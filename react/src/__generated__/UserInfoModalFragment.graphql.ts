@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3089d654ffa5a269f3af6836bb88eca9>>
+ * @generated SignedSource<<bab6cab6419f5d124debbade753a2c4c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -198,7 +198,13 @@ const node: ReaderFragment = {
     },
     {
       "alias": null,
-      "args": null,
+      "args": [
+        {
+          "kind": "Literal",
+          "name": "limit",
+          "value": 1000
+        }
+      ],
       "concreteType": "ProjectV2Connection",
       "kind": "LinkedField",
       "name": "projects",
@@ -252,13 +258,13 @@ const node: ReaderFragment = {
           "storageKey": null
         }
       ],
-      "storageKey": null
+      "storageKey": "projects(limit:1000)"
     }
   ],
   "type": "UserV2",
   "abstractKey": null
 };
 
-(node as any).hash = "cfb112c9d88e1c237eb282c33349c340";
+(node as any).hash = "062be09b05537dac6a8c3243b55dce62";
 
 export default node;

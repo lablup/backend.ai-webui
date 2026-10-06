@@ -89,26 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "เกิดข้อผิดพลาดที่ไม่คาดคิด กรุณาลองอีกครั้งภายหลัง หากปัญหายังคงมีอยู่ โปรดติดต่อฝ่ายสนับสนุน"
   },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "ล้าง",
-    "KeepAsIs": "เก็บไว้ตามเดิม",
-    "UndoChanges": "ยกเลิกการเปลี่ยนแปลง"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "การดำเนินการล้มเหลว",
-    "ErrorOccurred": "เกิดข้อผิดพลาด"
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "ล้าง",
-    "HexValue": "ค่าเลขฐานสิบหก",
-    "NoColor": "ไม่มีสี",
-    "SelectColor": "เลือกสี"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "ล้าง ค้นหาตัวเลือก",
-    "NoResults": "ไม่พบผลลัพธ์",
-    "SearchOptions": "ค้นหาตัวเลือก"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "เลือกรีจิสทรีคอนเทนเนอร์"
   },
@@ -128,14 +108,6 @@
     "Size": "ขนาด",
     "SuccessFullyRemoved": "ลบเวอร์ชัน {{count}} สำเร็จ",
     "Version": "รุ่น"
-  },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "คุณแน่ใจหรือไม่ว่าต้องการลบ?",
-    "AreYouSureToPermanentlyDeleteTarget": "คุณแน่ใจหรือไม่ว่าต้องการลบ {{target}} อย่างถาวร?",
-    "CannotBeUndone": "การกระทำนี้ไม่สามารถยกเลิกได้",
-    "DeleteItem": "ลบ",
-    "DeleteNItems": "ลบ {{count}} รายการ",
-    "TypeToConfirm": "พิมพ์ <token>{{confirmText}}</token> เพื่อยืนยัน"
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "สร้างโดย"
@@ -247,6 +219,10 @@
       "Timeout": "เว็บเซิร์ฟเวอร์ Backend.AI ไม่ตอบสนองภายในเวลาที่กำหนด",
       "Title": "ไม่สามารถเข้าสู่ระบบด้วย Backend.AI ได้"
     }
+  },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "ความคืบหน้าการเริ่มเคอร์เนล",
+    "KernelTerminationProgress": "ความคืบหน้าการยุติเคอร์เนล"
   },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "ขนาดคลัสเตอร์",
@@ -413,11 +389,6 @@
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "ที่จัดสรร / ที่ร้องขอ"
   },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "เปลี่ยนสีกลุ่ม",
-    "ResourceGrid": "ตารางทรัพยากร",
-    "UseColorN": "ใช้สี {{n}}"
-  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "ไม่ จำกัด"
   },
@@ -567,9 +538,6 @@
     "MultiNodeShort": "หลาย",
     "SingleNodeShort": "เดี่ยว"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "ไม่ จำกัด"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "เลือกโฮสต์จัดเก็บข้อมูล"
   },
@@ -586,28 +554,13 @@
     "Time": "เวลา"
   },
   "comp:BAITable": {
-    "Apply": "ใช้",
-    "Cancel": "ยกเลิก",
     "CollapseAll": "ยุบทั้งหมด",
     "ExpandAll": "ขยายทั้งหมด",
     "ExpandErrorsOnly": "ขยายเฉพาะข้อผิดพลาด",
-    "ExpandOptions": "ตัวเลือกการขยาย",
-    "ExpandRow": "ขยายแถว",
-    "Export": "ส่งออก",
-    "ExportCSV": "ส่งออก CSV",
-    "GoToFirstPage": "ไปยังหน้าแรก",
-    "InvalidPageNumber": "หมายเลขหน้าไม่ถูกต้อ",
-    "NoDataToDisplay": "ไม่มีข้อมูลที่จะแสดง",
-    "Pagination": "การแบ่งหน้า",
-    "SearchTableColumn": "คอลัมน์ตารางค้นหา",
-    "SelectColumnToDisplay": "เลือกคอลัมน์ที่จะแสดง",
-    "SettingTable": "การตั้งค่าตาราง"
+    "ExpandOptions": "ตัวเลือกการขยาย"
   },
   "comp:BAITestButton": {
     "Test": "ทดสอบ"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "และอีก {{rest}} รายการ"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "สร้างเมื่อ",
@@ -699,9 +652,6 @@
       "FileNameRequired": "กรุณากรอกชื่อไฟล์หรือโฟลเดอร์"
     }
   },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} ของ {{total}} รายการ"
-  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "ไม่มีข้อมูลทรัพยากร"
   },
@@ -763,55 +713,12 @@
   "error": {
     "UnknownError": "เกิดข้อผิดพลาดที่ไม่รู้จัก \nโปรดลองอีกครั้ง"
   },
-  "form": {
-    "Optional": "(ไม่จำเป็น)",
-    "validateMessages": {
-      "Default": "ฟิลด์ ${label} ไม่ผ่านเงื่อนไขการตรวจสอบ",
-      "Required": "กรุณากรอก ${label}",
-      "Whitespace": "${label} ไม่สามารถเป็นช่องว่างได้",
-      "array": {
-        "Len": "ต้องมี ${len} ${label}",
-        "Max": "มีได้สูงสุด ${max} ${label}",
-        "Min": "ต้องมีอย่างน้อย ${min} ${label}",
-        "Range": "จำนวน ${label} ต้องอยู่ในช่วง ${min}-${max}"
-      },
-      "number": {
-        "Len": "${label} ต้องมี ${len} ตัว",
-        "Max": "ค่าสูงสุด ${label} คือ ${max}",
-        "Min": "ค่าต่ำสุด ${label} คือ ${min}",
-        "Range": "${label} ต้องมีค่า ${min}-${max}"
-      },
-      "pattern": {
-        "Mismatch": "${label} ไม่ตรงกับรูปแบบ ${pattern}"
-      },
-      "string": {
-        "Len": "${label} ต้องมี ${len} ตัวอักษร",
-        "Max": "${label} มีได้สูงสุด ${max} ตัวอักษร",
-        "Min": "${label} ต้องมีอย่างน้อย ${min} ตัวอักษร",
-        "Range": "${label} ต้องมี ${min}-${max} ตัวอักษร"
-      },
-      "types": {
-        "Email": "${label} ไม่ใช่ ${type} ที่ถูกต้อง",
-        "Number": "${label} ไม่ใช่ ${type} ที่ถูกต้อง",
-        "Object": "${label} ไม่ใช่ ${type} ที่ถูกต้อง",
-        "String": "${label} ไม่ใช่ ${type} ที่ถูกต้อง",
-        "Url": "${label} ไม่ใช่ ${type} ที่ถูกต้อง"
-      }
-    }
-  },
   "general": {
-    "Decrease": "ลด",
-    "DeselectAll": "ยกเลิกการเลือกทั้งหมด",
     "File": "ไฟล์",
-    "Increase": "เพิ่ม",
-    "Loading": "กำลังโหลด...",
-    "NSelected": "{{count}} เลือก",
     "Optional": "ไม่บังคับ",
     "Project": "โครงการ",
     "Search": "ค้นหา",
     "Select": "เลือก",
-    "SelectPlaceholder": "เลือก{{label}}",
-    "TotalItems": "รวม {{total}} รายการ",
     "Unit": "หน่วย",
     "button": {
       "Action": "การดำเนินการ",

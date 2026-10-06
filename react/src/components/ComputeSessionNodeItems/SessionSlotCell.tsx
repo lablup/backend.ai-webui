@@ -4,6 +4,7 @@
  */
 import { SessionSlotCellFragment$key } from '../../__generated__/SessionSlotCellFragment.graphql';
 import { convertToBinaryUnit } from '../../helper';
+import { isTransitionalSessionStatus } from '../../helper/sessionStatus';
 import {
   UTILIZATION_ERROR_PERCENT,
   UTILIZATION_WARNING_PERCENT,
@@ -15,9 +16,9 @@ import {
 import { useSessionLiveStat } from '../../hooks/useSessionNodeLiveStat';
 import { getUnifiedSlotNameFromTag } from '../SessionFormItems/ResourceAllocationFormItems';
 import { displayMemoryUsage } from '../SessionUsageMonitor';
-import { Divider } from '@astryxdesign/core/Divider';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Divider } from '@lablup/ui-common/Divider';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import * as stylex from '@stylexjs/stylex';
 import type { SemanticColor } from 'backend.ai-ui';
 import { BAIBadge, BAIBadgeProps, BAIFlex } from 'backend.ai-ui';
@@ -30,6 +31,23 @@ const styles = stylex.create({
     maxWidth: 200,
   },
 });
+
+/**
+ * `occupied_slots` only counts kernel allocations the manager has not freed
+ * yet, so it shrinks toward one node's worth while a session transitions.
+ */
+export const selectDisplaySlots = (
+  status: string | null | undefined,
+  occupiedSlots: string | null | undefined,
+  requestedSlots: string | null | undefined,
+): { [key in ResourceSlotName]?: string } => {
+  const parsedOccupied = JSON.parse(occupiedSlots || '{}');
+  const parsedRequested = JSON.parse(requestedSlots || '{}');
+  const [preferred, fallback] = isTransitionalSessionStatus(status)
+    ? [parsedRequested, parsedOccupied]
+    : [parsedOccupied, parsedRequested];
+  return Object.keys(preferred).length > 0 ? preferred : fallback;
+};
 
 interface OccupiedSlotViewProps {
   sessionFrgmt: SessionSlotCellFragment$key;
@@ -57,13 +75,11 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
 
   const { liveStat } = useSessionLiveStat(session);
 
-  const parsedOccupiedSlots = JSON.parse(session.occupied_slots || '{}');
-  const occupiedSlots: {
-    [key in ResourceSlotName]?: string;
-  } =
-    Object.keys(parsedOccupiedSlots).length > 0
-      ? parsedOccupiedSlots
-      : JSON.parse(session.requested_slots || '{}');
+  const occupiedSlots = selectDisplaySlots(
+    session.status,
+    session.occupied_slots,
+    session.requested_slots,
+  );
 
   if (type === 'cpu') {
     const CPUOccupiedSlot = parseFloat(occupiedSlots.cpu ?? '1');

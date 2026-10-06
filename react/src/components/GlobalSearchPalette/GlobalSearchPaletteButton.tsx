@@ -2,12 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { OPEN_MODAL_ROOT_SELECTOR } from '../../helper/openModalRoot';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useThemeMode } from '../../hooks/useThemeMode';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Kbd } from '@astryxdesign/core/Kbd';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useHotkeys } from '@astryxdesign/core/hooks';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Kbd } from '@lablup/ui-common/Kbd';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useHotkeys } from '@lablup/ui-common/hooks';
 import { Search } from 'lucide-react';
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -45,9 +46,19 @@ const GlobalSearchPaletteButton: React.FC<GlobalSearchPaletteButtonProps> = ({
 
   // `allowInInputs`: reachable from a focused form field. An empty array still
   // attaches the listener, but nothing matches, so the browser keeps `mod+k`.
+  // An open modal or scrimmed drawer keeps the keyboard: the press does nothing.
   useHotkeys(
     isExperimentalGlobalSearchEnabled
-      ? [{ keys: 'mod+k', allowInInputs: true, onPress: () => setIsOpen(true) }]
+      ? [
+          {
+            keys: 'mod+k',
+            allowInInputs: true,
+            onPress: () => {
+              if (document.querySelector(OPEN_MODAL_ROOT_SELECTOR)) return;
+              setIsOpen(true);
+            },
+          },
+        ]
       : [],
   );
 

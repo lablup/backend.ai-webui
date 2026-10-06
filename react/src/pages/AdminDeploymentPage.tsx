@@ -13,6 +13,7 @@ import type {
 } from '../__generated__/AdminDeploymentQuery.graphql';
 import type {
   AdminModelCardQuery as AdminModelCardQueryType,
+  ModelCardV2Filter,
   ModelCardV2OrderBy,
 } from '../__generated__/AdminModelCardQuery.graphql';
 import type {
@@ -26,6 +27,8 @@ import type {
 } from '../__generated__/AdminRuntimeVariantPresetQuery.graphql';
 import AdminDeployment, {
   AdminDeploymentQuery,
+  sanitizeDeploymentOrder,
+  statusCategoryFilterFor,
 } from '../components/AdminDeployment';
 import AdminDeploymentPreset, {
   AdminDeploymentPresetQuery,
@@ -41,7 +44,7 @@ import AdminRuntimeVariantPreset, {
 } from '../components/AdminRuntimeVariantPreset';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { BAISkeleton } from 'backend.ai-ui';
@@ -68,14 +71,6 @@ type TabKey = (typeof TAB_KEYS)[number];
 
 const tabParser = parseAsStringLiteral(TAB_KEYS).withDefault('deployments');
 
-// Default status scope for the deployments tab: hide terminated deployments.
-// `status` is never a user-settable filter property, so the deployments tab
-// owns it entirely via its running/finished toggle. On first load (no
-// persisted filter) we fall back to "running".
-const DEPLOYMENT_RUNNING_FILTER: DeploymentFilter = {
-  status: { notIn: ['STOPPED'] },
-};
-
 // Per-tab default order. Tabs not listed default to no sort; the presets tabs
 // default to newest-first. Because all tabs now share a single `order` URL key
 // (see below), these defaults are applied explicitly on tab switch and on the
@@ -101,6 +96,18 @@ const AdminDeploymentPage: React.FC = () => {
     'prometheus-query-preset',
   );
   const isDeploymentPresetSupported = baiClient.supports('deployment-preset');
+
+  // Default status scope for the deployments tab: hide terminated deployments.
+  // `status` is never a user-settable filter property, so the deployments tab
+  // owns it entirely via its running/finished toggle. On first load (no
+  // persisted filter) we fall back to "running".
+  const supportsDeploymentExtendedFilter = baiClient.supports(
+    'model-deployment-extended-filter',
+  );
+  const deploymentRunningFilter = statusCategoryFilterFor(
+    'running',
+    supportsDeploymentExtendedFilter,
+  );
 
   // A single `{ tab, filter, order }` URL state is shared by every tab, plus a
   // single pagination state. Only the active tab's values are ever present in
@@ -180,26 +187,47 @@ const AdminDeploymentPage: React.FC = () => {
   };
 
   // --- Model store management tab ---
+  const currentDomain = useCurrentDomainValue();
   const [modelCardQueryRef, loadModelCardQuery] =
     useQueryLoader<AdminModelCardQueryType>(AdminModelCardQuery);
   const [modelCardColumnOverrides, setModelCardColumnOverrides] =
     useBAISettingUserState('table_column_overrides.AdminModelCard');
 
+  // The URL holds only the user's conditions; the domain is added per load.
+  const modelCardUserFilter =
+    (queryParams.filter as ModelCardV2Filter | null) ?? undefined;
   const reloadModelCards = (
     variables: AdminModelCardQueryType['variables'],
     options?: UseQueryLoaderLoadQueryOptions,
   ) => {
+    // A reload that keeps the loaded (scoped) filter keeps the URL's one.
+    const userFilter =
+      variables.filter === modelCardQueryRef?.variables.filter
+        ? modelCardUserFilter
+        : variables.filter;
     const nextLimit = variables.limit ?? 10;
     const nextOffset = variables.offset ?? 0;
     setQueryParams({
-      filter: variables.filter ?? null,
+      filter: userFilter ?? null,
       order: convertFirstOrderByToString(variables.orderBy),
     });
     setTablePaginationOption({
       pageSize: nextLimit,
       current: nextOffset > 0 ? Math.floor(nextOffset / nextLimit) + 1 : 1,
     });
-    loadModelCardQuery(variables, options);
+    loadModelCardQuery(
+      {
+        ...variables,
+        // AND-nesting keeps a user OR/NOT from widening past the domain.
+        filter: currentDomain
+          ? {
+              domainName: { equals: currentDomain },
+              ...(userFilter ? { AND: [userFilter] } : {}),
+            }
+          : userFilter,
+      },
+      options,
+    );
   };
 
   // --- Prometheus preset tab ---
@@ -296,8 +324,16 @@ const AdminDeploymentPage: React.FC = () => {
             {
               filter:
                 (params.filter as DeploymentFilter | null) ??
-                DEPLOYMENT_RUNNING_FILTER,
-              orderBy: convertToOrderBy<DeploymentOrderBy>(params.order),
+                deploymentRunningFilter,
+              // A URL bookmarked on a newer manager can name a sorter this
+              // one lacks; `loadTab` runs before the tab (and its
+              // `sortableKeys`) mounts, so it is gated here too.
+              orderBy: convertToOrderBy<DeploymentOrderBy>(
+                sanitizeDeploymentOrder(
+                  params.order,
+                  supportsDeploymentExtendedFilter,
+                ),
+              ),
               limit,
               offset,
             },
@@ -308,14 +344,20 @@ const AdminDeploymentPage: React.FC = () => {
       case 'model-store-management': {
         // No longer project-scoped, so loading once is enough.
         if (!modelCardQueryRef) {
+          const userFilter = params.filter as ModelCardV2Filter | null;
           loadModelCardQuery(
             {
-              filter:
-                (params.filter as AdminModelCardQueryType['variables']['filter']) ??
-                undefined,
+              filter: currentDomain
+                ? {
+                    domainName: { equals: currentDomain },
+                    ...(userFilter ? { AND: [userFilter] } : {}),
+                  }
+                : userFilter,
               orderBy: convertToOrderBy<ModelCardV2OrderBy>(params.order),
               limit,
               offset,
+              // Every domain has its own MODEL_STORE project.
+              domainName: currentDomain,
             },
             { fetchPolicy: 'store-and-network' },
           );
@@ -476,6 +518,7 @@ const AdminDeploymentPage: React.FC = () => {
             {modelCardQueryRef ? (
               <AdminModelCard
                 queryRef={modelCardQueryRef}
+                filter={modelCardUserFilter}
                 onReload={reloadModelCards}
                 tableSettings={{
                   columnOverrides: modelCardColumnOverrides,

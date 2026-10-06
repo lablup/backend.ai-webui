@@ -1,4 +1,3 @@
-import { BAI_MODAL_OPEN_ATTRIBUTE } from '../../../../packages/backend.ai-ui/src/components/dialogLevelStack';
 import {
   findAnchorTarget,
   findViaTarget,
@@ -9,6 +8,7 @@ import {
   quickFindTarget,
 } from './resolve.js';
 import type { AnchorV3 } from './types.js';
+import { MODAL_OPEN_ATTRIBUTE } from '@lablup/ui-common/Modal';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 /** react-grab 0.1.50's synchronous `getDisplayName`, stubbed per test. */
@@ -586,10 +586,10 @@ describe('isBehindModal', () => {
 
   it('counts the app dialog portal, which carries no aria-modal', () => {
     // Retyped in the overlay, which cannot import the package it reviews.
-    expect(PORTAL_MODAL).toContain(`[${BAI_MODAL_OPEN_ATTRIBUTE}]`);
+    expect(PORTAL_MODAL).toContain(`[${MODAL_OPEN_ATTRIBUTE}]`);
     document.body.insertAdjacentHTML(
       'beforeend',
-      `<div ${BAI_MODAL_OPEN_ATTRIBUTE}><div role="dialog"><button id="in">in</button></div></div>`,
+      `<div ${MODAL_OPEN_ATTRIBUTE}><div role="dialog"><button id="in">in</button></div></div>`,
     );
     expect(isBehindModal(byId('page'))).toBe(true);
     expect(isBehindModal(byId('in'))).toBe(false);
@@ -599,8 +599,8 @@ describe('isBehindModal', () => {
     // The level stack inerts a covered root; a reopened one keeps its place.
     document.body.insertAdjacentHTML(
       'beforeend',
-      '<div data-bai-modal-open><button id="top">top</button></div>' +
-        '<div data-bai-modal-open inert><button id="under">under</button></div>',
+      '<div data-uic-modal-open><button id="top">top</button></div>' +
+        '<div data-uic-modal-open inert><button id="under">under</button></div>',
     );
     expect(isBehindModal(byId('top'))).toBe(false);
     expect(isBehindModal(byId('under'))).toBe(true);
@@ -612,6 +612,54 @@ describe('isBehindModal', () => {
       '<div popover="auto"><div role="dialog" aria-modal="true"><button id="in">in</button></div></div>',
     );
     expect(isBehindModal(byId('page'))).toBe(false);
+  });
+
+  // A notification raised over a dialog sits outside the modal and on top.
+  describe('with layout', () => {
+    const rect = { left: 10, top: 10, width: 100, height: 40 } as DOMRect;
+    let painted: Element | null = null;
+    beforeEach(() => {
+      document.documentElement.getClientRects = () =>
+        [rect] as unknown as DOMRectList;
+      HTMLElement.prototype.getClientRects = () =>
+        [rect] as unknown as DOMRectList;
+      HTMLElement.prototype.getBoundingClientRect = () => rect;
+      document.elementsFromPoint = () => (painted ? [painted] : []);
+      document.body.insertAdjacentHTML(
+        'beforeend',
+        '<div role="dialog" aria-modal="true"><button id="in">in</button></div>' +
+          '<div id="toast"><span id="msg">saved</span></div>',
+      );
+    });
+    afterEach(() => {
+      painted = null;
+      delete (document.documentElement as Partial<HTMLElement>).getClientRects;
+      delete (HTMLElement.prototype as Partial<HTMLElement>).getClientRects;
+      delete (HTMLElement.prototype as Partial<HTMLElement>)
+        .getBoundingClientRect;
+      delete (document as Partial<Document>).elementsFromPoint;
+    });
+
+    it('does not hide what is painted above the modal', () => {
+      painted = byId('msg');
+      expect(isBehindModal(byId('toast'))).toBe(false);
+    });
+
+    it('still hides what the modal paints over', () => {
+      painted = byId('in');
+      expect(isBehindModal(byId('toast'))).toBe(true);
+    });
+
+    it('looks through the overlay’s own chrome', () => {
+      document.body.insertAdjacentHTML(
+        'beforeend',
+        '<div data-bai-review-overlay id="host"></div>',
+      );
+      const host = byId('host');
+      const msg = byId('msg');
+      document.elementsFromPoint = () => [host, msg];
+      expect(isBehindModal(byId('toast'))).toBe(false);
+    });
   });
 
   it('puts the first modal under the one opened after it', () => {
@@ -654,10 +702,10 @@ describe('findViaTarget', () => {
   it('points at nothing under an open modal, or when the label is gone', () => {
     document.body.insertAdjacentHTML(
       'beforeend',
-      '<div data-bai-modal-open><div role="dialog">form</div></div>',
+      '<div data-uic-modal-open><div role="dialog">form</div></div>',
     );
     expect(findViaTarget([click('Create Folder', 'create')])).toBeNull();
-    document.querySelector('[data-bai-modal-open]')!.remove();
+    document.querySelector('[data-uic-modal-open]')!.remove();
     expect(findViaTarget([click('Delete')])).toBeNull();
   });
 
@@ -773,5 +821,21 @@ describe('nextViaControl', () => {
     expect(nextViaControl(fillThenApply, [input, apply])?.element).toBe(apply);
     input.value = 'ab';
     expect(nextViaControl(fillThenApply, [input, apply])?.element).toBe(input);
+  });
+
+  it('never jumps a value still to type, even to a testid hit', () => {
+    const input = document.createElement('input');
+    const create = el('create', 'create-folder-button');
+    const fillThenCreate = [
+      { fill: { label: 'Folder name', value: 'demo' } },
+      { click: { text: 'Create', tid: 'create-folder-button' } },
+    ];
+    expect(nextViaControl(fillThenCreate, [input, create])?.element).toBe(
+      input,
+    );
+    input.value = 'demo';
+    expect(nextViaControl(fillThenCreate, [input, create])?.element).toBe(
+      create,
+    );
   });
 });

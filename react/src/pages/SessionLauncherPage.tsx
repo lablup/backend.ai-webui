@@ -48,23 +48,21 @@ import {
 } from '../hooks/useCurrentProject';
 import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
 import { useStartSession } from '../hooks/useStartSession';
-import { theme, useBAIBreakpoint } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
-import { Button } from '@astryxdesign/core/Button';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { Divider } from '@astryxdesign/core/Divider';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { Grid as AstryxGrid } from '@astryxdesign/core/Grid';
-import { Heading } from '@astryxdesign/core/Heading';
-// FRONTIER (ticket 17): the Form ENGINE is still antd's — ticket 34's
-// self-hosted replacement is parked (see form-engine/engine.ts). Everything
-// INSIDE the items is Astryx: the controls go through the shared
-// `astryxFormControls` adapters.
-import { InputGroup } from '@astryxdesign/core/InputGroup';
-import { RadioList, RadioListItem } from '@astryxdesign/core/RadioList';
-import { Step, Stepper } from '@astryxdesign/core/Stepper';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Button } from '@lablup/ui-common/Button';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { Divider } from '@lablup/ui-common/Divider';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { Grid as AstryxGrid } from '@lablup/ui-common/Grid';
+import { Heading } from '@lablup/ui-common/Heading';
+// The form engine is ui-common's (`@lablup/ui-common/Form`); the controls
+// inside the items go through the shared `astryxFormControls` adapters.
+import { InputGroup } from '@lablup/ui-common/InputGroup';
+import { RadioList, RadioListItem } from '@lablup/ui-common/RadioList';
+import { Step, Stepper } from '@lablup/ui-common/Stepper';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import * as stylex from '@stylexjs/stylex';
 import type { SessionResources as ClientSessionResources } from 'backend.ai-client';
 import {
@@ -83,6 +81,7 @@ import {
   useErrorMessageResolver,
   useToggle,
   useUpdatableState,
+  useBAIBreakpoint,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
@@ -366,7 +365,7 @@ const SessionLauncherPage = () => {
       { history: 'push' },
     );
   };
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const { t } = useTranslation();
 
@@ -985,7 +984,7 @@ const SessionLauncherPage = () => {
                                                 engine COMPOSES a child's own
                                                 trigger handler after its own
                                                 (`originTriggerFunc` in
-                                                `form-engine/Field.tsx`), so
+                                                ui-common Form's `Field`), so
                                                 both run. */}
                                             <AstryxFormNumberInput
                                               label={t(
@@ -1239,7 +1238,7 @@ const SessionLauncherPage = () => {
                           width="100%"
                           style={{
                             display: enabled ? 'none' : undefined,
-                            marginTop: token.marginMD,
+                            marginTop: token('--spacing-5'),
                           }}
                         >
                           <Form.Item
@@ -1493,7 +1492,7 @@ const SessionLauncherPage = () => {
         {screens.lg && (
           <BAIFlex
             data-test-id="neo-session-launcher-tour-step"
-            style={{ position: 'sticky', top: 80 }}
+            style={{ position: 'sticky', top: 20 }}
           >
             <Stepper
               orientation="vertical"
@@ -1648,14 +1647,14 @@ const unifiedChipStyles = stylex.create({
 const UnifiedAcceleratorChip: React.FC<{ type: string }> = ({ type }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   // The description lives only in the backend slot-details response, not in
   // the local device_metadata.json, and is not scoped to a resource group.
   const { mergedResourceSlots } = useResourceSlotsDetails();
   const description = mergedResourceSlots[type]?.description ?? type;
   // One line of the description text, so the icon can be vertically centered
   // against the first line (not the whole wrapped block).
-  const lineHeightPx = token.fontSize * token.lineHeight;
+  const lineHeight = `calc(${token('--text-body-size')} * ${token('--text-body-leading')})`;
   return (
     <Tooltip
       content={t('session.launcher.UnifiedAcceleratorMemoryNote', {
@@ -1670,7 +1669,7 @@ const UnifiedAcceleratorChip: React.FC<{ type: string }> = ({ type }) => {
       >
         {/* Match the icon box to one text line and center the icon so it stays
             aligned with the first line when the description wraps. */}
-        <BAIFlex align="center" style={{ flexShrink: 0, height: lineHeightPx }}>
+        <BAIFlex align="center" style={{ flexShrink: 0, height: lineHeight }}>
           <ResourceTypeIcon type={type} showTooltip={false} />
         </BAIFlex>
         <Text xstyle={unifiedChipStyles.description}>{description}</Text>

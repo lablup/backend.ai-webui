@@ -4,12 +4,12 @@
  */
 import type { DeploymentCurrentRevisionTab_deployment$key } from '../__generated__/DeploymentCurrentRevisionTab_deployment.graphql';
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
-import { theme } from '../theme-shim';
 import DeploymentRevisionDetail from './DeploymentRevisionDetail';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIUnmountAfterClose, toLocalId } from 'backend.ai-ui';
 import { LoaderCircle } from 'lucide-react';
 import React, { useState } from 'react';
@@ -35,7 +35,7 @@ const DeploymentCurrentRevisionTab: React.FC<
 > = ({ deploymentFrgmt }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const deployment = useFragment(
     graphql`
@@ -81,7 +81,7 @@ const DeploymentCurrentRevisionTab: React.FC<
         <Banner
           status="info"
           icon={<LoaderCircle className="bai-icon-spin" size="1em" />}
-          style={{ marginBottom: token.marginMD }}
+          style={{ marginBottom: token('--spacing-5') }}
           title={t('deployment.ApplyingRevision', {
             revisionNumber:
               deployingRevision.revisionNumber != null

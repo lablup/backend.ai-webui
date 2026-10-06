@@ -21,7 +21,6 @@ import { useSuspenseTanQuery, useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
-import { theme } from '../theme-shim';
 import { ProjectContextOrNull } from '../types/projectContext';
 import DeleteForeverVFolderModalV2 from './DeleteForeverVFolderModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -33,27 +32,28 @@ import SharedFolderPermissionInfoModalV2 from './SharedFolderPermissionInfoModal
 import VFolderDeployModal, { VFolderDeployQuery } from './VFolderDeployModal';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import VFolderPermissionCellV2 from './VFolderPermissionCellV2';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Link } from '@astryxdesign/core/Link';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
+import { Badge } from '@lablup/ui-common/Badge';
+import { Link } from '@lablup/ui-common/Link';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
   BAIAlertIconWithTooltip,
+  BAIIconWithTooltip,
   BAIModal,
   BAINameActionCell,
-  type BAINameActionCellAction,
-  BAIIconWithTooltip,
   BAIQuestionIconWithTooltip,
+  BAISkeleton,
   BAITable,
   BAITableProps,
+  BAIText,
   BAIUnmountAfterClose,
   StorageUsageBadge,
   badgeVariantForStatus,
-  BAIText,
   filterOutNullAndUndefined,
   toLocalId,
   useErrorMessageResolver,
+  type BAINameActionCellAction,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -159,7 +159,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { generateFolderPath } = useFolderExplorerOpener();
   const navigate = useWebUINavigate();
 
@@ -262,7 +262,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
       icon={
         <VFolderNodeIdenticonV2
           vfolderNodeIdenticonFrgmt={vfolder}
-          style={{ fontSize: token.fontSizeHeading5 }}
+          style={{ fontSize: token('--font-size-lg') }}
         />
       }
       title={vfolder.metadata?.name}

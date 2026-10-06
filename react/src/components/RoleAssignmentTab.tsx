@@ -14,10 +14,10 @@ import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { theme } from '../theme-shim';
 import AssignRoleModal from './AssignRoleModal';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIButton,
   BAIDeleteConfirmModal,
@@ -34,7 +34,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { Trash2, PlusIcon } from 'lucide-react';
+import { PlusIcon, Trash2 } from 'lucide-react';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
@@ -56,7 +56,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const baiClient = useSuspendedBackendaiClient();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
@@ -323,7 +323,10 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
               <Tooltip content={t('rbac.RevokeUser')}>
                 <BAIButton
                   icon={
-                    <Trash2 style={{ color: token.colorError }} size="1em" />
+                    <Trash2
+                      style={{ color: token('--color-error') }}
+                      size="1em"
+                    />
                   }
                   onClick={() => {
                     const userIds = assignments

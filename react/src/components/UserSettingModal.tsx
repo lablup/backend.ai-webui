@@ -4,8 +4,8 @@
  */
 import { GeneratedKeypairListModalFragment$key } from '../__generated__/GeneratedKeypairListModalFragment.graphql';
 import {
-  UserSettingModalBulkCreateMutation,
   UserRoleV2,
+  UserSettingModalBulkCreateMutation,
   UserStatusV2,
 } from '../__generated__/UserSettingModalBulkCreateMutation.graphql';
 import { UserSettingModalCreateMutation } from '../__generated__/UserSettingModalCreateMutation.graphql';
@@ -15,16 +15,16 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { isValidIPOrCidr } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import { roleFromV2 } from '../helper/userRole';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole, useTOTPSupported } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { theme } from '../theme-shim';
 import AccessKeySelect from './AccessKeySelect';
 import BAIFormItem from './BAIFormItem';
 import {
   BulkCreateUserErrorModal,
-  type FailedUserCreation,
   toFailedUserCreations,
+  type FailedUserCreation,
 } from './BulkCreateUserFailure';
 import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import ProjectSelect from './ProjectSelect';
@@ -38,21 +38,19 @@ import {
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Switch } from '@astryxdesign/core/Switch';
-import { Text } from '@astryxdesign/core/Text';
-import { Tokenizer } from '@astryxdesign/core/Tokenizer';
-import type {
-  SearchableItem,
-  SearchSource,
-} from '@astryxdesign/core/Typeahead';
+import { Switch } from '@lablup/ui-common/Switch';
+import { Text } from '@lablup/ui-common/Text';
+import { Tokenizer } from '@lablup/ui-common/Tokenizer';
+import type { SearchSource, SearchableItem } from '@lablup/ui-common/Typeahead';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
   BAIAlert,
   BAICompactGroup,
   BAIDomainSelect,
   BAIModal,
   BAIModalProps,
   BAISelect,
+  BAISkeleton,
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
   toLocalId,
@@ -64,7 +62,7 @@ import * as _ from 'lodash-es';
 import { CircleAlert } from 'lucide-react';
 import React, { Suspense, useDeferredValue, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useMutation, useFragment } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 type UserRole = {
   [key: string]: string[];
@@ -132,13 +130,6 @@ const statusFromV2: Record<string, string> = {
   DELETED: 'deleted',
 };
 
-const roleFromV2: Record<string, string> = {
-  USER: 'user',
-  ADMIN: 'admin',
-  SUPERADMIN: 'superadmin',
-  MONITOR: 'monitor',
-};
-
 const formatBulkEmail = (
   prefix: string,
   suffix: string,
@@ -173,7 +164,7 @@ const EMPTY_TAG_SEARCH_SOURCE: SearchSource<SearchableItem> = {
 // comma/space-separated text into multiple tags) has no Tokenizer
 // equivalent and is dropped — tags are committed one at a time with Enter
 // (`hasCreate`). The per-tag red highlight for invalid IPs (the antd
-// `tagRender`) is also dropped: `astryx component Tokenizer` best practices
+// `tagRender`) is also dropped: `ui-common component Tokenizer` best practices
 // explicitly discourage custom per-token colors, and the field's own
 // `rules` validator (kept unchanged below) already surfaces every invalid
 // IP in the BAIFormItem's error text under the control, so the same
@@ -242,7 +233,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { modal, message } = App.useApp();
   const formRef = useRef<FormInstance<FormValues>>(null);
   const { logger } = useBAILogger();
@@ -310,7 +301,9 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           containerMainGid
           containerGids
         }
-        projects {
+        # groupIds on save REPLACES the membership list, so the form must
+        # start from every project rather than the connection's default page.
+        projects(limit: 1000) {
           edges {
             node {
               id
@@ -385,7 +378,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               containerMainGid
               containerGids
             }
-            projects {
+            projects(limit: 1000) {
               edges {
                 node {
                   id
@@ -767,7 +760,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 ghostInfoBg={false}
                 showIcon
                 description={t('credential.BulkCreateUserDescription')}
-                style={{ marginBottom: token.marginMD }}
+                style={{ marginBottom: token('--spacing-5') }}
               />
               {/* QA-FINDINGS Q-32 — "email prefix 와 email suffix 사이의
                   input margin 이 없음". The gapless `HStack` this replaces put

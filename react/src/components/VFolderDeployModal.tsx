@@ -8,21 +8,21 @@ import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import { useWebUINavigate } from '../hooks';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { theme } from '../theme-shim';
 import { ProjectContext } from '../types/projectContext';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
-import { Banner } from '@astryxdesign/core/Banner';
-import { IconButton } from '@astryxdesign/core/IconButton';
+import { Banner } from '@lablup/ui-common/Banner';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAvailablePresetSelect,
   BAIFlex,
   BAILink,
   BAIModal,
-  type BAIModalProps,
   BAIProjectResourceGroupSelect,
   toLocalId,
   useErrorMessageResolver,
   useProjectResourceGroups,
+  type BAIModalProps,
 } from 'backend.ai-ui';
 import { Info } from 'lucide-react';
 import React, {
@@ -34,8 +34,8 @@ import React, {
 } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import {
-  graphql,
   PreloadedQuery,
+  graphql,
   useMutation,
   usePreloadedQuery,
 } from 'react-relay';
@@ -53,7 +53,10 @@ import {
 // differs to avoid clashing with the imported generated type.
 export const VFolderDeployQuery = graphql`
   query VFolderDeployModalQuery {
-    deploymentRevisionPresets(orderBy: [{ field: RANK, direction: "ASC" }]) {
+    deploymentRevisionPresets(
+      orderBy: [{ field: RANK, direction: "ASC" }]
+      limit: 100
+    ) {
       edges {
         node {
           id
@@ -113,7 +116,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
   const { getErrorMessage } = useErrorMessageResolver();
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   // Render-as-you-fetch: the request was already started by the opener's
   // `loadQuery` in the click event, so there is no `open`-derived fetch policy
@@ -322,7 +325,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
               }}
             />
           }
-          style={{ marginBottom: token.marginMD }}
+          style={{ marginBottom: token('--spacing-5') }}
         />
       )}
       <Form form={form} layout="vertical">

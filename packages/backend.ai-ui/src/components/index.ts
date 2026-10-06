@@ -80,10 +80,7 @@ export type {
   BAILabeledValue,
 } from './BAIComplexSelect';
 export { default as BAINotificationItem } from './BAINotificationItem';
-export type {
-  BAINotificationItemProps,
-  BAINotificationItemStyles,
-} from './BAINotificationItem';
+export type { BAINotificationItemProps } from './BAINotificationItem';
 export { default as BAIModal } from './BAIModal';
 export type { BAIModalProps } from './BAIModal';
 export { default as BAISkeleton } from './BAISkeleton';
@@ -224,6 +221,14 @@ export type {
 } from './BAIDoubleBadge';
 export { default as BAIProgressWithLabel } from './BAIProgressWithLabel';
 export type { BAIProgressWithLabelProps } from './BAIProgressWithLabel';
+export { default as BAIProgressRing } from './BAIProgressRing';
+export { getVisibleArcRange } from './BAIProgressRing';
+export type { BAIProgressRingProps } from './BAIProgressRing';
+export { default as BAIKernelProgressBreakdown } from './BAIKernelProgressBreakdown';
+export type {
+  BAIKernelProgressBreakdownProps,
+  BAIKernelProgressSegment,
+} from './BAIKernelProgressBreakdown';
 export { default as BAISchedulingResultBadge } from './BAISchedulingResultBadge';
 export type {
   BAISchedulingResultBadgeProps,
@@ -271,12 +276,8 @@ export { default as BAIVFolderIdenticon } from './BAIVFolderIdenticon';
 export type { BAIVFolderIdenticonProps } from './BAIVFolderIdenticon';
 export { default as BAIDrawer } from './BAIDrawer';
 export type { BAIDrawerProps } from './BAIDrawer';
-export { default as BAIDialog } from './BAIDialog';
-export type { BAIDialogProps } from './BAIDialog';
 export { default as BAIAlertDialog } from './BAIAlertDialog';
 export type { BAIAlertDialogProps } from './BAIAlertDialog';
-// `react/`'s `BAIDrawerPortal` joins this stack — one ladder for both (FR-3585).
-export { BAI_MODAL_OPEN_ATTRIBUTE, useDialogLevel } from './dialogLevelStack';
 export * from './Table';
 export * from './fragments';
 export * from './provider';

@@ -6,16 +6,16 @@ import { AssignRoleModalBulkAssignMutation } from '../__generated__/AssignRoleMo
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { reasonMessage } from '../helper/mutationError';
-import { theme } from '../theme-shim';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAdminUserV2Select,
   BAIBulkErrorModal,
-  type BAIColumnsType,
   BAIModal,
   BAIModalProps,
   useBAILogger,
   useMutationWithPromise,
+  type BAIColumnsType,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useRef, useState } from 'react';
@@ -53,7 +53,7 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const formRef = useRef<FormInstance<{ userIds: string[] }>>(null);
@@ -238,7 +238,10 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
         alertDescription={
           <>
             {t('rbac.UserAssignmentsPartialFailureDescription')}{' '}
-            <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
+            <Text
+              color="secondary"
+              style={{ fontSize: token('--font-size-sm') }}
+            >
               {t('rbac.PermissionsPartialFailureCounts', {
                 succeeded: succeededRequestCount,
                 failed: failedAssignments.length,

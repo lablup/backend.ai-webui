@@ -12,9 +12,9 @@
 */
 import useControllableState_deprecated from '../hooks/useControllableState';
 import './InputNumberWithSlider.css';
-import { InputGroup } from '@astryxdesign/core/InputGroup';
-import { NumberInput } from '@astryxdesign/core/NumberInput';
-import { Slider } from '@astryxdesign/core/Slider';
+import { InputGroup } from '@lablup/ui-common/InputGroup';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
+import { Slider } from '@lablup/ui-common/Slider';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useEffect } from 'react';

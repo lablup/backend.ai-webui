@@ -78,7 +78,7 @@ navTitle: コンピュートセッション
 追加設定なしでセッションを作成したい場合は、「レビューへスキップ」ボタンを押してください。
 この場合、他のページの設定はすべて既定値が使用されます。
 
-  ![](../images/launch_session_environments_and_resource.png)
+  ![=708px](../images/launch_session_environments_and_resource.png)
 
 ### 実行環境
 
@@ -96,7 +96,7 @@ navTitle: コンピュートセッション
   この機能では、環境変数設定ダイアログに変数名と値を入力することで、
   `PATH`などの任意の環境変数を追加できます。
 
-  ![](../images/launch_session_environments.png)
+  ![=700px](../images/launch_session_environments.png)
 
 ### リソース割り当て
 
@@ -113,7 +113,7 @@ navTitle: コンピュートセッション
   リソースセットが事前に定義されています。管理者は、よく使われるリソース設定を事前に定義できます。
   数値入力を調整するか、スライダーを動かすことで、ユーザーは希望する量のリソースを割り当てることができます。
 
-  ![](../images/launch_session_resource.png)
+  ![=700px](../images/launch_session_resource.png)
 
   各項目の意味は次のとおりです。
   「案内(ヘルプ)」ボタン（?）をクリックすると、詳細な情報を確認できます。
@@ -131,7 +131,7 @@ navTitle: コンピュートセッション
   * AIアクセラレータ: AIアクセラレータ（GPUまたはNPU）は、機械学習に関わる行列/ベクトル演算に適しています。
     AIアクセラレータは、トレーニング/推論アルゴリズムを桁違いに高速化し、
     実行時間を数週間から数日に短縮します。
-  ![](../images/launch_session_resource_2.png)
+  ![=700px](../images/launch_session_resource_2.png)
 
 :::note
 一部のAIアクセラレータは**ユニファイドメモリ**を使用します。専用のメモリを個別に
@@ -152,7 +152,7 @@ navTitle: コンピュートセッション
     現在、この機能はシングルノード、シングルコンテナ環境でのみサポートされています。
   * クラスターモード: 1つのコンピュートセッションをエージェントにどのように配置するかを選択します。**シングルノード**を選択すると、メインノードとすべてのワーカーノードが1つのエージェント（物理ノードまたは仮想マシン）に配置され、**マルチノード**を選択すると、1つのメインノードと1つ以上のワーカーノードが複数のエージェントに分割して配置されます。各オプションの横にある（`?`）アイコンにカーソルを合わせると、簡単な説明が表示されます。モードを選択した後、スライダーまたは数値入力で**クラスターサイズ**を指定します。シングルノードモードではサイズは1つのエージェント上に作成される**コンテナ**数を表し、マルチノードモードでは複数のエージェントに分散される**ノード**数を表します。スライダーの*残りリソース*マークは、現在割り当てられているリソースですぐに起動できる最大サイズを示します。より大きなサイズを選択することもできますが、十分なリソースが空くまでセッションが保留状態になる場合があります。サイズが1のマルチノードセッションは、シングルノードセッションとして作成されます。詳細については、[Backend.AIクラスターコンピュートセッションの概要](#backendai-cluster-compute-session)を参照してください。
 
-    ![](../images/cluster_mode.png)
+    ![=652px](../images/cluster_mode.png)
 
 :::note
 エージェント選択機能は、サーバー環境によっては利用できない場合があります。
@@ -167,7 +167,7 @@ navTitle: コンピュートセッション
   異常に多くのスレッドが生成されて、パフォーマンスが大幅に低下する場合があります。
   この問題を解決するには、スレッド数を1または2に設定するとよいでしょう。
 
-![](../images/session_hpc_optimization.png)
+![=700px](../images/session_hpc_optimization.png)
 
 <a id="data-and-storage"></a>
 <a id="session-mounts"></a>
@@ -181,7 +181,7 @@ navTitle: コンピュートセッション
 ただし、マウントされたフォルダに保存されたデータは保持されます。
 これらのフォルダのデータは、別のコンピュートセッションを作成する際にマウントして再利用することもできます。
 
-![](../images/launch_session_data.png)
+![=700px](../images/launch_session_data.png)
 
 ユーザーは、フォルダセレクタで、コンピュートセッションにマウントする
 ストレージフォルダを指定できます。
@@ -222,7 +222,7 @@ navTitle: コンピュートセッション
   詳細については、[セッション作成前に事前開放ポートを追加する方法](#set-preopen-ports)を参照してください。
 
 
-![](../images/launch_session_network.png)
+![=700px](../images/launch_session_network.png)
 
 <a id="confirm-and-launch"></a>
 
@@ -237,7 +237,7 @@ navTitle: コンピュートセッション
 設定を確認したら、ユーザーは「ローンチ」ボタンをクリックしてセッションを起動できます。
 各カード右上の**編集**ボタンをクリックすると、関連ページに移動します。
 
-![](../images/launch_session_confirm.png)
+![=708px](../images/launch_session_confirm.png)
 
 同一の設定で複数のセッションを一度に起動するには、「ローンチ」ボタンの隣にある
 その他(`...`)アイコンをクリックしてドロップダウンメニューを開き、
@@ -247,7 +247,7 @@ navTitle: コンピュートセッション
 
 ![](../images/session_start_multiple_dropdown.png)
 
-![](../images/session_start_dropdown.png)
+![=750px](../images/session_start_dropdown.png)
 
 :::note
 同時セッション起動はシステムによって制限されます。要求された合計が残りのセッション
@@ -258,12 +258,12 @@ navTitle: コンピュートセッション
 設定に問題がある場合は、次のようにエラーメッセージが表示されます。
 この場合、ユーザーは設定を編集できます。
 
-![](../images/launch_session_error_card.png)
+![=700px](../images/launch_session_error_card.png)
 
 「ローンチ」ボタンをクリックすると、マウントされたフォルダがないことを示す警告ダイアログが表示されます。
 フォルダのマウントが不要な場合は、警告を無視してダイアログの「スタート」ボタンをクリックして進むことができます。
 
-![](../images/no_folder_notification_dialog.png)
+![=400px](../images/no_folder_notification_dialog.png)
 
 新しいコンピュートセッションが**実行中**タブに追加されると、画面右下に通知が表示されます。
 通知の左下にはセッションのステータスが表示され、右下にはアプリダイアログを開くボタン、
@@ -273,11 +273,11 @@ navTitle: コンピュートセッション
 ![](../images/session_created.png)
 
 
-![](../images/session_notification.png)
+![=384px](../images/session_notification.png)
 
 一番左のアプリダイアログボタンをクリックすると、利用可能なアプリサービスを確認できます。
 
-![](../images/app_dialog.png)
+![=450px](../images/app_dialog.png)
 
 
 ### 最近の履歴
@@ -373,7 +373,7 @@ navTitle: コンピュートセッション
 
 「カーネル」の「ホスト名」の横にある「ログ」ボタンをクリックすると、そのカーネルのログを直接確認できます。
 
-![](../images/session_detail.png)
+![=799px](../images/session_detail.png)
 
 Backend.AIは、`PENDING`、`TERMINATED`、または`CANCELLED`状態のセッションに対して追加情報を提供します。
 利用可能な場合は、「情報」ボタンをクリックして詳細を確認できます。
@@ -482,7 +482,7 @@ Backend.AIは、`PENDING`、`TERMINATED`、または`CANCELLED`状態のセッ�
 
 **監査ログ**タブは、セッション詳細パネルの下部に**カーネル**タブと並んで表示されます。セッションに対して実行されたすべてのアクション（ステータス変更、リソース変更、管理操作など）の時系列記録と、各アクションを誰がいつ実行したかを提供します。
 
-![](../images/session_audit_log.png)
+![=799px](../images/session_audit_log.png)
 <!-- TODO: Capture screenshot showing the Client IP column (FR-3661) -->
 
 :::note
@@ -518,7 +518,7 @@ Backend.AIは、`PENDING`、`TERMINATED`、または`CANCELLED`状態のセッ�
 セッション詳細パネル右上の最初のアイコンをクリックすると、アプリランチャーが開き、
 そのセッションで利用可能なアプリサービスが表示されます。
 
-![](../images/app_dialog.png)
+![=450px](../images/app_dialog.png)
 
 
 :::note
@@ -558,7 +558,7 @@ Notebookのファイルエクスプローラーにある`id_container`ファイ�
 右上の「NEW」ボタンをクリックして「Notebook for Backend.AI」を選択すると、
 ユーザーがコードを入力できるipynbウィンドウが表示されます。
 
-![](../images/backendai_notebook_menu.png)
+![=404px](../images/backendai_notebook_menu.png)
 
 このウィンドウでは、ユーザーはセッションが提供する環境を使用して、任意のコードを入力して実行できます。
 コードは、コンピュートセッションが実際に作成されているBackend.AIのノードで実行され、
@@ -627,7 +627,7 @@ TensorBoardやJupyter LabなどのWebベースのサービスを利用できま�
 コンピュートセッションが終了すると同時にセッション内のフォルダのデータは削除されるため、
 データはマウントされたフォルダに移動するか、最初からマウントされたフォルダにアップロードすることをお勧めします。
 
-![](../images/session_destroy_dialog.png)
+![=520px](../images/session_destroy_dialog.png)
 
 <a id="idleness-checks"></a>
 
@@ -642,7 +642,7 @@ Backend.AIは、コンピュートセッションの自動ガベージコレク�
 セッションが実行中で、いずれかのアイドルチェックに残り時間が表示されているときに現れます。
 残り時間が数日でも数分でも同じように表示されます。
 
-![](../images/idle_checks_column.png)
+![=718px](../images/idle_checks_column.png)
 
 各アイドルチェッカーの意味は次のとおりです。**リクレイム状態** ラベルの横にある疑問符（`?`）
 アイコンをクリックすると、各項目の詳細な説明が記載されたダイアログが開きます。
@@ -723,7 +723,7 @@ Backend.AIは、コンピュートセッションの自動ガベージコレク�
 
 ![](../images/session_reclamation_status_column.png)
 
-![](../images/session_reclamation_status_popover.png)
+![=683px](../images/session_reclamation_status_popover.png)
 
 <a id="how-to-add-environment-variable-before-creating-a-session"></a>
 
@@ -736,7 +736,7 @@ Backend.AIは、コンピュートセッションの自動ガベージコレク�
 環境変数を追加するには、「＋ 環境変数を追加」ボタンをクリックするだけです。
 また、削除したい行の「-」ボタンをクリックすることで、環境変数を削除できます。
 
-![](../images/launch_session_env.png)
+![=700px](../images/launch_session_env.png)
 
 入力フィールドの同じ行に変数名と値を記述できます。
 
@@ -750,7 +750,7 @@ Backend.AIは、コンテナ起動時の事前開放ポート設定をサポー�
 
 事前開放ポートを追加するには、カンマ（,）またはスペースで区切って複数の値を入力するだけです。
 
-![](../images/preopen-ports-config.png)
+![=700px](../images/preopen-ports-config.png)
 
 セッション作成ページの4ページ目では、ユーザーは記述した事前開放ポートを追加、更新、削除できます。
 詳細については、「案内(ヘルプ)」ボタン（?）をクリックしてください。
@@ -809,11 +809,11 @@ Backend.AIは「セッションをイメージに変換」機能をサポート�
 このイメージは他のユーザーには公開されず、現在のセッションの状態をそのまま引き続き使用したい場合に便利です。
 変換されたイメージには`Customized<セッション名>`というタグが付けられます。
 
-![](../images/select_customized_image.png)
+![=674px](../images/select_customized_image.png)
 
 今後のセッション作成のために実行環境名を手動で入力するには、コピーアイコンをクリックしてください。
 
-![](../images/copy_customized_image.png)
+![=512px](../images/copy_customized_image.png)
 
 
 ## ウェブターミナルの高度な使い方

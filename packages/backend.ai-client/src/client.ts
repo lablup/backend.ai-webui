@@ -895,9 +895,17 @@ export class Client {
       this._features['my-roles'] = true;
       this._features['prometheus-auto-scaling-rule'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.4.1')) {
+      // ModelCardV2Filter gained the AND/OR/NOT sub-filter combinators
+      // (backend ab705371, fix(BA-5672)). Older managers reject them, so the
+      // model-store filter is restricted to a single condition below 26.4.1.
+      this._features['model-card-v2-sub-filter'] = true;
+    }
     if (this.isManagerVersionCompatibleWith('26.4.2')) {
       this._features['prometheus-query-preset'] = true;
       this._features['deployment-preset'] = true;
+      // `adminUnblockUser` clears a failed-login block (FR-4150).
+      this._features['admin-unblock-user'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.4.3')) {
       this._features['model-deployment-extended-filter'] = true;
@@ -910,6 +918,19 @@ export class Client {
       // its root. Older managers reject the unknown input field, so the key is
       // omitted from the mutation entirely on them.
       this._features['model-mount-subpath'] = true;
+      // QueryDefinitionFilter gained `categoryId: UUIDFilter` and the
+      // AND/OR/NOT sub-filter combinators in 26.4.4, while the tab itself is
+      // gated on `prometheus-query-preset` (26.4.2).
+      this._features['prometheus-query-preset-extended-filter'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('26.4.4rc3')) {
+      // Backend 1f88d36 (BA-5918) wrapped the remaining scalar V2 filter
+      // fields in their *Filter inputs: ModelCardV2Filter.domainName
+      // String -> StringFilter / .projectId UUID -> UUIDFilter, and
+      // RuntimeVariantPresetFilter / DeploymentRevisionPresetFilter
+      // .runtimeVariantId UUID -> UUIDFilter. `BAIGraphQLPropertyFilter` only
+      // emits the wrapper shape, so those properties are hidden below this.
+      this._features['v2-filter-wrapper-inputs'] = true;
     }
     // ModelHealthCheck gained an `enable` flag in 26.4.4 (BA-6242): health
     // checks are opt-in via `enable: true/false` instead of nulling the whole
@@ -1001,6 +1022,11 @@ export class Client {
       // the RBAC page's Presets tab is hidden below it (FR-4065).
       this._features['rbac-role-presets'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.9.0rc3')) {
+      // `Role.rolePresetId` / `rolePreset` (BA-8221, backport #15144) — the
+      // role list's Role Preset column (FR-4125).
+      this._features['role-preset-reference'] = true;
+    }
     if (this.isManagerVersionCompatibleWith('26.9.0')) {
       // X-BackendAI-Act-As (BA-6781); the webserver forwards it from 26.9.0 (BA-8216).
       this._features['act-as'] = true;
@@ -1041,6 +1067,12 @@ export class Client {
       // requested id (`items` / `successes` plus `failed`) instead of a bare
       // count, and the counts became `@deprecated`. FR-3820.
       this._features['bulk-mutation-per-id-results'] = true;
+      // V2 nodes expose their raw UUID as `entityId` (UserV2, Role, ...), so
+      // self-scoped reads no longer need the legacy graphene root fields.
+      this._features['v2-entity-id'] = true;
+      // `KeyPairV2.isDefault` / `KeyPair.is_default` mark the owner's main
+      // key; `UserV2OrganizationInfo.mainAccessKey` is deprecated.
+      this._features['keypair-is-default'] = true;
     }
   }
 
@@ -1098,7 +1130,13 @@ export class Client {
       result = await this._wrapWithPromise(rqst);
       if (result.authenticated === true) {
         this._config._accessKey = result.data.access_key;
-        this._config._session_id = result.session_id; // TODO: change to X-BackendAI-SessionID header-version. use this._loginSessionId instead.
+        this._config._session_id = result.session_id;
+        // A cookie-only login never sees the X-BackendAI-SessionID header, so
+        // adopt the id from the body to keep later requests and SSE carrying it.
+        if (result.session_id) {
+          this._loginSessionId = result.session_id;
+          safeStorage.setItem('backendaiwebui.sessionid', result.session_id);
+        }
         //console.log("login succeed");
       } else {
         //console.log("login failed");
@@ -1907,9 +1945,32 @@ export class Client {
       variables: v,
     };
     let rqst = this.newSignedRequest('POST', `/admin/gql`, query, null, secure);
-    return this._wrapWithPromise(rqst, false, signal, timeout, retry).then(
-      (r: { data: TData }) => r.data,
+    const result = await this._wrapWithPromise(
+      rqst,
+      false,
+      signal,
+      timeout,
+      retry,
     );
+    // A gateway reports an upstream HTTP failure as a 200 with `errors` and
+    // null data; throw it the way `_wrapWithPromise` throws an HTTP error.
+    const hasData = Object.values(result?.data ?? {}).some((v) => v != null);
+    if (result?.errors?.length && !hasData) {
+      const upstream = result.errors.find(
+        (e: { extensions?: { response?: unknown } }) => e?.extensions?.response,
+      )?.extensions?.response;
+      const detail = upstream?.body?.msg ?? result.errors[0]?.message;
+      throw {
+        isError: true,
+        ...upstream?.body,
+        statusCode: upstream?.status,
+        statusText: upstream?.statusText,
+        message: detail,
+        description: detail,
+        response: result,
+      };
+    }
+    return result.data as TData;
   }
 
   /**

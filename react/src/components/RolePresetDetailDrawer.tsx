@@ -5,11 +5,10 @@
 import { RolePresetDetailDrawerFragment$key } from '../__generated__/RolePresetDetailDrawerFragment.graphql';
 import { RolePresetDetailDrawerRefetchQuery } from '../__generated__/RolePresetDetailDrawerRefetchQuery.graphql';
 import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
-import { useBAIBreakpoint } from '../theme-shim';
 import RolePresetPermissionTable from './RolePresetPermissionTable';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Tab, TabList } from '@astryxdesign/core/TabList';
-import { Token } from '@astryxdesign/core/Token';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Tab, TabList } from '@lablup/ui-common/TabList';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAIAlert,
   BAICard,
@@ -22,6 +21,7 @@ import {
   BAIText,
   tokenColorForTagColor,
   useFetchKey,
+  useBAIBreakpoint,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { Suspense, useState, useTransition } from 'react';

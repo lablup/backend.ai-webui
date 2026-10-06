@@ -16,16 +16,17 @@ import { buildUserCSVExportFilter } from '../helper/userCSVExportFilter';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
-import { theme } from '../theme-shim';
+import { useUnblockUserLogin } from '../hooks/useUnblockUserLogin';
 import BAIRadioGroup from './BAIRadioGroup';
 import BulkCreateUserFromCSVModal from './BulkCreateUserFromCSVModal';
 import PurgeUsersModal from './PurgeUsersModal';
 import UpdateUsersModal from './UpdateUsersModal';
 import UserInfoModal from './UserInfoModal';
 import UserSettingModal from './UserSettingModal';
-import { Button } from '@astryxdesign/core/Button';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
+import { Button } from '@lablup/ui-common/Button';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAdminUserV2Table,
   BAIButton,
@@ -45,16 +46,17 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
-  Trash2,
+  BanIcon,
   Ellipsis,
   Info,
-  BanIcon,
+  LockOpen,
   PlusIcon,
   SquarePenIcon,
+  Trash2,
   UndoIcon,
   UserRoundCheckIcon,
 } from 'lucide-react';
-import React, { useState, useDeferredValue } from 'react';
+import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -118,7 +120,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
 
   const { logger } = useBAILogger();
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const bailClient = useSuspendedBackendaiClient();
   const { message, modal } = App.useApp();
@@ -160,6 +162,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   );
 
   const { supportedFields, exportCSV } = useCSVExport('users');
+  const unblockUserLogin = useUnblockUserLogin();
 
   const { adminUsersV2 } = usePreloadedQuery<AdminUserManagementQueryType>(
     AdminUserManagementQuery,
@@ -305,6 +308,23 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
                   });
                 }
               },
+            },
+          },
+          bailClient.supports('admin-unblock-user') && {
+            key: 'unblock-login',
+            title: t('credential.UnblockLogin'),
+            icon: <LockOpen />,
+            showInMenu: 'always' as const,
+            popConfirm: {
+              title: t('credential.UnblockLoginConfirm'),
+              description: email,
+              okText: t('credential.UnblockLogin'),
+              cancelText: t('button.Cancel'),
+              onConfirm: () =>
+                unblockUserLogin({
+                  email,
+                  username: record.basicInfo?.username,
+                }),
             },
           },
           !isActive && {
@@ -530,13 +550,18 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
                 onClearSelection={() => setSelectedUserList([])}
               />
               <BAIButton
-                icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
+                icon={
+                  <SquarePenIcon style={{ color: token('--color-info') }} />
+                }
                 onClick={toggleUpdateUsersModal}
               />
               {statusValue === 'INACTIVE' && (
                 <BAIButton
                   icon={
-                    <Trash2 style={{ color: token.colorError }} size="1em" />
+                    <Trash2
+                      style={{ color: token('--color-error') }}
+                      size="1em"
+                    />
                   }
                   onClick={togglePurgeUsersModal}
                 />

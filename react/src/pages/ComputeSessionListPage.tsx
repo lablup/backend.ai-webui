@@ -27,17 +27,16 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { useBAIBreakpoint } from '../theme-shim';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { Grid, GridSpan } from '@astryxdesign/core/Grid';
-import { IconButton } from '@astryxdesign/core/IconButton';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { Grid, GridSpan } from '@lablup/ui-common/Grid';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import {
   SegmentedControl,
   SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+} from '@lablup/ui-common/SegmentedControl';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import * as stylex from '@stylexjs/stylex';
 import {
   BAIAlertIconWithTooltip,
@@ -49,9 +48,10 @@ import {
   BAISelectionLabel,
   BAISessionsIcon,
   BAITabCountBadge,
-  filterOutNullAndUndefined,
   INITIAL_FETCH_KEY,
+  filterOutNullAndUndefined,
   mergeFilterValues,
+  useBAIBreakpoint,
   useBAILogger,
   useFetchKey,
 } from 'backend.ai-ui';

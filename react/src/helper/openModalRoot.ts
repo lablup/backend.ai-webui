@@ -2,16 +2,16 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 */
-import { BAI_MODAL_OPEN_ATTRIBUTE } from 'backend.ai-ui';
+import { MODAL_OPEN_ATTRIBUTE } from '@lablup/ui-common/Modal';
 
-// A portal root (`BAIDialog`, the `BAIModal` app launcher among them, and
+// A portal root (ui-common `Modal`, so every `BAIModal`, and
 // `BAIDrawerPortal` since FR-3585), or an open native `<dialog>` that is
 // actually MODAL. `[aria-modal="true"]` stands in for `:modal` (jsdom cannot
 // match it) and keeps the non-scrim `show()` drawers out — an open
 // notification drawer must not suppress its own `]` toggle (FR-3619).
 // `:not([inert])` drops the roots the level stack covered.
 const OPEN_MODAL_ROOTS = [
-  `[${BAI_MODAL_OPEN_ATTRIBUTE}]:not([inert])`,
+  `[${MODAL_OPEN_ATTRIBUTE}]:not([inert])`,
   'dialog[open][aria-modal="true"]:not([inert])',
 ] as const;
 

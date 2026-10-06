@@ -4,8 +4,8 @@
  */
 import { AppLaunchConfirmationModalFragment$key } from '../../__generated__/AppLaunchConfirmationModalFragment.graphql';
 import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
-import { Button } from '@astryxdesign/core/Button';
-import { Text } from '@astryxdesign/core/Text';
+import { Button } from '@lablup/ui-common/Button';
+import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';

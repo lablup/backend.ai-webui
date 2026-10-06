@@ -111,9 +111,9 @@
       **헬스 체크 활성화** 토글은 vLLM 및 SGLang의 고급 모드(Advanced Mode)에도 동일하게 적용됩니다.
       :::
 
-   ![](../images/deployment_preset_create_modal.png)
+   ![=800px](../images/deployment_preset_create_modal.png)
 
-   ![](../images/deployment_preset_service_configuration.png)
+   ![=768px](../images/deployment_preset_service_configuration.png)
 
 3. **검토** 단계에서 요약 내용을 확인한 뒤 `생성`을 클릭하여 저장합니다. 성공 알림이 표시됩니다.
 
@@ -141,7 +141,7 @@
 
    **런타임** 항목은 프리셋을 생성할 때뿐 아니라 **수정할 때도** 표시됩니다. 두 경우 모두 1단계에서 런타임을 변경할 수 있으므로, 저장하기 전에 이 항목에서 프리셋이 사용할 런타임을 확인하세요.
 
-![](../images/deployment_preset_review_step.png)
+![=800px](../images/deployment_preset_review_step.png)
 
 ### 배포 프리셋 수정
 

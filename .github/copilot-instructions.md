@@ -7,7 +7,7 @@ review-only and should not duplicate build/dev/architecture content that lives t
 ## Stack
 
 Backend.AI WebUI is a **React web application** using React 19 + Astryx
-(`@astryxdesign/core`) + Relay 20 (GraphQL). Ant Design has been fully removed: it is not
+(imported through `@lablup/ui-common`, never `@astryxdesign/*`) + Relay 20 (GraphQL). Ant Design has been fully removed: it is not
 a dependency, the workspace pins exact versions, and any stray `antd` import fails
 `tsc`/build.
 
@@ -70,3 +70,7 @@ a dependency, the workspace pins exact versions, and any stray `antd` import fai
 - PR description starts with: `Resolves #1234 (FR-1234)` — the space between `#1234` and
   `(FR-1234)` is required so GitHub auto-links the issue and the `project-status-sync`
   workflow can parse the reference
+- Pilot (from the 26.10 release train): an issue created directly on GitHub has no Jira
+  key. Its PR is titled `prefix(#1234): title`, its description starts with `Resolves #1234`
+  alone, and its branch is `type/gh-1234-slug`. Both forms are valid; do not ask for a Jira
+  key on a PR that follows this one.

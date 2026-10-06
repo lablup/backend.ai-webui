@@ -24,7 +24,7 @@ import {
   MetadataListItem,
   type MetadataListItemProps,
   type MetadataListProps,
-} from '@astryxdesign/core/MetadataList';
+} from '@lablup/ui-common/MetadataList';
 import React, { type ReactNode } from 'react';
 
 export interface BAIMetadataListProps extends MetadataListProps {

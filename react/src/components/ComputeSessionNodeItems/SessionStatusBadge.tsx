@@ -2,16 +2,25 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { SessionStatusBadgeFragment$key } from '../../__generated__/SessionStatusBadgeFragment.graphql';
 import {
-  SessionStatusBadgeFragment$data,
-  SessionStatusBadgeFragment$key,
-} from '../../__generated__/SessionStatusBadgeFragment.graphql';
+  getSessionKernelBreakdown,
+  getSessionKernelProgress,
+  isTransitionalSessionStatus,
+} from '../../helper/sessionStatus';
 import { useSuspendedBackendaiClient } from '../../hooks';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { BAIFlex, badgeVariantForStatus } from 'backend.ai-ui';
+import { Badge } from '@lablup/ui-common/Badge';
+import { HoverCard } from '@lablup/ui-common/HoverCard';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import {
+  BAIFlex,
+  BAIKernelProgressBreakdown,
+  BAIProgressRing,
+  badgeVariantForStatus,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { LoaderCircle, CircleAlertIcon } from 'lucide-react';
+import { CircleAlertIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -32,22 +41,6 @@ interface SessionStatusBadgeProps {
   showTooltip?: boolean;
 }
 
-const isTransitional = (session: SessionStatusBadgeFragment$data) => {
-  return [
-    'RESERVED',
-    'PREEMPTED',
-    'RESCHEDULING',
-    'SCHEDULED',
-    'RESTARTING',
-    'TERMINATING',
-    'PENDING',
-    'PREPARING',
-    'PREPARED',
-    'CREATING',
-    'PULLING',
-  ].includes(session?.status || '');
-};
-
 const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
   sessionFrgmt,
   showInfo,
@@ -65,6 +58,18 @@ const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
         status_info
         status_data
         queue_position @since(version: "25.13.0")
+        cluster_size
+        # No pagination args: the manager ignores them and returns every
+        # kernel, and the list already selects this connection, so Relay
+        # merges the two selections into one request.
+        kernel_nodes {
+          edges {
+            node {
+              id
+              status
+            }
+          }
+        }
       }
     `,
     sessionFrgmt,
@@ -83,18 +88,98 @@ const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
     return null;
   }
 
+  const progress = getSessionKernelProgress(session);
+
+  // One icon for all three render paths below, so they cannot drift apart. The
+  // ring is determinate only where `getSessionKernelProgress` can trust the
+  // fraction; elsewhere it spins like the glyph it replaces.
+  const statusIcon = isTransitionalSessionStatus(session.status) ? (
+    <BAIProgressRing
+      percent={progress.percent}
+      // Only the determinate ring is a `progressbar`, and a progressbar needs
+      // a name; naming the indeterminate one would announce a decoration.
+      aria-label={
+        progress.percent === undefined
+          ? undefined
+          : (session.status ?? undefined)
+      }
+    />
+  ) : undefined;
+
+  const { phase } = progress;
+  // The breakdown only says something a cluster session's badge does not: one
+  // kernel has no distribution, and a settled one is not moving. Edge COUNT is
+  // not proof of data — Relay permits null edges and nodes, which the helper
+  // skips — so the buckets themselves decide. `showTooltip={false}` opts the
+  // badge out of every overlay (the notification item relies on that), so it
+  // opts out of the breakdown hover card too.
+  const kernelBreakdown = getSessionKernelBreakdown(session);
+  const kernelBreakdownPhase =
+    showTooltip &&
+    phase !== null &&
+    progress.total > 1 &&
+    kernelBreakdown.some((bucket) => bucket.count > 0)
+      ? phase
+      : null;
+
+  /**
+   * One overlay per badge. A transitional badge can carry both a `status_info`
+   * reason and the kernel breakdown, and a Tooltip and a HoverCard on the same
+   * element open on the same hover and overlap — so where the breakdown
+   * applies, the hover card takes the reason as its first line and the tooltip
+   * stands down.
+   */
+  const withStatusOverlay = (
+    badge: React.ReactElement<{
+      tabIndex?: number;
+      style?: React.CSSProperties;
+    }>,
+    tooltipContent?: React.ReactNode,
+  ) => {
+    if (kernelBreakdownPhase) {
+      return (
+        <HoverCard
+          hasHoverIndication={false}
+          content={
+            <BAIFlex direction="column" align="stretch" gap="xs">
+              {tooltipContent ? (
+                <Text type="supporting">{tooltipContent}</Text>
+              ) : null}
+              <BAIKernelProgressBreakdown
+                phase={kernelBreakdownPhase}
+                done={progress.done}
+                total={progress.total}
+                segments={kernelBreakdown}
+              />
+            </BAIFlex>
+          }
+        >
+          {/* `Badge` is a bare <span>, and HoverCard's `focusTrigger="auto"`
+              only attaches to a naturally focusable element — without this the
+              breakdown is unreachable by keyboard (as in `BAITagList`). */}
+          {React.cloneElement(badge, {
+            tabIndex: 0,
+            style: { cursor: 'help', ...badge.props.style },
+          })}
+        </HoverCard>
+      );
+    }
+    return tooltipContent ? (
+      <Tooltip content={tooltipContent}>{badge}</Tooltip>
+    ) : (
+      badge
+    );
+  };
+
   const statusBadge = (
     <Badge
       variant={badgeVariantForStatus('session', session.status)}
-      icon={
-        isTransitional(session) ? (
-          <LoaderCircle className="bai-icon-spin" size="1em" />
-        ) : undefined
-      }
+      icon={statusIcon}
       label={
         <>
           {session.status || ' '}
-          {session.status_info && isTransitional(session) ? (
+          {session.status_info &&
+          isTransitionalSessionStatus(session.status) ? (
             <CircleAlertIcon
               size="1em"
               style={{
@@ -119,22 +204,17 @@ const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
     const schedulingHistoryBadge = (
       <Badge
         variant={badgeVariantForStatus('session', session.status)}
-        icon={
-          isTransitional(session) ? (
-            <LoaderCircle className="bai-icon-spin" size="1em" />
-          ) : undefined
-        }
+        icon={statusIcon}
         label={session.status || ' '}
       />
     );
     return (
       <BAIFlex gap="xs">
-        {showTooltip && statusInfoDescriptionKey ? (
-          <Tooltip content={t(statusInfoDescriptionKey)}>
-            {schedulingHistoryBadge}
-          </Tooltip>
-        ) : (
-          schedulingHistoryBadge
+        {withStatusOverlay(
+          schedulingHistoryBadge,
+          showTooltip && statusInfoDescriptionKey
+            ? t(statusInfoDescriptionKey)
+            : undefined,
         )}
         {queuePositionBadge}
       </BAIFlex>
@@ -144,18 +224,13 @@ const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
   if (_.isEmpty(session.status_info) || !showInfo) {
     return (
       <BAIFlex wrap="nowrap" gap="xs">
-        {showTooltip && session.status_info ? (
-          <Tooltip
-            content={
-              statusInfoDescriptionKey
-                ? t(statusInfoDescriptionKey)
-                : session.status_info
-            }
-          >
-            {statusBadge}
-          </Tooltip>
-        ) : (
-          statusBadge
+        {withStatusOverlay(
+          statusBadge,
+          showTooltip && session.status_info
+            ? statusInfoDescriptionKey
+              ? t(statusInfoDescriptionKey)
+              : session.status_info
+            : undefined,
         )}
         {queuePositionBadge}
       </BAIFlex>
@@ -165,15 +240,13 @@ const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
   return (
     <BAIFlex gap={'xs'}>
       <BAIFlex gap="xxs">
-        <Badge
-          variant={badgeVariantForStatus('session', session.status)}
-          icon={
-            isTransitional(session) ? (
-              <LoaderCircle className="bai-icon-spin" size="1em" />
-            ) : undefined
-          }
-          label={session.status || ' '}
-        />
+        {withStatusOverlay(
+          <Badge
+            variant={badgeVariantForStatus('session', session.status)}
+            icon={statusIcon}
+            label={session.status || ' '}
+          />,
+        )}
         {statusInfoDescriptionKey ? (
           <Tooltip content={t(statusInfoDescriptionKey)}>
             <Badge

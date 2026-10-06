@@ -220,7 +220,7 @@ async function createServiceViaUI(
   }
 
   const acceleratorFormItem = page
-    .locator('[data-bai-form-item]')
+    .locator('.uic-form-item')
     .filter({ hasText: 'AI Accelerator' })
     .first();
   const acceleratorSpinbutton = acceleratorFormItem.getByRole('spinbutton');
@@ -267,9 +267,7 @@ async function createServiceViaUI(
     if (toastText?.trim()) {
       throw new Error(`Service creation failed: ${toastText.trim()}`);
     }
-    const formError = page
-      .locator('[data-bai-form-item-explain-error]')
-      .first();
+    const formError = page.locator('.uic-form-item__explain-error').first();
     const formErrorText = await formError
       .textContent({ timeout: 1000 })
       .catch(() => null);

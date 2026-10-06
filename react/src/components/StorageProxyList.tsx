@@ -9,24 +9,24 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import { theme } from '../theme-shim';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import StorageHostDetailDrawer from './StorageHostDetailDrawer';
-import { Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  filterOutNullAndUndefined,
   BAICephIcon,
   BAIColumnsType,
+  BAIDoubleToken,
   BAIFlex,
   BAILink,
+  BAIProgressWithLabel,
   BAIPureStorageIcon,
   BAITable,
-  BAIProgressWithLabel,
-  BAIDoubleToken,
-  tokenColorForStatus,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
+  filterOutNullAndUndefined,
+  tokenColorForStatus,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -55,7 +55,7 @@ type StorageVolume = NonNullable<
 
 const StorageProxyList = () => {
   'use memo';
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { t } = useTranslation();
   const [drawerStorageHostId, setDrawerStorageHostId] = useState<string | null>(
     null,
@@ -164,7 +164,8 @@ const StorageProxyList = () => {
         const percent = _.toFinite(
           toFixedFloorWithoutTrailingZeros(ratio * 100, 2),
         );
-        const color = percent > 80 ? token.colorError : token.colorSuccess;
+        const color =
+          percent > 80 ? token('--color-error') : token('--color-success');
         const baseUnit =
           convertUnitValue(_.toString(usage?.capacity_bytes), 'auto', {
             base: 1000,

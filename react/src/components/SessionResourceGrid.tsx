@@ -42,16 +42,16 @@ import {
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import './SessionResourceGrid.css';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Divider } from '@astryxdesign/core/Divider';
+import { Badge } from '@lablup/ui-common/Badge';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Divider } from '@lablup/ui-common/Divider';
 import {
   SegmentedControl,
   SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
-import { Selector } from '@astryxdesign/core/Selector';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+} from '@lablup/ui-common/SegmentedControl';
+import { Selector } from '@lablup/ui-common/Selector';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIFlex,
   BAIResourceUnitGrid,

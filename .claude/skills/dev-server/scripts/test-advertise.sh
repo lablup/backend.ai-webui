@@ -169,6 +169,53 @@ check 'jira_key is empty when the body names none' '' "$(jira_key 'no ticket her
 jira_key 'no ticket here' >/dev/null
 check 'jira_key succeeds when the body names none' '0' "$?"
 
+# ── GitHub-native issue (no Jira key) ─────────────────────────────────────────
+check 'github_issue from the Resolves line' '10144' \
+  "$(github_issue 'Resolves #10144
+
+## What' fix/gh-1-other)"
+check 'github_issue reads the lowercase PR-template form' '10144' "$(github_issue 'resolves #10144')"
+check 'github_issue falls back to the gh-N branch' '10144' \
+  "$(github_issue 'no reference here' fix/gh-10144-drawer-header)"
+check 'github_issue ignores gh- inside a word' '' "$(github_issue '' fix/through-123)"
+check 'github_issue is empty when nothing names one' '' "$(github_issue 'see #12' main)"
+github_issue 'no reference here' main >/dev/null
+check 'github_issue succeeds when nothing names one' '0' "$?"
+
+# ── Teams thread from the issue field (fixture strings, no network) ───────────
+THREAD='https://teams.microsoft.com/l/message/19%3Aabc%40thread.tacv2/1700000000000?tenantId=t&groupId=g&parentMessageId=1700000000000'
+check 'the field value is the thread URL' "$THREAD" "$(teams_thread_url "$THREAD")"
+check 'surrounding whitespace and a CRLF are trimmed' "$THREAD" \
+  "$(teams_thread_url "$(printf '  %s \r\n' "$THREAD")")"
+check 'a non-https value is refused' '' "$(teams_thread_url 'javascript:alert(1)')"
+check 'a value that is more than one URL is refused' '' "$(teams_thread_url "see $THREAD")"
+check 'an empty value is empty' '' "$(teams_thread_url '')"
+teams_thread_url 'not a url' >/dev/null
+check 'teams_thread_url succeeds on a value it refuses' '0' "$?"
+
+# The filter `gh api graphql --jq` runs (raw output, as `jq -r`). The response
+# shape is the schema's, by introspection: no issue carries a value to record yet.
+field_value() { GITHUB_TEAMS_FIELD=${2:-$GITHUB_TEAMS_FIELD} jq -r "$TEAMS_FIELD_FILTER" <<<"$1"; }
+nodes() { printf '{"data":{"repository":{"issue":{"issueFieldValues":{"nodes":%s}}}}}' "$1"; }
+VALUES=$(nodes "$(jq -n --arg t "$THREAD" '[
+  {}, null,
+  {value: "DRI", field: {name: "Owner"}},
+  {value: $t, field: {name: "Teams thread"}},
+  {value: "https://second.example", field: {name: "Teams thread"}}]')")
+check 'the field is matched by name, among other kinds of value' "$THREAD" "$(field_value "$VALUES")"
+check 'the field name is configurable' 'DRI' "$(field_value "$VALUES" Owner)"
+check 'an issue with no field values prints nothing' '' "$(field_value "$(nodes '[]')")"
+check 'an issue that has other fields but not this one prints nothing' '' \
+  "$(field_value "$(nodes '[{}, {"value":"DRI","field":{"name":"Owner"}}]')")"
+check 'a field of that name with no text value prints nothing' '' \
+  "$(field_value "$(nodes '[{"value":null,"field":{"name":"Teams thread"}}, {"field":{"name":"Teams thread"}}]')")"
+check 'an issue GitHub could not resolve prints nothing' '' \
+  "$(field_value '{"data":{"repository":{"issue":null}},"errors":[{"type":"NOT_FOUND"}]}')"
+check 'an error body with no data prints nothing' '' \
+  "$(field_value '{"message":"Resource not accessible by personal access token","status":"403"}')"
+field_value '{"message":"Not Found","status":"404"}' >/dev/null
+check 'and the filter does not fail on it' '0' "$?"
+
 # ── boot record ───────────────────────────────────────────────────────────────
 SERVED='[{"pr":9330,"branch":"feat/FR-3810","jiraKey":"FR-3810",
           "teamsThread":"https://teams.microsoft.com/l/message/x",
@@ -242,6 +289,8 @@ probe_portless() { PROBE_STATUS=200; return 0; }
 served_set() { printf '%s' '[{"pr":9328,"branch":"a"},{"pr":9329,"branch":"b"}]'; }
 jira_key_for_pr() { printf ''; }
 teams_thread_for_key() { printf ''; }
+github_issue_for_pr() { printf ''; }
+teams_thread_for_issue() { printf ''; }
 upsert_comment() { printf '%s\thttps://example.invalid/c/%s' "$2" "$2"; }
 patch_stopped() { printf '%s\n' "$2" >>"$TMP/patched"; printf '%s' "$3" >"$TMP/patched-body"; }
 ( cmd_advertise --app testapp --branch b --repo o/r --pid 7 ) 2>/dev/null
@@ -267,6 +316,24 @@ check 'a stopped record does not donate its boot time to the next server' 'new' 
        2026-01-01T00:00:00Z) echo stale ;; *) echo new ;; esac)"
 check 'the fresh record is running again, not stopped' 'null' \
   "$(jq -r '.stoppedAt' "$STATE_DIR/testapp.json")"
+check 'a PR with neither a Jira key nor an issue records nulls for both' 'null null null' \
+  "$(jq -r '.served[0] | [.jiraKey, .githubIssue, .teamsThread] | map(tostring) | join(" ")' "$STATE_DIR/testapp.json")"
+
+# The two issue paths side by side: 9328 names a Jira key, 9329 a GitHub-native
+# issue. The issue is only looked up for the PR that names no Jira key.
+jira_key_for_pr() { [ "$2" = 9328 ] && printf 'FR-3810'; return 0; }
+teams_thread_for_key() { printf '%s\n' "${1:-<empty>}" >>"$TMP/jira-asked"; [ -n "${1:-}" ] && printf 'https://teams.example/jira'; return 0; }
+github_issue_for_pr() { printf '%s\n' "$2" >>"$TMP/issue-asked"; printf '10144'; }
+teams_thread_for_issue() { [ -n "$2" ] && printf 'https://teams.example/issue-%s' "$2"; return 0; }
+( cmd_advertise --app testapp --branch b --repo o/r --pid 7 ) 2>"$TMP/said"
+check 'the Jira PR keeps its key and its Jira thread' 'FR-3810 null https://teams.example/jira' \
+  "$(jq -r '.served[0] | [.jiraKey, .githubIssue, .teamsThread] | map(tostring) | join(" ")' "$STATE_DIR/testapp.json")"
+check 'the GitHub-native PR records its issue and the marker thread' 'null 10144 https://teams.example/issue-10144' \
+  "$(jq -r '.served[1] | [.jiraKey, .githubIssue, .teamsThread] | map(tostring) | join(" ")' "$STATE_DIR/testapp.json")"
+check 'the issue is looked up only for the PR without a Jira key' '9329' "$(cat "$TMP/issue-asked")"
+check 'the printed line names whichever reference the PR has' \
+  'FR-3810, teams thread https://teams.example/jira|issue #10144, teams thread https://teams.example/issue-10144' \
+  "$(sed -n 's/.*comment [0-9]*, //p' "$TMP/said" | paste -sd'|')"
 rm -rf "$TMP"
 
 # ── stop: a PR we never commented on gets no first comment at teardown ────────

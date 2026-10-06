@@ -3,12 +3,15 @@ packages:
   - packages/*
 
 catalog:
-  # Astryx pins are exact and move as one set: theme-neutral peer-requires the
-  # exact core version, and the CLI generates artifacts read by that same core.
+  # Astryx pins are exact and move as one set with @lablup/ui-common, which
+  # pins the same versions (ADR 0009): a mismatch installs a second core, and
+  # scripts/migration-gates/single-astryx-core-gate.mjs fails.
   "@astryxdesign/cli": 0.6.2
   "@astryxdesign/core": 0.6.2
   "@astryxdesign/lab": 0.6.2-canary.c9fb1ad
-  "@astryxdesign/theme-neutral": 0.6.2
+  # The library and its CLI release in lockstep; pin both exactly (ADR 0009).
+  "@lablup/ui-common": 0.2.0-alpha.15
+  "@lablup/ui-common-cli": 0.2.0-alpha.15
   "@babel/core": ^7.29.7
   "@babel/preset-typescript": ^7.29.7
   "@eslint/js": ^9.39.5
@@ -97,6 +100,10 @@ minimumReleaseAgeExclude:
   # quarantine window by design, so the exclusion is permanent while the
   # pin exists. Tarball-verified build (MAPPING.md header).
   - "@astryxdesign/lab@0.6.2-canary.c9fb1ad"
+  # ui-common 0.2.0-alpha.15 and its CLI: published 2026-10-02, inside the
+  # 7-day window at adoption time. Remove after 2026-10-09.
+  - "@lablup/ui-common@0.2.0-alpha.15"
+  - "@lablup/ui-common-cli@0.2.0-alpha.15"
   # pnpm 12.4.0 is this repo's own `packageManager` pin: published 2026-09-08,
   # inside the 7-day window at adoption time. Without these, a contributor
   # still on pnpm 12.3.4 cannot provision the pin at all — 12.3.4 fetches the
@@ -140,8 +147,9 @@ allowBuilds:
 
 overrides:
   tar-fs@2: 2.1.4
-  # Build-tooling override. `@electron/packager` and `electron`'s own
-  # install.js both extract their downloaded ZIPs via `extract-zip` → `yauzl`.
+  # Build-tooling override. `@electron/packager` extracts its downloaded ZIPs
+  # via `extract-zip` → `yauzl` (`electron` >= 41 uses its own
+  # `@electron-internal/extract-zip` and no longer goes through this path).
   # yauzl 2.10.0 extracts only the first entry and then lets the process exit
   # 0 with no error on Node >= 24.16.0 / >= 26.1.0, so desktop packaging
   # produces no app bundle and the Makefile fails later at the misleading
@@ -160,13 +168,20 @@ overrides:
   "uuid@^11": ^11.1.1 # buffer bounds check (#387) v11 line
   "uuid@^13": ^13.0.1 # buffer bounds check (#374) v13 line
   dompurify: ^3.4.12 # align transitives with catalog bump
+  # FR-4149. fast-uri ships in the bundle via `ajv` (latest 8.20.0 still
+  # ranges ^3.0.1). Was ^3.1.2 under the dev-only block (FR-3014).
+  "fast-uri@^3": ^3.1.8 # GHSA-qw65-cvwx-89v3 et al. (high, <3.1.7)
+  # FR-4149. `@ai-sdk/provider-utils@3` (ai v5 line) ranges undici ^5; it only
+  # requires it from Node via createRequire, never in the browser bundle. Same
+  # Agent/fetch usage as provider-utils@4, which ranges undici ^6.28.0.
+  "undici@^5": ^6.28.1 # GHSA-vxpw-j846-p89q et al. (high, <6.27.0)
+  "path-to-regexp@~0.1": ^0.1.13 # ReDoS GHSA-37ch-88jc-xwx2 (FR-4146); ships in the pkg local proxy via express
   # Dev-only transitive security overrides — FR-3014. These ship only in
   # dev/build tooling (not the production bundle), but Dependabot still
   # surfaces them. Remove an entry when every upstream consumer ranges to
   # the patched version on its own.
   qs: ^6.15.2 # crash on null in comma-format arrays (alert #388)
   "@babel/plugin-transform-modules-systemjs": ^7.29.4 # arbitrary code on malicious input (#378 high)
-  "fast-uri@^3": ^3.1.2 # host confusion + path traversal (#376, #377 high)
   postcss: ^8.5.10 # XSS via unescaped </style> (#372)
   "@xmldom/xmldom": ^0.8.13 # XML injection (#318, #368, #369, #371 high)
   "picomatch@^2": ^2.3.2 # method injection in POSIX char classes (#296)
@@ -178,8 +193,6 @@ overrides:
   lodash: ^4.18.0 # _.template RCE + _.unset prototype pollution (#321, #322 high)
 
 patchedDependencies:
-  "@astryxdesign/core@0.6.2": react/patches/@astryxdesign__core@0.6.2.patch
-  "@astryxdesign/lab@0.6.2-canary.c9fb1ad": react/patches/@astryxdesign__lab@0.6.2-canary.c9fb1ad.patch
   "@cloudscape-design/board-components@3.0.176": react/patches/@cloudscape-design__board-components@3.0.176.patch
   portless@0.15.5: react/patches/portless@0.15.5.patch
   relay-runtime@20.1.1: react/patches/relay-runtime@20.1.1.patch

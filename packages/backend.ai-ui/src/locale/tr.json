@@ -89,26 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin veya sorun devam ederse destekle iletişime geçin."
   },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "Temizle",
-    "KeepAsIs": "Olduğu gibi bırak",
-    "UndoChanges": "Değişiklikleri geri al"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Yürütme başarısız oldu",
-    "ErrorOccurred": "Bir hata oluştu"
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "Temizle",
-    "HexValue": "Onaltılık değer",
-    "NoColor": "Renk yok",
-    "SelectColor": "Renk seç"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Seçenekleri ara alanını temizle",
-    "NoResults": "Sonuç yok",
-    "SearchOptions": "Seçenekleri ara"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Konteyner Kayıt Defteri Seç"
   },
@@ -128,14 +108,6 @@
     "Size": "Boyut",
     "SuccessFullyRemoved": "{{count}} sürümlerini başarıyla kaldırdı.",
     "Version": "Versiyon"
-  },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "Silmek istediğinizden emin misiniz?",
-    "AreYouSureToPermanentlyDeleteTarget": "{{target}} kalıcı olarak silinsin mi?",
-    "CannotBeUndone": "Bu işlem geri alınamaz.",
-    "DeleteItem": "Sil",
-    "DeleteNItems": "{{count}} öğeyi sil",
-    "TypeToConfirm": "Onaylamak için <token>{{confirmText}}</token> yazın."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Oluşturan"
@@ -247,6 +219,10 @@
       "Timeout": "Backend.AI web sunucusu zamanında yanıt vermedi.",
       "Title": "Backend.AI ile oturum açılamadı"
     }
+  },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "Çekirdek başlatma ilerlemesi",
+    "KernelTerminationProgress": "Çekirdek sonlandırma ilerlemesi"
   },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Küme boyutu",
@@ -413,11 +389,6 @@
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Ayrılan / İstenen"
   },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "Grup rengini değiştir",
-    "ResourceGrid": "Kaynak ızgarası",
-    "UseColorN": "Renk {{n}} kullan"
-  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Sınırsız"
   },
@@ -567,9 +538,6 @@
     "MultiNodeShort": "Çok",
     "SingleNodeShort": "Bekar"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Sınırsız"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Depolama Sunucusu Seç"
   },
@@ -586,28 +554,13 @@
     "Time": "Zaman"
   },
   "comp:BAITable": {
-    "Apply": "Uygula",
-    "Cancel": "İptal",
     "CollapseAll": "Tümünü daralt",
     "ExpandAll": "Tümünü genişlet",
     "ExpandErrorsOnly": "Yalnızca hataları genişlet",
-    "ExpandOptions": "Genişletme seçenekleri",
-    "ExpandRow": "Satırı genişlet",
-    "Export": "Dışa aktar",
-    "ExportCSV": "CSV Dışa Aktar",
-    "GoToFirstPage": "İlk sayfaya git",
-    "InvalidPageNumber": "Geçersiz sayfa numarası",
-    "NoDataToDisplay": "Görüntülenecek veri yok",
-    "Pagination": "Sayfalama",
-    "SearchTableColumn": "Arama Tablosu sütunları",
-    "SelectColumnToDisplay": "Görüntülemek için sütunları seçin",
-    "SettingTable": "Masa Ayarları"
+    "ExpandOptions": "Genişletme seçenekleri"
   },
   "comp:BAITestButton": {
     "Test": "test"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "ve {{rest}} tane daha"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Oluşturulma Tarihi",
@@ -699,9 +652,6 @@
       "FileNameRequired": "Lütfen bir dosya veya klasör adı girin."
     }
   },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} öğelerinin {{total}}"
-  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Kaynak verisi yok"
   },
@@ -763,55 +713,12 @@
   "error": {
     "UnknownError": "Bilinmeyen bir hata oluştu. \nLütfen tekrar deneyin."
   },
-  "form": {
-    "Optional": "(opsiyonel)",
-    "validateMessages": {
-      "Default": "Alan doğrulama hatası ${label}",
-      "Required": "${label} gerekli bir alan",
-      "Whitespace": "${label} sadece boşluk olamaz",
-      "array": {
-        "Len": "${label} sayısı ${len} olmalı",
-        "Max": "${label} sayısı en çok ${max} olmalı",
-        "Min": "${label} sayısı en az ${min} olmalı",
-        "Range": "${label} sayısı ${min}-${max} arası olmalı"
-      },
-      "number": {
-        "Len": "${label} ${len} olmalı",
-        "Max": "${label} en çok ${max} olmalı",
-        "Min": "${label} en az ${min} olmalı",
-        "Range": "${label} ${min}-${max} arası olmalı"
-      },
-      "pattern": {
-        "Mismatch": "${label} şu kalıpla eşleşmeli: ${pattern}"
-      },
-      "string": {
-        "Len": "${label} ${len} karakter olmalı",
-        "Max": "${label} en çok ${max} karakter olmalı",
-        "Min": "${label} en az ${min} karakter olmalı",
-        "Range": "${label} ${min}-${max} karakter arası olmalı"
-      },
-      "types": {
-        "Email": "${label} geçerli bir ${type} değil",
-        "Number": "${label} geçerli bir ${type} değil",
-        "Object": "${label} geçerli bir ${type} değil",
-        "String": "${label} geçerli bir ${type} değil",
-        "Url": "${label} geçerli bir ${type} değil"
-      }
-    }
-  },
   "general": {
-    "Decrease": "Azalt",
-    "DeselectAll": "Tüm seçimi kaldır",
     "File": "Dosya",
-    "Increase": "Artır",
-    "Loading": "Yükleniyor...",
-    "NSelected": "{{count}} seçildi",
     "Optional": "İsteğe bağlı",
     "Project": "Proje",
     "Search": "Ara",
     "Select": "Seç",
-    "SelectPlaceholder": "{{label}} seçin",
-    "TotalItems": "Total {{total}} öğeleri",
     "Unit": "Birim",
     "button": {
       "Action": "Eylem",

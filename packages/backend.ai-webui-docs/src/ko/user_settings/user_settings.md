@@ -13,7 +13,7 @@ navTitle: 사용자 설정
 실험적 기능 등의 환경 설정을 구성할 수 있습니다. 또한 클라이언트 측 로그와
 현재 계정에 로그인되어 있는 로그인 세션, 로그인 기록도 확인할 수 있습니다.
 
-![](../images/preferences.png)
+![=183px](../images/preferences.png)
 
 이 대화 상자는 왼쪽에 나열된 **일반**, **로그**, **로그인 세션**, **로그인 기록**
 네 개의 범주로 구성되어 있습니다. 화면이 좁으면 목록이 대화 상자를 채우고, 범주를
@@ -76,25 +76,6 @@ WebUI의 화면 모드를 설정합니다. 다음 중에서 선택할 수 있습
 **테마** 설정은 관리자가 테마 사용자 정의 기능을 활성화하고 설치 환경에 둘 이상의
 테마가 제공되는 경우에만 표시됩니다. 따라서 제공되는 테마 목록은 위 목록과 다를
 수 있습니다.
-:::
-
-### 주요 색상
-
-**주요 색상**은 선택한 테마의 대표 강조 색상을 재정의합니다. **라이트 모드**와
-**다크 모드**에 각각 하나씩 두 개의 색상 선택기가 제공되므로, 화면 모드별로 다른
-강조 색상을 사용할 수 있습니다.
-
-1. 변경하려는 모드의 색상 견본을 클릭합니다
-2. 색상 선택기에서 색상을 고르거나 16진수 값을 입력합니다
-3. 새 강조 색상이 WebUI에 즉시 적용됩니다
-
-색상 선택기를 비우면 해당 모드에서 선택한 테마가 제공하는 색상을 그대로
-사용합니다. 설정의 초기화 버튼을 클릭하면 두 모드의 설정이 모두 지워지고 테마
-고유의 색상으로 복원됩니다.
-
-:::note
-**테마** 설정과 마찬가지로 **주요 색상**도 관리자가 테마 사용자 정의 기능을
-활성화한 경우에만 표시됩니다.
 :::
 
 ### 데스크탑 알림 활성화
@@ -190,7 +171,7 @@ WebUI의 새 버전이 검색될 경우 알림 창을 띄웁니다. 이 기능�
 발급되면 **키페어 자격증명 정보** 대화 상자가 나타나며, 새 자격증명을 단 한
 번만 표시합니다.
 
-![](../images/keypair_credential_info.png)
+![=640px](../images/keypair_credential_info.png)
 
 대화 상자에는 다음 값이 각각 복사 버튼과 함께 표시됩니다:
 
@@ -243,7 +224,7 @@ WebUI에 **재로그인 필요** 알림과 함께 *"기본 액세스 키가 변�
 **영구 삭제**를 입력해야 합니다.
 :::
 
-![](../images/keypair_delete_confirm.png)
+![=548px](../images/keypair_delete_confirm.png)
 
 <a id="user-ssh-keypair-management"></a>
 
@@ -257,7 +238,7 @@ WebUI에 **재로그인 필요** 알림과 함께 *"기본 액세스 키가 변�
 생성되어 사용자 정보로 저장됩니다. 비밀 키는 생성 직후 따로 저장해 두지 않으면
 다시 확인할 수 없음에 주의하십시오.
 
-![](../images/ssh_keypair_dialog.png)
+![=528px](../images/ssh_keypair_dialog.png)
 
 :::note
 Backend.AI는 OpenSSH에 기반한 SSH keypair를 사용합니다. Windows에서는 PPK 기반
@@ -269,7 +250,7 @@ Backend.AI WebUI는 사설 저장소 접근 등 유연성을 제공하기 위해
 `직접 입력하기` 버튼을 클릭하십시오. 그러면 **공개 키**와 **비밀 키** 두 개의
 텍스트 영역이 표시됩니다.
 
-![](../images/add_ssh_keypair_manually_dialog.png)
+![=528px](../images/add_ssh_keypair_manually_dialog.png)
 
 키를 입력한 후 `저장` 버튼을 클릭하십시오. 키페어가 정상적으로 등록되면
 *"SSH 키페어 등록이 완료되었습니다."* 메시지가 표시되고 대화 상자가 닫히며, 이제
@@ -278,7 +259,7 @@ Backend.AI WebUI는 사설 저장소 접근 등 유연성을 제공하기 위해
 대화 상자가 닫히지 않고 서버가 반환한 오류 메시지가 표시되므로 키를 수정한 후
 다시 저장할 수 있습니다.
 
-![](../images/ssh_keypair_dialog_after.png)
+![=528px](../images/ssh_keypair_dialog_after.png)
 
 ### 병렬 파일 업로드 제한
 
@@ -290,7 +271,7 @@ Backend.AI WebUI는 사설 저장소 접근 등 유연성을 제공하기 위해
 연산 세션 시작 후 한 번만 스크립트를 실행하고자 할 경우, 여기에 그 내용을
 작성해 주십시오.
 
-![](../images/edit_bootstrap_script.png)
+![=720px](../images/edit_bootstrap_script.png)
 
 :::note
 부트스트랩 스크립트의 실행이 완료될 때까지 연산 세션은 `PREPARING` 상태를
@@ -314,7 +295,7 @@ Backend.AI WebUI는 사설 저장소 접근 등 유연성을 제공하기 위해
 있습니다. 다이얼로그 좌측의 버튼으로는 스크립트를 삭제하거나 저장하지 않은
 변경사항을 초기화할 수 있습니다.
 
-![](../images/edit_user_config_script.png)
+![=720px](../images/edit_user_config_script.png)
 
 <a id="experimental-features"></a>
 
@@ -375,7 +356,7 @@ Backend.AI WebUI는 사설 저장소 접근 등 유연성을 제공하기 위해
 특정 열을 숨기거나 보이게 하려면, 테이블 우측 하단의 기어 아이콘을 클릭하십시오.
 그러면 아래와 같은 다이얼로그가 나타나며, 보고 싶은 열을 선택할 수 있습니다.
 
-![](../images/logs_table_setting.png)
+![=420px](../images/logs_table_setting.png)
 
 <a id="login-sessions-tab"></a>
 

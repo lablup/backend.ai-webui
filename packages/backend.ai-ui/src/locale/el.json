@@ -89,26 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Προέκυψε απρόσμενο σφάλμα. Δοκιμάστε ξανά αργότερα ή επικοινωνήστε με την υποστήριξη εάν το πρόβλημα επιμένει."
   },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "Καθαρισμός",
-    "KeepAsIs": "Διατήρηση ως έχει",
-    "UndoChanges": "Αναίρεση αλλαγών"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Η εκτέλεση απέτυχε",
-    "ErrorOccurred": "Παρουσιάστηκε σφάλμα"
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "Καθαρισμός",
-    "HexValue": "Δεκαεξαδική τιμή",
-    "NoColor": "Χωρίς χρώμα",
-    "SelectColor": "Επιλογή χρώματος"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Εκκαθάριση Αναζήτηση επιλογών",
-    "NoResults": "Δεν βρέθηκαν αποτελέσματα",
-    "SearchOptions": "Αναζήτηση επιλογών"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Επιλέξτε μητρώο εμπορευματοκιβωτίων"
   },
@@ -128,14 +108,6 @@
     "Size": "Μέγεθος",
     "SuccessFullyRemoved": "Κατάργηση επιτυχώς {{count}} εκδόσεις.",
     "Version": "Εκδοχή"
-  },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "Είστε σίγουροι ότι θέλετε να διαγράψετε;",
-    "AreYouSureToPermanentlyDeleteTarget": "Είστε βέβαιοι ότι θέλετε να διαγράψετε οριστικά {{target}};",
-    "CannotBeUndone": "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.",
-    "DeleteItem": "Διαγραφή",
-    "DeleteNItems": "Διαγραφή {{count}} στοιχείων",
-    "TypeToConfirm": "Πληκτρολογήστε <token>{{confirmText}}</token> για επιβεβαίωση."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Δημιουργήθηκε από"
@@ -247,6 +219,10 @@
       "Timeout": "Ο διακομιστής ιστού Backend.AI δεν απάντησε εγκαίρως.",
       "Title": "Δεν ήταν δυνατή η σύνδεση με Backend.AI"
     }
+  },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "Πρόοδος εκκίνησης πυρήνων",
+    "KernelTerminationProgress": "Πρόοδος τερματισμού πυρήνων"
   },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Μέγεθος συμπλέγματος",
@@ -413,11 +389,6 @@
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Διατεθέντα / Ζητούμενα"
   },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "Αλλαγή χρώματος ομάδας",
-    "ResourceGrid": "Πλέγμα πόρων",
-    "UseColorN": "Χρήση χρώματος {{n}}"
-  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Απεριόριστος"
   },
@@ -567,9 +538,6 @@
     "MultiNodeShort": "Πολλαπλών",
     "SingleNodeShort": "Μονόκλινο"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Απεριόριστος"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Επιλέξτε κεντρικό αποθηκευτικό χώρο"
   },
@@ -586,28 +554,13 @@
     "Time": "Ώρα"
   },
   "comp:BAITable": {
-    "Apply": "Εφαρμογή",
-    "Cancel": "Άκυρο",
     "CollapseAll": "Σύμπτυξη όλων",
     "ExpandAll": "Ανάπτυξη όλων",
     "ExpandErrorsOnly": "Ανάπτυξη μόνο σφαλμάτων",
-    "ExpandOptions": "Επιλογές ανάπτυξης",
-    "ExpandRow": "Ανάπτυξη γραμμής",
-    "Export": "Εξαγωγή",
-    "ExportCSV": "Εξαγωγή CSV",
-    "GoToFirstPage": "Μετάβαση στην πρώτη σελίδα",
-    "InvalidPageNumber": "Μη έγκυρος αριθμός σελίδας",
-    "NoDataToDisplay": "Δεν υπάρχουν δεδομένα για εμφάνιση",
-    "Pagination": "Σελιδοποίηση",
-    "SearchTableColumn": "Στήλες πίνακα αναζήτησης",
-    "SelectColumnToDisplay": "Επιλέξτε στήλες για εμφάνιση",
-    "SettingTable": "Ρυθμίσεις πίνακα"
+    "ExpandOptions": "Επιλογές ανάπτυξης"
   },
   "comp:BAITestButton": {
     "Test": "δοκιμή"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "και {{rest}} ακόμη"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Δημιουργήθηκε στο",
@@ -699,9 +652,6 @@
       "FileNameRequired": "Εισαγάγετε ένα αρχείο ή ένα όνομα φακέλου."
     }
   },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} των στοιχείων {{total}}"
-  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Δεν υπάρχουν διαθέσιμα δεδομένα πόρων"
   },
@@ -763,55 +713,12 @@
   "error": {
     "UnknownError": "Παρουσιάστηκε ένα άγνωστο σφάλμα. \nΔοκιμάστε ξανά."
   },
-  "form": {
-    "Optional": "(προαιρετικό)",
-    "validateMessages": {
-      "Default": "Σφάλμα επικύρωσης πεδίου για ${label}",
-      "Required": "Παρακαλώ εισάγετε ${label}",
-      "Whitespace": "Το ${label} δεν μπορεί να είναι κενός χαρακτήρας",
-      "array": {
-        "Len": "Πρέπει να είναι ${len} ${label}",
-        "Max": "Το πολύ ${max} ${label}",
-        "Min": "Τουλάχιστον ${min} ${label}",
-        "Range": "Το ποσό του ${label} πρέπει να είναι μεταξύ ${min}-${max}"
-      },
-      "number": {
-        "Len": "Το ${label} πρέπει να είναι ίσο με ${len}",
-        "Max": "Το ${label} πρέπει να είναι το πολύ ${max}",
-        "Min": "Το ${label} πρέπει να είναι τουλάχιστον ${min}",
-        "Range": "Το ${label} πρέπει να είναι μεταξύ ${min}-${max}"
-      },
-      "pattern": {
-        "Mismatch": "Το ${label} δεν ταιριάζει με το μοτίβο ${pattern}"
-      },
-      "string": {
-        "Len": "Το ${label} πρέπει να είναι ${len} χαρακτήρες",
-        "Max": "Το ${label} πρέπει να είναι το πολύ ${max} χαρακτήρες",
-        "Min": "Το ${label} πρέπει να είναι τουλάχιστον ${min} χαρακτήρες",
-        "Range": "Το ${label} πρέπει να είναι μεταξύ ${min}-${max} χαρακτήρων"
-      },
-      "types": {
-        "Email": "Το ${label} δεν είναι έγκυρο ${type}",
-        "Number": "Το ${label} δεν είναι έγκυρο ${type}",
-        "Object": "Το ${label} δεν είναι έγκυρο ${type}",
-        "String": "Το ${label} δεν είναι έγκυρο ${type}",
-        "Url": "Το ${label} δεν είναι έγκυρο ${type}"
-      }
-    }
-  },
   "general": {
-    "Decrease": "Μείωση",
-    "DeselectAll": "Αποεπιλογή όλων",
     "File": "Αρχείο",
-    "Increase": "Αύξηση",
-    "Loading": "Φόρτωση...",
-    "NSelected": "{{count}} Επιλεγμένη",
     "Optional": "Προαιρετικό",
     "Project": "Έργο",
     "Search": "Αναζήτηση",
     "Select": "Επιλογή",
-    "SelectPlaceholder": "Επιλέξτε {{label}}",
-    "TotalItems": "Σύνολο {{total}} στοιχεία",
     "Unit": "Μονάδα",
     "button": {
       "Action": "Ενέργεια",

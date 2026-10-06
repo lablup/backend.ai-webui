@@ -2,6 +2,15 @@ import reactPlugin from "eslint-plugin-react";
 import reactHooksPlugin from "eslint-plugin-react-hooks";
 import importPlugin from "eslint-plugin-import";
 
+// Without `to`, or with `type="disabled"`, BAILink renders a <button> whose text
+// sits in an inner Text, so root `textOverflow` never reaches it (FR-3686).
+export const bailinkEllipsisRestriction = {
+  selector:
+    "JSXOpeningElement[name.name='BAILink']:matches(:not(:has(JSXAttribute[name.name='to'])), :has(JSXAttribute[name.name='type'][value.value='disabled'])) > JSXAttribute[name.name='style'] Property[key.name='textOverflow']",
+  message:
+    "`textOverflow` in a BAILink's `style` cannot ellipsize a link rendered as a button (no `to`, or `type=\"disabled\"`) — its text lives in an inner element. Use the `ellipsis` prop instead (FR-3686).",
+};
+
 export const react = [
   reactPlugin.configs.flat.recommended,
   reactPlugin.configs.flat["jsx-runtime"],
@@ -51,6 +60,7 @@ export const react = [
           message:
             "Inline `all:` resets break Astryx anchor positioning on Chromium >= 151 — the anchor-name CSSOM getter returns the CSS-wide keyword, which poisons addAnchorName's list and detaches the layer to the viewport top-left (FR-3589). Use an explicit reset, or BAIIconWithTooltip for tooltip triggers.",
         },
+        bailinkEllipsisRestriction,
       ],
     },
   },

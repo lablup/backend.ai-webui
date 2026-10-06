@@ -13,10 +13,12 @@ import {
   registerBridge,
   setMessageConfig,
 } from './bridge';
+import { BAIAppProvider } from './index';
 import { message } from './message';
 import { AppShimModalHost, modal } from './modal';
-import type { ShowToastFn, ToastOptions } from '@astryxdesign/core/Toast';
-import { render, screen } from '@testing-library/react';
+import { MODAL_LIVE_ATTRIBUTE } from '@lablup/ui-common/Modal';
+import type { ShowToastFn, ToastOptions } from '@lablup/ui-common/Toast';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -167,8 +169,69 @@ describe('app-shim modal', () => {
     await expect(handle).resolves.toBe(false);
   });
 
+  it('honours keyboard/maskClosable/closable=false: only onOk closes it', async () => {
+    const user = userEvent.setup();
+    const onOk = vi.fn();
+    const onCancel = vi.fn();
+    const handle = modal.info({
+      title: 'Re-login required',
+      content: <p>Main key changed</p>,
+      okText: 'Confirm',
+      closable: false,
+      maskClosable: false,
+      keyboard: false,
+      onOk,
+      onCancel,
+    });
+    render(<AppShimModalHost />);
+
+    await user.keyboard('{Escape}');
+    await user.click(
+      document.querySelector<HTMLElement>('.uic-modal__mask') as HTMLElement,
+    );
+    expect(onCancel).not.toHaveBeenCalled();
+    expect(screen.getByText('Main key changed')).toBeInTheDocument();
+    expect(screen.getAllByRole('button').map((b) => b.textContent)).toEqual([
+      'Confirm',
+    ]);
+
+    await user.click(screen.getByRole('button', { name: 'Confirm' }));
+    expect(onOk).toHaveBeenCalledTimes(1);
+    await expect(handle).resolves.toBe(true);
+  });
+
+  it('closes on the backdrop when maskClosable is true', async () => {
+    const user = userEvent.setup();
+    const onCancel = vi.fn();
+    const handle = modal.info({ title: 'T', maskClosable: true, onCancel });
+    render(<AppShimModalHost />);
+
+    await user.click(
+      document.querySelector<HTMLElement>('.uic-modal__mask') as HTMLElement,
+    );
+    expect(onCancel).toHaveBeenCalledTimes(1);
+    await expect(handle).resolves.toBe(false);
+  });
+
+  it('keyboard=false blocks Escape on a plain-text confirm too', async () => {
+    const user = userEvent.setup();
+    const onCancel = vi.fn();
+    const handle = modal.confirm({
+      title: 'T',
+      content: 'C',
+      keyboard: false,
+      onCancel,
+    });
+    render(<AppShimModalHost />);
+
+    expect(screen.getByRole('alertdialog')).toBeInTheDocument();
+    await user.keyboard('{Escape}');
+    expect(onCancel).not.toHaveBeenCalled();
+    handle.destroy();
+  });
+
   // The escape hatch for a surface the ladder does not cover; values below the
-  // band base are floored instead (see BAIDialog.test.tsx).
+  // band base are floored instead (see ui-common's modalStack tests).
   it('forwards zIndex to the portal root', () => {
     const handle = modal.confirm({ title: 'T', content: 'C', zIndex: 10001 });
     render(<AppShimModalHost />);
@@ -176,9 +239,35 @@ describe('app-shim modal', () => {
     expect(
       screen
         .getByRole('alertdialog')
-        .closest<HTMLElement>('.bai-dialog')
-        ?.style.getPropertyValue('--bai-dialog-z'),
+        .closest<HTMLElement>('.uic-modal')
+        ?.style.getPropertyValue('--modal-z'),
     ).toBe('10001');
     handle.destroy();
+  });
+});
+
+describe('app-shim toast viewport', () => {
+  // ui-common's Modal inerts every body child without a modal root or a
+  // `data-uic-modal-live` mark; the toast viewport has to carry the mark.
+  it('stays out of the inert background while a modal is open', () => {
+    const { container } = render(
+      <BAIAppProvider>
+        <button type="button">page</button>
+      </BAIAppProvider>,
+    );
+    const viewport = container.querySelector('[popover]');
+    expect(viewport).toHaveAttribute(MODAL_LIVE_ATTRIBUTE);
+
+    let handle: ReturnType<typeof modal.confirm> | undefined;
+    act(() => {
+      handle = modal.confirm({ title: 'T', content: 'C' });
+    });
+    expect(screen.getByRole('alertdialog')).toBeInTheDocument();
+
+    expect(viewport).not.toHaveAttribute('inert');
+    expect(screen.getByRole('button', { name: 'page' })).toHaveAttribute(
+      'inert',
+    );
+    act(() => handle?.destroy());
   });
 });

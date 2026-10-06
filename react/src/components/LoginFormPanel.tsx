@@ -18,11 +18,15 @@ import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { baiSignedRequestWithPromise } from '../helper';
 import type { LoginConfigState } from '../helper/loginConfig';
+import { resolveDetailLogoSrc } from '../helper/logoSource';
+import {
+  getTotpActivationErrorMessageKey,
+  isTotpRegistrationTokenError,
+} from '../helper/totpErrorType';
 import { useAnonymousBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
-import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
 import SignupModal from './SignupModal';
 import {
@@ -30,20 +34,21 @@ import {
   type TOTPActivateFormData,
 } from './TOTPActivateModal';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import {
-  DropdownMenu,
-  type DropdownMenuOption,
-} from '@astryxdesign/core/DropdownMenu';
-import { Heading } from '@astryxdesign/core/Heading';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Link } from '@astryxdesign/core/Link';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { Heading } from '@lablup/ui-common/Heading';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Link } from '@lablup/ui-common/Link';
+import { List, ListItem } from '@lablup/ui-common/List';
+import { usePopover } from '@lablup/ui-common/Popover';
 import {
   SegmentedControl,
   SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
-import { Text } from '@astryxdesign/core/Text';
+} from '@lablup/ui-common/SegmentedControl';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
+import { focusVars, spacingVars } from '@lablup/ui-common/theme/tokens.stylex';
+import * as stylex from '@stylexjs/stylex';
 import {
   BAI_Z_INDEX,
   BAIModal,
@@ -55,10 +60,10 @@ import {
 import DOMPurify from 'dompurify';
 import {
   X,
-  Cloud,
   ChevronDown,
   Info,
   ChevronRight,
+  Trash2,
   TriangleAlert,
 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
@@ -66,12 +71,60 @@ import { useTranslation } from 'react-i18next';
 
 type ConnectionMode = 'SESSION' | 'API';
 
+const styles = stylex.create({
+  endpointPopover: {
+    width: 'anchor-size(width)',
+  },
+  // Scroll inside the popover surface, so the scrollbar stays within its rounded edge.
+  endpointList: {
+    maxHeight: 140,
+    overflowY: 'auto',
+  },
+  // ListItem drops the last divider with a shorthand that its longhand default
+  // outranks in StyleX, so the line under the last row survives; drop it here.
+  endpointLastRow: {
+    borderBlockEndWidth: 0,
+  },
+  // Item rings the row on any focused descendant; ring it only for the row's own
+  // select button (one outline per tab stop), inset so the scrolling list can't clip it.
+  endpointRow: {
+    outlineWidth: {
+      default: '0',
+      ':has(> :first-child:focus-visible)': focusVars['--focus-outline-width'],
+    },
+    outlineStyle: {
+      default: 'none',
+      ':has(> :first-child:focus-visible)': focusVars['--focus-outline-style'],
+    },
+    outlineColor: {
+      default: null,
+      ':has(> :first-child:focus-visible)': focusVars['--focus-outline-color'],
+    },
+    outlineOffset: {
+      default: '0',
+      ':has(> :first-child:focus-visible)': `calc(-1 * ${focusVars['--focus-outline-width']})`,
+    },
+  },
+});
+
+/** One row of the endpoint history list. */
+export interface EndpointHistoryEntry {
+  endpoint: string;
+  /** Pinned from `VITE_DEFAULT_API_ENDPOINT`; tagged, but deletable like the rest. */
+  isFromEnv?: boolean;
+}
+
 interface LoginFormPanelProps {
   isOpen: boolean;
   isLoading: boolean;
   loginError: { message: string; description?: string } | null;
   onClearLoginError?: () => void;
   connectionMode: ConnectionMode;
+  /**
+   * Why the Session/API switch cannot be operated, or `false` when it can.
+   * The reason travels with the flag so the two can never disagree.
+   */
+  signinModeDisabled: boolean | { reason: string };
   loginConfig: LoginConfigState;
   apiEndpoint: string;
   otpRequired: boolean;
@@ -84,9 +137,13 @@ interface LoginFormPanelProps {
   showEndpointInput: boolean;
   isEndpointDisabled: boolean;
   form: FormInstance;
-  endpointMenuItems: DropdownMenuOption[];
+  endpointHistory: EndpointHistoryEntry[];
+  onSelectEndpoint: (ep: string) => void;
+  onDeleteEndpoint: (ep: string) => void;
   onKeyDown: (e: React.KeyboardEvent) => void;
   onLogin: () => void;
+  /** The single automatic login right after a forced password change. */
+  onReloginAfterPasswordChange: () => void;
   onConnectionModeChange: (mode: ConnectionMode) => void;
   onShowSignupDialog: (token?: string) => void;
   onSAMLLogin: () => void;
@@ -104,6 +161,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   loginError,
   onClearLoginError,
   connectionMode,
+  signinModeDisabled,
   loginConfig,
   apiEndpoint,
   otpRequired,
@@ -116,9 +174,12 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   showEndpointInput,
   isEndpointDisabled,
   form,
-  endpointMenuItems,
+  endpointHistory,
+  onSelectEndpoint,
+  onDeleteEndpoint,
   onKeyDown,
   onLogin,
+  onReloginAfterPasswordChange,
   onConnectionModeChange,
   onShowSignupDialog,
   onSAMLLogin,
@@ -132,13 +193,42 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { isDarkMode } = useThemeMode();
-  const { themeConfig } = useCustomThemeConfig();
+  const { rawThemeConfig } = useCustomThemeConfig();
 
   const [isEndpointExpanded, setIsEndpointExpanded] = useState(
     () => showEndpointInput && !isEndpointDisabled && apiEndpoint === '',
   );
+  // The saved endpoints are the field's autofill, floating so the form never
+  // reflows. Focus decides when it closes: a text input cannot be the layer's
+  // invoker, so light dismiss would shut it on every click into the field.
+  const endpointHistoryPopover = usePopover({
+    hasLightDismiss: false,
+    hasCloseButton: false,
+    hasAutoFocus: false,
+    role: 'none',
+  });
+  const endpointAnchorRef = useRef<HTMLDivElement | null>(null);
+  // Hiding returns focus to the field; that focus must not reopen the list.
+  const isReturningFocusRef = useRef(false);
+  const showEndpointHistory = () => {
+    if (isReturningFocusRef.current) {
+      isReturningFocusRef.current = false;
+      return;
+    }
+    if (endpointHistory.length > 0 && !endpointHistoryPopover.isOpen) {
+      endpointHistoryPopover.show();
+    }
+  };
+  const selectEndpoint = (endpoint: string) => {
+    onSelectEndpoint(endpoint);
+    isReturningFocusRef.current = true;
+    endpointHistoryPopover.hide();
+    requestAnimationFrame(() => {
+      isReturningFocusRef.current = false;
+    });
+  };
   const [helpPanel, setHelpPanel] = useState<{
     title: string;
     content: string;
@@ -208,18 +298,17 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
           >
             <img
               src={
-                isDarkMode
-                  ? themeConfig?.logo?.loginLogoSrcDark ||
-                    themeConfig?.logo?.src ||
-                    'manifest/backend.ai-text-bgdark.svg'
-                  : themeConfig?.logo?.loginLogoSrc ||
-                    themeConfig?.logo?.srcDark ||
-                    'manifest/backend.ai-text.svg'
+                resolveDetailLogoSrc(
+                  rawThemeConfig?.branding?.logo,
+                  'login',
+                  isDarkMode ? 'dark' : 'light',
+                ).src
               }
-              alt={themeConfig?.logo?.alt || 'backend.ai'}
+              alt={rawThemeConfig?.branding?.logo?.alt || 'backend.ai'}
               style={{
-                width: themeConfig?.logo?.loginLogoSize?.width,
-                height: themeConfig?.logo?.loginLogoSize?.height || 35,
+                width: rawThemeConfig?.branding?.logo?.loginLogoSize?.width,
+                height:
+                  rawThemeConfig?.branding?.logo?.loginLogoSize?.height || 35,
               }}
             />
           </div>
@@ -248,7 +337,10 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
       >
         {/* Mode switching: Segmented control */}
         {loginConfig.change_signin_support && (
-          <div style={{ marginBottom: token.marginMD }}>
+          <div style={{ marginBottom: token('--spacing-5') }}>
+            {/* `disabledMessage` is the whole control's, not a segment's:
+                Astryx has no per-item reason, and a disabled control swallows
+                the hover an external Tooltip would need. */}
             <SegmentedControl
               value={connectionMode}
               onChange={(value) =>
@@ -256,6 +348,12 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               }
               layout="fill"
               label={t('login.Login', { postProcess: [] })}
+              isDisabled={!!signinModeDisabled}
+              disabledMessage={
+                typeof signinModeDisabled === 'object'
+                  ? signinModeDisabled.reason
+                  : undefined
+              }
             >
               <SegmentedControlItem
                 value="SESSION"
@@ -288,7 +386,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                   recognise this as a login form. */}
               <BAIFormItem
                 name="user_id"
-                style={{ marginBottom: token.marginSM }}
+                style={{ marginBottom: token('--spacing-3') }}
               >
                 <AstryxFormTextInput
                   label={t('login.E-mailOrUsername', { postProcess: [] })}
@@ -304,7 +402,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               </BAIFormItem>
               <BAIFormItem
                 name="password"
-                style={{ marginBottom: token.marginSM }}
+                style={{ marginBottom: token('--spacing-3') }}
               >
                 <AstryxFormTextInput
                   type="password"
@@ -317,7 +415,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               {otpRequired && (
                 <BAIFormItem
                   name="otp"
-                  style={{ marginBottom: token.marginSM }}
+                  style={{ marginBottom: token('--spacing-3') }}
                 >
                   <AstryxFormTextInput
                     label={t('totp.OTP', { postProcess: [] })}
@@ -335,7 +433,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
             <>
               <BAIFormItem
                 name="api_key"
-                style={{ marginBottom: token.marginSM }}
+                style={{ marginBottom: token('--spacing-3') }}
               >
                 <AstryxFormTextInput
                   label={t('login.APIKey', { postProcess: [] })}
@@ -347,7 +445,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               </BAIFormItem>
               <BAIFormItem
                 name="secret_key"
-                style={{ marginBottom: token.marginSM }}
+                style={{ marginBottom: token('--spacing-3') }}
               >
                 <AstryxFormTextInput
                   type="password"
@@ -366,14 +464,14 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               status="error"
               title={loginError.message}
               description={loginError.description}
-              style={{ marginBottom: token.marginSM }}
+              style={{ marginBottom: token('--spacing-3') }}
               isDismissable
               onDismiss={onClearLoginError}
             />
           )}
 
           {/* Login button */}
-          <BAIFormItem style={{ marginBottom: token.marginSM }}>
+          <BAIFormItem style={{ marginBottom: token('--spacing-3') }}>
             <Button
               variant="primary"
               width="100%"
@@ -382,10 +480,9 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               label={t('login.Login')}
             />
           </BAIFormItem>
-
           {/* SSO buttons */}
           {loginConfig.singleSignOnVendors.includes('saml') && (
-            <BAIFormItem style={{ marginBottom: token.marginSM }}>
+            <BAIFormItem style={{ marginBottom: token('--spacing-3') }}>
               <Button
                 width="100%"
                 onClick={onSAMLLogin}
@@ -394,7 +491,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
             </BAIFormItem>
           )}
           {loginConfig.singleSignOnVendors.includes('openid') && (
-            <BAIFormItem style={{ marginBottom: token.marginSM }}>
+            <BAIFormItem style={{ marginBottom: token('--spacing-3') }}>
               <Button
                 width="100%"
                 onClick={onOpenIDLogin}
@@ -407,7 +504,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
 
           {/* Collapsible endpoint section */}
           {showEndpointInput && (
-            <div style={{ marginTop: token.marginSM }}>
+            <div style={{ marginTop: token('--spacing-3') }}>
               {/* `Typography.Link onClick` with no href -> Astryx `Link`
                   is anchor-first (MAPPING §3.16), so the router-less toggle
                   uses `href="#"` + `preventDefault` (the pilot's fallback).
@@ -451,44 +548,121 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               {isEndpointExpanded && (
                 <BAIFlex
                   gap="xs"
-                  align="center"
-                  style={{ marginTop: token.marginXS }}
+                  align="start"
+                  style={{ marginTop: token('--spacing-2') }}
                 >
-                  {/* antd `Dropdown` wrapped an arbitrary trigger element;
-                      Astryx `DropdownMenu` renders its own trigger from
-                      `button` props and binds `onClick` per ITEM, so the
-                      endpoint-select handler is attached where the items are
-                      built (LoginView). The `overlayStyle` z-index and the
-                      hand-painted info-blue icon tint have no destination
-                      (P5). */}
-                  <DropdownMenu
-                    hasChevron={false}
-                    menuWidth={340}
-                    button={{
-                      variant: 'ghost',
-                      isIconOnly: true,
-                      icon: <Cloud size="1em" />,
-                      label: t('login.EndpointHistory'),
+                  <div
+                    ref={(el) => {
+                      endpointAnchorRef.current = el;
+                      endpointHistoryPopover.triggerRef(el);
                     }}
-                    items={endpointMenuItems}
-                  />
-                  <BAIFormItem
-                    name="api_endpoint"
-                    style={{ flex: 1, marginBottom: 0 }}
-                    rules={[
-                      {
-                        pattern: /^https?:\/\/(.*)/,
-                        message: t('login.EndpointStartWith'),
-                      },
-                    ]}
+                    onFocus={showEndpointHistory}
+                    onClick={showEndpointHistory}
+                    onBlur={(e) => {
+                      const next = e.relatedTarget as Node | null;
+                      if (
+                        !e.currentTarget.contains(next) &&
+                        !endpointHistoryPopover.contentRef.current?.contains(
+                          next,
+                        )
+                      ) {
+                        endpointHistoryPopover.hide();
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (!endpointHistoryPopover.isOpen) {
+                        if (e.key === 'ArrowDown') showEndpointHistory();
+                        return;
+                      }
+                      const list = endpointHistoryPopover.contentRef.current;
+                      // The layer is its own focus scope, so Tab from the field
+                      // skips it; ArrowDown enters it as in a combobox.
+                      if (
+                        e.key === 'ArrowDown' &&
+                        !list?.contains(e.target as Node)
+                      ) {
+                        e.preventDefault();
+                        list?.querySelector('button')?.focus();
+                      } else if (e.key === 'Escape') {
+                        e.stopPropagation();
+                        endpointHistoryPopover.hide();
+                        endpointAnchorRef.current
+                          ?.querySelector('input')
+                          ?.focus();
+                      }
+                    }}
+                    style={{ flex: 1, minWidth: 0 }}
                   >
-                    <AstryxFormTextInput
-                      label={t('login.Endpoint', { postProcess: [] })}
-                      placeholder={t('login.Endpoint', { postProcess: [] })}
-                      disabled={isEndpointDisabled || isLoading}
-                      onChange={(value) => onSetApiEndpoint(value)}
-                    />
-                  </BAIFormItem>
+                    <BAIFormItem
+                      name="api_endpoint"
+                      style={{ marginBottom: 0 }}
+                      rules={[
+                        {
+                          pattern: /^https?:\/\/(.*)/,
+                          message: t('login.EndpointStartWith'),
+                        },
+                      ]}
+                    >
+                      <AstryxFormTextInput
+                        label={t('login.Endpoint', { postProcess: [] })}
+                        placeholder={t('login.Endpoint', { postProcess: [] })}
+                        disabled={isEndpointDisabled || isLoading}
+                        onChange={(value) => onSetApiEndpoint(value)}
+                      />
+                    </BAIFormItem>
+                    {endpointHistory.length > 0 &&
+                      endpointHistoryPopover.render(
+                        <List
+                          density="compact"
+                          hasDividers
+                          aria-label={t('login.EndpointHistory')}
+                          xstyle={styles.endpointList}
+                        >
+                          {endpointHistory.map(({ endpoint, isFromEnv }, i) => (
+                            <ListItem
+                              key={endpoint}
+                              label={isFromEnv ? `${endpoint} (env)` : endpoint}
+                              xstyle={[
+                                styles.endpointRow,
+                                i === endpointHistory.length - 1 &&
+                                  styles.endpointLastRow,
+                              ]}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                selectEndpoint(endpoint);
+                              }}
+                              endContent={
+                                <IconButton
+                                  variant="ghost"
+                                  size="sm"
+                                  icon={<Trash2 size="1em" />}
+                                  label={`${t('button.Delete')}: ${endpoint}`}
+                                  onClick={(e) => {
+                                    // The row is the select target; deleting
+                                    // must not also select it.
+                                    e.stopPropagation();
+                                    if (endpointHistory.length === 1) {
+                                      endpointHistoryPopover.hide();
+                                    }
+                                    onDeleteEndpoint(endpoint);
+                                    // The pressed row unmounts with focus in it.
+                                    endpointAnchorRef.current
+                                      ?.querySelector('input')
+                                      ?.focus();
+                                  }}
+                                />
+                              }
+                            />
+                          ))}
+                        </List>,
+                        {
+                          placement: 'below',
+                          alignment: 'start',
+                          offset: spacingVars['--spacing-1'],
+                          xstyle: styles.endpointPopover,
+                        },
+                      )}
+                  </div>
                   <IconButton
                     icon={<Info size="1em" />}
                     variant="ghost"
@@ -513,7 +687,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               align="center"
               wrap="wrap"
               style={{
-                marginTop: token.marginLG,
+                marginTop: token('--spacing-6'),
                 fontSize: 13,
               }}
             >
@@ -570,10 +744,10 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
             transform: 'translateY(-50%)',
             width: helpPanelWidth,
             maxHeight: '60vh',
-            background: token.colorBgContainer,
-            borderRadius: token.borderRadiusLG,
-            boxShadow: token.boxShadowSecondary,
-            padding: token.paddingLG,
+            background: token('--color-background-surface'),
+            borderRadius: token('--radius-element'),
+            boxShadow: token('--shadow-med'),
+            padding: token('--spacing-6'),
             overflow: 'auto',
             zIndex: BAI_Z_INDEX.loginSideHelp,
           }}
@@ -581,7 +755,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
           <BAIFlex
             justify="between"
             align="center"
-            style={{ marginBottom: token.marginSM }}
+            style={{ marginBottom: token('--spacing-3') }}
           >
             <Text weight="semibold">{effectiveHelpPanel.title}</Text>
             <IconButton
@@ -611,11 +785,8 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
         onOk={(newPassword) => {
           onSetNeedToResetPassword(false);
           form.setFieldValue('password', newPassword);
-          // Defer onLogin to the next microtask so that Ant Design's
-          // setFieldValue has settled before the login handler reads the
-          // form. Without this, React 19 batching could cause onLogin()
-          // to read the stale (expired) password.
-          setTimeout(() => onLogin(), 0);
+          // Deferred so the login handler reads the new password, not the expired one.
+          setTimeout(() => onReloginAfterPasswordChange(), 0);
         }}
       />
 
@@ -668,7 +839,7 @@ const ResetPasswordRequiredInline: React.FC<{
 }> = ({ open, username, currentPassword, apiEndpoint, onCancel, onOk }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { logger } = useBAILogger();
   const [form] = Form.useForm<{ newPassword: string; confirm: string }>();
   const anonymousBaiClient = useAnonymousBackendaiClient({
@@ -743,12 +914,15 @@ const ResetPasswordRequiredInline: React.FC<{
         gap="md"
         style={{
           alignSelf: 'stretch',
-          paddingTop: token.paddingMD,
-          paddingBottom: token.paddingMD,
+          paddingTop: token('--spacing-5'),
+          paddingBottom: token('--spacing-5'),
         }}
       >
         <Heading level={3} style={{ margin: 0 }}>
-          <TriangleAlert style={{ color: token.colorWarning }} size="1em" />{' '}
+          <TriangleAlert
+            style={{ color: token('--color-warning') }}
+            size="1em"
+          />{' '}
           {t('webui.menu.PleaseChangeYourPassword')}
         </Heading>
         {t('webui.menu.YouMushChangeYourPassword')}
@@ -843,10 +1017,11 @@ const TOTPActivateInline: React.FC<{
     data: initializedTotp,
     isSuccess,
     isError,
+    error: initError,
     mutate,
   } = useTanMutation<
     { totp_key: string; totp_uri: string },
-    null,
+    unknown,
     { registration_token: string }
   >({
     mutationFn: ({ registration_token }) => {
@@ -862,7 +1037,7 @@ const TOTPActivateInline: React.FC<{
 
   const activateMutation = useTanMutation<
     NonNullable<unknown>,
-    null,
+    unknown,
     { registration_token: string; otp: number }
   >({
     mutationFn: (values: TOTPActivateFormData) => {
@@ -884,8 +1059,13 @@ const TOTPActivateInline: React.FC<{
               message.success(t('totp.TotpSetupCompleted'));
               onOk();
             },
-            onError: () => {
-              message.error(t('totp.InvalidTotpCode'));
+            onError: (error) => {
+              message.error(t(getTotpActivationErrorMessageKey(error)));
+              // A dead registration token cannot be retried here: send the
+              // user back to the login form to get a fresh one.
+              if (isTotpRegistrationTokenError(error)) {
+                onCancel();
+              }
             },
           },
         );
@@ -895,6 +1075,10 @@ const TOTPActivateInline: React.FC<{
       });
   };
 
+  const isInitPending = !isSuccess && !isError;
+  const isInitFailed =
+    isError || !initializedTotp?.totp_uri || !initializedTotp?.totp_key;
+
   return (
     <BAIModal
       title={t('webui.menu.SetupTotp')}
@@ -902,11 +1086,20 @@ const TOTPActivateInline: React.FC<{
       confirmLoading={activateMutation.isPending}
       open={open}
       onCancel={onCancel}
-      onOk={handleOk}
-      loading={!isSuccess}
+      // Nothing to submit once initialization failed, so OK returns to the
+      // login form — the only place a fresh setup link comes from.
+      onOk={!isInitPending && isInitFailed ? onCancel : handleOk}
+      loading={isInitPending}
     >
-      {isError || !initializedTotp?.totp_uri || !initializedTotp?.totp_key ? (
-        <BAIFlex>{t('totp.TotpSetupNotAvailable')}</BAIFlex>
+      {isInitFailed ? (
+        <BAIFlex>
+          {t(
+            getTotpActivationErrorMessageKey(
+              initError,
+              'totp.TotpSetupNotAvailable',
+            ),
+          )}
+        </BAIFlex>
       ) : (
         <TOTPActivateForm
           ref={formRef}

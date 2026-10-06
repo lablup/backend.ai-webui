@@ -89,26 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Đã xảy ra lỗi bất ngờ. Vui lòng thử lại sau hoặc liên hệ bộ phận hỗ trợ nếu vấn đề vẫn tiếp diễn."
   },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "Xóa",
-    "KeepAsIs": "Giữ nguyên",
-    "UndoChanges": "Hoàn tác thay đổi"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Thực thi thất bại",
-    "ErrorOccurred": "Đã xảy ra lỗi"
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "Xóa",
-    "HexValue": "Giá trị hex",
-    "NoColor": "Không có màu",
-    "SelectColor": "Chọn màu"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Xóa Tìm trong các tùy chọn",
-    "NoResults": "Không có kết quả",
-    "SearchOptions": "Tìm trong các tùy chọn"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Chọn kho lưu trữ container"
   },
@@ -128,14 +108,6 @@
     "Size": "Kích cỡ",
     "SuccessFullyRemoved": "Đã loại bỏ thành công các phiên bản {{count}}.",
     "Version": "Phiên bản"
-  },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "Bạn có chắc chắn muốn xóa không?",
-    "AreYouSureToPermanentlyDeleteTarget": "Bạn có chắc muốn xóa vĩnh viễn {{target}} không?",
-    "CannotBeUndone": "Hành động này không thể hoàn tác.",
-    "DeleteItem": "Xóa",
-    "DeleteNItems": "Xóa {{count}} mục",
-    "TypeToConfirm": "Nhập <token>{{confirmText}}</token> để xác nhận."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Được tạo bởi"
@@ -247,6 +219,10 @@
       "Timeout": "Máy chủ web Backend.AI không phản hồi kịp thời.",
       "Title": "Không thể đăng nhập bằng Backend.AI"
     }
+  },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "Tiến trình khởi động kernel",
+    "KernelTerminationProgress": "Tiến trình kết thúc kernel"
   },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Kích thước cụm",
@@ -413,11 +389,6 @@
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Đã cấp phát / Đã yêu cầu"
   },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "Đổi màu nhóm",
-    "ResourceGrid": "Lưới tài nguyên",
-    "UseColorN": "Dùng màu {{n}}"
-  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Không giới hạn"
   },
@@ -567,9 +538,6 @@
     "MultiNodeShort": "Đa",
     "SingleNodeShort": "Đơn"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Không giới hạn"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Chọn máy chủ lưu trữ"
   },
@@ -586,28 +554,13 @@
     "Time": "Thời gian"
   },
   "comp:BAITable": {
-    "Apply": "Áp dụng",
-    "Cancel": "Hủy",
     "CollapseAll": "Thu gọn tất cả",
     "ExpandAll": "Mở rộng tất cả",
     "ExpandErrorsOnly": "Chỉ mở rộng lỗi",
-    "ExpandOptions": "Tùy chọn mở rộng",
-    "ExpandRow": "Mở rộng hàng",
-    "Export": "Xuất",
-    "ExportCSV": "Xuất CSV",
-    "GoToFirstPage": "Đến trang đầu",
-    "InvalidPageNumber": "Số trang không hợp lệ",
-    "NoDataToDisplay": "Không có dữ liệu để hiển thị",
-    "Pagination": "Phân trang",
-    "SearchTableColumn": "Các cột bảng tìm kiếm",
-    "SelectColumnToDisplay": "Chọn các cột để hiển thị",
-    "SettingTable": "Cài đặt bảng"
+    "ExpandOptions": "Tùy chọn mở rộng"
   },
   "comp:BAITestButton": {
     "Test": "kiểm tra"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "và {{rest}} mục khác"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Được tạo tại",
@@ -699,9 +652,6 @@
       "FileNameRequired": "Vui lòng nhập tên tệp hoặc thư mục."
     }
   },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} của {{total}}"
-  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Không có dữ liệu tài nguyên"
   },
@@ -763,55 +713,12 @@
   "error": {
     "UnknownError": "Một lỗi không xác định xảy ra. \nHãy thử lại."
   },
-  "form": {
-    "Optional": "(Tùy chọn)",
-    "validateMessages": {
-      "Default": "${label} không đáp ứng điều kiện quy định",
-      "Required": "Hãy nhập thông tin cho trường ${label}",
-      "Whitespace": "${label} không được chứa khoảng trắng",
-      "array": {
-        "Len": "Mảng ${label} phải có ${len} phần tử ",
-        "Max": "Mảng ${label} phải chứa tối đa ${max} phần tử ",
-        "Min": "Mảng ${label} phải chứa tối thiểu ${min} phần tử ",
-        "Range": "Mảng ${label} phải chứa từ ${min}-${max} phần tử"
-      },
-      "number": {
-        "Len": "${label} phải bằng ${len}",
-        "Max": "${label} phải nhỏ hơn hoặc bằng ${max}",
-        "Min": "${label} phải lớn hơn hoặc bằng ${min}",
-        "Range": "${label} phải nằm trong khoảng ${min}-${max}"
-      },
-      "pattern": {
-        "Mismatch": "${label} không thỏa mãn mẫu kiểm tra ${pattern}"
-      },
-      "string": {
-        "Len": "${label} phải dài đúng ${len} ký tự",
-        "Max": "Độ dài tối đa trường ${label} là ${max} ký tự",
-        "Min": "Độ dài tối thiểu trường ${label} là ${min} ký tự",
-        "Range": "Độ dài trường ${label} phải từ ${min} đến ${max} ký tự"
-      },
-      "types": {
-        "Email": "${label} không phải kiểu ${type} hợp lệ",
-        "Number": "${label} không phải kiểu ${type} hợp lệ",
-        "Object": "${label} không phải kiểu ${type} hợp lệ",
-        "String": "${label} không phải kiểu ${type} hợp lệ",
-        "Url": "${label} không phải kiểu ${type} hợp lệ"
-      }
-    }
-  },
   "general": {
-    "Decrease": "Giảm",
-    "DeselectAll": "Bỏ chọn tất cả",
     "File": "Tệp",
-    "Increase": "Tăng",
-    "Loading": "Đang tải...",
-    "NSelected": "{{count}} Đã chọn",
     "Optional": "Không bắt buộc",
     "Project": "Dự án",
     "Search": "Tìm kiếm",
     "Select": "Chọn",
-    "SelectPlaceholder": "Chọn {{label}}",
-    "TotalItems": "Tổng số {{total}} các mục",
     "Unit": "Đơn vị",
     "button": {
       "Action": "Hành động",

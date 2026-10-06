@@ -21,7 +21,7 @@ At the top of the 'Sessions' page, you can find panels displaying your computing
 Different panel views — **My Total Resource Usage**, **My Resources in Resource Group**, and **Total Resources in Resource Group** — can be selected depending on
 the information needed. Click the settings (gear) icon in the panel header and pick a view under **Panel Settings**.
 
-![](../images/panel_settings.png)
+![=250px](../images/panel_settings.png)
 
 The **My Total Resource Usage** panel shows the resources you are currently using across all projects.
 To check the limit that applies to a resource, hover over the status bar below its number. When several limits apply
@@ -50,7 +50,7 @@ and elapsed time.
 Additional columns can be shown or specific ones hidden by clicking the `Settings` button at the bottom right of the table to customize the view.
 Within the column settings dialog, you can also drag columns to change the order in which they appear in the table.
 
-![](../images/session_table_settings.png)
+![=420px](../images/session_table_settings.png)
 
 :::tip
 You can view the detailed scheduling history for each session from the

@@ -43,7 +43,7 @@ image name.
 2. Navigate to the Sessions page and start creating a new session
 3. Paste the copied image path into the manual image input field
 
-![](../images/copy_image_name_manual.png)
+![=700px](../images/copy_image_name_manual.png)
 
 <a id="delete-customized-image"></a>
 
@@ -62,4 +62,4 @@ If you want to hide or show certain columns, click the gear icon at the
 bottom right of the table. A dialog appears where you can select which
 columns to display.
 
-![](../images/table_setting.png)
+![=420px](../images/table_setting.png)

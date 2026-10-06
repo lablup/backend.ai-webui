@@ -3,8 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { exitActAs, getActAsTarget } from '../helper/actAs';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
 import { LogOutIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

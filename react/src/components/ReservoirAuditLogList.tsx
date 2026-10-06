@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Token } from '@astryxdesign/core/Token';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAIPropertyFilter,
   BAIFlex,

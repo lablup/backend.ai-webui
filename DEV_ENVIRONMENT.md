@@ -51,6 +51,7 @@ The remaining `*.localhost:1355` URLs and `portless proxy start -p 1355` example
 `scripts/dev.mjs` picks the Portless app name as follows:
 
 1. If the current git branch matches `FR-XXXX` (case-insensitive — `fr-XXXX`, `feat/FR-XXXX-...`, `04-24-feat_fr-2701_...`), the hostname becomes `fr-XXXX.localhost:1355`.
+   A branch for a GitHub-native issue (pilot — no Jira key, branch `type/gh-N-slug`) gets `gh-N.localhost:1355` the same way; wherever this document says `fr-XXXX`, read `gh-N` for such a branch.
 2. Otherwise it falls back to `portless run`, which yields `<branch>.<project>.localhost:1355` automatically.
 
 Why issue-number names: long branch names trigger a TLS-cert generation issue under HTTPS. Short, predictable names sidestep that and are also easier to read and bookmark.
@@ -91,7 +92,7 @@ Notes:
 - **The share URL is unauthenticated.** Anyone on the dev VPN or in dev-net can open it, and the dev bundle they receive contains every `VITE_*` value from your `.env.development.local` — including `VITE_DEFAULT_EMAIL` / `VITE_DEFAULT_PASSWORD` if you set them (see the `SECURITY:` note in `.env.development.local.sample`). Don't run a shared dev server with credentials you would not hand to the whole team.
 - **Changing `PORTLESS_PORT` requires re-running `dev-gw join`.** The gateway forwards to the port recorded at join time; when they differ, `dev.mjs` says so and prints no URL.
 - `dev.mjs` also exposes the URL to the React bundle as `VITE_DEV_SHARE_URL`. Set `DEV_GW_CONFIG` to read the config from a different path.
-- When the app name is auto-derived by `portless run` (no `FR-XXXX` branch, no `PORTLESS_APP_NAME`), `dev.mjs` prints the pattern instead of a concrete URL — substitute the name Portless prints.
+- When the app name is auto-derived by `portless run` (no `FR-XXXX` or `gh-N` branch, no `PORTLESS_APP_NAME`), `dev.mjs` prints the pattern instead of a concrete URL — substitute the name Portless prints.
 
 ## Theme color for visual differentiation
 

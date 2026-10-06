@@ -25,6 +25,8 @@
 #
 # Requires (optional): ~/.config/atlassian/credentials with ATLASSIAN_EMAIL + ATLASSIAN_API_TOKEN.
 # Jira field customfield_10176 = Teams thread URL.
+# A `gh-N` branch (GitHub-native issue, no FR key) reads the issue and its
+# "Teams thread" issue field through `gh` instead, when `gh` is installed.
 # Env: CLAUDE_STATUSLINE_SSH_HOST (VS Code Remote-SSH host; prefer an ssh-config alias),
 #      CLAUDE_STATUSLINE_CACHE_DIR, CLAUDE_STATUSLINE_DEBUG=1|2, CLAUDE_STATUSLINE_DEBUG_LOG,
 #      PORTLESS_STATE_DIR / PORTLESS_HOME.
@@ -472,6 +474,29 @@ rm -f "$tmp" 2>/dev/null
 exit 0
 '''
 
+# A GitHub-native issue (`gh-N` branch, no Jira key). Its Teams thread is the org
+# Issue field NAMED "Teams thread" — the same query and filter as advertise.sh.
+GH_REFRESH = r'''
+num=$1; cache=$2
+t=""; command -v timeout >/dev/null 2>&1 && t="timeout 10"
+tmp="${cache}.tmp.$$"
+issue=$($t gh api "repos/{owner}/{repo}/issues/${num}" --jq '{title, state, html_url}' 2>/dev/null) || exit 0
+# No such field, no value or no permission to read it: the issue still renders, unlinked.
+teams=$($t gh api graphql -F owner='{owner}' -F repo='{repo}' -F num="$num" -f query='
+  query($owner: String!, $repo: String!, $num: Int!) {
+    repository(owner: $owner, name: $repo) { issue(number: $num) {
+      issueFieldValues(first: 100) { nodes {
+        ... on IssueFieldTextValue { value field { ... on IssueFieldText { name } } }
+      } }
+    } }
+  }' --jq '[.data.repository.issue.issueFieldValues.nodes[]?
+    | select(.field?.name? == "Teams thread") | .value | strings][0] | @json' 2>/dev/null) || teams=null
+case "$teams" in '"'*'"') ;; *) teams=null ;; esac
+printf '{"issue":%s,"teams":%s}' "$issue" "$teams" >"$tmp" && mv -f "$tmp" "$cache"
+rm -f "$tmp" 2>/dev/null
+exit 0
+'''
+
 
 def mtime(path):
     try:
@@ -522,7 +547,7 @@ def spawn_git_warm(git, top, cache_dir):
     return True
 
 
-def spawn_refresh(key, cache_path):
+def spawn_refresh(key, cache_path, script=REFRESH, cwd=None):
     bash = which("bash")
     if not bash:
         return False
@@ -538,13 +563,23 @@ def spawn_refresh(key, cache_path):
         # alive on macOS, which does not ship one. All fds to /dev/null so our exit
         # closes the consumer's stdout pipe immediately.
         subprocess.Popen(
-            [bash, "-c", REFRESH, "_", key, cache_path],
+            [bash, "-c", script, "_", key, cache_path],
             stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-            start_new_session=True,
+            start_new_session=True, cwd=cwd,
         )
     except Exception:
         return False
     return True
+
+
+def describe(part, status, summary):
+    if status:
+        part += " (%s)" % status
+    if summary:
+        if len(summary) > 45:
+            summary = summary[:42] + "..."
+        part += ": %s" % summary
+    return part
 
 
 def jira_segments(branch, cache_dir):
@@ -570,13 +605,36 @@ def jira_segments(branch, cache_dir):
     # "Teams" points, so at least deny non-https schemes.
     teams_part = link(teams, "Teams") if teams.startswith("https://") else ""
     jira_part = link("%s/browse/%s" % (JIRA_BASE, key), key)
-    if status:
-        jira_part += " (%s)" % status
-    if summary:
-        if len(summary) > 45:
-            summary = summary[:42] + "..."
-        jira_part += ": %s" % summary
-    return teams_part, jira_part
+    return teams_part, describe(jira_part, status, summary)
+
+
+def github_segments(branch, cache_dir, top):
+    """`gh-N` in the branch names a GitHub-native issue: same two segments as Jira,
+    served from a cache `gh` warms. Issue numbers are per repo, hence `top` in the name."""
+    m = re.search(r"(?:^|[-_/])gh-?(\d+)", branch or "", re.I)
+    if not m or not top:
+        return "", ""
+    num = m.group(1)
+    cache_path = os.path.join(cache_dir, "gh-%s-%s.json" % (slug(top), num))
+    if age(cache_path) >= CACHE_TTL:
+        spawn_refresh(num, cache_path, GH_REFRESH, top)
+    title = state = url = teams = ""
+    try:
+        with open(cache_path, "rb") as f:
+            data = json.loads(f.read().decode("utf-8", "replace")) or {}
+        issue = data.get("issue") or {}
+        title = scrub(issue.get("title"))
+        state = scrub(issue.get("state"))
+        url = scrub(issue.get("html_url")).strip()
+        teams = (data.get("teams") or "").strip()
+    except Exception:
+        pass
+    # https only, as for the Jira field; the value must be one URL and nothing else.
+    is_url = re.fullmatch(r"https://[^\s\"<>\x00-\x1f\x7f]+", teams)
+    teams_part = link(teams, "Teams") if is_url else ""
+    label = "#" + num
+    issue_part = link(url, label) if url.startswith("https://") else label
+    return teams_part, describe(issue_part, state, title)
 
 
 # ── debug ──────────────────────────────────────────────────────────────────
@@ -676,11 +734,14 @@ def main():
 
     try:
         branch = (facts or {}).get("branch") or scrub(worktree.get("branch")) or ""
-        teams_part, jira_part = jira_segments(branch, cache_dir)
+        teams_part, issue_part = jira_segments(branch, cache_dir)
+        if not issue_part:  # no FR key in the branch
+            teams_part, issue_part = github_segments(
+                branch, cache_dir, (facts or {}).get("top"))
         if teams_part:
             segments.append(teams_part)
-        if jira_part:
-            segments.append(jira_part)
+        if issue_part:
+            segments.append(issue_part)
     except Exception:
         pass
 

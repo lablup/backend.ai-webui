@@ -19,13 +19,17 @@ import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
 } from '../hooks';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useThemeMode } from '../hooks/useThemeMode';
-import { theme } from '../theme-shim';
 import { ImageMetaDivider, ImageTagTokens } from './ImageTags';
-import TextHighlighter from './TextHighlighter';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { Divider } from '@astryxdesign/core/Divider';
-import { Token } from '@astryxdesign/core/Token';
+import { Divider } from '@lablup/ui-common/Divider';
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+} from '@lablup/ui-common/DropdownMenu';
+import { Token } from '@lablup/ui-common/Token';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIDoubleToken,
   BAITextHighlighter,
@@ -41,6 +45,7 @@ import {
   BAIText,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { ArrowUpDown } from 'lucide-react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -56,7 +61,24 @@ type ImageGroup = {
     displayName: string;
     prefix?: string;
     images: Image[];
+    dedicatedAccelerators: string[];
   }[];
+};
+
+// Quick-pick options repeat an environment listed below, so they need their own value.
+// `~` cannot start a registry host, so no real `registry/namespace` carries this prefix.
+const DEDICATED_OPTION_VALUE_PREFIX = '~accelerator-dedicated:';
+
+// An image's explicit `supported_accelerators`; empty for a generic image
+// (`*`, or `''` from pre-BA-2358 managers).
+const getDedicatedAccelerators = (image: Image | undefined): string[] => {
+  if (_.includes(image?.supported_accelerators, '*')) return [];
+  return _.uniq(
+    _.filter(
+      image?.supported_accelerators,
+      (accelerator): accelerator is string => !!accelerator,
+    ),
+  );
 };
 
 export type ImageEnvironmentFormInput = {
@@ -89,8 +111,11 @@ const ImageEnvironmentSelectFormItems: React.FC<
   const [versionSearch, setVersionSearch] = useState('');
   const { t } = useTranslation();
   const [metadata, { getImageMeta, tagAlias }] = useBackendAIImageMetaData();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { isDarkMode } = useThemeMode();
+  const [showDedicatedFirst, setShowDedicatedFirst] = useBAISettingUserState(
+    'show_accelerator_dedicated_images_first',
+  );
 
   // antd `RefSelectProps` restated as the one method these two refs ever
   // called. `BAISelect` accepts `ref` and never attaches it (P26-8 — Astryx's
@@ -206,23 +231,39 @@ const ImageEnvironmentSelectFormItems: React.FC<
                 const displayName =
                   (imageKey && metadata?.imageInfo[imageKey]?.name) ||
                   (_.last(environmentName.split('/')) as string);
+                const sortedImages = images.sort(
+                  (a, b) =>
+                    compareImageVersions(
+                      // latest version comes first
+                      b?.tag?.split('-')?.[0] ?? '',
+                      a?.tag?.split('-')?.[0] ?? '',
+                    ) || localeCompare(a?.architecture, b?.architecture),
+                );
 
                 return {
                   environmentName,
                   displayName,
                   prefix: environmentName.split('/').slice(1, -1).join('/'),
-                  images: images.sort(
-                    (a, b) =>
-                      compareImageVersions(
-                        // latest version comes first
-                        b?.tag?.split('-')?.[0] ?? '',
-                        a?.tag?.split('-')?.[0] ?? '',
-                      ) || localeCompare(a?.architecture, b?.architecture),
+                  // `_.sortBy` is stable, so the version order holds within each half.
+                  images: showDedicatedFirst
+                    ? _.sortBy(sortedImages, (image) =>
+                        _.isEmpty(getDedicatedAccelerators(image)) ? 1 : 0,
+                      )
+                    : sortedImages,
+                  dedicatedAccelerators: _.uniq(
+                    _.flatMap(images, (image) =>
+                      getDedicatedAccelerators(image),
+                    ),
                   ),
                 };
               },
             ),
-            (item) => item.displayName,
+            showDedicatedFirst
+              ? [
+                  (item) => (_.isEmpty(item.dedicatedAccelerators) ? 1 : 0),
+                  (item) => item.displayName,
+                ]
+              : (item) => item.displayName,
           ),
         };
       },
@@ -396,6 +437,135 @@ const ImageEnvironmentSelectFormItems: React.FC<
     };
   }, [environmentSearch, imageGroups]);
 
+  const renderAcceleratorTokens = (
+    accelerators: string[],
+    highlightKeyword: string,
+  ) =>
+    _.map(accelerators, (accelerator) => (
+      <Token
+        key={`accelerator-${accelerator}`}
+        label={accelerator}
+        isLabelHidden
+        endContent={
+          <BAITextHighlighter keyword={highlightKeyword}>
+            {accelerator}
+          </BAITextHighlighter>
+        }
+      />
+    ));
+
+  const dedicatedEnvironmentGroups = _.sortBy(
+    _.filter(
+      _.flatMap(imageGroups, (group) => group.environmentGroups),
+      (environmentGroup) => !_.isEmpty(environmentGroup.dedicatedAccelerators),
+    ),
+    (environmentGroup) => environmentGroup.displayName,
+  );
+
+  const renderEnvironmentOption = (
+    environmentGroup: ImageGroup['environmentGroups'][0],
+    optionValue: string,
+  ) => {
+    const firstImage = environmentGroup.images[0];
+    const currentMetaImageInfo =
+      metadata?.imageInfo[environmentGroup.environmentName.split('/')?.[2]];
+
+    const extraFilterValues: string[] = [];
+    let environmentPrefixTag = null;
+    if (
+      environmentGroup.prefix &&
+      !['lablup', 'cloud', 'stable'].includes(environmentGroup.prefix)
+    ) {
+      extraFilterValues.push(environmentGroup.prefix);
+      environmentPrefixTag = (
+        <Token
+          color="purple"
+          label={environmentGroup.prefix}
+          isLabelHidden
+          endContent={
+            <BAITextHighlighter keyword={environmentSearch}>
+              {environmentGroup.prefix}
+            </BAITextHighlighter>
+          }
+        />
+      );
+    }
+
+    const tagsFromMetaImageInfoLabel = _.map(
+      currentMetaImageInfo?.label,
+      (label) => {
+        if (_.isUndefined(label.category) && label.tag && label.color) {
+          extraFilterValues.push(label.tag);
+          // `label.color` is a runtime string from the image
+          // metadata JSON; unknown values fall back to default.
+          return (
+            <Token
+              key={label.tag}
+              color={tokenColorForTagColor(label.color)}
+              label={label.tag}
+              isLabelHidden
+              endContent={
+                <BAITextHighlighter keyword={environmentSearch}>
+                  {label.tag}
+                </BAITextHighlighter>
+              }
+            />
+          );
+        }
+        return null;
+      },
+    );
+    extraFilterValues.push(...environmentGroup.dedicatedAccelerators);
+    return (
+      <SelectOption
+        key={optionValue}
+        value={optionValue}
+        // The prefix/meta token texts live in Token props, so
+        // the accessible/search label restates them (FR-3544).
+        label={_.compact([
+          environmentGroup.displayName,
+          ...extraFilterValues,
+        ]).join(' | ')}
+        filterValue={
+          environmentGroup.displayName + '\t' + extraFilterValues.join('\t')
+        }
+      >
+        <BAIFlex direction="row" justify="between">
+          <BAIFlex direction="row" align="center" gap="xs">
+            <BAIImageMetaIcon
+              image={getImageFullName(firstImage) || ''}
+              style={{
+                width: 15,
+                height: 15,
+              }}
+            />
+            <BAITextHighlighter keyword={environmentSearch}>
+              {environmentGroup.displayName}
+            </BAITextHighlighter>
+          </BAIFlex>
+          <BAIFlex
+            direction="row"
+            // set specific class name to handle flex wrap using css
+            className={isDarkMode ? 'tag-wrap-dark' : 'tag-wrap-light'}
+            // style={{ flex: 1 }}
+            style={{
+              marginLeft: token('--spacing-2'),
+              flexShrink: 1,
+            }}
+            gap="xs"
+          >
+            {environmentPrefixTag}
+            {tagsFromMetaImageInfoLabel}
+            {renderAcceleratorTokens(
+              environmentGroup.dedicatedAccelerators,
+              environmentSearch,
+            )}
+          </BAIFlex>
+        </BAIFlex>
+      </SelectOption>
+    );
+  };
+
   return (
     <>
       {/* The environment and version selects are one field. */}
@@ -406,16 +576,46 @@ const ImageEnvironmentSelectFormItems: React.FC<
           style={{ marginBottom: 0 }}
           name={['environments', 'environment']}
           label={
-            <BAIText
-              copyable={{
-                text: getImageFullName(
-                  form.getFieldValue(['environments', 'image']),
-                ),
-              }}
-            >
-              {t('session.launcher.Environments')} /{' '}
-              {t('session.launcher.Version')}
-            </BAIText>
+            <BAIFlex direction="row" align="center" gap="xxs">
+              <BAIText
+                copyable={{
+                  text: getImageFullName(
+                    form.getFieldValue(['environments', 'image']),
+                  ),
+                }}
+              >
+                {t('session.launcher.Environments')} /{' '}
+                {t('session.launcher.Version')}
+              </BAIText>
+              <DropdownMenu
+                button={{
+                  label: t('session.launcher.ImageFilter'),
+                  icon: (
+                    <ArrowUpDown
+                      size="1em"
+                      style={
+                        showDedicatedFirst
+                          ? { color: 'var(--color-accent)' }
+                          : undefined
+                      }
+                    />
+                  ),
+                  isIconOnly: true,
+                  variant: 'ghost',
+                  size: 'sm',
+                }}
+                hasChevron={false}
+                alignment="start"
+              >
+                <DropdownMenuCheckboxItem
+                  label={t(
+                    'session.launcher.ShowAcceleratorDedicatedImagesFirst',
+                  )}
+                  value={!!showDedicatedFirst}
+                  onChange={setShowDedicatedFirst}
+                />
+              </DropdownMenu>
+            </BAIFlex>
           }
           rules={[
             {
@@ -443,7 +643,12 @@ const ImageEnvironmentSelectFormItems: React.FC<
             }}
             popupMatchSelectWidth={false}
             defaultActiveFirstOption={true}
-            onChange={(value) => {
+            onChange={(selectedValue) => {
+              const value =
+                _.isString(selectedValue) &&
+                selectedValue.startsWith(DEDICATED_OPTION_VALUE_PREFIX)
+                  ? selectedValue.slice(DEDICATED_OPTION_VALUE_PREFIX.length)
+                  : selectedValue;
               if (fullNameMatchedImage) {
                 form.setFieldsValue({
                   environments: {
@@ -513,121 +718,32 @@ const ImageEnvironmentSelectFormItems: React.FC<
                 </BAIFlex>
               </SelectOption>
             ) : (
-              _.map(imageGroups, (group) => {
-                return (
-                  <SelectOptGroup key={group.groupName} label={group.groupName}>
-                    {_.map(group.environmentGroups, (environmentGroup) => {
-                      const firstImage = environmentGroup.images[0];
-                      const currentMetaImageInfo =
-                        metadata?.imageInfo[
-                          environmentGroup.environmentName.split('/')?.[2]
-                        ];
-
-                      const extraFilterValues: string[] = [];
-                      let environmentPrefixTag = null;
-                      if (
-                        environmentGroup.prefix &&
-                        !['lablup', 'cloud', 'stable'].includes(
-                          environmentGroup.prefix,
-                        )
-                      ) {
-                        extraFilterValues.push(environmentGroup.prefix);
-                        environmentPrefixTag = (
-                          <Token
-                            color="purple"
-                            label={environmentGroup.prefix}
-                            isLabelHidden
-                            endContent={
-                              <BAITextHighlighter keyword={environmentSearch}>
-                                {environmentGroup.prefix}
-                              </BAITextHighlighter>
-                            }
-                          />
-                        );
-                      }
-
-                      const tagsFromMetaImageInfoLabel = _.map(
-                        currentMetaImageInfo?.label,
-                        (label) => {
-                          if (
-                            _.isUndefined(label.category) &&
-                            label.tag &&
-                            label.color
-                          ) {
-                            extraFilterValues.push(label.tag);
-                            // `label.color` is a runtime string from the image
-                            // metadata JSON; unknown values fall back to default.
-                            return (
-                              <Token
-                                key={label.tag}
-                                color={tokenColorForTagColor(label.color)}
-                                label={label.tag}
-                                isLabelHidden
-                                endContent={
-                                  <BAITextHighlighter
-                                    keyword={environmentSearch}
-                                  >
-                                    {label.tag}
-                                  </BAITextHighlighter>
-                                }
-                              />
-                            );
-                          }
-                          return null;
-                        },
-                      );
-                      return (
-                        <SelectOption
-                          key={environmentGroup.environmentName}
-                          value={environmentGroup.environmentName}
-                          // The prefix/meta token texts live in Token props, so
-                          // the accessible/search label restates them (FR-3544).
-                          label={_.compact([
-                            environmentGroup.displayName,
-                            ...extraFilterValues,
-                          ]).join(' | ')}
-                          filterValue={
-                            environmentGroup.displayName +
-                            '\t' +
-                            extraFilterValues.join('\t')
-                          }
-                        >
-                          <BAIFlex direction="row" justify="between">
-                            <BAIFlex direction="row" align="center" gap="xs">
-                              <BAIImageMetaIcon
-                                image={getImageFullName(firstImage) || ''}
-                                style={{
-                                  width: 15,
-                                  height: 15,
-                                }}
-                              />
-                              <TextHighlighter keyword={environmentSearch}>
-                                {environmentGroup.displayName}
-                              </TextHighlighter>
-                            </BAIFlex>
-                            <BAIFlex
-                              direction="row"
-                              // set specific class name to handle flex wrap using css
-                              className={
-                                isDarkMode ? 'tag-wrap-dark' : 'tag-wrap-light'
-                              }
-                              // style={{ flex: 1 }}
-                              style={{
-                                marginLeft: token.marginXS,
-                                flexShrink: 1,
-                              }}
-                              gap="xs"
-                            >
-                              {environmentPrefixTag}
-                              {tagsFromMetaImageInfoLabel}
-                            </BAIFlex>
-                          </BAIFlex>
-                        </SelectOption>
-                      );
-                    })}
+              [
+                !_.isEmpty(dedicatedEnvironmentGroups) ? (
+                  <SelectOptGroup
+                    key={DEDICATED_OPTION_VALUE_PREFIX}
+                    label={t('session.launcher.AcceleratorDedicatedImages')}
+                  >
+                    {_.map(dedicatedEnvironmentGroups, (environmentGroup) =>
+                      renderEnvironmentOption(
+                        environmentGroup,
+                        DEDICATED_OPTION_VALUE_PREFIX +
+                          environmentGroup.environmentName,
+                      ),
+                    )}
                   </SelectOptGroup>
-                );
-              })
+                ) : null,
+                ..._.map(imageGroups, (group) => (
+                  <SelectOptGroup key={group.groupName} label={group.groupName}>
+                    {_.map(group.environmentGroups, (environmentGroup) =>
+                      renderEnvironmentOption(
+                        environmentGroup,
+                        environmentGroup.environmentName,
+                      ),
+                    )}
+                  </SelectOptGroup>
+                )),
+              ]
             )}
           </BAISelect>
         </Form.Item>
@@ -688,8 +804,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
                     <>
                       <BAIFlex
                         style={{
-                          fontWeight: token.fontWeightStrong,
-                          paddingLeft: token.paddingSM,
+                          fontWeight: token('--font-weight-semibold'),
+                          paddingLeft: token('--spacing-3'),
                         }}
                       >
                         {t('session.launcher.Version')}
@@ -798,6 +914,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
                         image?.labels as Array<{ key: string; value: string }>,
                         tagAlias,
                       );
+                      const dedicatedAccelerators =
+                        getDedicatedAccelerators(image);
                       const selectedLabel = _.compact([
                         image?.version,
                         image?.architecture,
@@ -808,6 +926,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                               )
                             : fact.aliasedTag,
                         ),
+                        ...dedicatedAccelerators,
                       ]).join(' | ');
                       return (
                         <SelectOption
@@ -819,16 +938,17 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             metadataTagAlias,
                             image?.architecture,
                             ...extraFilterValues,
+                            ...dedicatedAccelerators,
                           ].join('\t')}
                         >
                           <BAIFlex direction="row" wrap="wrap" gap="xxs">
-                            <TextHighlighter keyword={versionSearch}>
+                            <BAITextHighlighter keyword={versionSearch}>
                               {image?.version}
-                            </TextHighlighter>
+                            </BAITextHighlighter>
                             <ImageMetaDivider />
-                            <TextHighlighter keyword={versionSearch}>
+                            <BAITextHighlighter keyword={versionSearch}>
                               {image?.architecture}
-                            </TextHighlighter>
+                            </BAITextHighlighter>
                             {!_.isEmpty(tagFacts) ? (
                               <>
                                 <ImageMetaDivider />
@@ -836,6 +956,15 @@ const ImageEnvironmentSelectFormItems: React.FC<
                                   facts={tagFacts}
                                   highlightKeyword={versionSearch}
                                 />
+                              </>
+                            ) : null}
+                            {!_.isEmpty(dedicatedAccelerators) ? (
+                              <>
+                                <ImageMetaDivider />
+                                {renderAcceleratorTokens(
+                                  dedicatedAccelerators,
+                                  versionSearch,
+                                )}
                               </>
                             ) : null}
                           </BAIFlex>

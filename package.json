@@ -37,8 +37,7 @@
     "copyindex": "cp index.html build/web",
     "copymonaco": "mkdir -p build/web/resources/monaco/vs && cp -R react/node_modules/monaco-editor/min/vs/. build/web/resources/monaco/vs/",
     "prepare": "husky",
-    "theme-schema:update": "node scripts/gen-theme-schema.cjs",
-    "astryx": "pnpm --prefix ./react exec astryx",
+    "ui-common": "pnpm --prefix ./react exec ui-common",
     "bai-agent": "node packages/backend.ai-agent-cli/dist/cli.js",
     "review-pins": "node --import ./react/vite-plugins/review-overlay/register.mjs react/vite-plugins/review-overlay/cli.ts",
     "search-index": "pnpm --prefix ./react run search-index"
@@ -77,7 +76,7 @@
     "cli-color": "^2.0.4",
     "concurrently": "^8.2.2",
     "cors": "^2.8.6",
-    "electron": "^39.8.5",
+    "electron": "^41.10.7",
     "eslint": "catalog:",
     "eslint-config-bai": "workspace:*",
     "eslint-config-google": "^0.14.0",

@@ -7,29 +7,29 @@ import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
-import { theme, useBAIBreakpoint } from '../theme-shim';
-import { useFileUploadManager } from './FileUploadManager';
-import type { RcFile } from './FileUploadManager';
+import { useFileUploadManager, type RcFile } from './FileUploadManager';
 import FolderExplorerHeader from './FolderExplorerHeader';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeDescription from './VFolderNodeDescription';
 import VFolderTextFileEditorModal from './VFolderTextFileEditorModal';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Divider } from '@astryxdesign/core/Divider';
-import { ResizeHandle, useResizable } from '@astryxdesign/core/Resizable';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Divider } from '@lablup/ui-common/Divider';
+import { ResizeHandle, useResizable } from '@lablup/ui-common/Resizable';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
   BAIFileExplorer,
   BAIFileExplorerRef,
   BAIFlex,
   BAILink,
   BAIModal,
   BAIModalProps,
+  BAISkeleton,
   BAIUnmountAfterClose,
+  VFolderFile,
   toGlobalId,
+  useBAIBreakpoint,
   useFetchKey,
   useInterval,
-  VFolderFile,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Suspense, useDeferredValue, useEffect, useRef, useState } from 'react';
@@ -65,7 +65,7 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   // antd `Grid.useBreakpoint` → `useBAIBreakpoint` (RESPONSIVE-POLICY R2).
   const { xl } = useBAIBreakpoint();
 
@@ -230,7 +230,7 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
           : { x: 'max-content', y: 'calc(100vh - 400px)' },
       }}
       style={{
-        paddingBottom: xl ? token.paddingLG : 0,
+        paddingBottom: xl ? token('--spacing-6') : 0,
       }}
       fileDropContainerRef={bodyRef}
       onClickEditFile={(file, currentPath) => {
@@ -259,7 +259,7 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
         vfolder_node ? (
           <FolderExplorerHeader
             titleStyle={{
-              zIndex: token.zIndexPopupBase + 2,
+              zIndex: 1000 + 2,
             }}
             vfolderNodeFrgmt={vfolder_node}
           />

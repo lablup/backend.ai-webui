@@ -19,7 +19,7 @@
  from `.ant-typography-edit` to the button's own class (P6: a selector that
  matches nothing must go). Ticket 35 applied the same rule to its
  `.ant-form-item` margin reset — the form engine is self-hosted now, so the
- item root is `[data-bai-form-item]`.
+ item root is `.uic-form-item`.
 
  PILOT-DECISION — **the `component` prop is dropped.** It let a caller swap
  `Typography.Text` for `Typography.Title`, typed through antd's `GetProps` —
@@ -37,7 +37,6 @@
 import { App } from '../../../app-shim';
 import { Form } from '../../../form-engine';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
-import { theme } from '../../../theme-shim';
 import BAIFlex from '../../BAIFlex';
 import BAILink from '../../BAILink';
 import BAIText from '../../BAIText';
@@ -46,7 +45,8 @@ import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useCon
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
 import './EditableFileName.css';
-import { IconButton } from '@astryxdesign/core/IconButton';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { useTheme } from '@lablup/ui-common/theme';
 import { useMutation } from '@tanstack/react-query';
 import * as _ from 'lodash-es';
 import { File, Folder, PencilIcon } from 'lucide-react';
@@ -80,7 +80,7 @@ const EditableFileName: React.FC<EditableFileNameProps> = ({
 }) => {
   'use memo';
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { modal, message } = App.useApp();
   const { targetVFolderId, currentPath } = use(FolderInfoContext);
   const [isEditing, setIsEditing] = useState(false);
@@ -165,21 +165,18 @@ const EditableFileName: React.FC<EditableFileNameProps> = ({
               style={{ display: 'inline-flex', flex: '0 1 auto', minWidth: 0 }}
             >
               <Folder
-                style={{ color: token.colorLink, flexShrink: 0 }}
+                style={{ color: token('--color-link'), flexShrink: 0 }}
                 size="1em"
               />
               <BAILink
                 type="hover"
+                ellipsis
                 style={{
                   minWidth: 0,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
                   color: isPendingRenamingAndRefreshing
-                    ? token.colorTextTertiary
+                    ? token('--color-text-tertiary')
                     : undefined,
                 }}
-                title={fileInfo.name}
               >
                 {displayName}
               </BAILink>
@@ -195,7 +192,7 @@ const EditableFileName: React.FC<EditableFileNameProps> = ({
                 style={{
                   minWidth: 0,
                   color: isPendingRenamingAndRefreshing
-                    ? token.colorTextTertiary
+                    ? token('--color-text-tertiary')
                     : undefined,
                 }}
               >

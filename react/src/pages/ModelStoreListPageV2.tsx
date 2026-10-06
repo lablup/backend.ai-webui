@@ -10,18 +10,17 @@ import { ModelStoreListPageV2_ModelCardV2Fragment$key } from '../__generated__/M
 import AuthorIcon from '../components/AuthorIcon';
 import ModelBrandIcon from '../components/ModelBrandIcon';
 import ModelCardDrawer from '../components/ModelCardDrawer';
-import TextHighlighter from '../components/TextHighlighter';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useModelStoreProject } from '../hooks/useModelStoreProject';
-import { theme } from '../theme-shim';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Card } from '@astryxdesign/core/Card';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { Grid } from '@astryxdesign/core/Grid';
-import { Pagination } from '@astryxdesign/core/Pagination';
-import { Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Card } from '@lablup/ui-common/Card';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { Grid } from '@lablup/ui-common/Grid';
+import { Pagination } from '@lablup/ui-common/Pagination';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFetchKeyButton,
   BAIFlex,
@@ -30,6 +29,7 @@ import {
   BAIStorageHostSelect,
   safeDecodeUuid,
   useUpdatableState,
+  BAITextHighlighter,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { ArrowUpDown } from 'lucide-react';
@@ -101,7 +101,7 @@ const ModelCardV2Card: React.FC<{
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const modelCard = useFragment(
     graphql`
@@ -142,9 +142,9 @@ const ModelCardV2Card: React.FC<{
         <BAIFlex direction="row" align="center" gap="xs">
           <ModelBrandIcon modelName={modelCard.name} />
           <Text weight="semibold" maxLines={1} style={{ flex: 1 }}>
-            <TextHighlighter keyword={searchKeyword}>
+            <BAITextHighlighter keyword={searchKeyword}>
               {modelCard.metadata?.title || modelCard.name}
-            </TextHighlighter>
+            </BAITextHighlighter>
           </Text>
         </BAIFlex>
         <BAIFlex direction="row" justify="between" wrap="wrap" gap="xs">
@@ -153,7 +153,10 @@ const ModelCardV2Card: React.FC<{
               <Token label={modelCard.metadata.task} />
             )}
             {(modelCard.updatedAt || modelCard.createdAt) && (
-              <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
+              <Text
+                color="secondary"
+                style={{ fontSize: token('--font-size-sm') }}
+              >
                 {t('modelStore.RelativeTime', {
                   time: dayjs(
                     modelCard.updatedAt ?? modelCard.createdAt,
@@ -166,7 +169,7 @@ const ModelCardV2Card: React.FC<{
             <Text
               color="secondary"
               style={{
-                fontSize: token.fontSizeSM,
+                fontSize: token('--font-size-sm'),
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 4,
@@ -174,7 +177,7 @@ const ModelCardV2Card: React.FC<{
             >
               <AuthorIcon
                 author={modelCard.metadata.author}
-                size={token.fontSizeSM}
+                size={token('--font-size-sm')}
               />
               {modelCard.metadata.author}
             </Text>

@@ -10,13 +10,13 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { theme } from '../theme-shim';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { Button } from '@astryxdesign/core/Button';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { InputGroup } from '@astryxdesign/core/InputGroup';
-import { Switch } from '@astryxdesign/core/Switch';
-import { Text } from '@astryxdesign/core/Text';
+import { Button } from '@lablup/ui-common/Button';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { InputGroup } from '@lablup/ui-common/InputGroup';
+import { Switch } from '@lablup/ui-common/Switch';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAICard,
   BAIFlex,
@@ -28,12 +28,12 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
-  CloudUpload,
-  Filter,
-  Rocket,
   CheckIcon,
   CircleCheckBig,
   CircleX,
+  CloudUpload,
+  Filter,
+  Rocket,
 } from 'lucide-react';
 import Markdown from 'markdown-to-jsx';
 import React, {
@@ -64,7 +64,7 @@ type ImportFromHuggingFaceResult = {
 };
 
 const ReadmeFallbackCard = () => {
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { t } = useTranslation();
   return (
     <BAICard
@@ -77,7 +77,7 @@ const ReadmeFallbackCard = () => {
       }
       styles={{
         body: {
-          padding: token.paddingLG,
+          padding: token('--spacing-6'),
           overflow: 'auto',
           height: 200,
         },
@@ -101,7 +101,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
   ...baiModalProps
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
   const baiClient = useSuspendedBackendaiClient();
@@ -372,7 +372,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
                 }
                 styles={{
                   body: {
-                    padding: token.paddingLG,
+                    padding: token('--spacing-6'),
                     overflow: 'auto',
                     height: 200,
                   },
@@ -386,7 +386,10 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
           )}
           <BAIFlex
             gap={'xs'}
-            style={{ marginTop: token.marginLG, marginBottom: token.marginLG }}
+            style={{
+              marginTop: token('--spacing-6'),
+              marginBottom: token('--spacing-6'),
+            }}
           >
             {/* antd `Switch checked` → Astryx `Switch value` (MAPPING §4);
                 `label` is required and the control renders it, so the sibling
@@ -492,7 +495,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
             {importResult?.folder?.name && (
               <Text as="p" display="block">
                 <CloudUpload
-                  style={{ marginRight: token.marginXXS }}
+                  style={{ marginRight: token('--spacing-1') }}
                   size="1em"
                 />
                 {t('data.modelStore.ModelFolderName')}:{' '}
@@ -501,7 +504,10 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
             )}
             {importResult?.service?.name && (
               <Text as="p" display="block">
-                <Rocket style={{ marginRight: token.marginXXS }} size="1em" />
+                <Rocket
+                  style={{ marginRight: token('--spacing-1') }}
+                  size="1em"
+                />
                 {t('data.modelStore.ServiceName')}:{' '}
                 <BAIText copyable>{importResult?.service?.name}</BAIText>
               </Text>

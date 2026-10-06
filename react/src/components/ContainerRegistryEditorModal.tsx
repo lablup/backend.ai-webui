@@ -8,7 +8,6 @@ import { ContainerRegistryEditorModalModifyRegistryMutation } from '../__generat
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { theme } from '../theme-shim';
 import BAICodeEditor from './BAICodeEditor';
 import BAIFormItem from './BAIFormItem';
 import HiddenFormItem from './HiddenFormItem';
@@ -18,6 +17,7 @@ import {
   AstryxFormSelector,
   AstryxFormTextInput,
 } from './astryxFormControls';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex, BAIModal, BAIModalProps, BAISelect } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useRef } from 'react';
@@ -89,7 +89,7 @@ const ContainerRegistryEditorModal: React.FC<
 > = ({ containerRegistryFrgmt = null, onOk, initialValues, ...modalProps }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message, modal } = App.useApp();
 
   const baiClient = useSuspendedBackendaiClient();
@@ -111,7 +111,7 @@ const ContainerRegistryEditorModal: React.FC<
         ssl_verify
         extra @since(version: "24.09.3")
         is_global @since(version: "24.09.0")
-        allowed_groups @since(version: "25.3.0") {
+        allowed_groups(first: 100) @since(version: "25.3.0") {
           edges {
             node {
               id
@@ -163,7 +163,7 @@ const ContainerRegistryEditorModal: React.FC<
             ssl_verify
             extra @since(version: "24.09.3")
             is_global @since(version: "24.09.0")
-            allowed_groups @since(version: "25.3.0") {
+            allowed_groups(first: 100) @since(version: "25.3.0") {
               edges {
                 node {
                   id
@@ -585,8 +585,8 @@ const ContainerRegistryEditorModal: React.FC<
           <BAIFormItem label={t('registry.ExtraInformation')}>
             <BAIFlex
               style={{
-                border: `1px solid ${token.colorBorder}`,
-                borderRadius: token.borderRadius,
+                border: `1px solid ${token('--color-border-emphasized')}`,
+                borderRadius: token('--radius-inner'),
                 overflow: 'hidden',
               }}
             >

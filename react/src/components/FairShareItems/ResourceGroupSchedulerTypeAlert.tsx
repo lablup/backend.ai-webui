@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ResourceGroupSchedulerTypeAlertFragment$key } from '../../__generated__/ResourceGroupSchedulerTypeAlertFragment.graphql';
-import { Banner } from '@astryxdesign/core/Banner';
+import { Banner } from '@lablup/ui-common/Banner';
 import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';

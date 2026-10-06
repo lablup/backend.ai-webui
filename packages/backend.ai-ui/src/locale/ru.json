@@ -89,26 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Произошла непредвиденная ошибка. Попробуйте ещё раз позже или обратитесь в службу поддержки, если проблема сохраняется."
   },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "Очистить",
-    "KeepAsIs": "Оставить как есть",
-    "UndoChanges": "Отменить изменения"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Ошибка выполнения",
-    "ErrorOccurred": "Произошла ошибка"
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "Очистить",
-    "HexValue": "Шестнадцатеричное значение",
-    "NoColor": "Без цвета",
-    "SelectColor": "Выбрать цвет"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Очистить Поиск по вариантам",
-    "NoResults": "Нет результатов",
-    "SearchOptions": "Поиск по вариантам"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Выберите реестр контейнеров"
   },
@@ -128,14 +108,6 @@
     "Size": "Размер",
     "SuccessFullyRemoved": "Успешно удалено {{count}} версии.",
     "Version": "Версия"
-  },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "Вы уверены, что хотите удалить?",
-    "AreYouSureToPermanentlyDeleteTarget": "Вы действительно хотите окончательно удалить {{target}}?",
-    "CannotBeUndone": "Это действие нельзя отменить.",
-    "DeleteItem": "Удалить",
-    "DeleteNItems": "Удалить {{count}} элементов",
-    "TypeToConfirm": "Введите <token>{{confirmText}}</token> для подтверждения."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Создано"
@@ -247,6 +219,10 @@
       "Timeout": "Веб-сервер Backend.AI не ответил вовремя.",
       "Title": "Не удалось войти через Backend.AI"
     }
+  },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "Прогресс запуска ядер",
+    "KernelTerminationProgress": "Прогресс завершения ядер"
   },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Размер кластера",
@@ -413,11 +389,6 @@
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Выделено / Запрошено"
   },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "Изменить цвет группы",
-    "ResourceGrid": "Сетка ресурсов",
-    "UseColorN": "Использовать цвет {{n}}"
-  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Неограниченный"
   },
@@ -567,9 +538,6 @@
     "MultiNodeShort": "Мульти",
     "SingleNodeShort": "Одинокий"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Неограниченный"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Выберите хост хранилища"
   },
@@ -586,28 +554,13 @@
     "Time": "Время"
   },
   "comp:BAITable": {
-    "Apply": "Применить",
-    "Cancel": "Отмена",
     "CollapseAll": "Свернуть все",
     "ExpandAll": "Развернуть все",
     "ExpandErrorsOnly": "Развернуть только ошибки",
-    "ExpandOptions": "Параметры разворачивания",
-    "ExpandRow": "Развернуть строку",
-    "Export": "Экспорт",
-    "ExportCSV": "Экспорт в CSV",
-    "GoToFirstPage": "Перейти на первую страницу",
-    "InvalidPageNumber": "Неверный номер страницы",
-    "NoDataToDisplay": "Нет данных для отображения",
-    "Pagination": "Разбиение на страницы",
-    "SearchTableColumn": "Поиск таблицы столбцов",
-    "SelectColumnToDisplay": "Выберите столбцы, чтобы отобразить",
-    "SettingTable": "Настройки таблицы"
+    "ExpandOptions": "Параметры разворачивания"
   },
   "comp:BAITestButton": {
     "Test": "тест"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "и ещё {{rest}}"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Создан в",
@@ -699,9 +652,6 @@
       "FileNameRequired": "Пожалуйста, введите имя файла или папки."
     }
   },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} of {{total}} элементы"
-  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Недоступные данные о ресурсах"
   },
@@ -763,55 +713,12 @@
   "error": {
     "UnknownError": "Произошла неизвестная ошибка. \nПожалуйста, попробуйте еще раз."
   },
-  "form": {
-    "Optional": "(необязательно)",
-    "validateMessages": {
-      "Default": "Ошибка проверки поля ${label}",
-      "Required": "Пожалуйста, введите ${label}",
-      "Whitespace": "${label} не может быть пустым",
-      "array": {
-        "Len": "Количество элементов ${label} должно быть равно ${len}",
-        "Max": "Количество элементов ${label} должно быть меньше или равно ${max}",
-        "Min": "Количество элементов ${label} должно быть больше или равно ${min}",
-        "Range": "Количество элементов ${label} должно быть между ${min} и ${max}"
-      },
-      "number": {
-        "Len": "${label} должна быть равна ${len}",
-        "Max": "${label} должна быть меньше или равна ${max}",
-        "Min": "${label} должна быть больше или равна ${min}",
-        "Range": "${label} должна быть между ${min}-${max}"
-      },
-      "pattern": {
-        "Mismatch": "${label} не соответствует шаблону ${pattern}"
-      },
-      "string": {
-        "Len": "${label} должна быть ${len} символов",
-        "Max": "${label} должна быть меньше или равна ${max} символов",
-        "Min": "${label} должна быть больше или равна ${min} символов",
-        "Range": "Длина ${label} должна быть между ${min}-${max} символами"
-      },
-      "types": {
-        "Email": "${label} не является типом ${type}",
-        "Number": "${label} не является типом ${type}",
-        "Object": "${label} не является типом ${type}",
-        "String": "${label} не является типом ${type}",
-        "Url": "${label} не является типом ${type}"
-      }
-    }
-  },
   "general": {
-    "Decrease": "Уменьшить",
-    "DeselectAll": "Снять выделение",
     "File": "Файл",
-    "Increase": "Увеличить",
-    "Loading": "Загрузка...",
-    "NSelected": "{{count}} выбрал",
     "Optional": "Необязательно",
     "Project": "Проект",
     "Search": "Поиск",
     "Select": "Выбрать",
-    "SelectPlaceholder": "Выберите {{label}}",
-    "TotalItems": "Total {{total}} элементы",
     "Unit": "Единица",
     "button": {
       "Action": "Действие",

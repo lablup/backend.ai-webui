@@ -14,7 +14,6 @@ import {
 } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
-import { useBAIBreakpoint } from '../theme-shim';
 import { ProjectContextOrNull } from '../types/projectContext';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import CodeHighlighterModal from './CodeHighlighterModal';
@@ -35,13 +34,13 @@ import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
 import { getUnifiedSlotNameFromTag } from './SessionFormItems/ResourceAllocationFormItems';
 import SessionSchedulingHistoryModal from './SessionSchedulingHistoryModal';
 import SessionUsageMonitor from './SessionUsageMonitor';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Tab, TabList } from '@astryxdesign/core/TabList';
-import { Token } from '@astryxdesign/core/Token';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Tab, TabList } from '@lablup/ui-common/TabList';
+import { Token } from '@lablup/ui-common/Token';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAICard,
   BAIFlex,
@@ -60,6 +59,7 @@ import {
   UNSAFELazyUserEmailView,
   useMemoizedJSONParse,
   useToggle,
+  useBAIBreakpoint,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { History, Info, CircleHelp, TriangleAlert } from 'lucide-react';

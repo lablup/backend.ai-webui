@@ -85,7 +85,8 @@ So there is exactly one question for you to answer: **is there a `/rename` to us
    name. Every fallback is already handled.
 
 **Never pass the FR number or the PR number yourself.** `dev.mjs` derives the issue key from
-the branch and looks the PR up with one cached `gh` call, and it strips either identifier from
+the branch — `fr-N` for a Jira key, `gh-N` on the `type/gh-N-slug` branch of a GitHub-native
+issue (`gh-10144-pr10150-drawer`) — and looks the PR up with one cached `gh` call, and it strips either identifier from
 your string if you pass it anyway — so `PORTLESS_APP_NAME=fr-3665` just yields `fr-3665-pr9049`,
 losing the descriptive part for nothing.
 
@@ -272,7 +273,7 @@ bash .claude/skills/dev-server/scripts/advertise.sh advertise --app "$BAI_DEV_AP
 ```
 
 Idempotent: run it again and it edits the same comments. Pass `--teams-thread <url>` (for the
-running PR) or `--teams-thread <pr>=<url>` when Jira has no thread recorded for a PR. Every
+running PR) or `--teams-thread <pr>=<url>` when neither Jira nor the GitHub issue has a thread recorded for a PR. Every
 line the script prints goes to stderr, so its exit status is not what tells you it worked —
 read the lines.
 
@@ -308,6 +309,10 @@ bash .claude/skills/dev-server/scripts/advertise.sh stop --app "$BAI_DEV_APP"
   Jira GET (`customfield_10176`) at boot — never at request time. Missing is recorded as `null`.
   The credential reaches `curl` on stdin via `--config -`, never in argv, because `/proc` is
   readable by every other process on the box.
+  A PR with no Jira key — `Resolves #N` alone, or a `gh-N` branch — is a GitHub-native issue:
+  its thread is the issue's `Teams thread` field (an organization Issue field, matched by
+  name, read with one `gh api graphql` call), and the record carries `githubIssue: N` where a
+  Jira PR carries `jiraKey`. No field, no value or no permission to read it is `null` too.
 
 Logic that needs no network is unit-tested: `bash .claude/skills/dev-server/scripts/test-advertise.sh`.
 

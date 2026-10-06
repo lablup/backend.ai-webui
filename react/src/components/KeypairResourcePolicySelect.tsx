@@ -15,8 +15,8 @@
 import { KeypairResourcePolicySelectQuery } from '../__generated__/KeypairResourcePolicySelectQuery.graphql';
 import { localeCompare } from '../helper';
 import useControllableState_deprecated from '../hooks/useControllableState';
-import { Selector } from '@astryxdesign/core/Selector';
-import type { SelectorOptionData } from '@astryxdesign/core/Selector';
+import { Selector } from '@lablup/ui-common/Selector';
+import type { SelectorOptionData } from '@lablup/ui-common/Selector';
 import * as _ from 'lodash-es';
 import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';

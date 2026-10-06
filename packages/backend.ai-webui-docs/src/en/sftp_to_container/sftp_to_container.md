@@ -34,7 +34,7 @@ also download the `id_container` file located under `/home/work/` with your web
 terminal or Jupyter Notebook. The auto-generated SSH key may change when new
 session is created. In that case, it must be downloaded again.
 
-![](../images/SSH_SFTP_connection.png)
+![=800px](../images/SSH_SFTP_connection.png)
 
 ![](../images/sftp_app.png)
 
@@ -148,17 +148,17 @@ After launching the FileZilla client, go to the Settings-Connection-SFTP
 and register the key file `id_container.ppk` (`id_container` for clients
 supporting OpenSSH).
 
-![](../images/filezilla_setting.png)
+![=628px](../images/filezilla_setting.png)
 
 Open Site Manager, create a new site, and enter the connection information as
 follows.
 
-![](../images/filezilla_site_setting.png)
+![=798px](../images/filezilla_site_setting.png)
 
 When connecting to a container for the first time, the following confirmation
 popup may appear. Click the OK button to save the host key.
 
-![](../images/unknown_host_key.png)
+![=501px](../images/unknown_host_key.png)
 
 After a while, you can see that the connection is established as follows. You
 can now transfer large files to `/home/work/` or other mounted storage folder
@@ -187,7 +187,7 @@ compute session. In the VSCode Remote Connection dialog, click the copy icon but
 to copy the Visual Studio Code remote SSH password. Also, remember the host and
 the port number shown in the dialog.
 
-![](../images/download_ssh_key.png)
+![=418px](../images/download_ssh_key.png)
 
 Then, set the SSH config file. Edit the `~/.ssh/config` file (for Linux/Mac)
 or `C:\Users\[user name]\.ssh\config` (for Windows) and add the following block.
@@ -223,12 +223,12 @@ Selecting the host name will lead you to access the remote compute session.
 After you are connected, you will see an empty window. You can always refer to
 the Status bar to see which host you are connected to.
 
-![](../images/vscode_connect_finish.png)
+![=333px](../images/vscode_connect_finish.png)
 
 You can then open any folder or workspace on the remote host by accessing `File >
 Open...` or `File > Open Workspace...` menu just as you usually would do!
 
-![](../images/vscode_connected_host_file_open.png)
+![=614px](../images/vscode_connected_host_file_open.png)
 
 <a id="establish-ssh-connection-with-backendai-client-package"></a>
 
@@ -264,7 +264,7 @@ docker pull lablup/backend.ai-client:${VERSION}
 The version of Backend.AI server can be found in "About Backend.AI" menu that
 appears when you click on the person icon on the top right corner of the Web UI.
 
-![](../images/check_backend_server_version.png)
+![=350px](../images/check_backend_server_version.png)
 
 Run the Docker image with the following command:
 
