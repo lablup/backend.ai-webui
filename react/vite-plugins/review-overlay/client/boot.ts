@@ -36,6 +36,7 @@ import {
 } from './deeplink.js';
 import { createSetDock, whereItWas, type PinPlace } from './dock.js';
 import { createDraftStore, MAX_SET_PINS } from './draft.js';
+import { envForCopy, readShareAccount, writeShareAccount } from './env.js';
 import { startGuidedMode, type GuidedMode } from './guided.js';
 import { pinId } from './id.js';
 import { createPicker, isEditable, isMac } from './picker.js';
@@ -196,6 +197,11 @@ function boot(host: OverlayHost): OverlayHandle {
 
   const store = createDraftStore();
   let draft: SetPin[] = store.pins();
+  /** The footer's account switch; the footer itself is the host's to answer. */
+  let shareAccount = readShareAccount();
+  const copyOptions = () => ({
+    env: envForCopy(window.__BAI_REVIEW__?.env?.(), shareAccount),
+  });
   /** Only a picked pin can be re-keyed: a link's pin carries no `at`/`pr`. */
   type EditablePin = Extract<SetPin, { origin: 'pick' }>;
   /** The pin the composer is rewriting the note of, while it is open. */
@@ -243,8 +249,8 @@ function boot(host: OverlayHost): OverlayHandle {
         if (store.has(pin.id)) return { refused: 'Already pinned' };
         const set = [...draft, pin];
         return {
-          text: buildSetText(set),
-          html: buildSetHtml(set),
+          text: buildSetText(set, copyOptions()),
+          html: buildSetHtml(set, copyOptions()),
           toast: copiedToast(set.length),
           // The pin joins the set only once THIS write has landed: a copy that
           // failed, or a composer closed while it was in flight, adds nothing.
@@ -520,8 +526,8 @@ function boot(host: OverlayHost): OverlayHandle {
     if (!pin) return null;
     if (stackPending(pin)) return null;
     return {
-      text: buildSetText([pin]),
-      html: buildSetHtml([pin]),
+      text: buildSetText([pin], copyOptions()),
+      html: buildSetHtml([pin], copyOptions()),
       toast: onePinToast(pin),
     };
   }
@@ -568,6 +574,11 @@ function boot(host: OverlayHost): OverlayHandle {
     onEdit: startEdit,
     onUnhide: revealPin,
     onToggleCards: toggleCards,
+    onToggleAccount: () => {
+      shareAccount = !shareAccount;
+      writeShareAccount(shareAccount);
+      renderDock();
+    },
     onGo: (id) => {
       // Built from the DRAFT SET, never from `location.hash`: the hash was
       // scrubbed the moment the link merged (D4), and the tab this pin belongs
@@ -859,7 +870,7 @@ function boot(host: OverlayHost): OverlayHandle {
   function renderDock() {
     const map = places();
     drawn = placesKey(map);
-    dock.render(draft, map, store.cardsHidden());
+    dock.render(draft, map, store.cardsHidden(), shareAccount);
   }
 
   /** Rebuilding every row on every `locate()` is O(N²) rows for one redraw. */
@@ -886,8 +897,8 @@ function boot(host: OverlayHost): OverlayHandle {
       return;
     }
     ui.copyWithToast({
-      text: buildSetText(draft),
-      html: buildSetHtml(draft),
+      text: buildSetText(draft, copyOptions()),
+      html: buildSetHtml(draft, copyOptions()),
       toast: copiedToast(draft.length),
     });
   }

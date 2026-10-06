@@ -5,7 +5,7 @@
  * the layer and the dock, so this is where the flow can be asserted at all.
  */
 import { DRAFT_KEY, MAX_SET_PINS } from './draft.js';
-import type { SetPin } from './types.js';
+import type { ReviewEnv, SetPin } from './types.js';
 import type { Plugin, ReactGrabAPI } from 'react-grab';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -190,6 +190,8 @@ afterEach(() => {
   document.querySelector('[data-bai-review-overlay]')?.remove();
   document.body.innerHTML = '';
   delete window.__REACT_GRAB__;
+  delete window.__BAI_REVIEW__;
+  localStorage.clear();
 });
 
 describe('the first pin of a set', () => {
@@ -1089,5 +1091,80 @@ describe('editing a pin’s note', () => {
       'This pin came from a link — pick the element again to write your own note',
     );
     expect(storedIds()).toEqual(['c_oneaaaa']);
+  });
+});
+
+/**
+ * The footer (where the set was reviewed) is the host's answer, read at copy
+ * time; the dock's account switch is the one edit the overlay makes to it.
+ */
+describe('the environment footer', () => {
+  const env = {
+    webui: '26.9.0',
+    manager: '25.14.2',
+    endpoint: 'https://api.example.com',
+    account: 'reviewer@example.com (superadmin)',
+  };
+
+  it('ends every copy with where the set was reviewed', async () => {
+    window.__BAI_REVIEW__ = { env: () => env };
+    await bootOverlay();
+    const written = stubExecCommand();
+
+    await pickAndCopy('create', 'The label is cut off.');
+
+    const lines = written['text/plain'].split('\n');
+    expect(lines.at(-1)).toBe(
+      '<sub>WebUI 26.9.0 · Manager 25.14.2 · API https://api.example.com · reviewer@example.com (superadmin)</sub>',
+    );
+    expect(lines.at(-2)).toBe('');
+    expect(lines.at(-3)).toContain('<!-- bai-review v3');
+    expect(written['text/html'].endsWith('</sub></p>')).toBe(true);
+  });
+
+  it('leaves the account out once the dock’s switch says so, and remembers', async () => {
+    window.__BAI_REVIEW__ = { env: () => env };
+    await bootOverlay();
+    stubExecCommand();
+    await pickAndCopy('create', 'The label is cut off.');
+
+    node<HTMLButtonElement>('.setdock .account').click();
+    const written = stubExecCommand();
+    node<HTMLButtonElement>('.setdock .copyall').click();
+
+    expect(written['text/plain'].split('\n').at(-1)).toBe(
+      '<sub>WebUI 26.9.0 · Manager 25.14.2 · API https://api.example.com</sub>',
+    );
+    expect(written['text/plain']).not.toContain('reviewer@example.com');
+    expect(localStorage.getItem('bai-review:share-account')).toBe('0');
+    expect(node('.setdock .account').getAttribute('aria-label')).toBe(
+      'Put my account in copies',
+    );
+  });
+
+  it('reads the host at copy time, not at boot', async () => {
+    let current: ReviewEnv | undefined;
+    window.__BAI_REVIEW__ = { env: () => current };
+    await bootOverlay();
+    const written = stubExecCommand();
+    current = { webui: '26.9.0' };
+
+    await pickAndCopy('create', 'The label is cut off.');
+
+    expect(written['text/plain'].split('\n').at(-1)).toBe(
+      '<sub>WebUI 26.9.0</sub>',
+    );
+  });
+
+  it('copies exactly what it always has on a host with no app', async () => {
+    await bootOverlay();
+    const written = stubExecCommand();
+
+    await pickAndCopy('create', 'The label is cut off.');
+
+    expect(written['text/plain']).not.toContain('<sub>');
+    expect(written['text/plain'].split('\n').at(-1)).toContain(
+      '<!-- bai-review v3',
+    );
   });
 });
