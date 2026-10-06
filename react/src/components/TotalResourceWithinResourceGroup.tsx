@@ -79,7 +79,6 @@ const remainingAgentsQuery = graphql`
       }
     }
     agent_nodes(filter: $agentNodeFilter, first: $limit, offset: $offset)
-      @since(version: "24.12.0")
       @include(if: $isSuperAdmin) {
       edges {
         node {

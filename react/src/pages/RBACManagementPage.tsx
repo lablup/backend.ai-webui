@@ -493,7 +493,7 @@ const RoleListTab: React.FC = () => {
       />
       {/* One drawer per manager shape: the single-scope role (>= 26.9.0a4)
           gets the V2 drawer, everything older the previous one (ADR 0006). */}
-      {baiClient?.supports('rbac-single-scope-role') ? (
+      {baiClient?.isManagerVersionCompatibleWith('26.9.0a4') ? (
         <BAIUnmountAfterClose>
           <RoleDetailDrawerV2
             open={!!selectedRole}
@@ -549,7 +549,8 @@ const RBACManagementPage: React.FC = () => {
 
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  const supportsRolePresets = baiClient.supports('rbac-role-presets');
+  const supportsRolePresets =
+    baiClient.isManagerVersionCompatibleWith('26.9.0a4');
   const [{ tab }, setQueryParams] = useQueryStates(
     {
       tab: parseAsStringLiteral(tabValues).withDefault('roles'),

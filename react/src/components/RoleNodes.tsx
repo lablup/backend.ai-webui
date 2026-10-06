@@ -69,7 +69,8 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   const supportsAutoAssign =
     baiClient.isManagerVersionCompatibleWith('26.4.4rc9');
-  const supportsRolePreset = baiClient.supports('role-preset-reference');
+  const supportsRolePreset =
+    baiClient.isManagerVersionCompatibleWith('26.9.0rc3');
   const [hiddenColumnKeys, setHiddenColumnKeys] =
     useHiddenColumnKeysSetting('RoleList');
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =

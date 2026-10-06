@@ -84,10 +84,9 @@ const AdminPrometheusPreset = ({
   const { message } = App.useApp();
   const baiClient = useSuspendedBackendaiClient();
   // `QueryDefinitionFilter.categoryId` and its AND/OR/NOT combinators arrived
-  // in 26.4.4, two releases after the tab's own `prometheus-query-preset` gate.
-  const supportsExtendedFilter = baiClient.supports(
-    'prometheus-query-preset-extended-filter',
-  );
+  // in 26.4.4, two releases after the tab itself (26.4.2).
+  const supportsExtendedFilter =
+    baiClient.isManagerVersionCompatibleWith('26.4.4');
 
   const [isOpenEditorModal, setIsOpenEditorModal] = useState(false);
   const [editingPreset, setEditingPreset] =

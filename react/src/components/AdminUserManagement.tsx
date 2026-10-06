@@ -196,7 +196,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
     adminUsersV2?.edges?.find((edge) => edge?.node?.id === id)?.node ?? null;
 
   const canActAs =
-    bailClient.supports('act-as') &&
+    bailClient.isManagerVersionCompatibleWith('26.9.0') &&
     bailClient.is_superadmin &&
     !globalThis.isElectron;
 
@@ -311,7 +311,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
                     '',
                 ),
             },
-          bailClient.supports('admin-unblock-user') && {
+          bailClient.isManagerVersionCompatibleWith('26.4.2') && {
             key: 'unblock-login',
             title: t('credential.UnblockLogin'),
             icon: <LockOpen />,

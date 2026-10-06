@@ -258,7 +258,8 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
   const supportsAutoAssign =
     baiClient.isManagerVersionCompatibleWith('26.4.4rc9');
   // Managers >= 26.9.0 take the one scope as `scope`; older ones as `scopes`.
-  const isSingleScopeRole = baiClient.supports('rbac-single-scope-role');
+  const isSingleScopeRole =
+    baiClient.isManagerVersionCompatibleWith('26.9.0a4');
   const scopeType = Form.useWatch('scopeType', form) as string | undefined;
 
   const { rbacPermissionMatrix } =

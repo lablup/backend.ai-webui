@@ -9,7 +9,7 @@ import {
   createDeploymentShell,
   escapeForRegExp,
 } from '../utils/deployment-fixtures';
-import { skipUnlessClientFeature } from '../utils/feature-gate-util';
+import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
 import {
   loginAsAdmin,
   navigateTo,
@@ -64,10 +64,10 @@ test.describe(
         .toString(36)
         .slice(2, 6)}`;
       await loginAsAdmin(page, request);
-      await skipUnlessClientFeature(
+      await skipUnlessManagerVersion(
         page,
-        'model-deployment-extended-filter',
-        "The Deployments Owner filter requires 'model-deployment-extended-filter' (manager >= 26.4.3, FR-3914)",
+        '26.4.3',
+        'The Deployments Owner filter requires manager >= 26.4.3 (FR-3914)',
       );
     });
 

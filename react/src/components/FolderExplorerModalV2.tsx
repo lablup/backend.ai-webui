@@ -129,7 +129,7 @@ const OwnershipProjectBanner: React.FC<{
     useLazyLoadQuery<FolderExplorerModalV2OwnershipProjectQuery>(
       graphql`
         query FolderExplorerModalV2OwnershipProjectQuery($projectId: String!) {
-          group_node(id: $projectId) @since(version: "24.03.0") {
+          group_node(id: $projectId) {
             id
             type
           }
@@ -355,7 +355,7 @@ const FolderExplorerBody: React.FC<{
             {
               // 26.9.0 names the entity by the manager's own `EntityType`;
               // 26.4.4-26.8.x type this as the RBAC enum instead (FR-3982).
-              entityType: baiClient.supports('audit-log-entity-type-name')
+              entityType: baiClient.isManagerVersionCompatibleWith('26.9.0')
                 ? 'vfolder'
                 : 'VFOLDER',
               entityId: vfolderUuid,

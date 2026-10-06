@@ -95,10 +95,9 @@ const ProjectPage = () => {
     baiClient.isManagerVersionCompatibleWith('26.8.0');
   // From 26.9.0 the project admin grant is a `scope_admin` permission rather
   // than a name-suffixed SYSTEM role.
-  const matchesProjectAdminByScopeAdminPermission = baiClient.supports(
-    'rbac-single-scope-role',
-  );
-  const supportsTypeFilter = baiClient.supports('group-nodes-type-filter');
+  const matchesProjectAdminByScopeAdminPermission =
+    baiClient.isManagerVersionCompatibleWith('26.9.0a4');
+  const supportsTypeFilter = baiClient.isManagerVersionCompatibleWith('26.9.0');
   const [openSettingModal, { toggle: toggleSettingModal }] = useToggle(false);
   const [openBulkEditModal, { toggle: toggleBulkEditModal }] = useToggle(false);
   const [selectedProjectList, setSelectedProjectList] = useState<ProjectNode[]>(

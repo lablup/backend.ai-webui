@@ -110,9 +110,8 @@ const runningStatuses: ReadonlyArray<DeploymentStatus> = [
 
 /**
  * The hard-coded status scope behind the Running / Terminated toggle.
- * `DeploymentStatusFilter.notIn` only exists from 26.4.3
- * (`model-deployment-extended-filter`); below that the running scope has to be
- * spelled out as the complementary `in` list.
+ * `DeploymentStatusFilter.notIn` only exists from manager 26.4.3; below that
+ * the running scope has to be spelled out as the complementary `in` list.
  */
 export const statusCategoryFilterFor = (
   category: DeploymentStatusCategory,
@@ -171,8 +170,10 @@ const AdminDeployment = ({
   >(null);
   const [drawerRevisionId, setDrawerRevisionId] = useState<string | null>(null);
 
-  const supportsExtendedFilter = baiClient.isManagerVersionCompatibleWith('26.4.3');
-  const supportsReplicaNestedFilter = baiClient.isManagerVersionCompatibleWith('26.8.0');
+  const supportsExtendedFilter =
+    baiClient.isManagerVersionCompatibleWith('26.4.3');
+  const supportsReplicaNestedFilter =
+    baiClient.isManagerVersionCompatibleWith('26.8.0');
 
   const mergedFilter = queryRef.variables.filter as
     DeploymentFilter | undefined;

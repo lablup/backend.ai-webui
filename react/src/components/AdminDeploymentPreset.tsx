@@ -139,9 +139,8 @@ const AdminDeploymentPreset = ({
   const supportsSubFilter = baiClient.isManagerVersionCompatibleWith('26.7.0');
   // BA-5918 (26.4.4rc3) turned `runtimeVariantId` into a UUIDFilter; the
   // control only emits the wrapper shape.
-  const supportsFilterWrapperInputs = baiClient.supports(
-    'v2-filter-wrapper-inputs',
-  );
+  const supportsFilterWrapperInputs =
+    baiClient.isManagerVersionCompatibleWith('26.4.4rc3');
 
   return (
     <BAIFlex direction="column" align="stretch" gap={'sm'}>

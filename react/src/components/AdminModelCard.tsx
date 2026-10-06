@@ -71,7 +71,7 @@ type ModelCardNode = NonNullableNodeOnEdges<
 const availableModelCardSorterKeys = [
   'name',
   'created_at',
-  // Opened by 26.9.0 (backend #14811); gated on `model-card-search-axes`.
+  // Opened by 26.9.0 (backend #14811); gated on that manager version.
   'title',
   'category',
   'task',
@@ -164,13 +164,12 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   const { generateFolderPath } = useFolderExplorerOpener();
   const baiClient = useSuspendedBackendaiClient();
   // 26.9.0 opened the metadata axes of the model card search (backend #14811).
-  const supportsSearchAxes = baiClient.supports('model-card-search-axes');
+  const supportsSearchAxes = baiClient.isManagerVersionCompatibleWith('26.9.0');
   // BA-5918 (26.4.4rc3) turned `projectId` into a UUIDFilter; the control
   // only emits the wrapper shape.
-  const supportsFilterWrapperInputs = baiClient.supports(
-    'v2-filter-wrapper-inputs',
-  );
-  const supportsSubFilter = baiClient.supports('model-card-v2-sub-filter');
+  const supportsFilterWrapperInputs =
+    baiClient.isManagerVersionCompatibleWith('26.4.4rc3');
+  const supportsSubFilter = baiClient.isManagerVersionCompatibleWith('26.4.1');
 
   const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
   const [editingModelCardId, setEditingModelCardId] = useState<string | null>(

@@ -101,9 +101,8 @@ const AdminDeploymentPage: React.FC = () => {
   // `status` is never a user-settable filter property, so the deployments tab
   // owns it entirely via its running/finished toggle. On first load (no
   // persisted filter) we fall back to "running".
-  const supportsDeploymentExtendedFilter = baiClient.supports(
-    'model-deployment-extended-filter',
-  );
+  const supportsDeploymentExtendedFilter =
+    baiClient.isManagerVersionCompatibleWith('26.4.3');
   const deploymentRunningFilter = statusCategoryFilterFor(
     'running',
     supportsDeploymentExtendedFilter,

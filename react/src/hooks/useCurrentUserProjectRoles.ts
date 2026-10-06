@@ -38,7 +38,8 @@ export interface CurrentUserProjectRolesResult {
  */
 export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
   const baiClient = useSuspendedBackendaiClient();
-  const supportsMyRolesV2 = baiClient.supports('rbac-single-scope-role');
+  const supportsMyRolesV2 =
+    baiClient.isManagerVersionCompatibleWith('26.9.0a4');
 
   const PROJECT_ADMIN_PAGE = 'PROJECT_ADMIN_PAGE';
   const legacyPermissionFilter: PermissionNestedFilter = {

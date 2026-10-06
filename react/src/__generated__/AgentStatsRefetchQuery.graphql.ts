@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a31c5e83c98427b5c1bf160919cabd51>>
+ * @generated SignedSource<<8a8f18a1ec9c4d5df53d2d53a6080a52>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -162,16 +162,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "c4d2ad6eae99daf91d6f86118d5a2375",
+    "cacheID": "94723c46599cac0fa017d69548d9db15",
     "id": null,
     "metadata": {},
     "name": "AgentStatsRefetchQuery",
     "operationKind": "query",
-    "text": "query AgentStatsRefetchQuery(\n  $aliveAgentFilter: String!\n  $schedulableAgentFilter: String!\n) {\n  ...AgentStatsFragment_rQkRq\n}\n\nfragment AgentStatsFragment_rQkRq on Query {\n  agentStats {\n    totalResource {\n      free\n      used\n      capacity\n    }\n  }\n  aliveAgents: agent_nodes(filter: $aliveAgentFilter, first: 1) @since(version: \"24.12.0\") {\n    count\n  }\n  schedulableAgents: agent_nodes(filter: $schedulableAgentFilter, first: 1) @since(version: \"24.12.0\") {\n    count\n  }\n}\n"
+    "text": "query AgentStatsRefetchQuery(\n  $aliveAgentFilter: String!\n  $schedulableAgentFilter: String!\n) {\n  ...AgentStatsFragment_rQkRq\n}\n\nfragment AgentStatsFragment_rQkRq on Query {\n  agentStats {\n    totalResource {\n      free\n      used\n      capacity\n    }\n  }\n  aliveAgents: agent_nodes(filter: $aliveAgentFilter, first: 1) {\n    count\n  }\n  schedulableAgents: agent_nodes(filter: $schedulableAgentFilter, first: 1) {\n    count\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "3a7d0f75bc0580a337181d637bbcfbc2";
+(node as any).hash = "184fa590bf7419b2316880010ceb48ed";
 
 export default node;

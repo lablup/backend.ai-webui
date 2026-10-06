@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<22e69cc2ab8747caa6b68f433ef8f855>>
+ * @generated SignedSource<<d51b288a546556df57b14492ac734499>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -155,16 +155,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "a54eaadf587fb0ff9f9bfe9e6bfe92c2",
+    "cacheID": "3d9e15dc3855f4e31863da38f800decf",
     "id": null,
     "metadata": {},
     "name": "ResourceAllocationFormItemsQuery",
     "operationKind": "query",
-    "text": "query ResourceAllocationFormItemsQuery(\n  $projectID: UUID!\n) {\n  accessible_scaling_groups(project_id: $projectID) {\n    accelerator_quantum_size\n    name\n    is_active\n    ...useResourceLimitAndRemainingFragment\n  }\n  resource_presets {\n    id\n    name\n    scaling_group_name @since(version: \"25.4.0\")\n  }\n}\n\nfragment useResourceLimitAndRemainingFragment on ScalingGroup {\n  name\n  resource_allocation_limit_for_sessions\n}\n"
+    "text": "query ResourceAllocationFormItemsQuery(\n  $projectID: UUID!\n) {\n  accessible_scaling_groups(project_id: $projectID) {\n    accelerator_quantum_size\n    name\n    is_active\n    ...useResourceLimitAndRemainingFragment\n  }\n  resource_presets {\n    id\n    name\n    scaling_group_name\n  }\n}\n\nfragment useResourceLimitAndRemainingFragment on ScalingGroup {\n  name\n  resource_allocation_limit_for_sessions\n}\n"
   }
 };
 })();
 
-(node as any).hash = "90c600363701888f8e2c91dec882e5d4";
+(node as any).hash = "d8461d367b6a656ca490e54cc5223c32";
 
 export default node;

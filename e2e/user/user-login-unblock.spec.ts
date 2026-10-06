@@ -6,7 +6,7 @@ import {
   gqlAdmin,
   purgeUserViaApi,
 } from '../utils/admin-api';
-import { skipUnlessClientFeature } from '../utils/feature-gate-util';
+import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
 import {
   loginAsAdmin,
   loginAsCreatedAccount,
@@ -90,10 +90,10 @@ async function unblockLoginFromUserList(
   page: Page,
   email: string,
 ): Promise<void> {
-  await skipUnlessClientFeature(
+  await skipUnlessManagerVersion(
     page,
-    'admin-unblock-user',
-    "Unblock login requires the 'admin-unblock-user' capability (manager >= 26.4.2, FR-4131)",
+    '26.4.2',
+    'Unblock login requires manager >= 26.4.2 (FR-4131)',
   );
   await navigateToUsersPage(page);
   await filterUsersByEmail(page, email);

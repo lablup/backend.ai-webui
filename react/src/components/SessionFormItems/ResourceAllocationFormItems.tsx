@@ -327,7 +327,7 @@ const ResourceAllocationFormItems: React.FC<
           resource_presets {
             id
             name
-            scaling_group_name @since(version: "25.4.0")
+            scaling_group_name
           }
         }
       `,
