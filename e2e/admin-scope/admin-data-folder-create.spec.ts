@@ -31,8 +31,9 @@ test.describe(
       await cleanupVFolderSafely(page, folderName, 'admin-data');
       // The row's trash action can be disabled for project folders (lts), so
       // purge whatever the UI left behind over REST.
-      const api = await createAdminApiContext();
+      let api: Awaited<ReturnType<typeof createAdminApiContext>> | undefined;
       try {
+        api = await createAdminApiContext();
         const { vfolder_list } = await gqlAdmin<{
           vfolder_list: { items: Array<{ id: string; status: string }> };
         }>(
@@ -52,7 +53,7 @@ test.describe(
       } catch (error) {
         console.warn(`could not purge "${folderName}" over REST:`, error);
       } finally {
-        await api.dispose();
+        await api?.dispose().catch(() => {});
       }
     });
 
