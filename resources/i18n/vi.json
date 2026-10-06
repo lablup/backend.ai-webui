@@ -2688,7 +2688,6 @@
     "ResourceGroupName": "ResourceGroupName",
     "ResourceGroupNameNotMatch": "Tên nhóm tài nguyên không khớp!",
     "ResourceGroupNameRequired": "Tên nhóm tài nguyên là bắt buộc.",
-    "ResourceGroupNotFound": "Không tìm thấy nhóm tài nguyên.",
     "ResourceGroups": "Nhóm tài nguyên",
     "RetriesToSkip": "lần",
     "RetriesToSkipDesc": "Thử lại để bỏ qua phiên đang chờ xử lý",

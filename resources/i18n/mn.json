@@ -2687,7 +2687,6 @@
     "ResourceGroupName": "ResourceGroupName",
     "ResourceGroupNameNotMatch": "Нөөцийн бүлгийн нэр таарахгүй байна!",
     "ResourceGroupNameRequired": "Нөөцийн бүлгийн нэр шаардлагатай.",
-    "ResourceGroupNotFound": "Нөөцийн бүлэг олдсонгүй.",
     "ResourceGroups": "Нөөцийн бүлгүүд",
     "RetriesToSkip": "Цаг хугацаа",
     "RetriesToSkipDesc": "Хүлээгдэж буй хуралдааныг алгасахыг дахин оролдож байна",

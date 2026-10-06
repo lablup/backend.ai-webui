@@ -2689,7 +2689,6 @@
     "ResourceGroupName": "Nama Grup Sumber Daya",
     "ResourceGroupNameNotMatch": "Nama grup sumber daya tidak cocok!",
     "ResourceGroupNameRequired": "Nama grup sumber daya wajib diisi.",
-    "ResourceGroupNotFound": "Grup sumber daya tidak ditemukan.",
     "ResourceGroups": "Grup Sumber Daya",
     "RetriesToSkip": "Waktu",
     "RetriesToSkipDesc": "Retries untuk melewatkan sesi yang tertunda",

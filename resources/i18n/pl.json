@@ -2688,7 +2688,6 @@
     "ResourceGroupName": "NazwaGrupy Zasobów",
     "ResourceGroupNameNotMatch": "Niezgodna nazwa grupy zasobów!",
     "ResourceGroupNameRequired": "Nazwa grupy zasobów jest wymagana.",
-    "ResourceGroupNotFound": "Nie znaleziono grupy zasobów.",
     "ResourceGroups": "Grupy zasobów",
     "RetriesToSkip": "Czasy",
     "RetriesToSkipDesc": "Ponowne pominięcie trwającej sesji",

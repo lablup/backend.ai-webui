@@ -2690,7 +2690,6 @@
     "ResourceGroupName": "資源組名稱",
     "ResourceGroupNameNotMatch": "資源組名稱不匹配！",
     "ResourceGroupNameRequired": "需要資源組名稱。",
-    "ResourceGroupNotFound": "找不到資源群組。",
     "ResourceGroups": "資源組",
     "RetriesToSkip": "次",
     "RetriesToSkipDesc": "重試跳過待定會話",

@@ -2673,7 +2673,6 @@
     "ResourceGroupName": "Resource Group Name",
     "ResourceGroupNameNotMatch": "Resource group name does not match!",
     "ResourceGroupNameRequired": "Resource group name is required.",
-    "ResourceGroupNotFound": "Resource group not found.",
     "ResourceGroups": "Resource Groups",
     "RetriesToSkip": "Times",
     "RetriesToSkipDesc": "Retries to skip pending session",

@@ -2676,7 +2676,6 @@
     "ResourceGroupName": "ชื่อกลุ่มทรัพยากร",
     "ResourceGroupNameNotMatch": "ชื่อกลุ่มทรัพยากรไม่ตรงกัน!",
     "ResourceGroupNameRequired": "ต้องระบุชื่อกลุ่มทรัพยากร",
-    "ResourceGroupNotFound": "ไม่พบกลุ่มทรัพยากร",
     "ResourceGroups": "กลุ่มทรัพยากร",
     "RetriesToSkip": "ครั้ง",
     "RetriesToSkipDesc": "ลองข้ามเซสชันที่รอดำเนินการ",

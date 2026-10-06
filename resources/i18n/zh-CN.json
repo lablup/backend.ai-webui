@@ -2688,7 +2688,6 @@
     "ResourceGroupName": "资源组名称",
     "ResourceGroupNameNotMatch": "资源组名称不匹配！",
     "ResourceGroupNameRequired": "需要资源组名称。",
-    "ResourceGroupNotFound": "未找到资源组。",
     "ResourceGroups": "资源组",
     "RetriesToSkip": "次",
     "RetriesToSkipDesc": "重试跳过待定会话",

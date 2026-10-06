@@ -2688,7 +2688,6 @@
     "ResourceGroupName": "자원 그룹 이름",
     "ResourceGroupNameNotMatch": "자원 그룹 이름이 일치하지 않습니다.",
     "ResourceGroupNameRequired": "자원 그룹 이름이 필요합니다.",
-    "ResourceGroupNotFound": "자원 그룹을 찾을 수 없습니다.",
     "ResourceGroups": "자원 그룹",
     "RetriesToSkip": "회",
     "RetriesToSkipDesc": "세션 생성 최대 재시도 횟수",

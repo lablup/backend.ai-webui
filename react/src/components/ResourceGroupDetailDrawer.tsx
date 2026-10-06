@@ -2,6 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import {
+  ResourceGroupDetailDrawerFragment$data,
+  ResourceGroupDetailDrawerFragment$key,
+} from '../__generated__/ResourceGroupDetailDrawerFragment.graphql';
 import { ResourceGroupDetailDrawerQuery } from '../__generated__/ResourceGroupDetailDrawerQuery.graphql';
 import { ResourceGroupDetailDrawerSettingModalQuery } from '../__generated__/ResourceGroupDetailDrawerSettingModalQuery.graphql';
 import { getSessionTypeLabel } from '../helper/sessionTypeLabel';
@@ -12,7 +16,6 @@ import ResourceGroupDefaultSessionOptionsPanel from './ResourceGroupDefaultSessi
 import type { ScalingGroupOpts } from './ResourceGroupList';
 import ResourceGroupSettingModal from './ResourceGroupSettingModal';
 import { Badge } from '@lablup/ui-common/Badge';
-import { EmptyState } from '@lablup/ui-common/EmptyState';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import { Tab, TabList } from '@lablup/ui-common/TabList';
@@ -36,7 +39,7 @@ import * as _ from 'lodash-es';
 import { Check, SquarePenIcon, X } from 'lucide-react';
 import React, { Suspense, useEffect, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 type TabKey = 'defaultSessionOptions' | 'defaultDeploymentOptions';
 
@@ -80,10 +83,10 @@ const ResourceGroupSettingModalWithQuery: React.FC<{
 };
 
 const ResourceGroupDetailDrawerContent: React.FC<{
-  resourceGroupName: string;
+  resourceGroup: ResourceGroupDetailDrawerFragment$data;
   fetchKey: string;
   onClickEdit: () => void;
-}> = ({ resourceGroupName, fetchKey, onClickEdit }) => {
+}> = ({ resourceGroup, fetchKey, onClickEdit }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
@@ -93,56 +96,22 @@ const ResourceGroupDetailDrawerContent: React.FC<{
     baiClient.isManagerVersionCompatibleWith('26.4.4rc1');
   const [activeTab, setActiveTab] = useState<TabKey>('defaultSessionOptions');
 
-  const { adminResourceGroups, scaling_group } =
-    useLazyLoadQuery<ResourceGroupDetailDrawerQuery>(
-      graphql`
-        query ResourceGroupDetailDrawerQuery(
-          $name: String!
-          $filter: ResourceGroupFilter
-        ) {
-          adminResourceGroups(filter: $filter, limit: 1) {
-            edges {
-              node {
-                id
-                name
-                status {
-                  isActive
-                  isPublic
-                }
-                metadata {
-                  description
-                  createdAt
-                }
-                network {
-                  wsproxyAddr
-                }
-                scheduler {
-                  type
-                }
-              }
-            }
-          }
-          scaling_group(name: $name) {
-            scheduler_opts
-          }
+  const resourceGroupName = resourceGroup.name;
+  // `ResourceGroup` has no counterpart for `scheduler_opts`.
+  const { scaling_group } = useLazyLoadQuery<ResourceGroupDetailDrawerQuery>(
+    graphql`
+      query ResourceGroupDetailDrawerQuery($name: String!) {
+        scaling_group(name: $name) {
+          scheduler_opts
         }
-      `,
-      {
-        name: resourceGroupName,
-        filter: { name: { equals: resourceGroupName } },
-      },
-      { fetchPolicy: 'store-and-network', fetchKey },
-    );
-  const resourceGroup = adminResourceGroups?.edges[0]?.node;
+      }
+    `,
+    { name: resourceGroupName },
+    { fetchPolicy: 'store-and-network', fetchKey },
+  );
   const schedulerOpts: Partial<ScalingGroupOpts> = JSON.parse(
     scaling_group?.scheduler_opts || '{}',
   );
-
-  if (!resourceGroup) {
-    return (
-      <EmptyState title={t('resourceGroup.ResourceGroupNotFound')} isCompact />
-    );
-  }
 
   const renderBoolean = (value: boolean | null | undefined) =>
     value ? (
@@ -268,20 +237,43 @@ interface ResourceGroupDetailDrawerProps extends Omit<
   BAIDrawerProps,
   'onClose' | 'title' | 'extra' | 'children'
 > {
-  resourceGroupName?: string | null;
+  resourceGroupFrgmt?: ResourceGroupDetailDrawerFragment$key | null;
   onRequestClose?: () => void;
-  /** Called after the basic information is saved, to refresh the list. */
-  onResourceGroupUpdated?: () => void;
+  /** Refetches the list query that owns `resourceGroupFrgmt`. */
+  onRequestRefetch?: () => void;
 }
 
 const ResourceGroupDetailDrawer: React.FC<ResourceGroupDetailDrawerProps> = ({
-  resourceGroupName,
+  resourceGroupFrgmt,
   onRequestClose,
-  onResourceGroupUpdated,
+  onRequestRefetch,
   ...drawerProps
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const resourceGroup = useFragment(
+    graphql`
+      fragment ResourceGroupDetailDrawerFragment on ResourceGroup {
+        name
+        status {
+          isActive
+          isPublic
+        }
+        metadata {
+          description
+          createdAt
+        }
+        network {
+          wsproxyAddr
+        }
+        scheduler {
+          type
+        }
+      }
+    `,
+    resourceGroupFrgmt,
+  );
+  const resourceGroupName = resourceGroup?.name;
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
@@ -299,14 +291,15 @@ const ResourceGroupDetailDrawer: React.FC<ResourceGroupDetailDrawerProps> = ({
           value={fetchKey}
           onChange={(newFetchKey) => {
             startRefetchTransition(() => updateFetchKey(newFetchKey));
+            onRequestRefetch?.();
           }}
         />
       }
     >
       <Suspense fallback={<BAISkeleton />}>
-        {resourceGroupName ? (
+        {resourceGroup ? (
           <ResourceGroupDetailDrawerContent
-            resourceGroupName={resourceGroupName}
+            resourceGroup={resourceGroup}
             fetchKey={fetchKey}
             onClickEdit={() => setIsSettingModalOpen(true)}
           />
@@ -321,7 +314,7 @@ const ResourceGroupDetailDrawer: React.FC<ResourceGroupDetailDrawerProps> = ({
               setIsSettingModalOpen(false);
               if (success) {
                 startRefetchTransition(() => updateFetchKey());
-                onResourceGroupUpdated?.();
+                onRequestRefetch?.();
               }
             }}
           />

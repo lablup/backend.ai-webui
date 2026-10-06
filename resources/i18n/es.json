@@ -2686,7 +2686,6 @@
     "ResourceGroupName": "Nombre del grupo de recursos",
     "ResourceGroupNameNotMatch": "El nombre del grupo de recursos no coincide.",
     "ResourceGroupNameRequired": "El nombre del grupo de recursos es obligatorio.",
-    "ResourceGroupNotFound": "No se encontró el grupo de recursos.",
     "ResourceGroups": "Grupos de recursos",
     "RetriesToSkip": "veces",
     "RetriesToSkipDesc": "Reescribe a omitir la sesión pendiente",

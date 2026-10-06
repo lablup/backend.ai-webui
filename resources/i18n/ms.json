@@ -2686,7 +2686,6 @@
     "ResourceGroupName": "ResourceGroupName",
     "ResourceGroupNameNotMatch": "Nama kumpulan sumber tidak sepadan!",
     "ResourceGroupNameRequired": "Nama kumpulan sumber diperlukan.",
-    "ResourceGroupNotFound": "Kumpulan sumber tidak ditemui.",
     "ResourceGroups": "Kumpulan Sumber",
     "RetriesToSkip": "Masa",
     "RetriesToSkipDesc": "Mengambil semula untuk melangkau sesi yang belum selesai",

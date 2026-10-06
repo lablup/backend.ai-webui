@@ -2686,7 +2686,6 @@
     "ResourceGroupName": "ResourceGroupName",
     "ResourceGroupNameNotMatch": "Το όνομα της ομάδας πόρων δεν ταιριάζει!",
     "ResourceGroupNameRequired": "Απαιτείται όνομα ομάδας πόρων.",
-    "ResourceGroupNotFound": "Η ομάδα πόρων δεν βρέθηκε.",
     "ResourceGroups": "Ομάδες πόρων",
     "RetriesToSkip": "φορές",
     "RetriesToSkipDesc": "Επαναλαμβάνει την εκκρεμότητα",

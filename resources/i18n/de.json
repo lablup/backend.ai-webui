@@ -2688,7 +2688,6 @@
     "ResourceGroupName": "Ressourcengruppenname",
     "ResourceGroupNameNotMatch": "Name der Ressourcengruppe stimmt nicht überein!",
     "ResourceGroupNameRequired": "Der Name der Ressourcengruppe ist erforderlich.",
-    "ResourceGroupNotFound": "Ressourcengruppe nicht gefunden.",
     "ResourceGroups": "Ressourcengruppen",
     "RetriesToSkip": "Zeiten",
     "RetriesToSkipDesc": "Wiederholung zum Überspringen der ausstehenden Sitzung",

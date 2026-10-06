@@ -2688,7 +2688,6 @@
     "ResourceGroupName": "ResourceGroupName",
     "ResourceGroupNameNotMatch": "リソースグループ名が一致しません！",
     "ResourceGroupNameRequired": "リソースグループ名が必要です。",
-    "ResourceGroupNotFound": "リソースグループが見つかりません。",
     "ResourceGroups": "リソースグループ",
     "RetriesToSkip": "回",
     "RetriesToSkipDesc": "保留中のセッションをスキップするために再試行します",

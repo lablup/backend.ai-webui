@@ -2686,7 +2686,6 @@
     "ResourceGroupName": "KaynakGrubuAdı",
     "ResourceGroupNameNotMatch": "Kaynak grubu adı eşleşmiyor!",
     "ResourceGroupNameRequired": "Kaynak grubu adı gerekli.",
-    "ResourceGroupNotFound": "Kaynak grubu bulunamadı.",
     "ResourceGroups": "Kaynak Grupları",
     "RetriesToSkip": "kez",
     "RetriesToSkipDesc": "Bekleyen oturumu atlamak için yeniden deneme",

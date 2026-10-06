@@ -133,7 +133,6 @@
         "resourceGroup.ResourceGroupDeleted",
         "resourceGroup.ResourceGroupInfo",
         "resourceGroup.ResourceGroupModified",
-        "resourceGroup.ResourceGroupNotFound",
         "resourceGroup.RetriesToSkip",
         "resourceGroup.RetriesToSkipDesc",
         "resourceGroup.Scheduler",
