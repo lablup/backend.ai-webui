@@ -158,7 +158,7 @@ export const docs = {
     {
       name: 'okText',
       type: 'ReactNode',
-      description: 'Label of the OK button. Falls back to OK.',
+      description: 'Label of the OK button. Falls back to the translated general.button.Confirm label.',
     },
     {
       name: 'cancelText',

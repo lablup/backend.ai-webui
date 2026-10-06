@@ -514,7 +514,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
 
   // ------------------------------------------------------------------ footer
   const isDanger = okType === 'danger' || okButtonProps?.danger === true;
-  const okLabel = toText(okText) || 'OK';
+  const okLabel = toText(okText) || t('general.button.Confirm');
   const cancelLabel = toText(cancelText) || t('general.button.Cancel');
 
   // NOTE: these are *elements*, not components. Rendering the generated footer

@@ -105,3 +105,12 @@ describe('BAIModal dismissal', () => {
     expect(onFirstCancel).not.toHaveBeenCalled();
   });
 });
+
+describe('BAIModal default ok label', () => {
+  it('uses the translated Confirm label when okText is omitted', () => {
+    renderModal({});
+    expect(
+      screen.getByRole('button', { name: 'general.button.Confirm' }),
+    ).toBeInTheDocument();
+  });
+});
