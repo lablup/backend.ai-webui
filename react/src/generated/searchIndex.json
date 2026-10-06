@@ -65,6 +65,8 @@
         "credential.UserID",
         "dialog.ErrorOccurred",
         "dialog.error.Error",
+        "entityLabel.EditLabels",
+        "entityLabel.Labels",
         "error.FailedToLoadTableData",
         "error.InvalidUrl",
         "general.AccessKey",
