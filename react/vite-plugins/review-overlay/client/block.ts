@@ -188,6 +188,9 @@ export function envFooterParts(env: ReviewEnv): string[] {
   return parts;
 }
 
+/** A footer line as `envFooterText` writes it — a block closer for the parser. */
+export const ENV_FOOTER_RE = /^\s*<sub>[^<\n]*<\/sub>\s*$/;
+
 /** The footer as markdown; `null` when every field is blank. */
 export function envFooterText(env: ReviewEnv | undefined): string | null {
   const parts = env ? envFooterParts(env) : [];
