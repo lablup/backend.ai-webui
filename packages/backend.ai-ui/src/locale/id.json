@@ -146,6 +146,28 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Jumlah"
   },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "Tambah label",
+    "AddLabelsToItems": "Tambahkan label ke {{count}} item",
+    "BulkDescription": "Label ini ditambahkan ke setiap item yang dipilih. Item yang sudah memiliki kunci tersebut mendapat nilai baru; label lainnya tetap.",
+    "EditLabels": "Edit label",
+    "Error": "Kesalahan",
+    "Key": "Kunci",
+    "KeyMustBeUnique": "Setiap kunci hanya dapat digunakan sekali.",
+    "KeyRequired": "Masukkan kunci.",
+    "Label": "Label",
+    "LabelsSaved": "Label disimpan.",
+    "RemoveLabel": "Hapus label",
+    "Save": "Simpan",
+    "SomeLabelsFailed": "{{count}} perubahan label gagal",
+    "Target": "Target",
+    "TooLong": "Maksimal {{max}} karakter.",
+    "Value": "Nilai",
+    "ValueRequired": "Masukkan nilai."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "Label"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Penyegaran otomatis",
     "EveryHours": "{{count}}h",

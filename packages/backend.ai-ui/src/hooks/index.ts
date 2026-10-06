@@ -106,6 +106,11 @@ export { default as useViewer } from './useViewer';
 export type { ErrorResponse } from './useErrorMessageResolver';
 export type { ESMClientErrorResponse } from './useErrorMessageResolver';
 export { default as useGetAvailableFolderName } from './useGetAvailableFolderName';
+export {
+  default as useLabelableEntityTypes,
+  useIsLabelableEntityType,
+} from './useLabelableEntityTypes';
+export type { BAILabelableEntityType } from './useLabelableEntityTypes';
 export { useInterval, useIntervalValue } from './useIntervalValue';
 export {
   default as useBAILogger,

@@ -146,6 +146,28 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Menge"
   },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "Label hinzufügen",
+    "AddLabelsToItems": "Labels zu {{count}} Elementen hinzufügen",
+    "BulkDescription": "Diese Labels werden allen ausgewählten Elementen hinzugefügt. Hat ein Element den Schlüssel bereits, erhält er den neuen Wert; andere Labels bleiben erhalten.",
+    "EditLabels": "Labels bearbeiten",
+    "Error": "Fehler",
+    "Key": "Schlüssel",
+    "KeyMustBeUnique": "Jeder Schlüssel darf nur einmal vorkommen.",
+    "KeyRequired": "Geben Sie einen Schlüssel ein.",
+    "Label": "Label",
+    "LabelsSaved": "Labels gespeichert.",
+    "RemoveLabel": "Label entfernen",
+    "Save": "Speichern",
+    "SomeLabelsFailed": "{{count}} Labeländerungen fehlgeschlagen",
+    "Target": "Ziel",
+    "TooLong": "Höchstens {{max}} Zeichen.",
+    "Value": "Wert",
+    "ValueRequired": "Geben Sie einen Wert ein."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "Label"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Automatische Aktualisierung",
     "EveryHours": "{{count}}h",

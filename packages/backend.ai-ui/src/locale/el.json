@@ -146,6 +146,28 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Ποσότητα"
   },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "Προσθήκη ετικέτας",
+    "AddLabelsToItems": "Προσθήκη ετικετών σε {{count}} στοιχεία",
+    "BulkDescription": "Οι ετικέτες προστίθενται σε κάθε επιλεγμένο στοιχείο. Αν ένα στοιχείο έχει ήδη το κλειδί, παίρνει τη νέα τιμή· οι άλλες ετικέτες του παραμένουν.",
+    "EditLabels": "Επεξεργασία ετικετών",
+    "Error": "Σφάλμα",
+    "Key": "Κλειδί",
+    "KeyMustBeUnique": "Κάθε κλειδί μπορεί να χρησιμοποιηθεί μόνο μία φορά.",
+    "KeyRequired": "Εισαγάγετε κλειδί.",
+    "Label": "Ετικέτα",
+    "LabelsSaved": "Οι ετικέτες αποθηκεύτηκαν.",
+    "RemoveLabel": "Αφαίρεση ετικέτας",
+    "Save": "Αποθήκευση",
+    "SomeLabelsFailed": "Απέτυχαν {{count}} αλλαγές ετικετών",
+    "Target": "Στόχος",
+    "TooLong": "Έως {{max}} χαρακτήρες.",
+    "Value": "Τιμή",
+    "ValueRequired": "Εισαγάγετε τιμή."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "Ετικέτα"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Αυτόματη ανανέωση",
     "EveryHours": "{{count}}ω",

@@ -146,6 +146,28 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Määrä"
   },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "Lisää tunniste",
+    "AddLabelsToItems": "Lisää tunnisteita {{count}} kohteeseen",
+    "BulkDescription": "Nämä tunnisteet lisätään kaikkiin valittuihin kohteisiin. Jos kohteella on jo sama avain, se saa uuden arvon; muut tunnisteet säilyvät.",
+    "EditLabels": "Muokkaa tunnisteita",
+    "Error": "Virhe",
+    "Key": "Avain",
+    "KeyMustBeUnique": "Kutakin avainta voi käyttää vain kerran.",
+    "KeyRequired": "Anna avain.",
+    "Label": "Tunniste",
+    "LabelsSaved": "Tunnisteet tallennettu.",
+    "RemoveLabel": "Poista tunniste",
+    "Save": "Tallenna",
+    "SomeLabelsFailed": "{{count}} tunnistemuutosta epäonnistui",
+    "Target": "Kohde",
+    "TooLong": "Enintään {{max}} merkkiä.",
+    "Value": "Arvo",
+    "ValueRequired": "Anna arvo."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "Tunniste"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Automaattinen päivitys",
     "EveryHours": "{{count}}h",
