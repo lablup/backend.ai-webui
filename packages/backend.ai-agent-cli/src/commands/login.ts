@@ -133,8 +133,11 @@ export function devWebUiOrigin(
   const resolved = tryResolveRepoContext(cwd);
   const repoRoot = resolved.ok ? realpathSync(resolved.context.repoRoot) : undefined;
   const branch = currentBranch(cwd);
-  // `FR-1234` (Jira) or `gh-1234` (GitHub-native issue), as scripts/portless-app-name.mjs reads it.
-  const issue = branch ? /(?:^|[-_/])(fr|gh)-?(\d+)/i.exec(branch) : null;
+  // `FR-1234` (Jira) first, else `gh-1234` (GitHub-native issue), as scripts/portless-app-name.mjs reads it.
+  const issue = branch
+    ? (/(?:^|[-_/])(fr)-?(\d+)/i.exec(branch) ??
+      /(?:^|[-_/])(gh)-?(\d+)/i.exec(branch))
+    : null;
   if (!issue) return `https://localhost:${port}`;
   const app = `${issue[1].toLowerCase()}-${issue[2]}`;
   return `https://${liveAppName(app, repoRoot, env) ?? app}.localhost:${port}`;

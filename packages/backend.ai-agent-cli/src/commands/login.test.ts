@@ -133,6 +133,15 @@ describe('devWebUiOrigin', () => {
     );
   });
 
+  it('prefers the Jira key when a branch names both, whichever comes first', () => {
+    expect(
+      devWebUiOrigin(repoOnBranch('fix/gh-10144-FR-1234-x'), env(portlessState([]))),
+    ).toBe('https://fr-1234.localhost:1357');
+    expect(
+      devWebUiOrigin(repoOnBranch('fix/FR-1234-gh-10144-x'), env(portlessState([]))),
+    ).toBe('https://fr-1234.localhost:1357');
+  });
+
   it('does not match a different issue that merely shares a prefix', () => {
     const cwd = repoOnBranch('FR-366');
     const state = portlessState([

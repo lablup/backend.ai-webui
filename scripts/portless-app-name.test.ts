@@ -72,8 +72,9 @@ describe('portless app name', () => {
       ['gh-10144', 'gh-10144'],
       ['jongeun/GH-10144-x', 'gh-10144'],
       ['topic/gh10144-x', 'gh-10144'],
-      // The Jira key wins when a branch somehow names both.
+      // The Jira key wins when a branch somehow names both, whichever comes first.
       ['fix/FR-1234-gh-10144-x', 'fr-1234'],
+      ['fix/gh-10144-FR-1234-x', 'fr-1234'],
     ])('derives %s -> %s', (branch, expected) => {
       expect(branchAppName(branch)).toBe(expected);
     });

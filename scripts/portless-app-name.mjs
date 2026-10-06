@@ -28,8 +28,11 @@ const MAX_TITLE_WORDS = 3;
 /** `fr` / `gh` immediately followed by digits, at a slug boundary, is an issue key. */
 const ISSUE_TOKEN = /(^|-)(fr|gh)(\d+)(?=-|$)/g;
 
-/** The issue key anywhere in a branch name (`fix/FR-1234-thing`, `fr1234`, `fix/gh-1234-thing`, …). */
-const BRANCH_ISSUE = /(?:^|[-_/])((?:fr|gh)-?\d+)/i;
+/** The Jira key anywhere in a branch name (`fix/FR-1234-thing`, `fr1234`, …). */
+const BRANCH_JIRA_ISSUE = /(?:^|[-_/])(fr-?\d+)/i;
+
+/** A GitHub-native issue (`fix/gh-1234-thing`, `gh1234`, …) — consulted only when the branch has no Jira key. */
+const BRANCH_GITHUB_ISSUE = /(?:^|[-_/])(gh-?\d+)/i;
 
 /** `fix(FR-1234):` / `fix(#1234):` / `docs:` — the conventional-commit prefix, which says nothing. */
 const COMMIT_PREFIX = /^\s*\w+\s*(\([^)]*\))?\s*:\s*/;
@@ -69,7 +72,8 @@ export function sanitizeAppName(raw) {
 
 /** The issue key (`FR-####` or `gh-####`) in a branch name, as an app name, or null if it has none. */
 export function branchAppName(branch) {
-  const match = (branch || '').match(BRANCH_ISSUE);
+  const name = branch || '';
+  const match = name.match(BRANCH_JIRA_ISSUE) || name.match(BRANCH_GITHUB_ISSUE);
   return match ? sanitizeAppName(match[1]) : null;
 }
 
