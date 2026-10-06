@@ -2686,7 +2686,6 @@
     "ResourceGroupName": "ResourceGroupName",
     "ResourceGroupNameNotMatch": "O nome do grupo de recursos não corresponde!",
     "ResourceGroupNameRequired": "O nome do grupo de recursos é obrigatório.",
-    "ResourceGroupNotFound": "Grupo de recursos não encontrado.",
     "ResourceGroups": "Grupos de Recursos",
     "RetriesToSkip": "Tempos",
     "RetriesToSkipDesc": "EXPETIRAS PARA SUPER",
