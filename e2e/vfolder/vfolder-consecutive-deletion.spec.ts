@@ -141,17 +141,12 @@ test.describe(
         await row.getByRole('checkbox').check();
       }
 
-      // The bulk actions render next to the selection label, above the table.
-      const selectionBar = page
-        .locator('div')
-        .filter({ has: page.getByText('2 selected', { exact: true }) })
-        .filter({
-          has: page.getByRole('button', { name: 'Delete', exact: true }),
-        })
-        .last();
-      await expect(selectionBar).toBeVisible();
-      await selectionBar
+      // The bulk Delete renders next to the selection label, outside the
+      // table; each row's own Delete action sits inside it.
+      await expect(page.getByText('2 selected', { exact: true })).toBeVisible();
+      await page
         .getByRole('button', { name: 'Delete', exact: true })
+        .and(page.locator('button:not(table button)'))
         .click();
 
       const dialog = page.getByRole('dialog', { name: 'Delete Forever?' });
@@ -173,12 +168,12 @@ test.describe(
       await expect(dialog).toBeHidden({ timeout: 15000 });
 
       // The admin Trash tab keeps purged rows as DELETE_ONGOING /
-      // DELETE_COMPLETE, so a row leaving DELETE_PENDING (or the list) is the
-      // signal that it was deleted forever.
+      // DELETE_COMPLETE, so a row leaving DELETE_PENDING (or the list)
+      // without hitting DELETE_ERROR is the signal it was deleted forever.
       await retryWithTableRefresh(page, async () => {
         for (const row of rows) {
           await expect(
-            row.getByRole('cell', { name: 'DELETE_PENDING', exact: true }),
+            row.getByRole('cell', { name: /^DELETE_(PENDING|ERROR)$/ }),
           ).toBeHidden({ timeout: 2500 });
         }
       });

@@ -1350,12 +1350,12 @@ These are core user workflows that affect the largest number of users.
 
 ### Priority 2: Important - Admin Features, Data Integrity
 
-| #   | Page/Feature                                         | Reason                                                                                                             | Estimated Complexity |
-| --- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | -------------------- |
-| 3   | **User Settings Persistence** (`/usersettings`)      | 2 tabs, 4 modals. Language, auto-logout, SSH keys, shell scripts must persist correctly.                           | Low                  |
-| 4   | **VFolder - Filtering, Sorting, Bulk ops** (`/data`) | Data page has good CRUD but table interactions and bulk modals (DeleteVFolderModal, RestoreVFolderModal) untested. | Low                  |
-| 5   | **Credential - Keypairs Tab** (`/credential`)        | API access keys (3 uncovered features). Security-critical.                                                         | Medium               |
-| 6   | **Reservoir - Artifact Management** (`/reservoir`)   | 18 features across main and detail pages. HuggingFace import, revision management, bulk operations.                | High                 |
+| #   | Page/Feature                                         | Reason                                                                                              | Estimated Complexity |
+| --- | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------- | -------------------- |
+| 3   | **User Settings Persistence** (`/usersettings`)      | 2 tabs, 4 modals. Language, auto-logout, SSH keys, shell scripts must persist correctly.            | Low                  |
+| 4   | **VFolder - Filtering, Sorting, Bulk ops** (`/data`) | Data page has good CRUD but filtering, sorting and the bulk RestoreVFolderModal are untested.       | Low                  |
+| 5   | **Credential - Keypairs Tab** (`/credential`)        | API access keys (3 uncovered features). Security-critical.                                          | Medium               |
+| 6   | **Reservoir - Artifact Management** (`/reservoir`)   | 18 features across main and detail pages. HuggingFace import, revision management, bulk operations. | High                 |
 
 ### Priority 3: Nice to Have - Edge Cases, Admin Tools
 

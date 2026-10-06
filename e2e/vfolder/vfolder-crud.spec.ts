@@ -291,17 +291,12 @@ test.describe(
       await ownRow.getByRole('checkbox').check();
       await sharedRow.getByRole('checkbox').check();
 
-      // The bulk action renders next to the selection label, above the table.
-      const selectionBar = page
-        .locator('div')
-        .filter({ has: page.getByText('2 selected', { exact: true }) })
-        .filter({
-          has: page.getByRole('button', { name: 'Move to trash bin' }),
-        })
-        .last();
-      await expect(selectionBar).toBeVisible();
-      await selectionBar
+      // The bulk action renders next to the selection label, outside the
+      // table; each row's own Move to trash bin action sits inside it.
+      await expect(page.getByText('2 selected', { exact: true })).toBeVisible();
+      await page
         .getByRole('button', { name: 'Move to trash bin' })
+        .and(page.locator('button:not(table button)'))
         .click();
 
       const dialog = page.getByRole('dialog', { name: 'Move to trash bin' });
