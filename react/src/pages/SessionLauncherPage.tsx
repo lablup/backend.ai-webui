@@ -300,15 +300,8 @@ const SessionLauncherPage = () => {
     throw new Error('Project ID is required for ResourceAllocationFormItems');
   }
 
-  const {
-    startSession,
-    defaultFormValues: startSessionDefaultFormValues,
-    upsertSessionNotification,
-  } = useStartSession();
-  // The launcher picks its image in the image selector, not from `defaultSessionEnvironment`.
-  const defaultFormValues = _.omit(startSessionDefaultFormValues, [
-    'environments',
-  ]);
+  const { startSession, defaultFormValues, upsertSessionNotification } =
+    useStartSession();
   const StepParam = parseAsInteger.withDefault(0);
   // Migrate at the parser so every reader of `formValuesFromQueryParams` sees
   // `vfolderMounts`, never the legacy mount fields.
