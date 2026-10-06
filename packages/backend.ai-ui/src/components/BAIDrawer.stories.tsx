@@ -70,6 +70,35 @@ export const Default: Story = {
   },
 };
 
+export const WithFooter: Story = {
+  render: (args) => {
+    const [open, setOpen] = useState(false);
+    return (
+      <>
+        <BAIButton onClick={() => setOpen(true)}>Open drawer</BAIButton>
+        <BAIDrawer
+          {...args}
+          open={open}
+          onClose={() => setOpen(false)}
+          footer={
+            <BAIFlex justify="end" gap="sm">
+              <BAIButton onClick={() => setOpen(false)}>Cancel</BAIButton>
+              <BAIButton type="primary" onClick={() => setOpen(false)}>
+                Save
+              </BAIButton>
+            </BAIFlex>
+          }
+        >
+          <OwnerSelect />
+        </BAIDrawer>
+      </>
+    );
+  },
+  args: {
+    title: 'Edit session',
+  },
+};
+
 export const Nested: Story = {
   render: () => {
     const [open, setOpen] = useState(false);

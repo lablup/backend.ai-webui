@@ -7,11 +7,13 @@ import './BAIDrawer.css';
 import BAIDrawerPortal from './BAIDrawerPortal';
 import { Heading } from '@lablup/ui-common/Heading';
 import { IconButton } from '@lablup/ui-common/IconButton';
+import { LayoutFooter } from '@lablup/ui-common/Layout';
 import { HStack, StackItem, VStack } from '@lablup/ui-common/Stack';
 import { Drawer } from '@lablup/ui-common/lab';
 import classNames from 'classnames';
 import { X } from 'lucide-react';
 import React, {
+  type CSSProperties,
   type ReactNode,
   useEffectEvent,
   useLayoutEffect,
@@ -65,6 +67,15 @@ export interface BAIDrawerProps {
    * drawer, which makes its header the frameless window's drag handle.
    */
   headerClassName?: string;
+  /**
+   * Fixed footer below the scrolling body, divided from it. Mirrors
+   * `BAIModal`'s `footer`. Omitted when `undefined`.
+   */
+  footer?: ReactNode;
+  /** Extra class on the drawer root (the `<dialog>`). */
+  className?: string;
+  /** Inline style on the drawer root (the `<dialog>`). */
+  style?: CSSProperties;
   children?: ReactNode;
 }
 
@@ -90,6 +101,9 @@ const BAIDrawer: React.FC<BAIDrawerProps> = ({
   hasBodyPadding = true,
   bodyClassName,
   headerClassName,
+  footer,
+  className,
+  style,
   children,
 }) => {
   'use memo';
@@ -170,6 +184,11 @@ const BAIDrawer: React.FC<BAIDrawerProps> = ({
           {children}
         </div>
       </StackItem>
+      {footer !== undefined && footer !== null ? (
+        <LayoutFooter hasDivider className="bai-drawer-footer">
+          {footer}
+        </LayoutFooter>
+      ) : null}
     </VStack>
   );
 
@@ -180,6 +199,8 @@ const BAIDrawer: React.FC<BAIDrawerProps> = ({
       if (!next) onClose?.();
     },
     side,
+    className,
+    style,
     width: size,
     label: accessibleName,
     // The header above owns the close affordance, at antd's `start` placement.

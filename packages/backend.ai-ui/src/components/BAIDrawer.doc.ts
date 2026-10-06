@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The project drawer shell: a lab `Drawer` panel plus the header arrangement every detail surface in the app expects — a close button, the title, an `extra` action slot, then a scrollable padded body. lab `Drawer` has no title bar of its own, only a floating close glyph that would overlap the content, so that glyph is turned off and this header owns the single close affordance. A scrimmed drawer renders through `BAIDrawerPortal`, which keeps modal focus containment without entering the browser top layer, so modals opened from inside the drawer are not inerted; a `hasScrim={false}` drawer stays on the native non-modal overlay and leaves the page behind it interactive. The props surface is closed — it declares no pass-through, so anything not listed here has no effect.',
+      'The project drawer shell: a lab `Drawer` panel plus the header arrangement every detail surface in the app expects — a close button, the title, an `extra` action slot, then a scrollable padded body. lab `Drawer` has no title bar of its own, only a floating close glyph that would overlap the content, so that glyph is turned off and this header owns the single close affordance. A scrimmed drawer renders through `BAIDrawerPortal`, which keeps modal focus containment without entering the browser top layer, so modals opened from inside the drawer are not inerted; a `hasScrim={false}` drawer stays on the native non-modal overlay and leaves the page behind it interactive. The props surface is closed apart from `className` and `style`, which reach the drawer root; anything else not listed here has no effect.',
     bestPractices: [
       {
         guidance: true,
@@ -129,9 +129,26 @@ export const docs = {
         'Extra class on the header row. Used by the Electron notification drawer, which makes its header the frameless window drag handle.',
     },
     {
+      name: 'footer',
+      type: 'ReactNode',
+      description:
+        "Fixed footer below the scrolling body, separated by a divider, like `BAIModal`'s footer. Put the primary and cancel actions of a form drawer here.",
+    },
+    {
+      name: 'className',
+      type: 'string',
+      description: 'Extra class on the drawer root (the `<dialog>` element).',
+    },
+    {
+      name: 'style',
+      type: 'CSSProperties',
+      description: 'Inline style on the drawer root (the `<dialog>` element).',
+    },
+    {
       name: 'children',
       type: 'ReactNode',
-      description: 'Body content, rendered inside the scrollable region.',
+      description:
+        'Body content, rendered inside the scrollable region. It stays mounted while the drawer is closed, so a form inside keeps its fields registered; wrap the drawer in `BAIUnmountAfterClose` to drop it once the slide-out ends.',
     },
   ],
   examples: [

@@ -70,6 +70,10 @@
     padding: 0;
   }
 
+  .bai-drawer-footer {
+    flex: 0 0 auto;
+  }
+
   /* BAIHelpDrawer's body is a single full-bleed iframe sized at `height:100%`,
      so the body box has to be a definite height rather than shrink-to-fit. */
   .bai-help-drawer-body {

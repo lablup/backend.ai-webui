@@ -81,4 +81,56 @@ describe('BAIDrawer close lifecycle', () => {
     await waitFor(() => expect(screen.queryByText('Inside')).toBeNull());
     expect(afterClose).toHaveBeenCalledTimes(1);
   });
+
+  it.each([true, false])(
+    'renders the footer after the body (hasScrim=%s)',
+    (hasScrim) => {
+      render(
+        <BAIDrawer
+          open
+          onClose={() => {}}
+          title="Details"
+          hasScrim={hasScrim}
+          footer={<button type="button">Save</button>}
+        >
+          <span>Inside</span>
+        </BAIDrawer>,
+      );
+      const save = screen.getByRole('button', { name: 'Save' });
+      const body = screen.getByText('Inside');
+      expect(
+        body.compareDocumentPosition(save) & Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy();
+      expect(save.closest('.bai-drawer-body')).toBeNull();
+    },
+  );
+
+  it('renders no footer area without a footer', () => {
+    const { baseElement } = render(
+      <BAIDrawer open onClose={() => {}} title="Details">
+        <span>Inside</span>
+      </BAIDrawer>,
+    );
+    expect(baseElement.querySelector('.bai-drawer-footer')).toBeNull();
+  });
+
+  it.each([true, false])(
+    'passes className and style to the drawer root (hasScrim=%s)',
+    (hasScrim) => {
+      render(
+        <BAIDrawer
+          open
+          onClose={() => {}}
+          title="Details"
+          hasScrim={hasScrim}
+          className="custom-drawer"
+          style={{ minWidth: 123 }}
+        >
+          <span>Inside</span>
+        </BAIDrawer>,
+      );
+      const root = document.querySelector('dialog.custom-drawer');
+      expect(root).toHaveStyle({ minWidth: '123px' });
+    },
+  );
 });
