@@ -27,11 +27,14 @@ const visit = (url: URL) => {
 };
 
 describe('act-as hand-off', () => {
+  let openedTab: { opener: unknown };
+
   beforeEach(() => {
     localStorage.clear();
     sessionStorage.clear();
     window.history.replaceState(null, '', '/');
-    vi.spyOn(window, 'open').mockReturnValue(null);
+    openedTab = { opener: window };
+    vi.spyOn(window, 'open').mockReturnValue(openedTab as unknown as Window);
   });
 
   afterEach(() => {
@@ -45,7 +48,13 @@ describe('act-as hand-off', () => {
     expect(url.pathname).toBe('/');
     expect(url.searchParams.get(ACT_AS_HANDOFF_PARAM)).toBeTruthy();
     expect(url.href).not.toContain(TARGET.email);
-    expect(vi.mocked(window.open).mock.calls[0][2]).toBe('noopener');
+    expect(openedTab.opener).toBeNull();
+  });
+
+  it('reports a blocked popup and drops its hand-off', () => {
+    vi.mocked(window.open).mockReturnValue(null);
+    expect(openActAsTab(TARGET)).toBe(false);
+    expect(localStorage.length).toBe(0);
   });
 
   it('moves the hand-off into sessionStorage once and strips the nonce', () => {

@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-
 /**
  * Super-admin "use as this user" (X-BackendAI-Act-As, BA-6781).
  *
@@ -11,6 +10,7 @@
  * keeps the super-admin view. The opener hands the target over through a
  * one-time nonce in `localStorage`, so a crafted link alone cannot turn it on.
  */
+import { generateUUID } from './uuid';
 
 export interface ActAsTarget {
   userId: string;
@@ -71,14 +71,18 @@ export const getActAsTarget = (): ActAsTarget | null => {
   }
 };
 
-/** Opens a new tab that acts as `target`. Returns false if storage is unavailable. */
+/**
+ * Opens a new tab that acts as `target`. Returns false if storage is
+ * unavailable or the browser blocked the tab.
+ */
 export const openActAsTab = (target: ActAsTarget): boolean => {
   const now = Date.now();
   sweepExpiredHandoffs(now);
-  const nonce = crypto.randomUUID();
+  const nonce = generateUUID();
+  const key = HANDOFF_KEY_PREFIX + nonce;
   try {
     localStorage.setItem(
-      HANDOFF_KEY_PREFIX + nonce,
+      key,
       JSON.stringify({ target, createdAt: now } satisfies Handoff),
     );
   } catch {
@@ -86,7 +90,18 @@ export const openActAsTab = (target: ActAsTarget): boolean => {
   }
   const url = new URL('/', window.location.href);
   url.searchParams.set(ACT_AS_HANDOFF_PARAM, nonce);
-  window.open(url.href, '_blank', 'noopener');
+  // Not `noopener`: with it `window.open` always returns null, so a blocked
+  // popup would be indistinguishable from success.
+  const tab = window.open(url.href, '_blank');
+  if (!tab) {
+    try {
+      localStorage.removeItem(key);
+    } catch {
+      // The sweep drops it once it expires.
+    }
+    return false;
+  }
+  tab.opener = null;
   return true;
 };
 
