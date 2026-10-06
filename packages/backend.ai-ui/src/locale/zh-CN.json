@@ -146,6 +146,28 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "数量"
   },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "添加标签",
+    "AddLabelsToItems": "为 {{count}} 个项目添加标签",
+    "BulkDescription": "以下标签将添加到所有选中的项目。已有相同键的项目会更新其值，其他标签保持不变。",
+    "EditLabels": "编辑标签",
+    "Error": "错误",
+    "Key": "键",
+    "KeyMustBeUnique": "每个键只能使用一次。",
+    "KeyRequired": "请输入键。",
+    "Label": "标签",
+    "LabelsSaved": "标签已保存。",
+    "RemoveLabel": "删除标签",
+    "Save": "保存",
+    "SomeLabelsFailed": "{{count}} 项标签更改失败",
+    "Target": "对象",
+    "TooLong": "最多输入 {{max}} 个字符。",
+    "Value": "值",
+    "ValueRequired": "请输入值。"
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "标签"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "自动刷新",
     "EveryHours": "{{count}}小时",

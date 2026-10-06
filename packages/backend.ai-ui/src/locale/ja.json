@@ -146,6 +146,28 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "数量"
   },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "ラベルを追加",
+    "AddLabelsToItems": "{{count}}件の項目にラベルを追加",
+    "BulkDescription": "選択したすべての項目に以下のラベルを追加します。同じキーを持つ項目は値が更新され、その他のラベルはそのまま残ります。",
+    "EditLabels": "ラベルを編集",
+    "Error": "エラー",
+    "Key": "キー",
+    "KeyMustBeUnique": "同じキーは一度しか使用できません。",
+    "KeyRequired": "キーを入力してください。",
+    "Label": "ラベル",
+    "LabelsSaved": "ラベルを保存しました。",
+    "RemoveLabel": "ラベルを削除",
+    "Save": "保存",
+    "SomeLabelsFailed": "{{count}}件のラベル変更に失敗しました",
+    "Target": "対象",
+    "TooLong": "{{max}}文字以内で入力してください。",
+    "Value": "値",
+    "ValueRequired": "値を入力してください。"
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "ラベル"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "自動更新",
     "EveryHours": "{{count}}時間",

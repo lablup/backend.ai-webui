@@ -146,6 +146,28 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Miktar"
   },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "Etiket ekle",
+    "AddLabelsToItems": "{{count}} öğeye etiket ekle",
+    "BulkDescription": "Bu etiketler seçilen her öğeye eklenir. Anahtara zaten sahip olan öğe yeni değeri alır; diğer etiketleri korunur.",
+    "EditLabels": "Etiketleri düzenle",
+    "Error": "Hata",
+    "Key": "Anahtar",
+    "KeyMustBeUnique": "Her anahtar yalnızca bir kez kullanılabilir.",
+    "KeyRequired": "Bir anahtar girin.",
+    "Label": "Etiket",
+    "LabelsSaved": "Etiketler kaydedildi.",
+    "RemoveLabel": "Etiketi kaldır",
+    "Save": "Kaydet",
+    "SomeLabelsFailed": "{{count}} etiket değişikliği başarısız oldu",
+    "Target": "Hedef",
+    "TooLong": "En fazla {{max}} karakter.",
+    "Value": "Değer",
+    "ValueRequired": "Bir değer girin."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "Etiket"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Otomatik yenileme",
     "EveryHours": "{{count}}sa",

@@ -146,6 +146,28 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Ilość"
   },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "Dodaj etykietę",
+    "AddLabelsToItems": "Dodaj etykiety do {{count}} elementów",
+    "BulkDescription": "Te etykiety zostaną dodane do każdego wybranego elementu. Element, który ma już ten klucz, otrzyma nową wartość; pozostałe etykiety zostaną zachowane.",
+    "EditLabels": "Edytuj etykiety",
+    "Error": "Błąd",
+    "Key": "Klucz",
+    "KeyMustBeUnique": "Każdy klucz może wystąpić tylko raz.",
+    "KeyRequired": "Wprowadź klucz.",
+    "Label": "Etykieta",
+    "LabelsSaved": "Etykiety zapisane.",
+    "RemoveLabel": "Usuń etykietę",
+    "Save": "Zapisz",
+    "SomeLabelsFailed": "Nie powiodło się {{count}} zmian etykiet",
+    "Target": "Cel",
+    "TooLong": "Maksymalnie {{max}} znaków.",
+    "Value": "Wartość",
+    "ValueRequired": "Wprowadź wartość."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "Etykieta"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Automatyczne odświeżanie",
     "EveryHours": "{{count}}h",

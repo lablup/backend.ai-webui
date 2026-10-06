@@ -146,6 +146,28 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Хэмжээ"
   },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "Шошго нэмэх",
+    "AddLabelsToItems": "{{count}} зүйлд шошго нэмэх",
+    "BulkDescription": "Эдгээр шошгыг сонгосон бүх зүйлд нэмнэ. Ижил түлхүүртэй зүйлийн утга шинэчлэгдэж, бусад шошго хэвээр үлдэнэ.",
+    "EditLabels": "Шошго засах",
+    "Error": "Алдаа",
+    "Key": "Түлхүүр",
+    "KeyMustBeUnique": "Түлхүүр бүрийг зөвхөн нэг удаа ашиглана.",
+    "KeyRequired": "Түлхүүр оруулна уу.",
+    "Label": "Шошго",
+    "LabelsSaved": "Шошго хадгалагдлаа.",
+    "RemoveLabel": "Шошго устгах",
+    "Save": "Хадгалах",
+    "SomeLabelsFailed": "{{count}} шошгоны өөрчлөлт амжилтгүй",
+    "Target": "Зорилт",
+    "TooLong": "Хамгийн ихдээ {{max}} тэмдэгт.",
+    "Value": "Утга",
+    "ValueRequired": "Утга оруулна уу."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "Шошго"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Автоматаар сэргээх",
     "EveryHours": "{{count}}ц",

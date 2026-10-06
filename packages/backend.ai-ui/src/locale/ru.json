@@ -146,6 +146,28 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Количество"
   },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "Добавить метку",
+    "AddLabelsToItems": "Добавить метки к {{count}} элементам",
+    "BulkDescription": "Эти метки будут добавлены ко всем выбранным элементам. Если у элемента уже есть такой ключ, его значение заменится; остальные метки сохранятся.",
+    "EditLabels": "Изменить метки",
+    "Error": "Ошибка",
+    "Key": "Ключ",
+    "KeyMustBeUnique": "Каждый ключ можно использовать только один раз.",
+    "KeyRequired": "Введите ключ.",
+    "Label": "Метка",
+    "LabelsSaved": "Метки сохранены.",
+    "RemoveLabel": "Удалить метку",
+    "Save": "Сохранить",
+    "SomeLabelsFailed": "Не удалось применить изменений меток: {{count}}",
+    "Target": "Объект",
+    "TooLong": "Не более {{max}} символов.",
+    "Value": "Значение",
+    "ValueRequired": "Введите значение."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "Метка"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Автообновление",
     "EveryHours": "{{count}}ч",

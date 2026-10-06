@@ -146,6 +146,28 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "수량"
   },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "레이블 추가",
+    "AddLabelsToItems": "{{count}}개 항목에 레이블 추가",
+    "BulkDescription": "선택한 모든 항목에 아래 레이블을 추가합니다. 이미 같은 키가 있는 항목은 값이 바뀌고, 다른 레이블은 그대로 유지됩니다.",
+    "EditLabels": "레이블 편집",
+    "Error": "오류",
+    "Key": "키",
+    "KeyMustBeUnique": "같은 키는 한 번만 사용할 수 있습니다.",
+    "KeyRequired": "키를 입력하세요.",
+    "Label": "레이블",
+    "LabelsSaved": "레이블을 저장했습니다.",
+    "RemoveLabel": "레이블 삭제",
+    "Save": "저장",
+    "SomeLabelsFailed": "레이블 변경 {{count}}건 실패",
+    "Target": "대상",
+    "TooLong": "{{max}}자 이하로 입력하세요.",
+    "Value": "값",
+    "ValueRequired": "값을 입력하세요."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "레이블"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "자동 새로고침",
     "EveryHours": "{{count}}시간",
