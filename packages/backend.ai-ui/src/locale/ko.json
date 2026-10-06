@@ -571,6 +571,12 @@
     "MultiNodeShort": "다중",
     "SingleNodeShort": "단일"
   },
+  "comp:BAISessionTypeToken": {
+    "Batch": "배치",
+    "Inference": "추론",
+    "Interactive": "인터랙티브",
+    "System": "업로드"
+  },
   "comp:BAIStatistic": {
     "Unlimited": "제한없음"
   },

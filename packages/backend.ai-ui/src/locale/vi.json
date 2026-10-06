@@ -571,6 +571,12 @@
     "MultiNodeShort": "Đa",
     "SingleNodeShort": "Đơn"
   },
+  "comp:BAISessionTypeToken": {
+    "Batch": "Hàng loạt",
+    "Inference": "Suy luận",
+    "Interactive": "Tương tác",
+    "System": "Tải lên"
+  },
   "comp:BAIStatistic": {
     "Unlimited": "Không giới hạn"
   },

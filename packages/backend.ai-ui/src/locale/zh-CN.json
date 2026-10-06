@@ -571,6 +571,12 @@
     "MultiNodeShort": "多",
     "SingleNodeShort": "单节点"
   },
+  "comp:BAISessionTypeToken": {
+    "Batch": "批处理",
+    "Inference": "推理",
+    "Interactive": "交互式",
+    "System": "上传"
+  },
   "comp:BAIStatistic": {
     "Unlimited": "无限"
   },

@@ -3098,6 +3098,7 @@
       "ImageDoesNotProvideModelPath": "Säiliön kuva ei anna mallipolkua. Se on muutettava.",
       "ImageFilter": "Kuvasuodatin",
       "InferenceMode": "Päättely",
+      "InferenceModeConfig": "Päättelytilan konfigurointi",
       "InfiniteTime": "Rajoittamaton",
       "InsufficientAllocationOfResourcesWarning": "Allokoitavat resurssit jäävät alle valitussa kuvassa vaaditun vähimmäisresurssin.",
       "InteractiveMode": "Interaktiivinen",

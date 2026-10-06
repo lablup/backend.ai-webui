@@ -571,6 +571,12 @@
     "MultiNodeShort": "Çok",
     "SingleNodeShort": "Bekar"
   },
+  "comp:BAISessionTypeToken": {
+    "Batch": "Toplu İş",
+    "Inference": "Çıkarım",
+    "Interactive": "Etkileşimli",
+    "System": "Yükleme"
+  },
   "comp:BAIStatistic": {
     "Unlimited": "Sınırsız"
   },

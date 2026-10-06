@@ -3101,6 +3101,7 @@
       "ImageDoesNotProvideModelPath": "L'image du conteneur ne fournit pas le chemin d'accès au modèle. Il doit être modifié.",
       "ImageFilter": "Filtre d'images",
       "InferenceMode": "Inférence",
+      "InferenceModeConfig": "Configuration du mode inférence",
       "InfiniteTime": "Infini",
       "InsufficientAllocationOfResourcesWarning": "Les ressources allouables sont inférieures à la ressource minimale requise dans l'image sélectionnée.",
       "InteractiveMode": "Interactif",

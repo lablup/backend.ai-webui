@@ -571,6 +571,12 @@
     "MultiNodeShort": "Мульти",
     "SingleNodeShort": "Одинокий"
   },
+  "comp:BAISessionTypeToken": {
+    "Batch": "Пакетный",
+    "Inference": "Инференс",
+    "Interactive": "Интерактивный",
+    "System": "Загрузка"
+  },
   "comp:BAIStatistic": {
     "Unlimited": "Неограниченный"
   },

@@ -4841,6 +4841,7 @@
         "session.launcher.HPCOptimization",
         "session.launcher.HomeDirectoryDeletionDialog",
         "session.launcher.ImageFilter",
+        "session.launcher.InferenceModeConfig",
         "session.launcher.InsufficientAllocationOfResourcesWarning",
         "session.launcher.InteractiveMode",
         "session.launcher.InteractiveModeDesc",
