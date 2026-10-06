@@ -146,6 +146,9 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Хэмжээ"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "Шошго нэмэх"
+  },
   "comp:BAIEntityLabelSettingModal": {
     "AddLabel": "Шошго нэмэх",
     "AddLabelsToItems": "{{count}} зүйлд шошго нэмэх",

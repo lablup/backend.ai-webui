@@ -146,6 +146,9 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "数量"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "ラベルを追加"
+  },
   "comp:BAIEntityLabelSettingModal": {
     "AddLabel": "ラベルを追加",
     "AddLabelsToItems": "{{count}}件の項目にラベルを追加",

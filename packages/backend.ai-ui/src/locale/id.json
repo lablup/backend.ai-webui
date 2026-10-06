@@ -146,6 +146,9 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Jumlah"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "Tambah label"
+  },
   "comp:BAIEntityLabelSettingModal": {
     "AddLabel": "Tambah label",
     "AddLabelsToItems": "Tambahkan label ke {{count}} item",

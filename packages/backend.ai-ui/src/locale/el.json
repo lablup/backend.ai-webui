@@ -146,6 +146,9 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Ποσότητα"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "Προσθήκη ετικετών"
+  },
   "comp:BAIEntityLabelSettingModal": {
     "AddLabel": "Προσθήκη ετικέτας",
     "AddLabelsToItems": "Προσθήκη ετικετών σε {{count}} στοιχεία",

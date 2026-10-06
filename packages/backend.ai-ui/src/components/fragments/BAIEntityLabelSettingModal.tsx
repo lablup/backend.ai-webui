@@ -33,7 +33,9 @@ export interface BAIEntityLabelSettingModalProps extends Omit<
 > {
   entityType: BAILabelableEntityType;
   targets: ReadonlyArray<BAIEntityLabelSettingModalTarget>;
-  /** The labels the single target carries now. Ignored with several targets. */
+  /** `edit` replaces one target's labels; `add` puts labels on every target. */
+  mode?: 'edit' | 'add';
+  /** The labels the target carries now, for `edit`. */
   entityLabelsFrgmt?: BAIEntityLabelSettingModalFragment$key | null;
   /** `success` is true when any label may have changed. */
   onRequestClose: (success: boolean) => void;
@@ -42,6 +44,55 @@ export interface BAIEntityLabelSettingModalProps extends Omit<
 interface LabelFormValues {
   labels: Array<{ key?: string; value?: string } | undefined>;
 }
+
+export type EntityLabelChange = {
+  target: BAIEntityLabelSettingModalTarget;
+  key: string;
+  value: string;
+} & ({ kind: 'upsert' } | { kind: 'purge'; labelId: string });
+
+/**
+ * The requests a save sends. `edit` skips unchanged keys and purges removed ones;
+ * `add` upserts every row on every target and purges nothing.
+ */
+export const planEntityLabelChanges = ({
+  mode,
+  targets,
+  currentLabels,
+  rows,
+}: {
+  mode: 'edit' | 'add';
+  targets: ReadonlyArray<BAIEntityLabelSettingModalTarget>;
+  currentLabels: ReadonlyArray<{ fieldId: string; key: string; value: string }>;
+  rows: ReadonlyArray<{ key: string; value: string }>;
+}): EntityLabelChange[] => {
+  if (mode === 'add') {
+    return targets.flatMap((target) =>
+      rows.map((row) => ({ kind: 'upsert' as const, target, ...row })),
+    );
+  }
+  const target = targets[0];
+  if (!target) return [];
+  return [
+    ...rows
+      .filter(
+        (row) =>
+          !currentLabels.some(
+            (label) => label.key === row.key && label.value === row.value,
+          ),
+      )
+      .map((row) => ({ kind: 'upsert' as const, target, ...row })),
+    ...currentLabels
+      .filter((label) => !rows.some((row) => row.key === label.key))
+      .map((label) => ({
+        kind: 'purge' as const,
+        target,
+        key: label.key,
+        value: label.value,
+        labelId: label.fieldId,
+      })),
+  ];
+};
 
 interface LabelFailure {
   key: string;
@@ -53,6 +104,7 @@ interface LabelFailure {
 const BAIEntityLabelSettingModalContent = ({
   entityType,
   targets,
+  mode = 'edit',
   entityLabelsFrgmt,
   onRequestClose,
   ...modalProps
@@ -64,7 +116,7 @@ const BAIEntityLabelSettingModalContent = ({
   const [isSaving, setIsSaving] = useState(false);
   const [failures, setFailures] = useState<LabelFailure[]>([]);
 
-  const isBulk = targets.length > 1;
+  const isBulk = mode === 'add';
 
   const entityLabels = useFragment(
     graphql`
@@ -130,39 +182,21 @@ const BAIEntityLabelSettingModalContent = ({
     });
 
   const save = async (values: LabelFormValues) => {
-    const rows = values.labels.flatMap((row) =>
-      row?.key ? [{ key: row.key, value: row.value ?? '' }] : [],
-    );
-    const tasks: Array<{
-      target: BAIEntityLabelSettingModalTarget;
-      label: string;
-      run: () => Promise<void>;
-    }> = [];
-    for (const target of targets) {
-      for (const row of rows) {
-        const unchanged = currentLabels.some(
-          (label) => label.key === row.key && label.value === row.value,
-        );
-        if (isBulk || !unchanged) {
-          tasks.push({
-            target,
-            label: formatEntityLabel(row),
-            run: () => upsert(target.entityId, row.key, row.value),
-          });
-        }
-      }
-    }
-    if (!isBulk) {
-      for (const label of currentLabels) {
-        if (!rows.some((row) => row.key === label.key)) {
-          tasks.push({
-            target: targets[0],
-            label: formatEntityLabel(label),
-            run: () => purge(label.fieldId),
-          });
-        }
-      }
-    }
+    const tasks = planEntityLabelChanges({
+      mode,
+      targets,
+      currentLabels,
+      rows: values.labels.flatMap((row) =>
+        row?.key ? [{ key: row.key, value: row.value ?? '' }] : [],
+      ),
+    }).map((change) => ({
+      target: change.target,
+      label: formatEntityLabel(change),
+      run: () =>
+        change.kind === 'upsert'
+          ? upsert(change.target.entityId, change.key, change.value)
+          : purge(change.labelId),
+    }));
     if (tasks.length === 0) {
       onRequestClose(false);
       return;

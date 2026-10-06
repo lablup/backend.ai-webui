@@ -146,6 +146,9 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Số lượng"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "Thêm nhãn"
+  },
   "comp:BAIEntityLabelSettingModal": {
     "AddLabel": "Thêm nhãn",
     "AddLabelsToItems": "Thêm nhãn cho {{count}} mục",

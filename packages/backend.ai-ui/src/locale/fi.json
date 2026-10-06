@@ -146,6 +146,9 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Määrä"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "Lisää tunnisteita"
+  },
   "comp:BAIEntityLabelSettingModal": {
     "AddLabel": "Lisää tunniste",
     "AddLabelsToItems": "Lisää tunnisteita {{count}} kohteeseen",
