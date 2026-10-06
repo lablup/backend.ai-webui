@@ -28,12 +28,12 @@ import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
 import { Token } from '@astryxdesign/core/Token';
-import { BAISkeleton } from 'backend.ai-ui';
 import {
   BAIFlex,
   BAIPropertyFilter,
   BAISelectionLabel,
   BAIResourceNumberWithIcon,
+  BAISelect,
   BAITable,
   BAIText,
   BAIBooleanToken,
@@ -173,7 +173,16 @@ const ImageList: React.FC<ImageListProps> = ({
   const projectSelect = (
     <BAIFlex gap="xs" align="center" wrap="wrap">
       <Text color="secondary">{t('general.Project')}</Text>
-      <Suspense fallback={<BAISkeleton variant="input" size="small" />}>
+      <Suspense
+        fallback={
+          <BAISelect
+            loading
+            disabled
+            placeholder={t('environment.AllProjects')}
+            style={{ minWidth: 180 }}
+          />
+        }
+      >
         <ProjectSelectForAdminPage
           data-testid="environment-project-select"
           domain={baiClient._config.domainName}
