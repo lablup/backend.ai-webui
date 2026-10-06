@@ -186,11 +186,11 @@ const ImageList: React.FC<ImageListProps> = ({
         <ProjectSelectForAdminPage
           data-testid="environment-project-select"
           domain={baiClient._config.domainName}
-          value={project?.id ?? undefined}
-          // An optional FILTER, not a required choice: clearing it puts the
-          // list back on the domain-wide default. antd routes the clear
-          // through `onChange` with no option, so an absent `projectInfo` IS
-          // the "cleared" signal.
+          // `null`, not `undefined`: ProjectSelect treats `undefined` as
+          // uncontrolled and would keep showing the cleared project.
+          value={project?.id ?? null}
+          // An optional FILTER: clearing it calls `onSelectProject` with no
+          // option, which puts the list back on the domain-wide default.
           allowClear
           placeholder={t('environment.AllProjects')}
           style={{ minWidth: 180 }}
