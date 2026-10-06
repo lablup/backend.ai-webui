@@ -38,12 +38,14 @@ import {
   // here until the PowerSearch generalization covers the object-filter DSL.
   BAICard,
   BAIGraphQLPropertyFilter,
+  BAIEntityLabelBulkEditButton,
   BAISelectionLabel,
   INITIAL_FETCH_KEY,
   filterOutEmpty,
   filterOutNullAndUndefined,
   useFetchKey,
   useToggle,
+  toLocalId,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon, RotateCcwIcon, Trash2Icon, TrashIcon } from 'lucide-react';
@@ -221,6 +223,9 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
               node @required(action: THROW) {
                 id @required(action: THROW)
                 vfolderStatus: status
+                metadata {
+                  name
+                }
                 ...VFolderNodesV2Fragment
                 ...DeleteVFolderModalV2Fragment
                 ...DeleteForeverVFolderModalV2Fragment
@@ -360,6 +365,14 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
                     count={selectedFolderList.length}
                     onClearSelection={() => setSelectedFolderList([])}
                   />
+                  <BAIEntityLabelBulkEditButton
+                    entityType="vfolder"
+                    targets={selectedFolderList.map((folder) => ({
+                      entityId: toLocalId(folder.id),
+                      name: folder.metadata?.name ?? undefined,
+                    }))}
+                    onLabelsChanged={() => updateFetchKey()}
+                  />
                   <IconButton
                     label={t('data.folders.MoveToTrash')}
                     tooltip={t('data.folders.MoveToTrash')}
@@ -469,6 +482,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
                   null,
               });
             }}
+            onLabelsChanged={() => updateFetchKey()}
             onRemoveRow={(removedId) => {
               setSelectedFolderList((prevSelected) =>
                 _.filter(prevSelected, (folder) => folder.id !== removedId),

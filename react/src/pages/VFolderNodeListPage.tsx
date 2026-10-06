@@ -36,6 +36,7 @@ import {
   BAICard,
   BAISkeleton,
   BAIGraphQLPropertyFilter,
+  BAIEntityLabelBulkEditButton,
   BAISelectionLabel,
   BAITabCountBadge,
   INITIAL_FETCH_KEY,
@@ -43,6 +44,7 @@ import {
   filterOutNullAndUndefined,
   useFetchKey,
   useToggle,
+  toLocalId,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { RotateCcwIcon, Trash2Icon, TrashIcon } from 'lucide-react';
@@ -281,6 +283,9 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               node @required(action: THROW) {
                 id @required(action: THROW)
                 vfolderStatus: status
+                metadata {
+                  name
+                }
                 ...VFolderNodesV2Fragment
                 ...DeleteVFolderModalV2Fragment
                 ...DeleteForeverVFolderModalV2Fragment
@@ -445,6 +450,14 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                       count={selectedFolderList.length}
                       onClearSelection={() => setSelectedFolderList([])}
                     />
+                    <BAIEntityLabelBulkEditButton
+                      entityType="vfolder"
+                      targets={selectedFolderList.map((folder) => ({
+                        entityId: toLocalId(folder.id),
+                        name: folder.metadata?.name ?? undefined,
+                      }))}
+                      onLabelsChanged={() => updateFetchKey()}
+                    />
                     <IconButton
                       label={t('data.folders.MoveToTrash')}
                       tooltip={t('data.folders.MoveToTrash')}
@@ -547,6 +560,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                     null,
                 });
               }}
+              onLabelsChanged={() => updateFetchKey()}
               onRemoveRow={(removedId) => {
                 setSelectedFolderList((prevSelected) =>
                   _.filter(prevSelected, (folder) => folder.id !== removedId),
