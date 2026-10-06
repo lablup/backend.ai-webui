@@ -3114,6 +3114,7 @@
       "ImageDoesNotProvideModelPath": "Контейнерийн зураг нь загварын замыг өгдөггүй. \nҮүнийг өөрчлөх хэрэгтэй.",
       "ImageFilter": "Image шүүлтүүр",
       "InferenceMode": "Дүгнэлт",
+      "InferenceModeConfig": "Дүгнэлтийн горимын тохиргоо",
       "InfiniteTime": "Хязгааргүй",
       "InsufficientAllocationOfResourcesWarning": "Хуваарилах нөөц нь сонгосон зурагт шаардагдах хамгийн бага нөөцөөс доогуур байна.",
       "InteractiveMode": "Интерактив",

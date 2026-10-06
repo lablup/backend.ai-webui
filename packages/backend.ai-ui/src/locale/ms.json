@@ -538,6 +538,12 @@
     "MultiNodeShort": "MULTI",
     "SingleNodeShort": "Bujang"
   },
+  "comp:BAISessionTypeToken": {
+    "Batch": "Kelompok",
+    "Inference": "Inferens",
+    "Interactive": "Interaktif",
+    "System": "Muat Naik"
+  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Pilih Hos Storan"
   },

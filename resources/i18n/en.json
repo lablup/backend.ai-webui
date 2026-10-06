@@ -3099,6 +3099,7 @@
       "ImageDoesNotProvideModelPath": "Container image does not provide model path. It should be modified.",
       "ImageFilter": "Image filter",
       "InferenceMode": "Inference",
+      "InferenceModeConfig": "Inference Mode Configuration",
       "InfiniteTime": "Infinite",
       "InsufficientAllocationOfResourcesWarning": "Allocatable resources falls below the minimum resource required in the selected image.",
       "InteractiveMode": "Interactive",
