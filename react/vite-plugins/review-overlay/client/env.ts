@@ -38,6 +38,21 @@ export function writeShareAccount(
   }
 }
 
+/**
+ * Another tab flipped the switch, or cleared storage (`key === null`). Same-
+ * tab writes fire no `storage` event, so this only ever hears other tabs.
+ */
+export function onShareAccountChange(
+  listener: (share: boolean) => void,
+): () => void {
+  const handle = (evt: StorageEvent) => {
+    if (evt.key !== null && evt.key !== SHARE_ACCOUNT_KEY) return;
+    listener(evt.newValue !== '0' || evt.key === null);
+  };
+  window.addEventListener('storage', handle);
+  return () => window.removeEventListener('storage', handle);
+}
+
 /** What a copy may say about where it was made: the host's answer, minus the account when the switch is off. */
 export function envForCopy(
   env: ReviewEnv | undefined,

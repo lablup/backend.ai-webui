@@ -36,7 +36,12 @@ import {
 } from './deeplink.js';
 import { createSetDock, whereItWas, type PinPlace } from './dock.js';
 import { createDraftStore, MAX_SET_PINS } from './draft.js';
-import { envForCopy, readShareAccount, writeShareAccount } from './env.js';
+import {
+  envForCopy,
+  onShareAccountChange,
+  readShareAccount,
+  writeShareAccount,
+} from './env.js';
 import { startGuidedMode, type GuidedMode } from './guided.js';
 import { pinId } from './id.js';
 import { createPicker, isEditable, isMac } from './picker.js';
@@ -1083,6 +1088,12 @@ function boot(host: OverlayHost): OverlayHandle {
       evt.preventDefault();
       toggleCards();
     });
+
+  // An opt-out made in another tab holds here too, before the next copy.
+  onShareAccountChange((share) => {
+    shareAccount = share;
+    renderDock();
+  });
 
   window.addEventListener('hashchange', () => {
     guard.reset();

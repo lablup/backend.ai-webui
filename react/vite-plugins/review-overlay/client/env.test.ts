@@ -4,11 +4,12 @@
  */
 import {
   envForCopy,
+  onShareAccountChange,
   readShareAccount,
   SHARE_ACCOUNT_KEY,
   writeShareAccount,
 } from './env.js';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 const env = {
   webui: '26.9.0',
@@ -72,5 +73,37 @@ describe('what a copy may say', () => {
   it('is nothing on a host with no app behind it', () => {
     expect(envForCopy(undefined, true)).toBeUndefined();
     expect(envForCopy(undefined, false)).toBeUndefined();
+  });
+});
+
+describe('a switch flipped in another tab', () => {
+  let heard: boolean[];
+  let stop: () => void;
+  const fromOtherTab = (key: string | null, newValue: string | null) =>
+    window.dispatchEvent(new StorageEvent('storage', { key, newValue }));
+
+  beforeEach(() => {
+    heard = [];
+    stop = onShareAccountChange((share) => heard.push(share));
+  });
+  afterEach(() => stop());
+
+  it('is heard as off, then on again', () => {
+    fromOtherTab(SHARE_ACCOUNT_KEY, '0');
+    fromOtherTab(SHARE_ACCOUNT_KEY, null);
+
+    expect(heard).toEqual([false, true]);
+  });
+
+  it('reads cleared storage as the default, on', () => {
+    fromOtherTab(null, null);
+
+    expect(heard).toEqual([true]);
+  });
+
+  it('ignores every other key', () => {
+    fromOtherTab('bai-review:dock-pos', '{}');
+
+    expect(heard).toEqual([]);
   });
 });

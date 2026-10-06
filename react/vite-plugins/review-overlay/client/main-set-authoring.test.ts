@@ -1142,6 +1142,28 @@ describe('the environment footer', () => {
     );
   });
 
+  it('stops sharing the account the moment another tab opts out', async () => {
+    window.__BAI_REVIEW__ = { env: () => env };
+    await bootOverlay();
+    stubExecCommand();
+    await pickAndCopy('create', 'The label is cut off.');
+
+    localStorage.setItem('bai-review:share-account', '0');
+    window.dispatchEvent(
+      new StorageEvent('storage', {
+        key: 'bai-review:share-account',
+        newValue: '0',
+      }),
+    );
+    const written = stubExecCommand();
+    node<HTMLButtonElement>('.setdock .copyall').click();
+
+    expect(written['text/plain']).not.toContain('reviewer@example.com');
+    expect(node('.setdock .account').getAttribute('aria-label')).toBe(
+      'Put my account in copies',
+    );
+  });
+
   it('reads the host at copy time, not at boot', async () => {
     let current: ReviewEnv | undefined;
     window.__BAI_REVIEW__ = { env: () => current };
