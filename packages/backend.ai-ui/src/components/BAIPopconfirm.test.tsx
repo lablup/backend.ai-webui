@@ -57,4 +57,24 @@ describe('BAIPopconfirm', () => {
     expect(screen.getByRole('button', { name: '취소' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '확인' })).toBeInTheDocument();
   });
+
+  it('stays open and does not throw when onConfirm rejects', async () => {
+    const onConfirm = vi.fn().mockRejectedValue(new Error('mutation failed'));
+    render(
+      <BAIPopconfirm
+        title="Deactivate?"
+        okText="Deactivate"
+        onConfirm={onConfirm}
+      >
+        <Button label="Open" />
+      </BAIPopconfirm>,
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Open' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Deactivate' }));
+    await waitFor(() => expect(onConfirm).toHaveBeenCalledTimes(1));
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Deactivate' })).toBeEnabled(),
+    );
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
 });
