@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bdaa45f29b857a237d48fa514fe178ef>>
+ * @generated SignedSource<<dd82ea98f2737cad952045ab250a7c57>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,8 +11,8 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type UserRoleV2 = "ADMIN" | "MONITOR" | "SUPERADMIN" | "USER" | "%future added value";
 export type loginSessionAuthMyUserQuery$variables = {
-  limit: number;
-  offset: number;
+  hasRecentProject: boolean;
+  recentProjectName: string;
 };
 export type loginSessionAuthMyUserQuery$data = {
   readonly myUserV2: {
@@ -20,6 +20,16 @@ export type loginSessionAuthMyUserQuery$data = {
       readonly email: string;
       readonly fullName: string | null | undefined;
     };
+    readonly defaultProject: {
+      readonly edges: ReadonlyArray<{
+        readonly node: {
+          readonly basicInfo: {
+            readonly name: string;
+          };
+          readonly id: string;
+        };
+      }>;
+    } | null | undefined;
     readonly domain: {
       readonly basicInfo: {
         readonly name: string;
@@ -31,8 +41,7 @@ export type loginSessionAuthMyUserQuery$data = {
       readonly domainName: string | null | undefined;
       readonly role: UserRoleV2 | null | undefined;
     };
-    readonly projects: {
-      readonly count: number;
+    readonly recentProject?: {
       readonly edges: ReadonlyArray<{
         readonly node: {
           readonly basicInfo: {
@@ -50,26 +59,24 @@ export type loginSessionAuthMyUserQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "limit"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "offset"
-  }
-],
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "hasRecentProject"
+},
 v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "recentProjectName"
+},
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v2 = {
+v3 = {
   "alias": null,
   "args": null,
   "concreteType": "UserV2BasicInfo",
@@ -94,7 +101,7 @@ v2 = {
   ],
   "storageKey": null
 },
-v3 = {
+v4 = {
   "alias": null,
   "args": null,
   "concreteType": "UserV2OrganizationInfo",
@@ -119,14 +126,14 @@ v3 = {
   ],
   "storageKey": null
 },
-v4 = {
+v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "entityId",
   "storageKey": null
 },
-v5 = [
+v6 = [
   {
     "alias": null,
     "args": null,
@@ -135,88 +142,141 @@ v5 = [
     "storageKey": null
   }
 ],
-v6 = {
+v7 = {
   "alias": null,
   "args": null,
   "concreteType": "DomainBasicInfo",
   "kind": "LinkedField",
   "name": "basicInfo",
   "plural": false,
-  "selections": (v5/*: any*/),
+  "selections": (v6/*: any*/),
   "storageKey": null
 },
-v7 = {
-  "alias": null,
+v8 = {
+  "equals": "GENERAL"
+},
+v9 = {
+  "kind": "Literal",
+  "name": "limit",
+  "value": 1
+},
+v10 = [
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "ProjectV2Edge",
+    "kind": "LinkedField",
+    "name": "edges",
+    "plural": true,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "ProjectV2",
+        "kind": "LinkedField",
+        "name": "node",
+        "plural": false,
+        "selections": [
+          (v2/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ProjectBasicInfo",
+            "kind": "LinkedField",
+            "name": "basicInfo",
+            "plural": false,
+            "selections": (v6/*: any*/),
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
+  }
+],
+v11 = {
+  "condition": "hasRecentProject",
+  "kind": "Condition",
+  "passingValue": true,
+  "selections": [
+    {
+      "alias": "recentProject",
+      "args": [
+        {
+          "fields": [
+            {
+              "kind": "Literal",
+              "name": "isActive",
+              "value": true
+            },
+            {
+              "fields": [
+                {
+                  "kind": "Variable",
+                  "name": "equals",
+                  "variableName": "recentProjectName"
+                }
+              ],
+              "kind": "ObjectValue",
+              "name": "name"
+            },
+            {
+              "kind": "Literal",
+              "name": "type",
+              "value": (v8/*: any*/)
+            }
+          ],
+          "kind": "ObjectValue",
+          "name": "filter"
+        },
+        (v9/*: any*/)
+      ],
+      "concreteType": "ProjectV2Connection",
+      "kind": "LinkedField",
+      "name": "projects",
+      "plural": false,
+      "selections": (v10/*: any*/),
+      "storageKey": null
+    }
+  ]
+},
+v12 = {
+  "alias": "defaultProject",
   "args": [
     {
       "kind": "Literal",
       "name": "filter",
       "value": {
-        "isActive": true
+        "isActive": true,
+        "type": (v8/*: any*/)
       }
     },
+    (v9/*: any*/),
     {
-      "kind": "Variable",
-      "name": "limit",
-      "variableName": "limit"
-    },
-    {
-      "kind": "Variable",
-      "name": "offset",
-      "variableName": "offset"
+      "kind": "Literal",
+      "name": "orderBy",
+      "value": [
+        {
+          "direction": "ASC",
+          "field": "NAME"
+        }
+      ]
     }
   ],
   "concreteType": "ProjectV2Connection",
   "kind": "LinkedField",
   "name": "projects",
   "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "count",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "ProjectV2Edge",
-      "kind": "LinkedField",
-      "name": "edges",
-      "plural": true,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "ProjectV2",
-          "kind": "LinkedField",
-          "name": "node",
-          "plural": false,
-          "selections": [
-            (v1/*: any*/),
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "ProjectBasicInfo",
-              "kind": "LinkedField",
-              "name": "basicInfo",
-              "plural": false,
-              "selections": (v5/*: any*/),
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    }
-  ],
-  "storageKey": null
+  "selections": (v10/*: any*/),
+  "storageKey": "projects(filter:{\"isActive\":true,\"type\":{\"equals\":\"GENERAL\"}},limit:1,orderBy:[{\"direction\":\"ASC\",\"field\":\"NAME\"}])"
 };
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/)
+    ],
     "kind": "Fragment",
     "metadata": null,
     "name": "loginSessionAuthMyUserQuery",
@@ -229,9 +289,9 @@ return {
         "name": "myUserV2",
         "plural": false,
         "selections": [
-          (v1/*: any*/),
           (v2/*: any*/),
           (v3/*: any*/),
+          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -240,12 +300,13 @@ return {
             "name": "domain",
             "plural": false,
             "selections": [
-              (v4/*: any*/),
-              (v6/*: any*/)
+              (v5/*: any*/),
+              (v7/*: any*/)
             ],
             "storageKey": null
           },
-          (v7/*: any*/)
+          (v11/*: any*/),
+          (v12/*: any*/)
         ],
         "storageKey": null
       }
@@ -255,7 +316,10 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v1/*: any*/),
+      (v0/*: any*/)
+    ],
     "kind": "Operation",
     "name": "loginSessionAuthMyUserQuery",
     "selections": [
@@ -267,9 +331,9 @@ return {
         "name": "myUserV2",
         "plural": false,
         "selections": [
-          (v1/*: any*/),
           (v2/*: any*/),
           (v3/*: any*/),
+          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -278,29 +342,30 @@ return {
             "name": "domain",
             "plural": false,
             "selections": [
-              (v4/*: any*/),
-              (v6/*: any*/),
-              (v1/*: any*/)
+              (v5/*: any*/),
+              (v7/*: any*/),
+              (v2/*: any*/)
             ],
             "storageKey": null
           },
-          (v7/*: any*/)
+          (v11/*: any*/),
+          (v12/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "990919f8c616b56de2ca782cf493a464",
+    "cacheID": "b5bf366d0d2179c0a7d1238e63d0196b",
     "id": null,
     "metadata": {},
     "name": "loginSessionAuthMyUserQuery",
     "operationKind": "query",
-    "text": "query loginSessionAuthMyUserQuery(\n  $limit: Int!\n  $offset: Int!\n) {\n  myUserV2 {\n    id\n    basicInfo {\n      email\n      fullName\n    }\n    organization {\n      domainName\n      role\n    }\n    domain {\n      entityId\n      basicInfo {\n        name\n      }\n      id\n    }\n    projects(filter: {isActive: true}, limit: $limit, offset: $offset) {\n      count\n      edges {\n        node {\n          id\n          basicInfo {\n            name\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query loginSessionAuthMyUserQuery(\n  $recentProjectName: String!\n  $hasRecentProject: Boolean!\n) {\n  myUserV2 {\n    id\n    basicInfo {\n      email\n      fullName\n    }\n    organization {\n      domainName\n      role\n    }\n    domain {\n      entityId\n      basicInfo {\n        name\n      }\n      id\n    }\n    recentProject: projects(filter: {isActive: true, type: {equals: GENERAL}, name: {equals: $recentProjectName}}, limit: 1) @include(if: $hasRecentProject) {\n      edges {\n        node {\n          id\n          basicInfo {\n            name\n          }\n        }\n      }\n    }\n    defaultProject: projects(filter: {isActive: true, type: {equals: GENERAL}}, orderBy: [{field: NAME, direction: ASC}], limit: 1) {\n      edges {\n        node {\n          id\n          basicInfo {\n            name\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "ecda331eff5b74e6402f2006ef4f0732";
+(node as any).hash = "1f045c010e1773e462189296d4fe9594";
 
 export default node;

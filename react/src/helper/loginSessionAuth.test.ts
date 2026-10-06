@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RelayEnvironment } from '../RelayEnvironment';
+import myUserQueryNode from '../__generated__/loginSessionAuthMyUserQuery.graphql';
 import { getDefaultLoginConfig } from './loginConfig';
 import {
   LoginProbeCancelledError,
@@ -31,13 +32,18 @@ const DOMAIN_UUID = '22222222-2222-4222-8222-222222222222';
 const PROJECT_A = '33333333-3333-4333-8333-333333333333';
 const PROJECT_B = '44444444-4444-4444-8444-444444444444';
 
-type Page = {
-  edges: Array<{ node: { id: string; basicInfo: { name: string } } }>;
-  count: number;
-};
+type Edges = Array<{ node: { id: string; basicInfo: { name: string } } }>;
+
+const edges = (nodes: Array<[string, string]>): Edges =>
+  nodes.map(([uuid, name]) => ({
+    node: { id: globalId('ProjectV2', uuid), basicInfo: { name } },
+  }));
 
 const meWith = (
-  projects: Page,
+  projects: {
+    recent?: Array<[string, string]>;
+    default?: Array<[string, string]>;
+  } = {},
   overrides: Partial<{
     role: string | null;
     domainName: string | null;
@@ -55,18 +61,9 @@ const meWith = (
       'domain' in overrides
         ? overrides.domain
         : { entityId: DOMAIN_UUID, basicInfo: { name: 'default' } },
-    projects,
+    recentProject: projects.recent ? { edges: edges(projects.recent) } : null,
+    defaultProject: { edges: edges(projects.default ?? []) },
   },
-});
-
-const singlePage = (
-  nodes: Array<[string, string]>,
-  count: number = nodes.length,
-): Page => ({
-  edges: nodes.map(([uuid, name]) => ({
-    node: { id: globalId('ProjectV2', uuid), basicInfo: { name } },
-  })),
-  count,
 });
 
 // Queues one Relay payload per page and records the variables each was asked for.
@@ -81,6 +78,17 @@ const queueResponses = (responses: Array<unknown>) => {
   return variables;
 };
 
+// Mirrors global-stores: the remembered name survives only if `groups` lists it.
+const fakeUtils = (remembered: string | null) => ({
+  _peekRecentProjectGroup: vi.fn(() => remembered),
+  _readRecentProjectGroup: vi.fn(() => {
+    const { groups, current_group } = (globalThis as any).backendaiclient;
+    return remembered && groups.includes(remembered)
+      ? remembered
+      : current_group;
+  }),
+});
+
 const makeClient = () => ({
   logout: vi.fn().mockResolvedValue(undefined),
   _config: { endpoint: 'https://api.example.com', endpointHost: 'api' },
@@ -92,7 +100,7 @@ describe('connectViaGQL', () => {
 
   beforeEach(() => {
     g.backendaioptions = { get: vi.fn(() => null), set: vi.fn() };
-    g.backendaiutils = { _readRecentProjectGroup: vi.fn(() => null) };
+    g.backendaiutils = fakeUtils(null);
     g.backendaiclient = undefined;
   });
 
@@ -102,19 +110,16 @@ describe('connectViaGQL', () => {
     delete g.backendaiclient;
   });
 
-  test('stores the user, projects, and the domain name + uuid from one myUserV2 read', async () => {
+  test('stores the user, the default project, and the domain name + uuid from one myUserV2 read', async () => {
     const variables = queueResponses([
-      meWith(
-        singlePage([
-          [PROJECT_B, 'zeta'],
-          [PROJECT_A, 'alpha'],
-        ]),
-      ),
+      meWith({ default: [[PROJECT_A, 'alpha']] }),
     ]);
 
     await connectViaGQL(makeClient(), cfg, []);
 
-    expect(variables).toEqual([{ limit: 100, offset: 0 }]);
+    expect(variables).toEqual([
+      { recentProjectName: '', hasRecentProject: false },
+    ]);
 
     expect(g.backendaiclient.email).toBe('me@example.com');
     expect(g.backendaiclient.full_name).toBe('Me');
@@ -122,11 +127,8 @@ describe('connectViaGQL', () => {
     expect(g.backendaiclient.is_admin).toBe(true);
     expect(g.backendaiclient.is_superadmin).toBe(false);
 
-    expect(g.backendaiclient.groups).toEqual(['alpha', 'zeta']);
-    expect(g.backendaiclient.groupIds).toEqual({
-      alpha: PROJECT_A,
-      zeta: PROJECT_B,
-    });
+    expect(g.backendaiclient.groups).toEqual(['alpha']);
+    expect(g.backendaiclient.groupIds).toEqual({ alpha: PROJECT_A });
     expect(g.backendaiclient.current_group).toBe('alpha');
     expect(g.backendaiclient.current_group_id()).toBe(PROJECT_A);
 
@@ -134,23 +136,10 @@ describe('connectViaGQL', () => {
     expect(g.backendaiclient._config.domainId).toBe(DOMAIN_UUID);
   });
 
-  test('walks the project pages by offset until count is reached', async () => {
-    const variables = queueResponses([
-      meWith(singlePage([[PROJECT_A, 'alpha']], 101)),
-      meWith(singlePage([[PROJECT_B, 'beta']], 101)),
-    ]);
-
-    await connectViaGQL(makeClient(), cfg, []);
-
-    expect(variables).toEqual([
-      { limit: 100, offset: 0 },
-      { limit: 100, offset: 100 },
-    ]);
-    expect(g.backendaiclient.groups).toEqual(['alpha', 'beta']);
-    expect(g.backendaiclient.groupIds).toEqual({
-      alpha: PROJECT_A,
-      beta: PROJECT_B,
-    });
+  test('asks only for GENERAL projects, the default one by name', () => {
+    const text = (myUserQueryNode as any).params.text as string;
+    expect(text.match(/type: \{equals: GENERAL\}/g)).toHaveLength(2);
+    expect(text).toContain('orderBy: [{field: NAME, direction: ASC}]');
   });
 
   test.each([
@@ -162,7 +151,7 @@ describe('connectViaGQL', () => {
   ])(
     'maps role %s to is_admin=%s / is_superadmin=%s',
     async (role, isAdmin, isSuperadmin) => {
-      queueResponses([meWith(singlePage([]), { role })]);
+      queueResponses([meWith({}, { role })]);
 
       await connectViaGQL(makeClient(), cfg, []);
 
@@ -173,39 +162,67 @@ describe('connectViaGQL', () => {
 
   test('falls back to the domain node name and an empty uuid when the organization has none', async () => {
     queueResponses([
-      meWith(singlePage([]), {
-        domainName: null,
-        domain: { entityId: DOMAIN_UUID, basicInfo: { name: 'from-node' } },
-      }),
+      meWith(
+        {},
+        {
+          domainName: null,
+          domain: { entityId: DOMAIN_UUID, basicInfo: { name: 'from-node' } },
+        },
+      ),
     ]);
 
     await connectViaGQL(makeClient(), cfg, []);
     expect(g.backendaiclient._config.domainName).toBe('from-node');
     expect(g.backendaiclient._config.domainId).toBe(DOMAIN_UUID);
 
-    queueResponses([
-      meWith(singlePage([]), { domainName: null, domain: null }),
-    ]);
+    queueResponses([meWith({}, { domainName: null, domain: null })]);
     await connectViaGQL(makeClient(), cfg, []);
     expect(g.backendaiclient._config.domainName).toBe('');
     expect(g.backendaiclient._config.domainId).toBe('');
   });
 
-  test('keeps the remembered project when it is still one of the user projects', async () => {
-    g.backendaiutils._readRecentProjectGroup = vi.fn(() => 'zeta');
-    queueResponses([
-      meWith(
-        singlePage([
-          [PROJECT_A, 'alpha'],
-          [PROJECT_B, 'zeta'],
-        ]),
-      ),
+  test('keeps the remembered project when it is still a GENERAL project of the user', async () => {
+    g.backendaiutils = fakeUtils('zeta');
+    const variables = queueResponses([
+      meWith({
+        recent: [[PROJECT_B, 'zeta']],
+        default: [[PROJECT_A, 'alpha']],
+      }),
     ]);
 
     await connectViaGQL(makeClient(), cfg, []);
 
+    expect(variables).toEqual([
+      { recentProjectName: 'zeta', hasRecentProject: true },
+    ]);
     expect(g.backendaiclient.current_group).toBe('zeta');
     expect(g.backendaiclient.current_group_id()).toBe(PROJECT_B);
+  });
+
+  test('falls back to the default project when the remembered one is gone', async () => {
+    g.backendaiutils = fakeUtils('model-store');
+    queueResponses([meWith({ recent: [], default: [[PROJECT_A, 'alpha']] })]);
+
+    await connectViaGQL(makeClient(), cfg, []);
+
+    expect(g.backendaiclient.groups).toEqual(['alpha']);
+    expect(g.backendaiclient.current_group).toBe('alpha');
+    expect(g.backendaiclient.current_group_id()).toBe(PROJECT_A);
+  });
+
+  test('lists a remembered project that is also the default once', async () => {
+    g.backendaiutils = fakeUtils('alpha');
+    queueResponses([
+      meWith({
+        recent: [[PROJECT_A, 'alpha']],
+        default: [[PROJECT_A, 'alpha']],
+      }),
+    ]);
+
+    await connectViaGQL(makeClient(), cfg, []);
+
+    expect(g.backendaiclient.groups).toEqual(['alpha']);
+    expect(g.backendaiclient.current_group).toBe('alpha');
   });
 
   test('logs out and throws when the session has no user', async () => {
@@ -219,7 +236,7 @@ describe('connectViaGQL', () => {
   });
 
   test('records the endpoint in the history, keeping the five most recent', async () => {
-    queueResponses([meWith(singlePage([]))]);
+    queueResponses([meWith()]);
     const history = ['e1', 'e2', 'e3', 'e4', 'e5'];
 
     const updated = await connectViaGQL(makeClient(), cfg, history);
@@ -295,10 +312,16 @@ describe('probeManager (dev build)', () => {
 });
 
 describe('connectViaGQL — myUserV2 query rejects (FR-3998)', () => {
+  const g = globalThis as any;
   const cfg = getDefaultLoginConfig();
 
+  beforeEach(() => {
+    g.backendaiutils = fakeUtils(null);
+  });
+
   afterEach(() => {
-    delete (globalThis as Record<string, unknown>).backendaiclient;
+    delete g.backendaiclient;
+    delete g.backendaiutils;
   });
 
   // The Relay network layer rethrows a 401 as an `AuthorizationError`.
@@ -350,6 +373,11 @@ describe('connectViaGQL — act-as tab (FR-4111)', () => {
   const g = globalThis as any;
   const cfg = getDefaultLoginConfig();
 
+  beforeEach(() => {
+    g.backendaiutils = fakeUtils(null);
+    g.backendaioptions = { set: vi.fn() };
+  });
+
   afterEach(() => {
     delete g.backendaiclient;
     delete g.backendaiutils;
@@ -384,9 +412,7 @@ describe('connectViaGQL — act-as tab (FR-4111)', () => {
   });
 
   it("adopts the target's access key over the webserver session's", async () => {
-    g.backendaiutils = { _readRecentProjectGroup: () => '' };
-    g.backendaioptions = { set: vi.fn() };
-    queueResponses([meWith(singlePage([[PROJECT_A, 'alpha']]))]);
+    queueResponses([meWith({ default: [[PROJECT_A, 'alpha']] })]);
     const client = actAsClient(
       vi.fn().mockResolvedValue({ keypair: { access_key: 'TARGET_KEY' } }),
     );
@@ -399,9 +425,7 @@ describe('connectViaGQL — act-as tab (FR-4111)', () => {
   });
 
   it('keeps the session access key outside act-as', async () => {
-    g.backendaiutils = { _readRecentProjectGroup: () => '' };
-    g.backendaioptions = { set: vi.fn() };
-    queueResponses([meWith(singlePage([[PROJECT_A, 'alpha']]))]);
+    queueResponses([meWith({ default: [[PROJECT_A, 'alpha']] })]);
     const client = { ...makeClient(), query: vi.fn() };
 
     await connectViaGQL(client, cfg, []);

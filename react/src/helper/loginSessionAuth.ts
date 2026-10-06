@@ -14,15 +14,16 @@ import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
 import { getActAsTarget } from './actAs';
 import { applyConfigToClient, type LoginConfigState } from './loginConfig';
 import { toLocalId } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import { fetchQuery, graphql } from 'react-relay';
 
-// `UserV2.projects` caps an unpaginated read at the manager's default page
-// size, so the login walks the pages by offset (the legacy `group.list` had
-// no cap); `count` bounds the walk.
-const PROJECT_PAGE_SIZE = 100;
-
+// Only the starting project is needed: the remembered one if it is still a
+// GENERAL project of the user, else the first by name (the header's order).
 const myUserQuery = graphql`
-  query loginSessionAuthMyUserQuery($limit: Int!, $offset: Int!) {
+  query loginSessionAuthMyUserQuery(
+    $recentProjectName: String!
+    $hasRecentProject: Boolean!
+  ) {
     myUserV2 {
       id
       basicInfo {
@@ -39,8 +40,28 @@ const myUserQuery = graphql`
           name
         }
       }
-      projects(filter: { isActive: true }, limit: $limit, offset: $offset) {
-        count
+      recentProject: projects(
+        filter: {
+          isActive: true
+          type: { equals: GENERAL }
+          name: { equals: $recentProjectName }
+        }
+        limit: 1
+      ) @include(if: $hasRecentProject) {
+        edges {
+          node {
+            id
+            basicInfo {
+              name
+            }
+          }
+        }
+      }
+      defaultProject: projects(
+        filter: { isActive: true, type: { equals: GENERAL } }
+        orderBy: [{ field: NAME, direction: ASC }]
+        limit: 1
+      ) {
         edges {
           node {
             id
@@ -156,41 +177,41 @@ export async function connectViaGQL(
 
   (globalThis as any).backendaiclient = client;
 
-  const projects: Array<{ id: string; name: string }> = [];
-  let me: NonNullable<loginSessionAuthMyUserQuery['response']['myUserV2']>;
-  let offset = 0;
-  do {
-    let response: loginSessionAuthMyUserQuery['response'] | undefined;
-    try {
-      response = await fetchQuery<loginSessionAuthMyUserQuery>(
-        RelayEnvironment,
-        myUserQuery,
-        { limit: PROJECT_PAGE_SIZE, offset },
-        { fetchPolicy: 'network-only' },
-      ).toPromise();
-    } catch (err) {
-      // A refused session is cleaned up like a missing user; a network blip is not.
-      // RelayEnvironment rewraps a 401 as an `AuthorizationError`.
-      const e = err as { statusCode?: unknown; name?: unknown } | null;
-      if (
-        !isActingAs &&
-        (e?.name === 'AuthorizationError' ||
-          e?.statusCode === 401 ||
-          e?.statusCode === 403)
-      )
-        await client.logout().catch(() => {});
-      throw err;
-    }
-    if (!response?.myUserV2) {
-      if (!isActingAs) await client.logout();
-      throw new Error('User information is missing.');
-    }
-    me = response.myUserV2;
-    for (const { node } of me.projects?.edges ?? []) {
-      projects.push({ id: toLocalId(node.id), name: node.basicInfo.name });
-    }
-    offset += PROJECT_PAGE_SIZE;
-  } while (offset < (me.projects?.count ?? 0));
+  const recentProjectName =
+    (globalThis as any).backendaiutils._peekRecentProjectGroup() ?? '';
+  let response: loginSessionAuthMyUserQuery['response'] | undefined;
+  try {
+    response = await fetchQuery<loginSessionAuthMyUserQuery>(
+      RelayEnvironment,
+      myUserQuery,
+      { recentProjectName, hasRecentProject: !!recentProjectName },
+      { fetchPolicy: 'network-only' },
+    ).toPromise();
+  } catch (err) {
+    // A refused session is cleaned up like a missing user; a network blip is not.
+    // RelayEnvironment rewraps a 401 as an `AuthorizationError`.
+    const e = err as { statusCode?: unknown; name?: unknown } | null;
+    if (
+      !isActingAs &&
+      (e?.name === 'AuthorizationError' ||
+        e?.statusCode === 401 ||
+        e?.statusCode === 403)
+    )
+      await client.logout().catch(() => {});
+    throw err;
+  }
+  if (!response?.myUserV2) {
+    if (!isActingAs) await client.logout();
+    throw new Error('User information is missing.');
+  }
+  const me = response.myUserV2;
+  const projects = _.uniqBy(
+    _.map(
+      [...(me.recentProject?.edges ?? []), ...(me.defaultProject?.edges ?? [])],
+      ({ node }) => ({ id: toLocalId(node.id), name: node.basicInfo.name }),
+    ),
+    'name',
+  );
 
   // `check_login` reads the access key from the webserver session, which stays
   // the super admin's; under act-as the manager answers with the target's.
@@ -217,9 +238,9 @@ export async function connectViaGQL(
   ].includes(role);
   (globalThis as any).backendaiclient.is_superadmin = role === 'superadmin';
 
-  (globalThis as any).backendaiclient.groups = projects
-    .map(({ name }) => name)
-    .sort();
+  // `_readRecentProjectGroup` keeps the remembered name only if it is listed
+  // here, so the remembered project goes first and the default second.
+  (globalThis as any).backendaiclient.groups = projects.map(({ name }) => name);
   const groupMap: Record<string, string> = {};
   projects.forEach(({ id, name }) => {
     groupMap[name] = id;
