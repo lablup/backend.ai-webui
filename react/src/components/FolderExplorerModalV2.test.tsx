@@ -8,6 +8,7 @@ import FolderExplorerModalV2 from './FolderExplorerModalV2';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import * as _ from 'lodash-es';
 import { Suspense } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { MemoryRouter } from 'react-router-dom';
@@ -250,6 +251,14 @@ const withNullRootFields = (
   };
 };
 
+const ALL_FILE_HOST_PERMISSIONS = [
+  'download-file',
+  'upload-file',
+  'create-vfolder',
+  'delete-vfolder',
+  'modify-vfolder',
+];
+
 const renderModal = ({
   ownershipProjectId,
   ownershipProjectType,
@@ -295,15 +304,11 @@ const renderModal = ({
           type: ownershipProjectType ?? 'GENERAL',
         }),
         KeyPair: () => ({ resource_policy: 'default' }),
-        // The storage-host capability axis. `enableUpload` / `enableEdit` are the
-        // AND of this and the folder-level `UPDATE` bit, so both sides need a
-        // knob to be gated independently.
+        // The storage-host axis. Every content-changing action is the AND of
+        // this and the folder-level `UPDATE` bit, so both sides need a knob.
         Domain: () => ({
           allowed_vfolder_hosts: JSON.stringify({
-            'local:volume1': hostPermissions ?? [
-              'download-file',
-              'upload-file',
-            ],
+            'local:volume1': hostPermissions ?? ALL_FILE_HOST_PERMISSIONS,
           }),
         }),
         Group: () => ({ allowed_vfolder_hosts: '{}' }),
@@ -532,53 +537,43 @@ describe('FolderExplorerModalV2 project context (ADR-0001, FR-3413)', () => {
   });
 });
 
-describe('FolderExplorerModalV2 share-permission gating (FR-3800)', () => {
+describe('FolderExplorerModalV2 permission gating (FR-4140)', () => {
   beforeEach(() => {
     mockIsProjectAgnosticPage = false;
     mockListHosts.mockClear();
     fileExplorerProps.length = 0;
   });
 
-  it('a read-only share (no UPDATE) disables write, delete, upload and edit', async () => {
-    renderModal({
-      ownershipProjectId: null,
-      permissionBits: ['READ'],
-    });
+  const latestPermissionProps = () => {
+    const props = fileExplorerProps.at(-1);
+    return {
+      download: props.enableDownload,
+      upload: props.enableUpload,
+      create: props.enableCreate,
+      delete: props.enableDelete,
+      rename: props.enableRename,
+      edit: props.enableEdit,
+    };
+  };
+
+  it('UPDATE plus every host permission enables every action', async () => {
+    renderModal({ ownershipProjectId: null, permissionBits: ['UPDATE'] });
 
     await screen.findByTestId('mock-file-explorer');
 
-    await waitFor(() => {
-      const props = fileExplorerProps.at(-1);
-      expect(props.enableWrite).toBe(false);
-      expect(props.enableDelete).toBe(false);
-      // The host `upload-file` capability IS present in the fixture, so these
-      // prove the folder-level write gate participates in the AND.
-      expect(props.enableUpload).toBe(false);
-      expect(props.enableEdit).toBe(false);
-    });
+    await waitFor(() =>
+      expect(latestPermissionProps()).toEqual({
+        download: true,
+        upload: true,
+        create: true,
+        delete: true,
+        rename: true,
+        edit: true,
+      }),
+    );
   });
 
-  it('UPDATE enables write, delete, upload and edit', async () => {
-    renderModal({
-      ownershipProjectId: null,
-      permissionBits: ['READ', 'UPDATE'],
-    });
-
-    await screen.findByTestId('mock-file-explorer');
-
-    // Positive control: guards against the gating collapsing to always-false.
-    await waitFor(() => {
-      const props = fileExplorerProps.at(-1);
-      expect(props.enableWrite).toBe(true);
-      expect(props.enableDelete).toBe(true);
-      expect(props.enableUpload).toBe(true);
-      expect(props.enableEdit).toBe(true);
-      expect(props.enableDownload).toBe(true);
-    });
-  });
-
-  // Delete is gated on UPDATE, not SOFT_DELETE (backend decision; FR-4114).
-  it('SOFT_DELETE without UPDATE does not enable delete', async () => {
+  it('without UPDATE only download stays enabled, SOFT_DELETE included', async () => {
     renderModal({
       ownershipProjectId: null,
       permissionBits: ['READ', 'SOFT_DELETE'],
@@ -586,52 +581,49 @@ describe('FolderExplorerModalV2 share-permission gating (FR-3800)', () => {
 
     await screen.findByTestId('mock-file-explorer');
 
-    await waitFor(() => {
-      const props = fileExplorerProps.at(-1);
-      expect(props.enableDelete).toBe(false);
-      expect(props.enableWrite).toBe(false);
-      expect(props.enableUpload).toBe(false);
-      expect(props.enableEdit).toBe(false);
-    });
+    await waitFor(() =>
+      expect(latestPermissionProps()).toEqual({
+        download: true,
+        upload: false,
+        create: false,
+        delete: false,
+        rename: false,
+        edit: false,
+      }),
+    );
   });
 
-  it('a host without upload-file disables upload and edit even when UPDATE is granted', async () => {
-    renderModal({
-      ownershipProjectId: null,
-      hostPermissions: ['download-file'],
-    });
+  it.each([
+    ['upload-file', ['upload', 'edit']],
+    ['create-vfolder', ['create']],
+    ['delete-vfolder', ['delete']],
+    ['modify-vfolder', ['rename', 'edit']],
+    ['download-file', ['download']],
+  ])(
+    'a host without %s disables only %j',
+    async (missingPermission, disabledActions) => {
+      renderModal({
+        ownershipProjectId: null,
+        permissionBits: ['READ', 'UPDATE'],
+        hostPermissions: _.without(
+          ALL_FILE_HOST_PERMISSIONS,
+          missingPermission,
+        ),
+      });
 
-    await screen.findByTestId('mock-file-explorer');
+      await screen.findByTestId('mock-file-explorer');
 
-    // The other side of the AND: the folder grants write, the host does not
-    // allow the upload pipeline the upload buttons and the editor save write
-    // through.
-    await waitFor(() => {
-      const props = fileExplorerProps.at(-1);
-      expect(props.enableUpload).toBe(false);
-      expect(props.enableEdit).toBe(false);
-      expect(props.enableWrite).toBe(true);
-      expect(props.enableDelete).toBe(true);
-      expect(props.enableDownload).toBe(true);
-    });
-  });
-
-  it('a host without download-file disables download', async () => {
-    renderModal({
-      ownershipProjectId: null,
-      hostPermissions: ['upload-file'],
-    });
-
-    await screen.findByTestId('mock-file-explorer');
-
-    await waitFor(() => {
-      const props = fileExplorerProps.at(-1);
-      expect(props.enableDownload).toBe(false);
-      // Download is host-only: the folder-level grants are unaffected.
-      expect(props.enableUpload).toBe(true);
-      expect(props.enableWrite).toBe(true);
-    });
-  });
+      await waitFor(() => {
+        const props = latestPermissionProps();
+        expect(props).toEqual(
+          _.mapValues(
+            props,
+            (_enabled, action) => !disabledActions.includes(action),
+          ),
+        );
+      });
+    },
+  );
 });
 
 describe('FolderExplorerModalV2 unreadable folder', () => {
