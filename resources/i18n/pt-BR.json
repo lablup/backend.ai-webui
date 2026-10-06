@@ -1532,6 +1532,11 @@
     "SessionStatusIsWithReload": "O status da sessão é {{status}}. Recarregue a página após algum tempo.",
     "SessionStillPreparing": "A sessão ainda está em preparação. Recarregue depois de um tempo"
   },
+  "entityLabel": {
+    "EditLabels": "Editar rótulos",
+    "Labels": "Rótulos",
+    "NoPermissionToEditLabels": "Você não tem permissão para editar rótulos."
+  },
   "environment": {
     "Action": "Açao",
     "Aliases": "__NOT_TRANSLATED__",

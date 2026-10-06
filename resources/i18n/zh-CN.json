@@ -1532,6 +1532,11 @@
     "SessionStatusIsWithReload": "会话状态为 {{status}}。请稍后重新加载。",
     "SessionStillPreparing": "会议还在准备中。一段时间后重新加载"
   },
+  "entityLabel": {
+    "EditLabels": "编辑标签",
+    "Labels": "标签",
+    "NoPermissionToEditLabels": "您没有编辑标签的权限。"
+  },
   "environment": {
     "Action": "行动",
     "Aliases": "__NOT_TRANSLATED__",

@@ -1532,6 +1532,11 @@
     "SessionStatusIsWithReload": "Istunnon tila on {{status}}. Lataa sivu uudelleen hetken kuluttua.",
     "SessionStillPreparing": "Istunto on edelleen valmistelussa. Lataa uudelleen hetken kuluttua"
   },
+  "entityLabel": {
+    "EditLabels": "Muokkaa tunnisteita",
+    "Labels": "Tunnisteet",
+    "NoPermissionToEditLabels": "Sinulla ei ole oikeutta muokata tunnisteita."
+  },
   "environment": {
     "Action": "Toiminta",
     "Aliases": "__NOT_TRANSLATED__",

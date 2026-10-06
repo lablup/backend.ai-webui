@@ -1532,6 +1532,11 @@
     "SessionStatusIsWithReload": "Η κατάσταση της συνεδρίας είναι {{status}}. Επαναφορτώστε τη σελίδα μετά από λίγο.",
     "SessionStillPreparing": "Η συνεδρία βρίσκεται ακόμη σε προετοιμασία. Επαναφόρτωση μετά από λίγο"
   },
+  "entityLabel": {
+    "EditLabels": "Επεξεργασία ετικετών",
+    "Labels": "Ετικέτες",
+    "NoPermissionToEditLabels": "Δεν έχετε δικαίωμα επεξεργασίας ετικετών."
+  },
   "environment": {
     "Action": "Δράση",
     "Aliases": "__NOT_TRANSLATED__",

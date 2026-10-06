@@ -1532,6 +1532,11 @@
     "SessionStatusIsWithReload": "Сессийн төлөв {{status}} байна. Хэсэг хугацааны дараа дахин ачаална уу.",
     "SessionStillPreparing": "Session бэлтгэл ажил үргэлжилж байна. Хэсэг хугацааны дараа дахин ажиллуулна уу"
   },
+  "entityLabel": {
+    "EditLabels": "Шошго засах",
+    "Labels": "Шошго",
+    "NoPermissionToEditLabels": "Танд шошго засах эрх байхгүй."
+  },
   "environment": {
     "Action": "Үйлдэл",
     "Aliases": "__NOT_TRANSLATED__",

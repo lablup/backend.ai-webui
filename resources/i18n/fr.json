@@ -1532,6 +1532,11 @@
     "SessionStatusIsWithReload": "L'état de la session est {{status}}. Veuillez recharger la page dans quelques instants.",
     "SessionStillPreparing": "La séance est encore en préparation. Actualiser la page après un certain temps"
   },
+  "entityLabel": {
+    "EditLabels": "Modifier les libellés",
+    "Labels": "Libellés",
+    "NoPermissionToEditLabels": "Vous n’êtes pas autorisé à modifier les libellés."
+  },
   "environment": {
     "Action": "action",
     "Aliases": "__NOT_TRANSLATED__",

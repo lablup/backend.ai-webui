@@ -1532,6 +1532,11 @@
     "SessionStatusIsWithReload": "Trạng thái phiên là {{status}}. Vui lòng tải lại sau ít phút.",
     "SessionStillPreparing": "Phiên vẫn đang trong quá trình chuẩn bị. Tải lại sau một thời gian"
   },
+  "entityLabel": {
+    "EditLabels": "Sửa nhãn",
+    "Labels": "Nhãn",
+    "NoPermissionToEditLabels": "Bạn không có quyền sửa nhãn."
+  },
   "environment": {
     "Action": "Hoạt động",
     "Aliases": "__NOT_TRANSLATED__",

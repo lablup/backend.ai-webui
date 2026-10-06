@@ -1532,6 +1532,11 @@
     "SessionStatusIsWithReload": "Status sesi ialah {{status}}. Sila muat semula selepas beberapa ketika.",
     "SessionStillPreparing": "Sesi masih dalam persiapan. Muat semula selepas beberapa ketika"
   },
+  "entityLabel": {
+    "EditLabels": "Edit label",
+    "Labels": "Label",
+    "NoPermissionToEditLabels": "Anda tiada kebenaran untuk mengedit label."
+  },
   "environment": {
     "Action": "Tindakan",
     "Aliases": "__NOT_TRANSLATED__",

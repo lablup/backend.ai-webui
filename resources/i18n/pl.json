@@ -1532,6 +1532,11 @@
     "SessionStatusIsWithReload": "Stan sesji: {{status}}. Odśwież stronę za jakiś czas.",
     "SessionStillPreparing": "Sesja jest wciąż w przygotowaniu. Załaduj ponownie po chwili"
   },
+  "entityLabel": {
+    "EditLabels": "Edytuj etykiety",
+    "Labels": "Etykiety",
+    "NoPermissionToEditLabels": "Nie masz uprawnień do edycji etykiet."
+  },
   "environment": {
     "Action": "Akcja",
     "Aliases": "__NOT_TRANSLATED__",

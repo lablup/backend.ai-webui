@@ -1532,6 +1532,11 @@
     "SessionStatusIsWithReload": "Статус сессии: {{status}}. Обновите страницу через некоторое время.",
     "SessionStillPreparing": "Сессия все еще находится в стадии подготовки. Перезагрузите через некоторое время"
   },
+  "entityLabel": {
+    "EditLabels": "Изменить метки",
+    "Labels": "Метки",
+    "NoPermissionToEditLabels": "У вас нет прав на изменение меток."
+  },
   "environment": {
     "Action": "Действие",
     "Aliases": "__NOT_TRANSLATED__",
