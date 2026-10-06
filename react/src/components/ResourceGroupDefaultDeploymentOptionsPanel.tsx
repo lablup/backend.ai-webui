@@ -8,7 +8,12 @@ import { ResourceGroupDefaultDeploymentOptionsPanel_options$key } from '../__gen
 import ResourceGroupDefaultDeploymentOptionsModal from './ResourceGroupDefaultDeploymentOptionsModal';
 import { HandlerOptionsDescription } from './ResourceGroupHandlerOptionsFields';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
-import { BAIButton, BAICard, BAIUnmountAfterClose } from 'backend.ai-ui';
+import {
+  BAIButton,
+  BAICard,
+  BAIFlex,
+  BAIUnmountAfterClose,
+} from 'backend.ai-ui';
 import { SquarePenIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -57,17 +62,18 @@ const ResourceGroupDefaultDeploymentOptionsPanelContent: React.FC<
     );
 
   return (
-    <BAICard
-      extra={
+    <BAIFlex direction="column" align="stretch" gap="sm">
+      <BAIFlex justify="end">
         <BAIButton
           icon={<SquarePenIcon />}
           onClick={() => setIsEditModalOpen(true)}
         >
           {t('button.Edit')}
         </BAIButton>
-      }
-    >
-      <HandlerOptionsDescription handlerOptions={options?.handlerOptions} />
+      </BAIFlex>
+      <BAICard>
+        <HandlerOptionsDescription handlerOptions={options?.handlerOptions} />
+      </BAICard>
       <BAIUnmountAfterClose>
         <ResourceGroupDefaultDeploymentOptionsModal
           open={isEditModalOpen}
@@ -75,7 +81,7 @@ const ResourceGroupDefaultDeploymentOptionsPanelContent: React.FC<
           onRequestClose={() => setIsEditModalOpen(false)}
         />
       </BAIUnmountAfterClose>
-    </BAICard>
+    </BAIFlex>
   );
 };
 
