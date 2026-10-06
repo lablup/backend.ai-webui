@@ -11,7 +11,13 @@ import {
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import { Text } from '@lablup/ui-common/Text';
-import { BAIButton, BAICard, BAIFlex, BAIMetadataList } from 'backend.ai-ui';
+import {
+  BAIButton,
+  BAICard,
+  BAIFlex,
+  BAIMetadataList,
+  useBAIBreakpoint,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleMinus, PlusIcon } from 'lucide-react';
 import React from 'react';
@@ -198,13 +204,14 @@ export const HandlerOptionsDescription: React.FC<{
 }> = ({ handlerOptions }) => {
   'use memo';
   const { t } = useTranslation();
+  const { md } = useBAIBreakpoint();
   const unlimited = t('resourcePolicy.Unlimited');
   const seconds = t('resourceGroup.TimeoutSeconds');
 
   return (
     <BAIMetadataList
       title={t('resourceGroup.HandlerOptions')}
-      label={{ position: 'start', width: '40%' }}
+      columns={md ? 2 : 1}
     >
       <MetadataListItem label={t('resourceGroup.DefaultTimeout')}>
         {formatSeconds(handlerOptions?.default.timeoutSec, unlimited, seconds)}

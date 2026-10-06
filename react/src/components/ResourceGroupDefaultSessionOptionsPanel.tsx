@@ -17,6 +17,7 @@ import {
   BAIFlex,
   BAIMetadataList,
   BAIUnmountAfterClose,
+  useBAIBreakpoint,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -34,6 +35,7 @@ const ResourceGroupDefaultSessionOptionsPanelContent: React.FC<
 > = ({ resourceGroupFrgmt }) => {
   'use memo';
   const { t } = useTranslation();
+  const { md } = useBAIBreakpoint();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const resourceGroup = useFragment(
@@ -107,18 +109,17 @@ const ResourceGroupDefaultSessionOptionsPanelContent: React.FC<
   );
 
   return (
-    <BAICard
-      extra={
+    <BAIFlex direction="column" align="stretch" gap="sm">
+      <BAIFlex justify="end">
         <BAIButton
           icon={<SquarePenIcon />}
           onClick={() => setIsEditModalOpen(true)}
         >
           {t('button.Edit')}
         </BAIButton>
-      }
-    >
-      <BAIFlex direction="column" align="stretch" gap="md">
-        <BAIMetadataList label={{ position: 'start', width: '40%' }}>
+      </BAIFlex>
+      <BAICard>
+        <BAIMetadataList columns={md ? 2 : 1}>
           <MetadataListItem label={t('session.Priority')}>
             {options?.priority ?? '-'}
           </MetadataListItem>
@@ -147,10 +148,14 @@ const ResourceGroupDefaultSessionOptionsPanelContent: React.FC<
               : '-'}
           </MetadataListItem>
         </BAIMetadataList>
+      </BAICard>
+      <BAICard>
         <HandlerOptionsDescription handlerOptions={options?.handlerOptions} />
+      </BAICard>
+      <BAICard>
         <BAIMetadataList
           title={t('resourceGroup.KernelExecutionSpec')}
-          label={{ position: 'start', width: '40%' }}
+          columns={md ? 2 : 1}
         >
           <MetadataListItem label={t('general.Image')}>
             {spec?.imageId || '-'}
@@ -172,6 +177,11 @@ const ResourceGroupDefaultSessionOptionsPanelContent: React.FC<
           <MetadataListItem label={t('adminDeploymentPreset.Shmem')}>
             {spec?.resourceOpts?.shmem || '-'}
           </MetadataListItem>
+          <MetadataListItem label={t('resourceGroup.BatchTimeout')}>
+            {_.isNil(spec?.batchTimeoutSec)
+              ? '-'
+              : `${spec.batchTimeoutSec} ${t('resourceGroup.TimeoutSeconds')}`}
+          </MetadataListItem>
           <MetadataListItem label={t('adminDeploymentPreset.StartupCommand')}>
             {spec?.startupCommand ? (
               <Text type="code" maxLines={3}>
@@ -190,16 +200,11 @@ const ResourceGroupDefaultSessionOptionsPanelContent: React.FC<
               '-'
             )}
           </MetadataListItem>
-          <MetadataListItem label={t('resourceGroup.BatchTimeout')}>
-            {_.isNil(spec?.batchTimeoutSec)
-              ? '-'
-              : `${spec.batchTimeoutSec} ${t('resourceGroup.TimeoutSeconds')}`}
-          </MetadataListItem>
           <MetadataListItem label={t('resourceGroup.StartsAt')}>
             {spec?.startsAt ? dayjs(spec.startsAt).format('lll') : '-'}
           </MetadataListItem>
         </BAIMetadataList>
-      </BAIFlex>
+      </BAICard>
       <BAIUnmountAfterClose>
         <ResourceGroupDefaultSessionOptionsModal
           open={isEditModalOpen}
@@ -207,7 +212,7 @@ const ResourceGroupDefaultSessionOptionsPanelContent: React.FC<
           onRequestClose={() => setIsEditModalOpen(false)}
         />
       </BAIUnmountAfterClose>
-    </BAICard>
+    </BAIFlex>
   );
 };
 

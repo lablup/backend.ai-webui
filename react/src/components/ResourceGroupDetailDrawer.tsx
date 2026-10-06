@@ -18,6 +18,7 @@ import { Tab, TabList } from '@lablup/ui-common/TabList';
 import { Token } from '@lablup/ui-common/Token';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAIBadge,
   BAICard,
   BAIDrawer,
   type BAIDrawerProps,
@@ -80,7 +81,8 @@ const ResourceGroupSettingModalWithQuery: React.FC<{
 const ResourceGroupDetailDrawerContent: React.FC<{
   resourceGroupName: string;
   fetchKey: string;
-}> = ({ resourceGroupName, fetchKey }) => {
+  onClickEdit: () => void;
+}> = ({ resourceGroupName, fetchKey, onClickEdit }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
@@ -105,7 +107,6 @@ const ResourceGroupDetailDrawerContent: React.FC<{
                 status {
                   isActive
                   isPublic
-                  isDefault
                 }
                 metadata {
                   description
@@ -151,61 +152,77 @@ const ResourceGroupDetailDrawerContent: React.FC<{
 
   return (
     <BAIFlex direction="column" gap="lg" align="stretch">
-      <BAIFlex direction="column" align="start" gap="xxs">
-        <BAIText strong copyable size="2xl">
-          {resourceGroup.name}
-        </BAIText>
-        {resourceGroup.metadata.description ? (
-          <BAIText type="secondary">
-            {resourceGroup.metadata.description}
-          </BAIText>
-        ) : null}
+      <BAIFlex direction="column" gap="sm" align="stretch">
+        <BAIFlex justify="between" align="start" gap="sm">
+          <BAIFlex direction="column" align="start">
+            <BAIText strong copyable size="2xl">
+              {resourceGroup.name}
+            </BAIText>
+            {resourceGroup.metadata.description ? (
+              <BAIText type="secondary">
+                {resourceGroup.metadata.description}
+              </BAIText>
+            ) : null}
+          </BAIFlex>
+          <IconButton
+            className="bai-action-accent"
+            variant="ghost"
+            icon={<SquarePenIcon aria-hidden />}
+            label={t('resourceGroup.ModifyResourceGroup')}
+            tooltip={t('resourceGroup.ModifyResourceGroup')}
+            onClick={onClickEdit}
+          />
+        </BAIFlex>
+        <BAICard>
+          <BAIMetadataList columns={md ? 2 : 1}>
+            <MetadataListItem label={t('resourceGroup.Active')}>
+              <BAIBadge
+                color={resourceGroup.status.isActive ? 'success' : 'default'}
+                text={
+                  resourceGroup.status.isActive
+                    ? t('general.Active')
+                    : t('general.Inactive')
+                }
+              />
+            </MetadataListItem>
+            <MetadataListItem label={t('resourceGroup.Public')}>
+              {renderBoolean(resourceGroup.status.isPublic)}
+            </MetadataListItem>
+            <MetadataListItem label={t('resourceGroup.Scheduler')}>
+              {_.toUpper(resourceGroup.scheduler.type)}
+            </MetadataListItem>
+            <MetadataListItem label={t('resourceGroup.AllowedSessionTypes')}>
+              {_.isEmpty(schedulerOpts.allowed_session_types) ? (
+                '-'
+              ) : (
+                <BAIFlex wrap="wrap" gap="xs">
+                  {_.map(schedulerOpts.allowed_session_types, (value) => (
+                    <Token key={value} label={getSessionTypeLabel(t, value)} />
+                  ))}
+                </BAIFlex>
+              )}
+            </MetadataListItem>
+            <MetadataListItem label={t('resourceGroup.PendingTimeout')}>
+              {schedulerOpts.pending_timeout
+                ? `${schedulerOpts.pending_timeout} ${t('resourceGroup.TimeoutSeconds')}`
+                : t('general.Disabled')}
+            </MetadataListItem>
+            <MetadataListItem label={t('resourceGroup.RetriesToSkipDesc')}>
+              {schedulerOpts.config?.num_retries_to_skip
+                ? `${schedulerOpts.config.num_retries_to_skip} ${t('resourceGroup.RetriesToSkip')}`
+                : '-'}
+            </MetadataListItem>
+            <MetadataListItem label={t('resourceGroup.AppProxyAddress')}>
+              {resourceGroup.network.wsproxyAddr || '-'}
+            </MetadataListItem>
+            <MetadataListItem label={t('general.CreatedAt')}>
+              {resourceGroup.metadata.createdAt
+                ? dayjs(resourceGroup.metadata.createdAt).format('lll')
+                : '-'}
+            </MetadataListItem>
+          </BAIMetadataList>
+        </BAICard>
       </BAIFlex>
-      <BAICard>
-        <BAIMetadataList columns={md ? 2 : 1}>
-          <MetadataListItem label={t('resourceGroup.Active')}>
-            {renderBoolean(resourceGroup.status.isActive)}
-          </MetadataListItem>
-          <MetadataListItem label={t('resourceGroup.Public')}>
-            {renderBoolean(resourceGroup.status.isPublic)}
-          </MetadataListItem>
-          <MetadataListItem label={t('resourceGroup.Default')}>
-            {renderBoolean(resourceGroup.status.isDefault)}
-          </MetadataListItem>
-          <MetadataListItem label={t('resourceGroup.Scheduler')}>
-            {_.toUpper(resourceGroup.scheduler.type)}
-          </MetadataListItem>
-          <MetadataListItem label={t('resourceGroup.AllowedSessionTypes')}>
-            {_.isEmpty(schedulerOpts.allowed_session_types) ? (
-              '-'
-            ) : (
-              <BAIFlex wrap="wrap" gap="xs">
-                {_.map(schedulerOpts.allowed_session_types, (value) => (
-                  <Token key={value} label={getSessionTypeLabel(t, value)} />
-                ))}
-              </BAIFlex>
-            )}
-          </MetadataListItem>
-          <MetadataListItem label={t('resourceGroup.PendingTimeout')}>
-            {schedulerOpts.pending_timeout
-              ? `${schedulerOpts.pending_timeout} ${t('resourceGroup.TimeoutSeconds')}`
-              : t('general.Disabled')}
-          </MetadataListItem>
-          <MetadataListItem label={t('resourceGroup.RetriesToSkipDesc')}>
-            {schedulerOpts.config?.num_retries_to_skip
-              ? `${schedulerOpts.config.num_retries_to_skip} ${t('resourceGroup.RetriesToSkip')}`
-              : '-'}
-          </MetadataListItem>
-          <MetadataListItem label={t('resourceGroup.AppProxyAddress')}>
-            {resourceGroup.network.wsproxyAddr || '-'}
-          </MetadataListItem>
-          <MetadataListItem label={t('general.CreatedAt')}>
-            {resourceGroup.metadata.createdAt
-              ? dayjs(resourceGroup.metadata.createdAt).format('lll')
-              : '-'}
-          </MetadataListItem>
-        </BAIMetadataList>
-      </BAICard>
       {supportsDefaultOptions ? (
         <BAIFlex direction="column" gap="sm" align="stretch">
           <TabList
@@ -273,23 +290,13 @@ const ResourceGroupDetailDrawer: React.FC<ResourceGroupDetailDrawerProps> = ({
       size={800}
       title={t('resourceGroup.ResourceGroupInfo')}
       extra={
-        <>
-          <IconButton
-            className="bai-action-accent"
-            variant="ghost"
-            icon={<SquarePenIcon aria-hidden />}
-            label={t('resourceGroup.ModifyResourceGroup')}
-            tooltip={t('resourceGroup.ModifyResourceGroup')}
-            onClick={() => setIsSettingModalOpen(true)}
-          />
-          <BAIFetchKeyButton
-            loading={isPendingRefetch}
-            value={fetchKey}
-            onChange={(newFetchKey) => {
-              startRefetchTransition(() => updateFetchKey(newFetchKey));
-            }}
-          />
-        </>
+        <BAIFetchKeyButton
+          loading={isPendingRefetch}
+          value={fetchKey}
+          onChange={(newFetchKey) => {
+            startRefetchTransition(() => updateFetchKey(newFetchKey));
+          }}
+        />
       }
     >
       <Suspense fallback={<BAISkeleton />}>
@@ -297,6 +304,7 @@ const ResourceGroupDetailDrawer: React.FC<ResourceGroupDetailDrawerProps> = ({
           <ResourceGroupDetailDrawerContent
             resourceGroupName={resourceGroupName}
             fetchKey={fetchKey}
+            onClickEdit={() => setIsSettingModalOpen(true)}
           />
         ) : null}
       </Suspense>
