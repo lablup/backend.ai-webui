@@ -176,6 +176,8 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
       }}
       placeholder={t('storageHost.quotaSettings.SelectProject')}
       popupMatchSelectWidth={false}
+      // Renders a rich option row (e.g. the Project Admin shield) on the closed trigger too.
+      optionLabelProp="children"
       {...selectProps}
       value={value}
       showSearch={{
