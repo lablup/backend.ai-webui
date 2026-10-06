@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 359 / 510 features covered (70%)**
+**Overall (in-scope routes): 361 / 512 features covered (71%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -54,7 +54,7 @@
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **510**  | **359** | **70%** |
+| **Total**                |                                                  | **512**  | **361** | **71%** |
 
 ---
 
@@ -110,6 +110,8 @@
 | Auth failed — missing keypair                        | ✅     | `missing keypair shows login information mismatch notification`                                                |
 | Active login session exists notification             | ✅     | `active login session exists shows session exists notification`                                                |
 | Monitor role login forbidden                         | ✅     | `monitor role user sees login forbidden notification`                                                          |
+| Sign-in mode switch locked when apiEndpoint is set   | ✅     | `User cannot switch to API sign-in when apiEndpoint is configured`                                             |
+| Sign-in mode switch usable when apiEndpoint is empty | ✅     | `User can switch to API sign-in when apiEndpoint is empty`                                                     |
 | OAuth/SSO login flow                                 | ❌     | -                                                                                                              |
 | Session persistence                                  | ❌     | -                                                                                                              |
 
