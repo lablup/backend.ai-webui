@@ -62,10 +62,7 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
     - The skill list is fixed when a session starts: a session that began before a skill landed on `main` needs `/reload-plugins` (or a fresh session) before this step can call it — observed on 2026-09-18, when `walkthrough` appeared only after the reload.
 - Follow the GitHub Stacked PRs strategy. Write work by appropriately stacking individual PRs.
 - When amending a PR with significant changes, update the PR description to reflect the new scope. Minor fixes don't need description updates, but new features, deleted files, or changed approach should be reflected.
-
-## GitHub Project
-
-Project: https://github.com/orgs/lablup/projects/41 (lablup/41)
+- **GitHub Project**: https://github.com/orgs/lablup/projects/41 (lablup/41) — Iteration = sprint
 
 ### Configuration
 
