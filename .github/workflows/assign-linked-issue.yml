@@ -69,8 +69,8 @@ jobs:
 
           body_numbers=$(
             printf '%s' "$PR_BODY" \
-              | grep -oiE '(close[sd]?|fix(es|ed)?|resolve[sd]?)[[:space:]]+#[0-9]+' \
-              | grep -oE '[0-9]+' \
+              | grep -oiE '(^|[^[:alnum:]_])(close[sd]?|fix(es|ed)?|resolve[sd]?)[[:space:]]+#[0-9]+' \
+              | grep -oE '#[0-9]+' | tr -d '#' \
               || true
           )
 
@@ -80,11 +80,18 @@ jobs:
             exit 0
           fi
 
+          failed=0
           while IFS= read -r n; do
-            gh api "repos/${REPO}/issues/${n}" > issue.json 2>/dev/null || {
-              echo "::notice::#${n} not found. Skipping."
+            if ! gh api "repos/${REPO}/issues/${n}" > issue.json 2> err.txt; then
+              if grep -q 'HTTP 404' err.txt; then
+                echo "::notice::#${n} not found. Skipping."
+              else
+                cat err.txt >&2
+                echo "::error::Failed to fetch #${n}."
+                failed=1
+              fi
               continue
-            }
+            fi
             if jq -e '.pull_request' issue.json > /dev/null; then
               echo "::notice::#${n} is a pull request, not an issue. Skipping."
               continue
@@ -95,10 +102,15 @@ jobs:
             fi
 
             # GitHub silently drops assignees without repo access, so verify the result.
-            assigned=$(gh api -X POST "repos/${REPO}/issues/${n}/assignees" \
-              -f "assignees[]=${AUTHOR}" --jq '[.assignees[].login] | join(",")')
+            if ! assigned=$(gh api -X POST "repos/${REPO}/issues/${n}/assignees" \
+              -f "assignees[]=${AUTHOR}" --jq '[.assignees[].login] | join(",")'); then
+              echo "::error::Failed to assign ${AUTHOR} to issue #${n}."
+              failed=1
+              continue
+            fi
             case ",${assigned}," in
               *",${AUTHOR},"*) echo "::notice::Issue #${n} assigned to ${AUTHOR}." ;;
               *) echo "::warning::Could not assign ${AUTHOR} to issue #${n} (no repository access?)." ;;
             esac
           done <<< "$numbers"
+          exit "$failed"
