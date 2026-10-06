@@ -98,7 +98,7 @@ session on the user's behalf with the regular session launcher, or to work
 with their storage folders and other resources.
 
 1. Go to **Admin Settings** > **Users**.
-2. In the row of the active user you want to act as, click the **Use as this user** action.
+2. In the row of the active user you want to act as, open the more (`...`) menu and select **Use as this user**.
    The action is not available on your own account.
 3. In the **Use as {name}** dialog, click **Open in new tab**.
 4. In the new tab, work as usual. For example, start a session from the

@@ -223,21 +223,6 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
         title={email}
         showActions="always"
         actions={filterOutEmpty([
-          canActAs &&
-            isActive &&
-            userId !== bailClient.user_uuid && {
-              key: 'act-as',
-              title: t('actAs.UseAsThisUser'),
-              icon: <UserRoundCheckIcon />,
-              onClick: () =>
-                confirmActAs(
-                  userId,
-                  email,
-                  record.basicInfo?.fullName ||
-                    record.basicInfo?.username ||
-                    '',
-                ),
-            },
           {
             key: 'info',
             title: t('credential.UserDetail'),
@@ -310,6 +295,22 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
               },
             },
           },
+          canActAs &&
+            isActive &&
+            userId !== bailClient.user_uuid && {
+              key: 'act-as',
+              title: t('actAs.UseAsThisUser'),
+              icon: <UserRoundCheckIcon />,
+              showInMenu: 'always' as const,
+              onClick: () =>
+                confirmActAs(
+                  userId,
+                  email,
+                  record.basicInfo?.fullName ||
+                    record.basicInfo?.username ||
+                    '',
+                ),
+            },
           bailClient.supports('admin-unblock-user') && {
             key: 'unblock-login',
             title: t('credential.UnblockLogin'),
