@@ -557,7 +557,7 @@ export function getSortableColumnHeader(scope: Page | Locator, label: string) {
  * the DOM is pure dead time. Short assertion windows + an explicit refetch
  * converge much faster than the old 10s visibility windows (FR-3361).
  */
-async function retryWithTableRefresh(
+export async function retryWithTableRefresh(
   page: Page,
   assertion: () => Promise<void>,
   attempts = 6,
@@ -712,26 +712,27 @@ export async function moveToTrashAndVerify(
   });
   await expect(moveToTrashButton).toBeEnabled({ timeout: 10000 });
   await moveToTrashButton.click();
-  // The "Move to trash" confirmation is the app-shim `modal.confirm`, which
-  // renders as role="alertdialog" (not "dialog") with a "Confirm" button; the
-  // old `.ant-modal-confirm` scope matched nothing.
+  // The row action's confirm is an anchored popover (role="dialog", named
+  // after the action) whose description is the folder name.
   const confirmButton = page
-    .getByRole('alertdialog')
+    .getByRole('dialog', { name: 'Move to trash bin' })
+    .filter({ hasText: folderName })
     .getByRole('button', { name: 'Confirm', exact: true });
   await expect(confirmButton).toBeVisible();
-  // Wait for the DELETE /folders API response so a rejected request fails
-  // here with the status/body instead of surfacing as a row-gone timeout.
+  // Since #10051 the row action commits the `deleteVfolderV2` GraphQL
+  // mutation; surface its errors here instead of as a row-gone timeout.
   const deletionResponsePromise = page.waitForResponse(
     (response) =>
-      response.url().includes('/folders') &&
-      response.request().method() === 'DELETE',
+      response.request().method() === 'POST' &&
+      (response.request().postData() ?? '').includes('deleteVfolderV2'),
     { timeout: 30000 },
   );
   await confirmButton.click();
   const deletionResponse = await deletionResponsePromise;
-  if (!deletionResponse.ok()) {
+  const deletionBody = await deletionResponse.json().catch(() => null);
+  if (!deletionResponse.ok() || deletionBody?.errors?.length) {
     throw new Error(
-      `DELETE /folders returned ${deletionResponse.status()}: ${await deletionResponse.text()}`,
+      `deleteVfolderV2 for "${folderName}" failed (${deletionResponse.status()}): ${JSON.stringify(deletionBody?.errors ?? deletionBody).slice(0, 300)}`,
     );
   }
   // Verify in place: with the name filter still applied, the row must leave
@@ -871,16 +872,14 @@ export async function shareVFolderAndVerify(
   // Click the share button inside the BAINameActionCell of the folder row.
   // Action buttons (share/trash) are embedded in the Name cell; locate the
   // "share" button by its icon's aria-label rather than by td index.
-  const folderRow = page.getByRole('row', {
-    name: `VFolder Identicon ${folderName}`,
-  });
+  const folderRow = getVFolderRow(page, folderName);
   await expect(folderRow).toBeVisible({ timeout: 10000 });
-  await folderRow.getByRole('button', { name: 'share' }).first().click();
+  await folderRow.getByRole('button', { name: 'Share' }).first().click();
 
   // Fill in invited user's email in the share modal
-  const shareModal = page.locator('.ant-modal');
+  const shareModal = page.getByRole('dialog', { name: 'Share Folder' });
   await expect(shareModal).toBeVisible();
-  await shareModal.getByRole('textbox').fill(invitedUser);
+  await shareModal.getByRole('textbox', { name: 'Email' }).fill(invitedUser);
 
   // Set up the response promise before clicking Add to avoid a race condition
   // where the response fires before we start listening.
@@ -899,7 +898,7 @@ export async function shareVFolderAndVerify(
     );
   }
 
-  await shareModal.getByRole('button', { name: 'close' }).click();
+  await shareModal.getByRole('button', { name: 'Close', exact: true }).click();
 
   await removeSearchButton(page, folderName);
 }
@@ -937,9 +936,7 @@ export async function acceptAllInvitationAndVerifySpecificFolder(
     window.dispatchEvent(new PopStateEvent('popstate'));
   });
 
-  const invitationModal = page.locator('.ant-modal').filter({
-    has: page.getByRole('button', { name: /Accept/i }),
-  });
+  const invitationModal = page.getByRole('dialog', { name: 'Invited Folders' });
   await expect(invitationModal.first()).toBeVisible({ timeout: 15000 });
 
   // Verify the inviter's email is rendered in the "From" field only if the
@@ -979,7 +976,7 @@ export async function acceptAllInvitationAndVerifySpecificFolder(
   let folderInvitationAccepted = false;
   for (let i = 0; i < 20; i++) {
     const invitationItem = invitationModal
-      .locator('.ant-list-item')
+      .getByRole('listitem')
       .filter({ hasText: folderName })
       .first();
     const isItemVisible = await invitationItem
@@ -1029,11 +1026,9 @@ export async function acceptAllInvitationAndVerifySpecificFolder(
   }
 
   // Close the modal if still open.
-  await page
-    .locator('.ant-modal')
-    .getByRole('button', { name: /close/i })
-    .first()
-    .click()
+  await invitationModal
+    .getByRole('button', { name: 'Close', exact: true })
+    .click({ timeout: 5000 })
     .catch(() => {});
 
   // Verify the shared folder now appears in the user's Active data page.
@@ -1067,27 +1062,23 @@ export async function leaveSharedFolderAndVerify(
   // For folders the user does not own, the "share" action button opens the
   // SharedFolderPermissionInfoModal instead of the invite modal (see
   // VFolderNodes.tsx onShare). The button's aria-label is still "share".
-  const folderRow = page.getByRole('row', {
-    name: `VFolder Identicon ${folderName}`,
-  });
+  const folderRow = getVFolderRow(page, folderName);
   await expect(folderRow).toBeVisible({ timeout: 10000 });
-  await folderRow.getByRole('button', { name: 'share' }).first().click();
+  await folderRow.getByRole('button', { name: 'Share' }).first().click();
 
-  // The modal renders a Tooltip-wrapped Leave button whose accessible name is
-  // the tooltip's title ('Leave the shared folder').
-  const sharedFolderModal = page.locator('.ant-modal').filter({
-    hasText: folderName,
-  });
+  const sharedFolderModal = page
+    .getByRole('dialog', { name: 'Shared Folder Permission' })
+    .filter({ hasText: folderName });
   await expect(sharedFolderModal.first()).toBeVisible({ timeout: 10000 });
   await sharedFolderModal
     .getByRole('button', { name: 'Leave the shared folder' })
     .first()
     .click();
 
-  // Popconfirm OK button — confirm leaving.
+  // Confirm leaving in the anchored popover (role="dialog").
   await page
-    .locator('.ant-popover')
-    .getByRole('button', { name: /^OK$/i })
+    .getByRole('dialog', { name: /Do you want to leave the shared folder/ })
+    .getByRole('button', { name: 'Confirm', exact: true })
     .click();
 
   // Success toast should appear (no 400) and the folder should disappear from
@@ -1144,10 +1135,11 @@ export async function restoreVFolderAndVerify(page: Page, folderName: string) {
   );
   await restoreButton.click();
 
-  // The Restore button is wrapped in a Popconfirm — click the OK button to confirm.
+  // The Restore action confirms in an anchored popover (role="dialog").
   const popconfirmOkButton = page
-    .locator('.ant-popover')
-    .getByRole('button', { name: 'Confirm' });
+    .getByRole('dialog', { name: 'Restore' })
+    .filter({ hasText: folderName })
+    .getByRole('button', { name: 'Confirm', exact: true });
   await expect(popconfirmOkButton).toBeVisible({ timeout: 5000 });
   await popconfirmOkButton.click();
 
