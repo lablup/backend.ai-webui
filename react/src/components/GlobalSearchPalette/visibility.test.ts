@@ -143,6 +143,7 @@ describe('isHitVisible', () => {
       'deployment-preset',
       false,
     ],
+    ['tab:/admin/maintenance?tab=retention-policy', 'retention-policy', true],
   ])('gates %s on supports(%s)', (id, feature, isSuperAdmin) => {
     const hit = hitById(id);
     expect(isHitVisible(hit, makeCtx({ isSuperAdmin }))).toBe(false);
@@ -164,7 +165,7 @@ describe('isHitVisible', () => {
     expect(
       isHitVisible(hitById('tab:/admin/environment?tab=image'), makeCtx()),
     ).toBe(true);
-    expect(_.size(TAB_GATES)).toBe(4);
+    expect(_.size(TAB_GATES)).toBe(5);
   });
 
   it('lets actions bring their own gate', () => {

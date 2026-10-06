@@ -1008,6 +1008,9 @@ export class Client {
       // coercion rejects the whole query on an older manager, so status
       // filters must omit them.
       this._features['session-preemption-statuses'] = true;
+      // `adminRetentionPolicies` and its create/update/delete mutations
+      // (superadmin only). FR-4136.
+      this._features['retention-policy'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.9.0a4')) {
       // BA-7796 (#14478): one scope per role, project admin is `scope_admin`;
