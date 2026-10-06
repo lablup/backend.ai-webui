@@ -70,6 +70,8 @@ export type {
   BAIDeactivateArtifactsModalProps,
   BAIDeactivateArtifactsModalArtifactsFragmentKey,
 } from './BAIDeactivateArtifactsModal';
+export { default as BAIEntityLabelBulkEditButton } from './BAIEntityLabelBulkEditButton';
+export type { BAIEntityLabelBulkEditButtonProps } from './BAIEntityLabelBulkEditButton';
 export { default as BAIEntityLabelSettingModal } from './BAIEntityLabelSettingModal';
 export type {
   BAIEntityLabelSettingModalProps,

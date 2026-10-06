@@ -146,9 +146,12 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Amount"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "Add labels"
+  },
   "comp:BAIEntityLabelSettingModal": {
     "AddLabel": "Add label",
-    "AddLabelsToItems": "Add labels to {{count}} items",
+    "AddLabelsToItems": "Add labels ({{count}} selected)",
     "BulkDescription": "These labels are added to every selected item. An item that already has a key gets the new value; its other labels stay.",
     "EditLabels": "Edit labels",
     "Error": "Error",

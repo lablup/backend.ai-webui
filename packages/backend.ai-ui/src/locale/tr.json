@@ -146,6 +146,9 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Miktar"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "Etiket ekle"
+  },
   "comp:BAIEntityLabelSettingModal": {
     "AddLabel": "Etiket ekle",
     "AddLabelsToItems": "{{count}} öğeye etiket ekle",

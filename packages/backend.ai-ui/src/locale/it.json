@@ -146,6 +146,9 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Quantità"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "Aggiungi etichette"
+  },
   "comp:BAIEntityLabelSettingModal": {
     "AddLabel": "Aggiungi etichetta",
     "AddLabelsToItems": "Aggiungi etichette a {{count}} elementi",

@@ -8,7 +8,7 @@ export const docs = {
   keywords: ['label', 'entity label', 'key value', 'bulk', 'modal', 'tag'],
   usage: {
     description:
-      'One form for the `key=value` labels of any labelable entity. With one target it edits that entity’s labels: it pre-fills from `entityLabelsFrgmt`, upserts the keys that are new or changed and purges the keys the user removed. With several targets it adds the entered labels to every target, replacing the value of a key a target already carries and leaving its other labels alone. Each change is its own `upsertEntityLabel` / `purgeEntityLabel` request, run together with `Promise.allSettled`; failures are listed in a BAIBulkErrorModal. The content unmounts after the modal closes.',
+      'One form for the `key=value` labels of any labelable entity. In `edit` mode (the default) it edits one entity’s labels: it pre-fills from `entityLabelsFrgmt`, upserts the keys that are new or changed and purges the keys the user removed. In `add` mode it adds the entered labels to every target, replacing the value of a key a target already carries and leaving its other labels alone. Each change is its own `upsertEntityLabel` / `purgeEntityLabel` request, run together with `Promise.allSettled`; failures are listed in a BAIBulkErrorModal. The content unmounts after the modal closes.',
     bestPractices: [
       {
         guidance: true,
@@ -37,15 +37,19 @@ export const docs = {
     {
       name: 'targets',
       type: 'ReadonlyArray<{ entityId: string; name?: string }>',
-      description:
-        'The entities to label. One target edits; several targets add in bulk.',
+      description: 'The entities to label; `edit` reads only the first.',
       required: true,
+    },
+    {
+      name: 'mode',
+      type: "'edit' | 'add'",
+      description:
+        '`edit` replaces one entity’s labels; `add` puts the entered labels on every target and removes nothing.',
     },
     {
       name: 'entityLabelsFrgmt',
       type: 'BAIEntityLabelSettingModalFragment$key | null',
-      description:
-        'The single target’s `entityLabels` connection. Ignored with several targets.',
+      description: 'The target’s `entityLabels` connection, for `edit`.',
     },
     {
       name: 'onRequestClose',
