@@ -52,7 +52,7 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
   - Teams thread: read from the issue's `Teams thread` field — an organization-level Issue field visible to organization members only — instead of the Jira custom field. The repository is public, so the thread URL is never written into an issue or PR comment.
 
 - **Tool Requirements**:
-  - **Jira**: Use `jira-workflow` skill (fw plugin). Project config in `.jira.config`.
+  - **Jira**: Use `jira-workflow` skill (fw plugin). Project config in `.jira.config`. Its `ISSUE_TRACKER="github"` / `GITHUB_PROJECT` keys make fw skills create new work items as GitHub issues on Project 41 instead; existing FR issues still go through Jira.
   - **GitHub**: Use `gh` CLI (preferred) or GitHub MCP (`mcp__github__*`)
   - **Git/PR**: Use **GitHub Stacked PRs** via the `gh stack` CLI (`github/gh-stack` extension) for all stacked branch/PR work. The command reference lives in the `gh-stack` skill (`.claude/skills/gh-stack/`) and the project conventions (naming, draft→ready lifecycle, bottom-up merge, sync/rebase/conflict loops, non-interactive agent rules) in the `fw:stacked-pr-workflow` skill — load both before stack work.
     - **Graphite (`gt`) is banned in this repository (FR-3391).** Never run any `gt` command; a permissions deny rule plus a `PreToolUse` hook block `gt` invocations. Stack metadata lives on GitHub itself.
