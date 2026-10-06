@@ -1,5 +1,5 @@
 #!/bin/bash
-# Claude Code statusline — line 1: worktree state + VS Code + Portless + Teams + Jira,
+# Claude Code statusline — line 1: worktree state + VS Code + Portless + Teams + issue,
 # line 2: model + token usage. Reads the session JSON on stdin.
 #
 # WHY IT LOOKS LIKE THIS
@@ -13,7 +13,7 @@
 #   * Portless state is read straight from ~/.portless/{routes.json,proxy.port,proxy.tls};
 #     the `portless` CLI is a workspace devDependency and is never on the statusline's
 #     PATH. Route ownership is /proc/<pid>/cwd, which is also the liveness check.
-#   * No network in the foreground. Jira is served from cache; a setsid-detached
+#   * No network in the foreground. The issue is served from cache; a setsid-detached
 #     refresher warms it (setsid, because the abort is a process-group SIGTERM).
 #   * No `set -e`, and python3 runs as a CHILD (never `exec`): a run that COMPLETES
 #     with empty stdout clears the statusline, while an abort merely freezes it.
@@ -23,10 +23,10 @@
 #   * git runs WITHOUT --no-optional-locks so it may write the refreshed index back;
 #     see the comment in git_facts() for the 25x this is worth on a stat-dirty tree.
 #
-# Requires (optional): ~/.config/atlassian/credentials with ATLASSIAN_EMAIL + ATLASSIAN_API_TOKEN.
-# Jira field customfield_10176 = Teams thread URL.
-# A `gh-N` branch (GitHub-native issue, no FR key) reads the issue and its
-# "Teams thread" issue field through `gh` instead, when `gh` is installed.
+# Requires (optional): `gh`. A `gh-N` branch names the work item's GitHub issue; a
+# legacy `fr-N` branch is resolved once to its GitHub clone (the issue whose body
+# carries `JIRA Issue: FR-N`). Either renders the issue and its "Teams thread"
+# issue field. Nothing here talks to Jira.
 # Env: CLAUDE_STATUSLINE_SSH_HOST (VS Code Remote-SSH host; prefer an ssh-config alias),
 #      CLAUDE_STATUSLINE_CACHE_DIR, CLAUDE_STATUSLINE_DEBUG=1|2, CLAUDE_STATUSLINE_DEBUG_LOG,
 #      PORTLESS_STATE_DIR / PORTLESS_HOME.
@@ -43,9 +43,8 @@ import time
 import urllib.parse
 
 T0 = time.monotonic()
-CACHE_TTL = 300.0      # Jira cache freshness
+CACHE_TTL = 300.0      # issue cache freshness
 ATTEMPT_TTL = 60.0     # floor between two refresher spawns for the same key
-JIRA_BASE = "https://lablup.atlassian.net"
 # git is the only thing that blocks, so its budget IS the script's worst case. The two
 # calls share one deadline rather than each getting its own: sequential per-call
 # timeouts sum, and a 0.4+0.6 worst case would overshoot the 300ms refresh debounce by
@@ -423,14 +422,15 @@ def render_portless(matches):
 
 def prune_cache(cache_dir):
     """Sweep what previous versions left behind (the pid->cwd cache, whose pid reuse
-    silently mislinked worktrees; the gh PR summaries) and expire the attempt stamps,
-    which are one-per-key-forever otherwise."""
+    silently mislinked worktrees; the gh PR summaries; the Jira issue caches) and
+    expire the attempt stamps, which are one-per-key-forever otherwise."""
     now = time.time()
     try:
         for e in os.scandir(cache_dir):
             n = e.name
             stale = ((n.startswith("portless-pid-") and n.endswith(".cwd"))
-                     or (n.startswith("pr-FR-") and n.endswith(".txt")))
+                     or (n.startswith("pr-FR-") and n.endswith(".txt"))
+                     or re.fullmatch(r"FR-\d+\.json", n))
             if not stale and (n.endswith(".attempt") or n.startswith("git-inflight-")):
                 try:
                     stale = abs(now - e.stat().st_mtime) > 86400.0
@@ -445,42 +445,34 @@ def prune_cache(cache_dir):
         pass
 
 
-# ── Jira / Teams ───────────────────────────────────────────────────────────
-REFRESH = r'''
-key=$1; cache=$2
-cred="${ATLASSIAN_CRED_FILE:-$HOME/.config/atlassian/credentials}"
-[ -f "$cred" ] && . "$cred"
-[ -n "${ATLASSIAN_EMAIL:-}" ] && [ -n "${ATLASSIAN_API_TOKEN:-}" ] || exit 0
-auth=$(printf '%s:%s' "$ATLASSIAN_EMAIL" "$ATLASSIAN_API_TOKEN" | base64 | tr -d '\n')
-tmp="${cache}.tmp.$$"
-# The credential arrives on stdin via --config, never in argv: /proc is readable by
-# every other process on a dev box that runs dozens of agents.
-code=$(printf 'header = "Authorization: Basic %s"\n' "$auth" \
-  | curl -s -o "$tmp" -w '%{http_code}' --max-time 3 --config - \
-  "https://lablup.atlassian.net/rest/api/3/issue/${key}?fields=summary,status,customfield_10176" \
-  -H "Content-Type: application/json" 2>/dev/null) || code=000
-case "$code" in
-  200)
-    if python3 -c 'import json,sys; sys.exit(0 if "fields" in json.load(open(sys.argv[1])) else 1)' "$tmp" 2>/dev/null; then
-      mv -f "$tmp" "$cache"
-    fi
-    ;;
-  401|403|404)
-    # Definitive failure: never clobber a good cache, just gate the next attempt.
-    if [ -s "$cache" ]; then touch "$cache"; else printf '{}' >"$tmp" && mv -f "$tmp" "$cache"; fi
-    ;;
-esac
-rm -f "$tmp" 2>/dev/null
-exit 0
-'''
-
-# A GitHub-native issue (`gh-N` branch, no Jira key). Its Teams thread is the org
-# Issue field NAMED "Teams thread" — the same query and filter as advertise.sh.
+# ── issue / Teams ──────────────────────────────────────────────────────────
+# $1 is an issue number, or a legacy FR key resolved first to its GitHub clone: the
+# issue whose body carries the exact line `JIRA Issue: FR-N`. That mapping never
+# changes, so it is kept in a `.clone` file next to the cache, for good. The Teams
+# thread is the org Issue field NAMED "Teams thread" — the same query and filter as
+# advertise.sh.
 GH_REFRESH = r'''
-num=$1; cache=$2
+ref=$1; cache=$2
 t=""; command -v timeout >/dev/null 2>&1 && t="timeout 10"
 tmp="${cache}.tmp.$$"
-issue=$($t gh api "repos/{owner}/{repo}/issues/${num}" --jq '{title, state, html_url}' 2>/dev/null) || exit 0
+num=$ref
+case "$ref" in
+  FR-*)
+    map="${cache%.json}.clone"
+    num=$(cat "$map" 2>/dev/null | tr -dc '0-9')
+    if [ -z "$num" ]; then
+      # -F, not -f: only -F fills in {owner}/{repo} inside a value. The phrase match
+      # is token-fuzzy ("FR-1" ranks FR-854's clone), so the body is checked too.
+      num=$($t gh api -X GET search/issues -F q="repo:{owner}/{repo} \"JIRA Issue: $ref\" in:body" \
+              -f per_page=20 --jq "[.items[]? | select((.body // \"\") | test(\"JIRA Issue:\\\\s*$ref\\\\b\"))][0].number // empty" \
+              2>/dev/null | tr -dc '0-9')
+      # No clone (yet): render the bare key, ask again after CACHE_TTL.
+      [ -n "$num" ] || { printf '{}' >"$tmp" && mv -f "$tmp" "$cache"; exit 0; }
+      printf '%s\n' "$num" >"$map"
+    fi
+    ;;
+esac
+issue=$($t gh api "repos/{owner}/{repo}/issues/${num}" --jq '{number, title, state, html_url}' 2>/dev/null) || exit 0
 # No such field, no value or no permission to read it: the issue still renders, unlinked.
 teams=$($t gh api graphql -F owner='{owner}' -F repo='{repo}' -F num="$num" -f query='
   query($owner: String!, $repo: String!, $num: Int!) {
@@ -547,12 +539,12 @@ def spawn_git_warm(git, top, cache_dir):
     return True
 
 
-def spawn_refresh(key, cache_path, script=REFRESH, cwd=None):
+def spawn_refresh(key, cache_path, script=GH_REFRESH, cwd=None):
     bash = which("bash")
     if not bash:
         return False
     # The attempt stamp is written before the spawn, so a hard failure costs one
-    # curl per minute instead of one per tick.
+    # refresh per minute instead of one per tick.
     attempt = cache_path + ".attempt"
     if age(attempt) < ATTEMPT_TTL or not stamp(attempt):
         return False
@@ -582,43 +574,31 @@ def describe(part, status, summary):
     return part
 
 
-def jira_segments(branch, cache_dir):
-    m = re.search(r"fr-(\d+)", branch or "", re.I)
-    if not m:
-        return "", ""
-    key = "FR-%s" % m.group(1)
-    cache_path = os.path.join(cache_dir, key + ".json")
-    if age(cache_path) >= CACHE_TTL:
-        spawn_refresh(key, cache_path)
-    # Whatever the cache state, render what is there and keep going: the key alone is
-    # already useful on tick 1, and an early return is what caused the three-tick warmup.
-    summary = status = teams = ""
-    try:
-        with open(cache_path, "rb") as f:
-            fields = (json.loads(f.read().decode("utf-8", "replace")) or {}).get("fields") or {}
-        summary = scrub(fields.get("summary"))
-        status = scrub((fields.get("status") or {}).get("name"))
-        teams = scrub(fields.get("customfield_10176")).strip()
-    except Exception:
-        pass
-    # https:// only: whoever can edit the field controls where a link labelled
-    # "Teams" points, so at least deny non-https schemes.
-    teams_part = link(teams, "Teams") if teams.startswith("https://") else ""
-    jira_part = link("%s/browse/%s" % (JIRA_BASE, key), key)
-    return teams_part, describe(jira_part, status, summary)
-
-
-def github_segments(branch, cache_dir, top):
-    """`gh-N` in the branch names a GitHub-native issue: same two segments as Jira,
-    served from a cache `gh` warms. Issue numbers are per repo, hence `top` in the name."""
+def issue_ref(branch):
+    """The branch's work item: `gh-N` (a GitHub issue) or a legacy `fr-N` key, which
+    the refresher resolves to its GitHub clone. `gh-N` wins when both appear."""
     m = re.search(r"(?:^|[-_/])gh-?(\d+)", branch or "", re.I)
-    if not m or not top:
+    if m:
+        return m.group(1)
+    m = re.search(r"(?:^|[^A-Za-z0-9])fr-(\d+)", branch or "", re.I)
+    if m:
+        return "FR-%s" % m.group(1)
+    return ""
+
+
+def issue_segments(branch, cache_dir, top):
+    """Teams + `#N (state): title` for the branch's issue, served from a cache `gh`
+    warms. Issue numbers are per repo, hence `top` in the name."""
+    ref = issue_ref(branch)
+    if not ref or not top:
         return "", ""
-    num = m.group(1)
-    cache_path = os.path.join(cache_dir, "gh-%s-%s.json" % (slug(top), num))
+    cache_path = os.path.join(cache_dir, "gh-%s-%s.json" % (slug(top), ref))
     if age(cache_path) >= CACHE_TTL:
-        spawn_refresh(num, cache_path, GH_REFRESH, top)
+        spawn_refresh(ref, cache_path, GH_REFRESH, top)
+    # Whatever the cache state, render what is there: the ref alone is already
+    # useful on tick 1.
     title = state = url = teams = ""
+    num = ref if ref.isdigit() else ""
     try:
         with open(cache_path, "rb") as f:
             data = json.loads(f.read().decode("utf-8", "replace")) or {}
@@ -627,12 +607,16 @@ def github_segments(branch, cache_dir, top):
         state = scrub(issue.get("state"))
         url = scrub(issue.get("html_url")).strip()
         teams = (data.get("teams") or "").strip()
+        if isinstance(issue.get("number"), int):
+            num = str(issue["number"])
     except Exception:
         pass
-    # https only, as for the Jira field; the value must be one URL and nothing else.
+    # https only: whoever can edit the field controls where a link labelled "Teams"
+    # points. The value must be one URL and nothing else.
     is_url = re.fullmatch(r"https://[^\s\"<>\x00-\x1f\x7f]+", teams)
     teams_part = link(teams, "Teams") if is_url else ""
-    label = "#" + num
+    # An unresolved legacy key renders as itself, unlinked, until its clone is found.
+    label = ("#" + num) if num else ref
     issue_part = link(url, label) if url.startswith("https://") else label
     return teams_part, describe(issue_part, state, title)
 
@@ -734,10 +718,8 @@ def main():
 
     try:
         branch = (facts or {}).get("branch") or scrub(worktree.get("branch")) or ""
-        teams_part, issue_part = jira_segments(branch, cache_dir)
-        if not issue_part:  # no FR key in the branch
-            teams_part, issue_part = github_segments(
-                branch, cache_dir, (facts or {}).get("top"))
+        teams_part, issue_part = issue_segments(
+            branch, cache_dir, (facts or {}).get("top"))
         if teams_part:
             segments.append(teams_part)
         if issue_part:
