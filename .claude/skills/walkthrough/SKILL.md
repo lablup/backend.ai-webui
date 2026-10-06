@@ -4,7 +4,7 @@ description: >
   Mint a walkthrough for the PR this session just implemented: a set of
   numbered stops a reviewer opens in the live dev server, each one marking an
   element on screen with what changed and what to check. Decide first whether
-  the PR needs one (§0); when it does, run it as the LAST step of the
+  the PR needs one (section 0); when it does, run it as the LAST step of the
   implementation workflow, after the `dev-server` skill has advertised the
   PR's server — and on demand for any PR by number, booting
   a dev server for its branch when none is live. Trigger on "walkthrough
@@ -40,7 +40,7 @@ for the change or set up a state to see it:
   hover, a row action;
 - the change spans two or more places, or a flow across pages;
 - what shows depends on data (a status, a permission, a resource value), so
-  the check is value → what shows (§5).
+  the check is value → what shows (section 5).
 
 Skip it when:
 
@@ -60,12 +60,12 @@ Skip it when:
 
 Between a one-stop walkthrough and one line in the PR body, the line wins.
 
-An explicit request (§1a) overrides the one-spot skip, not the
+An explicit request (section 1a) overrides the one-spot skip, not the
 nothing-on-screen one.
 
 ## 1. When to run
 
-- **The last step of the implementation workflow**, when §0 says it is
+- **The last step of the implementation workflow**, when section 0 says it is
   needed, after `dev-server` has
   advertised the PR's server (the boot record exists and the PR carries the
   dev-server comment). The walkthrough is about the diff, so it runs on the
@@ -73,9 +73,9 @@ nothing-on-screen one.
   got theirs on their own turn.
 - **On demand, by PR number** — `/walkthrough 9751`, "PR #9751에 walkthrough
   달아줘" — for a PR this session did not implement, from any checkout. The
-  steps are §1a; `mint.mjs --pr <n>` does the resolution.
+  steps are section 1a; `mint.mjs --pr <n>` does the resolution.
 - **Re-runs**: an implementation re-run that changes the UI re-mints and edits
-  the comment in place (§0 covers the ones that do not).
+  the comment in place (section 0 covers the ones that do not).
 
 ### 1a. On demand for a PR by number
 
@@ -83,7 +83,7 @@ The branch path assumes the session is on the PR's branch with the diff in
 its head. Given only a number, get both first:
 
 1. **Is there a server?** `mint.mjs --pr <n> --dry-run` needs no manifest
-   and answers in one line (§6): the live server that serves the PR, or
+   and answers in one line (section 6): the live server that serves the PR, or
    exit 3. It refuses a PR that is not open, so that check is not yours.
 2. **No server** — boot one for `headRefName` with the `dev-server` skill,
    from a checkout at the PR head: reuse a worktree already on that branch
@@ -99,10 +99,10 @@ its head. Given only a number, get both first:
    that (it says so on stderr) and the stops are verified against that
    build. Only a server whose commit does not contain the PR head is refused.
 4. **The diff.** Read the PR body's own summary first; it names what the
-   author thinks is visible, and often settles §0 without the diff. Then
-   `gh pr diff <n> --name-only`, and read only the UI files it lists. §3–§5
+   author thinks is visible, and often settles section 0 without the diff. Then
+   `gh pr diff <n> --name-only`, and read only the UI files it lists. Sections 3–5
    apply unchanged.
-5. **Mint and post** with `--pr <n>` (§6) and `comment.sh … --pr <n>` (§7).
+5. **Mint and post** with `--pr <n>` (section 6) and `comment.sh … --pr <n>` (section 7).
    The report's `pr` and `sha` come from GitHub, not from the current branch.
 
 ## 2. Preflight
@@ -113,7 +113,7 @@ failure produces **no comment and no walkthrough**, not a partial one.
 | Check                              | How                                                                                                                                                                                                      |
 | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | The box has joined the dev gateway | `~/.config/fw/dev-gw.json` exists                                                                                                                                                                        |
-| A live server for the PR           | the boot record `mint.mjs` resolves (§6): this branch's, or with `--pr` the one that serves the PR                                                                                                       |
+| A live server for the PR           | the boot record `mint.mjs` resolves (section 6): this branch's, or with `--pr` the one that serves the PR                                                                                                |
 | The server is routable             | the record's `url` answers a 2xx with `X-Portless: 1`                                                                                                                                                    |
 | The server has guided mode         | `/__review/guided.js` answers 200; an older overlay (a branch that predates FR-3950) draws a stop as a bare pin without its notes, so `mint.mjs` exits 3 and says to rebase onto a main that includes it |
 | The app shell survives login       | `mint.mjs` checks it and exits 3                                                                                                                                                                         |
@@ -124,7 +124,7 @@ same refusal `advertise.sh` makes.
 
 The last check is the one that actually bites, and it is about the **backend**,
 not the server. Resolve the endpoint the way the `dev-server` skill does
-(its §2c: the PR description's named test server, then the shell/`.env` value,
+(its section 2c: the PR description's named test server, then the shell/`.env` value,
 then `config.toml`) and pass it as `--endpoint`; then verify the app shell
 survives login — `mint.mjs` does, and exits 3 with one line when it does not.
 A shell that dies leaves nothing to mint against. The symptom to recognize is
@@ -203,7 +203,7 @@ A JSON file — `{"stops": [...]}` or a bare array — one object per stop:
 - `label` — optional; without it the comment's head is
   `Page › testid › tag "text"`, derived from the anchor.
 - `lng` / `i18n` — always `"lng": "en"` with exactly one `i18n` entry, `ko`
-  (§5); `manifest.mjs` refuses any other. Each extra language would add a
+  (section 5); `manifest.mjs` refuses any other. Each extra language would add a
   replay per stop at mint time. The `ko` entry needs `ch` and `ck`; `old`,
   `new` and `via` fall back to the English ones when it omits them.
 - Capture inside a `[role=dialog]` sets `dlg: 1` on its own — do not write it.
@@ -240,7 +240,7 @@ every problem at once; the caps mirror the overlay's `stop-guard.ts`.
 "ro" shows "Read only"`. When the connected backend cannot produce that value yet (the
   feature is not deployed there), keep the condition and add one clause saying
   what this server cannot show — and list it under "Not shown in the
-  walkthrough" (§7). "Should look the same as before" is not a check: it
+  walkthrough" (section 7). "Should look the same as before" is not a check: it
   describes the unchanged branch and hides the one the PR added.
 - `old` / `new` — literals, ≤ 40 chars each. Omit both when nothing was
   replaced.
@@ -290,13 +290,13 @@ contains it; a server behind the sha exits 3.
 `--env-file` overrides where the admin account is read from (the server's own
 checkout, then this one) — never print or commit it. `--dry-run` resolves
 everything and launches no browser — without `--manifest`, for the one
-question §1a starts with.
+question section 1a starts with.
 
 A translated stop carries the element's text (`txt`) per language, since
 every resolution tier ANDs it: `mint.mjs` replays the stop once in each
 language to read it. A `find` whose anchor is one testid unique on the page
 needs no text, so that stop skips the per-language replays and mints in one
-pass. That is the cheap path, and why `find` should name a `testid` (§3).
+pass. That is the cheap path, and why `find` should name a `testid` (section 3).
 
 The script logs in, replays each stop, mints the anchor with the overlay's own
 in-page modules, builds the set link, then opens it in a **fresh page** and
@@ -355,14 +355,14 @@ and, when some stop did not pin:
 ```
 
 Each unpinned stop keeps its `ck`, so the reviewer can still check it by hand.
-A preflight failure, or a §0 skip, replaces the whole line with the one-line
+A preflight failure, or a section 0 skip, replaces the whole line with the one-line
 reason.
 
 ## 9. Out of scope
 
 - **Never posts to Teams**, and never to Jira.
 - **Never touches the dev-server comment** or its boot record — that comment
-  stays URL-only and separate (`dev-server` §5 owns it).
+  stays URL-only and separate (`dev-server` section 5 owns it).
 - **Never marks a PR ready.** Draft → ready is the `fw:pr-ready-gate` skill's.
 - **Never edits the PR description outside its `## Walkthrough` section**, and
   never opens, closes, labels or reviews a PR.
