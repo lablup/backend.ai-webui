@@ -347,76 +347,64 @@ describe('connectViaGQL — myUserV2 query rejects (FR-3998)', () => {
 });
 
 describe('connectViaGQL — act-as tab (FR-4111)', () => {
+  const g = globalThis as any;
+  const cfg = getDefaultLoginConfig();
+
   afterEach(() => {
-    const g = globalThis as Record<string, unknown>;
     delete g.backendaiclient;
     delete g.backendaiutils;
     delete g.backendaioptions;
   });
 
-  const refusal = { isError: true, statusCode: 401, message: 'not allowed' };
-
-  it('never logs out the shared session on a refusal', async () => {
-    const logout = vi.fn().mockResolvedValue(undefined);
-    const client = {
-      actAsUserId: 'target-uuid',
-      query: vi.fn().mockRejectedValue(refusal),
-      logout,
-    };
-
-    await expect(connectViaGQL(client, cfg, [])).rejects.toBe(refusal);
-    expect(logout).not.toHaveBeenCalled();
+  const refusal = Object.assign(new Error('GraphQL Authorization Error'), {
+    name: 'AuthorizationError',
+  });
+  const actAsClient = (query = vi.fn()) => ({
+    ...makeClient(),
+    actAsUserId: 'target-uuid',
+    query,
   });
 
-  it('never logs out the shared session when the keypair is missing', async () => {
-    const logout = vi.fn().mockResolvedValue(undefined);
-    const client = {
-      actAsUserId: 'target-uuid',
-      query: vi.fn().mockResolvedValue({ keypair: null }),
-      logout,
-    };
+  it('never logs out the shared session on a refusal', async () => {
+    environment.mock.queueOperationResolver(() => refusal);
+    const client = actAsClient();
+
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBe(refusal);
+    expect(client.logout).not.toHaveBeenCalled();
+  });
+
+  it('never logs out the shared session when the user is missing', async () => {
+    queueResponses([{ myUserV2: null }]);
+    const client = actAsClient();
 
     await expect(connectViaGQL(client, cfg, [])).rejects.toThrow(
-      'Keypair information is missing.',
+      'User information is missing.',
     );
-    expect(logout).not.toHaveBeenCalled();
+    expect(client.logout).not.toHaveBeenCalled();
   });
 
   it("adopts the target's access key over the webserver session's", async () => {
-    const g = globalThis as Record<string, unknown>;
     g.backendaiutils = { _readRecentProjectGroup: () => '' };
     g.backendaioptions = { set: vi.fn() };
-    const client = {
-      actAsUserId: 'target-uuid',
-      _config: { _accessKey: 'ADMIN_KEY', endpoint: 'https://example.test' },
-      query: vi
-        .fn()
-        .mockResolvedValueOnce({
-          keypair: {
-            user_id: 'target@example.test',
-            resource_policy: 'default',
-            user: 'target-uuid',
-            access_key: 'TARGET_KEY',
-          },
-        })
-        .mockResolvedValueOnce({
-          user: {
-            email: 'target@example.test',
-            uuid: 'target-uuid',
-            role: 'user',
-            domain_name: 'default',
-            groups: [{ name: 'p', id: 'p-id' }],
-          },
-        }),
-      group: {
-        list: vi
-          .fn()
-          .mockResolvedValue({ groups: [{ name: 'p', id: 'p-id' }] }),
-      },
-      logout: vi.fn(),
-    };
+    queueResponses([meWith(singlePage([[PROJECT_A, 'alpha']]))]);
+    const client = actAsClient(
+      vi.fn().mockResolvedValue({ keypair: { access_key: 'TARGET_KEY' } }),
+    );
+    (client._config as Record<string, unknown>)._accessKey = 'ADMIN_KEY';
 
-    await connectViaGQL(client, cfg, ['https://example.test']);
-    expect(client._config._accessKey).toBe('TARGET_KEY');
+    await connectViaGQL(client, cfg, []);
+    expect((client._config as Record<string, unknown>)._accessKey).toBe(
+      'TARGET_KEY',
+    );
+  });
+
+  it('keeps the session access key outside act-as', async () => {
+    g.backendaiutils = { _readRecentProjectGroup: () => '' };
+    g.backendaioptions = { set: vi.fn() };
+    queueResponses([meWith(singlePage([[PROJECT_A, 'alpha']]))]);
+    const client = { ...makeClient(), query: vi.fn() };
+
+    await connectViaGQL(client, cfg, []);
+    expect(client.query).not.toHaveBeenCalled();
   });
 });
