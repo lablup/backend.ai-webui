@@ -135,6 +135,12 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
                   content={t('projectSelect.ProjectAdminBadge')}
                   focusable={false}
                   icon={<ShieldUser />}
+                  // The icon's Text uses `--color-text-secondary`; follow the name's color instead.
+                  style={
+                    {
+                      '--color-text-secondary': 'currentColor',
+                    } as React.CSSProperties
+                  }
                 />
               )}
             </BAIFlex>
