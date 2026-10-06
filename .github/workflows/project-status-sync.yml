@@ -326,10 +326,13 @@ jobs:
           repo_name="${REPO_FULL_NAME#*/}"
           updated=0
           skipped=0
+          failed=0
 
           while IFS= read -r issue_number; do
             [ -z "$issue_number" ] && continue
 
+            # gh exits 1 for a number that is not an issue (e.g. a doc example in the PR body).
+            read_status=0
             gh api graphql \
               -f query='
                 query($owner: String!, $name: String!, $number: Int!, $iterationField: String!) {
@@ -351,7 +354,14 @@ jobs:
               -f name="$repo_name" \
               -F number="$issue_number" \
               -f iterationField="$ITERATION_FIELD_NAME" \
-              > "issue_${issue_number}.json"
+              > "issue_${issue_number}.json" || read_status=$?
+
+            if [ "$read_status" -ne 0 ] || [ "$(jq -r '.data.repository.issue != null' "issue_${issue_number}.json" 2>/dev/null)" != "true" ]; then
+              read_errors=$(jq -r '[.errors[]?.message] | join("; ")' "issue_${issue_number}.json" 2>/dev/null || true)
+              echo "::notice::#${issue_number} could not be resolved as an issue (gh exit ${read_status}${read_errors:+: ${read_errors}}). Skipping."
+              skipped=$((skipped + 1))
+              continue
+            fi
 
             item_id=$(jq -r \
               --arg pid "$PROJECT_ID" \
@@ -368,6 +378,7 @@ jobs:
               continue
             fi
 
+            write_status=0
             gh api graphql \
               -f query='
                 mutation($project: ID!, $item: ID!, $field: ID!, $option: String!) {
@@ -384,13 +395,19 @@ jobs:
               -f item="$item_id" \
               -f field="$STATUS_FIELD_ID" \
               -f option="$OPTION_ID" \
-              > /dev/null
+              > /dev/null || write_status=$?
+            if [ "$write_status" -ne 0 ]; then
+              echo "::error::Could not set the status of issue #${issue_number} (gh exit ${write_status})."
+              failed=$((failed + 1))
+              continue
+            fi
 
             echo "::notice::Issue #${issue_number} status set to \"${TARGET_STATUS}\"."
             updated=$((updated + 1))
 
             # ITERATION_FIELD_ID is empty unless the target wants an iteration and one is current.
             if [ -n "$ITERATION_FIELD_ID" ] && [ -z "$current_iteration" ]; then
+              write_status=0
               gh api graphql \
                 -f query='
                   mutation($project: ID!, $item: ID!, $field: ID!, $iteration: String!) {
@@ -407,9 +424,16 @@ jobs:
                 -f item="$item_id" \
                 -f field="$ITERATION_FIELD_ID" \
                 -f iteration="$ITERATION_ID" \
-                > /dev/null
-              echo "::notice::Issue #${issue_number} iteration set to the current iteration."
+                > /dev/null || write_status=$?
+              if [ "$write_status" -ne 0 ]; then
+                echo "::error::Could not set the iteration of issue #${issue_number} (gh exit ${write_status})."
+                failed=$((failed + 1))
+              else
+                echo "::notice::Issue #${issue_number} iteration set to the current iteration."
+              fi
             fi
           done <<< "$NUMBERS"
 
-          echo "::notice::PR #${{ github.event.pull_request.number }} sync summary: updated=${updated}, skipped=${skipped}."
+          echo "::notice::PR #${{ github.event.pull_request.number }} sync summary: updated=${updated}, skipped=${skipped}, failed=${failed}."
+          # A failed write is a project-level failure; unresolvable numbers are not.
+          [ "$failed" -eq 0 ]
