@@ -11,7 +11,7 @@ description: >
   "post the release risk report to Teams", "/release-train-prep". With
   --train it also opens the release train: reads the version from the thread's
   own "Final train to vX.Y.Z" title, creates the "Final Train to v<version>"
-  Jira Story (after user confirm) and posts the kickoff + digest into the
+  GitHub issue (after user confirm) and posts the kickoff + digest into the
   thread — "트레인 이슈 만들어줘", "릴리즈 트레인 준비해줘", "이 스레드로 트레인
   준비해줘", "release train 시작".
   PREPARATION ONLY — it never creates a release branch, tag, or GitHub release;
@@ -25,11 +25,11 @@ disable-model-invocation: true
 
 Prepare a release train: turn a ref range into a QA checklist, post it to the
 train's Teams thread grouped by risk category, and (with `--train`) open the
-`Final Train` Jira Story. The analysis is done entirely by
+`Final Train` GitHub issue. The analysis is done entirely by
 `scripts/release-risk-report.mjs`; this skill runs it once, renders Korean
 HTML, and posts.
 
-> **Prep, not release.** This skill touches Jira and Teams only — it never
+> **Prep, not release.** This skill touches the train issue and Teams only — it never
 > creates a release branch, pushes a tag, or publishes a GitHub release.
 > Cutting an rc or a stable is `create-release`; the post-release version bump
 > is `bump-alpha-version`. If the ask is "릴리즈 찍어줘" rather than
@@ -55,11 +55,11 @@ HTML, and posts.
 - `--to <ref>` — defaults to `HEAD`.
 - `--dry-run` — preview only, no side effects anywhere: write the HTML to
   `/tmp/release-train-prep-preview.html`, skip the Teams post, and with
-  `--train` also skip every Jira action (no Story, no weblink) — describe what
+  `--train` also skip every tracker action (no issue, no project item) — describe what
   would be created instead. A dry run must never mutate anything.
 - `--auto` — skip the confirm-before-post prompt (for cron / unattended runs).
 - `--train [version]` — also open the release train: create the
-  `Final Train to v<version>` Jira Story and post the kickoff into the thread.
+  `Final Train to v<version>` GitHub issue and post the kickoff into the thread.
   The version may be omitted — it is read from the thread's own title.
   See *Train kickoff* below.
 - A Teams thread URL (`teams.microsoft.com/l/message/...`) — **required unless `--dry-run`.**
@@ -290,10 +290,11 @@ and print the path instead.
 ## Train kickoff (`--train [version]`)
 
 The team's release ritual: a human opens a `🚂 Final train to vX.Y.Z` thread,
-someone creates the `Final Train to vX.Y.Z` Jira Story, and every bug found
-during release testing is linked onto it — `is blocked by` for blockers,
-`relates to` for the rest. The stable tag is cut when no blocker is left open.
-This mode automates the middle step and seeds the thread with the digest.
+someone creates the `Final Train to vX.Y.Z` issue, and every bug found during
+release testing is linked onto it — as a **blocked by** dependency for
+blockers, a `#N` mention for the rest. The stable tag is cut when no blocker
+is left open. This mode automates the middle step and seeds the thread with
+the digest.
 
 **The whole flow works from just the thread URL.** The human's only manual
 step is opening the thread; version and range are inferred from there:
@@ -308,64 +309,72 @@ step is opening the thread; version and range are inferred from there:
   "이전 정식 → 다음 정식(예정)" comparison the digest header speaks in),
   skipping the usual AskUserQuestion. An explicit `--from` still overrides.
 
-Both inferred values are shown in the Story-creation confirm (step 2), which
+Both inferred values are shown in the issue-creation confirm (step 2), which
 is where a wrong parse gets caught — one confirm, not two.
 
 Runs **in addition to** the normal digest flow, sharing its confirm gate. The
 thread URL is **required** here even though `--dry-run` normally waives it —
-the Story embeds it, and version inference reads it — and under `--dry-run`
+the issue embeds it, and version inference reads it — and under `--dry-run`
 every step below is described, not executed. Steps, in order:
 
 1. **Duplicate scan first.** An existing train for the same version is reused,
    never doubled:
 
    ```bash
-   $FW_JIRA search "project = FR AND summary ~ \"Final Train\" ORDER BY created DESC" --limit 10 \
+   gh search issues --repo lablup/backend.ai-webui --match title "Final Train" \
+     --sort created --order desc --limit 10 --json number,title,state,url \
+     --jq '.[] | "\(.number)\t\(.state)\t\(.title)"' \
      | grep -iF "$VERSION"
    ```
 
    List the recent trains and match the version string yourself. Do NOT put
-   the version into the JQL: `summary ~ "26.9.0"` is a tokenized text search
-   and returned nothing for FR-3663 "Final Train to v26.9.0" on 2026-09-09 —
-   a `--train` run that trusted it would have created a second Story. The
-   grep also catches the `vWebUI 26.9.0` and bare `26.9.0` spellings alike.
+   the version into the search query: search tokenizes `26.9.0`, and a
+   tokenized text search for the version once returned nothing for an
+   existing "Final Train to v26.9.0" (FR-3663, 2026-09-09) — a `--train` run
+   that trusted it would have created a second train. The grep also catches
+   the `vWebUI 26.9.0` and bare `26.9.0` spellings alike. Trains from before
+   the move to GitHub are their Jira clones and match the same way.
 
-   On a hit, skip creation, use the existing key, and say so in the reply.
+   On a hit, skip creation, use the existing issue, and say so in the reply.
 
-2. **Create the Story — after explicit user confirmation.** Creating a Jira
-   issue is outward-facing: show the exact title, assignee, and description you
-   are about to submit and ask (AskUserQuestion) before every creation — no
-   batch pre-approval, one confirm per issue. Then (see the `jira-workflow`
-   skill; `$FW_JIRA` as documented there) type **Story**, exact summary format
+2. **Create the issue — after explicit user confirmation.** Creating an issue
+   is outward-facing: show the exact title, type, and body you are about to
+   submit and ask (AskUserQuestion) before every creation — no batch
+   pre-approval, one confirm per issue. Type **Task**, exact title format
    `Final Train to v$VERSION` — the team greps for this shape (FR-3663,
-   FR-3392, FR-3238 all follow it):
+   FR-3392, FR-3238 all follow it). The body lists the PRs in the range — one
+   line per distinct `commits[].pr` from the report JSON, `- #N subject` —
+   so the train is readable without the digest:
 
    ```bash
-   $FW_JIRA create --type Story --assignee me \
-     --title "Final Train to v$VERSION" \
-     --desc "Release train for v$VERSION. Bugs found during release testing are
-   linked here: **is blocked by** for release blockers, **relates to** for
-   non-blocking findings. The stable tag is cut when no blocking issue is open.
+   ISSUE_URL=$(gh api -X POST repos/lablup/backend.ai-webui/issues \
+     -f title="Final Train to v$VERSION" -f type=Task \
+     -f body="Release train for v$VERSION. Bugs found during release testing are
+   linked here: **blocked by** (issue dependency) for release blockers, a \`#N\`
+   mention for non-blocking findings. The stable tag is cut when no blocking
+   issue is open.
 
    Kickoff thread: $TEAMS_URL
-   Risk digest at kickoff: see the thread reply posted alongside this issue."
+   Risk digest at kickoff: see the thread reply posted alongside this issue.
+
+   ## PRs in this train ($FROM → $TO)
+   $PR_LINES" --jq .html_url)
    ```
 
-3. **Attach the thread as a web link** so the issue points back at the
-   conversation: `$FW_JIRA weblink $KEY --url "$TEAMS_URL" --title "Kickoff thread"`.
+3. **Put it in the current iteration** of Project 41 so it shows on the
+   board: `gh project item-add 41 --owner lablup --url "$ISSUE_URL"`, then set
+   its `Iteration` field to the current iteration (`gh project field-list 41
+   --owner lablup` for the field and iteration ids, `gh project item-edit` to
+   set it). The Teams thread is already in the body — there is no separate
+   link step.
 
-4. **Wait for the GitHub clone.** The webhook mirrors the issue within ~a
-   minute; poll `gh issue list --search "$KEY"` a few times. If it has not
-   appeared after ~2 minutes, continue — mention the pending clone in the
-   reply instead of blocking on it.
-
-5. **Post the kickoff reply** into the thread: the digest as usual, prefixed
+4. **Post the kickoff reply** into the thread: the digest as usual, prefixed
    with the train header:
 
    ```html
-   <b>🚂 Final Train to v{VERSION}</b> — <a href="https://lablup.atlassian.net/browse/{KEY}">{KEY}</a><br/>
+   <b>🚂 Final Train to v{VERSION}</b> — <a href="{ISSUE_URL}">#{NUMBER}</a><br/>
    릴리즈 테스트에서 발견되는 버그는 이 이슈에 연결해주세요 —
-   블로커는 <b>is blocked by</b>, 그 외는 <b>relates to</b>.<br/><br/>
+   블로커는 <b>blocked by</b>, 그 외는 <b>#{NUMBER}</b> 언급으로.<br/><br/>
    {the normal digest body}
    ```
 
@@ -373,9 +382,10 @@ What this mode deliberately does **not** do:
 
 - **Link bugs to the train.** Whether a finding blocks the release is a human
   call, made per bug as it is filed (the `astryx-bug-report` /
-  `jira-github-bridge` flow already covers the mechanics).
-- **Decide go / no-go.** The open-blocker list is one Jira view away
-  (`links` on the train issue); it needs no digest.
+  `fw:github-issue-workflow` flow already covers the mechanics).
+- **Decide go / no-go.** The open-blocker list is one view away (the train
+  issue's **blocked by** dependencies, or `gh pr list --search "#$NUMBER"` for
+  the PRs that mention it); it needs no digest.
 - **Cut any tag or release.** The train issue is bookkeeping; releasing is
   `create-release`'s job, triggered by a human.
 
@@ -402,8 +412,7 @@ What this mode deliberately does **not** do:
 
 - `scripts/release-risk-report.mjs` — the analysis; `--help` for its own flags
 - `teams-workflow` (fw) — the Teams CLI, mentions, and images
-- `jira-workflow` (fw) — `$FW_JIRA` setup, `create`, `weblink`, `search`
-- `jira-github-bridge` (fw) — the webhook clone and `Resolves #N (KEY)` conventions
+- `fw:github-issue-workflow` — creating GitHub issues, Project 41 fields, and the `Resolves #N` conventions
 - `merged-pr-digest` (fw) — the same post-to-Teams shape for merged PRs
 - `create-release` — cutting the tag itself; out of this skill's scope
 - `.claude/rules/destructive-confirmation.md` — what R4 asks the reader to re-verify

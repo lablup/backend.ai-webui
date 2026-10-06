@@ -51,7 +51,7 @@ The remaining `*.localhost:1355` URLs and `portless proxy start -p 1355` example
 `scripts/dev.mjs` picks the Portless app name as follows:
 
 1. If the current git branch matches `FR-XXXX` (case-insensitive — `fr-XXXX`, `feat/FR-XXXX-...`, `04-24-feat_fr-2701_...`), the hostname becomes `fr-XXXX.localhost:1355`.
-   A branch for a GitHub-native issue (pilot — no Jira key, branch `type/gh-N-slug`) gets `gh-N.localhost:1355` the same way; wherever this document says `fr-XXXX`, read `gh-N` for such a branch.
+   A branch for a GitHub issue (`type/gh-N-slug`) gets `gh-N.localhost:1355` the same way; wherever this document says `fr-XXXX`, read `gh-N` for such a branch.
 2. Otherwise it falls back to `portless run`, which yields `<branch>.<project>.localhost:1355` automatically.
 
 Why issue-number names: long branch names trigger a TLS-cert generation issue under HTTPS. Short, predictable names sidestep that and are also easier to read and bookmark.
