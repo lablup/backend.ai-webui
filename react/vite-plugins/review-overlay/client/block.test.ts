@@ -7,6 +7,8 @@ import {
   buildSetHtml,
   buildSetText,
   captureForBlock,
+  envFooterHtml,
+  envFooterText,
   landmarkLabel,
   LINK_LABEL,
   LINK_LABEL_HTML,
@@ -522,6 +524,73 @@ describe('a pin set', () => {
             '</blockquote>',
           '<!-- bai-review v3 id=c_aaaaaa2 pr=9330 at=2026-08-31T09:00:00Z -->',
         ].join('\n'),
+      );
+    });
+  });
+
+  /**
+   * The footer: where the set was reviewed, once, under everything. A copy
+   * made with no `env` is byte-identical to one made before the footer
+   * existed, which is what keeps the extension's vendored client in step.
+   */
+  describe('with an environment', () => {
+    const env = {
+      webui: '26.9.0',
+      manager: '25.14.2',
+      endpoint: 'https://api.example.com',
+      account: 'reviewer@example.com (superadmin)',
+    };
+    const FOOTER =
+      '<sub>WebUI 26.9.0 · Manager 25.14.2 · API https://api.example.com · reviewer@example.com (superadmin)</sub>';
+
+    it('ends a set of one with the footer, after its marker', () => {
+      const plain = buildSetText([first()], { origin: ORIGIN });
+      expect(buildSetText([first()], { origin: ORIGIN, env })).toBe(
+        `${plain}\n\n${FOOTER}`,
+      );
+    });
+
+    it('ends a set of three with the footer, after the set link', () => {
+      const pins = [first(), second(), third()];
+      const plain = buildSetText(pins, { origin: ORIGIN });
+      const text = buildSetText(pins, { origin: ORIGIN, env });
+      expect(text).toBe(`${plain}\n\n${FOOTER}`);
+      expect(text.split('<sub>')).toHaveLength(2);
+    });
+
+    it('renders the same footer for a rich editor, escaped', () => {
+      const html = buildSetHtml([first()], { origin: ORIGIN, env });
+      expect(html.endsWith(`\n${envFooterHtml(env)}`)).toBe(true);
+      expect(envFooterHtml({ endpoint: 'https://h/?a=1&b=<2>' })).toBe(
+        '<p><sub>API https://h/?a=1&amp;b=&lt;2&gt;</sub></p>',
+      );
+      const several = buildSetHtml([first(), second()], {
+        origin: ORIGIN,
+        env,
+      });
+      expect(several.indexOf('Open all 2 pins')).toBeLessThan(
+        several.indexOf('<sub>'),
+      );
+    });
+
+    it('leaves out what the host could not answer', () => {
+      expect(envFooterText({ webui: '26.9.0', endpoint: ' ' })).toBe(
+        '<sub>WebUI 26.9.0</sub>',
+      );
+      expect(envFooterText({ webui: '26.9.0', manager: '25.14.2' })).toBe(
+        '<sub>WebUI 26.9.0 · Manager 25.14.2</sub>',
+      );
+    });
+
+    it('writes nothing at all when there is nothing to say', () => {
+      expect(envFooterText(undefined)).toBeNull();
+      expect(envFooterText({})).toBeNull();
+      expect(envFooterHtml({ account: '' })).toBeNull();
+      expect(buildSetText([first()], { origin: ORIGIN, env: {} })).toBe(
+        buildSetText([first()], { origin: ORIGIN }),
+      );
+      expect(buildSetHtml([first()], { origin: ORIGIN, env: {} })).toBe(
+        buildSetHtml([first()], { origin: ORIGIN }),
       );
     });
   });
