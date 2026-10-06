@@ -95,6 +95,28 @@ export async function skipUnlessWebUIVersion(
 }
 
 /**
+ * Declaratively skips the current test when the logged-in manager is older
+ * than `minVersion`, using the client's own `isManagerVersionCompatibleWith`
+ * (pre-release aware, e.g. "26.9.0rc1"). Use for manager capabilities that
+ * have no `baiClient.supports(...)` flag (pair with `@requires-manager-vX.Y`).
+ */
+export async function skipUnlessManagerVersion(
+  page: Page,
+  minVersion: string,
+  reason: string,
+): Promise<void> {
+  await waitForBackendAIClient(page);
+  const { compatible, version } = await page.evaluate((v) => {
+    const client = (globalThis as any).backendaiclient;
+    return {
+      compatible: !!client?.isManagerVersionCompatibleWith(v),
+      version: String(client?.managerVersion ?? 'unknown'),
+    };
+  }, minVersion);
+  test.skip(!compatible, `${reason} (manager ${version} < ${minVersion})`);
+}
+
+/**
  * Returns whether the logged-in Backend.AI client reports support for the
  * given capability flag — the same check components perform via
  * `baiClient.supports(feature)`.

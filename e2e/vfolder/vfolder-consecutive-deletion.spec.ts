@@ -1,5 +1,6 @@
 // Test to verify consecutive folder deletions work correctly with filter clearing
 import { NotificationHandler } from '../utils/classes/common/NotificationHandler';
+import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
 import {
   loginAsUser,
   loginAsAdmin,
@@ -83,31 +84,38 @@ test.describe(
     tag: ['@regression', '@vfolder', '@functional', '@requires-manager-v26.9'],
   },
   () => {
-    let adminApi: APIRequestContext;
+    let adminApi: APIRequestContext | undefined;
     let folderPrefix: string;
     let folders: Array<{ name: string; id: string }> = [];
 
     test.beforeEach(async ({ page, request }) => {
+      adminApi = undefined;
+      folders = [];
+      await loginAsAdmin(page, request);
+      await skipUnlessManagerVersion(
+        page,
+        '26.9.0rc1',
+        'Bulk delete forever reads VFolder permissions from scopedVFoldersV2 (#10051)',
+      );
       adminApi = await createUserApiContext(
         userInfo.admin.email,
         userInfo.admin.password,
       );
       folderPrefix = `e2e-test-bulk-purge-${Date.now()}-`;
-      folders = [];
       for (const suffix of ['a', 'b']) {
         const name = folderPrefix + suffix;
         const id = await createVFolderViaApi(adminApi, name);
         folders.push({ name, id });
         await moveVFolderToTrashViaApi(adminApi, id);
       }
-      await loginAsAdmin(page, request);
     });
 
     test.afterEach(async () => {
+      if (!adminApi) return;
       for (const { id } of folders) {
         await purgeVFolderViaApi(adminApi, id);
       }
-      await adminApi.dispose();
+      await adminApi.dispose().catch(() => {});
     });
 
     test('Admin can delete forever multiple folders at once from the trash tab', async ({
@@ -124,7 +132,9 @@ test.describe(
       const rows = folders.map(({ name }) => getVFolderRow(page, name));
       await retryWithTableRefresh(page, async () => {
         for (const row of rows) {
-          await expect(row).toBeVisible({ timeout: 2500 });
+          await expect(
+            row.getByRole('cell', { name: 'DELETE_PENDING', exact: true }),
+          ).toBeVisible({ timeout: 2500 });
         }
       });
       for (const row of rows) {

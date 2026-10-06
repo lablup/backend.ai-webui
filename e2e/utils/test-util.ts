@@ -871,7 +871,7 @@ export async function shareVFolderAndVerify(
 
   // Click the share button inside the BAINameActionCell of the folder row.
   // Action buttons (share/trash) are embedded in the Name cell; locate the
-  // "share" button by its icon's aria-label rather than by td index.
+  // button by its accessible name "Share" rather than by td index.
   const folderRow = getVFolderRow(page, folderName);
   await expect(folderRow).toBeVisible({ timeout: 10000 });
   await folderRow.getByRole('button', { name: 'Share' }).first().click();
@@ -1061,7 +1061,7 @@ export async function leaveSharedFolderAndVerify(
 
   // For folders the user does not own, the "share" action button opens the
   // SharedFolderPermissionInfoModal instead of the invite modal (see
-  // VFolderNodes.tsx onShare). The button's aria-label is still "share".
+  // VFolderNodesV2.tsx onShare); its accessible name is still "Share".
   const folderRow = getVFolderRow(page, folderName);
   await expect(folderRow).toBeVisible({ timeout: 10000 });
   await folderRow.getByRole('button', { name: 'Share' }).first().click();

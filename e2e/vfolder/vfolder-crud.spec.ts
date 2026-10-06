@@ -1,5 +1,6 @@
 import { FolderCreationModal } from '../utils/classes/vfolder/FolderCreationModal';
 import { cleanupVFolderSafely } from '../utils/cleanup-util';
+import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
 import {
   acceptAllInvitationAndVerifySpecificFolder,
   createVFolderAndVerify,
@@ -187,8 +188,8 @@ test.describe(
     // Regression guard for FR-2978: previously the leave_invited client
     // sent `null` as the request body, which the manager's
     // BodyParam[LeaveVFolderReq] rejected with HTTP 400.
-    // fixme: the nightly manager (26.9.0rc1) answers POST /folders/{id}/leave
-    // with 403 "lacks permission HARD_DELETE" for the invitee.
+    // fixme: the 26.9.0rc1 manager answers the invitee's POST
+    // /folders/{id}/leave with 403 "lacks permission HARD_DELETE".
     test.fixme('Invitee can leave a shared vFolder', async ({
       page,
       browser,
@@ -213,18 +214,28 @@ test.describe(
 // Not serial: single test — both folders and the share are prepared over the
 // API in beforeEach and purged in afterEach.
 test.describe(
-  'VFolder Move to Trash Permission',
+  'VFolder Move to Trash - Shared Folder Permission',
   {
     tag: ['@regression', '@vfolder', '@functional', '@requires-manager-v26.9'],
   },
   () => {
-    let userApi: APIRequestContext;
-    let user2Api: APIRequestContext;
+    let userApi: APIRequestContext | undefined;
+    let user2Api: APIRequestContext | undefined;
     let folderPrefix: string;
-    let ownFolder: { name: string; id: string };
-    let sharedFolder: { name: string; id: string };
+    let ownFolderId: string | undefined;
+    let sharedFolderId: string | undefined;
+    const ownFolderName = () => folderPrefix + 'own';
+    const sharedFolderName = () => folderPrefix + 'shared';
 
     test.beforeEach(async ({ page, request }) => {
+      userApi = user2Api = ownFolderId = sharedFolderId = undefined;
+      folderPrefix = `e2e-test-trash-perm-${Date.now()}-`;
+      await loginAsUser(page, request);
+      await skipUnlessManagerVersion(
+        page,
+        '26.9.0rc1',
+        'Move to trash reads VFolder permissions from scopedVFoldersV2 (#10051)',
+      );
       userApi = await createUserApiContext(
         userInfo.user.email,
         userInfo.user.password,
@@ -233,28 +244,27 @@ test.describe(
         userInfo.user2.email,
         userInfo.user2.password,
       );
-      folderPrefix = `e2e-test-trash-perm-${Date.now()}-`;
-      ownFolder = { name: folderPrefix + 'own', id: '' };
-      ownFolder.id = await createVFolderViaApi(userApi, ownFolder.name);
+      ownFolderId = await createVFolderViaApi(userApi, ownFolderName());
       // A folder shared read-only by another user: the invitee has no
       // SOFT_DELETE permission on it.
-      sharedFolder = { name: folderPrefix + 'shared', id: '' };
-      sharedFolder.id = await createVFolderViaApi(user2Api, sharedFolder.name);
+      sharedFolderId = await createVFolderViaApi(user2Api, sharedFolderName());
       await shareVFolderViaApi(
         user2Api,
         userApi,
-        sharedFolder.name,
+        sharedFolderName(),
         userInfo.user.email,
         'ro',
       );
-      await loginAsUser(page, request);
     });
 
     test.afterEach(async () => {
-      if (ownFolder.id) await purgeVFolderViaApi(userApi, ownFolder.id);
-      if (sharedFolder.id) await purgeVFolderViaApi(user2Api, sharedFolder.id);
-      await userApi.dispose();
-      await user2Api.dispose();
+      if (userApi && ownFolderId) {
+        await purgeVFolderViaApi(userApi, ownFolderId);
+      }
+      if (user2Api && sharedFolderId) {
+        await purgeVFolderViaApi(user2Api, sharedFolderId);
+      }
+      await Promise.allSettled([userApi?.dispose(), user2Api?.dispose()]);
     });
 
     test('User can move only folders with delete permission to trash when a shared read-only folder is selected', async ({
@@ -268,8 +278,8 @@ test.describe(
         .click();
       await selectPropertyFilter(page, 'Name', folderPrefix);
 
-      const ownRow = getVFolderRow(page, ownFolder.name);
-      const sharedRow = getVFolderRow(page, sharedFolder.name);
+      const ownRow = getVFolderRow(page, ownFolderName());
+      const sharedRow = getVFolderRow(page, sharedFolderName());
       await retryWithTableRefresh(page, async () => {
         await expect(ownRow).toBeVisible({ timeout: 2500 });
         await expect(sharedRow).toBeVisible({ timeout: 2500 });
@@ -303,12 +313,12 @@ test.describe(
       await expect(excludedAlert).toBeVisible();
       await expect(
         excludedAlert.getByRole('listitem').filter({
-          hasText: sharedFolder.name,
+          hasText: sharedFolderName(),
         }),
       ).toBeVisible();
-      await expect(excludedAlert).not.toContainText(ownFolder.name);
+      await expect(excludedAlert).not.toContainText(ownFolderName());
       await expect(dialog).toContainText(
-        `Are you sure you want to move "${ownFolder.name}" to trash bin?`,
+        `Are you sure you want to move "${ownFolderName()}" to trash bin?`,
       );
       await dialog.getByRole('button', { name: 'Delete', exact: true }).click();
       await expect(dialog).toBeHidden({ timeout: 15000 });

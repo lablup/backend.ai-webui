@@ -67,15 +67,23 @@ export async function shareVFolderViaApi(
   email: string,
   perm: 'ro' | 'rw' = 'ro',
 ): Promise<void> {
-  const invite = await ownerApi.post(`/func/folders/${folderName}/invite`, {
-    data: { perm, emails: [email] },
-  });
+  const invite = await ownerApi.post(
+    `/func/folders/${encodeURIComponent(folderName)}/invite`,
+    {
+      data: { perm, emails: [email] },
+    },
+  );
   if (!invite.ok()) {
     throw new Error(
       `POST /folders/${folderName}/invite returned ${invite.status()}: ${(await invite.text()).slice(0, 300)}`,
     );
   }
   const list = await inviteeApi.get('/func/folders/invitations/list');
+  if (!list.ok()) {
+    throw new Error(
+      `GET /folders/invitations/list returned ${list.status()}: ${(await list.text()).slice(0, 300)}`,
+    );
+  }
   const invitation = ((await list.json()).invitations ?? []).find(
     (i: { vfolder_name: string }) => i.vfolder_name === folderName,
   );
@@ -108,7 +116,8 @@ export async function purgeVFolderViaApi(
       data: { vfolder_id: vfolderId },
     })
     .catch(() => null);
-  if (res && !res.ok() && res.status() !== 404) {
+  // A 4xx means the folder is already gone or being purged.
+  if (res && res.status() >= 500) {
     console.warn(
       `[purgeVFolderViaApi] ${vfolderId}: ${res.status()} ${(await res.text()).slice(0, 200)}`,
     );
