@@ -1006,6 +1006,8 @@ export function listenToBackgroundTask<
   if (!req) {
     throw new Error('Failed to create request for background task events');
   }
+  // fetchEventSource takes its own headers, so the signed request's act-as header is copied over.
+  const actAsUserId = req.headers.get('X-BackendAI-Act-As');
 
   fetchEventSource(req.uri, {
     signal,
@@ -1014,6 +1016,7 @@ export function listenToBackgroundTask<
     headers: {
       'x-backendai-sessionid':
         localStorage.getItem('backendaiwebui.sessionid') || '',
+      ...(actAsUserId ? { 'x-backendai-act-as': actAsUserId } : {}),
     },
     onmessage: (event) => {
       const data = JSON.parse(event.data);

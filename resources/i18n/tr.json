@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "Bu sekmedeki her şey bu kullanıcı olarak çalıştırılır ve denetim günlüğüne kaydedilir. Diğer sekmeleriniz yönetici görünümünde kalır.",
+    "BannerTitle": "{{name}} ({{email}}) olarak kullanılıyor",
+    "ConfirmDescription": "Yeni bir sekmede {{email}} kullanıcısının izinleri ve görünümüyle çalışın. O sekmede yaptığınız her şey bu kullanıcı olarak çalıştırılır ve denetim günlüğü yönetici hesabınızı da kaydeder. Bu sekme yönetici görünümünüzde kalır.",
+    "ConfirmTitle": "{{name}} olarak kullan",
+    "Exit": "Çık",
+    "FailedToOpen": "Yeni sekme açılamadı.",
+    "OpenInNewTab": "Yeni sekmede aç",
+    "UseAsThisUser": "Bu kullanıcı olarak kullan"
+  },
   "activeAgent": {
     "ActiveAgents": "Aktif ajanlar",
     "ActiveAgentsTooltip": "Şu anda sistemde çalışan tüm ajanlara bir bakışta genel bir bakış gösterir."
@@ -3150,10 +3160,7 @@
       "OnlyAllowsDiscreteNumberByClusterSize": "Küme boyutu 2'den az olmadığında yalnızca tam sayılara izin verilir.",
       "OnlyAllowsDiscreteNumberByQuantumSize": "Değer {{stepSize}} değerinin katı olmalıdır.",
       "OpenMPOptimization": "OpenMP/OpenBLAS Optimizasyonu",
-      "OwnerAccessKey": "Sahip erişim anahtarı",
       "OwnerEmail": "Sahip E-postası",
-      "OwnerGroup": "Proje sahibi",
-      "OwnerResourceGroup": "Sahip kaynak grubu",
       "PinnedHistoryTooltip": "Kaydı sabitlemek için sabitle simgesine tıklayın. Sabitlenen kayıtlar korunur.",
       "PleaseCompleteForm": "Form eksik veya hatalar içeriyor. Lütfen girdilerinizi kontrol edin.",
       "PleaseWaitInitializing": "Başlatılırken lütfen bekleyin...",
@@ -3196,7 +3203,6 @@
       "SetBatchJobTimeoutDuration": "Toplu iş zaman aşımı süresini ayarlama",
       "SetEnvironmentVariable": "Ortam Değişkenini Ayarla",
       "SetPreopenPorts": "Ön Açık Bağlantı Noktaları (isteğe bağlı)",
-      "SetSessionOwner": "Oturum sahibi",
       "SettingUpProxyForApp": "Uygulama için proxy ayarlanıyor...",
       "SharedMemory": "Paylaşılan Bellek (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "Paylaşılan bellek ayarı, ayrılan belleğin altına düşürülür.",

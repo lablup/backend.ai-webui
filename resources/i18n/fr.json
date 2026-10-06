@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "Tout ce qui se passe dans cet onglet est exécuté en tant que cet utilisateur et enregistré dans le journal d'audit. Vos autres onglets restent dans la vue administrateur.",
+    "BannerTitle": "Utilisation en tant que {{name}} ({{email}})",
+    "ConfirmDescription": "Travaillez avec les autorisations et la vue de {{email}} dans un nouvel onglet. Tout ce que vous faites dans cet onglet est exécuté en tant que cet utilisateur, et le journal d'audit enregistre aussi votre compte administrateur. Cet onglet reste dans votre vue administrateur.",
+    "ConfirmTitle": "Utiliser en tant que {{name}}",
+    "Exit": "Quitter",
+    "FailedToOpen": "Impossible d'ouvrir un nouvel onglet.",
+    "OpenInNewTab": "Ouvrir dans un nouvel onglet",
+    "UseAsThisUser": "Utiliser en tant que cet utilisateur"
+  },
   "activeAgent": {
     "ActiveAgents": "Agents actifs",
     "ActiveAgentsTooltip": "Affiche un aperçu de tous les agents qui s'exécute actuellement dans le système."
@@ -3153,10 +3163,7 @@
       "OnlyAllowsDiscreteNumberByClusterSize": "Seul un nombre entier est autorisé lorsque la taille du cluster n'est pas inférieure à 2.",
       "OnlyAllowsDiscreteNumberByQuantumSize": "La valeur doit être un multiple de {{stepSize}}.",
       "OpenMPOptimization": "Optimisation OpenMP/OpenBLAS",
-      "OwnerAccessKey": "Clé d'accès propriétaire",
       "OwnerEmail": "Courriel du propriétaire",
-      "OwnerGroup": "Projet du propriétaire",
-      "OwnerResourceGroup": "Groupe de ressources propriétaire",
       "PinnedHistoryTooltip": "Cliquez sur l'icône d'épinglage pour épingler l'enregistrement. Les enregistrements épinglés sont conservés.",
       "PleaseCompleteForm": "Le formulaire est incomplet ou contient des erreurs. Veuillez vérifier vos données.",
       "PleaseWaitInitializing": "Veuillez patienter pendant l'initialisation...",
@@ -3199,7 +3206,6 @@
       "SetBatchJobTimeoutDuration": "Définir la durée d'expiration du travail par lots",
       "SetEnvironmentVariable": "Définir la variable d'environnement",
       "SetPreopenPorts": "Ports de préouverture (en option)",
-      "SetSessionOwner": "Propriétaire de la session",
       "SettingUpProxyForApp": "Configuration du proxy pour l'application...",
       "SharedMemory": "Mémoire partagée (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "Le paramètre de mémoire partagée est réduit en dessous de la mémoire allouée.",

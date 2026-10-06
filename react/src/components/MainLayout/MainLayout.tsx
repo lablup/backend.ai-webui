@@ -12,6 +12,7 @@ import { useRouteAccessDecision } from '../../hooks/useRouteAccess';
 import { useCurrentMenuKey, useRouteScope } from '../../hooks/useRouteScope';
 import { useSiderCollapsedState } from '../../hooks/useShellPanels';
 import { useSetupWebUIPluginEffect } from '../../hooks/useWebUIPluginState';
+import ActAsBanner from '../ActAsBanner';
 import AnnouncementBanner from '../AnnouncementBanner';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAIErrorBoundary from '../BAIErrorBoundary';
@@ -158,11 +159,14 @@ function MainLayout() {
           contentPadding={0}
           pathname={location.pathname}
           banner={
-            <ErrorBoundaryWithNullFallback>
-              <Suspense fallback={null}>
-                <AnnouncementBanner />
-              </Suspense>
-            </ErrorBoundaryWithNullFallback>
+            <>
+              <ActAsBanner />
+              <ErrorBoundaryWithNullFallback>
+                <Suspense fallback={null}>
+                  <AnnouncementBanner />
+                </Suspense>
+              </ErrorBoundaryWithNullFallback>
+            </>
           }
           sideNav={
             <WebUISider

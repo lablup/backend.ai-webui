@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "ทุกอย่างในแท็บนี้ดำเนินการในฐานะผู้ใช้นี้และถูกบันทึกในบันทึกการตรวจสอบ แท็บอื่นของคุณยังคงอยู่ในมุมมองผู้ดูแลระบบ",
+    "BannerTitle": "กำลังใช้งานในฐานะ {{name}} ({{email}})",
+    "ConfirmDescription": "ทำงานด้วยสิทธิ์และมุมมองของ {{email}} ในแท็บใหม่ ทุกอย่างที่คุณทำในแท็บนั้นจะดำเนินการในฐานะผู้ใช้นี้ และบันทึกการตรวจสอบจะบันทึกบัญชีผู้ดูแลระบบของคุณด้วย แท็บนี้ยังคงอยู่ในมุมมองผู้ดูแลระบบ",
+    "ConfirmTitle": "ใช้งานในฐานะ {{name}}",
+    "Exit": "ออก",
+    "FailedToOpen": "ไม่สามารถเปิดแท็บใหม่ได้",
+    "OpenInNewTab": "เปิดในแท็บใหม่",
+    "UseAsThisUser": "ใช้งานในฐานะผู้ใช้นี้"
+  },
   "activeAgent": {
     "ActiveAgents": "ตัวแทนที่ใช้งานอยู่",
     "ActiveAgentsTooltip": "แสดงภาพรวม at-a-glance ของตัวแทนทั้งหมดที่ทำงานอยู่ในระบบ"
@@ -3135,10 +3145,7 @@
       "OnlyAllowsDiscreteNumberByClusterSize": "อนุญาตเฉพาะจำนวนเต็มเมื่อขนาดคลัสเตอร์ไม่น้อยกว่า 2",
       "OnlyAllowsDiscreteNumberByQuantumSize": "ค่าจะต้องเป็นมัลติของ {{stepSize}}",
       "OpenMPOptimization": "การปรับแต่ง OpenMP/OpenBLAS",
-      "OwnerAccessKey": "คีย์การเข้าถึงของเจ้าของ",
       "OwnerEmail": "อีเมลเจ้าของ",
-      "OwnerGroup": "เจ้าของโครงการ",
-      "OwnerResourceGroup": "กลุ่มทรัพยากรของเจ้าของ",
       "PinnedHistoryTooltip": "คลิกที่ไอคอน PIN เพื่อแก้ไขบันทึก บันทึกคงที่จะถูกเก็บรักษาไว้",
       "PleaseCompleteForm": "แบบฟอร์มไม่สมบูรณ์หรือมีข้อผิดพลาด กรุณาตรวจสอบข้อมูลที่ป้อน",
       "PleaseWaitInitializing": "กรุณารอสักครู่ขณะกำลังเริ่มต้น...",
@@ -3181,7 +3188,6 @@
       "SetBatchJobTimeoutDuration": "กำหนดระยะเวลาหมดเวลางานแบทช์",
       "SetEnvironmentVariable": "ตัวแปรสภาพแวดล้อม (ไม่บังคับ)",
       "SetPreopenPorts": "พอร์ตที่เปิดล่วงหน้า (ไม่บังคับ)",
-      "SetSessionOwner": "เจ้าของเซสชัน",
       "SettingUpProxyForApp": "กำลังตั้งค่าพร็อกซีสำหรับแอป...",
       "SharedMemory": "หน่วยความจำที่ใช้ร่วมกัน (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "การตั้งค่าหน่วยความจำร่วมถูกลดลงให้ต่ำกว่าหน่วยความจำที่จัดสรร",
