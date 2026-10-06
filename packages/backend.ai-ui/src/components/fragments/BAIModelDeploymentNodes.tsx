@@ -4,6 +4,7 @@ import {
 } from '../../__generated__/BAIModelDeploymentNodesFragment.graphql';
 import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { useIsLabelableEntityType } from '../../hooks/useLabelableEntityTypes';
 import BAIBooleanToken from '../BAIBooleanToken';
 import BAIDeploymentStatusBadge, {
   BAIDeploymentStatus,
@@ -20,6 +21,7 @@ import {
 } from '../Table';
 import BAIDeploymentOwnerInfo from './BAIDeploymentOwnerInfo';
 import BAIDeploymentTagTokens from './BAIDeploymentTagTokens';
+import BAIEntityLabelTokens from './BAIEntityLabelTokens';
 import { Link } from '@lablup/ui-common/Link';
 import { Text } from '@lablup/ui-common/Text';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
@@ -93,6 +95,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
   const { t } = useBAIi18n();
 
   const isEnableSorter = (key: string) => _.includes(sortableKeys, key);
+  const isLabelable = useIsLabelableEntityType('deployment');
 
   const deployments = useFragment<BAIModelDeploymentNodesFragment$key>(
     graphql`
@@ -140,6 +143,10 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
               name
             }
           }
+        }
+        entityLabels(limit: 100) {
+          ...BAIEntityLabelTokensFragment
+          ...BAIEntityLabelSettingModalFragment
         }
         ...BAIDeploymentOwnerInfo_deployment
       }
@@ -198,6 +205,13 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
             <BAIDeploymentStatusBadge status={status as BAIDeploymentStatus} />
           );
         },
+      },
+      isLabelable && {
+        key: 'labels',
+        title: t('comp:BAIEntityLabelTokens.Labels'),
+        render: (__, record) => (
+          <BAIEntityLabelTokens entityLabelsFrgmt={record.entityLabels} />
+        ),
       },
       {
         key: 'replicaSummary',

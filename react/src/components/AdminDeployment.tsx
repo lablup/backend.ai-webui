@@ -40,9 +40,12 @@ import {
   isValidUUID,
   toLocalId,
   useBAILogger,
+  BAIEntityLabelSettingModal,
+  useIsLabelableEntityType,
+  type ModelDeploymentNodeInList,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { Trash2, SquarePenIcon } from 'lucide-react';
+import { Trash2, SquarePenIcon, TagsIcon } from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -169,6 +172,9 @@ const AdminDeployment = ({
   const [deletingDeploymentId, setDeletingDeploymentId] = useState<
     string | null
   >(null);
+  const isLabelable = useIsLabelableEntityType('deployment');
+  const [labelingDeployment, setLabelingDeployment] =
+    useState<ModelDeploymentNodeInList | null>(null);
   const [drawerRevisionId, setDrawerRevisionId] = useState<string | null>(null);
 
   const supportsExtendedFilter = baiClient.supports(
@@ -471,6 +477,7 @@ const AdminDeployment = ({
               'name',
               'currentRevisionNumber',
               'status',
+              'labels',
               'replicaSummary',
               'model',
               'createdAt',
@@ -488,6 +495,7 @@ const AdminDeployment = ({
               'name',
               'currentRevisionNumber',
               'status',
+              'labels',
               'replicaSummary',
               'model',
               'createdAt',
@@ -524,6 +532,18 @@ const AdminDeployment = ({
                               disabled: destroying,
                               onClick: () => setEditingDeploymentId(record.id),
                             },
+                            ...(isLabelable
+                              ? [
+                                  {
+                                    key: 'edit-labels',
+                                    title: t('entityLabel.EditLabels'),
+                                    icon: <TagsIcon />,
+                                    disabled: destroying,
+                                    onClick: () =>
+                                      setLabelingDeployment(record),
+                                  },
+                                ]
+                              : []),
                             {
                               key: 'delete',
                               title: t('deployment.DeleteDeployment'),
@@ -588,6 +608,26 @@ const AdminDeployment = ({
           }}
         />
       </BAIFlex>
+      <BAIEntityLabelSettingModal
+        open={!!labelingDeployment}
+        entityType="deployment"
+        targets={
+          labelingDeployment
+            ? [
+                {
+                  entityId: toLocalId(labelingDeployment.id),
+                  name: labelingDeployment.metadata?.name ?? undefined,
+                },
+              ]
+            : []
+        }
+        entityLabelsFrgmt={labelingDeployment?.entityLabels}
+        onRequestClose={(success) => {
+          setLabelingDeployment(null);
+          if (success)
+            onReload(queryRef.variables, { fetchPolicy: 'network-only' });
+        }}
+      />
       {/* Edit-only call site: the deployment already belongs to a project, so
           the props union rejects a `project` here entirely (ADR-0001). That
           member requires a non-null fragment, hence the guard. */}

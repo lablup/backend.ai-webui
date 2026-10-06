@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<87b662f573b9057850ee64ef573c9c40>>
+ * @generated SignedSource<<0d7d0e7b00686d69fe7e36173c686d57>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,9 @@ import { ReaderFragment } from 'relay-runtime';
 export type DeploymentStatus = "DEPLOYING" | "PENDING" | "READY" | "SCALING" | "STOPPED" | "STOPPING" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type DeploymentBasicInfoCard_deployment$data = {
+  readonly entityLabels: {
+    readonly " $fragmentSpreads": FragmentRefs<"BAIEntityLabelSettingModalFragment" | "BAIEntityLabelTokensFragment">;
+  } | null | undefined;
   readonly id: string;
   readonly metadata: {
     readonly domainName: string;
@@ -177,6 +180,33 @@ return {
         }
       ],
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": [
+        {
+          "kind": "Literal",
+          "name": "limit",
+          "value": 100
+        }
+      ],
+      "concreteType": "EntityLabelConnection",
+      "kind": "LinkedField",
+      "name": "entityLabels",
+      "plural": false,
+      "selections": [
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "BAIEntityLabelTokensFragment"
+        },
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "BAIEntityLabelSettingModalFragment"
+        }
+      ],
+      "storageKey": "entityLabels(limit:100)"
     }
   ],
   "type": "ModelDeployment",
@@ -184,6 +214,6 @@ return {
 };
 })();
 
-(node as any).hash = "400656518bf7392d456a4ea98b77d99d";
+(node as any).hash = "7ac840f1a1da55e49ae10a315c92c466";
 
 export default node;
