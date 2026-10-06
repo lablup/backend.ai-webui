@@ -28,9 +28,6 @@ import SessionLauncherStorageStep from '../components/SessionLauncherStorageStep
 import SessionNameFormItem, {
   SessionNameFormItemValue,
 } from '../components/SessionNameFormItem';
-import SessionOwnerSetterCard, {
-  SessionOwnerSetterFormValues,
-} from '../components/SessionOwnerSetterCard';
 import SessionTemplateModal from '../components/SessionTemplateModal';
 import {
   AstryxFormCheckbox,
@@ -44,10 +41,7 @@ import { Form } from '../form-engine';
 import { formatDuration, convertToBinaryUnit } from '../helper';
 import { normalizeLegacyMountFields } from '../helper/vfolderMounts';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import {
-  useCurrentUserRole,
-  useResourceSlotsDetails,
-} from '../hooks/backendai';
+import { useResourceSlotsDetails } from '../hooks/backendai';
 import {
   useCurrentProjectValue,
   useCurrentResourceGroupState,
@@ -133,7 +127,6 @@ export interface SessionResources {
   starts_at?: string;
   startupCommand?: string;
   bootstrap_script?: string;
-  owner_access_key?: string;
   enqueueOnly?: boolean;
   reuseIfExists?: boolean;
   dependencies?: string[];
@@ -194,8 +187,7 @@ export type SessionLauncherFormValue = SessionLauncherValue &
   ImageEnvironmentFormInput &
   ResourceAllocationFormValue &
   SessionLauncherVFolderMountValues &
-  PortSelectFormValues &
-  SessionOwnerSetterFormValues;
+  PortSelectFormValues;
 
 type SessionMode = 'normal' | 'inference' | 'import';
 
@@ -287,7 +279,6 @@ const SessionLauncherPage = () => {
   const mainContentDivRef = useAtomValue(mainContentDivRefState);
   const baiClient = useSuspendedBackendaiClient();
   const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
-  const currentUserRole = useCurrentUserRole();
   const [, setCurrentGlobalResourceGroup] = useCurrentResourceGroupState();
   // ADR-0001 (FR-3411): pages are the only readers of the ambient current
   // project; ResourceAllocationFormItems takes it as an explicit required
@@ -351,7 +342,6 @@ const SessionLauncherPage = () => {
           _.omit(form.getFieldsValue(), [
             'environments.image',
             'environments.customizedTag',
-            'owner',
             'envvars',
           ]),
           {
@@ -1104,18 +1094,8 @@ const SessionLauncherPage = () => {
                   </StepCard>
                 )}
 
-                {(currentUserRole === 'admin' ||
-                  currentUserRole === 'superadmin') && (
-                  <SessionOwnerSetterCard
-                    style={{
-                      display:
-                        currentStepKey === 'sessionType' ? 'block' : 'none',
-                    }}
-                  />
-                )}
-
                 {sessionType === 'inference' && (
-                  <StepCard title="Inference Mode Configuration">
+                  <StepCard title={t('session.launcher.InferenceModeConfig')}>
                     <Form.Item
                       name={['inference', 'vFolderName']}
                       label={t('session.launcher.ModelStorageToMount')}
@@ -1578,15 +1558,6 @@ const SessionLauncherPage = () => {
                 vfolderMounts: [],
                 bootstrap_script: '',
                 num_of_sessions: 1,
-                owner: {
-                  enabled: false,
-                  accesskey: '',
-                  domainName: '',
-                  email: undefined,
-                  projectId: '',
-                  project: '',
-                  resourceGroup: '',
-                },
                 environments: {
                   manual: '',
                 },

@@ -538,6 +538,12 @@
     "MultiNodeShort": "Đa",
     "SingleNodeShort": "Đơn"
   },
+  "comp:BAISessionTypeToken": {
+    "Batch": "Hàng loạt",
+    "Inference": "Suy luận",
+    "Interactive": "Tương tác",
+    "System": "Tải lên"
+  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Chọn máy chủ lưu trữ"
   },

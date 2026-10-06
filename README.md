@@ -215,7 +215,7 @@ Safari users (and some corporate networks) need a one-time `/etc/hosts` sync:
 $ sudo pnpm exec portless hosts sync
 ```
 
-If your branch name contains an `FR-XXXX` issue number, the URL is `https://fr-XXXX.localhost:1355`; otherwise Portless picks a branch-derived subdomain. To pin a specific React port, run `PORT=9081 pnpm run dev`. See `DEV_ENVIRONMENT.md` for theme color and troubleshooting.
+If your branch name contains an `FR-XXXX` issue number, the URL is `https://fr-XXXX.localhost:1355` (`gh-N` gives `https://gh-N.localhost:1355` for a GitHub-native issue); otherwise Portless picks a branch-derived subdomain. To pin a specific React port, run `PORT=9081 pnpm run dev`. See `DEV_ENVIRONMENT.md` for theme color and troubleshooting.
 
 ### Commands Reference
 

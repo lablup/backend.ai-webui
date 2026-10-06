@@ -115,3 +115,78 @@ describe('connectViaGQL — keypair query rejects (FR-3998)', () => {
     expect(logout).not.toHaveBeenCalled();
   });
 });
+
+describe('connectViaGQL — act-as tab (FR-4111)', () => {
+  afterEach(() => {
+    const g = globalThis as Record<string, unknown>;
+    delete g.backendaiclient;
+    delete g.backendaiutils;
+    delete g.backendaioptions;
+  });
+
+  const refusal = { isError: true, statusCode: 401, message: 'not allowed' };
+
+  it('never logs out the shared session on a refusal', async () => {
+    const logout = vi.fn().mockResolvedValue(undefined);
+    const client = {
+      actAsUserId: 'target-uuid',
+      query: vi.fn().mockRejectedValue(refusal),
+      logout,
+    };
+
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBe(refusal);
+    expect(logout).not.toHaveBeenCalled();
+  });
+
+  it('never logs out the shared session when the keypair is missing', async () => {
+    const logout = vi.fn().mockResolvedValue(undefined);
+    const client = {
+      actAsUserId: 'target-uuid',
+      query: vi.fn().mockResolvedValue({ keypair: null }),
+      logout,
+    };
+
+    await expect(connectViaGQL(client, cfg, [])).rejects.toThrow(
+      'Keypair information is missing.',
+    );
+    expect(logout).not.toHaveBeenCalled();
+  });
+
+  it("adopts the target's access key over the webserver session's", async () => {
+    const g = globalThis as Record<string, unknown>;
+    g.backendaiutils = { _readRecentProjectGroup: () => '' };
+    g.backendaioptions = { set: vi.fn() };
+    const client = {
+      actAsUserId: 'target-uuid',
+      _config: { _accessKey: 'ADMIN_KEY', endpoint: 'https://example.test' },
+      query: vi
+        .fn()
+        .mockResolvedValueOnce({
+          keypair: {
+            user_id: 'target@example.test',
+            resource_policy: 'default',
+            user: 'target-uuid',
+            access_key: 'TARGET_KEY',
+          },
+        })
+        .mockResolvedValueOnce({
+          user: {
+            email: 'target@example.test',
+            uuid: 'target-uuid',
+            role: 'user',
+            domain_name: 'default',
+            groups: [{ name: 'p', id: 'p-id' }],
+          },
+        }),
+      group: {
+        list: vi
+          .fn()
+          .mockResolvedValue({ groups: [{ name: 'p', id: 'p-id' }] }),
+      },
+      logout: vi.fn(),
+    };
+
+    await connectViaGQL(client, cfg, ['https://example.test']);
+    expect(client._config._accessKey).toBe('TARGET_KEY');
+  });
+});

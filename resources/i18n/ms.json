@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "Semua dalam tab ini dijalankan sebagai pengguna ini dan direkodkan dalam log audit. Tab anda yang lain kekal dalam paparan pentadbir.",
+    "BannerTitle": "Digunakan sebagai {{name}} ({{email}})",
+    "ConfirmDescription": "Bekerja dengan kebenaran dan paparan {{email}} dalam tab baharu. Semua yang anda lakukan dalam tab itu dijalankan sebagai pengguna ini, dan log audit juga merekodkan akaun pentadbir anda. Tab ini kekal dalam paparan pentadbir anda.",
+    "ConfirmTitle": "Guna sebagai {{name}}",
+    "Exit": "Keluar",
+    "FailedToOpen": "Tidak dapat membuka tab baharu.",
+    "OpenInNewTab": "Buka dalam tab baharu",
+    "UseAsThisUser": "Guna sebagai pengguna ini"
+  },
   "activeAgent": {
     "ActiveAgents": "Ejen aktif",
     "ActiveAgentsTooltip": "Menunjukkan gambaran keseluruhan sepintas lalu semua ejen yang sedang berjalan dalam sistem."
@@ -999,6 +1009,7 @@
       "LeaveFolder": "Tinggalkan folder",
       "Location": "Lokasi",
       "ManageProjectFolderInAdmin": "Pengurusan folder projek tersedia dalam tetapan pentadbir.",
+      "MaxFiles": "Bilangan fail maks",
       "MaxFolderQuota": "Kuota Folder Maks",
       "MaxSize": "Saiz maks",
       "ModelProjectFolderRestrictedToReadOnly": "Kebenaran \"Baca & Tulis\" tidak disokong untuk folder stor model",
@@ -3101,6 +3112,7 @@
       "ImageDoesNotProvideModelPath": "Imej bekas tidak menyediakan laluan model. \nIa harus diubah suai.",
       "ImageFilter": "Penapis imej",
       "InferenceMode": "Inferens",
+      "InferenceModeConfig": "Konfigurasi mod inferens",
       "InfiniteTime": "tak terhingga",
       "InsufficientAllocationOfResourcesWarning": "Sumber yang boleh diperuntukkan berada di bawah sumber minimum yang diperlukan dalam imej yang dipilih.",
       "InteractiveMode": "Interaktif",
@@ -3150,10 +3162,7 @@
       "OnlyAllowsDiscreteNumberByClusterSize": "Hanya integer dibenarkan apabila saiz kelompok tidak kurang daripada 2.",
       "OnlyAllowsDiscreteNumberByQuantumSize": "Nilai mestilah berganda {{stepSize}}",
       "OpenMPOptimization": "Pengoptimuman OpenMP/OpenBLAS",
-      "OwnerAccessKey": "Kunci akses pemilik",
       "OwnerEmail": "E-mel Pemilik",
-      "OwnerGroup": "Projek pemilik",
-      "OwnerResourceGroup": "Kumpulan sumber pemilik",
       "PinnedHistoryTooltip": "Klik ikon PIN untuk menetapkan rekod. Rekod tetap dikekalkan.",
       "PleaseCompleteForm": "Borang tidak lengkap atau mengandungi ralat. \nSila semak input anda.",
       "PleaseWaitInitializing": "Sila tunggu semasa memulakan ...",
@@ -3196,7 +3205,6 @@
       "SetBatchJobTimeoutDuration": "Tetapkan tempoh tamat masa kerja kelompok",
       "SetEnvironmentVariable": "Tetapkan Pembolehubah Persekitaran",
       "SetPreopenPorts": "Pelabuhan Prabuka (pilihan)",
-      "SetSessionOwner": "Pemilik sesi",
       "SettingUpProxyForApp": "Menyiapkan proksi untuk aplikasi ...",
       "SharedMemory": "Memori berkongsi (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "Tetapan memori bersama dikurangkan menjadi di bawah memori yang diperuntukkan.",

@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "Tutto in questa scheda viene eseguito come questo utente e registrato nel registro di audit. Le altre schede restano nella vista amministratore.",
+    "BannerTitle": "In uso come {{name}} ({{email}})",
+    "ConfirmDescription": "Lavora con i permessi e la vista di {{email}} in una nuova scheda. Tutto ciò che fai in quella scheda viene eseguito come questo utente e il registro di audit annota anche il tuo account amministratore. Questa scheda resta nella vista amministratore.",
+    "ConfirmTitle": "Usa come {{name}}",
+    "Exit": "Esci",
+    "FailedToOpen": "Impossibile aprire una nuova scheda.",
+    "OpenInNewTab": "Apri in una nuova scheda",
+    "UseAsThisUser": "Usa come questo utente"
+  },
   "activeAgent": {
     "ActiveAgents": "Agenti attivi",
     "ActiveAgentsTooltip": "Mostra una panoramica a colpo d'occhio di tutti gli agenti attualmente in esecuzione nel sistema."
@@ -999,6 +1009,7 @@
       "LeaveFolder": "Lasciare la cartella",
       "Location": "Posizione",
       "ManageProjectFolderInAdmin": "La gestione delle cartelle di progetto è disponibile nelle impostazioni di amministrazione.",
+      "MaxFiles": "Numero massimo di file",
       "MaxFolderQuota": "Quota massima della cartella",
       "MaxSize": "Dimensione massima",
       "ModelProjectFolderRestrictedToReadOnly": "Il permesso 'Read & Write' non è supportato per la cartella del model store",
@@ -3101,6 +3112,7 @@
       "ImageDoesNotProvideModelPath": "L'immagine del contenitore non fornisce il percorso del modello. Deve essere modificato.",
       "ImageFilter": "Filtro immagini",
       "InferenceMode": "Inferenza",
+      "InferenceModeConfig": "Configurazione modalità inferenza",
       "InfiniteTime": "Infinito",
       "InsufficientAllocationOfResourcesWarning": "Le risorse assegnabili sono inferiori alla risorsa minima richiesta nell'immagine selezionata.",
       "InteractiveMode": "Interattivo",
@@ -3150,10 +3162,7 @@
       "OnlyAllowsDiscreteNumberByClusterSize": "È consentito solo un numero intero quando la dimensione del cluster non è inferiore a 2.",
       "OnlyAllowsDiscreteNumberByQuantumSize": "Il valore deve essere un multiplo di {{dimensionePasso}}.",
       "OpenMPOptimization": "Ottimizzazione OpenMP/OpenBLAS",
-      "OwnerAccessKey": "Chiave di accesso del proprietario",
       "OwnerEmail": "Email del proprietario",
-      "OwnerGroup": "Progetto del proprietario",
-      "OwnerResourceGroup": "Gruppo di risorse proprietario",
       "PinnedHistoryTooltip": "Fare clic sull'icona della puntina per appuntare il record. I record appuntati vengono conservati.",
       "PleaseCompleteForm": "Il modulo è incompleto o contiene errori. Si prega di controllare i dati inseriti.",
       "PleaseWaitInitializing": "Attendere durante l'inizializzazione...",
@@ -3196,7 +3205,6 @@
       "SetBatchJobTimeoutDuration": "Imposta la durata del timeout del lavoro batch",
       "SetEnvironmentVariable": "Imposta variabile d'ambiente",
       "SetPreopenPorts": "Porte preapertura (opzionale)",
-      "SetSessionOwner": "Titolare della sessione Session",
       "SettingUpProxyForApp": "Configurazione del proxy per l'app...",
       "SharedMemory": "Memoria condivisa (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "L'impostazione della memoria condivisa è ridotta al di sotto della memoria allocata.",

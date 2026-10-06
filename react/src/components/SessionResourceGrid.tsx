@@ -35,6 +35,7 @@ import {
   utilizationFill,
   UtilizationFills,
 } from '../helper/sessionResourceGridData';
+import { getSessionTypeLabel } from '../helper/sessionTypeLabel';
 import {
   UTILIZATION_ERROR_PERCENT,
   UTILIZATION_WARNING_PERCENT,
@@ -395,7 +396,7 @@ const SessionResourceGrid = ({
             label={session.status}
           />
           <Text size="sm" color="secondary">
-            {`${session.type.toLowerCase()} · ${session.clusterMode} ×${session.clusterSize || Math.max(1, session.kernels.length)} · ${session.scalingGroup}`}
+            {`${getSessionTypeLabel(t, session.type)} · ${session.clusterMode} ×${session.clusterSize || Math.max(1, session.kernels.length)} · ${session.scalingGroup}`}
           </Text>
         </BAIFlex>
         <Text size="sm" color="secondary">
