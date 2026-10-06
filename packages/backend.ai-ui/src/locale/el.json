@@ -538,6 +538,12 @@
     "MultiNodeShort": "Πολλαπλών",
     "SingleNodeShort": "Μονόκλινο"
   },
+  "comp:BAISessionTypeToken": {
+    "Batch": "Παρτίδα",
+    "Inference": "Συμπερασμός",
+    "Interactive": "Διαδραστικό",
+    "System": "Μεταφόρτωση"
+  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Επιλέξτε κεντρικό αποθηκευτικό χώρο"
   },

@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "Kaikki tässä välilehdessä suoritetaan tämän käyttäjän nimissä ja kirjataan tarkastuslokiin. Muut välilehtesi pysyvät järjestelmänvalvojan näkymässä.",
+    "BannerTitle": "Käytössä käyttäjänä {{name}} ({{email}})",
+    "ConfirmDescription": "Työskentele käyttäjän {{email}} oikeuksilla ja näkymällä uudessa välilehdessä. Kaikki tuossa välilehdessä tehty suoritetaan tämän käyttäjän nimissä, ja tarkastuslokiin kirjataan myös järjestelmänvalvojan tilisi. Tämä välilehti pysyy järjestelmänvalvojan näkymässä.",
+    "ConfirmTitle": "Käytä käyttäjänä {{name}}",
+    "Exit": "Lopeta",
+    "FailedToOpen": "Uutta välilehteä ei voitu avata.",
+    "OpenInNewTab": "Avaa uudessa välilehdessä",
+    "UseAsThisUser": "Käytä tämän käyttäjän nimissä"
+  },
   "activeAgent": {
     "ActiveAgents": "Aktiiviset edustajat",
     "ActiveAgentsTooltip": "Näyttää yleiskatsauksen kaikista järjestelmässä tällä hetkellä toimivista edustajista."
@@ -999,6 +1009,7 @@
       "LeaveFolder": "Jätä kansio",
       "Location": "Sijainti",
       "ManageProjectFolderInAdmin": "Projektikansioiden hallinta on käytettävissä järjestelmänvalvojan asetuksissa.",
+      "MaxFiles": "Tiedostojen enimmäismäärä",
       "MaxFolderQuota": "Kansioiden enimmäiskiintiö",
       "MaxSize": "Enimmäiskoko",
       "ModelProjectFolderRestrictedToReadOnly": "Luku- ja kirjoitusoikeutta ei tueta mallivaraston kansiolle.",
@@ -3101,6 +3112,7 @@
       "ImageDoesNotProvideModelPath": "Säiliön kuva ei anna mallipolkua. Se on muutettava.",
       "ImageFilter": "Kuvasuodatin",
       "InferenceMode": "Päättely",
+      "InferenceModeConfig": "Päättelytilan konfigurointi",
       "InfiniteTime": "Rajoittamaton",
       "InsufficientAllocationOfResourcesWarning": "Allokoitavat resurssit jäävät alle valitussa kuvassa vaaditun vähimmäisresurssin.",
       "InteractiveMode": "Interaktiivinen",
@@ -3150,10 +3162,7 @@
       "OnlyAllowsDiscreteNumberByClusterSize": "Vain kokonaisluku on sallittu, kun klusterin koko on vähintään 2.",
       "OnlyAllowsDiscreteNumberByQuantumSize": "Arvon on oltava {{stepSize}}:n monikerta.",
       "OpenMPOptimization": "OpenMP/OpenBLAS-optimointi",
-      "OwnerAccessKey": "Omistajan käyttöoikeusavain",
       "OwnerEmail": "Omistajan sähköpostiosoite",
-      "OwnerGroup": "Omistajan hanke",
-      "OwnerResourceGroup": "Omistajan resurssiryhmä",
       "PinnedHistoryTooltip": "Kiinnitä historia napsauttamalla pin-kuvaketta. Kiinnitetty kohde säilyy.",
       "PleaseCompleteForm": "Lomake on puutteellinen tai sisältää virheitä. Tarkista syöttämäsi tiedot.",
       "PleaseWaitInitializing": "Odota alustuksen aikana...",
@@ -3196,7 +3205,6 @@
       "SetBatchJobTimeoutDuration": "Aseta erätyön aikakatkaisun kesto",
       "SetEnvironmentVariable": "Ympäristömuuttuja (valinnainen)",
       "SetPreopenPorts": "Esiavattavat portit (valinnainen)",
-      "SetSessionOwner": "Istunnon omistaja",
       "SettingUpProxyForApp": "Sovelluksen välityspalvelimen määrittäminen...",
       "SharedMemory": "Jaettu muisti (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "Jaetun muistin asetusta pienennetään alle jaetun muistin.",

@@ -538,6 +538,12 @@
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Single"
   },
+  "comp:BAISessionTypeToken": {
+    "Batch": "Batch",
+    "Inference": "Inference",
+    "Interactive": "Interactive",
+    "System": "Upload"
+  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Select Storage Host"
   },

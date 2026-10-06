@@ -27,12 +27,12 @@ import { Button } from '@lablup/ui-common/Button';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
 import { Token } from '@lablup/ui-common/Token';
-import { BAISkeleton } from 'backend.ai-ui';
 import {
   BAIFlex,
   BAIPropertyFilter,
   BAISelectionLabel,
   BAIResourceNumberWithIcon,
+  BAISelect,
   BAITable,
   BAIText,
   BAIBooleanToken,
@@ -172,15 +172,24 @@ const ImageList: React.FC<ImageListProps> = ({
   const projectSelect = (
     <BAIFlex gap="xs" align="center" wrap="wrap">
       <Text color="secondary">{t('general.Project')}</Text>
-      <Suspense fallback={<BAISkeleton variant="input" size="small" />}>
+      <Suspense
+        fallback={
+          <BAISelect
+            loading
+            disabled
+            placeholder={t('environment.AllProjects')}
+            style={{ minWidth: 180 }}
+          />
+        }
+      >
         <ProjectSelectForAdminPage
           data-testid="environment-project-select"
           domain={baiClient._config.domainName}
-          value={project?.id ?? undefined}
-          // An optional FILTER, not a required choice: clearing it puts the
-          // list back on the domain-wide default. antd routes the clear
-          // through `onChange` with no option, so an absent `projectInfo` IS
-          // the "cleared" signal.
+          // `null`, not `undefined`: ProjectSelect treats `undefined` as
+          // uncontrolled and would keep showing the cleared project.
+          value={project?.id ?? null}
+          // An optional FILTER: clearing it calls `onSelectProject` with no
+          // option, which puts the list back on the domain-wide default.
           allowClear
           placeholder={t('environment.AllProjects')}
           style={{ minWidth: 180 }}

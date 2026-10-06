@@ -538,6 +538,12 @@
     "MultiNodeShort": "หลาย",
     "SingleNodeShort": "เดี่ยว"
   },
+  "comp:BAISessionTypeToken": {
+    "Batch": "แบบแบตช์",
+    "Inference": "การอนุมาน",
+    "Interactive": "แบบโต้ตอบ",
+    "System": "อัปโหลด"
+  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "เลือกโฮสต์จัดเก็บข้อมูล"
   },

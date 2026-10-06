@@ -9,6 +9,7 @@
  * Handles post-authentication GQL connection and client setup.
  */
 import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
+import { getActAsTarget } from './actAs';
 import { applyConfigToClient, type LoginConfigState } from './loginConfig';
 
 /**
@@ -30,6 +31,7 @@ export function createBackendAIClient(
     clientConfig,
     'Backend.AI Console.',
   );
+  client.actAsUserId = getActAsTarget()?.userId ?? null;
   return { client, clientConfig };
 }
 
@@ -106,9 +108,12 @@ export async function connectViaGQL(
   cfg: LoginConfigState,
   endpoints: string[],
 ): Promise<string[]> {
-  const fields = ['user_id', 'resource_policy', 'user'];
+  const fields = ['user_id', 'resource_policy', 'user', 'access_key'];
   const q = `query { keypair { ${fields.join(' ')} } }`;
   const v = {};
+  // The login cookie is shared with the super admin's other tabs, so an act-as
+  // tab must never log it out.
+  const isActingAs = !!client.actAsUserId;
 
   let response;
   try {
@@ -116,15 +121,22 @@ export async function connectViaGQL(
   } catch (err) {
     // A refused session is cleaned up like an empty keypair; a network blip is not.
     const status = (err as { statusCode?: unknown } | null)?.statusCode;
-    if (status === 401 || status === 403) await client.logout().catch(() => {});
+    if (!isActingAs && (status === 401 || status === 403))
+      await client.logout().catch(() => {});
     throw err;
   }
 
   (globalThis as any).backendaiclient = client;
 
   if (!response['keypair']) {
-    await client.logout();
+    if (!isActingAs) await client.logout();
     throw new Error('Keypair information is missing.');
+  }
+
+  // `check_login` reads the access key from the webserver session, which stays
+  // the super admin's; under act-as the manager answers with the target's.
+  if (isActingAs && response['keypair'].access_key) {
+    client._config._accessKey = response['keypair'].access_key;
   }
 
   const resourcePolicy = response['keypair'].resource_policy;

@@ -268,10 +268,6 @@ export type {
   BAINotificationSource,
   ToBAINotificationStackItemsOptions,
 } from './BAINotificationStackAdapter';
-export { default as BAIVFolderDeleteButton } from './BAIVFolderDeleteButton';
-export type { BAIVFolderDeleteButtonProps } from './BAIVFolderDeleteButton';
-export { default as BAIVFolderDeleteButtonV2 } from './BAIVFolderDeleteButtonV2';
-export type { BAIVFolderDeleteButtonV2Props } from './BAIVFolderDeleteButtonV2';
 export { default as BAIVFolderIdenticon } from './BAIVFolderIdenticon';
 export type { BAIVFolderIdenticonProps } from './BAIVFolderIdenticon';
 export { default as BAIDrawer } from './BAIDrawer';

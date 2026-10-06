@@ -16,8 +16,9 @@ description: >
 The WebUI dev server runs under [Portless](https://github.com/vercel-labs/portless) on a `*.localhost:1355` URL.
 
 `scripts/dev.mjs` names the app from the branch's issue key, its PR number and a
-descriptive word — e.g. `https://fr-3665-pr9049-statusline.localhost:1355`; off an FR
-branch Portless derives the name. Don't construct the URL — read it from a source below.
+descriptive word — e.g. `https://fr-3665-pr9049-statusline.localhost:1355`, or
+`https://gh-10144-pr10150-drawer.localhost:1355` for a GitHub-native issue; off an FR or
+`gh-N` branch Portless derives the name. Don't construct the URL — read it from a source below.
 
 **Never assume port `1355`**: when another Portless daemon is already bound there (another Claude session / worktree), the server lands on 1356, 1357, … — always confirm the real port from one of the sources below.
 

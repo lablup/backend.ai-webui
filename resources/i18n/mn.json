@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "Энэ табын бүх үйлдэл энэ хэрэглэгчээр гүйцэтгэгдэж аудитын бүртгэлд тэмдэглэгдэнэ. Бусад таб админ харагдацаараа үлдэнэ.",
+    "BannerTitle": "{{name}} ({{email}})-ээр ашиглаж байна",
+    "ConfirmDescription": "Шинэ табд {{email}}-ийн эрх болон харагдацаар ажиллана. Тэр табд хийсэн бүх үйлдэл энэ хэрэглэгчээр гүйцэтгэгдэх ба аудитын бүртгэлд таны админ бүртгэл мөн тэмдэглэгдэнэ. Энэ таб админ харагдацаараа үлдэнэ.",
+    "ConfirmTitle": "{{name}}-ээр ашиглах",
+    "Exit": "Гарах",
+    "FailedToOpen": "Шинэ таб нээж чадсангүй.",
+    "OpenInNewTab": "Шинэ табд нээх",
+    "UseAsThisUser": "Энэ хэрэглэгчээр ашиглах"
+  },
   "activeAgent": {
     "ActiveAgents": "Идэвхтэй агентууд",
     "ActiveAgentsTooltip": "Системд ажиллаж байгаа бүх агентуудын тоймыг нэг дор харуулна."
@@ -999,6 +1009,7 @@
       "LeaveFolder": "Фолдерыг орхи",
       "Location": "Байршил",
       "ManageProjectFolderInAdmin": "Төслийн хавтасны удирдлага нь админы тохиргоонд боломжтой.",
+      "MaxFiles": "Файлын хамгийн их тоо",
       "MaxFolderQuota": "Фолдерын хамгийн их квот",
       "MaxSize": "Хамгийн их хэмжээ",
       "ModelProjectFolderRestrictedToReadOnly": "Моделийн агуулах хавтас дээр 'Унших ба бичих' эрхийг дэмждэггүй.",
@@ -3103,6 +3114,7 @@
       "ImageDoesNotProvideModelPath": "Контейнерийн зураг нь загварын замыг өгдөггүй. \nҮүнийг өөрчлөх хэрэгтэй.",
       "ImageFilter": "Image шүүлтүүр",
       "InferenceMode": "Дүгнэлт",
+      "InferenceModeConfig": "Дүгнэлтийн горимын тохиргоо",
       "InfiniteTime": "Хязгааргүй",
       "InsufficientAllocationOfResourcesWarning": "Хуваарилах нөөц нь сонгосон зурагт шаардагдах хамгийн бага нөөцөөс доогуур байна.",
       "InteractiveMode": "Интерактив",
@@ -3152,10 +3164,7 @@
       "OnlyAllowsDiscreteNumberByClusterSize": "Кластерын хэмжээ 2-оос багагүй тохиолдолд зөвхөн бүхэл тоог зөвшөөрнө.",
       "OnlyAllowsDiscreteNumberByQuantumSize": "Утга нь {{stepSize}} -ээс олон байх ёстой}}}.",
       "OpenMPOptimization": "OpenMP/OpenBLAS оновчлол",
-      "OwnerAccessKey": "Эзэмшигчийн нэвтрэх түлхүүр",
       "OwnerEmail": "Эзэмшигчийн имэйл",
-      "OwnerGroup": "Эзэмшигч төсөл",
-      "OwnerResourceGroup": "Эзэмшигчийн нөөцийн бүлэг",
       "PinnedHistoryTooltip": "Түүхийг зүүсэн PIN ICON дээр дарна уу. \nЗүүсэн зүйлийг хадгалах болно.",
       "PleaseCompleteForm": "Маягт дутуу эсвэл алдаатай байна. \nОруулсан мэдээллээ шалгана уу.",
       "PleaseWaitInitializing": "Эхлүүлэхдээ түр хүлээнэ үү ...",
@@ -3198,7 +3207,6 @@
       "SetBatchJobTimeoutDuration": "Багц ажлын завсарлах хугацааг тохируулах",
       "SetEnvironmentVariable": "Environment хувьсагчийг (variable) тохируулах",
       "SetPreopenPorts": "Урьдчилан нээх портууд (заавал биш)",
-      "SetSessionOwner": "Session эзэмшигч",
       "SettingUpProxyForApp": "Апп-д прокси тохируулж байна ...",
       "SharedMemory": "Хуваалцсан санах ой (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "Хуваалцсан санах ойн тохиргоог хуваарилагдсан санах ойн доогуур болгож багасгасан.",

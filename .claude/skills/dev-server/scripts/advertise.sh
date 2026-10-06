@@ -25,6 +25,9 @@ PORTLESS_DIR="${PORTLESS_DIR:-$HOME/.portless}"
 JIRA_SITE="${JIRA_SITE:-https://lablup.atlassian.net}"
 # The Jira "Teams thread" field. One GET per served PR, at boot only.
 JIRA_TEAMS_FIELD="${JIRA_TEAMS_FIELD:-customfield_10176}"
+# Its counterpart for an issue with no Jira key: an org-level Issue field (TEXT,
+# visible to organization members only), matched by name.
+GITHUB_TEAMS_FIELD="${GITHUB_TEAMS_FIELD:-Teams thread}"
 
 # Human-facing lines go to stderr: `boot-env`'s stdout is `eval`-ed by the caller,
 # so a refusal printed there would be evaluated as shell.
@@ -116,6 +119,36 @@ dropped_served() {
 # `pipefail` that would abort the caller's `key=$(...)` assignment mid-run.
 jira_key() {
   grep -oiE '\(FR-[0-9]+\)' <<<"$1" | head -1 | tr -d '()' | tr '[:lower:]' '[:upper:]' || true
+}
+
+# github_issue <pr-body> [<branch>] — a GitHub-native issue's number: the body's
+# `Resolves #N`, else the branch's `gh-N`. Empty and successful when neither names one.
+github_issue() {
+  local n
+  n=$(grep -oiE '(close[sd]?|fix(es|ed)?|resolve[sd]?)[[:space:]]+#[0-9]+' <<<"$1" | head -1 | grep -oE '[0-9]+' || true)
+  [ -n "$n" ] || n=$(grep -oiE '(^|[-_/])gh-?[0-9]+' <<<"${2:-}" | head -1 | grep -oE '[0-9]+' || true)
+  printf '%s' "$n"
+}
+
+# An issue's field values. Only a TEXT value selects anything, so every other
+# kind of field comes back as `{}` and cannot match a name.
+TEAMS_FIELD_QUERY='query($owner: String!, $repo: String!, $num: Int!) {
+  repository(owner: $owner, name: $repo) { issue(number: $num) {
+    issueFieldValues(first: 100) { nodes {
+      ... on IssueFieldTextValue { value field { ... on IssueFieldText { name } } }
+    } }
+  } }
+}'
+# That response → the value of the field NAMED $GITHUB_TEAMS_FIELD, never a field id.
+TEAMS_FIELD_FILTER='[.data.repository.issue.issueFieldValues.nodes[]?
+    | select(.field?.name? == env.GITHUB_TEAMS_FIELD) | .value | strings][0] // empty'
+
+# teams_thread_url <field-value> — the value, trimmed, when it is exactly one
+# https URL. Anything else is empty AND successful.
+teams_thread_url() {
+  local re='^[[:space:]]*(https://[^[:space:]"<>]+)[[:space:]]*$'
+  [[ $1 =~ $re ]] && printf '%s' "${BASH_REMATCH[1]}"
+  return 0
 }
 
 # teams_override <pr> <running> <override>... — the `--teams-thread` value that
@@ -294,6 +327,24 @@ jira_key_for_pr() {
   jira_key "${body:-}"
 }
 
+# Only asked when the PR names no Jira key, so the Jira path costs what it did.
+github_issue_for_pr() {
+  local repo=$1 pr=$2 branch=${3:-} body
+  body=$(gh pr view "$pr" --repo "$repo" --json body --jq '.body' 2>/dev/null || true)
+  github_issue "${body:-}" "$branch"
+}
+
+# The Teams thread of a GitHub-native issue: its `Teams thread` issue field.
+# No such field, no value, a 404 or a permission error all read as "no thread".
+teams_thread_for_issue() {
+  local repo=$1 issue=$2 value
+  [ -n "$issue" ] || return 0
+  value=$(GITHUB_TEAMS_FIELD=$GITHUB_TEAMS_FIELD gh api graphql \
+            -f owner="${repo%%/*}" -f repo="${repo#*/}" -F num="$issue" \
+            -f query="$TEAMS_FIELD_QUERY" --jq "$TEAMS_FIELD_FILTER" 2>/dev/null || true)
+  teams_thread_url "$value"
+}
+
 # ONE Jira GET per served PR, at boot only — never at request time.
 teams_thread_for_key() {
   local key=$1
@@ -405,12 +456,16 @@ cmd_advertise() {
   local stack; stack=$(stack_line "$running" ${prs[@]+"${prs[@]}"})
 
   local body; body=$(comment_body running "$box" "$url" "$stack")
-  local out="$served" i=0 pr pr_branch key thread id comment_url upsert
+  local out="$served" i=0 pr pr_branch key issue ref thread id comment_url upsert
   for pr in ${prs[@]+"${prs[@]}"}; do
     pr_branch=$(jq -r --argjson i "$i" '.[$i].branch' <<<"$served")
     key=$(jira_key_for_pr "$repo" "$pr")
+    issue=""
+    [ -n "$key" ] || issue=$(github_issue_for_pr "$repo" "$pr" "$pr_branch")
+    ref=${key:-${issue:+issue #$issue}}
     thread=$(teams_override "$pr" "$running" ${overrides[@]+"${overrides[@]}"})
     [ -n "$thread" ] || thread=$(teams_thread_for_key "$key")
+    [ -n "$thread" ] || thread=$(teams_thread_for_issue "$repo" "$issue")
     # One PR whose comment cannot be written (locked conversation, rate limit,
     # a revoked token) must not abort the run: the remaining PRs are still
     # served, and the record still has to be written.
@@ -418,13 +473,15 @@ cmd_advertise() {
     upsert=$(upsert_comment "$repo" "$pr" "$box" "$body") || upsert=""
     if [ -n "$upsert" ]; then
       IFS=$'\t' read -r id comment_url <<<"$upsert" || true
-      say "PR #$pr ($pr_branch): comment $id, ${key:-no Jira key}, teams thread ${thread:-none}"
+      say "PR #$pr ($pr_branch): comment $id, ${ref:-no Jira key}, teams thread ${thread:-none}"
     else
       say "PR #$pr ($pr_branch): could not write the comment — recorded with no comment id"
     fi
-    out=$(jq -c --argjson i "$i" --arg k "$key" --arg t "$thread" --arg c "$id" --arg cu "${comment_url:-}" '
+    out=$(jq -c --argjson i "$i" --arg k "$key" --arg n "$issue" --arg t "$thread" --arg c "$id" --arg cu "${comment_url:-}" '
       def orNull: if . == "" then null else . end;
-      .[$i] += {jiraKey: ($k | orNull), teamsThread: ($t | orNull),
+      .[$i] += {jiraKey: ($k | orNull),
+                githubIssue: (if $n == "" then null else ($n | tonumber) end),
+                teamsThread: ($t | orNull),
                 commentId: (if $c == "" then null else ($c | tonumber) end),
                 commentUrl: ($cu | orNull)}' <<<"$out")
     i=$((i + 1))

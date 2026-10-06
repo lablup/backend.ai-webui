@@ -158,6 +158,8 @@ export class Client {
   public pipelineTaskInstance: PipelineTaskInstance;
   public _features: FeatureSet;
   public ready: boolean = false;
+  // Super-admin impersonation target (user UUID) sent as X-BackendAI-Act-As.
+  public actAsUserId: string | null = null;
   public abortController: AbortController;
   public abortSignal: AbortSignal;
   public requestTimeout: number;
@@ -1026,6 +1028,8 @@ export class Client {
       this._features['role-preset-reference'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.9.0')) {
+      // X-BackendAI-Act-As (BA-6781); the webserver forwards it from 26.9.0 (BA-8216).
+      this._features['act-as'] = true;
       // BA-7210 / backend PR #13536, FR-3481. `DeploymentRevisionPreset
       // .modelDefinition` moves from `ModelDefinition` to a new
       // `PresetModelDefinition` type (mirrored down to `PresetModelConfig` /
@@ -1255,10 +1259,7 @@ export class Client {
         // Persist the login session ID so that the session survives a
         // page refresh — same as the regular login() path.
         if (this._loginSessionId !== null && this._loginSessionId !== '') {
-          safeStorage.setItem(
-            'backendaiwebui.sessionid',
-            this._loginSessionId,
-          );
+          safeStorage.setItem('backendaiwebui.sessionid', this._loginSessionId);
         }
         return this.check_login();
       } else if (result.authenticated === false) {
@@ -2110,6 +2111,9 @@ export class Client {
     // Add session id header for non-cookie environment.
     if (this._loginSessionId !== '' && this._loginSessionId !== null) {
       hdrs.set('X-BackendAI-SessionID', this._loginSessionId);
+    }
+    if (this.actAsUserId && serviceName !== 'pipeline') {
+      hdrs.set('X-BackendAI-Act-As', this.actAsUserId);
     }
     return {
       method: method,
