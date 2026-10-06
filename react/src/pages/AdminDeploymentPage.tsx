@@ -320,11 +320,14 @@ const AdminDeploymentPage: React.FC = () => {
     switch (tab) {
       case 'deployments':
         if (!deploymentQueryRef) {
+          const urlFilter = params.filter as DeploymentFilter | null;
           loadDeploymentQuery(
             {
-              filter:
-                (params.filter as DeploymentFilter | null) ??
-                deploymentRunningFilter,
+              // A link from elsewhere (e.g. a tag on the detail page) carries
+              // no `status`, so it starts in the running scope.
+              filter: urlFilter?.status
+                ? urlFilter
+                : { ...urlFilter, ...deploymentRunningFilter },
               // A URL bookmarked on a newer manager can name a sorter this
               // one lacks; `loadTab` runs before the tab (and its
               // `sortableKeys`) mounts, so it is gated here too.
