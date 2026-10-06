@@ -3421,6 +3421,7 @@
       "settings": [],
       "keys": [
         "button.ForceTerminate",
+        "entityLabel.EditLabels",
         "general.ErrorOccurred",
         "session.ContainerToCleanUp",
         "session.ForceTerminateWarningMsg",

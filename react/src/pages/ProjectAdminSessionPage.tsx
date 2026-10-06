@@ -26,6 +26,8 @@ import { IconButton } from '@lablup/ui-common/IconButton';
 import {
   BAISkeleton,
   BAICard,
+  BAIEntityLabelBulkEditButton,
+  BAIEntityLabelSettingModal,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
@@ -36,9 +38,12 @@ import {
   availableSessionV2SorterValues,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  toLocalId,
   useFetchKey,
+  useIsLabelableEntityType,
+  type SessionV2InList,
 } from 'backend.ai-ui';
-import { PowerOffIcon } from 'lucide-react';
+import { PowerOffIcon, TagsIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -69,6 +74,9 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
     Array<ProjectSessionNode>
   >([]);
   const [isTerminateOpen, setIsTerminateOpen] = useState(false);
+  const isLabelable = useIsLabelableEntityType('session');
+  const [labelingSession, setLabelingSession] =
+    useState<SessionV2InList | null>(null);
 
   const {
     baiPaginationOption,
@@ -242,6 +250,14 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
                 count={selectedSessionList.length}
                 onClearSelection={() => setSelectedSessionList([])}
               />
+              <BAIEntityLabelBulkEditButton
+                entityType="session"
+                targets={selectedSessionList.map((session) => ({
+                  entityId: toLocalId(session.id),
+                  name: session.metadata?.name ?? undefined,
+                }))}
+                onLabelsChanged={() => updateFetchKey()}
+              />
               <IconButton
                 label={t('session.TerminateSession')}
                 tooltip={t('session.TerminateSession')}
@@ -312,6 +328,12 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
                     title={session.metadata?.name ?? '-'}
                     showActions="always"
                     actions={filterOutEmpty([
+                      isLabelable && {
+                        key: 'edit-labels',
+                        title: t('entityLabel.EditLabels'),
+                        icon: <TagsIcon />,
+                        onClick: () => setLabelingSession(session),
+                      },
                       {
                         key: 'terminate',
                         title: t('session.TerminateSession'),
@@ -351,6 +373,25 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
             createdAt: { hidden: false },
           },
           onColumnOverridesChange: setColumnOverrides,
+        }}
+      />
+      <BAIEntityLabelSettingModal
+        open={!!labelingSession}
+        entityType="session"
+        targets={
+          labelingSession
+            ? [
+                {
+                  entityId: toLocalId(labelingSession.id),
+                  name: labelingSession.metadata?.name ?? undefined,
+                },
+              ]
+            : []
+        }
+        entityLabelsFrgmt={labelingSession?.entityLabels}
+        onRequestClose={(success) => {
+          setLabelingSession(null);
+          if (success) updateFetchKey();
         }}
       />
       <TerminateSessionModalForProjectAdmin
