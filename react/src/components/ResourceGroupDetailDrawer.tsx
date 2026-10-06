@@ -11,6 +11,7 @@ import ResourceGroupDefaultDeploymentOptionsPanel from './ResourceGroupDefaultDe
 import ResourceGroupDefaultSessionOptionsPanel from './ResourceGroupDefaultSessionOptionsPanel';
 import type { ScalingGroupOpts } from './ResourceGroupList';
 import ResourceGroupSettingModal from './ResourceGroupSettingModal';
+import { Badge } from '@lablup/ui-common/Badge';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
@@ -18,7 +19,6 @@ import { Tab, TabList } from '@lablup/ui-common/TabList';
 import { Token } from '@lablup/ui-common/Token';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIBadge,
   BAICard,
   BAIDrawer,
   type BAIDrawerProps,
@@ -27,6 +27,7 @@ import {
   BAIMetadataList,
   BAISkeleton,
   BAIText,
+  badgeVariantForStatus,
   useBAIBreakpoint,
   useUpdatableState,
 } from 'backend.ai-ui';
@@ -176,9 +177,12 @@ const ResourceGroupDetailDrawerContent: React.FC<{
         <BAICard>
           <BAIMetadataList columns={md ? 2 : 1}>
             <MetadataListItem label={t('resourceGroup.Active')}>
-              <BAIBadge
-                color={resourceGroup.status.isActive ? 'success' : 'default'}
-                text={
+              <Badge
+                variant={badgeVariantForStatus(
+                  'resourceGroup',
+                  resourceGroup.status.isActive ? 'ACTIVE' : 'INACTIVE',
+                )}
+                label={
                   resourceGroup.status.isActive
                     ? t('general.Active')
                     : t('general.Inactive')
