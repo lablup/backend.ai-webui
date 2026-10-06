@@ -41,6 +41,10 @@ import {
   filterOutNullAndUndefined,
   useToggle,
   useUpdatableState,
+  BAIEntityLabelBulkEditButton,
+  BAIEntityLabelSettingModal,
+  BAIEntityLabelTokens,
+  useIsLabelableEntityType,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -50,6 +54,7 @@ import {
   Info,
   PlusIcon,
   SquarePenIcon,
+  TagsIcon,
   Trash2,
   UndoIcon,
   X,
@@ -184,6 +189,9 @@ const ResourceGroupList: React.FC = () => {
   const [selectedResourceGroupName, setSelectedResourceGroupName] =
     useState<string>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const isLabelable = useIsLabelableEntityType('resource_group');
+  const [labelingResourceGroup, setLabelingResourceGroup] =
+    useState<ResourceGroupNode | null>(null);
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.ResourceGroupList',
   );
@@ -251,7 +259,12 @@ const ResourceGroupList: React.FC = () => {
           edges {
             node {
               id
+              entityId
               name
+              entityLabels(limit: 100) {
+                ...BAIEntityLabelTokensFragment
+                ...BAIEntityLabelSettingModalFragment
+              }
               status {
                 isActive
                 isPublic
@@ -352,6 +365,16 @@ const ResourceGroupList: React.FC = () => {
                 openSettingModal();
               },
             },
+            ...(isLabelable
+              ? [
+                  {
+                    key: 'edit-labels',
+                    title: t('entityLabel.EditLabels'),
+                    icon: <TagsIcon />,
+                    onClick: () => setLabelingResourceGroup(record),
+                  },
+                ]
+              : []),
             {
               key: 'activate-deactivate',
               title: record.status.isActive
@@ -431,6 +454,13 @@ const ResourceGroupList: React.FC = () => {
               : []),
           ]}
         />
+      ),
+    },
+    isLabelable && {
+      key: 'labels',
+      title: t('entityLabel.Labels'),
+      render: (_value: unknown, record: ResourceGroupNode) => (
+        <BAIEntityLabelTokens entityLabelsFrgmt={record.entityLabels} />
       ),
     },
     {
@@ -563,6 +593,16 @@ const ResourceGroupList: React.FC = () => {
                 count={selectedRowKeys.length}
                 onClearSelection={() => setSelectedRowKeys([])}
               />
+              <BAIEntityLabelBulkEditButton
+                entityType="resource_group"
+                targets={resourceGroups
+                  .filter((group) => selectedRowKeys.includes(group.name))
+                  .map((group) => ({
+                    entityId: group.entityId,
+                    name: group.name,
+                  }))}
+                onLabelsChanged={() => updateFetchKey()}
+              />
               {/* antd Tooltip + icon-only BAIButton → IconButton with its own
                   `tooltip` (ticket 15/18 idiom: never-disabled icon trigger). */}
               <IconButton
@@ -634,6 +674,25 @@ const ResourceGroupList: React.FC = () => {
         }}
       />
 
+      <BAIEntityLabelSettingModal
+        open={!!labelingResourceGroup}
+        entityType="resource_group"
+        targets={
+          labelingResourceGroup
+            ? [
+                {
+                  entityId: labelingResourceGroup.entityId,
+                  name: labelingResourceGroup.name,
+                },
+              ]
+            : []
+        }
+        entityLabelsFrgmt={labelingResourceGroup?.entityLabels}
+        onRequestClose={(success) => {
+          setLabelingResourceGroup(null);
+          if (success) updateFetchKey();
+        }}
+      />
       <BAIDeleteConfirmModal
         open={!!selectedResourceGroupName}
         title={t('resourceGroup.DeleteResourceGroup')}
