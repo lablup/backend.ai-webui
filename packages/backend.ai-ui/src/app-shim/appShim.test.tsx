@@ -230,6 +230,17 @@ describe('app-shim modal', () => {
     handle.destroy();
   });
 
+  it('labels the ok button with the translated Confirm default on both shapes', () => {
+    const alert = modal.confirm({ title: 'T', content: 'C' });
+    const dialog = modal.info({ title: 'T', content: <p>C</p> });
+    render(<AppShimModalHost />);
+
+    expect(screen.getAllByRole('button', { name: 'Confirm' })).toHaveLength(2);
+    expect(screen.queryByRole('button', { name: 'OK' })).toBeNull();
+    alert.destroy();
+    dialog.destroy();
+  });
+
   // The escape hatch for a surface the ladder does not cover; values below the
   // band base are floored instead (see ui-common's modalStack tests).
   it('forwards zIndex to the portal root', () => {

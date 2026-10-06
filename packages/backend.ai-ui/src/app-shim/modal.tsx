@@ -249,7 +249,7 @@ const AppShimModalTask: React.FC<{ task: ModalTask }> = ({ task }) => {
   const { kind, options } = task;
   const isDanger =
     options.okType === 'danger' || options.okButtonProps?.danger === true;
-  const okLabel = toText(options.okText) || 'OK';
+  const okLabel = toText(options.okText) || t('general.button.Confirm');
   const cancelLabel = toText(options.cancelText) || undefined;
 
   // Escape, the mask, the header X and the cancel button all land here.
