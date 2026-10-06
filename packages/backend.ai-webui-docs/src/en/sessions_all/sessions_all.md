@@ -68,17 +68,8 @@ If needed, setting the name of the session (optional) is also available.
   word will be assigned automatically. Session names only accept alphanumeric
   characters between 4 and 64 without spaces.
 
-If users create a session with the `superadmin` account,
-they can additionally assign a session owner. If you enable the toggle,
-a user email field will appear.
-
-![](../images/admin_launch_session_owner.png)
-
-Enter the email of the user you want to assign the session to,
-click the `search` button, and the user's access key will be automatically registered.
-You can also select a project and resource group.
-
-![=740px](../images/admin_launch_session_owner_project.png)
+To create a session on behalf of another user, a superadmin uses the
+**Use as this user** action on the Users page.
 
 <a id="environments-and-resource-allocation"></a>
 
