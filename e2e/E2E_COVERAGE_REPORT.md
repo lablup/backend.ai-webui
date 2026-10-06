@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-10-06
+> **Last Updated:** 2026-10-07
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 361 / 512 features covered (71%)**
+**Overall (in-scope routes): 363 / 513 features covered (71%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -25,7 +25,7 @@
 | Serving                  | `/serving`                                       |    7     |    2    | 🔶 29%  |
 | Endpoint Detail          | `/serving/:serviceId`                            |    20    |    9    | 🔶 45%  |
 | Service Launcher         | `/service/start`                                 |    5     |    1    | 🔶 20%  |
-| VFolder / Data           | `/data`                                          |    49    |   36    | 🔶 73%  |
+| VFolder / Data           | `/data`                                          |    50    |   38    | 🔶 76%  |
 | Model Store              | `/model-store`                                   |    6     |    6    | ✅ 100% |
 | Admin Model Store        | `/admin-model-store`                             |    28    |   28    | ✅ 100% |
 | Storage Host             | `/storage-settings/:hostname`                    |    3     |    0    |  ❌ 0%  |
@@ -54,7 +54,7 @@
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **512**  | **361** | **71%** |
+| **Total**                |                                                  | **513**  | **363** | **71%** |
 
 ---
 
@@ -409,7 +409,7 @@
 | Delete / trash / restore / purge                                         | ✅     | `User can create, delete(move to trash), restore, delete forever`                                                                      |
 | Consecutive deletion                                                     | ✅     | `User can create and permanently delete multiple VFolders`                                                                             |
 | Share folder → InviteFolderSettingModal                                  | ✅     | `User can share vFolder` (also asserts inviter email shown in invitation modal — FR-2982)                                              |
-| Leave shared folder → SharedFolderPermissionInfoModal                    | ✅     | `Invitee can leave a shared vFolder`                                                                                                   |
+| Leave shared folder → SharedFolderPermissionInfoModal                    | 🚧     | Skipped (fixme): `Invitee can leave a shared vFolder` — 26.9.0rc1 manager returns 403 on leave                                         |
 | File upload (button)                                                     | ✅     | `User can upload a single/multiple files via Upload button`                                                                            |
 | File upload (drag & drop)                                                | ✅     | `User can upload a file via drag and drop`                                                                                             |
 | File upload (duplicate handling)                                         | ✅     | `User sees duplicate confirmation` / `User can cancel duplicate`                                                                       |
@@ -443,13 +443,14 @@
 | Folder table sorting                                                     | ❌     | -                                                                                                                                      |
 | Pagination                                                               | ❌     | -                                                                                                                                      |
 | Storage status / quota display                                           | ❌     | -                                                                                                                                      |
-| Bulk trash → DeleteVFolderModal                                          | ❌     | -                                                                                                                                      |
+| Bulk trash → DeleteVFolderModal                                          | ✅     | `User can move only folders with delete permission to trash when a shared read-only folder is selected` (excluded folders, #10051)     |
+| Admin bulk delete forever (Trash tab) → DeleteForeverVFolderModalV2      | ✅     | `Admin can delete forever multiple folders at once from the trash tab` (#10051)                                                        |
 | Bulk restore → RestoreVFolderModal                                       | ❌     | -                                                                                                                                      |
 | Invitation notifications                                                 | ❌     | -                                                                                                                                      |
 | Shared folder permission → SharedFolderPermissionInfoModal               | ❌     | -                                                                                                                                      |
 | File download                                                            | ❌     | -                                                                                                                                      |
 
-**Coverage: 🔶 34/47 features (includes 1 skipped)**
+**Coverage: 🔶 36/48 features (includes 2 skipped)**
 
 ---
 
@@ -1349,12 +1350,12 @@ These are core user workflows that affect the largest number of users.
 
 ### Priority 2: Important - Admin Features, Data Integrity
 
-| #   | Page/Feature                                         | Reason                                                                                                             | Estimated Complexity |
-| --- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | -------------------- |
-| 3   | **User Settings Persistence** (`/usersettings`)      | 2 tabs, 4 modals. Language, auto-logout, SSH keys, shell scripts must persist correctly.                           | Low                  |
-| 4   | **VFolder - Filtering, Sorting, Bulk ops** (`/data`) | Data page has good CRUD but table interactions and bulk modals (DeleteVFolderModal, RestoreVFolderModal) untested. | Low                  |
-| 5   | **Credential - Keypairs Tab** (`/credential`)        | API access keys (3 uncovered features). Security-critical.                                                         | Medium               |
-| 6   | **Reservoir - Artifact Management** (`/reservoir`)   | 18 features across main and detail pages. HuggingFace import, revision management, bulk operations.                | High                 |
+| #   | Page/Feature                                         | Reason                                                                                              | Estimated Complexity |
+| --- | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------- | -------------------- |
+| 3   | **User Settings Persistence** (`/usersettings`)      | 2 tabs, 4 modals. Language, auto-logout, SSH keys, shell scripts must persist correctly.            | Low                  |
+| 4   | **VFolder - Filtering, Sorting, Bulk ops** (`/data`) | Data page has good CRUD but filtering, sorting and the bulk RestoreVFolderModal are untested.       | Low                  |
+| 5   | **Credential - Keypairs Tab** (`/credential`)        | API access keys (3 uncovered features). Security-critical.                                          | Medium               |
+| 6   | **Reservoir - Artifact Management** (`/reservoir`)   | 18 features across main and detail pages. HuggingFace import, revision management, bulk operations. | High                 |
 
 ### Priority 3: Nice to Have - Edge Cases, Admin Tools
 
