@@ -175,3 +175,5 @@ Runs behind Portless on a fixed internal port 6006. Open the printed `*.localhos
 | `pnpm --filter backend.ai-ui run storybook`                  | Storybook under Portless                                            |
 | `pnpm exec portless list`                                    | Show active Portless routes                                         |
 | `pnpm exec portless proxy stop` / `start -p 1355 [--no-tls]` | Daemon control (project-local binary)                               |
+
+<!-- frontdesk dispatch smoke test -->
