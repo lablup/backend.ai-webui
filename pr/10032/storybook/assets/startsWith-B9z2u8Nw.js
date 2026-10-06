@@ -1,1 +1,0 @@
-import{b as e}from"./_baseClamp-DVUOCJN_.js";import{t as l,b as t}from"./toString-BUn0v1a6.js";import{t as b}from"./toInteger-D1Af-wpy.js";function o(r,a,m){return r=l(r),m=m==null?0:e(b(m),0,r.length),a=t(a),r.slice(m,m+a.length)==a}export{o as s};
