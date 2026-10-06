@@ -65,12 +65,10 @@ a dependency, the workspace pins exact versions, and any stray `antd` import fai
 
 ## PR Conventions
 
-- PR titles follow format: `prefix(JIRA-ISSUE-NUMBER): title` (`feat` / `fix` / `refactor`
-  / `style` / `chore`)
-- PR description starts with: `Resolves #1234 (FR-1234)` — the space between `#1234` and
-  `(FR-1234)` is required so GitHub auto-links the issue and the `project-status-sync`
-  workflow can parse the reference
-- Pilot (from the 26.10 release train): an issue created directly on GitHub has no Jira
-  key. Its PR is titled `prefix(#1234): title`, its description starts with `Resolves #1234`
-  alone, and its branch is `type/gh-1234-slug`. Both forms are valid; do not ask for a Jira
-  key on a PR that follows this one.
+- Work items are GitHub issues. PR titles follow format: `prefix(#1234): title` (`feat` /
+  `fix` / `refactor` / `style` / `chore`), the description starts with `Resolves #1234`
+  alone, and the branch is `type/gh-1234-slug`. Do not ask for a Jira key — this applies
+  to issues whose body ends with `JIRA Issue: FR-XXXX` too.
+- Legacy: a PR opened before the switch may still use `prefix(FR-1234): title` and
+  `Resolves #1234 (FR-1234)` (the space before `(FR-1234)` is required for auto-linking).
+  Accept it on in-flight PRs; do not suggest it for new ones.

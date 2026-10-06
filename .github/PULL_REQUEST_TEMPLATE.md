@@ -1,6 +1,7 @@
-resolves #NNN (FR-MMM)
-<!-- replace NNN, MMM with the GitHub issue number and the corresponding Jira issue number. -->
-<!-- Pilot: for an issue created directly on GitHub (no Jira key), write `resolves #NNN` alone and title the PR `prefix(#NNN): title`. -->
+resolves #NNN
+<!-- replace NNN with the GitHub issue number and title the PR `prefix(#NNN): title`. -->
+<!-- Legacy: a PR already in flight against a Jira issue may keep `resolves #NNN (FR-MMM)` and `prefix(FR-MMM): title`. -->
+<!-- Do not use that form for new work, including issues whose body ends with `JIRA Issue: FR-MMM`. -->
 
 <!--
 Please precisely, concisely, and concretely describe what this PR changes, the rationale behind codes,
