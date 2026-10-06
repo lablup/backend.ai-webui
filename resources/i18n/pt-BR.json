@@ -1009,6 +1009,7 @@
       "LeaveFolder": "Pasta de saída",
       "Location": "Localização",
       "ManageProjectFolderInAdmin": "O gerenciamento de pastas de projeto está disponível nas configurações de administrador.",
+      "MaxFiles": "Número máximo de arquivos",
       "MaxFolderQuota": "Quota máxima de pastas",
       "MaxSize": "Tamanho máximo",
       "ModelProjectFolderRestrictedToReadOnly": "Permissão 'Leitura e gravação' não é suportada para a pasta do repositório de modelos",

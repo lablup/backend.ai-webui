@@ -1009,6 +1009,7 @@
       "LeaveFolder": "离开文件夹",
       "Location": "地点",
       "ManageProjectFolderInAdmin": "项目文件夹管理可在管理员设置中进行。",
+      "MaxFiles": "最大文件数",
       "MaxFolderQuota": "最大文件夹配额",
       "MaxSize": "最大尺寸",
       "ModelProjectFolderRestrictedToReadOnly": "模型存储文件夹不支持“读写”权限",

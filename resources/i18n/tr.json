@@ -1009,6 +1009,7 @@
       "LeaveFolder": "Klasörden ayrıl",
       "Location": "yer",
       "ManageProjectFolderInAdmin": "Proje klasörü yönetimi, yönetici ayarlarında kullanılabilir.",
+      "MaxFiles": "Maksimum Dosya Sayısı",
       "MaxFolderQuota": "Maksimum Klasör Kotası",
       "MaxSize": "Maksimum Boyut",
       "ModelProjectFolderRestrictedToReadOnly": "'Okuma ve Yazma' izni model depolama klasörü için desteklenmiyor",

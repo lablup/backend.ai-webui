@@ -1009,6 +1009,7 @@
       "LeaveFolder": "Tinggalkan folder",
       "Location": "Lokasi",
       "ManageProjectFolderInAdmin": "Pengelolaan folder proyek tersedia di pengaturan admin.",
+      "MaxFiles": "Jumlah file maksimal",
       "MaxFolderQuota": "Kuota Folder Maksimal",
       "MaxSize": "Ukuran maksimal",
       "ModelProjectFolderRestrictedToReadOnly": "Izin 'Baca & Tulis' tidak didukung untuk folder penyimpanan model.",

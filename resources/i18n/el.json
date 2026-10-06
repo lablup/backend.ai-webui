@@ -1009,6 +1009,7 @@
       "LeaveFolder": "Αφήστε το φάκελο",
       "Location": "Τοποθεσία",
       "ManageProjectFolderInAdmin": "Η διαχείριση φακέλων έργου είναι διαθέσιμη στις ρυθμίσεις διαχειριστή.",
+      "MaxFiles": "Μέγιστος αριθμός αρχείων",
       "MaxFolderQuota": "Μέγιστη ποσόστωση φακέλων",
       "MaxSize": "Μέγιστο μέγεθος",
       "ModelProjectFolderRestrictedToReadOnly": "Δεν υποστηρίζεται η άδεια 'Read & Write' για τον φάκελο του model store.",

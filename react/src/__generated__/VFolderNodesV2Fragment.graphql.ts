@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<de816130e4eb0edd55176f51b3250b04>>
+ * @generated SignedSource<<fd65e92099e32d96c0d98a3adf4c1342>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
+export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
 export type VFolderOwnershipType = "GROUP" | "USER" | "%future added value";
@@ -47,7 +48,20 @@ export type VFolderNodesV2Fragment$data = ReadonlyArray<{
     } | null | undefined;
     readonly userId: string | null | undefined;
   };
+  readonly permissions: ReadonlyArray<PermissionBit>;
+  readonly quota: {
+    readonly maxFiles: number;
+    readonly maxSize: {
+      readonly expr: string;
+    } | null | undefined;
+  };
   readonly unmanagedPath: string | null | undefined;
+  readonly usage: {
+    readonly numFiles: number;
+    readonly usedBytes: {
+      readonly expr: string;
+    };
+  } | null | undefined;
   readonly vfolderStatus: VFolderOperationStatus;
   readonly " $fragmentSpreads": FragmentRefs<"DeleteForeverVFolderModalV2Fragment" | "SharedFolderPermissionInfoModalV2Fragment" | "VFolderNodeIdenticonV2Fragment" | "VFolderPermissionCellV2Fragment">;
   readonly " $fragmentType": "VFolderNodesV2Fragment";
@@ -58,7 +72,16 @@ export type VFolderNodesV2Fragment$key = ReadonlyArray<{
 }>;
 
 const node: ReaderFragment = (function(){
-var v0 = {
+var v0 = [
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "expr",
+    "storageKey": null
+  }
+],
+v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -108,12 +131,40 @@ return {
     {
       "alias": null,
       "args": null,
+      "concreteType": "VFolderUsageInfo",
+      "kind": "LinkedField",
+      "name": "usage",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "numFiles",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "BinarySizeInfo",
+          "kind": "LinkedField",
+          "name": "usedBytes",
+          "plural": false,
+          "selections": (v0/*: any*/),
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "VFolderMetadataInfo",
       "kind": "LinkedField",
       "name": "metadata",
       "plural": false,
       "selections": [
-        (v0/*: any*/),
+        (v1/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -172,6 +223,41 @@ return {
           "args": null,
           "kind": "ScalarField",
           "name": "ownershipType",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "permissions",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "VFolderQuotaInfo",
+      "kind": "LinkedField",
+      "name": "quota",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "maxFiles",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "BinarySizeInfo",
+          "kind": "LinkedField",
+          "name": "maxSize",
+          "plural": false,
+          "selections": (v0/*: any*/),
           "storageKey": null
         }
       ],
@@ -251,7 +337,7 @@ return {
               "name": "basicInfo",
               "plural": false,
               "selections": [
-                (v0/*: any*/)
+                (v1/*: any*/)
               ],
               "storageKey": null
             }
@@ -303,6 +389,6 @@ return {
 };
 })();
 
-(node as any).hash = "07611fcd2a8e6b5fb66ca14bf652e541";
+(node as any).hash = "cd364f2546922ed4be6b125691a25588";
 
 export default node;

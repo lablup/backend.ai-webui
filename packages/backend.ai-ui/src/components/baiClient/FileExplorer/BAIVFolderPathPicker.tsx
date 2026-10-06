@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { BAIDirectoryPickerModalQuery } from '../../../__generated__/BAIDirectoryPickerModalQuery.graphql';
-import { toGlobalId } from '../../../helper';
 import { useControllableValue } from '../../../hooks';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import BAIUnmountAfterClose from '../../BAIUnmountAfterClose';
@@ -123,7 +122,7 @@ const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
     // `loading` (isPickerPending) instead of a blank Suspense gap.
     startPickerTransition(() => {
       loadPickerQuery(
-        { vfolderGlobalId: toGlobalId('VirtualFolderNode', vfolderUuid) },
+        { vfolderId: vfolderUuid },
         { fetchPolicy: 'store-and-network' },
       );
       setIsPickerOpen(true);

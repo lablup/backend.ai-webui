@@ -996,6 +996,7 @@
       "LeaveFolder": "Leave folder",
       "Location": "Location",
       "ManageProjectFolderInAdmin": "Project folder management is available in admin settings.",
+      "MaxFiles": "Max Files",
       "MaxFolderQuota": "Max Folder Quota",
       "MaxSize": "Max Size",
       "ModelProjectFolderRestrictedToReadOnly": "'Read & Write' permission is not supported for model store folder",

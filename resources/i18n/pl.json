@@ -1009,6 +1009,7 @@
       "LeaveFolder": "Zostaw folder",
       "Location": "Lokalizacja",
       "ManageProjectFolderInAdmin": "Zarządzanie folderami projektu jest dostępne w ustawieniach administratora.",
+      "MaxFiles": "Maks. liczba plików",
       "MaxFolderQuota": "Maksymalny limit folderu",
       "MaxSize": "Max rozmiar",
       "ModelProjectFolderRestrictedToReadOnly": "Uprawnienie 'Odczyt i zapis' nie jest obsługiwane dla folderu magazynu modeli",

@@ -1009,6 +1009,7 @@
       "LeaveFolder": "Фолдерыг орхи",
       "Location": "Байршил",
       "ManageProjectFolderInAdmin": "Төслийн хавтасны удирдлага нь админы тохиргоонд боломжтой.",
+      "MaxFiles": "Файлын хамгийн их тоо",
       "MaxFolderQuota": "Фолдерын хамгийн их квот",
       "MaxSize": "Хамгийн их хэмжээ",
       "ModelProjectFolderRestrictedToReadOnly": "Моделийн агуулах хавтас дээр 'Унших ба бичих' эрхийг дэмждэггүй.",

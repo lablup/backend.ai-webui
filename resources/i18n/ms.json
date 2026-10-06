@@ -1009,6 +1009,7 @@
       "LeaveFolder": "Tinggalkan folder",
       "Location": "Lokasi",
       "ManageProjectFolderInAdmin": "Pengurusan folder projek tersedia dalam tetapan pentadbir.",
+      "MaxFiles": "Bilangan fail maks",
       "MaxFolderQuota": "Kuota Folder Maks",
       "MaxSize": "Saiz maks",
       "ModelProjectFolderRestrictedToReadOnly": "Kebenaran \"Baca & Tulis\" tidak disokong untuk folder stor model",
