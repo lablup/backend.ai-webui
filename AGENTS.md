@@ -33,26 +33,22 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
 
 # Additional Workflow Description
 
-- All work items are created in Jira and serve as the starting point for understanding and resolving tasks. (The GitHub-native pilot below is the one exception.)
-- Work items are cloned as GitHub issues in the corresponding repository.
-- GitHub PR titles follow this format:
-  - prefix
-    - feat: New features or feature improvements and changes
-    - fix: Bug fixes
-    - refactor: Refactoring
-    - style: Design changes without functional changes
-    - chore: Other small tasks
-  - Format: `prefix(JIRA-ISSUE-NUMBER): title`
-  - GitHub PR content starts with `Resolves #1234 (FR-1234)` where #1234 is the cloned issue number and FR-1234 is the Jira issue number. The space between `#1234` and `(FR-1234)` is required — without it GitHub does not auto-link the issue reference and downstream tooling (the `.github/workflows/project-status-sync.yml` workflow) fails to detect the link.
-- **Pilot — GitHub-native issues (from the 26.10 release train).** A work item may instead be created directly as a GitHub issue (GitHub Project 41) and have no Jira key. The Jira path above is unchanged and stays the default for every issue that has an `FR-` key; an issue has exactly one of the two forms. For a GitHub-native issue number `N`:
+- Work items are GitHub issues in this repository, created directly on GitHub and planned on [GitHub Project 41](https://github.com/orgs/lablup/projects/41) (its Iteration field is the sprint). Jira is not used for new work items. For issue number `N`:
   - PR title: `prefix(#N): title` — for example `fix(#10144): keep the drawer header visible`. Write `#N`, never `GH-N`: an automation reads any `ABC-123`-shaped token in a PR title as a Jira key.
+    - prefix
+      - feat: New features or feature improvements and changes
+      - fix: Bug fixes
+      - refactor: Refactoring
+      - style: Design changes without functional changes
+      - chore: Other small tasks
   - PR content starts with `Resolves #N` — no parenthesized key after it.
-  - Branch: `type/gh-N-slug` — for example `fix/gh-10144-drawer-header` — where a Jira issue's branch is `type/FR-1234-slug`.
-  - Dev server: `gh-N` takes the place of `fr-XXXX` in the app name (`gh-10144-pr10150-drawer`).
-  - Teams thread: read from the issue's `Teams thread` field — an organization-level Issue field visible to organization members only — instead of the Jira custom field. The repository is public, so the thread URL is never written into an issue or PR comment.
+  - Branch: `type/gh-N-slug` — for example `fix/gh-10144-drawer-header`.
+  - Dev server: `gh-N` in the app name (`gh-10144-pr10150-drawer`).
+  - Teams thread: read from the issue's `Teams thread` field — an organization-level Issue field visible to organization members only, filled automatically when the issue is created. The repository is public, so the thread URL is never written into an issue or PR comment.
+- An issue whose body ends with `JIRA Issue: FR-XXXX` is a clone of a legacy Jira issue. Work on it exactly the same way: `prefix(#N): title`, `Resolves #N`, `type/gh-N-slug`. Do **not** put the FR key in the PR title — an automation closes the Jira side when the GitHub issue closes.
 
 - **Tool Requirements**:
-  - **Jira**: Use `jira-workflow` skill (fw plugin). Project config in `.jira.config`. Its `ISSUE_TRACKER="github"` / `GITHUB_PROJECT` keys make fw skills create new work items as GitHub issues on Project 41 instead; existing FR issues still go through Jira.
+  - **Jira**: read-only legacy. Use the `jira-workflow` skill (fw plugin; config in `.jira.config`) only to inspect existing FR issues — never to create work items.
   - **GitHub**: Use `gh` CLI (preferred) or GitHub MCP (`mcp__github__*`)
   - **Git/PR**: Use **GitHub Stacked PRs** via the `gh stack` CLI (`github/gh-stack` extension) for all stacked branch/PR work. The command reference lives in the `gh-stack` skill (`.claude/skills/gh-stack/`) and the project conventions (naming, draft→ready lifecycle, bottom-up merge, sync/rebase/conflict loops, non-interactive agent rules) in the `fw:stacked-pr-workflow` skill — load both before stack work.
     - **Graphite (`gt`) is banned in this repository (FR-3391).** Never run any `gt` command; a permissions deny rule plus a `PreToolUse` hook block `gt` invocations. Stack metadata lives on GitHub itself.
@@ -66,6 +62,10 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
     - The skill list is fixed when a session starts: a session that began before a skill landed on `main` needs `/reload-plugins` (or a fresh session) before this step can call it — observed on 2026-09-18, when `walkthrough` appeared only after the reload.
 - Follow the GitHub Stacked PRs strategy. Write work by appropriately stacking individual PRs.
 - When amending a PR with significant changes, update the PR description to reflect the new scope. Minor fixes don't need description updates, but new features, deleted files, or changed approach should be reflected.
+
+## GitHub Project
+
+Project: https://github.com/orgs/lablup/projects/41 (lablup/41)
 
 ### Configuration
 
