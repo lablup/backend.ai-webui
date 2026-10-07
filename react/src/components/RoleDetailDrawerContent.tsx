@@ -4,8 +4,6 @@
  */
 import { RoleDetailDrawerContentFragment$key } from '../__generated__/RoleDetailDrawerContentFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
-import LegacyRolePermissionTab from './LegacyRolePermissionTab';
-import LegacyRoleScopeTab from './LegacyRoleScopeTab';
 import RoleAssignmentTab from './RoleAssignmentTab';
 import RolePermissionDetailTab from './RolePermissionDetailTab';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
@@ -15,7 +13,6 @@ import {
   BAICard,
   BAIMetadataList,
   BAISkeleton,
-  toLocalId,
   tokenColorForTagColor,
   tokenColorForStatus,
 } from 'backend.ai-ui';
@@ -36,15 +33,7 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   // Auto-assign is only supported on managers >= 26.4.4.
   const supportsAutoAssign = baiClient.supports('role-auto-assign');
-  // Managers >= 26.8.0 can filter `Role.scopes` by scope type, which the
-  // merged Detailed Permissions view depends on. Older managers get the
-  // legacy separate Scopes / Permissions tabs instead.
-  const supportsDetailedPermissions = baiClient.supports(
-    'role-mapped-scope-filter',
-  );
-  const [activeTab, setActiveTab] = useState(
-    supportsDetailedPermissions ? 'detailedPermissions' : 'scopes',
-  );
+  const [activeTab, setActiveTab] = useState('detailedPermissions');
 
   const role = useFragment(
     graphql`
@@ -120,25 +109,12 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
       {/* antd `Tabs` -> `TabList` + `Tab` (MAPPING §4): navigation only, the
           panel is rendered by this component below the bar. */}
       <TabList hasDivider value={activeTab} onChange={setActiveTab}>
-        {supportsDetailedPermissions ? (
-          <Tab value="detailedPermissions" label={t('rbac.Permissions')} />
-        ) : (
-          <>
-            <Tab value="scopes" label={t('rbac.RoleScopes')} />
-            <Tab value="permissions" label={t('rbac.Permissions')} />
-          </>
-        )}
+        <Tab value="detailedPermissions" label={t('rbac.Permissions')} />
         <Tab value="assignments" label={t('rbac.RoleAssignments')} />
       </TabList>
       <Suspense fallback={<BAISkeleton />}>
         {activeTab === 'detailedPermissions' && (
           <RolePermissionDetailTab roleNodeFrgmt={role} />
-        )}
-        {activeTab === 'scopes' && (
-          <LegacyRoleScopeTab roleId={toLocalId(role.id)} />
-        )}
-        {activeTab === 'permissions' && (
-          <LegacyRolePermissionTab roleId={toLocalId(role.id)} />
         )}
         {activeTab === 'assignments' && (
           <RoleAssignmentTab roleNodeFrgmt={role} />
