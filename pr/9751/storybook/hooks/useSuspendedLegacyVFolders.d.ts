@@ -8,6 +8,8 @@ export interface LegacyVFolder {
     created_at: string;
     /** The caller's mount level: `rw` / `ro` / `none`, or `''` before 26.9.0a1. */
     permission: string;
+    /** The owner's uuid for a user folder. */
+    user: string | null;
     group: string | null;
     creator: string;
     user_email: string | null;
@@ -21,6 +23,8 @@ export interface LegacyVFolderListOptions {
 /**
  * The caller's mount level from `vfolder_nodes.permissions` (backend.ai#14679).
  * `null` means the manager predates the field's `@since`, so the level is unknown.
+ * The manager clamps these verbs by the folder default even for the owner, so
+ * the hook reads an owned folder as `rw` instead, as `resolve_mount_policy` does.
  */
 export declare const mountLevelFromPermissions: (permissions: ReadonlyArray<unknown> | null | undefined) => string;
 /** The caller's folders reachable from `groupId`, for the mount inputs. Suspends. */

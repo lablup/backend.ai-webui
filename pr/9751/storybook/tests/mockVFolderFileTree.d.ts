@@ -11,6 +11,8 @@ export declare const mockVFolderFile: (name: string, type: VFolderFile["type"], 
  * to name the handful that its gate or filter actually reads.
  */
 export declare const mockLegacyVFolder: (folder: Pick<LegacyVFolder, "id" | "name"> & Partial<LegacyVFolder>) => LegacyVFolder;
+/** The mock client's signed-in user; owns no fixture folder unless a story says so. */
+export declare const MOCK_USER_ID = "77777777-7777-7777-7777-777777777777";
 export declare const MOCK_LEGACY_PROJECT_ID = "99999999-9999-9999-9999-999999999999";
 /** Only `local:volume1` grants `mount-in-session`, so `archive:cold` is gated out. */
 export declare const MOCK_MOUNTABLE_HOSTS: Array<string>;

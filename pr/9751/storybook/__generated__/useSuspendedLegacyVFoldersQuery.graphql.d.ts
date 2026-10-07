@@ -19,6 +19,7 @@ export type useSuspendedLegacyVFoldersQuery$data = {
                 readonly row_id: string | null | undefined;
                 readonly status: string | null | undefined;
                 readonly usage_mode: string | null | undefined;
+                readonly user: string | null | undefined;
                 readonly user_email: string | null | undefined;
             } | null | undefined;
         } | null | undefined>;
