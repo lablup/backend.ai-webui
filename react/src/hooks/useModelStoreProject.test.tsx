@@ -23,7 +23,10 @@ const modelStoreNode = {
   basicInfo: { name: 'model-store' },
 };
 
-const renderWithPayload = async (payload: GraphQLResponse) => {
+const renderWithPayload = async (
+  payload: GraphQLResponse,
+  scope?: 'user' | 'admin',
+) => {
   const environment = createMockEnvironment();
   let operation: OperationDescriptor | undefined;
   environment.mock.queueOperationResolver((resolved) => {
@@ -35,14 +38,16 @@ const renderWithPayload = async (payload: GraphQLResponse) => {
       <Suspense fallback={null}>{children}</Suspense>
     </RelayEnvironmentProvider>
   );
-  const rendered = renderHook(() => useModelStoreProject(), { wrapper });
+  const rendered = renderHook(() => useModelStoreProject(scope), {
+    wrapper,
+  });
   await waitFor(() => expect(rendered.result.current).not.toBeNull());
   return { ...rendered, operation };
 };
 
 describe('useModelStoreProject (FR-4058)', () => {
   beforeEach(() => {
-    // Relay warns about the field a version gate pruned from the response.
+    // Relay logs the field error that `@catch` turns into `{ ok: false }`.
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     vi.spyOn(console, 'error').mockImplementation(() => {});
   });
@@ -52,57 +57,63 @@ describe('useModelStoreProject (FR-4058)', () => {
 
   it('sends the caller id and domain name as variables', async () => {
     const { operation } = await renderWithPayload({
-      data: { scopedProjectsV2: { edges: [] }, domainV2: null },
+      data: { scopedProjectsV2: { edges: [] } },
     });
     expect(operation?.request.variables).toEqual({
       userId: 'dfa9da54-4b28-432f-be29-c0d680c7a412',
       domainName: 'default',
+      isAdminScope: false,
     });
   });
 
-  it('reads the user-scoped project when the domain read is refused', async () => {
-    // An ordinary user on a 26.9 manager: `domainV2.projects` errors, the
-    // user scope answers.
+  it('reads the model store project from the user scope', async () => {
     const { result } = await renderWithPayload({
       data: {
         scopedProjectsV2: { edges: [{ node: modelStoreNode }] },
-        domainV2: { projects: null },
       },
+    });
+    expect(result.current).toEqual({
+      id: MODEL_STORE_UUID,
+      name: 'model-store',
+    });
+  });
+
+  it('returns nulls when the user scope is refused', async () => {
+    // `@catch(to: RESULT)` turns a field error into `{ ok: false }` so the
+    // page keeps rendering.
+    const { result } = await renderWithPayload({
+      data: { scopedProjectsV2: null },
       errors: [
         {
-          message:
-            'Insufficient permission to perform this operation. (User lacks permission <Permission.READ: 1> on project at scopes [DomainID(...)])',
-          path: ['domainV2', 'projects'],
+          message: 'Insufficient permission to perform this operation.',
+          path: ['scopedProjectsV2'],
         },
       ],
     });
-    expect(result.current).toEqual({
-      id: MODEL_STORE_UUID,
-      name: 'model-store',
-    });
+    expect(result.current).toEqual({ id: null, name: null });
   });
 
-  it('falls back to the domain projects when the user scope is absent', async () => {
-    // A manager before 26.9: `@since` pruned `scopedProjectsV2` from the
-    // request, so the response carries only the legacy field.
-    const { result } = await renderWithPayload({
-      data: {
-        domainV2: { projects: { edges: [{ node: modelStoreNode }] } },
-      },
-    });
-    expect(result.current).toEqual({
-      id: MODEL_STORE_UUID,
-      name: 'model-store',
-    });
-  });
-
-  it('returns nulls when the domain has no model store project', async () => {
+  it('returns nulls when the user belongs to no model store project', async () => {
     const { result } = await renderWithPayload({
       data: {
         scopedProjectsV2: { edges: [] },
-        domainV2: { projects: { edges: [] } },
       },
     });
     expect(result.current).toEqual({ id: null, name: null });
+  });
+
+  it('reads the model store project from the current domain in admin scope', async () => {
+    const { result, operation } = await renderWithPayload(
+      { data: { domainProjectsV2: { edges: [{ node: modelStoreNode }] } } },
+      'admin',
+    );
+    expect(operation?.request.variables).toMatchObject({
+      domainName: 'default',
+      isAdminScope: true,
+    });
+    expect(result.current).toEqual({
+      id: MODEL_STORE_UUID,
+      name: 'model-store',
+    });
   });
 });

@@ -19,6 +19,7 @@ import {
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useModelStoreProject } from '../hooks/useModelStoreProject';
 import AdminModelCardSettingModal from './AdminModelCardSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
@@ -90,7 +91,6 @@ export const AdminModelCardQuery = graphql`
     $orderBy: [ModelCardV2OrderBy!]
     $limit: Int
     $offset: Int
-    $domainName: String
   ) {
     adminModelCardsV2(
       filter: $filter
@@ -112,7 +112,7 @@ export const AdminModelCardQuery = graphql`
             ...VFolderNodeIdenticonV2Fragment
           }
           projectId
-          project @since(version: "26.4.3") {
+          project {
             id
             basicInfo {
               name
@@ -129,10 +129,6 @@ export const AdminModelCardQuery = graphql`
           ...AdminModelCardSettingModalFragment
         }
       }
-    }
-    groups(domain_name: $domainName, is_active: true, type: ["MODEL_STORE"]) {
-      id
-      name
     }
   }
 `;
@@ -165,12 +161,6 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   // 26.9.0 opened the metadata axes of the model card search (backend #14811).
   const supportsSearchAxes = baiClient.supports('model-card-search-axes');
-  // BA-5918 (26.4.4rc3) turned `projectId` into a UUIDFilter; the control
-  // only emits the wrapper shape.
-  const supportsFilterWrapperInputs = baiClient.supports(
-    'v2-filter-wrapper-inputs',
-  );
-  const supportsSubFilter = baiClient.supports('model-card-v2-sub-filter');
 
   const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
   const [editingModelCardId, setEditingModelCardId] = useState<string | null>(
@@ -193,11 +183,11 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   const deferredQueryRef = useDeferredValue(queryRef);
   const isRefetching = deferredQueryRef !== queryRef;
 
-  const { adminModelCardsV2, groups } =
-    usePreloadedQuery<AdminModelCardQueryType>(
-      AdminModelCardQuery,
-      deferredQueryRef,
-    );
+  const { adminModelCardsV2 } = usePreloadedQuery<AdminModelCardQueryType>(
+    AdminModelCardQuery,
+    deferredQueryRef,
+  );
+  const modelStoreProject = useModelStoreProject('admin');
 
   const [commitDeleteModelCard] = useMutation<AdminModelCardDeleteMutation>(
     graphql`
@@ -330,8 +320,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
       title: t('adminModelCard.Project'),
       dataIndex: 'projectId',
       sorter: supportsSearchAxes,
-      // `project` is @since(26.4.3); fall back to the raw UUID on older
-      // managers, which is all this column used to show.
+      // `project` is nullable (deleted project); fall back to the raw UUID.
       render: (projectId, record) => {
         const projectName = record.project?.basicInfo?.name;
         if (!projectName) {
@@ -378,7 +367,6 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
       <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
         <BAIFlex gap={'sm'} align="start" wrap="wrap" style={{ flexShrink: 1 }}>
           <BAIGraphQLPropertyFilter<ModelCardV2Filter>
-            maxConditions={supportsSubFilter ? undefined : 1}
             filterProperties={filterOutEmpty([
               {
                 key: 'name',
@@ -400,7 +388,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                 propertyLabel: t('modelStore.Task'),
                 type: 'string',
               },
-              supportsFilterWrapperInputs && {
+              {
                 key: 'projectId',
                 propertyLabel: t('adminModelCard.Project'),
                 type: 'uuid' as const,
@@ -412,8 +400,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                   <BAIAdminProjectSelect
                     label={t('adminModelCard.Project')}
                     isLabelHidden
-                    // A model card belongs to a MODEL_STORE project (see the
-                    // `groups(type: ["MODEL_STORE"])` query above).
+                    // A model card belongs to a MODEL_STORE project.
                     filter={{ type: { equals: 'MODEL_STORE' } }}
                     value={value}
                     isDisabled={isDisabled}
@@ -568,7 +555,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
         <AdminModelCardSettingModal
           open={isSettingModalOpen}
           modelCardFrgmt={editingModelCard ?? null}
-          modelStoreProject={groups?.[0] ?? null}
+          modelStoreProject={modelStoreProject}
           onRequestClose={(success) => {
             setIsSettingModalOpen(false);
             setEditingModelCardId(null);

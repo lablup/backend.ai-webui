@@ -2,7 +2,6 @@ import type { ProjectResourceGroupWarningIconFragment$key } from '../../__genera
 import type { ProjectResourceGroupWarningIconQuery } from '../../__generated__/ProjectResourceGroupWarningIconQuery.graphql';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIIconWithTooltip } from 'backend.ai-ui';
-import * as _ from 'lodash-es';
 import { TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
@@ -18,7 +17,6 @@ const ProjectResourceGroupWarningIcon: React.FC<
 
   const { t } = useTranslation();
   const { token } = useTheme();
-
   const { projectId, domainName, resourceGroupName } = useFragment(
     graphql`
       fragment ProjectResourceGroupWarningIconFragment on ProjectFairShare {
@@ -30,32 +28,36 @@ const ProjectResourceGroupWarningIcon: React.FC<
     projectFairShareFrgmt,
   );
 
-  const { group, domain } =
+  const { projectV2, domainV2 } =
     useLazyLoadQuery<ProjectResourceGroupWarningIconQuery>(
       graphql`
         query ProjectResourceGroupWarningIconQuery(
           $projectId: UUID!
-          $domainName: String
+          $domainName: String!
+          $resourceGroupName: String!
         ) {
-          group(id: $projectId, domain_name: $domainName) {
-            scaling_groups
+          projectV2(projectId: $projectId) {
+            resourceGroups(filter: { name: { equals: $resourceGroupName } })
+              @since(version: "26.9.0a1") {
+              count
+            }
           }
-          domain(name: $domainName) {
-            scaling_groups
+          domainV2(domainName: $domainName) {
+            resourceGroups(filter: { name: { equals: $resourceGroupName } })
+              @since(version: "26.9.0a1") {
+              count
+            }
           }
         }
       `,
-      { projectId, domainName },
+      { projectId, domainName, resourceGroupName },
     );
 
-  const projectScalingGroups = group?.scaling_groups ?? [];
-  const domainScalingGroups = domain?.scaling_groups ?? [];
+  // `resourceGroups` is stripped before 26.9.0a1; an unknown answer raises no warning.
+  const isProjectAllowed = (projectV2?.resourceGroups?.count ?? 1) > 0;
+  const isDomainAllowed = (domainV2?.resourceGroups?.count ?? 1) > 0;
 
-  if (
-    !resourceGroupName ||
-    _.includes(projectScalingGroups, resourceGroupName) ||
-    _.includes(domainScalingGroups, resourceGroupName)
-  ) {
+  if (!resourceGroupName || isProjectAllowed || isDomainAllowed) {
     return null;
   }
 
