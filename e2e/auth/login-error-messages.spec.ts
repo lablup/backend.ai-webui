@@ -95,12 +95,21 @@ async function gotoLoginPage(
     },
   });
   await setupBaseMocks(page);
+  // The app attempts a silent re-login on load; let that request finish
+  // before a test installs its own /server/login mock or spy.
+  const silentLogin = page.waitForResponse(
+    (response) =>
+      response.url().endsWith('/server/login') &&
+      response.request().method() === 'POST',
+    { timeout: 30_000 },
+  );
   await page.goto(webuiEndpoint);
   await page
     .evaluate(() => {
       document.getElementById('webpack-dev-server-client-overlay')?.remove();
     })
     .catch(() => {});
+  await silentLogin;
 }
 
 /**
