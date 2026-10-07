@@ -327,7 +327,8 @@ type KnownGlobalIdType =
   | 'UserNode'
   | 'ProjectNode'
   | 'ModelDeployment'
-  | 'ImageV2';
+  | 'ImageV2'
+  | 'ContainerRegistryV2';
 
 export const toGlobalId = (type: KnownGlobalIdType, id: string): string => {
   return btoa(`${type}:${id}`);
