@@ -299,7 +299,7 @@ const PAGE_FIXTURES: Array<{
     ],
   },
   {
-    page: 'LegacyRolePermissionTab (scalar valueMode)',
+    page: 'RBAC permission filter (scalar valueMode)',
     filterProperties: [
       {
         key: 'entityType',
