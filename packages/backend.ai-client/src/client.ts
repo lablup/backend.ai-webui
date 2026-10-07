@@ -1120,8 +1120,21 @@ export class Client {
   }
 
   /**
-   * Check if webserver is authenticated. This requires additional webserver package.
-   *
+   * Take the access key and the last `X-BackendAI-SessionID` as the live
+   * session; false when either is missing (then `check_login` still applies).
+   */
+  adoptLoginSession(accessKey: string | null | undefined): boolean {
+    if (!accessKey || !this._loginSessionId) {
+      return false;
+    }
+    this._config._accessKey = accessKey;
+    this._config._session_id = this._loginSessionId;
+    return true;
+  }
+
+  /**
+   * Ask the webserver whether it holds a session for this browser; the
+   * fallback when `adoptLoginSession` has no session id to adopt.
    */
   async check_login() {
     let rqst = this.newSignedRequest('POST', `/server/login-check`, null, null);
@@ -1208,6 +1221,9 @@ export class Client {
       if (this._loginSessionId !== null && this._loginSessionId !== '') {
         safeStorage.setItem('backendaiwebui.sessionid', this._loginSessionId);
       }
+      if (this.adoptLoginSession(result.data.access_key)) {
+        return true;
+      }
       return this.check_login();
     }
 
@@ -1260,6 +1276,9 @@ export class Client {
         // page refresh — same as the regular login() path.
         if (this._loginSessionId !== null && this._loginSessionId !== '') {
           safeStorage.setItem('backendaiwebui.sessionid', this._loginSessionId);
+        }
+        if (this.adoptLoginSession(result.data?.access_key)) {
+          return true;
         }
         return this.check_login();
       } else if (result.authenticated === false) {

@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { SessionAuthFailureError } from './loginBootstrap';
 import type { LoginConfigState } from './loginConfig';
 import {
   LoginProbeCancelledError,
@@ -89,29 +90,47 @@ describe('connectViaGQL — keypair query rejects (FR-3998)', () => {
 
   const refusal = { isError: true, statusCode: 401, message: 'not allowed' };
 
-  it('logs out and rethrows a 401 refusal unchanged', async () => {
-    const logout = vi.fn().mockResolvedValue(undefined);
-    const client = { query: vi.fn().mockRejectedValue(refusal), logout };
+  // The bootstrap goes through the login Relay environment, which signs
+  // and sends with these two client methods.
+  const failingClient = (
+    failure: unknown,
+    logout: ReturnType<typeof vi.fn>,
+  ) => ({
+    newSignedRequest: vi.fn(() => ({})),
+    _wrapWithPromise: vi.fn().mockRejectedValue(failure),
+    isManagerVersionCompatibleWith: () => true,
+    logout,
+  });
 
-    await expect(connectViaGQL(client, cfg, [])).rejects.toBe(refusal);
+  it('logs out and rethrows a 401 refusal as a session failure', async () => {
+    const logout = vi.fn().mockResolvedValue(undefined);
+    const client = failingClient(refusal, logout);
+
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBeInstanceOf(
+      SessionAuthFailureError,
+    );
     expect(logout).toHaveBeenCalledTimes(1);
   });
 
   it('rethrows the refusal when the cleanup logout also rejects', async () => {
-    const client = {
-      query: vi.fn().mockRejectedValue(refusal),
-      logout: vi.fn().mockRejectedValue(new Error('401 Unauthorized')),
-    };
+    const client = failingClient(
+      refusal,
+      vi.fn().mockRejectedValue(new Error('401 Unauthorized')),
+    );
 
-    await expect(connectViaGQL(client, cfg, [])).rejects.toBe(refusal);
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBeInstanceOf(
+      SessionAuthFailureError,
+    );
   });
 
   it('keeps the session when the query fails without a refusal', async () => {
     const timeout = { isError: true, statusCode: 408, message: 'Timeout' };
     const logout = vi.fn().mockResolvedValue(undefined);
-    const client = { query: vi.fn().mockRejectedValue(timeout), logout };
+    const client = failingClient(timeout, logout);
 
-    await expect(connectViaGQL(client, cfg, [])).rejects.toBe(timeout);
+    await expect(connectViaGQL(client, cfg, [])).rejects.toMatchObject({
+      statusCode: 408,
+    });
     expect(logout).not.toHaveBeenCalled();
   });
 });
@@ -126,30 +145,34 @@ describe('connectViaGQL — act-as tab (FR-4111)', () => {
 
   const refusal = { isError: true, statusCode: 401, message: 'not allowed' };
 
-  it('never logs out the shared session on a refusal', async () => {
-    const logout = vi.fn().mockResolvedValue(undefined);
-    const client = {
-      actAsUserId: 'target-uuid',
-      query: vi.fn().mockRejectedValue(refusal),
-      logout,
-    };
+  const actAsClient = (wrapWithPromise: ReturnType<typeof vi.fn>) => ({
+    actAsUserId: 'target-uuid',
+    newSignedRequest: vi.fn(() => ({})),
+    _wrapWithPromise: wrapWithPromise,
+    isManagerVersionCompatibleWith: () => true,
+    logout: vi.fn().mockResolvedValue(undefined),
+  });
 
-    await expect(connectViaGQL(client, cfg, [])).rejects.toBe(refusal);
-    expect(logout).not.toHaveBeenCalled();
+  it('never logs out the shared session on a refusal', async () => {
+    const client = actAsClient(vi.fn().mockRejectedValue(refusal));
+
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBeInstanceOf(
+      SessionAuthFailureError,
+    );
+    expect(client.logout).not.toHaveBeenCalled();
   });
 
   it('never logs out the shared session when the keypair is missing', async () => {
-    const logout = vi.fn().mockResolvedValue(undefined);
-    const client = {
-      actAsUserId: 'target-uuid',
-      query: vi.fn().mockResolvedValue({ keypair: null }),
-      logout,
-    };
+    const client = actAsClient(
+      vi.fn().mockResolvedValue({
+        data: { keypair: null, user: null, groups: null },
+      }),
+    );
 
     await expect(connectViaGQL(client, cfg, [])).rejects.toThrow(
       'Keypair information is missing.',
     );
-    expect(logout).not.toHaveBeenCalled();
+    expect(client.logout).not.toHaveBeenCalled();
   });
 
   it("adopts the target's access key over the webserver session's", async () => {
@@ -157,33 +180,35 @@ describe('connectViaGQL — act-as tab (FR-4111)', () => {
     g.backendaiutils = { _readRecentProjectGroup: () => '' };
     g.backendaioptions = { set: vi.fn() };
     const client = {
-      actAsUserId: 'target-uuid',
-      _config: { _accessKey: 'ADMIN_KEY', endpoint: 'https://example.test' },
-      query: vi
-        .fn()
-        .mockResolvedValueOnce({
-          keypair: {
-            user_id: 'target@example.test',
-            resource_policy: 'default',
-            user: 'target-uuid',
-            access_key: 'TARGET_KEY',
-          },
-        })
-        .mockResolvedValueOnce({
-          user: {
-            email: 'target@example.test',
-            uuid: 'target-uuid',
-            role: 'user',
-            domain_name: 'default',
-            groups: [{ name: 'p', id: 'p-id' }],
+      ...actAsClient(
+        vi.fn().mockResolvedValue({
+          data: {
+            keypair: {
+              id: 'KeyPair:TARGET_KEY',
+              user_id: 'target@example.test',
+              resource_policy: 'default',
+              user: 'target-uuid',
+              access_key: 'TARGET_KEY',
+            },
+            user: {
+              id: 'User:target-uuid',
+              username: 'target',
+              email: 'target@example.test',
+              full_name: 'Target',
+              is_active: true,
+              uuid: 'target-uuid',
+              role: 'user',
+              domain_name: 'default',
+              groups: [{ name: 'p', id: 'p-id' }],
+              need_password_change: false,
+            },
+            groups: [
+              { id: 'p-id', name: 'p', description: null, is_active: true },
+            ],
           },
         }),
-      group: {
-        list: vi
-          .fn()
-          .mockResolvedValue({ groups: [{ name: 'p', id: 'p-id' }] }),
-      },
-      logout: vi.fn(),
+      ),
+      _config: { _accessKey: 'ADMIN_KEY', endpoint: 'https://example.test' },
     };
 
     await connectViaGQL(client, cfg, ['https://example.test']);
