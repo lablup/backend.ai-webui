@@ -149,6 +149,9 @@
   "comp:BAIEntityLabelBulkEditButton": {
     "AddLabels": "Lisää tunnisteita"
   },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Muokkaa tunnisteita"
+  },
   "comp:BAIEntityLabelSettingModal": {
     "AddLabel": "Lisää tunniste",
     "AddLabelsToItems": "Lisää tunnisteita {{count}} kohteeseen",

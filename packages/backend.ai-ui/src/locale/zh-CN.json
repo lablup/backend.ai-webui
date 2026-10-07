@@ -149,6 +149,9 @@
   "comp:BAIEntityLabelBulkEditButton": {
     "AddLabels": "添加标签"
   },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "编辑标签"
+  },
   "comp:BAIEntityLabelSettingModal": {
     "AddLabel": "添加标签",
     "AddLabelsToItems": "为 {{count}} 个项目添加标签",

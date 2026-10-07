@@ -41,8 +41,8 @@ import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAlertIconWithTooltip,
+  BAIEntityLabelCell,
   BAIEntityLabelSettingModal,
-  BAIEntityLabelTokens,
   BAIIconWithTooltip,
   BAIModal,
   BAINameActionCell,
@@ -58,6 +58,7 @@ import {
   toLocalId,
   useErrorMessageResolver,
   useIsLabelableEntityType,
+  type BAIEntityLabel,
   type BAINameActionCellAction,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -66,7 +67,6 @@ import {
   RocketIcon,
   RotateCcwIcon,
   Share2Icon,
-  TagsIcon,
   Trash2Icon,
   TrashIcon,
   UserIcon,
@@ -109,8 +109,6 @@ const isEnableSorter = (key: string) => {
 interface VFolderNameCellProps {
   vfolder: VFolderNodeInList;
   onShare: () => void;
-  /** Omitted when labels are not offered for folders. */
-  onEditLabels?: () => void;
   onDelete: () => void;
   onRestore: () => void;
   onDeleteForever: () => void;
@@ -142,7 +140,6 @@ interface VFolderNameCellProps {
 const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
   vfolder,
   onShare,
-  onEditLabels,
   onDelete,
   onRestore,
   onDeleteForever,
@@ -200,17 +197,6 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           title: t('button.Share'),
           icon: <Share2Icon />,
           onClick: onShare,
-        }
-      : null,
-    onEditLabels && !isDeleted
-      ? {
-          key: 'edit-labels',
-          title: t('entityLabel.EditLabels'),
-          icon: <TagsIcon />,
-          disabled: _.includes(vfolder?.permissions, 'UPDATE')
-            ? false
-            : { reason: t('entityLabel.NoPermissionToEditLabels') },
-          onClick: onEditLabels,
         }
       : null,
     // Move to trash (active folders only)
@@ -489,6 +475,8 @@ interface VFolderNodesV2Props extends Omit<
   onRemoveRow?: (updatedFolderId?: string) => void;
   /** Called after labels may have changed, to refetch the list. */
   onLabelsChanged?: () => void;
+  /** Called when a label token is clicked, to filter the list by it. */
+  onLabelClick?: (label: BAIEntityLabel) => void;
   /**
    * Explicit project prop contract (ADR-0001, FR-3410). Pass-through for the
    * deployment-creation escalation modal (`DeploymentSettingModal`): the
@@ -518,6 +506,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   vfoldersFrgmt,
   onRemoveRow,
   onLabelsChanged,
+  onLabelClick,
   project,
   noDeployTooltip,
   disableProjectFolderActions,
@@ -708,9 +697,6 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
                       ? setInviteFolderId(toLocalId(vfolder?.id ?? null))
                       : setCurrentSharedVFolder(vfolder);
                   }}
-                  onEditLabels={
-                    isLabelable ? () => setLabelingVFolder(vfolder) : undefined
-                  }
                   onDelete={() => {
                     const folderId = vfolder?.id;
                     if (!folderId) return;
@@ -796,8 +782,19 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
                   key: 'labels',
                   title: t('entityLabel.Labels'),
                   render: (_value: unknown, vfolder: VFolderNodeInList) => (
-                    <BAIEntityLabelTokens
+                    <BAIEntityLabelCell
                       entityLabelsFrgmt={vfolder.entityLabels}
+                      onEdit={
+                        isDeletedCategory(vfolder.vfolderStatus)
+                          ? undefined
+                          : () => setLabelingVFolder(vfolder)
+                      }
+                      editDisabledReason={
+                        _.includes(vfolder.permissions, 'UPDATE')
+                          ? undefined
+                          : t('entityLabel.NoPermissionToEditLabels')
+                      }
+                      onLabelClick={onLabelClick}
                     />
                   ),
                 },

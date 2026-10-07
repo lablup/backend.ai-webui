@@ -149,6 +149,9 @@
   "comp:BAIEntityLabelBulkEditButton": {
     "AddLabels": "Adicionar rótulos"
   },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Editar rótulos"
+  },
   "comp:BAIEntityLabelSettingModal": {
     "AddLabel": "Adicionar rótulo",
     "AddLabelsToItems": "Adicionar rótulos a {{count}} itens",

@@ -149,6 +149,9 @@
   "comp:BAIEntityLabelBulkEditButton": {
     "AddLabels": "Thêm nhãn"
   },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Sửa nhãn"
+  },
   "comp:BAIEntityLabelSettingModal": {
     "AddLabel": "Thêm nhãn",
     "AddLabelsToItems": "Thêm nhãn cho {{count}} mục",

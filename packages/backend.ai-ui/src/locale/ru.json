@@ -149,6 +149,9 @@
   "comp:BAIEntityLabelBulkEditButton": {
     "AddLabels": "Добавить метки"
   },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Изменить метки"
+  },
   "comp:BAIEntityLabelSettingModal": {
     "AddLabel": "Добавить метку",
     "AddLabelsToItems": "Добавить метки к {{count}} элементам",

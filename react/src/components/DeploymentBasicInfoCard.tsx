@@ -37,6 +37,7 @@ import {
   BAIBooleanToken,
   isDeploymentInStoppedCategory,
   safeDecodeUuid,
+  toEntityLabelFilter,
   toLocalId,
   useBAILogger,
   useIsLabelableEntityType,
@@ -185,7 +186,15 @@ const DeploymentOverviewContent: React.FC<{
         <MetadataListItem label={t('entityLabel.Labels')}>
           <BAIEntityLabelTokens
             entityLabelsFrgmt={deployment?.entityLabels}
-            maxInline={10}
+            onLabelClick={(label) => {
+              webuiNavigate({
+                pathname: buildProjectPath('deployments'),
+                search: new URLSearchParams({
+                  filter: JSON.stringify(toEntityLabelFilter(label)),
+                }).toString(),
+              });
+            }}
+            fallback={renderFallback()}
           />
         </MetadataListItem>
       )}

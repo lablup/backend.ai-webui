@@ -149,6 +149,9 @@
   "comp:BAIEntityLabelBulkEditButton": {
     "AddLabels": "Etiket ekle"
   },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Etiketleri düzenle"
+  },
   "comp:BAIEntityLabelSettingModal": {
     "AddLabel": "Etiket ekle",
     "AddLabelsToItems": "{{count}} öğeye etiket ekle",

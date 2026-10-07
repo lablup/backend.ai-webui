@@ -42,8 +42,9 @@ import {
   useToggle,
   useUpdatableState,
   BAIEntityLabelBulkEditButton,
+  BAIEntityLabelCell,
   BAIEntityLabelSettingModal,
-  BAIEntityLabelTokens,
+  toEntityLabelFilter,
   useIsLabelableEntityType,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -54,7 +55,6 @@ import {
   Info,
   PlusIcon,
   SquarePenIcon,
-  TagsIcon,
   Trash2,
   UndoIcon,
   X,
@@ -365,16 +365,6 @@ const ResourceGroupList: React.FC = () => {
                 openSettingModal();
               },
             },
-            ...(isLabelable
-              ? [
-                  {
-                    key: 'edit-labels',
-                    title: t('entityLabel.EditLabels'),
-                    icon: <TagsIcon />,
-                    onClick: () => setLabelingResourceGroup(record),
-                  },
-                ]
-              : []),
             {
               key: 'activate-deactivate',
               title: record.status.isActive
@@ -460,7 +450,15 @@ const ResourceGroupList: React.FC = () => {
       key: 'labels',
       title: t('entityLabel.Labels'),
       render: (_value: unknown, record: ResourceGroupNode) => (
-        <BAIEntityLabelTokens entityLabelsFrgmt={record.entityLabels} />
+        <BAIEntityLabelCell
+          entityLabelsFrgmt={record.entityLabels}
+          onEdit={() => setLabelingResourceGroup(record)}
+          onLabelClick={(label) => {
+            setFilter(toEntityLabelFilter(label));
+            setTablePaginationOption({ current: 1 });
+            setSelectedRowKeys([]);
+          }}
+        />
       ),
     },
     {
@@ -577,6 +575,20 @@ const ResourceGroupList: React.FC = () => {
                 propertyLabel: t('resourceGroup.Default'),
                 type: 'boolean',
               },
+              ...(isLabelable
+                ? [
+                    {
+                      key: 'labels.some.key',
+                      propertyLabel: t('entityLabel.LabelKey'),
+                      type: 'string' as const,
+                    },
+                    {
+                      key: 'labels.some.value',
+                      propertyLabel: t('entityLabel.LabelValue'),
+                      type: 'string' as const,
+                    },
+                  ]
+                : []),
             ]}
             value={filter}
             onChange={(value) => {
