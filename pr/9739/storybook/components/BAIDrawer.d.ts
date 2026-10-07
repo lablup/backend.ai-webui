@@ -4,6 +4,13 @@ export interface BAIDrawerProps {
     open?: boolean;
     /** Close request (Escape, scrim click, the header close button). */
     onClose?: () => void;
+    /**
+     * Called with `true` as soon as the drawer opens, and with `false` once the
+     * slide-out has finished. Never on mount.
+     */
+    afterOpenChange?: (open: boolean) => void;
+    /** Called once the slide-out has finished. Drives `BAIUnmountAfterClose`. */
+    afterClose?: () => void;
     /** Header title. antd `Drawer`'s `title`. */
     title?: ReactNode;
     /** Header actions, rendered at the trailing edge. antd `Drawer`'s `extra`. */
@@ -17,7 +24,7 @@ export interface BAIDrawerProps {
     /** Panel size along the slide axis. antd `Drawer`'s `size`/`width`. */
     size?: number | string;
     /** Edge the panel slides from. @default 'end' */
-    side?: 'start' | 'end' | 'top' | 'bottom';
+    side?: 'start' | 'end';
     /**
      * Modal scrim, and with it the modality switch: `true` renders through
      * `BAIDrawerPortal` (modal band level + focus containment), `false` keeps
@@ -45,9 +52,8 @@ export interface BAIDrawerProps {
  * The project's drawer shell: lab `Drawer` plus the header arrangement antd's
  * `Drawer` produced — `[X] Title …… [extra]`, a divider, then a padded
  * scrollable body — so every detail drawer reads the way it did before the
- * Astryx migration. lab has no title bar of its own, only a floating
- * `hasCloseButton` glyph that overlaps whatever the content renders first;
- * that button is turned off here so there is one close affordance (qa2-c).
+ * Astryx migration. lab has no title bar of its own and, since 0.6.5, no
+ * close button either, so the header's button is the one close affordance.
  */
 declare const BAIDrawer: React.FC<BAIDrawerProps>;
 export default BAIDrawer;
