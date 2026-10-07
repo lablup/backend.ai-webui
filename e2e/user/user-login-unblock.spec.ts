@@ -12,6 +12,7 @@ import {
   loginAsCreatedAccount,
   logout,
   modifyConfigToml,
+  userInfo,
   webServerEndpoint,
   webuiEndpoint,
 } from '../utils/test-util';
@@ -138,6 +139,13 @@ test.describe(
       email = `e2e-unblock-${runId}@lablup.com`;
       password = `e2e-${randomBytes(12).toString('hex')}@Pw`;
       api = await createAdminApiContext();
+      // The webserver signs users in to its configured domain, which is the
+      // admin's domain on every cluster ('frontend' on lts, not 'default').
+      const admin = await gqlAdmin<{ user: { domain_name: string } | null }>(
+        api,
+        `query($email: String) { user(email: $email) { domain_name } }`,
+        { email: userInfo.admin.email },
+      );
       const created = await gqlAdmin<{
         create_user: { ok: boolean; msg: string };
       }>(
@@ -151,7 +159,7 @@ test.describe(
             username: `e2e-unblock-${runId}`,
             password,
             need_password_change: false,
-            domain_name: 'default',
+            domain_name: admin.user?.domain_name ?? 'default',
             group_ids: [],
           },
         },
