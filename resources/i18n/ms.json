@@ -1996,6 +1996,8 @@
     "APIKey": "Kunci API",
     "APIMode": "API",
     "APISigninNeedsManagerEndpoint": "Log masuk API memerlukan endpoint Manager. WebUI ini ditetapkan untuk bersambung melalui Backend.AI Webserver.",
+    "AccountInfoLoadFailed": "Tidak dapat memuatkan maklumat akaun anda",
+    "AccountInfoLoadFailedDesc": "Anda masih log masuk, tetapi pelayan tidak mengembalikan maklumat akaun anda. Cuba lagi, atau log keluar dan log masuk semula.",
     "ActiveSessionExists": "Sesi log masuk aktif sudah wujud.",
     "ActiveSessionExistsDescription": "Anda sudah log masuk dari pelayar atau tab lain. Sila log keluar dari sesi lain dahulu, atau cuba lagi.",
     "AdvancedSettings": "Lanjutan",

@@ -1997,6 +1997,8 @@
     "APIKey": "clé API",
     "APIMode": "API",
     "APISigninNeedsManagerEndpoint": "La connexion via API nécessite un endpoint Manager. Cette WebUI est configurée pour se connecter via un Backend.AI Webserver.",
+    "AccountInfoLoadFailed": "Impossible de charger les informations de votre compte",
+    "AccountInfoLoadFailedDesc": "Vous êtes toujours connecté, mais le serveur n'a pas renvoyé les informations de votre compte. Réessayez, ou déconnectez-vous puis reconnectez-vous.",
     "ActiveSessionExists": "Une session de connexion active existe déjà.",
     "ActiveSessionExistsDescription": "Vous êtes déjà connecté depuis un autre navigateur ou onglet. Veuillez d'abord vous déconnecter de l'autre session ou réessayer.",
     "AdvancedSettings": "Avancé",

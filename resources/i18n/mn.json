@@ -1997,6 +1997,8 @@
     "APIKey": "API түлхүүр",
     "APIMode": "API",
     "APISigninNeedsManagerEndpoint": "API нэвтрэхэд Manager endpoint шаардлагатай. Энэ WebUI нь Backend.AI Webserver-ээр дамжин холбогдохоор тохируулагдсан.",
+    "AccountInfoLoadFailed": "Таны бүртгэлийн мэдээллийг ачаалж чадсангүй",
+    "AccountInfoLoadFailedDesc": "Та нэвтэрсэн хэвээр байгаа ч сервер таны бүртгэлийн мэдээллийг буцаасангүй. Дахин оролдох эсвэл гараад дахин нэвтэрнэ үү.",
     "ActiveSessionExists": "Идэвхтэй нэвтрэх сессион аль хэдийн байна.",
     "ActiveSessionExistsDescription": "Та өөр хөтөч эсвэл табаас аль хэдийн нэвтэрсэн байна. Эхлээд нөгөө сессионоос гарах эсвэл дахин оролдоно уу.",
     "AdvancedSettings": "Нарийвчилсан",

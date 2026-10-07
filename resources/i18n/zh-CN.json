@@ -1998,6 +1998,8 @@
     "APIKey": "API 密钥",
     "APIMode": "API",
     "APISigninNeedsManagerEndpoint": "API 登录需要 Manager 端点。此 WebUI 已配置为通过 Backend.AI Webserver 连接。",
+    "AccountInfoLoadFailed": "无法加载您的账户信息",
+    "AccountInfoLoadFailedDesc": "您仍处于登录状态，但服务器未返回您的账户信息。请重试，或注销后重新登录。",
     "ActiveSessionExists": "已存在活动的登录会话。",
     "ActiveSessionExistsDescription": "您已从其他浏览器或标签页登录。请先从其他会话注销，或重试。",
     "AdvancedSettings": "高级设置",

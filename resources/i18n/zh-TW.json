@@ -1999,6 +1999,8 @@
     "APIKey": "API 密鑰",
     "APIMode": "API",
     "APISigninNeedsManagerEndpoint": "API 登入需要 Manager 端點。此 WebUI 已設定為透過 Backend.AI Webserver 連線。",
+    "AccountInfoLoadFailed": "無法載入您的帳戶資訊",
+    "AccountInfoLoadFailedDesc": "您仍處於登入狀態，但伺服器未傳回您的帳戶資訊。請重試，或登出後重新登入。",
     "ActiveSessionExists": "已存在一個有效的登入工作階段。",
     "ActiveSessionExistsDescription": "您已從其他瀏覽器或分頁登入。請先從其他工作階段登出，或再試一次。",
     "AdvancedSettings": "進階設定",

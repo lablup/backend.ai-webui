@@ -1996,6 +1996,8 @@
     "APIKey": "API Anahtarı",
     "APIMode": "API",
     "APISigninNeedsManagerEndpoint": "API girişi için bir Manager endpoint gereklidir. Bu WebUI, bir Backend.AI Webserver üzerinden bağlanacak şekilde yapılandırılmıştır.",
+    "AccountInfoLoadFailed": "Hesap bilgileriniz yüklenemedi",
+    "AccountInfoLoadFailedDesc": "Oturumunuz hâlâ açık, ancak sunucu hesap bilgilerinizi döndürmedi. Tekrar deneyin veya oturumu kapatıp yeniden açın.",
     "ActiveSessionExists": "Zaten aktif bir oturum açma oturumu mevcut.",
     "ActiveSessionExistsDescription": "Başka bir tarayıcı veya sekmeden zaten giriş yapmış durumdasınız. Lütfen önce diğer oturumdan çıkış yapın veya tekrar deneyin.",
     "AdvancedSettings": "Gelişmiş",
