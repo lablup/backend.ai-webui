@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 // `pnpm run dev-env` — pick a dev API server and test account from the team's
-// catalog (served by the dev box gateway through `dev-gw catalog`), and write
-// the pick into the git-ignored env files.
-// Conventions and one-time setup: DEV_ENVIRONMENT.md ("Dev servers and test accounts").
+// catalog (served by the dev box gateway at `http://dev-gw.<domain>/api/catalog`),
+// and write the pick into the git-ignored env files.
+// Conventions: DEV_ENVIRONMENT.md ("Dev servers and test accounts").
 import {
+  PROBE_STALE_MINUTES,
+  downWarning,
   findAccount,
   findServer,
   formatCatalog,
@@ -11,9 +13,9 @@ import {
   parseCatalog,
   playwrightVars,
   redactCatalog,
+  serverHealth,
   upsertEnv,
 } from "./dev-env-lib.mjs";
-import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -22,165 +24,119 @@ import { fileURLToPath } from "node:url";
 const REPO_ROOT =
   process.env.WEBUI_DEV_ENV_ROOT ??
   path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-// A JSON file in `bw list items` shape that replaces the gateway — for tests and for a box without one.
-const CATALOG_OVERRIDE = process.env.WEBUI_DEV_ENV_CATALOG;
-const EXIT_NOT_ENROLLED = 3;
-// What `dev-gw catalog --fallback-public` prints on stderr when SSH refused it and it served the public copy.
-const FALLBACK_NOTICE = /falling back to the redacted copy[^\n]*/;
+const FETCH_TIMEOUT_MS = 10_000;
 
 const USAGE = `Usage: pnpm run dev-env <command>
 
-  status                     Check dev-gw and the catalog it serves
+  status                     Where the catalog comes from, and what it holds
   list [--json]              Servers, accounts and their notes (no passwords)
   get <server> <role> [--json]
-                             One account, password included
+                             One account, password included when the catalog has one
   use <server> [role] [--no-password]
                              Write .env.development.local (login pre-fill, role
                              defaults to "user") and e2e/envs/.env.playwright`;
 
 class UserError extends Error {}
 
-function downloadCommand() {
-  let domain = "<domain>";
+/**
+ * Where to read the catalog: a JSON file (`WEBUI_DEV_ENV_CATALOG`), a URL
+ * (`WEBUI_DEV_ENV_CATALOG_URL`), or the gateway named by the dev-gw config.
+ */
+function catalogSource() {
+  const file = process.env.WEBUI_DEV_ENV_CATALOG?.trim();
+  if (file) return { file, label: `${file} (WEBUI_DEV_ENV_CATALOG)` };
+  const url = process.env.WEBUI_DEV_ENV_CATALOG_URL?.trim();
+  if (url) return { url, label: `${url} (WEBUI_DEV_ENV_CATALOG_URL)` };
+
+  const configPath =
+    process.env.DEV_GW_CONFIG?.trim() ||
+    path.join(os.homedir(), ".config", "fw", "dev-gw.json");
+  let domain;
   try {
-    const config = JSON.parse(
-      fs.readFileSync(
-        path.join(os.homedir(), ".config", "fw", "dev-gw.json"),
-        "utf8",
-      ),
-    );
-    if (config.domain) domain = config.domain;
+    domain = JSON.parse(fs.readFileSync(configPath, "utf8")).domain;
   } catch {
-    // Not joined to a gateway yet; keep the placeholder.
+    domain = undefined;
   }
-  return `mkdir -p ~/.local/bin && curl -fsSL http://dev-gw.${domain}/dev-gw -o ~/.local/bin/dev-gw && chmod +x ~/.local/bin/dev-gw`;
-}
-
-/**
- * The `dev-gw` on PATH, refusing a client older than `dev-gw catalog`: an old
- * client reads an unknown subcommand as `join <box>` and renames the box.
- */
-function resolveDevGw() {
-  const found = (process.env.PATH ?? "")
-    .split(path.delimiter)
-    .filter(Boolean)
-    .map((dir) => path.join(dir, "dev-gw"))
-    .find((candidate) => {
-      try {
-        fs.accessSync(candidate, fs.constants.X_OK);
-        return fs.statSync(candidate).isFile();
-      } catch {
-        return false;
-      }
-    });
-  if (!found) {
+  if (typeof domain !== "string" || domain.trim() === "") {
     throw new UserError(
-      `\`dev-gw\` is not on PATH. Install it from the gateway:\n  ${downloadCommand()}`,
+      `No dev box gateway configured (${configPath} is missing or has no "domain").\n` +
+        "Join the gateway with `dev-gw join` (DEV_ENVIRONMENT.md), or point " +
+        "WEBUI_DEV_ENV_CATALOG_URL at a catalog URL.",
     );
   }
-  if (!/\bcatalog\b/.test(fs.readFileSync(found, "utf8"))) {
-    throw new UserError(
-      `${found} predates \`dev-gw catalog\`. Update it from the gateway:\n  ${downloadCommand()}`,
-    );
-  }
-  return found;
+  const gatewayUrl = `http://dev-gw.${domain.trim()}/api/catalog`;
+  return { url: gatewayUrl, label: gatewayUrl };
 }
 
-/**
- * Raw catalog items and which view they are: `file` (the override), `full`
- * (the team view over SSH) or `public` (the redacted copy dev-gw fell back to).
- */
-function fetchItems() {
-  if (CATALOG_OVERRIDE) {
+async function readCatalogBody(source) {
+  if (source.file) {
     try {
-      return {
-        items: JSON.parse(fs.readFileSync(CATALOG_OVERRIDE, "utf8")),
-        view: "file",
-      };
+      return JSON.parse(fs.readFileSync(source.file, "utf8"));
     } catch (error) {
       throw new UserError(
-        `WEBUI_DEV_ENV_CATALOG=${CATALOG_OVERRIDE}: ${error.message}`,
+        `WEBUI_DEV_ENV_CATALOG=${source.file}: ${error.message}`,
       );
     }
   }
-  const result = spawnSync(resolveDevGw(), ["catalog", "--fallback-public"], {
-    encoding: "utf8",
-    maxBuffer: 64 * 1024 * 1024,
-  });
-  if (result.error) throw result.error;
-  const hint = (result.stderr ?? "").trim();
-  if (result.status === EXIT_NOT_ENROLLED) {
-    throw new UserError(
-      "This box cannot read the catalog yet. Run `dev-gw enroll` (once per box), " +
-        "then wait up to five minutes for the gateway to sync." +
-        (hint ? `\ndev-gw said:\n${hint}` : ""),
-    );
-  }
-  if (result.status !== 0) {
-    throw new UserError(
-      `\`dev-gw catalog\` failed (exit ${result.status})${hint ? `: ${hint}` : ""}`,
-    );
-  }
-  const lines = result.stdout.trim().split("\n");
-  let items;
+  let response;
   try {
-    items = JSON.parse(lines[lines.length - 1]);
-  } catch {
-    throw new UserError("`dev-gw catalog` did not print a JSON catalog.");
-  }
-  return {
-    items,
-    view: FALLBACK_NOTICE.test(hint) ? "public" : "full",
-    refusal: FALLBACK_NOTICE.test(hint)
-      ? hint.split(FALLBACK_NOTICE)[0].trim()
-      : null,
-  };
-}
-
-let catalogView = null;
-let catalogRefusal = null;
-
-function loadCatalog() {
-  const { items, view, refusal } = fetchItems();
-  catalogView = view;
-  catalogRefusal = refusal ?? null;
-  return parseCatalog(items);
-}
-
-/** One line on why `<server>/<role>` came without a password. */
-function passwordHint(server, account) {
-  const who = `${server.name}/${account.role}`;
-  if (catalogView === "public") {
-    return (
-      `note: ${who} is a team-tier account and this box got the public view, so its password ` +
-      "was left out. Run `dev-gw enroll` (once per box), or wait up to five minutes for the gateway to sync."
+    response = await fetch(source.url, {
+      headers: { accept: "application/json" },
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+    });
+  } catch (error) {
+    const reason =
+      error.name === "TimeoutError"
+        ? `no answer within ${FETCH_TIMEOUT_MS / 1000} s`
+        : (error.cause?.message ?? error.message);
+    throw new UserError(
+      `Could not reach the catalog at ${source.url}: ${reason}. Is the dev VPN up?`,
     );
   }
-  return `note: the catalog carries no password for ${who}, so it was left out.`;
+  if (!response.ok) {
+    throw new UserError(
+      `The catalog at ${source.url} answered HTTP ${response.status}.`,
+    );
+  }
+  try {
+    return await response.json();
+  } catch {
+    throw new UserError(`The catalog at ${source.url} did not return JSON.`);
+  }
 }
 
-function status() {
-  if (CATALOG_OVERRIDE) {
-    console.log(`catalog: ${CATALOG_OVERRIDE} (WEBUI_DEV_ENV_CATALOG)`);
-  } else {
-    console.log(`dev-gw: ${resolveDevGw()}`);
+async function loadCatalog(source = catalogSource()) {
+  const body = await readCatalogBody(source);
+  try {
+    return parseCatalog(body);
+  } catch (error) {
+    throw new UserError(`${source.label}: ${error.message}`);
   }
-  const catalog = loadCatalog();
+}
+
+function missingPasswordNote(server, account) {
+  return (
+    `note: the catalog has no password for ${server.name}/${account.role}; ` +
+    "type it at login, or add it to your own git-ignored env file."
+  );
+}
+
+async function status() {
+  const source = catalogSource();
+  console.log(`source: ${source.label}`);
+  const catalog = await loadCatalog(source);
   const accounts = catalog.servers.flatMap((s) => s.accounts);
   const missing = accounts.filter((a) => !a.passwordAvailable).length;
-  if (catalogView === "full") {
-    console.log("view: full (team) view");
-  } else if (catalogView === "public") {
-    console.log("view: public view — run dev-gw enroll for team passwords");
-    if (catalogRefusal) {
-      for (const line of catalogRefusal.split("\n")) {
-        console.log(`  ${line}`);
-      }
-    }
-  }
+  console.log(`updated: ${catalog.updatedAt ?? "unknown"}`);
   console.log(
     `catalog: ${catalog.servers.length} server(s), ${accounts.length} account(s)` +
       (missing > 0 ? `, ${missing} without a password` : ""),
+  );
+  const health = { live: 0, down: 0, unknown: 0 };
+  for (const server of catalog.servers) health[serverHealth(server)] += 1;
+  console.log(
+    `probe: ${health.live} live, ${health.down} down, ${health.unknown} unknown ` +
+      `(never probed, or not in the last ${PROBE_STALE_MINUTES} min)`,
   );
   for (const warning of catalog.warnings) console.log(`warning: ${warning}`);
 }
@@ -200,8 +156,8 @@ function writeEnvFile(relativePath, vars, { seedFrom, expand } = {}) {
   console.log(`wrote ${relativePath}`);
 }
 
-function use(serverName, role, { password }) {
-  const catalog = loadCatalog();
+async function use(serverName, role, { password }) {
+  const catalog = await loadCatalog();
   const server = findServer(catalog, serverName);
   if (!server.endpoint) {
     throw new UserError(
@@ -233,11 +189,12 @@ function use(serverName, role, { password }) {
         : ", password not pre-filled"),
   );
   if (password && !account.passwordAvailable) {
-    console.log(passwordHint(server, account));
+    console.log(missingPasswordNote(server, account));
   }
+  if (downWarning(server)) console.log(downWarning(server));
   if (server.stale || account.stale) {
     console.log(
-      "note: the catalog notes for this pick have not been verified recently.",
+      "note: the catalog notes for this pick have not been verified in the last 90 days.",
     );
   }
   console.log("Restart `pnpm run dev` to pick up the login pre-fill.");
@@ -253,7 +210,7 @@ async function main() {
     case "status":
       return status();
     case "list": {
-      const catalog = redactCatalog(loadCatalog());
+      const catalog = redactCatalog(await loadCatalog());
       console.log(
         json ? JSON.stringify(catalog, null, 2) : formatCatalog(catalog),
       );
@@ -261,7 +218,7 @@ async function main() {
     }
     case "get": {
       if (positional.length !== 2) throw new UserError(USAGE);
-      const server = findServer(loadCatalog(), positional[0]);
+      const server = findServer(await loadCatalog(), positional[0]);
       const account = findAccount(server, positional[1]);
       const result = {
         server: server.name,
@@ -279,8 +236,9 @@ async function main() {
       }
       // stderr, so `--json` stays parseable.
       if (!account.passwordAvailable) {
-        console.error(passwordHint(server, account));
+        console.error(missingPasswordNote(server, account));
       }
+      if (downWarning(server)) console.error(downWarning(server));
       return;
     }
     case "use": {

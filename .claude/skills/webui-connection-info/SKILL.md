@@ -35,19 +35,21 @@ If no dev server is running, tell the user to start it with `pnpm run dev` (Port
 
 ## API Endpoint & Credentials
 
-The source of truth is the team's Bitwarden collection, read through `pnpm run dev-env` (`DEV_ENVIRONMENT.md`, "Dev servers and test accounts"). It lists every dev API server and test account together with the notes that say what each is good for.
+The source of truth is the team's catalog on the dev box gateway, read through `pnpm run dev-env` (`DEV_ENVIRONMENT.md`, "Dev servers and test accounts"). It lists every dev API server and test account, the notes that say what each is good for, and each server's last probe (live or down, manager version).
 
 ### Choosing a server and an account
 
-1. `pnpm run dev-env list --json` — servers and accounts with `tags`, `notes`, `verifiedAt`, `stale`, `share` (`public` or `team`) and `passwordAvailable`. It carries no passwords, so it is safe to quote.
-2. Match the task against it: filter by `tags` first (`multi-project`, `plugin:<name>`, `no-destructive`, …), then read `notes` to decide between what is left. Prefer the least-privileged role that can do the task, prefer a `share: public` account when it does the job equally well, and never run a destructive flow on an account or server tagged `no-destructive`.
-   When the account you need has `passwordAvailable: false`, this box got only the public view: say so and tell the user to run `dev-gw enroll` (do not run it yourself — it registers a key on their GitHub account).
-3. Say which server and account you picked and why, in one line, before using them.
-4. `pnpm run dev-env get <server> <role> --json` for that account's endpoint, email and password — or `pnpm run dev-env use <server> [role]` to write the pick into `.env.development.local` and `e2e/envs/.env.playwright` when a dev server or the E2E suite should use it.
+1. `pnpm run dev-env list --json` — servers with `tags`, `notes`, `verifiedAt`, `stale` and `status` (`live`, `checkedAt`, `lastLiveAt`, `managerVersion`, `apiVersion`, `error`), and their accounts with `tags`, `notes`, `verifiedAt`, `stale` and `passwordAvailable`. It carries no passwords, so it is safe to quote.
+2. Skip servers whose `status.live` is `false` unless the user asked for that server by name. Treat `status: null`, or a `checkedAt` older than ~30 minutes, as unknown: confirm the server answers (the `bai-agent` skill, or a request to the endpoint) before relying on it.
+3. When the task depends on the manager version — a feature gated behind a release, or reproducing a bug on a given version — match it against `status.managerVersion`.
+4. Match the task against the rest: filter by `tags` first (`multi-project`, `plugin:<name>`, `no-destructive`, …), then read `notes` to decide between what is left. Prefer the least-privileged role that can do the task, prefer an account with `passwordAvailable: true` when it does the job equally well, and never run a destructive flow on an account or server tagged `no-destructive`.
+5. An account with `passwordAvailable: false` has no password in the catalog, so you cannot log in with it unless the box owner put it in `e2e/envs/.env.playwright`: look there for an `E2E_*_EMAIL` matching the account's email with a non-empty `E2E_*_PASSWORD` beside it. Otherwise pick another account, or ask the user for the password. Never guess one.
+6. Say which server and account you picked and why, in one line, before using them — including the manager version when the pick depended on it (e.g. "main/admin — live, manager 25.15.0, the first release with the feature").
+7. `pnpm run dev-env get <server> <role> --json` for that account's endpoint, email and password — or `pnpm run dev-env use <server> [role]` to write the pick into `.env.development.local` and `e2e/envs/.env.playwright` when a dev server or the E2E suite should use it. Careful: `use` rewrites the `E2E_*` lines of `e2e/envs/.env.playwright`, so read a box owner's hand-added password from it (step 5) before running `use`.
 
-Treat an entry with `stale: true` as a hint, not a fact: confirm what the note claims against the live server (the `bai-agent` skill) before relying on it. When a note turns out wrong or missing, tell the user what should change — the account is read-only, so a human edits Bitwarden.
+Treat an entry with `stale: true` as a hint, not a fact: confirm what the note claims against the live server (the `bai-agent` skill) before relying on it. When a note turns out wrong or missing, tell the user what should change; a human edits it in the gateway's admin UI (`http://dev-gw.<domain>/`, Catalog section).
 
-If `dev-env` reports that `dev-gw` is missing or tells you to run `dev-gw enroll`, the machine is not set up: tell the user to run `dev-gw enroll` (it registers a key on their GitHub account and may need a `gh auth refresh`, so you cannot run it), and fall back to the file below.
+If `dev-env` reports that no gateway is configured or the catalog cannot be reached, tell the user (the box needs `dev-gw join`, or the dev VPN is down) and fall back to the file below.
 
 ### The file fallback
 

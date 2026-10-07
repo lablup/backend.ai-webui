@@ -1,6 +1,7 @@
 // @ts-nocheck
-import { spawnSync } from "node:child_process";
+import { spawn } from "node:child_process";
 import fs from "node:fs";
+import http from "node:http";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -10,44 +11,124 @@ const SCRIPT = path.join(
   "dev-env.mjs",
 );
 
-const ITEMS = [
-  {
-    type: 2,
-    name: "webui-dev/main",
-    notes: "Tracks manager main.",
-    fields: [{ name: "endpoint", value: "https://main.example.test:8090" }],
-  },
-  {
-    type: 1,
-    name: "webui-dev/main/user",
-    login: { username: "user@example.test", password: "pw-user" },
-  },
-  {
-    type: 1,
-    name: "webui-dev/main/admin",
-    login: { username: "admin@example.test", password: "pw-admin" },
-  },
-];
+const minutesAgo = (minutes) =>
+  new Date(Date.now() - minutes * 60_000).toISOString();
+
+const catalogBody = () => ({
+  version: 1,
+  updated_at: "2026-10-07T05:00:00Z",
+  servers: [
+    {
+      name: "main",
+      endpoint: "https://main.example.test:8090",
+      tags: ["nightly"],
+      notes: "Tracks manager main.",
+      verified_at: null,
+      status: {
+        live: true,
+        checked_at: minutesAgo(3),
+        last_live_at: minutesAgo(3),
+        manager_version: "25.15.0",
+        api_version: "v9.20250722",
+        latency_ms: 42,
+        error: null,
+      },
+      accounts: [
+        {
+          role: "user",
+          email: "user@example.test",
+          password: "pw-user",
+          tags: [],
+          notes: "",
+          verified_at: null,
+        },
+        {
+          role: "admin",
+          email: "admin@example.test",
+          password: "pw-admin",
+          tags: [],
+          notes: "",
+          verified_at: null,
+        },
+        {
+          role: "monitor",
+          email: "monitor@example.test",
+          password: null,
+          tags: [],
+          notes: "",
+          verified_at: null,
+        },
+      ],
+    },
+    {
+      name: "lts",
+      endpoint: "https://lts.example.test",
+      tags: [],
+      notes: "",
+      verified_at: null,
+      status: {
+        live: false,
+        checked_at: minutesAgo(2),
+        last_live_at: "2026-10-06T22:00:00Z",
+        manager_version: "25.14.2",
+        api_version: "v9.20250601",
+        latency_ms: null,
+        error: "connect ECONNREFUSED",
+      },
+      accounts: [
+        {
+          role: "user",
+          email: "lts-user@example.test",
+          password: "pw-lts",
+          tags: [],
+          notes: "",
+          verified_at: null,
+        },
+      ],
+    },
+    {
+      name: "new",
+      endpoint: "https://new.example.test",
+      status: null,
+      accounts: [],
+    },
+  ],
+});
 
 describe("dev-env CLI", () => {
   let root;
   let catalogPath;
 
+  // Async on purpose: a blocking spawn would starve the in-process HTTP server.
   const run = (args, env = {}) => {
     const childEnv = {
       ...process.env,
+      HOME: root,
       WEBUI_DEV_ENV_ROOT: root,
       WEBUI_DEV_ENV_CATALOG: catalogPath,
       ...env,
     };
     for (const key of Object.keys(childEnv)) {
-      if (childEnv[key] === undefined || key.startsWith("VITE_DEFAULT_")) {
+      if (
+        childEnv[key] === undefined ||
+        key.startsWith("VITE_DEFAULT_") ||
+        (key === "DEV_GW_CONFIG" && !("DEV_GW_CONFIG" in env)) ||
+        (key === "WEBUI_DEV_ENV_CATALOG_URL" &&
+          !("WEBUI_DEV_ENV_CATALOG_URL" in env))
+      ) {
         delete childEnv[key];
       }
     }
-    return spawnSync(process.execPath, [SCRIPT, ...args], {
-      encoding: "utf8",
-      env: childEnv,
+    return new Promise((resolve, reject) => {
+      const child = spawn(process.execPath, [SCRIPT, ...args], {
+        env: childEnv,
+      });
+      let stdout = "";
+      let stderr = "";
+      child.stdout.on("data", (chunk) => (stdout += chunk));
+      child.stderr.on("data", (chunk) => (stderr += chunk));
+      child.on("error", reject);
+      child.on("close", (status) => resolve({ status, stdout, stderr }));
     });
   };
   const read = (relativePath) =>
@@ -65,216 +146,266 @@ describe("dev-env CLI", () => {
       "VITE_THEME_HEADER_COLOR=#7C3AED\n",
     );
     catalogPath = path.join(root, "catalog.json");
-    fs.writeFileSync(catalogPath, JSON.stringify(ITEMS));
+    fs.writeFileSync(catalogPath, JSON.stringify(catalogBody()));
   });
 
   afterEach(() => {
     fs.rmSync(root, { recursive: true, force: true });
   });
 
-  it("lists servers and accounts without passwords", () => {
-    const result = run(["list"]);
-    expect(result.status).toBe(0);
-    expect(result.stdout).toContain("main  https://main.example.test:8090");
-    expect(result.stdout).toContain("- user [team]  user@example.test");
-    expect(result.stdout).not.toContain("pw-");
-  });
-
-  it("prints the redacted catalog as JSON", () => {
-    const result = run(["list", "--json"]);
-    expect(result.status).toBe(0);
-    const catalog = JSON.parse(result.stdout);
-    expect(catalog.servers).toHaveLength(1);
-    expect(catalog.servers[0]).toMatchObject({
-      name: "main",
-      endpoint: "https://main.example.test:8090",
-    });
-    expect(catalog.servers[0].accounts.map((a) => a.role)).toEqual([
-      "admin",
-      "user",
-    ]);
-    expect(result.stdout).not.toContain("pw-");
-    expect(result.stdout).not.toContain(`"password":`);
-    expect(catalog.warnings).toEqual([]);
-  });
-
-  it("gets one account with its password", () => {
-    const result = run(["get", "main", "admin", "--json"]);
-    expect(result.status).toBe(0);
-    expect(JSON.parse(result.stdout)).toMatchObject({
-      server: "main",
-      endpoint: "https://main.example.test:8090",
-      role: "admin",
-      email: "admin@example.test",
-      password: "pw-admin",
-    });
-  });
-
-  it("writes both env files and keeps unrelated lines", () => {
-    const result = run(["use", "main"]);
-    expect(result.status).toBe(0);
-    const dev = read(".env.development.local");
-    expect(dev).toContain("VITE_THEME_HEADER_COLOR=#7C3AED");
-    expect(dev).toContain(
-      "VITE_DEFAULT_API_ENDPOINT=https://main.example.test:8090",
-    );
-    expect(dev).toContain("VITE_DEFAULT_EMAIL=user@example.test");
-    expect(dev).toContain("VITE_DEFAULT_PASSWORD=pw-user");
-    const playwright = read("e2e/envs/.env.playwright");
-    expect(playwright).toContain("# sample");
-    expect(playwright).toContain(
-      "E2E_WEBSERVER_ENDPOINT=https://main.example.test:8090",
-    );
-    expect(playwright).toContain("E2E_ADMIN_PASSWORD=pw-admin");
-    expect(playwright).not.toContain("E2E_MONITOR_EMAIL");
-  });
-
-  it("drops the password line with --no-password", () => {
-    run(["use", "main"]);
-    const result = run(["use", "main", "admin", "--no-password"]);
-    expect(result.status).toBe(0);
-    const dev = read(".env.development.local");
-    expect(dev).toContain("VITE_DEFAULT_EMAIL=admin@example.test");
-    expect(dev).not.toContain("VITE_DEFAULT_PASSWORD");
-  });
-
-  it("exits 1 and names the known servers for an unknown one", () => {
-    const result = run(["use", "nope"]);
-    expect(result.status).toBe(1);
-    expect(result.stderr).toContain('Unknown server "nope". Known: main');
-  });
-
-  it("exits 2 with usage when `use` has no server", () => {
-    const result = run(["use"]);
-    expect(result.status).toBe(2);
-    expect(result.stderr).toContain("Usage: pnpm run dev-env");
-  });
-
-  it("points at `dev-gw enroll` when the gateway refuses the box", () => {
-    const bin = path.join(root, "bin");
-    fs.mkdirSync(bin);
-    fs.writeFileSync(
-      path.join(bin, "dev-gw"),
-      "#!/bin/sh\n# usage: dev-gw catalog\necho 'not enrolled: run dev-gw enroll' >&2\nexit 3\n",
-      { mode: 0o755 },
-    );
-    const result = run(["list"], {
-      WEBUI_DEV_ENV_CATALOG: undefined,
-      PATH: `${bin}${path.delimiter}${process.env.PATH}`,
-    });
-    expect(result.status).toBe(1);
-    expect(result.stderr).toContain("Run `dev-gw enroll`");
-    expect(result.stderr).toContain("not enrolled: run dev-gw enroll");
-  });
-
-  describe("through a stub dev-gw", () => {
-    const PUBLIC_ITEMS = [
-      ITEMS[0],
-      {
-        ...ITEMS[1],
-        login: { username: "user@example.test", password: null },
-        password_in: "bitwarden",
-      },
-      {
-        ...ITEMS[2],
-        login: { username: "admin@example.test", password: null },
-        password_in: "bitwarden",
-      },
-    ];
-    // Records its arguments, then plays `dev-gw catalog --fallback-public`.
-    const stub = (items, { fellBack }) => {
-      const bin = path.join(root, "bin");
-      fs.mkdirSync(bin, { recursive: true });
-      fs.writeFileSync(path.join(root, "items.json"), JSON.stringify(items));
-      fs.writeFileSync(
-        path.join(bin, "dev-gw"),
-        [
-          "#!/bin/sh",
-          "# usage: dev-gw catalog [--public] [--fallback-public]",
-          `echo "$@" > '${path.join(root, "args")}'`,
-          fellBack
-            ? "echo 'no catalog key at ~/.ssh/dev-gw-catalog — run: dev-gw enroll' >&2\n" +
-              "echo 'falling back to the redacted copy (http://dev-gw.example.test/api/catalog)' >&2"
-            : "",
-          `cat '${path.join(root, "items.json")}'`,
-          "",
-        ].join("\n"),
-        { mode: 0o755 },
+  describe("from a WEBUI_DEV_ENV_CATALOG file", () => {
+    it("lists servers, accounts and probe status without passwords", async () => {
+      const result = await run(["list"]);
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain("main  https://main.example.test:8090");
+      expect(result.stdout).toContain(
+        "  live · manager 25.15.0 · checked 3m ago",
       );
-      return {
-        WEBUI_DEV_ENV_CATALOG: undefined,
-        PATH: `${bin}${path.delimiter}${process.env.PATH}`,
-      };
-    };
-
-    it("reports the public view and writes no password for a team account", () => {
-      const env = stub(PUBLIC_ITEMS, { fellBack: true });
-
-      const status = run(["status"], env);
-      expect(status.status).toBe(0);
-      expect(fs.readFileSync(path.join(root, "args"), "utf8").trim()).toBe(
-        "catalog --fallback-public",
+      expect(result.stdout).toContain(
+        "  DOWN since 2026-10-06T22:00:00Z (was 25.14.2): connect ECONNREFUSED",
       );
-      expect(status.stdout).toContain(
-        "view: public view — run dev-gw enroll for team passwords",
+      expect(result.stdout).toContain(
+        "new  https://new.example.test\n  not checked yet",
       );
-      expect(status.stdout).toContain("2 without a password");
+      expect(result.stdout).toContain("- user  user@example.test");
+      expect(result.stdout).toContain("password: — (typed at login)");
+      expect(result.stdout).not.toContain("pw-");
+    });
 
-      const use = run(["use", "main", "user"], env);
-      expect(use.status).toBe(0);
-      expect(use.stdout).toContain("main/user is a team-tier account");
-      expect(use.stdout).toContain("dev-gw enroll");
-      const dev = read(".env.development.local");
-      expect(dev).toContain("VITE_DEFAULT_EMAIL=user@example.test");
-      expect(dev).not.toContain("VITE_DEFAULT_PASSWORD");
-      const playwright = read("e2e/envs/.env.playwright");
-      expect(playwright).toContain("E2E_ADMIN_EMAIL=admin@example.test");
-      expect(playwright).not.toContain("PASSWORD");
-
-      const get = run(["get", "main", "admin", "--json"], env);
-      expect(get.status).toBe(0);
-      expect(JSON.parse(get.stdout)).toMatchObject({
-        email: "admin@example.test",
-        password: null,
-        passwordAvailable: false,
+    it("prints the redacted catalog, status included, as JSON", async () => {
+      const result = await run(["list", "--json"]);
+      expect(result.status).toBe(0);
+      const catalog = JSON.parse(result.stdout);
+      expect(catalog.servers.map((s) => s.name)).toEqual([
+        "lts",
+        "main",
+        "new",
+      ]);
+      const [lts, main, fresh] = catalog.servers;
+      expect(main.accounts.map((a) => a.role)).toEqual([
+        "admin",
+        "monitor",
+        "user",
+      ]);
+      expect(main.status).toMatchObject({
+        live: true,
+        managerVersion: "25.15.0",
       });
-      expect(get.stderr).toContain("main/admin is a team-tier account");
+      expect(lts.status).toMatchObject({
+        live: false,
+        managerVersion: "25.14.2",
+        error: "connect ECONNREFUSED",
+      });
+      expect(fresh.status).toBeNull();
+      expect(result.stdout).not.toContain("pw-");
+      expect(result.stdout).not.toContain(`"password":`);
+      expect(catalog.warnings).toEqual([]);
     });
 
-    it("reports the full view and writes the password", () => {
-      const env = stub(ITEMS, { fellBack: false });
-
-      const status = run(["status"], env);
-      expect(status.status).toBe(0);
-      expect(status.stdout).toContain("view: full (team) view");
-
-      const use = run(["use", "main", "user"], env);
-      expect(use.status).toBe(0);
-      expect(use.stdout).not.toContain("team-tier");
-      expect(read(".env.development.local")).toContain(
-        "VITE_DEFAULT_PASSWORD=pw-user",
+    it("reports source, counts, missing passwords and probe health", async () => {
+      const result = await run(["status"]);
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain(
+        `source: ${catalogPath} (WEBUI_DEV_ENV_CATALOG)`,
       );
-      expect(read("e2e/envs/.env.playwright")).toContain(
-        "E2E_ADMIN_PASSWORD=pw-admin",
+      expect(result.stdout).toContain("updated: 2026-10-07T05:00:00Z");
+      expect(result.stdout).toContain(
+        "catalog: 3 server(s), 4 account(s), 1 without a password",
+      );
+      expect(result.stdout).toContain("probe: 1 live, 1 down, 1 unknown");
+    });
+
+    it("gets one account with its password", async () => {
+      const result = await run(["get", "main", "admin", "--json"]);
+      expect(result.status).toBe(0);
+      expect(JSON.parse(result.stdout)).toMatchObject({
+        server: "main",
+        endpoint: "https://main.example.test:8090",
+        role: "admin",
+        email: "admin@example.test",
+        password: "pw-admin",
+      });
+      expect(result.stderr).toBe("");
+    });
+
+    it("writes both env files and keeps unrelated lines", async () => {
+      const result = await run(["use", "main"]);
+      expect(result.status).toBe(0);
+      expect(result.stdout).not.toContain("warning:");
+      const dev = read(".env.development.local");
+      expect(dev).toContain("VITE_THEME_HEADER_COLOR=#7C3AED");
+      expect(dev).toContain(
+        "VITE_DEFAULT_API_ENDPOINT=https://main.example.test:8090",
+      );
+      expect(dev).toContain("VITE_DEFAULT_EMAIL=user@example.test");
+      expect(dev).toContain("VITE_DEFAULT_PASSWORD=pw-user");
+      const playwright = read("e2e/envs/.env.playwright");
+      expect(playwright).toContain("# sample");
+      expect(playwright).toContain(
+        "E2E_WEBSERVER_ENDPOINT=https://main.example.test:8090",
+      );
+      expect(playwright).toContain("E2E_ADMIN_PASSWORD=pw-admin");
+      expect(playwright).toContain("E2E_MONITOR_EMAIL=monitor@example.test");
+      expect(playwright).not.toContain("E2E_MONITOR_PASSWORD");
+      expect(playwright).not.toContain("E2E_USER2_EMAIL");
+    });
+
+    it("writes no password line for an account without one, with one note", async () => {
+      await run(["use", "main"]);
+      const result = await run(["use", "main", "monitor"]);
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain("password not pre-filled");
+      expect(
+        result.stdout.match(/note: the catalog has no password/g),
+      ).toHaveLength(1);
+      const dev = read(".env.development.local");
+      expect(dev).toContain("VITE_DEFAULT_EMAIL=monitor@example.test");
+      expect(dev).not.toContain("VITE_DEFAULT_PASSWORD");
+      expect(dev).not.toMatch(/PASSWORD=\s*$/m);
+    });
+
+    it("drops the password line with --no-password, without a note", async () => {
+      await run(["use", "main"]);
+      const result = await run(["use", "main", "admin", "--no-password"]);
+      expect(result.status).toBe(0);
+      expect(result.stdout).not.toContain("note: the catalog has no password");
+      const dev = read(".env.development.local");
+      expect(dev).toContain("VITE_DEFAULT_EMAIL=admin@example.test");
+      expect(dev).not.toContain("VITE_DEFAULT_PASSWORD");
+    });
+
+    it("still uses a down server, warning once with the error and last live time", async () => {
+      const result = await run(["use", "lts"]);
+      expect(result.status).toBe(0);
+      const warnings = result.stdout
+        .split("\n")
+        .filter((line) => line.startsWith("warning:"));
+      expect(warnings).toEqual([
+        expect.stringMatching(
+          /^warning: lts was down at the last probe \(.+\): connect ECONNREFUSED; last live 2026-10-06T22:00:00Z\.$/,
+        ),
+      ]);
+      expect(read(".env.development.local")).toContain(
+        "VITE_DEFAULT_API_ENDPOINT=https://lts.example.test",
+      );
+
+      const get = await run(["get", "lts", "user", "--json"]);
+      expect(get.status).toBe(0);
+      expect(JSON.parse(get.stdout).password).toBe("pw-lts");
+      expect(get.stderr).toContain("warning: lts was down at the last probe");
+    });
+
+    it("exits 1 and names the known servers for an unknown one", async () => {
+      const result = await run(["use", "nope"]);
+      expect(result.status).toBe(1);
+      expect(result.stderr).toContain(
+        'Unknown server "nope". Known: lts, main, new',
+      );
+    });
+
+    it("exits 2 with usage when `use` has no server", async () => {
+      const result = await run(["use"]);
+      expect(result.status).toBe(2);
+      expect(result.stderr).toContain("Usage: pnpm run dev-env");
+    });
+  });
+
+  describe("over HTTP (WEBUI_DEV_ENV_CATALOG_URL)", () => {
+    let server;
+    let url;
+    let respond;
+
+    beforeEach(async () => {
+      respond = (_req, res) => {
+        res.writeHead(200, { "content-type": "application/json" });
+        res.end(JSON.stringify(catalogBody()));
+      };
+      server = http.createServer((req, res) => respond(req, res));
+      await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+      url = `http://127.0.0.1:${server.address().port}/api/catalog`;
+    });
+
+    afterEach(async () => {
+      await new Promise((resolve) => server.close(resolve));
+    });
+
+    const viaUrl = (catalogUrl) => ({
+      WEBUI_DEV_ENV_CATALOG: undefined,
+      WEBUI_DEV_ENV_CATALOG_URL: catalogUrl,
+    });
+
+    it("reads the catalog from the URL", async () => {
+      const requests = [];
+      const serve = respond;
+      respond = (req, res) => {
+        requests.push(req.url);
+        serve(req, res);
+      };
+      const status = await run(["status"], viaUrl(url));
+      expect(status.status).toBe(0);
+      expect(status.stdout).toContain(
+        `source: ${url} (WEBUI_DEV_ENV_CATALOG_URL)`,
+      );
+      expect(status.stdout).toContain("catalog: 3 server(s), 4 account(s)");
+
+      const use = await run(["use", "main", "admin"], viaUrl(url));
+      expect(use.status).toBe(0);
+      expect(read(".env.development.local")).toContain(
+        "VITE_DEFAULT_PASSWORD=pw-admin",
+      );
+      expect(requests).toEqual(["/api/catalog", "/api/catalog"]);
+    });
+
+    it("exits 1 naming the URL when the gateway answers 500", async () => {
+      respond = (_req, res) => {
+        res.writeHead(500);
+        res.end("boom");
+      };
+      const result = await run(["list"], viaUrl(url));
+      expect(result.status).toBe(1);
+      expect(result.stderr).toContain(url);
+      expect(result.stderr).toContain("HTTP 500");
+    });
+
+    it("exits 1 naming the URL when the body is not JSON", async () => {
+      respond = (_req, res) => {
+        res.writeHead(200);
+        res.end("<html>");
+      };
+      const result = await run(["list"], viaUrl(url));
+      expect(result.status).toBe(1);
+      expect(result.stderr).toContain(`${url} did not return JSON`);
+    });
+
+    it("exits 1 naming the URL when nothing listens", async () => {
+      const closed = url.replace(/:\d+\//, ":1/");
+      const result = await run(["list"], viaUrl(closed));
+      expect(result.status).toBe(1);
+      expect(result.stderr).toContain(
+        `Could not reach the catalog at ${closed}`,
       );
     });
   });
 
-  it("refuses a dev-gw too old to know `catalog` instead of running it", () => {
-    const bin = path.join(root, "bin");
-    const marker = path.join(root, "ran");
-    fs.mkdirSync(bin);
-    fs.writeFileSync(
-      path.join(bin, "dev-gw"),
-      `#!/bin/sh\ntouch '${marker}'\n`,
-      { mode: 0o755 },
+  it("exits 1 with the join hint when no gateway is configured", async () => {
+    const result = await run(["list"], { WEBUI_DEV_ENV_CATALOG: undefined });
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain("No dev box gateway configured");
+    expect(result.stderr).toContain(
+      path.join(root, ".config", "fw", "dev-gw.json"),
     );
-    const result = run(["list"], {
+    expect(result.stderr).toContain("dev-gw join");
+    expect(result.stderr).toContain("WEBUI_DEV_ENV_CATALOG_URL");
+  });
+
+  it("treats a dev-gw config without a domain as missing", async () => {
+    const config = path.join(root, "dev-gw.json");
+    fs.writeFileSync(config, JSON.stringify({ box: "x" }));
+    const result = await run(["status"], {
       WEBUI_DEV_ENV_CATALOG: undefined,
-      PATH: `${bin}${path.delimiter}${process.env.PATH}`,
+      DEV_GW_CONFIG: config,
     });
     expect(result.status).toBe(1);
-    expect(result.stderr).toContain("predates `dev-gw catalog`");
-    expect(fs.existsSync(marker)).toBe(false);
+    expect(result.stderr).toContain(`${config} is missing or has no "domain"`);
   });
 });

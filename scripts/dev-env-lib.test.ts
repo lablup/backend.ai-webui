@@ -1,95 +1,180 @@
 // @ts-nocheck
 import {
+  downWarning,
   findAccount,
   findServer,
   formatCatalog,
+  formatStatus,
   loginPrefillVars,
   parseCatalog,
   playwrightVars,
   quoteEnvValue,
   redactCatalog,
+  serverHealth,
   upsertEnv,
 } from "./dev-env-lib.mjs";
 import dotenv from "dotenv";
 
 const NOW = new Date("2026-10-02T00:00:00Z");
 
-const login = (name, username, password, extra = {}) => ({
-  type: 1,
-  name,
-  login: { username, password, uris: [{ uri: "https://main.example.test/" }] },
+const account = (role, email, password, extra = {}) => ({
+  role,
+  email,
+  password,
+  tags: [],
+  notes: "",
+  verified_at: null,
   ...extra,
 });
 
-const ITEMS = [
-  {
-    type: 2,
-    name: "webui-dev/main",
-    notes: "Tracks manager main.\nReset every Monday.",
-    fields: [
-      { name: "endpoint", value: "https://main.example.test:8090/" },
-      { name: "Tags", value: "plugin:fair-share, nightly" },
-      { name: "verified_at", value: "2026-09-20" },
-    ],
-  },
-  login("webui-dev/main/user", "user@example.test", "pw-user", {
-    notes: "Member of three projects.",
-    fields: [
-      { name: "tags", value: "multi-project" },
-      { name: "verified_at", value: "2026-01-01" },
-    ],
-  }),
-  login("webui-dev/main/admin", "admin@example.test", "pw-admin"),
-  login("webui-dev/main/project-admin", "pa@example.test", "pw-pa"),
-  login("webui-dev/lts/user", "lts-user@example.test", "pw-lts"),
-  login("Some unrelated login", "x", "y"),
-];
+const BODY = {
+  version: 1,
+  updated_at: "2026-10-01T05:00:00Z",
+  servers: [
+    {
+      name: "main",
+      endpoint: "https://main.example.test:8090",
+      tags: ["plugin:fair-share", "nightly"],
+      notes: "Tracks manager main.\nReset every Monday.",
+      verified_at: "2026-09-20",
+      accounts: [
+        account("user", "user@example.test", "pw-user", {
+          tags: ["multi-project"],
+          notes: "Member of three projects.",
+          verified_at: "2026-01-01",
+        }),
+        account("admin", "admin@example.test", "pw-admin"),
+        account("project-admin", "pa@example.test", "pw-pa"),
+        account("monitor", "monitor@example.test", null),
+      ],
+    },
+    {
+      name: "lts",
+      endpoint: "http://lts.example.test",
+      tags: [],
+      notes: "",
+      verified_at: null,
+      accounts: [account("user", "lts-user@example.test", "pw-lts")],
+    },
+  ],
+};
 
 describe("dev-env catalog", () => {
-  const catalog = parseCatalog(ITEMS, NOW);
+  const catalog = parseCatalog(BODY, NOW);
 
-  it("groups accounts under their server and ignores unrelated items", () => {
+  it("sorts servers and accounts and carries updated_at", () => {
     expect(catalog.servers.map((s) => s.name)).toEqual(["lts", "main"]);
     expect(findServer(catalog, "main").accounts.map((a) => a.role)).toEqual([
       "admin",
+      "monitor",
       "project-admin",
       "user",
     ]);
+    expect(catalog.updatedAt).toBe("2026-10-01T05:00:00Z");
     expect(catalog.warnings).toEqual([]);
   });
 
-  it("reads endpoint, tags and notes from the server item", () => {
+  it("maps the contract onto the catalog shape", () => {
     const main = findServer(catalog, "main");
-    expect(main.endpoint).toBe("https://main.example.test:8090");
-    expect(main.tags).toEqual(["plugin:fair-share", "nightly"]);
+    expect(main).toMatchObject({
+      endpoint: "https://main.example.test:8090",
+      tags: ["plugin:fair-share", "nightly"],
+      verifiedAt: "2026-09-20",
+      stale: false,
+    });
     expect(main.notes).toContain("Reset every Monday.");
-    expect(main.stale).toBe(false);
+    expect(findAccount(main, "user")).toEqual({
+      role: "user",
+      email: "user@example.test",
+      password: "pw-user",
+      passwordAvailable: true,
+      tags: ["multi-project"],
+      notes: "Member of three projects.",
+      verifiedAt: "2026-01-01",
+      stale: true,
+    });
+    expect(findAccount(main, "admin").notes).toBeNull();
+    expect(findAccount(main, "admin")).not.toHaveProperty("share");
   });
 
-  it("falls back to the login URI when the server has no item of its own", () => {
-    expect(findServer(catalog, "lts").endpoint).toBe(
-      "https://main.example.test",
-    );
+  it("treats a null or empty password as unavailable", () => {
+    const main = findServer(catalog, "main");
+    expect(findAccount(main, "monitor")).toMatchObject({
+      password: null,
+      passwordAvailable: false,
+    });
+    const empty = parseCatalog(
+      {
+        version: 1,
+        servers: [
+          {
+            name: "x",
+            endpoint: "https://x.example.test",
+            accounts: [account("user", "u@example.test", "")],
+          },
+        ],
+      },
+      NOW,
+    ).servers[0];
+    expect(findAccount(empty, "user")).toMatchObject({
+      password: null,
+      passwordAvailable: false,
+    });
   });
 
   it("marks a note stale when it is old or was never verified", () => {
     const main = findServer(catalog, "main");
     expect(findAccount(main, "user").stale).toBe(true);
     expect(findAccount(main, "admin").stale).toBe(true);
+    expect(findServer(catalog, "lts").stale).toBe(true);
   });
 
-  it("warns about malformed names, non-login accounts, duplicates and missing endpoints", () => {
+  it("skips and warns about entries that break the contract, never throwing", () => {
     const { servers, warnings } = parseCatalog(
-      [
-        { type: 1, name: "webui-dev/a/b/c" },
-        { type: 2, name: "webui-dev/a/user" },
-        { type: 1, name: "webui-dev/a/admin", login: { username: "one" } },
-        { type: 1, name: "webui-dev/a/admin", login: { username: "two" } },
-      ],
+      {
+        version: 2,
+        servers: [
+          "nope",
+          { name: "Bad Name", endpoint: "https://x.example.test" },
+          {
+            name: "a",
+            endpoint: "ftp://a.example.test",
+            tags: "not-a-list",
+            verified_at: "yesterday",
+            accounts: [
+              account("admin", "one@example.test", "pw"),
+              account("admin", "two@example.test", "pw"),
+              account("Bad Role", "x@example.test", "pw"),
+              { role: "user", email: "" },
+              account("monitor", "m@example.test", 42),
+              7,
+            ],
+          },
+          { name: "a", endpoint: "https://dup.example.test" },
+          { name: "b", endpoint: "https://b.example.test/", accounts: {} },
+        ],
+      },
       NOW,
     );
-    expect(servers[0].accounts.map((a) => a.email)).toEqual(["one"]);
-    expect(warnings).toHaveLength(4);
+    expect(servers.map((s) => s.name)).toEqual(["a", "b"]);
+    const [a, b] = servers;
+    expect(a.endpoint).toBeNull();
+    expect(a.tags).toEqual([]);
+    expect(a.verifiedAt).toBeNull();
+    expect(a.accounts.map((acc) => [acc.role, acc.email])).toEqual([
+      ["admin", "one@example.test"],
+      ["monitor", "m@example.test"],
+    ]);
+    expect(findAccount(a, "monitor").passwordAvailable).toBe(false);
+    expect(b.endpoint).toBe("https://b.example.test");
+    expect(b.accounts).toEqual([]);
+    expect(warnings).toHaveLength(13);
+    expect(warnings[0]).toContain("catalog version 2");
+  });
+
+  it("refuses a body with no servers list", () => {
+    expect(() => parseCatalog({ version: 1 }, NOW)).toThrow('"servers" list');
+    expect(() => parseCatalog([], NOW)).toThrow('"servers" list');
   });
 
   it("names the known choices when a lookup misses", () => {
@@ -102,12 +187,25 @@ describe("dev-env catalog", () => {
   it("never leaks a password through the redacted catalog or its text form", () => {
     const redacted = redactCatalog(catalog);
     expect(JSON.stringify(redacted)).not.toContain("pw-");
+    expect(redacted.servers[1].accounts[0]).not.toHaveProperty("password");
+    expect(redacted.servers[1].accounts[0]).toHaveProperty(
+      "passwordAvailable",
+      true,
+    );
     const text = formatCatalog(redacted);
     expect(text).toContain("main  https://main.example.test:8090");
-    expect(text).toContain("- user [team]  user@example.test");
+    expect(text).toContain("- user  user@example.test");
     expect(text).toContain("verified: 2026-01-01 (stale)");
     expect(text).toContain("verified: never");
     expect(formatCatalog(catalog)).not.toContain("pw-");
+  });
+
+  it("marks an account without a password as typed at login", () => {
+    const text = formatCatalog(redactCatalog(catalog));
+    expect(text.match(/password: — \(typed at login\)/g)).toHaveLength(1);
+    expect(text).toMatch(
+      /- monitor {2}monitor@example\.test\n.*\n {6}password: — \(typed at login\)/,
+    );
   });
 
   it("maps the roles the E2E suite reads and clears the ones the server lacks", () => {
@@ -119,7 +217,7 @@ describe("dev-env catalog", () => {
       E2E_USER_PASSWORD: "pw-user",
       E2E_USER2_EMAIL: null,
       E2E_USER2_PASSWORD: null,
-      E2E_MONITOR_EMAIL: null,
+      E2E_MONITOR_EMAIL: "monitor@example.test",
       E2E_MONITOR_PASSWORD: null,
       E2E_DOMAIN_ADMIN_EMAIL: null,
       E2E_DOMAIN_ADMIN_PASSWORD: null,
@@ -134,97 +232,136 @@ describe("dev-env catalog", () => {
       loginPrefillVars(main, user, { password: false }).VITE_DEFAULT_PASSWORD,
     ).toBeNull();
   });
-});
-
-describe("dev-env share tiers", () => {
-  // The gateway's public view: team-tier passwords nulled and marked.
-  const PUBLIC_ITEMS = [
-    login("webui-dev/main/user", "user@example.test", "pw-user", {
-      fields: [{ name: "share", value: "public" }],
-    }),
-    login("webui-dev/main/admin", "admin@example.test", null, {
-      password_in: "bitwarden",
-    }),
-    login("webui-dev/main/monitor", "monitor@example.test", null, {
-      fields: [{ name: "share", value: "team" }],
-      password_in: "bitwarden",
-    }),
-    login("webui-dev/main/user2", "user2@example.test", "pw-user2", {
-      fields: [{ name: "Share", value: "Public" }],
-    }),
-  ];
-  const main = findServer(parseCatalog(PUBLIC_ITEMS, NOW), "main");
-
-  it("reads the tier from an exact `share: public`, team otherwise", () => {
-    expect(
-      Object.fromEntries(main.accounts.map((a) => [a.role, a.share])),
-    ).toEqual({
-      admin: "team",
-      monitor: "team",
-      user: "public",
-      user2: "team",
-    });
-    const full = findServer(parseCatalog(ITEMS, NOW), "main");
-    expect(full.accounts.every((a) => a.share === "team")).toBe(true);
-    expect(full.accounts.every((a) => a.passwordAvailable)).toBe(true);
-  });
-
-  it("treats a nulled password or the `password_in` marker as unavailable", () => {
-    expect(findAccount(main, "user")).toMatchObject({
-      passwordAvailable: true,
-      password: "pw-user",
-    });
-    expect(findAccount(main, "admin")).toMatchObject({
-      passwordAvailable: false,
-      password: null,
-    });
-    const marked = parseCatalog(
-      [
-        login("webui-dev/x/user", "u@example.test", "leaked", {
-          password_in: "bitwarden",
-        }),
-        login("webui-dev/x/admin", "a@example.test", ""),
-      ],
-      NOW,
-    ).servers[0];
-    expect(findAccount(marked, "user")).toMatchObject({
-      passwordAvailable: false,
-      password: null,
-    });
-    expect(findAccount(marked, "admin").passwordAvailable).toBe(false);
-  });
-
-  it("keeps the tier in the redacted catalog and shows it in the text form", () => {
-    const redacted = redactCatalog({ servers: [main], warnings: [] });
-    expect(redacted.servers[0].accounts[0]).toMatchObject({
-      role: "admin",
-      share: "team",
-      passwordAvailable: false,
-    });
-    expect(redacted.servers[0].accounts[0]).not.toHaveProperty("password");
-    const text = formatCatalog(redacted);
-    expect(text).toContain("- user [public]  user@example.test");
-    expect(text).toContain("- admin [team]  admin@example.test");
-    expect(text).toContain(
-      "password: in Bitwarden (enroll for the full catalog)",
-    );
-    expect(text.match(/password: in Bitwarden/g)).toHaveLength(2);
-  });
 
   it("never writes an empty password key", () => {
-    const admin = findAccount(main, "admin");
-    expect(loginPrefillVars(main, admin).VITE_DEFAULT_PASSWORD).toBeNull();
-    const vars = playwrightVars(main);
-    expect(vars).toMatchObject({
-      E2E_ADMIN_EMAIL: "admin@example.test",
-      E2E_ADMIN_PASSWORD: null,
-      E2E_MONITOR_PASSWORD: null,
-      E2E_USER_PASSWORD: "pw-user",
-    });
-    const written = upsertEnv("E2E_ADMIN_PASSWORD=old\n", vars);
+    const main = findServer(catalog, "main");
+    const monitor = findAccount(main, "monitor");
+    expect(loginPrefillVars(main, monitor).VITE_DEFAULT_PASSWORD).toBeNull();
+    const written = upsertEnv(
+      "E2E_MONITOR_PASSWORD=old\n",
+      playwrightVars(main),
+    );
     expect(written).not.toMatch(/PASSWORD=\s*$/m);
-    expect(written).not.toContain("E2E_ADMIN_PASSWORD");
-    expect(written).toContain("E2E_ADMIN_EMAIL=admin@example.test");
+    expect(written).not.toContain("E2E_MONITOR_PASSWORD");
+    expect(written).toContain("E2E_MONITOR_EMAIL=monitor@example.test");
+  });
+});
+
+describe("dev-env server probe status", () => {
+  const server = (name, status) => ({
+    name,
+    endpoint: `https://${name}.example.test`,
+    status,
+    accounts: [],
+  });
+  const BODY_WITH_STATUS = {
+    version: 1,
+    servers: [
+      server("up", {
+        live: true,
+        checked_at: "2026-10-01T23:57:00Z",
+        last_live_at: "2026-10-01T23:57:00Z",
+        manager_version: "25.15.0",
+        api_version: "v9.20250722",
+        latency_ms: 42,
+        error: null,
+      }),
+      server("down", {
+        live: false,
+        checked_at: "2026-10-01T23:58:00Z",
+        last_live_at: "2026-10-01T20:00:00Z",
+        manager_version: "25.14.2",
+        api_version: "v9.20250601",
+        latency_ms: null,
+        error: "connect ECONNREFUSED",
+      }),
+      server("fresh", null),
+      server("old", {
+        live: true,
+        checked_at: "2026-10-01T20:00:00Z",
+        manager_version: "25.15.0",
+      }),
+      server("weird", { live: "yes" }),
+      { name: "absent", endpoint: "https://absent.example.test" },
+    ],
+  };
+  const catalog = parseCatalog(BODY_WITH_STATUS, NOW);
+  const byName = (name) => findServer(catalog, name);
+
+  it("normalizes the probe result to camelCase", () => {
+    expect(byName("up").status).toEqual({
+      live: true,
+      checkedAt: "2026-10-01T23:57:00Z",
+      lastLiveAt: "2026-10-01T23:57:00Z",
+      managerVersion: "25.15.0",
+      apiVersion: "v9.20250722",
+      latencyMs: 42,
+      error: null,
+    });
+    expect(byName("down").status).toMatchObject({
+      live: false,
+      managerVersion: "25.14.2",
+      error: "connect ECONNREFUSED",
+    });
+  });
+
+  it("treats a missing, null or malformed status as unknown, warning once for malformed", () => {
+    expect(byName("fresh").status).toBeNull();
+    expect(byName("absent").status).toBeNull();
+    expect(byName("weird").status).toBeNull();
+    expect(catalog.warnings).toEqual([
+      'server "weird": "status" is malformed, treated as unknown',
+    ]);
+  });
+
+  it("classifies health, with an old probe counted as unknown", () => {
+    expect(
+      Object.fromEntries(
+        catalog.servers.map((s) => [s.name, serverHealth(s, NOW)]),
+      ),
+    ).toEqual({
+      absent: "unknown",
+      down: "down",
+      fresh: "unknown",
+      old: "unknown",
+      up: "live",
+      weird: "unknown",
+    });
+  });
+
+  it("shows live, down and unchecked servers in the list text", () => {
+    const text = formatCatalog(redactCatalog(catalog), NOW);
+    expect(text).toContain(
+      "up  https://up.example.test\n  live · manager 25.15.0 · checked 3m ago",
+    );
+    expect(text).toContain(
+      "  DOWN since 2026-10-01T20:00:00Z (was 25.14.2): connect ECONNREFUSED",
+    );
+    expect(text).toContain(
+      "fresh  https://fresh.example.test\n  not checked yet",
+    );
+    expect(text).toContain(
+      "  live · manager 25.15.0 · checked 4h ago (probe stale)",
+    );
+    expect(formatStatus(byName("absent"), NOW)).toBe("not checked yet");
+  });
+
+  it("keeps the status in the redacted JSON", () => {
+    const json = JSON.parse(JSON.stringify(redactCatalog(catalog)));
+    expect(json.servers.find((s) => s.name === "down").status).toMatchObject({
+      live: false,
+      lastLiveAt: "2026-10-01T20:00:00Z",
+      managerVersion: "25.14.2",
+    });
+  });
+
+  it("warns about a down server only", () => {
+    expect(downWarning(byName("down"))).toBe(
+      "warning: down was down at the last probe (2026-10-01T23:58:00Z): " +
+        "connect ECONNREFUSED; last live 2026-10-01T20:00:00Z.",
+    );
+    expect(downWarning(byName("up"))).toBeNull();
+    expect(downWarning(byName("fresh"))).toBeNull();
   });
 });
 

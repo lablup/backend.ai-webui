@@ -1,10 +1,10 @@
-// Pure logic behind `pnpm run dev-env`: turning Bitwarden items into a catalog
-// of dev servers and test accounts, and writing a pick into the env files.
+// Pure logic behind `pnpm run dev-env`: normalizing the gateway's catalog of
+// dev servers and test accounts, and writing a pick into the env files.
 //
 // It lives outside dev-env.mjs so it can be unit tested without the gateway.
 
-/** Items are named `webui-dev/<server>` (the server) or `webui-dev/<server>/<role>` (an account). */
-export const ITEM_PREFIX = "webui-dev/";
+/** The catalog contract version this parser understands. */
+export const CATALOG_VERSION = 1;
 
 /** A note older than this is reported as stale: it describes a server nobody has re-checked. */
 export const STALE_AFTER_DAYS = 90;
@@ -18,28 +18,14 @@ export const E2E_ROLE_VARS = {
   "domain-admin": "E2E_DOMAIN_ADMIN",
 };
 
-const BW_TYPE_LOGIN = 1;
+/** A probe older than this says nothing about the server now; the gateway re-probes every ~5 minutes. */
+export const PROBE_STALE_MINUTES = 30;
 
-/** Only an exact `share: public` opens an account's password to the public view; anything else is team. */
-function shareTier(item) {
-  return fieldValue(item, "share") === "public" ? "public" : "team";
-}
+const SLUG = /^[a-z0-9][a-z0-9-]{0,62}$/;
+const DATE = /^\d{4}-\d{2}-\d{2}$/;
 
-function fieldValue(item, name) {
-  const field = (item.fields ?? []).find(
-    (f) => (f.name ?? "").trim().toLowerCase() === name,
-  );
-  const value = field?.value?.trim();
-  return value ? value : null;
-}
-
-function parseTags(raw) {
-  if (!raw) return [];
-  return raw
-    .split(/[,\s]+/)
-    .map((tag) => tag.trim())
-    .filter(Boolean);
-}
+const isObject = (value) =>
+  value !== null && typeof value === "object" && !Array.isArray(value);
 
 function isStale(verifiedAt, now) {
   if (!verifiedAt) return true;
@@ -49,100 +35,212 @@ function isStale(verifiedAt, now) {
 }
 
 function normalizeEndpoint(raw) {
-  return raw ? raw.trim().replace(/\/+$/, "") : null;
+  if (typeof raw !== "string") return null;
+  const endpoint = raw.trim().replace(/\/+$/, "");
+  try {
+    const { protocol } = new URL(endpoint);
+    return protocol === "http:" || protocol === "https:" ? endpoint : null;
+  } catch {
+    return null;
+  }
 }
 
-function describe(item, now) {
-  const verifiedAt = fieldValue(item, "verified_at");
+/** Tags, notes and verification date, shared by servers and accounts; a bad value is dropped with a warning. */
+function describe(entry, label, warnings, now) {
+  let tags = [];
+  if (Array.isArray(entry.tags)) {
+    tags = entry.tags
+      .filter((tag) => typeof tag === "string" && tag.trim() !== "")
+      .map((tag) => tag.trim());
+  } else if (entry.tags != null) {
+    warnings.push(`${label}: "tags" is not a list, ignored`);
+  }
+  let verifiedAt = null;
+  if (typeof entry.verified_at === "string" && DATE.test(entry.verified_at)) {
+    verifiedAt = entry.verified_at;
+  } else if (entry.verified_at != null) {
+    warnings.push(`${label}: "verified_at" is not YYYY-MM-DD, ignored`);
+  }
+  const notes =
+    typeof entry.notes === "string" && entry.notes.trim() !== ""
+      ? entry.notes.trim()
+      : null;
+  return { tags, notes, verifiedAt, stale: isStale(verifiedAt, now) };
+}
+
+const stringOrNull = (value) =>
+  typeof value === "string" && value !== "" ? value : null;
+
+/** The gateway's read-only probe result; `null` when never probed or malformed (one warning). */
+function parseStatus(raw, label, warnings) {
+  if (raw == null) return null;
+  if (!isObject(raw) || typeof raw.live !== "boolean") {
+    warnings.push(`${label}: "status" is malformed, treated as unknown`);
+    return null;
+  }
   return {
-    tags: parseTags(fieldValue(item, "tags")),
-    notes: item.notes?.trim() || null,
-    verifiedAt,
-    stale: isStale(verifiedAt, now),
+    live: raw.live,
+    checkedAt: stringOrNull(raw.checked_at),
+    lastLiveAt: stringOrNull(raw.last_live_at),
+    managerVersion: stringOrNull(raw.manager_version),
+    apiVersion: stringOrNull(raw.api_version),
+    latencyMs: Number.isFinite(raw.latency_ms) ? raw.latency_ms : null,
+    error: stringOrNull(raw.error),
+  };
+}
+
+function minutesSince(iso, now) {
+  const time = Date.parse(iso ?? "");
+  return Number.isNaN(time) ? null : (now.getTime() - time) / 60_000;
+}
+
+/**
+ * `live`, `down` or `unknown`. A probe that never ran, or ran more than
+ * PROBE_STALE_MINUTES ago, is `unknown`.
+ */
+export function serverHealth(server, now = new Date()) {
+  const age = minutesSince(server.status?.checkedAt, now);
+  if (!server.status || age === null || age > PROBE_STALE_MINUTES) {
+    return "unknown";
+  }
+  return server.status.live ? "live" : "down";
+}
+
+function ago(iso, now) {
+  const minutes = minutesSince(iso, now);
+  if (minutes === null) return "at an unknown time";
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `${Math.floor(minutes)}m ago`;
+  if (minutes < 48 * 60) return `${Math.floor(minutes / 60)}h ago`;
+  return `${Math.floor(minutes / (24 * 60))}d ago`;
+}
+
+/** One line on the server's last probe, for `list`. */
+export function formatStatus(server, now = new Date()) {
+  const status = server.status;
+  if (!status) return "not checked yet";
+  const age = minutesSince(status.checkedAt, now);
+  const staleProbe =
+    age === null || age > PROBE_STALE_MINUTES ? " (probe stale)" : "";
+  if (status.live) {
+    return (
+      [
+        "live",
+        status.managerVersion ? `manager ${status.managerVersion}` : null,
+        `checked ${ago(status.checkedAt, now)}`,
+      ]
+        .filter(Boolean)
+        .join(" · ") + staleProbe
+    );
+  }
+  const since = status.lastLiveAt
+    ? `DOWN since ${status.lastLiveAt}`
+    : "DOWN, never seen live";
+  const was = status.managerVersion ? ` (was ${status.managerVersion})` : "";
+  return `${since}${was}: ${status.error ?? "no error reported"}${staleProbe}`;
+}
+
+/** The warning `use` / `get` print for a server the last probe found down, or null. */
+export function downWarning(server) {
+  if (!server.status || server.status.live) return null;
+  return (
+    `warning: ${server.name} was down at the last probe (${server.status.checkedAt ?? "time unknown"}): ` +
+    `${server.status.error ?? "no error reported"}; last live ${server.status.lastLiveAt ?? "never"}.`
+  );
+}
+
+function parseAccount(raw, server, warnings, now) {
+  const label = `server "${server.name}"`;
+  if (!isObject(raw)) {
+    warnings.push(`${label}: an account is not an object, skipped`);
+    return null;
+  }
+  if (typeof raw.role !== "string" || !SLUG.test(raw.role)) {
+    warnings.push(
+      `${label}: account role ${JSON.stringify(raw.role)} is not a slug, skipped`,
+    );
+    return null;
+  }
+  const who = `"${server.name}/${raw.role}"`;
+  if (typeof raw.email !== "string" || raw.email.trim() === "") {
+    warnings.push(`${who}: no email, skipped`);
+    return null;
+  }
+  if (server.accounts.some((account) => account.role === raw.role)) {
+    warnings.push(`${who}: duplicate role, keeping the first`);
+    return null;
+  }
+  if (raw.password != null && typeof raw.password !== "string") {
+    warnings.push(`${who}: password is not a string, treated as missing`);
+  }
+  const passwordAvailable =
+    typeof raw.password === "string" && raw.password !== "";
+  return {
+    role: raw.role,
+    email: raw.email.trim(),
+    password: passwordAvailable ? raw.password : null,
+    passwordAvailable,
+    ...describe(raw, who, warnings, now),
   };
 }
 
 /**
- * Build the catalog from `bw list items` output. Items outside the naming
- * convention are ignored, so the collection may hold unrelated entries.
- * An account whose server has no item of its own still gets a server entry —
- * its endpoint then comes from the login's first URI.
+ * Normalize the gateway's `GET /api/catalog` body. The gateway validates on
+ * write; this still skips (and warns about) an entry that breaks the contract
+ * instead of failing the whole catalog. Only a body with no `servers` list throws.
  */
-export function parseCatalog(items, now = new Date()) {
-  const servers = new Map();
+export function parseCatalog(body, now = new Date()) {
+  if (!isObject(body) || !Array.isArray(body.servers)) {
+    throw new Error('the catalog is not an object with a "servers" list');
+  }
   const warnings = [];
-  const serverOf = (name) => {
-    if (!servers.has(name)) {
-      servers.set(name, {
-        name,
-        endpoint: null,
-        tags: [],
-        notes: null,
-        verifiedAt: null,
-        stale: true,
-        accounts: [],
-      });
-    }
-    return servers.get(name);
-  };
-
-  for (const item of items ?? []) {
-    const name = (item.name ?? "").trim();
-    if (!name.startsWith(ITEM_PREFIX)) continue;
-    const parts = name.slice(ITEM_PREFIX.length).split("/");
-    if (parts.some((part) => part === "") || parts.length > 2) {
-      warnings.push(`"${name}": expected webui-dev/<server>[/<role>]`);
+  if (body.version !== CATALOG_VERSION) {
+    warnings.push(
+      `catalog version ${JSON.stringify(body.version)}, expected ${CATALOG_VERSION}; reading it anyway`,
+    );
+  }
+  const servers = [];
+  for (const raw of body.servers) {
+    if (!isObject(raw)) {
+      warnings.push("a server entry is not an object, skipped");
       continue;
     }
-    const [serverName, role] = parts;
-    const server = serverOf(serverName);
-
-    if (role === undefined) {
-      Object.assign(server, describe(item, now), {
-        endpoint:
-          normalizeEndpoint(fieldValue(item, "endpoint")) ??
-          normalizeEndpoint(item.login?.uris?.[0]?.uri) ??
-          server.endpoint,
-      });
-      continue;
-    }
-
-    if (item.type !== BW_TYPE_LOGIN || !item.login?.username) {
+    if (typeof raw.name !== "string" || !SLUG.test(raw.name)) {
       warnings.push(
-        `"${name}": an account must be a Login item with a username`,
+        `server name ${JSON.stringify(raw.name)} is not a slug, skipped`,
       );
       continue;
     }
-    if (server.accounts.some((account) => account.role === role)) {
-      warnings.push(`"${name}": duplicate role, keeping the first`);
+    const label = `server "${raw.name}"`;
+    if (servers.some((server) => server.name === raw.name)) {
+      warnings.push(`${label}: duplicate name, keeping the first`);
       continue;
     }
-    // The gateway's public view nulls a team-tier password and marks the item `password_in`.
-    const passwordAvailable =
-      !item.password_in &&
-      typeof item.login.password === "string" &&
-      item.login.password !== "";
-    server.accounts.push({
-      role,
-      email: item.login.username,
-      password: passwordAvailable ? item.login.password : null,
-      share: shareTier(item),
-      passwordAvailable,
-      ...describe(item, now),
-    });
-    server.endpoint ??= normalizeEndpoint(item.login.uris?.[0]?.uri);
-  }
-
-  const sorted = [...servers.values()].sort((a, b) =>
-    a.name.localeCompare(b.name),
-  );
-  for (const server of sorted) {
-    server.accounts.sort((a, b) => a.role.localeCompare(b.role));
-    if (!server.endpoint) {
-      warnings.push(`"${ITEM_PREFIX}${server.name}": no endpoint`);
+    const endpoint = normalizeEndpoint(raw.endpoint);
+    if (!endpoint) warnings.push(`${label}: no valid http(s) endpoint`);
+    const server = {
+      name: raw.name,
+      endpoint,
+      ...describe(raw, label, warnings, now),
+      status: parseStatus(raw.status, label, warnings),
+      accounts: [],
+    };
+    if (raw.accounts != null && !Array.isArray(raw.accounts)) {
+      warnings.push(`${label}: "accounts" is not a list, ignored`);
     }
+    for (const rawAccount of Array.isArray(raw.accounts) ? raw.accounts : []) {
+      const account = parseAccount(rawAccount, server, warnings, now);
+      if (account) server.accounts.push(account);
+    }
+    server.accounts.sort((a, b) => a.role.localeCompare(b.role));
+    servers.push(server);
   }
-  return { servers: sorted, warnings };
+  servers.sort((a, b) => a.name.localeCompare(b.name));
+  return {
+    updatedAt: typeof body.updated_at === "string" ? body.updated_at : null,
+    servers,
+    warnings,
+  };
 }
 
 /** The catalog without passwords — what `list` prints and an agent reads to choose. */
@@ -265,7 +363,7 @@ export function upsertEnv(content, vars, options) {
 }
 
 /** Human-readable catalog for `list`. Never prints a password. */
-export function formatCatalog(catalog) {
+export function formatCatalog(catalog, now = new Date()) {
   const lines = [];
   const meta = (entry) =>
     [
@@ -281,22 +379,21 @@ export function formatCatalog(catalog) {
 
   for (const server of catalog.servers) {
     lines.push(`${server.name}  ${server.endpoint ?? "(no endpoint)"}`);
+    lines.push(`  ${formatStatus(server, now)}`);
     lines.push(`  ${meta(server)}`);
     if (server.notes) lines.push(...notes(server, "  "));
     for (const account of server.accounts) {
-      lines.push(`  - ${account.role} [${account.share}]  ${account.email}`);
+      lines.push(`  - ${account.role}  ${account.email}`);
       lines.push(`      ${meta(account)}`);
       if (!account.passwordAvailable) {
-        lines.push(
-          "      password: in Bitwarden (enroll for the full catalog)",
-        );
+        lines.push("      password: — (typed at login)");
       }
       if (account.notes) lines.push(...notes(account, "      "));
     }
     lines.push("");
   }
   if (catalog.servers.length === 0) {
-    lines.push(`No "${ITEM_PREFIX}…" items in the vault.`, "");
+    lines.push("The catalog has no servers yet.", "");
   }
   for (const warning of catalog.warnings) lines.push(`warning: ${warning}`);
   return lines.join("\n").trimEnd();

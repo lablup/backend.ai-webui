@@ -95,51 +95,35 @@ Notes:
 
 ## Dev servers and test accounts (`pnpm run dev-env`)
 
-Which API server a dev session talks to, and which test account it logs in with, live in the team's Bitwarden collection — not in this repository and not in anyone's notes. `pnpm run dev-env` reads that collection through the dev box gateway and writes the pick into the two git-ignored files that already consume it:
+Which API server a dev session talks to, and which test account it logs in with, live in the team's catalog on the dev box gateway — not in this repository and not in anyone's notes. Anyone on the dev VPN can read and edit it in the gateway's admin UI (`http://dev-gw.<domain>/`, **Catalog** section), which keeps a history of every change so a bad edit can be undone. The gateway also serves it at `http://dev-gw.<domain>/api/catalog` without authentication, so **the catalog is visible to everyone on the dev VPN: store only passwords that may be shared that widely, and leave the others empty — the person logging in types them.**
+
+`pnpm run dev-env` reads that endpoint and writes the pick into the two git-ignored files that already consume it:
 
 - `.env.development.local` — `VITE_DEFAULT_API_ENDPOINT` / `VITE_DEFAULT_EMAIL` / `VITE_DEFAULT_PASSWORD`, the login-screen pre-fill.
 - `e2e/envs/.env.playwright` — `E2E_WEBSERVER_ENDPOINT` and the `E2E_*_EMAIL` / `E2E_*_PASSWORD` pairs.
 
-```bash
-pnpm run dev-env list              # servers, accounts, tags and notes — no passwords
-pnpm run dev-env use main          # pre-fill as main's "user" account, point E2E at main
-pnpm run dev-env use main admin --no-password
-pnpm run dev-env get main project-admin   # one account, password included
-pnpm run dev-env status            # dev-gw found, catalog reachable, counts
-```
+| Command                                                | Does                                                                                                |
+| ------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| `pnpm run dev-env status`                              | Where the catalog came from, when it was updated, counts, accounts without a password, probe health |
+| `pnpm run dev-env list [--json]`                       | Servers (with live/down status and manager version), accounts, tags and notes — never a password    |
+| `pnpm run dev-env get <server> <role> [--json]`        | One account, password included when the catalog has one                                             |
+| `pnpm run dev-env use <server> [role] [--no-password]` | Write both files; `role` defaults to `user`                                                         |
 
 Every command asks the gateway, so there is no local copy to go stale. `use` only replaces the keys it owns; every other line of both files is left alone. Restart `pnpm run dev` afterwards — Vite reads env at server start. A `VITE_DEFAULT_*` variable exported in the shell wins over the file; `use` warns when one is in the way.
 
+`use` never writes an empty password: for an account the catalog has no password for, it removes the password line (and its `E2E_*_PASSWORD` pair) and prints a note. A box owner who wants that password pre-filled anyway can add it to their own git-ignored env file by hand; the next `use` of a different account replaces it. The roles `admin`, `user`, `user2`, `monitor` and `domain-admin` fill the matching `E2E_*` variables, and `use` removes the pair of a role the server does not have; any other role (`project-admin`, …) is available to `use` and `get` only.
+
 `--no-password` leaves the password out of the pre-fill. Use it on a dev server you share through dev-gw: the bundle carries every `VITE_*` value to whoever opens the share URL (see the notes above).
 
-### One-time setup per machine
+The gateway address comes from `~/.config/fw/dev-gw.json` (written by `dev-gw join`, see above; `DEV_GW_CONFIG` points elsewhere). Without it, set `WEBUI_DEV_ENV_CATALOG_URL` to the catalog URL, or `WEBUI_DEV_ENV_CATALOG` to a JSON file of the same shape (for tests and for a box without a gateway).
 
-`dev-env` reads the catalog through `dev-gw catalog`, the client of the team's dev box gateway (`~/.local/bin/dev-gw` on every box set up by `fw:setup-remote-env`). The gateway syncs the catalog from the team's Bitwarden collection with a read-only account that lives only on the gateway. It serves a box because the SSH key the box presents is published as a signing key on a GitHub account in the `lablup/frontend-dev` team, so no Bitwarden credential ever reaches a dev box.
+### What goes in an entry
 
-```bash
-dev-gw enroll
-```
+A server has a `name` (a lowercase slug), an `endpoint`, `tags`, `notes` and `verified_at`; each account has a `role` (a slug, unique on its server), `email`, an optional `password`, and its own `tags`, `notes` and `verified_at`. Tags are free words an agent filters on, e.g. `multi-project`, `plugin:fair-share`, `no-destructive`. `verified_at` is the last day someone checked the notes against the server; notes verified more than 90 days ago, or never, are listed as stale.
 
-`enroll` generates `~/.ssh/dev-gw-catalog` and registers it as an SSH signing key on your GitHub account through `gh`. If `gh` lacks the scope for that, it says so; grant it with `gh auth refresh -h github.com -s admin:ssh_signing_key` and run `enroll` again. The gateway picks up a new key on its next sync, so allow up to five minutes before `pnpm run dev-env status` reports the full view. Until then `dev-env` works from the public view (see the conventions below) and `status` shows why `dev-gw` refused the full one. A `dev-gw` older than the `catalog` subcommand is refused rather than run (an old client reads an unknown subcommand as `join <box>` and renames the box); re-download it from the gateway as the error shows.
+The gateway probes every server about every five minutes and `list` shows the result — `live · manager 25.15.0 · checked 3m ago`, `DOWN since … (was 25.15.0): <error>`, or `not checked yet`. `use` and `get` still work on a server that is down, with a warning. Manager and API versions come from that probe, so do not write them into notes.
 
-Access ends when you leave the `lablup/frontend-dev` team or delete that signing key from your GitHub account. The gateway side — the read-only account, the collection and the sync — is documented in the [devbox-gateway](https://github.com/lablup/devbox-gateway) README.
-
-`WEBUI_DEV_ENV_CATALOG=<file>` makes `dev-env` read a JSON file in `bw list items` shape instead of calling `dev-gw`, for tests and for a box without a gateway.
-
-### Conventions in the collection
-
-| Item                                   | Name                        | Carries                                                                                                 |
-| -------------------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------- |
-| A server (Secure Note)                 | `webui-dev/<server>`        | custom field `endpoint`; notes about the server                                                         |
-| An account on that server (Login item) | `webui-dev/<server>/<role>` | username, password; custom field `share` (`public` or `team`, absent = `team`); notes about the account |
-
-Both kinds take two optional custom fields: `tags` (space- or comma-separated, e.g. `multi-project plugin:fair-share no-destructive`) and `verified_at` (`YYYY-MM-DD`, the last time someone checked the notes against the server). Notes older than 90 days, or never verified, are listed as stale.
-
-An enrolled box gets the full view, every password included, so an agent on it can use team-tier accounts; a box that is not enrolled (or whose key the gateway has not synced yet) falls back to the public view, where only `share: public` accounts carry a password and `list` marks the rest `password: in Bitwarden`. A dev server shared through dev-gw will get the public view too, so a reviewer opening its URL never receives a team-tier password. Team-tier passwords are filled in the browser by the Bitwarden extension of whoever is logging in. `dev-env status` says which view this box got, and `use` writes no password line for an account whose password it did not receive.
-
-The roles `admin`, `user`, `user2`, `monitor` and `domain-admin` fill the matching `E2E_*` variables; `use` removes the pair of a role the server does not have. Any other role (`project-admin`, …) is available to `use` and `get` only. An item whose name does not start with `webui-dev/` is ignored.
-
-Write in the notes what cannot be queried: what the server is for, what must not be touched, known breakage, why the account exists. What the manager can answer — its version, an account's projects — is better asked of it (`bai-agent query`) than copied here.
+Write in the notes what cannot be queried: what the server is for, what must not be touched, known breakage, why the account exists. What the manager can answer — an account's projects, a resource group's settings — is better asked of it (`bai-agent query`) than copied here.
 
 ## Theme color for visual differentiation
 
@@ -222,4 +206,4 @@ Runs behind Portless on a fixed internal port 6006. Open the printed `*.localhos
 | `pnpm --filter backend.ai-ui run storybook`                  | Storybook under Portless                                            |
 | `pnpm exec portless list`                                    | Show active Portless routes                                         |
 | `pnpm exec portless proxy stop` / `start -p 1355 [--no-tls]` | Daemon control (project-local binary)                               |
-| `pnpm run dev-env list` / `use <server> [role]`              | Pick a dev API server and test account from Bitwarden               |
+| `pnpm run dev-env list` / `use <server> [role]`              | Pick a dev API server and test account from the gateway catalog     |
