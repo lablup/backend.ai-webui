@@ -22,18 +22,22 @@ const OPENID_LOGIN_ERROR_KEYS: Record<string, string> = {
 const DISPLAYABLE_CODE = /^[A-Za-z0-9_-]{1,64}$/;
 
 /**
- * Resolve a `bai_error` value to the i18n key of its description. Unknown
- * values fall back to a generic message that shows the code.
+ * Resolve a `bai_error` value to the i18n key of its description. An unknown
+ * code-shaped value keeps its code in the message; anything else gets the
+ * generic message without one.
  */
 export const resolveOpenIDLoginErrorKey = (
   code: string,
-): { key: string; code: string } => {
+): { key: string; code?: string } => {
   const trimmed = code.trim();
   if (Object.prototype.hasOwnProperty.call(OPENID_LOGIN_ERROR_KEYS, trimmed)) {
     return { key: OPENID_LOGIN_ERROR_KEYS[trimmed], code: trimmed };
   }
-  return {
-    key: 'login.singleSignOn.OpenIDUnknownError',
-    code: DISPLAYABLE_CODE.test(trimmed) ? trimmed : 'invalid',
-  };
+  if (DISPLAYABLE_CODE.test(trimmed)) {
+    return {
+      key: 'login.singleSignOn.OpenIDUnknownErrorWithCode',
+      code: trimmed,
+    };
+  }
+  return { key: 'login.singleSignOn.OpenIDUnknownError' };
 };

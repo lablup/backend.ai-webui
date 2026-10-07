@@ -2030,15 +2030,16 @@
       "LoginWithRealm": "{{realmName }} ile giriş yapın",
       "LoginWithRealmFailed": "{{ realmName }} ile giriş başarısız oldu",
       "LoginWithSAML": "SAML ile Oturum Açma",
-      "OpenIDAccessDenied": "Kimlik sağlayıcı girişi reddetti. Giriş veya onay iptal edilmiş olabilir ya da sağlayıcı yeniden giriş yapmanızı veya bir hesap seçmenizi istiyor olabilir. Lütfen tekrar deneyin.",
-      "OpenIDDomainNotFound": "Grubunuza bağlı bir Backend.AI etki alanı yok. Yöneticinize başvurun.",
-      "OpenIDGroupNotAllowed": "Hesabınız Backend.AI erişimine izin verilen bir gruba ait değil. Grup üyeliğinizi kontrol etmesi için yöneticinize başvurun.",
+      "OpenIDAccessDenied": "Giriş iptal edildi veya istenen izinler verilmedi. Lütfen tekrar giriş yapın ve kimlik sağlayıcının sayfasındaki tüm adımları tamamlayın. Kuruluşunuz bu uygulama için yönetici onayı gerektiriyorsa yöneticinize başvurun.",
+      "OpenIDDomainNotFound": "Grubunuz, mevcut olmayan bir Backend.AI etki alanına bağlı. Yöneticinize başvurun.",
+      "OpenIDGroupNotAllowed": "Hesabınız, Backend.AI kullanımına izin verilen hiçbir gruba ait değil. Grup üyeliğinizi kontrol etmesi için yöneticinize başvurun.",
       "OpenIDInternalServerError": "Giriş sırasında bir sunucu hatası oluştu. Lütfen daha sonra tekrar deneyin. Sorun devam ederse yöneticinize başvurun.",
-      "OpenIDNotAuthenticated": "Kimlik sağlayıcı kimliğinizi doğrulayamadı. Lütfen tekrar deneyin. Sorun devam ederse yöneticinize başvurun.",
-      "OpenIDProviderMisconfigured": "Kimlik sağlayıcı Backend.AI istemci yapılandırmasını reddetti. Yöneticinize başvurun.",
-      "OpenIDProviderUnavailable": "Kimlik sağlayıcı geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin.",
-      "OpenIDSessionInvalid": "Giriş oturumunuz yok veya süresi dolmuş. Lütfen tekrar giriş yapın.",
-      "OpenIDUnknownError": "Giriş sırasında bilinmeyen bir hata oluştu ({{ code }}). Lütfen tekrar deneyin. Sorun devam ederse yöneticinize başvurun."
+      "OpenIDNotAuthenticated": "Backend.AI, kimlik sağlayıcıdan gelen giriş yanıtını doğrulayamadı. Lütfen tekrar deneyin. Sorun devam ederse yöneticinize başvurun.",
+      "OpenIDProviderMisconfigured": "Backend.AI ile kimlik sağlayıcı arasındaki giriş doğru şekilde yapılandırılmamış. Yöneticinize başvurun.",
+      "OpenIDProviderUnavailable": "Kimlik sağlayıcı geçici olarak kullanılamıyor veya kimlik sağlayıcıya ulaşılamadı. Lütfen birkaç dakika sonra tekrar deneyin.",
+      "OpenIDSessionInvalid": "Giriş isteğinizin süresi doldu veya istek zaten kullanıldı. Bu durum, giriş çok uzun sürdüğünde veya tarayıcının geri düğmesini kullandığınızda oluşabilir. Lütfen giriş sayfasından yeniden başlayın.",
+      "OpenIDUnknownError": "Giriş sırasında beklenmeyen bir hata oluştu. Lütfen tekrar deneyin. Sorun devam ederse yöneticinize başvurun.",
+      "OpenIDUnknownErrorWithCode": "Giriş sırasında beklenmeyen bir hata oluştu (hata kodu: {{ code }}). Lütfen tekrar deneyin. Sorun devam ederse yöneticinize başvurun."
     }
   },
   "loginHistory": {

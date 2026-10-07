@@ -2030,15 +2030,16 @@
       "LoginWithRealm": "Accesso con {{ realmName }}",
       "LoginWithRealmFailed": "Accesso con {{ realmName }} non riuscito",
       "LoginWithSAML": "Accesso con SAML",
-      "OpenIDAccessDenied": "Il provider di identità ha negato l'accesso. L'accesso o il consenso potrebbero essere stati annullati, oppure il provider richiede di accedere di nuovo o di scegliere un account. Riprova.",
-      "OpenIDDomainNotFound": "Nessun dominio Backend.AI è collegato al tuo gruppo. Contatta l'amministratore.",
-      "OpenIDGroupNotAllowed": "Il tuo account non appartiene a un gruppo autorizzato ad accedere a Backend.AI. Chiedi all'amministratore di verificare l'appartenenza ai gruppi.",
+      "OpenIDAccessDenied": "L'accesso è stato annullato oppure le autorizzazioni richieste non sono state concesse. Accedi di nuovo e completa tutti i passaggi nella pagina del provider di identità. Se la tua organizzazione richiede l'approvazione di un amministratore per questa app, contatta l'amministratore.",
+      "OpenIDDomainNotFound": "Il tuo gruppo è collegato a un dominio Backend.AI che non esiste. Contatta l'amministratore.",
+      "OpenIDGroupNotAllowed": "Il tuo account non appartiene a nessun gruppo autorizzato a usare Backend.AI. Chiedi all'amministratore di verificare l'appartenenza ai gruppi.",
       "OpenIDInternalServerError": "Si è verificato un errore del server durante l'accesso. Riprova più tardi. Se il problema persiste, contatta l'amministratore.",
-      "OpenIDNotAuthenticated": "Il provider di identità non è riuscito ad autenticarti. Riprova. Se il problema persiste, contatta l'amministratore.",
-      "OpenIDProviderMisconfigured": "Il provider di identità ha rifiutato la configurazione client di Backend.AI. Contatta l'amministratore.",
-      "OpenIDProviderUnavailable": "Il provider di identità è temporaneamente non disponibile. Riprova più tardi.",
-      "OpenIDSessionInvalid": "La sessione di accesso non esiste o è scaduta. Accedi di nuovo.",
-      "OpenIDUnknownError": "Si è verificato un errore sconosciuto durante l'accesso ({{ code }}). Riprova. Se il problema persiste, contatta l'amministratore."
+      "OpenIDNotAuthenticated": "Backend.AI non è riuscito a verificare la risposta di accesso del provider di identità. Riprova. Se il problema persiste, contatta l'amministratore.",
+      "OpenIDProviderMisconfigured": "L'accesso tra Backend.AI e il provider di identità non è configurato correttamente. Contatta l'amministratore.",
+      "OpenIDProviderUnavailable": "Il provider di identità è temporaneamente non disponibile o non raggiungibile. Riprova tra qualche minuto.",
+      "OpenIDSessionInvalid": "La richiesta di accesso è scaduta o è già stata utilizzata. Può succedere se l'accesso ha richiesto troppo tempo o se hai usato il pulsante Indietro del browser. Ricomincia dalla pagina di accesso.",
+      "OpenIDUnknownError": "Si è verificato un errore imprevisto durante l'accesso. Riprova. Se il problema persiste, contatta l'amministratore.",
+      "OpenIDUnknownErrorWithCode": "Si è verificato un errore imprevisto durante l'accesso (codice di errore: {{ code }}). Riprova. Se il problema persiste, contatta l'amministratore."
     }
   },
   "loginHistory": {

@@ -2031,15 +2031,16 @@
       "LoginWithRealm": "Se connecter avec {{ realmName }}",
       "LoginWithRealmFailed": "Échec de la connexion avec {{ realmName }}",
       "LoginWithSAML": "Se connecter avec SAML",
-      "OpenIDAccessDenied": "Le fournisseur d'identité a refusé la connexion. La connexion ou le consentement a peut-être été annulé, ou le fournisseur exige une nouvelle connexion ou le choix d'un compte. Veuillez réessayer.",
-      "OpenIDDomainNotFound": "Aucun domaine Backend.AI n'est associé à votre groupe. Contactez votre administrateur.",
-      "OpenIDGroupNotAllowed": "Votre compte n'appartient à aucun groupe autorisé à accéder à Backend.AI. Demandez à votre administrateur de vérifier votre appartenance aux groupes.",
+      "OpenIDAccessDenied": "La connexion a été annulée, ou les autorisations demandées n'ont pas été accordées. Veuillez vous reconnecter et effectuer toutes les étapes sur la page du fournisseur d'identité. Si votre organisation exige l'approbation d'un administrateur pour cette application, contactez votre administrateur.",
+      "OpenIDDomainNotFound": "Votre groupe est associé à un domaine Backend.AI qui n'existe pas. Contactez votre administrateur.",
+      "OpenIDGroupNotAllowed": "Votre compte n'appartient à aucun groupe autorisé à utiliser Backend.AI. Demandez à votre administrateur de vérifier votre appartenance aux groupes.",
       "OpenIDInternalServerError": "Une erreur serveur s'est produite lors de la connexion. Veuillez réessayer plus tard. Si le problème persiste, contactez votre administrateur.",
-      "OpenIDNotAuthenticated": "Le fournisseur d'identité n'a pas pu vous authentifier. Veuillez réessayer. Si le problème persiste, contactez votre administrateur.",
-      "OpenIDProviderMisconfigured": "Le fournisseur d'identité a rejeté la configuration client de Backend.AI. Contactez votre administrateur.",
-      "OpenIDProviderUnavailable": "Le fournisseur d'identité est temporairement indisponible. Veuillez réessayer plus tard.",
-      "OpenIDSessionInvalid": "Votre session de connexion est absente ou a expiré. Veuillez vous reconnecter.",
-      "OpenIDUnknownError": "Une erreur inconnue s'est produite lors de la connexion ({{ code }}). Veuillez réessayer. Si le problème persiste, contactez votre administrateur."
+      "OpenIDNotAuthenticated": "Backend.AI n'a pas pu vérifier la réponse de connexion du fournisseur d'identité. Veuillez réessayer. Si le problème persiste, contactez votre administrateur.",
+      "OpenIDProviderMisconfigured": "La connexion entre Backend.AI et le fournisseur d'identité n'est pas configurée correctement. Contactez votre administrateur.",
+      "OpenIDProviderUnavailable": "Le fournisseur d'identité est temporairement indisponible ou injoignable. Veuillez réessayer dans quelques minutes.",
+      "OpenIDSessionInvalid": "Votre demande de connexion a expiré ou a déjà été utilisée. Cela peut se produire si la connexion a pris trop de temps ou si vous avez utilisé le bouton Retour du navigateur. Veuillez recommencer depuis la page de connexion.",
+      "OpenIDUnknownError": "Une erreur inattendue s'est produite lors de la connexion. Veuillez réessayer. Si le problème persiste, contactez votre administrateur.",
+      "OpenIDUnknownErrorWithCode": "Une erreur inattendue s'est produite lors de la connexion (code d'erreur : {{ code }}). Veuillez réessayer. Si le problème persiste, contactez votre administrateur."
     }
   },
   "loginHistory": {

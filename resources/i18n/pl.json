@@ -2031,15 +2031,16 @@
       "LoginWithRealm": "Zaloguj się za pomocą {{ realmName }}.",
       "LoginWithRealmFailed": "Logowanie przez {{ realmName }} nie powiodło się",
       "LoginWithSAML": "Logowanie za pomocą SAML",
-      "OpenIDAccessDenied": "Dostawca tożsamości odrzucił logowanie. Logowanie lub zgoda mogły zostać anulowane albo dostawca wymaga ponownego zalogowania lub wybrania konta. Spróbuj ponownie.",
-      "OpenIDDomainNotFound": "Z Twoją grupą nie jest powiązana żadna domena Backend.AI. Skontaktuj się z administratorem.",
-      "OpenIDGroupNotAllowed": "Twoje konto nie należy do grupy, która ma dostęp do Backend.AI. Poproś administratora o sprawdzenie przynależności do grup.",
+      "OpenIDAccessDenied": "Logowanie zostało anulowane lub żądane uprawnienia nie zostały przyznane. Zaloguj się ponownie i wykonaj wszystkie kroki na stronie dostawcy tożsamości. Jeśli Twoja organizacja wymaga zgody administratora na tę aplikację, skontaktuj się z administratorem.",
+      "OpenIDDomainNotFound": "Twoja grupa jest powiązana z domeną Backend.AI, która nie istnieje. Skontaktuj się z administratorem.",
+      "OpenIDGroupNotAllowed": "Twoje konto nie należy do żadnej grupy, która może korzystać z Backend.AI. Poproś administratora o sprawdzenie przynależności do grup.",
       "OpenIDInternalServerError": "Podczas logowania wystąpił błąd serwera. Spróbuj ponownie później. Jeśli problem będzie się powtarzał, skontaktuj się z administratorem.",
-      "OpenIDNotAuthenticated": "Dostawca tożsamości nie mógł Cię uwierzytelnić. Spróbuj ponownie. Jeśli problem będzie się powtarzał, skontaktuj się z administratorem.",
-      "OpenIDProviderMisconfigured": "Dostawca tożsamości odrzucił konfigurację klienta Backend.AI. Skontaktuj się z administratorem.",
-      "OpenIDProviderUnavailable": "Dostawca tożsamości jest tymczasowo niedostępny. Spróbuj ponownie później.",
-      "OpenIDSessionInvalid": "Sesja logowania nie istnieje lub wygasła. Zaloguj się ponownie.",
-      "OpenIDUnknownError": "Podczas logowania wystąpił nieznany błąd ({{ code }}). Spróbuj ponownie. Jeśli problem będzie się powtarzał, skontaktuj się z administratorem."
+      "OpenIDNotAuthenticated": "Backend.AI nie mógł zweryfikować odpowiedzi logowania od dostawcy tożsamości. Spróbuj ponownie. Jeśli problem będzie się powtarzał, skontaktuj się z administratorem.",
+      "OpenIDProviderMisconfigured": "Logowanie między Backend.AI a dostawcą tożsamości nie jest poprawnie skonfigurowane. Skontaktuj się z administratorem.",
+      "OpenIDProviderUnavailable": "Dostawca tożsamości jest tymczasowo niedostępny lub nie można się z nim połączyć. Spróbuj ponownie za kilka minut.",
+      "OpenIDSessionInvalid": "Żądanie logowania wygasło lub zostało już użyte. Może się tak zdarzyć, jeśli logowanie trwało zbyt długo lub użyto przycisku Wstecz w przeglądarce. Zacznij od nowa na stronie logowania.",
+      "OpenIDUnknownError": "Podczas logowania wystąpił nieoczekiwany błąd. Spróbuj ponownie. Jeśli problem będzie się powtarzał, skontaktuj się z administratorem.",
+      "OpenIDUnknownErrorWithCode": "Podczas logowania wystąpił nieoczekiwany błąd (kod błędu: {{ code }}). Spróbuj ponownie. Jeśli problem będzie się powtarzał, skontaktuj się z administratorem."
     }
   },
   "loginHistory": {

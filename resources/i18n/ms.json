@@ -2030,15 +2030,16 @@
       "LoginWithRealm": "Log masuk dengan {{ realmName }}",
       "LoginWithRealmFailed": "Gagal log masuk dengan {{ realmName }}",
       "LoginWithSAML": "Log masuk dengan SAML",
-      "OpenIDAccessDenied": "Pembekal identiti menolak log masuk. Log masuk atau persetujuan mungkin telah dibatalkan, atau pembekal memerlukan anda log masuk semula atau memilih akaun. Sila cuba lagi.",
-      "OpenIDDomainNotFound": "Tiada domain Backend.AI yang dipautkan dengan kumpulan anda. Hubungi pentadbir anda.",
-      "OpenIDGroupNotAllowed": "Akaun anda bukan ahli kumpulan yang dibenarkan mengakses Backend.AI. Minta pentadbir anda menyemak keahlian kumpulan anda.",
+      "OpenIDAccessDenied": "Log masuk telah dibatalkan, atau kebenaran yang diminta tidak diberikan. Sila log masuk semula dan lengkapkan setiap langkah di halaman pembekal identiti. Jika organisasi anda memerlukan kelulusan pentadbir untuk aplikasi ini, hubungi pentadbir anda.",
+      "OpenIDDomainNotFound": "Kumpulan anda dipautkan dengan domain Backend.AI yang tidak wujud. Hubungi pentadbir anda.",
+      "OpenIDGroupNotAllowed": "Akaun anda bukan ahli mana-mana kumpulan yang dibenarkan menggunakan Backend.AI. Minta pentadbir anda menyemak keahlian kumpulan anda.",
       "OpenIDInternalServerError": "Ralat pelayan berlaku semasa log masuk. Sila cuba lagi kemudian. Jika masalah berterusan, hubungi pentadbir anda.",
-      "OpenIDNotAuthenticated": "Pembekal identiti tidak dapat mengesahkan anda. Sila cuba lagi. Jika masalah berterusan, hubungi pentadbir anda.",
-      "OpenIDProviderMisconfigured": "Pembekal identiti menolak konfigurasi klien Backend.AI. Hubungi pentadbir anda.",
-      "OpenIDProviderUnavailable": "Pembekal identiti tidak tersedia buat sementara waktu. Sila cuba lagi kemudian.",
-      "OpenIDSessionInvalid": "Sesi log masuk anda tiada atau telah tamat tempoh. Sila log masuk semula.",
-      "OpenIDUnknownError": "Ralat yang tidak diketahui berlaku semasa log masuk ({{ code }}). Sila cuba lagi. Jika masalah berterusan, hubungi pentadbir anda."
+      "OpenIDNotAuthenticated": "Backend.AI tidak dapat mengesahkan respons log masuk daripada pembekal identiti. Sila cuba lagi. Jika masalah berterusan, hubungi pentadbir anda.",
+      "OpenIDProviderMisconfigured": "Log masuk antara Backend.AI dan pembekal identiti tidak dikonfigurasikan dengan betul. Hubungi pentadbir anda.",
+      "OpenIDProviderUnavailable": "Pembekal identiti tidak tersedia buat sementara waktu atau tidak dapat dihubungi. Sila cuba lagi dalam beberapa minit.",
+      "OpenIDSessionInvalid": "Permintaan log masuk anda telah tamat tempoh atau telah digunakan. Ini boleh berlaku jika log masuk mengambil masa terlalu lama atau anda menggunakan butang kembali pelayar. Sila mulakan semula dari halaman log masuk.",
+      "OpenIDUnknownError": "Ralat yang tidak dijangka berlaku semasa log masuk. Sila cuba lagi. Jika masalah berterusan, hubungi pentadbir anda.",
+      "OpenIDUnknownErrorWithCode": "Ralat yang tidak dijangka berlaku semasa log masuk (kod ralat: {{ code }}). Sila cuba lagi. Jika masalah berterusan, hubungi pentadbir anda."
     }
   },
   "loginHistory": {

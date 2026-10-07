@@ -32,38 +32,47 @@ describe('resolveOpenIDLoginErrorKey', () => {
     );
     expect(new Set(keys).size).toBe(KNOWN_CODES.length);
     for (const key of keys) {
-      expect(key).not.toBe('login.singleSignOn.OpenIDUnknownError');
+      expect(key).not.toMatch(/^login\.singleSignOn\.OpenIDUnknownError/);
       expect(typeof lookup(key)).toBe('string');
     }
   });
 
-  it('falls back to the unknown-error key and keeps the code', () => {
+  it('falls back to the with-code key for an unknown code-shaped value', () => {
     expect(resolveOpenIDLoginErrorKey('something-new')).toEqual({
-      key: 'login.singleSignOn.OpenIDUnknownError',
+      key: 'login.singleSignOn.OpenIDUnknownErrorWithCode',
       code: 'something-new',
     });
-    expect(typeof lookup('login.singleSignOn.OpenIDUnknownError')).toBe(
-      'string',
-    );
   });
 
   it('does not treat Object prototype names as known codes', () => {
-    expect(resolveOpenIDLoginErrorKey('constructor').key).toBe(
-      'login.singleSignOn.OpenIDUnknownError',
-    );
-  });
-
-  it('does not echo values that are not code-shaped', () => {
-    expect(resolveOpenIDLoginErrorKey('x'.repeat(65)).code).toBe('invalid');
-    expect(
-      resolveOpenIDLoginErrorKey('Account locked. Call 1-800-000').code,
-    ).toBe('invalid');
-  });
-
-  it('falls back to the unknown-error key for an empty value', () => {
-    expect(resolveOpenIDLoginErrorKey('')).toEqual({
-      key: 'login.singleSignOn.OpenIDUnknownError',
-      code: 'invalid',
+    expect(resolveOpenIDLoginErrorKey('constructor')).toEqual({
+      key: 'login.singleSignOn.OpenIDUnknownErrorWithCode',
+      code: 'constructor',
     });
+  });
+
+  it('omits the code for values that are not code-shaped', () => {
+    for (const value of ['x'.repeat(65), 'Account locked. Call 1-800-000']) {
+      expect(resolveOpenIDLoginErrorKey(value)).toEqual({
+        key: 'login.singleSignOn.OpenIDUnknownError',
+      });
+    }
+  });
+
+  it('omits the code for an empty or blank value', () => {
+    for (const value of ['', '   ']) {
+      const result = resolveOpenIDLoginErrorKey(value);
+      expect(result.key).toBe('login.singleSignOn.OpenIDUnknownError');
+      expect(result.code).toBeUndefined();
+    }
+  });
+
+  it('has both unknown-error messages, only one of them with the code', () => {
+    const withCode = lookup('login.singleSignOn.OpenIDUnknownErrorWithCode');
+    const withoutCode = lookup('login.singleSignOn.OpenIDUnknownError');
+    expect(typeof withCode).toBe('string');
+    expect(typeof withoutCode).toBe('string');
+    expect(withCode as string).toContain('{{ code }}');
+    expect(withoutCode as string).not.toContain('{{ code }}');
   });
 });

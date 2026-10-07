@@ -2033,15 +2033,16 @@
       "LoginWithRealm": "Masuk dengan {{ namaRealm }}",
       "LoginWithRealmFailed": "Gagal masuk dengan {{ realmName }}",
       "LoginWithSAML": "Masuk dengan SAML",
-      "OpenIDAccessDenied": "Penyedia identitas menolak proses masuk. Proses masuk atau persetujuan mungkin dibatalkan, atau penyedia meminta Anda masuk lagi atau memilih akun. Silakan coba lagi.",
-      "OpenIDDomainNotFound": "Tidak ada domain Backend.AI yang terhubung dengan grup Anda. Hubungi administrator Anda.",
-      "OpenIDGroupNotAllowed": "Akun Anda tidak termasuk dalam grup yang diizinkan mengakses Backend.AI. Minta administrator Anda untuk memeriksa keanggotaan grup Anda.",
+      "OpenIDAccessDenied": "Proses masuk dibatalkan, atau izin yang diminta tidak diberikan. Silakan masuk lagi dan selesaikan semua langkah di halaman penyedia identitas. Jika organisasi Anda mewajibkan persetujuan administrator untuk aplikasi ini, hubungi administrator Anda.",
+      "OpenIDDomainNotFound": "Grup Anda terhubung ke domain Backend.AI yang tidak ada. Hubungi administrator Anda.",
+      "OpenIDGroupNotAllowed": "Akun Anda tidak termasuk dalam grup mana pun yang diizinkan menggunakan Backend.AI. Minta administrator Anda untuk memeriksa keanggotaan grup Anda.",
       "OpenIDInternalServerError": "Terjadi kesalahan server saat masuk. Silakan coba lagi nanti. Jika masalah berlanjut, hubungi administrator Anda.",
-      "OpenIDNotAuthenticated": "Penyedia identitas tidak dapat mengautentikasi Anda. Silakan coba lagi. Jika masalah berlanjut, hubungi administrator Anda.",
-      "OpenIDProviderMisconfigured": "Penyedia identitas menolak konfigurasi klien Backend.AI. Hubungi administrator Anda.",
-      "OpenIDProviderUnavailable": "Penyedia identitas untuk sementara tidak tersedia. Silakan coba lagi nanti.",
-      "OpenIDSessionInvalid": "Sesi masuk Anda tidak ada atau telah kedaluwarsa. Silakan masuk lagi.",
-      "OpenIDUnknownError": "Terjadi kesalahan yang tidak diketahui saat masuk ({{ code }}). Silakan coba lagi. Jika masalah berlanjut, hubungi administrator Anda."
+      "OpenIDNotAuthenticated": "Backend.AI tidak dapat memverifikasi respons masuk dari penyedia identitas. Silakan coba lagi. Jika masalah berlanjut, hubungi administrator Anda.",
+      "OpenIDProviderMisconfigured": "Proses masuk antara Backend.AI dan penyedia identitas tidak dikonfigurasi dengan benar. Hubungi administrator Anda.",
+      "OpenIDProviderUnavailable": "Penyedia identitas untuk sementara tidak tersedia atau tidak dapat dihubungi. Silakan coba lagi dalam beberapa menit.",
+      "OpenIDSessionInvalid": "Permintaan masuk Anda telah kedaluwarsa atau sudah digunakan. Hal ini dapat terjadi jika proses masuk terlalu lama atau Anda menggunakan tombol kembali di browser. Silakan mulai lagi dari halaman masuk.",
+      "OpenIDUnknownError": "Terjadi kesalahan tak terduga saat masuk. Silakan coba lagi. Jika masalah berlanjut, hubungi administrator Anda.",
+      "OpenIDUnknownErrorWithCode": "Terjadi kesalahan tak terduga saat masuk (kode kesalahan: {{ code }}). Silakan coba lagi. Jika masalah berlanjut, hubungi administrator Anda."
     }
   },
   "loginHistory": {

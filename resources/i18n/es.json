@@ -2030,15 +2030,16 @@
       "LoginWithRealm": "Iniciar sesión con {{ realmName }}",
       "LoginWithRealmFailed": "Error al iniciar sesión con {{ realmName }}",
       "LoginWithSAML": "Inicio de sesión con SAML",
-      "OpenIDAccessDenied": "El proveedor de identidad rechazó el inicio de sesión. Es posible que se haya cancelado el inicio de sesión o el consentimiento, o que el proveedor requiera volver a iniciar sesión o elegir una cuenta. Inténtelo de nuevo.",
-      "OpenIDDomainNotFound": "No hay ningún dominio de Backend.AI vinculado a su grupo. Póngase en contacto con su administrador.",
-      "OpenIDGroupNotAllowed": "Su cuenta no pertenece a un grupo con acceso permitido a Backend.AI. Pida a su administrador que compruebe su pertenencia a grupos.",
+      "OpenIDAccessDenied": "Se canceló el inicio de sesión o no se concedieron los permisos solicitados. Vuelva a iniciar sesión y complete todos los pasos en la página del proveedor de identidad. Si su organización requiere la aprobación de un administrador para esta aplicación, póngase en contacto con su administrador.",
+      "OpenIDDomainNotFound": "Su grupo está vinculado a un dominio de Backend.AI que no existe. Póngase en contacto con su administrador.",
+      "OpenIDGroupNotAllowed": "Su cuenta no pertenece a ningún grupo autorizado para usar Backend.AI. Pida a su administrador que compruebe su pertenencia a grupos.",
       "OpenIDInternalServerError": "Se produjo un error del servidor al iniciar sesión. Inténtelo de nuevo más tarde. Si el problema persiste, póngase en contacto con su administrador.",
-      "OpenIDNotAuthenticated": "El proveedor de identidad no pudo autenticarle. Inténtelo de nuevo. Si el problema persiste, póngase en contacto con su administrador.",
-      "OpenIDProviderMisconfigured": "El proveedor de identidad rechazó la configuración de cliente de Backend.AI. Póngase en contacto con su administrador.",
-      "OpenIDProviderUnavailable": "El proveedor de identidad no está disponible temporalmente. Inténtelo de nuevo más tarde.",
-      "OpenIDSessionInvalid": "Su sesión de inicio de sesión no existe o ha caducado. Vuelva a iniciar sesión.",
-      "OpenIDUnknownError": "Se produjo un error desconocido al iniciar sesión ({{ code }}). Inténtelo de nuevo. Si el problema persiste, póngase en contacto con su administrador."
+      "OpenIDNotAuthenticated": "Backend.AI no pudo verificar la respuesta de inicio de sesión del proveedor de identidad. Inténtelo de nuevo. Si el problema persiste, póngase en contacto con su administrador.",
+      "OpenIDProviderMisconfigured": "El inicio de sesión entre Backend.AI y el proveedor de identidad no está configurado correctamente. Póngase en contacto con su administrador.",
+      "OpenIDProviderUnavailable": "El proveedor de identidad no está disponible temporalmente o no se pudo conectar con él. Inténtelo de nuevo en unos minutos.",
+      "OpenIDSessionInvalid": "Su solicitud de inicio de sesión caducó o ya se utilizó. Esto puede ocurrir si el inicio de sesión tardó demasiado o si usó el botón Atrás del navegador. Vuelva a empezar desde la página de inicio de sesión.",
+      "OpenIDUnknownError": "Se produjo un error inesperado al iniciar sesión. Inténtelo de nuevo. Si el problema persiste, póngase en contacto con su administrador.",
+      "OpenIDUnknownErrorWithCode": "Se produjo un error inesperado al iniciar sesión (código de error: {{ code }}). Inténtelo de nuevo. Si el problema persiste, póngase en contacto con su administrador."
     }
   },
   "loginHistory": {

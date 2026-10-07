@@ -2030,15 +2030,16 @@
       "LoginWithRealm": "Kirjaudu sisään {{ realmName }}",
       "LoginWithRealmFailed": "Kirjautuminen palvelulla {{ realmName }} epäonnistui",
       "LoginWithSAML": "Kirjautuminen SAML:llä",
-      "OpenIDAccessDenied": "Tunnistautumispalvelu hylkäsi kirjautumisen. Kirjautuminen tai suostumus on ehkä peruttu, tai palvelu vaatii kirjautumaan uudelleen tai valitsemaan tilin. Yritä uudelleen.",
-      "OpenIDDomainNotFound": "Ryhmääsi ei ole liitetty Backend.AI-toimialuetta. Ota yhteyttä järjestelmänvalvojaan.",
-      "OpenIDGroupNotAllowed": "Tilisi ei kuulu ryhmään, jolla on pääsy Backend.AI:hin. Pyydä järjestelmänvalvojaa tarkistamaan ryhmäjäsenyytesi.",
+      "OpenIDAccessDenied": "Kirjautuminen peruttiin, tai pyydettyjä käyttöoikeuksia ei myönnetty. Kirjaudu uudelleen ja suorita kaikki vaiheet tunnistautumispalvelun sivulla. Jos organisaatiosi vaatii tälle sovellukselle järjestelmänvalvojan hyväksynnän, ota yhteyttä järjestelmänvalvojaan.",
+      "OpenIDDomainNotFound": "Ryhmäsi on liitetty Backend.AI-toimialueeseen, jota ei ole olemassa. Ota yhteyttä järjestelmänvalvojaan.",
+      "OpenIDGroupNotAllowed": "Tilisi ei kuulu mihinkään ryhmään, jolla on oikeus käyttää Backend.AI:ta. Pyydä järjestelmänvalvojaa tarkistamaan ryhmäjäsenyytesi.",
       "OpenIDInternalServerError": "Kirjautumisen aikana tapahtui palvelinvirhe. Yritä myöhemmin uudelleen. Jos ongelma jatkuu, ota yhteyttä järjestelmänvalvojaan.",
-      "OpenIDNotAuthenticated": "Tunnistautumispalvelu ei pystynyt tunnistamaan sinua. Yritä uudelleen. Jos ongelma jatkuu, ota yhteyttä järjestelmänvalvojaan.",
-      "OpenIDProviderMisconfigured": "Tunnistautumispalvelu hylkäsi Backend.AI:n asiakasmääritykset. Ota yhteyttä järjestelmänvalvojaan.",
-      "OpenIDProviderUnavailable": "Tunnistautumispalvelu ei ole tilapäisesti käytettävissä. Yritä myöhemmin uudelleen.",
-      "OpenIDSessionInvalid": "Kirjautumisistuntoa ei ole tai se on vanhentunut. Kirjaudu uudelleen.",
-      "OpenIDUnknownError": "Kirjautumisen aikana tapahtui tuntematon virhe ({{ code }}). Yritä uudelleen. Jos ongelma jatkuu, ota yhteyttä järjestelmänvalvojaan."
+      "OpenIDNotAuthenticated": "Backend.AI ei pystynyt vahvistamaan tunnistautumispalvelun kirjautumisvastausta. Yritä uudelleen. Jos ongelma jatkuu, ota yhteyttä järjestelmänvalvojaan.",
+      "OpenIDProviderMisconfigured": "Kirjautumista ei ole määritetty oikein Backend.AI:n ja tunnistautumispalvelun välillä. Ota yhteyttä järjestelmänvalvojaan.",
+      "OpenIDProviderUnavailable": "Tunnistautumispalvelu ei ole tilapäisesti käytettävissä, tai siihen ei saatu yhteyttä. Yritä uudelleen muutaman minuutin kuluttua.",
+      "OpenIDSessionInvalid": "Kirjautumispyyntö on vanhentunut tai se on jo käytetty. Näin voi käydä, jos kirjautuminen kesti liian kauan tai käytit selaimen Takaisin-painiketta. Aloita uudelleen kirjautumissivulta.",
+      "OpenIDUnknownError": "Kirjautumisen aikana tapahtui odottamaton virhe. Yritä uudelleen. Jos ongelma jatkuu, ota yhteyttä järjestelmänvalvojaan.",
+      "OpenIDUnknownErrorWithCode": "Kirjautumisen aikana tapahtui odottamaton virhe (virhekoodi: {{ code }}). Yritä uudelleen. Jos ongelma jatkuu, ota yhteyttä järjestelmänvalvojaan."
     }
   },
   "loginHistory": {
