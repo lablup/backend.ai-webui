@@ -8,6 +8,7 @@ import {
   DOMAIN_APPEARANCE_CONFIG_KEY,
 } from '../helper/customThemeConfig';
 import { useUpdatePublicDomainAppConfig } from '../hooks/useAppConfig';
+import { useRawCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useDefaultTheme } from '../hooks/useDefaultTheme';
 import FontFamilySettingItem from './BrandingSettingItems/FontFamilySettingItem';
 import LogoPreviewer, {
@@ -27,8 +28,9 @@ import {
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import { Settings, Fullscreen, Check } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useBlocker } from 'react-router-dom';
 
 interface BrandingSettingListProps {}
 
@@ -41,11 +43,72 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
 
   const [openThemeConfigModal, setOpenThemeConfigModal] = useState(false);
 
-  const { defaultTheme, resetDefaultTheme } = useDefaultTheme();
-  // The draft (prefilled from the saved domain theme, else theme.json) is
-  // saved WHOLE — families included — as this domain's slice of the public
-  // document; reads replace wholesale rather than merging (FR-1964).
+  const {
+    defaultTheme,
+    resetDefaultTheme,
+    seedDefaultTheme,
+    clearDefaultTheme,
+    hasUnappliedChanges,
+  } = useDefaultTheme();
+  // The draft is saved WHOLE — families included — as this domain's slice of
+  // the public document; reads replace wholesale rather than merging (FR-1964).
   const updatePublicDomainAppConfig = useUpdatePublicDomainAppConfig();
+
+  // The draft lives only while this page is open: seeded from the applied
+  // document on entry (refresh included), cleared on leave or Apply.
+  const rawThemeConfig = useRawCustomThemeConfig();
+  const isDraftSeededRef = useRef(false);
+  const seedDraftOnce = useEffectEvent(() => {
+    if (!isDraftSeededRef.current) {
+      isDraftSeededRef.current = seedDefaultTheme();
+    }
+  });
+  useEffect(() => {
+    seedDraftOnce();
+  }, [rawThemeConfig]);
+  const discardDraft = useEffectEvent(() => {
+    isDraftSeededRef.current = false;
+    clearDefaultTheme();
+  });
+  useEffect(() => {
+    return () => discardDraft();
+  }, []);
+
+  // Set before the post-Apply reload so neither guard asks to confirm it.
+  const isLeavingAfterApplyRef = useRef(false);
+  const blocker = useBlocker(
+    ({ currentLocation, nextLocation }) =>
+      hasUnappliedChanges && currentLocation.pathname !== nextLocation.pathname,
+  );
+  const confirmLeave = useEffectEvent(() => {
+    modal.confirm({
+      title: t('userSettings.LeaveWithoutApplyingTheme'),
+      content: t('userSettings.LeaveWithoutApplyingThemeDesc'),
+      okText: t('button.Discard'),
+      okButtonProps: { danger: true },
+      cancelText: t('button.Cancel'),
+      onOk: () => blocker.proceed?.(),
+      onCancel: () => blocker.reset?.(),
+    });
+  });
+  useEffect(() => {
+    if (blocker.state === 'blocked') {
+      confirmLeave();
+    }
+  }, [blocker.state]);
+  // Refresh / tab close can only show the browser's own prompt.
+  const shouldConfirmUnload = useEffectEvent(
+    () => hasUnappliedChanges && !isLeavingAfterApplyRef.current,
+  );
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (shouldConfirmUnload()) {
+        e.preventDefault();
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
 
   const applyThemeToDomain = async () => {
     if (!defaultTheme) {
@@ -66,6 +129,8 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
           });
           // The reloaded page renders the applied document — that IS the
           // feedback; the anonymous read path has no refresh API (FR-1964).
+          isLeavingAfterApplyRef.current = true;
+          clearDefaultTheme();
           window.location.reload();
         } catch (error) {
           message.error(getErrorMessage(error));

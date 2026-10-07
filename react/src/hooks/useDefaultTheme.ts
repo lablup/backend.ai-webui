@@ -4,23 +4,23 @@
  */
 import { App } from '../app-shim';
 import {
-  APPEARANCE_SCHEMA_VERSION,
+  BAIAppearanceConfig,
   getDomainAppearanceConfig,
   getStaticAppearanceConfig,
 } from '../helper/customThemeConfig';
 import { useBAISettingUserState } from './useBAISetting';
 import { useRawCustomThemeConfig } from './useCustomThemeConfig';
 import * as _ from 'lodash-es';
-import { useEffectEvent, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
+/** The saved domain document, else the shipped `theme.json`. */
+const getAppliedSeed = (): BAIAppearanceConfig | undefined =>
+  getDomainAppearanceConfig() ?? getStaticAppearanceConfig();
+
 /**
- * The *editable* appearance document (the operator's `theme.json`
- * equivalent) backing the admin Branding page. Kept as a per-user draft in
- * localStorage (`custom_theme_config`) and applied through the theme preview
- * mode. Seeded from the saved domain document, else the shipped
- * `theme.json` — never from the applied (preview) document, so the user's
- * active family never leaks into the edited default.
+ * The Branding page's draft of the appearance document, kept in localStorage
+ * (`custom_theme_config`) so the preview window can read it. The page seeds
+ * it on entry and clears it on Apply or when it unmounts.
  */
 export const useDefaultTheme = () => {
   'use memo';
@@ -32,24 +32,22 @@ export const useDefaultTheme = () => {
     'custom_theme_config',
   );
 
-  // Seed the draft from the saved domain document, else the SHIPPED one —
-  // never from `rawThemeConfig`, which in preview mode IS the draft and would
-  // loop. A draft from before the v2 format (no schemaVersion) is reseeded
-  // rather than edited. Note: useBAISettingUserState returns null (not
-  // undefined) when localStorage has no value.
-  const initializeDefaultTheme = useEffectEvent(() => {
-    const seed = getDomainAppearanceConfig() ?? getStaticAppearanceConfig();
-    if (
-      (_.isNil(defaultTheme) ||
-        defaultTheme.schemaVersion !== APPEARANCE_SCHEMA_VERSION) &&
-      !_.isNil(seed)
-    ) {
-      setDefaultTheme(_.cloneDeep(seed));
+  /** Replace the draft with the applied document; false until it has loaded. */
+  const seedDefaultTheme = (): boolean => {
+    const seed = getAppliedSeed();
+    if (_.isNil(seed)) {
+      return false;
     }
-  });
-  useEffect(() => {
-    initializeDefaultTheme();
-  }, [rawThemeConfig]);
+    setDefaultTheme(_.cloneDeep(seed));
+    return true;
+  };
+
+  const clearDefaultTheme = () => {
+    setDefaultTheme(undefined);
+  };
+
+  const hasUnappliedChanges =
+    !_.isNil(defaultTheme) && !_.isEqual(defaultTheme, getAppliedSeed());
 
   const updateDefaultTheme = (path: string, value: unknown) => {
     setDefaultTheme((prev) => {
@@ -93,5 +91,8 @@ export const useDefaultTheme = () => {
     updateDefaultTheme,
     getDefaultThemeValue,
     resetDefaultTheme,
+    seedDefaultTheme,
+    clearDefaultTheme,
+    hasUnappliedChanges,
   };
 };

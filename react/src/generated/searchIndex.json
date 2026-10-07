@@ -421,6 +421,7 @@
       ],
       "keys": [
         "button.Apply",
+        "button.Discard",
         "button.OK",
         "button.Reset",
         "dialog.ask.DoYouWantToResetChanges",
@@ -443,6 +444,8 @@
         "userSettings.ApplyThemeToDomainDesc",
         "userSettings.DarkMode",
         "userSettings.FailedToLoadDefaultThemeConfig",
+        "userSettings.LeaveWithoutApplyingTheme",
+        "userSettings.LeaveWithoutApplyingThemeDesc",
         "userSettings.LightMode",
         "userSettings.font.FontCustomizationDesc",
         "userSettings.logo.CreateURLWithImage",
