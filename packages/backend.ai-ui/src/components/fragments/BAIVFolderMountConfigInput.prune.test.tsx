@@ -33,7 +33,7 @@ const unmountableEntry: VFolderMountConfigValue = {
 };
 
 // A suspended fetch only retries once its `act` scope is awaited: one scope for
-// the render, one more for the mock's 250 ms `GET /folders`.
+// the render, one more for the folder-list fetch.
 const flush = () =>
   act(async () => {
     await new Promise((resolve) => setTimeout(resolve, 400));

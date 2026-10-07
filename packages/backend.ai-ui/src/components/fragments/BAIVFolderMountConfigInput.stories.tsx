@@ -24,9 +24,9 @@ import { action } from 'storybook/actions';
 
 const DEMO_WIDTH = 760;
 
-// The shared REST fixture exercises every gate the select applies; a third
+// The shared folder fixture exercises every gate the select applies; a third
 // mountable folder is added here so the alias modes fit on one screen.
-const legacyFolders = [
+const fixtureFolders = [
   ...mockVFolderListItems,
   mockVFolderListItem({
     id: 'aaaaaaaabbbbccccddddeeeeffff0006',
@@ -34,10 +34,10 @@ const legacyFolders = [
   }),
 ];
 
-// The REST fixture keys folders by the 32-hex `id`; the select emits the
+// The fixture keys folders by the 32-hex `id`; the select emits the
 // dashed UUID, which is what the row's path picker browses by.
-const folderId = (index: number) => convertToUUID(legacyFolders[index].id);
-const folderName = (index: number) => legacyFolders[index].name;
+const folderId = (index: number) => convertToUUID(fixtureFolders[index].id);
+const folderName = (index: number) => fixtureFolders[index].name;
 
 // Directory trees keyed by vfolder UUID, then by the path notation
 // `useSearchVFolderFiles` uses ('.' = root, 'a/b' below it), so every row's
@@ -189,7 +189,7 @@ dropped in the **WithAutoMountedFolders** story.
     (Story) => (
       <MemoryRouter>
         <MockVFolderFileProviders
-          folders={legacyFolders}
+          folders={fixtureFolders}
           trees={createTrees}
           suspenseFallback="Loading..."
         >
