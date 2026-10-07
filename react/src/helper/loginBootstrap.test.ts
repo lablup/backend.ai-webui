@@ -4,6 +4,7 @@
  */
 import type { BackendAIClient } from '../hooks';
 import {
+  LoginBootstrapIncompleteError,
   SessionAuthFailureError,
   isSessionAuthFailure,
   probeLoginSession,
@@ -172,6 +173,32 @@ describe('probeLoginSession', () => {
     await expect(probeLoginSession(client)).rejects.not.toBeInstanceOf(
       SessionAuthFailureError,
     );
+  });
+
+  it('rejects, without asking check_login, when the identity fails to resolve', async () => {
+    const client = makeClient({
+      _wrapWithPromise: vi.fn().mockResolvedValue({
+        data: { keypair: bootstrap.keypair, user: null, groups: null },
+        errors: [{ message: 'resolver failed', path: ['user'] }],
+      }),
+    });
+    await expect(probeLoginSession(client)).rejects.toBeInstanceOf(
+      LoginBootstrapIncompleteError,
+    );
+    expect(client.check_login).not.toHaveBeenCalled();
+  });
+
+  it('accepts a bootstrap whose groups alone failed', async () => {
+    const client = makeClient({
+      _wrapWithPromise: vi.fn().mockResolvedValue({
+        data: { ...bootstrap, groups: null },
+        errors: [{ message: 'groups failed', path: ['groups'] }],
+      }),
+    });
+    await expect(probeLoginSession(client)).resolves.toMatchObject({
+      keypair: { access_key: 'AKIATEST' },
+      groups: null,
+    });
   });
 
   it('falls back to check_login when the session id is not known locally', async () => {

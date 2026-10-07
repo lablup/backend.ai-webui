@@ -129,7 +129,6 @@ export async function connectViaGQL(
     throw new Error('Keypair information is missing.');
   }
   if (!response.user) {
-    if (!isActingAs) await client.logout();
     throw new Error('User information is missing.');
   }
 

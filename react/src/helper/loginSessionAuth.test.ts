@@ -2,7 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { SessionAuthFailureError } from './loginBootstrap';
+import {
+  LoginBootstrapIncompleteError,
+  SessionAuthFailureError,
+} from './loginBootstrap';
 import type { LoginConfigState } from './loginConfig';
 import {
   LoginProbeCancelledError,
@@ -131,6 +134,27 @@ describe('connectViaGQL — keypair query rejects (FR-3998)', () => {
     await expect(connectViaGQL(client, cfg, [])).rejects.toMatchObject({
       statusCode: 408,
     });
+    expect(logout).not.toHaveBeenCalled();
+  });
+
+  it('keeps the session when the manager fails to resolve the identity', async () => {
+    const logout = vi.fn().mockResolvedValue(undefined);
+    const client = {
+      newSignedRequest: vi.fn(() => ({})),
+      _wrapWithPromise: vi.fn().mockResolvedValue({
+        data: { keypair: null, user: null, groups: null },
+        errors: [{ message: 'database is unavailable', path: ['keypair'] }],
+      }),
+      isManagerVersionCompatibleWith: () => true,
+      logout,
+    };
+
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBeInstanceOf(
+      LoginBootstrapIncompleteError,
+    );
+    await expect(connectViaGQL(client, cfg, [])).rejects.toThrow(
+      'database is unavailable',
+    );
     expect(logout).not.toHaveBeenCalled();
   });
 });
