@@ -120,6 +120,8 @@ export const useSuspendedLegacyVFolders = ({
       status: node.status ?? '',
       usage_mode: node.usage_mode ?? '',
       created_at: node.created_at ?? '',
+      // TODO(needs-backend): drop the owner rule once BA-8322 makes
+      // `permissions` carry the owner's level (keep it for managers without the fix).
       permission:
         node.user && isSameUuid(node.user, myUserId)
           ? 'rw'
