@@ -1,1 +1,0 @@
-import{r as o}from"./iframe-gRCT4_lE.js";import{F as s}from"./FieldStatus-Be9lyd1L.js";function i({isRequired:e=!1,isOptional:r=!1}){const{defaultOptionality:t}=o.use(s);return!r&&(e||t==="required")}export{i as u};
