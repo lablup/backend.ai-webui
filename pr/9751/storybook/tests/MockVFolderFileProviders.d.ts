@@ -18,8 +18,7 @@ export interface MockVFolderFileProvidersProps {
 /**
  * Everything a vfolder file-browsing story needs without a backend: a mock
  * Relay environment answering `vfolder_nodes` / the picker's `vfolderV2` from
- * `vfolders`, and a mock `BAIClient` whose file APIs read and write `trees`
- * and whose signed `GET /folders` request answers `folders`.
+ * `vfolders`, and a mock `BAIClient` whose file APIs read and write `trees`.
  */
 declare const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps>;
 export default MockVFolderFileProviders;

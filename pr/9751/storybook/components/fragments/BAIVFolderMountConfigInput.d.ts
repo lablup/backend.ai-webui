@@ -26,7 +26,7 @@ export interface AutoMountedFolder {
     name: string;
 }
 export interface BAIVFolderMountConfigInputRef {
-    /** Re-runs the `GET /folders` query behind the folder select. */
+    /** Re-runs the `vfolder_nodes` query behind the folder select. */
     refetch: () => Promise<unknown>;
 }
 export interface BAIVFolderMountConfigInputProps {
@@ -136,11 +136,8 @@ export declare const useVFolderMountConfigFormRule: (options?: VFolderMountConfi
 /**
  * Reusable, schema-agnostic input for configuring vfolder mounts.
  *
- * The folder list comes from REST `GET /folders` rather than the
- * `vfolder_nodes` connection because the `mountableHosts` /
- * `autoMountedFolders` gates the host supplies cannot be expressed there.
- * The component suspends on that fetch, so the consumer owns the Suspense
- * boundary.
+ * Suspends on the `vfolder_nodes` folder list, so the consumer owns the
+ * Suspense boundary.
  *
  * Props, form gating and usage: `BAIVFolderMountConfigInput.doc.ts`.
  */
