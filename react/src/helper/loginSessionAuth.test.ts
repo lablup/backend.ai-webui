@@ -147,8 +147,11 @@ describe('connectViaGQL — keypair query rejects (FR-3998)', () => {
     const logout = vi.fn().mockResolvedValue(undefined);
     const client = failingClient(timeout, logout);
 
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBeInstanceOf(
+      LoginBootstrapIncompleteError,
+    );
     await expect(connectViaGQL(client, cfg, [])).rejects.toMatchObject({
-      statusCode: 408,
+      cause: { statusCode: 408 },
     });
     expect(logout).not.toHaveBeenCalled();
   });

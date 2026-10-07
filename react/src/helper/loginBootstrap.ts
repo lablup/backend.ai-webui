@@ -133,9 +133,13 @@ export class SessionAuthFailureError extends Error {
 export class LoginBootstrapIncompleteError extends Error {
   readonly cause: unknown;
   constructor(cause: unknown) {
-    const errors = (cause as { errors?: Array<{ message?: unknown }> } | null)
-      ?.errors;
-    const detail = errors?.find((e) => typeof e?.message === 'string')?.message;
+    const { errors, message } =
+      (cause as {
+        errors?: Array<{ message?: unknown }>;
+        message?: unknown;
+      } | null) ?? {};
+    const detail =
+      errors?.find((e) => typeof e?.message === 'string')?.message ?? message;
     super(typeof detail === 'string' ? detail : '');
     this.name = 'LoginBootstrapIncompleteError';
     this.cause = cause;
@@ -160,6 +164,12 @@ function createLoginEnvironment(client: BackendAIClient) {
         (err as Error | null)?.name === 'AuthorizationError'
       ) {
         throw new SessionAuthFailureError(err);
+      }
+      // Any other HTTP failure (a wrapped manager 5xx, a timeout) leaves the
+      // session cookie live; 403 stays a refusal for connectViaGQL's logout.
+      const status = (err as { statusCode?: unknown } | null)?.statusCode;
+      if (typeof status === 'number' && status >= 400 && status !== 403) {
+        throw new LoginBootstrapIncompleteError(err);
       }
       throw err;
     }
