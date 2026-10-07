@@ -70,7 +70,7 @@ export { default as BAIVFolderSelect } from './BAIVFolderSelect';
 export type { BAIVFolderSelectProps, VFolderNode, BAIVFolderPermission, BAIVFolderSelectRef, } from './BAIVFolderSelect';
 export { default as BAIVFolderMountConfigInput } from './BAIVFolderMountConfigInput';
 export { inputToMountDestination, mountDestinationToInput, getVFolderMountConfigStatuses, resolveVFolderMounts, toMountCreationConfig, useVFolderMountConfigFormRule, } from './BAIVFolderMountConfigInput';
-export type { AutoMountedFolder, BAIVFolderMountConfigInputProps, BAIVFolderMountConfigInputRef, LegacyVFolder, VFolderMountConfigValue, VFolderMountConfigStatusOptions, VFolderMountConfigEntryStatus, ResolvedVFolderMount, VFolderMountCreationConfig, } from './BAIVFolderMountConfigInput';
+export type { AutoMountedFolder, BAIVFolderMountConfigInputProps, BAIVFolderMountConfigInputRef, VFolderListItem, VFolderMountConfigValue, VFolderMountConfigStatusOptions, VFolderMountConfigEntryStatus, ResolvedVFolderMount, VFolderMountCreationConfig, } from './BAIVFolderMountConfigInput';
 export { default as BAIProjectVfolderSelect } from './BAIProjectVfolderSelect';
 export type { BAIProjectVfolderSelectProps, BAIProjectVfolderSelectFilter, ProjectVfolderNode, BAIProjectVfolderSelectRef, } from './BAIProjectVfolderSelect';
 export { default as BAIAvailablePresetSelect } from './BAIAvailablePresetSelect';

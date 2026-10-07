@@ -1,8 +1,8 @@
 import { RuleObject } from '../../form-engine';
-import { LegacyVFolder } from '../../hooks/useSuspendedLegacyVFolders';
+import { VFolderListItem } from '../../hooks/useSuspendedMyVFolders';
 import { default as React } from '../../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.2.8/01dc110d7f872a8caacc052aa0e86f46609c662315b6d5b76a7913331f487dd1/node_modules/react';
 import { LinkProps } from 'react-router-dom';
-export type { LegacyVFolder };
+export type { VFolderListItem };
 /**
  * A single vfolder mount configuration emitted by BAIVFolderMountConfigInput.
  * `mountDestination` holds the **raw alias** the user typed, verbatim, so the
@@ -39,8 +39,6 @@ export interface BAIVFolderMountConfigInputProps {
      * project folder's owner line needs it from the host.
      */
     currentProjectName?: string;
-    /** Lists the folders of this user instead of the caller's own. */
-    ownerEmail?: string;
     /**
      * Hosts granting `mount-in-session`. Which policies merge into that list
      * is the host app's business, so it is supplied rather than queried here.
@@ -50,7 +48,7 @@ export interface BAIVFolderMountConfigInputProps {
      * Display-only folder filter, applied after the mount gates. An already
      * selected folder stays visible even when it filters out.
      */
-    filter?: (folder: LegacyVFolder) => boolean;
+    filter?: (folder: VFolderListItem) => boolean;
     disabled?: boolean;
     /** Base path prepended to a relative alias input (mirrors VFolderTable). */
     aliasBasePath?: string;
@@ -138,7 +136,7 @@ export declare const useVFolderMountConfigFormRule: (options?: VFolderMountConfi
 /**
  * Reusable, schema-agnostic input for configuring vfolder mounts.
  *
- * The whole folder list is fetched (`useSuspendedLegacyVFolders`) and gated
+ * The whole folder list is fetched (`useSuspendedMyVFolders`) and gated
  * here, because the `mountableHosts` / `autoMountedFolders` gates the host
  * supplies cannot be expressed as a server-side filter. The component
  * suspends on that fetch, so the consumer owns the Suspense boundary.
