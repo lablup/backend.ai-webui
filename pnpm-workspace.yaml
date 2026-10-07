@@ -6,12 +6,12 @@ catalog:
   # Astryx pins are exact and move as one set with @lablup/ui-common, which
   # pins the same versions (ADR 0009): a mismatch installs a second core, and
   # scripts/migration-gates/single-astryx-core-gate.mjs fails.
-  "@astryxdesign/cli": 0.6.2
-  "@astryxdesign/core": 0.6.2
-  "@astryxdesign/lab": 0.6.2-canary.c9fb1ad
+  "@astryxdesign/cli": 0.6.5
+  "@astryxdesign/core": 0.6.5
+  "@astryxdesign/lab": 0.6.5-canary.8701623
   # The library and its CLI release in lockstep; pin both exactly (ADR 0009).
-  "@lablup/ui-common": 0.2.0-alpha.15
-  "@lablup/ui-common-cli": 0.2.0-alpha.15
+  "@lablup/ui-common": 0.2.0-alpha.17
+  "@lablup/ui-common-cli": 0.2.0-alpha.17
   "@babel/core": ^7.29.7
   "@babel/preset-typescript": ^7.29.7
   "@eslint/js": ^9.39.5
@@ -51,7 +51,7 @@ catalog:
   jest-environment-jsdom: ^30.3.0
   jsonc-eslint-parser: ^2.4.2
   lodash-es: ^4.18.1
-  # ^1.x: single-major convergence with @astryxdesign/theme-neutral@0.6.2,
+  # ^1.x: single-major convergence with @astryxdesign/theme-neutral@0.6.5,
   # whose hard dependency is lucide-react ^1.18.0 (to-astryx ticket 07). All
   # 78 icon names the app imports exist in both 0.552 and 1.x (measured);
   # converging up dedupes the two installed majors into one instance.
@@ -90,20 +90,20 @@ minimumReleaseAgeExclude:
   - react@19.2.6
   - react-dom@19.2.6
   - nuqs@2.9.2
-  # Astryx 0.6.2: published 2026-09-15, inside the 7-day window at adoption
-  # time. Remove after 2026-09-22.
-  - "@astryxdesign/core@0.6.2"
-  - "@astryxdesign/theme-neutral@0.6.2"
-  - "@astryxdesign/cli@0.6.2"
+  # Astryx 0.6.5: published 2026-10-02, inside the 7-day window at adoption
+  # time. Remove after 2026-10-09.
+  - "@astryxdesign/core@0.6.5"
+  - "@astryxdesign/theme-neutral@0.6.5"
+  - "@astryxdesign/cli@0.6.5"
   # Astryx Lab canary (to-astryx, ticket 18): MIGRATION-SPEC §1-④ decided
   # canary adoption with an exact pin; canary releases never age past the
   # quarantine window by design, so the exclusion is permanent while the
   # pin exists. Tarball-verified build (MAPPING.md header).
-  - "@astryxdesign/lab@0.6.2-canary.c9fb1ad"
-  # ui-common 0.2.0-alpha.15 and its CLI: published 2026-10-02, inside the
-  # 7-day window at adoption time. Remove after 2026-10-09.
-  - "@lablup/ui-common@0.2.0-alpha.15"
-  - "@lablup/ui-common-cli@0.2.0-alpha.15"
+  - "@astryxdesign/lab@0.6.5-canary.8701623"
+  # ui-common 0.2.0-alpha.17 and its CLI: published 2026-10-07, inside the
+  # 7-day window at adoption time. Remove after 2026-10-14.
+  - "@lablup/ui-common@0.2.0-alpha.17"
+  - "@lablup/ui-common-cli@0.2.0-alpha.17"
   # pnpm 12.4.0 is this repo's own `packageManager` pin: published 2026-09-08,
   # inside the 7-day window at adoption time. Without these, a contributor
   # still on pnpm 12.3.4 cannot provision the pin at all — 12.3.4 fetches the

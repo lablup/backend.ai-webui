@@ -12,11 +12,11 @@
  | (reserved) | 101–899 | unowned. A layer placed here sits BELOW the boot curtain, so anything that must stay visible during boot belongs above `splash` |
  | `splash` | 900 | `index.html` `#splash`, which stays mounted as the logged-out backdrop. It sits BELOW `modalBase` deliberately: every dialog is a `document.body` portal now, so no login-screen wrapper can lift one over a splash that outranks the band |
  | `loginHost` | 950 | `InteractiveLoginPage`'s full-viewport card host |
- | (legacy 1000 band) | 1000–1002 | a SECOND vocabulary this ladder does not own: the antd-era popup base (1000), inlined by `FolderExplorerModal` (`+ 2`); lab `Drawer`'s non-modal base is 1000 too, and `DragAndDrop` sits at 1001 |
+ | (legacy 1000 band) | 1000–1002 | a SECOND vocabulary this ladder does not own: the antd-era popup base (1000), inlined by `FolderExplorerModal` (`+ 2`); the non-modal `Drawer` (ui-common's fork) bases at 1000 too, and `DragAndDrop` sits at 1001 |
  | `modalBase` | 1100 | ui-common `Modal` (so `BAIModal` and the app-shim's `modal.*`) and `BAIDrawerPortal` (the scrimmed drawer), plus `BAI_Z_INDEX_MODAL_LEVEL_STEP` per level of ui-common's modal stack they share. `BAI_MODAL_Z_INDEX_BAND` hands this band to that stack |
  | `loginSideHelp` | 1101 | `LoginFormPanel`'s side help panel — a fixed sibling anchored to the base modal's edge, so it clears that modal's mask but not a modal opened on top of it |
  | `notification` | 11000 | `.bai-notification-stack` |
- | (CSS top layer) | above all | Astryx `Toast`/`Popover`/`DropdownMenu`/`Tooltip`, `BAITour` — not stackable against this ladder. A NON-SCRIM lab `Drawer` is not here either: it opens with `show()`, so it stacks at the legacy 1000 band above |
+ | (CSS top layer) | above all | Astryx `Toast`/`Popover`/`DropdownMenu`/`Tooltip`, `BAITour` — not stackable against this ladder. A NON-SCRIM `Drawer` is not here either: ui-common's fork opens it with `show()` (lab 0.6.5 would use the top layer), so it stacks at the legacy 1000 band above |
  | context-local stacking | off the ladder at any magnitude | `BAIBoard.css`, `BAITable*`, `BAICompactGroup.css` — local to a subtree |
 */
 import './zIndexLadder.css';
