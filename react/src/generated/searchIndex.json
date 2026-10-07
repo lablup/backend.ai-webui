@@ -2926,7 +2926,6 @@
         "credential.RowsParsed",
         "credential.SecretKey",
         "credential.SelectAccessKey",
-        "credential.SelectPolicy",
         "credential.SelectUser",
         "credential.Sessions",
         "credential.SomeFiltersAreNotAppliedToCSVExport",

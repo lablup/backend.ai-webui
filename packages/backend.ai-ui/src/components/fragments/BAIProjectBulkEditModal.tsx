@@ -7,7 +7,7 @@ import BAIFlex from '../BAIFlex';
 import BAIListAlert from '../BAIListAlert';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import BAISelect from '../BAISelect';
-import BAIProjectResourcePolicySelect from './BAIProjectResourcePolicySelect';
+import BAIAdminProjectResourcePolicySelect from './BAIAdminProjectResourcePolicySelect';
 import * as _ from 'lodash-es';
 import { Suspense, useState } from 'react';
 import { graphql, useFragment } from 'react-relay';
@@ -101,7 +101,10 @@ const BAIProjectBulkEditModal = ({
               label={t('comp:BAIProjectBulkEditModal.ProjectResourcePolicy')}
               name="resource_policy"
             >
-              <BAIProjectResourcePolicySelect />
+              <BAIAdminProjectResourcePolicySelect
+                label={t('comp:BAIProjectBulkEditModal.ProjectResourcePolicy')}
+                isLabelHidden
+              />
             </Form.Item>
           </Suspense>
         </Form>

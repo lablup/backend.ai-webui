@@ -35,11 +35,17 @@
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Chọn dịch vụ mô hình"
   },
+  "comp:BAIAdminProjectResourcePolicySelect": {
+    "SelectProjectResourcePolicy": "Chọn chính sách tài nguyên dự án"
+  },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Chọn nhóm tài nguyên"
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Chọn phiên"
+  },
+  "comp:BAIAdminUserResourcePolicySelect": {
+    "SelectUserResourcePolicy": "Chọn chính sách tài nguyên người dùng"
   },
   "comp:BAIArtifactDescriptions": {
     "Description": "Sự miêu tả",

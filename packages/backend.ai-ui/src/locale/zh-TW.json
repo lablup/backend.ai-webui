@@ -35,11 +35,17 @@
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "選擇模型服務"
   },
+  "comp:BAIAdminProjectResourcePolicySelect": {
+    "SelectProjectResourcePolicy": "選擇專案資源策略"
+  },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "選擇資源群組"
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "選擇工作階段"
+  },
+  "comp:BAIAdminUserResourcePolicySelect": {
+    "SelectUserResourcePolicy": "選擇使用者資源策略"
   },
   "comp:BAIArtifactDescriptions": {
     "Description": "描述",

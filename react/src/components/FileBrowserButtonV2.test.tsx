@@ -190,8 +190,8 @@ const renderButton = (
       Group: () => ({
         allowed_vfolder_hosts: '{}',
       }),
-      KeyPairResourcePolicy: () => ({
-        allowed_vfolder_hosts: '{}',
+      KeypairResourcePolicyV2: () => ({
+        allowedVfolderHosts: [],
       }),
     });
   // Operations disappear from the pending list once a queued resolver
