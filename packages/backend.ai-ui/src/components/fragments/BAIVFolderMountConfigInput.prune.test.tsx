@@ -8,6 +8,7 @@ import MockVFolderFileProviders from '../../tests/MockVFolderFileProviders';
 import {
   MOCK_LEGACY_PROJECT_ID,
   MOCK_MOUNTABLE_HOSTS,
+  MOCK_USER_ID,
   mockLegacyVFolder,
   mockLegacyVFolders,
 } from '../../tests/mockVFolderFileTree';
@@ -44,6 +45,20 @@ const noneId = convertToUUID(noneFolder.id);
 const noneEntry: VFolderMountConfigValue = {
   vfolderId: noneId,
   name: 'denied-to-me',
+  mountDestination: '',
+};
+
+// A migrated personal folder: default `none`, so the manager sends the owner
+// no mount verb, though `resolve_mount_policy` lets the owner mount it rw.
+const ownedNoneFolder = mockLegacyVFolder({
+  id: 'aaaaaaaabbbbccccddddeeeeffff0007',
+  name: 'mine-default-none',
+  permission: 'none',
+  user: MOCK_USER_ID,
+});
+const ownedNoneEntry: VFolderMountConfigValue = {
+  vfolderId: convertToUUID(ownedNoneFolder.id),
+  name: 'mine-default-none',
   mountDestination: '',
 };
 
@@ -111,6 +126,19 @@ describe('BAIVFolderMountConfigInput prune', () => {
     expect(onChange).toHaveBeenCalledTimes(1);
     expect(onChange).toHaveBeenCalledWith([mountableEntry]);
     expect(warning).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps a folder the caller owns even when its default is none', async () => {
+    const warning = vi.spyOn(message, 'warning').mockImplementation(vi.fn());
+    const onChange = vi.fn();
+
+    await renderWithFolders([mountableEntry, ownedNoneEntry], onChange, {
+      folders: [...mockLegacyVFolders, ownedNoneFolder],
+    });
+
+    expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
+    expect(onChange).not.toHaveBeenCalled();
+    expect(warning).not.toHaveBeenCalled();
   });
 
   it('keeps a fully mountable selection and stays silent', async () => {

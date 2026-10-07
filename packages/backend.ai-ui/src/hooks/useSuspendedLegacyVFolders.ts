@@ -1,4 +1,5 @@
 import type { useSuspendedLegacyVFoldersQuery } from '../__generated__/useSuspendedLegacyVFoldersQuery.graphql';
+import useConnectedBAIClient from '../components/provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import {
   fetchQuery,
   graphql,
@@ -16,6 +17,8 @@ export interface LegacyVFolder {
   created_at: string;
   /** The caller's mount level: `rw` / `ro` / `none`, or `''` before 26.9.0a1. */
   permission: string;
+  /** The owner's uuid for a user folder. */
+  user: string | null;
   group: string | null;
   creator: string;
   user_email: string | null;
@@ -37,6 +40,8 @@ const MOUNT_VERBS = [
 /**
  * The caller's mount level from `vfolder_nodes.permissions` (backend.ai#14679).
  * `null` means the manager predates the field's `@since`, so the level is unknown.
+ * The manager clamps these verbs by the folder default even for the owner, so
+ * the hook reads an owned folder as `rw` instead, as `resolve_mount_policy` does.
  */
 export const mountLevelFromPermissions = (
   permissions: ReadonlyArray<unknown> | null | undefined,
@@ -45,6 +50,10 @@ export const mountLevelFromPermissions = (
   const held = new Set(permissions);
   return MOUNT_VERBS.find(([verb]) => held.has(verb))?.[1] ?? 'none';
 };
+
+const isSameUuid = (a: string, b: string | undefined) =>
+  !!b &&
+  a.replace(/-/g, '').toLowerCase() === b.replace(/-/g, '').toLowerCase();
 
 const PAGE_SIZE = 500;
 const ACTIVE_ONLY =
@@ -70,6 +79,7 @@ const folderListQuery = graphql`
           status
           usage_mode
           created_at
+          user
           user_email
           group
           group_name
@@ -88,6 +98,7 @@ export const useSuspendedLegacyVFolders = ({
 }: LegacyVFolderListOptions = {}) => {
   'use memo';
   const environment = useRelayEnvironment();
+  const { user_uuid: myUserId } = useConnectedBAIClient();
   const variables = {
     scopeId: groupId ? `project:${groupId}` : null,
     filter: ACTIVE_ONLY,
@@ -109,7 +120,11 @@ export const useSuspendedLegacyVFolders = ({
       status: node.status ?? '',
       usage_mode: node.usage_mode ?? '',
       created_at: node.created_at ?? '',
-      permission: mountLevelFromPermissions(node.permissions),
+      permission:
+        node.user && isSameUuid(node.user, myUserId)
+          ? 'rw'
+          : mountLevelFromPermissions(node.permissions),
+      user: node.user ?? null,
       group: node.group ?? null,
       creator: node.creator ?? '',
       user_email: node.user_email ?? null,
