@@ -71,6 +71,15 @@ If needed, setting the name of the session (optional) is also available.
 To create a session on behalf of another user, a superadmin uses the
 **Use as this user** action on the Users page.
 
+![](../images/admin_user_act_as_menu.png)
+
+Confirming it opens a new tab that works with the selected user's permissions
+and view, so a session you start there belongs to that user, and the audit log
+records the work under both accounts. Click **Exit** to return to your own
+account.
+
+![](../images/act_as_banner.png)
+
 <a id="environments-and-resource-allocation"></a>
 
 ### Environments & Resource Allocation
