@@ -8,8 +8,7 @@ import {
   DOMAIN_APPEARANCE_CONFIG_KEY,
 } from '../helper/customThemeConfig';
 import { useUpdatePublicDomainAppConfig } from '../hooks/useAppConfig';
-import { useRawCustomThemeConfig } from '../hooks/useCustomThemeConfig';
-import { useDefaultTheme } from '../hooks/useDefaultTheme';
+import { usePreviewThemeConfig } from '../hooks/usePreviewThemeConfig';
 import FontFamilySettingItem from './BrandingSettingItems/FontFamilySettingItem';
 import LogoPreviewer, {
   getLogoThemeKey,
@@ -27,6 +26,7 @@ import {
   BAIUnmountAfterClose,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import { Settings, Fullscreen, Check } from 'lucide-react';
 import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -44,41 +44,32 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
   const [openThemeConfigModal, setOpenThemeConfigModal] = useState(false);
 
   const {
-    defaultTheme,
-    resetDefaultTheme,
-    seedDefaultTheme,
-    clearDefaultTheme,
-    hasUnappliedChanges,
-  } = useDefaultTheme();
-  // The draft is saved WHOLE — families included — as this domain's slice of
-  // the public document; reads replace wholesale rather than merging (FR-1964).
+    themeConfig,
+    appliedThemeConfig,
+    hasPreviewThemeConfig,
+    updateThemeConfigValue,
+    clearPreviewThemeConfig,
+  } = usePreviewThemeConfig();
+  // Saved WHOLE — families included — as this domain's slice of the public
+  // document; reads replace wholesale rather than merging (FR-1964).
   const updatePublicDomainAppConfig = useUpdatePublicDomainAppConfig();
 
-  // The draft lives only while this page is open: seeded from the applied
-  // document on entry (refresh included), cleared on leave or Apply.
-  const rawThemeConfig = useRawCustomThemeConfig();
-  const isDraftSeededRef = useRef(false);
-  const seedDraftOnce = useEffectEvent(() => {
-    if (!isDraftSeededRef.current) {
-      isDraftSeededRef.current = seedDefaultTheme();
-    }
+  // Edits live only while this page is open: an entry (refresh included)
+  // starts from the applied document, and leaving drops them.
+  const discardPreview = useEffectEvent(() => {
+    clearPreviewThemeConfig();
   });
   useEffect(() => {
-    seedDraftOnce();
-  }, [rawThemeConfig]);
-  const discardDraft = useEffectEvent(() => {
-    isDraftSeededRef.current = false;
-    clearDefaultTheme();
-  });
-  useEffect(() => {
-    return () => discardDraft();
+    discardPreview();
+    return () => discardPreview();
   }, []);
 
   // Set before the post-Apply reload so neither guard asks to confirm it.
   const isLeavingAfterApplyRef = useRef(false);
   const blocker = useBlocker(
     ({ currentLocation, nextLocation }) =>
-      hasUnappliedChanges && currentLocation.pathname !== nextLocation.pathname,
+      hasPreviewThemeConfig &&
+      currentLocation.pathname !== nextLocation.pathname,
   );
   const confirmLeave = useEffectEvent(() => {
     modal.confirm({
@@ -98,7 +89,7 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
   }, [blocker.state]);
   // Refresh / tab close can only show the browser's own prompt.
   const shouldConfirmUnload = useEffectEvent(
-    () => hasUnappliedChanges && !isLeavingAfterApplyRef.current,
+    () => hasPreviewThemeConfig && !isLeavingAfterApplyRef.current,
   );
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -111,7 +102,7 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
   }, []);
 
   const applyThemeToDomain = async () => {
-    if (!defaultTheme) {
+    if (!themeConfig) {
       message.error(t('userSettings.FailedToLoadDefaultThemeConfig'));
       return;
     }
@@ -124,13 +115,13 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
       onOk: async () => {
         try {
           await updatePublicDomainAppConfig(DOMAIN_APPEARANCE_CONFIG_KEY, {
-            ...defaultTheme,
+            ...themeConfig,
             schemaVersion: APPEARANCE_SCHEMA_VERSION,
           });
           // The reloaded page renders the applied document — that IS the
           // feedback; the anonymous read path has no refresh API (FR-1964).
           isLeavingAfterApplyRef.current = true;
-          clearDefaultTheme();
+          clearPreviewThemeConfig();
           window.location.reload();
         } catch (error) {
           message.error(getErrorMessage(error));
@@ -139,12 +130,19 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
     });
   };
 
+  /** Restores the given paths to the applied document's values. */
+  const resetToApplied = (paths: string[]) => {
+    for (const path of paths) {
+      updateThemeConfigValue(path, _.get(appliedThemeConfig, path));
+    }
+  };
+
   const resetColorThemeConfig = (seedPath: AppearanceSeedPath) => {
-    resetDefaultTheme([seedPath]);
+    resetToApplied([seedPath]);
   };
 
   const resetLogoThemeConfig = (mode: LogoPreviewerMode) => {
-    resetDefaultTheme([`branding.logo.${getLogoThemeKey(mode)}`]);
+    resetToApplied([`branding.logo.${getLogoThemeKey(mode)}`]);
   };
 
   const resetLogoSizeConfig = (
@@ -156,14 +154,14 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
       login: 'loginLogoSize',
       about: 'aboutLogoSize',
     } as const;
-    resetDefaultTheme([
+    resetToApplied([
       `branding.logo.${keyMap[logoType]}`,
       ...(logoType === 'about' ? ['branding.logo.aboutModalSize'] : []),
     ]);
   };
 
   const resetFontFamilyConfig = () => {
-    resetDefaultTheme(['theme.fontFamily']);
+    resetToApplied(['theme.fontFamily']);
   };
 
   const settingGroups: Array<SettingGroup> = [
@@ -385,7 +383,7 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
         showSearchBar
         showResetButton
         onReset={() => {
-          resetDefaultTheme();
+          clearPreviewThemeConfig();
         }}
         settingGroups={settingGroups}
         primaryButton={

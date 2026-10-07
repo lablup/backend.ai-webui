@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../../app-shim';
-import { useDefaultTheme } from '../../hooks/useDefaultTheme';
+import { usePreviewThemeConfig } from '../../hooks/usePreviewThemeConfig';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex, BAIUncontrolledInput } from 'backend.ai-ui';
@@ -33,18 +33,19 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
   const { message } = App.useApp();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { getDefaultThemeValue, updateDefaultTheme } = useDefaultTheme();
+  const { getThemeConfigValue, updateThemeConfigValue } =
+    usePreviewThemeConfig();
   const logoThemeKey = getLogoThemeKey(mode);
   const fallbackKey = getLogoFallbackKey(mode);
   const logoPath = `branding.logo.${logoThemeKey}`;
   // Only this item's own key is edited and previewed; an unset login/About
   // key shows which sider logo the page borrows instead of a preview.
-  const logoSrc = getDefaultThemeValue<string>(logoPath);
+  const logoSrc = getThemeConfigValue<string>(logoPath);
   const pathLabel = `${t('userSettings.logo.ImagePath')}:`;
 
   const commitLogoSrc = (value: string) => {
     // An emptied path removes the key so the page falls back again.
-    updateDefaultTheme(logoPath, value.trim() === '' ? undefined : value);
+    updateThemeConfigValue(logoPath, value.trim() === '' ? undefined : value);
   };
 
   const handlePickedFile = (file: File | undefined) => {
@@ -56,7 +57,7 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       const base64 = e.target?.result as string;
-      updateDefaultTheme(logoPath, base64);
+      updateThemeConfigValue(logoPath, base64);
     };
     reader.onerror = () => {
       message.error(t('userSettings.logo.FailedToReadFile'));
