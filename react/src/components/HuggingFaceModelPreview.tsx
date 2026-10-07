@@ -3,10 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useTanQuery } from '../hooks/reactQueryAlias';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Link } from '@astryxdesign/core/Link';
-import { Token } from '@astryxdesign/core/Token';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Link } from '@lablup/ui-common/Link';
+import { Token } from '@lablup/ui-common/Token';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAICard,
   BAIFlex,

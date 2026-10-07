@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ea4df702aee7d8488f9b7d968c2b9c3b>>
+ * @generated SignedSource<<a60ea1eddbf3d2a580ab94b2a238f6ef>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,13 +9,10 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type QuotaPerStorageVolumePanelCardUserQuery$variables = {
-  domain_name?: string | null | undefined;
-  email?: string | null | undefined;
-};
+export type QuotaPerStorageVolumePanelCardUserQuery$variables = Record<PropertyKey, never>;
 export type QuotaPerStorageVolumePanelCardUserQuery$data = {
-  readonly user: {
-    readonly id: string | null | undefined;
+  readonly myUserV2: {
+    readonly entityId: string;
   } | null | undefined;
 };
 export type QuotaPerStorageVolumePanelCardUserQuery = {
@@ -24,77 +21,74 @@ export type QuotaPerStorageVolumePanelCardUserQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "domain_name"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "email"
-  }
-],
-v1 = [
-  {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "domain_name",
-        "variableName": "domain_name"
-      },
-      {
-        "kind": "Variable",
-        "name": "email",
-        "variableName": "email"
-      }
-    ],
-    "concreteType": "User",
-    "kind": "LinkedField",
-    "name": "user",
-    "plural": false,
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "entityId",
+  "storageKey": null
+};
+return {
+  "fragment": {
+    "argumentDefinitions": [],
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "QuotaPerStorageVolumePanelCardUserQuery",
     "selections": [
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "id",
+        "concreteType": "UserV2",
+        "kind": "LinkedField",
+        "name": "myUserV2",
+        "plural": false,
+        "selections": [
+          (v0/*: any*/)
+        ],
         "storageKey": null
       }
     ],
-    "storageKey": null
-  }
-];
-return {
-  "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
-    "kind": "Fragment",
-    "metadata": null,
-    "name": "QuotaPerStorageVolumePanelCardUserQuery",
-    "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [],
     "kind": "Operation",
     "name": "QuotaPerStorageVolumePanelCardUserQuery",
-    "selections": (v1/*: any*/)
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "UserV2",
+        "kind": "LinkedField",
+        "name": "myUserV2",
+        "plural": false,
+        "selections": [
+          (v0/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ]
   },
   "params": {
-    "cacheID": "0ad80eec6d619d2a7ba016c855727d62",
+    "cacheID": "f5f947356fe539ea4ce1b606616220a6",
     "id": null,
     "metadata": {},
     "name": "QuotaPerStorageVolumePanelCardUserQuery",
     "operationKind": "query",
-    "text": "query QuotaPerStorageVolumePanelCardUserQuery(\n  $domain_name: String\n  $email: String\n) {\n  user(domain_name: $domain_name, email: $email) {\n    id\n  }\n}\n"
+    "text": "query QuotaPerStorageVolumePanelCardUserQuery {\n  myUserV2 {\n    entityId\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "02f38803567dbc61f570ce247fde2947";
+(node as any).hash = "d501cb3ed1a87925830e95fb2c052478";
 
 export default node;

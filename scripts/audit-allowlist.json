@@ -1,0 +1,80 @@
+{
+  "$comment": "Reviewed exceptions for scripts/audit-gate.mjs. Each entry: id (GHSA), package, reason, optional expires (YYYY-MM-DD, gate fails after it), optional importers (exemption applies only to paths rooted in these workspace packages). Prefer upgrading over adding entries. shippedRootEntries: root dependencies a release artifact ships (Electron, the pkg-built local proxy's requires); every advisory on a path from them is gated, transitive ones included unless the entry sets transitive: false (the package itself only).",
+  "shippedRootEntries": [
+    {
+      "package": "electron",
+      "transitive": false,
+      "reason": "Root devDependency, but @electron/packager bundles it as the Backend.AI Desktop runtime."
+    },
+    {
+      "package": "express",
+      "reason": "Bundled by pkg into the backend.ai-local-proxy release binaries (src/wsproxy)."
+    },
+    {
+      "package": "express-rate-limit",
+      "reason": "Bundled by pkg into the backend.ai-local-proxy release binaries (src/wsproxy)."
+    },
+    {
+      "package": "cors",
+      "reason": "Bundled by pkg into the backend.ai-local-proxy release binaries (src/wsproxy)."
+    },
+    {
+      "package": "ws",
+      "reason": "Bundled by pkg into the backend.ai-local-proxy release binaries (src/wsproxy)."
+    },
+    {
+      "package": "dotenv",
+      "reason": "Bundled by pkg into the backend.ai-local-proxy release binaries (src/wsproxy)."
+    },
+    {
+      "package": "winston",
+      "reason": "Bundled by pkg into the backend.ai-local-proxy release binaries (src/wsproxy)."
+    },
+    {
+      "package": "https-proxy-agent",
+      "reason": "Bundled by pkg into the backend.ai-local-proxy release binaries (src/wsproxy)."
+    },
+    {
+      "package": "backend.ai-client",
+      "reason": "Bundled by pkg into the backend.ai-local-proxy release binaries (src/wsproxy)."
+    }
+  ],
+  "entries": [
+    {
+      "id": "GHSA-3jxr-9vmj-r5cp",
+      "package": "brace-expansion",
+      "importers": ["packages/eslint-config-bai"],
+      "reason": "Lint tooling only (eslint / typescript-eslint plugin tree under eslint-config-bai, a devDependency of every consumer); it is never bundled into the web or desktop build, and globs come from our own config, not user input."
+    },
+    {
+      "id": "GHSA-mh99-v99m-4gvg",
+      "package": "brace-expansion",
+      "importers": ["packages/eslint-config-bai"],
+      "reason": "Lint tooling only (eslint / typescript-eslint plugin tree under eslint-config-bai, a devDependency of every consumer); it is never bundled into the web or desktop build, and globs come from our own config, not user input."
+    },
+    {
+      "id": "GHSA-rgw5-rvv9-x895",
+      "package": "brace-expansion",
+      "importers": ["packages/eslint-config-bai"],
+      "reason": "Lint tooling only (eslint / typescript-eslint plugin tree under eslint-config-bai, a devDependency of every consumer); it is never bundled into the web or desktop build, and globs come from our own config, not user input."
+    },
+    {
+      "id": "GHSA-qhr7-859c-m2p7",
+      "package": "brace-expansion",
+      "importers": ["packages/eslint-config-bai"],
+      "reason": "Lint tooling only (eslint / typescript-eslint plugin tree under eslint-config-bai, a devDependency of every consumer); it is never bundled into the web or desktop build, and globs come from our own config, not user input."
+    },
+    {
+      "id": "GHSA-6j4f-fj2g-mc7p",
+      "package": "brace-expansion",
+      "importers": ["packages/eslint-config-bai"],
+      "reason": "Lint tooling only (eslint / typescript-eslint plugin tree under eslint-config-bai, a devDependency of every consumer); it is never bundled into the web or desktop build, and globs come from our own config, not user input."
+    },
+    {
+      "id": "GHSA-2883-xcg3-v3hh",
+      "package": "js-yaml",
+      "importers": ["packages/eslint-config-bai"],
+      "reason": "Lint tooling only (eslint -> @eslint/eslintrc under eslint-config-bai); parses our own config files at lint time and is never bundled into the web or desktop build."
+    }
+  ]
+}

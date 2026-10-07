@@ -22,7 +22,7 @@ import MyKeypairManagementModal from './MyKeypairManagementModal';
 import SSHKeypairManagementModal from './SSHKeypairManagementModal';
 import SettingList, { SettingGroup } from './SettingList';
 import ShellScriptEditModal, { ShellScriptType } from './ShellScriptEditModal';
-import { Button } from '@astryxdesign/core/Button';
+import { Button } from '@lablup/ui-common/Button';
 import {
   filterOutEmpty,
   useSessionStorageState,

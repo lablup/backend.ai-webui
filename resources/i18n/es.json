@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "Todo en esta pestaña se ejecuta como este usuario y se registra en el registro de auditoría. Sus otras pestañas permanecen en la vista de administrador.",
+    "BannerTitle": "Usando como {{name}} ({{email}})",
+    "ConfirmDescription": "Trabaje con los permisos y la vista de {{email}} en una pestaña nueva. Todo lo que haga en esa pestaña se ejecuta como este usuario, y el registro de auditoría también indica que lo hizo su cuenta de administrador. Esta pestaña permanece en su vista de administrador.",
+    "ConfirmTitle": "Usar como {{name}}",
+    "Exit": "Salir",
+    "FailedToOpen": "No se pudo abrir una pestaña nueva.",
+    "OpenInNewTab": "Abrir en una pestaña nueva",
+    "UseAsThisUser": "Usar como este usuario"
+  },
   "activeAgent": {
     "ActiveAgents": "Agentes activos",
     "ActiveAgentsTooltip": "Muestra una descripción general de un vistazo de todos los agentes que actualmente se ejecutan en el sistema."
@@ -678,6 +688,8 @@
     "KeypairDetail": "Detalle del par de claves",
     "KeypairRestored": "Par de claves restaurado.",
     "LastUsed": "Último utilizado",
+    "LoginNotUnblocked": "No se quitó el bloqueo de inicio de sesión. Es posible que el usuario no estuviera bloqueado.",
+    "LoginUnblocked": "Se ha quitado el bloqueo de inicio de sesión. El usuario puede volver a iniciar sesión.",
     "MainAccessKey": "Clave de acceso principal",
     "MainKeyCannotDeactivate": "No se puede desactivar la clave de acceso principal. Cambie primero a otra clave.",
     "MainKeyChanged": "La clave de acceso principal ha cambiado.",
@@ -742,6 +754,8 @@
     "StatusInfo": "Información de estado",
     "StatusUpdatedSuccessfully": "El estado del usuario ha cambiado.",
     "TooltipForRequirePasswordChange": "Si activa esta opción, los usuarios deberán cambiar su contraseña en el próximo inicio de sesión.",
+    "UnblockLogin": "Desbloquear inicio de sesión",
+    "UnblockLoginConfirm": "¿Quitar el bloqueo por intentos fallidos de inicio de sesión de este usuario?",
     "UpdateUsers": "Edición masiva de usuarios",
     "UpdateUsersWarningAlertTitle": "Establecer UID o GID(s) puede restringir el uso de montajes de carpetas creados previamente.",
     "UpdatedUsers": "Actualizados {{count}} de {{total}} usuarios.",
@@ -995,6 +1009,7 @@
       "LeaveFolder": "Dejar carpeta",
       "Location": "Ubicación",
       "ManageProjectFolderInAdmin": "La gestión de carpetas de proyecto está disponible en la configuración de administrador.",
+      "MaxFiles": "Número máximo de ficheros",
       "MaxFolderQuota": "Cuota máxima de carpetas",
       "MaxSize": "Tamaño máximo",
       "ModelProjectFolderRestrictedToReadOnly": "El permiso 'Lectura y escritura' no es compatible con la carpeta del almacén de modelos",
@@ -1980,6 +1995,7 @@
     "APIEndpointEmpty": "El punto final de la API está vacío. Especifique el punto final de la API para iniciar sesión.",
     "APIKey": "Clave API",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "El inicio de sesión por API necesita un endpoint de Manager. Esta WebUI está configurada para conectarse a través de un Backend.AI Webserver.",
     "ActiveSessionExists": "Ya existe una sesión de inicio de sesión activa.",
     "ActiveSessionExistsDescription": "Ya has iniciado sesión desde otro navegador o pestaña. Por favor, cierra la sesión desde la otra sesión primero o inténtalo de nuevo.",
     "AdvancedSettings": "Avanzado",
@@ -2010,6 +2026,8 @@
     "LoginWithE-mailOrUsername": "Iniciar sesión con correo electrónico o nombre de usuario",
     "LoginWithIAM": "Iniciar sesión con IAM",
     "MonitorRoleLoginForbidden": "Los usuarios con rol de monitor no pueden iniciar sesión.",
+    "NewPasswordMayNotBeApplied": "Es posible que tu nueva contraseña no se haya aplicado",
+    "NewPasswordMayNotBeAppliedDesc": "No se pudo iniciar sesión con la nueva contraseña, por lo que es posible que el cambio no se haya guardado en el servidor. Intenta iniciar sesión con tu contraseña anterior o contacta con el administrador. Los intentos fallidos repetidos pueden bloquear tu cuenta temporalmente.",
     "NoEndpointSaved": "No se ha guardado ningún punto final.",
     "NotAUser": "¿No es usuario?",
     "Password": "Contraseña",
@@ -2237,9 +2255,6 @@
     "StepWarning": "Acción requerida",
     "SuccessfullyUpdated": "Actualizado con éxito",
     "Visit": "Visite"
-  },
-  "pagination": {
-    "Total": "{{inicio}} - {{end}} de {{Total}} elementos"
   },
   "project": {
     "Activate": "Activar",
@@ -3097,6 +3112,7 @@
       "ImageDoesNotProvideModelPath": "La imagen del contenedor no proporciona la ruta del modelo. Debe modificarse.",
       "ImageFilter": "Filtro de imágenes",
       "InferenceMode": "Inferencia",
+      "InferenceModeConfig": "Configuración del modo de inferencia",
       "InfiniteTime": "Infinito",
       "InsufficientAllocationOfResourcesWarning": "Los recursos asignables están por debajo del recurso mínimo requerido en la imagen seleccionada.",
       "InteractiveMode": "Interactivo",
@@ -3146,10 +3162,7 @@
       "OnlyAllowsDiscreteNumberByClusterSize": "Solo se permiten números enteros cuando el tamaño del clúster no es inferior a 2.",
       "OnlyAllowsDiscreteNumberByQuantumSize": "El valor debe ser múltiplo de {{stepSize}}.",
       "OpenMPOptimization": "Optimización OpenMP/OpenBLAS",
-      "OwnerAccessKey": "Clave de acceso del propietario",
       "OwnerEmail": "Correo electrónico del propietario",
-      "OwnerGroup": "Proyecto propietario",
-      "OwnerResourceGroup": "Grupo de recursos propietario",
       "PinnedHistoryTooltip": "Haga clic en el icono de anclaje para anclar el registro. Los registros anclados se conservan.",
       "PleaseCompleteForm": "El formulario está incompleto o contiene errores. Compruebe los datos introducidos.",
       "PleaseWaitInitializing": "Por favor, espere mientras se inicializa...",
@@ -3192,7 +3205,6 @@
       "SetBatchJobTimeoutDuration": "Establecer la duración del tiempo de espera del trabajo por lotes",
       "SetEnvironmentVariable": "Variable de entorno (opcional)",
       "SetPreopenPorts": "Puertos preabiertos (opcional)",
-      "SetSessionOwner": "Propietario de la sesión",
       "SettingUpProxyForApp": "Configurar proxy para la aplicación...",
       "SharedMemory": "Memoria compartida (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "La configuración de la memoria compartida se reduce por debajo de la memoria asignada.",

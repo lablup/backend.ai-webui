@@ -7,9 +7,9 @@ import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
 import { resolveRBACScopeName } from '../helper/rbacScopeName';
 import RoleAssignmentTab from './RoleAssignmentTab';
 import RolePermissionSummaryTable from './RolePermissionSummaryTable';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Tab, TabList } from '@astryxdesign/core/TabList';
-import { Token } from '@astryxdesign/core/Token';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Tab, TabList } from '@lablup/ui-common/TabList';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAIAlert,
   BAICard,

@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "Bu sekmedeki her şey bu kullanıcı olarak çalıştırılır ve denetim günlüğüne kaydedilir. Diğer sekmeleriniz yönetici görünümünde kalır.",
+    "BannerTitle": "{{name}} ({{email}}) olarak kullanılıyor",
+    "ConfirmDescription": "Yeni bir sekmede {{email}} kullanıcısının izinleri ve görünümüyle çalışın. O sekmede yaptığınız her şey bu kullanıcı olarak çalıştırılır ve denetim günlüğü yönetici hesabınızı da kaydeder. Bu sekme yönetici görünümünüzde kalır.",
+    "ConfirmTitle": "{{name}} olarak kullan",
+    "Exit": "Çık",
+    "FailedToOpen": "Yeni sekme açılamadı.",
+    "OpenInNewTab": "Yeni sekmede aç",
+    "UseAsThisUser": "Bu kullanıcı olarak kullan"
+  },
   "activeAgent": {
     "ActiveAgents": "Aktif ajanlar",
     "ActiveAgentsTooltip": "Şu anda sistemde çalışan tüm ajanlara bir bakışta genel bir bakış gösterir."
@@ -678,6 +688,8 @@
     "KeypairDetail": "Anahtar Çifti Detayı",
     "KeypairRestored": "Anahtar çifti geri yüklendi.",
     "LastUsed": "Son kullanılan",
+    "LoginNotUnblocked": "Giriş engeli kaldırılmadı. Kullanıcı engellenmemiş olabilir.",
+    "LoginUnblocked": "Giriş engeli kaldırıldı. Kullanıcı yeniden giriş yapabilir.",
     "MainAccessKey": "Ana Erişim Anahtarı",
     "MainKeyCannotDeactivate": "Ana erişim anahtarı devre dışı bırakılamaz. Önce başka bir anahtara geçin.",
     "MainKeyChanged": "Ana erişim anahtarı değiştirildi.",
@@ -742,6 +754,8 @@
     "StatusInfo": "Durum Bilgisi",
     "StatusUpdatedSuccessfully": "Kullanıcı durumu değişti.",
     "TooltipForRequirePasswordChange": "Bu seçeneği etkinleştirirseniz kullanıcı bir sonraki girişte şifresini değiştirmek zorunda kalacaktır.",
+    "UnblockLogin": "Giriş engelini kaldır",
+    "UnblockLoginConfirm": "Bu kullanıcının başarısız giriş denemelerinden kaynaklanan engeli kaldırılsın mı?",
     "UpdateUsers": "Kullanıcıları Toplu Düzenle",
     "UpdateUsersWarningAlertTitle": "UID veya GID(lerin) ayarlanması, daha önce oluşturulmuş klasör bağlamalarının kullanılmasını kısıtlayabilir.",
     "UpdatedUsers": "Toplam {{total}} kullanıcıdan {{count}} güncellendi.",
@@ -995,6 +1009,7 @@
       "LeaveFolder": "Klasörden ayrıl",
       "Location": "yer",
       "ManageProjectFolderInAdmin": "Proje klasörü yönetimi, yönetici ayarlarında kullanılabilir.",
+      "MaxFiles": "Maksimum Dosya Sayısı",
       "MaxFolderQuota": "Maksimum Klasör Kotası",
       "MaxSize": "Maksimum Boyut",
       "ModelProjectFolderRestrictedToReadOnly": "'Okuma ve Yazma' izni model depolama klasörü için desteklenmiyor",
@@ -1980,6 +1995,7 @@
     "APIEndpointEmpty": "API Uç Noktası boş. Lütfen oturum açmak için API uç noktasını belirtin.",
     "APIKey": "API Anahtarı",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "API girişi için bir Manager endpoint gereklidir. Bu WebUI, bir Backend.AI Webserver üzerinden bağlanacak şekilde yapılandırılmıştır.",
     "ActiveSessionExists": "Zaten aktif bir oturum açma oturumu mevcut.",
     "ActiveSessionExistsDescription": "Başka bir tarayıcı veya sekmeden zaten giriş yapmış durumdasınız. Lütfen önce diğer oturumdan çıkış yapın veya tekrar deneyin.",
     "AdvancedSettings": "Gelişmiş",
@@ -2010,6 +2026,8 @@
     "LoginWithE-mailOrUsername": "E-posta veya Kullanıcı Adıyla Giriş Yapın",
     "LoginWithIAM": "IAM ile Giriş Yap",
     "MonitorRoleLoginForbidden": "İzleyici rolündeki kullanıcıların oturum açmasına izin verilmiyor.",
+    "NewPasswordMayNotBeApplied": "Yeni parolanız uygulanmamış olabilir",
+    "NewPasswordMayNotBeAppliedDesc": "Yeni parolayla oturum açılamadı; parola değişikliği sunucuya kaydedilmemiş olabilir. Önceki parolanızla oturum açmayı deneyin veya yöneticinize başvurun. Tekrarlanan başarısız denemeler hesabınızı geçici olarak kilitleyebilir.",
     "NoEndpointSaved": "Kaydedilmiş uç nokta yok.",
     "NotAUser": "Kullanıcı değil misiniz?",
     "Password": "Parola",
@@ -2237,9 +2255,6 @@
     "StepWarning": "İşlem gerekli",
     "SuccessfullyUpdated": "Başarıyla güncellendi",
     "Visit": "Ziyaret etmek"
-  },
-  "pagination": {
-    "Total": "{{start}} - {{total}} öğelerinin {{end}}"
   },
   "project": {
     "Activate": "Etkinleştir",
@@ -3097,6 +3112,7 @@
       "ImageDoesNotProvideModelPath": "Konteyner görüntüsü model yolunu sağlamıyor. Değiştirilmelidir.",
       "ImageFilter": "İmaj filtresi",
       "InferenceMode": "Çıkarım",
+      "InferenceModeConfig": "Çıkarım modu Yapılandırması",
       "InfiniteTime": "Sonsuz",
       "InsufficientAllocationOfResourcesWarning": "Tahsis edilebilir kaynaklar, seçilen görüntüde gereken minimum kaynağın altına düşüyor.",
       "InteractiveMode": "İnteraktif",
@@ -3146,10 +3162,7 @@
       "OnlyAllowsDiscreteNumberByClusterSize": "Küme boyutu 2'den az olmadığında yalnızca tam sayılara izin verilir.",
       "OnlyAllowsDiscreteNumberByQuantumSize": "Değer {{stepSize}} değerinin katı olmalıdır.",
       "OpenMPOptimization": "OpenMP/OpenBLAS Optimizasyonu",
-      "OwnerAccessKey": "Sahip erişim anahtarı",
       "OwnerEmail": "Sahip E-postası",
-      "OwnerGroup": "Proje sahibi",
-      "OwnerResourceGroup": "Sahip kaynak grubu",
       "PinnedHistoryTooltip": "Kaydı sabitlemek için sabitle simgesine tıklayın. Sabitlenen kayıtlar korunur.",
       "PleaseCompleteForm": "Form eksik veya hatalar içeriyor. Lütfen girdilerinizi kontrol edin.",
       "PleaseWaitInitializing": "Başlatılırken lütfen bekleyin...",
@@ -3192,7 +3205,6 @@
       "SetBatchJobTimeoutDuration": "Toplu iş zaman aşımı süresini ayarlama",
       "SetEnvironmentVariable": "Ortam Değişkenini Ayarla",
       "SetPreopenPorts": "Ön Açık Bağlantı Noktaları (isteğe bağlı)",
-      "SetSessionOwner": "Oturum sahibi",
       "SettingUpProxyForApp": "Uygulama için proxy ayarlanıyor...",
       "SharedMemory": "Paylaşılan Bellek (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "Paylaşılan bellek ayarı, ayrılan belleğin altına düşürülür.",

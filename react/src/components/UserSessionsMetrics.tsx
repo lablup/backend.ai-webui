@@ -11,11 +11,11 @@ import AutoUpdateFetchKeyButton, {
 } from './AutoUpdateFetchKeyButton';
 import BAIBoard, { BAIBoardItem } from './BAIBoard';
 import SessionMetricGraph from './SessionMetricGraph';
-import { Banner } from '@astryxdesign/core/Banner';
-import type { ISODateString } from '@astryxdesign/core/Calendar';
-import { DateRangeInput } from '@astryxdesign/core/DateRangeInput';
-import type { DateRange } from '@astryxdesign/core/DateRangeInput';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { Banner } from '@lablup/ui-common/Banner';
+import type { ISODateString } from '@lablup/ui-common/Calendar';
+import { DateRangeInput } from '@lablup/ui-common/DateRangeInput';
+import type { DateRange } from '@lablup/ui-common/DateRangeInput';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
 import { useUpdatableState, BAIFlex, filterOutEmpty } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';

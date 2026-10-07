@@ -12,9 +12,9 @@ import { useSetBAINotification } from '../../hooks/useBAINotification';
 // (required non-null `value`, self-rendered `label`, value-not-event
 // `onChange`).
 import { AstryxFormTextInput } from '../astryxFormControls';
-import { Divider } from '@astryxdesign/core/Divider';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Text } from '@astryxdesign/core/Text';
+import { Divider } from '@lablup/ui-common/Divider';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIFlex,
   BAIMetadataList,

@@ -9,6 +9,7 @@ import { ResourceGroupSettingModalUpdateMutation } from '../__generated__/Resour
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { newLineToBrElement } from '../helper';
+import { getSessionTypeLabel } from '../helper/sessionTypeLabel';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import {
   computeProxyDelta,
@@ -26,7 +27,7 @@ import {
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Grid } from '@astryxdesign/core/Grid';
+import { Grid } from '@lablup/ui-common/Grid';
 import {
   BAICard,
   BAIDomainSelect,
@@ -407,12 +408,10 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
           >
             <AstryxFormMultiSelector
               label={t('resourceGroup.AllowedSessionTypes')}
-              options={[
-                { label: 'Batch', value: 'batch' },
-                { label: 'Interactive', value: 'interactive' },
-                { label: 'Inference', value: 'inference' },
-                { label: 'System', value: 'system' },
-              ]}
+              options={_.map(
+                ['batch', 'interactive', 'inference', 'system'],
+                (value) => ({ label: getSessionTypeLabel(t, value), value }),
+              )}
             />
           </BAIFormItem>
           <BAIFormItem

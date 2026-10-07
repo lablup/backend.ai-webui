@@ -21,16 +21,16 @@ import {
 } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useThemeMode } from '../hooks/useThemeMode';
+import BAIFormItem from './BAIFormItem';
 import { ImageMetaDivider, ImageTagTokens } from './ImageTags';
-import TextHighlighter from './TextHighlighter';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { Divider } from '@astryxdesign/core/Divider';
+import { Divider } from '@lablup/ui-common/Divider';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
-} from '@astryxdesign/core/DropdownMenu';
-import { Token } from '@astryxdesign/core/Token';
-import { useTheme } from '@astryxdesign/core/theme';
+} from '@lablup/ui-common/DropdownMenu';
+import { Token } from '@lablup/ui-common/Token';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIDoubleToken,
   BAITextHighlighter,
@@ -114,9 +114,10 @@ const ImageEnvironmentSelectFormItems: React.FC<
   const [metadata, { getImageMeta, tagAlias }] = useBackendAIImageMetaData();
   const { token } = useTheme();
   const { isDarkMode } = useThemeMode();
-  const [showDedicatedFirst, setShowDedicatedFirst] = useBAISettingUserState(
-    'show_accelerator_dedicated_images_first',
-  );
+  const [showDedicatedFirstSetting, setShowDedicatedFirst] =
+    useBAISettingUserState('show_accelerator_dedicated_images_first');
+  // On until the user explicitly turns it off.
+  const showDedicatedFirst = showDedicatedFirstSetting ?? true;
 
   // antd `RefSelectProps` restated as the one method these two refs ever
   // called. `BAISelect` accepts `ref` and never attaches it (P26-8 — Astryx's
@@ -540,9 +541,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
                 height: 15,
               }}
             />
-            <TextHighlighter keyword={environmentSearch}>
+            <BAITextHighlighter keyword={environmentSearch}>
               {environmentGroup.displayName}
-            </TextHighlighter>
+            </BAITextHighlighter>
           </BAIFlex>
           <BAIFlex
             direction="row"
@@ -571,7 +572,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
     <>
       {/* The environment and version selects are one field. */}
       <BAIFlex direction="column" align="stretch" gap="xs">
-        <Form.Item
+        <BAIFormItem
           className="image-environment-select-form-item"
           // The wrapper's gap is the pair's spacing.
           style={{ marginBottom: 0 }}
@@ -613,7 +614,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                 label={t(
                   'session.launcher.ShowAcceleratorDedicatedImagesFirst',
                 )}
-                value={!!showDedicatedFirst}
+                value={showDedicatedFirst}
                 onChange={setShowDedicatedFirst}
               />
             </DropdownMenu>
@@ -747,7 +748,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
               ]
             )}
           </BAISelect>
-        </Form.Item>
+        </BAIFormItem>
         <Form.Item
           noStyle
           shouldUpdate={(prev, cur) =>
@@ -943,13 +944,13 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           ].join('\t')}
                         >
                           <BAIFlex direction="row" wrap="wrap" gap="xxs">
-                            <TextHighlighter keyword={versionSearch}>
+                            <BAITextHighlighter keyword={versionSearch}>
                               {image?.version}
-                            </TextHighlighter>
+                            </BAITextHighlighter>
                             <ImageMetaDivider />
-                            <TextHighlighter keyword={versionSearch}>
+                            <BAITextHighlighter keyword={versionSearch}>
                               {image?.architecture}
-                            </TextHighlighter>
+                            </BAITextHighlighter>
                             {!_.isEmpty(tagFacts) ? (
                               <>
                                 <ImageMetaDivider />

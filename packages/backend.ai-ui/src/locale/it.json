@@ -89,26 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Si è verificato un errore imprevisto. Riprova più tardi o contatta l'assistenza se il problema persiste."
   },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "Cancella",
-    "KeepAsIs": "Mantieni invariato",
-    "UndoChanges": "Annulla modifiche"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Esecuzione non riuscita",
-    "ErrorOccurred": "Si è verificato un errore"
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "Cancella",
-    "HexValue": "Valore esadecimale",
-    "NoColor": "Nessun colore",
-    "SelectColor": "Seleziona colore"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Cancella Cerca tra le opzioni",
-    "NoResults": "Nessun risultato",
-    "SearchOptions": "Cerca tra le opzioni"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Seleziona registro container"
   },
@@ -128,14 +108,6 @@
     "Size": "Misurare",
     "SuccessFullyRemoved": "Rimosse correttamente {{count}} versioni.",
     "Version": "Versione"
-  },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "Sei sicuro di voler eliminare?",
-    "AreYouSureToPermanentlyDeleteTarget": "Sei sicuro di voler eliminare definitivamente {{target}}?",
-    "CannotBeUndone": "Questa azione non può essere annullata.",
-    "DeleteItem": "Elimina",
-    "DeleteNItems": "Elimina {{count}} elementi",
-    "TypeToConfirm": "Digita <token>{{confirmText}}</token> per confermare."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Creato da"
@@ -417,11 +389,6 @@
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Allocato / Richiesto"
   },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "Cambia colore del gruppo",
-    "ResourceGrid": "Griglia delle risorse",
-    "UseColorN": "Usa il colore {{n}}"
-  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Illimitato"
   },
@@ -571,8 +538,11 @@
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Separare"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Illimitato"
+  "comp:BAISessionTypeToken": {
+    "Batch": "Batch",
+    "Inference": "Inferenza",
+    "Interactive": "Interattivo",
+    "System": "Caricamento"
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Seleziona host di archiviazione"
@@ -590,28 +560,13 @@
     "Time": "Ora"
   },
   "comp:BAITable": {
-    "Apply": "Applica",
-    "Cancel": "Annulla",
     "CollapseAll": "Comprimi tutto",
     "ExpandAll": "Espandi tutto",
     "ExpandErrorsOnly": "Espandi solo errori",
-    "ExpandOptions": "Opzioni di espansione",
-    "ExpandRow": "Espandi riga",
-    "Export": "Esporta",
-    "ExportCSV": "Esporta CSV",
-    "GoToFirstPage": "Vai alla prima pagina",
-    "InvalidPageNumber": "Numero di pagina non valido",
-    "NoDataToDisplay": "Nessun dato da visualizzare",
-    "Pagination": "Impaginazione",
-    "SearchTableColumn": "Colonne della tabella di ricerca",
-    "SelectColumnToDisplay": "Seleziona le colonne da visualizzare",
-    "SettingTable": "Impostazioni della tabella"
+    "ExpandOptions": "Opzioni di espansione"
   },
   "comp:BAITestButton": {
     "Test": "test"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "e altri {{rest}}"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Creato a",
@@ -703,9 +658,6 @@
       "FileNameRequired": "Immettere un nome di file o cartella."
     }
   },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} di {{total}} elementi"
-  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Nessun dati sulle risorse disponibili"
   },
@@ -767,62 +719,18 @@
   "error": {
     "UnknownError": "Si è verificato un errore sconosciuto. \nPer favore riprova."
   },
-  "form": {
-    "Optional": "(opzionale)",
-    "validateMessages": {
-      "Default": "Errore di convalida del campo ${label}",
-      "Required": "Si prega di inserire ${label}",
-      "Whitespace": "${label} non può essere un carattere vuoto",
-      "array": {
-        "Len": "Deve essere ${len} ${label}",
-        "Max": "Massimo ${max} ${label}",
-        "Min": "Almeno ${min} ${label}",
-        "Range": "Il totale di ${label} deve essere compreso tra ${min}-${max}"
-      },
-      "number": {
-        "Len": "${label} deve essere uguale a ${len}",
-        "Max": "${label} valor e massimo è ${max}",
-        "Min": "${label} valore minimo è ${min}",
-        "Range": "${label} deve essere compreso tra ${min}-${max}"
-      },
-      "pattern": {
-        "Mismatch": "${label} non corrisponde al modello ${pattern}"
-      },
-      "string": {
-        "Len": "${label} deve avere ${len} caratteri",
-        "Max": "${label} deve contenere fino a ${max} caratteri",
-        "Min": "${label} deve contenere almeno ${min} caratteri",
-        "Range": "${label} deve contenere tra ${min}-${max} caratteri"
-      },
-      "types": {
-        "Email": " ${label} non è un ${type} valido",
-        "Number": " ${label} non è un ${type} valido",
-        "Object": " ${label} non è un ${type} valido",
-        "String": " ${label} non è un ${type} valido",
-        "Url": " ${label} non è un ${type} valido"
-      }
-    }
-  },
   "general": {
-    "Decrease": "Diminuisci",
-    "DeselectAll": "Deseleziona tutto",
     "File": "File",
-    "Increase": "Aumenta",
-    "Loading": "Caricamento...",
-    "NSelected": "{{count}} selezionato",
     "Optional": "Opzionale",
     "Project": "Progetto",
     "Search": "Cerca",
     "Select": "Seleziona",
-    "SelectPlaceholder": "Seleziona {{label}}",
-    "TotalItems": "Totali {{total}} elementi",
     "Unit": "Unità",
     "button": {
       "Action": "Azione",
       "Back": "Indietro",
       "Cancel": "Cancellare",
       "Close": "Vicino",
-      "Collapse": "Crollo",
       "Confirm": "Conferma",
       "Copied": "Copiato",
       "Copy": "Copia",
@@ -830,7 +738,6 @@
       "Create": "Creare",
       "Delete": "Eliminare",
       "Edit": "Modifica",
-      "Expand": "Espandere",
       "Remove": "Rimuovere",
       "Save": "Salva",
       "Upload": "Caricamento"

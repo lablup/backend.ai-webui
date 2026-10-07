@@ -14,8 +14,56 @@ test.describe(
   'Admin Model Card Management - Create',
   { tag: ['@admin-model-card', '@admin', '@crud'] },
   () => {
+    let createdCardName = '';
+    let createdFolderName = '';
+
     test.beforeEach(async ({ page, request }) => {
+      createdCardName = '';
+      createdFolderName = '';
       await loginAsAdmin(page, request);
+    });
+
+    test.afterEach(async ({ page }) => {
+      if (createdCardName) {
+        try {
+          await page.goto(
+            `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+          );
+          const adminModelCardPage = new AdminModelCardPage(page);
+          await adminModelCardPage.waitForTableLoad();
+          await adminModelCardPage.applyNameFilter(createdCardName);
+          const exists = await adminModelCardPage
+            .getRowByName(createdCardName)
+            .waitFor({ timeout: 10000 })
+            .then(
+              () => true,
+              () => false,
+            );
+          if (exists) {
+            await adminModelCardPage.deleteModelCardByName(createdCardName);
+          }
+        } catch {
+          // Ignore cleanup errors
+        }
+      }
+      if (createdFolderName) {
+        try {
+          await moveToTrashAndVerify(page, createdFolderName, 'admin-data', {
+            skipTrashVerify: true,
+          });
+        } catch {
+          // Folder may already be in Trash or may not exist
+        }
+        try {
+          await deleteForeverAndVerifyFromTrash(
+            page,
+            createdFolderName,
+            'admin-data',
+          );
+        } catch {
+          // Folder may not be in Trash (already purged or never created)
+        }
+      }
     });
 
     // 3.1 Superadmin can open the Create Model Card modal
@@ -46,55 +94,55 @@ test.describe(
       ).toBeVisible();
       await expect(
         modal
-          .locator('[data-bai-form-item]')
+          .locator('.uic-form-item')
           .filter({ hasText: 'Author' })
           .getByRole('textbox'),
       ).toBeVisible();
       await expect(
         modal
-          .locator('[data-bai-form-item]')
+          .locator('.uic-form-item')
           .filter({ hasText: 'Title' })
           .getByRole('textbox'),
       ).toBeVisible();
       await expect(
         modal
-          .locator('[data-bai-form-item]')
+          .locator('.uic-form-item')
           .filter({ hasText: 'Model Version' })
           .getByRole('textbox'),
       ).toBeVisible();
       await expect(
         modal
-          .locator('[data-bai-form-item]')
+          .locator('.uic-form-item')
           .filter({ hasText: 'Description' })
           .getByRole('textbox'),
       ).toBeVisible();
       await expect(
         modal
-          .locator('[data-bai-form-item]')
+          .locator('.uic-form-item')
           .filter({ hasText: 'Task' })
           .getByRole('textbox'),
       ).toBeVisible();
       await expect(
         modal
-          .locator('[data-bai-form-item]')
+          .locator('.uic-form-item')
           .filter({ hasText: 'Category' })
           .getByRole('textbox'),
       ).toBeVisible();
       await expect(
         modal
-          .locator('[data-bai-form-item]')
+          .locator('.uic-form-item')
           .filter({ hasText: 'Architecture' })
           .getByRole('textbox'),
       ).toBeVisible();
       await expect(
         modal
-          .locator('[data-bai-form-item]')
+          .locator('.uic-form-item')
           .filter({ hasText: 'License' })
           .getByRole('textbox'),
       ).toBeVisible();
       await expect(
         modal
-          .locator('[data-bai-form-item]')
+          .locator('.uic-form-item')
           .filter({ hasText: 'README.md' })
           .getByRole('textbox'),
       ).toBeVisible();
@@ -103,7 +151,7 @@ test.describe(
       // Access Level is a plain Astryx `Selector` rendered as a combobox.
       await expect(
         modal
-          .locator('[data-bai-form-item]')
+          .locator('.uic-form-item')
           .filter({ hasText: 'Access Level' })
           .getByRole('combobox'),
       ).toBeVisible();
@@ -118,19 +166,16 @@ test.describe(
     });
 
     // 3.2 Superadmin can create a model card with only required fields
-    // BLOCKED BY BACKEND: `adminCreateModelCardV2` currently fails server-side
-    // with "ModelCardGQL.__init__() got an unexpected keyword argument
-    // 'min_resource'" (backendai_generic_internal-error). The locators in this
-    // test are correct; the mutation itself cannot succeed until the manager
-    // is fixed.
-    test.fixme('Superadmin can create a model card with only required fields', async ({
+    test('Superadmin can create a model card with only required fields', async ({
       page,
     }) => {
-      test.setTimeout(90000);
+      test.setTimeout(150000);
       const adminModelCardPage = new AdminModelCardPage(page);
       const timestamp = Date.now();
       const cardName = `e2e-test-required-only-${timestamp}`;
       const folderName = `e2e-test-required-only-folder-${timestamp}`;
+      createdCardName = cardName;
+      createdFolderName = folderName;
 
       await page.goto(
         `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
@@ -153,7 +198,7 @@ test.describe(
       // Access Level is a plain Astryx `Selector` (role="combobox" trigger,
       // role="listbox"/"option" popup).
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Access Level' })
         .getByRole('combobox')
         .click();
@@ -185,7 +230,11 @@ test.describe(
       }
 
       // Verify success message
-      await expect(page.getByText('Model card has been created.')).toBeVisible({
+      await expect(
+        adminModelCardPage
+          .getToastRegion()
+          .getByText('Model card has been created.'),
+      ).toBeVisible({
         timeout: 15000,
       });
 
@@ -196,37 +245,19 @@ test.describe(
       await expect(adminModelCardPage.getRowByName(cardName)).toBeVisible({
         timeout: 10000,
       });
-
-      // Cleanup: delete the created model card, then purge the folder
-      await adminModelCardPage.deleteModelCardByName(cardName);
-      try {
-        await moveToTrashAndVerify(page, folderName, 'admin-data', {
-          skipTrashVerify: true,
-        });
-      } catch {
-        // Folder may already be in Trash or may not exist
-      }
-      try {
-        await deleteForeverAndVerifyFromTrash(page, folderName, 'admin-data');
-      } catch {
-        // Folder may not be in Trash (already purged or never created)
-      }
     });
 
     // 3.3 Superadmin can create a model card with all fields populated
-    // BLOCKED BY BACKEND: `adminCreateModelCardV2` currently fails server-side
-    // with "ModelCardGQL.__init__() got an unexpected keyword argument
-    // 'min_resource'" (backendai_generic_internal-error). The locators in this
-    // test are correct; the mutation itself cannot succeed until the manager
-    // is fixed.
-    test.fixme('Superadmin can create a model card with all fields populated', async ({
+    test('Superadmin can create a model card with all fields populated', async ({
       page,
     }) => {
-      test.setTimeout(90000);
+      test.setTimeout(150000);
       const adminModelCardPage = new AdminModelCardPage(page);
       const timestamp = Date.now();
       const cardName = `e2e-test-full-card-${timestamp}`;
       const folderName = `e2e-test-full-card-folder-${timestamp}`;
+      createdCardName = cardName;
+      createdFolderName = folderName;
 
       await page.goto(
         `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
@@ -248,47 +279,47 @@ test.describe(
       // Fill optional fields. In antd v6, tooltip icons alter the accessible name so
       // we locate textboxes via their parent form item label.
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Author' })
         .getByRole('textbox')
         .fill('Test Author');
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Title' })
         .getByRole('textbox')
         .fill('Test Model Title');
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Model Version' })
         .getByRole('textbox')
         .fill('1.0.0');
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Description' })
         .getByRole('textbox')
         .fill('This is a test model description');
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Task' })
         .getByRole('textbox')
         .fill('text-generation');
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Category' })
         .getByRole('textbox')
         .fill('LLM');
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Architecture' })
         .getByRole('textbox')
         .fill('Transformer');
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'License' })
         .getByRole('textbox')
         .fill('Apache-2.0');
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'README.md' })
         .getByRole('textbox')
         .fill('# Test Model\nThis is a test model.');
@@ -297,7 +328,7 @@ test.describe(
       // Access Level is a plain Astryx `Selector` (role="combobox" trigger,
       // role="listbox"/"option" popup).
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Access Level' })
         .getByRole('combobox')
         .click();
@@ -329,7 +360,11 @@ test.describe(
       }
 
       // Verify success message
-      await expect(page.getByText('Model card has been created.')).toBeVisible({
+      await expect(
+        adminModelCardPage
+          .getToastRegion()
+          .getByText('Model card has been created.'),
+      ).toBeVisible({
         timeout: 15000,
       });
 
@@ -347,21 +382,6 @@ test.describe(
         newRow.getByRole('cell', { name: 'text-generation' }),
       ).toBeVisible();
       await expect(newRow.getByRole('cell', { name: 'Public' })).toBeVisible();
-
-      // Cleanup: delete the created model card, then purge the folder
-      await adminModelCardPage.deleteModelCardByName(cardName);
-      try {
-        await moveToTrashAndVerify(page, folderName, 'admin-data', {
-          skipTrashVerify: true,
-        });
-      } catch {
-        // Folder may already be in Trash or may not exist
-      }
-      try {
-        await deleteForeverAndVerifyFromTrash(page, folderName, 'admin-data');
-      } catch {
-        // Folder may not be in Trash (already purged or never created)
-      }
     });
 
     // 3.4 Superadmin cannot create a model card without a Name

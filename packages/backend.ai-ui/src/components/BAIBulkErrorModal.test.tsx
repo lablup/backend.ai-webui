@@ -2,27 +2,7 @@ import BAIBulkErrorModal from './BAIBulkErrorModal';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-// Partial mock: preserve every real export from `react-i18next` (notably
-// `initReactI18next`, which BUI's `locale/index.ts` consumes at import
-// time) and only override `useTranslation` for predictable label strings.
-// See BAIBulkEditFormItem.test.tsx for the rationale (FR-2986).
-vi.mock('react-i18next', async () => {
-  const actual =
-    await vi.importActual<typeof import('react-i18next')>('react-i18next');
-  return {
-    ...actual,
-    useTranslation: () => ({
-      t: (key: string) => {
-        const translations: Record<string, string> = {
-          'comp:BAIBulkErrorModal.ActionExecutionFailed':
-            'Action execution failed',
-          'comp:BAIBulkErrorModal.ErrorOccurred': 'Error Occurred',
-        };
-        return translations[key] || key;
-      },
-    }),
-  };
-});
+// The strings are ui-common's catalog English (uic.BulkErrorModal.*).
 
 interface FailedRow {
   key: string;
@@ -30,7 +10,7 @@ interface FailedRow {
   reason: string;
 }
 
-// antd resolves row keys from each record's `key` field by default.
+// Rows resolve their identity from `key` when there is no `id`.
 const failedRows: FailedRow[] = [
   { key: 'row-1', target: 'project-alpha', reason: 'Permission denied' },
   { key: 'row-2', target: 'project-beta', reason: 'Not found' },

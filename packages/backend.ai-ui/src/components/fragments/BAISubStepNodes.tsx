@@ -29,7 +29,7 @@ import {
   resultSemanticColorMap,
 } from '../BAISchedulingResultBadge';
 import './BAISubStepNodes.css';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import classNames from 'classnames';
 import dayjs from 'dayjs';
 import * as React from 'react';

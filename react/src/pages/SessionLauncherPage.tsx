@@ -28,9 +28,6 @@ import SessionLauncherStorageStep from '../components/SessionLauncherStorageStep
 import SessionNameFormItem, {
   SessionNameFormItemValue,
 } from '../components/SessionNameFormItem';
-import SessionOwnerSetterCard, {
-  SessionOwnerSetterFormValues,
-} from '../components/SessionOwnerSetterCard';
 import SessionTemplateModal from '../components/SessionTemplateModal';
 import {
   AstryxFormCheckbox,
@@ -44,10 +41,7 @@ import { Form } from '../form-engine';
 import { formatDuration, convertToBinaryUnit } from '../helper';
 import { normalizeLegacyMountFields } from '../helper/vfolderMounts';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import {
-  useCurrentUserRole,
-  useResourceSlotsDetails,
-} from '../hooks/backendai';
+import { useResourceSlotsDetails } from '../hooks/backendai';
 import {
   useCurrentProjectValue,
   useCurrentResourceGroupState,
@@ -55,22 +49,20 @@ import {
 import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
 import { useStartSession } from '../hooks/useStartSession';
 import { toProjectContext } from '../types/projectContext';
-import { Button } from '@astryxdesign/core/Button';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { Divider } from '@astryxdesign/core/Divider';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { Grid as AstryxGrid } from '@astryxdesign/core/Grid';
-import { Heading } from '@astryxdesign/core/Heading';
-// FRONTIER (ticket 17): the Form ENGINE is still antd's — ticket 34's
-// self-hosted replacement is parked (see form-engine/engine.ts). Everything
-// INSIDE the items is Astryx: the controls go through the shared
-// `astryxFormControls` adapters.
-import { InputGroup } from '@astryxdesign/core/InputGroup';
-import { RadioList, RadioListItem } from '@astryxdesign/core/RadioList';
-import { Step, Stepper } from '@astryxdesign/core/Stepper';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Button } from '@lablup/ui-common/Button';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { Divider } from '@lablup/ui-common/Divider';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { Grid as AstryxGrid } from '@lablup/ui-common/Grid';
+import { Heading } from '@lablup/ui-common/Heading';
+// The form engine is ui-common's (`@lablup/ui-common/Form`); the controls
+// inside the items go through the shared `astryxFormControls` adapters.
+import { InputGroup } from '@lablup/ui-common/InputGroup';
+import { RadioList, RadioListItem } from '@lablup/ui-common/RadioList';
+import { Step, Stepper } from '@lablup/ui-common/Stepper';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import * as stylex from '@stylexjs/stylex';
 import type { SessionResources as ClientSessionResources } from 'backend.ai-client';
 import {
@@ -135,7 +127,6 @@ export interface SessionResources {
   starts_at?: string;
   startupCommand?: string;
   bootstrap_script?: string;
-  owner_access_key?: string;
   enqueueOnly?: boolean;
   reuseIfExists?: boolean;
   dependencies?: string[];
@@ -196,8 +187,7 @@ export type SessionLauncherFormValue = SessionLauncherValue &
   ImageEnvironmentFormInput &
   ResourceAllocationFormValue &
   SessionLauncherVFolderMountValues &
-  PortSelectFormValues &
-  SessionOwnerSetterFormValues;
+  PortSelectFormValues;
 
 type SessionMode = 'normal' | 'inference' | 'import';
 
@@ -289,7 +279,6 @@ const SessionLauncherPage = () => {
   const mainContentDivRef = useAtomValue(mainContentDivRefState);
   const baiClient = useSuspendedBackendaiClient();
   const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
-  const currentUserRole = useCurrentUserRole();
   const [, setCurrentGlobalResourceGroup] = useCurrentResourceGroupState();
   // ADR-0001 (FR-3411): pages are the only readers of the ambient current
   // project; ResourceAllocationFormItems takes it as an explicit required
@@ -353,7 +342,6 @@ const SessionLauncherPage = () => {
           _.omit(form.getFieldsValue(), [
             'environments.image',
             'environments.customizedTag',
-            'owner',
             'envvars',
           ]),
           {
@@ -996,7 +984,7 @@ const SessionLauncherPage = () => {
                                                 engine COMPOSES a child's own
                                                 trigger handler after its own
                                                 (`originTriggerFunc` in
-                                                `form-engine/Field.tsx`), so
+                                                ui-common Form's `Field`), so
                                                 both run. */}
                                             <AstryxFormNumberInput
                                               label={t(
@@ -1106,18 +1094,8 @@ const SessionLauncherPage = () => {
                   </StepCard>
                 )}
 
-                {(currentUserRole === 'admin' ||
-                  currentUserRole === 'superadmin') && (
-                  <SessionOwnerSetterCard
-                    style={{
-                      display:
-                        currentStepKey === 'sessionType' ? 'block' : 'none',
-                    }}
-                  />
-                )}
-
                 {sessionType === 'inference' && (
-                  <StepCard title="Inference Mode Configuration">
+                  <StepCard title={t('session.launcher.InferenceModeConfig')}>
                     <Form.Item
                       name={['inference', 'vFolderName']}
                       label={t('session.launcher.ModelStorageToMount')}
@@ -1580,15 +1558,6 @@ const SessionLauncherPage = () => {
                 vfolderMounts: [],
                 bootstrap_script: '',
                 num_of_sessions: 1,
-                owner: {
-                  enabled: false,
-                  accesskey: '',
-                  domainName: '',
-                  email: undefined,
-                  projectId: '',
-                  project: '',
-                  resourceGroup: '',
-                },
                 environments: {
                   manual: '',
                 },

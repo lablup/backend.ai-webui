@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "ทุกอย่างในแท็บนี้ดำเนินการในฐานะผู้ใช้นี้และถูกบันทึกในบันทึกการตรวจสอบ แท็บอื่นของคุณยังคงอยู่ในมุมมองผู้ดูแลระบบ",
+    "BannerTitle": "กำลังใช้งานในฐานะ {{name}} ({{email}})",
+    "ConfirmDescription": "ทำงานด้วยสิทธิ์และมุมมองของ {{email}} ในแท็บใหม่ ทุกอย่างที่คุณทำในแท็บนั้นจะดำเนินการในฐานะผู้ใช้นี้ และบันทึกการตรวจสอบจะบันทึกบัญชีผู้ดูแลระบบของคุณด้วย แท็บนี้ยังคงอยู่ในมุมมองผู้ดูแลระบบ",
+    "ConfirmTitle": "ใช้งานในฐานะ {{name}}",
+    "Exit": "ออก",
+    "FailedToOpen": "ไม่สามารถเปิดแท็บใหม่ได้",
+    "OpenInNewTab": "เปิดในแท็บใหม่",
+    "UseAsThisUser": "ใช้งานในฐานะผู้ใช้นี้"
+  },
   "activeAgent": {
     "ActiveAgents": "ตัวแทนที่ใช้งานอยู่",
     "ActiveAgentsTooltip": "แสดงภาพรวม at-a-glance ของตัวแทนทั้งหมดที่ทำงานอยู่ในระบบ"
@@ -676,6 +686,8 @@
     "KeypairDetail": "รายละเอียดคู่คีย์",
     "KeypairRestored": "กู้คืนคู่คีย์แล้ว",
     "LastUsed": "ใช้ครั้งล่าสุด",
+    "LoginNotUnblocked": "ไม่ได้ยกเลิกการบล็อกการเข้าสู่ระบบ ผู้ใช้อาจไม่ได้ถูกบล็อก",
+    "LoginUnblocked": "ยกเลิกการบล็อกการเข้าสู่ระบบแล้ว ผู้ใช้สามารถเข้าสู่ระบบได้อีกครั้ง",
     "MainAccessKey": "คีย์การเข้าถึงหลัก",
     "MainKeyCannotDeactivate": "ไม่สามารถปิดใช้งานคีย์การเข้าถึงหลักได้ โปรดเปลี่ยนไปใช้คีย์อื่นก่อน",
     "MainKeyChanged": "คีย์การเข้าถึงหลักเปลี่ยนแล้ว",
@@ -738,6 +750,8 @@
     "StatusInfo": "ข้อมูลสถานะ",
     "StatusUpdatedSuccessfully": "สถานะผู้ใช้มีการเปลี่ยนแปลง",
     "TooltipForRequirePasswordChange": "หากเปิดใช้งานตัวเลือกนี้ ผู้ใช้จะต้องเปลี่ยนรหัสผ่านเมื่อเข้าสู่ระบบครั้งถัดไป",
+    "UnblockLogin": "ปลดล็อกการเข้าสู่ระบบ",
+    "UnblockLoginConfirm": "ต้องการยกเลิกการบล็อกจากการเข้าสู่ระบบล้มเหลวของผู้ใช้นี้หรือไม่",
     "UpdateUsers": "แก้ไขผู้ใช้เป็นชุด",
     "UpdateUsersWarningAlertTitle": "การตั้งค่า UID หรือ GID อาจทำให้ไม่สามารถใช้งานการเมานท์โฟลเดอร์ที่สร้างไว้ก่อนหน้านี้ได้",
     "UpdatedUsers": "อัปเดตแล้ว {{count}} จากผู้ใช้ทั้งหมด {{total}} คน",
@@ -990,6 +1004,7 @@
       "LeaveFolder": "ออกจากโฟลเดอร์",
       "Location": "ตำแหน่ง",
       "ManageProjectFolderInAdmin": "การจัดการโฟลเดอร์โครงการสามารถทำได้ในการตั้งค่าผู้ดูแลระบบ",
+      "MaxFiles": "จำนวนไฟล์สูงสุด",
       "MaxFolderQuota": "โควตาโฟลเดอร์สูงสุด",
       "MaxSize": "ขนาดสูงสุด",
       "ModelProjectFolderRestrictedToReadOnly": "สิทธิ์ 'อ่านและเขียน' ไม่รองรับสำหรับโฟลเดอร์ Model Store",
@@ -1971,6 +1986,7 @@
     "APIEndpointEmpty": "จุดสิ้นสุด API ว่างเปล่า กรุณาระบุจุดสิ้นสุด API เพื่อเข้าสู่ระบบ",
     "APIKey": "คีย์ API",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "การเข้าสู่ระบบด้วย API ต้องใช้เอนด์พอยต์ของ Manager WebUI นี้ถูกตั้งค่าให้เชื่อมต่อผ่าน Backend.AI Webserver",
     "ActiveSessionExists": "มีเซสชันการเข้าสู่ระบบที่ใช้งานอยู่แล้ว",
     "ActiveSessionExistsDescription": "คุณได้เข้าสู่ระบบจากเบราว์เซอร์หรือแท็บอื่นอยู่แล้ว กรุณาออกจากระบบจากเซสชันอื่นก่อน หรือลองอีกครั้ง",
     "AdvancedSettings": "ขั้นสูง",
@@ -2001,6 +2017,8 @@
     "LoginWithE-mailOrUsername": "เข้าสู่ระบบด้วยอีเมลหรือชื่อผู้ใช้",
     "LoginWithIAM": "เข้าสู่ระบบด้วย IAM",
     "MonitorRoleLoginForbidden": "ผู้ใช้ที่มีบทบาทตรวจสอบไม่ได้รับอนุญาตให้เข้าสู่ระบบ",
+    "NewPasswordMayNotBeApplied": "รหัสผ่านใหม่ของคุณอาจยังไม่ถูกนำไปใช้",
+    "NewPasswordMayNotBeAppliedDesc": "ไม่สามารถเข้าสู่ระบบด้วยรหัสผ่านใหม่ได้ การเปลี่ยนรหัสผ่านอาจไม่ได้ถูกบันทึกบนเซิร์ฟเวอร์ ลองเข้าสู่ระบบด้วยรหัสผ่านเดิม หรือติดต่อผู้ดูแลระบบ การเข้าสู่ระบบล้มเหลวซ้ำหลายครั้งอาจทำให้บัญชีของคุณถูกล็อกชั่วคราว",
     "NoEndpointSaved": "ไม่มีจุดสิ้นสุดที่บันทึกไว้",
     "NotAUser": "ยังไม่ได้เป็นผู้ใช้?",
     "Password": "รหัสผ่าน",
@@ -2228,9 +2246,6 @@
     "StepWarning": "ต้องดำเนินการ",
     "SuccessfullyUpdated": "อัปเดตสำเร็จแล้ว",
     "Visit": "เยี่ยมชม"
-  },
-  "pagination": {
-    "Total": "{{start}} - {{end}} ของ {{total}} รายการ"
   },
   "project": {
     "Activate": "เปิดใช้งาน",
@@ -3082,6 +3097,7 @@
       "ImageDoesNotProvideModelPath": "อิมเมจคอนเทนเนอร์ไม่ได้ให้เส้นทางโมเดล ควรแก้ไข",
       "ImageFilter": "ตัวกรองอิมเมจ",
       "InferenceMode": "การอนุมาน",
+      "InferenceModeConfig": "การกำหนดค่าโหมดการอนุมาน",
       "InfiniteTime": "ไม่จำกัดเวลา",
       "InsufficientAllocationOfResourcesWarning": "ทรัพยากรที่จัดสรรได้อยู่ต่ำกว่าทรัพยากรขั้นต่ำที่จำเป็นในรูปภาพที่เลือก",
       "InteractiveMode": "แบบโต้ตอบ",
@@ -3131,10 +3147,7 @@
       "OnlyAllowsDiscreteNumberByClusterSize": "อนุญาตเฉพาะจำนวนเต็มเมื่อขนาดคลัสเตอร์ไม่น้อยกว่า 2",
       "OnlyAllowsDiscreteNumberByQuantumSize": "ค่าจะต้องเป็นมัลติของ {{stepSize}}",
       "OpenMPOptimization": "การปรับแต่ง OpenMP/OpenBLAS",
-      "OwnerAccessKey": "คีย์การเข้าถึงของเจ้าของ",
       "OwnerEmail": "อีเมลเจ้าของ",
-      "OwnerGroup": "เจ้าของโครงการ",
-      "OwnerResourceGroup": "กลุ่มทรัพยากรของเจ้าของ",
       "PinnedHistoryTooltip": "คลิกที่ไอคอน PIN เพื่อแก้ไขบันทึก บันทึกคงที่จะถูกเก็บรักษาไว้",
       "PleaseCompleteForm": "แบบฟอร์มไม่สมบูรณ์หรือมีข้อผิดพลาด กรุณาตรวจสอบข้อมูลที่ป้อน",
       "PleaseWaitInitializing": "กรุณารอสักครู่ขณะกำลังเริ่มต้น...",
@@ -3177,7 +3190,6 @@
       "SetBatchJobTimeoutDuration": "กำหนดระยะเวลาหมดเวลางานแบทช์",
       "SetEnvironmentVariable": "ตัวแปรสภาพแวดล้อม (ไม่บังคับ)",
       "SetPreopenPorts": "พอร์ตที่เปิดล่วงหน้า (ไม่บังคับ)",
-      "SetSessionOwner": "เจ้าของเซสชัน",
       "SettingUpProxyForApp": "กำลังตั้งค่าพร็อกซีสำหรับแอป...",
       "SharedMemory": "หน่วยความจำที่ใช้ร่วมกัน (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "การตั้งค่าหน่วยความจำร่วมถูกลดลงให้ต่ำกว่าหน่วยความจำที่จัดสรร",

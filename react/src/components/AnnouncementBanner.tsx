@@ -11,10 +11,10 @@ import { useCurrentUserRole } from '../hooks/backendai';
 import { useSuspenseGetAnnouncement } from '../hooks/useSuspenseGetAnnouncement';
 import './AnnouncementBanner.css';
 import AnnouncementEditModal from './AnnouncementEditModal';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { Markdown } from '@astryxdesign/core/Markdown';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { Markdown } from '@lablup/ui-common/Markdown';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIUnmountAfterClose,
   useSessionStorageState,

@@ -26,13 +26,13 @@ import {
   AstryxFormTextInput,
   type AstryxFormSelectorOptions,
 } from './astryxFormControls';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
   BAIFlex,
   BAIModal,
   BAIModalProps,
+  BAISkeleton,
   toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';

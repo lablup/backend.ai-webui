@@ -21,15 +21,15 @@ import {
 import DomainResourceGroupAlert from './DomainResourceGroupAlert';
 import ProjectResourceGroupAlert from './ProjectResourceGroupAlert';
 import UserResourceGroupAlert from './UserResourceGroupAlert';
-import { Banner } from '@astryxdesign/core/Banner';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Banner } from '@lablup/ui-common/Banner';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
-  BAIQuestionIconWithTooltip,
   BAIBulkEditFormItem,
   BAIFlex,
   BAIModal,
   BAIModalProps,
+  BAIQuestionIconWithTooltip,
+  BAISkeleton,
   BAITokenList,
   useBAILogger,
 } from 'backend.ai-ui';

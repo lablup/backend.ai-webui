@@ -25,10 +25,20 @@ const toSubPath = (explorerPath: string) =>
 // Suspense gap. Operation name must match the generated artifact; the const
 // name only differs to avoid clashing with the imported generated type.
 export const BAIDirectoryPickerQuery = graphql`
-  query BAIDirectoryPickerModalQuery($vfolderGlobalId: String!) {
-    vfolder_node(id: $vfolderGlobalId) {
-      name
-      permissions
+  query BAIDirectoryPickerModalQuery($vfolderId: UUID!) {
+    vfolderV2(vfolderId: $vfolderId) {
+      id
+      host
+      metadata {
+        name
+      }
+      permissions @since(version: "26.9.0rc1")
+    }
+    myStorageHostPermissions {
+      items {
+        host
+        permissions
+      }
     }
   }
 `;
@@ -40,7 +50,7 @@ export interface BAIDirectoryPickerModalProps extends Omit<
   vfolderUuid: string;
   /**
    * Preloaded reference to `BAIDirectoryPickerQuery` produced by the opener
-   * via `useQueryLoader`, keyed by this vfolder's global id.
+   * via `useQueryLoader`, keyed by this vfolder's id.
    */
   queryRef: PreloadedQuery<BAIDirectoryPickerModalQuery>;
   /** Sub path to start browsing from ('' = vfolder root). */
@@ -54,7 +64,7 @@ export interface BAIDirectoryPickerModalProps extends Omit<
  * mode: browse the vfolder (files visible but disabled, folder CRUD
  * available) and confirm the current location with the footer button.
  *
- * Suspends until the preloaded `vfolder_node` query (and the BAIClient
+ * Suspends until the preloaded `vfolderV2` query (and the BAIClient
  * promise consumed inside `BAIFileExplorer`) resolves, so it mounts fully
  * ready — folder name in the title, permissions applied. Openers must
  * therefore mount it inside a transition (`loadQuery` + open-state update
@@ -75,29 +85,29 @@ const BAIDirectoryPickerModal: React.FC<BAIDirectoryPickerModalProps> = ({
     toExplorerPath(defaultPath ?? ''),
   );
 
-  // Folder CRUD inside the picker follows the caller's effective permissions
-  // on this vfolder, same as FolderExplorerModal.
-  const { vfolder_node } = usePreloadedQuery<BAIDirectoryPickerModalQuery>(
-    BAIDirectoryPickerQuery,
-    queryRef,
-  );
-  const hasWriteContentPermission = _.includes(
-    vfolder_node?.permissions,
-    'write_content',
-  );
-  const hasDeleteContentPermission = _.includes(
-    vfolder_node?.permissions,
-    'delete_content',
-  );
+  // Folder CRUD needs the folder's `UPDATE` bit plus the matching storage host
+  // permission. `myStorageHostPermissions` is the union across the user's
+  // projects; the manager still checks the folder's own scope.
+  const { vfolderV2, myStorageHostPermissions } =
+    usePreloadedQuery<BAIDirectoryPickerModalQuery>(
+      BAIDirectoryPickerQuery,
+      queryRef,
+    );
+  const canUpdateContent = _.includes(vfolderV2?.permissions, 'UPDATE');
+  const hostPermissions = _.find(myStorageHostPermissions?.items, {
+    host: vfolderV2?.host,
+  })?.permissions;
+  const hasHostPermission = (
+    permission: 'CREATE_VFOLDER' | 'MODIFY_VFOLDER' | 'DELETE_VFOLDER',
+  ) => canUpdateContent && _.includes(hostPermissions, permission);
+  const folderName = vfolderV2?.metadata?.name;
 
   return (
     <BAIModal
       width={800}
       title={
-        vfolder_node?.name
-          ? t('comp:VFolderPathPicker.SelectAPathInFolder', {
-              folderName: vfolder_node.name,
-            })
+        folderName
+          ? t('comp:VFolderPathPicker.SelectAPathInFolder', { folderName })
           : t('comp:VFolderPathPicker.SelectAPath')
       }
       onCancel={() => {
@@ -124,11 +134,12 @@ const BAIDirectoryPickerModal: React.FC<BAIDirectoryPickerModalProps> = ({
       <BAIFileExplorer
         mode="directoryPicker"
         targetVFolderId={vfolderUuid}
-        targetVFolderName={vfolder_node?.name ?? undefined}
+        targetVFolderName={folderName ?? undefined}
         defaultPath={toExplorerPath(defaultPath ?? '')}
         onChangeCurrentPath={setCurrentPath}
-        enableWrite={hasWriteContentPermission}
-        enableDelete={hasDeleteContentPermission}
+        enableCreate={hasHostPermission('CREATE_VFOLDER')}
+        enableRename={hasHostPermission('MODIFY_VFOLDER')}
+        enableDelete={hasHostPermission('DELETE_VFOLDER')}
       />
     </BAIModal>
   );

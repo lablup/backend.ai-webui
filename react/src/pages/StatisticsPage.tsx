@@ -6,7 +6,7 @@ import AllocationHistory from '../components/AllocationHistory';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import UserSessionsMetrics from '../components/UserSessionsMetrics';
 import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../hooks';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAISkeleton, filterOutEmpty, BAICard } from 'backend.ai-ui';
 import { parseAsStringLiteral } from 'nuqs';
 import React, { Suspense } from 'react';

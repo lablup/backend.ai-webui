@@ -18,8 +18,8 @@ import {
   AstryxFormTagsInput,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Banner } from '@astryxdesign/core/Banner';
-import { TextInput } from '@astryxdesign/core/TextInput';
+import { Banner } from '@lablup/ui-common/Banner';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIButton,
   BAIFlex,

@@ -89,26 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "發生未預期的錯誤。請稍後再試，若問題持續，請聯絡支援。"
   },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "清除",
-    "KeepAsIs": "保持原樣",
-    "UndoChanges": "撤銷更改"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "執行錯誤",
-    "ErrorOccurred": "發生錯誤"
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "清除",
-    "HexValue": "十六進位值",
-    "NoColor": "無顏色",
-    "SelectColor": "選擇顏色"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "清除 搜尋選項",
-    "NoResults": "無結果",
-    "SearchOptions": "搜尋選項"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "選擇容器映像倉庫"
   },
@@ -128,14 +108,6 @@
     "Size": "尺寸",
     "SuccessFullyRemoved": "成功刪除了{{count}}版本。",
     "Version": "版本"
-  },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "您確定要刪除嗎？",
-    "AreYouSureToPermanentlyDeleteTarget": "確定要永久刪除{{target}}嗎？",
-    "CannotBeUndone": "此操作無法復原。",
-    "DeleteItem": "刪除",
-    "DeleteNItems": "刪除 {{count}} 個項目",
-    "TypeToConfirm": "輸入 <token>{{confirmText}}</token> 以確認。"
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "建立者"
@@ -417,11 +389,6 @@
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "已分配 / 請求"
   },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "變更群組顏色",
-    "ResourceGrid": "資源網格",
-    "UseColorN": "使用顏色 {{n}}"
-  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "無限"
   },
@@ -571,8 +538,11 @@
     "MultiNodeShort": "多",
     "SingleNodeShort": "單節點"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "無限"
+  "comp:BAISessionTypeToken": {
+    "Batch": "批次",
+    "Inference": "推論",
+    "Interactive": "互動式",
+    "System": "上傳"
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "選擇儲存主機"
@@ -590,28 +560,13 @@
     "Time": "時間"
   },
   "comp:BAITable": {
-    "Apply": "套用",
-    "Cancel": "取消",
     "CollapseAll": "收合全部",
     "ExpandAll": "展開全部",
     "ExpandErrorsOnly": "僅展開錯誤",
-    "ExpandOptions": "展開選項",
-    "ExpandRow": "展開列",
-    "Export": "匯出",
-    "ExportCSV": "匯出 CSV",
-    "GoToFirstPage": "跳到第一頁",
-    "InvalidPageNumber": "無效的頁碼",
-    "NoDataToDisplay": "暫無資料",
-    "Pagination": "分頁",
-    "SearchTableColumn": "搜索表列",
-    "SelectColumnToDisplay": "選擇要顯示的列",
-    "SettingTable": "表設置"
+    "ExpandOptions": "展開選項"
   },
   "comp:BAITestButton": {
     "Test": "測試"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "另有 {{rest}} 項"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "創建於",
@@ -703,9 +658,6 @@
       "FileNameRequired": "請輸入文件或文件夾名稱。"
     }
   },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} {{total}}項目"
-  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "沒有可用的資源數據"
   },
@@ -767,62 +719,18 @@
   "error": {
     "UnknownError": "發生了未知錯誤。請重試。"
   },
-  "form": {
-    "Optional": "（可選）",
-    "validateMessages": {
-      "Default": "字段驗證錯誤${label}",
-      "Required": "請輸入${label}",
-      "Whitespace": "${label}不能為空字符",
-      "array": {
-        "Len": "須為${len}個${label}",
-        "Max": "最多${max}個${label}",
-        "Min": "最少${min}個${label}",
-        "Range": "${label}數量須在${min}-${max}之間"
-      },
-      "number": {
-        "Len": "${label}必須等於${len}",
-        "Max": "${label}最大值為${max}",
-        "Min": "${label}最小值為${min}",
-        "Range": "${label}須在${min}-${max}之間"
-      },
-      "pattern": {
-        "Mismatch": "${label}與模式不匹配${pattern}"
-      },
-      "string": {
-        "Len": "${label}須為${len}個字符",
-        "Max": "${label}最多${max}個字符",
-        "Min": "${label}最少${min}個字符",
-        "Range": "${label}須在${min}-${max}字符之間"
-      },
-      "types": {
-        "Email": "${label}不是一個有效的${type}",
-        "Number": "${label}不是一個有效的${type}",
-        "Object": "${label}不是一個有效的${type}",
-        "String": "${label}不是一個有效的${type}",
-        "Url": "${label}不是一個有效的${type}"
-      }
-    }
-  },
   "general": {
-    "Decrease": "減少",
-    "DeselectAll": "取消全選",
     "File": "檔案",
-    "Increase": "增加",
-    "Loading": "載入中...",
-    "NSelected": "{{count}}選擇",
     "Optional": "選填",
     "Project": "專案",
     "Search": "搜尋",
     "Select": "選擇",
-    "SelectPlaceholder": "請選擇{{label}}",
-    "TotalItems": "總計{{total}}項目",
     "Unit": "單位",
     "button": {
       "Action": "動作",
       "Back": "返回",
       "Cancel": "取消",
       "Close": "關閉",
-      "Collapse": "坍塌",
       "Confirm": "確認",
       "Copied": "已複製",
       "Copy": "複製",
@@ -830,7 +738,6 @@
       "Create": "創造",
       "Delete": "刪除",
       "Edit": "編輯",
-      "Expand": "擴張",
       "Remove": "消除",
       "Save": "儲存",
       "Upload": "上傳"

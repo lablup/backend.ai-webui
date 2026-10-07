@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "Everything in this tab runs as this user and is recorded in the audit log. Your other tabs stay in your admin view.",
+    "BannerTitle": "Using as {{name}} ({{email}})",
+    "ConfirmDescription": "Work with {{email}}'s permissions and view in a new tab. Everything you do in that tab runs as this user, and the audit log also records that your admin account did it. This tab stays in your admin view.",
+    "ConfirmTitle": "Use as {{name}}",
+    "Exit": "Exit",
+    "FailedToOpen": "Could not open a new tab.",
+    "OpenInNewTab": "Open in new tab",
+    "UseAsThisUser": "Use as this user"
+  },
   "activeAgent": {
     "ActiveAgents": "Active Agents",
     "ActiveAgentsTooltip": "Shows an at-a-glance overview of all agents currently running in the system."
@@ -665,6 +675,8 @@
     "KeypairDetail": "Keypair Detail",
     "KeypairRestored": "Keypair restored.",
     "LastUsed": "Last Used",
+    "LoginNotUnblocked": "The login block was not cleared. The user may not have been blocked.",
+    "LoginUnblocked": "The login block has been cleared. The user can sign in again.",
     "MainAccessKey": "Main Access Key",
     "MainKeyCannotDeactivate": "Cannot deactivate the main access key. Switch to another key first.",
     "MainKeyChanged": "Main access key changed.",
@@ -729,6 +741,8 @@
     "StatusInfo": "Status Info",
     "StatusUpdatedSuccessfully": "The user status has changed.",
     "TooltipForRequirePasswordChange": "When enabled, the user must change their password at next login.",
+    "UnblockLogin": "Unblock login",
+    "UnblockLoginConfirm": "Clear the failed-login block for this user?",
     "UpdateUsers": "Bulk Edit Users",
     "UpdateUsersWarningAlertTitle": "Setting UID or GID(s) may restrict the use of previously created folder mounts.",
     "UpdatedUsers": "Updated {{count}} out of {{total}} users.",
@@ -982,6 +996,7 @@
       "LeaveFolder": "Leave folder",
       "Location": "Location",
       "ManageProjectFolderInAdmin": "Project folder management is available in admin settings.",
+      "MaxFiles": "Max Files",
       "MaxFolderQuota": "Max Folder Quota",
       "MaxSize": "Max Size",
       "ModelProjectFolderRestrictedToReadOnly": "'Read & Write' permission is not supported for model store folder",
@@ -1967,6 +1982,7 @@
     "APIEndpointEmpty": "API Endpoint is empty. Please specify API endpoint to login.",
     "APIKey": "API Key",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "API sign-in needs a Manager endpoint. This WebUI is set to connect through a Backend.AI Webserver.",
     "ActiveSessionExists": "An active login session already exists.",
     "ActiveSessionExistsDescription": "You are already logged in from another browser or tab. Please log out from the other session first, or try again.",
     "AdvancedSettings": "Advanced",
@@ -1997,6 +2013,8 @@
     "LoginWithE-mailOrUsername": "Login With email or Username",
     "LoginWithIAM": "Login With IAM",
     "MonitorRoleLoginForbidden": "Monitor role users are not allowed to log in.",
+    "NewPasswordMayNotBeApplied": "Your new password may not have been applied",
+    "NewPasswordMayNotBeAppliedDesc": "Signing in with the new password failed, so the password change may not have been saved on the server. Try signing in with your previous password, or contact your administrator. Repeated failed attempts can temporarily lock your account.",
     "NoEndpointSaved": "No endpoint saved.",
     "NotAUser": "Not a user?",
     "Password": "Password",
@@ -2224,9 +2242,6 @@
     "StepWarning": "Action required",
     "SuccessfullyUpdated": "Successfully Updated",
     "Visit": "Visit"
-  },
-  "pagination": {
-    "Total": "{{start}} - {{end}} of {{total}} items"
   },
   "project": {
     "Activate": "Activate",
@@ -3084,6 +3099,7 @@
       "ImageDoesNotProvideModelPath": "Container image does not provide model path. It should be modified.",
       "ImageFilter": "Image filter",
       "InferenceMode": "Inference",
+      "InferenceModeConfig": "Inference Mode Configuration",
       "InfiniteTime": "Infinite",
       "InsufficientAllocationOfResourcesWarning": "Allocatable resources falls below the minimum resource required in the selected image.",
       "InteractiveMode": "Interactive",
@@ -3133,10 +3149,7 @@
       "OnlyAllowsDiscreteNumberByClusterSize": "Only integer is allowed when cluster size is not less than 2.",
       "OnlyAllowsDiscreteNumberByQuantumSize": "The value must be a multiple of {{stepSize}}.",
       "OpenMPOptimization": "OpenMP/OpenBLAS Optimization",
-      "OwnerAccessKey": "Owner access key",
       "OwnerEmail": "Owner Email",
-      "OwnerGroup": "Owner project",
-      "OwnerResourceGroup": "Owner resource group",
       "PinnedHistoryTooltip": "Click the pin icon to pin the history. Pinned item will be retained.",
       "PleaseCompleteForm": "Form is incomplete or contains errors. Please check your inputs.",
       "PleaseWaitInitializing": "Please wait while initializing...",
@@ -3179,7 +3192,6 @@
       "SetBatchJobTimeoutDuration": "Set batch job timeout duration",
       "SetEnvironmentVariable": "Environment Variable (optional)",
       "SetPreopenPorts": "Preopen Ports (optional)",
-      "SetSessionOwner": "Session owner",
       "SettingUpProxyForApp": "Setting up proxy for the app...",
       "SharedMemory": "Shared Memory (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "Shared memory setting is reduced to below the allocated memory.",

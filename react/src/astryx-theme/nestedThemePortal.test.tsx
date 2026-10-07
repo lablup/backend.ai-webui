@@ -10,11 +10,10 @@ import { ThemeModeProvider } from '../hooks/useThemeMode';
 import AstryxAdminTheme from './AstryxAdminTheme';
 import AstryxBrandTheme from './AstryxBrandTheme';
 import { resolveRoleTheme } from './resolveRoleTheme';
-import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog';
-import { Layout, LayoutContent } from '@astryxdesign/core/Layout';
-import { MediaTheme } from '@astryxdesign/core/theme';
+import { Layout, LayoutContent } from '@lablup/ui-common/Layout';
+import { Modal, ModalHeader } from '@lablup/ui-common/Modal';
+import { MediaTheme } from '@lablup/ui-common/theme';
 import { render, screen } from '@testing-library/react';
-import { BAIDialog } from 'backend.ai-ui';
 import { describe, expect, it, vi } from 'vitest';
 
 // `useCustomThemeConfig` reaches into `useBAISetting`, which drags in
@@ -29,7 +28,7 @@ const adminName = resolveRoleTheme(undefined, 'admin').name;
 
 const modalBody = (
   <Layout
-    header={<DialogHeader title="Admin modal" />}
+    header={<ModalHeader title="Admin modal" />}
     content={<LayoutContent>body</LayoutContent>}
   />
 );
@@ -64,23 +63,24 @@ describe('nested Astryx theme across a portal', () => {
     );
   });
 
-  it('kept the admin theme by DOM ancestry while the dialog was non-portalled', () => {
+  it('keeps the admin theme by DOM ancestry for a non-portalled dialog', () => {
     renderInAdminRegion(
-      <Dialog isOpen onOpenChange={vi.fn()} aria-label="Native dialog">
+      <Modal isInline isOpen onOpenChange={vi.fn()} aria-label="Inline dialog">
         {modalBody}
-      </Dialog>,
+      </Modal>,
     );
 
     expect(
-      nearestThemeOf(screen.getByRole('dialog', { name: 'Native dialog' })),
+      // An inline dialog exposes no dialog role; its title is in the same tree.
+      nearestThemeOf(screen.getByRole('heading', { name: 'Admin modal' })),
     ).toBe(adminName);
   });
 
   it('keeps a portalled modal on the admin theme it was opened from', () => {
     renderInAdminRegion(
-      <BAIDialog isOpen onOpenChange={vi.fn()}>
+      <Modal isOpen onOpenChange={vi.fn()}>
         {modalBody}
-      </BAIDialog>,
+      </Modal>,
     );
 
     expect(
@@ -91,9 +91,9 @@ describe('nested Astryx theme across a portal', () => {
   it('escapes a MediaTheme band instead of inheriting its on-dark tokens', () => {
     renderInAdminRegion(
       <MediaTheme mode="dark">
-        <BAIDialog isOpen onOpenChange={vi.fn()}>
+        <Modal isOpen onOpenChange={vi.fn()}>
           {modalBody}
-        </BAIDialog>
+        </Modal>
       </MediaTheme>,
     );
 

@@ -89,26 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Гэнэтийн алдаа гарлаа. Дахин оролдоно уу эсвэл асуудал үргэлжилбэл дэмжлэгт хандана уу."
   },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "Цэвэрлэх",
-    "KeepAsIs": "Хэвээр үлдээх",
-    "UndoChanges": "Өөрчлөлтийг буцаах"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Гүйцэтгэл амжилтгүй боллоо",
-    "ErrorOccurred": "Алдаа гарлаа"
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "Цэвэрлэх",
-    "HexValue": "Hex утга",
-    "NoColor": "Өнгөгүй",
-    "SelectColor": "Өнгө сонгох"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Сонголтуудаас хайх-г цэвэрлэх",
-    "NoResults": "Үр дүн олдсонгүй",
-    "SearchOptions": "Сонголтуудаас хайх"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Контейнер бүртгэл сонгох"
   },
@@ -128,14 +108,6 @@
     "Size": "Хэмжээ",
     "SuccessFullyRemoved": "Амжилттай хассан {{тоолох} хувилбарууд.",
     "Version": "Таамаглал"
-  },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "Та устгахдаа итгэлтэй байна уу?",
-    "AreYouSureToPermanentlyDeleteTarget": "{{target}}-г бүрмөсөн устгахдаа итгэлтэй байна уу?",
-    "CannotBeUndone": "Энэ үйлдлийг буцаах боломжгүй.",
-    "DeleteItem": "Устгах",
-    "DeleteNItems": "{{count}} зүйл устгах",
-    "TypeToConfirm": "Баталгаажуулахын тулд <token>{{confirmText}}</token> гэж бичнэ үү."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Үүсгэсэн"
@@ -417,11 +389,6 @@
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Хуваарилсан / Хүссэн"
   },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "Бүлгийн өнгийг өөрчлөх",
-    "ResourceGrid": "Нөөцийн тор",
-    "UseColorN": "Өнгө {{n}} ашиглах"
-  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Хязгааргүй"
   },
@@ -571,8 +538,11 @@
     "MultiNodeShort": "Олон-нүдэт",
     "SingleNodeShort": "Нэг-нүдэт"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Хязгааргүй"
+  "comp:BAISessionTypeToken": {
+    "Batch": "Багц",
+    "Inference": "Дүгнэлт",
+    "Interactive": "Интерактив",
+    "System": "Байршуулалт"
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Хадгалах хост сонгох"
@@ -590,28 +560,13 @@
     "Time": "Цаг"
   },
   "comp:BAITable": {
-    "Apply": "Хэрэглэх",
-    "Cancel": "Цуцлах",
     "CollapseAll": "Бүгдийг хураах",
     "ExpandAll": "Бүгдийг дэлгэх",
     "ExpandErrorsOnly": "Зөвхөн алдааг дэлгэх",
-    "ExpandOptions": "Дэлгэх сонголтууд",
-    "ExpandRow": "Мөрийг дэлгэх",
-    "Export": "Экспорт",
-    "ExportCSV": "CSV экспортлах",
-    "GoToFirstPage": "Эх хуудас руу шилжих",
-    "InvalidPageNumber": "Хуудасны дугаар буруу байна",
-    "NoDataToDisplay": "Харуулах өгөгдөл алга",
-    "Pagination": "Хуудаслалт",
-    "SearchTableColumn": "Хүснэгтийн баганыг хайх",
-    "SelectColumnToDisplay": "Дэлгэцийн баганыг сонгоно уу",
-    "SettingTable": "Хүснэгтийн тохиргоо"
+    "ExpandOptions": "Дэлгэх сонголтууд"
   },
   "comp:BAITestButton": {
     "Test": "турших"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "болон бусад {{rest}}"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Үүсгэсэн",
@@ -703,9 +658,6 @@
       "FileNameRequired": "Файл эсвэл хавтасны нэрийг оруулна уу."
     }
   },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{{end}} {{total}}}} зүйл"
-  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Нөөцийн мэдээлэл байхгүй байна"
   },
@@ -767,62 +719,18 @@
   "error": {
     "UnknownError": "Үл мэдэгдэх алдаа гарлаа. \nДахин оролдоно уу."
   },
-  "form": {
-    "Optional": "(сонголттой)",
-    "validateMessages": {
-      "Default": "${label}-ийн талбарын баталгаажуулалтын алдаа",
-      "Required": "${label} оруулна уу",
-      "Whitespace": "${label} нь хоосон тэмдэгт байж болохгүй",
-      "array": {
-        "Len": "${len} ${label} байх ёстой",
-        "Max": "Хамгийн ихдээ ${max} ${label}",
-        "Min": "Дор хаяж ${мин} ${label}",
-        "Range": "${label}-н хэмжээ ${min}-${max} хооронд байх ёстой"
-      },
-      "number": {
-        "Len": "${label} нь ${len}-тэй тэнцүү байх ёстой",
-        "Max": "${label} дээд тал нь ${max} байх ёстой",
-        "Min": "${label} хамгийн багадаа ${min} байх ёстой",
-        "Range": "${label} ${min}-${max} хооронд байх ёстой"
-      },
-      "pattern": {
-        "Mismatch": "${label} нь ${pattern} загвартай тохирохгүй байна"
-      },
-      "string": {
-        "Len": "${label} ${len} тэмдэгттэй байх ёстой",
-        "Max": "${label} нь ${max} хүртэлх тэмдэгттэй байх ёстой",
-        "Min": "${label} хамгийн багадаа ${min} тэмдэгттэй байх ёстой",
-        "Range": "${label} ${min}-${max} тэмдэгтийн хооронд байх ёстой"
-      },
-      "types": {
-        "Email": "${label} нь хүчинтэй ${type} биш",
-        "Number": "${label} нь хүчинтэй ${type} биш",
-        "Object": "${label} нь хүчинтэй ${type} биш",
-        "String": "${label} нь хүчинтэй ${type} биш",
-        "Url": "${label} нь хүчинтэй ${type} биш"
-      }
-    }
-  },
   "general": {
-    "Decrease": "Хасах",
-    "DeselectAll": "Бүгдийг сонголтоос хасах",
     "File": "Файл",
-    "Increase": "Нэмэх",
-    "Loading": "Ачаалж байна...",
-    "NSelected": "{{count}} сонгогдсон",
     "Optional": "Заавал биш",
     "Project": "Төсөл",
     "Search": "Хайх",
     "Select": "Сонгох",
-    "SelectPlaceholder": "{{label}} сонгоно уу",
-    "TotalItems": "Нийт {{total}} зүйлүүд",
     "Unit": "Нэгж",
     "button": {
       "Action": "Үйлдэл",
       "Back": "Буцах",
       "Cancel": "Цуаах",
       "Close": "Ойр дөхөм",
-      "Collapse": "Сүйрэл",
       "Confirm": "Баталгаажуулах",
       "Copied": "Хуулсан",
       "Copy": "Хуулах",
@@ -830,7 +738,6 @@
       "Create": "Шуүгиан дэгдээх",
       "Delete": "Эдгээх",
       "Edit": "Засах",
-      "Expand": "Өргөтгөх",
       "Remove": "Зөөх",
       "Save": "Хадгалах",
       "Upload": "Байршуулах"

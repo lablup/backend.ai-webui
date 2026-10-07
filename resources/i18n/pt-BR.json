@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "Tudo nesta aba é executado como este usuário e registrado no log de auditoria. Suas outras abas continuam na visão de administrador.",
+    "BannerTitle": "Usando como {{name}} ({{email}})",
+    "ConfirmDescription": "Trabalhe com as permissões e a visão de {{email}} em uma nova aba. Tudo o que você fizer nessa aba é executado como este usuário, e o log de auditoria também registra sua conta de administrador. Esta aba continua na sua visão de administrador.",
+    "ConfirmTitle": "Usar como {{name}}",
+    "Exit": "Sair",
+    "FailedToOpen": "Não foi possível abrir uma nova aba.",
+    "OpenInNewTab": "Abrir em nova aba",
+    "UseAsThisUser": "Usar como este usuário"
+  },
   "activeAgent": {
     "ActiveAgents": "Agentes ativos",
     "ActiveAgentsTooltip": "Mostra uma visão geral de todos os agentes atualmente em execução no sistema."
@@ -678,6 +688,8 @@
     "KeypairDetail": "Detalhe do par de chaves",
     "KeypairRestored": "Par de chaves restaurado.",
     "LastUsed": "Usado por último",
+    "LoginNotUnblocked": "O bloqueio de login não foi removido. O usuário pode não estar bloqueado.",
+    "LoginUnblocked": "O bloqueio de login foi removido. O usuário pode entrar novamente.",
     "MainAccessKey": "Chave de acesso principal",
     "MainKeyCannotDeactivate": "Não é possível desativar a chave de acesso principal. Mude para outra chave primeiro.",
     "MainKeyChanged": "A chave de acesso principal foi alterada.",
@@ -742,6 +754,8 @@
     "StatusInfo": "Informações de status",
     "StatusUpdatedSuccessfully": "O estado do utilizador foi alterado.",
     "TooltipForRequirePasswordChange": "Ao ativar esta opção, o usuário deverá alterar a senha no próximo login.",
+    "UnblockLogin": "Desbloquear login",
+    "UnblockLoginConfirm": "Remover o bloqueio por tentativas de login com falha deste usuário?",
     "UpdateUsers": "Edição em massa de usuários",
     "UpdateUsersWarningAlertTitle": "Definir UID ou GID(s) pode restringir o uso de montagens de pastas criadas anteriormente.",
     "UpdatedUsers": "Atualizados {{count}} de {{total}} usuários.",
@@ -995,6 +1009,7 @@
       "LeaveFolder": "Pasta de saída",
       "Location": "Localização",
       "ManageProjectFolderInAdmin": "O gerenciamento de pastas de projeto está disponível nas configurações de administrador.",
+      "MaxFiles": "Número máximo de arquivos",
       "MaxFolderQuota": "Quota máxima de pastas",
       "MaxSize": "Tamanho máximo",
       "ModelProjectFolderRestrictedToReadOnly": "Permissão 'Leitura e gravação' não é suportada para a pasta do repositório de modelos",
@@ -1980,6 +1995,7 @@
     "APIEndpointEmpty": "O endpoint da API está vazio. Especifique o endpoint da API para fazer o login.",
     "APIKey": "Chave API",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "O login via API precisa de um endpoint do Manager. Esta WebUI está configurada para se conectar por meio de um Backend.AI Webserver.",
     "ActiveSessionExists": "Já existe uma sessão de login ativa.",
     "ActiveSessionExistsDescription": "Você já está conectado em outro navegador ou aba. Por favor, faça logout da outra sessão primeiro ou tente novamente.",
     "AdvancedSettings": "Avançado",
@@ -2010,6 +2026,8 @@
     "LoginWithE-mailOrUsername": "Login com e-mail ou nome de usuário",
     "LoginWithIAM": "Login com IAM",
     "MonitorRoleLoginForbidden": "Usuários com função de monitor não têm permissão para fazer login.",
+    "NewPasswordMayNotBeApplied": "Sua nova senha pode não ter sido aplicada",
+    "NewPasswordMayNotBeAppliedDesc": "Não foi possível entrar com a nova senha, então a alteração pode não ter sido salva no servidor. Tente entrar com sua senha anterior ou entre em contato com o administrador. Tentativas repetidas sem sucesso podem bloquear sua conta temporariamente.",
     "NoEndpointSaved": "Nenhum endpoint salvo.",
     "NotAUser": "Não é um usuário?",
     "Password": "Senha",
@@ -2237,9 +2255,6 @@
     "StepWarning": "Ação necessária",
     "SuccessfullyUpdated": "Atualizado com sucesso",
     "Visit": "Visita"
-  },
-  "pagination": {
-    "Total": "{{start}} - {{end}} de {{total}} itens"
   },
   "project": {
     "Activate": "Ativar",
@@ -3097,6 +3112,7 @@
       "ImageDoesNotProvideModelPath": "A imagem do contentor não fornece o caminho do modelo. Deve ser modificado.",
       "ImageFilter": "Filtro de imagens",
       "InferenceMode": "Inferência",
+      "InferenceModeConfig": "Configuração do modo de inferência",
       "InfiniteTime": "Infinito",
       "InsufficientAllocationOfResourcesWarning": "Os recursos alocáveis ficam abaixo do recurso mínimo exigido na imagem selecionada.",
       "InteractiveMode": "Interativo",
@@ -3146,10 +3162,7 @@
       "OnlyAllowsDiscreteNumberByClusterSize": "Somente números inteiros são permitidos quando o tamanho do cluster não é menor que 2.",
       "OnlyAllowsDiscreteNumberByQuantumSize": "O valor tem de ser um múltiplo de {{stepSize}}",
       "OpenMPOptimization": "Otimização OpenMP/OpenBLAS",
-      "OwnerAccessKey": "Chave de acesso do proprietário",
       "OwnerEmail": "Email do proprietário",
-      "OwnerGroup": "Projeto do proprietário",
-      "OwnerResourceGroup": "Grupo de recursos do proprietário",
       "PinnedHistoryTooltip": "Clique no ícone de fixação para fixar o registo. Os registos fixados são mantidos.",
       "PleaseCompleteForm": "O formulário está incompleto ou contém erros. Por favor, verifique os seus dados.",
       "PleaseWaitInitializing": "Aguarde enquanto inicializando ...",
@@ -3192,7 +3205,6 @@
       "SetBatchJobTimeoutDuration": "Definir duração do tempo limite do trabalho em lote",
       "SetEnvironmentVariable": "Definir Variável de Ambiente",
       "SetPreopenPorts": "Portas pré-abertas (opcional)",
-      "SetSessionOwner": "Proprietário da sessão",
       "SettingUpProxyForApp": "Configurando proxy para o aplicativo ...",
       "SharedMemory": "Memória compartilhada (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "A configuração da memória compartilhada é reduzida para menos do que a memória alocada.",

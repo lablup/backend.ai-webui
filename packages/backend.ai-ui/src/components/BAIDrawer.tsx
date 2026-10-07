@@ -5,10 +5,10 @@
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import './BAIDrawer.css';
 import BAIDrawerPortal from './BAIDrawerPortal';
-import { Heading } from '@astryxdesign/core/Heading';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { HStack, StackItem, VStack } from '@astryxdesign/core/Stack';
-import { Drawer } from '@astryxdesign/lab';
+import { Heading } from '@lablup/ui-common/Heading';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { HStack, StackItem, VStack } from '@lablup/ui-common/Stack';
+import { Drawer } from '@lablup/ui-common/lab';
 import classNames from 'classnames';
 import { X } from 'lucide-react';
 import React, {
@@ -72,9 +72,8 @@ export interface BAIDrawerProps {
  * The project's drawer shell: lab `Drawer` plus the header arrangement antd's
  * `Drawer` produced — `[X] Title …… [extra]`, a divider, then a padded
  * scrollable body — so every detail drawer reads the way it did before the
- * Astryx migration. lab has no title bar of its own, only a floating
- * `hasCloseButton` glyph that overlaps whatever the content renders first;
- * that button is turned off here so there is one close affordance (qa2-c).
+ * Astryx migration. lab has no title bar of its own and, since 0.6.5, no
+ * close button either, so the header's button is the one close affordance.
  */
 const BAIDrawer: React.FC<BAIDrawerProps> = ({
   open = false,
@@ -128,7 +127,7 @@ const BAIDrawer: React.FC<BAIDrawerProps> = ({
   const hasHeader = title !== undefined || extra !== undefined;
 
   const panel = (
-    <VStack gap={0} align="stretch" height="100%">
+    <VStack gap={0} align="stretch" height="100%" className="bai-drawer-panel">
       {hasHeader ? (
         <HStack
           className={classNames('bai-drawer-header', headerClassName)}
@@ -182,10 +181,6 @@ const BAIDrawer: React.FC<BAIDrawerProps> = ({
     side,
     width: size,
     label: accessibleName,
-    // The header above owns the close affordance, at antd's `start` placement.
-    // Leaving lab's own button on would paint a second, floating one over the
-    // content.
-    hasCloseButton: false,
   };
 
   // A scrimmed lab `Drawer` would `showModal()` and inert every portalled modal

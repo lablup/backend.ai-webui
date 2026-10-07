@@ -5,13 +5,13 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState_deprecated from '../hooks/useControllableState';
-import TextHighlighter from './TextHighlighter';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIFlex,
   BAISelect,
   BAISelectProps,
   StorageUsageBadge,
+  BAITextHighlighter,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useEffect } from 'react';
@@ -145,9 +145,9 @@ const StorageSelect: React.FC<Props> = ({
                   &nbsp;&nbsp;
                 </Tooltip>
               )}
-              <TextHighlighter keyword={controllableSearchValue}>
+              <BAITextHighlighter keyword={controllableSearchValue}>
                 {host}
-              </TextHighlighter>
+              </BAITextHighlighter>
               {/* TODO: uncomment after implementing click action */}
               {/* <Button type="link" size="small" icon={<InfoCircleOutlined />} /> */}
             </BAIFlex>

@@ -14,17 +14,16 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { toProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import TextHighlighter from './TextHighlighter';
 import VFolderPermissionToken from './VFolderPermissionToken';
 import { VFolder } from './VFolderSelect';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Text } from '@astryxdesign/core/Text';
-import { TextInput } from '@astryxdesign/core/TextInput';
-import { Token } from '@astryxdesign/core/Token';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Text } from '@lablup/ui-common/Text';
+import { TextInput } from '@lablup/ui-common/TextInput';
+import { Token } from '@lablup/ui-common/Token';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIUserUnionIcon,
   BAIFlex,
@@ -35,6 +34,7 @@ import {
   useUpdatableState,
   type BAIColumnsType,
   type BAITableProps,
+  BAITextHighlighter,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -87,7 +87,6 @@ export interface VFolderTableProps extends Omit<
   rowKey: string | number;
   onChangeAutoMountedFolders?: (names: Array<string>) => void;
   showAutoMountedFoldersSection?: boolean;
-  ownerEmail?: string;
   onValidateSelectedRowKeys?: (
     invalidKeys: VFolderKey[],
     validVFolders: VFolder[],
@@ -107,7 +106,6 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   rowKey = 'name',
   onChangeAutoMountedFolders,
   showAutoMountedFoldersSection,
-  ownerEmail,
   onValidateSelectedRowKeys,
   ...tableProps
 }) => {
@@ -179,12 +177,11 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const { data: allFolderList } = useSuspenseTanQuery({
-    queryKey: ['VFolderSelectQuery', fetchKey, currentProject.id, ownerEmail],
+    queryKey: ['VFolderSelectQuery', fetchKey, currentProject.id],
     queryFn: () => {
       const search = new URLSearchParams();
       // FIXME: filter by group_id does not work
       // search.set('group_id', currentProject.id);
-      ownerEmail && search.set('owner_user_email', ownerEmail);
       return baiRequestWithPromise({
         method: 'GET',
         url: `/folders?${search.toString()}`,
@@ -424,7 +421,9 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                 display: 'block',
               }}
             >
-              <TextHighlighter keyword={searchKey}>{value}</TextHighlighter>
+              <BAITextHighlighter keyword={searchKey}>
+                {value}
+              </BAITextHighlighter>
             </BAILink>
             {showAliasInput && isCurrentRowSelected && (
               <Form.Item

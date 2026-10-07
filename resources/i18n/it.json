@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "Tutto in questa scheda viene eseguito come questo utente e registrato nel registro di audit. Le altre schede restano nella vista amministratore.",
+    "BannerTitle": "In uso come {{name}} ({{email}})",
+    "ConfirmDescription": "Lavora con i permessi e la vista di {{email}} in una nuova scheda. Tutto ciò che fai in quella scheda viene eseguito come questo utente e il registro di audit annota anche il tuo account amministratore. Questa scheda resta nella vista amministratore.",
+    "ConfirmTitle": "Usa come {{name}}",
+    "Exit": "Esci",
+    "FailedToOpen": "Impossibile aprire una nuova scheda.",
+    "OpenInNewTab": "Apri in una nuova scheda",
+    "UseAsThisUser": "Usa come questo utente"
+  },
   "activeAgent": {
     "ActiveAgents": "Agenti attivi",
     "ActiveAgentsTooltip": "Mostra una panoramica a colpo d'occhio di tutti gli agenti attualmente in esecuzione nel sistema."
@@ -678,6 +688,8 @@
     "KeypairDetail": "Dettaglio coppia di chiavi",
     "KeypairRestored": "Coppia di chiavi ripristinata.",
     "LastUsed": "Ultimo uso",
+    "LoginNotUnblocked": "Il blocco di accesso non è stato rimosso. L'utente potrebbe non essere stato bloccato.",
+    "LoginUnblocked": "Il blocco di accesso è stato rimosso. L'utente può accedere di nuovo.",
     "MainAccessKey": "Chiave di accesso principale",
     "MainKeyCannotDeactivate": "Impossibile disattivare la chiave di accesso principale. Prima passa a un'altra chiave.",
     "MainKeyChanged": "La chiave di accesso principale è stata modificata.",
@@ -742,6 +754,8 @@
     "StatusInfo": "Informazioni sullo stato",
     "StatusUpdatedSuccessfully": "Lo stato dell'utente è cambiato.",
     "TooltipForRequirePasswordChange": "Se abiliti questa opzione, l'utente dovrà cambiare la password al prossimo accesso.",
+    "UnblockLogin": "Sblocca accesso",
+    "UnblockLoginConfirm": "Rimuovere il blocco per tentativi di accesso falliti di questo utente?",
     "UpdateUsers": "Modifica in blocco degli utenti",
     "UpdateUsersWarningAlertTitle": "Impostare UID o GID(s) potrebbe limitare l'uso dei mount di cartelle creati in precedenza.",
     "UpdatedUsers": "Aggiornati {{count}} di {{total}} utenti.",
@@ -995,6 +1009,7 @@
       "LeaveFolder": "Lasciare la cartella",
       "Location": "Posizione",
       "ManageProjectFolderInAdmin": "La gestione delle cartelle di progetto è disponibile nelle impostazioni di amministrazione.",
+      "MaxFiles": "Numero massimo di file",
       "MaxFolderQuota": "Quota massima della cartella",
       "MaxSize": "Dimensione massima",
       "ModelProjectFolderRestrictedToReadOnly": "Il permesso 'Read & Write' non è supportato per la cartella del model store",
@@ -1980,6 +1995,7 @@
     "APIEndpointEmpty": "L'endpoint API è vuoto. Specifica l'endpoint API per accedere.",
     "APIKey": "Chiave API",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "L'accesso tramite API richiede un endpoint Manager. Questa WebUI è configurata per connettersi tramite un Backend.AI Webserver.",
     "ActiveSessionExists": "Esiste già una sessione di accesso attiva.",
     "ActiveSessionExistsDescription": "Sei già connesso da un altro browser o scheda. Effettua prima il logout dall'altra sessione oppure riprova.",
     "AdvancedSettings": "Avanzato",
@@ -2010,6 +2026,8 @@
     "LoginWithE-mailOrUsername": "Accedi con e-mail o nome utente",
     "LoginWithIAM": "Accedi con IAM",
     "MonitorRoleLoginForbidden": "Gli utenti con ruolo monitor non sono autorizzati ad accedere.",
+    "NewPasswordMayNotBeApplied": "La nuova password potrebbe non essere stata applicata",
+    "NewPasswordMayNotBeAppliedDesc": "L'accesso con la nuova password non è riuscito, quindi la modifica potrebbe non essere stata salvata sul server. Prova ad accedere con la password precedente oppure contatta l'amministratore. Tentativi falliti ripetuti possono bloccare temporaneamente l'account.",
     "NoEndpointSaved": "Nessun endpoint salvato.",
     "NotAUser": "Non sei un utente?",
     "Password": "Parola d'ordine",
@@ -2237,9 +2255,6 @@
     "StepWarning": "Azione richiesta",
     "SuccessfullyUpdated": "Aggiornato con successo",
     "Visit": "Visitare"
-  },
-  "pagination": {
-    "Total": "{{start}} - {{end}} di {{total}} elementi"
   },
   "project": {
     "Activate": "Attiva",
@@ -3097,6 +3112,7 @@
       "ImageDoesNotProvideModelPath": "L'immagine del contenitore non fornisce il percorso del modello. Deve essere modificato.",
       "ImageFilter": "Filtro immagini",
       "InferenceMode": "Inferenza",
+      "InferenceModeConfig": "Configurazione modalità inferenza",
       "InfiniteTime": "Infinito",
       "InsufficientAllocationOfResourcesWarning": "Le risorse assegnabili sono inferiori alla risorsa minima richiesta nell'immagine selezionata.",
       "InteractiveMode": "Interattivo",
@@ -3146,10 +3162,7 @@
       "OnlyAllowsDiscreteNumberByClusterSize": "È consentito solo un numero intero quando la dimensione del cluster non è inferiore a 2.",
       "OnlyAllowsDiscreteNumberByQuantumSize": "Il valore deve essere un multiplo di {{dimensionePasso}}.",
       "OpenMPOptimization": "Ottimizzazione OpenMP/OpenBLAS",
-      "OwnerAccessKey": "Chiave di accesso del proprietario",
       "OwnerEmail": "Email del proprietario",
-      "OwnerGroup": "Progetto del proprietario",
-      "OwnerResourceGroup": "Gruppo di risorse proprietario",
       "PinnedHistoryTooltip": "Fare clic sull'icona della puntina per appuntare il record. I record appuntati vengono conservati.",
       "PleaseCompleteForm": "Il modulo è incompleto o contiene errori. Si prega di controllare i dati inseriti.",
       "PleaseWaitInitializing": "Attendere durante l'inizializzazione...",
@@ -3192,7 +3205,6 @@
       "SetBatchJobTimeoutDuration": "Imposta la durata del timeout del lavoro batch",
       "SetEnvironmentVariable": "Imposta variabile d'ambiente",
       "SetPreopenPorts": "Porte preapertura (opzionale)",
-      "SetSessionOwner": "Titolare della sessione Session",
       "SettingUpProxyForApp": "Configurazione del proxy per l'app...",
       "SharedMemory": "Memoria condivisa (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "L'impostazione della memoria condivisa è ridotta al di sotto della memoria allocata.",

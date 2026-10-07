@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "此分頁中的所有操作都以此使用者身分執行並記錄於稽核日誌。其他分頁維持管理員畫面。",
+    "BannerTitle": "正在以 {{name}}（{{email}}）身分使用",
+    "ConfirmDescription": "將在新分頁中以 {{email}} 的權限與畫面進行操作。在該分頁中的所有操作都會以此使用者身分執行，稽核日誌也會記錄由您的管理員帳戶執行。目前分頁維持管理員畫面。",
+    "ConfirmTitle": "以 {{name}} 身分使用",
+    "Exit": "結束",
+    "FailedToOpen": "無法開啟新分頁。",
+    "OpenInNewTab": "在新分頁中開啟",
+    "UseAsThisUser": "以此使用者身分使用"
+  },
   "activeAgent": {
     "ActiveAgents": "活性代理",
     "ActiveAgentsTooltip": "顯示了當前在系統中運行的所有代理的一目了然的概述。"
@@ -678,6 +688,8 @@
     "KeypairDetail": "配对密钥详情",
     "KeypairRestored": "金鑰對已還原。",
     "LastUsed": "最後使用",
+    "LoginNotUnblocked": "登入鎖定未解除。此使用者可能並未被鎖定。",
+    "LoginUnblocked": "登入鎖定已解除，使用者可以重新登入。",
     "MainAccessKey": "主存取密鑰",
     "MainKeyCannotDeactivate": "無法停用主存取金鑰。請先切換至其他金鑰。",
     "MainKeyChanged": "主存取金鑰已變更。",
@@ -742,6 +754,8 @@
     "StatusInfo": "狀態資訊",
     "StatusUpdatedSuccessfully": "用户状态已更改。",
     "TooltipForRequirePasswordChange": "啟用此選項後，使用者在下次登入時需更改密碼。",
+    "UnblockLogin": "解除登入鎖定",
+    "UnblockLoginConfirm": "要解除此使用者因登入失敗而產生的鎖定嗎？",
     "UpdateUsers": "批次編輯使用者",
     "UpdateUsersWarningAlertTitle": "設定 UID 或 GID（或多個）可能會限制先前建立之資料夾掛載的使用。",
     "UpdatedUsers": "已更新 {{count}} / {{total}} 位使用者。",
@@ -995,6 +1009,7 @@
       "LeaveFolder": "离开文件夹",
       "Location": "地點",
       "ManageProjectFolderInAdmin": "專案資料夾管理可在管理員設定中進行。",
+      "MaxFiles": "最大文件數",
       "MaxFolderQuota": "最大文件夹配额",
       "MaxSize": "最大尺寸",
       "ModelProjectFolderRestrictedToReadOnly": "模型儲存資料夾不支援「讀取與寫入」權限",
@@ -1983,6 +1998,7 @@
     "APIEndpointEmpty": "API 端點為空。請指定要登錄的 API 端點。",
     "APIKey": "API 密鑰",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "API 登入需要 Manager 端點。此 WebUI 已設定為透過 Backend.AI Webserver 連線。",
     "ActiveSessionExists": "已存在一個有效的登入工作階段。",
     "ActiveSessionExistsDescription": "您已從其他瀏覽器或分頁登入。請先從其他工作階段登出，或再試一次。",
     "AdvancedSettings": "進階設定",
@@ -2013,6 +2029,8 @@
     "LoginWithE-mailOrUsername": "使用電子郵件或使用者名稱登入",
     "LoginWithIAM": "使用 IAM 登錄",
     "MonitorRoleLoginForbidden": "監控角色使用者不允許登入。",
+    "NewPasswordMayNotBeApplied": "新密碼可能未生效",
+    "NewPasswordMayNotBeAppliedDesc": "使用新密碼登入失敗，密碼變更可能未儲存到伺服器。請嘗試使用先前的密碼登入，或聯絡管理員。多次登入失敗可能會導致帳戶被暫時鎖定。",
     "NoEndpointSaved": "沒有保存端點。",
     "NotAUser": "不是用戶？",
     "Password": "密碼",
@@ -2241,9 +2259,6 @@
     "StepWarning": "需要操作",
     "SuccessfullyUpdated": "成功更新",
     "Visit": "訪問"
-  },
-  "pagination": {
-    "Total": "{{start}} - {{end}} {{total}}項目"
   },
   "project": {
     "Activate": "啟用",
@@ -3101,6 +3116,7 @@
       "ImageDoesNotProvideModelPath": "容器映像未提供模型路径。应进行修改。",
       "ImageFilter": "映像篩選",
       "InferenceMode": "推论",
+      "InferenceModeConfig": "推論模式設定",
       "InfiniteTime": "无限",
       "InsufficientAllocationOfResourcesWarning": "可分配資源低於所選映像所需的最低資源。",
       "InteractiveMode": "交互式",
@@ -3150,10 +3166,7 @@
       "OnlyAllowsDiscreteNumberByClusterSize": "當簇大小不小於 2 時，只允許使用整數。",
       "OnlyAllowsDiscreteNumberByQuantumSize": "数值必须是 {{stepSize}} 的倍数。",
       "OpenMPOptimization": "OpenMP/OpenBLAS 优化",
-      "OwnerAccessKey": "所有者訪問密鑰",
       "OwnerEmail": "所有者電子郵件",
-      "OwnerGroup": "业主项目",
-      "OwnerResourceGroup": "所有者資源組",
       "PinnedHistoryTooltip": "单击 \"固定 \"图标固定历史记录。钉住的项目将被保留。",
       "PleaseCompleteForm": "表格不完整或包含错误。请检查输入内容。",
       "PleaseWaitInitializing": "正在初始化，請稍候...",
@@ -3196,7 +3209,6 @@
       "SetBatchJobTimeoutDuration": "設定批次作業逾時時間",
       "SetEnvironmentVariable": "設置環境變量",
       "SetPreopenPorts": "预开放端口（可选）",
-      "SetSessionOwner": "會話所有者",
       "SettingUpProxyForApp": "為應用程序設置代理...",
       "SharedMemory": "共享內存（SHMEM）{{value}}",
       "SharedMemorySettingIsReduced": "共享內存設置減少到低於分配的內存。",

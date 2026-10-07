@@ -158,6 +158,8 @@ export class Client {
   public pipelineTaskInstance: PipelineTaskInstance;
   public _features: FeatureSet;
   public ready: boolean = false;
+  // Super-admin impersonation target (user UUID) sent as X-BackendAI-Act-As.
+  public actAsUserId: string | null = null;
   public abortController: AbortController;
   public abortSignal: AbortSignal;
   public requestTimeout: number;
@@ -902,6 +904,8 @@ export class Client {
     if (this.isManagerVersionCompatibleWith('26.4.2')) {
       this._features['prometheus-query-preset'] = true;
       this._features['deployment-preset'] = true;
+      // `adminUnblockUser` clears a failed-login block (FR-4150).
+      this._features['admin-unblock-user'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.4.3')) {
       this._features['model-deployment-extended-filter'] = true;
@@ -1024,6 +1028,8 @@ export class Client {
       this._features['role-preset-reference'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.9.0')) {
+      // X-BackendAI-Act-As (BA-6781); the webserver forwards it from 26.9.0 (BA-8216).
+      this._features['act-as'] = true;
       // BA-7210 / backend PR #13536, FR-3481. `DeploymentRevisionPreset
       // .modelDefinition` moves from `ModelDefinition` to a new
       // `PresetModelDefinition` type (mirrored down to `PresetModelConfig` /
@@ -1061,6 +1067,12 @@ export class Client {
       // requested id (`items` / `successes` plus `failed`) instead of a bare
       // count, and the counts became `@deprecated`. FR-3820.
       this._features['bulk-mutation-per-id-results'] = true;
+      // V2 nodes expose their raw UUID as `entityId` (UserV2, Role, ...), so
+      // self-scoped reads no longer need the legacy graphene root fields.
+      this._features['v2-entity-id'] = true;
+      // `KeyPairV2.isDefault` / `KeyPair.is_default` mark the owner's main
+      // key; `UserV2OrganizationInfo.mainAccessKey` is deprecated.
+      this._features['keypair-is-default'] = true;
     }
   }
 
@@ -1108,8 +1120,21 @@ export class Client {
   }
 
   /**
-   * Check if webserver is authenticated. This requires additional webserver package.
-   *
+   * Take the access key and the last `X-BackendAI-SessionID` as the live
+   * session; false when either is missing (then `check_login` still applies).
+   */
+  adoptLoginSession(accessKey: string | null | undefined): boolean {
+    if (!accessKey || !this._loginSessionId) {
+      return false;
+    }
+    this._config._accessKey = accessKey;
+    this._config._session_id = this._loginSessionId;
+    return true;
+  }
+
+  /**
+   * Ask the webserver whether it holds a session for this browser; the
+   * fallback when `adoptLoginSession` has no session id to adopt.
    */
   async check_login() {
     let rqst = this.newSignedRequest('POST', `/server/login-check`, null, null);
@@ -1118,7 +1143,13 @@ export class Client {
       result = await this._wrapWithPromise(rqst);
       if (result.authenticated === true) {
         this._config._accessKey = result.data.access_key;
-        this._config._session_id = result.session_id; // TODO: change to X-BackendAI-SessionID header-version. use this._loginSessionId instead.
+        this._config._session_id = result.session_id;
+        // A cookie-only login never sees the X-BackendAI-SessionID header, so
+        // adopt the id from the body to keep later requests and SSE carrying it.
+        if (result.session_id) {
+          this._loginSessionId = result.session_id;
+          safeStorage.setItem('backendaiwebui.sessionid', result.session_id);
+        }
         //console.log("login succeed");
       } else {
         //console.log("login failed");
@@ -1190,6 +1221,9 @@ export class Client {
       if (this._loginSessionId !== null && this._loginSessionId !== '') {
         safeStorage.setItem('backendaiwebui.sessionid', this._loginSessionId);
       }
+      if (this.adoptLoginSession(result.data.access_key)) {
+        return true;
+      }
       return this.check_login();
     }
 
@@ -1241,10 +1275,10 @@ export class Client {
         // Persist the login session ID so that the session survives a
         // page refresh — same as the regular login() path.
         if (this._loginSessionId !== null && this._loginSessionId !== '') {
-          safeStorage.setItem(
-            'backendaiwebui.sessionid',
-            this._loginSessionId,
-          );
+          safeStorage.setItem('backendaiwebui.sessionid', this._loginSessionId);
+        }
+        if (this.adoptLoginSession(result.data?.access_key)) {
+          return true;
         }
         return this.check_login();
       } else if (result.authenticated === false) {
@@ -2096,6 +2130,9 @@ export class Client {
     // Add session id header for non-cookie environment.
     if (this._loginSessionId !== '' && this._loginSessionId !== null) {
       hdrs.set('X-BackendAI-SessionID', this._loginSessionId);
+    }
+    if (this.actAsUserId && serviceName !== 'pipeline') {
+      hdrs.set('X-BackendAI-Act-As', this.actAsUserId);
     }
     return {
       method: method,

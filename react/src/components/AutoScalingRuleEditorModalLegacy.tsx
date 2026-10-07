@@ -19,7 +19,7 @@ import {
   AstryxFormSelector,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { InputGroup } from '@astryxdesign/core/InputGroup';
+import { InputGroup } from '@lablup/ui-common/InputGroup';
 import { BAIModal, BAIModalProps, useBAILogger } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef, useState } from 'react';

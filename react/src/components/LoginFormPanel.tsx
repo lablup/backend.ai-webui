@@ -34,20 +34,20 @@ import {
   type TOTPActivateFormData,
 } from './TOTPActivateModal';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { Heading } from '@astryxdesign/core/Heading';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Link } from '@astryxdesign/core/Link';
-import { List, ListItem } from '@astryxdesign/core/List';
-import { usePopover } from '@astryxdesign/core/Popover';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { Heading } from '@lablup/ui-common/Heading';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Link } from '@lablup/ui-common/Link';
+import { List, ListItem } from '@lablup/ui-common/List';
+import { usePopover } from '@lablup/ui-common/Popover';
 import {
   SegmentedControl,
   SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
-import { focusVars, spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
+} from '@lablup/ui-common/SegmentedControl';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
+import { focusVars, spacingVars } from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import {
   BAI_Z_INDEX,
@@ -120,6 +120,11 @@ interface LoginFormPanelProps {
   loginError: { message: string; description?: string } | null;
   onClearLoginError?: () => void;
   connectionMode: ConnectionMode;
+  /**
+   * Why the Session/API switch cannot be operated, or `false` when it can.
+   * The reason travels with the flag so the two can never disagree.
+   */
+  signinModeDisabled: boolean | { reason: string };
   loginConfig: LoginConfigState;
   apiEndpoint: string;
   otpRequired: boolean;
@@ -137,6 +142,8 @@ interface LoginFormPanelProps {
   onDeleteEndpoint: (ep: string) => void;
   onKeyDown: (e: React.KeyboardEvent) => void;
   onLogin: () => void;
+  /** The single automatic login right after a forced password change. */
+  onReloginAfterPasswordChange: () => void;
   onConnectionModeChange: (mode: ConnectionMode) => void;
   onShowSignupDialog: (token?: string) => void;
   onSAMLLogin: () => void;
@@ -154,6 +161,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   loginError,
   onClearLoginError,
   connectionMode,
+  signinModeDisabled,
   loginConfig,
   apiEndpoint,
   otpRequired,
@@ -171,6 +179,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   onDeleteEndpoint,
   onKeyDown,
   onLogin,
+  onReloginAfterPasswordChange,
   onConnectionModeChange,
   onShowSignupDialog,
   onSAMLLogin,
@@ -329,6 +338,9 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
         {/* Mode switching: Segmented control */}
         {loginConfig.change_signin_support && (
           <div style={{ marginBottom: token('--spacing-5') }}>
+            {/* `disabledMessage` is the whole control's, not a segment's:
+                Astryx has no per-item reason, and a disabled control swallows
+                the hover an external Tooltip would need. */}
             <SegmentedControl
               value={connectionMode}
               onChange={(value) =>
@@ -336,6 +348,12 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               }
               layout="fill"
               label={t('login.Login', { postProcess: [] })}
+              isDisabled={!!signinModeDisabled}
+              disabledMessage={
+                typeof signinModeDisabled === 'object'
+                  ? signinModeDisabled.reason
+                  : undefined
+              }
             >
               <SegmentedControlItem
                 value="SESSION"
@@ -767,11 +785,8 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
         onOk={(newPassword) => {
           onSetNeedToResetPassword(false);
           form.setFieldValue('password', newPassword);
-          // Defer onLogin to the next microtask so that Ant Design's
-          // setFieldValue has settled before the login handler reads the
-          // form. Without this, React 19 batching could cause onLogin()
-          // to read the stale (expired) password.
-          setTimeout(() => onLogin(), 0);
+          // Deferred so the login handler reads the new password, not the expired one.
+          setTimeout(() => onReloginAfterPasswordChange(), 0);
         }}
       />
 

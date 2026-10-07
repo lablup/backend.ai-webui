@@ -35,6 +35,7 @@ import {
   utilizationFill,
   UtilizationFills,
 } from '../helper/sessionResourceGridData';
+import { getSessionTypeLabel } from '../helper/sessionTypeLabel';
 import {
   UTILIZATION_ERROR_PERCENT,
   UTILIZATION_WARNING_PERCENT,
@@ -42,16 +43,16 @@ import {
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import './SessionResourceGrid.css';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Divider } from '@astryxdesign/core/Divider';
+import { Badge } from '@lablup/ui-common/Badge';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Divider } from '@lablup/ui-common/Divider';
 import {
   SegmentedControl,
   SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
-import { Selector } from '@astryxdesign/core/Selector';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+} from '@lablup/ui-common/SegmentedControl';
+import { Selector } from '@lablup/ui-common/Selector';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIFlex,
   BAIResourceUnitGrid,
@@ -395,7 +396,7 @@ const SessionResourceGrid = ({
             label={session.status}
           />
           <Text size="sm" color="secondary">
-            {`${session.type.toLowerCase()} · ${session.clusterMode} ×${session.clusterSize || Math.max(1, session.kernels.length)} · ${session.scalingGroup}`}
+            {`${getSessionTypeLabel(t, session.type)} · ${session.clusterMode} ×${session.clusterSize || Math.max(1, session.kernels.length)} · ${session.scalingGroup}`}
           </Text>
         </BAIFlex>
         <Text size="sm" color="secondary">

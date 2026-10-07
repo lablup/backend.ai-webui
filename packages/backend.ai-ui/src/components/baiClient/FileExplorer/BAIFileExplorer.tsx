@@ -19,19 +19,19 @@ import {
   useDragOverlay,
   useSearchVFolderFiles,
   useUploadVFolderFiles,
+  type RcFile,
 } from './hooks';
-import type { RcFile } from './hooks';
-import { BreadcrumbItem, Breadcrumbs } from '@astryxdesign/core/Breadcrumbs';
-import type { DropdownMenuOption } from '@astryxdesign/core/DropdownMenu';
-import { Skeleton } from '@astryxdesign/core/Skeleton';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { BreadcrumbItem, Breadcrumbs } from '@lablup/ui-common/Breadcrumbs';
+import type { DropdownMenuOption } from '@lablup/ui-common/DropdownMenu';
+import { Skeleton } from '@lablup/ui-common/Skeleton';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { File, Folder, HouseIcon } from 'lucide-react';
 import {
-  createContext,
   Suspense,
+  createContext,
   useEffect,
   useEffectEvent,
   useImperativeHandle,
@@ -75,11 +75,13 @@ export interface BAIFileExplorerProps {
   fileDropContainerRef?: React.RefObject<HTMLDivElement | null>;
   enableDownload?: boolean;
   enableDelete?: boolean;
+  // Fallback for `enableCreate` / `enableRename` when they are not passed.
   enableWrite?: boolean;
-  // Gates upload entry points (upload dropdown + drag-drop). Defaults to
-  // `enableWrite` for backwards compatibility — callers that need to gate
-  // upload independently (e.g., on the `upload-file` host permission) should
-  // pass this explicitly.
+  // Gates "Create Folder" / "Create File".
+  enableCreate?: boolean;
+  // Gates inline rename of files and folders.
+  enableRename?: boolean;
+  // Gates upload entry points (upload dropdown + drag-drop).
   enableUpload?: boolean;
   enableEdit?: boolean;
   onChangeFetchKey?: (fetchKey: string) => void;
@@ -107,6 +109,8 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   enableDownload = false,
   enableDelete = false,
   enableWrite = false,
+  enableCreate = enableWrite,
+  enableRename = enableWrite,
   enableUpload = false,
   enableEdit = false,
   onDeleteFilesInBackground,
@@ -283,7 +287,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
             <FileNameCell
               selectedItem={record}
               existingFiles={files?.items || []}
-              enableRename={enableWrite}
+              enableRename={enableRename}
               onEndRename={() => {
                 refetch();
               }}
@@ -391,7 +395,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
             mode={mode}
             enableDownload={enableDownload}
             enableDelete={enableDelete}
-            enableWrite={enableWrite}
+            enableCreate={enableCreate}
             enableUpload={enableUpload}
             onUpload={requestUpload}
             onDeleteFilesInBackground={onDeleteFilesInBackground}

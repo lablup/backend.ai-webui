@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "Semua di tab ini dijalankan sebagai pengguna ini dan dicatat di log audit. Tab Anda yang lain tetap dalam tampilan admin.",
+    "BannerTitle": "Digunakan sebagai {{name}} ({{email}})",
+    "ConfirmDescription": "Bekerja dengan izin dan tampilan {{email}} di tab baru. Semua yang Anda lakukan di tab tersebut dijalankan sebagai pengguna ini, dan log audit juga mencatat akun admin Anda. Tab ini tetap dalam tampilan admin Anda.",
+    "ConfirmTitle": "Gunakan sebagai {{name}}",
+    "Exit": "Keluar",
+    "FailedToOpen": "Tidak dapat membuka tab baru.",
+    "OpenInNewTab": "Buka di tab baru",
+    "UseAsThisUser": "Gunakan sebagai pengguna ini"
+  },
   "activeAgent": {
     "ActiveAgents": "Agen aktif",
     "ActiveAgentsTooltip": "Menunjukkan ikhtisar sekilas dari semua agen yang saat ini berjalan dalam sistem."
@@ -678,6 +688,8 @@
     "KeypairDetail": "Detail Pasangan Kunci",
     "KeypairRestored": "Pasangan kunci dipulihkan.",
     "LastUsed": "Terakhir digunakan",
+    "LoginNotUnblocked": "Blokir login tidak dihapus. Pengguna mungkin tidak sedang diblokir.",
+    "LoginUnblocked": "Blokir login telah dihapus. Pengguna dapat masuk kembali.",
     "MainAccessKey": "Kunci Akses Utama",
     "MainKeyCannotDeactivate": "Tidak dapat menonaktifkan kunci akses utama. Beralih ke kunci lain terlebih dahulu.",
     "MainKeyChanged": "Kunci akses utama telah diubah.",
@@ -742,6 +754,8 @@
     "StatusInfo": "Info Status",
     "StatusUpdatedSuccessfully": "Status pengguna telah berubah.",
     "TooltipForRequirePasswordChange": "Jika opsi ini diaktifkan, pengguna harus mengganti kata sandi saat masuk berikutnya.",
+    "UnblockLogin": "Buka blokir login",
+    "UnblockLoginConfirm": "Hapus blokir akibat gagal login untuk pengguna ini?",
     "UpdateUsers": "Edit Massal Pengguna",
     "UpdateUsersWarningAlertTitle": "Menetapkan UID atau GID(s) dapat membatasi penggunaan mount folder yang telah dibuat sebelumnya.",
     "UpdatedUsers": "Diperbarui {{count}} dari {{total}} pengguna.",
@@ -995,6 +1009,7 @@
       "LeaveFolder": "Tinggalkan folder",
       "Location": "Lokasi",
       "ManageProjectFolderInAdmin": "Pengelolaan folder proyek tersedia di pengaturan admin.",
+      "MaxFiles": "Jumlah file maksimal",
       "MaxFolderQuota": "Kuota Folder Maksimal",
       "MaxSize": "Ukuran maksimal",
       "ModelProjectFolderRestrictedToReadOnly": "Izin 'Baca & Tulis' tidak didukung untuk folder penyimpanan model.",
@@ -1983,6 +1998,7 @@
     "APIEndpointEmpty": "Titik Akhir API kosong. Harap tentukan titik akhir API untuk login.",
     "APIKey": "Kunci API",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "Login API memerlukan endpoint Manager. WebUI ini diatur untuk terhubung melalui Backend.AI Webserver.",
     "ActiveSessionExists": "Sesi login aktif sudah ada.",
     "ActiveSessionExistsDescription": "Anda sudah masuk dari browser atau tab lain. Silakan keluar dari sesi lain terlebih dahulu, atau coba lagi.",
     "AdvancedSettings": "Lanjutan",
@@ -2013,6 +2029,8 @@
     "LoginWithE-mailOrUsername": "Masuk Dengan Email atau Nama Pengguna",
     "LoginWithIAM": "Masuk dengan IAM",
     "MonitorRoleLoginForbidden": "Pengguna dengan peran monitor tidak diizinkan untuk masuk.",
+    "NewPasswordMayNotBeApplied": "Kata sandi baru Anda mungkin belum diterapkan",
+    "NewPasswordMayNotBeAppliedDesc": "Gagal masuk dengan kata sandi baru, sehingga perubahan kata sandi mungkin tidak tersimpan di server. Coba masuk dengan kata sandi sebelumnya, atau hubungi administrator Anda. Percobaan gagal berulang kali dapat mengunci akun Anda sementara.",
     "NoEndpointSaved": "Tidak ada titik akhir yang disimpan.",
     "NotAUser": "Bukan pengguna?",
     "Password": "Kata sandi",
@@ -2240,9 +2258,6 @@
     "StepWarning": "Tindakan diperlukan",
     "SuccessfullyUpdated": "Berhasil Diperbarui",
     "Visit": "Kunjungi"
-  },
-  "pagination": {
-    "Total": "{{start}} - {{end}} dari {{total}} item"
   },
   "project": {
     "Activate": "Aktifkan",
@@ -3101,6 +3116,7 @@
       "ImageDoesNotProvideModelPath": "Gambar kontainer tidak menyediakan jalur model. Ini harus dimodifikasi.",
       "ImageFilter": "Filter image",
       "InferenceMode": "Kesimpulan",
+      "InferenceModeConfig": "Konfigurasi mode inferensi",
       "InfiniteTime": "Tak terbatas",
       "InsufficientAllocationOfResourcesWarning": "Sumber daya yang dapat dialokasikan berada di bawah sumber daya minimum yang diperlukan pada gambar yang dipilih.",
       "InteractiveMode": "Interaktif",
@@ -3150,10 +3166,7 @@
       "OnlyAllowsDiscreteNumberByClusterSize": "Hanya bilangan bulat yang diperbolehkan jika ukuran cluster tidak kurang dari 2.",
       "OnlyAllowsDiscreteNumberByQuantumSize": "Nilai harus merupakan kelipatan dari {{stepSize}}.",
       "OpenMPOptimization": "Pengoptimalan OpenMP/OpenBLAS",
-      "OwnerAccessKey": "Kunci akses pemilik",
       "OwnerEmail": "Email Pemilik",
-      "OwnerGroup": "Proyek pemilik",
-      "OwnerResourceGroup": "Grup sumber daya pemilik",
       "PinnedHistoryTooltip": "Klik ikon pin untuk menyematkan catatan. Catatan yang disematkan akan disimpan.",
       "PleaseCompleteForm": "Formulir tidak lengkap atau mengandung kesalahan. Silakan periksa masukan Anda.",
       "PleaseWaitInitializing": "Harap tunggu saat inisialisasi...",
@@ -3196,7 +3209,6 @@
       "SetBatchJobTimeoutDuration": "Tetapkan durasi batas waktu tugas batch",
       "SetEnvironmentVariable": "Atur Variabel Lingkungan (opsional)",
       "SetPreopenPorts": "Port yang sudah dibuka sebelumnya (opsional)",
-      "SetSessionOwner": "Pemilik sesi",
       "SettingUpProxyForApp": "Menyiapkan proksi untuk aplikasi...",
       "SharedMemory": "Memori yang dibagikan (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "Pengaturan memori bersama dikurangi hingga di bawah memori yang dialokasikan.",

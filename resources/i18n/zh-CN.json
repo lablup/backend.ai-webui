@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "此标签页中的所有操作都以此用户身份执行并记录在审计日志中。其他标签页保持管理员视图。",
+    "BannerTitle": "正在以 {{name}}（{{email}}）身份使用",
+    "ConfirmDescription": "将在新标签页中以 {{email}} 的权限和视图进行操作。在该标签页中的所有操作都将以此用户身份执行，审计日志中也会记录由您的管理员账户执行。当前标签页保持管理员视图。",
+    "ConfirmTitle": "以 {{name}} 身份使用",
+    "Exit": "退出",
+    "FailedToOpen": "无法打开新标签页。",
+    "OpenInNewTab": "在新标签页中打开",
+    "UseAsThisUser": "以此用户身份使用"
+  },
   "activeAgent": {
     "ActiveAgents": "活性代理",
     "ActiveAgentsTooltip": "显示了当前在系统中运行的所有代理的一目了然概述。"
@@ -678,6 +688,8 @@
     "KeypairDetail": "配对密钥详情",
     "KeypairRestored": "密钥对已恢复。",
     "LastUsed": "最后使用",
+    "LoginNotUnblocked": "登录锁定未解除。该用户可能并未被锁定。",
+    "LoginUnblocked": "登录锁定已解除，用户可以重新登录。",
     "MainAccessKey": "主访问密钥",
     "MainKeyCannotDeactivate": "无法停用主访问密钥。请先切换到其他密钥。",
     "MainKeyChanged": "主访问密钥已更改。",
@@ -742,6 +754,8 @@
     "StatusInfo": "状态信息",
     "StatusUpdatedSuccessfully": "用户状态已更改。",
     "TooltipForRequirePasswordChange": "启用此选项后，用户下次登录时需更改密码。",
+    "UnblockLogin": "解除登录锁定",
+    "UnblockLoginConfirm": "要解除该用户因登录失败而产生的锁定吗？",
     "UpdateUsers": "批量编辑用户",
     "UpdateUsersWarningAlertTitle": "设置 UID 或 GID 可能会限制对已创建文件夹挂载的访问。",
     "UpdatedUsers": "已更新 {{count}} / {{total}} 名用户。",
@@ -995,6 +1009,7 @@
       "LeaveFolder": "离开文件夹",
       "Location": "地点",
       "ManageProjectFolderInAdmin": "项目文件夹管理可在管理员设置中进行。",
+      "MaxFiles": "最大文件数",
       "MaxFolderQuota": "最大文件夹配额",
       "MaxSize": "最大尺寸",
       "ModelProjectFolderRestrictedToReadOnly": "模型存储文件夹不支持“读写”权限",
@@ -1982,6 +1997,7 @@
     "APIEndpointEmpty": "API 端点为空。请指定要登录的 API 端点。",
     "APIKey": "API 密钥",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "API 登录需要 Manager 端点。此 WebUI 已配置为通过 Backend.AI Webserver 连接。",
     "ActiveSessionExists": "已存在活动的登录会话。",
     "ActiveSessionExistsDescription": "您已从其他浏览器或标签页登录。请先从其他会话注销，或重试。",
     "AdvancedSettings": "高级设置",
@@ -2012,6 +2028,8 @@
     "LoginWithE-mailOrUsername": "使用电子邮件或用户名登录",
     "LoginWithIAM": "使用 IAM 登录",
     "MonitorRoleLoginForbidden": "监控角色用户不允许登录。",
+    "NewPasswordMayNotBeApplied": "新密码可能未生效",
+    "NewPasswordMayNotBeAppliedDesc": "使用新密码登录失败，密码修改可能未保存到服务器。请尝试使用之前的密码登录，或联系管理员。多次登录失败可能会导致账户被暂时锁定。",
     "NoEndpointSaved": "没有保存端点。",
     "NotAUser": "不是用户？",
     "Password": "密码",
@@ -2239,9 +2257,6 @@
     "StepWarning": "需要操作",
     "SuccessfullyUpdated": "成功更新",
     "Visit": "访问"
-  },
-  "pagination": {
-    "Total": "{{start}} - {{end}} {{total}}项目"
   },
   "project": {
     "Activate": "激活",
@@ -3099,6 +3114,7 @@
       "ImageDoesNotProvideModelPath": "容器映像未提供模型路径。应进行修改。",
       "ImageFilter": "镜像筛选",
       "InferenceMode": "推论",
+      "InferenceModeConfig": "推理模式配置",
       "InfiniteTime": "无限",
       "InsufficientAllocationOfResourcesWarning": "可分配资源低于所选映像所需的最低资源。",
       "InteractiveMode": "交互式",
@@ -3148,10 +3164,7 @@
       "OnlyAllowsDiscreteNumberByClusterSize": "当簇大小不小于 2 时，只允许使用整数。",
       "OnlyAllowsDiscreteNumberByQuantumSize": "数值必须是 {{stepSize}} 的倍数。",
       "OpenMPOptimization": "OpenMP/OpenBLAS 优化",
-      "OwnerAccessKey": "所有者访问密钥",
       "OwnerEmail": "所有者电子邮件",
-      "OwnerGroup": "业主项目",
-      "OwnerResourceGroup": "所有者资源组",
       "PinnedHistoryTooltip": "单击固定图标固定记录。钉住的记录将被保留。",
       "PleaseCompleteForm": "表格不完整或包含错误。请检查输入内容。",
       "PleaseWaitInitializing": "正在初始化，请稍候...",
@@ -3194,7 +3207,6 @@
       "SetBatchJobTimeoutDuration": "设置批处理作业超时时间",
       "SetEnvironmentVariable": "设置环境变量",
       "SetPreopenPorts": "预开放端口（可选）",
-      "SetSessionOwner": "会话所有者",
       "SettingUpProxyForApp": "为应用程序设置代理...",
       "SharedMemory": "共享内存（SHMEM）{{value}}",
       "SharedMemorySettingIsReduced": "共享内存设置减少到低于分配的内存。",

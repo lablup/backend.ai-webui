@@ -17,7 +17,7 @@ import {
   AstryxFormSelector,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex, BAIModal, BAIModalProps, BAISelect } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useRef } from 'react';

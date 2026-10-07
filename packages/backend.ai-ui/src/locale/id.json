@@ -89,26 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Terjadi kesalahan tak terduga. Silakan coba lagi nanti atau hubungi dukungan jika masalah berlanjut."
   },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "Hapus",
-    "KeepAsIs": "Pertahankan",
-    "UndoChanges": "Batalkan perubahan"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Eksekusi gagal",
-    "ErrorOccurred": "Terjadi kesalahan"
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "Hapus",
-    "HexValue": "Nilai heksa",
-    "NoColor": "Tanpa warna",
-    "SelectColor": "Pilih warna"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Hapus Cari opsi",
-    "NoResults": "Tidak ada hasil",
-    "SearchOptions": "Cari opsi"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Pilih Registri Container"
   },
@@ -128,14 +108,6 @@
     "Size": "Ukuran",
     "SuccessFullyRemoved": "Berhasil menghapus {{count}} versi.",
     "Version": "Versi"
-  },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "Apakah Anda yakin ingin menghapus?",
-    "AreYouSureToPermanentlyDeleteTarget": "Apakah Anda yakin ingin menghapus {{target}} secara permanen?",
-    "CannotBeUndone": "Tindakan ini tidak dapat dibatalkan.",
-    "DeleteItem": "Hapus",
-    "DeleteNItems": "Hapus {{count}} item",
-    "TypeToConfirm": "Ketik <token>{{confirmText}}</token> untuk mengonfirmasi."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Dibuat oleh"
@@ -417,11 +389,6 @@
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Dialokasikan / Diminta"
   },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "Ubah warna grup",
-    "ResourceGrid": "Kisi sumber daya",
-    "UseColorN": "Gunakan warna {{n}}"
-  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Tak terbatas"
   },
@@ -571,8 +538,11 @@
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Lajang"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Tak terbatas"
+  "comp:BAISessionTypeToken": {
+    "Batch": "Batch",
+    "Inference": "Inferensi",
+    "Interactive": "Interaktif",
+    "System": "Unggah"
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Pilih Host Penyimpanan"
@@ -590,28 +560,13 @@
     "Time": "Waktu"
   },
   "comp:BAITable": {
-    "Apply": "Terapkan",
-    "Cancel": "Batal",
     "CollapseAll": "Ciutkan semua",
     "ExpandAll": "Perluas semua",
     "ExpandErrorsOnly": "Perluas hanya kesalahan",
-    "ExpandOptions": "Opsi perluasan",
-    "ExpandRow": "Perluas baris",
-    "Export": "Ekspor",
-    "ExportCSV": "Ekspor CSV",
-    "GoToFirstPage": "Ke halaman pertama",
-    "InvalidPageNumber": "Nomor halaman tidak valid",
-    "NoDataToDisplay": "Tidak ada data untuk ditampilkan",
-    "Pagination": "Penomoran halaman",
-    "SearchTableColumn": "Kolom Tabel Cari",
-    "SelectColumnToDisplay": "Pilih kolom untuk ditampilkan",
-    "SettingTable": "Pengaturan Tabel"
+    "ExpandOptions": "Opsi perluasan"
   },
   "comp:BAITestButton": {
     "Test": "tes"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "dan {{rest}} lainnya"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Dibuat di",
@@ -703,9 +658,6 @@
       "FileNameRequired": "Harap masukkan file atau nama folder."
     }
   },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} dari {{total}} item"
-  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Tidak ada data sumber daya yang tersedia"
   },
@@ -767,62 +719,18 @@
   "error": {
     "UnknownError": "Terjadi kesalahan yang tidak diketahui. \nTolong coba lagi."
   },
-  "form": {
-    "Optional": "(optional)",
-    "validateMessages": {
-      "Default": "Kesalahan validasi untuk ${label}",
-      "Required": "Tolong masukkan ${label}",
-      "Whitespace": "${label} tidak boleh berupa karakter kosong",
-      "array": {
-        "Len": "Harus ${len} ${label}",
-        "Max": "Maksimal ${max} ${label}",
-        "Min": "Minimal ${min} ${label}",
-        "Range": "Jumlah ${label} harus di antara ${min}-${max}"
-      },
-      "number": {
-        "Len": "${label} harus sama dengan ${len}",
-        "Max": "${label} harus maksimal ${max}",
-        "Min": "${label} harus minimal ${min}",
-        "Range": "${label} harus di antara ${min}-${max}"
-      },
-      "pattern": {
-        "Mismatch": "${label} tidak sesuai dengan pola ${pattern}"
-      },
-      "string": {
-        "Len": "${label} harus berupa ${len} karakter",
-        "Max": "${label} harus maksimal ${max} karakter",
-        "Min": "${label} harus minimal ${min} karakter",
-        "Range": "${label} harus diantara ${min}-${max} karakter"
-      },
-      "types": {
-        "Email": "${label} tidak valid ${type}",
-        "Number": "${label} tidak valid ${type}",
-        "Object": "${label} tidak valid ${type}",
-        "String": "${label} tidak valid ${type}",
-        "Url": "${label} tidak valid ${type}"
-      }
-    }
-  },
   "general": {
-    "Decrease": "Kurangi",
-    "DeselectAll": "Batalkan semua pilihan",
     "File": "Berkas",
-    "Increase": "Tambah",
-    "Loading": "Memuat...",
-    "NSelected": "{{count}} dipilih",
     "Optional": "Opsional",
     "Project": "Proyek",
     "Search": "Cari",
     "Select": "Pilih",
-    "SelectPlaceholder": "Pilih {{label}}",
-    "TotalItems": "Total {{total}} item",
     "Unit": "Satuan",
     "button": {
       "Action": "Tindakan",
       "Back": "Kembali",
       "Cancel": "Membatalkan",
       "Close": "Menutup",
-      "Collapse": "Runtuh",
       "Confirm": "Konfirmasi",
       "Copied": "Disalin",
       "Copy": "Salin",
@@ -830,7 +738,6 @@
       "Create": "Membuat",
       "Delete": "Menghapus",
       "Edit": "Edit",
-      "Expand": "Memperluas",
       "Remove": "Menghapus",
       "Save": "Simpan",
       "Upload": "Mengunggah"

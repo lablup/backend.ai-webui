@@ -7,8 +7,8 @@ import { AgentLifeCycleControlModalRefetchQuery } from '../__generated__/AgentLi
 import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFlex,
   BAIModal,

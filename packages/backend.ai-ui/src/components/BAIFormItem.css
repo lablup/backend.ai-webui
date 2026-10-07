@@ -1,0 +1,40 @@
+/* `labelExtra` slot inside ui-common's `.uic-form-item__label`. */
+@layer components {
+  .bai-form-item-label-with-extra {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  /* A too-narrow column clips the label text instead of the slot. */
+  .bai-form-item-label-with-extra__label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .bai-form-item-label-with-extra__extra {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+  }
+
+  /* Vertical: the label spans the row so the slot sits at the far end; the
+     column stops clipping so the flush-right button's focus ring stays whole. */
+  .uic-form-item[data-layout='vertical']
+    .uic-form-item__label-col:has(.bai-form-item-label-with-extra) {
+    overflow: visible;
+  }
+
+  .uic-form-item[data-layout='vertical']
+    .uic-form-item__label:has(> .bai-form-item-label-with-extra) {
+    width: 100%;
+  }
+
+  .uic-form-item[data-layout='vertical'] .bai-form-item-label-with-extra {
+    flex: 1;
+    justify-content: space-between;
+  }
+}

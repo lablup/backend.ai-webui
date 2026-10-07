@@ -14,9 +14,10 @@ import UserSettingsModalOpener, {
   useUserSettingsModal,
 } from './UserSettingsModalOpener';
 import UserSettingsRouteRedirect from './UserSettingsRouteRedirect';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { NuqsAdapter } from 'nuqs/adapters/react-router/v6';
+import { startTransition } from 'react';
 import {
   RouterProvider,
   createBrowserRouter,
@@ -185,9 +186,12 @@ describe('UserSettingsModalOpener history contract', () => {
     await router.navigate('/usersettings?settings=logs');
 
     expect(await screen.findByTestId('modal')).toBeInTheDocument();
-    expect(screen.getByTestId('location')).toHaveTextContent(
-      '/session?tab=running&settings=logs',
-    );
+    // The modal paints from the param before the redirect onto the background lands.
+    await vi.waitFor(() => {
+      expect(screen.getByTestId('location')).toHaveTextContent(
+        '/session?tab=running&settings=logs',
+      );
+    });
 
     await user.click(screen.getByText('close'));
 
@@ -197,5 +201,71 @@ describe('UserSettingsModalOpener history contract', () => {
     expect(screen.getByTestId('location')).toHaveTextContent(
       '/session?tab=running',
     );
+  });
+
+  // Stands in for a pending `BAIButton` `action` / Astryx `clickAction`: React
+  // holds every other transition back until it settles.
+  const holdAsyncAction = () => {
+    let settle = () => {};
+    act(() => {
+      startTransition(async () => {
+        await new Promise<void>((resolve) => {
+          settle = resolve;
+        });
+      });
+    });
+    return () => act(async () => settle());
+  };
+
+  // nuqs applies a URL change it did not make (a palette hit, the shim's
+  // redirect) in a transition: the URL gained `?settings=` and nothing opened.
+  it('opens from a router navigation while an async action is still pending', async () => {
+    const { router } = renderApp();
+    const settleAction = holdAsyncAction();
+
+    await act(() => router.navigate('/usersettings?settings=logs'));
+
+    expect(await screen.findByTestId('modal')).toBeInTheDocument();
+    expect(screen.getByTestId('category')).toHaveTextContent('logs');
+    await settleAction();
+  });
+
+  it('switches category and closes while an async action is still pending', async () => {
+    const user = userEvent.setup();
+    const { router } = renderApp();
+    await act(() => router.navigate('/session?tab=running&settings=general'));
+    await screen.findByTestId('modal');
+    const settleAction = holdAsyncAction();
+
+    await user.click(screen.getByText('to logs'));
+    expect(screen.getByTestId('category')).toHaveTextContent('logs');
+
+    await user.click(screen.getByText('close'));
+    expect(screen.queryByTestId('modal')).toBeNull();
+    expect(screen.getByTestId('location')).toHaveTextContent(
+      '/session?tab=running',
+    );
+    await settleAction();
+  });
+
+  // The session list carries its fetched detail fragment in `state`.
+  it('keeps the history state of the page it was opened over', async () => {
+    const user = userEvent.setup();
+    const { router } = renderApp();
+    await act(() =>
+      router.navigate('/session?tab=running', { state: { detail: 'kept' } }),
+    );
+    await user.click(screen.getByText('open settings'));
+    await screen.findByTestId('modal');
+    await user.click(screen.getByText('to logs'));
+    await vi.waitFor(() => {
+      expect(screen.getByTestId('category')).toHaveTextContent('logs');
+    });
+    await user.click(screen.getByText('close'));
+
+    await vi.waitFor(() => {
+      expect(screen.queryByTestId('modal')).toBeNull();
+    });
+    expect(router.state.location.state).toEqual({ detail: 'kept' });
   });
 });
