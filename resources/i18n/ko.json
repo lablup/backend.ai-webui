@@ -1534,6 +1534,8 @@
   },
   "entityLabel": {
     "EditLabels": "레이블 편집",
+    "LabelKey": "레이블 키",
+    "LabelValue": "레이블 값",
     "Labels": "레이블",
     "NoPermissionToEditLabels": "레이블을 편집할 권한이 없습니다."
   },

@@ -149,6 +149,9 @@
   "comp:BAIEntityLabelBulkEditButton": {
     "AddLabels": "เพิ่มป้ายกำกับ"
   },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "แก้ไขป้ายกำกับ"
+  },
   "comp:BAIEntityLabelSettingModal": {
     "AddLabel": "เพิ่มป้ายกำกับ",
     "AddLabelsToItems": "เพิ่มป้ายกำกับให้ {{count}} รายการ",

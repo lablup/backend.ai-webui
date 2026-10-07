@@ -1534,6 +1534,8 @@
   },
   "entityLabel": {
     "EditLabels": "Editar rótulos",
+    "LabelKey": "Chave do rótulo",
+    "LabelValue": "Valor do rótulo",
     "Labels": "Rótulos",
     "NoPermissionToEditLabels": "Não tem permissão para editar rótulos."
   },

@@ -149,6 +149,9 @@
   "comp:BAIEntityLabelBulkEditButton": {
     "AddLabels": "Tambah label"
   },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Edit label"
+  },
   "comp:BAIEntityLabelSettingModal": {
     "AddLabel": "Tambah label",
     "AddLabelsToItems": "Tambah label pada {{count}} item",

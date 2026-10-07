@@ -1534,6 +1534,8 @@
   },
   "entityLabel": {
     "EditLabels": "编辑标签",
+    "LabelKey": "标签键",
+    "LabelValue": "标签值",
     "Labels": "标签",
     "NoPermissionToEditLabels": "您没有编辑标签的权限。"
   },

@@ -1529,6 +1529,8 @@
   },
   "entityLabel": {
     "EditLabels": "แก้ไขป้ายกำกับ",
+    "LabelKey": "คีย์ป้ายกำกับ",
+    "LabelValue": "ค่าป้ายกำกับ",
     "Labels": "ป้ายกำกับ",
     "NoPermissionToEditLabels": "คุณไม่มีสิทธิ์แก้ไขป้ายกำกับ"
   },

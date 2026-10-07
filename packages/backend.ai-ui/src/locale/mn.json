@@ -149,6 +149,9 @@
   "comp:BAIEntityLabelBulkEditButton": {
     "AddLabels": "Шошго нэмэх"
   },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Шошго засах"
+  },
   "comp:BAIEntityLabelSettingModal": {
     "AddLabel": "Шошго нэмэх",
     "AddLabelsToItems": "{{count}} зүйлд шошго нэмэх",

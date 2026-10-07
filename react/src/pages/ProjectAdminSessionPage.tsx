@@ -38,12 +38,13 @@ import {
   availableSessionV2SorterValues,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  toEntityLabelFilter,
   toLocalId,
   useFetchKey,
   useIsLabelableEntityType,
   type SessionV2InList,
 } from 'backend.ai-ui';
-import { PowerOffIcon, TagsIcon } from 'lucide-react';
+import { PowerOffIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -235,6 +236,20 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
                   />
                 ),
               },
+              ...(isLabelable
+                ? [
+                    {
+                      key: 'labels.some.key',
+                      propertyLabel: t('entityLabel.LabelKey'),
+                      type: 'string' as const,
+                    },
+                    {
+                      key: 'labels.some.value',
+                      propertyLabel: t('entityLabel.LabelValue'),
+                      type: 'string' as const,
+                    },
+                  ]
+                : []),
             ]}
             value={queryParams.filter ?? undefined}
             onChange={(value) => {
@@ -276,6 +291,11 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
         </BAIFlex>
       </BAIFlex>
       <BAISessionNodesV2
+        onEditLabels={isLabelable ? setLabelingSession : undefined}
+        onLabelClick={(label) => {
+          setQueryParams({ filter: toEntityLabelFilter(label) });
+          setTablePaginationOption({ current: 1 });
+        }}
         sessionsFrgmt={sessionNodes}
         loading={isLoading}
         order={queryParams.order}
@@ -328,12 +348,6 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
                     title={session.metadata?.name ?? '-'}
                     showActions="always"
                     actions={filterOutEmpty([
-                      isLabelable && {
-                        key: 'edit-labels',
-                        title: t('entityLabel.EditLabels'),
-                        icon: <TagsIcon />,
-                        onClick: () => setLabelingSession(session),
-                      },
                       {
                         key: 'terminate',
                         title: t('session.TerminateSession'),

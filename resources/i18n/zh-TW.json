@@ -1535,6 +1535,8 @@
   },
   "entityLabel": {
     "EditLabels": "編輯標籤",
+    "LabelKey": "標籤鍵",
+    "LabelValue": "標籤值",
     "Labels": "標籤",
     "NoPermissionToEditLabels": "您沒有編輯標籤的權限。"
   },

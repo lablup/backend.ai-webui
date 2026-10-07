@@ -1534,6 +1534,8 @@
   },
   "entityLabel": {
     "EditLabels": "Изменить метки",
+    "LabelKey": "Ключ метки",
+    "LabelValue": "Значение метки",
     "Labels": "Метки",
     "NoPermissionToEditLabels": "У вас нет прав на изменение меток."
   },

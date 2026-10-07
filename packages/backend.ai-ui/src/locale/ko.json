@@ -149,6 +149,9 @@
   "comp:BAIEntityLabelBulkEditButton": {
     "AddLabels": "레이블 추가"
   },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "레이블 편집"
+  },
   "comp:BAIEntityLabelSettingModal": {
     "AddLabel": "레이블 추가",
     "AddLabelsToItems": "{{count}}개 항목에 레이블 추가",

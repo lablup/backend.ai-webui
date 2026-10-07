@@ -21,7 +21,8 @@ import {
 } from '../Table';
 import BAIDeploymentOwnerInfo from './BAIDeploymentOwnerInfo';
 import BAIDeploymentTagTokens from './BAIDeploymentTagTokens';
-import BAIEntityLabelTokens from './BAIEntityLabelTokens';
+import BAIEntityLabelCell from './BAIEntityLabelCell';
+import type { BAIEntityLabel } from './BAIEntityLabelTokens';
 import { Link } from '@lablup/ui-common/Link';
 import { Text } from '@lablup/ui-common/Text';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
@@ -81,6 +82,9 @@ export interface BAIModelDeploymentNodesProps extends Omit<
   onChangeOrder?: (
     order: (typeof availableDeploymentSorterValues)[number] | null,
   ) => void;
+  /** Adds "Edit labels" to the Labels column's hover actions. */
+  onEditLabels?: (deployment: ModelDeploymentNodeInList) => void;
+  onLabelClick?: (label: BAIEntityLabel) => void;
 }
 
 const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
@@ -89,6 +93,8 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
   disableSorter,
   sortableKeys = availableDeploymentSorterKeys,
   onChangeOrder,
+  onEditLabels,
+  onLabelClick,
   ...tableProps
 }) => {
   'use memo';
@@ -210,7 +216,11 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         key: 'labels',
         title: t('comp:BAIEntityLabelTokens.Labels'),
         render: (__, record) => (
-          <BAIEntityLabelTokens entityLabelsFrgmt={record.entityLabels} />
+          <BAIEntityLabelCell
+            entityLabelsFrgmt={record.entityLabels}
+            onEdit={onEditLabels ? () => onEditLabels(record) : undefined}
+            onLabelClick={onLabelClick}
+          />
         ),
       },
       {

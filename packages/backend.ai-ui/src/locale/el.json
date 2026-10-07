@@ -149,6 +149,9 @@
   "comp:BAIEntityLabelBulkEditButton": {
     "AddLabels": "Προσθήκη ετικετών"
   },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Επεξεργασία ετικετών"
+  },
   "comp:BAIEntityLabelSettingModal": {
     "AddLabel": "Προσθήκη ετικέτας",
     "AddLabelsToItems": "Προσθήκη ετικετών σε {{count}} στοιχεία",

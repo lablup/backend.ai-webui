@@ -1534,6 +1534,8 @@
   },
   "entityLabel": {
     "EditLabels": "Modifica etichette",
+    "LabelKey": "Chiave etichetta",
+    "LabelValue": "Valore etichetta",
     "Labels": "Etichette",
     "NoPermissionToEditLabels": "Non hai l’autorizzazione per modificare le etichette."
   },

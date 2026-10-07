@@ -1534,6 +1534,8 @@
   },
   "entityLabel": {
     "EditLabels": "Шошго засах",
+    "LabelKey": "Шошгоны түлхүүр",
+    "LabelValue": "Шошгоны утга",
     "Labels": "Шошго",
     "NoPermissionToEditLabels": "Танд шошго засах эрх байхгүй."
   },

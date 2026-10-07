@@ -4,7 +4,7 @@
  */
 import {
   BAIColumnType,
-  BAIEntityLabelTokens,
+  BAIEntityLabelCell,
   BAIFlex,
   BAIId,
   BAIImageNodeSimpleTagV2,
@@ -17,6 +17,7 @@ import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   useIsLabelableEntityType,
+  type BAIEntityLabel,
 } from '..';
 import type {
   BAISessionNodesV2Fragment$data,
@@ -130,6 +131,9 @@ interface BAISessionNodesV2Props extends Omit<
   onChangeOrder?: (
     order: (typeof availableSessionV2SorterValues)[number] | null,
   ) => void;
+  /** Adds "Edit labels" to the Labels column's hover actions. */
+  onEditLabels?: (session: SessionV2InList) => void;
+  onLabelClick?: (label: BAIEntityLabel) => void;
 }
 
 const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
@@ -137,6 +141,8 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
   customizeColumns,
   disableSorter,
   onChangeOrder,
+  onEditLabels,
+  onLabelClick,
   ...tableProps
 }) => {
   'use memo';
@@ -251,7 +257,11 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
         key: 'labels',
         title: t('comp:BAIEntityLabelTokens.Labels'),
         render: (__, session) => (
-          <BAIEntityLabelTokens entityLabelsFrgmt={session.entityLabels} />
+          <BAIEntityLabelCell
+            entityLabelsFrgmt={session.entityLabels}
+            onEdit={onEditLabels ? () => onEditLabels(session) : undefined}
+            onLabelClick={onLabelClick}
+          />
         ),
       },
       // TODO: SessionV2 does not yet expose live utilization (no `live_stat`),

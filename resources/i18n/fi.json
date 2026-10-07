@@ -1534,6 +1534,8 @@
   },
   "entityLabel": {
     "EditLabels": "Muokkaa tunnisteita",
+    "LabelKey": "Tunnisteen avain",
+    "LabelValue": "Tunnisteen arvo",
     "Labels": "Tunnisteet",
     "NoPermissionToEditLabels": "Sinulla ei ole oikeutta muokata tunnisteita."
   },

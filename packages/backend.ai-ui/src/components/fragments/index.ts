@@ -80,8 +80,14 @@ export type {
 export {
   default as BAIEntityLabelTokens,
   formatEntityLabel,
+  toEntityLabelFilter,
 } from './BAIEntityLabelTokens';
-export type { BAIEntityLabelTokensProps } from './BAIEntityLabelTokens';
+export type {
+  BAIEntityLabel,
+  BAIEntityLabelTokensProps,
+} from './BAIEntityLabelTokens';
+export { default as BAIEntityLabelCell } from './BAIEntityLabelCell';
+export type { BAIEntityLabelCellProps } from './BAIEntityLabelCell';
 export { default as BAIActivateArtifactsModal } from './BAIActivateArtifactsModal';
 export type {
   BAIActivateArtifactsModalProps,

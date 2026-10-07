@@ -1534,6 +1534,8 @@
   },
   "entityLabel": {
     "EditLabels": "Edit label",
+    "LabelKey": "Kunci label",
+    "LabelValue": "Nilai label",
     "Labels": "Label",
     "NoPermissionToEditLabels": "Anda tidak memiliki izin untuk mengedit label."
   },

@@ -1534,6 +1534,8 @@
   },
   "entityLabel": {
     "EditLabels": "Sửa nhãn",
+    "LabelKey": "Khóa nhãn",
+    "LabelValue": "Giá trị nhãn",
     "Labels": "Nhãn",
     "NoPermissionToEditLabels": "Bạn không có quyền sửa nhãn."
   },

@@ -1534,6 +1534,8 @@
   },
   "entityLabel": {
     "EditLabels": "Modifier les libellés",
+    "LabelKey": "Clé du libellé",
+    "LabelValue": "Valeur du libellé",
     "Labels": "Libellés",
     "NoPermissionToEditLabels": "Vous n’êtes pas autorisé à modifier les libellés."
   },

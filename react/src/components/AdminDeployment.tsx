@@ -41,11 +41,12 @@ import {
   toLocalId,
   useBAILogger,
   BAIEntityLabelSettingModal,
+  toEntityLabelFilter,
   useIsLabelableEntityType,
   type ModelDeploymentNodeInList,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { Trash2, SquarePenIcon, TagsIcon } from 'lucide-react';
+import { Trash2, SquarePenIcon } from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -371,6 +372,20 @@ const AdminDeployment = ({
         { label: t('replicaStatus.Inactive'), value: 'INACTIVE' },
       ],
     },
+    ...(isLabelable
+      ? [
+          {
+            key: 'labels.some.key',
+            propertyLabel: t('entityLabel.LabelKey'),
+            type: 'string' as const,
+          },
+          {
+            key: 'labels.some.value',
+            propertyLabel: t('entityLabel.LabelValue'),
+            type: 'string' as const,
+          },
+        ]
+      : []),
   ]);
 
   return (
@@ -436,6 +451,23 @@ const AdminDeployment = ({
           />
         </BAIFlex>
         <BAIModelDeploymentNodes
+          onEditLabels={isLabelable ? setLabelingDeployment : undefined}
+          onLabelClick={(label) => {
+            onReload(
+              {
+                ...queryRef.variables,
+                filter: {
+                  ...toEntityLabelFilter(label),
+                  ...statusCategoryFilterFor(
+                    statusCategory,
+                    supportsExtendedFilter,
+                  ),
+                },
+                offset: 0,
+              },
+              { fetchPolicy: 'network-only' },
+            );
+          }}
           deploymentsFrgmt={deploymentNodes}
           loading={isRefetching}
           order={order}
@@ -532,18 +564,6 @@ const AdminDeployment = ({
                               disabled: destroying,
                               onClick: () => setEditingDeploymentId(record.id),
                             },
-                            ...(isLabelable
-                              ? [
-                                  {
-                                    key: 'edit-labels',
-                                    title: t('entityLabel.EditLabels'),
-                                    icon: <TagsIcon />,
-                                    disabled: destroying,
-                                    onClick: () =>
-                                      setLabelingDeployment(record),
-                                  },
-                                ]
-                              : []),
                             {
                               key: 'delete',
                               title: t('deployment.DeleteDeployment'),

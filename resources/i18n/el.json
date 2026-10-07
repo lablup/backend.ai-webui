@@ -1534,6 +1534,8 @@
   },
   "entityLabel": {
     "EditLabels": "Επεξεργασία ετικετών",
+    "LabelKey": "Κλειδί ετικέτας",
+    "LabelValue": "Τιμή ετικέτας",
     "Labels": "Ετικέτες",
     "NoPermissionToEditLabels": "Δεν έχετε δικαίωμα επεξεργασίας ετικετών."
   },

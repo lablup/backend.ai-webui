@@ -149,6 +149,9 @@
   "comp:BAIEntityLabelBulkEditButton": {
     "AddLabels": "Labels hinzufügen"
   },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Labels bearbeiten"
+  },
   "comp:BAIEntityLabelSettingModal": {
     "AddLabel": "Label hinzufügen",
     "AddLabelsToItems": "Labels zu {{count}} Elementen hinzufügen",

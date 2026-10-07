@@ -1534,6 +1534,8 @@
   },
   "entityLabel": {
     "EditLabels": "Etiketleri düzenle",
+    "LabelKey": "Etiket anahtarı",
+    "LabelValue": "Etiket değeri",
     "Labels": "Etiketler",
     "NoPermissionToEditLabels": "Etiketleri düzenleme izniniz yok."
   },

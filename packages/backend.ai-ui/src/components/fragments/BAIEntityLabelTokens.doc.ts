@@ -5,10 +5,10 @@ export const docs = {
   name: 'BAIEntityLabelTokens',
   displayName: 'BAI Entity Label Tokens',
   category: 'Content',
-  keywords: ['label', 'entity label', 'key value', 'token', 'tag'],
+  keywords: ['label', 'entity label', 'key value', 'token', 'filter'],
   usage: {
     description:
-      'Shows the `key=value` labels on one entity as a BAITokenList. It reads `BAIEntityLabelTokensFragment` on `EntityLabelConnection`, so the caller spreads it inside the `entityLabels` field every labelable node (SessionV2, VFolder, ModelDeployment, ResourceGroup, …) carries. Remaining props go to BAITokenList; `maxInline` defaults to 2.',
+      'Shows the `key=value` labels on one entity as Tokens. It reads `BAIEntityLabelTokensFragment` on `EntityLabelConnection`, so the caller spreads it inside the `entityLabels` field every labelable node (SessionV2, VFolder, ModelDeployment, ResourceGroup, …) carries. With `onLabelClick` each token is a button; pair it with `toEntityLabelFilter(label)` to filter a list by the clicked label.',
     bestPractices: [
       {
         guidance: true,
@@ -18,7 +18,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Render the column only when `useIsLabelableEntityType(type)` is true.',
+          'Inside a table row pass `stopRowClick` so a token click does not also select the row.',
       },
     ],
   },
@@ -29,17 +29,31 @@ export const docs = {
       description: 'The entity’s `entityLabels` connection.',
       required: true,
     },
+    {
+      name: 'onLabelClick',
+      type: '(label: { key: string; value: string }) => void',
+      description: 'Makes tokens clickable and reports the clicked label.',
+    },
+    {
+      name: 'stopRowClick',
+      type: 'boolean',
+      description: 'Stops a token click from bubbling to the row.',
+    },
+    {
+      name: 'fallback',
+      type: 'ReactNode',
+      description: 'Rendered when the entity has no labels.',
+    },
   ],
   examples: [
     {
-      label: 'A labels column',
-      code: `{
-  key: 'labels',
-  title: t('comp:BAIEntityLabelTokens.Labels'),
-  render: (_, record) => (
-    <BAIEntityLabelTokens entityLabelsFrgmt={record.entityLabels} />
-  ),
-}`,
+      label: 'Navigate to a filtered list',
+      code: `<BAIEntityLabelTokens
+  entityLabelsFrgmt={deployment.entityLabels}
+  onLabelClick={(label) =>
+    navigate({ search: new URLSearchParams({ filter: JSON.stringify(toEntityLabelFilter(label)) }).toString() })
+  }
+/>`,
     },
   ],
 } satisfies ComponentDoc;
