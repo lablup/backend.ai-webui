@@ -4,18 +4,15 @@
  */
 import { VFolderTableProjectQuery } from '../__generated__/VFolderTableProjectQuery.graphql';
 import { Form } from '../form-engine';
-import { useBaiSignedRequestWithPromise } from '../helper';
 import { MOUNT_IN_SESSION_PERMISSION } from '../helper/storageHostPermission';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useKeyPairLazyLoadQuery } from '../hooks/hooksUsingRelay';
-import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { toProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderPermissionToken from './VFolderPermissionToken';
-import { VFolder } from './VFolderSelect';
 import { AstryxFormTextInput } from './astryxFormControls';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
 import { IconButton } from '@lablup/ui-common/IconButton';
@@ -35,6 +32,10 @@ import {
   type BAIColumnsType,
   type BAITableProps,
   BAITextHighlighter,
+  isMountableLegacyVFolder,
+  toLocalId,
+  useSuspendedLegacyVFolders,
+  type LegacyVFolder,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -58,6 +59,7 @@ export interface VFolderFile {
   modified: string;
 }
 type VFolderKey = string;
+type VFolder = LegacyVFolder;
 
 export interface VFolderSelectValue {
   alias?: string;
@@ -167,7 +169,6 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   }, [aliasMap, internalForm, aliasBasePath]);
 
   const { t } = useTranslation();
-  const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const currentProject = useCurrentProjectValue();
 
   if (!currentProject.id) {
@@ -176,19 +177,8 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
 
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [isPendingRefetch, startRefetchTransition] = useTransition();
-  const { data: allFolderList } = useSuspenseTanQuery({
-    queryKey: ['VFolderSelectQuery', fetchKey, currentProject.id],
-    queryFn: () => {
-      const search = new URLSearchParams();
-      // FIXME: filter by group_id does not work
-      // search.set('group_id', currentProject.id);
-      return baiRequestWithPromise({
-        method: 'GET',
-        url: `/folders?${search.toString()}`,
-      }) as Promise<VFolder[]>;
-    },
-    staleTime: 1000,
-  });
+  const { folders: allFolderList, refetch: refetchFolders } =
+    useSuspendedLegacyVFolders({ groupId: currentProject.id });
 
   const { domain, group, keypair_resource_policy } =
     useLazyLoadQuery<VFolderTableProjectQuery>(
@@ -243,23 +233,13 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     );
   }, [domain, group, keypair_resource_policy]);
 
-  const accessibleFoldersByCurrentProject = useMemo(() => {
-    return (
-      allFolderList?.filter(
-        (folder) =>
-          folder.ownership_type === 'user' ||
-          !folder.group ||
-          folder.group === currentProject.id,
-      ) || []
-    );
-  }, [allFolderList, currentProject.id]);
-
-  // `permission` is the caller's effective mount level; the manager refuses a
-  // 'none' mount (backend.ai#14679).
-  const mountableFoldersByPermission = accessibleFoldersByCurrentProject.filter(
+  // The manager refuses a 'none' mount (backend.ai#14679).
+  const mountableFoldersByPermission = allFolderList.filter(
     (folder) =>
-      mountableVolumesByPermission.includes(folder.host) &&
-      folder.permission !== 'none',
+      isMountableLegacyVFolder(folder, {
+        currentProjectId: currentProject.id ?? undefined,
+        mountableHosts: mountableVolumesByPermission,
+      }) && folder.permission !== 'none',
   );
 
   useEffect(() => {
@@ -668,6 +648,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
             onClick={() => {
               startRefetchTransition(() => {
                 updateFetchKey();
+                void refetchFolders();
               });
             }}
           />
@@ -717,10 +698,12 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           if (result) {
             startRefetchTransition(() => {
               updateFetchKey();
+              void refetchFolders();
               setSelectedRowKeys((x) => [
                 ...x,
-                // @ts-ignore
-                result[rowKey],
+                rowKey === 'id'
+                  ? (toLocalId(result.id) ?? '')
+                  : (result.metadata?.name ?? ''),
               ]);
             });
           }

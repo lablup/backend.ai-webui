@@ -5,8 +5,6 @@
 import { mountLevelFromPermissions } from './useSuspendedLegacyVFolders';
 import { describe, expect, it } from 'vitest';
 
-// `vfolder_nodes.permissions` is resolved per caller (backend.ai#14679), so
-// the mount verbs it carries are the caller's own level, not the folder default.
 describe('mountLevelFromPermissions', () => {
   it('reads rw from mount_rw', () => {
     expect(
@@ -35,9 +33,12 @@ describe('mountLevelFromPermissions', () => {
     ).toBe('none');
   });
 
-  it('reads none from an empty, null or undefined list', () => {
+  it('reads none from an empty list', () => {
     expect(mountLevelFromPermissions([])).toBe('none');
-    expect(mountLevelFromPermissions(null)).toBe('none');
-    expect(mountLevelFromPermissions(undefined)).toBe('none');
+  });
+
+  it('reads an unknown level when the field was stripped by @since', () => {
+    expect(mountLevelFromPermissions(null)).toBe('');
+    expect(mountLevelFromPermissions(undefined)).toBe('');
   });
 });
