@@ -9,7 +9,6 @@ import {
   createDeploymentShell,
   escapeForRegExp,
 } from '../utils/deployment-fixtures';
-import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
 import {
   loginAsAdmin,
   navigateTo,
@@ -64,11 +63,6 @@ test.describe(
         .toString(36)
         .slice(2, 6)}`;
       await loginAsAdmin(page, request);
-      await skipUnlessManagerVersion(
-        page,
-        '26.4.3',
-        'The Deployments Owner filter requires manager >= 26.4.3 (FR-3914)',
-      );
     });
 
     test.afterEach(async () => {

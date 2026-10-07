@@ -8,7 +8,7 @@
 - 26.5.0 이상 매니저 버전에 따라 갈리는 분기는 그 field를 쓰는 component나 hook이 `baiClient.isManagerVersionCompatibleWith('<version>')`으로 직접 판정한다. 버전 문자열은 그 field를 처음 낸 매니저 버전이고, 읽는 사람은 call site에서 최소 버전을 바로 본다.
 - `backend.ai-client`의 `Client`는 이름 붙은 [feature flag](#용어)를 더는 켜지 않는다. `_updateSupportList()`는 빈 함수이고, `supports(name)`은 API로 남지만 모든 이름에 `false`를 답한다.
 - [ADR 0006](0006-version-gated-field-pairs-across-manager-versions.md)의 field pair(`@since`·`@deprecatedSince`와 `graphql-transformer.ts`)는 26.5.0 이상에서 들어온 field에 그대로 쓴다. 이 ADR은 ADR 0006 4절의 "document 밖의 분기는 feature flag로 고른다"는 규칙만 대신한다.
-- e2e는 `skipUnlessManagerVersion`으로, 전역 검색 palette의 `TAB_GATES`는 `ctx.isManagerVersionCompatibleWith`로 같은 판정을 한다. 지원 기준은 e2e에 적용하지 않는다. e2e는 버전에 따라 갈리는 test마다 버전과 상관없이 gate와 version tag를 둔다.
+- e2e는 `skipUnlessManagerVersion`으로, 전역 검색 palette의 `TAB_GATES`는 `ctx.isManagerVersionCompatibleWith`로 같은 판정을 한다. 지원 기준은 애플리케이션 코드에 적용한다. e2e에서 매니저 버전에 따라 갈리는 test는 통과하는 최소 버전을 `@requires-manager-vX.Y` tag로 남기고, 그 버전이 26.4 이하여도 tag를 단다. `skipUnlessManagerVersion`은 26.4 기준보다 새 기능에만 쓴다.
 
 ## Context
 
@@ -94,7 +94,7 @@ flowchart TD
 ### 4. 테스트와 palette도 버전으로 판정한다
 
 - **E2E gate**: `e2e/utils/feature-gate-util.ts`의 `skipUnlessManagerVersion(page, version, reason)`이 페이지의 `backendaiclient.isManagerVersionCompatibleWith(version)`을 불러, `false`면 test를 skip한다. 같은 test에는 `@requires-manager-v26.9` 같은 version tag를 붙여 `--grep-invert`로 뺄 수 있게 한다.
-- **E2E keeps every gate**: 1절의 지원 기준은 애플리케이션 코드에만 적용한다. e2e suite는 더 오래된 매니저를 상대로도 돌 수 있으므로, 버전에 따라 갈리는 test는 최소 버전이 26.4.x 이하여도 `skipUnlessManagerVersion`과 `@requires-manager-vX.Y` tag를 둔다. `dashboard.spec.ts`의 Agent Statistics test는 `25.15.0`과 `@requires-manager-v25.15`, `deployment-lifecycle.spec.ts`의 preset test는 `26.4.2`로 gate한다. 애플리케이션에서 fallback이 지워진 화면을 검증하던 test는 gate로 되살리지 않는다.
+- **E2E records every minimum version as a tag**: 1절의 지원 기준은 애플리케이션 코드에 적용한다. e2e에서 매니저 버전에 따라 갈리는 test는 통과하는 최소 버전을 `@requires-manager-vX.Y` tag로 남기고, 그 버전이 26.4 이하여도 tag를 단다. 더 오래된 매니저를 상대로 돌리는 run은 `--grep-invert`로 그 test를 뺀다. 26.4 이하 버전에는 `skipUnlessManagerVersion`을 두지 않는다. `dashboard.spec.ts`의 Agent Statistics test는 `@requires-manager-v25.15`, `deployment-lifecycle.spec.ts`의 preset test는 `@requires-manager-v26.4` tag만 단다.
 - **E2E overrides**: 연결된 매니저와 다른 버전의 경로를 강제하는 spec은 `isManagerVersionCompatibleWith`를 감싸 특정 버전 문자열에 `true`나 `false`를 답하게 한다. `e2e/serving/admin-preset-service-config.spec.ts`가 그 예다.
 - **Palette context**: `react/src/components/GlobalSearchPalette/types.ts`의 `SearchContext`는 `supports` 대신 `isManagerVersionCompatibleWith`를 갖는다.
 - **Palette gates**: `visibility.ts`의 `TAB_GATES`에 매니저 버전 gate를 둘 때는 탭을 그리는 page와 같은 버전 문자열로 `ctx.isManagerVersionCompatibleWith`를 부른다. 지금 `TAB_GATES`에 버전 gate 항목은 없다.
@@ -109,7 +109,7 @@ flowchart TD
 ## Consequences
 
 - **No client edit per gate**: 새 gate를 더하는 PR은 `client.ts`를 고치지 않는다.
-- **Repeated version strings**: 같은 기능을 여러 component가, 또는 page와 `TAB_GATES`가 함께 판정하면 같은 버전 문자열이 여러 파일에 적히고, 두 문자열이 같은지 아무도 검사하지 않는다. gate를 지우거나 기준을 올리는 PR은 `isManagerVersionCompatibleWith('…')`와 `@since(version: "…")`를 그 버전으로 grep해 애플리케이션 코드의 gate와 fallback을 함께 지우고, `e2e/`의 `skipUnlessManagerVersion`과 `@requires-manager-vX.Y` tag는 남긴다.
+- **Repeated version strings**: 같은 기능을 여러 component가, 또는 page와 `TAB_GATES`가 함께 판정하면 같은 버전 문자열이 여러 파일에 적히고, 두 문자열이 같은지 아무도 검사하지 않는다. gate를 지우거나 기준을 올리는 PR은 `isManagerVersionCompatibleWith('…')`와 `@since(version: "…")`를 그 버전으로 grep해 애플리케이션 코드의 gate와 fallback을 함께 지우고, `e2e/`에서는 `skipUnlessManagerVersion`을 지우되 `@requires-manager-vX.Y` tag는 남긴다.
 - **No lint guard**: 새 `_features` 항목이나 `supports(` 호출을 막는 lint rule은 없다. 리뷰가 이 ADR로 막는다.
 - **Silent false for plugins**: `supports(name)`을 부르는 외부 plugin은 오류 없이 `false`를 받아 gate된 동작을 잃는다.
 - **No login floor**: 로그인 단계에서 매니저 최소 버전을 검사하지 않는다. 26.4 미만 매니저와 최신이 아닌 26.4 patch 매니저는 지워진 fallback 대신 답할 수 없는 query를 받는다.

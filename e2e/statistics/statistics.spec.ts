@@ -1,5 +1,4 @@
 // spec: Statistics page tests
-import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import test, { expect, Page } from '@playwright/test';
 
@@ -43,15 +42,8 @@ test.describe('Statistics', { tag: ['@functional', '@statistics'] }, () => {
       await loginAsAdmin(page, request);
       await navigateTo(page, 'statistics');
 
-      // Declarative feature gate (FR-3112): the User Session History tab
-      // requires manager >= 25.6.0 (tab introduced by FR-655).
-      await skipUnlessManagerVersion(
-        page,
-        '25.6.0',
-        'User Session History tab requires Backend.AI manager >= 25.6.0 (FR-655)',
-      );
-
-      // The backend is capable — the tab MUST be present; absence is a failure.
+      // FR-655's User Session History tab is always available (manager >= 26.4.0
+      // is the project baseline).
       const userSessionTab = statisticsTab(page, 'User Session History');
       await expect(userSessionTab).toBeVisible();
 

@@ -3,7 +3,6 @@
 //            9 (My Resources in Resource Group Widget), 10 (Agent Stats Widget),
 //            11 (Recently Created Sessions Widget), 12 (Board Layout)
 // plus: custom panel add flow (edit sider -> panel modal), added after the plan
-import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
 import { loginAsAdmin, loginAsUser, navigateTo } from '../utils/test-util';
 import { test, expect, type Page } from '@playwright/test';
 
@@ -346,20 +345,12 @@ test.describe(
         test.beforeEach(async ({ page, request }) => {
           await loginAsAdmin(page, request);
           await navigateTo(page, 'summary');
-
-          // Declarative feature gate (FR-3112): the Agent Statistics widget
-          // requires manager >= 25.15.0 (widget introduced by FR-1575).
-          await skipUnlessManagerVersion(
-            page,
-            '25.15.0',
-            'Agent Statistics widget requires Backend.AI manager >= 25.15.0 (FR-1575)',
-          );
         });
 
         test('Admin can view cluster-level resource statistics in the Agent Stats widget', async ({
           page,
         }) => {
-          // 1. The backend is capable — the widget MUST be present; absence is a failure.
+          // The widget is always present (manager >= 26.4.0 is the project baseline).
           const widget = page
             .locator('.bai_grid_item')
             .filter({ hasText: 'Agent Statistics' });

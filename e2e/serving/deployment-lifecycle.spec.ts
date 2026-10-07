@@ -58,7 +58,6 @@ import {
   provisionDeploymentFixtures,
   provisionDeploymentModelFolder,
 } from '../utils/deployment-fixtures';
-import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
 import { loginAsAdmin, modifyConfigToml, navigateTo } from '../utils/test-util';
 import { getFormItemControlByLabel } from '../utils/test-util-antd';
 import { test, expect, Page } from '@playwright/test';
@@ -482,79 +481,79 @@ test.describe(
       }
     });
 
-    test('Admin can view Preset Mode fields in the Add Revision modal', async ({
-      page,
-    }) => {
-      // Preset Mode's fields only render once at least one deployment preset
-      // exists on the cluster -- with none, the modal shows a "No deployment
-      // presets available" empty state instead (confirmed live via GraphQL:
-      // this cluster had zero deployment presets at test time, which the app
-      // correctly reflects as an intentional empty state, not a bug). Ensure
-      // one exists first, exactly like the Preset Mode revision-attach test
-      // below -- reusing a compatible pre-existing preset when the cluster
-      // has one, or provisioning a throwaway `e2e-dfx-*` preset otherwise. A
-      // model folder is not needed here since this test only inspects the
-      // modal's fields and never submits.
-      await skipUnlessManagerVersion(
-        page,
-        '26.4.2',
-        'Preset Mode requires manager >= 26.4.2',
-      );
-      const preset = await ensureDeploymentPreset(page);
-      if (preset.presetId) {
-        fixtures = { presetId: preset.presetId, presetName: preset.presetName };
-      }
+    test(
+      'Admin can view Preset Mode fields in the Add Revision modal',
+      { tag: ['@requires-manager-v26.4'] },
+      async ({ page }) => {
+        // Preset Mode's fields only render once at least one deployment preset
+        // exists on the cluster -- with none, the modal shows a "No deployment
+        // presets available" empty state instead (confirmed live via GraphQL:
+        // this cluster had zero deployment presets at test time, which the app
+        // correctly reflects as an intentional empty state, not a bug). Ensure
+        // one exists first, exactly like the Preset Mode revision-attach test
+        // below -- reusing a compatible pre-existing preset when the cluster
+        // has one, or provisioning a throwaway `e2e-dfx-*` preset otherwise. A
+        // model folder is not needed here since this test only inspects the
+        // modal's fields and never submits.
+        const preset = await ensureDeploymentPreset(page);
+        if (preset.presetId) {
+          fixtures = {
+            presetId: preset.presetId,
+            presetName: preset.presetName,
+          };
+        }
 
-      const deploymentName = `e2e-plan-preset-${Date.now()}`;
-      await navigateTo(page, 'deployments');
-      await createDeploymentShell(page, deploymentName);
-      createdDeploymentName = deploymentName;
+        const deploymentName = `e2e-plan-preset-${Date.now()}`;
+        await navigateTo(page, 'deployments');
+        await createDeploymentShell(page, deploymentName);
+        createdDeploymentName = deploymentName;
 
-      // 1. Click "Add Revision" (from either the banner or the tab bar).
-      await revisionTabBar(page)
-        .getByRole('button', { name: 'Add Revision' })
-        .click();
-      const dialog = page.getByRole('dialog', { name: /Add Revision/ });
-      await expect(dialog).toBeVisible({ timeout: 20000 });
+        // 1. Click "Add Revision" (from either the banner or the tab bar).
+        await revisionTabBar(page)
+          .getByRole('button', { name: 'Add Revision' })
+          .click();
+        const dialog = page.getByRole('dialog', { name: /Add Revision/ });
+        await expect(dialog).toBeVisible({ timeout: 20000 });
 
-      // 2. Confirm "Preset Mode" is selected by default in the modal's segmented
-      // control.
-      await expect(
-        dialog.getByRole('radio', { name: 'Preset Mode' }),
-      ).toBeChecked();
-      await expect(
-        dialog.getByRole('radio', { name: 'Advanced Mode' }),
-      ).not.toBeChecked();
+        // 2. Confirm "Preset Mode" is selected by default in the modal's segmented
+        // control.
+        await expect(
+          dialog.getByRole('radio', { name: 'Preset Mode' }),
+        ).toBeChecked();
+        await expect(
+          dialog.getByRole('radio', { name: 'Advanced Mode' }),
+        ).not.toBeChecked();
 
-      // 3. Inspect the Preset Mode fields.
-      await expect(dialog.getByText('Select Preset')).toBeVisible();
-      // The icon-only info button next to "Preset" now carries a purpose-based
-      // aria-label ("Deployment Preset Detail") instead of the old antd
-      // icon-name-derived "info-circle" -- it stays disabled until a preset
-      // is selected.
-      await expect(
-        dialog.getByRole('button', { name: 'Deployment Preset Detail' }),
-      ).toBeDisabled();
-      await expect(dialog.getByText('Select Folder')).toBeVisible();
-      await expect(
-        dialog.getByRole('checkbox', {
-          name: 'Apply immediately after adding',
-        }),
-      ).toBeChecked();
-      await expect(
-        dialog.getByRole('button', { name: 'Cancel' }),
-      ).toBeVisible();
-      await expect(
-        dialog.getByRole('button', { name: 'Add Revision' }),
-      ).toBeVisible();
+        // 3. Inspect the Preset Mode fields.
+        await expect(dialog.getByText('Select Preset')).toBeVisible();
+        // The icon-only info button next to "Preset" now carries a purpose-based
+        // aria-label ("Deployment Preset Detail") instead of the old antd
+        // icon-name-derived "info-circle" -- it stays disabled until a preset
+        // is selected.
+        await expect(
+          dialog.getByRole('button', { name: 'Deployment Preset Detail' }),
+        ).toBeDisabled();
+        await expect(dialog.getByText('Select Folder')).toBeVisible();
+        await expect(
+          dialog.getByRole('checkbox', {
+            name: 'Apply immediately after adding',
+          }),
+        ).toBeChecked();
+        await expect(
+          dialog.getByRole('button', { name: 'Cancel' }),
+        ).toBeVisible();
+        await expect(
+          dialog.getByRole('button', { name: 'Add Revision' }),
+        ).toBeVisible();
 
-      // 4. Click "Cancel" to close without submitting.
-      await dialog.getByRole('button', { name: 'Cancel' }).click();
-      await expect(dialog).toBeHidden({ timeout: 10000 });
+        // 4. Click "Cancel" to close without submitting.
+        await dialog.getByRole('button', { name: 'Cancel' }).click();
+        await expect(dialog).toBeHidden({ timeout: 10000 });
 
-      await deleteDeploymentAndVerify(page, deploymentName);
-      createdDeploymentName = null;
-    });
+        await deleteDeploymentAndVerify(page, deploymentName);
+        createdDeploymentName = null;
+      },
+    );
 
     test('Admin can view Advanced Mode fields in the Add Revision modal', async ({
       page,
@@ -639,7 +638,7 @@ test.describe(
     test.describe.serial('Revision attach flows', () => {
       test(
         'Admin can add a revision in Preset Mode and see it attached',
-        { tag: ['@critical'] },
+        { tag: ['@critical', '@requires-manager-v26.4'] },
         async ({ page }) => {
           // This test waits up to 180s for the deployment's Lifecycle to
           // leave "Pending" (real scheduling can take a while) but, per the
@@ -657,13 +656,7 @@ test.describe(
           // Add Revision modal: a compatible pre-existing preset is reused
           // as-is when the cluster has one, and created (then torn down)
           // otherwise -- no hand-seeded cluster fixture is assumed either
-          // way. Deployment presets need backend support, so gate on the same
-          // manager version the UI checks.
-          await skipUnlessManagerVersion(
-            page,
-            '26.4.2',
-            'Adding a revision from a preset requires manager >= 26.4.2',
-          );
+          // way.
           const provisioned = await provisionDeploymentFixtures(page);
           fixtures = provisioned;
 

@@ -395,9 +395,11 @@ are only reliable when `isLocalEnvironment` is true.
 - Skip rather than fail when the target deployment lacks a feature:
   `skipUnlessWebUIVersion`, `skipUnlessManagerVersion`, `skipUnlessClientConfig`,
   `skipUnlessAllowedVFolderType` from `e2e/utils/feature-gate-util.ts`.
-  Manager-version gates (`skipUnlessManagerVersion` + `@requires-manager-vX.Y`)
-  stay on every version-dependent test even below the app's 26.4 LTS support
-  floor (ADR 0010): the suite may run against older managers.
+  A test that depends on a manager version records the minimum version it
+  passes on as a `@requires-manager-vX.Y` tag, even at or below the app's 26.4
+  support floor (ADR 0010), so runs against older managers can
+  `--grep-invert` it; `skipUnlessManagerVersion` is only for features newer
+  than 26.4.
 
 ---
 
