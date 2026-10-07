@@ -35,8 +35,8 @@ export const THEME_FAMILY_STORAGE_KEY = 'backendaiwebui.settings.themeFamily';
  * `resources/theme.json` when no domain document was ever saved — or the
  * per-user draft while in branding preview mode. No deep-merge: "absent"
  * means "follow the shipped defaults" (FR-1964).
- * Shared by `useCustomThemeConfig` and `useDefaultTheme` (the editable
- * document of the Branding page). Safe outside RelayEnvironmentProvider.
+ * Shared by `useCustomThemeConfig` and `usePreviewThemeConfig` (the Branding
+ * page's edits). Safe outside RelayEnvironmentProvider.
  */
 export const useRawCustomThemeConfig = (): BAIAppearanceConfig | undefined => {
   'use memo';
