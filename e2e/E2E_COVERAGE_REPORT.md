@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-10-06
+> **Last Updated:** 2026-10-07
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 361 / 512 features covered (71%)**
+**Overall (in-scope routes): 360 / 511 features covered (70%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -23,7 +23,7 @@
 | Session List             | `/session`                                       |    24    |   16    | 🔶 67%  |
 | Session Launcher         | `/session/start`                                 |    14    |    3    | 🔶 21%  |
 | Serving                  | `/serving`                                       |    7     |    2    | 🔶 29%  |
-| Endpoint Detail          | `/serving/:serviceId`                            |    20    |    9    | 🔶 45%  |
+| Endpoint Detail          | `/serving/:serviceId`                            |    19    |    8    | 🔶 42%  |
 | Service Launcher         | `/service/start`                                 |    5     |    1    | 🔶 20%  |
 | VFolder / Data           | `/data`                                          |    49    |   36    | 🔶 73%  |
 | Model Store              | `/model-store`                                   |    6     |    6    | ✅ 100% |
@@ -54,7 +54,7 @@
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **512**  | **361** | **71%** |
+| **Total**                |                                                  | **511**  | **360** | **70%** |
 
 ---
 
@@ -280,30 +280,29 @@
 **Modals:** `AutoScalingRuleEditorModal`, `EndpointTokenGenerationModal`, `BAIJSONViewerModal`, `SessionDetailDrawer`, `InferenceSessionErrorModal`
 **Mocks:** [`e2e/serving/mocking/endpoint-detail-mock.ts`](serving/mocking/endpoint-detail-mock.ts), [`e2e/serving/mocking/endpoint-list-mock.ts`](serving/mocking/endpoint-list-mock.ts)
 
-| Feature                                                 | Status | Test                                                                                                                                                   |
-| ------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Service info display                                    | ❌     | -                                                                                                                                                      |
-| Edit button → navigate to `/service/update/:endpointId` | ❌     | -                                                                                                                                                      |
-| "Add Rules" → AutoScalingRuleEditorModal (create)       | ❌     | -                                                                                                                                                      |
-| Edit scaling rule → AutoScalingRuleEditorModal (edit)   | ❌     | -                                                                                                                                                      |
-| Delete scaling rule → Popconfirm                        | ❌     | -                                                                                                                                                      |
-| "Generate Token" → EndpointTokenGenerationModal         | ❌     | -                                                                                                                                                      |
-| Token list display                                      | ❌     | -                                                                                                                                                      |
-| Feature flag: route-node table toggle                   | ✅     | `1.1 Admin sees the new BAIRouteNodes table when route-node flag is enabled`, `1.2 Admin sees the legacy route table when route-node flag is disabled` |
-| Routes table display (columns, tags, values)            | ✅     | `4.1`–`4.7` (column headers, status tags, traffic tags, traffic ratio, session ID dash)                                                                |
-| Route category toggle (Running/Finished)                | ✅     | `2.1`–`2.3` (default Running, switch to Finished, switch back)                                                                                         |
-| Route property filtering (Traffic Status)               | ✅     | `3.1`–`3.4` (filter selector, filter by trafficStatus ACTIVE, filter by trafficStatus INACTIVE, remove filter)                                         |
-| Route table sorting                                     | ✅     | `7.1`–`7.3` (sort by Status, sort by Traffic Ratio, Session ID no sorter)                                                                              |
-| Route table pagination                                  | ✅     | `6.1`–`6.2` (total count display, navigate to page 2)                                                                                                  |
-| Route empty state                                       | ✅     | `9.1`–`9.2` (empty Running, empty Finished)                                                                                                            |
-| Route error → BAIJSONViewerModal                        | ✅     | `5.1`–`5.3` (error icon, open modal with JSON, close modal)                                                                                            |
-| Route session ID click → SessionDetailDrawer            | ❌     | -                                                                                                                                                      |
-| Session error → InferenceSessionErrorModal              | ❌     | -                                                                                                                                                      |
-| "Sync Routes" action                                    | ✅     | `8.1`–`8.3` (button visible, success notification, error notification)                                                                                 |
-| "Clear Errors" action                                   | ❌     | -                                                                                                                                                      |
-| Chat test link                                          | ❌     | -                                                                                                                                                      |
+| Feature                                                 | Status | Test                                                                                                           |
+| ------------------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------- |
+| Service info display                                    | ❌     | -                                                                                                              |
+| Edit button → navigate to `/service/update/:endpointId` | ❌     | -                                                                                                              |
+| "Add Rules" → AutoScalingRuleEditorModal (create)       | ❌     | -                                                                                                              |
+| Edit scaling rule → AutoScalingRuleEditorModal (edit)   | ❌     | -                                                                                                              |
+| Delete scaling rule → Popconfirm                        | ❌     | -                                                                                                              |
+| "Generate Token" → EndpointTokenGenerationModal         | ❌     | -                                                                                                              |
+| Token list display                                      | ❌     | -                                                                                                              |
+| Route-node table (`BAIRouteNodes`)                      | ✅     | `1.1 Admin sees the BAIRouteNodes table`                                                                       |
+| Routes table display (columns, tags, values)            | ✅     | `4.1`–`4.7` (column headers, status tags, traffic tags, traffic ratio, session ID dash)                        |
+| Route category toggle (Running/Finished)                | ✅     | `2.1`–`2.3` (default Running, switch to Finished, switch back)                                                 |
+| Route property filtering (Traffic Status)               | ✅     | `3.1`–`3.4` (filter selector, filter by trafficStatus ACTIVE, filter by trafficStatus INACTIVE, remove filter) |
+| Route table sorting                                     | ✅     | `7.1`–`7.3` (sort by Status, sort by Traffic Ratio, Session ID no sorter)                                      |
+| Route table pagination                                  | ✅     | `6.1`–`6.2` (total count display, navigate to page 2)                                                          |
+| Route empty state                                       | ✅     | `9.1`–`9.2` (empty Running, empty Finished)                                                                    |
+| Route error → BAIJSONViewerModal                        | ✅     | `5.1`–`5.3` (error icon, open modal with JSON, close modal)                                                    |
+| Route session ID click → SessionDetailDrawer            | ❌     | -                                                                                                              |
+| Session error → InferenceSessionErrorModal              | ❌     | -                                                                                                              |
+| "Clear Errors" action                                   | ❌     | -                                                                                                              |
+| Chat test link                                          | ❌     | -                                                                                                              |
 
-**Coverage: 🔶 9/20 features**
+**Coverage: 🔶 8/19 features**
 
 ---
 
