@@ -343,6 +343,8 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "アクション",
+    "ActionKind": "アクションタイプ",
     "AuditLog": "監査ログ",
     "Operation": "操作",
     "Status": "状態",

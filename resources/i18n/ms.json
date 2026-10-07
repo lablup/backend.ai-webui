@@ -343,6 +343,8 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "Tindakan",
+    "ActionKind": "Jenis Tindakan",
     "AuditLog": "Log Audit",
     "Operation": "Operasi",
     "Status": "Status",

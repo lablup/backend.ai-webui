@@ -343,6 +343,8 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "액션",
+    "ActionKind": "액션 유형",
     "AuditLog": "감사 로그",
     "Operation": "작업",
     "Status": "상태",

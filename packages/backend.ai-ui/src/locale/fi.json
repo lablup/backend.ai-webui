@@ -70,13 +70,17 @@
     "Version": "Versio"
   },
   "comp:BAIAuditLogNodes": {
+    "Action": "Toimenpide",
     "ActionId": "Toiminnon ID",
+    "ActionKind": "Toimenpiteen tyyppi",
     "Actor": "Suorittaja",
     "ClientIp": "Asiakkaan IP",
     "Description": "Kuvaus",
     "Duration": "Kesto",
     "EntityId": "Entiteetin ID",
     "EntityType": "Entiteettityyppi",
+    "LookupKey": "Hakuavain",
+    "LookupKind": "Hakuavaimen tyyppi",
     "Operation": "Toiminto",
     "RequestId": "Pyynnön ID",
     "Status": "Tila",

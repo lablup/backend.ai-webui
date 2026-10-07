@@ -70,13 +70,17 @@
     "Version": "Versiyon"
   },
   "comp:BAIAuditLogNodes": {
+    "Action": "Eylem",
     "ActionId": "Eylem ID",
+    "ActionKind": "Eylem Türü",
     "Actor": "Aktör",
     "ClientIp": "İstemci IP'si",
     "Description": "Açıklama",
     "Duration": "Süre",
     "EntityId": "Varlık ID",
     "EntityType": "Varlık Tipi",
+    "LookupKey": "Arama Anahtarı",
+    "LookupKind": "Arama Anahtarı Türü",
     "Operation": "İşlem",
     "RequestId": "İstek ID",
     "Status": "Durum",

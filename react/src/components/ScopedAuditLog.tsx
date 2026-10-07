@@ -4,12 +4,14 @@ import type {
   ScopedAuditLogQuery as ScopedAuditLogQueryType,
 } from '../__generated__/ScopedAuditLogQuery.graphql';
 import { convertToOrderBy } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import {
   BAIAuditLogNodes,
   type BAIAuditLogNodesProps,
   BAIFlex,
   BAIGraphQLPropertyFilter,
+  filterOutEmpty,
   filterOutNullAndUndefined,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -84,6 +86,8 @@ const ScopedAuditLog = ({
   'use memo';
   const { t } = useTranslation();
   const [fetchKey, updateFetchKey] = useFetchKey();
+  const baiClient = useSuspendedBackendaiClient();
+  const isActionFieldsSupported = baiClient.supports('audit-log-action-fields');
 
   const filter = queryRef.variables.filter ?? undefined;
   const orderBy = queryRef.variables.orderBy?.[0];
@@ -113,7 +117,7 @@ const ScopedAuditLog = ({
               { fetchPolicy: 'network-only' },
             );
           }}
-          filterProperties={[
+          filterProperties={filterOutEmpty([
             {
               key: 'status',
               propertyLabel: t('auditLog.Status'),
@@ -132,6 +136,30 @@ const ScopedAuditLog = ({
               type: 'string',
               fixedOperator: 'contains',
             },
+            isActionFieldsSupported && {
+              key: 'actionName',
+              propertyLabel: t('auditLog.Action'),
+              type: 'string' as const,
+              fixedOperator: 'contains' as const,
+            },
+            isActionFieldsSupported && {
+              key: 'actionKind',
+              propertyLabel: t('auditLog.ActionKind'),
+              type: 'enum' as const,
+              strictSelection: true,
+              options: _.map(
+                [
+                  'SINGLE_ENTITY',
+                  'BULK',
+                  'SCOPE',
+                  'RELATION',
+                  'MEMBERSHIP',
+                  'GLOBAL',
+                  'LOOKUP',
+                ],
+                (value) => ({ label: value, value }),
+              ),
+            },
             {
               key: 'triggeredBy',
               propertyLabel: t('auditLog.TriggeredBy'),
@@ -145,7 +173,7 @@ const ScopedAuditLog = ({
               type: 'datetime',
               defaultOperator: 'after',
             },
-          ]}
+          ])}
         />
         <AutoUpdateFetchKeyButton
           settingId="scoped-audit-log"

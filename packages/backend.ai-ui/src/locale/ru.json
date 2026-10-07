@@ -70,13 +70,17 @@
     "Version": "Версия"
   },
   "comp:BAIAuditLogNodes": {
+    "Action": "Действие",
     "ActionId": "ID действия",
+    "ActionKind": "Тип действия",
     "Actor": "Исполнитель",
     "ClientIp": "IP клиента",
     "Description": "Описание",
     "Duration": "Длительность",
     "EntityId": "ID объекта",
     "EntityType": "Тип объекта",
+    "LookupKey": "Ключ поиска",
+    "LookupKind": "Тип ключа поиска",
     "Operation": "Операция",
     "RequestId": "ID запроса",
     "Status": "Статус",

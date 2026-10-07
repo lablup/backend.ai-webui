@@ -70,13 +70,17 @@
     "Version": "รุ่น"
   },
   "comp:BAIAuditLogNodes": {
+    "Action": "แอ็กชัน",
     "ActionId": "รหัสการดำเนินการ",
+    "ActionKind": "ประเภทแอ็กชัน",
     "Actor": "ผู้ดำเนินการ",
     "ClientIp": "IP ของไคลเอ็นต์",
     "Description": "คำอธิบาย",
     "Duration": "ระยะเวลา",
     "EntityId": "รหัสเอนทิตี",
     "EntityType": "ประเภทเอนทิตี",
+    "LookupKey": "คีย์การค้นหา",
+    "LookupKind": "ประเภทคีย์การค้นหา",
     "Operation": "การดำเนินการ",
     "RequestId": "รหัสคำขอ",
     "Status": "สถานะ",

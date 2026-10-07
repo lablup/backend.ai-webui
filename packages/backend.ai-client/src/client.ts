@@ -1074,6 +1074,11 @@ export class Client {
       // key; `UserV2OrganizationInfo.mainAccessKey` is deprecated.
       this._features['keypair-is-default'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.10.0')) {
+      // BA-8298 / backend PR #15263 — `AuditLogV2` gained `actionName`,
+      // `actionKind`, `lookupKind` and `lookupKey`, with filter and order axes.
+      this._features['audit-log-action-fields'] = true;
+    }
   }
 
   /**

@@ -70,13 +70,17 @@
     "Version": "Εκδοχή"
   },
   "comp:BAIAuditLogNodes": {
+    "Action": "Ενέργεια",
     "ActionId": "ID ενέργειας",
+    "ActionKind": "Είδος ενέργειας",
     "Actor": "Εκτελεστής",
     "ClientIp": "IP πελάτη",
     "Description": "Περιγραφή",
     "Duration": "Διάρκεια",
     "EntityId": "ID οντότητας",
     "EntityType": "Τύπος οντότητας",
+    "LookupKey": "Κλειδί αναζήτησης",
+    "LookupKind": "Είδος κλειδιού αναζήτησης",
     "Operation": "Λειτουργία",
     "RequestId": "ID αιτήματος",
     "Status": "Κατάσταση",

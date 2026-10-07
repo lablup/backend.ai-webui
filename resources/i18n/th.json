@@ -343,6 +343,8 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "แอ็กชัน",
+    "ActionKind": "ประเภทแอ็กชัน",
     "AuditLog": "บันทึกการตรวจสอบ",
     "Operation": "การดำเนินการ",
     "Status": "สถานะ",

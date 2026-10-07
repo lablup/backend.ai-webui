@@ -70,13 +70,17 @@
     "Version": "版本"
   },
   "comp:BAIAuditLogNodes": {
+    "Action": "动作",
     "ActionId": "操作 ID",
+    "ActionKind": "动作类型",
     "Actor": "执行者",
     "ClientIp": "客户端 IP",
     "Description": "描述",
     "Duration": "持续时间",
     "EntityId": "实体 ID",
     "EntityType": "实体类型",
+    "LookupKey": "查找键",
+    "LookupKind": "查找键类型",
     "Operation": "操作",
     "RequestId": "请求 ID",
     "Status": "状态",

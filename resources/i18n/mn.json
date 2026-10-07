@@ -343,6 +343,8 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "Үйл",
+    "ActionKind": "Үйлийн төрөл",
     "AuditLog": "Аудитын бүртгэл",
     "Operation": "Үйлдэл",
     "Status": "Статус",

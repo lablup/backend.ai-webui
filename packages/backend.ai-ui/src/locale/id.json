@@ -70,13 +70,17 @@
     "Version": "Versi"
   },
   "comp:BAIAuditLogNodes": {
+    "Action": "Tindakan",
     "ActionId": "ID Tindakan",
+    "ActionKind": "Jenis Tindakan",
     "Actor": "Pelaku",
     "ClientIp": "IP Klien",
     "Description": "Deskripsi",
     "Duration": "Durasi",
     "EntityId": "ID Entitas",
     "EntityType": "Jenis Entitas",
+    "LookupKey": "Kunci Pencarian",
+    "LookupKind": "Jenis Kunci Pencarian",
     "Operation": "Operasi",
     "RequestId": "ID Permintaan",
     "Status": "Status",

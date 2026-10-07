@@ -70,13 +70,17 @@
     "Version": "Phiên bản"
   },
   "comp:BAIAuditLogNodes": {
+    "Action": "Hành động",
     "ActionId": "ID hành động",
+    "ActionKind": "Loại hành động",
     "Actor": "Người thực hiện",
     "ClientIp": "IP máy khách",
     "Description": "Mô tả",
     "Duration": "Thời lượng",
     "EntityId": "ID thực thể",
     "EntityType": "Loại thực thể",
+    "LookupKey": "Khóa tra cứu",
+    "LookupKind": "Loại khóa tra cứu",
     "Operation": "Thao tác",
     "RequestId": "ID yêu cầu",
     "Status": "Trạng thái",

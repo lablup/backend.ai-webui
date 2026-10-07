@@ -70,13 +70,17 @@
     "Version": "Таамаглал"
   },
   "comp:BAIAuditLogNodes": {
+    "Action": "Үйл",
     "ActionId": "Үйлийн ID",
+    "ActionKind": "Үйлийн төрөл",
     "Actor": "Гүйцэтгэгч",
     "ClientIp": "Клиентийн IP",
     "Description": "Тайлбар",
     "Duration": "Үргэлжлэх хугацаа",
     "EntityId": "Объектын ID",
     "EntityType": "Объектын төрөл",
+    "LookupKey": "Хайлтын түлхүүр",
+    "LookupKind": "Хайлтын түлхүүрийн төрөл",
     "Operation": "Үйлдэл",
     "RequestId": "Хүсэлтийн ID",
     "Status": "Төлөв",

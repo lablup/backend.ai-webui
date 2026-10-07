@@ -70,13 +70,17 @@
     "Version": "버전"
   },
   "comp:BAIAuditLogNodes": {
+    "Action": "액션",
     "ActionId": "액션 ID",
+    "ActionKind": "액션 유형",
     "Actor": "수행자",
     "ClientIp": "클라이언트 IP",
     "Description": "설명",
     "Duration": "소요 시간",
     "EntityId": "엔티티 ID",
     "EntityType": "엔티티 유형",
+    "LookupKey": "조회 키",
+    "LookupKind": "조회 키 유형",
     "Operation": "작업",
     "RequestId": "요청 ID",
     "Status": "상태",

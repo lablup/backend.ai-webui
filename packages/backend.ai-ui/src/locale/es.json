@@ -70,13 +70,17 @@
     "Version": "Versión"
   },
   "comp:BAIAuditLogNodes": {
+    "Action": "Acción",
     "ActionId": "ID de acción",
+    "ActionKind": "Tipo de acción",
     "Actor": "Actor",
     "ClientIp": "IP del cliente",
     "Description": "Descripción",
     "Duration": "Duración",
     "EntityId": "ID de entidad",
     "EntityType": "Tipo de entidad",
+    "LookupKey": "Clave de búsqueda",
+    "LookupKind": "Tipo de clave de búsqueda",
     "Operation": "Operación",
     "RequestId": "ID de solicitud",
     "Status": "Estado",

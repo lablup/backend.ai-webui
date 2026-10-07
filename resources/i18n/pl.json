@@ -343,6 +343,8 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "Akcja",
+    "ActionKind": "Rodzaj akcji",
     "AuditLog": "Dziennik audytu",
     "Operation": "Operacja",
     "Status": "Status",

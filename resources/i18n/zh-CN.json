@@ -343,6 +343,8 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "动作",
+    "ActionKind": "动作类型",
     "AuditLog": "审计日志",
     "Operation": "操作",
     "Status": "状态",

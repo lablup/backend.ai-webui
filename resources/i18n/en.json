@@ -330,6 +330,8 @@
     "ToolPermissionOverrides": "Tool Permission Overrides"
   },
   "auditLog": {
+    "Action": "Action",
+    "ActionKind": "Action Kind",
     "AuditLog": "Audit Log",
     "Operation": "Operation",
     "Status": "Status",

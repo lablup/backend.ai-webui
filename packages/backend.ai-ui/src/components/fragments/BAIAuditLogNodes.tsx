@@ -28,6 +28,8 @@ const availableAuditLogSorterKeys = [
   'createdAt',
   'operation',
   'status',
+  'actionName',
+  'actionKind',
 ] as const;
 
 export const availableAuditLogSorterValues = [
@@ -80,6 +82,7 @@ const BAIAuditLogNodes = ({
   const { t } = useBAIi18n();
   const baiClient = useConnectedBAIClient();
   const isClientIpSupported = baiClient.supports('client-ip-of-audit-log');
+  const isActionFieldsSupported = baiClient.supports('audit-log-action-fields');
 
   const auditLogs = useFragment<BAIAuditLogNodesFragment$key>(
     graphql`
@@ -92,6 +95,10 @@ const BAIAuditLogNodes = ({
         duration
         requestId
         actionId
+        actionName @since(version: "26.10.0")
+        actionKind @since(version: "26.10.0")
+        lookupKind @since(version: "26.10.0")
+        lookupKey @since(version: "26.10.0")
         entityType
         entityId
         triggeredBy
@@ -124,6 +131,25 @@ const BAIAuditLogNodes = ({
         sorter: isEnableSorter('operation'),
         render: (__, record) => record.operation || '-',
       },
+      isActionFieldsSupported
+        ? {
+            key: 'actionName',
+            title: t('comp:BAIAuditLogNodes.Action'),
+            dataIndex: 'actionName',
+            sorter: isEnableSorter('actionName'),
+            render: (__, record) => record.actionName || '-',
+          }
+        : undefined,
+      isActionFieldsSupported
+        ? {
+            key: 'actionKind',
+            title: t('comp:BAIAuditLogNodes.ActionKind'),
+            dataIndex: 'actionKind',
+            sorter: isEnableSorter('actionKind'),
+            defaultHidden: true,
+            render: (__, record) => record.actionKind || '-',
+          }
+        : undefined,
       {
         key: 'status',
         title: t('comp:BAIAuditLogNodes.Status'),
@@ -216,6 +242,24 @@ const BAIAuditLogNodes = ({
         render: (__, record) =>
           record.actionId ? <BAIId uuid={record.actionId} /> : '-',
       },
+      isActionFieldsSupported
+        ? {
+            key: 'lookupKind',
+            title: t('comp:BAIAuditLogNodes.LookupKind'),
+            dataIndex: 'lookupKind',
+            defaultHidden: true,
+            render: (__, record) => record.lookupKind || '-',
+          }
+        : undefined,
+      isActionFieldsSupported
+        ? {
+            key: 'lookupKey',
+            title: t('comp:BAIAuditLogNodes.LookupKey'),
+            dataIndex: 'lookupKey',
+            defaultHidden: true,
+            render: (__, record) => record.lookupKey || '-',
+          }
+        : undefined,
     ]),
     (column) => {
       return disableSorter ? _.omit(column, 'sorter') : column;
