@@ -1519,6 +1519,13 @@
     "SessionStatusIsWithReload": "Session status is {{status}}. Please reload after some time.",
     "SessionStillPreparing": "Session is still in preparing. Reload after a while"
   },
+  "entityLabel": {
+    "EditLabels": "Edit labels",
+    "LabelKey": "Label key",
+    "LabelValue": "Label value",
+    "Labels": "Labels",
+    "NoPermissionToEditLabels": "You do not have permission to edit labels."
+  },
   "environment": {
     "Action": "Action",
     "Aliases": "Aliases",

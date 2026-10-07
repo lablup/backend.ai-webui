@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b7e5c38023a941a3e629894ebeda22c7>>
+ * @generated SignedSource<<2687be43311a6573193c53b40800c6b4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+import { FragmentRefs } from "relay-runtime";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type ResourceGroupOrderField = "CREATED_AT" | "IS_ACTIVE" | "NAME" | "%future added value";
 export type SchedulerType = "DRF" | "FAIR_SHARE" | "FIFO" | "LIFO" | "%future added value";
@@ -81,6 +82,10 @@ export type ResourceGroupListQuery$data = {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly entityId: string;
+        readonly entityLabels: {
+          readonly " $fragmentSpreads": FragmentRefs<"BAIEntityLabelSettingModalFragment" | "BAIEntityLabelTokensFragment">;
+        } | null | undefined;
         readonly id: string;
         readonly metadata: {
           readonly createdAt: string;
@@ -130,174 +135,154 @@ v3 = {
 },
 v4 = [
   {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "filter",
-        "variableName": "filter"
-      },
-      {
-        "kind": "Variable",
-        "name": "limit",
-        "variableName": "limit"
-      },
-      {
-        "kind": "Variable",
-        "name": "offset",
-        "variableName": "offset"
-      },
-      {
-        "kind": "Variable",
-        "name": "orderBy",
-        "variableName": "orderBy"
-      }
-    ],
-    "concreteType": "ResourceGroupConnection",
-    "kind": "LinkedField",
-    "name": "adminResourceGroups",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "count",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "ResourceGroupEdge",
-        "kind": "LinkedField",
-        "name": "edges",
-        "plural": true,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ResourceGroup",
-            "kind": "LinkedField",
-            "name": "node",
-            "plural": false,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "id",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "name",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "ResourceGroupStatus",
-                "kind": "LinkedField",
-                "name": "status",
-                "plural": false,
-                "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "isActive",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "isPublic",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "isDefault",
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "ResourceGroupMetadata",
-                "kind": "LinkedField",
-                "name": "metadata",
-                "plural": false,
-                "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "description",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "createdAt",
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "ResourceGroupNetworkConfig",
-                "kind": "LinkedField",
-                "name": "network",
-                "plural": false,
-                "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "wsproxyAddr",
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "ResourceGroupSchedulerConfig",
-                "kind": "LinkedField",
-                "name": "scheduler",
-                "plural": false,
-                "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "type",
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
+    "kind": "Variable",
+    "name": "filter",
+    "variableName": "filter"
+  },
+  {
+    "kind": "Variable",
+    "name": "limit",
+    "variableName": "limit"
+  },
+  {
+    "kind": "Variable",
+    "name": "offset",
+    "variableName": "offset"
+  },
+  {
+    "kind": "Variable",
+    "name": "orderBy",
+    "variableName": "orderBy"
   }
-];
+],
+v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "count",
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "entityId",
+  "storageKey": null
+},
+v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v9 = [
+  {
+    "kind": "Literal",
+    "name": "limit",
+    "value": 100
+  }
+],
+v10 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "ResourceGroupStatus",
+  "kind": "LinkedField",
+  "name": "status",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "isActive",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "isPublic",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "isDefault",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v11 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "ResourceGroupMetadata",
+  "kind": "LinkedField",
+  "name": "metadata",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "description",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "createdAt",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v12 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "ResourceGroupNetworkConfig",
+  "kind": "LinkedField",
+  "name": "network",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "wsproxyAddr",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v13 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "ResourceGroupSchedulerConfig",
+  "kind": "LinkedField",
+  "name": "scheduler",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "type",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": [
@@ -309,7 +294,70 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "ResourceGroupListQuery",
-    "selections": (v4/*: any*/),
+    "selections": [
+      {
+        "alias": null,
+        "args": (v4/*: any*/),
+        "concreteType": "ResourceGroupConnection",
+        "kind": "LinkedField",
+        "name": "adminResourceGroups",
+        "plural": false,
+        "selections": [
+          (v5/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ResourceGroupEdge",
+            "kind": "LinkedField",
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ResourceGroup",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  (v6/*: any*/),
+                  (v7/*: any*/),
+                  (v8/*: any*/),
+                  {
+                    "alias": null,
+                    "args": (v9/*: any*/),
+                    "concreteType": "EntityLabelConnection",
+                    "kind": "LinkedField",
+                    "name": "entityLabels",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "args": null,
+                        "kind": "FragmentSpread",
+                        "name": "BAIEntityLabelTokensFragment"
+                      },
+                      {
+                        "args": null,
+                        "kind": "FragmentSpread",
+                        "name": "BAIEntityLabelSettingModalFragment"
+                      }
+                    ],
+                    "storageKey": "entityLabels(limit:100)"
+                  },
+                  (v10/*: any*/),
+                  (v11/*: any*/),
+                  (v12/*: any*/),
+                  (v13/*: any*/)
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
     "type": "Query",
     "abstractKey": null
   },
@@ -323,19 +371,116 @@ return {
     ],
     "kind": "Operation",
     "name": "ResourceGroupListQuery",
-    "selections": (v4/*: any*/)
+    "selections": [
+      {
+        "alias": null,
+        "args": (v4/*: any*/),
+        "concreteType": "ResourceGroupConnection",
+        "kind": "LinkedField",
+        "name": "adminResourceGroups",
+        "plural": false,
+        "selections": [
+          (v5/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ResourceGroupEdge",
+            "kind": "LinkedField",
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ResourceGroup",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  (v6/*: any*/),
+                  (v7/*: any*/),
+                  (v8/*: any*/),
+                  {
+                    "alias": null,
+                    "args": (v9/*: any*/),
+                    "concreteType": "EntityLabelConnection",
+                    "kind": "LinkedField",
+                    "name": "entityLabels",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "EntityLabelEdge",
+                        "kind": "LinkedField",
+                        "name": "edges",
+                        "plural": true,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "EntityLabel",
+                            "kind": "LinkedField",
+                            "name": "node",
+                            "plural": false,
+                            "selections": [
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "key",
+                                "storageKey": null
+                              },
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "value",
+                                "storageKey": null
+                              },
+                              (v6/*: any*/),
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "fieldId",
+                                "storageKey": null
+                              }
+                            ],
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": "entityLabels(limit:100)"
+                  },
+                  (v10/*: any*/),
+                  (v11/*: any*/),
+                  (v12/*: any*/),
+                  (v13/*: any*/)
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ]
   },
   "params": {
-    "cacheID": "11233065d01fa0653db714a9263daf0e",
+    "cacheID": "b1219c0c7b1ad6daf08bc660310a05e8",
     "id": null,
     "metadata": {},
     "name": "ResourceGroupListQuery",
     "operationKind": "query",
-    "text": "query ResourceGroupListQuery(\n  $limit: Int\n  $offset: Int\n  $filter: ResourceGroupFilter\n  $orderBy: [ResourceGroupOrderBy!]\n) {\n  adminResourceGroups(limit: $limit, offset: $offset, filter: $filter, orderBy: $orderBy) {\n    count\n    edges {\n      node {\n        id\n        name\n        status {\n          isActive\n          isPublic\n          isDefault\n        }\n        metadata {\n          description\n          createdAt\n        }\n        network {\n          wsproxyAddr\n        }\n        scheduler {\n          type\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ResourceGroupListQuery(\n  $limit: Int\n  $offset: Int\n  $filter: ResourceGroupFilter\n  $orderBy: [ResourceGroupOrderBy!]\n) {\n  adminResourceGroups(limit: $limit, offset: $offset, filter: $filter, orderBy: $orderBy) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        entityLabels(limit: 100) {\n          ...BAIEntityLabelTokensFragment\n          ...BAIEntityLabelSettingModalFragment\n        }\n        status {\n          isActive\n          isPublic\n          isDefault\n        }\n        metadata {\n          description\n          createdAt\n        }\n        network {\n          wsproxyAddr\n        }\n        scheduler {\n          type\n        }\n      }\n    }\n  }\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5431181fafe12427cb5049c3613c1d0c";
+(node as any).hash = "0114d4c2ef354742276d0429fc339489";
 
 export default node;

@@ -26,6 +26,8 @@ import {
   BAIDeleteConfirmModal,
   BAIDeploymentStatusBadge,
   BAIDeploymentTagTokens,
+  BAIEntityLabelSettingModal,
+  BAIEntityLabelTokens,
   BAIFetchKeyButton,
   BAIFlex,
   BAIId,
@@ -35,12 +37,20 @@ import {
   BAIBooleanToken,
   isDeploymentInStoppedCategory,
   safeDecodeUuid,
+  toEntityLabelFilter,
   toLocalId,
   useBAILogger,
   useConnectedBAIClient,
+  useIsLabelableEntityType,
 } from 'backend.ai-ui';
 import type { BAIDeploymentStatus } from 'backend.ai-ui';
-import { Trash2, History, EllipsisVertical, SquarePenIcon } from 'lucide-react';
+import {
+  Trash2,
+  History,
+  EllipsisVertical,
+  SquarePenIcon,
+  TagsIcon,
+} from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation, useQueryLoader } from 'react-relay';
@@ -75,6 +85,7 @@ const DeploymentOverviewContent: React.FC<{
   const { t } = useTranslation();
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
+  const isLabelable = useIsLabelableEntityType('deployment');
 
   const projectName =
     deployment?.metadata.projectV2?.basicInfo?.name ??
@@ -172,6 +183,22 @@ const DeploymentOverviewContent: React.FC<{
           fallback={renderFallback()}
         />
       </MetadataListItem>
+      {isLabelable && (
+        <MetadataListItem label={t('entityLabel.Labels')}>
+          <BAIEntityLabelTokens
+            entityLabelsFrgmt={deployment?.entityLabels}
+            onLabelClick={(label) => {
+              webuiNavigate({
+                pathname: buildProjectPath('deployments'),
+                search: new URLSearchParams({
+                  filter: JSON.stringify(toEntityLabelFilter(label)),
+                }).toString(),
+              });
+            }}
+            fallback={renderFallback()}
+          />
+        </MetadataListItem>
+      )}
     </BAIMetadataList>
   );
 };
@@ -219,6 +246,10 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
         replicaState {
           desiredReplicaCount
         }
+        entityLabels(limit: 100) {
+          ...BAIEntityLabelTokensFragment
+          ...BAIEntityLabelSettingModalFragment
+        }
       }
     `,
     deploymentFrgmt,
@@ -227,6 +258,8 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
   const [settingModalOpen, setSettingModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [historyModalOpen, setHistoryModalOpen] = useState(false);
+  const isLabelable = useIsLabelableEntityType('deployment');
+  const [isLabelModalOpen, setIsLabelModalOpen] = useState(false);
   const [deploymentHistoryQueryRef, loadDeploymentHistoryQuery] =
     useQueryLoader<DeploymentSchedulingHistoryModalQuery>(
       DeploymentSchedulingHistoryQuery,
@@ -316,6 +349,17 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
                 placement="below"
                 alignment="end"
                 items={[
+                  ...(isLabelable
+                    ? [
+                        {
+                          label: t('entityLabel.EditLabels'),
+                          icon: <TagsIcon size="1em" />,
+                          isDisabled:
+                            isDeploymentInStoppedCategory(deploymentStatus),
+                          onClick: () => setIsLabelModalOpen(true),
+                        },
+                      ]
+                    : []),
                   {
                     label: t('deployment.DeleteDeployment'),
                     icon: <Trash2 size="1em" />,
@@ -330,7 +374,6 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
             </ButtonGroup>
           </BAIFlex>
         }
-        styles={{ body: { paddingTop: 0 } }}
       >
         <DeploymentOverviewContent
           deployment={deployment}
@@ -368,6 +411,23 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
           deploymentFrgmt={deployment}
           onRequestClose={(success) => {
             setSettingModalOpen(false);
+            if (success) onRefetch();
+          }}
+        />
+      )}
+      {deployment != null && (
+        <BAIEntityLabelSettingModal
+          open={isLabelModalOpen}
+          entityType="deployment"
+          targets={[
+            {
+              entityId: toLocalId(deployment.id),
+              name: deployment.metadata.name,
+            },
+          ]}
+          entityLabelsFrgmt={deployment.entityLabels}
+          onRequestClose={(success) => {
+            setIsLabelModalOpen(false);
             if (success) onRefetch();
           }}
         />

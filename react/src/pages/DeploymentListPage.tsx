@@ -46,6 +46,10 @@ import {
   useBAILogger,
   useFetchKey,
   useToggle,
+  BAIEntityLabelSettingModal,
+  toEntityLabelFilter,
+  useIsLabelableEntityType,
+  type ModelDeploymentNodeInList,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Trash2, SquarePenIcon } from 'lucide-react';
@@ -79,6 +83,9 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
   const [deletingDeploymentId, setDeletingDeploymentId] = useState<
     string | null
   >(null);
+  const isLabelable = useIsLabelableEntityType('deployment');
+  const [labelingDeployment, setLabelingDeployment] =
+    useState<ModelDeploymentNodeInList | null>(null);
   const [drawerRevisionFrgmt, setDrawerRevisionFrgmt] =
     useState<DeploymentRevisionDetail_revision$key | null>(null);
 
@@ -228,6 +235,20 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
       propertyLabel: t('deployment.filter.OpenToPublic'),
       type: 'boolean',
     },
+    ...(isLabelable
+      ? [
+          {
+            key: 'labels.some.key',
+            propertyLabel: t('entityLabel.LabelKey'),
+            type: 'string' as const,
+          },
+          {
+            key: 'labels.some.value',
+            propertyLabel: t('entityLabel.LabelValue'),
+            type: 'string' as const,
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -269,6 +290,11 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
           </BAIFlex>
         </BAIFlex>
         <BAIModelDeploymentNodes
+          onEditLabels={isLabelable ? setLabelingDeployment : undefined}
+          onLabelClick={(label) => {
+            setQueryParams({ filter: toEntityLabelFilter(label) });
+            setTablePaginationOption({ current: 1 });
+          }}
           deploymentsFrgmt={deploymentNodes}
           loading={isPending}
           order={queryParams.order}
@@ -297,6 +323,7 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
               'name',
               'currentRevisionNumber',
               'status',
+              'labels',
               'replicaSummary',
               'model',
               'createdAt',
@@ -311,6 +338,7 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
               'name',
               'currentRevisionNumber',
               'status',
+              'labels',
               'replicaSummary',
               'model',
               'createdAt',
@@ -409,6 +437,25 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
           }}
         />
       </BAIFlex>
+      <BAIEntityLabelSettingModal
+        open={!!labelingDeployment}
+        entityType="deployment"
+        targets={
+          labelingDeployment
+            ? [
+                {
+                  entityId: toLocalId(labelingDeployment.id),
+                  name: labelingDeployment.metadata?.name ?? undefined,
+                },
+              ]
+            : []
+        }
+        entityLabelsFrgmt={labelingDeployment?.entityLabels}
+        onRequestClose={(success) => {
+          setLabelingDeployment(null);
+          if (success) updateFetchKey();
+        }}
+      />
       {/* ADR-0001: general page — the page is the only reader of the ambient
           current project and passes it explicitly. Creation is offered only
           here, from this project-scoped menu, so the modal's props union

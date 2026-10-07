@@ -1532,6 +1532,13 @@
     "SessionStatusIsWithReload": "セッションステータス: {{status}}。しばらくしてからリロードしてください。",
     "SessionStillPreparing": "セッションはまだ準備中です。しばらくしてからリロードしてください"
   },
+  "entityLabel": {
+    "EditLabels": "ラベルを編集",
+    "LabelKey": "ラベルキー",
+    "LabelValue": "ラベル値",
+    "Labels": "ラベル",
+    "NoPermissionToEditLabels": "ラベルを編集する権限がありません。"
+  },
   "environment": {
     "Action": "アクション",
     "Aliases": "__NOT_TRANSLATED__",

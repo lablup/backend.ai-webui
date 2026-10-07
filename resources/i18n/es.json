@@ -1532,6 +1532,13 @@
     "SessionStatusIsWithReload": "El estado de la sesión es {{status}}. Vuelva a cargar la página pasado un tiempo.",
     "SessionStillPreparing": "La sesión sigue en preparación. Recargar después de un rato"
   },
+  "entityLabel": {
+    "EditLabels": "Editar etiquetas",
+    "LabelKey": "Clave de etiqueta",
+    "LabelValue": "Valor de etiqueta",
+    "Labels": "Etiquetas",
+    "NoPermissionToEditLabels": "No tiene permiso para editar etiquetas."
+  },
   "environment": {
     "Action": "Acción",
     "Aliases": "__NOT_TRANSLATED__",

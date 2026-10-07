@@ -146,6 +146,34 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "จำนวน"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "เพิ่มป้ายกำกับ"
+  },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "แก้ไขป้ายกำกับ"
+  },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "เพิ่มป้ายกำกับ",
+    "AddLabelsToItems": "เพิ่มป้ายกำกับให้ {{count}} รายการ",
+    "BulkDescription": "ป้ายกำกับเหล่านี้จะถูกเพิ่มให้ทุกรายการที่เลือก รายการที่มีคีย์เดียวกันอยู่แล้วจะได้รับค่าใหม่ ส่วนป้ายกำกับอื่นยังคงอยู่",
+    "EditLabels": "แก้ไขป้ายกำกับ",
+    "Error": "ข้อผิดพลาด",
+    "Key": "คีย์",
+    "KeyMustBeUnique": "แต่ละคีย์ใช้ได้เพียงครั้งเดียว",
+    "KeyRequired": "กรุณาป้อนคีย์",
+    "Label": "ป้ายกำกับ",
+    "LabelsSaved": "บันทึกป้ายกำกับแล้ว",
+    "RemoveLabel": "ลบป้ายกำกับ",
+    "Save": "บันทึก",
+    "SomeLabelsFailed": "การเปลี่ยนป้ายกำกับล้มเหลว {{count}} รายการ",
+    "Target": "เป้าหมาย",
+    "TooLong": "ไม่เกิน {{max}} ตัวอักษร",
+    "Value": "ค่า",
+    "ValueRequired": "กรุณาป้อนค่า"
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "ป้ายกำกับ"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "รีเฟรชอัตโนมัติ",
     "EveryHours": "{{count}}ชม.",

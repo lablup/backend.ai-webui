@@ -146,6 +146,34 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Quantité"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "Ajouter des libellés"
+  },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Modifier les libellés"
+  },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "Ajouter un libellé",
+    "AddLabelsToItems": "Ajouter des libellés à {{count}} éléments",
+    "BulkDescription": "Ces libellés sont ajoutés à chaque élément sélectionné. Un élément qui possède déjà la clé reçoit la nouvelle valeur ; ses autres libellés sont conservés.",
+    "EditLabels": "Modifier les libellés",
+    "Error": "Erreur",
+    "Key": "Clé",
+    "KeyMustBeUnique": "Chaque clé ne peut être utilisée qu’une fois.",
+    "KeyRequired": "Saisissez une clé.",
+    "Label": "Libellé",
+    "LabelsSaved": "Libellés enregistrés.",
+    "RemoveLabel": "Supprimer le libellé",
+    "Save": "Enregistrer",
+    "SomeLabelsFailed": "{{count}} modifications de libellés ont échoué",
+    "Target": "Cible",
+    "TooLong": "{{max}} caractères au maximum.",
+    "Value": "Valeur",
+    "ValueRequired": "Saisissez une valeur."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "Libellé"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Actualisation automatique",
     "EveryHours": "{{count}}h",

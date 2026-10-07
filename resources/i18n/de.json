@@ -1532,6 +1532,13 @@
     "SessionStatusIsWithReload": "Der Sitzungsstatus ist {{status}}. Bitte laden Sie die Seite später neu.",
     "SessionStillPreparing": "Sitzung ist noch in Vorbereitung. Nach einiger Zeit neu laden"
   },
+  "entityLabel": {
+    "EditLabels": "Labels bearbeiten",
+    "LabelKey": "Label-Schlüssel",
+    "LabelValue": "Label-Wert",
+    "Labels": "Labels",
+    "NoPermissionToEditLabels": "Sie haben keine Berechtigung, Labels zu bearbeiten."
+  },
   "environment": {
     "Action": "Aktion",
     "Aliases": "__NOT_TRANSLATED__",

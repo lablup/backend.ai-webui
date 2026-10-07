@@ -4,6 +4,7 @@
  */
 import {
   BAIColumnType,
+  BAIEntityLabelCell,
   BAIFlex,
   BAIId,
   BAIImageNodeSimpleTagV2,
@@ -15,6 +16,8 @@ import {
   badgeVariantForStatus,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  useIsLabelableEntityType,
+  type BAIEntityLabel,
 } from '..';
 import type {
   BAISessionNodesV2Fragment$data,
@@ -128,6 +131,9 @@ interface BAISessionNodesV2Props extends Omit<
   onChangeOrder?: (
     order: (typeof availableSessionV2SorterValues)[number] | null,
   ) => void;
+  /** Adds "Edit labels" to the Labels column's hover actions. */
+  onEditLabels?: (session: SessionV2InList) => void;
+  onLabelClick?: (label: BAIEntityLabel) => void;
 }
 
 const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
@@ -135,10 +141,13 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
   customizeColumns,
   disableSorter,
   onChangeOrder,
+  onEditLabels,
+  onLabelClick,
   ...tableProps
 }) => {
   'use memo';
   const { t } = useBAIi18n();
+  const isLabelable = useIsLabelableEntityType('session');
 
   const sessions = useFragment(
     graphql`
@@ -191,6 +200,10 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
             email
           }
         }
+        entityLabels(limit: 100) {
+          ...BAIEntityLabelTokensFragment
+          ...BAIEntityLabelSettingModalFragment
+        }
       }
     `,
     sessionsFrgmt,
@@ -239,6 +252,17 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
             />
           );
         },
+      },
+      isLabelable && {
+        key: 'labels',
+        title: t('comp:BAIEntityLabelTokens.Labels'),
+        render: (__, session) => (
+          <BAIEntityLabelCell
+            entityLabelsFrgmt={session.entityLabels}
+            onEdit={onEditLabels ? () => onEditLabels(session) : undefined}
+            onLabelClick={onLabelClick}
+          />
+        ),
       },
       // TODO: SessionV2 does not yet expose live utilization (no `live_stat`),
       // so the AI accelerator / CPU / memory columns show only the occupied

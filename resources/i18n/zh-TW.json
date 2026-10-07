@@ -1533,6 +1533,13 @@
     "SessionStatusIsWithReload": "工作階段狀態為 {{status}}。請稍後重新載入。",
     "SessionStillPreparing": "會議還在準備中。一段時間後重新加載"
   },
+  "entityLabel": {
+    "EditLabels": "編輯標籤",
+    "LabelKey": "標籤鍵",
+    "LabelValue": "標籤值",
+    "Labels": "標籤",
+    "NoPermissionToEditLabels": "您沒有編輯標籤的權限。"
+  },
   "environment": {
     "Action": "行動",
     "Aliases": "__NOT_TRANSLATED__",

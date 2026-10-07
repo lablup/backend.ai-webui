@@ -33,12 +33,16 @@ import {
   BAISkeleton,
   BAICard,
   BAIGraphQLPropertyFilter,
+  BAIEntityLabelBulkEditButton,
   BAISelectionLabel,
   INITIAL_FETCH_KEY,
   filterOutEmpty,
   filterOutNullAndUndefined,
   useFetchKey,
   useToggle,
+  toLocalId,
+  toEntityLabelFilter,
+  useIsLabelableEntityType,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon, RotateCcwIcon, Trash2Icon, TrashIcon } from 'lucide-react';
@@ -104,6 +108,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
   'use memo';
 
   const { t } = useTranslation();
+  const isLabelable = useIsLabelableEntityType('vfolder');
   const baiClient = useSuspendedBackendaiClient();
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
@@ -211,6 +216,9 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
               node @required(action: THROW) {
                 id @required(action: THROW)
                 vfolderStatus: status
+                metadata {
+                  name
+                }
                 ...VFolderNodesV2Fragment
                 ...DeleteVFolderModalV2Fragment
                 ...DeleteForeverVFolderModalV2Fragment
@@ -379,6 +387,20 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                       propertyLabel: t('data.folders.Cloneable'),
                       type: 'boolean',
                     },
+                    ...(isLabelable
+                      ? [
+                          {
+                            key: 'labels.some.key',
+                            propertyLabel: t('entityLabel.LabelKey'),
+                            type: 'string' as const,
+                          },
+                          {
+                            key: 'labels.some.value',
+                            propertyLabel: t('entityLabel.LabelValue'),
+                            type: 'string' as const,
+                          },
+                        ]
+                      : []),
                   ]}
                   value={queryParams.filter ?? undefined}
                   onChange={(value) => {
@@ -395,6 +417,14 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                       <BAISelectionLabel
                         count={selectedFolderList.length}
                         onClearSelection={() => setSelectedFolderList([])}
+                      />
+                      <BAIEntityLabelBulkEditButton
+                        entityType="vfolder"
+                        targets={selectedFolderList.map((folder) => ({
+                          entityId: toLocalId(folder.id),
+                          name: folder.metadata?.name ?? undefined,
+                        }))}
+                        onLabelsChanged={() => updateFetchKey()}
                       />
                       <IconButton
                         label={t('data.folders.MoveToTrash')}
@@ -514,6 +544,12 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                       (order as (typeof availableVFolderSorterValues)[number]) ??
                       null,
                   });
+                }}
+                onLabelsChanged={() => updateFetchKey()}
+                onLabelClick={(label) => {
+                  setQuery({ filter: toEntityLabelFilter(label) });
+                  setTablePaginationOption({ current: 1 });
+                  setSelectedFolderList([]);
                 }}
                 onRemoveRow={(removedId) => {
                   setSelectedFolderList((prevSelected) =>

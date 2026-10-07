@@ -1532,6 +1532,13 @@
     "SessionStatusIsWithReload": "Lo stato della sessione è {{status}}. Ricarica la pagina tra qualche istante.",
     "SessionStillPreparing": "La sessione è ancora in preparazione. Ricarica dopo un po'"
   },
+  "entityLabel": {
+    "EditLabels": "Modifica etichette",
+    "LabelKey": "Chiave etichetta",
+    "LabelValue": "Valore etichetta",
+    "Labels": "Etichette",
+    "NoPermissionToEditLabels": "Non hai l’autorizzazione per modificare le etichette."
+  },
   "environment": {
     "Action": "Azione",
     "Aliases": "__NOT_TRANSLATED__",

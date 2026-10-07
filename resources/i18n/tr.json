@@ -1532,6 +1532,13 @@
     "SessionStatusIsWithReload": "Oturum durumu {{status}}. Lütfen bir süre sonra sayfayı yeniden yükleyin.",
     "SessionStillPreparing": "Oturum hala hazırlanıyor. Bir süre sonra yeniden yükle"
   },
+  "entityLabel": {
+    "EditLabels": "Etiketleri düzenle",
+    "LabelKey": "Etiket anahtarı",
+    "LabelValue": "Etiket değeri",
+    "Labels": "Etiketler",
+    "NoPermissionToEditLabels": "Etiketleri düzenleme izniniz yok."
+  },
   "environment": {
     "Action": "Aksiyon",
     "Aliases": "__NOT_TRANSLATED__",

@@ -4,6 +4,7 @@ import {
 } from '../../__generated__/BAIModelDeploymentNodesFragment.graphql';
 import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { useIsLabelableEntityType } from '../../hooks/useLabelableEntityTypes';
 import BAIBooleanToken from '../BAIBooleanToken';
 import BAIDeploymentStatusBadge, {
   BAIDeploymentStatus,
@@ -20,6 +21,8 @@ import {
 } from '../Table';
 import BAIDeploymentOwnerInfo from './BAIDeploymentOwnerInfo';
 import BAIDeploymentTagTokens from './BAIDeploymentTagTokens';
+import BAIEntityLabelCell from './BAIEntityLabelCell';
+import type { BAIEntityLabel } from './BAIEntityLabelTokens';
 import { Link } from '@lablup/ui-common/Link';
 import { Text } from '@lablup/ui-common/Text';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
@@ -79,6 +82,9 @@ export interface BAIModelDeploymentNodesProps extends Omit<
   onChangeOrder?: (
     order: (typeof availableDeploymentSorterValues)[number] | null,
   ) => void;
+  /** Adds "Edit labels" to the Labels column's hover actions. */
+  onEditLabels?: (deployment: ModelDeploymentNodeInList) => void;
+  onLabelClick?: (label: BAIEntityLabel) => void;
 }
 
 const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
@@ -87,12 +93,15 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
   disableSorter,
   sortableKeys = availableDeploymentSorterKeys,
   onChangeOrder,
+  onEditLabels,
+  onLabelClick,
   ...tableProps
 }) => {
   'use memo';
   const { t } = useBAIi18n();
 
   const isEnableSorter = (key: string) => _.includes(sortableKeys, key);
+  const isLabelable = useIsLabelableEntityType('deployment');
 
   const deployments = useFragment<BAIModelDeploymentNodesFragment$key>(
     graphql`
@@ -140,6 +149,10 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
               name
             }
           }
+        }
+        entityLabels(limit: 100) {
+          ...BAIEntityLabelTokensFragment
+          ...BAIEntityLabelSettingModalFragment
         }
         ...BAIDeploymentOwnerInfo_deployment
       }
@@ -198,6 +211,17 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
             <BAIDeploymentStatusBadge status={status as BAIDeploymentStatus} />
           );
         },
+      },
+      isLabelable && {
+        key: 'labels',
+        title: t('comp:BAIEntityLabelTokens.Labels'),
+        render: (__, record) => (
+          <BAIEntityLabelCell
+            entityLabelsFrgmt={record.entityLabels}
+            onEdit={onEditLabels ? () => onEditLabels(record) : undefined}
+            onLabelClick={onLabelClick}
+          />
+        ),
       },
       {
         key: 'replicaSummary',

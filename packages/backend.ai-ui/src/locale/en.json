@@ -146,6 +146,34 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Amount"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "Add labels"
+  },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Edit labels"
+  },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "Add label",
+    "AddLabelsToItems": "Add labels ({{count}} selected)",
+    "BulkDescription": "These labels are added to every selected item. An item that already has a key gets the new value; its other labels stay.",
+    "EditLabels": "Edit labels",
+    "Error": "Error",
+    "Key": "Key",
+    "KeyMustBeUnique": "Each key can be used only once.",
+    "KeyRequired": "Enter a key.",
+    "Label": "Label",
+    "LabelsSaved": "Labels saved.",
+    "RemoveLabel": "Remove label",
+    "Save": "Save",
+    "SomeLabelsFailed": "{{count}} label changes failed",
+    "Target": "Target",
+    "TooLong": "Use at most {{max}} characters.",
+    "Value": "Value",
+    "ValueRequired": "Enter a value."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "Labels"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Auto Refresh",
     "EveryHours": "{{count}}h",

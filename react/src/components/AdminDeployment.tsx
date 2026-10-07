@@ -40,6 +40,10 @@ import {
   isValidUUID,
   toLocalId,
   useBAILogger,
+  BAIEntityLabelSettingModal,
+  toEntityLabelFilter,
+  useIsLabelableEntityType,
+  type ModelDeploymentNodeInList,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Trash2, SquarePenIcon } from 'lucide-react';
@@ -169,6 +173,9 @@ const AdminDeployment = ({
   const [deletingDeploymentId, setDeletingDeploymentId] = useState<
     string | null
   >(null);
+  const isLabelable = useIsLabelableEntityType('deployment');
+  const [labelingDeployment, setLabelingDeployment] =
+    useState<ModelDeploymentNodeInList | null>(null);
   const [drawerRevisionId, setDrawerRevisionId] = useState<string | null>(null);
 
   const supportsExtendedFilter = baiClient.supports(
@@ -365,6 +372,20 @@ const AdminDeployment = ({
         { label: t('replicaStatus.Inactive'), value: 'INACTIVE' },
       ],
     },
+    ...(isLabelable
+      ? [
+          {
+            key: 'labels.some.key',
+            propertyLabel: t('entityLabel.LabelKey'),
+            type: 'string' as const,
+          },
+          {
+            key: 'labels.some.value',
+            propertyLabel: t('entityLabel.LabelValue'),
+            type: 'string' as const,
+          },
+        ]
+      : []),
   ]);
 
   return (
@@ -430,6 +451,23 @@ const AdminDeployment = ({
           />
         </BAIFlex>
         <BAIModelDeploymentNodes
+          onEditLabels={isLabelable ? setLabelingDeployment : undefined}
+          onLabelClick={(label) => {
+            onReload(
+              {
+                ...queryRef.variables,
+                filter: {
+                  ...toEntityLabelFilter(label),
+                  ...statusCategoryFilterFor(
+                    statusCategory,
+                    supportsExtendedFilter,
+                  ),
+                },
+                offset: 0,
+              },
+              { fetchPolicy: 'network-only' },
+            );
+          }}
           deploymentsFrgmt={deploymentNodes}
           loading={isRefetching}
           order={order}
@@ -471,6 +509,7 @@ const AdminDeployment = ({
               'name',
               'currentRevisionNumber',
               'status',
+              'labels',
               'replicaSummary',
               'model',
               'createdAt',
@@ -488,6 +527,7 @@ const AdminDeployment = ({
               'name',
               'currentRevisionNumber',
               'status',
+              'labels',
               'replicaSummary',
               'model',
               'createdAt',
@@ -588,6 +628,26 @@ const AdminDeployment = ({
           }}
         />
       </BAIFlex>
+      <BAIEntityLabelSettingModal
+        open={!!labelingDeployment}
+        entityType="deployment"
+        targets={
+          labelingDeployment
+            ? [
+                {
+                  entityId: toLocalId(labelingDeployment.id),
+                  name: labelingDeployment.metadata?.name ?? undefined,
+                },
+              ]
+            : []
+        }
+        entityLabelsFrgmt={labelingDeployment?.entityLabels}
+        onRequestClose={(success) => {
+          setLabelingDeployment(null);
+          if (success)
+            onReload(queryRef.variables, { fetchPolicy: 'network-only' });
+        }}
+      />
       {/* Edit-only call site: the deployment already belongs to a project, so
           the props union rejects a `project` here entirely (ADR-0001). That
           member requires a non-null fragment, hence the guard. */}

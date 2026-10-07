@@ -146,6 +146,34 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Quantidade"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "Adicionar rótulos"
+  },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Editar rótulos"
+  },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "Adicionar rótulo",
+    "AddLabelsToItems": "Adicionar rótulos a {{count}} itens",
+    "BulkDescription": "Estes rótulos são adicionados a todos os itens selecionados. Um item que já tem a chave recebe o novo valor; os seus outros rótulos mantêm-se.",
+    "EditLabels": "Editar rótulos",
+    "Error": "Erro",
+    "Key": "Chave",
+    "KeyMustBeUnique": "Cada chave só pode ser usada uma vez.",
+    "KeyRequired": "Introduza uma chave.",
+    "Label": "Rótulo",
+    "LabelsSaved": "Rótulos guardados.",
+    "RemoveLabel": "Remover rótulo",
+    "Save": "Guardar",
+    "SomeLabelsFailed": "{{count}} alterações de rótulos falharam",
+    "Target": "Destino",
+    "TooLong": "No máximo {{max}} caracteres.",
+    "Value": "Valor",
+    "ValueRequired": "Introduza um valor."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "Rótulo"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Atualização automática",
     "EveryHours": "{{count}}h",
