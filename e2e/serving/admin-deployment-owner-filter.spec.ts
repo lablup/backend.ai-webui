@@ -54,7 +54,7 @@ async function applyOwnerFilter(page: Page, email: string): Promise<void> {
 test.describe(
   'Admin Deployments - Owner filter',
   {
-    tag: ['@serving', '@admin', '@regression', '@requires-manager-v26.4'],
+    tag: ['@serving', '@admin', '@regression'],
   },
   () => {
     let deploymentName: string;

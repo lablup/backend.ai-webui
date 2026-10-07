@@ -91,7 +91,7 @@ async function createRankedPresets(
 test.describe(
   'Admin Deployment Presets - Rank column',
   {
-    tag: ['@serving', '@admin', '@regression', '@requires-manager-v26.4'],
+    tag: ['@serving', '@admin', '@regression'],
   },
   () => {
     let api: APIRequestContext;

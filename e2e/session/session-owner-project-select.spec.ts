@@ -15,7 +15,7 @@ const PROJECT_PREFIX = 'e2e-owner-proj-';
 test.describe(
   'SessionLauncher - Session Owner Project',
   {
-    tag: ['@regression', '@session', '@functional', '@requires-manager-v26.2'],
+    tag: ['@regression', '@session', '@functional'],
   },
   () => {
     let api: APIRequestContext;

@@ -28,12 +28,7 @@ async function setColumnVisible(
 test.describe(
   'Admin Model Card Management - Project and Updated At columns',
   {
-    tag: [
-      '@admin-model-card',
-      '@admin',
-      '@regression',
-      '@requires-manager-v26.4',
-    ],
+    tag: ['@admin-model-card', '@admin', '@regression'],
   },
   () => {
     let cardName: string;
