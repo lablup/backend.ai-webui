@@ -70,6 +70,10 @@ react/.env.local
 # dotenv environment variables file for playwright test
 /e2e/envs/*
 !/e2e/envs/.env.playwright.sample
+!/e2e/envs/.env.e2e-agent.sample
+
+# e2e (e2e.tester.army) run output: report, artifacts, replay cache
+/.e2e/
 
 # next.js build output
 .next
