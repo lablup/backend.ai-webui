@@ -96,7 +96,7 @@ function parseStatus(raw, label, warnings) {
   };
 }
 
-// Keep in sync with the catalog UI key list in lablup/frontend-board.
+// Keep in sync with MANAGER_CONFIG_KEYS in lablup/frontend-board board/ui/src/lib/catalog.ts.
 /** The deployment switches in `config.toml` worth choosing a server by; `section.*` is the whole table. */
 export const MANAGER_CONFIG_KEYS = [
   "general.connectionMode",
