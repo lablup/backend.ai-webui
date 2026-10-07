@@ -128,7 +128,7 @@ const BAIDrawer: React.FC<BAIDrawerProps> = ({
   const hasHeader = title !== undefined || extra !== undefined;
 
   const panel = (
-    <VStack gap={0} align="stretch" height="100%">
+    <VStack gap={0} align="stretch" height="100%" className="bai-drawer-panel">
       {hasHeader ? (
         <HStack
           className={classNames('bai-drawer-header', headerClassName)}
