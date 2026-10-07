@@ -69,7 +69,7 @@ import { jotaiStore } from './DefaultProviders';
 import LoginFormPanel, { type EndpointHistoryEntry } from './LoginFormPanel';
 import { Button } from '@lablup/ui-common/Button';
 import { Text } from '@lablup/ui-common/Text';
-import { BAIFlex, BAIModal, useBAILogger } from 'backend.ai-ui';
+import { BAIAlert, BAIFlex, BAIModal, useBAILogger } from 'backend.ai-ui';
 import i18n from 'i18next';
 import { useAtomValue, useSetAtom } from 'jotai';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -156,6 +156,7 @@ const LoginView: React.FC<{
   // The session is live but the manager could not return the user; the login
   // form would only get "already logged in" back, so offer retry / log out.
   const [sessionLoadError, setSessionLoadError] = useState<string | null>(null);
+  const [isSessionLogoutFailed, setIsSessionLogoutFailed] = useState(false);
   const [loginError, setLoginError] = useState<{
     message: string;
     description?: string;
@@ -417,6 +418,7 @@ const LoginView: React.FC<{
     setIsBlockPanelOpen(false);
     setIsLoginPanelOpen(false);
     setIsLoading(false);
+    setIsSessionLogoutFailed(false);
     setSessionLoadError(err.message);
   };
 
@@ -1288,7 +1290,7 @@ const LoginView: React.FC<{
                   } catch (err) {
                     // The cookie is still live, so the login form would be refused.
                     logger.error('[LoginView] logout failed', err);
-                    notification(t('error.UnknownError'));
+                    setIsSessionLogoutFailed(true);
                     return;
                   }
                   setSessionLoadError(null);
@@ -1324,6 +1326,9 @@ const LoginView: React.FC<{
             >
               {sessionLoadError}
             </Text>
+          ) : null}
+          {isSessionLogoutFailed ? (
+            <BAIAlert type="error" showIcon title={t('error.UnknownError')} />
           ) : null}
         </BAIFlex>
       </BAIModal>
