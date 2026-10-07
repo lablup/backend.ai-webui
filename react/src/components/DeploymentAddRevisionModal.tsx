@@ -648,8 +648,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     ReadonlyArray<RuntimeVariantPresetValueEntry> | undefined
   >(undefined);
 
-  // Snapshot of prefilled `extraMounts.mountDestination`, keyed by the
-  // dash-stripped vfolder id. Read at submit time as a fallback when
+  // Snapshot of prefilled `extraMounts.mountDestination`, keyed by vfolder id. Read at submit time as a fallback when
   // `values.mount_id_map` does not have the entry — VFolderTable's
   // `onChangeAliasMap` *replaces* (not merges) the alias map and only
   // surfaces aliases for rows that are visible in the current filtered
@@ -1015,10 +1014,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     prefilledMountAliasesRef.current = _.fromPairs(
       (rev.extraMounts ?? [])
         .filter((m) => !!m.mountDestination)
-        .map((m) => [
-          m.vfolderId.replace(/-/g, ''),
-          m.mountDestination as string,
-        ]),
+        .map((m) => [m.vfolderId, m.mountDestination as string]),
     );
 
     // Hydrate the runtime-parameter section from the revision's preset values
@@ -1068,19 +1064,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           : {}),
       },
       enabledAutomaticShmem: !shmemEntry,
-      // VFolderTable's `rowKey="id"` uses the 32-char-hex form, so
-      // selectedRowKeys must match that shape for prefilled rows to
-      // appear checked.
-      mount_ids: (rev.extraMounts ?? []).map((m) =>
-        m.vfolderId.replace(/-/g, ''),
-      ),
+      mount_ids: (rev.extraMounts ?? []).map((m) => m.vfolderId),
       mount_id_map: _.fromPairs(
         (rev.extraMounts ?? [])
           .filter((m) => !!m.mountDestination)
-          .map((m) => [
-            m.vfolderId.replace(/-/g, ''),
-            m.mountDestination as string,
-          ]),
+          .map((m) => [m.vfolderId, m.mountDestination as string]),
       ),
       runtimeVariantId: rev.modelRuntimeConfig?.runtimeVariantId ?? undefined,
       modelFolderId: rev.modelMountConfig?.vfolderId
@@ -2519,8 +2507,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 {(form) => {
                   const { getFieldValue } = form as FormInstance<FormValues>;
                   const modelFolderId = getFieldValue('modelFolderId');
-                  const modelFolderIdNoDash = modelFolderId
-                    ? safeDecodeUuid(String(modelFolderId))?.replace(/-/g, '')
+                  const modelFolderUuid = modelFolderId
+                    ? safeDecodeUuid(String(modelFolderId))
                     : undefined;
                   return (
                     <VFolderTableFormItem
@@ -2534,7 +2522,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                         vfolder.usage_mode !== 'model' &&
                         vfolder.status === 'ready' &&
                         !vfolder.name?.startsWith('.') &&
-                        vfolder.id !== modelFolderIdNoDash
+                        vfolder.id !== modelFolderUuid
                       }
                     />
                   );

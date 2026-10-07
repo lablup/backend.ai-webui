@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<697884a280493be0e2b0caeb81bc503f>>
+ * @generated SignedSource<<9bca70e047967f679b313cfa757b3ad0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,23 +18,17 @@ export type useSuspendedLegacyVFoldersQuery$data = {
   readonly vfolder_nodes: {
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly cloneable: boolean | null | undefined;
         readonly created_at: string | null | undefined;
         readonly creator: string | null | undefined;
-        readonly cur_size: any | null | undefined;
         readonly group: string | null | undefined;
         readonly group_name: string | null | undefined;
         readonly host: string | null | undefined;
-        readonly max_files: number | null | undefined;
-        readonly max_size: any | null | undefined;
         readonly name: string | null | undefined;
         readonly ownership_type: string | null | undefined;
         readonly permissions: ReadonlyArray<any | null | undefined> | null | undefined;
-        readonly quota_scope_id: string | null | undefined;
         readonly row_id: string | null | undefined;
         readonly status: string | null | undefined;
         readonly usage_mode: string | null | undefined;
-        readonly user: string | null | undefined;
         readonly user_email: string | null | undefined;
       } | null | undefined;
     } | null | undefined>;
@@ -129,80 +123,38 @@ v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "quota_scope_id",
+  "name": "user_email",
   "storageKey": null
 },
 v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "user",
+  "name": "group",
   "storageKey": null
 },
 v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "user_email",
+  "name": "group_name",
   "storageKey": null
 },
 v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "group",
+  "name": "creator",
   "storageKey": null
 },
 v14 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "group_name",
-  "storageKey": null
-},
-v15 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "creator",
-  "storageKey": null
-},
-v16 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
   "name": "ownership_type",
   "storageKey": null
 },
-v17 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "cloneable",
-  "storageKey": null
-},
-v18 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "max_files",
-  "storageKey": null
-},
-v19 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "max_size",
-  "storageKey": null
-},
-v20 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "cur_size",
-  "storageKey": null
-},
-v21 = {
+v15 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -255,13 +207,7 @@ return {
                   (v12/*: any*/),
                   (v13/*: any*/),
                   (v14/*: any*/),
-                  (v15/*: any*/),
-                  (v16/*: any*/),
-                  (v17/*: any*/),
-                  (v18/*: any*/),
-                  (v19/*: any*/),
-                  (v20/*: any*/),
-                  (v21/*: any*/)
+                  (v15/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -321,12 +267,6 @@ return {
                   (v13/*: any*/),
                   (v14/*: any*/),
                   (v15/*: any*/),
-                  (v16/*: any*/),
-                  (v17/*: any*/),
-                  (v18/*: any*/),
-                  (v19/*: any*/),
-                  (v20/*: any*/),
-                  (v21/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -346,16 +286,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "5d32616a324f82005f135216d2a2a196",
+    "cacheID": "67910251e7b49bdc39211c3882c70132",
     "id": null,
     "metadata": {},
     "name": "useSuspendedLegacyVFoldersQuery",
     "operationKind": "query",
-    "text": "query useSuspendedLegacyVFoldersQuery(\n  $scopeId: ScopeField\n  $filter: String\n  $first: Int\n) {\n  vfolder_nodes(scope_id: $scopeId, filter: $filter, first: $first, offset: 0) {\n    edges {\n      node {\n        row_id\n        name\n        host\n        status\n        usage_mode\n        created_at\n        quota_scope_id\n        user\n        user_email\n        group\n        group_name\n        creator\n        ownership_type\n        cloneable\n        max_files\n        max_size\n        cur_size\n        permissions\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query useSuspendedLegacyVFoldersQuery(\n  $scopeId: ScopeField\n  $filter: String\n  $first: Int\n) {\n  vfolder_nodes(scope_id: $scopeId, filter: $filter, first: $first, offset: 0) {\n    edges {\n      node {\n        row_id\n        name\n        host\n        status\n        usage_mode\n        created_at\n        user_email\n        group\n        group_name\n        creator\n        ownership_type\n        permissions @since(version: \"26.9.0a1\")\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "cff4c93b37b774e14ceb3fb726d34616";
+(node as any).hash = "c8760a04e86764e2a0afa7afbc0dafb1";
 
 export default node;

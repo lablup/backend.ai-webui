@@ -68,7 +68,7 @@ export interface AutoMountedFolder {
 }
 
 export interface BAIVFolderMountConfigInputRef {
-  /** Re-runs the `GET /folders` query behind the folder select. */
+  /** Re-runs the `vfolder_nodes` query behind the folder select. */
   refetch: () => Promise<unknown>;
 }
 
@@ -349,7 +349,7 @@ const useMountableLegacyFolders = (
   return { mountableFolders, mountableIdSet };
 };
 
-/** `ro` / `rw` / `wd` from the REST list, as welded tokens in the data page's colours. */
+/** The caller's `ro` / `rw` level, as welded tokens in the data page's colours. */
 const VFolderPermissionBadge: React.FC<{ permission: string }> = ({
   permission,
 }) => {
@@ -382,7 +382,6 @@ const VFolderOptionMeta: React.FC<{
   'use memo';
   const { t } = useBAIi18n();
   const isUserOwned = folder.ownership_type === 'user';
-  // The REST list leaves `user_email` / `group_name` empty on most managers.
   const owner = isUserOwned
     ? folder.user_email ||
       folder.creator ||
@@ -408,11 +407,8 @@ const VFolderOptionMeta: React.FC<{
 /**
  * Reusable, schema-agnostic input for configuring vfolder mounts.
  *
- * The folder list comes from REST `GET /folders` rather than the
- * `vfolder_nodes` connection because the `mountableHosts` /
- * `autoMountedFolders` gates the host supplies cannot be expressed there.
- * The component suspends on that fetch, so the consumer owns the Suspense
- * boundary.
+ * Suspends on the `vfolder_nodes` folder list, so the consumer owns the
+ * Suspense boundary.
  *
  * Props, form gating and usage: `BAIVFolderMountConfigInput.doc.ts`.
  */
@@ -438,11 +434,9 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
     { defaultValue: [] },
   );
   const [searchStr, setSearchStr] = useState('');
-  const {
-    folders: allFolderList,
-    refetch,
-    isFetching,
-  } = useSuspendedLegacyVFolders({ groupId: currentProjectId });
+  const { folders: allFolderList, refetch } = useSuspendedLegacyVFolders({
+    groupId: currentProjectId,
+  });
 
   useImperativeHandle(ref, () => ({ refetch }), [refetch]);
 
@@ -568,10 +562,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
           <BAIButton
             icon={<RotateCw size="1em" />}
             title={t('comp:BAIVFolderMountConfigInput.Refresh')}
-            loading={isFetching}
             disabled={disabled}
-            // The query already drives `loading`; `action` would add a transition
-            // that can stay pending after the fetch settles.
             onClick={() => {
               void refetch();
             }}

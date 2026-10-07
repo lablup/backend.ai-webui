@@ -24,7 +24,7 @@ import { action } from 'storybook/actions';
 
 const DEMO_WIDTH = 760;
 
-// The shared REST fixture exercises every gate the select applies; a third
+// The shared folder fixture exercises every gate the select applies; a third
 // mountable folder is added here so the alias modes fit on one screen.
 const legacyFolders = [
   ...mockLegacyVFolders,
@@ -34,7 +34,7 @@ const legacyFolders = [
   }),
 ];
 
-// The REST fixture keys folders by the 32-hex `id`; the select emits the
+// The fixture keys folders by the 32-hex `id`; the select emits the
 // dashed UUID, which is what the row's path picker browses by.
 const folderId = (index: number) => convertToUUID(legacyFolders[index].id);
 const folderName = (index: number) => legacyFolders[index].name;
@@ -151,9 +151,9 @@ const meta: Meta<typeof BAIVFolderMountConfigInput> = {
 **BAIVFolderMountConfigInput** is a reusable, schema-agnostic controlled input
 for configuring vfolder mounts.
 
-- Picks folders from the REST \`GET /folders\` list rather than the \`vfolder_nodes\`
-  connection, because the session launcher's mount gates cannot be expressed as a
-  GraphQL filter: the host must be in \`mountableHosts\` (those granting
+- Picks the caller's folders from the \`vfolder_nodes\` connection and applies the
+  session launcher's mount gates client side: the caller's mount level must not be
+  \`none\`, the host must be in \`mountableHosts\` (those granting
   \`mount-in-session\`), the folder must be reachable from \`currentProjectId\`, and
   folders in \`autoMountedFolders\` are dropped — the session mounts them anyway.
   \`filter\` hides rows on top of that without shrinking the selection.
@@ -177,7 +177,7 @@ for configuring vfolder mounts.
   form, wrap the component in one named \`Form.Item\` whose \`rules\` carry
   \`useVFolderMountConfigFormRule\` (see the **WithFormValidation** story).
 
-The stories below mock the REST folder list behind the providers' \`suspenseFallback\`,
+The stories below mock the \`vfolder_nodes\` folder list behind the providers' \`suspenseFallback\`,
 so of the six fixture folders \`cold-archive\` is dropped (its host is not in
 \`mountableHosts\`), \`other-team-data\` belongs to another project, and \`.config\` is
 dropped in the **WithAutoMountedFolders** story.
@@ -487,7 +487,7 @@ export const WithCreateFolderButton: Story = {
     docs: {
       description: {
         story:
-          'Passing `onClickCreateFolder` adds a **+** button to the group beside the select; clicking it logs to the Actions panel, standing in for the host opening its folder-creation modal. In the app the host then calls `ref.refetch()` (the **Refetch via ref** button below does the same) and appends the created folder to the value. The **⟳** button next to it is always rendered and re-runs `GET /folders` on its own.',
+          'Passing `onClickCreateFolder` adds a **+** button to the group beside the select; clicking it logs to the Actions panel, standing in for the host opening its folder-creation modal. In the app the host then calls `ref.refetch()` (the **Refetch via ref** button below does the same) and appends the created folder to the value. The **⟳** button next to it is always rendered and re-runs the folder query on its own.',
       },
     },
   },
