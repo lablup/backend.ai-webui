@@ -28,7 +28,7 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Expect duration, description or the id columns to sort — only time, operation and status carry a sorter.',
+          'Expect duration, description or the id columns to sort — only time, operation and status carry a sorter, plus action and action kind on a manager with the `audit-log-action-fields` capability.',
       },
       {
         guidance: false,
@@ -49,7 +49,7 @@ export const docs = {
       name: 'disableSorter',
       type: 'boolean',
       description:
-        'Strips the `sorter` flag from every base column, making the time, operation and status headers non-sortable.',
+        'Strips the `sorter` flag from every base column, making the time, operation, status, action and action kind headers non-sortable.',
     },
     {
       name: 'customizeColumns',
@@ -61,7 +61,7 @@ export const docs = {
       name: 'onChangeOrder',
       type: '(order: (typeof availableAuditLogSorterValues)[number] | null) => void',
       description:
-        'Called with the active sort key ("createdAt", "operation", "status", or their "-" prefixed descending form), or null when sorting is cleared.',
+        'Called with the active sort key ("createdAt", "operation", "status", "actionName", "actionKind", or their "-" prefixed descending form), or null when sorting is cleared.',
     },
   ],
   examples: [
