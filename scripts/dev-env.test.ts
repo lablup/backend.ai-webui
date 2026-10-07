@@ -23,7 +23,6 @@ const catalogBody = () => ({
       endpoint: "https://main.example.test:8090",
       tags: ["nightly"],
       notes: "Tracks manager main.",
-      verified_at: null,
       status: {
         live: true,
         checked_at: minutesAgo(3),
@@ -52,7 +51,6 @@ const catalogBody = () => ({
           password: "pw-user",
           tags: [],
           notes: "",
-          verified_at: null,
         },
         {
           role: "admin",
@@ -60,7 +58,6 @@ const catalogBody = () => ({
           password: "pw-admin",
           tags: [],
           notes: "",
-          verified_at: null,
         },
         {
           role: "project-admin",
@@ -68,7 +65,6 @@ const catalogBody = () => ({
           password: null,
           tags: [],
           notes: "",
-          verified_at: null,
         },
         {
           role: "user",
@@ -76,7 +72,6 @@ const catalogBody = () => ({
           password: "pw-user2",
           tags: [],
           notes: "",
-          verified_at: null,
         },
       ],
     },
@@ -85,7 +80,6 @@ const catalogBody = () => ({
       endpoint: "https://lts.example.test",
       tags: [],
       notes: "",
-      verified_at: null,
       status: {
         live: false,
         checked_at: minutesAgo(2),
@@ -106,7 +100,6 @@ const catalogBody = () => ({
           password: "pw-lts",
           tags: [],
           notes: "",
-          verified_at: null,
         },
       ],
     },

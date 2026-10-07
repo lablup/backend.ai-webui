@@ -30,7 +30,6 @@ const account = (role, email, password, extra = {}) => ({
   password,
   tags: [],
   notes: "",
-  verified_at: null,
   ...extra,
 });
 
@@ -49,11 +48,8 @@ const BODY = {
         account("user", "user@example.test", "pw-user", {
           tags: ["multi-project"],
           notes: "Member of three projects.",
-          verified_at: "2026-01-01",
         }),
-        account("admin", "admin@example.test", "pw-admin", {
-          verified_at: "2026-09-20",
-        }),
+        account("admin", "admin@example.test", "pw-admin"),
         account("user", "user2@example.test", null),
         account("project-admin", "pa@example.test", null),
         account("user", "user3@example.test", "pw-user3"),
@@ -99,13 +95,11 @@ describe("dev-env catalog", () => {
       passwordAvailable: true,
       tags: ["multi-project"],
       notes: "Member of three projects.",
-      verifiedAt: "2026-01-01",
-      stale: true,
     });
     expect(findAccount(main, "admin").notes).toBeNull();
   });
 
-  it("ignores a server's verified_at: only accounts carry verification", () => {
+  it("ignores a legacy verified_at on servers and accounts, without a warning", () => {
     const { servers, warnings } = parseCatalog(
       {
         version: 1,
@@ -114,13 +108,20 @@ describe("dev-env catalog", () => {
             name: "x",
             endpoint: "https://x.example.test",
             verified_at: "not a date",
+            accounts: [
+              account("user", "u@example.test", "pw", {
+                verified_at: "2020-01-01",
+              }),
+            ],
           },
         ],
       },
       NOW,
     );
-    expect(servers[0]).not.toHaveProperty("verifiedAt");
-    expect(servers[0]).not.toHaveProperty("stale");
+    for (const entry of [servers[0], servers[0].accounts[0]]) {
+      expect(entry).not.toHaveProperty("verifiedAt");
+      expect(entry).not.toHaveProperty("stale");
+    }
     expect(warnings).toEqual([]);
   });
 
@@ -146,12 +147,6 @@ describe("dev-env catalog", () => {
       password: null,
       passwordAvailable: false,
     });
-  });
-
-  it("marks an account note stale when it is old or was never verified", () => {
-    expect(findAccount(main, "user").stale).toBe(true);
-    expect(findAccount(main, "admin").stale).toBe(false);
-    expect(findAccount(main, "user3@example.test").stale).toBe(true);
   });
 
   it("selects by role (first in stored order) or by email, naming the others", () => {
@@ -241,11 +236,11 @@ describe("dev-env catalog", () => {
       ["admin", "one@example.test"],
       ["user", "m@example.test"],
     ]);
-    expect(findAccount(a, "admin").verifiedAt).toBeNull();
+    expect(findAccount(a, "admin")).not.toHaveProperty("verifiedAt");
     expect(findAccount(a, "user").passwordAvailable).toBe(false);
     expect(b.endpoint).toBe("https://b.example.test");
     expect(b.accounts).toEqual([]);
-    expect(warnings).toHaveLength(12);
+    expect(warnings).toHaveLength(11);
     expect(warnings[0]).toContain("catalog version 2");
   });
 
@@ -266,8 +261,8 @@ describe("dev-env catalog", () => {
     expect(text).toContain("main  https://main.example.test:8090");
     expect(text).toContain("  tags: plugin:fair-share nightly");
     expect(text).toContain("- user  user@example.test");
-    expect(text).toContain("verified: 2026-01-01 (stale)");
-    expect(text).toContain("verified: never");
+    expect(text).toContain("      tags: multi-project");
+    expect(text).not.toContain("verified");
     expect(formatCatalog(catalog)).not.toContain("pw-");
   });
 
@@ -275,7 +270,7 @@ describe("dev-env catalog", () => {
     const text = formatCatalog(redactCatalog(catalog));
     expect(text.match(/password: — \(typed at login\)/g)).toHaveLength(2);
     expect(text).toMatch(
-      /- project-admin {2}pa@example\.test\n.*\n {6}password: — \(typed at login\)/,
+      /- project-admin {2}pa@example\.test\n {6}password: — \(typed at login\)/,
     );
   });
 

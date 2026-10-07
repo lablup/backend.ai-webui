@@ -223,11 +223,6 @@ async function use(serverName, selector, { password }) {
     console.log(missingPasswordNote(server, account));
   }
   if (downWarning(server)) console.log(downWarning(server));
-  if (account.stale) {
-    console.log(
-      "note: the catalog notes for this account have not been verified in the last 90 days.",
-    );
-  }
   console.log("Restart `pnpm run dev` to pick up the login pre-fill.");
 }
 

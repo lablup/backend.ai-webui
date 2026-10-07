@@ -124,7 +124,7 @@ The board shares the gateway's domain, which `dev-env` reads from `~/.config/fw/
 
 ### What goes in an entry
 
-A server has a `name` (a lowercase slug), an `endpoint`, `tags` and `notes`; its state is probed (below), so it carries no verification date. Each account has a `role` (`user`, `project-admin` or `admin`; several accounts may share one), an `email` (unique on its server, case-insensitive), an optional `password`, and its own `tags`, `notes` and `verified_at`. Tags are free words an agent filters on, e.g. `multi-project`, `plugin:fair-share`, `no-destructive`. An account's `verified_at` is the last day someone checked its notes against the server; notes verified more than 90 days ago, or never, are listed as stale.
+A server has a `name` (a lowercase slug), an `endpoint`, `tags` and `notes`; its state is probed (below). Each account has a `role` (`user`, `project-admin` or `admin`; several accounts may share one), an `email` (unique on its server, case-insensitive), an optional `password`, and its own `tags` and `notes`. Nothing in the catalog carries a hand-entered verification date: the probe is the only freshness signal. Tags are free words an agent filters on, e.g. `multi-project`, `plugin:fair-share`, `no-destructive`.
 
 The board probes every server about every five minutes and `list` shows the result — `live · manager 25.15.0 · checked 3m ago`, `DOWN since … (was 25.15.0): <error>`, or `not checked yet`. `use` and `get` still work on a server that is down, with a warning. Manager and API versions come from that probe, so do not write them into notes.
 

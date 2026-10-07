@@ -6,9 +6,6 @@
 /** The catalog contract version this parser understands. */
 export const CATALOG_VERSION = 1;
 
-/** An account note older than this is reported as stale: nobody has re-checked it. */
-export const STALE_AFTER_DAYS = 90;
-
 /** The roles the contract knows, least privileged first. */
 export const ROLES = ["user", "project-admin", "admin"];
 
@@ -27,7 +24,6 @@ export const E2E_SLOTS = [
 export const PROBE_STALE_MINUTES = 30;
 
 const SLUG = /^[a-z0-9][a-z0-9-]{0,62}$/;
-const DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 const isObject = (value) =>
   value !== null && typeof value === "object" && !Array.isArray(value);
@@ -36,13 +32,6 @@ const sameEmail = (a, b) =>
   typeof a === "string" &&
   typeof b === "string" &&
   a.trim().toLowerCase() === b.trim().toLowerCase();
-
-function isStale(verifiedAt, now) {
-  if (!verifiedAt) return true;
-  const verified = Date.parse(verifiedAt);
-  if (Number.isNaN(verified)) return true;
-  return now.getTime() - verified > STALE_AFTER_DAYS * 24 * 60 * 60 * 1000;
-}
 
 function normalizeEndpoint(raw) {
   if (typeof raw !== "string") return null;
@@ -70,17 +59,6 @@ function describe(entry, label, warnings) {
       ? entry.notes.trim()
       : null;
   return { tags, notes };
-}
-
-/** An account's verification date and staleness; a server's status is probed instead. */
-function verification(entry, label, warnings, now) {
-  let verifiedAt = null;
-  if (typeof entry.verified_at === "string" && DATE.test(entry.verified_at)) {
-    verifiedAt = entry.verified_at;
-  } else if (entry.verified_at != null) {
-    warnings.push(`${label}: "verified_at" is not YYYY-MM-DD, ignored`);
-  }
-  return { verifiedAt, stale: isStale(verifiedAt, now) };
 }
 
 const stringOrNull = (value) =>
@@ -275,7 +253,7 @@ export function downWarning(server) {
   );
 }
 
-function parseAccount(raw, server, warnings, now) {
+function parseAccount(raw, server, warnings) {
   const label = `server "${server.name}"`;
   if (!isObject(raw)) {
     warnings.push(`${label}: an account is not an object, skipped`);
@@ -310,7 +288,6 @@ function parseAccount(raw, server, warnings, now) {
     password: passwordAvailable ? raw.password : null,
     passwordAvailable,
     ...describe(raw, who, warnings),
-    ...verification(raw, who, warnings, now),
   };
 }
 
@@ -319,7 +296,7 @@ function parseAccount(raw, server, warnings, now) {
  * write; this still skips (and warns about) an entry that breaks the contract
  * instead of failing the whole catalog. Only a body with no `servers` list throws.
  */
-export function parseCatalog(body, now = new Date()) {
+export function parseCatalog(body) {
   if (!isObject(body) || !Array.isArray(body.servers)) {
     throw new Error('the catalog is not an object with a "servers" list');
   }
@@ -359,7 +336,7 @@ export function parseCatalog(body, now = new Date()) {
       warnings.push(`${label}: "accounts" is not a list, ignored`);
     }
     for (const rawAccount of Array.isArray(raw.accounts) ? raw.accounts : []) {
-      const account = parseAccount(rawAccount, server, warnings, now);
+      const account = parseAccount(rawAccount, server, warnings);
       if (account) server.accounts.push(account);
     }
     // Accounts keep their stored order: "the first user" is a selection rule.
@@ -556,15 +533,6 @@ export function upsertEnv(content, vars, options) {
 /** Human-readable catalog for `list`. Never prints a password. */
 export function formatCatalog(catalog, now = new Date()) {
   const lines = [];
-  const meta = (entry) =>
-    [
-      entry.tags.length > 0 ? `tags: ${entry.tags.join(" ")}` : null,
-      entry.verifiedAt
-        ? `verified: ${entry.verifiedAt}${entry.stale ? " (stale)" : ""}`
-        : "verified: never",
-    ]
-      .filter(Boolean)
-      .join(" · ");
   const notes = (entry, indent) =>
     (entry.notes ?? "").split("\n").map((line) => `${indent}${line}`.trimEnd());
 
@@ -576,7 +544,9 @@ export function formatCatalog(catalog, now = new Date()) {
     if (server.notes) lines.push(...notes(server, "  "));
     for (const account of server.accounts) {
       lines.push(`  - ${account.role}  ${account.email}`);
-      lines.push(`      ${meta(account)}`);
+      if (account.tags.length > 0) {
+        lines.push(`      tags: ${account.tags.join(" ")}`);
+      }
       if (!account.passwordAvailable) {
         lines.push("      password: — (typed at login)");
       }
