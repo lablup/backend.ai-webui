@@ -135,7 +135,7 @@ const AnnouncementBanner: React.FC = () => {
               </Markdown>
             ) : undefined
           ) : (
-            title
+            <span className="webui-announcement-text">{title}</span>
           )
         }
         endContent={
