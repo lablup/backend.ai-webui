@@ -1074,6 +1074,12 @@ export class Client {
       // key; `UserV2OrganizationInfo.mainAccessKey` is deprecated.
       this._features['keypair-is-default'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.9.0a1')) {
+      // RBAC permissions became role-scoped permission bits: the
+      // `PermissionNestedFilter.scopeId` / `scopeType` / `operation` filters are
+      // gone or ignored (BA-7938) in every 26.9.0 pre-release, hence a1. FR-3522.
+      this._features['rbac-permission-bit'] = true;
+    }
   }
 
   /**

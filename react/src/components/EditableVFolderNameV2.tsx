@@ -27,6 +27,7 @@ import { Form } from '../form-engine';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
+import { useCanUpdateProjectVFolder } from '../hooks/useCanUpdateProjectVFolder';
 import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import { ProjectContextOrNull } from '../types/projectContext';
@@ -53,7 +54,7 @@ interface EditableVFolderNameV2Props {
   /**
    * Explicit project prop contract (ADR-0001, FR-3413): the project context
    * the page decided on, compared against the folder's ownership project for
-   * the rename gate. With `null` (super-admin pages) the project-membership
+   * the rename gate. With `null` (super-admin pages) the project-permission
    * branch simply doesn't match — the folder owner and super admins keep
    * their rename power. Never reads the ambient current project.
    */
@@ -101,6 +102,21 @@ const EditableVFolderNameV2: React.FC<EditableVFolderNameV2Props> = ({
   // Not `useEffectiveAdminRole` — it resolves its target from the ambient
   // project, which this contract must not depend on.
   const { isSuperAdmin } = useCurrentUserProjectRoles();
+  const isOwner = userInfo.uuid === vfolderNode.ownership?.userId;
+  // Set only when the owner / super-admin branches have not already answered,
+  // so the permission lookup is skipped otherwise.
+  const pageOwnedProjectId =
+    editable &&
+    !isDeletedCategory(vfolderNode.status) &&
+    !isOwner &&
+    !isSuperAdmin &&
+    project !== null &&
+    !!vfolderNode.ownership?.projectId &&
+    project.id === vfolderNode.ownership.projectId
+      ? project.id
+      : null;
+  const canUpdateProjectVFolder =
+    useCanUpdateProjectVFolder(pageOwnedProjectId);
   const baiClient = useSuspendedBackendaiClient();
   const renameMutation = useTanMutation({
     mutationFn: (input: { id: string; name: string }) => {
@@ -116,17 +132,11 @@ const EditableVFolderNameV2: React.FC<EditableVFolderNameV2Props> = ({
   const navigate = useWebUINavigate();
   const [isEditing, setIsEditing] = useState(false);
 
-  // Rename is allowed for the folder owner, super admins (any project —
-  // their power must not flicker with header state), or members of the
-  // page-decided project when the folder belongs to that project. With
-  // `project === null` the membership branch never matches.
+  // Mirrors the manager: owner, super admin (on any project), or VFOLDER/UPDATE
+  // on the page-decided project owning the folder — never plain members (FR-3522).
   const isEditingAllowed =
     editable &&
-    (userInfo.uuid === vfolderNode.ownership?.userId ||
-      isSuperAdmin ||
-      (project !== null &&
-        !!vfolderNode.ownership?.projectId &&
-        project.id === vfolderNode.ownership.projectId)) &&
+    (isOwner || isSuperAdmin || canUpdateProjectVFolder) &&
     !isDeletedCategory(vfolderNode.status);
 
   const isPendingRenameMutation =
