@@ -5,12 +5,16 @@
 // Conventions: DEV_ENVIRONMENT.md ("Dev servers and test accounts").
 import {
   PROBE_STALE_MINUTES,
+  allSettings,
   downWarning,
   findAccount,
   findServer,
   formatCatalog,
+  formatConfigLine,
+  formatSettingValue,
   keptPasswordEmails,
   loginPrefillVars,
+  managerSettings,
   parseCatalog,
   playwrightVars,
   redactCatalog,
@@ -32,6 +36,9 @@ const USAGE = `Usage: pnpm run dev-env <command>
 
   status                     Where the catalog comes from, and what it holds
   list [--json]              Servers, accounts and their notes (no passwords)
+  config <server> [--all] [--json]
+                             The server's probed config.toml: manager-related
+                             switches, or every key with --all
   get <server> <role> [--json]
                              One account, password included when the catalog has one
   use <server> [role] [--no-password]
@@ -220,6 +227,46 @@ async function use(serverName, role, { password }) {
   console.log("Restart `pnpm run dev` to pick up the login pre-fill.");
 }
 
+/** The server's probed `config.toml`: the manager-related switches, or with `all` every key. */
+function showConfig(server, { all, json }) {
+  const status = server.status;
+  const config = status?.config ?? null;
+  const settings = all ? allSettings(config) : managerSettings(config);
+  if (json) {
+    console.log(
+      JSON.stringify(
+        {
+          server: server.name,
+          endpoint: server.endpoint,
+          configFetchedAt: status?.configFetchedAt ?? null,
+          configError: status?.configError ?? null,
+          configTruncated: status?.configTruncated ?? false,
+          settings,
+        },
+        null,
+        2,
+      ),
+    );
+    return;
+  }
+  console.log(`${server.name}  ${server.endpoint ?? "(no endpoint)"}`);
+  if (!config) {
+    console.log(formatConfigLine(server));
+    return;
+  }
+  console.log(
+    `fetched: ${status.configFetchedAt ?? "unknown"}` +
+      (status.configTruncated ? " (truncated)" : "") +
+      (status.configError ? ` · last fetch failed: ${status.configError}` : ""),
+  );
+  const width = Math.max(...settings.map((row) => row.key.length), 0);
+  for (const { key, value, present } of settings) {
+    console.log(
+      `  ${key.padEnd(width)}  ${present ? formatSettingValue(value, 80) : "— (not set)"}`,
+    );
+  }
+}
+
 async function main() {
   const [command, ...rest] = process.argv.slice(2);
   const flags = new Set(rest.filter((arg) => arg.startsWith("--")));
@@ -235,6 +282,13 @@ async function main() {
         json ? JSON.stringify(catalog, null, 2) : formatCatalog(catalog),
       );
       return;
+    }
+    case "config": {
+      if (positional.length !== 1) throw new UserError(USAGE);
+      return showConfig(findServer(await loadCatalog(), positional[0]), {
+        all: flags.has("--all"),
+        json,
+      });
     }
     case "get": {
       if (positional.length !== 2) throw new UserError(USAGE);

@@ -32,6 +32,18 @@ const catalogBody = () => ({
         api_version: "v9.20250722",
         latency_ms: 42,
         error: null,
+        config: {
+          general: {
+            connectionMode: "SESSION",
+            enableModelFolders: true,
+            signupSupport: false,
+            apiEndpointText: "Main",
+          },
+          plugin: { page: "a,b" },
+        },
+        config_fetched_at: minutesAgo(3),
+        config_error: null,
+        config_truncated: false,
       },
       accounts: [
         {
@@ -74,6 +86,10 @@ const catalogBody = () => ({
         api_version: "v9.20250601",
         latency_ms: null,
         error: "connect ECONNREFUSED",
+        config: null,
+        config_fetched_at: null,
+        config_error: "HTTP 404",
+        config_truncated: false,
       },
       accounts: [
         {
@@ -347,6 +363,59 @@ describe("dev-env CLI", () => {
       expect(get.status).toBe(0);
       expect(JSON.parse(get.stdout).password).toBe("pw-lts");
       expect(get.stderr).toContain("warning: lts was down at the last probe");
+    });
+
+    it("shows each server's manager settings in list", async () => {
+      const result = await run(["list"]);
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain(
+        "  config: SESSION -signupSupport +enableModelFolders plugin.page=a,b\n",
+      );
+      expect(result.stdout).toContain("  config: none (HTTP 404)");
+      expect(result.stdout).toContain("  config: none (not checked yet)");
+      const json = JSON.parse((await run(["list", "--json"])).stdout);
+      expect(json.servers.find((s) => s.name === "main").status.config).toEqual(
+        catalogBody().servers[0].status.config,
+      );
+    });
+
+    it("prints the manager settings table with `config`", async () => {
+      const result = await run(["config", "main"]);
+      expect(result.status).toBe(0);
+      expect(result.stdout).toMatch(/^ {2}general\.connectionMode +SESSION$/m);
+      expect(result.stdout).toMatch(/^ {2}general\.enableModelFolders +true$/m);
+      expect(result.stdout).toMatch(/^ {2}general\.force2FA +— \(not set\)$/m);
+      expect(result.stdout).toMatch(/^ {2}plugin\.page +a,b$/m);
+      expect(result.stdout).not.toContain("apiEndpointText");
+
+      const all = await run(["config", "main", "--all"]);
+      expect(all.status).toBe(0);
+      expect(all.stdout).toMatch(/^ {2}general\.apiEndpointText +Main$/m);
+      expect(all.stdout).not.toContain("force2FA");
+
+      const json = JSON.parse((await run(["config", "main", "--json"])).stdout);
+      expect(json).toMatchObject({ server: "main", configError: null });
+      expect(json.settings).toContainEqual({
+        key: "general.signupSupport",
+        value: false,
+        present: true,
+      });
+      expect(json.settings).toContainEqual({
+        key: "pipeline.*",
+        value: null,
+        present: false,
+      });
+
+      const none = await run(["config", "lts"]);
+      expect(none.status).toBe(0);
+      expect(none.stdout).toContain("config: none (HTTP 404)");
+    });
+
+    it("exits 1 for `config` on an unknown server and 2 without one", async () => {
+      const unknown = await run(["config", "nope"]);
+      expect(unknown.status).toBe(1);
+      expect(unknown.stderr).toContain('Unknown server "nope"');
+      expect((await run(["config"])).status).toBe(2);
     });
 
     it("exits 1 and names the known servers for an unknown one", async () => {

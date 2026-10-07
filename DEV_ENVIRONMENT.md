@@ -106,6 +106,7 @@ Which API server a dev session talks to, and which test account it logs in with,
 | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
 | `pnpm run dev-env status`                              | Where the catalog came from, when it was updated, counts, accounts without a password, probe health |
 | `pnpm run dev-env list [--json]`                       | Servers (with live/down status and manager version), accounts, tags and notes — never a password    |
+| `pnpm run dev-env config <server> [--all] [--json]`    | The server's probed `config.toml`: the manager-related switches, or every key with `--all`          |
 | `pnpm run dev-env get <server> <role> [--json]`        | One account, password included when the catalog has one                                             |
 | `pnpm run dev-env use <server> [role] [--no-password]` | Write both files; `role` defaults to `user`                                                         |
 
@@ -122,6 +123,8 @@ The gateway address comes from `~/.config/fw/dev-gw.json` (written by `dev-gw jo
 A server has a `name` (a lowercase slug), an `endpoint`, `tags`, `notes` and `verified_at`; each account has a `role` (a slug, unique on its server), `email`, an optional `password`, and its own `tags`, `notes` and `verified_at`. Tags are free words an agent filters on, e.g. `multi-project`, `plugin:fair-share`, `no-destructive`. `verified_at` is the last day someone checked the notes against the server; notes verified more than 90 days ago, or never, are listed as stale.
 
 The gateway probes every server about every five minutes and `list` shows the result — `live · manager 25.15.0 · checked 3m ago`, `DOWN since … (was 25.15.0): <error>`, or `not checked yet`. `use` and `get` still work on a server that is down, with a warning. Manager and API versions come from that probe, so do not write them into notes.
+
+The probe also fetches the deployment's public `<endpoint>/config.toml`, and `list` prints its deployment switches in one line under each server — e.g. `config: SESSION +enableModelFolders -signupSupport plugin.page=…`, or `config: none (<error>)` for an endpoint that does not serve one (a bare manager endpoint, for instance). `pnpm run dev-env config <server>` prints them as a table. Switches are probed too, so do not write them into notes either. The list of keys (`MANAGER_CONFIG_KEYS` in `scripts/dev-env-lib.mjs`) is shared with the gateway's UI.
 
 Write in the notes what cannot be queried: what the server is for, what must not be touched, known breakage, why the account exists. What the manager can answer — an account's projects, a resource group's settings — is better asked of it (`bai-agent query`) than copied here.
 

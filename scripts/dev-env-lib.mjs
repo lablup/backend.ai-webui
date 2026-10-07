@@ -78,6 +78,9 @@ function parseStatus(raw, label, warnings) {
     warnings.push(`${label}: "status" is malformed, treated as unknown`);
     return null;
   }
+  if (raw.config != null && !isObject(raw.config)) {
+    warnings.push(`${label}: "status.config" is not an object, ignored`);
+  }
   return {
     live: raw.live,
     checkedAt: stringOrNull(raw.checked_at),
@@ -86,7 +89,115 @@ function parseStatus(raw, label, warnings) {
     apiVersion: stringOrNull(raw.api_version),
     latencyMs: Number.isFinite(raw.latency_ms) ? raw.latency_ms : null,
     error: stringOrNull(raw.error),
+    config: isObject(raw.config) ? raw.config : null,
+    configFetchedAt: stringOrNull(raw.config_fetched_at),
+    configError: stringOrNull(raw.config_error),
+    configTruncated: raw.config_truncated === true,
   };
+}
+
+// Keep in sync with devbox-gateway gw/ui.html.
+/** The deployment switches in `config.toml` worth choosing a server by; `section.*` is the whole table. */
+export const MANAGER_CONFIG_KEYS = [
+  "general.connectionMode",
+  "general.signupSupport",
+  "general.allowSignout",
+  "general.allowAnonymousChangePassword",
+  "general.allowSignupWithoutConfirmation",
+  "general.enableContainerCommit",
+  "general.enableModelFolders",
+  "general.enableImportFromHuggingFace",
+  "general.enableExtendLoginSession",
+  "general.enableReservoir",
+  "general.force2FA",
+  "general.allowProjectResourceMonitor",
+  "general.directoryBasedUsage",
+  "general.maxCountForPreopenPorts",
+  "resources.openPortToPublic",
+  "resources.allowPreferredPort",
+  "resources.allowNonAuthTCP",
+  "resources.maxFileUploadSize",
+  "environments.showNonInstalledImages",
+  "plugin.*",
+  "pipeline.*",
+];
+
+function lookup(config, dotted) {
+  let value = config;
+  for (const part of dotted.split(".")) {
+    if (!isObject(value) || !Object.hasOwn(value, part)) return undefined;
+    value = value[part];
+  }
+  return value;
+}
+
+/** `[{key, value, present}]` for MANAGER_CONFIG_KEYS; a present `section.*` expands to one row per key in it. */
+export function managerSettings(config) {
+  const rows = [];
+  for (const key of MANAGER_CONFIG_KEYS) {
+    if (key.endsWith(".*")) {
+      const section = key.slice(0, -2);
+      const table = lookup(config, section);
+      if (isObject(table) && Object.keys(table).length > 0) {
+        for (const [name, value] of Object.entries(table)) {
+          rows.push({ key: `${section}.${name}`, value, present: true });
+        }
+      } else {
+        rows.push({ key, value: null, present: false });
+      }
+      continue;
+    }
+    const value = lookup(config, key);
+    rows.push({ key, value: value ?? null, present: value !== undefined });
+  }
+  return rows;
+}
+
+/** Every leaf of `config` as `[{key, value, present: true}]`, for `config --all`. */
+export function allSettings(config, prefix = "") {
+  if (!isObject(config)) return [];
+  return Object.entries(config).flatMap(([name, value]) =>
+    isObject(value)
+      ? allSettings(value, `${prefix}${name}.`)
+      : [{ key: `${prefix}${name}`, value, present: true }],
+  );
+}
+
+/** A setting value as one short token. */
+export function formatSettingValue(value, max = 40) {
+  const text =
+    typeof value === "string" && !/\s/.test(value) && value !== ""
+      ? value
+      : JSON.stringify(value);
+  return text.length > max ? `${text.slice(0, max - 1)}…` : text;
+}
+
+/** The compact `config:` line `list` prints under a server. */
+export function formatConfigLine(server) {
+  const status = server.status;
+  if (!status?.config) {
+    const why = status
+      ? (status.configError ?? "not served")
+      : "not checked yet";
+    return `config: none (${why})`;
+  }
+  const tokens = managerSettings(status.config)
+    .filter((row) => row.present)
+    .map(({ key, value }) => {
+      const name = key.replace(/^general\./, "");
+      if (key === "general.connectionMode") return formatSettingValue(value);
+      if (typeof value === "boolean") return `${value ? "+" : "-"}${name}`;
+      return `${name}=${formatSettingValue(value)}`;
+    });
+  const extra = [
+    status.configTruncated ? "(truncated)" : null,
+    status.configError ? `(last fetch failed: ${status.configError})` : null,
+  ].filter(Boolean);
+  return [
+    "config:",
+    ...(tokens.length ? tokens : ["(no manager settings)"]),
+    ...extra,
+  ].join(" ");
 }
 
 function minutesSince(iso, now) {
@@ -423,6 +534,7 @@ export function formatCatalog(catalog, now = new Date()) {
   for (const server of catalog.servers) {
     lines.push(`${server.name}  ${server.endpoint ?? "(no endpoint)"}`);
     lines.push(`  ${formatStatus(server, now)}`);
+    lines.push(`  ${formatConfigLine(server)}`);
     lines.push(`  ${meta(server)}`);
     if (server.notes) lines.push(...notes(server, "  "));
     for (const account of server.accounts) {

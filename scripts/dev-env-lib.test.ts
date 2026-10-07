@@ -1,12 +1,16 @@
 // @ts-nocheck
 import {
+  MANAGER_CONFIG_KEYS,
+  allSettings,
   downWarning,
   findAccount,
   findServer,
   formatCatalog,
+  formatConfigLine,
   formatStatus,
   keptPasswordEmails,
   loginPrefillVars,
+  managerSettings,
   parseCatalog,
   playwrightVars,
   quoteEnvValue,
@@ -342,6 +346,64 @@ describe("dev-env hand-written passwords", () => {
   });
 });
 
+const UP_CONFIG = {
+  general: {
+    connectionMode: "SESSION",
+    enableModelFolders: true,
+    signupSupport: false,
+    maxCountForPreopenPorts: 10,
+    apiEndpointText: "Main cluster",
+  },
+  plugin: { page: "a,b" },
+  wsproxy: { proxyURL: "http://127.0.0.1:5050/" },
+};
+
+describe("dev-env manager settings", () => {
+  const rows = (config) =>
+    Object.fromEntries(
+      managerSettings(config).map(({ key, value, present }) => [
+        key,
+        [value, present],
+      ]),
+    );
+
+  it("reports each listed key as present or absent", () => {
+    const result = rows(UP_CONFIG);
+    expect(result["general.connectionMode"]).toEqual(["SESSION", true]);
+    expect(result["general.signupSupport"]).toEqual([false, true]);
+    expect(result["general.force2FA"]).toEqual([null, false]);
+    expect(result["resources.openPortToPublic"]).toEqual([null, false]);
+    expect(result).not.toHaveProperty("general.apiEndpointText");
+    expect(result).not.toHaveProperty("wsproxy.proxyURL");
+  });
+
+  it("expands a present `section.*` and keeps an absent one as one row", () => {
+    const result = rows(UP_CONFIG);
+    expect(result["plugin.page"]).toEqual(["a,b", true]);
+    expect(result).not.toHaveProperty("plugin.*");
+    expect(result["pipeline.*"]).toEqual([null, false]);
+  });
+
+  it("keeps the list order and covers every key for a missing config", () => {
+    const keys = managerSettings(null).map((row) => row.key);
+    expect(keys).toEqual(MANAGER_CONFIG_KEYS);
+    expect(managerSettings(null).every((row) => !row.present)).toBe(true);
+  });
+
+  it("flattens every leaf for --all", () => {
+    expect(allSettings(UP_CONFIG).map((row) => row.key)).toEqual([
+      "general.connectionMode",
+      "general.enableModelFolders",
+      "general.signupSupport",
+      "general.maxCountForPreopenPorts",
+      "general.apiEndpointText",
+      "plugin.page",
+      "wsproxy.proxyURL",
+    ]);
+    expect(allSettings(null)).toEqual([]);
+  });
+});
+
 describe("dev-env server probe status", () => {
   const server = (name, status) => ({
     name,
@@ -360,6 +422,10 @@ describe("dev-env server probe status", () => {
         api_version: "v9.20250722",
         latency_ms: 42,
         error: null,
+        config: UP_CONFIG,
+        config_fetched_at: "2026-10-01T23:57:00Z",
+        config_error: null,
+        config_truncated: false,
       }),
       server("down", {
         live: false,
@@ -369,6 +435,10 @@ describe("dev-env server probe status", () => {
         api_version: "v9.20250601",
         latency_ms: null,
         error: "connect ECONNREFUSED",
+        config: null,
+        config_fetched_at: null,
+        config_error: "HTTP 404",
+        config_truncated: false,
       }),
       server("fresh", null),
       server("old", {
@@ -392,6 +462,10 @@ describe("dev-env server probe status", () => {
       apiVersion: "v9.20250722",
       latencyMs: 42,
       error: null,
+      config: UP_CONFIG,
+      configFetchedAt: "2026-10-01T23:57:00Z",
+      configError: null,
+      configTruncated: false,
     });
     expect(byName("down").status).toMatchObject({
       live: false,
@@ -448,6 +522,56 @@ describe("dev-env server probe status", () => {
       lastLiveAt: "2026-10-01T20:00:00Z",
       managerVersion: "25.14.2",
     });
+  });
+
+  it("prints one compact config line per server", () => {
+    expect(formatConfigLine(byName("up"))).toBe(
+      "config: SESSION -signupSupport +enableModelFolders maxCountForPreopenPorts=10 plugin.page=a,b",
+    );
+    expect(formatConfigLine(byName("down"))).toBe("config: none (HTTP 404)");
+    expect(formatConfigLine(byName("fresh"))).toBe(
+      "config: none (not checked yet)",
+    );
+    expect(formatConfigLine(byName("old"))).toBe("config: none (not served)");
+    const text = formatCatalog(redactCatalog(catalog), NOW);
+    expect(text).toContain(
+      "  live · manager 25.15.0 · checked 3m ago\n  config: SESSION",
+    );
+  });
+
+  it("marks a kept config whose last fetch failed, or a truncated one", () => {
+    const status = {
+      ...byName("up").status,
+      configError: "timeout",
+      configTruncated: true,
+    };
+    expect(formatConfigLine({ status })).toMatch(
+      / \(truncated\) \(last fetch failed: timeout\)$/,
+    );
+  });
+
+  it("ignores a malformed config with a warning", () => {
+    const { servers, warnings } = parseCatalog(
+      {
+        version: 1,
+        servers: [
+          server("x", {
+            live: true,
+            config: "general.x = 1",
+            config_truncated: "no",
+          }),
+        ],
+      },
+      NOW,
+    );
+    expect(servers[0].status).toMatchObject({
+      live: true,
+      config: null,
+      configTruncated: false,
+    });
+    expect(warnings).toEqual([
+      'server "x": "status.config" is not an object, ignored',
+    ]);
   });
 
   it("warns about a down server only", () => {
