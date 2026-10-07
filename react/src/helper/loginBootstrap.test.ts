@@ -5,7 +5,6 @@
 import type { BackendAIClient } from '../hooks';
 import {
   LoginBootstrapIncompleteError,
-  SessionAuthFailureError,
   isSessionAuthFailure,
   probeLoginSession,
 } from './loginBootstrap';
@@ -162,17 +161,44 @@ describe('probeLoginSession', () => {
     expect(client.check_login).not.toHaveBeenCalled();
   });
 
-  it('rethrows failures that are not an auth refusal', async () => {
-    const boom = { isError: true, statusCode: 502 };
+  it('reports an HTTP failure that is not a refusal as incomplete', async () => {
+    const boom = { isError: true, statusCode: 502, message: 'bad gateway' };
     const client = makeClient({
       _wrapWithPromise: vi.fn().mockRejectedValue(boom),
     });
-    await expect(probeLoginSession(client)).rejects.toMatchObject({
-      statusCode: 502,
-    });
-    await expect(probeLoginSession(client)).rejects.not.toBeInstanceOf(
-      SessionAuthFailureError,
+    await expect(probeLoginSession(client)).rejects.toBeInstanceOf(
+      LoginBootstrapIncompleteError,
     );
+    await expect(probeLoginSession(client)).rejects.toThrow('bad gateway');
+    expect(client.check_login).not.toHaveBeenCalled();
+  });
+
+  it('reports a router-wrapped manager 5xx as incomplete', async () => {
+    const client = makeClient({
+      _wrapWithPromise: vi.fn().mockResolvedValue({
+        data: { keypair: null, user: null, groups: null },
+        errors: [
+          {
+            message: 'upstream failed',
+            extensions: {
+              response: { status: 500, body: { msg: 'manager exploded' } },
+            },
+          },
+        ],
+      }),
+    });
+    await expect(probeLoginSession(client)).rejects.toBeInstanceOf(
+      LoginBootstrapIncompleteError,
+    );
+    await expect(probeLoginSession(client)).rejects.toThrow('manager exploded');
+  });
+
+  it('rethrows a failure that carries no HTTP status', async () => {
+    const network = new Error('sending request has failed');
+    const client = makeClient({
+      _wrapWithPromise: vi.fn().mockRejectedValue(network),
+    });
+    await expect(probeLoginSession(client)).rejects.toBe(network);
   });
 
   it('rejects, without asking check_login, when the identity fails to resolve', async () => {

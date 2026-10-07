@@ -210,6 +210,17 @@ export async function connectViaGQL(
         e?.statusCode === 403)
     )
       await client.logout().catch(() => {});
+    // Any other HTTP failure (a wrapped manager 5xx, a timeout) leaves the
+    // session live; the recovery dialog handles it.
+    const status = e?.statusCode;
+    if (
+      typeof status === 'number' &&
+      status >= 400 &&
+      status !== 401 &&
+      status !== 403
+    ) {
+      throw new LoginBootstrapIncompleteError(err);
+    }
     throw err;
   }
   if (isCancelled?.()) throw cancel();

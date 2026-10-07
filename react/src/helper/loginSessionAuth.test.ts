@@ -391,7 +391,9 @@ describe('connectViaGQL — myUserV2 query rejects (FR-3998)', () => {
     rejectWith(timeout);
     const client = makeClient();
 
-    await expect(connectViaGQL(client, cfg, [])).rejects.toBe(timeout);
+    const result = connectViaGQL(client, cfg, []);
+    await expect(result).rejects.toBeInstanceOf(LoginBootstrapIncompleteError);
+    await expect(result).rejects.toMatchObject({ cause: timeout });
     expect(client.logout).not.toHaveBeenCalled();
   });
 
