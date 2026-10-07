@@ -95,7 +95,7 @@ Notes:
 
 ## Dev servers and test accounts (`pnpm run dev-env`)
 
-Which API server a dev session talks to, and which test account it logs in with, live in the team's catalog on the dev box gateway — not in this repository and not in anyone's notes. Anyone on the dev VPN can read and edit it in the gateway's admin UI (`http://dev-gw.<domain>/`, **Catalog** section), which keeps a history of every change so a bad edit can be undone. The gateway also serves it at `http://dev-gw.<domain>/api/catalog` without authentication, so **the catalog is visible to everyone on the dev VPN: store only passwords that may be shared that widely, and leave the others empty — the person logging in types them.**
+Which API server a dev session talks to, and which test account it logs in with, live in the team's catalog on the team PR board ([frontend-board](https://github.com/lablup/frontend-board), running on the dev box gateway host) — not in this repository and not in anyone's notes. Anyone on the dev VPN can read and edit it on the board's **Catalog** page (`http://board.<domain>/`). The board also serves it at `http://board.<domain>/api/catalog` without authentication, so **the catalog is visible to everyone on the dev VPN: store only passwords that may be shared that widely, and leave the others empty — the person logging in types them.**
 
 `pnpm run dev-env` reads that endpoint and writes the pick into the two git-ignored files that already consume it:
 
@@ -110,21 +110,21 @@ Which API server a dev session talks to, and which test account it logs in with,
 | `pnpm run dev-env get <server> <role> [--json]`        | One account, password included when the catalog has one                                             |
 | `pnpm run dev-env use <server> [role] [--no-password]` | Write both files; `role` defaults to `user`                                                         |
 
-Every command asks the gateway, so there is no local copy to go stale. `use` only replaces the keys it owns; every other line of both files is left alone. Restart `pnpm run dev` afterwards — Vite reads env at server start. A `VITE_DEFAULT_*` variable exported in the shell wins over the file; `use` warns when one is in the way.
+Every command asks the board, so there is no local copy to go stale. `use` only replaces the keys it owns; every other line of both files is left alone. Restart `pnpm run dev` afterwards — Vite reads env at server start. A `VITE_DEFAULT_*` variable exported in the shell wins over the file; `use` warns when one is in the way.
 
 `use` never writes an empty password. For an account the catalog has no password for, a box owner can write the password into their own git-ignored file by hand (`VITE_DEFAULT_PASSWORD`, or the role's `E2E_*_PASSWORD`): `use` keeps that line as long as the email line beside it names the same account (case-insensitive) and says so, and removes it otherwise, so another account's password never lingers. With nothing kept it prints a note that the password is typed at login. The roles `admin`, `user`, `user2`, `monitor` and `domain-admin` fill the matching `E2E_*` variables, and `use` removes the pair of a role the server does not have; any other role (`project-admin`, …) is available to `use` and `get` only.
 
 `--no-password` leaves the password out of the pre-fill. Use it on a dev server you share through dev-gw: the bundle carries every `VITE_*` value to whoever opens the share URL (see the notes above).
 
-The gateway address comes from `~/.config/fw/dev-gw.json` (written by `dev-gw join`, see above; `DEV_GW_CONFIG` points elsewhere). Without it, set `WEBUI_DEV_ENV_CATALOG_URL` to the catalog URL, or `WEBUI_DEV_ENV_CATALOG` to a JSON file of the same shape (for tests and for a box without a gateway).
+The board shares the gateway's domain, which `dev-env` reads from `~/.config/fw/dev-gw.json` (written by `dev-gw join`, see above; `DEV_GW_CONFIG` points elsewhere). It uses plain `http://`, because Node's `fetch` rejects the gateway's internal CA. Without that file, set `WEBUI_DEV_ENV_CATALOG_URL` to the catalog URL, or `WEBUI_DEV_ENV_CATALOG` to a JSON file of the same shape (for tests and for a box that has not joined the gateway).
 
 ### What goes in an entry
 
 A server has a `name` (a lowercase slug), an `endpoint`, `tags`, `notes` and `verified_at`; each account has a `role` (a slug, unique on its server), `email`, an optional `password`, and its own `tags`, `notes` and `verified_at`. Tags are free words an agent filters on, e.g. `multi-project`, `plugin:fair-share`, `no-destructive`. `verified_at` is the last day someone checked the notes against the server; notes verified more than 90 days ago, or never, are listed as stale.
 
-The gateway probes every server about every five minutes and `list` shows the result — `live · manager 25.15.0 · checked 3m ago`, `DOWN since … (was 25.15.0): <error>`, or `not checked yet`. `use` and `get` still work on a server that is down, with a warning. Manager and API versions come from that probe, so do not write them into notes.
+The board probes every server about every five minutes and `list` shows the result — `live · manager 25.15.0 · checked 3m ago`, `DOWN since … (was 25.15.0): <error>`, or `not checked yet`. `use` and `get` still work on a server that is down, with a warning. Manager and API versions come from that probe, so do not write them into notes.
 
-The probe also fetches the deployment's public `<endpoint>/config.toml`, and `list` prints its deployment switches in one line under each server — e.g. `config: SESSION +enableModelFolders -signupSupport plugin.page=…`, or `config: none (<error>)` for an endpoint that does not serve one (a bare manager endpoint, for instance). `pnpm run dev-env config <server>` prints them as a table. Switches are probed too, so do not write them into notes either. The list of keys (`MANAGER_CONFIG_KEYS` in `scripts/dev-env-lib.mjs`) is shared with the gateway's UI.
+The probe also fetches the deployment's public `<endpoint>/config.toml`, and `list` prints its deployment switches in one line under each server — e.g. `config: SESSION +enableModelFolders -signupSupport plugin.page=…`, or `config: none (<error>)` for an endpoint that does not serve one (a bare manager endpoint, for instance). `pnpm run dev-env config <server>` prints them as a table. Switches are probed too, so do not write them into notes either. The list of keys (`MANAGER_CONFIG_KEYS` in `scripts/dev-env-lib.mjs`) is shared with the board's Catalog page.
 
 Write in the notes what cannot be queried: what the server is for, what must not be touched, known breakage, why the account exists. What the manager can answer — an account's projects, a resource group's settings — is better asked of it (`bai-agent query`) than copied here.
 
@@ -209,4 +209,4 @@ Runs behind Portless on a fixed internal port 6006. Open the printed `*.localhos
 | `pnpm --filter backend.ai-ui run storybook`                  | Storybook under Portless                                            |
 | `pnpm exec portless list`                                    | Show active Portless routes                                         |
 | `pnpm exec portless proxy stop` / `start -p 1355 [--no-tls]` | Daemon control (project-local binary)                               |
-| `pnpm run dev-env list` / `use <server> [role]`              | Pick a dev API server and test account from the gateway catalog     |
+| `pnpm run dev-env list` / `use <server> [role]`              | Pick a dev API server and test account from the board catalog       |

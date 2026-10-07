@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // `pnpm run dev-env` — pick a dev API server and test account from the team's
-// catalog (served by the dev box gateway at `http://dev-gw.<domain>/api/catalog`),
+// catalog (served by the team PR board at `http://board.<domain>/api/catalog`),
 // and write the pick into the git-ignored env files.
 // Conventions: DEV_ENVIRONMENT.md ("Dev servers and test accounts").
 import {
@@ -49,7 +49,8 @@ class UserError extends Error {}
 
 /**
  * Where to read the catalog: a JSON file (`WEBUI_DEV_ENV_CATALOG`), a URL
- * (`WEBUI_DEV_ENV_CATALOG_URL`), or the gateway named by the dev-gw config.
+ * (`WEBUI_DEV_ENV_CATALOG_URL`), or the board on the gateway host named by
+ * the dev-gw config. Plain http: Node's fetch rejects the gateway's internal CA.
  */
 function catalogSource() {
   const file = process.env.WEBUI_DEV_ENV_CATALOG?.trim();
@@ -68,13 +69,14 @@ function catalogSource() {
   }
   if (typeof domain !== "string" || domain.trim() === "") {
     throw new UserError(
-      `No dev box gateway configured (${configPath} is missing or has no "domain").\n` +
+      `No dev box gateway configured (${configPath} is missing or has no "domain"), ` +
+        "so the board's catalog URL is unknown.\n" +
         "Join the gateway with `dev-gw join` (DEV_ENVIRONMENT.md), or point " +
         "WEBUI_DEV_ENV_CATALOG_URL at a catalog URL.",
     );
   }
-  const gatewayUrl = `http://dev-gw.${domain.trim()}/api/catalog`;
-  return { url: gatewayUrl, label: gatewayUrl };
+  const boardUrl = `http://board.${domain.trim()}/api/catalog`;
+  return { url: boardUrl, label: boardUrl };
 }
 
 async function readCatalogBody(source) {

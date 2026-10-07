@@ -35,7 +35,7 @@ If no dev server is running, tell the user to start it with `pnpm run dev` (Port
 
 ## API Endpoint & Credentials
 
-The source of truth is the team's catalog on the dev box gateway, read through `pnpm run dev-env` (`DEV_ENVIRONMENT.md`, "Dev servers and test accounts"). It lists every dev API server and test account, the notes that say what each is good for, and each server's last probe (live or down, manager version).
+The source of truth is the team's catalog on the team PR board (`http://board.<domain>/`, Catalog page), read through `pnpm run dev-env` (`DEV_ENVIRONMENT.md`, "Dev servers and test accounts"). It lists every dev API server and test account, the notes that say what each is good for, and each server's last probe (live or down, manager version).
 
 ### Choosing a server and an account
 
@@ -47,9 +47,9 @@ The source of truth is the team's catalog on the dev box gateway, read through `
 6. Say which server and account you picked and why, in one line, before using them — including the manager version or the deployment switch when the pick depended on it (e.g. "main/admin — live, manager 25.15.0, `enableModelFolders` on").
 7. `pnpm run dev-env get <server> <role> --json` for that account's endpoint, email and password — or `pnpm run dev-env use <server> [role]` to write the pick into `.env.development.local` and `e2e/envs/.env.playwright` when a dev server or the E2E suite should use it. A password the box owner wrote for the same email survives `use`.
 
-Treat an entry with `stale: true` as a hint, not a fact: confirm what the note claims against the live server (the `bai-agent` skill) before relying on it. When a note turns out wrong or missing, tell the user what should change; a human edits it in the gateway's admin UI (`http://dev-gw.<domain>/`, Catalog section).
+Treat an entry with `stale: true` as a hint, not a fact: confirm what the note claims against the live server (the `bai-agent` skill) before relying on it. When a note turns out wrong or missing, tell the user what should change; anyone on the dev VPN can edit it on the board's Catalog page (`http://board.<domain>/`).
 
-If `dev-env` reports that no gateway is configured or the catalog cannot be reached, tell the user (the box needs `dev-gw join`, or the dev VPN is down) and fall back to the file below.
+If `dev-env` reports that no gateway is configured or the board cannot be reached, tell the user (the box needs `dev-gw join` for the domain, or the dev VPN or the board is down) and fall back to the file below.
 
 ### The file fallback
 

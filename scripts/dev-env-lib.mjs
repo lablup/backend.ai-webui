@@ -1,7 +1,7 @@
-// Pure logic behind `pnpm run dev-env`: normalizing the gateway's catalog of
+// Pure logic behind `pnpm run dev-env`: normalizing the team PR board's catalog of
 // dev servers and test accounts, and writing a pick into the env files.
 //
-// It lives outside dev-env.mjs so it can be unit tested without the gateway.
+// It lives outside dev-env.mjs so it can be unit tested without the board.
 
 /** The catalog contract version this parser understands. */
 export const CATALOG_VERSION = 1;
@@ -18,7 +18,7 @@ export const E2E_ROLE_VARS = {
   "domain-admin": "E2E_DOMAIN_ADMIN",
 };
 
-/** A probe older than this says nothing about the server now; the gateway re-probes every ~5 minutes. */
+/** A probe older than this says nothing about the server now; the board re-probes every ~5 minutes. */
 export const PROBE_STALE_MINUTES = 30;
 
 const SLUG = /^[a-z0-9][a-z0-9-]{0,62}$/;
@@ -71,7 +71,7 @@ function describe(entry, label, warnings, now) {
 const stringOrNull = (value) =>
   typeof value === "string" && value !== "" ? value : null;
 
-/** The gateway's read-only probe result; `null` when never probed or malformed (one warning). */
+/** The board's read-only probe result; `null` when never probed or malformed (one warning). */
 function parseStatus(raw, label, warnings) {
   if (raw == null) return null;
   if (!isObject(raw) || typeof raw.live !== "boolean") {
@@ -96,7 +96,7 @@ function parseStatus(raw, label, warnings) {
   };
 }
 
-// Keep in sync with devbox-gateway gw/ui.html.
+// Keep in sync with the catalog UI key list in lablup/frontend-board.
 /** The deployment switches in `config.toml` worth choosing a server by; `section.*` is the whole table. */
 export const MANAGER_CONFIG_KEYS = [
   "general.connectionMode",
@@ -296,7 +296,7 @@ function parseAccount(raw, server, warnings, now) {
 }
 
 /**
- * Normalize the gateway's `GET /api/catalog` body. The gateway validates on
+ * Normalize the board's `GET /api/catalog` body. The board validates on
  * write; this still skips (and warns about) an entry that breaks the contract
  * instead of failing the whole catalog. Only a body with no `servers` list throws.
  */

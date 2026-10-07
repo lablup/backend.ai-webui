@@ -479,7 +479,7 @@ describe("dev-env CLI", () => {
       expect(requests).toEqual(["/api/catalog", "/api/catalog"]);
     });
 
-    it("exits 1 naming the URL when the gateway answers 500", async () => {
+    it("exits 1 naming the URL when the board answers 500", async () => {
       respond = (_req, res) => {
         res.writeHead(500);
         res.end("boom");
@@ -519,6 +519,23 @@ describe("dev-env CLI", () => {
     );
     expect(result.stderr).toContain("dev-gw join");
     expect(result.stderr).toContain("WEBUI_DEV_ENV_CATALOG_URL");
+  });
+
+  it("derives the board's catalog URL from the dev-gw domain", async () => {
+    // `.invalid` never resolves (RFC 2606), so no request leaves the box.
+    const config = path.join(root, "dev-gw.json");
+    fs.writeFileSync(config, JSON.stringify({ domain: "example.invalid" }));
+    const result = await run(["status"], {
+      WEBUI_DEV_ENV_CATALOG: undefined,
+      DEV_GW_CONFIG: config,
+    });
+    expect(result.stdout).toContain(
+      "source: http://board.example.invalid/api/catalog",
+    );
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain(
+      "Could not reach the catalog at http://board.example.invalid/api/catalog",
+    );
   });
 
   it("treats a dev-gw config without a domain as missing", async () => {
