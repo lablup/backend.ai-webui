@@ -114,9 +114,10 @@ const ImageEnvironmentSelectFormItems: React.FC<
   const [metadata, { getImageMeta, tagAlias }] = useBackendAIImageMetaData();
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
-  const [showDedicatedFirst, setShowDedicatedFirst] = useBAISettingUserState(
-    'show_accelerator_dedicated_images_first',
-  );
+  const [showDedicatedFirstSetting, setShowDedicatedFirst] =
+    useBAISettingUserState('show_accelerator_dedicated_images_first');
+  // On until the user explicitly turns it off.
+  const showDedicatedFirst = showDedicatedFirstSetting ?? true;
 
   // antd `RefSelectProps` restated as the one method these two refs ever
   // called. `BAISelect` accepts `ref` and never attaches it (P26-8 — Astryx's
@@ -612,7 +613,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                   label={t(
                     'session.launcher.ShowAcceleratorDedicatedImagesFirst',
                   )}
-                  value={!!showDedicatedFirst}
+                  value={showDedicatedFirst}
                   onChange={setShowDedicatedFirst}
                 />
               </DropdownMenu>
