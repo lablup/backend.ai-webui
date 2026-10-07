@@ -16,6 +16,8 @@
     position: fixed;
     inset: 0;
     z-index: var(--bai-dialog-z, var(--bai-z-modal-base));
+    /* The scrim covers the window's drag regions too (see BAIDrawer.css). */
+    -webkit-app-region: no-drag;
   }
 
   /* Closed but still rendered: lab keeps the panel sliding out for one
