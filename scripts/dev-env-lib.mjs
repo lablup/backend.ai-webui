@@ -6,17 +6,22 @@
 /** The catalog contract version this parser understands. */
 export const CATALOG_VERSION = 1;
 
-/** A note older than this is reported as stale: it describes a server nobody has re-checked. */
+/** An account note older than this is reported as stale: nobody has re-checked it. */
 export const STALE_AFTER_DAYS = 90;
 
-/** Roles the E2E suite reads, and the `E2E_*` variable stem each one fills. */
-export const E2E_ROLE_VARS = {
-  admin: "E2E_ADMIN",
-  user: "E2E_USER",
-  user2: "E2E_USER2",
-  monitor: "E2E_MONITOR",
-  "domain-admin": "E2E_DOMAIN_ADMIN",
-};
+/** The roles the contract knows, least privileged first. */
+export const ROLES = ["user", "project-admin", "admin"];
+
+/**
+ * The `E2E_*` stems `use` fills: the `index`-th account (stored order) with
+ * `role`. Other stems (`E2E_MONITOR`, `E2E_DOMAIN_ADMIN`) are left as written.
+ */
+export const E2E_SLOTS = [
+  { stem: "E2E_ADMIN", role: "admin", index: 0 },
+  { stem: "E2E_USER", role: "user", index: 0 },
+  { stem: "E2E_USER2", role: "user", index: 1 },
+  { stem: "E2E_PROJECT_ADMIN", role: "project-admin", index: 0 },
+];
 
 /** A probe older than this says nothing about the server now; the board re-probes every ~5 minutes. */
 export const PROBE_STALE_MINUTES = 30;
@@ -26,6 +31,11 @@ const DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 const isObject = (value) =>
   value !== null && typeof value === "object" && !Array.isArray(value);
+
+const sameEmail = (a, b) =>
+  typeof a === "string" &&
+  typeof b === "string" &&
+  a.trim().toLowerCase() === b.trim().toLowerCase();
 
 function isStale(verifiedAt, now) {
   if (!verifiedAt) return true;
@@ -45,8 +55,8 @@ function normalizeEndpoint(raw) {
   }
 }
 
-/** Tags, notes and verification date, shared by servers and accounts; a bad value is dropped with a warning. */
-function describe(entry, label, warnings, now) {
+/** Tags and notes, shared by servers and accounts; a bad value is dropped with a warning. */
+function describe(entry, label, warnings) {
   let tags = [];
   if (Array.isArray(entry.tags)) {
     tags = entry.tags
@@ -55,17 +65,22 @@ function describe(entry, label, warnings, now) {
   } else if (entry.tags != null) {
     warnings.push(`${label}: "tags" is not a list, ignored`);
   }
+  const notes =
+    typeof entry.notes === "string" && entry.notes.trim() !== ""
+      ? entry.notes.trim()
+      : null;
+  return { tags, notes };
+}
+
+/** An account's verification date and staleness; a server's status is probed instead. */
+function verification(entry, label, warnings, now) {
   let verifiedAt = null;
   if (typeof entry.verified_at === "string" && DATE.test(entry.verified_at)) {
     verifiedAt = entry.verified_at;
   } else if (entry.verified_at != null) {
     warnings.push(`${label}: "verified_at" is not YYYY-MM-DD, ignored`);
   }
-  const notes =
-    typeof entry.notes === "string" && entry.notes.trim() !== ""
-      ? entry.notes.trim()
-      : null;
-  return { tags, notes, verifiedAt, stale: isStale(verifiedAt, now) };
+  return { verifiedAt, stale: isStale(verifiedAt, now) };
 }
 
 const stringOrNull = (value) =>
@@ -266,19 +281,22 @@ function parseAccount(raw, server, warnings, now) {
     warnings.push(`${label}: an account is not an object, skipped`);
     return null;
   }
-  if (typeof raw.role !== "string" || !SLUG.test(raw.role)) {
-    warnings.push(
-      `${label}: account role ${JSON.stringify(raw.role)} is not a slug, skipped`,
-    );
-    return null;
-  }
-  const who = `"${server.name}/${raw.role}"`;
   if (typeof raw.email !== "string" || raw.email.trim() === "") {
-    warnings.push(`${who}: no email, skipped`);
+    warnings.push(`${label}: an account has no email, skipped`);
     return null;
   }
-  if (server.accounts.some((account) => account.role === raw.role)) {
-    warnings.push(`${who}: duplicate role, keeping the first`);
+  const who = `"${server.name}/${raw.email.trim()}"`;
+  if (typeof raw.role !== "string" || raw.role.trim() === "") {
+    warnings.push(`${who}: no role, skipped`);
+    return null;
+  }
+  if (!ROLES.includes(raw.role)) {
+    warnings.push(
+      `${who}: unknown role "${raw.role}" (expected ${ROLES.join(", ")}), kept`,
+    );
+  }
+  if (server.accounts.some((account) => sameEmail(account.email, raw.email))) {
+    warnings.push(`${who}: duplicate email, keeping the first`);
     return null;
   }
   if (raw.password != null && typeof raw.password !== "string") {
@@ -287,11 +305,12 @@ function parseAccount(raw, server, warnings, now) {
   const passwordAvailable =
     typeof raw.password === "string" && raw.password !== "";
   return {
-    role: raw.role,
+    role: raw.role.trim(),
     email: raw.email.trim(),
     password: passwordAvailable ? raw.password : null,
     passwordAvailable,
-    ...describe(raw, who, warnings, now),
+    ...describe(raw, who, warnings),
+    ...verification(raw, who, warnings, now),
   };
 }
 
@@ -332,7 +351,7 @@ export function parseCatalog(body, now = new Date()) {
     const server = {
       name: raw.name,
       endpoint,
-      ...describe(raw, label, warnings, now),
+      ...describe(raw, label, warnings),
       status: parseStatus(raw.status, label, warnings),
       accounts: [],
     };
@@ -343,7 +362,7 @@ export function parseCatalog(body, now = new Date()) {
       const account = parseAccount(rawAccount, server, warnings, now);
       if (account) server.accounts.push(account);
     }
-    server.accounts.sort((a, b) => a.role.localeCompare(b.role));
+    // Accounts keep their stored order: "the first user" is a selection rule.
     servers.push(server);
   }
   servers.sort((a, b) => a.name.localeCompare(b.name));
@@ -374,21 +393,39 @@ export function findServer(catalog, serverName) {
   return server;
 }
 
-export function findAccount(server, role) {
-  const account = server.accounts.find((a) => a.role === role);
-  if (!account) {
-    const known = server.accounts.map((a) => a.role).join(", ") || "(none)";
+/**
+ * Pick an account by email (case-insensitive) or by role, the first with that
+ * role in stored order. `others` are the emails of the rest sharing the role.
+ */
+export function selectAccount(server, selector) {
+  const byEmail = server.accounts.find((a) => sameEmail(a.email, selector));
+  if (byEmail) return { account: byEmail, others: [] };
+  const withRole = server.accounts.filter((a) => a.role === selector);
+  if (withRole.length === 0) {
+    const roles = [...new Set(server.accounts.map((a) => a.role))];
     throw new Error(
-      `Server "${server.name}" has no "${role}" account. Known: ${known}`,
+      `Server "${server.name}" has no account "${selector}". ` +
+        `Roles: ${roles.join(", ") || "(none)"}; emails: ` +
+        `${server.accounts.map((a) => a.email).join(", ") || "(none)"}`,
     );
   }
-  return account;
+  return {
+    account: withRole[0],
+    others: withRole.slice(1).map((a) => a.email),
+  };
 }
 
-const sameEmail = (a, b) =>
-  typeof a === "string" &&
-  typeof b === "string" &&
-  a.trim().toLowerCase() === b.trim().toLowerCase();
+/** The account `selectAccount` picks. */
+export function findAccount(server, selector) {
+  return selectAccount(server, selector).account;
+}
+
+/** The line `get` / `use` print when a role matched several accounts, or null. */
+export function ambiguityNote(others) {
+  return others.length > 0
+    ? `also: ${others.join(", ")} — pass the email to pick one`
+    : null;
+}
 
 /**
  * Set `vars[passwordKey]` for `account` in a file whose parsed content is
@@ -437,14 +474,14 @@ export function loginPrefillVars(
 }
 
 /**
- * `e2e/envs/.env.playwright` values: the endpoint plus every role the suite
- * reads, given the file's current parsed content. A role this server lacks is
+ * `e2e/envs/.env.playwright` values: the endpoint plus every E2E_SLOTS stem,
+ * given the file's current parsed content. A slot this server cannot fill is
  * removed, so another server's account never lingers next to the new endpoint.
  */
 export function playwrightVars(server, { existing = {} } = {}) {
   const vars = { E2E_WEBSERVER_ENDPOINT: server.endpoint };
-  for (const [role, stem] of Object.entries(E2E_ROLE_VARS)) {
-    const account = server.accounts.find((a) => a.role === role);
+  for (const { stem, role, index } of E2E_SLOTS) {
+    const account = server.accounts.filter((a) => a.role === role)[index];
     vars[`${stem}_EMAIL`] = account?.email ?? null;
     setPassword(vars, account, existing, `${stem}_EMAIL`, `${stem}_PASSWORD`);
   }
@@ -535,7 +572,7 @@ export function formatCatalog(catalog, now = new Date()) {
     lines.push(`${server.name}  ${server.endpoint ?? "(no endpoint)"}`);
     lines.push(`  ${formatStatus(server, now)}`);
     lines.push(`  ${formatConfigLine(server)}`);
-    lines.push(`  ${meta(server)}`);
+    if (server.tags.length > 0) lines.push(`  tags: ${server.tags.join(" ")}`);
     if (server.notes) lines.push(...notes(server, "  "));
     for (const account of server.accounts) {
       lines.push(`  - ${account.role}  ${account.email}`);

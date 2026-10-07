@@ -1,6 +1,7 @@
 // @ts-nocheck
 import {
   MANAGER_CONFIG_KEYS,
+  ambiguityNote,
   allSettings,
   downWarning,
   findAccount,
@@ -15,6 +16,7 @@ import {
   playwrightVars,
   quoteEnvValue,
   redactCatalog,
+  selectAccount,
   serverHealth,
   upsertEnv,
 } from "./dev-env-lib.mjs";
@@ -32,6 +34,8 @@ const account = (role, email, password, extra = {}) => ({
   ...extra,
 });
 
+// main's accounts in stored order: three users (the second without a
+// password), an admin and a project admin without a password.
 const BODY = {
   version: 1,
   updated_at: "2026-10-01T05:00:00Z",
@@ -41,16 +45,18 @@ const BODY = {
       endpoint: "https://main.example.test:8090",
       tags: ["plugin:fair-share", "nightly"],
       notes: "Tracks manager main.\nReset every Monday.",
-      verified_at: "2026-09-20",
       accounts: [
         account("user", "user@example.test", "pw-user", {
           tags: ["multi-project"],
           notes: "Member of three projects.",
           verified_at: "2026-01-01",
         }),
-        account("admin", "admin@example.test", "pw-admin"),
-        account("project-admin", "pa@example.test", "pw-pa"),
-        account("monitor", "monitor@example.test", null),
+        account("admin", "admin@example.test", "pw-admin", {
+          verified_at: "2026-09-20",
+        }),
+        account("user", "user2@example.test", null),
+        account("project-admin", "pa@example.test", null),
+        account("user", "user3@example.test", "pw-user3"),
       ],
     },
     {
@@ -58,7 +64,6 @@ const BODY = {
       endpoint: "http://lts.example.test",
       tags: [],
       notes: "",
-      verified_at: null,
       accounts: [account("user", "lts-user@example.test", "pw-lts")],
     },
   ],
@@ -66,26 +71,25 @@ const BODY = {
 
 describe("dev-env catalog", () => {
   const catalog = parseCatalog(BODY, NOW);
+  const main = findServer(catalog, "main");
 
-  it("sorts servers and accounts and carries updated_at", () => {
+  it("sorts servers, keeps accounts in stored order and carries updated_at", () => {
     expect(catalog.servers.map((s) => s.name)).toEqual(["lts", "main"]);
-    expect(findServer(catalog, "main").accounts.map((a) => a.role)).toEqual([
-      "admin",
-      "monitor",
-      "project-admin",
-      "user",
+    expect(main.accounts.map((a) => a.email)).toEqual([
+      "user@example.test",
+      "admin@example.test",
+      "user2@example.test",
+      "pa@example.test",
+      "user3@example.test",
     ]);
     expect(catalog.updatedAt).toBe("2026-10-01T05:00:00Z");
     expect(catalog.warnings).toEqual([]);
   });
 
   it("maps the contract onto the catalog shape", () => {
-    const main = findServer(catalog, "main");
     expect(main).toMatchObject({
       endpoint: "https://main.example.test:8090",
       tags: ["plugin:fair-share", "nightly"],
-      verifiedAt: "2026-09-20",
-      stale: false,
     });
     expect(main.notes).toContain("Reset every Monday.");
     expect(findAccount(main, "user")).toEqual({
@@ -99,12 +103,29 @@ describe("dev-env catalog", () => {
       stale: true,
     });
     expect(findAccount(main, "admin").notes).toBeNull();
-    expect(findAccount(main, "admin")).not.toHaveProperty("share");
+  });
+
+  it("ignores a server's verified_at: only accounts carry verification", () => {
+    const { servers, warnings } = parseCatalog(
+      {
+        version: 1,
+        servers: [
+          {
+            name: "x",
+            endpoint: "https://x.example.test",
+            verified_at: "not a date",
+          },
+        ],
+      },
+      NOW,
+    );
+    expect(servers[0]).not.toHaveProperty("verifiedAt");
+    expect(servers[0]).not.toHaveProperty("stale");
+    expect(warnings).toEqual([]);
   });
 
   it("treats a null or empty password as unavailable", () => {
-    const main = findServer(catalog, "main");
-    expect(findAccount(main, "monitor")).toMatchObject({
+    expect(findAccount(main, "pa@example.test")).toMatchObject({
       password: null,
       passwordAvailable: false,
     });
@@ -127,11 +148,62 @@ describe("dev-env catalog", () => {
     });
   });
 
-  it("marks a note stale when it is old or was never verified", () => {
-    const main = findServer(catalog, "main");
+  it("marks an account note stale when it is old or was never verified", () => {
     expect(findAccount(main, "user").stale).toBe(true);
-    expect(findAccount(main, "admin").stale).toBe(true);
-    expect(findServer(catalog, "lts").stale).toBe(true);
+    expect(findAccount(main, "admin").stale).toBe(false);
+    expect(findAccount(main, "user3@example.test").stale).toBe(true);
+  });
+
+  it("selects by role (first in stored order) or by email, naming the others", () => {
+    expect(selectAccount(main, "user")).toEqual({
+      account: findAccount(main, "user@example.test"),
+      others: ["user2@example.test", "user3@example.test"],
+    });
+    expect(ambiguityNote(selectAccount(main, "user").others)).toBe(
+      "also: user2@example.test, user3@example.test — pass the email to pick one",
+    );
+    const byEmail = selectAccount(main, "USER3@example.test");
+    expect(byEmail.account.email).toBe("user3@example.test");
+    expect(byEmail.others).toEqual([]);
+    expect(selectAccount(main, "admin").others).toEqual([]);
+    expect(ambiguityNote([])).toBeNull();
+  });
+
+  it("names roles and emails when a selection misses", () => {
+    expect(() => findServer(catalog, "nope")).toThrow("Known: lts, main");
+    expect(() => selectAccount(main, "monitor")).toThrow(
+      'Server "main" has no account "monitor". Roles: user, admin, project-admin; ' +
+        "emails: user@example.test, admin@example.test, user2@example.test, " +
+        "pa@example.test, user3@example.test",
+    );
+  });
+
+  it("keeps an unknown role with a warning and skips a duplicate email", () => {
+    const { servers, warnings } = parseCatalog(
+      {
+        version: 1,
+        servers: [
+          {
+            name: "a",
+            endpoint: "https://a.example.test",
+            accounts: [
+              account("monitor", "m@example.test", "pw"),
+              account("user", "u@example.test", "pw-first"),
+              account("admin", " U@Example.test ", "pw-second"),
+            ],
+          },
+        ],
+      },
+      NOW,
+    );
+    expect(servers[0].accounts.map((a) => [a.role, a.email])).toEqual([
+      ["monitor", "m@example.test"],
+      ["user", "u@example.test"],
+    ]);
+    expect(warnings).toEqual([
+      '"a/m@example.test": unknown role "monitor" (expected user, project-admin, admin), kept',
+      '"a/U@Example.test": duplicate email, keeping the first',
+    ]);
   });
 
   it("skips and warns about entries that break the contract, never throwing", () => {
@@ -145,13 +217,13 @@ describe("dev-env catalog", () => {
             name: "a",
             endpoint: "ftp://a.example.test",
             tags: "not-a-list",
-            verified_at: "yesterday",
             accounts: [
-              account("admin", "one@example.test", "pw"),
-              account("admin", "two@example.test", "pw"),
-              account("Bad Role", "x@example.test", "pw"),
+              account("admin", "one@example.test", "pw", {
+                verified_at: "yesterday",
+              }),
+              account("", "x@example.test", "pw"),
               { role: "user", email: "" },
-              account("monitor", "m@example.test", 42),
+              account("user", "m@example.test", 42),
               7,
             ],
           },
@@ -165,28 +237,21 @@ describe("dev-env catalog", () => {
     const [a, b] = servers;
     expect(a.endpoint).toBeNull();
     expect(a.tags).toEqual([]);
-    expect(a.verifiedAt).toBeNull();
     expect(a.accounts.map((acc) => [acc.role, acc.email])).toEqual([
       ["admin", "one@example.test"],
-      ["monitor", "m@example.test"],
+      ["user", "m@example.test"],
     ]);
-    expect(findAccount(a, "monitor").passwordAvailable).toBe(false);
+    expect(findAccount(a, "admin").verifiedAt).toBeNull();
+    expect(findAccount(a, "user").passwordAvailable).toBe(false);
     expect(b.endpoint).toBe("https://b.example.test");
     expect(b.accounts).toEqual([]);
-    expect(warnings).toHaveLength(13);
+    expect(warnings).toHaveLength(12);
     expect(warnings[0]).toContain("catalog version 2");
   });
 
   it("refuses a body with no servers list", () => {
     expect(() => parseCatalog({ version: 1 }, NOW)).toThrow('"servers" list');
     expect(() => parseCatalog([], NOW)).toThrow('"servers" list');
-  });
-
-  it("names the known choices when a lookup misses", () => {
-    expect(() => findServer(catalog, "nope")).toThrow("Known: lts, main");
-    expect(() => findAccount(findServer(catalog, "lts"), "admin")).toThrow(
-      "Known: user",
-    );
   });
 
   it("never leaks a password through the redacted catalog or its text form", () => {
@@ -199,6 +264,7 @@ describe("dev-env catalog", () => {
     );
     const text = formatCatalog(redacted);
     expect(text).toContain("main  https://main.example.test:8090");
+    expect(text).toContain("  tags: plugin:fair-share nightly");
     expect(text).toContain("- user  user@example.test");
     expect(text).toContain("verified: 2026-01-01 (stale)");
     expect(text).toContain("verified: never");
@@ -207,30 +273,45 @@ describe("dev-env catalog", () => {
 
   it("marks an account without a password as typed at login", () => {
     const text = formatCatalog(redactCatalog(catalog));
-    expect(text.match(/password: — \(typed at login\)/g)).toHaveLength(1);
+    expect(text.match(/password: — \(typed at login\)/g)).toHaveLength(2);
     expect(text).toMatch(
-      /- monitor {2}monitor@example\.test\n.*\n {6}password: — \(typed at login\)/,
+      /- project-admin {2}pa@example\.test\n.*\n {6}password: — \(typed at login\)/,
     );
   });
 
-  it("maps the roles the E2E suite reads and clears the ones the server lacks", () => {
-    expect(playwrightVars(findServer(catalog, "main"))).toEqual({
+  it("fills the E2E slots: first admin, first and second user, first project admin", () => {
+    expect(playwrightVars(main)).toEqual({
       E2E_WEBSERVER_ENDPOINT: "https://main.example.test:8090",
       E2E_ADMIN_EMAIL: "admin@example.test",
       E2E_ADMIN_PASSWORD: "pw-admin",
       E2E_USER_EMAIL: "user@example.test",
       E2E_USER_PASSWORD: "pw-user",
-      E2E_USER2_EMAIL: null,
+      E2E_USER2_EMAIL: "user2@example.test",
       E2E_USER2_PASSWORD: null,
-      E2E_MONITOR_EMAIL: "monitor@example.test",
-      E2E_MONITOR_PASSWORD: null,
-      E2E_DOMAIN_ADMIN_EMAIL: null,
-      E2E_DOMAIN_ADMIN_PASSWORD: null,
+      E2E_PROJECT_ADMIN_EMAIL: "pa@example.test",
+      E2E_PROJECT_ADMIN_PASSWORD: null,
+    });
+    expect(playwrightVars(findServer(catalog, "lts"))).toMatchObject({
+      E2E_ADMIN_EMAIL: null,
+      E2E_USER_EMAIL: "lts-user@example.test",
+      E2E_USER2_EMAIL: null,
+      E2E_PROJECT_ADMIN_EMAIL: null,
     });
   });
 
+  it("leaves E2E_MONITOR_* and E2E_DOMAIN_ADMIN_* lines untouched", () => {
+    const before = [
+      "E2E_MONITOR_EMAIL=monitor@example.test",
+      "E2E_MONITOR_PASSWORD=hand-written",
+      "E2E_DOMAIN_ADMIN_EMAIL=da@example.test",
+      "E2E_DOMAIN_ADMIN_PASSWORD=hand-written",
+      "",
+    ].join("\n");
+    const after = upsertEnv(before, playwrightVars(main));
+    expect(after.startsWith(before)).toBe(true);
+  });
+
   it("drops the password line from the login pre-fill on request", () => {
-    const main = findServer(catalog, "main");
     const user = findAccount(main, "user");
     expect(loginPrefillVars(main, user).VITE_DEFAULT_PASSWORD).toBe("pw-user");
     expect(
@@ -239,72 +320,79 @@ describe("dev-env catalog", () => {
   });
 
   it("never writes an empty password key", () => {
-    const main = findServer(catalog, "main");
-    const monitor = findAccount(main, "monitor");
-    expect(loginPrefillVars(main, monitor).VITE_DEFAULT_PASSWORD).toBeNull();
+    const pa = findAccount(main, "project-admin");
+    expect(loginPrefillVars(main, pa).VITE_DEFAULT_PASSWORD).toBeNull();
     const written = upsertEnv(
-      "E2E_MONITOR_PASSWORD=old\n",
+      "E2E_PROJECT_ADMIN_PASSWORD=old\n",
       playwrightVars(main),
     );
     expect(written).not.toMatch(/PASSWORD=\s*$/m);
-    expect(written).not.toContain("E2E_MONITOR_PASSWORD");
-    expect(written).toContain("E2E_MONITOR_EMAIL=monitor@example.test");
+    expect(written).not.toContain("E2E_PROJECT_ADMIN_PASSWORD");
+    expect(written).toContain("E2E_PROJECT_ADMIN_EMAIL=pa@example.test");
   });
 });
 
 describe("dev-env hand-written passwords", () => {
   const catalog = parseCatalog(BODY, NOW);
   const main = findServer(catalog, "main");
-  const monitor = findAccount(main, "monitor");
+  const pa = findAccount(main, "project-admin");
   const user = findAccount(main, "user");
 
   it("keeps a password written for the same email", () => {
     const existing = {
-      VITE_DEFAULT_EMAIL: "  Monitor@Example.test ",
+      VITE_DEFAULT_EMAIL: "  PA@Example.test ",
       VITE_DEFAULT_PASSWORD: "hand-written",
     };
-    const prefill = loginPrefillVars(main, monitor, { existing });
+    const prefill = loginPrefillVars(main, pa, { existing });
     expect(prefill).not.toHaveProperty("VITE_DEFAULT_PASSWORD");
-    expect(keptPasswordEmails(prefill)).toEqual(["monitor@example.test"]);
+    expect(keptPasswordEmails(prefill)).toEqual(["pa@example.test"]);
     expect(
       upsertEnv(
-        "VITE_DEFAULT_EMAIL=monitor@example.test\nVITE_DEFAULT_PASSWORD=hand-written\n",
+        "VITE_DEFAULT_EMAIL=pa@example.test\nVITE_DEFAULT_PASSWORD=hand-written\n",
         prefill,
       ),
     ).toContain("VITE_DEFAULT_PASSWORD=hand-written");
 
     const vars = playwrightVars(main, {
       existing: {
-        E2E_MONITOR_EMAIL: "monitor@example.test",
-        E2E_MONITOR_PASSWORD: "hand-written",
+        E2E_USER2_EMAIL: "user2@example.test",
+        E2E_USER2_PASSWORD: "hand-written-2",
+        E2E_PROJECT_ADMIN_EMAIL: "pa@example.test",
+        E2E_PROJECT_ADMIN_PASSWORD: "hand-written-pa",
       },
     });
-    expect(vars).not.toHaveProperty("E2E_MONITOR_PASSWORD");
-    expect(keptPasswordEmails(vars)).toEqual(["monitor@example.test"]);
+    expect(vars).not.toHaveProperty("E2E_USER2_PASSWORD");
+    expect(vars).not.toHaveProperty("E2E_PROJECT_ADMIN_PASSWORD");
+    expect(keptPasswordEmails(vars)).toEqual([
+      "user2@example.test",
+      "pa@example.test",
+    ]);
   });
 
   it("removes a password written for a different email", () => {
     const existing = {
       VITE_DEFAULT_EMAIL: "someone-else@example.test",
       VITE_DEFAULT_PASSWORD: "theirs",
-      E2E_MONITOR_EMAIL: "someone-else@example.test",
-      E2E_MONITOR_PASSWORD: "theirs",
+      E2E_PROJECT_ADMIN_EMAIL: "someone-else@example.test",
+      E2E_PROJECT_ADMIN_PASSWORD: "theirs",
     };
     expect(
-      loginPrefillVars(main, monitor, { existing }).VITE_DEFAULT_PASSWORD,
+      loginPrefillVars(main, pa, { existing }).VITE_DEFAULT_PASSWORD,
     ).toBeNull();
-    expect(playwrightVars(main, { existing }).E2E_MONITOR_PASSWORD).toBeNull();
+    expect(
+      playwrightVars(main, { existing }).E2E_PROJECT_ADMIN_PASSWORD,
+    ).toBeNull();
   });
 
   it("removes the password key when there is no existing line", () => {
-    const existing = { VITE_DEFAULT_EMAIL: "monitor@example.test" };
-    const prefill = loginPrefillVars(main, monitor, { existing });
+    const existing = { VITE_DEFAULT_EMAIL: "pa@example.test" };
+    const prefill = loginPrefillVars(main, pa, { existing });
     expect(prefill.VITE_DEFAULT_PASSWORD).toBeNull();
     expect(keptPasswordEmails(prefill)).toEqual([]);
     expect(
       playwrightVars(main, {
-        existing: { E2E_MONITOR_EMAIL: "monitor@example.test" },
-      }).E2E_MONITOR_PASSWORD,
+        existing: { E2E_PROJECT_ADMIN_EMAIL: "pa@example.test" },
+      }).E2E_PROJECT_ADMIN_PASSWORD,
     ).toBeNull();
   });
 
@@ -325,16 +413,16 @@ describe("dev-env hand-written passwords", () => {
 
   it("removes the password with --no-password even for the same email", () => {
     const existing = {
-      VITE_DEFAULT_EMAIL: "monitor@example.test",
+      VITE_DEFAULT_EMAIL: "pa@example.test",
       VITE_DEFAULT_PASSWORD: "hand-written",
     };
     expect(
-      loginPrefillVars(main, monitor, { existing, password: false })
+      loginPrefillVars(main, pa, { existing, password: false })
         .VITE_DEFAULT_PASSWORD,
     ).toBeNull();
   });
 
-  it("removes the password of a role the server lacks", () => {
+  it("removes the password of a slot the server cannot fill", () => {
     const vars = playwrightVars(findServer(catalog, "lts"), {
       existing: {
         E2E_ADMIN_EMAIL: "admin@example.test",

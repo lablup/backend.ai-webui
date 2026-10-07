@@ -102,17 +102,21 @@ Which API server a dev session talks to, and which test account it logs in with,
 - `.env.development.local` — `VITE_DEFAULT_API_ENDPOINT` / `VITE_DEFAULT_EMAIL` / `VITE_DEFAULT_PASSWORD`, the login-screen pre-fill.
 - `e2e/envs/.env.playwright` — `E2E_WEBSERVER_ENDPOINT` and the `E2E_*_EMAIL` / `E2E_*_PASSWORD` pairs.
 
-| Command                                                | Does                                                                                                |
-| ------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
-| `pnpm run dev-env status`                              | Where the catalog came from, when it was updated, counts, accounts without a password, probe health |
-| `pnpm run dev-env list [--json]`                       | Servers (with live/down status and manager version), accounts, tags and notes — never a password    |
-| `pnpm run dev-env config <server> [--all] [--json]`    | The server's probed `config.toml`: the manager-related switches, or every key with `--all`          |
-| `pnpm run dev-env get <server> <role> [--json]`        | One account, password included when the catalog has one                                             |
-| `pnpm run dev-env use <server> [role] [--no-password]` | Write both files; `role` defaults to `user`                                                         |
+| Command                                                   | Does                                                                                                |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `pnpm run dev-env status`                                 | Where the catalog came from, when it was updated, counts, accounts without a password, probe health |
+| `pnpm run dev-env list [--json]`                          | Servers (with live/down status and manager version), accounts, tags and notes — never a password    |
+| `pnpm run dev-env config <server> [--all] [--json]`       | The server's probed `config.toml`: the manager-related switches, or every key with `--all`          |
+| `pnpm run dev-env get <server> <account> [--json]`        | One account, password included when the catalog has one                                             |
+| `pnpm run dev-env use <server> [account] [--no-password]` | Write both files; `account` defaults to `user`                                                      |
+
+`<account>` is a role (`user`, `project-admin`, `admin`) or an email. A role picks the first account with that role in the catalog's order; when others share it, `get` and `use` print `also: <emails> — pass the email to pick one`.
 
 Every command asks the board, so there is no local copy to go stale. `use` only replaces the keys it owns; every other line of both files is left alone. Restart `pnpm run dev` afterwards — Vite reads env at server start. A `VITE_DEFAULT_*` variable exported in the shell wins over the file; `use` warns when one is in the way.
 
-`use` never writes an empty password. For an account the catalog has no password for, a box owner can write the password into their own git-ignored file by hand (`VITE_DEFAULT_PASSWORD`, or the role's `E2E_*_PASSWORD`): `use` keeps that line as long as the email line beside it names the same account (case-insensitive) and says so, and removes it otherwise, so another account's password never lingers. With nothing kept it prints a note that the password is typed at login. The roles `admin`, `user`, `user2`, `monitor` and `domain-admin` fill the matching `E2E_*` variables, and `use` removes the pair of a role the server does not have; any other role (`project-admin`, …) is available to `use` and `get` only.
+`use` never writes an empty password. For an account the catalog has no password for, a box owner can write the password into their own git-ignored file by hand (`VITE_DEFAULT_PASSWORD`, or the slot's `E2E_*_PASSWORD`): `use` keeps that line as long as the email line beside it names the same account (case-insensitive) and says so, and removes it otherwise, so another account's password never lingers. With nothing kept it prints a note that the password is typed at login.
+
+In `e2e/envs/.env.playwright`, `use` fills `E2E_ADMIN_*` from the server's first `admin`, `E2E_USER_*` and `E2E_USER2_*` from its first and second `user`, and `E2E_PROJECT_ADMIN_*` from its first `project-admin`, removing the pair of a slot the server cannot fill. Nothing in `e2e/` reads `E2E_PROJECT_ADMIN_*` yet; it is written for tests to come. `E2E_MONITOR_*` and `E2E_DOMAIN_ADMIN_*` are not filled by `use`, and lines you wrote for them are left as they are.
 
 `--no-password` leaves the password out of the pre-fill. Use it on a dev server you share through dev-gw: the bundle carries every `VITE_*` value to whoever opens the share URL (see the notes above).
 
@@ -120,7 +124,7 @@ The board shares the gateway's domain, which `dev-env` reads from `~/.config/fw/
 
 ### What goes in an entry
 
-A server has a `name` (a lowercase slug), an `endpoint`, `tags`, `notes` and `verified_at`; each account has a `role` (a slug, unique on its server), `email`, an optional `password`, and its own `tags`, `notes` and `verified_at`. Tags are free words an agent filters on, e.g. `multi-project`, `plugin:fair-share`, `no-destructive`. `verified_at` is the last day someone checked the notes against the server; notes verified more than 90 days ago, or never, are listed as stale.
+A server has a `name` (a lowercase slug), an `endpoint`, `tags` and `notes`; its state is probed (below), so it carries no verification date. Each account has a `role` (`user`, `project-admin` or `admin`; several accounts may share one), an `email` (unique on its server, case-insensitive), an optional `password`, and its own `tags`, `notes` and `verified_at`. Tags are free words an agent filters on, e.g. `multi-project`, `plugin:fair-share`, `no-destructive`. An account's `verified_at` is the last day someone checked its notes against the server; notes verified more than 90 days ago, or never, are listed as stale.
 
 The board probes every server about every five minutes and `list` shows the result — `live · manager 25.15.0 · checked 3m ago`, `DOWN since … (was 25.15.0): <error>`, or `not checked yet`. `use` and `get` still work on a server that is down, with a warning. Manager and API versions come from that probe, so do not write them into notes.
 
@@ -209,4 +213,4 @@ Runs behind Portless on a fixed internal port 6006. Open the printed `*.localhos
 | `pnpm --filter backend.ai-ui run storybook`                  | Storybook under Portless                                            |
 | `pnpm exec portless list`                                    | Show active Portless routes                                         |
 | `pnpm exec portless proxy stop` / `start -p 1355 [--no-tls]` | Daemon control (project-local binary)                               |
-| `pnpm run dev-env list` / `use <server> [role]`              | Pick a dev API server and test account from the board catalog       |
+| `pnpm run dev-env list` / `use <server> [account]`           | Pick a dev API server and test account from the board catalog       |

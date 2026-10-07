@@ -6,8 +6,8 @@
 import {
   PROBE_STALE_MINUTES,
   allSettings,
+  ambiguityNote,
   downWarning,
-  findAccount,
   findServer,
   formatCatalog,
   formatConfigLine,
@@ -18,6 +18,7 @@ import {
   parseCatalog,
   playwrightVars,
   redactCatalog,
+  selectAccount,
   serverHealth,
   upsertEnv,
 } from "./dev-env-lib.mjs";
@@ -39,11 +40,11 @@ const USAGE = `Usage: pnpm run dev-env <command>
   config <server> [--all] [--json]
                              The server's probed config.toml: manager-related
                              switches, or every key with --all
-  get <server> <role> [--json]
+  get <server> <account> [--json]
                              One account, password included when the catalog has one
-  use <server> [role] [--no-password]
-                             Write .env.development.local (login pre-fill, role
-                             defaults to "user") and e2e/envs/.env.playwright`;
+  use <server> [account] [--no-password]
+                             Write .env.development.local (login pre-fill; account
+                             is a role or an email, default "user") and e2e/envs/.env.playwright`;
 
 class UserError extends Error {}
 
@@ -127,7 +128,7 @@ async function loadCatalog(source = catalogSource()) {
 
 function missingPasswordNote(server, account) {
   return (
-    `note: the catalog has no password for ${server.name}/${account.role}; ` +
+    `note: the catalog has no password for ${account.email} (${server.name}, ${account.role}); ` +
     "type it at login, or add it to your own git-ignored env file."
   );
 }
@@ -180,7 +181,7 @@ function writeEnvFile(relativePath, buildVars, { seedFrom, expand } = {}) {
   return { vars, kept };
 }
 
-async function use(serverName, role, { password }) {
+async function use(serverName, selector, { password }) {
   const catalog = await loadCatalog();
   const server = findServer(catalog, serverName);
   if (!server.endpoint) {
@@ -188,7 +189,7 @@ async function use(serverName, role, { password }) {
       `Server "${server.name}" has no endpoint in the catalog.`,
     );
   }
-  const account = findAccount(server, role);
+  const { account, others } = selectAccount(server, selector);
   // Vite runs dotenv-expand over this file; Playwright reads its file with plain dotenv.
   const { vars: prefill, kept } = writeEnvFile(
     ".env.development.local",
@@ -217,13 +218,14 @@ async function use(serverName, role, { password }) {
         ? ""
         : ", password not pre-filled"),
   );
+  if (ambiguityNote(others)) console.log(ambiguityNote(others));
   if (password && !account.passwordAvailable && kept.length === 0) {
     console.log(missingPasswordNote(server, account));
   }
   if (downWarning(server)) console.log(downWarning(server));
-  if (server.stale || account.stale) {
+  if (account.stale) {
     console.log(
-      "note: the catalog notes for this pick have not been verified in the last 90 days.",
+      "note: the catalog notes for this account have not been verified in the last 90 days.",
     );
   }
   console.log("Restart `pnpm run dev` to pick up the login pre-fill.");
@@ -295,7 +297,7 @@ async function main() {
     case "get": {
       if (positional.length !== 2) throw new UserError(USAGE);
       const server = findServer(await loadCatalog(), positional[0]);
-      const account = findAccount(server, positional[1]);
+      const { account, others } = selectAccount(server, positional[1]);
       const result = {
         server: server.name,
         endpoint: server.endpoint,
@@ -311,6 +313,7 @@ async function main() {
         }
       }
       // stderr, so `--json` stays parseable.
+      if (ambiguityNote(others)) console.error(ambiguityNote(others));
       if (!account.passwordAvailable) {
         console.error(missingPasswordNote(server, account));
       }
