@@ -76,6 +76,8 @@ export type STokenLoginError =
    * mirroring LoginView's `forceLoginApprovedRef`).
    */
   | { kind: 'concurrent-session'; cause: unknown }
+  /** A live session whose user the manager could not return; retry may help. */
+  | { kind: 'account-unavailable'; cause: unknown }
   | { kind: 'unknown'; cause: unknown };
 
 /**
@@ -334,7 +336,7 @@ const STokenLoginBoundaryInner: React.FC<STokenLoginBoundaryProps> = ({
     // would only be refused as "already logged in", so offer a retry.
     if (probed instanceof LoginBootstrapIncompleteError) {
       logger.error('[STokenLoginBoundary] bootstrap incomplete', probed);
-      surfaceError({ kind: 'unknown', cause: probed });
+      surfaceError({ kind: 'account-unavailable', cause: probed });
       return;
     }
     const bootstrap = probed;
@@ -576,8 +578,15 @@ const DefaultErrorCard: React.FC<{
   const { logger } = useBAILogger();
 
   const kindKey = kindToI18nKey(error.kind);
-  const title = t(`sTokenLoginBoundary.Error${kindKey}Title`);
-  const description = t(`sTokenLoginBoundary.Error${kindKey}Description`);
+  // Shares LoginView's copy for the same failure.
+  const title =
+    error.kind === 'account-unavailable'
+      ? t('login.AccountInfoLoadFailed')
+      : t(`sTokenLoginBoundary.Error${kindKey}Title`);
+  const description =
+    error.kind === 'account-unavailable'
+      ? t('login.AccountInfoLoadFailedDesc')
+      : t(`sTokenLoginBoundary.Error${kindKey}Description`);
   const causeDetail =
     'cause' in error && error.cause
       ? String((error.cause as Error)?.message ?? error.cause)

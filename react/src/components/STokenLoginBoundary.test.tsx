@@ -307,7 +307,7 @@ describe('STokenLoginBoundary', () => {
 
     await waitFor(() => {
       expect(onError).toHaveBeenCalledWith({
-        kind: 'unknown',
+        kind: 'account-unavailable',
         cause: incomplete,
       });
     });

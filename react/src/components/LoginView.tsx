@@ -68,6 +68,7 @@ import { preloadPostLoginChunks } from '../preload';
 import { jotaiStore } from './DefaultProviders';
 import LoginFormPanel, { type EndpointHistoryEntry } from './LoginFormPanel';
 import { Button } from '@lablup/ui-common/Button';
+import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex, BAIModal, useBAILogger } from 'backend.ai-ui';
 import i18n from 'i18next';
 import { useAtomValue, useSetAtom } from 'jotai';
@@ -1308,7 +1309,7 @@ const LoginView: React.FC<{
 
       <BAIModal
         open={sessionLoadError !== null}
-        title={t('error.LoginSucceededManagerNotResponding')}
+        title={t('login.AccountInfoLoadFailed')}
         footer={
           <BAIFlex gap="xs" justify="end">
             {/* An act-as tab shares the super admin's cookie; never log it out. */}
@@ -1343,7 +1344,21 @@ const LoginView: React.FC<{
         closable={false}
         mask={{ closable: false }}
       >
-        {sessionLoadError}
+        <BAIFlex direction="column" align="stretch" gap="xs">
+          <Text as="p" display="block" style={{ margin: 0 }}>
+            {t('login.AccountInfoLoadFailedDesc')}
+          </Text>
+          {sessionLoadError ? (
+            <Text
+              as="p"
+              display="block"
+              type="supporting"
+              style={{ margin: 0, whiteSpace: 'pre-wrap' }}
+            >
+              {sessionLoadError}
+            </Text>
+          ) : null}
+        </BAIFlex>
       </BAIModal>
     </>
   );
