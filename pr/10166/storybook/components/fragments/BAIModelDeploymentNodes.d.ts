@@ -1,5 +1,6 @@
 import { BAIModelDeploymentNodesFragment$data, BAIModelDeploymentNodesFragment$key } from '../../__generated__/BAIModelDeploymentNodesFragment.graphql';
 import { BAIColumnsType, BAITableProps } from '../Table';
+import { BAIEntityLabel } from './BAIEntityLabelTokens';
 import { default as React } from '../../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.2.8/01dc110d7f872a8caacc052aa0e86f46609c662315b6d5b76a7913331f487dd1/node_modules/react';
 export type ModelDeploymentNodeInList = NonNullable<BAIModelDeploymentNodesFragment$data[number]>;
 /**
@@ -25,6 +26,9 @@ export interface BAIModelDeploymentNodesProps extends Omit<BAITableProps<ModelDe
      */
     sortableKeys?: ReadonlyArray<DeploymentSorterKey>;
     onChangeOrder?: (order: (typeof availableDeploymentSorterValues)[number] | null) => void;
+    /** Adds "Edit labels" to the Labels column's hover actions. */
+    onEditLabels?: (deployment: ModelDeploymentNodeInList) => void;
+    onLabelClick?: (label: BAIEntityLabel) => void;
 }
 declare const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps>;
 export default BAIModelDeploymentNodes;
