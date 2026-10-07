@@ -3759,6 +3759,8 @@
     "InvalidPortNumber": "ポート番号は1025〜65534の正の数である必要があります",
     "KeepLoginSessionInformation": "ログアウト中はログインセッション情報を保持する",
     "Language": "言語",
+    "LeaveWithoutApplyingTheme": "テーマを適用せずに移動しますか？",
+    "LeaveWithoutApplyingThemeDesc": "ドメインに適用していないテーマの変更は破棄されます。",
     "LightMode": "ライトモード",
     "LightTheme": "ライトモード",
     "LoginHistory": "ログイン履歴",

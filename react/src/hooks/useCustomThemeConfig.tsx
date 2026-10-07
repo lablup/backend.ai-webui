@@ -67,7 +67,9 @@ export const useRawCustomThemeConfig = (): BAIAppearanceConfig | undefined => {
     };
   }, [isThemePreviewMode]);
 
-  if (isThemePreviewMode) {
+  // The Branding page clears the draft on Apply or leave; preview then shows
+  // the applied document instead of the neutral theme.
+  if (isThemePreviewMode && userCustomThemeConfig) {
     return userCustomThemeConfig;
   }
   return customThemeConfig;

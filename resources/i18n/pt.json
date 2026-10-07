@@ -3759,6 +3759,8 @@
     "InvalidPortNumber": "O número da porta deve ser um número positivo entre 1025 ~ 65534",
     "KeepLoginSessionInformation": "Manter as informações da sessão de login durante o logout",
     "Language": "Língua",
+    "LeaveWithoutApplyingTheme": "Sair sem aplicar o tema?",
+    "LeaveWithoutApplyingThemeDesc": "As alterações do tema não foram aplicadas ao domínio e serão descartadas.",
     "LightMode": "Modo claro",
     "LightTheme": "Modo claro",
     "LoginHistory": "Histórico de login",

@@ -3757,6 +3757,8 @@
     "InvalidPortNumber": "Portin numeron on oltava positiivinen numero välillä 1025~65534.",
     "KeepLoginSessionInformation": "Pidä kirjautumisistunnon tiedot uloskirjautumisen aikana",
     "Language": "Kieli",
+    "LeaveWithoutApplyingTheme": "Poistutaanko ottamatta teemaa käyttöön?",
+    "LeaveWithoutApplyingThemeDesc": "Teemamuutoksia ei ole otettu käyttöön toimialueella, ja ne hylätään.",
     "LightMode": "Valotila",
     "LightTheme": "Vaalea tila",
     "LoginHistory": "Kirjautumishistoria",

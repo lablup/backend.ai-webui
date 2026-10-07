@@ -3757,6 +3757,8 @@
     "InvalidPortNumber": "El número de puerto debe estar comprendido entre 1025~65534.",
     "KeepLoginSessionInformation": "Conservar la información de la sesión de inicio de sesión al cerrar la sesión",
     "Language": "Idioma",
+    "LeaveWithoutApplyingTheme": "¿Salir sin aplicar el tema?",
+    "LeaveWithoutApplyingThemeDesc": "Los cambios del tema no se han aplicado al dominio y se descartarán.",
     "LightMode": "Modo de luz",
     "LightTheme": "Modo claro",
     "LoginHistory": "Historial de inicio de sesión",

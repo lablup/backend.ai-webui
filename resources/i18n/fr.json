@@ -3760,6 +3760,8 @@
     "InvalidPortNumber": "Le numéro de port doit être un nombre positif compris entre 1025 et 65534",
     "KeepLoginSessionInformation": "Conserver les informations de session de connexion pendant la déconnexion",
     "Language": "Langue",
+    "LeaveWithoutApplyingTheme": "Quitter sans appliquer le thème ?",
+    "LeaveWithoutApplyingThemeDesc": "Vos modifications du thème n'ont pas été appliquées au domaine et seront abandonnées.",
     "LightMode": "Mode lumière",
     "LightTheme": "Mode clair",
     "LoginHistory": "Historique de connexion",

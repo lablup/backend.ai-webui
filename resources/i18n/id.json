@@ -3761,6 +3761,8 @@
     "InvalidPortNumber": "Nomor port harus berupa angka positif antara 1025~65534",
     "KeepLoginSessionInformation": "Simpan Informasi Login saat Keluar",
     "Language": "Bahasa",
+    "LeaveWithoutApplyingTheme": "Keluar tanpa menerapkan tema?",
+    "LeaveWithoutApplyingThemeDesc": "Perubahan tema Anda belum diterapkan ke domain dan akan dibuang.",
     "LightMode": "Modus Cahaya",
     "LightTheme": "Mode Terang",
     "LoginHistory": "Riwayat Login",

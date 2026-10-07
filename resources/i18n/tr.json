@@ -3757,6 +3757,8 @@
     "InvalidPortNumber": "Port numarası 1025~65534 arasında pozitif bir sayı olmalıdır",
     "KeepLoginSessionInformation": "Oturumu Kapatırken Oturum Açma Bilgilerini Saklayın",
     "Language": "Dil",
+    "LeaveWithoutApplyingTheme": "Temayı uygulamadan çıkılsın mı?",
+    "LeaveWithoutApplyingThemeDesc": "Tema değişiklikleriniz alana uygulanmadı ve silinecek.",
     "LightMode": "Işık Modu",
     "LightTheme": "Açık Mod",
     "LoginHistory": "Giriş Geçmişi",

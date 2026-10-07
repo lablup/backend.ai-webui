@@ -3757,6 +3757,8 @@
     "InvalidPortNumber": "Номер порта должен быть положительным числом от 1025 до 65534.",
     "KeepLoginSessionInformation": "Сохранять информацию о сеансе входа в систему при выходе из системы",
     "Language": "Язык",
+    "LeaveWithoutApplyingTheme": "Выйти, не применив тему?",
+    "LeaveWithoutApplyingThemeDesc": "Изменения темы не применены к домену и будут отменены.",
     "LightMode": "Светлый режим",
     "LightTheme": "Светлый режим",
     "LoginHistory": "История входов",

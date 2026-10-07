@@ -3761,6 +3761,8 @@
     "InvalidPortNumber": "端口號應為 1025~65534 之間的正數",
     "KeepLoginSessionInformation": "註銷時保留登錄會話信息",
     "Language": "語",
+    "LeaveWithoutApplyingTheme": "不套用主題就離開嗎？",
+    "LeaveWithoutApplyingThemeDesc": "尚未套用到網域的主題變更將被捨棄。",
     "LightMode": "燈光模式",
     "LightTheme": "淺色模式",
     "LoginHistory": "登入記錄",

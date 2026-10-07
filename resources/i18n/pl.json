@@ -3760,6 +3760,8 @@
     "InvalidPortNumber": "Numer portu powinien być liczbą dodatnią z zakresu 1025~65534",
     "KeepLoginSessionInformation": "Zachowaj informacje o sesji logowania podczas wylogowania",
     "Language": "Język",
+    "LeaveWithoutApplyingTheme": "Wyjść bez zastosowania motywu?",
+    "LeaveWithoutApplyingThemeDesc": "Zmiany motywu nie zostały zastosowane w domenie i zostaną odrzucone.",
     "LightMode": "Tryb światła",
     "LightTheme": "Tryb jasny",
     "LoginHistory": "Historia logowania",

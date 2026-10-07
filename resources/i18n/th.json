@@ -3742,6 +3742,8 @@
     "InvalidPortNumber": "หมายเลขพอร์ตควรเป็นจำนวนบวกระหว่าง 1025~65534",
     "KeepLoginSessionInformation": "เก็บข้อมูลเซสชันเข้าสู่ระบบไว้ระหว่างการออกจากระบบ",
     "Language": "ภาษา",
+    "LeaveWithoutApplyingTheme": "ออกโดยไม่นำธีมไปใช้หรือไม่",
+    "LeaveWithoutApplyingThemeDesc": "การเปลี่ยนแปลงธีมที่ยังไม่ได้นำไปใช้กับโดเมนจะถูกยกเลิก",
     "LightMode": "โหมดสว่าง",
     "LightTheme": "โหมดสว่าง",
     "LoginHistory": "ประวัติการเข้าสู่ระบบ",

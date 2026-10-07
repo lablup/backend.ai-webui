@@ -3757,6 +3757,8 @@
     "InvalidPortNumber": "Nombor port mestilah nombor positif antara 1025 ~ 65534",
     "KeepLoginSessionInformation": "Simpan Maklumat Sesi Masuk semasa Log Keluar",
     "Language": "Bahasa",
+    "LeaveWithoutApplyingTheme": "Keluar tanpa menggunakan tema?",
+    "LeaveWithoutApplyingThemeDesc": "Perubahan tema anda belum digunakan pada domain dan akan dibuang.",
     "LightMode": "Mod Cahaya",
     "LightTheme": "Mod Terang",
     "LoginHistory": "Sejarah Log Masuk",

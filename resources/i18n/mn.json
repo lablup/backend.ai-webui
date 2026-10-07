@@ -3759,6 +3759,8 @@
     "InvalidPortNumber": "Портын дугаар нь 1025 ~ 65534 хооронд эерэг тоо байх ёстой",
     "KeepLoginSessionInformation": "Гарах үед нэвтрэх хуралдааны мэдээллийг хадгалах",
     "Language": "Хэл",
+    "LeaveWithoutApplyingTheme": "Загварыг хэрэгжүүлэхгүйгээр гарах уу?",
+    "LeaveWithoutApplyingThemeDesc": "Домэйнд хэрэгжүүлээгүй загварын өөрчлөлтүүд устгагдана.",
     "LightMode": "Гэрэл горим",
     "LightTheme": "Цайвар горим",
     "LoginHistory": "Нэвтрэх түүх",

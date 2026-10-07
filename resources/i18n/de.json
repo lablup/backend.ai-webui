@@ -3759,6 +3759,8 @@
     "InvalidPortNumber": "Die Portnummer sollte eine positive Zahl zwischen 1025 und 65534 sein",
     "KeepLoginSessionInformation": "Behalten Sie die Informationen zur Anmeldesitzung beim Abmelden bei",
     "Language": "Sprache",
+    "LeaveWithoutApplyingTheme": "Ohne Anwenden des Designs verlassen?",
+    "LeaveWithoutApplyingThemeDesc": "Ihre Designänderungen wurden nicht auf die Domain angewendet und werden verworfen.",
     "LightMode": "Lichtmodus",
     "LightTheme": "Hellmodus",
     "LoginHistory": "Anmeldeverlauf",

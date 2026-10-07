@@ -3744,6 +3744,8 @@
     "InvalidPortNumber": "Port number should be positive number between 1025~65534",
     "KeepLoginSessionInformation": "Keep Login Session Information while Logout",
     "Language": "Language",
+    "LeaveWithoutApplyingTheme": "Leave without applying the theme?",
+    "LeaveWithoutApplyingThemeDesc": "Your theme changes have not been applied to the domain and will be discarded.",
     "LightMode": "Light mode",
     "LightTheme": "Light Mode",
     "LoginHistory": "Login History",
