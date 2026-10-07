@@ -647,7 +647,6 @@
     "DescRequirePasswordChange": "Perubahan kata sandi diperlukan",
     "Description": "Deskripsi",
     "Domain": "Domain",
-    "DomainIsActive": "Domain aktif",
     "DownloadCSV": "Unduh CSV",
     "DownloadCSVTemplate": "Unduh Template CSV",
     "EmailPrefix": "Awalan email (sebelum @)",
@@ -791,8 +790,7 @@
       "PleaseEnterPositiveAndUnder2_31": "Silakan masukkan nilai positif kurang dari 2^31",
       "PleaseEnterPositiveInteger": "Harap masukkan nilai positif.",
       "PleaseEnterUniqueNumbers": "Silakan masukkan angka yang unik",
-      "PleaseEnterValidNumber": "Silakan masukkan angka yang valid",
-      "PleaseSelectDomain": "Silakan pilih domain terlebih dahulu."
+      "PleaseEnterValidNumber": "Silakan masukkan angka yang valid"
     }
   },
   "dashboard": {
@@ -1311,7 +1309,6 @@
     "filter": {
       "CreatedAt": "Dibuat Pada",
       "DestroyedAt": "Dihancurkan Pada",
-      "DomainName": "Domain",
       "EndpointUrl": "URL Titik Akhir",
       "Name": "Nama",
       "OpenToPublic": "Publik",
@@ -2053,7 +2050,6 @@
     }
   },
   "loginHistory": {
-    "Domain": "Domain",
     "LoginTime": "Waktu Login",
     "Result": "Hasil"
   },
@@ -2269,7 +2265,6 @@
     "DeactivateProject": "Nonaktifkan Proyek",
     "DescRevokeProjectAdmin": "Mencabut izin Admin Proyek tidak akan secara otomatis menghapus proyek tersebut dari daftar Proyek yang Diizinkan milik pengguna. Untuk mencabut akses ke proyek tersebut, hapus secara manual dari daftar.",
     "DescSetProjectAdmin": "Memberikan izin Admin Proyek akan secara otomatis menambahkan proyek tersebut ke daftar Proyek yang Diizinkan milik pengguna, sehingga pengguna tersebut kemudian dapat mengakses proyek tersebut.",
-    "Domain": "Domain",
     "EditProject": "Edit",
     "FailedToActivateProject": "Gagal mengaktifkan proyek.",
     "FailedToDeactivateProject": "Gagal menonaktifkan proyek.",

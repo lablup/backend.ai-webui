@@ -319,7 +319,6 @@
     "ContainerRegistryForImageCommit": "รีจิสทรีคอนเทนเนอร์สำหรับการคอมมิตอิมเมจ",
     "CreateProject": "สร้างโปรเจกต์",
     "Description": "คำอธิบาย",
-    "Domain": "โดเมน",
     "FailedToCreateProject": "ไม่สามารถสร้างโปรเจกต์ได้",
     "FailedToUpdateProject": "ไม่สามารถอัปเดตโปรเจ็กต์ได้",
     "IsActive": "ใช้งานอยู่หรือไม่?",

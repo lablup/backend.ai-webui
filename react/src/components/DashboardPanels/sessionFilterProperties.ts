@@ -106,11 +106,6 @@ export const getSessionFilterProperties = (
     propertyLabel: t('general.AccessKey'),
     type: 'string',
   },
-  {
-    key: 'domain_name',
-    propertyLabel: t('credential.Domain'),
-    type: 'string',
-  },
   enumProperty('cluster_mode', t('session.ClusterMode'), CLUSTER_MODES),
   {
     key: 'cluster_size',

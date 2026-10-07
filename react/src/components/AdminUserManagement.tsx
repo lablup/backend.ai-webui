@@ -149,7 +149,10 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   const isTOTPSupported = !variables.isNotSupportTotp;
   const statusValue =
     variables.filter?.status?.equals === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE';
-  const propertyFilterValue = _.omit(variables.filter ?? {}, 'status');
+  const propertyFilterValue = _.omit(variables.filter ?? {}, [
+    'status',
+    'domainName',
+  ]);
   const orderValue = convertFirstOrderByToString(variables.orderBy);
   const pageSize = variables.limit ?? USER_LIST_DEFAULT_PAGE_SIZE;
   const current = Math.floor((variables.offset ?? 0) / pageSize) + 1;
@@ -442,16 +445,6 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
       type: 'boolean',
     },
     {
-      key: 'domainName',
-      propertyLabel: t('credential.Domain'),
-      type: 'string',
-    },
-    {
-      key: 'domain.isActive',
-      propertyLabel: t('credential.DomainIsActive'),
-      type: 'boolean',
-    },
-    {
       key: 'integrationName',
       propertyLabel: t('credential.IntegrationName'),
       type: 'string',
@@ -706,7 +699,10 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
                 supportedFields,
                 onExport: async (selectedExportKeys) => {
                   const { filter: exportFilter, unsupportedKeys } =
-                    buildUserCSVExportFilter(propertyFilterValue);
+                    buildUserCSVExportFilter({
+                      ...propertyFilterValue,
+                      domainName: variables.filter?.domainName,
+                    });
                   if (unsupportedKeys.length > 0) {
                     message.warning(
                       t('credential.SomeFiltersAreNotAppliedToCSVExport'),

@@ -647,7 +647,6 @@
     "DescRequirePasswordChange": "Salasanan vaihto vaaditaan",
     "Description": "Kuvaus",
     "Domain": "Verkkotunnus",
-    "DomainIsActive": "Verkkotunnus aktiivinen",
     "DownloadCSV": "Lataa CSV",
     "DownloadCSVTemplate": "Lataa CSV-malli",
     "EmailPrefix": "Sähköpostin etuliite (ennen @-merkkiä)",
@@ -791,8 +790,7 @@
       "PleaseEnterPositiveAndUnder2_31": "Syötä positiivinen arvo, joka on pienempi kuin 2^31",
       "PleaseEnterPositiveInteger": "Syötä positiivinen arvo.",
       "PleaseEnterUniqueNumbers": "Syötä yksilöllisiä numeroita",
-      "PleaseEnterValidNumber": "Syötä kelvollinen numero",
-      "PleaseSelectDomain": "Valitse ensin toimialue."
+      "PleaseEnterValidNumber": "Syötä kelvollinen numero"
     }
   },
   "dashboard": {
@@ -1311,7 +1309,6 @@
     "filter": {
       "CreatedAt": "Luotu",
       "DestroyedAt": "Tuhottu",
-      "DomainName": "Verkkotunnus",
       "EndpointUrl": "Päätepisteen URL",
       "Name": "Nimi",
       "OpenToPublic": "Julkinen",
@@ -2050,7 +2047,6 @@
     }
   },
   "loginHistory": {
-    "Domain": "Toimialue",
     "LoginTime": "Kirjautumisaika",
     "Result": "Tulos"
   },
@@ -2266,7 +2262,6 @@
     "DeactivateProject": "Poista projekti käytöstä",
     "DescRevokeProjectAdmin": "Projektin ylläpitäjän käyttöoikeuden peruminen ei poista projektia automaattisesti käyttäjän sallittujen projektien luettelosta. Peru pääsy projektiin poistamalla se luettelosta manuaalisesti.",
     "DescSetProjectAdmin": "Projektin ylläpitäjän käyttöoikeuden myöntäminen lisää projektin automaattisesti käyttäjän sallittujen projektien luetteloon, minkä jälkeen käyttäjä pääsee käsiksi kyseiseen projektiin.",
-    "Domain": "Toimialue",
     "EditProject": "Muokkaa",
     "FailedToActivateProject": "Projektin käyttöönotto epäonnistui.",
     "FailedToDeactivateProject": "Projektin poistaminen käytöstä epäonnistui.",

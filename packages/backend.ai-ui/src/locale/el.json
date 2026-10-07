@@ -319,7 +319,6 @@
     "ContainerRegistryForImageCommit": "Αποθετήριο κοντέινερ για καταχώρηση εικόνας",
     "CreateProject": "Δημιουργία έργου",
     "Description": "Περιγραφή",
-    "Domain": "Τομέας",
     "FailedToCreateProject": "Αποτυχία δημιουργίας έργου",
     "FailedToUpdateProject": "Η ενημέρωση του έργου απέτυχε",
     "IsActive": "Είναι ενεργό;",

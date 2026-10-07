@@ -634,7 +634,6 @@
     "DescRequirePasswordChange": "Password change required",
     "Description": "Description",
     "Domain": "Domain",
-    "DomainIsActive": "Domain Is Active",
     "DownloadCSV": "Download CSV",
     "DownloadCSVTemplate": "Download CSV Template",
     "EmailPrefix": "Email prefix (before @)",
@@ -778,8 +777,7 @@
       "PleaseEnterPositiveAndUnder2_31": "Please enter a positive value less than 2^31",
       "PleaseEnterPositiveInteger": "Please enter a positive value.",
       "PleaseEnterUniqueNumbers": "Enter a unique number.",
-      "PleaseEnterValidNumber": "Please enter a valid number.",
-      "PleaseSelectDomain": "Please select domain first."
+      "PleaseEnterValidNumber": "Please enter a valid number."
     }
   },
   "dashboard": {
@@ -1298,7 +1296,6 @@
     "filter": {
       "CreatedAt": "Created At",
       "DestroyedAt": "Destroyed At",
-      "DomainName": "Domain",
       "EndpointUrl": "Endpoint URL",
       "Name": "Name",
       "OpenToPublic": "Public",
@@ -2037,7 +2034,6 @@
     }
   },
   "loginHistory": {
-    "Domain": "Domain",
     "LoginTime": "Login Time",
     "Result": "Result"
   },
@@ -2253,7 +2249,6 @@
     "DeactivateProject": "Deactivate Project",
     "DescRevokeProjectAdmin": "Revoking project admin permission does not automatically remove the project from the user's allowed project list. To revoke access to the project, remove it from the list manually.",
     "DescSetProjectAdmin": "Granting project admin permission automatically adds the project to the user's allowed project list, and the user will then be able to access that project.",
-    "Domain": "Domain",
     "EditProject": "Edit",
     "FailedToActivateProject": "Failed to activate the project.",
     "FailedToDeactivateProject": "Failed to deactivate the project.",

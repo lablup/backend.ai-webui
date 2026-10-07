@@ -647,7 +647,6 @@
     "DescRequirePasswordChange": "Cambio password richiesto",
     "Description": "Descrizione",
     "Domain": "Dominio",
-    "DomainIsActive": "Dominio attivo",
     "DownloadCSV": "Scarica CSV",
     "DownloadCSVTemplate": "Scarica modello CSV",
     "EmailPrefix": "Prefisso email (prima di @)",
@@ -791,8 +790,7 @@
       "PleaseEnterPositiveAndUnder2_31": "Inserisci un valore positivo inferiore a 2^31",
       "PleaseEnterPositiveInteger": "Inserisci un valore positivo.",
       "PleaseEnterUniqueNumbers": "Inserisci numeri univoci",
-      "PleaseEnterValidNumber": "Inserisci un numero valido",
-      "PleaseSelectDomain": "Seleziona prima un dominio."
+      "PleaseEnterValidNumber": "Inserisci un numero valido"
     }
   },
   "dashboard": {
@@ -1311,7 +1309,6 @@
     "filter": {
       "CreatedAt": "Creato il",
       "DestroyedAt": "Eliminato il",
-      "DomainName": "Dominio",
       "EndpointUrl": "URL endpoint",
       "Name": "Nome",
       "OpenToPublic": "Pubblico",
@@ -2050,7 +2047,6 @@
     }
   },
   "loginHistory": {
-    "Domain": "Dominio",
     "LoginTime": "Ora di accesso",
     "Result": "Risultato"
   },
@@ -2266,7 +2262,6 @@
     "DeactivateProject": "Disattiva progetto",
     "DescRevokeProjectAdmin": "La revoca del permesso di amministratore del progetto non rimuove automaticamente il progetto dall'elenco dei progetti consentiti dell'utente. Per revocare l'accesso al progetto, rimuoverlo manualmente dall'elenco.",
     "DescSetProjectAdmin": "La concessione del permesso di amministratore del progetto aggiunge automaticamente il progetto all'elenco dei progetti consentiti dell'utente, che potrà quindi accedere a tale progetto.",
-    "Domain": "Dominio",
     "EditProject": "Modifica",
     "FailedToActivateProject": "Impossibile attivare il progetto.",
     "FailedToDeactivateProject": "Impossibile disattivare il progetto.",

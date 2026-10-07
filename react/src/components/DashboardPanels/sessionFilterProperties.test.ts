@@ -12,7 +12,8 @@ const t = ((key: string) => key) as unknown as TFunction;
 
 /**
  * `_queryfilter_fieldspec` in the manager's `gql_legacy/session.py`, minus the
- * project-scoped keys the panel cannot use (`project_id`, `group_name`),
+ * project-scoped keys the panel cannot use (`project_id`, `group_name`), `domain_name`
+ * (the WebUI works in one domain),
  * `scheduled_at` (the manager compares its JSON text extraction against a
  * parsed datetime), and `images`, whose `image` alias is the same column.
  */
@@ -22,7 +23,6 @@ const EXPECTED_KEYS = [
   'cluster_mode',
   'cluster_size',
   'created_at',
-  'domain_name',
   'full_name',
   'id',
   'image',

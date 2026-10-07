@@ -647,7 +647,6 @@
     "DescRequirePasswordChange": "비밀번호 변경 필요",
     "Description": "소개",
     "Domain": "도메인",
-    "DomainIsActive": "도메인 활성 여부",
     "DownloadCSV": "CSV 다운로드",
     "DownloadCSVTemplate": "CSV 템플릿 다운로드",
     "EmailPrefix": "이메일 접두사 (@ 앞)",
@@ -791,8 +790,7 @@
       "PleaseEnterPositiveAndUnder2_31": "2^31보다 작은 양수를 입력하세요.",
       "PleaseEnterPositiveInteger": "양수를 입력하세요.",
       "PleaseEnterUniqueNumbers": "중복되지 않는 숫자를 입력하세요",
-      "PleaseEnterValidNumber": "유효한 숫자를 입력하세요",
-      "PleaseSelectDomain": "도메인을 먼저 선택해 주세요."
+      "PleaseEnterValidNumber": "유효한 숫자를 입력하세요"
     }
   },
   "dashboard": {
@@ -1311,7 +1309,6 @@
     "filter": {
       "CreatedAt": "생성일",
       "DestroyedAt": "삭제일",
-      "DomainName": "도메인",
       "EndpointUrl": "엔드포인트 URL",
       "Name": "이름",
       "OpenToPublic": "공개",
@@ -2052,7 +2049,6 @@
     }
   },
   "loginHistory": {
-    "Domain": "도메인",
     "LoginTime": "로그인 시각",
     "Result": "결과"
   },
@@ -2268,7 +2264,6 @@
     "DeactivateProject": "프로젝트 비활성화",
     "DescRevokeProjectAdmin": "프로젝트 관리자 권한을 해제해도 사용자의 허용 프로젝트 목록에서 해당 프로젝트가 자동으로 제거되지 않습니다. 프로젝트 접근을 차단하려면 목록에서 직접 제거해야 합니다.",
     "DescSetProjectAdmin": "프로젝트 관리자 권한을 부여하면 사용자의 허용 프로젝트 목록에 해당 프로젝트가 자동으로 추가되며, 이후 사용자는 해당 프로젝트에 접근할 수 있습니다.",
-    "Domain": "도메인",
     "EditProject": "수정",
     "FailedToActivateProject": "프로젝트 활성화에 실패했습니다.",
     "FailedToDeactivateProject": "프로젝트 비활성화에 실패했습니다.",

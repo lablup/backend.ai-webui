@@ -435,11 +435,6 @@ const ProjectPage = () => {
                   propertyLabel: t('project.Name'),
                   type: 'string',
                 },
-                {
-                  key: 'domain_name',
-                  propertyLabel: t('project.Domain'),
-                  type: 'string',
-                },
                 ...(supportsTypeFilter
                   ? [
                       {

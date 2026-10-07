@@ -647,7 +647,6 @@
     "DescRequirePasswordChange": "Wymagana zmiana hasła",
     "Description": "Opis",
     "Domain": "Domena",
-    "DomainIsActive": "Domena aktywna",
     "DownloadCSV": "Pobierz CSV",
     "DownloadCSVTemplate": "Pobierz szablon CSV",
     "EmailPrefix": "Prefiks e-mail (przed @)",
@@ -791,8 +790,7 @@
       "PleaseEnterPositiveAndUnder2_31": "Wprowadź dodatnią wartość mniejszą niż 2^31",
       "PleaseEnterPositiveInteger": "Wprowadź wartość dodatnią.",
       "PleaseEnterUniqueNumbers": "Proszę wprowadzić unikalne liczby",
-      "PleaseEnterValidNumber": "Proszę wprowadzić prawidłową liczbę",
-      "PleaseSelectDomain": "Najpierw wybierz domenę."
+      "PleaseEnterValidNumber": "Proszę wprowadzić prawidłową liczbę"
     }
   },
   "dashboard": {
@@ -1311,7 +1309,6 @@
     "filter": {
       "CreatedAt": "Utworzono",
       "DestroyedAt": "Usunięto",
-      "DomainName": "Domena",
       "EndpointUrl": "URL punktu końcowego",
       "Name": "Nazwa",
       "OpenToPublic": "Publiczne",
@@ -2051,7 +2048,6 @@
     }
   },
   "loginHistory": {
-    "Domain": "Domena",
     "LoginTime": "Czas logowania",
     "Result": "Wynik"
   },
@@ -2268,7 +2264,6 @@
     "DeactivateProject": "Dezaktywuj projekt",
     "DescRevokeProjectAdmin": "Odebranie uprawnienia administratora projektu nie usuwa automatycznie projektu z listy dozwolonych projektów użytkownika. Aby odebrać dostęp do projektu, usuń go ręcznie z listy.",
     "DescSetProjectAdmin": "Nadanie uprawnienia administratora projektu automatycznie dodaje projekt do listy dozwolonych projektów użytkownika, dzięki czemu użytkownik będzie mógł uzyskać dostęp do tego projektu.",
-    "Domain": "Domena",
     "EditProject": "Edytuj",
     "FailedToActivateProject": "Nie udało się aktywować projektu.",
     "FailedToDeactivateProject": "Nie udało się dezaktywować projektu.",

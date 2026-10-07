@@ -54,7 +54,6 @@ const availableSessionSorterKeys = [
   'status',
   'status_info',
   'result',
-  'domain_name',
   'project_id',
   'access_key',
   'terminated_at',

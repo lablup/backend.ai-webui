@@ -647,7 +647,6 @@
     "DescRequirePasswordChange": "Нууц үгийг өөрчлөх шаардлагатай",
     "Description": "Тодорхойлолт",
     "Domain": "Домэйн",
-    "DomainIsActive": "Домэйн идэвхтэй",
     "DownloadCSV": "CSV татаж авах",
     "DownloadCSVTemplate": "CSV загвар татах",
     "EmailPrefix": "Имэйл префикс (@-с өмнөх)",
@@ -791,8 +790,7 @@
       "PleaseEnterPositiveAndUnder2_31": "2^31-аас бага эерэг утга оруулна уу",
       "PleaseEnterPositiveInteger": "Эерэг утга оруулна уу.",
       "PleaseEnterUniqueNumbers": "Давтагдаагүй тоо оруулна уу",
-      "PleaseEnterValidNumber": "Зөв тоо оруулна уу",
-      "PleaseSelectDomain": "Эхлээд доменээ сонгоно уу."
+      "PleaseEnterValidNumber": "Зөв тоо оруулна уу"
     }
   },
   "dashboard": {
@@ -1311,7 +1309,6 @@
     "filter": {
       "CreatedAt": "Үүсгэсэн огноо",
       "DestroyedAt": "Устгасан огноо",
-      "DomainName": "Домайн",
       "EndpointUrl": "Endpoint URL",
       "Name": "Нэр",
       "OpenToPublic": "Нийтэд нээлттэй",
@@ -2051,7 +2048,6 @@
     }
   },
   "loginHistory": {
-    "Domain": "Домэйн",
     "LoginTime": "Нэвтэрсэн цаг",
     "Result": "Үр дүн"
   },
@@ -2267,7 +2263,6 @@
     "DeactivateProject": "Төслийг идэвхгүй болгох",
     "DescRevokeProjectAdmin": "Төслийн администраторын зөвшөөрлийг цуцалсан ч тухайн төсөл нь хэрэглэгчийн зөвшөөрөгдсөн төслийн жагсаалтаас автоматаар хасагдахгүй. Төсөлд хандах эрхийг цуцлахын тулд жагсаалтаас гараар хасна уу.",
     "DescSetProjectAdmin": "Төслийн администраторын зөвшөөрлийг олгосноор тухайн төсөл нь хэрэглэгчийн зөвшөөрөгдсөн төслийн жагсаалтад автоматаар нэмэгдэх бөгөөд, ингэснээр хэрэглэгч тухайн төсөлд хандах боломжтой болно.",
-    "Domain": "Домен",
     "EditProject": "Засах",
     "FailedToActivateProject": "Төслийг идэвхжүүлэхэд амжилтгүй боллоо.",
     "FailedToDeactivateProject": "Төслийг идэвхгүй болгоход амжилтгүй боллоо.",

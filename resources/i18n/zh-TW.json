@@ -647,7 +647,6 @@
     "DescRequirePasswordChange": "需要更改密碼",
     "Description": "描述",
     "Domain": "領域",
-    "DomainIsActive": "領域已啟用",
     "DownloadCSV": "下載 CSV",
     "DownloadCSVTemplate": "下載 CSV 範本",
     "EmailPrefix": "電子郵件前綴（@ 之前）",
@@ -791,8 +790,7 @@
       "PleaseEnterPositiveAndUnder2_31": "請輸入小於 2^31 的正數",
       "PleaseEnterPositiveInteger": "請輸入正數。",
       "PleaseEnterUniqueNumbers": "請輸入不重複的數字",
-      "PleaseEnterValidNumber": "請輸入有效的數字",
-      "PleaseSelectDomain": "請先選擇網域。"
+      "PleaseEnterValidNumber": "請輸入有效的數字"
     }
   },
   "dashboard": {
@@ -1312,7 +1310,6 @@
     "filter": {
       "CreatedAt": "建立時間",
       "DestroyedAt": "刪除時間",
-      "DomainName": "網域",
       "EndpointUrl": "端點 URL",
       "Name": "名稱",
       "OpenToPublic": "公開",
@@ -2053,7 +2050,6 @@
     }
   },
   "loginHistory": {
-    "Domain": "網域",
     "LoginTime": "登入時間",
     "Result": "結果"
   },
@@ -2270,7 +2266,6 @@
     "DeactivateProject": "停用專案",
     "DescRevokeProjectAdmin": "撤銷專案管理員權限後，系統不會自動將該專案從使用者的允許專案清單中移除。如需撤銷對該專案的存取，請手動將其從清單中移除。",
     "DescSetProjectAdmin": "授予專案管理員權限後，系統會自動將該專案新增至使用者的允許專案清單中，此後該使用者即可存取該專案。",
-    "Domain": "網域",
     "EditProject": "編輯",
     "FailedToActivateProject": "無法啟用專案。",
     "FailedToDeactivateProject": "無法停用專案。",

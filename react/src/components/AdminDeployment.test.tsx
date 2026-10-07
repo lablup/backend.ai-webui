@@ -41,7 +41,12 @@ describe('sanitizeDeploymentOrder', () => {
   it('keeps a sorter the manager supports, in either direction', () => {
     expect(sanitizeDeploymentOrder('name', false)).toBe('name');
     expect(sanitizeDeploymentOrder('-createdAt', false)).toBe('-createdAt');
-    expect(sanitizeDeploymentOrder('-domain', true)).toBe('-domain');
+    expect(sanitizeDeploymentOrder('-project', true)).toBe('-project');
+  });
+
+  it('drops a domain sorter: the WebUI works in one domain', () => {
+    expect(sanitizeDeploymentOrder('domain', true)).toBeNull();
+    expect(sanitizeDeploymentOrder('-domain', true)).toBeNull();
   });
 
   // The case Copilot found: a URL bookmarked on a 26.4.3+ manager, reopened on

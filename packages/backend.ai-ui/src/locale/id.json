@@ -319,7 +319,6 @@
     "ContainerRegistryForImageCommit": "Registry Kontainer untuk Commit Image",
     "CreateProject": "Buat Proyek",
     "Description": "Deskripsi",
-    "Domain": "Domain",
     "FailedToCreateProject": "Gagal membuat proyek",
     "FailedToUpdateProject": "Gagal memperbarui proyek",
     "IsActive": "Aktif?",

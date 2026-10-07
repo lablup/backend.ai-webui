@@ -647,7 +647,6 @@
     "DescRequirePasswordChange": "Penukaran kata laluan diperlukan",
     "Description": "Penerangan",
     "Domain": "Domain",
-    "DomainIsActive": "Domain aktif",
     "DownloadCSV": "Muat turun CSV",
     "DownloadCSVTemplate": "Muat Turun Templat CSV",
     "EmailPrefix": "Awalan e-mel (sebelum @)",
@@ -791,8 +790,7 @@
       "PleaseEnterPositiveAndUnder2_31": "Sila masukkan nilai positif kurang daripada 2^31",
       "PleaseEnterPositiveInteger": "Sila masukkan nilai positif.",
       "PleaseEnterUniqueNumbers": "Sila masukkan nombor yang unik",
-      "PleaseEnterValidNumber": "Sila masukkan nombor yang sah",
-      "PleaseSelectDomain": "Sila pilih domain terlebih dahulu."
+      "PleaseEnterValidNumber": "Sila masukkan nombor yang sah"
     }
   },
   "dashboard": {
@@ -1311,7 +1309,6 @@
     "filter": {
       "CreatedAt": "Dicipta Pada",
       "DestroyedAt": "Dimusnahkan Pada",
-      "DomainName": "Domain",
       "EndpointUrl": "URL Titik Akhir",
       "Name": "Nama",
       "OpenToPublic": "Awam",
@@ -2050,7 +2047,6 @@
     }
   },
   "loginHistory": {
-    "Domain": "Domain",
     "LoginTime": "Masa Log Masuk",
     "Result": "Keputusan"
   },
@@ -2266,7 +2262,6 @@
     "DeactivateProject": "Nyahaktifkan Projek",
     "DescRevokeProjectAdmin": "Membatalkan kebenaran Pentadbir Projek tidak akan secara automatik mengeluarkan projek tersebut daripada senarai Projek Dibenarkan pengguna. Untuk membatalkan akses kepada projek tersebut, keluarkannya secara manual daripada senarai.",
     "DescSetProjectAdmin": "Memberikan kebenaran Pentadbir Projek secara automatik menambahkan projek tersebut ke dalam senarai Projek Dibenarkan pengguna, dan pengguna tersebut kemudiannya akan dapat mengakses projek tersebut.",
-    "Domain": "Domain",
     "EditProject": "Sunting",
     "FailedToActivateProject": "Gagal mengaktifkan projek.",
     "FailedToDeactivateProject": "Gagal menyahaktifkan projek.",
