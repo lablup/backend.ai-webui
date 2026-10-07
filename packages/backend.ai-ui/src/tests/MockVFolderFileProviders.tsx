@@ -1,5 +1,5 @@
 import { BAIDirectoryPickerQuery } from '../components/baiClient/FileExplorer/BAIDirectoryPickerModal';
-import type { LegacyVFolder } from '../components/fragments/BAIVFolderMountConfigInput';
+import type { VFolderListItem } from '../components/fragments/BAIVFolderMountConfigInput';
 import { BAIClientProvider } from '../components/provider/BAIClientProvider';
 import { convertToUUID, toGlobalId } from '../helper';
 import {
@@ -32,8 +32,8 @@ export interface MockVFolder {
 export interface MockVFolderFileProvidersProps {
   vfolders?: Array<MockVFolder>;
   trees?: MockVFolderFileTrees | (() => MockVFolderFileTrees);
-  /** Rows both `myVfolders` and the mocked REST `GET /folders` answer with. */
-  folders?: Array<LegacyVFolder>;
+  /** Rows `myVfolders` answers with. */
+  folders?: Array<VFolderListItem>;
   /** Fallback for a Suspense boundary around `children`; omit to render bare. */
   suspenseFallback?: React.ReactNode;
   children?: React.ReactNode;
@@ -43,13 +43,11 @@ export interface MockVFolderFileProvidersProps {
  * Everything a vfolder file-browsing story needs without a backend: a mock
  * Relay environment answering `myVfolders` from `folders` and
  * `vfolder_nodes` / the picker's `vfolderV2` from `vfolders`, and a mock
- * `BAIClient` whose file APIs read and write `trees` and whose signed
- * `GET /folders` request answers `folders`.
+ * `BAIClient` whose file APIs read and write `trees`.
  */
 const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
   folders,
-  // A REST-fed story still needs the path picker's `vfolderV2` answered,
-  // so the Relay folders default to the REST rows.
+  // The path picker's `vfolderV2` is answered from the same rows by default.
   vfolders = (folders ?? []).map((folder): MockVFolder => ({
     name: folder.name,
     row_id: convertToUUID(folder.id),
@@ -65,7 +63,6 @@ const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
     Promise.resolve(
       createMockVFolderFileClient(
         typeof trees === 'function' ? trees() : trees,
-        folders,
       ),
     ),
   );
@@ -79,9 +76,8 @@ const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
       },
     }));
 
-    // The REST rows as `myVfolders` nodes — the inverse of `toLegacyVFolder`,
-    // so the mount select reads the same fixture from either source.
-    const MOUNT_LEVEL_BY_REST_PERMISSION: Record<string, string> = {
+    // The rows as `myVfolders` nodes, the inverse of `toVFolderListItem`.
+    const MOUNT_LEVEL_BY_PERMISSION: Record<string, string> = {
       ro: 'READ_ONLY',
       rw: 'READ_WRITE',
       wd: 'RW_DELETE',
@@ -99,8 +95,7 @@ const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
           cloneable: folder.cloneable,
         },
         accessControl: {
-          permission:
-            MOUNT_LEVEL_BY_REST_PERMISSION[folder.permission] ?? 'NONE',
+          permission: MOUNT_LEVEL_BY_PERMISSION[folder.permission] ?? 'NONE',
           ownershipType: folder.ownership_type.toUpperCase(),
         },
         ownership: {

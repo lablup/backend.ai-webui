@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<033af697c4c33d610f639d06918e5c18>>
+ * @generated SignedSource<<d702aec2b941e22388afed8bd6c23982>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,11 +13,11 @@ export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_D
 export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
 export type VFolderOwnershipType = "GROUP" | "USER" | "%future added value";
 export type VFolderUsageMode = "DATA" | "GENERAL" | "MODEL" | "%future added value";
-export type useSuspendedLegacyVFoldersQuery$variables = {
+export type useSuspendedMyVFoldersQuery$variables = {
   limit: number;
   offset: number;
 };
-export type useSuspendedLegacyVFoldersQuery$data = {
+export type useSuspendedMyVFoldersQuery$data = {
   readonly myVfolders: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
@@ -45,9 +45,9 @@ export type useSuspendedLegacyVFoldersQuery$data = {
     }>;
   } | null | undefined;
 };
-export type useSuspendedLegacyVFoldersQuery = {
-  response: useSuspendedLegacyVFoldersQuery$data;
-  variables: useSuspendedLegacyVFoldersQuery$variables;
+export type useSuspendedMyVFoldersQuery = {
+  response: useSuspendedMyVFoldersQuery$data;
+  variables: useSuspendedMyVFoldersQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -266,7 +266,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "useSuspendedLegacyVFoldersQuery",
+    "name": "useSuspendedMyVFoldersQuery",
     "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -275,20 +275,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "useSuspendedLegacyVFoldersQuery",
+    "name": "useSuspendedMyVFoldersQuery",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "2cf779a935cb4f27ceeb1495053e3f74",
+    "cacheID": "ebfb23928db9a56e51b61f5e8663c41d",
     "id": null,
     "metadata": {},
-    "name": "useSuspendedLegacyVFoldersQuery",
+    "name": "useSuspendedMyVFoldersQuery",
     "operationKind": "query",
-    "text": "query useSuspendedLegacyVFoldersQuery(\n  $limit: Int!\n  $offset: Int!\n) {\n  myVfolders(limit: $limit, offset: $offset, filter: {status: {notIn: [DELETE_COMPLETE]}}, orderBy: [{field: CREATED_AT, direction: DESC}]) {\n    count\n    edges {\n      node {\n        id\n        status\n        host\n        metadata {\n          name\n          usageMode\n          quotaScopeId\n          createdAt\n          cloneable\n        }\n        accessControl {\n          permission\n          ownershipType\n        }\n        ownership {\n          userId\n          projectId\n          creatorEmail\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query useSuspendedMyVFoldersQuery(\n  $limit: Int!\n  $offset: Int!\n) {\n  myVfolders(limit: $limit, offset: $offset, filter: {status: {notIn: [DELETE_COMPLETE]}}, orderBy: [{field: CREATED_AT, direction: DESC}]) {\n    count\n    edges {\n      node {\n        id\n        status\n        host\n        metadata {\n          name\n          usageMode\n          quotaScopeId\n          createdAt\n          cloneable\n        }\n        accessControl {\n          permission\n          ownershipType\n        }\n        ownership {\n          userId\n          projectId\n          creatorEmail\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b155ce46e47cc6f49d64923cc4721b96";
+(node as any).hash = "fa8bdafa25b434e2bf9d93721c8e842a";
 
 export default node;

@@ -10,14 +10,14 @@ import VFolderTable, {
   VFolderTableProps,
   vFolderAliasNameRegExp,
 } from './VFolderTable';
-import { useEventNotStable, type LegacyVFolder } from 'backend.ai-ui';
+import { useEventNotStable, type VFolderListItem } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface VFolderTableFormItemProps extends Omit<FormItemProps, 'name'> {
   rowFilter?: VFolderTableProps['rowFilter'];
-  rowKey?: keyof LegacyVFolder;
+  rowKey?: keyof VFolderListItem;
   tableProps?: Partial<VFolderTableProps>;
 }
 

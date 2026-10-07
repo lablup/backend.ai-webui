@@ -8,7 +8,7 @@ import MockVFolderFileProviders from '../../tests/MockVFolderFileProviders';
 import {
   MOCK_LEGACY_PROJECT_ID,
   MOCK_MOUNTABLE_HOSTS,
-  mockLegacyVFolders,
+  mockVFolderListItems,
 } from '../../tests/mockVFolderFileTree';
 import BAIVFolderMountConfigInput, {
   type VFolderMountConfigValue,
@@ -18,8 +18,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 // `my-project-data` sits on a host granting mount-in-session; `cold-archive`
 // is on `archive:cold`, which is not in MOCK_MOUNTABLE_HOSTS.
-const mountableId = convertToUUID(mockLegacyVFolders[0].id);
-const unmountableId = convertToUUID(mockLegacyVFolders[3].id);
+const mountableId = convertToUUID(mockVFolderListItems[0].id);
+const unmountableId = convertToUUID(mockVFolderListItems[3].id);
 
 const mountableEntry: VFolderMountConfigValue = {
   vfolderId: mountableId,
@@ -47,7 +47,7 @@ const renderWithFolders = async (
     render(
       <BAIAppProvider>
         <MockVFolderFileProviders
-          folders={mockLegacyVFolders}
+          folders={mockVFolderListItems}
           suspenseFallback="Loading..."
         >
           <BAIVFolderMountConfigInput

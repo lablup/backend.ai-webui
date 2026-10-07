@@ -4,8 +4,8 @@ import MockVFolderFileProviders from '../../tests/MockVFolderFileProviders';
 import {
   MOCK_LEGACY_PROJECT_ID,
   MOCK_MOUNTABLE_HOSTS,
-  mockLegacyVFolder,
-  mockLegacyVFolders,
+  mockVFolderListItem,
+  mockVFolderListItems,
   mockVFolderFile as entry,
   type MockVFolderFileTrees,
 } from '../../tests/mockVFolderFileTree';
@@ -27,8 +27,8 @@ const DEMO_WIDTH = 760;
 // The shared REST fixture exercises every gate the select applies; a third
 // mountable folder is added here so the alias modes fit on one screen.
 const legacyFolders = [
-  ...mockLegacyVFolders,
-  mockLegacyVFolder({
+  ...mockVFolderListItems,
+  mockVFolderListItem({
     id: 'aaaaaaaabbbbccccddddeeeeffff0006',
     name: 'model-checkpoints',
   }),
@@ -212,15 +212,10 @@ dropped in the **WithAutoMountedFolders** story.
       description: 'Project ID to scope vfolder selection',
       table: { type: { summary: 'string' } },
     },
-    ownerEmail: {
-      control: { type: 'text' },
-      description: "Lists this user's folders instead of the caller's own",
-      table: { type: { summary: 'string' } },
-    },
     filter: {
       control: false,
       description: 'Display-only folder filter, applied after the mount gates',
-      table: { type: { summary: '(folder: LegacyVFolder) => boolean' } },
+      table: { type: { summary: '(folder: VFolderListItem) => boolean' } },
     },
     disabled: {
       control: { type: 'boolean' },
