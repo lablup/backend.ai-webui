@@ -487,21 +487,19 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       'environment',
       'admin-operations',
     ),
-    baiClient?.supports('reservoir') &&
-      baiClient?._config.enableReservoir &&
+    baiClient?._config.enableReservoir &&
       createAdminMenuItem(
         t('webui.menu.Reservoir'),
         <PackagePlus style={{ color: token('--color-info') }} />,
         'reservoir',
         'admin-operations',
       ),
-    baiClient?.supports('fair-share-scheduling') &&
-      createAdminMenuItem(
-        t('webui.menu.Scheduler'),
-        <ClipboardClock style={{ color: token('--color-info') }} />,
-        'scheduler',
-        'admin-operations',
-      ),
+    createAdminMenuItem(
+      t('webui.menu.Scheduler'),
+      <ClipboardClock style={{ color: token('--color-info') }} />,
+      'scheduler',
+      'admin-operations',
+    ),
     createAdminMenuItem(
       t('webui.menu.ResourcePolicies'),
       <FileUser style={{ color: token('--color-info') }} size="1em" />,
@@ -542,7 +540,6 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       ),
     // --- System group (superadmin only) ---
     isSuperAdmin &&
-      baiClient?.supports('rbac') &&
       createAdminMenuItem(
         t('webui.menu.RBACManagement'),
         <BadgeCheck style={{ color: token('--color-info') }} size="1em" />,

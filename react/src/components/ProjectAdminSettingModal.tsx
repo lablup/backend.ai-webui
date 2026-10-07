@@ -194,9 +194,8 @@ const ProjectAdminSettingModal = ({
   const { upsertNotification } = useSetBAINotification();
   const webuiNavigate = useWebUINavigate();
   const baiClient = useSuspendedBackendaiClient();
-  const matchesByScopeAdminPermission = baiClient.supports(
-    'rbac-single-scope-role',
-  );
+  const matchesByScopeAdminPermission =
+    baiClient.isManagerVersionCompatibleWith('26.9.0a4');
   const formRef = useRef<FormInstance<{ userIds: string[] }>>(null);
 
   // Keep the previous result visible while a reload is in flight so the table

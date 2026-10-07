@@ -1,8 +1,7 @@
 // Covers FR-3476: Category / Display Name / UI Option (slider, number,
 // select, checkbox, text) on the Runtime Parameter admin create/update
-// modal. These fields are gated behind the `runtime-variant-preset-ui-metadata`
-// client capability (manager >= 26.9.0) — tests that depend on them skip
-// gracefully against an older manager instead of failing.
+// modal. These fields require manager >= 26.9.0 — tests that depend on them
+// skip gracefully against an older manager instead of failing.
 import { loginAsAdmin, webuiEndpoint } from '../utils/test-util';
 import { test, expect, Page } from '@playwright/test';
 
@@ -21,10 +20,11 @@ async function supportsUIMetadata(page: Page): Promise<boolean> {
     () =>
       (
         window as unknown as {
-          backendaiclient?: { supports: (f: string) => boolean };
+          backendaiclient?: {
+            isManagerVersionCompatibleWith: (v: string) => boolean;
+          };
         }
-      ).backendaiclient?.supports('runtime-variant-preset-ui-metadata') ??
-      false,
+      ).backendaiclient?.isManagerVersionCompatibleWith('26.9.0') ?? false,
   );
 }
 

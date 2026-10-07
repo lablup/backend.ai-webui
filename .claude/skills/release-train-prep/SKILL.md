@@ -141,7 +141,7 @@ Top-level fields:
 | `divergedFrom` | true when `to` forked before `from` moved on — mention the base when true |
 | `commits[]` | `{sha, subject, pr, fr, type, scope}` |
 | `featureMatrix[]` | `{flag, version, used}` — gates **added inside the range** |
-| `gating.gaps[]` | `{key, version, kind, ungated[]}` — new schema fields used without `@since` or a `supports()` guard |
+| `gating.gaps[]` | `{key, version, kind, ungated[]}` — new schema fields used without `@since` or an `isManagerVersionCompatibleWith()` guard |
 | `hotspots[]` | `{area, commits, prs[]}` — existing-feature churn, most-changed first (`feat` excluded) |
 | `undeclared[]` | flags used but never declared, i.e. permanently `false` |
 | `risks.noE2E[]` | `{pr, fr, subject, ui[]}` — UI changed, no e2e changed |
@@ -213,7 +213,7 @@ Template:
 <ul>
   <li><code>{key}</code> ({version} 추가) — <code>{ungated file}</code>에서 @since 없이 사용</li>
 </ul>
-<i>낮은 버전 매니저에서 이 쿼리는 실패합니다. @since(version:) 주석 또는 supports() 게이트가 필요합니다.</i><br/><br/>
+<i>낮은 버전 매니저에서 이 쿼리는 실패합니다. @since(version:) 주석 또는 isManagerVersionCompatibleWith() 게이트가 필요합니다.</i><br/><br/>
 
 <b>🌐 미번역</b> — 신규 영어 키 {addedCount}개<br/>
 {shape line, then outliers}<br/><br/>

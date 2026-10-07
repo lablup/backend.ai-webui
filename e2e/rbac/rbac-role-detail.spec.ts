@@ -6,7 +6,7 @@ import {
   KeyPairModal,
   UserSettingModal,
 } from '../utils/classes/user/UserSettingModal';
-import { skipUnlessClientFeature } from '../utils/feature-gate-util';
+import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import test, {
   expect,
@@ -985,10 +985,10 @@ test.describe(
       request,
     }) => {
       await loginAsAdmin(page, request);
-      await skipUnlessClientFeature(
+      await skipUnlessManagerVersion(
         page,
-        'rbac-role-presets',
-        "The Presets tab requires the 'rbac-role-presets' capability (manager >= 26.9.0a4, FR-4065)",
+        '26.9.0a4',
+        'The Presets tab requires manager >= 26.9.0a4 (FR-4065)',
       );
       const namesItsPreset = await page.evaluate(
         () =>

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d841ac1836da98a4c2062394fd09af15>>
+ * @generated SignedSource<<12b456f1f7cfbb3ad67401ef1a334acb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -101,16 +101,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "692d97a4eb52796692ac3af348a0b004",
+    "cacheID": "9b19b660b10d6a135add711f0c57f10d",
     "id": null,
     "metadata": {},
     "name": "EditSessionPriorityModalMutation",
     "operationKind": "mutation",
-    "text": "mutation EditSessionPriorityModalMutation(\n  $input: ModifyComputeSessionInput!\n) {\n  modify_compute_session(input: $input) {\n    item {\n      id\n      priority @since(version: \"24.09.0\")\n    }\n  }\n}\n"
+    "text": "mutation EditSessionPriorityModalMutation(\n  $input: ModifyComputeSessionInput!\n) {\n  modify_compute_session(input: $input) {\n    item {\n      id\n      priority\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "2656f79687d0c72d1df9010e92042076";
+(node as any).hash = "6505d7dc8985bea17b802ea6a9a0a364";
 
 export default node;

@@ -385,13 +385,13 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         metadata {
           resourceGroupName
           projectId
-          projectV2 @since(version: "26.4.3") {
+          projectV2 {
             basicInfo {
               name
             }
           }
         }
-        currentRevision @since(version: "26.4.3") {
+        currentRevision {
           modelMountConfig {
             vfolderId
           }
@@ -408,7 +408,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // is passed in via `sourceRevisionFrgmt`.
   const revisionPrefillFragment = graphql`
     fragment DeploymentAddRevisionModal_revisionSource on ModelRevision {
-      revisionPresetId @since(version: "26.4.4")
+      revisionPresetId
       clusterConfig {
         mode
         size
@@ -441,7 +441,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             value
           }
         }
-        runtimeVariantPresetValues @since(version: "26.4.4rc9") {
+        runtimeVariantPresetValues {
           presetId
           value
         }
@@ -454,7 +454,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         }
         mountDestination
         definitionPath
-        subpath @since(version: "26.4.4")
+        subpath
       }
       modelDefinition {
         models {
@@ -470,7 +470,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               args
             }
             healthCheck {
-              enable @since(version: "26.4.4")
+              enable
               path
               maxRetries
               initialDelay
@@ -515,11 +515,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // ADR-0001 (FR-3411, derive-from-resource tier): adding a revision always
   // targets the deployment's own project — never the ambient header
   // selection. The id comes from the deployment metadata (`projectId`); the
-  // name is resolved via `projectV2` (managers >= 26.4.3). It scopes the
+  // name is resolved via `projectV2`. It scopes the
   // model-folder picker, the resource-allocation form, and the in-modal
   // folder-creation flow. When the pair cannot be resolved (defensive:
-  // missing metadata or a pre-26.4.3 manager without `projectV2`),
-  // submission is visibly disabled instead of falling back to ambient.
+  // missing metadata), submission is visibly disabled instead of falling back to ambient.
   const deploymentProject: ProjectContextOrNull =
     deployment?.metadata?.projectId &&
     deployment?.metadata?.projectV2?.basicInfo?.name
@@ -532,38 +531,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const { open: openFolderExplorer } = useFolderExplorerOpener();
   const baiClient = useSuspendedBackendaiClient();
   const commonEnvVars = useCommonEnvVarConfigs();
-  // 26.4.4+ managers accept the `enable` flag on ModelHealthCheckInput;
-  // older managers reject it, so we keep the legacy null-when-disabled shape.
-  const supportsHealthCheckEnable = baiClient.supports(
-    'model-health-check-enable',
-  );
-  // Managers from 26.4.4 (pinned to the rc9 staging tag) accept
-  // `runtimeVariantPresetValues` on ModelRuntimeConfigInput (FR-3139); older
-  // managers lack the field, so the key must be omitted from the mutation input
-  // entirely. The matching @since directive on the query field uses the same
-  // version string.
-  const supportsRuntimeVariantPresetValues = baiClient.supports(
-    'model-runtime-variant-preset-values',
-  );
-  // The single-string `command` + `shell` fields exist on
-  // ModelServiceConfigInput since 26.7.0, but the WebUI only uses them from
-  // 26.8.0 — see the capability comment in `client.ts` (BA-6742). Below that,
-  // ModelServiceConfigInput (FR-3205); older managers only understand the
-  // deprecated `startCommand` token list, so we fall back to sending that.
-  const supportsCommandShell = baiClient.supports(
-    'model-service-command-string',
-  );
-  // `ModelMountConfigInput.subpath` (mount a subfolder inside the model vfolder)
-  // was added in 26.4.4 (FR-3205); older managers reject the unknown input
-  // field, so the key is omitted from the mutation entirely on them.
-  const supportsMountSubpath = baiClient.supports('model-mount-subpath');
-  // 26.8.0+ managers report `readsVfolderConfigFiles` / `defaultModelDefinition`
-  // on RuntimeVariant (FR-3342); older managers omit them, so the flag is only
-  // authoritative when supported (otherwise the legacy `name === 'custom'`
-  // heuristic decides).
-  const supportsRuntimeVariantConfigReads = baiClient.supports(
-    'model-runtime-variant-reads-vfolder-config-files',
-  );
+  // Single-string `command` + `shell` (BA-6742); older managers get the
+  // deprecated `startCommand` token list instead.
+  const supportsCommandShell =
+    baiClient.isManagerVersionCompatibleWith('26.8.0');
+  // `readsVfolderConfigFiles` / `defaultModelDefinition` on RuntimeVariant
+  // (FR-3342); otherwise the legacy `name === 'custom'` heuristic decides.
+  const supportsRuntimeVariantConfigReads =
+    baiClient.isManagerVersionCompatibleWith('26.8.0');
 
   // Refs to refetch each form's model folder select after creating a new
   // model-usage folder, or via the manual refresh button. Two refs because
@@ -785,7 +760,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   value
                 }
               }
-              image @since(version: "26.4.4") {
+              image {
                 id
                 identity {
                   canonicalName
@@ -831,15 +806,15 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           revision {
             id
             ...DeploymentRevisionDetail_revision
-            deployment @since(version: "26.4.4") {
+            deployment {
               id
               currentRevisionId
               deployingRevisionId
-              currentRevision @since(version: "26.4.3") {
+              currentRevision {
                 id
                 ...DeploymentRevisionDetail_revision
               }
-              deployingRevision @since(version: "26.4.3") {
+              deployingRevision {
                 id
                 ...DeploymentRevisionDetail_revision
               }
@@ -1011,9 +986,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       }));
     }
     const service = rev.modelDefinition?.models?.[0]?.service;
-    // On 26.4.4+ a disabled source revision carries `enable: false`; treat
-    // that as "no health check" for prefill so form fields stay empty. On older
-    // managers `enable` is stripped (undefined), fall back to object presence.
+    // A disabled source revision carries `enable: false`; treat that as
+    // "no health check" for prefill so form fields stay empty.
     const healthCheck =
       service?.healthCheck && service.healthCheck.enable !== false
         ? service.healthCheck
@@ -1205,8 +1179,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // scope): a revision records only the mounted vfolder UUID, not the card
   // it came from, so a card-born revision prefills as a 'folder' source
   // pointing at the card's backing folder. A revision without
-  // `revisionPresetId` (custom-made, preset since deleted, or a pre-26.4.4
-  // manager) cannot be represented in Preset mode at all, so flip to Custom
+  // `revisionPresetId` (custom-made, or preset since deleted) cannot be represented in Preset mode at all, so flip to Custom
   // and let `applySourcePrefillOnce` take over — otherwise the "Add new
   // revision from this" entry silently does nothing when the modal
   // remembers Preset mode.
@@ -1464,14 +1437,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 
     // Resolve the model folder's mount destination + subpath from the plain
     // inputs beneath the folder selector (FR-3205). An empty destination falls
-    // back to the conventional `/models` model mount root; the subpath is only
-    // sent on managers that support it.
+    // back to the conventional `/models` model mount root.
     const selectedModelFolderUuid = toLocalId(values.modelFolderId);
     const modelMountDestination =
       values.modelMountDestination?.trim() || '/models';
-    const modelMountSubpath = supportsMountSubpath
-      ? values.modelSubpath?.trim() || null
-      : undefined;
+    const modelMountSubpath = values.modelSubpath?.trim() || null;
 
     // `environ` now carries ONLY the user's manual Environment Variables —
     // runtime-variant preset values are no longer merged in here.
@@ -1498,11 +1468,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         initialDelay: values.healthCheck?.initialDelay,
         expectedStatusCode: values.healthCheck?.expectedStatusCode,
       };
-      if (!supportsHealthCheckEnable) {
-        // Managers < 26.4.4: null disables the health check.
-        return healthCheckEnabled ? configuredFields : null;
-      }
-      // 26.4.4+: always send the object so the server can seed defaults.
+      // Always send the object so the server can seed defaults.
       return healthCheckEnabled
         ? { enable: true, ...configuredFields }
         : { enable: false };
@@ -1510,12 +1476,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 
     // Runtime-variant preset values are their own list (kept out of `environ`),
     // sent via `modelRuntimeConfig.runtimeVariantPresetValues`. Only collected
-    // for variants that do NOT read the vfolder config files, on managers that
-    // support the field.
-    const runtimeVariantPresetValues =
-      readsVfolderConfigFiles || !supportsRuntimeVariantPresetValues
-        ? []
-        : collectRuntimeVariantPresetValues(values.runtimeParams);
+    // for variants that do NOT read the vfolder config files.
+    const runtimeVariantPresetValues = readsVfolderConfigFiles
+      ? []
+      : collectRuntimeVariantPresetValues(values.runtimeParams);
 
     // Start Command (FR-3205): when the command/shell path is enabled (26.8.0+
     // by client policy) send the user's raw command string in
@@ -1605,15 +1569,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             environ:
               environEntries.length > 0 ? { entries: environEntries } : null,
             // Preset values are sent as their own field, keyed by preset id —
-            // NOT folded into `environ`. The key is omitted entirely on
-            // managers that predate the field (< 26.4.4), which would reject an
-            // unknown input field.
-            ...(supportsRuntimeVariantPresetValues && {
-              runtimeVariantPresetValues:
-                runtimeVariantPresetValues.length > 0
-                  ? runtimeVariantPresetValues
-                  : null,
-            }),
+            // NOT folded into `environ`.
+            runtimeVariantPresetValues:
+              runtimeVariantPresetValues.length > 0
+                ? runtimeVariantPresetValues
+                : null,
           },
           modelMountConfig: {
             vfolderId: selectedModelFolderUuid,
@@ -1624,10 +1584,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             definitionPath: readsVfolderConfigFiles
               ? values.definitionPath?.trim() || null
               : null,
-            // `subpath` (mount a subfolder inside the model vfolder) was added
-            // in 26.4.4; omit the key entirely on older managers, which reject
-            // unknown input fields.
-            ...(supportsMountSubpath && { subpath: modelMountSubpath }),
+            // `subpath` mounts a subfolder inside the model vfolder.
+            subpath: modelMountSubpath,
           },
           modelDefinition,
           extraMounts: extraMounts.length > 0 ? extraMounts : null,
@@ -2361,24 +2319,22 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 placeholder={modelDefinitionDefaults?.modelMountDestination}
               />
             </BAIFormItem>
-            {supportsMountSubpath && (
-              <BAIFormItem
-                name="modelSubpath"
+            <BAIFormItem
+              name="modelSubpath"
+              label={t('modelService.Subpath')}
+              tooltip={t('modelService.SubpathTooltip')}
+              style={{ flex: 1 }}
+            >
+              <BAIVFolderPathPicker
                 label={t('modelService.Subpath')}
-                tooltip={t('modelService.SubpathTooltip')}
-                style={{ flex: 1 }}
-              >
-                <BAIVFolderPathPicker
-                  label={t('modelService.Subpath')}
-                  vfolderUuid={
-                    watchedModelFolderId
-                      ? toLocalId(watchedModelFolderId)
-                      : undefined
-                  }
-                  disabled={!watchedModelFolderId}
-                />
-              </BAIFormItem>
-            )}
+                vfolderUuid={
+                  watchedModelFolderId
+                    ? toLocalId(watchedModelFolderId)
+                    : undefined
+                }
+                disabled={!watchedModelFolderId}
+              />
+            </BAIFormItem>
           </BAIFlex>
           <Suspense
             fallback={

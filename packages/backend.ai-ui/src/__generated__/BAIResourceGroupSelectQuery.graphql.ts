@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0bb8a82ea9185e00743942db285dcfdb>>
+ * @generated SignedSource<<9207bc9dcc8312994097928b8a2f1cd5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -212,16 +212,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "22efa7c04f6b7c9523a92eeee439f90d",
+    "cacheID": "ccbeb1e0d742d5ecb1d403bebf4046be",
     "id": null,
     "metadata": {},
     "name": "BAIResourceGroupSelectQuery",
     "operationKind": "query",
-    "text": "query BAIResourceGroupSelectQuery(\n  $filter: ResourceGroupFilter\n) {\n  adminResourceGroups(filter: $filter, orderBy: [{field: NAME, direction: ASC}], limit: 100) @since(version: \"26.2.0\") {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query BAIResourceGroupSelectQuery(\n  $filter: ResourceGroupFilter\n) {\n  adminResourceGroups(filter: $filter, orderBy: [{field: NAME, direction: ASC}], limit: 100) {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b14073f3d72df00894859dbc4e8adb74";
+(node as any).hash = "401e1429387d38b178219ebb0a678556";
 
 export default node;

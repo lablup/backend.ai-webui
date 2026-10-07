@@ -38,9 +38,6 @@ vi.mock('../hooks', async (importOriginal) => {
   const originalModule = await importOriginal<typeof import('../hooks')>();
   return {
     ...originalModule,
-    useSuspendedBackendaiClient: () => ({
-      isManagerVersionCompatibleWith: () => true,
-    }),
     useWebUINavigate: () => vi.fn(),
   };
 });

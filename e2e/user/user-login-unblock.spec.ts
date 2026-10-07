@@ -6,7 +6,6 @@ import {
   gqlAdmin,
   purgeUserViaApi,
 } from '../utils/admin-api';
-import { skipUnlessClientFeature } from '../utils/feature-gate-util';
 import {
   loginAsAdmin,
   loginAsCreatedAccount,
@@ -26,7 +25,7 @@ import test, {
 import { randomBytes } from 'crypto';
 
 // The webserver blocks a login identifier after repeated failures (10 on the
-// nightly cluster); `adminUnblockUser` (manager >= 26.4.2) clears it.
+// nightly cluster); `adminUnblockUser` clears it.
 const LOGIN_BLOCK_FAILURE_ATTEMPTS = 12;
 
 async function blockLoginWithWrongPasswords(email: string): Promise<void> {
@@ -91,11 +90,6 @@ async function unblockLoginFromUserList(
   page: Page,
   email: string,
 ): Promise<void> {
-  await skipUnlessClientFeature(
-    page,
-    'admin-unblock-user',
-    "Unblock login requires the 'admin-unblock-user' capability (manager >= 26.4.2, FR-4131)",
-  );
   await navigateToUsersPage(page);
   await filterUsersByEmail(page, email);
   const userRow = page.getByRole('row').filter({ hasText: email });
@@ -128,7 +122,9 @@ async function unblockLoginFromUserList(
 
 test.describe(
   'User login unblock',
-  { tag: ['@regression', '@user', '@functional'] },
+  {
+    tag: ['@regression', '@user', '@functional', '@requires-manager-v26.4'],
+  },
   () => {
     let api: APIRequestContext | null = null;
     let email: string;

@@ -8,7 +8,6 @@ import {
   getSessionKernelProgress,
   isTransitionalSessionStatus,
 } from '../../helper/sessionStatus';
-import { useSuspendedBackendaiClient } from '../../hooks';
 import { Badge } from '@lablup/ui-common/Badge';
 import { HoverCard } from '@lablup/ui-common/HoverCard';
 import { Text } from '@lablup/ui-common/Text';
@@ -20,7 +19,6 @@ import {
   badgeVariantForStatus,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { CircleAlertIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -36,19 +34,16 @@ const STATUS_INFO_DESCRIPTION_KEY: Record<string, string> = {
 
 interface SessionStatusBadgeProps {
   sessionFrgmt?: SessionStatusBadgeFragment$key | null;
-  showInfo?: boolean;
   showQueuePosition?: boolean;
   showTooltip?: boolean;
 }
 
 const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
   sessionFrgmt,
-  showInfo,
   showQueuePosition = true,
   showTooltip = true,
 }) => {
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
 
   const session = useFragment(
     graphql`
@@ -56,8 +51,7 @@ const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
         id
         status
         status_info
-        status_data
-        queue_position @since(version: "25.13.0")
+        queue_position
         cluster_size
         # No pagination args: the manager ignores them and returns every
         # kernel, and the list already selects this connection, so Relay
@@ -175,99 +169,23 @@ const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
     <Badge
       variant={badgeVariantForStatus('session', session.status)}
       icon={statusIcon}
-      label={
-        <>
-          {session.status || ' '}
-          {session.status_info &&
-          isTransitionalSessionStatus(session.status) ? (
-            <CircleAlertIcon
-              size="1em"
-              style={{
-                verticalAlign: 'text-top',
-                marginLeft: 4,
-                color: 'var(--color-error)',
-              }}
-            />
-          ) : null}
-        </>
-      }
+      label={session.status || ' '}
     />
   );
 
-  const queuePositionBadge = displayQuePosition ? (
-    <Tooltip content={t('session.PendingPosition')}>
-      <Badge label={`#${displayQuePosition}`} />
-    </Tooltip>
-  ) : null;
-
-  if (baiClient.supports('session-scheduling-history')) {
-    const schedulingHistoryBadge = (
-      <Badge
-        variant={badgeVariantForStatus('session', session.status)}
-        icon={statusIcon}
-        label={session.status || ' '}
-      />
-    );
-    return (
-      <BAIFlex gap="xs">
-        {withStatusOverlay(
-          schedulingHistoryBadge,
-          showTooltip && statusInfoDescriptionKey
-            ? t(statusInfoDescriptionKey)
-            : undefined,
-        )}
-        {queuePositionBadge}
-      </BAIFlex>
-    );
-  }
-
-  if (_.isEmpty(session.status_info) || !showInfo) {
-    return (
-      <BAIFlex wrap="nowrap" gap="xs">
-        {withStatusOverlay(
-          statusBadge,
-          showTooltip && session.status_info
-            ? statusInfoDescriptionKey
-              ? t(statusInfoDescriptionKey)
-              : session.status_info
-            : undefined,
-        )}
-        {queuePositionBadge}
-      </BAIFlex>
-    );
-  }
-
   return (
-    <BAIFlex gap={'xs'}>
-      <BAIFlex gap="xxs">
-        {withStatusOverlay(
-          <Badge
-            variant={badgeVariantForStatus('session', session.status)}
-            icon={statusIcon}
-            label={session.status || ' '}
-          />,
-        )}
-        {statusInfoDescriptionKey ? (
-          <Tooltip content={t(statusInfoDescriptionKey)}>
-            <Badge
-              variant={badgeVariantForStatus(
-                'sessionStatusInfo',
-                session.status_info,
-              )}
-              label={session.status_info}
-            />
-          </Tooltip>
-        ) : (
-          <Badge
-            variant={badgeVariantForStatus(
-              'sessionStatusInfo',
-              session.status_info,
-            )}
-            label={session.status_info}
-          />
-        )}
-      </BAIFlex>
-      {queuePositionBadge}
+    <BAIFlex gap="xs">
+      {withStatusOverlay(
+        statusBadge,
+        showTooltip && statusInfoDescriptionKey
+          ? t(statusInfoDescriptionKey)
+          : undefined,
+      )}
+      {displayQuePosition ? (
+        <Tooltip content={t('session.PendingPosition')}>
+          <Badge label={`#${displayQuePosition}`} />
+        </Tooltip>
+      ) : null}
     </BAIFlex>
   );
 };

@@ -219,16 +219,15 @@ const ModelCardV2Grid: React.FC<{
   // The store lists public cards only, whoever is looking; private ones live
   // on the admin page. The manager never applies the access level itself, and
   // the filter field exists from 26.9.0 (FR-4013 gate).
-  const effectiveFilter: ModelCardV2Filter | undefined = baiClient.supports(
-    'model-card-search-axes',
-  )
-    ? {
-        AND: [
-          { accessLevel: { equals: 'public' } },
-          ...(filter ? [filter] : []),
-        ],
-      }
-    : filter;
+  const effectiveFilter: ModelCardV2Filter | undefined =
+    baiClient.isManagerVersionCompatibleWith('26.9.0')
+      ? {
+          AND: [
+            { accessLevel: { equals: 'public' } },
+            ...(filter ? [filter] : []),
+          ],
+        }
+      : filter;
 
   const result = useLazyLoadQuery<ModelStoreListPageV2Query>(
     graphql`

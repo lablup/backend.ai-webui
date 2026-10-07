@@ -34,27 +34,6 @@ test.describe(
       await expect(page.locator('table').first()).toBeVisible({
         timeout: 10000,
       });
-
-      // Force session-scheduling-history capability so the history button
-      // is rendered regardless of the backend version.
-      // This must be set AFTER navigation so backendaiclient is fully initialized.
-      // The component reads baiClient.supports() on each render, so setting the flag
-      // here ensures it is active when the Session Detail drawer is opened.
-      await page.waitForFunction(
-        () => {
-          return (
-            typeof (globalThis as any).backendaiclient !== 'undefined' &&
-            (globalThis as any).backendaiclient !== null &&
-            (globalThis as any).backendaiclient.ready === true
-          );
-        },
-        { timeout: 10000 },
-      );
-      await page.evaluate(() => {
-        (globalThis as any).backendaiclient._features[
-          'session-scheduling-history'
-        ] = true;
-      });
     });
 
     /**

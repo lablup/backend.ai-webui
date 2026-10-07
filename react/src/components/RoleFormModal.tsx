@@ -152,7 +152,7 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
     };
     return (
       <Suspense fallback={fallback}>
-        {baiClient.supports('rbac-domain-scope-uuid') ? (
+        {baiClient.isManagerVersionCompatibleWith('26.9.0') ? (
           <BAIDomainSelectV2 {...domainSelectProps} />
         ) : (
           <BAIDomainSelect {...domainSelectProps} />
@@ -254,11 +254,9 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
   const { logger } = useBAILogger();
   const [form] = Form.useForm();
   const baiClient = useSuspendedBackendaiClient();
-  // Auto-assign is only supported on managers >= 26.4.4. Gate the form field
-  // and the mutation input so older managers never receive the unknown field.
-  const supportsAutoAssign = baiClient.supports('role-auto-assign');
   // Managers >= 26.9.0 take the one scope as `scope`; older ones as `scopes`.
-  const isSingleScopeRole = baiClient.supports('rbac-single-scope-role');
+  const isSingleScopeRole =
+    baiClient.isManagerVersionCompatibleWith('26.9.0a4');
   const scopeType = Form.useWatch('scopeType', form) as string | undefined;
 
   const { rbacPermissionMatrix } =
@@ -294,7 +292,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
         id
         name
         description
-        autoAssign @since(version: "26.4.4")
+        autoAssign
       }
     `,
     roleNodeFrgmt ?? null,
@@ -311,7 +309,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
           description
           source
           status
-          autoAssign @since(version: "26.4.4")
+          autoAssign
           createdAt
           updatedAt
         }
@@ -325,7 +323,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
           id
           name
           description
-          autoAssign @since(version: "26.4.4")
+          autoAssign
           updatedAt
         }
       }
@@ -357,10 +355,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
           ) {
             changedFields.description = values.description || null;
           }
-          if (
-            supportsAutoAssign &&
-            values.autoAssign !== editingRole.autoAssign
-          ) {
+          if (values.autoAssign !== editingRole.autoAssign) {
             changedFields.autoAssign = values.autoAssign;
           }
 
@@ -413,9 +408,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
               input: {
                 name: values.name,
                 description: values.description || null,
-                ...(supportsAutoAssign
-                  ? { autoAssign: values.autoAssign }
-                  : {}),
+                autoAssign: values.autoAssign,
                 ...(isSingleScopeRole
                   ? {
                       scope: {
@@ -506,16 +499,14 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
         <Form.Item name="description" label={t('rbac.RoleDescription')}>
           <AstryxFormTextArea label={t('rbac.RoleDescription')} rows={1} />
         </Form.Item>
-        {supportsAutoAssign && (
-          <Form.Item
-            name="autoAssign"
-            label={t('rbac.AutoAssign')}
-            valuePropName="checked"
-            tooltip={t('rbac.AutoAssignDescription')}
-          >
-            <AstryxFormCheckbox label={t('general.Enable')} />
-          </Form.Item>
-        )}
+        <Form.Item
+          name="autoAssign"
+          label={t('rbac.AutoAssign')}
+          valuePropName="checked"
+          tooltip={t('rbac.AutoAssignDescription')}
+        >
+          <AstryxFormCheckbox label={t('general.Enable')} />
+        </Form.Item>
         {!isEditMode && (
           <BAIFlex direction="row" gap="xs" align="start">
             <Form.Item

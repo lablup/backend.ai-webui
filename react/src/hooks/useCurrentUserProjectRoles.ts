@@ -38,14 +38,15 @@ export interface CurrentUserProjectRolesResult {
  */
 export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
   const baiClient = useSuspendedBackendaiClient();
-  const supportsMyRolesV2 = baiClient.supports('rbac-single-scope-role');
+  const supportsMyRolesV2 =
+    baiClient.isManagerVersionCompatibleWith('26.9.0a4');
 
   const PROJECT_ADMIN_PAGE = 'PROJECT_ADMIN_PAGE';
   const legacyPermissionFilter: PermissionNestedFilter = {
     // Cast confined to the one field the generated type can't model.
-    entityType: (baiClient.supports('rbac-filter-wrapper')
-      ? { equals: PROJECT_ADMIN_PAGE }
-      : PROJECT_ADMIN_PAGE) as PermissionNestedFilter['entityType'],
+    entityType: {
+      equals: PROJECT_ADMIN_PAGE,
+    } as PermissionNestedFilter['entityType'],
   };
 
   const data = useLazyLoadQuery<useCurrentUserProjectRolesQuery>(
@@ -101,9 +102,7 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
     { legacyPermissionFilter, supportsMyRolesV2 },
     {
       // store-or-network keeps the result cached across pages for the session.
-      fetchPolicy: baiClient.supports('my-roles')
-        ? 'store-or-network'
-        : 'store-only',
+      fetchPolicy: 'store-or-network',
     },
   );
 

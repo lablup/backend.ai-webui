@@ -103,7 +103,7 @@ e2e/
     ├── test-util-antd.ts     # legacy filename; see the helper table below
     ├── admin-api.ts          # GraphQL admin context + API-level sweeps
     ├── cleanup-util.ts       # sweepServices / sweepVFolders / cleanupVFolderSafely
-    └── feature-gate-util.ts  # skipUnlessWebUIVersion / skipUnlessClientFeature / …
+    └── feature-gate-util.ts  # skipUnlessWebUIVersion / skipUnlessManagerVersion / …
 ```
 
 Naming (full rules in `e2e/E2E-TEST-NAMING-GUIDELINES.md`):
@@ -393,8 +393,13 @@ are only reliable when `isLocalEnvironment` is true.
 - Track created resources in a variable and clean up in `afterEach`, wrapped in try/catch —
   never assume creation succeeded.
 - Skip rather than fail when the target deployment lacks a feature:
-  `skipUnlessWebUIVersion`, `skipUnlessClientFeature`, `skipUnlessClientConfig`,
+  `skipUnlessWebUIVersion`, `skipUnlessManagerVersion`, `skipUnlessClientConfig`,
   `skipUnlessAllowedVFolderType` from `e2e/utils/feature-gate-util.ts`.
+  A test that depends on a manager version records the minimum version it
+  passes on as a `@requires-manager-vX.Y` tag, even at or below the app's 26.4
+  support floor (ADR 0010), so runs against older managers can
+  `--grep-invert` it; `skipUnlessManagerVersion` is only for features newer
+  than 26.4.
 
 ---
 

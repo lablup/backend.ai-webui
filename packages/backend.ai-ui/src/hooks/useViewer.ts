@@ -1,10 +1,7 @@
-import { useConnectedBAIClient } from '..';
 import { useViewerQuery } from '../__generated__/useViewerQuery.graphql';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const useViewer = () => {
-  const baiClient = useConnectedBAIClient();
-  const isViewerAvailable = baiClient.isManagerVersionCompatibleWith('25.14.2');
   const { viewer } = useLazyLoadQuery<useViewerQuery>(
     graphql`
       query useViewerQuery {
@@ -18,7 +15,7 @@ const useViewer = () => {
     `,
     {},
     {
-      fetchPolicy: isViewerAvailable ? 'store-or-network' : 'store-only',
+      fetchPolicy: 'store-or-network',
     },
   );
 

@@ -33,7 +33,7 @@ const BAIDeploymentOwnerInfo: React.FC<BAIDeploymentOwnerInfoProps> = ({
     graphql`
       fragment BAIDeploymentOwnerInfo_deployment on ModelDeployment {
         id
-        creator @since(version: "26.4.3") {
+        creator {
           id
           basicInfo {
             email

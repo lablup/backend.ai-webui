@@ -8,7 +8,6 @@ import {
   LegacyRoleScopeTabQuery,
 } from '../__generated__/LegacyRoleScopeTabQuery.graphql';
 import { convertToOrderBy } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { Token } from '@lablup/ui-common/Token';
 import {
@@ -37,15 +36,12 @@ interface LegacyRoleScopeTabProps {
 }
 
 /**
- * Legacy Scopes tab for managers without `role-mapped-scope-filter`
- * (< 26.8.0). Managers with the flag get the merged Detailed Permissions view
- * (`RolePermissionDetailTab`) instead. Filtering, ordering, and pagination all
- * run server-side via query variables.
+ * Legacy Scopes tab for managers < 26.8.0; newer managers get the merged
+ * Detailed Permissions view (`RolePermissionDetailTab`) instead.
  */
 const LegacyRoleScopeTab: React.FC<LegacyRoleScopeTabProps> = ({ roleId }) => {
   'use memo';
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
 
   const {
     baiPaginationOption,
@@ -176,9 +172,6 @@ const LegacyRoleScopeTab: React.FC<LegacyRoleScopeTabProps> = ({ roleId }) => {
               key: 'entityType',
               propertyLabel: t('rbac.ScopeType'),
               type: 'enum',
-              valueMode: baiClient.supports('rbac-filter-wrapper')
-                ? 'operator'
-                : 'scalar',
               options: [
                 'DOMAIN',
                 'PROJECT',

@@ -1,6 +1,6 @@
 // Covers the RBAC page's Presets tab and the system-role "View Presets" link
 // added in #9924 (FR-4065). Read-only: no preset or role is created or edited.
-import { skipUnlessClientFeature } from '../utils/feature-gate-util';
+import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import test, { expect, Locator, Page } from '@playwright/test';
 
@@ -133,10 +133,10 @@ test.describe(
   () => {
     test.beforeEach(async ({ page, request }) => {
       await loginAsAdmin(page, request);
-      await skipUnlessClientFeature(
+      await skipUnlessManagerVersion(
         page,
-        'rbac-role-presets',
-        "The Presets tab requires the 'rbac-role-presets' capability (manager >= 26.9.0a4, FR-4065)",
+        '26.9.0a4',
+        'The Presets tab requires manager >= 26.9.0a4 (FR-4065)',
       );
     });
 
@@ -275,15 +275,15 @@ test.describe(
   () => {
     test.beforeEach(async ({ page, request }) => {
       await loginAsAdmin(page, request);
-      await skipUnlessClientFeature(
+      await skipUnlessManagerVersion(
         page,
-        'rbac-role-presets',
-        "The system role's View Presets link requires the 'rbac-role-presets' capability (manager >= 26.9.0a4, FR-4065)",
+        '26.9.0a4',
+        "The system role's View Presets link requires manager >= 26.9.0a4 (FR-4065)",
       );
-      await skipUnlessClientFeature(
+      await skipUnlessManagerVersion(
         page,
-        'role-mapped-scope-filter',
-        "Picking a project-scoped role needs the role list's Scope Type filter ('role-mapped-scope-filter')",
+        '26.8.0',
+        "Picking a project-scoped role needs the role list's Scope Type filter (manager >= 26.8.0)",
       );
     });
 

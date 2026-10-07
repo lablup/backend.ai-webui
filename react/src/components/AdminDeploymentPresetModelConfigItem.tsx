@@ -77,16 +77,14 @@ const ModelConfigItem: React.FC<{
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   /**
-   * BA-7210 / FR-3481 (26.9.0+, `preset-model-config-type`): legacy managers
-   * (without the capability) can only submit Service Configuration/Health
+   * BA-7210 / FR-3481: managers older than 26.9.0 can only submit Service Configuration/Health
    * Check/Pre-Start Actions together with a real name/modelPath, so those
    * sections nest here (instead of independently in Step 1 — see
    * AdminDeploymentPresetSettingPageContent.tsx), rendered above Metadata to
    * match the pre-FR-3205 field order.
    */
-  const supportsNullableModelDefinition = baiClient.supports(
-    'preset-model-config-type',
-  );
+  const supportsNullableModelDefinition =
+    baiClient.isManagerVersionCompatibleWith('26.9.0');
 
   // Rendered only when the model-definition switch is ON. Name/path are
   // nullable server-side on 26.9.0+ (BA-7210 inherits them from the runtime

@@ -196,7 +196,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
     adminUsersV2?.edges?.find((edge) => edge?.node?.id === id)?.node ?? null;
 
   const canActAs =
-    bailClient.supports('act-as') &&
+    bailClient.isManagerVersionCompatibleWith('26.9.0') &&
     bailClient.is_superadmin &&
     !globalThis.isElectron;
 
@@ -311,7 +311,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
                     '',
                 ),
             },
-          bailClient.supports('admin-unblock-user') && {
+          {
             key: 'unblock-login',
             title: t('credential.UnblockLogin'),
             icon: <LockOpen />,
@@ -352,9 +352,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
     validate: (value: string) => /^-?\d+$/.test(String(value).trim()),
   };
 
-  // Filters only supported by the v2 user search API from 26.4.4 (backend
-  // BA-6247 / BA-6249). Included only when the connected manager advertises
-  // the capability, so the UI never offers filters it cannot evaluate.
+  // Filters the v2 user search API evaluates (BA-6247 / BA-6249).
   const extendedFilterProperties: Array<BAIGraphQLFilterProperty> = [
     {
       key: 'fullName',
@@ -486,9 +484,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
         },
       ],
     },
-    ...(bailClient.supports('user-v2-extended-filter')
-      ? extendedFilterProperties
-      : []),
+    ...extendedFilterProperties,
   ]);
 
   return (
@@ -605,33 +601,31 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
                 setOpenCreateModal(true);
               }}
             />
-            {bailClient.supports('bulk-create-user') && (
-              <DropdownMenu
-                button={{
-                  label: t('button.More'),
-                  variant: 'primary',
-                  isIconOnly: true,
-                  icon: <Ellipsis size="1em" />,
-                }}
-                hasChevron={false}
-                placement="below"
-                alignment="end"
-                items={[
-                  {
-                    label: t('credential.BulkCreateUser'),
-                    onClick: () => {
-                      setOpenBulkCreateModal(true);
-                    },
+            <DropdownMenu
+              button={{
+                label: t('button.More'),
+                variant: 'primary',
+                isIconOnly: true,
+                icon: <Ellipsis size="1em" />,
+              }}
+              hasChevron={false}
+              placement="below"
+              alignment="end"
+              items={[
+                {
+                  label: t('credential.BulkCreateUser'),
+                  onClick: () => {
+                    setOpenBulkCreateModal(true);
                   },
-                  {
-                    label: t('credential.BulkCreateUserFromCSV'),
-                    onClick: () => {
-                      setOpenBulkCreateCSVModal(true);
-                    },
+                },
+                {
+                  label: t('credential.BulkCreateUserFromCSV'),
+                  onClick: () => {
+                    setOpenBulkCreateCSVModal(true);
                   },
-                ]}
-              />
-            )}
+                },
+              ]}
+            />
           </ButtonGroup>
         </BAIFlex>
       </BAIFlex>

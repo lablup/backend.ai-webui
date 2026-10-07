@@ -114,7 +114,7 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
     setIsInstalling(true);
     try {
       const installPromises = imagesToInstall.map(async (image, index) => {
-        const imageName = `${image?.registry}/${image?.namespace ?? image?.name}:${image?.tag}`;
+        const imageName = `${image?.registry}/${image?.namespace}:${image?.tag}`;
 
         const labels = (image?.labels ?? []).reduce<Record<string, string>>(
           (acc, label) => {
@@ -374,8 +374,7 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
         >
           {(() => {
             const imageNames = imagesToInstall.map(
-              (image) =>
-                `${image?.registry}/${image?.namespace ?? image?.name}:${image?.tag}`,
+              (image) => `${image?.registry}/${image?.namespace}:${image?.tag}`,
             );
             const pagedNames = imageNames.slice(
               (listPage - 1) * LIST_PAGE_SIZE,

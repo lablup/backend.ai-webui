@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<87a60e3b31389681275b963db5a6d458>>
+ * @generated SignedSource<<01484c822cee5123d9902d193c8daea4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -139,16 +139,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e071e72804236e9dbbbb86ca78b26844",
+    "cacheID": "21fc24af5d2c1f66b16e026ee4f67086",
     "id": null,
     "metadata": {},
     "name": "UserResourcePolicySelectQuery",
     "operationKind": "query",
-    "text": "query UserResourcePolicySelectQuery {\n  user_resource_policies {\n    id\n    name\n    created_at\n    max_vfolder_count @since(version: \"23.09.6\")\n    max_session_count_per_model_session @since(version: \"23.09.10\")\n    max_quota_scope_size @since(version: \"23.09.2\")\n    max_customized_image_count @since(version: \"24.03.0\")\n    ...UserResourcePolicySettingModalFragment\n  }\n}\n\nfragment UserResourcePolicySettingModalFragment on UserResourcePolicy {\n  id\n  name\n  max_vfolder_count @since(version: \"23.09.6\")\n  max_session_count_per_model_session @since(version: \"23.09.10\")\n  max_quota_scope_size @since(version: \"23.09.2\")\n  max_customized_image_count @since(version: \"24.03.0\")\n}\n"
+    "text": "query UserResourcePolicySelectQuery {\n  user_resource_policies {\n    id\n    name\n    created_at\n    max_vfolder_count\n    max_session_count_per_model_session\n    max_quota_scope_size\n    max_customized_image_count\n    ...UserResourcePolicySettingModalFragment\n  }\n}\n\nfragment UserResourcePolicySettingModalFragment on UserResourcePolicy {\n  id\n  name\n  max_vfolder_count\n  max_session_count_per_model_session\n  max_quota_scope_size\n  max_customized_image_count\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5726bc665516f441e11765f3a7f91cf6";
+(node as any).hash = "650dac37b7fa07c0eaaa289b70cb9831";
 
 export default node;
