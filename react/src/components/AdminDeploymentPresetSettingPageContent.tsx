@@ -292,7 +292,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           revisionHistoryLimit
           deploymentStrategy
         }
-        presetValues @since(version: "26.4.4rc9") {
+        presetValues {
           presetId
           value
         }
@@ -310,7 +310,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               shell
               port
               healthCheck {
-                enable @since(version: "26.4.4rc7")
+                enable
                 interval
                 path
                 maxRetries
@@ -608,11 +608,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                         shell: commandModeState.shell,
                         startCommand: commandModeState.command,
                         execution: commandModeState.execution,
-                        // 26.4.4rc7+: `enable` is authoritative; older managers
-                        // omit it, so fall back to the object's presence.
                         enableHealthCheck:
-                          m.service.healthCheck?.enable ??
-                          !!m.service.healthCheck,
+                          m.service.healthCheck?.enable ?? false,
                         healthCheck: m.service.healthCheck
                           ? {
                               path: m.service.healthCheck.path,

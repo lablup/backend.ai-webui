@@ -311,7 +311,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
                     '',
                 ),
             },
-          bailClient.isManagerVersionCompatibleWith('26.4.2') && {
+          {
             key: 'unblock-login',
             title: t('credential.UnblockLogin'),
             icon: <LockOpen />,
@@ -352,8 +352,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
     validate: (value: string) => /^-?\d+$/.test(String(value).trim()),
   };
 
-  // Filters the v2 user search API evaluates only from 26.4.4rc9 (BA-6247 /
-  // BA-6249); offered only when the manager can evaluate them.
+  // Filters the v2 user search API evaluates (BA-6247 / BA-6249).
   const extendedFilterProperties: Array<BAIGraphQLFilterProperty> = [
     {
       key: 'fullName',
@@ -485,9 +484,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
         },
       ],
     },
-    ...(bailClient.isManagerVersionCompatibleWith('26.4.4rc9')
-      ? extendedFilterProperties
-      : []),
+    ...extendedFilterProperties,
   ]);
 
   return (

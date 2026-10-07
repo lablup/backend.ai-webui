@@ -20,7 +20,7 @@ import SessionNodes, {
 import SessionResourceGrid from '../components/SessionResourceGrid';
 import { handleRowSelectionChange } from '../helper';
 import { ExtractResultValue } from '../helper/resultTypes';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -97,7 +97,6 @@ const ComputeSessionListPage = () => {
   const currentProject = useCurrentProjectValue();
 
   const [currentUser] = useCurrentUserInfo();
-  const baiClient = useSuspendedBackendaiClient();
 
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -686,12 +685,7 @@ const ComputeSessionListPage = () => {
                         // user too — otherwise an admin exports every user's
                         // sessions. Mirrors the table's user_id filter via the
                         // session export `user.email` filter (BA-6480).
-                        if (
-                          baiClient.isManagerVersionCompatibleWith(
-                            '26.4.4rc9',
-                          ) &&
-                          currentUser.email
-                        ) {
+                        if (currentUser.email) {
                           csvFilter.user = {
                             email: { equals: currentUser.email },
                           };

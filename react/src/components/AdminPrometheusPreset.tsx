@@ -6,7 +6,6 @@ import { AdminPrometheusPresetDeleteMutation } from '../__generated__/AdminProme
 import { AdminPrometheusPresetQuery as AdminPrometheusPresetQueryType } from '../__generated__/AdminPrometheusPresetQuery.graphql';
 import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
 import AutoUpdateFetchKeyButton, {
   LONG_AUTO_UPDATE_DELAY_OPTIONS,
 } from './AutoUpdateFetchKeyButton';
@@ -23,7 +22,6 @@ import {
   BAISelect,
   BAIUnmountAfterClose,
   type BAITableSettings,
-  filterOutEmpty,
   isValidUUID,
   toLocalId,
 } from 'backend.ai-ui';
@@ -82,11 +80,6 @@ const AdminPrometheusPreset = ({
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const baiClient = useSuspendedBackendaiClient();
-  // `QueryDefinitionFilter.categoryId` and its AND/OR/NOT combinators arrived
-  // in 26.4.4, two releases after the tab itself (26.4.2).
-  const supportsExtendedFilter =
-    baiClient.isManagerVersionCompatibleWith('26.4.4');
 
   const [isOpenEditorModal, setIsOpenEditorModal] = useState(false);
   const [editingPreset, setEditingPreset] =
@@ -135,7 +128,6 @@ const AdminPrometheusPreset = ({
       <BAIFlex direction="row" justify="between" wrap="wrap" gap="sm">
         <BAIGraphQLPropertyFilter
           combinationMode="AND"
-          maxConditions={supportsExtendedFilter ? undefined : 1}
           value={filter}
           onChange={(value) => {
             onReload(
@@ -143,13 +135,13 @@ const AdminPrometheusPreset = ({
               { fetchPolicy: 'network-only' },
             );
           }}
-          filterProperties={filterOutEmpty([
+          filterProperties={[
             {
               key: 'name',
               propertyLabel: t('prometheusQueryPreset.Name'),
               type: 'string',
             },
-            supportsExtendedFilter && {
+            {
               key: 'categoryId',
               propertyLabel: t('prometheusQueryPreset.Category'),
               type: 'uuid' as const,
@@ -184,7 +176,7 @@ const AdminPrometheusPreset = ({
                 </Suspense>
               ),
             },
-          ])}
+          ]}
         />
         <BAIFlex gap="xs">
           <AutoUpdateFetchKeyButton

@@ -56,8 +56,7 @@ const SwitchToProjectButtonView: React.FC<
   );
 };
 
-// Fallback for callers that cannot supply the name themselves — including
-// managers older than 26.4.3, where `projectV2` is stripped from the query.
+// Fallback for callers that cannot supply the name themselves.
 const SwitchToProjectButtonWithQuery: React.FC<
   Omit<SwitchToProjectButtonProps, 'projectName'>
 > = ({ projectId, ...buttonProps }) => {

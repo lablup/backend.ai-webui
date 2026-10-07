@@ -11,7 +11,6 @@ import {
 } from '../__generated__/LegacyRolePermissionTabQuery.graphql';
 import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import LegacyCreatePermissionModal, {
   PermissionMatrixQuery,
@@ -121,9 +120,6 @@ const LegacyRolePermissionTab: React.FC<LegacyRolePermissionTabProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
-  const supportsRbacFilterWrapper =
-    baiClient.isManagerVersionCompatibleWith('26.4.4rc9');
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const relayEnvironment = useRelayEnvironment();
@@ -155,9 +151,7 @@ const LegacyRolePermissionTab: React.FC<LegacyRolePermissionTabProps> = ({
   const [filter, setFilter] = useState<PermissionFilter | undefined>();
   const [fetchKey, updateFetchKey] = useFetchKey();
 
-  const roleIdFilter = (
-    supportsRbacFilterWrapper ? { equals: roleId } : roleId
-  ) as { equals: string };
+  const roleIdFilter = { equals: roleId };
 
   const queryVariables: LegacyRolePermissionTabQuery['variables'] = {
     roleId,
@@ -339,7 +333,6 @@ const LegacyRolePermissionTab: React.FC<LegacyRolePermissionTabProps> = ({
               key: 'scopeType',
               propertyLabel: t('rbac.ScopeType'),
               type: 'enum',
-              valueMode: supportsRbacFilterWrapper ? 'operator' : 'scalar',
               options: [
                 'DOMAIN',
                 'PROJECT',
@@ -359,7 +352,6 @@ const LegacyRolePermissionTab: React.FC<LegacyRolePermissionTabProps> = ({
               key: 'entityType',
               propertyLabel: t('rbac.EntityType'),
               type: 'enum',
-              valueMode: supportsRbacFilterWrapper ? 'operator' : 'scalar',
               options: [
                 'DOMAIN',
                 'PROJECT',

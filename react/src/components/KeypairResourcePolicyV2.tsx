@@ -307,8 +307,6 @@ const KeypairResourcePolicyV2 = ({
               defaultOperator: 'greaterThanOrEqual',
             },
             {
-              // Added in manager 26.4.4; this V2 list only renders on >= 26.7.0,
-              // so it needs no manager-version gate of its own.
               key: 'keypair.userId',
               propertyLabel: t('resourcePolicy.User'),
               type: 'uuid',

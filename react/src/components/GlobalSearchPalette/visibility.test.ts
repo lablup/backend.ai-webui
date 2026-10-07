@@ -128,17 +128,10 @@ describe('isHitVisible', () => {
   });
 
   it.each([
-    ['tab:/admin/deployments?tab=prometheus-preset', '26.4.2'],
-    ['tab:/admin/deployments?tab=deployment-presets', '26.4.2'],
-  ])('gates %s on manager %s', (id, version) => {
-    const hit = hitById(id);
-    expect(isHitVisible(hit, makeCtx())).toBe(false);
-    expect(
-      isHitVisible(
-        hit,
-        makeCtx({ isManagerVersionCompatibleWith: (v) => v === version }),
-      ),
-    ).toBe(true);
+    'tab:/admin/deployments?tab=prometheus-preset',
+    'tab:/admin/deployments?tab=deployment-presets',
+  ])('does not gate %s on the manager version', (id) => {
+    expect(isHitVisible(hitById(id), makeCtx())).toBe(true);
   });
 
   it('does not gate the user session history tab', () => {
@@ -162,7 +155,7 @@ describe('isHitVisible', () => {
     expect(
       isHitVisible(hitById('tab:/admin/environment?tab=image'), makeCtx()),
     ).toBe(true);
-    expect(_.size(TAB_GATES)).toBe(3);
+    expect(_.size(TAB_GATES)).toBe(1);
   });
 
   it('lets actions bring their own gate', () => {

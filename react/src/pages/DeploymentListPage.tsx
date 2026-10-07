@@ -160,7 +160,7 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
                 name
                 status
               }
-              currentRevision @since(version: "26.4.3") {
+              currentRevision {
                 id
                 revisionNumber
                 ...DeploymentRevisionDetail_revision

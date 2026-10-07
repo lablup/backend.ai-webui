@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3a2d8877e479611c352c21c02c3e5bbc>>
+ * @generated SignedSource<<a383b5f61796171dbcf354334be42b9e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -175,16 +175,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "6d311f0545011ee1c6a5ab3cac1f1939",
+    "cacheID": "c24380e04c113b79fa5e505d4b3aeac3",
     "id": null,
     "metadata": {},
     "name": "AutoScalingRuleEditorModalPresetsQuery",
     "operationKind": "query",
-    "text": "query AutoScalingRuleEditorModalPresetsQuery(\n  $limit: Int!\n) {\n  prometheusQueryPresets(limit: $limit) {\n    edges {\n      node {\n        id\n        name\n        description\n        rank\n        categoryId\n        metricName\n        queryTemplate\n        timeWindow\n        category @since(version: \"26.4.3\") {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query AutoScalingRuleEditorModalPresetsQuery(\n  $limit: Int!\n) {\n  prometheusQueryPresets(limit: $limit) {\n    edges {\n      node {\n        id\n        name\n        description\n        rank\n        categoryId\n        metricName\n        queryTemplate\n        timeWindow\n        category {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "7d9cdf46714c6881f9b7b0a851b37c93";
+(node as any).hash = "34b9fcf06a5e9cc4d12abd7b8297d65d";
 
 export default node;

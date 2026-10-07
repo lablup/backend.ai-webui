@@ -44,9 +44,9 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
   const PROJECT_ADMIN_PAGE = 'PROJECT_ADMIN_PAGE';
   const legacyPermissionFilter: PermissionNestedFilter = {
     // Cast confined to the one field the generated type can't model.
-    entityType: (baiClient.isManagerVersionCompatibleWith('26.4.4rc9')
-      ? { equals: PROJECT_ADMIN_PAGE }
-      : PROJECT_ADMIN_PAGE) as PermissionNestedFilter['entityType'],
+    entityType: {
+      equals: PROJECT_ADMIN_PAGE,
+    } as PermissionNestedFilter['entityType'],
   };
 
   const data = useLazyLoadQuery<useCurrentUserProjectRolesQuery>(

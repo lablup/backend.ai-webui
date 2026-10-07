@@ -12,9 +12,8 @@
  *
  * - Manager-version capabilities → `skipUnlessManagerVersion(page, '26.9.0', ...)`
  *   (same source of truth as `baiClient.isManagerVersionCompatibleWith(...)`
- *   in components — named capability flags via `supports()` are gone; every
- *   version gate above the project's LTS baseline is now an inline version
- *   check in the component itself, FR-3980)
+ *   in components; the supported baseline is the 26.4 LTS line, so only
+ *   gates at 26.5.0 or newer exist, ADR 0010)
  * - `config.toml` toggles → `skipUnlessClientConfig(page, 'enableModelFolders', ...)`
  *   (same source of truth as `baiClient._config.*` in components)
  * - Client properties (FR-3114) → `getClientProperty(page, 'current_group')`
@@ -135,7 +134,7 @@ export async function getClientConfigValue(
  *
  * The `reason` should cite the originating feature ticket and the minimum
  * backend version, e.g.
- * `"Deployment Presets require manager >= 26.4.2 (FR-3205)"`.
+ * `"The Presets tab requires manager >= 26.9.0a4 (FR-4065)"`.
  */
 export async function skipUnlessManagerVersion(
   page: Page,

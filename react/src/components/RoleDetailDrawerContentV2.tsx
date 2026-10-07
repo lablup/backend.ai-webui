@@ -56,7 +56,7 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
         description
         source
         status
-        autoAssign @since(version: "26.4.4")
+        autoAssign
         createdAt
         updatedAt
         scopeType @since(version: "26.9.0a4")

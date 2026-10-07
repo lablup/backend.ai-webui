@@ -291,7 +291,7 @@ describe('DeploymentAddRevisionModal project derivation contract (ADR-0001)', ()
     renderModal({
       resourceGroupName: 'deployment-rg',
       projectId: 'deployment-project-id',
-      // Pre-26.4.3 manager: no projectV2 → the project name is unresolvable.
+      // No projectV2 → the project name is unresolvable.
       projectV2: null,
     });
 

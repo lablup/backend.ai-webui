@@ -44,11 +44,11 @@ import AdminRuntimeVariantPreset, {
 } from '../components/AdminRuntimeVariantPreset';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
-import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentDomainValue } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { BAISkeleton } from 'backend.ai-ui';
-import { BAICard, type BAICardProps, filterOutEmpty } from 'backend.ai-ui';
+import { BAICard, type BAICardProps } from 'backend.ai-ui';
 import {
   parseAsJson,
   parseAsString,
@@ -91,22 +91,12 @@ type DeploymentTabQueryParams = {
 const AdminDeploymentPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
-  const isPrometheusPresetSupported =
-    baiClient.isManagerVersionCompatibleWith('26.4.2');
-  const isDeploymentPresetSupported =
-    baiClient.isManagerVersionCompatibleWith('26.4.2');
 
   // Default status scope for the deployments tab: hide terminated deployments.
   // `status` is never a user-settable filter property, so the deployments tab
   // owns it entirely via its running/finished toggle. On first load (no
   // persisted filter) we fall back to "running".
-  const supportsDeploymentExtendedFilter =
-    baiClient.isManagerVersionCompatibleWith('26.4.3');
-  const deploymentRunningFilter = statusCategoryFilterFor(
-    'running',
-    supportsDeploymentExtendedFilter,
-  );
+  const deploymentRunningFilter = statusCategoryFilterFor('running');
 
   // A single `{ tab, filter, order }` URL state is shared by every tab, plus a
   // single pagination state. Only the active tab's values are ever present in
@@ -324,14 +314,10 @@ const AdminDeploymentPage: React.FC = () => {
               filter:
                 (params.filter as DeploymentFilter | null) ??
                 deploymentRunningFilter,
-              // A URL bookmarked on a newer manager can name a sorter this
-              // one lacks; `loadTab` runs before the tab (and its
-              // `sortableKeys`) mounts, so it is gated here too.
+              // `loadTab` runs before the tab mounts, so a URL-supplied
+              // sorter the table does not know is dropped here.
               orderBy: convertToOrderBy<DeploymentOrderBy>(
-                sanitizeDeploymentOrder(
-                  params.order,
-                  supportsDeploymentExtendedFilter,
-                ),
+                sanitizeDeploymentOrder(params.order),
               ),
               limit,
               offset,
@@ -364,7 +350,7 @@ const AdminDeploymentPage: React.FC = () => {
         break;
       }
       case 'prometheus-preset':
-        if (isPrometheusPresetSupported && !prometheusQueryRef) {
+        if (!prometheusQueryRef) {
           loadPrometheusQuery(
             {
               filter:
@@ -379,7 +365,7 @@ const AdminDeploymentPage: React.FC = () => {
         }
         break;
       case 'deployment-presets':
-        if (isDeploymentPresetSupported && !deploymentPresetQueryRef) {
+        if (!deploymentPresetQueryRef) {
           loadDeploymentPresetQuery(
             {
               filter:
@@ -465,7 +451,7 @@ const AdminDeploymentPage: React.FC = () => {
 
   // The antd `CardTabListType` import is replaced by the tab-item shape
   // `BAICard` itself accepts — this array's only consumer.
-  const tabItems: NonNullable<BAICardProps['tabList']> = filterOutEmpty([
+  const tabItems: NonNullable<BAICardProps['tabList']> = [
     {
       key: 'deployments',
       label: t('webui.menu.Deployments'),
@@ -474,11 +460,11 @@ const AdminDeploymentPage: React.FC = () => {
       key: 'model-store-management',
       label: t('adminModelCard.ModelStoreManagement'),
     },
-    isPrometheusPresetSupported && {
+    {
       key: 'prometheus-preset',
       label: t('webui.menu.PrometheusPreset'),
     },
-    isDeploymentPresetSupported && {
+    {
       key: 'deployment-presets',
       label: t('adminDeploymentPreset.TabTitle'),
     },
@@ -486,7 +472,7 @@ const AdminDeploymentPage: React.FC = () => {
       key: 'runtime-variant-presets',
       label: t('adminRuntimeVariantPreset.TabTitle'),
     },
-  ]);
+  ];
 
   return (
     <BAICard
@@ -529,7 +515,7 @@ const AdminDeploymentPage: React.FC = () => {
             )}
           </BAIErrorBoundary>
         )}
-        {currentTab === 'prometheus-preset' && isPrometheusPresetSupported && (
+        {currentTab === 'prometheus-preset' && (
           <BAIErrorBoundary>
             {prometheusQueryRef ? (
               <AdminPrometheusPreset
@@ -545,7 +531,7 @@ const AdminDeploymentPage: React.FC = () => {
             )}
           </BAIErrorBoundary>
         )}
-        {currentTab === 'deployment-presets' && isDeploymentPresetSupported && (
+        {currentTab === 'deployment-presets' && (
           <BAIErrorBoundary>
             {deploymentPresetQueryRef ? (
               <AdminDeploymentPreset

@@ -276,7 +276,7 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
                     revisionNumber
                     ...DeploymentRevisionDetail_revision
                   }
-                  sessionV2 @since(version: "26.4.3") {
+                  sessionV2 {
                     id
                     metadata {
                       name

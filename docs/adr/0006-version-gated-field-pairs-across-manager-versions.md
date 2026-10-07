@@ -1,6 +1,6 @@
 # 0006 — Version-gated field pairs across manager versions
 
-> 4절의 feature flag 규칙(document 밖의 분기를 `backend.ai-client` flag와 `baiClient.supports(flag)`로 고르는 것)은 [ADR 0010](0010-component-level-manager-version-gates.md)이 대신한다. 이 문서가 부르는 flag는 지금 `baiClient.isManagerVersionCompatibleWith('<version>')` check이고, field pair와 나머지 결정은 그대로 발효 중이다.
+> 4절의 feature flag 규칙(document 밖의 분기를 `backend.ai-client` flag와 `baiClient.supports(flag)`로 고르는 것)은 [ADR 0010](0010-component-level-manager-version-gates.md)이 대신한다. 이 문서가 부르는 flag 중 26.5.0 이상의 것은 지금 `baiClient.isManagerVersionCompatibleWith('<version>')` check이고, 26.4 line 이하의 것(`my-roles`, `rbac-filter-wrapper`)은 check 없이 켜진 쪽으로 동작한다. field pair와 나머지 결정은 그대로 발효 중이다.
 
 ## Summary
 

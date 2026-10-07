@@ -8,7 +8,6 @@ import {
   LegacyRoleScopeTabQuery,
 } from '../__generated__/LegacyRoleScopeTabQuery.graphql';
 import { convertToOrderBy } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { Token } from '@lablup/ui-common/Token';
 import {
@@ -43,7 +42,6 @@ interface LegacyRoleScopeTabProps {
 const LegacyRoleScopeTab: React.FC<LegacyRoleScopeTabProps> = ({ roleId }) => {
   'use memo';
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
 
   const {
     baiPaginationOption,
@@ -174,9 +172,6 @@ const LegacyRoleScopeTab: React.FC<LegacyRoleScopeTabProps> = ({ roleId }) => {
               key: 'entityType',
               propertyLabel: t('rbac.ScopeType'),
               type: 'enum',
-              valueMode: baiClient.isManagerVersionCompatibleWith('26.4.4rc9')
-                ? 'operator'
-                : 'scalar',
               options: [
                 'DOMAIN',
                 'PROJECT',

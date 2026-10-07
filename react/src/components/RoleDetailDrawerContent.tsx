@@ -34,8 +34,6 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
   'use memo';
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  const supportsAutoAssign =
-    baiClient.isManagerVersionCompatibleWith('26.4.4rc9');
   // The merged Detailed Permissions view filters `Role.scopes` by scope type;
   // older managers get the legacy Scopes / Permissions tabs.
   const supportsDetailedPermissions =
@@ -52,7 +50,7 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
         description
         source
         status
-        autoAssign @since(version: "26.4.4")
+        autoAssign
         createdAt
         updatedAt
         deletedAt
@@ -98,18 +96,16 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
               ? dayjs(role.updatedAt).format('YYYY-MM-DD HH:mm:ss')
               : '-'}
           </MetadataListItem>
-          {supportsAutoAssign ? (
-            <MetadataListItem label={t('rbac.AutoAssign')}>
-              <Token
-                color={tokenColorForTagColor(
-                  role.autoAssign ? 'green' : 'default',
-                )}
-                label={
-                  role.autoAssign ? t('general.Active') : t('general.Inactive')
-                }
-              />
-            </MetadataListItem>
-          ) : null}
+          <MetadataListItem label={t('rbac.AutoAssign')}>
+            <Token
+              color={tokenColorForTagColor(
+                role.autoAssign ? 'green' : 'default',
+              )}
+              label={
+                role.autoAssign ? t('general.Active') : t('general.Inactive')
+              }
+            />
+          </MetadataListItem>
           <MetadataListItem label={t('rbac.RoleDescription')}>
             {role.description || '-'}
           </MetadataListItem>

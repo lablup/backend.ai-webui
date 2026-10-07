@@ -41,12 +41,12 @@ const DeploymentCurrentRevisionTab: React.FC<
     graphql`
       fragment DeploymentCurrentRevisionTab_deployment on ModelDeployment {
         id
-        currentRevision @since(version: "26.4.3") {
+        currentRevision {
           id
           revisionNumber
           ...DeploymentRevisionDetail_revision
         }
-        deployingRevision @since(version: "26.4.3") {
+        deployingRevision {
           id
           revisionNumber
           ...DeploymentRevisionDetail_revision

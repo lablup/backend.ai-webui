@@ -204,7 +204,7 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
           domainName
           status
           resourceGroupName
-          projectV2 @since(version: "26.4.3") {
+          projectV2 {
             basicInfo {
               name
             }

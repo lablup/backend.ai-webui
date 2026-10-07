@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8f58864aa1464ea62a8667d6c8466a19>>
+ * @generated SignedSource<<9e585755272d63b847cd48eb1bb710a7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -383,12 +383,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "118a557759b447446439bd12b048ec8a",
+    "cacheID": "06a48fe15d9534c6c9ac10c14751bcd2",
     "id": null,
     "metadata": {},
     "name": "RoleDetailDrawerRefetchQuery",
     "operationKind": "query",
-    "text": "query RoleDetailDrawerRefetchQuery(\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...RoleDetailDrawerFragment\n    id\n  }\n}\n\nfragment RoleAssignmentTabFragment on Role {\n  id\n  name\n  source\n  firstScope: scopes(first: 1) @deprecatedSince(version: \"26.9.0a4\") {\n    edges {\n      node {\n        scopeType\n        scopeId\n        id\n      }\n    }\n  }\n  scopeType @since(version: \"26.9.0a4\")\n  scopeId @since(version: \"26.9.0a4\")\n  users(limit: 10, offset: 0) @deprecatedSince(version: \"26.9.0a4\") {\n    count\n    edges {\n      node {\n        id\n        userId\n        grantedAt\n        user {\n          id\n          basicInfo {\n            email\n            fullName\n          }\n        }\n      }\n    }\n  }\n  usersV2(limit: 10, offset: 0) @since(version: \"26.9.0a4\") {\n    count\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n}\n\nfragment RoleDetailDrawerContentFragment on Role {\n  id\n  name\n  description\n  source\n  status\n  autoAssign @since(version: \"26.4.4\")\n  createdAt\n  updatedAt\n  deletedAt\n  ...RoleAssignmentTabFragment\n  ...RolePermissionDetailTab_roleScopeFragment\n}\n\nfragment RoleDetailDrawerFragment on Role {\n  name\n  source\n  ...RoleDetailDrawerContentFragment\n  ...RoleFormModalFragment\n  id\n}\n\nfragment RoleFormModalFragment on Role {\n  id\n  name\n  description\n  autoAssign @since(version: \"26.4.4\")\n}\n\nfragment RolePermissionDetailTab_roleScopeFragment on Role {\n  totalScopes: scopes(first: 1) @deprecatedSince(version: \"26.9.0a4\") {\n    count\n  }\n  scopeId @since(version: \"26.9.0a4\")\n  ...ScopedRolePermissionCardFragment\n}\n\nfragment RoleScopePermissionEditModalFragment on Role {\n  id\n}\n\nfragment ScopedRolePermissionCardFragment on Role {\n  id\n  ...RoleScopePermissionEditModalFragment\n}\n"
+    "text": "query RoleDetailDrawerRefetchQuery(\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...RoleDetailDrawerFragment\n    id\n  }\n}\n\nfragment RoleAssignmentTabFragment on Role {\n  id\n  name\n  source\n  firstScope: scopes(first: 1) @deprecatedSince(version: \"26.9.0a4\") {\n    edges {\n      node {\n        scopeType\n        scopeId\n        id\n      }\n    }\n  }\n  scopeType @since(version: \"26.9.0a4\")\n  scopeId @since(version: \"26.9.0a4\")\n  users(limit: 10, offset: 0) @deprecatedSince(version: \"26.9.0a4\") {\n    count\n    edges {\n      node {\n        id\n        userId\n        grantedAt\n        user {\n          id\n          basicInfo {\n            email\n            fullName\n          }\n        }\n      }\n    }\n  }\n  usersV2(limit: 10, offset: 0) @since(version: \"26.9.0a4\") {\n    count\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n}\n\nfragment RoleDetailDrawerContentFragment on Role {\n  id\n  name\n  description\n  source\n  status\n  autoAssign\n  createdAt\n  updatedAt\n  deletedAt\n  ...RoleAssignmentTabFragment\n  ...RolePermissionDetailTab_roleScopeFragment\n}\n\nfragment RoleDetailDrawerFragment on Role {\n  name\n  source\n  ...RoleDetailDrawerContentFragment\n  ...RoleFormModalFragment\n  id\n}\n\nfragment RoleFormModalFragment on Role {\n  id\n  name\n  description\n  autoAssign\n}\n\nfragment RolePermissionDetailTab_roleScopeFragment on Role {\n  totalScopes: scopes(first: 1) @deprecatedSince(version: \"26.9.0a4\") {\n    count\n  }\n  scopeId @since(version: \"26.9.0a4\")\n  ...ScopedRolePermissionCardFragment\n}\n\nfragment RoleScopePermissionEditModalFragment on Role {\n  id\n}\n\nfragment ScopedRolePermissionCardFragment on Role {\n  id\n  ...RoleScopePermissionEditModalFragment\n}\n"
   }
 };
 })();

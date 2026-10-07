@@ -305,7 +305,7 @@ const RoleListTab: React.FC = () => {
                   ],
                   strictSelection: true,
                 },
-                baiClient.isManagerVersionCompatibleWith('26.4.4') && {
+                {
                   key: 'assignedUser.userId',
                   propertyLabel: t('rbac.AssignedUser'),
                   type: 'uuid',

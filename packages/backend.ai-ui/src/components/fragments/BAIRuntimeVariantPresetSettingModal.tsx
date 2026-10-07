@@ -139,8 +139,6 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
   const { logger } = useBAILogger();
   const [form] = Form.useForm<RuntimeVariantPresetFormValues>();
   const baiClient = useConnectedBAIClient();
-  const isRequiredSupported =
-    baiClient.isManagerVersionCompatibleWith('26.4.4rc9');
   const isUIMetadataSupported =
     baiClient.isManagerVersionCompatibleWith('26.9.0');
 
@@ -158,7 +156,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
           defaultValue
           key
         }
-        required @since(version: "26.4.4")
+        required
         category
         displayName
         uiOption {
@@ -325,7 +323,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
               defaultValue
               key
             }
-            required @since(version: "26.4.4")
+            required
             category
             displayName
             uiOption {
@@ -374,7 +372,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
               defaultValue
               key
             }
-            required @since(version: "26.4.4")
+            required
             category
             displayName
             uiOption {
@@ -428,9 +426,6 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
     return form
       .validateFields()
       .then((values) => {
-        const requiredField = isRequiredSupported
-          ? { required: values.required ?? false }
-          : {};
         const uiMetadataFields = isUIMetadataSupported
           ? {
               category: normalizeOptionalText(values.category),
@@ -457,7 +452,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
             valueType: values.valueType,
             defaultValue: values.defaultValue ?? null,
             key: values.key,
-            ...requiredField,
+            required: values.required ?? false,
             ...uiMetadataFields,
           };
           commitUpdate({
@@ -475,7 +470,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
             valueType: values.valueType,
             defaultValue: values.defaultValue ?? null,
             key: values.key,
-            ...requiredField,
+            required: values.required ?? false,
             ...uiMetadataFields,
           };
           commitCreate({
@@ -1144,23 +1139,21 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
             )}
           />
         </Form.Item>
-        {isRequiredSupported ? (
-          <Form.Item
-            label={t('comp:BAIRuntimeVariantPresetSettingModal.Requirement')}
-            name="required"
-            valuePropName="checked"
-            // Display-only: a checkbox always carries a value, so the
-            // "(optional)" mark on the label would be noise. No rule is added.
-            required
-            tooltip={t(
-              'comp:BAIRuntimeVariantPresetSettingModal.RequiredTooltip',
-            )}
-          >
-            <AstryxFormCheckbox
-              label={t('comp:BAIRuntimeVariantPresetSettingModal.Required')}
-            />
-          </Form.Item>
-        ) : null}
+        <Form.Item
+          label={t('comp:BAIRuntimeVariantPresetSettingModal.Requirement')}
+          name="required"
+          valuePropName="checked"
+          // Display-only: a checkbox always carries a value, so the
+          // "(optional)" mark on the label would be noise. No rule is added.
+          required
+          tooltip={t(
+            'comp:BAIRuntimeVariantPresetSettingModal.RequiredTooltip',
+          )}
+        >
+          <AstryxFormCheckbox
+            label={t('comp:BAIRuntimeVariantPresetSettingModal.Required')}
+          />
+        </Form.Item>
         {preset ? (
           <Form.Item
             label={t('comp:BAIRuntimeVariantPresetSettingModal.Rank')}

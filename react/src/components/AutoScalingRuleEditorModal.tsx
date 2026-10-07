@@ -129,7 +129,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
                 metricName
                 queryTemplate
                 timeWindow
-                category @since(version: "26.4.3") {
+                category {
                   id
                   name
                 }

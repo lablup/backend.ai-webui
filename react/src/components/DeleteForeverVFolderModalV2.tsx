@@ -42,8 +42,8 @@ const DeleteForeverVFolderModalV2: React.FC<
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
-  // `successes` is 26.9.0+ and `failed` 26.4.4+; `@since` strips each from
-  // the document below its version, and this picks which count to read.
+  // `successes` is 26.9.0+; `@since` strips it from the document below that
+  // version, and this picks which count to read.
   const supportsPerIdResults =
     useSuspendedBackendaiClient().isManagerVersionCompatibleWith('26.9.0');
   // Per-folder failures of the last request; `total` is what the request
@@ -73,7 +73,7 @@ const DeleteForeverVFolderModalV2: React.FC<
       ) {
         bulkPurgeVfoldersV2(input: $input) {
           successes @since(version: "26.9.0")
-          failed @since(version: "26.4.4") {
+          failed {
             vfolderId
             message
           }
