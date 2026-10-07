@@ -23,6 +23,8 @@ export interface BAIFileExplorerProps {
     enableDownload?: boolean;
     enableDelete?: boolean;
     enableWrite?: boolean;
+    enableCreate?: boolean;
+    enableRename?: boolean;
     enableUpload?: boolean;
     enableEdit?: boolean;
     onChangeFetchKey?: (fetchKey: string) => void;
