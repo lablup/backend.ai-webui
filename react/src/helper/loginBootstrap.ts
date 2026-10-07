@@ -105,9 +105,30 @@ export class SessionAuthFailureError extends Error {
 }
 
 /**
+ * The session is live but the manager failed to resolve `keypair` or `user`
+ * (an `errors[]` entry that is not a refusal). Not a reason to log out.
+ */
+export class LoginBootstrapIncompleteError extends Error {
+  readonly cause: unknown;
+  constructor(cause: unknown) {
+    const errors = (cause as { errors?: Array<{ message?: unknown }> } | null)
+      ?.errors;
+    const detail = errors?.find((e) => typeof e?.message === 'string')?.message;
+    super(
+      typeof detail === 'string'
+        ? detail
+        : 'The manager returned no data for the signed-in user.',
+    );
+    this.name = 'LoginBootstrapIncompleteError';
+    this.cause = cause;
+  }
+}
+
+/**
  * A throwaway Relay environment bound to `client`. The app environment waits
  * for the global client, which is exactly what signing in has yet to create.
- * Same fetch as the app's; only the refusal is reported differently.
+ * Same fetch as the app's; only the refusal and a missing identity are
+ * reported differently.
  */
 function createLoginEnvironment(client: BackendAIClient) {
   const fetch = createFetchFn(async () => client);
@@ -126,6 +147,14 @@ function createLoginEnvironment(client: BackendAIClient) {
     }
     if (isSessionAuthFailure(result)) {
       throw new SessionAuthFailureError(result);
+    }
+    // Relay would hand back the nulls as data; `client.query` threw instead.
+    const { data, errors } = result as {
+      data?: { keypair?: unknown; user?: unknown } | null;
+      errors?: unknown[];
+    };
+    if (errors?.length && (data?.keypair == null || data?.user == null)) {
+      throw new LoginBootstrapIncompleteError(result);
     }
     return result;
   };
