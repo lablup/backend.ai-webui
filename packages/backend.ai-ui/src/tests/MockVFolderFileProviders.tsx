@@ -82,6 +82,7 @@ const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
           status: row?.status ?? 'ready',
           usage_mode: row?.usage_mode ?? 'general',
           created_at: row?.created_at ?? '2026-07-01T11:20:00+00:00',
+          user: row?.user ?? null,
           user_email: row?.user_email ?? null,
           group: row?.group ?? null,
           group_name: row?.group_name ?? null,

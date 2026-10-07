@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9bca70e047967f679b313cfa757b3ad0>>
+ * @generated SignedSource<<ff3ad1f10197a12e1f56594ce2831727>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -29,6 +29,7 @@ export type useSuspendedLegacyVFoldersQuery$data = {
         readonly row_id: string | null | undefined;
         readonly status: string | null | undefined;
         readonly usage_mode: string | null | undefined;
+        readonly user: string | null | undefined;
         readonly user_email: string | null | undefined;
       } | null | undefined;
     } | null | undefined>;
@@ -123,38 +124,45 @@ v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "user_email",
+  "name": "user",
   "storageKey": null
 },
 v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "group",
+  "name": "user_email",
   "storageKey": null
 },
 v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "group_name",
+  "name": "group",
   "storageKey": null
 },
 v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "creator",
+  "name": "group_name",
   "storageKey": null
 },
 v14 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "ownership_type",
+  "name": "creator",
   "storageKey": null
 },
 v15 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "ownership_type",
+  "storageKey": null
+},
+v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -207,7 +215,8 @@ return {
                   (v12/*: any*/),
                   (v13/*: any*/),
                   (v14/*: any*/),
-                  (v15/*: any*/)
+                  (v15/*: any*/),
+                  (v16/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -267,6 +276,7 @@ return {
                   (v13/*: any*/),
                   (v14/*: any*/),
                   (v15/*: any*/),
+                  (v16/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -286,16 +296,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "67910251e7b49bdc39211c3882c70132",
+    "cacheID": "70ec9ddb8361377a368ac420668ca6eb",
     "id": null,
     "metadata": {},
     "name": "useSuspendedLegacyVFoldersQuery",
     "operationKind": "query",
-    "text": "query useSuspendedLegacyVFoldersQuery(\n  $scopeId: ScopeField\n  $filter: String\n  $first: Int\n) {\n  vfolder_nodes(scope_id: $scopeId, filter: $filter, first: $first, offset: 0) {\n    edges {\n      node {\n        row_id\n        name\n        host\n        status\n        usage_mode\n        created_at\n        user_email\n        group\n        group_name\n        creator\n        ownership_type\n        permissions @since(version: \"26.9.0a1\")\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query useSuspendedLegacyVFoldersQuery(\n  $scopeId: ScopeField\n  $filter: String\n  $first: Int\n) {\n  vfolder_nodes(scope_id: $scopeId, filter: $filter, first: $first, offset: 0) {\n    edges {\n      node {\n        row_id\n        name\n        host\n        status\n        usage_mode\n        created_at\n        user\n        user_email\n        group\n        group_name\n        creator\n        ownership_type\n        permissions @since(version: \"26.9.0a1\")\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "c8760a04e86764e2a0afa7afbc0dafb1";
+(node as any).hash = "8207aa1fa3993fa947a705bd6dcb4e63";
 
 export default node;

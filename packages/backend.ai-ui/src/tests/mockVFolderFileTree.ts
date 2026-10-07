@@ -38,6 +38,7 @@ export const mockLegacyVFolder = (
   usage_mode: 'general',
   created_at: '2026-07-01T11:20:00+00:00',
   permission: 'wd',
+  user: null,
   group: null,
   creator: 'user@lablup.com',
   user_email: 'user@lablup.com',
@@ -45,6 +46,9 @@ export const mockLegacyVFolder = (
   ownership_type: 'user',
   ...folder,
 });
+
+/** The mock client's signed-in user; owns no fixture folder unless a story says so. */
+export const MOCK_USER_ID = '77777777-7777-7777-7777-777777777777';
 
 export const MOCK_LEGACY_PROJECT_ID = '99999999-9999-9999-9999-999999999999';
 const MOCK_LEGACY_OTHER_PROJECT_ID = '88888888-8888-8888-8888-888888888888';
@@ -180,6 +184,7 @@ export const createMockVFolderFileClient = (
   return {
     vfolder: mockVFolder,
     supports: () => false,
+    user_uuid: MOCK_USER_ID,
     _config: {
       isDirectorySizeVisible: false,
       domainName: 'default',
