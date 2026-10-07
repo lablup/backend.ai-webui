@@ -34,6 +34,7 @@ import {
   devPasswordOverride,
 } from '../helper/devLoginOverrides';
 import {
+  SessionAuthFailureError,
   probeLoginSession,
   type LoginBootstrap,
 } from '../helper/loginBootstrap';
@@ -713,7 +714,9 @@ const LoginView: React.FC<{
           message?: string;
           status?: number;
         };
-        if (e.message) {
+        if (err instanceof SessionAuthFailureError) {
+          notification(t('error.LoginFailed'), err.message || undefined);
+        } else if (e.message) {
           if (e.status === 408) {
             notification(
               t('error.LoginSucceededManagerNotResponding'),

@@ -95,10 +95,31 @@ export function isSessionAuthFailure(err: unknown): boolean {
   );
 }
 
+// The manager's own text for a refusal, whichever layer wrapped it.
+function refusalDetail(cause: unknown): string {
+  let current = cause as {
+    description?: unknown;
+    message?: unknown;
+    cause?: unknown;
+    name?: unknown;
+  } | null;
+  while (current && typeof current === 'object') {
+    if (current.name !== 'AuthorizationError') {
+      const text = current.description ?? current.message;
+      if (typeof text === 'string' && text) return text;
+    } else if (typeof current.description === 'string') {
+      return current.description;
+    }
+    current = current.cause as typeof current;
+  }
+  return '';
+}
+
+/** `message` is the manager's text when it sent one, else empty. */
 export class SessionAuthFailureError extends Error {
   readonly cause: unknown;
   constructor(cause: unknown) {
-    super('The webserver holds no session for this browser.');
+    super(refusalDetail(cause));
     this.name = 'SessionAuthFailureError';
     this.cause = cause;
   }
