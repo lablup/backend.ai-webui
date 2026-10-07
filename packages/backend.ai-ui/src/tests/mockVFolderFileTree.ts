@@ -1,4 +1,4 @@
-import type { LegacyVFolder } from '../components/fragments/BAIVFolderMountConfigInput';
+import type { VFolderListItem } from '../components/fragments/BAIVFolderMountConfigInput';
 import type {
   BAIClient,
   VFolderFile,
@@ -27,12 +27,12 @@ export const mockVFolderFile = (
 });
 
 /**
- * A REST `GET /folders` row with every field filled in, so a story only has
+ * A folder-list row with every field filled in, so a story only has
  * to name the handful that its gate or filter actually reads.
  */
-export const mockLegacyVFolder = (
-  folder: Pick<LegacyVFolder, 'id' | 'name'> & Partial<LegacyVFolder>,
-): LegacyVFolder => ({
+export const mockVFolderListItem = (
+  folder: Pick<VFolderListItem, 'id' | 'name'> & Partial<VFolderListItem>,
+): VFolderListItem => ({
   quota_scope_id: 'project:00000000-0000-0000-0000-000000000000',
   host: 'local:volume1',
   status: 'ready',
@@ -61,16 +61,16 @@ const MOCK_LEGACY_OTHER_PROJECT_ID = '88888888-8888-8888-8888-888888888888';
 export const MOCK_MOUNTABLE_HOSTS: Array<string> = ['local:volume1'];
 
 /**
- * The shared REST folder fixture: two mountable folders, one auto-mounted
+ * The shared folder-list fixture: two mountable folders, one auto-mounted
  * dotfile, one on a host without `mount-in-session`, and one owned by another
  * project — so a story exercises every gate the mount config input applies.
  */
-export const mockLegacyVFolders: Array<LegacyVFolder> = [
-  mockLegacyVFolder({
+export const mockVFolderListItems: Array<VFolderListItem> = [
+  mockVFolderListItem({
     id: 'aaaaaaaabbbbccccddddeeeeffff0001',
     name: 'my-project-data',
   }),
-  mockLegacyVFolder({
+  mockVFolderListItem({
     id: 'aaaaaaaabbbbccccddddeeeeffff0002',
     name: 'shared-datasets',
     ownership_type: 'group',
@@ -78,16 +78,16 @@ export const mockLegacyVFolders: Array<LegacyVFolder> = [
     group: MOCK_LEGACY_PROJECT_ID,
     group_name: 'default',
   }),
-  mockLegacyVFolder({
+  mockVFolderListItem({
     id: 'aaaaaaaabbbbccccddddeeeeffff0003',
     name: '.config',
   }),
-  mockLegacyVFolder({
+  mockVFolderListItem({
     id: 'aaaaaaaabbbbccccddddeeeeffff0004',
     name: 'cold-archive',
     host: 'archive:cold',
   }),
-  mockLegacyVFolder({
+  mockVFolderListItem({
     id: 'aaaaaaaabbbbccccddddeeeeffff0005',
     name: 'other-team-data',
     ownership_type: 'group',
@@ -115,13 +115,11 @@ const childKey = (parent: string, name: string) =>
 /**
  * A BAIClient whose `vfolder` file APIs (`list_files` / `mkdir` /
  * `rename_file` / `delete_files`) read and write the given in-memory trees,
- * and whose signed `GET /folders` request answers `folders`, so file-explorer
- * and folder-picker stories run without a backend. The trees are mutated in
+ * so file-explorer and folder-picker stories run without a backend. The trees are mutated in
  * place — hand a fresh copy per Storybook instance.
  */
 export const createMockVFolderFileClient = (
   trees: MockVFolderFileTrees,
-  folders?: Array<LegacyVFolder>,
 ): BAIClient => {
   const mockVFolder = {
     list_files: async (path: string, id: string) => {
@@ -194,9 +192,6 @@ export const createMockVFolderFileClient = (
   const newSignedRequest = (method: string, url: string) => ({ method, url });
   const _wrapWithPromise = async (request: { method: string; url: string }) => {
     await delay(250);
-    if (request.url.startsWith('/folders')) {
-      return folders ?? [];
-    }
     throw new Error(`Unmocked request: ${request.method} ${request.url}`);
   };
 

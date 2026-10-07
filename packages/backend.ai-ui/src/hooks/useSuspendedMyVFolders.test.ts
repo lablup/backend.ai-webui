@@ -1,7 +1,7 @@
 import {
-  toLegacyVFolder,
+  toVFolderListItem,
   type MyVfolderNode,
-} from './useSuspendedLegacyVFolders';
+} from './useSuspendedMyVFolders';
 import { describe, expect, it } from 'vitest';
 
 const ME = '11111111-2222-3333-4444-555555555555';
@@ -25,9 +25,9 @@ const node = (overrides: Partial<MyVfolderNode> = {}): MyVfolderNode => ({
   ...overrides,
 });
 
-describe('toLegacyVFolder', () => {
+describe('toVFolderListItem', () => {
   it('maps a user folder onto the REST row shape', () => {
-    expect(toLegacyVFolder(node(), ME)).toMatchObject({
+    expect(toVFolderListItem(node(), ME)).toMatchObject({
       id: VFOLDER.replace(/-/g, ''),
       name: 'datasets',
       status: 'ready',
@@ -45,7 +45,7 @@ describe('toLegacyVFolder', () => {
   });
 
   it('keeps a project folder mountable through the project gate', () => {
-    const row = toLegacyVFolder(
+    const row = toVFolderListItem(
       node({
         accessControl: { permission: 'READ_ONLY', ownershipType: 'GROUP' },
         ownership: { userId: null, projectId: PROJECT, creatorEmail: null },
@@ -73,7 +73,7 @@ describe('toLegacyVFolder', () => {
 
   it('reports someone else`s user folder as not owned', () => {
     expect(
-      toLegacyVFolder(
+      toVFolderListItem(
         node({
           ownership: { userId: OTHER, projectId: null, creatorEmail: null },
         }),

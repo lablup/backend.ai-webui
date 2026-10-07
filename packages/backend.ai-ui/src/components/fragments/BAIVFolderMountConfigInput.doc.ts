@@ -41,7 +41,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Gate the folder list it loads with `currentProjectId`, `ownerEmail`, `mountableHosts` and `filter` so users cannot pick folders the session will not be able to mount.',
+          'Gate the folder list it loads with `currentProjectId`, `mountableHosts` and `filter` so users cannot pick folders the session will not be able to mount.',
       },
       {
         guidance: true,
@@ -102,14 +102,8 @@ export const docs = {
         'Name of `currentProjectId`, shown as the owner of a project folder. The folder list carries no project name, so the host supplies it; without it the owner line falls back to the generic "Project".',
     },
     {
-      name: 'ownerEmail',
-      type: 'string',
-      description:
-        "Loads the folders of this user instead of the caller's own, for a launch on someone else's behalf.",
-    },
-    {
       name: 'filter',
-      type: '(folder: LegacyVFolder) => boolean',
+      type: '(folder: VFolderListItem) => boolean',
       description:
         'Display-only folder filter, applied to the folder list it loads after the mount gates. An already-selected folder stays visible even when it filters out.',
     },
@@ -194,7 +188,6 @@ await baiClient.createIfNotExists(image, sessionName, {
       label: 'Scoping the picker',
       code: `<BAIVFolderMountConfigInput
   currentProjectId={currentProject.id}
-  ownerEmail={ownerEmail}
   mountableHosts={mountableHosts}
   autoMountedFolders={autoMountedFolders}
   filter={(folder) => folder.status === 'ready'}

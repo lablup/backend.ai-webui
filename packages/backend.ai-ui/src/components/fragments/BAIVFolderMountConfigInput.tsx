@@ -4,11 +4,11 @@ import { convertToUUID } from '../../helper';
 import { useControllableValue } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import {
-  isMountableLegacyVFolder,
-  useSuspendedLegacyVFolders,
-  type LegacyVFolder,
-  type LegacyVFolderMountScope,
-} from '../../hooks/useSuspendedLegacyVFolders';
+  isMountableVFolder,
+  useSuspendedMyVFolders,
+  type VFolderListItem,
+  type VFolderMountScope,
+} from '../../hooks/useSuspendedMyVFolders';
 import { BAIUserUnionIcon } from '../../icons';
 import BAIButton from '../BAIButton';
 import BAICard from '../BAICard';
@@ -41,7 +41,7 @@ import type { LinkProps } from 'react-router-dom';
 
 // Lives with the query that returns it; re-exported here because this module
 // is where the rest of the mount vocabulary is published from.
-export type { LegacyVFolder };
+export type { VFolderListItem };
 
 /**
  * A single vfolder mount configuration emitted by BAIVFolderMountConfigInput.
@@ -82,8 +82,6 @@ export interface BAIVFolderMountConfigInputProps {
    * project folder's owner line needs it from the host.
    */
   currentProjectName?: string;
-  /** Lists the folders of this user instead of the caller's own. */
-  ownerEmail?: string;
   /**
    * Hosts granting `mount-in-session`. Which policies merge into that list
    * is the host app's business, so it is supplied rather than queried here.
@@ -93,7 +91,7 @@ export interface BAIVFolderMountConfigInputProps {
    * Display-only folder filter, applied after the mount gates. An already
    * selected folder stays visible even when it filters out.
    */
-  filter?: (folder: LegacyVFolder) => boolean;
+  filter?: (folder: VFolderListItem) => boolean;
   disabled?: boolean;
   /** Base path prepended to a relative alias input (mirrors VFolderTable). */
   aliasBasePath?: string;
@@ -334,13 +332,13 @@ export const useVFolderMountConfigFormRule = (
 
 // Called before any value-derived line so the compiler caches this on the list
 // alone; the uuid is derived once per folder and read back by both callers.
-const useMountableLegacyFolders = (
-  allFolderList: Array<LegacyVFolder>,
-  scope: LegacyVFolderMountScope,
+const useMountableFolders = (
+  allFolderList: Array<VFolderListItem>,
+  scope: VFolderMountScope,
 ) => {
   'use memo';
   const mountableFolders = allFolderList
-    .filter((folder) => isMountableLegacyVFolder(folder, scope))
+    .filter((folder) => isMountableVFolder(folder, scope))
     .map((folder) => ({ folder, uuid: convertToUUID(folder.id) }));
   const mountableIdSet = new Set(mountableFolders.map((entry) => entry.uuid));
   return { mountableFolders, mountableIdSet };
@@ -373,7 +371,7 @@ const VFolderPermissionBadge: React.FC<{ permission: string }> = ({
 
 /** Second line of a folder option: who owns it, what it is for, where it is. */
 const VFolderOptionMeta: React.FC<{
-  folder: LegacyVFolder;
+  folder: VFolderListItem;
   projectName?: string;
 }> = ({ folder, projectName }) => {
   'use memo';
@@ -405,7 +403,7 @@ const VFolderOptionMeta: React.FC<{
 /**
  * Reusable, schema-agnostic input for configuring vfolder mounts.
  *
- * The whole folder list is fetched (`useSuspendedLegacyVFolders`) and gated
+ * The whole folder list is fetched (`useSuspendedMyVFolders`) and gated
  * here, because the `mountableHosts` / `autoMountedFolders` gates the host
  * supplies cannot be expressed as a server-side filter. The component
  * suspends on that fetch, so the consumer owns the Suspense boundary.
@@ -415,7 +413,6 @@ const VFolderOptionMeta: React.FC<{
 const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   currentProjectId,
   currentProjectName,
-  ownerEmail,
   mountableHosts,
   filter,
   disabled,
@@ -439,11 +436,11 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
     folders: allFolderList,
     refetch,
     isFetching,
-  } = useSuspendedLegacyVFolders({ ownerEmail, groupId: currentProjectId });
+  } = useSuspendedMyVFolders();
 
   useImperativeHandle(ref, () => ({ refetch }), [refetch]);
 
-  const { mountableFolders, mountableIdSet } = useMountableLegacyFolders(
+  const { mountableFolders, mountableIdSet } = useMountableFolders(
     allFolderList,
     { currentProjectId, mountableHosts },
   );

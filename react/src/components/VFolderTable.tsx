@@ -28,12 +28,12 @@ import {
   BAIMetadataList,
   BAITable,
   useEventNotStable,
-  useSuspendedLegacyVFolders,
+  useSuspendedMyVFolders,
   useUpdatableState,
   type BAIColumnsType,
   type BAITableProps,
   BAITextHighlighter,
-  type LegacyVFolder,
+  type VFolderListItem,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -67,28 +67,28 @@ export interface AliasMap {
   [key: string]: string;
 }
 
-type DataIndex = keyof LegacyVFolder;
+type DataIndex = keyof VFolderListItem;
 
 export interface VFolderTableProps extends Omit<
-  BAITableProps<LegacyVFolder>,
+  BAITableProps<VFolderListItem>,
   'rowKey'
 > {
   showAliasInput?: boolean;
   selectedRowKeys?: VFolderKey[];
   onChangeSelectedRowKeys?: (
     selectedKeys: VFolderKey[],
-    selectedVFolders: LegacyVFolder[],
+    selectedVFolders: VFolderListItem[],
   ) => void;
   aliasBasePath?: string;
   aliasMap?: AliasMap;
   onChangeAliasMap?: (aliasMap: AliasMap) => void;
-  rowFilter?: (vFolder: LegacyVFolder) => boolean;
+  rowFilter?: (vFolder: VFolderListItem) => boolean;
   rowKey: string | number;
   onChangeAutoMountedFolders?: (names: Array<string>) => void;
   showAutoMountedFoldersSection?: boolean;
   onValidateSelectedRowKeys?: (
     invalidKeys: VFolderKey[],
-    validVFolders: LegacyVFolder[],
+    validVFolders: VFolderListItem[],
   ) => void;
 }
 
@@ -111,7 +111,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   'use memo';
   const { generateFolderPath } = useFolderExplorerOpener();
   const getRowKey = React.useMemo(() => {
-    return (record: LegacyVFolder) => {
+    return (record: VFolderListItem) => {
       const key = record && record[rowKey as DataIndex];
       return key as VFolderKey;
     };
@@ -179,7 +179,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     folders: allFolderList,
     refetch: refetchFolders,
     isFetching: isFetchingFolders,
-  } = useSuspendedLegacyVFolders({});
+  } = useSuspendedMyVFolders();
 
   const { domain, group, keypair_resource_policy } =
     useLazyLoadQuery<VFolderTableProjectQuery>(
@@ -361,7 +361,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(selectedRowKeys), handleAliasUpdate]);
 
-  const columns: BAIColumnsType<LegacyVFolder> = [
+  const columns: BAIColumnsType<VFolderListItem> = [
     {
       title: (
         <BAIFlex direction="row" gap="xxs">
