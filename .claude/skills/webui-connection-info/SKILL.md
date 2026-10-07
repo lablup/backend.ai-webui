@@ -1,63 +1,28 @@
 ---
 name: webui-connection-info
 description: >
-  Find WebUI dev server address and Backend.AI API endpoint/credentials for testing.
+  Find the WebUI dev server address and the Backend.AI API endpoint and test account to use.
   Trigger on: "which server", "connection info", "login credentials", "dev server URL",
-  "API endpoint", "where to connect", "how to login", "test server",
-  or when needing to interact with the running WebUI (screenshots, live checks, E2E).
-  This skill only says where to connect: for the data behind the UI — field meanings,
-  GraphQL queries, live rows — use the `bai-agent` skill.
+  "API endpoint", "where to connect", "how to login", "test server", or when needing to
+  interact with the running WebUI (screenshots, live checks, E2E). Defers to
+  `fw:webui-connection-info` when that skill is available; this copy is the fallback for fw < 28.1.0.
 ---
 
-# WebUI Connection Info
+# WebUI Connection Info (fallback)
 
-## Dev Server Address
+**If `fw:webui-connection-info` is in your skill list, use it instead and stop here.** This thin copy exists only for teammates on fw < 28.1.0 and will be removed once fw 28.1.0 is everywhere.
 
-The WebUI dev server runs under [Portless](https://github.com/vercel-labs/portless) on a `*.localhost:1355` URL.
+## API server and test account
 
-`scripts/dev.mjs` names the app from the branch's issue key, its PR number and a
-descriptive word — e.g. `https://fr-3665-pr9049-statusline.localhost:1355`, or
-`https://gh-10144-pr10150-drawer.localhost:1355` on a `gh-N` (GitHub issue) branch; off a
-legacy FR or `gh-N` branch Portless derives the name. Don't construct the URL — read it from a source below.
+From this repository (details: `DEV_ENVIRONMENT.md`, "Dev servers and test accounts"):
 
-**Never assume port `1355`**: when another Portless daemon is already bound there (another Claude session / worktree), the server lands on 1356, 1357, … — always confirm the real port from one of the sources below.
+1. `pnpm run dev-env list --json` — the team catalog. It never prints passwords, so it is safe to quote.
+2. Choose: skip servers with `status.live: false` unless the user named one; treat `status: null` or a `checkedAt` older than ~30 min as unknown. Match version-dependent work on `status.managerVersion` and deployment switches on `status.config` (`null` means unknown, not off). Then filter by tags, read notes, and take the least-privileged role (`user` < `project-admin` < `admin`), naming the email when several accounts share a role. Never run a destructive flow on anything tagged `no-destructive`.
+3. An account with `passwordAvailable: false` can be used only if `e2e/envs/.env.playwright` already holds a password for that email; otherwise pick another or ask the user. Never guess.
+4. Say which server and account you picked and why in one line, then `pnpm run dev-env use <server> [role|email]` (or `get <server> <role|email> --json`).
 
-To find the actual URL for a running instance, check these sources in order:
+## Dev server address
 
-1. **The boot records** — `~/.local/state/fw/dev-servers/*.json`, one per Portless app,
-   written by the `dev-server` skill. Each carries `url` (the gateway URL a teammate can
-   open), `localUrl`, `branch`, `pid`, `startedAt`/`stoppedAt` and the PRs it serves. A
-   record with `stoppedAt` set is a server that is gone. This is the only source that says
-   *which branch and PRs* a server is for, so start here.
-2. `portless list` — live routes on this box.
-3. The `pnpm run dev` terminal output — Portless prints the full URL on startup.
+Read the boot records in `~/.local/state/fw/dev-servers/*.json` (written by the `dev-server` skill; a record with `stoppedAt` is gone) and announce the record's `url` — the dev box gateway URL — with `https://`, never the `*.localhost` one. No record: `portless list`, or ask the user to run `pnpm run dev`.
 
-If no dev server is running, tell the user to start it with `pnpm run dev` (Portless is a devDependency and `dev.mjs` starts its daemon; no global install).
-
-## API Endpoint & Credentials
-
-Read `e2e/envs/.env.playwright` to get the current server endpoint and login credentials.
-
-Key variables:
-- `E2E_WEBSERVER_ENDPOINT` — Backend.AI API server URL
-- `E2E_ADMIN_EMAIL` / `E2E_ADMIN_PASSWORD` — admin account
-- `E2E_USER_EMAIL` / `E2E_USER_PASSWORD` — regular user account
-- Additional: `E2E_USER2_*`, `E2E_MONITOR_*`, `E2E_DOMAIN_ADMIN_*`
-
-**Always read the file fresh** — credentials and endpoints change. Do not hardcode or cache them.
-
-## Login Flow
-
-The WebUI login page requires:
-1. Email/Username
-2. Password
-3. Endpoint (may be hidden under "Advanced" toggle)
-
-The app uses `config.toml` with `connectionMode = "SESSION"`. If `apiEndpoint` is empty, the user must enter the endpoint manually on the login page.
-
-## Gotchas
-
-- The `.env.playwright` file may have multiple endpoints commented out (e.g., LTS vs main). Use the **uncommented** `E2E_WEBSERVER_ENDPOINT`.
-- Passwords may contain special characters — handle quoting carefully.
-- The webpack-dev-server overlay can intercept clicks. Remove it via: `document.getElementById('webpack-dev-server-client-overlay')?.remove()`
-- If the "Endpoint" input field is not visible on the login page, click "Advanced" to expand it.
+For the data behind the UI (field meanings, GraphQL, live rows) use the `bai-agent` skill.

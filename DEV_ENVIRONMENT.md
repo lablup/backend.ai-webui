@@ -94,6 +94,47 @@ Notes:
 - `dev.mjs` also exposes the URL to the React bundle as `VITE_DEV_SHARE_URL`. Set `DEV_GW_CONFIG` to read the config from a different path.
 - When the app name is auto-derived by `portless run` (no `FR-XXXX` or `gh-N` branch, no `PORTLESS_APP_NAME`), `dev.mjs` prints the pattern instead of a concrete URL — substitute the name Portless prints.
 
+## Dev servers and test accounts (`pnpm run dev-env`)
+
+Which API server a dev session talks to, and which test account it logs in with, live in the team's catalog on the team PR board ([frontend-board](https://github.com/lablup/frontend-board), running on the dev box gateway host) — not in this repository and not in anyone's notes. Anyone on the dev VPN can read and edit it on the board's **Catalog** page (`http://board.<domain>/`). The board also serves it at `http://board.<domain>/api/catalog` without authentication, so **the catalog is visible to everyone on the dev VPN: store only passwords that may be shared that widely, and leave the others empty — the person logging in types them.** Every save keeps the previous version (the newest 50), so a bad edit is undone by loading an earlier version on the Catalog page and saving it again.
+
+**Agents** choose a server and account with the `fw:webui-connection-info` skill (the `fw` plugin of [lablup/claude-mp](https://github.com/lablup/claude-mp); on fw < 28.1.0 the thin repository copy in `.claude/skills/webui-connection-info/` stands in): it reads this catalog, applies the selection rules (live, manager version, `config.toml` switches, tags and notes, least-privileged role) and hands the pick to `pnpm run dev-env` below.
+
+`pnpm run dev-env` reads that endpoint and writes the pick into the two git-ignored files that already consume it:
+
+- `.env.development.local` — `VITE_DEFAULT_API_ENDPOINT` / `VITE_DEFAULT_EMAIL` / `VITE_DEFAULT_PASSWORD`, the login-screen pre-fill.
+- `e2e/envs/.env.playwright` — `E2E_WEBSERVER_ENDPOINT` and the `E2E_*_EMAIL` / `E2E_*_PASSWORD` pairs.
+
+| Command                                                   | Does                                                                                                |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `pnpm run dev-env status`                                 | Where the catalog came from, when it was updated, counts, accounts without a password, probe health |
+| `pnpm run dev-env list [--json]`                          | Servers (with live/down status and manager version), accounts, tags and notes — never a password    |
+| `pnpm run dev-env config <server> [--all] [--json]`       | The server's probed `config.toml`: the manager-related switches, or every key with `--all`          |
+| `pnpm run dev-env get <server> <account> [--json]`        | One account, password included when the catalog has one                                             |
+| `pnpm run dev-env use <server> [account] [--no-password]` | Write both files; `account` defaults to `user`                                                      |
+
+`<account>` is a role (`user`, `project-admin`, `admin`) or an email. A role picks the first account with that role in the catalog's order; when others share it, `get` and `use` print `also: <emails> — pass the email to pick one`.
+
+Every command asks the board, so there is no local copy to go stale. `use` only replaces the keys it owns; every other line of both files is left alone. Restart `pnpm run dev` afterwards — Vite reads env at server start. A `VITE_DEFAULT_*` variable exported in the shell wins over the file; `use` warns when one is in the way.
+
+`use` never writes an empty password. For an account the catalog has no password for, a box owner can write the password into their own git-ignored file by hand (`VITE_DEFAULT_PASSWORD`, or the slot's `E2E_*_PASSWORD`): `use` keeps that line as long as the email line beside it names the same account (case-insensitive) and says so, and removes it otherwise, so another account's password never lingers. With nothing kept it prints a note that the password is typed at login.
+
+In `e2e/envs/.env.playwright`, `use` fills `E2E_ADMIN_*` from the server's first `admin`, `E2E_USER_*` and `E2E_USER2_*` from its first and second `user`, and `E2E_PROJECT_ADMIN_*` from its first `project-admin`, removing the pair of a slot the server cannot fill. Nothing in `e2e/` reads `E2E_PROJECT_ADMIN_*` yet; it is written for tests to come. `E2E_MONITOR_*` and `E2E_DOMAIN_ADMIN_*` are not filled by `use`, and lines you wrote for them are left as they are. `e2e/utils/test-util.ts` falls back to the sample's default accounts (`admin@lablup.com`, …) for any `E2E_ADMIN_*`, `E2E_USER_*` or `E2E_USER2_*` value that is missing, so `use` warns, naming each slot the server left without an account or a password.
+
+`--no-password` leaves the password out of the pre-fill. Use it on a dev server you share through dev-gw: the bundle carries every `VITE_*` value to whoever opens the share URL (see the notes above).
+
+The board shares the gateway's domain, which `dev-env` reads from `~/.config/fw/dev-gw.json` (written by `dev-gw join`, see above; `DEV_GW_CONFIG` points elsewhere). It uses plain `http://`, because Node's `fetch` rejects the gateway's internal CA. Without that file, set `WEBUI_DEV_ENV_CATALOG_URL` to the catalog URL, or `WEBUI_DEV_ENV_CATALOG` to a JSON file of the same shape (for tests and for a box that has not joined the gateway).
+
+### What goes in an entry
+
+A server has a `name` (a lowercase slug), an `endpoint`, `tags` and `notes`; its state is probed (below). Each account has a `role` (`user`, `project-admin` or `admin`; several accounts may share one), an `email` (unique on its server, case-insensitive), an optional `password`, and its own `tags` and `notes`. Nothing in the catalog carries a hand-entered verification date: the probe is the only freshness signal. Tags are free words an agent filters on, e.g. `multi-project`, `plugin:fair-share`, `no-destructive`.
+
+The board probes every server about every five minutes and `list` shows the result — `live · manager 25.15.0 · checked 3m ago`, `DOWN since … (was 25.15.0): <error>`, or `not checked yet`. `use` and `get` still work on a server that is down, with a warning. Manager and API versions come from that probe, so do not write them into notes.
+
+The probe also fetches the deployment's public `<endpoint>/config.toml`, and `list` prints its deployment switches in one line under each server — e.g. `config: SESSION +enableModelFolders -signupSupport plugin.page=…`, or `config: none (<error>)` for an endpoint that does not serve one (a bare manager endpoint, for instance). `pnpm run dev-env config <server>` prints them as a table. Switches are probed too, so do not write them into notes either. The list of keys (`MANAGER_CONFIG_KEYS` in `scripts/dev-env-lib.mjs`) is shared with the board's Catalog page.
+
+Write in the notes what cannot be queried: what the server is for, what must not be touched, known breakage, why the account exists. What the manager can answer — an account's projects, a resource group's settings — is better asked of it (`bai-agent query`) than copied here.
+
 ## Theme color for visual differentiation
 
 Create `.env.development.local` (copy from `.env.development.local.sample`) and set:
@@ -175,3 +216,4 @@ Runs behind Portless on a fixed internal port 6006. Open the printed `*.localhos
 | `pnpm --filter backend.ai-ui run storybook`                  | Storybook under Portless                                            |
 | `pnpm exec portless list`                                    | Show active Portless routes                                         |
 | `pnpm exec portless proxy stop` / `start -p 1355 [--no-tls]` | Daemon control (project-local binary)                               |
+| `pnpm run dev-env list` / `use <server> [account]`           | Pick a dev API server and test account from the board catalog       |
