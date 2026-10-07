@@ -477,6 +477,37 @@ class Manager extends EventEmitter {
       );
     });
 
+    this.app.get('/sshd', (req, res) => {
+      let port = req.query.port;
+
+      if (!isValidPort(port)) {
+        return res
+          .status(400)
+          .send(
+            htmldeco('Invalid Port', 'The port number provided is invalid.'),
+          );
+      }
+
+      const escapedPort = escapeHtml(String(parseInt(port, 10)));
+      const escapedHost = escapeHtml(this.proxyBaseHost);
+      let url = 'ssh://work@' + escapedHost + ':' + escapedPort;
+
+      res.send(
+        htmldeco(
+          'Connect with your SSH client',
+          'host: ' +
+            escapedHost +
+            '<br/>port: ' +
+            escapedPort +
+            '<br/>username: work<br/>URL : <a href="' +
+            escapeHtml(url) +
+            '">' +
+            escapeHtml(url) +
+            '</a>',
+        ),
+      );
+    });
+
     this.app.get('/vnc', (req, res) => {
       let port = req.query.port;
 
