@@ -1,4 +1,4 @@
-import { ShowToastFn } from '@astryxdesign/core/Toast';
+import { ShowToastFn } from '@lablup/ui-common/Toast';
 export interface BridgeImpl {
     showToast: ShowToastFn;
 }
