@@ -60,10 +60,8 @@
  caller-supplied async search in a transition and surfaced it as `loading`.
  Astryx's `Selector` filters its own options client-side and exposes no
  `onSearch` at all — server-driven search is `Typeahead` / `ComplexSelector`
- territory by design (MAPPING §3.1). Measured live usage: ONE call site
- (`LegacyCreatePermissionModal`, over a static in-memory option list where
- client-side filtering is equivalent) plus a story. The prop stays in the
- signature so the 12 extenders keep compiling.
+ territory by design (MAPPING §3.1). No app call site passes it, only a
+ story. The prop stays in the signature so the 12 extenders keep compiling.
 
  PILOT-DECISION — **`endReached` / `atBottomStateChange` / `bottomLoading` are
  accepted and inert.** They implemented cursor pagination by watching

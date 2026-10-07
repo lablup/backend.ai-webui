@@ -68,7 +68,7 @@ export interface AutoMountedFolder {
 }
 
 export interface BAIVFolderMountConfigInputRef {
-  /** Re-runs the `GET /folders` query behind the folder select. */
+  /** Re-runs the `vfolder_nodes` query behind the folder select. */
   refetch: () => Promise<unknown>;
 }
 
@@ -78,12 +78,10 @@ export interface BAIVFolderMountConfigInputProps {
   onChange?: (value: VFolderMountConfigValue[]) => void;
   currentProjectId?: string;
   /**
-   * Name of `currentProjectId`. `GET /folders` leaves `group_name` empty, so a
-   * project folder's owner line needs it from the host.
+   * Name of `currentProjectId`, for a project folder's owner line when the
+   * node carries no `group_name`.
    */
   currentProjectName?: string;
-  /** Lists the folders of this user instead of the caller's own. */
-  ownerEmail?: string;
   /**
    * Hosts granting `mount-in-session`. Which policies merge into that list
    * is the host app's business, so it is supplied rather than queried here.
@@ -340,13 +338,18 @@ const useMountableLegacyFolders = (
 ) => {
   'use memo';
   const mountableFolders = allFolderList
-    .filter((folder) => isMountableLegacyVFolder(folder, scope))
+    // `permission` is the caller's own level, so a folder resolving to 'none'
+    // is one the manager would refuse to mount (backend.ai#14679).
+    .filter(
+      (folder) =>
+        isMountableLegacyVFolder(folder, scope) && folder.permission !== 'none',
+    )
     .map((folder) => ({ folder, uuid: convertToUUID(folder.id) }));
   const mountableIdSet = new Set(mountableFolders.map((entry) => entry.uuid));
   return { mountableFolders, mountableIdSet };
 };
 
-/** `ro` / `rw` / `wd` from the REST list, as welded tokens in the data page's colours. */
+/** The caller's `ro` / `rw` level, as welded tokens in the data page's colours. */
 const VFolderPermissionBadge: React.FC<{ permission: string }> = ({
   permission,
 }) => {
@@ -379,7 +382,6 @@ const VFolderOptionMeta: React.FC<{
   'use memo';
   const { t } = useBAIi18n();
   const isUserOwned = folder.ownership_type === 'user';
-  // The REST list leaves `user_email` / `group_name` empty on most managers.
   const owner = isUserOwned
     ? folder.user_email ||
       folder.creator ||
@@ -405,18 +407,14 @@ const VFolderOptionMeta: React.FC<{
 /**
  * Reusable, schema-agnostic input for configuring vfolder mounts.
  *
- * The folder list comes from REST `GET /folders` rather than the
- * `vfolder_nodes` connection because the `mountableHosts` /
- * `autoMountedFolders` gates the host supplies cannot be expressed there.
- * The component suspends on that fetch, so the consumer owns the Suspense
- * boundary.
+ * Suspends on the `vfolder_nodes` folder list, so the consumer owns the
+ * Suspense boundary.
  *
  * Props, form gating and usage: `BAIVFolderMountConfigInput.doc.ts`.
  */
 const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   currentProjectId,
   currentProjectName,
-  ownerEmail,
   mountableHosts,
   filter,
   disabled,
@@ -436,11 +434,9 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
     { defaultValue: [] },
   );
   const [searchStr, setSearchStr] = useState('');
-  const {
-    folders: allFolderList,
-    refetch,
-    isFetching,
-  } = useSuspendedLegacyVFolders({ ownerEmail, groupId: currentProjectId });
+  const { folders: allFolderList, refetch } = useSuspendedLegacyVFolders({
+    groupId: currentProjectId,
+  });
 
   useImperativeHandle(ref, () => ({ refetch }), [refetch]);
 
@@ -566,10 +562,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
           <BAIButton
             icon={<RotateCw size="1em" />}
             title={t('comp:BAIVFolderMountConfigInput.Refresh')}
-            loading={isFetching}
             disabled={disabled}
-            // The query already drives `loading`; `action` would add a transition
-            // that can stay pending after the fetch settles.
             onClick={() => {
               void refetch();
             }}

@@ -11,7 +11,7 @@ import {
 
 /**
  * The ready dotfile folders a session mounts on its own, read off the same
- * `GET /folders` list the mount select uses. Suspends.
+ * `vfolder_nodes` list the mount select uses. Suspends.
  */
 export const useSuspendedAutoMountedFolders = ({
   currentProjectId,
