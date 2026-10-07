@@ -87,6 +87,19 @@ In the Users list, columns that hold several values — **Allowed Client IPs** a
 show the first value inline and collapse the rest behind a `+N` tag. Hover over the tag to see the
 complete list without widening the column.
 
+<a id="use-as-this-user"></a>
+
+### Use as this user
+
+A superadmin can work in the WebUI with another user's permissions. Open the more actions
+menu in that user's row, select **Use as this user**, and confirm with **Open in new tab**.
+
+![=400px](../images/admin_user_use_as_this_user.png)
+
+The new tab runs as that user; click **Exit** in its banner to return the tab to your own
+account. Your other tabs keep your admin view, and the audit log records that your admin
+account performed the actions.
+
 <a id="bulk-create-users"></a>
 
 ### Bulk create users
