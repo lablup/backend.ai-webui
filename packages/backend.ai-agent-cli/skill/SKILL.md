@@ -39,8 +39,8 @@ for a CLAUDE.md outside a checkout; there isn't one.
 **When `whoami` says `auth_required` (exit 3):**
 
 - Get the endpoint and the account from the **`webui-connection-info`** skill
-  in a checkout; elsewhere the endpoint is the one `init` recorded (`doctor`
-  prints it). Never ask the user for a password, and never put one in a
+  (`fw` plugin; it reads the team's dev server catalog). Without that skill,
+  the endpoint is the one `init` recorded (`doctor` prints it). Never ask the user for a password, and never put one in a
   command.
 - Browser on this machine: `bai-agent login --endpoint <url>`, then confirm on
   the `/cli-login` page it opens. That page is the WebUI's; in a checkout it
@@ -72,7 +72,7 @@ guess at runtime.
 
 | Skill | Owns | Not this |
 | --- | --- | --- |
-| `webui-connection-info` | Which dev server is up, its URL and port, the API endpoint, the test credentials. | It does not read data — it tells you where to point `login`. |
+| `webui-connection-info` (`fw` plugin) | Which dev server is up and its URL; which dev Backend.AI server and test account to use, from the team's catalog. | It does not read data — it tells you where to point `login`. |
 | `backend-ai-guide` | Backend.AI architecture and product Q&A with no live data: what Sokovan is, how the agent talks to the manager. | The moment the question is about *this* deployment's data or a schema field's meaning, it is `bai-agent`. |
 | `docs-lead` | Writing and maintaining the user manual, terminology, translations, screenshots. | Reading the manual to answer a question is `bai-agent search` / `docs show`. |
 | `bai-cli` (backend repo) | `./bai`, the backend's own REST CLI, inside a `backend.ai` checkout. | In **this** repo use `bai-agent`; `./bai` does not exist here. |

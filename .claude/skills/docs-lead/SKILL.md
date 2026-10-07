@@ -234,7 +234,7 @@ Real failure modes you will hit if you don't think about them up front.
   different slug (e.g., suffix with `-v2`).
 
 - **`docs-screenshot-capturer` requires the dev server live** — get its
-  real URL from the `webui-connection-info` skill (Portless picks the host
+  real URL from the `fw:webui-connection-info` skill (Portless picks the host
   and may not be on 1355). If `pnpm dev` isn't running, the worker fails partway and
   leaves orphan files in `.playwright-mcp/`. Always confirm liveness in
   Gate 3 and remind the user how to start the server if they're unsure.
