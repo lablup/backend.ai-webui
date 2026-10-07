@@ -69,7 +69,7 @@ export const isAutoMountFolderName = (name: string) => name.startsWith('.');
 
 /**
  * The folders a session mounts on its own — ready dotfile folders — picked out
- * of a `GET /folders` list the same way VFolderTable did it.
+ * of the folder list the same way VFolderTable does.
  */
 export const autoMountedFoldersFrom = (
   folders: Array<VFolderListItem>,

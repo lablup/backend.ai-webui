@@ -344,7 +344,7 @@ const useMountableFolders = (
   return { mountableFolders, mountableIdSet };
 };
 
-/** `ro` / `rw` / `wd` from the REST list, as welded tokens in the data page's colours. */
+/** `ro` / `rw` / `wd` from the folder list, as welded tokens in the data page's colours. */
 const VFolderPermissionBadge: React.FC<{ permission: string }> = ({
   permission,
 }) => {
@@ -377,7 +377,7 @@ const VFolderOptionMeta: React.FC<{
   'use memo';
   const { t } = useBAIi18n();
   const isUserOwned = folder.ownership_type === 'user';
-  // The REST list leaves `user_email` / `group_name` empty on most managers.
+  // The folder list leaves `user_email` / `group_name` empty.
   const owner = isUserOwned
     ? folder.user_email ||
       folder.creator ||

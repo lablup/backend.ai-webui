@@ -70,7 +70,7 @@ const SessionLauncherStorageStep: React.FC<{
           setIsCreateModalOpen(false);
           if (!response) return;
           // The select can only offer the new folder once its own
-          // `GET /folders` query has seen it.
+          // folder-list query has seen it.
           await mountConfigInputRef.current?.refetch();
           // A dotfile folder is auto-mounted by the session, never selected.
           if (isAutoMountFolderName(response.metadata.name)) return;
