@@ -59,6 +59,7 @@ import {
   provisionDeploymentFixtures,
   selectRevisionModalOption,
 } from '../utils/deployment-fixtures';
+import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import { test, expect, Page } from '@playwright/test';
 
@@ -139,7 +140,8 @@ test.describe(
         // 0. Ensure the preset + model folder pair the Add Revision flow
         // selects (a compatible pre-existing preset is reused when the
         // cluster has one, created otherwise -- no hand-seeded fixture is
-        // assumed either way).
+        // assumed either way), gated on the same manager version the UI
+        // checks.
         // NOTE: this provisioning (folder create + fixture upload) is the
         // same heavy /data + storage path that deployment-lifecycle.spec.ts
         // serializes between its own two revision tests. Cross-FILE overlap
@@ -147,6 +149,11 @@ test.describe(
         // multi-worker runs and can slow both sides' list/upload waits; CI
         // runs single-worker (playwright.config.ts), where this cannot
         // happen.
+        await skipUnlessManagerVersion(
+          page,
+          '26.4.2',
+          'Adding a revision from a preset requires manager >= 26.4.2',
+        );
         fixtures = await provisionDeploymentFixtures(page);
 
         // 1. Navigate to /deployments and create a deployment shell.

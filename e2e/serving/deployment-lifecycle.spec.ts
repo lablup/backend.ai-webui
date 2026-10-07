@@ -58,6 +58,7 @@ import {
   provisionDeploymentFixtures,
   provisionDeploymentModelFolder,
 } from '../utils/deployment-fixtures';
+import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
 import { loginAsAdmin, modifyConfigToml, navigateTo } from '../utils/test-util';
 import { getFormItemControlByLabel } from '../utils/test-util-antd';
 import { test, expect, Page } from '@playwright/test';
@@ -494,6 +495,11 @@ test.describe(
       // has one, or provisioning a throwaway `e2e-dfx-*` preset otherwise. A
       // model folder is not needed here since this test only inspects the
       // modal's fields and never submits.
+      await skipUnlessManagerVersion(
+        page,
+        '26.4.2',
+        'Preset Mode requires manager >= 26.4.2',
+      );
       const preset = await ensureDeploymentPreset(page);
       if (preset.presetId) {
         fixtures = { presetId: preset.presetId, presetName: preset.presetName };
@@ -651,7 +657,13 @@ test.describe(
           // Add Revision modal: a compatible pre-existing preset is reused
           // as-is when the cluster has one, and created (then torn down)
           // otherwise -- no hand-seeded cluster fixture is assumed either
-          // way.
+          // way. Deployment presets need backend support, so gate on the same
+          // manager version the UI checks.
+          await skipUnlessManagerVersion(
+            page,
+            '26.4.2',
+            'Adding a revision from a preset requires manager >= 26.4.2',
+          );
           const provisioned = await provisionDeploymentFixtures(page);
           fixtures = provisioned;
 

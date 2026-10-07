@@ -14,7 +14,7 @@ const PROJECT_PREFIX = 'e2e-membership-';
 test.describe(
   'Header ProjectSelect - Project Membership',
   {
-    tag: ['@regression', '@project', '@functional'],
+    tag: ['@regression', '@project', '@functional', '@requires-manager-v26.2'],
   },
   () => {
     let api: APIRequestContext;

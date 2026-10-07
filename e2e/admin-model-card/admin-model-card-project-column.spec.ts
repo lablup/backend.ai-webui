@@ -3,6 +3,7 @@
 // ("Modified At") column.
 import { createAdminApiContext, gqlAdmin } from '../utils/admin-api';
 import { AdminModelCardPage } from '../utils/classes/AdminModelCardPage';
+import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
 import {
   deleteForeverAndVerifyFromTrash,
   getSortableColumnHeader,
@@ -27,7 +28,12 @@ async function setColumnVisible(
 test.describe(
   'Admin Model Card Management - Project and Updated At columns',
   {
-    tag: ['@admin-model-card', '@admin', '@regression'],
+    tag: [
+      '@admin-model-card',
+      '@admin',
+      '@regression',
+      '@requires-manager-v26.4',
+    ],
   },
   () => {
     let cardName: string;
@@ -38,6 +44,12 @@ test.describe(
       cardName = `e2e-test-project-col-${testInfo.workerIndex}-${timestamp}`;
       folderName = `e2e-test-project-col-folder-${testInfo.workerIndex}-${timestamp}`;
       await loginAsAdmin(page, request);
+      // `ModelCardV2.project` is @since 26.4.3.
+      await skipUnlessManagerVersion(
+        page,
+        '26.4.3',
+        'Model card project names require manager >= 26.4.3 (FR-3914)',
+      );
       const adminModelCardPage = new AdminModelCardPage(page);
       await adminModelCardPage.goto();
       await adminModelCardPage.createModelCard({

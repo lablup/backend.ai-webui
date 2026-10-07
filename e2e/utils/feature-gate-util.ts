@@ -12,8 +12,9 @@
  *
  * - Manager-version capabilities → `skipUnlessManagerVersion(page, '26.9.0', ...)`
  *   (same source of truth as `baiClient.isManagerVersionCompatibleWith(...)`
- *   in components; the supported baseline is the 26.4 LTS line, so only
- *   gates at 26.5.0 or newer exist, ADR 0010)
+ *   in components). The app's 26.4 LTS support floor (ADR 0010) does not
+ *   apply here: the suite may run against older managers, so every
+ *   version-dependent test keeps its gate, whatever the version.
  * - `config.toml` toggles → `skipUnlessClientConfig(page, 'enableModelFolders', ...)`
  *   (same source of truth as `baiClient._config.*` in components)
  * - Client properties (FR-3114) → `getClientProperty(page, 'current_group')`

@@ -300,6 +300,14 @@ UI element fails the test instead of silently skipping. Named capability flags
 (`baiClient.supports(...)`) are gone (FR-3980) — every manager-version gate
 now checks `isManagerVersionCompatibleWith(...)` directly.
 
+Keep the tag and the gate on every version-dependent test, even when the
+version is at or below the application's support floor (the 26.4 LTS line,
+ADR 0010). The floor applies to application code only; the suite may run
+against older managers, so a test still declares and skips by the manager
+version it needs (e.g. `@requires-manager-v25.15` +
+`skipUnlessManagerVersion(page, '25.15.0', …)` for the FR-1575 Agent
+Statistics widget).
+
 ### Environment-constraint tags (FR-3114)
 
 When a spec needs a backend environment capability or pre-seeded data that

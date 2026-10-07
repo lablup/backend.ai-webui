@@ -9,6 +9,7 @@ import {
   createDeploymentShell,
   escapeForRegExp,
 } from '../utils/deployment-fixtures';
+import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
 import {
   loginAsAdmin,
   navigateTo,
@@ -53,7 +54,7 @@ async function applyOwnerFilter(page: Page, email: string): Promise<void> {
 test.describe(
   'Admin Deployments - Owner filter',
   {
-    tag: ['@serving', '@admin', '@regression'],
+    tag: ['@serving', '@admin', '@regression', '@requires-manager-v26.4'],
   },
   () => {
     let deploymentName: string;
@@ -63,6 +64,11 @@ test.describe(
         .toString(36)
         .slice(2, 6)}`;
       await loginAsAdmin(page, request);
+      await skipUnlessManagerVersion(
+        page,
+        '26.4.3',
+        'The Deployments Owner filter requires manager >= 26.4.3 (FR-3914)',
+      );
     });
 
     test.afterEach(async () => {
