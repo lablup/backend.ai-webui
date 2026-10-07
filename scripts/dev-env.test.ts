@@ -264,6 +264,60 @@ describe("dev-env CLI", () => {
       expect(dev).not.toMatch(/PASSWORD=\s*$/m);
     });
 
+    it("keeps a hand-written password for the same email and drops it when the account changes", async () => {
+      const body = catalogBody();
+      const mainUser = body.servers
+        .find((s) => s.name === "main")
+        .accounts.find((a) => a.role === "user");
+      mainUser.password = null;
+      fs.writeFileSync(catalogPath, JSON.stringify(body));
+      fs.writeFileSync(
+        path.join(root, "e2e", "envs", ".env.playwright"),
+        "E2E_USER_EMAIL=User@Example.test\nE2E_USER_PASSWORD=hand-written\n",
+      );
+
+      const kept = await run(["use", "main", "user"]);
+      expect(kept.status).toBe(0);
+      expect(kept.stdout).toContain(
+        "kept the password already in e2e/envs/.env.playwright for user@example.test",
+      );
+      const playwright = read("e2e/envs/.env.playwright");
+      expect(playwright).toContain("E2E_USER_EMAIL=user@example.test");
+      expect(playwright).toContain("E2E_USER_PASSWORD=hand-written");
+
+      mainUser.email = "other-user@example.test";
+      fs.writeFileSync(catalogPath, JSON.stringify(body));
+      const changed = await run(["use", "main", "user"]);
+      expect(changed.status).toBe(0);
+      expect(changed.stdout).not.toContain("kept the password");
+      const after = read("e2e/envs/.env.playwright");
+      expect(after).toContain("E2E_USER_EMAIL=other-user@example.test");
+      expect(after).not.toContain("E2E_USER_PASSWORD");
+    });
+
+    it("keeps a hand-written pre-fill password instead of printing the note", async () => {
+      fs.writeFileSync(
+        path.join(root, ".env.development.local"),
+        "VITE_DEFAULT_EMAIL=monitor@example.test\nVITE_DEFAULT_PASSWORD=hand-written\n",
+      );
+      const result = await run(["use", "main", "monitor"]);
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain(
+        "kept the password already in .env.development.local for monitor@example.test",
+      );
+      expect(result.stdout).not.toContain("note: the catalog has no password");
+      expect(result.stdout).not.toContain("password not pre-filled");
+      expect(read(".env.development.local")).toContain(
+        "VITE_DEFAULT_PASSWORD=hand-written",
+      );
+
+      const noPassword = await run(["use", "main", "monitor", "--no-password"]);
+      expect(noPassword.status).toBe(0);
+      expect(read(".env.development.local")).not.toContain(
+        "VITE_DEFAULT_PASSWORD",
+      );
+    });
+
     it("drops the password line with --no-password, without a note", async () => {
       await run(["use", "main"]);
       const result = await run(["use", "main", "admin", "--no-password"]);

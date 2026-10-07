@@ -5,6 +5,7 @@ import {
   findServer,
   formatCatalog,
   formatStatus,
+  keptPasswordEmails,
   loginPrefillVars,
   parseCatalog,
   playwrightVars,
@@ -244,6 +245,100 @@ describe("dev-env catalog", () => {
     expect(written).not.toMatch(/PASSWORD=\s*$/m);
     expect(written).not.toContain("E2E_MONITOR_PASSWORD");
     expect(written).toContain("E2E_MONITOR_EMAIL=monitor@example.test");
+  });
+});
+
+describe("dev-env hand-written passwords", () => {
+  const catalog = parseCatalog(BODY, NOW);
+  const main = findServer(catalog, "main");
+  const monitor = findAccount(main, "monitor");
+  const user = findAccount(main, "user");
+
+  it("keeps a password written for the same email", () => {
+    const existing = {
+      VITE_DEFAULT_EMAIL: "  Monitor@Example.test ",
+      VITE_DEFAULT_PASSWORD: "hand-written",
+    };
+    const prefill = loginPrefillVars(main, monitor, { existing });
+    expect(prefill).not.toHaveProperty("VITE_DEFAULT_PASSWORD");
+    expect(keptPasswordEmails(prefill)).toEqual(["monitor@example.test"]);
+    expect(
+      upsertEnv(
+        "VITE_DEFAULT_EMAIL=monitor@example.test\nVITE_DEFAULT_PASSWORD=hand-written\n",
+        prefill,
+      ),
+    ).toContain("VITE_DEFAULT_PASSWORD=hand-written");
+
+    const vars = playwrightVars(main, {
+      existing: {
+        E2E_MONITOR_EMAIL: "monitor@example.test",
+        E2E_MONITOR_PASSWORD: "hand-written",
+      },
+    });
+    expect(vars).not.toHaveProperty("E2E_MONITOR_PASSWORD");
+    expect(keptPasswordEmails(vars)).toEqual(["monitor@example.test"]);
+  });
+
+  it("removes a password written for a different email", () => {
+    const existing = {
+      VITE_DEFAULT_EMAIL: "someone-else@example.test",
+      VITE_DEFAULT_PASSWORD: "theirs",
+      E2E_MONITOR_EMAIL: "someone-else@example.test",
+      E2E_MONITOR_PASSWORD: "theirs",
+    };
+    expect(
+      loginPrefillVars(main, monitor, { existing }).VITE_DEFAULT_PASSWORD,
+    ).toBeNull();
+    expect(playwrightVars(main, { existing }).E2E_MONITOR_PASSWORD).toBeNull();
+  });
+
+  it("removes the password key when there is no existing line", () => {
+    const existing = { VITE_DEFAULT_EMAIL: "monitor@example.test" };
+    const prefill = loginPrefillVars(main, monitor, { existing });
+    expect(prefill.VITE_DEFAULT_PASSWORD).toBeNull();
+    expect(keptPasswordEmails(prefill)).toEqual([]);
+    expect(
+      playwrightVars(main, {
+        existing: { E2E_MONITOR_EMAIL: "monitor@example.test" },
+      }).E2E_MONITOR_PASSWORD,
+    ).toBeNull();
+  });
+
+  it("lets a catalog password override the existing one", () => {
+    const existing = {
+      VITE_DEFAULT_EMAIL: "user@example.test",
+      VITE_DEFAULT_PASSWORD: "old",
+      E2E_USER_EMAIL: "user@example.test",
+      E2E_USER_PASSWORD: "old",
+    };
+    expect(
+      loginPrefillVars(main, user, { existing }).VITE_DEFAULT_PASSWORD,
+    ).toBe("pw-user");
+    expect(playwrightVars(main, { existing }).E2E_USER_PASSWORD).toBe(
+      "pw-user",
+    );
+  });
+
+  it("removes the password with --no-password even for the same email", () => {
+    const existing = {
+      VITE_DEFAULT_EMAIL: "monitor@example.test",
+      VITE_DEFAULT_PASSWORD: "hand-written",
+    };
+    expect(
+      loginPrefillVars(main, monitor, { existing, password: false })
+        .VITE_DEFAULT_PASSWORD,
+    ).toBeNull();
+  });
+
+  it("removes the password of a role the server lacks", () => {
+    const vars = playwrightVars(findServer(catalog, "lts"), {
+      existing: {
+        E2E_ADMIN_EMAIL: "admin@example.test",
+        E2E_ADMIN_PASSWORD: "x",
+      },
+    });
+    expect(vars.E2E_ADMIN_EMAIL).toBeNull();
+    expect(vars.E2E_ADMIN_PASSWORD).toBeNull();
   });
 });
 

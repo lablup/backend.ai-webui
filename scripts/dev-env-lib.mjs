@@ -274,35 +274,78 @@ export function findAccount(server, role) {
   return account;
 }
 
+const sameEmail = (a, b) =>
+  typeof a === "string" &&
+  typeof b === "string" &&
+  a.trim().toLowerCase() === b.trim().toLowerCase();
+
 /**
- * `.env.development.local` values that pre-fill the login screen. The password
- * line is dropped on `password: false` and when the catalog has no password —
- * never written empty.
+ * Set `vars[passwordKey]` for `account` in a file whose parsed content is
+ * `existing`. Without a catalog password, a password a person wrote for the
+ * same email is kept (the key is left out, so upsertEnv leaves its line
+ * alone); any other is removed, so another account's password never lingers.
  */
-export function loginPrefillVars(server, account, { password = true } = {}) {
-  return {
+function setPassword(vars, account, existing, emailKey, passwordKey) {
+  if (account?.passwordAvailable) {
+    vars[passwordKey] = account.password;
+  } else if (
+    !account ||
+    !existing[passwordKey] ||
+    !sameEmail(existing[emailKey], account.email)
+  ) {
+    vars[passwordKey] = null;
+  }
+}
+
+/**
+ * `.env.development.local` values that pre-fill the login screen, given the
+ * file's current parsed content. The password line is removed on
+ * `password: false`, and never written empty.
+ */
+export function loginPrefillVars(
+  server,
+  account,
+  { password = true, existing = {} } = {},
+) {
+  const vars = {
     VITE_DEFAULT_API_ENDPOINT: server.endpoint,
     VITE_DEFAULT_EMAIL: account.email,
-    VITE_DEFAULT_PASSWORD:
-      password && account.passwordAvailable ? account.password : null,
   };
+  if (password) {
+    setPassword(
+      vars,
+      account,
+      existing,
+      "VITE_DEFAULT_EMAIL",
+      "VITE_DEFAULT_PASSWORD",
+    );
+  } else {
+    vars.VITE_DEFAULT_PASSWORD = null;
+  }
+  return vars;
 }
 
 /**
  * `e2e/envs/.env.playwright` values: the endpoint plus every role the suite
- * reads. A role this server lacks is removed, so another server's account
- * never lingers next to the new endpoint; so is a password the catalog lacks.
+ * reads, given the file's current parsed content. A role this server lacks is
+ * removed, so another server's account never lingers next to the new endpoint.
  */
-export function playwrightVars(server) {
+export function playwrightVars(server, { existing = {} } = {}) {
   const vars = { E2E_WEBSERVER_ENDPOINT: server.endpoint };
   for (const [role, stem] of Object.entries(E2E_ROLE_VARS)) {
     const account = server.accounts.find((a) => a.role === role);
     vars[`${stem}_EMAIL`] = account?.email ?? null;
-    vars[`${stem}_PASSWORD`] = account?.passwordAvailable
-      ? account.password
-      : null;
+    setPassword(vars, account, existing, `${stem}_EMAIL`, `${stem}_PASSWORD`);
   }
   return vars;
+}
+
+/** Emails whose hand-written password `vars` leaves in place: password keys it omits. */
+export function keptPasswordEmails(vars) {
+  return Object.keys(vars)
+    .filter((key) => key.endsWith("_EMAIL"))
+    .filter((key) => !(key.replace(/_EMAIL$/, "_PASSWORD") in vars))
+    .map((key) => vars[key]);
 }
 
 /**

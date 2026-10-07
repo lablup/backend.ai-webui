@@ -9,6 +9,7 @@ import {
   findAccount,
   findServer,
   formatCatalog,
+  keptPasswordEmails,
   loginPrefillVars,
   parseCatalog,
   playwrightVars,
@@ -16,6 +17,7 @@ import {
   serverHealth,
   upsertEnv,
 } from "./dev-env-lib.mjs";
+import dotenv from "dotenv";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -141,19 +143,32 @@ async function status() {
   for (const warning of catalog.warnings) console.log(`warning: ${warning}`);
 }
 
-function writeEnvFile(relativePath, vars, { seedFrom, expand } = {}) {
+/**
+ * Write the vars `buildVars(existing)` returns into `relativePath`, where
+ * `existing` is the file's current parsed content (empty for a new file, even
+ * one seeded from a sample). Prints one line per hand-written password kept.
+ */
+function writeEnvFile(relativePath, buildVars, { seedFrom, expand } = {}) {
   const target = path.join(REPO_ROOT, relativePath);
   let content = "";
+  let existing = {};
   if (fs.existsSync(target)) {
     content = fs.readFileSync(target, "utf8");
+    existing = dotenv.parse(content);
   } else if (seedFrom && fs.existsSync(path.join(REPO_ROOT, seedFrom))) {
     content = fs.readFileSync(path.join(REPO_ROOT, seedFrom), "utf8");
   }
+  const vars = buildVars(existing);
   fs.mkdirSync(path.dirname(target), { recursive: true });
   fs.writeFileSync(target, upsertEnv(content, vars, { expand }), {
     mode: 0o600,
   });
   console.log(`wrote ${relativePath}`);
+  const kept = keptPasswordEmails(vars);
+  for (const email of kept) {
+    console.log(`kept the password already in ${relativePath} for ${email}`);
+  }
+  return { vars, kept };
 }
 
 async function use(serverName, role, { password }) {
@@ -165,9 +180,12 @@ async function use(serverName, role, { password }) {
     );
   }
   const account = findAccount(server, role);
-  const prefill = loginPrefillVars(server, account, { password });
   // Vite runs dotenv-expand over this file; Playwright reads its file with plain dotenv.
-  writeEnvFile(".env.development.local", prefill, { expand: true });
+  const { vars: prefill, kept } = writeEnvFile(
+    ".env.development.local",
+    (existing) => loginPrefillVars(server, account, { password, existing }),
+    { expand: true },
+  );
   const shadowed = Object.keys(prefill).filter(
     (key) =>
       process.env[key] !== undefined &&
@@ -179,16 +197,18 @@ async function use(serverName, role, { password }) {
         "shell over .env.development.local. Unset it, or the pre-fill will not change.",
     );
   }
-  writeEnvFile("e2e/envs/.env.playwright", playwrightVars(server), {
-    seedFrom: "e2e/envs/.env.playwright.sample",
-  });
+  writeEnvFile(
+    "e2e/envs/.env.playwright",
+    (existing) => playwrightVars(server, { existing }),
+    { seedFrom: "e2e/envs/.env.playwright.sample" },
+  );
   console.log(
     `${server.name} (${server.endpoint}) as ${account.role} <${account.email}>` +
       (prefill.VITE_DEFAULT_PASSWORD !== null
         ? ""
         : ", password not pre-filled"),
   );
-  if (password && !account.passwordAvailable) {
+  if (password && !account.passwordAvailable && kept.length === 0) {
     console.log(missingPasswordNote(server, account));
   }
   if (downWarning(server)) console.log(downWarning(server));
