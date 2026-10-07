@@ -28,12 +28,14 @@ import { App } from '../app-shim';
 //     Message is rendered here at all and the override was already dead.
 import { Form } from '../form-engine';
 import { extractErrorType } from '../helper';
+import { getActAsTarget } from '../helper/actAs';
 import {
   devApiEndpointOverride,
   devEmailOverride,
   devPasswordOverride,
 } from '../helper/devLoginOverrides';
 import {
+  LoginBootstrapIncompleteError,
   SessionAuthFailureError,
   probeLoginSession,
   type LoginBootstrap,
@@ -66,7 +68,7 @@ import { preloadPostLoginChunks } from '../preload';
 import { jotaiStore } from './DefaultProviders';
 import LoginFormPanel, { type EndpointHistoryEntry } from './LoginFormPanel';
 import { Button } from '@lablup/ui-common/Button';
-import { BAIModal, useBAILogger } from 'backend.ai-ui';
+import { BAIFlex, BAIModal, useBAILogger } from 'backend.ai-ui';
 import i18n from 'i18next';
 import { useAtomValue, useSetAtom } from 'jotai';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -150,6 +152,9 @@ const LoginView: React.FC<{
   const [blockMessage, setBlockMessage] = useState('');
   const [blockType, setBlockType] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  // The session is live but the manager could not return the user; the login
+  // form would only get "already logged in" back, so offer retry / log out.
+  const [sessionLoadError, setSessionLoadError] = useState<string | null>(null);
   const [loginError, setLoginError] = useState<{
     message: string;
     description?: string;
@@ -402,6 +407,20 @@ const LoginView: React.FC<{
       });
     }, 2000);
   }, []);
+
+  const showSessionLoadError = useCallback(
+    (err: LoginBootstrapIncompleteError) => {
+      if (blockTimerRef.current) {
+        clearTimeout(blockTimerRef.current);
+        blockTimerRef.current = null;
+      }
+      setIsBlockPanelOpen(false);
+      setIsLoginPanelOpen(false);
+      setIsLoading(false);
+      setSessionLoadError(err.message);
+    },
+    [],
+  );
 
   const clearSavedLoginInfo = useCallback(() => {
     localStorage.removeItem('backendaiwebui.login.api_key');
@@ -696,6 +715,10 @@ const LoginView: React.FC<{
 
   const handleGQLError = useCallback(
     (err: unknown, showError: boolean) => {
+      if (err instanceof LoginBootstrapIncompleteError) {
+        showSessionLoadError(err);
+        return;
+      }
       setIsBlockPanelOpen(false);
       if (showError) {
         const e = err as {
@@ -721,7 +744,7 @@ const LoginView: React.FC<{
       open();
       setIsLoading(false);
     },
-    [notification, t, open],
+    [notification, t, open, showSessionLoadError],
   );
 
   const connectUsingSession = useCallback(
@@ -758,7 +781,9 @@ const LoginView: React.FC<{
 
       // The session probe runs alongside the reachability check, which is
       // awaited first so Esc can still abort it.
-      const sessionProbe = probeLoginSession(client).catch(() => null);
+      const sessionProbe = probeLoginSession(client).catch((err: unknown) =>
+        err instanceof LoginBootstrapIncompleteError ? err : null,
+      );
       try {
         await probeManager(client);
       } catch (err: unknown) {
@@ -772,6 +797,10 @@ const LoginView: React.FC<{
       }
 
       const bootstrap = await sessionProbe;
+      if (bootstrap instanceof LoginBootstrapIncompleteError) {
+        showSessionLoadError(bootstrap);
+        return;
+      }
       if (bootstrap) {
         try {
           await doGQLConnect(client, bootstrap);
@@ -801,6 +830,10 @@ const LoginView: React.FC<{
         await doGQLConnect(client);
         return;
       } catch (err: unknown) {
+        if (err instanceof LoginBootstrapIncompleteError) {
+          showSessionLoadError(err);
+          return;
+        }
         setIsBlockPanelOpen(false);
 
         // The server can report a password change as applied when it was not
@@ -830,7 +863,17 @@ const LoginView: React.FC<{
       setIsLoading(false);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [apiEndpoint, form, endpoints, doGQLConnect, block, open, notification, t],
+    [
+      apiEndpoint,
+      form,
+      endpoints,
+      doGQLConnect,
+      block,
+      open,
+      notification,
+      t,
+      showSessionLoadError,
+    ],
   );
   // The concurrent-session modal's onOk (in handleLoginError) calls this ref.
   useEffect(
@@ -1243,6 +1286,39 @@ const LoginView: React.FC<{
         <div style={{ textAlign: 'center', paddingTop: 15 }}>
           {blockMessage}
         </div>
+      </BAIModal>
+
+      <BAIModal
+        open={sessionLoadError !== null}
+        title={t('error.LoginSucceededManagerNotResponding')}
+        footer={
+          <BAIFlex gap="xs" justify="end">
+            {/* An act-as tab shares the super admin's cookie; never log it out. */}
+            {!getActAsTarget() && (
+              <Button
+                onClick={async () => {
+                  setSessionLoadError(null);
+                  await logoutSession().catch(() => {});
+                  open();
+                }}
+                label={t('webui.menu.LogOut')}
+              />
+            )}
+            <Button
+              variant="primary"
+              onClick={() => {
+                setSessionLoadError(null);
+                setIsLoading(true);
+                connectUsingSession(true);
+              }}
+              label={t('button.Retry')}
+            />
+          </BAIFlex>
+        }
+        closable={false}
+        mask={{ closable: false }}
+      >
+        {sessionLoadError}
       </BAIModal>
     </>
   );

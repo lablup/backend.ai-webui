@@ -15,7 +15,10 @@ import { App } from '../app-shim';
 // Ticket 34: `Form` is the self-hosted engine (was the antd SHIM).
 import { Form } from '../form-engine';
 import { extractErrorType } from '../helper';
-import { probeLoginSession } from '../helper/loginBootstrap';
+import {
+  LoginBootstrapIncompleteError,
+  probeLoginSession,
+} from '../helper/loginBootstrap';
 import { getDefaultLoginConfig } from '../helper/loginConfig';
 import {
   connectViaGQL,
@@ -316,7 +319,9 @@ const STokenLoginBoundaryInner: React.FC<STokenLoginBoundaryProps> = ({
 
     // The session probe runs alongside the reachability check; a browser the
     // webserver already knows skips `token_login` (also without a URL token).
-    const sessionProbe = probeLoginSession(client).catch(() => null);
+    const sessionProbe = probeLoginSession(client).catch((err: unknown) =>
+      err instanceof LoginBootstrapIncompleteError ? err : null,
+    );
     try {
       await client.get_manager_version();
     } catch (cause) {
@@ -324,7 +329,15 @@ const STokenLoginBoundaryInner: React.FC<STokenLoginBoundaryProps> = ({
       surfaceError({ kind: 'server-unreachable', cause });
       return;
     }
-    const bootstrap = (await sessionProbe) ?? null;
+    const probed = (await sessionProbe) ?? null;
+    // A live session whose user the manager could not return: token_login
+    // would only be refused as "already logged in", so offer a retry.
+    if (probed instanceof LoginBootstrapIncompleteError) {
+      logger.error('[STokenLoginBoundary] bootstrap incomplete', probed);
+      surfaceError({ kind: 'unknown', cause: probed });
+      return;
+    }
+    const bootstrap = probed;
     const alreadyLoggedIn = bootstrap !== null;
 
     // Only after the session check do we surface `missing-token`: a bare
