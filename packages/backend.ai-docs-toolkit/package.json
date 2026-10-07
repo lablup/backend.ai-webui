@@ -1,6 +1,6 @@
 {
   "name": "backend.ai-docs-toolkit",
-  "version": "26.9.0-alpha.0",
+  "version": "26.10.0-alpha.0",
   "description": "A reusable documentation toolkit for generating PDFs and web previews from Markdown content",
   "repository": {
     "type": "git",
@@ -49,7 +49,7 @@
     "marked": "^12.0.2",
     "pdf-lib": "^1.17.1",
     "shiki": "1.29.2",
-    "yaml": "^2.8.2"
+    "yaml": "^2.9.0"
   },
   "peerDependencies": {
     "playwright": "^1.42.0",

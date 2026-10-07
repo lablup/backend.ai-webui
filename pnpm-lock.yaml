@@ -354,6 +354,7 @@ overrides:
   fast-uri@^3: ^3.1.8
   undici@^5: ^6.28.1
   path-to-regexp@~0.1: ^0.1.13
+  proxy-addr: ^2.0.8
   qs: ^6.15.2
   '@babel/plugin-transform-modules-systemjs': ^7.29.4
   postcss: ^8.5.10
@@ -449,7 +450,7 @@ importers:
         specifier: ^7.18.0
         version: 7.18.0(eslint@9.39.5(jiti@2.7.0)(supports-color@5.5.0))(supports-color@5.5.0)(typescript@5.5.4)
       '@vitest/coverage-v8':
-        specifier: ^4.1.4
+        specifier: ^4.1.10
         version: 4.1.10(vitest@4.1.10)
       '@yao-pkg/pkg':
         specifier: ^6.14.1
@@ -539,7 +540,7 @@ importers:
         specifier: ~5.5.4
         version: 5.5.4
       vitest:
-        specifier: ^4.1.4
+        specifier: ^4.1.10
         version: 4.1.10(@opentelemetry/api@1.9.0)(@types/node@22.20.1)(@vitest/coverage-v8@4.1.10)(happy-dom@20.11.1(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jsdom@29.1.1)(vite@6.4.3(@types/node@22.20.1)(jiti@2.7.0)(lightningcss@1.33.0)(terser@5.49.2)(tsx@4.21.0)(yaml@2.9.0))
       webpack:
         specifier: 'catalog:'
@@ -587,7 +588,7 @@ importers:
         specifier: 'catalog:'
         version: 8.66.0(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.9.3)
       vitest:
-        specifier: ^4.1.4
+        specifier: ^4.1.10
         version: 4.1.10(@opentelemetry/api@1.9.0)(@types/node@22.20.1)(@vitest/coverage-v8@4.1.10)(happy-dom@20.11.1(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jsdom@29.1.1)(vite@6.4.3(@types/node@22.20.1)(jiti@2.7.0)(lightningcss@1.33.0)(terser@5.49.2)(tsx@4.21.0)(yaml@2.9.0))
       yaml:
         specifier: ^2.9.0
@@ -614,7 +615,7 @@ importers:
         specifier: 'catalog:'
         version: 8.66.0(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.9.3)
       vitest:
-        specifier: ^4.1.4
+        specifier: ^4.1.10
         version: 4.1.10(@opentelemetry/api@1.9.0)(@types/node@22.20.1)(@vitest/coverage-v8@4.1.10)(happy-dom@20.11.1(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jsdom@29.1.1)(vite@6.4.3(@types/node@22.20.1)(jiti@2.7.0)(lightningcss@1.33.0)(terser@5.49.2)(tsx@4.21.0)(yaml@2.9.0))
 
   packages/backend.ai-docs-toolkit:
@@ -635,7 +636,7 @@ importers:
         specifier: 1.29.2
         version: 1.29.2
       yaml:
-        specifier: ^2.8.2
+        specifier: ^2.9.0
         version: 2.9.0
     devDependencies:
       '@types/fontkit':
@@ -883,7 +884,7 @@ importers:
         specifier: ^1.58.2
         version: 1.58.2
       yaml:
-        specifier: ^2.8.3
+        specifier: ^2.9.0
         version: 2.9.0
 
   packages/eslint-config-bai:
@@ -9261,8 +9262,8 @@ packages:
   property-information@7.2.0:
     resolution: {integrity: sha512-IAtzIB6sUiWaJYrX9smp3V46pBGbBeLFRGdh25kg1334VcBlD8HzhPeNIWQH9zhGmo2itIe25EHt9dQP7G5hmg==}
 
-  proxy-addr@2.0.7:
-    resolution: {integrity: sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==}
+  proxy-addr@2.0.8:
+    resolution: {integrity: sha512-5nnx0yGyVUcY6t9RnWcARWtwT9F1D8O9rt08htPvnd49W1IgZtmLkhu9WfMzQj1cFxjHIO6connUNVW5k7AVyQ==}
     engines: {node: '>= 0.10'}
 
   pstree.remy@1.1.8:
@@ -18000,7 +18001,7 @@ snapshots:
       on-finished: 2.4.1
       parseurl: 1.3.3
       path-to-regexp: 0.1.13
-      proxy-addr: 2.0.7
+      proxy-addr: 2.0.8
       qs: 6.15.2
       range-parser: 1.2.1
       safe-buffer: 5.2.1
@@ -20856,7 +20857,7 @@ snapshots:
 
   property-information@7.2.0: {}
 
-  proxy-addr@2.0.7:
+  proxy-addr@2.0.8:
     dependencies:
       forwarded: 0.2.0
       ipaddr.js: 1.9.1

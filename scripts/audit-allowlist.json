@@ -75,6 +75,12 @@
       "package": "js-yaml",
       "importers": ["packages/eslint-config-bai"],
       "reason": "Lint tooling only (eslint -> @eslint/eslintrc under eslint-config-bai); parses our own config files at lint time and is never bundled into the web or desktop build."
+    },
+    {
+      "id": "GHSA-vfj7-8cjw-p6xm",
+      "package": "braces",
+      "importers": ["packages/eslint-config-bai"],
+      "reason": "Lint tooling only (eslint-plugin-import -> typescript-estree -> globby -> fast-glob -> micromatch -> braces under eslint-config-bai, a devDependency of every consumer); no patched version exists, it is never bundled into the web or desktop build, and glob patterns come from our own config, not user input."
     }
   ]
 }
