@@ -4,7 +4,7 @@
  */
 import type { SessionV2Status } from 'backend.ai-ui';
 
-/** Gated behind the client's `session-preemption-statuses` feature flag. */
+/** Joined `SessionV2Status` in manager 26.8.0; callers gate them on that version. */
 const PREEMPTION_STATUSES: ReadonlyArray<SessionV2Status> = [
   'RESERVED',
   'PREEMPTED',
