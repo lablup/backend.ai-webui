@@ -169,21 +169,19 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
                   message.error(t('theme.CannotApplyInvalidJsonConfig'));
                   return;
                 }
-                // A pasted v1 document is converted before the markers are
-                // read: they report the v1 shape failing the v2 schema, which
-                // the conversion is what resolves.
+                // A pasted v1 document is only converted here; the next OK runs
+                // the converted draft through the v2 gate below.
                 const migrated = migrateV1AppearanceConfig(parsedValue);
                 if (migrated) {
-                  parsedValue = migrated;
                   setEditorValue(JSON.stringify(migrated, null, 2));
                   message.info(t('theme.ConvertedV1ThemeConfig'));
-                } else {
-                  const markers =
-                    await monacoRef.current?.editor.getModelMarkers();
-                  if (markers && markers.length > 0) {
-                    message.error(t('theme.CannotApplyInvalidJsonConfig'));
-                    return;
-                  }
+                  return;
+                }
+                const markers =
+                  await monacoRef.current?.editor.getModelMarkers();
+                if (markers && markers.length > 0) {
+                  message.error(t('theme.CannotApplyInvalidJsonConfig'));
+                  return;
                 }
                 // The Monaco markers are advisory (the schema fetch can fail);
                 // this is the gate every draft passes before it is stored.
