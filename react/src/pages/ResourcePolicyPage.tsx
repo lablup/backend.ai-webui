@@ -128,8 +128,9 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
   'use memo';
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  const supportsSubFilter = baiClient.supports('sub-filter');
-  const supportsBinarySizeExpr = baiClient.supports('binary-size-expr');
+  const supportsSubFilter = baiClient.isManagerVersionCompatibleWith('26.7.0');
+  const supportsBinarySizeExpr =
+    baiClient.isManagerVersionCompatibleWith('26.8.0');
   const supportsV2: Record<TabKey, boolean> = {
     keypair: supportsSubFilter,
     user: supportsSubFilter && supportsBinarySizeExpr,

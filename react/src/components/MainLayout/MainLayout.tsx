@@ -12,13 +12,13 @@ import { useRouteAccessDecision } from '../../hooks/useRouteAccess';
 import { useCurrentMenuKey, useRouteScope } from '../../hooks/useRouteScope';
 import { useSiderCollapsedState } from '../../hooks/useShellPanels';
 import { useSetupWebUIPluginEffect } from '../../hooks/useWebUIPluginState';
+import ActAsBanner from '../ActAsBanner';
 import AnnouncementBanner from '../AnnouncementBanner';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAIErrorBoundary from '../BAIErrorBoundary';
 import { SIDER_WIDTH } from '../BAISider';
 import DevApiEndpointMismatchAlert from '../DevApiEndpointMismatchAlert';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
-import ForceTOTPChecker from '../ForceTOTPChecker';
 import NetworkStatusBanner from '../NetworkStatusBanner';
 import NoResourceGroupAlert from '../NoResourceGroupAlert';
 import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
@@ -158,11 +158,14 @@ function MainLayout() {
           contentPadding={0}
           pathname={location.pathname}
           banner={
-            <ErrorBoundaryWithNullFallback>
-              <Suspense fallback={null}>
-                <AnnouncementBanner />
-              </Suspense>
-            </ErrorBoundaryWithNullFallback>
+            <>
+              <ActAsBanner />
+              <ErrorBoundaryWithNullFallback>
+                <Suspense fallback={null}>
+                  <AnnouncementBanner />
+                </Suspense>
+              </ErrorBoundaryWithNullFallback>
+            </>
           }
           sideNav={
             <WebUISider
@@ -273,13 +276,6 @@ function MainLayout() {
                         />
                       </ErrorBoundaryWithNullFallback>
                     </BAIFlex>
-                  </Suspense>
-                  <Suspense>
-                    <ErrorBoundaryWithNullFallback>
-                      {/* ForceTOTPChecker is a component for previous version of manager which don't support TOTP registration before login.  */}
-                      {/* https://github.com/lablup/backend.ai/pull/4354 */}
-                      <ForceTOTPChecker />
-                    </ErrorBoundaryWithNullFallback>
                   </Suspense>
                   {/* Owns the breadcrumb AND the Outlet, so it is on screen for
                     the whole lazy-route fetch. With no fallback that window

@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The v2 counterpart of `BAISessionTypeToken`, for the SessionV2 GraphQL surface. It reads the `BAISessionTypeTokenV2Fragment` on `SessionV2MetadataInfo` (field `sessionType`), so the caller spreads `...BAISessionTypeTokenV2Fragment` inside the session `metadata` selection and passes that metadata object as `metadataFrgmt` — not the session node. The value is upper-cased and coloured through the same `sessionType` domain of `tokenColorForStatus` as v1, so a session shows the same hue on both APIs; an unlisted type falls back to the default colour. A null fragment, or one with no session type, renders a dash instead of a token.',
+      'The v2 counterpart of `BAISessionTypeToken`, for the SessionV2 GraphQL surface. It reads the `BAISessionTypeTokenV2Fragment` on `SessionV2MetadataInfo` (field `sessionType`), so the caller spreads `...BAISessionTypeTokenV2Fragment` inside the session `metadata` selection and passes that metadata object as `metadataFrgmt` — not the session node. The label is the translated type name, coloured through the same `sessionType` domain of `tokenColorForStatus` as v1, so a session shows the same hue on both APIs; an unlisted type falls back to the default colour. A null fragment, or one with no session type, renders a dash instead of a token.',
     bestPractices: [
       {
         guidance: true,

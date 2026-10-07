@@ -93,12 +93,12 @@ to the user admin surface.
    `packages/backend.ai-client/src/resources/user-config.ts` (Option A).
 2. Add `react/src/hooks/useUserPreference.ts` returning `[value, setValue]` with the
    same signature as today's `useLocalStorageGlobalState`, backed by the API +
-   localStorage cache, gated by a capability check
-   (`baiClient.supports('user-preferences')`).
+   localStorage cache, gated by the manager version that ships the API
+   (`baiClient.isManagerVersionCompatibleWith('<version>')`, ADR 0010).
 3. Swap the two persistence calls in `useCustomThemeConfig` / `useThemeMode` to
    `useUserPreference`. Everything downstream is unchanged.
 
-Gate behind a feature flag / capability so older Managers keep working on
+Gate behind that manager version so older Managers keep working on
 localStorage.
 
 ## 6. Migration & FOUC
@@ -125,7 +125,7 @@ localStorage.
 
 1. JSONB column on `users` vs a dedicated `user_preferences` table?
 2. Self-service auth path for ordinary users (Option B would need one).
-3. Capability string to advertise support (for `baiClient.supports(...)`).
+3. Which manager version ships the API (the WebUI gates on it with `isManagerVersionCompatibleWith`).
 4. Should this also become the home for the existing localStorage-only settings
    (`compact_sidebar`, `selected_language`, board layouts), i.e. one prefs doc
    for all of them?

@@ -11,6 +11,7 @@ import {
 import { AdminUserManagementUpdateUserMutation } from '../__generated__/AdminUserManagementUpdateUserMutation.graphql';
 import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
+import { openActAsTab } from '../helper/actAs';
 import { buildUserCSVExportFilter } from '../helper/userCSVExportFilter';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -53,6 +54,7 @@ import {
   SquarePenIcon,
   Trash2,
   UndoIcon,
+  UserRoundCheckIcon,
 } from 'lucide-react';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -121,7 +123,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   const { token } = useTheme();
 
   const bailClient = useSuspendedBackendaiClient();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
 
   const [selectedUserForInfoModal, setSelectedUserForInfoModal] = useState<
     UserNode['node'] | null
@@ -193,9 +195,29 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   const findUserNode = (id: string) =>
     adminUsersV2?.edges?.find((edge) => edge?.node?.id === id)?.node ?? null;
 
+  const canActAs =
+    bailClient.isManagerVersionCompatibleWith('26.9.0') &&
+    bailClient.is_superadmin &&
+    !globalThis.isElectron;
+
+  const confirmActAs = (userId: string, email: string, name: string) => {
+    modal.confirm({
+      title: t('actAs.ConfirmTitle', { name: name || email }),
+      content: t('actAs.ConfirmDescription', { email }),
+      okText: t('actAs.OpenInNewTab'),
+      cancelText: t('button.Cancel'),
+      onOk: () => {
+        if (!openActAsTab({ userId, email, name })) {
+          message.error(t('actAs.FailedToOpen'));
+        }
+      },
+    });
+  };
+
   const renderEmailWithActions = (__: unknown, record: UserV2InList) => {
     const email = record.basicInfo?.email ?? '';
     const isActive = record.status?.status === 'ACTIVE';
+    const userId = toLocalId(record.id);
     return (
       <BAINameActionCell
         title={email}
@@ -273,7 +295,23 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
               },
             },
           },
-          bailClient.supports('admin-unblock-user') && {
+          canActAs &&
+            isActive &&
+            userId !== bailClient.user_uuid && {
+              key: 'act-as',
+              title: t('actAs.UseAsThisUser'),
+              icon: <UserRoundCheckIcon />,
+              showInMenu: 'always' as const,
+              onClick: () =>
+                confirmActAs(
+                  userId,
+                  email,
+                  record.basicInfo?.fullName ||
+                    record.basicInfo?.username ||
+                    '',
+                ),
+            },
+          {
             key: 'unblock-login',
             title: t('credential.UnblockLogin'),
             icon: <LockOpen />,
@@ -314,9 +352,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
     validate: (value: string) => /^-?\d+$/.test(String(value).trim()),
   };
 
-  // Filters only supported by the v2 user search API from 26.4.4 (backend
-  // BA-6247 / BA-6249). Included only when the connected manager advertises
-  // the capability, so the UI never offers filters it cannot evaluate.
+  // Filters the v2 user search API evaluates (BA-6247 / BA-6249).
   const extendedFilterProperties: Array<BAIGraphQLFilterProperty> = [
     {
       key: 'fullName',
@@ -448,9 +484,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
         },
       ],
     },
-    ...(bailClient.supports('user-v2-extended-filter')
-      ? extendedFilterProperties
-      : []),
+    ...extendedFilterProperties,
   ]);
 
   return (
@@ -567,33 +601,31 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
                 setOpenCreateModal(true);
               }}
             />
-            {bailClient.supports('bulk-create-user') && (
-              <DropdownMenu
-                button={{
-                  label: t('button.More'),
-                  variant: 'primary',
-                  isIconOnly: true,
-                  icon: <Ellipsis size="1em" />,
-                }}
-                hasChevron={false}
-                placement="below"
-                alignment="end"
-                items={[
-                  {
-                    label: t('credential.BulkCreateUser'),
-                    onClick: () => {
-                      setOpenBulkCreateModal(true);
-                    },
+            <DropdownMenu
+              button={{
+                label: t('button.More'),
+                variant: 'primary',
+                isIconOnly: true,
+                icon: <Ellipsis size="1em" />,
+              }}
+              hasChevron={false}
+              placement="below"
+              alignment="end"
+              items={[
+                {
+                  label: t('credential.BulkCreateUser'),
+                  onClick: () => {
+                    setOpenBulkCreateModal(true);
                   },
-                  {
-                    label: t('credential.BulkCreateUserFromCSV'),
-                    onClick: () => {
-                      setOpenBulkCreateCSVModal(true);
-                    },
+                },
+                {
+                  label: t('credential.BulkCreateUserFromCSV'),
+                  onClick: () => {
+                    setOpenBulkCreateCSVModal(true);
                   },
-                ]}
-              />
-            )}
+                },
+              ]}
+            />
           </ButtonGroup>
         </BAIFlex>
       </BAIFlex>

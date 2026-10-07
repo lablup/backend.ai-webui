@@ -451,8 +451,7 @@ const EMPTY_TOKEN_LIST = {
 /**
  * Shared minimal `modelDeployment` node used by EndpointDetailPage mocks. The
  * page reads `modelDeployment.metadata.status` as the single source of truth
- * for `isDeploymentDeploying` / `hasAnyHealthyRoute` when the `model-card-v2`
- * feature flag is injected by the tests.
+ * for `isDeploymentDeploying` / `hasAnyHealthyRoute`.
  */
 const MOCK_DEPLOYMENT_GLOBAL_ID = btoa(`ModelDeployment:${MOCK_ENDPOINT_UUID}`);
 

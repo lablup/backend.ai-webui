@@ -124,7 +124,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
     graphql`
       query ImportFromHuggingFaceModalQuery($id: UUID!) {
         group(id: $id) {
-          type @since(version: "24.03.0")
+          type
         }
       }
     `,

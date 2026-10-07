@@ -538,6 +538,12 @@
     "MultiNodeShort": "Мульти",
     "SingleNodeShort": "Одинокий"
   },
+  "comp:BAISessionTypeToken": {
+    "Batch": "Пакетный",
+    "Inference": "Инференс",
+    "Interactive": "Интерактивный",
+    "System": "Загрузка"
+  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Выберите хост хранилища"
   },
@@ -725,7 +731,6 @@
       "Back": "Назад",
       "Cancel": "Отмена",
       "Close": "Закрывать",
-      "Collapse": "Крах",
       "Confirm": "Подтвердить",
       "Copied": "Скопировано",
       "Copy": "Копировать",
@@ -733,7 +738,6 @@
       "Create": "Создавать",
       "Delete": "Удалить",
       "Edit": "Редактировать",
-      "Expand": "Расширять",
       "Remove": "Удалять",
       "Save": "Сохранить",
       "Upload": "Загрузить"

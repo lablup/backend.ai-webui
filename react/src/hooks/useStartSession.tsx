@@ -94,8 +94,7 @@ export type StartSessionValue =
       /**
        * Explicit target project (group) name for the created session
        * (ADR-0001, FR-3412). When set, `group_name` is pinned to exactly
-       * this project instead of the ambient current project. Distinct from
-       * the `owner` branch, which is coupled to `owner_access_key`.
+       * this project instead of the ambient current project.
        * Callers that omit it keep the ambient-project fallback — a
        * sanctioned interim state until they are converted.
        */
@@ -133,7 +132,6 @@ export const useStartSession = () => {
   const relayEnv = useRelayEnvironment();
   const resolveImageReference = useResolveImageReference();
   const baiClient = useSuspendedBackendaiClient();
-  const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
 
   const [currentGlobalResourceGroup] = useCurrentResourceGroupState();
 
@@ -148,11 +146,9 @@ export const useStartSession = () => {
       enabled: false,
       command: undefined,
       scheduleDate: undefined,
-      ...(supportBatchTimeout && {
-        timeoutEnabled: false,
-        timeout: undefined,
-        timeoutUnit: 's',
-      }),
+      timeoutEnabled: false,
+      timeout: undefined,
+      timeoutUnit: 's',
     },
     envvars: [],
     // set default_session_environment only if set
@@ -209,16 +205,10 @@ export const useStartSession = () => {
       architecture,
       resources: {
         enqueueOnly: true,
-        // Project and domain settings. `projectName` (explicit project
-        // contract, FR-3412) wins over the ambient current project; the
-        // `owner` branch stays independent because it is coupled to
-        // `owner_access_key`.
-        group_name: values.owner?.enabled
-          ? values.owner.project
-          : values.projectName || currentProject.name || undefined,
-        domain: values.owner?.enabled
-          ? values.owner.domainName
-          : baiClient._config.domainName,
+        // `projectName` (explicit project contract, FR-3412) wins over the
+        // ambient current project.
+        group_name: values.projectName || currentProject.name || undefined,
+        domain: baiClient._config.domainName,
 
         // Session configuration
         type: values.sessionType,
@@ -232,14 +222,6 @@ export const useStartSession = () => {
         cluster_size: values.cluster_size,
         maxWaitSeconds: 15,
         reuseIfExists: values.reuseIfExists ?? false,
-
-        // Owner settings (optional)
-        // FYI, `config.scaling_group` also changes based on owner settings
-        ...(values.owner?.enabled
-          ? {
-              owner_access_key: values.owner.accesskey,
-            }
-          : {}),
 
         // Batch mode settings (optional)
         ...(values.sessionType === 'batch'
@@ -257,8 +239,7 @@ export const useStartSession = () => {
           : {}),
 
         // Batch timeout configuration (optional)
-        ...(supportBatchTimeout &&
-        values?.batch?.timeoutEnabled &&
+        ...(values?.batch?.timeoutEnabled &&
         !_.isUndefined(values?.batch?.timeout)
           ? {
               batchTimeout:
@@ -301,9 +282,7 @@ export const useStartSession = () => {
                 : undefined),
             },
           }),
-          scaling_group: values.owner?.enabled
-            ? values.owner.resourceGroup
-            : values.resourceGroup,
+          scaling_group: values.resourceGroup,
           ...(values?.resource && {
             resource_opts: {
               shmem: values?.resource?.shmem,
@@ -326,8 +305,7 @@ export const useStartSession = () => {
           preopen_ports: transformPortValuesToNumbers(values.ports),
 
           // Agent selection (optional)
-          ...(baiClient.supports('agent-select') &&
-          !baiClient?._config?.hideAgents &&
+          ...(!baiClient?._config?.hideAgents &&
           values.agent !== undefined &&
           !_.isEqual(_.castArray(values.agent), ['auto'])
             ? {

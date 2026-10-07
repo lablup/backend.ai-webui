@@ -1,6 +1,6 @@
 // spec: e2e/.agent-output/test-plan-rbac-management.md
 // Scenarios: 1.1 – 1.4, 6.1, 6.4, 6.5 (Role list view, filtering, sorting, refresh)
-import { clientSupports } from '../utils/feature-gate-util';
+import { isManagerVersionCompatible } from '../utils/feature-gate-util';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import test, { expect, Page } from '@playwright/test';
 
@@ -82,7 +82,7 @@ test.describe(
         'true',
       );
       // The "Presets" tab is shown only on managers >= 26.9.0a4.
-      if (await clientSupports(page, 'rbac-role-presets')) {
+      if (await isManagerVersionCompatible(page, '26.9.0a4')) {
         await expect(rbacPageTab(page, 'Presets')).toBeVisible();
       } else {
         await expect(rbacPageTab(page, 'Presets')).toBeHidden();

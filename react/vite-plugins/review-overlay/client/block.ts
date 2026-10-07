@@ -13,7 +13,7 @@ import { encodeAnchor } from './codec.js';
 import { dedupeById, pinSetUrl, pinUrl, readablePath } from './deeplink.js';
 import { esc } from './escape-html.js';
 import { pinId } from './id.js';
-import type { AnchorComponent, AnchorV3, SetPin } from './types.js';
+import type { AnchorComponent, AnchorV3, ReviewEnv, SetPin } from './types.js';
 
 /**
  * The app publishes the current route's ENGLISH i18n label on
@@ -171,6 +171,38 @@ export function buildBlockHtml(input: BlockInput): string {
 export interface SetBlockOptions {
   /** Prepended to the set link; defaults to this document's origin. */
   origin?: string;
+  /** Rendered once under the set as a footer; absent, the copy ends as before. */
+  env?: ReviewEnv | undefined;
+}
+
+/**
+ * The footer's pieces in reading order, each a `<name> <value>` pair except
+ * the account, which already carries its own role. Empty fields drop out.
+ */
+export function envFooterParts(env: ReviewEnv): string[] {
+  const parts: string[] = [];
+  if (env.webui?.trim()) parts.push(`WebUI ${env.webui.trim()}`);
+  if (env.manager?.trim()) parts.push(`Manager ${env.manager.trim()}`);
+  if (env.endpoint?.trim()) parts.push(`API ${env.endpoint.trim()}`);
+  if (env.account?.trim()) parts.push(env.account.trim());
+  return parts;
+}
+
+/** A footer line as `envFooterText` writes it — a block closer for the parser. */
+export const ENV_FOOTER_RE = /^\s*<sub>[^<\n]*<\/sub>\s*$/;
+
+/** The footer as markdown; `null` when every field is blank. */
+export function envFooterText(env: ReviewEnv | undefined): string | null {
+  const parts = env ? envFooterParts(env) : [];
+  return parts.length ? `<sub>${parts.join(' · ')}</sub>` : null;
+}
+
+/** The same footer for a rich editor. */
+export function envFooterHtml(env: ReviewEnv | undefined): string | null {
+  const parts = env ? envFooterParts(env) : [];
+  return parts.length
+    ? `<p><sub>${parts.map(esc).join(' · ')}</sub></p>`
+    : null;
 }
 
 /**
@@ -226,6 +258,8 @@ export function buildSetText(
   if (set.length > 1) {
     parts.push(`[${setLinkLabel(set.length)}](${setUrl(set, options)})`);
   }
+  const footer = envFooterText(options.env);
+  if (footer) parts.push(footer);
   return parts.join('\n\n');
 }
 
@@ -240,9 +274,11 @@ export function buildSetHtml(
   const html = set
     .map((pin) => buildBlockHtml(setBlockInput(pin, ownUrl(pin, options))))
     .join('\n<p></p>\n');
-  if (set.length < 2) return html;
+  const footer = envFooterHtml(options.env);
+  const tail = footer ? `\n${footer}` : '';
+  if (set.length < 2) return `${html}${tail}`;
   const href = esc(setUrl(set, options));
-  return `${html}\n<p><a href="${href}">${setLinkLabelHtml(set.length)}</a></p>`;
+  return `${html}\n<p><a href="${href}">${setLinkLabelHtml(set.length)}</a></p>${tail}`;
 }
 
 /**

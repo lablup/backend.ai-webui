@@ -97,6 +97,8 @@ const RoleListTab: React.FC = () => {
 
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
+  const supportsMappedScopeFilter =
+    baiClient.isManagerVersionCompatibleWith('26.8.0');
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -303,7 +305,7 @@ const RoleListTab: React.FC = () => {
                   ],
                   strictSelection: true,
                 },
-                baiClient?.supports('rbac-filter-assigned-user') && {
+                {
                   key: 'assignedUser.userId',
                   propertyLabel: t('rbac.AssignedUser'),
                   type: 'uuid',
@@ -329,7 +331,7 @@ const RoleListTab: React.FC = () => {
                     />
                   ),
                 },
-                baiClient?.supports('role-mapped-scope-filter') && {
+                supportsMappedScopeFilter && {
                   key: 'mappedScope.scopeType',
                   propertyLabel: t('rbac.ScopeType'),
                   type: 'enum',
@@ -357,7 +359,7 @@ const RoleListTab: React.FC = () => {
                     </Suspense>
                   ),
                 },
-                baiClient?.supports('role-mapped-scope-filter') && {
+                supportsMappedScopeFilter && {
                   key: 'mappedScope.scopeId',
                   propertyLabel: t('rbac.ScopeRawId'),
                   // `equals` is the one operator both the 26.8 StringFilter
@@ -491,7 +493,7 @@ const RoleListTab: React.FC = () => {
       />
       {/* One drawer per manager shape: the single-scope role (>= 26.9.0a4)
           gets the V2 drawer, everything older the previous one (ADR 0006). */}
-      {baiClient?.supports('rbac-single-scope-role') ? (
+      {baiClient?.isManagerVersionCompatibleWith('26.9.0a4') ? (
         <BAIUnmountAfterClose>
           <RoleDetailDrawerV2
             open={!!selectedRole}
@@ -547,7 +549,8 @@ const RBACManagementPage: React.FC = () => {
 
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  const supportsRolePresets = baiClient.supports('rbac-role-presets');
+  const supportsRolePresets =
+    baiClient.isManagerVersionCompatibleWith('26.9.0a4');
   const [{ tab }, setQueryParams] = useQueryStates(
     {
       tab: parseAsStringLiteral(tabValues).withDefault('roles'),

@@ -26,7 +26,7 @@ const makeSearchContext = (
   overrides: Partial<SearchContext> = {},
 ): SearchContext => ({
   isSuperAdmin: false,
-  supports: () => true,
+  isManagerVersionCompatibleWith: () => true,
   config: { fasttrackEndpoint: null },
   visibleMenuKeys: new Set(['session', 'data', 'deployments', 'pipeline']),
   disabledMenuKeys: new Set(),

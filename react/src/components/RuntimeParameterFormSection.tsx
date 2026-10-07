@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { Form } from '../form-engine';
-import { useSuspendedBackendaiClient } from '../hooks';
 import {
   RuntimeParameterGroup,
   RuntimeVariantPresetDef,
@@ -22,7 +21,6 @@ import { Banner } from '@lablup/ui-common/Banner';
 import { Collapsible } from '@lablup/ui-common/Collapsible';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Tab, TabList } from '@lablup/ui-common/TabList';
-import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import { spacingVars } from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
@@ -127,10 +125,6 @@ const RuntimeParameterFormSection: React.FC<
   'use memo';
   const { t } = useTranslation();
   const form = Form.useFormInstance();
-  const baiClient = useSuspendedBackendaiClient();
-  const supportsRequiredField = baiClient.supports(
-    'runtime-variant-preset-required',
-  );
   const groups = useRuntimeParameterSchema(runtimeVariant);
 
   // Notify parent when groups change (for serialization at submit time)
@@ -251,12 +245,7 @@ const RuntimeParameterFormSection: React.FC<
       defaultIsOpen
       trigger={
         <BAIFlex justify="between" align="center" style={{ flex: 1 }}>
-          <span>
-            {t('modelService.RuntimeParamTitle')}{' '}
-            {!supportsRequiredField && (
-              <Text color="secondary">({t('general.Optional')})</Text>
-            )}
-          </span>
+          <span>{t('modelService.RuntimeParamTitle')}</span>
           {/* MAPPING 3.3: an icon-only button whose accessible name was an
               ad-hoc `aria-label` is an `IconButton`, which requires `label`
               and renders the tooltip itself -- so the Tooltip wrapper goes.
@@ -360,10 +349,6 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
-  const baiClient = useSuspendedBackendaiClient();
-  const supportsRequired = baiClient.supports(
-    'runtime-variant-preset-required',
-  );
 
   const label = param.displayName ?? param.name;
   const tooltip = param.description ?? undefined;
@@ -375,7 +360,7 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
 
   // Defaults are shown as placeholders (not seeded into form state), so a
   // required preset always demands an explicit user value before submit.
-  const isRequired = supportsRequired && param.required;
+  const isRequired = param.required;
   const requiredRules = isRequired
     ? [{ required: true, message: t('general.ValueRequired', { name: label }) }]
     : undefined;

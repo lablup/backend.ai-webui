@@ -19,6 +19,8 @@ import { __iconNode as gripVertical } from 'lucide-react/dist/esm/icons/grip-ver
 import { __iconNode as mapPin } from 'lucide-react/dist/esm/icons/map-pin.mjs';
 import { __iconNode as pencil } from 'lucide-react/dist/esm/icons/pencil.mjs';
 import { __iconNode as trash2 } from 'lucide-react/dist/esm/icons/trash-2.mjs';
+import { __iconNode as userX } from 'lucide-react/dist/esm/icons/user-x.mjs';
+import { __iconNode as user } from 'lucide-react/dist/esm/icons/user.mjs';
 import { __iconNode as x } from 'lucide-react/dist/esm/icons/x.mjs';
 import { describe, expect, it } from 'vitest';
 
@@ -37,6 +39,8 @@ const UPSTREAM: Record<IconName, unknown> = {
   'map-pin': mapPin,
   pencil,
   'trash-2': trash2,
+  user,
+  'user-x': userX,
   x,
 };
 

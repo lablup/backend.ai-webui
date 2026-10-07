@@ -538,6 +538,12 @@
     "MultiNodeShort": "Олон-нүдэт",
     "SingleNodeShort": "Нэг-нүдэт"
   },
+  "comp:BAISessionTypeToken": {
+    "Batch": "Багц",
+    "Inference": "Дүгнэлт",
+    "Interactive": "Интерактив",
+    "System": "Байршуулалт"
+  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Хадгалах хост сонгох"
   },
@@ -725,7 +731,6 @@
       "Back": "Буцах",
       "Cancel": "Цуаах",
       "Close": "Ойр дөхөм",
-      "Collapse": "Сүйрэл",
       "Confirm": "Баталгаажуулах",
       "Copied": "Хуулсан",
       "Copy": "Хуулах",
@@ -733,7 +738,6 @@
       "Create": "Шуүгиан дэгдээх",
       "Delete": "Эдгээх",
       "Edit": "Засах",
-      "Expand": "Өргөтгөх",
       "Remove": "Зөөх",
       "Save": "Хадгалах",
       "Upload": "Байршуулах"

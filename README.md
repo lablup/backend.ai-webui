@@ -215,7 +215,7 @@ Safari users (and some corporate networks) need a one-time `/etc/hosts` sync:
 $ sudo pnpm exec portless hosts sync
 ```
 
-If your branch name contains an `FR-XXXX` issue number, the URL is `https://fr-XXXX.localhost:1355`; otherwise Portless picks a branch-derived subdomain. To pin a specific React port, run `PORT=9081 pnpm run dev`. See `DEV_ENVIRONMENT.md` for theme color and troubleshooting.
+If your branch name contains an `FR-XXXX` issue number, the URL is `https://fr-XXXX.localhost:1355` (`gh-N` gives `https://gh-N.localhost:1355` for a GitHub-native issue); otherwise Portless picks a branch-derived subdomain. To pin a specific React port, run `PORT=9081 pnpm run dev`. See `DEV_ENVIRONMENT.md` for theme color and troubleshooting.
 
 ### Commands Reference
 
@@ -350,6 +350,12 @@ After installing the extension, add the following configuration to your `./vscod
   "relay.rootDirectory": "react"
 }
 ```
+
+### Dependency vulnerability gate
+
+`node scripts/audit-gate.mjs` fails on any high/critical `pnpm audit` advisory in shipped dependencies (production dependencies, plus everything reachable from the root entries listed under `shippedRootEntries`: the Electron package itself and the pkg-built local proxy's requires) that is not listed in `scripts/audit-allowlist.json`. CI runs it on PRs that change dependencies, weekly, and before every release build (`.github/workflows/dependency-audit.yml`).
+
+When it fails, upgrade the dependency. If that is not possible yet, add a reviewed allowlist entry: the GHSA id, the package, a reason, and either an `expires` date with the tracking issue (the gate fails once it passes) or `importers` that limit it to tooling which is never bundled.
 
 ## Serving Guide
 

@@ -74,7 +74,7 @@ const DeploymentAutoScalingCard: React.FC<DeploymentAutoScalingCardProps> = ({
         metadata {
           status
         }
-        creator @since(version: "26.4.3") {
+        creator {
           basicInfo {
             email
           }

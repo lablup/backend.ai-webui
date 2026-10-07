@@ -29,37 +29,40 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
 ### Development Workflow
 
 1. **Dev Server**: Run `pnpm run dev` (TypeScript watch + Relay watch + React dev server under [Portless](https://github.com/vercel-labs/portless)). Portless is a `devDependency`, no global install needed; `dev.mjs` auto-starts the daemon on port 1355 (HTTPS by default).
-2. **URL**: For branches matching `FR-XXXX` the dev URL is `https://fr-XXXX.localhost:1355`; otherwise Portless derives a branch-based subdomain (printed on startup). See `DEV_ENVIRONMENT.md` for theme color and troubleshooting.
+2. **URL**: For branches matching `FR-XXXX` the dev URL is `https://fr-XXXX.localhost:1355` (`gh-N` → `https://gh-N.localhost:1355` for a GitHub-native issue, see below); otherwise Portless derives a branch-based subdomain (printed on startup). See `DEV_ENVIRONMENT.md` for theme color and troubleshooting.
 
 # Additional Workflow Description
 
-- All work items are created in Jira and serve as the starting point for understanding and resolving tasks.
-- Work items are cloned as GitHub issues in the corresponding repository.
-- GitHub PR titles follow this format:
-  - prefix
-    - feat: New features or feature improvements and changes
-    - fix: Bug fixes
-    - refactor: Refactoring
-    - style: Design changes without functional changes
-    - chore: Other small tasks
-  - Format: `prefix(JIRA-ISSUE-NUMBER): title`
-  - GitHub PR content starts with `Resolves #1234 (FR-1234)` where #1234 is the cloned issue number and FR-1234 is the Jira issue number. The space between `#1234` and `(FR-1234)` is required — without it GitHub does not auto-link the issue reference and downstream tooling (the `.github/workflows/project-status-sync.yml` workflow) fails to detect the link.
+- Work items are GitHub issues in this repository, created directly on GitHub and planned on [GitHub Project 41](https://github.com/orgs/lablup/projects/41) (its Iteration field is the sprint). Jira is not used for new work items. For issue number `N`:
+  - PR title: `prefix(#N): title` — for example `fix(#10144): keep the drawer header visible`. Write `#N`, never `GH-N`: an automation reads any `ABC-123`-shaped token in a PR title as a Jira key.
+    - prefix
+      - feat: New features or feature improvements and changes
+      - fix: Bug fixes
+      - refactor: Refactoring
+      - style: Design changes without functional changes
+      - chore: Other small tasks
+  - PR content starts with `Resolves #N` — no parenthesized key after it.
+  - Branch: `type/gh-N-slug` — for example `fix/gh-10144-drawer-header`.
+  - Dev server: `gh-N` in the app name (`gh-10144-pr10150-drawer`).
+  - Teams thread: read from the issue's `Teams thread` field — an organization-level Issue field visible to organization members only, filled automatically when the issue is created. The repository is public, so the thread URL is never written into an issue or PR comment.
+- An issue whose body ends with `JIRA Issue: FR-XXXX` is a clone of a legacy Jira issue. Work on it exactly the same way: `prefix(#N): title`, `Resolves #N`, `type/gh-N-slug`. Do **not** put the FR key in the PR title — an automation closes the Jira side when the GitHub issue closes.
 
 - **Tool Requirements**:
-  - **Jira**: Use `jira-workflow` skill (fw plugin). Project config in `.jira.config`.
+  - **Jira**: read-only legacy. Use the `jira-workflow` skill (fw plugin; config in `.jira.config`) only to inspect existing FR issues — never to create work items.
   - **GitHub**: Use `gh` CLI (preferred) or GitHub MCP (`mcp__github__*`)
   - **Git/PR**: Use **GitHub Stacked PRs** via the `gh stack` CLI (`github/gh-stack` extension) for all stacked branch/PR work. The command reference lives in the `gh-stack` skill (`.claude/skills/gh-stack/`) and the project conventions (naming, draft→ready lifecycle, bottom-up merge, sync/rebase/conflict loops, non-interactive agent rules) in the `fw:stacked-pr-workflow` skill — load both before stack work.
     - **Graphite (`gt`) is banned in this repository (FR-3391).** Never run any `gt` command; a permissions deny rule plus a `PreToolUse` hook block `gt` invocations. Stack metadata lives on GitHub itself.
     - Open and update PRs with `gh stack submit --auto`, which creates them as drafts. For a genuinely single, unstacked PR, plain `git push` + `gh pr create` is acceptable. Leave them as drafts — marking a PR ready (`--open` / `gh pr ready`) belongs to the gate below, not here.
     - **Draft → ready goes through the `fw:pr-ready-gate` skill (FR-3508), never a bare `gh pr ready` / `--open`.** Copilot's automatic review is disabled on this repository, so the gate is what requests it: it asks Copilot to review while the PR is still a draft, fixes what is objectively wrong, brings anything needing a human decision back to you with the thread left open, replies to and resolves the rest, and only then flips the PR out of draft. Copilot is the first reader; humans are the second.
-  - **After the PR exists: dev server, then walkthrough, in that order.** Right after `gh stack submit --auto` / `gh pr create`, boot the branch's dev server with the `dev-server` skill — or reuse the live one its boot record already names for the branch; one server per branch — so `advertise.sh` writes the record and the dev-server comment; then run the `walkthrough` skill (`.claude/skills/walkthrough/`) as the last step. It mints the PR's review stops against that server, upserts one walkthrough comment, and gives you the `[Walkthrough](<set link>) · N stops` line for the final message — a markdown link, so chat and PR bodies render it short. Do not wait to be asked for either: nothing else in this workflow boots a server, so a walkthrough that only runs "after the server is advertised" never runs on its own. The endpoint and credentials follow `dev-server` §2c–§2d as written there.
-    - Two skips, each named in the final message with its one-line reason: the backend is unreachable or kills the app shell after login; the PR changes nothing a person can recognize on screen — schema, tests, docs, generated files, i18n key plumbing (a relabel *is* on screen and gets a stop).
-    - A backend that does not yet ship the feature is **not** a skip: mint anyway, write each stop's check as value → what shows (`walkthrough` §5), and list what that server cannot show under "Not shown in the walkthrough".
-    - A stack submitted in one sitting gets one walkthrough per layer with on-screen changes: the top layer's server serves the lower ones (their heads are contained in it), so mint each lower layer with `/walkthrough <pr>` (`walkthrough` §1a) against that same server — no second boot. The same command serves a PR opened by another session or on another day, from any checkout.
-    - When the PR is done with, `advertise.sh stop --app <name>` after killing the server (`dev-server` §5); a server nobody stopped is a ~1 GB process and a boot record every reader has to distrust (FR-3993).
+  - **After the PR exists: dev server, then walkthrough when it is needed.** First decide with `walkthrough` section 0 whether the PR needs one: it does when a reviewer would have to hunt for the change or set up a state to see it (a dialog or step, several places, data-dependent display). Then, right after `gh stack submit --auto` / `gh pr create`, boot the branch's dev server with the `dev-server` skill — or reuse the live one its boot record already names for the branch; one server per branch — so `advertise.sh` writes the record and the dev-server comment; and, when section 0 said so, run the `walkthrough` skill (`.claude/skills/walkthrough/`) as the last step. It mints the PR's review stops against that server, upserts one walkthrough comment, and gives you the `[Walkthrough](<set link>) · N stops` line for the final message — a markdown link, so chat and PR bodies render it short. Do not wait to be asked: nothing else in this workflow boots a server or makes that call. The endpoint and credentials follow `dev-server` sections 2c–2d as written there.
+    - Skips, each named in the final message with its one-line reason (`walkthrough` section 0): the PR changes nothing a person can recognize on screen (schema, tests, docs, generated files, i18n key plumbing, a same-render refactor), in which case boot no dev server either; the change is one spot a reader finds on landing (a relabel, copy, icon or spacing tweak), which gets a `Where to look:` line in the PR body instead; the connected backend can show none of it, which gets its value → what shows condition in the PR body; the backend is unreachable or kills the app shell after login.
+    - What the PR shows is **English**, whatever language the chat is in: each stop's base fields (`ch`, `ck`, `old`/`new`) are English with `"lng": "en"`, and so is the "Not shown" list. The stop itself carries a Korean translation under `i18n.ko`, so the reviewer can switch the popover between English and Korean (`walkthrough` section 5).
+    - A stack submitted in one sitting gets one walkthrough per layer with on-screen changes: the top layer's server serves the lower ones (their heads are contained in it), so mint each lower layer with `/walkthrough <pr>` (`walkthrough` section 1a) against that same server — no second boot. The same command serves a PR opened by another session or on another day, from any checkout.
+    - When the PR is done with, `advertise.sh stop --app <name>` after killing the server (`dev-server` section 5); a server nobody stopped is a ~1 GB process and a boot record every reader has to distrust (FR-3993).
     - The skill list is fixed when a session starts: a session that began before a skill landed on `main` needs `/reload-plugins` (or a fresh session) before this step can call it — observed on 2026-09-18, when `walkthrough` appeared only after the reload.
 - Follow the GitHub Stacked PRs strategy. Write work by appropriately stacking individual PRs.
 - When amending a PR with significant changes, update the PR description to reflect the new scope. Minor fixes don't need description updates, but new features, deleted files, or changed approach should be reflected.
+- **GitHub Project**: https://github.com/orgs/lablup/projects/41 (lablup/41) — Iteration = sprint
 
 ### Configuration
 
@@ -150,7 +153,7 @@ When reviewing PRs (especially agent-generated ones), check:
 - No hardcoded strings, magic numbers, or debug artifacts left behind
 
 <!-- UI-COMMON:START -->
-@lablup/ui-common v0.2.0-alpha.15 · Astryx v0.6.2 · 164 components
+@lablup/ui-common v0.2.0-alpha.17 · Astryx v0.6.5 · 166 components
 CLI: run every command as `pnpm exec ui-common <cmd>` (shown below as `ui-common ...`).
 
 SETUP (once, first in your entry stylesheet) — without these, components render unstyled:
@@ -160,28 +163,30 @@ SETUP (once, first in your entry stylesheet) — without these, components rende
   @import "@lablup/ui-common/theme/lablup/theme.css";
   @import "@lablup/ui-common/ui-common.css";
 
-WORKFLOW — discover, don't guess. Before writing UI:
-1. `ui-common build "<idea>"` — START HERE: returns a kit (closest [page] + [block]s + [component]s). No args = full playbook.
-2. `ui-common template <name> [--skeleton]` — scaffold the [page]/[block]s it named, or study their layout. Templates are reference code.
-3. `ui-common component <Name>` — props + examples for every component you use.
+WORKFLOW — start every page from a template. Never lay out a page from scratch:
+1. `ui-common build "<idea>"` — START HERE: names the [page] template to start from (always one: the closest match, or the app shell), two other templates, and the [block]s + [component]s for parts it lacks. No args = full playbook.
+2. `ui-common template <name> <path>` — scaffold that template into your project. Keep its frame, gap and padding; replace its data, copy and sections; delete sections you do not need.
+3. `ui-common template <Block>` for a part the template lacks; `ui-common component <Name>` for props + examples before you use or change a component.
+Changing a page you already have? Keep it: skip step 2 and add blocks and components inside its sections.
 
 RULES:
 - No <div> — components do all layout/spacing, page frame included.
-- Frame first: read `ui-common docs layout` before writing any page or screen — page frame, region widths, breakpoint behavior.
+- Frame first: the template you scaffold sets the page frame. Read `ui-common docs layout` before you change it — region widths, breakpoint behavior.
 - Dense data = rows (Table, List/Item), never Card-wrapped list items; Card is for standalone widgets. Status = StatusDot/Token; Badge = counts only.
 - Custom styling: component props first; else the xstyle prop / StyleX tokens (@lablup/ui-common/theme/tokens.stylex). No raw hex/px.
 - Tokens for every value (`ui-common docs tokens`). Brand/accent belongs in the theme (`ui-common theme list` / `theme add <slug>`, or `ui-common theme template` for a custom one) — never override --color-* in :root.
-- SELF-CHECK before you finish: re-read the file and replace any className=, style={{…}}, raw <div>/<span> layout, imported .css/@apply, or hardcoded #hex/px with the component or the xstyle prop + a token. If unsure a component/prop exists, run `ui-common component <Name>` / `ui-common search "<thing>"`; don't hand-roll CSS.
+- SELF-CHECK before you finish: re-read the file and replace any className=, style={{…}}, raw <div>/<span> layout, imported .css/@apply, or hardcoded #hex/px with the component or the xstyle prop + a token. Confirm the page kept its template's frame, gap and padding. If unsure a component/prop exists, run `ui-common component <Name>` / `ui-common search "<thing>"`; don't hand-roll CSS.
 
 MORE CLI:
   search "<query>"   find any component / hook / doc / template / block
-  component --list   164 components by category
+  component --list   166 components by category
   template --list    page + block recipes
-  docs <topic>       browser-support, cli-integrations, color, elevation, getting-started, icons, illustrations, internationalization, layout, migration, motion, principles, shape, spacing, styling-libraries, styling, theme, tokens, typography, working-with-ai, backend-ai-ui, ui-common
+  docs <topic>       authoring, browser-support, color, elevation, getting-started, icons, illustrations, internationalization, layout, migration, motion, principles, shape, spacing, styling-libraries, styling, theme, tokens, typography, working-with-ai, backend-ai-ui, ui-common
+  docs cli           commands, API reference, integration authoring (one level at a time)
   swizzle <Name>     eject component source for deep customization
-  upgrade --from <v> run after bumping @lablup/ui-common: ui-common's codemods, then Astryx's
+  upgrade --from <old version> --apply   run after any Astryx or integration dependency bump
 
-UI-COMMON (@lablup/ui-common v0.2.0-alpha.15 wraps Astryx v0.6.2):
+UI-COMMON (@lablup/ui-common v0.2.0-alpha.17 wraps Astryx v0.6.5):
 - Import only from @lablup/ui-common: the root, or the same subpath Astryx uses (@lablup/ui-common/Button, /theme/tokens.stylex, /lab). Never import @astryxdesign/* directly.
 - Layers: declare `@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;` once, first, in the entry stylesheet. ui-common's styles sit in `ui-common`; yours go in `components` / `utilities`.
 - Use AlertModal (@lablup/ui-common/AlertModal), not AlertDialog: ui-common hides AlertDialog.

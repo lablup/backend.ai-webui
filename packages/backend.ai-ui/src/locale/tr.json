@@ -538,6 +538,12 @@
     "MultiNodeShort": "Çok",
     "SingleNodeShort": "Bekar"
   },
+  "comp:BAISessionTypeToken": {
+    "Batch": "Toplu İş",
+    "Inference": "Çıkarım",
+    "Interactive": "Etkileşimli",
+    "System": "Yükleme"
+  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Depolama Sunucusu Seç"
   },
@@ -725,7 +731,6 @@
       "Back": "Geri",
       "Cancel": "İptal etmek",
       "Close": "Kapalı",
-      "Collapse": "Yıkılmak",
       "Confirm": "Onayla",
       "Copied": "Kopyalandı",
       "Copy": "Kopyala",
@@ -733,7 +738,6 @@
       "Create": "Yaratmak",
       "Delete": "Silmek",
       "Edit": "Düzenle",
-      "Expand": "Genişletmek",
       "Remove": "Kaldırmak",
       "Save": "Kaydet",
       "Upload": "Yüklemek"

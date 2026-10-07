@@ -538,6 +538,12 @@
     "MultiNodeShort": "多",
     "SingleNodeShort": "单节点"
   },
+  "comp:BAISessionTypeToken": {
+    "Batch": "批处理",
+    "Inference": "推理",
+    "Interactive": "交互式",
+    "System": "上传"
+  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "选择存储主机"
   },
@@ -725,7 +731,6 @@
       "Back": "返回",
       "Cancel": "取消",
       "Close": "关闭",
-      "Collapse": "坍塌",
       "Confirm": "确认",
       "Copied": "已复制",
       "Copy": "复制",
@@ -733,7 +738,6 @@
       "Create": "创造",
       "Delete": "删除",
       "Edit": "编辑",
-      "Expand": "扩张",
       "Remove": "消除",
       "Save": "保存",
       "Upload": "上传"

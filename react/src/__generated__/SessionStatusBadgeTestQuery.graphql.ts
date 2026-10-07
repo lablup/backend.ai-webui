@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b75cf60920e2bb6127b03636f6fa4bb2>>
+ * @generated SignedSource<<b62636bcb0ced2b956dfd8cdcdcf6018>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -124,13 +124,6 @@ return {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "status_data",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
             "name": "queue_position",
             "storageKey": null
           },
@@ -182,7 +175,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "37290f2a3b7805c830700bdc61b01e0f",
+    "cacheID": "5624434ff490530fb32020ecda32c725",
     "id": null,
     "metadata": {
       "relayTestingSelectionTypeInfo": {
@@ -216,18 +209,12 @@ return {
         "compute_session_node.kernel_nodes.edges.node.status": (v6/*: any*/),
         "compute_session_node.queue_position": (v4/*: any*/),
         "compute_session_node.status": (v6/*: any*/),
-        "compute_session_node.status_data": {
-          "enumValues": null,
-          "nullable": true,
-          "plural": false,
-          "type": "JSONString"
-        },
         "compute_session_node.status_info": (v6/*: any*/)
       }
     },
     "name": "SessionStatusBadgeTestQuery",
     "operationKind": "query",
-    "text": "query SessionStatusBadgeTestQuery(\n  $id: GlobalIDField!\n) {\n  compute_session_node(id: $id) {\n    ...SessionStatusBadgeFragment\n    id\n  }\n}\n\nfragment SessionStatusBadgeFragment on ComputeSessionNode {\n  id\n  status\n  status_info\n  status_data\n  queue_position @since(version: \"25.13.0\")\n  cluster_size\n  kernel_nodes {\n    edges {\n      node {\n        id\n        status\n      }\n    }\n  }\n}\n"
+    "text": "query SessionStatusBadgeTestQuery(\n  $id: GlobalIDField!\n) {\n  compute_session_node(id: $id) {\n    ...SessionStatusBadgeFragment\n    id\n  }\n}\n\nfragment SessionStatusBadgeFragment on ComputeSessionNode {\n  id\n  status\n  status_info\n  queue_position\n  cluster_size\n  kernel_nodes {\n    edges {\n      node {\n        id\n        status\n      }\n    }\n  }\n}\n"
   }
 };
 })();

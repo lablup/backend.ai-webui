@@ -538,6 +538,12 @@
     "MultiNodeShort": "다중",
     "SingleNodeShort": "단일"
   },
+  "comp:BAISessionTypeToken": {
+    "Batch": "배치",
+    "Inference": "추론",
+    "Interactive": "인터랙티브",
+    "System": "업로드"
+  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "스토리지 호스트를 선택해주세요"
   },
@@ -726,7 +732,6 @@
       "Back": "뒤로",
       "Cancel": "취소",
       "Close": "닫기",
-      "Collapse": "접기",
       "Confirm": "확인",
       "Copied": "복사됨",
       "Copy": "복사",
@@ -734,7 +739,6 @@
       "Create": "생성",
       "Delete": "삭제",
       "Edit": "편집",
-      "Expand": "펼치기",
       "Remove": "제거",
       "Save": "저장",
       "Upload": "업로드"

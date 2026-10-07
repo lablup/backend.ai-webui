@@ -1,4 +1,3 @@
-import { useSuspendedBackendaiClient } from '.';
 import { downloadCSV } from '../helper/csv-util';
 import { useCurrentUserRole } from './backendai';
 import { useSuspenseTanQuery } from './reactQueryAlias';
@@ -74,14 +73,11 @@ export const resolveCSVExportRoute = ({
   nodeKey,
   scope,
   userRole,
-  supportsExportCSV,
 }: {
   nodeKey: SupportedNodeKeys;
   scope: CSVExportScope;
   userRole: string | undefined;
-  supportsExportCSV: boolean;
 }): CSVExportRoute => {
-  if (!supportsExportCSV) return 'none';
   if (userRole === 'superadmin') return 'admin';
   if (scope === 'my' && nodeKey === 'sessions') return 'my';
   return 'none';
@@ -108,7 +104,6 @@ export const useCSVExport = (
   'use memo';
 
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
   const baiRequestWithPromise = useBAISignedRequestWithPromise();
   const { getErrorMessage } = useErrorMessageResolver();
   const userRole = useCurrentUserRole();
@@ -117,7 +112,6 @@ export const useCSVExport = (
     nodeKey,
     scope,
     userRole,
-    supportsExportCSV: baiClient.supports('export-csv'),
   });
 
   const { data: supportedFields } = useSuspenseTanQuery<Array<string>>({

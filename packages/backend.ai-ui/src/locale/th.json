@@ -538,6 +538,12 @@
     "MultiNodeShort": "หลาย",
     "SingleNodeShort": "เดี่ยว"
   },
+  "comp:BAISessionTypeToken": {
+    "Batch": "แบบแบตช์",
+    "Inference": "การอนุมาน",
+    "Interactive": "แบบโต้ตอบ",
+    "System": "อัปโหลด"
+  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "เลือกโฮสต์จัดเก็บข้อมูล"
   },
@@ -725,7 +731,6 @@
       "Back": "ย้อนกลับ",
       "Cancel": "ยกเลิก",
       "Close": "ปิด",
-      "Collapse": "ทรุด",
       "Confirm": "ยืนยัน",
       "Copied": "คัดลอกแล้ว",
       "Copy": "คัดลอก",
@@ -733,7 +738,6 @@
       "Create": "สร้าง",
       "Delete": "ลบ",
       "Edit": "แก้ไข",
-      "Expand": "ขยาย",
       "Remove": "ลบ",
       "Save": "บันทึก",
       "Upload": "อัพโหลด"

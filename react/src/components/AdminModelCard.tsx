@@ -71,7 +71,7 @@ type ModelCardNode = NonNullableNodeOnEdges<
 const availableModelCardSorterKeys = [
   'name',
   'created_at',
-  // Opened by 26.9.0 (backend #14811); gated on `model-card-search-axes`.
+  // Opened by 26.9.0 (backend #14811); gated on that manager version.
   'title',
   'category',
   'task',
@@ -112,7 +112,7 @@ export const AdminModelCardQuery = graphql`
             ...VFolderNodeIdenticonV2Fragment
           }
           projectId
-          project @since(version: "26.4.3") {
+          project {
             id
             basicInfo {
               name
@@ -164,13 +164,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   const { generateFolderPath } = useFolderExplorerOpener();
   const baiClient = useSuspendedBackendaiClient();
   // 26.9.0 opened the metadata axes of the model card search (backend #14811).
-  const supportsSearchAxes = baiClient.supports('model-card-search-axes');
-  // BA-5918 (26.4.4rc3) turned `projectId` into a UUIDFilter; the control
-  // only emits the wrapper shape.
-  const supportsFilterWrapperInputs = baiClient.supports(
-    'v2-filter-wrapper-inputs',
-  );
-  const supportsSubFilter = baiClient.supports('model-card-v2-sub-filter');
+  const supportsSearchAxes = baiClient.isManagerVersionCompatibleWith('26.9.0');
 
   const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
   const [editingModelCardId, setEditingModelCardId] = useState<string | null>(
@@ -330,8 +324,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
       title: t('adminModelCard.Project'),
       dataIndex: 'projectId',
       sorter: supportsSearchAxes,
-      // `project` is @since(26.4.3); fall back to the raw UUID on older
-      // managers, which is all this column used to show.
+      // Fall back to the raw UUID when the project name does not resolve.
       render: (projectId, record) => {
         const projectName = record.project?.basicInfo?.name;
         if (!projectName) {
@@ -378,7 +371,6 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
       <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
         <BAIFlex gap={'sm'} align="start" wrap="wrap" style={{ flexShrink: 1 }}>
           <BAIGraphQLPropertyFilter<ModelCardV2Filter>
-            maxConditions={supportsSubFilter ? undefined : 1}
             filterProperties={filterOutEmpty([
               {
                 key: 'name',
@@ -400,7 +392,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                 propertyLabel: t('modelStore.Task'),
                 type: 'string',
               },
-              supportsFilterWrapperInputs && {
+              {
                 key: 'projectId',
                 propertyLabel: t('adminModelCard.Project'),
                 type: 'uuid' as const,

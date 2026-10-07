@@ -538,6 +538,12 @@
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Célibataire"
   },
+  "comp:BAISessionTypeToken": {
+    "Batch": "Lot",
+    "Inference": "Inférence",
+    "Interactive": "Interactif",
+    "System": "Téléversement"
+  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Sélectionner un hôte de stockage"
   },
@@ -725,7 +731,6 @@
       "Back": "Retour",
       "Cancel": "Annuler",
       "Close": "Fermer",
-      "Collapse": "Effondrement",
       "Confirm": "Confirmer",
       "Copied": "Copié",
       "Copy": "Copier",
@@ -733,7 +738,6 @@
       "Create": "Créer",
       "Delete": "Supprimer",
       "Edit": "Modifier",
-      "Expand": "Développer",
       "Remove": "Retirer",
       "Save": "Enregistrer",
       "Upload": "Télécharger"

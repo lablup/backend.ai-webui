@@ -85,7 +85,8 @@ So there is exactly one question for you to answer: **is there a `/rename` to us
    name. Every fallback is already handled.
 
 **Never pass the FR number or the PR number yourself.** `dev.mjs` derives the issue key from
-the branch and looks the PR up with one cached `gh` call, and it strips either identifier from
+the branch — `fr-N` for a legacy `FR-N` branch, `gh-N` on the `type/gh-N-slug` branch of a
+GitHub issue (`gh-10144-pr10150-drawer`) — and looks the PR up with one cached `gh` call, and it strips either identifier from
 your string if you pass it anyway — so `PORTLESS_APP_NAME=fr-3665` just yields `fr-3665-pr9049`,
 losing the descriptive part for nothing.
 
@@ -272,7 +273,7 @@ bash .claude/skills/dev-server/scripts/advertise.sh advertise --app "$BAI_DEV_AP
 ```
 
 Idempotent: run it again and it edits the same comments. Pass `--teams-thread <url>` (for the
-running PR) or `--teams-thread <pr>=<url>` when Jira has no thread recorded for a PR. Every
+running PR) or `--teams-thread <pr>=<url>` when the PR's GitHub issue has no thread recorded. Every
 line the script prints goes to stderr, so its exit status is not what tells you it worked —
 read the lines.
 
@@ -304,10 +305,14 @@ bash .claude/skills/dev-server/scripts/advertise.sh stop --app "$BAI_DEV_APP"
 - **Teardown never writes a PR's first comment.** `stop` edits only the comments the boot
   record has ids for. A PR whose comment could not be written at boot (`commentId: null`) is
   left alone rather than told a server it never heard about has stopped.
-- **The Teams thread** for each served PR comes from that PR's `Resolves … (FR-XXXX)` key and one
-  Jira GET (`customfield_10176`) at boot — never at request time. Missing is recorded as `null`.
-  The credential reaches `curl` on stdin via `--config -`, never in argv, because `/proc` is
-  readable by every other process on the box.
+- **The Teams thread** for each served PR is its GitHub issue's `Teams thread` field (an
+  organization Issue field, matched by name, read with one `gh api graphql` call at boot —
+  never at request time). The issue is the PR body's `Resolves #N`, else the branch's `gh-N`,
+  else a legacy `FR-XXXX` key (PR body or branch) resolved to its GitHub clone — the issue
+  whose body carries the line `JIRA Issue: FR-XXXX`, found with one GitHub search and cached
+  for good under `~/.cache/backend.ai-webui/fr-clones/`. The record carries `githubIssue: N`,
+  plus `jiraKey` when a legacy key was named (a label only — nothing calls Jira). No issue, no
+  field, no value or no permission to read it is recorded as `null`.
 
 Logic that needs no network is unit-tested: `bash .claude/skills/dev-server/scripts/test-advertise.sh`.
 
@@ -355,7 +360,7 @@ Many projects don't use Portless. Read the dev server's stdout for whatever URL(
 - **The sanctioned side effects are exactly three**: the env var prefix, and — on a
   gateway-joined box — the dev-server comment on each served PR plus the boot record under
   `~/.local/state/fw/dev-servers/`, both written only by `advertise.sh` (step 5). Nothing
-  else touches GitHub, Jira or disk: no labels, no PR body edits, no reviewers, no registry
+  else touches GitHub or disk: no labels, no PR body edits, no reviewers, no registry
   entries, and never a comment on a PR this server does not serve.
 - Don't install deps, run lint, or do any other "while we're here" steps. Just start the
   server and advertise it.
