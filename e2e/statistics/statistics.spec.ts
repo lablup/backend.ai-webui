@@ -42,8 +42,7 @@ test.describe('Statistics', { tag: ['@functional', '@statistics'] }, () => {
       await loginAsAdmin(page, request);
       await navigateTo(page, 'statistics');
 
-      // FR-655's User Session History tab is always available (manager >= 26.4.0
-      // is the project baseline).
+      // FR-655: the User Session History tab ships with manager 25.6 (see the tag).
       const userSessionTab = statisticsTab(page, 'User Session History');
       await expect(userSessionTab).toBeVisible();
 

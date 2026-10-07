@@ -350,7 +350,7 @@ test.describe(
         test('Admin can view cluster-level resource statistics in the Agent Stats widget', async ({
           page,
         }) => {
-          // The widget is always present (manager >= 26.4.0 is the project baseline).
+          // The widget ships with manager 25.15 (see the tag).
           const widget = page
             .locator('.bai_grid_item')
             .filter({ hasText: 'Agent Statistics' });
