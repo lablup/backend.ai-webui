@@ -408,19 +408,16 @@ const LoginView: React.FC<{
     }, 2000);
   }, []);
 
-  const showSessionLoadError = useCallback(
-    (err: LoginBootstrapIncompleteError) => {
-      if (blockTimerRef.current) {
-        clearTimeout(blockTimerRef.current);
-        blockTimerRef.current = null;
-      }
-      setIsBlockPanelOpen(false);
-      setIsLoginPanelOpen(false);
-      setIsLoading(false);
-      setSessionLoadError(err.message);
-    },
-    [],
-  );
+  const showSessionLoadError = (err: LoginBootstrapIncompleteError) => {
+    if (blockTimerRef.current) {
+      clearTimeout(blockTimerRef.current);
+      blockTimerRef.current = null;
+    }
+    setIsBlockPanelOpen(false);
+    setIsLoginPanelOpen(false);
+    setIsLoading(false);
+    setSessionLoadError(err.message);
+  };
 
   const clearSavedLoginInfo = useCallback(() => {
     localStorage.removeItem('backendaiwebui.login.api_key');
@@ -713,39 +710,36 @@ const LoginView: React.FC<{
     [notification, t, otpRequired, form, modal, logger],
   );
 
-  const handleGQLError = useCallback(
-    (err: unknown, showError: boolean) => {
-      if (err instanceof LoginBootstrapIncompleteError) {
-        showSessionLoadError(err);
-        return;
-      }
-      setIsBlockPanelOpen(false);
-      if (showError) {
-        const e = err as {
-          title?: string;
-          message?: string;
-          status?: number;
-        };
-        if (err instanceof SessionAuthFailureError) {
-          notification(t('error.LoginFailed'), err.message || undefined);
-        } else if (e.message) {
-          if (e.status === 408) {
-            notification(
-              t('error.LoginSucceededManagerNotResponding'),
-              e.message,
-            );
-          } else {
-            notification(e.title || t('error.LoginFailed'), e.message);
-          }
+  const handleGQLError = (err: unknown, showError: boolean) => {
+    if (err instanceof LoginBootstrapIncompleteError) {
+      showSessionLoadError(err);
+      return;
+    }
+    setIsBlockPanelOpen(false);
+    if (showError) {
+      const e = err as {
+        title?: string;
+        message?: string;
+        status?: number;
+      };
+      if (err instanceof SessionAuthFailureError) {
+        notification(t('error.LoginFailed'), err.message || undefined);
+      } else if (e.message) {
+        if (e.status === 408) {
+          notification(
+            t('error.LoginSucceededManagerNotResponding'),
+            e.message,
+          );
         } else {
-          notification(t('error.LoginInformationMismatch'));
+          notification(e.title || t('error.LoginFailed'), e.message);
         }
+      } else {
+        notification(t('error.LoginInformationMismatch'));
       }
-      open();
-      setIsLoading(false);
-    },
-    [notification, t, open, showSessionLoadError],
-  );
+    }
+    open();
+    setIsLoading(false);
+  };
 
   const connectUsingSession = useCallback(
     async (
@@ -863,17 +857,7 @@ const LoginView: React.FC<{
       setIsLoading(false);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      apiEndpoint,
-      form,
-      endpoints,
-      doGQLConnect,
-      block,
-      open,
-      notification,
-      t,
-      showSessionLoadError,
-    ],
+    [apiEndpoint, form, endpoints, doGQLConnect, block, open, notification, t],
   );
   // The concurrent-session modal's onOk (in handleLoginError) calls this ref.
   useEffect(
@@ -1071,8 +1055,9 @@ const LoginView: React.FC<{
           ? { endpoint: ep, client, bootstrap }
           : null;
         return bootstrap !== null;
-      } catch {
-        return false;
+      } catch (err) {
+        // Live, only its user failed to load; the connect step shows the dialog.
+        return err instanceof LoginBootstrapIncompleteError;
       }
     }
     return false;
@@ -1297,8 +1282,15 @@ const LoginView: React.FC<{
             {!getActAsTarget() && (
               <Button
                 onClick={async () => {
+                  try {
+                    await logoutSession();
+                  } catch (err) {
+                    // The cookie is still live, so the login form would be refused.
+                    logger.error('[LoginView] logout failed', err);
+                    notification(t('error.UnknownError'));
+                    return;
+                  }
                   setSessionLoadError(null);
-                  await logoutSession().catch(() => {});
                   open();
                 }}
                 label={t('webui.menu.LogOut')}

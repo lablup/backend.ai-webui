@@ -128,6 +128,7 @@ export class SessionAuthFailureError extends Error {
 /**
  * The session is live but the manager failed to resolve `keypair` or `user`
  * (an `errors[]` entry that is not a refusal). Not a reason to log out.
+ * `message` is the manager's text, else empty.
  */
 export class LoginBootstrapIncompleteError extends Error {
   readonly cause: unknown;
@@ -135,11 +136,7 @@ export class LoginBootstrapIncompleteError extends Error {
     const errors = (cause as { errors?: Array<{ message?: unknown }> } | null)
       ?.errors;
     const detail = errors?.find((e) => typeof e?.message === 'string')?.message;
-    super(
-      typeof detail === 'string'
-        ? detail
-        : 'The manager returned no data for the signed-in user.',
-    );
+    super(typeof detail === 'string' ? detail : '');
     this.name = 'LoginBootstrapIncompleteError';
     this.cause = cause;
   }
