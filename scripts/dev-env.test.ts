@@ -254,7 +254,10 @@ describe("dev-env CLI", () => {
       );
       const result = await run(["use", "main"]);
       expect(result.status).toBe(0);
-      expect(result.stdout).not.toContain("warning:");
+      expect(result.stdout.match(/^warning:/gm)).toHaveLength(1);
+      expect(result.stdout).toContain(
+        "warning: main has no password for E2E_PROJECT_ADMIN. (E2E_PROJECT_ADMIN is not read by e2e yet.)",
+      );
       expect(result.stdout).toContain(
         "also: user2@example.test — pass the email to pick one",
       );
@@ -400,7 +403,7 @@ describe("dev-env CLI", () => {
       expect(result.status).toBe(0);
       const warnings = result.stdout
         .split("\n")
-        .filter((line) => line.startsWith("warning:"));
+        .filter((line) => line.startsWith("warning: lts was down"));
       expect(warnings).toEqual([
         expect.stringMatching(
           /^warning: lts was down at the last probe \(.+\): connect ECONNREFUSED; last live 2026-10-06T22:00:00Z\.$/,
@@ -477,6 +480,49 @@ describe("dev-env CLI", () => {
       );
     });
 
+    it("warns about E2E slots that fall back to the sample defaults", async () => {
+      const result = await run(["use", "lts"]);
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain(
+        "warning: lts has no account for E2E_ADMIN, E2E_USER2, E2E_PROJECT_ADMIN. " +
+          "e2e will fall back to the sample default credentials for E2E_ADMIN, E2E_USER2. " +
+          "(E2E_PROJECT_ADMIN is not read by e2e yet.)",
+      );
+    });
+
+    it("tightens an existing env file to 0600", async () => {
+      const dev = path.join(root, ".env.development.local");
+      const e2e = path.join(root, "e2e", "envs", ".env.playwright");
+      fs.writeFileSync(e2e, "# mine\n");
+      fs.chmodSync(dev, 0o644);
+      fs.chmodSync(e2e, 0o644);
+      expect((await run(["use", "main"])).status).toBe(0);
+      expect(fs.statSync(dev).mode & 0o777).toBe(0o600);
+      expect(fs.statSync(e2e).mode & 0o777).toBe(0o600);
+    });
+
+    it("rejects an option the command does not take, writing nothing", async () => {
+      const before = read(".env.development.local");
+      for (const args of [
+        ["use", "main", "user", "--no-passwords"],
+        ["use", "main", "--json"],
+        ["status", "--json"],
+        ["list", "--all"],
+        ["get", "main", "user", "--no-password"],
+        ["config", "main", "--no-password"],
+      ]) {
+        const result = await run(args);
+        expect(result.status, args.join(" ")).toBe(2);
+        expect(result.stderr).toContain(`Unknown option ${args.at(-1)}`);
+        expect(result.stderr).toContain("Usage: pnpm run dev-env");
+        expect(result.stdout).toBe("");
+      }
+      expect(read(".env.development.local")).toBe(before);
+      expect(
+        fs.existsSync(path.join(root, "e2e", "envs", ".env.playwright")),
+      ).toBe(false);
+    });
+
     it("exits 2 with usage when `use` has no server", async () => {
       const result = await run(["use"]);
       expect(result.status).toBe(2);
@@ -528,6 +574,21 @@ describe("dev-env CLI", () => {
         "VITE_DEFAULT_PASSWORD=pw-admin",
       );
       expect(requests).toEqual(["/api/catalog", "/api/catalog"]);
+    });
+
+    it("rejects an unknown option before asking the board", async () => {
+      let requests = 0;
+      respond = (_req, res) => {
+        requests += 1;
+        res.writeHead(200, { "content-type": "application/json" });
+        res.end(JSON.stringify(catalogBody()));
+      };
+      const result = await run(
+        ["use", "main", "user", "--no-passwords"],
+        viaUrl(url),
+      );
+      expect(result.status).toBe(2);
+      expect(requests).toBe(0);
     });
 
     it("exits 1 naming the URL when the board answers 500", async () => {

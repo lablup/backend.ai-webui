@@ -465,6 +465,43 @@ export function playwrightVars(server, { existing = {} } = {}) {
   return vars;
 }
 
+/** Stems e2e/utils/test-util.ts reads with a hard-coded fallback (the sample's default accounts). */
+const E2E_STEMS_WITH_DEFAULTS = new Set(["E2E_ADMIN", "E2E_USER", "E2E_USER2"]);
+
+/**
+ * The warning `use` prints for E2E slots it left without an email or a
+ * password, given the vars it wrote; null when every slot is complete.
+ */
+export function e2eFallbackWarning(server, vars) {
+  const empty = E2E_SLOTS.map(({ stem }) => stem).filter(
+    (stem) => vars[`${stem}_EMAIL`] === null,
+  );
+  const noPassword = E2E_SLOTS.map(({ stem }) => stem).filter(
+    (stem) =>
+      vars[`${stem}_EMAIL`] !== null && vars[`${stem}_PASSWORD`] === null,
+  );
+  if (empty.length === 0 && noPassword.length === 0) return null;
+  const parts = [
+    empty.length ? `no account for ${empty.join(", ")}` : null,
+    noPassword.length ? `no password for ${noPassword.join(", ")}` : null,
+  ].filter(Boolean);
+  const fallsBack = [...empty, ...noPassword].filter((stem) =>
+    E2E_STEMS_WITH_DEFAULTS.has(stem),
+  );
+  const notRead = [...empty, ...noPassword].filter(
+    (stem) => !E2E_STEMS_WITH_DEFAULTS.has(stem),
+  );
+  return [
+    `warning: ${server.name} has ${parts.join(" and ")}.`,
+    fallsBack.length
+      ? `e2e will fall back to the sample default credentials for ${fallsBack.join(", ")}.`
+      : null,
+    notRead.length ? `(${notRead.join(", ")} is not read by e2e yet.)` : null,
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
 /** Emails whose hand-written password `vars` leaves in place: password keys it omits. */
 export function keptPasswordEmails(vars) {
   return Object.keys(vars)

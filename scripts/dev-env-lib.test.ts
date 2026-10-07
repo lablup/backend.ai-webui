@@ -4,6 +4,7 @@ import {
   ambiguityNote,
   allSettings,
   downWarning,
+  e2eFallbackWarning,
   findAccount,
   findServer,
   formatCatalog,
@@ -21,6 +22,10 @@ import {
   upsertEnv,
 } from "./dev-env-lib.mjs";
 import dotenv from "dotenv";
+import fs from "node:fs";
+import { createRequire } from "node:module";
+import os from "node:os";
+import path from "node:path";
 
 const NOW = new Date("2026-10-02T00:00:00Z");
 
@@ -292,6 +297,31 @@ describe("dev-env catalog", () => {
       E2E_USER2_EMAIL: null,
       E2E_PROJECT_ADMIN_EMAIL: null,
     });
+  });
+
+  it("names the E2E slots that fall back to defaults, or none", () => {
+    expect(e2eFallbackWarning(main, playwrightVars(main))).toBe(
+      "warning: main has no password for E2E_USER2, E2E_PROJECT_ADMIN. " +
+        "e2e will fall back to the sample default credentials for E2E_USER2. " +
+        "(E2E_PROJECT_ADMIN is not read by e2e yet.)",
+    );
+    const lts = findServer(catalog, "lts");
+    expect(e2eFallbackWarning(lts, playwrightVars(lts))).toBe(
+      "warning: lts has no account for E2E_ADMIN, E2E_USER2, E2E_PROJECT_ADMIN. " +
+        "e2e will fall back to the sample default credentials for E2E_ADMIN, E2E_USER2. " +
+        "(E2E_PROJECT_ADMIN is not read by e2e yet.)",
+    );
+    const complete = {
+      E2E_ADMIN_EMAIL: "a",
+      E2E_ADMIN_PASSWORD: "x",
+      E2E_USER_EMAIL: "u",
+      E2E_USER_PASSWORD: "x",
+      E2E_USER2_EMAIL: "u2",
+      E2E_PROJECT_ADMIN_EMAIL: "pa",
+      E2E_PROJECT_ADMIN_PASSWORD: "x",
+    };
+    // E2E_USER2_PASSWORD omitted = a hand-written one is kept, so the slot is complete.
+    expect(e2eFallbackWarning(main, complete)).toBeNull();
   });
 
   it("leaves E2E_MONITOR_* and E2E_DOMAIN_ADMIN_* lines untouched", () => {
@@ -668,18 +698,53 @@ describe("dev-env server probe status", () => {
 });
 
 describe("dev-env env files", () => {
+  const AWKWARD = [
+    "plain-1",
+    "has space",
+    "a#b",
+    `it's`,
+    `"q" 'q'`,
+    "a$b",
+    "x\\ny",
+    // Backslashes next to `$` (CodeQL "incomplete string escaping").
+    "\\$",
+    "\\\\$",
+    "a\\",
+    "\\${HOME}",
+    "$\\",
+    "${HOME}",
+    "$$",
+    "\\",
+    `p\\a$s'w"d`,
+  ];
+
   it("round-trips awkward passwords through dotenv", () => {
-    for (const value of [
-      "plain-1",
-      "has space",
-      "a#b",
-      `it's`,
-      `"q" 'q'`,
-      "a$b",
-      "x\\ny",
-    ]) {
+    for (const value of AWKWARD) {
       const parsed = dotenv.parse(`K=${quoteEnvValue(value)}\n`);
       expect(parsed.K).toBe(value);
+    }
+  });
+
+  it("round-trips awkward passwords through Vite's loadEnv (dotenv-expand)", async () => {
+    // The real reader of .env.development.local, resolved from react/ where Vite is a dependency.
+    const require = createRequire(
+      path.join(process.cwd(), "react", "package.json"),
+    );
+    const { loadEnv } = await import(require.resolve("vite"));
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "dev-env-vite-"));
+    try {
+      for (const value of AWKWARD) {
+        fs.writeFileSync(
+          path.join(dir, ".env.development.local"),
+          `VITE_DEFAULT_PASSWORD=${quoteEnvValue(value, { expand: true })}\n`,
+        );
+        expect(
+          loadEnv("development", dir, "VITE_").VITE_DEFAULT_PASSWORD,
+          JSON.stringify(value),
+        ).toBe(value);
+      }
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
     }
   });
 

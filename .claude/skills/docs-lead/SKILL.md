@@ -15,9 +15,9 @@ description: >
 
 # docs-lead — Documentation Team Lead
 
-> **Category note**: This is a *skill* (runs in the main context with full
+> **Category note**: This is a _skill_ (runs in the main context with full
 > access to `AskUserQuestion` and the `Agent` tool), **not a subagent**. The
-> "Team Lead" metaphor describes the *role*, not the technical type — do not
+> "Team Lead" metaphor describes the _role_, not the technical type — do not
 > look for this under `.claude/agents/`. The skill lives at
 > `.claude/skills/docs-lead/`.
 
@@ -123,6 +123,7 @@ examples live in `references/decision-gate-templates.md` (Gate 1)**. Read
 that file when constructing this gate.
 
 Special cases:
+
 - Queue empty → do not call `AskUserQuestion`. Report "no work needed —
   most recent lint on `<timestamp>` is clean" and stop.
 - More than 4 candidates → bundle lower-priority into "기타 N건 일괄 처리".
@@ -234,7 +235,7 @@ Real failure modes you will hit if you don't think about them up front.
   different slug (e.g., suffix with `-v2`).
 
 - **`docs-screenshot-capturer` requires the dev server live** — get its
-  real URL from the `fw:webui-connection-info` skill (Portless picks the host
+  real URL from the `fw:webui-connection-info` skill (on fw < 28.1.0, the repository's `webui-connection-info`; Portless picks the host
   and may not be on 1355). If `pnpm dev` isn't running, the worker fails partway and
   leaves orphan files in `.playwright-mcp/`. Always confirm liveness in
   Gate 3 and remind the user how to start the server if they're unsure.

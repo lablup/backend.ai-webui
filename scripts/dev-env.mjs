@@ -8,6 +8,7 @@ import {
   allSettings,
   ambiguityNote,
   downWarning,
+  e2eFallbackWarning,
   findServer,
   formatCatalog,
   formatConfigLine,
@@ -173,6 +174,8 @@ function writeEnvFile(relativePath, buildVars, { seedFrom, expand } = {}) {
   fs.writeFileSync(target, upsertEnv(content, vars, { expand }), {
     mode: 0o600,
   });
+  // `mode` applies only when the file is created; both files carry passwords.
+  fs.chmodSync(target, 0o600);
   console.log(`wrote ${relativePath}`);
   const kept = keptPasswordEmails(vars);
   for (const email of kept) {
@@ -207,7 +210,7 @@ async function use(serverName, selector, { password }) {
         "shell over .env.development.local. Unset it, or the pre-fill will not change.",
     );
   }
-  writeEnvFile(
+  const { vars: e2eVars } = writeEnvFile(
     "e2e/envs/.env.playwright",
     (existing) => playwrightVars(server, { existing }),
     { seedFrom: "e2e/envs/.env.playwright.sample" },
@@ -223,6 +226,8 @@ async function use(serverName, selector, { password }) {
     console.log(missingPasswordNote(server, account));
   }
   if (downWarning(server)) console.log(downWarning(server));
+  const fallback = e2eFallbackWarning(server, e2eVars);
+  if (fallback) console.log(fallback);
   console.log("Restart `pnpm run dev` to pick up the login pre-fill.");
 }
 
@@ -266,9 +271,25 @@ function showConfig(server, { all, json }) {
   }
 }
 
+/** The flags each command accepts; anything else is a usage error. */
+const COMMAND_FLAGS = {
+  status: [],
+  list: ["--json"],
+  config: ["--all", "--json"],
+  get: ["--json"],
+  use: ["--no-password"],
+};
+
 async function main() {
   const [command, ...rest] = process.argv.slice(2);
   const flags = new Set(rest.filter((arg) => arg.startsWith("--")));
+  const allowed = COMMAND_FLAGS[command];
+  const unknown = allowed ? [...flags].filter((f) => !allowed.includes(f)) : [];
+  if (unknown.length > 0) {
+    throw new UserError(
+      `Unknown option ${unknown.join(", ")} for "${command}".\n\n${USAGE}`,
+    );
+  }
   const positional = rest.filter((arg) => !arg.startsWith("--"));
   const json = flags.has("--json");
 
