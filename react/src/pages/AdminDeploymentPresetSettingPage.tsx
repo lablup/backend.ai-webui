@@ -32,6 +32,7 @@ import {
   useBAILogger,
   useMutationWithPromise,
 } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -144,15 +145,19 @@ const buildModelDefinitionInput = (
               // pydantic rejects), so `{ enable: false }` alone still fails —
               // null is the only way to disable.
               if (!checked) return null;
-              // Enabled → the form requires all HC fields, so they are present.
-              const fields = {
-                path: hc?.path,
-                interval: hc?.interval,
-                maxRetries: hc?.maxRetries,
-                maxWaitTime: hc?.maxWaitTime,
-                expectedStatusCode: hc?.expectedStatusCode,
-                initialDelay: hc?.initialDelay,
-              };
+              // Enabled → the input's fields are non-null with server defaults,
+              // so a blank field must be omitted, never sent as null.
+              const fields = _.omitBy(
+                {
+                  path: hc?.path,
+                  interval: hc?.interval,
+                  maxRetries: hc?.maxRetries,
+                  maxWaitTime: hc?.maxWaitTime,
+                  expectedStatusCode: hc?.expectedStatusCode,
+                  initialDelay: hc?.initialDelay,
+                },
+                (v) => v === null || v === undefined || v === '',
+              );
               return { enable: true, ...fields };
             })(),
           },
