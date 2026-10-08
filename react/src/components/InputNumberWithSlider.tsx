@@ -50,7 +50,7 @@ interface SliderBag {
   };
 }
 
-interface InputNumberWithSliderProps {
+interface InputNumberWithSliderBaseProps {
   min?: number;
   max?: number;
   step?: number | null;
@@ -71,7 +71,6 @@ interface InputNumberWithSliderProps {
   disableMode?: 'normal' | 'empty';
   value?: number;
   allowNegative?: boolean;
-  onChange?: (value: number) => void;
   inputNumberProps?: InputNumberBag;
   inputContainerMinWidth?: number;
   style?: CSSProperties;
@@ -82,6 +81,16 @@ interface InputNumberWithSliderProps {
    */
   label?: string;
 }
+
+type InputNumberWithSliderProps = InputNumberWithSliderBaseProps &
+  (
+    | { allowClear?: false; onChange?: (value: number) => void }
+    | {
+        /** Emptying the number field emits `null` instead of restoring the previous value. */
+        allowClear: true;
+        onChange?: (value: number | null) => void;
+      }
+  );
 
 /** A mark label Astryx can render itself. */
 const isPlainLabel = (label: ReactNode): label is string | number =>
@@ -128,6 +137,7 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   inputContainerMinWidth,
   style,
   label,
+  allowClear,
   ...otherProps
 }) => {
   'use memo';
@@ -203,7 +213,10 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
                 : undefined
             }
             onChange={(next) => {
-              if (_.isNil(next)) return;
+              if (_.isNil(next)) {
+                if (allowClear && !_.isNil(value)) setValue(null);
+                return;
+              }
               setValue(next);
             }}
             onBlur={(event) => {
@@ -211,6 +224,10 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
               // so the raw field text is the only surviving trace. (React 19
               // does not pool events, so reading `target.value` here is safe.)
               const rawText = (event.target as HTMLInputElement).value;
+              if (allowClear && rawText.trim() === '') {
+                if (!_.isNil(value)) setValue(null);
+                return;
+              }
               const typed = rawText.trim() === '' ? NaN : Number(rawText);
               let current = value;
               if (
