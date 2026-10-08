@@ -51,7 +51,7 @@ const SEED_BY_TOKEN = {
   colorWarning: 'warning',
 } as const satisfies Record<string, keyof BAIThemeSeeds>;
 
-/** v1 and v2 spell the logo block identically; anything else is dropped. */
+/** v1 and v2 spell these logo keys identically; anything else is dropped. */
 const LOGO_KEYS = [
   'src',
   'srcCollapsed',
@@ -67,7 +67,6 @@ const LOGO_KEYS = [
   'aboutLogoSrc',
   'aboutLogoSrcDark',
   'aboutLogoSize',
-  'aboutModalSize',
 ] as const satisfies ReadonlyArray<keyof LogoConfig>;
 
 /** Seeds are 6-digit hex only; a 3-digit v1 value expands, anything else drops. */
@@ -189,11 +188,16 @@ export const migrateV1AppearanceConfig = (
     families,
   };
 
-  const logo = _.pick(doc.logo ?? {}, LOGO_KEYS);
+  const logo = _.pick(doc.logo ?? {}, LOGO_KEYS) as LogoConfig;
+  // v2 deprecates `aboutModalSize`; carry its value over under the v2 name.
+  if (!logo.aboutLogoSize && _.isPlainObject(doc.logo?.aboutModalSize)) {
+    logo.aboutLogoSize = doc.logo
+      ?.aboutModalSize as LogoConfig['aboutLogoSize'];
+  }
   const companyName = trimmedString(doc.branding?.companyName);
   const brandName = trimmedString(doc.branding?.brandName);
   const branding: BAIBrandingConfig = {
-    ...(_.isEmpty(logo) ? {} : { logo: logo as LogoConfig }),
+    ...(_.isEmpty(logo) ? {} : { logo }),
     ...(companyName ? { companyName } : {}),
     ...(brandName ? { brandName } : {}),
     ...(_.isEmpty(familyLabels) ? {} : { familyLabels }),

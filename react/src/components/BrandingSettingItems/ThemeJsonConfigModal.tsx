@@ -54,6 +54,15 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
   const monacoRef = useRef<Monaco | null>(null);
   const jsonFileInputRef = useRef<HTMLInputElement>(null);
 
+  // Warnings (e.g. a deprecated key) are advisory; only errors block a draft.
+  const hasSchemaErrors = () => {
+    const monaco = monacoRef.current;
+    return _.some(
+      monaco?.editor.getModelMarkers({}),
+      (marker) => marker.severity === monaco?.MarkerSeverity.Error,
+    );
+  };
+
   const skeletonWithPadding = (
     <div
       style={{
@@ -126,11 +135,9 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
               icon={<ExternalLink size="1em" />}
               label={t('theme.button.ExportToJson')}
               clickAction={async () => {
-                const markers =
-                  await monacoRef.current?.editor.getModelMarkers();
                 if (_.isEmpty(themeConfig)) {
                   message.error(t('userSettings.theme.NoChangesMade'));
-                } else if (markers && markers.length > 0) {
+                } else if (hasSchemaErrors()) {
                   message.error(t('theme.CannotApplyInvalidJsonConfig'));
                 } else {
                   // Export the editor value, not the stored document.
@@ -177,9 +184,7 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
                   message.info(t('theme.ConvertedV1ThemeConfig'));
                   return;
                 }
-                const markers =
-                  await monacoRef.current?.editor.getModelMarkers();
-                if (markers && markers.length > 0) {
+                if (hasSchemaErrors()) {
                   message.error(t('theme.CannotApplyInvalidJsonConfig'));
                   return;
                 }
