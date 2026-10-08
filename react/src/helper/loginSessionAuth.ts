@@ -157,23 +157,10 @@ export class LoginAttemptCancelledError extends Error {
 }
 
 /**
- * Check if the current session is already logged in.
- */
-export async function checkLoginSession(apiEndpoint: string): Promise<boolean> {
-  if (!apiEndpoint) return false;
-  const { client } = createBackendAIClient('', '', apiEndpoint, 'SESSION');
-  try {
-    await probeManager(client);
-    const isLogon = await client.check_login();
-    return !!isLogon;
-  } catch {
-    return false;
-  }
-}
-
-/**
  * Perform GQL connection after successful authentication.
  * Sets up globalThis.backendaiclient with user info, projects, and config.
+ * Pass the `bootstrap` a `probeLoginSession` call already fetched to reuse
+ * its keypair under act-as.
  * A cancelled attempt (`isCancelled`) leaves the globals and the login
  * cookie untouched, since a newer attempt may already own them.
  */
@@ -231,12 +218,12 @@ export async function connectViaGQL(
   // `check_login` reads the access key from the webserver session, which stays
   // the super admin's; under act-as the manager answers with the target's.
   if (isActingAs) {
-    const keypairResponse = await client.query(
-      'query { keypair { access_key } }',
-      {},
-    );
-    if (keypairResponse?.keypair?.access_key) {
-      client._config._accessKey = keypairResponse.keypair.access_key;
+    const accessKey =
+      bootstrap?.keypair?.access_key ??
+      (await client.query('query { keypair { access_key } }', {}))?.keypair
+        ?.access_key;
+    if (accessKey) {
+      client._config._accessKey = accessKey;
     }
   }
 
