@@ -18,12 +18,6 @@ export interface BAIModelDeploymentNodesProps extends Omit<BAITableProps<ModelDe
     deploymentsFrgmt: BAIModelDeploymentNodesFragment$key;
     customizeColumns?: (baseColumns: BAIColumnsType<ModelDeploymentNodeInList>) => BAIColumnsType<ModelDeploymentNodeInList>;
     disableSorter?: boolean;
-    /**
-     * Which columns may be sorted. Defaults to every key the current server enum
-     * has; a caller on an older manager narrows it (`DOMAIN`/`PROJECT`/
-     * `RESOURCE_GROUP`/`TAG` only exist from 26.4.3).
-     */
-    sortableKeys?: ReadonlyArray<DeploymentSorterKey>;
     onChangeOrder?: (order: (typeof availableDeploymentSorterValues)[number] | null) => void;
 }
 declare const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps>;
