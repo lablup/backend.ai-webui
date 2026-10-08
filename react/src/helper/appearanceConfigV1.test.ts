@@ -226,6 +226,29 @@ describe('migrateV1AppearanceConfig', () => {
     expect(doc?.branding?.logo).toEqual({ src: '/logo.svg' });
   });
 
+  it('moves the deprecated aboutModalSize to aboutLogoSize', () => {
+    const doc = migrateV1AppearanceConfig({
+      logo: { src: '/logo.svg', aboutModalSize: { width: 159, height: 24 } },
+    });
+    expect(validate(doc), JSON.stringify(validate.errors)).toBe(true);
+    expect(doc?.branding?.logo).toEqual({
+      src: '/logo.svg',
+      aboutLogoSize: { width: 159, height: 24 },
+    });
+  });
+
+  it('keeps aboutLogoSize over aboutModalSize when both are set', () => {
+    const doc = migrateV1AppearanceConfig({
+      logo: {
+        aboutLogoSize: { width: 100, height: 20 },
+        aboutModalSize: { width: 159, height: 24 },
+      },
+    });
+    expect(doc?.branding?.logo).toEqual({
+      aboutLogoSize: { width: 100, height: 20 },
+    });
+  });
+
   it('returns undefined for anything that is not a v1 document', () => {
     expect(migrateV1AppearanceConfig({ schemaVersion: 2 })).toBeUndefined();
     expect(migrateV1AppearanceConfig(null)).toBeUndefined();
