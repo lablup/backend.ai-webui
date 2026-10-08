@@ -225,6 +225,7 @@ FileBrowser는 두 가지 방법으로 사용할 수 있습니다.
 FileBrowser가 새 창에서 열립니다. 탐색기를 열었던 스토리지 폴더가 FileBrowser의 루트 디렉토리가 됩니다. FileBrowser 창에서 디렉토리와 파일을 자유롭게 업로드하고, 수정하고, 삭제합니다.
 
 ![](../images/filebrowser_with_new_window.png)
+<!-- TODO: Capture FileBrowser or SFTP screenshots on an operational server -->
 
 사용자가 `파일브라우저 실행` 버튼을 클릭하면 Backend.AI는 자동으로 FileBrowser 전용 연산 세션을 하나 생성합니다. 따라서 세션 페이지에서 FileBrowser 연산 세션이 조회됩니다. 이 연산 세션을 삭제하는 것은 사용자의 몫입니다.
 
