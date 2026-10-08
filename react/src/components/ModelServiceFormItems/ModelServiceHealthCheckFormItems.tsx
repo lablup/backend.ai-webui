@@ -14,35 +14,40 @@ import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-export interface ModelServiceHealthCheckFormItemsProps {
-  namePrefix: Array<string | number>;
-  /**
-   * Per-field placeholder text. The revision modal sources some of these
-   * dynamically from the selected model definition's defaults (and leaves
-   * others blank); the preset form uses static example text on all of them.
-   * Left undefined, a field simply has no placeholder.
-   */
-  placeholders?: Partial<{
-    path: string;
-    interval: string;
-    maxRetries: string;
-    maxWaitTime: string;
-    expectedStatusCode: string;
-    initialDelay: string;
-  }>;
+interface HealthCheckFieldValues {
+  path: string;
+  interval: number;
+  maxRetries: number;
+  maxWaitTime: number;
+  expectedStatusCode: number;
+  initialDelay: number;
 }
 
-// Shared between DeploymentAddRevisionModal.tsx (namePrefix: []) and
-// AdminDeploymentPresetSettingPageContent.tsx (namePrefix: ['modelDefinition',
-// 'models', 0, 'service']) — labels, tooltips, i18n keys, and `required`
-// rules on all 6 detail fields were already identical (FR-3474); only
-// placeholder sourcing differs per caller.
+// What the manager fills in for an omitted field: `ModelHealthCheck` in
+// `ai/backend/common/config.py` and `PresetModelHealthCheckInput`.
+const HEALTH_CHECK_DEFAULTS: HealthCheckFieldValues = {
+  path: '/health',
+  interval: 10,
+  maxRetries: 10,
+  maxWaitTime: 15,
+  expectedStatusCode: 200,
+  initialDelay: 60,
+};
+
+export interface ModelServiceHealthCheckFormItemsProps {
+  namePrefix: Array<string | number>;
+  /** Per-field placeholders; a field left out shows the manager's default for it. */
+  placeholders?: Partial<HealthCheckFieldValues>;
+}
+
 const ModelServiceHealthCheckFormItems: React.FC<
   ModelServiceHealthCheckFormItemsProps
 > = ({ namePrefix, placeholders }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const placeholder = <K extends keyof HealthCheckFieldValues>(field: K) =>
+    String(placeholders?.[field] ?? HEALTH_CHECK_DEFAULTS[field]);
 
   return (
     <>
@@ -61,12 +66,11 @@ const ModelServiceHealthCheckFormItems: React.FC<
                 name={[...namePrefix, 'healthCheck', 'path']}
                 label={t('adminDeploymentPreset.modelDef.HealthCheckPath')}
                 tooltip={t('modelService.HealthCheckTooltip')}
-                rules={[{ required: true }]}
               >
                 {/* antd `allowClear` → Astryx `hasClear`. */}
                 <AstryxFormTextInput
                   label={t('adminDeploymentPreset.modelDef.HealthCheckPath')}
-                  placeholder={placeholders?.path}
+                  placeholder={placeholder('path')}
                   hasClear
                 />
               </Form.Item>
@@ -77,7 +81,6 @@ const ModelServiceHealthCheckFormItems: React.FC<
                     'adminDeploymentPreset.modelDef.HealthCheckInterval',
                   )}
                   tooltip={t('modelService.IntervalTooltip')}
-                  rules={[{ required: true }]}
                   style={{ flex: 1, minWidth: 160 }}
                 >
                   {/* antd `InputNumber suffix` → Astryx `units`. */}
@@ -86,7 +89,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
                       'adminDeploymentPreset.modelDef.HealthCheckInterval',
                     )}
                     min={1}
-                    placeholder={placeholders?.interval}
+                    placeholder={placeholder('interval')}
                     units={t('time.Sec')}
                   />
                 </Form.Item>
@@ -96,7 +99,6 @@ const ModelServiceHealthCheckFormItems: React.FC<
                     'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
                   )}
                   tooltip={t('modelService.MaxRetriesTooltip')}
-                  rules={[{ required: true }]}
                   style={{ flex: 1, minWidth: 160 }}
                 >
                   <AstryxFormNumberInput
@@ -104,7 +106,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
                       'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
                     )}
                     min={1}
-                    placeholder={placeholders?.maxRetries}
+                    placeholder={placeholder('maxRetries')}
                   />
                 </Form.Item>
                 <Form.Item
@@ -113,7 +115,6 @@ const ModelServiceHealthCheckFormItems: React.FC<
                     'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
                   )}
                   tooltip={t('modelService.MaxWaitTimeTooltip')}
-                  rules={[{ required: true }]}
                   style={{ flex: 1, minWidth: 160 }}
                 >
                   <AstryxFormNumberInput
@@ -121,7 +122,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
                       'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
                     )}
                     min={1}
-                    placeholder={placeholders?.maxWaitTime}
+                    placeholder={placeholder('maxWaitTime')}
                     units={t('time.Sec')}
                   />
                 </Form.Item>
@@ -133,7 +134,6 @@ const ModelServiceHealthCheckFormItems: React.FC<
                     'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
                   )}
                   tooltip={t('modelService.ExpectedStatusTooltip')}
-                  rules={[{ required: true }]}
                   style={{ flex: 1, minWidth: 160 }}
                 >
                   {/* Backend `expected_status_code` is `gt=100`, hence 101. */}
@@ -143,7 +143,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
                     )}
                     min={101}
                     max={599}
-                    placeholder={placeholders?.expectedStatusCode}
+                    placeholder={placeholder('expectedStatusCode')}
                   />
                 </Form.Item>
                 <Form.Item
@@ -152,7 +152,6 @@ const ModelServiceHealthCheckFormItems: React.FC<
                     'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
                   )}
                   tooltip={t('modelService.InitialDelayTooltip')}
-                  rules={[{ required: true }]}
                   style={{ flex: 1, minWidth: 160 }}
                 >
                   <AstryxFormNumberInput
@@ -160,7 +159,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
                       'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
                     )}
                     min={0}
-                    placeholder={placeholders?.initialDelay}
+                    placeholder={placeholder('initialDelay')}
                     units={t('time.Sec')}
                   />
                 </Form.Item>

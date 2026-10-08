@@ -501,14 +501,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
     <>
       <ModelServiceHealthCheckFormItems
         namePrefix={['modelDefinition', 'models', 0, 'service']}
-        placeholders={{
-          path: t('general.Example', { value: '/health' }),
-          interval: t('general.Example', { value: '10' }),
-          maxRetries: t('general.Example', { value: '10' }),
-          maxWaitTime: t('general.Example', { value: '15' }),
-          expectedStatusCode: t('general.Example', { value: '200' }),
-          initialDelay: t('general.Example', { value: '60' }),
-        }}
+        placeholders={{ initialDelay: 1800 }}
       />
       <PreStartActionsFormList
         namePrefix={['modelDefinition', 'models', 0, 'service']}
