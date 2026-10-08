@@ -1122,3 +1122,9 @@ export const convertFirstOrderByToString = (
   if (!first?.field) return null;
   return `${first.direction === 'DESC' ? '-' : ''}${_.camelCase(first.field)}`;
 };
+
+export const extractErrorType = (typeUrl?: string | null): string => {
+  if (!typeUrl) return '';
+  const parts = typeUrl.split('/');
+  return parts[parts.length - 1] || '';
+};
