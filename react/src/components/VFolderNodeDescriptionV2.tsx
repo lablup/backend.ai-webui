@@ -125,18 +125,15 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
 
   const vfolderId = toLocalId(vfolderNode.id);
 
-  // V2 `VFolderMountPermission` enum → legacy REST permission string mapping
-  // for the `<Selector/>` below. READ_ONLY → 'ro', READ_WRITE/RW_DELETE → 'rw'.
-  // NOTE: `accessControl.permission` is the *mount* permission (how this folder
-  // would be mounted into a session), not the caller's operational rights on
-  // the folder. When the value is null/undefined we fall back to 'ro' so that
-  // users without an explicit permission do not see a misleading read-write
-  // default. See FR-2619 follow-up for a proper permission set.
+  // `accessControl.permission` is the folder's mount permission, not the
+  // caller's rights on it; NONE leaves the selector empty instead of guessing.
+  const mountPermission = vfolderNode.accessControl?.permission;
   const currentSelectPermission =
-    vfolderNode.accessControl?.permission === 'READ_WRITE' ||
-    vfolderNode.accessControl?.permission === 'RW_DELETE'
+    mountPermission === 'READ_WRITE' || mountPermission === 'RW_DELETE'
       ? 'rw'
-      : 'ro';
+      : mountPermission === 'READ_ONLY'
+        ? 'ro'
+        : undefined;
   // The value the user just picked, shown until the update and the store
   // refresh land (or the update fails and the server value returns).
   const [pendingPermission, setPendingPermission] = useState<string | null>(
@@ -213,6 +210,7 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
           placement="below"
           label={t('data.folders.MountPermission')}
           isLabelHidden
+          placeholder={t('data.folders.MountPermissionNotSet')}
           value={pendingPermission ?? currentSelectPermission}
           isLoading={pendingPermission !== null}
           options={[
