@@ -1026,7 +1026,7 @@
       "Name": "Nama",
       "NoDeletePermission": "Tiada kebenaran memadam",
       "NoFolderToDisplay": "Tiada Folder untuk dipaparkan",
-      "NoMountPermission": "Folder ini tiada kebenaran lekap lalai. Pemiliknya masih boleh melekapkannya dengan akses baca & tulis.",
+      "NoMountPermission": "Tiada kebenaran lekap ditetapkan.",
       "NoRestorePermission": "Tiada kebenaran memulihkan",
       "NumberOfFiles": "Bilangan fail",
       "OpenAFolder": "Buka folder",

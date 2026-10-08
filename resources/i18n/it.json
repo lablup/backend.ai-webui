@@ -1026,7 +1026,7 @@
       "Name": "Nome",
       "NoDeletePermission": "Nessun permesso di cancellazione",
       "NoFolderToDisplay": "Nessuna cartella da visualizzare",
-      "NoMountPermission": "Questa cartella non ha un permesso di montaggio predefinito. Il proprietario può comunque montarla in lettura e scrittura.",
+      "NoMountPermission": "Nessun permesso di montaggio impostato.",
       "NoRestorePermission": "Nessun permesso di ripristino",
       "NumberOfFiles": "Numero di file",
       "OpenAFolder": "Aprire una cartella",

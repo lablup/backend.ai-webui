@@ -1026,7 +1026,7 @@
       "Name": "이름",
       "NoDeletePermission": "삭제 권한이 없습니다",
       "NoFolderToDisplay": "폴더 정보가 없습니다.",
-      "NoMountPermission": "이 폴더에는 기본 마운트 권한이 없습니다. 폴더 소유자는 읽기 및 쓰기 권한으로 마운트할 수 있습니다.",
+      "NoMountPermission": "마운트 권한이 설정되어 있지 않습니다.",
       "NoRestorePermission": "복원 권한이 없습니다.",
       "NumberOfFiles": "파일 개수",
       "OpenAFolder": "폴더 열기",

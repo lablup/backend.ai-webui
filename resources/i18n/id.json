@@ -1026,7 +1026,7 @@
       "Name": "Nama",
       "NoDeletePermission": "Tidak ada izin hapus",
       "NoFolderToDisplay": "Tidak ada Folder untuk ditampilkan",
-      "NoMountPermission": "Folder ini tidak memiliki izin mount bawaan. Pemiliknya tetap dapat me-mount-nya dengan akses baca & tulis.",
+      "NoMountPermission": "Izin mount belum ditetapkan.",
       "NoRestorePermission": "Tidak ada izin pemulihan",
       "NumberOfFiles": "Jumlah file",
       "OpenAFolder": "Membuka folder",

@@ -1026,7 +1026,7 @@
       "Name": "名前",
       "NoDeletePermission": "削除許可なし",
       "NoFolderToDisplay": "フォルダ情報がありません。",
-      "NoMountPermission": "このフォルダーにはデフォルトのマウント許可がありません。所有者は読み書き可能でマウントできます。",
+      "NoMountPermission": "マウント許可が設定されていません。",
       "NoRestorePermission": "復元許可なし",
       "NumberOfFiles": "ファイル数",
       "OpenAFolder": "フォルダを開く",

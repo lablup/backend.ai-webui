@@ -1026,7 +1026,7 @@
       "Name": "Nom",
       "NoDeletePermission": "Pas d'autorisation de suppression",
       "NoFolderToDisplay": "Aucun dossier à afficher",
-      "NoMountPermission": "Ce dossier n'a pas d'autorisation de montage par défaut. Son propriétaire peut toujours le monter en lecture et écriture.",
+      "NoMountPermission": "Aucune autorisation de montage n'est définie.",
       "NoRestorePermission": "Pas d'autorisation de restauration",
       "NumberOfFiles": "Nombre de fichiers",
       "OpenAFolder": "Ouvrir un dossier",

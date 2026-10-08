@@ -1026,7 +1026,7 @@
       "Name": "Name",
       "NoDeletePermission": "Keine Löschberechtigung",
       "NoFolderToDisplay": "Keine Ordner anzeigen",
-      "NoMountPermission": "Dieser Ordner hat keine Standard-Mount-Berechtigung. Der Besitzer kann ihn weiterhin mit Lese- und Schreibzugriff einbinden.",
+      "NoMountPermission": "Es ist keine Mount-Berechtigung festgelegt.",
       "NoRestorePermission": "Keine Wiederherstellungsberechtigung",
       "NumberOfFiles": "Anzahl der Dateien",
       "OpenAFolder": "Einen Ordner öffnen",
