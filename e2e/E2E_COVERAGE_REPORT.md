@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-10-08
+> **Last Updated:** 2026-10-09
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 360 / 510 features covered (71%)**
+**Overall (in-scope routes): 362 / 512 features covered (71%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -49,12 +49,12 @@
 | Plugin System            | (config-based)                                   |    12    |   12    | ✅ 100% |
 | RBAC Management          | `/rbac`                                          |    23    |   22    | 🔶 96%  |
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule`           |    33    |   32    | 🔶 97%  |
-| Deployments              | `/deployments`, `/deployments/:id`               |    18    |   15    | 🔶 83%  |
-| Admin Deployment Preset  | `/admin/deployments/deployment-presets/new`      |    4     |    4    | ✅ 100% |
+| Deployments              | `/deployments`, `/deployments/:id`               |    19    |   16    | 🔶 84%  |
+| Admin Deployment Preset  | `/admin/deployments/deployment-presets/new`      |    5     |    5    | ✅ 100% |
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **510**  | **360** | **71%** |
+| **Total**                |                                                  | **512**  | **362** | **71%** |
 
 ---
 
@@ -334,11 +334,12 @@
 | Model Definition File Path value does not feed back into the command placeholder (FR-3342)                                                                                                                                         | ✅     | `Admin sees the Model Definition File Path leave the command placeholder unchanged`                                                   |
 | Model Definition File Path hidden for a non-config-reading variant (FR-3342)                                                                                                                                                       | ✅     | asserted inside `… default-command note for a non-config-reading variant (vllm)`                                                      |
 | Old-manager name-based `readsVfolderConfigFiles` fallback, reachable from a fresh variant select — `BAIRuntimeVariantSelect` resolves the omitted flag via `?? name === 'custom'` before the modal ever sees `undefined` (FR-3342) | ✅     | `Admin sees the custom service config for an old-manager variant (readsVfolderConfigFiles omitted, name === custom)`                  |
+| Health Check on with every detail field blank: fields optional, placeholders from the model definition or manager defaults, mutation sends only `{ enable: true }` (#10223)                                                        | ✅     | `User can add a revision with health check enabled and detail fields left blank`                                                      |
 | Old-manager name-based `readsVfolderConfigFiles` fallback via the "Load current revision" prefill path                                                                                                                             | ⏸️     | deferred — needs a full `DeploymentDetailPageQuery` mock with a `currentRevision` whose variant name is `custom` and the flag omitted |
 | Command prefill suppressed when the source revision's variant does not read config files (FR-3342)                                                                                                                                 | ⏸️     | same prefill path as the row above — needs the deferred `DeploymentDetailPageQuery` mock                                              |
 | `definitionPath` sent as null for a non-config-reading variant (FR-3342)                                                                                                                                                           | ⏸️     | submit-path guard; the field is unreachable in the UI for those variants, so only the mutation payload shows it                       |
 
-**Coverage: ✅ 15 features (FR-3278 regression guard + FR-3205 Start Command redesign + FR-3342 runtime-variant defaults); 3 deferred**
+**Coverage: ✅ 16 features (FR-3278 regression guard + FR-3205 Start Command redesign + FR-3342 runtime-variant defaults + #10223 optional health-check fields); 3 deferred**
 
 > The FR-3205 preset-side change (the Admin Deployment Preset form no longer coerces
 > Basic mode's `shell` to the client default) has its own suite — see
@@ -362,8 +363,9 @@
 | Full Create submission carries Service Configuration / Health Check / Pre-Start Actions in the expected nested `modelDefinition.models[0].service` shape (FR-3474)                                                                                                                                          | ✅     | `Admin creates a preset carrying Service Configuration, Health Check, and a Pre-Start Action`                                                      |
 | Leaving Start Command and Port blank still submits successfully — `command` omitted, `port` falls back to the submit-mapping layer's default (FR-3474/BA-6613)                                                                                                                                              | ✅     | `Admin creates a preset with Start Command and Port left blank`                                                                                    |
 | Legacy manager (`preset-model-config-type` off): Service Configuration/Health Check/Pre-Start Actions render nested inside Model Definition rather than independently in Basic Info, and the create mutation still carries the required `name`/`modelPath` plus the full nested `service` payload (FR-3481) | ✅     | `Admin sees Service Configuration/Health Check/Pre-Start Actions nested inside Model Definition, and the mutation carries required name/modelPath` |
+| Health Check on with every detail field blank: placeholders show the preset defaults (`/health`, 10, 10, 15, 200, 1800), Create sends only `{ enable: true }` (#10223)                                                                                                                                      | ✅     | `Admin can save a deployment preset with health check enabled and blank detail fields`                                                             |
 
-**Coverage: ✅ 4 features**
+**Coverage: ✅ 5 features**
 
 ---
 
