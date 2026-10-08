@@ -12,6 +12,7 @@ import { RelayEnvironment } from '../RelayEnvironment';
 import { loginSessionAuthMyUserQuery } from '../__generated__/loginSessionAuthMyUserQuery.graphql';
 import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
 import { getActAsTarget } from './actAs';
+import type { LoginBootstrap } from './loginBootstrap';
 import { applyConfigToClient, type LoginConfigState } from './loginConfig';
 import { toLocalId } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -148,28 +149,16 @@ export async function probeManager(client: any): Promise<void> {
 }
 
 /**
- * Check if the current session is already logged in.
- */
-export async function checkLoginSession(apiEndpoint: string): Promise<boolean> {
-  if (!apiEndpoint) return false;
-  const { client } = createBackendAIClient('', '', apiEndpoint, 'SESSION');
-  try {
-    await probeManager(client);
-    const isLogon = await client.check_login();
-    return !!isLogon;
-  } catch {
-    return false;
-  }
-}
-
-/**
  * Perform GQL connection after successful authentication.
  * Sets up globalThis.backendaiclient with user info, projects, and config.
+ * Pass the `bootstrap` a `probeLoginSession` call already fetched to reuse
+ * its keypair under act-as.
  */
 export async function connectViaGQL(
   client: any,
   cfg: LoginConfigState,
   endpoints: string[],
+  bootstrap?: LoginBootstrap | null,
 ): Promise<string[]> {
   // The login cookie is shared with the super admin's other tabs, so an act-as
   // tab must never log it out.
@@ -216,12 +205,12 @@ export async function connectViaGQL(
   // `check_login` reads the access key from the webserver session, which stays
   // the super admin's; under act-as the manager answers with the target's.
   if (isActingAs) {
-    const keypairResponse = await client.query(
-      'query { keypair { access_key } }',
-      {},
-    );
-    if (keypairResponse?.keypair?.access_key) {
-      client._config._accessKey = keypairResponse.keypair.access_key;
+    const accessKey =
+      bootstrap?.keypair?.access_key ??
+      (await client.query('query { keypair { access_key } }', {}))?.keypair
+        ?.access_key;
+    if (accessKey) {
+      client._config._accessKey = accessKey;
     }
   }
 

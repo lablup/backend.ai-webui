@@ -4,6 +4,7 @@
  */
 import { RelayEnvironment } from '../RelayEnvironment';
 import myUserQueryNode from '../__generated__/loginSessionAuthMyUserQuery.graphql';
+import type { LoginBootstrap } from './loginBootstrap';
 import { getDefaultLoginConfig } from './loginConfig';
 import {
   LoginProbeCancelledError,
@@ -419,6 +420,21 @@ describe('connectViaGQL — act-as tab (FR-4111)', () => {
     (client._config as Record<string, unknown>)._accessKey = 'ADMIN_KEY';
 
     await connectViaGQL(client, cfg, []);
+    expect((client._config as Record<string, unknown>)._accessKey).toBe(
+      'TARGET_KEY',
+    );
+  });
+
+  it("takes the target's access key from the probe's bootstrap without a keypair read", async () => {
+    queueResponses([meWith({ default: [[PROJECT_A, 'alpha']] })]);
+    const client = actAsClient();
+    (client._config as Record<string, unknown>)._accessKey = 'ADMIN_KEY';
+    const bootstrap = {
+      keypair: { access_key: 'TARGET_KEY' },
+    } as unknown as LoginBootstrap;
+
+    await connectViaGQL(client, cfg, [], bootstrap);
+    expect(client.query).not.toHaveBeenCalled();
     expect((client._config as Record<string, unknown>)._accessKey).toBe(
       'TARGET_KEY',
     );
