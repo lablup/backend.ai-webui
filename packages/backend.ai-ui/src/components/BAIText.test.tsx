@@ -1,6 +1,9 @@
 import { i18n as buiI18n } from '../locale';
 import BAIText from './BAIText';
 import { act, fireEvent, render, screen } from '@testing-library/react';
+import copy from 'copy-to-clipboard';
+
+vi.mock('copy-to-clipboard', () => ({ default: vi.fn(() => true) }));
 
 /**
  * jsdom does not lay out, so overflow is faked by pinning the metrics the
@@ -386,13 +389,8 @@ describe('BAIText ellipsis', () => {
 // The copy label must come from the bundle. English alone cannot prove it
 // (a hardcoded 'Copy' also passes); the Korean cases are the real guard.
 describe('BAIText copyable', () => {
-  const writeText = vi.fn(() => Promise.resolve());
   beforeEach(() => {
-    writeText.mockClear();
-    Object.defineProperty(navigator, 'clipboard', {
-      value: { writeText },
-      configurable: true,
-    });
+    vi.mocked(copy).mockClear();
   });
 
   afterEach(async () => {
@@ -441,14 +439,14 @@ describe('BAIText copyable', () => {
       </BAIText>,
     );
     await click(screen.getByRole('button'));
-    expect(writeText).toHaveBeenCalledWith('full-value');
+    expect(copy).toHaveBeenCalledWith('full-value');
   });
 
   it('copies `copyable.text` over the visible children and locks out re-entry', async () => {
     render(<BAIText copyable={{ text: 'full-value' }}>truncated…</BAIText>);
     const button = screen.getByRole('button');
     await click(button);
-    expect(writeText).toHaveBeenCalledWith('full-value');
+    expect(copy).toHaveBeenCalledWith('full-value');
     // Astryx `IconButton isDisabled` announces the lock through `aria-disabled`
     // (an href-less/`tabindex=-1` control), not the `disabled` attribute.
     expect(button.getAttribute('aria-disabled')).toBe('true');
@@ -460,13 +458,13 @@ describe('BAIText copyable', () => {
   it('accepts a `text` function', async () => {
     render(<BAIText copyable={{ text: () => 'computed' }}>shown</BAIText>);
     await click(screen.getByRole('button'));
-    expect(writeText).toHaveBeenCalledWith('computed');
+    expect(copy).toHaveBeenCalledWith('computed');
   });
 
   it('renders a standalone copy control when given no children', async () => {
     render(<BAIText copyable={{ text: 'bare' }} />);
     await click(screen.getByRole('button'));
-    expect(writeText).toHaveBeenCalledWith('bare');
+    expect(copy).toHaveBeenCalledWith('bare');
   });
 
   it('takes antd `[resting, copied]` tuples for icon and tooltips', async () => {
@@ -494,10 +492,15 @@ describe('BAIText copyable', () => {
     expect(screen.getByTestId('copied')).toBeInTheDocument();
   });
 
-  it('stays in the resting state when the clipboard rejects', async () => {
-    writeText.mockImplementationOnce(() => Promise.reject(new Error('denied')));
+  it('stays in the resting state when `text()` rejects', async () => {
     const onCopy = vi.fn();
-    render(<BAIText copyable={{ onCopy }}>abc</BAIText>);
+    render(
+      <BAIText
+        copyable={{ text: () => Promise.reject(new Error('denied')), onCopy }}
+      >
+        abc
+      </BAIText>,
+    );
     const button = screen.getByRole('button');
     await click(button);
     expect(onCopy).not.toHaveBeenCalled();

@@ -70,6 +70,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "big.js": "catalog:",
     "classnames": "catalog:",
+    "copy-to-clipboard": "^3.3.3",
     "dayjs": "catalog:",
     "i18next": "catalog:",
     "lodash-es": "catalog:",
