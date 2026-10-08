@@ -690,6 +690,9 @@ importers:
       classnames:
         specifier: 'catalog:'
         version: 2.5.1
+      copy-to-clipboard:
+        specifier: ^3.3.3
+        version: 3.3.3
       dayjs:
         specifier: 'catalog:'
         version: 1.11.21
@@ -23335,6 +23338,7 @@ time:
   commander@12.1.0: '2024-05-18T11:16:54.043Z'
   compression@1.8.1: '2025-07-17T17:36:13.234Z'
   concurrently@8.2.2: '2023-10-19T01:37:36.240Z'
+  copy-to-clipboard@3.3.3: '2022-11-13T21:14:04.484Z'
   cors@2.8.6: '2026-01-22T14:41:30.223Z'
   crypto-es@2.1.0: '2023-10-24T14:53:04.505Z'
   dayjs@1.11.21: '2026-05-26T05:46:12.427Z'

@@ -65,6 +65,7 @@
     "@dicebear/shapes": "^9.4.2",
     "big.js": "catalog:",
     "classnames": "catalog:",
+    "copy-to-clipboard": "^3.3.3",
     "dayjs": "catalog:",
     "i18next": "catalog:",
     "lodash-es": "catalog:",
