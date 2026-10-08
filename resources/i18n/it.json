@@ -1013,6 +1013,7 @@
       "MaxSize": "Dimensione massima",
       "ModelProjectFolderRestrictedToReadOnly": "Il permesso 'Read & Write' non è supportato per la cartella del model store",
       "MountPermission": "Autorizzazione del montaggio",
+      "MountPermissionNotSet": "Non impostato",
       "MountedSessions": "Sessioni montate",
       "MoveToTrash": "Passa al cestino della spazzatura",
       "MoveToTrashDescription": "Sei sicuro di voler spostare \"{{folderName}}\" in cestino?",

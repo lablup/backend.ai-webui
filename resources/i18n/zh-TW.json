@@ -1013,6 +1013,7 @@
       "MaxSize": "最大尺寸",
       "ModelProjectFolderRestrictedToReadOnly": "模型儲存資料夾不支援「讀取與寫入」權限",
       "MountPermission": "安裝許可",
+      "MountPermissionNotSet": "未設定",
       "MountedSessions": "已掛載的工作階段",
       "MoveToTrash": "移至垃圾箱",
       "MoveToTrashDescription": "您確定要將“ {{folderName}}”移至垃圾桶？",

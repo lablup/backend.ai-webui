@@ -34,7 +34,6 @@ import {
   toLocalId,
   useErrorMessageResolver,
   badgeVariantForStatus,
-  BAIQuestionIconWithTooltip,
   BAIText,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -205,17 +204,7 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
       (!!vfolderNode?.ownership?.projectId &&
         projectAdminIds.includes(vfolderNode.ownership.projectId))) && {
       key: 'permission',
-      label:
-        currentSelectPermission === undefined ? (
-          <HStack gap={2} align="center">
-            {t('data.folders.MountPermission')}
-            <BAIQuestionIconWithTooltip
-              title={t('data.folders.NoMountPermission')}
-            />
-          </HStack>
-        ) : (
-          t('data.folders.MountPermission')
-        ),
+      label: t('data.folders.MountPermission'),
       children: (
         // QA-FINDINGS Q-34 — this Selector bypasses `BAISelect` /
         // `AstryxFormSelector`, so it needs its own `placement`. With none,
@@ -228,7 +217,7 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
           placement="below"
           label={t('data.folders.MountPermission')}
           isLabelHidden
-          placeholder="-"
+          placeholder={t('data.folders.MountPermissionNotSet')}
           value={pendingPermission ?? currentSelectPermission}
           isLoading={pendingPermission !== null}
           options={[

@@ -1013,6 +1013,7 @@
       "MaxSize": "Μέγιστο μέγεθος",
       "ModelProjectFolderRestrictedToReadOnly": "Δεν υποστηρίζεται η άδεια 'Read & Write' για τον φάκελο του model store.",
       "MountPermission": "Τοποθετημένος άδεια",
+      "MountPermissionNotSet": "Δεν έχει οριστεί",
       "MountedSessions": "Προσαρτημένες συνεδρίες",
       "MoveToTrash": "Μετακίνηση στον κάδο απορριμμάτων",
       "MoveToTrashDescription": "Είστε βέβαιοι ότι θέλετε να μετακινήσετε το \"{{ folderName }}\" στον κάδο απορριμμάτων;",

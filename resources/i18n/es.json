@@ -1013,6 +1013,7 @@
       "MaxSize": "Tamaño máximo",
       "ModelProjectFolderRestrictedToReadOnly": "El permiso 'Lectura y escritura' no es compatible con la carpeta del almacén de modelos",
       "MountPermission": "Montar permiso",
+      "MountPermissionNotSet": "No establecido",
       "MountedSessions": "Sesiones montadas",
       "MoveToTrash": "Muévete a la basura de la basura",
       "MoveToTrashDescription": "¿Estás seguro de que quieres mover \"{{folderName}}\" a la basura?",

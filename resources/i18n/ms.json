@@ -1013,6 +1013,7 @@
       "MaxSize": "Saiz maks",
       "ModelProjectFolderRestrictedToReadOnly": "Kebenaran \"Baca & Tulis\" tidak disokong untuk folder stor model",
       "MountPermission": "Izin gunung",
+      "MountPermissionNotSet": "Tidak ditetapkan",
       "MountedSessions": "Sesi Terpasang",
       "MoveToTrash": "Pindah ke Tong sampah",
       "MoveToTrashDescription": "Adakah anda pasti mahu bergerak \"{{folderName}}\" ke sampah sampah?",

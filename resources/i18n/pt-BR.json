@@ -1013,6 +1013,7 @@
       "MaxSize": "Tamanho máximo",
       "ModelProjectFolderRestrictedToReadOnly": "Permissão 'Leitura e gravação' não é suportada para a pasta do repositório de modelos",
       "MountPermission": "Permissão de montagem",
+      "MountPermissionNotSet": "Não definido",
       "MountedSessions": "Sessões Montadas",
       "MoveToTrash": "Mover para a lixeira",
       "MoveToTrashDescription": "Tem certeza de que deseja mover \"{{folderName}}\" para a lixeira?",

@@ -1000,6 +1000,7 @@
       "MaxSize": "Max Size",
       "ModelProjectFolderRestrictedToReadOnly": "'Read & Write' permission is not supported for model store folder",
       "MountPermission": "Mount Permission",
+      "MountPermissionNotSet": "Not set",
       "MountedSessions": "Mounted Sessions",
       "MoveToTrash": "Move to trash bin",
       "MoveToTrashDescription": "Are you sure you want to move \"{{ folderName }}\" to trash bin?",

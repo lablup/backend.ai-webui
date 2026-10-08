@@ -1013,6 +1013,7 @@
       "MaxSize": "Kích thước tối đa",
       "ModelProjectFolderRestrictedToReadOnly": "Quyền 'Đọc & Ghi' không được hỗ trợ cho thư mục kho mô hình",
       "MountPermission": "Gắn kết quyền",
+      "MountPermissionNotSet": "Chưa thiết lập",
       "MountedSessions": "Các phiên đã gắn",
       "MoveToTrash": "Di chuyển đến thùng rác",
       "MoveToTrashDescription": "Bạn có chắc là bạn muốn di chuyển \"{{folderName}}\" sang thùng rác không?",

@@ -1013,6 +1013,7 @@
       "MaxSize": "Maksimum Boyut",
       "ModelProjectFolderRestrictedToReadOnly": "'Okuma ve Yazma' izni model depolama klasörü için desteklenmiyor",
       "MountPermission": "Montaj İzni",
+      "MountPermissionNotSet": "Ayarlanmadı",
       "MountedSessions": "Bağlanmış Oturumlar",
       "MoveToTrash": "Çöp kutusuna geç",
       "MoveToTrashDescription": "\"{{folderName}}\" ı çöp kutusuna taşımak istediğinizden emin misiniz?",
