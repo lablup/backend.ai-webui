@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-10-07
+> **Last Updated:** 2026-10-08
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 360 / 511 features covered (70%)**
+**Overall (in-scope routes): 360 / 510 features covered (71%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -21,7 +21,7 @@
 | Start Page               | `/start`                                         |    8     |    6    | 🔶 75%  |
 | Dashboard                | `/dashboard`                                     |    11    |    9    | 🔶 82%  |
 | Session List             | `/session`                                       |    24    |   16    | 🔶 67%  |
-| Session Launcher         | `/session/start`                                 |    14    |    3    | 🔶 21%  |
+| Session Launcher         | `/session/start`                                 |    13    |    3    | 🔶 23%  |
 | Serving                  | `/serving`                                       |    7     |    2    | 🔶 29%  |
 | Endpoint Detail          | `/serving/:serviceId`                            |    19    |    8    | 🔶 42%  |
 | Service Launcher         | `/service/start`                                 |    5     |    1    | 🔶 20%  |
@@ -54,7 +54,7 @@
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **511**  | **360** | **70%** |
+| **Total**                |                                                  | **510**  | **360** | **71%** |
 
 ---
 
@@ -240,12 +240,11 @@
 | Port configuration (Step 4)            | ❌     | -                                                                                                              |
 | Batch schedule/timeout options         | ❌     | -                                                                                                              |
 | Session dependency via useStartSession | 🚧     | `Creates batch + interactive session with dependency` (fixme: requires running agent)                          |
-| Session owner selection (admin)        | ❌     | -                                                                                                              |
 | Form validation errors                 | ❌     | -                                                                                                              |
 | Cluster mode warning (multi-node x1)   | 🔶     | `session-cluster-mode.spec.ts` (10 tests: 5 active, 5 skipped due to cluster-size limits/capacity constraints) |
 | Session history → SessionTemplateModal | ✅     | `session-template-modal.spec.ts` (7 tests)                                                                     |
 
-**Coverage: 🔶 3/14 features (most only indirectly tested)**
+**Coverage: 🔶 3/13 features (most only indirectly tested)**
 
 ---
 
