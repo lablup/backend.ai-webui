@@ -60,7 +60,10 @@ import ImageEnvironmentSelectFormItems, {
 } from './ImageEnvironmentSelectFormItems';
 import ModelCardDrawer from './ModelCardDrawer';
 import ModelCardSelect from './ModelCardSelect';
-import ModelServiceHealthCheckFormItems from './ModelServiceFormItems/ModelServiceHealthCheckFormItems';
+import ModelServiceHealthCheckFormItems, {
+  omitBlankHealthCheckFields,
+  REVISION_HEALTH_CHECK_DEFAULTS,
+} from './ModelServiceFormItems/ModelServiceHealthCheckFormItems';
 import PreStartActionsFormList from './ModelServiceFormItems/PreStartActionsFormList';
 import ServiceConfigurationFormItems from './ModelServiceFormItems/ServiceConfigurationFormItems';
 import RuntimeParameterFormSection, {
@@ -1454,20 +1457,20 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     );
 
     // Health check is opt-in via the explicit checkbox (FR-3068), shown for
-    // every runtime variant and definition mode. When on, all health-check
-    // fields are required in the UI (mirrors the preset form). For non-command
-    // modes (non-custom runtimes and custom+file) we send a minimal
-    // modelDefinition override containing only the health check when enabled.
+    // every runtime variant and definition mode; blank fields are left to the
+    // manager's defaults. For non-command modes (non-custom runtimes and
+    // custom+file) we send a minimal modelDefinition override containing only
+    // the health check when enabled.
     const healthCheckEnabled = !!values.enableHealthCheck;
     const healthCheck = (() => {
-      const configuredFields = {
+      const configuredFields = omitBlankHealthCheckFields({
         path: values.healthCheck?.path,
         interval: values.healthCheck?.interval,
         maxRetries: values.healthCheck?.maxRetries,
         maxWaitTime: values.healthCheck?.maxWaitTime,
         initialDelay: values.healthCheck?.initialDelay,
         expectedStatusCode: values.healthCheck?.expectedStatusCode,
-      };
+      });
       // Always send the object so the server can seed defaults.
       return healthCheckEnabled
         ? { enable: true, ...configuredFields }
@@ -2444,9 +2447,15 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           <ModelServiceHealthCheckFormItems
             namePrefix={[]}
             placeholders={{
-              path: modelDefinitionDefaults?.healthCheckPath,
-              maxRetries: modelDefinitionDefaults?.maxRetries?.toString(),
-              initialDelay: modelDefinitionDefaults?.initialDelay?.toString(),
+              ...REVISION_HEALTH_CHECK_DEFAULTS,
+              ..._.omitBy(
+                {
+                  path: modelDefinitionDefaults?.healthCheckPath,
+                  maxRetries: modelDefinitionDefaults?.maxRetries,
+                  initialDelay: modelDefinitionDefaults?.initialDelay,
+                },
+                _.isNil,
+              ),
             }}
           />
 

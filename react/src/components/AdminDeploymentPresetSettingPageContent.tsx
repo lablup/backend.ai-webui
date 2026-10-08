@@ -33,7 +33,9 @@ import {
 import PresetReviewSummary from './AdminDeploymentPresetReviewSummary';
 import PresetValidationTour from './AdminDeploymentPresetValidationTour';
 import BAIFormItem from './BAIFormItem';
-import ModelServiceHealthCheckFormItems from './ModelServiceFormItems/ModelServiceHealthCheckFormItems';
+import ModelServiceHealthCheckFormItems, {
+  PRESET_HEALTH_CHECK_DEFAULTS,
+} from './ModelServiceFormItems/ModelServiceHealthCheckFormItems';
 import PreStartActionsFormList from './ModelServiceFormItems/PreStartActionsFormList';
 import ServiceConfigurationFormItems from './ModelServiceFormItems/ServiceConfigurationFormItems';
 import RuntimeParameterFormSection, {
@@ -499,14 +501,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
     <>
       <ModelServiceHealthCheckFormItems
         namePrefix={['modelDefinition', 'models', 0, 'service']}
-        placeholders={{
-          path: t('general.Example', { value: '/health' }),
-          interval: t('general.Example', { value: '10' }),
-          maxRetries: t('general.Example', { value: '10' }),
-          maxWaitTime: t('general.Example', { value: '15' }),
-          expectedStatusCode: t('general.Example', { value: '200' }),
-          initialDelay: t('general.Example', { value: '60' }),
-        }}
+        placeholders={PRESET_HEALTH_CHECK_DEFAULTS}
       />
       <PreStartActionsFormList
         namePrefix={['modelDefinition', 'models', 0, 'service']}

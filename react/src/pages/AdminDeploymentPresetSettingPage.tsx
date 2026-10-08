@@ -13,6 +13,7 @@ import AdminDeploymentPresetSettingPageContent, {
   type AdminDeploymentPresetFormValue,
   type ModelDefinitionFormValue,
 } from '../components/AdminDeploymentPresetSettingPageContent';
+import { omitBlankHealthCheckFields } from '../components/ModelServiceFormItems/ModelServiceHealthCheckFormItems';
 import { Form } from '../form-engine';
 import {
   preStartActionsToInput,
@@ -144,15 +145,16 @@ const buildModelDefinitionInput = (
               // pydantic rejects), so `{ enable: false }` alone still fails —
               // null is the only way to disable.
               if (!checked) return null;
-              // Enabled → the form requires all HC fields, so they are present.
-              const fields = {
+              // Enabled → the input's fields are non-null with server defaults,
+              // so a blank field must be omitted, never sent as null.
+              const fields = omitBlankHealthCheckFields({
                 path: hc?.path,
                 interval: hc?.interval,
                 maxRetries: hc?.maxRetries,
                 maxWaitTime: hc?.maxWaitTime,
                 expectedStatusCode: hc?.expectedStatusCode,
                 initialDelay: hc?.initialDelay,
-              };
+              });
               return { enable: true, ...fields };
             })(),
           },
