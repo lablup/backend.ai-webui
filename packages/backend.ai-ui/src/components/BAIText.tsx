@@ -27,6 +27,7 @@ import { Kbd } from '@astryxdesign/core/Kbd';
 import { Link } from '@astryxdesign/core/Link';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import classNames from 'classnames';
+import copy from 'copy-to-clipboard';
 import { CheckIcon, CopyIcon } from 'lucide-react';
 import React, {
   useEffect,
@@ -256,7 +257,9 @@ const CopyControl: React.FC<{
               : typeof config?.text === 'string'
                 ? config.text
                 : nodeToText(children);
-          await navigator.clipboard?.writeText(text);
+          // antd's copier: `execCommand('copy')` also works over plain HTTP,
+          // where `navigator.clipboard` does not exist.
+          copy(text);
           config?.onCopy?.(e);
           setCopied(true);
           timerRef.current = setTimeout(
@@ -264,8 +267,8 @@ const CopyControl: React.FC<{
             COPIED_RESET_MS,
           );
         })().catch(() => {
-          // A denied clipboard or a rejected `text()`: nothing was copied,
-          // so the control stays in its resting state.
+          // A rejected `text()`: nothing was copied, so the control stays in
+          // its resting state.
         });
       }}
     />
