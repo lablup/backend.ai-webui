@@ -47,10 +47,6 @@ import {
   loginWithSAML,
   probeManager,
 } from '../helper/loginSessionAuth';
-import {
-  OPENID_LOGIN_ERROR_PARAM,
-  resolveOpenIDLoginErrorKey,
-} from '../helper/openIDLoginError';
 import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
 import { useLoginOrchestration } from '../hooks/useLoginOrchestration';
 import {
@@ -72,6 +68,9 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type ConnectionMode = 'SESSION' | 'API';
+
+// Only echo code-shaped `bai_error` values, so a crafted link cannot put prose in the banner.
+const DISPLAYABLE_OPENID_ERROR_CODE = /^[A-Za-z0-9_-]{1,64}$/;
 
 const STORED_API_ENDPOINT_KEY = 'backendaiwebui.api_endpoint';
 
@@ -154,7 +153,7 @@ const LoginView: React.FC<{
     description?: string;
   } | null>(null);
   const [, setOpenIDLoginErrorParam] = useQueryState(
-    OPENID_LOGIN_ERROR_PARAM,
+    'bai_error',
     parseAsString,
   );
   const [endpoints, setEndpoints] = useState<string[]>(() => {
@@ -353,14 +352,39 @@ const LoginView: React.FC<{
 
     // The manager's OpenID plugin reports a failed login as `?bai_error=`;
     // drop it once shown so a reload does not repeat the message.
-    const openIDLoginError = urlParams.get(OPENID_LOGIN_ERROR_PARAM);
-    if (openIDLoginError !== null) {
-      const { key, code } = resolveOpenIDLoginErrorKey(openIDLoginError);
+    const openIDLoginError = urlParams.get('bai_error')?.trim();
+    if (openIDLoginError !== undefined) {
+      const descriptions: Record<string, string> = {
+        'openid-access-denied': t('login.singleSignOn.OpenIDAccessDenied'),
+        'invalid-openid-session': t('login.singleSignOn.OpenIDSessionInvalid'),
+        'openid-not-authenticated': t(
+          'login.singleSignOn.OpenIDNotAuthenticated',
+        ),
+        'openid-group-not-allowed': t(
+          'login.singleSignOn.OpenIDGroupNotAllowed',
+        ),
+        'openid-domain-not-found': t('login.singleSignOn.OpenIDDomainNotFound'),
+        'openid-provider-misconfigured': t(
+          'login.singleSignOn.OpenIDProviderMisconfigured',
+        ),
+        'openid-provider-unavailable': t(
+          'login.singleSignOn.OpenIDProviderUnavailable',
+        ),
+        'internal-server-error': t(
+          'login.singleSignOn.OpenIDInternalServerError',
+        ),
+      };
       setLoginError({
         message: t('login.singleSignOn.LoginWithRealmFailed', {
           realmName: loginConfig.ssoRealmName || 'OpenID',
         }),
-        description: t(key, { code }),
+        description: Object.hasOwn(descriptions, openIDLoginError)
+          ? descriptions[openIDLoginError]
+          : DISPLAYABLE_OPENID_ERROR_CODE.test(openIDLoginError)
+            ? t('login.singleSignOn.OpenIDUnknownErrorWithCode', {
+                code: openIDLoginError,
+              })
+            : t('login.singleSignOn.OpenIDUnknownError'),
       });
       setOpenIDLoginErrorParam(null);
     }
