@@ -98,7 +98,7 @@ Notes:
 
 Which API server a dev session talks to, and which test account it logs in with, live in the team's catalog on the team PR board ([frontend-board](https://github.com/lablup/frontend-board), running on the dev box gateway host) — not in this repository and not in anyone's notes. Anyone on the dev VPN can read and edit it on the board's **Catalog** page (`http://board.<domain>/`). The board also serves it at `http://board.<domain>/api/catalog` without authentication, so **the catalog is visible to everyone on the dev VPN: store only passwords that may be shared that widely, and leave the others empty — the person logging in types them.** Every save keeps the previous version (the newest 50), so a bad edit is undone by loading an earlier version on the Catalog page and saving it again.
 
-**Agents** choose a server and account with the `fw:webui-connection-info` skill (the `fw` plugin of [lablup/claude-mp](https://github.com/lablup/claude-mp); on fw < 28.1.0 the thin repository copy in `.claude/skills/webui-connection-info/` stands in): it reads this catalog, applies the selection rules (live, manager version, `config.toml` switches, tags and notes, least-privileged role) and hands the pick to `pnpm run dev-env` below.
+**Agents** choose a server and account with the `fw:webui-connection-info` skill (the `fw` plugin of [lablup/claude-mp](https://github.com/lablup/claude-mp), 28.1.0 or later): it reads this catalog, applies the selection rules (live, manager version, `config.toml` switches, tags and notes, least-privileged role) and hands the pick to `pnpm run dev-env` below.
 
 `pnpm run dev-env` reads that endpoint and writes the pick into the two git-ignored files that already consume it:
 
@@ -121,7 +121,7 @@ Every command asks the board, so there is no local copy to go stale. `use` only 
 
 In `e2e/envs/.env.playwright`, `use` fills `E2E_ADMIN_*` from the server's first `admin`, `E2E_USER_*` and `E2E_USER2_*` from its first and second `user`, and `E2E_PROJECT_ADMIN_*` from its first `project-admin`, removing the pair of a slot the server cannot fill. Nothing in `e2e/` reads `E2E_PROJECT_ADMIN_*` yet; it is written for tests to come. `E2E_MONITOR_*` and `E2E_DOMAIN_ADMIN_*` are not filled by `use`, and lines you wrote for them are left as they are. `e2e/utils/test-util.ts` falls back to the sample's default accounts (`admin@lablup.com`, …) for any `E2E_ADMIN_*`, `E2E_USER_*` or `E2E_USER2_*` value that is missing, so `use` warns, naming each slot the server left without an account or a password.
 
-`--no-password` leaves the password out of the pre-fill. Use it on a dev server you share through dev-gw: the bundle carries every `VITE_*` value to whoever opens the share URL (see the notes above).
+`--no-password` leaves the password out of the pre-fill. A dev server shared through dev-gw hands every `VITE_*` value to whoever opens the share URL (see the notes above); a password that came from the catalog is already visible to that same audience, so pre-filling it there is fine. Use `--no-password` when the password is one you wrote by hand and is not in the catalog.
 
 The board shares the gateway's domain, which `dev-env` reads from `~/.config/fw/dev-gw.json` (written by `dev-gw join`, see above; `DEV_GW_CONFIG` points elsewhere). It uses plain `http://`, because Node's `fetch` rejects the gateway's internal CA. Without that file, set `WEBUI_DEV_ENV_CATALOG_URL` to the catalog URL, or `WEBUI_DEV_ENV_CATALOG` to a JSON file of the same shape (for tests and for a box that has not joined the gateway).
 
