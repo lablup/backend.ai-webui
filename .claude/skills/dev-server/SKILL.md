@@ -128,7 +128,7 @@ This skill auto-derives the value from the current branch's PR description so de
    gh pr view --json body -q '.body' 2>/dev/null
    ```
    Skip silently when the branch has no PR.
-3. **The team dev catalog** — when neither names an endpoint, pick a server with the `fw:webui-connection-info` skill (live, manager version and `config.toml` switches that fit what the PR changes) and read its endpoint with `pnpm run dev-env get <server> <role|email> --json`. Say which server you picked and why.
+3. **The team dev catalog** — when neither names an endpoint, pick a server with the `fw:webui-connection-info` skill (live, manager version and `config.toml` switches that fit what the PR changes) and read its endpoint from `pnpm run dev-env list --json` (it never prints a password). Say which server you picked and why.
 4. **None of the above** (no catalog reachable, nothing fits) — omit the env var. Do **not** invent a default endpoint.
 
 **Conversion rules** (apply to the candidate string before passing as `VITE_DEFAULT_API_ENDPOINT`):
@@ -181,7 +181,7 @@ If the resolved value matches the existing default backend the WebUI would other
 
 1. **User explicitly supplied credentials** in the prompt or conversation (e.g. "log in as `admin@lablup.com` / `wJalrXUt`", "use the domain-admin test account") → set both vars from what they said.
 2. **A shared team test server's credentials are already known** to this session — credentials the user pasted earlier for that box → reuse them.
-3. **The endpoint is a server in the team dev catalog** (picked in 2c step 3, or a PR-body / user endpoint that matches a catalog server's `endpoint`) → choose the account with `fw:webui-connection-info` (least-privileged role that can show the change) and take `email` / `password` from `pnpm run dev-env get <server> <role|email> --json`. A catalog password is one the team agreed may be shared on the dev VPN. When the account has no password, set the email alone — the person types the password at login.
+3. **The endpoint is a server in the team dev catalog** (picked in 2c step 3, or a PR-body / user endpoint that matches a catalog server's `endpoint`) → choose the account with `fw:webui-connection-info` (least-privileged role that can show the change) and take `email` / `password` from `pnpm run dev-env get <server> <role|email> --json`. A catalog password is one the team agreed may be shared on the dev VPN, and the board already serves it to the same audience the share URL reaches, so it is pre-filled even though step 5 advertises the server — that is what lets a reviewer sign in from the PR link. A password that is not in the catalog (user-supplied, steps 1–2) follows the caveats below. When the account has no password, set the email alone — the person types the password at login. Do not echo the password back in your reply.
 4. **Otherwise omit both.** Do **not** scrape passwords out of the PR body, invent credentials, or reuse `e2e/envs/.env.playwright` values unless the user pointed you at them. Set the email alone (without a password) only if that is all the user gave.
 
 **Security caveats (state them when you use these):**
