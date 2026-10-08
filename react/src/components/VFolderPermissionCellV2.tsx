@@ -4,6 +4,7 @@
  */
 import { VFolderPermissionCellV2Fragment$key } from '../__generated__/VFolderPermissionCellV2Fragment.graphql';
 import { HStack } from '@astryxdesign/core/Stack';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { BAIText } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useMemo } from 'react';
@@ -43,16 +44,28 @@ const VFolderPermissionCellV2: React.FC<VFolderPermissionCellV2Props> = ({
         icon: 'RW',
       },
     };
-    // V2 enum: READ_ONLY, READ_WRITE, RW_DELETE.
-    // READ_ONLY  -> RO badge
-    // READ_WRITE -> RW badge
-    // RW_DELETE  -> RW badge (delete capability is surfaced via row actions)
+    // RW_DELETE folds into RW; NONE (no mount permission) renders `-`.
+    const permission = vfolderData?.accessControl?.permission;
     const perm =
-      vfolderData?.accessControl?.permission === 'READ_ONLY' ? 'ro' : 'rw';
+      permission === 'READ_ONLY'
+        ? 'ro'
+        : permission === 'READ_WRITE' || permission === 'RW_DELETE'
+          ? 'rw'
+          : undefined;
     return {
-      permissionInfo: permissionMap[perm],
+      permissionInfo: perm ? permissionMap[perm] : undefined,
     };
   }, [vfolderData, t]);
+
+  if (!permissionInfo) {
+    return (
+      <HStack gap={2} {...props}>
+        <Tooltip content={t('data.folders.NoMountPermission')}>
+          <BAIText>-</BAIText>
+        </Tooltip>
+      </HStack>
+    );
+  }
 
   return (
     <HStack gap={2} {...props}>
