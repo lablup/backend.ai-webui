@@ -1,10 +1,13 @@
 import { renderExplain } from '../commands/explain.js';
 import { CliError } from '../errors.js';
 import { resolveRepoContext } from '../repo-context.js';
+import { resolveDocsVersion } from '../search/engine.js';
 import { explain } from './explain.js';
 import { describe, expect, it } from 'vitest';
 
 const context = resolveRepoContext(import.meta.dirname);
+// `next` on a prerelease checkout, `major.minor` on a release branch.
+const docsVersion = resolveDocsVersion(context);
 
 const run = (target: string, lang = 'en') => explain(context, { target, lang });
 
@@ -26,7 +29,7 @@ describe('explain, fully curated field value', () => {
     expect(data.concept.id).toBe('compute-session');
     expect(data.meaning.text).toMatch(/accepting work/);
     expect(data.docs.url).toBe(
-      'https://webui.docs.backend.ai/next/en/sessions_all.html#sessions_all-session-detail-panel',
+      `https://webui.docs.backend.ai/${docsVersion}/en/sessions_all.html#sessions_all-session-detail-panel`,
     );
     expect(data.value?.label).toBe('Running');
     expect(data.value?.variant).toBe('success');
