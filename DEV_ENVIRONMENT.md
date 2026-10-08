@@ -98,7 +98,7 @@ Notes:
 
 Which API server a dev session talks to, and which test account it logs in with, live in the team's catalog on the team PR board ([frontend-board](https://github.com/lablup/frontend-board), running on the dev box gateway host) — not in this repository and not in anyone's notes. Anyone on the dev VPN can read and edit it on the board's **Catalog** page (`http://board.<domain>/`). The board also serves it at `http://board.<domain>/api/catalog` without authentication, so **the catalog is visible to everyone on the dev VPN: store only passwords that may be shared that widely, and leave the others empty — the person logging in types them.** Every save keeps the previous version (the newest 50), so a bad edit is undone by loading an earlier version on the Catalog page and saving it again.
 
-**Agents** choose a server and account with the `fw:webui-connection-info` skill (the `fw` plugin of [lablup/claude-mp](https://github.com/lablup/claude-mp); on fw < 28.1.0 the thin repository copy in `.claude/skills/webui-connection-info/` stands in): it reads this catalog, applies the selection rules (live, manager version, `config.toml` switches, tags and notes, least-privileged role) and hands the pick to `pnpm run dev-env` below.
+**Agents** choose a server and account with the `fw:webui-connection-info` skill (the `fw` plugin of [lablup/claude-mp](https://github.com/lablup/claude-mp), 28.1.0 or later): it reads this catalog, applies the selection rules (live, manager version, `config.toml` switches, tags and notes, least-privileged role) and hands the pick to `pnpm run dev-env` below.
 
 `pnpm run dev-env` reads that endpoint and writes the pick into the two git-ignored files that already consume it:
 

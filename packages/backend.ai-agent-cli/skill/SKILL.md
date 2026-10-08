@@ -39,7 +39,7 @@ for a CLAUDE.md outside a checkout; there isn't one.
 **When `whoami` says `auth_required` (exit 3):**
 
 - Get the endpoint and the account from the **`webui-connection-info`** skill
-  (`fw` plugin, or the webui repository's fallback copy on fw < 28.1.0; it reads the team's dev server catalog). Without that skill,
+  (`fw` plugin; it reads the team's dev server catalog). Without that skill,
   the endpoint is the one `init` recorded (`doctor` prints it). Never ask the user for a password, and never put one in a
   command.
 - Browser on this machine: `bai-agent login --endpoint <url>`, then confirm on
