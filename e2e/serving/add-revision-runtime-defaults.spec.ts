@@ -473,7 +473,7 @@ test.describe(
   () => {
     test.describe.configure({ mode: 'serial', retries: 1 });
 
-    test('User can add a revision with health check enabled and detail fields left blank', async ({
+    test('Admin can add a revision with health check enabled and detail fields left blank', async ({
       page,
       request,
     }) => {
@@ -493,6 +493,8 @@ test.describe(
           DeploymentAddRevisionModalAddMutation:
             addRevisionMutationMock(capture),
         });
+        // No health_check block, so the DB defaultModelDefinition (not the
+        // vfolder) supplies the definition-backed placeholders.
         folderName = await provisionDeploymentModelFolder(page, {
           yamlContent: `models:
   - name: "mock-openai"
@@ -515,8 +517,8 @@ test.describe(
           .getByRole('checkbox', { name: 'Enable Health Check', exact: true })
           .check();
 
-        // Blank fields show what the manager applies: the model definition's
-        // value where it has one, otherwise the manager default.
+        // The modal forwards only Path / Max Retries / Startup Grace Period
+        // from the model definition; the rest show the manager defaults.
         const pathInput = modal.getByRole('textbox', {
           name: 'Path',
           exact: true,
@@ -545,6 +547,7 @@ test.describe(
 
         // No resource preset is picked for a manually typed image; entering
         // memory switches the allocation to Custom so the form validates.
+        // TODO: give the memory input a real label (BUI's doubled fallback name).
         await modal
           .getByRole('spinbutton', { name: 'Select Select', exact: true })
           .fill('1');
