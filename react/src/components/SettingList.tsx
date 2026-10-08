@@ -37,11 +37,19 @@ import { useTranslation } from 'react-i18next';
 // Environment") still fits beside its count badge instead of truncating.
 const NAV_PANEL_WIDTH = 240;
 
-// From the `settings-sidebar` template: the nav column carries its own padding
-// so its first item sits on the same baseline as the content pane's first row.
+// One shared inset for the toolbar, the nav labels and the content pane:
+// nav padding (spacing-1) + spacious ListItem inset (spacing-3) = spacing-4,
+// which is also the content pane's `padding={4}`.
+const SHARED_INSET = 'var(--spacing-4)';
+
 const navPanelPadding: CSSProperties = {
-  paddingBlock: 'var(--spacing-4)',
+  paddingBlock: SHARED_INSET,
   paddingInline: 'var(--spacing-1)',
+};
+
+const toolbarPadding: CSSProperties = {
+  paddingInline: SHARED_INSET,
+  paddingBlockEnd: SHARED_INSET,
 };
 
 const ALL_NAV_KEY = 'all';
@@ -288,8 +296,13 @@ const SettingList: React.FC<SettingPageProps> = ({
 
   return (
     <>
-      <BAIFlex direction="column" gap={'md'} align="stretch">
-        <BAIFlex justify="start" gap={'xs'} wrap="nowrap">
+      <BAIFlex direction="column" gap={hideGroupNav ? 'md' : 0} align="stretch">
+        <BAIFlex
+          justify="start"
+          gap={'xs'}
+          wrap="nowrap"
+          style={hideGroupNav ? undefined : toolbarPadding}
+        >
           {!!showSearchBar && (
             // The flex item is the field's OUTER box, which `TextInput` does
             // not expose (its `style` lands on the inner control), so the
@@ -332,6 +345,7 @@ const SettingList: React.FC<SettingPageProps> = ({
           )}
           {primaryButton}
         </BAIFlex>
+        {!hideGroupNav && <Divider />}
         {hideGroupNav ? (
           allGroupsPane
         ) : isNarrow && narrowView === 'nav' ? (
