@@ -32,11 +32,26 @@ import { useTranslation } from 'react-i18next';
 // Environment") still fits beside its count badge instead of truncating.
 const NAV_PANEL_WIDTH = 240;
 
-// From the `settings-sidebar` template: the nav column carries its own padding
-// so its first item sits on the same baseline as the content pane's first row.
+// The body bleeds to the card border, so the host BAICard's padding (step 6)
+// is the inset: nav labels get it from spacing-3 here + the spacious ListItem's
+// spacing-3, the content pane from `LayoutContent padding={6}`.
 const navPanelPadding: CSSProperties = {
   paddingBlock: 'var(--spacing-4)',
-  paddingInline: 'var(--spacing-1)',
+  paddingInline: 'var(--spacing-3)',
+};
+
+// Layout escapes the card padding on its own (`--container-padding-*`); only
+// its top margin is kept so the gap under the toolbar survives, and the top
+// border runs edge to edge like the card header's divider.
+const bodyBleed: CSSProperties = {
+  marginBlockStart: 0,
+  borderBlockStart: '1px solid var(--color-border)',
+};
+// The narrow nav list is a plain flex column, so it bleeds by hand.
+const narrowNavBleed: CSSProperties = {
+  ...bodyBleed,
+  marginInlineStart: 'calc(-1 * var(--container-padding-inline-start, 0px))',
+  marginInlineEnd: 'calc(-1 * var(--container-padding-inline-end, 0px))',
 };
 
 const ALL_NAV_KEY = 'all';
@@ -330,11 +345,14 @@ const SettingList: React.FC<SettingPageProps> = ({
         {hideGroupNav ? (
           allGroupsPane
         ) : isNarrow && narrowView === 'nav' ? (
-          navList
+          <BAIFlex direction="column" align="stretch" style={narrowNavBleed}>
+            {navList}
+          </BAIFlex>
         ) : (
           <Layout
             height="auto"
             padding={0}
+            style={bodyBleed}
             start={
               isNarrow ? undefined : (
                 <LayoutPanel
@@ -350,7 +368,7 @@ const SettingList: React.FC<SettingPageProps> = ({
               )
             }
             content={
-              <LayoutContent padding={4} isScrollable={false}>
+              <LayoutContent padding={6} isScrollable={false}>
                 <BAIFlex direction="column" align="stretch" gap={'md'}>
                   {isNarrow && (
                     <Toolbar
