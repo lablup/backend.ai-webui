@@ -60,10 +60,7 @@ import ImageEnvironmentSelectFormItems, {
 } from './ImageEnvironmentSelectFormItems';
 import ModelCardDrawer from './ModelCardDrawer';
 import ModelCardSelect from './ModelCardSelect';
-import ModelServiceHealthCheckFormItems, {
-  omitBlankHealthCheckFields,
-  REVISION_HEALTH_CHECK_DEFAULTS,
-} from './ModelServiceFormItems/ModelServiceHealthCheckFormItems';
+import ModelServiceHealthCheckFormItems from './ModelServiceFormItems/ModelServiceHealthCheckFormItems';
 import PreStartActionsFormList from './ModelServiceFormItems/PreStartActionsFormList';
 import ServiceConfigurationFormItems from './ModelServiceFormItems/ServiceConfigurationFormItems';
 import RuntimeParameterFormSection, {
@@ -1463,14 +1460,18 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     // the health check when enabled.
     const healthCheckEnabled = !!values.enableHealthCheck;
     const healthCheck = (() => {
-      const configuredFields = omitBlankHealthCheckFields({
-        path: values.healthCheck?.path,
-        interval: values.healthCheck?.interval,
-        maxRetries: values.healthCheck?.maxRetries,
-        maxWaitTime: values.healthCheck?.maxWaitTime,
-        initialDelay: values.healthCheck?.initialDelay,
-        expectedStatusCode: values.healthCheck?.expectedStatusCode,
-      });
+      const configuredFields = _.omitBy(
+        {
+          path: values.healthCheck?.path,
+          interval: values.healthCheck?.interval,
+          maxRetries: values.healthCheck?.maxRetries,
+          maxWaitTime: values.healthCheck?.maxWaitTime,
+          initialDelay: values.healthCheck?.initialDelay,
+          expectedStatusCode: values.healthCheck?.expectedStatusCode,
+        },
+        // Blank fields are omitted so the manager applies its defaults.
+        (v) => v === null || v === undefined || v === '',
+      );
       // Always send the object so the server can seed defaults.
       return healthCheckEnabled
         ? { enable: true, ...configuredFields }
@@ -2447,15 +2448,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           <ModelServiceHealthCheckFormItems
             namePrefix={[]}
             placeholders={{
-              ...REVISION_HEALTH_CHECK_DEFAULTS,
-              ..._.omitBy(
-                {
-                  path: modelDefinitionDefaults?.healthCheckPath,
-                  maxRetries: modelDefinitionDefaults?.maxRetries,
-                  initialDelay: modelDefinitionDefaults?.initialDelay,
-                },
-                _.isNil,
-              ),
+              path: modelDefinitionDefaults?.healthCheckPath,
+              maxRetries: modelDefinitionDefaults?.maxRetries,
+              initialDelay: modelDefinitionDefaults?.initialDelay,
             }}
           />
 

@@ -4,9 +4,7 @@
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIFormItem from './BAIFormItem';
-import ModelServiceHealthCheckFormItems, {
-  PRESET_HEALTH_CHECK_DEFAULTS,
-} from './ModelServiceFormItems/ModelServiceHealthCheckFormItems';
+import ModelServiceHealthCheckFormItems from './ModelServiceFormItems/ModelServiceHealthCheckFormItems';
 import PreStartActionsFormList from './ModelServiceFormItems/PreStartActionsFormList';
 import ServiceConfigurationFormItems from './ModelServiceFormItems/ServiceConfigurationFormItems';
 import {
@@ -142,7 +140,7 @@ const ModelConfigItem: React.FC<{
           )}
           <ModelServiceHealthCheckFormItems
             namePrefix={modelField('service')}
-            placeholders={PRESET_HEALTH_CHECK_DEFAULTS}
+            placeholders={{ initialDelay: 1800 }}
           />
           <PreStartActionsFormList namePrefix={modelField('service')} />
         </>

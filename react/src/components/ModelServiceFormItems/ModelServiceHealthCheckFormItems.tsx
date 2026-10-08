@@ -11,11 +11,10 @@ import {
 } from '../astryxFormControls';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex } from 'backend.ai-ui';
-import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-export interface HealthCheckFieldValues {
+interface HealthCheckFieldValues {
   path: string;
   interval: number;
   maxRetries: number;
@@ -26,7 +25,7 @@ export interface HealthCheckFieldValues {
 
 // What the manager fills in for an omitted field: `ModelHealthCheck` in
 // `ai/backend/common/config.py` and `PresetModelHealthCheckInput`.
-export const REVISION_HEALTH_CHECK_DEFAULTS: HealthCheckFieldValues = {
+const HEALTH_CHECK_DEFAULTS: HealthCheckFieldValues = {
   path: '/health',
   interval: 10,
   maxRetries: 10,
@@ -34,18 +33,10 @@ export const REVISION_HEALTH_CHECK_DEFAULTS: HealthCheckFieldValues = {
   expectedStatusCode: 200,
   initialDelay: 60,
 };
-export const PRESET_HEALTH_CHECK_DEFAULTS: HealthCheckFieldValues = {
-  ...REVISION_HEALTH_CHECK_DEFAULTS,
-  initialDelay: 1800,
-};
-
-/** Drops blank fields so the manager applies its default to them. */
-export const omitBlankHealthCheckFields = <T extends object>(fields: T) =>
-  _.omitBy(fields, (v) => v === null || v === undefined || v === '');
 
 export interface ModelServiceHealthCheckFormItemsProps {
   namePrefix: Array<string | number>;
-  /** Per-field placeholders, normally the value the manager applies when the field is left blank. */
+  /** Per-field placeholders; a field left out shows the manager's default for it. */
   placeholders?: Partial<HealthCheckFieldValues>;
 }
 
@@ -55,6 +46,8 @@ const ModelServiceHealthCheckFormItems: React.FC<
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
+  const placeholder = <K extends keyof HealthCheckFieldValues>(field: K) =>
+    String(placeholders?.[field] ?? HEALTH_CHECK_DEFAULTS[field]);
 
   return (
     <>
@@ -77,7 +70,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
                 {/* antd `allowClear` → Astryx `hasClear`. */}
                 <AstryxFormTextInput
                   label={t('adminDeploymentPreset.modelDef.HealthCheckPath')}
-                  placeholder={placeholders?.path}
+                  placeholder={placeholder('path')}
                   hasClear
                 />
               </Form.Item>
@@ -96,7 +89,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
                       'adminDeploymentPreset.modelDef.HealthCheckInterval',
                     )}
                     min={1}
-                    placeholder={placeholders?.interval?.toString()}
+                    placeholder={placeholder('interval')}
                     units={t('time.Sec')}
                   />
                 </Form.Item>
@@ -113,7 +106,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
                       'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
                     )}
                     min={1}
-                    placeholder={placeholders?.maxRetries?.toString()}
+                    placeholder={placeholder('maxRetries')}
                   />
                 </Form.Item>
                 <Form.Item
@@ -129,7 +122,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
                       'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
                     )}
                     min={1}
-                    placeholder={placeholders?.maxWaitTime?.toString()}
+                    placeholder={placeholder('maxWaitTime')}
                     units={t('time.Sec')}
                   />
                 </Form.Item>
@@ -150,7 +143,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
                     )}
                     min={101}
                     max={599}
-                    placeholder={placeholders?.expectedStatusCode?.toString()}
+                    placeholder={placeholder('expectedStatusCode')}
                   />
                 </Form.Item>
                 <Form.Item
@@ -166,7 +159,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
                       'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
                     )}
                     min={0}
-                    placeholder={placeholders?.initialDelay?.toString()}
+                    placeholder={placeholder('initialDelay')}
                     units={t('time.Sec')}
                   />
                 </Form.Item>
