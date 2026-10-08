@@ -1026,6 +1026,7 @@
       "Name": "Nazwa",
       "NoDeletePermission": "Brak uprawnień do usuwania",
       "NoFolderToDisplay": "Brak wyświetlanych folderów",
+      "NoMountPermission": "Ten folder nie ma domyślnego uprawnienia do montowania. Właściciel nadal może go zamontować z dostępem do odczytu i zapisu.",
       "NoRestorePermission": "Brak uprawnień do przywracania",
       "NumberOfFiles": "Liczba plików",
       "OpenAFolder": "Otwórz folder",

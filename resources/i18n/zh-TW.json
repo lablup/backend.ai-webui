@@ -1026,6 +1026,7 @@
       "Name": "名稱",
       "NoDeletePermission": "无删除权限",
       "NoFolderToDisplay": "无文件夹显示",
+      "NoMountPermission": "此資料夾沒有預設掛載權限。擁有者仍可以讀寫方式掛載。",
       "NoRestorePermission": "無還原權限",
       "NumberOfFiles": "文件數",
       "OpenAFolder": "打开文件夹",

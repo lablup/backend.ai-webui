@@ -1026,6 +1026,7 @@
       "Name": "Nimi",
       "NoDeletePermission": "Ei poistolupaa",
       "NoFolderToDisplay": "Ei näytettäviä kansioita",
+      "NoMountPermission": "Tällä kansiolla ei ole oletusarvoista liitosoikeutta. Omistaja voi silti liittää sen luku- ja kirjoitusoikeuksin.",
       "NoRestorePermission": "Ei palautuslupaa",
       "NumberOfFiles": "Tiedostojen määrä",
       "OpenAFolder": "Avaa kansio",

@@ -1013,6 +1013,7 @@
       "Name": "Name",
       "NoDeletePermission": "No delete permission",
       "NoFolderToDisplay": "No Folders to display",
+      "NoMountPermission": "This folder has no default mount permission. Its owner can still mount it with read & write access.",
       "NoRestorePermission": "No restore permission",
       "NumberOfFiles": "Number of files",
       "OpenAFolder": "Open folder",

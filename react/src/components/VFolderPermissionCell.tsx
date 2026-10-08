@@ -4,7 +4,7 @@
  */
 import { VFolderPermissionCellFragment$key } from '../__generated__/VFolderPermissionCellFragment.graphql';
 import { HStack } from '@lablup/ui-common/Stack';
-import { BAIText } from 'backend.ai-ui';
+import { BAIQuestionIconWithTooltip, BAIText } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -47,17 +47,33 @@ const VFolderPermissionCell: React.FC<VFolderPermissionCellProps> = ({
         icon: 'RW',
       },
     };
-    const perm = vfolderData?.permissions
-      ? _.includes(vfolderData.permissions, 'mount_rw')
+    // No mount verb means the folder has no mount permission (26.9 `none`).
+    const perm = vfolderData
+      ? _.some(['mount_rw', 'mount_wd'], (verb) =>
+          _.includes(vfolderData.permissions, verb),
+        )
         ? 'rw'
-        : 'ro'
+        : _.includes(vfolderData.permissions, 'mount_ro')
+          ? 'ro'
+          : undefined
       : permissionProp === 'wd'
         ? 'rw'
         : permissionProp || 'ro';
     return {
-      permissionInfo: permissionMap[perm],
+      permissionInfo: perm ? permissionMap[perm] : undefined,
     };
   }, [permissionProp, vfolderData, t]);
+
+  if (!permissionInfo) {
+    return (
+      <HStack gap={2} {...props}>
+        <BAIText>-</BAIText>
+        <BAIQuestionIconWithTooltip
+          title={t('data.folders.NoMountPermission')}
+        />
+      </HStack>
+    );
+  }
 
   return (
     <HStack gap={2} {...props}>

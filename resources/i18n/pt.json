@@ -1026,6 +1026,7 @@
       "Name": "Nome",
       "NoDeletePermission": "Sem permissão de eliminação",
       "NoFolderToDisplay": "Não há pastas a apresentar",
+      "NoMountPermission": "Esta pasta não tem permissão de montagem predefinida. O proprietário pode ainda montá-la com acesso de leitura e escrita.",
       "NoRestorePermission": "Sem permissão de restauração",
       "NumberOfFiles": "Número de arquivos",
       "OpenAFolder": "Abrir uma pasta",

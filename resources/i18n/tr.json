@@ -1026,6 +1026,7 @@
       "Name": "isim",
       "NoDeletePermission": "Silme izni yok",
       "NoFolderToDisplay": "Görüntülenecek Klasör Yok",
+      "NoMountPermission": "Bu klasörün varsayılan bağlama izni yok. Sahibi yine de okuma ve yazma erişimiyle bağlayabilir.",
       "NoRestorePermission": "Geri yükleme izni yok",
       "NumberOfFiles": "Dosya sayısı",
       "OpenAFolder": "Bir klasör açın",

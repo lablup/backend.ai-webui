@@ -1026,6 +1026,7 @@
       "Name": "Tên",
       "NoDeletePermission": "Không xóa quyền",
       "NoFolderToDisplay": "Không có thư mục nào để hiển thị",
+      "NoMountPermission": "Thư mục này không có quyền gắn mặc định. Chủ sở hữu vẫn có thể gắn thư mục với quyền đọc và ghi.",
       "NoRestorePermission": "Không có quyền khôi phục",
       "NumberOfFiles": "Số lượng tệp",
       "OpenAFolder": "Mở một thư mục",
