@@ -255,7 +255,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
         </VStack>
 
         <VStack align="stretch" gap={4}>
-          <HStack gap={2}>
+          <HStack gap={2} align="center">
             <Heading level={5}>{t('data.folders.SharedUser')}</Heading>
             <BAIQuestionIconWithTooltip
               title={t('data.folders.SharedUserDesc')}
@@ -281,7 +281,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
                 dataIndex: 'perm',
                 render: (perm, record) => {
                   return (
-                    <HStack gap={1}>
+                    <HStack gap={1} align="center">
                       <Selector
                         label={t('data.explorer.Permission')}
                         isLabelHidden
