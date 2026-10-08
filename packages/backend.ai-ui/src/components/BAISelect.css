@@ -85,6 +85,13 @@
   position: relative;
 }
 
+/* A Tooltip anchor in the rich node (marked by its `aria-describedby`) is
+   raised above the trigger button so it still receives hover. */
+.bai-select-rich-trigger > .bai-select-rich-value [aria-describedby] {
+  position: relative;
+  z-index: 1;
+}
+
 /* @astryxdesign/core `VisuallyHidden`'s recipe, inlined — the label span is
    Selector-internal, still the accessible selected-value text. */
 .bai-select-rich-trigger > button[aria-haspopup='listbox'] > span {
