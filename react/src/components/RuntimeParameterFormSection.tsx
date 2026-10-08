@@ -435,6 +435,7 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
             min={min}
             max={max}
             step={step}
+            allowClear={!isRequired}
             onChange={onTouch}
             inputContainerMinWidth={190}
             inputNumberProps={{ placeholder: defaultPlaceholder }}
