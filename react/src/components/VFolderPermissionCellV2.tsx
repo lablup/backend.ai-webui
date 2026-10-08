@@ -4,7 +4,8 @@
  */
 import { VFolderPermissionCellV2Fragment$key } from '../__generated__/VFolderPermissionCellV2Fragment.graphql';
 import { HStack } from '@lablup/ui-common/Stack';
-import { BAIQuestionIconWithTooltip, BAIText } from 'backend.ai-ui';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { BAIText } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -59,10 +60,9 @@ const VFolderPermissionCellV2: React.FC<VFolderPermissionCellV2Props> = ({
   if (!permissionInfo) {
     return (
       <HStack gap={2} {...props}>
-        <BAIText>-</BAIText>
-        <BAIQuestionIconWithTooltip
-          title={t('data.folders.NoMountPermission')}
-        />
+        <Tooltip content={t('data.folders.NoMountPermission')}>
+          <BAIText>-</BAIText>
+        </Tooltip>
       </HStack>
     );
   }
