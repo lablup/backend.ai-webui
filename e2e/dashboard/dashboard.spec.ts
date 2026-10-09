@@ -460,8 +460,12 @@ test.describe(
         expect(count).toBeGreaterThanOrEqual(3);
 
         // 4. Panels are rearrangeable at all times — no mode to enter first
-        await expect(page.locator('.bai_board_handle').first()).toBeVisible();
-        await expect(page.locator('.bai_board_resizer').first()).toBeVisible();
+        await expect(
+          page.locator('.uic-board-item__drag-handle').first(),
+        ).toBeVisible();
+        await expect(
+          page.locator('.uic-board-item__resize-handle').first(),
+        ).toBeVisible();
       });
 
       test('Admin can open and close the dashboard edit sider', async ({

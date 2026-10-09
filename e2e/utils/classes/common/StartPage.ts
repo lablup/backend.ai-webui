@@ -57,6 +57,6 @@ export class StartPage {
     return this.page.locator('.bai_grid_item');
   }
   getDragHandles() {
-    return this.page.locator('.bai_board_handle');
+    return this.page.locator('.uic-board-item__drag-handle');
   }
 }

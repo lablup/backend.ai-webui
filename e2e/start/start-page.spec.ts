@@ -454,7 +454,7 @@ test.describe(
         expect(cardCount).toBeGreaterThanOrEqual(2);
 
         // 3. Verify drag handles exist on board items
-        const dragHandles = page.locator('.bai_board_handle');
+        const dragHandles = page.locator('.uic-board-item__drag-handle');
         await expect(dragHandles.first()).toBeVisible();
       });
     });

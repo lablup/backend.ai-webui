@@ -17,7 +17,7 @@
  | `loginSideHelp` | 1101 | `LoginFormPanel`'s side help panel — a fixed sibling anchored to the base modal's edge, so it clears that modal's mask but not a modal opened on top of it |
  | `notification` | 11000 | `.bai-notification-stack` |
  | (CSS top layer) | above all | Astryx `Toast`/`Popover`/`DropdownMenu`/`Tooltip`, `BAITour` — not stackable against this ladder. A NON-SCRIM `Drawer` is not here either: ui-common's fork opens it with `show()` (lab 0.6.5 would use the top layer), so it stacks at the legacy 1000 band above |
- | context-local stacking | off the ladder at any magnitude | `BAIBoard.css`, `BAITable*`, `BAICompactGroup.css` — local to a subtree |
+ | context-local stacking | off the ladder at any magnitude | `BAIBoard.css` (BUI), `BAITable*`, `BAICompactGroup.css` — local to a subtree |
 */
 import './zIndexLadder.css';
 import { configureModalZIndex } from '@lablup/ui-common/Modal';

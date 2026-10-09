@@ -10,8 +10,8 @@ catalog:
   "@astryxdesign/core": 0.6.5
   "@astryxdesign/lab": 0.6.5-canary.8701623
   # The library and its CLI release in lockstep; pin both exactly (ADR 0009).
-  "@lablup/ui-common": 0.2.0-alpha.17
-  "@lablup/ui-common-cli": 0.2.0-alpha.17
+  "@lablup/ui-common": 0.2.0-alpha.18
+  "@lablup/ui-common-cli": 0.2.0-alpha.18
   "@babel/core": ^7.29.7
   "@babel/preset-typescript": ^7.29.7
   "@eslint/js": ^9.39.5
@@ -100,10 +100,10 @@ minimumReleaseAgeExclude:
   # quarantine window by design, so the exclusion is permanent while the
   # pin exists. Tarball-verified build (MAPPING.md header).
   - "@astryxdesign/lab@0.6.5-canary.8701623"
-  # ui-common 0.2.0-alpha.17 and its CLI: published 2026-10-07, inside the
-  # 7-day window at adoption time. Remove after 2026-10-14.
-  - "@lablup/ui-common@0.2.0-alpha.17"
-  - "@lablup/ui-common-cli@0.2.0-alpha.17"
+  # ui-common 0.2.0-alpha.18 and its CLI: published 2026-10-10, inside the
+  # 7-day window at adoption time. Remove after 2026-10-17.
+  - "@lablup/ui-common@0.2.0-alpha.18"
+  - "@lablup/ui-common-cli@0.2.0-alpha.18"
   # e2e agentic test runner (e2e.tester.army): published 2026-10-04, and no
   # release of it is older than 7 days yet. Remove after 2026-10-11.
   - e2e@0.17.0
@@ -198,6 +198,5 @@ overrides:
   lodash: ^4.18.0 # _.template RCE + _.unset prototype pollution (#321, #322 high)
 
 patchedDependencies:
-  "@cloudscape-design/board-components@3.0.176": react/patches/@cloudscape-design__board-components@3.0.176.patch
   portless@0.15.5: react/patches/portless@0.15.5.patch
   relay-runtime@20.1.1: react/patches/relay-runtime@20.1.1.patch

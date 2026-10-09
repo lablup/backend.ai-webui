@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { BAIBoardItem } from '../BAIBoard';
+import type { BAIBoardItem } from 'backend.ai-ui';
 
 /** A board item's persisted layout slice: id + spans + offset, no content. */
 export type BoardLayoutEntry = Omit<BAIBoardItem, 'data'>;
@@ -34,7 +34,7 @@ export const reconcileBoardLayout = ({
 };
 
 /**
- * The list to persist after the board reports a change. Cloudscape only reports
+ * The list to persist after the board reports a change. The board only reports
  * the items it is rendering, so entries for ids that are currently hidden — a
  * custom panel while the feature is opted out, a built-in gated off by role —
  * would be dropped by a plain overwrite, losing their saved geometry. They are
