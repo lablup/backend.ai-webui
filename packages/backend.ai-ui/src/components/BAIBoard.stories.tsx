@@ -84,6 +84,7 @@ const sampleItems: Array<BAIBoardItem> = [
 ];
 
 const ControlledBoard = (args: Partial<BAIBoardProps>) => {
+  'use memo';
   const [items, setItems] = useState<Array<BAIBoardItem>>(sampleItems);
   return (
     <BAIBoard

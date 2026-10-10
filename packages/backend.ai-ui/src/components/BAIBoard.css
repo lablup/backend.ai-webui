@@ -5,13 +5,16 @@
  Co-located styles for <BAIBoard>, imported by the component itself (P17).
  ui-common `Board` draws the item surface, border and handles; what remains
  here is the status tint `BAIBoardItemErrorBoundary` asks for through
- `data-bai-board-item-status`. Unlayered, like the other BUI stylesheets, so it
- outranks the `@layer ui-common` border of the bordered variant.
+ `data-bai-board-item-status`. In `@layer components`, which follows
+ `ui-common` in the layer order (styles/backend.ai-ui.css), so it overrides
+ the bordered variant's border without outranking every layer.
 */
-.bai-board .uic-board-item:has([data-bai-board-item-status='error']) {
-  border-color: var(--color-error);
-}
+@layer components {
+  .bai-board .uic-board-item:has([data-bai-board-item-status='error']) {
+    border-color: var(--color-error);
+  }
 
-.bai-board .uic-board-item:has([data-bai-board-item-status='warning']) {
-  border-color: var(--color-warning);
+  .bai-board .uic-board-item:has([data-bai-board-item-status='warning']) {
+    border-color: var(--color-warning);
+  }
 }

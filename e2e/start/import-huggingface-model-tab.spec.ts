@@ -11,7 +11,7 @@ const HF_TAB_NAME = /Import Hugging Face Model/i;
 
 const openStartFromURLModal = async (page: Page) => {
   const card = page
-    .locator('.bai_grid_item')
+    .locator('.uic-board-item')
     .filter({ hasText: 'Start From URL' });
   await card.getByRole('button', { name: 'Start Now' }).click();
   await expect(

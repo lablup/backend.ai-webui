@@ -18,7 +18,7 @@ export class StartPage {
   }
 
   private getCardByTitle(title: string) {
-    return this.page.locator(`.bai_grid_item:has-text("${title}")`);
+    return this.page.locator(`.uic-board-item:has-text("${title}")`);
   }
   getStorageFolderCard() {
     return this.getCardByTitle('Create New Storage Folder');
@@ -54,7 +54,7 @@ export class StartPage {
     return card.getByRole('button', { name: 'Create Deployment' });
   }
   getBoardItems() {
-    return this.page.locator('.bai_grid_item');
+    return this.page.locator('.uic-board-item');
   }
   getDragHandles() {
     return this.page.locator('.uic-board-item__drag-handle');
