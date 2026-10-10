@@ -4,7 +4,6 @@
  */
 import { AstryxSecondaryTheme } from '../astryx-theme';
 import ActionItemContent from '../components/ActionItemContent';
-import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
 import FolderCreateModalV2 from '../components/FolderCreateModalV2';
 import StartFromURLModal from '../components/StartFromURLModal';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
@@ -26,6 +25,8 @@ import {
   BAIBatchSessionIcon,
   BAINewFolderIcon,
   BAIAlert,
+  BAIBoard,
+  type BAIBoardItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Grid2x2Plus } from 'lucide-react';

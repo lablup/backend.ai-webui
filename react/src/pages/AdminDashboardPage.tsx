@@ -5,7 +5,6 @@
 import { AdminDashboardPageQuery } from '../__generated__/AdminDashboardPageQuery.graphql';
 import ActiveAgents from '../components/ActiveAgents';
 import AgentStats from '../components/AgentStats';
-import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
 import RecentlyCreatedSession from '../components/RecentlyCreatedSession';
 import SessionCountDashboardItem from '../components/SessionCountDashboardItem';
 import TotalResourceWithinResourceGroup, {
@@ -25,6 +24,8 @@ import {
   INITIAL_FETCH_KEY,
   useFetchKey,
   useInterval,
+  BAIBoard,
+  type BAIBoardItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Suspense, useTransition } from 'react';

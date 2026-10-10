@@ -5,7 +5,6 @@
 import { DEFAULT_SESSION_GRID_VIEW } from '../../helper/sessionResourceGridData';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
-import { BAIBoardItem } from '../BAIBoard';
 import { createPanel, DEFAULT_PANEL_LAYOUTS, DEFAULT_PANELS } from './defaults';
 import { effectivePanelType, panelRegistry } from './panelRegistry';
 import {
@@ -14,7 +13,7 @@ import {
   resourceRegistry,
 } from './resourceRegistry';
 import type { PanelInput, PersistedPanel, ResourceKey } from './types';
-import { BAIBoardItemErrorBoundary } from 'backend.ai-ui';
+import { BAIBoardItemErrorBoundary, type BAIBoardItem } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 
 export interface UseCustomPanelsOptions {
@@ -71,8 +70,8 @@ export const sanitizePanels = (value: unknown): PersistedPanel[] => {
 
 /**
  * The "query-as-config" custom panels, rendered as extra items INSIDE the page's
- * single Cloudscape `<Board>` (a second board corrupts the module-level DnD
- * controller). This hook owns panel identity + descriptor persistence
+ * single `BAIBoard`, so one persisted list owns the whole layout. This hook
+ * owns panel identity + descriptor persistence
  * (`custom_dashboard_panels`); order/layout for the WHOLE board lives in the
  * unified `dashboard_board_items` list owned by the page.
  */

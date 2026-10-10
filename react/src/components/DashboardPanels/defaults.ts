@@ -4,8 +4,8 @@
  */
 import { DEFAULT_SESSION_GRID_VIEW } from '../../helper/sessionResourceGridData';
 import { generateUUID } from '../../helper/uuid';
-import type { BAIBoardItem } from '../BAIBoard';
 import type { PanelInput, PanelType, PersistedPanel } from './types';
+import type { BAIBoardItem } from 'backend.ai-ui';
 
 /** No seeded custom panels — panels exist only when added through the modal. */
 export const DEFAULT_PANELS: ReadonlyArray<PersistedPanel> = [];
