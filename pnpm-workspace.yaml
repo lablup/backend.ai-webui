@@ -108,6 +108,11 @@ minimumReleaseAgeExclude:
   # release of it is older than 7 days yet. Remove after 2026-10-11.
   - e2e@0.17.0
   - "@e2e-dev/web@0.12.0"
+  # handlebars 4.7.10: published 2026-10-05, inside the 7-day window at
+  # adoption time. It is the first release patching two critical advisories
+  # in 4.7.9 (GHSA-8r5x-fm3f-whwj, GHSA-p8wg-vrv2-v86f) that fail the
+  # dependency audit gate. Remove after 2026-10-12.
+  - handlebars@4.7.10
   # pnpm 12.4.0 is this repo's own `packageManager` pin: published 2026-09-08,
   # inside the 7-day window at adoption time. Without these, a contributor
   # still on pnpm 12.3.4 cannot provision the pin at all — 12.3.4 fetches the

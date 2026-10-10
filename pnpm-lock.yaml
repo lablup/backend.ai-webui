@@ -635,8 +635,8 @@ importers:
         specifier: ^2.0.4
         version: 2.0.4
       handlebars:
-        specifier: ^4.7.9
-        version: 4.7.9
+        specifier: ^4.7.10
+        version: 4.7.10
       marked:
         specifier: ^12.0.2
         version: 12.0.2
@@ -7313,8 +7313,8 @@ packages:
   gulp-sort@2.0.0:
     resolution: {integrity: sha512-MyTel3FXOdh1qhw1yKhpimQrAmur9q1X0ZigLmCOxouQD+BD3za9/89O+HfbgBQvvh4igEbp0/PUWO+VqGYG1g==}
 
-  handlebars@4.7.9:
-    resolution: {integrity: sha512-4E71E0rpOaQuJR2A3xDZ+GM1HyWYv1clR58tC8emQNeQe3RH7MAzSbat+V0wG78LQBo6m6bzSG/L4pBuCsgnUQ==}
+  handlebars@4.7.10:
+    resolution: {integrity: sha512-P5VJMVM7qgBn6vjXMw8WG9uVI+ncf2pi72j4de4yz5ZULLj2RGqLYaKOYGsgyrViQ0tePOVlN1tDCCXXtFqXKg==}
     engines: {node: '>=0.4.7'}
     hasBin: true
 
@@ -18522,7 +18522,7 @@ snapshots:
     dependencies:
       through2: 2.0.5
 
-  handlebars@4.7.9:
+  handlebars@4.7.10:
     dependencies:
       minimist: 1.2.8
       neo-async: 2.6.2
@@ -23425,7 +23425,7 @@ time:
   gpt-tokenizer@3.4.0: '2025-11-07T20:15:06.227Z'
   graphql-sse@2.6.0: '2025-10-22T16:19:37.488Z'
   graphql@16.14.2: '2026-06-09T09:08:23.122Z'
-  handlebars@4.7.9: '2026-03-26T20:46:39.280Z'
+  handlebars@4.7.10: '2026-10-05T22:37:37.837Z'
   https-proxy-agent@7.0.6: '2024-12-07T03:32:09.302Z'
   husky@9.1.7: '2024-11-18T15:28:26.026Z'
   i18next-http-backend@3.0.6: '2026-04-23T15:39:30.348Z'
