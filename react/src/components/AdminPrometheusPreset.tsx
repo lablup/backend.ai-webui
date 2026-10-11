@@ -22,6 +22,7 @@ import {
   BAISelect,
   BAIUnmountAfterClose,
   type BAITableSettings,
+  isValidUUID,
   toLocalId,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -143,7 +144,12 @@ const AdminPrometheusPreset = ({
             {
               key: 'categoryId',
               propertyLabel: t('prometheusQueryPreset.Category'),
-              type: 'uuid',
+              type: 'uuid' as const,
+              fixedOperator: 'equals' as const,
+              rule: {
+                message: t('general.InvalidUUID'),
+                validate: (value: string) => isValidUUID(value.toLowerCase()),
+              },
               renderInput: ({ onAddCondition, value, isDisabled }) => (
                 // The category select owns its query and suspends on first
                 // load, so the boundary lives here rather than on the page.

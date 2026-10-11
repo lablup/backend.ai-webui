@@ -197,6 +197,22 @@ describe('the stop’s own prose and links', () => {
     expect(viaSentence(undefined)).toBe('');
   });
 
+  it('reads fill and select steps, in both languages', () => {
+    const via = [
+      { fill: { label: 'Search by name', value: 'abc', enter: 1 as const } },
+      { select: { label: 'Usage Mode', option: 'Models' } },
+    ];
+    expect(viaSentence(via)).toBe(
+      'Type “abc” in “Search by name” and press Enter, then Choose “Models” in “Usage Mode”',
+    );
+    expect(viaSentence(via, 'ko')).toBe(
+      '“Search by name”에 “abc” 입력 후 Enter, 그다음 “Usage Mode”에서 “Models” 선택',
+    );
+    expect(viaSentence([{ fill: { tid: 'filter', value: 'abc' } }])).toBe(
+      'Type “abc”',
+    );
+  });
+
   it('points a code ref at GitHub’s sha256-keyed file anchor', () => {
     const ref = { path: 'react/src/App.tsx', line: 12, to: 20 };
     expect(codeText(ref)).toBe('react/src/App.tsx:12-20');

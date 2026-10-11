@@ -7,12 +7,12 @@ import {
   NotificationState,
   useSetBAINotification,
 } from '../hooks/useBAINotification';
-import { theme } from '../theme-shim';
 import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import { Card } from '@astryxdesign/core/Card';
-import { Link } from '@astryxdesign/core/Link';
-import { Text } from '@astryxdesign/core/Text';
+import { Card } from '@lablup/ui-common/Card';
+import { Link } from '@lablup/ui-common/Link';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFlex,
   BAILink,
@@ -44,7 +44,7 @@ const BAIVirtualFolderNodeNotificationItem: React.FC<
 
   const { open: openFolderExplorer } = useFolderExplorerOpener();
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { closeNotification } = useSetBAINotification();
   const [showExtraDescription, { toggle: toggleShowExtraDescription }] =
     useToggle(false);
@@ -122,7 +122,7 @@ const BAIVirtualFolderNodeNotificationItem: React.FC<
                   maxHeight: '300px',
                   overflow: 'auto',
                   overflowX: 'hidden',
-                  marginTop: token.marginSM,
+                  marginTop: token('--spacing-3'),
                 }}
               >
                 {_.isString(notification.extraDescription) ? (

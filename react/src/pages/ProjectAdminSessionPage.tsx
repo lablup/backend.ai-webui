@@ -22,7 +22,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { IconButton } from '@astryxdesign/core/IconButton';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import {
   BAISkeleton,
   BAICard,
@@ -95,7 +95,7 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
   const [fetchKey, updateFetchKey] = useFetchKey();
   const baiClient = useSuspendedBackendaiClient();
   const statusBuckets = getSessionV2StatusBuckets(
-    baiClient.supports('session-preemption-statuses'),
+    baiClient.isManagerVersionCompatibleWith('26.8.0'),
   );
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(

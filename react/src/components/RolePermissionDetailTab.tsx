@@ -6,7 +6,7 @@ import { RolePermissionDetailTabMatrixQuery } from '../__generated__/RolePermiss
 import { RolePermissionDetailTab_roleScopeFragment$key } from '../__generated__/RolePermissionDetailTab_roleScopeFragment.graphql';
 import { type RBACElementType } from '../__generated__/ScopedRolePermissionCardQuery.graphql';
 import ScopedRolePermissionCard from './ScopedRolePermissionCard';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
 import { BAISkeleton, BAICard, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense } from 'react';
@@ -35,10 +35,10 @@ const RolePermissionDetailTab: React.FC<RolePermissionDetailTabProps> = ({
   const role = useFragment(
     graphql`
       fragment RolePermissionDetailTab_roleScopeFragment on Role {
-        totalScopes: scopes(first: 1) @deprecatedSince(version: "26.9.0") {
+        totalScopes: scopes(first: 1) @deprecatedSince(version: "26.9.0a4") {
           count
         }
-        scopeId @since(version: "26.9.0")
+        scopeId @since(version: "26.9.0a4")
         ...ScopedRolePermissionCardFragment
       }
     `,

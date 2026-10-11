@@ -5,15 +5,15 @@
 import { QuotaPerStorageVolumePanelCardQuery } from '../__generated__/QuotaPerStorageVolumePanelCardQuery.graphql';
 import { QuotaPerStorageVolumePanelCardUserQuery } from '../__generated__/QuotaPerStorageVolumePanelCardUserQuery.graphql';
 import { addQuotaScopeTypePrefix, convertToDecimalUnit } from '../helper';
-import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { theme } from '../theme-shim';
 import BAIProgress from './BAIProgress';
 import StorageSelect from './StorageSelect';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { Grid, GridSpan } from '@astryxdesign/core/Grid';
-import { Text } from '@astryxdesign/core/Text';
-import { BAISkeleton, BAIFlex } from 'backend.ai-ui';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { Grid, GridSpan } from '@lablup/ui-common/Grid';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
+import { BAIFlex, BAISkeleton } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -55,27 +55,24 @@ const QuotaScopeContent: React.FC<QuotaScopeContentProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const currentProject = useCurrentProjectValue();
   const baiClient = useSuspendedBackendaiClient();
 
   // TODO: Add resolver to enable subquery and modify to call useLazyLoadQuery only once.
-  const { user } = useLazyLoadQuery<QuotaPerStorageVolumePanelCardUserQuery>(
-    graphql`
-      query QuotaPerStorageVolumePanelCardUserQuery(
-        $domain_name: String
-        $email: String
-      ) {
-        user(domain_name: $domain_name, email: $email) {
-          id
+  // The quota scope id needs the raw user UUID, which is `entityId`.
+  const { myUserV2 } =
+    useLazyLoadQuery<QuotaPerStorageVolumePanelCardUserQuery>(
+      graphql`
+        query QuotaPerStorageVolumePanelCardUserQuery {
+          myUserV2 {
+            entityId
+          }
         }
-      }
-    `,
-    {
-      domain_name: useCurrentDomainValue(),
-      email: baiClient?.email,
-    },
-  );
+      `,
+      {},
+    );
+  const userId = myUserV2?.entityId;
   const { project_quota_scope, user_quota_scope } =
     useLazyLoadQuery<QuotaPerStorageVolumePanelCardQuery>(
       graphql`
@@ -110,11 +107,11 @@ const QuotaScopeContent: React.FC<QuotaScopeContentProps> = ({
           'project',
           currentProject?.id || '',
         ),
-        user_quota_scope_id: addQuotaScopeTypePrefix('user', user?.id || ''),
+        user_quota_scope_id: addQuotaScopeTypePrefix('user', userId || ''),
         storage_host_name: selectedVolumeInfo?.id || '',
         skipQuotaScope:
           currentProject?.id === undefined ||
-          user?.id === undefined ||
+          userId === undefined ||
           !selectedVolumeInfo?.id,
       },
     );
@@ -159,16 +156,19 @@ const QuotaScopeContent: React.FC<QuotaScopeContentProps> = ({
       <GridSpan
         columns={12}
         style={{
-          borderRight: `1px solid ${token.colorBorderSecondary}`,
+          borderRight: `1px solid ${token('--color-border')}`,
         }}
       >
         <BAIProgress
           title={
             <BAIFlex direction="column" align="start">
-              <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
+              <Text
+                color="secondary"
+                style={{ fontSize: token('--font-size-sm') }}
+              >
                 {t('data.Project')}
               </Text>
-              <Text style={{ fontSize: token.fontSize }}>
+              <Text style={{ fontSize: token('--font-size-base') }}>
                 {currentProject?.name}
               </Text>
             </BAIFlex>
@@ -191,10 +191,13 @@ const QuotaScopeContent: React.FC<QuotaScopeContentProps> = ({
           percent={userPercent}
           title={
             <BAIFlex direction="column" align="start">
-              <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
+              <Text
+                color="secondary"
+                style={{ fontSize: token('--font-size-sm') }}
+              >
                 {t('data.User')}
               </Text>
-              <Text style={{ fontSize: token.fontSize }}>
+              <Text style={{ fontSize: token('--font-size-base') }}>
                 {baiClient?.full_name}
               </Text>
             </BAIFlex>

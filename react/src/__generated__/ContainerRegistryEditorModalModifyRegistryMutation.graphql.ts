@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<54f7f6aa371368bda94bbe52021cf68f>>
+ * @generated SignedSource<<bce6f0cbbdd951344e1fefa937fdc09c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -191,7 +191,13 @@ v4 = [
           },
           {
             "alias": null,
-            "args": null,
+            "args": [
+              {
+                "kind": "Literal",
+                "name": "first",
+                "value": 100
+              }
+            ],
             "concreteType": "GroupConnection",
             "kind": "LinkedField",
             "name": "allowed_groups",
@@ -223,7 +229,7 @@ v4 = [
                 "storageKey": null
               }
             ],
-            "storageKey": null
+            "storageKey": "allowed_groups(first:100)"
           }
         ],
         "storageKey": null
@@ -250,16 +256,16 @@ return {
     "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "83c56653a320ed514c8f0ba237d6854c",
+    "cacheID": "aab1cdfe23c07856e9648370f8b4856f",
     "id": null,
     "metadata": {},
     "name": "ContainerRegistryEditorModalModifyRegistryMutation",
     "operationKind": "mutation",
-    "text": "mutation ContainerRegistryEditorModalModifyRegistryMutation(\n  $id: String!\n  $props: ModifyContainerRegistryNodeInputV2!\n) {\n  modify_container_registry_node_v2(id: $id, props: $props) {\n    container_registry {\n      id\n      row_id\n      name\n      registry_name\n      url\n      type\n      project\n      username\n      password\n      ssl_verify\n      extra @since(version: \"24.09.3\")\n      is_global @since(version: \"24.09.0\")\n      allowed_groups @since(version: \"25.3.0\") {\n        edges {\n          node {\n            id\n            row_id\n            name\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "mutation ContainerRegistryEditorModalModifyRegistryMutation(\n  $id: String!\n  $props: ModifyContainerRegistryNodeInputV2!\n) {\n  modify_container_registry_node_v2(id: $id, props: $props) {\n    container_registry {\n      id\n      row_id\n      name\n      registry_name\n      url\n      type\n      project\n      username\n      password\n      ssl_verify\n      extra\n      is_global\n      allowed_groups(first: 100) {\n        edges {\n          node {\n            id\n            row_id\n            name\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b83016ed32b96f0bacfd0663c8a6120e";
+(node as any).hash = "4f0a54fe2dec1cc71b6a5ab2904e203d";
 
 export default node;

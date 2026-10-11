@@ -48,7 +48,7 @@ if (process.env.serveMode == 'dev') {
   electronPath = npjoin(__dirname);
 }
 
-// The renderer's origin (ADR 0010). A file:// document has an opaque origin,
+// The renderer's origin (ADR 0011). A file:// document has an opaque origin,
 // for which Chromium keeps no V8 code cache.
 const APP_ORIGIN = 'es6://app';
 const mainIndexURL = `${APP_ORIGIN}/index.html`;
@@ -65,7 +65,7 @@ protocol.registerSchemesAsPrivileged([
       bypassCSP: true,
       supportFetchAPI: true,
       corsEnabled: true,
-      // Requires `standard`; only takes effect for an es6:// document (ADR 0010).
+      // Requires `standard`; only takes effect for an es6:// document (ADR 0011).
       codeCache: true,
     },
   },
@@ -569,7 +569,7 @@ async function serveAppFile(encodedPath, extraHeaders = {}) {
   }
 }
 
-// One-time copy of localStorage from the file:// origin used before ADR 0010
+// One-time copy of localStorage from the file:// origin used before ADR 0011
 // into es6://app. Keys already present in es6://app win. Gives up after
 // MIGRATION_MAX_ATTEMPTS failures so a broken install does not pay every launch.
 const MIGRATION_MAX_ATTEMPTS = 3;
@@ -584,7 +584,7 @@ async function migrateFileOriginStorage() {
     fs.writeFile(marker, JSON.stringify({ ...next, at: new Date().toISOString() }));
   const win = new BrowserWindow({ show: false });
   try {
-    // Same file://app/… form the pre-ADR-0010 main window loaded from.
+    // Same file://app/… form the pre-ADR-0011 main window loaded from.
     await win.loadURL('file://app/version.json');
     const entries = await win.webContents.executeJavaScript(
       'JSON.stringify(Object.entries(localStorage))',

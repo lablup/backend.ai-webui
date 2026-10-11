@@ -15,11 +15,11 @@ import {
   getPathFromMenuKey,
   useWebUIMenuItems,
 } from '../../hooks/useWebUIMenuItems';
-import { theme } from '../../theme-shim';
 import BAIMenu from '../BAIMenu';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { HStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { HStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import { filterOutEmpty, useSessionStorageState } from 'backend.ai-ui';
 import { ArrowLeftIcon, ShieldUserIcon } from 'lucide-react';
 import React, { useEffect } from 'react';
@@ -42,7 +42,7 @@ const WebUISiderNavigation: React.FC<WebUISiderNavigationProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const webuiNavigate = useWebUINavigate();
   const location = useLocation();
   // Scope-aware current menu key (route handle), correct under the
@@ -163,7 +163,7 @@ const WebUISiderNavigation: React.FC<WebUISiderNavigationProps> = ({
                 firstAvailableAdminMenuItem.key,
                 activeProjectName,
               ),
-              icon: <ShieldUserIcon style={{ color: token.colorInfo }} />,
+              icon: <ShieldUserIcon style={{ color: token('--color-info') }} />,
             },
             ...groupedGeneralMenu,
           ])}

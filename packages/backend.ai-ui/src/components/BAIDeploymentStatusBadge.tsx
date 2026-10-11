@@ -1,6 +1,6 @@
 import { badgeVariantForStatus } from '../helper/astryxTagVariant';
 import { useBAIi18n } from '../hooks/useBAIi18n';
-import { Badge, type BadgeProps } from '@astryxdesign/core/Badge';
+import { Badge, type BadgeProps } from '@lablup/ui-common/Badge';
 import { LoaderCircle } from 'lucide-react';
 import React from 'react';
 

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<dd17484d97923b040eb79e19ec348085>>
+ * @generated SignedSource<<69d7b8cbed5fa839fbf16d440df78fee>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -207,12 +207,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "6fcc69167ea63d1ec139fa4784ae9d76",
+    "cacheID": "a1b01e444d64b02f5357c249a992559b",
     "id": null,
     "metadata": {},
     "name": "StorageProxyListQuery",
     "operationKind": "query",
-    "text": "query StorageProxyListQuery(\n  $offset: Int!\n  $limit: Int!\n) {\n  storage_volume_list(limit: $limit, offset: $offset) {\n    items {\n      id\n      backend\n      capabilities\n      path\n      fsprefix\n      usage\n      ...StorageHostDetailDrawerFragment\n    }\n    total_count\n  }\n}\n\nfragment DomainStoragePermissionTable_storageVolumeFrgmt on StorageVolume {\n  id\n}\n\nfragment KeypairResourcePolicyStoragePermissionTableV2_storageVolumeFrgmt on StorageVolume {\n  id\n}\n\nfragment KeypairResourcePolicyStoragePermissionTable_storageVolumeFrgmt on StorageVolume {\n  id\n}\n\nfragment ProjectFolderPermissionPanel_storageVolumeFrgmt on StorageVolume {\n  ...DomainStoragePermissionTable_storageVolumeFrgmt\n  ...ProjectStoragePermissionTable_storageVolumeFrgmt\n}\n\nfragment ProjectStoragePermissionTable_storageVolumeFrgmt on StorageVolume {\n  id\n}\n\nfragment StorageHostDetailDrawerContentFragment on StorageVolume {\n  id\n  path\n  capabilities\n  ...StorageHostResourcePanelFragment\n  ...StorageHostSettingsPanel_storageVolumeFrgmt\n  ...ProjectFolderPermissionPanel_storageVolumeFrgmt\n  ...UserFolderPermissionPanel_storageVolumeFrgmt\n  ...UserFolderPermissionPanelV2_storageVolumeFrgmt\n}\n\nfragment StorageHostDetailDrawerFragment on StorageVolume {\n  ...StorageHostDetailDrawerContentFragment\n}\n\nfragment StorageHostResourcePanelFragment on StorageVolume {\n  id\n  backend\n  capabilities\n  path\n  usage\n}\n\nfragment StorageHostSettingsPanel_storageVolumeFrgmt on StorageVolume {\n  id\n  capabilities\n}\n\nfragment UserFolderPermissionPanelV2_storageVolumeFrgmt on StorageVolume {\n  ...KeypairResourcePolicyStoragePermissionTableV2_storageVolumeFrgmt\n}\n\nfragment UserFolderPermissionPanel_storageVolumeFrgmt on StorageVolume {\n  ...KeypairResourcePolicyStoragePermissionTable_storageVolumeFrgmt\n}\n"
+    "text": "query StorageProxyListQuery(\n  $offset: Int!\n  $limit: Int!\n) {\n  storage_volume_list(limit: $limit, offset: $offset) {\n    items {\n      id\n      backend\n      capabilities\n      path\n      fsprefix\n      usage\n      ...StorageHostDetailDrawerFragment\n    }\n    total_count\n  }\n}\n\nfragment DomainStoragePermissionTable_storageVolumeFrgmt on StorageVolume {\n  id\n}\n\nfragment KeypairResourcePolicyStoragePermissionTableV2_storageVolumeFrgmt on StorageVolume {\n  id\n}\n\nfragment ProjectFolderPermissionPanel_storageVolumeFrgmt on StorageVolume {\n  ...DomainStoragePermissionTable_storageVolumeFrgmt\n  ...ProjectStoragePermissionTable_storageVolumeFrgmt\n}\n\nfragment ProjectStoragePermissionTable_storageVolumeFrgmt on StorageVolume {\n  id\n}\n\nfragment StorageHostDetailDrawerContentFragment on StorageVolume {\n  id\n  path\n  capabilities\n  ...StorageHostResourcePanelFragment\n  ...StorageHostSettingsPanel_storageVolumeFrgmt\n  ...ProjectFolderPermissionPanel_storageVolumeFrgmt\n  ...UserFolderPermissionPanelV2_storageVolumeFrgmt\n}\n\nfragment StorageHostDetailDrawerFragment on StorageVolume {\n  ...StorageHostDetailDrawerContentFragment\n}\n\nfragment StorageHostResourcePanelFragment on StorageVolume {\n  id\n  backend\n  capabilities\n  path\n  usage\n}\n\nfragment StorageHostSettingsPanel_storageVolumeFrgmt on StorageVolume {\n  id\n  capabilities\n}\n\nfragment UserFolderPermissionPanelV2_storageVolumeFrgmt on StorageVolume {\n  ...KeypairResourcePolicyStoragePermissionTableV2_storageVolumeFrgmt\n}\n"
   }
 };
 })();

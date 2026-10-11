@@ -6,18 +6,18 @@ import { TerminateSessionModalForProjectAdminFragment$key } from '../__generated
 import { TerminateSessionModalForProjectAdminMutation } from '../__generated__/TerminateSessionModalForProjectAdminMutation.graphql';
 import { App } from '../app-shim';
 import { useCurrentUserRole } from '../hooks/backendai';
-import { theme } from '../theme-shim';
 import './TerminateSessionModalForProjectAdmin.css';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { Text } from '@astryxdesign/core/Text';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAICard,
   BAIFlex,
   BAIModal,
-  type BAIModalProps,
   BAIText,
   filterOutNullAndUndefined,
   toLocalId,
+  type BAIModalProps,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useState } from 'react';
@@ -50,7 +50,7 @@ const TerminateSessionModalForProjectAdmin: React.FC<
 > = ({ sessionsFrgmt, onRequestClose, ...modalProps }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
   const userRole = useCurrentUserRole();
   const [isForce, setIsForce] = useState(false);
@@ -170,7 +170,7 @@ const TerminateSessionModalForProjectAdmin: React.FC<
           onChange={(checked) => setIsForce(checked)}
         />
         {isForce && (
-          <BAICard styles={{ body: { padding: token.padding } }}>
+          <BAICard styles={{ body: { padding: token('--spacing-4') } }}>
             {/* `Typography.Paragraph` -> `Text as="p" display="block"`; the
                 `danger` type resolves through the brand theme's custom
                 `color:danger` Text colour added in p3-a. */}

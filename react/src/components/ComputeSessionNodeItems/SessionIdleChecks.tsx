@@ -7,7 +7,7 @@ import { SessionReclamationStatusCellFragment$key } from '../../__generated__/Se
 import { formatDurationAsDays } from '../../helper';
 import SessionReclamationStatusCell from './SessionReclamationStatusCell';
 import { getOverallReclamation } from './SessionReclamationStatusPopover';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import * as stylex from '@stylexjs/stylex';
 import {
   useMemoizedJSONParse,

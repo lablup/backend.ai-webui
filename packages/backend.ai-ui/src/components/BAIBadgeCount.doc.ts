@@ -112,7 +112,7 @@ export const docs = {
       name: 'className',
       type: 'string',
       description:
-        'Extra class on the wrapper span, appended to the internal `bai-badge-count` class.',
+        'Extra class on the wrapper span, appended to the `uic-count-badge` class of ui-common `CountBadge`.',
     },
     {
       name: 'style',

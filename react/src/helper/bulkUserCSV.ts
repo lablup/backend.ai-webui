@@ -169,8 +169,7 @@ export const mapUserCSVColumns = (
   const presentColumns = new Set<CanonicalUserColumn>();
   _.forEach(headerKeys, (rawKey) => {
     const canonical = aliases[rawKey.trim().toLowerCase()] as
-      | CanonicalUserColumn
-      | undefined;
+      CanonicalUserColumn | undefined;
     // Only honour aliases that resolve to a column we actually import.
     if (canonical && CSV_COLUMNS.includes(canonical) && !headerMap[canonical]) {
       headerMap[canonical] = rawKey;

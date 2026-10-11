@@ -22,7 +22,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          "Derive `enableWrite`, `enableDelete` and `enableDownload` from the vfolder's `permissions`, since all of them default to `false` and the explorer is read-only until they are set.",
+          "Derive the `enable*` flags from the vfolder's `UPDATE` permission and the storage host permission for each operation (`create-vfolder`, `modify-vfolder`, `delete-vfolder`, `upload-file`, `download-file`), since all of them default to `false` and the explorer is read-only until they are set.",
       },
       {
         guidance: true,
@@ -132,8 +132,22 @@ export const docs = {
       name: 'enableWrite',
       type: 'boolean',
       description:
-        'Allows mutating the folder — inline rename on the name cell and the folder-creation controls. When it is off, names render read-only.',
+        'Fallback for `enableCreate` and `enableRename` when either is not passed.',
       default: 'false',
+    },
+    {
+      name: 'enableCreate',
+      type: 'boolean',
+      description:
+        'Enables "Create Folder" and, together with `enableUpload`, "Create File" (which writes through the upload API).',
+      default: 'enableWrite',
+    },
+    {
+      name: 'enableRename',
+      type: 'boolean',
+      description:
+        'Enables inline rename on the name cell. When it is off, names render read-only.',
+      default: 'enableWrite',
     },
     {
       name: 'enableUpload',
@@ -190,9 +204,11 @@ export const docs = {
   fetchKey={fetchKey}
   fileDropContainerRef={bodyRef}
   deletingFilePaths={deletingFilePaths}
-  enableWrite={hasWritePermission}
-  enableUpload={hasWritePermission}
-  enableDelete={hasDeletePermission}
+  enableCreate={canCreate}
+  enableRename={canModify}
+  enableUpload={canUpload}
+  enableEdit={canModify && canUpload}
+  enableDelete={canDelete}
   enableDownload
   onUpload={(files, currentPath) => {
     uploadFiles(files, vfolderID, currentPath);
@@ -207,8 +223,9 @@ export const docs = {
   targetVFolderName={vfolder_node?.name ?? undefined}
   defaultPath={defaultPath ?? '.'}
   onChangeCurrentPath={setCurrentPath}
-  enableWrite={hasWriteContentPermission}
-  enableDelete={hasDeleteContentPermission}
+  enableCreate={hasHostPermission('CREATE_VFOLDER')}
+  enableRename={hasHostPermission('MODIFY_VFOLDER')}
+  enableDelete={hasHostPermission('DELETE_VFOLDER')}
 />`,
     },
   ],

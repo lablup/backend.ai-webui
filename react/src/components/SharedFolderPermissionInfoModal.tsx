@@ -16,11 +16,11 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import VFolderPermissionCell from './VFolderPermissionCell';
-import { Banner } from '@astryxdesign/core/Banner';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Heading, Text } from '@astryxdesign/core/Text';
+import { Banner } from '@lablup/ui-common/Banner';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Heading, Text } from '@lablup/ui-common/Text';
 import { BAIPopconfirm } from 'backend.ai-ui';
 import {
   filterOutNullAndUndefined,

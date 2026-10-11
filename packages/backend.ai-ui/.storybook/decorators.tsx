@@ -1,12 +1,14 @@
 import { BAIAppProvider } from '../src/app-shim';
 import BAIText from '../src/components/BAIText';
 import BAIConfigProvider from '../src/components/provider/BAIConfigProvider/BAIConfigProvider';
-import { FormConfigProvider } from '../src/form-engine/FormConfigProvider';
-import { i18n } from '../src/locale';
-import { ThemeShimProvider, theme } from '../src/theme-shim';
+import { FormConfigProvider } from '../src/form-engine';
+import { i18n, type BAILocale } from '../src/locale';
 import { themePresets, type ThemeStyle } from './themeConfig';
-import { Skeleton } from '@astryxdesign/core/Skeleton';
-import { Theme as AstryxThemeProvider } from '@astryxdesign/core/theme';
+import { Skeleton } from '@lablup/ui-common/Skeleton';
+import {
+  Theme as AstryxThemeProvider,
+  useTheme,
+} from '@lablup/ui-common/theme';
 import type { Decorator } from '@storybook/react-vite';
 import { useDarkMode } from '@vueless/storybook-dark-mode';
 import dayjs from 'dayjs';
@@ -48,6 +50,17 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(duration);
 
+// The published `backend.ai-ui/locale/*` modules, keyed by `lang`, so a story
+// gets the Astryx and ui-common strings the app gets for that language.
+const localeModules = Object.fromEntries(
+  Object.values(
+    import.meta.glob<BAILocale>('../src/locale/[a-z][a-z]_*.ts', {
+      eager: true,
+      import: 'default',
+    }),
+  ).map((module) => [module.lang, module]),
+);
+
 interface StorybookProviderProps {
   locale: string;
   themeStyle: ThemeStyle;
@@ -58,13 +71,16 @@ interface StorybookProviderProps {
 const ThemedContainer: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { token } = theme.useToken();
+  const { token } = useTheme();
+  const bodyBg = token('--color-background-body');
+  const bodyColor = token('--color-text-primary');
+  const bodyFont = token('--font-family-body');
 
   useEffect(() => {
-    document.body.style.backgroundColor = token.colorBgLayout;
-    document.body.style.color = token.colorText;
-    document.body.style.fontFamily = token.fontFamily;
-  }, [token.colorBgLayout, token.colorText, token.fontFamily]);
+    document.body.style.backgroundColor = bodyBg;
+    document.body.style.color = bodyColor;
+    document.body.style.fontFamily = bodyFont;
+  }, [bodyBg, bodyColor, bodyFont]);
 
   return <>{children}</>;
 };
@@ -76,65 +92,54 @@ const GlobalConfigProvider: React.FC<StorybookProviderProps> = ({
   children,
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const preset = themePresets[themeStyle];
   const isWebUIStyle = themeStyle === 'webui';
 
   return (
-    // Both theme layers follow the "Theme" toolbar together: the Astryx
-    // `<Theme>` drives Astryx-native components, the shim's seeds drive the
-    // legacy antd-era ones. See themeConfig.ts for why one alone is inert.
+    // The "Theme" toolbar picks the Astryx `<Theme>` every component reads
+    // (FR-3819): the Backend.AI brand, or Astryx's neutral baseline.
     <AstryxThemeProvider
       theme={preset.theme}
       mode={isDarkMode ? 'dark' : 'light'}
     >
-      {/* Astryx theme shim (ticket 10): BUI's legacy antd-consuming
-          components read tokens from ThemeShimProvider, so mirror the
-          story's mode/seeds here — without it they'd fall back to
-          light-mode default seeds. */}
-      <ThemeShimProvider
-        mode={isDarkMode ? 'dark' : 'light'}
-        seeds={isDarkMode ? preset.dark : preset.light}
-      >
-        {/* The real production wrapper, carrying only the locale — which
-            drives BUI's i18next, dayjs and Astryx's resolver from one `lang`,
-            keeping Astryx chrome strings and plurals on the story's locale
-            instead of the 'en' context default (P13). */}
-        <BAIConfigProvider locale={{ lang: locale }}>
-          {/* The `form.requiredMark` inversion — no asterisk on required
+      {/* The real production wrapper with the app's locale module: BUI's
+          i18next, dayjs and Astryx's resolver (Astryx and ui-common strings)
+          all follow the story's locale. */}
+      <BAIConfigProvider locale={localeModules[locale] ?? { lang: locale }}>
+        {/* The `form.requiredMark` inversion — no asterisk on required
               fields, "(Optional)" appended to the rest — mirrors what
               `react/src/components/DefaultProviders.tsx` does in the app.
               Gated on the WebUI preset: it is Backend.AI product behaviour,
               so the Astryx baseline keeps the engine default's asterisk. */}
-          <FormConfigProvider
-            {...(isWebUIStyle && {
-              requiredMark: (label, { required }) => (
-                <>
-                  {label}
-                  {!required && (
-                    <BAIText
-                      type="secondary"
-                      style={{
-                        marginLeft: token.marginXXS,
-                        wordBreak: 'keep-all',
-                      }}
-                    >
-                      {`(${t('general.Optional')})`}
-                    </BAIText>
-                  )}
-                </>
-              ),
-            })}
-          >
-            {/* App.useApp shim (ticket 11): stories exercising imperative
+        <FormConfigProvider
+          {...(isWebUIStyle && {
+            requiredMark: (label, { required }) => (
+              <>
+                {label}
+                {!required && (
+                  <BAIText
+                    type="secondary"
+                    style={{
+                      marginLeft: token('--spacing-1'),
+                      wordBreak: 'keep-all',
+                    }}
+                  >
+                    {`(${t('general.Optional')})`}
+                  </BAIText>
+                )}
+              </>
+            ),
+          })}
+        >
+          {/* App.useApp shim (ticket 11): stories exercising imperative
                 message/modal flows read the shim's toast/dialog host from here
                 (replaces the per-story antd <App> wrappers). */}
-            <BAIAppProvider>
-              <ThemedContainer>{children}</ThemedContainer>
-            </BAIAppProvider>
-          </FormConfigProvider>
-        </BAIConfigProvider>
-      </ThemeShimProvider>
+          <BAIAppProvider>
+            <ThemedContainer>{children}</ThemedContainer>
+          </BAIAppProvider>
+        </FormConfigProvider>
+      </BAIConfigProvider>
     </AstryxThemeProvider>
   );
 };

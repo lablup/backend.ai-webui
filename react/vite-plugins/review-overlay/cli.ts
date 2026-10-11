@@ -6,7 +6,7 @@
  *
  * Exit codes: 0 pins found · 2 usage / unreadable input · 5 no pin found.
  */
-import { LINK_LABEL } from './client/block.js';
+import { ENV_FOOTER_RE, LINK_LABEL } from './client/block.js';
 import { PIN_BODY_SRC, decodeAnchor } from './client/codec.js';
 import { pinId } from './client/id.js';
 import { isStop, stripVolatileQuery } from './client/stop-guard.js';
@@ -186,8 +186,12 @@ const stripQuote = (line: string) => line.replace(QUOTE_PREFIX_RE, '');
 const endsABlock = (line: string) =>
   BLOCK_HEAD_RE.test(line) || LINK_RE.test(line);
 
+// A set's environment footer is the end of a copy, never the next pin's note.
 const closesABlock = (line: string) =>
-  QUOTED_RE.test(line) || MARKER_RE.test(line) || endsABlock(line);
+  QUOTED_RE.test(line) ||
+  MARKER_RE.test(line) ||
+  ENV_FOOTER_RE.test(line) ||
+  endsABlock(line);
 
 /**
  * The reviewer's words are the comment's own prose, above the quote. The run
@@ -209,7 +213,7 @@ function fillBlockBody(block: ParsedBlock, body: string[]): void {
   const notes: string[] = [];
   let inStack = false;
   for (const line of body) {
-    if (MARKER_RE.test(line)) continue;
+    if (MARKER_RE.test(line) || ENV_FOOTER_RE.test(line)) continue;
     const head = STACK_HEAD_RE.exec(line.trim());
     if (head) {
       block.stack.push(head[1].trim());

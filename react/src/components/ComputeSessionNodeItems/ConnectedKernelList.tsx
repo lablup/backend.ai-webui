@@ -9,9 +9,9 @@ import {
 import { ContainerLogModalFragment$key } from '../../__generated__/ContainerLogModalFragment.graphql';
 // import BAIPropertyFilter from '../BAIPropertyFilter';
 import ContainerLogModal from './ContainerLogModal';
-import { Badge } from '@astryxdesign/core/Badge';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Text } from '@astryxdesign/core/Text';
+import { Badge } from '@lablup/ui-common/Badge';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Text } from '@lablup/ui-common/Text';
 import {
   badgeVariantForStatus,
   filterOutEmpty,

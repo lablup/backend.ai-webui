@@ -21,10 +21,10 @@ import RouteSchedulingHistoryModal, {
   RouteSchedulingHistoryQuery,
 } from './RouteSchedulingHistoryModal';
 import SessionDetailDrawer from './SessionDetailDrawer';
-import { Badge } from '@astryxdesign/core/Badge';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Link } from '@astryxdesign/core/Link';
-import { Text } from '@astryxdesign/core/Text';
+import { Badge } from '@lablup/ui-common/Badge';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Link } from '@lablup/ui-common/Link';
+import { Text } from '@lablup/ui-common/Text';
 import { BAISkeleton } from 'backend.ai-ui';
 import {
   BAICard,
@@ -40,7 +40,6 @@ import {
   safeDecodeUuid,
   toLocalId,
   type GraphQLFilter,
-  useConnectedBAIClient,
   BAILink,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -234,10 +233,6 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
   const isInitialFetch =
     fetchKey === 0 &&
     (replicaFetchKey === undefined || replicaFetchKey === INITIAL_FETCH_KEY);
-  const baiClient = useConnectedBAIClient();
-  const supportsRouteSchedulingHistory = baiClient.supports(
-    'route-scheduling-history',
-  );
   const [isRouteHistoryOpen, setIsRouteHistoryOpen] = useState(false);
   const [routeHistoryQueryRef, loadRouteHistoryQuery] =
     useQueryLoader<RouteSchedulingHistoryModalQuery>(
@@ -281,7 +276,7 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
                     revisionNumber
                     ...DeploymentRevisionDetail_revision
                   }
-                  sessionV2 @since(version: "26.4.3") {
+                  sessionV2 {
                     id
                     metadata {
                       name
@@ -366,35 +361,30 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
       render: (value: string | null | undefined, record: ReplicaNode) => (
         <BAIFlex align="center" gap="xs">
           <ReplicaStatusBadge status={toReplicaStatus(value)} />
-          {supportsRouteSchedulingHistory && (
-            // `IconButton`'s own `label`/`tooltip` — the wrapping `Tooltip` left
-            // the button with no accessible name (it resolved to "Action"),
-            // and `type="link"` lost the accent tint (FR-3572).
-            <IconButton
-              className="bai-action-accent"
-              variant="ghost"
-              size="sm"
-              icon={<History size="1em" />}
-              label={t('route.RouteSchedulingHistory')}
-              tooltip={t('route.RouteSchedulingHistory')}
-              clickAction={async () => {
-                const id = safeDecodeUuid(record.id) ?? record.id;
-                // Render-as-you-fetch: start the request in the open event.
-                loadRouteHistoryQuery(
-                  {
-                    scope: { routeId: id },
-                    orderBy: [{ field: 'UPDATED_AT', direction: 'DESC' }],
-                    limit: 10,
-                    offset: 0,
-                  },
-                  {
-                    fetchPolicy: 'store-and-network',
-                  },
-                );
-                setIsRouteHistoryOpen(true);
-              }}
-            />
-          )}
+          <IconButton
+            className="bai-action-accent"
+            variant="ghost"
+            size="sm"
+            icon={<History size="1em" />}
+            label={t('route.RouteSchedulingHistory')}
+            tooltip={t('route.RouteSchedulingHistory')}
+            clickAction={async () => {
+              const id = safeDecodeUuid(record.id) ?? record.id;
+              // Render-as-you-fetch: start the request in the open event.
+              loadRouteHistoryQuery(
+                {
+                  scope: { routeId: id },
+                  orderBy: [{ field: 'UPDATED_AT', direction: 'DESC' }],
+                  limit: 10,
+                  offset: 0,
+                },
+                {
+                  fetchPolicy: 'store-and-network',
+                },
+              );
+              setIsRouteHistoryOpen(true);
+            }}
+          />
         </BAIFlex>
       ),
     },

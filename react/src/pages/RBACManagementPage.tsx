@@ -14,11 +14,13 @@ import { RBACManagementPageScopeTypesQuery } from '../__generated__/RBACManageme
 import { App } from '../app-shim';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import RoleDetailDrawer from '../components/RoleDetailDrawer';
+import RoleDetailDrawerV2 from '../components/RoleDetailDrawerV2';
 import RoleFormModal from '../components/RoleFormModal';
 import RoleNodes, {
   type RoleNodeInList,
   availableRoleSorterValues,
 } from '../components/RoleNodes';
+import RolePresetListTab from '../components/RolePresetListTab';
 import { convertToOrderBy } from '../helper';
 import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
 import { useSuspendedBackendaiClient } from '../hooks';
@@ -33,6 +35,8 @@ import {
   BAINameActionCell,
   BAISelect,
   type BAISelectProps,
+  BAISkeleton,
+  BAIUnmountAfterClose,
   BAIUserSelect,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
@@ -53,6 +57,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 const statusFilterValues = ['ACTIVE', 'DELETED'] as const;
+const tabValues = ['roles', 'presets'] as const;
 
 // Since 26.9.0 scope types are lowercase names the manager lists, not an enum
 // the client could enumerate.
@@ -87,11 +92,13 @@ const ScopeTypeSelect: React.FC<Omit<BAISelectProps, 'options'>> = (props) => {
   );
 };
 
-const RBACManagementPage: React.FC = () => {
+const RoleListTab: React.FC = () => {
   'use memo';
 
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
+  const supportsMappedScopeFilter =
+    baiClient.isManagerVersionCompatibleWith('26.8.0');
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -147,6 +154,7 @@ const RBACManagementPage: React.FC = () => {
               id
               ...RoleNodesFragment
               ...RoleDetailDrawerFragment
+              ...RoleDetailDrawerV2Fragment
             }
           }
         }
@@ -258,15 +266,7 @@ const RBACManagementPage: React.FC = () => {
   const selectedRole = roleNodes.find((role) => role?.id === selectedRoleId);
 
   return (
-    <BAICard
-      activeTabKey="roles"
-      tabList={[
-        {
-          key: 'roles',
-          label: t('webui.menu.RBACManagement'),
-        },
-      ]}
-    >
+    <>
       <BAIFlex direction="column" align="stretch" gap={'sm'}>
         <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
           <BAIFlex
@@ -305,7 +305,7 @@ const RBACManagementPage: React.FC = () => {
                   ],
                   strictSelection: true,
                 },
-                baiClient?.supports('rbac-filter-assigned-user') && {
+                {
                   key: 'assignedUser.userId',
                   propertyLabel: t('rbac.AssignedUser'),
                   type: 'uuid',
@@ -331,7 +331,7 @@ const RBACManagementPage: React.FC = () => {
                     />
                   ),
                 },
-                baiClient?.supports('role-mapped-scope-filter') && {
+                supportsMappedScopeFilter && {
                   key: 'mappedScope.scopeType',
                   propertyLabel: t('rbac.ScopeType'),
                   type: 'enum',
@@ -359,7 +359,7 @@ const RBACManagementPage: React.FC = () => {
                     </Suspense>
                   ),
                 },
-                baiClient?.supports('role-mapped-scope-filter') && {
+                supportsMappedScopeFilter && {
                   key: 'mappedScope.scopeId',
                   propertyLabel: t('rbac.ScopeRawId'),
                   // `equals` is the one operator both the 26.8 StringFilter
@@ -491,11 +491,25 @@ const RBACManagementPage: React.FC = () => {
           }
         }}
       />
-      <RoleDetailDrawer
-        open={!!selectedRole}
-        roleFrgmt={selectedRole}
-        onClose={() => setRoleDetailParam({ roleDetail: null })}
-      />
+      {/* One drawer per manager shape: the single-scope role (>= 26.9.0a4)
+          gets the V2 drawer, everything older the previous one (ADR 0006). */}
+      {baiClient?.isManagerVersionCompatibleWith('26.9.0a4') ? (
+        <BAIUnmountAfterClose>
+          <RoleDetailDrawerV2
+            open={!!selectedRole}
+            roleFrgmt={selectedRole}
+            onClose={() => setRoleDetailParam({ roleDetail: null })}
+          />
+        </BAIUnmountAfterClose>
+      ) : (
+        <BAIUnmountAfterClose>
+          <RoleDetailDrawer
+            open={!!selectedRole}
+            roleFrgmt={selectedRole}
+            onClose={() => setRoleDetailParam({ roleDetail: null })}
+          />
+        </BAIUnmountAfterClose>
+      )}
       <BAIDeleteConfirmModal
         open={!!purgingRole}
         items={
@@ -526,6 +540,57 @@ const RBACManagementPage: React.FC = () => {
         }}
         onCancel={() => setPurgingRole(null)}
       />
+    </>
+  );
+};
+
+const RBACManagementPage: React.FC = () => {
+  'use memo';
+
+  const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+  const supportsRolePresets =
+    baiClient.isManagerVersionCompatibleWith('26.9.0a4');
+  const [{ tab }, setQueryParams] = useQueryStates(
+    {
+      tab: parseAsStringLiteral(tabValues).withDefault('roles'),
+      // Tab-owned params, cleared on a tab switch so one tab's list state
+      // never reaches the other's query.
+      status: parseAsString,
+      order: parseAsString,
+      filter: parseAsString,
+      current: parseAsString,
+      pageSize: parseAsString,
+      roleDetail: parseAsString,
+      presetDetail: parseAsString,
+    },
+    { history: 'push' },
+  );
+  const activeTab = supportsRolePresets ? tab : 'roles';
+
+  return (
+    <BAICard
+      activeTabKey={activeTab}
+      onTabChange={(key) => {
+        setQueryParams({
+          tab: key as (typeof tabValues)[number],
+          status: null,
+          order: null,
+          filter: null,
+          current: null,
+          pageSize: null,
+          roleDetail: null,
+          presetDetail: null,
+        });
+      }}
+      tabList={filterOutEmpty([
+        { key: 'roles', label: t('rbac.Roles') },
+        supportsRolePresets && { key: 'presets', label: t('rbac.Presets') },
+      ])}
+    >
+      <Suspense fallback={<BAISkeleton rows={4} />}>
+        {activeTab === 'presets' ? <RolePresetListTab /> : <RoleListTab />}
+      </Suspense>
     </BAICard>
   );
 };

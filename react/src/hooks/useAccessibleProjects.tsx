@@ -4,7 +4,8 @@
  */
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '.';
 import { useAccessibleProjectsQuery } from '../__generated__/useAccessibleProjectsQuery.graphql';
-import { useCurrentUserInfo, useCurrentUserRole } from './backendai';
+import { useCurrentUserRole } from './backendai';
+import { toLocalId } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import type { FetchPolicy } from 'relay-runtime';
@@ -45,17 +46,15 @@ export const useAccessibleProjects = (
   'use memo';
   const baiClient = useSuspendedBackendaiClient();
   const currentDomainName = useCurrentDomainValue();
-  const [currentUser] = useCurrentUserInfo();
   const userRole = useCurrentUserRole();
   const blockList = baiClient?._config?.blockList ?? null;
 
-  const { groups, user } = useLazyLoadQuery<useAccessibleProjectsQuery>(
+  const domainName = options?.domain ?? currentDomainName;
+  // Membership comes from `ProjectV2`: legacy `UserGroup.id` is the same raw
+  // UUID as `Group.id`, which collides in the Relay store.
+  const { groups, myUserV2 } = useLazyLoadQuery<useAccessibleProjectsQuery>(
     graphql`
-      query useAccessibleProjectsQuery(
-        $domain_name: String
-        $email: String
-        $type: [String]
-      ) {
+      query useAccessibleProjectsQuery($domain_name: String, $type: [String]) {
         groups(domain_name: $domain_name, is_active: true, type: $type) {
           id
           is_active
@@ -63,17 +62,22 @@ export const useAccessibleProjects = (
           resource_policy
           type
         }
-        user(email: $email) {
-          groups {
-            id
-            name
+        myUserV2 {
+          projects(
+            filter: { isActive: true, domainName: { equals: $domain_name } }
+            limit: 1000
+          ) {
+            edges {
+              node {
+                id
+              }
+            }
           }
         }
       }
     `,
     {
-      domain_name: options?.domain ?? currentDomainName,
-      email: currentUser.email,
+      domain_name: domainName,
       type:
         (userRole === 'admin' || userRole === 'superadmin') &&
         _.includes(blockList, 'model-store')
@@ -86,8 +90,11 @@ export const useAccessibleProjects = (
   );
 
   // Membership filter: only projects the user actually belongs to.
-  const accessibleProjects = groups?.filter((project) =>
-    user?.groups?.map((group) => group?.id).includes(project?.id),
+  const memberProjectIds = new Set(
+    _.map(myUserV2?.projects?.edges, (edge) => toLocalId(edge.node.id)),
+  );
+  const accessibleProjects = groups?.filter(
+    (project) => !!project?.id && memberProjectIds.has(project.id),
   );
 
   return { groups, accessibleProjects };

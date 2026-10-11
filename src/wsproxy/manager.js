@@ -140,7 +140,7 @@ function isLoopbackOrigin(origin) {
 
 // Decide whether a browser request from `origin` may read the proxy response.
 // `undefined` (no Origin header → non-browser or same-origin request) and the
-// Electron renderer `es6://app` (ADR 0010) are always allowed. `'null'` is not:
+// Electron renderer `es6://app` (ADR 0011) are always allowed. `'null'` is not:
 // any local file opened in a browser sends it. Every other cross-origin request
 // must be loopback or explicitly configured.
 function isAllowedOrigin(origin) {
@@ -580,6 +580,37 @@ class Manager extends EventEmitter {
             '<br/>port: ' +
             escapedPort +
             '<br/>username:upload<br/>URL : <a href="' +
+            escapeHtml(url) +
+            '">' +
+            escapeHtml(url) +
+            '</a>',
+        ),
+      );
+    });
+
+    this.app.get('/sshd', (req, res) => {
+      let port = req.query.port;
+
+      if (!isValidPort(port)) {
+        return res
+          .status(400)
+          .send(
+            htmldeco('Invalid Port', 'The port number provided is invalid.'),
+          );
+      }
+
+      const escapedPort = escapeHtml(String(parseInt(port, 10)));
+      const escapedHost = escapeHtml(this.proxyBaseHost);
+      let url = 'ssh://work@' + escapedHost + ':' + escapedPort;
+
+      res.send(
+        htmldeco(
+          'Connect with your SSH client',
+          'host: ' +
+            escapedHost +
+            '<br/>port: ' +
+            escapedPort +
+            '<br/>username: work<br/>URL : <a href="' +
             escapeHtml(url) +
             '">' +
             escapeHtml(url) +

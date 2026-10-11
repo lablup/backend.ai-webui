@@ -2,7 +2,7 @@
 /**
  * Cascade-layer order gate (FR-3532).
  *
- * `@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;`
+ * `@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;`
  * fixes layer precedence by FIRST APPEARANCE — a later statement can append
  * names but never reorder ones already seen. So the statement has to be parsed
  * before any layered rule, and the four places that declare it must agree.
@@ -48,6 +48,7 @@ export const REQUIRED_ORDER = [
   "base",
   "astryx-base",
   "astryx-theme",
+  "ui-common",
   "components",
   "utilities",
 ];

@@ -2,14 +2,13 @@ import BAIDoubleToken from './BAIDoubleToken';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 
-// The weld is CSS (vitest does not evaluate it), so these pin the DOM contract
-// BAIDoubleToken.css is written against: the `bai-double` anchor, direct-child
-// tokens in source order, and `gap: 0`.
+// The adapter over ui-common DoubleToken: its DOM contract (the
+// `uic-double-token` run of direct-child tokens, in source order, gap 0).
 describe('BAIDoubleToken', () => {
   const root = (c: HTMLElement) =>
-    c.querySelector('.bai-double') as HTMLElement;
+    c.querySelector('.uic-double-token') as HTMLElement;
 
-  it('anchors the stylesheet on `bai-double` and pins gap to 0', () => {
+  it('renders the ui-common run with gap 0', () => {
     const { container } = render(<BAIDoubleToken values={['User', 'admin']} />);
     expect(root(container)).toBeInTheDocument();
     expect(root(container)).toHaveAttribute('data-gap', '0');
@@ -62,5 +61,47 @@ describe('BAIDoubleToken', () => {
     const tokens = Array.from(root(container).children);
     expect(tokens[0]).toHaveAttribute('aria-label', 'python');
     expect(screen.getByText('py')).toBeInTheDocument();
+  });
+
+  it('appends the copy control to a copyable segment, keeping tokens the direct children', () => {
+    const { container } = render(
+      <BAIDoubleToken
+        values={[
+          { label: 'Project', color: 'blue' },
+          {
+            label: '01a0c2f9-4e84-7f7c-a9b5-f24958a5f8fa',
+            color: 'default',
+            copyable: true,
+          },
+        ]}
+      />,
+    );
+    // The copy control's tooltip bubble lands as a trailing sibling of the
+    // chips, so the weld CSS keys on `:last-of-type` — count the chips only.
+    const tokens = Array.from(
+      root(container).querySelectorAll(':scope > .astryx-token'),
+    );
+    expect(tokens).toHaveLength(2);
+    expect(tokens[1]).toBe(
+      root(container).querySelector(':scope > .astryx-token:last-of-type'),
+    );
+    const copyButton = screen.getByRole('button', { name: 'Copy' });
+    expect(tokens[1]).toContainElement(copyButton);
+    expect(tokens[0]).not.toContainElement(copyButton);
+    expect(screen.getAllByRole('button')).toHaveLength(1);
+  });
+
+  it('highlights a copyable label inside its copy control', () => {
+    const { container } = render(
+      <BAIDoubleToken
+        values={[{ label: 'python', copyable: true }]}
+        highlightKeyword="py"
+      />,
+    );
+    const token = root(container).children[0];
+    expect(token).toHaveAttribute('aria-label', 'python');
+    const match = token.querySelector('.uic-text-highlighter__match');
+    expect(match).toHaveTextContent('py');
+    expect(screen.getByRole('button', { name: 'Copy' })).toBeInTheDocument();
   });
 });

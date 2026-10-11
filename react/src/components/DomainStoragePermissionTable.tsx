@@ -11,14 +11,14 @@ import {
   buildAllowedHostsPayload,
   parseAllowedHosts,
 } from '../helper/storageHostPermission';
-import { theme } from '../theme-shim';
 import StoragePermissionEditModal from './StoragePermissionEditModal';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAINameActionCell,
   BAITable,
-  type BAITableProps,
   BAIUnmountAfterClose,
+  type BAITableProps,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleCheck, CircleX, SquarePenIcon } from 'lucide-react';
@@ -63,7 +63,7 @@ const DomainStoragePermissionTable: React.FC<
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
   const storageVolume = useFragment(
@@ -199,10 +199,13 @@ const DomainStoragePermissionTable: React.FC<
               align: 'center' as const,
               render: () =>
                 enabledSet.has(permKey) ? (
-                  <CircleCheck style={{ color: token.purple5 }} size="1em" />
+                  <CircleCheck
+                    style={{ color: token('--preset-purple-5') }}
+                    size="1em"
+                  />
                 ) : (
                   <CircleX
-                    style={{ color: token.colorTextDisabled }}
+                    style={{ color: token('--color-text-disabled') }}
                     size="1em"
                   />
                 ),

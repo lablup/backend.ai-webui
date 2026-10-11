@@ -18,7 +18,7 @@
 */
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { resolveRoleTheme } from './resolveRoleTheme';
-import { Theme as AstryxTheme, useTheme } from '@astryxdesign/core/theme';
+import { Theme as AstryxTheme, useTheme } from '@lablup/ui-common/theme';
 import React from 'react';
 
 export interface AstryxReverseThemeProps {
@@ -29,9 +29,13 @@ const AstryxReverseTheme: React.FC<AstryxReverseThemeProps> = ({
   children,
 }) => {
   'use memo';
-  const { themeConfig, activeThemeFamily } = useCustomThemeConfig();
+  const { rawThemeConfig, activeThemeFamily } = useCustomThemeConfig();
   const { mode } = useTheme();
-  const theme = resolveRoleTheme(themeConfig, 'brand', activeThemeFamily);
+  const theme = resolveRoleTheme(
+    rawThemeConfig?.theme,
+    'brand',
+    activeThemeFamily,
+  );
   return (
     <AstryxTheme theme={theme} mode={mode === 'dark' ? 'light' : 'dark'}>
       {children}

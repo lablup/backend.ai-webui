@@ -1,0 +1,42 @@
+# Fails on high/critical advisories in shipped dependencies that are not in
+# scripts/audit-allowlist.json. package.yml calls this before building a release.
+name: Dependency audit
+
+on:
+  pull_request:
+    paths:
+      - "package.json"
+      - "**/package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "scripts/audit-gate.mjs"
+      - "scripts/audit-allowlist.json"
+      - ".github/workflows/dependency-audit.yml"
+  schedule:
+    # Mondays 00:00 UTC (09:00 KST): new advisories and expiring allowlist entries.
+    - cron: "0 0 * * 1"
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dependency-audit-${{ github.event.pull_request.number || github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      # pnpm audit reads only the lockfile, so no install and no store cache.
+      - uses: pnpm/action-setup@v6.1.0
+        with:
+          run_install: false
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version-file: ".nvmrc"
+      - name: Run audit gate
+        run: node scripts/audit-gate.mjs

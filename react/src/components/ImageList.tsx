@@ -15,7 +15,6 @@ import {
 } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
-import { theme } from '../theme-shim';
 import { ProjectContextOrNull } from '../types/projectContext';
 import AliasedImageTagTokens from './AliasedImageTagTokens';
 import ImageInstallModal from './ImageInstallModal';
@@ -23,17 +22,17 @@ import ManageAppsModal from './ManageAppsModal';
 import ManageImageResourceLimitModal from './ManageImageResourceLimitModal';
 import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Button } from '@astryxdesign/core/Button';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
-import { BAISkeleton } from 'backend.ai-ui';
+import { Badge } from '@lablup/ui-common/Badge';
+import { Button } from '@lablup/ui-common/Button';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAIFlex,
   BAIPropertyFilter,
   BAISelectionLabel,
   BAIResourceNumberWithIcon,
+  BAISelect,
   BAITable,
   BAIText,
   BAIBooleanToken,
@@ -173,15 +172,24 @@ const ImageList: React.FC<ImageListProps> = ({
   const projectSelect = (
     <BAIFlex gap="xs" align="center" wrap="wrap">
       <Text color="secondary">{t('general.Project')}</Text>
-      <Suspense fallback={<BAISkeleton variant="input" size="small" />}>
+      <Suspense
+        fallback={
+          <BAISelect
+            loading
+            disabled
+            placeholder={t('environment.AllProjects')}
+            style={{ minWidth: 180 }}
+          />
+        }
+      >
         <ProjectSelectForAdminPage
           data-testid="environment-project-select"
           domain={baiClient._config.domainName}
-          value={project?.id ?? undefined}
-          // An optional FILTER, not a required choice: clearing it puts the
-          // list back on the domain-wide default. antd routes the clear
-          // through `onChange` with no option, so an absent `projectInfo` IS
-          // the "cleared" signal.
+          // `null`, not `undefined`: ProjectSelect treats `undefined` as
+          // uncontrolled and would keep showing the cleared project.
+          value={project?.id ?? null}
+          // An optional FILTER: clearing it calls `onSelectProject` with no
+          // option, which puts the list back on the domain-wide default.
           allowClear
           placeholder={t('environment.AllProjects')}
           style={{ minWidth: 180 }}
@@ -224,7 +232,6 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
   const { t } = useTranslation();
   const [selectedRows, setSelectedRows] = useState<EnvironmentImage[]>([]);
   const [, { tagAlias }] = useBackendAIImageMetaData();
-  const { token } = theme.useToken();
   const [managingApp, setManagingApp] = useState<EnvironmentImage | null>(null);
   const [managingResourceLimit, setManagingResourceLimit] =
     useState<EnvironmentImage | null>(null);
@@ -295,7 +302,6 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
           edges @required(action: THROW) {
             node @required(action: THROW) {
               id @required(action: THROW)
-              name @deprecatedSince(version: "24.12.0")
               tag
               registry
               architecture
@@ -386,7 +392,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
       // built from, so it is the closest ordering the backend colmap offers.
       sorter: isEnableSorter('name'),
       sortKey: 'name',
-      width: token.screenXS,
+      width: 480,
     },
     {
       title: t('environment.Registry'),
@@ -549,7 +555,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
             e.stopPropagation();
           }}
         >
-          {/* PILOT-DECISION: antd text Buttons with token.colorInfo-tinted
+          {/* PILOT-DECISION: antd text Buttons with token('--color-info')-tinted
               icons -> Astryx ghost IconButtons. IconButton's variant enum is
               closed, so the info-blue icon tint is dropped (P5/P11);
               accessible labels reuse the modal titles they open (P8).
@@ -731,7 +737,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
               }}
             />
             {/* PILOT-DECISION: the hand-painted primary button
-                (style backgroundColor token.colorPrimary) becomes Astryx
+                (style backgroundColor token('--color-accent')) becomes Astryx
                 `Button variant="primary"` — the brand accent comes from the
                 theme layer, not an inline style (P5). */}
             <Button

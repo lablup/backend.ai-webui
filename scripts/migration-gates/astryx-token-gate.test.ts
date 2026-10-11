@@ -40,6 +40,7 @@ const {
   parseDeclaredCss,
   parseDeclaredJs,
   parseUsages,
+  readDeclaredCss,
   runTokenGate,
 } = await import("./astryx-token-gate.mjs");
 
@@ -219,6 +220,22 @@ describe("runTokenGate — parser edges", () => {
       ),
     ]).toEqual(["--hook-x", "--hook-y"]);
   });
+
+  it("follows @import chains, as a ui-common mirror sheet needs", () => {
+    const dir = mkdtempSync(join(tmpdir(), "token-gate-import-"));
+    try {
+      writeFileSync(join(dir, "mirror.css"), "@import './core.css';\n");
+      writeFileSync(
+        join(dir, "core.css"),
+        "@import url('./mirror.css');\n:root { --core-token: 1px; }",
+      );
+      expect([...readDeclaredCss(join(dir, "mirror.css"))]).toEqual([
+        "--core-token",
+      ]);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
 });
 
 // Prove the declared-set source of truth matches the pilot findings against
@@ -233,16 +250,22 @@ describe.skipIf(!realCssPresent)(
     const declared = new Set<string>();
     beforeAll(() => {
       for (const p of realCss) {
-        for (const name of parseDeclaredCss(readFileSync(p, "utf8"))) {
+        for (const name of readDeclaredCss(p)) {
           declared.add(name as string);
         }
       }
     });
 
-    it("the spike's three broken names are genuinely absent", () => {
-      expect(declared.has("--color-text-tertiary")).toBe(false);
+    it("the spike's broken names are genuinely absent", () => {
+      // `--color-text-tertiary`, the spike's third broken name, is a declared
+      // custom token of the brand theme since FR-3605, so it left this list.
       expect(declared.has("--color-text-error")).toBe(false);
       expect(declared.has("--color-background-primary")).toBe(false);
+    });
+
+    it("the brand theme declares the custom tokens the app reads", () => {
+      expect(declared.has("--color-text-tertiary")).toBe(true);
+      expect(declared.has("--color-info")).toBe(true);
     });
 
     it("the spike's fixes resolve to declared names", () => {

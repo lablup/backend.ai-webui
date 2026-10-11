@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<900546b6f074e8f20dbf0ca8416433f2>>
+ * @generated SignedSource<<23252b52fcd76ea55a3dc390eaa4ee51>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,7 +16,6 @@ export type ManageAppsModal_image$data = {
     readonly key: string | null | undefined;
     readonly value: string | null | undefined;
   } | null | undefined> | null | undefined;
-  readonly name: string | null | undefined;
   readonly namespace: string | null | undefined;
   readonly registry: string | null | undefined;
   readonly tag: string | null | undefined;
@@ -69,13 +68,6 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "name",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
       "name": "namespace",
       "storageKey": null
     },
@@ -98,6 +90,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "93135d3fe605f5e46532ed40e111bbde";
+(node as any).hash = "6eb4eed02e97c3b3290ac08758d6c251";
 
 export default node;

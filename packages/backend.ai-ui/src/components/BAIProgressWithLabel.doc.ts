@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'A compact usage bar that carries its own labels inside the track. It draws the fill itself — an absolutely positioned BAIFlex sized to `percent` over a bordered, muted container — and lays a title on the left and a value label on the right on top of it, so a table cell or a list row can show "what" and "how much" in the height of a single line. `percent` is clamped to 100 and treated as 0 when missing or NaN, so a partially loaded metric renders an empty track rather than breaking the layout. It is not the Astryx ProgressBar wrapper: there is no indeterminate state, no steps and no built-in percentage formatting, only what the two label slots are given.',
+      'A compact usage bar that carries its own labels inside the track. It is ui-common ProgressWithLabel under its BUI name: a fill sized to `percent` over a bordered, muted frame, with a title on the left and a value label on the right on top of it, so a table cell or a list row can show "what" and "how much" in the height of a single line. `percent` is clamped to 100 and treated as 0 when missing or NaN, so a partially loaded metric renders an empty track rather than breaking the layout. It is not the Astryx ProgressBar wrapper: there is no indeterminate state, no steps and no built-in percentage formatting, only what the two label slots are given.',
     bestPractices: [
       {
         guidance: true,

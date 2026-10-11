@@ -2,12 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { SessionLauncherPreviewQuery } from '../__generated__/SessionLauncherPreviewQuery.graphql';
 import { App } from '../app-shim';
 // FRONTIER (ticket 17 / ticket 34): `Form.useFormInstance` / `Form.useWatch`
 // keep reading the antd form engine (locked SHIM decision).
 import { Form } from '../form-engine';
 import { getImageFullName } from '../helper';
-import { ownerEmailFromOwner } from '../helper/vfolderMounts';
+import { getSessionTypeLabel } from '../helper/sessionTypeLabel';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
@@ -23,15 +24,14 @@ import {
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { ImageMetaDivider, ImageTagTokens } from './ImageTags';
 import { PortToken } from './PortSelectFormItem';
-import { SessionOwnerSetterPreviewCard } from './SessionOwnerSetterCard';
 import SourceCodeView from './SourceCodeView';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { Card } from '@astryxdesign/core/Card';
-import { Heading } from '@astryxdesign/core/Heading';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { Card } from '@lablup/ui-common/Card';
+import { Heading } from '@lablup/ui-common/Heading';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAICard,
   BAIFlex,
@@ -48,6 +48,7 @@ import {
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 /**
  * The review step's image row. A manually typed image has no parts to
@@ -104,13 +105,37 @@ const SessionLauncherPreview: React.FC<{
   const form = Form.useFormInstance<SessionLauncherFormValue>();
   const baiClient = useSuspendedBackendaiClient();
   const sessionType = Form.useWatch('sessionType', { form, preserve: true });
-  const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
   const currentProject = useCurrentProjectValue();
-  // `preserve` reads the raw store: `owner` has no registered Form.Item.
-  const owner = Form.useWatch('owner', { form, preserve: true });
   const mountableHosts = useMountableStorageHosts(currentProjectId);
+  // `allocationPreset` holds the preset's id; the store already has the
+  // list from `ResourcePresetSelect`, so this resolves without a request.
+  const { resource_presets } = useLazyLoadQuery<SessionLauncherPreviewQuery>(
+    graphql`
+      query SessionLauncherPreviewQuery {
+        resource_presets {
+          id
+          name
+        }
+      }
+    `,
+    {},
+    { fetchPolicy: 'store-or-network' },
+  );
+  const allocationPreset = form.getFieldValue('allocationPreset');
+  // Names how the resources were allocated, ahead of the numbers.
+  const allocationMethodLabel = !allocationPreset
+    ? undefined
+    : allocationPreset === 'custom'
+      ? t('session.launcher.CustomAllocation')
+      : allocationPreset === 'minimum-required'
+        ? t('session.launcher.MiniumAllocation')
+        : `${t('resourcePreset.ResourcePreset')}: ${
+            _.find(
+              resource_presets,
+              (preset) => preset?.id === allocationPreset,
+            )?.name ?? allocationPreset
+          }`;
   const autoMountedFolders = useSuspendedAutoMountedFolders({
-    ownerEmail: ownerEmailFromOwner(owner),
     currentProjectId,
     mountableHosts,
   });
@@ -167,7 +192,7 @@ const SessionLauncherPreview: React.FC<{
       >
         <BAIMetadataList columns="single">
           <MetadataListItem label={t('session.SessionType')}>
-            {form.getFieldValue('sessionType')}
+            {getSessionTypeLabel(t, form.getFieldValue('sessionType'))}
           </MetadataListItem>
           {!_.isEmpty(form.getFieldValue('sessionName')) && (
             <MetadataListItem label={t('session.launcher.SessionName')}>
@@ -194,29 +219,22 @@ const SessionLauncherPreview: React.FC<{
                   <Text color="secondary">{t('general.None')}</Text>
                 )}
               </MetadataListItem>
-              {supportBatchTimeout ? (
-                <MetadataListItem
-                  label={t('session.launcher.BatchJobTimeoutDuration')}
-                >
-                  {form.getFieldValue(['batch', 'timeout']) ? (
-                    <Text>
-                      {form.getFieldValue(['batch', 'timeout'])}
-                      {form.getFieldValue(['batch', 'timeoutUnit']) || 's'}
-                    </Text>
-                  ) : (
-                    <Text color="secondary">{t('general.None')}</Text>
-                  )}
-                </MetadataListItem>
-              ) : null}
+              <MetadataListItem
+                label={t('session.launcher.BatchJobTimeoutDuration')}
+              >
+                {form.getFieldValue(['batch', 'timeout']) ? (
+                  <Text>
+                    {form.getFieldValue(['batch', 'timeout'])}
+                    {form.getFieldValue(['batch', 'timeoutUnit']) || 's'}
+                  </Text>
+                ) : (
+                  <Text color="secondary">{t('general.None')}</Text>
+                )}
+              </MetadataListItem>
             </>
           )}
         </BAIMetadataList>
       </BAICard>
-      <SessionOwnerSetterPreviewCard
-        onClickExtraButton={() => {
-          onClickEditStep('sessionType');
-        }}
-      />
       <BAICard
         title={t('session.launcher.Environments')}
         showDivider
@@ -327,25 +345,21 @@ const SessionLauncherPreview: React.FC<{
                 wrap="wrap"
                 style={{ flex: 1 }}
               >
-                {form.getFieldValue('allocationPreset') === 'custom' ? (
-                  // t('session.launcher.CustomAllocation')
-                  ''
-                ) : (
-                  <Token label={form.getFieldValue('allocationPreset')} />
-                )}
+                {allocationMethodLabel ? (
+                  <Token label={allocationMethodLabel} />
+                ) : null}
 
                 <ResourceNumbersOfSession
                   resource={form.getFieldValue('resource')}
                 />
               </BAIFlex>
             </MetadataListItem>
-            {baiClient.supports('agent-select') &&
-              !baiClient?._config?.hideAgents && (
-                <MetadataListItem label={t('session.launcher.AgentNode')}>
-                  {_.castArray(form.getFieldValue('agent')).join(', ') ||
-                    t('session.launcher.AutoSelect')}
-                </MetadataListItem>
-              )}
+            {!baiClient?._config?.hideAgents && (
+              <MetadataListItem label={t('session.launcher.AgentNode')}>
+                {_.castArray(form.getFieldValue('agent')).join(', ') ||
+                  t('session.launcher.AutoSelect')}
+              </MetadataListItem>
+            )}
             <MetadataListItem label={t('session.launcher.NumberOfContainer')}>
               {form.getFieldValue('cluster_size') === 1
                 ? form.getFieldValue('num_of_sessions')
@@ -457,7 +471,7 @@ const SessionLauncherPreview: React.FC<{
         </BAIFlex>
       </BAICard>
       <BAICard
-        title="Network"
+        title={t('session.launcher.Network')}
         showDivider
         size="small"
         status={form.getFieldError('ports').length > 0 ? 'error' : undefined}

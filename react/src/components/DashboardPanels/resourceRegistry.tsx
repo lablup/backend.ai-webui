@@ -14,7 +14,7 @@ import type {
   ResourceKey,
   ResourceQueryArgs,
 } from './types';
-import { Badge } from '@astryxdesign/core/Badge';
+import { Badge } from '@lablup/ui-common/Badge';
 import {
   badgeVariantForStatus,
   filterOutNullAndUndefined,

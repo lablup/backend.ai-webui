@@ -7,7 +7,6 @@ import type { AdminModelCardSettingModalFragment$key } from '../__generated__/Ad
 import type { AdminModelCardSettingModalUpdateMutation } from '../__generated__/AdminModelCardSettingModalUpdateMutation.graphql';
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
-import { useCurrentDomainValue } from '../hooks';
 import { toProjectContext } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
 import FolderCreateModalV2 from './FolderCreateModalV2';
@@ -19,12 +18,10 @@ import {
   AstryxFormTagsInput,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Text } from '@astryxdesign/core/Text';
-import { TextInput } from '@astryxdesign/core/TextInput';
+import { Banner } from '@lablup/ui-common/Banner';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIButton,
-  BAIDomainSelect,
   BAIFlex,
   BAIModal,
   type BAIModalProps,
@@ -42,7 +39,6 @@ import { graphql, useFragment, useMutation } from 'react-relay';
 type FormInputType = {
   name: string;
   vfolderId: string;
-  domainName?: string;
   author?: string;
   title?: string;
   modelVersion?: string;
@@ -81,8 +77,6 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
   const vfolderSelectRef = useRef<BAIProjectVfolderSelectRef>(null);
   const [isOpenCreateFolderModal, setIsOpenCreateFolderModal] = useState(false);
 
-  const currentDomain = useCurrentDomainValue();
-
   const modelCard = useFragment(
     graphql`
       fragment AdminModelCardSettingModalFragment on ModelCardV2 {
@@ -95,7 +89,6 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
           }
           ...VFolderNodeIdenticonV2Fragment
         }
-        domainName
         projectId
         readme
         accessLevel
@@ -169,7 +162,6 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
     ? {
         name: modelCard.name,
         vfolderId: modelCard.vfolderId,
-        domainName: modelCard.domainName || undefined,
         author: modelCard.metadata?.author || undefined,
         title: modelCard.metadata?.title || undefined,
         modelVersion: modelCard.metadata?.modelVersion || undefined,
@@ -191,7 +183,6 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
       }
     : {
         accessLevel: 'INTERNAL',
-        domainName: currentDomain,
       };
 
   const buildMetadataInput = (values: FormInputType) => ({
@@ -266,7 +257,6 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                 // become global cards. Once a query that can look up cards across
                 // projects of multiple scopes is added, this will need to change.
                 modelStoreProjectId: modelStoreProjectContext.id,
-                domainName: values.domainName || null,
                 ...metadataInput,
               },
             },
@@ -390,33 +380,6 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                   />
                 </BAIFlex>
               </BAIFormItem>
-            )}
-
-            {isEditMode ? (
-              <BAIFormItem label={t('adminModelCard.Domain')}>
-                <Text>{modelCard.domainName}</Text>
-              </BAIFormItem>
-            ) : (
-              <Suspense
-                fallback={
-                  <BAIFormItem
-                    name="domainName"
-                    label={t('adminModelCard.Domain')}
-                  >
-                    <AstryxFormTextInput
-                      label={t('adminModelCard.Domain')}
-                      disabled
-                    />
-                  </BAIFormItem>
-                }
-              >
-                <BAIFormItem
-                  name="domainName"
-                  label={t('adminModelCard.Domain')}
-                >
-                  <BAIDomainSelect />
-                </BAIFormItem>
-              </Suspense>
             )}
 
             <BAIFormItem

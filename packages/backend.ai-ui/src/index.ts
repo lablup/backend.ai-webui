@@ -29,13 +29,11 @@ export * from './tests';
 // The z-index ladder. Its module imports the matching custom properties, so
 // consuming a name from JS also guarantees the CSS side is loaded.
 export * from './styles/zIndexLadder';
-export * from './theme-shim';
+export * from './theme';
 export * from './app-shim';
-// The self-hosted form engine (tickets 34 + 35). `Form` is exported as a NAMED
-// export only — BUI has no default export — and `react/src/form-engine`
-// re-exports it for app files, mirroring app-shim / theme-shim. Safe to
-// republish now that the alias resolves to BUI's OWN engine rather than
-// forwarding to antd: there is only one `Form`/`FormInstance` in the graph.
+// The form engine (`@lablup/ui-common/Form` through the `form-engine` alias).
+// `Form` is exported as a NAMED export only — BUI has no default export — and
+// `react/src/form-engine` re-exports it for app files.
 export * from './form-engine';
 // The `locale` prop shape for `<BAIConfigProvider>`. Hosts used to reach the
 // per-language modules under `backend.ai-ui/dist/locale/*` for this; that

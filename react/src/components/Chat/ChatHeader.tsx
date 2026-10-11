@@ -7,7 +7,6 @@ import { useWebUINavigate } from '../../hooks';
 import { AIAgent, useAIAgent } from '../../hooks/useAIAgent';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useProjectPath } from '../../hooks/useRouteScope';
-import { theme } from '../../theme-shim';
 import AIAgentSelect from './AIAgentSelect';
 import {
   getCustomEndpointHost,
@@ -20,21 +19,22 @@ import ModelSelect from './ModelSelect';
 import {
   DropdownMenu,
   type DropdownMenuOption,
-} from '@astryxdesign/core/DropdownMenu';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Popover } from '@astryxdesign/core/Popover';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { filterOutEmpty, BAIFlex, toLocalId } from 'backend.ai-ui';
+} from '@lablup/ui-common/DropdownMenu';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Popover } from '@lablup/ui-common/Popover';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
+import { BAIFlex, filterOutEmpty, toLocalId } from 'backend.ai-ui';
 import { isEmpty } from 'lodash-es';
 import {
-  X,
-  SlidersHorizontal,
-  EllipsisVertical,
-  ScaleIcon,
-  EraserIcon,
-  ToggleRightIcon,
-  ToggleLeftIcon,
   ArrowRightLeftIcon,
+  EllipsisVertical,
+  EraserIcon,
+  ScaleIcon,
+  SlidersHorizontal,
+  ToggleLeftIcon,
+  ToggleRightIcon,
+  X,
 } from 'lucide-react';
 import React, { startTransition, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -117,7 +117,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   onClearMessage,
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
 
@@ -197,8 +197,8 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       style={{
         minHeight: '56px',
         width: '100%',
-        paddingTop: token.paddingXS,
-        paddingBottom: token.paddingXS,
+        paddingTop: token('--spacing-2'),
+        paddingBottom: token('--spacing-2'),
       }}
     >
       <BAIFlex
@@ -280,7 +280,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
           placement="below"
           alignment="end"
           style={{
-            padding: token.paddingXS,
+            padding: token('--spacing-2'),
           }}
         >
           <Tooltip content={t('chatui.chat.parameter.Title')}>
@@ -319,7 +319,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             icon: <EllipsisVertical size="1em" />,
             label: t('button.MoreActions'),
             isIconOnly: true,
-            style: { color: token.colorTextSecondary },
+            style: { color: token('--color-text-secondary') },
           }}
         />
       </BAIFlex>

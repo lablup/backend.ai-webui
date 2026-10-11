@@ -5,10 +5,10 @@
 import { ChatPageQuery } from '../__generated__/ChatPageQuery.graphql';
 import ChatCard from '../components/Chat/ChatCard';
 import {
-  type ChatHistoryData,
   generateChatId,
   getChatById,
   useHistory,
+  type ChatHistoryData,
 } from '../components/Chat/ChatHistory';
 import {
   normalizeCustomEndpointURL,
@@ -18,17 +18,17 @@ import WebUINavigate from '../components/WebUINavigate';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { theme } from '../theme-shim';
 import './ChatPage.css';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Card } from '@astryxdesign/core/Card';
-import { Divider } from '@astryxdesign/core/Divider';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Skeleton } from '@astryxdesign/core/Skeleton';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Heading, Text } from '@astryxdesign/core/Text';
-import { TextInput } from '@astryxdesign/core/TextInput';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Card } from '@lablup/ui-common/Card';
+import { Divider } from '@lablup/ui-common/Divider';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Skeleton } from '@lablup/ui-common/Skeleton';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Heading, Text } from '@lablup/ui-common/Text';
+import { TextInput } from '@lablup/ui-common/TextInput';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex, BAITable, toLocalId } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -62,19 +62,8 @@ function useDefaultDeploymentId() {
       }
     `,
     {
-      // Select a deployment with an actively-serving replica. When the manager
-      // supports the nested replica filter, keep deployments that have a
-      // RUNNING, traffic-active replica — this mirrors the manager's own
-      // "serving" definition (RouteStatus RUNNING; traffic_status ACTIVE is the
-      // traffic-enabled flag). Deployment-level `status` is a monotonic
-      // lifecycle axis, not a real-time serving signal, so it can't stand in for
-      // this. Older managers (25.19.0–<26.8.0) fall back to excluding terminated
-      // deployments by lifecycle status (the interim FR-3303 behavior). The
-      // version gate lives in
-      // the client `deployment-replica-nested-filter` support flag rather than a
-      // hardcoded version compare here. The whole deployment-selection surface
-      // targets the Strawberry v2 Deployments API (myDeployments/DeploymentFilter,
-      // manager ≥25.19.0), same baseline as the FR-2664 Deployments UI.
+      // Select a deployment with a RUNNING, traffic-active replica (manager
+      // 26.8.0+); older managers exclude terminated deployments (FR-3303).
       //
       // NOTE: This is intentionally left without a current-project scope. The
       // legacy endpoint_list query wasn't project-scoped either — it declared a
@@ -85,7 +74,7 @@ function useDefaultDeploymentId() {
       // TODO(FR-3332): investigate why Chat endpoint selection has never been
       // project-scoped and decide whether it should align with the new
       // Deployments UI.
-      filter: baiClient.supports('deployment-replica-nested-filter')
+      filter: baiClient.isManagerVersionCompatibleWith('26.8.0')
         ? {
             replicas: {
               some: {
@@ -148,7 +137,7 @@ const ChatHistoryPanel = ({
 }: ChatHistoryPanelProps) => {
   'use memo';
 
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { t } = useTranslation();
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -226,7 +215,7 @@ const ChatHistoryPanel = ({
                   </HStack>
                   <Text
                     color="secondary"
-                    style={{ fontSize: token.fontSizeSM }}
+                    style={{ fontSize: token('--font-size-sm') }}
                   >
                     {dayjs(record.updatedAt).format('YYYY-MM-DD HH:mm:ss')}
                   </Text>
@@ -236,11 +225,11 @@ const ChatHistoryPanel = ({
             {
               key: 'actions',
               align: 'right',
-              width: token.sizeXXL,
+              width: token('--spacing-12'),
               render: (_, record) => (
                 <IconButton
                   variant="ghost"
-                  icon={<TrashIcon size={token.size} />}
+                  icon={<TrashIcon size={token('--spacing-4')} />}
                   label={t('chatui.DeleteChattingSession')}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -313,6 +302,8 @@ const EditableChatTitle: React.FC<EditableChatTitleProps> = ({
         onEnter={commit}
         onKeyDown={(e) => {
           if (e.key === 'Escape') {
+            // Claims the press, so an open scrimless drawer stays open.
+            e.preventDefault();
             setDraft(label);
             setIsEditing(false);
           }

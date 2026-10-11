@@ -2,30 +2,15 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- to-astryx TICKET 30-D — the engine-neutral half of the BAITable contract.
-
- These types and helpers used to live inside `BAITable.tsx` (the antd engine),
- which is why ticket 30 could not delete that file: `BAITable` imported
- `isColumnVisible` from it, and every consumer imported `BAIColumnsType` /
- `BAITableSettings` from it. Extracting them here breaks that cycle — the
- column model, the persisted-override shape and the visibility rules are
- declarative data, not an engine concern, and now depend on **no** table
- implementation at all.
-
- The column model is deliberately still **antd-SHAPED** (`title` / `dataIndex` /
- `render(value, record, index)` / `sorter` / `fixed` / `align` / `width`) — that
- is the migration seam ticket 25 chose, and it is why flipping a consumer is a
- one-line import swap. It is no longer antd-TYPED, though: nothing here imports
- from `antd`, so a consumer that only declares columns pulls in no antd
- declarations.
-
- Fields antd's `ColumnType` has that this one drops (measured: zero consumers
- after the ticket-30-D flip): `sortOrder`, `sortDirections`, `filters` /
- `filterDropdown` / `onFilter`, `shouldCellUpdate`, `onHeaderCell`,
- `responsive`, `rowSpan`. Server-side sorting is driven by the `order` string
- (`order` / `onChangeOrder`), and filtering goes through `BAIPropertyFilter`
- (server-side) everywhere in this app.
+ The antd-SHAPED column model `BAITable` translates onto ui-common `DataGrid`
+ (`title` / `dataIndex` / `render(value, record, index)` / `sorter` / `fixed`),
+ kept so declaring columns stays a one-line import at every call site. It
+ imports no table implementation. The persisted-override shape is DataGrid's.
 */
+import type {
+  DataGridColumnOverride,
+  DataGridColumnOverrides,
+} from '@lablup/ui-common/components/DataGrid';
 import { isValidElement } from 'react';
 import type { Key, ReactNode, TdHTMLAttributes } from 'react';
 
@@ -47,10 +32,9 @@ export type BAICompareFn<RecordType> = (
 ) => number;
 
 /**
- * antd's sorter shape. Only its TRUTHINESS reaches the Astryx engine (a column
- * with a `sorter` gets a sort control whose key is its `dataIndex`); the
- * comparator itself is dead weight for the server-sorted tables but is kept in
- * the type because a handful of client-sorted tables still pass one.
+ * antd's sorter shape. A truthy sorter makes the column sortable; a comparator
+ * sorts the rows locally unless the table is server-sorted (`order` /
+ * `onChangeOrder`).
  */
 export type BAIColumnSorter<RecordType> =
   | boolean
@@ -61,35 +45,13 @@ export type BAIColumnSorter<RecordType> =
     };
 
 /**
- * Column override properties that can be customized.
- * Used to override default column behavior like visibility.
+ * A column's user overrides: `hidden`, `order` (set only after a reorder) and
+ * the resized `width` in pixels, all persisted in one record.
  */
-export interface BAITableColumnOverrideItem {
-  /** Override the default visibility of a column */
-  hidden?: boolean;
-  /**
-   * Override the column display order. Lower values come first. Persisted in
-   * the same overrides record as `hidden`, so reordering needs no extra
-   * persistence plumbing. Only set when the user has reordered columns away
-   * from their natural (declaration) order; see `disableColumnReorder`.
-   */
-  order?: number;
-  /**
-   * Persisted column width in pixels. Written by `BAITable` when the
-   * user drags a column border, so a resize survives a reload exactly like a
-   * visibility toggle (ticket 25).
-   */
-  width?: number;
-  // Future extensibility: pinned?, etc.
-}
+export type BAITableColumnOverrideItem = DataGridColumnOverride;
 
-/**
- * Record type mapping column keys to their override configurations
- */
-export type BAITableColumnOverrideRecord = Record<
-  string,
-  BAITableColumnOverrideItem
->;
+/** Column overrides keyed by column key. */
+export type BAITableColumnOverrideRecord = DataGridColumnOverrides;
 
 /**
  * Configuration for table settings including column overrides

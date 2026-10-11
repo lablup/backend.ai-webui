@@ -305,21 +305,48 @@ export function createWalkthroughLanguage(
 // ------------------------------------------------------------------ prose
 
 /** How a `via` sentence reads, per language the popover offers. */
-const VIA_PROSE: Record<
-  string,
-  { step: (what: string) => string; join: string }
-> = {
-  en: { step: (what) => `Click “${what}”`, join: ', then ' },
-  ko: { step: (what) => `“${what}” 클릭`, join: ', 그다음 ' },
+interface ViaProse {
+  click: (what: string) => string;
+  fill: (value: string, label?: string, enter?: boolean) => string;
+  select: (option: string, label?: string) => string;
+  join: string;
+}
+const VIA_PROSE: Record<string, ViaProse> = {
+  en: {
+    click: (what) => `Click “${what}”`,
+    fill: (value, label, enter) =>
+      `Type “${value}”${label ? ` in “${label}”` : ''}${enter ? ' and press Enter' : ''}`,
+    select: (option, label) =>
+      `Choose “${option}”${label ? ` in “${label}”` : ''}`,
+    join: ', then ',
+  },
+  ko: {
+    click: (what) => `“${what}” 클릭`,
+    fill: (value, label, enter) =>
+      `${label ? `“${label}”에 ` : ''}“${value}” 입력${enter ? ' 후 Enter' : ''}`,
+    select: (option, label) =>
+      `${label ? `“${label}”에서 ` : ''}“${option}” 선택`,
+    join: ', 그다음 ',
+  },
 };
 
 /** A waiting stop's `via`, as the sentence the reader follows. */
 export function viaSentence(via: AnchorVia[] | undefined, lang = 'en'): string {
   const prose = VIA_PROSE[lang] ?? VIA_PROSE.en;
   const steps = (via ?? [])
-    .map(({ click }) => click.text ?? click.tid ?? '')
-    .filter(Boolean)
-    .map(prose.step);
+    .map((step) => {
+      if ('fill' in step)
+        return prose.fill(
+          step.fill.value,
+          step.fill.label,
+          step.fill.enter === 1,
+        );
+      if ('select' in step)
+        return prose.select(step.select.option, step.select.label);
+      const what = step.click.text ?? step.click.tid ?? '';
+      return what ? prose.click(what) : '';
+    })
+    .filter(Boolean);
   return steps.join(prose.join);
 }
 

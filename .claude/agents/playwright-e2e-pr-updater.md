@@ -1,6 +1,6 @@
 ---
 name: playwright-e2e-pr-updater
-description: Use this agent to record e2e test cases as GIFs and attach them to a GitHub PR description. Records one GIF per test via Playwright video, uploads them to GitHub CDN via Chrome DevTools, and updates the PR body with a GIF table. Examples: <example>Context: Developer has written new e2e tests and wants to showcase them in a PR. user: 'Record GIFs for the BAIPropertyFilter tests and add them to the PR' assistant: 'I will use the playwright-e2e-pr-updater agent to record the tests as GIFs and update the PR.' <commentary>The user wants e2e test recordings attached to a PR, which is exactly what this agent does.</commentary></example><example>Context: PR is ready but needs visual proof of the tests passing. user: 'Add GIF recordings to the e2e PR' assistant: 'I will launch the playwright-e2e-pr-updater to record and attach GIFs to the PR.' <commentary>Recording and attaching GIFs to a PR is the core purpose of this agent.</commentary></example>
+description: Record e2e tests as one GIF per test (Playwright video + ffmpeg), upload the GIFs to GitHub's user-attachments CDN through Chrome DevTools, and append a GIF table to the PR body. Use when the user wants test recordings attached to a PR.
 tools: Glob, Grep, Read, Write, Edit, Bash, mcp__playwright-test__test_run, mcp__playwright-test__test_list, mcp__chrome-devtools__take_snapshot, mcp__chrome-devtools__click, mcp__chrome-devtools__evaluate_script, mcp__chrome-devtools__upload_file, mcp__chrome-devtools__wait_for, mcp__chrome-devtools__navigate_page, mcp__chrome-devtools__list_pages, mcp__chrome-devtools__select_page
 model: sonnet
 color: purple
@@ -53,7 +53,7 @@ Each video is in a directory named after the test. The directory name format is:
 For each video file, create a GIF:
 
 ```bash
-/opt/homebrew/bin/ffmpeg -y \
+ffmpeg -y \
   -i "test-results/{dir}/video.webm" \
   -vf "fps=8,scale=960:-1:flags=lanczos,split[s0][s1];[s0]palettegen=max_colors=128[p];[s1][p]paletteuse=dither=bayer" \
   -loop 0 \
@@ -241,12 +241,8 @@ Print the PR URL and a summary of what was done.
 
 ## Notes
 
-- If ffmpeg is not at `/opt/homebrew/bin/ffmpeg`, try `which ffmpeg` to find it
+- If `ffmpeg` is not on `PATH`, locate it with `which ffmpeg` (e.g. `/opt/homebrew/bin/ffmpeg` on macOS)
 - Skipped tests produce no video — omit them from the table
 - If a GIF exceeds 10 MB, reduce fps to 5 or scale to 720px
-- `e2e/recordings/` is in `.gitignore` — GIFs must NEVER be committed to git
-- **NEVER upload GIFs as GitHub release assets** — use Chrome DevTools file upload instead
 - The user must be logged into GitHub in Chrome for this workflow to work
 - GitHub CDN URLs (`user-attachments/assets/`) render correctly in markdown and persist indefinitely
-- When updating the PR body, always preserve existing content and append the GIF table
-- **NEVER add GIF table as a PR comment** — always edit the PR body (본문) directly

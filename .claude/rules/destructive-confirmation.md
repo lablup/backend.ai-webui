@@ -6,15 +6,7 @@ For **irreversible destructive actions** (permanent deletion, purge, force termi
 
 Anchored confirm popovers and one-click confirmation dialogs are appropriate for **reversible or low-impact** actions (inactivating, hiding, unassigning, canceling a draft). For actions the user cannot undo, a single misclick has permanent consequences. Requiring the user to type a specific string (typically the resource's name) forces a deliberate pause and prevents accidental destruction.
 
-This convention was applied project-wide in FR-2479 ("standardize confirmation UX"), which replaced the legacy `PopConfirmWithInput.tsx` with a shared typed-confirmation modal.
-
-> **History — the component names moved, the contract did not.** FR-2479's
-> component was `BAIConfirmModalWithInput`; the shipped successor is
-> `BAIDeleteConfirmModal` with `requireConfirmInput`. antd was then removed
-> from the project entirely, so antd's `Popconfirm` — the reversible-tier
-> component this rule used to name — is gone too; the anchored confirm is now
-> `BAIPopconfirm` (Astryx `Popover` + a `Button` pair). Both tiers, and
-> the boundary between them, are unchanged.
+The shared components for both tiers are listed below; older specs and tests in the tree still name their predecessors (`PopConfirmWithInput`, `BAIConfirmModalWithInput`, antd `Popconfirm`), which are not to be reintroduced.
 
 ## The components
 

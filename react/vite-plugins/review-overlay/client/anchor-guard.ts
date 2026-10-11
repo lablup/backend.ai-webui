@@ -4,13 +4,12 @@
  * `querySelector` and `location.assign`.
  */
 import { isSafePath } from './codec.js';
-import { hasValidStopFields } from './stop-guard.js';
+import { hasValidStopFields, TXT_MAX } from './stop-guard.js';
 import type { AnchorV3 } from './types.js';
 
 /** Every string is bounded: the payload comes off a public PR comment. */
 export const SELECTOR_MAX = 1024;
 const NAME_MAX = 256;
-const TXT_MAX = 64;
 /**
  * The note the anchor carries. 280 chars of adversarial CJK on top of a
  * SELECTOR_MAX selector deflates to 1359 of `PIN_BODY_SRC`'s 2048 base64

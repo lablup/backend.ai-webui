@@ -65,7 +65,7 @@
  rail's own box.
 */
 import './BAISider.css';
-import { SideNav } from '@astryxdesign/core/SideNav';
+import { SideNav } from '@lablup/ui-common/SideNav';
 import classNames from 'classnames';
 import React from 'react';
 

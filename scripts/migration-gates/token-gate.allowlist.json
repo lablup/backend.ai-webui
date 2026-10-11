@@ -1,10 +1,10 @@
 {
   "$comment": "Allowlist for scripts/migration-gates/astryx-token-gate.mjs (P19). ONLY for custom properties whose undeclared-with-fallback shape is a DOCUMENTED design (override hooks whose fallback IS the default). Never allowlist a name to silence a typo — fix the name instead. Each entry needs a reason.",
-  "prefixes": [
+  "prefixes": [],
+  "names": [
     {
-      "prefix": "--bai-form-item-",
-      "reason": "BAIFormItem per-surface override hooks (react/src/components/BAIFormItem.tsx V map): intentionally declared nowhere; the var() fallback chain (hook -> Astryx token -> antd-parity literal) is the documented default resolution order."
+      "name": "--modal-z",
+      "reason": "ui-common's modal level stack (useModalLevel in @lablup/ui-common/Modal) writes it inline on each open portal root when it claims a level; BAIDrawerPortal.css reads it with the ladder's modal base as the fallback for a root that has not claimed one yet."
     }
-  ],
-  "names": []
+  ]
 }

@@ -44,9 +44,9 @@ import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import BAIFormItem from './BAIFormItem';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { HStack } from '@astryxdesign/core/Stack';
-import { Heading, Text } from '@astryxdesign/core/Text';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { HStack } from '@lablup/ui-common/Stack';
+import { Heading, Text } from '@lablup/ui-common/Text';
 import { BAILink, toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
 import { PencilIcon } from 'lucide-react';
 import React, { useState } from 'react';
@@ -159,7 +159,10 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
             // The router link stays BUI's `BAILink` (react-router `to`), which
             // is what the V1 component already used; Astryx's `Link as=` slot
             // is href-first and cannot take a react-router `To` object.
-            <BAILink type="hover" to={generateFolderPath(toLocalId(vfolder?.id))}>
+            <BAILink
+              type="hover"
+              to={generateFolderPath(toLocalId(vfolder?.id))}
+            >
               {nameNode}
             </BAILink>
           ) : (

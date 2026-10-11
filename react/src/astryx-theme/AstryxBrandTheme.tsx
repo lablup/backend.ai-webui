@@ -17,7 +17,7 @@
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
 import { resolveRoleTheme } from './resolveRoleTheme';
-import { Theme as AstryxTheme } from '@astryxdesign/core/theme';
+import { Theme as AstryxTheme } from '@lablup/ui-common/theme';
 import React from 'react';
 
 export interface AstryxBrandThemeProps {
@@ -34,9 +34,13 @@ const AstryxBrandTheme: React.FC<AstryxBrandThemeProps> = ({
   children,
 }) => {
   'use memo';
-  const { themeConfig, activeThemeFamily } = useCustomThemeConfig();
+  const { rawThemeConfig, activeThemeFamily } = useCustomThemeConfig();
   const { isDarkMode } = useThemeMode();
-  const theme = resolveRoleTheme(themeConfig, 'brand', activeThemeFamily);
+  const theme = resolveRoleTheme(
+    rawThemeConfig?.theme,
+    'brand',
+    activeThemeFamily,
+  );
   return (
     <AstryxTheme theme={theme} mode={mode ?? (isDarkMode ? 'dark' : 'light')}>
       {children}

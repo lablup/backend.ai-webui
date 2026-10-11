@@ -6,17 +6,16 @@ import { ChatCardQuery } from '../../__generated__/ChatCardQuery.graphql';
 import { App } from '../../app-shim';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
 import { useAIAgent } from '../../hooks/useAIAgent';
-import { theme } from '../../theme-shim';
 import PureChatHeader from './ChatHeader';
 import PureChatInput from './ChatInput';
 import ChatMessages from './ChatMessages';
 import {
-  getAIErrorMessage,
-  ChatProviderData,
   ChatData,
-  ChatModel,
-  getLatestUserMessage,
   ChatMessage,
+  ChatModel,
+  ChatProviderData,
+  getAIErrorMessage,
+  getLatestUserMessage,
   isCustomEndpointProvider,
 } from './ChatModel';
 import CustomEndpointForm from './CustomEndpointForm';
@@ -28,11 +27,12 @@ import {
 import { fetchOpenAIModels } from './openAIModels';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { useChat } from '@ai-sdk/react';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Card } from '@astryxdesign/core/Card';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Card } from '@lablup/ui-common/Card';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  convertToModelMessages,
   DefaultChatTransport,
+  convertToModelMessages,
   extractReasoningMiddleware,
   streamText,
   wrapLanguageModel,
@@ -246,7 +246,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   // provider and the `deploymentId` URL param do.
   const deploymentId = deployment?.id ? toLocalId(deployment.id) : undefined;
 
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const [isPendingUpdate, startUpdateTransition] = useTransition();
 
@@ -490,10 +490,10 @@ const PureChatCard: React.FC<ChatCardProps> = ({
         align="stretch"
         style={{
           zIndex: 1,
-          paddingInline: token.paddingContentHorizontal,
-          paddingRight: token.paddingXS,
-          paddingBlock: token.paddingXS,
-          borderBottom: `1px solid ${token.colorBorderSecondary}`,
+          paddingInline: token('--spacing-4'),
+          paddingRight: token('--spacing-2'),
+          paddingBlock: token('--spacing-2'),
+          borderBottom: `1px solid ${token('--color-border')}`,
         }}
       >
         <ChatHeader
@@ -572,7 +572,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
         direction="column"
         align="stretch"
         style={{
-          backgroundColor: token.colorFillQuaternary,
+          backgroundColor: token('--color-fill-quaternary'),
           flex: 1,
           padding: 0,
           // `minHeight: 0` (not the old `height: '50%'`): this column owns the
@@ -647,8 +647,8 @@ const PureChatCard: React.FC<ChatCardProps> = ({
             title={error?.message ?? ''}
             status="error"
             style={{
-              marginBlock: token.paddingContentVertical,
-              marginInline: token.paddingContentHorizontal,
+              marginBlock: token('--spacing-3'),
+              marginInline: token('--spacing-4'),
             }}
           />
         ) : null}
@@ -657,8 +657,8 @@ const PureChatCard: React.FC<ChatCardProps> = ({
             title={t('error.InvalidBaseURL')}
             status="error"
             style={{
-              marginBlock: token.paddingContentVertical,
-              marginInline: token.paddingContentHorizontal,
+              marginBlock: token('--spacing-3'),
+              marginInline: token('--spacing-4'),
             }}
           />
         ) : null}

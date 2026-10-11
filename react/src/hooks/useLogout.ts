@@ -4,6 +4,7 @@
  */
 import { useWebUINavigate } from '.';
 import { backendaiOptions, backendaiUtils } from '../global-stores';
+import { exitActAs, getActAsTarget } from '../helper/actAs';
 import React, { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -140,6 +141,11 @@ export function useLogout() {
    * 2. Redirect (Electron -> electronInitialHref, Web -> navigate + reload)
    */
   const logout = async (performClose = false, callbackURL = '/') => {
+    // The login cookie is shared with the super admin's other tabs; only leave act-as.
+    if (getActAsTarget()) {
+      exitActAs();
+      return;
+    }
     const didCleanup = await performLogoutCleanup(t('webui.CleanUpNow'));
 
     if (didCleanup) {

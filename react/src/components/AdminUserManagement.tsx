@@ -11,20 +11,22 @@ import {
 import { AdminUserManagementUpdateUserMutation } from '../__generated__/AdminUserManagementUpdateUserMutation.graphql';
 import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
+import { openActAsTab } from '../helper/actAs';
 import { buildUserCSVExportFilter } from '../helper/userCSVExportFilter';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
-import { theme } from '../theme-shim';
+import { useUnblockUserLogin } from '../hooks/useUnblockUserLogin';
 import BAIRadioGroup from './BAIRadioGroup';
 import BulkCreateUserFromCSVModal from './BulkCreateUserFromCSVModal';
 import PurgeUsersModal from './PurgeUsersModal';
 import UpdateUsersModal from './UpdateUsersModal';
 import UserInfoModal from './UserInfoModal';
 import UserSettingModal from './UserSettingModal';
-import { Button } from '@astryxdesign/core/Button';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
+import { Button } from '@lablup/ui-common/Button';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAdminUserV2Table,
   BAIButton,
@@ -44,15 +46,17 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
-  Trash2,
+  BanIcon,
   Ellipsis,
   Info,
-  BanIcon,
+  LockOpen,
   PlusIcon,
   SquarePenIcon,
+  Trash2,
   UndoIcon,
+  UserRoundCheckIcon,
 } from 'lucide-react';
-import React, { useState, useDeferredValue } from 'react';
+import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -116,10 +120,10 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
 
   const { logger } = useBAILogger();
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const bailClient = useSuspendedBackendaiClient();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
 
   const [selectedUserForInfoModal, setSelectedUserForInfoModal] = useState<
     UserNode['node'] | null
@@ -158,6 +162,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   );
 
   const { supportedFields, exportCSV } = useCSVExport('users');
+  const unblockUserLogin = useUnblockUserLogin();
 
   const { adminUsersV2 } = usePreloadedQuery<AdminUserManagementQueryType>(
     AdminUserManagementQuery,
@@ -190,9 +195,29 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   const findUserNode = (id: string) =>
     adminUsersV2?.edges?.find((edge) => edge?.node?.id === id)?.node ?? null;
 
+  const canActAs =
+    bailClient.isManagerVersionCompatibleWith('26.9.0') &&
+    bailClient.is_superadmin &&
+    !globalThis.isElectron;
+
+  const confirmActAs = (userId: string, email: string, name: string) => {
+    modal.confirm({
+      title: t('actAs.ConfirmTitle', { name: name || email }),
+      content: t('actAs.ConfirmDescription', { email }),
+      okText: t('actAs.OpenInNewTab'),
+      cancelText: t('button.Cancel'),
+      onOk: () => {
+        if (!openActAsTab({ userId, email, name })) {
+          message.error(t('actAs.FailedToOpen'));
+        }
+      },
+    });
+  };
+
   const renderEmailWithActions = (__: unknown, record: UserV2InList) => {
     const email = record.basicInfo?.email ?? '';
     const isActive = record.status?.status === 'ACTIVE';
+    const userId = toLocalId(record.id);
     return (
       <BAINameActionCell
         title={email}
@@ -270,6 +295,39 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
               },
             },
           },
+          canActAs &&
+            isActive &&
+            userId !== bailClient.user_uuid && {
+              key: 'act-as',
+              title: t('actAs.UseAsThisUser'),
+              icon: <UserRoundCheckIcon />,
+              showInMenu: 'always' as const,
+              onClick: () =>
+                confirmActAs(
+                  userId,
+                  email,
+                  record.basicInfo?.fullName ||
+                    record.basicInfo?.username ||
+                    '',
+                ),
+            },
+          {
+            key: 'unblock-login',
+            title: t('credential.UnblockLogin'),
+            icon: <LockOpen />,
+            showInMenu: 'always' as const,
+            popConfirm: {
+              title: t('credential.UnblockLoginConfirm'),
+              description: email,
+              okText: t('credential.UnblockLogin'),
+              cancelText: t('button.Cancel'),
+              onConfirm: () =>
+                unblockUserLogin({
+                  email,
+                  username: record.basicInfo?.username,
+                }),
+            },
+          },
           !isActive && {
             key: 'purge',
             title: t('credential.PermanentlyDelete'),
@@ -294,9 +352,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
     validate: (value: string) => /^-?\d+$/.test(String(value).trim()),
   };
 
-  // Filters only supported by the v2 user search API from 26.4.4 (backend
-  // BA-6247 / BA-6249). Included only when the connected manager advertises
-  // the capability, so the UI never offers filters it cannot evaluate.
+  // Filters the v2 user search API evaluates (BA-6247 / BA-6249).
   const extendedFilterProperties: Array<BAIGraphQLFilterProperty> = [
     {
       key: 'fullName',
@@ -428,9 +484,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
         },
       ],
     },
-    ...(bailClient.supports('user-v2-extended-filter')
-      ? extendedFilterProperties
-      : []),
+    ...extendedFilterProperties,
   ]);
 
   return (
@@ -493,13 +547,18 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
                 onClearSelection={() => setSelectedUserList([])}
               />
               <BAIButton
-                icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
+                icon={
+                  <SquarePenIcon style={{ color: token('--color-info') }} />
+                }
                 onClick={toggleUpdateUsersModal}
               />
               {statusValue === 'INACTIVE' && (
                 <BAIButton
                   icon={
-                    <Trash2 style={{ color: token.colorError }} size="1em" />
+                    <Trash2
+                      style={{ color: token('--color-error') }}
+                      size="1em"
+                    />
                   }
                   onClick={togglePurgeUsersModal}
                 />
@@ -542,33 +601,31 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
                 setOpenCreateModal(true);
               }}
             />
-            {bailClient.supports('bulk-create-user') && (
-              <DropdownMenu
-                button={{
-                  label: t('button.More'),
-                  variant: 'primary',
-                  isIconOnly: true,
-                  icon: <Ellipsis size="1em" />,
-                }}
-                hasChevron={false}
-                placement="below"
-                alignment="end"
-                items={[
-                  {
-                    label: t('credential.BulkCreateUser'),
-                    onClick: () => {
-                      setOpenBulkCreateModal(true);
-                    },
+            <DropdownMenu
+              button={{
+                label: t('button.More'),
+                variant: 'primary',
+                isIconOnly: true,
+                icon: <Ellipsis size="1em" />,
+              }}
+              hasChevron={false}
+              placement="below"
+              alignment="end"
+              items={[
+                {
+                  label: t('credential.BulkCreateUser'),
+                  onClick: () => {
+                    setOpenBulkCreateModal(true);
                   },
-                  {
-                    label: t('credential.BulkCreateUserFromCSV'),
-                    onClick: () => {
-                      setOpenBulkCreateCSVModal(true);
-                    },
+                },
+                {
+                  label: t('credential.BulkCreateUserFromCSV'),
+                  onClick: () => {
+                    setOpenBulkCreateCSVModal(true);
                   },
-                ]}
-              />
-            )}
+                },
+              ]}
+            />
           </ButtonGroup>
         </BAIFlex>
       </BAIFlex>

@@ -64,26 +64,6 @@ export const normalizeLegacyMountFields = <T extends object>(
   };
 };
 
-/** The launcher's "launch on behalf of" owner block, as the form stores it. */
-interface SessionOwner {
-  enabled?: boolean;
-  email?: string;
-  [key: string]: unknown;
-}
-
-/**
- * The owner whose folders the launcher should list, or `undefined` for the
- * caller's own: a half-filled owner block means the user is still choosing.
- */
-export const ownerEmailFromOwner = (
-  owner: SessionOwner | undefined,
-): string | undefined => {
-  const isComplete =
-    owner?.enabled &&
-    _.every(_.omit(owner, 'enabled'), (field) => field !== undefined);
-  return isComplete ? owner?.email : undefined;
-};
-
 /** A dotfile folder is what a session mounts without being asked. */
 export const isAutoMountFolderName = (name: string) => name.startsWith('.');
 

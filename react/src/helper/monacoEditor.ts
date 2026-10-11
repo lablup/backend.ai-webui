@@ -17,7 +17,7 @@
 //
 // The absolute `/resources/monaco/vs` path relies on the app being served
 // from the origin root in both web and Electron builds. In Electron the
-// document is `es6://app/index.html` (ADR 0010), and `resolveAppFile` in
+// document is `es6://app/index.html` (ADR 0011), and `resolveAppFile` in
 // `electron-app/main.js` maps `/resources/…` to the packaged resources — if
 // that mapping changes, Monaco loading breaks here. Sub-path web deployments would need this path
 // rewritten relative to the deploy base URL.

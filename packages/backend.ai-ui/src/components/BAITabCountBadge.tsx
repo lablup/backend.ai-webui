@@ -8,8 +8,8 @@
  (see `BAITabCountBadge.css` for why no `Badge.variant` can express that).
 */
 import './BAITabCountBadge.css';
-import { Badge } from '@astryxdesign/core/Badge';
-import type { BadgeProps } from '@astryxdesign/core/Badge';
+import { Badge } from '@lablup/ui-common/Badge';
+import type { BadgeProps } from '@lablup/ui-common/Badge';
 import React from 'react';
 
 export interface BAITabCountBadgeProps extends Omit<

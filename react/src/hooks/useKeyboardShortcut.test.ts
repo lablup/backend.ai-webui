@@ -1,14 +1,11 @@
 import useKeyboardShortcut from './useKeyboardShortcut';
+import { MODAL_OPEN_ATTRIBUTE } from '@lablup/ui-common/Modal';
 import { renderHook } from '@testing-library/react';
-import { BAI_MODAL_OPEN_ATTRIBUTE } from 'backend.ai-ui';
 import type { Mock } from 'vitest';
 
 // Factory mock keeps the whole component library out of this hook's test graph.
-// It has to restate `BAI_MODAL_OPEN_ATTRIBUTE`, so this suite cannot catch a
-// rename of the real constant — the gate on the DOM contract is
-// `BAIDialog.test.tsx`, which asserts the attribute the component emits.
+// The open-modal attribute is ui-common's real constant, imported above.
 vi.mock('backend.ai-ui', () => ({
-  BAI_MODAL_OPEN_ATTRIBUTE: 'data-bai-modal-open',
   useEventListener: vi.fn((event, handler) => {
     // Store handler for testing
     (global as any).__eventListeners = (global as any).__eventListeners || {};
@@ -126,11 +123,11 @@ describe('useKeyboardShortcut', () => {
   });
 
   describe('Modal detection', () => {
-    // Both roots the selector covers: a portal root (BAIDialog, the
+    // Both roots the selector covers: a portal root (ui-common Modal, the
     // BAIModal launcher, and since FR-3585 the scrimmed drawer), and a native
     // `<dialog>` that is actually modal (`aria-modal`).
     it.each([
-      ['a portal modal', 'div', { [BAI_MODAL_OPEN_ATTRIBUTE]: '' }],
+      ['a portal modal', 'div', { [MODAL_OPEN_ATTRIBUTE]: '' }],
       ['a modal native dialog', 'dialog', { open: '', 'aria-modal': 'true' }],
     ] as const)(
       'should not trigger handler when %s is open',
@@ -296,7 +293,7 @@ describe('useKeyboardShortcut', () => {
       document.body.appendChild(input);
       input.focus();
 
-      appendOpenModalRoot('div', { [BAI_MODAL_OPEN_ATTRIBUTE]: '' });
+      appendOpenModalRoot('div', { [MODAL_OPEN_ATTRIBUTE]: '' });
 
       renderHook(() => useKeyboardShortcut(mockHandler));
       triggerKeydown({ key: 'a' });

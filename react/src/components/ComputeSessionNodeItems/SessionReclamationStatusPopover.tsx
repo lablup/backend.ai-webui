@@ -6,10 +6,10 @@ import { SessionReclamationStatusPopoverFragment$key } from '../../__generated__
 import { toFixedFloorWithoutTrailingZeros } from '../../helper';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
 import type { IdleChecks } from './SessionIdleChecks';
-import { Divider } from '@astryxdesign/core/Divider';
-import { HoverCard } from '@astryxdesign/core/HoverCard';
-import { StatusDot } from '@astryxdesign/core/StatusDot';
-import { Text } from '@astryxdesign/core/Text';
+import { Divider } from '@lablup/ui-common/Divider';
+import { HoverCard } from '@lablup/ui-common/HoverCard';
+import { StatusDot } from '@lablup/ui-common/StatusDot';
+import { Text } from '@lablup/ui-common/Text';
 import { useMemoizedJSONParse, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Info } from 'lucide-react';

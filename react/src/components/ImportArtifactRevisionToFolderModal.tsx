@@ -7,11 +7,11 @@ import { ImportArtifactRevisionToFolderModalModelStoreProjectsFragment$key } fro
 import { ImportArtifactRevisionToFolderModalMutation } from '../__generated__/ImportArtifactRevisionToFolderModalMutation.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
-import { theme } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIButton,
   BAIFlex,
@@ -31,7 +31,7 @@ import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useMutation, useFragment } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 export interface ImportArtifactRevisionToFolderModalProps extends Omit<
   BAIModalProps,
@@ -74,7 +74,7 @@ const ImportArtifactRevisionToFolderModal = ({
 }: ImportArtifactRevisionToFolderModalProps) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
 
   const formRef =
@@ -268,7 +268,7 @@ const ImportArtifactRevisionToFolderModal = ({
             <Banner
               status="warning"
               title={t('importArtifactRevisionToFolderModal.OverwriteWarning')}
-              style={{ marginBottom: token.marginMD }}
+              style={{ marginBottom: token('--spacing-5') }}
             />
             {/* The destination project is chosen here, in the modal — the
                 admin surface below must never mutate the global selection. */}

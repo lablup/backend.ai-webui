@@ -17,8 +17,8 @@ import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from './DeploymentSettingModal';
-import { Link } from '@astryxdesign/core/Link';
-import { Text } from '@astryxdesign/core/Text';
+import { Link } from '@lablup/ui-common/Link';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIAdminProjectSelect,
   BAIDeleteConfirmModal,
@@ -30,6 +30,8 @@ import {
   BAINameActionCell,
   type BAITableSettings,
   BAIUnmountAfterClose,
+  BAIUserSelect,
+  availableDeploymentSorterKeys,
   DeploymentOrderValue,
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -50,7 +52,7 @@ import {
   UseQueryLoaderLoadQueryOptions,
 } from 'react-relay';
 
-type DeploymentStatusCategory = 'running' | 'finished';
+export type DeploymentStatusCategory = 'running' | 'finished';
 
 export const AdminDeploymentQuery = graphql`
   query AdminDeploymentQuery(
@@ -75,7 +77,7 @@ export const AdminDeploymentQuery = graphql`
             name
             status
           }
-          currentRevision @since(version: "26.4.3") {
+          currentRevision {
             id
             revisionNumber
             ...DeploymentRevisionDetail_revision
@@ -96,12 +98,27 @@ export interface AdminDeploymentProps {
 }
 
 const finishedStatuses: ReadonlyArray<DeploymentStatus> = ['STOPPED'];
-const statusCategoryFilterFor = (
+
+/** The hard-coded status scope behind the Running / Terminated toggle. */
+export const statusCategoryFilterFor = (
   category: DeploymentStatusCategory,
 ): DeploymentFilter =>
   category === 'finished'
     ? { status: { in: finishedStatuses } }
     : { status: { notIn: finishedStatuses } };
+
+/**
+ * `order` is `[-]<camelCaseKey>`; a key the table cannot sort by is dropped.
+ * Shared with `AdminDeploymentPage`, which sanitizes URL-supplied `order`
+ * before the tab's first query runs.
+ */
+export const sanitizeDeploymentOrder = (
+  order: string | null | undefined,
+): string | null => {
+  if (!order) return null;
+  const key = order.startsWith('-') ? order.slice(1) : order;
+  return _.includes(availableDeploymentSorterKeys, key) ? order : null;
+};
 
 const AdminDeployment = ({
   queryRef,
@@ -123,9 +140,8 @@ const AdminDeployment = ({
   >(null);
   const [drawerRevisionId, setDrawerRevisionId] = useState<string | null>(null);
 
-  const supportsExtendedFilter = baiClient.supports(
-    'model-deployment-extended-filter',
-  );
+  const supportsReplicaNestedFilter =
+    baiClient.isManagerVersionCompatibleWith('26.8.0');
 
   const mergedFilter = queryRef.variables.filter as
     DeploymentFilter | undefined;
@@ -203,17 +219,17 @@ const AdminDeployment = ({
       propertyLabel: t('deployment.filter.OpenToPublic'),
       type: 'boolean',
     },
-    supportsExtendedFilter && {
+    {
       key: 'domainName',
       propertyLabel: t('deployment.filter.DomainName'),
       type: 'string' as const,
     },
-    supportsExtendedFilter && {
+    {
       key: 'resourceGroup',
       propertyLabel: t('deployment.filter.ResourceGroup'),
       type: 'string' as const,
     },
-    supportsExtendedFilter && {
+    {
       key: 'projectId',
       propertyLabel: t('deployment.Project'),
       type: 'uuid' as const,
@@ -234,19 +250,83 @@ const AdminDeployment = ({
         />
       ),
     },
-    supportsExtendedFilter && {
+    {
       key: 'createdAt',
       propertyLabel: t('deployment.filter.CreatedAt'),
       type: 'datetime' as const,
       operators: ['after' as const, 'before' as const],
       defaultOperator: 'after' as const,
     },
-    supportsExtendedFilter && {
+    {
       key: 'destroyedAt',
       propertyLabel: t('deployment.filter.DestroyedAt'),
       type: 'datetime' as const,
       operators: ['after' as const, 'before' as const],
       defaultOperator: 'after' as const,
+    },
+    {
+      key: 'createdUserId',
+      propertyLabel: t('deployment.Owner'),
+      type: 'uuid' as const,
+      fixedOperator: 'equals' as const,
+      rule: uuidRule,
+      renderInput: ({ onAddCondition, value, isDisabled }) => (
+        <BAIUserSelect
+          valuePropName="id"
+          label={t('deployment.Owner')}
+          isLabelHidden
+          value={value}
+          isDisabled={isDisabled}
+          onChange={(next, option) =>
+            // The picker emits the user UUID; forward the option label
+            // (email) so the condition tag stays readable.
+            onAddCondition(
+              next as string | undefined,
+              Array.isArray(option) ? option[0]?.label : option?.label,
+            )
+          }
+        />
+      ),
+    },
+    // `replicas.some.X` nests as ReplicaNestedFilter -> ReplicaFilter -> the
+    // per-field filter, which is what `buildNestedFilter` emits from the key.
+    supportsReplicaNestedFilter && {
+      key: 'replicas.some.status',
+      propertyLabel: t('deployment.filter.ReplicaStatus'),
+      type: 'enum' as const,
+      fixedOperator: 'equals' as const,
+      strictSelection: true,
+      options: [
+        { label: t('replicaStatus.Provisioning'), value: 'PROVISIONING' },
+        { label: t('replicaStatus.Running'), value: 'RUNNING' },
+        { label: t('replicaStatus.Terminating'), value: 'TERMINATING' },
+        { label: t('replicaStatus.Terminated'), value: 'TERMINATED' },
+        { label: t('replicaStatus.FailedToStart'), value: 'FAILED_TO_START' },
+      ],
+    },
+    supportsReplicaNestedFilter && {
+      key: 'replicas.some.healthStatus',
+      propertyLabel: t('deployment.filter.ReplicaHealthStatus'),
+      type: 'enum' as const,
+      fixedOperator: 'equals' as const,
+      strictSelection: true,
+      options: [
+        { label: t('replicaStatus.NotChecked'), value: 'NOT_CHECKED' },
+        { label: t('replicaStatus.Healthy'), value: 'HEALTHY' },
+        { label: t('replicaStatus.Unhealthy'), value: 'UNHEALTHY' },
+        { label: t('replicaStatus.Degraded'), value: 'DEGRADED' },
+      ],
+    },
+    supportsReplicaNestedFilter && {
+      key: 'replicas.some.trafficStatus',
+      propertyLabel: t('deployment.filter.ReplicaTrafficStatus'),
+      type: 'enum' as const,
+      fixedOperator: 'equals' as const,
+      strictSelection: true,
+      options: [
+        { label: t('replicaStatus.Active'), value: 'ACTIVE' },
+        { label: t('replicaStatus.Inactive'), value: 'INACTIVE' },
+      ],
     },
   ]);
 

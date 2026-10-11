@@ -24,7 +24,7 @@
    exactly antd's key-based replace behaviour).
 */
 import { getDefaultMessageDurationS, withBridge } from './bridge';
-import { HStack } from '@astryxdesign/core/Stack';
+import { HStack } from '@lablup/ui-common/Stack';
 import { CheckIcon, TriangleAlertIcon } from 'lucide-react';
 import { isValidElement, type ReactNode } from 'react';
 

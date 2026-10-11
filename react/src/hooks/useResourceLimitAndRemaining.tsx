@@ -78,6 +78,7 @@ export type RemainingSlots = {
 };
 
 export type ResourcePreset = {
+  id: string;
   name: string;
   resource_slots: ResourceSlots;
   shared_memory: string | null;
@@ -136,7 +137,7 @@ export const useResourceLimitAndRemaining = ({
     graphql`
       fragment useResourceLimitAndRemainingFragment on ScalingGroup {
         name
-        resource_allocation_limit_for_sessions @since(version: "25.6.0")
+        resource_allocation_limit_for_sessions
       }
     `,
     currentResourceGroupFrgmt,

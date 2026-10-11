@@ -479,8 +479,10 @@ test.describe(
         });
 
         await modifyThemeJson(page, request, {
-          logo: {
-            href: undefined,
+          branding: {
+            logo: {
+              href: undefined,
+            },
           },
         });
 
@@ -585,8 +587,10 @@ test.describe(
           },
         });
         await modifyThemeJson(page, request, {
-          logo: {
-            href: undefined,
+          branding: {
+            logo: {
+              href: undefined,
+            },
           },
         });
 
@@ -658,8 +662,10 @@ test.describe(
         });
 
         await modifyThemeJson(page, request, {
-          logo: {
-            href: undefined,
+          branding: {
+            logo: {
+              href: undefined,
+            },
           },
         });
 
@@ -728,8 +734,10 @@ test.describe(
           },
         });
         await modifyThemeJson(page, request, {
-          logo: {
-            href: undefined,
+          branding: {
+            logo: {
+              href: undefined,
+            },
           },
         });
 

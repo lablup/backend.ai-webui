@@ -5,7 +5,7 @@
 import {
   SegmentedControl,
   SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
+} from '@lablup/ui-common/SegmentedControl';
 import React from 'react';
 
 /**

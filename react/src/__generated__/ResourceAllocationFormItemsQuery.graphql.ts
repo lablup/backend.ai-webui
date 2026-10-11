@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ed1ee9a424d4d55944c358a919acf02d>>
+ * @generated SignedSource<<d51b288a546556df57b14492ac734499>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,6 +19,11 @@ export type ResourceAllocationFormItemsQuery$data = {
     readonly is_active: boolean | null | undefined;
     readonly name: string | null | undefined;
     readonly " $fragmentSpreads": FragmentRefs<"useResourceLimitAndRemainingFragment">;
+  } | null | undefined> | null | undefined;
+  readonly resource_presets: ReadonlyArray<{
+    readonly id: string | null | undefined;
+    readonly name: string | null | undefined;
+    readonly scaling_group_name: string | null | undefined;
   } | null | undefined> | null | undefined;
 };
 export type ResourceAllocationFormItemsQuery = {
@@ -61,6 +66,32 @@ v4 = {
   "kind": "ScalarField",
   "name": "is_active",
   "storageKey": null
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "ResourcePreset",
+  "kind": "LinkedField",
+  "name": "resource_presets",
+  "plural": true,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "id",
+      "storageKey": null
+    },
+    (v3/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "scaling_group_name",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -87,7 +118,8 @@ return {
           }
         ],
         "storageKey": null
-      }
+      },
+      (v5/*: any*/)
     ],
     "type": "Query",
     "abstractKey": null
@@ -118,20 +150,21 @@ return {
           }
         ],
         "storageKey": null
-      }
+      },
+      (v5/*: any*/)
     ]
   },
   "params": {
-    "cacheID": "154414ad4ffcb223a54520460a2f0e09",
+    "cacheID": "3d9e15dc3855f4e31863da38f800decf",
     "id": null,
     "metadata": {},
     "name": "ResourceAllocationFormItemsQuery",
     "operationKind": "query",
-    "text": "query ResourceAllocationFormItemsQuery(\n  $projectID: UUID!\n) {\n  accessible_scaling_groups(project_id: $projectID) {\n    accelerator_quantum_size\n    name\n    is_active\n    ...useResourceLimitAndRemainingFragment\n  }\n}\n\nfragment useResourceLimitAndRemainingFragment on ScalingGroup {\n  name\n  resource_allocation_limit_for_sessions @since(version: \"25.6.0\")\n}\n"
+    "text": "query ResourceAllocationFormItemsQuery(\n  $projectID: UUID!\n) {\n  accessible_scaling_groups(project_id: $projectID) {\n    accelerator_quantum_size\n    name\n    is_active\n    ...useResourceLimitAndRemainingFragment\n  }\n  resource_presets {\n    id\n    name\n    scaling_group_name\n  }\n}\n\nfragment useResourceLimitAndRemainingFragment on ScalingGroup {\n  name\n  resource_allocation_limit_for_sessions\n}\n"
   }
 };
 })();
 
-(node as any).hash = "582b82538b5beb7c08f2e448439f7b57";
+(node as any).hash = "d8461d367b6a656ca490e54cc5223c32";
 
 export default node;

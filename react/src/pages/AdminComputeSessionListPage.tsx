@@ -20,18 +20,18 @@ import { handleRowSelectionChange } from '../helper';
 import { liftProjectPredicate } from '../helper/adminSessionProjectLift';
 import { ExtractResultValue } from '../helper/resultTypes';
 import { buildSessionExportFilter } from '../helper/sessionExportFilter';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
-import { Banner } from '@astryxdesign/core/Banner';
-import { IconButton } from '@astryxdesign/core/IconButton';
+import { Banner } from '@lablup/ui-common/Banner';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import {
   SegmentedControl,
   SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+} from '@lablup/ui-common/SegmentedControl';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIAdminProjectSelect,
   BAIFlex,
@@ -89,7 +89,6 @@ const AdminComputeSessionListPage = () => {
   'use memo';
 
   const userRole = useCurrentUserRole();
-  const baiClient = useSuspendedBackendaiClient();
 
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -677,11 +676,7 @@ const AdminComputeSessionListPage = () => {
                       // superset of the table and never a subset (FR-3915).
                       _.assign(
                         csvFilter,
-                        buildSessionExportFilter(queryParams.filter, {
-                          supportsUserFilter: baiClient.supports(
-                            'session-export-user-filter',
-                          ),
-                        }),
+                        buildSessionExportFilter(queryParams.filter),
                       );
                       await exportCSV(selectedExportKeys, csvFilter).catch(
                         (err) => {

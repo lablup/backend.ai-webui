@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e1c4cbdd3ec56f734a06e174ee89ae98>>
+ * @generated SignedSource<<0546b075c2330ee9ee881b99d684202f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -360,7 +360,13 @@ v2 = [
           },
           {
             "alias": null,
-            "args": null,
+            "args": [
+              {
+                "kind": "Literal",
+                "name": "limit",
+                "value": 1000
+              }
+            ],
             "concreteType": "ProjectV2Connection",
             "kind": "LinkedField",
             "name": "projects",
@@ -415,7 +421,7 @@ v2 = [
                 "storageKey": null
               }
             ],
-            "storageKey": null
+            "storageKey": "projects(limit:1000)"
           }
         ],
         "storageKey": null
@@ -467,16 +473,16 @@ return {
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "f3df911edf22339372cadf3f5e90f595",
+    "cacheID": "fe20f51246df032d922c376f948fea06",
     "id": null,
     "metadata": {},
     "name": "UpdateUsersModalBulkUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation UpdateUsersModalBulkUpdateMutation(\n  $input: BulkUpdateUserV2Input!\n  $isNotSupportTotp: Boolean!\n) {\n  adminBulkUpdateUsersV2(input: $input) {\n    updatedUsers {\n      id\n      basicInfo {\n        email\n        fullName\n        username\n        description\n        integrationName\n      }\n      organization {\n        domainName\n        role\n        resourcePolicy\n        mainAccessKey\n      }\n      security {\n        totpActivated @skipOnClient(if: $isNotSupportTotp)\n        totpActivatedAt @skipOnClient(if: $isNotSupportTotp)\n        sudoSessionEnabled\n        allowedClientIp\n      }\n      status {\n        status\n        statusInfo\n        needPasswordChange\n      }\n      container {\n        containerUid\n        containerMainGid\n        containerGids\n      }\n      timestamps {\n        createdAt\n        modifiedAt\n      }\n      projects {\n        edges {\n          node {\n            id\n            basicInfo {\n              name\n              type\n            }\n          }\n        }\n      }\n    }\n    failed {\n      userId\n      message\n    }\n  }\n}\n"
+    "text": "mutation UpdateUsersModalBulkUpdateMutation(\n  $input: BulkUpdateUserV2Input!\n  $isNotSupportTotp: Boolean!\n) {\n  adminBulkUpdateUsersV2(input: $input) {\n    updatedUsers {\n      id\n      basicInfo {\n        email\n        fullName\n        username\n        description\n        integrationName\n      }\n      organization {\n        domainName\n        role\n        resourcePolicy\n        mainAccessKey\n      }\n      security {\n        totpActivated @skipOnClient(if: $isNotSupportTotp)\n        totpActivatedAt @skipOnClient(if: $isNotSupportTotp)\n        sudoSessionEnabled\n        allowedClientIp\n      }\n      status {\n        status\n        statusInfo\n        needPasswordChange\n      }\n      container {\n        containerUid\n        containerMainGid\n        containerGids\n      }\n      timestamps {\n        createdAt\n        modifiedAt\n      }\n      projects(limit: 1000) {\n        edges {\n          node {\n            id\n            basicInfo {\n              name\n              type\n            }\n          }\n        }\n      }\n    }\n    failed {\n      userId\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "2dd60710ca40abdfa0640a941ced81c6";
+(node as any).hash = "9ee118073ee75d76ad27429fed60786e";
 
 export default node;
