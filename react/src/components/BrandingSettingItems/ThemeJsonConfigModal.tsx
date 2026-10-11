@@ -6,7 +6,7 @@ import { App } from '../../app-shim';
 import { downloadBlob } from '../../helper/csv-util';
 import { pickValidAppearanceConfig } from '../../helper/customThemeConfig';
 import { loadMonacoEditor } from '../../helper/monacoEditor';
-import { useDefaultTheme } from '../../hooks/useDefaultTheme';
+import { usePreviewThemeConfig } from '../../hooks/usePreviewThemeConfig';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
@@ -44,11 +44,11 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
   const { token } = useTheme();
   const { message } = App.useApp();
   const { isDarkMode } = useThemeMode();
-  const { defaultTheme, setDefaultTheme } = useDefaultTheme();
+  const { themeConfig, setPreviewThemeConfig } = usePreviewThemeConfig();
   const { logger } = useBAILogger();
 
   const [editorValue, setEditorValue] = useState(
-    JSON.stringify(defaultTheme ?? {}, null, 2) ?? '',
+    JSON.stringify(themeConfig ?? {}, null, 2) ?? '',
   );
   const monacoRef = useRef<Monaco | null>(null);
   const jsonFileInputRef = useRef<HTMLInputElement>(null);
@@ -121,12 +121,12 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
               clickAction={async () => {
                 const markers =
                   await monacoRef.current?.editor.getModelMarkers();
-                if (_.isEmpty(defaultTheme)) {
+                if (_.isEmpty(themeConfig)) {
                   message.error(t('userSettings.theme.NoChangesMade'));
                 } else if (markers && markers.length > 0) {
                   message.error(t('theme.CannotApplyInvalidJsonConfig'));
                 } else {
-                  // should export current value not the defaultTheme state
+                  // Export the editor value, not the stored document.
                   let parsedValue;
                   try {
                     parsedValue = JSON.parse(editorValue);
@@ -178,7 +178,7 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
                   message.error(t('theme.CannotApplyInvalidJsonConfig'));
                   return;
                 }
-                setDefaultTheme(validated);
+                setPreviewThemeConfig(validated);
                 message.success(t('theme.JsonConfigAppliedSuccessfully'));
                 onRequestClose();
               }}
