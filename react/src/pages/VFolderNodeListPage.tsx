@@ -19,6 +19,7 @@ import VFolderNodesV2, {
   VFolderNodeInList,
   availableVFolderSorterValues,
 } from '../components/VFolderNodesV2';
+import WebMCPVFolderListTools from '../components/WebMCPVFolderListTools';
 import { convertToOrderBy, handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
@@ -282,6 +283,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 id @required(action: THROW)
                 vfolderStatus: status
                 ...VFolderNodesV2Fragment
+                ...WebMCPVFolderListToolsFragment
                 ...DeleteVFolderModalV2Fragment
                 ...DeleteForeverVFolderModalV2Fragment
                 ...RestoreVFolderModalV2Fragment
@@ -312,6 +314,10 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
         fetchKey: deferredFetchKey,
       },
     );
+
+  const vfolderNodes = filterOutNullAndUndefined(
+    _.map(scopedVFoldersV2?.edges, 'node'),
+  );
 
   return (
     <VStack align="stretch" gap={5} {...props}>
@@ -498,6 +504,19 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               />
             </HStack>
           </HStack>
+          <WebMCPVFolderListTools
+            vfoldersFrgmt={vfolderNodes}
+            columnOverrides={columnOverrides}
+            page={tablePaginationOption.current}
+            pageSize={tablePaginationOption.pageSize}
+            total={scopedVFoldersV2?.count}
+            viewParams={{
+              ...queryParams,
+              filter: queryParams.filter
+                ? JSON.stringify(queryParams.filter)
+                : null,
+            }}
+          />
           {/* FR-4009: a query suspending inside the table (useCurrentUserProjectRoles
               refetches after a folder mutation) must not blank the whole page. */}
           <Suspense fallback={<BAISkeleton rows={4} />}>
@@ -506,9 +525,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               loading={deferredQueryVariables !== queryVariables}
               disableProjectFolderActions
               project={projectContext}
-              vfoldersFrgmt={filterOutNullAndUndefined(
-                _.map(scopedVFoldersV2?.edges, 'node'),
-              )}
+              vfoldersFrgmt={vfolderNodes}
               rowSelection={{
                 type: 'checkbox',
                 preserveSelectedRowKeys: true,
@@ -522,9 +539,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 onChange: (selectedRowKeys) => {
                   handleRowSelectionChange(
                     selectedRowKeys,
-                    filterOutNullAndUndefined(
-                      _.map(scopedVFoldersV2?.edges, 'node'),
-                    ),
+                    vfolderNodes,
                     setSelectedFolderList,
                   );
                 },
