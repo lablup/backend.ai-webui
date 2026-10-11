@@ -56,7 +56,7 @@ describe(BROWSER_GUIDE, () => {
     for (const name of names) expect(guide).toContain(`\`${name}\``);
   });
 
-  it('describes page tools by the ADR 0009 name patterns', () => {
+  it('describes page tools by the ADR 0011 name patterns', () => {
     for (const pattern of [
       'bai_list_visible_<noun>',
       'bai_get_current_<noun>',
