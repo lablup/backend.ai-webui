@@ -476,6 +476,7 @@
     "Yes": "Evet"
   },
   "chatui": {
+    "AttachmentNotStored": "Tarayıcı depolama sınırı nedeniyle ek kaydedilmedi",
     "Attachments": "Ekler",
     "CannotFindModel": "LLM modelleri bulunamadı. OpenAI ile temel yolu ve belirteç uyumluluğunu doğrulayın, ardından 'Modelleri Yenile' düğmesine basın",
     "ChatTitle": "Sohbet başlığı",
@@ -488,6 +489,9 @@
     "DeploymentModels": "{{name}}'nin Modelleri",
     "DropFileHere": "Dosyayı buraya bırakın",
     "History": "Tarih",
+    "HistoryAttachmentsNotStored": "Sohbet geçmişi için ayrılan tarayıcı depolama alanı dolu. Ekler artık sohbet geçmişine kaydedilmiyor.",
+    "HistoryNotStored": "Sohbet geçmişi için ayrılan tarayıcı depolama alanı dolu. Bu sohbetteki son değişiklikler yeniden yüklendikten sonra kaybolacak.",
+    "HistoryOlderChatsNotStored": "Sohbet geçmişi için ayrılan tarayıcı depolama alanı dolu. Eski sohbetler artık kaydedilmiyor ve yeniden yüklendikten sonra kaybolacak.",
     "NewChat": "Yeni sohbet",
     "NoDesiredReplicas": "Bu dağıtım için istenen kopya sayısı 0 olduğundan yanıt veremiyor. Kullanmak için istenen kopya sayısını 1 veya daha fazla olarak ayarlayın.",
     "ScrollToBottom": "En alta kaydır",

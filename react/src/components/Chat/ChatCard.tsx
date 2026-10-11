@@ -17,6 +17,7 @@ import {
   getAIErrorMessage,
   getLatestUserMessage,
   isCustomEndpointProvider,
+  withoutStorageDroppedAttachments,
 } from './ChatModel';
 import CustomEndpointForm from './CustomEndpointForm';
 import { CustomModelForm } from './CustomModelForm';
@@ -170,6 +171,25 @@ function useModels(
     modelsErrorStatus,
     isLoadingModels,
   } as const;
+}
+
+function withoutStorageDroppedAttachmentsInBody(
+  init?: RequestInit,
+): RequestInit | undefined {
+  if (!_.isString(init?.body)) return init;
+  try {
+    const body = JSON.parse(init.body);
+    if (!_.isArray(body?.messages)) return init;
+    return {
+      ...init,
+      body: JSON.stringify({
+        ...body,
+        messages: withoutStorageDroppedAttachments(body.messages),
+      }),
+    };
+  } catch {
+    return init;
+  }
 }
 
 const ChatHeader = PureChatHeader;
@@ -338,7 +358,9 @@ const PureChatCard: React.FC<ChatCardProps> = ({
                   },
                 ],
               }),
-              messages: convertToModelMessages(body?.messages),
+              messages: convertToModelMessages(
+                withoutStorageDroppedAttachments(body?.messages ?? []),
+              ),
               system: agent?.systemPrompt || undefined,
               ...(chat.usingParameters ? chat.parameters : {}),
             });
@@ -374,8 +396,9 @@ const PureChatCard: React.FC<ChatCardProps> = ({
           }
         }
 
-        // Default fetch for server endpoints
-        return fetch(input, init);
+        // Default fetch for server endpoints — the request body carries the
+        // UI messages as-is, so strip the storage placeholders here too.
+        return fetch(input, withoutStorageDroppedAttachmentsInBody(init));
       }),
     }),
   });
