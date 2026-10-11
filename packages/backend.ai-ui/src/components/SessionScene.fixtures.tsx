@@ -40,6 +40,8 @@ interface MockSession {
   util: number;
   idleMinutes: number;
   pendingMinutes: number;
+  /** Share of its agent's capacity; null = not measured yet. */
+  share: number | null;
 }
 
 const makeSessions = (count: number): MockSession[] =>
@@ -57,6 +59,12 @@ const makeSessions = (count: number): MockSession[] =>
       util,
       idleMinutes: util < 0.08 ? Math.floor(rand(i + 400) * 600) : 0,
       pendingMinutes: status === 'PENDING' ? Math.floor(rand(i + 500) * 40) : 0,
+      share:
+        status === 'PENDING'
+          ? 0
+          : rand(i + 600) < 0.06
+            ? null
+            : Math.round(rand(i + 700) * 100) / 100,
     };
   });
 
@@ -75,6 +83,7 @@ export const toFigure = (s: MockSession): BAICrowdFigure => ({
   zoneKey: s.agent,
   mood: moodFor(s),
   utilization: s.status === 'RUNNING' ? s.util : undefined,
+  resourceShare: s.status === 'PENDING' ? undefined : s.share,
   isHero: s.owner === ME,
   detail:
     s.idleMinutes > 0 ? (

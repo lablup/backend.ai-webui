@@ -541,6 +541,8 @@
   "comp:BAISessionScene": {
     "FoundCount": "{{count}} олдсон",
     "Hero": "Минийх",
+    "Measuring": "Хэмжиж байна",
+    "ResourceShare": "Нөөцийн эзлэх хувь",
     "ShowAll": "Бүгдийг харуулах",
     "Utilization": "Ашиглалт",
     "mood": {

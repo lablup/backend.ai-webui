@@ -541,6 +541,8 @@
   "comp:BAISessionScene": {
     "FoundCount": "{{count}} löydetty",
     "Hero": "Omat",
+    "Measuring": "Mitataan",
+    "ResourceShare": "Resurssiosuus",
     "ShowAll": "Näytä kaikki",
     "Utilization": "Käyttöaste",
     "mood": {

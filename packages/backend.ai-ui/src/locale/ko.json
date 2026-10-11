@@ -541,6 +541,8 @@
   "comp:BAISessionScene": {
     "FoundCount": "{{count}}개 발견",
     "Hero": "내 세션",
+    "Measuring": "측정 중",
+    "ResourceShare": "자원 점유",
     "ShowAll": "전체 보기",
     "Utilization": "사용률",
     "mood": {

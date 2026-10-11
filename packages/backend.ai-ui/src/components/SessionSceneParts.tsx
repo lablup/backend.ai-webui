@@ -31,6 +31,13 @@ export interface BAICrowdFigure {
   mood: BAICrowdFigureMood;
   /** 0..1 — drives how fast a `working` figure moves. */
   utilization?: number;
+  /**
+   * 0..1 share of its agent's capacity the session holds — the largest of
+   * cpu, gpu and memory. Sizes its furniture; `null` means not measured yet.
+   */
+  resourceShare?: number | null;
+  /** 1-based place in its agent's queue, for a `waiting` figure. */
+  queuePosition?: number;
   /** The one to find (the viewer's own session). */
   isHero?: boolean;
   /** Extra lines for the hover card, after the built-in ones. */
@@ -73,8 +80,21 @@ const MOOD_LABEL_KEY: Record<BAICrowdFigureMood, string> = {
   leaving: 'comp:BAISessionScene.mood.Leaving',
 };
 
-export const clamp01 = (n: number | undefined) =>
+export const clamp01 = (n: number | null | undefined) =>
   Number.isFinite(n) ? Math.min(1, Math.max(0, n as number)) : 0;
+
+export const resourceTiers = ['small', 'medium', 'large'] as const;
+export type BAIResourceTier = (typeof resourceTiers)[number] | 'unknown';
+
+/** Bucketed, not proportional: < 34% small, < 67% medium, the rest large. */
+export const resourceTierFor = (
+  share: number | null | undefined,
+): BAIResourceTier => {
+  if (share === null || share === undefined || !Number.isFinite(share))
+    return 'unknown';
+  const r = clamp01(share);
+  return r < 0.34 ? 'small' : r < 0.67 ? 'medium' : 'large';
+};
 
 export const useSceneLabels = () => {
   'use memo';
@@ -82,6 +102,13 @@ export const useSceneLabels = () => {
   return {
     mood: (mood: BAICrowdFigureMood) => t(MOOD_LABEL_KEY[mood]),
     hero: t('comp:BAISessionScene.Hero'),
+    resourceShare: (share: number | null | undefined) =>
+      share === undefined
+        ? undefined
+        : share === null || !Number.isFinite(share)
+          ? `${t('comp:BAISessionScene.ResourceShare')} · ${t('comp:BAISessionScene.Measuring')}`
+          : `${t('comp:BAISessionScene.ResourceShare')} ${Math.round(clamp01(share) * 100)}%`,
+    resourceShareTitle: t('comp:BAISessionScene.ResourceShare'),
   };
 };
 
@@ -179,6 +206,11 @@ export const SceneFigureCard: React.FC<{ figure: BAICrowdFigure }> = ({
         {figure.utilization !== undefined &&
           ` · ${t('comp:BAISessionScene.Utilization')} ${Math.round(clamp01(figure.utilization) * 100)}%`}
       </Text>
+      {figure.resourceShare !== undefined && (
+        <Text type="supporting" color="inherit">
+          {labels.resourceShare(figure.resourceShare)}
+        </Text>
+      )}
       {figure.detail}
     </BAIFlex>
   );

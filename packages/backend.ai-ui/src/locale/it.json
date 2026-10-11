@@ -541,6 +541,8 @@
   "comp:BAISessionScene": {
     "FoundCount": "{{count}} trovato/i",
     "Hero": "Mie",
+    "Measuring": "Misurazione in corso",
+    "ResourceShare": "Quota di risorse",
     "ShowAll": "Mostra tutto",
     "Utilization": "Utilizzo",
     "mood": {

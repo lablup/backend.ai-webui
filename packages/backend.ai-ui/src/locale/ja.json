@@ -541,6 +541,8 @@
   "comp:BAISessionScene": {
     "FoundCount": "{{count}}件発見",
     "Hero": "自分のセッション",
+    "Measuring": "測定中",
+    "ResourceShare": "リソース占有",
     "ShowAll": "すべて表示",
     "Utilization": "使用率",
     "mood": {

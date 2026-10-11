@@ -541,6 +541,8 @@
   "comp:BAISessionScene": {
     "FoundCount": "找到 {{count}} 个",
     "Hero": "我的会话",
+    "Measuring": "测量中",
+    "ResourceShare": "资源占用",
     "ShowAll": "显示全部",
     "Utilization": "使用率",
     "mood": {

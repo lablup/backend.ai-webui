@@ -541,6 +541,8 @@
   "comp:BAISessionScene": {
     "FoundCount": "พบ {{count}} รายการ",
     "Hero": "ของฉัน",
+    "Measuring": "กำลังวัด",
+    "ResourceShare": "สัดส่วนทรัพยากร",
     "ShowAll": "แสดงทั้งหมด",
     "Utilization": "การใช้งาน",
     "mood": {

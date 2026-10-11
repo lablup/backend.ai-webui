@@ -2,20 +2,21 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- PoC "Where's Wally" crowd view: every session is a small cartoon figure in
- the zone (agent / resource group) it runs on; its state shows only as props
- (smoke, a ticket, Zzz, a suitcase) and the owner's own sessions wear the
- striped shirt. Finders spotlight the figures a predicate matches and dim the
- rest, so "which one is mine / overheated / idle" becomes a search game. The
- scene is data-agnostic: callers map sessions to figures.
+ PoC "Where's Wally" office: every agent is a pixel-art room, every session a
+ fixed-size character. What a session holds is its furniture — desk or sofa,
+ and the floor it reserves, step up small → medium → large with its share of
+ the agent's capacity. Workers sit at desks, idle sessions take a lounge
+ sofa, pending ones queue at the door, and the viewer's own wear stripes.
+ Geometry and sprites follow the BAI Pixel Office pack (assets/pixel-office).
  */
 import BAIFlex from './BAIFlex';
 import './BAISessionCrowdScene.css';
 import {
-  type BAICrowdFigureMood,
+  type BAICrowdFigure,
+  type BAIResourceTier,
   type BAISessionSceneBaseProps,
   clamp01,
-  crowdFigureMoods,
+  resourceTierFor,
   SceneFigureCard,
   SceneFinderBar,
   useSceneFinder,
@@ -25,7 +26,7 @@ import { Text } from '@lablup/ui-common/Text';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import classNames from 'classnames';
 import _ from 'lodash';
-import React, { useId } from 'react';
+import React from 'react';
 
 export {
   crowdFigureMoods,
@@ -35,115 +36,226 @@ export {
   type BAICrowdZone,
 } from './SessionSceneParts';
 
-export type BAISessionCrowdSceneProps = BAISessionSceneBaseProps;
+export interface BAISessionCrowdSceneProps extends BAISessionSceneBaseProps {
+  /** Integer pixel-art scale. Never fractional: the sprites would blur. */
+  pixelScale?: 1 | 2;
+}
 
-/** One figure, drawn in a 40×56 box. Props are SVG parts toggled by mood. */
-const CrowdFigureGlyph: React.FC<{
-  mood: BAICrowdFigureMood;
-  isHero: boolean;
-  stripesId: string;
-  ticket?: string;
-}> = ({ mood, isHero, stripesId, ticket }) => {
-  'use memo';
+type SizedTier = Exclude<BAIResourceTier, 'unknown'>;
+
+// Pack geometry, in 1× source pixels (assets/pixel-office manifest).
+const FOOTPRINT: Record<SizedTier, [number, number]> = {
+  small: [64, 48],
+  medium: [96, 64],
+  large: [128, 80],
+};
+const FURNITURE_W: Record<SizedTier, number> = {
+  small: 48,
+  medium: 80,
+  large: 112,
+};
+const DESK_H = 32;
+const SOFA_H = 40;
+const CHAR_FOOT = [32, 84];
+const OVERHEAD_SOCKET = [32, 12];
+const STATUS_SOCKET = [51, 23];
+const SLOT_H = 124;
+const QUEUE_SLOT = { w: 40, h: 108 };
+
+type Point = { left: number; top: number };
+
+const Sprite: React.FC<{
+  frame: string;
+  at: Point;
+  s: number;
+  className?: string;
+}> = ({ frame, at, s, className }) => (
+  <span
+    className={classNames('px-sprite', `px-${frame}`, className)}
+    style={{ left: at.left * s, top: at.top * s }}
+    aria-hidden="true"
+  />
+);
+
+/** Frame-stepped FX (smoke 3 frames, Z 2 frames), anchored bottom-centre. */
+const Fx: React.FC<{ kind: 'smoke' | 'idle'; at: Point; s: number }> = ({
+  kind,
+  at,
+  s,
+}) => {
+  const frames = kind === 'smoke' ? 3 : 2;
   return (
-    <svg
-      className="bai-crowd-glyph"
-      viewBox="0 0 40 56"
-      aria-hidden="true"
-      focusable="false"
+    <>
+      {_.range(frames).map((i) => (
+        <Sprite
+          key={i}
+          frame={`fx-${kind}-${i}`}
+          at={{ left: at.left - 16, top: at.top - 32 }}
+          s={s}
+          className={`px-fx px-fx-${frames}f px-fx-f${i}`}
+        />
+      ))}
+    </>
+  );
+};
+
+/** Ownership is not a state: the viewer's own keep the striped sprite. */
+const characterFrame = (figure: BAICrowdFigure, seated: boolean) => {
+  if (figure.isHero) return seated ? 'character-seated-mine' : 'character-mine';
+  if (seated) return 'character-seated';
+  switch (figure.mood) {
+    case 'overheated':
+      return 'character-hot';
+    case 'waiting':
+      return 'character-pending';
+    case 'leaving':
+      return 'character-terminating';
+    default:
+      return 'character-base';
+  }
+};
+
+/** One reserved floor slot, drawn in the pack's layer order. */
+const OfficeSlot: React.FC<{ figure: BAICrowdFigure; s: number }> = ({
+  figure,
+  s,
+}) => {
+  'use memo';
+  const tier = resourceTierFor(figure.resourceShare);
+  const sized: SizedTier = tier === 'unknown' ? 'small' : tier;
+  const [fpW, fpH] = FOOTPRINT[sized];
+  const furnW = FURNITURE_W[sized];
+  const cx = fpW / 2;
+  const baseY = SLOT_H - 2 - Math.round(fpH / 8);
+  const rugH = fpH / 2;
+  const seated = figure.mood === 'idle';
+  const leaving = figure.mood === 'leaving';
+  const hero = !!figure.isHero;
+
+  // At a desk the feet hide behind it; seated and leaving figures stand in front.
+  const foot = {
+    x: leaving ? cx + 14 : cx,
+    y: seated || leaving ? baseY + 2 : baseY - 2,
+  };
+  const char: Point = {
+    left: foot.x - CHAR_FOOT[0],
+    top: foot.y - CHAR_FOOT[1],
+  };
+  const overhead: Point = {
+    left: char.left + OVERHEAD_SOCKET[0],
+    top: char.top + OVERHEAD_SOCKET[1],
+  };
+  const status: Point = {
+    left: char.left + STATUS_SOCKET[0] - 8,
+    top: char.top + STATUS_SOCKET[1] - 8,
+  };
+  const furniture = (
+    <Sprite
+      frame={seated ? `sofa-${sized}` : `desk-${sized}`}
+      at={{ left: cx - furnW / 2, top: baseY - (seated ? SOFA_H : DESK_H) }}
+      s={s}
+      className={leaving ? 'px-vacating' : undefined}
+    />
+  );
+  const character = (
+    <Sprite
+      frame={characterFrame(figure, seated)}
+      at={char}
+      s={s}
+      className={classNames('px-character', { 'px-walker': leaving })}
+    />
+  );
+
+  return (
+    <span
+      className={classNames('px-slot-art', `tier-${tier}`)}
+      style={{ width: fpW * s, height: SLOT_H * s }}
     >
-      {mood === 'overheated' && (
-        <g className="bai-crowd-smoke">
-          <circle cx="14" cy="6" r="2.2" />
-          <circle cx="20" cy="3" r="2.8" />
-          <circle cx="27" cy="6" r="2.2" />
-        </g>
+      <span
+        className="px-rug"
+        style={{
+          top: (SLOT_H - 2 - rugH) * s,
+          width: fpW * s,
+          height: rugH * s,
+        }}
+        aria-hidden="true"
+      />
+      {seated || leaving ? (
+        <>
+          {furniture}
+          {character}
+        </>
+      ) : (
+        <>
+          {character}
+          {furniture}
+          <Sprite
+            frame="prop-screen"
+            at={{ left: cx + 2, top: baseY - DESK_H + 7 - 24 }}
+            s={s}
+          />
+        </>
       )}
-      {mood === 'idle' && (
-        <g className="bai-crowd-zzz">
-          <text x="27" y="10">
-            z
-          </text>
-          <text x="32" y="5" className="bai-crowd-zzz-small">
-            z
-          </text>
-        </g>
+      {figure.mood === 'overheated' && hero && (
+        <>
+          <Fx kind="smoke" at={overhead} s={s} />
+          <Sprite frame="ui-hot" at={status} s={s} />
+        </>
       )}
-      <g className="bai-crowd-body">
-        {/* legs */}
-        <g className="bai-crowd-legs">
-          <rect x="13" y="40" width="5" height="13" rx="2" />
-          <rect x="22" y="40" width="5" height="13" rx="2" />
-        </g>
-        {/* torso */}
-        <rect
-          className="bai-crowd-torso"
-          x="10"
-          y="24"
-          width="20"
-          height="18"
-          rx="4"
-          // Inline so it wins over the class fill; the pattern id is per instance.
-          style={isHero ? { fill: `url(#${stripesId})` } : undefined}
-        />
-        {/* arms */}
-        <rect
-          className="bai-crowd-arm bai-crowd-arm-left"
-          x="5"
-          y="25"
-          width="5"
-          height="14"
-          rx="2.5"
-        />
-        <rect
-          className="bai-crowd-arm bai-crowd-arm-right"
-          x="30"
-          y="25"
-          width="5"
-          height="14"
-          rx="2.5"
-        />
-        {/* head */}
-        <g className="bai-crowd-head">
-          <circle className="bai-crowd-face" cx="20" cy="15" r="8" />
-          {isHero && (
-            <>
-              <path
-                className="bai-crowd-hat"
-                d="M11 12 Q20 2 29 12 L29 14 L11 14 Z"
-              />
-              <circle className="bai-crowd-bobble" cx="20" cy="4" r="2.5" />
-              <g className="bai-crowd-glasses">
-                <circle cx="16.5" cy="15.5" r="2.6" />
-                <circle cx="23.5" cy="15.5" r="2.6" />
-                <line x1="19.1" y1="15.5" x2="20.9" y2="15.5" />
-              </g>
-            </>
-          )}
-          <circle className="bai-crowd-eye" cx="17" cy="15" r="0.9" />
-          <circle className="bai-crowd-eye" cx="23" cy="15" r="0.9" />
-        </g>
-        {mood === 'overheated' && (
-          <g className="bai-crowd-sweat">
-            <path d="M30 11 q2 3 0 4.5 q-2 -1.5 0 -4.5z" />
-          </g>
-        )}
-      </g>
-      {mood === 'waiting' && (
-        <g className="bai-crowd-ticket">
-          <rect x="1" y="28" width="11" height="8" rx="1" />
-          <text x="6.5" y="34.2">
-            {ticket ?? '#'}
-          </text>
-        </g>
+      {seated && <Fx kind="idle" at={overhead} s={s} />}
+      {leaving && hero && <Sprite frame="ui-terminating" at={status} s={s} />}
+      {tier === 'unknown' && (
+        <span
+          className="px-unknown"
+          style={{ top: (SLOT_H - 2 - rugH) * s - 8 }}
+          aria-hidden="true"
+        >
+          ?
+        </span>
       )}
-      {mood === 'leaving' && (
-        <g className="bai-crowd-suitcase">
-          <rect x="29" y="38" width="10" height="8" rx="1.5" />
-          <rect x="32.5" y="35.5" width="3" height="3" rx="0.8" />
-        </g>
-      )}
-    </svg>
+    </span>
+  );
+};
+
+const QueueSlot: React.FC<{
+  figure: BAICrowdFigure;
+  position: number;
+  s: number;
+}> = ({ figure, position, s }) => {
+  'use memo';
+  const char: Point = {
+    left: QUEUE_SLOT.w / 2 - CHAR_FOOT[0],
+    top: QUEUE_SLOT.h - 4 - CHAR_FOOT[1],
+  };
+  // The ticket's 12×8 text slot sits at (6, 6) inside its 24×20 frame.
+  const ticket: Point = {
+    left: char.left + OVERHEAD_SOCKET[0] - 12,
+    top: char.top + OVERHEAD_SOCKET[1] - 14,
+  };
+  return (
+    <span
+      className="px-slot-art"
+      style={{ width: QUEUE_SLOT.w * s, height: QUEUE_SLOT.h * s }}
+    >
+      <Sprite
+        frame={characterFrame(figure, false)}
+        at={char}
+        s={s}
+        className="px-character"
+      />
+      <Sprite frame="fx-ticket" at={ticket} s={s} />
+      <span
+        className="px-ticket-no"
+        style={{
+          left: (ticket.left + 6) * s,
+          top: (ticket.top + 6) * s,
+          width: 12 * s,
+          height: 8 * s,
+        }}
+      >
+        {position}
+      </span>
+    </span>
   );
 };
 
@@ -155,12 +267,14 @@ const BAISessionCrowdScene: React.FC<BAISessionCrowdSceneProps> = ({
   onActiveFinderChange,
   onFigureClick,
   hideLegend,
+  pixelScale = 1,
   className,
+  style,
   ...divProps
 }) => {
   'use memo';
   const labels = useSceneLabels();
-  const stripesId = `${useId()}-stripes`;
+  const s = pixelScale;
   const { finderKey, setFinderKey, matches } = useSceneFinder({
     figures,
     finders,
@@ -169,29 +283,51 @@ const BAISessionCrowdScene: React.FC<BAISessionCrowdSceneProps> = ({
   });
   const figuresByZone = _.groupBy(figures, (f) => f.zoneKey);
 
+  const renderSlot = (figure: BAICrowdFigure, art: React.ReactNode) => {
+    const isFound = matches?.has(figure.key) ?? false;
+    return (
+      <Tooltip
+        key={figure.key}
+        content={<SceneFigureCard figure={figure} />}
+        placement="above"
+      >
+        <button
+          type="button"
+          className={classNames('px-slot', `mood-${figure.mood}`, {
+            'is-hero': figure.isHero,
+            'is-found': isFound,
+            'is-dimmed': matches && !isFound,
+          })}
+          style={
+            {
+              '--px-util': clamp01(figure.utilization),
+            } as React.CSSProperties
+          }
+          aria-label={[
+            figure.name,
+            figure.isHero ? labels.hero : undefined,
+            labels.mood(figure.mood),
+            labels.resourceShare(figure.resourceShare),
+          ]
+            .filter(Boolean)
+            .join(' — ')}
+          onClick={() => onFigureClick?.(figure)}
+        >
+          {art}
+        </button>
+      </Tooltip>
+    );
+  };
+
   return (
     <div
       {...divProps}
       className={classNames('bai-crowd-scene', className, {
         'is-searching': !!matches,
       })}
+      style={{ ...style, '--px-s': s } as React.CSSProperties}
     >
-      <svg width="0" height="0" aria-hidden="true" focusable="false">
-        <defs>
-          <pattern
-            id={stripesId}
-            width="4"
-            height="4"
-            patternUnits="userSpaceOnUse"
-          >
-            <rect className="bai-crowd-stripe-light" width="4" height="4" />
-            <rect className="bai-crowd-stripe-dark" width="4" height="2" />
-          </pattern>
-        </defs>
-      </svg>
-
       <SceneFinderBar
-        className="bai-crowd-finders"
         figures={figures}
         finders={finders}
         finderKey={finderKey}
@@ -199,86 +335,88 @@ const BAISessionCrowdScene: React.FC<BAISessionCrowdSceneProps> = ({
         onChange={setFinderKey}
       />
 
-      <div className="bai-crowd-zones">
+      <div className="px-rooms">
         {zones.map((zone) => {
           const zoneFigures = figuresByZone[zone.key] ?? [];
           const foundHere = matches
             ? zoneFigures.filter((f) => matches.has(f.key)).length
             : 0;
+          const work = zoneFigures.filter(
+            (f) =>
+              f.mood === 'working' ||
+              f.mood === 'overheated' ||
+              f.mood === 'leaving',
+          );
+          const lounge = zoneFigures.filter((f) => f.mood === 'idle');
+          const queue = _.sortBy(
+            zoneFigures.filter((f) => f.mood === 'waiting'),
+            (f) => f.queuePosition ?? Number.MAX_SAFE_INTEGER,
+          );
           return (
             <section
               key={zone.key}
-              className={classNames('bai-crowd-zone', {
+              className={classNames('px-room', {
                 'has-found': foundHere > 0,
                 'is-empty-of-found': matches && foundHere === 0,
               })}
               aria-label={zone.label}
             >
-              <BAIFlex
-                className="bai-crowd-zone-head"
-                justify="between"
-                align="center"
-                gap="xs"
-              >
-                <Text type="label" color="secondary">
-                  {zone.label}
-                </Text>
-                <Text type="supporting">
-                  {matches && foundHere > 0
-                    ? `${foundHere} / ${zoneFigures.length}`
-                    : zoneFigures.length}
-                </Text>
-              </BAIFlex>
-              <div className="bai-crowd-ground">
-                {zoneFigures.map((figure, idx) => {
-                  const util = clamp01(figure.utilization);
-                  const isFound = matches?.has(figure.key) ?? false;
-                  return (
-                    <Tooltip
-                      key={figure.key}
-                      content={<SceneFigureCard figure={figure} />}
-                      placement="above"
-                    >
-                      <button
-                        type="button"
-                        className={classNames(
-                          'bai-crowd-figure',
-                          `mood-${figure.mood}`,
-                          {
-                            'is-hero': figure.isHero,
-                            'is-found': isFound,
-                            'is-dimmed': matches && !isFound,
-                          },
-                        )}
-                        style={
-                          {
-                            '--bai-crowd-util': util,
-                            // Stagger so a crowd never moves in lockstep.
-                            '--bai-crowd-phase': `${(idx % 7) * -0.37}s`,
-                          } as React.CSSProperties
-                        }
-                        aria-label={`${figure.name} — ${labels.mood(figure.mood)}`}
-                        onClick={() => onFigureClick?.(figure)}
-                      >
-                        <CrowdFigureGlyph
-                          mood={figure.mood}
-                          isHero={!!figure.isHero}
-                          stripesId={stripesId}
-                          ticket={
-                            figure.mood === 'waiting'
-                              ? String(
-                                  zoneFigures
-                                    .filter((f) => f.mood === 'waiting')
-                                    .indexOf(figure) + 1,
-                                )
-                              : undefined
-                          }
-                        />
-                      </button>
-                    </Tooltip>
-                  );
-                })}
+              <div className="px-wall">
+                <span
+                  className="px-sprite px-prop-plant px-wall-plant"
+                  aria-hidden="true"
+                />
+                <span className="px-sign">
+                  <Text type="label" color="inherit">
+                    {zone.label}
+                  </Text>
+                </span>
+                <span className="px-sign px-sign-count">
+                  <Text type="supporting" color="inherit">
+                    {matches && foundHere > 0
+                      ? `${foundHere} / ${zoneFigures.length}`
+                      : zoneFigures.length}
+                  </Text>
+                </span>
+                <span className="px-racks" aria-hidden="true">
+                  <span className="px-sprite px-prop-server-rack" />
+                  <span className="px-sprite px-prop-server-rack" />
+                </span>
               </div>
+              <div className="px-floor">
+                {work.length > 0 && (
+                  <div className="px-area px-area-work">
+                    {work.map((f) =>
+                      renderSlot(f, <OfficeSlot figure={f} s={s} />),
+                    )}
+                  </div>
+                )}
+                {lounge.length > 0 && (
+                  <div className="px-area px-area-lounge">
+                    {lounge.map((f) =>
+                      renderSlot(f, <OfficeSlot figure={f} s={s} />),
+                    )}
+                  </div>
+                )}
+              </div>
+              {queue.length > 0 && (
+                <div className="px-queue">
+                  <span
+                    className="px-sprite px-ui-pending px-queue-icon"
+                    aria-hidden="true"
+                  />
+                  {queue.map((f, i) =>
+                    renderSlot(
+                      f,
+                      <QueueSlot
+                        figure={f}
+                        position={f.queuePosition ?? i + 1}
+                        s={s}
+                      />,
+                    ),
+                  )}
+                </div>
+              )}
             </section>
           );
         })}
@@ -286,33 +424,55 @@ const BAISessionCrowdScene: React.FC<BAISessionCrowdSceneProps> = ({
 
       {!hideLegend && (
         <BAIFlex
-          className="bai-crowd-legend"
-          gap="md"
+          className="px-legend"
+          gap="lg"
           wrap="wrap"
-          align="center"
+          align="end"
+          style={{ '--px-s': 1 } as React.CSSProperties}
         >
-          {crowdFigureMoods.map((mood) => (
-            <BAIFlex key={mood} gap="xxs" align="center">
-              <span
-                className={classNames(
-                  'bai-crowd-figure is-legend',
-                  `mood-${mood}`,
-                )}
-              >
-                <CrowdFigureGlyph
-                  mood={mood}
-                  isHero={false}
-                  stripesId={stripesId}
+          <BAIFlex gap="sm" wrap="wrap" align="center">
+            {(
+              [
+                ['ui-cpu', labels.mood('working')],
+                ['ui-hot', labels.mood('overheated')],
+                ['ui-idle', labels.mood('idle')],
+                ['ui-pending', labels.mood('waiting')],
+                ['ui-terminating', labels.mood('leaving')],
+                ['ui-mine', labels.hero],
+              ] as const
+            ).map(([icon, label]) => (
+              <BAIFlex key={icon} gap="xxs" align="center">
+                <span
+                  className={`px-sprite px-inline px-${icon}`}
+                  aria-hidden="true"
                 />
-              </span>
-              <Text type="supporting">{labels.mood(mood)}</Text>
-            </BAIFlex>
-          ))}
-          <BAIFlex gap="xxs" align="center">
-            <span className="bai-crowd-figure is-legend is-hero mood-working">
-              <CrowdFigureGlyph mood="working" isHero stripesId={stripesId} />
-            </span>
-            <Text type="supporting">{labels.hero}</Text>
+                <Text type="supporting" color="inherit">
+                  {label}
+                </Text>
+              </BAIFlex>
+            ))}
+          </BAIFlex>
+          <BAIFlex gap="sm" wrap="wrap" align="end">
+            <Text type="supporting" color="inherit">
+              {labels.resourceShareTitle}
+            </Text>
+            {(
+              [
+                ['small', '< 34%'],
+                ['medium', '34–67%'],
+                ['large', '≥ 67%'],
+              ] as const
+            ).map(([tier, range]) => (
+              <BAIFlex key={tier} direction="column" align="center" gap="xxs">
+                <span
+                  className={`px-sprite px-inline px-desk-${tier}`}
+                  aria-hidden="true"
+                />
+                <Text type="supporting" color="inherit">
+                  {range}
+                </Text>
+              </BAIFlex>
+            ))}
           </BAIFlex>
         </BAIFlex>
       )}

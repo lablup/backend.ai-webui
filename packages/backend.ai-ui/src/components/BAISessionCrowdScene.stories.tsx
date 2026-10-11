@@ -17,20 +17,28 @@ const meta: Meta<typeof BAISessionCrowdScene> = {
     docs: {
       description: {
         component: `
-**BAISessionCrowdScene** is a proof-of-concept "Where's Wally" rendering of a
-session list. Each session is a small figure in the zone (agent) it runs on;
-its state is a prop — swinging arms whose speed follows utilization, smoke and
-a red face above the error threshold, floating z's when idle, a numbered
-ticket while pending, a suitcase while terminating — and the viewer's own
-sessions wear the striped shirt.
+**BAISessionCrowdScene** is a proof-of-concept "Where's Wally" office built
+from the BAI Pixel Office asset pack. Each agent is a room; each session is a
+fixed-size pixel character.
 
-**Finders** are named predicates. Toggling one spotlights the matching
-figures, dims the rest, outlines the zones that hold a match and shows the
-found count, so "find mine / find the hot ones" is the interaction.
+**What a session holds is its furniture.** A working session sits at a desk,
+an idle one takes a lounge sofa, and both the furniture and the floor rug it
+reserves step up **small → medium → large** with the session's share of the
+agent's capacity (the largest of cpu / gpu / memory): < 34%, 34–67%, ≥ 67%.
+The steps are buckets, not a proportional chart — the exact share is in the
+hover card. A share that is not measured yet draws a dashed small rug with a
+"?".
 
-Everything is theme-token coloured and CSS-animated; under
-\`prefers-reduced-motion\` the crowd stands still and the props still carry
-every state.
+- **Overheated** — red-faced (or, for your own, smoke + a hot icon).
+- **Idle** — on the lounge carpet, Z's floating.
+- **Waiting** — no furniture yet; queues at the door holding a numbered ticket.
+- **Terminating** — walks away from a fading desk with a suitcase.
+- **Yours** — striped shirt, whatever the state.
+
+**Finders** spotlight the matching sessions, dim the rest and outline the
+rooms that hold a match. Sprites render at an integer \`pixelScale\` with
+\`image-rendering: pixelated\`; under \`prefers-reduced-motion\` everything
+holds on the first frame.
         `,
       },
     },
@@ -88,28 +96,60 @@ export const Controlled: Story = {
   },
 };
 
-export const EveryMood: Story = {
-  name: 'Every mood side by side',
+const ladder = (
+  mood: BAICrowdFigureMood,
+  zoneKey: string,
+  offset: number,
+): BAICrowdFigure[] =>
+  ([0.15, 0.5, 0.9, null] as const).map((share, i) => ({
+    key: `${zoneKey}-${i}`,
+    name: `${mood} ${share === null ? '?' : `${Math.round(share * 100)}%`}`,
+    zoneKey,
+    mood,
+    utilization: 0.5,
+    resourceShare: share,
+    isHero: i === offset,
+  }));
+
+export const TierLadder: Story = {
+  name: 'Furniture size = resource share',
   args: {
-    zones: [{ key: 'z', label: 'moods' }],
+    zones: [
+      { key: 'desks', label: 'desks: 15% · 50% · 90% · ?' },
+      { key: 'sofas', label: 'sofas: 15% · 50% · 90% · ?' },
+    ],
+    figures: [...ladder('working', 'desks', 1), ...ladder('idle', 'sofas', 2)],
+  },
+};
+
+export const EveryState: Story = {
+  name: 'Every state, 2× pixels',
+  args: {
+    pixelScale: 2,
     hideLegend: true,
+    zones: [{ key: 'z', label: 'a100-node-01' }],
     figures: (
       [
-        ['working', 0.1],
-        ['working', 0.5],
-        ['working', 1],
-        ['overheated', 0.97],
-        ['idle', 0.02],
-        ['waiting', undefined],
-        ['leaving', undefined],
-      ] as Array<[BAICrowdFigureMood, number | undefined]>
-    ).map(([mood, util], i) => ({
+        ['working', 0.6, 0.4, false],
+        ['working', 0.3, 0.8, true],
+        ['overheated', 0.97, 0.7, false],
+        ['overheated', 0.95, 0.5, true],
+        ['idle', 0.02, 0.2, false],
+        ['idle', 0.01, 0.6, true],
+        ['leaving', undefined, 0.5, false],
+        ['waiting', undefined, undefined, false],
+        ['waiting', undefined, undefined, true],
+      ] as Array<
+        [BAICrowdFigureMood, number | undefined, number | undefined, boolean]
+      >
+    ).map(([mood, util, share, mine], i) => ({
       key: `m${i}`,
-      name: `${mood}${util !== undefined ? ` ${Math.round(util * 100)}%` : ''}`,
+      name: `${mood}${mine ? ' (mine)' : ''}`,
       zoneKey: 'z',
       mood,
       utilization: util,
-      isHero: i === 1,
+      resourceShare: share,
+      isHero: mine,
     })),
   },
 };

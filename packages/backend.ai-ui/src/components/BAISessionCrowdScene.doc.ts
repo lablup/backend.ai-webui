@@ -8,43 +8,44 @@ export const docs = {
   keywords: [
     'crowd',
     'scene',
-    'figures',
+    'pixel art',
+    'office',
     'where is wally',
     'spotlight',
     'finder',
     'sessions',
-    'utilization',
-    'playful',
+    'resource share',
+    'footprint',
     'poc',
   ],
   usage: {
     description:
-      'A proof-of-concept "Where\'s Wally" view of a session list. Every session is a small cartoon figure standing in the zone (agent, resource group) the caller assigns it to; its state shows only as a prop — a working figure swings its arms at a speed that follows `utilization`, an idle one slumps under floating z\'s, an overheated one shivers under smoke, a waiting one holds a numbered ticket, a leaving one carries a suitcase — and the sessions the caller marks `isHero` wear the striped shirt, bobble hat and round glasses. `finders` are named predicates rendered as toggle buttons with their match count; the active one spotlights the matching figures, dims the rest, outlines the zones that hold a match and shows a found-count Badge, so "which one is mine / over 90% / idle for hours" becomes a search the eye enjoys. Hovering a figure opens a Tooltip card with its name, owner, mood and utilization; clicking fires `onFigureClick`. The scene is data-agnostic — callers map their sessions to `BAICrowdFigure`s — and all motion is CSS driven by two inline custom properties, switched off under `prefers-reduced-motion`.',
+      "A proof-of-concept \"Where's Wally\" office built from the BAI Pixel Office sprite atlas. Each zone (agent, resource group) is a pixel-art room — a wall with a name sign, the session count and server racks, a planked floor, and a queue lane at the door. Each session is a character of fixed size; what it holds is drawn as its furniture. A working or overheated session sits at a desk with a monitor, an idle one sits on a sofa in the room's lounge carpet, a terminating one walks away from its fading desk, and a waiting one has no furniture yet and queues at the door holding a numbered ticket (`queuePosition`, else its place in line). The desk or sofa, and the rug of floor under it, step up small → medium → large with `resourceShare` — the session's share of its agent's capacity, the largest of cpu, gpu and memory — at < 34%, 34–67% and ≥ 67%. The steps are buckets, not a proportional chart; the exact share is in the hover card, and a share that is `null` draws a dashed small rug with a \"?\". The viewer's own sessions (`isHero`) keep the striped sprite in every state, with smoke and a hot icon or a suitcase icon added where the plain sprites show it on the face. `finders` work as in the other session scenes: the active one spotlights its matches, dims the rest and outlines the rooms that hold one. Sprites render at an integer `pixelScale` with `image-rendering: pixelated`; motion is a 1px bob paced by `utilization`, stepped smoke and Z frames, and a short walk, all off under `prefers-reduced-motion`.",
     bestPractices: [
       {
         guidance: true,
         description:
-          'Keep the figure count in the tens: the view is for recognising one session in a crowd, and past ~100 figures the grid view carries the same information more legibly.',
+          "Compute `resourceShare` against the agent's capacity, not the session's own allocation: it is what the furniture means. Use `utilization` (within the session's allocation) for \"GPU ≥ 90%\"-style finders.",
       },
       {
         guidance: true,
         description:
-          'Map `zoneKey` to something physical the user already reasons about — an agent or a resource group — so a busy zone reads as a busy place.',
+          'Smooth the share over 5–15 seconds before passing it, so a session near 34% or 67% does not swap its desk on every poll.',
       },
       {
         guidance: true,
         description:
-          'Reuse the live utilization thresholds when deriving `mood` (`overheated` above the error threshold, `idle` below the idle one) so the crowd never disagrees with the grid colours next to it.',
+          'Pass `null` while a share is not measured yet; `0` draws a small desk as though the session held nothing.',
       },
       {
         guidance: false,
         description:
-          'Encoding anything only in motion — reduced-motion users see a still crowd, so every state must also be visible as a prop or a tint.',
+          'Setting a fractional scale or a CSS transform on the scene — the atlas is pixel art and blurs off the integer grid.',
       },
       {
         guidance: false,
         description:
-          'Marking more than a handful of figures `isHero`; the striped shirt is the one thing to find, and a crowd of Wallies finds nothing.',
+          'Mixing actual usage and allocation in one scene; if only allocation is known, pass that and say so in the surrounding UI.',
       },
     ],
   },
@@ -53,68 +54,66 @@ export const docs = {
       name: 'figures',
       type: 'ReadonlyArray<BAICrowdFigure>',
       description:
-        'The sessions to draw. Each carries a `key`, `name`, optional `owner`, the `zoneKey` it stands in, a `mood` (`working` | `idle` | `overheated` | `waiting` | `leaving`), an optional 0..1 `utilization` that paces a working figure, `isHero` for the striped shirt and optional `detail` nodes for the hover card.',
+        'The sessions to draw: `key`, `name`, optional `owner`, `zoneKey`, `mood` (`working` | `idle` | `overheated` | `waiting` | `leaving`), optional 0..1 `utilization`, optional 0..1 `resourceShare` (or `null` while unmeasured) that sizes the furniture, optional `queuePosition` for a waiting one, `isHero` for the striped sprite and optional `detail` for the hover card.',
       required: true,
     },
     {
       name: 'zones',
       type: 'ReadonlyArray<BAICrowdZone>',
       description:
-        'The places figures stand in, drawn in this order as outlined plates with a label and a head count. A figure whose `zoneKey` matches no zone is not drawn.',
+        'The rooms, drawn in this order. A figure whose `zoneKey` matches no zone is not drawn.',
       required: true,
     },
     {
       name: 'finders',
       type: 'ReadonlyArray<BAICrowdFinder>',
       description:
-        'Named predicates (`key`, `label`, optional `icon`, `match`) rendered as toggle buttons with their live match count. The active finder spotlights its matches and dims everything else.',
+        'Named predicates rendered as toggle buttons with their live match count; the active one spotlights its matches.',
     },
     {
       name: 'activeFinderKey',
       type: 'string | null',
-      description:
-        'Controlled active finder. Omit to let the scene keep the selection in local state.',
+      description: 'Controlled active finder. Omit to keep it in local state.',
     },
     {
       name: 'onActiveFinderChange',
       type: '(key: string | null) => void',
-      description:
-        'Called when the user toggles a finder or presses "Show all" (`null`).',
+      description: 'Called when a finder is toggled or cleared (`null`).',
     },
     {
       name: 'onFigureClick',
       type: '(figure: BAICrowdFigure) => void',
-      description: 'Called with the figure the user clicked or activated.',
+      description: 'Called with the session the user clicked or activated.',
+    },
+    {
+      name: 'pixelScale',
+      type: '1 | 2',
+      description: 'Integer scale of the sprites and the reserved floor.',
+      default: '1',
     },
     {
       name: 'hideLegend',
       type: 'boolean',
-      description: 'Hides the mood legend row under the zones.',
+      description: 'Hides the HUD legend of states and the three desk sizes.',
       default: 'false',
     },
   ],
   examples: [
     {
-      label: 'Sessions grouped by agent with three finders',
+      label: 'Sessions grouped by agent, sized by their share of it',
       code: `<BAISessionCrowdScene
-  zones={[
-    { key: 'a100-01', label: 'a100-node-01' },
-    { key: 'cpu', label: 'cpu-pool' },
-  ]}
+  zones={agents.map((a) => ({ key: a.id, label: a.id }))}
   figures={sessions.map((s) => ({
     key: s.id,
     name: s.name,
     owner: s.owner,
-    zoneKey: s.agent,
+    zoneKey: s.agentId,
     mood: moodFor(s),
-    utilization: s.cpuUtil / 100,
+    utilization: s.gpuUtil,
+    resourceShare: dominantShare(s.used, agentCapacity[s.agentId]),
     isHero: s.owner === me,
   }))}
-  finders={[
-    { key: 'mine', label: 'My sessions', match: (f) => !!f.isHero },
-    { key: 'hot', label: 'GPU ≥ 90%', match: (f) => (f.utilization ?? 0) >= 0.9 },
-    { key: 'idle', label: 'Idle', match: (f) => f.mood === 'idle' },
-  ]}
+  finders={finders}
   onFigureClick={(f) => openSession(f.key)}
 />`,
     },

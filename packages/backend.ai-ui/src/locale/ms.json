@@ -541,6 +541,8 @@
   "comp:BAISessionScene": {
     "FoundCount": "{{count}} ditemui",
     "Hero": "Saya",
+    "Measuring": "Mengukur",
+    "ResourceShare": "Bahagian sumber",
     "ShowAll": "Tunjuk semua",
     "Utilization": "Penggunaan",
     "mood": {

@@ -541,6 +541,8 @@
   "comp:BAISessionScene": {
     "FoundCount": "Βρέθηκαν {{count}}",
     "Hero": "Δικές μου",
+    "Measuring": "Μέτρηση",
+    "ResourceShare": "Μερίδιο πόρων",
     "ShowAll": "Εμφάνιση όλων",
     "Utilization": "Χρήση",
     "mood": {

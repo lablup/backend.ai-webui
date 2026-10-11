@@ -541,6 +541,8 @@
   "comp:BAISessionScene": {
     "FoundCount": "找到 {{count}} 個",
     "Hero": "我的工作階段",
+    "Measuring": "測量中",
+    "ResourceShare": "資源占用",
     "ShowAll": "顯示全部",
     "Utilization": "使用率",
     "mood": {

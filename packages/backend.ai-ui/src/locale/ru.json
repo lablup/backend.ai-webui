@@ -541,6 +541,8 @@
   "comp:BAISessionScene": {
     "FoundCount": "Найдено: {{count}}",
     "Hero": "Мои",
+    "Measuring": "Измеряется",
+    "ResourceShare": "Доля ресурсов",
     "ShowAll": "Показать все",
     "Utilization": "Загрузка",
     "mood": {
