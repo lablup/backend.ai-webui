@@ -1005,7 +1005,7 @@ directly versus point the user at the WebUI, the neighbouring skills'
 boundaries, `references/query-cookbook.md` — ready-to-run documents that
 `src/init/skill.test.ts` re-validates against the SDL — and
 `references/webui-browser.md`, the guide to operating the WebUI itself through
-agent-browser and the WebMCP tools it registers (ADR 0009).
+agent-browser and the WebMCP tools it registers (ADR 0011).
 
 ## Output contract
 
