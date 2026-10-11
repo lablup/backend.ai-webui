@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<82a4adb14a5a7157cdd1d1cc59e01889>>
+ * @generated SignedSource<<5e022b0fc67ea54dfa2a4f5aa8207e00>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,14 +10,16 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type TableAstryxProbeUsersQuery$variables = Record<PropertyKey, never>;
+export type TableAstryxProbeUsersQuery$variables = {
+  isNotSupportTotp: boolean;
+};
 export type TableAstryxProbeUsersQuery$data = {
-  readonly user_nodes: {
+  readonly adminUsersV2: {
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly " $fragmentSpreads": FragmentRefs<"BAIUserNodesFragment">;
-      } | null | undefined;
-    } | null | undefined>;
+        readonly " $fragmentSpreads": FragmentRefs<"BAIAdminUserV2TableFragment">;
+      };
+    }>;
   } | null | undefined;
 };
 export type TableAstryxProbeUsersQuery = {
@@ -28,8 +30,15 @@ export type TableAstryxProbeUsersQuery = {
 const node: ConcreteRequest = (function(){
 var v0 = [
   {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "isNotSupportTotp"
+  }
+],
+v1 = [
+  {
     "kind": "Literal",
-    "name": "first",
+    "name": "limit",
     "value": 10
   },
   {
@@ -37,33 +46,26 @@ var v0 = [
     "name": "offset",
     "value": 0
   }
-],
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-};
+];
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "TableAstryxProbeUsersQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v0/*: any*/),
-        "concreteType": "UserConnection",
+        "args": (v1/*: any*/),
+        "concreteType": "UserV2Connection",
         "kind": "LinkedField",
-        "name": "user_nodes",
+        "name": "adminUsersV2",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "UserEdge",
+            "concreteType": "UserV2Edge",
             "kind": "LinkedField",
             "name": "edges",
             "plural": true,
@@ -71,7 +73,7 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "UserNode",
+                "concreteType": "UserV2",
                 "kind": "LinkedField",
                 "name": "node",
                 "plural": false,
@@ -79,7 +81,7 @@ return {
                   {
                     "args": null,
                     "kind": "FragmentSpread",
-                    "name": "BAIUserNodesFragment"
+                    "name": "BAIAdminUserV2TableFragment"
                   }
                 ],
                 "storageKey": null
@@ -88,7 +90,7 @@ return {
             "storageKey": null
           }
         ],
-        "storageKey": "user_nodes(first:10,offset:0)"
+        "storageKey": "adminUsersV2(limit:10,offset:0)"
       }
     ],
     "type": "Query",
@@ -96,22 +98,22 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "TableAstryxProbeUsersQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v0/*: any*/),
-        "concreteType": "UserConnection",
+        "args": (v1/*: any*/),
+        "concreteType": "UserV2Connection",
         "kind": "LinkedField",
-        "name": "user_nodes",
+        "name": "adminUsersV2",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "UserEdge",
+            "concreteType": "UserV2Edge",
             "kind": "LinkedField",
             "name": "edges",
             "plural": true,
@@ -119,191 +121,237 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "UserNode",
+                "concreteType": "UserV2",
                 "kind": "LinkedField",
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v1/*: any*/),
                   {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "email",
+                    "name": "id",
                     "storageKey": null
                   },
                   {
                     "alias": null,
                     "args": null,
-                    "kind": "ScalarField",
-                    "name": "full_name",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "role",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "description",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "username",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "created_at",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "modified_at",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "status",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "domain_name",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "resource_policy",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "allowed_client_ip",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "container_gids",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "container_main_gid",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "container_uid",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "status_info",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "sudo_session_enabled",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "need_password_change",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "totp_activated",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": [
-                      {
-                        "kind": "Literal",
-                        "name": "first",
-                        "value": 100
-                      }
-                    ],
-                    "concreteType": "GroupConnection",
+                    "concreteType": "UserV2BasicInfo",
                     "kind": "LinkedField",
-                    "name": "project_nodes",
+                    "name": "basicInfo",
                     "plural": false,
                     "selections": [
                       {
                         "alias": null,
                         "args": null,
                         "kind": "ScalarField",
-                        "name": "count",
+                        "name": "email",
                         "storageKey": null
                       },
                       {
                         "alias": null,
                         "args": null,
-                        "concreteType": "GroupEdge",
-                        "kind": "LinkedField",
-                        "name": "edges",
-                        "plural": true,
+                        "kind": "ScalarField",
+                        "name": "fullName",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "username",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "description",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "integrationName",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "UserV2OrganizationInfo",
+                    "kind": "LinkedField",
+                    "name": "organization",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "domainName",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "role",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "resourcePolicy",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "mainAccessKey",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "UserV2SecurityInfo",
+                    "kind": "LinkedField",
+                    "name": "security",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "condition": "isNotSupportTotp",
+                        "kind": "Condition",
+                        "passingValue": false,
                         "selections": [
                           {
                             "alias": null,
                             "args": null,
-                            "concreteType": "GroupNode",
-                            "kind": "LinkedField",
-                            "name": "node",
-                            "plural": false,
-                            "selections": [
-                              {
-                                "alias": null,
-                                "args": null,
-                                "kind": "ScalarField",
-                                "name": "name",
-                                "storageKey": null
-                              },
-                              (v1/*: any*/)
-                            ],
+                            "kind": "ScalarField",
+                            "name": "totpActivated",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "totpActivatedAt",
                             "storageKey": null
                           }
-                        ],
+                        ]
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "sudoSessionEnabled",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "allowedClientIp",
                         "storageKey": null
                       }
                     ],
-                    "storageKey": "project_nodes(first:100)"
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "UserV2StatusInfo",
+                    "kind": "LinkedField",
+                    "name": "status",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "status",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "statusInfo",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "needPasswordChange",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "UserV2ContainerSettings",
+                    "kind": "LinkedField",
+                    "name": "container",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "containerUid",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "containerMainGid",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "containerGids",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "EntityTimestamps",
+                    "kind": "LinkedField",
+                    "name": "timestamps",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "createdAt",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "modifiedAt",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
                   }
                 ],
                 "storageKey": null
@@ -312,21 +360,21 @@ return {
             "storageKey": null
           }
         ],
-        "storageKey": "user_nodes(first:10,offset:0)"
+        "storageKey": "adminUsersV2(limit:10,offset:0)"
       }
     ]
   },
   "params": {
-    "cacheID": "579f51cd465f0fdd877e43ac1ae0078f",
+    "cacheID": "3c745c3e714a361c41757e2a11e52e1c",
     "id": null,
     "metadata": {},
     "name": "TableAstryxProbeUsersQuery",
     "operationKind": "query",
-    "text": "query TableAstryxProbeUsersQuery {\n  user_nodes(first: 10, offset: 0) {\n    edges {\n      node {\n        ...BAIUserNodesFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIUserNodesFragment on UserNode {\n  id\n  email\n  full_name\n  role\n  description\n  username\n  created_at\n  modified_at\n  status\n  domain_name\n  resource_policy\n  allowed_client_ip\n  container_gids\n  container_main_gid\n  container_uid\n  status_info\n  sudo_session_enabled\n  need_password_change\n  totp_activated\n  project_nodes(first: 100) {\n    count\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query TableAstryxProbeUsersQuery(\n  $isNotSupportTotp: Boolean!\n) {\n  adminUsersV2(limit: 10, offset: 0) {\n    edges {\n      node {\n        ...BAIAdminUserV2TableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIAdminUserV2TableFragment on UserV2 {\n  id\n  basicInfo {\n    email\n    fullName\n    username\n    description\n    integrationName\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n    mainAccessKey\n  }\n  security {\n    totpActivated @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    totpActivatedAt @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    sudoSessionEnabled\n    allowedClientIp\n  }\n  status {\n    status\n    statusInfo\n    needPasswordChange\n  }\n  container {\n    containerUid\n    containerMainGid\n    containerGids\n  }\n  timestamps {\n    createdAt\n    modifiedAt\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "793563e31be1ecf94d53b33d870bbca5";
+(node as any).hash = "c74c45a5ae2828dfac5123ab2f5d7ffd";
 
 export default node;

@@ -1,22 +1,27 @@
 import RelayResolver from '../../tests/RelayResolver';
+import {
+  locales,
+  mockAnonymousClientFactory,
+} from '../../tests/storybook-mock-utils';
+import type { BAIClient } from '../provider/BAIClientProvider';
+import { BAIConfigProvider } from '../provider/BAIConfigProvider';
 import BAIUserSelect from './BAIUserSelect';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ComponentProps, useState } from 'react';
+import type { MockResolvers } from 'relay-test-utils';
 
 /**
- * BAIUserSelect is the ticket-26 reference consumer of
- * `BAIComplexSelect`: Relay OFFSET pagination with scroll-driven `loadNext`,
- * server-side search, and `labelInValue` semantics, all behind the SAME
- * plain-key (`string`/`string[]`) value contract the antd `BAIUserSelect`
- * exposes (frontier rule — the antd wrapper is untouched).
+ * `BAIUserSelect` is the reference consumer of `BAIComplexSelect`: Relay
+ * offset pagination with scroll-driven `loadNext`, server-side search, and
+ * `labelInValue` semantics behind a plain-key (`string`/`string[]`) value.
  *
  * Storybook can't reproduce real scroll-driven pagination against a live
- * backend, so this mocks a single page's worth of users via `RelayResolver`
- * (same `relay-test-utils` pattern as `BAIUserNodes.stories.tsx`). The
- * scroll-load behavior itself is proven against a real mock Relay
- * environment in `react/theme-probe/select26.tsx` (ticket 26 measurement
- * harness), not re-derived here.
+ * backend, so this mocks a single page's worth of users via `RelayResolver`.
  */
+const clientPromise = Promise.resolve({
+  _config: { domainName: 'default' },
+} as unknown as BAIClient);
+
 const meta: Meta<typeof BAIUserSelect> = {
   title: 'Fragments/BAIUserSelect',
   component: BAIUserSelect,
@@ -26,21 +31,37 @@ const meta: Meta<typeof BAIUserSelect> = {
     docs: {
       description: {
         component: `
-**BAIUserSelect** — the Astryx-native successor pattern the other 17 \`*Select\` wrappers follow (ticket 27). Built on \`BAIComplexSelect\`.
+**BAIUserSelect** — the user picker for admin and project-admin forms. Built on \`BAIComplexSelect\`, paged through \`scopedUsersV2\`.
 
-- \`valuePropName\`: \`'email'\` (default) or \`'id'\` — which field is the plain-key value.
-- \`filter\` / \`excludeInactive\`: composed into the Backend.AI query-filter minilang string.
-- The selected-key -> label resolution query is **mandatory infrastructure** here (not a nicety, as it was for antd): the trigger reads label text from the value, and a value picked on page 1 falls out of \`options\` once \`loadNext\` pages past it.
+- \`projectId\`: the members of that project. \`domainId\`: the users of that domain. Neither: the current domain, whose UUID is first resolved through \`domainV2\`.
+- \`valuePropName\`: \`'email'\` (default) or \`'id'\` — which field is the plain-key value. Only \`'id'\` runs the \`uuid in\` label-resolution query; with emails the key already is the label.
+- \`filter\` / \`excludeInactive\`: composed into a \`UserV2Filter\` through the schema's \`AND\` combinator, together with the debounced \`email: { iContains }\` search.
+- Needs a manager >= 26.9.0, where \`scopedUsersV2\` exists.
 
 See \`BAIComplexSelect.stories.tsx\` for the underlying popup-body component with static options.
         `,
       },
     },
   },
+  decorators: [
+    (Story, context) => (
+      <BAIConfigProvider
+        locale={locales[context.globals.locale] || locales.en}
+        clientPromise={clientPromise}
+        anonymousClientFactory={mockAnonymousClientFactory}
+      >
+        <Story />
+      </BAIConfigProvider>
+    ),
+  ],
   argTypes: {
     value: { control: false },
     onChange: { control: false },
+    filter: { control: false },
+    projectId: { control: false },
+    domainId: { control: false },
     multiple: { control: { type: 'boolean' } },
+    excludeInactive: { control: { type: 'boolean' } },
     valuePropName: {
       control: { type: 'select' },
       options: ['email', 'id'],
@@ -54,64 +75,53 @@ type Story = StoryObj<typeof BAIUserSelect>;
 
 const mockUsers = [
   {
-    id: 'VXNlck5vZGU6MQ==',
-    email: 'admin@example.com',
-    username: 'admin',
-    full_name: 'System Administrator',
-    status: 'active',
-    role: 'superadmin',
+    id: 'VXNlclYyOjE=',
+    basicInfo: {
+      email: 'admin@example.com',
+      fullName: 'System Administrator',
+    },
   },
   {
-    id: 'VXNlck5vZGU6Mg==',
-    email: 'alice@example.com',
-    username: 'alice',
-    full_name: 'Alice Kim',
-    status: 'active',
-    role: 'user',
+    id: 'VXNlclYyOjI=',
+    basicInfo: { email: 'alice@example.com', fullName: 'Alice Kim' },
   },
   {
-    id: 'VXNlck5vZGU6Mw==',
-    email: 'bob@example.com',
-    username: 'bob',
-    full_name: 'Bob Lee',
-    status: 'active',
-    role: 'user',
+    id: 'VXNlclYyOjM=',
+    basicInfo: { email: 'bob@example.com', fullName: 'Bob Lee' },
   },
   {
-    id: 'VXNlck5vZGU6NA==',
-    email: 'carol@example.com',
-    username: 'carol',
-    full_name: 'Carol Park',
-    status: 'active',
-    role: 'user',
-  },
-  {
-    id: 'VXNlck5vZGU6NQ==',
-    email: 'dave@example.com',
-    username: 'dave',
-    full_name: 'Dave Choi',
-    status: 'inactive',
-    role: 'user',
+    id: 'VXNlclYyOjQ=',
+    basicInfo: { email: 'carol@example.com', fullName: 'Carol Park' },
   },
 ];
-const mockEdges = mockUsers.map((node) => ({ node }));
 
-const mockResolvers = {
+const connection = (users: typeof mockUsers) => ({
+  count: users.length,
+  edges: users.map((node) => ({ node })),
+});
+
+const mockResolvers: MockResolvers = {
   Query: () => ({
-    user_nodes: { count: mockUsers.length, edges: mockEdges },
+    scopedUsersV2: connection(mockUsers),
+    domainV2: { entityId: '5c3b5a9e-0000-4000-8000-0000000000d0' },
   }),
+};
+
+const emptyResolvers: MockResolvers = {
+  Query: () => ({ scopedUsersV2: connection([]) }),
 };
 
 const Sandbox: React.FC<
   Omit<ComponentProps<typeof BAIUserSelect>, 'value' | 'onChange'> & {
     initialValue?: string | Array<string> | null;
+    resolvers?: MockResolvers;
   }
-> = ({ initialValue = null, ...args }) => {
+> = ({ initialValue = null, resolvers = mockResolvers, ...args }) => {
   const [value, setValue] = useState<string | Array<string> | null | undefined>(
     initialValue,
   );
   return (
-    <RelayResolver mockResolvers={mockResolvers}>
+    <RelayResolver mockResolvers={resolvers}>
       <BAIUserSelect
         {...args}
         value={value}
@@ -121,20 +131,47 @@ const Sandbox: React.FC<
   );
 };
 
-export const Default: Story = {
-  name: 'Single Select',
+export const CurrentDomain: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Single user select, `valuePropName="email"` (default).',
+        story:
+          'No scope props: resolves the current domain through `domainV2`, then lists its users.',
       },
     },
   },
-  render: (args) => <Sandbox {...args} label="User" />,
+  render: (args) => <Sandbox {...args} label="User" defaultOpen />,
+};
+
+export const ProjectMembers: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`projectId` set: reads `scopedUsersV2` with a project scope, the members of that project.',
+      },
+    },
+  },
+  render: (args) => (
+    <Sandbox
+      {...args}
+      label="Owner"
+      projectId="5c3b5a9e-0000-4000-8000-000000000001"
+      defaultOpen
+    />
+  ),
 };
 
 export const Multiple: Story = {
   name: 'Multiple Select',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Multi-selection: the value is an array of keys and the trigger lists the selected emails.',
+      },
+    },
+  },
   render: (args) => (
     <Sandbox
       {...args}
@@ -151,7 +188,7 @@ export const ExcludeInactive: Story = {
     docs: {
       description: {
         story:
-          '`excludeInactive` composes `status == "active"` into the query filter.',
+          '`excludeInactive` composes `status: { equals: ACTIVE }` into the `UserV2Filter`.',
       },
     },
   },
@@ -164,9 +201,53 @@ export const IdValued: Story = {
     docs: {
       description: {
         story:
-          '`valuePropName="id"` — the plain-key value is the local (decoded) node id instead of the email.',
+          '`valuePropName="id"` — the plain-key value is the local user UUID, which is what `adminBulkAssignRole` and friends take. This is the only mode that runs the `uuid in` label-resolution query.',
       },
     },
   },
   render: (args) => <Sandbox {...args} label="User" valuePropName="id" />,
+};
+
+export const Loading: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Caller-side `isLoading`, which spins the trigger the same way the internal debounce and refetch pending states do.',
+      },
+    },
+  },
+  render: (args) => <Sandbox {...args} label="User" isLoading isDisabled />,
+};
+
+export const Empty: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'No users match the query — the popup shows the shared empty-state text.',
+      },
+    },
+  },
+  render: (args) => (
+    <Sandbox {...args} label="User" resolvers={emptyResolvers} defaultOpen />
+  ),
+};
+
+export const Error: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The error status a form item sets when its `required` rule fails.',
+      },
+    },
+  },
+  render: (args) => (
+    <Sandbox
+      {...args}
+      label="User"
+      status={{ type: 'error', message: 'Please select users.' }}
+    />
+  ),
 };

@@ -3529,7 +3529,6 @@
       "SelectDomain": "Select Domain",
       "SelectFirst": "Please select a user or project from the selector above.",
       "SelectProject": "Select Project",
-      "SelectUser": "Search and select User",
       "UnsetCustomSettings": "Unset custom settings"
     },
     "tab": {

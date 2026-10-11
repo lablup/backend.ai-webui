@@ -3545,7 +3545,6 @@
       "SelectDomain": "Sélectionner un domaine",
       "SelectFirst": "Veuillez sélectionner un utilisateur ou un projet dans le sélecteur ci-dessus.",
       "SelectProject": "Sélectionner un projet",
-      "SelectUser": "Rechercher et sélectionner Utilisateur",
       "UnsetCustomSettings": "Désactiver les paramètres personnalisés"
     },
     "tab": {

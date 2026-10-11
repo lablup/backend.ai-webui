@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c8e8844b1ea71717903f069dd41b6b9b>>
+ * @generated SignedSource<<39ce5b016d70719e580cfe0bd62e6c4d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,8 +9,18 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type UserRoleV2 = "ADMIN" | "MONITOR" | "SUPERADMIN" | "USER" | "%future added value";
 export type UserStatusV2 = "ACTIVE" | "BEFORE_VERIFICATION" | "DELETED" | "INACTIVE" | "%future added value";
+export type UserV2OrderField = "CONTAINER_MAIN_GID" | "CONTAINER_UID" | "CREATED_AT" | "DESCRIPTION" | "DOMAIN_ID" | "DOMAIN_NAME" | "EMAIL" | "ENTITY_ID" | "FULL_NAME" | "INTEGRATION_NAME" | "MODIFIED_AT" | "NEED_PASSWORD_CHANGE" | "PROJECT_NAME" | "RESOURCE_POLICY" | "ROLE" | "STATUS" | "STATUS_INFO" | "SUDO_SESSION_ENABLED" | "TOTP_ACTIVATED" | "TOTP_ACTIVATED_AT" | "USERNAME" | "%future added value";
+export type UserScope = {
+  domain?: ReadonlyArray<UUIDScope> | null | undefined;
+  project?: ReadonlyArray<UUIDScope> | null | undefined;
+  role?: ReadonlyArray<UUIDScope> | null | undefined;
+};
+export type UUIDScope = {
+  value: string;
+};
 export type UserV2Filter = {
   AND?: ReadonlyArray<UserV2Filter> | null | undefined;
   NOT?: ReadonlyArray<UserV2Filter> | null | undefined;
@@ -133,108 +143,147 @@ export type UserProjectNestedFilter = {
   isActive?: boolean | null | undefined;
   name?: StringFilter | null | undefined;
 };
-export type BAIAdminUserV2SelectValueQuery$variables = {
-  limit: number;
-  selectedFilter?: UserV2Filter | null | undefined;
-  skipSelected: boolean;
+export type UserV2OrderBy = {
+  direction?: OrderDirection;
+  field?: UserV2OrderField;
 };
-export type BAIAdminUserV2SelectValueQuery$data = {
-  readonly adminUsersV2?: {
+export type BAIUserSelectScopedPaginatedQuery$variables = {
+  filter?: UserV2Filter | null | undefined;
+  limit: number;
+  offset: number;
+  orderBy?: ReadonlyArray<UserV2OrderBy> | null | undefined;
+  scope: UserScope;
+};
+export type BAIUserSelectScopedPaginatedQuery$data = {
+  readonly scopedUsersV2: {
+    readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly basicInfo: {
           readonly email: string;
+          readonly fullName: string | null | undefined;
         };
         readonly id: string;
       };
     }>;
   } | null | undefined;
 };
-export type BAIAdminUserV2SelectValueQuery = {
-  response: BAIAdminUserV2SelectValueQuery$data;
-  variables: BAIAdminUserV2SelectValueQuery$variables;
+export type BAIUserSelectScopedPaginatedQuery = {
+  response: BAIUserSelectScopedPaginatedQuery$data;
+  variables: BAIUserSelectScopedPaginatedQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "limit"
+  "name": "filter"
 },
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "selectedFilter"
+  "name": "limit"
 },
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "skipSelected"
+  "name": "offset"
 },
-v3 = [
+v3 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "orderBy"
+},
+v4 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "scope"
+},
+v5 = [
   {
-    "condition": "skipSelected",
-    "kind": "Condition",
-    "passingValue": false,
+    "alias": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "filter",
+        "variableName": "filter"
+      },
+      {
+        "kind": "Variable",
+        "name": "limit",
+        "variableName": "limit"
+      },
+      {
+        "kind": "Variable",
+        "name": "offset",
+        "variableName": "offset"
+      },
+      {
+        "kind": "Variable",
+        "name": "orderBy",
+        "variableName": "orderBy"
+      },
+      {
+        "kind": "Variable",
+        "name": "scope",
+        "variableName": "scope"
+      }
+    ],
+    "concreteType": "UserV2Connection",
+    "kind": "LinkedField",
+    "name": "scopedUsersV2",
+    "plural": false,
     "selections": [
       {
         "alias": null,
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "filter",
-            "variableName": "selectedFilter"
-          },
-          {
-            "kind": "Variable",
-            "name": "limit",
-            "variableName": "limit"
-          }
-        ],
-        "concreteType": "UserV2Connection",
+        "args": null,
+        "kind": "ScalarField",
+        "name": "count",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "UserV2Edge",
         "kind": "LinkedField",
-        "name": "adminUsersV2",
-        "plural": false,
+        "name": "edges",
+        "plural": true,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "UserV2Edge",
+            "concreteType": "UserV2",
             "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
+            "name": "node",
+            "plural": false,
             "selections": [
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "UserV2",
+                "kind": "ScalarField",
+                "name": "id",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "UserV2BasicInfo",
                 "kind": "LinkedField",
-                "name": "node",
+                "name": "basicInfo",
                 "plural": false,
                 "selections": [
                   {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "id",
+                    "name": "email",
                     "storageKey": null
                   },
                   {
                     "alias": null,
                     "args": null,
-                    "concreteType": "UserV2BasicInfo",
-                    "kind": "LinkedField",
-                    "name": "basicInfo",
-                    "plural": false,
-                    "selections": [
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "email",
-                        "storageKey": null
-                      }
-                    ],
+                    "kind": "ScalarField",
+                    "name": "fullName",
                     "storageKey": null
                   }
                 ],
@@ -246,7 +295,8 @@ v3 = [
         ],
         "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
@@ -254,37 +304,41 @@ return {
     "argumentDefinitions": [
       (v0/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/)
+      (v2/*: any*/),
+      (v3/*: any*/),
+      (v4/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "BAIAdminUserV2SelectValueQuery",
-    "selections": (v3/*: any*/),
+    "name": "BAIUserSelectScopedPaginatedQuery",
+    "selections": (v5/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
+      (v4/*: any*/),
+      (v2/*: any*/),
       (v1/*: any*/),
       (v0/*: any*/),
-      (v2/*: any*/)
+      (v3/*: any*/)
     ],
     "kind": "Operation",
-    "name": "BAIAdminUserV2SelectValueQuery",
-    "selections": (v3/*: any*/)
+    "name": "BAIUserSelectScopedPaginatedQuery",
+    "selections": (v5/*: any*/)
   },
   "params": {
-    "cacheID": "0a609f6f54a1625212fe62168903b81c",
+    "cacheID": "ffe0bdc5e4c13ffc25631d55383ba84a",
     "id": null,
     "metadata": {},
-    "name": "BAIAdminUserV2SelectValueQuery",
+    "name": "BAIUserSelectScopedPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIAdminUserV2SelectValueQuery(\n  $selectedFilter: UserV2Filter\n  $limit: Int!\n  $skipSelected: Boolean!\n) {\n  adminUsersV2(filter: $selectedFilter, limit: $limit) @skip(if: $skipSelected) {\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIUserSelectScopedPaginatedQuery(\n  $scope: UserScope!\n  $offset: Int!\n  $limit: Int!\n  $filter: UserV2Filter\n  $orderBy: [UserV2OrderBy!]\n) {\n  scopedUsersV2(scope: $scope, offset: $offset, limit: $limit, filter: $filter, orderBy: $orderBy) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "77a6ea8cc05760ecebb6a139b466b99f";
+(node as any).hash = "a1168201ee93ae3a8f43897a1ca2fbb7";
 
 export default node;
