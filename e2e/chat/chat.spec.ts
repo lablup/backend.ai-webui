@@ -139,14 +139,10 @@ test.describe('Basic Chat Flow', { tag: ['@chat', '@functional'] }, () => {
     await expect(page.getByText('Hello from mock!').first()).toBeVisible();
   });
 
-  test.fixme('User can stop a streaming response mid-generation', async ({
+  test('User can stop a streaming response mid-generation', async ({
     page,
     request,
   }) => {
-    // FIXME: The stop button never becomes visible because the mock SSE response
-    // completes synchronously before the Astryx ChatComposer can switch
-    // to the loading/stop state. A real slow streaming endpoint would be needed to
-    // test this behavior reliably.
     // Setup with a slow streaming response
     await loginAsAdmin(page, request);
     await page.evaluate(() => {
@@ -171,18 +167,37 @@ test.describe('Basic Chat Flow', { tag: ['@chat', '@functional'] }, () => {
       });
     });
 
-    // Slow chunked response — uses a delay between chunks to allow stop
-    await page.route('**/v1/chat/completions', async (route) => {
-      // Fulfill with a response body that streams slowly
-      const chunks =
-        `data: ${JSON.stringify({ id: 'chatcmpl-slow', object: 'chat.completion.chunk', choices: [{ delta: { content: 'Starting...' }, index: 0, finish_reason: null }] })}\n\n` +
-        `data: ${JSON.stringify({ id: 'chatcmpl-slow', object: 'chat.completion.chunk', choices: [{ delta: { content: ' still going...' }, index: 0, finish_reason: null }] })}\n\n`;
-      await route.fulfill({
-        status: 200,
-        contentType: 'text/event-stream',
-        body: chunks,
-        // Note: no [DONE] so streaming stays open until aborted
-      });
+    // route.fulfill delivers the whole body at once, so the stream would end
+    // before Stop renders. Patch fetch to stream one chunk and stay open until aborted.
+    await page.addInitScript(() => {
+      const originalFetch = window.fetch;
+      window.fetch = (input, init) => {
+        const url =
+          typeof input === 'string'
+            ? input
+            : input instanceof URL
+              ? input.href
+              : input.url;
+        if (!url.includes('/v1/chat/completions')) {
+          return originalFetch(input, init);
+        }
+        const signal = init?.signal;
+        const chunk = `data: ${JSON.stringify({ id: 'chatcmpl-slow', object: 'chat.completion.chunk', choices: [{ delta: { content: 'Starting...' }, index: 0, finish_reason: null }] })}\n\n`;
+        const body = new ReadableStream<Uint8Array>({
+          start(controller) {
+            controller.enqueue(new TextEncoder().encode(chunk));
+            signal?.addEventListener('abort', () => {
+              controller.error(new DOMException('Aborted', 'AbortError'));
+            });
+          },
+        });
+        return Promise.resolve(
+          new Response(body, {
+            status: 200,
+            headers: { 'Content-Type': 'text/event-stream' },
+          }),
+        );
+      };
     });
 
     await navigateTo(page, 'chat');
@@ -198,6 +213,11 @@ test.describe('Basic Chat Flow', { tag: ['@chat', '@functional'] }, () => {
     await expect(
       page.getByText('Generate a long response.').first(),
     ).toBeVisible({ timeout: 10000 });
+
+    // The first chunk has rendered while the stream is still open
+    await expect(page.getByText('Starting...').first()).toBeVisible({
+      timeout: 15000,
+    });
 
     // Wait for streaming state to begin — a stop/cancel button should appear
     // The stop button is typically rendered while the response is streaming
