@@ -1764,6 +1764,7 @@
     "ContainerRegistry": "Konttirekisteri",
     "Control": "Valvonta",
     "Cores": "ytimet",
+    "CreateValue": "Luo \"{{value}}\"",
     "CreatedAt": "Luontipäivä",
     "Credential": "Tunnistetiedot",
     "Days": "{{num}} päivää",
