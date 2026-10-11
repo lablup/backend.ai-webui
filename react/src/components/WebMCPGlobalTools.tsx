@@ -213,7 +213,7 @@ const WebMCPGlobalToolsRegistrar: React.FC = () => {
   return null;
 };
 
-/** The app-shell WebMCP tools (ADR 0009). Mount inside a Suspense boundary: it waits for login. */
+/** The app-shell WebMCP tools (ADR 0011). Mount inside a Suspense boundary: it waits for login. */
 const WebMCPGlobalTools: React.FC = () => {
   'use memo';
   const isActive = useBAIWebMCPActive();
