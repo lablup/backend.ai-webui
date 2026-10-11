@@ -2049,7 +2049,18 @@
     "TooManyAttempt": "Đã có quá nhiều lần đăng nhập. Nỗ lực đăng nhập đã bị chặn trong một thời gian.",
     "singleSignOn": {
       "LoginWithRealm": "Đăng nhập bằng {{realmName }}",
-      "LoginWithSAML": "Đăng nhập bằng SAML"
+      "LoginWithRealmFailed": "Đăng nhập bằng {{ realmName }} không thành công",
+      "LoginWithSAML": "Đăng nhập bằng SAML",
+      "OpenIDAccessDenied": "Việc đăng nhập đã bị hủy hoặc các quyền được yêu cầu chưa được cấp. Vui lòng đăng nhập lại và hoàn tất mọi bước trên trang của nhà cung cấp danh tính. Nếu tổ chức của bạn yêu cầu quản trị viên phê duyệt ứng dụng này, hãy liên hệ với quản trị viên.",
+      "OpenIDDomainNotFound": "Nhóm của bạn được liên kết với một miền Backend.AI không tồn tại. Hãy liên hệ với quản trị viên.",
+      "OpenIDGroupNotAllowed": "Tài khoản của bạn không thuộc nhóm nào được phép sử dụng Backend.AI. Hãy liên hệ với quản trị viên để kiểm tra nhóm của bạn.",
+      "OpenIDInternalServerError": "Đã xảy ra lỗi máy chủ khi đăng nhập. Vui lòng thử lại sau. Nếu sự cố vẫn tiếp diễn, hãy liên hệ với quản trị viên.",
+      "OpenIDNotAuthenticated": "Backend.AI không thể xác minh phản hồi đăng nhập từ nhà cung cấp danh tính. Vui lòng thử lại. Nếu sự cố vẫn tiếp diễn, hãy liên hệ với quản trị viên.",
+      "OpenIDProviderMisconfigured": "Đăng nhập giữa Backend.AI và nhà cung cấp danh tính chưa được thiết lập đúng. Hãy liên hệ với quản trị viên.",
+      "OpenIDProviderUnavailable": "Nhà cung cấp danh tính tạm thời không khả dụng hoặc không thể kết nối. Vui lòng thử lại sau vài phút.",
+      "OpenIDSessionInvalid": "Yêu cầu đăng nhập của bạn đã hết hạn hoặc đã được sử dụng. Điều này có thể xảy ra nếu quá trình đăng nhập mất quá nhiều thời gian hoặc bạn đã dùng nút quay lại của trình duyệt. Vui lòng bắt đầu lại từ trang đăng nhập.",
+      "OpenIDUnknownError": "Đã xảy ra lỗi không mong muốn khi đăng nhập. Vui lòng thử lại. Nếu sự cố vẫn tiếp diễn, hãy liên hệ với quản trị viên.",
+      "OpenIDUnknownErrorWithCode": "Đã xảy ra lỗi không mong muốn khi đăng nhập (mã lỗi: {{ code }}). Vui lòng thử lại. Nếu sự cố vẫn tiếp diễn, hãy liên hệ với quản trị viên."
     }
   },
   "loginHistory": {

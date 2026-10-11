@@ -2049,7 +2049,18 @@
     "TooManyAttempt": "Houve muitas tentativas de login. As tentativas de login foram bloqueadas por um tempo.",
     "singleSignOn": {
       "LoginWithRealm": "Iniciar sessão com {{ realmName }}",
-      "LoginWithSAML": "Iniciar sessão com SAML"
+      "LoginWithRealmFailed": "Falha ao iniciar sessão com {{ realmName }}",
+      "LoginWithSAML": "Iniciar sessão com SAML",
+      "OpenIDAccessDenied": "O início de sessão foi cancelado ou as permissões pedidas não foram concedidas. Inicie sessão novamente e conclua todos os passos na página do fornecedor de identidade. Se a sua organização exigir a aprovação do administrador para esta aplicação, contacte o administrador.",
+      "OpenIDDomainNotFound": "O seu grupo está associado a um domínio Backend.AI que não existe. Contacte o administrador.",
+      "OpenIDGroupNotAllowed": "A sua conta não pertence a nenhum grupo com permissão para utilizar o Backend.AI. Peça ao administrador para verificar a sua associação a grupos.",
+      "OpenIDInternalServerError": "Ocorreu um erro no servidor ao iniciar sessão. Tente novamente mais tarde. Se o problema persistir, contacte o administrador.",
+      "OpenIDNotAuthenticated": "O Backend.AI não conseguiu verificar a resposta de início de sessão do fornecedor de identidade. Tente novamente. Se o problema persistir, contacte o administrador.",
+      "OpenIDProviderMisconfigured": "O início de sessão entre o Backend.AI e o fornecedor de identidade não está configurado corretamente. Contacte o administrador.",
+      "OpenIDProviderUnavailable": "O fornecedor de identidade está temporariamente indisponível ou não foi possível contactá-lo. Tente novamente dentro de alguns minutos.",
+      "OpenIDSessionInvalid": "O seu pedido de início de sessão expirou ou já foi utilizado. Isto pode acontecer se o início de sessão demorou demasiado tempo ou se utilizou o botão Retroceder do navegador. Recomece a partir da página de início de sessão.",
+      "OpenIDUnknownError": "Ocorreu um erro inesperado ao iniciar sessão. Tente novamente. Se o problema persistir, contacte o administrador.",
+      "OpenIDUnknownErrorWithCode": "Ocorreu um erro inesperado ao iniciar sessão (código de erro: {{ code }}). Tente novamente. Se o problema persistir, contacte o administrador."
     }
   },
   "loginHistory": {

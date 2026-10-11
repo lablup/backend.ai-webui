@@ -2049,7 +2049,18 @@
     "TooManyAttempt": "ログインの試行回数が多すぎました。ログインの試行はしばらくの間ブロックされています。",
     "singleSignOn": {
       "LoginWithRealm": "{{ realmName }}ログイン",
-      "LoginWithSAML": "SAMLログイン"
+      "LoginWithRealmFailed": "{{ realmName }} でのログインに失敗しました",
+      "LoginWithSAML": "SAMLログイン",
+      "OpenIDAccessDenied": "ログインがキャンセルされたか、要求された権限が許可されませんでした。もう一度ログインし、認証プロバイダーの画面ですべての手順を完了してください。組織でこのアプリに管理者の承認が必要な場合は、管理者に連絡してください。",
+      "OpenIDDomainNotFound": "お使いのグループは存在しない Backend.AI ドメインに紐づいています。管理者に連絡してください。",
+      "OpenIDGroupNotAllowed": "お使いのアカウントは Backend.AI の利用が許可されたグループに所属していません。管理者にグループの所属を確認してください。",
+      "OpenIDInternalServerError": "ログイン中にサーバーエラーが発生しました。しばらくしてからもう一度お試しください。問題が続く場合は管理者に連絡してください。",
+      "OpenIDNotAuthenticated": "Backend.AI が認証プロバイダーからのログイン応答を確認できませんでした。もう一度お試しください。問題が続く場合は管理者に連絡してください。",
+      "OpenIDProviderMisconfigured": "Backend.AI と認証プロバイダーの間のログイン設定に問題があります。管理者に連絡してください。",
+      "OpenIDProviderUnavailable": "認証プロバイダーが一時的に利用できないか、接続できません。数分後にもう一度お試しください。",
+      "OpenIDSessionInvalid": "ログインリクエストの有効期限が切れたか、すでに使用されています。ログインに時間がかかりすぎた場合や、ブラウザーの戻るボタンを使用した場合に発生することがあります。ログイン画面からやり直してください。",
+      "OpenIDUnknownError": "ログイン中に予期しないエラーが発生しました。もう一度お試しください。問題が続く場合は管理者に連絡してください。",
+      "OpenIDUnknownErrorWithCode": "ログイン中に予期しないエラーが発生しました（エラーコード: {{ code }}）。もう一度お試しください。問題が続く場合は管理者に連絡してください。"
     }
   },
   "loginHistory": {

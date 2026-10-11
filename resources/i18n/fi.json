@@ -2047,7 +2047,18 @@
     "TooManyAttempt": "Kirjautumisyrityksiä oli liikaa. Kirjautumisyritykset on estetty jonkin aikaa.",
     "singleSignOn": {
       "LoginWithRealm": "Kirjaudu sisään {{ realmName }}",
-      "LoginWithSAML": "Kirjautuminen SAML:llä"
+      "LoginWithRealmFailed": "Kirjautuminen palvelulla {{ realmName }} epäonnistui",
+      "LoginWithSAML": "Kirjautuminen SAML:llä",
+      "OpenIDAccessDenied": "Kirjautuminen peruttiin, tai pyydettyjä käyttöoikeuksia ei myönnetty. Kirjaudu uudelleen ja suorita kaikki vaiheet tunnistautumispalvelun sivulla. Jos organisaatiosi vaatii tälle sovellukselle järjestelmänvalvojan hyväksynnän, ota yhteyttä järjestelmänvalvojaan.",
+      "OpenIDDomainNotFound": "Ryhmäsi on liitetty Backend.AI-toimialueeseen, jota ei ole olemassa. Ota yhteyttä järjestelmänvalvojaan.",
+      "OpenIDGroupNotAllowed": "Tilisi ei kuulu mihinkään ryhmään, jolla on oikeus käyttää Backend.AI:ta. Pyydä järjestelmänvalvojaa tarkistamaan ryhmäjäsenyytesi.",
+      "OpenIDInternalServerError": "Kirjautumisen aikana tapahtui palvelinvirhe. Yritä myöhemmin uudelleen. Jos ongelma jatkuu, ota yhteyttä järjestelmänvalvojaan.",
+      "OpenIDNotAuthenticated": "Backend.AI ei pystynyt vahvistamaan tunnistautumispalvelun kirjautumisvastausta. Yritä uudelleen. Jos ongelma jatkuu, ota yhteyttä järjestelmänvalvojaan.",
+      "OpenIDProviderMisconfigured": "Kirjautumista ei ole määritetty oikein Backend.AI:n ja tunnistautumispalvelun välillä. Ota yhteyttä järjestelmänvalvojaan.",
+      "OpenIDProviderUnavailable": "Tunnistautumispalvelu ei ole tilapäisesti käytettävissä, tai siihen ei saatu yhteyttä. Yritä uudelleen muutaman minuutin kuluttua.",
+      "OpenIDSessionInvalid": "Kirjautumispyyntö on vanhentunut tai se on jo käytetty. Näin voi käydä, jos kirjautuminen kesti liian kauan tai käytit selaimen Takaisin-painiketta. Aloita uudelleen kirjautumissivulta.",
+      "OpenIDUnknownError": "Kirjautumisen aikana tapahtui odottamaton virhe. Yritä uudelleen. Jos ongelma jatkuu, ota yhteyttä järjestelmänvalvojaan.",
+      "OpenIDUnknownErrorWithCode": "Kirjautumisen aikana tapahtui odottamaton virhe (virhekoodi: {{ code }}). Yritä uudelleen. Jos ongelma jatkuu, ota yhteyttä järjestelmänvalvojaan."
     }
   },
   "loginHistory": {

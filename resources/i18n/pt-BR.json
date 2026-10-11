@@ -2047,7 +2047,18 @@
     "TooManyAttempt": "Houve muitas tentativas de login. As tentativas de login foram bloqueadas por um tempo.",
     "singleSignOn": {
       "LoginWithRealm": "Iniciar sessão com {{ realmName }}",
-      "LoginWithSAML": "Iniciar sessão com SAML"
+      "LoginWithRealmFailed": "Falha ao fazer login com {{ realmName }}",
+      "LoginWithSAML": "Iniciar sessão com SAML",
+      "OpenIDAccessDenied": "O login foi cancelado ou as permissões solicitadas não foram concedidas. Faça login novamente e conclua todas as etapas na página do provedor de identidade. Se sua organização exigir aprovação do administrador para este aplicativo, entre em contato com o administrador.",
+      "OpenIDDomainNotFound": "Seu grupo está vinculado a um domínio do Backend.AI que não existe. Entre em contato com o administrador.",
+      "OpenIDGroupNotAllowed": "Sua conta não pertence a nenhum grupo com permissão para usar o Backend.AI. Peça ao administrador para verificar sua associação a grupos.",
+      "OpenIDInternalServerError": "Ocorreu um erro no servidor durante o login. Tente novamente mais tarde. Se o problema persistir, entre em contato com o administrador.",
+      "OpenIDNotAuthenticated": "O Backend.AI não conseguiu verificar a resposta de login do provedor de identidade. Tente novamente. Se o problema persistir, entre em contato com o administrador.",
+      "OpenIDProviderMisconfigured": "O login entre o Backend.AI e o provedor de identidade não está configurado corretamente. Entre em contato com o administrador.",
+      "OpenIDProviderUnavailable": "O provedor de identidade está temporariamente indisponível ou não pôde ser acessado. Tente novamente em alguns minutos.",
+      "OpenIDSessionInvalid": "Sua solicitação de login expirou ou já foi usada. Isso pode acontecer se o login demorou muito ou se você usou o botão Voltar do navegador. Comece novamente pela página de login.",
+      "OpenIDUnknownError": "Ocorreu um erro inesperado durante o login. Tente novamente. Se o problema persistir, entre em contato com o administrador.",
+      "OpenIDUnknownErrorWithCode": "Ocorreu um erro inesperado durante o login (código de erro: {{ code }}). Tente novamente. Se o problema persistir, entre em contato com o administrador."
     }
   },
   "loginHistory": {

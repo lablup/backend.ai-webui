@@ -2034,7 +2034,18 @@
     "TooManyAttempt": "There were too many login attempts. Login attempts have been blocked for a while.",
     "singleSignOn": {
       "LoginWithRealm": "Login with {{ realmName }}",
-      "LoginWithSAML": "Login with SAML"
+      "LoginWithRealmFailed": "Login with {{ realmName }} failed",
+      "LoginWithSAML": "Login with SAML",
+      "OpenIDAccessDenied": "Login was canceled, or the requested permissions were not granted. Please log in again and complete every step on the identity provider's page. If your organization requires administrator approval for this app, contact your administrator.",
+      "OpenIDDomainNotFound": "Your group is linked to a Backend.AI domain that does not exist. Contact your administrator.",
+      "OpenIDGroupNotAllowed": "Your account is not in any group allowed to use Backend.AI. Contact your administrator to check your group membership.",
+      "OpenIDInternalServerError": "A server error occurred while logging in. Please try again later. If the problem persists, contact your administrator.",
+      "OpenIDNotAuthenticated": "Backend.AI could not verify the login response from the identity provider. Please try again. If the problem persists, contact your administrator.",
+      "OpenIDProviderMisconfigured": "Login is not set up correctly between Backend.AI and the identity provider. Contact your administrator.",
+      "OpenIDProviderUnavailable": "The identity provider is temporarily unavailable or could not be reached. Please try again in a few minutes.",
+      "OpenIDSessionInvalid": "Your login request expired or was already used. This can happen if logging in took too long or you used the browser's back button. Please start again from the login page.",
+      "OpenIDUnknownError": "An unexpected error occurred while logging in. Please try again. If the problem persists, contact your administrator.",
+      "OpenIDUnknownErrorWithCode": "An unexpected error occurred while logging in (error code: {{ code }}). Please try again. If the problem persists, contact your administrator."
     }
   },
   "loginHistory": {
