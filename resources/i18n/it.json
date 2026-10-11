@@ -1997,6 +1997,8 @@
     "APIKey": "Chiave API",
     "APIMode": "API",
     "APISigninNeedsManagerEndpoint": "L'accesso tramite API richiede un endpoint Manager. Questa WebUI è configurata per connettersi tramite un Backend.AI Webserver.",
+    "AccountInfoLoadFailed": "Impossibile caricare le informazioni del tuo account",
+    "AccountInfoLoadFailedDesc": "Sei ancora connesso, ma il server non ha restituito le informazioni del tuo account. Riprova, oppure esci ed effettua di nuovo l'accesso.",
     "ActiveSessionExists": "Esiste già una sessione di accesso attiva.",
     "ActiveSessionExistsDescription": "Sei già connesso da un altro browser o scheda. Effettua prima il logout dall'altra sessione oppure riprova.",
     "AdvancedSettings": "Avanzato",

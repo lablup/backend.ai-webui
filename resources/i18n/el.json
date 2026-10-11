@@ -1997,6 +1997,8 @@
     "APIKey": "Κλειδί API",
     "APIMode": "API",
     "APISigninNeedsManagerEndpoint": "Η σύνδεση μέσω API απαιτεί ένα Manager endpoint. Αυτό το WebUI είναι ρυθμισμένο να συνδέεται μέσω ενός Backend.AI Webserver.",
+    "AccountInfoLoadFailed": "Δεν ήταν δυνατή η φόρτωση των στοιχείων του λογαριασμού σας",
+    "AccountInfoLoadFailedDesc": "Είστε ακόμα συνδεδεμένοι, αλλά ο διακομιστής δεν επέστρεψε τα στοιχεία του λογαριασμού σας. Δοκιμάστε ξανά ή αποσυνδεθείτε και συνδεθείτε ξανά.",
     "ActiveSessionExists": "Υπάρχει ήδη μια ενεργή σύνδεση.",
     "ActiveSessionExistsDescription": "Είστε ήδη συνδεδεμένος από άλλο πρόγραμμα περιήγησης ή καρτέλα. Αποσυνδεθείτε πρώτα από την άλλη σύνδεση ή προσπαθήστε ξανά.",
     "AdvancedSettings": "Σύνθετες ρυθμίσεις",

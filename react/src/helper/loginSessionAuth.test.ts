@@ -2,7 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { SessionAuthFailureError } from './loginBootstrap';
+import {
+  LoginBootstrapIncompleteError,
+  SessionAuthFailureError,
+} from './loginBootstrap';
 import type { LoginConfigState } from './loginConfig';
 import {
   LoginProbeCancelledError,
@@ -112,6 +115,22 @@ describe('connectViaGQL — keypair query rejects (FR-3998)', () => {
     expect(logout).toHaveBeenCalledTimes(1);
   });
 
+  it("carries the manager's text, the IP-block one included", async () => {
+    const logout = vi.fn().mockResolvedValue(undefined);
+    await expect(
+      connectViaGQL(failingClient(refusal, logout), cfg, []),
+    ).rejects.toThrow('not allowed');
+
+    const ipBlocked = {
+      isError: true,
+      statusCode: 401,
+      description: '10.0.0.1 is not allowed IP address',
+    };
+    await expect(
+      connectViaGQL(failingClient(ipBlocked, logout), cfg, []),
+    ).rejects.toThrow('10.0.0.1 is not allowed IP address');
+  });
+
   it('rethrows the refusal when the cleanup logout also rejects', async () => {
     const client = failingClient(
       refusal,
@@ -128,9 +147,33 @@ describe('connectViaGQL — keypair query rejects (FR-3998)', () => {
     const logout = vi.fn().mockResolvedValue(undefined);
     const client = failingClient(timeout, logout);
 
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBeInstanceOf(
+      LoginBootstrapIncompleteError,
+    );
     await expect(connectViaGQL(client, cfg, [])).rejects.toMatchObject({
-      statusCode: 408,
+      cause: { statusCode: 408 },
     });
+    expect(logout).not.toHaveBeenCalled();
+  });
+
+  it('keeps the session when the manager fails to resolve the identity', async () => {
+    const logout = vi.fn().mockResolvedValue(undefined);
+    const client = {
+      newSignedRequest: vi.fn(() => ({})),
+      _wrapWithPromise: vi.fn().mockResolvedValue({
+        data: { keypair: null, user: null, groups: null },
+        errors: [{ message: 'database is unavailable', path: ['keypair'] }],
+      }),
+      isManagerVersionCompatibleWith: () => true,
+      logout,
+    };
+
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBeInstanceOf(
+      LoginBootstrapIncompleteError,
+    );
+    await expect(connectViaGQL(client, cfg, [])).rejects.toThrow(
+      'database is unavailable',
+    );
     expect(logout).not.toHaveBeenCalled();
   });
 });

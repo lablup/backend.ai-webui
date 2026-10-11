@@ -1999,6 +1999,8 @@
     "APIKey": "APIキー",
     "APIMode": "API",
     "APISigninNeedsManagerEndpoint": "APIログインにはManagerのエンドポイントが必要です。このWebUIはBackend.AI Webserver経由で接続するよう設定されています。",
+    "AccountInfoLoadFailed": "アカウント情報を読み込めませんでした",
+    "AccountInfoLoadFailedDesc": "ログイン状態は維持されていますが、サーバーからアカウント情報を取得できませんでした。再試行するか、ログアウトしてから再度ログインしてください。",
     "ActiveSessionExists": "すでにアクティブなログインセッションが存在します。",
     "ActiveSessionExistsDescription": "別のブラウザまたはタブからすでにログインしています。先に別のセッションからログアウトするか、再試行してください。",
     "AdvancedSettings": "詳細設定",

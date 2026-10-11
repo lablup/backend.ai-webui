@@ -1998,6 +1998,8 @@
     "APIKey": "Klucz API",
     "APIMode": "API",
     "APISigninNeedsManagerEndpoint": "Logowanie przez API wymaga endpointu Manager. Ta WebUI jest skonfigurowana do łączenia się przez Backend.AI Webserver.",
+    "AccountInfoLoadFailed": "Nie udało się wczytać informacji o koncie",
+    "AccountInfoLoadFailedDesc": "Nadal jesteś zalogowany, ale serwer nie zwrócił informacji o Twoim koncie. Spróbuj ponownie lub wyloguj się i zaloguj ponownie.",
     "ActiveSessionExists": "Aktywna sesja logowania już istnieje.",
     "ActiveSessionExistsDescription": "Jesteś już zalogowany z innej przeglądarki lub karty. Najpierw wyloguj się z tamtej sesji lub spróbuj ponownie.",
     "AdvancedSettings": "Zaawansowane",

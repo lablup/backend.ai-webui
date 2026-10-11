@@ -28,12 +28,15 @@ import { App } from '../app-shim';
 //     Message is rendered here at all and the override was already dead.
 import { Form } from '../form-engine';
 import { extractErrorType } from '../helper';
+import { getActAsTarget } from '../helper/actAs';
 import {
   devApiEndpointOverride,
   devEmailOverride,
   devPasswordOverride,
 } from '../helper/devLoginOverrides';
 import {
+  LoginBootstrapIncompleteError,
+  SessionAuthFailureError,
   probeLoginSession,
   type LoginBootstrap,
 } from '../helper/loginBootstrap';
@@ -65,7 +68,8 @@ import { preloadPostLoginChunks } from '../preload';
 import { jotaiStore } from './DefaultProviders';
 import LoginFormPanel, { type EndpointHistoryEntry } from './LoginFormPanel';
 import { Button } from '@lablup/ui-common/Button';
-import { BAIModal, useBAILogger } from 'backend.ai-ui';
+import { Text } from '@lablup/ui-common/Text';
+import { BAIAlert, BAIFlex, BAIModal, useBAILogger } from 'backend.ai-ui';
 import i18n from 'i18next';
 import { useAtomValue, useSetAtom } from 'jotai';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -149,6 +153,10 @@ const LoginView: React.FC<{
   const [blockMessage, setBlockMessage] = useState('');
   const [blockType, setBlockType] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  // The session is live but the manager could not return the user; the login
+  // form would only get "already logged in" back, so offer retry / log out.
+  const [sessionLoadError, setSessionLoadError] = useState<string | null>(null);
+  const [isSessionLogoutFailed, setIsSessionLogoutFailed] = useState(false);
   const [loginError, setLoginError] = useState<{
     message: string;
     description?: string;
@@ -401,6 +409,18 @@ const LoginView: React.FC<{
       });
     }, 2000);
   }, []);
+
+  const showSessionLoadError = (err: LoginBootstrapIncompleteError) => {
+    if (blockTimerRef.current) {
+      clearTimeout(blockTimerRef.current);
+      blockTimerRef.current = null;
+    }
+    setIsBlockPanelOpen(false);
+    setIsLoginPanelOpen(false);
+    setIsLoading(false);
+    setIsSessionLogoutFailed(false);
+    setSessionLoadError(err.message);
+  };
 
   const clearSavedLoginInfo = useCallback(() => {
     localStorage.removeItem('backendaiwebui.login.api_key');
@@ -693,33 +713,36 @@ const LoginView: React.FC<{
     [notification, t, otpRequired, form, modal, logger],
   );
 
-  const handleGQLError = useCallback(
-    (err: unknown, showError: boolean) => {
-      setIsBlockPanelOpen(false);
-      if (showError) {
-        const e = err as {
-          title?: string;
-          message?: string;
-          status?: number;
-        };
-        if (e.message) {
-          if (e.status === 408) {
-            notification(
-              t('error.LoginSucceededManagerNotResponding'),
-              e.message,
-            );
-          } else {
-            notification(e.title || t('error.LoginFailed'), e.message);
-          }
+  const handleGQLError = (err: unknown, showError: boolean) => {
+    if (err instanceof LoginBootstrapIncompleteError) {
+      showSessionLoadError(err);
+      return;
+    }
+    setIsBlockPanelOpen(false);
+    if (showError) {
+      const e = err as {
+        title?: string;
+        message?: string;
+        status?: number;
+      };
+      if (err instanceof SessionAuthFailureError) {
+        notification(t('error.LoginFailed'), err.message || undefined);
+      } else if (e.message) {
+        if (e.status === 408) {
+          notification(
+            t('error.LoginSucceededManagerNotResponding'),
+            e.message,
+          );
         } else {
-          notification(t('error.LoginInformationMismatch'));
+          notification(e.title || t('error.LoginFailed'), e.message);
         }
+      } else {
+        notification(t('error.LoginInformationMismatch'));
       }
-      open();
-      setIsLoading(false);
-    },
-    [notification, t, open],
-  );
+    }
+    open();
+    setIsLoading(false);
+  };
 
   const connectUsingSession = useCallback(
     async (
@@ -755,7 +778,9 @@ const LoginView: React.FC<{
 
       // The session probe runs alongside the reachability check, which is
       // awaited first so Esc can still abort it.
-      const sessionProbe = probeLoginSession(client).catch(() => null);
+      const sessionProbe = probeLoginSession(client).catch((err: unknown) =>
+        err instanceof LoginBootstrapIncompleteError ? err : null,
+      );
       try {
         await probeManager(client);
       } catch (err: unknown) {
@@ -769,6 +794,10 @@ const LoginView: React.FC<{
       }
 
       const bootstrap = await sessionProbe;
+      if (bootstrap instanceof LoginBootstrapIncompleteError) {
+        showSessionLoadError(bootstrap);
+        return;
+      }
       if (bootstrap) {
         try {
           await doGQLConnect(client, bootstrap);
@@ -798,6 +827,10 @@ const LoginView: React.FC<{
         await doGQLConnect(client);
         return;
       } catch (err: unknown) {
+        if (err instanceof LoginBootstrapIncompleteError) {
+          showSessionLoadError(err);
+          return;
+        }
         setIsBlockPanelOpen(false);
 
         // The server can report a password change as applied when it was not
@@ -1025,8 +1058,9 @@ const LoginView: React.FC<{
           ? { endpoint: ep, client, bootstrap }
           : null;
         return bootstrap !== null;
-      } catch {
-        return false;
+      } catch (err) {
+        // Live, only its user failed to load; the connect step shows the dialog.
+        return err instanceof LoginBootstrapIncompleteError;
       }
     }
     return false;
@@ -1240,6 +1274,63 @@ const LoginView: React.FC<{
         <div style={{ textAlign: 'center', paddingTop: 15 }}>
           {blockMessage}
         </div>
+      </BAIModal>
+
+      <BAIModal
+        open={sessionLoadError !== null}
+        title={t('login.AccountInfoLoadFailed')}
+        footer={
+          <BAIFlex gap="xs" justify="end">
+            {/* An act-as tab shares the super admin's cookie; never log it out. */}
+            {!getActAsTarget() && (
+              <Button
+                onClick={async () => {
+                  try {
+                    await logoutSession();
+                  } catch (err) {
+                    // The cookie is still live, so the login form would be refused.
+                    logger.error('[LoginView] logout failed', err);
+                    setIsSessionLogoutFailed(true);
+                    return;
+                  }
+                  setSessionLoadError(null);
+                  open();
+                }}
+                label={t('webui.menu.LogOut')}
+              />
+            )}
+            <Button
+              variant="primary"
+              onClick={() => {
+                setSessionLoadError(null);
+                setIsLoading(true);
+                connectUsingSession(true);
+              }}
+              label={t('button.Retry')}
+            />
+          </BAIFlex>
+        }
+        closable={false}
+        mask={{ closable: false }}
+      >
+        <BAIFlex direction="column" align="stretch" gap="xs">
+          <Text as="p" display="block" style={{ margin: 0 }}>
+            {t('login.AccountInfoLoadFailedDesc')}
+          </Text>
+          {sessionLoadError ? (
+            <Text
+              as="p"
+              display="block"
+              type="supporting"
+              style={{ margin: 0, whiteSpace: 'pre-wrap' }}
+            >
+              {sessionLoadError}
+            </Text>
+          ) : null}
+          {isSessionLogoutFailed ? (
+            <BAIAlert type="error" showIcon title={t('error.UnknownError')} />
+          ) : null}
+        </BAIFlex>
       </BAIModal>
     </>
   );

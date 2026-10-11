@@ -1999,6 +1999,8 @@
     "APIKey": "API-Schlüssel",
     "APIMode": "API",
     "APISigninNeedsManagerEndpoint": "API-Anmeldung erfordert einen Manager-Endpunkt. Diese WebUI ist für die Verbindung über einen Backend.AI Webserver konfiguriert.",
+    "AccountInfoLoadFailed": "Kontoinformationen konnten nicht geladen werden",
+    "AccountInfoLoadFailedDesc": "Sie sind weiterhin angemeldet, aber der Server hat Ihre Kontoinformationen nicht zurückgegeben. Versuchen Sie es erneut oder melden Sie sich ab und wieder an.",
     "ActiveSessionExists": "Es besteht bereits eine aktive Anmeldesitzung.",
     "ActiveSessionExistsDescription": "Sie sind bereits von einem anderen Browser oder Tab angemeldet. Bitte melden Sie sich zuerst aus der anderen Sitzung ab oder versuchen Sie es erneut.",
     "AdvancedSettings": "Erweitert",

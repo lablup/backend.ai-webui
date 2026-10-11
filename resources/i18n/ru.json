@@ -1997,6 +1997,8 @@
     "APIKey": "Ключ API",
     "APIMode": "API",
     "APISigninNeedsManagerEndpoint": "Для входа через API требуется endpoint Manager. Этот WebUI настроен на подключение через Backend.AI Webserver.",
+    "AccountInfoLoadFailed": "Не удалось загрузить сведения об учётной записи",
+    "AccountInfoLoadFailedDesc": "Вы по-прежнему в системе, но сервер не вернул сведения о вашей учётной записи. Повторите попытку или выйдите и войдите снова.",
     "ActiveSessionExists": "Активный сеанс входа уже существует.",
     "ActiveSessionExistsDescription": "Вы уже вошли в систему из другого браузера или вкладки. Пожалуйста, сначала выйдите из другого сеанса или повторите попытку.",
     "AdvancedSettings": "Дополнительно",

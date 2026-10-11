@@ -1984,6 +1984,8 @@
     "APIKey": "API Key",
     "APIMode": "API",
     "APISigninNeedsManagerEndpoint": "API sign-in needs a Manager endpoint. This WebUI is set to connect through a Backend.AI Webserver.",
+    "AccountInfoLoadFailed": "Couldn't load your account information",
+    "AccountInfoLoadFailedDesc": "You are still signed in, but the server did not return your account information. Try again, or log out and sign in again.",
     "ActiveSessionExists": "An active login session already exists.",
     "ActiveSessionExistsDescription": "You are already logged in from another browser or tab. Please log out from the other session first, or try again.",
     "AdvancedSettings": "Advanced",

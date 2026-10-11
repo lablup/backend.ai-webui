@@ -1997,6 +1997,8 @@
     "APIKey": "Clave API",
     "APIMode": "API",
     "APISigninNeedsManagerEndpoint": "El inicio de sesión por API necesita un endpoint de Manager. Esta WebUI está configurada para conectarse a través de un Backend.AI Webserver.",
+    "AccountInfoLoadFailed": "No se pudo cargar la información de su cuenta",
+    "AccountInfoLoadFailedDesc": "Su sesión sigue iniciada, pero el servidor no devolvió la información de su cuenta. Vuelva a intentarlo, o cierre sesión e inicie sesión de nuevo.",
     "ActiveSessionExists": "Ya existe una sesión de inicio de sesión activa.",
     "ActiveSessionExistsDescription": "Ya has iniciado sesión desde otro navegador o pestaña. Por favor, cierra la sesión desde la otra sesión primero o inténtalo de nuevo.",
     "AdvancedSettings": "Avanzado",

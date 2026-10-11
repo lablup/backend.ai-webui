@@ -1999,6 +1999,8 @@
     "APIKey": "Mã API",
     "APIMode": "API",
     "APISigninNeedsManagerEndpoint": "Đăng nhập bằng API cần một endpoint của Manager. WebUI này được cấu hình để kết nối thông qua một Backend.AI Webserver.",
+    "AccountInfoLoadFailed": "Không thể tải thông tin tài khoản của bạn",
+    "AccountInfoLoadFailedDesc": "Bạn vẫn đang đăng nhập, nhưng máy chủ không trả về thông tin tài khoản của bạn. Hãy thử lại, hoặc đăng xuất rồi đăng nhập lại.",
     "ActiveSessionExists": "Đã tồn tại một phiên đăng nhập đang hoạt động.",
     "ActiveSessionExistsDescription": "Bạn đã đăng nhập từ trình duyệt hoặc tab khác. Vui lòng đăng xuất khỏi phiên đó trước, hoặc thử lại.",
     "AdvancedSettings": "Nâng cao",

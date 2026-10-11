@@ -1997,6 +1997,8 @@
     "APIKey": "API-avain",
     "APIMode": "API",
     "APISigninNeedsManagerEndpoint": "API-kirjautuminen vaatii Manager-endpointin. Tämä WebUI on määritetty muodostamaan yhteys Backend.AI Webserverin kautta.",
+    "AccountInfoLoadFailed": "Tilitietojasi ei voitu ladata",
+    "AccountInfoLoadFailedDesc": "Olet edelleen kirjautuneena, mutta palvelin ei palauttanut tilitietojasi. Yritä uudelleen tai kirjaudu ulos ja kirjaudu sitten uudelleen sisään.",
     "ActiveSessionExists": "Aktiivinen kirjautumissessio on jo olemassa.",
     "ActiveSessionExistsDescription": "Olet jo kirjautunut sisään toisesta selaimesta tai välilehdestä. Kirjaudu ensin ulos toisesta sessiosta tai yritä uudelleen.",
     "AdvancedSettings": "Lisäasetukset",

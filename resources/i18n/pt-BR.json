@@ -1997,6 +1997,8 @@
     "APIKey": "Chave API",
     "APIMode": "API",
     "APISigninNeedsManagerEndpoint": "O login via API precisa de um endpoint do Manager. Esta WebUI está configurada para se conectar por meio de um Backend.AI Webserver.",
+    "AccountInfoLoadFailed": "Não foi possível carregar as informações da sua conta",
+    "AccountInfoLoadFailedDesc": "Você continua conectado, mas o servidor não retornou as informações da sua conta. Tente novamente ou saia e entre de novo.",
     "ActiveSessionExists": "Já existe uma sessão de login ativa.",
     "ActiveSessionExistsDescription": "Você já está conectado em outro navegador ou aba. Por favor, faça logout da outra sessão primeiro ou tente novamente.",
     "AdvancedSettings": "Avançado",

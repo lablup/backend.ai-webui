@@ -1988,6 +1988,8 @@
     "APIKey": "คีย์ API",
     "APIMode": "API",
     "APISigninNeedsManagerEndpoint": "การเข้าสู่ระบบด้วย API ต้องใช้เอนด์พอยต์ของ Manager WebUI นี้ถูกตั้งค่าให้เชื่อมต่อผ่าน Backend.AI Webserver",
+    "AccountInfoLoadFailed": "ไม่สามารถโหลดข้อมูลบัญชีของคุณได้",
+    "AccountInfoLoadFailedDesc": "คุณยังคงเข้าสู่ระบบอยู่ แต่เซิร์ฟเวอร์ไม่ได้ส่งข้อมูลบัญชีของคุณกลับมา โปรดลองอีกครั้ง หรือออกจากระบบแล้วเข้าสู่ระบบใหม่",
     "ActiveSessionExists": "มีเซสชันการเข้าสู่ระบบที่ใช้งานอยู่แล้ว",
     "ActiveSessionExistsDescription": "คุณได้เข้าสู่ระบบจากเบราว์เซอร์หรือแท็บอื่นอยู่แล้ว กรุณาออกจากระบบจากเซสชันอื่นก่อน หรือลองอีกครั้ง",
     "AdvancedSettings": "ขั้นสูง",
