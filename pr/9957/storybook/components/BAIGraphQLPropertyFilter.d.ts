@@ -1,5 +1,5 @@
 import { BAIPowerSearchChromeProps, FilterPropertyOption, FilterRenderInput } from './BAIPowerSearchAdapters';
-import { FilterValue, PowerSearchFilter } from '@astryxdesign/core/PowerSearch';
+import { FilterValue, PowerSearchFilter } from '@lablup/ui-common/PowerSearch';
 export type StringFilter = {
     contains?: string | null;
     startsWith?: string | null;
@@ -101,6 +101,14 @@ export interface BAIGraphQLPropertyFilterProps<TFilter extends GraphQLFilter = G
     loading?: boolean;
     combinationMode?: 'AND' | 'OR';
     singleCondition?: boolean;
+    /**
+     * Hard cap on how many conditions the emitted filter may carry IN TOTAL,
+     * across every property. Unlike `singleCondition` (at most one per
+     * property) this is what bounds the AND/OR combinators: `maxConditions={1}`
+     * never emits `AND`, so it is the gate for managers whose filter input has
+     * no sub-filter fields. The LAST conditions win.
+     */
+    maxConditions?: number;
 }
 interface FilterCondition {
     id: string;
@@ -128,6 +136,6 @@ export declare function tokenValueToConditionValue(value: FilterValue): any;
  */
 export declare function graphQLFilterToPowerSearchFilters(value: GraphQLFilter | undefined, filterProperties: Array<FilterProperty>): Array<PowerSearchFilter>;
 /** Exact inverse of `graphQLFilterToPowerSearchFilters`. */
-export declare function powerSearchFiltersToGraphQLFilter(filters: ReadonlyArray<PowerSearchFilter>, filterProperties: Array<FilterProperty>, combinationMode?: 'AND' | 'OR', singleCondition?: boolean): GraphQLFilter | undefined;
-declare const BAIGraphQLPropertyFilter: <TFilter extends GraphQLFilter = GraphQLFilter>({ filterProperties, value: propValue, onChange: propOnChange, defaultValue, combinationMode, singleCondition, label, placeholder, applyLabel, resultCount, contentSearchFieldKey, isDisabled, size, style, className, loading, "data-testid": dataTestId, }: BAIGraphQLPropertyFilterProps<TFilter>) => import("react").JSX.Element;
+export declare function powerSearchFiltersToGraphQLFilter(filters: ReadonlyArray<PowerSearchFilter>, filterProperties: Array<FilterProperty>, combinationMode?: 'AND' | 'OR', singleCondition?: boolean, maxConditions?: number): GraphQLFilter | undefined;
+declare const BAIGraphQLPropertyFilter: <TFilter extends GraphQLFilter = GraphQLFilter>({ filterProperties, value: propValue, onChange: propOnChange, defaultValue, combinationMode, singleCondition, maxConditions, label, placeholder, applyLabel, resultCount, contentSearchFieldKey, isDisabled, size, style, className, loading, "data-testid": dataTestId, }: BAIGraphQLPropertyFilterProps<TFilter>) => import("react").JSX.Element;
 export default BAIGraphQLPropertyFilter;
