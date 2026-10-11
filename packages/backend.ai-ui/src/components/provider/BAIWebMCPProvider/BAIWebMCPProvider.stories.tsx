@@ -1,6 +1,6 @@
 import BAIWebMCPProvider from './BAIWebMCPProvider';
 import useWebMCPTool, { useBAIWebMCPActive } from './hooks/useWebMCPTool';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const EchoTool = () => {
@@ -43,7 +43,7 @@ const meta: Meta<typeof BAIWebMCPProvider> = {
     docs: {
       description: {
         component:
-          'Runtime gate for `useWebMCPTool` (ADR 0009). Open this story in a browser that implements WebMCP (Chrome with `--enable-features=WebMCPTesting`) to call `bai_story_echo`.',
+          'Runtime gate for `useWebMCPTool` (ADR 0011). Open this story in a browser that implements WebMCP (Chrome with `--enable-features=WebMCPTesting`) to call `bai_story_echo`.',
       },
     },
   },
