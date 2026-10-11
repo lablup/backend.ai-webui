@@ -6,7 +6,7 @@ export interface BAIDirectoryPickerModalProps extends Omit<BAIModalProps, 'onOk'
     vfolderUuid: string;
     /**
      * Preloaded reference to `BAIDirectoryPickerQuery` produced by the opener
-     * via `useQueryLoader`, keyed by this vfolder's global id.
+     * via `useQueryLoader`, keyed by this vfolder's id.
      */
     queryRef: PreloadedQuery<BAIDirectoryPickerModalQuery>;
     /** Sub path to start browsing from ('' = vfolder root). */
@@ -19,7 +19,7 @@ export interface BAIDirectoryPickerModalProps extends Omit<BAIModalProps, 'onOk'
  * mode: browse the vfolder (files visible but disabled, folder CRUD
  * available) and confirm the current location with the footer button.
  *
- * Suspends until the preloaded `vfolder_node` query (and the BAIClient
+ * Suspends until the preloaded `vfolderV2` query (and the BAIClient
  * promise consumed inside `BAIFileExplorer`) resolves, so it mounts fully
  * ready — folder name in the title, permissions applied. Openers must
  * therefore mount it inside a transition (`loadQuery` + open-state update
