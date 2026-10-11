@@ -563,7 +563,8 @@
     "CollapseAll": "Σύμπτυξη όλων",
     "ExpandAll": "Ανάπτυξη όλων",
     "ExpandErrorsOnly": "Ανάπτυξη μόνο σφαλμάτων",
-    "ExpandOptions": "Επιλογές ανάπτυξης"
+    "ExpandOptions": "Επιλογές ανάπτυξης",
+    "RowNumber": "γραμμή {{number}}"
   },
   "comp:BAITestButton": {
     "Test": "δοκιμή"

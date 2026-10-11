@@ -563,7 +563,8 @@
     "CollapseAll": "收合全部",
     "ExpandAll": "展開全部",
     "ExpandErrorsOnly": "僅展開錯誤",
-    "ExpandOptions": "展開選項"
+    "ExpandOptions": "展開選項",
+    "RowNumber": "第 {{number}} 列"
   },
   "comp:BAITestButton": {
     "Test": "測試"

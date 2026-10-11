@@ -563,7 +563,8 @@
     "CollapseAll": "Бүгдийг хураах",
     "ExpandAll": "Бүгдийг дэлгэх",
     "ExpandErrorsOnly": "Зөвхөн алдааг дэлгэх",
-    "ExpandOptions": "Дэлгэх сонголтууд"
+    "ExpandOptions": "Дэлгэх сонголтууд",
+    "RowNumber": "{{number}}-р мөр"
   },
   "comp:BAITestButton": {
     "Test": "турших"

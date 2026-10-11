@@ -563,7 +563,8 @@
     "CollapseAll": "收起全部",
     "ExpandAll": "展开全部",
     "ExpandErrorsOnly": "仅展开错误",
-    "ExpandOptions": "展开选项"
+    "ExpandOptions": "展开选项",
+    "RowNumber": "第 {{number}} 行"
   },
   "comp:BAITestButton": {
     "Test": "测试"

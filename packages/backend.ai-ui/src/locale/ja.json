@@ -563,7 +563,8 @@
     "CollapseAll": "すべて折りたたむ",
     "ExpandAll": "すべて展開",
     "ExpandErrorsOnly": "エラーのみ展開",
-    "ExpandOptions": "展開オプション"
+    "ExpandOptions": "展開オプション",
+    "RowNumber": "{{number}} 行目"
   },
   "comp:BAITestButton": {
     "Test": "テスト"

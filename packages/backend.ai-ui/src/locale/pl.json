@@ -563,7 +563,8 @@
     "CollapseAll": "Zwiń wszystko",
     "ExpandAll": "Rozwiń wszystko",
     "ExpandErrorsOnly": "Rozwiń tylko błędy",
-    "ExpandOptions": "Opcje rozwijania"
+    "ExpandOptions": "Opcje rozwijania",
+    "RowNumber": "wiersz {{number}}"
   },
   "comp:BAITestButton": {
     "Test": "test"

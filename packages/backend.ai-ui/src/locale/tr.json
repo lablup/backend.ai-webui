@@ -563,7 +563,8 @@
     "CollapseAll": "Tümünü daralt",
     "ExpandAll": "Tümünü genişlet",
     "ExpandErrorsOnly": "Yalnızca hataları genişlet",
-    "ExpandOptions": "Genişletme seçenekleri"
+    "ExpandOptions": "Genişletme seçenekleri",
+    "RowNumber": "{{number}}. satır"
   },
   "comp:BAITestButton": {
     "Test": "test"

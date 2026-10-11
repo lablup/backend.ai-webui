@@ -563,7 +563,8 @@
     "CollapseAll": "Tiivistä kaikki",
     "ExpandAll": "Laajenna kaikki",
     "ExpandErrorsOnly": "Laajenna vain virheet",
-    "ExpandOptions": "Laajenemisvaihtoehdot"
+    "ExpandOptions": "Laajenemisvaihtoehdot",
+    "RowNumber": "rivi {{number}}"
   },
   "comp:BAITestButton": {
     "Test": "testi"

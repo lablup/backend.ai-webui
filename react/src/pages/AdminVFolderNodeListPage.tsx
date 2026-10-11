@@ -11,7 +11,7 @@ import type {
 import { AstryxAdminTheme } from '../astryx-theme';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
-import BAITabs from '../components/BAITabs';
+import BAITabs, { baiTabPanelProps } from '../components/BAITabs';
 import DeleteForeverVFolderModalV2 from '../components/DeleteForeverVFolderModalV2';
 import DeleteVFolderModalV2 from '../components/DeleteVFolderModalV2';
 import FolderCreateModalV2 from '../components/FolderCreateModalV2';
@@ -47,6 +47,7 @@ import React, {
   Suspense,
   useDeferredValue,
   useEffect,
+  useId,
   useRef,
   useState,
 } from 'react';
@@ -113,6 +114,8 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
   const [selectedFolderList, setSelectedFolderList] = useState<
     Array<VFolderNodesType>
   >([]);
+
+  const tabPanelId = useId();
 
   const [isOpenDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const [isOpenRestoreModal, { toggle: toggleRestoreModal }] = useToggle(false);
@@ -249,6 +252,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
           title={t('data.Folders')}
         >
           <BAITabs
+            panelId={tabPanelId}
             activeKey={queryParams.statusCategory}
             onChange={(key: string) => {
               const storedQuery = queryMapRef.current[key] || {
@@ -302,7 +306,11 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
               },
             )}
           />
-          <VStack align="stretch" gap={3}>
+          <VStack
+            align="stretch"
+            gap={3}
+            {...baiTabPanelProps(tabPanelId, queryParams.statusCategory)}
+          >
             <HStack justify="between" wrap="wrap" gap={3}>
               <HStack
                 gap={3}

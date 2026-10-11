@@ -563,7 +563,8 @@
     "CollapseAll": "Thu gọn tất cả",
     "ExpandAll": "Mở rộng tất cả",
     "ExpandErrorsOnly": "Chỉ mở rộng lỗi",
-    "ExpandOptions": "Tùy chọn mở rộng"
+    "ExpandOptions": "Tùy chọn mở rộng",
+    "RowNumber": "hàng {{number}}"
   },
   "comp:BAITestButton": {
     "Test": "kiểm tra"

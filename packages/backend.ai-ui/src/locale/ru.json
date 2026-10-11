@@ -563,7 +563,8 @@
     "CollapseAll": "Свернуть все",
     "ExpandAll": "Развернуть все",
     "ExpandErrorsOnly": "Развернуть только ошибки",
-    "ExpandOptions": "Параметры разворачивания"
+    "ExpandOptions": "Параметры разворачивания",
+    "RowNumber": "строку {{number}}"
   },
   "comp:BAITestButton": {
     "Test": "тест"
