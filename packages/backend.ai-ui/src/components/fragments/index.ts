@@ -128,7 +128,7 @@ export type {
   AutoMountedFolder,
   BAIVFolderMountConfigInputProps,
   BAIVFolderMountConfigInputRef,
-  LegacyVFolder,
+  VFolderListItem,
   VFolderMountConfigValue,
   VFolderMountConfigStatusOptions,
   VFolderMountConfigEntryStatus,

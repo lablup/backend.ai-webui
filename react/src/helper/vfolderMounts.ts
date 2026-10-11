@@ -4,11 +4,11 @@
  */
 import {
   convertToUUID,
-  isMountableLegacyVFolder,
+  isMountableVFolder,
   mountDestinationToInput,
   type AutoMountedFolder,
-  type LegacyVFolder,
-  type LegacyVFolderMountScope,
+  type VFolderListItem,
+  type VFolderMountScope,
   type VFolderMountConfigValue,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -69,11 +69,11 @@ export const isAutoMountFolderName = (name: string) => name.startsWith('.');
 
 /**
  * The folders a session mounts on its own — ready dotfile folders — picked out
- * of a `GET /folders` list the same way VFolderTable did it.
+ * of the folder list the same way VFolderTable does.
  */
 export const autoMountedFoldersFrom = (
-  folders: Array<LegacyVFolder>,
-  scope: LegacyVFolderMountScope,
+  folders: Array<VFolderListItem>,
+  scope: VFolderMountScope,
 ): Array<AutoMountedFolder> =>
   _.map(
     _.filter(
@@ -81,7 +81,7 @@ export const autoMountedFoldersFrom = (
       (folder) =>
         folder.status === 'ready' &&
         isAutoMountFolderName(folder.name) &&
-        isMountableLegacyVFolder(folder, scope),
+        isMountableVFolder(folder, scope),
     ),
     (folder) => ({ vfolderId: convertToUUID(folder.id), name: folder.name }),
   );

@@ -7,7 +7,7 @@ import {
   isAutoMountFolderName,
   normalizeLegacyMountFields,
 } from './vfolderMounts';
-import type { LegacyVFolder } from 'backend.ai-ui';
+import type { VFolderListItem } from 'backend.ai-ui';
 
 const HEX_ID = '2f9d4a1b6c7e4f0aa1b2c3d4e5f60718';
 const UUID_ID = '2f9d4a1b-6c7e-4f0a-a1b2-c3d4e5f60718';
@@ -93,7 +93,7 @@ describe('isAutoMountFolderName', () => {
 describe('autoMountedFoldersFrom', () => {
   const PROJECT_ID = 'c2b0a4de-0d1e-4f5a-9b6c-7d8e9f001122';
 
-  const folder = (overrides: Partial<LegacyVFolder>): LegacyVFolder =>
+  const folder = (overrides: Partial<VFolderListItem>): VFolderListItem =>
     ({
       id: HEX_ID,
       name: '.bashrc',
@@ -102,7 +102,7 @@ describe('autoMountedFoldersFrom', () => {
       group: null,
       ownership_type: 'user',
       ...overrides,
-    }) as LegacyVFolder;
+    }) as VFolderListItem;
 
   it("picks the ready dotfile folders out of the owner's list, with dashed ids", () => {
     expect(

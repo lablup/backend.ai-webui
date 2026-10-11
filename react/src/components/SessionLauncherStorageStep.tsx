@@ -14,14 +14,14 @@ import {
   BAIVFolderMountConfigInput,
   safeDecodeUuid,
   type BAIVFolderMountConfigInputRef,
-  type LegacyVFolder,
+  type VFolderListItem,
   useVFolderMountConfigFormRule,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef, useState } from 'react';
 
 // Dotfile folders are mounted by the session itself, so they are never offered.
-const isSelectableFolder = (folder: LegacyVFolder) =>
+const isSelectableFolder = (folder: VFolderListItem) =>
   folder.status === 'ready' && !isAutoMountFolderName(folder.name);
 
 const SessionLauncherStorageStep: React.FC<{
@@ -70,7 +70,7 @@ const SessionLauncherStorageStep: React.FC<{
           setIsCreateModalOpen(false);
           if (!response) return;
           // The select can only offer the new folder once its own
-          // `GET /folders` query has seen it.
+          // folder-list query has seen it.
           await mountConfigInputRef.current?.refetch();
           // A dotfile folder is auto-mounted by the session, never selected.
           if (isAutoMountFolderName(response.metadata.name)) return;

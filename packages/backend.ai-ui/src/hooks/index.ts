@@ -188,9 +188,9 @@ export {
 } from './useProjectResourceGroups';
 export type { ScalingGroupItem } from './useProjectResourceGroups';
 export {
-  isMountableLegacyVFolder,
-  useSuspendedLegacyVFolders,
-} from './useSuspendedLegacyVFolders';
-export type { LegacyVFolderMountScope } from './useSuspendedLegacyVFolders';
+  isMountableVFolder,
+  useSuspendedMyVFolders,
+} from './useSuspendedMyVFolders';
+export type { VFolderMountScope } from './useSuspendedMyVFolders';
 
 export * from './useBAIBreakpoint';
