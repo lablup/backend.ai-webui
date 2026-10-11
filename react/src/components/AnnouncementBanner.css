@@ -19,6 +19,38 @@
   min-height: var(--webui-header-height);
   padding-inline: var(--webui-header-padding-inline);
   align-content: center;
+  /* One header-row line box: the icon, the title line and the actions sit in
+     it, so expanding grows the body downward and moves none of them. */
+  --webui-announcement-line: calc(
+    var(--webui-header-height) - 2 * var(--spacing-3)
+  );
+  align-items: flex-start;
+}
+
+.webui-announcement-banner > .astryx-banner > :first-child,
+.webui-announcement-banner > .astryx-banner > :last-child,
+.webui-announcement-title {
+  min-height: var(--webui-announcement-line);
+}
+
+/* Banner's edge compensation pulls the actions 4px up out of the line box. */
+.webui-announcement-banner > .astryx-banner > :last-child {
+  margin-block: 0;
+}
+
+/* Wrapping text keeps its first line in the line box. */
+.webui-announcement-text,
+.webui-announcement-summary,
+.webui-announcement-headline {
+  display: block;
+  padding-block: calc((var(--webui-announcement-line) - 1lh) / 2);
+}
+
+/* The info band's tint swallows Blockquote's grey rule and secondary text, so
+   colour a quote like the band's own icon to keep it distinguishable. */
+.webui-announcement-body .astryx-blockquote {
+  border-inline-start-color: var(--color-info);
+  color: var(--color-text-primary);
 }
 
 /* Electron/macOS: the banner is the window's topmost band, so it grows by the
@@ -41,7 +73,7 @@ body.electron-macos .webui-announcement-banner a {
 
 .webui-announcement-title {
   display: flex;
-  align-items: center;
+  align-items: first baseline;
   gap: var(--spacing-2);
   min-width: 0;
 }
