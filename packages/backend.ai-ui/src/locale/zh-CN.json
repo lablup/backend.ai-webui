@@ -538,6 +538,19 @@
     "MultiNodeShort": "多",
     "SingleNodeShort": "单节点"
   },
+  "comp:BAISessionCrowdScene": {
+    "FoundCount": "找到 {{count}} 个",
+    "Hero": "我的会话",
+    "ShowAll": "显示全部",
+    "Utilization": "使用率",
+    "mood": {
+      "Idle": "空闲",
+      "Leaving": "终止中",
+      "Overheated": "过热",
+      "Waiting": "等待资源",
+      "Working": "工作中"
+    }
+  },
   "comp:BAISessionTypeToken": {
     "Batch": "批处理",
     "Inference": "推理",

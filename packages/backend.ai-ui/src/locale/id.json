@@ -538,6 +538,19 @@
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Lajang"
   },
+  "comp:BAISessionCrowdScene": {
+    "FoundCount": "{{count}} ditemukan",
+    "Hero": "Milik saya",
+    "ShowAll": "Tampilkan semua",
+    "Utilization": "Pemanfaatan",
+    "mood": {
+      "Idle": "Menganggur",
+      "Leaving": "Menghentikan",
+      "Overheated": "Terlalu panas",
+      "Waiting": "Menunggu sumber daya",
+      "Working": "Bekerja"
+    }
+  },
   "comp:BAISessionTypeToken": {
     "Batch": "Batch",
     "Inference": "Inferensi",

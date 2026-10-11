@@ -1,0 +1,425 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAISessionCrowdScene> (P17). Figures are inline SVG
+ coloured with theme tokens; motion is CSS only, scaled per figure by the
+ `--bai-crowd-util` (0..1) and `--bai-crowd-phase` variables the component
+ sets inline, and switched off under reduced motion.
+*/
+
+/* `@keyframes` never joins a cascade layer, so the names are BUI-scoped. */
+@keyframes bai-crowd-work {
+  0%,
+  100% {
+    transform: rotate(-18deg);
+  }
+  50% {
+    transform: rotate(18deg);
+  }
+}
+
+@keyframes bai-crowd-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1.5px);
+  }
+}
+
+@keyframes bai-crowd-smoke-rise {
+  0% {
+    transform: translateY(2px) scale(0.6);
+    opacity: 0.2;
+  }
+  60% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-6px) scale(1.15);
+    opacity: 0;
+  }
+}
+
+@keyframes bai-crowd-zzz-float {
+  0% {
+    transform: translateY(2px);
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-5px);
+    opacity: 0;
+  }
+}
+
+@keyframes bai-crowd-nod {
+  0%,
+  100% {
+    transform: rotate(10deg);
+  }
+  50% {
+    transform: rotate(14deg);
+  }
+}
+
+@keyframes bai-crowd-shiver {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-0.6px);
+  }
+  75% {
+    transform: translateX(0.6px);
+  }
+}
+
+@keyframes bai-crowd-walk-out {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(3px);
+  }
+}
+
+@keyframes bai-crowd-found-pop {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  30% {
+    transform: translateY(-6px) scale(1.12);
+  }
+  100% {
+    transform: translateY(0) scale(1.08);
+  }
+}
+
+@layer components {
+  .bai-crowd-scene {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    /* Figure palette: skin/ink/cloth follow the text tokens so the crowd
+       reads as line art in both modes; alarms use the semantic tokens. */
+    --bai-crowd-ink: var(--color-text-secondary);
+    --bai-crowd-cloth: color-mix(
+      in srgb,
+      var(--color-text-secondary) 55%,
+      var(--color-background-card)
+    );
+    --bai-crowd-face: color-mix(
+      in srgb,
+      var(--color-text-secondary) 22%,
+      var(--color-background-card)
+    );
+    --bai-crowd-hero: var(--color-error);
+    --bai-crowd-paper: var(--color-background-card);
+  }
+
+  .bai-crowd-zones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-3);
+    align-items: stretch;
+  }
+
+  .bai-crowd-zone {
+    flex: 1 1 240px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    padding: var(--spacing-3);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-element);
+    background: var(--color-background-muted);
+    transition:
+      border-color var(--duration-medium-min) var(--ease-standard),
+      opacity var(--duration-medium-min) var(--ease-standard);
+  }
+
+  .bai-crowd-zone.has-found {
+    border-color: var(--color-accent);
+  }
+
+  .bai-crowd-zone.is-empty-of-found {
+    opacity: 0.55;
+  }
+
+  .bai-crowd-ground {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--spacing-1) var(--spacing-2);
+    min-height: 56px;
+    padding-top: var(--spacing-2);
+    /* A thin "floor" line the figures stand on. */
+    border-bottom: var(--border-width) dashed
+      color-mix(in srgb, var(--color-border) 70%, transparent);
+    padding-bottom: var(--spacing-1);
+  }
+
+  .bai-crowd-figure {
+    all: unset;
+    display: inline-flex;
+    width: 40px;
+    height: 56px;
+    cursor: pointer;
+    border-radius: var(--radius-element);
+    transition:
+      opacity var(--duration-medium-min) var(--ease-standard),
+      filter var(--duration-medium-min) var(--ease-standard),
+      transform var(--duration-medium-min) var(--ease-standard);
+  }
+
+  .bai-crowd-figure.is-legend {
+    width: 24px;
+    height: 34px;
+    cursor: default;
+  }
+
+  .bai-crowd-figure:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .bai-crowd-figure:hover:not(.is-legend) {
+    transform: translateY(-2px);
+  }
+
+  .is-searching .bai-crowd-figure.is-dimmed {
+    opacity: 0.18;
+    filter: grayscale(1);
+  }
+
+  .is-searching .bai-crowd-figure.is-found {
+    animation: bai-crowd-found-pop var(--duration-medium) var(--ease-standard)
+      both;
+    /* Spotlight: a soft disc of accent behind the figure. */
+    background: radial-gradient(
+      circle at 50% 60%,
+      color-mix(in srgb, var(--color-accent) 35%, transparent) 0%,
+      color-mix(in srgb, var(--color-accent) 12%, transparent) 55%,
+      transparent 75%
+    );
+  }
+
+  .bai-crowd-glyph {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  /* --- parts ----------------------------------------------------------- */
+
+  .bai-crowd-torso,
+  .bai-crowd-arm,
+  .bai-crowd-legs rect {
+    fill: var(--bai-crowd-cloth);
+  }
+
+  .bai-crowd-face {
+    fill: var(--bai-crowd-face);
+    stroke: var(--bai-crowd-ink);
+    stroke-width: 1;
+  }
+
+  .bai-crowd-eye {
+    fill: var(--bai-crowd-ink);
+  }
+
+  .bai-crowd-arm {
+    transform-box: fill-box;
+    transform-origin: 50% 15%;
+  }
+
+  .bai-crowd-head {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+  }
+
+  /* Hero: red/white stripes, bobble hat, round glasses. */
+  .bai-crowd-stripe-light {
+    fill: var(--bai-crowd-paper);
+  }
+
+  .bai-crowd-stripe-dark {
+    fill: var(--bai-crowd-hero);
+  }
+
+  .is-hero .bai-crowd-arm {
+    fill: var(--bai-crowd-hero);
+  }
+
+  .bai-crowd-hat {
+    fill: var(--bai-crowd-hero);
+  }
+
+  .bai-crowd-bobble {
+    fill: var(--bai-crowd-paper);
+    stroke: var(--bai-crowd-hero);
+    stroke-width: 1;
+  }
+
+  .bai-crowd-glasses circle {
+    fill: none;
+    stroke: var(--bai-crowd-ink);
+    stroke-width: 1;
+  }
+
+  .bai-crowd-glasses line {
+    stroke: var(--bai-crowd-ink);
+    stroke-width: 1;
+  }
+
+  /* Overheated: red face, sweat drop, smoke puffs. */
+  .mood-overheated .bai-crowd-face {
+    fill: color-mix(in srgb, var(--color-error) 45%, var(--bai-crowd-face));
+    stroke: var(--color-error);
+  }
+
+  .bai-crowd-sweat path {
+    fill: var(--color-accent);
+  }
+
+  .bai-crowd-smoke circle {
+    fill: color-mix(in srgb, var(--color-text-secondary) 60%, transparent);
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  /* Waiting: a numbered ticket, lighter cloth. */
+  .mood-waiting .bai-crowd-torso,
+  .mood-waiting .bai-crowd-arm,
+  .mood-waiting .bai-crowd-legs rect {
+    fill: color-mix(in srgb, var(--bai-crowd-cloth) 55%, transparent);
+  }
+
+  .bai-crowd-ticket rect {
+    fill: var(--bai-crowd-paper);
+    stroke: var(--color-warning);
+    stroke-width: 1;
+  }
+
+  .bai-crowd-ticket text {
+    fill: var(--color-warning);
+    font: var(--font-weight-semibold) 6px var(--font-family-code);
+    text-anchor: middle;
+  }
+
+  /* Idle: slumped head, floating z's. */
+  .mood-idle .bai-crowd-head {
+    transform: rotate(10deg);
+  }
+
+  .mood-idle .bai-crowd-eye {
+    transform: scaleY(0.25);
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .bai-crowd-zzz text {
+    fill: var(--color-text-disabled);
+    font: var(--font-weight-semibold) 8px var(--font-family-code);
+  }
+
+  .bai-crowd-zzz .bai-crowd-zzz-small {
+    font-size: 6px;
+  }
+
+  /* Leaving: suitcase, half gone. */
+  .mood-leaving {
+    opacity: 0.6;
+  }
+
+  .bai-crowd-suitcase rect {
+    fill: var(--bai-crowd-ink);
+  }
+
+  /* --- motion ---------------------------------------------------------- */
+
+  /* Working: arms swing faster with utilization. 0 → 2.4s, 1 → 0.4s. */
+  .mood-working .bai-crowd-arm {
+    animation: bai-crowd-work calc(2.4s - 2s * var(--bai-crowd-util, 0))
+      ease-in-out infinite;
+    animation-delay: var(--bai-crowd-phase, 0s);
+  }
+
+  .mood-working .bai-crowd-arm-right {
+    animation-direction: reverse;
+  }
+
+  .mood-working .bai-crowd-body {
+    animation: bai-crowd-bob calc(2.4s - 2s * var(--bai-crowd-util, 0))
+      ease-in-out infinite;
+    animation-delay: var(--bai-crowd-phase, 0s);
+  }
+
+  .mood-overheated .bai-crowd-body {
+    animation: bai-crowd-shiver 0.25s linear infinite;
+  }
+
+  .bai-crowd-smoke circle {
+    animation: bai-crowd-smoke-rise 1.6s ease-out infinite;
+    animation-delay: var(--bai-crowd-phase, 0s);
+  }
+
+  .bai-crowd-smoke circle:nth-child(2) {
+    animation-delay: calc(var(--bai-crowd-phase, 0s) - 0.5s);
+  }
+
+  .bai-crowd-smoke circle:nth-child(3) {
+    animation-delay: calc(var(--bai-crowd-phase, 0s) - 1s);
+  }
+
+  .mood-idle .bai-crowd-head {
+    animation: bai-crowd-nod 3.2s ease-in-out infinite;
+    animation-delay: var(--bai-crowd-phase, 0s);
+  }
+
+  .bai-crowd-zzz text {
+    animation: bai-crowd-zzz-float 2.4s ease-out infinite;
+    animation-delay: var(--bai-crowd-phase, 0s);
+  }
+
+  .bai-crowd-zzz .bai-crowd-zzz-small {
+    animation-delay: calc(var(--bai-crowd-phase, 0s) - 1.2s);
+  }
+
+  .mood-leaving .bai-crowd-body,
+  .mood-leaving .bai-crowd-suitcase {
+    animation: bai-crowd-walk-out 1.2s ease-in-out infinite;
+    animation-delay: var(--bai-crowd-phase, 0s);
+  }
+
+  .is-legend .bai-crowd-arm,
+  .is-legend .bai-crowd-body,
+  .is-legend .bai-crowd-head,
+  .is-legend .bai-crowd-smoke circle,
+  .is-legend .bai-crowd-zzz text,
+  .is-legend .bai-crowd-suitcase {
+    animation: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Mood is already carried by the props, so everything simply holds. */
+    .bai-crowd-scene *,
+    .bai-crowd-scene *::before,
+    .bai-crowd-scene *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+
+    .is-searching .bai-crowd-figure.is-found {
+      transform: scale(1.08);
+    }
+  }
+}

@@ -538,6 +538,19 @@
     "MultiNodeShort": "多",
     "SingleNodeShort": "單節點"
   },
+  "comp:BAISessionCrowdScene": {
+    "FoundCount": "找到 {{count}} 個",
+    "Hero": "我的工作階段",
+    "ShowAll": "顯示全部",
+    "Utilization": "使用率",
+    "mood": {
+      "Idle": "閒置",
+      "Leaving": "終止中",
+      "Overheated": "過熱",
+      "Waiting": "等待資源",
+      "Working": "工作中"
+    }
+  },
   "comp:BAISessionTypeToken": {
     "Batch": "批次",
     "Inference": "推論",

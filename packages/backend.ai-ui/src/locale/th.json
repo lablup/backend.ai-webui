@@ -538,6 +538,19 @@
     "MultiNodeShort": "หลาย",
     "SingleNodeShort": "เดี่ยว"
   },
+  "comp:BAISessionCrowdScene": {
+    "FoundCount": "พบ {{count}} รายการ",
+    "Hero": "ของฉัน",
+    "ShowAll": "แสดงทั้งหมด",
+    "Utilization": "การใช้งาน",
+    "mood": {
+      "Idle": "ว่าง",
+      "Leaving": "กำลังสิ้นสุด",
+      "Overheated": "ร้อนเกิน",
+      "Waiting": "รอทรัพยากร",
+      "Working": "กำลังทำงาน"
+    }
+  },
   "comp:BAISessionTypeToken": {
     "Batch": "แบบแบตช์",
     "Inference": "การอนุมาน",

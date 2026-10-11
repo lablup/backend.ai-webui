@@ -538,6 +538,19 @@
     "MultiNodeShort": "Çok",
     "SingleNodeShort": "Bekar"
   },
+  "comp:BAISessionCrowdScene": {
+    "FoundCount": "{{count}} bulundu",
+    "Hero": "Benim",
+    "ShowAll": "Tümünü göster",
+    "Utilization": "Kullanım",
+    "mood": {
+      "Idle": "Boşta",
+      "Leaving": "Sonlandırılıyor",
+      "Overheated": "Aşırı ısınmış",
+      "Waiting": "Kaynak bekliyor",
+      "Working": "Çalışıyor"
+    }
+  },
   "comp:BAISessionTypeToken": {
     "Batch": "Toplu İş",
     "Inference": "Çıkarım",

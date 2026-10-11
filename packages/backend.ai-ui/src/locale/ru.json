@@ -538,6 +538,19 @@
     "MultiNodeShort": "Мульти",
     "SingleNodeShort": "Одинокий"
   },
+  "comp:BAISessionCrowdScene": {
+    "FoundCount": "Найдено: {{count}}",
+    "Hero": "Мои",
+    "ShowAll": "Показать все",
+    "Utilization": "Загрузка",
+    "mood": {
+      "Idle": "Простаивает",
+      "Leaving": "Завершается",
+      "Overheated": "Перегрев",
+      "Waiting": "Ожидает ресурсы",
+      "Working": "Работает"
+    }
+  },
   "comp:BAISessionTypeToken": {
     "Batch": "Пакетный",
     "Inference": "Инференс",

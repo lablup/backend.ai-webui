@@ -538,6 +538,19 @@
     "MultiNodeShort": "Đa",
     "SingleNodeShort": "Đơn"
   },
+  "comp:BAISessionCrowdScene": {
+    "FoundCount": "Tìm thấy {{count}}",
+    "Hero": "Của tôi",
+    "ShowAll": "Hiện tất cả",
+    "Utilization": "Mức sử dụng",
+    "mood": {
+      "Idle": "Nhàn rỗi",
+      "Leaving": "Đang kết thúc",
+      "Overheated": "Quá nóng",
+      "Waiting": "Đang chờ tài nguyên",
+      "Working": "Đang làm việc"
+    }
+  },
   "comp:BAISessionTypeToken": {
     "Batch": "Hàng loạt",
     "Inference": "Suy luận",

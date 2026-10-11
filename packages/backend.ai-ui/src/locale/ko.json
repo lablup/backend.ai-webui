@@ -538,6 +538,19 @@
     "MultiNodeShort": "다중",
     "SingleNodeShort": "단일"
   },
+  "comp:BAISessionCrowdScene": {
+    "FoundCount": "{{count}}개 발견",
+    "Hero": "내 세션",
+    "ShowAll": "전체 보기",
+    "Utilization": "사용률",
+    "mood": {
+      "Idle": "유휴",
+      "Leaving": "종료 중",
+      "Overheated": "과열",
+      "Waiting": "자원 대기 중",
+      "Working": "작업 중"
+    }
+  },
   "comp:BAISessionTypeToken": {
     "Batch": "배치",
     "Inference": "추론",

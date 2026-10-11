@@ -538,6 +538,19 @@
     "MultiNodeShort": "Πολλαπλών",
     "SingleNodeShort": "Μονόκλινο"
   },
+  "comp:BAISessionCrowdScene": {
+    "FoundCount": "Βρέθηκαν {{count}}",
+    "Hero": "Δικές μου",
+    "ShowAll": "Εμφάνιση όλων",
+    "Utilization": "Χρήση",
+    "mood": {
+      "Idle": "Αδρανής",
+      "Leaving": "Τερματίζεται",
+      "Overheated": "Υπερθέρμανση",
+      "Waiting": "Αναμονή πόρων",
+      "Working": "Εργάζεται"
+    }
+  },
   "comp:BAISessionTypeToken": {
     "Batch": "Παρτίδα",
     "Inference": "Συμπερασμός",
