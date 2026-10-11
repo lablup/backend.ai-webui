@@ -186,9 +186,13 @@ test.describe('Basic Chat Flow', { tag: ['@chat', '@functional'] }, () => {
         const body = new ReadableStream<Uint8Array>({
           start(controller) {
             controller.enqueue(new TextEncoder().encode(chunk));
-            signal?.addEventListener('abort', () => {
+            const abort = () =>
               controller.error(new DOMException('Aborted', 'AbortError'));
-            });
+            if (signal?.aborted) {
+              abort();
+            } else {
+              signal?.addEventListener('abort', abort, { once: true });
+            }
           },
         });
         return Promise.resolve(

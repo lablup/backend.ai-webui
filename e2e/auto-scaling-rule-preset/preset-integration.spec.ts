@@ -24,7 +24,6 @@ async function createPreset(
   await page.getByRole('button', { name: 'Create Preset' }).click();
   const modal = page.getByRole('dialog');
   await expect(modal).toBeVisible({ timeout: 10000 });
-  await expect(modal).not.toHaveClass(/ant-zoom-appear/, { timeout: 10000 });
   await modal.getByRole('textbox', { name: 'Name', exact: true }).fill(name);
   await modal.getByRole('textbox', { name: 'Metric Name' }).fill(metricName);
   await modal
@@ -46,9 +45,6 @@ async function deletePreset(page: Page, presetName: string): Promise<void> {
   await row.getByRole('button', { name: 'Delete', exact: true }).click();
   const confirmModal = page.getByRole('dialog');
   await expect(confirmModal).toBeVisible({ timeout: 30000 });
-  await expect(confirmModal).not.toHaveClass(/ant-zoom-appear/, {
-    timeout: 10000,
-  });
   await confirmModal.locator('input').fill(presetName);
   await confirmModal
     .getByRole('button', { name: 'Delete', exact: true })
@@ -99,7 +95,14 @@ async function selectPrometheusPreset(
 
 test.describe(
   'Auto Scaling Rule Preset - Integration (Preset in Auto-Scaling Rule Editor)',
-  { tag: ['@auto-scaling-rule-preset', '@admin', '@integration'] },
+  {
+    tag: [
+      '@auto-scaling-rule-preset',
+      '@admin',
+      '@integration',
+      '@requires-manager-v26.4',
+    ],
+  },
   () => {
     test.describe.configure({ mode: 'serial' });
 
@@ -157,9 +160,6 @@ test.describe(
       await page.getByRole('button', { name: 'Create Preset' }).click();
       const createModal = page.getByRole('dialog');
       await expect(createModal).toBeVisible({ timeout: 10000 });
-      await expect(createModal).not.toHaveClass(/ant-zoom-appear/, {
-        timeout: 10000,
-      });
       await createModal
         .getByRole('textbox', { name: 'Name', exact: true })
         .fill(presetName);
@@ -239,9 +239,6 @@ test.describe(
       await twRow.getByRole('button', { name: 'edit' }).click();
       const editModal = page.getByRole('dialog');
       await expect(editModal).toBeVisible({ timeout: 10000 });
-      await expect(editModal).not.toHaveClass(/ant-zoom-appear/, {
-        timeout: 10000,
-      });
       await editModal
         .getByRole('textbox', { name: /^Time Window/ })
         .fill('15m');
