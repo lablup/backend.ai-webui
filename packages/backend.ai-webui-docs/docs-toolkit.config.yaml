@@ -65,7 +65,7 @@ versions:
       kind: archive-branch
       ref: docs-archive/26.9
     latest: true
-    pdfTag: "v26.9.0"
+    pdfTag: "v26.9.2"
   - label: "26.8"
     source:
       kind: archive-branch
