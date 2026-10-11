@@ -578,7 +578,11 @@ async function migrateFileOriginStorage() {
   let state = { done: false, attempts: 0 };
   try {
     state = { ...state, ...JSON.parse(nfs.readFileSync(marker, 'utf-8')) };
-  } catch {}
+  } catch (err) {
+    if (err.code !== 'ENOENT') {
+      console.error('Unreadable es6://app migration marker, retrying:', err);
+    }
+  }
   if (state.done || state.attempts >= MIGRATION_MAX_ATTEMPTS) return;
   const writeState = (next) =>
     fs.writeFile(marker, JSON.stringify({ ...next, at: new Date().toISOString() }));

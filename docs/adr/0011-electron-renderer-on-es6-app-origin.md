@@ -36,7 +36,7 @@ flowchart LR
   new["es6://app origin<br/>localStorage + code cache"]
   files["BASE_DIR 안의 파일"]
   wsproxy["로컬 wsproxy<br/>isAllowedOrigin"]
-  create --> fallback
+  create -- "webServerURL이 비었으면 호출" --> fallback
   fallback -- "1. await" --> migrate
   migrate -- "숨은 창 file://app/version.json 에서 읽기" --> old
   migrate -- "숨은 창 es6://app/version.json 에서 없는 키만 쓰기" --> new
@@ -95,6 +95,7 @@ flowchart LR
 
 - [FR-4085](https://lablup.atlassian.net/browse/FR-4085) — 이 결정. 2026-09-25.
 - Electron `CustomScheme.privileges.codeCache`, `session.setCodeCachePath`, `session.flushStorageData` (`electron.d.ts`, Electron 39).
+- 관련: 이웃한 ADR은 없다. 코드: `electron-app/main.js`(`resolveAppFile`, `serveAppFile`, `migrateFileOriginStorage`), `src/wsproxy/manager.js`(`isAllowedOrigin`), `scripts/patch-electron-publicpath.js`(빌드가 쓰는 `es6://assets/` 형식).
 
 ## 용어
 
