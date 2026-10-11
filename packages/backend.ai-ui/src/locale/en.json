@@ -538,7 +538,7 @@
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Single"
   },
-  "comp:BAISessionCrowdScene": {
+  "comp:BAISessionScene": {
     "FoundCount": "{{count}} found",
     "Hero": "Yours",
     "ShowAll": "Show all",

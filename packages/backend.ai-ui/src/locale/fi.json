@@ -538,7 +538,7 @@
     "MultiNodeShort": "Moni-",
     "SingleNodeShort": "Yksittäinen"
   },
-  "comp:BAISessionCrowdScene": {
+  "comp:BAISessionScene": {
     "FoundCount": "{{count}} löydetty",
     "Hero": "Omat",
     "ShowAll": "Näytä kaikki",

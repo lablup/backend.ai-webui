@@ -538,7 +538,7 @@
     "MultiNodeShort": "Πολλαπλών",
     "SingleNodeShort": "Μονόκλινο"
   },
-  "comp:BAISessionCrowdScene": {
+  "comp:BAISessionScene": {
     "FoundCount": "Βρέθηκαν {{count}}",
     "Hero": "Δικές μου",
     "ShowAll": "Εμφάνιση όλων",

@@ -538,7 +538,7 @@
     "MultiNodeShort": "MULTI",
     "SingleNodeShort": "Bujang"
   },
-  "comp:BAISessionCrowdScene": {
+  "comp:BAISessionScene": {
     "FoundCount": "{{count}} ditemui",
     "Hero": "Saya",
     "ShowAll": "Tunjuk semua",

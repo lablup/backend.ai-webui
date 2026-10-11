@@ -538,7 +538,7 @@
     "MultiNodeShort": "Đa",
     "SingleNodeShort": "Đơn"
   },
-  "comp:BAISessionCrowdScene": {
+  "comp:BAISessionScene": {
     "FoundCount": "Tìm thấy {{count}}",
     "Hero": "Của tôi",
     "ShowAll": "Hiện tất cả",

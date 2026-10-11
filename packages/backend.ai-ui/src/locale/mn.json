@@ -538,7 +538,7 @@
     "MultiNodeShort": "Олон-нүдэт",
     "SingleNodeShort": "Нэг-нүдэт"
   },
-  "comp:BAISessionCrowdScene": {
+  "comp:BAISessionScene": {
     "FoundCount": "{{count}} олдсон",
     "Hero": "Минийх",
     "ShowAll": "Бүгдийг харуулах",

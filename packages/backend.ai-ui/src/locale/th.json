@@ -538,7 +538,7 @@
     "MultiNodeShort": "หลาย",
     "SingleNodeShort": "เดี่ยว"
   },
-  "comp:BAISessionCrowdScene": {
+  "comp:BAISessionScene": {
     "FoundCount": "พบ {{count}} รายการ",
     "Hero": "ของฉัน",
     "ShowAll": "แสดงทั้งหมด",

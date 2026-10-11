@@ -538,7 +538,7 @@
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Célibataire"
   },
-  "comp:BAISessionCrowdScene": {
+  "comp:BAISessionScene": {
     "FoundCount": "{{count}} trouvé(s)",
     "Hero": "Les miennes",
     "ShowAll": "Tout afficher",

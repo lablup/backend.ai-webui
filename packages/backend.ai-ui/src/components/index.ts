@@ -259,6 +259,8 @@ export { default as BAIResourceUnitGridSkeleton } from './BAIResourceUnitGridSke
 export type { BAIResourceUnitGridSkeletonProps } from './BAIResourceUnitGridSkeleton';
 export { default as BAISessionCrowdScene } from './BAISessionCrowdScene';
 export { crowdFigureMoods } from './BAISessionCrowdScene';
+export { default as BAISessionPinwheelMeadow } from './BAISessionPinwheelMeadow';
+export type { BAISessionPinwheelMeadowProps } from './BAISessionPinwheelMeadow';
 export type {
   BAISessionCrowdSceneProps,
   BAICrowdFigure,

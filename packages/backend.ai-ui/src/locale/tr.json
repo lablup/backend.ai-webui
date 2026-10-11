@@ -538,7 +538,7 @@
     "MultiNodeShort": "Çok",
     "SingleNodeShort": "Bekar"
   },
-  "comp:BAISessionCrowdScene": {
+  "comp:BAISessionScene": {
     "FoundCount": "{{count}} bulundu",
     "Hero": "Benim",
     "ShowAll": "Tümünü göster",

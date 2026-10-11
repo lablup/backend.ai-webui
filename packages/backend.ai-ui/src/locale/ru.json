@@ -538,7 +538,7 @@
     "MultiNodeShort": "Мульти",
     "SingleNodeShort": "Одинокий"
   },
-  "comp:BAISessionCrowdScene": {
+  "comp:BAISessionScene": {
     "FoundCount": "Найдено: {{count}}",
     "Hero": "Мои",
     "ShowAll": "Показать все",

@@ -538,7 +538,7 @@
     "MultiNodeShort": "多",
     "SingleNodeShort": "单节点"
   },
-  "comp:BAISessionCrowdScene": {
+  "comp:BAISessionScene": {
     "FoundCount": "找到 {{count}} 个",
     "Hero": "我的会话",
     "ShowAll": "显示全部",

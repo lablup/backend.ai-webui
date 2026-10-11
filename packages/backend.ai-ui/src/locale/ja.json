@@ -538,7 +538,7 @@
     "MultiNodeShort": "マルチ",
     "SingleNodeShort": "シングル"
   },
-  "comp:BAISessionCrowdScene": {
+  "comp:BAISessionScene": {
     "FoundCount": "{{count}}件発見",
     "Hero": "自分のセッション",
     "ShowAll": "すべて表示",

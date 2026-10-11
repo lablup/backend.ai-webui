@@ -9,78 +9,33 @@
  rest, so "which one is mine / overheated / idle" becomes a search game. The
  scene is data-agnostic: callers map sessions to figures.
  */
-import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIFlex from './BAIFlex';
 import './BAISessionCrowdScene.css';
-import { Badge } from '@lablup/ui-common/Badge';
-import { Button } from '@lablup/ui-common/Button';
+import {
+  type BAICrowdFigureMood,
+  type BAISessionSceneBaseProps,
+  clamp01,
+  crowdFigureMoods,
+  SceneFigureCard,
+  SceneFinderBar,
+  useSceneFinder,
+  useSceneLabels,
+} from './SessionSceneParts';
 import { Text } from '@lablup/ui-common/Text';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import classNames from 'classnames';
 import _ from 'lodash';
-import React, { useId, useState } from 'react';
+import React, { useId } from 'react';
 
-export const crowdFigureMoods = [
-  'working',
-  'idle',
-  'overheated',
-  'waiting',
-  'leaving',
-] as const;
-export type BAICrowdFigureMood = (typeof crowdFigureMoods)[number];
+export {
+  crowdFigureMoods,
+  type BAICrowdFigure,
+  type BAICrowdFigureMood,
+  type BAICrowdFinder,
+  type BAICrowdZone,
+} from './SessionSceneParts';
 
-export interface BAICrowdFigure {
-  key: string;
-  name: string;
-  owner?: string;
-  /** `BAICrowdZone.key` this figure stands in. Unknown zones are skipped. */
-  zoneKey: string;
-  mood: BAICrowdFigureMood;
-  /** 0..1 — drives how fast a `working` figure moves. */
-  utilization?: number;
-  /** The one to find: wears the striped shirt and the bobble hat. */
-  isHero?: boolean;
-  /** Extra lines for the hover card, after the built-in ones. */
-  detail?: React.ReactNode;
-}
-
-export interface BAICrowdZone {
-  key: string;
-  label: string;
-}
-
-export interface BAICrowdFinder {
-  key: string;
-  label: string;
-  icon?: React.ReactNode;
-  match: (figure: BAICrowdFigure) => boolean;
-}
-
-export interface BAISessionCrowdSceneProps extends Omit<
-  React.HTMLAttributes<HTMLDivElement>,
-  'children'
-> {
-  figures: ReadonlyArray<BAICrowdFigure>;
-  zones: ReadonlyArray<BAICrowdZone>;
-  finders?: ReadonlyArray<BAICrowdFinder>;
-  /** Controlled active finder. Omit to keep it in local state. */
-  activeFinderKey?: string | null;
-  onActiveFinderChange?: (key: string | null) => void;
-  onFigureClick?: (figure: BAICrowdFigure) => void;
-  /** Hide the mood legend row. */
-  hideLegend?: boolean;
-}
-
-const MOOD_LABEL_KEY: Record<BAICrowdFigureMood, string> = {
-  working: 'comp:BAISessionCrowdScene.mood.Working',
-  idle: 'comp:BAISessionCrowdScene.mood.Idle',
-  overheated: 'comp:BAISessionCrowdScene.mood.Overheated',
-  waiting: 'comp:BAISessionCrowdScene.mood.Waiting',
-  leaving: 'comp:BAISessionCrowdScene.mood.Leaving',
-};
-
-const clamp01 = (n: number | undefined) =>
-  Number.isFinite(n) ? Math.min(1, Math.max(0, n as number)) : 0;
+export type BAISessionCrowdSceneProps = BAISessionSceneBaseProps;
 
 /** One figure, drawn in a 40×56 box. Props are SVG parts toggled by mood. */
 const CrowdFigureGlyph: React.FC<{
@@ -204,23 +159,15 @@ const BAISessionCrowdScene: React.FC<BAISessionCrowdSceneProps> = ({
   ...divProps
 }) => {
   'use memo';
-  const { t } = useBAIi18n();
+  const labels = useSceneLabels();
   const stripesId = `${useId()}-stripes`;
-  const [localFinderKey, setLocalFinderKey] = useState<string | null>(null);
-  const finderKey =
-    activeFinderKey !== undefined ? activeFinderKey : localFinderKey;
-  const setFinderKey = (next: string | null) => {
-    setLocalFinderKey(next);
-    onActiveFinderChange?.(next);
-  };
-  const activeFinder = finders.find((f) => f.key === finderKey) ?? null;
-
+  const { finderKey, setFinderKey, matches } = useSceneFinder({
+    figures,
+    finders,
+    activeFinderKey,
+    onActiveFinderChange,
+  });
   const figuresByZone = _.groupBy(figures, (f) => f.zoneKey);
-  const matches = activeFinder
-    ? new Set(figures.filter(activeFinder.match).map((f) => f.key))
-    : null;
-
-  const moodLabel = (mood: BAICrowdFigureMood) => t(MOOD_LABEL_KEY[mood]);
 
   return (
     <div
@@ -243,46 +190,14 @@ const BAISessionCrowdScene: React.FC<BAISessionCrowdSceneProps> = ({
         </defs>
       </svg>
 
-      {finders.length > 0 && (
-        <BAIFlex
-          className="bai-crowd-finders"
-          gap="xs"
-          wrap="wrap"
-          align="center"
-        >
-          {finders.map((finder) => {
-            const isActive = finder.key === finderKey;
-            const count = figures.filter(finder.match).length;
-            return (
-              <Button
-                key={finder.key}
-                size="sm"
-                variant={isActive ? 'primary' : 'secondary'}
-                icon={finder.icon}
-                label={`${finder.label} · ${count}`}
-                aria-pressed={isActive}
-                onClick={() => setFinderKey(isActive ? null : finder.key)}
-              />
-            );
-          })}
-          {matches && (
-            <>
-              <Badge
-                variant="info"
-                label={t('comp:BAISessionCrowdScene.FoundCount', {
-                  count: matches.size,
-                })}
-              />
-              <Button
-                size="sm"
-                variant="ghost"
-                label={t('comp:BAISessionCrowdScene.ShowAll')}
-                onClick={() => setFinderKey(null)}
-              />
-            </>
-          )}
-        </BAIFlex>
-      )}
+      <SceneFinderBar
+        className="bai-crowd-finders"
+        figures={figures}
+        finders={finders}
+        finderKey={finderKey}
+        matches={matches}
+        onChange={setFinderKey}
+      />
 
       <div className="bai-crowd-zones">
         {zones.map((zone) => {
@@ -318,26 +233,12 @@ const BAISessionCrowdScene: React.FC<BAISessionCrowdSceneProps> = ({
                 {zoneFigures.map((figure, idx) => {
                   const util = clamp01(figure.utilization);
                   const isFound = matches?.has(figure.key) ?? false;
-                  const card = (
-                    <BAIFlex direction="column" align="start" gap="xxs">
-                      <Text weight="semibold" color="inherit">
-                        {figure.name}
-                      </Text>
-                      {figure.owner && (
-                        <Text type="supporting" color="inherit">
-                          {figure.owner}
-                        </Text>
-                      )}
-                      <Text type="supporting" color="inherit">
-                        {moodLabel(figure.mood)}
-                        {figure.utilization !== undefined &&
-                          ` · ${t('comp:BAISessionCrowdScene.Utilization')} ${Math.round(util * 100)}%`}
-                      </Text>
-                      {figure.detail}
-                    </BAIFlex>
-                  );
                   return (
-                    <Tooltip key={figure.key} content={card} placement="above">
+                    <Tooltip
+                      key={figure.key}
+                      content={<SceneFigureCard figure={figure} />}
+                      placement="above"
+                    >
                       <button
                         type="button"
                         className={classNames(
@@ -356,7 +257,7 @@ const BAISessionCrowdScene: React.FC<BAISessionCrowdSceneProps> = ({
                             '--bai-crowd-phase': `${(idx % 7) * -0.37}s`,
                           } as React.CSSProperties
                         }
-                        aria-label={`${figure.name} — ${moodLabel(figure.mood)}`}
+                        aria-label={`${figure.name} — ${labels.mood(figure.mood)}`}
                         onClick={() => onFigureClick?.(figure)}
                       >
                         <CrowdFigureGlyph
@@ -404,14 +305,14 @@ const BAISessionCrowdScene: React.FC<BAISessionCrowdSceneProps> = ({
                   stripesId={stripesId}
                 />
               </span>
-              <Text type="supporting">{moodLabel(mood)}</Text>
+              <Text type="supporting">{labels.mood(mood)}</Text>
             </BAIFlex>
           ))}
           <BAIFlex gap="xxs" align="center">
             <span className="bai-crowd-figure is-legend is-hero mood-working">
               <CrowdFigureGlyph mood="working" isHero stripesId={stripesId} />
             </span>
-            <Text type="supporting">{t('comp:BAISessionCrowdScene.Hero')}</Text>
+            <Text type="supporting">{labels.hero}</Text>
           </BAIFlex>
         </BAIFlex>
       )}

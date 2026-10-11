@@ -538,7 +538,7 @@
     "MultiNodeShort": "多",
     "SingleNodeShort": "單節點"
   },
-  "comp:BAISessionCrowdScene": {
+  "comp:BAISessionScene": {
     "FoundCount": "找到 {{count}} 個",
     "Hero": "我的工作階段",
     "ShowAll": "顯示全部",
