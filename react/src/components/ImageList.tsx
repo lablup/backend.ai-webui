@@ -18,6 +18,7 @@ import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting'
 import { ProjectContextOrNull } from '../types/projectContext';
 import AliasedImageTagTokens from './AliasedImageTagTokens';
 import ImageInstallModal from './ImageInstallModal';
+import ImportImageModal from './ImportImageModal';
 import ManageAppsModal from './ManageAppsModal';
 import ManageImageResourceLimitModal from './ManageImageResourceLimitModal';
 import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
@@ -52,6 +53,7 @@ import {
   RotateCw,
   Settings,
   ArrowDownToLine,
+  Import,
   SquarePenIcon,
 } from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
@@ -230,12 +232,15 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
   'use memo';
 
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
   const [selectedRows, setSelectedRows] = useState<EnvironmentImage[]>([]);
   const [, { tagAlias }] = useBackendAIImageMetaData();
   const [managingApp, setManagingApp] = useState<EnvironmentImage | null>(null);
   const [managingResourceLimit, setManagingResourceLimit] =
     useState<EnvironmentImage | null>(null);
   const [isOpenInstallModal, setIsOpenInstallModal] = useState<boolean>(false);
+  const [isOpenImportImageModal, setIsOpenImportImageModal] =
+    useState<boolean>(false);
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [, startTransition] = useTransition();
   const [installingImages, setInstallingImages] = useState<string[]>([]);
@@ -736,6 +741,17 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
                 startRefreshTransition(() => updateFetchKey());
               }}
             />
+            {/* The Images tab is admin-scoped but the REST route behind this
+                is `superadmin_required`, so the role check cannot be
+                inherited from the route. */}
+            {baiClient.is_superadmin ? (
+              <Button
+                variant="secondary"
+                icon={<Import size="1em" />}
+                label={t('environment.ImportImage')}
+                onClick={() => setIsOpenImportImageModal(true)}
+              />
+            ) : null}
             {/* PILOT-DECISION: the hand-painted primary button
                 (style backgroundColor token('--color-accent')) becomes Astryx
                 `Button variant="primary"` — the brand accent comes from the
@@ -839,6 +855,17 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
         }}
         imageFrgmt={managingApp}
       />
+      <BAIUnmountAfterClose>
+        <ImportImageModal
+          open={isOpenImportImageModal}
+          onRequestClose={() => setIsOpenImportImageModal(false)}
+          onAdded={() => {
+            startTransition(() => {
+              updateFetchKey();
+            });
+          }}
+        />
+      </BAIUnmountAfterClose>
       {/* No project is handed down: installing an image enqueues a session,
           and the modal asks for that session's own project and resource group.
           The list's project filter only decides which images are on screen.
