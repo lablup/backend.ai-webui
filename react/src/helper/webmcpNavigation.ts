@@ -48,7 +48,7 @@ export const resolveAppPath = (
   if (url.origin !== origin) {
     return notAllowed('"path" must stay on this origin.');
   }
-  // A form filled through the URL must carry the agent-filled notice (ADR 0009).
+  // A form filled through the URL must carry the agent-filled notice (ADR 0011).
   if (
     url.searchParams.has('formValues') ||
     url.searchParams.has('agentPrefill')
