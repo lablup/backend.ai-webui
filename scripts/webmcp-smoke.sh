@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Smoke-test the WebUI's app-shell WebMCP tools (ADR 0009) through agent-browser.
+# Smoke-test the WebUI's app-shell WebMCP tools (ADR 0011) through agent-browser.
 # Usage and exit codes: scripts/webmcp-smoke.sh --help
 
 set -uo pipefail

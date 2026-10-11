@@ -4,7 +4,7 @@
 the WebUI itself in [agent-browser](https://agent-browser.dev) and calling the
 **WebMCP tools** the WebUI registers on each page — named functions that read
 what the page shows, move between pages, and fill forms for the user. The
-tool rules are the WebUI's ADR 0009 (`docs/adr/0009-webmcp-tool-surface.md` in
+tool rules are the WebUI's ADR 0011 (`docs/adr/0011-webmcp-tool-surface.md` in
 a checkout).
 
 agent-browser ships its own version-matched guide. Read it once per task, and
