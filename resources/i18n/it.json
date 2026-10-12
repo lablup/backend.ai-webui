@@ -2703,6 +2703,7 @@
     "Scheduler": "Pianificatore",
     "SchedulerOptions": "Opzioni di pianificazione",
     "SelectDomain": "Seleziona dominio",
+    "SelectHandlerName": "Seleziona un handler",
     "SelectScheduler": "Seleziona l'agenda",
     "SessionExecutionSpec": "Specifica di esecuzione della sessione",
     "Timeout": "Timeout",

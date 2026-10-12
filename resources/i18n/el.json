@@ -2703,6 +2703,7 @@
     "Scheduler": "Χρονοδιάγραμμα",
     "SchedulerOptions": "Επιλογές προγραμματιστή",
     "SelectDomain": "Επιλέξτε τομέα",
+    "SelectHandlerName": "Επιλέξτε handler",
     "SelectScheduler": "Επιλέξτε Προγραμματιστής",
     "SessionExecutionSpec": "Προδιαγραφή εκτέλεσης συνόδου",
     "Timeout": "Χρονικό όριο",

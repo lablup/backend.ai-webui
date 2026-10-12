@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0757d0b7272c45a1452cb2fa0a1dd91d>>
+ * @generated SignedSource<<7e8ff6f85c9aacb340180c592862b678>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -75,6 +75,7 @@ export type ResourceGroupDefaultDeploymentOptionsPanelQuery$data = {
       };
     }>;
   } | null | undefined;
+  readonly " $fragmentSpreads": FragmentRefs<"ResourceGroupDefaultDeploymentOptionsModal_schedulingHandlers">;
 };
 export type ResourceGroupDefaultDeploymentOptionsPanelQuery = {
   response: ResourceGroupDefaultDeploymentOptionsPanelQuery$data;
@@ -113,6 +114,13 @@ v3 = {
   "args": null,
   "kind": "ScalarField",
   "name": "maxRetryCount",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 };
 return {
@@ -159,6 +167,11 @@ return {
           }
         ],
         "storageKey": null
+      },
+      {
+        "args": null,
+        "kind": "FragmentSpread",
+        "name": "ResourceGroupDefaultDeploymentOptionsModal_schedulingHandlers"
       }
     ],
     "type": "Query",
@@ -256,13 +269,7 @@ return {
                     "name": "id",
                     "storageKey": null
                   },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "name",
-                    "storageKey": null
-                  }
+                  (v4/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -271,20 +278,39 @@ return {
           }
         ],
         "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "SchedulingHandlerNode",
+        "kind": "LinkedField",
+        "name": "schedulingHandlers",
+        "plural": true,
+        "selections": [
+          (v4/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "description",
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "106a77a2fd1ccfd1fced47288302d879",
+    "cacheID": "fbb033a0dfd4adb1e4bd2c089ed62fea",
     "id": null,
     "metadata": {},
     "name": "ResourceGroupDefaultDeploymentOptionsPanelQuery",
     "operationKind": "query",
-    "text": "query ResourceGroupDefaultDeploymentOptionsPanelQuery(\n  $filter: ResourceGroupFilter\n) {\n  adminResourceGroups(filter: $filter, last: 1) {\n    edges {\n      node {\n        ...ResourceGroupDefaultDeploymentOptionsPanelFragment\n        id\n      }\n    }\n  }\n}\n\nfragment ResourceGroupDefaultDeploymentOptionsModalFragment on ResourceGroup {\n  id\n  name\n  defaultDeploymentOptions @since(version: \"26.4.4rc1\") {\n    ...ResourceGroupDefaultDeploymentOptionsModal_options\n  }\n}\n\nfragment ResourceGroupDefaultDeploymentOptionsModal_options on DeploymentOptionsInfo {\n  handlerOptions {\n    default {\n      timeoutSec\n      maxRetryCount\n    }\n    byHandler {\n      handlerName\n      timeoutSec\n      maxRetryCount\n    }\n  }\n}\n\nfragment ResourceGroupDefaultDeploymentOptionsPanelFragment on ResourceGroup {\n  defaultDeploymentOptions @since(version: \"26.4.4rc1\") {\n    ...ResourceGroupDefaultDeploymentOptionsPanel_options\n  }\n  ...ResourceGroupDefaultDeploymentOptionsModalFragment\n}\n\nfragment ResourceGroupDefaultDeploymentOptionsPanel_options on DeploymentOptionsInfo {\n  handlerOptions {\n    default {\n      timeoutSec\n      maxRetryCount\n    }\n    byHandler {\n      handlerName\n      timeoutSec\n      maxRetryCount\n    }\n  }\n}\n"
+    "text": "query ResourceGroupDefaultDeploymentOptionsPanelQuery(\n  $filter: ResourceGroupFilter\n) {\n  adminResourceGroups(filter: $filter, last: 1) {\n    edges {\n      node {\n        ...ResourceGroupDefaultDeploymentOptionsPanelFragment\n        id\n      }\n    }\n  }\n  ...ResourceGroupDefaultDeploymentOptionsModal_schedulingHandlers\n}\n\nfragment ResourceGroupDefaultDeploymentOptionsModalFragment on ResourceGroup {\n  id\n  name\n  defaultDeploymentOptions @since(version: \"26.4.4rc1\") {\n    ...ResourceGroupDefaultDeploymentOptionsModal_options\n  }\n}\n\nfragment ResourceGroupDefaultDeploymentOptionsModal_options on DeploymentOptionsInfo {\n  handlerOptions {\n    default {\n      timeoutSec\n      maxRetryCount\n    }\n    byHandler {\n      handlerName\n      timeoutSec\n      maxRetryCount\n    }\n  }\n}\n\nfragment ResourceGroupDefaultDeploymentOptionsModal_schedulingHandlers on Query {\n  schedulingHandlers @since(version: \"26.4.4rc1\") {\n    name\n    description\n  }\n}\n\nfragment ResourceGroupDefaultDeploymentOptionsPanelFragment on ResourceGroup {\n  defaultDeploymentOptions @since(version: \"26.4.4rc1\") {\n    ...ResourceGroupDefaultDeploymentOptionsPanel_options\n  }\n  ...ResourceGroupDefaultDeploymentOptionsModalFragment\n}\n\nfragment ResourceGroupDefaultDeploymentOptionsPanel_options on DeploymentOptionsInfo {\n  handlerOptions {\n    default {\n      timeoutSec\n      maxRetryCount\n    }\n    byHandler {\n      handlerName\n      timeoutSec\n      maxRetryCount\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "31327ffef7364b9a6498f9a3c54c3f96";
+(node as any).hash = "69a1369ddf6e6073f673dd326f837a67";
 
 export default node;

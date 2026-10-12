@@ -2703,6 +2703,7 @@
     "Scheduler": "Zamanlayıcı",
     "SchedulerOptions": "Zamanlayıcı Seçenekleri",
     "SelectDomain": "Etki Alanı Seç",
+    "SelectHandlerName": "Handler seçin",
     "SelectScheduler": "Zamanlayıcı Seç",
     "SessionExecutionSpec": "Oturum Yürütme Belirtimi",
     "Timeout": "Zaman Aşımı",

@@ -143,6 +143,7 @@
         "resourceGroup.RunAsBatchSession",
         "resourceGroup.Scheduler",
         "resourceGroup.SchedulerOptions",
+        "resourceGroup.SelectHandlerName",
         "resourceGroup.SessionExecutionSpec",
         "resourceGroup.Timeout",
         "resourceGroup.TimeoutSeconds",

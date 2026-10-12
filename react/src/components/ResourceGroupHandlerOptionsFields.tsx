@@ -2,12 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Form } from '../form-engine';
+import { Form, useFormInstance, useWatch } from '../form-engine';
 import BAIFormItem from './BAIFormItem';
 import ResourceGroupOptionsCollapsible from './ResourceGroupOptionsCollapsible';
 import {
   AstryxFormNumberInput,
-  AstryxFormTextInput,
+  AstryxFormSelector,
 } from './astryxFormControls';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
@@ -22,6 +22,11 @@ import * as _ from 'lodash-es';
 import { CircleMinus, PlusIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+
+export interface HandlerNameOption {
+  value: string;
+  description?: string;
+}
 
 export interface HandlerOptionsFormValue {
   default?: {
@@ -68,7 +73,7 @@ export const toHandlerOptionsInput = (value?: HandlerOptionsFormValue) => ({
     maxRetryCount: value?.default?.maxRetryCount ?? null,
   },
   byHandler: _.map(value?.byHandler, (entry) => ({
-    handlerName: _.trim(entry.handlerName),
+    handlerName: entry.handlerName,
     timeoutSec: entry.timeoutSec ?? null,
     maxRetryCount: entry.maxRetryCount ?? null,
   })),
@@ -76,10 +81,28 @@ export const toHandlerOptionsInput = (value?: HandlerOptionsFormValue) => ({
 
 export const HandlerOptionsFormFields: React.FC<{
   name: string;
+  // The names the manager accepts in `byHandler`; it rejects any other.
+  handlerNameOptions: ReadonlyArray<HandlerNameOption>;
   defaultIsOpen?: boolean;
-}> = ({ name, defaultIsOpen }) => {
+}> = ({ name, handlerNameOptions, defaultIsOpen }) => {
   'use memo';
   const { t } = useTranslation();
+  const form = useFormInstance();
+  const byHandler = useWatch([name, 'byHandler'], form) as
+    HandlerOptionsFormValue['byHandler'] | undefined;
+
+  // One override per handler: the manager rejects a duplicate name.
+  const optionsForRow = (rowIndex: number) =>
+    _.map(handlerNameOptions, (option) => ({
+      value: option.value,
+      label: option.value,
+      description: option.description,
+      disabled: _.some(
+        byHandler,
+        (entry, index) =>
+          index !== rowIndex && entry?.handlerName === option.value,
+      ),
+    }));
 
   return (
     <ResourceGroupOptionsCollapsible
@@ -129,16 +152,17 @@ export const HandlerOptionsFormFields: React.FC<{
                     rules={[
                       {
                         required: true,
-                        whitespace: true,
                         message: t('general.ValueRequired', {
                           name: t('resourceGroup.HandlerName'),
                         }),
                       },
                     ]}
                   >
-                    <AstryxFormTextInput
+                    <AstryxFormSelector
                       label={t('resourceGroup.HandlerName')}
-                      placeholder={t('resourceGroup.HandlerName')}
+                      placeholder={t('resourceGroup.SelectHandlerName')}
+                      options={optionsForRow(fieldName)}
+                      hasSearch
                     />
                   </Form.Item>
                   <Form.Item

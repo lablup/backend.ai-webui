@@ -2705,6 +2705,7 @@
     "Scheduler": "Planer",
     "SchedulerOptions": "Scheduler-Optionen",
     "SelectDomain": "Domain auswählen",
+    "SelectHandlerName": "Handler auswählen",
     "SelectScheduler": "Wählen Sie Planer",
     "SessionExecutionSpec": "Sitzungsausführungsspezifikation",
     "Timeout": "Timeout",

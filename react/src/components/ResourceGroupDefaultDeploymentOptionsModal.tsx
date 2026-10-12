@@ -5,6 +5,7 @@
 import { ResourceGroupDefaultDeploymentOptionsModalFragment$key } from '../__generated__/ResourceGroupDefaultDeploymentOptionsModalFragment.graphql';
 import { ResourceGroupDefaultDeploymentOptionsModalMutation } from '../__generated__/ResourceGroupDefaultDeploymentOptionsModalMutation.graphql';
 import { ResourceGroupDefaultDeploymentOptionsModal_options$key } from '../__generated__/ResourceGroupDefaultDeploymentOptionsModal_options.graphql';
+import { ResourceGroupDefaultDeploymentOptionsModal_schedulingHandlers$key } from '../__generated__/ResourceGroupDefaultDeploymentOptionsModal_schedulingHandlers.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import {
@@ -27,17 +28,36 @@ interface ResourceGroupDefaultDeploymentOptionsModalProps extends Omit<
   BAIModalProps,
   'onOk' | 'onCancel'
 > {
+  queryRef: ResourceGroupDefaultDeploymentOptionsModal_schedulingHandlers$key;
   resourceGroupFrgmt: ResourceGroupDefaultDeploymentOptionsModalFragment$key;
   onRequestClose: (success: boolean) => void;
 }
 
 const ResourceGroupDefaultDeploymentOptionsModal: React.FC<
   ResourceGroupDefaultDeploymentOptionsModalProps
-> = ({ resourceGroupFrgmt, onRequestClose, ...modalProps }) => {
+> = ({ queryRef, resourceGroupFrgmt, onRequestClose, ...modalProps }) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
   const formRef = useRef<FormInstance<FormValues>>(null);
+
+  // The manager validates `handlerName` against this registry, so the
+  // select offers exactly what it accepts.
+  const { schedulingHandlers } = useFragment(
+    graphql`
+      fragment ResourceGroupDefaultDeploymentOptionsModal_schedulingHandlers on Query {
+        schedulingHandlers @since(version: "26.4.4rc1") {
+          name
+          description
+        }
+      }
+    `,
+    queryRef,
+  );
+  const handlerNameOptions = _.map(schedulingHandlers, (handler) => ({
+    value: handler.name,
+    description: handler.description ?? undefined,
+  }));
 
   const resourceGroup = useFragment(
     graphql`
@@ -151,7 +171,10 @@ const ResourceGroupDefaultDeploymentOptionsModal: React.FC<
           layout="vertical"
         >
           <BAIFlex direction="column" align="stretch" gap="sm">
-            <HandlerOptionsFormFields name="handlerOptions" />
+            <HandlerOptionsFormFields
+              name="handlerOptions"
+              handlerNameOptions={handlerNameOptions}
+            />
           </BAIFlex>
         </Form>
       </BAIFlex>

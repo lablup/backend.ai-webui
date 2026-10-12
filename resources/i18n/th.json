@@ -2694,6 +2694,7 @@
     "Scheduler": "ตัวจัดกำหนดการ",
     "SchedulerOptions": "ตัวเลือกตัวจัดกำหนดการ",
     "SelectDomain": "เลือกโดเมน",
+    "SelectHandlerName": "เลือก Handler",
     "SelectScheduler": "เลือกตัวจัดกำหนดการ",
     "SessionExecutionSpec": "ข้อกำหนดการทำงานของเซสชัน",
     "Timeout": "Timeout",

@@ -2703,6 +2703,7 @@
     "Scheduler": "Penjadual",
     "SchedulerOptions": "Pilihan Penjadual",
     "SelectDomain": "Pilih Domain",
+    "SelectHandlerName": "Pilih Handler",
     "SelectScheduler": "Pilih Penjadual",
     "SessionExecutionSpec": "Spesifikasi Pelaksanaan Sesi",
     "Timeout": "Had Masa",

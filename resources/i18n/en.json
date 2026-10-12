@@ -2690,6 +2690,7 @@
     "Scheduler": "Scheduler",
     "SchedulerOptions": "Scheduler Options",
     "SelectDomain": "Select Domain",
+    "SelectHandlerName": "Select a handler",
     "SelectScheduler": "Select Scheduler",
     "SessionExecutionSpec": "Session Execution Spec",
     "Timeout": "Timeout",

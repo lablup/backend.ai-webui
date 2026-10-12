@@ -2703,6 +2703,7 @@
     "Scheduler": "Планировщик",
     "SchedulerOptions": "Параметры планировщика",
     "SelectDomain": "Выбрать домен",
+    "SelectHandlerName": "Выбрать handler",
     "SelectScheduler": "Выберите планировщик",
     "SessionExecutionSpec": "Спецификация выполнения сессии",
     "Timeout": "Тайм-аут",

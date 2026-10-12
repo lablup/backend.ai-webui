@@ -2705,6 +2705,7 @@
     "Scheduler": "スケジューラー",
     "SchedulerOptions": "スケジューラオプション",
     "SelectDomain": "ドメインを選択",
+    "SelectHandlerName": "Handler を選択",
     "SelectScheduler": "スケジューラを選択",
     "SessionExecutionSpec": "セッション実行スペック",
     "Timeout": "タイムアウト",

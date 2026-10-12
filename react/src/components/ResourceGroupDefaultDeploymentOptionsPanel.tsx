@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { ResourceGroupDefaultDeploymentOptionsModal_schedulingHandlers$key } from '../__generated__/ResourceGroupDefaultDeploymentOptionsModal_schedulingHandlers.graphql';
 import { ResourceGroupDefaultDeploymentOptionsPanelFragment$key } from '../__generated__/ResourceGroupDefaultDeploymentOptionsPanelFragment.graphql';
 import { ResourceGroupDefaultDeploymentOptionsPanelQuery } from '../__generated__/ResourceGroupDefaultDeploymentOptionsPanelQuery.graphql';
 import { ResourceGroupDefaultDeploymentOptionsPanel_options$key } from '../__generated__/ResourceGroupDefaultDeploymentOptionsPanel_options.graphql';
@@ -15,12 +16,13 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 interface ResourceGroupDefaultDeploymentOptionsPanelContentProps {
+  queryRef: ResourceGroupDefaultDeploymentOptionsModal_schedulingHandlers$key;
   resourceGroupFrgmt: ResourceGroupDefaultDeploymentOptionsPanelFragment$key;
 }
 
 const ResourceGroupDefaultDeploymentOptionsPanelContent: React.FC<
   ResourceGroupDefaultDeploymentOptionsPanelContentProps
-> = ({ resourceGroupFrgmt }) => {
+> = ({ queryRef, resourceGroupFrgmt }) => {
   'use memo';
   const { t } = useTranslation();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -67,6 +69,7 @@ const ResourceGroupDefaultDeploymentOptionsPanelContent: React.FC<
       <BAIUnmountAfterClose>
         <ResourceGroupDefaultDeploymentOptionsModal
           open={isEditModalOpen}
+          queryRef={queryRef}
           resourceGroupFrgmt={resourceGroup}
           onRequestClose={() => setIsEditModalOpen(false)}
         />
@@ -83,7 +86,7 @@ const ResourceGroupDefaultDeploymentOptionsPanel: React.FC<{
   const { t } = useTranslation();
   // Its own query and its own pagination args (so its own store record): a
   // manager error inside the options nulls this node, not the drawer's.
-  const { adminResourceGroups } =
+  const queryData =
     useLazyLoadQuery<ResourceGroupDefaultDeploymentOptionsPanelQuery>(
       graphql`
         query ResourceGroupDefaultDeploymentOptionsPanelQuery(
@@ -96,15 +99,17 @@ const ResourceGroupDefaultDeploymentOptionsPanel: React.FC<{
               }
             }
           }
+          ...ResourceGroupDefaultDeploymentOptionsModal_schedulingHandlers
         }
       `,
       { filter: { name: { equals: resourceGroupName } } },
       { fetchPolicy: 'store-and-network', fetchKey },
     );
-  const node = adminResourceGroups?.edges[0]?.node;
+  const node = queryData.adminResourceGroups?.edges[0]?.node;
 
   return node ? (
     <ResourceGroupDefaultDeploymentOptionsPanelContent
+      queryRef={queryData}
       resourceGroupFrgmt={node}
     />
   ) : (

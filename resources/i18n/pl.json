@@ -2705,6 +2705,7 @@
     "Scheduler": "Planista",
     "SchedulerOptions": "Opcje harmonogramu",
     "SelectDomain": "Wybierz domenę",
+    "SelectHandlerName": "Wybierz handler",
     "SelectScheduler": "Wybierz harmonogram",
     "SessionExecutionSpec": "Specyfikacja wykonania sesji",
     "Timeout": "Limit czasu",
