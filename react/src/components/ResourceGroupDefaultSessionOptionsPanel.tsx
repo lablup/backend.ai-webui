@@ -5,23 +5,25 @@
 import { ResourceGroupDefaultSessionOptionsPanelFragment$key } from '../__generated__/ResourceGroupDefaultSessionOptionsPanelFragment.graphql';
 import { ResourceGroupDefaultSessionOptionsPanelQuery } from '../__generated__/ResourceGroupDefaultSessionOptionsPanelQuery.graphql';
 import { ResourceGroupDefaultSessionOptionsPanel_options$key } from '../__generated__/ResourceGroupDefaultSessionOptionsPanel_options.graphql';
-import ResourceGroupDefaultSessionOptionsModal from './ResourceGroupDefaultSessionOptionsModal';
+import { formatDuration } from '../helper';
+import ResourceGroupDefaultSessionOptionsModal, {
+  ResourceGroupDefaultSessionOptionsSection,
+} from './ResourceGroupDefaultSessionOptionsModal';
 import { HandlerOptionsDescription } from './ResourceGroupHandlerOptionsFields';
+import ResourceGroupOptionsSection from './ResourceGroupOptionsSection';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import { Text } from '@lablup/ui-common/Text';
 import { Token } from '@lablup/ui-common/Token';
 import {
-  BAIButton,
-  BAICard,
   BAIFlex,
   BAIMetadataList,
   BAIUnmountAfterClose,
+  convertToBinaryUnit,
   useBAIBreakpoint,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { SquarePenIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
@@ -36,7 +38,8 @@ const ResourceGroupDefaultSessionOptionsPanelContent: React.FC<
   'use memo';
   const { t } = useTranslation();
   const { md } = useBAIBreakpoint();
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingSection, setEditingSection] =
+    useState<ResourceGroupDefaultSessionOptionsSection | null>(null);
 
   const resourceGroup = useFragment(
     graphql`
@@ -110,57 +113,20 @@ const ResourceGroupDefaultSessionOptionsPanelContent: React.FC<
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
-      <BAIFlex justify="end">
-        <BAIButton
-          icon={<SquarePenIcon />}
-          onClick={() => setIsEditModalOpen(true)}
-        >
-          {t('button.Edit')}
-        </BAIButton>
-      </BAIFlex>
-      <BAICard>
+      <ResourceGroupOptionsSection
+        title={t('resourceGroup.SessionExecutionSpec')}
+        onEdit={() => setEditingSection('sessionExecutionSpec')}
+      >
         <BAIMetadataList columns={md ? 2 : 1}>
-          <MetadataListItem label={t('session.Priority')}>
-            {options?.priority ?? '-'}
-          </MetadataListItem>
-          <MetadataListItem label={t('resourceGroup.Preemptible')}>
-            {_.isNil(options?.isPreemptible)
-              ? '-'
-              : options.isPreemptible
-                ? t('general.Enabled')
-                : t('general.Disabled')}
+          <MetadataListItem label={t('general.Image')}>
+            {spec?.imageId || '-'}
           </MetadataListItem>
           <MetadataListItem label={t('session.ClusterMode')}>
             {clusterModeLabel[normalizedClusterMode] ??
               options?.clusterMode ??
               '-'}
           </MetadataListItem>
-          <MetadataListItem label={t('resourceGroup.FailurePolicy')}>
-            {options?.defaultFailurePolicy
-              ? (failurePolicyLabel[options.defaultFailurePolicy] ??
-                options.defaultFailurePolicy)
-              : '-'}
-          </MetadataListItem>
-          <MetadataListItem label={t('resourceGroup.AgentSelectionPolicy')}>
-            {options?.agentSelectionPolicy
-              ? (agentSelectionLabel[options.agentSelectionPolicy] ??
-                options.agentSelectionPolicy)
-              : '-'}
-          </MetadataListItem>
-        </BAIMetadataList>
-      </BAICard>
-      <BAICard>
-        <HandlerOptionsDescription handlerOptions={options?.handlerOptions} />
-      </BAICard>
-      <BAICard>
-        <BAIMetadataList
-          title={t('resourceGroup.KernelExecutionSpec')}
-          columns={md ? 2 : 1}
-        >
-          <MetadataListItem label={t('general.Image')}>
-            {spec?.imageId || '-'}
-          </MetadataListItem>
-          <MetadataListItem label={t('resourcePreset.Resources')}>
+          <MetadataListItem label={t('adminDeploymentPreset.ResourceSlots')}>
             {_.isEmpty(spec?.resources) ? (
               '-'
             ) : (
@@ -168,7 +134,12 @@ const ResourceGroupDefaultSessionOptionsPanelContent: React.FC<
                 {_.map(spec?.resources, (entry) => (
                   <Token
                     key={entry.resourceType}
-                    label={`${entry.resourceType}: ${entry.quantity}`}
+                    label={`${entry.resourceType}: ${
+                      entry.resourceType === 'mem'
+                        ? (convertToBinaryUnit(String(entry.quantity), 'auto')
+                            ?.displayValue ?? entry.quantity)
+                        : entry.quantity
+                    }`}
                   />
                 ))}
               </BAIFlex>
@@ -177,12 +148,17 @@ const ResourceGroupDefaultSessionOptionsPanelContent: React.FC<
           <MetadataListItem label={t('adminDeploymentPreset.Shmem')}>
             {spec?.resourceOpts?.shmem || '-'}
           </MetadataListItem>
-          <MetadataListItem label={t('resourceGroup.BatchTimeout')}>
+          <MetadataListItem
+            label={t('session.launcher.BatchJobTimeoutDuration')}
+          >
             {_.isNil(spec?.batchTimeoutSec)
               ? '-'
-              : `${spec.batchTimeoutSec} ${t('resourceGroup.TimeoutSeconds')}`}
+              : formatDuration(dayjs.duration(spec.batchTimeoutSec, 's'), t)}
           </MetadataListItem>
-          <MetadataListItem label={t('adminDeploymentPreset.StartupCommand')}>
+          <MetadataListItem label={t('session.launcher.SessionStartTime')}>
+            {spec?.startsAt ? dayjs(spec.startsAt).format('lll') : '-'}
+          </MetadataListItem>
+          <MetadataListItem label={t('session.launcher.StartUpCommand')}>
             {spec?.startupCommand ? (
               <Text type="code" maxLines={3}>
                 {spec.startupCommand}
@@ -200,16 +176,49 @@ const ResourceGroupDefaultSessionOptionsPanelContent: React.FC<
               '-'
             )}
           </MetadataListItem>
-          <MetadataListItem label={t('resourceGroup.StartsAt')}>
-            {spec?.startsAt ? dayjs(spec.startsAt).format('lll') : '-'}
+        </BAIMetadataList>
+      </ResourceGroupOptionsSection>
+      <ResourceGroupOptionsSection
+        title={t('resourceGroup.SchedulerOptions')}
+        onEdit={() => setEditingSection('schedulerOptions')}
+      >
+        <BAIMetadataList columns={md ? 2 : 1}>
+          <MetadataListItem label={t('session.Priority')}>
+            {options?.priority ?? '-'}
+          </MetadataListItem>
+          <MetadataListItem label={t('resourceGroup.Preemptible')}>
+            {_.isNil(options?.isPreemptible)
+              ? '-'
+              : options.isPreemptible
+                ? t('general.Enabled')
+                : t('general.Disabled')}
+          </MetadataListItem>
+          <MetadataListItem label={t('resourceGroup.FailurePolicy')}>
+            {options?.defaultFailurePolicy
+              ? (failurePolicyLabel[options.defaultFailurePolicy] ??
+                options.defaultFailurePolicy)
+              : '-'}
+          </MetadataListItem>
+          <MetadataListItem label={t('resourceGroup.AgentSelectionPolicy')}>
+            {options?.agentSelectionPolicy
+              ? (agentSelectionLabel[options.agentSelectionPolicy] ??
+                options.agentSelectionPolicy)
+              : '-'}
           </MetadataListItem>
         </BAIMetadataList>
-      </BAICard>
+      </ResourceGroupOptionsSection>
+      <ResourceGroupOptionsSection
+        title={t('resourceGroup.HandlerOptions')}
+        onEdit={() => setEditingSection('handlerOptions')}
+      >
+        <HandlerOptionsDescription handlerOptions={options?.handlerOptions} />
+      </ResourceGroupOptionsSection>
       <BAIUnmountAfterClose>
         <ResourceGroupDefaultSessionOptionsModal
-          open={isEditModalOpen}
+          open={!!editingSection}
+          initialOpenSection={editingSection ?? undefined}
           resourceGroupFrgmt={resourceGroup}
-          onRequestClose={() => setIsEditModalOpen(false)}
+          onRequestClose={() => setEditingSection(null)}
         />
       </BAIUnmountAfterClose>
     </BAIFlex>

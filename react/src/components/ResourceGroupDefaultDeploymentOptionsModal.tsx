@@ -150,7 +150,9 @@ const ResourceGroupDefaultDeploymentOptionsModal: React.FC<
           }}
           layout="vertical"
         >
-          <HandlerOptionsFormFields name="handlerOptions" />
+          <BAIFlex direction="column" align="stretch" gap="sm">
+            <HandlerOptionsFormFields name="handlerOptions" />
+          </BAIFlex>
         </Form>
       </BAIFlex>
     </BAIModal>

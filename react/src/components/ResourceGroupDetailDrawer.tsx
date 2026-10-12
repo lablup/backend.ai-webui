@@ -136,7 +136,7 @@ const ResourceGroupDetailDrawerContent: React.FC<{
           </BAIFlex>
           <IconButton
             className="bai-action-accent"
-            variant="ghost"
+            variant="secondary"
             icon={<SquarePenIcon aria-hidden />}
             label={t('resourceGroup.ModifyResourceGroup')}
             tooltip={t('resourceGroup.ModifyResourceGroup')}

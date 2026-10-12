@@ -7,14 +7,9 @@ import { ResourceGroupDefaultDeploymentOptionsPanelQuery } from '../__generated_
 import { ResourceGroupDefaultDeploymentOptionsPanel_options$key } from '../__generated__/ResourceGroupDefaultDeploymentOptionsPanel_options.graphql';
 import ResourceGroupDefaultDeploymentOptionsModal from './ResourceGroupDefaultDeploymentOptionsModal';
 import { HandlerOptionsDescription } from './ResourceGroupHandlerOptionsFields';
+import ResourceGroupOptionsSection from './ResourceGroupOptionsSection';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
-import {
-  BAIButton,
-  BAICard,
-  BAIFlex,
-  BAIUnmountAfterClose,
-} from 'backend.ai-ui';
-import { SquarePenIcon } from 'lucide-react';
+import { BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
@@ -63,17 +58,12 @@ const ResourceGroupDefaultDeploymentOptionsPanelContent: React.FC<
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
-      <BAIFlex justify="end">
-        <BAIButton
-          icon={<SquarePenIcon />}
-          onClick={() => setIsEditModalOpen(true)}
-        >
-          {t('button.Edit')}
-        </BAIButton>
-      </BAIFlex>
-      <BAICard>
+      <ResourceGroupOptionsSection
+        title={t('resourceGroup.HandlerOptions')}
+        onEdit={() => setIsEditModalOpen(true)}
+      >
         <HandlerOptionsDescription handlerOptions={options?.handlerOptions} />
-      </BAICard>
+      </ResourceGroupOptionsSection>
       <BAIUnmountAfterClose>
         <ResourceGroupDefaultDeploymentOptionsModal
           open={isEditModalOpen}
