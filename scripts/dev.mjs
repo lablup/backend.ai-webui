@@ -10,7 +10,7 @@
 // at startup and exposed as VITE_DEV_SHARE_URL.
 import { spawn, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { resolveAppName } from './portless-app-name.mjs';
@@ -221,6 +221,15 @@ if (devGwShareBase && devGwPortMismatch) {
   // `portless run` derives the app name itself, so it is unknown until it prints.
   console.log(
     `-- Team share URL: ${devGwShareBase.replace('{app}', '<app>')} — <app> is the name Portless prints below (dev VPN, via dev-gw)`,
+  );
+}
+
+// Vite serves `/config.toml` only when the file exists; otherwise the SPA
+// fallback answers with index.html and every switch silently takes its default.
+if (!existsSync(new URL('../config.toml', import.meta.url))) {
+  console.log(
+    '-- config.toml is missing: /config.toml will be served as index.html and every switch falls back to its default. ' +
+      'Run `pnpm run dev-env use <server>` (writes it from the server\'s probed switches) or copy config.toml.sample.',
   );
 }
 

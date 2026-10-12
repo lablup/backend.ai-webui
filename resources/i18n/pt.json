@@ -1749,6 +1749,7 @@
     "ContainerRegistry": "Registro de Contêineres",
     "Control": "Ao controle",
     "Cores": "núcleos",
+    "CreateValue": "Criar \"{{value}}\"",
     "CreatedAt": "Data de criação",
     "Credential": "Credencial",
     "Days": "{{num}} dias",

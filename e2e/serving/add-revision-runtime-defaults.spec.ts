@@ -36,17 +36,25 @@ import {
   provisionDeploymentModelFolder,
   selectRevisionModalOption,
 } from '../utils/deployment-fixtures';
-import { loginAsAdmin } from '../utils/test-util';
+import { loginAsAdmin, modifyConfigToml } from '../utils/test-util';
 import {
   createDeploymentAndOpenPage,
+  disableAutoApply,
+  fillManualImageName,
   installDeploymentFlagOverride,
   openAddRevisionAdvanced,
   selectRuntimeVariant,
+  submitAddRevision,
 } from './add-revision-support';
 import {
+  addRevisionMutationMock,
+  manualImageResolveMock,
   MOCK_DB_DEFAULT_COMMAND,
+  MOCK_DB_DEFAULT_HEALTH_PATH,
+  MOCK_DB_DEFAULT_INITIAL_DELAY,
   MOCK_DB_DEFAULT_MAX_RETRIES,
   MOCK_DB_DEFAULT_PORT,
+  MOCK_MANUAL_IMAGE_REFERENCE,
   MOCK_VFOLDER_COMMAND,
   MOCK_VFOLDER_MAX_RETRIES,
   MOCK_VFOLDER_PORT,
@@ -454,6 +462,109 @@ test.describe(
         ).toBeVisible();
       } finally {
         await cleanupDeploymentSafely(page, name);
+      }
+    });
+  },
+);
+
+test.describe(
+  'Model Serving — Add Revision with optional health-check fields (#10223)',
+  { tag: ['@serving', '@deploy', '@functional', '@regression'] },
+  () => {
+    test.describe.configure({ mode: 'serial', retries: 1 });
+
+    test('Admin can add a revision with health check enabled and detail fields left blank', async ({
+      page,
+      request,
+    }) => {
+      test.setTimeout(240_000);
+      const name = `e2e-gh10223-blank-hc-${Date.now()}`;
+      const capture: { input: any } = { input: null };
+      let folderName: string | undefined;
+      try {
+        await modifyConfigToml(page, request, {
+          general: { allowManualImageNameForSession: true },
+        });
+        await loginWithVariantMocks(page, request, {
+          ...runtimeVariantSelectMocks('custom', true),
+          DeploymentAddRevisionModalVariantDefaultQuery:
+            variantDefaultModelDefinitionMock(),
+          DeploymentAddRevisionModalManualImageQuery: manualImageResolveMock(),
+          DeploymentAddRevisionModalAddMutation:
+            addRevisionMutationMock(capture),
+        });
+        // No health_check block, so the DB defaultModelDefinition (not the
+        // vfolder) supplies the definition-backed placeholders.
+        folderName = await provisionDeploymentModelFolder(page, {
+          yamlContent: `models:
+  - name: "mock-openai"
+    model_path: "/models"
+    service:
+      start_command:
+        - python3
+        - /models/mock_openai_server.py
+`,
+        });
+
+        await createDeploymentAndOpenPage(page, name);
+        const modal = await openAddRevisionAdvanced(page);
+        await selectRuntimeVariant(page, modal, 'custom');
+        await selectRevisionModalOption(page, 'Model Folder', folderName);
+        await fillManualImageName(modal, MOCK_MANUAL_IMAGE_REFERENCE);
+        await disableAutoApply(modal);
+
+        await modal
+          .getByRole('checkbox', { name: 'Enable Health Check', exact: true })
+          .check();
+
+        // The modal forwards only Path / Max Retries / Startup Grace Period
+        // from the model definition; the rest show the manager defaults.
+        const pathInput = modal.getByRole('textbox', {
+          name: 'Path',
+          exact: true,
+        });
+        await expect(pathInput).toHaveAttribute(
+          'placeholder',
+          MOCK_DB_DEFAULT_HEALTH_PATH,
+          { timeout: 10000 },
+        );
+        await expect(pathInput).toHaveValue('');
+        const expectedNumberPlaceholders: Array<[string, string]> = [
+          ['Interval', '10'],
+          ['Max Retries', String(MOCK_DB_DEFAULT_MAX_RETRIES)],
+          ['Max Wait Time', '15'],
+          ['Status Code', '200'],
+          ['Startup Grace Period', String(MOCK_DB_DEFAULT_INITIAL_DELAY)],
+        ];
+        for (const [label, placeholder] of expectedNumberPlaceholders) {
+          const input = modal.getByRole('spinbutton', {
+            name: label,
+            exact: true,
+          });
+          await expect(input).toHaveAttribute('placeholder', placeholder);
+          await expect(input).toHaveValue('');
+        }
+
+        // No resource preset is picked for a manually typed image; entering
+        // memory switches the allocation to Custom so the form validates.
+        // TODO: give the memory input a real label (BUI's doubled fallback name).
+        await modal
+          .getByRole('spinbutton', { name: 'Select Select', exact: true })
+          .fill('1');
+
+        await submitAddRevision(modal);
+
+        await expect
+          .poll(() => capture.input, { timeout: 30000 })
+          .not.toBeNull();
+        // Blank fields are omitted so the manager fills in its defaults.
+        const service = capture.input?.modelDefinition?.models?.[0]?.service;
+        expect(service?.healthCheck).toEqual({ enable: true });
+      } finally {
+        await cleanupDeploymentSafely(page, name);
+        if (folderName) {
+          await cleanupDeploymentFixtures(page, { folderName });
+        }
       }
     });
   },

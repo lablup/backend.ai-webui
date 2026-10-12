@@ -1747,6 +1747,7 @@
     "ContainerRegistry": "Μητρώο Κοντέινερ",
     "Control": "Ελεγχος",
     "Cores": "πυρήνες",
+    "CreateValue": "Δημιουργία \"{{value}}\"",
     "CreatedAt": "Ημερομηνία δημιουργίας",
     "Credential": "Διαπιστευτήριο",
     "Days": "{{num}} ημέρες",

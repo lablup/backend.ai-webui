@@ -100,10 +100,11 @@ Which API server a dev session talks to, and which test account it logs in with,
 
 **Agents** choose a server and account with the `fw:webui-connection-info` skill (the `fw` plugin of [lablup/claude-mp](https://github.com/lablup/claude-mp), 28.1.0 or later): it reads this catalog, applies the selection rules (live, manager version, `config.toml` switches, tags and notes, least-privileged role) and hands the pick to `pnpm run dev-env` below.
 
-`pnpm run dev-env` reads that endpoint and writes the pick into the two git-ignored files that already consume it:
+`pnpm run dev-env` reads that endpoint and writes the pick into the three git-ignored files that already consume it:
 
 - `.env.development.local` — `VITE_DEFAULT_API_ENDPOINT` / `VITE_DEFAULT_EMAIL` / `VITE_DEFAULT_PASSWORD`, the login-screen pre-fill.
 - `e2e/envs/.env.playwright` — `E2E_WEBSERVER_ENDPOINT` and the `E2E_*_EMAIL` / `E2E_*_PASSWORD` pairs.
+- `config.toml` — the deployment switches the app reads at `/config.toml` (`resources.openPortToPublic`, `general.enableModelFolders`, …): `config.toml.sample` with its `[description]` placeholders disabled, the server's probed switches on top, then any `--set` overrides. Without this file Vite's SPA fallback answers `/config.toml` with `index.html` and every switch silently takes its default — `pnpm run dev` prints a warning when it is missing.
 
 | Command                                                   | Does                                                                                                |
 | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
@@ -111,11 +112,13 @@ Which API server a dev session talks to, and which test account it logs in with,
 | `pnpm run dev-env list [--json]`                          | Servers (with live/down status and manager version), accounts, tags and notes — never a password    |
 | `pnpm run dev-env config <server> [--all] [--json]`       | The server's probed `config.toml`: the manager-related switches, or every key with `--all`          |
 | `pnpm run dev-env get <server> <account> [--json]`        | One account, password included when the catalog has one                                             |
-| `pnpm run dev-env use <server> [account] [--no-password]` | Write both files; `account` defaults to `user`                                                      |
+| `pnpm run dev-env use <server> [account] [--no-password] [--set <section>.<key>=<value> …]` | Write all three files; `account` defaults to `user`; each `--set` overrides one switch in `config.toml` |
 
 `<account>` is a role (`user`, `project-admin`, `admin`) or an email. A role picks the first account with that role in the catalog's order; when others share it, `get` and `use` print `also: <emails> — pass the email to pick one`.
 
-Every command asks the board, so there is no local copy to go stale. `use` only replaces the keys it owns; every other line of both files is left alone. Restart `pnpm run dev` afterwards — Vite reads env at server start. A `VITE_DEFAULT_*` variable exported in the shell wins over the file; `use` warns when one is in the way.
+Every command asks the board, so there is no local copy to go stale. `use` only replaces the keys it owns; every other line of both env files is left alone. Restart `pnpm run dev` afterwards — Vite reads env at server start; `config.toml` alone is watched, so a running server reloads it on its own. A `VITE_DEFAULT_*` variable exported in the shell wins over the file; `use` warns when one is in the way.
+
+`config.toml` is rewritten whole on every `use` (its first line says so and names the server and overrides it was built from), so a switch a PR needs is repeated on each `use`: `pnpm run dev-env use staging-latest --set resources.openPortToPublic=true`. The value is a TOML literal (`true`, `3`, `"SESSION"`) or, failing that, a string. A hand-written `config.toml` — any file without that first line — is kept as it is; `--set` still edits it in place. `use` never copies `general.apiEndpoint` / `apiEndpointText` (the login endpoint is `.env.development.local`'s job, and a baked endpoint disables API sign-in) or `plugin.*` (bundle files the deployment has and a worktree does not). A PR whose change sits behind a switch says so in its body with a `Config:` line — `Config: resources.openPortToPublic = true` — which the `dev-server` skill turns into `--set`.
 
 `use` never writes an empty password. For an account the catalog has no password for, a box owner can write the password into their own git-ignored file by hand (`VITE_DEFAULT_PASSWORD`, or the slot's `E2E_*_PASSWORD`): `use` keeps that line as long as the email line beside it names the same account (case-insensitive) and says so, and removes it otherwise, so another account's password never lingers. With nothing kept it prints a note that the password is typed at login.
 

@@ -162,6 +162,22 @@ describe("dev-env CLI", () => {
       path.join(root, ".env.development.local"),
       "VITE_THEME_HEADER_COLOR=#7C3AED\n",
     );
+    fs.writeFileSync(
+      path.join(root, "config.toml.sample"),
+      [
+        "[general]",
+        'apiEndpointText = "[Placeholder text]"',
+        'connectionMode = "[API or SESSION]"',
+        "enableModelFolders = false   # Enable model folders",
+        "",
+        "[resources]",
+        "openPortToPublic = false     # Show option to open app proxy port to anyone.",
+        "",
+        "[plugin]",
+        '#page = "test-plugin1"',
+        "",
+      ].join("\n"),
+    );
     catalogPath = path.join(root, "catalog.json");
     fs.writeFileSync(catalogPath, JSON.stringify(catalogBody()));
   });
@@ -281,6 +297,82 @@ describe("dev-env CLI", () => {
       expect(playwright).toContain("E2E_USER2_PASSWORD=pw-user2");
       expect(playwright).toContain("E2E_PROJECT_ADMIN_EMAIL=pa@example.test");
       expect(playwright).not.toContain("E2E_PROJECT_ADMIN_PASSWORD");
+    });
+
+    it("writes config.toml from the sample, the server's switches and --set", async () => {
+      const result = await run([
+        "use",
+        "main",
+        "--set",
+        "resources.openPortToPublic=true",
+        "--set=general.maxCountForPreopenPorts=3",
+      ]);
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain(
+        'wrote config.toml (switches of main, set resources.openPortToPublic=true, general.maxCountForPreopenPorts=3)',
+      );
+      const config = read("config.toml");
+      expect(config.startsWith("# Written by `pnpm run dev-env use`")).toBe(true);
+      expect(config).toContain(
+        "overrides: resources.openPortToPublic = true, general.maxCountForPreopenPorts = 3",
+      );
+      expect(config).toContain('connectionMode = "SESSION"');
+      expect(config).toContain("enableModelFolders = true  # Enable model folders");
+      expect(config).toContain("signupSupport = false");
+      expect(config).toContain("maxCountForPreopenPorts = 3");
+      expect(config).toContain(
+        "openPortToPublic = true  # Show option to open app proxy port to anyone.",
+      );
+      expect(config).toContain('#apiEndpointText = "[Placeholder text]"');
+      expect(config).toContain('#page = "test-plugin1"');
+      expect(config).not.toContain('page = "a,b"');
+
+      // A second `use` rewrites the generated file; the overrides are gone.
+      const again = await run(["use", "lts"]);
+      expect(again.status).toBe(0);
+      expect(again.stdout).toContain("wrote config.toml (sample defaults)");
+      const rewritten = read("config.toml");
+      expect(rewritten).toContain("sample defaults (lts serves no config.toml)");
+      expect(rewritten).toContain('#connectionMode = "[API or SESSION]"');
+      expect(rewritten).toContain("openPortToPublic = false");
+    });
+
+    it("keeps a hand-written config.toml and applies --set to it in place", async () => {
+      fs.writeFileSync(
+        path.join(root, "config.toml"),
+        '[general]\nconnectionMode = "API" # mine\n\n[resources]\n#openPortToPublic = false\n',
+      );
+      const kept = await run(["use", "main"]);
+      expect(kept.status).toBe(0);
+      expect(kept.stdout).toContain("kept config.toml (hand-written;");
+      expect(read("config.toml")).toBe(
+        '[general]\nconnectionMode = "API" # mine\n\n[resources]\n#openPortToPublic = false\n',
+      );
+      const set = await run(["use", "main", "--set", "resources.openPortToPublic=true"]);
+      expect(set.status).toBe(0);
+      expect(set.stdout).toContain(
+        "kept config.toml (hand-written), set resources.openPortToPublic=true",
+      );
+      expect(read("config.toml")).toBe(
+        '[general]\nconnectionMode = "API" # mine\n\n[resources]\nopenPortToPublic = true\n',
+      );
+    });
+
+    it("rejects a malformed --set with usage, writing nothing", async () => {
+      for (const args of [
+        ["use", "main", "--set"],
+        ["use", "main", "--set", "debug=true"],
+        ["use", "main", "--set", "a..b=true"],
+        ["use", "main", "--set", "resources.=true"],
+        ["use", "main", "--set", "resources.openPortToPublic"],
+      ]) {
+        const result = await run(args);
+        expect(result.status, args.join(" ")).toBe(2);
+        expect(result.stderr).toContain("<section>.<key>=<value>");
+        expect(result.stderr).toContain("Usage: pnpm run dev-env");
+        expect(result.stdout).toBe("");
+      }
+      expect(fs.existsSync(path.join(root, "config.toml"))).toBe(false);
     });
 
     it("seeds a new E2E file from the sample", async () => {

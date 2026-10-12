@@ -573,6 +573,7 @@ const ContainerRegistryList: React.FC<{
       <ContainerRegistryEditorModal
         containerRegistryFrgmt={editingRegistry}
         open={!!editingRegistry || isNewModalOpen}
+        unmountOnClose
         onOk={(type) => {
           if (type === 'create') {
             message.success({
