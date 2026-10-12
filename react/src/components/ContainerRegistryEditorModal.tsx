@@ -11,14 +11,19 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import BAICodeEditor from './BAICodeEditor';
 import BAIFormItem from './BAIFormItem';
 import HiddenFormItem from './HiddenFormItem';
-import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
 import {
   AstryxFormCheckbox,
   AstryxFormSelector,
   AstryxFormTextInput,
 } from './astryxFormControls';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFlex, BAIModal, BAIModalProps, BAISelect } from 'backend.ai-ui';
+import {
+  BAIAdminProjectSelect,
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  BAISelect,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -570,10 +575,25 @@ const ContainerRegistryEditorModal: React.FC<
                   name="allowed_group_ids"
                   label={t('registry.AllowedProjects')}
                 >
-                  <ProjectSelectForAdminPage
-                    domain={baiClient._config.domainName}
-                    mode="multiple"
+                  <BAIAdminProjectSelect
+                    label={t('registry.AllowedProjects')}
+                    isLabelHidden
+                    multiple
                     allowClear
+                    // Same option scope as `useAccessibleProjects`; the selected
+                    // ids still resolve to names outside it.
+                    filter={{
+                      isActive: true,
+                      domainName: { equals: baiClient._config.domainName },
+                      type: {
+                        in_: _.includes(
+                          baiClient._config.blockList,
+                          'model-store',
+                        )
+                          ? ['GENERAL']
+                          : ['GENERAL', 'MODEL_STORE'],
+                      },
+                    }}
                   />
                 </BAIFormItem>
               </Suspense>
