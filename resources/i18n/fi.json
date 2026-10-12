@@ -3284,6 +3284,7 @@
     }
   },
   "sessionMonitor": {
+    "MonitorSettings": "Valvonta-asetukset",
     "MoreSessions": "{{count}} istuntoa lisää",
     "MyResourceUsage": "Käyttöni verrattuna rajaani",
     "MySessions": "Omat istunnot",
@@ -3298,6 +3299,16 @@
       "SessionLifetime": "Istunto on saavuttamassa enimmäiskestoikänsä.",
       "Title": "{{name}} päättyy {{minutes}} min kuluttua",
       "Utilization": "Resurssien käyttö on pysynyt joutokäynnin kynnysarvon alapuolella. Käytä istuntoa ennen kuin se lopetetaan."
+    },
+    "settings": {
+      "DesktopNotifications": "Työpöytäilmoitusten asetukset →",
+      "IdleAlerts": "Hälytys ennen joutokäynnin aiheuttamaa päättymistä",
+      "IncludeStarting": "Sisällytä käynnistyvät istunnot",
+      "RowsShown": "Näytetyt rivit",
+      "SortBy": "Järjestä",
+      "SortDeadline": "Pikaisin päättyminen ensin",
+      "SortName": "Nimi",
+      "SortNewest": "Uusimmat ensin"
     }
   },
   "settings": {

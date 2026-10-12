@@ -3286,6 +3286,7 @@
     }
   },
   "sessionMonitor": {
+    "MonitorSettings": "Monitor-Einstellungen",
     "MoreSessions": "{{count}} weitere Sitzungen",
     "MyResourceUsage": "Meine Nutzung im Vergleich zu meinem Limit",
     "MySessions": "Meine Sitzungen",
@@ -3300,6 +3301,16 @@
       "SessionLifetime": "Die Sitzung erreicht ihre maximale Lebensdauer.",
       "Title": "{{name}} endet in {{minutes}} Min.",
       "Utilization": "Die Ressourcennutzung liegt unter dem Leerlaufschwellenwert. Verwenden Sie die Sitzung, bevor sie beendet wird."
+    },
+    "settings": {
+      "DesktopNotifications": "Einstellungen für Desktop-Benachrichtigungen →",
+      "IdleAlerts": "Warnung vor Leerlaufbeendigung",
+      "IncludeStarting": "Startende Sitzungen einschließen",
+      "RowsShown": "Angezeigte Zeilen",
+      "SortBy": "Sortieren",
+      "SortDeadline": "Baldigste Beendigung zuerst",
+      "SortName": "Name",
+      "SortNewest": "Neueste zuerst"
     }
   },
   "settings": {

@@ -3287,6 +3287,7 @@
     }
   },
   "sessionMonitor": {
+    "MonitorSettings": "Ustawienia monitora",
     "MoreSessions": "{{count}} więcej sesji",
     "MyResourceUsage": "Moje użycie względem mojego limitu",
     "MySessions": "Moje sesje",
@@ -3301,6 +3302,16 @@
       "SessionLifetime": "Sesja osiąga swój maksymalny czas trwania.",
       "Title": "{{name}} zakończy się za {{minutes}} min",
       "Utilization": "Wykorzystanie zasobów utrzymuje się poniżej progu bezczynności. Użyj sesji, zanim zostanie zakończona."
+    },
+    "settings": {
+      "DesktopNotifications": "Ustawienia powiadomień pulpitu →",
+      "IdleAlerts": "Alert przed zakończeniem z powodu bezczynności",
+      "IncludeStarting": "Uwzględnij uruchamiające się sesje",
+      "RowsShown": "Wyświetlane wiersze",
+      "SortBy": "Sortuj",
+      "SortDeadline": "Najszybsze zakończenie najpierw",
+      "SortName": "Nazwa",
+      "SortNewest": "Najnowsze najpierw"
     }
   },
   "settings": {

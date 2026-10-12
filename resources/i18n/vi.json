@@ -3286,6 +3286,7 @@
     }
   },
   "sessionMonitor": {
+    "MonitorSettings": "Cài đặt giám sát",
     "MoreSessions": "{{count}} phiên khác",
     "MyResourceUsage": "Mức sử dụng của tôi so với giới hạn của tôi",
     "MySessions": "Phiên của tôi",
@@ -3300,6 +3301,16 @@
       "SessionLifetime": "Phiên đang đạt đến thời gian tồn tại tối đa.",
       "Title": "{{name}} kết thúc trong {{minutes}} phút",
       "Utilization": "Mức sử dụng tài nguyên vẫn ở dưới ngưỡng không hoạt động. Hãy sử dụng phiên trước khi nó bị chấm dứt."
+    },
+    "settings": {
+      "DesktopNotifications": "Cài đặt thông báo desktop →",
+      "IdleAlerts": "Cảnh báo trước khi chấm dứt do không hoạt động",
+      "IncludeStarting": "Bao gồm các phiên đang khởi động",
+      "RowsShown": "Số dòng hiển thị",
+      "SortBy": "Sắp xếp",
+      "SortDeadline": "Sắp kết thúc sớm nhất trước",
+      "SortName": "Tên",
+      "SortNewest": "Mới nhất trước"
     }
   },
   "settings": {

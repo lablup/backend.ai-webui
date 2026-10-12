@@ -3288,6 +3288,7 @@
     }
   },
   "sessionMonitor": {
+    "MonitorSettings": "Pengaturan monitor",
     "MoreSessions": "{{count}} sesi lainnya",
     "MyResourceUsage": "Penggunaan saya dibandingkan dengan batas saya",
     "MySessions": "Sesi saya",
@@ -3302,6 +3303,16 @@
       "SessionLifetime": "Sesi telah mencapai durasi maksimalnya.",
       "Title": "{{name}} berakhir dalam {{minutes}} menit",
       "Utilization": "Penggunaan sumber daya tetap di bawah ambang batas idle. Gunakan sesi sebelum dihentikan."
+    },
+    "settings": {
+      "DesktopNotifications": "Pengaturan notifikasi desktop →",
+      "IdleAlerts": "Peringatan sebelum penghentian karena idle",
+      "IncludeStarting": "Sertakan sesi yang sedang dimulai",
+      "RowsShown": "Baris yang ditampilkan",
+      "SortBy": "Urutkan",
+      "SortDeadline": "Penghentian tercepat lebih dulu",
+      "SortName": "Nama",
+      "SortNewest": "Terbaru lebih dulu"
     }
   },
   "settings": {

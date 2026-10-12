@@ -3286,6 +3286,7 @@
     }
   },
   "sessionMonitor": {
+    "MonitorSettings": "Definições do monitor",
     "MoreSessions": "{{count}} sessões adicionais",
     "MyResourceUsage": "O meu uso relativamente ao meu limite",
     "MySessions": "As minhas sessões",
@@ -3300,6 +3301,16 @@
       "SessionLifetime": "A sessão está a atingir a sua duração máxima.",
       "Title": "{{name}} termina em {{minutes}} min",
       "Utilization": "A utilização de recursos manteve-se abaixo do limite de inactividade. Utilize a sessão antes que seja terminada."
+    },
+    "settings": {
+      "DesktopNotifications": "Definições de notificações da área de trabalho →",
+      "IdleAlerts": "Alerta antes do término por inactividade",
+      "IncludeStarting": "Incluir sessões em início",
+      "RowsShown": "Linhas exibidas",
+      "SortBy": "Ordenar",
+      "SortDeadline": "Término mais próximo primeiro",
+      "SortName": "Nome",
+      "SortNewest": "Mais recentes primeiro"
     }
   },
   "settings": {

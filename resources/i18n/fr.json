@@ -3287,6 +3287,7 @@
     }
   },
   "sessionMonitor": {
+    "MonitorSettings": "Paramètres du moniteur",
     "MoreSessions": "{{count}} sessions supplémentaires",
     "MyResourceUsage": "Mon utilisation par rapport à ma limite",
     "MySessions": "Mes sessions",
@@ -3301,6 +3302,16 @@
       "SessionLifetime": "La session atteint sa durée de vie maximale.",
       "Title": "{{name}} se termine dans {{minutes}} min",
       "Utilization": "L'utilisation des ressources est restée sous le seuil d'inactivité. Utilisez la session avant qu'elle ne soit arrêtée."
+    },
+    "settings": {
+      "DesktopNotifications": "Paramètres des notifications de bureau →",
+      "IdleAlerts": "Alerte avant l'arrêt pour inactivité",
+      "IncludeStarting": "Inclure les sessions en démarrage",
+      "RowsShown": "Lignes affichées",
+      "SortBy": "Trier",
+      "SortDeadline": "Arrêt le plus proche en premier",
+      "SortName": "Nom",
+      "SortNewest": "Plus récentes en premier"
     }
   },
   "settings": {

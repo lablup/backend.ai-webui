@@ -3286,6 +3286,7 @@
     }
   },
   "sessionMonitor": {
+    "MonitorSettings": "监控设置",
     "MoreSessions": "还有 {{count}} 个会话",
     "MyResourceUsage": "我的使用量与限制对比",
     "MySessions": "我的会话",
@@ -3300,6 +3301,16 @@
       "SessionLifetime": "会话即将达到最大使用期限。",
       "Title": "{{name}} 将在 {{minutes}} 分钟后结束",
       "Utilization": "资源使用率一直低于空闲阈值。请在会话终止前使用该会话。"
+    },
+    "settings": {
+      "DesktopNotifications": "桌面通知设置 →",
+      "IdleAlerts": "空闲终止前提醒",
+      "IncludeStarting": "包含正在启动的会话",
+      "RowsShown": "显示行数",
+      "SortBy": "排序",
+      "SortDeadline": "即将终止优先",
+      "SortName": "名称",
+      "SortNewest": "最新优先"
     }
   },
   "settings": {

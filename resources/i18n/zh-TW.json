@@ -3288,6 +3288,7 @@
     }
   },
   "sessionMonitor": {
+    "MonitorSettings": "監控設定",
     "MoreSessions": "還有 {{count}} 個會話",
     "MyResourceUsage": "我的使用量與限制對比",
     "MySessions": "我的會話",
@@ -3302,6 +3303,16 @@
       "SessionLifetime": "會話即將達到最大使用期限。",
       "Title": "{{name}} 將在 {{minutes}} 分鐘後結束",
       "Utilization": "資源使用率持續低於閒置門檻。請在會話終止前使用該會話。"
+    },
+    "settings": {
+      "DesktopNotifications": "桌面通知設定 →",
+      "IdleAlerts": "閒置終止前提醒",
+      "IncludeStarting": "包含正在啟動的會話",
+      "RowsShown": "顯示行數",
+      "SortBy": "排序",
+      "SortDeadline": "即將終止優先",
+      "SortName": "名稱",
+      "SortNewest": "最新優先"
     }
   },
   "settings": {

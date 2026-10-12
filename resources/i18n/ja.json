@@ -3286,6 +3286,7 @@
     }
   },
   "sessionMonitor": {
+    "MonitorSettings": "モニター設定",
     "MoreSessions": "他に{{count}}件のセッション",
     "MyResourceUsage": "自分の上限に対する使用量",
     "MySessions": "自分のセッション",
@@ -3300,6 +3301,16 @@
       "SessionLifetime": "セッションが最大寿命に達しています。",
       "Title": "{{name}}は{{minutes}}分後に終了します",
       "Utilization": "リソース使用率がアイドルしきい値を下回ったままです。終了する前にセッションを使用してください。"
+    },
+    "settings": {
+      "DesktopNotifications": "デスクトップ通知設定 →",
+      "IdleAlerts": "アイドル終了前に警告",
+      "IncludeStarting": "開始中のセッションを含める",
+      "RowsShown": "表示行数",
+      "SortBy": "並べ替え",
+      "SortDeadline": "終了が近い順",
+      "SortName": "名前順",
+      "SortNewest": "新しい順"
     }
   },
   "settings": {
