@@ -3287,13 +3287,11 @@
     "MoreSessions": "{{count}} sessões adicionais",
     "MySessions": "Minhas sessões",
     "NoActiveSessions": "Nenhuma sessão ativa",
-    "NoTimeLimit": "Sem limite de tempo",
     "OpenSession": "Abrir sessão",
     "OpenSessionList": "Abrir lista de sessões",
     "RunningCount": "{{count}} em execução",
     "StartingCount": "{{count}} iniciando",
     "Tooltip": "Minhas sessões: número em execução e o próximo término",
-    "WaitingForResources": "Aguardando recursos",
     "idleAlert": {
       "NetworkTimeout": "Nenhuma atividade de rede foi detectada. Conecte-se à sessão antes que ela seja encerrada.",
       "SessionLifetime": "A sessão está atingindo sua duração máxima.",

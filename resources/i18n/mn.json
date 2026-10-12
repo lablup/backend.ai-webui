@@ -3289,13 +3289,11 @@
     "MoreSessions": "өөр {{count}} сесс",
     "MySessions": "Миний сессүүд",
     "NoActiveSessions": "Идэвхтэй сесс байхгүй",
-    "NoTimeLimit": "Хугацааны хязгаарлалт байхгүй",
     "OpenSession": "Сесс нээх",
     "OpenSessionList": "Сессийн жагсаалт нээх",
     "RunningCount": "{{count}} ажиллаж байна",
     "StartingCount": "{{count}} эхэлж байна",
     "Tooltip": "Миний сессүүд: ажиллаж буй тоо болон хамгийн ойрын дуусах хугацаа",
-    "WaitingForResources": "Нөөц хүлээж байна",
     "idleAlert": {
       "NetworkTimeout": "Сүлжээний үйл ажиллагаа илрээгүй байна. Дуусгахаас өмнө сесстэй холбогдоно уу.",
       "SessionLifetime": "Сесс хамгийн их ашиглалтын хугацаандаа хүрч байна.",

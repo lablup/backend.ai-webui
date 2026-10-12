@@ -3272,13 +3272,11 @@
     "MoreSessions": "อีก {{count}} เซสชัน",
     "MySessions": "เซสชันของฉัน",
     "NoActiveSessions": "ไม่มีเซสชันที่ใช้งานอยู่",
-    "NoTimeLimit": "ไม่มีการจำกัดเวลา",
     "OpenSession": "เปิดเซสชัน",
     "OpenSessionList": "เปิดรายการเซสชัน",
     "RunningCount": "กำลังทำงาน {{count}}",
     "StartingCount": "กำลังเริ่ม {{count}}",
     "Tooltip": "เซสชันของฉัน: จำนวนที่กำลังทำงานและเวลาสิ้นสุดที่ใกล้ที่สุด",
-    "WaitingForResources": "กำลังรอทรัพยากร",
     "idleAlert": {
       "NetworkTimeout": "ไม่พบการใช้งานเครือข่าย กรุณาเชื่อมต่อกับเซสชันก่อนที่จะถูกยุติ",
       "SessionLifetime": "เซสชันกำลังจะถึงอายุการใช้งานสูงสุด",

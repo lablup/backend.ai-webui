@@ -4,18 +4,22 @@
  */
 import { formatDurationAsDays } from '../../helper';
 import { ATTENTION_THRESHOLD_SEC } from '../../helper/sessionMonitor';
+import { useIsProjectAgnosticPage } from '../../hooks/useIsProjectAgnosticPage';
 import { sessionMonitorSummaryAtom } from '../../hooks/useSessionMonitor';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
+import SessionMonitorAcceleratorSummary from './SessionMonitorAcceleratorSummary';
 import SessionMonitorPopoverContent from './SessionMonitorPopoverContent';
-import { Badge } from '@lablup/ui-common/Badge';
 import { Button } from '@lablup/ui-common/Button';
 import { Popover } from '@lablup/ui-common/Popover';
+import { StatusDot } from '@lablup/ui-common/StatusDot';
+import { Text } from '@lablup/ui-common/Text';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
-import { BAISkeleton, useIntervalValue } from 'backend.ai-ui';
+import { useTheme } from '@lablup/ui-common/theme';
+import { BAIFlex, BAISkeleton, useIntervalValue } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
-import { Activity } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -23,11 +27,28 @@ interface SessionMonitorButtonProps {
   'data-testid'?: string;
 }
 
-/** Header trigger: running count plus the nearest termination countdown. */
+const Separator: React.FC = () => {
+  const { token } = useTheme();
+  return (
+    <span
+      aria-hidden
+      style={{
+        width: 1,
+        alignSelf: 'stretch',
+        background: 'currentColor',
+        opacity: 0.3,
+        marginInline: token('--spacing-1'),
+      }}
+    />
+  );
+};
+
+/** Header chip: running count, accelerator use, nearest termination. */
 const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
   'use memo';
   const { t } = useTranslation();
   const { isDarkMode } = useThemeMode();
+  const isProjectAgnosticPage = useIsProjectAgnosticPage();
   const summary = useAtomValue(sessionMonitorSummaryAtom);
   const [isOpen, setIsOpen] = useState(false);
   // The band is a reversed surface; the media scope goes on the trigger only
@@ -53,6 +74,7 @@ const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
     deadline !== null ? 1000 : null,
     String(deadline),
   );
+  const running = summary?.running ?? 0;
 
   return (
     <Popover
@@ -89,17 +111,43 @@ const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
           variant="ghost"
           size="sm"
           label={t('sessionMonitor.MySessions')}
-          icon={<Activity size="1em" />}
-          endContent={
-            tick ? (
-              <Badge
-                variant={tick.isUrgent ? 'error' : 'neutral'}
-                label={tick.text}
-              />
-            ) : undefined
-          }
         >
-          {summary ? summary.running : ''}
+          <BAIFlex direction="row" align="center" gap="xs">
+            <StatusDot
+              variant={running > 0 ? 'success' : 'neutral'}
+              label={t('sessionMonitor.RunningCount', { count: running })}
+              isPulsing={running > 0}
+            />
+            <Text type="inherit" textWrap="nowrap">
+              {t('sessionMonitor.RunningCount', { count: running })}
+            </Text>
+            {!isProjectAgnosticPage && (
+              <ErrorBoundaryWithNullFallback>
+                <Suspense fallback={null}>
+                  <SessionMonitorAcceleratorSummary separator={<Separator />} />
+                </Suspense>
+              </ErrorBoundaryWithNullFallback>
+            )}
+            {tick && (
+              <>
+                <Separator />
+                <BAIFlex
+                  direction="row"
+                  align="center"
+                  gap="xxs"
+                  style={{
+                    color: tick.isUrgent ? 'var(--color-error)' : undefined,
+                    fontWeight: tick.isUrgent ? 700 : undefined,
+                  }}
+                >
+                  <Clock size="1em" />
+                  <Text type="inherit" color="inherit" textWrap="nowrap">
+                    {tick.text}
+                  </Text>
+                </BAIFlex>
+              </>
+            )}
+          </BAIFlex>
         </Button>
       </Tooltip>
     </Popover>

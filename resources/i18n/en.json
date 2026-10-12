@@ -3274,13 +3274,11 @@
     "MoreSessions": "{{count}} more sessions",
     "MySessions": "My sessions",
     "NoActiveSessions": "No active sessions",
-    "NoTimeLimit": "No time limit",
     "OpenSession": "Open session",
     "OpenSessionList": "Open session list",
     "RunningCount": "{{count}} running",
     "StartingCount": "{{count}} starting",
     "Tooltip": "My sessions: running count and the nearest termination",
-    "WaitingForResources": "Waiting for resources",
     "idleAlert": {
       "NetworkTimeout": "No network activity has been detected. Connect to the session before it is terminated.",
       "SessionLifetime": "The session is reaching its maximum lifetime.",

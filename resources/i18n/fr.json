@@ -3290,13 +3290,11 @@
     "MoreSessions": "{{count}} sessions supplémentaires",
     "MySessions": "Mes sessions",
     "NoActiveSessions": "Aucune session active",
-    "NoTimeLimit": "Aucune limite de temps",
     "OpenSession": "Ouvrir la session",
     "OpenSessionList": "Ouvrir la liste des sessions",
     "RunningCount": "{{count}} en cours",
     "StartingCount": "{{count}} en démarrage",
     "Tooltip": "Mes sessions : nombre en cours et prochaine fin",
-    "WaitingForResources": "En attente de ressources",
     "idleAlert": {
       "NetworkTimeout": "Aucune activité réseau n'a été détectée. Connectez-vous à la session avant qu'elle ne soit arrêtée.",
       "SessionLifetime": "La session atteint sa durée de vie maximale.",

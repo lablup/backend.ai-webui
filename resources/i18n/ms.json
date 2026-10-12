@@ -3287,13 +3287,11 @@
     "MoreSessions": "{{count}} lagi sesi",
     "MySessions": "Sesi saya",
     "NoActiveSessions": "Tiada sesi aktif",
-    "NoTimeLimit": "Tiada had masa",
     "OpenSession": "Buka sesi",
     "OpenSessionList": "Buka senarai sesi",
     "RunningCount": "{{count}} berjalan",
     "StartingCount": "{{count}} bermula",
     "Tooltip": "Sesi saya: bilangan berjalan dan penamatan terdekat",
-    "WaitingForResources": "Menunggu sumber",
     "idleAlert": {
       "NetworkTimeout": "Tidak ada aktiviti rangkaian dikesan. Sambung ke sesi sebelum ia ditamatkan.",
       "SessionLifetime": "Sesi hampir mencapai tempoh hayat maksimumnya.",

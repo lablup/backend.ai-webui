@@ -3290,13 +3290,11 @@
     "MoreSessions": "세션 {{count}}개 더 있음",
     "MySessions": "나의 세션",
     "NoActiveSessions": "실행 중인 세션이 없습니다",
-    "NoTimeLimit": "시간 제한 없음",
     "OpenSession": "세션 열기",
     "OpenSessionList": "세션 목록 열기",
     "RunningCount": "실행 {{count}}",
     "StartingCount": "시작 중 {{count}}",
     "Tooltip": "나의 세션: 실행 수와 가장 가까운 종료 시각",
-    "WaitingForResources": "자원 대기 중",
     "idleAlert": {
       "NetworkTimeout": "네트워크 활동이 감지되지 않았습니다. 종료되기 전에 세션에 접속해 주세요.",
       "SessionLifetime": "세션이 최대 수명에 도달하고 있습니다.",

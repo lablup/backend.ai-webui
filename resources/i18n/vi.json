@@ -3289,13 +3289,11 @@
     "MoreSessions": "{{count}} phiên khác",
     "MySessions": "Phiên của tôi",
     "NoActiveSessions": "Không có phiên hoạt động",
-    "NoTimeLimit": "Không giới hạn thời gian",
     "OpenSession": "Mở phiên",
     "OpenSessionList": "Mở danh sách phiên",
     "RunningCount": "{{count}} đang chạy",
     "StartingCount": "{{count}} đang khởi động",
     "Tooltip": "Phiên của tôi: số lượng đang chạy và thời điểm kết thúc gần nhất",
-    "WaitingForResources": "Đang chờ tài nguyên",
     "idleAlert": {
       "NetworkTimeout": "Không phát hiện hoạt động mạng. Hãy kết nối đến phiên trước khi nó bị chấm dứt.",
       "SessionLifetime": "Phiên đang đạt đến thời gian tồn tại tối đa.",

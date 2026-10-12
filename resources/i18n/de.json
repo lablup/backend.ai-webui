@@ -3289,13 +3289,11 @@
     "MoreSessions": "{{count}} weitere Sitzungen",
     "MySessions": "Meine Sitzungen",
     "NoActiveSessions": "Keine aktiven Sitzungen",
-    "NoTimeLimit": "Keine Zeitbegrenzung",
     "OpenSession": "Sitzung öffnen",
     "OpenSessionList": "Sitzungsliste öffnen",
     "RunningCount": "{{count}} laufend",
     "StartingCount": "{{count}} startend",
     "Tooltip": "Meine Sitzungen: Anzahl laufender Sitzungen und nächste Beendigung",
-    "WaitingForResources": "Warten auf Ressourcen",
     "idleAlert": {
       "NetworkTimeout": "Es wurde keine Netzwerkaktivität erkannt. Verbinden Sie sich mit der Sitzung, bevor sie beendet wird.",
       "SessionLifetime": "Die Sitzung erreicht ihre maximale Lebensdauer.",

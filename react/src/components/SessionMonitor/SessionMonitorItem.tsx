@@ -30,12 +30,15 @@ import { graphql, useFragment } from 'react-relay';
 interface SessionMonitorItemProps {
   sessionFrgmt: SessionMonitorItemFragment$key;
   entry: SessionMonitorEntry;
+  /** Keeps the time-left column only when some listed session has one. */
+  showDeadlineColumn?: boolean;
   onNavigate?: () => void;
 }
 
 const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
   sessionFrgmt,
   entry,
+  showDeadlineColumn = true,
   onNavigate,
 }) => {
   'use memo';
@@ -110,62 +113,58 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
         </BAIFlex>
       </BAIFlex>
       <div style={{ width: 160, flex: 'none' }}>
-        {isRunningStatus(session.status) ? (
+        {isRunningStatus(session.status) && (
           <SessionUsageMonitor sessionFrgmt={session} size="small" />
-        ) : (
-          <Text type="supporting">
-            {t('sessionMonitor.WaitingForResources')}
-          </Text>
         )}
       </div>
-      <BAIFlex
-        direction="column"
-        align="end"
-        gap="xxs"
-        style={{ width: 96, flex: 'none' }}
-      >
-        {nearest && deadline !== null ? (
-          <>
-            <BAIIntervalView
-              delay={1000}
-              callback={() => {
-                const remainingSec = Math.max(
-                  0,
-                  Math.round((deadline - Date.now()) / 1000),
-                );
-                return {
-                  remainingSec,
-                  text:
-                    remainingSec > 0
-                      ? formatDurationAsDays(
-                          dayjs().toISOString(),
-                          dayjs(deadline).toISOString(),
-                        )
-                      : '00:00:00',
-                };
-              }}
-              render={({ remainingSec, text }) => (
-                <Badge
-                  variant={getIdleChecksBadgeVariant(
-                    {
-                      remaining: remainingSec,
-                      remaining_time_type: nearest.remainingTimeType,
-                      extra: null,
-                    },
-                    'remaining',
-                  )}
-                  label={text}
-                />
-              )}
-            />
-            <Text type="supporting" maxLines={1} hasTruncateTooltip={false}>
-              {idleCheckLabel(nearest.key)}
-            </Text>
-          </>
-        ) : (
-          <Text type="supporting">{t('sessionMonitor.NoTimeLimit')}</Text>
-        )}
-      </BAIFlex>
+      {showDeadlineColumn && (
+        <BAIFlex
+          direction="column"
+          align="end"
+          gap="xxs"
+          style={{ width: 96, flex: 'none' }}
+        >
+          {nearest && deadline !== null && (
+            <>
+              <BAIIntervalView
+                delay={1000}
+                callback={() => {
+                  const remainingSec = Math.max(
+                    0,
+                    Math.round((deadline - Date.now()) / 1000),
+                  );
+                  return {
+                    remainingSec,
+                    text:
+                      remainingSec > 0
+                        ? formatDurationAsDays(
+                            dayjs().toISOString(),
+                            dayjs(deadline).toISOString(),
+                          )
+                        : '00:00:00',
+                  };
+                }}
+                render={({ remainingSec, text }) => (
+                  <Badge
+                    variant={getIdleChecksBadgeVariant(
+                      {
+                        remaining: remainingSec,
+                        remaining_time_type: nearest.remainingTimeType,
+                        extra: null,
+                      },
+                      'remaining',
+                    )}
+                    label={text}
+                  />
+                )}
+              />
+              <Text type="supporting" maxLines={1} hasTruncateTooltip={false}>
+                {idleCheckLabel(nearest.key)}
+              </Text>
+            </>
+          )}
+        </BAIFlex>
+      )}
     </BAIFlex>
   );
 };

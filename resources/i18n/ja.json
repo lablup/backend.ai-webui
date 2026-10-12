@@ -3289,13 +3289,11 @@
     "MoreSessions": "他に{{count}}件のセッション",
     "MySessions": "自分のセッション",
     "NoActiveSessions": "実行中のセッションはありません",
-    "NoTimeLimit": "時間制限なし",
     "OpenSession": "セッションを開く",
     "OpenSessionList": "セッション一覧を開く",
     "RunningCount": "実行中 {{count}}件",
     "StartingCount": "起動中 {{count}}件",
     "Tooltip": "自分のセッション: 実行中の件数と最も近い終了予定",
-    "WaitingForResources": "リソース待機中",
     "idleAlert": {
       "NetworkTimeout": "ネットワークアクティビティが検出されませんでした。終了する前にセッションに接続してください。",
       "SessionLifetime": "セッションが最大寿命に達しています。",

@@ -3287,13 +3287,11 @@
     "MoreSessions": "{{count}} oturum daha",
     "MySessions": "Oturumlarım",
     "NoActiveSessions": "Aktif oturum yok",
-    "NoTimeLimit": "Zaman sınırı yok",
     "OpenSession": "Oturumu aç",
     "OpenSessionList": "Oturum listesini aç",
     "RunningCount": "{{count}} çalışıyor",
     "StartingCount": "{{count}} başlıyor",
     "Tooltip": "Oturumlarım: çalışan sayısı ve en yakın sonlanma",
-    "WaitingForResources": "Kaynak bekleniyor",
     "idleAlert": {
       "NetworkTimeout": "Ağ etkinliği algılanmadı. Sonlandırılmadan önce oturuma bağlanın.",
       "SessionLifetime": "Oturum maksimum ömrüne ulaşıyor.",

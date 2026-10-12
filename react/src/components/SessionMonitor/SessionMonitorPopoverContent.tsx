@@ -42,6 +42,7 @@ const SessionMonitorPopoverContent: React.FC<
   const hiddenCount = Math.max(0, total - visible.length);
   const running = entries.filter((e) => e.status === 'RUNNING').length;
   const starting = entries.length - running;
+  const showDeadlineColumn = visible.some((e) => e.deadline !== null);
 
   return (
     <BAIFlex
@@ -95,6 +96,7 @@ const SessionMonitorPopoverContent: React.FC<
               key={entry.id}
               sessionFrgmt={node}
               entry={entry}
+              showDeadlineColumn={showDeadlineColumn}
               onNavigate={onNavigate}
             />
           ) : null;
@@ -119,7 +121,9 @@ const SessionMonitorPopoverContent: React.FC<
           to={buildProjectPath('session', { scope: 'project' })}
           onClick={onNavigate}
         >
-          {t('sessionMonitor.OpenSessionList')}
+          <Text type="label" color="accent">
+            {t('sessionMonitor.OpenSessionList')}
+          </Text>
         </WebUILink>
       </BAIFlex>
     </BAIFlex>

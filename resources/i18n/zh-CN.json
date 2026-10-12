@@ -3289,13 +3289,11 @@
     "MoreSessions": "还有 {{count}} 个会话",
     "MySessions": "我的会话",
     "NoActiveSessions": "没有活动会话",
-    "NoTimeLimit": "无时间限制",
     "OpenSession": "打开会话",
     "OpenSessionList": "打开会话列表",
     "RunningCount": "{{count}} 个运行中",
     "StartingCount": "{{count}} 个启动中",
     "Tooltip": "我的会话：运行数量和最近的终止时间",
-    "WaitingForResources": "等待资源",
     "idleAlert": {
       "NetworkTimeout": "未检测到网络活动。请在会话终止前连接到该会话。",
       "SessionLifetime": "会话即将达到最大使用期限。",

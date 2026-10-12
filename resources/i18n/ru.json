@@ -3287,13 +3287,11 @@
     "MoreSessions": "Ещё {{count}} сеансов",
     "MySessions": "Мои сеансы",
     "NoActiveSessions": "Нет активных сеансов",
-    "NoTimeLimit": "Без ограничения по времени",
     "OpenSession": "Открыть сеанс",
     "OpenSessionList": "Открыть список сеансов",
     "RunningCount": "{{count}} выполняется",
     "StartingCount": "{{count}} запускается",
     "Tooltip": "Мои сеансы: количество выполняющихся и ближайшее завершение",
-    "WaitingForResources": "Ожидание ресурсов",
     "idleAlert": {
       "NetworkTimeout": "Сетевая активность не обнаружена. Подключитесь к сеансу, прежде чем он будет завершён.",
       "SessionLifetime": "Сеанс достигает максимального времени жизни.",
