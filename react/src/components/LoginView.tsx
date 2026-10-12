@@ -68,7 +68,13 @@ import { Button } from '@lablup/ui-common/Button';
 import { BAIModal, useBAILogger } from 'backend.ai-ui';
 import i18n from 'i18next';
 import { useAtomValue, useSetAtom } from 'jotai';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 
 type ConnectionMode = 'SESSION' | 'API';
@@ -190,6 +196,9 @@ const LoginView: React.FC<{
     client: ReturnType<typeof createBackendAIClient>['client'];
     bootstrap: LoginBootstrap;
   } | null>(null);
+  // Dev-only Esc bumps this to cancel the login in flight; each step compares
+  // the value it started with after every await and drops a stale result.
+  const loginAttemptRef = useRef(0);
 
   // Reset force-login approval when credentials or endpoint change
   const watchedUserId = Form.useWatch('user_id', form);
@@ -469,6 +478,7 @@ const LoginView: React.FC<{
       // Using configRef.current here would return stale config because React
       // hasn't re-rendered yet after the Jotai atom update.
       const cfg = jotaiStore.get(loginConfigState) ?? configRef.current;
+      const attempt = loginAttemptRef.current;
 
       const updatedEndpoints = await connectViaGQL(
         client,
@@ -476,6 +486,12 @@ const LoginView: React.FC<{
         endpoints,
         bootstrap,
       );
+      if (attempt !== loginAttemptRef.current) {
+        if ((globalThis as any).backendaiclient === client) {
+          delete (globalThis as any).backendaiclient;
+        }
+        return;
+      }
       setEndpoints(updatedEndpoints);
 
       postConnectSetup(client);
@@ -733,6 +749,8 @@ const LoginView: React.FC<{
         open();
         return;
       }
+      const attempt = loginAttemptRef.current;
+      const isCancelled = () => attempt !== loginAttemptRef.current;
 
       const probed = probedSessionRef.current;
       probedSessionRef.current = null;
@@ -741,7 +759,7 @@ const LoginView: React.FC<{
         try {
           await doGQLConnect(probed.client, probed.bootstrap);
         } catch (err: unknown) {
-          handleGQLError(err, showError);
+          if (!isCancelled()) handleGQLError(err, showError);
         }
         return;
       }
@@ -759,6 +777,7 @@ const LoginView: React.FC<{
       try {
         await probeManager(client);
       } catch (err: unknown) {
+        if (isCancelled()) return;
         setIsBlockPanelOpen(false);
         open();
         setIsLoading(false);
@@ -769,11 +788,12 @@ const LoginView: React.FC<{
       }
 
       const bootstrap = await sessionProbe;
+      if (isCancelled()) return;
       if (bootstrap) {
         try {
           await doGQLConnect(client, bootstrap);
         } catch (err: unknown) {
-          handleGQLError(err, showError);
+          if (!isCancelled()) handleGQLError(err, showError);
         }
         return;
       }
@@ -798,6 +818,7 @@ const LoginView: React.FC<{
         await doGQLConnect(client);
         return;
       } catch (err: unknown) {
+        if (isCancelled()) return;
         setIsBlockPanelOpen(false);
 
         // The server can report a password change as applied when it was not
@@ -846,11 +867,13 @@ const LoginView: React.FC<{
       const { client } = createBackendAIClient(apiKey, secretKey, ep, 'API');
       clientRef.current = client;
       client.ready = false;
+      const attempt = loginAttemptRef.current;
 
       try {
         await probeManager(client);
         await doGQLConnect(client);
       } catch (err: unknown) {
+        if (attempt !== loginAttemptRef.current) return;
         if (!(err instanceof LoginProbeCancelledError)) {
           notification(t('error.CannotConnectToServer'));
         }
@@ -1016,11 +1039,13 @@ const LoginView: React.FC<{
       if (ep === '') return false;
       const { client } = createBackendAIClient('', '', ep, 'SESSION');
       clientRef.current = client;
+      const attempt = loginAttemptRef.current;
       try {
         const [, bootstrap] = await Promise.all([
           probeManager(client),
           probeLoginSession(client),
         ]);
+        if (attempt !== loginAttemptRef.current) return false;
         probedSessionRef.current = bootstrap
           ? { endpoint: ep, client, bootstrap }
           : null;
@@ -1128,19 +1153,35 @@ const LoginView: React.FC<{
     ...endpoints.map((endpoint) => ({ endpoint })),
   ];
 
-  // Dev-only: Esc aborts a login probe stuck on an unreachable endpoint (a
-  // reviewer's dev server pinned to a backend outside their VPN) so the form
-  // comes back without waiting out the client-wide timeout.
+  // Dev-only: Esc cancels a login stuck on an unreachable endpoint or behind
+  // the splash loader, so the form comes back without waiting out the timeout.
+  const onDevEscape = useEffectEvent(() => {
+    if (escapeLoginProbe()) {
+      logger.info('[dev] login probe aborted with Esc');
+      return;
+    }
+    const splash = document.getElementById('splash');
+    const isSplashLoading =
+      !!splash &&
+      !splash.classList.contains('splash-backdrop') &&
+      !splash.classList.contains('splash-hidden');
+    if (!isLoading && !isSplashLoading) return;
+    if ((globalThis as any).backendaiclient?.ready === true) return;
+    loginAttemptRef.current += 1;
+    probedSessionRef.current = null;
+    setIsBlockPanelOpen(false);
+    open();
+    setIsLoading(false);
+    logger.info('[dev] login cancelled with Esc');
+  });
   useEffect(() => {
     if (!import.meta.env.DEV) return;
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && escapeLoginProbe()) {
-        logger.info('[dev] login probe aborted with Esc');
-      }
+      if (e.key === 'Escape') onDevEscape();
     };
     window.addEventListener('keydown', onKeyDown, true);
     return () => window.removeEventListener('keydown', onKeyDown, true);
-  }, [logger]);
+  }, []);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
