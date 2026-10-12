@@ -2705,7 +2705,7 @@
     "SelectDomain": "Pilih Domain",
     "SelectHandlerName": "Pilih Handler",
     "SelectScheduler": "Pilih Penjadual",
-    "SessionExecutionSpec": "Spesifikasi Pelaksanaan Sesi",
+    "SessionExecutionOptions": "Pilihan Pelaksanaan Sesi",
     "Timeout": "Had Masa",
     "TimeoutSeconds": "Detik",
     "TypeResourceGroupNameToDelete": "Taipkan nama kumpulan sumber untuk dipadamkan",

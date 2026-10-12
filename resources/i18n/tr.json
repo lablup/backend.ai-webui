@@ -2705,7 +2705,7 @@
     "SelectDomain": "Etki Alanı Seç",
     "SelectHandlerName": "Handler seçin",
     "SelectScheduler": "Zamanlayıcı Seç",
-    "SessionExecutionSpec": "Oturum Yürütme Belirtimi",
+    "SessionExecutionOptions": "Oturum Yürütme Seçenekleri",
     "Timeout": "Zaman Aşımı",
     "TimeoutSeconds": "saniye",
     "TypeResourceGroupNameToDelete": "Silmek için kaynak grubu adını yazın",

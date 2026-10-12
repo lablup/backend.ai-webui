@@ -2706,7 +2706,7 @@
     "SelectDomain": "Домэйн сонгоно уу",
     "SelectHandlerName": "Handler сонгох",
     "SelectScheduler": "Цагийн хуваарийг сонгоно уу",
-    "SessionExecutionSpec": "Сессийн гүйцэтгэлийн тодорхойлолт",
+    "SessionExecutionOptions": "Сессийн гүйцэтгэлийн сонголтууд",
     "Timeout": "Хугацаа хэтрэлт",
     "TimeoutSeconds": "Секунд",
     "TypeResourceGroupNameToDelete": "Устгахын тулд нөөцийн бүлгийн нэрийг бичнэ үү",

@@ -3,30 +3,65 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ResourceGroupDefaultSessionOptionsPanelFragment$key } from '../__generated__/ResourceGroupDefaultSessionOptionsPanelFragment.graphql';
+import { ResourceGroupDefaultSessionOptionsPanelImageQuery } from '../__generated__/ResourceGroupDefaultSessionOptionsPanelImageQuery.graphql';
 import { ResourceGroupDefaultSessionOptionsPanelQuery } from '../__generated__/ResourceGroupDefaultSessionOptionsPanelQuery.graphql';
 import { ResourceGroupDefaultSessionOptionsPanel_options$key } from '../__generated__/ResourceGroupDefaultSessionOptionsPanel_options.graphql';
 import { formatDuration } from '../helper';
+import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import ResourceGroupDefaultSessionOptionsModal, {
   ResourceGroupDefaultSessionOptionsSection,
 } from './ResourceGroupDefaultSessionOptionsModal';
 import { HandlerOptionsDescription } from './ResourceGroupHandlerOptionsFields';
 import ResourceGroupOptionsSection from './ResourceGroupOptionsSection';
+import { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import { Text } from '@lablup/ui-common/Text';
-import { Token } from '@lablup/ui-common/Token';
 import {
   BAIFlex,
+  BAIImageNodeSimpleTagV2,
   BAIMetadataList,
+  BAISkeleton,
+  BAIText,
   BAIUnmountAfterClose,
-  convertToBinaryUnit,
   useBAIBreakpoint,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+
+// The spec stores the image's raw UUID; resolve it to a node for the meta row.
+const SpecImageMetaRow: React.FC<{ imageId: string }> = ({ imageId }) => {
+  'use memo';
+  const { adminImagesV2 } =
+    useLazyLoadQuery<ResourceGroupDefaultSessionOptionsPanelImageQuery>(
+      graphql`
+        query ResourceGroupDefaultSessionOptionsPanelImageQuery(
+          $imageId: UUID!
+        ) {
+          adminImagesV2(filter: { id: { equals: $imageId } }, limit: 1) {
+            edges {
+              node {
+                ...BAIImageNodeSimpleTagV2Fragment
+              }
+            }
+          }
+        }
+      `,
+      { imageId },
+      { fetchPolicy: 'store-or-network' },
+    );
+  const image = adminImagesV2?.edges[0]?.node;
+  return image ? (
+    <BAIImageNodeSimpleTagV2 imageFrgmt={image} />
+  ) : (
+    <BAIText monospace copyable>
+      {imageId}
+    </BAIText>
+  );
+};
 
 interface ResourceGroupDefaultSessionOptionsPanelContentProps {
   resourceGroupFrgmt: ResourceGroupDefaultSessionOptionsPanelFragment$key;
@@ -110,43 +145,52 @@ const ResourceGroupDefaultSessionOptionsPanelContent: React.FC<
     '_',
     '-',
   );
+  // Same shape the session drawer feeds `ResourceNumbersOfSession`: slot name
+  // → amount, `mem` in bytes, `shmem` as the manager's size string.
+  const specResource = {
+    ..._.fromPairs(
+      _.map(spec?.resources, (entry) => [
+        entry.resourceType,
+        entry.resourceType === 'cpu'
+          ? parseFloat(String(entry.quantity))
+          : String(entry.quantity),
+      ]),
+    ),
+    ...(spec?.resourceOpts?.shmem ? { shmem: spec.resourceOpts.shmem } : {}),
+  } as ResourceAllocationFormValue['resource'];
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
       <ResourceGroupOptionsSection
-        title={t('resourceGroup.SessionExecutionSpec')}
+        title={t('resourceGroup.SessionExecutionOptions')}
         onEdit={() => setEditingSection('sessionExecutionSpec')}
       >
         <BAIMetadataList columns={md ? 2 : 1}>
-          <MetadataListItem label={t('general.Image')}>
-            {spec?.imageId || '-'}
+          <MetadataListItem label={t('session.launcher.Environments')}>
+            {spec?.imageId ? (
+              <Suspense fallback={<BAISkeleton variant="input" size="small" />}>
+                <SpecImageMetaRow imageId={spec.imageId} />
+              </Suspense>
+            ) : (
+              '-'
+            )}
           </MetadataListItem>
           <MetadataListItem label={t('session.ClusterMode')}>
             {clusterModeLabel[normalizedClusterMode] ??
               options?.clusterMode ??
               '-'}
           </MetadataListItem>
-          <MetadataListItem label={t('adminDeploymentPreset.ResourceSlots')}>
+          <MetadataListItem label={t('session.launcher.ResourceAllocation')}>
             {_.isEmpty(spec?.resources) ? (
               '-'
             ) : (
-              <BAIFlex gap="xxs" wrap="wrap">
-                {_.map(spec?.resources, (entry) => (
-                  <Token
-                    key={entry.resourceType}
-                    label={`${entry.resourceType}: ${
-                      entry.resourceType === 'mem'
-                        ? (convertToBinaryUnit(String(entry.quantity), 'auto')
-                            ?.displayValue ?? entry.quantity)
-                        : entry.quantity
-                    }`}
-                  />
-                ))}
+              <BAIFlex gap="sm" wrap="wrap" align="center">
+                <ResourceNumbersOfSession
+                  resource={specResource}
+                  showDividers
+                />
               </BAIFlex>
             )}
-          </MetadataListItem>
-          <MetadataListItem label={t('adminDeploymentPreset.Shmem')}>
-            {spec?.resourceOpts?.shmem || '-'}
           </MetadataListItem>
           <MetadataListItem
             label={t('session.launcher.BatchJobTimeoutDuration')}

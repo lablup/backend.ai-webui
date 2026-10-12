@@ -2707,7 +2707,7 @@
     "SelectDomain": "Wybierz domenę",
     "SelectHandlerName": "Wybierz handler",
     "SelectScheduler": "Wybierz harmonogram",
-    "SessionExecutionSpec": "Specyfikacja wykonania sesji",
+    "SessionExecutionOptions": "Opcje wykonania sesji",
     "Timeout": "Limit czasu",
     "TimeoutSeconds": "sekundy",
     "TypeResourceGroupNameToDelete": "Wpisz nazwę grupy zasobów do usunięcia",

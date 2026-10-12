@@ -2705,7 +2705,7 @@
     "SelectDomain": "Выбрать домен",
     "SelectHandlerName": "Выбрать handler",
     "SelectScheduler": "Выберите планировщик",
-    "SessionExecutionSpec": "Спецификация выполнения сессии",
+    "SessionExecutionOptions": "Параметры выполнения сессии",
     "Timeout": "Тайм-аут",
     "TimeoutSeconds": "Секунды",
     "TypeResourceGroupNameToDelete": "Введите имя группы ресурсов для удаления",

@@ -2705,7 +2705,7 @@
     "SelectDomain": "Valitse verkkotunnus",
     "SelectHandlerName": "Valitse handler",
     "SelectScheduler": "Valitse Ajastin",
-    "SessionExecutionSpec": "Istunnon suoritusmääritys",
+    "SessionExecutionOptions": "Istunnon suoritusasetukset",
     "Timeout": "Aikakatkaisu",
     "TimeoutSeconds": "Sekuntia",
     "TypeResourceGroupNameToDelete": "Kirjoita poistettavan resurssiryhmän nimi",

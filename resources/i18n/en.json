@@ -2692,7 +2692,7 @@
     "SelectDomain": "Select Domain",
     "SelectHandlerName": "Select a handler",
     "SelectScheduler": "Select Scheduler",
-    "SessionExecutionSpec": "Session Execution Spec",
+    "SessionExecutionOptions": "Session Execution Options",
     "Timeout": "Timeout",
     "TimeoutSeconds": "Seconds",
     "TypeResourceGroupNameToDelete": "Type resource group name to delete",

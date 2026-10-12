@@ -2709,7 +2709,7 @@
     "SelectDomain": "選擇域",
     "SelectHandlerName": "選擇 Handler",
     "SelectScheduler": "選擇調度程序",
-    "SessionExecutionSpec": "會話執行規格",
+    "SessionExecutionOptions": "會話執行選項",
     "Timeout": "逾時",
     "TimeoutSeconds": "秒",
     "TypeResourceGroupNameToDelete": "輸入要刪除的資源組名稱",

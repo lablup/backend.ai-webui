@@ -2707,7 +2707,7 @@
     "SelectDomain": "Sélectionnez le domaine",
     "SelectHandlerName": "Sélectionner un handler",
     "SelectScheduler": "Sélectionnez le planificateur",
-    "SessionExecutionSpec": "Spécification d'exécution de la session",
+    "SessionExecutionOptions": "Options d'exécution de la session",
     "Timeout": "Délai d'expiration",
     "TimeoutSeconds": "Seconds",
     "TypeResourceGroupNameToDelete": "Tapez le nom du groupe de ressources à supprimer",

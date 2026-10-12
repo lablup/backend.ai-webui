@@ -2708,7 +2708,7 @@
     "SelectDomain": "Pilih Domain",
     "SelectHandlerName": "Pilih Handler",
     "SelectScheduler": "Pilih Penjadwal",
-    "SessionExecutionSpec": "Spesifikasi Eksekusi Sesi",
+    "SessionExecutionOptions": "Opsi Eksekusi Sesi",
     "Timeout": "Batas Waktu",
     "TimeoutSeconds": "Detik",
     "TypeResourceGroupNameToDelete": "Ketik nama grup sumber daya yang akan dihapus",

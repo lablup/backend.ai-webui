@@ -301,7 +301,7 @@ export const SessionExecutionSpecFormFields: React.FC<{
 
   return (
     <ResourceGroupOptionsCollapsible
-      title={t('resourceGroup.SessionExecutionSpec')}
+      title={t('resourceGroup.SessionExecutionOptions')}
       defaultIsOpen={defaultIsOpen}
     >
       <BAIFormItem label={t('general.Image')} name={[name, 'imageId']}>
