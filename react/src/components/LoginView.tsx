@@ -54,6 +54,7 @@ import {
 } from '../helper/loginSessionAuth';
 import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
 import { useLoginOrchestration } from '../hooks/useLoginOrchestration';
+import { INTENTIONAL_LOGOUT_FLAG } from '../hooks/useLogout';
 import {
   useInitializeConfig,
   useConfigRefreshPageEffect,
@@ -1156,17 +1157,27 @@ const LoginView: React.FC<{
   // Dev-only: Esc cancels a login stuck on an unreachable endpoint or behind
   // the splash loader, so the form comes back without waiting out the timeout.
   const onDevEscape = useEffectEvent(() => {
-    if (escapeLoginProbe()) {
-      logger.info('[dev] login probe aborted with Esc');
-      return;
-    }
     const splash = document.getElementById('splash');
     const isSplashLoading =
       !!splash &&
       !splash.classList.contains('splash-backdrop') &&
       !splash.classList.contains('splash-hidden');
-    if (!isLoading && !isSplashLoading) return;
-    if ((globalThis as any).backendaiclient?.ready === true) return;
+    if (isSplashLoading) {
+      // Any boot step can hang behind the splash (silent login, session check,
+      // app shell); reload with the logout flag so the form opens without one.
+      escapeLoginProbe();
+      sessionStorage.setItem(INTENTIONAL_LOGOUT_FLAG, '1');
+      logger.info('[dev] loading splash cancelled with Esc; reloading');
+      window.location.reload();
+      return;
+    }
+    if (escapeLoginProbe()) {
+      logger.info('[dev] login probe aborted with Esc');
+      return;
+    }
+    if (!isLoading || (globalThis as any).backendaiclient?.ready === true) {
+      return;
+    }
     loginAttemptRef.current += 1;
     probedSessionRef.current = null;
     setIsBlockPanelOpen(false);
