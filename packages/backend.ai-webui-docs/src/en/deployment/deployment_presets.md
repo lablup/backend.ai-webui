@@ -102,7 +102,7 @@ Older flat links such as `/admin-deployments/deployment-presets/new` still work 
       * **Replica Count**: Default number of replicas created from this preset.
       * **Revision History Limit**: Number of past revisions kept for each deployment created from this preset.
       * **Open to Public**: Whether the endpoint of deployments created from this preset is reachable without an access token by default.
-   - **Health Check**: This section has an **Enable Health Check** toggle, which is **off** by default. When the toggle is off, the health check fields are hidden. When you turn it on, the health check fields appear and become configurable: Path, Interval, Max Retries, Max Wait Time, Status Code, and Startup Grace Period.
+   - **Health Check**: This section has an **Enable Health Check** toggle, which is **off** by default. When the toggle is off, the health check fields are hidden. When you turn it on, the health check fields appear and become configurable: Path, Interval, Max Retries, Max Wait Time, Status Code, and Startup Grace Period. Each of these fields is optional — a field left blank keeps its default value.
    - **Pre-Start Actions**: Actions to execute before the model service starts. Click **Add Pre-Start Action** to add a row, then fill in **Action** and **Args (JSON)**.
    - **Model Definition** (optional): A switch in the card header turns the model definition on. When it is on, fill in **Model Name** and **Model Path** — both required — and, optionally, expand the **Metadata** section for the served model's title, author, version, license, description, task, category, architecture, framework, and labels.
 
