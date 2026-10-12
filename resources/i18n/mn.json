@@ -3287,8 +3287,10 @@
   },
   "sessionMonitor": {
     "MoreSessions": "өөр {{count}} сесс",
+    "MyResourceUsage": "Миний хязгаартай харьцуулсан хэрэглээ",
     "MySessions": "Миний сессүүд",
     "NoActiveSessions": "Идэвхтэй сесс байхгүй",
+    "NotificationSettings": "Мэдэгдлийн тохиргоо",
     "OpenSession": "Сесс нээх",
     "OpenSessionList": "Сессийн жагсаалт нээх",
     "RunningCount": "{{count}} ажиллаж байна",

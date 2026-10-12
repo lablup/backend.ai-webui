@@ -3285,8 +3285,10 @@
   },
   "sessionMonitor": {
     "MoreSessions": "Ещё {{count}} сеансов",
+    "MyResourceUsage": "Моё использование по сравнению с моим лимитом",
     "MySessions": "Мои сеансы",
     "NoActiveSessions": "Нет активных сеансов",
+    "NotificationSettings": "Настройки уведомлений",
     "OpenSession": "Открыть сеанс",
     "OpenSessionList": "Открыть список сеансов",
     "RunningCount": "{{count}} выполняется",

@@ -13,11 +13,9 @@ import {
   useSessionMonitorData,
 } from '../../hooks/useSessionMonitor';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
-import { useUserSettingsModal } from '../UserSettingsModalOpener';
 import WebUILink from '../WebUILink';
 import SessionMonitorItem from './SessionMonitorItem';
 import SessionMonitorResourceUsage from './SessionMonitorResourceUsage';
-import { Link } from '@lablup/ui-common/Link';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFetchKeyButton, BAIFlex } from 'backend.ai-ui';
@@ -37,7 +35,6 @@ const SessionMonitorPopoverContent: React.FC<
   const { token } = useTheme();
   const buildProjectPath = useProjectPath();
   const isProjectAgnosticPage = useIsProjectAgnosticPage();
-  const { open: openUserSettings } = useUserSettingsModal();
   const [fetchKey, setFetchKey] = useAtom(sessionMonitorFetchKeyAtom);
   const deferredFetchKey = useDeferredValue(fetchKey);
   const [isPending, startTransition] = useTransition();
@@ -131,9 +128,10 @@ const SessionMonitorPopoverContent: React.FC<
             data-testid="session-monitor-open-list"
             to={buildProjectPath('session', { scope: 'project' })}
             onClick={onNavigate}
+            style={{ textDecoration: 'none' }}
           >
-            <Text type="label" color="accent">
-              {t('sessionMonitor.OpenSessionList')}
+            <Text type="label" weight="semibold" color="accent">
+              {t('sessionMonitor.OpenSessionList')} →
             </Text>
           </WebUILink>
           {hiddenCount > 0 && (
@@ -142,15 +140,16 @@ const SessionMonitorPopoverContent: React.FC<
             </Text>
           )}
         </BAIFlex>
-        <Link
+        <WebUILink
           data-testid="session-monitor-settings"
-          onClick={() => {
-            onNavigate?.();
-            openUserSettings('general');
-          }}
+          to={{ search: '?settings=general' }}
+          onClick={onNavigate}
+          style={{ textDecoration: 'none' }}
         >
-          {t('sessionMonitor.NotificationSettings')}
-        </Link>
+          <Text type="label" color="secondary">
+            {t('sessionMonitor.NotificationSettings')}
+          </Text>
+        </WebUILink>
       </BAIFlex>
     </BAIFlex>
   );

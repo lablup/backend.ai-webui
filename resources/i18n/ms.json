@@ -3285,8 +3285,10 @@
   },
   "sessionMonitor": {
     "MoreSessions": "{{count}} lagi sesi",
+    "MyResourceUsage": "Penggunaan saya berbanding had saya",
     "MySessions": "Sesi saya",
     "NoActiveSessions": "Tiada sesi aktif",
+    "NotificationSettings": "Tetapan Pemberitahuan",
     "OpenSession": "Buka sesi",
     "OpenSessionList": "Buka senarai sesi",
     "RunningCount": "{{count}} berjalan",

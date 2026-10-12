@@ -3289,8 +3289,10 @@
   },
   "sessionMonitor": {
     "MoreSessions": "還有 {{count}} 個會話",
+    "MyResourceUsage": "我的使用量與限制對比",
     "MySessions": "我的會話",
     "NoActiveSessions": "沒有活動會話",
+    "NotificationSettings": "通知設置",
     "OpenSession": "開啟會話",
     "OpenSessionList": "開啟會話清單",
     "RunningCount": "{{count}} 個執行中",

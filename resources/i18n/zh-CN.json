@@ -3287,8 +3287,10 @@
   },
   "sessionMonitor": {
     "MoreSessions": "还有 {{count}} 个会话",
+    "MyResourceUsage": "我的使用量与限制对比",
     "MySessions": "我的会话",
     "NoActiveSessions": "没有活动会话",
+    "NotificationSettings": "通知设置",
     "OpenSession": "打开会话",
     "OpenSessionList": "打开会话列表",
     "RunningCount": "{{count}} 个运行中",

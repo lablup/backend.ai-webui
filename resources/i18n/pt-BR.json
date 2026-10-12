@@ -3285,8 +3285,10 @@
   },
   "sessionMonitor": {
     "MoreSessions": "{{count}} sessões adicionais",
+    "MyResourceUsage": "Meu uso em relação ao meu limite",
     "MySessions": "Minhas sessões",
     "NoActiveSessions": "Nenhuma sessão ativa",
+    "NotificationSettings": "Definições de notificação",
     "OpenSession": "Abrir sessão",
     "OpenSessionList": "Abrir lista de sessões",
     "RunningCount": "{{count}} em execução",

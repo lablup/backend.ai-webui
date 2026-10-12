@@ -4,9 +4,10 @@
  */
 import { useKeypairResourceUsage } from '../../hooks/useKeypairResourceUsage';
 import { sessionMonitorFetchKeyAtom } from '../../hooks/useSessionMonitor';
+import { ProgressBar } from '@lablup/ui-common/ProgressBar';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFlex, BAIProgressWithLabel } from 'backend.ai-ui';
+import { BAIFlex } from 'backend.ai-ui';
 import { useAtomValue } from 'jotai';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -33,17 +34,40 @@ const SessionMonitorResourceUsage: React.FC = () => {
     >
       <Text type="supporting">{t('sessionMonitor.MyResourceUsage')}</Text>
       {rows.map((row) => (
-        <BAIProgressWithLabel
-          key={row.key}
-          size="small"
-          title={row.name}
-          percent={row.limit ? Math.min(100, (row.using / row.limit) * 100) : 0}
-          valueLabel={
-            row.limit !== null
-              ? `${row.using} / ${row.limit} ${row.unit}`.trim()
-              : `${row.using} ${row.unit}`.trim()
-          }
-        />
+        <BAIFlex key={row.key} direction="row" align="center" gap="sm">
+          <Text
+            type="label"
+            textWrap="nowrap"
+            maxLines={1}
+            hasTruncateTooltip={false}
+          >
+            <span style={{ display: 'inline-block', width: 64 }}>
+              {row.name}
+            </span>
+          </Text>
+          <div style={{ flex: 1 }}>
+            <ProgressBar
+              label={row.name}
+              isLabelHidden
+              value={row.limit ? Math.min(row.limit, row.using) : 0}
+              max={row.limit ?? 1}
+              variant="accent"
+            />
+          </div>
+          <Text type="supporting" textWrap="nowrap">
+            <span
+              style={{
+                display: 'inline-block',
+                minWidth: 96,
+                textAlign: 'end',
+              }}
+            >
+              {row.limit !== null
+                ? `${row.using} / ${row.limit} ${row.unit}`.trim()
+                : `${row.using} ${row.unit}`.trim()}
+            </span>
+          </Text>
+        </BAIFlex>
       ))}
     </BAIFlex>
   );

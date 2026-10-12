@@ -3270,8 +3270,10 @@
   },
   "sessionMonitor": {
     "MoreSessions": "อีก {{count}} เซสชัน",
+    "MyResourceUsage": "การใช้งานของฉันเทียบกับขีดจำกัดของฉัน",
     "MySessions": "เซสชันของฉัน",
     "NoActiveSessions": "ไม่มีเซสชันที่ใช้งานอยู่",
+    "NotificationSettings": "การตั้งค่าการแจ้งเตือน",
     "OpenSession": "เปิดเซสชัน",
     "OpenSessionList": "เปิดรายการเซสชัน",
     "RunningCount": "กำลังทำงาน {{count}}",
