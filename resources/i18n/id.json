@@ -2692,6 +2692,7 @@
     "Scheduler": "Penjadwal",
     "SchedulerOptions": "Opsi Penjadwal",
     "SelectDomain": "Pilih Domain",
+    "SelectHandlerName": "Pilih Handler",
     "SelectScheduler": "Pilih Penjadwal",
     "SessionExecutionSpec": "Spesifikasi Eksekusi Sesi",
     "Timeout": "Batas Waktu",

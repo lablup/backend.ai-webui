@@ -2689,6 +2689,7 @@
     "Scheduler": "Programador",
     "SchedulerOptions": "Opciones del programador",
     "SelectDomain": "Seleccionar dominio",
+    "SelectHandlerName": "Seleccionar un handler",
     "SelectScheduler": "Seleccione Programador",
     "SessionExecutionSpec": "Especificación de ejecución de la sesión",
     "Timeout": "Tiempo de espera",

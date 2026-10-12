@@ -2691,6 +2691,7 @@
     "Scheduler": "Planificateur",
     "SchedulerOptions": "Options du planificateur",
     "SelectDomain": "Sélectionnez le domaine",
+    "SelectHandlerName": "Sélectionner un handler",
     "SelectScheduler": "Sélectionnez le planificateur",
     "SessionExecutionSpec": "Spécification d'exécution de la session",
     "Timeout": "Délai d'expiration",

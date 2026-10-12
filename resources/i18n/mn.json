@@ -2690,6 +2690,7 @@
     "Scheduler": "Хуваарь гаргагч",
     "SchedulerOptions": "Хуваарилагчийн сонголтууд",
     "SelectDomain": "Домэйн сонгоно уу",
+    "SelectHandlerName": "Handler сонгох",
     "SelectScheduler": "Цагийн хуваарийг сонгоно уу",
     "SessionExecutionSpec": "Сессийн гүйцэтгэлийн тодорхойлолт",
     "Timeout": "Хугацаа хэтрэлт",

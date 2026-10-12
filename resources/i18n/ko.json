@@ -2691,6 +2691,7 @@
     "Scheduler": "스케줄",
     "SchedulerOptions": "스케줄러 옵션",
     "SelectDomain": "도메인 선택",
+    "SelectHandlerName": "Handler 선택",
     "SelectScheduler": "스케줄러 선택",
     "SessionExecutionSpec": "세션 실행 스펙",
     "Timeout": "Timeout",

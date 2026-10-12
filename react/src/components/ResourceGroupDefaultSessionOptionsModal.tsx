@@ -13,6 +13,7 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import BAIFormItem from './BAIFormItem';
 import {
+  HandlerNameOption,
   HandlerOptionsFormFields,
   HandlerOptionsFormValue,
   toHandlerOptionsFormValue,
@@ -49,6 +50,21 @@ type FormValues = {
 
 export type ResourceGroupDefaultSessionOptionsSection =
   'sessionExecutionSpec' | 'schedulerOptions' | 'handlerOptions';
+
+// TODO(needs-backend): BA-8372 — the manager validates these names against its
+// live registry but exposes no query for the session set (deployment has
+// `schedulingHandlers`); read them from the server once it does.
+const SESSION_HANDLER_NAME_OPTIONS: ReadonlyArray<HandlerNameOption> = [
+  'check-precondition',
+  'deprioritize-sessions',
+  'preempt-sessions',
+  'release-reserved-sessions',
+  'reschedule-sessions',
+  'schedule-sessions',
+  'start-sessions',
+  'sweep-sessions',
+  'terminate-sessions',
+].map((value) => ({ value }));
 
 interface ResourceGroupDefaultSessionOptionsModalProps extends Omit<
   BAIModalProps,
@@ -315,6 +331,7 @@ const ResourceGroupDefaultSessionOptionsModal: React.FC<
             </ResourceGroupOptionsCollapsible>
             <HandlerOptionsFormFields
               name="handlerOptions"
+              handlerNameOptions={SESSION_HANDLER_NAME_OPTIONS}
               defaultIsOpen={isInitiallyOpen('handlerOptions')}
             />
           </BAIFlex>

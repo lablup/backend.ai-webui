@@ -2691,6 +2691,7 @@
     "Scheduler": "Người lập kế hoạch",
     "SchedulerOptions": "Tùy chọn bộ lập lịch",
     "SelectDomain": "Chọn miền",
+    "SelectHandlerName": "Chọn handler",
     "SelectScheduler": "Chọn bộ lập lịch",
     "SessionExecutionSpec": "Đặc tả thực thi phiên",
     "Timeout": "Thời gian chờ",

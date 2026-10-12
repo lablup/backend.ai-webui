@@ -2691,6 +2691,7 @@
     "Scheduler": "调度器",
     "SchedulerOptions": "调度程序选项",
     "SelectDomain": "选择域",
+    "SelectHandlerName": "选择 Handler",
     "SelectScheduler": "选择调度程序",
     "SessionExecutionSpec": "会话执行规格",
     "Timeout": "超时",
