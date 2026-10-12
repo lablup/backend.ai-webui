@@ -25,6 +25,15 @@
     min-width: 0;
   }
 
+  /* The clear-all lane is absolutely positioned and Tokenizer reserves its
+     measured width only on the input, so chips on the first row ran under it.
+     Reserve it on the wrapper too, on top of the wrapper's own end padding. */
+  .bai-power-search .astryx-tokenizer:has(.astryx-token) {
+    padding-inline-end: calc(
+      var(--_tokenizer-end-lane-reserve, 0px) + var(--spacing-1) - 1px
+    );
+  }
+
   /* `Token`'s click target is `all: unset`, which inlines the label and so
      disables its `text-overflow: ellipsis`; a block label truncates. */
   .bai-power-search .astryx-token > button > span:not(.astryx-icon) {
