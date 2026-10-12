@@ -11,7 +11,10 @@ import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import ResourceGroupDefaultSessionOptionsModal, {
   ResourceGroupDefaultSessionOptionsSection,
 } from './ResourceGroupDefaultSessionOptionsModal';
-import { HandlerOptionsDescription } from './ResourceGroupHandlerOptionsFields';
+import {
+  HandlerOptionsDescription,
+  HandlerOverridesTable,
+} from './ResourceGroupHandlerOptionsFields';
 import ResourceGroupOptionsSection from './ResourceGroupOptionsSection';
 import { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
@@ -261,6 +264,11 @@ const ResourceGroupDefaultSessionOptionsPanelContent: React.FC<
       <ResourceGroupOptionsSection
         title={t('resourceGroup.HandlerOptions')}
         onEdit={() => setEditingSection('handlerOptions')}
+        footer={
+          <HandlerOverridesTable
+            byHandler={options?.handlerOptions?.byHandler}
+          />
+        }
       >
         <HandlerOptionsDescription handlerOptions={options?.handlerOptions} />
       </ResourceGroupOptionsSection>

@@ -15,12 +15,14 @@ interface ResourceGroupOptionsSectionProps {
   // Renders the hover-revealed edit button next to the title.
   onEdit?: () => void;
   children?: React.ReactNode;
+  // Rendered below the card, still under this section's title.
+  footer?: React.ReactNode;
 }
 
 // A titled group of resource group default options in the detail panel; the title sits above the card.
 const ResourceGroupOptionsSection: React.FC<
   ResourceGroupOptionsSectionProps
-> = ({ title, onEdit, children }) => {
+> = ({ title, onEdit, children, footer }) => {
   'use memo';
   const { t } = useTranslation();
   return (
@@ -45,6 +47,7 @@ const ResourceGroupOptionsSection: React.FC<
         ) : null}
       </BAIFlex>
       <BAICard>{children}</BAICard>
+      {footer}
     </BAIFlex>
   );
 };

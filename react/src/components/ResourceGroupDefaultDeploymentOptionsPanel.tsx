@@ -7,7 +7,10 @@ import { ResourceGroupDefaultDeploymentOptionsPanelFragment$key } from '../__gen
 import { ResourceGroupDefaultDeploymentOptionsPanelQuery } from '../__generated__/ResourceGroupDefaultDeploymentOptionsPanelQuery.graphql';
 import { ResourceGroupDefaultDeploymentOptionsPanel_options$key } from '../__generated__/ResourceGroupDefaultDeploymentOptionsPanel_options.graphql';
 import ResourceGroupDefaultDeploymentOptionsModal from './ResourceGroupDefaultDeploymentOptionsModal';
-import { HandlerOptionsDescription } from './ResourceGroupHandlerOptionsFields';
+import {
+  HandlerOptionsDescription,
+  HandlerOverridesTable,
+} from './ResourceGroupHandlerOptionsFields';
 import ResourceGroupOptionsSection from './ResourceGroupOptionsSection';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
 import { BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
@@ -63,6 +66,11 @@ const ResourceGroupDefaultDeploymentOptionsPanelContent: React.FC<
       <ResourceGroupOptionsSection
         title={t('resourceGroup.HandlerOptions')}
         onEdit={() => setIsEditModalOpen(true)}
+        footer={
+          <HandlerOverridesTable
+            byHandler={options?.handlerOptions?.byHandler}
+          />
+        }
       >
         <HandlerOptionsDescription handlerOptions={options?.handlerOptions} />
       </ResourceGroupOptionsSection>
