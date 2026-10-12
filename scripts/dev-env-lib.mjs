@@ -1,7 +1,9 @@
 // Pure logic behind `pnpm run dev-env`: normalizing the team PR board's catalog of
-// dev servers and test accounts, and writing a pick into the env files.
+// dev servers and test accounts, and writing a pick into the env files and
+// config.toml.
 //
 // It lives outside dev-env.mjs so it can be unit tested without the board.
+import TOML from "@iarna/toml";
 
 /** The catalog contract version this parser understands. */
 export const CATALOG_VERSION = 1;
@@ -596,4 +598,179 @@ export function formatCatalog(catalog, now = new Date()) {
   }
   for (const warning of catalog.warnings) lines.push(`warning: ${warning}`);
   return lines.join("\n").trimEnd();
+}
+
+// ---- config.toml -----------------------------------------------------------
+
+/** First line of a config.toml `use` wrote; a file without it is hand-written and kept. */
+export const CONFIG_GENERATED_MARKER =
+  "# Written by `pnpm run dev-env use`";
+
+/**
+ * Probed keys `use` never copies: the login endpoint comes from
+ * `.env.development.local` (a baked `apiEndpoint` disables API sign-in), and
+ * `plugin.*` names bundle files the deployment has and a worktree does not.
+ */
+export const CONFIG_COPY_SKIP = ["general.apiEndpoint", "general.apiEndpointText", "plugin"];
+
+const TOML_KEY = "[A-Za-z0-9_-]+";
+const PLACEHOLDER = /^"\[.*\]"$/;
+
+/** `--set key=value` → `{key, value}`; the value is a TOML literal, else a string. */
+export function parseConfigSet(arg) {
+  const m = /^([A-Za-z0-9_.-]+)=(.*)$/s.exec(arg ?? "");
+  if (!m || !m[1].includes(".")) {
+    throw new Error(
+      `--set takes "<section>.<key>=<value>", got "${arg}" (e.g. resources.openPortToPublic=true)`,
+    );
+  }
+  const [, key, raw] = m;
+  let value = raw.trim();
+  try {
+    value = TOML.parse(`v = ${value}`).v;
+  } catch {
+    // Not a TOML literal (a bare word, an URL): a string.
+  }
+  return { key, value };
+}
+
+/** Split the text after `key =` into the value and its trailing comment. */
+function splitTomlValue(rest) {
+  let i = 0;
+  const text = rest;
+  const skipString = (quote) => {
+    i += 1;
+    while (i < text.length && text[i] !== quote) {
+      if (text[i] === "\\" && quote === '"') i += 1;
+      i += 1;
+    }
+    i += 1;
+  };
+  while (i < text.length && text[i] === " ") i += 1;
+  const start = i;
+  if (text[i] === '"' || text[i] === "'") {
+    skipString(text[i]);
+  } else if (text[i] === "[") {
+    let depth = 0;
+    while (i < text.length) {
+      if (text[i] === '"' || text[i] === "'") {
+        skipString(text[i]);
+        continue;
+      }
+      if (text[i] === "[") depth += 1;
+      if (text[i] === "]") depth -= 1;
+      i += 1;
+      if (depth === 0) break;
+    }
+  } else {
+    while (i < text.length && text[i] !== "#") i += 1;
+  }
+  const value = text.slice(start, i).trim();
+  const comment = text.slice(i).trim();
+  return { value, comment: comment.startsWith("#") ? comment : "" };
+}
+
+/** A TOML `key = value` line, keeping an inline comment where there was one. */
+function tomlLine(key, value, comment) {
+  const line = `${key} = ${TOML.stringify.value(value)}`;
+  return comment ? `${line}  ${comment}` : line;
+}
+
+/**
+ * Set one dotted key in TOML text, leaving every other line as written. The
+ * key's own line is rewritten (a commented-out `#key = …` is uncommented);
+ * otherwise it is appended to its section, which is created when missing.
+ */
+export function setTomlValue(text, dotted, value) {
+  const at = dotted.lastIndexOf(".");
+  if (at <= 0) throw new Error(`"${dotted}" is not a <section>.<key>`);
+  const section = dotted.slice(0, at);
+  const key = dotted.slice(at + 1);
+  const lines = text.split("\n");
+  const header = /^\s*\[([^\]]+)\]/;
+  const active = new RegExp(`^\\s*(${TOML_KEY})\\s*=(.*)$`);
+  const commented = new RegExp(`^\\s*#\\s*(${TOML_KEY})\\s*=(.*)$`);
+  let start = -1;
+  let end = lines.length;
+  for (let i = 0; i < lines.length; i += 1) {
+    const h = header.exec(lines[i]);
+    if (!h) continue;
+    if (start >= 0) {
+      end = i;
+      break;
+    }
+    if (h[1].trim() === section) start = i;
+  }
+  if (start < 0) {
+    while (lines.length > 0 && lines[lines.length - 1].trim() === "") lines.pop();
+    if (lines.length > 0) lines.push("");
+    lines.push(`[${section}]`, tomlLine(key, value, ""), "");
+    return lines.join("\n");
+  }
+  let fallback = -1;
+  for (let i = start + 1; i < end; i += 1) {
+    const a = active.exec(lines[i]);
+    if (a && a[1] === key) {
+      lines[i] = tomlLine(key, value, splitTomlValue(a[2]).comment);
+      return lines.join("\n");
+    }
+    const c = commented.exec(lines[i]);
+    if (c && c[1] === key && fallback < 0) fallback = i;
+  }
+  if (fallback >= 0) {
+    lines[fallback] = tomlLine(key, value, splitTomlValue(commented.exec(lines[fallback])[2]).comment);
+    return lines.join("\n");
+  }
+  let insert = end;
+  while (insert > start + 1 && lines[insert - 1].trim() === "") insert -= 1;
+  lines.splice(insert, 0, tomlLine(key, value, ""));
+  return lines.join("\n");
+}
+
+/** Comment out the sample's `key = "[description]"` placeholder lines. */
+export function disablePlaceholders(text) {
+  const active = new RegExp(`^(\\s*)(${TOML_KEY}\\s*=)(.*)$`);
+  return text
+    .split("\n")
+    .map((line) => {
+      const m = active.exec(line);
+      return m && PLACEHOLDER.test(splitTomlValue(m[3]).value) ? `${m[1]}#${m[2]}${m[3]}` : line;
+    })
+    .join("\n");
+}
+
+const skipped = (key) =>
+  CONFIG_COPY_SKIP.some((s) => key === s || key.startsWith(`${s}.`));
+
+/** `CONFIG_GENERATED_MARKER` on the first line. */
+export function isGeneratedConfig(text) {
+  return typeof text === "string" && text.startsWith(CONFIG_GENERATED_MARKER);
+}
+
+/**
+ * config.toml for a worktree: the sample with its placeholders disabled, the
+ * server's probed switches (minus CONFIG_COPY_SKIP) on top, then `overrides`
+ * (`[{key, value}]`), under a header that says where each layer came from.
+ */
+export function renderConfigToml({ sample, server = null, overrides = [] }) {
+  let text = disablePlaceholders(sample);
+  const config = server?.status?.config ?? null;
+  const copied = config ? allSettings(config).filter(({ key }) => !skipped(key)) : [];
+  for (const { key, value } of copied) text = setTomlValue(text, key, value);
+  for (const { key, value } of overrides) text = setTomlValue(text, key, value);
+  const source = !server
+    ? "switches: sample defaults (no server)"
+    : config
+      ? `switches: ${server.name} (probed ${server.status.configFetchedAt ?? "unknown"})`
+      : `switches: sample defaults (${server.name} serves no config.toml)`;
+  const head = [
+    `${CONFIG_GENERATED_MARKER} — re-run it to refresh; delete this line to keep the file by hand.`,
+    `# base: config.toml.sample · ${source}` +
+      (overrides.length > 0
+        ? ` · overrides: ${overrides.map(({ key, value }) => `${key} = ${TOML.stringify.value(value)}`).join(", ")}`
+        : ""),
+    "",
+    "",
+  ];
+  return head.join("\n") + text.replace(/^\n+/, "");
 }

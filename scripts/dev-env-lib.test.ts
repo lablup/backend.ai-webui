@@ -1,8 +1,14 @@
 // @ts-nocheck
 import {
+  CONFIG_GENERATED_MARKER,
   MANAGER_CONFIG_KEYS,
   ambiguityNote,
   allSettings,
+  disablePlaceholders,
+  isGeneratedConfig,
+  parseConfigSet,
+  renderConfigToml,
+  setTomlValue,
   downWarning,
   e2eFallbackWarning,
   findAccount,
@@ -788,5 +794,170 @@ describe("dev-env env files", () => {
 
   it("starts an empty file cleanly", () => {
     expect(upsertEnv("", { A: "1" })).toBe("A=1\n");
+  });
+});
+
+describe("config.toml", () => {
+  const SAMPLE = [
+    "[general]",
+    '# Set apiEndpoint only to a Webserver address.',
+    'apiEndpoint = "[Default API Endpoint.]"',
+    'connectionMode = "[Connection mode. API or SESSION]"',
+    "debug = false                 # README",
+    '#singleSignOnVendors = "saml"  # Comma-separated',
+    "",
+    "[resources]",
+    "openPortToPublic = false  # Show option to open app proxy port to anyone.",
+    'tags = ["a", "b#c"]  # inline array',
+    "",
+    "[plugin]",
+    '#login = "signup-cloud"',
+    "",
+  ].join("\n");
+
+  describe("parseConfigSet", () => {
+    it("reads TOML literals and falls back to a string", () => {
+      expect(parseConfigSet("resources.openPortToPublic=true")).toEqual({
+        key: "resources.openPortToPublic",
+        value: true,
+      });
+      expect(parseConfigSet("general.maxCountForPreopenPorts=3")).toEqual({
+        key: "general.maxCountForPreopenPorts",
+        value: 3,
+      });
+      expect(parseConfigSet('general.connectionMode="SESSION"').value).toBe(
+        "SESSION",
+      );
+      expect(parseConfigSet("general.connectionMode=SESSION").value).toBe(
+        "SESSION",
+      );
+      expect(parseConfigSet("wsproxy.proxyURL=http://x:1/").value).toBe(
+        "http://x:1/",
+      );
+    });
+
+    it("rejects a key without a section", () => {
+      expect(() => parseConfigSet("debug=true")).toThrow(/<section>\.<key>/);
+      expect(() => parseConfigSet("nope")).toThrow(/<section>\.<key>/);
+    });
+  });
+
+  describe("setTomlValue", () => {
+    it("rewrites the key's line and keeps its inline comment", () => {
+      const out = setTomlValue(SAMPLE, "resources.openPortToPublic", true);
+      expect(out).toContain(
+        "openPortToPublic = true  # Show option to open app proxy port to anyone.",
+      );
+      expect(out.split("\n").length).toBe(SAMPLE.split("\n").length);
+    });
+
+    it("keeps a comment after an inline array containing '#'", () => {
+      const out = setTomlValue(SAMPLE, "resources.tags", ["x"]);
+      expect(out).toContain('tags = [ "x" ]  # inline array');
+    });
+
+    it("uncomments a commented-out key instead of appending", () => {
+      const out = setTomlValue(SAMPLE, "general.singleSignOnVendors", "saml");
+      expect(out).toContain('singleSignOnVendors = "saml"  # Comma-separated');
+      expect(out).not.toContain("#singleSignOnVendors");
+    });
+
+    it("appends a new key at the end of its section", () => {
+      const out = setTomlValue(SAMPLE, "general.newKey", "v");
+      const lines = out.split("\n");
+      const at = lines.indexOf('newKey = "v"');
+      expect(at).toBeGreaterThan(lines.indexOf("[general]"));
+      expect(lines[at + 1]).toBe("");
+      expect(lines[at + 2]).toBe("[resources]");
+    });
+
+    it("creates a missing section at the end", () => {
+      const out = setTomlValue(SAMPLE, "pipeline.endpoint", "http://x/");
+      expect(out.trimEnd().split("\n").slice(-2)).toEqual([
+        "[pipeline]",
+        'endpoint = "http://x/"',
+      ]);
+    });
+
+    it("does not touch a same-named key in another section", () => {
+      const text = "[a]\nkey = 1\n\n[b]\nkey = 2\n";
+      expect(setTomlValue(text, "b.key", 3)).toBe("[a]\nkey = 1\n\n[b]\nkey = 3\n");
+    });
+  });
+
+  it("disablePlaceholders comments out the sample's [description] values only", () => {
+    const out = disablePlaceholders(SAMPLE);
+    expect(out).toContain('#apiEndpoint = "[Default API Endpoint.]"');
+    expect(out).toContain('#connectionMode = "[Connection mode. API or SESSION]"');
+    expect(out).toContain("debug = false                 # README");
+    expect(out).toContain('tags = ["a", "b#c"]');
+  });
+
+  describe("renderConfigToml", () => {
+    const server = {
+      name: "main",
+      status: {
+        configFetchedAt: "2026-10-12T03:00:00Z",
+        config: {
+          general: {
+            apiEndpoint: "https://main.example.test",
+            apiEndpointText: "Main",
+            connectionMode: "SESSION",
+            debug: true,
+            enableModelFolders: true,
+          },
+          resources: { openPortToPublic: false },
+          plugin: { login: "signup-cloud" },
+          pipeline: { endpoint: "http://mlops.example.test/" },
+        },
+      },
+    };
+
+    it("layers sample < probed switches < overrides under a generated header", () => {
+      const out = renderConfigToml({
+        sample: SAMPLE,
+        server,
+        overrides: [parseConfigSet("resources.openPortToPublic=true")],
+      });
+      const lines = out.split("\n");
+      expect(isGeneratedConfig(out)).toBe(true);
+      expect(lines[0].startsWith(CONFIG_GENERATED_MARKER)).toBe(true);
+      expect(lines[1]).toBe(
+        "# base: config.toml.sample · switches: main (probed 2026-10-12T03:00:00Z) · overrides: resources.openPortToPublic = true",
+      );
+      expect(lines[2]).toBe("");
+      expect(lines[3]).toBe("[general]");
+      expect(out).toContain('connectionMode = "SESSION"');
+      expect(out).toContain("debug = true  # README");
+      expect(out).toContain("enableModelFolders = true");
+      expect(out).toContain("openPortToPublic = true  # Show option");
+      expect(out).toContain('[pipeline]\nendpoint = "http://mlops.example.test/"');
+    });
+
+    it("never copies the endpoint or the plugin table", () => {
+      const out = renderConfigToml({ sample: SAMPLE, server });
+      expect(out).toContain('#apiEndpoint = "[Default API Endpoint.]"');
+      expect(out).not.toContain("https://main.example.test");
+      expect(out).not.toContain("apiEndpointText = ");
+      expect(out).toContain('#login = "signup-cloud"');
+      expect(out).not.toContain('\nlogin = "signup-cloud"');
+    });
+
+    it("falls back to the sample defaults when the server serves no config.toml", () => {
+      const out = renderConfigToml({
+        sample: SAMPLE,
+        server: { name: "bare", status: { config: null } },
+      });
+      expect(out.split("\n")[1]).toBe(
+        "# base: config.toml.sample · switches: sample defaults (bare serves no config.toml)",
+      );
+      expect(out).toContain('#connectionMode = "[Connection mode. API or SESSION]"');
+      expect(out).toContain("openPortToPublic = false  # Show option");
+    });
+
+    it("isGeneratedConfig is false for a hand-written file", () => {
+      expect(isGeneratedConfig("[general]\ndebug = true\n")).toBe(false);
+      expect(isGeneratedConfig("")).toBe(false);
+    });
   });
 });
