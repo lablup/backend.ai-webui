@@ -58,7 +58,8 @@ automation's job.
 3. Draft the new flow yourself from the diff and the old test's steps, then
    ask with `AskUserQuestion` whether to add it:
    - `Use the proposed flow (Recommended)`, with the numbered steps in the
-     option's `preview`;
+     option's `preview` — and, when only a Playwright spec covers the flow,
+     the spec file that will be ported and deleted (below);
    - `Don't add a flow`.
 
    The built-in "Other" takes a flow the user types. If they want to rework
@@ -73,10 +74,22 @@ automation's job.
 Update the `e2e-agent/` test that covers the flow; otherwise add
 `e2e-agent/<feature>/<flow>.e2e.ts`, following the folder names in `e2e/`.
 
+**Only a Playwright spec in `e2e/` covers the flow → port it, then delete
+it.** Port the whole spec file, not just the changed test, into one
+`e2e-agent/<feature>/<same-stem>.e2e.ts`:
+
+- each `test(...)` becomes a draft test with the same name, its steps
+  rewritten as the user scenario they walk, in `agent.act` sentences only;
+  the changed test gets the new flow, the others keep their current flow;
+- drop everything selector-based: locators, `expect`s, fixtures, waits,
+  test data setup and teardown. The automation adds what it needs;
+- `git rm` the spec file in the same commit. Keep shared helpers under
+  `e2e/utils/` that other specs still import.
+
 ```ts
 import { test } from "@e2e-dev/web";
 
-// supersedes: e2e/session/session-creation.spec.ts › <test name>
+// ported from: e2e/session/session-creation.spec.ts › <test name>
 test(
   "the user launches an interactive session with a project",
   {
@@ -101,8 +114,11 @@ test(
   whenever the agent can click through, so a run must report it `skipped`,
   never `passed`. The tag is how the automation selects drafts
   (`e2e run --tag draft`); it removes both once the test has its checks.
-- The `// supersedes:` line names the Playwright spec the flow replaces, when
-  one covers it. An updated draft keeps the line it already had.
+- The first line names where the flow came from: `// ported from:
+  e2e/<path>.spec.ts › <test name>` for a ported test (the spec is gone), or
+  `// supersedes: e2e/<path>.spec.ts › <test name>` when an `e2e-agent/` test
+  already covered the flow and a Playwright spec still does. An updated draft
+  keeps the line it already had.
 
 ## 3. PR body
 
@@ -119,13 +135,13 @@ Result: flow changed
 Change: <old step> → <new step>
 Intended: yes
 Agent flow: e2e-agent/session/<flow>.e2e.ts
-Supersedes: e2e/session/session-creation.spec.ts › <test name>
+Ported from: e2e/session/session-creation.spec.ts (deleted)
 ```
 
 | `Result` | Lines after `Result` |
 |---|---|
 | `no flow change` | `Reason: <why>` |
-| `flow changed` / `new flow`, added | `Change`, `Intended: yes`, `Agent flow`, `Supersedes` (when a spec covers it) |
+| `flow changed` / `new flow`, added | `Change`, `Intended: yes`, `Agent flow`, then `Ported from: <spec> (deleted)` or `Supersedes: <spec> › <test>` (when a spec covers it) |
 | `flow changed` / `new flow`, not added | `Change`, `Intended: yes`, `Not added because: <reason>` |
 | `awaiting human confirmation` | `Change` |
 
