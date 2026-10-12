@@ -80,6 +80,8 @@ const BAIAdminUserResourcePolicySelect: React.FC<
       BAIAdminUserResourcePolicySelectPaginatedQuery,
       AdminUserResourcePolicyNode
     >(
+      // TODO(needs-backend): superadmin only; a domain admin has no V2 list to
+      // read until core adds a scoped one (#10288).
       graphql`
         query BAIAdminUserResourcePolicySelectPaginatedQuery(
           $offset: Int!
