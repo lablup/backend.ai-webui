@@ -1,0 +1,138 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-10-12T15:44:05.662Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 0,
+        "modified": 1,
+        "removed": 0,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "user_settings",
+          "title": "User Settings",
+          "status": "modified",
+          "url": "next/en/user_settings.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/user_settings/user_settings.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "139b1def59db"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 0,
+        "modified": 1,
+        "removed": 0,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "user_settings",
+          "title": "ユーザー設定",
+          "status": "modified",
+          "url": "next/ja/user_settings.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/user_settings/user_settings.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "32f797923a7c"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 0,
+        "modified": 1,
+        "removed": 0,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "user_settings",
+          "title": "사용자 설정",
+          "status": "modified",
+          "url": "next/ko/user_settings.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/user_settings/user_settings.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "ab5c698cb201"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 0,
+        "modified": 1,
+        "removed": 0,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "user_settings",
+          "title": "ตั้งค่าผู้ใช้",
+          "status": "modified",
+          "url": "next/th/user_settings.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/user_settings/user_settings.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "27cdbd7beb28"
+          ]
+        }
+      ]
+    }
+  }
+}
