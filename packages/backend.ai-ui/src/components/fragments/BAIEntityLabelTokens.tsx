@@ -22,10 +22,10 @@ export interface BAIEntityLabelTokensProps {
 export const formatEntityLabel = (label: BAIEntityLabel) =>
   `${label.key}=${label.value}`;
 
-/** The entity-filter fragment that selects entities carrying this exact label. */
+/** The entity-filter fragment that selects entities carrying this label (iEquals: the string operator BAIGraphQLPropertyFilter accepts). */
 export const toEntityLabelFilter = (label: BAIEntityLabel) => ({
   labels: {
-    some: { key: { equals: label.key }, value: { equals: label.value } },
+    some: { key: { iEquals: label.key }, value: { iEquals: label.value } },
   },
 });
 
