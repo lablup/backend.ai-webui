@@ -107,7 +107,7 @@ let artifactsCache: ArtifactsCacheEntry | null = null;
 /**
  * Everything `buildHits` and `isHitVisible` read apart from the menu rows. The
  * gates are evaluated rather than compared by identity because they close over
- * `supports()`, which is a fresh function on every render.
+ * `isManagerVersionCompatibleWith()`, a fresh function on every render.
  */
 const signatureOf = ({
   projectName,

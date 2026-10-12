@@ -153,7 +153,7 @@ const DeploymentDetailPage: React.FC = () => {
               name
               status
               projectId
-              projectV2 @since(version: "26.4.3") {
+              projectV2 {
                 basicInfo {
                   name
                 }
@@ -172,13 +172,13 @@ const DeploymentDetailPage: React.FC = () => {
             accessTokens {
               count
             }
-            currentRevision @since(version: "26.4.3") {
+            currentRevision {
               id
             }
-            deployingRevision @since(version: "26.4.3") {
+            deployingRevision {
               id
             }
-            creator @since(version: "26.4.3") {
+            creator {
               basicInfo {
                 email
               }

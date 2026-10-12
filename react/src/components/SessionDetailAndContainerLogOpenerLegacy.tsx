@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useWebUINavigate } from '../hooks';
 import { ProjectContextOrNull } from '../types/projectContext';
 import ContainerLogModalWithLazyQueryLoader from './ComputeSessionNodeItems/ContainerLogModalWithLazyQueryLoader';
 import SessionDetailDrawer from './SessionDetailDrawer';
@@ -47,7 +47,6 @@ const SessionDetailAndContainerLogOpenerLegacy: React.FC<
   const [containerLogModalSessionId, setContainerLogModalSessionId] =
     useState<string>();
   const [isPendingLogModalOpen, startLogModalOpenTransition] = useTransition();
-  const baiClient = useSuspendedBackendaiClient();
 
   useEffect(() => {
     const handler = (e: any) => {
@@ -61,22 +60,18 @@ const SessionDetailAndContainerLogOpenerLegacy: React.FC<
     };
   }, [startLogModalOpenTransition, setContainerLogModalSessionId]);
 
-  const supportSessionDetailPanel = baiClient?.supports('session-node');
-
   return (
     <>
-      {supportSessionDetailPanel ? (
-        <BAIUnmountAfterClose>
-          <SessionDetailDrawer
-            open={!!sessionId}
-            sessionId={sessionId || undefined}
-            project={project}
-            onClose={() => {
-              setSessionId(null);
-            }}
-          />
-        </BAIUnmountAfterClose>
-      ) : null}
+      <BAIUnmountAfterClose>
+        <SessionDetailDrawer
+          open={!!sessionId}
+          sessionId={sessionId || undefined}
+          project={project}
+          onClose={() => {
+            setSessionId(null);
+          }}
+        />
+      </BAIUnmountAfterClose>
       <ContainerLogModalWithLazyQueryLoader
         open={!!containerLogModalSessionId || isPendingLogModalOpen}
         loading={isPendingLogModalOpen}

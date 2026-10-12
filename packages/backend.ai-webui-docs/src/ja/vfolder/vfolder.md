@@ -228,6 +228,7 @@ Backend.AIは[FileBrowser](https://filebrowser.org)をサポートしていま�
 FileBrowserが新しいウィンドウで開かれているのがわかります。また、エクスプローラーダイアログで開いたストレージフォルダがルートディレクトリになっているのがわかります。FileBrowserウィンドウから、ディレクトリやファイルを自由にアップロード、変更、削除することができます。
 
 ![](../images/filebrowser_with_new_window.png)
+<!-- TODO: Capture FileBrowser or SFTP screenshots on an operational server -->
 
 ユーザーが `ファイルブラウザを実行する` ボタンをクリックすると、Backend.AI はそのアプリ専用のコンピュートセッションを自動で作成します。したがって、セッションページで FileBrowser のコンピュートセッションが表示されるはずです。このコンピュートセッションを削除するかどうかはユーザーの責任です。
 

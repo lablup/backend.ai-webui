@@ -112,7 +112,7 @@ const AgentSessions = ({ agentId, queryRef, onReload }: AgentSessionsProps) => {
   const deferredFetchKey = useDeferredValue(fetchKey);
   const baiClient = useSuspendedBackendaiClient();
   const statusBuckets = getSessionV2StatusBuckets(
-    baiClient.supports('session-preemption-statuses'),
+    baiClient.isManagerVersionCompatibleWith('26.8.0'),
   );
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(

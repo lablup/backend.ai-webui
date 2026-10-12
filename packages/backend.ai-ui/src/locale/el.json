@@ -538,6 +538,12 @@
     "MultiNodeShort": "Πολλαπλών",
     "SingleNodeShort": "Μονόκλινο"
   },
+  "comp:BAISessionTypeToken": {
+    "Batch": "Παρτίδα",
+    "Inference": "Συμπερασμός",
+    "Interactive": "Διαδραστικό",
+    "System": "Μεταφόρτωση"
+  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Επιλέξτε κεντρικό αποθηκευτικό χώρο"
   },
@@ -725,7 +731,6 @@
       "Back": "Πίσω",
       "Cancel": "Ματαίωση",
       "Close": "Κοντά",
-      "Collapse": "Κατάρρευση",
       "Confirm": "Επιβεβαίωση",
       "Copied": "Αντιγράφηκε",
       "Copy": "Αντιγραφή",
@@ -733,7 +738,6 @@
       "Create": "Δημιουργώ",
       "Delete": "Διαγράφω",
       "Edit": "Επεξεργασία",
-      "Expand": "Διαστέλλω",
       "Remove": "Αφαιρώ",
       "Save": "Αποθήκευση",
       "Upload": "Μεταφορτώσω"

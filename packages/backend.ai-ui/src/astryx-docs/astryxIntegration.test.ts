@@ -11,8 +11,8 @@ import { describe, expect, it } from 'vitest';
  *
  * The CLI's discovery is deliberately fault-tolerant — a doc file that fails
  * the authoring schema is skipped with a warning instead of crashing the
- * command — so a broken doc drops its component out of `astryx component` /
- * `astryx search` silently. These assertions are what make that loud.
+ * command — so a broken doc drops its component out of `ui-common component` /
+ * `ui-common search` silently. These assertions are what make that loud.
  */
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const componentsRoot = resolve(packageDir, integration.components);
@@ -91,7 +91,7 @@ describe.each(componentDocs.map((file) => [stemOf(file), file]))(
     it('is named after its file, with a BAI-prefixed display name', async () => {
       const { docs } = await import(/* @vite-ignore */ file);
       // Discovery keys a component on the doc file's stem; a `name` that
-      // disagrees makes `astryx component <name>` miss it.
+      // disagrees makes `ui-common component <name>` miss it.
       expect(docs.name).toBe(stem);
       expect(docs.displayName).toBeTruthy();
       if (stem.startsWith('BAI')) {

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<33163259bc11743f12d13094c3512e9d>>
+ * @generated SignedSource<<bce6f0cbbdd951344e1fefa937fdc09c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -256,16 +256,16 @@ return {
     "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "e115ee697d1e6247a8904b6b57cf4d31",
+    "cacheID": "aab1cdfe23c07856e9648370f8b4856f",
     "id": null,
     "metadata": {},
     "name": "ContainerRegistryEditorModalModifyRegistryMutation",
     "operationKind": "mutation",
-    "text": "mutation ContainerRegistryEditorModalModifyRegistryMutation(\n  $id: String!\n  $props: ModifyContainerRegistryNodeInputV2!\n) {\n  modify_container_registry_node_v2(id: $id, props: $props) {\n    container_registry {\n      id\n      row_id\n      name\n      registry_name\n      url\n      type\n      project\n      username\n      password\n      ssl_verify\n      extra @since(version: \"24.09.3\")\n      is_global @since(version: \"24.09.0\")\n      allowed_groups(first: 100) @since(version: \"25.3.0\") {\n        edges {\n          node {\n            id\n            row_id\n            name\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "mutation ContainerRegistryEditorModalModifyRegistryMutation(\n  $id: String!\n  $props: ModifyContainerRegistryNodeInputV2!\n) {\n  modify_container_registry_node_v2(id: $id, props: $props) {\n    container_registry {\n      id\n      row_id\n      name\n      registry_name\n      url\n      type\n      project\n      username\n      password\n      ssl_verify\n      extra\n      is_global\n      allowed_groups(first: 100) {\n        edges {\n          node {\n            id\n            row_id\n            name\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "2d558023291970fc8752760901b54000";
+(node as any).hash = "4f0a54fe2dec1cc71b6a5ab2904e203d";
 
 export default node;

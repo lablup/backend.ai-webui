@@ -347,7 +347,7 @@ export const BatchType: Story = {
 
 Use for components that work with `Form` / `Form.Item`.
 
-The form engine is **self-hosted** at `packages/backend.ai-ui/src/form-engine/`, with a deliberately antd-identical API — `Form.Item`, `Form.List`, `Form.useForm()`, `Form.useWatch()` and `Form.Item.useStatus()` all resolve to the engine. `Form.Item` **is** `BAIFormItem`, so it renders `[data-bai-form-item]` attributes rather than `.ant-form-item*` classes; assert on those if a story test inspects the DOM. Import from `backend.ai-ui` (the package re-exports it), or from `'../form-engine'` inside `packages/backend.ai-ui/src` — never from `antd`, which is not a dependency.
+The form engine is `@lablup/ui-common/Form` (ADR 0009), which BUI re-exports through its `form-engine` alias (`packages/backend.ai-ui/src/form-engine/index.ts`). Its API is deliberately antd-identical — `Form.Item`, `Form.List`, `Form.useForm()`, `Form.useWatch()` and `Form.Item.useStatus()` all resolve to the engine. `Form.Item` **is** `BAIFormItem`, so it renders `.uic-form-item*` classes (`.uic-form-item`, `.uic-form-item__label`, `.uic-form-item__control-input`, `.uic-form-item__explain-error`, …) rather than `.ant-form-item*` ones; assert on those if a story test inspects the DOM. Import from `backend.ai-ui` (the package re-exports it), or from `'../form-engine'` inside `packages/backend.ai-ui/src` — never from `antd`, which is not a dependency.
 
 ```typescript
 import { Form } from '../form-engine';

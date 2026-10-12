@@ -80,7 +80,8 @@ export const useGlobalSearchSource = (): GlobalSearchSource => {
 
   const ctx: SearchContext = {
     isSuperAdmin: currentUserRole === 'superadmin',
-    supports: (feature: string) => !!baiClient?.supports?.(feature),
+    isManagerVersionCompatibleWith: (version: string) =>
+      !!baiClient?.isManagerVersionCompatibleWith?.(version),
     config: toSearchConfigFlags(baiClient),
     visibleMenuKeys: new Set(
       _.map([...generalMenu, ...adminMenu], (item) => item.key as string),

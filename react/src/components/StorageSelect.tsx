@@ -120,7 +120,8 @@ const StorageSelect: React.FC<Props> = ({
               filterOption: true,
             }
       }
-      optionLabelProp={showUsageStatus ? 'label' : 'value'}
+      // BAISelect renders the rich option node on the trigger only for 'children'.
+      optionLabelProp={showUsageStatus ? 'children' : 'value'}
       options={_.map(vhostInfo?.allowed, (host) => {
         const usagePercent = vhostInfo?.volume_info?.[host]?.usage?.percentage;
         const usageLabel =

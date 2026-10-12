@@ -87,6 +87,19 @@ In the Users list, columns that hold several values — **Allowed Client IPs** a
 show the first value inline and collapse the rest behind a `+N` tag. Hover over the tag to see the
 complete list without widening the column.
 
+<a id="use-as-this-user"></a>
+
+### Use as this user
+
+A superadmin can work in the WebUI with another user's permissions. Open the more actions
+menu in that user's row, select **Use as this user**, and confirm with **Open in new tab**.
+
+![=400px](../images/admin_user_use_as_this_user.png)
+
+The new tab runs as that user; click **Exit** in its banner to return the tab to your own
+account. Your other tabs keep your admin view, and the audit log records that your admin
+account performed the actions.
+
 <a id="bulk-create-users"></a>
 
 ### Bulk create users
@@ -261,6 +274,10 @@ Please note that deactivating or reactivating the user does not change the user'
 account can have multiple keypairs, which brings it hard to decide which credential
 should be reactivated.
 :::
+
+Repeated failed sign-in attempts can block a user from signing in even though
+the account is still active. To let the user sign in again, select **Unblock
+login** from the more (`...`) menu in the user's row and confirm.
 
 While day-to-day account management relies on deactivation, superadmins can
 permanently remove accounts that are already inactive, using the Purge feature
@@ -479,7 +496,7 @@ You can filter entries by **Status**, **Operation**, **Triggered By**, and a **T
 
 ### Admin Model Store management
 
-Superadmins can manage model cards through the **Model Store Management** tab on the Admin Deployments page.
+Superadmins can manage model cards through the **Model Store Management** tab on the Admin Deployments page. New model cards are added to the Model Store project automatically.
 
 ![](../images/admin_model_card_list_v2.png)
 
@@ -490,14 +507,12 @@ The list provides the following columns:
 - **Category**: The model category (e.g., LLM).
 - **Task**: The inference task type (e.g., text-generation).
 - **Access Level**: Shows a green `Public` tag when the model card is publicly accessible, or a default `Private` tag otherwise.
-- **Domain**: The domain that owns the model card.
 - **Project**: The project that owns the model card.
 - **Created At**: The timestamp when the model card was created.
 
 You can narrow the list using the property filter bar at the top, which supports filtering by the following properties:
 
 - **Name**: Filter by the model card's name (string match).
-- **Domain**: Filter by the owning domain (string match).
 - **Project**: Filter by the owning project. Instead of typing a project identifier, you can pick from a searchable dropdown of the Model Store projects.
 - **Storage Host**: Filter by the storage host of the linked folder. Instead of typing a value, pick the host from a dropdown of the hosts registered on this cluster; the equals and not-equals operators are both available.
 
@@ -521,12 +536,10 @@ Click the `Create Model Card` button to open the creation modal. Fill in the fol
 - **License**: The license under which the model is distributed.
 - **Architecture**: The model architecture (e.g., Transformer).
 - **README**: A markdown README for the model.
-- **Domain**: The domain to associate the model card with. When creating a new model card, this field is pre-filled with your current domain; you can change it if needed.
-- **Project ID** (required): The project that owns the model card.
-- **VFolder** (required): The storage folder containing the model files.
+- **Model Storage Folder** (required): The storage folder containing the model files.
 - **Access Level**: Controls who can see the model card in the user-facing Model Store.
 
-   * `Internal`: Visible only to administrators of the owning domain and project. Regular users cannot see internal cards in their Model Store.
+   * `Internal`: Visible only to administrators of the owning project. Regular users cannot see internal cards in their Model Store.
    * `Public`: Visible to all users who have access to the owning project.
 
 ![=520px](../images/model_card_create_modal.png)

@@ -65,7 +65,7 @@ const DeploymentPresetDetailModal: React.FC<
             value
           }
         }
-        image @since(version: "26.4.4") {
+        image {
           id
           identity {
             canonicalName
@@ -87,7 +87,7 @@ const DeploymentPresetDetailModal: React.FC<
           revisionHistoryLimit
           deploymentStrategy
         }
-        presetValues @since(version: "26.4.4rc9") {
+        presetValues {
           presetId
           value
         }
@@ -96,8 +96,7 @@ const DeploymentPresetDetailModal: React.FC<
             name
             service {
               healthCheck {
-                # TODO: change to "26.4.4" once the 26.4.4 release is out
-                enable @since(version: "26.4.4rc7")
+                enable
                 interval
                 path
                 maxRetries
@@ -113,8 +112,7 @@ const DeploymentPresetDetailModal: React.FC<
     presetFrgmt ?? null,
   );
 
-  // `image` is gated by @since(26.4.4); on older managers it is null, so the
-  // Image row falls back to "-". This replaces the previous secondary
+  // The Image row falls back to "-" when `image` does not resolve. This replaces the previous secondary
   // useImageCanonicalName(imageId) lookup now that the preset exposes the
   // resolved image directly (BA-5952).
   const imageCanonicalName = preset?.image?.identity?.canonicalName;
@@ -126,9 +124,7 @@ const DeploymentPresetDetailModal: React.FC<
   const healthCheck = preset?.modelDefinition?.models?.find(
     (m) => m.service?.healthCheck,
   )?.service?.healthCheck;
-  // On 26.4.4rc7+ `enable` is authoritative; on older managers `enable` is
-  // stripped (undefined), so fall back to presence of the object.
-  const isHealthCheckEnabled = healthCheck?.enable ?? !!healthCheck;
+  const isHealthCheckEnabled = healthCheck?.enable ?? false;
   const hasServiceConfig = (preset?.modelDefinition?.models?.length ?? 0) > 0;
 
   return (

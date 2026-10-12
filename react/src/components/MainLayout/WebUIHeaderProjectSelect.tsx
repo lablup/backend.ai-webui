@@ -61,7 +61,6 @@ const WebUIHeaderProjectSelect: React.FC = () => {
   const currentDomainName = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
   const setCurrentProject = useSetCurrentProject();
-  // RESPONSIVE-POLICY R3: `Grid.useBreakpoint()` → theme-shim hook.
   const gridBreakpoint = useBAIBreakpoint();
   const webuiNavigate = useWebUINavigate();
   const matches = useMatches();

@@ -202,7 +202,7 @@ mkdir -p "$state_dir" && date -u '+%Y-%m-%d' > "$since_file"
 
 Parse JSON. A PR is a "user-facing-without-docs" gap when **all** of:
 
-1. Title matches `^(feat|fix|style)\(FR-\d+\)`.
+1. Title matches `^(feat|fix|style)\((FR-\d+|#\d+)\)` — a Jira key, or `#N` for a GitHub-native issue.
 2. No file path in `files[].path` starts with `packages/backend.ai-webui-docs/`.
 3. At least one file path is **not** in the non-user-facing exclude set:
    - `^e2e/`

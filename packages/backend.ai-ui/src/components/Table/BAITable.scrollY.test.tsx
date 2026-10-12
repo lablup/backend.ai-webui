@@ -89,13 +89,15 @@ describe('BAITable scroll.y', () => {
       resizeLayer.firstElementChild,
     );
 
+    // Astryx 0.6.5's Table wraps the table in its scrollable area, so the cap
+    // lands on that area's content div, not on the layer's first child.
     const withoutResize = renderScrollTable({
       scroll: { y: 500 },
       resizable: false,
     }).container;
     const plainLayer = dimLayerOf(withoutResize);
     expect(plainLayer.querySelector('div:has(> table)')).toBe(
-      plainLayer.firstElementChild,
+      plainLayer.querySelector('table')?.parentElement,
     );
   });
 

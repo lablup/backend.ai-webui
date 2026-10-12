@@ -910,7 +910,7 @@ export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
    * tokenSeparators={[',', ' ']}`, which cut a token on the KEYSTROKE.
    *
    * WHY THERE IS NO PROP: Astryx's `Tokenizer` has no delimiter API —
-   * `astryx component Tokenizer` lists none, `Tokenizer.d.ts` contains no
+   * `ui-common component Tokenizer` lists none, `Tokenizer.d.ts` contains no
    * `separator`/`delimiter`, and `TokenizerHandle` exposes only
    * `focus()`/`blur()`. `InputGroup`-style composition does not apply either.
    * The only reachable seam is the DOM.

@@ -52,7 +52,7 @@ const EditSessionPriorityModal: React.FC<EditSessionPriorityModalProps> = ({
       @relay(plural: true) {
         id @required(action: NONE)
         name
-        priority @since(version: "24.09.0")
+        priority
       }
     `,
     sessionFrgmts,
@@ -68,7 +68,7 @@ const EditSessionPriorityModal: React.FC<EditSessionPriorityModalProps> = ({
         modify_compute_session(input: $input) {
           item {
             id
-            priority @since(version: "24.09.0")
+            priority
           }
         }
       }

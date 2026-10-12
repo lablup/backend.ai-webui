@@ -6,7 +6,6 @@ import {
   autoMountedFoldersFrom,
   isAutoMountFolderName,
   normalizeLegacyMountFields,
-  ownerEmailFromOwner,
 } from './vfolderMounts';
 import type { LegacyVFolder } from 'backend.ai-ui';
 
@@ -81,39 +80,6 @@ describe('normalizeLegacyMountFields', () => {
     expect(normalizeLegacyMountFields({ mount_ids: [] })).toEqual({
       vfolderMounts: [],
     });
-  });
-});
-
-describe('ownerEmailFromOwner', () => {
-  it('returns undefined when the owner block is disabled', () => {
-    expect(
-      ownerEmailFromOwner({
-        enabled: false,
-        email: 'owner@lablup.com',
-        domainName: 'default',
-      }),
-    ).toBeUndefined();
-  });
-
-  it('returns undefined while an enabled owner block is still half-filled', () => {
-    expect(
-      ownerEmailFromOwner({
-        enabled: true,
-        email: 'owner@lablup.com',
-        accessKey: undefined,
-      }),
-    ).toBeUndefined();
-  });
-
-  it('returns the email of a complete, enabled owner block', () => {
-    expect(
-      ownerEmailFromOwner({
-        enabled: true,
-        email: 'owner@lablup.com',
-        accessKey: 'AKIA',
-        domainName: 'default',
-      }),
-    ).toBe('owner@lablup.com');
   });
 });
 

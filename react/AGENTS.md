@@ -3,7 +3,7 @@
 Project-specific guidance for AI coding agents.
 
 <!-- UI-COMMON:START -->
-@lablup/ui-common v0.2.0-alpha.15 · Astryx v0.6.2 · 164 components
+@lablup/ui-common v0.2.0-alpha.18 · Astryx v0.6.5 · 166 components
 CLI: run every command as `pnpm exec ui-common <cmd>` (shown below as `ui-common ...`).
 
 SETUP (once, first in your entry stylesheet) — without these, components render unstyled:
@@ -13,28 +13,30 @@ SETUP (once, first in your entry stylesheet) — without these, components rende
   @import "@lablup/ui-common/theme/lablup/theme.css";
   @import "@lablup/ui-common/ui-common.css";
 
-WORKFLOW — discover, don't guess. Before writing UI:
-1. `ui-common build "<idea>"` — START HERE: returns a kit (closest [page] + [block]s + [component]s). No args = full playbook.
-2. `ui-common template <name> [--skeleton]` — scaffold the [page]/[block]s it named, or study their layout. Templates are reference code.
-3. `ui-common component <Name>` — props + examples for every component you use.
+WORKFLOW — start every page from a template. Never lay out a page from scratch:
+1. `ui-common build "<idea>"` — START HERE: names the [page] template to start from (always one: the closest match, or the app shell), two other templates, and the [block]s + [component]s for parts it lacks. No args = full playbook.
+2. `ui-common template <name> <path>` — scaffold that template into your project. Keep its frame, gap and padding; replace its data, copy and sections; delete sections you do not need.
+3. `ui-common template <Block>` for a part the template lacks; `ui-common component <Name>` for props + examples before you use or change a component.
+Changing a page you already have? Keep it: skip step 2 and add blocks and components inside its sections.
 
 RULES:
 - No <div> — components do all layout/spacing, page frame included.
-- Frame first: read `ui-common docs layout` before writing any page or screen — page frame, region widths, breakpoint behavior.
+- Frame first: the template you scaffold sets the page frame. Read `ui-common docs layout` before you change it — region widths, breakpoint behavior.
 - Dense data = rows (Table, List/Item), never Card-wrapped list items; Card is for standalone widgets. Status = StatusDot/Token; Badge = counts only.
 - Custom styling: component props first; else the xstyle prop / StyleX tokens (@lablup/ui-common/theme/tokens.stylex). No raw hex/px.
 - Tokens for every value (`ui-common docs tokens`). Brand/accent belongs in the theme (`ui-common theme list` / `theme add <slug>`, or `ui-common theme template` for a custom one) — never override --color-* in :root.
-- SELF-CHECK before you finish: re-read the file and replace any className=, style={{…}}, raw <div>/<span> layout, imported .css/@apply, or hardcoded #hex/px with the component or the xstyle prop + a token. If unsure a component/prop exists, run `ui-common component <Name>` / `ui-common search "<thing>"`; don't hand-roll CSS.
+- SELF-CHECK before you finish: re-read the file and replace any className=, style={{…}}, raw <div>/<span> layout, imported .css/@apply, or hardcoded #hex/px with the component or the xstyle prop + a token. Confirm the page kept its template's frame, gap and padding. If unsure a component/prop exists, run `ui-common component <Name>` / `ui-common search "<thing>"`; don't hand-roll CSS.
 
 MORE CLI:
   search "<query>"   find any component / hook / doc / template / block
-  component --list   164 components by category
+  component --list   166 components by category
   template --list    page + block recipes
-  docs <topic>       browser-support, cli-integrations, color, elevation, getting-started, icons, illustrations, internationalization, layout, migration, motion, principles, shape, spacing, styling-libraries, styling, theme, tokens, typography, working-with-ai, backend-ai-ui, ui-common
+  docs <topic>       authoring, browser-support, color, elevation, getting-started, icons, illustrations, internationalization, layout, migration, motion, principles, shape, spacing, styling-libraries, styling, theme, tokens, typography, working-with-ai, backend-ai-ui, ui-common
+  docs cli           commands, API reference, integration authoring (one level at a time)
   swizzle <Name>     eject component source for deep customization
-  upgrade --from <v> run after bumping @lablup/ui-common: ui-common's codemods, then Astryx's
+  upgrade --from <old version> --apply   run after any Astryx or integration dependency bump
 
-UI-COMMON (@lablup/ui-common v0.2.0-alpha.15 wraps Astryx v0.6.2):
+UI-COMMON (@lablup/ui-common v0.2.0-alpha.18 wraps Astryx v0.6.5):
 - Import only from @lablup/ui-common: the root, or the same subpath Astryx uses (@lablup/ui-common/Button, /theme/tokens.stylex, /lab). Never import @astryxdesign/* directly.
 - Layers: declare `@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;` once, first, in the entry stylesheet. ui-common's styles sit in `ui-common`; yours go in `components` / `utilities`.
 - Use AlertModal (@lablup/ui-common/AlertModal), not AlertDialog: ui-common hides AlertDialog.
@@ -44,7 +46,7 @@ UI-COMMON (@lablup/ui-common v0.2.0-alpha.15 wraps Astryx v0.6.2):
 - Tour (@lablup/ui-common/lab) comes from ui-common: its own copy of Astryx's, same API and import path. A step's highlight is promoted into the top layer once, so under StrictMode the spotlight dim no longer covers the callout.
 - Theme: <Theme theme={lablupTheme}> with lablupTheme from @lablup/ui-common/theme/lablup/built, plus @lablup/ui-common/theme/lablup/theme.css. A product palette is its own defineTheme over lablupTheme.
 - Strings: every built-in string is a prop; defaults come from ui-common's catalog. Pass uiCommonMessages from @lablup/ui-common/i18n-catalog to Astryx's InternationalizationProvider. Never a product i18n runtime.
-- ui-common's own components: AlertModal, BoardItemTitle, BooleanToken, BulkEditFormItem, BulkErrorModal, ColorPicker, ConfirmPopover, CountBadge, CountdownBorder, DataGrid, DeleteConfirmModal, DigitPopIn, DividedRow, DoubleBadge, DoubleToken, ErrorState, Form, IconWithTooltip, ImageWithFallback, ListBanner, Modal, NotificationItem, NotificationStack, OverlayScrollbar, PageHeader, PageLayout, PagedSelector, ProgressWithLabel, SelectionLabel, Skeleton composites, SmoothHeight, StatCard, Statistic, StepNumberInput, TextHighlighter, TokenList, TokenRow, UncontrolledInput, UnitGrid. `pnpm exec ui-common docs ui-common` explains them.
+- ui-common's own components: AlertModal, Board, BoardItemTitle, BooleanToken, BulkEditFormItem, BulkErrorModal, ColorPicker, ConfirmPopover, CountBadge, CountdownBorder, DataGrid, DeleteConfirmModal, DigitPopIn, DividedRow, DoubleBadge, DoubleToken, ErrorState, Form, IconWithTooltip, ImageWithFallback, ListBanner, Modal, NotificationItem, NotificationStack, OverlayScrollbar, PageHeader, PageLayout, PagedSelector, ProgressWithLabel, SelectionLabel, Skeleton composites, SmoothHeight, StatCard, Statistic, StepNumberInput, TextHighlighter, TokenList, TokenRow, UncontrolledInput, UnitGrid. `pnpm exec ui-common docs ui-common` explains them.
 - The `ui-common` bin is @lablup/ui-common-cli, a devDependency pinned to the same version as @lablup/ui-common; bump both together. Without it installed, `pnpm dlx @lablup/ui-common-cli@next <cmd>` (or `npx @lablup/ui-common-cli@next <cmd>`); drop `@next` once 0.2.0 is published.
 - After bumping @lablup/ui-common and @lablup/ui-common-cli: `pnpm exec ui-common upgrade --from <old version>`, then read ui-common-upgrade-report.md.
 <!-- UI-COMMON:END -->

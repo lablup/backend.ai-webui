@@ -398,7 +398,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         num_files
         cur_size
         cloneable
-        permissions @since(version: "24.09.0")
+        permissions
         ...VFolderPermissionCellFragment
         ...VFolderNodeIdenticonFragment
         ...SharedFolderPermissionInfoModalFragment

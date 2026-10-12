@@ -34,14 +34,10 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
   'use memo';
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  // Auto-assign is only supported on managers >= 26.4.4.
-  const supportsAutoAssign = baiClient.supports('role-auto-assign');
-  // Managers >= 26.8.0 can filter `Role.scopes` by scope type, which the
-  // merged Detailed Permissions view depends on. Older managers get the
-  // legacy separate Scopes / Permissions tabs instead.
-  const supportsDetailedPermissions = baiClient.supports(
-    'role-mapped-scope-filter',
-  );
+  // The merged Detailed Permissions view filters `Role.scopes` by scope type;
+  // older managers get the legacy Scopes / Permissions tabs.
+  const supportsDetailedPermissions =
+    baiClient.isManagerVersionCompatibleWith('26.8.0');
   const [activeTab, setActiveTab] = useState(
     supportsDetailedPermissions ? 'detailedPermissions' : 'scopes',
   );
@@ -54,7 +50,7 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
         description
         source
         status
-        autoAssign @since(version: "26.4.4")
+        autoAssign
         createdAt
         updatedAt
         deletedAt
@@ -100,18 +96,16 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
               ? dayjs(role.updatedAt).format('YYYY-MM-DD HH:mm:ss')
               : '-'}
           </MetadataListItem>
-          {supportsAutoAssign ? (
-            <MetadataListItem label={t('rbac.AutoAssign')}>
-              <Token
-                color={tokenColorForTagColor(
-                  role.autoAssign ? 'green' : 'default',
-                )}
-                label={
-                  role.autoAssign ? t('general.Active') : t('general.Inactive')
-                }
-              />
-            </MetadataListItem>
-          ) : null}
+          <MetadataListItem label={t('rbac.AutoAssign')}>
+            <Token
+              color={tokenColorForTagColor(
+                role.autoAssign ? 'green' : 'default',
+              )}
+              label={
+                role.autoAssign ? t('general.Active') : t('general.Inactive')
+              }
+            />
+          </MetadataListItem>
           <MetadataListItem label={t('rbac.RoleDescription')}>
             {role.description || '-'}
           </MetadataListItem>

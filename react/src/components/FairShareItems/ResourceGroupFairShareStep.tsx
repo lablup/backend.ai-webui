@@ -36,13 +36,12 @@ const ResourceGroupFairShareStep: React.FC<ResourceGroupFairShareStepProps> = ({
 
   const { t } = useTranslation();
 
-  // Two conditions serialize as `{ AND: [...] }`, which needs `sub-filter`
-  // (26.7+); this step is reachable from 26.2. Below 26.7 expose only the
-  // property that shipped before FR-3920, capped at one condition.
+  // Two conditions serialize as `{ AND: [...] }` (manager 26.7.0+); older
+  // managers get only the pre-FR-3920 property, capped at one condition.
   // TODO(FR-3920): once #9638's `maxConditions` lands, show them with
   // `maxConditions={1}` instead of hiding them.
   const supportsSubFilter =
-    useSuspendedBackendaiClient().supports('sub-filter');
+    useSuspendedBackendaiClient().isManagerVersionCompatibleWith('26.7.0');
 
   const {
     baiPaginationOption,

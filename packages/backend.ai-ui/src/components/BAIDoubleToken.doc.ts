@@ -58,7 +58,7 @@ export const docs = {
       name: 'highlightKeyword',
       type: 'string',
       description:
-        'Search term marked inside every segment label through BAITextHighlighter. Left unset, labels render as plain text.',
+        'Search term marked inside every segment label through ui-common TextHighlighter (BAITextHighlighter, the same component under its BUI name, on a copyable segment). Left unset, labels render as plain text.',
     },
     {
       name: 'values[].copyable',

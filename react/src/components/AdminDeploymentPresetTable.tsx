@@ -90,7 +90,7 @@ const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
           imageId
           startupCommand
         }
-        image @since(version: "26.4.4") {
+        image {
           id
           identity {
             canonicalName
@@ -173,8 +173,8 @@ const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
         key: 'image',
         title: t('adminDeploymentPreset.Image'),
         render: (__, record) => {
-          // `image` is gated by @since(26.4.4); on older servers it is null,
-          // so fall back to the raw imageId. Label is
+          // `image` is null when the image no longer resolves, so fall back
+          // to the raw imageId. Label is
           // "<canonicalName>@<architecture>" so admins can tell aarch64 and
           // x86_64 images apart.
           const identity = record.image?.identity;

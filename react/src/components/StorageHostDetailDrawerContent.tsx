@@ -3,12 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { StorageHostDetailDrawerContentFragment$key } from '../__generated__/StorageHostDetailDrawerContentFragment.graphql';
-import { useSuspendedBackendaiClient } from '../hooks';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import ProjectFolderPermissionPanel from './ProjectFolderPermissionPanel';
 import StorageHostResourcePanel from './StorageHostResourcePanel';
 import StorageHostSettingsPanel from './StorageHostSettingsPanel';
-import UserFolderPermissionPanel from './UserFolderPermissionPanel';
 import UserFolderPermissionPanelV2 from './UserFolderPermissionPanelV2';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
 import { Heading } from '@lablup/ui-common/Heading';
@@ -45,7 +43,6 @@ const StorageHostDetailDrawerContent: React.FC<
         ...StorageHostResourcePanelFragment
         ...StorageHostSettingsPanel_storageVolumeFrgmt
         ...ProjectFolderPermissionPanel_storageVolumeFrgmt
-        ...UserFolderPermissionPanel_storageVolumeFrgmt
         ...UserFolderPermissionPanelV2_storageVolumeFrgmt
       }
     `,
@@ -56,14 +53,6 @@ const StorageHostDetailDrawerContent: React.FC<
   const storageHostId = storageVolume?.id ?? '';
   const isQuotaSupportedStorage =
     storageVolume?.capabilities?.includes('quota') ?? false;
-
-  // The keypair-scoped User Folder Permissions view (filter policies by a
-  // user's keypairs + Assigned Keypairs column) relies on the `keypair.userId`
-  // filter and `keypairs` connection added to `adminKeypairResourcePoliciesV2`
-  // in 26.4.4. Older managers fall back to the policy-name selection view.
-  const baiClient = useSuspendedBackendaiClient();
-  const supportsKeypairUserFilter =
-    baiClient?.supports('keypair-resource-policy-user-filter') ?? false;
 
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
@@ -101,11 +90,7 @@ const StorageHostDetailDrawerContent: React.FC<
       {activeTabKey === 'userFolderPermissions' && (
         <ErrorBoundaryWithNullFallback>
           <Suspense fallback={<BAISkeleton />}>
-            {supportsKeypairUserFilter ? (
-              <UserFolderPermissionPanelV2 storageVolumeFrgmt={storageVolume} />
-            ) : (
-              <UserFolderPermissionPanel storageVolumeFrgmt={storageVolume} />
-            )}
+            <UserFolderPermissionPanelV2 storageVolumeFrgmt={storageVolume} />
           </Suspense>
         </ErrorBoundaryWithNullFallback>
       )}

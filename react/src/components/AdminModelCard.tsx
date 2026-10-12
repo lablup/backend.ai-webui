@@ -72,7 +72,7 @@ type ModelCardNode = NonNullableNodeOnEdges<
 const availableModelCardSorterKeys = [
   'name',
   'created_at',
-  // Opened by 26.9.0 (backend #14811); gated on `model-card-search-axes`.
+  // Opened by 26.9.0 (backend #14811); gated on that manager version.
   'title',
   'category',
   'task',
@@ -160,7 +160,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   const { generateFolderPath } = useFolderExplorerOpener();
   const baiClient = useSuspendedBackendaiClient();
   // 26.9.0 opened the metadata axes of the model card search (backend #14811).
-  const supportsSearchAxes = baiClient.supports('model-card-search-axes');
+  const supportsSearchAxes = baiClient.isManagerVersionCompatibleWith('26.9.0');
 
   const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
   const [editingModelCardId, setEditingModelCardId] = useState<string | null>(

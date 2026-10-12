@@ -22,9 +22,12 @@ REPO_DEFAULT="lablup/backend.ai-webui"
 STATE_DIR="${BAI_DEV_SERVER_STATE_DIR:-$HOME/.local/state/fw/dev-servers}"
 DEV_GW_CONFIG="${DEV_GW_CONFIG:-$HOME/.config/fw/dev-gw.json}"
 PORTLESS_DIR="${PORTLESS_DIR:-$HOME/.portless}"
-JIRA_SITE="${JIRA_SITE:-https://lablup.atlassian.net}"
-# The Jira "Teams thread" field. One GET per served PR, at boot only.
-JIRA_TEAMS_FIELD="${JIRA_TEAMS_FIELD:-customfield_10176}"
+# A work item's Teams thread: an org-level Issue field (TEXT, visible to
+# organization members only), matched by name.
+GITHUB_TEAMS_FIELD="${GITHUB_TEAMS_FIELD:-Teams thread}"
+# Legacy FR-XXXX key → GitHub clone number. The mapping never changes, so it is
+# cached for good: one search per key per box.
+CLONE_CACHE_DIR="${BAI_CLONE_CACHE_DIR:-$HOME/.cache/backend.ai-webui/fr-clones}"
 
 # Human-facing lines go to stderr: `boot-env`'s stdout is `eval`-ed by the caller,
 # so a refusal printed there would be evaluated as shell.
@@ -111,11 +114,54 @@ dropped_served() {
   ' 2>/dev/null || true
 }
 
-# jira_key <pr-body> — the FR key from `Resolves #1234 (FR-1234)`.
-# A body that names none is empty AND successful: `grep` exits 1, and under
-# `pipefail` that would abort the caller's `key=$(...)` assignment mid-run.
-jira_key() {
-  grep -oiE '\(FR-[0-9]+\)' <<<"$1" | head -1 | tr -d '()' | tr '[:lower:]' '[:upper:]' || true
+# legacy_key <pr-body> [<branch>] — a legacy FR key: the body's `(FR-1234)`, else
+# an `FR-1234` in the branch. Only a pointer to the GitHub clone — never looked up
+# in Jira. A body that names none is empty AND successful: `grep` exits 1, and
+# under `pipefail` that would abort the caller's `key=$(...)` assignment mid-run.
+legacy_key() {
+  local k
+  k=$(grep -oiE '\(FR-[0-9]+\)' <<<"$1" | head -1 | tr -d '()' || true)
+  [ -n "$k" ] || k=$(grep -oiE '(^|[^A-Za-z0-9])fr-[0-9]+' <<<"${2:-}" | head -1 | grep -oiE 'fr-[0-9]+' || true)
+  printf '%s' "$k" | tr '[:lower:]' '[:upper:]'
+}
+
+# clone_search_query <repo> <key> — the GitHub search that finds a legacy key's
+# clone: the exact `JIRA Issue: FR-XXXX` line every clone's body ends with.
+clone_search_query() { printf 'repo:%s "JIRA Issue: %s" in:body' "$1" "$2"; }
+# clone_hit_filter <key> — the jq filter that picks, from that search's response,
+# the first issue whose body names exactly <key> (not FR-10 for FR-1).
+clone_hit_filter() {
+  printf '[.items[]? | select((.body // "") | test("JIRA Issue:\\\\s*%s\\\\b"))][0].number // empty' "$1"
+}
+
+# github_issue <pr-body> [<branch>] — the work item's issue number: the body's
+# `Resolves #N`, else the branch's `gh-N`. Empty and successful when neither names one.
+github_issue() {
+  local n
+  n=$(grep -oiE '(close[sd]?|fix(es|ed)?|resolve[sd]?)[[:space:]]+#[0-9]+' <<<"$1" | head -1 | grep -oE '[0-9]+' || true)
+  [ -n "$n" ] || n=$(grep -oiE '(^|[-_/])gh-?[0-9]+' <<<"${2:-}" | head -1 | grep -oE '[0-9]+' || true)
+  printf '%s' "$n"
+}
+
+# An issue's field values. Only a TEXT value selects anything, so every other
+# kind of field comes back as `{}` and cannot match a name.
+TEAMS_FIELD_QUERY='query($owner: String!, $repo: String!, $num: Int!) {
+  repository(owner: $owner, name: $repo) { issue(number: $num) {
+    issueFieldValues(first: 100) { nodes {
+      ... on IssueFieldTextValue { value field { ... on IssueFieldText { name } } }
+    } }
+  } }
+}'
+# That response → the value of the field NAMED $GITHUB_TEAMS_FIELD, never a field id.
+TEAMS_FIELD_FILTER='[.data.repository.issue.issueFieldValues.nodes[]?
+    | select(.field?.name? == env.GITHUB_TEAMS_FIELD) | .value | strings][0] // empty'
+
+# teams_thread_url <field-value> — the value, trimmed, when it is exactly one
+# https URL. Anything else is empty AND successful.
+teams_thread_url() {
+  local re='^[[:space:]]*(https://[^[:space:]"<>]+)[[:space:]]*$'
+  [[ $1 =~ $re ]] && printf '%s' "${BASH_REMATCH[1]}"
+  return 0
 }
 
 # teams_override <pr> <running> <override>... — the `--teams-thread` value that
@@ -274,7 +320,7 @@ resolve_app_name() {
     '
 }
 
-# ── GitHub / Jira ────────────────────────────────────────────────────────────
+# ── GitHub ───────────────────────────────────────────────────────────────────
 
 # The served set: the current branch plus every layer below it (open PRs only),
 # or a set of one when the branch is not stacked.
@@ -288,30 +334,49 @@ served_set() {
     | jq -c --arg b "$branch" 'map({pr: .number, branch: $b})'
 }
 
-jira_key_for_pr() {
-  local repo=$1 pr=$2 body
-  body=$(gh pr view "$pr" --repo "$repo" --json body --jq '.body' 2>/dev/null || true)
-  jira_key "${body:-}"
+# resolve_legacy_key <repo> <key> — the GitHub clone's number for a legacy FR
+# key, cached for good. Empty and successful when no clone is found (nothing is
+# cached then, so a clone created later is still picked up).
+resolve_legacy_key() {
+  local repo=$1 key=$2 cache n
+  [ -n "$key" ] || return 0
+  cache="$CLONE_CACHE_DIR/${repo//\//-}-$key"
+  if [ -f "$cache" ]; then
+    n=$(tr -dc '0-9' <"$cache")
+    [ -n "$n" ] && { printf '%s' "$n"; return 0; }
+  fi
+  [[ $key =~ ^FR-[0-9]+$ ]] || return 0
+  # Search's "exact phrase" is token-fuzzy ("FR-1" also ranks FR-854's clone), so
+  # the hit is only taken when its body really carries the key's line.
+  n=$(gh api -X GET search/issues -f q="$(clone_search_query "$repo" "$key")" -f per_page=20 \
+        --jq "$(clone_hit_filter "$key")" 2>/dev/null || true)
+  n=$(printf '%s' "$n" | tr -dc '0-9')
+  [ -n "$n" ] || return 0
+  mkdir -p "$CLONE_CACHE_DIR" 2>/dev/null && printf '%s\n' "$n" >"$cache" 2>/dev/null
+  printf '%s' "$n"
 }
 
-# ONE Jira GET per served PR, at boot only — never at request time.
-teams_thread_for_key() {
-  local key=$1
-  [ -n "$key" ] || return 0
-  local cred=${ATLASSIAN_CRED_FILE:-$HOME/.config/atlassian/credentials}
-  local email=${ATLASSIAN_EMAIL:-} token=${ATLASSIAN_API_TOKEN:-}
-  if [ -f "$cred" ]; then
-    [ -n "$email" ] || email=$(sed -n 's/^[[:space:]]*\(export[[:space:]]*\)\?ATLASSIAN_EMAIL=//p' "$cred" | head -1)
-    [ -n "$token" ] || token=$(sed -n 's/^[[:space:]]*\(export[[:space:]]*\)\?ATLASSIAN_API_TOKEN=//p' "$cred" | head -1)
-  fi
-  [ -n "$email" ] && [ -n "$token" ] || return 0
-  local auth; auth=$(printf '%s:%s' "$email" "$token" | base64 | tr -d '\n')
-  # The credential arrives on stdin via --config, never in argv: /proc is
-  # readable by every other process on a dev box that runs dozens of agents.
-  printf 'header = "Authorization: Basic %s"\n' "$auth" \
-    | curl -sS -m 10 --config - \
-      "$JIRA_SITE/rest/api/3/issue/$key?fields=$JIRA_TEAMS_FIELD" 2>/dev/null \
-    | jq -r --arg f "$JIRA_TEAMS_FIELD" '.fields[$f] | select(type == "string") // empty' 2>/dev/null || true
+# issue_ref_for_pr <repo> <pr> [<branch>] — "<issue>|<legacy-key>": the PR's
+# `Resolves #N`, else its `gh-N` branch, else its legacy FR key resolved to the
+# clone. Either half may be empty.
+issue_ref_for_pr() {
+  local repo=$1 pr=$2 branch=${3:-} body issue key
+  body=$(gh pr view "$pr" --repo "$repo" --json body --jq '.body' 2>/dev/null || true)
+  issue=$(github_issue "${body:-}" "$branch")
+  key=$(legacy_key "${body:-}" "$branch")
+  [ -n "$issue" ] || issue=$(resolve_legacy_key "$repo" "$key")
+  printf '%s|%s' "$issue" "$key"
+}
+
+# The Teams thread of a work item's GitHub issue: its `Teams thread` issue field.
+# No such field, no value, a 404 or a permission error all read as "no thread".
+teams_thread_for_issue() {
+  local repo=$1 issue=$2 value
+  [ -n "$issue" ] || return 0
+  value=$(GITHUB_TEAMS_FIELD=$GITHUB_TEAMS_FIELD gh api graphql \
+            -f owner="${repo%%/*}" -f repo="${repo#*/}" -F num="$issue" \
+            -f query="$TEAMS_FIELD_QUERY" --jq "$TEAMS_FIELD_FILTER" 2>/dev/null || true)
+  teams_thread_url "$value"
 }
 
 # Upsert THIS box's comment on a PR; echoes "<id><TAB><html_url>".
@@ -405,12 +470,17 @@ cmd_advertise() {
   local stack; stack=$(stack_line "$running" ${prs[@]+"${prs[@]}"})
 
   local body; body=$(comment_body running "$box" "$url" "$stack")
-  local out="$served" i=0 pr pr_branch key thread id comment_url upsert
+  local out="$served" i=0 pr pr_branch key issue ref thread id comment_url upsert
   for pr in ${prs[@]+"${prs[@]}"}; do
     pr_branch=$(jq -r --argjson i "$i" '.[$i].branch' <<<"$served")
-    key=$(jira_key_for_pr "$repo" "$pr")
+    issue=""; key=""
+    # `|`, not a tab: IFS whitespace would swallow an empty leading field.
+    IFS='|' read -r issue key <<<"$(issue_ref_for_pr "$repo" "$pr" "$pr_branch")" || true
+    if [ -n "$issue" ]; then ref="issue #$issue${key:+ ($key)}"
+    elif [ -n "$key" ]; then ref="$key (no GitHub clone found)"
+    else ref=""; fi
     thread=$(teams_override "$pr" "$running" ${overrides[@]+"${overrides[@]}"})
-    [ -n "$thread" ] || thread=$(teams_thread_for_key "$key")
+    [ -n "$thread" ] || thread=$(teams_thread_for_issue "$repo" "$issue")
     # One PR whose comment cannot be written (locked conversation, rate limit,
     # a revoked token) must not abort the run: the remaining PRs are still
     # served, and the record still has to be written.
@@ -418,13 +488,15 @@ cmd_advertise() {
     upsert=$(upsert_comment "$repo" "$pr" "$box" "$body") || upsert=""
     if [ -n "$upsert" ]; then
       IFS=$'\t' read -r id comment_url <<<"$upsert" || true
-      say "PR #$pr ($pr_branch): comment $id, ${key:-no Jira key}, teams thread ${thread:-none}"
+      say "PR #$pr ($pr_branch): comment $id, ${ref:-no issue}, teams thread ${thread:-none}"
     else
       say "PR #$pr ($pr_branch): could not write the comment — recorded with no comment id"
     fi
-    out=$(jq -c --argjson i "$i" --arg k "$key" --arg t "$thread" --arg c "$id" --arg cu "${comment_url:-}" '
+    out=$(jq -c --argjson i "$i" --arg k "$key" --arg n "$issue" --arg t "$thread" --arg c "$id" --arg cu "${comment_url:-}" '
       def orNull: if . == "" then null else . end;
-      .[$i] += {jiraKey: ($k | orNull), teamsThread: ($t | orNull),
+      .[$i] += {jiraKey: ($k | orNull),  # the legacy FR key, if any; never looked up
+                githubIssue: (if $n == "" then null else ($n | tonumber) end),
+                teamsThread: ($t | orNull),
                 commentId: (if $c == "" then null else ($c | tonumber) end),
                 commentUrl: ($cu | orNull)}' <<<"$out")
     i=$((i + 1))

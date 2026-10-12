@@ -33,10 +33,9 @@ vi.mock('react-i18next', async (importOriginal) => {
   };
 });
 
-// The header only reads `supports()` / `_config` off the client.
+// The header only reads `_config` off the client.
 vi.mock('../../hooks', () => ({
   useSuspendedBackendaiClient: () => ({
-    supports: () => false,
     _config: { enableExtendLoginSession: false },
   }),
 }));

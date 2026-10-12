@@ -67,9 +67,8 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
   'use memo';
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  // Auto-assign is only supported on managers >= 26.4.4.
-  const supportsAutoAssign = baiClient.supports('role-auto-assign');
-  const supportsRolePreset = baiClient.supports('role-preset-reference');
+  const supportsRolePreset =
+    baiClient.isManagerVersionCompatibleWith('26.9.0rc3');
   const [hiddenColumnKeys, setHiddenColumnKeys] =
     useHiddenColumnKeysSetting('RoleList');
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
@@ -83,7 +82,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         description
         source
         status
-        autoAssign @since(version: "26.4.4")
+        autoAssign
         createdAt
         updatedAt
         scopes(first: 3) @deprecatedSince(version: "26.9.0a4") {
@@ -241,7 +240,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         );
       },
     },
-    supportsAutoAssign && {
+    {
       key: 'autoAssign',
       title: t('rbac.AutoAssign'),
       dataIndex: 'autoAssign',

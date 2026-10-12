@@ -13,23 +13,13 @@ import { navigateTo } from '../utils/test-util';
 import { expect, type Locator, type Page } from '@playwright/test';
 
 /**
- * Force `model-card-v2` on (so the deployment detail page reads the
- * `modelDeployment`-backed status), `prometheus-auto-scaling-rule` off (so
- * the page does not fire an unmocked auto-scaling query that could collide with
- * the Relay store), and `model-service-command-string` on — persistently
- * across full-page reloads via `addInitScript`. Mirrors
- * `model-card-drawer.spec.ts`'s `installModelCardV2FlagOverride`.
- *
- * `model-service-command-string` is gated at manager version 26.8.0 exactly
- * (see `packages/backend.ai-client/src/client.ts`, FR-3205/BA-6551 — the gate
- * is deliberately at the *final* 26.8.0 tag, not 26.7.0, to sidestep a
- * BA-6742 ambiguity described there). The shared e2e test backend runs
- * `26.8.0rc1`, which sorts *before* `26.8.0` under PEP440 (release candidates
- * are pre-releases), so `isManagerVersionCompatibleWith('26.8.0')` — and
- * therefore this flag — is false against it even though the feature is
- * present. Every Execution/Shell control these specs assert on is gated
- * behind this exact flag, so without the override the whole
- * command/shell UI silently falls back to the pre-FR-3205 legacy path and
+ * Force manager-version compatibility for '26.8.0' — persistently across
+ * full-page reloads via `addInitScript`. `DeploymentAddRevisionModal` gates
+ * `command`/`shell` support on `baiClient.isManagerVersionCompatibleWith('26.8.0')`
+ * (FR-3205/BA-6551). The shared e2e test backend runs `26.8.0rc1`, which sorts
+ * *before* `26.8.0` under PEP440 (release candidates are pre-releases), so the
+ * real check is false even though the feature is present. Without the
+ * override the command/shell UI silently falls back to the legacy path and
  * every assertion in this file fails or times out waiting for elements that
  * never render.
  */
@@ -43,15 +33,13 @@ export async function installDeploymentFlagOverride(page: Page): Promise<void> {
       set(value: any) {
         if (
           value &&
-          typeof value.supports === 'function' &&
+          typeof value.isManagerVersionCompatibleWith === 'function' &&
           !value.__depFlagPatched
         ) {
-          const origSupports = value.supports.bind(value);
-          value.supports = function (feature: string) {
-            if (feature === 'model-card-v2') return true;
-            if (feature === 'prometheus-auto-scaling-rule') return false;
-            if (feature === 'model-service-command-string') return true;
-            return origSupports(feature);
+          const origCompat = value.isManagerVersionCompatibleWith.bind(value);
+          value.isManagerVersionCompatibleWith = function (version: string) {
+            if (version === '26.8.0') return true;
+            return origCompat(version);
           };
           value.__depFlagPatched = true;
         }
