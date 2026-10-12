@@ -618,8 +618,8 @@ const PLACEHOLDER = /^"\[.*\]"$/;
 
 /** `--set key=value` → `{key, value}`; the value is a TOML literal, else a string. */
 export function parseConfigSet(arg) {
-  const m = /^([A-Za-z0-9_.-]+)=(.*)$/s.exec(arg ?? "");
-  if (!m || !m[1].includes(".")) {
+  const m = /^([A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)+)=(.*)$/s.exec(arg ?? "");
+  if (!m) {
     throw new Error(
       `--set takes "<section>.<key>=<value>", got "${arg}" (e.g. resources.openPortToPublic=true)`,
     );

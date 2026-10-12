@@ -836,9 +836,10 @@ describe("config.toml", () => {
       );
     });
 
-    it("rejects a key without a section", () => {
-      expect(() => parseConfigSet("debug=true")).toThrow(/<section>\.<key>/);
-      expect(() => parseConfigSet("nope")).toThrow(/<section>\.<key>/);
+    it("rejects a key without a section or with an empty component", () => {
+      for (const arg of ["debug=true", "nope", "a..b=true", "resources.=true", ".x=1"]) {
+        expect(() => parseConfigSet(arg), arg).toThrow(/<section>\.<key>/);
+      }
     });
   });
 
