@@ -2691,7 +2691,7 @@
     "SelectDomain": "Επιλέξτε τομέα",
     "SelectHandlerName": "Επιλέξτε handler",
     "SelectScheduler": "Επιλέξτε Προγραμματιστής",
-    "SessionExecutionSpec": "Προδιαγραφή εκτέλεσης συνόδου",
+    "SessionExecutionOptions": "Επιλογές εκτέλεσης συνόδου",
     "Timeout": "Χρονικό όριο",
     "TimeoutSeconds": "δευτερόλεπτα",
     "TypeResourceGroupNameToDelete": "Πληκτρολογήστε όνομα ομάδας πόρων για διαγραφή",

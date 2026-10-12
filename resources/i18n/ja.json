@@ -2693,7 +2693,7 @@
     "SelectDomain": "ドメインを選択",
     "SelectHandlerName": "Handler を選択",
     "SelectScheduler": "スケジューラを選択",
-    "SessionExecutionSpec": "セッション実行スペック",
+    "SessionExecutionOptions": "セッション実行オプション",
     "Timeout": "タイムアウト",
     "TimeoutSeconds": "秒",
     "TypeResourceGroupNameToDelete": "削除するリソースグループ名を入力します",

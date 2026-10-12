@@ -2693,7 +2693,7 @@
     "SelectDomain": "选择域",
     "SelectHandlerName": "选择 Handler",
     "SelectScheduler": "选择调度程序",
-    "SessionExecutionSpec": "会话执行规格",
+    "SessionExecutionOptions": "会话执行选项",
     "Timeout": "超时",
     "TimeoutSeconds": "秒",
     "TypeResourceGroupNameToDelete": "输入要删除的资源组名称",

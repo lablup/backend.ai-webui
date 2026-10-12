@@ -2693,7 +2693,7 @@
     "SelectDomain": "도메인 선택",
     "SelectHandlerName": "Handler 선택",
     "SelectScheduler": "스케줄러 선택",
-    "SessionExecutionSpec": "세션 실행 스펙",
+    "SessionExecutionOptions": "세션 실행 옵션",
     "Timeout": "Timeout",
     "TimeoutSeconds": "초",
     "TypeResourceGroupNameToDelete": "삭제하려는 자원 그룹 이름을 다시 한번 입력하세요.",

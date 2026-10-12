@@ -2682,7 +2682,7 @@
     "SelectDomain": "เลือกโดเมน",
     "SelectHandlerName": "เลือก Handler",
     "SelectScheduler": "เลือกตัวจัดกำหนดการ",
-    "SessionExecutionSpec": "ข้อกำหนดการทำงานของเซสชัน",
+    "SessionExecutionOptions": "ตัวเลือกการทำงานของเซสชัน",
     "Timeout": "Timeout",
     "TimeoutSeconds": "วินาที",
     "TypeResourceGroupNameToDelete": "พิมพ์ชื่อกลุ่มทรัพยากรเพื่อลบ",

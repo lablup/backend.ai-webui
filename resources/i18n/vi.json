@@ -2693,7 +2693,7 @@
     "SelectDomain": "Chọn miền",
     "SelectHandlerName": "Chọn handler",
     "SelectScheduler": "Chọn bộ lập lịch",
-    "SessionExecutionSpec": "Đặc tả thực thi phiên",
+    "SessionExecutionOptions": "Tùy chọn thực thi phiên",
     "Timeout": "Thời gian chờ",
     "TimeoutSeconds": "Giây",
     "TypeResourceGroupNameToDelete": "Nhập tên nhóm tài nguyên để xóa",
