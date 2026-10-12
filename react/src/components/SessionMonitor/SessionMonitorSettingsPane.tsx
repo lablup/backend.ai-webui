@@ -8,6 +8,7 @@ import {
   type SessionMonitorSort,
 } from '../../helper/sessionMonitor';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
+import { SETTING_ARRIVAL_PARAM } from '../../hooks/useSettingArrival';
 import WebUILink from '../WebUILink';
 import { Selector } from '@lablup/ui-common/Selector';
 import { Switch } from '@lablup/ui-common/Switch';
@@ -51,7 +52,6 @@ const SessionMonitorSettingsPane: React.FC<{ onNavigate?: () => void }> = ({
       }}
     >
       <BAIFlex direction="row" align="center" justify="between" gap="sm">
-        <Text type="label">{t('sessionMonitor.settings.SortBy')}</Text>
         <Selector
           label={t('sessionMonitor.settings.SortBy')}
           size="sm"
@@ -61,7 +61,6 @@ const SessionMonitorSettingsPane: React.FC<{ onNavigate?: () => void }> = ({
         />
       </BAIFlex>
       <BAIFlex direction="row" align="center" justify="between" gap="sm">
-        <Text type="label">{t('sessionMonitor.settings.RowsShown')}</Text>
         <Selector
           label={t('sessionMonitor.settings.RowsShown')}
           size="sm"
@@ -81,7 +80,9 @@ const SessionMonitorSettingsPane: React.FC<{ onNavigate?: () => void }> = ({
         onChange={(checked) => setIdleAlerts(checked)}
       />
       <WebUILink
-        to={{ search: '?settings=general' }}
+        to={{
+          search: `?settings=general&${SETTING_ARRIVAL_PARAM}=userSettings.DesktopNotification`,
+        }}
         onClick={onNavigate}
         style={{ textDecoration: 'none' }}
       >

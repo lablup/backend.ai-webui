@@ -76,7 +76,8 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
       if (!value) return null;
       const name = mergedResourceSlots?.[key]?.human_readable_name ?? key;
       if (key === 'mem') {
-        return `${name} ${convertToBinaryUnit(value, 'g', 0)?.numberFixed ?? value}G`;
+        const gib = convertToBinaryUnit(value, 'g', 1)?.number ?? 0;
+        return `${name} ${Number.isInteger(gib) ? gib : gib.toFixed(1)}G`;
       }
       return `${name} ${parseFloat(value)}`;
     }),
