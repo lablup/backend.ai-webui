@@ -15,6 +15,8 @@ import {
   BAIButton,
   BAIFlex,
   BAIMetadataList,
+  BAITable,
+  type BAIColumnsType,
   useBAIBreakpoint,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -244,44 +246,57 @@ export const HandlerOptionsDescription: React.FC<{
   const seconds = t('resourceGroup.TimeoutSeconds');
 
   return (
-    <BAIFlex direction="column" align="stretch" gap="sm">
-      <BAIMetadataList columns={md ? 2 : 1}>
-        <MetadataListItem label={t('resourceGroup.DefaultTimeout')}>
-          {formatSeconds(
-            handlerOptions?.default.timeoutSec,
-            unlimited,
-            seconds,
-          )}
-        </MetadataListItem>
-        <MetadataListItem label={t('resourceGroup.DefaultMaxRetries')}>
-          {handlerOptions?.default.maxRetryCount ?? unlimited}
-        </MetadataListItem>
-      </BAIMetadataList>
-      {/* Full width, label on top like the two-column list above it. */}
-      <BAIMetadataList columns={1} label={{ position: 'top' }}>
-        <MetadataListItem label={t('resourceGroup.HandlerOverrides')}>
-          {_.isEmpty(handlerOptions?.byHandler) ? (
-            '-'
-          ) : (
-            <BAIFlex direction="column" align="stretch" gap="sm">
-              {_.map(handlerOptions?.byHandler, (entry) => (
-                <BAIMetadataList
-                  key={entry.handlerName}
-                  title={entry.handlerName}
-                  columns={md ? 2 : 1}
-                >
-                  <MetadataListItem label={t('resourceGroup.Timeout')}>
-                    {formatSeconds(entry.timeoutSec, unlimited, seconds)}
-                  </MetadataListItem>
-                  <MetadataListItem label={t('modelService.MaxRetries')}>
-                    {entry.maxRetryCount ?? unlimited}
-                  </MetadataListItem>
-                </BAIMetadataList>
-              ))}
-            </BAIFlex>
-          )}
-        </MetadataListItem>
-      </BAIMetadataList>
-    </BAIFlex>
+    <BAIMetadataList columns={md ? 2 : 1}>
+      <MetadataListItem label={t('resourceGroup.DefaultTimeout')}>
+        {formatSeconds(handlerOptions?.default.timeoutSec, unlimited, seconds)}
+      </MetadataListItem>
+      <MetadataListItem label={t('resourceGroup.DefaultMaxRetries')}>
+        {handlerOptions?.default.maxRetryCount ?? unlimited}
+      </MetadataListItem>
+    </BAIMetadataList>
+  );
+};
+
+type HandlerOverrideRow = HandlerOptionsInfo['byHandler'][number];
+
+// The per-handler overrides, as a table under the defaults card.
+export const HandlerOverridesTable: React.FC<{
+  byHandler: HandlerOptionsInfo['byHandler'] | null | undefined;
+}> = ({ byHandler }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const unlimited = t('resourcePolicy.Unlimited');
+  const seconds = t('resourceGroup.TimeoutSeconds');
+
+  const columns: BAIColumnsType<HandlerOverrideRow> = [
+    {
+      key: 'handlerName',
+      title: t('resourceGroup.HandlerName'),
+      dataIndex: 'handlerName',
+    },
+    {
+      key: 'timeoutSec',
+      title: t('resourceGroup.Timeout'),
+      dataIndex: 'timeoutSec',
+      render: (value: HandlerOverrideRow['timeoutSec']) =>
+        formatSeconds(value, unlimited, seconds),
+    },
+    {
+      key: 'maxRetryCount',
+      title: t('modelService.MaxRetries'),
+      dataIndex: 'maxRetryCount',
+      render: (value: HandlerOverrideRow['maxRetryCount']) =>
+        value ?? unlimited,
+    },
+  ];
+
+  return (
+    <BAITable
+      size="small"
+      rowKey="handlerName"
+      dataSource={[...(byHandler ?? [])]}
+      columns={columns}
+      pagination={false}
+    />
   );
 };
