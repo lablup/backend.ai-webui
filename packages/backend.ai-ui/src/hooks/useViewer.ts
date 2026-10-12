@@ -10,14 +10,9 @@ const roleFromV2: Record<string, ViewerRole> = {
   MONITOR: 'monitor',
 };
 
-// Managers before 26.2.0 have no `myUserV2`; they only send the base64 `encoded_user_role`.
 export const resolveViewerRole = (
   v2Role: string | null | undefined,
-  encodedUserRole: string | null | undefined,
-): ViewerRole | null => {
-  if (v2Role) return roleFromV2[v2Role] ?? null;
-  return encodedUserRole ? (atob(encodedUserRole) as ViewerRole) : null;
-};
+): ViewerRole | null => (v2Role ? (roleFromV2[v2Role] ?? null) : null);
 
 const useViewer = () => {
   const { viewer, myUserV2 } = useLazyLoadQuery<useViewerQuery>(
@@ -27,9 +22,8 @@ const useViewer = () => {
           user {
             email
           }
-          encoded_user_role @deprecatedSince(version: "26.2.0")
         }
-        myUserV2 @since(version: "26.2.0") {
+        myUserV2 {
           organization {
             role
           }
@@ -44,10 +38,7 @@ const useViewer = () => {
 
   return {
     viewer,
-    userRole: resolveViewerRole(
-      myUserV2?.organization.role,
-      viewer?.encoded_user_role,
-    ),
+    userRole: resolveViewerRole(myUserV2?.organization.role),
   };
 };
 

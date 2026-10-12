@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7c74709c46f2595f7622aaac21b54b6a>>
+ * @generated SignedSource<<4e41467fb087ca71e62dfeaef6be36b9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,7 +18,6 @@ export type useViewerQuery$data = {
     };
   } | null | undefined;
   readonly viewer: {
-    readonly encoded_user_role: string | null | undefined;
     readonly user: {
       readonly email: string | null | undefined;
     } | null | undefined;
@@ -40,13 +39,6 @@ var v0 = {
 v1 = {
   "alias": null,
   "args": null,
-  "kind": "ScalarField",
-  "name": "encoded_user_role",
-  "storageKey": null
-},
-v2 = {
-  "alias": null,
-  "args": null,
   "concreteType": "UserV2OrganizationInfo",
   "kind": "LinkedField",
   "name": "organization",
@@ -62,7 +54,7 @@ v2 = {
   ],
   "storageKey": null
 },
-v3 = {
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -95,8 +87,7 @@ return {
               (v0/*: any*/)
             ],
             "storageKey": null
-          },
-          (v1/*: any*/)
+          }
         ],
         "storageKey": null
       },
@@ -108,7 +99,7 @@ return {
         "name": "myUserV2",
         "plural": false,
         "selections": [
-          (v2/*: any*/)
+          (v1/*: any*/)
         ],
         "storageKey": null
       }
@@ -139,11 +130,10 @@ return {
             "plural": false,
             "selections": [
               (v0/*: any*/),
-              (v3/*: any*/)
+              (v2/*: any*/)
             ],
             "storageKey": null
-          },
-          (v1/*: any*/)
+          }
         ],
         "storageKey": null
       },
@@ -155,24 +145,24 @@ return {
         "name": "myUserV2",
         "plural": false,
         "selections": [
-          (v2/*: any*/),
-          (v3/*: any*/)
+          (v1/*: any*/),
+          (v2/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "4baddfc63cfa1fbd036f74f32cdd5e27",
+    "cacheID": "ec59575b4277c0a9ab342c19197fa30a",
     "id": null,
     "metadata": {},
     "name": "useViewerQuery",
     "operationKind": "query",
-    "text": "query useViewerQuery {\n  viewer {\n    user {\n      email\n      id\n    }\n    encoded_user_role @deprecatedSince(version: \"26.2.0\")\n  }\n  myUserV2 @since(version: \"26.2.0\") {\n    organization {\n      role\n    }\n    id\n  }\n}\n"
+    "text": "query useViewerQuery {\n  viewer {\n    user {\n      email\n      id\n    }\n  }\n  myUserV2 {\n    organization {\n      role\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "70918f0a30f49f6bf9300a59049137ce";
+(node as any).hash = "51e76fb4c1c744bd4a3ee925b8e9af54";
 
 export default node;
