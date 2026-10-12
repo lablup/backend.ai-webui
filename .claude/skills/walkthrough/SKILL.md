@@ -116,6 +116,7 @@ failure produces **no comment and no walkthrough**, not a partial one.
 | A live server for the PR           | the boot record `mint.mjs` resolves (section 6): this branch's, or with `--pr` the one that serves the PR                                                                                                |
 | The server is routable             | the record's `url` answers a 2xx with `X-Portless: 1`                                                                                                                                                    |
 | The server has guided mode         | `/__review/guided.js` answers 200; an older overlay (a branch that predates FR-3950) draws a stop as a bare pin without its notes, so `mint.mjs` exits 3 and says to rebase onto a main that includes it |
+| The server serves a `config.toml`  | `<url>/config.toml` answers with a content type other than `text/html`; `text/html` is the SPA fallback for a worktree without the file, so every switch is at its default and a stop behind one (the PR body's `Config:` line) would mark nothing — `dev-server` section 2f writes the file |
 | The app shell survives login       | `mint.mjs` checks it and exits 3                                                                                                                                                                         |
 
 The set link goes in a public PR comment, so an unroutable server is a

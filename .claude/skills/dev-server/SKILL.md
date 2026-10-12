@@ -212,6 +212,42 @@ This is the behaviour of `react/vite.config.ts` itself, not something this skill
 
 Running without it costs no real type safety: `scripts/verify.sh`, the Husky pre-commit hook, and CI each run one-shot `tsc --noEmit` independently of the dev server, and the IDE's own tsserver still flags errors while editing. What is lost is only the in-terminal / in-browser feedback loop while the server runs. If a specific check is needed on a checker-less server, run `pnpm --filter ./react exec tsc --noEmit` once rather than restarting with the checker enabled — a one-shot check frees its memory when it exits, a resident watcher does not.
 
+## 2f. Make sure the worktree has a `config.toml` (webui only)
+
+`config.toml` is git-ignored, so a fresh worktree has none — and Vite then answers
+`/config.toml` with `index.html` (the SPA fallback), every switch takes its default, and
+nothing reports it: a change behind `resources.openPortToPublic` or
+`general.enableModelFolders` simply never shows. `pnpm run dev` prints one warning line
+when the file is missing; do not boot past it.
+
+**Write it with `pnpm run dev-env use`**, the same command 2c–2d already lean on: it builds
+`config.toml` from `config.toml.sample`, the catalog server's probed switches and any
+`--set` overrides (DEV_ENVIRONMENT.md, "Dev servers and test accounts"). When the endpoint
+is a catalog server, run it for that server and account once before boot; it writes
+`.env.development.local` and `e2e/envs/.env.playwright` in the same go, which is the 2c/2d
+pre-fill. A `config.toml` that is already there and **not** written by `use` (no
+`# Written by \`pnpm run dev-env use\`` first line) is the user's: keep it, `--set` still
+applies to it in place.
+
+**Switches the PR needs: the `Config:` line.** A PR whose change sits behind a switch says
+so in its body with one line — `Config: resources.openPortToPublic = true` (several,
+comma-separated: `Config: resources.openPortToPublic = true, general.enableModelFolders = true`).
+Read it from the same `gh pr view --json body` as 2c and pass each pair as
+`--set <section>.<key>=<value>`; repeat it on every `use`, since `use` rewrites the file whole.
+When you are the one opening the PR and your change is behind a `baiClient._config.*` /
+`loginConfig` switch, write that line into the PR body yourself — the reviewer's server
+and the walkthrough are minted from it. Values are TOML literals (`true`, `3`,
+`"SESSION"`); the key is the one the app reads, which `pnpm run dev-env config <server> --all`
+lists and `react/src/helper/loginConfig.ts` maps.
+
+When the endpoint is not a catalog server (a user-named box, a PR IP), `use` cannot be
+run: copy `config.toml.sample` to `config.toml` and apply the `Config:` pairs by hand, and
+say so.
+
+**Verify after boot** (section 6): `curl -sk -o /dev/null -w '%{content_type}' <portless url>/config.toml`
+must not print `text/html`. `text/html` means the file is still missing — fix it before
+advertising the server; a reviewer cannot tell a missing switch from a broken change.
+
 ## 3. Compose the run
 
 **Default: no env vars.** If you cannot resolve a color from step 2a (no `/color` in history, or the most recent was `default`, or anything ambiguous), run the command with **no `VITE_THEME_HEADER_COLOR` prefix at all**. Do not invent a color, do not pick a "neutral" default, do not pass an empty string. Just omit the env var. Same goes for `PORTLESS_APP_NAME` from step 2b.
@@ -344,6 +380,10 @@ React:    http://127.0.0.1:4627/
 ```
 
 The Portless port shown above is just an example — use whatever Portless actually printed.
+
+Before announcing, run the `config.toml` check from 2f against the Portless URL: a `text/html`
+content type means the worktree has no `config.toml` and the server is showing defaults, not
+the branch's switches — fix it (2f) before step 5 advertises the server.
 
 If after ~15s the React URL still hasn't appeared (very rare with Vite), announce just the Portless URL and tell the user the React port hasn't been printed yet — don't block indefinitely.
 
