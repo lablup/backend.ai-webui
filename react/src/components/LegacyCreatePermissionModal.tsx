@@ -13,7 +13,11 @@ import { LegacyCreatePermissionModalUpdateMutation } from '../__generated__/Lega
 import { LegacyCreatePermissionModal_roleScopeFragment$key } from '../__generated__/LegacyCreatePermissionModal_roleScopeFragment.graphql';
 import { App } from '../app-shim';
 import { Form } from '../form-engine';
-import { RBAC_ELEMENT_TYPES, ScopeIdSelect } from './RoleFormModal';
+import {
+  RBAC_ELEMENT_TYPES,
+  ScopeIdSelect,
+  isDomainScopeType,
+} from './RoleFormModal';
 import {
   BAIModal,
   BAIModalProps,
@@ -480,6 +484,7 @@ const LegacyCreatePermissionModal: React.FC<
             <Form.Item
               name="scopeId"
               label={t('rbac.ScopeId')}
+              hidden={isDomainScopeType(effectiveScopeType)}
               rules={[
                 {
                   required: true,

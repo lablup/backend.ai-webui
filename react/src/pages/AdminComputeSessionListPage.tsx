@@ -419,11 +419,6 @@ const AdminComputeSessionListPage = () => {
                   type: 'string',
                 },
                 {
-                  key: 'domain_name',
-                  propertyLabel: t('session.Domain'),
-                  type: 'string',
-                },
-                {
                   key: 'access_key',
                   propertyLabel: t('general.AccessKey'),
                   type: 'string',

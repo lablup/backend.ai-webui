@@ -319,7 +319,6 @@
     "ContainerRegistryForImageCommit": "Имэйж commit хийхэд зориулсан контейнерийн регистр",
     "CreateProject": "Төсөл үүсгэх",
     "Description": "Тайлбар",
-    "Domain": "Домен",
     "FailedToCreateProject": "Төслийг үүсгэж чадсангүй.",
     "FailedToUpdateProject": "Төслийг шинэчлэхэд амжилтгүй боллоо.",
     "IsActive": "Идэвхтэй юу?",

@@ -54,7 +54,6 @@ import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAlert,
   BAIButton,
-  BAIDomainSelect,
   BAIFlex,
   BAIModal,
   BAIModalProps,
@@ -121,7 +120,6 @@ const roleToV2: Record<string, UserRoleV2> = {
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 interface GlobalDefaults {
-  domainName: string;
   groupIds: string[];
   resourcePolicy: string;
   description: string;
@@ -138,7 +136,6 @@ interface ValidatedRow {
   fullName: string;
   role: string;
   status: string;
-  domainName: string;
   description: string;
   needPasswordChange: boolean;
   resourcePolicy: string;
@@ -184,7 +181,6 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
     Set<CanonicalUserColumn>
   >(new Set());
   const [globalDefaults, setGlobalDefaults] = useState<GlobalDefaults>({
-    domainName: currentDomainName,
     groupIds: [],
     resourcePolicy: 'default',
     description: '',
@@ -222,8 +218,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   const [groupList, setGroupList] = useState<
     ReadonlyArray<{ id: string; name: string }>
   >([]);
-  // Whether the group list for the current global-defaults domain has finished
-  // loading. Project-name validation is skipped until this is true so rows are
+  // Whether the group list has finished loading. Project-name validation is skipped until this is true so rows are
   // not transiently flagged as "unknown project" while the fetch is in flight.
   const [groupsLoaded, setGroupsLoaded] = useState(false);
   // Keypairs of the just-created users, shown in a download modal on success
@@ -256,9 +251,8 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       }
     `);
 
-  // Imperative query used to resolve project name <-> group id. Loaded into
-  // state whenever the domain changes so the preview can display names and the
-  // mutation can convert them to ids.
+  // Imperative query used to resolve project name <-> group id, so the preview
+  // can display names and the mutation can convert them to ids.
   const groupsQuery = graphql`
     query BulkCreateUserFromCSVModalGroupsQuery(
       $domain_name: String
@@ -271,11 +265,11 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
     }
   `;
 
-  const loadGroups = useEffectEvent((domainName: string) => {
+  const loadGroups = useEffectEvent(() => {
     fetchQuery<BulkCreateUserFromCSVModalGroupsQuery>(
       relayEnvironment,
       groupsQuery,
-      { domain_name: domainName, type: ['GENERAL', 'MODEL_STORE'] },
+      { domain_name: currentDomainName, type: ['GENERAL', 'MODEL_STORE'] },
       { fetchPolicy: 'store-or-network' },
     )
       .toPromise()
@@ -294,18 +288,9 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       });
   });
 
-  // A domain change disables validation until the new fetch resolves.
-  const [prevGroupsDomainName, setPrevGroupsDomainName] = useState(
-    globalDefaults.domainName,
-  );
-  if (prevGroupsDomainName !== globalDefaults.domainName) {
-    setPrevGroupsDomainName(globalDefaults.domainName);
-    setGroupsLoaded(false);
-  }
-
   useEffect(() => {
-    loadGroups(globalDefaults.domainName);
-  }, [globalDefaults.domainName]);
+    loadGroups();
+  }, []);
 
   const loadDynamicAliases = useEffectEvent(() => {
     baiRequest({ method: 'GET', url: '/export/reports/users' })
@@ -347,7 +332,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
     // value.
     const applyDefault = (
       rawVal: string,
-      key: 'domainName' | 'resourcePolicy' | 'description',
+      key: 'resourcePolicy' | 'description',
     ): string => {
       if (rawVal.trim()) return rawVal.trim();
       const def = globalDefaults[key];
@@ -365,7 +350,6 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
     const fullName = raw.full_name.trim();
     const role = (raw.role.trim() || 'user').toLowerCase();
     const status = (raw.status.trim() || 'active').toLowerCase();
-    const domainName = applyDefault(raw.domain_name, 'domainName');
     const resourcePolicy =
       applyDefault(raw.resource_policy, 'resourcePolicy') || 'default';
     const description = applyDefault(raw.description, 'description');
@@ -415,17 +399,11 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       });
     }
 
-    // Project: a per-row project name must resolve to a real group, otherwise
-    // the user would be created with no (or the wrong) project membership and
-    // the admin would never know. The group list is loaded only for the
-    // global-defaults domain (loadGroups), so a row whose domain differs cannot
-    // be validated against it — flag those too instead of resolving against the
-    // wrong domain's groups. Skip while groups are still loading to avoid
-    // transient false errors.
+    // Project: a per-row project name must resolve to a real group of the
+    // current domain, otherwise the user would be created with no project
+    // membership unnoticed. Skip while groups are still loading.
     if (projectName) {
-      const sameDomain =
-        !domainName || domainName === globalDefaults.domainName;
-      if (!sameDomain || (groupsLoaded && !nameToId[projectName])) {
+      if (groupsLoaded && !nameToId[projectName]) {
         fieldErrors.project = t('credential.validation.CSVUnknownProject', {
           project: projectName,
         });
@@ -441,7 +419,6 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       fullName,
       role,
       status,
-      domainName,
       resourcePolicy,
       description,
       needPasswordChange,
@@ -613,7 +590,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
         email: r.email,
         username: r.username,
         password: r.password,
-        domainName: r.domainName || currentDomainName,
+        domainName: currentDomainName,
         needPasswordChange: r.needPasswordChange,
         status: statusToV2[r.status] || 'ACTIVE',
         role: roleToV2[r.role] || 'USER',
@@ -785,9 +762,9 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   // whether a default value is *always* applied:
   //   - need_password_change always sends a value (true or false), so its
   //     column is always shown.
-  //   - domain and resource policy always carry a value (current-domain
-  //     fallback / the server-side "default" policy), so they are shown
-  //     whenever a value is selected — including the plain "default" policy.
+  //   - resource policy always carries a value (the server-side "default"
+  //     policy), so it is shown whenever a value is selected — including the
+  //     plain "default" policy.
   //   - description and project become null when empty, so their columns
   //     appear only when the admin actually configures a default.
   const showFullName = presentColumns.has('full_name');
@@ -796,10 +773,6 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   // A need_password_change value is always applied to every row (true or
   // false), so this column is always relevant.
   const showNeedPasswordChange = true;
-  // Domain is always applied (per-row, global default, or current domain),
-  // so it is always relevant to preview.
-  const showDomain =
-    presentColumns.has('domain_name') || !!globalDefaults.domainName;
   // A resource policy value is always applied — the admin may explicitly
   // select "default" (which delegates to the server default), and that is
   // still a configured global default worth showing.
@@ -892,20 +865,6 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
           }
         >
           {val ? t('button.Yes') : t('button.No')}
-        </BAIText>
-      ),
-    },
-    showDomain && {
-      title: t('credential.Domain'),
-      dataIndex: 'domainName',
-      key: 'domainName',
-      width: 120,
-      onCell: (record: ValidatedRow) => cellStyle(record, 'domainName'),
-      render: (val: string, record: ValidatedRow) => (
-        <BAIText
-          type={record.fromDefaults.domainName ? 'secondary' : undefined}
-        >
-          {val || '—'}
         </BAIText>
       ),
     },
@@ -1184,36 +1143,13 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
 
           <Form layout="vertical" requiredMark={false} component={false}>
             <BAIFormItem
-              label={t('credential.Domain')}
-              style={{ marginBottom: token('--spacing-3') }}
-            >
-              <Suspense fallback={<BAISkeleton />}>
-                <BAIDomainSelect
-                  value={globalDefaults.domainName}
-                  onChange={(v) => {
-                    setGlobalDefaults((prev) => ({
-                      ...prev,
-                      domainName: v ? String(v) : '',
-                      groupIds: [],
-                    }));
-                  }}
-                  style={{ width: '100%' }}
-                />
-              </Suspense>
-            </BAIFormItem>
-
-            <BAIFormItem
               label={t('session.launcher.Project')}
               style={{ marginBottom: token('--spacing-3') }}
             >
-              <Suspense
-                key={globalDefaults.domainName}
-                fallback={<BAISkeleton />}
-              >
+              <Suspense fallback={<BAISkeleton />}>
                 <ProjectSelect
-                  key={globalDefaults.domainName}
                   mode="multiple"
-                  domain={globalDefaults.domainName}
+                  domain={currentDomainName}
                   disableDefaultFilter
                   lockedProjectTypes={['MODEL_STORE']}
                   value={

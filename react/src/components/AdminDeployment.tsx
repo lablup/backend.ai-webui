@@ -220,11 +220,6 @@ const AdminDeployment = ({
       type: 'boolean',
     },
     {
-      key: 'domainName',
-      propertyLabel: t('deployment.filter.DomainName'),
-      type: 'string' as const,
-    },
-    {
       key: 'resourceGroup',
       propertyLabel: t('deployment.filter.ResourceGroup'),
       type: 'string' as const,
