@@ -271,8 +271,8 @@ export const useCurrentUserInfo = () => {
 };
 
 export const useCurrentUserRole = () => {
-  const { decodedUserRole } = useViewer();
-  return decodedUserRole as UserRole;
+  const { userRole } = useViewer();
+  return userRole as UserRole;
 };
 
 export const useTOTPSupported = () => {

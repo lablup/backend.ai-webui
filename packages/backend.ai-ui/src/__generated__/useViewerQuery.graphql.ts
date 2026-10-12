@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<91204fda4bad85f352055cbdf6525a17>>
+ * @generated SignedSource<<7c74709c46f2595f7622aaac21b54b6a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,8 +9,14 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+export type UserRoleV2 = "ADMIN" | "MONITOR" | "SUPERADMIN" | "USER" | "%future added value";
 export type useViewerQuery$variables = Record<PropertyKey, never>;
 export type useViewerQuery$data = {
+  readonly myUserV2: {
+    readonly organization: {
+      readonly role: UserRoleV2 | null | undefined;
+    };
+  } | null | undefined;
   readonly viewer: {
     readonly encoded_user_role: string | null | undefined;
     readonly user: {
@@ -36,6 +42,31 @@ v1 = {
   "args": null,
   "kind": "ScalarField",
   "name": "encoded_user_role",
+  "storageKey": null
+},
+v2 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "UserV2OrganizationInfo",
+  "kind": "LinkedField",
+  "name": "organization",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "role",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 };
 return {
@@ -68,6 +99,18 @@ return {
           (v1/*: any*/)
         ],
         "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "UserV2",
+        "kind": "LinkedField",
+        "name": "myUserV2",
+        "plural": false,
+        "selections": [
+          (v2/*: any*/)
+        ],
+        "storageKey": null
       }
     ],
     "type": "Query",
@@ -96,33 +139,40 @@ return {
             "plural": false,
             "selections": [
               (v0/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "id",
-                "storageKey": null
-              }
+              (v3/*: any*/)
             ],
             "storageKey": null
           },
           (v1/*: any*/)
         ],
         "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "UserV2",
+        "kind": "LinkedField",
+        "name": "myUserV2",
+        "plural": false,
+        "selections": [
+          (v2/*: any*/),
+          (v3/*: any*/)
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "2e3112eeb7ec9c210923d9e89787c205",
+    "cacheID": "4baddfc63cfa1fbd036f74f32cdd5e27",
     "id": null,
     "metadata": {},
     "name": "useViewerQuery",
     "operationKind": "query",
-    "text": "query useViewerQuery {\n  viewer {\n    user {\n      email\n      id\n    }\n    encoded_user_role\n  }\n}\n"
+    "text": "query useViewerQuery {\n  viewer {\n    user {\n      email\n      id\n    }\n    encoded_user_role @deprecatedSince(version: \"26.2.0\")\n  }\n  myUserV2 @since(version: \"26.2.0\") {\n    organization {\n      role\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "3bb335b115b87782d6e3370eb51afe6f";
+(node as any).hash = "70918f0a30f49f6bf9300a59049137ce";
 
 export default node;
