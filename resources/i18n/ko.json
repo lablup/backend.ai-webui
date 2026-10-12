@@ -3287,11 +3287,11 @@
     }
   },
   "sessionMonitor": {
+    "MonitorSettings": "모니터 설정",
     "MoreSessions": "세션 {{count}}개 더 있음",
     "MyResourceUsage": "내 할당 한도 대비 사용량",
     "MySessions": "나의 세션",
     "NoActiveSessions": "실행 중인 세션이 없습니다",
-    "NotificationSettings": "알림 설정",
     "OpenSession": "세션 열기",
     "OpenSessionList": "세션 목록 열기",
     "RunningCount": "실행 {{count}}",
@@ -3302,6 +3302,16 @@
       "SessionLifetime": "세션이 최대 수명에 도달하고 있습니다.",
       "Title": "{{name}} 세션이 {{minutes}}분 후 종료됩니다",
       "Utilization": "자원 사용률이 유휴 기준에 못 미치고 있습니다. 종료되기 전에 세션을 사용해 주세요."
+    },
+    "settings": {
+      "DesktopNotifications": "데스크톱 알림 설정 →",
+      "IdleAlerts": "유휴 종료 전 알림",
+      "IncludeStarting": "시작 중인 세션 포함",
+      "RowsShown": "표시 행 수",
+      "SortBy": "정렬",
+      "SortDeadline": "종료 임박순",
+      "SortName": "이름순",
+      "SortNewest": "최신순"
     }
   },
   "settings": {

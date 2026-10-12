@@ -3271,11 +3271,11 @@
     }
   },
   "sessionMonitor": {
+    "MonitorSettings": "Monitor settings",
     "MoreSessions": "{{count}} more sessions",
     "MyResourceUsage": "My usage against my limit",
     "MySessions": "My sessions",
     "NoActiveSessions": "No active sessions",
-    "NotificationSettings": "Notification settings",
     "OpenSession": "Open session",
     "OpenSessionList": "Open session list",
     "RunningCount": "{{count}} running",
@@ -3286,6 +3286,16 @@
       "SessionLifetime": "The session is reaching its maximum lifetime.",
       "Title": "{{name}} ends in {{minutes}} min",
       "Utilization": "Resource utilization has stayed under the idle threshold. Use the session before it is terminated."
+    },
+    "settings": {
+      "DesktopNotifications": "Desktop notification settings →",
+      "IdleAlerts": "Alert before idle termination",
+      "IncludeStarting": "Include starting sessions",
+      "RowsShown": "Rows shown",
+      "SortBy": "Sort by",
+      "SortDeadline": "Soonest termination first",
+      "SortName": "Name",
+      "SortNewest": "Newest first"
     }
   },
   "settings": {

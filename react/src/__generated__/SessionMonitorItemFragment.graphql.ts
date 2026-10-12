@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6e9260bf20c64ece94ffc56338f1da11>>
+ * @generated SignedSource<<dd4f827ab4331fabda7f2f9fe26dbc9e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,8 +14,10 @@ export type SessionMonitorItemFragment$data = {
   readonly created_at: string | null | undefined;
   readonly id: string;
   readonly name: string | null | undefined;
+  readonly occupied_slots: string | null | undefined;
+  readonly requested_slots: string | null | undefined;
   readonly status: string | null | undefined;
-  readonly " $fragmentSpreads": FragmentRefs<"SessionUsageMonitorFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"SessionMonitorUtilizationBarsFragment">;
   readonly " $fragmentType": "SessionMonitorItemFragment";
 };
 export type SessionMonitorItemFragment$key = {
@@ -58,15 +60,29 @@ const node: ReaderFragment = {
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "occupied_slots",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "requested_slots",
+      "storageKey": null
+    },
+    {
       "args": null,
       "kind": "FragmentSpread",
-      "name": "SessionUsageMonitorFragment"
+      "name": "SessionMonitorUtilizationBarsFragment"
     }
   ],
   "type": "ComputeSessionNode",
   "abstractKey": null
 };
 
-(node as any).hash = "977004e25e8ea600259407a6f9f35147";
+(node as any).hash = "2b529db47b0c97f788884c0eaffdced9";
 
 export default node;

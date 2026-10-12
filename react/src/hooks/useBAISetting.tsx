@@ -20,6 +20,9 @@ export interface UserSettings {
   desktop_notification?: boolean;
   /** Idle-termination alerts from the header session monitor; default on. */
   session_monitor_idle_alerts?: boolean;
+  session_monitor_sort?: 'deadline' | 'newest' | 'name';
+  session_monitor_include_starting?: boolean;
+  session_monitor_rows?: number;
   compact_sidebar?: boolean;
   preserve_login?: boolean;
   automatic_update_check?: boolean;

@@ -100,16 +100,25 @@ export const toSessionMonitorEntry = (
   };
 };
 
-/** Soonest deadline first, then newest session first. */
+export type SessionMonitorSort = 'deadline' | 'newest' | 'name';
+export const SESSION_MONITOR_ROW_OPTIONS = [5, 10, 20] as const;
+
+/** Default: soonest deadline first, then newest session first. */
 export const rankSessions = (
   entries: ReadonlyArray<SessionMonitorEntry>,
+  sort: SessionMonitorSort = 'deadline',
 ): SessionMonitorEntry[] =>
   [...entries].sort((a, b) => {
-    if (a.deadline !== null && b.deadline !== null) {
-      return a.deadline - b.deadline;
+    if (sort === 'name') {
+      return (a.name ?? '').localeCompare(b.name ?? '');
     }
-    if (a.deadline !== null) return -1;
-    if (b.deadline !== null) return 1;
+    if (sort === 'deadline') {
+      if (a.deadline !== null && b.deadline !== null) {
+        return a.deadline - b.deadline;
+      }
+      if (a.deadline !== null) return -1;
+      if (b.deadline !== null) return 1;
+    }
     return (b.createdAt ?? '').localeCompare(a.createdAt ?? '');
   });
 

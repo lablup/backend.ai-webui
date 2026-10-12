@@ -3290,7 +3290,6 @@
     "MyResourceUsage": "自分の上限に対する使用量",
     "MySessions": "自分のセッション",
     "NoActiveSessions": "実行中のセッションはありません",
-    "NotificationSettings": "通知設定",
     "OpenSession": "セッションを開く",
     "OpenSessionList": "セッション一覧を開く",
     "RunningCount": "実行中 {{count}}件",

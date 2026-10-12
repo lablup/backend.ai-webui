@@ -4,7 +4,7 @@
  */
 import { useKeypairResourceUsage } from '../../hooks/useKeypairResourceUsage';
 import { sessionMonitorFetchKeyAtom } from '../../hooks/useSessionMonitor';
-import { ProgressBar } from '@lablup/ui-common/ProgressBar';
+import SessionMonitorThinBar from './SessionMonitorThinBar';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex } from 'backend.ai-ui';
@@ -26,9 +26,9 @@ const SessionMonitorResourceUsage: React.FC = () => {
       data-testid="session-monitor-resource-usage"
       direction="column"
       align="stretch"
-      gap="xxs"
+      gap={2}
       style={{
-        padding: `${token('--spacing-2')} ${token('--spacing-3')}`,
+        padding: `${token('--spacing-1-5')} ${token('--spacing-3')}`,
         borderTop: `1px solid ${token('--color-border')}`,
       }}
     >
@@ -46,11 +46,9 @@ const SessionMonitorResourceUsage: React.FC = () => {
             </span>
           </Text>
           <div style={{ flex: 1 }}>
-            <ProgressBar
+            <SessionMonitorThinBar
               label={row.name}
-              isLabelHidden
-              value={row.limit ? Math.min(row.limit, row.using) : 0}
-              max={row.limit ?? 1}
+              percent={row.limit ? (row.using / row.limit) * 100 : 0}
               variant="accent"
             />
           </div>

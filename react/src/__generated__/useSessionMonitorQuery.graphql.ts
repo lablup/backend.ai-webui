@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<88ba1d109cd711f65133b3fbc67d4b1e>>
+ * @generated SignedSource<<e20506fbb20c79e562827a5618f35a5d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -224,6 +224,13 @@ return {
                   {
                     "alias": null,
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "requested_slots",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
                     "concreteType": "KernelConnection",
                     "kind": "LinkedField",
                     "name": "kernel_nodes",
@@ -281,12 +288,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "bbd505b17d3798f3ac4b279c88b362aa",
+    "cacheID": "d5147f8b7df518cb85ac2fc314ff4174",
     "id": null,
     "metadata": {},
     "name": "useSessionMonitorQuery",
     "operationKind": "query",
-    "text": "query useSessionMonitorQuery(\n  $scopeId: ScopeField\n  $filter: String\n  $first: Int\n) {\n  compute_session_nodes(scope_id: $scopeId, filter: $filter, order: \"-created_at\", first: $first) {\n    count\n    edges {\n      node {\n        id\n        name\n        status\n        created_at\n        idle_checks\n        ...SessionMonitorItemFragment\n      }\n    }\n  }\n}\n\nfragment SessionMonitorItemFragment on ComputeSessionNode {\n  id\n  name\n  status\n  created_at\n  ...SessionUsageMonitorFragment\n}\n\nfragment SessionUsageMonitorFragment on ComputeSessionNode {\n  occupied_slots\n  ...useSessionNodeLiveStatSessionFragment\n}\n\nfragment useSessionNodeLiveStatSessionFragment on ComputeSessionNode {\n  id\n  kernel_nodes {\n    edges {\n      node {\n        live_stat\n        cluster_role\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query useSessionMonitorQuery(\n  $scopeId: ScopeField\n  $filter: String\n  $first: Int\n) {\n  compute_session_nodes(scope_id: $scopeId, filter: $filter, order: \"-created_at\", first: $first) {\n    count\n    edges {\n      node {\n        id\n        name\n        status\n        created_at\n        idle_checks\n        ...SessionMonitorItemFragment\n      }\n    }\n  }\n}\n\nfragment SessionMonitorItemFragment on ComputeSessionNode {\n  id\n  name\n  status\n  created_at\n  occupied_slots\n  requested_slots\n  ...SessionMonitorUtilizationBarsFragment\n}\n\nfragment SessionMonitorUtilizationBarsFragment on ComputeSessionNode {\n  occupied_slots\n  ...useSessionNodeLiveStatSessionFragment\n}\n\nfragment useSessionNodeLiveStatSessionFragment on ComputeSessionNode {\n  id\n  kernel_nodes {\n    edges {\n      node {\n        live_stat\n        cluster_role\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();

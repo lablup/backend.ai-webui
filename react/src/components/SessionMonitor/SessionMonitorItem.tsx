@@ -3,26 +3,25 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { SessionMonitorItemFragment$key } from '../../__generated__/SessionMonitorItemFragment.graphql';
-import { formatDurationAsDays } from '../../helper';
+import { convertToBinaryUnit, formatDurationAsDays } from '../../helper';
 import {
   ATTENTION_THRESHOLD_SEC,
   isRunningStatus,
+  isStartingStatus,
   type SessionMonitorEntry,
 } from '../../helper/sessionMonitor';
+import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import { getIdleChecksBadgeVariant } from '../ComputeSessionNodeItems/SessionIdleChecks';
-import SessionUsageMonitor from '../SessionUsageMonitor';
 import WebUILink from '../WebUILink';
+import SessionMonitorUtilizationBars from './SessionMonitorUtilizationBars';
 import { Badge } from '@lablup/ui-common/Badge';
+import { StatusDot } from '@lablup/ui-common/StatusDot';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
-import {
-  BAIFlex,
-  BAIIntervalView,
-  badgeVariantForStatus,
-  toLocalId,
-} from 'backend.ai-ui';
+import { BAIFlex, BAIIntervalView, toLocalId } from 'backend.ai-ui';
 import dayjs from 'dayjs';
+import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -45,6 +44,7 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
   const { t } = useTranslation();
   const { token } = useTheme();
   const buildProjectPath = useProjectPath();
+  const { mergedResourceSlots } = useResourceSlotsDetails();
 
   const session = useFragment(
     graphql`
@@ -53,16 +53,37 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
         name
         status
         created_at
-        ...SessionUsageMonitorFragment
+        occupied_slots
+        requested_slots
+        ...SessionMonitorUtilizationBarsFragment
       }
     `,
     sessionFrgmt,
   );
 
   const { nearest, deadline } = entry;
+  const isRunning = isRunningStatus(session.status);
   const detailPath = `${buildProjectPath('session', { scope: 'project' })}?${new URLSearchParams(
     { sessionDetail: toLocalId(session.id) },
   ).toString()}`;
+
+  // "GPU 2 · RAM 32G": the allocation (or the request while starting).
+  const slots: Record<string, string | undefined> = JSON.parse(
+    (isRunning ? session.occupied_slots : session.requested_slots) || '{}',
+  );
+  const allocation = _.compact(
+    _.map(slots, (value, key) => {
+      if (!value) return null;
+      const name = mergedResourceSlots?.[key]?.human_readable_name ?? key;
+      if (key === 'mem') {
+        return `${name} ${convertToBinaryUnit(value, 'g', 0)?.numberFixed ?? value}G`;
+      }
+      return `${name} ${parseFloat(value)}`;
+    }),
+  ).join(' · ');
+  const elapsed = session.created_at
+    ? dayjs(session.created_at).fromNow(true)
+    : null;
 
   const idleCheckLabel = (
     key: NonNullable<SessionMonitorEntry['nearest']>['key'],
@@ -73,13 +94,19 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
         ? t('session.NetworkIdleTimeout')
         : t('session.MaxSessionLifetime');
 
+  const statusVariant = isRunning
+    ? 'success'
+    : isStartingStatus(session.status)
+      ? 'warning'
+      : 'neutral';
+
   return (
     <BAIFlex
       direction="row"
       align="center"
       gap="sm"
       style={{
-        padding: `${token('--spacing-2')} ${token('--spacing-3')}`,
+        padding: `${token('--spacing-1-5')} ${token('--spacing-3')}`,
         borderTop: `1px solid ${token('--color-border')}`,
         background:
           nearest && nearest.remaining <= ATTENTION_THRESHOLD_SEC
@@ -93,29 +120,24 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
         gap="xxs"
         style={{ flex: 1, minWidth: 0 }}
       >
-        <WebUILink
-          to={detailPath}
-          onClick={onNavigate}
-          style={{ display: 'block', minWidth: 0, overflow: 'hidden' }}
-        >
-          <Text type="label" maxLines={1} hasTruncateTooltip={false}>
-            {session.name ?? toLocalId(session.id)}
-          </Text>
-        </WebUILink>
-        <BAIFlex direction="row" align="center" gap="xxs">
-          <Badge
-            variant={badgeVariantForStatus('session', session.status)}
-            label={session.status ?? ''}
-          />
-          {session.created_at && (
-            <Text type="supporting">{dayjs(session.created_at).fromNow()}</Text>
-          )}
+        <BAIFlex direction="row" align="center" gap="xs">
+          <StatusDot variant={statusVariant} label={session.status ?? ''} />
+          <WebUILink
+            to={detailPath}
+            onClick={onNavigate}
+            style={{ display: 'block', minWidth: 0, overflow: 'hidden' }}
+          >
+            <Text type="label" maxLines={1} hasTruncateTooltip={false}>
+              {session.name ?? toLocalId(session.id)}
+            </Text>
+          </WebUILink>
         </BAIFlex>
+        <Text type="supporting" maxLines={1} hasTruncateTooltip={false}>
+          {[allocation, elapsed].filter(Boolean).join(' · ')}
+        </Text>
       </BAIFlex>
-      <div style={{ width: 160, flex: 'none' }}>
-        {isRunningStatus(session.status) && (
-          <SessionUsageMonitor sessionFrgmt={session} size="small" />
-        )}
+      <div style={{ width: 170, flex: 'none' }}>
+        {isRunning && <SessionMonitorUtilizationBars sessionFrgmt={session} />}
       </div>
       {showDeadlineColumn && (
         <BAIFlex

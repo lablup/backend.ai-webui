@@ -3,9 +3,11 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
+  isStartingStatus,
   rankSessions,
   SESSION_MONITOR_VISIBLE_LIMIT,
 } from '../../helper/sessionMonitor';
+import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useIsProjectAgnosticPage } from '../../hooks/useIsProjectAgnosticPage';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import {
@@ -16,11 +18,19 @@ import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import WebUILink from '../WebUILink';
 import SessionMonitorItem from './SessionMonitorItem';
 import SessionMonitorResourceUsage from './SessionMonitorResourceUsage';
+import SessionMonitorSettingsPane from './SessionMonitorSettingsPane';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFetchKeyButton, BAIFlex } from 'backend.ai-ui';
 import { useAtom } from 'jotai';
-import React, { Suspense, useDeferredValue, useTransition } from 'react';
+import { ArrowLeft, Settings } from 'lucide-react';
+import React, {
+  Suspense,
+  useDeferredValue,
+  useState,
+  useTransition,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface SessionMonitorPopoverContentProps {
@@ -38,12 +48,25 @@ const SessionMonitorPopoverContent: React.FC<
   const [fetchKey, setFetchKey] = useAtom(sessionMonitorFetchKeyAtom);
   const deferredFetchKey = useDeferredValue(fetchKey);
   const [isPending, startTransition] = useTransition();
+  const [view, setView] = useState<'list' | 'settings'>('list');
+  const [sort] = useBAISettingUserState('session_monitor_sort');
+  const [includeStarting] = useBAISettingUserState(
+    'session_monitor_include_starting',
+  );
+  const [rows] = useBAISettingUserState('session_monitor_rows');
   const { entries, nodesById, total, fetchedAt } =
     useSessionMonitorData(deferredFetchKey);
 
-  const ranked = rankSessions(entries);
-  const visible = ranked.slice(0, SESSION_MONITOR_VISIBLE_LIMIT);
-  const hiddenCount = Math.max(0, total - visible.length);
+  const listed =
+    (includeStarting ?? true)
+      ? entries
+      : entries.filter((e) => !isStartingStatus(e.status));
+  const ranked = rankSessions(listed, sort ?? 'deadline');
+  const visible = ranked.slice(0, rows ?? SESSION_MONITOR_VISIBLE_LIMIT);
+  const hiddenCount = Math.max(
+    0,
+    total - (entries.length - listed.length) - visible.length,
+  );
   const running = entries.filter((e) => e.status === 'RUNNING').length;
   const starting = entries.length - running;
   const showDeadlineColumn = visible.some((e) => e.deadline !== null);
@@ -60,97 +83,117 @@ const SessionMonitorPopoverContent: React.FC<
         align="center"
         gap="xs"
         style={{
-          padding: `${token('--spacing-2')} ${token('--spacing-3')}`,
+          padding: `${token('--spacing-1-5')} ${token('--spacing-3')}`,
         }}
       >
         <Text type="label" weight="semibold">
-          {t('sessionMonitor.MySessions')}
+          {view === 'settings'
+            ? t('sessionMonitor.MonitorSettings')
+            : t('sessionMonitor.MySessions')}
         </Text>
-        <Text type="supporting">
-          {t('sessionMonitor.RunningCount', { count: running })}
-          {starting > 0 &&
-            ` · ${t('sessionMonitor.StartingCount', { count: starting })}`}
-        </Text>
+        {view === 'list' && (
+          <Text type="supporting">
+            {t('sessionMonitor.RunningCount', { count: running })}
+            {starting > 0 &&
+              ` · ${t('sessionMonitor.StartingCount', { count: starting })}`}
+          </Text>
+        )}
         <span style={{ flex: 1 }} />
-        <BAIFetchKeyButton
-          size="small"
-          type="text"
-          value={fetchKey}
-          loading={isPending || fetchKey !== deferredFetchKey}
-          showLastLoadTime
-          lastLoadTime={new Date(fetchedAt)}
-          onChange={(nextKey) => startTransition(() => setFetchKey(nextKey))}
+        {view === 'list' && (
+          <BAIFetchKeyButton
+            size="small"
+            type="text"
+            value={fetchKey}
+            loading={isPending || fetchKey !== deferredFetchKey}
+            showLastLoadTime
+            lastLoadTime={new Date(fetchedAt)}
+            onChange={(nextKey) => startTransition(() => setFetchKey(nextKey))}
+          />
+        )}
+        <IconButton
+          data-testid="session-monitor-settings-button"
+          variant="ghost"
+          size="sm"
+          label={
+            view === 'settings'
+              ? t('sessionMonitor.MySessions')
+              : t('sessionMonitor.MonitorSettings')
+          }
+          icon={
+            view === 'settings' ? (
+              <ArrowLeft size="1em" />
+            ) : (
+              <Settings size="1em" />
+            )
+          }
+          onClick={() => setView(view === 'settings' ? 'list' : 'settings')}
         />
       </BAIFlex>
-      {visible.length === 0 ? (
-        <BAIFlex
-          justify="center"
-          style={{
-            padding: `${token('--spacing-4')} ${token('--spacing-3')}`,
-            borderTop: `1px solid ${token('--color-border')}`,
-          }}
-        >
-          <Text type="supporting">{t('sessionMonitor.NoActiveSessions')}</Text>
-        </BAIFlex>
+      {view === 'settings' ? (
+        <SessionMonitorSettingsPane onNavigate={onNavigate} />
       ) : (
-        visible.map((entry) => {
-          const node = nodesById.get(entry.id);
-          return node ? (
-            <SessionMonitorItem
-              key={entry.id}
-              sessionFrgmt={node}
-              entry={entry}
-              showDeadlineColumn={showDeadlineColumn}
-              onNavigate={onNavigate}
-            />
-          ) : null;
-        })
-      )}
-      {!isProjectAgnosticPage && (
-        <ErrorBoundaryWithNullFallback>
-          <Suspense fallback={null}>
-            <SessionMonitorResourceUsage />
-          </Suspense>
-        </ErrorBoundaryWithNullFallback>
-      )}
-      <BAIFlex
-        direction="row"
-        align="center"
-        justify="between"
-        gap="sm"
-        style={{
-          padding: `${token('--spacing-2')} ${token('--spacing-3')}`,
-          borderTop: `1px solid ${token('--color-border')}`,
-        }}
-      >
-        <BAIFlex direction="row" align="center" gap="sm">
-          <WebUILink
-            data-testid="session-monitor-open-list"
-            to={buildProjectPath('session', { scope: 'project' })}
-            onClick={onNavigate}
-            style={{ textDecoration: 'none' }}
-          >
-            <Text type="label" weight="semibold" color="accent">
-              {t('sessionMonitor.OpenSessionList')} →
-            </Text>
-          </WebUILink>
-          {hiddenCount > 0 && (
-            <Text type="supporting">
-              {t('sessionMonitor.MoreSessions', { count: hiddenCount })}
-            </Text>
+        <>
+          {visible.length === 0 ? (
+            <BAIFlex
+              justify="center"
+              style={{
+                padding: `${token('--spacing-4')} ${token('--spacing-3')}`,
+                borderTop: `1px solid ${token('--color-border')}`,
+              }}
+            >
+              <Text type="supporting">
+                {t('sessionMonitor.NoActiveSessions')}
+              </Text>
+            </BAIFlex>
+          ) : (
+            visible.map((entry) => {
+              const node = nodesById.get(entry.id);
+              return node ? (
+                <SessionMonitorItem
+                  key={entry.id}
+                  sessionFrgmt={node}
+                  entry={entry}
+                  showDeadlineColumn={showDeadlineColumn}
+                  onNavigate={onNavigate}
+                />
+              ) : null;
+            })
           )}
-        </BAIFlex>
-        <WebUILink
-          data-testid="session-monitor-settings"
-          to={{ search: '?settings=general' }}
-          onClick={onNavigate}
-          style={{ textDecoration: 'none' }}
-        >
-          <Text type="label" color="secondary">
-            {t('sessionMonitor.NotificationSettings')}
-          </Text>
-        </WebUILink>
-      </BAIFlex>
+          {!isProjectAgnosticPage && (
+            <ErrorBoundaryWithNullFallback>
+              <Suspense fallback={null}>
+                <SessionMonitorResourceUsage />
+              </Suspense>
+            </ErrorBoundaryWithNullFallback>
+          )}
+          <BAIFlex
+            direction="row"
+            align="center"
+            justify="between"
+            gap="sm"
+            style={{
+              padding: `${token('--spacing-2')} ${token('--spacing-3')}`,
+              borderTop: `1px solid ${token('--color-border')}`,
+            }}
+          >
+            <WebUILink
+              data-testid="session-monitor-open-list"
+              to={buildProjectPath('session', { scope: 'project' })}
+              onClick={onNavigate}
+              style={{ textDecoration: 'none' }}
+            >
+              <Text type="label" weight="semibold" color="accent">
+                {t('sessionMonitor.OpenSessionList')} →
+              </Text>
+            </WebUILink>
+            {hiddenCount > 0 && (
+              <Text type="supporting">
+                {t('sessionMonitor.MoreSessions', { count: hiddenCount })}
+              </Text>
+            )}
+          </BAIFlex>
+        </>
+      )}
     </BAIFlex>
   );
 };
