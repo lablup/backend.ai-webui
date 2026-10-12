@@ -59,7 +59,7 @@ To create a new custom role:
    - **Description** (optional): Enter a description of the role's purpose
    - **Auto Assign** (optional): When enabled, the role is automatically granted to users when they are added to a scope the role is registered in. Disabled by default.
    - **Scope Type** (required): Select the scope type the role applies to (for example, Domain, Project, or User)
-   - **Target** (required): Choose the specific entity within that scope type. A role is bound to exactly one scope.
+   - **Target** (required): Choose the specific entity within that scope type. A role is bound to exactly one scope. A **Domain** role always applies to the domain you are signed in to.
 3. Click **OK** to create the role
 
 ![](../images/rbac_create_role_modal.png)
