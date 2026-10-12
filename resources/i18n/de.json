@@ -1748,6 +1748,7 @@
     "ContainerRegistry": "Container-Registry",
     "Control": "Steuerung",
     "Cores": "Kerne",
+    "CreateValue": "\"{{value}}\" erstellen",
     "CreatedAt": "Erstellungsdatum",
     "Credential": "Anmeldedaten",
     "Days": "{{num}} Tage",

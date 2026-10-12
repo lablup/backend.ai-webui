@@ -1747,6 +1747,7 @@
     "ContainerRegistry": "Rejestr kontenerów",
     "Control": "Kontrola",
     "Cores": "rdzenie",
+    "CreateValue": "Utwórz \"{{value}}\"",
     "CreatedAt": "Data utworzenia",
     "Credential": "Dane uwierzytelniające",
     "Days": "{{num}} dni",

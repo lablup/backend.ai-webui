@@ -1747,6 +1747,7 @@
     "ContainerRegistry": "Контейнер бүртгэл",
     "Control": "Хяналт",
     "Cores": "цөм",
+    "CreateValue": "\"{{value}}\" үүсгэх",
     "CreatedAt": "Үүсгэсэн огноо",
     "Credential": "Итгэмжлэл",
     "Days": "{{num}} өдөр",
