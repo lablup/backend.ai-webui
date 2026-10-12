@@ -91,18 +91,25 @@ export const HandlerOptionsFormFields: React.FC<{
   const byHandler = useWatch([name, 'byHandler'], form) as
     HandlerOptionsFormValue['byHandler'] | undefined;
 
-  // One override per handler: the manager rejects a duplicate name.
+  // One override per handler: the manager rejects a duplicate name, so a
+  // name chosen in another row leaves this row's list.
+  const chosenNames = _.map(byHandler, (entry) => entry?.handlerName);
   const optionsForRow = (rowIndex: number) =>
-    _.map(handlerNameOptions, (option) => ({
-      value: option.value,
-      label: option.value,
-      description: option.description,
-      disabled: _.some(
-        byHandler,
-        (entry, index) =>
-          index !== rowIndex && entry?.handlerName === option.value,
+    _.map(
+      _.reject(
+        handlerNameOptions,
+        (option) =>
+          _.includes(chosenNames, option.value) &&
+          chosenNames[rowIndex] !== option.value,
       ),
-    }));
+      (option) => ({
+        value: option.value,
+        label: option.value,
+        description: option.description,
+      }),
+    );
+  const hasUnchosenName =
+    _.size(_.compact(chosenNames)) < _.size(handlerNameOptions);
 
   return (
     <ResourceGroupOptionsCollapsible
@@ -203,6 +210,7 @@ export const HandlerOptionsFormFields: React.FC<{
                 type="dashed"
                 icon={<PlusIcon />}
                 block
+                disabled={!hasUnchosenName}
                 onClick={() =>
                   add({
                     handlerName: '',
