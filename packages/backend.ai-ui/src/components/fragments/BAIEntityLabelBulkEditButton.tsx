@@ -7,6 +7,7 @@ import BAIEntityLabelSettingModal, {
   type BAIEntityLabelSettingModalTarget,
 } from './BAIEntityLabelSettingModal';
 import { IconButton, type IconButtonProps } from '@lablup/ui-common/IconButton';
+import classNames from 'classnames';
 import { TagsIcon } from 'lucide-react';
 import { useState } from 'react';
 
@@ -25,6 +26,7 @@ const BAIEntityLabelBulkEditButton = ({
   entityType,
   targets,
   onLabelsChanged,
+  className,
   ...iconButtonProps
 }: BAIEntityLabelBulkEditButtonProps) => {
   'use memo';
@@ -40,6 +42,8 @@ const BAIEntityLabelBulkEditButton = ({
         variant="ghost"
         tooltip={t('comp:BAIEntityLabelBulkEditButton.AddLabels')}
         {...iconButtonProps}
+        // The selection bar's action tint, as the sibling ghost buttons wear.
+        className={classNames('bai-action-accent', className)}
         label={t('comp:BAIEntityLabelBulkEditButton.AddLabels')}
         icon={<TagsIcon />}
         onClick={() => setIsOpen(true)}

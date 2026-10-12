@@ -429,9 +429,8 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                       <IconButton
                         label={t('data.folders.MoveToTrash')}
                         tooltip={t('data.folders.MoveToTrash')}
-                        icon={<TrashIcon />}
+                        icon={<TrashIcon color="var(--color-error)" />}
                         variant="ghost"
-                        className="bai-name-action-cell-danger"
                         onClick={() => {
                           toggleDeleteModal();
                         }}
@@ -457,8 +456,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                       <IconButton
                         label={t('data.folders.Delete')}
                         tooltip={t('data.folders.Delete')}
-                        icon={<Trash2Icon />}
-                        className="bai-name-action-cell-danger"
+                        icon={<Trash2Icon color="var(--color-error)" />}
                         variant="ghost"
                         onClick={() => {
                           toggleDeleteForeverModal();
