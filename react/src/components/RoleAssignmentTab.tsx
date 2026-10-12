@@ -4,6 +4,7 @@
  */
 import { RoleAssignmentTabBulkRevokeMutation } from '../__generated__/RoleAssignmentTabBulkRevokeMutation.graphql';
 import { RoleAssignmentTabFragment$key } from '../__generated__/RoleAssignmentTabFragment.graphql';
+import { RoleAssignmentTabGrantedAtQuery } from '../__generated__/RoleAssignmentTabGrantedAtQuery.graphql';
 import {
   RoleAssignmentFilter,
   RoleAssignmentOrderBy,
@@ -34,9 +35,9 @@ import {
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { PlusIcon, Trash2 } from 'lucide-react';
-import React, { useState, useTransition } from 'react';
+import React, { useDeferredValue, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useRefetchableFragment } from 'react-relay';
+import { graphql, useLazyLoadQuery, useRefetchableFragment } from 'react-relay';
 
 type AssignmentOrder =
   | 'EMAIL_ASC'
@@ -66,6 +67,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     { userId: string; label: string }[] | null
   >(null);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
+  const [grantFetchKey, setGrantFetchKey] = useState(0);
 
   // Pagination / order / filter live in local React state (not the URL);
   // they reset whenever the drawer content remounts.
@@ -196,9 +198,62 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       }
     `);
 
-  // `usersV2` answers users, not assignment rows, so it has no grant time.
-  // TODO(needs-backend): BA-8188 — restore Granted At once usersV2 carries it.
   const isUsersV2 = baiClient.isManagerVersionCompatibleWith('26.9.0a4');
+
+  // `usersV2` answers users, not assignment rows, so the grant time of the
+  // listed users is looked up from their assignment rows by email.
+  const pageEmailsKey = isUsersV2
+    ? _.compact(
+        _.map(data.usersV2?.edges, (edge) => edge?.node?.basicInfo.email),
+      ).join('\n')
+    : '';
+  const deferredPageEmailsKey = useDeferredValue(pageEmailsKey);
+  const deferredPageEmails = deferredPageEmailsKey
+    ? deferredPageEmailsKey.split('\n')
+    : [];
+  const { adminRoleAssignments } =
+    useLazyLoadQuery<RoleAssignmentTabGrantedAtQuery>(
+      graphql`
+        query RoleAssignmentTabGrantedAtQuery(
+          $filter: RoleAssignmentFilter
+          $limit: Int
+          $skip: Boolean!
+        ) {
+          adminRoleAssignments(filter: $filter, limit: $limit)
+            @skip(if: $skip) {
+            edges {
+              node {
+                id
+                userId
+                grantedAt
+              }
+            }
+          }
+        }
+      `,
+      {
+        filter: {
+          roleId: { equals: roleId },
+          OR: _.map(deferredPageEmails, (email) => ({
+            email: { equals: email },
+          })),
+        },
+        limit: deferredPageEmails.length,
+        skip: deferredPageEmails.length === 0,
+      },
+      {
+        fetchPolicy:
+          deferredPageEmails.length === 0 ? 'store-only' : 'network-only',
+        fetchKey: grantFetchKey,
+      },
+    );
+  const grantedAtByUserId = _.fromPairs(
+    _.compact(
+      _.map(adminRoleAssignments?.edges, (edge) =>
+        edge?.node ? [edge.node.userId, edge.node.grantedAt] : null,
+      ),
+    ),
+  );
   const assignments: Array<{
     id: string;
     userId: string;
@@ -214,6 +269,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
                 userId: edge.node.entityId,
                 email: edge.node.basicInfo.email,
                 fullName: edge.node.basicInfo.fullName,
+                grantedAt: grantedAtByUserId[edge.node.entityId],
               }
             : null,
         ),
@@ -244,6 +300,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     const order =
       overrides?.order !== undefined ? overrides.order : queryParams.order;
     startRefetchTransition(() => {
+      setGrantFetchKey((key) => key + 1);
       refetch(
         {
           ...(isUsersV2
@@ -354,7 +411,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       <BAITable
         rowKey="id"
         dataSource={assignments}
-        loading={isPendingRefetch}
+        loading={isPendingRefetch || deferredPageEmailsKey !== pageEmailsKey}
         size="small"
         pagination={{
           pageSize: queryParams.pageSize,
@@ -417,20 +474,17 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
             render: (_, record) => record.fullName || '-',
             sorter: true,
           },
-          ...(isUsersV2
-            ? []
-            : [
-                {
-                  key: 'grantedAt',
-                  dataIndex: 'grantedAt',
-                  title: t('rbac.GrantedAt'),
-                  render: (_: unknown, record: (typeof assignments)[number]) =>
-                    record.grantedAt
-                      ? dayjs(record.grantedAt).format('YYYY-MM-DD HH:mm')
-                      : '-',
-                  sorter: true,
-                },
-              ]),
+          {
+            key: 'grantedAt',
+            dataIndex: 'grantedAt',
+            title: t('rbac.GrantedAt'),
+            render: (_, record) =>
+              record.grantedAt
+                ? dayjs(record.grantedAt).format('YYYY-MM-DD HH:mm')
+                : '-',
+            // UserV2OrderBy has no grant-time field.
+            sorter: !isUsersV2,
+          },
         ]}
       />
       <BAIUnmountAfterClose>
