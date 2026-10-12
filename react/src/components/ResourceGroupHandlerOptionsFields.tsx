@@ -236,31 +236,9 @@ const formatSeconds = (
   unit: string,
 ) => (_.isNil(value) ? unlimited : `${value} ${unit}`);
 
-export const HandlerOptionsDescription: React.FC<{
-  handlerOptions: HandlerOptionsInfo | null | undefined;
-}> = ({ handlerOptions }) => {
-  'use memo';
-  const { t } = useTranslation();
-  const { md } = useBAIBreakpoint();
-  const unlimited = t('resourcePolicy.Unlimited');
-  const seconds = t('resourceGroup.TimeoutSeconds');
-
-  return (
-    <BAIMetadataList columns={md ? 2 : 1}>
-      <MetadataListItem label={t('resourceGroup.DefaultTimeout')}>
-        {formatSeconds(handlerOptions?.default.timeoutSec, unlimited, seconds)}
-      </MetadataListItem>
-      <MetadataListItem label={t('resourceGroup.DefaultMaxRetries')}>
-        {handlerOptions?.default.maxRetryCount ?? unlimited}
-      </MetadataListItem>
-    </BAIMetadataList>
-  );
-};
-
 type HandlerOverrideRow = HandlerOptionsInfo['byHandler'][number];
 
-// The per-handler overrides, as a table under the defaults card.
-export const HandlerOverridesTable: React.FC<{
+const HandlerOverridesTable: React.FC<{
   byHandler: HandlerOptionsInfo['byHandler'] | null | undefined;
 }> = ({ byHandler }) => {
   'use memo';
@@ -298,5 +276,38 @@ export const HandlerOverridesTable: React.FC<{
       columns={columns}
       pagination={false}
     />
+  );
+};
+
+export const HandlerOptionsDescription: React.FC<{
+  handlerOptions: HandlerOptionsInfo | null | undefined;
+}> = ({ handlerOptions }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { md } = useBAIBreakpoint();
+  const unlimited = t('resourcePolicy.Unlimited');
+  const seconds = t('resourceGroup.TimeoutSeconds');
+
+  return (
+    <BAIFlex direction="column" align="stretch" gap="sm">
+      <BAIMetadataList columns={md ? 2 : 1}>
+        <MetadataListItem label={t('resourceGroup.DefaultTimeout')}>
+          {formatSeconds(
+            handlerOptions?.default.timeoutSec,
+            unlimited,
+            seconds,
+          )}
+        </MetadataListItem>
+        <MetadataListItem label={t('resourceGroup.DefaultMaxRetries')}>
+          {handlerOptions?.default.maxRetryCount ?? unlimited}
+        </MetadataListItem>
+      </BAIMetadataList>
+      {/* Full width, label on top like the two-column list above it. */}
+      <BAIMetadataList columns={1} label={{ position: 'top' }}>
+        <MetadataListItem label={t('resourceGroup.HandlerOverrides')}>
+          <HandlerOverridesTable byHandler={handlerOptions?.byHandler} />
+        </MetadataListItem>
+      </BAIMetadataList>
+    </BAIFlex>
   );
 };
