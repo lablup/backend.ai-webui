@@ -82,7 +82,7 @@ export interface PaletteActionContext {
 /** Everything `isHitVisible` and the ranker need that is not in the index. */
 export interface SearchContext {
   isSuperAdmin: boolean;
-  supports: (feature: string) => boolean;
+  isManagerVersionCompatibleWith: (version: string) => boolean;
   config: SearchConfigFlags;
   /** Menu keys `useWebUIMenuItems()` emitted. */
   visibleMenuKeys: ReadonlySet<string>;

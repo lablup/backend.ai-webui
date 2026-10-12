@@ -284,17 +284,11 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
       'TERMINATING',
       'PENDING',
       'SCHEDULED',
-      g.backendaiclient.supports('prepared-session-status')
-        ? 'PREPARED'
-        : undefined,
-      g.backendaiclient.supports('creating-session-status')
-        ? 'CREATING'
-        : undefined,
+      'PREPARED',
+      'CREATING',
       'PREPARING',
       'PULLING',
-    ]
-      .filter(Boolean)
-      .join(',');
+    ].join(',');
 
     const sessionFields = [
       'session_id',

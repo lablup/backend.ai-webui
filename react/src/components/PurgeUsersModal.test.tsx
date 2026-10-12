@@ -56,7 +56,7 @@ vi.mock('../hooks', async (importOriginal) => {
   return {
     ...originalModule,
     useSuspendedBackendaiClient: () => ({
-      supports: () => getSupportsPerIdResults(),
+      isManagerVersionCompatibleWith: () => getSupportsPerIdResults(),
     }),
   };
 });

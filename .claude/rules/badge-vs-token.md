@@ -30,9 +30,9 @@ outline and dark text. A filled chip reads as "a state right now", an outlined
 chip reads as "a value". Drawing a username with a `Badge`, or a session status
 with a `Token`, tells the user the wrong thing.
 
-The Astryx-generated agent block says "Status = StatusDot/Token; Badge = counts
-only". This repository overrides that line (the `STATUS SEMANTICS` line under
-it in `AGENTS.md`): status shown as a labelled chip is a `Badge` here.
+The UI-COMMON block (`ui-common agents`) says "Status = StatusDot/Token; Badge =
+counts only". This repository overrides that line (the `STATUS SEMANTICS` line in
+the PROJECT LINES under it in `AGENTS.md`): status shown as a labelled chip is a `Badge` here.
 
 ## Rules
 

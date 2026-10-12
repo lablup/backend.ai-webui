@@ -95,7 +95,7 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
   const [fetchKey, updateFetchKey] = useFetchKey();
   const baiClient = useSuspendedBackendaiClient();
   const statusBuckets = getSessionV2StatusBuckets(
-    baiClient.supports('session-preemption-statuses'),
+    baiClient.isManagerVersionCompatibleWith('26.8.0'),
   );
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(

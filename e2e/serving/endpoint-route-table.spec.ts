@@ -5,7 +5,6 @@ import {
   endpointDetailRunningMockResponse,
   endpointDetailEmptyMockResponse,
   endpointDetailPaginatedMockResponse,
-  endpointDetailLegacyMockResponse,
   MOCK_ENDPOINT_UUID,
 } from './mocking/endpoint-detail-mock';
 import { endpointListMockResponse } from './mocking/endpoint-list-mock';
@@ -29,14 +28,10 @@ test.describe(
     test.fixme(true);
 
     /**
-     * Helper: sets up authentication, feature flag, GraphQL mocks, and navigates
-     * to the endpoint detail page. Returns after the "Routes Info" card is visible.
-     *
-     * Strategy: navigate to the serving list page first, inject the feature flag
-     * into the already-initialized backendaiclient, then click the mock endpoint
-     * link to perform a client-side (React Router) navigation to the detail page.
-     * This preserves the injected feature flag across the navigation because no
-     * full page reload occurs between the flag injection and the detail page render.
+     * Helper: sets up authentication and GraphQL mocks, and navigates to the
+     * endpoint detail page. Returns after the "Routes Info" card is visible.
+     * `route-node` and `route-health-status` are always on (manager >= 26.4.0
+     * is required project-wide), so there is no flag to inject any more.
      */
     async function setupAndNavigateToDetail(
       page: Page,
@@ -44,8 +39,6 @@ test.describe(
       detailMockFn: (
         vars: Record<string, any>,
       ) => Record<string, any> = endpointDetailRunningMockResponse,
-      enableRouteNode: boolean = true,
-      enableRouteHealthStatus: boolean = true,
     ) {
       await loginAsAdmin(page, request);
       await setupGraphQLMocks(page, {
@@ -54,32 +47,11 @@ test.describe(
       });
       // Navigate to the serving list page first so backendaiclient is initialized.
       await navigateTo(page, 'serving');
-      // Wait for the mock endpoint to appear in the table before injecting the flag.
       await expect(
         page.getByRole('link', { name: 'mock-endpoint', exact: true }),
       ).toBeVisible({
         timeout: 10000,
       });
-      // Inject the route-node and route-health-status feature flags into the
-      // already-initialized client. Because the next navigation (clicking the
-      // link below) is a client-side React Router navigation, no page reload
-      // occurs, so the flags persist.
-      await page.evaluate(
-        ({ routeNode, routeHealthStatus }) => {
-          const client = (globalThis as any).backendaiclient;
-          if (client) {
-            // Ensure _updateSupportList has already run by calling supports() once,
-            // then override the feature flags.
-            client.supports('route-node');
-            client._features['route-node'] = routeNode;
-            client._features['route-health-status'] = routeHealthStatus;
-          }
-        },
-        {
-          routeNode: enableRouteNode,
-          routeHealthStatus: enableRouteHealthStatus,
-        },
-      );
       // Click the mock endpoint link to navigate to the detail page via React Router.
       await page
         .getByRole('link', { name: 'mock-endpoint', exact: true })
@@ -119,7 +91,7 @@ test.describe(
     // 1. Feature Flag — New Table vs Legacy Table
     // ─────────────────────────────────────────────────────────────────────────
 
-    test('1.1 Admin sees the new BAIRouteNodes table when route-node flag is enabled', async ({
+    test('1.1 Admin sees the BAIRouteNodes table', async ({
       page,
       request,
     }) => {
@@ -135,7 +107,6 @@ test.describe(
         page,
         request,
         endpointDetailRunningMockResponse,
-        true,
       );
 
       const card = getRoutesInfoCard(page);
@@ -169,57 +140,6 @@ test.describe(
       await expect(
         card.getByRole('columnheader', { name: 'Created At' }),
       ).toBeVisible();
-    });
-
-    test('1.2 Admin sees the legacy route table when route-node flag is disabled', async ({
-      page,
-      request,
-    }) => {
-      // Same root cause as test 1.1: FR-2664 renamed the serving system to
-      // deployments. The list page now uses DeploymentListPageQuery instead
-      // of ServingPageQuery, so setupAndNavigateToDetail (which mocks
-      // ServingPageQuery) cannot navigate to the endpoint detail page.
-      // The Routes Info card and legacy route table tested here no longer
-      // exist in the new DeploymentDetailPage.
-      test.fixme(true);
-      await setupAndNavigateToDetail(
-        page,
-        request,
-        endpointDetailLegacyMockResponse,
-        false,
-      );
-
-      const card = getRoutesInfoCard(page);
-
-      // The BAIRadioGroup toggle should NOT be present in legacy mode
-      await expect(
-        card.locator('.ant-radio-button-wrapper', { hasText: 'Running' }),
-      ).not.toBeVisible();
-      await expect(
-        card.locator('.ant-radio-button-wrapper', { hasText: 'Finished' }),
-      ).not.toBeVisible();
-
-      // The property filter should NOT be present
-      await expect(
-        card.locator('.ant-space-compact .ant-select'),
-      ).not.toBeVisible();
-
-      // Legacy table has "Route ID" but no "Traffic Status" column
-      await expect(
-        card.getByRole('columnheader', { name: 'Route ID' }),
-      ).toBeVisible();
-      await expect(
-        card.getByRole('columnheader', { name: 'Session ID' }),
-      ).toBeVisible();
-      await expect(
-        card.getByRole('columnheader', { name: 'Status', exact: true }),
-      ).toBeVisible();
-      await expect(
-        card.getByRole('columnheader', { name: 'Traffic Ratio' }),
-      ).toBeVisible();
-      await expect(
-        card.getByRole('columnheader', { name: 'Traffic Status' }),
-      ).not.toBeVisible();
     });
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -805,112 +725,6 @@ test.describe(
       await expect(
         sessionIdHeader.locator('.ant-table-column-sorter'),
       ).not.toBeVisible();
-    });
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // 8. Sync Routes Button
-    // ─────────────────────────────────────────────────────────────────────────
-
-    test('8.1 Admin can see the Sync Routes button in the Routes Info card', async ({
-      page,
-      request,
-    }) => {
-      // The Sync Routes button is a legacy fallback for manual route
-      // reconciliation and is rendered only when the backend does NOT
-      // support route-health-status. In that legacy path the new route-node
-      // table is also absent (the legacy routings list is used instead), so
-      // we disable both flags to match the real legacy backend behavior.
-      await setupAndNavigateToDetail(
-        page,
-        request,
-        endpointDetailLegacyMockResponse,
-        false,
-        false,
-      );
-
-      // The Sync Routes button should be visible in the card header
-      const syncButton = page.getByRole('button', { name: 'Sync routes' });
-      await expect(syncButton).toBeVisible();
-    });
-
-    test('8.2 Admin can click Sync Routes and the routes table is refreshed', async ({
-      page,
-      request,
-    }) => {
-      await setupAndNavigateToDetail(
-        page,
-        request,
-        endpointDetailLegacyMockResponse,
-        false,
-        false,
-      );
-
-      // Intercept the sync POST request
-      await page.route(
-        `**/services/${MOCK_ENDPOINT_UUID}/sync`,
-        async (route) => {
-          if (route.request().method() === 'POST') {
-            await route.fulfill({
-              status: 200,
-              contentType: 'application/json',
-              body: JSON.stringify({ success: true }),
-            });
-          } else {
-            await route.continue();
-          }
-        },
-      );
-
-      const syncButton = page.getByRole('button', { name: 'Sync routes' });
-      await syncButton.click();
-
-      // After sync completes, a success notification should appear
-      await expect(
-        page.getByText('The route synchronization requested.'),
-      ).toBeVisible({ timeout: 10000 });
-
-      // The routes table should still be visible
-      const card = getRoutesInfoCard(page);
-      await expect(
-        card.locator('table tbody tr.ant-table-row').first(),
-      ).toBeVisible();
-    });
-
-    test('8.3 Admin sees error notification when Sync Routes request fails', async ({
-      page,
-      request,
-    }) => {
-      await setupAndNavigateToDetail(
-        page,
-        request,
-        endpointDetailLegacyMockResponse,
-        false,
-        false,
-      );
-
-      // Intercept the sync POST request and return failure
-      await page.route(
-        `**/services/${MOCK_ENDPOINT_UUID}/sync`,
-        async (route) => {
-          if (route.request().method() === 'POST') {
-            await route.fulfill({
-              status: 200,
-              contentType: 'application/json',
-              body: JSON.stringify({ success: false }),
-            });
-          } else {
-            await route.continue();
-          }
-        },
-      );
-
-      const syncButton = page.getByRole('button', { name: 'Sync routes' });
-      await syncButton.click();
-
-      // An error notification should appear
-      await expect(
-        page.getByText('The route synchronization request failed.'),
-      ).toBeVisible({ timeout: 10000 });
     });
 
     // ─────────────────────────────────────────────────────────────────────────

@@ -255,6 +255,7 @@ FileBrowser window, you can freely upload, modify, and delete any directories
 and files.
 
 ![](../images/filebrowser_with_new_window.png)
+<!-- TODO: Capture FileBrowser or SFTP screenshots on an operational server -->
 
 When user clicks `Execute filebrowser` button, Backend.AI automatically creates a
 dedicated compute session for the app. So, in the Sessions page, you should see

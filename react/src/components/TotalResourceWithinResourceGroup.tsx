@@ -79,7 +79,6 @@ const remainingAgentsQuery = graphql`
       }
     }
     agent_nodes(filter: $agentNodeFilter, first: $limit, offset: $offset)
-      @since(version: "24.12.0")
       @include(if: $isSuperAdmin) {
       edges {
         node {
@@ -176,11 +175,8 @@ export const useIsAvailableTotalResourceWithinResourceGroup = () => {
   const userRole = useCurrentUserRole();
   const isHiddenAgents = !!baiClient?._config?.hideAgents;
 
-  // Superadmin users can use `agent_nodes` if available, even when hideAgents is true.
-  // The GraphQL `agent_nodes` field is only available from v24.12.0. If hideAgents is false, `agent_summary_list` can be used instead.
-  return userRole === 'superadmin'
-    ? baiClient.isManagerVersionCompatibleWith('24.12.0') || !isHiddenAgents
-    : !isHiddenAgents;
+  // Superadmins read `agent_nodes` even when hideAgents is true; others need `agent_summary_list`.
+  return userRole === 'superadmin' || !isHiddenAgents;
 };
 
 const TotalResourceWithinResourceGroup: React.FC<
@@ -222,7 +218,6 @@ const TotalResourceWithinResourceGroup: React.FC<
           total_count
         }
         agent_nodes(filter: $agentNodeFilter, first: 100)
-          @since(version: "24.12.0")
           @include(if: $isSuperAdmin) {
           edges {
             node {

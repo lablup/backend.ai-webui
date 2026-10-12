@@ -63,21 +63,20 @@ const AgentStats: React.FC<AgentStatsProps> = ({
         schedulableAgentFilter: { type: "String!" }
       )
       @refetchable(queryName: "AgentStatsRefetchQuery") {
-        agentStats @since(version: "25.15.0") {
+        agentStats {
           totalResource {
             free
             used
             capacity
           }
         }
-        aliveAgents: agent_nodes(filter: $aliveAgentFilter, first: 1)
-          @since(version: "24.12.0") {
+        aliveAgents: agent_nodes(filter: $aliveAgentFilter, first: 1) {
           count
         }
         schedulableAgents: agent_nodes(
           filter: $schedulableAgentFilter
           first: 1
-        ) @since(version: "24.12.0") {
+        ) {
           count
         }
       }

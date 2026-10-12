@@ -8,7 +8,7 @@
 - 개수(count)는 계속 `Badge`이고, 점 하나로 상태를 보이는 곳은 계속 `StatusDot`(BUI `BAIBadge`)이다.
 - chip을 그리는 BUI·host component의 이름은 그 component가 그리는 primitive에 따라 `*Badge` 또는 `*Token`으로 끝난다. "Tag"는 image tag, deployment tag 같은 domain 명사로만 남는다.
 - chip 색은 `packages/backend.ai-ui/src/helper/astryxTagVariant.ts`의 helper로만 고른다. `Badge`는 `badgeVariantFor*`, `Token`은 `tokenColorFor*`를 쓴다.
-- 이 결정은 `.claude/rules/badge-vs-token.md`가 review 규칙으로, `AGENTS.md`의 ASTRYX block 아래 `STATUS SEMANTICS` 줄이 agent 지침으로 옮긴다. 그 줄은 Astryx가 생성한 "Status = StatusDot/Token; Badge = counts only"를 이 저장소에서 덮어쓴다.
+- 이 결정은 `.claude/rules/badge-vs-token.md`가 review 규칙으로, `AGENTS.md`의 UI-COMMON block 아래 PROJECT LINES의 `STATUS SEMANTICS` 줄이 agent 지침으로 옮긴다. 그 줄은 `ui-common agents`가 생성한 "Status = StatusDot/Token; Badge = counts only"를 이 저장소에서 덮어쓴다.
 - 범위 밖: `StatusDot`으로 그리는 isActive 표시를 `BAIBooleanToken`으로 바꾸는 일, 사용자 매뉴얼의 "status tag"·"tag chip" 표현, e2e의 `.ant-tag` locator는 별도 이슈로 다룬다.
 
 ## Context
@@ -16,7 +16,7 @@
 - **What the two primitives are**: Astryx core에는 `Tag`나 `Chip` primitive가 없다. chip 모양은 `Badge`(`label: ReactNode`, `variant`, 클릭 불가)와 `Token`(`label: string`, `color`, `icon`, `onClick`, `onRemove`, `endContent`) 둘뿐이다. `StatusDot`은 점 하나만 그리며 chip이 아니다.
 - **Styling after PR #9777**: FR-4002의 theme 변경으로 `Token`은 투명한 바탕에 자기 색의 1px outline을, `Badge`는 옅게 칠한 바탕과 outline과 진한 글자를 갖는다. 두 chip이 한 화면에서 눈에 띄게 달라졌으므로, 어느 값을 어느 chip으로 그리는지가 사용자에게 의미를 전하게 되었다.
 - **One wrapper, two meanings**: BUI의 `BAITag`는 antd `Tag`의 `color` 문자열을 받아 `closable`이면 `Token`, 아니면 `Badge`를 그렸다. 쓰는 곳이 `closable`을 넘기지 않아 사실상 모든 chip이 `Badge`였고, 사용자 이름·권한·버전 같은 settled value와 session 상태 같은 live value가 같은 모양이었다. `BAIDoubleTag`, `BAITagList`, `BAIBadgeList`, `BooleanTag`도 이름과 상관없이 모두 `Badge`를 그렸다.
-- **Upstream guidance disagrees with itself**: `astryx init`이 생성한 agent 지침은 "Status = StatusDot/Token; Badge = counts only"라고 쓰지만, Astryx `Badge` 문서는 semantic variant를 system state에 쓰라고 한다. 이 저장소에는 status를 chip으로 그리는 화면이 많아, 두 문장 중 어느 쪽도 그대로 따를 수 없다.
+- **Upstream guidance disagrees with itself**: `ui-common agents`가 생성한 agent 지침은 "Status = StatusDot/Token; Badge = counts only"라고 쓰지만, Astryx `Badge` 문서는 semantic variant를 system state에 쓰라고 한다. 이 저장소에는 status를 chip으로 그리는 화면이 많아, 두 문장 중 어느 쪽도 그대로 따를 수 없다.
 - **A hidden colour bug**: `BAIRouteNodes`는 `useSemanticColorMap`의 hex 문자열을 `BAITag`의 `color`로 넘겨 route status와 health status가 모두 neutral로 그려졌다. 색 입력을 helper 하나로 묶지 않은 것이 이 bug를 가렸다.
 
 ## 설계도
@@ -112,13 +112,13 @@ flowchart TB
 - **Visible difference**: 한 화면에서 칠해진 chip은 지금 상태를, outline chip은 값이나 분류를 뜻하게 된다. 권한, 이름, type, version을 그리던 chip이 모두 outline으로 바뀐다.
 - **Route colours return**: `BAIRouteNodes`의 route status와 health status가 `badgeVariantForStatus('route', …)`로 그려져 처음으로 색을 갖는다.
 - **Highlight cost**: 검색어 highlight가 필요한 `Token`은 `isLabelHidden`과 `endContent`를 함께 써야 해서 call site가 한 줄 길어진다.
-- **Override to maintain**: `@astryxdesign/core`를 올리고 `astryx init`을 다시 돌릴 때마다 `STATUS SEMANTICS` 줄을 ASTRYX block에 다시 넣어야 한다. `AGENTS.md`의 block 아래 설명이 그것을 적어 둔다.
+- **Override to maintain**: `STATUS SEMANTICS` 줄은 UI-COMMON block의 marker 밖 PROJECT LINES에 있어서, `@lablup/ui-common`을 올린 뒤 `ui-common agents --write`로 block을 다시 생성해도 남는다([ADR 0009](0009-ui-common-as-the-single-entry-point-to-astryx.md)). 생성된 block의 문장이 바뀌면 그 줄이 덮어쓰는 문장도 맞춰 고친다.
 - **Pointers stay Badge**: Current·Latest는 사용자가 아무것도 하지 않아도 옮겨가는 system pointer라 `Badge`다. 같은 모양의 사용자 설정 표시가 새로 생기면 1항의 질문으로 다시 판정한다.
 
 ## 출처
 
 - Jira: FR-4002. GitHub: lablup/backend.ai-webui#9777이 두 primitive의 스타일을 바꿨다.
-- Astryx core 0.5.4의 `Badge`, `Token`, `StatusDot` 문서(`pnpm run astryx component <Name>`).
+- Astryx core 0.5.4의 `Badge`, `Token`, `StatusDot` 문서(`pnpm run ui-common component <Name>`).
 - 결정일: 2026-09-18.
 - 관련: [ADR 0005](0005-container-image-meta-row.md)는 image tag chip을 그리는 곳을 정하고, 이 결정에 따라 그 chip을 `Token`으로 그린다. `.claude/rules/badge-vs-token.md`가 review 규칙이고, `.claude/rules/component-props-extension.md`가 wrapper props의 base를 정한다.
 

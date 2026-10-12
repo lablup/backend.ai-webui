@@ -78,7 +78,6 @@ const toStringFilter = (
  */
 export const buildSessionExportFilter = (
   filter: string | undefined | null,
-  { supportsUserFilter }: { supportsUserFilter: boolean },
 ): SessionExportFilter => {
   const result: SessionExportFilter = {};
   if (!filter || hasTopLevelOr(filter)) return result;
@@ -101,7 +100,7 @@ export const buildSessionExportFilter = (
       if (condition) result.scaling_group_name = condition;
       return;
     }
-    if (property === 'user_email' && supportsUserFilter) {
+    if (property === 'user_email') {
       const condition = toStringFilter(operator, value);
       if (condition) result.user = { email: condition };
       return;

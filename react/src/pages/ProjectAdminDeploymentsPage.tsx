@@ -153,7 +153,7 @@ const ProjectAdminDeploymentsContent: React.FC<
                 name
                 status
               }
-              currentRevision @since(version: "26.4.3") {
+              currentRevision {
                 id
                 revisionNumber
                 ...DeploymentRevisionDetail_revision

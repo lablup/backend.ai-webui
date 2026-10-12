@@ -1,14 +1,12 @@
 {
   "name": "backend-ai-webui-react",
-  "version": "26.9.0-alpha.0",
+  "version": "26.10.0-alpha.0",
   "private": true,
   "type": "module",
   "dependencies": {
     "@ai-sdk/openai-compatible": "^1.0.47",
     "@ai-sdk/react": "^2.0.230",
     "@astryxdesign/lab": "catalog:",
-    "@cloudscape-design/board-components": "3.0.176",
-    "@cloudscape-design/components": "^3.0.1341",
     "@dicebear/collection": "^9.4.2",
     "@dicebear/core": "^9.4.3",
     "@dicebear/shapes": "^9.4.2",

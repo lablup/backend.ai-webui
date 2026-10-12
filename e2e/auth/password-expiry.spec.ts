@@ -9,20 +9,16 @@
 // Mock strategy:
 //   - POST /server/login → password-expired response (mocked in beforeEach)
 //   - POST /server/update-password-no-auth → success response (mocked per-test when needed)
-//   - All other requests (GET / for version, POST /server/login-check) hit the real cluster.
-import { PurgeUsersModal } from '../utils/classes/user/PurgeUsersModal';
-import {
-  KeyPairModal,
-  UserSettingModal,
-} from '../utils/classes/user/UserSettingModal';
+//   - All other requests (GET / for version, the bootstrap POST /func/admin/gql) hit the real cluster.
+import { createAdminApiContext, purgeUserViaApi } from '../utils/admin-api';
 import {
   loginAsAdmin,
   logout,
   modifyConfigToml,
-  navigateTo,
   webServerEndpoint,
   webuiEndpoint,
 } from '../utils/test-util';
+import { createDisposableUser } from '../utils/user-profile-util';
 import { test, expect, type Page } from '@playwright/test';
 
 const EXPIRED_PASSWORD_RESPONSE = {
@@ -105,7 +101,7 @@ test.beforeEach(async ({ page, request }) => {
 
   // Mock the login endpoint to return a password-expired response.
   // Must be registered before page.goto so the route is in place when the
-  // app makes its automatic login-check on load.
+  // app probes the session with the bootstrap GraphQL query on load.
   await page.route('**/server/login', async (route) => {
     await route.fulfill({
       status: 200,
@@ -163,7 +159,7 @@ test(
 
     // Login form must be accessible again (login modal stays open, wrapper restored)
     await expect(page.getByLabel('Email or Username')).toBeVisible();
-    await expect(page.getByLabel('Password')).toBeVisible();
+    await expect(page.getByLabel('Password', { exact: true })).toBeVisible();
   },
 );
 
@@ -212,74 +208,35 @@ test.describe('real account password change flow', () => {
   const NEW_PASSWORD = 'Changed@456';
   let userCreated = false;
 
-  test.afterEach(async ({ page, request }) => {
+  test.afterEach(async () => {
     if (!userCreated) return;
-
-    // Ensure no mocked routes interfere with cleanup
-    await page.unroute('**/server/login');
-    await page.unroute('**/server/update-password-no-auth');
-
-    await loginAsAdmin(page, request);
-    await navigateTo(page, 'credential');
-    await expect(page.getByRole('tab', { name: 'Users' })).toBeVisible();
-
-    // Deactivate
-    const userRow = page.getByRole('row').filter({ hasText: USER_EMAIL });
-    await expect(userRow).toBeVisible({ timeout: 10_000 });
-    await userRow.getByRole('button', { name: 'Deactivate' }).click();
-    const popconfirm = page.locator('.ant-popconfirm');
-    await popconfirm.getByRole('button', { name: 'Deactivate' }).click();
-    await expect(userRow).toBeHidden({ timeout: 10_000 });
-
-    // Purge
-    await page.getByText('Inactive', { exact: true }).click();
-    const inactiveRow = page.getByRole('row').filter({ hasText: USER_EMAIL });
-    await expect(inactiveRow).toBeVisible({ timeout: 10_000 });
-    await inactiveRow.getByRole('checkbox').click();
-    await page.getByRole('button', { name: 'trash bin' }).click();
-    const purgeModal = new PurgeUsersModal(page);
-    await purgeModal.waitForVisible();
-    await purgeModal.confirmDeletion();
-    await expect(inactiveRow).toBeHidden({ timeout: 10_000 });
+    try {
+      const api = await createAdminApiContext();
+      try {
+        await purgeUserViaApi(api, USER_EMAIL);
+      } finally {
+        await api.dispose();
+      }
+    } catch (error) {
+      // Best-effort: the global sweep reclaims leaked e2e-* users.
+      console.warn(`Cleanup of ${USER_EMAIL} failed: ${String(error)}`);
+    }
   });
 
-  test.fixme(
+  test(
     'user can complete the password change flow with a real account and re-login is attempted',
     { tag: ['@regression', '@auth', '@functional'], timeout: 90_000 },
     async ({ page, request }) => {
-      // This test requires a live Backend.AI cluster at webServerEndpoint
-      // (http://localhost:8090). In environments where the backend is not
-      // reachable, loginAsAdmin times out waiting for the user-dropdown-button.
-      // The test is skipped until the backend is available.
       // ── Setup: remove the beforeEach mock and create a real test user ──
       await page.unroute('**/server/login');
       await loginAsAdmin(page, request);
-      await navigateTo(page, 'credential');
-      await expect(page.getByRole('tab', { name: 'Users' })).toBeVisible();
-      await page.getByRole('button', { name: 'Create User' }).click();
-
-      const userSettingModal = new UserSettingModal(page);
-      await userSettingModal.createUser(
+      userCreated = true;
+      await createDisposableUser(
+        page,
         USER_EMAIL,
         USER_NAME,
         ORIGINAL_PASSWORD,
       );
-      userCreated = true;
-
-      // Key pair modal may appear after user creation
-      const keyPairModal = new KeyPairModal(page);
-      if (
-        await keyPairModal
-          .getModal()
-          .isVisible({ timeout: 5_000 })
-          .catch(() => false)
-      ) {
-        await keyPairModal.close();
-      }
-      await userSettingModal.waitForHidden();
-      await expect(page.getByRole('cell', { name: USER_EMAIL })).toBeVisible({
-        timeout: 10_000,
-      });
       await logout(page);
 
       // ── Navigate and fill the login form BEFORE registering the mock ──
@@ -301,7 +258,7 @@ test.describe('real account password change flow', () => {
 
       // ── Now register the mock: first user-initiated call → expired, rest → real backend ──
       // The mock is registered late (after page.goto and form fill) so that the app's
-      // automatic login-check on load hits the real backend instead of consuming our
+      // automatic silent login on load hits the real backend instead of consuming our
       // one-shot expired response meant for the explicit Login button click.
       let loginCallCount = 0;
       await page.route('**/server/login', async (route) => {

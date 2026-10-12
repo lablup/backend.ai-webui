@@ -15,10 +15,12 @@ import {
 } from '../__generated__/VFolderNodesV2Fragment.graphql';
 import { VFolderNodesV2RestoreMutation } from '../__generated__/VFolderNodesV2RestoreMutation.graphql';
 import { App } from '../app-shim';
+import { convertToDecimalUnit } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useSuspenseTanQuery, useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import { ProjectContextOrNull } from '../types/projectContext';
@@ -70,37 +72,14 @@ import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation, useQueryLoader } from 'react-relay';
 
-/**
- * Legacy antd `Tag` colour map — kept ONLY for the unconverted V1
- * `VFolderNodeDescription` import; converted call sites in this area use
- * `badgeVariantForStatus('vfolder', …)` from the ticket-13 lookup instead.
- */
-export const statusTagColor = {
-  // V2 UPPERCASE enum values (VFolderOperationStatus)
-  // mountable
-  READY: 'warning',
-  CLONING: 'warning',
-  // delete
-  DELETE_PENDING: 'default',
-  DELETE_ONGOING: 'default',
-  DELETE_COMPLETE: 'default',
-  // error
-  DELETE_ERROR: 'error',
-  // Legacy V1 kebab-case values emitted by `VirtualFolderNode.status`.
-  ready: 'warning',
-  performing: 'warning',
-  cloning: 'warning',
-  mounted: 'warning',
-  error: 'error',
-  'delete-pending': 'default',
-  'delete-ongoing': 'default',
-  'delete-complete': 'default',
-  'delete-error': 'error',
-};
-
 export type VFolderNodeInList = NonNullable<
   VFolderNodesV2Fragment$data[number]
 >;
+
+/** Formats a `BinarySizeInfo` from its exact byte count. */
+export const formatBinarySizeInfo = (
+  size: { expr: string } | null | undefined,
+) => (size ? convertToDecimalUnit(size.expr, 'auto', 2)?.displayValue : null);
 
 // V2 `VFolderOrderField` enum values. Legacy fields not present in V2
 // (last_used, cloneable, ownership_type, quota_scope_id, num_files, cur_size,
@@ -146,6 +125,12 @@ interface VFolderNameCellProps {
    * unchanged. Mirrors `VFolderNodes` (V1, FR-3423).
    */
   noDeployTooltip?: string;
+  /**
+   * When true, project-type folders are locked from row-level destructive
+   * actions — the user-facing data page (`/data`) manages them from the
+   * admin data page instead. Mirrors `VFolderNodes` (V1, FR-4142).
+   */
+  disableProjectFolderActions?: boolean;
 }
 
 const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
@@ -156,16 +141,28 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
   onDeleteForever,
   onStartServiceFallback,
   noDeployTooltip,
+  disableProjectFolderActions = false,
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
   const { generateFolderPath } = useFolderExplorerOpener();
   const navigate = useWebUINavigate();
+  const effectiveAdminRole = useEffectiveAdminRole();
 
   const isPipelineFolder = vfolder?.metadata?.usageMode === 'DATA';
   const isModelFolder = vfolder?.metadata?.usageMode === 'MODEL';
   const isDeleted = isDeletedCategory(vfolder?.vfolderStatus);
+  const hasDeletePermission = _.includes(vfolder?.permissions, 'SOFT_DELETE');
+  const isProjectFolder = vfolder?.accessControl?.ownershipType === 'GROUP';
+  const isProjectFolderManagedElsewhere =
+    disableProjectFolderActions && isProjectFolder;
+  // Admins get redirected to the admin data page; members fall back to the
+  // existing per-action reason (mirrors `VFolderNodes` V1).
+  const projectFolderAdminHint =
+    isProjectFolderManagedElsewhere && effectiveAdminRole !== 'none'
+      ? t('data.folders.ManageProjectFolderInAdmin')
+      : undefined;
 
   const vfolderId = toLocalId(vfolder.id ?? '');
   const folderPath = generateFolderPath(vfolderId);
@@ -205,12 +202,17 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           title: t('data.folders.MoveToTrash'),
           icon: <TrashIcon />,
           type: 'danger' as const,
-          // TODO(needs-backend): V2 `VFolder` exposes no entity-level action
-          // permission (`accessControl.permission` is mount-level RO/RW/
-          // RW_DELETE), so the backend is what rejects unauthorized deletes.
           disabled: isPipelineFolder
             ? { reason: t('data.folders.CannotDeletePipelineFolder') }
-            : false,
+            : isProjectFolderManagedElsewhere
+              ? {
+                  reason:
+                    projectFolderAdminHint ??
+                    t('data.folders.NoDeletePermission'),
+                }
+              : !hasDeletePermission
+                ? { reason: t('data.folders.NoDeletePermission') }
+                : false,
           popConfirm: {
             title: t('data.folders.MoveToTrash'),
             description: vfolder?.metadata?.name ?? undefined,
@@ -229,9 +231,15 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           icon: <RotateCcwIcon />,
           disabled: isPipelineFolder
             ? { reason: t('data.folders.CannotRestorePipelineFolder') }
-            : vfolder?.vfolderStatus !== 'DELETE_PENDING'
-              ? { reason: t('data.folders.DeletionAlreadyStarted') }
-              : false,
+            : isProjectFolderManagedElsewhere
+              ? {
+                  reason:
+                    projectFolderAdminHint ??
+                    t('data.folders.NoRestorePermission'),
+                }
+              : vfolder?.vfolderStatus !== 'DELETE_PENDING'
+                ? { reason: t('data.folders.DeletionAlreadyStarted') }
+                : false,
           popConfirm: {
             title: t('data.folders.Restore'),
             description: vfolder?.metadata?.name ?? undefined,
@@ -248,8 +256,13 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           title: t('data.folders.Delete'),
           icon: <Trash2Icon />,
           type: 'danger' as const,
-          disabled:
-            vfolder?.vfolderStatus !== 'DELETE_PENDING'
+          disabled: isProjectFolderManagedElsewhere
+            ? {
+                reason:
+                  projectFolderAdminHint ??
+                  t('data.folders.NoDeletePermission'),
+              }
+            : vfolder?.vfolderStatus !== 'DELETE_PENDING'
               ? { reason: t('data.folders.DeletionAlreadyStarted') }
               : false,
           onClick: onDeleteForever,
@@ -472,6 +485,13 @@ interface VFolderNodesV2Props extends Omit<
    * future admin-oversight caller of V2 gets the same treatment for free.
    */
   noDeployTooltip?: string;
+  /**
+   * Forwarded to each row's name cell. Set on the user-facing data page
+   * (`/data`) so project folders are not deletable/restorable from there
+   * — those actions live on the admin data page instead. Mirrors
+   * `VFolderNodes` (V1, FR-4142).
+   */
+  disableProjectFolderActions?: boolean;
 }
 
 const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
@@ -479,6 +499,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   onRemoveRow,
   project,
   noDeployTooltip,
+  disableProjectFolderActions,
   ...tableProps
 }) => {
   'use memo';
@@ -523,6 +544,12 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
         vfolderStatus: status
         host
         unmanagedPath
+        usage {
+          numFiles
+          usedBytes {
+            expr @since(version: "26.8.0")
+          }
+        }
         metadata {
           name
           usageMode
@@ -534,6 +561,13 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
         accessControl {
           permission
           ownershipType
+        }
+        permissions @since(version: "26.9.0rc1")
+        quota {
+          maxFiles
+          maxSize {
+            expr @since(version: "26.8.0")
+          }
         }
         ownership {
           userId
@@ -640,6 +674,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
                 <VFolderNameCell
                   vfolder={vfolder}
                   noDeployTooltip={noDeployTooltip}
+                  disableProjectFolderActions={disableProjectFolderActions}
                   onShare={() => {
                     vfolder?.ownership?.userId === currentUser?.uuid
                       ? setInviteFolderId(toLocalId(vfolder?.id ?? null))
@@ -740,10 +775,6 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
             ),
             sorter: isEnableSorter('host'),
           },
-          // TODO(needs-backend): V2 `VFolder` does not expose the legacy
-          // per-user `permissions` array. The Mount Permission column now
-          // derives RO/RW from `accessControl.permission` only; restore or
-          // augment once the backend re-introduces richer permission info.
           {
             key: 'permissions',
             title: t('data.folders.MountPermission'),
@@ -799,39 +830,41 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
               }
             },
           },
-          // TODO(needs-backend): V2 `VFolder` does not yet expose file/size
-          // usage statistics (num_files, cur_size) or quota limits
-          // (max_files, max_size). Keep these as hidden placeholder columns
-          // so column order and per-user settings (saved by key) remain
-          // stable; swap `render` back to the real formatter once the
-          // backend fields are available.
+          // Usage / quota are hidden by default as in `VFolderNodes`; the
+          // column keys are the persisted per-user settings keys.
           {
             key: 'num_files',
             title: t('data.folders.NumberOfFiles'),
             defaultHidden: true,
             sorter: false,
-            render: () => '-',
+            render: (__, vfolder) =>
+              vfolder.usage ? vfolder.usage.numFiles.toLocaleString() : '-',
           },
           {
             key: 'cur_size',
             title: t('data.folders.FolderUsage'),
             defaultHidden: true,
             sorter: false,
-            render: () => '-',
+            render: (__, vfolder) =>
+              formatBinarySizeInfo(vfolder.usage?.usedBytes) ?? '-',
           },
           {
             key: 'max_files',
             title: t('data.folders.MaxFolderQuota'),
+            dataIndex: ['quota', 'maxFiles'],
             defaultHidden: true,
             sorter: false,
-            render: () => '-',
+            render: (value: number | null | undefined) =>
+              value != null && value > 0 ? value.toLocaleString() : '-',
           },
           {
             key: 'max_size',
             title: t('data.folders.MaxSize'),
+            dataIndex: ['quota', 'maxSize'],
             defaultHidden: true,
             sorter: false,
-            render: () => '-',
+            render: (value: VFolderNodeInList['quota']['maxSize']) =>
+              formatBinarySizeInfo(value) ?? '-',
           },
           {
             key: 'cloneable',

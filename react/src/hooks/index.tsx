@@ -332,6 +332,20 @@ export type BackendAIClient = {
   [key: string]: any;
   _config: BackendAIConfig;
   isManagerVersionCompatibleWith: (version: string) => boolean;
+  newSignedRequest: (
+    method: string,
+    queryString: string,
+    body?: any,
+    serviceName?: string | null,
+    secure?: boolean,
+  ) => any;
+  _wrapWithPromise: (
+    request: any,
+    rawFile?: boolean,
+    signal?: AbortSignal | null,
+    timeout?: number,
+    retry?: number,
+  ) => Promise<any>;
   utils: {
     elapsedTime: (
       start: string | Date | number,

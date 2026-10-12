@@ -10,12 +10,6 @@ vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key }),
 }));
 
-vi.mock('.', () => ({
-  useSuspendedBackendaiClient: () => ({
-    supports: (flag: string) => supportedFeatures.has(flag),
-  }),
-}));
-
 vi.mock('./backendai', () => ({
   useCurrentUserRole: () => currentUserRole,
 }));
@@ -40,7 +34,6 @@ vi.mock('../helper/csv-util', () => ({
   downloadCSV: (...args: Array<unknown>) => downloadCSVMock(...args),
 }));
 
-let supportedFeatures = new Set<string>();
 let currentUserRole: string | undefined;
 const baiRequest = vi.fn();
 const downloadCSVMock = vi.fn();
@@ -52,7 +45,6 @@ const resolve = (
     nodeKey: 'sessions',
     scope: 'admin',
     userRole: 'user',
-    supportsExportCSV: true,
     ...overrides,
   });
 
@@ -77,18 +69,10 @@ describe('resolveCSVExportRoute', () => {
     expect(resolve({ scope: 'my', nodeKey: 'users' })).toBe('none');
     expect(resolve({ scope: 'my', nodeKey: 'audit-logs' })).toBe('none');
   });
-
-  it('falls back to no route on managers without export-csv', () => {
-    expect(resolve({ scope: 'my', supportsExportCSV: false })).toBe('none');
-    expect(resolve({ userRole: 'superadmin', supportsExportCSV: false })).toBe(
-      'none',
-    );
-  });
 });
 
 describe('useCSVExport', () => {
   beforeEach(() => {
-    supportedFeatures = new Set(['export-csv']);
     currentUserRole = 'user';
     baiRequest.mockReset();
     baiRequest.mockImplementation(({ method }: { method: string }) =>

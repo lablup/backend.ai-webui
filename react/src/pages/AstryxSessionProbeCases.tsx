@@ -55,7 +55,7 @@ export const AstryxSessionProbeCases: React.FC<{ caseName: string }> = ({
       <BAIFlex direction="column" align="start" gap="md">
         <SessionStatusBadge sessionFrgmt={data.running} />
         <SessionStatusBadge sessionFrgmt={data.pending} />
-        <SessionStatusBadge sessionFrgmt={data.error} showInfo />
+        <SessionStatusBadge sessionFrgmt={data.error} />
         <BAIFlex gap="xs" wrap="wrap">
           {data.running && <SessionReservation sessionFrgmt={data.running} />}
         </BAIFlex>

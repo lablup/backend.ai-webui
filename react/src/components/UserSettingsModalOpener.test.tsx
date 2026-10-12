@@ -186,9 +186,12 @@ describe('UserSettingsModalOpener history contract', () => {
     await router.navigate('/usersettings?settings=logs');
 
     expect(await screen.findByTestId('modal')).toBeInTheDocument();
-    expect(screen.getByTestId('location')).toHaveTextContent(
-      '/session?tab=running&settings=logs',
-    );
+    // The modal paints from the param before the redirect onto the background lands.
+    await vi.waitFor(() => {
+      expect(screen.getByTestId('location')).toHaveTextContent(
+        '/session?tab=running&settings=logs',
+      );
+    });
 
     await user.click(screen.getByText('close'));
 

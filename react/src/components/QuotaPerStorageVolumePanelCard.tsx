@@ -5,7 +5,7 @@
 import { QuotaPerStorageVolumePanelCardQuery } from '../__generated__/QuotaPerStorageVolumePanelCardQuery.graphql';
 import { QuotaPerStorageVolumePanelCardUserQuery } from '../__generated__/QuotaPerStorageVolumePanelCardUserQuery.graphql';
 import { addQuotaScopeTypePrefix, convertToDecimalUnit } from '../helper';
-import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAIProgress from './BAIProgress';
 import StorageSelect from './StorageSelect';
@@ -60,22 +60,19 @@ const QuotaScopeContent: React.FC<QuotaScopeContentProps> = ({
   const baiClient = useSuspendedBackendaiClient();
 
   // TODO: Add resolver to enable subquery and modify to call useLazyLoadQuery only once.
-  const { user } = useLazyLoadQuery<QuotaPerStorageVolumePanelCardUserQuery>(
-    graphql`
-      query QuotaPerStorageVolumePanelCardUserQuery(
-        $domain_name: String
-        $email: String
-      ) {
-        user(domain_name: $domain_name, email: $email) {
-          id
+  // The quota scope id needs the raw user UUID, which is `entityId`.
+  const { myUserV2 } =
+    useLazyLoadQuery<QuotaPerStorageVolumePanelCardUserQuery>(
+      graphql`
+        query QuotaPerStorageVolumePanelCardUserQuery {
+          myUserV2 {
+            entityId
+          }
         }
-      }
-    `,
-    {
-      domain_name: useCurrentDomainValue(),
-      email: baiClient?.email,
-    },
-  );
+      `,
+      {},
+    );
+  const userId = myUserV2?.entityId;
   const { project_quota_scope, user_quota_scope } =
     useLazyLoadQuery<QuotaPerStorageVolumePanelCardQuery>(
       graphql`
@@ -110,11 +107,11 @@ const QuotaScopeContent: React.FC<QuotaScopeContentProps> = ({
           'project',
           currentProject?.id || '',
         ),
-        user_quota_scope_id: addQuotaScopeTypePrefix('user', user?.id || ''),
+        user_quota_scope_id: addQuotaScopeTypePrefix('user', userId || ''),
         storage_host_name: selectedVolumeInfo?.id || '',
         skipQuotaScope:
           currentProject?.id === undefined ||
-          user?.id === undefined ||
+          userId === undefined ||
           !selectedVolumeInfo?.id,
       },
     );

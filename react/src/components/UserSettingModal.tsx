@@ -15,6 +15,7 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { isValidIPOrCidr } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import { roleFromV2 } from '../helper/userRole';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole, useTOTPSupported } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -129,13 +130,6 @@ const statusFromV2: Record<string, string> = {
   DELETED: 'deleted',
 };
 
-const roleFromV2: Record<string, string> = {
-  USER: 'user',
-  ADMIN: 'admin',
-  SUPERADMIN: 'superadmin',
-  MONITOR: 'monitor',
-};
-
 const formatBulkEmail = (
   prefix: string,
   suffix: string,
@@ -170,7 +164,7 @@ const EMPTY_TAG_SEARCH_SOURCE: SearchSource<SearchableItem> = {
 // comma/space-separated text into multiple tags) has no Tokenizer
 // equivalent and is dropped — tags are committed one at a time with Enter
 // (`hasCreate`). The per-tag red highlight for invalid IPs (the antd
-// `tagRender`) is also dropped: `astryx component Tokenizer` best practices
+// `tagRender`) is also dropped: `ui-common component Tokenizer` best practices
 // explicitly discourage custom per-token colors, and the field's own
 // `rules` validator (kept unchanged below) already surfaces every invalid
 // IP in the BAIFormItem's error text under the control, so the same

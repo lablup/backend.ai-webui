@@ -1,6 +1,6 @@
 {
   "name": "backend.ai-ui",
-  "version": "26.9.0-alpha.0",
+  "version": "26.10.0-alpha.0",
   "description": "React components for Backend.AI",
   "repository": {
     "type": "git",
@@ -65,6 +65,7 @@
     "@dicebear/shapes": "^9.4.2",
     "big.js": "catalog:",
     "classnames": "catalog:",
+    "copy-to-clipboard": "^3.3.3",
     "dayjs": "catalog:",
     "i18next": "catalog:",
     "lodash-es": "catalog:",

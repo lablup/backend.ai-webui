@@ -66,7 +66,8 @@ const portFlag = process.env.PORT ? `--app-port ${process.env.PORT} ` : '';
 delete env.PORT; // Avoid leaking to portless / CRA before Portless reassigns it.
 
 // Decide the portless app name (`https://<name>.localhost:1355`) — the issue key,
-// the PR number and a word for what this branch is: `fr-3665-pr9049-statusline`.
+// the PR number and a word for what this branch is: `fr-3665-pr9049-statusline`
+// (`gh-10144-pr10150-drawer` on the branch of a GitHub-native issue).
 // Composition rules and fallbacks live in portless-app-name.mjs.
 //
 // PORTLESS_APP_NAME supplies only the descriptive word (the dev-server skill fills

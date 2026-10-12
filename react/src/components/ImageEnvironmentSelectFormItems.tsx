@@ -113,9 +113,10 @@ const ImageEnvironmentSelectFormItems: React.FC<
   const [metadata, { getImageMeta, tagAlias }] = useBackendAIImageMetaData();
   const { token } = useTheme();
   const { isDarkMode } = useThemeMode();
-  const [showDedicatedFirst, setShowDedicatedFirst] = useBAISettingUserState(
-    'show_accelerator_dedicated_images_first',
-  );
+  const [showDedicatedFirstSetting, setShowDedicatedFirst] =
+    useBAISettingUserState('show_accelerator_dedicated_images_first');
+  // On until the user explicitly turns it off.
+  const showDedicatedFirst = showDedicatedFirstSetting ?? true;
 
   // antd `RefSelectProps` restated as the one method these two refs ever
   // called. `BAISelect` accepts `ref` and never attaches it (P26-8 — Astryx's
@@ -161,7 +162,6 @@ const ImageEnvironmentSelectFormItems: React.FC<
       query ImageEnvironmentSelectFormItemsQuery($installed: Boolean) {
         images(is_installed: $installed) {
           id
-          name @deprecatedSince(version: "24.12.0")
           humanized_name
           tag
           registry
@@ -177,13 +177,13 @@ const ImageEnvironmentSelectFormItems: React.FC<
             key
             value
           }
-          namespace @since(version: "24.12.0")
-          base_image_name @since(version: "24.12.0")
-          tags @since(version: "24.12.0") {
+          namespace
+          base_image_name
+          tags {
             key
             value
           }
-          version @since(version: "24.12.0")
+          version
           supported_accelerators
         }
       }
@@ -611,7 +611,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                   label={t(
                     'session.launcher.ShowAcceleratorDedicatedImagesFirst',
                   )}
-                  value={!!showDedicatedFirst}
+                  value={showDedicatedFirst}
                   onChange={setShowDedicatedFirst}
                 />
               </DropdownMenu>

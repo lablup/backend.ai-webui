@@ -20,7 +20,7 @@ import { handleRowSelectionChange } from '../helper';
 import { liftProjectPredicate } from '../helper/adminSessionProjectLift';
 import { ExtractResultValue } from '../helper/resultTypes';
 import { buildSessionExportFilter } from '../helper/sessionExportFilter';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -89,7 +89,6 @@ const AdminComputeSessionListPage = () => {
   'use memo';
 
   const userRole = useCurrentUserRole();
-  const baiClient = useSuspendedBackendaiClient();
 
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -677,11 +676,7 @@ const AdminComputeSessionListPage = () => {
                       // superset of the table and never a subset (FR-3915).
                       _.assign(
                         csvFilter,
-                        buildSessionExportFilter(queryParams.filter, {
-                          supportsUserFilter: baiClient.supports(
-                            'session-export-user-filter',
-                          ),
-                        }),
+                        buildSessionExportFilter(queryParams.filter),
                       );
                       await exportCSV(selectedExportKeys, csvFilter).catch(
                         (err) => {

@@ -87,7 +87,6 @@ export interface VFolderTableProps extends Omit<
   rowKey: string | number;
   onChangeAutoMountedFolders?: (names: Array<string>) => void;
   showAutoMountedFoldersSection?: boolean;
-  ownerEmail?: string;
   onValidateSelectedRowKeys?: (
     invalidKeys: VFolderKey[],
     validVFolders: VFolder[],
@@ -107,7 +106,6 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   rowKey = 'name',
   onChangeAutoMountedFolders,
   showAutoMountedFoldersSection,
-  ownerEmail,
   onValidateSelectedRowKeys,
   ...tableProps
 }) => {
@@ -179,12 +177,11 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const { data: allFolderList } = useSuspenseTanQuery({
-    queryKey: ['VFolderSelectQuery', fetchKey, currentProject.id, ownerEmail],
+    queryKey: ['VFolderSelectQuery', fetchKey, currentProject.id],
     queryFn: () => {
       const search = new URLSearchParams();
       // FIXME: filter by group_id does not work
       // search.set('group_id', currentProject.id);
-      ownerEmail && search.set('owner_user_email', ownerEmail);
       return baiRequestWithPromise({
         method: 'GET',
         url: `/folders?${search.toString()}`,

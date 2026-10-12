@@ -8,7 +8,7 @@ import { App } from '../app-shim';
 // keep reading the antd form engine (locked SHIM decision).
 import { Form } from '../form-engine';
 import { getImageFullName } from '../helper';
-import { ownerEmailFromOwner } from '../helper/vfolderMounts';
+import { getSessionTypeLabel } from '../helper/sessionTypeLabel';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
@@ -24,7 +24,6 @@ import {
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { ImageMetaDivider, ImageTagTokens } from './ImageTags';
 import { PortToken } from './PortSelectFormItem';
-import { SessionOwnerSetterPreviewCard } from './SessionOwnerSetterCard';
 import SourceCodeView from './SourceCodeView';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
@@ -106,10 +105,7 @@ const SessionLauncherPreview: React.FC<{
   const form = Form.useFormInstance<SessionLauncherFormValue>();
   const baiClient = useSuspendedBackendaiClient();
   const sessionType = Form.useWatch('sessionType', { form, preserve: true });
-  const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
   const currentProject = useCurrentProjectValue();
-  // `preserve` reads the raw store: `owner` has no registered Form.Item.
-  const owner = Form.useWatch('owner', { form, preserve: true });
   const mountableHosts = useMountableStorageHosts(currentProjectId);
   // `allocationPreset` holds the preset's id; the store already has the
   // list from `ResourcePresetSelect`, so this resolves without a request.
@@ -140,7 +136,6 @@ const SessionLauncherPreview: React.FC<{
             )?.name ?? allocationPreset
           }`;
   const autoMountedFolders = useSuspendedAutoMountedFolders({
-    ownerEmail: ownerEmailFromOwner(owner),
     currentProjectId,
     mountableHosts,
   });
@@ -197,7 +192,7 @@ const SessionLauncherPreview: React.FC<{
       >
         <BAIMetadataList columns="single">
           <MetadataListItem label={t('session.SessionType')}>
-            {form.getFieldValue('sessionType')}
+            {getSessionTypeLabel(t, form.getFieldValue('sessionType'))}
           </MetadataListItem>
           {!_.isEmpty(form.getFieldValue('sessionName')) && (
             <MetadataListItem label={t('session.launcher.SessionName')}>
@@ -224,29 +219,22 @@ const SessionLauncherPreview: React.FC<{
                   <Text color="secondary">{t('general.None')}</Text>
                 )}
               </MetadataListItem>
-              {supportBatchTimeout ? (
-                <MetadataListItem
-                  label={t('session.launcher.BatchJobTimeoutDuration')}
-                >
-                  {form.getFieldValue(['batch', 'timeout']) ? (
-                    <Text>
-                      {form.getFieldValue(['batch', 'timeout'])}
-                      {form.getFieldValue(['batch', 'timeoutUnit']) || 's'}
-                    </Text>
-                  ) : (
-                    <Text color="secondary">{t('general.None')}</Text>
-                  )}
-                </MetadataListItem>
-              ) : null}
+              <MetadataListItem
+                label={t('session.launcher.BatchJobTimeoutDuration')}
+              >
+                {form.getFieldValue(['batch', 'timeout']) ? (
+                  <Text>
+                    {form.getFieldValue(['batch', 'timeout'])}
+                    {form.getFieldValue(['batch', 'timeoutUnit']) || 's'}
+                  </Text>
+                ) : (
+                  <Text color="secondary">{t('general.None')}</Text>
+                )}
+              </MetadataListItem>
             </>
           )}
         </BAIMetadataList>
       </BAICard>
-      <SessionOwnerSetterPreviewCard
-        onClickExtraButton={() => {
-          onClickEditStep('sessionType');
-        }}
-      />
       <BAICard
         title={t('session.launcher.Environments')}
         showDivider
@@ -366,13 +354,12 @@ const SessionLauncherPreview: React.FC<{
                 />
               </BAIFlex>
             </MetadataListItem>
-            {baiClient.supports('agent-select') &&
-              !baiClient?._config?.hideAgents && (
-                <MetadataListItem label={t('session.launcher.AgentNode')}>
-                  {_.castArray(form.getFieldValue('agent')).join(', ') ||
-                    t('session.launcher.AutoSelect')}
-                </MetadataListItem>
-              )}
+            {!baiClient?._config?.hideAgents && (
+              <MetadataListItem label={t('session.launcher.AgentNode')}>
+                {_.castArray(form.getFieldValue('agent')).join(', ') ||
+                  t('session.launcher.AutoSelect')}
+              </MetadataListItem>
+            )}
             <MetadataListItem label={t('session.launcher.NumberOfContainer')}>
               {form.getFieldValue('cluster_size') === 1
                 ? form.getFieldValue('num_of_sessions')
@@ -484,7 +471,7 @@ const SessionLauncherPreview: React.FC<{
         </BAIFlex>
       </BAICard>
       <BAICard
-        title="Network"
+        title={t('session.launcher.Network')}
         showDivider
         size="small"
         status={form.getFieldError('ports').length > 0 ? 'error' : undefined}
