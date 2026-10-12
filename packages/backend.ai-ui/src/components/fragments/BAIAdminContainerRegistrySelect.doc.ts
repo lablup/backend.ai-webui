@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'Admin-scoped picker for a container registry, built on BAIComplexSelect. It owns its data: a page query (10 rows at a time, ordered by registry name, extended by `loadNext` when the popup scrolls to the bottom) plus a second query that resolves the labels of the currently selected keys — that second query is what keeps the trigger readable once paging has scrolled the chosen row out of `options`. The page query is `adminContainerRegistriesV2` and the label lookup goes through `node(id:)`, which resolves the first selected key (`ContainerRegistryV2Filter` has no id filter); the other keys in `multiple` mode take their label from the loaded page rows. Options are labelled `"<registryName> - <project>"`, or the registry name alone when the node carries no project, and typing in the popup search box refetches server-side with a debounced case-insensitive name filter. The emitted value is a plain key (`string`, or `string[]` in `multiple` mode): the Relay global `id` by default, or the registry UUID when `valuePropName="row_id"`. Both queries run through `useLazyLoadQuery`, so it must sit inside a Suspense boundary; `label` is required by BAIComplexSelect, and every prop not listed below is forwarded to it — except `options`, `value`, `onChange`, `searchValue`, `onSearch` and `total`, which this wrapper owns and omits from its props type.',
+      'Admin-scoped picker for a container registry, built on BAIComplexSelect. It owns its data: a page query (10 rows at a time, ordered by registry name, extended by `loadNext` when the popup scrolls to the bottom) plus a second query that resolves the labels of the currently selected keys — that second query is what keeps the trigger readable once paging has scrolled the chosen row out of `options`. The page query is `adminContainerRegistriesV2` and the label lookup goes through `node(id:)`, which resolves the first selected key (`ContainerRegistryV2Filter` has no id filter); the other keys in `multiple` mode take their label from the loaded page rows. Options are labelled `"<registryName> - <project>"`, or the registry name alone when the node carries no project, and typing in the popup search box refetches server-side with a debounced case-insensitive name filter. The emitted value is a plain key (`string`, or `string[]` in `multiple` mode): the registry UUID. A `filter` prop (a `ContainerRegistryV2Filter`) narrows the page query and is AND-ed with the search term. Both queries run through `useLazyLoadQuery`, so it must sit inside a Suspense boundary; `label` is required by BAIComplexSelect, and every prop not listed below is forwarded to it — except `options`, `value`, `onChange`, `searchValue`, `onSearch` and `total`, which this wrapper owns and omits from its props type.',
     bestPractices: [
       {
         guidance: true,
@@ -27,11 +27,6 @@ export const docs = {
         guidance: true,
         description:
           'Render it inside a Suspense boundary; both the page query and the selected-label query suspend on first load.',
-      },
-      {
-        guidance: true,
-        description:
-          'Set `valuePropName="row_id"` when the chosen value feeds an API that expects the registry UUID (an RBAC scope id, for one) — in the default `id` mode the value is the `ContainerRegistryV2` Relay global id.',
       },
       {
         guidance: false,
@@ -59,11 +54,10 @@ export const docs = {
         'Fired with the new plain key, or the array of keys in `multiple` mode. It passes no second option argument.',
     },
     {
-      name: 'valuePropName',
-      type: "'id' | 'row_id'",
+      name: 'filter',
+      type: 'ContainerRegistryV2Filter | null',
       description:
-        'Which node field becomes the option value and the emitted key. `id` is the Relay global id; `row_id` is the registry UUID (`entityId`).',
-      default: "'id'",
+        'Extra conditions for the page query, AND-ed with the search term (which owns `registryName`). The selected-label lookup ignores it.',
     },
     {
       name: 'multiple',
@@ -111,12 +105,11 @@ export const docs = {
   ],
   examples: [
     {
-      label: 'Scope picker that stores the registry row id',
+      label: 'Scope picker that stores the registry UUID',
       code: `<Suspense fallback={<BAISkeleton variant="input" />}>
   <BAIAdminContainerRegistrySelect
     label={t('rbac.ScopeId')}
     isLabelHidden
-    valuePropName="row_id"
     value={scopeId}
     onChange={(value) => setScopeId(value as string | undefined)}
   />

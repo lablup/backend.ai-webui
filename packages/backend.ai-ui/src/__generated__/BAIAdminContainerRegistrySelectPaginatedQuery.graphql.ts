@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b3c10683e8123da8d7a1ae5389524935>>
+ * @generated SignedSource<<29fafb5941f41d5e0b69224dfce98b52>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -56,7 +56,6 @@ export type BAIAdminContainerRegistrySelectPaginatedQuery$data = {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly entityId: string;
         readonly id: string;
         readonly project: string | null | undefined;
         readonly registryName: string;
@@ -154,13 +153,6 @@ v3 = [
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
-                "name": "entityId",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
                 "name": "registryName",
                 "storageKey": null
               },
@@ -207,16 +199,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "1617ae6e9a603f2339924b8b96537009",
+    "cacheID": "22fafd8ed25014e8e54be3bfe5c1c0ad",
     "id": null,
     "metadata": {},
     "name": "BAIAdminContainerRegistrySelectPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIAdminContainerRegistrySelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: ContainerRegistryV2Filter\n) {\n  adminContainerRegistriesV2(offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: REGISTRY_NAME, direction: ASC}]) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        registryName\n        project\n      }\n    }\n  }\n}\n"
+    "text": "query BAIAdminContainerRegistrySelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: ContainerRegistryV2Filter\n) {\n  adminContainerRegistriesV2(offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: REGISTRY_NAME, direction: ASC}]) {\n    count\n    edges {\n      node {\n        id\n        registryName\n        project\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "409b53ba0e4ca053604fe3f9ef3f3c0d";
+(node as any).hash = "a8ba65365bfa7868387817aa980e0542";
 
 export default node;
