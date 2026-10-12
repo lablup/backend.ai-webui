@@ -20,8 +20,8 @@ import UserResourcePolicyV2, {
 } from '../components/UserResourcePolicyV2';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import {
-  useBrowserPopstateEffect,
   useKeyedSnapshot,
+  useUrlSnapshotEffect,
   useSuspendedBackendaiClient,
 } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -40,7 +40,7 @@ import {
   parseAsStringLiteral,
   useQueryStates,
 } from 'nuqs';
-import React, { Suspense, useEffect, useEffectEvent, useRef } from 'react';
+import React, { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   useQueryLoader,
@@ -173,9 +173,10 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
     TabSnapshot
   >(queryParams.tab, currentSnapshot);
 
-  const queriedTabRef = useRef<TabKey | null>(null);
+  // What the page last queried; the URL is re-queried when it says otherwise.
+  const queriedRef = useRef<({ tab: TabKey } & TabSnapshot) | null>(null);
   const loadTabQuery = (tab: TabKey, snapshot: TabSnapshot) => {
-    queriedTabRef.current = tab;
+    queriedRef.current = { tab, ...snapshot };
     // The legacy lists fetch on their own; only the V2 tables are preloaded.
     if (!supportsV2[tab]) return;
     const options = { fetchPolicy: 'store-and-network' } as const;
@@ -223,28 +224,14 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
       mirrorSnapshot(tab, snapshotOfVariables(variables), 'replace');
     };
 
-  // Queries the tab the URL currently describes. Every tab change afterwards
-  // restores its snapshot and queries inside onTabChange.
-  const loadTabFromQueryParams = () => {
-    loadTabQuery(queryParams.tab, currentSnapshot);
-  };
-
-  // First visit: mount, direct URL entry, reload.
-  const loadTabOnMount = useEffectEvent(loadTabFromQueryParams);
-  useEffect(() => {
-    loadTabOnMount();
-  }, []);
-
-  // Back/forward: the hook holds the callback until `queryParams` and
-  // `tablePaginationOption` describe the URL the user navigated to.
-  useBrowserPopstateEffect(loadTabFromQueryParams);
-
-  // An in-app link to another tab's URL fires no popstate: useKeyedSnapshot
-  // follows the URL to that tab, and nothing has queried it yet.
-  const loadTabOnUrlSwitch = useEffectEvent(loadTabFromQueryParams);
-  useEffect(() => {
-    if (queriedTabRef.current !== currentTab) loadTabOnUrlSwitch();
-  }, [currentTab]);
+  // Mount, back/forward, an in-app link to a tab or to other filters: the
+  // URL is queried whenever it is not what the page queried last. Tab clicks
+  // query inside onTabChange and come back equal.
+  useUrlSnapshotEffect(
+    { tab: queryParams.tab, ...currentSnapshot },
+    queriedRef,
+    () => loadTabQuery(queryParams.tab, currentSnapshot),
+  );
 
   return (
     <BAICard

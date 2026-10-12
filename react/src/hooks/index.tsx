@@ -5,11 +5,17 @@
 import { getOS, preserveDotStartCase } from '../helper';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import { MenuKeys } from './useWebUIMenuItems';
-import { useEventListener } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import type { SingleParserBuilder } from 'nuqs';
 import { useOptimisticSearchParams } from 'nuqs/adapters/react-router/v6';
-import { useEffect, useMemo, useRef, useState, useEffectEvent } from 'react';
+import {
+  type RefObject,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useEffectEvent,
+} from 'react';
 // eslint-disable-next-line no-restricted-imports
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -133,40 +139,48 @@ const normalizeSearch = (search: string | URLSearchParams) => {
   return params.toString();
 };
 
-/**
- * Runs `onSettled` after a browser back/forward, once nuqs' query state
- * matches the address bar — so callers can read their nuqs state inside the
- * callback without comparing it against `location.search` themselves.
- *
- * The wait is the point: nuqs applies `popstate` inside a `startTransition`,
- * so for at least one render after the event every `useQueryStates` value
- * still describes the page the user just left.
- */
-export const useBrowserPopstateEffect = (onSettled: () => void) => {
-  'use memo';
-  const handleSettled = useEffectEvent(onSettled);
-  // nuqs' view of the URL; a fresh object per popstate re-runs the effect below.
-  const nuqsSearchParams = useOptimisticSearchParams();
-  // Distinguishes back/forward from the page's own `setQueryParams` writes.
-  const isSettlePendingRef = useRef(false);
+/** `null` and `undefined` both mean "absent" to nuqs and to the pages. */
+const isSameSnapshot = (a: unknown, b: unknown) =>
+  _.isEqualWith(a, b, (x, y) => (x == null && y == null ? true : undefined));
 
-  useEventListener('popstate', () => {
-    isSettlePendingRef.current = true;
+/**
+ * Runs `onSettled` whenever the URL describes a state the page has not
+ * queried — first mount, a browser back/forward, an in-app link to another
+ * tab or to other filters — once nuqs' query state has caught up with the
+ * address bar. `snapshot` is the state parsed from the URL this render and
+ * `queriedRef` the one the page last queried, so the page's own writes come
+ * back equal and never re-run it.
+ *
+ * The wait is the point: nuqs applies external URL changes inside a
+ * `startTransition`, so for at least one render every `useQueryStates` value
+ * still describes the page the user just left; and the page's own writes
+ * reach the address bar only after a throttle, so a render between two
+ * setters would otherwise read as an external change.
+ */
+export const useUrlSnapshotEffect = <S,>(
+  snapshot: S,
+  queriedRef: RefObject<S | null>,
+  onSettled: () => void,
+) => {
+  'use memo';
+  const settleIfUnqueried = useEffectEvent(() => {
+    if (!isSameSnapshot(snapshot, queriedRef.current)) onSettled();
   });
+  // nuqs' view of the URL; a fresh object per URL change re-runs the effect.
+  const nuqsSearchParams = useOptimisticSearchParams();
+  const serializedSnapshot = JSON.stringify(snapshot);
 
   useEffect(
     function runOnceQueryStateCaughtUp() {
-      if (!isSettlePendingRef.current) return;
       if (
         normalizeSearch(nuqsSearchParams) !==
         normalizeSearch(window.location.search)
       ) {
         return;
       }
-      isSettlePendingRef.current = false;
-      handleSettled();
+      settleIfUnqueried();
     },
-    [nuqsSearchParams],
+    [nuqsSearchParams, serializedSnapshot],
   );
 };
 
