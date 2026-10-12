@@ -524,7 +524,7 @@ const AdminDeployment = ({
                             {
                               ...queryRef.variables,
                               filter: {
-                                tags: { iContains: tag },
+                                tags: { iEquals: tag },
                                 ...statusCategoryFilterFor(statusCategory),
                               },
                               offset: 0,
