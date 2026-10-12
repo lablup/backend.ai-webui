@@ -3288,8 +3288,10 @@
   },
   "sessionMonitor": {
     "MoreSessions": "세션 {{count}}개 더 있음",
+    "MyResourceUsage": "내 할당 한도 대비 사용량",
     "MySessions": "나의 세션",
     "NoActiveSessions": "실행 중인 세션이 없습니다",
+    "NotificationSettings": "알림 설정",
     "OpenSession": "세션 열기",
     "OpenSessionList": "세션 목록 열기",
     "RunningCount": "실행 {{count}}",

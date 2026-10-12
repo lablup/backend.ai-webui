@@ -6,18 +6,23 @@ import {
   rankSessions,
   SESSION_MONITOR_VISIBLE_LIMIT,
 } from '../../helper/sessionMonitor';
+import { useIsProjectAgnosticPage } from '../../hooks/useIsProjectAgnosticPage';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import {
   sessionMonitorFetchKeyAtom,
   useSessionMonitorData,
 } from '../../hooks/useSessionMonitor';
+import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
+import { useUserSettingsModal } from '../UserSettingsModalOpener';
 import WebUILink from '../WebUILink';
 import SessionMonitorItem from './SessionMonitorItem';
+import SessionMonitorResourceUsage from './SessionMonitorResourceUsage';
+import { Link } from '@lablup/ui-common/Link';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFetchKeyButton, BAIFlex } from 'backend.ai-ui';
 import { useAtom } from 'jotai';
-import React, { useDeferredValue, useTransition } from 'react';
+import React, { Suspense, useDeferredValue, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface SessionMonitorPopoverContentProps {
@@ -31,6 +36,8 @@ const SessionMonitorPopoverContent: React.FC<
   const { t } = useTranslation();
   const { token } = useTheme();
   const buildProjectPath = useProjectPath();
+  const isProjectAgnosticPage = useIsProjectAgnosticPage();
+  const { open: openUserSettings } = useUserSettingsModal();
   const [fetchKey, setFetchKey] = useAtom(sessionMonitorFetchKeyAtom);
   const deferredFetchKey = useDeferredValue(fetchKey);
   const [isPending, startTransition] = useTransition();
@@ -102,29 +109,48 @@ const SessionMonitorPopoverContent: React.FC<
           ) : null;
         })
       )}
+      {!isProjectAgnosticPage && (
+        <ErrorBoundaryWithNullFallback>
+          <Suspense fallback={null}>
+            <SessionMonitorResourceUsage />
+          </Suspense>
+        </ErrorBoundaryWithNullFallback>
+      )}
       <BAIFlex
         direction="row"
         align="center"
         justify="between"
+        gap="sm"
         style={{
           padding: `${token('--spacing-2')} ${token('--spacing-3')}`,
           borderTop: `1px solid ${token('--color-border')}`,
         }}
       >
-        <Text type="supporting">
-          {hiddenCount > 0
-            ? t('sessionMonitor.MoreSessions', { count: hiddenCount })
-            : ''}
-        </Text>
-        <WebUILink
-          data-testid="session-monitor-open-list"
-          to={buildProjectPath('session', { scope: 'project' })}
-          onClick={onNavigate}
+        <BAIFlex direction="row" align="center" gap="sm">
+          <WebUILink
+            data-testid="session-monitor-open-list"
+            to={buildProjectPath('session', { scope: 'project' })}
+            onClick={onNavigate}
+          >
+            <Text type="label" color="accent">
+              {t('sessionMonitor.OpenSessionList')}
+            </Text>
+          </WebUILink>
+          {hiddenCount > 0 && (
+            <Text type="supporting">
+              {t('sessionMonitor.MoreSessions', { count: hiddenCount })}
+            </Text>
+          )}
+        </BAIFlex>
+        <Link
+          data-testid="session-monitor-settings"
+          onClick={() => {
+            onNavigate?.();
+            openUserSettings('general');
+          }}
         >
-          <Text type="label" color="accent">
-            {t('sessionMonitor.OpenSessionList')}
-          </Text>
-        </WebUILink>
+          {t('sessionMonitor.NotificationSettings')}
+        </Link>
       </BAIFlex>
     </BAIFlex>
   );
