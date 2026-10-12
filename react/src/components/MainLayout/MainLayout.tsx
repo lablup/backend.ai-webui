@@ -24,6 +24,7 @@ import NoResourceGroupAlert from '../NoResourceGroupAlert';
 import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
 import PluginLoader from '../PluginLoader';
 import ProjectAdminScopeAlert from '../ProjectAdminScopeAlert';
+import SessionMonitorWatcher from '../SessionMonitor/SessionMonitorWatcher';
 import ThemePreviewModeAlert from '../ThemePreviewModeAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
@@ -222,6 +223,11 @@ function MainLayout() {
                 <ErrorBoundaryWithNullFallback>
                   <Suspense fallback={null}>
                     <NetworkStatusBanner />
+                  </Suspense>
+                </ErrorBoundaryWithNullFallback>
+                <ErrorBoundaryWithNullFallback>
+                  <Suspense fallback={null}>
+                    <SessionMonitorWatcher />
                   </Suspense>
                 </ErrorBoundaryWithNullFallback>
               </div>

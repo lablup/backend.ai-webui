@@ -1,0 +1,109 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import { formatDurationAsDays } from '../../helper';
+import { ATTENTION_THRESHOLD_SEC } from '../../helper/sessionMonitor';
+import { sessionMonitorSummaryAtom } from '../../hooks/useSessionMonitor';
+import { useThemeMode } from '../../hooks/useThemeMode';
+import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
+import SessionMonitorPopoverContent from './SessionMonitorPopoverContent';
+import { Badge } from '@lablup/ui-common/Badge';
+import { Button } from '@lablup/ui-common/Button';
+import { Popover } from '@lablup/ui-common/Popover';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { BAISkeleton, useIntervalValue } from 'backend.ai-ui';
+import dayjs from 'dayjs';
+import { useAtomValue } from 'jotai';
+import { Activity } from 'lucide-react';
+import React, { Suspense, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+
+interface SessionMonitorButtonProps {
+  'data-testid'?: string;
+}
+
+/** Header trigger: running count plus the nearest termination countdown. */
+const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { isDarkMode } = useThemeMode();
+  const summary = useAtomValue(sessionMonitorSummaryAtom);
+  const [isOpen, setIsOpen] = useState(false);
+  // The band is a reversed surface; the media scope goes on the trigger only
+  // so the popover panel (an inline sibling) keeps the app palette.
+  const bandMediaMode = isDarkMode ? 'light' : 'dark';
+
+  const deadline = summary?.nearest?.deadline ?? null;
+  const tick = useIntervalValue(
+    () => {
+      if (deadline === null) return null;
+      const remainingMs = deadline - Date.now();
+      return {
+        text:
+          remainingMs > 0
+            ? formatDurationAsDays(
+                dayjs().toISOString(),
+                dayjs(deadline).toISOString(),
+              )
+            : '00:00:00',
+        isUrgent: remainingMs <= ATTENTION_THRESHOLD_SEC * 1000,
+      };
+    },
+    deadline !== null ? 1000 : null,
+    String(deadline),
+  );
+
+  return (
+    <Popover
+      label={t('sessionMonitor.MySessions')}
+      placement="below"
+      alignment="end"
+      padding={0}
+      isOpen={isOpen}
+      onOpenChange={setIsOpen}
+      content={
+        isOpen ? (
+          <ErrorBoundaryWithNullFallback>
+            <Suspense
+              fallback={
+                <div style={{ width: 460, padding: 16 }}>
+                  <BAISkeleton />
+                </div>
+              }
+            >
+              <SessionMonitorPopoverContent
+                onNavigate={() => setIsOpen(false)}
+              />
+            </Suspense>
+          </ErrorBoundaryWithNullFallback>
+        ) : (
+          <span />
+        )
+      }
+    >
+      <Tooltip content={t('sessionMonitor.Tooltip')}>
+        <Button
+          data-astryx-media={bandMediaMode}
+          data-testid={props['data-testid']}
+          variant="ghost"
+          size="sm"
+          label={t('sessionMonitor.MySessions')}
+          icon={<Activity size="1em" />}
+          endContent={
+            tick ? (
+              <Badge
+                variant={tick.isUrgent ? 'error' : 'neutral'}
+                label={tick.text}
+              />
+            ) : undefined
+          }
+        >
+          {summary ? summary.running : ''}
+        </Button>
+      </Tooltip>
+    </Popover>
+  );
+};
+
+export default SessionMonitorButton;

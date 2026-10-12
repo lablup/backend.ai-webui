@@ -5327,6 +5327,14 @@
           ]
         },
         {
+          "key": "userSettings.SessionMonitorIdleAlerts",
+          "tab": "general",
+          "groupKey": "userSettings.Preferences",
+          "groupId": "group-preferences",
+          "testId": "items-session-monitor-idle-alerts",
+          "descriptionKeys": []
+        },
+        {
           "key": "userSettings.SessionResourceGrid",
           "tab": "general",
           "groupKey": "userSettings.ExperimentalFeatures",
@@ -5478,6 +5486,7 @@
         "userSettings.DescScriptCreated",
         "userSettings.DescScriptDeleted",
         "userSettings.DescScriptUpdated",
+        "userSettings.DescSessionMonitorIdleAlerts",
         "userSettings.DescUseCompactSidebar",
         "userSettings.ExperimentalFeaturesDesc",
         "userSettings.FollowSystem",

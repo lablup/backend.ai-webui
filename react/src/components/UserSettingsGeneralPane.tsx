@@ -55,6 +55,8 @@ const UserSettingsGeneralPane = () => {
   const [desktopNotification, setDesktopNotification] = useBAISettingUserState(
     'desktop_notification',
   );
+  const [sessionMonitorIdleAlerts, setSessionMonitorIdleAlerts] =
+    useBAISettingUserState('session_monitor_idle_alerts');
   const [compactSidebar, setCompactSidebar] =
     useBAISettingUserState('compact_sidebar');
   const [selectedLanguage, setSelectedLanguage] =
@@ -218,6 +220,17 @@ const UserSettingsGeneralPane = () => {
               }
             });
           },
+        },
+        {
+          'data-testid': 'items-session-monitor-idle-alerts',
+          type: 'checkbox',
+          title: t('userSettings.SessionMonitorIdleAlerts'),
+          description: (
+            <Trans i18nKey="userSettings.DescSessionMonitorIdleAlerts" />
+          ),
+          defaultValue: true,
+          value: sessionMonitorIdleAlerts ?? true,
+          onChange: setSessionMonitorIdleAlerts,
         },
         {
           'data-testid': 'items-use-compact-sidebar',

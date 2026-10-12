@@ -3270,6 +3270,24 @@
       "SluggedStrings": "Slugged strings (>3 chars)"
     }
   },
+  "sessionMonitor": {
+    "MoreSessions": "{{count}} more sessions",
+    "MySessions": "My sessions",
+    "NoActiveSessions": "No active sessions",
+    "NoTimeLimit": "No time limit",
+    "OpenSession": "Open session",
+    "OpenSessionList": "Open session list",
+    "RunningCount": "{{count}} running",
+    "StartingCount": "{{count}} starting",
+    "Tooltip": "My sessions: running count and the nearest termination",
+    "WaitingForResources": "Waiting for resources",
+    "idleAlert": {
+      "NetworkTimeout": "No network activity has been detected. Connect to the session before it is terminated.",
+      "SessionLifetime": "The session is reaching its maximum lifetime.",
+      "Title": "{{name}} ends in {{minutes}} min",
+      "Utilization": "Resource utilization has stayed under the idle threshold. Use the session before it is terminated."
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "ATOM Max Support",
     "ATOMPlusSupport": "ATOM+ Support",
@@ -3724,6 +3742,7 @@
     "DescScriptCreated": "User config script created. This will be applied to new sessions only.",
     "DescScriptDeleted": "User config script deleted : ",
     "DescScriptUpdated": "User config script updated. This will be applied to new sessions only.",
+    "DescSessionMonitorIdleAlerts": "Shows an alert when one of your running sessions is about to be terminated by an idle check (30 and 10 minutes before). The alert also reaches the desktop when desktop notifications are on.",
     "DescThemeFamily": "Set the theme.",
     "DescThemeMode": "Set the display mode.",
     "DescUseCompactSidebar": "Compact sidebar provides more workspace. <br />When enabled, the compact sidebar will be the default UI at startup.",
@@ -3767,6 +3786,7 @@
     "SSHKeypairGeneration": "SSH Keypair Generation",
     "SSHKeypairGenerationWarning": "You will not be able to access the private key again after closing this modal.",
     "SSHKeypairManagement": "SSH Keypair Management",
+    "SessionMonitorIdleAlerts": "Alert before idle termination",
     "SessionResourceGrid": "Session resource grid view",
     "SessionTerminationDialog": "Session termination cannot be undone. Do you want to proceed to terminate the session?",
     "ShellEnvironments": "Shell Environments",

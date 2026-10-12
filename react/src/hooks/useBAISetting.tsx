@@ -18,6 +18,8 @@ export interface UserSettings {
   has_opened_tour_neo_deployment_validation?: boolean;
   has_opened_tour_deployment_preset_validation?: boolean;
   desktop_notification?: boolean;
+  /** Idle-termination alerts from the header session monitor; default on. */
+  session_monitor_idle_alerts?: boolean;
   compact_sidebar?: boolean;
   preserve_login?: boolean;
   automatic_update_check?: boolean;
