@@ -5,10 +5,10 @@ export const docs = {
   name: 'BAIEntityLabelCell',
   displayName: 'BAI Entity Label Cell',
   category: 'Table & List',
-  keywords: ['label', 'entity label', 'table cell', 'hover action', 'filter'],
+  keywords: ['label', 'entity label', 'table cell', 'edit', 'filter'],
   usage: {
     description:
-      'The Labels column cell: a BAINameActionCell whose title is the entity’s clickable label tokens and whose hover action is "Edit labels". Editing lives on the Labels column rather than the name cell, next to what it changes. Shows "-" when the entity has no labels.',
+      'The Labels column cell: a BAINameActionCell whose title is the entity’s clickable label tokens and whose always-visible action is "Edit labels". Editing lives on the Labels column rather than the name cell, next to what it changes. Shows "-" when the entity has no labels.',
     bestPractices: [
       {
         guidance: true,
@@ -32,7 +32,7 @@ export const docs = {
     {
       name: 'onEdit',
       type: '() => void',
-      description: 'Adds the "Edit labels" hover action; omit for read-only.',
+      description: 'Adds the "Edit labels" action; omit for read-only.',
     },
     {
       name: 'editDisabledReason',
