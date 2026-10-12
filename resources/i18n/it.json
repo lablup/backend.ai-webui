@@ -3283,6 +3283,24 @@
       "SluggedStrings": "Stringhe con slugged (>3 caratteri)"
     }
   },
+  "sessionMonitor": {
+    "MoreSessions": "{{count}} sessioni in più",
+    "MySessions": "Le mie sessioni",
+    "NoActiveSessions": "Nessuna sessione attiva",
+    "NoTimeLimit": "Nessun limite di tempo",
+    "OpenSession": "Apri sessione",
+    "OpenSessionList": "Apri elenco sessioni",
+    "RunningCount": "{{count}} in esecuzione",
+    "StartingCount": "{{count}} in avvio",
+    "Tooltip": "Le mie sessioni: numero in esecuzione e prossima terminazione",
+    "WaitingForResources": "In attesa di risorse",
+    "idleAlert": {
+      "NetworkTimeout": "Non è stata rilevata alcuna attività di rete. Connettiti alla sessione prima che venga terminata.",
+      "SessionLifetime": "La sessione sta raggiungendo la sua durata massima.",
+      "Title": "{{name}} termina in {{minutes}} min",
+      "Utilization": "L'utilizzo delle risorse è rimasto sotto la soglia di inattività. Usa la sessione prima che venga terminata."
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "Atom Max Support",
     "ATOMPlusSupport": "Supporto ATOM+",
@@ -3737,6 +3755,7 @@
     "DescScriptCreated": "Script di configurazione utente creato. Questo verrà applicato solo alle nuove sessioni.",
     "DescScriptDeleted": "Script di configurazione utente eliminato:",
     "DescScriptUpdated": "Script di configurazione utente aggiornato. Questo verrà applicato solo alle nuove sessioni.",
+    "DescSessionMonitorIdleAlerts": "Mostra un avviso quando una delle tue sessioni in esecuzione sta per essere terminata da un controllo di inattività (30 e 10 minuti prima). L'avviso raggiunge anche il desktop quando le notifiche desktop sono attive.",
     "DescThemeFamily": "Imposta il tema.",
     "DescThemeMode": "Imposta la modalità di visualizzazione.",
     "DescUseCompactSidebar": "La barra laterale compatta fornisce più spazio di lavoro. <br />Quando abilitata, la barra laterale compatta sarà l'interfaccia predefinita all'avvio.",
@@ -3780,6 +3799,7 @@
     "SSHKeypairGeneration": "Generazione di coppie di chiavi SSH",
     "SSHKeypairGenerationWarning": "Non sarà più possibile accedere alla chiave privata dopo aver chiuso questa finestra.",
     "SSHKeypairManagement": "Gestione delle coppie di chiavi SSH",
+    "SessionMonitorIdleAlerts": "Avviso prima della terminazione per inattività",
     "SessionResourceGrid": "Vista griglia risorse sessione",
     "SessionTerminationDialog": "La chiusura della sessione non può essere annullata. Vuoi procedere per terminare la sessione?",
     "ShellEnvironments": "Ambienti shell",

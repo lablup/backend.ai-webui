@@ -3285,6 +3285,24 @@
       "SluggedStrings": "Chuỗi bị trượt (>3 ký tự)"
     }
   },
+  "sessionMonitor": {
+    "MoreSessions": "{{count}} phiên khác",
+    "MySessions": "Phiên của tôi",
+    "NoActiveSessions": "Không có phiên hoạt động",
+    "NoTimeLimit": "Không giới hạn thời gian",
+    "OpenSession": "Mở phiên",
+    "OpenSessionList": "Mở danh sách phiên",
+    "RunningCount": "{{count}} đang chạy",
+    "StartingCount": "{{count}} đang khởi động",
+    "Tooltip": "Phiên của tôi: số lượng đang chạy và thời điểm kết thúc gần nhất",
+    "WaitingForResources": "Đang chờ tài nguyên",
+    "idleAlert": {
+      "NetworkTimeout": "Không phát hiện hoạt động mạng. Hãy kết nối đến phiên trước khi nó bị chấm dứt.",
+      "SessionLifetime": "Phiên đang đạt đến thời gian tồn tại tối đa.",
+      "Title": "{{name}} kết thúc trong {{minutes}} phút",
+      "Utilization": "Mức sử dụng tài nguyên vẫn ở dưới ngưỡng không hoạt động. Hãy sử dụng phiên trước khi nó bị chấm dứt."
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "Hỗ trợ Atom Max",
     "ATOMPlusSupport": "Hỗ trợ ATOM+",
@@ -3739,6 +3757,7 @@
     "DescScriptCreated": "Đã tạo tập lệnh cấu hình người dùng. Điều này sẽ chỉ được áp dụng cho các phiên mới.",
     "DescScriptDeleted": "Tập lệnh cấu hình người dùng đã bị xóa:",
     "DescScriptUpdated": "Đã cập nhật tập lệnh cấu hình người dùng. Điều này sẽ chỉ được áp dụng cho các phiên mới.",
+    "DescSessionMonitorIdleAlerts": "Hiển thị cảnh báo khi một trong các phiên đang chạy của bạn sắp bị chấm dứt do kiểm tra không hoạt động (30 và 10 phút trước đó). Cảnh báo cũng sẽ xuất hiện trên desktop khi thông báo desktop được bật.",
     "DescThemeFamily": "Đặt chủ đề.",
     "DescThemeMode": "Đặt chế độ hiển thị.",
     "DescUseCompactSidebar": "Thanh bên gọn gàng cung cấp nhiều không gian làm việc hơn. <br />Khi được kích hoạt, thanh bên gọn gàng sẽ là giao diện mặc định khi khởi động.",
@@ -3782,6 +3801,7 @@
     "SSHKeypairGeneration": "Tạo cặp khóa SSH",
     "SSHKeypairGenerationWarning": "Bạn sẽ không thể truy cập lại khóa riêng tư sau khi đóng cửa sổ này.",
     "SSHKeypairManagement": "Quản lý cặp khóa SSH",
+    "SessionMonitorIdleAlerts": "Cảnh báo trước khi chấm dứt do không hoạt động",
     "SessionResourceGrid": "Xem lưới tài nguyên phiên",
     "SessionTerminationDialog": "Không thể hoàn tác việc kết thúc phiên. Bạn có muốn tiếp tục kết thúc phiên này không?",
     "ShellEnvironments": "Môi trường Shell",

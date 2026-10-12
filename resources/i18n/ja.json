@@ -3285,6 +3285,24 @@
       "SluggedStrings": "最低4文字以上の固有の文字列で入力してください。"
     }
   },
+  "sessionMonitor": {
+    "MoreSessions": "他に{{count}}件のセッション",
+    "MySessions": "自分のセッション",
+    "NoActiveSessions": "実行中のセッションはありません",
+    "NoTimeLimit": "時間制限なし",
+    "OpenSession": "セッションを開く",
+    "OpenSessionList": "セッション一覧を開く",
+    "RunningCount": "実行中 {{count}}件",
+    "StartingCount": "起動中 {{count}}件",
+    "Tooltip": "自分のセッション: 実行中の件数と最も近い終了予定",
+    "WaitingForResources": "リソース待機中",
+    "idleAlert": {
+      "NetworkTimeout": "ネットワークアクティビティが検出されませんでした。終了する前にセッションに接続してください。",
+      "SessionLifetime": "セッションが最大寿命に達しています。",
+      "Title": "{{name}}は{{minutes}}分後に終了します",
+      "Utilization": "リソース使用率がアイドルしきい値を下回ったままです。終了する前にセッションを使用してください。"
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "Atom Maxサポート",
     "ATOMPlusSupport": "アトムのサポート",
@@ -3739,6 +3757,7 @@
     "DescScriptCreated": "ユーザー構成スクリプトが作成されました。これは、新しいセッションにのみ適用されます。",
     "DescScriptDeleted": "ユーザー設定スクリプトが削除されました：",
     "DescScriptUpdated": "ユーザー構成スクリプトが更新されました。これは、新しいセッションにのみ適用されます。",
+    "DescSessionMonitorIdleAlerts": "実行中のセッションがアイドルチェックにより終了しようとしている場合に警告を表示します（終了の30分前と10分前）。デスクトップ通知が有効な場合、警告はデスクトップにも届きます。",
     "DescThemeFamily": "テーマを設定します。",
     "DescThemeMode": "表示モードを設定します。",
     "DescUseCompactSidebar": "コンパクトサイドバーはより多くのワークスペースを提供します。<br />有効にすると、起動時にコンパクトサイドバーがデフォルトUIになります。",
@@ -3782,6 +3801,7 @@
     "SSHKeypairGeneration": "SSHキーペアの生成",
     "SSHKeypairGenerationWarning": "このモーダルを閉じると、秘密鍵に再度アクセスできなくなります。",
     "SSHKeypairManagement": "SSHキーペア管理",
+    "SessionMonitorIdleAlerts": "アイドル終了前に警告",
     "SessionResourceGrid": "セッションリソースグリッド表示",
     "SessionTerminationDialog": "セッションの終了は元に戻せません。セッションの終了に進みますか？",
     "ShellEnvironments": "シェル環境",

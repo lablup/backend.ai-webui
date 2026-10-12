@@ -3286,6 +3286,24 @@
       "SluggedStrings": "Chaînes de caractères tronquées (>3 chars)"
     }
   },
+  "sessionMonitor": {
+    "MoreSessions": "{{count}} sessions supplémentaires",
+    "MySessions": "Mes sessions",
+    "NoActiveSessions": "Aucune session active",
+    "NoTimeLimit": "Aucune limite de temps",
+    "OpenSession": "Ouvrir la session",
+    "OpenSessionList": "Ouvrir la liste des sessions",
+    "RunningCount": "{{count}} en cours",
+    "StartingCount": "{{count}} en démarrage",
+    "Tooltip": "Mes sessions : nombre en cours et prochaine fin",
+    "WaitingForResources": "En attente de ressources",
+    "idleAlert": {
+      "NetworkTimeout": "Aucune activité réseau n'a été détectée. Connectez-vous à la session avant qu'elle ne soit arrêtée.",
+      "SessionLifetime": "La session atteint sa durée de vie maximale.",
+      "Title": "{{name}} se termine dans {{minutes}} min",
+      "Utilization": "L'utilisation des ressources est restée sous le seuil d'inactivité. Utilisez la session avant qu'elle ne soit arrêtée."
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "ATOM MAX SOUTIEN",
     "ATOMPlusSupport": "Prise en charge ATOM+",
@@ -3740,6 +3758,7 @@
     "DescScriptCreated": "Script de configuration utilisateur créé. Cela ne s'appliquera qu'aux nouvelles sessions.",
     "DescScriptDeleted": "Script de configuration utilisateur supprimé :",
     "DescScriptUpdated": "Script de configuration utilisateur mis à jour. Cela ne s'appliquera qu'aux nouvelles sessions.",
+    "DescSessionMonitorIdleAlerts": "Affiche une alerte lorsqu'une de vos sessions en cours est sur le point d'être arrêtée par une vérification d'inactivité (30 et 10 minutes avant). L'alerte atteint également le bureau lorsque les notifications de bureau sont activées.",
     "DescThemeFamily": "Définir le thème.",
     "DescThemeMode": "Définir le mode d'affichage.",
     "DescUseCompactSidebar": "La barre latérale compacte fournit plus d'espace de travail. <br />Quand activée, la barre latérale compacte sera l'interface par défaut au démarrage.",
@@ -3783,6 +3802,7 @@
     "SSHKeypairGeneration": "Génération de paires de clés SSH",
     "SSHKeypairGenerationWarning": "Vous ne pourrez plus accéder à la clé privée après avoir fermé cette fenêtre.",
     "SSHKeypairManagement": "Gestion des paires de clés SSH",
+    "SessionMonitorIdleAlerts": "Alerte avant l'arrêt pour inactivité",
     "SessionResourceGrid": "Vue de la grille de ressources de session",
     "SessionTerminationDialog": "L'arrêt de la session ne peut pas être annulé. Voulez-vous continuer pour terminer la session ?",
     "ShellEnvironments": "Environnements Shell",

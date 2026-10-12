@@ -3283,6 +3283,24 @@
       "SluggedStrings": "Slugged-merkkijonot (>3 merkkiä)"
     }
   },
+  "sessionMonitor": {
+    "MoreSessions": "{{count}} istuntoa lisää",
+    "MySessions": "Omat istunnot",
+    "NoActiveSessions": "Ei aktiivisia istuntoja",
+    "NoTimeLimit": "Ei aikarajaa",
+    "OpenSession": "Avaa istunto",
+    "OpenSessionList": "Avaa istuntoluettelo",
+    "RunningCount": "{{count}} käynnissä",
+    "StartingCount": "{{count}} käynnistyy",
+    "Tooltip": "Omat istunnot: käynnissä olevien määrä ja lähin päättyminen",
+    "WaitingForResources": "Odottaa resursseja",
+    "idleAlert": {
+      "NetworkTimeout": "Verkkotoimintaa ei havaittu. Yhdistä istuntoon ennen kuin se lopetetaan.",
+      "SessionLifetime": "Istunto on saavuttamassa enimmäiskestoikänsä.",
+      "Title": "{{name}} päättyy {{minutes}} min kuluttua",
+      "Utilization": "Resurssien käyttö on pysynyt joutokäynnin kynnysarvon alapuolella. Käytä istuntoa ennen kuin se lopetetaan."
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "Atom Max -tuki",
     "ATOMPlusSupport": "ATOM+-tuki",
@@ -3737,6 +3755,7 @@
     "DescScriptCreated": "Käyttäjän konfigurointiskripti luotu. Tätä sovelletaan vain uusiin istuntoihin.",
     "DescScriptDeleted": "Käyttäjän konfigurointiskripti poistettu :",
     "DescScriptUpdated": "Käyttäjän konfigurointiskripti päivitetty. Tätä sovelletaan vain uusiin istuntoihin.",
+    "DescSessionMonitorIdleAlerts": "Näyttää hälytyksen, kun yksi käynnissä olevista istunnoistasi on päättymässä joutokäyntitarkistuksen takia (30 ja 10 minuuttia aiemmin). Hälytys näkyy myös työpöydällä, kun työpöytäilmoitukset ovat käytössä.",
     "DescThemeFamily": "Aseta teema.",
     "DescThemeMode": "Aseta näyttötila.",
     "DescUseCompactSidebar": "Kompakti sivupalkki tarjoaa enemmän työtilaa. <br />Kun käytössä, kompakti sivupalkki on oletuskäyttöliittymä käynnistyksen yhteydessä.",
@@ -3780,6 +3799,7 @@
     "SSHKeypairGeneration": "SSH-avainparin luominen",
     "SSHKeypairGenerationWarning": "Et pysty enää käyttämään yksityistä avainta tämän ikkunan sulkemisen jälkeen.",
     "SSHKeypairManagement": "SSH-avainparin hallinta",
+    "SessionMonitorIdleAlerts": "Hälytys ennen joutokäynnin aiheuttamaa päättymistä",
     "SessionResourceGrid": "Istunnon resurssiruudukkonäkymä",
     "SessionTerminationDialog": "Istunnon lopettamista ei voi peruuttaa. Haluatko jatkaa istunnon lopettamista?",
     "ShellEnvironments": "Shell-ympäristöt",

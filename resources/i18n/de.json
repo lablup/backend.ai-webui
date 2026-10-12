@@ -3285,6 +3285,24 @@
       "SluggedStrings": "Geschliffene Zeichenfolgen (>3 Zeichen)"
     }
   },
+  "sessionMonitor": {
+    "MoreSessions": "{{count}} weitere Sitzungen",
+    "MySessions": "Meine Sitzungen",
+    "NoActiveSessions": "Keine aktiven Sitzungen",
+    "NoTimeLimit": "Keine Zeitbegrenzung",
+    "OpenSession": "Sitzung öffnen",
+    "OpenSessionList": "Sitzungsliste öffnen",
+    "RunningCount": "{{count}} laufend",
+    "StartingCount": "{{count}} startend",
+    "Tooltip": "Meine Sitzungen: Anzahl laufender Sitzungen und nächste Beendigung",
+    "WaitingForResources": "Warten auf Ressourcen",
+    "idleAlert": {
+      "NetworkTimeout": "Es wurde keine Netzwerkaktivität erkannt. Verbinden Sie sich mit der Sitzung, bevor sie beendet wird.",
+      "SessionLifetime": "Die Sitzung erreicht ihre maximale Lebensdauer.",
+      "Title": "{{name}} endet in {{minutes}} Min.",
+      "Utilization": "Die Ressourcennutzung liegt unter dem Leerlaufschwellenwert. Verwenden Sie die Sitzung, bevor sie beendet wird."
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "Atom Max -Unterstützung",
     "ATOMPlusSupport": "ATOM+ Unterstützung",
@@ -3739,6 +3757,7 @@
     "DescScriptCreated": "Benutzerkonfigurationsskript erstellt. Dies gilt nur für neue Sitzungen.",
     "DescScriptDeleted": "Benutzerkonfigurationsskript gelöscht:",
     "DescScriptUpdated": "Benutzerkonfigurationsskript aktualisiert. Dies gilt nur für neue Sitzungen.",
+    "DescSessionMonitorIdleAlerts": "Zeigt eine Warnung an, wenn eine Ihrer laufenden Sitzungen durch eine Leerlaufprüfung beendet werden soll (30 und 10 Minuten vorher). Die Warnung erreicht auch den Desktop, wenn Desktop-Benachrichtigungen aktiviert sind.",
     "DescThemeFamily": "Thema festlegen.",
     "DescThemeMode": "Anzeigemodus festlegen.",
     "DescUseCompactSidebar": "Die kompakte Seitenleiste bietet mehr Arbeitsbereich. <br />Wenn aktiviert, wird die kompakte Seitenleiste beim Start zur Standard-UI.",
@@ -3782,6 +3801,7 @@
     "SSHKeypairGeneration": "SSH-Schlüsselpaargenerierung",
     "SSHKeypairGenerationWarning": "Nach dem Schließen dieses Modals können Sie nicht mehr auf den privaten Schlüssel zugreifen.",
     "SSHKeypairManagement": "SSH-Schlüsselpaarverwaltung",
+    "SessionMonitorIdleAlerts": "Warnung vor Leerlaufbeendigung",
     "SessionResourceGrid": "Sitzungsressourcenraster-Ansicht",
     "SessionTerminationDialog": "Die Beendigung der Sitzung kann nicht rückgängig gemacht werden. Möchten Sie fortfahren, um die Sitzung zu beenden?",
     "ShellEnvironments": "Shell-Umgebungen",

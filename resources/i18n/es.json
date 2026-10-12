@@ -3283,6 +3283,24 @@
       "SluggedStrings": "Cadenas babosas (>3 caracteres)"
     }
   },
+  "sessionMonitor": {
+    "MoreSessions": "{{count}} sesiones más",
+    "MySessions": "Mis sesiones",
+    "NoActiveSessions": "No hay sesiones activas",
+    "NoTimeLimit": "Sin límite de tiempo",
+    "OpenSession": "Abrir sesión",
+    "OpenSessionList": "Abrir lista de sesiones",
+    "RunningCount": "{{count}} en ejecución",
+    "StartingCount": "{{count}} iniciando",
+    "Tooltip": "Mis sesiones: número en ejecución y la próxima finalización",
+    "WaitingForResources": "Esperando recursos",
+    "idleAlert": {
+      "NetworkTimeout": "No se ha detectado actividad de red. Conéctese a la sesión antes de que se cierre.",
+      "SessionLifetime": "La sesión está alcanzando su duración máxima.",
+      "Title": "{{name}} finaliza en {{minutes}} min",
+      "Utilization": "El uso de recursos se ha mantenido por debajo del umbral de inactividad. Use la sesión antes de que se cierre."
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "Soporte de Atom Max",
     "ATOMPlusSupport": "Soporte ATOM+",
@@ -3737,6 +3755,7 @@
     "DescScriptCreated": "Script de configuración de usuario creado. Esto se aplicará sólo a las nuevas sesiones.",
     "DescScriptDeleted": "Script de configuración de usuario borrado :",
     "DescScriptUpdated": "Script de configuración de usuario actualizado. Esto se aplicará sólo a las nuevas sesiones.",
+    "DescSessionMonitorIdleAlerts": "Muestra una alerta cuando una de sus sesiones en ejecución está a punto de finalizar por una comprobación de inactividad (30 y 10 minutos antes). La alerta también llega al escritorio cuando las notificaciones de escritorio están activadas.",
     "DescThemeFamily": "Establecer el tema.",
     "DescThemeMode": "Establecer el modo de visualización.",
     "DescUseCompactSidebar": "La barra lateral compacta le permite utilizar más espacio de trabajo. <br />Si esta opción está activada, la barra lateral compacta se convierte en la interfaz de usuario inicial al arrancar.",
@@ -3780,6 +3799,7 @@
     "SSHKeypairGeneration": "Generación de pares de claves SSH",
     "SSHKeypairGenerationWarning": "No podrá acceder a la clave privada de nuevo después de cerrar este modal.",
     "SSHKeypairManagement": "Gestión de pares de claves SSH",
+    "SessionMonitorIdleAlerts": "Alerta antes de la finalización por inactividad",
     "SessionResourceGrid": "Vista de cuadrícula de recursos de sesión",
     "SessionTerminationDialog": "La finalización de la sesión no se puede deshacer. ¿Desea finalizar la sesión?",
     "ShellEnvironments": "Entornos de conchas",

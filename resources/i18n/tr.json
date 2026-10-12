@@ -3283,6 +3283,24 @@
       "SluggedStrings": "Kesikli dizeler (>3 karakter)"
     }
   },
+  "sessionMonitor": {
+    "MoreSessions": "{{count}} oturum daha",
+    "MySessions": "Oturumlarım",
+    "NoActiveSessions": "Aktif oturum yok",
+    "NoTimeLimit": "Zaman sınırı yok",
+    "OpenSession": "Oturumu aç",
+    "OpenSessionList": "Oturum listesini aç",
+    "RunningCount": "{{count}} çalışıyor",
+    "StartingCount": "{{count}} başlıyor",
+    "Tooltip": "Oturumlarım: çalışan sayısı ve en yakın sonlanma",
+    "WaitingForResources": "Kaynak bekleniyor",
+    "idleAlert": {
+      "NetworkTimeout": "Ağ etkinliği algılanmadı. Sonlandırılmadan önce oturuma bağlanın.",
+      "SessionLifetime": "Oturum maksimum ömrüne ulaşıyor.",
+      "Title": "{{name}} {{minutes}} dakika içinde sona erecek",
+      "Utilization": "Kaynak kullanımı boşta kalma eşiğinin altında kaldı. Sonlandırılmadan önce oturumu kullanın."
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "Atom Max Desteği",
     "ATOMPlusSupport": "ATOM+ Desteği",
@@ -3737,6 +3755,7 @@
     "DescScriptCreated": "Kullanıcı yapılandırma komut dosyası oluşturuldu. Bu sadece yeni oturumlara uygulanacaktır.",
     "DescScriptDeleted": "Kullanıcı yapılandırma komut dosyası silindi:",
     "DescScriptUpdated": "Kullanıcı yapılandırma komut dosyası güncellendi. Bu sadece yeni oturumlara uygulanacaktır.",
+    "DescSessionMonitorIdleAlerts": "Çalışan oturumlarınızdan biri boşta kalma denetimiyle sonlandırılmak üzereyken bir uyarı gösterir (sonlanmadan 30 ve 10 dakika önce). Masaüstü bildirimleri açıksa uyarı masaüstüne de ulaşır.",
     "DescThemeFamily": "Temayı ayarlayın.",
     "DescThemeMode": "Görüntüleme modunu ayarlayın.",
     "DescUseCompactSidebar": "Kompakt kenar çubuğu daha fazla çalışma alanı sağlar. <br />Etkinleştirildiğinde, kompakt kenar çubuğu başlangıçta varsayılan UI olacaktır.",
@@ -3780,6 +3799,7 @@
     "SSHKeypairGeneration": "SSH Anahtar Çifti Oluşturma",
     "SSHKeypairGenerationWarning": "Bu modal kapatıldıktan sonra özel anahtara tekrar erişemeyeceksiniz.",
     "SSHKeypairManagement": "SSH Anahtar Çifti Yönetimi",
+    "SessionMonitorIdleAlerts": "Boşta kalma nedeniyle sonlandırmadan önce uyar",
     "SessionResourceGrid": "Oturum kaynak ızgarası görünümü",
     "SessionTerminationDialog": "Oturum sonlandırma geri alınamaz. Oturumu sonlandırmak için devam etmek istiyor musunuz?",
     "ShellEnvironments": "Kabuk Ortamları",
