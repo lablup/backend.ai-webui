@@ -4,6 +4,7 @@
  */
 import { Form } from '../form-engine';
 import BAIFormItem from './BAIFormItem';
+import ResourceGroupOptionsCollapsible from './ResourceGroupOptionsCollapsible';
 import {
   AstryxFormNumberInput,
   AstryxFormTextInput,
@@ -13,7 +14,6 @@ import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAIButton,
-  BAICard,
   BAIFlex,
   BAIMetadataList,
   useBAIBreakpoint,
@@ -74,14 +74,18 @@ export const toHandlerOptionsInput = (value?: HandlerOptionsFormValue) => ({
   })),
 });
 
-export const HandlerOptionsFormFields: React.FC<{ name: string }> = ({
-  name,
-}) => {
+export const HandlerOptionsFormFields: React.FC<{
+  name: string;
+  defaultIsOpen?: boolean;
+}> = ({ name, defaultIsOpen }) => {
   'use memo';
   const { t } = useTranslation();
 
   return (
-    <BAICard size="small" title={t('resourceGroup.HandlerOptions')}>
+    <ResourceGroupOptionsCollapsible
+      title={t('resourceGroup.HandlerOptions')}
+      defaultIsOpen={defaultIsOpen}
+    >
       <BAIFlex direction="row" gap="sm" align="start">
         <BAIFormItem
           label={t('resourceGroup.DefaultTimeout')}
@@ -189,7 +193,7 @@ export const HandlerOptionsFormFields: React.FC<{ name: string }> = ({
           )}
         </Form.List>
       </BAIFormItem>
-    </BAICard>
+    </ResourceGroupOptionsCollapsible>
   );
 };
 
@@ -209,10 +213,7 @@ export const HandlerOptionsDescription: React.FC<{
   const seconds = t('resourceGroup.TimeoutSeconds');
 
   return (
-    <BAIMetadataList
-      title={t('resourceGroup.HandlerOptions')}
-      columns={md ? 2 : 1}
-    >
+    <BAIMetadataList columns={md ? 2 : 1}>
       <MetadataListItem label={t('resourceGroup.DefaultTimeout')}>
         {formatSeconds(handlerOptions?.default.timeoutSec, unlimited, seconds)}
       </MetadataListItem>

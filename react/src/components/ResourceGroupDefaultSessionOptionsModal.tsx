@@ -18,6 +18,13 @@ import {
   toHandlerOptionsFormValue,
   toHandlerOptionsInput,
 } from './ResourceGroupHandlerOptionsFields';
+import ResourceGroupOptionsCollapsible from './ResourceGroupOptionsCollapsible';
+import {
+  SessionExecutionSpecFormFields,
+  SessionExecutionSpecFormValue,
+  toKernelExecutionSpecInput,
+  toSessionExecutionSpecFormValue,
+} from './ResourceGroupSessionExecutionSpecFields';
 import {
   AstryxFormNumberInput,
   AstryxFormSelector,
@@ -37,13 +44,19 @@ type FormValues = {
   defaultFailurePolicy: SessionFailurePolicy;
   agentSelectionPolicy: SessionAgentSelectionPolicy;
   handlerOptions?: HandlerOptionsFormValue;
+  sessionExecutionSpec?: SessionExecutionSpecFormValue;
 };
+
+export type ResourceGroupDefaultSessionOptionsSection =
+  'sessionExecutionSpec' | 'schedulerOptions' | 'handlerOptions';
 
 interface ResourceGroupDefaultSessionOptionsModalProps extends Omit<
   BAIModalProps,
   'onOk' | 'onCancel'
 > {
   resourceGroupFrgmt: ResourceGroupDefaultSessionOptionsModalFragment$key;
+  // When set, only this section starts expanded; the others stay in the form, collapsed.
+  initialOpenSection?: ResourceGroupDefaultSessionOptionsSection;
   onRequestClose: (success: boolean) => void;
 }
 
@@ -53,9 +66,17 @@ const normalizeClusterMode = (value?: string | null) =>
 
 const ResourceGroupDefaultSessionOptionsModal: React.FC<
   ResourceGroupDefaultSessionOptionsModalProps
-> = ({ resourceGroupFrgmt, onRequestClose, ...modalProps }) => {
+> = ({
+  resourceGroupFrgmt,
+  initialOpenSection,
+  onRequestClose,
+  ...modalProps
+}) => {
   'use memo';
   const { t } = useTranslation();
+  const isInitiallyOpen = (
+    section: ResourceGroupDefaultSessionOptionsSection,
+  ) => !initialOpenSection || initialOpenSection === section;
   const { message } = App.useApp();
   const formRef = useRef<FormInstance<FormValues>>(null);
 
@@ -124,32 +145,6 @@ const ResourceGroupDefaultSessionOptionsModal: React.FC<
       }
     `);
 
-  // The mutation replaces the whole value, so the kernel spec this modal does
-  // not edit is sent back as it was read.
-  const spec = options?.defaultKernelExecutionSpec;
-  const kernelExecutionSpecInput = spec
-    ? {
-        imageId: spec.imageId ?? null,
-        resources: spec.resources
-          ? _.map(spec.resources, (entry) => ({
-              resourceType: entry.resourceType,
-              quantity: String(entry.quantity),
-            }))
-          : null,
-        resourceOpts: spec.resourceOpts
-          ? {
-              shmem: spec.resourceOpts.shmem
-                ? { expr: spec.resourceOpts.shmem }
-                : null,
-            }
-          : null,
-        startupCommand: spec.startupCommand ?? null,
-        bootstrapScript: spec.bootstrapScript ?? null,
-        startsAt: spec.startsAt ?? null,
-        batchTimeoutSec: spec.batchTimeoutSec ?? null,
-      }
-    : null;
-
   const initialValues: FormValues = {
     priority: options?.priority ?? 10,
     isPreemptible: options?.isPreemptible ?? false,
@@ -157,6 +152,9 @@ const ResourceGroupDefaultSessionOptionsModal: React.FC<
     defaultFailurePolicy: options?.defaultFailurePolicy ?? 'STRICT',
     agentSelectionPolicy: options?.agentSelectionPolicy ?? 'PREFERRED',
     handlerOptions: toHandlerOptionsFormValue(options?.handlerOptions),
+    sessionExecutionSpec: toSessionExecutionSpecFormValue(
+      options?.defaultKernelExecutionSpec,
+    ),
   };
 
   const handleOk = () =>
@@ -174,7 +172,9 @@ const ResourceGroupDefaultSessionOptionsModal: React.FC<
                 defaultFailurePolicy: values.defaultFailurePolicy,
                 agentSelectionPolicy: values.agentSelectionPolicy,
                 handlerOptions: toHandlerOptionsInput(values.handlerOptions),
-                defaultKernelExecutionSpec: kernelExecutionSpecInput,
+                defaultKernelExecutionSpec: toKernelExecutionSpecInput(
+                  values.sessionExecutionSpec,
+                ),
               },
             },
           },
@@ -224,93 +224,100 @@ const ResourceGroupDefaultSessionOptionsModal: React.FC<
           title={t('resourceGroup.DefaultOptionsReplaceNotice')}
         />
         <Form ref={formRef} initialValues={initialValues} layout="vertical">
-          <Grid columns={2} columnGap={3}>
-            <BAIFormItem
-              label={t('session.Priority')}
-              name="priority"
-              rules={[{ required: true }]}
+          <BAIFlex direction="column" align="stretch" gap="sm">
+            <SessionExecutionSpecFormFields
+              name="sessionExecutionSpec"
+              clusterModeName="clusterMode"
+              resourceGroupName={resourceGroup.name}
+              defaultIsOpen={isInitiallyOpen('sessionExecutionSpec')}
+            />
+            <ResourceGroupOptionsCollapsible
+              title={t('resourceGroup.SchedulerOptions')}
+              defaultIsOpen={isInitiallyOpen('schedulerOptions')}
             >
-              <AstryxFormNumberInput
-                label={t('session.Priority')}
-                min={0}
-                max={100}
-                isIntegerOnly
-                hasClear={false}
-              />
-            </BAIFormItem>
-            <BAIFormItem
-              label={t('session.ClusterMode')}
-              name="clusterMode"
-              rules={[{ required: true }]}
-            >
-              <AstryxFormSelector
-                label={t('session.ClusterMode')}
-                options={[
-                  {
-                    label: t('session.launcher.SingleNode'),
-                    value: 'single-node',
-                  },
-                  {
-                    label: t('session.launcher.MultiNode'),
-                    value: 'multi-node',
-                  },
-                ]}
-              />
-            </BAIFormItem>
-            <BAIFormItem
-              label={t('resourceGroup.FailurePolicy')}
-              name="defaultFailurePolicy"
-              tooltip={t('resourceGroup.FailurePolicyDesc')}
-              rules={[{ required: true }]}
-            >
-              <AstryxFormSelector
-                label={t('resourceGroup.FailurePolicy')}
-                options={[
-                  {
-                    label: t('resourceGroup.FailurePolicyStrict'),
-                    value: 'STRICT',
-                  },
-                  {
-                    label: t('resourceGroup.FailurePolicyBootAll'),
-                    value: 'BOOT_ALL',
-                  },
-                  {
-                    label: t('resourceGroup.FailurePolicyTolerant'),
-                    value: 'TOLERANT',
-                  },
-                ]}
-              />
-            </BAIFormItem>
-            <BAIFormItem
-              label={t('resourceGroup.AgentSelectionPolicy')}
-              name="agentSelectionPolicy"
-              tooltip={t('resourceGroup.AgentSelectionPolicyDesc')}
-              rules={[{ required: true }]}
-            >
-              <AstryxFormSelector
-                label={t('resourceGroup.AgentSelectionPolicy')}
-                options={[
-                  {
-                    label: t('resourceGroup.AgentSelectionStrict'),
-                    value: 'STRICT',
-                  },
-                  {
-                    label: t('resourceGroup.AgentSelectionPreferred'),
-                    value: 'PREFERRED',
-                  },
-                ]}
-              />
-            </BAIFormItem>
-          </Grid>
-          <BAIFormItem
-            layout="horizontal"
-            label={t('resourceGroup.Preemptible')}
-            name="isPreemptible"
-            tooltip={t('resourceGroup.PreemptibleDesc')}
-          >
-            <AstryxFormSwitch label={t('resourceGroup.Preemptible')} />
-          </BAIFormItem>
-          <HandlerOptionsFormFields name="handlerOptions" />
+              <Grid columns={2} columnGap={3}>
+                <BAIFormItem
+                  label={t('session.Priority')}
+                  name="priority"
+                  rules={[{ required: true }]}
+                >
+                  <AstryxFormNumberInput
+                    label={t('session.Priority')}
+                    min={0}
+                    max={100}
+                    isIntegerOnly
+                    hasClear={false}
+                  />
+                </BAIFormItem>
+                <BAIFormItem
+                  label={t('resourceGroup.Preemptible')}
+                  name="isPreemptible"
+                  tooltip={t('resourceGroup.PreemptibleDesc')}
+                >
+                  <AstryxFormSwitch label={t('resourceGroup.Preemptible')} />
+                </BAIFormItem>
+                <BAIFormItem
+                  label={t('resourceGroup.FailurePolicy')}
+                  name="defaultFailurePolicy"
+                  tooltip={
+                    // pre-line so the `\n` between the policy lines renders as a line break.
+                    <span style={{ whiteSpace: 'pre-line' }}>
+                      {t('resourceGroup.FailurePolicyDesc')}
+                    </span>
+                  }
+                  rules={[{ required: true }]}
+                  style={{ marginBottom: 0 }}
+                >
+                  <AstryxFormSelector
+                    label={t('resourceGroup.FailurePolicy')}
+                    options={[
+                      {
+                        label: t('resourceGroup.FailurePolicyStrict'),
+                        value: 'STRICT',
+                      },
+                      {
+                        label: t('resourceGroup.FailurePolicyBootAll'),
+                        value: 'BOOT_ALL',
+                      },
+                      {
+                        label: t('resourceGroup.FailurePolicyTolerant'),
+                        value: 'TOLERANT',
+                      },
+                    ]}
+                  />
+                </BAIFormItem>
+                <BAIFormItem
+                  label={t('resourceGroup.AgentSelectionPolicy')}
+                  name="agentSelectionPolicy"
+                  tooltip={
+                    <span style={{ whiteSpace: 'pre-line' }}>
+                      {t('resourceGroup.AgentSelectionPolicyDesc')}
+                    </span>
+                  }
+                  rules={[{ required: true }]}
+                  style={{ marginBottom: 0 }}
+                >
+                  <AstryxFormSelector
+                    label={t('resourceGroup.AgentSelectionPolicy')}
+                    options={[
+                      {
+                        label: t('resourceGroup.AgentSelectionStrict'),
+                        value: 'STRICT',
+                      },
+                      {
+                        label: t('resourceGroup.AgentSelectionPreferred'),
+                        value: 'PREFERRED',
+                      },
+                    ]}
+                  />
+                </BAIFormItem>
+              </Grid>
+            </ResourceGroupOptionsCollapsible>
+            <HandlerOptionsFormFields
+              name="handlerOptions"
+              defaultIsOpen={isInitiallyOpen('handlerOptions')}
+            />
+          </BAIFlex>
         </Form>
       </BAIFlex>
     </BAIModal>
