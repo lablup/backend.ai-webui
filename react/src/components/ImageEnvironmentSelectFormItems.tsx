@@ -721,7 +721,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
               </SelectOption>
             ) : (
               [
-                !_.isEmpty(dedicatedEnvironmentGroups) ? (
+                showDedicatedFirst && !_.isEmpty(dedicatedEnvironmentGroups) ? (
                   <SelectOptGroup
                     key={DEDICATED_OPTION_VALUE_PREFIX}
                     label={t('session.launcher.AcceleratorDedicatedImages')}
