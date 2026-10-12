@@ -13,12 +13,12 @@ import {
 } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import './SessionMetricGraph.css';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { Heading } from '@astryxdesign/core/Heading';
-import { useTheme } from '@astryxdesign/core/theme';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { Heading } from '@lablup/ui-common/Heading';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIQuestionIconWithTooltip,
   BAIFlex,
+  BAIQuestionIconWithTooltip,
   BAISkeleton,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -27,15 +27,15 @@ import { Suspense, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
   CartesianGrid,
   Legend,
-  ResponsiveContainer,
+  Line,
+  LineChart,
   ReferenceLine,
+  ResponsiveContainer,
   Tooltip as ChartTooltip,
+  XAxis,
+  YAxis,
 } from 'recharts';
 
 type MetricData = NonNullable<

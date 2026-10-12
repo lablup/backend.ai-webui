@@ -6,16 +6,16 @@ import { AssignRoleModalBulkAssignMutation } from '../__generated__/AssignRoleMo
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { reasonMessage } from '../helper/mutationError';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAdminUserV2Select,
   BAIBulkErrorModal,
-  type BAIColumnsType,
   BAIModal,
   BAIModalProps,
   useBAILogger,
   useMutationWithPromise,
+  type BAIColumnsType,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useRef, useState } from 'react';

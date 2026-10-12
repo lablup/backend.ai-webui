@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<187fdc2d2db50d917a3667890cf6f433>>
+ * @generated SignedSource<<ad0b632beff91833858e9909017f242d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -191,7 +191,13 @@ return {
           },
           {
             "alias": null,
-            "args": null,
+            "args": [
+              {
+                "kind": "Literal",
+                "name": "first",
+                "value": 100
+              }
+            ],
             "concreteType": "GroupConnection",
             "kind": "LinkedField",
             "name": "allowed_groups",
@@ -223,7 +229,7 @@ return {
                 "storageKey": null
               }
             ],
-            "storageKey": null
+            "storageKey": "allowed_groups(first:100)"
           }
         ],
         "storageKey": null
@@ -231,7 +237,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "dae6f7ea2866ae70744bbe1b9725b4dd",
+    "cacheID": "598632f8252e422a464bff3a9cd48ade",
     "id": null,
     "metadata": {
       "relayTestingSelectionTypeInfo": {
@@ -287,7 +293,7 @@ return {
     },
     "name": "ContainerRegistryEditorModalTestQuery",
     "operationKind": "query",
-    "text": "query ContainerRegistryEditorModalTestQuery(\n  $id: String!\n) {\n  container_registry_node(id: $id) {\n    ...ContainerRegistryEditorModalFragment\n    id\n  }\n}\n\nfragment ContainerRegistryEditorModalFragment on ContainerRegistryNode {\n  id\n  row_id\n  name\n  registry_name\n  url\n  type\n  project\n  username\n  ssl_verify\n  extra @since(version: \"24.09.3\")\n  is_global @since(version: \"24.09.0\")\n  allowed_groups @since(version: \"25.3.0\") {\n    edges {\n      node {\n        id\n        row_id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query ContainerRegistryEditorModalTestQuery(\n  $id: String!\n) {\n  container_registry_node(id: $id) {\n    ...ContainerRegistryEditorModalFragment\n    id\n  }\n}\n\nfragment ContainerRegistryEditorModalFragment on ContainerRegistryNode {\n  id\n  row_id\n  name\n  registry_name\n  url\n  type\n  project\n  username\n  ssl_verify\n  extra\n  is_global\n  allowed_groups(first: 100) {\n    edges {\n      node {\n        id\n        row_id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();

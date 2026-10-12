@@ -11,9 +11,9 @@ import { toProjectContext } from '../types/projectContext';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Selector } from '@astryxdesign/core/Selector';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Selector } from '@lablup/ui-common/Selector';
 import {
   useUpdatableState,
   BAIFlex,

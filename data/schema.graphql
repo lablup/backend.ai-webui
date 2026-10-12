@@ -765,6 +765,24 @@ type AgentSystemInfo
   computePlugins: ComputePlugins!
 }
 
+"""
+Added in 26.9.0. Uses narrowing an agent query; every id is AND-ed. The caller must be able to read each listed entity, or the request is refused. Only agents the caller can read are returned, even when a listed entity is tied to others.
+"""
+input AgentUsage
+  @join__type(graph: STRAWBERRY)
+{
+  """Entities whose use of the agent narrows the read."""
+  usedBy: AgentUsedBy = null
+}
+
+"""Added in 26.9.0. Entities whose use of an agent narrows the read."""
+input AgentUsedBy
+  @join__type(graph: STRAWBERRY)
+{
+  """Sessions running a kernel on the agent."""
+  session: [UUID!] = null
+}
+
 """Added in 26.1.0. Strawberry-based Agent type replacing AgentNode."""
 type AgentV2 implements Node
   @join__implements(graph: STRAWBERRY, interface: "Node")
@@ -3999,7 +4017,7 @@ type ContainerUtilizationMetric
 {
   metric_name: String
 
-  """One of 'current', 'capacity'."""
+  """One of 'current', 'capacity', 'pct'."""
   value_type: String
   values: [MetricResultValue]
 
@@ -4377,7 +4395,9 @@ input CreateDomainInput
   integrationName: String = null
 }
 
-"""Added in 24.12.0."""
+"""
+Added in 24.12.0. Creates the domain, then links the given scaling groups in a separate step. If linking fails, the domain remains without them.
+"""
 type CreateDomainNode
   @join__type(graph: GRAPHENE)
 {
@@ -9616,6 +9636,9 @@ type ImageV2 implements Node
 
   """Added in 26.2.0. Aliases for this image."""
   aliases(filter: ImageV2AliasFilter = null, orderBy: [ImageV2AliasOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null): ImageV2AliasConnection
+
+  """Added in 26.9.0. The labels on this image."""
+  entityLabels(filter: EntityLabelFilter = null, orderBy: [EntityLabelOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): EntityLabelConnection
 }
 
 """
@@ -9776,6 +9799,9 @@ input ImageV2Filter
 
   """Added in 26.3.0. Filter by last used datetime (before/after)."""
   lastUsed: DateTimeFilter = null
+
+  """Added in 26.9.0. Select entities by the labels on them."""
+  labels: EntityLabelNestedFilter = null
   AND: [ImageV2Filter!] = null
   OR: [ImageV2Filter!] = null
   NOT: [ImageV2Filter!] = null
@@ -12848,7 +12874,9 @@ input ModifyDomainInput
   integration_id: String
 }
 
-"""Added in 24.12.0."""
+"""
+Added in 24.12.0. Updates the domain, then adds and removes the given scaling groups in separate steps. If linking fails, the domain update remains.
+"""
 type ModifyDomainNode
   @join__type(graph: GRAPHENE)
 {
@@ -17256,7 +17284,7 @@ type Query
   available_service: AvailableServiceNode @join__field(graph: GRAPHENE)
 
   """Added in 25.8.0."""
-  available_services(filter: String, order: String, offset: Int, before: String, after: String, first: Int, last: Int): AvailableServiceConnection @join__field(graph: GRAPHENE)
+  available_services(filter: String, order: String, offset: Int, before: String, after: String, first: Int, last: Int): AvailableServiceConnection @join__field(graph: GRAPHENE) @deprecated(reason: "Deprecated since 26.9.0.")
 
   """Added in 25.8.0."""
   service_config(service: String!): ServiceConfigNode @join__field(graph: GRAPHENE)
@@ -17276,7 +17304,20 @@ type Query
   agentStats: AgentStats @join__field(graph: STRAWBERRY)
 
   """Added in 26.1.0. List agents with filtering and pagination"""
-  agentsV2(filter: AgentFilter = null, orderBy: [AgentOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): AgentV2Connection @join__field(graph: STRAWBERRY)
+  agentsV2(
+    """
+    Added in 26.9.0. Uses narrowing the result. Each listed entity must be readable by the caller; agents the caller cannot read are left out.
+    """
+    usage: AgentUsage = null
+    filter: AgentFilter = null
+    orderBy: [AgentOrderBy!] = null
+    before: String = null
+    after: String = null
+    first: Int = null
+    last: Int = null
+    limit: Int = null
+    offset: Int = null
+  ): AgentV2Connection @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.7.0. Get a single app config allow-list entry by id (super admin only).
@@ -17592,6 +17633,22 @@ type Query
     offset: Int = null
   ): ImageV2Connection @join__field(graph: STRAWBERRY)
 
+  """Added in 26.9.0. Page through the images the current user can reach."""
+  myImagesV2(
+    """
+    Uses narrowing the result. Each listed entity must be readable by the caller; images the caller cannot read are left out.
+    """
+    usage: ImageUsage = null
+    filter: ImageV2Filter = null
+    orderBy: [ImageV2OrderBy!] = null
+    before: String = null
+    after: String = null
+    first: Int = null
+    last: Int = null
+    limit: Int = null
+    offset: Int = null
+  ): ImageV2Connection @join__field(graph: STRAWBERRY)
+
   """
   Added in 26.2.0. Query kernels with pagination and filtering. (admin only)
   """
@@ -17678,6 +17735,22 @@ type Query
 
     """
     Added in 26.9.0. Uses narrowing the result. Each listed entity must be readable by the caller; sessions the caller cannot read are left out.
+    """
+    usage: SessionUsage = null
+    filter: SessionV2Filter = null
+    orderBy: [SessionV2OrderBy!] = null
+    before: String = null
+    after: String = null
+    first: Int = null
+    last: Int = null
+    limit: Int = null
+    offset: Int = null
+  ): SessionV2Connection @join__field(graph: STRAWBERRY)
+
+  """Added in 26.9.0. Page through the sessions the current user owns."""
+  mySessionsV2(
+    """
+    Uses narrowing the result. Each listed entity must be readable by the caller; sessions the caller cannot read are left out.
     """
     usage: SessionUsage = null
     filter: SessionV2Filter = null
@@ -18162,6 +18235,11 @@ type Query
   scopedProjectsV2(scope: ProjectScope!, filter: ProjectV2Filter = null, orderBy: [ProjectV2OrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ProjectV2Connection @join__field(graph: STRAWBERRY)
 
   """
+  Added in 26.9.0. Page through the projects the current user is a member of.
+  """
+  myProjectsV2(filter: ProjectV2Filter = null, orderBy: [ProjectV2OrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ProjectV2Connection @join__field(graph: STRAWBERRY)
+
+  """
   Added in 26.2.0. Get the domain that a project belongs to. Returns an error if project or domain is not found.
   """
   projectDomainV2(projectId: UUID!): DomainV2 @join__field(graph: STRAWBERRY)
@@ -18201,6 +18279,11 @@ type Query
 
   """Added in 26.4.2. Get the current user's user resource policy."""
   myUserResourcePolicyV2: UserResourcePolicyV2 @join__field(graph: STRAWBERRY)
+
+  """
+  Added in 26.9.0. Get the resource policy the named project is subject to.
+  """
+  scopedProjectResourcePolicyV2(projectId: ID!): ProjectResourcePolicyV2 @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.4.2. List storage hosts the current user is allowed to mount, with the union of permissions inherited from domain, project, and keypair resource policies.
@@ -18345,6 +18428,24 @@ type Query
 
     """
     Added in 26.9.0. Uses narrowing the result. Each listed entity must be readable by the caller; model cards the caller cannot read are left out.
+    """
+    usage: ModelCardUsage = null
+    filter: ModelCardV2Filter = null
+    orderBy: [ModelCardV2OrderBy!] = null
+    before: String = null
+    after: String = null
+    first: Int = null
+    last: Int = null
+    limit: Int = null
+    offset: Int = null
+  ): ModelCardV2Connection @join__field(graph: STRAWBERRY)
+
+  """
+  Added in 26.9.0. Page through the model cards the current user holds through membership.
+  """
+  myModelCardsV2(
+    """
+    Uses narrowing the result. Each listed entity must be readable by the caller; model cards the caller cannot read are left out.
     """
     usage: ModelCardUsage = null
     filter: ModelCardV2Filter = null
@@ -19380,6 +19481,9 @@ type ResourceGroup implements Node
 
   """Added in 26.9.0. Projects this resource group serves."""
   projects(filter: ProjectV2Filter = null, orderBy: [ProjectV2OrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ProjectV2Connection
+
+  """Added in 26.9.0. The labels on this resource group."""
+  entityLabels(filter: EntityLabelFilter = null, orderBy: [EntityLabelOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): EntityLabelConnection
 }
 
 """Added in 26.2.0. Resource group connection"""
@@ -19422,6 +19526,9 @@ input ResourceGroupFilter
   isActive: Boolean = null
   isPublic: Boolean = null
   isDefault: Boolean = null
+
+  """Added in 26.9.0. Select entities by the labels on them."""
+  labels: EntityLabelNestedFilter = null
   AND: [ResourceGroupFilter!] = null
   OR: [ResourceGroupFilter!] = null
   NOT: [ResourceGroupFilter!] = null
@@ -20302,8 +20409,18 @@ type Role implements Node
   """Added in 26.9.0. ID of the scope the role belongs to."""
   scopeId: UUID!
 
+  """
+  Added in 26.9.0. ID of the role preset the role was instantiated from. Null when the role was not created from a preset or the preset has been purged.
+  """
+  rolePresetId: UUID
+
   """Added in 26.9.0. The scope the role belongs to."""
   scope: EntityNode
+
+  """
+  Added in 26.9.0. The role preset the role was instantiated from. Null when the role was not created from a preset or the preset has been purged.
+  """
+  rolePreset: RolePreset
 
   """Added in 26.3.0. Permissions associated with this role."""
   permissions(filter: PermissionFilter = null, orderBy: [PermissionOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): PermissionConnection
@@ -20869,6 +20986,9 @@ type RolePresetEdge
 input RolePresetFilter
   @join__type(graph: STRAWBERRY)
 {
+  """Added in 26.9.0. Filter by role preset ID."""
+  id: UUIDFilter = null
+
   """Filter by name."""
   name: StringFilter = null
 
@@ -20882,6 +21002,11 @@ input RolePresetFilter
   Filter by soft-delete flag. Searches exclude soft-deleted rows by default; set this explicitly to `true` to inspect archived presets.
   """
   deleted: Boolean = null
+
+  """
+  Added in 26.9.0. Filter by conditions on the permission entries the preset carries.
+  """
+  permissions: RolePresetPermissionNestedFilter = null
 
   """Combine multiple filters with AND logic. All conditions must match."""
   AND: [RolePresetFilter!] = null
@@ -20914,6 +21039,31 @@ enum RolePresetOrderField
   SCOPE_TYPE @join__enumValue(graph: STRAWBERRY)
   CREATED_AT @join__enumValue(graph: STRAWBERRY)
   UPDATED_AT @join__enumValue(graph: STRAWBERRY)
+}
+
+"""
+Added in 26.9.0. Filter role presets by conditions on the permission entries they carry.
+"""
+input RolePresetPermissionNestedFilter
+  @join__type(graph: STRAWBERRY)
+{
+  """
+  Matches presets carrying at least one permission entry when true, and presets carrying none when false. Says nothing about what the entries hold.
+  """
+  exists: Boolean = null
+
+  """
+  Matches presets with at least one permission entry satisfying all conditions.
+  """
+  some: RolePermissionPresetFilter = null
+
+  """
+  Matches presets whose every permission entry satisfies all conditions (also true when the preset carries none).
+  """
+  every: RolePermissionPresetFilter = null
+
+  """Matches presets with no permission entry satisfying all conditions."""
+  none: RolePermissionPresetFilter = null
 }
 
 """
@@ -26024,7 +26174,7 @@ type UserUtilizationMetric
 input UserUtilizationMetricQueryInput
   @join__type(graph: GRAPHENE)
 {
-  """One of 'current', 'capacity'. Default value is 'current'."""
+  """One of 'current', 'capacity', 'pct'. Default value is 'current'."""
   value_type: String = "current"
 
   """metric name of container utilization. For example, 'cpu_util', 'mem'."""

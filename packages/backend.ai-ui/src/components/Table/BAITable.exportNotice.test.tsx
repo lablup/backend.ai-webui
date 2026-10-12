@@ -39,7 +39,7 @@ const openExportModal = async (notice?: React.ReactNode) => {
 describe('BAITable export modal notice (FR-4010)', () => {
   it('shows the notice above the column list when one is given', async () => {
     await openExportModal('Only the first 1000 of 1234 rows will be exported.');
-    expect(screen.getByTestId('bai-table-export-notice')).toHaveTextContent(
+    expect(screen.getByTestId('uic-data-grid-export-notice')).toHaveTextContent(
       'Only the first 1000 of 1234 rows will be exported.',
     );
   });
@@ -47,7 +47,7 @@ describe('BAITable export modal notice (FR-4010)', () => {
   it('renders no banner when there is nothing to warn about', async () => {
     await openExportModal(undefined);
     expect(
-      screen.queryByTestId('bai-table-export-notice'),
+      screen.queryByTestId('uic-data-grid-export-notice'),
     ).not.toBeInTheDocument();
   });
 });

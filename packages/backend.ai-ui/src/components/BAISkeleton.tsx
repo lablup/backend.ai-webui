@@ -13,9 +13,9 @@
  Standard pairing (`use-bai-card.md`): the Suspense fallback INSIDE a card
  body, so the header stays visible while the body loads.
 */
-import { Skeleton } from '@astryxdesign/core/Skeleton';
-import type { SkeletonProps } from '@astryxdesign/core/Skeleton';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Skeleton } from '@lablup/ui-common/Skeleton';
+import type { SkeletonProps } from '@lablup/ui-common/Skeleton';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
 import React from 'react';
 
 export type BAISkeletonVariant = 'block' | 'paragraph' | 'input' | 'button';

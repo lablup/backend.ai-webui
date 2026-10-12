@@ -11,7 +11,8 @@
 
  Regenerate after any recipe or theme.json change:
 
-     cd react && pnpm exec astryx theme build src/astryx-theme/built/backendai-default.ts
+     cd react && NODE_OPTIONS="--import=$PWD/../scripts/astryx-theme-css-stub.mjs" \
+       pnpm exec astryx theme build src/astryx-theme/built/backendai-default.ts
 
  `scripts/verify.sh` runs the CLI's `--check` mode to fail on stale artifacts.
 

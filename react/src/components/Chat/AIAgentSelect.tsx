@@ -4,8 +4,8 @@
  */
 import { AIAgent, useAIAgent } from '../../hooks/useAIAgent';
 import { FluentEmojiIcon } from '../FluentEmojiIcon';
-import { Selector } from '@astryxdesign/core/Selector';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Selector } from '@lablup/ui-common/Selector';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex, useControllableValue } from 'backend.ai-ui';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';

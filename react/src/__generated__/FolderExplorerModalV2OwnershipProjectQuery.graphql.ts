@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6303e3289f684ae7a934b0c6172f5957>>
+ * @generated SignedSource<<e817cadfaf0c2559762270a3f4685ae8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -82,16 +82,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "dcbd8e092aa971137ec8a90e75b5a241",
+    "cacheID": "40f7bea71386e17202f160ea4421c253",
     "id": null,
     "metadata": {},
     "name": "FolderExplorerModalV2OwnershipProjectQuery",
     "operationKind": "query",
-    "text": "query FolderExplorerModalV2OwnershipProjectQuery(\n  $projectId: String!\n) {\n  group_node(id: $projectId) @since(version: \"24.03.0\") {\n    id\n    type\n  }\n}\n"
+    "text": "query FolderExplorerModalV2OwnershipProjectQuery(\n  $projectId: String!\n) {\n  group_node(id: $projectId) {\n    id\n    type\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "8a373fe60530e9371efd306f3e746e6a";
+(node as any).hash = "a0e3de62f6cdab6b0f3803dbb9f12587";
 
 export default node;

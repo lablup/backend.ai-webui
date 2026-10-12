@@ -1,9 +1,9 @@
 import type { AstryxConfig } from '@astryxdesign/cli/authoring';
 
 /**
- * Registers `backend.ai-ui` (BUI) as an Astryx CLI integration, so `astryx
+ * Registers `backend.ai-ui` (BUI) as an Astryx CLI integration, so `ui-common
  * component` / `search` / `docs` answer with the BAI* wrappers this project
- * actually uses instead of only Astryx core's primitives.
+ * actually uses instead of only ui-common's and Astryx core's components.
  *
  * The CLI reads this file from the nearest package.json root, and resolves
  * each integration from that root's `node_modules` — so it lives here (the

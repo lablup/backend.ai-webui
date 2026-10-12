@@ -15,7 +15,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'Owner cell for a model deployment: the creator’s email, truncated to 200px, wrapped in a tooltip that spells out who created it. It reads `BAIDeploymentOwnerInfo_deployment` on `ModelDeployment`, selecting `creator` — guarded by `@since(version: "26.4.3")` — and that creator’s `email`, `username` and `fullName`, so the caller spreads that fragment on the deployment node and passes the node as `deploymentFrgmt`. The tooltip stacks three lines: a "Created by" label, the full name (falling back to the username, then the email), and the email itself. When no email resolves — an older manager where `creator` is absent, or a deployment with no creator — it renders a secondary-coloured dash instead.',
+      'Owner cell for a model deployment: the creator’s email, truncated to 200px, wrapped in a tooltip that spells out who created it. It reads `BAIDeploymentOwnerInfo_deployment` on `ModelDeployment`, selecting `creator` and that creator’s `email`, `username` and `fullName`, so the caller spreads that fragment on the deployment node and passes the node as `deploymentFrgmt`. The tooltip stacks three lines: a "Created by" label, the full name (falling back to the username, then the email), and the email itself. When no email resolves — a deployment with no creator — it renders a secondary-coloured dash instead.',
     bestPractices: [
       {
         guidance: true,
@@ -26,11 +26,6 @@ export const docs = {
         guidance: true,
         description:
           'Reserve at least 200px for the cell — the email clamps at that width, and everything past it is only reachable through the tooltip.',
-      },
-      {
-        guidance: true,
-        description:
-          'Treat the dash as a normal state on managers older than 26.4.3, where the `creator` field is not served at all.',
       },
       {
         guidance: false,

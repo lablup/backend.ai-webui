@@ -7,7 +7,7 @@ import { EditSessionPriorityModalMutation } from '../../__generated__/EditSessio
 import { App } from '../../app-shim';
 import { Form, FormInstance } from '../../form-engine';
 import { AstryxFormNumberInput } from '../astryxFormControls';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIBulkEditFormItem,
   BAIFlex,
@@ -52,7 +52,7 @@ const EditSessionPriorityModal: React.FC<EditSessionPriorityModalProps> = ({
       @relay(plural: true) {
         id @required(action: NONE)
         name
-        priority @since(version: "24.09.0")
+        priority
       }
     `,
     sessionFrgmts,
@@ -68,7 +68,7 @@ const EditSessionPriorityModal: React.FC<EditSessionPriorityModalProps> = ({
         modify_compute_session(input: $input) {
           item {
             id
-            priority @since(version: "24.09.0")
+            priority
           }
         }
       }

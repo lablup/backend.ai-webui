@@ -4,8 +4,8 @@
  */
 import { App } from '../../app-shim';
 import { useDefaultTheme } from '../../hooks/useDefaultTheme';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Text } from '@astryxdesign/core/Text';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex, BAIUncontrolledInput } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { ImagePlus } from 'lucide-react';

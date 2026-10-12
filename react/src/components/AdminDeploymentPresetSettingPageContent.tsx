@@ -4,8 +4,7 @@
  */
 import type { AdminDeploymentPresetSettingPageContent_preset$key } from '../__generated__/AdminDeploymentPresetSettingPageContent_preset.graphql';
 import EnvVarFormList from '../components/EnvVarFormList';
-import { Form } from '../form-engine';
-import type { FormInstance } from '../form-engine';
+import { Form, type FormInstance } from '../form-engine';
 import {
   DEFAULT_MODEL_SERVICE_SHELL,
   deriveCommandModeState,
@@ -50,26 +49,26 @@ import {
   AstryxFormTextInput,
 } from './astryxFormControls';
 import './collapsible-section.css';
-import { Button } from '@astryxdesign/core/Button';
-import { Selector } from '@astryxdesign/core/Selector';
-import { Step, Stepper } from '@astryxdesign/core/Stepper';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Button } from '@lablup/ui-common/Button';
+import { Selector } from '@lablup/ui-common/Selector';
+import { Step, Stepper } from '@lablup/ui-common/Stepper';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
   BAIAdminImageSelect,
   BAIButton,
   BAICard,
   BAIFlex,
+  BAISkeleton,
   toLocalId,
-  useDebounceFn,
   useBAIBreakpoint,
+  useDebounceFn,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
-  ChevronsRight,
   ChevronLeft,
-  CircleMinus,
   ChevronRight,
+  ChevronsRight,
+  CircleMinus,
   PlusIcon,
 } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
@@ -248,12 +247,10 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   const { token } = useTheme();
   const screens = useBAIBreakpoint();
   const baiClient = useSuspendedBackendaiClient();
-  // BA-7210 / FR-3481: managers this version+ resolve an omitted model
-  // name/modelPath from the runtime variant baseline / model mount
-  // destination at revision resolution, so the form can stop requiring them.
-  const supportsNullableModelDefinition = baiClient.supports(
-    'preset-model-config-type',
-  );
+  // BA-7210 / FR-3481: newer managers resolve an omitted model name/modelPath,
+  // so the form can stop requiring them.
+  const supportsNullableModelDefinition =
+    baiClient.isManagerVersionCompatibleWith('26.9.0');
   const commonEnvVars = useCommonEnvVarConfigs();
 
   const preset = useFragment(
@@ -295,7 +292,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           revisionHistoryLimit
           deploymentStrategy
         }
-        presetValues @since(version: "26.4.4rc9") {
+        presetValues {
           presetId
           value
         }
@@ -313,7 +310,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               shell
               port
               healthCheck {
-                enable @since(version: "26.4.4rc7")
+                enable
                 interval
                 path
                 maxRetries
@@ -502,14 +499,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
     <>
       <ModelServiceHealthCheckFormItems
         namePrefix={['modelDefinition', 'models', 0, 'service']}
-        placeholders={{
-          path: t('general.Example', { value: '/health' }),
-          interval: t('general.Example', { value: '10' }),
-          maxRetries: t('general.Example', { value: '10' }),
-          maxWaitTime: t('general.Example', { value: '15' }),
-          expectedStatusCode: t('general.Example', { value: '200' }),
-          initialDelay: t('general.Example', { value: '60' }),
-        }}
+        placeholders={{ initialDelay: 1800 }}
       />
       <PreStartActionsFormList
         namePrefix={['modelDefinition', 'models', 0, 'service']}
@@ -611,11 +601,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                         shell: commandModeState.shell,
                         startCommand: commandModeState.command,
                         execution: commandModeState.execution,
-                        // 26.4.4rc7+: `enable` is authoritative; older managers
-                        // omit it, so fall back to the object's presence.
                         enableHealthCheck:
-                          m.service.healthCheck?.enable ??
-                          !!m.service.healthCheck,
+                          m.service.healthCheck?.enable ?? false,
                         healthCheck: m.service.healthCheck
                           ? {
                               path: m.service.healthCheck.path,
@@ -948,7 +935,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             {/* Service Configuration (port, command, shell) — shown only when
                 the selected runtime variant reads vfolder config files
                 (custom) AND the manager supports submitting it independently
-                of Model Definition (26.9.0+, `preset-model-config-type`).
+                of Model Definition (manager 26.9.0+).
                 Legacy managers require a real name/modelPath alongside any
                 service data (`PresetModelConfigInput.name`/`modelPath` were
                 required, non-empty strings pre-BA-7210) — showing this here
@@ -1393,7 +1380,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
       {/* Right-side vertical Steps panel — mirrors DeploymentLauncherPageContent.
           Hidden below lg so the form gets the full viewport width on small screens. */}
       {screens.lg && (
-        <BAIFlex style={{ position: 'sticky', top: 80 }}>
+        <BAIFlex style={{ position: 'sticky', top: 20 }}>
           {/* Only completed and current steps are clickable; forward jumps go
               through the Next / Skip-to-Review buttons. */}
           <Stepper

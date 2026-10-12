@@ -145,6 +145,7 @@ If a documentation update plan asks for any of the above, skip that item and not
 #### Image References
 
 - Format: `![](images/filename.png)`
+- 2× captures of a modal, dropdown, menu, card or other component narrower than 1640px get a width hint of half the PNG width, per locale: `![=520px](images/filename.png)` (see `SCREENSHOT-GUIDELINES.md` → "Display Width for Component Captures"). Without it the web manual shows the component at double size.
 - Naming: `snake_case.png`, descriptive names
 - Placement: After introductory text for the section
 - If a screenshot doesn't exist yet, add the reference with a comment:

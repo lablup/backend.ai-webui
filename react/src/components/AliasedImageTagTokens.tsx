@@ -30,7 +30,7 @@ const AliasedImageTagTokens: React.FC<AliasedImageTagTokensProps> = ({
           key
           value
         }
-        tags @since(version: "24.12.0") {
+        tags {
           key
           value
         }

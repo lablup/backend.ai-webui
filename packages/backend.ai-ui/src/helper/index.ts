@@ -1,4 +1,4 @@
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import Big from 'big.js';
 import * as _ from 'lodash-es';
 

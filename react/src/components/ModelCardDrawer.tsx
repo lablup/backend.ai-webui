@@ -10,12 +10,12 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ModelBrandIcon from './ModelBrandIcon';
 import ModelCardDeployModal from './ModelCardDeployModal';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
-import { Button } from '@astryxdesign/core/Button';
-import { Card } from '@astryxdesign/core/Card';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Heading, Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
+import { Button } from '@lablup/ui-common/Button';
+import { Card } from '@lablup/ui-common/Card';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Heading, Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAICard,
   BAIDrawer,

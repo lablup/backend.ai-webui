@@ -1,35 +1,16 @@
 /**
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
- */
-import React, { useState } from 'react';
 
-export interface BAIImageWithFallbackProps extends Omit<
-  React.ImgHTMLAttributes<HTMLImageElement>,
-  'onError'
-> {
-  src: string;
-  fallbackIcon: React.ReactNode;
-  alt: string;
-}
+ ui-common `ImageWithFallback` under its BUI name; the props are identical.
+*/
+import {
+  ImageWithFallback,
+  type ImageWithFallbackProps,
+} from '@lablup/ui-common/components/ImageWithFallback';
 
-const BAIImageWithFallback: React.FC<BAIImageWithFallbackProps> = ({
-  src,
-  fallbackIcon,
-  alt,
-  ...props
-}) => {
-  'use memo';
-  const [errorSrc, setErrorSrc] = useState<string | null>(null);
-  const hasError = errorSrc === src;
+export type BAIImageWithFallbackProps = ImageWithFallbackProps;
 
-  if (hasError) {
-    return <>{fallbackIcon}</>;
-  }
-
-  return (
-    <img {...props} src={src} alt={alt} onError={() => setErrorSrc(src)} />
-  );
-};
+const BAIImageWithFallback = ImageWithFallback;
 
 export default BAIImageWithFallback;

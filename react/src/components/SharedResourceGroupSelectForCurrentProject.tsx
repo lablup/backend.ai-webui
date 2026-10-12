@@ -8,8 +8,7 @@ import {
   useCurrentResourceGroupState,
   useResourceGroupsForCurrentProject,
 } from '../hooks/useCurrentProject';
-import TextHighlighter from './TextHighlighter';
-import { BAISelect, BAISelectProps } from 'backend.ai-ui';
+import { BAISelect, BAISelectProps, BAITextHighlighter } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useState, useTransition } from 'react';
 
@@ -53,9 +52,9 @@ const SharedResourceGroupSelectForCurrentProject: React.FC<
       })}
       optionRender={(option) => {
         return (
-          <TextHighlighter keyword={controllableSearchValue}>
+          <BAITextHighlighter keyword={controllableSearchValue}>
             {option.data.value?.toString()}
-          </TextHighlighter>
+          </BAITextHighlighter>
         );
       }}
       showSearch={

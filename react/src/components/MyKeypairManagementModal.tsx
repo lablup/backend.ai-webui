@@ -5,9 +5,9 @@
 import { MyKeypairManagementModalDeactivateMyKeypairMutation } from '../__generated__/MyKeypairManagementModalDeactivateMyKeypairMutation.graphql';
 import { MyKeypairManagementModalIssueMyKeypairMutation } from '../__generated__/MyKeypairManagementModalIssueMyKeypairMutation.graphql';
 import {
+  KeypairOrderBy,
   MyKeypairManagementModalQuery,
   MyKeypairManagementModalQuery$data,
-  KeypairOrderBy,
 } from '../__generated__/MyKeypairManagementModalQuery.graphql';
 import { MyKeypairManagementModalRevokeMyKeypairMutation } from '../__generated__/MyKeypairManagementModalRevokeMyKeypairMutation.graphql';
 import { MyKeypairManagementModalSwitchMainKeyMutation } from '../__generated__/MyKeypairManagementModalSwitchMainKeyMutation.graphql';
@@ -17,29 +17,29 @@ import { csvLiteral, downloadCSV, escapeCsvValue } from '../helper/csv-util';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import BAIRadioGroup from './BAIRadioGroup';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { useTheme } from '@astryxdesign/core/theme';
-import { BAIPopconfirm } from 'backend.ai-ui';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
+  BAIIconWithTooltip,
   BAIModal,
   BAIModalProps,
+  BAIPopconfirm,
   BAITable,
   BAIText,
+  INITIAL_FETCH_KEY,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  type GraphQLFilter,
-  INITIAL_FETCH_KEY,
-  BAIIconWithTooltip,
   useBAILogger,
   useErrorMessageResolver,
   useFetchKey,
+  type GraphQLFilter,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import {
@@ -225,6 +225,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
               accessKey
               isActive
               isAdmin
+              isDefault
               createdAt
               modifiedAt
               lastUsed
@@ -236,8 +237,15 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
           }
           count
         }
-        user {
-          main_access_key
+        # The banner shows the main key even when the table page or filter
+        # leaves it out, so it is read on its own.
+        defaultKeypair: myKeypairs(filter: { isDefault: true }, limit: 1) {
+          edges {
+            node {
+              id
+              accessKey
+            }
+          }
         }
       }
     `,
@@ -251,7 +259,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
     },
   );
 
-  const mainAccessKey = data.user?.main_access_key;
+  const mainAccessKey = data.defaultKeypair?.edges?.[0]?.node?.accessKey;
   const keypairNodes = filterOutNullAndUndefined(
     data.myKeypairs?.edges?.map((edge) => edge?.node),
   );
@@ -472,12 +480,12 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                 title: t('credential.AccessKey'),
                 dataIndex: 'accessKey',
                 sorter: true,
-                render: (value: string) => (
+                render: (value: string, record: KeypairNode) => (
                   <BAIFlex gap="xs" align="center">
                     <BAIText monospace copyable>
                       {value}
                     </BAIText>
-                    {value === mainAccessKey && (
+                    {record.isDefault && (
                       <BAIIconWithTooltip
                         content={t('credential.MainAccessKey')}
                         icon={
@@ -498,7 +506,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                 fixed: 'right' as const,
                 render: (_: unknown, record: KeypairNode) => {
                   if (deferredActiveFilter === 'active') {
-                    const isMain = record.accessKey === mainAccessKey;
+                    const isMain = record.isDefault;
                     return (
                       <BAIFlex gap="xxs">
                         {!isMain && (

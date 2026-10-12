@@ -16,7 +16,7 @@
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import './DragAndDrop.css';
 import type { RcFile } from './hooks';
-import { FileInput } from '@astryxdesign/core/FileInput';
+import { FileInput } from '@lablup/ui-common/FileInput';
 import { useRef } from 'react';
 import { createPortal } from 'react-dom';
 

@@ -50,6 +50,9 @@ export default defineConfig({
     ],
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['**/node_modules/**', '**/dist/**', '**/__generated__/**'],
+    // ui-common's own components import their `.css`, which Node cannot load
+    // when the package is externalized; let Vite transform it instead.
+    server: { deps: { inline: [/@lablup\/ui-common/] } },
 
     // CI-only transform cache — see comment in `react/vitest.config.ts`.
     experimental: { fsModuleCache: !!process.env.CI },

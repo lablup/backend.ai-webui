@@ -22,9 +22,9 @@ import BAIRadioGroup from './BAIRadioGroup';
 import ResourceGroupInfoModal from './ResourceGroupInfoModal';
 import ResourceGroupSettingModal from './ResourceGroupSettingModal';
 import UpdateResourceGroupsModal from './UpdateResourceGroupsModal';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Token } from '@astryxdesign/core/Token';
-import { useTheme } from '@astryxdesign/core/theme';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Token } from '@lablup/ui-common/Token';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIButton,
   BAIColumnsType,
@@ -45,14 +45,14 @@ import {
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import {
-  Check,
-  X,
-  Trash2,
-  Info,
   BanIcon,
+  Check,
+  Info,
   PlusIcon,
   SquarePenIcon,
+  Trash2,
   UndoIcon,
+  X,
 } from 'lucide-react';
 import React, {
   Suspense,
@@ -168,9 +168,9 @@ const ResourceGroupList: React.FC = () => {
   const { token } = useTheme();
   const { message } = App.useApp();
   const baiClient = useSuspendedBackendaiClient();
-  // AND/OR/NOT sub-filters only exist on managers with the `sub-filter`
-  // capability; older ones reject them, so restrict to a single condition.
-  const supportsSubFilter = baiClient.supports('sub-filter');
+  // AND/OR/NOT sub-filters need manager 26.7.0; older ones reject them, so
+  // restrict to a single condition.
+  const supportsSubFilter = baiClient.isManagerVersionCompatibleWith('26.7.0');
   const [activeType, setActiveType] = useState<'active' | 'inactive'>('active');
   const [
     openCreateModal,

@@ -23,8 +23,8 @@ import {
   type BrandSeedPair,
 } from '../src/theme';
 import webuiThemeJson from './theme.json';
-import { defineTheme } from '@astryxdesign/core/theme';
-import { neutralTheme } from '@astryxdesign/theme-neutral';
+import { defineTheme } from '@lablup/ui-common/theme';
+import { neutralTheme } from '@lablup/ui-common/theme/neutral';
 
 /** v2 seed value -> declared pair (string = both schemes, tuple = split). */
 const toPair = (

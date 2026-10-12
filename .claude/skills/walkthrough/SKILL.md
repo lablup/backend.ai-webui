@@ -3,9 +3,10 @@ name: walkthrough
 description: >
   Mint a walkthrough for the PR this session just implemented: a set of
   numbered stops a reviewer opens in the live dev server, each one marking an
-  element on screen with what changed and what to check. Run it as the LAST
-  step of the implementation workflow, after the `dev-server` skill has
-  advertised the PR's server — and on demand for any PR by number, booting
+  element on screen with what changed and what to check. Decide first whether
+  the PR needs one (section 0); when it does, run it as the LAST step of the
+  implementation workflow, after the `dev-server` skill has advertised the
+  PR's server — and on demand for any PR by number, booting
   a dev server for its branch when none is live. Trigger on "walkthrough
   만들어줘", "make a walkthrough", "PR #N에 walkthrough 달아줘", "add a
   walkthrough to PR #N", `/walkthrough <pr>`, "워크스루 다시 만들어줘",
@@ -27,19 +28,54 @@ and the `via` steps (clicks, typing, a select) that reveal it.
 You write the stop manifest; `scripts/mint.mjs` does the mechanical half (log
 in, replay, mint, verify, link) and `scripts/comment.sh` posts it.
 
+## 0. Is it needed?
+
+Decide from the diff and the PR body **before** booting a server or reading
+on. A skip ends here; name it in the final message with its one-line reason.
+
+Mint one only when a reviewer holding the PR body would otherwise have to hunt
+for the change or set up a state to see it:
+
+- reaching it takes interaction: a dialog, a wizard step, a tab, a filter, a
+  hover, a row action;
+- the change spans two or more places, or a flow across pages;
+- what shows depends on data (a status, a permission, a resource value), so
+  the check is value → what shows (section 5).
+
+Skip it when:
+
+- **nothing a person can recognize on screen changed**: schema, tests, docs,
+  generated files, i18n key plumbing, a refactor meant to render the same.
+  Boot no dev server either.
+- **the change is one spot a reader finds on landing**: a relabel, a copy
+  fix, an icon, a color or spacing change on a page's first screen. Write
+  `Where to look: <page> › <element>` in the PR body instead; the dev server
+  still boots.
+- **the connected backend can show none of it**: every stop would only say
+  what this server cannot produce. Put the condition (value → what shows) in
+  the PR body.
+- **a re-run changed no UI** (doc-only, test-only, a fix behind the same
+  elements): the stops still point at the same elements, and a re-mint would
+  only churn the ids.
+
+Between a one-stop walkthrough and one line in the PR body, the line wins.
+
+An explicit request (section 1a) overrides the one-spot skip, not the
+nothing-on-screen one.
+
 ## 1. When to run
 
-- **The last step of the implementation workflow**, after `dev-server` has
+- **The last step of the implementation workflow**, when section 0 says it is
+  needed, after `dev-server` has
   advertised the PR's server (the boot record exists and the PR carries the
   dev-server comment). The walkthrough is about the diff, so it runs on the
   branch you implemented, for that branch's PR only — lower layers of a stack
   got theirs on their own turn.
 - **On demand, by PR number** — `/walkthrough 9751`, "PR #9751에 walkthrough
   달아줘" — for a PR this session did not implement, from any checkout. The
-  steps are §1a; `mint.mjs --pr <n>` does the resolution.
+  steps are section 1a; `mint.mjs --pr <n>` does the resolution.
 - **Re-runs**: an implementation re-run that changes the UI re-mints and edits
-  the comment in place. A doc-only or test-only re-run does not — the stops
-  still point at the same elements, and a re-mint would only churn the ids.
+  the comment in place (section 0 covers the ones that do not).
 
 ### 1a. On demand for a PR by number
 
@@ -47,7 +83,7 @@ The branch path assumes the session is on the PR's branch with the diff in
 its head. Given only a number, get both first:
 
 1. **Is there a server?** `mint.mjs --pr <n> --dry-run` needs no manifest
-   and answers in one line (§6): the live server that serves the PR, or
+   and answers in one line (section 6): the live server that serves the PR, or
    exit 3. It refuses a PR that is not open, so that check is not yours.
 2. **No server** — boot one for `headRefName` with the `dev-server` skill,
    from a checkout at the PR head: reuse a worktree already on that branch
@@ -62,10 +98,11 @@ its head. Given only a number, get both first:
    serves every lower PR and its head contains theirs; `mint.mjs` accepts
    that (it says so on stderr) and the stops are verified against that
    build. Only a server whose commit does not contain the PR head is refused.
-4. **The diff.** `gh pr diff <n>` is what the manifest is written from —
-   §3–§5 apply unchanged. Read the PR body's own summary first; it names
-   what the author thinks is visible.
-5. **Mint and post** with `--pr <n>` (§6) and `comment.sh … --pr <n>` (§7).
+4. **The diff.** Read the PR body's own summary first; it names what the
+   author thinks is visible, and often settles section 0 without the diff. Then
+   `gh pr diff <n> --name-only`, and read only the UI files it lists. Sections 3–5
+   apply unchanged.
+5. **Mint and post** with `--pr <n>` (section 6) and `comment.sh … --pr <n>` (section 7).
    The report's `pr` and `sha` come from GitHub, not from the current branch.
 
 ## 2. Preflight
@@ -76,7 +113,7 @@ failure produces **no comment and no walkthrough**, not a partial one.
 | Check                              | How                                                                                                                                                                                                      |
 | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | The box has joined the dev gateway | `~/.config/fw/dev-gw.json` exists                                                                                                                                                                        |
-| A live server for the PR           | the boot record `mint.mjs` resolves (§6): this branch's, or with `--pr` the one that serves the PR                                                                                                       |
+| A live server for the PR           | the boot record `mint.mjs` resolves (section 6): this branch's, or with `--pr` the one that serves the PR                                                                                                |
 | The server is routable             | the record's `url` answers a 2xx with `X-Portless: 1`                                                                                                                                                    |
 | The server has guided mode         | `/__review/guided.js` answers 200; an older overlay (a branch that predates FR-3950) draws a stop as a bare pin without its notes, so `mint.mjs` exits 3 and says to rebase onto a main that includes it |
 | The app shell survives login       | `mint.mjs` checks it and exits 3                                                                                                                                                                         |
@@ -87,7 +124,7 @@ same refusal `advertise.sh` makes.
 
 The last check is the one that actually bites, and it is about the **backend**,
 not the server. Resolve the endpoint the way the `dev-server` skill does
-(its §2c: the PR description's named test server, then the shell/`.env` value,
+(its section 2c: the PR description's named test server, then the shell/`.env` value,
 then `config.toml`) and pass it as `--endpoint`; then verify the app shell
 survives login — `mint.mjs` does, and exits 3 with one line when it does not.
 A shell that dies leaves nothing to mint against. The symptom to recognize is
@@ -107,10 +144,10 @@ A JSON file — `{"stops": [...]}` or a bare array — one object per stop:
       "find": { "text": "Create Folder" },
       "type": "modified",
       "kind": "button",
-      "ch": "업로드 버튼이 행마다 놓여 있던 자리에서 카드 헤더로 옮겨졌습니다.",
-      "ck": "목록 위 오른쪽 상단에 \"Create Folder\" 버튼이 보여야 합니다.",
-      "old": "행마다 ⬆ 아이콘",
-      "new": "헤더의 \"Create Folder\" 버튼",
+      "ch": "The upload button moved from every row into the card header.",
+      "ck": "A \"Create Folder\" button shows at the top right, above the list.",
+      "old": "⬆ icon on every row",
+      "new": "\"Create Folder\" in the header",
       "code": [{ "path": "react/src/pages/VFolderListPage.tsx", "line": 120 }]
     },
     {
@@ -119,8 +156,8 @@ A JSON file — `{"stops": [...]}` or a bare array — one object per stop:
       "find": { "testid": "model-usage-mode" },
       "type": "added",
       "kind": "radio",
-      "ch": "폴더 생성 모달에 Models 사용 모드 라디오가 추가됐습니다.",
-      "ck": "모달 안 usage mode에 \"Models\" 선택지가 보여야 합니다.",
+      "ch": "The folder create modal gained a Models usage-mode radio.",
+      "ck": "The modal's usage mode shows a \"Models\" choice.",
       "code": [
         {
           "path": "react/src/components/FolderCreateModal.tsx",
@@ -128,11 +165,11 @@ A JSON file — `{"stops": [...]}` or a bare array — one object per stop:
           "to": 104
         }
       ],
-      "lng": "ko",
+      "lng": "en",
       "i18n": {
-        "en": {
-          "ch": "The folder create modal gained a Models usage-mode radio.",
-          "ck": "The modal's usage mode shows a \"Models\" choice."
+        "ko": {
+          "ch": "폴더 생성 모달에 Models 사용 모드 라디오가 추가됐습니다.",
+          "ck": "모달의 사용 모드에 \"모델\" 선택지가 보여야 합니다."
         }
       }
     }
@@ -165,10 +202,10 @@ A JSON file — `{"stops": [...]}` or a bare array — one object per stop:
   node whose text matches — an SVG label, a table cell).
 - `label` — optional; without it the comment's head is
   `Page › testid › tag "text"`, derived from the anchor.
-- `lng` / `i18n` — the language `ch`/`ck`/`old`/`new` are written in, and the
-  same stop in other languages (§5). Both or neither. An `i18n` entry needs
-  `ch` and `ck`; `old`, `new` and `via` fall back to the base language when it
-  omits them. At most 4 translations, and never one keyed by `lng` itself.
+- `lng` / `i18n` — always `"lng": "en"` with exactly one `i18n` entry, `ko`
+  (section 5); `manifest.mjs` refuses any other. Each extra language would add a
+  replay per stop at mint time. The `ko` entry needs `ch` and `ck`; `old`,
+  `new` and `via` fall back to the English ones when it omits them.
 - Capture inside a `[role=dialog]` sets `dlg: 1` on its own — do not write it.
 
 `scripts/manifest.mjs` validates the file before a browser starts and reports
@@ -180,11 +217,13 @@ every problem at once; the caps mirror the overlay's `stop-guard.ts`.
   appeared, moved or was relabeled, a new column, new state text, a changed
   validation message.
 - **N identical call sites → one stop** on the most representative one; name
-  the rest in that stop's `ch` ("…, 목록 3곳 모두에").
+  the rest in that stop's `ch` ("…, in all three lists").
 - **No code-only stops.** A hook, a test, an i18n key, a generated file has no
   element. Those go to the PR description's **"Not shown in the walkthrough"**
   list (`comment.sh describe --not-shown`), never into the manifest.
-- **At most 20.** Beyond that, group.
+- **As few as cover the change, usually 1–5.** Each stop is a browser replay
+  at mint time and a step for the reviewer. 20 is the hard cap; group long
+  before it.
 - **Order = the requester's flow**: the page where the feature starts, then
   interaction order within it, then the page where the result shows.
   Same-page stops stay contiguous, and a dialog stop follows the stop that
@@ -195,26 +234,28 @@ every problem at once; the caps mirror the overlay's `stop-guard.ts`.
 - `ch` — what changed and how, **past tense**, one or two sentences, naming
   the previous state when there was one. ≤ 280 chars.
 - `ck` — **one** outcome the reader can verify by looking or with one click
-  ("…가 보여야 합니다"). ≤ 280 chars.
+  ("… shows …"). ≤ 280 chars.
 - **`ck` states the condition that produces the new behaviour**, as value →
-  what shows: `마운트 권한이 "none"인 폴더는 "마운트 불가", "ro"는 "Read only"로
-보여야 합니다`. When the connected backend cannot produce that value yet (the
+  what shows: `A folder whose mount permission is "none" shows "Not mountable";
+"ro" shows "Read only"`. When the connected backend cannot produce that value yet (the
   feature is not deployed there), keep the condition and add one clause saying
   what this server cannot show — and list it under "Not shown in the
-  walkthrough" (§7). "Should look the same as before" is not a check: it
+  walkthrough" (section 7). "Should look the same as before" is not a check: it
   describes the unchanged branch and hides the one the PR added.
 - `old` / `new` — literals, ≤ 40 chars each. Omit both when nothing was
   replaced.
-- **Language** — the requester's chat language, and UI labels quoted
-  **verbatim** in the language the UI shows them in.
-- **Write every stop twice, `ko` and `en`** (FR-4057): the base fields in the
-  requester's language with `"lng"` naming it, and the other under
-  `"i18n"`. The popover's KO/EN toggle switches the stop text and the app's
-  own language together, so the quoted UI labels must be the ones THAT
-  language shows — the English stop quotes the English label, the Korean stop
-  the Korean one. Look both up in `resources/i18n/{en,ko}.json` rather than
-  translating a label yourself. A translation is not a second judgement: both
-  say the same thing about the same element.
+- **The PR reads English; the stop reads English or Korean.** Whatever the
+  chat language, the base fields are English with `"lng": "en"`, and the same
+  stop in Korean goes under `"i18n": {"ko": {…}}`; no other language is
+  written. The PR comment prints only the base fields, so it is always
+  English, as are `label` and the "Not shown in the walkthrough" list. The popover's EN/KO toggle switches the stop text
+  and the app's language together.
+- **Each language quotes its own UI labels verbatim**: the English stop the
+  label in `resources/i18n/en.json`, the Korean one the label in `ko.json`.
+  Look both up rather than translating a label yourself. The translation says
+  the same thing about the same element; `old`, `new` and `via` fall back to
+  the English ones when the `ko` entry omits them, so give it only what reads
+  differently.
 - **Write for the person looking at the screen, not for the code.** Name
   what they see — the red line, the dotted line, the button's label, the
   panel's title — and what it does now versus before. No function or
@@ -249,12 +290,13 @@ contains it; a server behind the sha exits 3.
 `--env-file` overrides where the admin account is read from (the server's own
 checkout, then this one) — never print or commit it. `--dry-run` resolves
 everything and launches no browser — without `--manifest`, for the one
-question §1a starts with.
+question section 1a starts with.
 
-A translated stop is minted **without** the element's text (`txt`): every
-resolution tier ANDs it, so a stop that carried it would come unpinned the
-moment the reader switched language. It resolves by selector, testid landmark
-and rect instead — which is why `find` should name a `testid` (§3).
+A translated stop carries the element's text (`txt`) per language, since
+every resolution tier ANDs it: `mint.mjs` replays the stop once in each
+language to read it. A `find` whose anchor is one testid unique on the page
+needs no text, so that stop skips the per-language replays and mints in one
+pass. That is the cheap path, and why `find` should name a `testid` (section 3).
 
 The script logs in, replays each stop, mints the anchor with the overlay's own
 in-page modules, builds the set link, then opens it in a **fresh page** and
@@ -263,6 +305,11 @@ captured on** — the element is stamped `data-bai-change` (guided mode) or a
 `.markbox` is drawn for it (the reviewer overlay). A mark that lands on another
 testid, or on none, is a failure and goes to `couldNotPin[]` with its `ck`. Exit **0** with a link, **2** on a
 bad manifest, **3** on preflight.
+
+**One fix pass, then post.** When `couldNotPin[]` is non-empty, correct the
+manifest once (a better `find`, a missing `via` step, a `route` query) and
+re-run. Whatever still does not pin is posted under "Could not pin" with its
+`ck`: the reviewer checks it by hand faster than a third mint finds it.
 
 The report's `stops[]` carries each stop's wording read back off the _stripped_
 anchor, so the comment says exactly what the link carries; a `dropped` list
@@ -303,18 +350,19 @@ and, when some stop did not pin:
 
 ```
 [Walkthrough](<set link>) · 6 stops (2 could not be pinned)
-- Session start › resource slider — check: 2단계에 GPU 슬라이더가 보여야 합니다.
-- Data › 정렬 표시 — check: Name 헤더에 정렬 화살표가 보여야 합니다.
+- Session start › resource slider — check: Step 2 shows a GPU slider.
+- Data › sort indicator — check: The Name header shows a sort arrow.
 ```
 
 Each unpinned stop keeps its `ck`, so the reviewer can still check it by hand.
-A preflight failure replaces the whole line with the one-line reason.
+A preflight failure, or a section 0 skip, replaces the whole line with the one-line
+reason.
 
 ## 9. Out of scope
 
 - **Never posts to Teams**, and never to Jira.
 - **Never touches the dev-server comment** or its boot record — that comment
-  stays URL-only and separate (`dev-server` §5 owns it).
+  stays URL-only and separate (`dev-server` section 5 owns it).
 - **Never marks a PR ready.** Draft → ready is the `fw:pr-ready-gate` skill's.
 - **Never edits the PR description outside its `## Walkthrough` section**, and
   never opens, closes, labels or reviews a PR.

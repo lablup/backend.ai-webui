@@ -3,14 +3,13 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 // `Form`/`FormInstance` state engine stays (SHIM); visuals are BAIFormItem.
-import { Form } from '../../form-engine';
-import type { FormInstance } from '../../form-engine';
+import { Form, type FormInstance } from '../../form-engine';
 import BAIFormItem from '../BAIFormItem';
 import { AstryxFormTextInput } from '../astryxFormControls';
 import DeploymentTokenSelect from './DeploymentTokenSelect';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { useTheme } from '@lablup/ui-common/theme';
 import useResizeObserver from '@react-hook/resize-observer';
 import { BAIFlex } from 'backend.ai-ui';
 import { RotateCw } from 'lucide-react';

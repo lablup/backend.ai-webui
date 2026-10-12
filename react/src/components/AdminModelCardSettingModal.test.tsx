@@ -29,14 +29,6 @@ vi.mock('react-i18next', async () => {
   };
 });
 
-vi.mock('../hooks', async (importOriginal) => {
-  const originalModule = await importOriginal<typeof import('../hooks')>();
-  return {
-    ...originalModule,
-    useCurrentDomainValue: () => 'default',
-  };
-});
-
 const MODEL_STORE_PROJECT = {
   id: 'project-0000-1111-2222-333333333333',
   name: 'model-store',
@@ -49,14 +41,13 @@ const CREATED_VFOLDER_GLOBAL_ID = btoa(
   `VirtualFolderNode:${CREATED_VFOLDER_UUID}`,
 );
 
-// The folder picker and the domain select fetch their own data; stub both and
-// surface the picker's project scope and current value for assertions.
+// The folder picker fetches its own data; stub it and surface its project
+// scope and current value for assertions.
 vi.mock('backend.ai-ui', async (importOriginal) => {
   const React = await import('react');
   const originalModule = await importOriginal<typeof import('backend.ai-ui')>();
   return {
     ...originalModule,
-    BAIDomainSelect: () => null,
     BAIProjectVfolderSelect: (props: any) =>
       React.createElement(
         'button',
@@ -133,6 +124,8 @@ describe('AdminModelCardSettingModal model-storage folder picker', () => {
       environment.mock.getMostRecentOperation().request.variables;
     expect(input.vfolderId).toBe(PICKED_VFOLDER_UUID);
     expect(input.modelStoreProjectId).toBe(MODEL_STORE_PROJECT.id);
+    // The backend derives the domain from the model-store project.
+    expect(input).not.toHaveProperty('domainName');
   });
 
   it('fills the picker with the local id of a just-created folder', async () => {

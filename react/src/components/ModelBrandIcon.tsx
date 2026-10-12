@@ -4,7 +4,7 @@
  */
 import { findBrandIconLoader } from '../helper/modelBrandIcons';
 import type { BrandIconType } from './brandIcons/createBrandIcon';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import { Bot } from 'lucide-react';
 import React, { Suspense, use } from 'react';
 

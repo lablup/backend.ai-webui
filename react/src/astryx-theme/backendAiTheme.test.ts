@@ -9,7 +9,7 @@ import {
 } from './backendAiTheme';
 import { builtBackendAiBrandTheme } from './built';
 import { resolveRoleTheme } from './resolveRoleTheme';
-import { neutralTheme } from '@astryxdesign/theme-neutral';
+import { neutralTheme } from '@lablup/ui-common/theme/neutral';
 
 // The shipped document is the only source of brand values: every default the
 // tests reason about is read from it, never restated here.

@@ -14,8 +14,8 @@ import ThemeColorPicker, {
 } from './BrandingSettingItems/ThemeColorPicker';
 import ThemeJsonConfigModal from './BrandingSettingItems/ThemeJsonConfigModal';
 import SettingList, { SettingGroup } from './SettingList';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
 import { BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
 import { Settings, Fullscreen } from 'lucide-react';
 import { useState } from 'react';

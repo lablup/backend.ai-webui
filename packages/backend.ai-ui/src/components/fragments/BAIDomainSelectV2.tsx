@@ -18,6 +18,10 @@ export interface BAIDomainSelectV2Props extends Omit<
   activeOnly?: boolean;
 }
 
+// `adminDomainsV2` returns 10 rows when no bound is given; domains are a
+// tenant-level catalog, so one bounded page lists them all.
+const DOMAIN_FETCH_LIMIT = 100;
+
 /**
  * Sibling of `BAIDomainSelect` on `adminDomainsV2`: shows the domain name but
  * its value is the domain uuid (BA-7234, managers >= 26.9.0). Superadmin only.
@@ -32,8 +36,8 @@ const BAIDomainSelectV2: React.FC<BAIDomainSelectV2Props> = ({
 
   const { adminDomainsV2 } = useLazyLoadQuery<BAIDomainSelectV2Query>(
     graphql`
-      query BAIDomainSelectV2Query($isActive: Boolean) {
-        adminDomainsV2(filter: { isActive: $isActive }) {
+      query BAIDomainSelectV2Query($isActive: Boolean, $limit: Int!) {
+        adminDomainsV2(filter: { isActive: $isActive }, limit: $limit) {
           edges {
             node {
               id
@@ -45,7 +49,7 @@ const BAIDomainSelectV2: React.FC<BAIDomainSelectV2Props> = ({
         }
       }
     `,
-    { isActive: activeOnly ? true : null },
+    { isActive: activeOnly ? true : null, limit: DOMAIN_FETCH_LIMIT },
     {
       fetchPolicy: 'store-and-network',
     },

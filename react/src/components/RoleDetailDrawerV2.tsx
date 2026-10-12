@@ -6,7 +6,7 @@ import { RoleDetailDrawerV2Fragment$key } from '../__generated__/RoleDetailDrawe
 import { RoleDetailDrawerV2RefetchQuery } from '../__generated__/RoleDetailDrawerV2RefetchQuery.graphql';
 import RoleDetailDrawerContentV2 from './RoleDetailDrawerContentV2';
 import RoleFormModal from './RoleFormModal';
-import { IconButton } from '@astryxdesign/core/IconButton';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import {
   BAIDrawer,
   type BAIDrawerProps,
@@ -34,8 +34,8 @@ interface RoleDetailDrawerV2Props extends Omit<
 
 /**
  * The role drawer for managers >= 26.9.0a4, where a role belongs to one scope.
- * `RBACManagementPage` renders `RoleDetailDrawer` instead while
- * `rbac-single-scope-role` is off (ADR 0006).
+ * `RBACManagementPage` renders `RoleDetailDrawer` instead on older managers
+ * (ADR 0006).
  */
 const RoleDetailDrawerV2: React.FC<RoleDetailDrawerV2Props> = ({
   roleFrgmt,

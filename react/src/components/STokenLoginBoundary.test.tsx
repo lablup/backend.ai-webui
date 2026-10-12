@@ -21,6 +21,7 @@
  * only available at runtime in the browser bundle.
  */
 import '../../__test__/matchMedia.mock.js';
+import { probeLoginSession } from '../helper/loginBootstrap';
 import {
   connectViaGQL,
   createBackendAIClient,
@@ -74,6 +75,10 @@ vi.mock('../helper/loginSessionAuth', () => ({
   tokenLogin: vi.fn(),
   connectViaGQL: vi.fn(),
 }));
+vi.mock('../helper/loginBootstrap', () => ({
+  __esModule: true,
+  probeLoginSession: vi.fn().mockResolvedValue(null),
+}));
 
 vi.mock('backend.ai-ui', async () => {
   const actual =
@@ -106,6 +111,9 @@ const mockedTokenLogin = tokenLogin as MockedFunction<typeof tokenLogin>;
 const mockedConnectViaGQL = connectViaGQL as MockedFunction<
   typeof connectViaGQL
 >;
+const mockedProbeLoginSession = probeLoginSession as MockedFunction<
+  typeof probeLoginSession
+>;
 const endpointState = (
   endpointModule as unknown as { __endpointState: { endpoint: string } }
 ).__endpointState;
@@ -115,13 +123,11 @@ const setEndpoint = (next: string) => {
 
 type FakeClient = {
   get_manager_version: Mock;
-  check_login: Mock;
   token_login: Mock;
 };
 
 const buildFakeClient = (overrides: Partial<FakeClient> = {}): FakeClient => ({
   get_manager_version: vi.fn().mockResolvedValue('1.0'),
-  check_login: vi.fn().mockResolvedValue(false),
   token_login: vi.fn().mockResolvedValue(true),
   ...overrides,
 });
@@ -265,14 +271,14 @@ describe('STokenLoginBoundary', () => {
   });
 
   test('skips token_login when the browser already holds a valid session', async () => {
-    // Reuse the existing session: check_login resolves truthy.
-    const client = buildFakeClient({
-      check_login: vi.fn().mockResolvedValue(true),
-    });
+    // Reuse the existing session: the bootstrap probe resolves with data.
+    const client = buildFakeClient();
     mockedCreateBackendAIClient.mockImplementation(() => ({
       client,
       clientConfig: {},
     }));
+    const bootstrap = { keypair: null, user: null, groups: null };
+    mockedProbeLoginSession.mockResolvedValueOnce(bootstrap);
     const onSuccess = vi.fn();
     renderBoundary({ onSuccess });
 
@@ -284,6 +290,7 @@ describe('STokenLoginBoundary', () => {
     // Relay and plugin subscribers unblock.
     expect(mockedTokenLogin).not.toHaveBeenCalled();
     expect(mockedConnectViaGQL).toHaveBeenCalledTimes(1);
+    expect(mockedConnectViaGQL.mock.calls[0][3]).toBe(bootstrap);
     expect(connectedEventCount).toBe(1);
     expect(onSuccess).toHaveBeenCalledTimes(1);
   });

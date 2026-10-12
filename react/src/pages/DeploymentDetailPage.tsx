@@ -24,11 +24,11 @@ import {
   useWebUIMenuItems,
 } from '../hooks/useWebUIMenuItems';
 import { toProjectContext } from '../types/projectContext';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { Heading } from '@astryxdesign/core/Heading';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { Heading } from '@lablup/ui-common/Heading';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIButton,
   BAIDeploymentStatus,
@@ -59,15 +59,10 @@ import { useLocation, useParams } from 'react-router-dom';
 // rollout settles.
 const REVISION_ROLLOUT_POLL_INTERVAL = 5000;
 
-// Smooth-scroll a page section into view, offsetting the sticky header so it is
-// not hidden underneath. Shared by the deep-link handler and the
-// revision/access-token "created" callbacks.
-const scrollSectionIntoView = (
-  el: HTMLElement | null,
-  headerHeight: number | string,
-) => {
+// Smooth-scroll a page section into view. Shared by the deep-link handler and
+// the revision/access-token "created" callbacks.
+const scrollSectionIntoView = (el: HTMLElement | null) => {
   if (!el) return;
-  el.style.scrollMarginTop = `${headerHeight}px`;
   el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
@@ -130,7 +125,7 @@ const DeploymentDetailPage: React.FC = () => {
         '#revisions': revisionsSectionRef,
         '#access-tokens': accessTokensSectionRef,
       };
-    scrollSectionIntoView(sectionRefByHash[hash]?.current ?? null, 60);
+    scrollSectionIntoView(sectionRefByHash[hash]?.current ?? null);
   });
   useEffect(() => {
     scrollToHashSection();
@@ -158,7 +153,7 @@ const DeploymentDetailPage: React.FC = () => {
               name
               status
               projectId
-              projectV2 @since(version: "26.4.3") {
+              projectV2 {
                 basicInfo {
                   name
                 }
@@ -177,13 +172,13 @@ const DeploymentDetailPage: React.FC = () => {
             accessTokens {
               count
             }
-            currentRevision @since(version: "26.4.3") {
+            currentRevision {
               id
             }
-            deployingRevision @since(version: "26.4.3") {
+            deployingRevision {
               id
             }
-            creator @since(version: "26.4.3") {
+            creator {
               basicInfo {
                 email
               }
@@ -333,7 +328,7 @@ const DeploymentDetailPage: React.FC = () => {
         // refresh or a tab re-mount.
         updateReplicaFetchKey();
       });
-      scrollSectionIntoView(revisionsSectionRef.current, 60);
+      scrollSectionIntoView(revisionsSectionRef.current);
     }
   };
 
@@ -485,7 +480,7 @@ const DeploymentDetailPage: React.FC = () => {
           // otherwise the "Private deployment" alert (which is gated on
           // `hasAccessTokens === false`) stays visible after creation.
           handleRefetch();
-          scrollSectionIntoView(accessTokensSectionRef.current, 60);
+          scrollSectionIntoView(accessTokensSectionRef.current);
         }}
       />
       {/* No page-level Suspense boundary needed: the modal renders its chrome

@@ -5,7 +5,7 @@
 import { loadMonacoEditor } from '../helper/monacoEditor';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useThemeMode } from '../hooks/useThemeMode';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import type { EditorProps } from '@monaco-editor/react';
 import { BAISkeleton } from 'backend.ai-ui';
 import React, { Suspense } from 'react';

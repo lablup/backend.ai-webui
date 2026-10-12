@@ -124,10 +124,10 @@ export const inScope = (element: Element, anchor: AnchorV3): boolean => {
 /**
  * Modals the browser does not put in the top layer: ARIA modals, and the
  * portal roots of this app's own dialogs and drawers, which carry neither
- * (`BAI_MODAL_OPEN_ATTRIBUTE`, packages/backend.ai-ui dialogLevelStack.ts).
+ * (`MODAL_OPEN_ATTRIBUTE`, @lablup/ui-common/Modal).
  */
 export const PORTAL_MODAL =
-  '[role="dialog"][aria-modal="true"], [role="alertdialog"][aria-modal="true"], [data-bai-modal-open]';
+  '[role="dialog"][aria-modal="true"], [role="alertdialog"][aria-modal="true"], [data-uic-modal-open]';
 
 /**
  * Astryx renders every Popover (BAIPopconfirm included) as an `aria-modal`
@@ -135,8 +135,41 @@ export const PORTAL_MODAL =
  */
 const isLightDismissSurface = (modal: Element): boolean =>
   modal.tagName !== 'DIALOG' &&
-  !modal.hasAttribute('data-bai-modal-open') &&
+  !modal.hasAttribute('data-uic-modal-open') &&
   !!modal.closest('[popover]');
+
+/** Where on its box an element is sampled for what the browser paints there. */
+const PAINT_SAMPLES: ReadonlyArray<readonly [number, number]> = [
+  [0.5, 0.5],
+  [0.2, 0.2],
+  [0.8, 0.2],
+  [0.2, 0.8],
+  [0.8, 0.8],
+];
+
+/**
+ * Does the browser paint this element above everything else at some point of
+ * its box? A notification the app raises over its own dialogs is outside the
+ * modal and still on top. Our own chrome is looked through.
+ */
+function paintsOnTop(element: Element): boolean {
+  const doc = element.ownerDocument;
+  if (!hasLayout(doc) || typeof doc.elementsFromPoint !== 'function')
+    return false;
+  const box = element.getBoundingClientRect();
+  const view = doc.defaultView;
+  const width = view?.innerWidth ?? 0;
+  const height = view?.innerHeight ?? 0;
+  return PAINT_SAMPLES.some(([fx, fy]) => {
+    const x = box.left + box.width * fx;
+    const y = box.top + box.height * fy;
+    if (x < 0 || y < 0 || x >= width || y >= height) return false;
+    const top = doc
+      .elementsFromPoint(x, y)
+      .find((hit) => !hit.closest(`[${OVERLAY_MARKER_ATTR}]`));
+    return !!top && (top === element || element.contains(top));
+  });
+}
 
 /**
  * Is an open modal painted over this element? A covered modal is `inert`, so
@@ -161,7 +194,7 @@ export function isBehindModal(element: Element): boolean {
     (modal) => !open.some((other) => other !== modal && other.contains(modal)),
   );
   const top = outer[outer.length - 1];
-  return !!top && !top.contains(element);
+  return !!top && !top.contains(element) && !paintsOnTop(element);
 }
 
 /** What a `via` step clicks: a control, never the wrapper around its label. */
@@ -307,7 +340,8 @@ export function viaStepDone(step: AnchorVia, element: Element): boolean {
  * `steps[i]`): an earlier step's control often stays, under the dialog the
  * later one is in. A label alone can be a look-alike elsewhere (a pager's
  * "Next"), so a later step found without its testid counts only once no
- * earlier step is left to do.
+ * earlier step is left to do — and even a testid never jumps a value still to
+ * be typed or chosen, which the later click would submit without.
  */
 export function nextViaControl(
   steps: readonly AnchorVia[],
@@ -325,7 +359,10 @@ export function nextViaControl(
     const tid = viaTid(steps[i]);
     const byTid = !!tid && !!element.closest(`[data-testid="${esc(tid)}"]`);
     const earlierLeft = steps.slice(0, i).some((_, j) => left(j));
-    if (byTid || !earlierLeft) return { element, index: i };
+    const inputLeft = steps
+      .slice(0, i)
+      .some((step, j) => left(j) && viaKind(step) !== 'click');
+    if ((byTid && !inputLeft) || !earlierLeft) return { element, index: i };
   }
   return null;
 }

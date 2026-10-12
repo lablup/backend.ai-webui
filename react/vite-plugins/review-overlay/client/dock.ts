@@ -24,6 +24,9 @@ const hideCardsLabel = (chord: boolean) =>
   chord ? `Hide every card (${CARDS_CHORD})` : 'Hide every card';
 const showCardsLabel = (chord: boolean) =>
   chord ? `Show every card (${CARDS_CHORD})` : 'Show every card';
+/** The footer's account switch — a person's email in a comment others read. */
+export const WITHHOLD_ACCOUNT_LABEL = 'Leave my account out of copies';
+export const SHARE_ACCOUNT_LABEL = 'Put my account in copies';
 
 /** Where a dragged dock is parked, per tab. Cleared with the tab, not the set. */
 export const DOCK_POS_KEY = 'bai-review:dock-pos';
@@ -224,6 +227,8 @@ export interface SetDockOptions {
   onUnhide: (id: string) => void;
   /** The header switch: every card off, or on again. */
   onToggleCards: () => void;
+  /** The header switch: the account leaves the footer, or comes back. */
+  onToggleAccount: () => void;
   /** Open the whole set on that pin's own page — it is not on this one (D2). */
   onGo?: (id: string) => void;
 }
@@ -324,6 +329,7 @@ export function createSetDock(options: SetDockOptions) {
   const clear = button('clear', 'trash-2', 'Clear the whole set', 'Clear all');
   const chords = options.pageChords;
   const cards = button('cards', 'eye-off', hideCardsLabel(chords), 'Cards');
+  const account = button('account', 'user-x', WITHHOLD_ACCOUNT_LABEL);
   const confirm = document.createElement('span');
   confirm.className = 'confirm';
   const confirmText = document.createElement('span');
@@ -337,7 +343,7 @@ export function createSetDock(options: SetDockOptions) {
     chord.textContent = CARDS_CHORD;
     head.append(chord);
   }
-  head.append(copyAll, clear, confirm);
+  head.append(account, copyAll, clear, confirm);
   const rows = document.createElement('div');
   rows.className = 'rows';
   dock.append(head, rows);
@@ -552,6 +558,7 @@ export function createSetDock(options: SetDockOptions) {
 
   copyAll.addEventListener('click', () => options.onCopyAll());
   cards.addEventListener('click', () => options.onToggleCards());
+  account.addEventListener('click', () => options.onToggleAccount());
   clear.addEventListener('click', () => setConfirming(true));
   no.addEventListener('click', () => setConfirming(false));
   yes.addEventListener('click', () => {
@@ -564,11 +571,13 @@ export function createSetDock(options: SetDockOptions) {
    * rows are the ONLY thing a pin the layer cannot draw has on screen, so an
    * `elsewhere` one opens the set on its own page instead of scrolling.
    * `cardsHidden` is the switch's own state; each pin carries its own ✕.
+   * `accountShared` is the footer switch's.
    */
   function render(
     pins: SetPin[],
     places: ReadonlyMap<string, PinPlace> = new Map(),
     cardsHidden = false,
+    accountShared = true,
   ) {
     // Ordinary page churn re-renders these rows; only a changed set changes
     // the answer to "clear all N?", so only that takes the question back.
@@ -587,6 +596,11 @@ export function createSetDock(options: SetDockOptions) {
     setLabel(
       cards,
       cardsHidden ? showCardsLabel(chords) : hideCardsLabel(chords),
+    );
+    setIcon(account, accountShared ? 'user-x' : 'user');
+    setLabel(
+      account,
+      accountShared ? WITHHOLD_ACCOUNT_LABEL : SHARE_ACCOUNT_LABEL,
     );
     // A row action re-renders every row, which would drop the focus it was
     // pressed with — a keyboard user repeating ▲ must not tab back each time.

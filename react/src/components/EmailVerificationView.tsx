@@ -8,7 +8,7 @@ import { Form } from '../form-engine';
 import { useAnonymousBackendaiClient } from '../hooks';
 import BAIFormItem from './BAIFormItem';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { Button } from '@astryxdesign/core/Button';
+import { Button } from '@lablup/ui-common/Button';
 import { BAIFlex, BAIModal } from 'backend.ai-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';

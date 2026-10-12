@@ -5,7 +5,7 @@
 import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIFlex,
   BAIIconWithTooltip,
@@ -135,6 +135,12 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
                   content={t('projectSelect.ProjectAdminBadge')}
                   focusable={false}
                   icon={<ShieldUser />}
+                  // The icon's Text uses `--color-text-secondary`; follow the name's color instead.
+                  style={
+                    {
+                      '--color-text-secondary': 'currentColor',
+                    } as React.CSSProperties
+                  }
                 />
               )}
             </BAIFlex>
@@ -176,6 +182,8 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
       }}
       placeholder={t('storageHost.quotaSettings.SelectProject')}
       popupMatchSelectWidth={false}
+      // Renders a rich option row (e.g. the Project Admin shield) on the closed trigger too.
+      optionLabelProp="children"
       {...selectProps}
       value={value}
       showSearch={{

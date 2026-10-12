@@ -62,7 +62,7 @@ navTitle: เริ่มต้น
 
 ### นำเข้าโน้ตบุ๊ก
 
-![](../images/start_from_url_notebook.png)
+![=800px](../images/start_from_url_notebook.png)
 
 1. ป้อน URL ของ Jupyter Notebook (ต้องลงท้ายด้วย `.ipynb`) ในฟิลด์
    **URL โน้ตบุ๊ก**
@@ -92,7 +92,7 @@ navTitle: เริ่มต้น
 
 ### นำเข้าพื้นที่เก็บข้อมูล GitHub
 
-![](../images/start_from_url_github.png)
+![=800px](../images/start_from_url_github.png)
 
 1. ป้อน URL พื้นที่เก็บข้อมูล GitHub ที่ถูกต้องในฟิลด์ **URL GitHub**
 2. เลือก **โฮสต์ที่เก็บข้อมูล** ที่จะบันทึกพื้นที่เก็บข้อมูล
@@ -105,7 +105,7 @@ navTitle: เริ่มต้น
 
 ### นำเข้าพื้นที่เก็บข้อมูล GitLab
 
-![](../images/start_from_url_gitlab.png)
+![=800px](../images/start_from_url_gitlab.png)
 
 1. ป้อน URL พื้นที่เก็บข้อมูล GitLab ที่ถูกต้องในฟิลด์ **URL GitLab**
 2. ระบุ **ชื่อ Branch GitLab** ตามต้องการ (ค่าเริ่มต้น: `master`)
@@ -126,7 +126,7 @@ navTitle: เริ่มต้น
 ฟีเจอร์ทดลองอาจเปลี่ยนแปลงหรือถูกลบออกในการอัปเดตในอนาคต
 :::
 
-![](../images/start_from_url_huggingface.png)
+![=800px](../images/start_from_url_huggingface.png)
 
 1. ป้อนโมเดลในฟิลด์ **URL หรือ ID ของโมเดล Hugging Face** ระบบรองรับทั้ง URL
    ของหน้าโมเดล เช่น `https://huggingface.co/openai/gpt-oss-20b` และ ID

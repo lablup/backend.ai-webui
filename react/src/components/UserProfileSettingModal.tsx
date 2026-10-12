@@ -15,7 +15,7 @@ import {
   AstryxFormTagsInput,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIModal,
   BAIText,

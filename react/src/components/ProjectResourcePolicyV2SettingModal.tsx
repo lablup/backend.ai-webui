@@ -8,8 +8,8 @@ import {
 } from '../__generated__/ProjectResourcePolicyV2SettingModalCreateMutation.graphql';
 import { ProjectResourcePolicyV2SettingModalFragment$key } from '../__generated__/ProjectResourcePolicyV2SettingModalFragment.graphql';
 import {
-  UpdateProjectResourcePolicyInput,
   ProjectResourcePolicyV2SettingModalModifyMutation,
+  UpdateProjectResourcePolicyInput,
 } from '../__generated__/ProjectResourcePolicyV2SettingModalModifyMutation.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
@@ -21,9 +21,9 @@ import {
   AstryxFormNumberInput,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Banner } from '@astryxdesign/core/Banner';
-import { useTheme } from '@astryxdesign/core/theme';
-import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
+import { Banner } from '@lablup/ui-common/Banner';
+import { useTheme } from '@lablup/ui-common/theme';
+import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';

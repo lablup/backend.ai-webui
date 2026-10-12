@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Grid } from '@astryxdesign/core/Grid';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Grid } from '@lablup/ui-common/Grid';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIColorPicker,
   BAIFlex,

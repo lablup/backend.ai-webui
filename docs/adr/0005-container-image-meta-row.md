@@ -143,11 +143,11 @@ flowchart TB
 
 ### 8. 24.12 이전 manager를 위한 image 표현은 없다
 
-- **Support floor**: 이 저장소가 지원하는 가장 낮은 manager는 26.4.x다. `extended-image-info`는 `packages/backend.ai-client/src/client.ts`에서 manager 24.12.0부터 켜지므로, 이 flag는 지원 범위 안에서 늘 참이다.
+- **Support floor**: 이 저장소가 지원하는 가장 낮은 manager는 26.4.x다. `extended-image-info` flag는 manager 24.12.0부터 켜졌으므로 지원 범위 안에서 늘 참이었고, ADR 0010이 26.4 line 이하의 다른 flag와 함께 `packages/backend.ai-client/src/client.ts`에서 지웠다.
 - **What went**: 그 flag의 거짓 분기가 그리던 image 표현을 모두 지웠다. host의 `ImageTags` component, `CustomizedImageList`의 Namespace/Version/Base/Tags 레거시 열 네 개, `ImageEnvironmentSelectFormItems`의 version 옵션 레거시 행, `SessionLauncherPreview`의 두 번째 복제본이다.
 - **Parsers that went with them**: image 문자열에서 tag와 base image를 다시 parse하던 `getTags`와 `getBaseImages`를 host의 `imageParser`에서 지웠고, 그것을 받던 `imageTagFacts`도 지웠다. 서버가 `tags`를 직접 주므로 다시 parse할 이유가 없다.
 - **Search coverage**: `CustomizedImageList`의 검색은 이제 서버가 준 `tags`, `version`, `namespace`, `digest`, 전체 reference만 본다. 다시 parse한 base version과 base image는 같은 값을 중복으로 훑던 것이라 함께 지웠다.
-- **New code**: `supports('extended-image-info')`로 갈리는 분기를 새로 만들지 않는다.
+- **New code**: image의 `namespace`, `base_image_name`, `version`, `tags`가 있는지로 갈리는 분기를 새로 만들지 않는다.
 
 ## 대안과 기각 사유
 
@@ -183,4 +183,4 @@ flowchart TB
 |---|---|
 | image meta row | image 하나의 icon, 이름, version, architecture, tag chip을 한 줄에 늘어놓은 표현이다. |
 | double tag | 붙어 있는 Astryx `Token` 두 개로 `key`와 `value`를 나란히 보여주는 chip이다. `BAIDoubleToken`가 그리고, metadata에 그 tag의 alias가 없거나 그 tag가 customized image의 것일 때 쓴다. |
-| extended image info | 서버가 image의 `namespace`, `base_image_name`, `version`, `tags`를 따로 제공하는 기능이다. `baiClient.supports('extended-image-info')`로 판정하고, 지원하지 않는 서버에서는 같은 정보를 image 문자열에서 parse한다. |
+| extended image info | 서버가 image의 `namespace`, `base_image_name`, `version`, `tags`를 따로 제공하는 기능이다. manager 24.12.0부터 제공한다. |

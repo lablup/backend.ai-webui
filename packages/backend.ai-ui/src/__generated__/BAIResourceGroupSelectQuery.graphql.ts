@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8a26884cefac6a994b70ad1fd9cb8e64>>
+ * @generated SignedSource<<9207bc9dcc8312994097928b8a2f1cd5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,7 @@ export type ResourceGroupFilter = {
   isActive?: boolean | null | undefined;
   isDefault?: boolean | null | undefined;
   isPublic?: boolean | null | undefined;
+  labels?: EntityLabelNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
 };
 export type StringFilter = {
@@ -40,6 +41,27 @@ export type StringFilter = {
   notIn?: ReadonlyArray<string> | null | undefined;
   notStartsWith?: string | null | undefined;
   startsWith?: string | null | undefined;
+};
+export type EntityLabelNestedFilter = {
+  every?: EntityLabelFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: EntityLabelFilter | null | undefined;
+  some?: EntityLabelFilter | null | undefined;
+};
+export type EntityLabelFilter = {
+  AND?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  NOT?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
+  key?: StringFilter | null | undefined;
+  value?: StringFilter | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type BAIResourceGroupSelectQuery$variables = {
   filter?: ResourceGroupFilter | null | undefined;
@@ -190,16 +212,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "22efa7c04f6b7c9523a92eeee439f90d",
+    "cacheID": "ccbeb1e0d742d5ecb1d403bebf4046be",
     "id": null,
     "metadata": {},
     "name": "BAIResourceGroupSelectQuery",
     "operationKind": "query",
-    "text": "query BAIResourceGroupSelectQuery(\n  $filter: ResourceGroupFilter\n) {\n  adminResourceGroups(filter: $filter, orderBy: [{field: NAME, direction: ASC}], limit: 100) @since(version: \"26.2.0\") {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query BAIResourceGroupSelectQuery(\n  $filter: ResourceGroupFilter\n) {\n  adminResourceGroups(filter: $filter, orderBy: [{field: NAME, direction: ASC}], limit: 100) {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b14073f3d72df00894859dbc4e8adb74";
+(node as any).hash = "401e1429387d38b178219ebb0a678556";
 
 export default node;

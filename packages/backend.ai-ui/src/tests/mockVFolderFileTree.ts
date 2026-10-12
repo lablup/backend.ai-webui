@@ -202,7 +202,7 @@ export const createMockVFolderFileClient = (
 
   return {
     vfolder: mockVFolder,
-    supports: () => false,
+    isManagerVersionCompatibleWith: () => false,
     newSignedRequest,
     _wrapWithPromise,
     _config: {

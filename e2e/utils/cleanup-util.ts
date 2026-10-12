@@ -124,10 +124,11 @@ export async function sweepServices(
  * current tab that is actionable (not in `skip`, carrying the phase's action
  * button, and — when `action.requireEnabled` is set — with that button
  * enabled), or
- * null when none qualifies. The name is read from the row's identicon name cell
- * (`VFolder Identicon <name>`); the identicon is an <img> (no text), so the
- * cell's text content is just the folder name — exactly the string the
- * maintained trash/delete helpers and the "type to confirm" dialog need.
+ * null when none qualifies. The name is read from the row's name cell — the
+ * cell holding the phase's action button. The identicon is an <img> with an
+ * empty alt and the action buttons are icon-only, so the cell's text content
+ * is just the folder name — exactly the string the maintained trash/delete
+ * helpers and the "type to confirm" dialog need.
  *
  * Why the enabled check matters: the broad teardown sweep runs on /data as the
  * regular user, where project-type folders (created by an admin) are visible
@@ -170,8 +171,11 @@ async function firstActionableVFolderName(
   const count = await rows.count();
   for (let i = 0; i < count; i++) {
     const row = rows.nth(i);
+    // The name cell is the one holding the row's action buttons; the
+    // identicon renders `alt=""`, so it no longer names the cell.
     const nameCell = row
-      .getByRole('cell', { name: /VFolder Identicon/ })
+      .getByRole('cell')
+      .filter({ has: page.getByRole('button', { name: action.buttonName }) })
       .first();
     const name = (await nameCell.textContent().catch(() => null))?.trim();
     if (!name || skip.has(name)) continue;

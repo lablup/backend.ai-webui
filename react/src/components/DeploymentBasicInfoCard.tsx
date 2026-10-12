@@ -15,11 +15,11 @@ import DeploymentSchedulingHistoryModal, {
   DeploymentSchedulingHistoryQuery,
 } from './DeploymentSchedulingHistoryModal';
 import DeploymentSettingModal from './DeploymentSettingModal';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Text } from '@astryxdesign/core/Text';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIButton,
   BAICard,
@@ -37,7 +37,6 @@ import {
   safeDecodeUuid,
   toLocalId,
   useBAILogger,
-  useConnectedBAIClient,
 } from 'backend.ai-ui';
 import type { BAIDeploymentStatus } from 'backend.ai-ui';
 import { Trash2, History, EllipsisVertical, SquarePenIcon } from 'lucide-react';
@@ -205,7 +204,7 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
           domainName
           status
           resourceGroupName
-          projectV2 @since(version: "26.4.3") {
+          projectV2 {
             basicInfo {
               name
             }
@@ -231,10 +230,6 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
     useQueryLoader<DeploymentSchedulingHistoryModalQuery>(
       DeploymentSchedulingHistoryQuery,
     );
-
-  const baiClient = useConnectedBAIClient();
-  const supportsDeploymentSchedulingHistory =
-    baiClient?.supports('deployment-scheduling-history') ?? false;
 
   const [commitDeleteMutation, isInFlightDeleteMutation] =
     useMutation<DeploymentBasicInfoCardDeleteMutation>(graphql`
@@ -335,7 +330,7 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
         <DeploymentOverviewContent
           deployment={deployment}
           onClickSchedulingHistoryAction={
-            supportsDeploymentSchedulingHistory && deployment?.id
+            deployment?.id
               ? async () => {
                   // Render-as-you-fetch: start the request in the open event.
                   const rawId = deployment.id;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c079a3372876daedd1ea31b0e08049b0>>
+ * @generated SignedSource<<01ce268ef6692c4f63d3ac1ae7ce8180>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,6 +18,10 @@ export type RoleNodesFragment$data = ReadonlyArray<{
   readonly description: string | null | undefined;
   readonly id: string;
   readonly name: string;
+  readonly rolePreset: {
+    readonly name: string;
+  } | null | undefined;
+  readonly rolePresetId: string | null | undefined;
   readonly scope: {
     readonly basicInfo?: {
       readonly domainName?: string;
@@ -58,17 +62,24 @@ var v0 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "scopeType",
+  "name": "name",
   "storageKey": null
 },
 v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "scopeId",
+  "name": "scopeType",
   "storageKey": null
 },
 v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "scopeId",
+  "storageKey": null
+},
+v3 = {
   "alias": null,
   "args": null,
   "concreteType": null,
@@ -175,13 +186,7 @@ return {
     },
     {
       "kind": "RequiredField",
-      "field": {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "name",
-        "storageKey": null
-      },
+      "field": (v0/*: any*/),
       "action": "NONE"
     },
     {
@@ -263,9 +268,9 @@ return {
               "name": "node",
               "plural": false,
               "selections": [
-                (v0/*: any*/),
                 (v1/*: any*/),
-                (v2/*: any*/)
+                (v2/*: any*/),
+                (v3/*: any*/)
               ],
               "storageKey": null
             }
@@ -275,15 +280,34 @@ return {
       ],
       "storageKey": "scopes(first:3)"
     },
-    (v0/*: any*/),
     (v1/*: any*/),
-    (v2/*: any*/)
+    (v2/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "rolePresetId",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "RolePreset",
+      "kind": "LinkedField",
+      "name": "rolePreset",
+      "plural": false,
+      "selections": [
+        (v0/*: any*/)
+      ],
+      "storageKey": null
+    },
+    (v3/*: any*/)
   ],
   "type": "Role",
   "abstractKey": null
 };
 })();
 
-(node as any).hash = "2f53d26dba628a221039265b70c24722";
+(node as any).hash = "58a54c1f402f964ec69c49acd54e2dc0";
 
 export default node;

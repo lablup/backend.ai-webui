@@ -9,7 +9,7 @@
 import '../../__test__/matchMedia.mock.js';
 import '../../__test__/resizeObserver.mock.js';
 import ProjectSelect from './ProjectSelect';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import { isValidElement, type ReactElement, type ReactNode } from 'react';

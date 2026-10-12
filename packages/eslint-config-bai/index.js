@@ -1,2 +1,2 @@
 export { base } from "./base.js";
-export { react } from "./react.js";
+export { bailinkEllipsisRestriction, react } from "./react.js";

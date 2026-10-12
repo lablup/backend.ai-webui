@@ -1,5 +1,11 @@
 # Responsive Policy + Conversion Recipes (ticket 14)
 
+> **Superseded where it conflicts with ADR 0009.** Astryx is reached only through
+> `@lablup/ui-common` (`@lablup/ui-common/<X>`, never `@astryxdesign/*`), the CLI is
+> `ui-common` (`pnpm exec ui-common …` in `react/`, `pnpm run ui-common …` from the root),
+> and the theme-shim is retired. Commands and import paths below are updated to that;
+> the rest is the migration-era record.
+
 **Status: PROVISIONAL — pending user ratification.** Open decision #5
 (MIGRATION-SPEC §7) was to be settled with the user; the user was unavailable,
 so this session evaluated both models against measured evidence and recorded
@@ -39,7 +45,7 @@ xs={24} xxl={12}).
 1. **Track layout responsiveness** (all `Row`/`Col` breakpoint-prop sites) →
    **Astryx `Grid columns={{minWidth, max?}}`** — container-driven CSS.
 2. **JS behaviour branches** (the 18 `Grid.useBreakpoint()` sites — render
-   tree, layout *mode*, formatting) → **`useBAIBreakpoint()`** (theme-shim,
+   tree, layout *mode*, formatting) → **`useBAIBreakpoint()`** (`backend.ai-ui`,
    ticket 08), a pure import swap.
 3. **`token.screen*` px constants** → **`BAI_BREAKPOINTS.<step>`** where the
    value matches a step; they are constants, not responsiveness.
@@ -91,7 +97,7 @@ spans → `Grid columns={{minWidth, max?}}`:
   <Col xs={24} sm={12}>…</Col>  // ×N
 </Row>
 // after
-import { Grid } from '@astryxdesign/core/Grid';
+import { Grid } from '@lablup/ui-common/Grid';
 <Grid columns={{ minWidth: 280, max: 2 }} gap={4}>
   …  {/* the Col wrapper usually disappears entirely */}
 </Grid>
@@ -131,10 +137,10 @@ present, never `undefined`):
 ```tsx
 // react/src/**
 -import { Grid } from 'antd';
-+import { useBAIBreakpoint } from '../theme-shim';
++import { useBAIBreakpoint } from 'backend.ai-ui';
 -const { lg } = Grid.useBreakpoint();
 +const { lg } = useBAIBreakpoint();
-// packages/backend.ai-ui/src/** → import { useBAIBreakpoint } from '../theme-shim' (BUI-internal) or 'backend.ai-ui'
+// packages/backend.ai-ui/src/** → import { useBAIBreakpoint } from '../hooks/useBAIBreakpoint' (adjust the depth)
 ```
 
 Drop `?? true`/`?? false` fallbacks if present (keys are now total). If a
@@ -163,8 +169,8 @@ R1). Do not pre-convert these.
 
 - `useBAIBreakpoint`, `useBAIActiveBreakpoint`, `BAI_BREAKPOINTS`,
   `BAI_BREAKPOINT_KEYS`, `BAI_BREAKPOINT_QUERIES`, types `BAIBreakpointKey` /
-  `BAIScreenMap` are now exported from the theme shim:
-  `react/src/theme-shim` (react app) and `backend.ai-ui` (everywhere).
+  `BAIScreenMap` are exported from `backend.ai-ui`
+  (`packages/backend.ai-ui/src/hooks/useBAIBreakpoint.ts`).
 - Probe harness: `react/theme-probe/responsive.html` (+ vite config now runs
   babel-plugin-relay for react/src and defines `global`, so probe pages can
   mount real Relay-fragment components with `relay-test-utils`).

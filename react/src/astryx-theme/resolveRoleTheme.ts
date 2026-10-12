@@ -21,7 +21,7 @@ import {
   themeOptionsFromConfig,
 } from './backendAiTheme';
 import { builtBackendAiBrandTheme } from './built';
-import type { DefinedTheme } from '@astryxdesign/core/theme';
+import type { DefinedTheme } from '@lablup/ui-common/theme';
 
 /**
  * Resolve the theme for a role against the live appearance document's `theme`

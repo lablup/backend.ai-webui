@@ -11,8 +11,8 @@ import { ResourcePresetSettingModalFragment$key } from '../__generated__/Resourc
 import { App } from '../app-shim';
 import { reasonMessage } from '../helper/mutationError';
 import ResourcePresetSettingModal from './ResourcePresetSettingModal';
-import { Button } from '@astryxdesign/core/Button';
-import { IconButton } from '@astryxdesign/core/IconButton';
+import { Button } from '@lablup/ui-common/Button';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import {
   filterOutNullAndUndefined,
   BAITable,

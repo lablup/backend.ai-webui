@@ -3,9 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useTokenCount } from '../../hooks/useTokenizer';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Divider } from '@astryxdesign/core/Divider';
-import { Text } from '@astryxdesign/core/Text';
+import { Badge } from '@lablup/ui-common/Badge';
+import { Divider } from '@lablup/ui-common/Divider';
+import { Text } from '@lablup/ui-common/Text';
 import { UIMessage } from 'ai';
 import { BAIFlex, BAIQuestionIconWithTooltip } from 'backend.ai-ui';
 import { t } from 'i18next';

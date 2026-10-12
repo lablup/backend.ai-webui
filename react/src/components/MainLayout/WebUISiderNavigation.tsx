@@ -16,10 +16,10 @@ import {
   useWebUIMenuItems,
 } from '../../hooks/useWebUIMenuItems';
 import BAIMenu from '../BAIMenu';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { HStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { HStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import { filterOutEmpty, useSessionStorageState } from 'backend.ai-ui';
 import { ArrowLeftIcon, ShieldUserIcon } from 'lucide-react';
 import React, { useEffect } from 'react';

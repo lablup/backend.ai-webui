@@ -394,7 +394,7 @@ export const getImageFullName = (
   image: DeepPartial<Image | CommittedImage | EnvironmentImage>,
 ) => {
   return image
-    ? `${image.registry}/${image.namespace ?? image.name}:${image.tag}@${image.architecture}`
+    ? `${image.registry}/${image.namespace}:${image.tag}@${image.architecture}`
     : undefined;
 };
 
@@ -598,8 +598,7 @@ export const resolveImageFullName = (
     const sameEnvironment = _.filter(
       candidates,
       (image) =>
-        `${image.registry}/${image.namespace ?? image.name}` ===
-          registryAndNamespace &&
+        `${image.registry}/${image.namespace}` === registryAndNamespace &&
         (!hasArch || image.architecture === architecture),
     );
     // Sorted the same way as the launcher's version select: latest first,
@@ -1006,6 +1005,8 @@ export function listenToBackgroundTask<
   if (!req) {
     throw new Error('Failed to create request for background task events');
   }
+  // fetchEventSource takes its own headers, so the signed request's act-as header is copied over.
+  const actAsUserId = req.headers.get('X-BackendAI-Act-As');
 
   fetchEventSource(req.uri, {
     signal,
@@ -1014,6 +1015,7 @@ export function listenToBackgroundTask<
     headers: {
       'x-backendai-sessionid':
         localStorage.getItem('backendaiwebui.sessionid') || '',
+      ...(actAsUserId ? { 'x-backendai-act-as': actAsUserId } : {}),
     },
     onmessage: (event) => {
       const data = JSON.parse(event.data);
@@ -1121,4 +1123,14 @@ export const convertFirstOrderByToString = (
   const first = orderBy?.[0];
   if (!first?.field) return null;
   return `${first.direction === 'DESC' ? '-' : ''}${_.camelCase(first.field)}`;
+};
+
+/**
+ * Extract the error type suffix from a Backend.AI problem type URL.
+ * e.g., "https://api.backend.ai/probs/auth-failed" → "auth-failed"
+ */
+export const extractErrorType = (typeUrl?: string | null): string => {
+  if (!typeUrl) return '';
+  const parts = typeUrl.split('/');
+  return parts[parts.length - 1] || '';
 };

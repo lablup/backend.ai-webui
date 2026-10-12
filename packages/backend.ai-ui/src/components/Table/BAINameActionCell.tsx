@@ -5,16 +5,16 @@ import BAIButton from '../BAIButton';
 import BAILink from '../BAILink';
 import BAIText from '../BAIText';
 import './BAINameActionCell.css';
-import { Button } from '@astryxdesign/core/Button';
+import { Button } from '@lablup/ui-common/Button';
 import {
   DropdownMenu,
   type DropdownMenuItemData,
   type DropdownMenuOption,
-} from '@astryxdesign/core/DropdownMenu';
-import { Popover } from '@astryxdesign/core/Popover';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+} from '@lablup/ui-common/DropdownMenu';
+import { Popover } from '@lablup/ui-common/Popover';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import classNames from 'classnames';
 import { EllipsisVertical } from 'lucide-react';
 import React, { useEffect, useRef, useState, useTransition } from 'react';

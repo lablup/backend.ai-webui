@@ -3,8 +3,8 @@ import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIFlex from './BAIFlex';
 import BAIRowWrapWithDividers from './BAIRowWrapWithDividers';
 import BAIStatistic, { BAIStatisticProps } from './BAIStatistic';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { useTheme } from '@astryxdesign/core/theme';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { useTheme } from '@lablup/ui-common/theme';
 import React from 'react';
 
 interface ResourceData {

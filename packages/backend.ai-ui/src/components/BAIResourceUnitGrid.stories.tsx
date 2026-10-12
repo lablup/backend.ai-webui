@@ -3,7 +3,7 @@ import BAIFlex from './BAIFlex';
 import BAIResourceUnitGrid, {
   type BAIUnitGridGroup,
 } from './BAIResourceUnitGrid';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 

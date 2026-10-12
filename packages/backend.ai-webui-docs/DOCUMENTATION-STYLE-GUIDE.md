@@ -262,7 +262,7 @@ Explanation or next steps after the image.
 Rules:
 - Place images **after** the introductory text, not before
 - Leave blank lines before and after the image reference
-- No alt text (current convention)
+- No alt text (current convention), except a width hint for 2× component captures: `![=520px](images/foo_modal.png)` (half the PNG width — see `SCREENSHOT-GUIDELINES.md` → "Display Width for Component Captures")
 - Use relative paths: `images/filename.png`
 - Image paths are resolved relative to the markdown file's directory during build
 - If a screenshot doesn't exist yet, add a TODO comment:

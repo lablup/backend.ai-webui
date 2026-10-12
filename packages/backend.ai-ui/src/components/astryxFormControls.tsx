@@ -29,12 +29,12 @@
  antd-identical API, which is why the reconciliations above still read against
  antd's semantics. These adapters are only the control layer.
 */
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { NumberInput } from '@astryxdesign/core/NumberInput';
-import { Switch } from '@astryxdesign/core/Switch';
-import { TextArea } from '@astryxdesign/core/TextArea';
-import { TextInput } from '@astryxdesign/core/TextInput';
-import type { SizeValue } from '@astryxdesign/core/utils';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
+import { Switch } from '@lablup/ui-common/Switch';
+import { TextArea } from '@lablup/ui-common/TextArea';
+import { TextInput } from '@lablup/ui-common/TextInput';
+import type { SizeValue } from '@lablup/ui-common/utils';
 import React from 'react';
 import type { CSSProperties } from 'react';
 

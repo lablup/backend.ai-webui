@@ -20,13 +20,13 @@ import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { Button } from '@astryxdesign/core/Button';
-import { Card } from '@astryxdesign/core/Card';
-import { Grid } from '@astryxdesign/core/Grid';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { HStack } from '@astryxdesign/core/Stack';
-import { useTheme } from '@astryxdesign/core/theme';
-import { Stat } from '@astryxdesign/lab';
+import { Button } from '@lablup/ui-common/Button';
+import { Card } from '@lablup/ui-common/Card';
+import { Grid } from '@lablup/ui-common/Grid';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { HStack } from '@lablup/ui-common/Stack';
+import { Stat } from '@lablup/ui-common/lab';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   // TODO(needs-backend): BAIHuggingFaceRegistrySettingModal - uncomment when storage-proxy applies DB config via Redis
   BAIImportArtifactModal,
@@ -192,7 +192,7 @@ const ReservoirPage: React.FC = () => {
             name
             type
           }
-          huggingfaceRegistries @since(version: "25.14.0") {
+          huggingfaceRegistries {
             edges {
               node {
                 id
@@ -212,7 +212,7 @@ const ReservoirPage: React.FC = () => {
             count
             edges {
               node {
-                id @since(version: "25.17.0")
+                id
                 ...BAIArtifactTableArtifactFragment
                 ...BAIImportArtifactModalArtifactFragment
                 ...BAIDeactivateArtifactsModalArtifactsFragment

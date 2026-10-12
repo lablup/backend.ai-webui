@@ -17,12 +17,11 @@ import {
   useCustomThemeConfig,
 } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
-import MyKeypairInfoModalLegacy from './MyKeypairInfoModalLegacy';
 import MyKeypairManagementModal from './MyKeypairManagementModal';
 import SSHKeypairManagementModal from './SSHKeypairManagementModal';
 import SettingList, { SettingGroup } from './SettingList';
 import ShellScriptEditModal, { ShellScriptType } from './ShellScriptEditModal';
-import { Button } from '@astryxdesign/core/Button';
+import { Button } from '@lablup/ui-common/Button';
 import {
   filterOutEmpty,
   useSessionStorageState,
@@ -454,17 +453,10 @@ const UserSettingsGeneralPane = () => {
         showSearchBar
         hideGroupNav
       />
-      {baiClient?.supports('my-keypairs') ? (
-        <MyKeypairManagementModal
-          open={isOpenSSHKeypairInfoModal}
-          onRequestClose={toggleSSHKeypairInfoModal}
-        />
-      ) : (
-        <MyKeypairInfoModalLegacy
-          open={isOpenSSHKeypairInfoModal}
-          onRequestClose={toggleSSHKeypairInfoModal}
-        />
-      )}
+      <MyKeypairManagementModal
+        open={isOpenSSHKeypairInfoModal}
+        onRequestClose={toggleSSHKeypairInfoModal}
+      />
       <SSHKeypairManagementModal
         open={isOpenSSHKeypairManagementModal}
         onRequestClose={toggleSSHKeypairManagementModal}

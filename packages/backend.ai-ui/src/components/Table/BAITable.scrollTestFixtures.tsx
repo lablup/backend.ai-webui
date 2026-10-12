@@ -39,7 +39,7 @@ export const renderScrollTable = (
   );
 
 export const dimLayerOf = (container: HTMLElement) =>
-  container.querySelector<HTMLElement>('.bai-table-astryx-dim-layer')!;
+  container.querySelector<HTMLElement>('.uic-data-grid__body')!;
 
 export const rootOf = (container: HTMLElement) =>
-  container.querySelector<HTMLElement>('.bai-table-astryx-root')!;
+  container.querySelector<HTMLElement>('.uic-data-grid')!;

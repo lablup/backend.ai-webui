@@ -7,15 +7,15 @@
  express any condition the backend supports instead of the three the picker
  used to offer (FR-3654).
 */
+import { getSessionTypeLabel } from '../../helper/sessionTypeLabel';
 import { isValidUUID, type FilterProperty } from 'backend.ai-ui';
 import type { TFunction } from 'i18next';
 
-/**
- * Enum values are shown verbatim: they are what goes into the filter string,
- * and the app renders session status/type/result raw everywhere else too.
- */
-const asOptions = (values: ReadonlyArray<string>) =>
-  values.map((value) => ({ label: value, value }));
+/** Enum values are shown verbatim unless a `toLabel` is given. */
+const asOptions = (
+  values: ReadonlyArray<string>,
+  toLabel: (value: string) => string = (value) => value,
+) => values.map((value) => ({ label: toLabel(value), value }));
 
 /** `SessionStatus` (manager `data/session/types.py`). */
 const SESSION_STATUSES = [
@@ -63,13 +63,14 @@ const enumProperty = (
   key: string,
   propertyLabel: string,
   values: ReadonlyArray<string>,
+  toLabel?: (value: string) => string,
 ): FilterProperty => ({
   key,
   propertyLabel,
   type: 'string',
   defaultOperator: '==',
   strictSelection: true,
-  options: asOptions(values),
+  options: asOptions(values, toLabel),
 });
 
 /**
@@ -83,7 +84,9 @@ export const getSessionFilterProperties = (
 ): Array<FilterProperty> => [
   { key: 'name', propertyLabel: t('session.SessionName'), type: 'string' },
   enumProperty('status', t('session.Status'), SESSION_STATUSES),
-  enumProperty('type', t('session.SessionType'), SESSION_TYPES),
+  enumProperty('type', t('session.SessionType'), SESSION_TYPES, (value) =>
+    getSessionTypeLabel(t, value),
+  ),
   {
     key: 'scaling_group',
     propertyLabel: t('session.ResourceGroup'),

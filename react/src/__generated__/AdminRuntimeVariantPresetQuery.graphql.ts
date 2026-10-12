@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<18b7b24227dd9d3bc4dd26afbbf0460d>>
+ * @generated SignedSource<<9c9346706cc68223ce1d9cf4dfa2ec92>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -478,12 +478,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "18a47fe3ec2aa5bfabbe3c9d772e5ddb",
+    "cacheID": "947a1214db74fb5c4832960a2b256968",
     "id": null,
     "metadata": {},
     "name": "AdminRuntimeVariantPresetQuery",
     "operationKind": "query",
-    "text": "query AdminRuntimeVariantPresetQuery(\n  $filter: RuntimeVariantPresetFilter\n  $orderBy: [RuntimeVariantPresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  runtimeVariantPresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        category\n        ...BAIRuntimeVariantPresetTableFragment\n        ...BAIRuntimeVariantPresetSettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIRuntimeVariantPresetSettingModalFragment on RuntimeVariantPreset {\n  id\n  runtimeVariantId\n  name\n  description\n  rank\n  targetSpec {\n    presetTarget\n    valueType\n    defaultValue\n    key\n  }\n  required @since(version: \"26.4.4\")\n  category\n  displayName\n  uiOption {\n    uiType\n    slider {\n      min\n      max\n      step\n    }\n    number {\n      min\n      max\n    }\n    choices {\n      items {\n        value\n        label\n      }\n    }\n    text {\n      placeholder\n    }\n  }\n}\n\nfragment BAIRuntimeVariantPresetTableFragment on RuntimeVariantPreset {\n  id\n  runtimeVariantId\n  runtimeVariant @since(version: \"26.8.0\") {\n    name\n    id\n  }\n  name\n  description\n  category\n  displayName\n  rank\n  targetSpec {\n    presetTarget\n    valueType\n    defaultValue\n    key\n  }\n  required @since(version: \"26.4.4\")\n  uiOption {\n    uiType\n  }\n  createdAt\n  updatedAt\n}\n"
+    "text": "query AdminRuntimeVariantPresetQuery(\n  $filter: RuntimeVariantPresetFilter\n  $orderBy: [RuntimeVariantPresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  runtimeVariantPresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        category\n        ...BAIRuntimeVariantPresetTableFragment\n        ...BAIRuntimeVariantPresetSettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIRuntimeVariantPresetSettingModalFragment on RuntimeVariantPreset {\n  id\n  runtimeVariantId\n  name\n  description\n  rank\n  targetSpec {\n    presetTarget\n    valueType\n    defaultValue\n    key\n  }\n  required\n  category\n  displayName\n  uiOption {\n    uiType\n    slider {\n      min\n      max\n      step\n    }\n    number {\n      min\n      max\n    }\n    choices {\n      items {\n        value\n        label\n      }\n    }\n    text {\n      placeholder\n    }\n  }\n}\n\nfragment BAIRuntimeVariantPresetTableFragment on RuntimeVariantPreset {\n  id\n  runtimeVariantId\n  runtimeVariant @since(version: \"26.8.0\") {\n    name\n    id\n  }\n  name\n  description\n  category\n  displayName\n  rank\n  targetSpec {\n    presetTarget\n    valueType\n    defaultValue\n    key\n  }\n  required\n  uiOption {\n    uiType\n  }\n  createdAt\n  updatedAt\n}\n"
   }
 };
 })();

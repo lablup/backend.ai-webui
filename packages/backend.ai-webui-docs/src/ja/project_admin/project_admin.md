@@ -14,7 +14,7 @@ navTitle: プロジェクト管理者機能
 
 ヘッダーのプロジェクトドロップダウンを開くと、プロジェクト管理者ロールを持つプロジェクトには名前の横に盾の形のバッジが表示されます。バッジにカーソルを合わせると **プロジェクト管理者** ツールチップが表示され、このプロジェクトを選択すると以下で説明するプロジェクト管理者向けサイドバー項目が表示されることが確認できます。
 
-![](../images/header_project_selector_with_admin_badge.png)
+![=300px](../images/header_project_selector_with_admin_badge.png)
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 ヘッダーのプロジェクトセレクターで別のプロジェクトに切り替えると、ユーザーのロールが再評価されます。同じユーザーが同一のログインセッション内で、あるプロジェクトではプロジェクト管理者として、別のプロジェクトでは一般ユーザーとして振る舞うことがあります。プロジェクト管理者ロールの付与と取り消しの方法については、RBAC管理章の[プロジェクト管理者権限の付与](#grant-project-admin)セクションを参照してください。
@@ -67,7 +67,7 @@ navTitle: プロジェクト管理者機能
 - **セッション** — 現在のプロジェクトのユーザーが所有するコンピュートセッション
 - **デプロイメント** — 現在のプロジェクトが所有するモデルデプロイメント
 
-![](../images/project_admin_sidebar.png)
+![=240px](../images/project_admin_sidebar.png)
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 プロジェクト管理者ページでは、上部のプロジェクトセレクターで選択したプロジェクト配下の項目のみが表示されます。この内容はページ上部のバナーで確認できます。
@@ -83,7 +83,7 @@ navTitle: プロジェクト管理者機能
 
 更新ボタンの横のドロップダウンボタンをクリックすると **自動更新** メニューが開き、自動更新の間隔を選択できます。
 
-![](../images/project_admin_auto_refresh_menu.png)
+![=94px](../images/project_admin_auto_refresh_menu.png)
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 <a id="users"></a>
@@ -128,7 +128,7 @@ navTitle: プロジェクト管理者機能
 2. 作成モーダルでフォルダ情報を入力します。
 3. **作成** をクリックしてフォルダを作成します。
 
-![](../images/project_admin_create_folder_modal.png)
+![=650px](../images/project_admin_create_folder_modal.png)
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 :::info
@@ -177,7 +177,7 @@ navTitle: プロジェクト管理者機能
 4. 必要に応じて **強制終了** チェックボックスを選択すると、現在のステータスに関係なくセッションを終了またはキャンセルできます。このオプションを有効にすると警告が表示され、確認ボタンのラベルが **終了する** から **強制終了** に変わります。
 5. 確認ボタンをクリックしてセッションを終了します。
 
-![](../images/project_admin_terminate_session_modal.png)
+![=520px](../images/project_admin_terminate_session_modal.png)
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 :::warning

@@ -5,9 +5,9 @@
 import { panelTypeLabelKeys } from './panelRegistry';
 import { resolvePanelTitle, resourceRegistry } from './resourceRegistry';
 import type { PersistedPanel, ResourceKey } from './types';
-import { Button } from '@astryxdesign/core/Button';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Button } from '@lablup/ui-common/Button';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex, BAIPopconfirm, BAIText } from 'backend.ai-ui';
 import { Plus, RotateCcw, SquarePenIcon, Trash2 } from 'lucide-react';
 import React from 'react';

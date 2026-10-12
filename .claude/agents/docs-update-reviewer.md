@@ -93,6 +93,7 @@ Check for consistency across the documentation:
 - [ ] Numbered lists (`1.`) for step-by-step procedures
 - [ ] Admonitions (`:::note`, `:::warning`, ...) for new notes/warnings (3-space indented notes are legacy)
 - [ ] Image format: `![](images/filename.png)`
+- [ ] 2× component captures (modal, dropdown, card…, PNG < 1640px wide) carry a width hint of half the PNG width in every locale: `![=520px](images/filename.png)`
 - [ ] Cross-reference format: `[Display Text](#anchor-id)`
 - [ ] Professional, instructional tone throughout
 - [ ] Second person ("You can...", "Click the...")

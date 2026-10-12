@@ -9,7 +9,7 @@
 import { buildBaiCustomTokens } from '../../theme/baiCustomTokens';
 import BAINameActionCell from './BAINameActionCell';
 import type { BAINameActionCellAction } from './BAINameActionCell';
-import { Theme, defineTheme, useTheme } from '@astryxdesign/core/theme';
+import { Theme, defineTheme, useTheme } from '@lablup/ui-common/theme';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
