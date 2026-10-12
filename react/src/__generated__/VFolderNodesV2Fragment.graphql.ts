@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6340b494825faf82e51f3b43daab83ad>>
+ * @generated SignedSource<<0d9c7919bb941b9c572e9057f3474ad8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -67,7 +67,7 @@ export type VFolderNodesV2Fragment$data = ReadonlyArray<{
     };
   } | null | undefined;
   readonly vfolderStatus: VFolderOperationStatus;
-  readonly " $fragmentSpreads": FragmentRefs<"DeleteForeverVFolderModalV2Fragment" | "SharedFolderPermissionInfoModalV2Fragment" | "VFolderNodeIdenticonV2Fragment" | "VFolderPermissionCellV2Fragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"DeleteForeverVFolderModalV2Fragment" | "InviteFolderSettingModalV2Fragment" | "SharedFolderPermissionInfoModalV2Fragment" | "VFolderNodeIdenticonV2Fragment" | "VFolderPermissionCellV2Fragment">;
   readonly " $fragmentType": "VFolderNodesV2Fragment";
 } | null | undefined>;
 export type VFolderNodesV2Fragment$key = ReadonlyArray<{
@@ -403,6 +403,11 @@ return {
     {
       "args": null,
       "kind": "FragmentSpread",
+      "name": "InviteFolderSettingModalV2Fragment"
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
       "name": "DeleteForeverVFolderModalV2Fragment"
     },
     {
@@ -427,6 +432,6 @@ return {
 };
 })();
 
-(node as any).hash = "607ae67fd5df169ab6c7203a711c087e";
+(node as any).hash = "73fcf9876ded2d4b962919664334efb6";
 
 export default node;
