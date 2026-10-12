@@ -11,7 +11,6 @@ import {
 } from './astryxFormControls';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
-import { Text } from '@lablup/ui-common/Text';
 import {
   BAIButton,
   BAIFlex,
@@ -245,33 +244,44 @@ export const HandlerOptionsDescription: React.FC<{
   const seconds = t('resourceGroup.TimeoutSeconds');
 
   return (
-    <BAIMetadataList columns={md ? 2 : 1}>
-      <MetadataListItem label={t('resourceGroup.DefaultTimeout')}>
-        {formatSeconds(handlerOptions?.default.timeoutSec, unlimited, seconds)}
-      </MetadataListItem>
-      <MetadataListItem label={t('resourceGroup.DefaultMaxRetries')}>
-        {handlerOptions?.default.maxRetryCount ?? unlimited}
-      </MetadataListItem>
-      <MetadataListItem label={t('resourceGroup.HandlerOverrides')}>
-        {_.isEmpty(handlerOptions?.byHandler) ? (
-          '-'
-        ) : (
-          <BAIFlex direction="column" align="start" gap="xxs">
-            {_.map(handlerOptions?.byHandler, (entry) => (
-              <Text key={entry.handlerName}>
-                <Text weight="semibold">{entry.handlerName}</Text>
-                {` · ${t('resourceGroup.Timeout')} ${formatSeconds(
-                  entry.timeoutSec,
-                  unlimited,
-                  seconds,
-                )} · ${t('modelService.MaxRetries')} ${
-                  entry.maxRetryCount ?? unlimited
-                }`}
-              </Text>
-            ))}
-          </BAIFlex>
-        )}
-      </MetadataListItem>
-    </BAIMetadataList>
+    <BAIFlex direction="column" align="stretch" gap="sm">
+      <BAIMetadataList columns={md ? 2 : 1}>
+        <MetadataListItem label={t('resourceGroup.DefaultTimeout')}>
+          {formatSeconds(
+            handlerOptions?.default.timeoutSec,
+            unlimited,
+            seconds,
+          )}
+        </MetadataListItem>
+        <MetadataListItem label={t('resourceGroup.DefaultMaxRetries')}>
+          {handlerOptions?.default.maxRetryCount ?? unlimited}
+        </MetadataListItem>
+      </BAIMetadataList>
+      {/* Full width, label on top like the two-column list above it. */}
+      <BAIMetadataList columns={1} label={{ position: 'top' }}>
+        <MetadataListItem label={t('resourceGroup.HandlerOverrides')}>
+          {_.isEmpty(handlerOptions?.byHandler) ? (
+            '-'
+          ) : (
+            <BAIFlex direction="column" align="stretch" gap="sm">
+              {_.map(handlerOptions?.byHandler, (entry) => (
+                <BAIMetadataList
+                  key={entry.handlerName}
+                  title={entry.handlerName}
+                  columns={md ? 2 : 1}
+                >
+                  <MetadataListItem label={t('resourceGroup.Timeout')}>
+                    {formatSeconds(entry.timeoutSec, unlimited, seconds)}
+                  </MetadataListItem>
+                  <MetadataListItem label={t('modelService.MaxRetries')}>
+                    {entry.maxRetryCount ?? unlimited}
+                  </MetadataListItem>
+                </BAIMetadataList>
+              ))}
+            </BAIFlex>
+          )}
+        </MetadataListItem>
+      </BAIMetadataList>
+    </BAIFlex>
   );
 };
