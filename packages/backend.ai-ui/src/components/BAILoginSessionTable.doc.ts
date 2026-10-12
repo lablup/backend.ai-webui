@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The presentational table over a plural `LoginSessionV2` Relay fragment, listing the live sign-in sessions on record. A session that ended is removed from this list and appears in the login history instead. It renders four columns — the session owner (the user email, falling back to a dash), the access key as monospace copyable text, the creation time and the last access time, both formatted as `ll LTS` — and the created-at and last-accessed-at columns are server-sortable. The last access time is what tells a user which session to end. Filtering, pagination, query orchestration and the revoke action belong to the consuming surface: it renders BAITable, and every remaining BAITableProps prop passes straight through.',
+      'The presentational table over a plural `LoginSessionV2` Relay fragment, listing the live sign-in sessions on record. A session that ended is removed from this list and appears in the login history instead. It renders four columns — the session owner (the user email, falling back to a dash), the access key as monospace copyable text, the creation time and the last access time, both formatted as `lll` (date, hours and minutes) — and the created-at and last-accessed-at columns are server-sortable. The last access time is what tells a user which session to end. Filtering, pagination, query orchestration and the revoke action belong to the consuming surface: it renders BAITable, and every remaining BAITableProps prop passes straight through.',
     bestPractices: [
       {
         guidance: true,

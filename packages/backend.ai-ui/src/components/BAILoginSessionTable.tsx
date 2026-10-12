@@ -111,7 +111,7 @@ const BAILoginSessionTable = ({
         dataIndex: 'createdAt',
         sorter: isEnableSorter('createdAt'),
         render: (__, record) =>
-          record.createdAt ? dayjs(record.createdAt).format('ll LTS') : '-',
+          record.createdAt ? dayjs(record.createdAt).format('lll') : '-',
       },
       {
         key: 'lastAccessedAt',
@@ -120,7 +120,7 @@ const BAILoginSessionTable = ({
         sorter: isEnableSorter('lastAccessedAt'),
         render: (__, record) =>
           record.lastAccessedAt
-            ? dayjs(record.lastAccessedAt).format('ll LTS')
+            ? dayjs(record.lastAccessedAt).format('lll')
             : '-',
       },
     ]),
