@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6a9d05778ff75de637d455f0e22d0f7f>>
+ * @generated SignedSource<<61c4715645215ee3aa1bb4321ddbd601>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,8 +10,10 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type OperationType = "CREATE" | "GRANT_ALL" | "GRANT_HARD_DELETE" | "GRANT_READ" | "GRANT_SOFT_DELETE" | "GRANT_UPDATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
+export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type RBACElementType = "AGENT" | "APP_CONFIG" | "APP_CONFIG_ALLOW_LIST" | "APP_CONFIG_DEFINITION" | "APP_CONFIG_FRAGMENT" | "ARTIFACT" | "ARTIFACT_REGISTRY" | "ARTIFACT_REVISION" | "AUDIT_LOG" | "CONTAINER_REGISTRY" | "DEPLOYMENT_POLICY" | "DEPLOYMENT_REVISION" | "DEPLOYMENT_TOKEN" | "DOMAIN" | "DOMAIN_ADMIN_PAGE" | "EVENT_LOG" | "IDLE_CHECKER_ASSIGNMENT" | "IMAGE" | "IMAGE_ALIAS" | "KERNEL" | "KERNEL_HISTORY" | "KEYPAIR" | "KEYPAIR_RESOURCE_POLICY" | "MODEL_CARD" | "MODEL_DEPLOYMENT" | "NETWORK" | "NOTIFICATION_CHANNEL" | "NOTIFICATION_RULE" | "PROJECT" | "PROJECT_ADMIN_PAGE" | "PROJECT_RESOURCE_POLICY" | "RESOURCE_GROUP" | "RESOURCE_PRESET" | "ROLE" | "ROLE_ASSIGNMENT" | "ROUTING" | "SESSION" | "SESSION_APP_SERVICE" | "SESSION_TEMPLATE" | "STORAGE_HOST" | "USER" | "USER_EMAIL" | "USER_RESOURCE_POLICY" | "VFOLDER" | "VFOLDER_DATA" | "%future added value";
+export type RoleAssignmentOrderField = "EMAIL" | "GRANTED_AT" | "USERNAME" | "%future added value";
 export type RoleSource = "CUSTOM" | "SYSTEM" | "%future added value";
 export type RoleStatus = "ACTIVE" | "DELETED" | "INACTIVE" | "%future added value";
 export type RoleAssignmentFilter = {
@@ -100,105 +102,168 @@ export type OperationTypeFilter = {
   notEquals?: OperationType | null | undefined;
   notIn?: ReadonlyArray<OperationType> | null | undefined;
 };
-export type RoleAssignmentTabGrantedAtQuery$variables = {
+export type RoleAssignmentOrderBy = {
+  direction?: OrderDirection;
+  field: RoleAssignmentOrderField;
+};
+export type RoleAssignmentTabQuery$variables = {
   filter?: RoleAssignmentFilter | null | undefined;
   limit?: number | null | undefined;
-  skip: boolean;
+  offset?: number | null | undefined;
+  orderBy?: ReadonlyArray<RoleAssignmentOrderBy> | null | undefined;
 };
-export type RoleAssignmentTabGrantedAtQuery$data = {
-  readonly adminRoleAssignments?: {
+export type RoleAssignmentTabQuery$data = {
+  readonly adminRoleAssignments: {
+    readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly grantedAt: string;
         readonly id: string;
+        readonly user: {
+          readonly basicInfo: {
+            readonly email: string;
+            readonly fullName: string | null | undefined;
+          };
+          readonly id: string;
+        } | null | undefined;
         readonly userId: string;
       };
     }>;
   } | null | undefined;
 };
-export type RoleAssignmentTabGrantedAtQuery = {
-  response: RoleAssignmentTabGrantedAtQuery$data;
-  variables: RoleAssignmentTabGrantedAtQuery$variables;
+export type RoleAssignmentTabQuery = {
+  response: RoleAssignmentTabQuery$data;
+  variables: RoleAssignmentTabQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "filter"
+},
+v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "limit"
+},
+v2 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "offset"
+},
+v3 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "orderBy"
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v5 = [
   {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "filter"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "limit"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "skip"
-  }
-],
-v1 = [
-  {
-    "condition": "skip",
-    "kind": "Condition",
-    "passingValue": false,
+    "alias": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "filter",
+        "variableName": "filter"
+      },
+      {
+        "kind": "Variable",
+        "name": "limit",
+        "variableName": "limit"
+      },
+      {
+        "kind": "Variable",
+        "name": "offset",
+        "variableName": "offset"
+      },
+      {
+        "kind": "Variable",
+        "name": "orderBy",
+        "variableName": "orderBy"
+      }
+    ],
+    "concreteType": "RoleAssignmentConnection",
+    "kind": "LinkedField",
+    "name": "adminRoleAssignments",
+    "plural": false,
     "selections": [
       {
         "alias": null,
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "filter",
-            "variableName": "filter"
-          },
-          {
-            "kind": "Variable",
-            "name": "limit",
-            "variableName": "limit"
-          }
-        ],
-        "concreteType": "RoleAssignmentConnection",
+        "args": null,
+        "kind": "ScalarField",
+        "name": "count",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "RoleAssignmentEdge",
         "kind": "LinkedField",
-        "name": "adminRoleAssignments",
-        "plural": false,
+        "name": "edges",
+        "plural": true,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "RoleAssignmentEdge",
+            "concreteType": "RoleAssignment",
             "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
+            "name": "node",
+            "plural": false,
             "selections": [
+              (v4/*: any*/),
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "RoleAssignment",
+                "kind": "ScalarField",
+                "name": "userId",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "grantedAt",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "UserV2",
                 "kind": "LinkedField",
-                "name": "node",
+                "name": "user",
                 "plural": false,
                 "selections": [
+                  (v4/*: any*/),
                   {
                     "alias": null,
                     "args": null,
-                    "kind": "ScalarField",
-                    "name": "id",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "userId",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "grantedAt",
+                    "concreteType": "UserV2BasicInfo",
+                    "kind": "LinkedField",
+                    "name": "basicInfo",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "email",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "fullName",
+                        "storageKey": null
+                      }
+                    ],
                     "storageKey": null
                   }
                 ],
@@ -210,37 +275,48 @@ v1 = [
         ],
         "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/),
+      (v2/*: any*/),
+      (v3/*: any*/)
+    ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "RoleAssignmentTabGrantedAtQuery",
-    "selections": (v1/*: any*/),
+    "name": "RoleAssignmentTabQuery",
+    "selections": (v5/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v3/*: any*/),
+      (v1/*: any*/),
+      (v2/*: any*/)
+    ],
     "kind": "Operation",
-    "name": "RoleAssignmentTabGrantedAtQuery",
-    "selections": (v1/*: any*/)
+    "name": "RoleAssignmentTabQuery",
+    "selections": (v5/*: any*/)
   },
   "params": {
-    "cacheID": "1f89dd39946cfeba59800490c527e2c2",
+    "cacheID": "a9165df396132f314335c7e5de5321fb",
     "id": null,
     "metadata": {},
-    "name": "RoleAssignmentTabGrantedAtQuery",
+    "name": "RoleAssignmentTabQuery",
     "operationKind": "query",
-    "text": "query RoleAssignmentTabGrantedAtQuery(\n  $filter: RoleAssignmentFilter\n  $limit: Int\n  $skip: Boolean!\n) {\n  adminRoleAssignments(filter: $filter, limit: $limit) @skip(if: $skip) {\n    edges {\n      node {\n        id\n        userId\n        grantedAt\n      }\n    }\n  }\n}\n"
+    "text": "query RoleAssignmentTabQuery(\n  $filter: RoleAssignmentFilter\n  $orderBy: [RoleAssignmentOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminRoleAssignments(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        userId\n        grantedAt\n        user {\n          id\n          basicInfo {\n            email\n            fullName\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "524b55f2a62fea95a05249599114b5df";
+(node as any).hash = "b0ba95fe44225651b4b1cdda196f6dcd";
 
 export default node;

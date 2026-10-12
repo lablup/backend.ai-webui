@@ -4,13 +4,11 @@
  */
 import { RoleAssignmentTabBulkRevokeMutation } from '../__generated__/RoleAssignmentTabBulkRevokeMutation.graphql';
 import { RoleAssignmentTabFragment$key } from '../__generated__/RoleAssignmentTabFragment.graphql';
-import { RoleAssignmentTabGrantedAtQuery } from '../__generated__/RoleAssignmentTabGrantedAtQuery.graphql';
 import {
   RoleAssignmentFilter,
   RoleAssignmentOrderBy,
-  UserV2Filter,
-  UserV2OrderBy,
-} from '../__generated__/RoleAssignmentTabRefetchQuery.graphql';
+  RoleAssignmentTabQuery,
+} from '../__generated__/RoleAssignmentTabQuery.graphql';
 import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
@@ -29,15 +27,17 @@ import {
   BAISelectionLabel,
   BAITable,
   BAIUnmountAfterClose,
+  INITIAL_FETCH_KEY,
   useBAILogger,
+  useFetchKey,
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { PlusIcon, Trash2 } from 'lucide-react';
-import React, { useDeferredValue, useState, useTransition } from 'react';
+import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery, useRefetchableFragment } from 'react-relay';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 type AssignmentOrder =
   | 'EMAIL_ASC'
@@ -66,8 +66,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   const [revokingTargets, setRevokingTargets] = useState<
     { userId: string; label: string }[] | null
   >(null);
-  const [isPendingRefetch, startRefetchTransition] = useTransition();
-  const [grantFetchKey, setGrantFetchKey] = useState(0);
+  const [fetchKey, updateFetchKey] = useFetchKey();
 
   // Pagination / order / filter live in local React state (not the URL);
   // they reset whenever the drawer content remounts.
@@ -83,22 +82,9 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     filter: null,
   });
 
-  const limit = queryParams.pageSize;
-  const offset =
-    queryParams.current > 1 ? (queryParams.current - 1) * limit : 0;
-
-  const [data, refetch] = useRefetchableFragment(
+  const data = useFragment(
     graphql`
-      fragment RoleAssignmentTabFragment on Role
-      @argumentDefinitions(
-        filter: { type: "RoleAssignmentFilter" }
-        orderBy: { type: "[RoleAssignmentOrderBy!]" }
-        userFilter: { type: "UserV2Filter" }
-        userOrderBy: { type: "[UserV2OrderBy!]" }
-        limit: { type: "Int", defaultValue: 10 }
-        offset: { type: "Int", defaultValue: 0 }
-      )
-      @refetchable(queryName: "RoleAssignmentTabRefetchQuery") {
+      fragment RoleAssignmentTabFragment on Role {
         id
         entityId
         name
@@ -116,46 +102,6 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         }
         scopeType @since(version: "26.9.0a4")
         scopeId @since(version: "26.9.0a4")
-        users(
-          filter: $filter
-          orderBy: $orderBy
-          limit: $limit
-          offset: $offset
-        ) @deprecatedSince(version: "26.9.0a4") {
-          count
-          edges {
-            node {
-              id
-              userId
-              grantedAt
-              user {
-                id
-                basicInfo {
-                  email
-                  fullName
-                }
-              }
-            }
-          }
-        }
-        usersV2(
-          filter: $userFilter
-          orderBy: $userOrderBy
-          limit: $limit
-          offset: $offset
-        ) @since(version: "26.9.0a4") {
-          count
-          edges {
-            node {
-              id
-              entityId
-              basicInfo {
-                email
-                fullName
-              }
-            }
-          }
-        }
       }
     `,
     roleNodeFrgmt,
@@ -198,129 +144,78 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       }
     `);
 
-  const isUsersV2 = baiClient.isManagerVersionCompatibleWith('26.9.0a4');
+  const limit = queryParams.pageSize;
+  const queryVariables = {
+    filter: {
+      ...(queryParams.filter ?? {}),
+      roleId: { equals: roleId },
+    },
+    orderBy: convertToOrderBy<RoleAssignmentOrderBy>(queryParams.order),
+    limit,
+    offset: queryParams.current > 1 ? (queryParams.current - 1) * limit : 0,
+  };
+  const deferredQueryVariables = useDeferredValue(queryVariables);
+  const deferredFetchKey = useDeferredValue(fetchKey);
 
-  // `usersV2` answers users, not assignment rows, so the grant time of the
-  // listed users is looked up from their assignment rows by email.
-  const pageEmailsKey = isUsersV2
-    ? _.compact(
-        _.map(data.usersV2?.edges, (edge) => edge?.node?.basicInfo.email),
-      ).join('\n')
-    : '';
-  const deferredPageEmailsKey = useDeferredValue(pageEmailsKey);
-  const deferredPageEmails = deferredPageEmailsKey
-    ? deferredPageEmailsKey.split('\n')
-    : [];
-  const { adminRoleAssignments } =
-    useLazyLoadQuery<RoleAssignmentTabGrantedAtQuery>(
-      graphql`
-        query RoleAssignmentTabGrantedAtQuery(
-          $filter: RoleAssignmentFilter
-          $limit: Int
-          $skip: Boolean!
+  const { adminRoleAssignments } = useLazyLoadQuery<RoleAssignmentTabQuery>(
+    graphql`
+      query RoleAssignmentTabQuery(
+        $filter: RoleAssignmentFilter
+        $orderBy: [RoleAssignmentOrderBy!]
+        $limit: Int
+        $offset: Int
+      ) {
+        adminRoleAssignments(
+          filter: $filter
+          orderBy: $orderBy
+          limit: $limit
+          offset: $offset
         ) {
-          adminRoleAssignments(filter: $filter, limit: $limit)
-            @skip(if: $skip) {
-            edges {
-              node {
+          count
+          edges {
+            node {
+              id
+              userId
+              grantedAt
+              user {
                 id
-                userId
-                grantedAt
+                basicInfo {
+                  email
+                  fullName
+                }
               }
             }
           }
         }
-      `,
-      {
-        filter: {
-          roleId: { equals: roleId },
-          OR: _.map(deferredPageEmails, (email) => ({
-            email: { equals: email },
-          })),
-        },
-        limit: deferredPageEmails.length,
-        skip: deferredPageEmails.length === 0,
-      },
-      {
-        fetchPolicy:
-          deferredPageEmails.length === 0 ? 'store-only' : 'network-only',
-        fetchKey: grantFetchKey,
-      },
-    );
-  const grantedAtByUserId = _.fromPairs(
-    _.compact(
-      _.map(adminRoleAssignments?.edges, (edge) =>
-        edge?.node ? [edge.node.userId, edge.node.grantedAt] : null,
-      ),
+      }
+    `,
+    deferredQueryVariables,
+    {
+      fetchKey: deferredFetchKey,
+      fetchPolicy:
+        deferredFetchKey === INITIAL_FETCH_KEY
+          ? 'store-and-network'
+          : 'network-only',
+    },
+  );
+  const isPendingRefetch =
+    !_.isEqual(deferredQueryVariables, queryVariables) ||
+    deferredFetchKey !== fetchKey;
+
+  const assignments = _.compact(
+    _.map(adminRoleAssignments?.edges, (edge) =>
+      edge?.node
+        ? {
+            id: edge.node.id,
+            userId: edge.node.userId,
+            email: edge.node.user?.basicInfo?.email,
+            fullName: edge.node.user?.basicInfo?.fullName,
+            grantedAt: edge.node.grantedAt,
+          }
+        : null,
     ),
   );
-  const assignments: Array<{
-    id: string;
-    userId: string;
-    email?: string | null;
-    fullName?: string | null;
-    grantedAt?: string | null;
-  }> = isUsersV2
-    ? _.compact(
-        _.map(data.usersV2?.edges, (edge) =>
-          edge?.node
-            ? {
-                id: edge.node.id,
-                userId: edge.node.entityId,
-                email: edge.node.basicInfo.email,
-                fullName: edge.node.basicInfo.fullName,
-                grantedAt: grantedAtByUserId[edge.node.entityId],
-              }
-            : null,
-        ),
-      )
-    : _.compact(
-        _.map(data.users?.edges, (edge) =>
-          edge?.node
-            ? {
-                id: edge.node.id,
-                userId: edge.node.userId,
-                email: edge.node.user?.basicInfo.email,
-                fullName: edge.node.user?.basicInfo.fullName,
-                grantedAt: edge.node.grantedAt,
-              }
-            : null,
-        ),
-      );
-  const totalCount = (isUsersV2 ? data.usersV2?.count : data.users?.count) ?? 0;
-
-  const doRefetch = (overrides?: {
-    filter?: RoleAssignmentFilter | null;
-    order?: string | null;
-    limit?: number;
-    offset?: number;
-  }) => {
-    const filter =
-      overrides?.filter !== undefined ? overrides.filter : queryParams.filter;
-    const order =
-      overrides?.order !== undefined ? overrides.order : queryParams.order;
-    startRefetchTransition(() => {
-      setGrantFetchKey((key) => key + 1);
-      refetch(
-        {
-          ...(isUsersV2
-            ? {
-                // The filter UI only emits `email` / `username`, which
-                // UserV2Filter shares with RoleAssignmentFilter.
-                userFilter: filter as UserV2Filter | null,
-                userOrderBy: convertToOrderBy<UserV2OrderBy>(order),
-              }
-            : {
-                filter,
-                orderBy: convertToOrderBy<RoleAssignmentOrderBy>(order),
-              }),
-          limit: overrides?.limit ?? limit,
-          offset: overrides?.offset ?? offset,
-        },
-        { fetchPolicy: 'network-only' },
-      );
-    });
-  };
+  const totalCount = adminRoleAssignments?.count ?? 0;
 
   const handleFilterChange = (newFilter: RoleAssignmentFilter | undefined) => {
     setQueryParams((prev) => ({
@@ -328,11 +223,10 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       filter: newFilter ?? null,
       current: 1,
     }));
-    doRefetch({ filter: newFilter ?? null, offset: 0 });
   };
 
   const handleRefresh = () => {
-    doRefetch();
+    updateFetchKey();
   };
 
   const handleBulkRevoke = (userIds: string[]) => {
@@ -411,7 +305,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       <BAITable
         rowKey="id"
         dataSource={assignments}
-        loading={isPendingRefetch || deferredPageEmailsKey !== pageEmailsKey}
+        loading={isPendingRefetch}
         size="small"
         pagination={{
           pageSize: queryParams.pageSize,
@@ -419,8 +313,6 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
           total: totalCount,
           onChange: (current, pageSize) => {
             setQueryParams((prev) => ({ ...prev, current, pageSize }));
-            const newOffset = current > 1 ? (current - 1) * pageSize : 0;
-            doRefetch({ limit: pageSize, offset: newOffset });
           },
         }}
         rowSelection={
@@ -438,7 +330,6 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
             ...prev,
             order: (newOrder as AssignmentOrder) ?? null,
           }));
-          doRefetch({ order: newOrder ?? null });
         }}
         columns={[
           {
@@ -482,8 +373,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
               record.grantedAt
                 ? dayjs(record.grantedAt).format('YYYY-MM-DD HH:mm')
                 : '-',
-            // UserV2OrderBy has no grant-time field.
-            sorter: !isUsersV2,
+            sorter: true,
           },
         ]}
       />
