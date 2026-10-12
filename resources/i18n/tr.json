@@ -1764,6 +1764,7 @@
     "ContainerRegistry": "Konteyner Kayıt Defteri",
     "Control": "Kontrol",
     "Cores": "çekirdek",
+    "CreateValue": "\"{{value}}\" oluştur",
     "CreatedAt": "Oluşturulma Tarihi",
     "Credential": "Kimlik Bilgisi",
     "Days": "{{num}} günler",

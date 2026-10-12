@@ -1767,6 +1767,7 @@
     "ContainerRegistry": "容器登錄",
     "Control": "控制",
     "Cores": "核心",
+    "CreateValue": "建立「{{value}}」",
     "CreatedAt": "建立日期",
     "Credential": "憑證",
     "Days": "{{num}}天",

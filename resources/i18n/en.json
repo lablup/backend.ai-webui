@@ -1751,6 +1751,7 @@
     "ContainerRegistry": "Container Registry",
     "Control": "Control",
     "Cores": "cores",
+    "CreateValue": "Create \"{{value}}\"",
     "CreatedAt": "Created At",
     "Credential": "Credential",
     "Days": "{{ num }} Days",

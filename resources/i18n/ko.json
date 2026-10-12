@@ -1766,6 +1766,7 @@
     "ContainerRegistry": "컨테이너 레지스트리",
     "Control": "제어",
     "Cores": "코어",
+    "CreateValue": "\"{{value}}\" 추가",
     "CreatedAt": "생성일",
     "Credential": "자격증명",
     "Days": "{{ num }}일",

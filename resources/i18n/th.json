@@ -1755,6 +1755,7 @@
     "ContainerRegistry": "รีจิสทรีคอนเทนเนอร์",
     "Control": "ควบคุม",
     "Cores": "คอร์",
+    "CreateValue": "สร้าง \"{{value}}\"",
     "CreatedAt": "วันที่สร้าง",
     "Credential": "ข้อมูลรับรอง",
     "Days": "{{num}} วัน",
