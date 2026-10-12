@@ -32,7 +32,8 @@ import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
-// The spec stores the image's raw UUID; resolve it to a node for the meta row.
+// TODO(needs-backend): BA-8374 — the spec carries only the image's raw UUID;
+// resolve it here until the manager returns the `ImageV2` node itself.
 const SpecImageMetaRow: React.FC<{ imageId: string }> = ({ imageId }) => {
   'use memo';
   const { adminImagesV2 } =
