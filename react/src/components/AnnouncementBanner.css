@@ -39,9 +39,10 @@ body.electron-macos .webui-announcement-banner a {
   -webkit-app-region: no-drag;
 }
 
+/* flex-start keeps the toggle on the first line of a wrapped headline. */
 .webui-announcement-title {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--spacing-2);
   min-width: 0;
 }
@@ -64,6 +65,10 @@ body.electron-macos .webui-announcement-banner a {
   font-weight: var(--font-weight-semibold);
 }
 
+/* Same block-margin compensation as Banner's own end area, so the sm toggle
+   fits one text line and the title stays level with the icon and actions
+   once expanding switches the header to top alignment. */
 .webui-announcement-toggle {
   flex-shrink: 0;
+  margin-block: calc(-1 * (var(--spacing-3) - var(--spacing-2)));
 }
