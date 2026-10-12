@@ -30,6 +30,7 @@ import {
   BAIMetadataList,
   BAISkeleton,
   BAIText,
+  BAIUnmountAfterClose,
   badgeVariantForStatus,
   useBAIBreakpoint,
   useUpdatableState,
@@ -67,11 +68,22 @@ const SettingModalQuery = graphql`
   }
 `;
 
-const ResourceGroupDetailDrawerSettingModal: React.FC<{
-  queryRef: PreloadedQuery<ResourceGroupDetailDrawerSettingModalQuery>;
-  open: boolean;
+interface ResourceGroupDetailDrawerSettingModalProps {
+  queryRef:
+    | PreloadedQuery<ResourceGroupDetailDrawerSettingModalQuery>
+    | null
+    | undefined;
+  open?: boolean;
   onRequestClose: (success: boolean) => void;
-}> = ({ queryRef, onRequestClose, ...modalProps }) => {
+  // Set by `BAIUnmountAfterClose`; the drawer releases the query in it.
+  afterClose?: () => void;
+}
+
+const ResourceGroupDetailDrawerSettingModalContent: React.FC<
+  Omit<ResourceGroupDetailDrawerSettingModalProps, 'queryRef'> & {
+    queryRef: PreloadedQuery<ResourceGroupDetailDrawerSettingModalQuery>;
+  }
+> = ({ queryRef, onRequestClose, ...modalProps }) => {
   'use memo';
   const { scaling_group } =
     usePreloadedQuery<ResourceGroupDetailDrawerSettingModalQuery>(
@@ -93,6 +105,20 @@ const ResourceGroupDetailDrawerSettingModal: React.FC<{
     <ResourceGroupSettingModal
       resourceGroupFrgmt={scaling_group}
       onRequestClose={onRequestClose}
+      {...modalProps}
+    />
+  ) : null;
+};
+
+// Mounted by `BAIUnmountAfterClose` only while open, so with a loaded query,
+// and kept through the close animation, during which the query is still live.
+const ResourceGroupDetailDrawerSettingModal: React.FC<
+  ResourceGroupDetailDrawerSettingModalProps
+> = ({ queryRef, ...modalProps }) => {
+  'use memo';
+  return queryRef ? (
+    <ResourceGroupDetailDrawerSettingModalContent
+      queryRef={queryRef}
       {...modalProps}
     />
   ) : null;
@@ -303,9 +329,9 @@ const ResourceGroupDetailDrawer: React.FC<ResourceGroupDetailDrawerProps> = ({
     useQueryLoader<ResourceGroupDetailDrawerSettingModalQuery>(
       SettingModalQuery,
     );
-  // The modal mounts inside an already-mounted Suspense boundary, so the
-  // transition holds the drawer as is (and `isPendingEdit` true) until the
-  // query answers instead of flashing the fallback.
+  const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
+  // The modal mounts inside this transition, so React holds the drawer as is
+  // (and `isPendingEdit` true) until the query answers; no Suspense needed.
   const [isPendingEdit, startEditTransition] = useTransition();
 
   return (
@@ -342,26 +368,27 @@ const ResourceGroupDetailDrawer: React.FC<ResourceGroupDetailDrawerProps> = ({
                   { name: resourceGroupName },
                   { fetchPolicy: 'network-only' },
                 );
+                setIsSettingModalOpen(true);
               });
             }}
           />
         ) : null}
       </Suspense>
-      <Suspense fallback={null}>
-        {settingModalQueryRef ? (
-          <ResourceGroupDetailDrawerSettingModal
-            queryRef={settingModalQueryRef}
-            open
-            onRequestClose={(success) => {
-              disposeSettingModalQuery();
-              if (success) {
-                startRefetchTransition(() => updateFetchKey());
-                onRequestRefetch?.();
-              }
-            }}
-          />
-        ) : null}
-      </Suspense>
+      <BAIUnmountAfterClose>
+        <ResourceGroupDetailDrawerSettingModal
+          open={isSettingModalOpen && !!settingModalQueryRef}
+          queryRef={settingModalQueryRef}
+          onRequestClose={(success) => {
+            setIsSettingModalOpen(false);
+            if (success) {
+              startRefetchTransition(() => updateFetchKey());
+              onRequestRefetch?.();
+            }
+          }}
+          // The modal still reads the query while it fades out.
+          afterClose={disposeSettingModalQuery}
+        />
+      </BAIUnmountAfterClose>
     </BAIDrawer>
   );
 };
