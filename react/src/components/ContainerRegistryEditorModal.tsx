@@ -580,19 +580,14 @@ const ContainerRegistryEditorModal: React.FC<
                     isLabelHidden
                     multiple
                     allowClear
-                    // Same option scope as `useAccessibleProjects`; the selected
-                    // ids still resolve to names outside it.
+                    // All types incl. PERSONAL; `notIn` avoids naming PERSONAL, which
+                    // pre-26.9 managers may not know.
                     filter={{
                       isActive: true,
                       domainName: { equals: baiClient._config.domainName },
-                      type: {
-                        in_: _.includes(
-                          baiClient._config.blockList,
-                          'model-store',
-                        )
-                          ? ['GENERAL']
-                          : ['GENERAL', 'MODEL_STORE'],
-                      },
+                      ...(_.includes(baiClient._config.blockList, 'model-store')
+                        ? { type: { notIn: ['MODEL_STORE'] } }
+                        : {}),
                     }}
                   />
                 </BAIFormItem>
