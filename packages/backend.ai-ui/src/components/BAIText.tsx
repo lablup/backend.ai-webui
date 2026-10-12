@@ -170,6 +170,18 @@ const contentOverflows = (element: HTMLElement) => {
   return contentHeight > element.clientHeight + 1;
 };
 
+// One observer for every BAIText, so all clamp boxes are measured in a single
+// callback before React re-renders; per-instance observers interleave the reads
+// with commits and force a style recalc each.
+const overflowChecks = new WeakMap<Element, () => void>();
+let overflowObserver: ResizeObserver | null = null;
+const getOverflowObserver = () => {
+  overflowObserver ??= new ResizeObserver((entries) => {
+    for (const entry of entries) overflowChecks.get(entry.target)?.();
+  });
+  return overflowObserver;
+};
+
 /**
  * Overflow of the clamp box, re-measured on resize and on new children — a
  * fixed-width cell whose value changes does not resize, so a ResizeObserver
@@ -194,11 +206,18 @@ const useOverflow = (
           : contentOverflows(element),
       );
     };
-    check();
-    if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(check);
+    if (typeof ResizeObserver === 'undefined') {
+      check();
+      return;
+    }
+    // observe() reports once the next layout is done, so no synchronous read.
+    const observer = getOverflowObserver();
+    overflowChecks.set(element, check);
     observer.observe(element);
-    return () => observer.disconnect();
+    return () => {
+      observer.unobserve(element);
+      overflowChecks.delete(element);
+    };
   }, [ref, enabled, rows, children]);
 
   return isOverflowing;

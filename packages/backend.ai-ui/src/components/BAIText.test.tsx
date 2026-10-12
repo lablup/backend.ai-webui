@@ -28,6 +28,43 @@ const setOverflow = (overflowing: boolean) => {
   });
 };
 
+/**
+ * setupTests' ResizeObserver never reports. BAIText measures only from the
+ * observer's report, which a browser sends once right after observe(), so
+ * this one does the same, and `notifyResize` stands in for a later resize.
+ */
+const observed = new Set<Element>();
+let reportResize: ResizeObserverCallback | undefined;
+const notifyResize = () =>
+  reportResize?.(
+    [...observed].map((target) => ({ target })) as ResizeObserverEntry[],
+    {} as ResizeObserver,
+  );
+const setupResizeObserver = global.ResizeObserver;
+beforeAll(() => {
+  global.ResizeObserver = class {
+    constructor(callback: ResizeObserverCallback) {
+      reportResize = callback;
+    }
+    observe(target: Element) {
+      observed.add(target);
+      reportResize?.(
+        [{ target }] as ResizeObserverEntry[],
+        {} as ResizeObserver,
+      );
+    }
+    unobserve(target: Element) {
+      observed.delete(target);
+    }
+    disconnect() {
+      observed.clear();
+    }
+  } as unknown as typeof ResizeObserver;
+});
+afterAll(() => {
+  global.ResizeObserver = setupResizeObserver;
+});
+
 afterEach(() => {
   for (const key of [
     'scrollWidth',
@@ -320,30 +357,16 @@ describe('BAIText ellipsis', () => {
     });
 
     it('re-measures when the ResizeObserver fires', () => {
-      const original = global.ResizeObserver;
-      let notify: (() => void) | undefined;
-      global.ResizeObserver = class {
-        constructor(cb: ResizeObserverCallback) {
-          notify = () => cb([], this as unknown as ResizeObserver);
-        }
-        observe() {}
-        unobserve() {}
-        disconnect() {}
-      } as unknown as typeof ResizeObserver;
-      try {
-        setOverflow(false);
-        render(<BAIText ellipsis={{ tooltip: true }}>long</BAIText>);
-        hover(box('long'));
-        expect(screen.queryByRole('tooltip')).toBeNull();
-        unhover(box('long'));
+      setOverflow(false);
+      render(<BAIText ellipsis={{ tooltip: true }}>long</BAIText>);
+      hover(box('long'));
+      expect(screen.queryByRole('tooltip')).toBeNull();
+      unhover(box('long'));
 
-        setOverflow(true);
-        act(() => notify?.());
-        hover(box('long'));
-        expect(screen.getByRole('tooltip')).toHaveTextContent('long');
-      } finally {
-        global.ResizeObserver = original;
-      }
+      setOverflow(true);
+      act(() => notifyResize());
+      hover(box('long'));
+      expect(screen.getByRole('tooltip')).toHaveTextContent('long');
     });
   });
 });
