@@ -543,6 +543,61 @@ test.describe(
 );
 
 test.describe(
+  'Admin Deployment Preset — optional health-check fields (#10223)',
+  { tag: ['@serving', '@deploy', '@functional', '@regression'] },
+  () => {
+    test.describe.configure({ mode: 'serial', retries: 1 });
+
+    test('Admin can save a deployment preset with health check enabled and blank detail fields', async ({
+      page,
+      request,
+    }) => {
+      const { capture } = await setupPresetCreatePage(page, request);
+
+      await page
+        .getByRole('checkbox', { name: 'Enable Health Check', exact: true })
+        .check();
+
+      // Blank fields show the preset input's server defaults.
+      const pathInput = page.getByRole('textbox', {
+        name: 'Path',
+        exact: true,
+      });
+      await expect(pathInput).toHaveAttribute('placeholder', '/health');
+      await expect(pathInput).toHaveValue('');
+      const expectedNumberPlaceholders: Array<[string, string]> = [
+        ['Interval', '10'],
+        ['Max Retries', '10'],
+        ['Max Wait Time', '15'],
+        ['Status Code', '200'],
+        ['Startup Grace Period', '1800'],
+      ];
+      for (const [label, placeholder] of expectedNumberPlaceholders) {
+        const input = page.getByRole('spinbutton', {
+          name: label,
+          exact: true,
+        });
+        await expect(input).toHaveAttribute('placeholder', placeholder);
+        await expect(input).toHaveValue('');
+      }
+
+      await page
+        .getByRole('spinbutton', { name: 'Replica Count', exact: true })
+        .fill('1');
+      await page.getByRole('button', { name: 'Skip to Review' }).click();
+      await page.getByRole('button', { name: 'Create', exact: true }).click();
+
+      await expect.poll(() => capture.input, { timeout: 15000 }).not.toBeNull();
+
+      // Blank fields are omitted, never sent as null (the preset input's
+      // fields are non-null with server defaults).
+      const service = capture.input?.modelDefinition?.models?.[0]?.service;
+      expect(service?.healthCheck).toEqual({ enable: true });
+    });
+  },
+);
+
+test.describe(
   'Admin Deployment Preset — Service Configuration, legacy manager (FR-3481)',
   { tag: ['@serving', '@deploy', '@functional', '@regression'] },
   () => {

@@ -11,14 +11,19 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import BAICodeEditor from './BAICodeEditor';
 import BAIFormItem from './BAIFormItem';
 import HiddenFormItem from './HiddenFormItem';
-import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
 import {
   AstryxFormCheckbox,
   AstryxFormSelector,
   AstryxFormTextInput,
 } from './astryxFormControls';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFlex, BAIModal, BAIModalProps, BAISelect } from 'backend.ai-ui';
+import {
+  BAIAdminProjectSelect,
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  BAISelect,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -116,12 +121,32 @@ const ContainerRegistryEditorModal: React.FC<
               id
               row_id
               name
+              type
+              is_active
+              domain_name
             }
           }
         }
       }
     `,
     containerRegistryFrgmt,
+  );
+
+  const projectTypes: Array<'GENERAL' | 'MODEL_STORE'> = _.includes(
+    baiClient._config.blockList,
+    'model-store',
+  )
+    ? ['GENERAL']
+    : ['GENERAL', 'MODEL_STORE'];
+  // Only projects the select can list are edited here; the rest stay allowed untouched.
+  const originalGroupIds = _.compact(
+    _.map(containerRegistry?.allowed_groups?.edges, (edge) =>
+      edge?.node?.is_active &&
+      edge.node.domain_name === baiClient._config.domainName &&
+      _.includes(projectTypes, edge.node.type)
+        ? edge.node.row_id
+        : null,
+    ),
   );
 
   const [commitCreateRegistry, isInflightCreateRegistry] =
@@ -168,6 +193,9 @@ const ContainerRegistryEditorModal: React.FC<
                   id
                   row_id
                   name
+                  type
+                  is_active
+                  domain_name
                 }
               }
             }
@@ -206,9 +234,7 @@ const ContainerRegistryEditorModal: React.FC<
                 // so treat original as empty to avoid removing non-existent associations
                 const original = containerRegistry?.is_global
                   ? []
-                  : (containerRegistry?.allowed_groups?.edges
-                      ?.map((edge) => edge?.node?.row_id)
-                      .filter(Boolean) ?? []);
+                  : originalGroupIds;
                 return {
                   add: _.difference(selected, original),
                   remove: _.difference(original, selected),
@@ -341,10 +367,7 @@ const ContainerRegistryEditorModal: React.FC<
                   : '',
                 is_global: containerRegistry?.is_global ?? true,
                 ssl_verify: containerRegistry?.ssl_verify === true,
-                allowed_group_ids:
-                  containerRegistry?.allowed_groups?.edges
-                    ?.map((edge) => edge?.node?.row_id)
-                    .filter(Boolean) ?? [],
+                allowed_group_ids: originalGroupIds,
               }
             : { is_global: true, ssl_verify: true, ...initialValues }
         }
@@ -538,11 +561,6 @@ const ContainerRegistryEditorModal: React.FC<
             label={t('registry.IsGlobalDescription')}
             onValueChange={(checked) => {
               if (!checked) {
-                // Restore original allowed groups from fragment data on uncheck
-                const originalGroupIds =
-                  containerRegistry?.allowed_groups?.edges
-                    ?.map((edge) => edge?.node?.row_id)
-                    .filter(Boolean) ?? [];
                 formRef.current?.setFieldValue(
                   'allowed_group_ids',
                   originalGroupIds,
@@ -570,10 +588,17 @@ const ContainerRegistryEditorModal: React.FC<
                   name="allowed_group_ids"
                   label={t('registry.AllowedProjects')}
                 >
-                  <ProjectSelectForAdminPage
-                    domain={baiClient._config.domainName}
-                    mode="multiple"
+                  <BAIAdminProjectSelect
+                    label={t('registry.AllowedProjects')}
+                    isLabelHidden
+                    multiple
                     allowClear
+                    // Same scope as `originalGroupIds`, so the trigger and the list count alike.
+                    filter={{
+                      isActive: true,
+                      domainName: { equals: baiClient._config.domainName },
+                      type: { in_: projectTypes },
+                    }}
                   />
                 </BAIFormItem>
               </Suspense>

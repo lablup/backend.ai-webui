@@ -1750,6 +1750,7 @@
     "ContainerRegistry": "Registry Kontainer",
     "Control": "Kontrol",
     "Cores": "core",
+    "CreateValue": "Buat \"{{value}}\"",
     "CreatedAt": "Tanggal dibuat",
     "Credential": "Kredensial",
     "Days": "{{num}} hari",

@@ -1749,6 +1749,7 @@
     "ContainerRegistry": "Container Registry",
     "Control": "Điều khiển",
     "Cores": "lõi",
+    "CreateValue": "Tạo \"{{value}}\"",
     "CreatedAt": "Ngày tạo",
     "Credential": "Thông tin đăng nhập",
     "Days": "{{num}} ngày",

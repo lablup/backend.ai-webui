@@ -1747,6 +1747,7 @@
     "ContainerRegistry": "Реестр контейнеров",
     "Control": "Контроль",
     "Cores": "ядра",
+    "CreateValue": "Создать \"{{value}}\"",
     "CreatedAt": "Дата создания",
     "Credential": "Учётные данные",
     "Days": "{{num}} Дни",

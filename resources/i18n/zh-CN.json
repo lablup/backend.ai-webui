@@ -1749,6 +1749,7 @@
     "ContainerRegistry": "容器注册表",
     "Control": "控制",
     "Cores": "核心",
+    "CreateValue": "创建“{{value}}”",
     "CreatedAt": "创建日期",
     "Credential": "凭据",
     "Days": "{{num}}天",

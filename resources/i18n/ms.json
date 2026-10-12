@@ -1747,6 +1747,7 @@
     "ContainerRegistry": "Registri Kontena",
     "Control": "Kawal",
     "Cores": "teras",
+    "CreateValue": "Cipta \"{{value}}\"",
     "CreatedAt": "Tarikh dicipta",
     "Credential": "Kelayakan",
     "Days": "{{num}} hari",
