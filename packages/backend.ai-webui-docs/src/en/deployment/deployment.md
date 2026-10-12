@@ -144,7 +144,7 @@ In **Exec** mode the same line is split into arguments and executed directly, so
 
 The **Enable Health Check** and **Pre-Start Actions** fields follow the Service Configuration section and are shown for every runtime variant.
 
-- **Enable Health Check**: When enabled, the system periodically sends HTTP requests to the inference server to verify it is responding correctly. When disabled (the default for new revisions), no health check is configured and unhealthy replicas are not automatically detected. Turn this on for production deployments. When **Enable Health Check** is checked, the following additional fields appear:
+- **Enable Health Check**: When enabled, the system periodically sends HTTP requests to the inference server to verify it is responding correctly. When disabled (the default for new revisions), no health check is configured and unhealthy replicas are not automatically detected. Turn this on for production deployments. When **Enable Health Check** is checked, the following additional fields appear, all of them optional — a field left blank keeps its default value:
    * **Path**: The HTTP endpoint path called during service health checks (default: `/health`).
    * **Interval**: Seconds between consecutive health checks.
    * **Max Retries**: Maximum consecutive health check failures before the replica is marked `UNHEALTHY`.

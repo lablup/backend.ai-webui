@@ -13,14 +13,18 @@ import {
   formatCatalog,
   formatConfigLine,
   formatSettingValue,
+  isGeneratedConfig,
   keptPasswordEmails,
   loginPrefillVars,
   managerSettings,
   parseCatalog,
+  parseConfigSet,
   playwrightVars,
   redactCatalog,
+  renderConfigToml,
   selectAccount,
   serverHealth,
+  setTomlValue,
   upsertEnv,
 } from "./dev-env-lib.mjs";
 import dotenv from "dotenv";
@@ -43,9 +47,12 @@ const USAGE = `Usage: pnpm run dev-env <command>
                              switches, or every key with --all
   get <server> <account> [--json]
                              One account, password included when the catalog has one
-  use <server> [account] [--no-password]
+  use <server> [account] [--no-password] [--set <section>.<key>=<value> ...]
                              Write .env.development.local (login pre-fill; account
-                             is a role or an email, default "user") and e2e/envs/.env.playwright`;
+                             is a role or an email, default "user"),
+                             e2e/envs/.env.playwright and config.toml (the sample
+                             plus the server's probed switches; --set overrides
+                             one, e.g. --set resources.openPortToPublic=true)`;
 
 class UserError extends Error {}
 
@@ -184,7 +191,46 @@ function writeEnvFile(relativePath, buildVars, { seedFrom, expand } = {}) {
   return { vars, kept };
 }
 
-async function use(serverName, selector, { password }) {
+/**
+ * config.toml for this worktree. A file `use` wrote (CONFIG_GENERATED_MARKER)
+ * or none → rendered from the sample, the server and `overrides`; a hand-written
+ * one is kept, with `overrides` applied in place.
+ */
+function writeConfigToml(server, overrides) {
+  const target = path.join(REPO_ROOT, "config.toml");
+  const sample = fs.readFileSync(
+    path.join(REPO_ROOT, "config.toml.sample"),
+    "utf8",
+  );
+  const existing = fs.existsSync(target)
+    ? fs.readFileSync(target, "utf8")
+    : null;
+  const sets = overrides.map(
+    ({ key, value }) => `${key}=${JSON.stringify(value)}`,
+  );
+  if (existing !== null && !isGeneratedConfig(existing)) {
+    if (overrides.length === 0) {
+      console.log(
+        "kept config.toml (hand-written; delete it to have `use` write one)",
+      );
+      return;
+    }
+    let text = existing;
+    for (const { key, value } of overrides) text = setTomlValue(text, key, value);
+    fs.writeFileSync(target, text);
+    console.log(`kept config.toml (hand-written), set ${sets.join(", ")}`);
+    return;
+  }
+  fs.writeFileSync(target, renderConfigToml({ sample, server, overrides }));
+  const source = server.status?.config
+    ? `switches of ${server.name}`
+    : "sample defaults";
+  console.log(
+    `wrote config.toml (${source}${sets.length > 0 ? `, set ${sets.join(", ")}` : ""})`,
+  );
+}
+
+async function use(serverName, selector, { password, overrides = [] }) {
   const catalog = await loadCatalog();
   const server = findServer(catalog, serverName);
   if (!server.endpoint) {
@@ -215,6 +261,7 @@ async function use(serverName, selector, { password }) {
     (existing) => playwrightVars(server, { existing }),
     { seedFrom: "e2e/envs/.env.playwright.sample" },
   );
+  writeConfigToml(server, overrides);
   console.log(
     `${server.name} (${server.endpoint}) as ${account.role} <${account.email}>` +
       (prefill.VITE_DEFAULT_PASSWORD !== null
@@ -228,7 +275,9 @@ async function use(serverName, selector, { password }) {
   if (downWarning(server)) console.log(downWarning(server));
   const fallback = e2eFallbackWarning(server, e2eVars);
   if (fallback) console.log(fallback);
-  console.log("Restart `pnpm run dev` to pick up the login pre-fill.");
+  console.log(
+    "Restart `pnpm run dev` to pick up the login pre-fill (a running one reloads config.toml by itself).",
+  );
 }
 
 /** The server's probed `config.toml`: the manager-related switches, or with `all` every key. */
@@ -277,11 +326,31 @@ const COMMAND_FLAGS = {
   list: ["--json"],
   config: ["--all", "--json"],
   get: ["--json"],
-  use: ["--no-password"],
+  use: ["--no-password", "--set"],
 };
 
 async function main() {
-  const [command, ...rest] = process.argv.slice(2);
+  const [command, ...argv] = process.argv.slice(2);
+  // `--set <key>=<value>` is the one option with an argument: collect its pairs first.
+  const rest = [];
+  const overrides = [];
+  for (let i = 0; i < argv.length; i += 1) {
+    const inline = /^--set=(.*)$/s.exec(argv[i]);
+    if (argv[i] !== "--set" && !inline) {
+      rest.push(argv[i]);
+      continue;
+    }
+    const pair = inline ? inline[1] : argv[++i];
+    if (pair === undefined) {
+      throw new UserError(`--set needs <section>.<key>=<value>\n\n${USAGE}`);
+    }
+    try {
+      overrides.push(parseConfigSet(pair));
+    } catch (error) {
+      throw new UserError(`${error.message}\n\n${USAGE}`);
+    }
+    rest.push("--set");
+  }
   const flags = new Set(rest.filter((arg) => arg.startsWith("--")));
   const allowed = COMMAND_FLAGS[command];
   const unknown = allowed ? [...flags].filter((f) => !allowed.includes(f)) : [];
@@ -341,6 +410,7 @@ async function main() {
         throw new UserError(USAGE);
       return use(positional[0], positional[1] ?? "user", {
         password: !flags.has("--no-password"),
+        overrides,
       });
     }
     case undefined:
