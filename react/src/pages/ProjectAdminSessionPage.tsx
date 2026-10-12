@@ -48,8 +48,10 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 // the table (`BAISessionNodesV2Fragment`) and the terminate modal
 // (`TerminateSessionModalForProjectAdminFragment`), so row selection / the
 // terminate target list pass these nodes straight to the modal.
+// `projectSessionsV2` and `scopedSessionsV2` select the identical shape (both
+// resolve to `SessionV2Connection`), so either side's type works here.
 type ProjectSessionNode = NonNullableNodeOnEdges<
-  ProjectAdminSessionPageQuery$data['projectSessionsV2']
+  ProjectAdminSessionPageQuery$data['scopedSessionsV2']
 >;
 
 interface ProjectAdminSessionContentProps {
@@ -97,6 +99,10 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
   const statusBuckets = getSessionV2StatusBuckets(
     baiClient.isManagerVersionCompatibleWith('26.8.0'),
   );
+  // `scopedSessionsV2` (26.9.0+) replaces `projectSessionsV2` (26.4.2+) for
+  // project-scoped reads; older managers keep the deprecated field (#10269).
+  const isScopedSessionsV2Supported =
+    baiClient.isManagerVersionCompatibleWith('26.9.0');
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.ProjectAdminSessionPage',
@@ -119,6 +125,7 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
     ],
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
+    isScopedSessionsV2Supported,
   };
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
@@ -132,6 +139,7 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
         $orderBy: [SessionV2OrderBy!]
         $limit: Int
         $offset: Int
+        $isScopedSessionsV2Supported: Boolean!
       ) {
         projectSessionsV2(
           scope: { projectId: $projectId }
@@ -139,7 +147,26 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
           orderBy: $orderBy
           limit: $limit
           offset: $offset
-        ) {
+        ) @skip(if: $isScopedSessionsV2Supported) {
+          count
+          edges {
+            node {
+              id
+              metadata {
+                name
+              }
+              ...BAISessionNodesV2Fragment
+              ...TerminateSessionModalForProjectAdminFragment
+            }
+          }
+        }
+        scopedSessionsV2(
+          scope: { project: [{ value: $projectId }] }
+          filter: $filter
+          orderBy: $orderBy
+          limit: $limit
+          offset: $offset
+        ) @include(if: $isScopedSessionsV2Supported) {
           count
           edges {
             node {
@@ -164,10 +191,13 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
     },
   );
 
+  const sessionConnection = isScopedSessionsV2Supported
+    ? data.scopedSessionsV2
+    : data.projectSessionsV2;
   const sessionNodes = filterOutNullAndUndefined(
-    data.projectSessionsV2?.edges?.map((edge) => edge?.node),
+    sessionConnection?.edges?.map((edge) => edge?.node),
   );
-  const total = data.projectSessionsV2?.count ?? 0;
+  const total = sessionConnection?.count ?? 0;
 
   const openTerminateModal = (targets: Array<ProjectSessionNode>) => {
     setTerminateTargets(targets);

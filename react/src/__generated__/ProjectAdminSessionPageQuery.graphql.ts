@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<cffda9fdbb8053a571421c0d0049373e>>
+ * @generated SignedSource<<d4f13d8bdc0a4cb43c89d58f47e4c911>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -133,13 +133,26 @@ export type SessionV2OrderBy = {
 };
 export type ProjectAdminSessionPageQuery$variables = {
   filter?: SessionV2Filter | null | undefined;
+  isScopedSessionsV2Supported: boolean;
   limit?: number | null | undefined;
   offset?: number | null | undefined;
   orderBy?: ReadonlyArray<SessionV2OrderBy> | null | undefined;
   projectId: string;
 };
 export type ProjectAdminSessionPageQuery$data = {
-  readonly projectSessionsV2: {
+  readonly projectSessionsV2?: {
+    readonly count: number;
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly id: string;
+        readonly metadata: {
+          readonly name: string;
+        };
+        readonly " $fragmentSpreads": FragmentRefs<"BAISessionNodesV2Fragment" | "TerminateSessionModalForProjectAdminFragment">;
+      };
+    }>;
+  } | null | undefined;
+  readonly scopedSessionsV2?: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -166,44 +179,53 @@ var v0 = {
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "limit"
+  "name": "isScopedSessionsV2Supported"
 },
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "offset"
+  "name": "limit"
 },
 v3 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "orderBy"
+  "name": "offset"
 },
 v4 = {
   "defaultValue": null,
   "kind": "LocalArgument",
+  "name": "orderBy"
+},
+v5 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
   "name": "projectId"
 },
-v5 = [
-  {
-    "kind": "Variable",
-    "name": "filter",
-    "variableName": "filter"
-  },
-  {
-    "kind": "Variable",
-    "name": "limit",
-    "variableName": "limit"
-  },
-  {
-    "kind": "Variable",
-    "name": "offset",
-    "variableName": "offset"
-  },
-  {
-    "kind": "Variable",
-    "name": "orderBy",
-    "variableName": "orderBy"
-  },
+v6 = {
+  "kind": "Variable",
+  "name": "filter",
+  "variableName": "filter"
+},
+v7 = {
+  "kind": "Variable",
+  "name": "limit",
+  "variableName": "limit"
+},
+v8 = {
+  "kind": "Variable",
+  "name": "offset",
+  "variableName": "offset"
+},
+v9 = {
+  "kind": "Variable",
+  "name": "orderBy",
+  "variableName": "orderBy"
+},
+v10 = [
+  (v6/*: any*/),
+  (v7/*: any*/),
+  (v8/*: any*/),
+  (v9/*: any*/),
   {
     "fields": [
       {
@@ -216,31 +238,106 @@ v5 = [
     "name": "scope"
   }
 ],
-v6 = {
+v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "count",
   "storageKey": null
 },
-v7 = {
+v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v8 = {
+v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v9 = [
-  (v8/*: any*/)
+v14 = [
+  (v13/*: any*/)
 ],
-v10 = [
+v15 = [
+  (v11/*: any*/),
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "SessionV2Edge",
+    "kind": "LinkedField",
+    "name": "edges",
+    "plural": true,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "SessionV2",
+        "kind": "LinkedField",
+        "name": "node",
+        "plural": false,
+        "selections": [
+          (v12/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "SessionV2MetadataInfo",
+            "kind": "LinkedField",
+            "name": "metadata",
+            "plural": false,
+            "selections": (v14/*: any*/),
+            "storageKey": null
+          },
+          {
+            "args": null,
+            "kind": "FragmentSpread",
+            "name": "BAISessionNodesV2Fragment"
+          },
+          {
+            "args": null,
+            "kind": "FragmentSpread",
+            "name": "TerminateSessionModalForProjectAdminFragment"
+          }
+        ],
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
+  }
+],
+v16 = [
+  (v6/*: any*/),
+  (v7/*: any*/),
+  (v8/*: any*/),
+  (v9/*: any*/),
+  {
+    "fields": [
+      {
+        "items": [
+          {
+            "fields": [
+              {
+                "kind": "Variable",
+                "name": "value",
+                "variableName": "projectId"
+              }
+            ],
+            "kind": "ObjectValue",
+            "name": "project.0"
+          }
+        ],
+        "kind": "ListValue",
+        "name": "project"
+      }
+    ],
+    "kind": "ObjectValue",
+    "name": "scope"
+  }
+],
+v17 = [
   {
     "alias": null,
     "args": null,
@@ -267,7 +364,7 @@ v10 = [
     "storageKey": null
   }
 ],
-v11 = [
+v18 = [
   {
     "alias": null,
     "args": null,
@@ -282,6 +379,347 @@ v11 = [
     "name": "value",
     "storageKey": null
   }
+],
+v19 = [
+  (v11/*: any*/),
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "SessionV2Edge",
+    "kind": "LinkedField",
+    "name": "edges",
+    "plural": true,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "SessionV2",
+        "kind": "LinkedField",
+        "name": "node",
+        "plural": false,
+        "selections": [
+          (v12/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "SessionV2MetadataInfo",
+            "kind": "LinkedField",
+            "name": "metadata",
+            "plural": false,
+            "selections": [
+              (v13/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "sessionType",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "clusterMode",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "clusterSize",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ProjectV2",
+            "kind": "LinkedField",
+            "name": "project",
+            "plural": false,
+            "selections": [
+              (v12/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ProjectBasicInfo",
+                "kind": "LinkedField",
+                "name": "basicInfo",
+                "plural": false,
+                "selections": (v14/*: any*/),
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "SessionV2LifecycleInfo",
+            "kind": "LinkedField",
+            "name": "lifecycle",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "status",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "createdAt",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "terminatedAt",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "SessionV2ResourceInfo",
+            "kind": "LinkedField",
+            "name": "resource",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "resourceGroupName",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ResourceAllocation",
+                "kind": "LinkedField",
+                "name": "allocation",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "ResourceSlot",
+                    "kind": "LinkedField",
+                    "name": "requested",
+                    "plural": false,
+                    "selections": (v17/*: any*/),
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "ResourceSlot",
+                    "kind": "LinkedField",
+                    "name": "used",
+                    "plural": false,
+                    "selections": (v17/*: any*/),
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ImageV2Connection",
+            "kind": "LinkedField",
+            "name": "images",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ImageV2Edge",
+                "kind": "LinkedField",
+                "name": "edges",
+                "plural": true,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "ImageV2",
+                    "kind": "LinkedField",
+                    "name": "node",
+                    "plural": false,
+                    "selections": [
+                      (v12/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "ImageV2IdentityInfo",
+                        "kind": "LinkedField",
+                        "name": "identity",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "canonicalName",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "architecture",
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "ImageV2MetadataInfo",
+                        "kind": "LinkedField",
+                        "name": "metadata",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "ImageV2TagEntry",
+                            "kind": "LinkedField",
+                            "name": "tags",
+                            "plural": true,
+                            "selections": (v18/*: any*/),
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "ImageV2LabelEntry",
+                            "kind": "LinkedField",
+                            "name": "labels",
+                            "plural": true,
+                            "selections": (v18/*: any*/),
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "UserV2",
+            "kind": "LinkedField",
+            "name": "user",
+            "plural": false,
+            "selections": [
+              (v12/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "UserV2BasicInfo",
+                "kind": "LinkedField",
+                "name": "basicInfo",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "email",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "KernelV2Connection",
+            "kind": "LinkedField",
+            "name": "kernels",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "KernelV2Edge",
+                "kind": "LinkedField",
+                "name": "edges",
+                "plural": true,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "KernelV2",
+                    "kind": "LinkedField",
+                    "name": "node",
+                    "plural": false,
+                    "selections": [
+                      (v12/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "KernelV2ResourceInfo",
+                        "kind": "LinkedField",
+                        "name": "resource",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "agentId",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "containerId",
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
+  }
 ];
 return {
   "fragment": {
@@ -290,66 +728,46 @@ return {
       (v1/*: any*/),
       (v2/*: any*/),
       (v3/*: any*/),
-      (v4/*: any*/)
+      (v4/*: any*/),
+      (v5/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "ProjectAdminSessionPageQuery",
     "selections": [
       {
-        "alias": null,
-        "args": (v5/*: any*/),
-        "concreteType": "SessionV2Connection",
-        "kind": "LinkedField",
-        "name": "projectSessionsV2",
-        "plural": false,
+        "condition": "isScopedSessionsV2Supported",
+        "kind": "Condition",
+        "passingValue": false,
         "selections": [
-          (v6/*: any*/),
           {
             "alias": null,
-            "args": null,
-            "concreteType": "SessionV2Edge",
+            "args": (v10/*: any*/),
+            "concreteType": "SessionV2Connection",
             "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "SessionV2",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": [
-                  (v7/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "SessionV2MetadataInfo",
-                    "kind": "LinkedField",
-                    "name": "metadata",
-                    "plural": false,
-                    "selections": (v9/*: any*/),
-                    "storageKey": null
-                  },
-                  {
-                    "args": null,
-                    "kind": "FragmentSpread",
-                    "name": "BAISessionNodesV2Fragment"
-                  },
-                  {
-                    "args": null,
-                    "kind": "FragmentSpread",
-                    "name": "TerminateSessionModalForProjectAdminFragment"
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
+            "name": "projectSessionsV2",
+            "plural": false,
+            "selections": (v15/*: any*/),
             "storageKey": null
           }
-        ],
-        "storageKey": null
+        ]
+      },
+      {
+        "condition": "isScopedSessionsV2Supported",
+        "kind": "Condition",
+        "passingValue": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": (v16/*: any*/),
+            "concreteType": "SessionV2Connection",
+            "kind": "LinkedField",
+            "name": "scopedSessionsV2",
+            "plural": false,
+            "selections": (v15/*: any*/),
+            "storageKey": null
+          }
+        ]
       }
     ],
     "type": "Query",
@@ -358,378 +776,63 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v4/*: any*/),
+      (v5/*: any*/),
       (v0/*: any*/),
+      (v4/*: any*/),
+      (v2/*: any*/),
       (v3/*: any*/),
-      (v1/*: any*/),
-      (v2/*: any*/)
+      (v1/*: any*/)
     ],
     "kind": "Operation",
     "name": "ProjectAdminSessionPageQuery",
     "selections": [
       {
-        "alias": null,
-        "args": (v5/*: any*/),
-        "concreteType": "SessionV2Connection",
-        "kind": "LinkedField",
-        "name": "projectSessionsV2",
-        "plural": false,
+        "condition": "isScopedSessionsV2Supported",
+        "kind": "Condition",
+        "passingValue": false,
         "selections": [
-          (v6/*: any*/),
           {
             "alias": null,
-            "args": null,
-            "concreteType": "SessionV2Edge",
+            "args": (v10/*: any*/),
+            "concreteType": "SessionV2Connection",
             "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "SessionV2",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": [
-                  (v7/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "SessionV2MetadataInfo",
-                    "kind": "LinkedField",
-                    "name": "metadata",
-                    "plural": false,
-                    "selections": [
-                      (v8/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "sessionType",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "clusterMode",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "clusterSize",
-                        "storageKey": null
-                      }
-                    ],
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "ProjectV2",
-                    "kind": "LinkedField",
-                    "name": "project",
-                    "plural": false,
-                    "selections": [
-                      (v7/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "ProjectBasicInfo",
-                        "kind": "LinkedField",
-                        "name": "basicInfo",
-                        "plural": false,
-                        "selections": (v9/*: any*/),
-                        "storageKey": null
-                      }
-                    ],
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "SessionV2LifecycleInfo",
-                    "kind": "LinkedField",
-                    "name": "lifecycle",
-                    "plural": false,
-                    "selections": [
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "status",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "createdAt",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "terminatedAt",
-                        "storageKey": null
-                      }
-                    ],
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "SessionV2ResourceInfo",
-                    "kind": "LinkedField",
-                    "name": "resource",
-                    "plural": false,
-                    "selections": [
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "resourceGroupName",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "ResourceAllocation",
-                        "kind": "LinkedField",
-                        "name": "allocation",
-                        "plural": false,
-                        "selections": [
-                          {
-                            "alias": null,
-                            "args": null,
-                            "concreteType": "ResourceSlot",
-                            "kind": "LinkedField",
-                            "name": "requested",
-                            "plural": false,
-                            "selections": (v10/*: any*/),
-                            "storageKey": null
-                          },
-                          {
-                            "alias": null,
-                            "args": null,
-                            "concreteType": "ResourceSlot",
-                            "kind": "LinkedField",
-                            "name": "used",
-                            "plural": false,
-                            "selections": (v10/*: any*/),
-                            "storageKey": null
-                          }
-                        ],
-                        "storageKey": null
-                      }
-                    ],
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "ImageV2Connection",
-                    "kind": "LinkedField",
-                    "name": "images",
-                    "plural": false,
-                    "selections": [
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "ImageV2Edge",
-                        "kind": "LinkedField",
-                        "name": "edges",
-                        "plural": true,
-                        "selections": [
-                          {
-                            "alias": null,
-                            "args": null,
-                            "concreteType": "ImageV2",
-                            "kind": "LinkedField",
-                            "name": "node",
-                            "plural": false,
-                            "selections": [
-                              (v7/*: any*/),
-                              {
-                                "alias": null,
-                                "args": null,
-                                "concreteType": "ImageV2IdentityInfo",
-                                "kind": "LinkedField",
-                                "name": "identity",
-                                "plural": false,
-                                "selections": [
-                                  {
-                                    "alias": null,
-                                    "args": null,
-                                    "kind": "ScalarField",
-                                    "name": "canonicalName",
-                                    "storageKey": null
-                                  },
-                                  {
-                                    "alias": null,
-                                    "args": null,
-                                    "kind": "ScalarField",
-                                    "name": "architecture",
-                                    "storageKey": null
-                                  }
-                                ],
-                                "storageKey": null
-                              },
-                              {
-                                "alias": null,
-                                "args": null,
-                                "concreteType": "ImageV2MetadataInfo",
-                                "kind": "LinkedField",
-                                "name": "metadata",
-                                "plural": false,
-                                "selections": [
-                                  {
-                                    "alias": null,
-                                    "args": null,
-                                    "concreteType": "ImageV2TagEntry",
-                                    "kind": "LinkedField",
-                                    "name": "tags",
-                                    "plural": true,
-                                    "selections": (v11/*: any*/),
-                                    "storageKey": null
-                                  },
-                                  {
-                                    "alias": null,
-                                    "args": null,
-                                    "concreteType": "ImageV2LabelEntry",
-                                    "kind": "LinkedField",
-                                    "name": "labels",
-                                    "plural": true,
-                                    "selections": (v11/*: any*/),
-                                    "storageKey": null
-                                  }
-                                ],
-                                "storageKey": null
-                              }
-                            ],
-                            "storageKey": null
-                          }
-                        ],
-                        "storageKey": null
-                      }
-                    ],
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "UserV2",
-                    "kind": "LinkedField",
-                    "name": "user",
-                    "plural": false,
-                    "selections": [
-                      (v7/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "UserV2BasicInfo",
-                        "kind": "LinkedField",
-                        "name": "basicInfo",
-                        "plural": false,
-                        "selections": [
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "email",
-                            "storageKey": null
-                          }
-                        ],
-                        "storageKey": null
-                      }
-                    ],
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "KernelV2Connection",
-                    "kind": "LinkedField",
-                    "name": "kernels",
-                    "plural": false,
-                    "selections": [
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "KernelV2Edge",
-                        "kind": "LinkedField",
-                        "name": "edges",
-                        "plural": true,
-                        "selections": [
-                          {
-                            "alias": null,
-                            "args": null,
-                            "concreteType": "KernelV2",
-                            "kind": "LinkedField",
-                            "name": "node",
-                            "plural": false,
-                            "selections": [
-                              (v7/*: any*/),
-                              {
-                                "alias": null,
-                                "args": null,
-                                "concreteType": "KernelV2ResourceInfo",
-                                "kind": "LinkedField",
-                                "name": "resource",
-                                "plural": false,
-                                "selections": [
-                                  {
-                                    "alias": null,
-                                    "args": null,
-                                    "kind": "ScalarField",
-                                    "name": "agentId",
-                                    "storageKey": null
-                                  },
-                                  {
-                                    "alias": null,
-                                    "args": null,
-                                    "kind": "ScalarField",
-                                    "name": "containerId",
-                                    "storageKey": null
-                                  }
-                                ],
-                                "storageKey": null
-                              }
-                            ],
-                            "storageKey": null
-                          }
-                        ],
-                        "storageKey": null
-                      }
-                    ],
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
+            "name": "projectSessionsV2",
+            "plural": false,
+            "selections": (v19/*: any*/),
             "storageKey": null
           }
-        ],
-        "storageKey": null
+        ]
+      },
+      {
+        "condition": "isScopedSessionsV2Supported",
+        "kind": "Condition",
+        "passingValue": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": (v16/*: any*/),
+            "concreteType": "SessionV2Connection",
+            "kind": "LinkedField",
+            "name": "scopedSessionsV2",
+            "plural": false,
+            "selections": (v19/*: any*/),
+            "storageKey": null
+          }
+        ]
       }
     ]
   },
   "params": {
-    "cacheID": "c820f27d343104a865c15784ce0ceb00",
+    "cacheID": "a5b5f5e10062ea137ead8a201780f1b3",
     "id": null,
     "metadata": {},
     "name": "ProjectAdminSessionPageQuery",
     "operationKind": "query",
-    "text": "query ProjectAdminSessionPageQuery(\n  $projectId: UUID!\n  $filter: SessionV2Filter\n  $orderBy: [SessionV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  projectSessionsV2(scope: {projectId: $projectId}, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        metadata {\n          name\n        }\n        ...BAISessionNodesV2Fragment\n        ...TerminateSessionModalForProjectAdminFragment\n      }\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment BAISessionClusterModeV2Fragment on SessionV2MetadataInfo {\n  clusterMode\n  clusterSize\n}\n\nfragment BAISessionNodesV2Fragment on SessionV2 {\n  id\n  project {\n    id\n    basicInfo {\n      name\n    }\n  }\n  metadata {\n    name\n    ...BAISessionTypeTokenV2Fragment\n    ...BAISessionClusterModeV2Fragment\n  }\n  lifecycle {\n    status\n    createdAt\n    terminatedAt\n  }\n  resource {\n    resourceGroupName\n    allocation {\n      requested {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n      used {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n    }\n  }\n  images {\n    edges {\n      node {\n        id\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n\nfragment BAISessionTypeTokenV2Fragment on SessionV2MetadataInfo {\n  sessionType\n}\n\nfragment TerminateSessionModalForProjectAdminFragment on SessionV2 {\n  id\n  metadata {\n    name\n  }\n  kernels {\n    edges {\n      node {\n        id\n        resource {\n          agentId\n          containerId\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ProjectAdminSessionPageQuery(\n  $projectId: UUID!\n  $filter: SessionV2Filter\n  $orderBy: [SessionV2OrderBy!]\n  $limit: Int\n  $offset: Int\n  $isScopedSessionsV2Supported: Boolean!\n) {\n  projectSessionsV2(scope: {projectId: $projectId}, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) @skip(if: $isScopedSessionsV2Supported) {\n    count\n    edges {\n      node {\n        id\n        metadata {\n          name\n        }\n        ...BAISessionNodesV2Fragment\n        ...TerminateSessionModalForProjectAdminFragment\n      }\n    }\n  }\n  scopedSessionsV2(scope: {project: [{value: $projectId}]}, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) @include(if: $isScopedSessionsV2Supported) {\n    count\n    edges {\n      node {\n        id\n        metadata {\n          name\n        }\n        ...BAISessionNodesV2Fragment\n        ...TerminateSessionModalForProjectAdminFragment\n      }\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment BAISessionClusterModeV2Fragment on SessionV2MetadataInfo {\n  clusterMode\n  clusterSize\n}\n\nfragment BAISessionNodesV2Fragment on SessionV2 {\n  id\n  project {\n    id\n    basicInfo {\n      name\n    }\n  }\n  metadata {\n    name\n    ...BAISessionTypeTokenV2Fragment\n    ...BAISessionClusterModeV2Fragment\n  }\n  lifecycle {\n    status\n    createdAt\n    terminatedAt\n  }\n  resource {\n    resourceGroupName\n    allocation {\n      requested {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n      used {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n    }\n  }\n  images {\n    edges {\n      node {\n        id\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n\nfragment BAISessionTypeTokenV2Fragment on SessionV2MetadataInfo {\n  sessionType\n}\n\nfragment TerminateSessionModalForProjectAdminFragment on SessionV2 {\n  id\n  metadata {\n    name\n  }\n  kernels {\n    edges {\n      node {\n        id\n        resource {\n          agentId\n          containerId\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0319d10e5f67b53895012b3e1c631bde";
+(node as any).hash = "727925ec5db96c26133cd08d7ecbcf30";
 
 export default node;
