@@ -145,8 +145,12 @@ const ResourceGroupDefaultSessionOptionsPanelContent: React.FC<
     '_',
     '-',
   );
+  // The manager answers shmem as "3 MiB"; the chip parser reads "3m".
+  const shmemExpr = spec?.resourceOpts?.shmem?.match(
+    /^(\d+(?:\.\d+)?)\s*([kmgtpe]?)/i,
+  );
   // Same shape the session drawer feeds `ResourceNumbersOfSession`: slot name
-  // → amount, `mem` in bytes, `shmem` as the manager's size string.
+  // → amount, `mem` in bytes.
   const specResource = {
     ..._.fromPairs(
       _.map(spec?.resources, (entry) => [
@@ -156,7 +160,9 @@ const ResourceGroupDefaultSessionOptionsPanelContent: React.FC<
           : String(entry.quantity),
       ]),
     ),
-    ...(spec?.resourceOpts?.shmem ? { shmem: spec.resourceOpts.shmem } : {}),
+    ...(shmemExpr
+      ? { shmem: `${shmemExpr[1]}${_.toLower(shmemExpr[2])}` }
+      : {}),
   } as ResourceAllocationFormValue['resource'];
 
   return (
