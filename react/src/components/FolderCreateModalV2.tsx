@@ -582,7 +582,14 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
 
               return (
                 <BAIFormItem
-                  label={t('data.folders.MountPermission')}
+                  label={
+                    <HStack gap={1} align="center">
+                      {t('data.folders.DefaultMountPermission')}
+                      <BAIQuestionIconWithTooltip
+                        title={t('data.folders.DefaultMountPermissionDesc')}
+                      />
+                    </HStack>
+                  }
                   name={'permission'}
                   layout="horizontal"
                   required
@@ -603,7 +610,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                   ]}
                 >
                   <AstryxFormRadioList
-                    label={t('data.folders.MountPermission')}
+                    label={t('data.folders.DefaultMountPermission')}
                     disabled={isFolderTypeLocked}
                     options={[
                       {
