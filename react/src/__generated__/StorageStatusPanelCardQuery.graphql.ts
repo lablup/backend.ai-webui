@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2c20c55be6eb2afbad2a63f630eadc8c>>
+ * @generated SignedSource<<91498886c0904c33bbecfa91a572ace7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -266,16 +266,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "ff3f7c668317694920e9fb02607f5599",
+    "cacheID": "8be9b2e730a2480ef8a255bceeee14a2",
     "id": null,
     "metadata": {},
     "name": "StorageStatusPanelCardQuery",
     "operationKind": "query",
-    "text": "query StorageStatusPanelCardQuery(\n  $projectId: UUID!\n  $projectIdForPolicy: ID!\n  $activeFilter: VFolderFilter\n) {\n  myUserResourcePolicyV2 {\n    maxVfolderCount\n    id\n  }\n  scopedProjectResourcePolicyV2(projectId: $projectIdForPolicy) {\n    maxVfolderCount\n    id\n  }\n  myVfolders(filter: $activeFilter) {\n    count\n  }\n  projectVfolders(projectId: $projectId, filter: $activeFilter) {\n    count\n  }\n}\n"
+    "text": "query StorageStatusPanelCardQuery(\n  $projectId: UUID!\n  $projectIdForPolicy: ID!\n  $activeFilter: VFolderFilter\n) {\n  myUserResourcePolicyV2 {\n    maxVfolderCount\n    id\n  }\n  scopedProjectResourcePolicyV2(projectId: $projectIdForPolicy) @since(version: \"26.9.0\") {\n    maxVfolderCount\n    id\n  }\n  myVfolders(filter: $activeFilter) {\n    count\n  }\n  projectVfolders(projectId: $projectId, filter: $activeFilter) {\n    count\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d7cfdd02d25042785dd056f79586ef46";
+(node as any).hash = "6a33281c1bb964587a060cd7de28536b";
 
 export default node;

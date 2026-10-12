@@ -93,7 +93,8 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
         myUserResourcePolicyV2 {
           maxVfolderCount
         }
-        scopedProjectResourcePolicyV2(projectId: $projectIdForPolicy) {
+        scopedProjectResourcePolicyV2(projectId: $projectIdForPolicy)
+          @since(version: "26.9.0") {
           maxVfolderCount
         }
         myVfolders(filter: $activeFilter) {
