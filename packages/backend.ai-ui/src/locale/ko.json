@@ -253,7 +253,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "액세스 키",
     "CreatedAt": "생성 시각",
-    "InvalidatedAt": "무효화 시각",
+    "LastAccessedAt": "마지막 접근 시각",
     "User": "사용자"
   },
   "comp:BAIModal": {

@@ -253,7 +253,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "Kunci Akses",
     "CreatedAt": "Dicipta pada",
-    "InvalidatedAt": "Tidak Sah Pada",
+    "LastAccessedAt": "Akses Terakhir",
     "User": "Pengguna"
   },
   "comp:BAIModal": {

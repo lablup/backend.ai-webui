@@ -253,7 +253,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "Chiave di accesso",
     "CreatedAt": "Creato a",
-    "InvalidatedAt": "Invalidato a",
+    "LastAccessedAt": "Ultimo accesso",
     "User": "Utente"
   },
   "comp:BAIModal": {
