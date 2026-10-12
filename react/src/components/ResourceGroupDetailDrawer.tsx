@@ -37,41 +37,57 @@ import {
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { Check, SquarePenIcon, X } from 'lucide-react';
-import React, { Suspense, useEffect, useState, useTransition } from 'react';
+import React, {
+  Suspense,
+  useEffect,
+  useEffectEvent,
+  useState,
+  useTransition,
+} from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+import {
+  type PreloadedQuery,
+  graphql,
+  useFragment,
+  useLazyLoadQuery,
+  usePreloadedQuery,
+  useQueryLoader,
+} from 'react-relay';
 
 type TabKey = 'defaultSessionOptions' | 'defaultDeploymentOptions';
 
 // The basic-info form still edits the graphene `ScalingGroup` (it carries
 // `wsproxy_api_token` and `scheduler_opts`, which `ResourceGroup` does not).
-const ResourceGroupSettingModalWithQuery: React.FC<{
-  resourceGroupName: string;
+// The drawer starts this query on the edit click (render-as-you-fetch).
+const SettingModalQuery = graphql`
+  query ResourceGroupDetailDrawerSettingModalQuery($name: String!) {
+    scaling_group(name: $name) {
+      ...ResourceGroupSettingModalFragment
+    }
+  }
+`;
+
+const ResourceGroupDetailDrawerSettingModal: React.FC<{
+  queryRef: PreloadedQuery<ResourceGroupDetailDrawerSettingModalQuery>;
   open: boolean;
   onRequestClose: (success: boolean) => void;
-}> = ({ resourceGroupName, onRequestClose, ...modalProps }) => {
+}> = ({ queryRef, onRequestClose, ...modalProps }) => {
   'use memo';
   const { scaling_group } =
-    useLazyLoadQuery<ResourceGroupDetailDrawerSettingModalQuery>(
-      graphql`
-        query ResourceGroupDetailDrawerSettingModalQuery($name: String!) {
-          scaling_group(name: $name) {
-            ...ResourceGroupSettingModalFragment
-          }
-        }
-      `,
-      { name: resourceGroupName },
-      // `modify_scaling_group` returns only `ok`/`msg`, and the form reads
-      // `initialValues` once at mount, so a cached first render would stick.
-      { fetchPolicy: 'network-only' },
+    usePreloadedQuery<ResourceGroupDetailDrawerSettingModalQuery>(
+      SettingModalQuery,
+      queryRef,
     );
 
   // A null fragment puts the modal in create mode; close instead.
-  useEffect(() => {
+  const closeWhenMissing = useEffectEvent(() => {
     if (!scaling_group) {
       onRequestClose(false);
     }
-  }, [scaling_group, onRequestClose]);
+  });
+  useEffect(() => {
+    closeWhenMissing();
+  }, [scaling_group]);
 
   return scaling_group ? (
     <ResourceGroupSettingModal
@@ -86,7 +102,9 @@ const ResourceGroupDetailDrawerContent: React.FC<{
   resourceGroup: ResourceGroupDetailDrawerFragment$data;
   fetchKey: string;
   onClickEdit: () => void;
-}> = ({ resourceGroup, fetchKey, onClickEdit }) => {
+  // The edit modal's data is in flight; the button shows it.
+  isEditPending?: boolean;
+}> = ({ resourceGroup, fetchKey, onClickEdit, isEditPending }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
@@ -140,6 +158,7 @@ const ResourceGroupDetailDrawerContent: React.FC<{
             icon={<SquarePenIcon aria-hidden />}
             label={t('resourceGroup.ModifyResourceGroup')}
             tooltip={t('resourceGroup.ModifyResourceGroup')}
+            isLoading={isEditPending}
             onClick={onClickEdit}
           />
         </BAIFlex>
@@ -276,7 +295,18 @@ const ResourceGroupDetailDrawer: React.FC<ResourceGroupDetailDrawerProps> = ({
   const resourceGroupName = resourceGroup?.name;
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [isPendingRefetch, startRefetchTransition] = useTransition();
-  const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
+  const [
+    settingModalQueryRef,
+    loadSettingModalQuery,
+    disposeSettingModalQuery,
+  ] =
+    useQueryLoader<ResourceGroupDetailDrawerSettingModalQuery>(
+      SettingModalQuery,
+    );
+  // The modal mounts inside an already-mounted Suspense boundary, so the
+  // transition holds the drawer as is (and `isPendingEdit` true) until the
+  // query answers instead of flashing the fallback.
+  const [isPendingEdit, startEditTransition] = useTransition();
 
   return (
     <BAIDrawer
@@ -301,25 +331,37 @@ const ResourceGroupDetailDrawer: React.FC<ResourceGroupDetailDrawerProps> = ({
           <ResourceGroupDetailDrawerContent
             resourceGroup={resourceGroup}
             fetchKey={fetchKey}
-            onClickEdit={() => setIsSettingModalOpen(true)}
+            isEditPending={isPendingEdit}
+            onClickEdit={() => {
+              if (!resourceGroupName) return;
+              startEditTransition(() => {
+                // `modify_scaling_group` returns only `ok`/`msg`, and the
+                // form reads `initialValues` once at mount, so a cached
+                // first render would stick.
+                loadSettingModalQuery(
+                  { name: resourceGroupName },
+                  { fetchPolicy: 'network-only' },
+                );
+              });
+            }}
           />
         ) : null}
       </Suspense>
-      {resourceGroupName && isSettingModalOpen ? (
-        <Suspense fallback={null}>
-          <ResourceGroupSettingModalWithQuery
-            resourceGroupName={resourceGroupName}
-            open={isSettingModalOpen}
+      <Suspense fallback={null}>
+        {settingModalQueryRef ? (
+          <ResourceGroupDetailDrawerSettingModal
+            queryRef={settingModalQueryRef}
+            open
             onRequestClose={(success) => {
-              setIsSettingModalOpen(false);
+              disposeSettingModalQuery();
               if (success) {
                 startRefetchTransition(() => updateFetchKey());
                 onRequestRefetch?.();
               }
             }}
           />
-        </Suspense>
-      ) : null}
+        ) : null}
+      </Suspense>
     </BAIDrawer>
   );
 };
