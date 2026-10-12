@@ -37,15 +37,17 @@ vi.mock('../hooks', async (importOriginal) => {
   };
 });
 
-// The real select fetches with network-only, so it always suspends on mount;
+// The real select suspends while it resolves the selected project names;
 // this stand-in does the same until the test resolves it.
 let resolveProjects: () => void;
 let projectsPromise: Promise<void>;
 let projectsSettled = false;
-vi.mock('./ProjectSelectForAdminPage', async () => {
+vi.mock('backend.ai-ui', async (importOriginal) => {
   const React = await import('react');
+  const originalModule = await importOriginal<typeof import('backend.ai-ui')>();
   return {
-    default: () => {
+    ...originalModule,
+    BAIAdminProjectSelect: () => {
       if (!projectsSettled) throw projectsPromise;
       return React.createElement('input', {
         'data-testid': 'allowed-projects-select',
