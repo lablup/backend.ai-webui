@@ -472,13 +472,13 @@ const LoginView: React.FC<{
     async (
       client: ReturnType<typeof createBackendAIClient>['client'],
       bootstrap?: LoginBootstrap | null,
+      attempt = loginAttemptRef.current,
     ) => {
       // Read directly from Jotai store to get the latest config synchronously,
       // including any merged webserver config from loadConfigFromWebServer().
       // Using configRef.current here would return stale config because React
       // hasn't re-rendered yet after the Jotai atom update.
       const cfg = jotaiStore.get(loginConfigState) ?? configRef.current;
-      const attempt = loginAttemptRef.current;
 
       const updatedEndpoints = await connectViaGQL(
         client,
@@ -757,7 +757,7 @@ const LoginView: React.FC<{
       if (!showError && probed?.endpoint === ep) {
         clientRef.current = probed.client;
         try {
-          await doGQLConnect(probed.client, probed.bootstrap);
+          await doGQLConnect(probed.client, probed.bootstrap, attempt);
         } catch (err: unknown) {
           if (!isCancelled()) handleGQLError(err, showError);
         }
@@ -791,7 +791,7 @@ const LoginView: React.FC<{
       if (isCancelled()) return;
       if (bootstrap) {
         try {
-          await doGQLConnect(client, bootstrap);
+          await doGQLConnect(client, bootstrap, attempt);
         } catch (err: unknown) {
           if (!isCancelled()) handleGQLError(err, showError);
         }
@@ -815,7 +815,7 @@ const LoginView: React.FC<{
       // with structured info from _wrapWithPromise.
       try {
         await client.login(otp, forceLoginApprovedRef.current);
-        await doGQLConnect(client);
+        await doGQLConnect(client, undefined, attempt);
         return;
       } catch (err: unknown) {
         if (isCancelled()) return;
@@ -871,7 +871,7 @@ const LoginView: React.FC<{
 
       try {
         await probeManager(client);
-        await doGQLConnect(client);
+        await doGQLConnect(client, undefined, attempt);
       } catch (err: unknown) {
         if (attempt !== loginAttemptRef.current) return;
         if (!(err instanceof LoginProbeCancelledError)) {
