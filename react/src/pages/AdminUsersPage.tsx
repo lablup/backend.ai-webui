@@ -42,7 +42,7 @@ import {
   parseAsStringLiteral,
   useQueryStates,
 } from 'nuqs';
-import { Suspense, useEffect, useEffectEvent } from 'react';
+import { Suspense, useEffect, useEffectEvent, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   useQueryLoader,
@@ -243,7 +243,9 @@ const AdminUsersPage: React.FC = () => {
     setTablePaginationOption(snapshot.tablePaginationOption);
   };
 
+  const queriedTabRef = useRef<TabKey | null>(null);
   const loadTabQuery = (tab: TabKey, snapshot: TabSnapshot) => {
+    queriedTabRef.current = tab;
     if (tab === 'users') {
       loadUsersQuery(usersVariablesOf(snapshot), {
         fetchPolicy: 'store-and-network',
@@ -270,6 +272,13 @@ const AdminUsersPage: React.FC = () => {
   // Back/forward: the hook holds the callback until `queryParams` and
   // `tablePaginationOption` describe the URL the user navigated to.
   useBrowserPopstateEffect(loadTabFromQueryParams);
+
+  // An in-app link to another tab's URL fires no popstate: useKeyedSnapshot
+  // follows the URL to that tab, and nothing has queried it yet.
+  const loadTabOnUrlSwitch = useEffectEvent(loadTabFromQueryParams);
+  useEffect(() => {
+    if (queriedTabRef.current !== currentTab) loadTabOnUrlSwitch();
+  }, [currentTab]);
 
   const tabItems: BAICardTabItem[] = [
     {

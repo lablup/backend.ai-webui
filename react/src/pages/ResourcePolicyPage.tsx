@@ -40,7 +40,7 @@ import {
   parseAsStringLiteral,
   useQueryStates,
 } from 'nuqs';
-import React, { Suspense, useEffect, useEffectEvent } from 'react';
+import React, { Suspense, useEffect, useEffectEvent, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   useQueryLoader,
@@ -173,7 +173,9 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
     TabSnapshot
   >(queryParams.tab, currentSnapshot);
 
+  const queriedTabRef = useRef<TabKey | null>(null);
   const loadTabQuery = (tab: TabKey, snapshot: TabSnapshot) => {
+    queriedTabRef.current = tab;
     // The legacy lists fetch on their own; only the V2 tables are preloaded.
     if (!supportsV2[tab]) return;
     const options = { fetchPolicy: 'store-and-network' } as const;
@@ -236,6 +238,13 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
   // Back/forward: the hook holds the callback until `queryParams` and
   // `tablePaginationOption` describe the URL the user navigated to.
   useBrowserPopstateEffect(loadTabFromQueryParams);
+
+  // An in-app link to another tab's URL fires no popstate: useKeyedSnapshot
+  // follows the URL to that tab, and nothing has queried it yet.
+  const loadTabOnUrlSwitch = useEffectEvent(loadTabFromQueryParams);
+  useEffect(() => {
+    if (queriedTabRef.current !== currentTab) loadTabOnUrlSwitch();
+  }, [currentTab]);
 
   return (
     <BAICard
