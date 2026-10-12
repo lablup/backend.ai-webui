@@ -15,14 +15,9 @@ export const resolveViewerRole = (
 ): ViewerRole | null => (v2Role ? (roleFromV2[v2Role] ?? null) : null);
 
 const useViewer = () => {
-  const { viewer, myUserV2 } = useLazyLoadQuery<useViewerQuery>(
+  const { myUserV2 } = useLazyLoadQuery<useViewerQuery>(
     graphql`
       query useViewerQuery {
-        viewer {
-          user {
-            email
-          }
-        }
         myUserV2 {
           organization {
             role
@@ -37,7 +32,6 @@ const useViewer = () => {
   );
 
   return {
-    viewer,
     userRole: resolveViewerRole(myUserV2?.organization.role),
   };
 };
