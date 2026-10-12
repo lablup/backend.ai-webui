@@ -275,6 +275,8 @@ const HandlerOverridesTable: React.FC<{
       dataSource={[...(byHandler ?? [])]}
       columns={columns}
       pagination={false}
+      // Back inside the card's own inset (BAICard default `padding={6}`).
+      style={{ paddingInline: 'var(--spacing-6)' }}
     />
   );
 };
