@@ -377,8 +377,16 @@ const ProjectAdminSettingModal = ({
       <BAIFlex direction="column" align="stretch" gap="sm">
         {/* antd `Alert` → `Banner` (MAPPING §4): `type` → `status`, `showIcon`
             dropped (Banner always renders its status icon). */}
-        <Banner status="info" title={t('project.DescSetProjectAdmin')} />
-        <Banner status="warning" title={t('project.DescRevokeProjectAdmin')} />
+        <Banner
+          role="status"
+          status="info"
+          title={t('project.DescSetProjectAdmin')}
+        />
+        <Banner
+          role="alert"
+          status="warning"
+          title={t('project.DescRevokeProjectAdmin')}
+        />
         <Form ref={formRef}>
           <BAIFlex gap="xs" align="start">
             <Suspense

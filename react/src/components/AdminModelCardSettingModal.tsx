@@ -299,6 +299,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
       >
         {!modelStoreProjectContext ? (
           <Banner
+            role="alert"
             status="error"
             title={t('modelStore.ProjectNotFound')}
             description={t('modelStore.ProjectNotFoundDescription')}

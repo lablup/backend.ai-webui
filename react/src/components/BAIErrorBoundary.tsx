@@ -154,6 +154,7 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
                         style={{ width: '100%' }}
                       >
                         <Banner
+                          role="status"
                           status="info"
                           // POLISH-3 item 1: a Banner's action belongs in
                           // `endContent` (Banner's own "Action button"

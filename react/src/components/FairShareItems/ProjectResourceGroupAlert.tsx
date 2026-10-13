@@ -59,6 +59,7 @@ const ProjectResourceGroupAlert: React.FC<ProjectResourceGroupAlertProps> = ({
 
   return (
     <Banner
+      role="alert"
       status="warning"
       title={t('fairShare.ProjectNotAllowedInResourceGroup', {
         resourceGroup: resourceGroupName,

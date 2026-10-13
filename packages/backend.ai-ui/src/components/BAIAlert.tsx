@@ -72,6 +72,15 @@ export interface BAIAlertProps {
   'data-testid'?: string;
 }
 
+/**
+ * The live role Astryx `Banner` derived from `status` before 0.7: an error or
+ * warning is announced assertively, anything else politely.
+ */
+export const bannerLiveRole = (
+  status: BannerProps['status'],
+): 'alert' | 'status' =>
+  status === 'error' || status === 'warning' ? 'alert' : 'status';
+
 /** BAIAlert's props as `Banner` props; `BAIListAlert` shares the mapping. */
 export const toBannerProps = ({
   type = 'info',
@@ -92,6 +101,7 @@ export const toBannerProps = ({
   const resolvedTitle = title ?? message;
   const hasTitle = resolvedTitle !== undefined && resolvedTitle !== null;
   return {
+    role: bannerLiveRole(type),
     ...restProps,
     // The hook `BAIAlert.css` needs; every call site's own className still
     // rides along.

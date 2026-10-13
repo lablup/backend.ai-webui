@@ -116,6 +116,7 @@ const NetworkStatusBanner = () => {
     <>
       {shouldOpenOfflineAlert && (
         <Banner
+          role="alert"
           title={t('webui.YouAreOffline')}
           status="error"
           container="section"
@@ -123,6 +124,7 @@ const NetworkStatusBanner = () => {
       )}
       {shouldOpenSoftAlert && (
         <Banner
+          role="alert"
           title={t('webui.NetworkSoftTimeout')}
           status="warning"
           container="section"

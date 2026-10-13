@@ -193,6 +193,7 @@ const CLIDownloadTab: React.FC = () => {
             </BAIMetadataList>
             {selectedOS === 'MacOS' ? (
               <Banner
+                role="alert"
                 status="warning"
                 title={t('summary.CLIMacOSUnsignedTitle')}
                 description={
