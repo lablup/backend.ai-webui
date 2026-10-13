@@ -16,6 +16,7 @@ import RetentionPolicySettingModal, {
 } from './RetentionPolicySettingModal';
 import { Switch } from '@lablup/ui-common/Switch';
 import {
+  BAIAlert,
   BAIButton,
   BAIColumnsType,
   BAIDeleteConfirmModal,
@@ -237,8 +238,8 @@ const RetentionPolicyList = () => {
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
-      <BAIFlex justify="between" align="center" wrap="wrap" gap="sm">
-        <BAIText type="secondary">{t('retentionPolicy.Description')}</BAIText>
+      <BAIAlert type="info" description={t('retentionPolicy.Description')} />
+      <BAIFlex justify="end" align="center" wrap="wrap" gap="sm">
         <BAIFlex gap="xs">
           <BAIFetchKeyButton
             loading={isPending}
