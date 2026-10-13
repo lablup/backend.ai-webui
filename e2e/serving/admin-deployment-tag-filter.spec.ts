@@ -4,25 +4,26 @@
 import {
   createAdminApiContext,
   deleteDeploymentViaApi,
-  gqlAdmin,
-  listDeploymentsByPattern,
+  findDeploymentByName,
   setDeploymentTagsViaApi,
 } from '../utils/admin-api';
 import {
   createDeploymentShell,
   escapeForRegExp,
 } from '../utils/deployment-fixtures';
-import { loginAsAdmin, navigateTo, webuiEndpoint } from '../utils/test-util';
+import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import { test, expect, type Page } from '@playwright/test';
 
-const ADMIN_DEPLOYMENTS_URL = `${webuiEndpoint}/admin/deployments?tab=deployments`;
+const ADMIN_DEPLOYMENTS_PATH = 'admin/deployments?tab=deployments';
 
 // `e2e-plan-` is what the global teardown's deployment sweep removes.
 const TAG_DEPLOYMENT_PREFIX = 'e2e-plan-tag-';
 
 async function showTagsColumn(page: Page): Promise<void> {
   await page.getByRole('button', { name: 'Table Settings' }).click();
-  const settings = page.getByRole('dialog');
+  const settings = page
+    .getByRole('dialog')
+    .filter({ has: page.getByRole('checkbox', { name: 'Tags' }) });
   await expect(settings).toBeVisible();
   await settings.getByRole('checkbox', { name: 'Tags' }).setChecked(true);
   await settings.getByRole('button', { name: 'Apply' }).click();
@@ -35,7 +36,6 @@ test.describe(
     tag: ['@serving', '@admin', '@regression', '@requires-manager-v26.4'],
   },
   () => {
-    let suffix: string;
     let tag: string;
     // Tagged `tag`, still running.
     let runningName: string;
@@ -48,50 +48,39 @@ test.describe(
       page.getByRole('row', { name: new RegExp(escapeForRegExp(name)) });
 
     test.beforeEach(async ({ page, request }) => {
-      suffix = `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+      // Three UI-created deployments plus the wait for STOPPED.
+      test.setTimeout(300_000);
+      const suffix = `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
       tag = `e2e-tag-${suffix}`;
       runningName = `${TAG_DEPLOYMENT_PREFIX}run-${suffix}`;
       similarName = `${TAG_DEPLOYMENT_PREFIX}sim-${suffix}`;
       terminatedName = `${TAG_DEPLOYMENT_PREFIX}end-${suffix}`;
       await loginAsAdmin(page, request);
 
-      for (const name of [runningName, similarName, terminatedName]) {
+      const tagsByName: Record<string, string[]> = {
+        [runningName]: [tag],
+        [similarName]: [`${tag}-large`],
+        [terminatedName]: [tag],
+      };
+      for (const name of Object.keys(tagsByName)) {
         await navigateTo(page, 'deployments');
         await createDeploymentShell(page, name);
       }
 
       const api = await createAdminApiContext();
       try {
-        const created = await listDeploymentsByPattern(
-          api,
-          new RegExp(
-            `^${TAG_DEPLOYMENT_PREFIX}\\w+-${escapeForRegExp(suffix)}$`,
-          ),
-        );
-        const idOf = (name: string) => {
-          const found = created.find((d) => d.name === name);
-          if (!found) throw new Error(`deployment "${name}" was not created`);
-          return found.id;
-        };
-        await setDeploymentTagsViaApi(api, idOf(runningName), [tag]);
-        await setDeploymentTagsViaApi(api, idOf(similarName), [`${tag}-large`]);
-        await setDeploymentTagsViaApi(api, idOf(terminatedName), [tag]);
-        await deleteDeploymentViaApi(api, idOf(terminatedName));
+        for (const [name, tags] of Object.entries(tagsByName)) {
+          const deployment = await findDeploymentByName(api, name);
+          if (!deployment) throw new Error(`deployment "${name}" not found`);
+          await setDeploymentTagsViaApi(api, deployment.id, tags);
+        }
+        const terminated = await findDeploymentByName(api, terminatedName);
+        await deleteDeploymentViaApi(api, terminated!.id);
         // Deleting goes through STOPPING, which still counts as Running.
         await expect
           .poll(
-            async () => {
-              const data = await gqlAdmin(
-                api,
-                `query($name: String!) {
-                  adminDeployments(filter: { name: { equals: $name } }) {
-                    edges { node { metadata { status } } }
-                  }
-                }`,
-                { name: terminatedName },
-              );
-              return data.adminDeployments?.edges?.[0]?.node.metadata.status;
-            },
+            async () =>
+              (await findDeploymentByName(api, terminatedName))?.status,
             { timeout: 120_000, intervals: [2000] },
           )
           .toBe('STOPPED');
@@ -103,14 +92,11 @@ test.describe(
     test.afterEach(async () => {
       const api = await createAdminApiContext();
       try {
-        const leftovers = await listDeploymentsByPattern(
-          api,
-          new RegExp(
-            `^${TAG_DEPLOYMENT_PREFIX}\\w+-${escapeForRegExp(suffix)}$`,
-          ),
-        );
-        for (const { id } of leftovers) {
-          await deleteDeploymentViaApi(api, id);
+        for (const name of [runningName, similarName, terminatedName]) {
+          const deployment = await findDeploymentByName(api, name).catch(
+            () => null,
+          );
+          if (deployment) await deleteDeploymentViaApi(api, deployment.id);
         }
       } finally {
         await api.dispose();
@@ -118,7 +104,7 @@ test.describe(
     });
 
     test('Admin can filter deployments by clicking a tag', async ({ page }) => {
-      await page.goto(ADMIN_DEPLOYMENTS_URL);
+      await navigateTo(page, ADMIN_DEPLOYMENTS_PATH);
       await showTagsColumn(page);
       await expect(rowOf(page, runningName)).toBeVisible({ timeout: 30000 });
       await expect(rowOf(page, similarName)).toBeVisible({ timeout: 30000 });
@@ -138,7 +124,7 @@ test.describe(
     test('Admin can filter terminated deployments by clicking a tag', async ({
       page,
     }) => {
-      await page.goto(ADMIN_DEPLOYMENTS_URL);
+      await navigateTo(page, ADMIN_DEPLOYMENTS_PATH);
       await showTagsColumn(page);
       await page.getByRole('radio', { name: 'Terminated' }).check();
       await expect(rowOf(page, terminatedName)).toBeVisible({
@@ -164,7 +150,7 @@ test.describe(
     test('Admin can open the running deployment list filtered by a tag from the deployment detail', async ({
       page,
     }) => {
-      await page.goto(ADMIN_DEPLOYMENTS_URL);
+      await navigateTo(page, ADMIN_DEPLOYMENTS_PATH);
       const runningRow = rowOf(page, runningName);
       await expect(runningRow).toBeVisible({ timeout: 30000 });
       await runningRow.getByText(runningName, { exact: true }).click();

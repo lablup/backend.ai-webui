@@ -227,6 +227,28 @@ export async function deleteDeploymentViaApi(
   }
 }
 
+/** Looks a deployment up by its exact name, server-side. */
+export async function findDeploymentByName(
+  api: APIRequestContext,
+  name: string,
+): Promise<{ id: string; status: string } | null> {
+  const data = await gqlAdmin<{
+    adminDeployments: {
+      edges: Array<{ node: { id: string; metadata: { status: string } } }>;
+    };
+  }>(
+    api,
+    `query($name: String!) {
+      adminDeployments(filter: { name: { equals: $name } }) {
+        edges { node { id metadata { status } } }
+      }
+    }`,
+    { name },
+  );
+  const node = data.adminDeployments?.edges?.[0]?.node;
+  return node ? { id: node.id, status: node.metadata.status } : null;
+}
+
 /** Replaces a deployment's tags via `updateModelDeployment`. */
 export async function setDeploymentTagsViaApi(
   api: APIRequestContext,
