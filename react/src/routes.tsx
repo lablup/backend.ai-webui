@@ -853,6 +853,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         handle: {
           scope: 'admin',
           menuKey: 'scheduler',
+          access: 'superadmin',
           labelKey: 'webui.menu.Scheduler',
         },
       },
