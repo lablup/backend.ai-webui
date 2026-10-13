@@ -1,4 +1,12 @@
 import { ConcreteRequest } from 'relay-runtime';
+export type ResourceGroupScope = {
+    domain?: ReadonlyArray<UUIDScope> | null | undefined;
+    project?: ReadonlyArray<UUIDScope> | null | undefined;
+    user?: ReadonlyArray<UUIDScope> | null | undefined;
+};
+export type UUIDScope = {
+    value: string;
+};
 export type ResourceGroupFilter = {
     AND?: ReadonlyArray<ResourceGroupFilter> | null | undefined;
     NOT?: ReadonlyArray<ResourceGroupFilter> | null | undefined;
@@ -55,9 +63,10 @@ export type UUIDFilter = {
 };
 export type BAIResourceGroupSelectQuery$variables = {
     filter?: ResourceGroupFilter | null | undefined;
+    scope: ResourceGroupScope;
 };
 export type BAIResourceGroupSelectQuery$data = {
-    readonly adminResourceGroups: {
+    readonly scopedResourceGroups: {
         readonly edges: ReadonlyArray<{
             readonly node: {
                 readonly name: string;

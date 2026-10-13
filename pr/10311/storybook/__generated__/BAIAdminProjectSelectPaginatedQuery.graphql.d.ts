@@ -79,21 +79,9 @@ export type BAIAdminProjectSelectPaginatedQuery$variables = {
     limit: number;
     offset: number;
     scope: ProjectScope;
-    useScope: boolean;
 };
 export type BAIAdminProjectSelectPaginatedQuery$data = {
-    readonly adminProjectsV2?: {
-        readonly count: number;
-        readonly edges: ReadonlyArray<{
-            readonly node: {
-                readonly basicInfo: {
-                    readonly name: string;
-                };
-                readonly id: string;
-            };
-        }>;
-    } | null | undefined;
-    readonly scopedProjectsV2?: {
+    readonly scopedProjectsV2: {
         readonly count: number;
         readonly edges: ReadonlyArray<{
             readonly node: {

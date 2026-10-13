@@ -10,20 +10,9 @@ export type UUIDScope = {
 export type BAIAdminProjectSelectValueQuery$variables = {
     projectIds: ReadonlyArray<string>;
     scope: ProjectScope;
-    skipAdmin: boolean;
-    skipScoped: boolean;
+    skipSelected: boolean;
 };
 export type BAIAdminProjectSelectValueQuery$data = {
-    readonly adminProjectsV2?: {
-        readonly edges: ReadonlyArray<{
-            readonly node: {
-                readonly basicInfo: {
-                    readonly name: string;
-                };
-                readonly id: string;
-            };
-        }>;
-    } | null | undefined;
     readonly scopedProjectsV2?: {
         readonly edges: ReadonlyArray<{
             readonly node: {
