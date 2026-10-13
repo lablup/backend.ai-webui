@@ -157,6 +157,8 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
+  // RBAC management is superadmin-only, so this reads adminRoleAssignments on
+  // purpose instead of a scoped search (ADR 0011's system-management exception).
   const { adminRoleAssignments } = useLazyLoadQuery<RoleAssignmentTabQuery>(
     graphql`
       query RoleAssignmentTabQuery(
