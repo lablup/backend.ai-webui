@@ -141,7 +141,6 @@ const BAIAdminRetentionPolicyTable = ({
         title: t('comp:BAIAdminRetentionPolicyTable.UpdatedAt'),
         dataIndex: 'updatedAt',
         key: 'updatedAt',
-        sorter: isEnableSorter('updatedAt'),
         defaultHidden: true,
         render: (__, row) => dayjs(row.updatedAt).format('lll'),
       },
