@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fada401e8613ad4de369e03f5095e850>>
+ * @generated SignedSource<<f5b7be71fb0b3d513479843d79e0507b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -342,6 +342,13 @@ return {
                   {
                     "alias": null,
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "entityId",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
                     "concreteType": "UserV2BasicInfo",
                     "kind": "LinkedField",
                     "name": "basicInfo",
@@ -571,12 +578,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "92a2c6651885b26e9d49583233cf75d1",
+    "cacheID": "5088a3191ed70f8441612659cab203d7",
     "id": null,
     "metadata": {},
     "name": "ProjectAdminUsersPageQuery",
     "operationKind": "query",
-    "text": "query ProjectAdminUsersPageQuery(\n  $projectId: UUID!\n  $filter: UserV2Filter\n  $orderBy: [UserV2OrderBy!]\n  $limit: Int\n  $offset: Int\n  $isNotSupportTotp: Boolean!\n) {\n  projectUsersV2(scope: {projectId: $projectId}, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...BAIAdminUserV2TableFragment\n      }\n    }\n  }\n}\n\nfragment BAIAdminUserV2TableFragment on UserV2 {\n  id\n  basicInfo {\n    email\n    fullName\n    username\n    description\n    integrationName\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n    mainAccessKey\n  }\n  security {\n    totpActivated @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    totpActivatedAt @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    sudoSessionEnabled\n    allowedClientIp\n  }\n  status {\n    status\n    statusInfo\n    needPasswordChange\n  }\n  container {\n    containerUid\n    containerMainGid\n    containerGids\n  }\n  timestamps {\n    createdAt\n    modifiedAt\n  }\n}\n"
+    "text": "query ProjectAdminUsersPageQuery(\n  $projectId: UUID!\n  $filter: UserV2Filter\n  $orderBy: [UserV2OrderBy!]\n  $limit: Int\n  $offset: Int\n  $isNotSupportTotp: Boolean!\n) {\n  projectUsersV2(scope: {projectId: $projectId}, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...BAIAdminUserV2TableFragment\n      }\n    }\n  }\n}\n\nfragment BAIAdminUserV2TableFragment on UserV2 {\n  id\n  entityId\n  basicInfo {\n    email\n    fullName\n    username\n    description\n    integrationName\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n    mainAccessKey\n  }\n  security {\n    totpActivated @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    totpActivatedAt @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    sudoSessionEnabled\n    allowedClientIp\n  }\n  status {\n    status\n    statusInfo\n    needPasswordChange\n  }\n  container {\n    containerUid\n    containerMainGid\n    containerGids\n  }\n  timestamps {\n    createdAt\n    modifiedAt\n  }\n}\n"
   }
 };
 })();
