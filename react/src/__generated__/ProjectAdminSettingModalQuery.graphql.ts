@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<28ecd3e84cdf02c9ddfe6e51a9a89fe2>>
+ * @generated SignedSource<<228db8f87ac9cc218066d2d22a8c0998>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -344,16 +344,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "ebb1044c7bbde469866808e048abe612",
+    "cacheID": "32fe3425c92b04c9266bed60734e0575",
     "id": null,
     "metadata": {},
     "name": "ProjectAdminSettingModalQuery",
     "operationKind": "query",
-    "text": "query ProjectAdminSettingModalQuery(\n  $filter: RoleFilter\n  $limit: Int\n  $offset: Int\n) {\n  adminRoles(filter: $filter, first: 50) {\n    count\n    edges {\n      node {\n        id\n        entityId @since(version: \"26.9.0\")\n        name\n        users(limit: $limit, offset: $offset) {\n          count\n          edges {\n            node {\n              id\n              userId\n              user {\n                id\n                basicInfo {\n                  email\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ProjectAdminSettingModalQuery(\n  $filter: RoleFilter\n  $limit: Int\n  $offset: Int\n) {\n  adminRoles(filter: $filter, first: 50) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        users(limit: $limit, offset: $offset) {\n          count\n          edges {\n            node {\n              id\n              userId\n              user {\n                id\n                basicInfo {\n                  email\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "bce14795845ebde4789c1d14828c2e18";
+(node as any).hash = "41eec1d1ac6fd4df5df139bf0bb1803d";
 
 export default node;

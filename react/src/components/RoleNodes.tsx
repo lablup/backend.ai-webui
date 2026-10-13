@@ -79,7 +79,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
     graphql`
       fragment RoleNodesFragment on Role @relay(plural: true) {
         id @required(action: NONE)
-        entityId @since(version: "26.9.0")
+        entityId
         name @required(action: NONE)
         description
         source

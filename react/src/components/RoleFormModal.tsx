@@ -32,7 +32,6 @@ import {
   BAIStorageHostSelect,
   BAIUserSelect,
   BAIVFolderSelect,
-  toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
 import _ from 'lodash';
@@ -335,7 +334,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
     graphql`
       fragment RoleFormModalFragment on Role {
         id
-        entityId @since(version: "26.9.0")
+        entityId
         name
         description
         autoAssign
@@ -413,7 +412,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
           commitUpdateRole({
             variables: {
               input: {
-                id: editingRole.entityId ?? toLocalId(editingRole.id),
+                id: editingRole.entityId,
                 ...changedFields,
               },
             },

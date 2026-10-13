@@ -21,7 +21,6 @@ import {
   BAITable,
   BAIUserSelect,
   filterOutNullAndUndefined,
-  toLocalId,
   useBAILogger,
   useMutationWithPromise,
 } from 'backend.ai-ui';
@@ -50,7 +49,7 @@ export const ProjectAdminSettingQuery = graphql`
       edges {
         node {
           id
-          entityId @since(version: "26.9.0")
+          entityId
           name
           users(limit: $limit, offset: $offset) {
             count
@@ -153,7 +152,7 @@ export const groupProjectAdminAssignmentsByUser = (
           _.map(role.users?.edges, (edge) => edge?.node),
         ).map((node) => ({
           ...node,
-          roleId: role.entityId ?? toLocalId(role.id),
+          roleId: role.entityId,
         })),
       ),
       'userId',
@@ -266,7 +265,7 @@ const ProjectAdminSettingModal = ({
           roles.map((adminRole, index) =>
             mutateBulkAssignRole({
               input: {
-                roleId: adminRole.entityId ?? toLocalId(adminRole.id),
+                roleId: adminRole.entityId,
                 userIds: values.userIds,
                 // Passing projectId auto-adds the project to each user's
                 // allowed project list — once is enough, and concurrent

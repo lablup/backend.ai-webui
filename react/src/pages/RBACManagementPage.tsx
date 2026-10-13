@@ -40,7 +40,6 @@ import {
   BAIUserSelect,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
-  toLocalId,
   useBAILogger,
   useFetchKey,
   useMutationWithPromise,
@@ -217,7 +216,7 @@ const RoleListTab: React.FC = () => {
   );
   const handleDeactivateRole = (role: RoleNodeInList) => {
     commitDeactivateRole({
-      variables: { input: { id: role.entityId ?? toLocalId(role.id) } },
+      variables: { input: { id: role.entityId } },
       onCompleted: (_data, errors) => {
         if (errors && errors.length > 0) {
           logger.error(errors[0]);
@@ -237,7 +236,7 @@ const RoleListTab: React.FC = () => {
   const handleActivateRole = (role: RoleNodeInList) => {
     commitActivateRole({
       variables: {
-        input: { id: role.entityId ?? toLocalId(role.id), status: 'ACTIVE' },
+        input: { id: role.entityId, status: 'ACTIVE' },
       },
       onCompleted: (_data, errors) => {
         if (errors && errors.length > 0) {
@@ -525,7 +524,7 @@ const RoleListTab: React.FC = () => {
           if (purgingRole) {
             return mutatePurgeRole({
               input: {
-                id: purgingRole.entityId ?? toLocalId(purgingRole.id),
+                id: purgingRole.entityId,
               },
             })
               .then(() => {
