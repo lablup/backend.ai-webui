@@ -922,9 +922,9 @@ export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
    * `focus()`/`blur()`. `InputGroup`-style composition does not apply either.
    * The only reachable seam is the DOM.
    *
-   * MECHANISM: `TokenizerProps` extends `Omit<BaseProps<HTMLDivElement>,
-   * 'onChange'>`, so the root div takes a ref. A CAPTURE-phase `keydown`
-   * listener on that root sees the separator key before anything else,
+   * MECHANISM: `Tokenizer`'s ref is its `<input>`; `tokenizerControlBox`
+   * recovers the control box around it (`.astryx-tokenizer`). A CAPTURE-phase
+   * `keydown` listener on that box sees the separator key before anything else,
    * cancels it (a separator is never part of a tag) and re-dispatches a
    * synthetic `Enter` keydown on the same `<input>`. Astryx's own create path
    * then runs unmodified: `BaseTypeahead` selects the highlighted

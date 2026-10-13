@@ -62,7 +62,7 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({
       <FileInput
         mode="dropzone"
         // `FileInput` spreads unknown props onto its hidden <input>, so a
-        // data-testid cannot reach the drop area — `className` can, and both
+        // data-testid cannot reach the drop area — `controlClassName` can, and both
         // e2e and `DragAndDrop.css` need a repo-owned handle on it (never an
         // `astryx-*` class).
         controlClassName="bai-file-explorer-dropzone"
@@ -82,7 +82,7 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({
           }
           lastFileListRef.current = fileList;
         }}
-        // `style` lands on the dropzone element, so the drop area itself fills
+        // `controlStyle` lands on the dropzone element, so the drop area itself fills
         // the overlay — the Field wrapper it sits in has no height of its own.
         controlStyle={{ position: 'absolute', inset: 0 }}
       />
