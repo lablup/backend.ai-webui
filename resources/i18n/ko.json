@@ -3290,7 +3290,7 @@
     "DomainSessions": "이 도메인의 세션",
     "InUseAcross": "실행 중인 세션 {{count}}개에 할당된 자원",
     "MonitorSettings": "모니터 설정",
-    "MoreSessions": "{{count}}개 더 · 총 {{total}}개",
+    "MoreSessions": "{{count}}개 더 (총 {{total}}개)",
     "MyResourceUsage": "내 할당량 (한도 대비)",
     "MySessions": "나의 세션",
     "NoActiveSessions": "실행 중인 세션이 없습니다",

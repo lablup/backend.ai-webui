@@ -3289,7 +3289,7 @@
     "DomainSessions": "Phiên trong miền này",
     "InUseAcross": "Được cấp phát cho {{count}} phiên đang chạy",
     "MonitorSettings": "Cài đặt giám sát",
-    "MoreSessions": "{{count}} nữa · tổng {{total}}",
+    "MoreSessions": "{{count}} nữa (tổng {{total}})",
     "MyResourceUsage": "Được cấp phát cho tôi, so với giới hạn của tôi",
     "MySessions": "Phiên của tôi",
     "NoActiveSessions": "Không có phiên hoạt động",

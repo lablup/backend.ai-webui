@@ -3274,7 +3274,7 @@
     "DomainSessions": "Sessions in this domain",
     "InUseAcross": "Allocated to {{count}} running sessions",
     "MonitorSettings": "Monitor settings",
-    "MoreSessions": "{{count}} more · {{total}} total",
+    "MoreSessions": "{{count}} more ({{total}} total)",
     "MyResourceUsage": "Allocated to me, against my limit",
     "MySessions": "My sessions",
     "NoActiveSessions": "No active sessions",

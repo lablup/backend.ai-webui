@@ -3289,7 +3289,7 @@
     "DomainSessions": "Sessões deste domínio",
     "InUseAcross": "Alocado a {{count}} sessões em execução",
     "MonitorSettings": "Definições do monitor",
-    "MoreSessions": "{{count}} a mais · {{total}} no total",
+    "MoreSessions": "{{count}} a mais ({{total}} no total)",
     "MyResourceUsage": "Alocado a mim, relativamente ao meu limite",
     "MySessions": "As minhas sessões",
     "NoActiveSessions": "Nenhuma sessão activa",

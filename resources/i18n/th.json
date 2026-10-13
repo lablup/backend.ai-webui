@@ -3272,7 +3272,7 @@
     "DomainSessions": "เซสชันในโดเมนนี้",
     "InUseAcross": "จัดสรรให้กับเซสชันที่กำลังทำงาน {{count}} เซสชัน",
     "MonitorSettings": "การตั้งค่าการตรวจสอบ",
-    "MoreSessions": "อีก {{count}} · รวม {{total}}",
+    "MoreSessions": "อีก {{count}} (รวม {{total}})",
     "MyResourceUsage": "จัดสรรให้ฉัน เทียบกับขีดจำกัดของฉัน",
     "MySessions": "เซสชันของฉัน",
     "NoActiveSessions": "ไม่มีเซสชันที่ใช้งานอยู่",

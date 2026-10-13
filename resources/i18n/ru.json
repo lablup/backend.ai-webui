@@ -3287,7 +3287,7 @@
     "DomainSessions": "Сеансы в этом домене",
     "InUseAcross": "Выделено для {{count}} выполняющихся сеансов",
     "MonitorSettings": "Настройки мониторинга",
-    "MoreSessions": "ещё {{count}} · всего {{total}}",
+    "MoreSessions": "ещё {{count}} (всего {{total}})",
     "MyResourceUsage": "Выделено мне, по сравнению с моим лимитом",
     "MySessions": "Мои сеансы",
     "NoActiveSessions": "Нет активных сеансов",
