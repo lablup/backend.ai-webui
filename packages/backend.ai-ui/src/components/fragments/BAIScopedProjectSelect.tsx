@@ -2,32 +2,17 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- BAIAdminProjectSelect — ticket-27 Astryx sibling of the antd
- `BAIAdminProjectSelect` (Relay-paginated, id-valued select pattern B,
- following the recipe used across the Astryx migration).
-
- FRONTIER RULE (MIGRATION-SPEC §0 "번역 프런티어" / 래퍼 정책): the antd
- `BAIAdminProjectSelect` is NOT touched by this file. It keeps serving every
- unmigrated call site until a later ticket moves them over. This file is the
- Astryx-native sibling, and its OUTER value contract is deliberately the same
- plain key (`string` / `string[]`) the antd wrapper exposes — labelInValue
- lives strictly between the wrapper and `BAIComplexSelect`, exactly as it
- does between `BAIUserSelect`/`BAIUserSelect` and `BAISelect`.
-
- PILOT-DECISIONs:
-  - P26-6 The `open ? 'network-only' : 'store-only'` fetchPolicy switch is
-    kept — `BAIComplexSelect.onOpenChange` re-exposes the open state that
-    `ComplexSelector` otherwise keeps private.
-  - P26-7 antd's `notFoundContent={<Skeleton.Input/>}` first-load placeholder
-    is dropped: the empty state is the shared "No results" text.
-  - This wrapper's antd original had no `optionRender`/`labelRender`, so
-    there is no rich-content-to-`description` migration to record here.
+ BAIScopedProjectSelect — Relay-paginated, id-valued project select over
+ `scopedProjectsV2` (ADR 0011). The outer value is a plain key (`string` /
+ `string[]`); labelInValue stays between this wrapper and `BAIComplexSelect`.
+ The page query refetches `network-only` while the popup is open
+ (`BAIComplexSelect.onOpenChange`) and reads the store otherwise.
 */
 import {
-  BAIAdminProjectSelectPaginatedQuery,
+  BAIScopedProjectSelectPaginatedQuery,
   ProjectScope,
-} from '../../__generated__/BAIAdminProjectSelectPaginatedQuery.graphql';
-import { BAIAdminProjectSelectValueQuery } from '../../__generated__/BAIAdminProjectSelectValueQuery.graphql';
+} from '../../__generated__/BAIScopedProjectSelectPaginatedQuery.graphql';
+import { BAIScopedProjectSelectValueQuery } from '../../__generated__/BAIScopedProjectSelectValueQuery.graphql';
 import { toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useControllableValue, useFetchKey } from '../../hooks';
@@ -47,21 +32,21 @@ import {
 } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export type AstryxAdminProjectNode = NonNullable<
+export type ScopedProjectNode = NonNullable<
   NonNullable<
-    BAIAdminProjectSelectPaginatedQuery['response']['scopedProjectsV2']
+    BAIScopedProjectSelectPaginatedQuery['response']['scopedProjectsV2']
   >['edges'][number]
 >['node'];
 
-export interface BAIAdminProjectSelectRef {
+export interface BAIScopedProjectSelectRef {
   refetch: () => void;
 }
 
-export interface BAIAdminProjectSelectProps extends Omit<
+export interface BAIScopedProjectSelectProps extends Omit<
   BAIComplexSelectProps,
   'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total'
 > {
-  /** Plain key(s), as the antd `BAIAdminProjectSelect` exposes. */
+  /** Plain key(s), as the antd `BAIScopedProjectSelect` exposes. */
   value?: string | Array<string> | null;
   /**
    * P3C-1: like `BAIUserSelect`, this wrapper keeps antd's second
@@ -75,15 +60,15 @@ export interface BAIAdminProjectSelectProps extends Omit<
   ) => void;
   /** Spread into the page query filter; the search term owns `name`. */
   filter?: Omit<
-    NonNullable<BAIAdminProjectSelectPaginatedQuery['variables']['filter']>,
+    NonNullable<BAIScopedProjectSelectPaginatedQuery['variables']['filter']>,
     'name'
   >;
   /** The projects this scope reaches are listed, usually the current domain (ADR 0011). */
   scope: ProjectScope;
-  ref?: React.Ref<BAIAdminProjectSelectRef>;
+  ref?: React.Ref<BAIScopedProjectSelectRef>;
 }
 
-const BAIAdminProjectSelect: React.FC<BAIAdminProjectSelectProps> = ({
+const BAIScopedProjectSelect: React.FC<BAIScopedProjectSelectProps> = ({
   filter: filterFromProps,
   scope,
   multiple = false,
@@ -125,9 +110,9 @@ const BAIAdminProjectSelect: React.FC<BAIAdminProjectSelectProps> = ({
    * not in `options` after `loadNext` has paged past it).
    */
   const selectedProjectsData =
-    useLazyLoadQuery<BAIAdminProjectSelectValueQuery>(
+    useLazyLoadQuery<BAIScopedProjectSelectValueQuery>(
       graphql`
-        query BAIAdminProjectSelectValueQuery(
+        query BAIScopedProjectSelectValueQuery(
           $projectIds: [UUID!]!
           $scope: ProjectScope!
           $skipSelected: Boolean!
@@ -161,11 +146,11 @@ const BAIAdminProjectSelect: React.FC<BAIAdminProjectSelectProps> = ({
 
   const { paginationData, result, loadNext, isLoadingNext } =
     useLazyPaginatedQuery<
-      BAIAdminProjectSelectPaginatedQuery,
-      AstryxAdminProjectNode
+      BAIScopedProjectSelectPaginatedQuery,
+      ScopedProjectNode
     >(
       graphql`
-        query BAIAdminProjectSelectPaginatedQuery(
+        query BAIScopedProjectSelectPaginatedQuery(
           $offset: Int!
           $limit: Int!
           $filter: ProjectV2Filter
@@ -291,4 +276,4 @@ const BAIAdminProjectSelect: React.FC<BAIAdminProjectSelectProps> = ({
   );
 };
 
-export default BAIAdminProjectSelect;
+export default BAIScopedProjectSelect;

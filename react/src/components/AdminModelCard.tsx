@@ -29,7 +29,7 @@ import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIAdminProjectSelect,
+  BAIScopedProjectSelect,
   BAIAlert,
   BAIButton,
   BAIColumnType,
@@ -403,7 +403,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                   validate: (value) => isValidUUID(value),
                 },
                 renderInput: ({ onAddCondition, value, isDisabled }) => (
-                  <BAIAdminProjectSelect
+                  <BAIScopedProjectSelect
                     scope={domainScope}
                     label={t('adminModelCard.Project')}
                     isLabelHidden

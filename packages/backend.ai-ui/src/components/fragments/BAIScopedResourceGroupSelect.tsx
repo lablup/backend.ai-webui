@@ -1,8 +1,8 @@
 import {
-  BAIResourceGroupSelectQuery,
+  BAIScopedResourceGroupSelectQuery,
   ResourceGroupFilter,
   ResourceGroupScope,
-} from '../../__generated__/BAIResourceGroupSelectQuery.graphql';
+} from '../../__generated__/BAIScopedResourceGroupSelectQuery.graphql';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAISelect, { BAISelectProps } from '../BAISelect';
 import * as _ from 'lodash-es';
@@ -15,17 +15,17 @@ export type BAIResourceGroupFilter = Pick<
 
 /**
  * Names of the resource groups `scope` reaches, ordered by name (ADR 0011).
- * Shares one request with `BAIResourceGroupSelect` given the same `scope` and `filter`.
+ * Shares one request with `BAIScopedResourceGroupSelect` given the same `scope` and `filter`.
  */
-export const useResourceGroupNames = (
+export const useScopedResourceGroupNames = (
   scope: ResourceGroupScope,
   filter?: BAIResourceGroupFilter | null,
 ) => {
   'use memo';
   const { scopedResourceGroups } =
-    useLazyLoadQuery<BAIResourceGroupSelectQuery>(
+    useLazyLoadQuery<BAIScopedResourceGroupSelectQuery>(
       graphql`
-        query BAIResourceGroupSelectQuery(
+        query BAIScopedResourceGroupSelectQuery(
           $scope: ResourceGroupScope!
           $filter: ResourceGroupFilter
         ) {
@@ -50,7 +50,7 @@ export const useResourceGroupNames = (
   );
 };
 
-export interface BAIResourceGroupSelectProps extends Omit<
+export interface BAIScopedResourceGroupSelectProps extends Omit<
   BAISelectProps,
   'options'
 > {
@@ -60,14 +60,14 @@ export interface BAIResourceGroupSelectProps extends Omit<
   filter?: BAIResourceGroupFilter | null;
 }
 
-const BAIResourceGroupSelect = ({
+const BAIScopedResourceGroupSelect = ({
   scope,
   filter,
   ...selectProps
-}: BAIResourceGroupSelectProps) => {
+}: BAIScopedResourceGroupSelectProps) => {
   'use memo';
   const { t } = useBAIi18n();
-  const resourceGroupNames = useResourceGroupNames(scope, filter);
+  const resourceGroupNames = useScopedResourceGroupNames(scope, filter);
 
   return (
     <BAISelect
@@ -83,4 +83,4 @@ const BAIResourceGroupSelect = ({
   );
 };
 
-export default BAIResourceGroupSelect;
+export default BAIScopedResourceGroupSelect;
