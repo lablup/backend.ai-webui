@@ -24,6 +24,12 @@ export interface PageToolColumn {
   absent?: boolean;
 }
 
+/** A `hiddenColumnKeys.*` setting as the column overrides BAITable reads. */
+export const overridesFromHiddenKeys = (
+  hiddenKeys: ReadonlyArray<string> | null | undefined,
+): BAITableColumnOverrideRecord =>
+  _.fromPairs(_.map(hiddenKeys, (key) => [key, { hidden: true }]));
+
 /** Row fields whose column the user (or the column default) has hidden. */
 export const hiddenRowFields = (
   columns: ReadonlyArray<PageToolColumn>,
@@ -111,6 +117,9 @@ export const pathWithSearchParam = (
   return `${pathname}?${params.toString()}`;
 };
 
+/** The opened item, with the in-app path that reopens it (`null`: no deep link). */
+export type CurrentItem = PageToolRow & { path: string | null };
+
 /**
  * The opened item as `bai_get_current_<noun>` reports it. An item that is not
  * on the rendered page still answers with its id and path.
@@ -118,10 +127,10 @@ export const pathWithSearchParam = (
 export const openedItem = (
   rows: ReadonlyArray<PageToolRow>,
   openedId: string | null | undefined,
-  path: string,
+  path: string | null,
   matches: (row: PageToolRow, id: string) => boolean = (row, id) =>
     row.id === id,
-): (PageToolRow & { path: string }) | null => {
+): CurrentItem | null => {
   if (!openedId) return null;
   const row = _.find(rows, (candidate) => matches(candidate, openedId));
   return { ...(row ?? { id: openedId }), path };
@@ -149,7 +158,7 @@ export interface PageReadToolsConfig {
   rowFields: string;
   readRows: () => VisibleRowsResult;
   readViewState: () => ViewStateResult;
-  readCurrent: () => (PageToolRow & { path: string }) | null;
+  readCurrent: () => CurrentItem | null;
   /** What "current" means on this page, e.g. `the session open in the detail drawer`. */
   currentMeaning: string;
 }
@@ -194,7 +203,7 @@ export const createCurrentItemTool = ({
   'noun' | 'currentMeaning' | 'readCurrent'
 >): WebMCPTool => ({
   name: currentToolName(noun),
-  description: `The ${noun} currently open in this Backend.AI WebUI tab: ${currentMeaning}. Returns {current: {id, …row fields, path}} where path is the in-app path that reopens it, or {current: null} when nothing is open.`,
+  description: `The ${noun} currently open in this Backend.AI WebUI tab: ${currentMeaning}. Returns {current: {id, …row fields, path}}, where path is the in-app path that reopens it (null when the item has no link of its own), or {current: null} when nothing is open.`,
   inputSchema: NO_INPUT,
   annotations: READ_ANNOTATIONS,
   execute: () => ({ current: readCurrent() }),

@@ -23,7 +23,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('../hooks', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../hooks')>()),
-  useSuspendedBackendaiClient: () => ({ _config: { hideAgents: false } }),
+  useSuspendedBackendaiClient: () => ({
+    _config: { hideAgents: false },
+    isManagerVersionCompatibleWith: () => true,
+  }),
 }));
 vi.mock('../hooks/backendai', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../hooks/backendai')>()),

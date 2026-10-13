@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8857fadbb00c11a5dbef5958e37a9817>>
+ * @generated SignedSource<<e4453941b13a8c1bb636200cd261bf8c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -156,7 +156,7 @@ export type AdminUserManagementQuery$data = {
           readonly email: string;
         };
         readonly id: string;
-        readonly " $fragmentSpreads": FragmentRefs<"BAIAdminUserV2TableFragment" | "PurgeUsersModalFragment" | "UpdateUsersModalFragment" | "UserInfoModalFragment" | "UserSettingModalFragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"BAIAdminUserV2TableFragment" | "PurgeUsersModalFragment" | "UpdateUsersModalFragment" | "UserInfoModalFragment" | "UserSettingModalFragment" | "WebMCPAdminUserToolsFragment">;
       };
     }>;
   } | null | undefined;
@@ -316,6 +316,11 @@ return {
                     "args": null,
                     "kind": "FragmentSpread",
                     "name": "UserSettingModalFragment"
+                  },
+                  {
+                    "args": null,
+                    "kind": "FragmentSpread",
+                    "name": "WebMCPAdminUserToolsFragment"
                   }
                 ],
                 "storageKey": null
@@ -659,16 +664,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "c453cc63954c2ae2082411c749de7774",
+    "cacheID": "c1a921e2d4e84b39d24025d0c20d2f94",
     "id": null,
     "metadata": {},
     "name": "AdminUserManagementQuery",
     "operationKind": "query",
-    "text": "query AdminUserManagementQuery(\n  $filter: UserV2Filter\n  $orderBy: [UserV2OrderBy!]\n  $limit: Int\n  $offset: Int\n  $isNotSupportTotp: Boolean!\n) {\n  adminUsersV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n        }\n        ...BAIAdminUserV2TableFragment_1wLHi5\n        ...PurgeUsersModalFragment\n        ...UpdateUsersModalFragment\n        ...UserInfoModalFragment\n        ...UserSettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIAdminUserV2TableFragment_1wLHi5 on UserV2 {\n  id\n  basicInfo {\n    email\n    fullName\n    username\n    description\n    integrationName\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n    mainAccessKey\n  }\n  projects(limit: 1000) {\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n  security {\n    totpActivated @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    totpActivatedAt @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    sudoSessionEnabled\n    allowedClientIp\n  }\n  status {\n    status\n    statusInfo\n    needPasswordChange\n  }\n  container {\n    containerUid\n    containerMainGid\n    containerGids\n  }\n  timestamps {\n    createdAt\n    modifiedAt\n  }\n}\n\nfragment PurgeUsersModalFragment on UserV2 {\n  id\n  basicInfo {\n    email\n  }\n}\n\nfragment TOTPActivateModalFragment on UserV2 {\n  basicInfo {\n    email\n  }\n  security {\n    totpActivated @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n  }\n}\n\nfragment UpdateUsersModalFragment on UserV2 {\n  id\n  basicInfo {\n    email\n  }\n}\n\nfragment UserInfoModalFragment on UserV2 {\n  basicInfo {\n    email\n    username\n    fullName\n    description\n  }\n  status {\n    status\n    needPasswordChange\n  }\n  security {\n    totpActivated @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    sudoSessionEnabled\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n    mainAccessKey\n  }\n  projects(limit: 1000) {\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n\nfragment UserSettingModalFragment on UserV2 {\n  id\n  basicInfo {\n    email\n    username\n    fullName\n    description\n  }\n  status {\n    status\n    needPasswordChange\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n    mainAccessKey\n  }\n  security {\n    totpActivated @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    sudoSessionEnabled\n    allowedClientIp\n  }\n  container {\n    containerUid\n    containerMainGid\n    containerGids\n  }\n  projects(limit: 1000) {\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n          type\n        }\n      }\n    }\n  }\n  ...TOTPActivateModalFragment\n}\n"
+    "text": "query AdminUserManagementQuery(\n  $filter: UserV2Filter\n  $orderBy: [UserV2OrderBy!]\n  $limit: Int\n  $offset: Int\n  $isNotSupportTotp: Boolean!\n) {\n  adminUsersV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n        }\n        ...BAIAdminUserV2TableFragment_1wLHi5\n        ...PurgeUsersModalFragment\n        ...UpdateUsersModalFragment\n        ...UserInfoModalFragment\n        ...UserSettingModalFragment\n        ...WebMCPAdminUserToolsFragment\n      }\n    }\n  }\n}\n\nfragment BAIAdminUserV2TableFragment_1wLHi5 on UserV2 {\n  id\n  basicInfo {\n    email\n    fullName\n    username\n    description\n    integrationName\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n    mainAccessKey\n  }\n  projects(limit: 1000) {\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n  security {\n    totpActivated @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    totpActivatedAt @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    sudoSessionEnabled\n    allowedClientIp\n  }\n  status {\n    status\n    statusInfo\n    needPasswordChange\n  }\n  container {\n    containerUid\n    containerMainGid\n    containerGids\n  }\n  timestamps {\n    createdAt\n    modifiedAt\n  }\n}\n\nfragment PurgeUsersModalFragment on UserV2 {\n  id\n  basicInfo {\n    email\n  }\n}\n\nfragment TOTPActivateModalFragment on UserV2 {\n  basicInfo {\n    email\n  }\n  security {\n    totpActivated @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n  }\n}\n\nfragment UpdateUsersModalFragment on UserV2 {\n  id\n  basicInfo {\n    email\n  }\n}\n\nfragment UserInfoModalFragment on UserV2 {\n  basicInfo {\n    email\n    username\n    fullName\n    description\n  }\n  status {\n    status\n    needPasswordChange\n  }\n  security {\n    totpActivated @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    sudoSessionEnabled\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n    mainAccessKey\n  }\n  projects(limit: 1000) {\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n\nfragment UserSettingModalFragment on UserV2 {\n  id\n  basicInfo {\n    email\n    username\n    fullName\n    description\n  }\n  status {\n    status\n    needPasswordChange\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n    mainAccessKey\n  }\n  security {\n    totpActivated @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    sudoSessionEnabled\n    allowedClientIp\n  }\n  container {\n    containerUid\n    containerMainGid\n    containerGids\n  }\n  projects(limit: 1000) {\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n          type\n        }\n      }\n    }\n  }\n  ...TOTPActivateModalFragment\n}\n\nfragment WebMCPAdminUserToolsFragment on UserV2 {\n  id\n  basicInfo {\n    email\n    fullName\n    username\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n    mainAccessKey\n  }\n  status {\n    status\n    statusInfo\n  }\n  timestamps {\n    createdAt\n    modifiedAt\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "45b19a0be46c09d4dda27e4e37c30d60";
+(node as any).hash = "14007b3f206e19a8549327813b9109fa";
 
 export default node;

@@ -28,9 +28,13 @@ import { useLocation } from 'react-router-dom';
 export const SESSION_DETAIL_PARAM = 'sessionDetail';
 
 /** `SessionNodes` columns that render a reported field, with their defaults. */
-export const sessionToolColumns = (
-  showAgents: boolean,
-): Array<PageToolColumn> => [
+export const sessionToolColumns = ({
+  showAgents,
+  showOwner,
+}: {
+  showAgents: boolean;
+  showOwner: boolean;
+}): Array<PageToolColumn> => [
   { key: 'name', fields: ['name'], required: true },
   { key: 'status', fields: ['status'] },
   { key: 'status_info', fields: ['statusInfo'], defaultHidden: true },
@@ -42,10 +46,12 @@ export const sessionToolColumns = (
   { key: 'domain_name', fields: ['domainName'], defaultHidden: true },
   { key: 'project_id', fields: ['projectId'], defaultHidden: true },
   { key: 'agent', fields: ['agentIds'], absent: !showAgents },
+  { key: 'owner', fields: ['ownerEmail'], absent: !showOwner },
 ];
 
 export interface WebMCPSessionListToolsProps {
   sessionsFrgmt: WebMCPSessionListToolsFragment$key;
+  /** The table's effective overrides: its `defaultColumnOverrides` merged under the user's. */
   columnOverrides?: BAITableColumnOverrideRecord | null;
   page: number;
   pageSize: number;
@@ -83,6 +89,9 @@ const SessionListToolsRegistrar: React.FC<WebMCPSessionListToolsProps> = ({
         domain_name
         project_id
         agent_ids
+        owner @since(version: "25.13.0") {
+          email
+        }
       }
     `,
     sessionsFrgmt,
@@ -103,13 +112,17 @@ const SessionListToolsRegistrar: React.FC<WebMCPSessionListToolsProps> = ({
       domainName: session.domain_name ?? null,
       projectId: session.project_id ?? null,
       agentIds: session.agent_ids ?? null,
+      ownerEmail: session.owner?.email ?? null,
     }),
   );
   const list = visibleRowsResult({
     rows,
-    columns: sessionToolColumns(
-      userRole === 'superadmin' || !baiClient._config?.hideAgents,
-    ),
+    columns: sessionToolColumns({
+      showAgents: userRole === 'superadmin' || !baiClient._config?.hideAgents,
+      showOwner:
+        userRole === 'superadmin' &&
+        !!baiClient.isManagerVersionCompatibleWith?.('25.13.0'),
+    }),
     columnOverrides,
     page,
     pageSize,
@@ -121,7 +134,7 @@ const SessionListToolsRegistrar: React.FC<WebMCPSessionListToolsProps> = ({
     noun: 'session',
     plural: 'sessions',
     rowFields:
-      'Row fields: id (session UUID), name, status, statusInfo, result, resourceGroup, type, createdAt, terminatedAt, domainName, projectId, agentIds.',
+      'Row fields: id (session UUID), name, status, statusInfo, result, resourceGroup, type, createdAt, terminatedAt, domainName, projectId, agentIds, ownerEmail.',
     currentMeaning: 'the session whose detail drawer is open',
     readRows: () => list,
     readViewState: () =>
