@@ -12,13 +12,12 @@ import {
 } from '../../helper/sessionMonitor';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { getIdleChecksBadgeVariant } from '../ComputeSessionNodeItems/SessionIdleChecks';
-import WebUILink from '../WebUILink';
 import SessionMonitorUtilizationBars from './SessionMonitorUtilizationBars';
 import { Badge } from '@lablup/ui-common/Badge';
 import { StatusDot } from '@lablup/ui-common/StatusDot';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFlex, BAIIntervalView, toLocalId } from 'backend.ai-ui';
+import { BAIFlex, BAIIntervalView, BAILink, toLocalId } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import React from 'react';
@@ -124,15 +123,14 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
       >
         <BAIFlex direction="row" align="center" gap="xs">
           <StatusDot variant={statusVariant} label={session.status ?? ''} />
-          <WebUILink
+          <BAILink
             to={detailPath}
             onClick={onNavigate}
-            style={{ display: 'block', minWidth: 0, overflow: 'hidden' }}
+            ellipsis
+            style={{ minWidth: 0, fontWeight: 500 }}
           >
-            <Text type="label" maxLines={1} hasTruncateTooltip={false}>
-              {session.name ?? toLocalId(session.id)}
-            </Text>
-          </WebUILink>
+            {session.name ?? toLocalId(session.id)}
+          </BAILink>
         </BAIFlex>
         <Text type="supporting" maxLines={1} hasTruncateTooltip={false}>
           {[allocation, elapsed].filter(Boolean).join(' · ')}

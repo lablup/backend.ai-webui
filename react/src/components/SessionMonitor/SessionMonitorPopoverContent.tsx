@@ -18,14 +18,13 @@ import {
   type SessionMonitorScope,
 } from '../../hooks/useSessionMonitor';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
-import WebUILink from '../WebUILink';
 import SessionMonitorItem from './SessionMonitorItem';
 import SessionMonitorResourceUsage from './SessionMonitorResourceUsage';
 import SessionMonitorSettingsPane from './SessionMonitorSettingsPane';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFetchKeyButton, BAIFlex } from 'backend.ai-ui';
+import { BAIFetchKeyButton, BAIFlex, BAILink } from 'backend.ai-ui';
 import { useAtom, useAtomValue } from 'jotai';
 import { ArrowLeft, Settings } from 'lucide-react';
 import React, {
@@ -208,16 +207,14 @@ const ScopedSessionMonitorPopoverContent: React.FC<
               borderTop: `1px solid ${token('--color-border')}`,
             }}
           >
-            <WebUILink
+            <BAILink
               data-testid="session-monitor-open-list"
               to={listPath}
               onClick={onNavigate}
-              style={{ textDecoration: 'none' }}
+              style={{ fontWeight: 600 }}
             >
-              <Text type="label" weight="semibold" color="accent">
-                {t('sessionMonitor.OpenSessionList')} →
-              </Text>
-            </WebUILink>
+              {t('sessionMonitor.OpenSessionList')} →
+            </BAILink>
             {hiddenCount > 0 && (
               <Text type="supporting">
                 {t('sessionMonitor.MoreSessions', { count: hiddenCount })}

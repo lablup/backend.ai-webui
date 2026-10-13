@@ -9,12 +9,10 @@ import {
 } from '../../helper/sessionMonitor';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { SETTING_ARRIVAL_PARAM } from '../../hooks/useSettingArrival';
-import WebUILink from '../WebUILink';
 import { Selector } from '@lablup/ui-common/Selector';
 import { Switch } from '@lablup/ui-common/Switch';
-import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAILink } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -79,17 +77,14 @@ const SessionMonitorSettingsPane: React.FC<{ onNavigate?: () => void }> = ({
         value={idleAlerts ?? true}
         onChange={(checked) => setIdleAlerts(checked)}
       />
-      <WebUILink
+      <BAILink
         to={{
           search: `?settings=general&${SETTING_ARRIVAL_PARAM}=userSettings.DesktopNotification`,
         }}
         onClick={onNavigate}
-        style={{ textDecoration: 'none' }}
       >
-        <Text type="label" color="accent">
-          {t('sessionMonitor.settings.DesktopNotifications')}
-        </Text>
-      </WebUILink>
+        {t('sessionMonitor.settings.DesktopNotifications')}
+      </BAILink>
     </BAIFlex>
   );
 };
