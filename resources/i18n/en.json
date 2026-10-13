@@ -3272,10 +3272,10 @@
   },
   "sessionMonitor": {
     "DomainSessions": "Sessions in this domain",
-    "InUseAcross": "In use across {{count}} running sessions",
+    "InUseAcross": "Allocated to {{count}} running sessions",
     "MonitorSettings": "Monitor settings",
     "MoreSessions": "{{count}} more sessions",
-    "MyResourceUsage": "My usage against my limit",
+    "MyResourceUsage": "Allocated to me, against my limit",
     "MySessions": "My sessions",
     "NoActiveSessions": "No active sessions",
     "OpenSession": "Open session",
