@@ -1,4 +1,7 @@
-import { BAIProjectResourcePolicySelect, BAIResourceGroupSelect } from '.';
+import {
+  BAIProjectResourcePolicySelect,
+  BAIScopedResourceGroupSelect,
+} from '.';
 import {
   BAIAllowedHostNamesSelect,
   BAIDynamicUnitInputNumber,
@@ -9,7 +12,7 @@ import { BAIProjectSettingModalCreateMutation } from '../../__generated__/BAIPro
 import { BAIProjectSettingModalFragment$key } from '../../__generated__/BAIProjectSettingModalFragment.graphql';
 import { BAIProjectSettingModalModifyMutation } from '../../__generated__/BAIProjectSettingModalModifyMutation.graphql';
 import { BAIProjectSettingModalQuery } from '../../__generated__/BAIProjectSettingModalQuery.graphql';
-import { ResourceGroupScope } from '../../__generated__/BAIResourceGroupSelectQuery.graphql';
+import { ResourceGroupScope } from '../../__generated__/BAIScopedResourceGroupSelectQuery.graphql';
 import { App } from '../../app-shim';
 import { Form, FormInstance } from '../../form-engine';
 import { convertToBinaryUnit } from '../../helper';
@@ -463,7 +466,7 @@ const BAIProjectSettingModal = ({
           label={t('comp:BAIProjectSettingModal.AllowedResourceGroups')}
           name="scaling_groups"
         >
-          <BAIResourceGroupSelect
+          <BAIScopedResourceGroupSelect
             scope={resourceGroupScope}
             mode="tags"
             allowClear

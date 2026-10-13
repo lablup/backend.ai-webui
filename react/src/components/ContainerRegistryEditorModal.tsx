@@ -19,7 +19,7 @@ import {
 } from './astryxFormControls';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIAdminProjectSelect,
+  BAIScopedProjectSelect,
   BAIFlex,
   BAIModal,
   BAIModalProps,
@@ -590,7 +590,7 @@ const ContainerRegistryEditorModal: React.FC<
                   name="allowed_group_ids"
                   label={t('registry.AllowedProjects')}
                 >
-                  <BAIAdminProjectSelect
+                  <BAIScopedProjectSelect
                     scope={domainScope}
                     label={t('registry.AllowedProjects')}
                     isLabelHidden

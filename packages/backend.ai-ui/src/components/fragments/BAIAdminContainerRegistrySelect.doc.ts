@@ -41,7 +41,7 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Expect a second `option` argument on `onChange` — this wrapper emits the plain key only, unlike BAIAdminProjectSelect.',
+          'Expect a second `option` argument on `onChange` — this wrapper emits the plain key only, unlike BAIScopedProjectSelect.',
       },
       {
         guidance: false,
