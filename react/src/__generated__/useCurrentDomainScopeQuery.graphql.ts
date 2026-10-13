@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7cbafc388a4f2b6ddd16b7173832ba03>>
+ * @generated SignedSource<<017d6cc7a4a06e016014bdf53c4fea66>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -92,16 +92,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "a9bb4a2c3d0ce69d3fdd0c04d77a2ffd",
+    "cacheID": "90f8df253d4ebb0bf4ba5a61d761a56b",
     "id": null,
     "metadata": {},
     "name": "useCurrentDomainScopeQuery",
     "operationKind": "query",
-    "text": "query useCurrentDomainScopeQuery {\n  myUserV2 {\n    organization {\n      domainId @since(version: \"26.9.0a4\")\n    }\n    id\n  }\n}\n"
+    "text": "query useCurrentDomainScopeQuery {\n  myUserV2 {\n    organization {\n      domainId\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "20900b482a753366954042e6cb4d5a8d";
+(node as any).hash = "988b1391eeeb1ece0822b51173960609";
 
 export default node;

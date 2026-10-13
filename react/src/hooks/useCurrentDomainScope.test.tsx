@@ -5,68 +5,58 @@
 import { useCurrentDomainScope } from './useCurrentDomainScope';
 import { renderHook, waitFor } from '@testing-library/react';
 import React, { Suspense } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment } from 'relay-test-utils';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const DOMAIN_ID = '6a4b0b8e-1f0f-4c49-9d63-3b0c6d0f3e11';
-let supportsScopedSearch = true;
 
 vi.mock('.', () => ({
-  useSuspendedBackendaiClient: () => ({
-    isManagerVersionCompatibleWith: () => supportsScopedSearch,
-  }),
   useCurrentDomainValue: () => 'default',
 }));
 
-const renderScope = () => {
+const renderScope = (domainId: string | null) => {
   const environment = createMockEnvironment();
-  const resolver = vi.fn(() => ({
+  environment.mock.queueOperationResolver(() => ({
     data: {
-      myUserV2: {
-        id: btoa('UserV2:me'),
-        organization: { domainId: DOMAIN_ID },
-      },
+      myUserV2: { id: btoa('UserV2:me'), organization: { domainId } },
     },
   }));
-  environment.mock.queueOperationResolver(resolver);
+  const onError = vi.fn();
   const wrapper = ({ children }: { children: React.ReactNode }) => (
     <RelayEnvironmentProvider environment={environment}>
-      <Suspense fallback={null}>{children}</Suspense>
+      <ErrorBoundary fallback={null} onError={onError}>
+        <Suspense fallback={null}>{children}</Suspense>
+      </ErrorBoundary>
     </RelayEnvironmentProvider>
   );
   return {
     ...renderHook(() => useCurrentDomainScope(), { wrapper }),
-    resolver,
+    onError,
   };
 };
 
 describe('useCurrentDomainScope (#10301)', () => {
+  beforeEach(() => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+  });
   afterEach(() => {
-    supportsScopedSearch = true;
+    vi.restoreAllMocks();
   });
 
-  it('builds a domain scope from myUserV2 on a scoped-search manager', async () => {
-    const { result } = renderScope();
+  it('builds the domain scope from myUserV2', async () => {
+    const { result } = renderScope(DOMAIN_ID);
     await waitFor(() => expect(result.current?.domainId).toBe(DOMAIN_ID));
     expect(result.current).toEqual({
       domainName: 'default',
       domainId: DOMAIN_ID,
       domainScope: { domain: [{ value: DOMAIN_ID }] },
-      supportsScopedSearch: true,
     });
   });
 
-  it('sends no request and answers no scope below 26.9.0a4', async () => {
-    supportsScopedSearch = false;
-    const { result, resolver } = renderScope();
-    await waitFor(() => expect(result.current).not.toBeNull());
-    expect(resolver).not.toHaveBeenCalled();
-    expect(result.current).toEqual({
-      domainName: 'default',
-      domainId: null,
-      domainScope: null,
-      supportsScopedSearch: false,
-    });
+  it('throws when the manager answers no domain id', async () => {
+    const { onError } = renderScope(null);
+    await waitFor(() => expect(onError).toHaveBeenCalled());
   });
 });
