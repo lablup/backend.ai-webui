@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6d0c9d6b3a84a6b26228c1343ccee4a5>>
+ * @generated SignedSource<<8d78f84f56da796b11bf28c48dcbf73f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -122,23 +122,9 @@ export type BAIAdminImageSelectPaginatedQuery$variables = {
   limit: number;
   offset: number;
   scope: ImageSearchScope;
-  useScope: boolean;
 };
 export type BAIAdminImageSelectPaginatedQuery$data = {
-  readonly adminImagesV2?: {
-    readonly count: number;
-    readonly edges: ReadonlyArray<{
-      readonly node: {
-        readonly id: string;
-        readonly identity: {
-          readonly architecture: string;
-          readonly canonicalName: string;
-        };
-        readonly " $fragmentSpreads": FragmentRefs<"BAIImageNodeSimpleTagV2Fragment">;
-      };
-    }>;
-  } | null | undefined;
-  readonly scopedImagesV2?: {
+  readonly scopedImagesV2: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -178,62 +164,53 @@ v3 = {
   "kind": "LocalArgument",
   "name": "scope"
 },
-v4 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "useScope"
-},
-v5 = {
-  "kind": "Variable",
-  "name": "filter",
-  "variableName": "filter"
-},
-v6 = {
-  "kind": "Variable",
-  "name": "limit",
-  "variableName": "limit"
-},
-v7 = {
-  "kind": "Variable",
-  "name": "offset",
-  "variableName": "offset"
-},
-v8 = {
-  "kind": "Literal",
-  "name": "orderBy",
-  "value": [
-    {
-      "direction": "ASC",
-      "field": "NAME"
-    }
-  ]
-},
-v9 = [
-  (v5/*: any*/),
-  (v6/*: any*/),
-  (v7/*: any*/),
-  (v8/*: any*/),
+v4 = [
+  {
+    "kind": "Variable",
+    "name": "filter",
+    "variableName": "filter"
+  },
+  {
+    "kind": "Variable",
+    "name": "limit",
+    "variableName": "limit"
+  },
+  {
+    "kind": "Variable",
+    "name": "offset",
+    "variableName": "offset"
+  },
+  {
+    "kind": "Literal",
+    "name": "orderBy",
+    "value": [
+      {
+        "direction": "ASC",
+        "field": "NAME"
+      }
+    ]
+  },
   {
     "kind": "Variable",
     "name": "scope",
     "variableName": "scope"
   }
 ],
-v10 = {
+v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "count",
   "storageKey": null
 },
-v11 = {
+v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v12 = {
+v7 = {
   "alias": null,
   "args": null,
   "concreteType": "ImageV2IdentityInfo",
@@ -258,45 +235,7 @@ v12 = {
   ],
   "storageKey": null
 },
-v13 = [
-  (v10/*: any*/),
-  {
-    "alias": null,
-    "args": null,
-    "concreteType": "ImageV2Edge",
-    "kind": "LinkedField",
-    "name": "edges",
-    "plural": true,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "ImageV2",
-        "kind": "LinkedField",
-        "name": "node",
-        "plural": false,
-        "selections": [
-          (v11/*: any*/),
-          (v12/*: any*/),
-          {
-            "args": null,
-            "kind": "FragmentSpread",
-            "name": "BAIImageNodeSimpleTagV2Fragment"
-          }
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
-  }
-],
-v14 = [
-  (v5/*: any*/),
-  (v6/*: any*/),
-  (v7/*: any*/),
-  (v8/*: any*/)
-],
-v15 = [
+v8 = [
   {
     "alias": null,
     "args": null,
@@ -311,64 +250,6 @@ v15 = [
     "name": "value",
     "storageKey": null
   }
-],
-v16 = [
-  (v10/*: any*/),
-  {
-    "alias": null,
-    "args": null,
-    "concreteType": "ImageV2Edge",
-    "kind": "LinkedField",
-    "name": "edges",
-    "plural": true,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "ImageV2",
-        "kind": "LinkedField",
-        "name": "node",
-        "plural": false,
-        "selections": [
-          (v11/*: any*/),
-          (v12/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ImageV2MetadataInfo",
-            "kind": "LinkedField",
-            "name": "metadata",
-            "plural": false,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "ImageV2TagEntry",
-                "kind": "LinkedField",
-                "name": "tags",
-                "plural": true,
-                "selections": (v15/*: any*/),
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "ImageV2LabelEntry",
-                "kind": "LinkedField",
-                "name": "labels",
-                "plural": true,
-                "selections": (v15/*: any*/),
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
-  }
 ];
 return {
   "fragment": {
@@ -376,46 +257,52 @@ return {
       (v0/*: any*/),
       (v1/*: any*/),
       (v2/*: any*/),
-      (v3/*: any*/),
-      (v4/*: any*/)
+      (v3/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "BAIAdminImageSelectPaginatedQuery",
     "selections": [
       {
-        "condition": "useScope",
-        "kind": "Condition",
-        "passingValue": true,
+        "alias": null,
+        "args": (v4/*: any*/),
+        "concreteType": "ImageV2Connection",
+        "kind": "LinkedField",
+        "name": "scopedImagesV2",
+        "plural": false,
         "selections": [
+          (v5/*: any*/),
           {
             "alias": null,
-            "args": (v9/*: any*/),
-            "concreteType": "ImageV2Connection",
+            "args": null,
+            "concreteType": "ImageV2Edge",
             "kind": "LinkedField",
-            "name": "scopedImagesV2",
-            "plural": false,
-            "selections": (v13/*: any*/),
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ImageV2",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  (v6/*: any*/),
+                  (v7/*: any*/),
+                  {
+                    "args": null,
+                    "kind": "FragmentSpread",
+                    "name": "BAIImageNodeSimpleTagV2Fragment"
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
             "storageKey": null
           }
-        ]
-      },
-      {
-        "condition": "useScope",
-        "kind": "Condition",
-        "passingValue": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": (v14/*: any*/),
-            "concreteType": "ImageV2Connection",
-            "kind": "LinkedField",
-            "name": "adminImagesV2",
-            "plural": false,
-            "selections": (v13/*: any*/),
-            "storageKey": null
-          }
-        ]
+        ],
+        "storageKey": null
       }
     ],
     "type": "Query",
@@ -427,59 +314,91 @@ return {
       (v2/*: any*/),
       (v1/*: any*/),
       (v0/*: any*/),
-      (v3/*: any*/),
-      (v4/*: any*/)
+      (v3/*: any*/)
     ],
     "kind": "Operation",
     "name": "BAIAdminImageSelectPaginatedQuery",
     "selections": [
       {
-        "condition": "useScope",
-        "kind": "Condition",
-        "passingValue": true,
+        "alias": null,
+        "args": (v4/*: any*/),
+        "concreteType": "ImageV2Connection",
+        "kind": "LinkedField",
+        "name": "scopedImagesV2",
+        "plural": false,
         "selections": [
+          (v5/*: any*/),
           {
             "alias": null,
-            "args": (v9/*: any*/),
-            "concreteType": "ImageV2Connection",
+            "args": null,
+            "concreteType": "ImageV2Edge",
             "kind": "LinkedField",
-            "name": "scopedImagesV2",
-            "plural": false,
-            "selections": (v16/*: any*/),
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ImageV2",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  (v6/*: any*/),
+                  (v7/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "ImageV2MetadataInfo",
+                    "kind": "LinkedField",
+                    "name": "metadata",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "ImageV2TagEntry",
+                        "kind": "LinkedField",
+                        "name": "tags",
+                        "plural": true,
+                        "selections": (v8/*: any*/),
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "ImageV2LabelEntry",
+                        "kind": "LinkedField",
+                        "name": "labels",
+                        "plural": true,
+                        "selections": (v8/*: any*/),
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
             "storageKey": null
           }
-        ]
-      },
-      {
-        "condition": "useScope",
-        "kind": "Condition",
-        "passingValue": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": (v14/*: any*/),
-            "concreteType": "ImageV2Connection",
-            "kind": "LinkedField",
-            "name": "adminImagesV2",
-            "plural": false,
-            "selections": (v16/*: any*/),
-            "storageKey": null
-          }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "5255c653de82f52cf0cd867fe28545ca",
+    "cacheID": "aaa9067f0e1e3bc8bb2408c57c348686",
     "id": null,
     "metadata": {},
     "name": "BAIAdminImageSelectPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIAdminImageSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: ImageV2Filter\n  $scope: ImageSearchScope!\n  $useScope: Boolean!\n) {\n  scopedImagesV2(scope: $scope, offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: ASC}]) @include(if: $useScope) @since(version: \"26.9.0a4\") {\n    count\n    edges {\n      node {\n        id\n        identity {\n          canonicalName\n          architecture\n        }\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n  adminImagesV2(offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: ASC}]) @skip(if: $useScope) {\n    count\n    edges {\n      node {\n        id\n        identity {\n          canonicalName\n          architecture\n        }\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n"
+    "text": "query BAIAdminImageSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: ImageV2Filter\n  $scope: ImageSearchScope!\n) {\n  scopedImagesV2(scope: $scope, offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: ASC}]) {\n    count\n    edges {\n      node {\n        id\n        identity {\n          canonicalName\n          architecture\n        }\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "1acf01fcfd7b022ba872e5d102a59dfe";
+(node as any).hash = "01ea333f30d42bea610f4c19d45c6ba0";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fd7fb2a0ccbc22c5fa6b8653ac28062f>>
+ * @generated SignedSource<<b785a36338fe3978948fecafce1120e2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,11 +9,22 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+export type ImageSearchScope = {
+  containerRegistry?: ReadonlyArray<UUIDScope> | null | undefined;
+  domain?: ReadonlyArray<UUIDScope> | null | undefined;
+  project?: ReadonlyArray<UUIDScope> | null | undefined;
+  public?: boolean;
+  user?: ReadonlyArray<UUIDScope> | null | undefined;
+};
+export type UUIDScope = {
+  value: string;
+};
 export type hooksUsingRelay_AdminImageReferenceQuery$variables = {
   id: string;
+  scope: ImageSearchScope;
 };
 export type hooksUsingRelay_AdminImageReferenceQuery$data = {
-  readonly adminImagesV2: {
+  readonly scopedImagesV2: {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly identity: {
@@ -35,6 +46,11 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "id"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "scope"
   }
 ],
 v1 = [
@@ -59,6 +75,11 @@ v1 = [
     "kind": "Literal",
     "name": "limit",
     "value": 1
+  },
+  {
+    "kind": "Variable",
+    "name": "scope",
+    "variableName": "scope"
   }
 ],
 v2 = {
@@ -98,7 +119,7 @@ return {
         "args": (v1/*: any*/),
         "concreteType": "ImageV2Connection",
         "kind": "LinkedField",
-        "name": "adminImagesV2",
+        "name": "scopedImagesV2",
         "plural": false,
         "selections": [
           {
@@ -142,7 +163,7 @@ return {
         "args": (v1/*: any*/),
         "concreteType": "ImageV2Connection",
         "kind": "LinkedField",
-        "name": "adminImagesV2",
+        "name": "scopedImagesV2",
         "plural": false,
         "selections": [
           {
@@ -181,16 +202,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "2488b1b0b7c570c4740c0826f33c1964",
+    "cacheID": "13e27b264bd4179d657eccaaf70a6ab6",
     "id": null,
     "metadata": {},
     "name": "hooksUsingRelay_AdminImageReferenceQuery",
     "operationKind": "query",
-    "text": "query hooksUsingRelay_AdminImageReferenceQuery(\n  $id: UUID!\n) {\n  adminImagesV2(filter: {id: {equals: $id}}, limit: 1) {\n    edges {\n      node {\n        identity {\n          canonicalName\n          architecture\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query hooksUsingRelay_AdminImageReferenceQuery(\n  $id: UUID!\n  $scope: ImageSearchScope!\n) {\n  scopedImagesV2(scope: $scope, filter: {id: {equals: $id}}, limit: 1) {\n    edges {\n      node {\n        identity {\n          canonicalName\n          architecture\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "1268865e22264aa8fe7c775602949b70";
+(node as any).hash = "9815e4470dbaaafa0fe9433affe03c3a";
 
 export default node;
