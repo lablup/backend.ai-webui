@@ -132,7 +132,7 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
   const supportsBinarySizeExpr =
     baiClient.isManagerVersionCompatibleWith('26.8.0');
   // The admin*ResourcePoliciesV2 queries are superadmin-only; domain admins read the legacy lists.
-  // TODO(needs-backend): #10288 — core has no scoped resource-policy list yet.
+  // TODO(needs-backend): core has no scoped resource-policy list yet; move to it in #10317.
   const isSuperadmin = !!baiClient.is_superadmin;
   const usesV2Table: Record<TabKey, boolean> = {
     keypair: isSuperadmin && supportsSubFilter,
