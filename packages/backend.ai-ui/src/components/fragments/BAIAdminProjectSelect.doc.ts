@@ -70,6 +70,12 @@ export const docs = {
         'Extra GraphQL filter narrowing the listed projects — any `ProjectV2Filter` field except `name`, e.g. `{ type: { equals: "MODEL_STORE" } }`, or `{ user: { email: { equals: … } } }` for one user\'s projects. It is spread into the page query filter, where a search term adds `name: { contains: … }` on top of it.',
     },
     {
+      name: 'scope',
+      type: 'ProjectScope | null',
+      description:
+        'Lists the projects this scope reaches through `scopedProjectsV2` instead of every project through the superadmin-only `adminProjectsV2` (ADR 0011). Pass it on pages a domain admin can open, for example `useCurrentDomainScope().domainScope`; it is `null` on managers below 26.9.0a4, where the select falls back to `adminProjectsV2`. Omit it on superadmin-only pages.',
+    },
+    {
       name: 'multiple',
       type: 'boolean',
       description:
