@@ -52,9 +52,8 @@ export interface BAIDrawerProps {
  * The project's drawer shell: lab `Drawer` plus the header arrangement antd's
  * `Drawer` produced — `[X] Title …… [extra]`, a divider, then a padded
  * scrollable body — so every detail drawer reads the way it did before the
- * Astryx migration. lab has no title bar of its own, only a floating
- * `hasCloseButton` glyph that overlaps whatever the content renders first;
- * that button is turned off here so there is one close affordance (qa2-c).
+ * Astryx migration. lab has no title bar of its own and, since 0.6.5, no
+ * close button either, so the header's button is the one close affordance.
  */
 declare const BAIDrawer: React.FC<BAIDrawerProps>;
 export default BAIDrawer;

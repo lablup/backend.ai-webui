@@ -9,15 +9,11 @@ export interface BAITextTooltipConfig {
     title?: ReactNode;
     [antdTooltipProp: string]: unknown;
 }
-/** antd `EllipsisConfig`. */
+/** antd `EllipsisConfig`, without its `expandable` / `onExpand` pair. */
 export interface BAITextEllipsisConfig {
     rows?: number;
-    expandable?: boolean;
     /** `true` shows the children; a node shows that node; `{ title }` its title. */
     tooltip?: ReactNode | BAITextTooltipConfig;
-    onExpand?: (e: React.MouseEvent<HTMLElement>, info: {
-        expanded: boolean;
-    }) => void;
 }
 /** antd `CopyConfig`. Tuples are `[resting, copied]`. */
 export interface BAITextCopyConfig {

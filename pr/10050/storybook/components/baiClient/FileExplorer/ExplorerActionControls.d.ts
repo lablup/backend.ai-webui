@@ -10,7 +10,7 @@ interface ExplorerActionControlsProps {
     onClearSelection?: () => void;
     enableDownload?: boolean;
     enableDelete?: boolean;
-    enableWrite?: boolean;
+    enableCreate?: boolean;
     enableUpload?: boolean;
     mode?: 'explorer' | 'directoryPicker';
     onFolderCreated?: (folderName: string) => void;
