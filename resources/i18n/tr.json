@@ -3285,6 +3285,7 @@
   },
   "sessionMonitor": {
     "DomainSessions": "Bu etki alanının oturumları",
+    "InUseAcross": "{{count}} çalışan oturumda kullanılıyor",
     "MonitorSettings": "Monitör ayarları",
     "MoreSessions": "{{count}} oturum daha",
     "MyResourceUsage": "Limitime karşı kullanımım",

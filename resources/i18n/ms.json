@@ -3285,6 +3285,7 @@
   },
   "sessionMonitor": {
     "DomainSessions": "Sesi dalam domain ini",
+    "InUseAcross": "Digunakan dalam {{count}} sesi yang berjalan",
     "MonitorSettings": "Tetapan pemantau",
     "MoreSessions": "{{count}} lagi sesi",
     "MyResourceUsage": "Penggunaan saya berbanding had saya",

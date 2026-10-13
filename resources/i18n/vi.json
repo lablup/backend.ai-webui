@@ -3287,6 +3287,7 @@
   },
   "sessionMonitor": {
     "DomainSessions": "Phiên trong miền này",
+    "InUseAcross": "Đang được sử dụng trong {{count}} phiên đang chạy",
     "MonitorSettings": "Cài đặt giám sát",
     "MoreSessions": "{{count}} phiên khác",
     "MyResourceUsage": "Mức sử dụng của tôi so với giới hạn của tôi",

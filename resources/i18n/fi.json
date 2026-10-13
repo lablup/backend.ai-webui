@@ -3285,6 +3285,7 @@
   },
   "sessionMonitor": {
     "DomainSessions": "Tämän toimialueen istunnot",
+    "InUseAcross": "Käytössä {{count}} käynnissä olevassa istunnossa",
     "MonitorSettings": "Valvonta-asetukset",
     "MoreSessions": "{{count}} istuntoa lisää",
     "MyResourceUsage": "Käyttöni verrattuna rajaani",

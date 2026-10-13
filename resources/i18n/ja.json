@@ -3287,6 +3287,7 @@
   },
   "sessionMonitor": {
     "DomainSessions": "このドメインのセッション",
+    "InUseAcross": "実行中のセッション{{count}}件で使用中",
     "MonitorSettings": "モニター設定",
     "MoreSessions": "他に{{count}}件のセッション",
     "MyResourceUsage": "自分の上限に対する使用量",

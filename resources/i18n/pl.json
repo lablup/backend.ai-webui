@@ -3288,6 +3288,7 @@
   },
   "sessionMonitor": {
     "DomainSessions": "Sesje w tej domenie",
+    "InUseAcross": "W użyciu w {{count}} działających sesjach",
     "MonitorSettings": "Ustawienia monitora",
     "MoreSessions": "{{count}} więcej sesji",
     "MyResourceUsage": "Moje użycie względem mojego limitu",

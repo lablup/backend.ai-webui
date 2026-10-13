@@ -3287,6 +3287,7 @@
   },
   "sessionMonitor": {
     "DomainSessions": "Энэ доменийн сессүүд",
+    "InUseAcross": "Ажиллаж буй {{count}} сессэд ашиглагдаж байна",
     "MonitorSettings": "Хяналтын тохиргоо",
     "MoreSessions": "өөр {{count}} сесс",
     "MyResourceUsage": "Миний хязгаартай харьцуулсан хэрэглээ",

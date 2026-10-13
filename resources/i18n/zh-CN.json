@@ -3287,6 +3287,7 @@
   },
   "sessionMonitor": {
     "DomainSessions": "此域中的会话",
+    "InUseAcross": "正在 {{count}} 个运行中的会话中使用",
     "MonitorSettings": "监控设置",
     "MoreSessions": "还有 {{count}} 个会话",
     "MyResourceUsage": "我的使用量与限制对比",

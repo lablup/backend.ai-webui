@@ -3289,6 +3289,7 @@
   },
   "sessionMonitor": {
     "DomainSessions": "Sesi di domain ini",
+    "InUseAcross": "Digunakan di {{count}} sesi yang berjalan",
     "MonitorSettings": "Pengaturan monitor",
     "MoreSessions": "{{count}} sesi lainnya",
     "MyResourceUsage": "Penggunaan saya dibandingkan dengan batas saya",
