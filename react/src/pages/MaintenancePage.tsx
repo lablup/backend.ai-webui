@@ -22,12 +22,7 @@ import {
   availableRetentionPolicySorterValues,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import {
-  parseAsJson,
-  parseAsString,
-  parseAsStringLiteral,
-  useQueryStates,
-} from 'nuqs';
+import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { Suspense, useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -49,7 +44,7 @@ type RetentionPolicyVariables = AdminRetentionPolicyQueryType['variables'];
 type TabSnapshot = {
   queryParams: {
     order: typeof orderParser.defaultValue;
-    filter: string | null;
+    filter: RetentionPolicyFilter | null;
   };
   tablePaginationOption: { current: number; pageSize: number };
 };
@@ -68,10 +63,10 @@ const filterParser = parseAsJson<RetentionPolicyFilter>((value) =>
 
 const retentionPolicyVariablesOf = (
   order: string | null,
-  filter: string | null,
+  filter: RetentionPolicyFilter | null,
   pagination: { current: number; pageSize: number },
 ): RetentionPolicyVariables => ({
-  filter: (filter && filterParser.parse(filter)) || null,
+  filter: _.isEmpty(filter) ? null : filter,
   orderBy: convertToOrderBy<RetentionPolicyOrderBy>(
     (order && orderParser.parse(order)) ?? orderParser.defaultValue,
   ),
@@ -86,7 +81,7 @@ const MaintenancePage = () => {
     {
       tab: tabParser,
       order: orderParser,
-      filter: parseAsString,
+      filter: filterParser,
     },
     { history: 'replace' },
   );
@@ -123,7 +118,7 @@ const MaintenancePage = () => {
     const order = convertFirstOrderByToString(variables.orderBy);
     const filter = _.isEmpty(variables.filter)
       ? null
-      : JSON.stringify(variables.filter);
+      : (variables.filter ?? null);
     loadRetentionPolicyQuery(
       retentionPolicyVariablesOf(order, filter, pagination),
       { fetchPolicy: 'store-and-network', ...options },

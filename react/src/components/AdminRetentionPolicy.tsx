@@ -163,7 +163,8 @@ const AdminRetentionPolicy: React.FC<AdminRetentionPolicyProps> = ({
     });
   };
 
-  const findPolicy = (id: string) => _.find(policies, { id }) ?? null;
+  const policyById = _.keyBy(policies, 'id');
+  const findPolicy = (id: string) => policyById[id] ?? null;
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
@@ -282,7 +283,6 @@ const AdminRetentionPolicy: React.FC<AdminRetentionPolicyProps> = ({
               return {
                 ...column,
                 render: (_value, row) => {
-                  const policy = findPolicy(row.id);
                   const isToggling = _.includes(togglingIds, row.id);
                   return (
                     <Switch
@@ -291,8 +291,10 @@ const AdminRetentionPolicy: React.FC<AdminRetentionPolicyProps> = ({
                       size="sm"
                       value={row.enabled}
                       isLoading={isToggling}
-                      isDisabled={isToggling || !policy}
-                      onChange={(next) => policy && toggleEnabled(policy, next)}
+                      isDisabled={isToggling}
+                      onChange={(next) =>
+                        toggleEnabled(policyById[row.id], next)
+                      }
                     />
                   );
                 },
