@@ -10,7 +10,7 @@ import {
 import { RetentionPolicySettingModalFragment$key } from '../__generated__/RetentionPolicySettingModalFragment.graphql';
 import { RetentionPolicySettingModalUpdateMutation } from '../__generated__/RetentionPolicySettingModalUpdateMutation.graphql';
 import { App } from '../app-shim';
-import { Form } from '../form-engine';
+import { Form, FormInstance } from '../form-engine';
 import {
   AstryxFormNumberInput,
   AstryxFormSelector,
@@ -18,7 +18,7 @@ import {
 } from './astryxFormControls';
 import { BAILink, BAIModal, BAIModalProps, useBAILogger } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import {
   fetchQuery,
@@ -86,7 +86,7 @@ const RetentionPolicySettingModal: React.FC<
   const { logger } = useBAILogger();
   const relayEnv = useRelayEnvironment();
   const getCategoryLabel = useRetentionCategoryLabel();
-  const [form] = Form.useForm<RetentionPolicyFormValues>();
+  const formRef = useRef<FormInstance<RetentionPolicyFormValues>>(null);
   // A counter, so a re-select during an in-flight check does not end loading early.
   const [pendingCategoryChecks, setPendingCategoryChecks] = useState(0);
 
@@ -178,8 +178,8 @@ const RetentionPolicySettingModal: React.FC<
   };
 
   const handleOk = () =>
-    form
-      .validateFields()
+    formRef.current
+      ?.validateFields()
       .then((values) => {
         if (policy) {
           commitUpdate({
@@ -252,7 +252,7 @@ const RetentionPolicySettingModal: React.FC<
       onCancel={() => onRequestClose(false)}
     >
       <Form
-        form={form}
+        ref={formRef}
         layout="vertical"
         initialValues={
           policy
