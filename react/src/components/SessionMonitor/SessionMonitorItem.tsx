@@ -209,7 +209,7 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
           ) : (
             <>
               <Text type="label" justify="end">
-                —
+                -
               </Text>
               <Text type="supporting" maxLines={1} justify="end">
                 {isRunning
