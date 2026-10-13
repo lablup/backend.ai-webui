@@ -2,30 +2,122 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import {
+  RetentionPolicyListQuery as RetentionPolicyListQueryType,
+  RetentionPolicyOrderBy,
+} from '../__generated__/RetentionPolicyListQuery.graphql';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import MaintenanceSettingList from '../components/MaintenanceSettingList';
-import RetentionPolicyList from '../components/RetentionPolicyList';
+import RetentionPolicyList, {
+  RETENTION_POLICY_LIST_DEFAULT_PAGE_SIZE,
+  RETENTION_POLICY_SORTER_KEYS,
+  RetentionPolicyListQuery,
+} from '../components/RetentionPolicyList';
+import { RETENTION_CATEGORIES } from '../components/RetentionPolicySettingModal';
+import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
+import { useBrowserPopstateEffect } from '../hooks';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { BAISkeleton, BAICard } from 'backend.ai-ui';
-import { parseAsStringLiteral, useQueryState } from 'nuqs';
-import { Suspense } from 'react';
+import * as _ from 'lodash-es';
+import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import { Suspense, useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  useQueryLoader,
+  type UseQueryLoaderLoadQueryOptions,
+} from 'react-relay';
+
+const tabParser = parseAsStringLiteral([
+  'maintenance',
+  'retention-policy',
+]).withDefault('maintenance');
+const orderParser = parseAsString.withDefault('category');
+
+type RetentionPolicyVariables = RetentionPolicyListQueryType['variables'];
+
+const defaultRetentionPolicyPagination = {
+  current: 1,
+  pageSize: RETENTION_POLICY_LIST_DEFAULT_PAGE_SIZE,
+};
+
+const retentionPolicyVariablesOf = (
+  order: string | null,
+  pagination: { current: number; pageSize: number },
+): RetentionPolicyVariables => ({
+  orderBy: convertToOrderBy<RetentionPolicyOrderBy>(
+    order && _.includes(RETENTION_POLICY_SORTER_KEYS, order.replace(/^-/, ''))
+      ? order
+      : orderParser.defaultValue,
+  ),
+  limit: pagination.pageSize,
+  offset: (pagination.current - 1) * pagination.pageSize,
+  categoryLimit: RETENTION_CATEGORIES.length,
+});
 
 const MaintenancePage = () => {
   'use memo';
   const { t } = useTranslation();
-  const [tabKey, setTabKey] = useQueryState(
-    'tab',
-    parseAsStringLiteral(['maintenance', 'retention-policy']).withDefault(
-      'maintenance',
-    ),
+  const [queryParams, setQueryParams] = useQueryStates(
+    {
+      tab: tabParser,
+      order: orderParser,
+    },
+    { history: 'replace' },
   );
+  const { tablePaginationOption, setTablePaginationOption } =
+    useBAIPaginationOptionStateOnSearchParam(defaultRetentionPolicyPagination);
+
+  const [retentionPolicyQueryRef, loadRetentionPolicyQuery] =
+    useQueryLoader<RetentionPolicyListQueryType>(RetentionPolicyListQuery);
+
+  const handleRetentionPolicyReload = (
+    variables: RetentionPolicyVariables,
+    options?: UseQueryLoaderLoadQueryOptions,
+  ) => {
+    const pageSize = variables.limit ?? RETENTION_POLICY_LIST_DEFAULT_PAGE_SIZE;
+    const pagination = {
+      current: Math.floor((variables.offset ?? 0) / pageSize) + 1,
+      pageSize,
+    };
+    const order = convertFirstOrderByToString(variables.orderBy);
+    loadRetentionPolicyQuery(retentionPolicyVariablesOf(order, pagination), {
+      fetchPolicy: 'store-and-network',
+      ...options,
+    });
+    setQueryParams({ order }, { history: 'replace' });
+    setTablePaginationOption(pagination);
+  };
+
+  const loadTabFromQueryParams = () => {
+    if (queryParams.tab !== 'retention-policy') return;
+    loadRetentionPolicyQuery(
+      retentionPolicyVariablesOf(queryParams.order, tablePaginationOption),
+      { fetchPolicy: 'store-and-network' },
+    );
+  };
+
+  const loadTabOnMount = useEffectEvent(loadTabFromQueryParams);
+  useEffect(() => {
+    loadTabOnMount();
+  }, []);
+
+  useBrowserPopstateEffect(loadTabFromQueryParams);
 
   return (
     <BAICard
-      activeTabKey={tabKey}
-      onTabChange={(key) =>
-        setTabKey(key as 'maintenance' | 'retention-policy')
-      }
+      activeTabKey={queryParams.tab}
+      onTabChange={(key) => {
+        const tab = tabParser.parse(key) ?? tabParser.defaultValue;
+        if (tab === queryParams.tab) return;
+        if (tab === 'retention-policy') {
+          loadRetentionPolicyQuery(
+            retentionPolicyVariablesOf(null, defaultRetentionPolicyPagination),
+            { fetchPolicy: 'store-and-network' },
+          );
+        }
+        setQueryParams({ tab, order: null }, { history: 'push' });
+        setTablePaginationOption(defaultRetentionPolicyPagination);
+      }}
       tabList={[
         {
           key: 'maintenance',
@@ -38,14 +130,21 @@ const MaintenancePage = () => {
       ]}
     >
       <Suspense fallback={<BAISkeleton />}>
-        {tabKey === 'maintenance' && (
+        {queryParams.tab === 'maintenance' && (
           <BAIErrorBoundary>
             <MaintenanceSettingList />
           </BAIErrorBoundary>
         )}
-        {tabKey === 'retention-policy' && (
+        {queryParams.tab === 'retention-policy' && (
           <BAIErrorBoundary>
-            <RetentionPolicyList />
+            {retentionPolicyQueryRef ? (
+              <RetentionPolicyList
+                queryRef={retentionPolicyQueryRef}
+                onReload={handleRetentionPolicyReload}
+              />
+            ) : (
+              <BAISkeleton />
+            )}
           </BAIErrorBoundary>
         )}
       </Suspense>
