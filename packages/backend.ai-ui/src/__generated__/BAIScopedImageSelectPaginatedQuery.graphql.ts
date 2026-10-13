@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f147506128a14fbd4b2bc0078b669228>>
+ * @generated SignedSource<<9336b113468c2bd8e290cb73681059b1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -107,16 +107,28 @@ export type EntityLabelFilter = {
   key?: StringFilter | null | undefined;
   value?: StringFilter | null | undefined;
 };
-export type BAIAdminImageSelectPaginatedQuery$variables = {
+export type ImageSearchScope = {
+  containerRegistry?: ReadonlyArray<UUIDScope> | null | undefined;
+  domain?: ReadonlyArray<UUIDScope> | null | undefined;
+  project?: ReadonlyArray<UUIDScope> | null | undefined;
+  public?: boolean;
+  user?: ReadonlyArray<UUIDScope> | null | undefined;
+};
+export type UUIDScope = {
+  value: string;
+};
+export type BAIScopedImageSelectPaginatedQuery$variables = {
   filter?: ImageV2Filter | null | undefined;
   limit: number;
   offset: number;
+  scope: ImageSearchScope;
 };
-export type BAIAdminImageSelectPaginatedQuery$data = {
-  readonly adminImagesV2: {
+export type BAIScopedImageSelectPaginatedQuery$data = {
+  readonly scopedImagesV2: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly entityId: string;
         readonly id: string;
         readonly identity: {
           readonly architecture: string;
@@ -127,9 +139,9 @@ export type BAIAdminImageSelectPaginatedQuery$data = {
     }>;
   } | null | undefined;
 };
-export type BAIAdminImageSelectPaginatedQuery = {
-  response: BAIAdminImageSelectPaginatedQuery$data;
-  variables: BAIAdminImageSelectPaginatedQuery$variables;
+export type BAIScopedImageSelectPaginatedQuery = {
+  response: BAIScopedImageSelectPaginatedQuery$data;
+  variables: BAIScopedImageSelectPaginatedQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -148,7 +160,12 @@ v2 = {
   "kind": "LocalArgument",
   "name": "offset"
 },
-v3 = [
+v3 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "scope"
+},
+v4 = [
   {
     "kind": "Variable",
     "name": "filter",
@@ -173,23 +190,35 @@ v3 = [
         "field": "NAME"
       }
     ]
+  },
+  {
+    "kind": "Variable",
+    "name": "scope",
+    "variableName": "scope"
   }
 ],
-v4 = {
+v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "count",
   "storageKey": null
 },
-v5 = {
+v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v6 = {
+v7 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "entityId",
+  "storageKey": null
+},
+v8 = {
   "alias": null,
   "args": null,
   "concreteType": "ImageV2IdentityInfo",
@@ -214,7 +243,7 @@ v6 = {
   ],
   "storageKey": null
 },
-v7 = [
+v9 = [
   {
     "alias": null,
     "args": null,
@@ -235,21 +264,22 @@ return {
     "argumentDefinitions": [
       (v0/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/)
+      (v2/*: any*/),
+      (v3/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "BAIAdminImageSelectPaginatedQuery",
+    "name": "BAIScopedImageSelectPaginatedQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v3/*: any*/),
+        "args": (v4/*: any*/),
         "concreteType": "ImageV2Connection",
         "kind": "LinkedField",
-        "name": "adminImagesV2",
+        "name": "scopedImagesV2",
         "plural": false,
         "selections": [
-          (v4/*: any*/),
+          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -266,8 +296,9 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v5/*: any*/),
                   (v6/*: any*/),
+                  (v7/*: any*/),
+                  (v8/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -291,20 +322,21 @@ return {
     "argumentDefinitions": [
       (v2/*: any*/),
       (v1/*: any*/),
-      (v0/*: any*/)
+      (v0/*: any*/),
+      (v3/*: any*/)
     ],
     "kind": "Operation",
-    "name": "BAIAdminImageSelectPaginatedQuery",
+    "name": "BAIScopedImageSelectPaginatedQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v3/*: any*/),
+        "args": (v4/*: any*/),
         "concreteType": "ImageV2Connection",
         "kind": "LinkedField",
-        "name": "adminImagesV2",
+        "name": "scopedImagesV2",
         "plural": false,
         "selections": [
-          (v4/*: any*/),
+          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -321,8 +353,9 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v5/*: any*/),
                   (v6/*: any*/),
+                  (v7/*: any*/),
+                  (v8/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -338,7 +371,7 @@ return {
                         "kind": "LinkedField",
                         "name": "tags",
                         "plural": true,
-                        "selections": (v7/*: any*/),
+                        "selections": (v9/*: any*/),
                         "storageKey": null
                       },
                       {
@@ -348,7 +381,7 @@ return {
                         "kind": "LinkedField",
                         "name": "labels",
                         "plural": true,
-                        "selections": (v7/*: any*/),
+                        "selections": (v9/*: any*/),
                         "storageKey": null
                       }
                     ],
@@ -366,16 +399,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "0a4b672009422bedc14d4dc93ab0bd18",
+    "cacheID": "f8ee299e7abdec064da93cb5d849f2cd",
     "id": null,
     "metadata": {},
-    "name": "BAIAdminImageSelectPaginatedQuery",
+    "name": "BAIScopedImageSelectPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIAdminImageSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: ImageV2Filter\n) {\n  adminImagesV2(offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: ASC}]) {\n    count\n    edges {\n      node {\n        id\n        identity {\n          canonicalName\n          architecture\n        }\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n"
+    "text": "query BAIScopedImageSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: ImageV2Filter\n  $scope: ImageSearchScope!\n) {\n  scopedImagesV2(scope: $scope, offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: ASC}]) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        identity {\n          canonicalName\n          architecture\n        }\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "9d7e11f9ecc26940c3a3317eb188cb83";
+(node as any).hash = "e5ee326b12a20aacacaf3cba0ddc10a4";
 
 export default node;

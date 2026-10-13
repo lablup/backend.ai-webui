@@ -19,6 +19,7 @@ import {
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import { useModelStoreProject } from '../hooks/useModelStoreProject';
 import AdminModelCardSettingModal from './AdminModelCardSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -29,7 +30,7 @@ import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIAdminProjectSelect,
+  BAIScopedProjectSelect,
   BAIAlert,
   BAIButton,
   BAIColumnType,
@@ -151,6 +152,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   tableSettings,
 }) => {
   'use memo';
+  const { domainScope } = useCurrentDomainScope();
 
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -397,7 +399,8 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                   validate: (value) => isValidUUID(value),
                 },
                 renderInput: ({ onAddCondition, value, isDisabled }) => (
-                  <BAIAdminProjectSelect
+                  <BAIScopedProjectSelect
+                    scope={domainScope}
                     label={t('adminModelCard.Project')}
                     isLabelHidden
                     // A model card belongs to a MODEL_STORE project.

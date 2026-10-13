@@ -16,6 +16,15 @@ import {
 } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
 
+const CURRENT_DOMAIN_ID = 'b9e676dc-e23e-54c6-b350-e83fba4127e9';
+vi.mock('../hooks/useCurrentDomainScope', () => ({
+  useCurrentDomainScope: () => ({
+    domainName: 'default',
+    domainId: CURRENT_DOMAIN_ID,
+    domainScope: { domain: [{ value: CURRENT_DOMAIN_ID }] },
+  }),
+}));
+
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key,
@@ -47,7 +56,7 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
   const originalModule = await importOriginal<typeof import('backend.ai-ui')>();
   return {
     ...originalModule,
-    BAIAdminProjectSelect: () => {
+    BAIScopedProjectSelect: () => {
       if (!projectsSettled) throw projectsPromise;
       return React.createElement('input', {
         'data-testid': 'allowed-projects-select',

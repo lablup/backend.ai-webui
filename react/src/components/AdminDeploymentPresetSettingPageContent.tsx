@@ -11,6 +11,7 @@ import {
   resolvesReadsVfolderConfigFiles,
 } from '../helper/modelServiceCommand';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import {
   buildRuntimeVariantPresetValues,
   collectTouchedRuntimePresetParams,
@@ -54,7 +55,7 @@ import { Selector } from '@lablup/ui-common/Selector';
 import { Step, Stepper } from '@lablup/ui-common/Stepper';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIAdminImageSelect,
+  BAIScopedImageSelect,
   BAIButton,
   BAICard,
   BAIFlex,
@@ -130,7 +131,7 @@ export interface AdminDeploymentPresetSettingPageContentProps {
 }
 
 // ---------------------------------------------------------------------------
-// ImageSelectField — thin Suspense wrapper around BAIAdminImageSelect
+// ImageSelectField — thin Suspense wrapper around BAIScopedImageSelect
 // ---------------------------------------------------------------------------
 
 const ImageSelectField: React.FC<{
@@ -154,13 +155,26 @@ const ImageSelectField: React.FC<{
         />
       }
     >
-      <BAIAdminImageSelect
-        label={t('adminDeploymentPreset.Image')}
-        isLabelHidden
-        value={value}
-        onChange={onChange}
-      />
+      <ScopedPresetImageSelect value={value} onChange={onChange} />
     </Suspense>
+  );
+};
+
+const ScopedPresetImageSelect: React.FC<{
+  value?: string | Array<string>;
+  onChange?: (value: string | Array<string> | undefined) => void;
+}> = ({ value, onChange }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { domainScope } = useCurrentDomainScope();
+  return (
+    <BAIScopedImageSelect
+      scope={{ ...domainScope, public: true }}
+      label={t('adminDeploymentPreset.Image')}
+      isLabelHidden
+      value={value}
+      onChange={onChange}
+    />
   );
 };
 

@@ -98,10 +98,10 @@ export { default as BAIProjectSettingModal } from './BAIProjectSettingModal';
 export type { BAIProjectSettingModalFragmentKey } from './BAIProjectSettingModal';
 export { default as BAIProjectResourcePolicySelect } from './BAIProjectResourcePolicySelect';
 export type { BAIProjectResourcePolicySelectProps } from './BAIProjectResourcePolicySelect';
-export { default as BAIResourceGroupSelect } from './BAIResourceGroupSelect';
-export type { BAIResourceGroupSelectProps } from './BAIResourceGroupSelect';
-export { useResourceGroupNames } from './BAIResourceGroupSelect';
-export type { BAIResourceGroupFilter } from './BAIResourceGroupSelect';
+export { default as BAIScopedResourceGroupSelect } from './BAIScopedResourceGroupSelect';
+export type { BAIScopedResourceGroupSelectProps } from './BAIScopedResourceGroupSelect';
+export { useScopedResourceGroupNames } from './BAIScopedResourceGroupSelect';
+export type { BAIResourceGroupFilter } from './BAIScopedResourceGroupSelect';
 export { default as BAIStorageProxySelect } from './BAIStorageProxySelect';
 export type { BAIStorageProxySelectProps } from './BAIStorageProxySelect';
 export { default as BAIProjectBulkEditModal } from './BAIProjectBulkEditModal';
@@ -173,12 +173,12 @@ export type {
   BAIKeypairSelectRef,
   AstryxKeypairNode,
 } from './BAIKeypairSelect';
-export { default as BAIAdminProjectSelect } from './BAIAdminProjectSelect';
+export { default as BAIScopedProjectSelect } from './BAIScopedProjectSelect';
 export type {
-  BAIAdminProjectSelectProps,
-  BAIAdminProjectSelectRef,
-  AstryxAdminProjectNode,
-} from './BAIAdminProjectSelect';
+  BAIScopedProjectSelectProps,
+  BAIScopedProjectSelectRef,
+  ScopedProjectNode,
+} from './BAIScopedProjectSelect';
 export { default as BAIAdminKeypairResourcePolicySelect } from './BAIAdminKeypairResourcePolicySelect';
 export type {
   BAIAdminKeypairResourcePolicySelectProps,
@@ -261,11 +261,11 @@ export type {
   BAIStorageHostSelectRef,
   StorageHostNode,
 } from './BAIStorageHostSelect';
-export { default as BAIAdminImageSelect } from './BAIAdminImageSelect';
+export { default as BAIScopedImageSelect } from './BAIScopedImageSelect';
 export type {
-  BAIAdminImageSelectProps,
-  BAIAdminImageSelectRef,
+  BAIScopedImageSelectProps,
+  BAIScopedImageSelectRef,
   AstryxImageV2Node,
-} from './BAIAdminImageSelect';
+} from './BAIScopedImageSelect';
 export { default as BAISubStepNodes } from './BAISubStepNodes';
 export type { BAISubStepNodesProps, SubStepInList } from './BAISubStepNodes';

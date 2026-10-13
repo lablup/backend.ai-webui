@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9207bc9dcc8312994097928b8a2f1cd5>>
+ * @generated SignedSource<<bc7bb741b6b476a7997712f6ead2bb59>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,14 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+export type ResourceGroupScope = {
+  domain?: ReadonlyArray<UUIDScope> | null | undefined;
+  project?: ReadonlyArray<UUIDScope> | null | undefined;
+  user?: ReadonlyArray<UUIDScope> | null | undefined;
+};
+export type UUIDScope = {
+  value: string;
+};
 export type ResourceGroupFilter = {
   AND?: ReadonlyArray<ResourceGroupFilter> | null | undefined;
   NOT?: ReadonlyArray<ResourceGroupFilter> | null | undefined;
@@ -63,11 +71,12 @@ export type UUIDFilter = {
   notEquals?: string | null | undefined;
   notIn?: ReadonlyArray<string> | null | undefined;
 };
-export type BAIResourceGroupSelectQuery$variables = {
+export type BAIScopedResourceGroupSelectQuery$variables = {
   filter?: ResourceGroupFilter | null | undefined;
+  scope: ResourceGroupScope;
 };
-export type BAIResourceGroupSelectQuery$data = {
-  readonly adminResourceGroups: {
+export type BAIScopedResourceGroupSelectQuery$data = {
+  readonly scopedResourceGroups: {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly name: string;
@@ -75,20 +84,23 @@ export type BAIResourceGroupSelectQuery$data = {
     }>;
   } | null | undefined;
 };
-export type BAIResourceGroupSelectQuery = {
-  response: BAIResourceGroupSelectQuery$data;
-  variables: BAIResourceGroupSelectQuery$variables;
+export type BAIScopedResourceGroupSelectQuery = {
+  response: BAIScopedResourceGroupSelectQuery$data;
+  variables: BAIScopedResourceGroupSelectQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "filter"
-  }
-],
-v1 = [
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "filter"
+},
+v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "scope"
+},
+v2 = [
   {
     "kind": "Variable",
     "name": "filter",
@@ -108,9 +120,14 @@ v1 = [
         "field": "NAME"
       }
     ]
+  },
+  {
+    "kind": "Variable",
+    "name": "scope",
+    "variableName": "scope"
   }
 ],
-v2 = {
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -119,17 +136,20 @@ v2 = {
 };
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/)
+    ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "BAIResourceGroupSelectQuery",
+    "name": "BAIScopedResourceGroupSelectQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v1/*: any*/),
+        "args": (v2/*: any*/),
         "concreteType": "ResourceGroupConnection",
         "kind": "LinkedField",
-        "name": "adminResourceGroups",
+        "name": "scopedResourceGroups",
         "plural": false,
         "selections": [
           {
@@ -148,7 +168,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v2/*: any*/)
+                  (v3/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -164,16 +184,19 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v1/*: any*/),
+      (v0/*: any*/)
+    ],
     "kind": "Operation",
-    "name": "BAIResourceGroupSelectQuery",
+    "name": "BAIScopedResourceGroupSelectQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v1/*: any*/),
+        "args": (v2/*: any*/),
         "concreteType": "ResourceGroupConnection",
         "kind": "LinkedField",
-        "name": "adminResourceGroups",
+        "name": "scopedResourceGroups",
         "plural": false,
         "selections": [
           {
@@ -192,7 +215,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v2/*: any*/),
+                  (v3/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -212,16 +235,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "ccbeb1e0d742d5ecb1d403bebf4046be",
+    "cacheID": "b89ae9ea8eecb7f51921bfa05c94f5c8",
     "id": null,
     "metadata": {},
-    "name": "BAIResourceGroupSelectQuery",
+    "name": "BAIScopedResourceGroupSelectQuery",
     "operationKind": "query",
-    "text": "query BAIResourceGroupSelectQuery(\n  $filter: ResourceGroupFilter\n) {\n  adminResourceGroups(filter: $filter, orderBy: [{field: NAME, direction: ASC}], limit: 100) {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query BAIScopedResourceGroupSelectQuery(\n  $scope: ResourceGroupScope!\n  $filter: ResourceGroupFilter\n) {\n  scopedResourceGroups(scope: $scope, filter: $filter, orderBy: [{field: NAME, direction: ASC}], limit: 100) {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "401e1429387d38b178219ebb0a678556";
+(node as any).hash = "b1c8fb072a583117bb5851f845807b45";
 
 export default node;

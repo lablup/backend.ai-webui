@@ -10,10 +10,12 @@ import {
 import { ResourcePresetSettingModalFragment$key } from '../__generated__/ResourcePresetSettingModalFragment.graphql';
 import { App } from '../app-shim';
 import { reasonMessage } from '../helper/mutationError';
+import { useSuspendedBackendaiClient } from '../hooks';
 import ResourcePresetSettingModal from './ResourcePresetSettingModal';
 import { Button } from '@lablup/ui-common/Button';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import {
+  filterOutEmpty,
   filterOutNullAndUndefined,
   BAITable,
   BAIFlex,
@@ -55,6 +57,9 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
+  // TODO(needs-backend): preset writes admit superadmins only until lablup/backend.ai#15527
+  // ships scoped preset mutations; move to them in #10316.
+  const isSuperAdmin = useSuspendedBackendaiClient().is_superadmin;
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [resourcePresetsFetchKey, updateResourcePresetsFetchKey] =
     useUpdatableState('initial-fetch');
@@ -120,8 +125,8 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
         <BAINameActionCell
           title={name}
           showActions="always"
-          actions={[
-            {
+          actions={filterOutEmpty([
+            isSuperAdmin && {
               key: 'edit',
               title: t('button.Edit'),
               icon: <SquarePenIcon />,
@@ -131,16 +136,16 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
                 }
               },
             },
-            {
+            isSuperAdmin && {
               key: 'delete',
               title: t('button.Delete'),
               icon: <Trash2 size="1em" />,
-              type: 'danger',
+              type: 'danger' as const,
               onClick: () => {
                 setDeletingPresetId(record?.id ?? null);
               },
             },
-          ]}
+          ])}
         />
       ),
     },
@@ -222,14 +227,16 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
               });
             }}
           />
-          <Button
-            variant="primary"
-            icon={<PlusIcon />}
-            label={t('resourcePreset.CreatePreset')}
-            onClick={() => {
-              setIsCreating(true);
-            }}
-          />
+          {isSuperAdmin && (
+            <Button
+              variant="primary"
+              icon={<PlusIcon />}
+              label={t('resourcePreset.CreatePreset')}
+              onClick={() => {
+                setIsCreating(true);
+              }}
+            />
+          )}
         </BAIFlex>
       </BAIFlex>
       <BAITable
