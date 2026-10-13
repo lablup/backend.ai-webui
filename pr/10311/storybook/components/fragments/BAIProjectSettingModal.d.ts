@@ -1,5 +1,5 @@
 import { BAIProjectSettingModalFragment$key } from '../../__generated__/BAIProjectSettingModalFragment.graphql';
-import { ResourceGroupScope } from '../../__generated__/BAIResourceGroupSelectQuery.graphql';
+import { ResourceGroupScope } from '../../__generated__/BAIScopedResourceGroupSelectQuery.graphql';
 import { BAIModalProps } from '../BAIModal';
 export interface BAIProjectSettingModalProps extends Omit<BAIModalProps, 'title' | 'loading'> {
     projectFragment: BAIProjectSettingModalFragment$key | null;
