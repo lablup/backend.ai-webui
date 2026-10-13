@@ -198,9 +198,12 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   const findUserNode = (id: string) =>
     adminUsersV2?.edges?.find((edge) => edge?.node?.id === id)?.node ?? null;
 
+  // The manager's user create/modify mutations admit superadmins only (#10288).
+  const isSuperAdmin = bailClient.is_superadmin;
+
   const canActAs =
     bailClient.isManagerVersionCompatibleWith('26.9.0') &&
-    bailClient.is_superadmin &&
+    isSuperAdmin &&
     !globalThis.isElectron;
 
   const confirmActAs = (userId: string, email: string, name: string) => {
@@ -234,7 +237,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
               setSelectedUserForInfoModal(findUserNode(record.id));
             },
           },
-          {
+          isSuperAdmin && {
             key: 'edit',
             title: t('button.Edit'),
             icon: <SquarePenIcon />,
@@ -539,12 +542,14 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
                 count={selectedUserList.length}
                 onClearSelection={() => setSelectedUserList([])}
               />
-              <BAIButton
-                icon={
-                  <SquarePenIcon style={{ color: token('--color-info') }} />
-                }
-                onClick={toggleUpdateUsersModal}
-              />
+              {isSuperAdmin && (
+                <BAIButton
+                  icon={
+                    <SquarePenIcon style={{ color: token('--color-info') }} />
+                  }
+                  onClick={toggleUpdateUsersModal}
+                />
+              )}
               {statusValue === 'INACTIVE' && (
                 <BAIButton
                   icon={
@@ -564,62 +569,43 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
               onReload(variables, { fetchPolicy: 'network-only' });
             }}
           />
-          {/* ONE attached control, not two adjacent buttons.
-              `ButtonGroup` joins its children through CONTEXT, not through
-              wrappers or cloneElement: `ButtonGroupContext` tells each child
-              its position, and the child suppresses its own inner end-cap
-              radius and shared border accordingly (see `ButtonGroup.js` — "no
-              cloneElement or wrapper divs needed" — and `IS_LAST_ITEM` in
-              `Button.js`, which is why a trailing `[popover]` sibling does not
-              break the last-child detection).
-
-              Only Astryx `Button` / `IconButton` / `ToggleButton` read that
-              context. The primary action here was `BAIButton`, i.e. an antd
-              `Button` (`packages/backend.ai-ui/src/components/BAIButton.tsx`
-              wraps `antd`'s), which is invisible to the context and therefore
-              kept its own fully-rounded pill — the group rendered as a split
-              pair. `DropdownMenu` was already fine: it renders an Astryx
-              `Button` as its trigger, as a direct child.
-
-              So the fix is to make the primary child an Astryx `Button` too.
-              `variant="primary"` is the Astryx spelling of antd
-              `type="primary"`; `label` carries both the visible text and the
-              accessible name. */}
-          <ButtonGroup label={t('credential.CreateUser')}>
-            <Button
-              variant="primary"
-              icon={<PlusIcon size="1em" />}
-              label={t('credential.CreateUser')}
-              onClick={() => {
-                setOpenCreateModal(true);
-              }}
-            />
-            <DropdownMenu
-              button={{
-                label: t('button.More'),
-                variant: 'primary',
-                isIconOnly: true,
-                icon: <Ellipsis size="1em" />,
-              }}
-              hasChevron={false}
-              placement="below"
-              alignment="end"
-              items={[
-                {
-                  label: t('credential.BulkCreateUser'),
-                  onClick: () => {
-                    setOpenBulkCreateModal(true);
+          {isSuperAdmin && (
+            <ButtonGroup label={t('credential.CreateUser')}>
+              <Button
+                variant="primary"
+                icon={<PlusIcon size="1em" />}
+                label={t('credential.CreateUser')}
+                onClick={() => {
+                  setOpenCreateModal(true);
+                }}
+              />
+              <DropdownMenu
+                button={{
+                  label: t('button.More'),
+                  variant: 'primary',
+                  isIconOnly: true,
+                  icon: <Ellipsis size="1em" />,
+                }}
+                hasChevron={false}
+                placement="below"
+                alignment="end"
+                items={[
+                  {
+                    label: t('credential.BulkCreateUser'),
+                    onClick: () => {
+                      setOpenBulkCreateModal(true);
+                    },
                   },
-                },
-                {
-                  label: t('credential.BulkCreateUserFromCSV'),
-                  onClick: () => {
-                    setOpenBulkCreateCSVModal(true);
+                  {
+                    label: t('credential.BulkCreateUserFromCSV'),
+                    onClick: () => {
+                      setOpenBulkCreateCSVModal(true);
+                    },
                   },
-                },
-              ]}
-            />
-          </ButtonGroup>
+                ]}
+              />
+            </ButtonGroup>
+          )}
         </BAIFlex>
       </BAIFlex>
       <BAIAdminUserV2Table
