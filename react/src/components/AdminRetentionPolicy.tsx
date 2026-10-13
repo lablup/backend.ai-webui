@@ -2,13 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { RetentionPolicyListDeleteMutation } from '../__generated__/RetentionPolicyListDeleteMutation.graphql';
+import { AdminRetentionPolicyDeleteMutation } from '../__generated__/AdminRetentionPolicyDeleteMutation.graphql';
 import {
   RetentionPolicyFilter,
-  RetentionPolicyListQuery as RetentionPolicyListQueryType,
+  AdminRetentionPolicyQuery as AdminRetentionPolicyQueryType,
   RetentionPolicyOrderBy,
-} from '../__generated__/RetentionPolicyListQuery.graphql';
-import { RetentionPolicyListToggleMutation } from '../__generated__/RetentionPolicyListToggleMutation.graphql';
+} from '../__generated__/AdminRetentionPolicyQuery.graphql';
+import { AdminRetentionPolicyToggleMutation } from '../__generated__/AdminRetentionPolicyToggleMutation.graphql';
 import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import RetentionPolicySettingModal, {
@@ -41,8 +41,8 @@ import {
   type UseQueryLoaderLoadQueryOptions,
 } from 'react-relay';
 
-export const RetentionPolicyListQuery = graphql`
-  query RetentionPolicyListQuery(
+export const AdminRetentionPolicyQuery = graphql`
+  query AdminRetentionPolicyQuery(
     $filter: RetentionPolicyFilter
     $orderBy: [RetentionPolicyOrderBy!]
     $limit: Int
@@ -68,23 +68,23 @@ export const RetentionPolicyListQuery = graphql`
   }
 `;
 
-export const RETENTION_POLICY_LIST_DEFAULT_PAGE_SIZE = 10;
+export const ADMIN_RETENTION_POLICY_DEFAULT_PAGE_SIZE = 10;
 
 type RetentionPolicyNode = NonNullable<
   NonNullable<
-    RetentionPolicyListQueryType['response']['adminRetentionPolicies']
+    AdminRetentionPolicyQueryType['response']['adminRetentionPolicies']
   >['edges'][number]['node']
 >;
 
-interface RetentionPolicyListProps {
-  queryRef: PreloadedQuery<RetentionPolicyListQueryType>;
+export interface AdminRetentionPolicyProps {
+  queryRef: PreloadedQuery<AdminRetentionPolicyQueryType>;
   onReload: (
-    variables: RetentionPolicyListQueryType['variables'],
+    variables: AdminRetentionPolicyQueryType['variables'],
     options?: UseQueryLoaderLoadQueryOptions,
   ) => void;
 }
 
-const RetentionPolicyList: React.FC<RetentionPolicyListProps> = ({
+const AdminRetentionPolicy: React.FC<AdminRetentionPolicyProps> = ({
   queryRef,
   onReload,
 }) => {
@@ -95,34 +95,36 @@ const RetentionPolicyList: React.FC<RetentionPolicyListProps> = ({
 
   const variables = queryRef.variables;
   const orderValue = convertFirstOrderByToString(variables.orderBy);
-  const pageSize = variables.limit ?? RETENTION_POLICY_LIST_DEFAULT_PAGE_SIZE;
+  const pageSize = variables.limit ?? ADMIN_RETENTION_POLICY_DEFAULT_PAGE_SIZE;
   const current = Math.floor((variables.offset ?? 0) / pageSize) + 1;
 
   const deferredQueryRef = useDeferredValue(queryRef);
   const isPending = deferredQueryRef !== queryRef;
 
   const { adminRetentionPolicies } =
-    usePreloadedQuery<RetentionPolicyListQueryType>(
-      RetentionPolicyListQuery,
+    usePreloadedQuery<AdminRetentionPolicyQueryType>(
+      AdminRetentionPolicyQuery,
       deferredQueryRef,
     );
 
-  const [commitToggle] = useMutation<RetentionPolicyListToggleMutation>(graphql`
-    mutation RetentionPolicyListToggleMutation(
-      $input: UpdateRetentionPolicyInput!
-    ) {
-      adminUpdateRetentionPolicy(input: $input) {
-        policy {
-          id
-          enabled
-          updatedAt
+  const [commitToggle] = useMutation<AdminRetentionPolicyToggleMutation>(
+    graphql`
+      mutation AdminRetentionPolicyToggleMutation(
+        $input: UpdateRetentionPolicyInput!
+      ) {
+        adminUpdateRetentionPolicy(input: $input) {
+          policy {
+            id
+            enabled
+            updatedAt
+          }
         }
       }
-    }
-  `);
+    `,
+  );
   const [commitDelete, isInflightDelete] =
-    useMutation<RetentionPolicyListDeleteMutation>(graphql`
-      mutation RetentionPolicyListDeleteMutation($id: UUID!) {
+    useMutation<AdminRetentionPolicyDeleteMutation>(graphql`
+      mutation AdminRetentionPolicyDeleteMutation($id: UUID!) {
         adminDeleteRetentionPolicy(id: $id) {
           id
         }
@@ -363,4 +365,4 @@ const RetentionPolicyList: React.FC<RetentionPolicyListProps> = ({
   );
 };
 
-export default RetentionPolicyList;
+export default AdminRetentionPolicy;

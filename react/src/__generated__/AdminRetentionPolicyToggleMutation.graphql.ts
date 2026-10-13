@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8cf87090aacbd453e4aeb780ff08ea03>>
+ * @generated SignedSource<<a643e3f01411270561d4c1a0e815cae9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,10 +16,10 @@ export type UpdateRetentionPolicyInput = {
   id: string;
   retentionPeriodDays?: number | null | undefined;
 };
-export type RetentionPolicyListToggleMutation$variables = {
+export type AdminRetentionPolicyToggleMutation$variables = {
   input: UpdateRetentionPolicyInput;
 };
-export type RetentionPolicyListToggleMutation$data = {
+export type AdminRetentionPolicyToggleMutation$data = {
   readonly adminUpdateRetentionPolicy: {
     readonly policy: {
       readonly enabled: boolean;
@@ -28,9 +28,9 @@ export type RetentionPolicyListToggleMutation$data = {
     };
   } | null | undefined;
 };
-export type RetentionPolicyListToggleMutation = {
-  response: RetentionPolicyListToggleMutation$data;
-  variables: RetentionPolicyListToggleMutation$variables;
+export type AdminRetentionPolicyToggleMutation = {
+  response: AdminRetentionPolicyToggleMutation$data;
+  variables: AdminRetentionPolicyToggleMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -97,7 +97,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "RetentionPolicyListToggleMutation",
+    "name": "AdminRetentionPolicyToggleMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -106,20 +106,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "RetentionPolicyListToggleMutation",
+    "name": "AdminRetentionPolicyToggleMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "fb9cccb4895bb77ff115a86fda078805",
+    "cacheID": "e8c34e5f32fc7f2b267bc721e8831aa4",
     "id": null,
     "metadata": {},
-    "name": "RetentionPolicyListToggleMutation",
+    "name": "AdminRetentionPolicyToggleMutation",
     "operationKind": "mutation",
-    "text": "mutation RetentionPolicyListToggleMutation(\n  $input: UpdateRetentionPolicyInput!\n) {\n  adminUpdateRetentionPolicy(input: $input) {\n    policy {\n      id\n      enabled\n      updatedAt\n    }\n  }\n}\n"
+    "text": "mutation AdminRetentionPolicyToggleMutation(\n  $input: UpdateRetentionPolicyInput!\n) {\n  adminUpdateRetentionPolicy(input: $input) {\n    policy {\n      id\n      enabled\n      updatedAt\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "89915f205ec3d8a0583e836ebdd862b5";
+(node as any).hash = "fbde690f12811e4ebe195fb314539021";
 
 export default node;

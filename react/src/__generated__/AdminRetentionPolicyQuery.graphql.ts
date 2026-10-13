@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8442b0f5727b4e4d937a1802890a2f64>>
+ * @generated SignedSource<<5bfbeb4d8b71803ee22d398f75c1d90e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,13 +20,13 @@ export type RetentionPolicyOrderBy = {
   direction?: string;
   field: RetentionPolicyOrderField;
 };
-export type RetentionPolicyListQuery$variables = {
+export type AdminRetentionPolicyQuery$variables = {
   filter?: RetentionPolicyFilter | null | undefined;
   limit?: number | null | undefined;
   offset?: number | null | undefined;
   orderBy?: ReadonlyArray<RetentionPolicyOrderBy> | null | undefined;
 };
-export type RetentionPolicyListQuery$data = {
+export type AdminRetentionPolicyQuery$data = {
   readonly adminRetentionPolicies: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
@@ -39,9 +39,9 @@ export type RetentionPolicyListQuery$data = {
     }>;
   } | null | undefined;
 };
-export type RetentionPolicyListQuery = {
-  response: RetentionPolicyListQuery$data;
-  variables: RetentionPolicyListQuery$variables;
+export type AdminRetentionPolicyQuery = {
+  response: AdminRetentionPolicyQuery$data;
+  variables: AdminRetentionPolicyQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -125,7 +125,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "RetentionPolicyListQuery",
+    "name": "AdminRetentionPolicyQuery",
     "selections": [
       {
         "alias": null,
@@ -187,7 +187,7 @@ return {
       (v2/*: any*/)
     ],
     "kind": "Operation",
-    "name": "RetentionPolicyListQuery",
+    "name": "AdminRetentionPolicyQuery",
     "selections": [
       {
         "alias": null,
@@ -264,16 +264,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "9e43602e8bca0d8eb94d71320f1957ed",
+    "cacheID": "879104e8cf324117c328324b54809fc3",
     "id": null,
     "metadata": {},
-    "name": "RetentionPolicyListQuery",
+    "name": "AdminRetentionPolicyQuery",
     "operationKind": "query",
-    "text": "query RetentionPolicyListQuery(\n  $filter: RetentionPolicyFilter\n  $orderBy: [RetentionPolicyOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminRetentionPolicies(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        category\n        ...RetentionPolicySettingModalFragment\n        ...BAIAdminRetentionPolicyTableFragment\n      }\n    }\n  }\n}\n\nfragment BAIAdminRetentionPolicyTableFragment on RetentionPolicy {\n  id\n  category\n  retentionPeriodDays\n  enabled\n  lastSweptAt\n  createdAt\n  updatedAt\n}\n\nfragment RetentionPolicySettingModalFragment on RetentionPolicy {\n  id\n  entityId\n  category\n  retentionPeriodDays\n  enabled\n}\n"
+    "text": "query AdminRetentionPolicyQuery(\n  $filter: RetentionPolicyFilter\n  $orderBy: [RetentionPolicyOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminRetentionPolicies(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        category\n        ...RetentionPolicySettingModalFragment\n        ...BAIAdminRetentionPolicyTableFragment\n      }\n    }\n  }\n}\n\nfragment BAIAdminRetentionPolicyTableFragment on RetentionPolicy {\n  id\n  category\n  retentionPeriodDays\n  enabled\n  lastSweptAt\n  createdAt\n  updatedAt\n}\n\nfragment RetentionPolicySettingModalFragment on RetentionPolicy {\n  id\n  entityId\n  category\n  retentionPeriodDays\n  enabled\n}\n"
   }
 };
 })();
 
-(node as any).hash = "fde4a26815d845e197eeee61b669e081";
+(node as any).hash = "ada5fad63f5b04d0c631243d79b4d718";
 
 export default node;
