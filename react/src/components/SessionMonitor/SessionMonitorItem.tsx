@@ -7,7 +7,6 @@ import { convertToBinaryUnit, formatDurationAsDays } from '../../helper';
 import {
   ATTENTION_THRESHOLD_SEC,
   isRunningStatus,
-  isStartingStatus,
   type SessionMonitorEntry,
 } from '../../helper/sessionMonitor';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
@@ -15,7 +14,6 @@ import { getIdleChecksBadgeVariant } from '../ComputeSessionNodeItems/SessionIdl
 import SessionStatusBadge from '../ComputeSessionNodeItems/SessionStatusBadge';
 import SessionMonitorUtilizationBars from './SessionMonitorUtilizationBars';
 import { Badge } from '@lablup/ui-common/Badge';
-import { StatusDot } from '@lablup/ui-common/StatusDot';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex, BAIIntervalView, BAILink, toLocalId } from 'backend.ai-ui';
@@ -94,12 +92,6 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
         ? t('session.NetworkIdleTimeout')
         : t('session.MaxSessionLifetime');
 
-  const statusVariant = isRunning
-    ? 'success'
-    : isStartingStatus(session.status)
-      ? 'warning'
-      : 'neutral';
-
   return (
     <BAIFlex
       direction="row"
@@ -121,7 +113,6 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
         style={{ flex: 1, minWidth: 0 }}
       >
         <BAIFlex direction="row" align="center" gap="xs">
-          <StatusDot variant={statusVariant} label={session.status ?? ''} />
           <BAILink
             to={detailPath}
             onClick={onNavigate}
