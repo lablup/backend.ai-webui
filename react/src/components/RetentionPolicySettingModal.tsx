@@ -145,7 +145,6 @@ const RetentionPolicySettingModal: React.FC<
             $filter: RetentionPolicyFilter
           ) {
             adminRetentionPolicies(filter: $filter, limit: 1) {
-              count
               edges {
                 node {
                   id
@@ -163,8 +162,7 @@ const RetentionPolicySettingModal: React.FC<
           return undefined;
         })
         .finally(() => setPendingCategoryChecks((n) => n - 1));
-    const existingId =
-      result?.adminRetentionPolicies?.edges[0]?.node?.id ?? null;
+    const existingId = result?.adminRetentionPolicies?.edges[0]?.node?.id;
     if (existingId && existingId !== policy?.id) {
       throw (
         <Trans
