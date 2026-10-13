@@ -47,7 +47,7 @@ flowchart LR
 ### 1. `admin*` 읽기는 `scoped*` field로 바꾼다
 
 - **Rule**: 대응하는 `scoped*` field가 있는 `admin*` 읽기(`adminUsersV2`, `adminProjectsV2`, `adminResourceGroups`, `adminImagesV2` …)는 `scoped*` field(`scopedUsersV2`, `scopedProjectsV2`, `scopedResourceGroups`, `scopedImagesV2` …)로 바꾸고 `admin*` 선택은 지운다.
-- **System-wide management**: 도메인에 묶이지 않은 엔티티를 superadmin이 만들고 관리하는 화면(리소스 그룹 관리의 `ResourceGroupList`, RBAC 관리)은 `admin*` field를 유지한다. 도메인 scope로 읽으면 그 화면에서 관리할 엔티티가 빠진다.
+- **System-wide management**: 도메인에 묶이지 않은 엔티티를 superadmin이 만들고 관리하는 화면은 `admin*` field를 유지한다. 리소스 그룹 관리의 `ResourceGroupList`, Agent 설정과 RBAC role 모달의 `BAIAdminResourceGroupSelect`, fair share 설정(`FairShareItems/*`), RBAC 관리 화면과 `BAIAdminUserV2Select`가 여기에 든다. 도메인 scope로 읽으면 그 화면에서 관리할 엔티티가 빠진다.
 - **No scoped field**: 읽기나 쓰기에 `scoped*` field가 없으면, 그 동작은 host component가 `useSuspendedBackendaiClient().is_superadmin`이 참일 때만 렌더하고, 도메인 관리자에게 답하는 legacy 읽기가 있으면 그 field를 쓴다. `TODO(needs-backend)`로 backend 요청 issue를 가리킨다.
 
 ### 2. scope는 현재 도메인이다
