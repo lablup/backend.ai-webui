@@ -3271,7 +3271,7 @@
     }
   },
   "sessionMonitor": {
-    "Active": "Active",
+    "Active": "In use",
     "DomainSessions": "Sessions in this domain",
     "InUseAcross": "Allocated to {{count}} running sessions",
     "MonitorSettings": "Monitor settings",

@@ -3287,7 +3287,7 @@
     }
   },
   "sessionMonitor": {
-    "Active": "활발히 사용 중",
+    "Active": "사용 중",
     "DomainSessions": "이 도메인의 세션",
     "InUseAcross": "실행 중인 세션 {{count}}개에 할당된 자원",
     "MonitorSettings": "모니터 설정",
