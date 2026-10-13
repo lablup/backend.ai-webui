@@ -2785,15 +2785,7 @@
   },
   "retentionPolicy": {
     "Category": "Ангилал",
-    "CategoryDeployments": "Байршуулалт",
-    "CategoryLogin": "Нэвтрэлтийн түүх",
-    "CategoryLogs": "Лог",
-    "CategoryReconcileHistory": "Тохируулгын түүх",
     "CategoryRequired": "Ангилал сонгоно уу.",
-    "CategoryRolesInvitations": "Үүрэг ба урилга",
-    "CategorySessions": "Сешн",
-    "CategoryUsageBuckets": "Ашиглалтын нэгтгэл",
-    "CategoryUsageRecords": "Ашиглалтын бичлэг",
     "CreatePolicy": "Бодлого үүсгэх",
     "DataRetention": "Өгөгдөл хадгалалт",
     "DeletePolicy": "Хадгалах бодлогыг устгах",
@@ -2806,7 +2798,17 @@
     "RetentionPolicy": "Хадгалах бодлого",
     "SuccessfullyCreated": "Хадгалах бодлого үүсгэлээ.",
     "SuccessfullyDeleted": "Хадгалах бодлогыг устгалаа.",
-    "SuccessfullyUpdated": "Хадгалах бодлогыг шинэчиллээ."
+    "SuccessfullyUpdated": "Хадгалах бодлогыг шинэчиллээ.",
+    "categories": {
+      "DEPLOYMENTS": "Байршуулалт",
+      "LOGIN": "Нэвтрэлтийн түүх",
+      "LOGS": "Лог",
+      "RECONCILE_HISTORY": "Тохируулгын түүх",
+      "ROLES_INVITATIONS": "Үүрэг ба урилга",
+      "SESSIONS": "Сешн",
+      "USAGE_BUCKETS": "Ашиглалтын нэгтгэл",
+      "USAGE_RECORDS": "Ашиглалтын бичлэг"
+    }
   },
   "route": {
     "CreatedAt": "Бүтэмж дээр бүтсэн",

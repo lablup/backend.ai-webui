@@ -2786,15 +2786,7 @@
   },
   "retentionPolicy": {
     "Category": "Kategorie",
-    "CategoryDeployments": "Bereitstellungen",
-    "CategoryLogin": "Anmeldeverlauf",
-    "CategoryLogs": "Protokolle",
-    "CategoryReconcileHistory": "Abgleichsverlauf",
     "CategoryRequired": "Wählen Sie eine Kategorie.",
-    "CategoryRolesInvitations": "Rollen & Einladungen",
-    "CategorySessions": "Sitzungen",
-    "CategoryUsageBuckets": "Nutzungs-Buckets",
-    "CategoryUsageRecords": "Nutzungsdatensätze",
     "CreatePolicy": "Richtlinie erstellen",
     "DataRetention": "Datenaufbewahrung",
     "DeletePolicy": "Aufbewahrungsrichtlinie löschen",
@@ -2807,7 +2799,17 @@
     "RetentionPolicy": "Aufbewahrungsrichtlinie",
     "SuccessfullyCreated": "Aufbewahrungsrichtlinie erstellt.",
     "SuccessfullyDeleted": "Aufbewahrungsrichtlinie gelöscht.",
-    "SuccessfullyUpdated": "Aufbewahrungsrichtlinie aktualisiert."
+    "SuccessfullyUpdated": "Aufbewahrungsrichtlinie aktualisiert.",
+    "categories": {
+      "DEPLOYMENTS": "Bereitstellungen",
+      "LOGIN": "Anmeldeverlauf",
+      "LOGS": "Protokolle",
+      "RECONCILE_HISTORY": "Abgleichsverlauf",
+      "ROLES_INVITATIONS": "Rollen & Einladungen",
+      "SESSIONS": "Sitzungen",
+      "USAGE_BUCKETS": "Nutzungs-Buckets",
+      "USAGE_RECORDS": "Nutzungsdatensätze"
+    }
   },
   "route": {
     "CreatedAt": "Erstellt am",

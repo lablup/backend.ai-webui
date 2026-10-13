@@ -2784,15 +2784,7 @@
   },
   "retentionPolicy": {
     "Category": "Luokka",
-    "CategoryDeployments": "Käyttöönotot",
-    "CategoryLogin": "Kirjautumishistoria",
-    "CategoryLogs": "Lokit",
-    "CategoryReconcileHistory": "Täsmäytyshistoria",
     "CategoryRequired": "Valitse luokka.",
-    "CategoryRolesInvitations": "Roolit ja kutsut",
-    "CategorySessions": "Istunnot",
-    "CategoryUsageBuckets": "Käyttökoosteet",
-    "CategoryUsageRecords": "Käyttötietueet",
     "CreatePolicy": "Luo käytäntö",
     "DataRetention": "Tietojen säilytys",
     "DeletePolicy": "Poista säilytyskäytäntö",
@@ -2805,7 +2797,17 @@
     "RetentionPolicy": "Säilytyskäytäntö",
     "SuccessfullyCreated": "Säilytyskäytäntö luotu.",
     "SuccessfullyDeleted": "Säilytyskäytäntö poistettu.",
-    "SuccessfullyUpdated": "Säilytyskäytäntö päivitetty."
+    "SuccessfullyUpdated": "Säilytyskäytäntö päivitetty.",
+    "categories": {
+      "DEPLOYMENTS": "Käyttöönotot",
+      "LOGIN": "Kirjautumishistoria",
+      "LOGS": "Lokit",
+      "RECONCILE_HISTORY": "Täsmäytyshistoria",
+      "ROLES_INVITATIONS": "Roolit ja kutsut",
+      "SESSIONS": "Istunnot",
+      "USAGE_BUCKETS": "Käyttökoosteet",
+      "USAGE_RECORDS": "Käyttötietueet"
+    }
   },
   "route": {
     "CreatedAt": "Luotu jhk",

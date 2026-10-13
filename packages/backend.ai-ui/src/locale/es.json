@@ -40,20 +40,22 @@
   },
   "comp:BAIAdminRetentionPolicyTable": {
     "Category": "Categoría",
-    "CategoryDeployments": "Despliegues",
-    "CategoryLogin": "Historial de inicio de sesión",
-    "CategoryLogs": "Registros",
-    "CategoryReconcileHistory": "Historial de conciliación",
-    "CategoryRolesInvitations": "Roles e invitaciones",
-    "CategorySessions": "Sesiones",
-    "CategoryUsageBuckets": "Agregados de uso",
-    "CategoryUsageRecords": "Registros de uso",
     "CreatedAt": "Fecha de creación",
     "Enabled": "Activado",
     "LastSweptAt": "Última limpieza",
     "NotSweptYet": "Aún no ejecutado",
     "RetentionPeriodDays": "Período de retención (días)",
-    "UpdatedAt": "Actualizado el"
+    "UpdatedAt": "Actualizado el",
+    "categories": {
+      "DEPLOYMENTS": "Despliegues",
+      "LOGIN": "Historial de inicio de sesión",
+      "LOGS": "Registros",
+      "RECONCILE_HISTORY": "Historial de conciliación",
+      "ROLES_INVITATIONS": "Roles e invitaciones",
+      "SESSIONS": "Sesiones",
+      "USAGE_BUCKETS": "Agregados de uso",
+      "USAGE_RECORDS": "Registros de uso"
+    }
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Seleccionar sesión"

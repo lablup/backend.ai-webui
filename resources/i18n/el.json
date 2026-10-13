@@ -2784,15 +2784,7 @@
   },
   "retentionPolicy": {
     "Category": "Κατηγορία",
-    "CategoryDeployments": "Αναπτύξεις",
-    "CategoryLogin": "Ιστορικό συνδέσεων",
-    "CategoryLogs": "Αρχεία καταγραφής",
-    "CategoryReconcileHistory": "Ιστορικό συμφωνίας",
     "CategoryRequired": "Επιλέξτε κατηγορία.",
-    "CategoryRolesInvitations": "Ρόλοι και προσκλήσεις",
-    "CategorySessions": "Συνεδρίες",
-    "CategoryUsageBuckets": "Συγκεντρωτικά χρήσης",
-    "CategoryUsageRecords": "Εγγραφές χρήσης",
     "CreatePolicy": "Δημιουργία πολιτικής",
     "DataRetention": "Διατήρηση δεδομένων",
     "DeletePolicy": "Διαγραφή πολιτικής διατήρησης",
@@ -2805,7 +2797,17 @@
     "RetentionPolicy": "Πολιτική διατήρησης",
     "SuccessfullyCreated": "Η πολιτική διατήρησης δημιουργήθηκε.",
     "SuccessfullyDeleted": "Η πολιτική διατήρησης διαγράφηκε.",
-    "SuccessfullyUpdated": "Η πολιτική διατήρησης ενημερώθηκε."
+    "SuccessfullyUpdated": "Η πολιτική διατήρησης ενημερώθηκε.",
+    "categories": {
+      "DEPLOYMENTS": "Αναπτύξεις",
+      "LOGIN": "Ιστορικό συνδέσεων",
+      "LOGS": "Αρχεία καταγραφής",
+      "RECONCILE_HISTORY": "Ιστορικό συμφωνίας",
+      "ROLES_INVITATIONS": "Ρόλοι και προσκλήσεις",
+      "SESSIONS": "Συνεδρίες",
+      "USAGE_BUCKETS": "Συγκεντρωτικά χρήσης",
+      "USAGE_RECORDS": "Εγγραφές χρήσης"
+    }
   },
   "route": {
     "CreatedAt": "Δημιουργήθηκε στο",

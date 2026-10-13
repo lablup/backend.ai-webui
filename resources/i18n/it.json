@@ -2784,15 +2784,7 @@
   },
   "retentionPolicy": {
     "Category": "Categoria",
-    "CategoryDeployments": "Distribuzioni",
-    "CategoryLogin": "Cronologia accessi",
-    "CategoryLogs": "Log",
-    "CategoryReconcileHistory": "Cronologia riconciliazione",
     "CategoryRequired": "Seleziona una categoria.",
-    "CategoryRolesInvitations": "Ruoli e inviti",
-    "CategorySessions": "Sessioni",
-    "CategoryUsageBuckets": "Aggregati di utilizzo",
-    "CategoryUsageRecords": "Record di utilizzo",
     "CreatePolicy": "Crea criterio",
     "DataRetention": "Conservazione dei dati",
     "DeletePolicy": "Elimina criterio di conservazione",
@@ -2805,7 +2797,17 @@
     "RetentionPolicy": "Criterio di conservazione",
     "SuccessfullyCreated": "Criterio di conservazione creato.",
     "SuccessfullyDeleted": "Criterio di conservazione eliminato.",
-    "SuccessfullyUpdated": "Criterio di conservazione aggiornato."
+    "SuccessfullyUpdated": "Criterio di conservazione aggiornato.",
+    "categories": {
+      "DEPLOYMENTS": "Distribuzioni",
+      "LOGIN": "Cronologia accessi",
+      "LOGS": "Log",
+      "RECONCILE_HISTORY": "Cronologia riconciliazione",
+      "ROLES_INVITATIONS": "Ruoli e inviti",
+      "SESSIONS": "Sessioni",
+      "USAGE_BUCKETS": "Aggregati di utilizzo",
+      "USAGE_RECORDS": "Record di utilizzo"
+    }
   },
   "route": {
     "CreatedAt": "Creato a",

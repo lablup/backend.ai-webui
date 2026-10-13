@@ -2784,15 +2784,7 @@
   },
   "retentionPolicy": {
     "Category": "Категория",
-    "CategoryDeployments": "Развёртывания",
-    "CategoryLogin": "История входов",
-    "CategoryLogs": "Журналы",
-    "CategoryReconcileHistory": "История согласования",
     "CategoryRequired": "Выберите категорию.",
-    "CategoryRolesInvitations": "Роли и приглашения",
-    "CategorySessions": "Сеансы",
-    "CategoryUsageBuckets": "Сводки использования",
-    "CategoryUsageRecords": "Записи использования",
     "CreatePolicy": "Создать политику",
     "DataRetention": "Хранение данных",
     "DeletePolicy": "Удалить политику хранения",
@@ -2805,7 +2797,17 @@
     "RetentionPolicy": "Политика хранения",
     "SuccessfullyCreated": "Политика хранения создана.",
     "SuccessfullyDeleted": "Политика хранения удалена.",
-    "SuccessfullyUpdated": "Политика хранения обновлена."
+    "SuccessfullyUpdated": "Политика хранения обновлена.",
+    "categories": {
+      "DEPLOYMENTS": "Развёртывания",
+      "LOGIN": "История входов",
+      "LOGS": "Журналы",
+      "RECONCILE_HISTORY": "История согласования",
+      "ROLES_INVITATIONS": "Роли и приглашения",
+      "SESSIONS": "Сеансы",
+      "USAGE_BUCKETS": "Сводки использования",
+      "USAGE_RECORDS": "Записи использования"
+    }
   },
   "route": {
     "CreatedAt": "Создан в",

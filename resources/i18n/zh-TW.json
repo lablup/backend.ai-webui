@@ -2788,15 +2788,7 @@
   },
   "retentionPolicy": {
     "Category": "類別",
-    "CategoryDeployments": "部署",
-    "CategoryLogin": "登入記錄",
-    "CategoryLogs": "日誌",
-    "CategoryReconcileHistory": "協調記錄",
     "CategoryRequired": "請選擇類別。",
-    "CategoryRolesInvitations": "角色與邀請",
-    "CategorySessions": "工作階段",
-    "CategoryUsageBuckets": "使用量彙總",
-    "CategoryUsageRecords": "使用記錄",
     "CreatePolicy": "建立政策",
     "DataRetention": "資料保留",
     "DeletePolicy": "刪除保留政策",
@@ -2809,7 +2801,17 @@
     "RetentionPolicy": "保留政策",
     "SuccessfullyCreated": "已建立保留政策。",
     "SuccessfullyDeleted": "已刪除保留政策。",
-    "SuccessfullyUpdated": "已更新保留政策。"
+    "SuccessfullyUpdated": "已更新保留政策。",
+    "categories": {
+      "DEPLOYMENTS": "部署",
+      "LOGIN": "登入記錄",
+      "LOGS": "日誌",
+      "RECONCILE_HISTORY": "協調記錄",
+      "ROLES_INVITATIONS": "角色與邀請",
+      "SESSIONS": "工作階段",
+      "USAGE_BUCKETS": "使用量彙總",
+      "USAGE_RECORDS": "使用記錄"
+    }
   },
   "route": {
     "CreatedAt": "創建在",

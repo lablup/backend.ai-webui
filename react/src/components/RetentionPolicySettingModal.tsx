@@ -39,24 +39,6 @@ export const RETENTION_CATEGORIES: ReadonlyArray<RetentionCategory> = [
   'USAGE_BUCKETS',
 ];
 
-export const useRetentionCategoryLabel = () => {
-  'use memo';
-  const { t } = useTranslation();
-  const labels: Record<RetentionCategory, string> = {
-    LOGS: t('retentionPolicy.CategoryLogs'),
-    LOGIN: t('retentionPolicy.CategoryLogin'),
-    RECONCILE_HISTORY: t('retentionPolicy.CategoryReconcileHistory'),
-    ROLES_INVITATIONS: t('retentionPolicy.CategoryRolesInvitations'),
-    DEPLOYMENTS: t('retentionPolicy.CategoryDeployments'),
-    SESSIONS: t('retentionPolicy.CategorySessions'),
-    USAGE_RECORDS: t('retentionPolicy.CategoryUsageRecords'),
-    USAGE_BUCKETS: t('retentionPolicy.CategoryUsageBuckets'),
-    '%future added value': '',
-  };
-  return (category: string) =>
-    labels[category as RetentionCategory] || category;
-};
-
 type RetentionPolicyFormValues = {
   category: RetentionCategory;
   retentionPeriodDays: number;
@@ -85,7 +67,6 @@ const RetentionPolicySettingModal: React.FC<
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const relayEnv = useRelayEnvironment();
-  const getCategoryLabel = useRetentionCategoryLabel();
   const formRef = useRef<FormInstance<RetentionPolicyFormValues>>(null);
   const [pendingCategoryChecks, setPendingCategoryChecks] = useState(0);
 
@@ -276,7 +257,9 @@ const RetentionPolicySettingModal: React.FC<
             label={t('retentionPolicy.Category')}
             options={_.map(RETENTION_CATEGORIES, (category) => ({
               value: category,
-              label: getCategoryLabel(category),
+              label: t(`retentionPolicy.categories.${category}`, {
+                defaultValue: category,
+              }),
             }))}
           />
         </Form.Item>

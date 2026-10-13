@@ -76,22 +76,6 @@ const BAIAdminRetentionPolicyTable = ({
       retentionPoliciesFrgmt,
     );
 
-  const categoryLabels: Record<RetentionPolicyInList['category'], string> = {
-    LOGS: t('comp:BAIAdminRetentionPolicyTable.CategoryLogs'),
-    LOGIN: t('comp:BAIAdminRetentionPolicyTable.CategoryLogin'),
-    RECONCILE_HISTORY: t(
-      'comp:BAIAdminRetentionPolicyTable.CategoryReconcileHistory',
-    ),
-    ROLES_INVITATIONS: t(
-      'comp:BAIAdminRetentionPolicyTable.CategoryRolesInvitations',
-    ),
-    DEPLOYMENTS: t('comp:BAIAdminRetentionPolicyTable.CategoryDeployments'),
-    SESSIONS: t('comp:BAIAdminRetentionPolicyTable.CategorySessions'),
-    USAGE_RECORDS: t('comp:BAIAdminRetentionPolicyTable.CategoryUsageRecords'),
-    USAGE_BUCKETS: t('comp:BAIAdminRetentionPolicyTable.CategoryUsageBuckets'),
-    '%future added value': '',
-  };
-
   const baseColumns = _.map(
     [
       {
@@ -101,7 +85,10 @@ const BAIAdminRetentionPolicyTable = ({
         fixed: 'left',
         required: true,
         sorter: isEnableSorter('category'),
-        render: (__, row) => categoryLabels[row.category] || row.category,
+        render: (__, row) =>
+          t(`comp:BAIAdminRetentionPolicyTable.categories.${row.category}`, {
+            defaultValue: row.category,
+          }),
       },
       {
         title: t('comp:BAIAdminRetentionPolicyTable.RetentionPeriodDays'),

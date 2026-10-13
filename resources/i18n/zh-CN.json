@@ -2786,15 +2786,7 @@
   },
   "retentionPolicy": {
     "Category": "类别",
-    "CategoryDeployments": "部署",
-    "CategoryLogin": "登录历史",
-    "CategoryLogs": "日志",
-    "CategoryReconcileHistory": "协调历史",
     "CategoryRequired": "请选择类别。",
-    "CategoryRolesInvitations": "角色与邀请",
-    "CategorySessions": "会话",
-    "CategoryUsageBuckets": "使用量汇总",
-    "CategoryUsageRecords": "使用记录",
     "CreatePolicy": "创建策略",
     "DataRetention": "数据保留",
     "DeletePolicy": "删除保留策略",
@@ -2807,7 +2799,17 @@
     "RetentionPolicy": "保留策略",
     "SuccessfullyCreated": "已创建保留策略。",
     "SuccessfullyDeleted": "已删除保留策略。",
-    "SuccessfullyUpdated": "已更新保留策略。"
+    "SuccessfullyUpdated": "已更新保留策略。",
+    "categories": {
+      "DEPLOYMENTS": "部署",
+      "LOGIN": "登录历史",
+      "LOGS": "日志",
+      "RECONCILE_HISTORY": "协调历史",
+      "ROLES_INVITATIONS": "角色与邀请",
+      "SESSIONS": "会话",
+      "USAGE_BUCKETS": "使用量汇总",
+      "USAGE_RECORDS": "使用记录"
+    }
   },
   "route": {
     "CreatedAt": "创建在",

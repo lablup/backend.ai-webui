@@ -2784,15 +2784,7 @@
   },
   "retentionPolicy": {
     "Category": "Kategori",
-    "CategoryDeployments": "Dağıtımlar",
-    "CategoryLogin": "Oturum açma geçmişi",
-    "CategoryLogs": "Günlükler",
-    "CategoryReconcileHistory": "Uzlaştırma geçmişi",
     "CategoryRequired": "Bir kategori seçin.",
-    "CategoryRolesInvitations": "Roller ve davetler",
-    "CategorySessions": "Oturumlar",
-    "CategoryUsageBuckets": "Kullanım toplamları",
-    "CategoryUsageRecords": "Kullanım kayıtları",
     "CreatePolicy": "Politika oluştur",
     "DataRetention": "Veri saklama",
     "DeletePolicy": "Saklama politikasını sil",
@@ -2805,7 +2797,17 @@
     "RetentionPolicy": "Saklama politikası",
     "SuccessfullyCreated": "Saklama politikası oluşturuldu.",
     "SuccessfullyDeleted": "Saklama politikası silindi.",
-    "SuccessfullyUpdated": "Saklama politikası güncellendi."
+    "SuccessfullyUpdated": "Saklama politikası güncellendi.",
+    "categories": {
+      "DEPLOYMENTS": "Dağıtımlar",
+      "LOGIN": "Oturum açma geçmişi",
+      "LOGS": "Günlükler",
+      "RECONCILE_HISTORY": "Uzlaştırma geçmişi",
+      "ROLES_INVITATIONS": "Roller ve davetler",
+      "SESSIONS": "Oturumlar",
+      "USAGE_BUCKETS": "Kullanım toplamları",
+      "USAGE_RECORDS": "Kullanım kayıtları"
+    }
   },
   "route": {
     "CreatedAt": "Yaratılmış",

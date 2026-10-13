@@ -40,20 +40,22 @@
   },
   "comp:BAIAdminRetentionPolicyTable": {
     "Category": "Ангилал",
-    "CategoryDeployments": "Байршуулалт",
-    "CategoryLogin": "Нэвтрэлтийн түүх",
-    "CategoryLogs": "Лог",
-    "CategoryReconcileHistory": "Тохируулгын түүх",
-    "CategoryRolesInvitations": "Үүрэг ба урилга",
-    "CategorySessions": "Сешн",
-    "CategoryUsageBuckets": "Ашиглалтын нэгтгэл",
-    "CategoryUsageRecords": "Ашиглалтын бичлэг",
     "CreatedAt": "Үүсгэсэн огноо",
     "Enabled": "Идэвхжсэн",
     "LastSweptAt": "Сүүлийн цэвэрлэгээ",
     "NotSweptYet": "Хараахан ажиллаагүй",
     "RetentionPeriodDays": "Хадгалах хугацаа (өдөр)",
-    "UpdatedAt": "Шинэчлэгдсэн огноо"
+    "UpdatedAt": "Шинэчлэгдсэн огноо",
+    "categories": {
+      "DEPLOYMENTS": "Байршуулалт",
+      "LOGIN": "Нэвтрэлтийн түүх",
+      "LOGS": "Лог",
+      "RECONCILE_HISTORY": "Тохируулгын түүх",
+      "ROLES_INVITATIONS": "Үүрэг ба урилга",
+      "SESSIONS": "Сешн",
+      "USAGE_BUCKETS": "Ашиглалтын нэгтгэл",
+      "USAGE_RECORDS": "Ашиглалтын бичлэг"
+    }
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Сесс сонгох"

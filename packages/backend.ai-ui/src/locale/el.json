@@ -40,20 +40,22 @@
   },
   "comp:BAIAdminRetentionPolicyTable": {
     "Category": "Κατηγορία",
-    "CategoryDeployments": "Αναπτύξεις",
-    "CategoryLogin": "Ιστορικό συνδέσεων",
-    "CategoryLogs": "Αρχεία καταγραφής",
-    "CategoryReconcileHistory": "Ιστορικό συμφωνίας",
-    "CategoryRolesInvitations": "Ρόλοι και προσκλήσεις",
-    "CategorySessions": "Συνεδρίες",
-    "CategoryUsageBuckets": "Συγκεντρωτικά χρήσης",
-    "CategoryUsageRecords": "Εγγραφές χρήσης",
     "CreatedAt": "Ημερομηνία δημιουργίας",
     "Enabled": "Ενεργοποιήθηκε",
     "LastSweptAt": "Τελευταίος καθαρισμός",
     "NotSweptYet": "Δεν έχει εκτελεστεί",
     "RetentionPeriodDays": "Περίοδος διατήρησης (ημέρες)",
-    "UpdatedAt": "Ενημερώθηκε στις"
+    "UpdatedAt": "Ενημερώθηκε στις",
+    "categories": {
+      "DEPLOYMENTS": "Αναπτύξεις",
+      "LOGIN": "Ιστορικό συνδέσεων",
+      "LOGS": "Αρχεία καταγραφής",
+      "RECONCILE_HISTORY": "Ιστορικό συμφωνίας",
+      "ROLES_INVITATIONS": "Ρόλοι και προσκλήσεις",
+      "SESSIONS": "Συνεδρίες",
+      "USAGE_BUCKETS": "Συγκεντρωτικά χρήσης",
+      "USAGE_RECORDS": "Εγγραφές χρήσης"
+    }
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Επιλέξτε συνεδρία"

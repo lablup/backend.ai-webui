@@ -13,7 +13,6 @@ import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import RetentionPolicySettingModal, {
   RETENTION_CATEGORIES,
-  useRetentionCategoryLabel,
 } from './RetentionPolicySettingModal';
 import { Switch } from '@lablup/ui-common/Switch';
 import {
@@ -90,7 +89,6 @@ const AdminRetentionPolicy: React.FC<AdminRetentionPolicyProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const getCategoryLabel = useRetentionCategoryLabel();
 
   const variables = queryRef.variables;
   const orderValue = convertFirstOrderByToString(variables.orderBy);
@@ -192,7 +190,9 @@ const AdminRetentionPolicy: React.FC<AdminRetentionPolicyProps> = ({
               fixedOperator: 'equals',
               strictSelection: true,
               options: _.map(RETENTION_CATEGORIES, (category) => ({
-                label: getCategoryLabel(category),
+                label: t(`retentionPolicy.categories.${category}`, {
+                  defaultValue: category,
+                }),
                 value: category,
               })),
             },
@@ -330,13 +330,20 @@ const AdminRetentionPolicy: React.FC<AdminRetentionPolicyProps> = ({
             ? [
                 {
                   key: deletingPolicy.id,
-                  label: getCategoryLabel(deletingPolicy.category),
+                  label: t(
+                    `retentionPolicy.categories.${deletingPolicy.category}`,
+                    { defaultValue: deletingPolicy.category },
+                  ),
                 },
               ]
             : []
         }
         confirmText={
-          deletingPolicy ? getCategoryLabel(deletingPolicy.category) : ''
+          deletingPolicy
+            ? t(`retentionPolicy.categories.${deletingPolicy.category}`, {
+                defaultValue: deletingPolicy.category,
+              })
+            : ''
         }
         requireConfirmInput
         confirmLoading={isInflightDelete}

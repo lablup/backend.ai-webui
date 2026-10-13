@@ -2784,15 +2784,7 @@
   },
   "retentionPolicy": {
     "Category": "Kategori",
-    "CategoryDeployments": "Penggunaan",
-    "CategoryLogin": "Sejarah log masuk",
-    "CategoryLogs": "Log",
-    "CategoryReconcileHistory": "Sejarah penyelarasan",
     "CategoryRequired": "Pilih kategori.",
-    "CategoryRolesInvitations": "Peranan & jemputan",
-    "CategorySessions": "Sesi",
-    "CategoryUsageBuckets": "Agregat penggunaan",
-    "CategoryUsageRecords": "Rekod penggunaan",
     "CreatePolicy": "Cipta dasar",
     "DataRetention": "Pengekalan data",
     "DeletePolicy": "Padam dasar pengekalan",
@@ -2805,7 +2797,17 @@
     "RetentionPolicy": "Dasar pengekalan",
     "SuccessfullyCreated": "Dasar pengekalan dicipta.",
     "SuccessfullyDeleted": "Dasar pengekalan dipadam.",
-    "SuccessfullyUpdated": "Dasar pengekalan dikemas kini."
+    "SuccessfullyUpdated": "Dasar pengekalan dikemas kini.",
+    "categories": {
+      "DEPLOYMENTS": "Penggunaan",
+      "LOGIN": "Sejarah log masuk",
+      "LOGS": "Log",
+      "RECONCILE_HISTORY": "Sejarah penyelarasan",
+      "ROLES_INVITATIONS": "Peranan & jemputan",
+      "SESSIONS": "Sesi",
+      "USAGE_BUCKETS": "Agregat penggunaan",
+      "USAGE_RECORDS": "Rekod penggunaan"
+    }
   },
   "route": {
     "CreatedAt": "Dicipta di",

@@ -40,20 +40,22 @@
   },
   "comp:BAIAdminRetentionPolicyTable": {
     "Category": "หมวดหมู่",
-    "CategoryDeployments": "การปรับใช้",
-    "CategoryLogin": "ประวัติการเข้าสู่ระบบ",
-    "CategoryLogs": "บันทึก",
-    "CategoryReconcileHistory": "ประวัติการกระทบยอด",
-    "CategoryRolesInvitations": "บทบาทและคำเชิญ",
-    "CategorySessions": "เซสชัน",
-    "CategoryUsageBuckets": "ข้อมูลรวมการใช้งาน",
-    "CategoryUsageRecords": "บันทึกการใช้งาน",
     "CreatedAt": "วันที่สร้าง",
     "Enabled": "เปิดใช้งาน",
     "LastSweptAt": "การล้างครั้งล่าสุด",
     "NotSweptYet": "ยังไม่ได้ทำงาน",
     "RetentionPeriodDays": "ระยะเวลาเก็บรักษา (วัน)",
-    "UpdatedAt": "อัปเดตเมื่อ"
+    "UpdatedAt": "อัปเดตเมื่อ",
+    "categories": {
+      "DEPLOYMENTS": "การปรับใช้",
+      "LOGIN": "ประวัติการเข้าสู่ระบบ",
+      "LOGS": "บันทึก",
+      "RECONCILE_HISTORY": "ประวัติการกระทบยอด",
+      "ROLES_INVITATIONS": "บทบาทและคำเชิญ",
+      "SESSIONS": "เซสชัน",
+      "USAGE_BUCKETS": "ข้อมูลรวมการใช้งาน",
+      "USAGE_RECORDS": "บันทึกการใช้งาน"
+    }
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "เลือกเซสชัน"

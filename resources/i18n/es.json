@@ -2784,15 +2784,7 @@
   },
   "retentionPolicy": {
     "Category": "Categoría",
-    "CategoryDeployments": "Despliegues",
-    "CategoryLogin": "Historial de inicio de sesión",
-    "CategoryLogs": "Registros",
-    "CategoryReconcileHistory": "Historial de conciliación",
     "CategoryRequired": "Seleccione una categoría.",
-    "CategoryRolesInvitations": "Roles e invitaciones",
-    "CategorySessions": "Sesiones",
-    "CategoryUsageBuckets": "Agregados de uso",
-    "CategoryUsageRecords": "Registros de uso",
     "CreatePolicy": "Crear política",
     "DataRetention": "Retención de datos",
     "DeletePolicy": "Eliminar política de retención",
@@ -2805,7 +2797,17 @@
     "RetentionPolicy": "Política de retención",
     "SuccessfullyCreated": "Política de retención creada.",
     "SuccessfullyDeleted": "Política de retención eliminada.",
-    "SuccessfullyUpdated": "Política de retención actualizada."
+    "SuccessfullyUpdated": "Política de retención actualizada.",
+    "categories": {
+      "DEPLOYMENTS": "Despliegues",
+      "LOGIN": "Historial de inicio de sesión",
+      "LOGS": "Registros",
+      "RECONCILE_HISTORY": "Historial de conciliación",
+      "ROLES_INVITATIONS": "Roles e invitaciones",
+      "SESSIONS": "Sesiones",
+      "USAGE_BUCKETS": "Agregados de uso",
+      "USAGE_RECORDS": "Registros de uso"
+    }
   },
   "route": {
     "CreatedAt": "Creado a",

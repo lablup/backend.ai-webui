@@ -2786,15 +2786,7 @@
   },
   "retentionPolicy": {
     "Category": "種類",
-    "CategoryDeployments": "デプロイメント",
-    "CategoryLogin": "ログイン履歴",
-    "CategoryLogs": "ログ",
-    "CategoryReconcileHistory": "調整履歴",
     "CategoryRequired": "種類を選択してください。",
-    "CategoryRolesInvitations": "ロールと招待",
-    "CategorySessions": "セッション",
-    "CategoryUsageBuckets": "使用量バケット",
-    "CategoryUsageRecords": "使用量記録",
     "CreatePolicy": "ポリシーを作成",
     "DataRetention": "データ保持",
     "DeletePolicy": "保持ポリシーを削除",
@@ -2807,7 +2799,17 @@
     "RetentionPolicy": "保持ポリシー",
     "SuccessfullyCreated": "保持ポリシーを作成しました。",
     "SuccessfullyDeleted": "保持ポリシーを削除しました。",
-    "SuccessfullyUpdated": "保持ポリシーを更新しました。"
+    "SuccessfullyUpdated": "保持ポリシーを更新しました。",
+    "categories": {
+      "DEPLOYMENTS": "デプロイメント",
+      "LOGIN": "ログイン履歴",
+      "LOGS": "ログ",
+      "RECONCILE_HISTORY": "調整履歴",
+      "ROLES_INVITATIONS": "ロールと招待",
+      "SESSIONS": "セッション",
+      "USAGE_BUCKETS": "使用量バケット",
+      "USAGE_RECORDS": "使用量記録"
+    }
   },
   "route": {
     "CreatedAt": "で作成されました",

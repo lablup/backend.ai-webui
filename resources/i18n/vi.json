@@ -2786,15 +2786,7 @@
   },
   "retentionPolicy": {
     "Category": "Danh mục",
-    "CategoryDeployments": "Triển khai",
-    "CategoryLogin": "Lịch sử đăng nhập",
-    "CategoryLogs": "Nhật ký",
-    "CategoryReconcileHistory": "Lịch sử đối soát",
     "CategoryRequired": "Hãy chọn một danh mục.",
-    "CategoryRolesInvitations": "Vai trò và lời mời",
-    "CategorySessions": "Phiên",
-    "CategoryUsageBuckets": "Tổng hợp sử dụng",
-    "CategoryUsageRecords": "Bản ghi sử dụng",
     "CreatePolicy": "Tạo chính sách",
     "DataRetention": "Lưu giữ dữ liệu",
     "DeletePolicy": "Xóa chính sách lưu giữ",
@@ -2807,7 +2799,17 @@
     "RetentionPolicy": "Chính sách lưu giữ",
     "SuccessfullyCreated": "Đã tạo chính sách lưu giữ.",
     "SuccessfullyDeleted": "Đã xóa chính sách lưu giữ.",
-    "SuccessfullyUpdated": "Đã cập nhật chính sách lưu giữ."
+    "SuccessfullyUpdated": "Đã cập nhật chính sách lưu giữ.",
+    "categories": {
+      "DEPLOYMENTS": "Triển khai",
+      "LOGIN": "Lịch sử đăng nhập",
+      "LOGS": "Nhật ký",
+      "RECONCILE_HISTORY": "Lịch sử đối soát",
+      "ROLES_INVITATIONS": "Vai trò và lời mời",
+      "SESSIONS": "Phiên",
+      "USAGE_BUCKETS": "Tổng hợp sử dụng",
+      "USAGE_RECORDS": "Bản ghi sử dụng"
+    }
   },
   "route": {
     "CreatedAt": "Được tạo ra tại",

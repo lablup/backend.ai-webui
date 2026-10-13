@@ -2771,15 +2771,7 @@
   },
   "retentionPolicy": {
     "Category": "Category",
-    "CategoryDeployments": "Deployments",
-    "CategoryLogin": "Login History",
-    "CategoryLogs": "Logs",
-    "CategoryReconcileHistory": "Reconcile History",
     "CategoryRequired": "Select a category.",
-    "CategoryRolesInvitations": "Roles & Invitations",
-    "CategorySessions": "Sessions",
-    "CategoryUsageBuckets": "Usage Buckets",
-    "CategoryUsageRecords": "Usage Records",
     "CreatePolicy": "Create Policy",
     "DataRetention": "Data Retention",
     "DeletePolicy": "Delete Retention Policy",
@@ -2792,7 +2784,17 @@
     "RetentionPolicy": "Retention Policy",
     "SuccessfullyCreated": "Retention policy created.",
     "SuccessfullyDeleted": "Retention policy deleted.",
-    "SuccessfullyUpdated": "Retention policy updated."
+    "SuccessfullyUpdated": "Retention policy updated.",
+    "categories": {
+      "DEPLOYMENTS": "Deployments",
+      "LOGIN": "Login History",
+      "LOGS": "Logs",
+      "RECONCILE_HISTORY": "Reconcile History",
+      "ROLES_INVITATIONS": "Roles & Invitations",
+      "SESSIONS": "Sessions",
+      "USAGE_BUCKETS": "Usage Buckets",
+      "USAGE_RECORDS": "Usage Records"
+    }
   },
   "route": {
     "CreatedAt": "Created At",

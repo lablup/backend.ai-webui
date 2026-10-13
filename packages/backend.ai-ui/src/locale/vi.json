@@ -40,20 +40,22 @@
   },
   "comp:BAIAdminRetentionPolicyTable": {
     "Category": "Danh mục",
-    "CategoryDeployments": "Triển khai",
-    "CategoryLogin": "Lịch sử đăng nhập",
-    "CategoryLogs": "Nhật ký",
-    "CategoryReconcileHistory": "Lịch sử đối soát",
-    "CategoryRolesInvitations": "Vai trò và lời mời",
-    "CategorySessions": "Phiên",
-    "CategoryUsageBuckets": "Tổng hợp sử dụng",
-    "CategoryUsageRecords": "Bản ghi sử dụng",
     "CreatedAt": "Ngày tạo",
     "Enabled": "Đã bật",
     "LastSweptAt": "Lần dọn dẹp gần nhất",
     "NotSweptYet": "Chưa chạy",
     "RetentionPeriodDays": "Thời gian lưu giữ (ngày)",
-    "UpdatedAt": "Cập nhật lúc"
+    "UpdatedAt": "Cập nhật lúc",
+    "categories": {
+      "DEPLOYMENTS": "Triển khai",
+      "LOGIN": "Lịch sử đăng nhập",
+      "LOGS": "Nhật ký",
+      "RECONCILE_HISTORY": "Lịch sử đối soát",
+      "ROLES_INVITATIONS": "Vai trò và lời mời",
+      "SESSIONS": "Phiên",
+      "USAGE_BUCKETS": "Tổng hợp sử dụng",
+      "USAGE_RECORDS": "Bản ghi sử dụng"
+    }
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Chọn phiên"
