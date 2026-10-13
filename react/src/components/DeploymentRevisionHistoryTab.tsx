@@ -23,7 +23,7 @@ import { Link } from '@lablup/ui-common/Link';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIAdminImageSelect,
+  BAIScopedImageSelect,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -627,7 +627,7 @@ const DeploymentRevisionHistoryTab: React.FC<
       fixedOperator: 'equals' as const,
       rule: uuidRule,
       renderInput: ({ onAddCondition, value, isDisabled }) => (
-        <BAIAdminImageSelect
+        <BAIScopedImageSelect
           scope={imageFilterScope}
           label={t('deployment.Image')}
           isLabelHidden

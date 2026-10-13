@@ -3,10 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
-import { hooksUsingRelay_AdminImageReferenceQuery } from '../__generated__/hooksUsingRelay_AdminImageReferenceQuery.graphql';
 import { hooksUsingRelay_ImageCanonicalNameQuery } from '../__generated__/hooksUsingRelay_ImageCanonicalNameQuery.graphql';
 import { hooksUsingRelay_KeyPairQuery } from '../__generated__/hooksUsingRelay_KeyPairQuery.graphql';
 import { hooksUsingRelay_KeyPairResourcePolicyQuery } from '../__generated__/hooksUsingRelay_KeyPairResourcePolicyQuery.graphql';
+import { hooksUsingRelay_ScopedImageReferenceQuery } from '../__generated__/hooksUsingRelay_ScopedImageReferenceQuery.graphql';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useCurrentDomainScope } from './useCurrentDomainScope';
 import { useUpdatableState } from 'backend.ai-ui';
@@ -139,14 +139,14 @@ export const useImageCanonicalName = (
  * to the canonical name alone, then the raw id. See `useImageCanonicalName` for
  * null-handling semantics.
  */
-export const useAdminImageReference = (
+export const useScopedImageReference = (
   imageId: string | null | undefined,
   options: FetchOptions = { fetchPolicy: 'store-or-network' },
 ): string | undefined => {
   const { domainScope } = useCurrentDomainScope();
-  const data = useLazyLoadQuery<hooksUsingRelay_AdminImageReferenceQuery>(
+  const data = useLazyLoadQuery<hooksUsingRelay_ScopedImageReferenceQuery>(
     graphql`
-      query hooksUsingRelay_AdminImageReferenceQuery(
+      query hooksUsingRelay_ScopedImageReferenceQuery(
         $id: UUID!
         $scope: ImageSearchScope!
       ) {
