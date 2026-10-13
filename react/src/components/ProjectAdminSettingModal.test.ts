@@ -16,6 +16,7 @@ type Role = ReturnType<typeof selectProjectAdminRoles>[number];
 const role = (id: string, name: string, userIds: Array<string> = []) =>
   ({
     id,
+    entityId: id,
     name,
     users: {
       count: userIds.length,

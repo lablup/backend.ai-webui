@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<310ad2123f891b9a7b42c2724bfe2795>>
+ * @generated SignedSource<<b0f8d15a48a0276811403f570244e01d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,7 @@ import { ReaderFragment } from 'relay-runtime';
 export type RoleSource = "CUSTOM" | "SYSTEM" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type RoleAssignmentTabFragment$data = {
+  readonly entityId: string;
   readonly firstScope: {
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -76,34 +77,41 @@ v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "scopeType",
+  "name": "entityId",
   "storageKey": null
 },
 v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "scopeId",
+  "name": "scopeType",
   "storageKey": null
 },
 v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "scopeId",
+  "storageKey": null
+},
+v4 = {
   "kind": "Variable",
   "name": "limit",
   "variableName": "limit"
 },
-v4 = {
+v5 = {
   "kind": "Variable",
   "name": "offset",
   "variableName": "offset"
 },
-v5 = {
+v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "count",
   "storageKey": null
 },
-v6 = {
+v7 = {
   "alias": null,
   "args": null,
   "concreteType": "UserV2BasicInfo",
@@ -178,6 +186,7 @@ return {
   "name": "RoleAssignmentTabFragment",
   "selections": [
     (v0/*: any*/),
+    (v1/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -222,8 +231,8 @@ return {
               "name": "node",
               "plural": false,
               "selections": [
-                (v1/*: any*/),
-                (v2/*: any*/)
+                (v2/*: any*/),
+                (v3/*: any*/)
               ],
               "storageKey": null
             }
@@ -233,8 +242,8 @@ return {
       ],
       "storageKey": "scopes(first:1)"
     },
-    (v1/*: any*/),
     (v2/*: any*/),
+    (v3/*: any*/),
     {
       "alias": null,
       "args": [
@@ -243,8 +252,8 @@ return {
           "name": "filter",
           "variableName": "filter"
         },
-        (v3/*: any*/),
         (v4/*: any*/),
+        (v5/*: any*/),
         {
           "kind": "Variable",
           "name": "orderBy",
@@ -256,7 +265,7 @@ return {
       "name": "users",
       "plural": false,
       "selections": [
-        (v5/*: any*/),
+        (v6/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -297,7 +306,7 @@ return {
                   "plural": false,
                   "selections": [
                     (v0/*: any*/),
-                    (v6/*: any*/)
+                    (v7/*: any*/)
                   ],
                   "storageKey": null
                 }
@@ -318,8 +327,8 @@ return {
           "name": "filter",
           "variableName": "userFilter"
         },
-        (v3/*: any*/),
         (v4/*: any*/),
+        (v5/*: any*/),
         {
           "kind": "Variable",
           "name": "orderBy",
@@ -331,7 +340,7 @@ return {
       "name": "usersV2",
       "plural": false,
       "selections": [
-        (v5/*: any*/),
+        (v6/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -349,14 +358,8 @@ return {
               "plural": false,
               "selections": [
                 (v0/*: any*/),
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "entityId",
-                  "storageKey": null
-                },
-                (v6/*: any*/)
+                (v1/*: any*/),
+                (v7/*: any*/)
               ],
               "storageKey": null
             }
@@ -372,6 +375,6 @@ return {
 };
 })();
 
-(node as any).hash = "c40588e5b4a36e7533b40d0bb2f41dc2";
+(node as any).hash = "09418e63c37569b2e6c2b5d4d3e5cee8";
 
 export default node;

@@ -50,6 +50,7 @@ export const ProjectAdminSettingQuery = graphql`
       edges {
         node {
           id
+          entityId @since(version: "26.9.0")
           name
           users(limit: $limit, offset: $offset) {
             count
@@ -150,7 +151,10 @@ export const groupProjectAdminAssignmentsByUser = (
       roles.flatMap((role) =>
         filterOutNullAndUndefined(
           _.map(role.users?.edges, (edge) => edge?.node),
-        ).map((node) => ({ ...node, roleId: role.id })),
+        ).map((node) => ({
+          ...node,
+          roleId: role.entityId ?? toLocalId(role.id),
+        })),
       ),
       'userId',
     ),
@@ -262,7 +266,7 @@ const ProjectAdminSettingModal = ({
           roles.map((adminRole, index) =>
             mutateBulkAssignRole({
               input: {
-                roleId: toLocalId(adminRole.id),
+                roleId: adminRole.entityId ?? toLocalId(adminRole.id),
                 userIds: values.userIds,
                 // Passing projectId auto-adds the project to each user's
                 // allowed project list — once is enough, and concurrent
@@ -325,7 +329,7 @@ const ProjectAdminSettingModal = ({
       roleIds.map((roleId) =>
         mutateRevokeRole({
           input: {
-            roleId: toLocalId(roleId),
+            roleId,
             userId,
           },
         }),

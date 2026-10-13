@@ -99,6 +99,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       )
       @refetchable(queryName: "RoleAssignmentTabRefetchQuery") {
         id
+        entityId @since(version: "26.9.0")
         name
         source
         # Aliased: RoleNodesFragment selects scopes(first: 3) on the same list
@@ -159,7 +160,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     roleNodeFrgmt,
   );
 
-  const roleId = toLocalId(data.id);
+  const roleId = data.entityId ?? toLocalId(data.id);
 
   // Managers >= 26.9.0a4 answer the role's one scope directly; older ones
   // answer a scopes connection.

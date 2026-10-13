@@ -62,13 +62,14 @@ const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
     graphql`
       fragment RolePermissionSummaryTableFragment on Role {
         id
+        entityId @since(version: "26.9.0")
         source
         scopeType @since(version: "26.9.0a4")
       }
     `,
     roleNodeFrgmt,
   );
-  const roleId = toLocalId(role.id);
+  const roleId = role.entityId ?? toLocalId(role.id);
   const scopeType = role.scopeType ?? '';
 
   const [fetchKey, updateFetchKey] = useFetchKey();
