@@ -82,6 +82,7 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
       )
       @relay(plural: true) {
         id @required(action: NONE)
+        entityId
         basicInfo {
           email
           fullName

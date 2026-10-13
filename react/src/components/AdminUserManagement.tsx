@@ -40,7 +40,6 @@ import {
   UserV2InList,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  toLocalId,
   useBAILogger,
   useToggle,
 } from 'backend.ai-ui';
@@ -227,7 +226,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   const renderEmailWithActions = (__: unknown, record: UserV2InList) => {
     const email = record.basicInfo?.email ?? '';
     const isActive = record.status?.status === 'ACTIVE';
-    const userId = toLocalId(record.id);
+    const userId = record.entityId;
     return (
       <BAINameActionCell
         title={email}
@@ -279,7 +278,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
                   return new Promise<void>((resolve) => {
                     commitUpdateUserV2({
                       variables: {
-                        userId: toLocalId(record.id),
+                        userId: record.entityId,
                         input: { status: isActive ? 'INACTIVE' : 'ACTIVE' },
                       },
                       onCompleted: (_res, errors) => {
