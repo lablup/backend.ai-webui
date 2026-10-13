@@ -67,7 +67,7 @@ import {
 } from 'react-relay';
 
 type ModelCardNode = NonNullableNodeOnEdges<
-  AdminModelCardQuery$data['adminModelCardsV2']
+  AdminModelCardQuery$data['scopedModelCardsV2']
 >;
 
 const availableModelCardSorterKeys = [
@@ -92,8 +92,10 @@ export const AdminModelCardQuery = graphql`
     $orderBy: [ModelCardV2OrderBy!]
     $limit: Int
     $offset: Int
+    $scope: ModelCardScope!
   ) {
-    adminModelCardsV2(
+    scopedModelCardsV2(
+      scope: $scope
       filter: $filter
       orderBy: $orderBy
       limit: $limit
@@ -185,7 +187,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   const deferredQueryRef = useDeferredValue(queryRef);
   const isRefetching = deferredQueryRef !== queryRef;
 
-  const { adminModelCardsV2 } = usePreloadedQuery<AdminModelCardQueryType>(
+  const { scopedModelCardsV2 } = usePreloadedQuery<AdminModelCardQueryType>(
     AdminModelCardQuery,
     deferredQueryRef,
   );
@@ -238,7 +240,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
     setIsSettingModalOpen(true);
   };
 
-  const modelCards = adminModelCardsV2?.edges?.map((edge) => edge?.node) ?? [];
+  const modelCards = scopedModelCardsV2?.edges?.map((edge) => edge?.node) ?? [];
 
   const editingModelCard = editingModelCardId
     ? modelCards.find((mc) => mc?.id === editingModelCardId)
@@ -541,7 +543,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
         pagination={{
           pageSize,
           current,
-          total: adminModelCardsV2?.count ?? 0,
+          total: scopedModelCardsV2?.count ?? 0,
           onChange: (nextCurrent, nextPageSize) => {
             onReload(
               {

@@ -47,6 +47,7 @@ import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { useCurrentDomainValue } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import { BAISkeleton } from 'backend.ai-ui';
 import { BAICard, type BAICardProps } from 'backend.ai-ui';
 import {
@@ -91,6 +92,8 @@ type DeploymentTabQueryParams = {
 const AdminDeploymentPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
+  // Deployments and model cards of the current domain (ADR 0011).
+  const { domainScope } = useCurrentDomainScope();
 
   // Default status scope for the deployments tab: hide terminated deployments.
   // `status` is never a user-settable filter property, so the deployments tab
@@ -172,7 +175,7 @@ const AdminDeploymentPage: React.FC = () => {
       pageSize: nextLimit,
       current: nextOffset > 0 ? Math.floor(nextOffset / nextLimit) + 1 : 1,
     });
-    loadDeploymentQuery(variables, options);
+    loadDeploymentQuery({ ...variables, scope: domainScope }, options);
   };
 
   // --- Model store management tab ---
@@ -207,6 +210,7 @@ const AdminDeploymentPage: React.FC = () => {
     loadModelCardQuery(
       {
         ...variables,
+        scope: domainScope,
         // AND-nesting keeps a user OR/NOT from widening past the domain.
         filter: currentDomain
           ? {
@@ -311,6 +315,7 @@ const AdminDeploymentPage: React.FC = () => {
         if (!deploymentQueryRef) {
           loadDeploymentQuery(
             {
+              scope: domainScope,
               filter:
                 (params.filter as DeploymentFilter | null) ??
                 deploymentRunningFilter,
@@ -341,6 +346,7 @@ const AdminDeploymentPage: React.FC = () => {
               orderBy: convertToOrderBy<ModelCardV2OrderBy>(params.order),
               limit,
               offset,
+              scope: domainScope,
             },
             { fetchPolicy: 'store-and-network' },
           );
