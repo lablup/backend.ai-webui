@@ -2786,7 +2786,6 @@
   },
   "retentionPolicy": {
     "Category": "種類",
-    "CategoryAlreadyHasPolicy": "{{category}} にはすでにポリシーがあります。既存のポリシーを編集してください。",
     "CategoryDeployments": "デプロイメント",
     "CategoryLogin": "ログイン履歴",
     "CategoryLogs": "ログ",
@@ -2802,6 +2801,7 @@
     "Description": "記録の種類ごとに保持期間を設定します。古い記録は、ポリシーが有効な種類でのみ整理されます。",
     "EditPolicy": "ポリシーを編集",
     "OnePolicyPerCategory": "ポリシーは種類ごとに1つだけ作成できます。",
+    "PolicyAlreadyExistsView": "この種類にはすでにポリシーがあります。<viewLink>確認</viewLink>",
     "RetentionPeriodDays": "保持期間（日）",
     "RetentionPeriodRequired": "1日以上の保持期間を入力してください。",
     "RetentionPolicy": "保持ポリシー",

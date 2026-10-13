@@ -2787,7 +2787,6 @@
   },
   "retentionPolicy": {
     "Category": "Kategori",
-    "CategoryAlreadyHasPolicy": "{{category}} sudah memiliki kebijakan. Edit kebijakan yang ada.",
     "CategoryDeployments": "Deployment",
     "CategoryLogin": "Riwayat login",
     "CategoryLogs": "Log",
@@ -2803,6 +2802,7 @@
     "Description": "Atur berapa lama setiap jenis catatan disimpan. Catatan lama hanya dibersihkan untuk kategori yang kebijakannya aktif.",
     "EditPolicy": "Edit kebijakan",
     "OnePolicyPerCategory": "Setiap kategori hanya dapat memiliki satu kebijakan.",
+    "PolicyAlreadyExistsView": "Kategori ini sudah memiliki kebijakan. <viewLink>Lihat</viewLink>",
     "RetentionPeriodDays": "Periode retensi (hari)",
     "RetentionPeriodRequired": "Masukkan periode retensi minimal 1 hari.",
     "RetentionPolicy": "Kebijakan retensi",

@@ -2784,7 +2784,6 @@
   },
   "retentionPolicy": {
     "Category": "Categoría",
-    "CategoryAlreadyHasPolicy": "{{category}} ya tiene una política. Edite la política existente.",
     "CategoryDeployments": "Despliegues",
     "CategoryLogin": "Historial de inicio de sesión",
     "CategoryLogs": "Registros",
@@ -2800,6 +2799,7 @@
     "Description": "Defina cuánto tiempo se conserva cada tipo de registro. Los registros antiguos solo se limpian en las categorías cuya política está habilitada.",
     "EditPolicy": "Editar política",
     "OnePolicyPerCategory": "Solo puede existir una política por categoría.",
+    "PolicyAlreadyExistsView": "Ya existe una política para esta categoría. <viewLink>Ver</viewLink>",
     "RetentionPeriodDays": "Período de retención (días)",
     "RetentionPeriodRequired": "Introduzca un período de retención de al menos 1 día.",
     "RetentionPolicy": "Política de retención",

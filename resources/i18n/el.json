@@ -2784,7 +2784,6 @@
   },
   "retentionPolicy": {
     "Category": "Κατηγορία",
-    "CategoryAlreadyHasPolicy": "Η κατηγορία {{category}} έχει ήδη πολιτική. Επεξεργαστείτε την υπάρχουσα πολιτική.",
     "CategoryDeployments": "Αναπτύξεις",
     "CategoryLogin": "Ιστορικό συνδέσεων",
     "CategoryLogs": "Αρχεία καταγραφής",
@@ -2800,6 +2799,7 @@
     "Description": "Ορίστε πόσο καιρό διατηρείται κάθε είδος εγγραφής. Οι παλιές εγγραφές καθαρίζονται μόνο για κατηγορίες με ενεργή πολιτική.",
     "EditPolicy": "Επεξεργασία πολιτικής",
     "OnePolicyPerCategory": "Μπορεί να υπάρχει μόνο μία πολιτική ανά κατηγορία.",
+    "PolicyAlreadyExistsView": "Υπάρχει ήδη πολιτική για αυτήν την κατηγορία. <viewLink>Προβολή</viewLink>",
     "RetentionPeriodDays": "Περίοδος διατήρησης (ημέρες)",
     "RetentionPeriodRequired": "Εισαγάγετε περίοδο διατήρησης τουλάχιστον 1 ημέρας.",
     "RetentionPolicy": "Πολιτική διατήρησης",

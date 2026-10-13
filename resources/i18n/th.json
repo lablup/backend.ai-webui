@@ -2772,7 +2772,6 @@
   },
   "retentionPolicy": {
     "Category": "หมวดหมู่",
-    "CategoryAlreadyHasPolicy": "{{category}} มีนโยบายอยู่แล้ว โปรดแก้ไขนโยบายที่มีอยู่",
     "CategoryDeployments": "การปรับใช้",
     "CategoryLogin": "ประวัติการเข้าสู่ระบบ",
     "CategoryLogs": "บันทึก",
@@ -2788,6 +2787,7 @@
     "Description": "กำหนดระยะเวลาเก็บบันทึกแต่ละประเภท บันทึกเก่าจะถูกล้างเฉพาะหมวดหมู่ที่เปิดใช้นโยบายเท่านั้น",
     "EditPolicy": "แก้ไขนโยบาย",
     "OnePolicyPerCategory": "แต่ละหมวดหมู่มีนโยบายได้เพียงหนึ่งนโยบาย",
+    "PolicyAlreadyExistsView": "หมวดหมู่นี้มีนโยบายอยู่แล้ว <viewLink>ดู</viewLink>",
     "RetentionPeriodDays": "ระยะเวลาเก็บรักษา (วัน)",
     "RetentionPeriodRequired": "ป้อนระยะเวลาเก็บรักษาอย่างน้อย 1 วัน",
     "RetentionPolicy": "นโยบายการเก็บรักษา",

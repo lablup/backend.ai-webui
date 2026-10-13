@@ -2784,7 +2784,6 @@
   },
   "retentionPolicy": {
     "Category": "Категория",
-    "CategoryAlreadyHasPolicy": "Для категории {{category}} уже есть политика. Измените существующую политику.",
     "CategoryDeployments": "Развёртывания",
     "CategoryLogin": "История входов",
     "CategoryLogs": "Журналы",
@@ -2800,6 +2799,7 @@
     "Description": "Задайте, как долго хранится каждый тип записей. Старые записи очищаются только для категорий с включённой политикой.",
     "EditPolicy": "Изменить политику",
     "OnePolicyPerCategory": "Для каждой категории может существовать только одна политика.",
+    "PolicyAlreadyExistsView": "Для этой категории уже есть политика. <viewLink>Просмотреть</viewLink>",
     "RetentionPeriodDays": "Срок хранения (дни)",
     "RetentionPeriodRequired": "Введите срок хранения не менее 1 дня.",
     "RetentionPolicy": "Политика хранения",

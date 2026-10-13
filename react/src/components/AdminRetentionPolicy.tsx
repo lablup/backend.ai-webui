@@ -308,6 +308,15 @@ const AdminRetentionPolicy: React.FC<AdminRetentionPolicyProps> = ({
         <RetentionPolicySettingModal
           open={isOpenSettingModal}
           policyFrgmt={editingPolicy}
+          onViewExistingPolicy={(category) => {
+            setIsOpenSettingModal(false);
+            onReload({
+              ...variables,
+              filter: { category },
+              orderBy: undefined,
+              offset: 0,
+            });
+          }}
           onRequestClose={(success) => {
             setIsOpenSettingModal(false);
             // An update returns its fields and Relay patches the row in

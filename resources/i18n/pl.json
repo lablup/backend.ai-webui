@@ -2786,7 +2786,6 @@
   },
   "retentionPolicy": {
     "Category": "Kategoria",
-    "CategoryAlreadyHasPolicy": "Kategoria {{category}} ma już zasadę. Edytuj istniejącą zasadę.",
     "CategoryDeployments": "Wdrożenia",
     "CategoryLogin": "Historia logowania",
     "CategoryLogs": "Dzienniki",
@@ -2802,6 +2801,7 @@
     "Description": "Określ, jak długo przechowywany jest każdy rodzaj rekordów. Stare rekordy są czyszczone tylko w kategoriach z włączoną zasadą.",
     "EditPolicy": "Edytuj zasadę",
     "OnePolicyPerCategory": "Dla każdej kategorii może istnieć tylko jedna zasada.",
+    "PolicyAlreadyExistsView": "Dla tej kategorii istnieje już zasada. <viewLink>Wyświetl</viewLink>",
     "RetentionPeriodDays": "Okres przechowywania (dni)",
     "RetentionPeriodRequired": "Wprowadź okres przechowywania co najmniej 1 dzień.",
     "RetentionPolicy": "Zasada przechowywania",
