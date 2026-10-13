@@ -49,7 +49,7 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export type AstryxAdminProjectNode = NonNullable<
   NonNullable<
-    BAIAdminProjectSelectPaginatedQuery['response']['adminProjectsV2']
+    BAIAdminProjectSelectPaginatedQuery['response']['scopedProjectsV2']
   >['edges'][number]
 >['node'];
 
@@ -78,8 +78,8 @@ export interface BAIAdminProjectSelectProps extends Omit<
     NonNullable<BAIAdminProjectSelectPaginatedQuery['variables']['filter']>,
     'name'
   >;
-  /** Lists the projects this scope reaches; omit on superadmin-only pages (ADR 0011). */
-  scope?: ProjectScope | null;
+  /** The projects this scope reaches are listed, usually the current domain (ADR 0011). */
+  scope: ProjectScope;
   ref?: React.Ref<BAIAdminProjectSelectRef>;
 }
 
@@ -118,8 +118,6 @@ const BAIAdminProjectSelect: React.FC<BAIAdminProjectSelectProps> = ({
   // Deferred so a fresh selection does not immediately re-run the value query.
   const deferredControllableValue = useDeferredValue(controllableValue);
   const selectedIds = _.compact(_.castArray(deferredControllableValue ?? []));
-  const useScope = !!scope;
-  const scopeVariable = scope ?? { domain: [] };
 
   /**
    * The selected-id -> label resolution query. Mandatory on Astryx (the
@@ -132,25 +130,13 @@ const BAIAdminProjectSelect: React.FC<BAIAdminProjectSelectProps> = ({
         query BAIAdminProjectSelectValueQuery(
           $projectIds: [UUID!]!
           $scope: ProjectScope!
-          $skipScoped: Boolean!
-          $skipAdmin: Boolean!
+          $skipSelected: Boolean!
         ) {
           scopedProjectsV2(
             scope: $scope
             filter: { id: { in: $projectIds } }
             limit: 100
-          ) @since(version: "26.9.0a4") @skip(if: $skipScoped) {
-            edges {
-              node {
-                id
-                basicInfo {
-                  name
-                }
-              }
-            }
-          }
-          adminProjectsV2(filter: { id: { in: $projectIds } }, limit: 100)
-            @skip(if: $skipAdmin) {
+          ) @skip(if: $skipSelected) {
             edges {
               node {
                 id
@@ -164,9 +150,8 @@ const BAIAdminProjectSelect: React.FC<BAIAdminProjectSelectProps> = ({
       `,
       {
         projectIds: selectedIds,
-        scope: scopeVariable,
-        skipScoped: selectedIds.length === 0 || !useScope,
-        skipAdmin: selectedIds.length === 0 || useScope,
+        scope,
+        skipSelected: selectedIds.length === 0,
       },
       {
         fetchPolicy: selectedIds.length > 0 ? 'store-or-network' : 'store-only',
@@ -185,7 +170,6 @@ const BAIAdminProjectSelect: React.FC<BAIAdminProjectSelectProps> = ({
           $limit: Int!
           $filter: ProjectV2Filter
           $scope: ProjectScope!
-          $useScope: Boolean!
         ) {
           scopedProjectsV2(
             scope: $scope
@@ -193,23 +177,7 @@ const BAIAdminProjectSelect: React.FC<BAIAdminProjectSelectProps> = ({
             limit: $limit
             filter: $filter
             orderBy: [{ field: NAME, direction: ASC }]
-          ) @since(version: "26.9.0a4") @include(if: $useScope) {
-            count
-            edges {
-              node {
-                id
-                basicInfo {
-                  name
-                }
-              }
-            }
-          }
-          adminProjectsV2(
-            offset: $offset
-            limit: $limit
-            filter: $filter
-            orderBy: [{ field: NAME, direction: ASC }]
-          ) @skip(if: $useScope) {
+          ) {
             count
             edges {
               node {
@@ -224,8 +192,7 @@ const BAIAdminProjectSelect: React.FC<BAIAdminProjectSelectProps> = ({
       `,
       { limit: 10 },
       {
-        scope: scopeVariable,
-        useScope,
+        scope,
         filter: {
           ...(filterFromProps ?? {}),
           ...(debouncedDeferredValue
@@ -239,12 +206,8 @@ const BAIAdminProjectSelect: React.FC<BAIAdminProjectSelectProps> = ({
         fetchKey: deferredFetchKey,
       },
       {
-        getTotal: (r) =>
-          (r.scopedProjectsV2 ?? r.adminProjectsV2)?.count ?? undefined,
-        getItem: (r) =>
-          (r.scopedProjectsV2 ?? r.adminProjectsV2)?.edges?.map(
-            (edge) => edge?.node,
-          ),
+        getTotal: (r) => r.scopedProjectsV2?.count ?? undefined,
+        getItem: (r) => r.scopedProjectsV2?.edges?.map((edge) => edge?.node),
         getId: (item) => (item?.id ? toLocalId(item.id) : item?.id),
       },
     );
@@ -282,10 +245,7 @@ const BAIAdminProjectSelect: React.FC<BAIAdminProjectSelectProps> = ({
   const labeledValue: BAIComplexSelectValue = (() => {
     const labeled: Array<BAILabeledValue> = _.map(selectedIds, (key) => {
       const edge = _.find(
-        (
-          selectedProjectsData.scopedProjectsV2 ??
-          selectedProjectsData.adminProjectsV2
-        )?.edges,
+        selectedProjectsData.scopedProjectsV2?.edges,
         (e) => keyOfNode(e?.node) === key,
       );
       // Echoing the key as its own label is the antd fallback, made explicit.
@@ -311,9 +271,7 @@ const BAIAdminProjectSelect: React.FC<BAIAdminProjectSelectProps> = ({
         isPendingRefetch
       }
       isLoadingNext={isLoadingNext}
-      total={
-        (result.scopedProjectsV2 ?? result.adminProjectsV2)?.count ?? undefined
-      }
+      total={result.scopedProjectsV2?.count ?? undefined}
       options={options}
       value={labeledValue}
       onChange={(next) => {

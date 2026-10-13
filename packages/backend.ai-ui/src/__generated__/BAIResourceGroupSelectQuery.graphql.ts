@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9207bc9dcc8312994097928b8a2f1cd5>>
+ * @generated SignedSource<<623405aee964849dcbc0bdc7ef8eaf2b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,14 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+export type ResourceGroupScope = {
+  domain?: ReadonlyArray<UUIDScope> | null | undefined;
+  project?: ReadonlyArray<UUIDScope> | null | undefined;
+  user?: ReadonlyArray<UUIDScope> | null | undefined;
+};
+export type UUIDScope = {
+  value: string;
+};
 export type ResourceGroupFilter = {
   AND?: ReadonlyArray<ResourceGroupFilter> | null | undefined;
   NOT?: ReadonlyArray<ResourceGroupFilter> | null | undefined;
@@ -65,9 +73,10 @@ export type UUIDFilter = {
 };
 export type BAIResourceGroupSelectQuery$variables = {
   filter?: ResourceGroupFilter | null | undefined;
+  scope: ResourceGroupScope;
 };
 export type BAIResourceGroupSelectQuery$data = {
-  readonly adminResourceGroups: {
+  readonly scopedResourceGroups: {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly name: string;
@@ -81,14 +90,17 @@ export type BAIResourceGroupSelectQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "filter"
-  }
-],
-v1 = [
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "filter"
+},
+v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "scope"
+},
+v2 = [
   {
     "kind": "Variable",
     "name": "filter",
@@ -108,9 +120,14 @@ v1 = [
         "field": "NAME"
       }
     ]
+  },
+  {
+    "kind": "Variable",
+    "name": "scope",
+    "variableName": "scope"
   }
 ],
-v2 = {
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -119,17 +136,20 @@ v2 = {
 };
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/)
+    ],
     "kind": "Fragment",
     "metadata": null,
     "name": "BAIResourceGroupSelectQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v1/*: any*/),
+        "args": (v2/*: any*/),
         "concreteType": "ResourceGroupConnection",
         "kind": "LinkedField",
-        "name": "adminResourceGroups",
+        "name": "scopedResourceGroups",
         "plural": false,
         "selections": [
           {
@@ -148,7 +168,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v2/*: any*/)
+                  (v3/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -164,16 +184,19 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v1/*: any*/),
+      (v0/*: any*/)
+    ],
     "kind": "Operation",
     "name": "BAIResourceGroupSelectQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v1/*: any*/),
+        "args": (v2/*: any*/),
         "concreteType": "ResourceGroupConnection",
         "kind": "LinkedField",
-        "name": "adminResourceGroups",
+        "name": "scopedResourceGroups",
         "plural": false,
         "selections": [
           {
@@ -192,7 +215,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v2/*: any*/),
+                  (v3/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -212,16 +235,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "ccbeb1e0d742d5ecb1d403bebf4046be",
+    "cacheID": "625339ba3b9fcb5359e357553e4938d1",
     "id": null,
     "metadata": {},
     "name": "BAIResourceGroupSelectQuery",
     "operationKind": "query",
-    "text": "query BAIResourceGroupSelectQuery(\n  $filter: ResourceGroupFilter\n) {\n  adminResourceGroups(filter: $filter, orderBy: [{field: NAME, direction: ASC}], limit: 100) {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query BAIResourceGroupSelectQuery(\n  $scope: ResourceGroupScope!\n  $filter: ResourceGroupFilter\n) {\n  scopedResourceGroups(scope: $scope, filter: $filter, orderBy: [{field: NAME, direction: ASC}], limit: 100) {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "401e1429387d38b178219ebb0a678556";
+(node as any).hash = "97f3a44e2aa7644fec449974c1ddac20";
 
 export default node;

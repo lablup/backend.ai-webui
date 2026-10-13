@@ -4,6 +4,7 @@
  */
 import { StorageHostSettingsPanel_storageVolumeFrgmt$key } from '../__generated__/StorageHostSettingsPanel_storageVolumeFrgmt.graphql';
 import { QuotaScopeType, addQuotaScopeTypePrefix } from '../helper/index';
+import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import BAIRadioGroup from './BAIRadioGroup';
 import QuotaScopeTable from './QuotaScopeTable';
 import {
@@ -24,6 +25,7 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
   storageVolumeFrgmt,
 }) => {
   'use memo';
+  const { domainScope } = useCurrentDomainScope();
   const { t } = useTranslation();
   const storageVolume = useFragment(
     graphql`
@@ -69,6 +71,7 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
         />
         {currentSettingType === 'project' ? (
           <BAIAdminProjectSelect
+            scope={domainScope}
             // The adjacent radio group already prints "For Project", so the
             // field's accessible name reuses it and stays visually hidden.
             label={t('storageHost.ForProject')}

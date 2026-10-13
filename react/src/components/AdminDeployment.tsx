@@ -13,6 +13,7 @@ import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
@@ -126,6 +127,7 @@ const AdminDeployment = ({
   tableSettings,
 }: AdminDeploymentProps) => {
   'use memo';
+  const { domainScope } = useCurrentDomainScope();
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
@@ -232,6 +234,7 @@ const AdminDeployment = ({
       rule: uuidRule,
       renderInput: ({ onAddCondition, value, isDisabled }) => (
         <BAIAdminProjectSelect
+          scope={domainScope}
           label={t('deployment.Project')}
           isLabelHidden
           value={value}

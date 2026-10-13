@@ -12,6 +12,7 @@ import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import {
   AstryxFormCheckbox,
   AstryxFormSelector,
@@ -171,6 +172,12 @@ const CurrentDomainScopeId: React.FC<DomainScopeIdProps> = (props) => {
   );
 };
 
+const ProjectScopeIdSelect: React.FC<ScopeIdBranchProps> = (props) => {
+  'use memo';
+  const { domainScope } = useCurrentDomainScope();
+  return <BAIAdminProjectSelect scope={domainScope} {...props} />;
+};
+
 export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   scopeType: rawScopeType,
   ...selectProps
@@ -207,7 +214,7 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   if (scopeType === 'PROJECT') {
     return (
       <Suspense fallback={fallback}>
-        <BAIAdminProjectSelect {...branchProps} />
+        <ProjectScopeIdSelect {...branchProps} />
       </Suspense>
     );
   }
