@@ -15,7 +15,7 @@ import RetentionPolicyList, {
 } from '../components/RetentionPolicyList';
 import { RETENTION_CATEGORIES } from '../components/RetentionPolicySettingModal';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
-import { useBrowserPopstateEffect } from '../hooks';
+import { useBrowserPopstateEffect, useKeyedSnapshot } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { BAISkeleton, BAICard } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -36,12 +36,21 @@ const orderParser = parseAsStringLiteral([
   ..._.map(RETENTION_POLICY_SORTER_KEYS, (key) => `-${key}` as const),
 ]).withDefault('category');
 
+type TabKey = 'maintenance' | 'retention-policy';
 type RetentionPolicyVariables = RetentionPolicyListQueryType['variables'];
 
-const defaultRetentionPolicyPagination = {
-  current: 1,
-  pageSize: RETENTION_POLICY_LIST_DEFAULT_PAGE_SIZE,
+type TabSnapshot = {
+  queryParams: { order: typeof orderParser.defaultValue };
+  tablePaginationOption: { current: number; pageSize: number };
 };
+
+const defaultSnapshotOf = (_tab: TabKey): TabSnapshot => ({
+  queryParams: { order: orderParser.defaultValue },
+  tablePaginationOption: {
+    current: 1,
+    pageSize: RETENTION_POLICY_LIST_DEFAULT_PAGE_SIZE,
+  },
+});
 
 const retentionPolicyVariablesOf = (
   order: string | null,
@@ -66,10 +75,24 @@ const MaintenancePage = () => {
     { history: 'replace' },
   );
   const { tablePaginationOption, setTablePaginationOption } =
-    useBAIPaginationOptionStateOnSearchParam(defaultRetentionPolicyPagination);
+    useBAIPaginationOptionStateOnSearchParam(
+      defaultSnapshotOf(queryParams.tab).tablePaginationOption,
+    );
 
   const [retentionPolicyQueryRef, loadRetentionPolicyQuery] =
     useQueryLoader<RetentionPolicyListQueryType>(RetentionPolicyListQuery);
+
+  // What the URL currently describes — both the snapshot `useKeyedSnapshot`
+  // stores for the active tab and what a browser navigation reloads from.
+  const currentSnapshot: TabSnapshot = {
+    queryParams: _.omit(queryParams, 'tab'),
+    tablePaginationOption,
+  };
+
+  const [currentTab, setCurrentTab, peekTabSnapshot] = useKeyedSnapshot<
+    TabKey,
+    TabSnapshot
+  >(queryParams.tab, currentSnapshot);
 
   const handleRetentionPolicyReload = (
     variables: RetentionPolicyVariables,
@@ -89,12 +112,20 @@ const MaintenancePage = () => {
     setTablePaginationOption(pagination);
   };
 
-  const loadTabFromQueryParams = () => {
-    if (queryParams.tab !== 'retention-policy') return;
+  // The maintenance tab has no preloaded query.
+  const loadTabQuery = (tab: TabKey, snapshot: TabSnapshot) => {
+    if (tab !== 'retention-policy') return;
     loadRetentionPolicyQuery(
-      retentionPolicyVariablesOf(queryParams.order, tablePaginationOption),
+      retentionPolicyVariablesOf(
+        snapshot.queryParams.order,
+        snapshot.tablePaginationOption,
+      ),
       { fetchPolicy: 'store-and-network' },
     );
+  };
+
+  const loadTabFromQueryParams = () => {
+    loadTabQuery(queryParams.tab, currentSnapshot);
   };
 
   const loadTabOnMount = useEffectEvent(loadTabFromQueryParams);
@@ -106,18 +137,15 @@ const MaintenancePage = () => {
 
   return (
     <BAICard
-      activeTabKey={queryParams.tab}
+      activeTabKey={currentTab}
       onTabChange={(key) => {
         const tab = tabParser.parse(key) ?? tabParser.defaultValue;
-        if (tab === queryParams.tab) return;
-        if (tab === 'retention-policy') {
-          loadRetentionPolicyQuery(
-            retentionPolicyVariablesOf(null, defaultRetentionPolicyPagination),
-            { fetchPolicy: 'store-and-network' },
-          );
-        }
-        setQueryParams({ tab, order: null }, { history: 'push' });
-        setTablePaginationOption(defaultRetentionPolicyPagination);
+        if (tab === currentTab) return;
+        const snapshot = peekTabSnapshot(tab) ?? defaultSnapshotOf(tab);
+        setCurrentTab(tab);
+        loadTabQuery(tab, snapshot);
+        setQueryParams({ tab, ...snapshot.queryParams }, { history: 'push' });
+        setTablePaginationOption(snapshot.tablePaginationOption);
       }}
       tabList={[
         {
@@ -131,12 +159,12 @@ const MaintenancePage = () => {
       ]}
     >
       <Suspense fallback={<BAISkeleton />}>
-        {queryParams.tab === 'maintenance' && (
+        {currentTab === 'maintenance' && (
           <BAIErrorBoundary>
             <MaintenanceSettingList />
           </BAIErrorBoundary>
         )}
-        {queryParams.tab === 'retention-policy' && (
+        {currentTab === 'retention-policy' && (
           <BAIErrorBoundary>
             {retentionPolicyQueryRef ? (
               <RetentionPolicyList
