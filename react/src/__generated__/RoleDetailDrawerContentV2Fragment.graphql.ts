@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2265004a079d25d4daa86c21ccebe3bb>>
+ * @generated SignedSource<<28d1ca6b868312b7eaeacf0a3f7aa53c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -33,7 +33,6 @@ export type RoleDetailDrawerContentV2Fragment$data = {
     readonly name?: string;
     readonly project?: string | null | undefined;
     readonly registryName?: string;
-    readonly vfolderName?: string | null | undefined;
   } | null | undefined;
   readonly scopeId: string;
   readonly scopeType: string;
@@ -201,39 +200,18 @@ return {
           "kind": "InlineFragment",
           "selections": [
             {
-              "alias": "vfolderName",
+              "alias": null,
               "args": null,
-              "kind": "ScalarField",
-              "name": "name",
+              "concreteType": "VFolderMetadataInfo",
+              "kind": "LinkedField",
+              "name": "metadata",
+              "plural": false,
+              "selections": (v2/*: any*/),
               "storageKey": null
             }
           ],
-          "type": "VirtualFolderNode",
+          "type": "VFolder",
           "abstractKey": null
-        },
-        {
-          "kind": "InlineFragment",
-          "selections": [
-            {
-              "kind": "InlineFragment",
-              "selections": [
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "VFolderMetadataInfo",
-                  "kind": "LinkedField",
-                  "name": "metadata",
-                  "plural": false,
-                  "selections": (v2/*: any*/),
-                  "storageKey": null
-                }
-              ],
-              "type": "VFolder",
-              "abstractKey": null
-            }
-          ],
-          "type": "Node",
-          "abstractKey": "__isNode"
         },
         {
           "kind": "InlineFragment",
@@ -335,6 +313,6 @@ return {
 };
 })();
 
-(node as any).hash = "e2b01d28b993ce1fe149666878589ea4";
+(node as any).hash = "3c12e7f6ca8b07c991a0257b4c246d2d";
 
 export default node;
