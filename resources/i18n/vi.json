@@ -3286,6 +3286,7 @@
     }
   },
   "sessionMonitor": {
+    "DomainSessions": "Phiên trong miền này",
     "MonitorSettings": "Cài đặt giám sát",
     "MoreSessions": "{{count}} phiên khác",
     "MyResourceUsage": "Mức sử dụng của tôi so với giới hạn của tôi",
@@ -3293,9 +3294,10 @@
     "NoActiveSessions": "Không có phiên hoạt động",
     "OpenSession": "Mở phiên",
     "OpenSessionList": "Mở danh sách phiên",
+    "ProjectSessions": "Phiên trong dự án này",
     "RunningCount": "{{count}} đang chạy",
     "StartingCount": "{{count}} đang khởi động",
-    "Tooltip": "Phiên của tôi: số lượng đang chạy và thời điểm kết thúc gần nhất",
+    "Tooltip": "Giám sát phiên: số lượng đang chạy và thời điểm kết thúc gần nhất",
     "idleAlert": {
       "NetworkTimeout": "Không phát hiện hoạt động mạng. Hãy kết nối đến phiên trước khi nó bị chấm dứt.",
       "SessionLifetime": "Phiên đang đạt đến thời gian tồn tại tối đa.",

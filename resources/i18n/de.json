@@ -3286,6 +3286,7 @@
     }
   },
   "sessionMonitor": {
+    "DomainSessions": "Sitzungen in dieser Domäne",
     "MonitorSettings": "Monitor-Einstellungen",
     "MoreSessions": "{{count}} weitere Sitzungen",
     "MyResourceUsage": "Meine Nutzung im Vergleich zu meinem Limit",
@@ -3293,9 +3294,10 @@
     "NoActiveSessions": "Keine aktiven Sitzungen",
     "OpenSession": "Sitzung öffnen",
     "OpenSessionList": "Sitzungsliste öffnen",
+    "ProjectSessions": "Sitzungen in diesem Projekt",
     "RunningCount": "{{count}} laufend",
     "StartingCount": "{{count}} startend",
-    "Tooltip": "Meine Sitzungen: Anzahl laufender Sitzungen und nächste Beendigung",
+    "Tooltip": "Sitzungsmonitor: Anzahl laufender Sitzungen und nächste Beendigung",
     "idleAlert": {
       "NetworkTimeout": "Es wurde keine Netzwerkaktivität erkannt. Verbinden Sie sich mit der Sitzung, bevor sie beendet wird.",
       "SessionLifetime": "Die Sitzung erreicht ihre maximale Lebensdauer.",

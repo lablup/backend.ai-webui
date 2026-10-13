@@ -3286,6 +3286,7 @@
     }
   },
   "sessionMonitor": {
+    "DomainSessions": "このドメインのセッション",
     "MonitorSettings": "モニター設定",
     "MoreSessions": "他に{{count}}件のセッション",
     "MyResourceUsage": "自分の上限に対する使用量",
@@ -3293,9 +3294,10 @@
     "NoActiveSessions": "実行中のセッションはありません",
     "OpenSession": "セッションを開く",
     "OpenSessionList": "セッション一覧を開く",
+    "ProjectSessions": "このプロジェクトのセッション",
     "RunningCount": "実行中 {{count}}件",
     "StartingCount": "起動中 {{count}}件",
-    "Tooltip": "自分のセッション: 実行中の件数と最も近い終了予定",
+    "Tooltip": "セッションモニター: 実行中の件数と最も近い終了予定",
     "idleAlert": {
       "NetworkTimeout": "ネットワークアクティビティが検出されませんでした。終了する前にセッションに接続してください。",
       "SessionLifetime": "セッションが最大寿命に達しています。",

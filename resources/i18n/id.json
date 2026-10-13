@@ -3288,6 +3288,7 @@
     }
   },
   "sessionMonitor": {
+    "DomainSessions": "Sesi di domain ini",
     "MonitorSettings": "Pengaturan monitor",
     "MoreSessions": "{{count}} sesi lainnya",
     "MyResourceUsage": "Penggunaan saya dibandingkan dengan batas saya",
@@ -3295,9 +3296,10 @@
     "NoActiveSessions": "Tidak ada sesi aktif",
     "OpenSession": "Buka sesi",
     "OpenSessionList": "Buka daftar sesi",
+    "ProjectSessions": "Sesi di proyek ini",
     "RunningCount": "{{count}} berjalan",
     "StartingCount": "{{count}} memulai",
-    "Tooltip": "Sesi saya: jumlah yang berjalan dan penghentian terdekat",
+    "Tooltip": "Monitor sesi: jumlah yang berjalan dan penghentian terdekat",
     "idleAlert": {
       "NetworkTimeout": "Tidak ada aktivitas jaringan yang terdeteksi. Sambungkan ke sesi sebelum dihentikan.",
       "SessionLifetime": "Sesi telah mencapai durasi maksimalnya.",

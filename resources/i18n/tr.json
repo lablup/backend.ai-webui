@@ -3284,6 +3284,7 @@
     }
   },
   "sessionMonitor": {
+    "DomainSessions": "Bu etki alanının oturumları",
     "MonitorSettings": "Monitör ayarları",
     "MoreSessions": "{{count}} oturum daha",
     "MyResourceUsage": "Limitime karşı kullanımım",
@@ -3291,9 +3292,10 @@
     "NoActiveSessions": "Aktif oturum yok",
     "OpenSession": "Oturumu aç",
     "OpenSessionList": "Oturum listesini aç",
+    "ProjectSessions": "Bu projenin oturumları",
     "RunningCount": "{{count}} çalışıyor",
     "StartingCount": "{{count}} başlıyor",
-    "Tooltip": "Oturumlarım: çalışan sayısı ve en yakın sonlanma",
+    "Tooltip": "Oturum monitörü: çalışan sayısı ve en yakın sonlanma",
     "idleAlert": {
       "NetworkTimeout": "Ağ etkinliği algılanmadı. Sonlandırılmadan önce oturuma bağlanın.",
       "SessionLifetime": "Oturum maksimum ömrüne ulaşıyor.",
