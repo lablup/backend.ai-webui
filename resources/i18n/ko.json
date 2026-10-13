@@ -3288,6 +3288,7 @@
   },
   "sessionMonitor": {
     "DomainSessions": "이 도메인의 세션",
+    "InUseAcross": "실행 중인 세션 {{count}}개가 사용 중인 자원",
     "MonitorSettings": "모니터 설정",
     "MoreSessions": "세션 {{count}}개 더 있음",
     "MyResourceUsage": "내 할당 한도 대비 사용량",

@@ -20,6 +20,7 @@ import {
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import SessionMonitorItem from './SessionMonitorItem';
 import SessionMonitorResourceUsage from './SessionMonitorResourceUsage';
+import SessionMonitorScopeTotals from './SessionMonitorScopeTotals';
 import SessionMonitorSettingsPane from './SessionMonitorSettingsPane';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
@@ -189,6 +190,13 @@ const ScopedSessionMonitorPopoverContent: React.FC<
                 />
               ) : null;
             })
+          )}
+          {scope.mode !== 'my' && (
+            <ErrorBoundaryWithNullFallback>
+              <Suspense fallback={null}>
+                <SessionMonitorScopeTotals scope={scope} />
+              </Suspense>
+            </ErrorBoundaryWithNullFallback>
           )}
           {!isProjectAgnosticPage && scope.mode !== 'domain' && (
             <ErrorBoundaryWithNullFallback>

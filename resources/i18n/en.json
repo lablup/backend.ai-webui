@@ -3272,6 +3272,7 @@
   },
   "sessionMonitor": {
     "DomainSessions": "Sessions in this domain",
+    "InUseAcross": "In use across {{count}} running sessions",
     "MonitorSettings": "Monitor settings",
     "MoreSessions": "{{count}} more sessions",
     "MyResourceUsage": "My usage against my limit",
