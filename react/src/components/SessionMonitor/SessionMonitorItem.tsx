@@ -12,6 +12,7 @@ import {
 } from '../../helper/sessionMonitor';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { getIdleChecksBadgeVariant } from '../ComputeSessionNodeItems/SessionIdleChecks';
+import SessionStatusBadge from '../ComputeSessionNodeItems/SessionStatusBadge';
 import SessionMonitorUtilizationBars from './SessionMonitorUtilizationBars';
 import { Badge } from '@lablup/ui-common/Badge';
 import { StatusDot } from '@lablup/ui-common/StatusDot';
@@ -53,6 +54,7 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
         occupied_slots
         requested_slots
         ...SessionMonitorUtilizationBarsFragment
+        ...SessionStatusBadgeFragment
       }
     `,
     sessionFrgmt,
@@ -145,19 +147,7 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
         </BAIFlex>
       </BAIFlex>
       <div style={{ width: 160, flex: 'none' }}>
-        {isRunning ? (
-          <SessionMonitorUtilizationBars sessionFrgmt={session} />
-        ) : (
-          isStartingStatus(session.status) && (
-            <Text
-              type="supporting"
-              style={{ color: 'var(--color-warning)' }}
-              textWrap="nowrap"
-            >
-              {t('sessionMonitor.WaitingForResources')}
-            </Text>
-          )
-        )}
+        {isRunning && <SessionMonitorUtilizationBars sessionFrgmt={session} />}
       </div>
       {
         <BAIFlex
@@ -207,16 +197,9 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
               </Text>
             </>
           ) : (
-            <>
-              <Text type="label" justify="end">
-                -
-              </Text>
-              <Text type="supporting" maxLines={1} justify="end">
-                {isRunning
-                  ? t('sessionMonitor.Active')
-                  : (session.status ?? '')}
-              </Text>
-            </>
+            <BAIFlex justify="end">
+              <SessionStatusBadge sessionFrgmt={session} showQueuePosition />
+            </BAIFlex>
           )}
         </BAIFlex>
       }

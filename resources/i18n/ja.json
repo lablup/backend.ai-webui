@@ -3286,7 +3286,6 @@
     }
   },
   "sessionMonitor": {
-    "Active": "使用中",
     "DomainSessions": "このドメインのセッション",
     "InUseAcross": "実行中のセッション{{count}}件に割り当て済み",
     "MonitorSettings": "モニター設定",
@@ -3300,7 +3299,6 @@
     "RunningCount": "実行中 {{count}}件",
     "StartingCount": "起動中 {{count}}件",
     "Tooltip": "セッションモニター: 実行中の件数と最も近い終了予定",
-    "WaitingForResources": "リソース待ち",
     "idleAlert": {
       "NetworkTimeout": "ネットワークアクティビティが検出されませんでした。終了する前にセッションに接続してください。",
       "SessionLifetime": "セッションが最大寿命に達しています。",

@@ -3286,7 +3286,6 @@
     }
   },
   "sessionMonitor": {
-    "Active": "Đang sử dụng",
     "DomainSessions": "Phiên trong miền này",
     "InUseAcross": "Được cấp phát cho {{count}} phiên đang chạy",
     "MonitorSettings": "Cài đặt giám sát",
@@ -3300,7 +3299,6 @@
     "RunningCount": "{{count}} đang chạy",
     "StartingCount": "{{count}} đang khởi động",
     "Tooltip": "Giám sát phiên: số lượng đang chạy và thời điểm kết thúc gần nhất",
-    "WaitingForResources": "Đang chờ tài nguyên",
     "idleAlert": {
       "NetworkTimeout": "Không phát hiện hoạt động mạng. Hãy kết nối đến phiên trước khi nó bị chấm dứt.",
       "SessionLifetime": "Phiên đang đạt đến thời gian tồn tại tối đa.",

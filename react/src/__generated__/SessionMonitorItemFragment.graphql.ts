@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<dd4f827ab4331fabda7f2f9fe26dbc9e>>
+ * @generated SignedSource<<574a87e9aeaf607c03ea5f3a9eab629b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,7 +17,7 @@ export type SessionMonitorItemFragment$data = {
   readonly occupied_slots: string | null | undefined;
   readonly requested_slots: string | null | undefined;
   readonly status: string | null | undefined;
-  readonly " $fragmentSpreads": FragmentRefs<"SessionMonitorUtilizationBarsFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"SessionMonitorUtilizationBarsFragment" | "SessionStatusBadgeFragment">;
   readonly " $fragmentType": "SessionMonitorItemFragment";
 };
 export type SessionMonitorItemFragment$key = {
@@ -77,12 +77,17 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "FragmentSpread",
       "name": "SessionMonitorUtilizationBarsFragment"
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "SessionStatusBadgeFragment"
     }
   ],
   "type": "ComputeSessionNode",
   "abstractKey": null
 };
 
-(node as any).hash = "2b529db47b0c97f788884c0eaffdced9";
+(node as any).hash = "e60aea7c68939d9e13152719b5fda089";
 
 export default node;

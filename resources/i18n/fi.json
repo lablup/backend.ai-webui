@@ -3284,7 +3284,6 @@
     }
   },
   "sessionMonitor": {
-    "Active": "Käytössä",
     "DomainSessions": "Tämän toimialueen istunnot",
     "InUseAcross": "Varattu {{count}} käynnissä olevaan istuntoon",
     "MonitorSettings": "Valvonta-asetukset",
@@ -3298,7 +3297,6 @@
     "RunningCount": "{{count}} käynnissä",
     "StartingCount": "{{count}} käynnistyy",
     "Tooltip": "Istuntovalvonta: käynnissä olevien määrä ja lähin päättyminen",
-    "WaitingForResources": "Odottaa resursseja",
     "idleAlert": {
       "NetworkTimeout": "Verkkotoimintaa ei havaittu. Yhdistä istuntoon ennen kuin se lopetetaan.",
       "SessionLifetime": "Istunto on saavuttamassa enimmäiskestoikänsä.",

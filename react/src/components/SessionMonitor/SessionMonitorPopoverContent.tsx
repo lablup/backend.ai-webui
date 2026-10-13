@@ -85,10 +85,10 @@ const ScopedSessionMonitorPopoverContent: React.FC<
       : entries.filter((e) => !isStartingStatus(e.status));
   const ranked = rankSessions(listed, sort ?? 'deadline');
   const visible = ranked.slice(0, rows ?? SESSION_MONITOR_VISIBLE_LIMIT);
-  const hiddenCount = Math.max(
-    0,
-    total - (entries.length - listed.length) - visible.length,
-  );
+  // `total` counts the scope; starting sessions filtered out locally are
+  // subtracted so the footer agrees with what the list can show.
+  const listedTotal = Math.max(0, total - (entries.length - listed.length));
+  const hiddenCount = Math.max(0, listedTotal - visible.length);
   const running = entries.filter((e) => e.status === 'RUNNING').length;
   const starting = entries.length - running;
   // The list that matches the scope: admin, project-admin or the user's own.
@@ -223,7 +223,10 @@ const ScopedSessionMonitorPopoverContent: React.FC<
             </BAILink>
             {hiddenCount > 0 && (
               <Text type="supporting">
-                {t('sessionMonitor.MoreSessions', { count: hiddenCount })}
+                {t('sessionMonitor.MoreSessions', {
+                  count: hiddenCount,
+                  total: listedTotal,
+                })}
               </Text>
             )}
           </BAIFlex>

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e20506fbb20c79e562827a5618f35a5d>>
+ * @generated SignedSource<<bb048c06db83d0e30f931e0564fa29dc>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -266,7 +266,8 @@ return {
                                 "name": "cluster_role",
                                 "storageKey": null
                               },
-                              (v5/*: any*/)
+                              (v5/*: any*/),
+                              (v7/*: any*/)
                             ],
                             "storageKey": null
                           }
@@ -274,6 +275,27 @@ return {
                         "storageKey": null
                       }
                     ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "status_info",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "queue_position",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "cluster_size",
                     "storageKey": null
                   }
                 ],
@@ -288,12 +310,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d5147f8b7df518cb85ac2fc314ff4174",
+    "cacheID": "33f67272cd6fc17606f89d08d110b7d9",
     "id": null,
     "metadata": {},
     "name": "useSessionMonitorQuery",
     "operationKind": "query",
-    "text": "query useSessionMonitorQuery(\n  $scopeId: ScopeField\n  $filter: String\n  $first: Int\n) {\n  compute_session_nodes(scope_id: $scopeId, filter: $filter, order: \"-created_at\", first: $first) {\n    count\n    edges {\n      node {\n        id\n        name\n        status\n        created_at\n        idle_checks\n        ...SessionMonitorItemFragment\n      }\n    }\n  }\n}\n\nfragment SessionMonitorItemFragment on ComputeSessionNode {\n  id\n  name\n  status\n  created_at\n  occupied_slots\n  requested_slots\n  ...SessionMonitorUtilizationBarsFragment\n}\n\nfragment SessionMonitorUtilizationBarsFragment on ComputeSessionNode {\n  occupied_slots\n  ...useSessionNodeLiveStatSessionFragment\n}\n\nfragment useSessionNodeLiveStatSessionFragment on ComputeSessionNode {\n  id\n  kernel_nodes {\n    edges {\n      node {\n        live_stat\n        cluster_role\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query useSessionMonitorQuery(\n  $scopeId: ScopeField\n  $filter: String\n  $first: Int\n) {\n  compute_session_nodes(scope_id: $scopeId, filter: $filter, order: \"-created_at\", first: $first) {\n    count\n    edges {\n      node {\n        id\n        name\n        status\n        created_at\n        idle_checks\n        ...SessionMonitorItemFragment\n      }\n    }\n  }\n}\n\nfragment SessionMonitorItemFragment on ComputeSessionNode {\n  id\n  name\n  status\n  created_at\n  occupied_slots\n  requested_slots\n  ...SessionMonitorUtilizationBarsFragment\n  ...SessionStatusBadgeFragment\n}\n\nfragment SessionMonitorUtilizationBarsFragment on ComputeSessionNode {\n  occupied_slots\n  ...useSessionNodeLiveStatSessionFragment\n}\n\nfragment SessionStatusBadgeFragment on ComputeSessionNode {\n  id\n  status\n  status_info\n  queue_position\n  cluster_size\n  kernel_nodes {\n    edges {\n      node {\n        id\n        status\n      }\n    }\n  }\n}\n\nfragment useSessionNodeLiveStatSessionFragment on ComputeSessionNode {\n  id\n  kernel_nodes {\n    edges {\n      node {\n        live_stat\n        cluster_role\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();

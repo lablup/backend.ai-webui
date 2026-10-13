@@ -3271,11 +3271,10 @@
     }
   },
   "sessionMonitor": {
-    "Active": "In use",
     "DomainSessions": "Sessions in this domain",
     "InUseAcross": "Allocated to {{count}} running sessions",
     "MonitorSettings": "Monitor settings",
-    "MoreSessions": "{{count}} more sessions",
+    "MoreSessions": "{{count}} more · {{total}} total",
     "MyResourceUsage": "Allocated to me, against my limit",
     "MySessions": "My sessions",
     "NoActiveSessions": "No active sessions",
@@ -3285,7 +3284,6 @@
     "RunningCount": "{{count}} running",
     "StartingCount": "{{count}} starting",
     "Tooltip": "Session monitor: running count and the nearest termination",
-    "WaitingForResources": "Waiting for resources",
     "idleAlert": {
       "NetworkTimeout": "No network activity has been detected. Connect to the session before it is terminated.",
       "SessionLifetime": "The session is reaching its maximum lifetime.",

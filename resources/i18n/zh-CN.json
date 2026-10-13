@@ -3286,7 +3286,6 @@
     }
   },
   "sessionMonitor": {
-    "Active": "使用中",
     "DomainSessions": "此域中的会话",
     "InUseAcross": "已分配给 {{count}} 个运行中的会话",
     "MonitorSettings": "监控设置",
@@ -3300,7 +3299,6 @@
     "RunningCount": "{{count}} 个运行中",
     "StartingCount": "{{count}} 个启动中",
     "Tooltip": "会话监控：运行数量和最近的终止时间",
-    "WaitingForResources": "等待资源",
     "idleAlert": {
       "NetworkTimeout": "未检测到网络活动。请在会话终止前连接到该会话。",
       "SessionLifetime": "会话即将达到最大使用期限。",
