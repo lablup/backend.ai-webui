@@ -386,7 +386,7 @@ const ProjectAdminDeploymentsContent: React.FC<
                             pathname: buildProjectPath('deployments'),
                             search: new URLSearchParams({
                               filter: JSON.stringify({
-                                tags: { iContains: tag },
+                                tags: { iEquals: tag },
                               }),
                             }).toString(),
                           });

@@ -9,6 +9,7 @@ import {
   loginAsUser,
   moveToTrashAndVerify,
   deleteForeverAndVerifyFromTrash,
+  getVFolderRow,
   navigateTo,
 } from '../utils/test-util';
 import { test, expect } from '@playwright/test';
@@ -185,11 +186,9 @@ test.describe(
           await expect(page).toHaveURL(/\/data/);
 
           // 6. Verify the newly created folder appears in the Data page list
-          await expect(
-            page
-              .getByRole('cell', { name: `VFolder Identicon ${folderName}` })
-              .filter({ hasText: folderName }),
-          ).toBeVisible({ timeout: 10_000 });
+          await expect(getVFolderRow(page, folderName)).toBeVisible({
+            timeout: 10_000,
+          });
         });
       });
 

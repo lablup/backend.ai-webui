@@ -253,7 +253,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "Хандалтын түлхүүр",
     "CreatedAt": "Үүсгэсэн",
-    "InvalidatedAt": "Хүчингүй болгосон",
+    "LastAccessedAt": "Сүүлд хандсан",
     "User": "Хэрэглэгч"
   },
   "comp:BAIModal": {

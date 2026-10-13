@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ac44fa822e4ee5e54290b6eca3a5316f>>
+ * @generated SignedSource<<dde56e193daa6869e300d23f57c7f000>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,7 +14,7 @@ export type RoleFormModalCurrentDomainQuery$variables = {
 };
 export type RoleFormModalCurrentDomainQuery$data = {
   readonly domainV2: {
-    readonly id: string;
+    readonly entityId: string;
   } | null | undefined;
 };
 export type RoleFormModalCurrentDomainQuery = {
@@ -32,37 +32,38 @@ var v0 = [
 ],
 v1 = [
   {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "domainName",
-        "variableName": "domainName"
-      }
-    ],
-    "concreteType": "DomainV2",
-    "kind": "LinkedField",
-    "name": "domainV2",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "id",
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
+    "kind": "Variable",
+    "name": "domainName",
+    "variableName": "domainName"
   }
-];
+],
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "entityId",
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "RoleFormModalCurrentDomainQuery",
-    "selections": (v1/*: any*/),
+    "selections": [
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "DomainV2",
+        "kind": "LinkedField",
+        "name": "domainV2",
+        "plural": false,
+        "selections": [
+          (v2/*: any*/)
+        ],
+        "storageKey": null
+      }
+    ],
     "type": "Query",
     "abstractKey": null
   },
@@ -71,19 +72,39 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "RoleFormModalCurrentDomainQuery",
-    "selections": (v1/*: any*/)
+    "selections": [
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "DomainV2",
+        "kind": "LinkedField",
+        "name": "domainV2",
+        "plural": false,
+        "selections": [
+          (v2/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ]
   },
   "params": {
-    "cacheID": "d1984d5bc1f542d7e95d98d728b58cfd",
+    "cacheID": "ec8758c159e80d8596fa82f6ef7b46ee",
     "id": null,
     "metadata": {},
     "name": "RoleFormModalCurrentDomainQuery",
     "operationKind": "query",
-    "text": "query RoleFormModalCurrentDomainQuery(\n  $domainName: String!\n) {\n  domainV2(domainName: $domainName) {\n    id\n  }\n}\n"
+    "text": "query RoleFormModalCurrentDomainQuery(\n  $domainName: String!\n) {\n  domainV2(domainName: $domainName) {\n    entityId\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "1a7caf1fa68c4d32c599d0b15cbde63f";
+(node as any).hash = "c4ee8255cb95c3397f3a11c01f390dc4";
 
 export default node;

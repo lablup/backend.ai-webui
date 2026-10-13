@@ -168,11 +168,10 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   const { supportedFields, exportCSV } = useCSVExport('users');
   const unblockUserLogin = useUnblockUserLogin();
 
-  const { scopedUsersV2: userConnection } =
-    usePreloadedQuery<AdminUserManagementQueryType>(
-      AdminUserManagementQuery,
-      deferredQueryRef,
-    );
+  const { scopedUsersV2 } = usePreloadedQuery<AdminUserManagementQueryType>(
+    AdminUserManagementQuery,
+    deferredQueryRef,
+  );
 
   // >= 26.4.0: adminUpdateUserV2 — status toggle keyed by userId.
   const [commitUpdateUserV2] =
@@ -198,7 +197,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   // The detail / edit modals are driven by the presence of this fragment rather
   // than by an id, so `open` follows whether a user is selected.
   const findUserNode = (id: string) =>
-    userConnection?.edges?.find((edge) => edge?.node?.id === id)?.node ?? null;
+    scopedUsersV2?.edges?.find((edge) => edge?.node?.id === id)?.node ?? null;
 
   // User management (create, edit, status, purge, unblock) is out of scope for the
   // scoped migration and stays superadmin-only by design (ADR 0011).
@@ -614,7 +613,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
       </BAIFlex>
       <BAIAdminUserV2Table
         usersFrgmt={filterOutNullAndUndefined(
-          _.map(userConnection?.edges, 'node'),
+          _.map(scopedUsersV2?.edges, 'node'),
         )}
         withProjects
         customizeColumns={(baseColumns) => {
@@ -637,7 +636,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
         }}
         pagination={{
           pageSize,
-          total: userConnection?.count || 0,
+          total: scopedUsersV2?.count || 0,
           current,
           onChange: (nextCurrent, nextPageSize) => {
             if (_.isNumber(nextCurrent) && _.isNumber(nextPageSize)) {
@@ -653,7 +652,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
         rowSelection={{
           type: 'checkbox',
           onChange: (keys) => {
-            const userNodes = _.compact(userConnection?.edges);
+            const userNodes = _.compact(scopedUsersV2?.edges);
             setSelectedUserList(() => {
               return userNodes.filter(
                 (edge) => edge.node && keys.includes(edge?.node.id),
@@ -776,7 +775,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
             setPurgeTargetId(null);
           }}
           usersFrgmt={filterOutNullAndUndefined(
-            userConnection?.edges
+            scopedUsersV2?.edges
               ?.filter((edge) => edge?.node?.id === purgeTargetId)
               .map((edge) => edge?.node),
           )}

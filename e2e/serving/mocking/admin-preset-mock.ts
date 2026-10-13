@@ -132,6 +132,7 @@ function buildImageNode() {
   return {
     __typename: 'ImageV2',
     id: btoa(`ImageV2:${MOCK_IMAGE_UUID}`),
+    entityId: MOCK_IMAGE_UUID,
     identity: {
       canonicalName: MOCK_IMAGE_CANONICAL_NAME,
       architecture: MOCK_IMAGE_ARCHITECTURE,

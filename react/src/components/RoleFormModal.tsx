@@ -33,7 +33,6 @@ import {
   BAIStorageHostSelect,
   BAIUserSelect,
   BAIVFolderSelect,
-  toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
 import _ from 'lodash';
@@ -141,14 +140,14 @@ const CurrentDomainUuidScopeId: React.FC<
     graphql`
       query RoleFormModalCurrentDomainQuery($domainName: String!) {
         domainV2(domainName: $domainName) {
-          id
+          entityId
         }
       }
     `,
     { domainName },
     { fetchPolicy: 'store-or-network' },
   );
-  useSyncScopeId(domainV2?.id ? toLocalId(domainV2.id) : undefined, props);
+  useSyncScopeId(domainV2?.entityId, props);
   return null;
 };
 
@@ -342,6 +341,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
     graphql`
       fragment RoleFormModalFragment on Role {
         id
+        entityId
         name
         description
         autoAssign
@@ -419,7 +419,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
           commitUpdateRole({
             variables: {
               input: {
-                id: toLocalId(editingRole.id),
+                id: editingRole.entityId,
                 ...changedFields,
               },
             },
