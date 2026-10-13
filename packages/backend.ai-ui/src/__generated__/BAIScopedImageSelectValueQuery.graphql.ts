@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d3803c121a0e15ca244562136bf19fbc>>
+ * @generated SignedSource<<9c93072304bb4679f3e8095dd3ee7a77>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -28,6 +28,7 @@ export type BAIScopedImageSelectValueQuery$data = {
   readonly scopedImagesV2?: {
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly entityId: string;
         readonly id: string;
         readonly identity: {
           readonly architecture: string;
@@ -128,6 +129,13 @@ v1 = [
                   {
                     "alias": null,
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "entityId",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
                     "concreteType": "ImageV2IdentityInfo",
                     "kind": "LinkedField",
                     "name": "identity",
@@ -180,16 +188,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "2f015e19707bbc022735e8e091ef34b5",
+    "cacheID": "e5d920d894b54dab01c081ce017530ae",
     "id": null,
     "metadata": {},
     "name": "BAIScopedImageSelectValueQuery",
     "operationKind": "query",
-    "text": "query BAIScopedImageSelectValueQuery(\n  $ids: [UUID!]\n  $scope: ImageSearchScope!\n  $skipSelected: Boolean!\n) {\n  scopedImagesV2(scope: $scope, filter: {id: {in: $ids}}, limit: 100) @skip(if: $skipSelected) {\n    edges {\n      node {\n        id\n        identity {\n          canonicalName\n          architecture\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIScopedImageSelectValueQuery(\n  $ids: [UUID!]\n  $scope: ImageSearchScope!\n  $skipSelected: Boolean!\n) {\n  scopedImagesV2(scope: $scope, filter: {id: {in: $ids}}, limit: 100) @skip(if: $skipSelected) {\n    edges {\n      node {\n        id\n        entityId\n        identity {\n          canonicalName\n          architecture\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "19fdbd03ced3ca8d1c7ac1899ab1a4b1";
+(node as any).hash = "b561b4e248e4232d7cbe02fa1199f2f5";
 
 export default node;

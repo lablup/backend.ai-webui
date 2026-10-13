@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6582f2f266e43d05d0d6f87d8466d0d0>>
+ * @generated SignedSource<<9336b113468c2bd8e290cb73681059b1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -128,6 +128,7 @@ export type BAIScopedImageSelectPaginatedQuery$data = {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly entityId: string;
         readonly id: string;
         readonly identity: {
           readonly architecture: string;
@@ -213,6 +214,13 @@ v6 = {
 v7 = {
   "alias": null,
   "args": null,
+  "kind": "ScalarField",
+  "name": "entityId",
+  "storageKey": null
+},
+v8 = {
+  "alias": null,
+  "args": null,
   "concreteType": "ImageV2IdentityInfo",
   "kind": "LinkedField",
   "name": "identity",
@@ -235,7 +243,7 @@ v7 = {
   ],
   "storageKey": null
 },
-v8 = [
+v9 = [
   {
     "alias": null,
     "args": null,
@@ -290,6 +298,7 @@ return {
                 "selections": [
                   (v6/*: any*/),
                   (v7/*: any*/),
+                  (v8/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -346,6 +355,7 @@ return {
                 "selections": [
                   (v6/*: any*/),
                   (v7/*: any*/),
+                  (v8/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -361,7 +371,7 @@ return {
                         "kind": "LinkedField",
                         "name": "tags",
                         "plural": true,
-                        "selections": (v8/*: any*/),
+                        "selections": (v9/*: any*/),
                         "storageKey": null
                       },
                       {
@@ -371,7 +381,7 @@ return {
                         "kind": "LinkedField",
                         "name": "labels",
                         "plural": true,
-                        "selections": (v8/*: any*/),
+                        "selections": (v9/*: any*/),
                         "storageKey": null
                       }
                     ],
@@ -389,16 +399,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "11de8d2cbe25984f0b787f8ea753b8af",
+    "cacheID": "f8ee299e7abdec064da93cb5d849f2cd",
     "id": null,
     "metadata": {},
     "name": "BAIScopedImageSelectPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIScopedImageSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: ImageV2Filter\n  $scope: ImageSearchScope!\n) {\n  scopedImagesV2(scope: $scope, offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: ASC}]) {\n    count\n    edges {\n      node {\n        id\n        identity {\n          canonicalName\n          architecture\n        }\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n"
+    "text": "query BAIScopedImageSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: ImageV2Filter\n  $scope: ImageSearchScope!\n) {\n  scopedImagesV2(scope: $scope, offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: ASC}]) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        identity {\n          canonicalName\n          architecture\n        }\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "743fa3d0da33ac693fb1612c2b369efe";
+(node as any).hash = "e5ee326b12a20aacacaf3cba0ddc10a4";
 
 export default node;
