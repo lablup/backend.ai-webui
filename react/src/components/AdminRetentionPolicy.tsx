@@ -25,7 +25,6 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
-  BAIUnmountAfterClose,
   filterOutNullAndUndefined,
   type GraphQLFilter,
 } from 'backend.ai-ui';
@@ -304,29 +303,27 @@ const AdminRetentionPolicy: React.FC<AdminRetentionPolicyProps> = ({
           })
         }
       />
-      <BAIUnmountAfterClose>
-        <RetentionPolicySettingModal
-          open={isOpenSettingModal}
-          policyFrgmt={editingPolicy}
-          onViewExistingPolicy={(category) => {
-            setIsOpenSettingModal(false);
-            onReload({
-              ...variables,
-              filter: { category },
-              orderBy: undefined,
-              offset: 0,
-            });
-          }}
-          onRequestClose={(success) => {
-            setIsOpenSettingModal(false);
-            // An update returns its fields and Relay patches the row in
-            // place; only a create changes which rows the list holds.
-            if (success && editingPolicy === null) {
-              onReload(variables, { fetchPolicy: 'network-only' });
-            }
-          }}
-        />
-      </BAIUnmountAfterClose>
+      <RetentionPolicySettingModal
+        open={isOpenSettingModal}
+        policyFrgmt={editingPolicy}
+        onViewExistingPolicy={(category) => {
+          setIsOpenSettingModal(false);
+          onReload({
+            ...variables,
+            filter: { category },
+            orderBy: undefined,
+            offset: 0,
+          });
+        }}
+        onRequestClose={(success) => {
+          setIsOpenSettingModal(false);
+          // An update returns its fields and Relay patches the row in
+          // place; only a create changes which rows the list holds.
+          if (success && editingPolicy === null) {
+            onReload(variables, { fetchPolicy: 'network-only' });
+          }
+        }}
+      />
       <BAIDeleteConfirmModal
         open={!!deletingPolicy}
         title={t('retentionPolicy.DeletePolicy')}
