@@ -51,11 +51,7 @@ export const loginResultFilterOptions = loginAttemptResults.map((result) => ({
   value: result,
 }));
 
-const availableLoginHistorySorterKeys = [
-  'createdAt',
-  'result',
-  'domainName',
-] as const;
+const availableLoginHistorySorterKeys = ['createdAt', 'result'] as const;
 
 export const availableLoginHistorySorterValues = [
   ...availableLoginHistorySorterKeys,

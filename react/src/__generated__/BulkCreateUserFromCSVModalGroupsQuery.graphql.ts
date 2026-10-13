@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d04f0f48bd7cccef7c50038fd264dd7c>>
+ * @generated SignedSource<<7db03a9019f730e8b1cb80006375e6d9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,19 +9,28 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+export type ProjectScope = {
+  domain?: ReadonlyArray<UUIDScope> | null | undefined;
+  resourceGroup?: ReadonlyArray<UUIDScope> | null | undefined;
+  user?: ReadonlyArray<UUIDScope> | null | undefined;
+};
+export type UUIDScope = {
+  value: string;
+};
 export type BulkCreateUserFromCSVModalGroupsQuery$variables = {
-  domainName: string;
   limit: number;
   offset: number;
+  scope: ProjectScope;
 };
 export type BulkCreateUserFromCSVModalGroupsQuery$data = {
-  readonly domainProjectsV2: {
+  readonly scopedProjectsV2: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly basicInfo: {
           readonly name: string;
         };
+        readonly entityId: string;
         readonly id: string;
       };
     }>;
@@ -33,24 +42,22 @@ export type BulkCreateUserFromCSVModalGroupsQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "domainName"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "limit"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "offset"
-  }
-],
-v1 = [
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "limit"
+},
+v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "offset"
+},
+v2 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "scope"
+},
+v3 = [
   {
     "alias": null,
     "args": [
@@ -88,20 +95,14 @@ v1 = [
         ]
       },
       {
-        "fields": [
-          {
-            "kind": "Variable",
-            "name": "domainName",
-            "variableName": "domainName"
-          }
-        ],
-        "kind": "ObjectValue",
-        "name": "scope"
+        "kind": "Variable",
+        "name": "scope",
+        "variableName": "scope"
       }
     ],
     "concreteType": "ProjectV2Connection",
     "kind": "LinkedField",
-    "name": "domainProjectsV2",
+    "name": "scopedProjectsV2",
     "plural": false,
     "selections": [
       {
@@ -137,6 +138,13 @@ v1 = [
               {
                 "alias": null,
                 "args": null,
+                "kind": "ScalarField",
+                "name": "entityId",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
                 "concreteType": "ProjectBasicInfo",
                 "kind": "LinkedField",
                 "name": "basicInfo",
@@ -164,32 +172,40 @@ v1 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/),
+      (v2/*: any*/)
+    ],
     "kind": "Fragment",
     "metadata": null,
     "name": "BulkCreateUserFromCSVModalGroupsQuery",
-    "selections": (v1/*: any*/),
+    "selections": (v3/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v2/*: any*/),
+      (v0/*: any*/),
+      (v1/*: any*/)
+    ],
     "kind": "Operation",
     "name": "BulkCreateUserFromCSVModalGroupsQuery",
-    "selections": (v1/*: any*/)
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "23a6f9865b7df7c88d62b7ce9ec85933",
+    "cacheID": "ce9a72166565fc33b6815b19e2ba62fb",
     "id": null,
     "metadata": {},
     "name": "BulkCreateUserFromCSVModalGroupsQuery",
     "operationKind": "query",
-    "text": "query BulkCreateUserFromCSVModalGroupsQuery(\n  $domainName: String!\n  $limit: Int!\n  $offset: Int!\n) {\n  domainProjectsV2(scope: {domainName: $domainName}, filter: {isActive: true, type: {in_: [GENERAL, MODEL_STORE]}}, orderBy: [{field: NAME, direction: ASC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BulkCreateUserFromCSVModalGroupsQuery(\n  $scope: ProjectScope!\n  $limit: Int!\n  $offset: Int!\n) {\n  scopedProjectsV2(scope: $scope, filter: {isActive: true, type: {in_: [GENERAL, MODEL_STORE]}}, orderBy: [{field: NAME, direction: ASC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4738069be68c896294686f8f95c261de";
+(node as any).hash = "613168e14a6b600095fb2ab1c3cd3828";
 
 export default node;

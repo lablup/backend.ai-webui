@@ -10,7 +10,7 @@ import {
 } from '../__generated__/useAccessibleProjectsQuery.graphql';
 import type { useAccessibleProjects_domainProjectsFragment$key } from '../__generated__/useAccessibleProjects_domainProjectsFragment.graphql';
 import { useCurrentUserRole } from './backendai';
-import { toLocalId } from 'backend.ai-ui';
+import { useCurrentDomainScope } from './useCurrentDomainScope';
 import * as _ from 'lodash-es';
 import { useEffect, useState } from 'react';
 import { graphql, useLazyLoadQuery, usePaginationFragment } from 'react-relay';
@@ -42,7 +42,7 @@ export interface AccessibleProject {
 
 type ProjectV2Edge = {
   readonly node: {
-    readonly id: string;
+    readonly entityId: string;
     readonly basicInfo: { readonly name: string; readonly type: ProjectTypeV2 };
     readonly organization: { readonly resourcePolicy: string };
     readonly lifecycle: { readonly isActive: boolean | null | undefined };
@@ -50,7 +50,7 @@ type ProjectV2Edge = {
 };
 
 const toAccessibleProject = (edge: ProjectV2Edge): AccessibleProject => ({
-  id: toLocalId(edge.node.id),
+  id: edge.node.entityId,
   name: edge.node.basicInfo.name,
   type: edge.node.basicInfo.type,
   is_active: edge.node.lifecycle.isActive ?? null,
@@ -92,10 +92,14 @@ export const useAccessibleProjects = (
       ? ['GENERAL']
       : ['GENERAL', 'MODEL_STORE'];
 
-  // `domainProjectsV2` needs domain-admin rights, so only admins ask for it.
+  // Both lists read `scopedProjectsV2` (ADR 0011): the caller's memberships for
+  // everyone, plus every project of the current domain for admins.
+  const { domainScope } = useCurrentDomainScope();
   const queryRef = useLazyLoadQuery<useAccessibleProjectsQuery>(
     graphql`
       query useAccessibleProjectsQuery(
+        $domainScope: ProjectScope!
+        $userScope: ProjectScope!
         $domainName: String!
         $types: [ProjectTypeV2!]!
         $isAdmin: Boolean!
@@ -103,41 +107,51 @@ export const useAccessibleProjects = (
         ...useAccessibleProjects_domainProjectsFragment
           @include(if: $isAdmin)
           @alias(as: "adminDomainProjects")
-          @arguments(domainName: $domainName, types: $types)
-        myUserV2 {
-          projects(
-            filter: {
-              isActive: true
-              domainName: { equals: $domainName }
-              type: { in_: $types }
-            }
-            limit: 1000
-          ) {
-            edges {
-              node {
-                id
-                basicInfo {
-                  name
-                  type
-                }
-                organization {
-                  resourcePolicy
-                }
-                lifecycle {
-                  isActive
-                }
+          @arguments(
+            scope: $domainScope
+            domainName: $domainName
+            types: $types
+          )
+        memberProjects: scopedProjectsV2(
+          scope: $userScope
+          filter: {
+            isActive: true
+            domainName: { equals: $domainName }
+            type: { in_: $types }
+          }
+          limit: 1000
+        ) {
+          edges {
+            node {
+              id
+              entityId
+              basicInfo {
+                name
+                type
+              }
+              organization {
+                resourcePolicy
+              }
+              lifecycle {
+                isActive
               }
             }
           }
         }
       }
     `,
-    { domainName, types, isAdmin },
+    {
+      domainScope,
+      userScope: { user: [{ value: baiClient.user_uuid }] },
+      domainName,
+      types,
+      isAdmin,
+    },
     {
       fetchPolicy: options?.fetchPolicy ?? 'store-or-network',
     },
   );
-  const { myUserV2, adminDomainProjects } = queryRef;
+  const { memberProjects, adminDomainProjects } = queryRef;
 
   // The manager caps a page at 1000 rows; keep loading until the admin list is
   // complete. Non-admins never spread the fragment, so `data` stays null.
@@ -156,20 +170,26 @@ export const useAccessibleProjects = (
         queryName: "useAccessibleProjectsDomainProjectsPaginationQuery"
       )
       @argumentDefinitions(
+        scope: { type: "ProjectScope!" }
         domainName: { type: "String!" }
         types: { type: "[ProjectTypeV2!]!" }
         first: { type: "Int", defaultValue: 1000 }
         after: { type: "String" }
       ) {
-        domainProjectsV2(
-          scope: { domainName: $domainName }
-          filter: { isActive: true, type: { in_: $types } }
+        scopedProjectsV2(
+          scope: $scope
+          filter: {
+            isActive: true
+            domainName: { equals: $domainName }
+            type: { in_: $types }
+          }
           first: $first
           after: $after
-        ) @connection(key: "useAccessibleProjects_domainProjectsV2") {
+        ) @connection(key: "useAccessibleProjects_scopedProjectsV2") {
           edges {
             node {
               id
+              entityId
               basicInfo {
                 name
                 type
@@ -201,12 +221,9 @@ export const useAccessibleProjects = (
     }
   }, [hasNext, isLoadingNext, loadNext, failedPagingKey, pagingKey]);
 
-  const accessibleProjects = _.map(
-    myUserV2?.projects?.edges,
-    toAccessibleProject,
-  );
-  const groups = domainProjects?.domainProjectsV2
-    ? _.map(domainProjects.domainProjectsV2.edges, toAccessibleProject)
+  const accessibleProjects = _.map(memberProjects?.edges, toAccessibleProject);
+  const groups = domainProjects?.scopedProjectsV2
+    ? _.map(domainProjects.scopedProjectsV2.edges, toAccessibleProject)
     : accessibleProjects;
 
   return { groups, accessibleProjects };

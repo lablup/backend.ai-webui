@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b84df5daf13cafd7f7514dcda147eced>>
+ * @generated SignedSource<<67e17608b8d0406e5946b4f9f60536be>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,10 +11,19 @@
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type ProjectTypeV2 = "GENERAL" | "MODEL_STORE" | "PERSONAL" | "%future added value";
+export type ProjectScope = {
+  domain?: ReadonlyArray<UUIDScope> | null | undefined;
+  resourceGroup?: ReadonlyArray<UUIDScope> | null | undefined;
+  user?: ReadonlyArray<UUIDScope> | null | undefined;
+};
+export type UUIDScope = {
+  value: string;
+};
 export type useAccessibleProjectsDomainProjectsPaginationQuery$variables = {
   after?: string | null | undefined;
   domainName: string;
   first?: number | null | undefined;
+  scope: ProjectScope;
   types: ReadonlyArray<ProjectTypeV2>;
 };
 export type useAccessibleProjectsDomainProjectsPaginationQuery$data = {
@@ -45,6 +54,11 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
+    "name": "scope"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
     "name": "types"
   }
 ],
@@ -55,18 +69,29 @@ v1 = {
 },
 v2 = {
   "kind": "Variable",
-  "name": "domainName",
-  "variableName": "domainName"
+  "name": "first",
+  "variableName": "first"
 },
 v3 = {
   "kind": "Variable",
-  "name": "first",
-  "variableName": "first"
+  "name": "scope",
+  "variableName": "scope"
 },
 v4 = [
   (v1/*: any*/),
   {
     "fields": [
+      {
+        "fields": [
+          {
+            "kind": "Variable",
+            "name": "equals",
+            "variableName": "domainName"
+          }
+        ],
+        "kind": "ObjectValue",
+        "name": "domainName"
+      },
       {
         "kind": "Literal",
         "name": "isActive",
@@ -87,14 +112,8 @@ v4 = [
     "kind": "ObjectValue",
     "name": "filter"
   },
-  (v3/*: any*/),
-  {
-    "fields": [
-      (v2/*: any*/)
-    ],
-    "kind": "ObjectValue",
-    "name": "scope"
-  }
+  (v2/*: any*/),
+  (v3/*: any*/)
 ];
 return {
   "fragment": {
@@ -106,6 +125,11 @@ return {
       {
         "args": [
           (v1/*: any*/),
+          {
+            "kind": "Variable",
+            "name": "domainName",
+            "variableName": "domainName"
+          },
           (v2/*: any*/),
           (v3/*: any*/),
           {
@@ -132,7 +156,7 @@ return {
         "args": (v4/*: any*/),
         "concreteType": "ProjectV2Connection",
         "kind": "LinkedField",
-        "name": "domainProjectsV2",
+        "name": "scopedProjectsV2",
         "plural": false,
         "selections": [
           {
@@ -156,6 +180,13 @@ return {
                     "args": null,
                     "kind": "ScalarField",
                     "name": "id",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "entityId",
                     "storageKey": null
                   },
                   {
@@ -275,23 +306,23 @@ return {
           "filter"
         ],
         "handle": "connection",
-        "key": "useAccessibleProjects_domainProjectsV2",
+        "key": "useAccessibleProjects_scopedProjectsV2",
         "kind": "LinkedHandle",
-        "name": "domainProjectsV2"
+        "name": "scopedProjectsV2"
       }
     ]
   },
   "params": {
-    "cacheID": "cdc9ea08b342be429e77172c69e4771d",
+    "cacheID": "aa082c9a539e6ba86d36c035c2f34af8",
     "id": null,
     "metadata": {},
     "name": "useAccessibleProjectsDomainProjectsPaginationQuery",
     "operationKind": "query",
-    "text": "query useAccessibleProjectsDomainProjectsPaginationQuery(\n  $after: String\n  $domainName: String!\n  $first: Int = 1000\n  $types: [ProjectTypeV2!]!\n) {\n  ...useAccessibleProjects_domainProjectsFragment_2UnDCV\n}\n\nfragment useAccessibleProjects_domainProjectsFragment_2UnDCV on Query {\n  domainProjectsV2(scope: {domainName: $domainName}, filter: {isActive: true, type: {in_: $types}}, first: $first, after: $after) {\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n          type\n        }\n        organization {\n          resourcePolicy\n        }\n        lifecycle {\n          isActive\n        }\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query useAccessibleProjectsDomainProjectsPaginationQuery(\n  $after: String\n  $domainName: String!\n  $first: Int = 1000\n  $scope: ProjectScope!\n  $types: [ProjectTypeV2!]!\n) {\n  ...useAccessibleProjects_domainProjectsFragment_mzAMF\n}\n\nfragment useAccessibleProjects_domainProjectsFragment_mzAMF on Query {\n  scopedProjectsV2(scope: $scope, filter: {isActive: true, domainName: {equals: $domainName}, type: {in_: $types}}, first: $first, after: $after) {\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          name\n          type\n        }\n        organization {\n          resourcePolicy\n        }\n        lifecycle {\n          isActive\n        }\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "1a10613a39dbae93eabca98509c2d4e9";
+(node as any).hash = "29519a58836b585ceb9fac59ee7d6a7e";
 
 export default node;

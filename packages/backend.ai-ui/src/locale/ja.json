@@ -319,7 +319,6 @@
     "ContainerRegistryForImageCommit": "イメージのコミット用コンテナレジストリ",
     "CreateProject": "プロジェクトを作成",
     "Description": "説明",
-    "Domain": "ドメイン",
     "FailedToCreateProject": "プロジェクトの作成に失敗しました",
     "FailedToUpdateProject": "プロジェクトの更新に失敗しました",
     "IsActive": "有効ですか？",

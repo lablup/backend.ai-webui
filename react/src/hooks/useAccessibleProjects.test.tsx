@@ -9,8 +9,19 @@ import { RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment } from 'relay-test-utils';
 import { describe, expect, it, vi } from 'vitest';
 
+const DOMAIN_ID = 'b9e676dc-e23e-54c6-b350-e83fba4127e9';
+vi.mock('./useCurrentDomainScope', () => ({
+  useCurrentDomainScope: () => ({
+    domainName: 'default',
+    domainId: DOMAIN_ID,
+    domainScope: { domain: [{ value: DOMAIN_ID }] },
+  }),
+}));
 vi.mock('.', () => ({
-  useSuspendedBackendaiClient: () => ({ _config: { blockList: null } }),
+  useSuspendedBackendaiClient: () => ({
+    _config: { blockList: null },
+    user_uuid: 'dfa9da54-4b28-432f-be29-c0d680c7a412',
+  }),
   useCurrentDomainValue: () => 'default',
 }));
 vi.mock('./backendai', () => ({
@@ -24,6 +35,7 @@ const projectEdge = (index: number) => ({
     id: btoa(
       `ProjectV2:00000000-0000-0000-0000-${String(index).padStart(12, '0')}`,
     ),
+    entityId: `00000000-0000-0000-0000-${String(index).padStart(12, '0')}`,
     basicInfo: { name: `project-${index}`, type: 'GENERAL' },
     organization: { resourcePolicy: 'default' },
     lifecycle: { isActive: true },
@@ -64,8 +76,8 @@ const resolveFirstPage = async (
   await act(async () => {
     environment.mock.resolveMostRecentOperation({
       data: {
-        domainProjectsV2: page([1, 2], true),
-        myUserV2: { id: 'dXNlcg==', projects: { edges: [] } },
+        scopedProjectsV2: page([1, 2], true),
+        memberProjects: { edges: [] },
       },
     });
   });
@@ -88,10 +100,11 @@ describe('useAccessibleProjects', () => {
         after,
         first: 1000,
         domainName: 'default',
+        scope: { domain: [{ value: DOMAIN_ID }] },
       });
       await act(async () => {
         environment.mock.resolve(next, {
-          data: { domainProjectsV2: page([...indexes], hasNextPage) },
+          data: { scopedProjectsV2: page([...indexes], hasNextPage) },
         });
       });
     }

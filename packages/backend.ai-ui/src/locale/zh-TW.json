@@ -319,7 +319,6 @@
     "ContainerRegistryForImageCommit": "映像提交的容器註冊表",
     "CreateProject": "建立專案",
     "Description": "描述",
-    "Domain": "網域",
     "FailedToCreateProject": "建立專案失敗",
     "FailedToUpdateProject": "無法更新專案",
     "IsActive": "是否啟用？",

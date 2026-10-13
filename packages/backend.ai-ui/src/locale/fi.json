@@ -319,7 +319,6 @@
     "ContainerRegistryForImageCommit": "Säiliörekisteri kuvan tallennusta varten",
     "CreateProject": "Luo projekti",
     "Description": "Kuvaus",
-    "Domain": "Toimialue",
     "FailedToCreateProject": "Projektin luominen epäonnistui",
     "FailedToUpdateProject": "Projektin päivittäminen epäonnistui.",
     "IsActive": "Aktiivinen?",

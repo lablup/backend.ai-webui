@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8c93d96f5a1effbe6fb402073bb8d7e9>>
+ * @generated SignedSource<<e45f505e8e3be386338975148a957763>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,13 +12,14 @@ import { ReaderFragment } from 'relay-runtime';
 export type ProjectTypeV2 = "GENERAL" | "MODEL_STORE" | "PERSONAL" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type useAccessibleProjects_domainProjectsFragment$data = {
-  readonly domainProjectsV2: {
+  readonly scopedProjectsV2: {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly basicInfo: {
           readonly name: string;
           readonly type: ProjectTypeV2;
         };
+        readonly entityId: string;
         readonly id: string;
         readonly lifecycle: {
           readonly isActive: boolean | null | undefined;
@@ -40,7 +41,7 @@ import useAccessibleProjectsDomainProjectsPaginationQuery_graphql from './useAcc
 
 const node: ReaderFragment = (function(){
 var v0 = [
-  "domainProjectsV2"
+  "scopedProjectsV2"
 ];
 return {
   "argumentDefinitions": [
@@ -58,6 +59,11 @@ return {
       "defaultValue": 1000,
       "kind": "LocalArgument",
       "name": "first"
+    },
+    {
+      "defaultValue": null,
+      "kind": "LocalArgument",
+      "name": "scope"
     },
     {
       "defaultValue": null,
@@ -91,10 +97,21 @@ return {
   "name": "useAccessibleProjects_domainProjectsFragment",
   "selections": [
     {
-      "alias": "domainProjectsV2",
+      "alias": "scopedProjectsV2",
       "args": [
         {
           "fields": [
+            {
+              "fields": [
+                {
+                  "kind": "Variable",
+                  "name": "equals",
+                  "variableName": "domainName"
+                }
+              ],
+              "kind": "ObjectValue",
+              "name": "domainName"
+            },
             {
               "kind": "Literal",
               "name": "isActive",
@@ -116,20 +133,14 @@ return {
           "name": "filter"
         },
         {
-          "fields": [
-            {
-              "kind": "Variable",
-              "name": "domainName",
-              "variableName": "domainName"
-            }
-          ],
-          "kind": "ObjectValue",
-          "name": "scope"
+          "kind": "Variable",
+          "name": "scope",
+          "variableName": "scope"
         }
       ],
       "concreteType": "ProjectV2Connection",
       "kind": "LinkedField",
-      "name": "__useAccessibleProjects_domainProjectsV2_connection",
+      "name": "__useAccessibleProjects_scopedProjectsV2_connection",
       "plural": false,
       "selections": [
         {
@@ -153,6 +164,13 @@ return {
                   "args": null,
                   "kind": "ScalarField",
                   "name": "id",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "entityId",
                   "storageKey": null
                 },
                 {
@@ -270,6 +288,6 @@ return {
 };
 })();
 
-(node as any).hash = "1a10613a39dbae93eabca98509c2d4e9";
+(node as any).hash = "29519a58836b585ceb9fac59ee7d6a7e";
 
 export default node;

@@ -16,9 +16,25 @@
    root, which is transparent layout-only: sizing the root leaves the page
    background showing through. min-height, so the expanded body can grow. */
 .webui-announcement-banner > .astryx-banner {
+  --webui-announcement-line: calc(
+    var(--text-label-size) * var(--text-label-leading)
+  );
   min-height: var(--webui-header-height);
   padding-inline: var(--webui-header-padding-inline);
   align-content: center;
+}
+
+/* Expanding adds a description, which top-aligns Banner's header: size the
+   icon box and the actions to one title line so all three share its center. */
+.webui-announcement-banner > .astryx-banner > :first-child {
+  height: var(--webui-announcement-line);
+}
+
+.webui-announcement-banner > .astryx-banner > :last-child,
+.webui-announcement-toggle {
+  margin-block: calc(
+    (var(--webui-announcement-line) - var(--size-element-sm)) / 2
+  );
 }
 
 /* Electron/macOS: the banner is the window's topmost band, so it grows by the

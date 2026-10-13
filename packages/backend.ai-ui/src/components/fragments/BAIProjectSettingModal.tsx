@@ -1,8 +1,4 @@
-import {
-  BAIDomainSelect,
-  BAIProjectResourcePolicySelect,
-  BAIResourceGroupSelect,
-} from '.';
+import { BAIProjectResourcePolicySelect, BAIResourceGroupSelect } from '.';
 import {
   BAIAllowedHostNamesSelect,
   BAIDynamicUnitInputNumber,
@@ -26,6 +22,7 @@ import {
   AstryxFormTextInput,
 } from '../astryxFormControls';
 import { useBAIResourceSlots } from '../provider';
+import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { HStack } from '@lablup/ui-common/Stack';
 import * as _ from 'lodash-es';
 import { useDeferredValue, useRef } from 'react';
@@ -48,7 +45,6 @@ interface FormValues {
   type?: string;
   description?: string;
   is_active?: boolean;
-  domain_name: string;
   total_resource_slots?: string;
   allowed_vfolder_hosts?: string;
   integration_id?: string;
@@ -74,6 +70,7 @@ const BAIProjectSettingModal = ({
   const form = useRef<FormInstance<FormValues>>(null);
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
+  const baiClient = useConnectedBAIClient();
 
   const project = useFragment<BAIProjectSettingModalFragment$key>(
     graphql`
@@ -83,7 +80,6 @@ const BAIProjectSettingModal = ({
         name
         description
         is_active
-        domain_name
         total_resource_slots
         allowed_vfolder_hosts
         integration_id
@@ -221,6 +217,7 @@ const BAIProjectSettingModal = ({
               props: _.omit(
                 {
                   ...values,
+                  domain_name: baiClient._config.domainName,
                   total_resource_slots: JSON.stringify(totalResourceSlots),
                   allowed_vfolder_hosts: JSON.stringify(allowedVfolderHosts),
                   container_registry: JSON.stringify(containerRegistry),
@@ -418,7 +415,6 @@ const BAIProjectSettingModal = ({
             JSON.parse(project?.container_registry || '{}'),
             'project',
           ),
-          domain_name: project?.domain_name,
           name: project?.name,
           description: project?.description,
           resource_policy: project?.resource_policy,
@@ -429,7 +425,6 @@ const BAIProjectSettingModal = ({
         <Form.Item
           label={t('comp:BAIProjectSettingModal.Name')}
           name="name"
-          dependencies={['domain_name']}
           rules={[
             { required: true },
             {
@@ -453,13 +448,6 @@ const BAIProjectSettingModal = ({
             label={t('comp:BAIProjectSettingModal.Description')}
             rows={1}
           />
-        </Form.Item>
-        <Form.Item
-          label={t('comp:BAIProjectSettingModal.Domain')}
-          name="domain_name"
-          rules={[{ required: true }]}
-        >
-          <BAIDomainSelect />
         </Form.Item>
         <Form.Item
           label={t('comp:BAIProjectSettingModal.ProjectResourcePolicy')}

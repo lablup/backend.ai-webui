@@ -319,7 +319,6 @@
     "ContainerRegistryForImageCommit": "Rejestr kontenerów do zatwierdzania obrazów",
     "CreateProject": "Utwórz projekt",
     "Description": "Opis",
-    "Domain": "Domena",
     "FailedToCreateProject": "Nie udało się utworzyć projektu",
     "FailedToUpdateProject": "Nie udało się zaktualizować projektu",
     "IsActive": "Aktywny?",
