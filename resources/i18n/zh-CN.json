@@ -3287,10 +3287,10 @@
   },
   "sessionMonitor": {
     "DomainSessions": "此域中的会话",
-    "InUseAcross": "正在 {{count}} 个运行中的会话中使用",
+    "InUseAcross": "已分配给 {{count}} 个运行中的会话",
     "MonitorSettings": "监控设置",
     "MoreSessions": "还有 {{count}} 个会话",
-    "MyResourceUsage": "我的使用量与限制对比",
+    "MyResourceUsage": "已分配给我（与我的限制对比）",
     "MySessions": "我的会话",
     "NoActiveSessions": "没有活动会话",
     "OpenSession": "打开会话",

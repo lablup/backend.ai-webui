@@ -3285,10 +3285,10 @@
   },
   "sessionMonitor": {
     "DomainSessions": "Bu etki alanının oturumları",
-    "InUseAcross": "{{count}} çalışan oturumda kullanılıyor",
+    "InUseAcross": "{{count}} çalışan oturuma ayrıldı",
     "MonitorSettings": "Monitör ayarları",
     "MoreSessions": "{{count}} oturum daha",
-    "MyResourceUsage": "Limitime karşı kullanımım",
+    "MyResourceUsage": "Bana ayrıldı, limitime karşı",
     "MySessions": "Oturumlarım",
     "NoActiveSessions": "Aktif oturum yok",
     "OpenSession": "Oturumu aç",

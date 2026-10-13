@@ -3287,10 +3287,10 @@
   },
   "sessionMonitor": {
     "DomainSessions": "Энэ доменийн сессүүд",
-    "InUseAcross": "Ажиллаж буй {{count}} сессэд ашиглагдаж байна",
+    "InUseAcross": "Ажиллаж буй {{count}} сессэд хуваарилагдсан",
     "MonitorSettings": "Хяналтын тохиргоо",
     "MoreSessions": "өөр {{count}} сесс",
-    "MyResourceUsage": "Миний хязгаартай харьцуулсан хэрэглээ",
+    "MyResourceUsage": "Надад хуваарилагдсан, хязгаартай харьцуулсан",
     "MySessions": "Миний сессүүд",
     "NoActiveSessions": "Идэвхтэй сесс байхгүй",
     "OpenSession": "Сесс нээх",

@@ -3288,10 +3288,10 @@
   },
   "sessionMonitor": {
     "DomainSessions": "Sessions de ce domaine",
-    "InUseAcross": "Utilisé dans {{count}} sessions en cours",
+    "InUseAcross": "Alloué à {{count}} sessions en cours",
     "MonitorSettings": "Paramètres du moniteur",
     "MoreSessions": "{{count}} sessions supplémentaires",
-    "MyResourceUsage": "Mon utilisation par rapport à ma limite",
+    "MyResourceUsage": "Alloué à moi, par rapport à ma limite",
     "MySessions": "Mes sessions",
     "NoActiveSessions": "Aucune session active",
     "OpenSession": "Ouvrir la session",

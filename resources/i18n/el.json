@@ -3285,10 +3285,10 @@
   },
   "sessionMonitor": {
     "DomainSessions": "Συνεδρίες σε αυτόν τον τομέα",
-    "InUseAcross": "Σε χρήση από {{count}} συνεδρίες σε εκτέλεση",
+    "InUseAcross": "Διατέθηκε σε {{count}} συνεδρίες σε εκτέλεση",
     "MonitorSettings": "Ρυθμίσεις παρακολούθησης",
     "MoreSessions": "{{count}} ακόμη συνεδρίες",
-    "MyResourceUsage": "Η χρήση μου σε σχέση με το όριό μου",
+    "MyResourceUsage": "Διατέθηκε σε εμένα, σε σχέση με το όριό μου",
     "MySessions": "Οι συνεδρίες μου",
     "NoActiveSessions": "Δεν υπάρχουν ενεργές συνεδρίες",
     "OpenSession": "Άνοιγμα συνεδρίας",

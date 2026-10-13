@@ -3270,10 +3270,10 @@
   },
   "sessionMonitor": {
     "DomainSessions": "เซสชันในโดเมนนี้",
-    "InUseAcross": "ใช้งานอยู่ในเซสชันที่กำลังทำงาน {{count}} เซสชัน",
+    "InUseAcross": "จัดสรรให้กับเซสชันที่กำลังทำงาน {{count}} เซสชัน",
     "MonitorSettings": "การตั้งค่าการตรวจสอบ",
     "MoreSessions": "อีก {{count}} เซสชัน",
-    "MyResourceUsage": "การใช้งานของฉันเทียบกับขีดจำกัดของฉัน",
+    "MyResourceUsage": "จัดสรรให้ฉัน เทียบกับขีดจำกัดของฉัน",
     "MySessions": "เซสชันของฉัน",
     "NoActiveSessions": "ไม่มีเซสชันที่ใช้งานอยู่",
     "OpenSession": "เปิดเซสชัน",

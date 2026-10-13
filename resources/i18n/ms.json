@@ -3285,10 +3285,10 @@
   },
   "sessionMonitor": {
     "DomainSessions": "Sesi dalam domain ini",
-    "InUseAcross": "Digunakan dalam {{count}} sesi yang berjalan",
+    "InUseAcross": "Diperuntukkan kepada {{count}} sesi yang berjalan",
     "MonitorSettings": "Tetapan pemantau",
     "MoreSessions": "{{count}} lagi sesi",
-    "MyResourceUsage": "Penggunaan saya berbanding had saya",
+    "MyResourceUsage": "Diperuntukkan kepada saya, berbanding had saya",
     "MySessions": "Sesi saya",
     "NoActiveSessions": "Tiada sesi aktif",
     "OpenSession": "Buka sesi",
