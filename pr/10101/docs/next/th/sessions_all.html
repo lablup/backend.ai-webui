@@ -10,7 +10,7 @@
   <link rel="apple-touch-icon" href="../../apple-touch-icon.png" />
   <link rel="manifest" href="../../site.webmanifest" />
   <meta name="description" content="เอกสารนี้จะครอบคลุมวิธีการค้นหาและสร้างเซสชันการคำนวณที่ใช้คอนเทนเนอร์ รวมถึงการใช้งานแอปพลิเคชันเว็บต่าง ๆ ในหน้า 'เซสชัน'" />
-  <link rel="canonical" href="https://webui.docs.backend.ai/26.8/th/sessions_all.html" />
+  <link rel="canonical" href="https://webui.docs.backend.ai/26.9/th/sessions_all.html" />
   <meta property="og:type" content="article" />
   <meta property="og:title" content="เซสชันการคำนวณ" />
   <meta property="og:description" content="เอกสารนี้จะครอบคลุมวิธีการค้นหาและสร้างเซสชันการคำนวณที่ใช้คอนเทนเนอร์ รวมถึงการใช้งานแอปพลิเคชันเว็บต่าง ๆ ในหน้า 'เซสชัน'" />
@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="เซสชันการคำนวณ" />
   <meta name="twitter:description" content="เอกสารนี้จะครอบคลุมวิธีการค้นหาและสร้างเซสชันการคำนวณที่ใช้คอนเทนเนอร์ รวมถึงการใช้งานแอปพลิเคชันเว็บต่าง ๆ ในหน้า 'เซสชัน'" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"เซสชันการคำนวณ","inLanguage":"th","description":"เอกสารนี้จะครอบคลุมวิธีการค้นหาและสร้างเซสชันการคำนวณที่ใช้คอนเทนเนอร์ รวมถึงการใช้งานแอปพลิเคชันเว็บต่าง ๆ ในหน้า 'เซสชัน'","dateModified":"2026-10-01T08:25:04.000Z","url":"https://webui.docs.backend.ai/next/th/sessions_all.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"เซสชันการคำนวณ","inLanguage":"th","description":"เอกสารนี้จะครอบคลุมวิธีการค้นหาและสร้างเซสชันการคำนวณที่ใช้คอนเทนเนอร์ รวมถึงการใช้งานแอปพลิเคชันเว็บต่าง ๆ ในหน้า 'เซสชัน'","dateModified":"2026-10-09T00:31:32.000Z","url":"https://webui.docs.backend.ai/next/th/sessions_all.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/sessions_all.html" />
   <link rel="alternate" hreflang="en" href="../en/sessions_all.html" />
   <link rel="alternate" hreflang="ja" href="../ja/sessions_all.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (ae23c2f)">v26.9.0-alpha.0 (ae23c2f)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.0 (743b22d)">v26.10.0-alpha.0 (743b22d)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -56,11 +56,11 @@
     <a class="bai-iconbtn" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.95 10.95 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/></svg></a>
   </div>
 </header>
-<div class="docs-banner docs-banner--view-latest docs-banner--preview" role="status" data-current-version="next" data-latest-version="26.8">
+<div class="docs-banner docs-banner--view-latest docs-banner--preview" role="status" data-current-version="next" data-latest-version="26.9">
   <span class="docs-banner__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 2 21h20L12 3Z"/><path d="M12 10v4M12 17h.01"/></svg></span>
   <div class="docs-banner__body">
     <span class="docs-banner__title">นี่คือเอกสารที่ยังไม่เผยแพร่สำหรับ WebUI เวอร์ชัน Next</span>
-    <span class="docs-banner__desc">ดูเอกสารฉบับล่าสุดได้ที่ <a class="docs-banner__link" href="../../26.8/th/index.html">เวอร์ชันล่าสุด (26.8)</a></span>
+    <span class="docs-banner__desc">ดูเอกสารฉบับล่าสุดได้ที่ <a class="docs-banner__link" href="../../26.9/th/index.html">เวอร์ชันล่าสุด (26.9)</a></span>
   </div>
 </div>
 <div class="doc-page">
@@ -76,8 +76,8 @@
       data-lang="th"
       data-slug="sessions_all"
       data-root-depth="3"
-      data-availability="{&quot;next&quot;:true,&quot;26.8&quot;:false,&quot;26.7&quot;:false,&quot;26.4&quot;:false}" data-legacy-url="https://webui.docs-archive.backend.ai/"
-    ><option value="next" selected>next</option><option value="26.8">26.8 (latest)</option><option value="26.7">26.7</option><option value="26.4">26.4</option><option value="__legacy__">เวอร์ชันก่อนหน้า</option></select>
+      data-availability="{&quot;next&quot;:true,&quot;26.9&quot;:false,&quot;26.8&quot;:false,&quot;26.7&quot;:false,&quot;26.4&quot;:false}" data-legacy-url="https://webui.docs-archive.backend.ai/"
+    ><option value="next" selected>next</option><option value="26.9">26.9 (latest)</option><option value="26.8">26.8</option><option value="26.7">26.7</option><option value="26.4">26.4</option><option value="__legacy__">เวอร์ชันก่อนหน้า</option></select>
     <script>(function(){
   var sel = document.currentScript && document.currentScript.previousElementSibling;
   if (!sel || sel.tagName !== 'SELECT') return;
@@ -259,15 +259,15 @@
 หากตั้งค่าไว้ ชื่อนี้จะปรากฏในข้อมูลเซสชัน ทำให้สามารถแยกแยะระหว่างเซสชันการคำนวณหลายรายการได้
 หากไม่ได้ระบุ ระบบจะกำหนดคำแบบสุ่มให้โดยอัตโนมัติ ชื่อเซสชันยอมรับเฉพาะตัวอักษรและตัวเลขที่มีความยาว 4 ถึง 64 ตัวอักษรโดยไม่มีช่องว่าง</li>
 </ul>
-<p data-bai-block="21">หากผู้ใช้สร้างเซสชันด้วยบัญชี <code>superadmin</code>
-ผู้ใช้สามารถมอบหมายเจ้าของเซสชันเพิ่มเติมได้ หากคุณเปิดใช้งานสวิตช์สลับ
-จะมีช่องอีเมลของผู้ใช้ปรากฏขึ้น</p>
-<p><figure data-bai-block="22" class="doc-figure"><img src="./images/admin_launch_session_owner.png" alt="" class="doc-image" loading="lazy" decoding="async" width="4884" height="1674" /><figcaption>รูปที่ 10.4</figcaption></figure>
+<p data-bai-block="21">หากต้องการสร้างเซสชันแทนผู้ใช้อื่น ผู้ดูแลระบบสูงสุด (Superadmin)
+ให้ใช้การดำเนินการ <strong>ใช้งานในฐานะผู้ใช้นี้</strong> ในหน้าผู้ใช้</p>
+<p><figure data-bai-block="22" class="doc-figure"><img src="./images/admin_user_act_as_menu.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2424" height="832" /><figcaption>รูปที่ 10.4</figcaption></figure>
 </p>
-<p data-bai-block="23">ป้อนอีเมลของผู้ใช้ที่คุณต้องการมอบหมายเซสชันให้
-คลิกปุ่ม &#39;search&#39; และคีย์การเข้าถึงของผู้ใช้จะถูกลงทะเบียนโดยอัตโนมัติ
-คุณยังสามารถเลือกโปรเจกต์และกลุ่มทรัพยากรได้อีกด้วย</p>
-<p><figure data-bai-block="24" class="doc-figure"><img src="./images/admin_launch_session_owner_project.png" alt="" class="doc-image" style="width:740px" loading="lazy" decoding="async" width="1480" height="1040" /><figcaption>รูปที่ 10.5</figcaption></figure>
+<p data-bai-block="23">เมื่อยืนยันแล้ว ระบบจะเปิดแท็บใหม่ที่ทำงานด้วยสิทธิ์และมุมมองของผู้ใช้ที่เลือก
+เซสชันที่คุณสร้างในแท็บนั้นจึงเป็นของผู้ใช้รายนั้น
+และบันทึกการตรวจสอบจะบันทึกการทำงานไว้ทั้งสองบัญชี
+คลิก <strong>ออก</strong> เพื่อกลับไปยังบัญชีของคุณเอง</p>
+<p><figure data-bai-block="24" class="doc-figure"><img src="./images/act_as_banner.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="132" /><figcaption>รูปที่ 10.5</figcaption></figure>
 </p>
 <p><a id="environments-and-resource-allocation"></a></p>
 <h3 data-bai-block="25" id="sessions_all-สภาพแวดลอมและการจดสรรทรพยากร">สภาพแวดล้อมและการจัดสรรทรัพยากร<a class="hash-link" href="#sessions_all-สภาพแวดลอมและการจดสรรทรพยากร" aria-label="Direct link to สภาพแวดล้อมและการจัดสรรทรัพยากร">#</a></h3>
@@ -472,7 +472,7 @@ Backend.AI ตั้งค่านี้ให้เท่ากับจำน
 คุณยังสามารถดูการแจ้งเตือนการสร้างเซสชันนี้ได้โดยคลิก <strong>Notifications</strong> ในส่วนหัว</p>
 <p><figure data-bai-block="86" class="doc-figure"><img src="./images/session_created.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 10.20</figcaption></figure>
 </p>
-<p><figure data-bai-block="87" class="doc-figure"><img src="./images/session_notification.png" alt="" class="doc-image" style="width:384px" loading="lazy" decoding="async" width="768" height="172" /><figcaption>รูปที่ 10.21</figcaption></figure>
+<p><figure data-bai-block="87" class="doc-figure"><img src="./images/session_notification.png" alt="" class="doc-image" style="width:384px" loading="lazy" decoding="async" width="768" height="148" /><figcaption>รูปที่ 10.21</figcaption></figure>
 </p>
 <p data-bai-block="88">โดยการคลิกปุ่มกล่องโต้ตอบแอปที่อยู่ซ้ายสุด คุณสามารถดูบริการแอปที่พร้อมใช้งานได้</p>
 <p><figure data-bai-block="89" class="doc-figure"><img src="./images/app_dialog.png" alt="" class="doc-image" style="width:450px" loading="lazy" decoding="async" width="900" height="1402" /><figcaption>รูปที่ 10.22</figcaption></figure>
@@ -1056,7 +1056,7 @@ Lab เป็นต้น ขึ้นอยู่กับประเภทข
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/th/sessions_all/sessions_all.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> แก้ไขหน้านี้</a>
-  <span class="last-updated">อัปเดตล่าสุด 1 ต.ค. 2569</span>
+  <span class="last-updated">อัปเดตล่าสุด 9 ต.ค. 2569</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./session_page.html">
