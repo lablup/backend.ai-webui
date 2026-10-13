@@ -3288,6 +3288,7 @@
     }
   },
   "sessionMonitor": {
+    "Active": "Sedang digunakan",
     "DomainSessions": "Sesi di domain ini",
     "InUseAcross": "Dialokasikan untuk {{count}} sesi yang berjalan",
     "MonitorSettings": "Pengaturan monitor",
@@ -3301,6 +3302,7 @@
     "RunningCount": "{{count}} berjalan",
     "StartingCount": "{{count}} memulai",
     "Tooltip": "Monitor sesi: jumlah yang berjalan dan penghentian terdekat",
+    "WaitingForResources": "Menunggu sumber daya",
     "idleAlert": {
       "NetworkTimeout": "Tidak ada aktivitas jaringan yang terdeteksi. Sambungkan ke sesi sebelum dihentikan.",
       "SessionLifetime": "Sesi telah mencapai durasi maksimalnya.",

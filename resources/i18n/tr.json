@@ -3284,6 +3284,7 @@
     }
   },
   "sessionMonitor": {
+    "Active": "Kullanımda",
     "DomainSessions": "Bu etki alanının oturumları",
     "InUseAcross": "{{count}} çalışan oturuma ayrıldı",
     "MonitorSettings": "Monitör ayarları",
@@ -3297,6 +3298,7 @@
     "RunningCount": "{{count}} çalışıyor",
     "StartingCount": "{{count}} başlıyor",
     "Tooltip": "Oturum monitörü: çalışan sayısı ve en yakın sonlanma",
+    "WaitingForResources": "Kaynak bekleniyor",
     "idleAlert": {
       "NetworkTimeout": "Ağ etkinliği algılanmadı. Sonlandırılmadan önce oturuma bağlanın.",
       "SessionLifetime": "Oturum maksimum ömrüne ulaşıyor.",

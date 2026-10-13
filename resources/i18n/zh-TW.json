@@ -3288,6 +3288,7 @@
     }
   },
   "sessionMonitor": {
+    "Active": "使用中",
     "DomainSessions": "此網域中的會話",
     "InUseAcross": "已分配給 {{count}} 個執行中的會話",
     "MonitorSettings": "監控設定",
@@ -3301,6 +3302,7 @@
     "RunningCount": "{{count}} 個執行中",
     "StartingCount": "{{count}} 個啟動中",
     "Tooltip": "會話監控：執行數量與最近的終止時間",
+    "WaitingForResources": "等待資源",
     "idleAlert": {
       "NetworkTimeout": "未偵測到網路活動。請在會話終止前連線至該會話。",
       "SessionLifetime": "會話即將達到最大使用期限。",

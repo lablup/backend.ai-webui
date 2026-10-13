@@ -3287,6 +3287,7 @@
     }
   },
   "sessionMonitor": {
+    "Active": "W użyciu",
     "DomainSessions": "Sesje w tej domenie",
     "InUseAcross": "Przydzielone do {{count}} działających sesji",
     "MonitorSettings": "Ustawienia monitora",
@@ -3300,6 +3301,7 @@
     "RunningCount": "{{count}} działa",
     "StartingCount": "{{count}} uruchamia się",
     "Tooltip": "Monitor sesji: liczba działających i najbliższe zakończenie",
+    "WaitingForResources": "Oczekiwanie na zasoby",
     "idleAlert": {
       "NetworkTimeout": "Nie wykryto aktywności sieciowej. Połącz się z sesją, zanim zostanie zakończona.",
       "SessionLifetime": "Sesja osiąga swój maksymalny czas trwania.",

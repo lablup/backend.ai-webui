@@ -3284,6 +3284,7 @@
     }
   },
   "sessionMonitor": {
+    "Active": "Sedang digunakan",
     "DomainSessions": "Sesi dalam domain ini",
     "InUseAcross": "Diperuntukkan kepada {{count}} sesi yang berjalan",
     "MonitorSettings": "Tetapan pemantau",
@@ -3297,6 +3298,7 @@
     "RunningCount": "{{count}} berjalan",
     "StartingCount": "{{count}} bermula",
     "Tooltip": "Pemantau sesi: bilangan berjalan dan penamatan terdekat",
+    "WaitingForResources": "Menunggu sumber",
     "idleAlert": {
       "NetworkTimeout": "Tidak ada aktiviti rangkaian dikesan. Sambung ke sesi sebelum ia ditamatkan.",
       "SessionLifetime": "Sesi hampir mencapai tempoh hayat maksimumnya.",

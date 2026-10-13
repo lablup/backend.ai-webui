@@ -3284,6 +3284,7 @@
     }
   },
   "sessionMonitor": {
+    "Active": "In uso",
     "DomainSessions": "Sessioni in questo dominio",
     "InUseAcross": "Allocato a {{count}} sessioni in esecuzione",
     "MonitorSettings": "Impostazioni monitor",
@@ -3297,6 +3298,7 @@
     "RunningCount": "{{count}} in esecuzione",
     "StartingCount": "{{count}} in avvio",
     "Tooltip": "Monitor sessioni: numero in esecuzione e prossima terminazione",
+    "WaitingForResources": "In attesa di risorse",
     "idleAlert": {
       "NetworkTimeout": "Non è stata rilevata alcuna attività di rete. Connettiti alla sessione prima che venga terminata.",
       "SessionLifetime": "La sessione sta raggiungendo la sua durata massima.",
