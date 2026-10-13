@@ -129,10 +129,12 @@ export const rankSessions = (
     }
     if (sort === 'deadline') {
       if (a.deadline !== null && b.deadline !== null) {
-        return a.deadline - b.deadline;
+        if (a.deadline !== b.deadline) return a.deadline - b.deadline;
+      } else if (a.deadline !== null) {
+        return -1;
+      } else if (b.deadline !== null) {
+        return 1;
       }
-      if (a.deadline !== null) return -1;
-      if (b.deadline !== null) return 1;
     }
     return (b.createdAt ?? '').localeCompare(a.createdAt ?? '');
   });

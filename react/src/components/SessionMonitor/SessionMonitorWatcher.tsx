@@ -173,13 +173,16 @@ const ScopedSessionMonitorWatcher: React.FC<{ scope: SessionMonitorScope }> = ({
     writeAlertedRecords(storage, alerted);
     const sessionListPath = buildProjectPath('session', { scope: 'project' });
     due.forEach(({ entry, thresholdSec }) => {
-      if (!entry.nearest) return;
+      if (!entry.nearest || entry.deadline === null) return;
       upsertNotification({
         key: `session-monitor-idle-${entry.id}-${thresholdSec}`,
         type: 'warning',
         title: t('sessionMonitor.idleAlert.Title', {
           name: entry.name ?? toLocalId(entry.id),
-          minutes: Math.ceil(thresholdSec / 60),
+          minutes: Math.max(
+            1,
+            Math.ceil(((entry.deadline ?? now) - now) / 60_000),
+          ),
         }),
         description: t(idleAlertDescriptionKey(entry.nearest.key)),
         toText: t('sessionMonitor.OpenSession'),

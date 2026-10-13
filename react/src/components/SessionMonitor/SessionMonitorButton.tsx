@@ -33,6 +33,7 @@ interface SessionMonitorButtonProps {
 }
 
 const Separator: React.FC = () => {
+  'use memo';
   const { token } = useTheme();
   return (
     <span

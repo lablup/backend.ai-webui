@@ -8,7 +8,6 @@ import {
   SESSION_MONITOR_VISIBLE_LIMIT,
 } from '../../helper/sessionMonitor';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
-import { useIsProjectAgnosticPage } from '../../hooks/useIsProjectAgnosticPage';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import {
   sessionMonitorFetchKeyAtom,
@@ -64,7 +63,6 @@ const ScopedSessionMonitorPopoverContent: React.FC<
   const { t } = useTranslation();
   const { token } = useTheme();
   const buildProjectPath = useProjectPath();
-  const isProjectAgnosticPage = useIsProjectAgnosticPage();
   const [fetchKey, setFetchKey] = useAtom(sessionMonitorFetchKeyAtom);
   const deferredFetchKey = useDeferredValue(fetchKey);
   const [isPending, startTransition] = useTransition();
@@ -75,7 +73,7 @@ const ScopedSessionMonitorPopoverContent: React.FC<
   );
   const [rows] = useBAISettingUserState('session_monitor_rows');
   const { entries, nodesById, total, counts, fetchedAt } =
-    useSessionMonitorData(deferredFetchKey, scope);
+    useSessionMonitorData(deferredFetchKey, scope, { withRows: true });
 
   const listed =
     (includeStarting ?? true)
@@ -174,11 +172,11 @@ const ScopedSessionMonitorPopoverContent: React.FC<
             </BAIFlex>
           ) : (
             visible.map((entry) => {
-              const node = nodesById.get(entry.id);
-              return node ? (
+              const row = nodesById.get(entry.id)?.row;
+              return row ? (
                 <SessionMonitorItem
                   key={entry.id}
-                  sessionFrgmt={node}
+                  sessionFrgmt={row}
                   entry={entry}
                   listPath={listPath}
                   onNavigate={onNavigate}
@@ -193,7 +191,7 @@ const ScopedSessionMonitorPopoverContent: React.FC<
               </Suspense>
             </ErrorBoundaryWithNullFallback>
           )}
-          {!isProjectAgnosticPage && scope.mode !== 'domain' && (
+          {scope.mode === 'my' && (
             <ErrorBoundaryWithNullFallback>
               <Suspense fallback={null}>
                 <SessionMonitorResourceUsage />

@@ -61,6 +61,9 @@ export type SessionMonitorNode = NonNullable<
 export const useSessionMonitorData = (
   fetchKey: string,
   scope: SessionMonitorScope,
+  // The row fragment carries per-kernel live stats; only the open popover
+  // needs it, so the minute-by-minute watcher leaves it out.
+  { withRows = false }: { withRows?: boolean } = {},
 ) => {
   'use memo';
 
@@ -72,6 +75,7 @@ export const useSessionMonitorData = (
         $runningFilter: String
         $startingFilter: String
         $first: Int
+        $withRows: Boolean!
       ) {
         runningCount: compute_session_nodes(
           scope_id: $scopeId
@@ -102,6 +106,8 @@ export const useSessionMonitorData = (
               created_at
               idle_checks
               ...SessionMonitorItemFragment
+                @include(if: $withRows)
+                @alias(as: "row")
             }
           }
         }
@@ -113,6 +119,7 @@ export const useSessionMonitorData = (
       runningFilter: `${scope.filter} & ${SESSION_MONITOR_RUNNING_FILTER}`,
       startingFilter: `${scope.filter} & ${SESSION_MONITOR_STARTING_FILTER}`,
       first: SESSION_MONITOR_FETCH_LIMIT,
+      withRows,
     },
     { fetchPolicy: 'store-and-network', fetchKey },
   );

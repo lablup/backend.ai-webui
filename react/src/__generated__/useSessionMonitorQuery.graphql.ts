@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<95f8382b01dee6e0ff9a3a00a71c89aa>>
+ * @generated SignedSource<<7004ca34ef097f950555d364267859d5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,6 +16,7 @@ export type useSessionMonitorQuery$variables = {
   runningFilter?: string | null | undefined;
   scopeId?: any | null | undefined;
   startingFilter?: string | null | undefined;
+  withRows: boolean;
 };
 export type useSessionMonitorQuery$data = {
   readonly compute_session_nodes: {
@@ -26,8 +27,10 @@ export type useSessionMonitorQuery$data = {
         readonly id: string;
         readonly idle_checks: string | null | undefined;
         readonly name: string | null | undefined;
+        readonly row?: {
+          readonly " $fragmentSpreads": FragmentRefs<"SessionMonitorItemFragment">;
+        } | null | undefined;
         readonly status: string | null | undefined;
-        readonly " $fragmentSpreads": FragmentRefs<"SessionMonitorItemFragment">;
       } | null | undefined;
     } | null | undefined>;
   } | null | undefined;
@@ -70,26 +73,31 @@ v4 = {
   "name": "startingFilter"
 },
 v5 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "withRows"
+},
+v6 = {
   "kind": "Literal",
   "name": "first",
   "value": 0
 },
-v6 = {
+v7 = {
   "kind": "Variable",
   "name": "scope_id",
   "variableName": "scopeId"
 },
-v7 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "count",
   "storageKey": null
 },
-v8 = [
-  (v7/*: any*/)
+v9 = [
+  (v8/*: any*/)
 ],
-v9 = {
+v10 = {
   "alias": "runningCount",
   "args": [
     {
@@ -97,17 +105,17 @@ v9 = {
       "name": "filter",
       "variableName": "runningFilter"
     },
-    (v5/*: any*/),
-    (v6/*: any*/)
+    (v6/*: any*/),
+    (v7/*: any*/)
   ],
   "concreteType": "ComputeSessionConnection",
   "kind": "LinkedField",
   "name": "compute_session_nodes",
   "plural": false,
-  "selections": (v8/*: any*/),
+  "selections": (v9/*: any*/),
   "storageKey": null
 },
-v10 = {
+v11 = {
   "alias": "startingCount",
   "args": [
     {
@@ -115,17 +123,17 @@ v10 = {
       "name": "filter",
       "variableName": "startingFilter"
     },
-    (v5/*: any*/),
-    (v6/*: any*/)
+    (v6/*: any*/),
+    (v7/*: any*/)
   ],
   "concreteType": "ComputeSessionConnection",
   "kind": "LinkedField",
   "name": "compute_session_nodes",
   "plural": false,
-  "selections": (v8/*: any*/),
+  "selections": (v9/*: any*/),
   "storageKey": null
 },
-v11 = [
+v12 = [
   {
     "kind": "Variable",
     "name": "filter",
@@ -141,37 +149,37 @@ v11 = [
     "name": "order",
     "value": "-created_at"
   },
-  (v6/*: any*/)
+  (v7/*: any*/)
 ],
-v12 = {
+v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v13 = {
+v14 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v14 = {
+v15 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "status",
   "storageKey": null
 },
-v15 = {
+v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "created_at",
   "storageKey": null
 },
-v16 = {
+v17 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -185,23 +193,24 @@ return {
       (v1/*: any*/),
       (v2/*: any*/),
       (v3/*: any*/),
-      (v4/*: any*/)
+      (v4/*: any*/),
+      (v5/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "useSessionMonitorQuery",
     "selections": [
-      (v9/*: any*/),
       (v10/*: any*/),
+      (v11/*: any*/),
       {
         "alias": null,
-        "args": (v11/*: any*/),
+        "args": (v12/*: any*/),
         "concreteType": "ComputeSessionConnection",
         "kind": "LinkedField",
         "name": "compute_session_nodes",
         "plural": false,
         "selections": [
-          (v7/*: any*/),
+          (v8/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -218,15 +227,33 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v12/*: any*/),
                   (v13/*: any*/),
                   (v14/*: any*/),
                   (v15/*: any*/),
                   (v16/*: any*/),
+                  (v17/*: any*/),
                   {
-                    "args": null,
-                    "kind": "FragmentSpread",
-                    "name": "SessionMonitorItemFragment"
+                    "condition": "withRows",
+                    "kind": "Condition",
+                    "passingValue": true,
+                    "selections": [
+                      {
+                        "fragment": {
+                          "kind": "InlineFragment",
+                          "selections": [
+                            {
+                              "args": null,
+                              "kind": "FragmentSpread",
+                              "name": "SessionMonitorItemFragment"
+                            }
+                          ],
+                          "type": "ComputeSessionNode",
+                          "abstractKey": null
+                        },
+                        "kind": "AliasedInlineFragmentSpread",
+                        "name": "row"
+                      }
+                    ]
                   }
                 ],
                 "storageKey": null
@@ -248,22 +275,23 @@ return {
       (v0/*: any*/),
       (v2/*: any*/),
       (v4/*: any*/),
-      (v1/*: any*/)
+      (v1/*: any*/),
+      (v5/*: any*/)
     ],
     "kind": "Operation",
     "name": "useSessionMonitorQuery",
     "selections": [
-      (v9/*: any*/),
       (v10/*: any*/),
+      (v11/*: any*/),
       {
         "alias": null,
-        "args": (v11/*: any*/),
+        "args": (v12/*: any*/),
         "concreteType": "ComputeSessionConnection",
         "kind": "LinkedField",
         "name": "compute_session_nodes",
         "plural": false,
         "selections": [
-          (v7/*: any*/),
+          (v8/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -280,94 +308,101 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v12/*: any*/),
                   (v13/*: any*/),
                   (v14/*: any*/),
                   (v15/*: any*/),
                   (v16/*: any*/),
+                  (v17/*: any*/),
                   {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "occupied_slots",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "requested_slots",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "KernelConnection",
-                    "kind": "LinkedField",
-                    "name": "kernel_nodes",
-                    "plural": false,
+                    "condition": "withRows",
+                    "kind": "Condition",
+                    "passingValue": true,
                     "selections": [
                       {
                         "alias": null,
                         "args": null,
-                        "concreteType": "KernelEdge",
+                        "kind": "ScalarField",
+                        "name": "occupied_slots",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "requested_slots",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "KernelConnection",
                         "kind": "LinkedField",
-                        "name": "edges",
-                        "plural": true,
+                        "name": "kernel_nodes",
+                        "plural": false,
                         "selections": [
                           {
                             "alias": null,
                             "args": null,
-                            "concreteType": "KernelNode",
+                            "concreteType": "KernelEdge",
                             "kind": "LinkedField",
-                            "name": "node",
-                            "plural": false,
+                            "name": "edges",
+                            "plural": true,
                             "selections": [
                               {
                                 "alias": null,
                                 "args": null,
-                                "kind": "ScalarField",
-                                "name": "live_stat",
+                                "concreteType": "KernelNode",
+                                "kind": "LinkedField",
+                                "name": "node",
+                                "plural": false,
+                                "selections": [
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "kind": "ScalarField",
+                                    "name": "live_stat",
+                                    "storageKey": null
+                                  },
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "kind": "ScalarField",
+                                    "name": "cluster_role",
+                                    "storageKey": null
+                                  },
+                                  (v13/*: any*/),
+                                  (v15/*: any*/)
+                                ],
                                 "storageKey": null
-                              },
-                              {
-                                "alias": null,
-                                "args": null,
-                                "kind": "ScalarField",
-                                "name": "cluster_role",
-                                "storageKey": null
-                              },
-                              (v12/*: any*/),
-                              (v14/*: any*/)
+                              }
                             ],
                             "storageKey": null
                           }
                         ],
                         "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "status_info",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "queue_position",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "cluster_size",
+                        "storageKey": null
                       }
-                    ],
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "status_info",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "queue_position",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "cluster_size",
-                    "storageKey": null
+                    ]
                   }
                 ],
                 "storageKey": null
@@ -381,16 +416,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "34b22f023ca18eff7c9a0686bf01a14c",
+    "cacheID": "85c752a69469cf7227cf3f18a6f6d3ba",
     "id": null,
     "metadata": {},
     "name": "useSessionMonitorQuery",
     "operationKind": "query",
-    "text": "query useSessionMonitorQuery(\n  $scopeId: ScopeField\n  $filter: String\n  $runningFilter: String\n  $startingFilter: String\n  $first: Int\n) {\n  runningCount: compute_session_nodes(scope_id: $scopeId, filter: $runningFilter, first: 0) {\n    count\n  }\n  startingCount: compute_session_nodes(scope_id: $scopeId, filter: $startingFilter, first: 0) {\n    count\n  }\n  compute_session_nodes(scope_id: $scopeId, filter: $filter, order: \"-created_at\", first: $first) {\n    count\n    edges {\n      node {\n        id\n        name\n        status\n        created_at\n        idle_checks\n        ...SessionMonitorItemFragment\n      }\n    }\n  }\n}\n\nfragment SessionMonitorItemFragment on ComputeSessionNode {\n  id\n  name\n  status\n  created_at\n  occupied_slots\n  requested_slots\n  ...SessionMonitorUtilizationBarsFragment\n  ...SessionStatusBadgeFragment\n}\n\nfragment SessionMonitorUtilizationBarsFragment on ComputeSessionNode {\n  occupied_slots\n  ...useSessionNodeLiveStatSessionFragment\n}\n\nfragment SessionStatusBadgeFragment on ComputeSessionNode {\n  id\n  status\n  status_info\n  queue_position\n  cluster_size\n  kernel_nodes {\n    edges {\n      node {\n        id\n        status\n      }\n    }\n  }\n}\n\nfragment useSessionNodeLiveStatSessionFragment on ComputeSessionNode {\n  id\n  kernel_nodes {\n    edges {\n      node {\n        live_stat\n        cluster_role\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query useSessionMonitorQuery(\n  $scopeId: ScopeField\n  $filter: String\n  $runningFilter: String\n  $startingFilter: String\n  $first: Int\n  $withRows: Boolean!\n) {\n  runningCount: compute_session_nodes(scope_id: $scopeId, filter: $runningFilter, first: 0) {\n    count\n  }\n  startingCount: compute_session_nodes(scope_id: $scopeId, filter: $startingFilter, first: 0) {\n    count\n  }\n  compute_session_nodes(scope_id: $scopeId, filter: $filter, order: \"-created_at\", first: $first) {\n    count\n    edges {\n      node {\n        id\n        name\n        status\n        created_at\n        idle_checks\n        ...SessionMonitorItemFragment @include(if: $withRows)\n      }\n    }\n  }\n}\n\nfragment SessionMonitorItemFragment on ComputeSessionNode {\n  id\n  name\n  status\n  created_at\n  occupied_slots\n  requested_slots\n  ...SessionMonitorUtilizationBarsFragment\n  ...SessionStatusBadgeFragment\n}\n\nfragment SessionMonitorUtilizationBarsFragment on ComputeSessionNode {\n  occupied_slots\n  ...useSessionNodeLiveStatSessionFragment\n}\n\nfragment SessionStatusBadgeFragment on ComputeSessionNode {\n  id\n  status\n  status_info\n  queue_position\n  cluster_size\n  kernel_nodes {\n    edges {\n      node {\n        id\n        status\n      }\n    }\n  }\n}\n\nfragment useSessionNodeLiveStatSessionFragment on ComputeSessionNode {\n  id\n  kernel_nodes {\n    edges {\n      node {\n        live_stat\n        cluster_role\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "05dd245b87f069f8063643468d796655";
+(node as any).hash = "0d3d8c46614175d4e2145f5944433748";
 
 export default node;

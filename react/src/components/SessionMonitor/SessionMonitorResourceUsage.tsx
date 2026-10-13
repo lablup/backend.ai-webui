@@ -35,13 +35,8 @@ const SessionMonitorResourceUsage: React.FC = () => {
       <Text type="supporting">{t('sessionMonitor.MyResourceUsage')}</Text>
       {rows.map((row) => (
         <BAIFlex key={row.key} direction="row" align="center" gap="sm">
-          <Text
-            type="label"
-            textWrap="nowrap"
-            maxLines={1}
-            hasTruncateTooltip={false}
-          >
-            <span style={{ display: 'inline-block', width: 64 }}>
+          <Text type="supporting" weight="medium" textWrap="nowrap">
+            <span style={{ display: 'inline-block', width: 56 }}>
               {row.name}
             </span>
           </Text>
