@@ -57,20 +57,6 @@ export const useRetentionCategoryLabel = () => {
     labels[category as RetentionCategory] || category;
 };
 
-type MutationError = { message: string; extensions?: unknown };
-
-// A create answers with RetentionPolicyConflict; an update that moves onto a
-// taken category hits the table's unique constraint instead.
-const DUPLICATE_CATEGORY_CODES = [
-  'retention-policy_create_conflict',
-  'database_generic_already-exists',
-];
-const isDuplicateCategoryError = (error: MutationError) =>
-  _.includes(DUPLICATE_CATEGORY_CODES, _.get(error, 'extensions.code')) ||
-  /already exists|uq_retention_policies_category|duplicate key|unique constraint/i.test(
-    error.message ?? '',
-  );
-
 type RetentionPolicyFormValues = {
   category: RetentionCategory;
   retentionPeriodDays: number;
@@ -146,16 +132,7 @@ const RetentionPolicySettingModal: React.FC<
       }
     `);
 
-  const conflictMessageOf = (category: RetentionCategory) => (
-    <Trans
-      i18nKey="retentionPolicy.PolicyAlreadyExistsView"
-      components={{
-        viewLink: <BAILink onClick={() => onViewExistingPolicy(category)} />,
-      }}
-    />
-  );
-
-  // A failed check resolves: the mutation's conflict error stays the final guard.
+  // A failed check resolves: the server's error on submit stays the final guard.
   const validateCategoryIsFree = async (_rule: unknown, value: unknown) => {
     const category = value as RetentionCategory | undefined;
     if (!category || category === policy?.category) return;
@@ -189,47 +166,17 @@ const RetentionPolicySettingModal: React.FC<
     const existingId =
       result?.adminRetentionPolicies?.edges[0]?.node?.id ?? null;
     if (existingId && existingId !== policy?.id) {
-      throw conflictMessageOf(category);
+      throw (
+        <Trans
+          i18nKey="retentionPolicy.PolicyAlreadyExistsView"
+          components={{
+            viewLink: (
+              <BAILink onClick={() => onViewExistingPolicy(category)} />
+            ),
+          }}
+        />
+      );
     }
-  };
-
-  // The modal stays open on failure so the user can correct the input and retry.
-  const showFailure = (
-    errors: ReadonlyArray<MutationError>,
-    category: RetentionCategory,
-    mayConflict: boolean,
-  ) => {
-    if (mayConflict && _.some(errors, isDuplicateCategoryError)) {
-      // Re-running the rule puts the linked message on the field.
-      form.validateFields(['category']).catch(() => undefined);
-      message.error(conflictMessageOf(category));
-      return;
-    }
-    _.forEach(errors, (err) =>
-      message.error(err.message || t('general.ErrorOccurred')),
-    );
-  };
-
-  // Relay hands a failed mutation's GraphQL errors to onError under `source`.
-  const errorsOf = (error: Error): ReadonlyArray<MutationError> => {
-    const sourceErrors = (
-      error as { source?: { errors?: ReadonlyArray<MutationError> } }
-    ).source?.errors;
-    return sourceErrors && sourceErrors.length > 0 ? sourceErrors : [error];
-  };
-
-  const settle = (
-    errors: ReadonlyArray<MutationError> | null | undefined,
-    successMessage: string,
-    category: RetentionCategory,
-    mayConflict: boolean,
-  ) => {
-    if (errors && errors.length > 0) {
-      showFailure(errors, category, mayConflict);
-      return;
-    }
-    message.success(successMessage);
-    onRequestClose(true);
   };
 
   const handleOk = () =>
@@ -237,12 +184,11 @@ const RetentionPolicySettingModal: React.FC<
       .validateFields()
       .then((values) => {
         if (policy) {
-          const isCategoryChanged = values.category !== policy.category;
           commitUpdate({
             variables: {
               input: {
                 id: policy.entityId,
-                ...(isCategoryChanged && {
+                ...(values.category !== policy.category && {
                   category: values.category,
                 }),
                 ...(values.retentionPeriodDays !==
@@ -254,15 +200,17 @@ const RetentionPolicySettingModal: React.FC<
                 }),
               },
             },
-            onCompleted: (_res, errors) =>
-              settle(
-                errors,
-                t('retentionPolicy.SuccessfullyUpdated'),
-                values.category,
-                isCategoryChanged,
-              ),
-            onError: (error) =>
-              showFailure(errorsOf(error), values.category, isCategoryChanged),
+            onCompleted: (_res, errors) => {
+              if (errors && errors.length > 0) {
+                message.error(errors[0]?.message || t('general.ErrorOccurred'));
+                return;
+              }
+              message.success(t('retentionPolicy.SuccessfullyUpdated'));
+              onRequestClose(true);
+            },
+            onError: (error) => {
+              message.error(error?.message || t('general.ErrorOccurred'));
+            },
           });
           return;
         }
@@ -274,15 +222,17 @@ const RetentionPolicySettingModal: React.FC<
               enabled: values.enabled,
             },
           },
-          onCompleted: (_res, errors) =>
-            settle(
-              errors,
-              t('retentionPolicy.SuccessfullyCreated'),
-              values.category,
-              true,
-            ),
-          onError: (error) =>
-            showFailure(errorsOf(error), values.category, true),
+          onCompleted: (_res, errors) => {
+            if (errors && errors.length > 0) {
+              message.error(errors[0]?.message || t('general.ErrorOccurred'));
+              return;
+            }
+            message.success(t('retentionPolicy.SuccessfullyCreated'));
+            onRequestClose(true);
+          },
+          onError: (error) => {
+            message.error(error?.message || t('general.ErrorOccurred'));
+          },
         });
       })
       .catch(() => {});
