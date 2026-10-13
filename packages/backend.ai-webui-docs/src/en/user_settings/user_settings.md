@@ -400,6 +400,7 @@ The table includes the following columns:
   copy icon to copy it.
 - **Created At**: When the login session was created. Click the column header to
   sort by this column.
+- **Last Accessed**: When the login session was last used.
 
 ### Filtering login sessions
 
