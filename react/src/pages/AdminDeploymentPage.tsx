@@ -314,11 +314,14 @@ const AdminDeploymentPage: React.FC = () => {
     switch (tab) {
       case 'deployments':
         if (!deploymentQueryRef) {
+          const urlFilter = params.filter as DeploymentFilter | null;
           loadDeploymentQuery(
             {
-              filter:
-                (params.filter as DeploymentFilter | null) ??
-                DEPLOYMENT_RUNNING_FILTER,
+              // A link from elsewhere (e.g. a tag on the detail page) carries
+              // no `status`, so it starts in the running scope.
+              filter: urlFilter?.status
+                ? urlFilter
+                : { ...urlFilter, ...DEPLOYMENT_RUNNING_FILTER },
               orderBy: convertToOrderBy<DeploymentOrderBy>(params.order),
               limit,
               offset,
