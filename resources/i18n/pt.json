@@ -1002,6 +1002,7 @@
       "FolderUpdated": "Opção (ões) de pasta atualizada (s)",
       "FolderUsage": "Utilização da pasta",
       "FolderUsing": "Utilizar",
+      "Invite": "Convidar",
       "InviteByEmail": "Convidar por e-mail",
       "InviteUsers": "Convite o usuário",
       "KickOut": "Pare de compartilhar",
@@ -1046,7 +1047,7 @@
       "RestoreDescription": "Deseja restaurar a pasta \"{{ folderName }}\"?",
       "RestoreMultipleDescription": "Deseja restaurar as pastas {{ folderLength }}?",
       "SameFileName": "O valor de entrada é igual ao nome do arquivo a ser atualizado. Por favor, mude para um nome diferente.",
-      "SearchUserOrEnterEmail": "Pesquise um utilizador ou introduza um endereço de e-mail",
+      "SearchUser": "Pesquisar utilizador",
       "SelectPermission": "Selecione a permissão",
       "Serve": "Serviço de modelo",
       "ShareFolder": "Partilhar pasta",
@@ -1065,7 +1066,6 @@
       "TypeFolderNameToLeave": "Digite o nome da pasta para sair",
       "TypeNewFolderName": "Digite o nome da nova pasta",
       "TypeToConfirmDeleteForever": "Digite a palavra abaixo para excluir permanentemente",
-      "UserOrEmail": "Utilizador ou e-mail",
       "View": "Visualizar"
     },
     "invitation": {

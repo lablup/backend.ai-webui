@@ -1002,6 +1002,7 @@
       "FolderUpdated": "Kansiovaihtoehto(t) päivitetty",
       "FolderUsage": "Kansion käyttö",
       "FolderUsing": "Käyttämällä",
+      "Invite": "Kutsu",
       "InviteByEmail": "Kutsu sähköpostitse",
       "InviteUsers": "Kutsua käyttäjää",
       "KickOut": "Lopeta jakaminen",
@@ -1046,7 +1047,7 @@
       "RestoreDescription": "Haluatko palauttaa \"{{ folderName }}\" -kansio?",
       "RestoreMultipleDescription": "Haluatko palauttaa {{ folderLength }} kansiot?",
       "SameFileName": "Syöttöarvo on sama kuin päivitettävän tiedoston nimi. Vaihda se toiseen nimeen.",
-      "SearchUserOrEnterEmail": "Hae käyttäjää tai anna sähköpostiosoite",
+      "SearchUser": "Hae käyttäjää",
       "SelectPermission": "Valitse lupa",
       "Serve": "Malli, joka palvelee",
       "ShareFolder": "Jaa kansio",
@@ -1065,7 +1066,6 @@
       "TypeFolderNameToLeave": "Kirjoita poistuvan kansion nimi",
       "TypeNewFolderName": "Kirjoita uuden kansion nimi",
       "TypeToConfirmDeleteForever": "Kirjoita alla oleva sana pysyvää poistoa varten",
-      "UserOrEmail": "Käyttäjä tai sähköposti",
       "View": "Näytä"
     },
     "invitation": {

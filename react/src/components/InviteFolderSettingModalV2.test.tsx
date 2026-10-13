@@ -73,13 +73,28 @@ const PENDING_SHARE_ID = '01a12f7e-0644-75be-8e76-b2ab727ce7ac';
 const SHARED_USERS = [
   { perm: 'ro', shared_to: { uuid: USER2_ID, email: 'user2@example.com' } },
 ];
+const SENT_INVITATIONS = [
+  {
+    id: PENDING_SHARE_ID,
+    invitee: 'nobody@example.com',
+    perm: 'rw',
+    state: 'pending',
+    vfolder_id: VFOLDER_ID,
+  },
+];
 
 vi.mock('../hooks/reactQueryAlias', async (importOriginal) => {
   const originalModule =
     await importOriginal<typeof import('../hooks/reactQueryAlias')>();
   return {
     ...originalModule,
-    useTanQuery: () => ({ data: SHARED_USERS, isFetching: false }),
+    useTanQuery: ({ queryKey }: { queryKey: Array<unknown> }) => ({
+      data:
+        queryKey[0] === 'baiClient.vfolder.list_sent_invitations'
+          ? SENT_INVITATIONS
+          : SHARED_USERS,
+      isFetching: false,
+    }),
   };
 });
 
@@ -144,6 +159,8 @@ const Harness: React.FC<{ onRequestClose?: () => void }> = ({
   );
 };
 
+const h = { hidden: true } as const;
+
 const operationNames = (environment: RelayMockEnvironment) =>
   environment.mock
     .getAllOperations()
@@ -181,6 +198,27 @@ const resolveMutation = async (
   return operation!.request.variables;
 };
 
+// The select suspends on each (debounced) search query, so keep resolving
+// pending queries until the option row we want is on screen.
+const findOptionResolvingQueries = (
+  environment: RelayMockEnvironment,
+  name: RegExp,
+) =>
+  waitFor(
+    () => {
+      for (const operation of environment.mock.getAllOperations()) {
+        if (operation.request.node.params.operationKind === 'query') {
+          environment.mock.resolve(
+            operation,
+            MockPayloadGenerator.generate(operation, RESOLVERS),
+          );
+        }
+      }
+      return screen.getByRole('option', { name, ...h });
+    },
+    { timeout: 3000 },
+  );
+
 const renderModal = async () => {
   const environment = createMockEnvironment();
   render(
@@ -198,6 +236,17 @@ const renderModal = async () => {
 };
 
 describe('InviteFolderSettingModalV2 (#10295)', () => {
+  beforeAll(() => {
+    // jsdom has no scrollIntoView; the select scrolls its highlighted row.
+    Element.prototype.scrollIntoView = vi.fn();
+    // jsdom reports 0px widths, which would fold every name-cell action into
+    // the overflow menu; give the cells room so the buttons stay visible.
+    Object.defineProperty(HTMLElement.prototype, 'clientWidth', {
+      configurable: true,
+      value: 800,
+    });
+  });
+
   beforeEach(() => {
     mockRequest.mockReset();
     mockRequest.mockResolvedValue({ invited_ids: ['nobody2@example.com'] });
@@ -216,22 +265,36 @@ describe('InviteFolderSettingModalV2 (#10295)', () => {
     expect(
       screen.getAllByText('data.ReadWrite').some((el) => el.closest('tr')),
     ).toBe(true);
+    // A pending row shows the level the invitee is set to get, read from the
+    // caller's sent invitations.
+    expect(
+      screen.getByText('nobody@example.com').closest('tr'),
+    ).toHaveTextContent('data.ReadWrite');
   });
 
   it('sends an e-mail invite with the folder shared mount permission as perm', async () => {
     const user = userEvent.setup();
     const environment = await renderModal();
 
-    await user.type(
-      screen.getByPlaceholderText('data.folders.SearchUserOrEnterEmail'),
-      'nobody2@example.com',
+    await user.click(screen.getByText('data.folders.SearchUser'));
+    await resolvePendingQueries(environment);
+    // The mount-level Selector is a combobox too; the search box is the input.
+    const searchBox = screen
+      .getAllByRole('combobox', h)
+      .find((el) => el.tagName === 'INPUT');
+    expect(searchBox).toBeDefined();
+    await user.type(searchBox!, 'nobody2@example.com');
+    await user.click(
+      await findOptionResolvingQueries(environment, /nobody2@example\.com/),
     );
     expect(
       await screen.findByText(
         'data.folders.EmailInviteUsesSharedMountPermission',
       ),
     ).toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: 'general.Add' }));
+    await user.click(
+      screen.getByRole('button', { name: 'data.folders.Invite' }),
+    );
 
     await waitFor(() =>
       expect(mockRequest).toHaveBeenCalledWith({

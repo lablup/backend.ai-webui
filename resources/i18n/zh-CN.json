@@ -1002,6 +1002,7 @@
       "FolderUpdated": "文件夹选项已更新",
       "FolderUsage": "文件夹的使用",
       "FolderUsing": "使用",
+      "Invite": "邀请",
       "InviteByEmail": "通过电子邮件邀请",
       "InviteUsers": "邀请用户",
       "KickOut": "停止共享",
@@ -1046,7 +1047,7 @@
       "RestoreDescription": "您要还原“{{ folderName }}”文件夹？",
       "RestoreMultipleDescription": "您要还原{{ folderLength }}文件夹吗？",
       "SameFileName": "输入值与要更新的文件名相同。请将其更改为其他名称。",
-      "SearchUserOrEnterEmail": "搜索用户或输入电子邮件地址",
+      "SearchUser": "搜索用户",
       "SelectPermission": "选择权限",
       "Serve": "服务模式",
       "ShareFolder": "共享文件夹",
@@ -1065,7 +1066,6 @@
       "TypeFolderNameToLeave": "输入要离开的文件夹名称",
       "TypeNewFolderName": "输入新文件夹名称",
       "TypeToConfirmDeleteForever": "请输入下方的词语以永久删除",
-      "UserOrEmail": "用户或电子邮件",
       "View": "看法"
     },
     "invitation": {
