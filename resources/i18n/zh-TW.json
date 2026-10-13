@@ -3291,7 +3291,7 @@
     "DomainSessions": "此網域中的會話",
     "InUseAcross": "已分配給 {{count}} 個執行中的會話",
     "MonitorSettings": "監控設定",
-    "MoreSessions": "還有 {{count}} 個會話",
+    "MoreSessions": "還有 {{count}} 個 · 共 {{total}} 個",
     "MyResourceUsage": "已分配給我（與我的限制對比）",
     "MySessions": "我的會話",
     "NoActiveSessions": "沒有活動會話",

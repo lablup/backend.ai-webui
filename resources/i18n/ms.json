@@ -3287,7 +3287,7 @@
     "DomainSessions": "Sesi dalam domain ini",
     "InUseAcross": "Diperuntukkan kepada {{count}} sesi yang berjalan",
     "MonitorSettings": "Tetapan pemantau",
-    "MoreSessions": "{{count}} lagi sesi",
+    "MoreSessions": "{{count}} lagi · {{total}} jumlah",
     "MyResourceUsage": "Diperuntukkan kepada saya, berbanding had saya",
     "MySessions": "Sesi saya",
     "NoActiveSessions": "Tiada sesi aktif",

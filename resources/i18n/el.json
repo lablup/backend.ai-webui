@@ -3287,7 +3287,7 @@
     "DomainSessions": "Συνεδρίες σε αυτόν τον τομέα",
     "InUseAcross": "Διατέθηκε σε {{count}} συνεδρίες σε εκτέλεση",
     "MonitorSettings": "Ρυθμίσεις παρακολούθησης",
-    "MoreSessions": "{{count}} ακόμη συνεδρίες",
+    "MoreSessions": "{{count}} ακόμη · {{total}} σύνολο",
     "MyResourceUsage": "Διατέθηκε σε εμένα, σε σχέση με το όριό μου",
     "MySessions": "Οι συνεδρίες μου",
     "NoActiveSessions": "Δεν υπάρχουν ενεργές συνεδρίες",

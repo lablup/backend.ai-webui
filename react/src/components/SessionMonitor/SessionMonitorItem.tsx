@@ -154,9 +154,12 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
           direction="column"
           align="stretch"
           gap="xxs"
-          style={{ width: 128, flex: 'none', textAlign: 'end' }}
+          style={{ width: 140, flex: 'none', textAlign: 'end' }}
         >
-          {nearest && deadline !== null ? (
+          <BAIFlex justify="end">
+            <SessionStatusBadge sessionFrgmt={session} showQueuePosition />
+          </BAIFlex>
+          {nearest && deadline !== null && (
             <>
               <BAIIntervalView
                 delay={1000}
@@ -196,10 +199,6 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
                 {idleCheckLabel(nearest.key)}
               </Text>
             </>
-          ) : (
-            <BAIFlex justify="end">
-              <SessionStatusBadge sessionFrgmt={session} showQueuePosition />
-            </BAIFlex>
           )}
         </BAIFlex>
       }

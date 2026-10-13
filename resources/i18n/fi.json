@@ -3287,7 +3287,7 @@
     "DomainSessions": "Tämän toimialueen istunnot",
     "InUseAcross": "Varattu {{count}} käynnissä olevaan istuntoon",
     "MonitorSettings": "Valvonta-asetukset",
-    "MoreSessions": "{{count}} istuntoa lisää",
+    "MoreSessions": "{{count}} lisää · yhteensä {{total}}",
     "MyResourceUsage": "Minulle varattu, suhteessa rajaani",
     "MySessions": "Omat istunnot",
     "NoActiveSessions": "Ei aktiivisia istuntoja",

@@ -3289,7 +3289,7 @@
     "DomainSessions": "Энэ доменийн сессүүд",
     "InUseAcross": "Ажиллаж буй {{count}} сессэд хуваарилагдсан",
     "MonitorSettings": "Хяналтын тохиргоо",
-    "MoreSessions": "өөр {{count}} сесс",
+    "MoreSessions": "өөр {{count}} · нийт {{total}}",
     "MyResourceUsage": "Надад хуваарилагдсан, хязгаартай харьцуулсан",
     "MySessions": "Миний сессүүд",
     "NoActiveSessions": "Идэвхтэй сесс байхгүй",

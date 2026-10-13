@@ -3287,7 +3287,7 @@
     "DomainSessions": "Bu etki alanının oturumları",
     "InUseAcross": "{{count}} çalışan oturuma ayrıldı",
     "MonitorSettings": "Monitör ayarları",
-    "MoreSessions": "{{count}} oturum daha",
+    "MoreSessions": "{{count}} daha · toplam {{total}}",
     "MyResourceUsage": "Bana ayrıldı, limitime karşı",
     "MySessions": "Oturumlarım",
     "NoActiveSessions": "Aktif oturum yok",

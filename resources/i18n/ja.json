@@ -3289,7 +3289,7 @@
     "DomainSessions": "このドメインのセッション",
     "InUseAcross": "実行中のセッション{{count}}件に割り当て済み",
     "MonitorSettings": "モニター設定",
-    "MoreSessions": "他に{{count}}件のセッション",
+    "MoreSessions": "他に{{count}}件 · 合計{{total}}件",
     "MyResourceUsage": "自分に割り当て済み（上限との比較）",
     "MySessions": "自分のセッション",
     "NoActiveSessions": "実行中のセッションはありません",

@@ -3289,7 +3289,7 @@
     "DomainSessions": "此域中的会话",
     "InUseAcross": "已分配给 {{count}} 个运行中的会话",
     "MonitorSettings": "监控设置",
-    "MoreSessions": "还有 {{count}} 个会话",
+    "MoreSessions": "还有 {{count}} 个 · 共 {{total}} 个",
     "MyResourceUsage": "已分配给我（与我的限制对比）",
     "MySessions": "我的会话",
     "NoActiveSessions": "没有活动会话",
