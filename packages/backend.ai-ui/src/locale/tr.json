@@ -558,6 +558,9 @@
     "To": "Hedef durum",
     "UpdatedAt": "Güncelleme Tarihi"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "E-posta ile davet et"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Ajan"
   },

@@ -558,6 +558,9 @@
     "To": "Κατάσταση προορισμού",
     "UpdatedAt": "Ενημερώθηκε στις"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Πρόσκληση μέσω e-mail"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Μέσο"
   },

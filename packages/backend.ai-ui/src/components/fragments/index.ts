@@ -190,6 +190,7 @@ export type {
   BAIScopedUserSelectProps,
   BAIScopedUserSelectFilter,
   BAIScopedUserSelectScope,
+  BAIScopedUserSelectOption,
   ScopedUserV2Node,
   BAIScopedUserSelectRef,
 } from './BAIScopedUserSelect';

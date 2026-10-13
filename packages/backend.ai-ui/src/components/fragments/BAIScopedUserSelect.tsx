@@ -20,6 +20,7 @@ import BAIComplexSelect, {
   type BAILabeledValue,
 } from '../BAIComplexSelect';
 import * as _ from 'lodash-es';
+import { MailPlusIcon } from 'lucide-react';
 import {
   useDeferredValue,
   useImperativeHandle,
@@ -45,6 +46,14 @@ export interface BAIScopedUserSelectRef {
   refetch: () => void;
 }
 
+/** What `onChange` hands back beside the key: a listed user's id, or the custom mark. */
+export type BAIScopedUserSelectOption = BAILabeledValue & {
+  /** Local user id of a listed user. */
+  userId?: string;
+  /** Set when the value was typed and offered through `allowCustomSelect`. */
+  isCustom?: boolean;
+};
+
 export interface BAIScopedUserSelectProps extends Omit<
   BAIComplexSelectProps,
   'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total'
@@ -57,8 +66,15 @@ export interface BAIScopedUserSelectProps extends Omit<
    */
   onChange?: (
     value: string | Array<string> | undefined,
-    option?: BAILabeledValue | Array<BAILabeledValue>,
+    option?: BAIScopedUserSelectOption | Array<BAIScopedUserSelectOption>,
   ) => void;
+  /**
+   * Offer the typed search text as an option when it is an e-mail address no
+   * listed user matches, so an address outside the scope can still be picked.
+   * The pick's value is that address and its option carries `isCustom`.
+   * Only under `valuePropName="email"`.
+   */
+  allowCustomSelect?: boolean;
   /** Domain id(s) whose users are listed. Left out of the scope when omitted. */
   domainId?: string | Array<string> | null;
   /** Project id(s) whose users are listed. Left out of the scope when omitted. */
@@ -73,6 +89,8 @@ export interface BAIScopedUserSelectProps extends Omit<
   ref?: React.Ref<BAIScopedUserSelectRef>;
 }
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const toUUIDScopes = (ids: string | Array<string> | null | undefined) =>
   _.map(_.compact(_.castArray(ids ?? [])), (value) => ({ value }));
 
@@ -80,6 +98,7 @@ const BAIScopedUserSelect: React.FC<BAIScopedUserSelectProps> = ({
   domainId,
   projectId,
   roleId,
+  allowCustomSelect = false,
   filter: filterFromProps,
   excludeInactive = false,
   valuePropName = 'email',
@@ -272,6 +291,20 @@ const BAIScopedUserSelect: React.FC<BAIScopedUserSelectProps> = ({
     }),
   );
 
+  const typedText = debouncedDeferredValue.trim();
+  const customOption =
+    allowCustomSelect &&
+    valuePropName === 'email' &&
+    EMAIL_PATTERN.test(typedText) &&
+    !_.some(options, (o) => o.value.toLowerCase() === typedText.toLowerCase())
+      ? {
+          value: typedText,
+          label: typedText,
+          description: t('comp:BAIScopedUserSelect.InviteByEmail'),
+          icon: <MailPlusIcon size="1em" />,
+        }
+      : null;
+
   /** Plain keys -> labelInValue, resolving each label where we can. */
   const labeledValue: BAIComplexSelectValue = (() => {
     const emailByKey = new Map(
@@ -304,15 +337,26 @@ const BAIScopedUserSelect: React.FC<BAIScopedUserSelectProps> = ({
       }
       isLoadingNext={isLoadingNext}
       total={result.scopedUsersV2?.count ?? undefined}
-      options={options}
+      options={customOption ? [...options, customOption] : options}
       value={labeledValue}
       onChange={(next) => {
         const labeled = _.compact(_.castArray(next ?? []));
         const keys = _.map(labeled, (v) => v.value);
-        // P3C-1: second argument carries the labelInValue pair(s).
+        // P3C-1: second argument carries the labelInValue pair(s), plus the
+        // listed user's id or the custom mark.
+        const picked: Array<BAIScopedUserSelectOption> = _.map(labeled, (v) => {
+          const node = _.find(
+            paginationData,
+            (item) => keyOfNode(item) === v.value,
+          );
+          if (node) return { ...v, userId: toLocalId(node.id) };
+          return customOption && v.value === customOption.value
+            ? { ...v, isCustom: true }
+            : v;
+        });
         setControllableValue(
           multiple ? keys : keys[0],
-          multiple ? labeled : labeled[0],
+          multiple ? picked : picked[0],
         );
       }}
       searchValue={searchStr}

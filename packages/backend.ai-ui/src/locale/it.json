@@ -558,6 +558,9 @@
     "To": "Stato di destinazione",
     "UpdatedAt": "Aggiornato il"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Invita tramite e-mail"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agente"
   },

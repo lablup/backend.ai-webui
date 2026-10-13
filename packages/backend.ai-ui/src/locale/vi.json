@@ -558,6 +558,9 @@
     "To": "Trạng thái đích",
     "UpdatedAt": "Cập nhật lúc"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Mời qua e-mail"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Đại lý"
   },

@@ -558,6 +558,9 @@
     "To": "To Status",
     "UpdatedAt": "Updated At"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Invite by e-mail"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agent"
   },

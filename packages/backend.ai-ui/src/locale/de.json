@@ -558,6 +558,9 @@
     "To": "Zielstatus",
     "UpdatedAt": "Aktualisiert am"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Per E-Mail einladen"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agent"
   },

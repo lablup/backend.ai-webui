@@ -558,6 +558,9 @@
     "To": "Целевой статус",
     "UpdatedAt": "Обновлено"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Пригласить по электронной почте"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Агент"
   },
