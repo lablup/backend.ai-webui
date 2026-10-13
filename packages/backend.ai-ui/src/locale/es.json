@@ -319,7 +319,6 @@
     "ContainerRegistryForImageCommit": "Registro de contenedores para el commit de imágenes",
     "CreateProject": "Crear proyecto",
     "Description": "Descripción",
-    "Domain": "Dominio",
     "FailedToCreateProject": "No se pudo crear el proyecto",
     "FailedToUpdateProject": "No se pudo actualizar el proyecto",
     "IsActive": "¿Está activo?",

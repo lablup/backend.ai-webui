@@ -29,7 +29,6 @@ const availableUserV2SorterKeys = [
   'email',
   'username',
   'status',
-  'domainName',
   'projectName',
   'createdAt',
   'modifiedAt',
