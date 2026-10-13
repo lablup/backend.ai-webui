@@ -131,10 +131,13 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
   const supportsSubFilter = baiClient.isManagerVersionCompatibleWith('26.7.0');
   const supportsBinarySizeExpr =
     baiClient.isManagerVersionCompatibleWith('26.8.0');
-  const supportsV2: Record<TabKey, boolean> = {
-    keypair: supportsSubFilter,
-    user: supportsSubFilter && supportsBinarySizeExpr,
-    project: supportsSubFilter && supportsBinarySizeExpr,
+  // The admin*ResourcePoliciesV2 queries are superadmin-only; domain admins read the legacy lists.
+  // TODO(needs-backend): #10288 — core has no scoped resource-policy list yet.
+  const isSuperadmin = !!baiClient.is_superadmin;
+  const usesV2Table: Record<TabKey, boolean> = {
+    keypair: isSuperadmin && supportsSubFilter,
+    user: isSuperadmin && supportsSubFilter && supportsBinarySizeExpr,
+    project: isSuperadmin && supportsSubFilter && supportsBinarySizeExpr,
   };
 
   const [queryParams, setQueryParams] = useQueryStates(
@@ -175,7 +178,7 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
 
   const loadTabQuery = (tab: TabKey, snapshot: TabSnapshot) => {
     // The legacy lists fetch on their own; only the V2 tables are preloaded.
-    if (!supportsV2[tab]) return;
+    if (!usesV2Table[tab]) return;
     const options = { fetchPolicy: 'store-and-network' } as const;
     if (tab === 'keypair') {
       loadKeypairResourcePolicyQuery(
@@ -268,7 +271,7 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
       <Suspense fallback={<BAISkeleton />}>
         {currentTab === 'keypair' && (
           <BAIErrorBoundary>
-            {supportsV2.keypair ? (
+            {usesV2Table.keypair ? (
               keypairResourcePolicyQueryRef ? (
                 <KeypairResourcePolicyV2
                   queryRef={keypairResourcePolicyQueryRef}
@@ -287,7 +290,7 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
         )}
         {currentTab === 'user' && (
           <BAIErrorBoundary>
-            {supportsV2.user ? (
+            {usesV2Table.user ? (
               userResourcePolicyQueryRef ? (
                 <UserResourcePolicyV2
                   queryRef={userResourcePolicyQueryRef}
@@ -306,7 +309,7 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
         )}
         {currentTab === 'project' && (
           <BAIErrorBoundary>
-            {supportsV2.project ? (
+            {usesV2Table.project ? (
               projectResourcePolicyQueryRef ? (
                 <ProjectResourcePolicyV2
                   queryRef={projectResourcePolicyQueryRef}
