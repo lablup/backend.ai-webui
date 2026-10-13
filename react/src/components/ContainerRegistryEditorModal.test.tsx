@@ -56,7 +56,7 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
   const originalModule = await importOriginal<typeof import('backend.ai-ui')>();
   return {
     ...originalModule,
-    BAIAdminProjectSelect: () => {
+    BAIScopedProjectSelect: () => {
       if (!projectsSettled) throw projectsPromise;
       return React.createElement('input', {
         'data-testid': 'allowed-projects-select',

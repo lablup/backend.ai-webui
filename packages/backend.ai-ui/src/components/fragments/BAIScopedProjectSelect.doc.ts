@@ -2,7 +2,7 @@ import type { ComponentDoc } from '@astryxdesign/cli/authoring';
 
 export const docs = {
   type: 'component',
-  name: 'BAIAdminProjectSelect',
+  name: 'BAIScopedProjectSelect',
   displayName: 'BAI Admin Project Select',
   category: 'Data Input',
   keywords: [
@@ -102,7 +102,7 @@ export const docs = {
     },
     {
       name: 'ref',
-      type: 'React.Ref<BAIAdminProjectSelectRef>',
+      type: 'React.Ref<BAIScopedProjectSelectRef>',
       description:
         'Imperative handle exposing `refetch()`, which bumps the fetch key inside a transition so both queries reload without the control unmounting.',
     },
@@ -110,7 +110,7 @@ export const docs = {
   examples: [
     {
       label: 'Project scope of a quota setting',
-      code: `<BAIAdminProjectSelect
+      code: `<BAIScopedProjectSelect
   label={t('storageHost.ForProject')}
   isLabelHidden
   value={projectId}
@@ -120,7 +120,7 @@ export const docs = {
     },
     {
       label: 'Filter input that shows the name and filters by UUID',
-      code: `<BAIAdminProjectSelect
+      code: `<BAIScopedProjectSelect
   label={t('data.Project')}
   isLabelHidden
   value={null}

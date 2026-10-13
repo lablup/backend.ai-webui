@@ -20,8 +20,8 @@ import {
   BAIDynamicUnitInputNumber,
   BAIModal,
   BAIModalProps,
-  BAIResourceGroupSelect,
-  BAIResourceGroupSelectProps,
+  BAIScopedResourceGroupSelect,
+  BAIScopedResourceGroupSelectProps,
   BAISelect,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -36,7 +36,7 @@ import { graphql, useFragment, useMutation } from 'react-relay';
  * direct child from being swallowed by the Suspense boundary.
  */
 const ResourceGroupSelect: React.FC<
-  Omit<BAIResourceGroupSelectProps, 'scope'>
+  Omit<BAIScopedResourceGroupSelectProps, 'scope'>
 > = (props) => {
   'use memo';
   return (
@@ -47,11 +47,11 @@ const ResourceGroupSelect: React.FC<
 };
 
 const ScopedResourceGroupSelect: React.FC<
-  Omit<BAIResourceGroupSelectProps, 'scope'>
+  Omit<BAIScopedResourceGroupSelectProps, 'scope'>
 > = (props) => {
   'use memo';
   const { domainScope } = useCurrentDomainScope();
-  return <BAIResourceGroupSelect scope={domainScope} {...props} />;
+  return <BAIScopedResourceGroupSelect scope={domainScope} {...props} />;
 };
 
 interface ResourcePresetSettingModalProps extends BAIModalProps {

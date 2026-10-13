@@ -8,7 +8,7 @@ import { useState } from 'react';
 /**
  * BAIComplexSelect is the BUI adapter over ui-common `PagedSelector`, shared
  * by the Relay-backed `*Select` wrappers (`BAIUserSelect`,
- * `BAIAdminProjectSelect`, …) — see `BAIUserSelect.stories.tsx` for a
+ * `BAIScopedProjectSelect`, …) — see `BAIUserSelect.stories.tsx` for a
  * Relay-connected example with infinite scroll.
  */
 const meta: Meta<typeof BAIComplexSelect> = {

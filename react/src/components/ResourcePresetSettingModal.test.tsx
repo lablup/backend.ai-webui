@@ -90,7 +90,7 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
         'data-testid': 'mock-project-resource-group-select',
         'data-project-name': props.projectName ?? '',
       }),
-    BAIResourceGroupSelect: (props: any) =>
+    BAIScopedResourceGroupSelect: (props: any) =>
       React.createElement('button', {
         'data-testid': 'mock-admin-resource-group-select',
         'data-allow-clear': String(!!props.allowClear),

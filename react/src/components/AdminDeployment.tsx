@@ -21,7 +21,7 @@ import DeploymentSettingModal from './DeploymentSettingModal';
 import { Link } from '@lablup/ui-common/Link';
 import { Text } from '@lablup/ui-common/Text';
 import {
-  BAIAdminProjectSelect,
+  BAIScopedProjectSelect,
   BAIDeleteConfirmModal,
   BAIDeploymentTagTokens,
   BAIFlex,
@@ -233,7 +233,7 @@ const AdminDeployment = ({
       fixedOperator: 'equals' as const,
       rule: uuidRule,
       renderInput: ({ onAddCondition, value, isDisabled }) => (
-        <BAIAdminProjectSelect
+        <BAIScopedProjectSelect
           scope={domainScope}
           label={t('deployment.Project')}
           isLabelHidden
