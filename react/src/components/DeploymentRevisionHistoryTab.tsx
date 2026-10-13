@@ -10,10 +10,8 @@ import {
 import type { DeploymentRevisionHistoryTab_deployment$key } from '../__generated__/DeploymentRevisionHistoryTab_deployment.graphql';
 import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
-import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { SCOPED_SEARCH_MIN_VERSION } from '../hooks/useCurrentDomainScope';
+import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import FolderLink from './FolderLink';
@@ -178,16 +176,12 @@ const DeploymentRevisionHistoryTab: React.FC<
   // status rather than receiving it as a prop from the parent.
   const deploymentStatus = deployment?.metadata?.status;
 
-  // Project members reach this tab; adminImagesV2 answers superadmins only (ADR 0011).
-  const baiClient = useSuspendedBackendaiClient();
-  const userRole = useCurrentUserRole();
+  // Images the deployment's project and public registries reach (ADR 0011).
+  const { domainScope } = useCurrentDomainScope();
   const deploymentProjectId = deployment?.metadata?.projectId;
-  const imageFilterScope =
-    userRole !== 'superadmin' &&
-    deploymentProjectId &&
-    baiClient.isManagerVersionCompatibleWith(SCOPED_SEARCH_MIN_VERSION)
-      ? { project: [{ value: deploymentProjectId }], public: true }
-      : null;
+  const imageFilterScope = deploymentProjectId
+    ? { project: [{ value: deploymentProjectId }], public: true }
+    : { ...domainScope, public: true };
 
   const parseRevisionFilter = (filter: string | null) => {
     if (!filter) return null;

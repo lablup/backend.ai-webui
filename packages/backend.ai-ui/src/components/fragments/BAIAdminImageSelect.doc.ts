@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'Admin-scoped picker for a container image, built on BAIComplexSelect and backed by `adminImagesV2` — the admin connection, so images hidden from a regular user by permission scoping are still listable here. It runs its own Relay queries: a page query (20 rows at a time, ordered by NAME, extended by `loadNext` when the popup scrolls to the bottom) and a lookup that resolves the labels of the selected ids, which keeps the trigger readable after paging has moved past the chosen row. Each option is labelled `"<canonicalName>@<architecture>"` so images of different CPU architectures stay distinguishable, and draws its popup row with `BAIImageNodeSimpleTagV2` in place of that label (`labelContent`), so the picker reads like the session launcher (ADR 0005) while the closed trigger and the filter chips keep the string label. The popup search box refetches server-side with a debounced `name contains` filter. The emitted value is the image UUID (`toLocalId` of the node id), ready to hand straight to a mutation input typed `UUID!`. Both queries use `useLazyLoadQuery`, so render it inside a Suspense boundary; `label` is required by BAIComplexSelect, and every prop not listed below is forwarded to it — except `options`, `value`, `onChange`, `searchValue`, `onSearch` and `total`, which this wrapper owns and omits from its props type.',
+      'Picker for a container image within a scope, built on BAIComplexSelect and backed by `scopedImagesV2` (manager 26.9.0a4+): it lists the images the required `scope` reaches. It runs its own Relay queries: a page query (20 rows at a time, ordered by NAME, extended by `loadNext` when the popup scrolls to the bottom) and a lookup that resolves the labels of the selected ids, which keeps the trigger readable after paging has moved past the chosen row. Each option is labelled `"<canonicalName>@<architecture>"` so images of different CPU architectures stay distinguishable, and draws its popup row with `BAIImageNodeSimpleTagV2` in place of that label (`labelContent`), so the picker reads like the session launcher (ADR 0005) while the closed trigger and the filter chips keep the string label. The popup search box refetches server-side with a debounced `name contains` filter. The emitted value is the image UUID (`toLocalId` of the node id), ready to hand straight to a mutation input typed `UUID!`. Both queries use `useLazyLoadQuery`, so render it inside a Suspense boundary; `label` is required by BAIComplexSelect, and every prop not listed below is forwarded to it — except `options`, `value`, `onChange`, `searchValue`, `onSearch` and `total`, which this wrapper owns and omits from its props type.',
     bestPractices: [
       {
         guidance: true,
@@ -65,9 +65,9 @@ export const docs = {
     },
     {
       name: 'scope',
-      type: 'ImageSearchScope | null',
+      type: 'ImageSearchScope',
       description:
-        'Lists the images this scope reaches through `scopedImagesV2` instead of every image through the superadmin-only `adminImagesV2` (ADR 0011). Pass it on pages a non-superadmin can open, for example `{ project: [{ value: projectId }], public: true }`; pass `null` on managers below 26.9.0a4 and omit it on superadmin-only pages.',
+        'Required. The `scopedImagesV2` scope whose images are listed and resolved (ADR 0011), for example `{ ...domainScope, public: true }` for the current domain plus public registries, or `{ project: [{ value: projectId }], public: true }` for one project.',
     },
     {
       name: 'filter',
