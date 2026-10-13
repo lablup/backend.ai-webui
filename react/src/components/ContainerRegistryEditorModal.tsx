@@ -8,6 +8,7 @@ import { ContainerRegistryEditorModalModifyRegistryMutation } from '../__generat
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import BAICodeEditor from './BAICodeEditor';
 import BAIFormItem from './BAIFormItem';
 import HiddenFormItem from './HiddenFormItem';
@@ -93,6 +94,7 @@ const ContainerRegistryEditorModal: React.FC<
   ContainerRegistryEditorModalProps
 > = ({ containerRegistryFrgmt = null, onOk, initialValues, ...modalProps }) => {
   'use memo';
+  const { domainScope } = useCurrentDomainScope();
   const { t } = useTranslation();
   const { token } = useTheme();
   const { message, modal } = App.useApp();
@@ -589,6 +591,7 @@ const ContainerRegistryEditorModal: React.FC<
                   label={t('registry.AllowedProjects')}
                 >
                   <BAIAdminProjectSelect
+                    scope={domainScope}
                     label={t('registry.AllowedProjects')}
                     isLabelHidden
                     multiple

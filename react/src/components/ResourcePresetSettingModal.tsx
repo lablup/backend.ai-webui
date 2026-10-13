@@ -10,6 +10,7 @@ import { Form, type FormInstance } from '../form-engine';
 import { convertToBinaryUnit } from '../helper';
 import { reasonMessage } from '../helper/mutationError';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
+import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import BAIFormItem from './BAIFormItem';
 import {
   AstryxFormNumberInput,
@@ -30,23 +31,27 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 /**
- * Resource groups a preset may be bound to, listed at ADMIN scope — no project
- * involved. A resource preset has no project dimension in the manager
- * (`resource_presets` has no group column; its only relation is to one
- * `ScalingGroupRow`, and a null `scaling_group_name` means the preset is
- * global), so the options must not be narrowed by any project.
- * `BAIResourceGroupSelect` lists `adminResourceGroups` unfiltered, which is
- * exactly that list. Spreading `props` keeps the value/onChange pair
- * `BAIFormItem` injects into its direct child from being swallowed by the
- * Suspense boundary.
+ * Resource groups of the current domain a preset may be bound to (ADR 0011).
+ * Spreading `props` keeps the value/onChange pair `BAIFormItem` injects into its
+ * direct child from being swallowed by the Suspense boundary.
  */
-const ResourceGroupSelect: React.FC<BAIResourceGroupSelectProps> = (props) => {
+const ResourceGroupSelect: React.FC<
+  Omit<BAIResourceGroupSelectProps, 'scope'>
+> = (props) => {
   'use memo';
   return (
     <Suspense fallback={<BAISelect {...props} loading disabled />}>
-      <BAIResourceGroupSelect {...props} />
+      <ScopedResourceGroupSelect {...props} />
     </Suspense>
   );
+};
+
+const ScopedResourceGroupSelect: React.FC<
+  Omit<BAIResourceGroupSelectProps, 'scope'>
+> = (props) => {
+  'use memo';
+  const { domainScope } = useCurrentDomainScope();
+  return <BAIResourceGroupSelect scope={domainScope} {...props} />;
 };
 
 interface ResourcePresetSettingModalProps extends BAIModalProps {

@@ -90,9 +90,7 @@ const AdminComputeSessionListPage = () => {
   'use memo';
 
   const userRole = useCurrentUserRole();
-  // Superadmins list sessions of every domain, so only domain admins get a scope (ADR 0011).
   const { domainScope } = useCurrentDomainScope();
-  const projectSelectScope = userRole === 'superadmin' ? null : domainScope;
 
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -373,7 +371,7 @@ const AdminComputeSessionListPage = () => {
                   defaultOperator: '==',
                   renderInput: ({ onAddCondition, value, isDisabled }) => (
                     <BAIAdminProjectSelect
-                      scope={projectSelectScope}
+                      scope={domainScope}
                       // The filter row already prints the property label.
                       label={t('data.Project')}
                       isLabelHidden

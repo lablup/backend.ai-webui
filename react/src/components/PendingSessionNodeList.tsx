@@ -12,6 +12,7 @@ import { handleRowSelectionChange } from '../helper';
 import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import EditSessionPriorityModal from './ComputeSessionNodeItems/EditSessionPriorityModal';
 import SessionNodes from './SessionNodes';
@@ -43,6 +44,7 @@ type PendingSessionNode = NonNullableNodeOnEdges<
 
 const PendingSessionNodeList: React.FC = () => {
   'use memo';
+  const { domainScope } = useCurrentDomainScope();
   const { t } = useTranslation();
   const { token } = useTheme();
   const [fetchKey, updateFetchKey] = useFetchKey();
@@ -54,7 +56,9 @@ const PendingSessionNodeList: React.FC = () => {
 
   // Superadmin scope: every active resource group, not the current project's
   // subset. Same query as the select below, so Relay issues it once.
-  const resourceGroupNames = useResourceGroupNames({ isActive: true });
+  const resourceGroupNames = useResourceGroupNames(domainScope, {
+    isActive: true,
+  });
   // A stale, inactive or empty `resourceGroup` param must not reach
   // `session_pending_queue` — fall back to the first active group.
   const currentResourceGroup = _.includes(
@@ -145,6 +149,7 @@ const PendingSessionNodeList: React.FC = () => {
           style={{ marginBottom: 0 }}
         >
           <BAIResourceGroupSelect
+            scope={domainScope}
             filter={{ isActive: true }}
             style={{ minWidth: 100 }}
             loading={currentResourceGroup !== deferredCurrentResourceGroup}
