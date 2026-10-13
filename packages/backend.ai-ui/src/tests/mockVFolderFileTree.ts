@@ -43,19 +43,14 @@ export const mockVFolderListItem = (
   user: null,
   group: null,
   creator: 'user@lablup.com',
-  user_email: 'user@lablup.com',
-  group_name: null,
   ownership_type: 'user',
   type: 'user',
   cloneable: false,
-  max_files: 1000,
-  max_size: null,
-  cur_size: 0,
   ...folder,
 });
 
-export const MOCK_LEGACY_PROJECT_ID = '99999999-9999-9999-9999-999999999999';
-const MOCK_LEGACY_OTHER_PROJECT_ID = '88888888-8888-8888-8888-888888888888';
+export const MOCK_PROJECT_ID = '99999999-9999-9999-9999-999999999999';
+const MOCK_OTHER_PROJECT_ID = '88888888-8888-8888-8888-888888888888';
 
 /** Only `local:volume1` grants `mount-in-session`, so `archive:cold` is gated out. */
 export const MOCK_MOUNTABLE_HOSTS: Array<string> = ['local:volume1'];
@@ -75,8 +70,7 @@ export const mockVFolderListItems: Array<VFolderListItem> = [
     name: 'shared-datasets',
     ownership_type: 'group',
     type: 'group',
-    group: MOCK_LEGACY_PROJECT_ID,
-    group_name: 'default',
+    group: MOCK_PROJECT_ID,
   }),
   mockVFolderListItem({
     id: 'aaaaaaaabbbbccccddddeeeeffff0003',
@@ -92,8 +86,7 @@ export const mockVFolderListItems: Array<VFolderListItem> = [
     name: 'other-team-data',
     ownership_type: 'group',
     type: 'group',
-    group: MOCK_LEGACY_OTHER_PROJECT_ID,
-    group_name: 'other-team',
+    group: MOCK_OTHER_PROJECT_ID,
   }),
 ];
 

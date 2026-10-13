@@ -580,12 +580,6 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       // ],
       // onFilter: (value, record) => record.type.indexOf(value + '') === 0,
     },
-    // {
-    //   title: 'Group',
-    //   dataIndex: 'group_name',
-    //   sorter: (a, b) => (a.group || '').localeCompare(b.group || ''),
-    //   render: (value) => value || '-',
-    // },
     {
       title: t('data.Permission'),
       dataIndex: 'permission',
@@ -601,25 +595,6 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       render: (value) => dayjs(value).format('L'),
       defaultSortOrder: 'descend',
     },
-    // {
-    //   title: 'Modified',
-    //   dataIndex: 'modified',
-    //   sorter: (a, b) => a.modified.localeCompare(b.modified),
-    //   render: (value) => value || '-',
-    // },
-    // {
-    //   title: 'Size',
-    //   dataIndex: 'size',
-    //   sorter: (a, b) => a.size - b.size,
-    //   render: (value) => value || '-',
-    // },
-    // }
-    // {
-    //   title: 'Max Size',
-    //   dataIndex: 'max_size',
-    //   // sorter: (a, b) => a (a.max_size || '').localeCompare(b.max_size || ''),
-    //   render: (value) => value || '-',
-    // },
   ];
   return (
     <BAIFlex direction="column" align="stretch" gap={'xs'}>

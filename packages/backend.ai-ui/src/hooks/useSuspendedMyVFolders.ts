@@ -23,14 +23,9 @@ export interface VFolderListItem {
   user: string | null;
   group: string | null;
   creator: string;
-  user_email: string | null;
-  group_name: string | null;
   ownership_type: string;
   type: string;
   cloneable: boolean;
-  max_files: number;
-  max_size: null | number;
-  cur_size: number;
 }
 
 // DELETE_COMPLETE rows are dropped server side; the other deletion states stay
@@ -105,40 +100,37 @@ export const toVFolderListItem = (
     user: node.ownership.userId ?? null,
     group: node.ownership.projectId ?? null,
     creator: node.ownership.creatorEmail ?? '',
-    user_email: null,
-    group_name: null,
     ownership_type: ownershipType,
     type: ownershipType,
     cloneable: node.metadata.cloneable,
-    max_files: 0,
-    max_size: null,
-    cur_size: 0,
   };
 };
 
 const PAGE_SIZE = 100;
 
-/** Every page of `myVfolders`. */
-const fetchAllMyVfolders = async (
+/** Every page of `myVfolders`: the first page's `count` sizes the rest, fetched in parallel. */
+export const fetchAllMyVfolders = async (
   relayEnv: IEnvironment,
   currentUserId: string,
 ): Promise<Array<VFolderListItem>> => {
-  const folders: Array<VFolderListItem> = [];
-  for (let offset = 0; ; offset += PAGE_SIZE) {
-    const page = (
-      await fetchQuery<useSuspendedMyVFoldersQuery>(relayEnv, myVfoldersQuery, {
-        limit: PAGE_SIZE,
-        offset,
-      }).toPromise()
-    )?.myVfolders;
-    const nodes = page?.edges.map((edge) => edge.node) ?? [];
-    folders.push(
-      ...nodes.map((node) => toVFolderListItem(node, currentUserId)),
-    );
-    if (nodes.length < PAGE_SIZE || folders.length >= (page?.count ?? 0)) {
-      return folders;
-    }
-  }
+  const fetchPage = (offset: number) =>
+    fetchQuery<useSuspendedMyVFoldersQuery>(relayEnv, myVfoldersQuery, {
+      limit: PAGE_SIZE,
+      offset,
+    })
+      .toPromise()
+      .then((data) => data?.myVfolders);
+  const firstPage = await fetchPage(0);
+  const restOffsets = Array.from(
+    { length: Math.max(0, Math.ceil((firstPage?.count ?? 0) / PAGE_SIZE) - 1) },
+    (_, index) => (index + 1) * PAGE_SIZE,
+  );
+  const restPages = await Promise.all(restOffsets.map(fetchPage));
+  return [firstPage, ...restPages].flatMap(
+    (page) =>
+      page?.edges.map((edge) => toVFolderListItem(edge.node, currentUserId)) ??
+      [],
+  );
 };
 
 /**

@@ -1,7 +1,9 @@
 import {
+  fetchAllMyVfolders,
   toVFolderListItem,
   type MyVfolderNode,
 } from './useSuspendedMyVFolders';
+import { createMockEnvironment } from 'relay-test-utils';
 import { describe, expect, it } from 'vitest';
 
 const ME = '11111111-2222-3333-4444-555555555555';
@@ -26,7 +28,7 @@ const node = (overrides: Partial<MyVfolderNode> = {}): MyVfolderNode => ({
 });
 
 describe('toVFolderListItem', () => {
-  it('maps a user folder onto the REST row shape', () => {
+  it('maps a user folder onto the list row shape', () => {
     expect(toVFolderListItem(node(), ME)).toMatchObject({
       id: VFOLDER.replace(/-/g, ''),
       name: 'datasets',
@@ -80,5 +82,60 @@ describe('toVFolderListItem', () => {
         ME,
       ).is_owner,
     ).toBe(false);
+  });
+});
+
+describe('fetchAllMyVfolders', () => {
+  it('sizes the remaining pages from the first count and keeps their order', async () => {
+    const TOTAL = 250;
+    const environment = createMockEnvironment();
+    const offsets: Array<number> = [];
+    const answerPending = () =>
+      environment.mock.getAllOperations().forEach((operation) => {
+        const { limit, offset } = operation.request.variables;
+        offsets.push(offset);
+        const length = Math.max(0, Math.min(limit, TOTAL - offset));
+        environment.mock.resolve(operation, {
+          data: {
+            myVfolders: {
+              count: TOTAL,
+              edges: Array.from({ length }, (_, index) => ({
+                node: {
+                  ...node(),
+                  id: btoa(
+                    `VFolder:00000000-0000-0000-0000-${String(offset + index).padStart(12, '0')}`,
+                  ),
+                  metadata: { ...node().metadata, name: `f${offset + index}` },
+                },
+              })),
+            },
+          },
+        });
+      });
+
+    const result = fetchAllMyVfolders(environment, ME);
+    answerPending();
+    await Promise.resolve();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    // Both remaining pages are in flight together, before either answers.
+    expect(environment.mock.getAllOperations()).toHaveLength(2);
+    answerPending();
+
+    const folders = await result;
+    expect(offsets).toEqual([0, 100, 200]);
+    expect(folders).toHaveLength(TOTAL);
+    expect(folders.map((folder) => folder.name)).toEqual(
+      Array.from({ length: TOTAL }, (_, index) => `f${index}`),
+    );
+  });
+
+  it('stops after the first page when it holds everything', async () => {
+    const environment = createMockEnvironment();
+    const result = fetchAllMyVfolders(environment, ME);
+    environment.mock.resolveMostRecentOperation({
+      data: { myVfolders: { count: 1, edges: [{ node: node() }] } },
+    });
+    expect(await result).toHaveLength(1);
+    expect(environment.mock.getAllOperations()).toHaveLength(0);
   });
 });

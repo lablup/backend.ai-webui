@@ -377,14 +377,9 @@ const VFolderOptionMeta: React.FC<{
   'use memo';
   const { t } = useBAIi18n();
   const isUserOwned = folder.ownership_type === 'user';
-  // The folder list leaves `user_email` / `group_name` empty.
   const owner = isUserOwned
-    ? folder.user_email ||
-      folder.creator ||
-      t('comp:BAIVFolderMountConfigInput.OwnerUser')
-    : folder.group_name ||
-      projectName ||
-      t('comp:BAIVFolderMountConfigInput.OwnerProject');
+    ? folder.creator || t('comp:BAIVFolderMountConfigInput.OwnerUser')
+    : projectName || t('comp:BAIVFolderMountConfigInput.OwnerProject');
   // "YYYY-MM-DD hh:mm:ss.ffffff+00:00" -> ISO, so the offset is honoured.
   const createdAt = dayjs(folder.created_at.replace(' ', 'T'));
   return (

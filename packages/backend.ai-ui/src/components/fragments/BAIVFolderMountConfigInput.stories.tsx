@@ -2,7 +2,7 @@ import { Form } from '../../form-engine';
 import { convertToUUID } from '../../helper';
 import MockVFolderFileProviders from '../../tests/MockVFolderFileProviders';
 import {
-  MOCK_LEGACY_PROJECT_ID,
+  MOCK_PROJECT_ID,
   MOCK_MOUNTABLE_HOSTS,
   mockVFolderListItem,
   mockVFolderListItems,
@@ -90,7 +90,7 @@ const ControlledDemo = ({
     <div style={{ width: DEMO_WIDTH }}>
       <BAIVFolderMountConfigInput
         ref={inputRef}
-        currentProjectId={MOCK_LEGACY_PROJECT_ID}
+        currentProjectId={MOCK_PROJECT_ID}
         mountableHosts={MOCK_MOUNTABLE_HOSTS}
         {...props}
         value={value}
@@ -451,7 +451,7 @@ export const WithFormValidation: Story = {
             rules={[mountConfigRule]}
           >
             <BAIVFolderMountConfigInput
-              currentProjectId={MOCK_LEGACY_PROJECT_ID}
+              currentProjectId={MOCK_PROJECT_ID}
               {...args}
             />
           </Form.Item>

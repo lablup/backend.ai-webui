@@ -6,7 +6,7 @@ import { BAIAppProvider, message } from '../../app-shim';
 import { convertToUUID } from '../../helper';
 import MockVFolderFileProviders from '../../tests/MockVFolderFileProviders';
 import {
-  MOCK_LEGACY_PROJECT_ID,
+  MOCK_PROJECT_ID,
   MOCK_MOUNTABLE_HOSTS,
   mockVFolderListItems,
 } from '../../tests/mockVFolderFileTree';
@@ -51,7 +51,7 @@ const renderWithFolders = async (
           suspenseFallback="Loading..."
         >
           <BAIVFolderMountConfigInput
-            currentProjectId={MOCK_LEGACY_PROJECT_ID}
+            currentProjectId={MOCK_PROJECT_ID}
             mountableHosts={MOCK_MOUNTABLE_HOSTS}
             value={value}
             onChange={onChange}
