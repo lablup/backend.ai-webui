@@ -1,4 +1,5 @@
 import { useSuspendedMyVFoldersQuery } from '../__generated__/useSuspendedMyVFoldersQuery.graphql';
+import { IEnvironment } from 'relay-runtime';
 /**
  * The flat folder row the mount select and `VFolderTable` read, mapped from a
  * `myVfolders` node (the shape `GET /folders` returned): `id` is the 32-hex
@@ -17,14 +18,9 @@ export interface VFolderListItem {
     user: string | null;
     group: string | null;
     creator: string;
-    user_email: string | null;
-    group_name: string | null;
     ownership_type: string;
     type: string;
     cloneable: boolean;
-    max_files: number;
-    max_size: null | number;
-    cur_size: number;
 }
 export type MyVfolderNode = NonNullable<useSuspendedMyVFoldersQuery['response']['myVfolders']>['edges'][number]['node'];
 /**
@@ -32,6 +28,8 @@ export type MyVfolderNode = NonNullable<useSuspendedMyVFoldersQuery['response'][
  * (26.4.4+, and `usage` is a storage-proxy round trip); no consumer reads them.
  */
 export declare const toVFolderListItem: (node: MyVfolderNode, currentUserId: string) => VFolderListItem;
+/** Every page of `myVfolders`: the first page's `count` sizes the rest, fetched in parallel. */
+export declare const fetchAllMyVfolders: (relayEnv: IEnvironment, currentUserId: string) => Promise<Array<VFolderListItem>>;
 /**
  * The caller's folder list behind `BAIVFolderMountConfigInput`. Suspends. One
  * cache entry, so a host deriving something from the same list (auto-mounted
