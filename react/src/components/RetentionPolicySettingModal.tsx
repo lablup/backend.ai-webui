@@ -15,12 +15,7 @@ import {
   AstryxFormSelector,
   AstryxFormSwitch,
 } from './astryxFormControls';
-import {
-  BAIModal,
-  BAIModalProps,
-  toLocalId,
-  useBAILogger,
-} from 'backend.ai-ui';
+import { BAIModal, BAIModalProps, useBAILogger } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -90,6 +85,7 @@ const RetentionPolicySettingModal: React.FC<
     graphql`
       fragment RetentionPolicySettingModalFragment on RetentionPolicy {
         id
+        entityId
         category
         retentionPeriodDays
         enabled
@@ -148,7 +144,7 @@ const RetentionPolicySettingModal: React.FC<
           commitUpdate({
             variables: {
               input: {
-                id: toLocalId(policy.id),
+                id: policy.entityId,
                 ...(values.category !== policy.category && {
                   category: values.category,
                 }),

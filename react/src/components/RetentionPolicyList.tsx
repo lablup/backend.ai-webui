@@ -14,7 +14,7 @@ import RetentionPolicySettingModal, {
   RETENTION_CATEGORIES,
   useRetentionCategoryLabel,
 } from './RetentionPolicySettingModal';
-import { Switch } from '@astryxdesign/core/Switch';
+import { Switch } from '@lablup/ui-common/Switch';
 import {
   BAIButton,
   BAIColumnsType,
@@ -27,7 +27,6 @@ import {
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   filterOutNullAndUndefined,
-  toLocalId,
   useFetchKey,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -71,6 +70,7 @@ const RetentionPolicyList = () => {
           edges {
             node {
               id
+              entityId
               category
               retentionPeriodDays
               enabled
@@ -136,7 +136,7 @@ const RetentionPolicyList = () => {
     const clearToggling = () =>
       setTogglingIds((ids) => _.without(ids, policy.id));
     commitToggle({
-      variables: { input: { id: toLocalId(policy.id), enabled } },
+      variables: { input: { id: policy.entityId, enabled } },
       onCompleted: (_res, errors) => {
         clearToggling();
         if (errors && errors.length > 0) {
@@ -312,7 +312,7 @@ const RetentionPolicyList = () => {
         onOk={() => {
           if (!deletingPolicy) return;
           commitDelete({
-            variables: { id: toLocalId(deletingPolicy.id) },
+            variables: { id: deletingPolicy.entityId },
             onCompleted: (_res, errors) => {
               if (errors && errors.length > 0) {
                 _.forEach(errors, (err) => message.error(err.message));

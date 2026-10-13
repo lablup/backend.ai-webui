@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a0f758bddb9257c090f788825580fbdd>>
+ * @generated SignedSource<<14a2ff63474a002310a112c212647315>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -26,6 +26,7 @@ export type RetentionPolicyListQuery$data = {
         readonly category: RetentionCategory;
         readonly createdAt: string;
         readonly enabled: boolean;
+        readonly entityId: string;
         readonly id: string;
         readonly lastSweptAt: string | null | undefined;
         readonly retentionPeriodDays: number;
@@ -66,38 +67,45 @@ v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "category",
+  "name": "entityId",
   "storageKey": null
 },
 v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "retentionPeriodDays",
+  "name": "category",
   "storageKey": null
 },
 v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "enabled",
+  "name": "retentionPeriodDays",
   "storageKey": null
 },
 v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "lastSweptAt",
+  "name": "enabled",
   "storageKey": null
 },
 v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "createdAt",
+  "name": "lastSweptAt",
   "storageKey": null
 },
 v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "createdAt",
+  "storageKey": null
+},
+v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -142,6 +150,7 @@ return {
                   (v6/*: any*/),
                   (v7/*: any*/),
                   (v8/*: any*/),
+                  (v9/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -196,7 +205,8 @@ return {
                   (v5/*: any*/),
                   (v6/*: any*/),
                   (v7/*: any*/),
-                  (v8/*: any*/)
+                  (v8/*: any*/),
+                  (v9/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -209,16 +219,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "c2a7f42ee8545a7f5d56c7d77e8e7edc",
+    "cacheID": "0a79eeee29d8f11fb388e4b3076b9f85",
     "id": null,
     "metadata": {},
     "name": "RetentionPolicyListQuery",
     "operationKind": "query",
-    "text": "query RetentionPolicyListQuery(\n  $orderBy: [RetentionPolicyOrderBy!]\n) {\n  adminRetentionPolicies(orderBy: $orderBy) {\n    edges {\n      node {\n        id\n        category\n        retentionPeriodDays\n        enabled\n        lastSweptAt\n        createdAt\n        updatedAt\n        ...RetentionPolicySettingModalFragment\n      }\n    }\n  }\n}\n\nfragment RetentionPolicySettingModalFragment on RetentionPolicy {\n  id\n  category\n  retentionPeriodDays\n  enabled\n}\n"
+    "text": "query RetentionPolicyListQuery(\n  $orderBy: [RetentionPolicyOrderBy!]\n) {\n  adminRetentionPolicies(orderBy: $orderBy) {\n    edges {\n      node {\n        id\n        entityId\n        category\n        retentionPeriodDays\n        enabled\n        lastSweptAt\n        createdAt\n        updatedAt\n        ...RetentionPolicySettingModalFragment\n      }\n    }\n  }\n}\n\nfragment RetentionPolicySettingModalFragment on RetentionPolicy {\n  id\n  entityId\n  category\n  retentionPeriodDays\n  enabled\n}\n"
   }
 };
 })();
 
-(node as any).hash = "cc5b6aa8ac262c288a1846cd76e94bf9";
+(node as any).hash = "1abc8d77a71401887716df216bd4242a";
 
 export default node;
