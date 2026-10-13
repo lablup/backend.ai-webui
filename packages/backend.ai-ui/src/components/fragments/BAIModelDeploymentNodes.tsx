@@ -92,6 +92,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
       fragment BAIModelDeploymentNodesFragment on ModelDeployment
       @relay(plural: true) {
         id
+        entityId
         currentRevisionId
         metadata {
           projectId

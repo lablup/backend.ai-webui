@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f4b0c6ada947de8a3b8101d561578d89>>
+ * @generated SignedSource<<e2c8a7f690c74b8bfe98d9a1ac400560>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -25,6 +25,7 @@ export type BAIAdminUserV2TableFragment$data = ReadonlyArray<{
     readonly containerMainGid: number | null | undefined;
     readonly containerUid: number | null | undefined;
   };
+  readonly entityId: string;
   readonly id: string;
   readonly organization: {
     readonly domainName: string | null | undefined;
@@ -94,6 +95,13 @@ return {
       "kind": "RequiredField",
       "field": (v0/*: any*/),
       "action": "NONE"
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
     },
     {
       "alias": null,
@@ -386,6 +394,6 @@ return {
 };
 })();
 
-(node as any).hash = "de513d02de8b26ffb86630069b0bf34a";
+(node as any).hash = "22732a6cb15d719a4e4b79f0a8319c06";
 
 export default node;
