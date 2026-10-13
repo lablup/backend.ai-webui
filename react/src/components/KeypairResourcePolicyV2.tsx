@@ -13,6 +13,7 @@ import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { CSV_EXPORT_MAX_ROWS } from '../helper/pagedExport';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import { usePagedCSVExport } from '../hooks/usePagedCSVExport';
 import KeypairResourcePolicyV2SettingModal from './KeypairResourcePolicyV2SettingModal';
 import {
@@ -26,7 +27,7 @@ import {
   type BAIKeypairResourcePolicyV2TableProps,
   BAINameActionCell,
   BAISkeleton,
-  BAIUserSelect,
+  BAIScopedUserSelect,
   filterOutNullAndUndefined,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -141,6 +142,7 @@ const KeypairResourcePolicyV2 = ({
   ...tableProps
 }: KeypairResourcePolicyV2Props) => {
   'use memo';
+  const { domainScope } = useCurrentDomainScope();
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [fetchKey, updateFetchKey] = useFetchKey();
@@ -315,7 +317,8 @@ const KeypairResourcePolicyV2 = ({
                 <Suspense
                   fallback={<BAISkeleton variant="input" width={200} />}
                 >
-                  <BAIUserSelect
+                  <BAIScopedUserSelect
+                    scope={domainScope}
                     valuePropName="id"
                     value={value}
                     isDisabled={isDisabled}

@@ -33,7 +33,7 @@ import {
   BAINameActionCell,
   BAISelectionLabel,
   BAISessionNodesV2,
-  BAIUserSelect,
+  BAIScopedUserSelect,
   INITIAL_FETCH_KEY,
   availableSessionV2SorterValues,
   filterOutEmpty,
@@ -219,21 +219,26 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
                 propertyLabel: t('session.Owner'),
                 type: 'uuid',
                 renderInput: ({ onAddCondition, value, isDisabled }) => (
-                  <BAIUserSelect
-                    valuePropName="id"
-                    label={t('session.Owner')}
-                    isLabelHidden
-                    value={value}
-                    isDisabled={isDisabled}
-                    onChange={(next, option) =>
-                      onAddCondition(
-                        next as string | undefined,
-                        Array.isArray(option)
-                          ? option[0]?.label
-                          : option?.label,
-                      )
-                    }
-                  />
+                  <Suspense
+                    fallback={<BAISkeleton variant="input" width={200} />}
+                  >
+                    <BAIScopedUserSelect
+                      scope={{ project: [{ value: projectId }] }}
+                      valuePropName="id"
+                      label={t('session.Owner')}
+                      isLabelHidden
+                      value={value}
+                      isDisabled={isDisabled}
+                      onChange={(next, option) =>
+                        onAddCondition(
+                          next as string | undefined,
+                          Array.isArray(option)
+                            ? option[0]?.label
+                            : option?.label,
+                        )
+                      }
+                    />
+                  </Suspense>
                 ),
               },
               ...(isLabelable
