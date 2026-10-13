@@ -312,6 +312,8 @@ const renderModal = ({
           }),
         }),
         Group: () => ({ allowed_vfolder_hosts: '{}' }),
+        ProjectStorageInfo: () => ({ allowedVfolderHosts: [] }),
+        KeyPairV2: () => ({ resourcePolicy: 'default' }),
         KeypairResourcePolicyV2: () => ({ allowedVfolderHosts: [] }),
       }),
       nullResolvers ?? [],
