@@ -4,14 +4,11 @@
  */
 import {
   AdminUserManagementQuery as AdminUserManagementQueryType,
+  AdminUserManagementQuery$data,
   UserV2Filter,
   UserV2OrderBy,
 } from '../__generated__/AdminUserManagementQuery.graphql';
 import { AdminUserManagementUpdateUserMutation } from '../__generated__/AdminUserManagementUpdateUserMutation.graphql';
-import {
-  AdminUserManagement_userConnection$data,
-  AdminUserManagement_userConnection$key,
-} from '../__generated__/AdminUserManagement_userConnection.graphql';
 import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { openActAsTab } from '../helper/actAs';
@@ -63,7 +60,6 @@ import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
-  useFragment,
   useMutation,
   usePreloadedQuery,
   type PreloadedQuery,
@@ -73,8 +69,6 @@ import {
 export const AdminUserManagementQuery = graphql`
   query AdminUserManagementQuery(
     $scope: UserScope!
-    $domainName: String!
-    $useScopedSearch: Boolean!
     $filter: UserV2Filter
     $orderBy: [UserV2OrderBy!]
     $limit: Int
@@ -87,35 +81,20 @@ export const AdminUserManagementQuery = graphql`
       orderBy: $orderBy
       limit: $limit
       offset: $offset
-    ) @since(version: "26.9.0a4") @include(if: $useScopedSearch) {
-      ...AdminUserManagement_userConnection
-    }
-    domainUsersV2(
-      scope: { domainName: $domainName }
-      filter: $filter
-      orderBy: $orderBy
-      limit: $limit
-      offset: $offset
-    ) @skip(if: $useScopedSearch) {
-      ...AdminUserManagement_userConnection
-    }
-  }
-`;
-
-const AdminUserManagementUserConnectionFragment = graphql`
-  fragment AdminUserManagement_userConnection on UserV2Connection {
-    count
-    edges {
-      node {
-        id
-        basicInfo {
-          email
+    ) {
+      count
+      edges {
+        node {
+          id
+          basicInfo {
+            email
+          }
+          ...BAIAdminUserV2TableFragment @arguments(withProjects: true)
+          ...PurgeUsersModalFragment
+          ...UpdateUsersModalFragment
+          ...UserInfoModalFragment
+          ...UserSettingModalFragment
         }
-        ...BAIAdminUserV2TableFragment @arguments(withProjects: true)
-        ...PurgeUsersModalFragment
-        ...UpdateUsersModalFragment
-        ...UserInfoModalFragment
-        ...UserSettingModalFragment
       }
     }
   }
@@ -132,7 +111,7 @@ interface AdminUserManagementProps {
 }
 
 type UserNode = NonNullable<
-  AdminUserManagement_userConnection$data['edges']
+  NonNullable<AdminUserManagementQuery$data['scopedUsersV2']>['edges']
 >[number];
 
 const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
@@ -190,15 +169,11 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   const { supportedFields, exportCSV } = useCSVExport('users');
   const unblockUserLogin = useUnblockUserLogin();
 
-  const { scopedUsersV2, domainUsersV2 } =
+  const { scopedUsersV2: userConnection } =
     usePreloadedQuery<AdminUserManagementQueryType>(
       AdminUserManagementQuery,
       deferredQueryRef,
     );
-  const userConnection = useFragment<AdminUserManagement_userConnection$key>(
-    AdminUserManagementUserConnectionFragment,
-    scopedUsersV2 ?? domainUsersV2,
-  );
 
   // >= 26.4.0: adminUpdateUserV2 — status toggle keyed by userId.
   const [commitUpdateUserV2] =

@@ -95,14 +95,11 @@ const AdminUsersPage: React.FC = () => {
   const { domainName: currentDomain, domainScope } = useCurrentDomainScope();
   // The list is fixed to the signed-in domain; the condition never reaches the URL.
   const withCurrentDomain = (
-    variables: Omit<UsersVariables, 'scope' | 'domainName' | 'useScopedSearch'>,
+    variables: Omit<UsersVariables, 'scope'>,
   ): UsersVariables => ({
     ...variables,
     filter: { ...variables.filter, domainName: { equals: currentDomain } },
-    // ADR 0011: scopedUsersV2 on >= 26.9.0a4, domainUsersV2 below.
-    scope: domainScope ?? { domain: [] },
-    domainName: currentDomain,
-    useScopedSearch: !!domainScope,
+    scope: domainScope,
   });
 
   const [queryParams, setQueryParams] = useQueryStates(
