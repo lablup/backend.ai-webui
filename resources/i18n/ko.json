@@ -3287,6 +3287,7 @@
     }
   },
   "sessionMonitor": {
+    "Active": "활발히 사용 중",
     "DomainSessions": "이 도메인의 세션",
     "InUseAcross": "실행 중인 세션 {{count}}개에 할당된 자원",
     "MonitorSettings": "모니터 설정",
@@ -3300,6 +3301,7 @@
     "RunningCount": "실행 {{count}}",
     "StartingCount": "시작 중 {{count}}",
     "Tooltip": "세션 모니터: 실행 수와 가장 가까운 종료 시각",
+    "WaitingForResources": "자원 부족으로 대기 중",
     "idleAlert": {
       "NetworkTimeout": "네트워크 활동이 감지되지 않았습니다. 종료되기 전에 세션에 접속해 주세요.",
       "SessionLifetime": "세션이 최대 수명에 도달하고 있습니다.",

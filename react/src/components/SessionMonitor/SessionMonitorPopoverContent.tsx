@@ -91,7 +91,6 @@ const ScopedSessionMonitorPopoverContent: React.FC<
   );
   const running = entries.filter((e) => e.status === 'RUNNING').length;
   const starting = entries.length - running;
-  const showDeadlineColumn = visible.some((e) => e.deadline !== null);
   // The list that matches the scope: admin, project-admin or the user's own.
   const listPath = buildProjectPath('session', {
     scope:
@@ -107,7 +106,7 @@ const ScopedSessionMonitorPopoverContent: React.FC<
       data-testid="session-monitor-popover"
       direction="column"
       align="stretch"
-      style={{ width: 500 }}
+      style={{ width: 520 }}
     >
       <BAIFlex
         direction="row"
@@ -185,7 +184,6 @@ const ScopedSessionMonitorPopoverContent: React.FC<
                   sessionFrgmt={node}
                   entry={entry}
                   listPath={listPath}
-                  showDeadlineColumn={showDeadlineColumn}
                   onNavigate={onNavigate}
                 />
               ) : null;

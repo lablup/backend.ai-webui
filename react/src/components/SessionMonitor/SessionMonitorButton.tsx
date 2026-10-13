@@ -97,7 +97,7 @@ const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
           <ErrorBoundaryWithNullFallback>
             <Suspense
               fallback={
-                <div style={{ width: 500, padding: 16 }}>
+                <div style={{ width: 520, padding: 16 }}>
                   <BAISkeleton />
                 </div>
               }

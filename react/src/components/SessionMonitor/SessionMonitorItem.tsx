@@ -29,8 +29,6 @@ interface SessionMonitorItemProps {
   entry: SessionMonitorEntry;
   /** The session list the row's detail link opens on. */
   listPath: string;
-  /** Keeps the time-left column only when some listed session has one. */
-  showDeadlineColumn?: boolean;
   onNavigate?: () => void;
 }
 
@@ -38,7 +36,6 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
   sessionFrgmt,
   entry,
   listPath,
-  showDeadlineColumn = true,
   onNavigate,
 }) => {
   'use memo';
@@ -132,21 +129,44 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
             {session.name ?? toLocalId(session.id)}
           </BAILink>
         </BAIFlex>
-        <Text type="supporting" maxLines={1} hasTruncateTooltip={false}>
-          {[allocation, elapsed].filter(Boolean).join(' · ')}
-        </Text>
+        <BAIFlex direction="row" align="center" gap="xs">
+          <Text
+            type="supporting"
+            maxLines={1}
+            style={{ flex: '0 1 auto', minWidth: 0 }}
+          >
+            {allocation}
+          </Text>
+          {elapsed && (
+            <Text type="supporting" textWrap="nowrap">
+              {allocation ? `· ${elapsed}` : elapsed}
+            </Text>
+          )}
+        </BAIFlex>
       </BAIFlex>
       <div style={{ width: 160, flex: 'none' }}>
-        {isRunning && <SessionMonitorUtilizationBars sessionFrgmt={session} />}
+        {isRunning ? (
+          <SessionMonitorUtilizationBars sessionFrgmt={session} />
+        ) : (
+          isStartingStatus(session.status) && (
+            <Text
+              type="supporting"
+              style={{ color: 'var(--color-warning)' }}
+              textWrap="nowrap"
+            >
+              {t('sessionMonitor.WaitingForResources')}
+            </Text>
+          )
+        )}
       </div>
-      {showDeadlineColumn && (
+      {
         <BAIFlex
           direction="column"
           align="stretch"
           gap="xxs"
           style={{ width: 128, flex: 'none', textAlign: 'end' }}
         >
-          {nearest && deadline !== null && (
+          {nearest && deadline !== null ? (
             <>
               <BAIIntervalView
                 delay={1000}
@@ -186,9 +206,20 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
                 {idleCheckLabel(nearest.key)}
               </Text>
             </>
+          ) : (
+            <>
+              <Text type="label" justify="end">
+                —
+              </Text>
+              <Text type="supporting" maxLines={1} justify="end">
+                {isRunning
+                  ? t('sessionMonitor.Active')
+                  : (session.status ?? '')}
+              </Text>
+            </>
           )}
         </BAIFlex>
-      )}
+      }
     </BAIFlex>
   );
 };
