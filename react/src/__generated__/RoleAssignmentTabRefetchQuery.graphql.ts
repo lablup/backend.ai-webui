@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d067e48368a957089870d360fdbc5743>>
+ * @generated SignedSource<<c45b28a635048e68d4e460b0471582f3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -301,24 +301,31 @@ v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "scopeType",
+  "name": "entityId",
   "storageKey": null
 },
 v14 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "scopeId",
+  "name": "scopeType",
   "storageKey": null
 },
 v15 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "count",
+  "name": "scopeId",
   "storageKey": null
 },
 v16 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "count",
+  "storageKey": null
+},
+v17 = {
   "alias": null,
   "args": null,
   "concreteType": "UserV2BasicInfo",
@@ -426,6 +433,7 @@ return {
           {
             "kind": "InlineFragment",
             "selections": [
+              (v13/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -470,8 +478,8 @@ return {
                         "name": "node",
                         "plural": false,
                         "selections": [
-                          (v13/*: any*/),
                           (v14/*: any*/),
+                          (v15/*: any*/),
                           (v12/*: any*/)
                         ],
                         "storageKey": null
@@ -482,8 +490,8 @@ return {
                 ],
                 "storageKey": "scopes(first:1)"
               },
-              (v13/*: any*/),
               (v14/*: any*/),
+              (v15/*: any*/),
               {
                 "alias": null,
                 "args": [
@@ -497,7 +505,7 @@ return {
                 "name": "users",
                 "plural": false,
                 "selections": [
-                  (v15/*: any*/),
+                  (v16/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -538,7 +546,7 @@ return {
                             "plural": false,
                             "selections": [
                               (v12/*: any*/),
-                              (v16/*: any*/)
+                              (v17/*: any*/)
                             ],
                             "storageKey": null
                           }
@@ -572,7 +580,7 @@ return {
                 "name": "usersV2",
                 "plural": false,
                 "selections": [
-                  (v15/*: any*/),
+                  (v16/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -590,14 +598,8 @@ return {
                         "plural": false,
                         "selections": [
                           (v12/*: any*/),
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "entityId",
-                            "storageKey": null
-                          },
-                          (v16/*: any*/)
+                          (v13/*: any*/),
+                          (v17/*: any*/)
                         ],
                         "storageKey": null
                       }
@@ -617,16 +619,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "15597cb5bb8ff4469d96ed6fef946e87",
+    "cacheID": "b0c87b3fcaee1e628c704b1d6f21e2b2",
     "id": null,
     "metadata": {},
     "name": "RoleAssignmentTabRefetchQuery",
     "operationKind": "query",
-    "text": "query RoleAssignmentTabRefetchQuery(\n  $filter: RoleAssignmentFilter\n  $limit: Int = 10\n  $offset: Int = 0\n  $orderBy: [RoleAssignmentOrderBy!]\n  $userFilter: UserV2Filter\n  $userOrderBy: [UserV2OrderBy!]\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...RoleAssignmentTabFragment_36l2j3\n    id\n  }\n}\n\nfragment RoleAssignmentTabFragment_36l2j3 on Role {\n  id\n  name\n  source\n  firstScope: scopes(first: 1) @deprecatedSince(version: \"26.9.0a4\") {\n    edges {\n      node {\n        scopeType\n        scopeId\n        id\n      }\n    }\n  }\n  scopeType @since(version: \"26.9.0a4\")\n  scopeId @since(version: \"26.9.0a4\")\n  users(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) @deprecatedSince(version: \"26.9.0a4\") {\n    count\n    edges {\n      node {\n        id\n        userId\n        grantedAt\n        user {\n          id\n          basicInfo {\n            email\n            fullName\n          }\n        }\n      }\n    }\n  }\n  usersV2(filter: $userFilter, orderBy: $userOrderBy, limit: $limit, offset: $offset) @since(version: \"26.9.0a4\") {\n    count\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query RoleAssignmentTabRefetchQuery(\n  $filter: RoleAssignmentFilter\n  $limit: Int = 10\n  $offset: Int = 0\n  $orderBy: [RoleAssignmentOrderBy!]\n  $userFilter: UserV2Filter\n  $userOrderBy: [UserV2OrderBy!]\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...RoleAssignmentTabFragment_36l2j3\n    id\n  }\n}\n\nfragment RoleAssignmentTabFragment_36l2j3 on Role {\n  id\n  entityId\n  name\n  source\n  firstScope: scopes(first: 1) @deprecatedSince(version: \"26.9.0a4\") {\n    edges {\n      node {\n        scopeType\n        scopeId\n        id\n      }\n    }\n  }\n  scopeType @since(version: \"26.9.0a4\")\n  scopeId @since(version: \"26.9.0a4\")\n  users(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) @deprecatedSince(version: \"26.9.0a4\") {\n    count\n    edges {\n      node {\n        id\n        userId\n        grantedAt\n        user {\n          id\n          basicInfo {\n            email\n            fullName\n          }\n        }\n      }\n    }\n  }\n  usersV2(filter: $userFilter, orderBy: $userOrderBy, limit: $limit, offset: $offset) @since(version: \"26.9.0a4\") {\n    count\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "c40588e5b4a36e7533b40d0bb2f41dc2";
+(node as any).hash = "71960f6098250b33470a6aabd95e29f4";
 
 export default node;

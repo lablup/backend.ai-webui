@@ -259,7 +259,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "Klucz dostępu",
     "CreatedAt": "Utworzono o godz",
-    "InvalidatedAt": "Unieważniono o godz",
+    "LastAccessedAt": "Ostatni dostęp",
     "User": "Użytkownik"
   },
   "comp:BAIModal": {

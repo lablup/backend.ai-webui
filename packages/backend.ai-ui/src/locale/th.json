@@ -259,7 +259,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "คีย์การเข้าถึง",
     "CreatedAt": "สร้างเมื่อ",
-    "InvalidatedAt": "ถูกยกเลิกเมื่อ",
+    "LastAccessedAt": "เข้าถึงล่าสุด",
     "User": "ผู้ใช้"
   },
   "comp:BAIModal": {

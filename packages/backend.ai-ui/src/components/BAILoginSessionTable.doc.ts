@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The presentational table over a plural `LoginSessionV2` Relay fragment, listing the sign-in sessions currently on record. It renders three columns — the session owner (the user email, falling back to a dash), the access key as monospace copyable text, and the creation time formatted as `ll LTS` — and only the created-at column is server-sortable. Session status and the invalidated-at time are deliberately not selected, because the backend does not write them yet. Filtering, pagination, query orchestration and the revoke action belong to the consuming surface: it renders BAITable, and every remaining BAITableProps prop passes straight through.',
+      'The presentational table over a plural `LoginSessionV2` Relay fragment, listing the live sign-in sessions on record. A session that ended is removed from this list and appears in the login history instead. It renders four columns — the session owner (the user email, falling back to a dash), the access key as monospace copyable text, the creation time and the last access time, both formatted as `lll` (date, hours and minutes) — and the created-at and last-accessed-at columns are server-sortable. The last access time is what tells a user which session to end. Filtering, pagination, query orchestration and the revoke action belong to the consuming surface: it renders BAITable, and every remaining BAITableProps prop passes straight through.',
     bestPractices: [
       {
         guidance: true,
@@ -36,7 +36,7 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Expect a status or invalidated-at column — the fragment does not select those fields, so they cannot be rendered or filtered here.',
+          'Add a status or invalidated-at column — every listed session is live, and a session that ended is deleted rather than marked, so those fields carry no meaningful value. Show ended sessions through BAILoginHistoryTable.',
       },
       {
         guidance: false,
@@ -67,9 +67,9 @@ export const docs = {
     },
     {
       name: 'onChangeOrder',
-      type: "(order: 'createdAt' | '-createdAt' | null) => void",
+      type: "(order: 'createdAt' | '-createdAt' | 'lastAccessedAt' | '-lastAccessedAt' | null) => void",
       description:
-        'Fired when the user sorts by creation time, with a "-" prefix for descending, or null when sorting is cleared. Convert it to the query `orderBy`; the table does not sort its own rows.',
+        'Fired when the user sorts by creation or last access time, with a "-" prefix for descending, or null when sorting is cleared. Convert it to the query `orderBy`; the table does not sort its own rows.',
     },
   ],
   examples: [

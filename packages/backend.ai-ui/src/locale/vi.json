@@ -259,7 +259,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "Khóa truy cập",
     "CreatedAt": "Được tạo tại",
-    "InvalidatedAt": "Bị vô hiệu tại",
+    "LastAccessedAt": "Truy cập lần cuối",
     "User": "Người dùng"
   },
   "comp:BAIModal": {

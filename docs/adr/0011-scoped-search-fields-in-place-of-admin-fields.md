@@ -34,7 +34,8 @@ flowchart LR
   page["host component<br/>superadmin, domain admin 공통"]
   select["BUI 공용 component<br/>필수 scope prop"]
   transformer["graphql-transformer.ts<br/>RelayEnvironment fetch"]
-  hook -- "myUserV2.organization.domainId" --> transformer
+  hook -- "myUserV2 query" --> transformer
+  transformer -- "organization.domainId" --> hook
   hook -- "domainScope" --> page
   page -- "scope prop" --> select
   select -- "scoped* field" --> transformer
@@ -63,22 +64,22 @@ flowchart LR
 
 ### 4. 이 field들은 26.9.0a4 이상 매니저에서만 쓴다
 
-- **No fallback**: `scoped*` field에 `@since`를 달지 않고, 26.9 미만 매니저를 위한 `admin*`·이름 field 분기를 두지 않는다. 26.9.0a4 미만 매니저에서 이 field를 쓰는 화면은 오류를 낸다.
+- **No fallback**: `scoped*` field와 `UserV2.organization.domainId`에 `@since`를 달지 않고, 26.9 미만 매니저를 위한 `admin*`·이름 field 분기를 두지 않는다. 26.9.0a4 미만 매니저에서 이 field를 쓰는 화면은 오류를 낸다.
 - **ADR 0010**: ADR 0010의 지원 기준(26.4 LTS line)은 이 결정이 바꾼 화면에 한해 26.9.0a4로 오른다. 나머지 코드는 ADR 0010을 따른다.
 
 ## 대안과 기각 사유
 
-- **범위 종류별 field(`domainUsersV2`, `projectUsersV2`)**: 26.2.0부터 있어 26.4 매니저도 답한다. 기각한다. 도메인, 프로젝트, 사용자 범위마다 field와 query가 따로 필요해 공용 component가 범위 종류마다 분기하고, backend가 새로 만들지 않는 모양이라 새 엔티티에는 없다.
-- **superadmin은 `admin*` field 유지**: superadmin 화면이 지금처럼 모든 도메인을 보여 준다. 기각한다. 공용 component마다 역할 분기와 `admin*` 분기가 남고, superadmin과 도메인 관리자가 같은 화면에서 다른 document를 받는다.
-- **26.9 미만 매니저용 대체 field 유지**: 26.4 LTS 매니저에서도 화면이 동작한다. 기각한다. 모든 document에 field 쌍과 분기 variable이 붙고, 이름 field를 쓰는 26.9 미만 경로가 도메인 관리자에게 다시 `admin*`로 떨어지는 공용 select를 남긴다.
-- **종류별 prop(`domainId`, `projectId`)을 공용 component에 더하기**: 호출부가 읽기 쉽다. 기각한다. 범위 종류가 늘 때마다 prop과 분기가 늘고, 두 종류를 함께 넘기는 경우를 표현하려면 prop 조합 규칙을 따로 정해야 한다.
+- **Per-kind scope fields**: 범위 종류마다 다른 field(`domainUsersV2`, `projectUsersV2`)를 쓴다. 26.2.0부터 있어 26.4 매니저도 답한다. 기각한다. 도메인, 프로젝트, 사용자 범위마다 field와 query가 따로 필요해 공용 component가 범위 종류마다 분기하고, backend가 새로 만들지 않는 모양이라 새 엔티티에는 없다.
+- **Admin fields for superadmins**: superadmin은 `admin*` field를 계속 읽는다. superadmin 화면이 지금처럼 모든 도메인을 보여 준다. 기각한다. 공용 component마다 역할 분기와 `admin*` 분기가 남고, superadmin과 도메인 관리자가 같은 화면에서 다른 document를 받는다.
+- **Pre-26.9 fallback fields**: 26.9 미만 매니저를 위한 대체 field를 유지한다. 26.4 LTS 매니저에서도 화면이 동작한다. 기각한다. 모든 document에 field 쌍과 분기 variable이 붙고, 이름 field를 쓰는 26.9 미만 경로가 도메인 관리자에게 다시 `admin*`로 떨어지는 공용 select를 남긴다.
+- **Per-kind id props**: 공용 component에 종류별 prop(`domainId`, `projectId`)을 더한다. 호출부가 읽기 쉽다. 기각한다. 범위 종류가 늘 때마다 prop과 분기가 늘고, 두 종류를 함께 넘기는 경우를 표현하려면 prop 조합 규칙을 따로 정해야 한다.
 
 ## Consequences
 
-- 도메인 관리자는 `admin*`만 쓰던 목록을 자기 도메인 범위로 본다.
-- superadmin이 모든 도메인을 보던 목록(Admin › Sessions의 Project filter 등)은 현재 도메인만 보여 준다.
-- 26.9.0a4 미만 매니저에서는 이 결정이 바꾼 화면이 동작하지 않는다.
-- `scoped*` mutation이 생기기 전까지 사용자, keypair, 리소스 정책, resource preset, fair share 쓰기는 superadmin만 한다.
+- **Domain admin lists**: 도메인 관리자는 `admin*`만 쓰던 목록을 자기 도메인 범위로 본다.
+- **Superadmin lists**: superadmin이 모든 도메인을 보던 목록(Admin › Sessions의 Project filter 등)은 현재 도메인만 보여 준다.
+- **Manager floor**: 26.9.0a4 미만 매니저에서는 이 결정이 바꾼 화면이 동작하지 않는다.
+- **Scoped writes**: `scoped*` mutation이 생기기 전까지 사용자, keypair, 리소스 정책, resource preset, fair share 쓰기는 superadmin만 한다.
 
 ## 출처
 

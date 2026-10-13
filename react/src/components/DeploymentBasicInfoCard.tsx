@@ -164,7 +164,7 @@ const DeploymentOverviewContent: React.FC<{
             webuiNavigate({
               pathname: targetPathname,
               search: new URLSearchParams({
-                filter: JSON.stringify({ tags: { iContains: tag } }),
+                filter: JSON.stringify({ tags: { iEquals: tag } }),
               }).toString(),
             });
           }}

@@ -259,7 +259,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "Erişim Anahtarı",
     "CreatedAt": "Oluşturulma Tarihi",
-    "InvalidatedAt": "Geçersizleştirilme Tarihi",
+    "LastAccessedAt": "Son Erişim",
     "User": "Kullanıcı"
   },
   "comp:BAIModal": {
