@@ -3,10 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { Form, type FormInstance } from '../form-engine';
-import {
-  isAutoMountFolderName,
-  ownerEmailFromOwner,
-} from '../helper/vfolderMounts';
+import { isAutoMountFolderName } from '../helper/vfolderMounts';
 import { useMountableStorageHosts } from '../hooks/useMountableStorageHosts';
 import { useSuspendedAutoMountedFolders } from '../hooks/useSuspendedAutoMountedFolders';
 import { SessionLauncherFormValue } from '../pages/SessionLauncherPage';
@@ -35,14 +32,8 @@ const SessionLauncherStorageStep: React.FC<{
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const mountConfigInputRef = useRef<BAIVFolderMountConfigInputRef>(null);
 
-  // `preserve` reads the raw store: `owner` has no registered Form.Item, and
-  // `setFieldValue` still notifies watchers through `setFields`.
-  const owner = Form.useWatch('owner', { form, preserve: true });
-  const ownerEmail = ownerEmailFromOwner(owner);
-
   const mountableHosts = useMountableStorageHosts(project.id);
   const autoMountedFolders = useSuspendedAutoMountedFolders({
-    ownerEmail,
     currentProjectId: project.id,
     mountableHosts,
   });
@@ -64,7 +55,6 @@ const SessionLauncherStorageStep: React.FC<{
             ref={mountConfigInputRef}
             currentProjectId={project.id}
             currentProjectName={project.name}
-            ownerEmail={ownerEmail}
             mountableHosts={mountableHosts}
             autoMountedFolders={autoMountedFolders}
             folderExplorerPath={generateFolderPath}

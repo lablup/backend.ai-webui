@@ -7,17 +7,17 @@ import { TerminateSessionModalForProjectAdminMutation } from '../__generated__/T
 import { App } from '../app-shim';
 import { useCurrentUserRole } from '../hooks/backendai';
 import './TerminateSessionModalForProjectAdmin.css';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAICard,
   BAIFlex,
   BAIModal,
-  type BAIModalProps,
   BAIText,
   filterOutNullAndUndefined,
   toLocalId,
+  type BAIModalProps,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useState } from 'react';

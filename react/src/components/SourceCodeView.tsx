@@ -5,7 +5,7 @@
 import CopyButton from './Chat/CopyButton';
 import { SyntaxHighlighter } from './Chat/SyntaxHighlighter';
 import './SourceCodeView.css';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex, BAIText } from 'backend.ai-ui';
 
 interface SourceCodeViewProps {

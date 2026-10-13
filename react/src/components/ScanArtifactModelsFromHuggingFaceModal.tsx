@@ -6,7 +6,7 @@ import { ScanArtifactModelsFromHuggingFaceModalMutation } from '../__generated__
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFlex,
   BAIModal,

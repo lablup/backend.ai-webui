@@ -14,15 +14,15 @@ import {
   AstryxFormNumberInput,
   AstryxFormTextInput,
 } from '../astryxFormControls';
-import { Grid } from '@astryxdesign/core/Grid';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Grid } from '@lablup/ui-common/Grid';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIQuestionIconWithTooltip,
   BAIAlert,
   BAICard,
   BAIFlex,
   BAIModal,
   BAIModalProps,
+  BAIQuestionIconWithTooltip,
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';

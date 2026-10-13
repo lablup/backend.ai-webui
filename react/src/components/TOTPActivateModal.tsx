@@ -5,11 +5,12 @@
 import { TOTPActivateModalFragment$key } from '../__generated__/TOTPActivateModalFragment.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
+import { getTotpActivationErrorMessageKey } from '../helper/totpErrorType';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { Spinner } from '@astryxdesign/core/Spinner';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Spinner } from '@lablup/ui-common/Spinner';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIModal, BAIModalProps, BAIFlex, BAIText } from 'backend.ai-ui';
 // PILOT-DECISION (p3-w3b): antd `QRCode` was the last antd RENDER in this
 // file. MAPPING.md §2 grades it **NONE** — neither Astryx core nor lab ships
@@ -91,8 +92,8 @@ const TOTPActivateModal: React.FC<Props> = ({
             message.success(t('totp.TotpSetupCompleted'));
             onRequestClose(true);
           },
-          onError: () => {
-            message.error(t('totp.InvalidTotpCode'));
+          onError: (error) => {
+            message.error(t(getTotpActivationErrorMessageKey(error)));
           },
         });
       })

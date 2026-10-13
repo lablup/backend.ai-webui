@@ -2,14 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { BAIBoardItem } from '../components/BAIBoard';
 import type { PersistedPanel } from '../components/DashboardPanels/types';
 import { jotaiStore } from '../components/DefaultProviders';
 import type { RecentSearchHit } from '../components/GlobalSearchPalette/types';
 import { backendaiOptions } from '../global-stores';
 import { BAIAppearanceConfig } from '../helper/customThemeConfig';
 import type { AgentEndpointBindings, AgentProfile } from './useAIAgent';
-import { BAITableColumnOverrideRecord } from 'backend.ai-ui';
+import { type BAIBoardItem, BAITableColumnOverrideRecord } from 'backend.ai-ui';
 import { atom, useAtom } from 'jotai';
 import { atomFamily } from 'jotai-family';
 import { SetStateAction } from 'react';
@@ -65,6 +64,7 @@ export interface UserSettings {
   sessionResourceGridHueOverrides?: Record<string, number>;
   schedulingHistoryExpandMode?: 'expand-all' | 'collapse-all' | 'errors-only';
   chat_intro_alert_dismissed?: boolean;
+  show_accelerator_dedicated_images_first?: boolean;
 }
 
 export type SessionHistory = {

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3288b2d30b225e6bac8e57e8f0f133ee>>
+ * @generated SignedSource<<c0f5b070824b9c873878b5b8dcb2f64e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -41,6 +41,12 @@ export type VFolderNodeDescriptionV2Fragment$data = {
       };
     } | null | undefined;
     readonly userId: string | null | undefined;
+  };
+  readonly quota: {
+    readonly maxFiles: number;
+    readonly maxSize: {
+      readonly expr: string;
+    } | null | undefined;
   };
   readonly status: VFolderOperationStatus;
   readonly unmanagedPath: string | null | undefined;
@@ -155,6 +161,42 @@ return {
     {
       "alias": null,
       "args": null,
+      "concreteType": "VFolderQuotaInfo",
+      "kind": "LinkedField",
+      "name": "quota",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "maxFiles",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "BinarySizeInfo",
+          "kind": "LinkedField",
+          "name": "maxSize",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "expr",
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "VFolderOwnershipInfo",
       "kind": "LinkedField",
       "name": "ownership",
@@ -252,6 +294,6 @@ return {
 };
 })();
 
-(node as any).hash = "38f8809b455b0643ff7fdb45dfd0aa89";
+(node as any).hash = "0e67f5e87371928e7ba51d46ec56839f";
 
 export default node;

@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The shared report for a bulk operation that partially failed: one row per failed request, in a table the caller describes with its own columns because every bulk endpoint has a different response shape. It builds on BAIModal and fixes the parts that should not vary — a localized "Action execution failed" title with an error icon, a compact bordered BAITable paginated at ten rows (the pager hides on a single page), and an optional BAIAlert above it for retry guidance. The modal is purely informational: it renders no footer, so dismissal happens through the header close button, the backdrop or Escape and is reported through `onRequestClose`, leaving the caller to decide whether its own form stays open for a retry. Everything BAIModalProps declares except `children`, `onOk`, `onCancel`, `footer` and `type` passes through.',
+      'The shared report for a bulk operation that partially failed: one row per failed request, in a table the caller describes with its own columns because every bulk endpoint has a different response shape. It is ui-common BulkErrorModal under its BUI name, with the BAITable column vocabulary and the BAIModal header geometry, and fixes the parts that should not vary — a localized "Action execution failed" title with an error icon, a compact bordered table paginated at ten rows (the pager hides on a single page), and an optional error banner above it for retry guidance. The modal is purely informational: it renders no footer, so dismissal happens through the header close button, the backdrop or Escape and is reported through `onRequestClose`, leaving the caller to decide whether its own form stays open for a retry. The other ui-common Modal props (width, zIndex, afterOpenChange, …) pass through.',
     bestPractices: [
       {
         guidance: true,
@@ -26,7 +26,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Give every record a unique `key`, since the table resolves row keys from that field.',
+          'Give every record a unique `key` (or `id`), since the table resolves row keys from those fields.',
       },
       {
         guidance: true,
@@ -62,14 +62,14 @@ export const docs = {
       name: 'dataSource',
       type: 'RecordType[]',
       description:
-        'One record per failed request. Each record needs a unique `key` field for row identity.',
+        'One record per failed request. Each record needs a unique `key` (or `id`) field for row identity.',
       required: true,
     },
     {
       name: 'alertDescription',
       type: 'ReactNode',
       description:
-        'Operation-specific guidance rendered as the body of an error BAIAlert above the table, under a fixed localized "Error Occurred" title. Omit it and no alert is rendered.',
+        'Operation-specific guidance rendered as the body of an error banner above the table, under a fixed localized "Error Occurred" title. Omit it and no banner is rendered.',
     },
     {
       name: 'onRequestClose',
@@ -88,7 +88,7 @@ export const docs = {
       name: 'width',
       type: 'number | string',
       description:
-        'Modal width, inherited from BAIModal and defaulted here to fit a multi-column failure table.',
+        'Modal width, defaulted to fit a multi-column failure table.',
       default: '720',
     },
   ],

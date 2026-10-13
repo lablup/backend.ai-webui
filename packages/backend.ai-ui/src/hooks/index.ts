@@ -1,8 +1,8 @@
 import useConnectedBAIClient from '../components/provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { useSuspenseTanQuery } from '../helper/reactQueryAlias';
-import { useEventNotStable } from './useEventNotStable';
+import { useDateISOState } from './useUpdatableState';
 import * as _ from 'lodash-es';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useRelayEnvironment } from 'react-relay';
 import {
   commitMutation,
@@ -44,19 +44,7 @@ export function useMemoizedJSONParse<T = any>(
   }, [jsonString, fallbackValue]);
 }
 
-export const useDateISOState = (initialValue?: string) => {
-  'use memo';
-  const [value, setValue] = useState(initialValue || new Date().toISOString());
-
-  const update = useEventNotStable((newValue?: string) => {
-    setValue(newValue || new Date().toISOString());
-  });
-  return [value, update] as const;
-};
-
-export const useUpdatableState = (initialValue: string) => {
-  return useDateISOState(initialValue);
-};
+export { useDateISOState, useUpdatableState } from './useUpdatableState';
 
 export const INITIAL_FETCH_KEY = 'first';
 export const useFetchKey = () => {

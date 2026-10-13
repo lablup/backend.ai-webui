@@ -7,8 +7,8 @@ import { useTanQuery } from '../hooks/reactQueryAlias';
 import SSHKeyBlock from './SSHKeyBlock';
 import SSHKeypairGenerationModal from './SSHKeypairGenerationModal';
 import SSHKeypairManualFormModal from './SSHKeypairManualFormModal';
-import { Button } from '@astryxdesign/core/Button';
-import { HStack } from '@astryxdesign/core/Stack';
+import { Button } from '@lablup/ui-common/Button';
+import { HStack } from '@lablup/ui-common/Stack';
 import {
   BAIModal,
   BAIModalProps,

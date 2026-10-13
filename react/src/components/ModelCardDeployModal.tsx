@@ -10,19 +10,19 @@ import { useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
-import { Banner } from '@astryxdesign/core/Banner';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Banner } from '@lablup/ui-common/Banner';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAvailablePresetSelect,
   BAIFlex,
   BAILink,
   BAIModal,
-  type BAIModalProps,
   BAIProjectResourceGroupSelect,
   toLocalId,
   useErrorMessageResolver,
   useProjectResourceGroups,
+  type BAIModalProps,
 } from 'backend.ai-ui';
 import { Info } from 'lucide-react';
 import React, {
@@ -83,7 +83,10 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
     graphql`
       fragment ModelCardDeployModalFragment on ModelCardV2 {
         id
-        availablePresets(orderBy: [{ field: RANK, direction: "ASC" }]) {
+        availablePresets(
+          orderBy: [{ field: RANK, direction: "ASC" }]
+          limit: 100
+        ) {
           edges {
             node {
               id

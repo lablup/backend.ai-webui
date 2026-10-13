@@ -4,8 +4,8 @@
  */
 import { GeneratedKeypairListModalFragment$key } from '../__generated__/GeneratedKeypairListModalFragment.graphql';
 import {
-  UserSettingModalBulkCreateMutation,
   UserRoleV2,
+  UserSettingModalBulkCreateMutation,
   UserStatusV2,
 } from '../__generated__/UserSettingModalBulkCreateMutation.graphql';
 import { UserSettingModalCreateMutation } from '../__generated__/UserSettingModalCreateMutation.graphql';
@@ -15,6 +15,7 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { isValidIPOrCidr } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import { roleFromV2 } from '../helper/userRole';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole, useTOTPSupported } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -22,8 +23,8 @@ import AccessKeySelect from './AccessKeySelect';
 import BAIFormItem from './BAIFormItem';
 import {
   BulkCreateUserErrorModal,
-  type FailedUserCreation,
   toFailedUserCreations,
+  type FailedUserCreation,
 } from './BulkCreateUserFailure';
 import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import ProjectSelect from './ProjectSelect';
@@ -37,22 +38,18 @@ import {
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Switch } from '@astryxdesign/core/Switch';
-import { Text } from '@astryxdesign/core/Text';
-import { Tokenizer } from '@astryxdesign/core/Tokenizer';
-import type {
-  SearchableItem,
-  SearchSource,
-} from '@astryxdesign/core/Typeahead';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Switch } from '@lablup/ui-common/Switch';
+import { Text } from '@lablup/ui-common/Text';
+import { Tokenizer } from '@lablup/ui-common/Tokenizer';
+import type { SearchSource, SearchableItem } from '@lablup/ui-common/Typeahead';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
   BAIAlert,
   BAICompactGroup,
-  BAIDomainSelect,
   BAIModal,
   BAIModalProps,
   BAISelect,
+  BAISkeleton,
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
   toLocalId,
@@ -64,7 +61,7 @@ import * as _ from 'lodash-es';
 import { CircleAlert } from 'lucide-react';
 import React, { Suspense, useDeferredValue, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useMutation, useFragment } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 type UserRole = {
   [key: string]: string[];
@@ -90,7 +87,6 @@ type FormValues = {
   full_name?: string;
   description?: string;
   role: string;
-  domain_name: string;
   group_ids?: string[];
   status: string;
   allowed_client_ip?: string[];
@@ -132,13 +128,6 @@ const statusFromV2: Record<string, string> = {
   DELETED: 'deleted',
 };
 
-const roleFromV2: Record<string, string> = {
-  USER: 'user',
-  ADMIN: 'admin',
-  SUPERADMIN: 'superadmin',
-  MONITOR: 'monitor',
-};
-
 const formatBulkEmail = (
   prefix: string,
   suffix: string,
@@ -173,7 +162,7 @@ const EMPTY_TAG_SEARCH_SOURCE: SearchSource<SearchableItem> = {
 // comma/space-separated text into multiple tags) has no Tokenizer
 // equivalent and is dropped — tags are committed one at a time with Enter
 // (`hasCreate`). The per-tag red highlight for invalid IPs (the antd
-// `tagRender`) is also dropped: `astryx component Tokenizer` best practices
+// `tagRender`) is also dropped: `ui-common component Tokenizer` best practices
 // explicitly discourage custom per-token colors, and the field's own
 // `rules` validator (kept unchanged below) already surfaces every invalid
 // IP in the BAIFormItem's error text under the control, so the same
@@ -310,7 +299,9 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           containerMainGid
           containerGids
         }
-        projects {
+        # groupIds on save REPLACES the membership list, so the form must
+        # start from every project rather than the connection's default page.
+        projects(limit: 1000) {
           edges {
             node {
               id
@@ -385,7 +376,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               containerMainGid
               containerGids
             }
-            projects {
+            projects(limit: 1000) {
               edges {
                 node {
                   id
@@ -510,7 +501,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           bulkValues.user_count,
         ),
         password: bulkValues.password as string,
-        domainName: bulkValues.domain_name,
+        domainName: currentDomainName,
         needPasswordChange: bulkValues.need_password_change || false,
         status: statusToV2[bulkValues.status] || 'ACTIVE',
         role: roleToV2[bulkValues.role] || 'USER',
@@ -597,7 +588,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               ? statusToV2[formValues.status]
               : undefined,
             role: formValues.role ? roleToV2[formValues.role] : undefined,
-            domainName: formValues.domain_name,
             groupIds: formValues.group_ids,
             allowedClientIp: formValues.allowed_client_ip,
             needPasswordChange: formValues.need_password_change || false,
@@ -633,7 +623,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             email: formValues.email,
             username: formValues.username,
             password: formValues.password as string,
-            domainName: formValues.domain_name,
+            domainName: currentDomainName,
             needPasswordChange: formValues.need_password_change || false,
             status: statusToV2[formValues.status] || 'ACTIVE',
             role: roleToV2[formValues.role] || 'USER',
@@ -729,7 +719,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   role: user.organization.role
                     ? roleFromV2[user.organization.role]
                     : undefined,
-                  domain_name: user.organization.domainName ?? undefined,
                   resource_policy: user.organization.resourcePolicy,
                   main_access_key: user.organization.mainAccessKey ?? undefined,
                   sudo_session_enabled: user.security.sudoSessionEnabled,
@@ -752,7 +741,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   need_password_change: bulkCreate ? true : false,
                   user_count: 1,
                   status: 'active',
-                  domain_name: currentDomainName,
                   role: 'user',
                   is_active: true,
                   resource_policy: 'default',
@@ -1137,17 +1125,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           >
             <UserResourcePolicySelect />
           </BAIFormItem>
-          <BAIFormItem
-            name="domain_name"
-            label={t('credential.Domain')}
-            rules={[{ required: true }]}
-          >
-            <BAIDomainSelect
-              onChange={() => {
-                formRef.current?.setFieldValue('group_ids', []);
-              }}
-            />
-          </BAIFormItem>
           <Suspense
             fallback={
               <BAIFormItem label={t('credential.Projects')}>
@@ -1155,30 +1132,21 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               </BAIFormItem>
             }
           >
-            <BAIFormItem noStyle dependencies={['domain_name']}>
-              {(form) => {
-                // BAIFormItem render-prop children receive `unknown` (antd
-                // typed this as FormInstance); narrow it back.
-                const { getFieldValue } = form as FormInstance<FormValues>;
-                return (
-                  <BAIFormItem
-                    name="group_ids"
-                    label={t('credential.Projects')}
-                    getValueFromEvent={(value) => value}
-                    getValueProps={(value) => ({
-                      value: _.isArray(value) ? value : projectMembershipIds,
-                    })}
-                  >
-                    <ProjectSelect
-                      mode="multiple"
-                      domain={getFieldValue('domain_name')}
-                      disableDefaultFilter
-                      lockedProjectTypes={!user ? ['MODEL_STORE'] : undefined}
-                      personalProject={personalProject}
-                    />
-                  </BAIFormItem>
-                );
-              }}
+            <BAIFormItem
+              name="group_ids"
+              label={t('credential.Projects')}
+              getValueFromEvent={(value) => value}
+              getValueProps={(value) => ({
+                value: _.isArray(value) ? value : projectMembershipIds,
+              })}
+            >
+              <ProjectSelect
+                mode="multiple"
+                domain={user?.organization.domainName ?? currentDomainName}
+                disableDefaultFilter
+                lockedProjectTypes={!user ? ['MODEL_STORE'] : undefined}
+                personalProject={personalProject}
+              />
             </BAIFormItem>
           </Suspense>
           <BAIFormItem

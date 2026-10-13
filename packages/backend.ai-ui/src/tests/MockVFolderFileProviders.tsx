@@ -1,7 +1,7 @@
 import { BAIDirectoryPickerQuery } from '../components/baiClient/FileExplorer/BAIDirectoryPickerModal';
 import type { LegacyVFolder } from '../components/fragments/BAIVFolderMountConfigInput';
 import { BAIClientProvider } from '../components/provider/BAIClientProvider';
-import { convertToUUID, toGlobalId, toLocalId } from '../helper';
+import { convertToUUID, toGlobalId } from '../helper';
 import {
   createMockVFolderFileClient,
   type MockVFolderFileTrees,
@@ -12,12 +12,20 @@ import { Suspense, useState } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
 
-const DEFAULT_PERMISSIONS = ['read_content', 'write_content', 'delete_content'];
+const DEFAULT_PERMISSIONS = ['READ', 'UPDATE', 'SOFT_DELETE'];
+const MOCK_HOST = 'local:volume1';
+const MOCK_HOST_PERMISSIONS = [
+  'CREATE_VFOLDER',
+  'MODIFY_VFOLDER',
+  'DELETE_VFOLDER',
+  'UPLOAD_FILE',
+  'DOWNLOAD_FILE',
+];
 
 export interface MockVFolder {
   name: string;
   row_id: string;
-  /** Defaults to full read/write/delete content permissions. */
+  /** `VFolder.permissions` bits; defaults to read, write and delete. */
   permissions?: Array<string>;
 }
 
@@ -33,13 +41,13 @@ export interface MockVFolderFileProvidersProps {
 
 /**
  * Everything a vfolder file-browsing story needs without a backend: a mock
- * Relay environment answering `vfolder_nodes` / `vfolder_node` from
+ * Relay environment answering `vfolder_nodes` / the picker's `vfolderV2` from
  * `vfolders`, and a mock `BAIClient` whose file APIs read and write `trees`
  * and whose signed `GET /folders` request answers `folders`.
  */
 const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
   folders,
-  // A REST-fed story still needs the path picker's `vfolder_node` answered,
+  // A REST-fed story still needs the path picker's `vfolderV2` answered,
   // so the Relay folders default to the REST rows.
   vfolders = (folders ?? []).map((folder): MockVFolder => ({
     name: folder.name,
@@ -70,43 +78,43 @@ const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
       },
     }));
 
-    const queuePickerOperation = (vfolderGlobalId: string) =>
+    const queuePickerOperation = (rowId: string) =>
       env.mock.queuePendingOperation(BAIDirectoryPickerQuery, {
-        vfolderGlobalId,
+        vfolderId: rowId,
       });
 
     const queueResolver = () => {
       env.mock.queueOperationResolver((operation) => {
         queueResolver();
-        const { vfolderGlobalId } = operation.request.variables;
-        const requestedRowId =
-          typeof vfolderGlobalId === 'string'
-            ? toLocalId(vfolderGlobalId)
-            : undefined;
+        const { vfolderId } = operation.request.variables;
         // The picker PRELOADS its vfolder query, so answering an open also has
         // to re-arm the pending operation the next open will look for.
-        if (typeof vfolderGlobalId === 'string') {
-          queuePickerOperation(vfolderGlobalId);
+        if (typeof vfolderId === 'string') {
+          queuePickerOperation(vfolderId);
         }
         const requested =
-          vfolders.find((folder) => folder.row_id === requestedRowId) ??
-          vfolders[0];
+          vfolders.find((folder) => folder.row_id === vfolderId) ?? vfolders[0];
         return MockPayloadGenerator.generate(operation, {
           Query: () => ({
             vfolder_nodes: { count: edges.length, edges },
-            vfolder_node: requested
+            vfolderV2: requested
               ? {
-                  name: requested.name,
+                  id: btoa(`VFolder:${requested.row_id}`),
+                  host: MOCK_HOST,
+                  metadata: { name: requested.name },
                   permissions: requested.permissions ?? DEFAULT_PERMISSIONS,
                 }
               : undefined,
+            myStorageHostPermissions: {
+              items: [{ host: MOCK_HOST, permissions: MOCK_HOST_PERMISSIONS }],
+            },
           }),
         });
       });
     };
 
     queueResolver();
-    edges.forEach(({ node }) => queuePickerOperation(node.id));
+    edges.forEach(({ node }) => queuePickerOperation(node.row_id));
     return env;
   });
 

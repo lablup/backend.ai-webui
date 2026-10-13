@@ -23,7 +23,7 @@ import type {
 } from '../__generated__/BAISessionNodesV2Fragment.graphql';
 import { convertToBinaryUnit } from '../helper';
 import { useBAIi18n } from '../hooks/useBAIi18n';
-import { Badge } from '@astryxdesign/core/Badge';
+import { Badge } from '@lablup/ui-common/Badge';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import * as _ from 'lodash-es';

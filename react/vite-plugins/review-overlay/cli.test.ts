@@ -238,6 +238,50 @@ describe('parse — round trip with the block producer', () => {
     });
   });
 
+  // Every copy now ends with an environment footer; pasted back to back, the
+  // second pin's empty note must not swallow the first copy's footer.
+  it('keeps a footer out of the next pasted copy’s note', async () => {
+    const env = {
+      webui: '26.9.0',
+      manager: '25.14.2',
+      endpoint: 'https://api.example.com',
+      account: 'reviewer@example.com (user)',
+    };
+    const at = '2026-08-31T09:00:00Z';
+    const pin = async (selector: string, note?: string): Promise<SetPin> => {
+      const a: AnchorV3 = note
+        ? { v: 3, s: selector, p: '/x', n: note }
+        : { v: 3, s: selector, p: '/x' };
+      const anchorB64 = await encodeAnchor(a);
+      const id = pinId(1, anchorB64, at);
+      return {
+        id,
+        origin: 'pick',
+        anchor: a,
+        anchorB64,
+        label: `L ${id}`,
+        appHash: '',
+        stack: [],
+        at,
+        pr: 1,
+      };
+    };
+    const first = await pin('#a', 'note one');
+    const second = await pin('#b');
+    const text = [
+      buildSetText([first], { origin: 'https://o', env }),
+      buildSetText([second], { origin: 'https://o', env }),
+    ].join('\n\n');
+
+    const pins = await parsePins(text);
+
+    expect(pins.map((p) => [p.id, p.note, p.idVerified])).toEqual([
+      [first.id, 'note one', true],
+      [second.id, '', true],
+    ]);
+    expect(JSON.stringify(pins)).not.toContain('reviewer@example.com');
+  });
+
   it('merges the same pin quoted twice into one', async () => {
     const anchorB64 = await encodeAnchor(anchor);
     const built = buildBlockFromCapture(

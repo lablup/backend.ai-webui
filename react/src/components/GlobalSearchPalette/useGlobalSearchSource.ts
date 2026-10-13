@@ -16,7 +16,7 @@ import {
 } from './searchArtifacts';
 import type { SearchConfigFlags, SearchContext, SearchHit } from './types';
 import { useRecentSearchHits } from './useRecentSearchHits';
-import type { SearchSource } from '@astryxdesign/core/Typeahead';
+import type { SearchSource } from '@lablup/ui-common/Typeahead';
 import { useBAILogger } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useEffect, useEffectEvent } from 'react';
@@ -80,7 +80,8 @@ export const useGlobalSearchSource = (): GlobalSearchSource => {
 
   const ctx: SearchContext = {
     isSuperAdmin: currentUserRole === 'superadmin',
-    supports: (feature: string) => !!baiClient?.supports?.(feature),
+    isManagerVersionCompatibleWith: (version: string) =>
+      !!baiClient?.isManagerVersionCompatibleWith?.(version),
     config: toSearchConfigFlags(baiClient),
     visibleMenuKeys: new Set(
       _.map([...generalMenu, ...adminMenu], (item) => item.key as string),

@@ -14,17 +14,17 @@ import {
   v2PermissionToKey,
 } from '../helper/storageHostPermission';
 import StoragePermissionEditModal from './StoragePermissionEditModal';
-import { Token } from '@astryxdesign/core/Token';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Token } from '@lablup/ui-common/Token';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAlertIconWithTooltip,
   BAIFlex,
   BAINameActionCell,
   BAITable,
-  PRIMARY_TOKEN_COLOR,
   BAIText,
   BAIUnmountAfterClose,
+  PRIMARY_TOKEN_COLOR,
   type BAITableProps,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -116,7 +116,8 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
             host
             permissions
           }
-          keypairs(filter: $keypairFilter) @include(if: $includeKeypairs) {
+          keypairs(filter: $keypairFilter, limit: 100)
+            @include(if: $includeKeypairs) {
             edges {
               node {
                 id

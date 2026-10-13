@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b1c9240c0e272186c1c61a6223868a88>>
+ * @generated SignedSource<<f4b0c6ada947de8a3b8101d561578d89>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -187,7 +187,13 @@ return {
       "selections": [
         {
           "alias": null,
-          "args": null,
+          "args": [
+            {
+              "kind": "Literal",
+              "name": "limit",
+              "value": 1000
+            }
+          ],
           "concreteType": "ProjectV2Connection",
           "kind": "LinkedField",
           "name": "projects",
@@ -235,7 +241,7 @@ return {
               "storageKey": null
             }
           ],
-          "storageKey": null
+          "storageKey": "projects(limit:1000)"
         }
       ]
     },
@@ -380,6 +386,6 @@ return {
 };
 })();
 
-(node as any).hash = "039268ec2b3d7a0c99464d2d860344a0";
+(node as any).hash = "de513d02de8b26ffb86630069b0bf34a";
 
 export default node;

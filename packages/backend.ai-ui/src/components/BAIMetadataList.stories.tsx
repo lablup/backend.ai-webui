@@ -1,6 +1,6 @@
 import BAIBadge from './BAIBadge';
 import BAIMetadataList from './BAIMetadataList';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof BAIMetadataList> = {

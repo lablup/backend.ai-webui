@@ -8,7 +8,7 @@ import {
 } from '../__generated__/GeneratedKeypairListModalFragment.graphql';
 import { localeCompare } from '../helper';
 import { csvLiteral, exportCSVWithFormattingRules } from '../helper/csv-util';
-import { Banner } from '@astryxdesign/core/Banner';
+import { Banner } from '@lablup/ui-common/Banner';
 import {
   BAIFlex,
   BAIModal,

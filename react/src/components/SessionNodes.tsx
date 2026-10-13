@@ -17,8 +17,8 @@ import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
 import SessionStatusBadge from './ComputeSessionNodeItems/SessionStatusBadge';
 import TerminateSessionModal from './ComputeSessionNodeItems/TerminateSessionModal';
-import { Token } from '@astryxdesign/core/Token';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Token } from '@lablup/ui-common/Token';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -54,7 +54,6 @@ const availableSessionSorterKeys = [
   'status',
   'status_info',
   'result',
-  'domain_name',
   'project_id',
   'access_key',
   'terminated_at',
@@ -114,7 +113,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         service_ports
         user_id
         agent_ids
-        priority @since(version: "24.09.0")
+        priority
         ...SessionStatusBadgeFragment
         ...SessionReservationFragment
         ...SessionSlotCellFragment
@@ -144,7 +143,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         domain_name
         scaling_group
         project_id
-        owner @since(version: "25.13.0") {
+        owner {
           email
         }
         dependees {
@@ -453,14 +452,13 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         sorter: isEnableSorter('agent_ids'),
         render: (__, session) => <BAISessionAgentIds sessionFrgmt={session} />,
       },
-      userRole === 'superadmin' &&
-        baiClient.isManagerVersionCompatibleWith('25.13.0') && {
-          key: 'owner',
-          title: t('session.launcher.OwnerEmail'),
-          defaultHidden: false,
-          exportKey: 'user_email',
-          render: (__, session) => session.owner?.email || '-',
-        },
+      userRole === 'superadmin' && {
+        key: 'owner',
+        title: t('session.launcher.OwnerEmail'),
+        defaultHidden: false,
+        exportKey: 'user_email',
+        render: (__, session) => session.owner?.email || '-',
+      },
     ]),
     (column) => {
       return disableSorter ? _.omit(column, 'sorter') : column;

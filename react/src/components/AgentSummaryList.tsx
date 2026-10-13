@@ -18,9 +18,9 @@ import { useResourceGroupsForCurrentProject } from '../hooks/useCurrentProject';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import BAIRadioGroup from './BAIRadioGroup';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFlex,
   BAIProgressWithLabel,
@@ -30,11 +30,11 @@ import {
   ResourceTypeIcon,
   filterOutNullAndUndefined,
   mergeFilterValues,
+  useFetchKey,
+  useToggle,
   type BAIColumnType,
   type BAIColumnsType,
   type BAITableProps,
-  useFetchKey,
-  useToggle,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleCheck, CircleMinus, RotateCw } from 'lucide-react';

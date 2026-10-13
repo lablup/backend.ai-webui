@@ -12,12 +12,12 @@ import type {
   ModelServiceFormValue,
 } from './AdminDeploymentPresetFormTypes';
 import SourceCodeView from './SourceCodeView';
-import { Button } from '@astryxdesign/core/Button';
-import { Code } from '@astryxdesign/core/Code';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { HStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
+import { Button } from '@lablup/ui-common/Button';
+import { Code } from '@lablup/ui-common/Code';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { HStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAICard,
   BAIFlex,
@@ -94,9 +94,8 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
    * (legacy managers, where they can only be submitted alongside a real
    * name/modelPath).
    */
-  const supportsNullableModelDefinition = baiClient.supports(
-    'preset-model-config-type',
-  );
+  const supportsNullableModelDefinition =
+    baiClient.isManagerVersionCompatibleWith('26.9.0');
   // `true` includes untouched fields and arrays (e.g. modelDefinition.models)
   // that getFieldsValue() omits; its overload returns `any`, so annotate here.
   const values: AdminDeploymentPresetFormValue = form.getFieldsValue(true);

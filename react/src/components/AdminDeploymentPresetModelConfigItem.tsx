@@ -13,7 +13,7 @@ import {
   AstryxFormTextInput,
 } from './astryxFormControls';
 import './collapsible-section.css';
-import { Collapsible } from '@astryxdesign/core/Collapsible';
+import { Collapsible } from '@lablup/ui-common/Collapsible';
 import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -77,16 +77,14 @@ const ModelConfigItem: React.FC<{
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   /**
-   * BA-7210 / FR-3481 (26.9.0+, `preset-model-config-type`): legacy managers
-   * (without the capability) can only submit Service Configuration/Health
+   * BA-7210 / FR-3481: managers older than 26.9.0 can only submit Service Configuration/Health
    * Check/Pre-Start Actions together with a real name/modelPath, so those
    * sections nest here (instead of independently in Step 1 — see
    * AdminDeploymentPresetSettingPageContent.tsx), rendered above Metadata to
    * match the pre-FR-3205 field order.
    */
-  const supportsNullableModelDefinition = baiClient.supports(
-    'preset-model-config-type',
-  );
+  const supportsNullableModelDefinition =
+    baiClient.isManagerVersionCompatibleWith('26.9.0');
 
   // Rendered only when the model-definition switch is ON. Name/path are
   // nullable server-side on 26.9.0+ (BA-7210 inherits them from the runtime
@@ -142,14 +140,7 @@ const ModelConfigItem: React.FC<{
           )}
           <ModelServiceHealthCheckFormItems
             namePrefix={modelField('service')}
-            placeholders={{
-              path: t('general.Example', { value: '/health' }),
-              interval: t('general.Example', { value: '10' }),
-              maxRetries: t('general.Example', { value: '10' }),
-              maxWaitTime: t('general.Example', { value: '15' }),
-              expectedStatusCode: t('general.Example', { value: '200' }),
-              initialDelay: t('general.Example', { value: '60' }),
-            }}
+            placeholders={{ initialDelay: 1800 }}
           />
           <PreStartActionsFormList namePrefix={modelField('service')} />
         </>

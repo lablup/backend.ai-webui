@@ -6,8 +6,8 @@ import { toLocalId } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import { AstryxFormTextInput } from '../astryxFormControls';
-import { InputGroup } from '@astryxdesign/core/InputGroup';
-import { Link } from '@astryxdesign/core/Link';
+import { InputGroup } from '@lablup/ui-common/InputGroup';
+import { Link } from '@lablup/ui-common/Link';
 import { useRef, useState } from 'react';
 import { graphql, useFragment, useMutation } from 'react-relay';
 

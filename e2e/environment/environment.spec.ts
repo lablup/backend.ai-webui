@@ -29,20 +29,20 @@ async function waitForImageListReady(page: Page) {
 }
 
 /**
- * `BAITable` has no spinner: while `loading` is true it dims its own wrapper
- * and marks it `aria-busy` (`BAITable.tsx`, the `bai-table-astryx-dim-layer`
- * div — a class this repo owns, not a framework-internal one).
+ * `BAITable` has no spinner: while `loading` is true ui-common `DataGrid`
+ * dims its rows wrapper and marks it `aria-busy` (the `uic-data-grid__body`
+ * div — a ui-common class, not a framework-internal one).
  */
 async function waitForImageListSettled(page: Page) {
   await expect(
-    page.locator('.bai-table-astryx-dim-layer[aria-busy="true"]'),
+    page.locator('.uic-data-grid__body[aria-busy="true"]'),
   ).toHaveCount(0, { timeout: 15000 });
 }
 
 /**
  * `BAITable`'s pagination bar: an Astryx `Pagination` in a
  * `navigation` landmark named "Pagination"
- * (`label={String(t('comp:BAITable.Pagination'))}`, `BAITable.tsx`), whose
+ * (ui-common `DataGrid`'s `uic.DataGrid.pagination` label), whose
  * page buttons are named "Go to page N" and whose current page carries
  * `aria-current="page"` (`@astryxdesign/core/src/Pagination/Pagination.tsx`).
  */
@@ -166,20 +166,20 @@ test.describe(
       await expect(resourceLimitControlModal).toBeVisible();
 
       // `ManageImageResourceLimitModal.tsx` renders each slot as a
-      // `BAIFormItem` (`[data-bai-form-item]`). The value controls are Astryx
+      // `BAIFormItem` (`.uic-form-item`). The value controls are Astryx
       // now: `AstryxFormNumberInput` / `BAIDynamicUnitInputNumber` both end in
       // an Astryx `NumberInput`, which is `role="spinbutton"`
       // (`@astryxdesign/core/src/NumberInput/NumberInput.tsx`), and the memory
       // unit is an Astryx `Selector` labelled "Unit"
       // (`BAIDynamicUnitInputNumber.tsx`).
       const cpuFormItem = resourceLimitControlModal.locator(
-        '[data-bai-form-item]:has-text("CPU")',
+        '.uic-form-item:has-text("CPU")',
       );
       const cpuFormItemInput = cpuFormItem.getByRole('spinbutton');
       const cpuValue = await cpuFormItemInput.inputValue();
 
       const memoryFormItem = resourceLimitControlModal.locator(
-        '[data-bai-form-item]:has-text("Memory")',
+        '.uic-form-item:has-text("Memory")',
       );
       const memoryFormItemInput = memoryFormItem.getByRole('spinbutton');
       const memoryValue = await memoryFormItemInput.inputValue();
@@ -216,10 +216,10 @@ test.describe(
       });
       await expect(modifiedResourceLimitControlModal).toBeVisible();
       const modifiedCpuFormItem = modifiedResourceLimitControlModal.locator(
-        '[data-bai-form-item]:has-text("CPU")',
+        '.uic-form-item:has-text("CPU")',
       );
       const modifiedMemoryFormItem = modifiedResourceLimitControlModal.locator(
-        '[data-bai-form-item]:has-text("Memory")',
+        '.uic-form-item:has-text("Memory")',
       );
       const modifiedCpuFormItemInput =
         modifiedCpuFormItem.getByRole('spinbutton');
@@ -269,11 +269,11 @@ test.describe(
         modal.getByRole('button', { name: 'Add', exact: true }),
       ).toBeVisible();
       // ManageAppsModal.tsx renders one un-`noStyle` outer `BAIFormItem` per
-      // app row (`[data-bai-form-item]`); the 3 nested per-field
+      // app row (`.uic-form-item`); the 3 nested per-field
       // BAIFormItems inside it are all `noStyle` and render no DOM of their
       // own, so this still counts exactly one element per row.
       const numberOfAppsBeforeAdd = await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .count();
       await modal.getByRole('button', { name: 'Add', exact: true }).click();
       const addInfo = {
@@ -286,7 +286,7 @@ test.describe(
       // "Protocol", "Port"); scope through the row's own form item so the
       // names stay unambiguous across rows.
       const addedAppRow = modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .nth(numberOfAppsBeforeAdd);
       await addedAppRow.getByPlaceholder('App Name').fill(addInfo.app);
       await addedAppRow.getByPlaceholder('Protocol').fill(addInfo.protocol);
@@ -311,9 +311,9 @@ test.describe(
         await openManageAppsModal();
         const dialog = page.getByRole('dialog', { name: /Manage Apps/i });
         await expect(dialog).toBeVisible();
-        // One `[data-bai-form-item]` per app row (the 3 nested per-field
+        // One `.uic-form-item` per app row (the 3 nested per-field
         // items are `noStyle` and render no DOM of their own).
-        const count = await dialog.locator('[data-bai-form-item]').count();
+        const count = await dialog.locator('.uic-form-item').count();
         await dialog.getByRole('button', { name: 'Cancel' }).click();
         await expect(dialog).toBeHidden();
         return count;
@@ -333,12 +333,12 @@ test.describe(
       // Retry the count assertion: the freshly-reopened modal renders its
       // app form-items asynchronously, so a one-shot `.count()` can read the
       // old total before the added row mounts (flaky off by one).
-      await expect(modalAfterAdd.locator('[data-bai-form-item]')).toHaveCount(
+      await expect(modalAfterAdd.locator('.uic-form-item')).toHaveCount(
         numberOfAppsBeforeAdd + 1,
       );
       const numberOfApps = numberOfAppsBeforeAdd + 1;
       // Verify the last row has the added app info
-      const lastRow = modalAfterAdd.locator('[data-bai-form-item]').last();
+      const lastRow = modalAfterAdd.locator('.uic-form-item').last();
       await expect(lastRow.getByPlaceholder('App Name')).toHaveValue(
         addInfo.app,
       );
@@ -351,7 +351,7 @@ test.describe(
       // instead of indexing a flat button list (`ManageAppsModal.tsx` renders
       // one ghost IconButton `label={t('button.Delete')}` per app row).
       await modalAfterAdd
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .nth(numberOfApps - 1)
         .getByRole('button', { name: 'Delete' })
         .click();
@@ -823,8 +823,8 @@ test.describe(
       { tag: ['@requires-seeded-data'] },
       async ({ page }) => {
         // 1. Check total row count to determine if there are enough images for page 2.
-        // `BAITable`'s bottom bar renders `BAIPaginationInfoText`, i.e.
-        // `comp:PaginationInfoText.Total` = "{{start}} - {{end}} of {{total}} items".
+        // `BAITable`'s bottom bar renders ui-common's `uic.DataGrid.range`,
+        // "{start} - {end} of {total} items".
         const paginationTotal = page.getByText(
           /^\d+\s*-\s*\d+\s+of\s+\d+\s+items$/,
         );
@@ -956,7 +956,7 @@ test.describe(
       ).toBeVisible();
 
       // 3. Verify the table shows its empty state. `BAITable` owns the node
-      // (an Astryx `EmptyState` titled `comp:BAITable.NoDataToDisplay` =
+      // (an Astryx `EmptyState` titled ui-common's `uic.DataGrid.noData` =
       // "No data to display") instead of Astryx's own `@astryx.table.noData`.
       // It renders as a single full-width `<tr><td colSpan>` inside the tbody
       // (`@astryxdesign/core/src/Table/BaseTable.tsx`), so it replaces — not

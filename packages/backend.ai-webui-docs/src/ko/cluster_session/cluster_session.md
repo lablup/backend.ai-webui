@@ -71,15 +71,15 @@ Backend.AI 클러스터 세션의 상세 특징은 다음을 참고하십시오.
 
 시작 버튼을 클릭하여 연산 세션 생성 요청을 보내고 잠시 기다리면 클러스터 세션이 생성됩니다. 세션 생성 이후에, 세션 상세 페이지에서 생성된 컨테이너를 확인할 수 있습니다.
 
-![](../images/cluster_session_created.png)
+![=751px](../images/cluster_session_created.png)
 
 방금 생성한 연산 세션에서 터미널 앱을 열어 보겠습니다. 환경 변수를 조회하면, 위 섹션에서 설명한 `BACKENDAI_CLUSTER_*` 변수들이 설정되어 있는 것을 확인할 수 있습니다. 각 환경 변수의 의미와 값을 위의 설명과 비교해 보십시오.
 
-![](../images/terminal_on_main_container.png)
+![=404px](../images/terminal_on_main_container.png)
 
 `sub1` 컨테이너로 SSH 접속을 할 수도 있습니다. 별도의 SSH 설정 없이, `ssh sub1` 명령어를 입력하기만 하면 됩니다. `work@` 뒤의 호스트 이름이 변경된 것을 확인할 수 있으며, 이는 서브 컨테이너의 셸이 표시되고 있음을 나타냅니다.
 
-![](../images/terminal_on_sub1_container.png)
+![=427px](../images/terminal_on_sub1_container.png)
 
 이런 방식으로 Backend.AI에서는 클러스터 연산 세션을 손쉽게 생성할 수 있습니다. 클러스터 연산 세션을 통해 분산 학습 및 연산을 실행하기 위해서는, TensorFlow/PyTorch 등 ML 라이브러리에서 제공하는 분산 학습용 모듈이나 Horovod, NNI, MLFlow 등과 같은 별도의 지원 소프트웨어가 필요하고, 해당 소프트웨어를 활용할 수 있는 방식으로 코드를 주의 깊게 작성해야 합니다. Backend.AI에서는 분산 학습에 필요한 소프트웨어를 포함하는 커널 이미지를 제공하고 있으므로, 해당 이미지를 사용하여 분산 학습 알고리즘을 구현해 볼 수 있습니다.
 

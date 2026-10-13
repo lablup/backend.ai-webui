@@ -69,7 +69,7 @@ Backend.AI มีตัวเลือกในการเก็บไฟล์
 ภายใต้ `user2-vfolder` ให้สร้าง `test_file`
 เติมเนื้อหาด้วยข้อความ "file inside user2-vfolder"
 
-![](../images/mounted_folders_in_terminal.png)
+![=682px](../images/mounted_folders_in_terminal.png)
 
 เมื่อรันคำสั่ง `ls` ที่ `user2-vfolder` ผู้ใช้จะยืนยันได้ว่าไฟล์ถูกสร้างขึ้นเรียบร้อยแล้ว
 โปรดทราบว่าสามารถตรวจสอบเนื้อหาของไฟล์ได้ด้วยคำสั่ง `cat`

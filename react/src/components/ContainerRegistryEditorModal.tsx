@@ -11,14 +11,19 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import BAICodeEditor from './BAICodeEditor';
 import BAIFormItem from './BAIFormItem';
 import HiddenFormItem from './HiddenFormItem';
-import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
 import {
   AstryxFormCheckbox,
   AstryxFormSelector,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { useTheme } from '@astryxdesign/core/theme';
-import { BAIFlex, BAIModal, BAIModalProps, BAISelect } from 'backend.ai-ui';
+import { useTheme } from '@lablup/ui-common/theme';
+import {
+  BAIAdminProjectSelect,
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  BAISelect,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -93,7 +98,6 @@ const ContainerRegistryEditorModal: React.FC<
   const { message, modal } = App.useApp();
 
   const baiClient = useSuspendedBackendaiClient();
-  const isSupportExtraField = baiClient.supports('extra-field');
 
   const formRef = useRef<FormInstance<RegistryFormInput>>(null);
 
@@ -109,20 +113,40 @@ const ContainerRegistryEditorModal: React.FC<
         project
         username
         ssl_verify
-        extra @since(version: "24.09.3")
-        is_global @since(version: "24.09.0")
-        allowed_groups @since(version: "25.3.0") {
+        extra
+        is_global
+        allowed_groups(first: 100) {
           edges {
             node {
               id
               row_id
               name
+              type
+              is_active
+              domain_name
             }
           }
         }
       }
     `,
     containerRegistryFrgmt,
+  );
+
+  const projectTypes: Array<'GENERAL' | 'MODEL_STORE'> = _.includes(
+    baiClient._config.blockList,
+    'model-store',
+  )
+    ? ['GENERAL']
+    : ['GENERAL', 'MODEL_STORE'];
+  // Only projects the select can list are edited here; the rest stay allowed untouched.
+  const originalGroupIds = _.compact(
+    _.map(containerRegistry?.allowed_groups?.edges, (edge) =>
+      edge?.node?.is_active &&
+      edge.node.domain_name === baiClient._config.domainName &&
+      _.includes(projectTypes, edge.node.type)
+        ? edge.node.row_id
+        : null,
+    ),
   );
 
   const [commitCreateRegistry, isInflightCreateRegistry] =
@@ -161,14 +185,17 @@ const ContainerRegistryEditorModal: React.FC<
             username
             password
             ssl_verify
-            extra @since(version: "24.09.3")
-            is_global @since(version: "24.09.0")
-            allowed_groups @since(version: "25.3.0") {
+            extra
+            is_global
+            allowed_groups(first: 100) {
               edges {
                 node {
                   id
                   row_id
                   name
+                  type
+                  is_active
+                  domain_name
                 }
               }
             }
@@ -207,9 +234,7 @@ const ContainerRegistryEditorModal: React.FC<
                 // so treat original as empty to avoid removing non-existent associations
                 const original = containerRegistry?.is_global
                   ? []
-                  : (containerRegistry?.allowed_groups?.edges
-                      ?.map((edge) => edge?.node?.row_id)
-                      .filter(Boolean) ?? []);
+                  : originalGroupIds;
                 return {
                   add: _.difference(selected, original),
                   remove: _.difference(original, selected),
@@ -342,10 +367,7 @@ const ContainerRegistryEditorModal: React.FC<
                   : '',
                 is_global: containerRegistry?.is_global ?? true,
                 ssl_verify: containerRegistry?.ssl_verify === true,
-                allowed_group_ids:
-                  containerRegistry?.allowed_groups?.edges
-                    ?.map((edge) => edge?.node?.row_id)
-                    .filter(Boolean) ?? [],
+                allowed_group_ids: originalGroupIds,
               }
             : { is_global: true, ssl_verify: true, ...initialValues }
         }
@@ -539,11 +561,6 @@ const ContainerRegistryEditorModal: React.FC<
             label={t('registry.IsGlobalDescription')}
             onValueChange={(checked) => {
               if (!checked) {
-                // Restore original allowed groups from fragment data on uncheck
-                const originalGroupIds =
-                  containerRegistry?.allowed_groups?.edges
-                    ?.map((edge) => edge?.node?.row_id)
-                    .filter(Boolean) ?? [];
                 formRef.current?.setFieldValue(
                   'allowed_group_ids',
                   originalGroupIds,
@@ -571,54 +588,59 @@ const ContainerRegistryEditorModal: React.FC<
                   name="allowed_group_ids"
                   label={t('registry.AllowedProjects')}
                 >
-                  <ProjectSelectForAdminPage
-                    domain={baiClient._config.domainName}
-                    mode="multiple"
+                  <BAIAdminProjectSelect
+                    label={t('registry.AllowedProjects')}
+                    isLabelHidden
+                    multiple
                     allowClear
+                    // Same scope as `originalGroupIds`, so the trigger and the list count alike.
+                    filter={{
+                      isActive: true,
+                      domainName: { equals: baiClient._config.domainName },
+                      type: { in_: projectTypes },
+                    }}
                   />
                 </BAIFormItem>
               </Suspense>
             )
           }
         </BAIFormItem>
-        {isSupportExtraField && (
-          <BAIFormItem label={t('registry.ExtraInformation')}>
-            <BAIFlex
-              style={{
-                border: `1px solid ${token('--color-border-emphasized')}`,
-                borderRadius: token('--radius-inner'),
-                overflow: 'hidden',
-              }}
-            >
-              <BAIFormItem
-                name="extra"
-                noStyle
-                rules={[
-                  {
-                    validator: (_, value) => {
-                      if (value) {
-                        try {
-                          JSON.parse(value);
-                        } catch {
-                          return Promise.reject(
-                            t('registry.DescExtraJsonFormat'),
-                          );
-                        }
+        <BAIFormItem label={t('registry.ExtraInformation')}>
+          <BAIFlex
+            style={{
+              border: `1px solid ${token('--color-border-emphasized')}`,
+              borderRadius: token('--radius-inner'),
+              overflow: 'hidden',
+            }}
+          >
+            <BAIFormItem
+              name="extra"
+              noStyle
+              rules={[
+                {
+                  validator: (_, value) => {
+                    if (value) {
+                      try {
+                        JSON.parse(value);
+                      } catch {
+                        return Promise.reject(
+                          t('registry.DescExtraJsonFormat'),
+                        );
                       }
-                      return Promise.resolve();
-                    },
+                    }
+                    return Promise.resolve();
                   },
-                ]}
-              >
-                <BAICodeEditor
-                  editable
-                  language="json"
-                  style={{ width: '100%' }}
-                />
-              </BAIFormItem>
-            </BAIFlex>
-          </BAIFormItem>
-        )}
+                },
+              ]}
+            >
+              <BAICodeEditor
+                editable
+                language="json"
+                style={{ width: '100%' }}
+              />
+            </BAIFormItem>
+          </BAIFlex>
+        </BAIFormItem>
       </Form>
     </BAIModal>
   );

@@ -3,9 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useDefaultTheme } from '../../hooks/useDefaultTheme';
-import { Grid } from '@astryxdesign/core/Grid';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Grid } from '@lablup/ui-common/Grid';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex, BAIUncontrolledInput } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 

@@ -9,11 +9,12 @@ import {
   useSetBAINotification,
 } from '../hooks/useBAINotification';
 import { useProjectPath } from '../hooks/useRouteScope';
+import './BAINodeNotificationItem.css';
 import SessionActionButtons, {
   PrimaryAppOption,
 } from './ComputeSessionNodeItems/SessionActionButtons';
 import SessionStatusBadge from './ComputeSessionNodeItems/SessionStatusBadge';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFlex,
   BAILink,
@@ -86,6 +87,7 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
     node && (
       <>
         <BAINotificationItem
+          className="bai-node-notification-item"
           title={
             <BAIText ellipsis>
               {t('general.Session')}:&nbsp;

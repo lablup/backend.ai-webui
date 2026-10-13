@@ -25,7 +25,7 @@ import type {
   PersistedPanel,
   ResourceKey,
 } from './types';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIBoardItemErrorBoundary,
   BAIFlex,

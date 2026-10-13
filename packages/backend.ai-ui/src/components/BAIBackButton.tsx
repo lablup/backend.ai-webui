@@ -14,7 +14,7 @@
  The public prop surface (`to`, `options`) is unchanged.
 */
 import { useBAIi18n } from '../hooks/useBAIi18n';
-import { IconButton } from '@astryxdesign/core/IconButton';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import { ArrowLeft } from 'lucide-react';
 import { NavigateOptions, To, useNavigate } from 'react-router-dom';
 

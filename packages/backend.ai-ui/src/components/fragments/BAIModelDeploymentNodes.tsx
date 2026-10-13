@@ -20,9 +20,9 @@ import {
 } from '../Table';
 import BAIDeploymentOwnerInfo from './BAIDeploymentOwnerInfo';
 import BAIDeploymentTagTokens from './BAIDeploymentTagTokens';
-import { Link } from '@astryxdesign/core/Link';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Link } from '@lablup/ui-common/Link';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { CircleHelp } from 'lucide-react';
@@ -44,7 +44,6 @@ export type ModelDeploymentNodeInList = NonNullable<
 export const availableDeploymentSorterKeys = [
   'name',
   'createdAt',
-  'domain',
   'project',
   'resourceGroup',
   'tag',
@@ -70,12 +69,6 @@ export interface BAIModelDeploymentNodesProps extends Omit<
     baseColumns: BAIColumnsType<ModelDeploymentNodeInList>,
   ) => BAIColumnsType<ModelDeploymentNodeInList>;
   disableSorter?: boolean;
-  /**
-   * Which columns may be sorted. Defaults to every key the current server enum
-   * has; a caller on an older manager narrows it (`DOMAIN`/`PROJECT`/
-   * `RESOURCE_GROUP`/`TAG` only exist from 26.4.3).
-   */
-  sortableKeys?: ReadonlyArray<DeploymentSorterKey>;
   onChangeOrder?: (
     order: (typeof availableDeploymentSorterValues)[number] | null,
   ) => void;
@@ -85,14 +78,14 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
   deploymentsFrgmt,
   customizeColumns,
   disableSorter,
-  sortableKeys = availableDeploymentSorterKeys,
   onChangeOrder,
   ...tableProps
 }) => {
   'use memo';
   const { t } = useBAIi18n();
 
-  const isEnableSorter = (key: string) => _.includes(sortableKeys, key);
+  const isEnableSorter = (key: string) =>
+    _.includes(availableDeploymentSorterKeys, key);
 
   const deployments = useFragment<BAIModelDeploymentNodesFragment$key>(
     graphql`
@@ -109,7 +102,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           createdAt
           updatedAt
           resourceGroupName
-          projectV2 @since(version: "26.4.3") {
+          projectV2 {
             basicInfo {
               name
             }
@@ -131,7 +124,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         runningReplicas: replicas(filter: { status: { equals: RUNNING } }) {
           count
         }
-        currentRevision @since(version: "26.4.3") {
+        currentRevision {
           id
           revisionNumber
           modelMountConfig {

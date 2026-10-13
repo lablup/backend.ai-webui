@@ -7,23 +7,23 @@ import { useResourceSlotsDetails } from '../hooks/backendai';
 import {
   SegmentedControl,
   SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
-import { Heading } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+} from '@lablup/ui-common/SegmentedControl';
+import { Heading } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
   BAIBoardItemTitle,
   BAIDoubleBadge,
   BAIFetchKeyButton,
   BAIFlex,
   BAIFlexProps,
+  BAISkeleton,
   ResourceStatistics,
   convertToNumber,
   processMemoryValue,
   useControllableValue,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { useTransition, ReactNode } from 'react';
+import { ReactNode, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
 
@@ -63,21 +63,20 @@ const AgentStats: React.FC<AgentStatsProps> = ({
         schedulableAgentFilter: { type: "String!" }
       )
       @refetchable(queryName: "AgentStatsRefetchQuery") {
-        agentStats @since(version: "25.15.0") {
+        agentStats {
           totalResource {
             free
             used
             capacity
           }
         }
-        aliveAgents: agent_nodes(filter: $aliveAgentFilter, first: 1)
-          @since(version: "24.12.0") {
+        aliveAgents: agent_nodes(filter: $aliveAgentFilter, first: 1) {
           count
         }
         schedulableAgents: agent_nodes(
           filter: $schedulableAgentFilter
           first: 1
-        ) @since(version: "24.12.0") {
+        ) {
           count
         }
       }

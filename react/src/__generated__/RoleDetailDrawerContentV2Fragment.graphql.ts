@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c355ab9ba436ecf6a02f79336546d71d>>
+ * @generated SignedSource<<28d1ca6b868312b7eaeacf0a3f7aa53c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,19 +18,21 @@ export type RoleDetailDrawerContentV2Fragment$data = {
   readonly description: string | null | undefined;
   readonly id: string;
   readonly name: string;
+  readonly rolePreset: {
+    readonly id: string;
+  } | null | undefined;
   readonly scope: {
     readonly basicInfo?: {
       readonly email?: string;
       readonly name: string;
     };
     readonly metadata?: {
-      readonly name?: string;
-      readonly sessionName: string;
+      readonly name: string;
+      readonly sessionName?: string;
     };
     readonly name?: string;
     readonly project?: string | null | undefined;
     readonly registryName?: string;
-    readonly vfolderName?: string | null | undefined;
   } | null | undefined;
   readonly scopeId: string;
   readonly scopeType: string;
@@ -50,11 +52,18 @@ var v0 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v1 = [
-  (v0/*: any*/)
+v2 = [
+  (v1/*: any*/)
 ];
 return {
   "argumentDefinitions": [],
@@ -62,14 +71,8 @@ return {
   "metadata": null,
   "name": "RoleDetailDrawerContentV2Fragment",
   "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "id",
-      "storageKey": null
-    },
     (v0/*: any*/),
+    (v1/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -144,7 +147,7 @@ return {
               "kind": "LinkedField",
               "name": "basicInfo",
               "plural": false,
-              "selections": (v1/*: any*/),
+              "selections": (v2/*: any*/),
               "storageKey": null
             }
           ],
@@ -161,7 +164,7 @@ return {
               "kind": "LinkedField",
               "name": "basicInfo",
               "plural": false,
-              "selections": (v1/*: any*/),
+              "selections": (v2/*: any*/),
               "storageKey": null
             }
           ],
@@ -197,14 +200,17 @@ return {
           "kind": "InlineFragment",
           "selections": [
             {
-              "alias": "vfolderName",
+              "alias": null,
               "args": null,
-              "kind": "ScalarField",
-              "name": "name",
+              "concreteType": "VFolderMetadataInfo",
+              "kind": "LinkedField",
+              "name": "metadata",
+              "plural": false,
+              "selections": (v2/*: any*/),
               "storageKey": null
             }
           ],
-          "type": "VirtualFolderNode",
+          "type": "VFolder",
           "abstractKey": null
         },
         {
@@ -242,7 +248,7 @@ return {
               "kind": "LinkedField",
               "name": "metadata",
               "plural": false,
-              "selections": (v1/*: any*/),
+              "selections": (v2/*: any*/),
               "storageKey": null
             }
           ],
@@ -251,7 +257,7 @@ return {
         },
         {
           "kind": "InlineFragment",
-          "selections": (v1/*: any*/),
+          "selections": (v2/*: any*/),
           "type": "ResourceGroup",
           "abstractKey": null
         },
@@ -280,6 +286,18 @@ return {
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
+      "concreteType": "RolePreset",
+      "kind": "LinkedField",
+      "name": "rolePreset",
+      "plural": false,
+      "selections": [
+        (v0/*: any*/)
+      ],
+      "storageKey": null
+    },
+    {
       "args": null,
       "kind": "FragmentSpread",
       "name": "RoleAssignmentTabFragment"
@@ -295,6 +313,6 @@ return {
 };
 })();
 
-(node as any).hash = "05d81dabadedf0ac41eb34cd9d8c4fdc";
+(node as any).hash = "3c12e7f6ca8b07c991a0257b4c246d2d";
 
 export default node;

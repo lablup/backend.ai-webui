@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import { BAIMetadataList, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 

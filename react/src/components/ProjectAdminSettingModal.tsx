@@ -9,8 +9,8 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIButton,
   BAIFlex,
@@ -194,9 +194,8 @@ const ProjectAdminSettingModal = ({
   const { upsertNotification } = useSetBAINotification();
   const webuiNavigate = useWebUINavigate();
   const baiClient = useSuspendedBackendaiClient();
-  const matchesByScopeAdminPermission = baiClient.supports(
-    'rbac-single-scope-role',
-  );
+  const matchesByScopeAdminPermission =
+    baiClient.isManagerVersionCompatibleWith('26.9.0a4');
   const formRef = useRef<FormInstance<{ userIds: string[] }>>(null);
 
   // Keep the previous result visible while a reload is in flight so the table

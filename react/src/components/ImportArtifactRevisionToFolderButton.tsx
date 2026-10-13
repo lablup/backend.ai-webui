@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ImportArtifactRevisionToFolderButtonFragment$key } from '../__generated__/ImportArtifactRevisionToFolderButtonFragment.graphql';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIButton, BAIButtonProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { FolderInput } from 'lucide-react';

@@ -62,7 +62,7 @@ Backend.AIは、計算セッションが削除される際にフォルダー内�
 `user2-vfolder` の配下に `test_file` を作成します。
 ファイルの内容は \"file inside user2-vfolder\" とします。
 
-![](../images/mounted_folders_in_terminal.png)
+![=682px](../images/mounted_folders_in_terminal.png)
 
 `user2-vfolder` に対して `ls` コマンドを実行すると、ファイルが正常に作成されたことを確認できます。
 ファイルの内容は `cat` コマンドで確認できます。

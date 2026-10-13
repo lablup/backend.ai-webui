@@ -59,13 +59,13 @@ export const getCardItemByCardTitle = (page: Page, title: string) => {
  * engine is self-hosted, and no screen renders antd's form DOM — so the antd
  * half of each selector could never match again and is gone.
  *
- * Attribute set: `packages/backend.ai-ui/src/form-engine/FormItemVisual.tsx`.
+ * Class set: `FormItemVisual` in `@lablup/ui-common/Form`.
  */
 export const getFormItemControlByLabel = (page: Page, label: string) => {
   return page
-    .locator('[data-bai-form-item]')
+    .locator('.uic-form-item')
     .filter({
-      has: page.locator('[data-bai-form-item-label]', { hasText: label }),
+      has: page.locator('.uic-form-item__label', { hasText: label }),
     })
-    .locator('[data-bai-form-item-control-input]');
+    .locator('.uic-form-item__control-input');
 };

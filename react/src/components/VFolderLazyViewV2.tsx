@@ -5,8 +5,8 @@
 import { VFolderLazyViewV2Query } from '../__generated__/VFolderLazyViewV2Query.graphql';
 import { useWebUINavigate } from '../hooks';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
-import { Link } from '@astryxdesign/core/Link';
-import { Text } from '@astryxdesign/core/Text';
+import { Link } from '@lablup/ui-common/Link';
+import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex, toLocalId } from 'backend.ai-ui';
 import React from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';

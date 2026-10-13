@@ -4,11 +4,11 @@
  */
 import { useActiveErrorBoundaryControl } from '../hooks/useActiveErrorBoundary';
 import { isLoginSessionExpiredState } from './LoginSessionExtendButton';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import type { GraphQLFormattedError } from 'graphql';
 import { useAtomValue } from 'jotai';
@@ -102,24 +102,24 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
           isExpiredLoginSession ||
           (error as Error)?.name === 'AuthorizationError' ||
           (error as any)?.statusCode === 401;
+        // Set by RelayEnvironment's fetchFn only for a disallowed-client-IP 401.
+        const ipBlockedMessage =
+          (error as Error)?.name === 'AuthorizationError'
+            ? (error as { description?: string }).description
+            : undefined;
         return (
           <BAIFlex
             style={{ margin: 'auto', ...style }}
             justify="center"
             align="center"
           >
-            {/* PILOT-DECISION: antd `Result status="warning"` → Astryx
-                `EmptyState` (MAPPING §"Also COMPOSITION": `subTitle`→
-                `description`, `extra`→`actions`, `status="warning"`→ an icon
-                you choose). antd drew a warning illustration; the Astryx
-                equivalent is an explicit `icon`, so the lucide
-                `TriangleAlertIcon` stands in. */}
             <EmptyState
               icon={<TriangleAlertIcon size={40} />}
               title={
-                isLoginSessionExpiredError
+                ipBlockedMessage ||
+                (isLoginSessionExpiredError
                   ? t('errorBoundary.ExpiredLoginSessionTitle')
-                  : t('errorBoundary.Title')
+                  : t('errorBoundary.Title'))
               }
               actions={
                 <BAIFlex direction="column" gap="md">

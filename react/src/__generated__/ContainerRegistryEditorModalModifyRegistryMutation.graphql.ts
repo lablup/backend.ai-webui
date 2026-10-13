@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<54f7f6aa371368bda94bbe52021cf68f>>
+ * @generated SignedSource<<d853ac23f61992e5623cb20cd3642b7e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -35,9 +35,12 @@ export type ContainerRegistryEditorModalModifyRegistryMutation$data = {
       readonly allowed_groups: {
         readonly edges: ReadonlyArray<{
           readonly node: {
+            readonly domain_name: string | null | undefined;
             readonly id: string;
+            readonly is_active: boolean | null | undefined;
             readonly name: string | null | undefined;
             readonly row_id: string | null | undefined;
+            readonly type: string | null | undefined;
           } | null | undefined;
         } | null | undefined>;
       } | null | undefined;
@@ -95,7 +98,14 @@ v3 = {
   "name": "name",
   "storageKey": null
 },
-v4 = [
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "type",
+  "storageKey": null
+},
+v5 = [
   {
     "alias": null,
     "args": [
@@ -140,13 +150,7 @@ v4 = [
             "name": "url",
             "storageKey": null
           },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "type",
-            "storageKey": null
-          },
+          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -191,7 +195,13 @@ v4 = [
           },
           {
             "alias": null,
-            "args": null,
+            "args": [
+              {
+                "kind": "Literal",
+                "name": "first",
+                "value": 100
+              }
+            ],
             "concreteType": "GroupConnection",
             "kind": "LinkedField",
             "name": "allowed_groups",
@@ -215,7 +225,22 @@ v4 = [
                     "selections": [
                       (v1/*: any*/),
                       (v2/*: any*/),
-                      (v3/*: any*/)
+                      (v3/*: any*/),
+                      (v4/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "is_active",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "domain_name",
+                        "storageKey": null
+                      }
                     ],
                     "storageKey": null
                   }
@@ -223,7 +248,7 @@ v4 = [
                 "storageKey": null
               }
             ],
-            "storageKey": null
+            "storageKey": "allowed_groups(first:100)"
           }
         ],
         "storageKey": null
@@ -238,7 +263,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "ContainerRegistryEditorModalModifyRegistryMutation",
-    "selections": (v4/*: any*/),
+    "selections": (v5/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -247,19 +272,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "ContainerRegistryEditorModalModifyRegistryMutation",
-    "selections": (v4/*: any*/)
+    "selections": (v5/*: any*/)
   },
   "params": {
-    "cacheID": "83c56653a320ed514c8f0ba237d6854c",
+    "cacheID": "398d9a16bb559920df32765e7b1e918f",
     "id": null,
     "metadata": {},
     "name": "ContainerRegistryEditorModalModifyRegistryMutation",
     "operationKind": "mutation",
-    "text": "mutation ContainerRegistryEditorModalModifyRegistryMutation(\n  $id: String!\n  $props: ModifyContainerRegistryNodeInputV2!\n) {\n  modify_container_registry_node_v2(id: $id, props: $props) {\n    container_registry {\n      id\n      row_id\n      name\n      registry_name\n      url\n      type\n      project\n      username\n      password\n      ssl_verify\n      extra @since(version: \"24.09.3\")\n      is_global @since(version: \"24.09.0\")\n      allowed_groups @since(version: \"25.3.0\") {\n        edges {\n          node {\n            id\n            row_id\n            name\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "mutation ContainerRegistryEditorModalModifyRegistryMutation(\n  $id: String!\n  $props: ModifyContainerRegistryNodeInputV2!\n) {\n  modify_container_registry_node_v2(id: $id, props: $props) {\n    container_registry {\n      id\n      row_id\n      name\n      registry_name\n      url\n      type\n      project\n      username\n      password\n      ssl_verify\n      extra\n      is_global\n      allowed_groups(first: 100) {\n        edges {\n          node {\n            id\n            row_id\n            name\n            type\n            is_active\n            domain_name\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b83016ed32b96f0bacfd0663c8a6120e";
+(node as any).hash = "6654c19136120d38b5d0e7ea287bc22d";
 
 export default node;

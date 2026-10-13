@@ -66,7 +66,7 @@ Hugging Faceインポートを有効にすると、**Hugging Face モデルを�
 
 ### ノートブック取り込み
 
-![](../images/start_from_url_notebook.png)
+![=800px](../images/start_from_url_notebook.png)
 
 1. **ノートブックのURL**フィールドにJupyter Notebook URL（`.ipynb`で終わる）を
    入力します
@@ -101,7 +101,7 @@ Markdownのバッジコードをコピーして、プロジェクトのドキュ
 
 ### GitHubリポジトリをインポートする
 
-![](../images/start_from_url_github.png)
+![=800px](../images/start_from_url_github.png)
 
 1. **GitHubのURL**フィールドに有効なGitHubリポジトリURLを入力します
 2. リポジトリを保存する**ストレージホスト**を選択します
@@ -114,7 +114,7 @@ Markdownのバッジコードをコピーして、プロジェクトのドキュ
 
 ### GitLabリポジトリ取り込み
 
-![](../images/start_from_url_gitlab.png)
+![=800px](../images/start_from_url_gitlab.png)
 
 1. **GitLabアドレス**フィールドに有効なGitLabリポジトリURLを入力します
 2. 必要に応じて**GitLab ブランチ名**を指定します（デフォルト: `master`）
@@ -135,7 +135,7 @@ Markdownのバッジコードをコピーして、プロジェクトのドキュ
 将来のアップデートで変更または削除される可能性があります。
 :::
 
-![](../images/start_from_url_huggingface.png)
+![=800px](../images/start_from_url_huggingface.png)
 
 1. **Hugging Face モデルの URL または ID**フィールドにモデルを入力します。
    `https://huggingface.co/openai/gpt-oss-20b`のようなモデルページのURLと、

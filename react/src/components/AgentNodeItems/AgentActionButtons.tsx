@@ -7,11 +7,11 @@ import AgentLifeCycleControlModal, {
   AgentLifeCycleType,
 } from '../AgentLifeCycleControlModal';
 import AgentSettingModal from '../AgentSettingModal';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { useTheme } from '@astryxdesign/core/theme';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAITerminateIcon } from 'backend.ai-ui';
-import { CirclePlay, Settings, RefreshCw } from 'lucide-react';
+import { CirclePlay, RefreshCw, Settings } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';

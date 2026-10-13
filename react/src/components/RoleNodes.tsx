@@ -7,13 +7,14 @@ import {
   RoleNodesFragment$key,
 } from '../__generated__/RoleNodesFragment.graphql';
 import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
+import { resolveRBACScopeName } from '../helper/rbacScopeName';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import { Badge } from '@astryxdesign/core/Badge';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
+import { Badge } from '@lablup/ui-common/Badge';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAIColumnType,
   BAIDoubleToken,
@@ -67,8 +68,8 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
   'use memo';
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  // Auto-assign is only supported on managers >= 26.4.4.
-  const supportsAutoAssign = baiClient.supports('role-auto-assign');
+  const supportsRolePreset =
+    baiClient.isManagerVersionCompatibleWith('26.9.0rc3');
   const [hiddenColumnKeys, setHiddenColumnKeys] =
     useHiddenColumnKeysSetting('RoleList');
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
@@ -82,7 +83,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         description
         source
         status
-        autoAssign @since(version: "26.4.4")
+        autoAssign
         createdAt
         updatedAt
         scopes(first: 3) @deprecatedSince(version: "26.9.0a4") {
@@ -113,6 +114,10 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         }
         scopeType @since(version: "26.9.0a4")
         scopeId @since(version: "26.9.0a4")
+        rolePresetId @since(version: "26.9.0rc3")
+        rolePreset @since(version: "26.9.0rc3") {
+          name
+        }
         scope @since(version: "26.9.0a4") {
           ... on ProjectV2 {
             basicInfo {
@@ -128,6 +133,28 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
             basicInfo {
               userEmail: email
             }
+          }
+          ... on VFolder {
+            metadata {
+              name
+            }
+          }
+          ... on SessionV2 {
+            metadata {
+              sessionName: name
+            }
+          }
+          ... on ModelDeployment {
+            metadata {
+              name
+            }
+          }
+          ... on ResourceGroup {
+            name
+          }
+          ... on ContainerRegistryV2 {
+            registryName
+            project
           }
         }
       }
@@ -194,11 +221,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
           defaultValue: scopeType,
         });
         const scopeName =
-          scope?.basicInfo?.projectName ??
-          scope?.basicInfo?.domainName ??
-          scope?.basicInfo?.userEmail ??
-          scopeId ??
-          '-';
+          resolveRBACScopeName({ scopeType, scope }) ?? scopeId ?? '-';
         return (
           <BAIFlex gap="xxs" wrap="wrap" align="center">
             <BAIDoubleToken
@@ -237,6 +260,17 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
       },
     },
     {
+      key: 'autoAssign',
+      title: t('rbac.AutoAssign'),
+      dataIndex: 'autoAssign',
+      render: (autoAssign: boolean) => (
+        <Token
+          color={tokenColorForTagColor(autoAssign ? 'green' : 'default')}
+          label={autoAssign ? t('general.Active') : t('general.Inactive')}
+        />
+      ),
+    },
+    {
       key: 'source',
       title: t('rbac.Source'),
       dataIndex: 'source',
@@ -249,16 +283,22 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         );
       },
     },
-    supportsAutoAssign && {
-      key: 'autoAssign',
-      title: t('rbac.AutoAssign'),
-      dataIndex: 'autoAssign',
-      render: (autoAssign: boolean) => (
-        <Token
-          color={tokenColorForTagColor(autoAssign ? 'green' : 'default')}
-          label={autoAssign ? t('general.Active') : t('general.Inactive')}
-        />
-      ),
+    supportsRolePreset && {
+      key: 'rolePreset',
+      title: t('rbac.RolePreset'),
+      render: (_, record: RoleNodeInList) => {
+        if (!record.rolePresetId) return '-';
+        return (
+          <BAIFlex gap="xxs" align="center" wrap="nowrap">
+            {record.rolePreset?.name && <Text>{record.rolePreset.name}</Text>}
+            <BAIFlex align="center" wrap="nowrap">
+              <Text>(</Text>
+              <BAIId uuid={record.rolePresetId} />
+              <Text>)</Text>
+            </BAIFlex>
+          </BAIFlex>
+        );
+      },
     },
     {
       key: 'createdAt',

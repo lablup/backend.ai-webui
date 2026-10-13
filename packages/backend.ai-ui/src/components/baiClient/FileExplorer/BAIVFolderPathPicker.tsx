@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { BAIDirectoryPickerModalQuery } from '../../../__generated__/BAIDirectoryPickerModalQuery.graphql';
-import { toGlobalId } from '../../../helper';
 import { useControllableValue } from '../../../hooks';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import BAIUnmountAfterClose from '../../BAIUnmountAfterClose';
@@ -13,8 +12,8 @@ import BAIDirectoryPickerModal, {
 import {
   ComplexSelector,
   type ComplexSelectorSize,
-} from '@astryxdesign/core/ComplexSelector';
-import type { SizeValue } from '@astryxdesign/core/utils';
+} from '@lablup/ui-common/ComplexSelector';
+import type { SizeValue } from '@lablup/ui-common/utils';
 import {
   useEffectEvent,
   useLayoutEffect,
@@ -123,7 +122,7 @@ const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
     // `loading` (isPickerPending) instead of a blank Suspense gap.
     startPickerTransition(() => {
       loadPickerQuery(
-        { vfolderGlobalId: toGlobalId('VirtualFolderNode', vfolderUuid) },
+        { vfolderId: vfolderUuid },
         { fetchPolicy: 'store-and-network' },
       );
       setIsPickerOpen(true);
@@ -154,7 +153,7 @@ const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
             : (placeholder ?? t('comp:VFolderPathPicker.ClickToSelectPath'))
         }
         isDisabled={disabled}
-        // `hasClear` / `onClear`: react/patches/@astryxdesign__core@0.6.2.patch
+        // `hasClear` / `onClear`: ui-common's ComplexSelector fork
         // (upstream: https://github.com/facebook/astryx/pull/6362)
         hasClear={allowClear}
         onClear={() => setSelectedSubPath(undefined)}

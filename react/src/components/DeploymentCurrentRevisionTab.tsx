@@ -6,10 +6,10 @@ import type { DeploymentCurrentRevisionTab_deployment$key } from '../__generated
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import DeploymentRevisionDetail from './DeploymentRevisionDetail';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIUnmountAfterClose, toLocalId } from 'backend.ai-ui';
 import { LoaderCircle } from 'lucide-react';
 import React, { useState } from 'react';
@@ -41,12 +41,12 @@ const DeploymentCurrentRevisionTab: React.FC<
     graphql`
       fragment DeploymentCurrentRevisionTab_deployment on ModelDeployment {
         id
-        currentRevision @since(version: "26.4.3") {
+        currentRevision {
           id
           revisionNumber
           ...DeploymentRevisionDetail_revision
         }
-        deployingRevision @since(version: "26.4.3") {
+        deployingRevision {
           id
           revisionNumber
           ...DeploymentRevisionDetail_revision

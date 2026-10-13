@@ -19,8 +19,8 @@
    wrapper surfaces it so a future call site must name the control.
 */
 import useControllableState_deprecated from '../hooks/useControllableState';
-import { Slider } from '@astryxdesign/core/Slider';
-import type { SliderSingleProps } from '@astryxdesign/core/Slider';
+import { Slider } from '@lablup/ui-common/Slider';
+import type { SliderSingleProps } from '@lablup/ui-common/Slider';
 import * as _ from 'lodash-es';
 import React from 'react';
 

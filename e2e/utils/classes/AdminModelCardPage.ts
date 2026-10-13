@@ -246,7 +246,7 @@ export class AdminModelCardPage {
       name: 'Change Project',
     });
     const plusButton = modal
-      .locator('[data-bai-form-item]')
+      .locator('.uic-form-item')
       .filter({ hasText: 'Model Storage Folder' })
       .getByRole('button', { name: 'Action', exact: true });
 
@@ -310,7 +310,7 @@ export class AdminModelCardPage {
       .toBeVisible({ timeout: 5000 })
       .catch(() => {});
     await folderDialog
-      .locator('[data-bai-form-item]')
+      .locator('.uic-form-item')
       .filter({ hasText: 'Folder name' })
       .getByRole('textbox')
       .fill(folderName);
@@ -325,7 +325,7 @@ export class AdminModelCardPage {
     // re-open the VFolder dropdown and explicitly select the newly-created folder by name.
     // This ensures the form field has the correct VirtualFolderNode GlobalID value.
     const vfolderFormItem = modal
-      .locator('[data-bai-form-item]')
+      .locator('.uic-form-item')
       .filter({ hasText: 'Model Storage Folder' });
     // The picker is Astryx `ComplexSelector`: its trigger is role="button"
     // (named after the field label via `aria-labelledby`), and opening it
@@ -390,7 +390,7 @@ export class AdminModelCardPage {
       // (named after the field label) opens a nested role="dialog" holding a
       // search box and a role="listbox" of role="option" rows.
       const vfolderFormItem = modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Model Storage Folder' });
       const vfolderTrigger = vfolderFormItem.getByRole('button', {
         name: 'Model Storage Folder',
@@ -424,63 +424,63 @@ export class AdminModelCardPage {
       // In antd v6, Form.Item tooltip icons contribute to the accessible name.
       // Use the form item container to locate the textbox by label text instead.
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Author' })
         .getByRole('textbox')
         .fill(fields.author);
     }
     if (fields.title) {
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Title' })
         .getByRole('textbox')
         .fill(fields.title);
     }
     if (fields.modelVersion) {
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Model Version' })
         .getByRole('textbox')
         .fill(fields.modelVersion);
     }
     if (fields.description) {
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Description' })
         .getByRole('textbox')
         .fill(fields.description);
     }
     if (fields.task) {
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Task' })
         .getByRole('textbox')
         .fill(fields.task);
     }
     if (fields.category) {
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Category' })
         .getByRole('textbox')
         .fill(fields.category);
     }
     if (fields.architecture) {
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Architecture' })
         .getByRole('textbox')
         .fill(fields.architecture);
     }
     if (fields.license) {
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'License' })
         .getByRole('textbox')
         .fill(fields.license);
     }
     if (fields.readme) {
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'README.md' })
         .getByRole('textbox')
         .fill(fields.readme);
@@ -490,7 +490,7 @@ export class AdminModelCardPage {
     // Access Level is a plain Astryx `Selector` (role="combobox" trigger,
     // role="listbox"/"option" popup) — unlike the VFolder `ComplexSelector`.
     await modal
-      .locator('[data-bai-form-item]')
+      .locator('.uic-form-item')
       .filter({ hasText: 'Access Level' })
       .getByRole('combobox')
       .click();

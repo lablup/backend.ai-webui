@@ -9,19 +9,19 @@ import { toProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import {
-  vFolderAliasNameRegExp,
   DEFAULT_ALIAS_BASE_PATH,
+  vFolderAliasNameRegExp,
 } from './VFolderTable';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
-import { useTheme } from '@astryxdesign/core/theme';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
   BAIFlex,
   BAIMetadataList,
+  BAISkeleton,
   BAIVFolderSelect,
   BAIVFolderSelectRef,
   toLocalId,
@@ -30,10 +30,10 @@ import * as _ from 'lodash-es';
 import { FolderOpenIcon, PlusIcon, RefreshCwIcon, XIcon } from 'lucide-react';
 import React, {
   Suspense,
-  useState,
   startTransition,
-  useRef,
   useCallback,
+  useRef,
+  useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
 

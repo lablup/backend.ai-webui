@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3f5ec7a88458bdb78dc9ce2c530da9d7>>
+ * @generated SignedSource<<f7db515766540257204490cadc16c755>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,7 +14,6 @@ export type BAIProjectSettingModalFragment$data = {
   readonly allowed_vfolder_hosts: string | null | undefined;
   readonly container_registry: string | null | undefined;
   readonly description: string | null | undefined;
-  readonly domain_name: string | null | undefined;
   readonly id: string;
   readonly integration_id: string | null | undefined;
   readonly is_active: boolean | null | undefined;
@@ -76,13 +75,6 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "domain_name",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
       "name": "total_resource_slots",
       "storageKey": null
     },
@@ -133,6 +125,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "bb5590480461b2e800d750b3eb70e124";
+(node as any).hash = "ea7429ecb2f341f517a3d89df897629b";
 
 export default node;

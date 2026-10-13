@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<77f3254cbdbbc8209dfe9bb0d6381001>>
+ * @generated SignedSource<<ebf29b00b5a56f0e27b7bb1b4715fefa>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -333,7 +333,13 @@ v4 = [
           },
           {
             "alias": null,
-            "args": null,
+            "args": [
+              {
+                "kind": "Literal",
+                "name": "limit",
+                "value": 1000
+              }
+            ],
             "concreteType": "ProjectV2Connection",
             "kind": "LinkedField",
             "name": "projects",
@@ -388,7 +394,7 @@ v4 = [
                 "storageKey": null
               }
             ],
-            "storageKey": null
+            "storageKey": "projects(limit:1000)"
           },
           {
             "alias": null,
@@ -448,16 +454,16 @@ return {
     "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "9a61cba94ec3e26ebb6c12cfcf6ef361",
+    "cacheID": "796208dc31d0c14ff837ee06e8d3b5bd",
     "id": null,
     "metadata": {},
     "name": "UserSettingModalUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation UserSettingModalUpdateMutation(\n  $userId: UUID!\n  $input: UpdateUserV2Input!\n  $isNotSupportTotp: Boolean!\n) {\n  adminUpdateUserV2(userId: $userId, input: $input) {\n    user {\n      id\n      basicInfo {\n        email\n        fullName\n        username\n        description\n        integrationName\n      }\n      organization {\n        domainName\n        role\n        resourcePolicy\n        mainAccessKey\n      }\n      security {\n        totpActivated @skipOnClient(if: $isNotSupportTotp)\n        totpActivatedAt @skipOnClient(if: $isNotSupportTotp)\n        sudoSessionEnabled\n        allowedClientIp\n      }\n      status {\n        status\n        statusInfo\n        needPasswordChange\n      }\n      container {\n        containerUid\n        containerMainGid\n        containerGids\n      }\n      projects {\n        edges {\n          node {\n            id\n            basicInfo {\n              name\n              type\n            }\n          }\n        }\n      }\n      timestamps {\n        createdAt\n        modifiedAt\n      }\n    }\n  }\n}\n"
+    "text": "mutation UserSettingModalUpdateMutation(\n  $userId: UUID!\n  $input: UpdateUserV2Input!\n  $isNotSupportTotp: Boolean!\n) {\n  adminUpdateUserV2(userId: $userId, input: $input) {\n    user {\n      id\n      basicInfo {\n        email\n        fullName\n        username\n        description\n        integrationName\n      }\n      organization {\n        domainName\n        role\n        resourcePolicy\n        mainAccessKey\n      }\n      security {\n        totpActivated @skipOnClient(if: $isNotSupportTotp)\n        totpActivatedAt @skipOnClient(if: $isNotSupportTotp)\n        sudoSessionEnabled\n        allowedClientIp\n      }\n      status {\n        status\n        statusInfo\n        needPasswordChange\n      }\n      container {\n        containerUid\n        containerMainGid\n        containerGids\n      }\n      projects(limit: 1000) {\n        edges {\n          node {\n            id\n            basicInfo {\n              name\n              type\n            }\n          }\n        }\n      }\n      timestamps {\n        createdAt\n        modifiedAt\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4745a71054dfb21be64ae8202fc3597b";
+(node as any).hash = "d3a19df7e24ec1e7aed3cdc8f57f91b1";
 
 export default node;

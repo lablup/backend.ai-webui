@@ -19,22 +19,22 @@ import ModelSelect from './ModelSelect';
 import {
   DropdownMenu,
   type DropdownMenuOption,
-} from '@astryxdesign/core/DropdownMenu';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Popover } from '@astryxdesign/core/Popover';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useTheme } from '@astryxdesign/core/theme';
-import { filterOutEmpty, BAIFlex, toLocalId } from 'backend.ai-ui';
+} from '@lablup/ui-common/DropdownMenu';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Popover } from '@lablup/ui-common/Popover';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
+import { BAIFlex, filterOutEmpty, toLocalId } from 'backend.ai-ui';
 import { isEmpty } from 'lodash-es';
 import {
-  X,
-  SlidersHorizontal,
-  EllipsisVertical,
-  ScaleIcon,
-  EraserIcon,
-  ToggleRightIcon,
-  ToggleLeftIcon,
   ArrowRightLeftIcon,
+  EllipsisVertical,
+  EraserIcon,
+  ScaleIcon,
+  SlidersHorizontal,
+  ToggleLeftIcon,
+  ToggleRightIcon,
+  X,
 } from 'lucide-react';
 import React, { startTransition, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';

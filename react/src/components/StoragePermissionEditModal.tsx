@@ -7,14 +7,11 @@ import {
   PERMISSION_DISPLAY_MAP,
   hasMountWithoutFileOps,
 } from '../helper/storageHostPermission';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import {
-  CheckboxList,
-  CheckboxListItem,
-} from '@astryxdesign/core/CheckboxList';
-import { Divider } from '@astryxdesign/core/Divider';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { CheckboxList, CheckboxListItem } from '@lablup/ui-common/CheckboxList';
+import { Divider } from '@lablup/ui-common/Divider';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { BAIFlex, BAIModal, type BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useState } from 'react';

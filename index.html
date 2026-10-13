@@ -24,7 +24,7 @@
        packages/backend.ai-ui/.storybook/astryx.css;
        scripts/migration-gates/layer-order-gate.mjs fails on drift. -->
   <style nonce="{{nonce}}">
-    @layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
+    @layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;
   </style>
   <link rel="icon" href="manifest/favicon.ico">
   <link rel="apple-touch-icon" sizes="256x256" href="manifest/backend-ai.iconset/icon_256x256@2x.png">
@@ -97,8 +97,8 @@
     }
     globalThis.enableSW = true;
 
-    globalThis.packageVersion = "26.9.0-alpha.0";
-    globalThis.buildNumber = "8646";
+    globalThis.packageVersion = "26.10.0-alpha.0";
+    globalThis.buildNumber = "9246";
     globalThis.baiNonce = "{{nonce}}";
 
     // DO NOT CHANGE BELOW LINE

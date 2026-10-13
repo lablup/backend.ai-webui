@@ -36,28 +36,27 @@
     `e.target.checked`).
 */
 import { FormItemInputContext } from '../form-engine';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { MultiSelector } from '@astryxdesign/core/MultiSelector';
-import { NumberInput } from '@astryxdesign/core/NumberInput';
-import { RadioList, RadioListItem } from '@astryxdesign/core/RadioList';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { MultiSelector } from '@lablup/ui-common/MultiSelector';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
+import { RadioList, RadioListItem } from '@lablup/ui-common/RadioList';
 import {
   SegmentedControl,
   SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
-import type { SelectorOptionType } from '@astryxdesign/core/Selector';
-import { Selector } from '@astryxdesign/core/Selector';
-import { Switch } from '@astryxdesign/core/Switch';
-import { TextArea } from '@astryxdesign/core/TextArea';
-import type { TextInputProps } from '@astryxdesign/core/TextInput';
-import { TextInput } from '@astryxdesign/core/TextInput';
-import { Tokenizer } from '@astryxdesign/core/Tokenizer';
-import type {
-  SearchableItem,
-  SearchSource,
-} from '@astryxdesign/core/Typeahead';
-import type { SizeValue } from '@astryxdesign/core/utils';
+} from '@lablup/ui-common/SegmentedControl';
+import type { SelectorOptionType } from '@lablup/ui-common/Selector';
+import { Selector } from '@lablup/ui-common/Selector';
+import { Switch } from '@lablup/ui-common/Switch';
+import { TextArea } from '@lablup/ui-common/TextArea';
+import type { TextInputProps } from '@lablup/ui-common/TextInput';
+import { TextInput } from '@lablup/ui-common/TextInput';
+import { Tokenizer } from '@lablup/ui-common/Tokenizer';
+import { TypeaheadItem } from '@lablup/ui-common/Typeahead';
+import type { SearchableItem, SearchSource } from '@lablup/ui-common/Typeahead';
+import type { SizeValue } from '@lablup/ui-common/utils';
 import * as _ from 'lodash-es';
 import React, { useEffectEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 
 /**
  * RESTORED (input-parity pass) — **the control paints the field's validation
@@ -456,7 +455,7 @@ export const AstryxFormSegmented: React.FC<AstryxFormSegmentedProps> = ({
       onChange={(next) => onChange?.(next)}
       label={label}
       isDisabled={disabled}
-      // `Form.Item`'s `data-bai-field-id` rides through to the root, which is
+      // `Form.Item`'s `data-uic-field-id` rides through to the root, which is
       // what lets scroll-to-first-error find this field.
       {...(rest as object)}
     >
@@ -886,6 +885,7 @@ export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
   ...rest
 }) => {
   'use memo';
+  const { t } = useTranslation();
   const statusProps = useFormControlStatusProps();
   const rootRef = React.useRef<HTMLDivElement>(null);
   const splitOnSeparators = (label: string): Array<string> => {
@@ -913,7 +913,7 @@ export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
    * tokenSeparators={[',', ' ']}`, which cut a token on the KEYSTROKE.
    *
    * WHY THERE IS NO PROP: Astryx's `Tokenizer` has no delimiter API —
-   * `astryx component Tokenizer` lists none, `Tokenizer.d.ts` contains no
+   * `ui-common component Tokenizer` lists none, `Tokenizer.d.ts` contains no
    * `separator`/`delimiter`, and `TokenizerHandle` exposes only
    * `focus()`/`blur()`. `InputGroup`-style composition does not apply either.
    * The only reachable seam is the DOM.
@@ -974,12 +974,53 @@ export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
     );
   });
 
+  // Tokenizer leaves uncommitted text in the input on blur; commit it as tags
+  // (antd `mode="tags"` did). Its own Enter path re-focuses the input, so the
+  // tags are emitted here and the query is cleared through a native input event.
+  const commitPendingTextOnFocusOut = useEffectEvent((event: FocusEvent) => {
+    const root = rootRef.current;
+    const input = root?.querySelector('input');
+    if (!root || !input || !input.value.trim()) return;
+    const next = event.relatedTarget;
+    const listbox = document.getElementById(
+      input.getAttribute('aria-controls') ?? '',
+    );
+    if (
+      next instanceof Node &&
+      (root.contains(next) || listbox?.contains(next))
+    )
+      return;
+
+    const current = value ?? [];
+    const merged = _.uniq([
+      ...current,
+      ...splitOnSeparators(input.value.trim()),
+    ]);
+    const committed =
+      maxEntries == null
+        ? merged
+        : merged.slice(0, Math.max(maxEntries, current.length));
+    if (committed.length > current.length) onChange?.(committed);
+
+    Object.getOwnPropertyDescriptor(
+      HTMLInputElement.prototype,
+      'value',
+    )?.set?.call(input, '');
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+
   React.useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
-    const listener = (event: KeyboardEvent) => handleSeparatorKeyDown(event);
-    root.addEventListener('keydown', listener, true);
-    return () => root.removeEventListener('keydown', listener, true);
+    const keyListener = (event: KeyboardEvent) => handleSeparatorKeyDown(event);
+    const focusOutListener = (event: FocusEvent) =>
+      commitPendingTextOnFocusOut(event);
+    root.addEventListener('keydown', keyListener, true);
+    root.addEventListener('focusout', focusOutListener);
+    return () => {
+      root.removeEventListener('keydown', keyListener, true);
+      root.removeEventListener('focusout', focusOutListener);
+    };
   }, []);
 
   return (
@@ -998,6 +1039,25 @@ export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
       isLabelHidden
       searchSource={EMPTY_TAG_SEARCH_SOURCE}
       hasCreate
+      // Tokenizer hardcodes the create row's English label; the typed text
+      // rides on `auxiliaryData.__createdValue`.
+      renderItem={(item) => {
+        const createdValue = (
+          item as SearchableItem<{ __createdValue?: unknown }>
+        ).auxiliaryData?.__createdValue;
+        return (
+          <TypeaheadItem
+            item={
+              typeof createdValue === 'string'
+                ? {
+                    ...item,
+                    label: t('general.CreateValue', { value: createdValue }),
+                  }
+                : item
+            }
+          />
+        );
+      }}
       // See the Q-31 block above — the separator keystroke needs the create
       // row to already be in `results`, and the source is free to query.
       debounceMs={0}

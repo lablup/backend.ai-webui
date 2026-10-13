@@ -56,7 +56,7 @@ vi.mock('react-i18next', async () => {
 const { mockBaiClient } = vi.hoisted(() => {
   const mockBaiClient = {
     _config: { domainName: 'default' },
-    supports: () => false,
+    isManagerVersionCompatibleWith: () => false,
     vfolder: {
       delete_by_id: vi.fn(),
       restore_from_trash_bin: vi.fn(),

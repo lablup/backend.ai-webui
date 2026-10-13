@@ -1015,6 +1015,21 @@ export default defineConfig(({ command, mode }) => {
         // across react/ and (future) packages/backend.ai-ui builds.
         unstable_moduleResolution: { type: 'commonJS', rootDir: projectRoot },
       }),
+      // StyleX excludes every dependency that peers on @stylexjs/stylex from
+      // the dep optimizer; ui-common must stay pre-bundled like Astryx core, or
+      // a cold dev start deadlocks (StyleX `ctx.load`s optimized deps mid-crawl).
+      {
+        name: 'webui:prebundle-ui-common',
+        enforce: 'post',
+        config(config) {
+          const exclude = config.optimizeDeps?.exclude;
+          if (exclude) {
+            config.optimizeDeps!.exclude = exclude.filter(
+              (name) => name !== '@lablup/ui-common',
+            );
+          }
+        },
+      },
 
       react({
         babel: (id) => {

@@ -32,26 +32,34 @@ vi.mock('../hooks', async (importOriginal) => {
     ...originalModule,
     useSuspendedBackendaiClient: () => ({
       _config: { domainName: 'default' },
-      supports: () => false,
+      isManagerVersionCompatibleWith: () => false,
     }),
   };
 });
 
-// The real select fetches with network-only, so it always suspends on mount;
+// The real select suspends while it resolves the selected project names;
 // this stand-in does the same until the test resolves it.
 let resolveProjects: () => void;
 let projectsPromise: Promise<void>;
 let projectsSettled = false;
-vi.mock('./ProjectSelectForAdminPage', async () => {
+vi.mock('backend.ai-ui', async (importOriginal) => {
   const React = await import('react');
+  const originalModule = await importOriginal<typeof import('backend.ai-ui')>();
   return {
-    default: () => {
+    ...originalModule,
+    BAIAdminProjectSelect: () => {
       if (!projectsSettled) throw projectsPromise;
       return React.createElement('input', {
         'data-testid': 'allowed-projects-select',
       });
     },
   };
+});
+
+// The Extra Information editor needs the host ThemeModeProvider.
+vi.mock('./BAICodeEditor', async () => {
+  const React = await import('react');
+  return { default: () => React.createElement('div') };
 });
 
 const renderModal = (

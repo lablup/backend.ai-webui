@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2e4644da7040cc3d805e4b08da776015>>
+ * @generated SignedSource<<7690e96b05bb24b5b862ee076200499d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,6 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type MountedVFolderLinksFragment$data = {
-  readonly row_id: string | null | undefined;
   readonly vfolder_nodes: {
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -19,7 +18,6 @@ export type MountedVFolderLinksFragment$data = {
       } | null | undefined;
     } | null | undefined>;
   } | null | undefined;
-  readonly " $fragmentSpreads": FragmentRefs<"MountedVFolderLinksLegacyLazyFolderLinkFragment">;
   readonly " $fragmentType": "MountedVFolderLinksFragment";
 };
 export type MountedVFolderLinksFragment$key = {
@@ -33,13 +31,6 @@ const node: ReaderFragment = {
   "metadata": null,
   "name": "MountedVFolderLinksFragment",
   "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "row_id",
-      "storageKey": null
-    },
     {
       "alias": null,
       "args": null,
@@ -77,17 +68,12 @@ const node: ReaderFragment = {
         }
       ],
       "storageKey": null
-    },
-    {
-      "args": null,
-      "kind": "FragmentSpread",
-      "name": "MountedVFolderLinksLegacyLazyFolderLinkFragment"
     }
   ],
   "type": "ComputeSessionNode",
   "abstractKey": null
 };
 
-(node as any).hash = "f26bc04640693f4094c9a072011821b0";
+(node as any).hash = "a556c4be60f823378db9d32add579c15";
 
 export default node;

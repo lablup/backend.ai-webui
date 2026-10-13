@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RoleFormModalCreateMutation } from '../__generated__/RoleFormModalCreateMutation.graphql';
+import { RoleFormModalCurrentDomainQuery } from '../__generated__/RoleFormModalCurrentDomainQuery.graphql';
 import { RoleFormModalFragment$key } from '../__generated__/RoleFormModalFragment.graphql';
 import { RoleFormModalPermissionMatrixQuery } from '../__generated__/RoleFormModalPermissionMatrixQuery.graphql';
 import { RoleFormModalResourceGroupQuery } from '../__generated__/RoleFormModalResourceGroupQuery.graphql';
@@ -23,8 +24,6 @@ import {
   BAIAdminProjectSelect,
   BAIAdminResourceGroupSelect,
   BAIAdminSessionSelect,
-  BAIDomainSelect,
-  BAIDomainSelectV2,
   BAIFlex,
   BAIKeypairSelect,
   BAIModal,
@@ -37,7 +36,7 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -116,13 +115,69 @@ const ResourceGroupScopeIdSelect: React.FC<ScopeIdBranchProps> = (props) => {
   return <BAIAdminResourceGroupSelect queryRef={queryRef} {...props} />;
 };
 
+/** True for the DOMAIN scope, whose id is the signed-in domain and is never shown. */
+export const isDomainScopeType = (scopeType?: string) =>
+  scopeType?.toUpperCase() === 'DOMAIN';
+
+type DomainScopeIdProps = Pick<ScopeIdSelectProps, 'value' | 'onChange'>;
+
+/** Hands `scopeId` to the form once it is known and differs from `value`. */
+const useSyncScopeId = (
+  scopeId: string | undefined,
+  { value, onChange }: DomainScopeIdProps,
+) => {
+  useEffect(() => {
+    if (scopeId && value !== scopeId) onChange?.(scopeId);
+  }, [scopeId, value, onChange]);
+};
+
+/** Managers >= 26.9.0 (BA-7234) take the domain uuid as a DOMAIN scope id. */
+const CurrentDomainUuidScopeId: React.FC<
+  DomainScopeIdProps & { domainName: string }
+> = ({ domainName, ...props }) => {
+  'use memo';
+  const { domainV2 } = useLazyLoadQuery<RoleFormModalCurrentDomainQuery>(
+    graphql`
+      query RoleFormModalCurrentDomainQuery($domainName: String!) {
+        domainV2(domainName: $domainName) {
+          id
+        }
+      }
+    `,
+    { domainName },
+    { fetchPolicy: 'store-or-network' },
+  );
+  useSyncScopeId(domainV2?.id ? toLocalId(domainV2.id) : undefined, props);
+  return null;
+};
+
+/** Older managers take the domain name; no query, since `domainV2` may not exist. */
+const CurrentDomainNameScopeId: React.FC<
+  DomainScopeIdProps & { domainName: string }
+> = ({ domainName, ...props }) => {
+  'use memo';
+  useSyncScopeId(domainName, props);
+  return null;
+};
+
+/** Fills the DOMAIN scope id with the signed-in domain: the WebUI has no domain picker. */
+const CurrentDomainScopeId: React.FC<DomainScopeIdProps> = (props) => {
+  'use memo';
+  const baiClient = useSuspendedBackendaiClient();
+  const domainName: string = baiClient._config.domainName;
+  return baiClient.isManagerVersionCompatibleWith('26.9.0') ? (
+    <CurrentDomainUuidScopeId domainName={domainName} {...props} />
+  ) : (
+    <CurrentDomainNameScopeId domainName={domainName} {...props} />
+  );
+};
+
 export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   scopeType: rawScopeType,
   ...selectProps
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
   const scopeType = rawScopeType?.toUpperCase();
   // The surrounding `Form.Item` already prints "Scope ID", so the Astryx
   // field's own label is the accessible name only.
@@ -141,22 +196,12 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
     />
   );
   if (scopeType === 'DOMAIN') {
-    // Managers >= 26.9.0 (BA-7234) parse a DOMAIN scopeId as the domain uuid;
-    // older managers expect the domain name. FR-3618.
-    const domainSelectProps = {
-      showSearch: true,
-      placeholder: selectProps.placeholder,
-      disabled: selectProps.isDisabled,
-      value: selectProps.value,
-      onChange: selectProps.onChange,
-    };
     return (
-      <Suspense fallback={fallback}>
-        {baiClient.supports('rbac-domain-scope-uuid') ? (
-          <BAIDomainSelectV2 {...domainSelectProps} />
-        ) : (
-          <BAIDomainSelect {...domainSelectProps} />
-        )}
+      <Suspense fallback={null}>
+        <CurrentDomainScopeId
+          value={selectProps.value}
+          onChange={selectProps.onChange}
+        />
       </Suspense>
     );
   }
@@ -254,11 +299,9 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
   const { logger } = useBAILogger();
   const [form] = Form.useForm();
   const baiClient = useSuspendedBackendaiClient();
-  // Auto-assign is only supported on managers >= 26.4.4. Gate the form field
-  // and the mutation input so older managers never receive the unknown field.
-  const supportsAutoAssign = baiClient.supports('role-auto-assign');
   // Managers >= 26.9.0 take the one scope as `scope`; older ones as `scopes`.
-  const isSingleScopeRole = baiClient.supports('rbac-single-scope-role');
+  const isSingleScopeRole =
+    baiClient.isManagerVersionCompatibleWith('26.9.0a4');
   const scopeType = Form.useWatch('scopeType', form) as string | undefined;
 
   const { rbacPermissionMatrix } =
@@ -294,7 +337,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
         id
         name
         description
-        autoAssign @since(version: "26.4.4")
+        autoAssign
       }
     `,
     roleNodeFrgmt ?? null,
@@ -311,7 +354,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
           description
           source
           status
-          autoAssign @since(version: "26.4.4")
+          autoAssign
           createdAt
           updatedAt
         }
@@ -325,7 +368,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
           id
           name
           description
-          autoAssign @since(version: "26.4.4")
+          autoAssign
           updatedAt
         }
       }
@@ -357,10 +400,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
           ) {
             changedFields.description = values.description || null;
           }
-          if (
-            supportsAutoAssign &&
-            values.autoAssign !== editingRole.autoAssign
-          ) {
+          if (values.autoAssign !== editingRole.autoAssign) {
             changedFields.autoAssign = values.autoAssign;
           }
 
@@ -413,9 +453,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
               input: {
                 name: values.name,
                 description: values.description || null,
-                ...(supportsAutoAssign
-                  ? { autoAssign: values.autoAssign }
-                  : {}),
+                autoAssign: values.autoAssign,
                 ...(isSingleScopeRole
                   ? {
                       scope: {
@@ -506,16 +544,14 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
         <Form.Item name="description" label={t('rbac.RoleDescription')}>
           <AstryxFormTextArea label={t('rbac.RoleDescription')} rows={1} />
         </Form.Item>
-        {supportsAutoAssign && (
-          <Form.Item
-            name="autoAssign"
-            label={t('rbac.AutoAssign')}
-            valuePropName="checked"
-            tooltip={t('rbac.AutoAssignDescription')}
-          >
-            <AstryxFormCheckbox label={t('general.Enable')} />
-          </Form.Item>
-        )}
+        <Form.Item
+          name="autoAssign"
+          label={t('rbac.AutoAssign')}
+          valuePropName="checked"
+          tooltip={t('rbac.AutoAssignDescription')}
+        >
+          <AstryxFormCheckbox label={t('general.Enable')} />
+        </Form.Item>
         {!isEditMode && (
           <BAIFlex direction="row" gap="xs" align="start">
             <Form.Item
@@ -541,6 +577,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
             <Form.Item
               name="scopeId"
               label={t('rbac.ScopeId')}
+              hidden={isDomainScopeType(scopeType)}
               style={{ flex: 1 }}
               rules={[
                 {

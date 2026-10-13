@@ -6,19 +6,19 @@ import { NotificationState } from '../hooks/useBAINotification';
 import './BAIMultiStepNotificationItem.css';
 import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
 import './BAINotificationListItem.css';
-import { Link } from '@astryxdesign/core/Link';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Link } from '@lablup/ui-common/Link';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import {
-  CircleCheck,
-  Clock,
-  CircleX,
   ChevronDown,
   CircleAlert,
-  LoaderCircle,
+  CircleCheck,
   CircleMinus,
+  CircleX,
+  Clock,
+  LoaderCircle,
 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';

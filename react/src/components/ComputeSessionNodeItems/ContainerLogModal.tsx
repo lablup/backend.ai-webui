@@ -8,10 +8,10 @@ import { useSuspendedBackendaiClient } from '../../hooks';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
 import { useMemoWithPrevious } from '../../hooks/useMemoWithPrevious';
 import AutoUpdateFetchKeyButton from '../AutoUpdateFetchKeyButton';
-import { Divider } from '@astryxdesign/core/Divider';
-import { Heading } from '@astryxdesign/core/Heading';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Text } from '@astryxdesign/core/Text';
+import { Divider } from '@lablup/ui-common/Divider';
+import { Heading } from '@lablup/ui-common/Heading';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Text } from '@lablup/ui-common/Text';
 import { LazyLog, ScrollFollow } from '@melloware/react-logviewer';
 import {
   BAIAlert,

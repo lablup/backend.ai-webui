@@ -13,7 +13,7 @@ import type {
 } from '../__generated__/BAILoginHistoryTableFragment.graphql';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import useConnectedBAIClient from './provider/BAIClientProvider/hooks/useConnectedBAIClient';
-import { Token } from '@astryxdesign/core/Token';
+import { Token } from '@lablup/ui-common/Token';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
@@ -51,11 +51,7 @@ export const loginResultFilterOptions = loginAttemptResults.map((result) => ({
   value: result,
 }));
 
-const availableLoginHistorySorterKeys = [
-  'createdAt',
-  'result',
-  'domainName',
-] as const;
+const availableLoginHistorySorterKeys = ['createdAt', 'result'] as const;
 
 export const availableLoginHistorySorterValues = [
   ...availableLoginHistorySorterKeys,
@@ -98,7 +94,8 @@ const BAILoginHistoryTable = ({
   'use memo';
   const { t } = useBAIi18n();
   const baiClient = useConnectedBAIClient();
-  const isClientIpSupported = baiClient.supports('client-ip-of-login-history');
+  const isClientIpSupported =
+    baiClient.isManagerVersionCompatibleWith('26.9.0');
 
   const loginHistory = useFragment<BAILoginHistoryTableFragment$key>(
     graphql`

@@ -5,14 +5,14 @@
 import { NotificationState } from '../hooks/useBAINotification';
 import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
 import './BAINotificationListItem.css';
-import { Card } from '@astryxdesign/core/Card';
-import { Link } from '@astryxdesign/core/Link';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Card } from '@lablup/ui-common/Card';
+import { Link } from '@lablup/ui-common/Link';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex, BAIText } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { CircleCheck, Clock, CircleX, FolderIcon } from 'lucide-react';
+import { CircleCheck, CircleX, Clock, FolderIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
