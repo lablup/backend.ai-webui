@@ -18,6 +18,7 @@ export type BAIScopedImageSelectValueQuery$data = {
     readonly scopedImagesV2?: {
         readonly edges: ReadonlyArray<{
             readonly node: {
+                readonly entityId: string;
                 readonly id: string;
                 readonly identity: {
                     readonly architecture: string;

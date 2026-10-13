@@ -117,6 +117,7 @@ export type BAIScopedImageSelectPaginatedQuery$data = {
         readonly count: number;
         readonly edges: ReadonlyArray<{
             readonly node: {
+                readonly entityId: string;
                 readonly id: string;
                 readonly identity: {
                     readonly architecture: string;

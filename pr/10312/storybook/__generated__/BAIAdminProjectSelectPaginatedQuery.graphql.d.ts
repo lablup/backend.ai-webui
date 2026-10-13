@@ -66,22 +66,13 @@ export type ProjectUserNestedFilter = {
     isActive?: boolean | null | undefined;
     username?: StringFilter | null | undefined;
 };
-export type ProjectScope = {
-    domain?: ReadonlyArray<UUIDScope> | null | undefined;
-    resourceGroup?: ReadonlyArray<UUIDScope> | null | undefined;
-    user?: ReadonlyArray<UUIDScope> | null | undefined;
-};
-export type UUIDScope = {
-    value: string;
-};
 export type BAIAdminProjectSelectPaginatedQuery$variables = {
     filter?: ProjectV2Filter | null | undefined;
     limit: number;
     offset: number;
-    scope: ProjectScope;
 };
 export type BAIAdminProjectSelectPaginatedQuery$data = {
-    readonly scopedProjectsV2: {
+    readonly adminProjectsV2: {
         readonly count: number;
         readonly edges: ReadonlyArray<{
             readonly node: {

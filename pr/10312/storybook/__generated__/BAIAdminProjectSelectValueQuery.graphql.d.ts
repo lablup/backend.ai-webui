@@ -1,19 +1,10 @@
 import { ConcreteRequest } from 'relay-runtime';
-export type ProjectScope = {
-    domain?: ReadonlyArray<UUIDScope> | null | undefined;
-    resourceGroup?: ReadonlyArray<UUIDScope> | null | undefined;
-    user?: ReadonlyArray<UUIDScope> | null | undefined;
-};
-export type UUIDScope = {
-    value: string;
-};
 export type BAIAdminProjectSelectValueQuery$variables = {
     projectIds: ReadonlyArray<string>;
-    scope: ProjectScope;
     skipSelected: boolean;
 };
 export type BAIAdminProjectSelectValueQuery$data = {
-    readonly scopedProjectsV2?: {
+    readonly adminProjectsV2?: {
         readonly edges: ReadonlyArray<{
             readonly node: {
                 readonly basicInfo: {
