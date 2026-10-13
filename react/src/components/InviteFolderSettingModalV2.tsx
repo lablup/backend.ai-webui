@@ -434,7 +434,8 @@ const InviteFolderSettingModalV2Body: React.FC<{
       // ("OneOf Input Object 'EntityShareRecipientInput' must specify exactly
       // one key", 26.9.0rc1 and 26.9.1), so the invite goes through the
       // legacy endpoint, which writes the share and, with `perm`, the policy
-      // row. An e-mail invite omits `perm` so the folder default applies.
+      // row. An e-mail invite sends the folder's shared mount permission as
+      // `perm`: omitted, the server defaults it to `rw` for an existing account.
       // Tracked on lablup/backend.ai-webui#10295.
       const result = await baiRequestWithPromise<{
         invited_ids?: Array<string>;
@@ -443,7 +444,7 @@ const InviteFolderSettingModalV2Body: React.FC<{
         url: `/folders/${vfolderId}/invite`,
         body: {
           user_ids: [inviteTarget.email],
-          ...(inviteTarget.kind === 'user' ? { perm: mountLevel } : {}),
+          perm: inviteTarget.kind === 'user' ? mountLevel : defaultMountLevel,
         },
       });
       if (_.isEmpty(result?.invited_ids)) {
@@ -567,7 +568,7 @@ const InviteFolderSettingModalV2Body: React.FC<{
         {isEmailInvite && (
           <Banner
             status="info"
-            title={t('data.folders.EmailInviteUsesDefaultMountPermission', {
+            title={t('data.folders.EmailInviteUsesSharedMountPermission', {
               permission: mountLevelLabel(defaultMountLevel),
             })}
           />
