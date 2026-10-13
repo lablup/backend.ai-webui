@@ -10,13 +10,16 @@ import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import MaintenanceSettingList from '../components/MaintenanceSettingList';
 import RetentionPolicyList, {
   RETENTION_POLICY_LIST_DEFAULT_PAGE_SIZE,
-  RETENTION_POLICY_SORTER_KEYS,
   RetentionPolicyListQuery,
 } from '../components/RetentionPolicyList';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { useBrowserPopstateEffect, useKeyedSnapshot } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import { BAISkeleton, BAICard } from 'backend.ai-ui';
+import {
+  BAISkeleton,
+  BAICard,
+  availableRetentionPolicySorterValues,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { Suspense, useEffect, useEffectEvent } from 'react';
@@ -30,10 +33,9 @@ const tabParser = parseAsStringLiteral([
   'maintenance',
   'retention-policy',
 ]).withDefault('maintenance');
-const orderParser = parseAsStringLiteral([
-  ...RETENTION_POLICY_SORTER_KEYS,
-  ..._.map(RETENTION_POLICY_SORTER_KEYS, (key) => `-${key}` as const),
-]).withDefault('category');
+const orderParser = parseAsStringLiteral(
+  availableRetentionPolicySorterValues,
+).withDefault('category');
 
 type TabKey = 'maintenance' | 'retention-policy';
 type RetentionPolicyVariables = RetentionPolicyListQueryType['variables'];

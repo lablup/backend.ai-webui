@@ -2802,8 +2802,6 @@
     "DeletePolicy": "Hapus kebijakan retensi",
     "Description": "Atur berapa lama setiap jenis catatan disimpan. Catatan lama hanya dibersihkan untuk kategori yang kebijakannya aktif.",
     "EditPolicy": "Edit kebijakan",
-    "LastSweptAt": "Pembersihan terakhir",
-    "NotSweptYet": "Belum dijalankan",
     "OnePolicyPerCategory": "Setiap kategori hanya dapat memiliki satu kebijakan.",
     "RetentionPeriodDays": "Periode retensi (hari)",
     "RetentionPeriodRequired": "Masukkan periode retensi minimal 1 hari.",

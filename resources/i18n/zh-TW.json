@@ -2803,8 +2803,6 @@
     "DeletePolicy": "刪除保留政策",
     "Description": "設定每類記錄的保留時長。僅對政策已啟用的類別清理舊記錄。",
     "EditPolicy": "編輯政策",
-    "LastSweptAt": "上次清理",
-    "NotSweptYet": "尚未執行",
     "OnePolicyPerCategory": "每個類別只能有一個政策。",
     "RetentionPeriodDays": "保留期限（天）",
     "RetentionPeriodRequired": "請輸入至少 1 天的保留期限。",

@@ -38,6 +38,23 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Seleziona gruppo di risorse"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "Categoria",
+    "CategoryDeployments": "Distribuzioni",
+    "CategoryLogin": "Cronologia accessi",
+    "CategoryLogs": "Log",
+    "CategoryReconcileHistory": "Cronologia riconciliazione",
+    "CategoryRolesInvitations": "Ruoli e inviti",
+    "CategorySessions": "Sessioni",
+    "CategoryUsageBuckets": "Aggregati di utilizzo",
+    "CategoryUsageRecords": "Record di utilizzo",
+    "CreatedAt": "Data di creazione",
+    "Enabled": "Abilitato",
+    "LastSweptAt": "Ultima pulizia",
+    "NotSweptYet": "Non ancora eseguito",
+    "RetentionPeriodDays": "Periodo di conservazione (giorni)",
+    "UpdatedAt": "Aggiornato il"
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Seleziona sessione"
   },

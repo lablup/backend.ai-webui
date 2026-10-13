@@ -38,6 +38,23 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Επιλέξτε ομάδα πόρων"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "Κατηγορία",
+    "CategoryDeployments": "Αναπτύξεις",
+    "CategoryLogin": "Ιστορικό συνδέσεων",
+    "CategoryLogs": "Αρχεία καταγραφής",
+    "CategoryReconcileHistory": "Ιστορικό συμφωνίας",
+    "CategoryRolesInvitations": "Ρόλοι και προσκλήσεις",
+    "CategorySessions": "Συνεδρίες",
+    "CategoryUsageBuckets": "Συγκεντρωτικά χρήσης",
+    "CategoryUsageRecords": "Εγγραφές χρήσης",
+    "CreatedAt": "Ημερομηνία δημιουργίας",
+    "Enabled": "Ενεργοποιήθηκε",
+    "LastSweptAt": "Τελευταίος καθαρισμός",
+    "NotSweptYet": "Δεν έχει εκτελεστεί",
+    "RetentionPeriodDays": "Περίοδος διατήρησης (ημέρες)",
+    "UpdatedAt": "Ενημερώθηκε στις"
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Επιλέξτε συνεδρία"
   },

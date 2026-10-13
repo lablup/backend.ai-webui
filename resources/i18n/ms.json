@@ -2799,8 +2799,6 @@
     "DeletePolicy": "Padam dasar pengekalan",
     "Description": "Tetapkan tempoh setiap jenis rekod disimpan. Rekod lama hanya dibersihkan bagi kategori yang dasarnya didayakan.",
     "EditPolicy": "Edit dasar",
-    "LastSweptAt": "Pembersihan terakhir",
-    "NotSweptYet": "Belum dijalankan",
     "OnePolicyPerCategory": "Setiap kategori hanya boleh mempunyai satu dasar.",
     "RetentionPeriodDays": "Tempoh pengekalan (hari)",
     "RetentionPeriodRequired": "Masukkan tempoh pengekalan sekurang-kurangnya 1 hari.",

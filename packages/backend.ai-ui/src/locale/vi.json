@@ -38,6 +38,23 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Chọn nhóm tài nguyên"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "Danh mục",
+    "CategoryDeployments": "Triển khai",
+    "CategoryLogin": "Lịch sử đăng nhập",
+    "CategoryLogs": "Nhật ký",
+    "CategoryReconcileHistory": "Lịch sử đối soát",
+    "CategoryRolesInvitations": "Vai trò và lời mời",
+    "CategorySessions": "Phiên",
+    "CategoryUsageBuckets": "Tổng hợp sử dụng",
+    "CategoryUsageRecords": "Bản ghi sử dụng",
+    "CreatedAt": "Ngày tạo",
+    "Enabled": "Đã bật",
+    "LastSweptAt": "Lần dọn dẹp gần nhất",
+    "NotSweptYet": "Chưa chạy",
+    "RetentionPeriodDays": "Thời gian lưu giữ (ngày)",
+    "UpdatedAt": "Cập nhật lúc"
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Chọn phiên"
   },

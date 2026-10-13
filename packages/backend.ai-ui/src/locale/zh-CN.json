@@ -38,6 +38,23 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "选择资源组"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "类别",
+    "CategoryDeployments": "部署",
+    "CategoryLogin": "登录历史",
+    "CategoryLogs": "日志",
+    "CategoryReconcileHistory": "协调历史",
+    "CategoryRolesInvitations": "角色与邀请",
+    "CategorySessions": "会话",
+    "CategoryUsageBuckets": "使用量汇总",
+    "CategoryUsageRecords": "使用记录",
+    "CreatedAt": "创建日期",
+    "Enabled": "启用",
+    "LastSweptAt": "上次清理",
+    "NotSweptYet": "尚未运行",
+    "RetentionPeriodDays": "保留期限（天）",
+    "UpdatedAt": "更新时间"
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "选择会话"
   },

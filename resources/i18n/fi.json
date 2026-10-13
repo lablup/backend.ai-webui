@@ -2799,8 +2799,6 @@
     "DeletePolicy": "Poista säilytyskäytäntö",
     "Description": "Määritä, kuinka kauan kutakin tietuetyyppiä säilytetään. Vanhat tietueet siivotaan vain luokista, joiden käytäntö on käytössä.",
     "EditPolicy": "Muokkaa käytäntöä",
-    "LastSweptAt": "Viimeisin siivous",
-    "NotSweptYet": "Ei vielä ajettu",
     "OnePolicyPerCategory": "Kullakin luokalla voi olla vain yksi käytäntö.",
     "RetentionPeriodDays": "Säilytysaika (päivää)",
     "RetentionPeriodRequired": "Anna vähintään 1 päivän säilytysaika.",

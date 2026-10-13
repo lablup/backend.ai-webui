@@ -2801,8 +2801,6 @@
     "DeletePolicy": "Eliminar política de retenção",
     "Description": "Defina por quanto tempo cada tipo de registo é mantido. Os registos antigos só são limpos nas categorias cuja política está ativada.",
     "EditPolicy": "Editar política",
-    "LastSweptAt": "Última limpeza",
-    "NotSweptYet": "Ainda não executado",
     "OnePolicyPerCategory": "Só pode existir uma política por categoria.",
     "RetentionPeriodDays": "Período de retenção (dias)",
     "RetentionPeriodRequired": "Introduza um período de retenção de pelo menos 1 dia.",

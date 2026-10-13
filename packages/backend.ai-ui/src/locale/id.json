@@ -38,6 +38,23 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Pilih grup sumber daya"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "Kategori",
+    "CategoryDeployments": "Deployment",
+    "CategoryLogin": "Riwayat login",
+    "CategoryLogs": "Log",
+    "CategoryReconcileHistory": "Riwayat rekonsiliasi",
+    "CategoryRolesInvitations": "Peran & undangan",
+    "CategorySessions": "Sesi",
+    "CategoryUsageBuckets": "Agregat penggunaan",
+    "CategoryUsageRecords": "Catatan penggunaan",
+    "CreatedAt": "Tanggal dibuat",
+    "Enabled": "Diaktifkan",
+    "LastSweptAt": "Pembersihan terakhir",
+    "NotSweptYet": "Belum dijalankan",
+    "RetentionPeriodDays": "Periode retensi (hari)",
+    "UpdatedAt": "Diperbarui Pada"
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Pilih sesi"
   },

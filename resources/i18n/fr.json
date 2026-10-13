@@ -2801,8 +2801,6 @@
     "DeletePolicy": "Supprimer la politique de conservation",
     "Description": "Définissez la durée de conservation de chaque type d'enregistrement. Les anciens enregistrements ne sont nettoyés que pour les catégories dont la politique est activée.",
     "EditPolicy": "Modifier la politique",
-    "LastSweptAt": "Dernier nettoyage",
-    "NotSweptYet": "Pas encore exécuté",
     "OnePolicyPerCategory": "Une seule politique peut exister par catégorie.",
     "RetentionPeriodDays": "Durée de conservation (jours)",
     "RetentionPeriodRequired": "Saisissez une durée de conservation d'au moins 1 jour.",

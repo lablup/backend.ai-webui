@@ -2799,8 +2799,6 @@
     "DeletePolicy": "Saklama politikasını sil",
     "Description": "Her kayıt türünün ne kadar süre saklanacağını belirleyin. Eski kayıtlar yalnızca politikası etkin olan kategorilerde temizlenir.",
     "EditPolicy": "Politikayı düzenle",
-    "LastSweptAt": "Son temizlik",
-    "NotSweptYet": "Henüz çalıştırılmadı",
     "OnePolicyPerCategory": "Her kategori için yalnızca bir politika olabilir.",
     "RetentionPeriodDays": "Saklama süresi (gün)",
     "RetentionPeriodRequired": "En az 1 günlük bir saklama süresi girin.",

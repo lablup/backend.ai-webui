@@ -2801,8 +2801,6 @@
     "DeletePolicy": "Xóa chính sách lưu giữ",
     "Description": "Đặt thời gian lưu giữ cho từng loại bản ghi. Bản ghi cũ chỉ được dọn dẹp ở các danh mục có chính sách đang bật.",
     "EditPolicy": "Sửa chính sách",
-    "LastSweptAt": "Lần dọn dẹp gần nhất",
-    "NotSweptYet": "Chưa chạy",
     "OnePolicyPerCategory": "Mỗi danh mục chỉ có thể có một chính sách.",
     "RetentionPeriodDays": "Thời gian lưu giữ (ngày)",
     "RetentionPeriodRequired": "Nhập thời gian lưu giữ ít nhất 1 ngày.",

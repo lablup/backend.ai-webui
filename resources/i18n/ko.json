@@ -2801,8 +2801,6 @@
     "DeletePolicy": "보존 정책 삭제",
     "Description": "기록 종류별로 보존할 기간을 설정합니다. 정책이 켜진 종류만 오래된 기록이 정리됩니다.",
     "EditPolicy": "정책 수정",
-    "LastSweptAt": "마지막 정리",
-    "NotSweptYet": "아직 실행되지 않음",
     "OnePolicyPerCategory": "종류마다 정책은 하나만 만들 수 있습니다.",
     "RetentionPeriodDays": "보존 기간 (일)",
     "RetentionPeriodRequired": "1일 이상의 보존 기간을 입력하세요.",

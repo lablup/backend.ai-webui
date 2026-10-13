@@ -2801,8 +2801,6 @@
     "DeletePolicy": "删除保留策略",
     "Description": "设置每类记录的保留时长。仅对策略已启用的类别清理旧记录。",
     "EditPolicy": "编辑策略",
-    "LastSweptAt": "上次清理",
-    "NotSweptYet": "尚未运行",
     "OnePolicyPerCategory": "每个类别只能有一个策略。",
     "RetentionPeriodDays": "保留期限（天）",
     "RetentionPeriodRequired": "请输入至少 1 天的保留期限。",

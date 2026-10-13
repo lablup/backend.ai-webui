@@ -2786,8 +2786,6 @@
     "DeletePolicy": "Delete Retention Policy",
     "Description": "Set how long each kind of record is kept. Old records are cleaned up only for categories whose policy is enabled.",
     "EditPolicy": "Edit Policy",
-    "LastSweptAt": "Last Cleanup",
-    "NotSweptYet": "Not run yet",
     "OnePolicyPerCategory": "Only one policy can exist per category.",
     "RetentionPeriodDays": "Retention Period (Days)",
     "RetentionPeriodRequired": "Enter a retention period of at least 1 day.",
