@@ -4,11 +4,14 @@
  */
 import {
   AdminUserManagementQuery as AdminUserManagementQueryType,
-  AdminUserManagementQuery$data,
   UserV2Filter,
   UserV2OrderBy,
 } from '../__generated__/AdminUserManagementQuery.graphql';
 import { AdminUserManagementUpdateUserMutation } from '../__generated__/AdminUserManagementUpdateUserMutation.graphql';
+import {
+  AdminUserManagement_userConnection$data,
+  AdminUserManagement_userConnection$key,
+} from '../__generated__/AdminUserManagement_userConnection.graphql';
 import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { openActAsTab } from '../helper/actAs';
@@ -60,6 +63,7 @@ import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
+  useFragment,
   useMutation,
   usePreloadedQuery,
   type PreloadedQuery,
@@ -68,31 +72,50 @@ import {
 
 export const AdminUserManagementQuery = graphql`
   query AdminUserManagementQuery(
+    $scope: UserScope!
+    $domainName: String!
+    $useScopedSearch: Boolean!
     $filter: UserV2Filter
     $orderBy: [UserV2OrderBy!]
     $limit: Int
     $offset: Int
     $isNotSupportTotp: Boolean!
   ) {
-    adminUsersV2(
+    scopedUsersV2(
+      scope: $scope
       filter: $filter
       orderBy: $orderBy
       limit: $limit
       offset: $offset
-    ) {
-      count
-      edges {
-        node {
-          id
-          basicInfo {
-            email
-          }
-          ...BAIAdminUserV2TableFragment @arguments(withProjects: true)
-          ...PurgeUsersModalFragment
-          ...UpdateUsersModalFragment
-          ...UserInfoModalFragment
-          ...UserSettingModalFragment
+    ) @since(version: "26.9.0a4") @include(if: $useScopedSearch) {
+      ...AdminUserManagement_userConnection
+    }
+    domainUsersV2(
+      scope: { domainName: $domainName }
+      filter: $filter
+      orderBy: $orderBy
+      limit: $limit
+      offset: $offset
+    ) @skip(if: $useScopedSearch) {
+      ...AdminUserManagement_userConnection
+    }
+  }
+`;
+
+const AdminUserManagementUserConnectionFragment = graphql`
+  fragment AdminUserManagement_userConnection on UserV2Connection {
+    count
+    edges {
+      node {
+        id
+        basicInfo {
+          email
         }
+        ...BAIAdminUserV2TableFragment @arguments(withProjects: true)
+        ...PurgeUsersModalFragment
+        ...UpdateUsersModalFragment
+        ...UserInfoModalFragment
+        ...UserSettingModalFragment
       }
     }
   }
@@ -109,7 +132,7 @@ interface AdminUserManagementProps {
 }
 
 type UserNode = NonNullable<
-  NonNullable<AdminUserManagementQuery$data['adminUsersV2']>['edges']
+  AdminUserManagement_userConnection$data['edges']
 >[number];
 
 const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
@@ -167,9 +190,14 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   const { supportedFields, exportCSV } = useCSVExport('users');
   const unblockUserLogin = useUnblockUserLogin();
 
-  const { adminUsersV2 } = usePreloadedQuery<AdminUserManagementQueryType>(
-    AdminUserManagementQuery,
-    deferredQueryRef,
+  const { scopedUsersV2, domainUsersV2 } =
+    usePreloadedQuery<AdminUserManagementQueryType>(
+      AdminUserManagementQuery,
+      deferredQueryRef,
+    );
+  const userConnection = useFragment<AdminUserManagement_userConnection$key>(
+    AdminUserManagementUserConnectionFragment,
+    scopedUsersV2 ?? domainUsersV2,
   );
 
   // >= 26.4.0: adminUpdateUserV2 — status toggle keyed by userId.
@@ -196,11 +224,14 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   // The detail / edit modals are driven by the presence of this fragment rather
   // than by an id, so `open` follows whether a user is selected.
   const findUserNode = (id: string) =>
-    adminUsersV2?.edges?.find((edge) => edge?.node?.id === id)?.node ?? null;
+    userConnection?.edges?.find((edge) => edge?.node?.id === id)?.node ?? null;
+
+  // User status, purge and unblock mutations admit superadmins only (ADR 0011).
+  const isSuperAdmin = bailClient.is_superadmin;
 
   const canActAs =
     bailClient.isManagerVersionCompatibleWith('26.9.0') &&
-    bailClient.is_superadmin &&
+    isSuperAdmin &&
     !globalThis.isElectron;
 
   const confirmActAs = (userId: string, email: string, name: string) => {
@@ -242,7 +273,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
               setSelectedUserForSettingModal(findUserNode(record.id));
             },
           },
-          {
+          isSuperAdmin && {
             key: 'toggle-status',
             title: isActive
               ? t('credential.Deactivate')
@@ -314,7 +345,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
                     '',
                 ),
             },
-          {
+          isSuperAdmin && {
             key: 'unblock-login',
             title: t('credential.UnblockLogin'),
             icon: <LockOpen />,
@@ -331,17 +362,18 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
                 }),
             },
           },
-          !isActive && {
-            key: 'purge',
-            title: t('credential.PermanentlyDelete'),
-            icon: <Trash2 size="1em" />,
-            type: 'danger' as const,
-            onClick: () => {
-              if (record?.id) {
-                setPurgeTargetId(record.id);
-              }
+          isSuperAdmin &&
+            !isActive && {
+              key: 'purge',
+              title: t('credential.PermanentlyDelete'),
+              icon: <Trash2 size="1em" />,
+              type: 'danger' as const,
+              onClick: () => {
+                if (record?.id) {
+                  setPurgeTargetId(record.id);
+                }
+              },
             },
-          },
         ])}
       />
     );
@@ -545,7 +577,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
                 }
                 onClick={toggleUpdateUsersModal}
               />
-              {statusValue === 'INACTIVE' && (
+              {isSuperAdmin && statusValue === 'INACTIVE' && (
                 <BAIButton
                   icon={
                     <Trash2
@@ -624,7 +656,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
       </BAIFlex>
       <BAIAdminUserV2Table
         usersFrgmt={filterOutNullAndUndefined(
-          _.map(adminUsersV2?.edges, 'node'),
+          _.map(userConnection?.edges, 'node'),
         )}
         withProjects
         customizeColumns={(baseColumns) => {
@@ -647,7 +679,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
         }}
         pagination={{
           pageSize,
-          total: adminUsersV2?.count || 0,
+          total: userConnection?.count || 0,
           current,
           onChange: (nextCurrent, nextPageSize) => {
             if (_.isNumber(nextCurrent) && _.isNumber(nextPageSize)) {
@@ -663,7 +695,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
         rowSelection={{
           type: 'checkbox',
           onChange: (keys) => {
-            const userNodes = _.compact(adminUsersV2?.edges);
+            const userNodes = _.compact(userConnection?.edges);
             setSelectedUserList(() => {
               return userNodes.filter(
                 (edge) => edge.node && keys.includes(edge?.node.id),
@@ -786,7 +818,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
             setPurgeTargetId(null);
           }}
           usersFrgmt={filterOutNullAndUndefined(
-            adminUsersV2?.edges
+            userConnection?.edges
               ?.filter((edge) => edge?.node?.id === purgeTargetId)
               .map((edge) => edge?.node),
           )}
