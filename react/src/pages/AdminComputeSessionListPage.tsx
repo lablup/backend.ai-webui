@@ -25,6 +25,7 @@ import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
+import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import { Banner } from '@lablup/ui-common/Banner';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import {
@@ -89,6 +90,9 @@ const AdminComputeSessionListPage = () => {
   'use memo';
 
   const userRole = useCurrentUserRole();
+  // Superadmins list sessions of every domain, so only domain admins get a scope (ADR 0011).
+  const { domainScope } = useCurrentDomainScope();
+  const projectSelectScope = userRole === 'superadmin' ? null : domainScope;
 
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -369,6 +373,7 @@ const AdminComputeSessionListPage = () => {
                   defaultOperator: '==',
                   renderInput: ({ onAddCondition, value, isDisabled }) => (
                     <BAIAdminProjectSelect
+                      scope={projectSelectScope}
                       // The filter row already prints the property label.
                       label={t('data.Project')}
                       isLabelHidden

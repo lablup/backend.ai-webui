@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8514404b4eef5cea028911f2fc7a6208>>
+ * @generated SignedSource<<e4af9c30368fae262ede5e201f97e511>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -76,13 +76,34 @@ export type ProjectUserNestedFilter = {
   isActive?: boolean | null | undefined;
   username?: StringFilter | null | undefined;
 };
+export type ProjectScope = {
+  domain?: ReadonlyArray<UUIDScope> | null | undefined;
+  resourceGroup?: ReadonlyArray<UUIDScope> | null | undefined;
+  user?: ReadonlyArray<UUIDScope> | null | undefined;
+};
+export type UUIDScope = {
+  value: string;
+};
 export type BAIAdminProjectSelectPaginatedQuery$variables = {
   filter?: ProjectV2Filter | null | undefined;
   limit: number;
   offset: number;
+  scope: ProjectScope;
+  useScope: boolean;
 };
 export type BAIAdminProjectSelectPaginatedQuery$data = {
-  readonly adminProjectsV2: {
+  readonly adminProjectsV2?: {
+    readonly count: number;
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly basicInfo: {
+          readonly name: string;
+        };
+        readonly id: string;
+      };
+    }>;
+  } | null | undefined;
+  readonly scopedProjectsV2?: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -115,87 +136,85 @@ v2 = {
   "kind": "LocalArgument",
   "name": "offset"
 },
-v3 = [
+v3 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "scope"
+},
+v4 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "useScope"
+},
+v5 = {
+  "kind": "Variable",
+  "name": "filter",
+  "variableName": "filter"
+},
+v6 = {
+  "kind": "Variable",
+  "name": "limit",
+  "variableName": "limit"
+},
+v7 = {
+  "kind": "Variable",
+  "name": "offset",
+  "variableName": "offset"
+},
+v8 = {
+  "kind": "Literal",
+  "name": "orderBy",
+  "value": [
+    {
+      "direction": "ASC",
+      "field": "NAME"
+    }
+  ]
+},
+v9 = [
   {
     "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "filter",
-        "variableName": "filter"
-      },
-      {
-        "kind": "Variable",
-        "name": "limit",
-        "variableName": "limit"
-      },
-      {
-        "kind": "Variable",
-        "name": "offset",
-        "variableName": "offset"
-      },
-      {
-        "kind": "Literal",
-        "name": "orderBy",
-        "value": [
-          {
-            "direction": "ASC",
-            "field": "NAME"
-          }
-        ]
-      }
-    ],
-    "concreteType": "ProjectV2Connection",
+    "args": null,
+    "kind": "ScalarField",
+    "name": "count",
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "ProjectV2Edge",
     "kind": "LinkedField",
-    "name": "adminProjectsV2",
-    "plural": false,
+    "name": "edges",
+    "plural": true,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "count",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "ProjectV2Edge",
+        "concreteType": "ProjectV2",
         "kind": "LinkedField",
-        "name": "edges",
-        "plural": true,
+        "name": "node",
+        "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "ProjectV2",
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ProjectBasicInfo",
             "kind": "LinkedField",
-            "name": "node",
+            "name": "basicInfo",
             "plural": false,
             "selections": [
               {
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
-                "name": "id",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "ProjectBasicInfo",
-                "kind": "LinkedField",
-                "name": "basicInfo",
-                "plural": false,
-                "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "name",
-                    "storageKey": null
-                  }
-                ],
+                "name": "name",
                 "storageKey": null
               }
             ],
@@ -207,18 +226,71 @@ v3 = [
     ],
     "storageKey": null
   }
+],
+v10 = [
+  {
+    "condition": "useScope",
+    "kind": "Condition",
+    "passingValue": true,
+    "selections": [
+      {
+        "alias": null,
+        "args": [
+          (v5/*: any*/),
+          (v6/*: any*/),
+          (v7/*: any*/),
+          (v8/*: any*/),
+          {
+            "kind": "Variable",
+            "name": "scope",
+            "variableName": "scope"
+          }
+        ],
+        "concreteType": "ProjectV2Connection",
+        "kind": "LinkedField",
+        "name": "scopedProjectsV2",
+        "plural": false,
+        "selections": (v9/*: any*/),
+        "storageKey": null
+      }
+    ]
+  },
+  {
+    "condition": "useScope",
+    "kind": "Condition",
+    "passingValue": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": [
+          (v5/*: any*/),
+          (v6/*: any*/),
+          (v7/*: any*/),
+          (v8/*: any*/)
+        ],
+        "concreteType": "ProjectV2Connection",
+        "kind": "LinkedField",
+        "name": "adminProjectsV2",
+        "plural": false,
+        "selections": (v9/*: any*/),
+        "storageKey": null
+      }
+    ]
+  }
 ];
 return {
   "fragment": {
     "argumentDefinitions": [
       (v0/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/)
+      (v2/*: any*/),
+      (v3/*: any*/),
+      (v4/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "BAIAdminProjectSelectPaginatedQuery",
-    "selections": (v3/*: any*/),
+    "selections": (v10/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -227,23 +299,25 @@ return {
     "argumentDefinitions": [
       (v2/*: any*/),
       (v1/*: any*/),
-      (v0/*: any*/)
+      (v0/*: any*/),
+      (v3/*: any*/),
+      (v4/*: any*/)
     ],
     "kind": "Operation",
     "name": "BAIAdminProjectSelectPaginatedQuery",
-    "selections": (v3/*: any*/)
+    "selections": (v10/*: any*/)
   },
   "params": {
-    "cacheID": "86548d27e69f0aca7150dd91071f424a",
+    "cacheID": "61197ab429dc21569d016ae2bcff67bf",
     "id": null,
     "metadata": {},
     "name": "BAIAdminProjectSelectPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIAdminProjectSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: ProjectV2Filter\n) {\n  adminProjectsV2(offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: ASC}]) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIAdminProjectSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: ProjectV2Filter\n  $scope: ProjectScope!\n  $useScope: Boolean!\n) {\n  scopedProjectsV2(scope: $scope, offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: ASC}]) @include(if: $useScope) @since(version: \"26.9.0a4\") {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n  adminProjectsV2(offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: ASC}]) @skip(if: $useScope) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d89e2c836b89b0dd19d61cf9f43099f0";
+(node as any).hash = "a56a660262ba3fe91730c3a6e375a233";
 
 export default node;
