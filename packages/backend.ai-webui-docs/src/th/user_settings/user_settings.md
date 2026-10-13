@@ -431,7 +431,6 @@ session ของ Backend.AI โดยใช้คีย์ของคุณเ
 หมวดนี้เป็นแบบอ่านอย่างเดียว และไม่มีการดำเนินการใดๆ บนแถว
 
 ![](../images/login_history_tab.png)
-<!-- TODO: Capture screenshot showing the Client IP column (FR-3661) -->
 
 ตารางประกอบด้วยคอลัมน์ต่อไปนี้:
 
