@@ -174,7 +174,6 @@ const AdminRetentionPolicy: React.FC<AdminRetentionPolicyProps> = ({
           singleCondition
           value={variables.filter ?? undefined}
           onChange={(next) => {
-            // RetentionPolicyFilter has no AND; one condition per field merges losslessly.
             const filter: RetentionPolicyFilter = next?.AND
               ? _.assign({}, ..._.castArray(next.AND))
               : (next ?? {});
@@ -317,8 +316,6 @@ const AdminRetentionPolicy: React.FC<AdminRetentionPolicyProps> = ({
         }}
         onRequestClose={(success) => {
           setIsOpenSettingModal(false);
-          // An update returns its fields and Relay patches the row in
-          // place; only a create changes which rows the list holds.
           if (success && editingPolicy === null) {
             onReload(variables, { fetchPolicy: 'network-only' });
           }

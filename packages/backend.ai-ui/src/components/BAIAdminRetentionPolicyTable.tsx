@@ -20,7 +20,6 @@ export type RetentionPolicyInList = NonNullable<
   BAIAdminRetentionPolicyTableFragment$data[number]
 >;
 
-/** The `RetentionPolicyOrderField` members the server sorts by. */
 const availableRetentionPolicySorterKeys = [
   'category',
   'createdAt',

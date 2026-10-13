@@ -93,8 +93,6 @@ const MaintenancePage = () => {
   const [retentionPolicyQueryRef, loadRetentionPolicyQuery] =
     useQueryLoader<AdminRetentionPolicyQueryType>(AdminRetentionPolicyQuery);
 
-  // What the URL currently describes — both the snapshot `useKeyedSnapshot`
-  // stores for the active tab and what a browser navigation reloads from.
   const currentSnapshot: TabSnapshot = {
     queryParams: _.omit(queryParams, 'tab'),
     tablePaginationOption,
@@ -127,7 +125,6 @@ const MaintenancePage = () => {
     setTablePaginationOption(pagination);
   };
 
-  // The maintenance tab has no preloaded query.
   const loadTabQuery = (tab: TabKey, snapshot: TabSnapshot) => {
     if (tab !== 'retention-policy') return;
     loadRetentionPolicyQuery(
