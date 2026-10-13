@@ -107,7 +107,7 @@ const ScopedSessionMonitorPopoverContent: React.FC<
       data-testid="session-monitor-popover"
       direction="column"
       align="stretch"
-      style={{ width: 460 }}
+      style={{ width: 500 }}
     >
       <BAIFlex
         direction="row"

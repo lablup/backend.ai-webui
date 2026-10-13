@@ -136,15 +136,15 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
           {[allocation, elapsed].filter(Boolean).join(' · ')}
         </Text>
       </BAIFlex>
-      <div style={{ width: 170, flex: 'none' }}>
+      <div style={{ width: 160, flex: 'none' }}>
         {isRunning && <SessionMonitorUtilizationBars sessionFrgmt={session} />}
       </div>
       {showDeadlineColumn && (
         <BAIFlex
           direction="column"
-          align="end"
+          align="stretch"
           gap="xxs"
-          style={{ width: 96, flex: 'none' }}
+          style={{ width: 128, flex: 'none', textAlign: 'end' }}
         >
           {nearest && deadline !== null && (
             <>
@@ -167,20 +167,22 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
                   };
                 }}
                 render={({ remainingSec, text }) => (
-                  <Badge
-                    variant={getIdleChecksBadgeVariant(
-                      {
-                        remaining: remainingSec,
-                        remaining_time_type: nearest.remainingTimeType,
-                        extra: null,
-                      },
-                      'remaining',
-                    )}
-                    label={text}
-                  />
+                  <BAIFlex justify="end">
+                    <Badge
+                      variant={getIdleChecksBadgeVariant(
+                        {
+                          remaining: remainingSec,
+                          remaining_time_type: nearest.remainingTimeType,
+                          extra: null,
+                        },
+                        'remaining',
+                      )}
+                      label={text}
+                    />
+                  </BAIFlex>
                 )}
               />
-              <Text type="supporting" maxLines={1} hasTruncateTooltip={false}>
+              <Text type="supporting" maxLines={1} justify="end">
                 {idleCheckLabel(nearest.key)}
               </Text>
             </>
