@@ -557,6 +557,9 @@
     "To": "Status sasaran",
     "UpdatedAt": "Dikemas kini pada"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Jemput melalui e-mel"
+  },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "Pilih Folder"
   },

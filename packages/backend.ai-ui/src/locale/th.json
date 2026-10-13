@@ -557,6 +557,9 @@
     "To": "สถานะปลายทาง",
     "UpdatedAt": "อัปเดตเมื่อ"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "เชิญทางอีเมล"
+  },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "เลือกโฟลเดอร์"
   },

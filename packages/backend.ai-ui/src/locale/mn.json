@@ -557,6 +557,9 @@
     "To": "Зорилтот төлөв",
     "UpdatedAt": "Шинэчлэгдсэн огноо"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "И-мэйлээр урих"
+  },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "Хавтас сонгох"
   },

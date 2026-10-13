@@ -557,6 +557,9 @@
     "To": "Status docelowy",
     "UpdatedAt": "Zaktualizowano"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Zaproś przez e-mail"
+  },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "Wybierz folder"
   },
