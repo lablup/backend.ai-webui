@@ -22,13 +22,13 @@ import {
   BAIAlert,
   BAIButton,
   BAIFlex,
-  BAIResourceGroupSelect,
+  BAIScopedResourceGroupSelect,
   BAISelectionLabel,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   filterOutNullAndUndefined,
   useFetchKey,
-  useResourceGroupNames,
+  useScopedResourceGroupNames,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { SettingsIcon } from 'lucide-react';
@@ -56,7 +56,7 @@ const PendingSessionNodeList: React.FC = () => {
 
   // Superadmin scope: every active resource group, not the current project's
   // subset. Same query as the select below, so Relay issues it once.
-  const resourceGroupNames = useResourceGroupNames(domainScope, {
+  const resourceGroupNames = useScopedResourceGroupNames(domainScope, {
     isActive: true,
   });
   // A stale, inactive or empty `resourceGroup` param must not reach
@@ -148,7 +148,7 @@ const PendingSessionNodeList: React.FC = () => {
           label={t('session.ResourceGroup')}
           style={{ marginBottom: 0 }}
         >
-          <BAIResourceGroupSelect
+          <BAIScopedResourceGroupSelect
             scope={domainScope}
             filter={{ isActive: true }}
             style={{ minWidth: 100 }}

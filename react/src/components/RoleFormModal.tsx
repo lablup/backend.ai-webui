@@ -22,7 +22,7 @@ import {
 import {
   BAIAdminContainerRegistrySelect,
   BAIAdminModelServiceSelect,
-  BAIAdminProjectSelect,
+  BAIScopedProjectSelect,
   BAIAdminResourceGroupSelect,
   BAIAdminSessionSelect,
   BAIFlex,
@@ -176,7 +176,7 @@ const CurrentDomainScopeId: React.FC<DomainScopeIdProps> = (props) => {
 const ProjectScopeIdSelect: React.FC<ScopeIdBranchProps> = (props) => {
   'use memo';
   const { domainScope } = useCurrentDomainScope();
-  return <BAIAdminProjectSelect scope={domainScope} {...props} />;
+  return <BAIScopedProjectSelect scope={domainScope} {...props} />;
 };
 
 export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({

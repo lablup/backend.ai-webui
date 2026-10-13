@@ -17,7 +17,7 @@ import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockE
 /**
  * Contract tests for the pending-sessions tab's resource-group scope
  * (FR-3409). The tab is superadmin-only, so its options come from the root
- * `scopedResourceGroups` field over the current domain (through `BAIResourceGroupSelect`) and never
+ * `scopedResourceGroups` field over the current domain (through `BAIScopedResourceGroupSelect`) and never
  * from the current project.
  */
 
@@ -89,7 +89,7 @@ vi.mock('./AutoUpdateFetchKeyButton', async () => {
   };
 });
 
-const RESOURCE_GROUPS_QUERY = 'BAIResourceGroupSelectQuery';
+const RESOURCE_GROUPS_QUERY = 'BAIScopedResourceGroupSelectQuery';
 const PENDING_QUEUE_QUERY = 'PendingSessionNodeListQuery';
 
 const renderList = (search: string) => {

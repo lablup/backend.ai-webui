@@ -1,5 +1,5 @@
 import RelayResolver from '../../tests/RelayResolver';
-import BAIResourceGroupSelect from './BAIResourceGroupSelect';
+import BAIScopedResourceGroupSelect from './BAIScopedResourceGroupSelect';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 // =============================================================================
@@ -23,7 +23,7 @@ const asConnection = (groups: Array<{ name: string }>) => ({
 });
 
 /**
- * BAIResourceGroupSelect is a specialized Select component that fetches and displays
+ * BAIScopedResourceGroupSelect is a specialized Select component that fetches and displays
  * resource groups at admin scope through the `adminResourceGroups` query.
  *
  * Key features:
@@ -32,31 +32,31 @@ const asConnection = (groups: Array<{ name: string }>) => ({
  * - Built-in search functionality
  * - Internationalized placeholder text
  *
- * @see BAIResourceGroupSelect.tsx for implementation details
+ * @see BAIScopedResourceGroupSelect.tsx for implementation details
  */
-const meta: Meta<typeof BAIResourceGroupSelect> = {
-  title: 'Fragments/BAIResourceGroupSelect',
-  component: BAIResourceGroupSelect,
+const meta: Meta<typeof BAIScopedResourceGroupSelect> = {
+  title: 'Fragments/BAIScopedResourceGroupSelect',
+  component: BAIScopedResourceGroupSelect,
   tags: ['autodocs'],
   parameters: {
     layout: 'centered',
     docs: {
       description: {
         component: `
-**BAIResourceGroupSelect** extends [BAISelect](/?path=/docs/components-input-baiselect--docs) to fetch and display resource groups at admin scope.
+**BAIScopedResourceGroupSelect** extends [BAISelect](/?path=/docs/components-input-baiselect--docs) to fetch and display resource groups at admin scope.
 
 ## Features
-- Fetches resource groups from GraphQL query \`BAIResourceGroupSelectQuery\` (\`adminResourceGroups\`, manager 26.2.0+)
+- Fetches resource groups from GraphQL query \`BAIScopedResourceGroupSelectQuery\` (\`adminResourceGroups\`, manager 26.2.0+)
 - Optional \`filter\` prop narrows the list server-side (\`isActive\`, \`isPublic\`)
 - Ordered by name, capped at 100 groups
 - Built-in search functionality enabled by default
 - Internationalized placeholder using \`comp:BAIResourceGroupSelect.SelectResourceGroup\`
 - Uses resource group \`name\` as both label and value
-- \`useResourceGroupNames(filter)\` exposes the same list to a parent that needs it during render
+- \`useScopedResourceGroupNames(filter)\` exposes the same list to a parent that needs it during render
 
 ## GraphQL Query
 \`\`\`graphql
-query BAIResourceGroupSelectQuery($filter: ResourceGroupFilter) {
+query BAIScopedResourceGroupSelectQuery($filter: ResourceGroupFilter) {
   adminResourceGroups(
     filter: $filter
     orderBy: [{ field: NAME, direction: ASC }]
@@ -73,7 +73,7 @@ query BAIResourceGroupSelectQuery($filter: ResourceGroupFilter) {
 
 ## Usage
 \`\`\`tsx
-<BAIResourceGroupSelect
+<BAIScopedResourceGroupSelect
   onChange={(value) => console.log(value)}
 />
 \`\`\`
@@ -118,7 +118,7 @@ For all other props, refer to [BAISelect](/?path=/docs/components-input-baiselec
 };
 
 export default meta;
-type Story = StoryObj<typeof BAIResourceGroupSelect>;
+type Story = StoryObj<typeof BAIScopedResourceGroupSelect>;
 
 /**
  * Basic usage with 5 sample resource groups.
@@ -142,7 +142,7 @@ export const Default: Story = {
         }),
       }}
     >
-      <BAIResourceGroupSelect {...args} style={{ width: '300px' }} />
+      <BAIScopedResourceGroupSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -168,7 +168,7 @@ export const Empty: Story = {
         }),
       }}
     >
-      <BAIResourceGroupSelect {...args} style={{ width: '300px' }} />
+      <BAIScopedResourceGroupSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -197,7 +197,7 @@ export const Disabled: Story = {
         }),
       }}
     >
-      <BAIResourceGroupSelect {...args} style={{ width: '300px' }} />
+      <BAIScopedResourceGroupSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -226,7 +226,7 @@ export const WithClearButton: Story = {
         }),
       }}
     >
-      <BAIResourceGroupSelect {...args} style={{ width: '300px' }} />
+      <BAIScopedResourceGroupSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -255,7 +255,7 @@ export const WithCustomPlaceholder: Story = {
         }),
       }}
     >
-      <BAIResourceGroupSelect {...args} style={{ width: '300px' }} />
+      <BAIScopedResourceGroupSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -284,7 +284,7 @@ export const ManyResourceGroups: Story = {
         }),
       }}
     >
-      <BAIResourceGroupSelect {...args} style={{ width: '300px' }} />
+      <BAIScopedResourceGroupSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<623405aee964849dcbc0bdc7ef8eaf2b>>
+ * @generated SignedSource<<bc7bb741b6b476a7997712f6ead2bb59>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -71,11 +71,11 @@ export type UUIDFilter = {
   notEquals?: string | null | undefined;
   notIn?: ReadonlyArray<string> | null | undefined;
 };
-export type BAIResourceGroupSelectQuery$variables = {
+export type BAIScopedResourceGroupSelectQuery$variables = {
   filter?: ResourceGroupFilter | null | undefined;
   scope: ResourceGroupScope;
 };
-export type BAIResourceGroupSelectQuery$data = {
+export type BAIScopedResourceGroupSelectQuery$data = {
   readonly scopedResourceGroups: {
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -84,9 +84,9 @@ export type BAIResourceGroupSelectQuery$data = {
     }>;
   } | null | undefined;
 };
-export type BAIResourceGroupSelectQuery = {
-  response: BAIResourceGroupSelectQuery$data;
-  variables: BAIResourceGroupSelectQuery$variables;
+export type BAIScopedResourceGroupSelectQuery = {
+  response: BAIScopedResourceGroupSelectQuery$data;
+  variables: BAIScopedResourceGroupSelectQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -142,7 +142,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "BAIResourceGroupSelectQuery",
+    "name": "BAIScopedResourceGroupSelectQuery",
     "selections": [
       {
         "alias": null,
@@ -189,7 +189,7 @@ return {
       (v0/*: any*/)
     ],
     "kind": "Operation",
-    "name": "BAIResourceGroupSelectQuery",
+    "name": "BAIScopedResourceGroupSelectQuery",
     "selections": [
       {
         "alias": null,
@@ -235,16 +235,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "625339ba3b9fcb5359e357553e4938d1",
+    "cacheID": "b89ae9ea8eecb7f51921bfa05c94f5c8",
     "id": null,
     "metadata": {},
-    "name": "BAIResourceGroupSelectQuery",
+    "name": "BAIScopedResourceGroupSelectQuery",
     "operationKind": "query",
-    "text": "query BAIResourceGroupSelectQuery(\n  $scope: ResourceGroupScope!\n  $filter: ResourceGroupFilter\n) {\n  scopedResourceGroups(scope: $scope, filter: $filter, orderBy: [{field: NAME, direction: ASC}], limit: 100) {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query BAIScopedResourceGroupSelectQuery(\n  $scope: ResourceGroupScope!\n  $filter: ResourceGroupFilter\n) {\n  scopedResourceGroups(scope: $scope, filter: $filter, orderBy: [{field: NAME, direction: ASC}], limit: 100) {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "97f3a44e2aa7644fec449974c1ddac20";
+(node as any).hash = "b1c8fb072a583117bb5851f845807b45";
 
 export default node;

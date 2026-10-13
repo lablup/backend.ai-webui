@@ -34,7 +34,7 @@ import {
 } from '@lablup/ui-common/SegmentedControl';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
-  BAIAdminProjectSelect,
+  BAIScopedProjectSelect,
   BAIFlex,
   BAIPropertyFilter,
   BAIResourceUnitGridSkeleton,
@@ -370,7 +370,7 @@ const AdminComputeSessionListPage = () => {
                   type: 'string',
                   defaultOperator: '==',
                   renderInput: ({ onAddCondition, value, isDisabled }) => (
-                    <BAIAdminProjectSelect
+                    <BAIScopedProjectSelect
                       scope={domainScope}
                       // The filter row already prints the property label.
                       label={t('data.Project')}
