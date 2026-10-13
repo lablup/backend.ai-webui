@@ -15,13 +15,10 @@ import {
 } from './helper/actAs';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import { applyDevServerTitle } from './helper/devServerTitle';
-import { installDevSplashEscape } from './helper/devSplashEscape';
 import { ThemeModeProvider } from './hooks/useThemeMode';
 import { Provider as JotaiProvider } from 'jotai';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-
-installDevSplashEscape();
 
 // To maintain compatibility with various manager versions, the WebUI client uses directives to manipulate GraphQL queries.
 // This can cause Relay to show "Warning: RelayResponseNormalizer: Payload did not contain a value for field" in the browser console during development.

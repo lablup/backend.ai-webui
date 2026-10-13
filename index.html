@@ -306,6 +306,22 @@
         window.__dismissSplash = dismiss;
         window.__enterLoginBackdrop = enterLoginBackdrop;
 
+        // Dev-only (the NODE_ENV shim above is injected by react/vite.config.ts
+        // in dev): Esc on the loading splash reloads straight to the login form.
+        // Lives here, not in a module, so it exists before Vite loads the app;
+        // preventDefault() keeps the browser from treating Esc as "stop loading".
+        if (globalThis.process && globalThis.process.env &&
+            globalThis.process.env.NODE_ENV === 'development') {
+          window.addEventListener('keydown', function (e) {
+            if (e.key !== 'Escape' || state !== 'loading') return;
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            // INTENTIONAL_LOGOUT_FLAG in react/src/hooks/useLogout.ts
+            sessionStorage.setItem('backendai_intentional_logout', '1');
+            window.location.reload();
+          }, true);
+        }
+
         // Fallback for routes that signal neither (/verify-email,
         // /change-password): dismiss once the app occupies space. A
         // ResizeObserver IS the predicate, so no polling and no forced layout.

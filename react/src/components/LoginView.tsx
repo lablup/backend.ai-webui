@@ -1155,7 +1155,7 @@ const LoginView: React.FC<{
 
   // Dev-only: Esc cancels a login stuck on an unreachable endpoint or behind
   // the splash loader, so the form comes back without waiting out the timeout.
-  // The loading splash itself is handled at boot (helper/devSplashEscape).
+  // The loading splash itself is handled by the inline script in index.html.
   const onDevEscape = useEffectEvent(() => {
     if (escapeLoginProbe()) {
       logger.info('[dev] login probe aborted with Esc');
