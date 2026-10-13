@@ -25,7 +25,8 @@ const AdminSessionPage: React.FC = () => {
 
   const { t } = useTranslation();
   const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
-  // session_pending_queue admits superadmins only (ADR 0011).
+  // TODO(needs-backend): session_pending_queue admits superadmins only until the backend
+  // reworks the pending queue query (#10300).
   const isSuperAdmin = useSuspendedBackendaiClient().is_superadmin;
   const activeTab = isSuperAdmin ? currentTab : 'compute-sessions';
 
