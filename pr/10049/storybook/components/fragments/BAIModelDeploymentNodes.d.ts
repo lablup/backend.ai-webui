@@ -10,9 +10,9 @@ export type ModelDeploymentNodeInList = NonNullable<BAIModelDeploymentNodesFragm
  * (`createdAt` → `CREATED_AT`, `tag` → `TAG`, …). `updatedAt` is
  * intentionally omitted because the server enum does not include it.
  */
-export declare const availableDeploymentSorterKeys: readonly ["name", "createdAt", "domain", "project", "resourceGroup", "tag"];
+export declare const availableDeploymentSorterKeys: readonly ["name", "createdAt", "project", "resourceGroup", "tag"];
 export type DeploymentSorterKey = (typeof availableDeploymentSorterKeys)[number];
-export declare const availableDeploymentSorterValues: readonly ["name", "createdAt", "domain", "project", "resourceGroup", "tag", ...("-createdAt" | "-name" | "-tag" | "-project" | "-resourceGroup" | "-domain")[]];
+export declare const availableDeploymentSorterValues: readonly ["name", "createdAt", "project", "resourceGroup", "tag", ...("-createdAt" | "-name" | "-tag" | "-project" | "-resourceGroup")[]];
 export type DeploymentOrderValue = (typeof availableDeploymentSorterValues)[number];
 export interface BAIModelDeploymentNodesProps extends Omit<BAITableProps<ModelDeploymentNodeInList>, 'dataSource' | 'columns' | 'onChangeOrder'> {
     deploymentsFrgmt: BAIModelDeploymentNodesFragment$key;
