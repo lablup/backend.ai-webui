@@ -8,7 +8,7 @@ import {
   useAccessibleProjectsQuery,
 } from '../__generated__/useAccessibleProjectsQuery.graphql';
 import { useCurrentUserRole } from './backendai';
-import { toLocalId } from 'backend.ai-ui';
+import { useCurrentDomainScope } from './useCurrentDomainScope';
 import * as _ from 'lodash-es';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import type { FetchPolicy } from 'relay-runtime';
@@ -39,7 +39,7 @@ export interface AccessibleProject {
 
 type ProjectV2Edge = {
   readonly node: {
-    readonly id: string;
+    readonly entityId: string;
     readonly basicInfo: { readonly name: string; readonly type: ProjectTypeV2 };
     readonly organization: { readonly resourcePolicy: string };
     readonly lifecycle: { readonly isActive: boolean | null | undefined };
@@ -47,7 +47,7 @@ type ProjectV2Edge = {
 };
 
 const toAccessibleProject = (edge: ProjectV2Edge): AccessibleProject => ({
-  id: toLocalId(edge.node.id),
+  id: edge.node.entityId,
   name: edge.node.basicInfo.name,
   type: edge.node.basicInfo.type,
   is_active: edge.node.lifecycle.isActive ?? null,
@@ -89,23 +89,32 @@ export const useAccessibleProjects = (
       ? ['GENERAL']
       : ['GENERAL', 'MODEL_STORE'];
 
-  // `domainProjectsV2` needs domain-admin rights, so only admins ask for it.
-  const { domainProjectsV2, myUserV2 } =
+  // Both lists read `scopedProjectsV2` (ADR 0011): the caller's memberships for
+  // everyone, plus every project of the current domain for admins.
+  const { domainScope } = useCurrentDomainScope();
+  const { domainProjects, memberProjects } =
     useLazyLoadQuery<useAccessibleProjectsQuery>(
       graphql`
         query useAccessibleProjectsQuery(
+          $domainScope: ProjectScope!
+          $userScope: ProjectScope!
           $domainName: String!
           $types: [ProjectTypeV2!]!
           $isAdmin: Boolean!
         ) {
-          domainProjectsV2(
-            scope: { domainName: $domainName }
-            filter: { isActive: true, type: { in_: $types } }
+          domainProjects: scopedProjectsV2(
+            scope: $domainScope
+            filter: {
+              isActive: true
+              domainName: { equals: $domainName }
+              type: { in_: $types }
+            }
             limit: 1000
           ) @include(if: $isAdmin) {
             edges {
               node {
                 id
+                entityId
                 basicInfo {
                   name
                   type
@@ -119,46 +128,49 @@ export const useAccessibleProjects = (
               }
             }
           }
-          myUserV2 {
-            projects(
-              filter: {
-                isActive: true
-                domainName: { equals: $domainName }
-                type: { in_: $types }
-              }
-              limit: 1000
-            ) {
-              edges {
-                node {
-                  id
-                  basicInfo {
-                    name
-                    type
-                  }
-                  organization {
-                    resourcePolicy
-                  }
-                  lifecycle {
-                    isActive
-                  }
+          memberProjects: scopedProjectsV2(
+            scope: $userScope
+            filter: {
+              isActive: true
+              domainName: { equals: $domainName }
+              type: { in_: $types }
+            }
+            limit: 1000
+          ) {
+            edges {
+              node {
+                id
+                entityId
+                basicInfo {
+                  name
+                  type
+                }
+                organization {
+                  resourcePolicy
+                }
+                lifecycle {
+                  isActive
                 }
               }
             }
           }
         }
       `,
-      { domainName, types, isAdmin },
+      {
+        domainScope,
+        userScope: { user: [{ value: baiClient.user_uuid }] },
+        domainName,
+        types,
+        isAdmin,
+      },
       {
         fetchPolicy: options?.fetchPolicy ?? 'store-or-network',
       },
     );
 
-  const accessibleProjects = _.map(
-    myUserV2?.projects?.edges,
-    toAccessibleProject,
-  );
-  const groups = domainProjectsV2
-    ? _.map(domainProjectsV2.edges, toAccessibleProject)
+  const accessibleProjects = _.map(memberProjects?.edges, toAccessibleProject);
+  const groups = domainProjects
+    ? _.map(domainProjects.edges, toAccessibleProject)
     : accessibleProjects;
 
   return { groups, accessibleProjects };

@@ -10,6 +10,15 @@ import type { GraphQLResponse, OperationDescriptor } from 'relay-runtime';
 import { createMockEnvironment } from 'relay-test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+const DOMAIN_ID = 'b9e676dc-e23e-54c6-b350-e83fba4127e9';
+vi.mock('./useCurrentDomainScope', () => ({
+  useCurrentDomainScope: () => ({
+    domainName: 'default',
+    domainId: DOMAIN_ID,
+    domainScope: { domain: [{ value: DOMAIN_ID }] },
+  }),
+}));
+
 vi.mock('.', () => ({
   useSuspendedBackendaiClient: () => ({
     user_uuid: 'dfa9da54-4b28-432f-be29-c0d680c7a412',
@@ -20,6 +29,7 @@ vi.mock('.', () => ({
 const MODEL_STORE_UUID = '8e32dd28-d319-4e3b-8851-ea37837699a5';
 const modelStoreNode = {
   id: btoa(`ProjectV2:${MODEL_STORE_UUID}`),
+  entityId: MODEL_STORE_UUID,
   basicInfo: { name: 'model-store' },
 };
 
@@ -55,14 +65,13 @@ describe('useModelStoreProject (FR-4058)', () => {
     vi.restoreAllMocks();
   });
 
-  it('sends the caller id and domain name as variables', async () => {
+  it('scopes the search to the caller in user scope', async () => {
     const { operation } = await renderWithPayload({
       data: { scopedProjectsV2: { edges: [] } },
     });
     expect(operation?.request.variables).toEqual({
-      userId: 'dfa9da54-4b28-432f-be29-c0d680c7a412',
+      scope: { user: [{ value: 'dfa9da54-4b28-432f-be29-c0d680c7a412' }] },
       domainName: 'default',
-      isAdminScope: false,
     });
   });
 
@@ -104,12 +113,12 @@ describe('useModelStoreProject (FR-4058)', () => {
 
   it('reads the model store project from the current domain in admin scope', async () => {
     const { result, operation } = await renderWithPayload(
-      { data: { domainProjectsV2: { edges: [{ node: modelStoreNode }] } } },
+      { data: { scopedProjectsV2: { edges: [{ node: modelStoreNode }] } } },
       'admin',
     );
-    expect(operation?.request.variables).toMatchObject({
+    expect(operation?.request.variables).toEqual({
+      scope: { domain: [{ value: DOMAIN_ID }] },
       domainName: 'default',
-      isAdminScope: true,
     });
     expect(result.current).toEqual({
       id: MODEL_STORE_UUID,

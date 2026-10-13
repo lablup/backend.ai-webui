@@ -4,56 +4,43 @@
  */
 import { useSuspendedBackendaiClient, useCurrentDomainValue } from '.';
 import { useModelStoreProjectQuery } from '../__generated__/useModelStoreProjectQuery.graphql';
-import { toLocalId } from 'backend.ai-ui';
+import { useCurrentDomainScope } from './useCurrentDomainScope';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 /**
  * Returns the id and name of the active MODEL_STORE project in the current
  * domain, or nulls when there is none. Assumes one model store per domain.
- * `'user'` reads the caller's memberships; `'admin'` reads every project of the
- * current domain (domain admin or higher), for admin pages.
+ * `'user'` scopes `scopedProjectsV2` to the caller's memberships; `'admin'` to
+ * the current domain (domain admin or higher), for admin pages (ADR 0011).
  */
 export const useModelStoreProject = (scope: 'user' | 'admin' = 'user') => {
   const baiClient = useSuspendedBackendaiClient();
   const domainName = useCurrentDomainValue();
-  const userId: string = baiClient.user_uuid;
-  const isAdminScope = scope === 'admin';
+  const { domainScope } = useCurrentDomainScope();
+  const projectScope =
+    scope === 'admin'
+      ? domainScope
+      : { user: [{ value: baiClient.user_uuid as string }] };
 
   const data = useLazyLoadQuery<useModelStoreProjectQuery>(
     graphql`
       query useModelStoreProjectQuery(
-        $userId: UUID!
+        $scope: ProjectScope!
         $domainName: String!
-        $isAdminScope: Boolean!
       ) {
         scopedProjectsV2(
-          scope: { user: [{ value: $userId }] }
+          scope: $scope
           filter: {
             type: { equals: MODEL_STORE }
             isActive: true
             domainName: { equals: $domainName }
           }
-        )
-          @skip(if: $isAdminScope)
-          @since(version: "26.9.0a1")
-          @catch(to: RESULT) {
-          edges {
-            node {
-              id
-              basicInfo {
-                name
-              }
-            }
-          }
-        }
-        domainProjectsV2(
-          scope: { domainName: $domainName }
-          filter: { type: { equals: MODEL_STORE }, isActive: true }
           limit: 1
-        ) @include(if: $isAdminScope) @catch(to: RESULT) {
+        ) @catch(to: RESULT) {
           edges {
             node {
               id
+              entityId
               basicInfo {
                 name
               }
@@ -62,18 +49,18 @@ export const useModelStoreProject = (scope: 'user' | 'admin' = 'user') => {
         }
       }
     `,
-    { userId, domainName, isAdminScope },
+    { scope: projectScope, domainName },
     {
       fetchPolicy: 'store-or-network',
     },
   );
 
-  const projects = isAdminScope ? data.domainProjectsV2 : data.scopedProjectsV2;
+  const projects = data.scopedProjectsV2;
   const modelStoreProject =
     projects?.ok === true ? (projects.value?.edges?.[0]?.node ?? null) : null;
 
   return {
-    id: modelStoreProject ? toLocalId(modelStoreProject.id) : null,
+    id: modelStoreProject?.entityId ?? null,
     name: modelStoreProject?.basicInfo?.name ?? null,
   };
 };
