@@ -25,23 +25,31 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-
-  const { domain, group } = useLazyLoadQuery<UserResourceGroupAlertQuery>(
+  const { domainV2, projectV2 } = useLazyLoadQuery<UserResourceGroupAlertQuery>(
     graphql`
       query UserResourceGroupAlertQuery(
         $projectId: UUID!
-        $domainName: String
+        $domainName: String!
+        $resourceGroupName: String!
       ) {
-        domain(name: $domainName) {
-          scaling_groups
+        domainV2(domainName: $domainName) {
+          resourceGroups(filter: { name: { equals: $resourceGroupName } })
+            @since(version: "26.9.0a1") {
+            count
+          }
         }
-        group(id: $projectId, domain_name: $domainName) {
-          name
-          scaling_groups
+        projectV2(projectId: $projectId) {
+          basicInfo {
+            name
+          }
+          resourceGroups(filter: { name: { equals: $resourceGroupName } })
+            @since(version: "26.9.0a1") {
+            count
+          }
         }
       }
     `,
-    { projectId, domainName },
+    { projectId, domainName, resourceGroupName },
     {
       fetchPolicy: _.isUndefined(isModalOpen)
         ? 'network-only'
@@ -51,14 +59,11 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
     },
   );
 
-  const domainScalingGroups = domain?.scaling_groups ?? [];
-  const projectScalingGroups = group?.scaling_groups ?? [];
+  // `resourceGroups` is stripped before 26.9.0a1; an unknown answer raises no warning.
+  const isDomainAllowed = (domainV2?.resourceGroups?.count ?? 1) > 0;
+  const isProjectAllowed = (projectV2?.resourceGroups?.count ?? 1) > 0;
 
-  if (
-    !resourceGroupName ||
-    _.includes(domainScalingGroups, resourceGroupName) ||
-    _.includes(projectScalingGroups, resourceGroupName)
-  ) {
+  if (!resourceGroupName || isDomainAllowed || isProjectAllowed) {
     return null;
   }
 
@@ -66,7 +71,7 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
     <Banner
       status="warning"
       title={t('fairShare.UserNotAllowedInResourceGroup', {
-        project: group?.name,
+        project: projectV2?.basicInfo?.name,
         resourceGroup: resourceGroupName,
       })}
       {...bannerProps}

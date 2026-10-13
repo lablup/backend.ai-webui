@@ -4,12 +4,7 @@
  */
 import { SwitchToProjectButtonQuery } from '../__generated__/SwitchToProjectButtonQuery.graphql';
 import { useSwitchProject } from '../hooks/useRouteScope';
-import {
-  BAIButton,
-  BAIButtonProps,
-  toGlobalId,
-  toLocalId,
-} from 'backend.ai-ui';
+import { BAIButton, BAIButtonProps } from 'backend.ai-ui';
 import React, { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -19,7 +14,7 @@ interface SwitchToProjectButtonProps extends Omit<BAIButtonProps, 'onClick'> {
   /**
    * Project name the caller already resolved (e.g. from
    * `ModelDeploymentMetadata.projectV2`). When omitted, the name is looked up
-   * with an extra `group_node` round-trip.
+   * with an extra `projectV2` round-trip.
    */
   projectName?: string | null;
 }
@@ -61,22 +56,23 @@ const SwitchToProjectButtonWithQuery: React.FC<
   Omit<SwitchToProjectButtonProps, 'projectName'>
 > = ({ projectId, ...buttonProps }) => {
   'use memo';
-  const { group_node } = useLazyLoadQuery<SwitchToProjectButtonQuery>(
+  const { projectV2 } = useLazyLoadQuery<SwitchToProjectButtonQuery>(
     graphql`
-      query SwitchToProjectButtonQuery($projectId: String!) {
-        group_node(id: $projectId) {
-          id
-          name
+      query SwitchToProjectButtonQuery($projectId: UUID!) {
+        projectV2(projectId: $projectId) {
+          basicInfo {
+            name
+          }
         }
       }
     `,
-    { projectId: toGlobalId('GroupNode', projectId) },
+    { projectId },
   );
 
   return (
     <SwitchToProjectButtonView
-      projectId={toLocalId(group_node?.id || '')}
-      projectName={group_node?.name}
+      projectId={projectId}
+      projectName={projectV2?.basicInfo?.name}
       {...buttonProps}
     />
   );

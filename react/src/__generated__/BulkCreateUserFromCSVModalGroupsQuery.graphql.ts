@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<99529af65495bc4ca6d2c222ad3dd3f3>>
+ * @generated SignedSource<<7db03a9019f730e8b1cb80006375e6d9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,15 +9,32 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+export type ProjectScope = {
+  domain?: ReadonlyArray<UUIDScope> | null | undefined;
+  resourceGroup?: ReadonlyArray<UUIDScope> | null | undefined;
+  user?: ReadonlyArray<UUIDScope> | null | undefined;
+};
+export type UUIDScope = {
+  value: string;
+};
 export type BulkCreateUserFromCSVModalGroupsQuery$variables = {
-  domain_name?: string | null | undefined;
-  type?: ReadonlyArray<string | null | undefined> | null | undefined;
+  limit: number;
+  offset: number;
+  scope: ProjectScope;
 };
 export type BulkCreateUserFromCSVModalGroupsQuery$data = {
-  readonly groups: ReadonlyArray<{
-    readonly id: string | null | undefined;
-    readonly name: string | null | undefined;
-  } | null | undefined> | null | undefined;
+  readonly scopedProjectsV2: {
+    readonly count: number;
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly basicInfo: {
+          readonly name: string;
+        };
+        readonly entityId: string;
+        readonly id: string;
+      };
+    }>;
+  } | null | undefined;
 };
 export type BulkCreateUserFromCSVModalGroupsQuery = {
   response: BulkCreateUserFromCSVModalGroupsQuery$data;
@@ -25,55 +42,128 @@ export type BulkCreateUserFromCSVModalGroupsQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "domain_name"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "type"
-  }
-],
-v1 = [
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "limit"
+},
+v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "offset"
+},
+v2 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "scope"
+},
+v3 = [
   {
     "alias": null,
     "args": [
       {
+        "kind": "Literal",
+        "name": "filter",
+        "value": {
+          "isActive": true,
+          "type": {
+            "in_": [
+              "GENERAL",
+              "MODEL_STORE"
+            ]
+          }
+        }
+      },
+      {
         "kind": "Variable",
-        "name": "domain_name",
-        "variableName": "domain_name"
+        "name": "limit",
+        "variableName": "limit"
+      },
+      {
+        "kind": "Variable",
+        "name": "offset",
+        "variableName": "offset"
       },
       {
         "kind": "Literal",
-        "name": "is_active",
-        "value": true
+        "name": "orderBy",
+        "value": [
+          {
+            "direction": "ASC",
+            "field": "NAME"
+          }
+        ]
       },
       {
         "kind": "Variable",
-        "name": "type",
-        "variableName": "type"
+        "name": "scope",
+        "variableName": "scope"
       }
     ],
-    "concreteType": "Group",
+    "concreteType": "ProjectV2Connection",
     "kind": "LinkedField",
-    "name": "groups",
-    "plural": true,
+    "name": "scopedProjectsV2",
+    "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "id",
+        "name": "count",
         "storageKey": null
       },
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "name",
+        "concreteType": "ProjectV2Edge",
+        "kind": "LinkedField",
+        "name": "edges",
+        "plural": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ProjectV2",
+            "kind": "LinkedField",
+            "name": "node",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "id",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "entityId",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ProjectBasicInfo",
+                "kind": "LinkedField",
+                "name": "basicInfo",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "name",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
         "storageKey": null
       }
     ],
@@ -82,32 +172,40 @@ v1 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/),
+      (v2/*: any*/)
+    ],
     "kind": "Fragment",
     "metadata": null,
     "name": "BulkCreateUserFromCSVModalGroupsQuery",
-    "selections": (v1/*: any*/),
+    "selections": (v3/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v2/*: any*/),
+      (v0/*: any*/),
+      (v1/*: any*/)
+    ],
     "kind": "Operation",
     "name": "BulkCreateUserFromCSVModalGroupsQuery",
-    "selections": (v1/*: any*/)
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "907bf63fe3ef62524aab93b5b541bafb",
+    "cacheID": "ce9a72166565fc33b6815b19e2ba62fb",
     "id": null,
     "metadata": {},
     "name": "BulkCreateUserFromCSVModalGroupsQuery",
     "operationKind": "query",
-    "text": "query BulkCreateUserFromCSVModalGroupsQuery(\n  $domain_name: String\n  $type: [String]\n) {\n  groups(domain_name: $domain_name, is_active: true, type: $type) {\n    id\n    name\n  }\n}\n"
+    "text": "query BulkCreateUserFromCSVModalGroupsQuery(\n  $scope: ProjectScope!\n  $limit: Int!\n  $offset: Int!\n) {\n  scopedProjectsV2(scope: $scope, filter: {isActive: true, type: {in_: [GENERAL, MODEL_STORE]}}, orderBy: [{field: NAME, direction: ASC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4a592cfc93416494db8742d2df955f51";
+(node as any).hash = "613168e14a6b600095fb2ab1c3cd3828";
 
 export default node;

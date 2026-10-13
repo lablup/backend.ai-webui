@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5cac4de641eaa134946ab86aa7ea431f>>
+ * @generated SignedSource<<6b87daee6afecf1104eb63344ab36ef1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,6 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type ProjectResourceGroupAlertFragment$data = {
-  readonly domainName: string;
   readonly projectId: string;
   readonly resourceGroupName: string;
   readonly " $fragmentType": "ProjectResourceGroupAlertFragment";
@@ -38,13 +37,6 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "domainName",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
       "name": "resourceGroupName",
       "storageKey": null
     }
@@ -53,6 +45,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "ea98aa9dfe400b51a952ca4b7cb7591c";
+(node as any).hash = "79159388c8e077e93cccaad99beac10f";
 
 export default node;

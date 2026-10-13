@@ -4,7 +4,7 @@
  */
 /**
  * FR-2371: when the caller already knows the project name, the button must
- * switch project without the extra `group_node` round-trip, while callers that
+ * switch project without the extra `projectV2` round-trip, while callers that
  * cannot supply it (older managers) keep the query-backed fallback.
  */
 import '../../__test__/matchMedia.mock.js';
@@ -81,17 +81,20 @@ describe('SwitchToProjectButton', () => {
     });
   });
 
-  it('falls back to the group_node lookup when no project name is given', async () => {
+  it('falls back to the projectV2 lookup when no project name is given', async () => {
     const environment = createMockEnvironment();
-    environment.mock.queueOperationResolver((operation) =>
-      MockPayloadGenerator.generate(operation, {
-        GroupNode: () => ({
-          id: btoa('GroupNode:project-0000'),
-          name: 'beta',
+    let variables: Record<string, unknown> | undefined;
+    environment.mock.queueOperationResolver((operation) => {
+      variables = operation.request.variables;
+      return MockPayloadGenerator.generate(operation, {
+        ProjectV2: () => ({
+          basicInfo: { name: 'beta' },
         }),
-      }),
-    );
+      });
+    });
     renderButton(environment);
+
+    expect(variables).toEqual({ projectId: 'project-0000' });
 
     expect(
       await screen.findByText('modelService.SwitchToProject:beta'),

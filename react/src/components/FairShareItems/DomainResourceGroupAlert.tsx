@@ -1,7 +1,6 @@
 import type { DomainResourceGroupAlertFragment$key } from '../../__generated__/DomainResourceGroupAlertFragment.graphql';
 import type { DomainResourceGroupAlertQuery } from '../../__generated__/DomainResourceGroupAlertQuery.graphql';
 import { Banner } from '@lablup/ui-common/Banner';
-import * as _ from 'lodash-es';
 import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
@@ -36,24 +35,28 @@ const DomainResourceGroupAlert: React.FC<DomainResourceGroupAlertProps> = ({
     domainFairShareFrgmt,
   );
 
-  const { domain } = useLazyLoadQuery<DomainResourceGroupAlertQuery>(
+  const { domainV2 } = useLazyLoadQuery<DomainResourceGroupAlertQuery>(
     graphql`
-      query DomainResourceGroupAlertQuery($domainName: String) {
-        domain(name: $domainName) {
-          scaling_groups
+      query DomainResourceGroupAlertQuery(
+        $domainName: String!
+        $resourceGroupName: String!
+      ) {
+        domainV2(domainName: $domainName) {
+          resourceGroups(filter: { name: { equals: $resourceGroupName } })
+            @since(version: "26.9.0a1") {
+            count
+          }
         }
       }
     `,
-    { domainName },
+    { domainName, resourceGroupName },
     {
       fetchPolicy: isModalOpen ? 'network-only' : 'store-only',
     },
   );
 
-  if (
-    !resourceGroupName ||
-    _.includes(domain?.scaling_groups ?? [], resourceGroupName)
-  ) {
+  // `resourceGroups` is stripped before 26.9.0a1; an unknown answer raises no warning.
+  if (!resourceGroupName || (domainV2?.resourceGroups?.count ?? 1) > 0) {
     return null;
   }
 
