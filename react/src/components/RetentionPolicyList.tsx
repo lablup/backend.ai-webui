@@ -4,6 +4,7 @@
  */
 import { RetentionPolicyListDeleteMutation } from '../__generated__/RetentionPolicyListDeleteMutation.graphql';
 import {
+  RetentionPolicyFilter,
   RetentionPolicyListQuery as RetentionPolicyListQueryType,
   RetentionPolicyOrderBy,
 } from '../__generated__/RetentionPolicyListQuery.graphql';
@@ -11,6 +12,7 @@ import { RetentionPolicyListToggleMutation } from '../__generated__/RetentionPol
 import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import RetentionPolicySettingModal, {
+  RETENTION_CATEGORIES,
   useRetentionCategoryLabel,
 } from './RetentionPolicySettingModal';
 import { Switch } from '@lablup/ui-common/Switch';
@@ -21,9 +23,11 @@ import {
   BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
+  BAIGraphQLPropertyFilter,
   BAINameActionCell,
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
+  type GraphQLFilter,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon, SquarePenIcon, Trash2 } from 'lucide-react';
@@ -39,11 +43,17 @@ import {
 
 export const RetentionPolicyListQuery = graphql`
   query RetentionPolicyListQuery(
+    $filter: RetentionPolicyFilter
     $orderBy: [RetentionPolicyOrderBy!]
     $limit: Int
     $offset: Int
   ) {
-    adminRetentionPolicies(orderBy: $orderBy, limit: $limit, offset: $offset) {
+    adminRetentionPolicies(
+      filter: $filter
+      orderBy: $orderBy
+      limit: $limit
+      offset: $offset
+    ) {
       count
       edges {
         node {
@@ -156,7 +166,42 @@ const RetentionPolicyList: React.FC<RetentionPolicyListProps> = ({
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIAlert type="info" description={t('retentionPolicy.Description')} />
-      <BAIFlex justify="end" align="center" wrap="wrap" gap="sm">
+      <BAIFlex justify="between" align="start" wrap="wrap" gap="sm">
+        <BAIGraphQLPropertyFilter<GraphQLFilter>
+          style={{ flex: 1 }}
+          singleCondition
+          value={variables.filter ?? undefined}
+          onChange={(next) => {
+            // RetentionPolicyFilter has no AND; one condition per field merges losslessly.
+            const filter: RetentionPolicyFilter = next?.AND
+              ? _.assign({}, ..._.castArray(next.AND))
+              : (next ?? {});
+            onReload({
+              ...variables,
+              filter: _.isEmpty(filter) ? null : filter,
+              offset: 0,
+            });
+          }}
+          filterProperties={[
+            {
+              key: 'category',
+              propertyLabel: t('retentionPolicy.Category'),
+              type: 'enum',
+              valueMode: 'scalar',
+              fixedOperator: 'equals',
+              strictSelection: true,
+              options: _.map(RETENTION_CATEGORIES, (category) => ({
+                label: getCategoryLabel(category),
+                value: category,
+              })),
+            },
+            {
+              key: 'enabled',
+              propertyLabel: t('general.Enabled'),
+              type: 'boolean',
+            },
+          ]}
+        />
         <BAIFlex gap="xs">
           <BAIFetchKeyButton
             loading={isPending}

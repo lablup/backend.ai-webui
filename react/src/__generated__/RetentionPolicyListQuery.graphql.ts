@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ec219b55a957ca29e4e2464c3bbf4b0a>>
+ * @generated SignedSource<<8442b0f5727b4e4d937a1802890a2f64>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,11 +12,16 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type RetentionCategory = "DEPLOYMENTS" | "LOGIN" | "LOGS" | "RECONCILE_HISTORY" | "ROLES_INVITATIONS" | "SESSIONS" | "USAGE_BUCKETS" | "USAGE_RECORDS" | "%future added value";
 export type RetentionPolicyOrderField = "CATEGORY" | "CREATED_AT" | "LAST_SWEPT_AT" | "%future added value";
+export type RetentionPolicyFilter = {
+  category?: RetentionCategory | null | undefined;
+  enabled?: boolean | null | undefined;
+};
 export type RetentionPolicyOrderBy = {
   direction?: string;
   field: RetentionPolicyOrderField;
 };
 export type RetentionPolicyListQuery$variables = {
+  filter?: RetentionPolicyFilter | null | undefined;
   limit?: number | null | undefined;
   offset?: number | null | undefined;
   orderBy?: ReadonlyArray<RetentionPolicyOrderBy> | null | undefined;
@@ -43,19 +48,29 @@ const node: ConcreteRequest = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "limit"
+  "name": "filter"
 },
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "offset"
+  "name": "limit"
 },
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
+  "name": "offset"
+},
+v3 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
   "name": "orderBy"
 },
-v3 = [
+v4 = [
+  {
+    "kind": "Variable",
+    "name": "filter",
+    "variableName": "filter"
+  },
   {
     "kind": "Variable",
     "name": "limit",
@@ -72,28 +87,28 @@ v3 = [
     "variableName": "orderBy"
   }
 ],
-v4 = {
+v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "count",
   "storageKey": null
 },
-v5 = {
+v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v6 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "entityId",
   "storageKey": null
 },
-v7 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -105,7 +120,8 @@ return {
     "argumentDefinitions": [
       (v0/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/)
+      (v2/*: any*/),
+      (v3/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
@@ -113,13 +129,13 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v3/*: any*/),
+        "args": (v4/*: any*/),
         "concreteType": "RetentionPolicyConnection",
         "kind": "LinkedField",
         "name": "adminRetentionPolicies",
         "plural": false,
         "selections": [
-          (v4/*: any*/),
+          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -136,9 +152,9 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v5/*: any*/),
                   (v6/*: any*/),
                   (v7/*: any*/),
+                  (v8/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -165,22 +181,23 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v2/*: any*/),
       (v0/*: any*/),
-      (v1/*: any*/)
+      (v3/*: any*/),
+      (v1/*: any*/),
+      (v2/*: any*/)
     ],
     "kind": "Operation",
     "name": "RetentionPolicyListQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v3/*: any*/),
+        "args": (v4/*: any*/),
         "concreteType": "RetentionPolicyConnection",
         "kind": "LinkedField",
         "name": "adminRetentionPolicies",
         "plural": false,
         "selections": [
-          (v4/*: any*/),
+          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -197,9 +214,9 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v5/*: any*/),
                   (v6/*: any*/),
                   (v7/*: any*/),
+                  (v8/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -247,16 +264,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "7a49099799465c85718192a32be48634",
+    "cacheID": "9e43602e8bca0d8eb94d71320f1957ed",
     "id": null,
     "metadata": {},
     "name": "RetentionPolicyListQuery",
     "operationKind": "query",
-    "text": "query RetentionPolicyListQuery(\n  $orderBy: [RetentionPolicyOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminRetentionPolicies(orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        category\n        ...RetentionPolicySettingModalFragment\n        ...BAIAdminRetentionPolicyTableFragment\n      }\n    }\n  }\n}\n\nfragment BAIAdminRetentionPolicyTableFragment on RetentionPolicy {\n  id\n  category\n  retentionPeriodDays\n  enabled\n  lastSweptAt\n  createdAt\n  updatedAt\n}\n\nfragment RetentionPolicySettingModalFragment on RetentionPolicy {\n  id\n  entityId\n  category\n  retentionPeriodDays\n  enabled\n}\n"
+    "text": "query RetentionPolicyListQuery(\n  $filter: RetentionPolicyFilter\n  $orderBy: [RetentionPolicyOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminRetentionPolicies(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        category\n        ...RetentionPolicySettingModalFragment\n        ...BAIAdminRetentionPolicyTableFragment\n      }\n    }\n  }\n}\n\nfragment BAIAdminRetentionPolicyTableFragment on RetentionPolicy {\n  id\n  category\n  retentionPeriodDays\n  enabled\n  lastSweptAt\n  createdAt\n  updatedAt\n}\n\nfragment RetentionPolicySettingModalFragment on RetentionPolicy {\n  id\n  entityId\n  category\n  retentionPeriodDays\n  enabled\n}\n"
   }
 };
 })();
 
-(node as any).hash = "1b000a5558aa06443fc029e8aeff4fdf";
+(node as any).hash = "fde4a26815d845e197eeee61b669e081";
 
 export default node;
