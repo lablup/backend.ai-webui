@@ -586,9 +586,9 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                 <BAIFormItem
                   label={
                     <HStack gap={1} align="center">
-                      {t('data.folders.DefaultMountPermission')}
+                      {t('data.folders.SharedMountPermission')}
                       <BAIQuestionIconWithTooltip
-                        title={t('data.folders.DefaultMountPermissionDesc')}
+                        title={t('data.folders.SharedMountPermissionDesc')}
                       />
                     </HStack>
                   }
@@ -612,7 +612,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                   ]}
                 >
                   <AstryxFormRadioList
-                    label={t('data.folders.DefaultMountPermission')}
+                    label={t('data.folders.SharedMountPermission')}
                     disabled={isFolderTypeLocked}
                     options={[
                       {

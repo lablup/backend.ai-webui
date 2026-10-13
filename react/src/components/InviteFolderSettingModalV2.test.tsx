@@ -21,7 +21,7 @@ import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockE
 /**
  * #10295: the share modal lists the folder's entity shares with each
  * accepted user's mount level, invites one recipient at a time, and sends an
- * e-mail invite without a mount permission so the folder default applies.
+ * e-mail invite with the folder's shared mount permission as `perm`.
  * `t` is identity-mapped, so the assertions read as i18n keys.
  */
 
@@ -218,7 +218,7 @@ describe('InviteFolderSettingModalV2 (#10295)', () => {
     ).toBe(true);
   });
 
-  it('sends an e-mail invite without a mount permission so the folder default applies', async () => {
+  it('sends an e-mail invite with the folder shared mount permission as perm', async () => {
     const user = userEvent.setup();
     const environment = await renderModal();
 
@@ -228,7 +228,7 @@ describe('InviteFolderSettingModalV2 (#10295)', () => {
     );
     expect(
       await screen.findByText(
-        'data.folders.EmailInviteUsesDefaultMountPermission',
+        'data.folders.EmailInviteUsesSharedMountPermission',
       ),
     ).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'general.Add' }));
@@ -237,7 +237,7 @@ describe('InviteFolderSettingModalV2 (#10295)', () => {
       expect(mockRequest).toHaveBeenCalledWith({
         method: 'POST',
         url: `/folders/${VFOLDER_ID}/invite`,
-        body: { user_ids: ['nobody2@example.com'] },
+        body: { user_ids: ['nobody2@example.com'], perm: 'ro' },
       }),
     );
     expect(operationNames(environment)).not.toContain(
