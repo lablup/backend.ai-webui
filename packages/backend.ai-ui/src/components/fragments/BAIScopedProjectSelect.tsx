@@ -13,7 +13,6 @@ import {
   ProjectScope,
 } from '../../__generated__/BAIScopedProjectSelectPaginatedQuery.graphql';
 import { BAIScopedProjectSelectValueQuery } from '../../__generated__/BAIScopedProjectSelectValueQuery.graphql';
-import { toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useControllableValue, useFetchKey } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -125,6 +124,7 @@ const BAIScopedProjectSelect: React.FC<BAIScopedProjectSelectProps> = ({
             edges {
               node {
                 id
+                entityId
                 basicInfo {
                   name
                 }
@@ -167,6 +167,7 @@ const BAIScopedProjectSelect: React.FC<BAIScopedProjectSelectProps> = ({
             edges {
               node {
                 id
+                entityId
                 basicInfo {
                   name
                 }
@@ -193,7 +194,7 @@ const BAIScopedProjectSelect: React.FC<BAIScopedProjectSelectProps> = ({
       {
         getTotal: (r) => r.scopedProjectsV2?.count ?? undefined,
         getItem: (r) => r.scopedProjectsV2?.edges?.map((edge) => edge?.node),
-        getId: (item) => (item?.id ? toLocalId(item.id) : item?.id),
+        getId: (item) => item?.entityId,
       },
     );
 
@@ -209,10 +210,10 @@ const BAIScopedProjectSelect: React.FC<BAIScopedProjectSelectProps> = ({
     [updateFetchKey, startRefetchTransition],
   );
 
-  // id-valued (class B): the raw UUID (`toLocalId`), never the Relay global id.
+  // id-valued: the project UUID (`entityId`), never the Relay global id.
   const keyOfNode = (
-    node: { id: string } | null | undefined,
-  ): string | undefined => (node?.id ? toLocalId(node.id) : undefined);
+    node: { entityId: string } | null | undefined,
+  ): string | undefined => node?.entityId;
 
   const options = _.compact(
     _.map(paginationData, (item) => {
