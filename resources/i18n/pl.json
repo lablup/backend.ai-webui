@@ -1002,6 +1002,7 @@
       "FolderUpdated": "Zaktualizowano opcje folderów",
       "FolderUsage": "Użycie folderu",
       "FolderUsing": "Korzystanie z",
+      "Invite": "Zaproś",
       "InviteByEmail": "Zaproś przez e-mail",
       "InviteUsers": "Zaproś użytkownika",
       "KickOut": "Przestań dzielić się",
@@ -1046,7 +1047,7 @@
       "RestoreDescription": "Czy chcesz przywrócić folder \"{{ folderName }}\"?",
       "RestoreMultipleDescription": "Czy chcesz przywrócić foldery {{ folderLength }}?",
       "SameFileName": "Wartość wejściowa jest taka sama jak nazwa pliku do aktualizacji. Zmień go na inną nazwę.",
-      "SearchUserOrEnterEmail": "Wyszukaj użytkownika lub wpisz adres e-mail",
+      "SearchUser": "Szukaj użytkownika",
       "SelectPermission": "Wybierz uprawnienia",
       "Serve": "Model obsługujący",
       "ShareFolder": "Folder udostępniony",
@@ -1065,7 +1066,6 @@
       "TypeFolderNameToLeave": "Wpisz nazwę folderu do opuszczenia",
       "TypeNewFolderName": "Wpisz nową nazwę folderu",
       "TypeToConfirmDeleteForever": "Wpisz poniższe słowo, aby trwale usunąć",
-      "UserOrEmail": "Użytkownik lub e-mail",
       "View": "Widok"
     },
     "invitation": {

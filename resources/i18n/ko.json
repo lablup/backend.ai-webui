@@ -1002,6 +1002,7 @@
       "FolderUpdated": "폴더 정보가 갱신되었습니다",
       "FolderUsage": "폴더 사용량",
       "FolderUsing": "사용량",
+      "Invite": "초대",
       "InviteByEmail": "이메일로 초대",
       "InviteUsers": "사용자 초대",
       "KickOut": "공유 중지",
@@ -1046,7 +1047,7 @@
       "RestoreDescription": "\"{{ folderName }}\" 폴더를 복원하시겠습니까?",
       "RestoreMultipleDescription": "{{ folderLength }} 개의 폴더를 복원하시겠습니까?",
       "SameFileName": "입력한 파일 명이 기존 파일 명과 같습니다. 다른 이름으로 변경해 주세요.",
-      "SearchUserOrEnterEmail": "사용자를 검색하거나 이메일 주소를 입력하세요",
+      "SearchUser": "사용자 검색",
       "SelectPermission": "권한 선택",
       "Serve": "서비스",
       "ShareFolder": "폴더 공유하기",
@@ -1065,7 +1066,6 @@
       "TypeFolderNameToLeave": "연결 해제 확인을 위해 폴더 이름을 입력하세요",
       "TypeNewFolderName": "새 폴더 이름을 입력하세요",
       "TypeToConfirmDeleteForever": "영구 삭제를 확인하려면 아래 단어를 입력하세요",
-      "UserOrEmail": "사용자 또는 이메일",
       "View": "읽기 전용"
     },
     "invitation": {

@@ -1002,6 +1002,7 @@
       "FolderUpdated": "Фолдерын сонголтууд шинэчлэгдсэн",
       "FolderUsage": "Хавтас ашиглалт",
       "FolderUsing": "Ашиглаж байна",
+      "Invite": "Урих",
       "InviteByEmail": "И-мэйлээр урих",
       "InviteUsers": "Урих хэрэглэгч",
       "KickOut": "Хуваалцах гэж",
@@ -1046,7 +1047,7 @@
       "RestoreDescription": "Та сэргээхийг хүсч байна уу \"{{ folderName }}\" хавтас?",
       "RestoreMultipleDescription": "Та {{ folderLength }} фолдерыг сэргээхийг хүсэж байна уу?",
       "SameFileName": "Оруулах утга нь шинэчлэх файлын нэртэй ижил байна. Үүнийг өөр нэрээр солино уу.",
-      "SearchUserOrEnterEmail": "Хэрэглэгч хайх эсвэл и-мэйл хаяг оруулна уу",
+      "SearchUser": "Хэрэглэгч хайх",
       "SelectPermission": "Зөвшөөрлийг сонгоно уу",
       "Serve": "Загвар үйлчилгээ үзүүлдэг",
       "ShareFolder": "Фолдер хуваалцах",
@@ -1065,7 +1066,6 @@
       "TypeFolderNameToLeave": "Орхихын тулд хавтасныхаа нэрийг оруулна уу",
       "TypeNewFolderName": "Шинэ хавтасны нэрийг оруулна уу",
       "TypeToConfirmDeleteForever": "Бүрмөсөн устгахын тулд доорх үгийг бичнэ үү",
-      "UserOrEmail": "Хэрэглэгч эсвэл и-мэйл",
       "View": "Харах"
     },
     "invitation": {

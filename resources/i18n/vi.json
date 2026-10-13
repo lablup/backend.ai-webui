@@ -1002,6 +1002,7 @@
       "FolderUpdated": "Đã cập nhật (các) tùy chọn thư mục",
       "FolderUsage": "Sử dụng thư mục",
       "FolderUsing": "sử dụng",
+      "Invite": "Mời",
       "InviteByEmail": "Mời qua e-mail",
       "InviteUsers": "Mời người dùng",
       "KickOut": "Ngừng chia sẻ",
@@ -1046,7 +1047,7 @@
       "RestoreDescription": "Bạn có muốn khôi phục thư mục \"{{ folderName }}\" không?",
       "RestoreMultipleDescription": "Bạn có muốn khôi phục các thư mục {{ folderLength }} không?",
       "SameFileName": "Giá trị đầu vào giống với tên tệp cần cập nhật. Vui lòng thay đổi nó thành một tên khác.",
-      "SearchUserOrEnterEmail": "Tìm người dùng hoặc nhập địa chỉ e-mail",
+      "SearchUser": "Tìm người dùng",
       "SelectPermission": "Chọn quyền",
       "Serve": "Phục vụ người mẫu",
       "ShareFolder": "Chia sẻ thư mục",
@@ -1065,7 +1066,6 @@
       "TypeFolderNameToLeave": "Nhập tên thư mục để rời khỏi",
       "TypeNewFolderName": "Nhập tên thư mục mới",
       "TypeToConfirmDeleteForever": "Nhập từ bên dưới để xóa vĩnh viễn",
-      "UserOrEmail": "Người dùng hoặc e-mail",
       "View": "Lượt xem"
     },
     "invitation": {

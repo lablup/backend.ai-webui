@@ -1002,6 +1002,7 @@
       "FolderUpdated": "Pilihan folder dikemas kini",
       "FolderUsage": "Penggunaan folder",
       "FolderUsing": "menggunakan",
+      "Invite": "Jemput",
       "InviteByEmail": "Jemput melalui e-mel",
       "InviteUsers": "Jemput pengguna",
       "KickOut": "Berhenti berkongsi",
@@ -1046,7 +1047,7 @@
       "RestoreDescription": "Adakah anda mahu memulihkan folder \"{{ folderName }}\"?",
       "RestoreMultipleDescription": "Adakah anda mahu memulihkan folder {{ folderLength }}?",
       "SameFileName": "Nilai input adalah sama dengan nama fail yang akan dikemas kini. Tolong ubah ke nama lain.",
-      "SearchUserOrEnterEmail": "Cari pengguna atau masukkan alamat e-mel",
+      "SearchUser": "Cari pengguna",
       "SelectPermission": "Pilih kebenaran",
       "Serve": "Hidangan model",
       "ShareFolder": "Kongsi Folder",
@@ -1065,7 +1066,6 @@
       "TypeFolderNameToLeave": "Taipkan nama folder untuk ditinggalkan",
       "TypeNewFolderName": "Taipkan nama folder baru",
       "TypeToConfirmDeleteForever": "Taip perkataan di bawah untuk memadam secara kekal",
-      "UserOrEmail": "Pengguna atau e-mel",
       "View": "Pandangan"
     },
     "invitation": {
