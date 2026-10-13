@@ -30,35 +30,34 @@ export const useMergedAllowedStorageHostPermission = (
   // is still resolved through the keypair.
   const isCurrentUser = userAccessKey === baiClient._config.accessKey;
 
-  const { keypair } =
+  // Keypair management is superadmin-only by design; another user's keypair is
+  // read through adminKeypairV2.
+  const { adminKeypairV2: keypair } =
     useLazyLoadQuery<useMergedAllowedStorageHostPermission_KeypairQuery>(
       graphql`
         query useMergedAllowedStorageHostPermission_KeypairQuery(
-          $domainName: String
-          $accessKey: String
+          $accessKey: String!
           $skipKeypair: Boolean!
         ) {
-          keypair(domain_name: $domainName, access_key: $accessKey)
-            @skip(if: $skipKeypair) {
-            resource_policy
+          adminKeypairV2(accessKey: $accessKey) @skip(if: $skipKeypair) {
+            resourcePolicy
           }
         }
       `,
       {
-        domainName: domain,
-        accessKey: userAccessKey,
+        accessKey: userAccessKey ?? '',
         skipKeypair: isCurrentUser,
       },
       {
         fetchPolicy: 'store-or-network',
       },
     );
-  if (!isCurrentUser && !keypair?.resource_policy) {
+  if (!isCurrentUser && !keypair?.resourcePolicy) {
     throw new Error(
       `Keypair ${userAccessKey} has no resource policy to read storage host permissions from`,
     );
   }
-  const resourcePolicyName = keypair?.resource_policy ?? '';
+  const resourcePolicyName = keypair?.resourcePolicy ?? '';
 
   const mergedAllowedVFolderHosts =
     useLazyLoadQuery<useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery>(
@@ -70,12 +69,17 @@ export const useMergedAllowedStorageHostPermission = (
           $skipProjectScope: Boolean!
           $isCurrentUser: Boolean!
         ) {
+          # TODO(needs-backend): DomainV2 has no vfolder host permissions yet (#10300).
           domain(name: $domainName) {
             allowed_vfolder_hosts
           }
-          group(id: $projectId, domain_name: $domainName)
-            @skip(if: $skipProjectScope) {
-            allowed_vfolder_hosts
+          projectV2(projectId: $projectId) @skip(if: $skipProjectScope) {
+            storage {
+              allowedVfolderHosts {
+                host
+                permissions
+              }
+            }
           }
           myKeypairResourcePolicyV2 @include(if: $isCurrentUser) {
             allowedVfolderHosts {
@@ -107,8 +111,8 @@ export const useMergedAllowedStorageHostPermission = (
   const allowedPermissionForDomainsByVolume = JSON.parse(
     mergedAllowedVFolderHosts?.domain?.allowed_vfolder_hosts || '{}',
   );
-  const allowedPermissionForGroupsByVolume = JSON.parse(
-    mergedAllowedVFolderHosts?.group?.allowed_vfolder_hosts || '{}',
+  const allowedPermissionForGroupsByVolume = v2AllowedVfolderHostsToRecord(
+    mergedAllowedVFolderHosts?.projectV2?.storage?.allowedVfolderHosts,
   );
   const allowedPermissionForResourcePolicyByVolume =
     v2AllowedVfolderHostsToRecord(

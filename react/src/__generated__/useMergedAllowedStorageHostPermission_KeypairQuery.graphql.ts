@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4f1b9d2158e8296efbbbec10f19757db>>
+ * @generated SignedSource<<965578327f2b448ffcb6a2da3a974bd3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,13 +10,12 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type useMergedAllowedStorageHostPermission_KeypairQuery$variables = {
-  accessKey?: string | null | undefined;
-  domainName?: string | null | undefined;
+  accessKey: string;
   skipKeypair: boolean;
 };
 export type useMergedAllowedStorageHostPermission_KeypairQuery$data = {
-  readonly keypair?: {
-    readonly resource_policy: string | null | undefined;
+  readonly adminKeypairV2?: {
+    readonly resourcePolicy: string;
   } | null | undefined;
 };
 export type useMergedAllowedStorageHostPermission_KeypairQuery = {
@@ -25,47 +24,35 @@ export type useMergedAllowedStorageHostPermission_KeypairQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "accessKey"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "domainName"
-},
-v2 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "skipKeypair"
-},
-v3 = [
+var v0 = [
   {
-    "kind": "Variable",
-    "name": "access_key",
-    "variableName": "accessKey"
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "accessKey"
   },
   {
-    "kind": "Variable",
-    "name": "domain_name",
-    "variableName": "domainName"
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "skipKeypair"
   }
 ],
-v4 = {
+v1 = [
+  {
+    "kind": "Variable",
+    "name": "accessKey",
+    "variableName": "accessKey"
+  }
+],
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "resource_policy",
+  "name": "resourcePolicy",
   "storageKey": null
 };
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/),
-      (v2/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "useMergedAllowedStorageHostPermission_KeypairQuery",
@@ -77,13 +64,13 @@ return {
         "selections": [
           {
             "alias": null,
-            "args": (v3/*: any*/),
-            "concreteType": "KeyPair",
+            "args": (v1/*: any*/),
+            "concreteType": "KeyPairV2",
             "kind": "LinkedField",
-            "name": "keypair",
+            "name": "adminKeypairV2",
             "plural": false,
             "selections": [
-              (v4/*: any*/)
+              (v2/*: any*/)
             ],
             "storageKey": null
           }
@@ -95,11 +82,7 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v1/*: any*/),
-      (v0/*: any*/),
-      (v2/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "useMergedAllowedStorageHostPermission_KeypairQuery",
     "selections": [
@@ -110,13 +93,13 @@ return {
         "selections": [
           {
             "alias": null,
-            "args": (v3/*: any*/),
-            "concreteType": "KeyPair",
+            "args": (v1/*: any*/),
+            "concreteType": "KeyPairV2",
             "kind": "LinkedField",
-            "name": "keypair",
+            "name": "adminKeypairV2",
             "plural": false,
             "selections": [
-              (v4/*: any*/),
+              (v2/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -132,16 +115,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "eb39af3f79bf43ac123f438cfccf5e2b",
+    "cacheID": "f19395c3583c736e0079849c854cf7bb",
     "id": null,
     "metadata": {},
     "name": "useMergedAllowedStorageHostPermission_KeypairQuery",
     "operationKind": "query",
-    "text": "query useMergedAllowedStorageHostPermission_KeypairQuery(\n  $domainName: String\n  $accessKey: String\n  $skipKeypair: Boolean!\n) {\n  keypair(domain_name: $domainName, access_key: $accessKey) @skip(if: $skipKeypair) {\n    resource_policy\n    id\n  }\n}\n"
+    "text": "query useMergedAllowedStorageHostPermission_KeypairQuery(\n  $accessKey: String!\n  $skipKeypair: Boolean!\n) {\n  adminKeypairV2(accessKey: $accessKey) @skip(if: $skipKeypair) {\n    resourcePolicy\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0241befc32a960ea545b404cd488184f";
+(node as any).hash = "ad997c1913cbcb02e83fa7ca191a22c9";
 
 export default node;

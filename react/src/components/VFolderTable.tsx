@@ -189,18 +189,24 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     staleTime: 1000,
   });
 
-  const { domain, group, myKeypairResourcePolicyV2 } =
+  const { domain, projectV2, myKeypairResourcePolicyV2 } =
     useLazyLoadQuery<VFolderTableProjectQuery>(
       graphql`
         query VFolderTableProjectQuery(
           $domain_name: String!
           $group_id: UUID!
         ) {
+          # TODO(needs-backend): DomainV2 has no vfolder host permissions yet (#10300).
           domain(name: $domain_name) {
             allowed_vfolder_hosts
           }
-          group(id: $group_id, domain_name: $domain_name) {
-            allowed_vfolder_hosts
+          projectV2(projectId: $group_id) {
+            storage {
+              allowedVfolderHosts {
+                host
+                permissions
+              }
+            }
           }
           myKeypairResourcePolicyV2 {
             allowedVfolderHosts {
@@ -224,8 +230,8 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     const allowedVFolderHostsByDomain = JSON.parse(
       domain?.allowed_vfolder_hosts || '{}',
     );
-    const allowedVFolderHostsByGroup = JSON.parse(
-      group?.allowed_vfolder_hosts || '{}',
+    const allowedVFolderHostsByGroup = v2AllowedVfolderHostsToRecord(
+      projectV2?.storage?.allowedVfolderHosts,
     );
     const allowedVFolderHostsByKeypairResourcePolicy =
       v2AllowedVfolderHostsToRecord(
@@ -242,7 +248,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     return Object.keys(mergedVFolderPermissions).filter((volume) =>
       mergedVFolderPermissions[volume].includes(MOUNT_IN_SESSION_PERMISSION),
     );
-  }, [domain, group, myKeypairResourcePolicyV2]);
+  }, [domain, projectV2, myKeypairResourcePolicyV2]);
 
   const accessibleFoldersByCurrentProject = useMemo(() => {
     return (
