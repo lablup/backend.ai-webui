@@ -18,7 +18,7 @@ import {
 } from './astryxFormControls';
 import { BAILink, BAIModal, BAIModalProps, useBAILogger } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { useTransition } from 'react';
+import React, { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import {
   fetchQuery,
@@ -101,7 +101,8 @@ const RetentionPolicySettingModal: React.FC<
   const relayEnv = useRelayEnvironment();
   const getCategoryLabel = useRetentionCategoryLabel();
   const [form] = Form.useForm<RetentionPolicyFormValues>();
-  const [isSubmitting, startSubmitTransition] = useTransition();
+  // A counter, so a re-select during an in-flight check does not end loading early.
+  const [pendingCategoryChecks, setPendingCategoryChecks] = useState(0);
 
   const policy = useFragment(
     graphql`
@@ -116,8 +117,8 @@ const RetentionPolicySettingModal: React.FC<
     policyFrgmt ?? null,
   );
 
-  const [commitCreate] = useMutation<RetentionPolicySettingModalCreateMutation>(
-    graphql`
+  const [commitCreate, isInFlightCreate] =
+    useMutation<RetentionPolicySettingModalCreateMutation>(graphql`
       mutation RetentionPolicySettingModalCreateMutation(
         $input: CreateRetentionPolicyInput!
       ) {
@@ -127,10 +128,9 @@ const RetentionPolicySettingModal: React.FC<
           }
         }
       }
-    `,
-  );
-  const [commitUpdate] = useMutation<RetentionPolicySettingModalUpdateMutation>(
-    graphql`
+    `);
+  const [commitUpdate, isInFlightUpdate] =
+    useMutation<RetentionPolicySettingModalUpdateMutation>(graphql`
       mutation RetentionPolicySettingModalUpdateMutation(
         $input: UpdateRetentionPolicyInput!
       ) {
@@ -144,8 +144,7 @@ const RetentionPolicySettingModal: React.FC<
           }
         }
       }
-    `,
-  );
+    `);
 
   const conflictMessageOf = (category: RetentionCategory) => (
     <Trans
@@ -160,6 +159,7 @@ const RetentionPolicySettingModal: React.FC<
   const validateCategoryIsFree = async (_rule: unknown, value: unknown) => {
     const category = value as RetentionCategory | undefined;
     if (!category || category === policy?.category) return;
+    setPendingCategoryChecks((n) => n + 1);
     const result =
       await fetchQuery<RetentionPolicySettingModalCategoryCheckQuery>(
         relayEnv,
@@ -184,7 +184,8 @@ const RetentionPolicySettingModal: React.FC<
         .catch((error) => {
           logger.error(error);
           return undefined;
-        });
+        })
+        .finally(() => setPendingCategoryChecks((n) => n - 1));
     const existingId =
       result?.adminRetentionPolicies?.edges[0]?.node?.id ?? null;
     if (existingId && existingId !== policy?.id) {
@@ -231,71 +232,60 @@ const RetentionPolicySettingModal: React.FC<
     onRequestClose(true);
   };
 
-  const submit = (values: RetentionPolicyFormValues) =>
-    new Promise<void>((resolve) => {
-      if (policy) {
-        const isCategoryChanged = values.category !== policy.category;
-        commitUpdate({
+  const handleOk = () =>
+    form
+      .validateFields()
+      .then((values) => {
+        if (policy) {
+          const isCategoryChanged = values.category !== policy.category;
+          commitUpdate({
+            variables: {
+              input: {
+                id: policy.entityId,
+                ...(isCategoryChanged && {
+                  category: values.category,
+                }),
+                ...(values.retentionPeriodDays !==
+                  policy.retentionPeriodDays && {
+                  retentionPeriodDays: values.retentionPeriodDays,
+                }),
+                ...(values.enabled !== policy.enabled && {
+                  enabled: values.enabled,
+                }),
+              },
+            },
+            onCompleted: (_res, errors) =>
+              settle(
+                errors,
+                t('retentionPolicy.SuccessfullyUpdated'),
+                values.category,
+                isCategoryChanged,
+              ),
+            onError: (error) =>
+              showFailure(errorsOf(error), values.category, isCategoryChanged),
+          });
+          return;
+        }
+        commitCreate({
           variables: {
             input: {
-              id: policy.entityId,
-              ...(isCategoryChanged && {
-                category: values.category,
-              }),
-              ...(values.retentionPeriodDays !== policy.retentionPeriodDays && {
-                retentionPeriodDays: values.retentionPeriodDays,
-              }),
-              ...(values.enabled !== policy.enabled && {
-                enabled: values.enabled,
-              }),
+              category: values.category,
+              retentionPeriodDays: values.retentionPeriodDays,
+              enabled: values.enabled,
             },
           },
-          onCompleted: (_res, errors) => {
+          onCompleted: (_res, errors) =>
             settle(
               errors,
-              t('retentionPolicy.SuccessfullyUpdated'),
+              t('retentionPolicy.SuccessfullyCreated'),
               values.category,
-              isCategoryChanged,
-            );
-            resolve();
-          },
-          onError: (error) => {
-            showFailure(errorsOf(error), values.category, isCategoryChanged);
-            resolve();
-          },
+              true,
+            ),
+          onError: (error) =>
+            showFailure(errorsOf(error), values.category, true),
         });
-        return;
-      }
-      commitCreate({
-        variables: {
-          input: {
-            category: values.category,
-            retentionPeriodDays: values.retentionPeriodDays,
-            enabled: values.enabled,
-          },
-        },
-        onCompleted: (_res, errors) => {
-          settle(
-            errors,
-            t('retentionPolicy.SuccessfullyCreated'),
-            values.category,
-            true,
-          );
-          resolve();
-        },
-        onError: (error) => {
-          showFailure(errorsOf(error), values.category, true);
-          resolve();
-        },
-      });
-    });
-
-  // One transition spans the async category check and the mutation.
-  const handleOk = () =>
-    startSubmitTransition(async () => {
-      const values = await form.validateFields().catch(() => null);
-      if (values) await submit(values);
-    });
+      })
+      .catch(() => {});
 
   return (
     <BAIModal
@@ -307,7 +297,9 @@ const RetentionPolicySettingModal: React.FC<
           : t('retentionPolicy.CreatePolicy')
       }
       okText={policy ? t('button.Save') : t('button.Create')}
-      confirmLoading={isSubmitting}
+      confirmLoading={
+        pendingCategoryChecks > 0 || isInFlightCreate || isInFlightUpdate
+      }
       onOk={handleOk}
       onCancel={() => onRequestClose(false)}
     >
