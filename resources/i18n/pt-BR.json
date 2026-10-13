@@ -2784,6 +2784,7 @@
   },
   "retentionPolicy": {
     "Category": "Categoria",
+    "CategoryAlreadyHasPolicy": "{{category}} já tem uma política. Edite a política existente.",
     "CategoryDeployments": "Implantações",
     "CategoryLogin": "Histórico de login",
     "CategoryLogs": "Logs",
@@ -2800,6 +2801,7 @@
     "EditPolicy": "Editar política",
     "LastSweptAt": "Última limpeza",
     "NotSweptYet": "Ainda não executado",
+    "OnePolicyPerCategory": "Só pode existir uma política por categoria.",
     "RetentionPeriodDays": "Período de retenção (dias)",
     "RetentionPeriodRequired": "Insira um período de retenção de pelo menos 1 dia.",
     "RetentionPolicy": "Política de retenção",

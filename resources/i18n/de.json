@@ -2786,6 +2786,7 @@
   },
   "retentionPolicy": {
     "Category": "Kategorie",
+    "CategoryAlreadyHasPolicy": "{{category}} hat bereits eine Richtlinie. Bearbeiten Sie stattdessen die vorhandene Richtlinie.",
     "CategoryDeployments": "Bereitstellungen",
     "CategoryLogin": "Anmeldeverlauf",
     "CategoryLogs": "Protokolle",
@@ -2802,6 +2803,7 @@
     "EditPolicy": "Richtlinie bearbeiten",
     "LastSweptAt": "Letzte Bereinigung",
     "NotSweptYet": "Noch nicht ausgeführt",
+    "OnePolicyPerCategory": "Pro Kategorie kann es nur eine Richtlinie geben.",
     "RetentionPeriodDays": "Aufbewahrungsdauer (Tage)",
     "RetentionPeriodRequired": "Geben Sie eine Aufbewahrungsdauer von mindestens 1 Tag ein.",
     "RetentionPolicy": "Aufbewahrungsrichtlinie",

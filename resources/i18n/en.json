@@ -2771,6 +2771,7 @@
   },
   "retentionPolicy": {
     "Category": "Category",
+    "CategoryAlreadyHasPolicy": "{{category}} already has a policy. Edit the existing policy instead.",
     "CategoryDeployments": "Deployments",
     "CategoryLogin": "Login History",
     "CategoryLogs": "Logs",
@@ -2787,6 +2788,7 @@
     "EditPolicy": "Edit Policy",
     "LastSweptAt": "Last Cleanup",
     "NotSweptYet": "Not run yet",
+    "OnePolicyPerCategory": "Only one policy can exist per category.",
     "RetentionPeriodDays": "Retention Period (Days)",
     "RetentionPeriodRequired": "Enter a retention period of at least 1 day.",
     "RetentionPolicy": "Retention Policy",

@@ -2784,6 +2784,7 @@
   },
   "retentionPolicy": {
     "Category": "Kategori",
+    "CategoryAlreadyHasPolicy": "{{category}} için zaten bir politika var. Bunun yerine mevcut politikayı düzenleyin.",
     "CategoryDeployments": "Dağıtımlar",
     "CategoryLogin": "Oturum açma geçmişi",
     "CategoryLogs": "Günlükler",
@@ -2800,6 +2801,7 @@
     "EditPolicy": "Politikayı düzenle",
     "LastSweptAt": "Son temizlik",
     "NotSweptYet": "Henüz çalıştırılmadı",
+    "OnePolicyPerCategory": "Her kategori için yalnızca bir politika olabilir.",
     "RetentionPeriodDays": "Saklama süresi (gün)",
     "RetentionPeriodRequired": "En az 1 günlük bir saklama süresi girin.",
     "RetentionPolicy": "Saklama politikası",

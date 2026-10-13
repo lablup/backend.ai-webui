@@ -11,7 +11,6 @@ import { RetentionPolicyListToggleMutation } from '../__generated__/RetentionPol
 import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import RetentionPolicySettingModal, {
-  RETENTION_CATEGORIES,
   useRetentionCategoryLabel,
 } from './RetentionPolicySettingModal';
 import { Switch } from '@lablup/ui-common/Switch';
@@ -41,14 +40,11 @@ import {
   type UseQueryLoaderLoadQueryOptions,
 } from 'react-relay';
 
-// `configuredPolicies` is unpaged: one policy per category caps it at
-// `$categoryLimit`, and the create modal needs every taken category.
 export const RetentionPolicyListQuery = graphql`
   query RetentionPolicyListQuery(
     $orderBy: [RetentionPolicyOrderBy!]
     $limit: Int
     $offset: Int
-    $categoryLimit: Int!
   ) {
     adminRetentionPolicies(orderBy: $orderBy, limit: $limit, offset: $offset) {
       count
@@ -63,14 +59,6 @@ export const RetentionPolicyListQuery = graphql`
           createdAt
           updatedAt
           ...RetentionPolicySettingModalFragment
-        }
-      }
-    }
-    configuredPolicies: adminRetentionPolicies(limit: $categoryLimit) {
-      edges {
-        node {
-          id
-          category
         }
       }
     }
@@ -115,7 +103,7 @@ const RetentionPolicyList: React.FC<RetentionPolicyListProps> = ({
   const deferredQueryRef = useDeferredValue(queryRef);
   const isPending = deferredQueryRef !== queryRef;
 
-  const { adminRetentionPolicies, configuredPolicies } =
+  const { adminRetentionPolicies } =
     usePreloadedQuery<RetentionPolicyListQueryType>(
       RetentionPolicyListQuery,
       deferredQueryRef,
@@ -152,13 +140,6 @@ const RetentionPolicyList: React.FC<RetentionPolicyListProps> = ({
 
   const policies = filterOutNullAndUndefined(
     _.map(adminRetentionPolicies?.edges, (edge) => edge?.node),
-  );
-  const configuredCategories = _.compact(
-    _.map(configuredPolicies?.edges, (edge) => edge?.node?.category),
-  );
-  const unconfiguredCategories = _.difference(
-    RETENTION_CATEGORIES,
-    configuredCategories,
   );
 
   const toggleEnabled = (policy: RetentionPolicyNode, enabled: boolean) => {
@@ -279,7 +260,6 @@ const RetentionPolicyList: React.FC<RetentionPolicyListProps> = ({
           <BAIButton
             type="primary"
             icon={<PlusIcon />}
-            disabled={unconfiguredCategories.length === 0}
             onClick={() => {
               setEditingPolicy(null);
               setIsOpenSettingModal(true);
@@ -322,7 +302,6 @@ const RetentionPolicyList: React.FC<RetentionPolicyListProps> = ({
         <RetentionPolicySettingModal
           open={isOpenSettingModal}
           policyFrgmt={editingPolicy}
-          configuredCategories={configuredCategories}
           onRequestClose={(success) => {
             setIsOpenSettingModal(false);
             // An update returns its fields and Relay patches the row in

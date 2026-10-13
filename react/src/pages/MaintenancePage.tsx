@@ -13,7 +13,6 @@ import RetentionPolicyList, {
   RETENTION_POLICY_SORTER_KEYS,
   RetentionPolicyListQuery,
 } from '../components/RetentionPolicyList';
-import { RETENTION_CATEGORIES } from '../components/RetentionPolicySettingModal';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { useBrowserPopstateEffect, useKeyedSnapshot } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -61,7 +60,6 @@ const retentionPolicyVariablesOf = (
   ),
   limit: pagination.pageSize,
   offset: (pagination.current - 1) * pagination.pageSize,
-  categoryLimit: RETENTION_CATEGORIES.length,
 });
 
 const MaintenancePage = () => {

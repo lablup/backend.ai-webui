@@ -2784,6 +2784,7 @@
   },
   "retentionPolicy": {
     "Category": "Categoria",
+    "CategoryAlreadyHasPolicy": "{{category}} ha già un criterio. Modifica il criterio esistente.",
     "CategoryDeployments": "Distribuzioni",
     "CategoryLogin": "Cronologia accessi",
     "CategoryLogs": "Log",
@@ -2800,6 +2801,7 @@
     "EditPolicy": "Modifica criterio",
     "LastSweptAt": "Ultima pulizia",
     "NotSweptYet": "Non ancora eseguito",
+    "OnePolicyPerCategory": "Può esistere un solo criterio per categoria.",
     "RetentionPeriodDays": "Periodo di conservazione (giorni)",
     "RetentionPeriodRequired": "Inserisci un periodo di conservazione di almeno 1 giorno.",
     "RetentionPolicy": "Criterio di conservazione",

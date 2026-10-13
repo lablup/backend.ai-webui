@@ -1950,10 +1950,10 @@ available categories are Logs, Login History, Reconcile History, Roles & Invitat
 Usage Records, and Usage Buckets. The list can be sorted by **Category**, **Last Cleanup**, or **Created At**.
 
 - **Create Policy**: Click **Create Policy**, choose a category, enter a retention period of at least 1 day,
-  and choose whether the policy is enabled. Only one policy can exist per category, so categories that
-  already have a policy are disabled in the category list.
-- **Edit**: Use the edit action in the row to change the retention period or the enabled setting. The
-  category can be moved only to a category that has no policy yet.
+  and choose whether the policy is enabled. Only one policy can exist per category; creating a policy for a
+  category that already has one fails with an error, so edit the existing policy instead.
+- **Edit**: Use the edit action in the row to change the category, the retention period, or the enabled
+  setting. Moving the policy to a category that already has a policy fails with an error.
 - **Enabled switch**: Turn a policy on or off directly from the list, without opening the editor.
 - **Delete**: Use the delete action in the row. Because the policy is removed permanently, you must type
   the category name shown in the dialog before the delete button is enabled.

@@ -2785,6 +2785,7 @@
   },
   "retentionPolicy": {
     "Category": "Ангилал",
+    "CategoryAlreadyHasPolicy": "{{category}} ангилалд бодлого аль хэдийн байна. Одоо байгаа бодлогыг засна уу.",
     "CategoryDeployments": "Байршуулалт",
     "CategoryLogin": "Нэвтрэлтийн түүх",
     "CategoryLogs": "Лог",
@@ -2801,6 +2802,7 @@
     "EditPolicy": "Бодлого засах",
     "LastSweptAt": "Сүүлийн цэвэрлэгээ",
     "NotSweptYet": "Хараахан ажиллаагүй",
+    "OnePolicyPerCategory": "Ангилал бүрт зөвхөн нэг бодлого байж болно.",
     "RetentionPeriodDays": "Хадгалах хугацаа (өдөр)",
     "RetentionPeriodRequired": "Хамгийн багадаа 1 өдрийн хадгалах хугацаа оруулна уу.",
     "RetentionPolicy": "Хадгалах бодлого",

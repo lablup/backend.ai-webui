@@ -2784,6 +2784,7 @@
   },
   "retentionPolicy": {
     "Category": "Kategori",
+    "CategoryAlreadyHasPolicy": "{{category}} sudah mempunyai dasar. Edit dasar yang sedia ada.",
     "CategoryDeployments": "Penggunaan",
     "CategoryLogin": "Sejarah log masuk",
     "CategoryLogs": "Log",
@@ -2800,6 +2801,7 @@
     "EditPolicy": "Edit dasar",
     "LastSweptAt": "Pembersihan terakhir",
     "NotSweptYet": "Belum dijalankan",
+    "OnePolicyPerCategory": "Setiap kategori hanya boleh mempunyai satu dasar.",
     "RetentionPeriodDays": "Tempoh pengekalan (hari)",
     "RetentionPeriodRequired": "Masukkan tempoh pengekalan sekurang-kurangnya 1 hari.",
     "RetentionPolicy": "Dasar pengekalan",

@@ -2786,6 +2786,7 @@
   },
   "retentionPolicy": {
     "Category": "종류",
+    "CategoryAlreadyHasPolicy": "{{category}} 종류에는 이미 정책이 있습니다. 기존 정책을 수정하세요.",
     "CategoryDeployments": "배포",
     "CategoryLogin": "로그인 기록",
     "CategoryLogs": "로그",
@@ -2802,6 +2803,7 @@
     "EditPolicy": "정책 수정",
     "LastSweptAt": "마지막 정리",
     "NotSweptYet": "아직 실행되지 않음",
+    "OnePolicyPerCategory": "종류마다 정책은 하나만 만들 수 있습니다.",
     "RetentionPeriodDays": "보존 기간 (일)",
     "RetentionPeriodRequired": "1일 이상의 보존 기간을 입력하세요.",
     "RetentionPolicy": "보존 정책",

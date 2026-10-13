@@ -2784,6 +2784,7 @@
   },
   "retentionPolicy": {
     "Category": "Luokka",
+    "CategoryAlreadyHasPolicy": "Luokalla {{category}} on jo käytäntö. Muokkaa olemassa olevaa käytäntöä.",
     "CategoryDeployments": "Käyttöönotot",
     "CategoryLogin": "Kirjautumishistoria",
     "CategoryLogs": "Lokit",
@@ -2800,6 +2801,7 @@
     "EditPolicy": "Muokkaa käytäntöä",
     "LastSweptAt": "Viimeisin siivous",
     "NotSweptYet": "Ei vielä ajettu",
+    "OnePolicyPerCategory": "Kullakin luokalla voi olla vain yksi käytäntö.",
     "RetentionPeriodDays": "Säilytysaika (päivää)",
     "RetentionPeriodRequired": "Anna vähintään 1 päivän säilytysaika.",
     "RetentionPolicy": "Säilytyskäytäntö",

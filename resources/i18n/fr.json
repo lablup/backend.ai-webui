@@ -2786,6 +2786,7 @@
   },
   "retentionPolicy": {
     "Category": "Catégorie",
+    "CategoryAlreadyHasPolicy": "{{category}} a déjà une politique. Modifiez plutôt la politique existante.",
     "CategoryDeployments": "Déploiements",
     "CategoryLogin": "Historique de connexion",
     "CategoryLogs": "Journaux",
@@ -2802,6 +2803,7 @@
     "EditPolicy": "Modifier la politique",
     "LastSweptAt": "Dernier nettoyage",
     "NotSweptYet": "Pas encore exécuté",
+    "OnePolicyPerCategory": "Une seule politique peut exister par catégorie.",
     "RetentionPeriodDays": "Durée de conservation (jours)",
     "RetentionPeriodRequired": "Saisissez une durée de conservation d'au moins 1 jour.",
     "RetentionPolicy": "Politique de conservation",

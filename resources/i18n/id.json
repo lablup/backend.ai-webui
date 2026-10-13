@@ -2787,6 +2787,7 @@
   },
   "retentionPolicy": {
     "Category": "Kategori",
+    "CategoryAlreadyHasPolicy": "{{category}} sudah memiliki kebijakan. Edit kebijakan yang ada.",
     "CategoryDeployments": "Deployment",
     "CategoryLogin": "Riwayat login",
     "CategoryLogs": "Log",
@@ -2803,6 +2804,7 @@
     "EditPolicy": "Edit kebijakan",
     "LastSweptAt": "Pembersihan terakhir",
     "NotSweptYet": "Belum dijalankan",
+    "OnePolicyPerCategory": "Setiap kategori hanya dapat memiliki satu kebijakan.",
     "RetentionPeriodDays": "Periode retensi (hari)",
     "RetentionPeriodRequired": "Masukkan periode retensi minimal 1 hari.",
     "RetentionPolicy": "Kebijakan retensi",

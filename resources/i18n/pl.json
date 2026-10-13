@@ -2786,6 +2786,7 @@
   },
   "retentionPolicy": {
     "Category": "Kategoria",
+    "CategoryAlreadyHasPolicy": "Kategoria {{category}} ma już zasadę. Edytuj istniejącą zasadę.",
     "CategoryDeployments": "Wdrożenia",
     "CategoryLogin": "Historia logowania",
     "CategoryLogs": "Dzienniki",
@@ -2802,6 +2803,7 @@
     "EditPolicy": "Edytuj zasadę",
     "LastSweptAt": "Ostatnie czyszczenie",
     "NotSweptYet": "Jeszcze nie uruchomiono",
+    "OnePolicyPerCategory": "Dla każdej kategorii może istnieć tylko jedna zasada.",
     "RetentionPeriodDays": "Okres przechowywania (dni)",
     "RetentionPeriodRequired": "Wprowadź okres przechowywania co najmniej 1 dzień.",
     "RetentionPolicy": "Zasada przechowywania",

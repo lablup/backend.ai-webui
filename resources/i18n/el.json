@@ -2784,6 +2784,7 @@
   },
   "retentionPolicy": {
     "Category": "Κατηγορία",
+    "CategoryAlreadyHasPolicy": "Η κατηγορία {{category}} έχει ήδη πολιτική. Επεξεργαστείτε την υπάρχουσα πολιτική.",
     "CategoryDeployments": "Αναπτύξεις",
     "CategoryLogin": "Ιστορικό συνδέσεων",
     "CategoryLogs": "Αρχεία καταγραφής",
@@ -2800,6 +2801,7 @@
     "EditPolicy": "Επεξεργασία πολιτικής",
     "LastSweptAt": "Τελευταίος καθαρισμός",
     "NotSweptYet": "Δεν έχει εκτελεστεί",
+    "OnePolicyPerCategory": "Μπορεί να υπάρχει μόνο μία πολιτική ανά κατηγορία.",
     "RetentionPeriodDays": "Περίοδος διατήρησης (ημέρες)",
     "RetentionPeriodRequired": "Εισαγάγετε περίοδο διατήρησης τουλάχιστον 1 ημέρας.",
     "RetentionPolicy": "Πολιτική διατήρησης",

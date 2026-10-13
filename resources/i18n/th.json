@@ -2772,6 +2772,7 @@
   },
   "retentionPolicy": {
     "Category": "หมวดหมู่",
+    "CategoryAlreadyHasPolicy": "{{category}} มีนโยบายอยู่แล้ว โปรดแก้ไขนโยบายที่มีอยู่",
     "CategoryDeployments": "การปรับใช้",
     "CategoryLogin": "ประวัติการเข้าสู่ระบบ",
     "CategoryLogs": "บันทึก",
@@ -2788,6 +2789,7 @@
     "EditPolicy": "แก้ไขนโยบาย",
     "LastSweptAt": "การล้างครั้งล่าสุด",
     "NotSweptYet": "ยังไม่ได้ทำงาน",
+    "OnePolicyPerCategory": "แต่ละหมวดหมู่มีนโยบายได้เพียงหนึ่งนโยบาย",
     "RetentionPeriodDays": "ระยะเวลาเก็บรักษา (วัน)",
     "RetentionPeriodRequired": "ป้อนระยะเวลาเก็บรักษาอย่างน้อย 1 วัน",
     "RetentionPolicy": "นโยบายการเก็บรักษา",

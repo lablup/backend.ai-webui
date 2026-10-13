@@ -2788,6 +2788,7 @@
   },
   "retentionPolicy": {
     "Category": "類別",
+    "CategoryAlreadyHasPolicy": "{{category}} 已有政策。請編輯現有政策。",
     "CategoryDeployments": "部署",
     "CategoryLogin": "登入記錄",
     "CategoryLogs": "日誌",
@@ -2804,6 +2805,7 @@
     "EditPolicy": "編輯政策",
     "LastSweptAt": "上次清理",
     "NotSweptYet": "尚未執行",
+    "OnePolicyPerCategory": "每個類別只能有一個政策。",
     "RetentionPeriodDays": "保留期限（天）",
     "RetentionPeriodRequired": "請輸入至少 1 天的保留期限。",
     "RetentionPolicy": "保留政策",

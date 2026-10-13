@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c881f28792f25c360bd1da50bb7f85b9>>
+ * @generated SignedSource<<f128928ba46f33991ea66d324fbb0d17>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,7 +17,6 @@ export type RetentionPolicyOrderBy = {
   field: RetentionPolicyOrderField;
 };
 export type RetentionPolicyListQuery$variables = {
-  categoryLimit: number;
   limit?: number | null | undefined;
   offset?: number | null | undefined;
   orderBy?: ReadonlyArray<RetentionPolicyOrderBy> | null | undefined;
@@ -39,14 +38,6 @@ export type RetentionPolicyListQuery$data = {
       };
     }>;
   } | null | undefined;
-  readonly configuredPolicies: {
-    readonly edges: ReadonlyArray<{
-      readonly node: {
-        readonly category: RetentionCategory;
-        readonly id: string;
-      };
-    }>;
-  } | null | undefined;
 };
 export type RetentionPolicyListQuery = {
   response: RetentionPolicyListQuery$data;
@@ -57,24 +48,19 @@ const node: ConcreteRequest = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "categoryLimit"
+  "name": "limit"
 },
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "limit"
+  "name": "offset"
 },
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "offset"
-},
-v3 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
   "name": "orderBy"
 },
-v4 = [
+v3 = [
   {
     "kind": "Variable",
     "name": "limit",
@@ -91,108 +77,67 @@ v4 = [
     "variableName": "orderBy"
   }
 ],
-v5 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "count",
   "storageKey": null
 },
-v6 = {
+v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v7 = {
+v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "entityId",
   "storageKey": null
 },
-v8 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "category",
   "storageKey": null
 },
-v9 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "retentionPeriodDays",
   "storageKey": null
 },
-v10 = {
+v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "enabled",
   "storageKey": null
 },
-v11 = {
+v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "lastSweptAt",
   "storageKey": null
 },
-v12 = {
+v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "createdAt",
   "storageKey": null
 },
-v13 = {
+v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "updatedAt",
-  "storageKey": null
-},
-v14 = {
-  "alias": "configuredPolicies",
-  "args": [
-    {
-      "kind": "Variable",
-      "name": "limit",
-      "variableName": "categoryLimit"
-    }
-  ],
-  "concreteType": "RetentionPolicyConnection",
-  "kind": "LinkedField",
-  "name": "adminRetentionPolicies",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "RetentionPolicyEdge",
-      "kind": "LinkedField",
-      "name": "edges",
-      "plural": true,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "RetentionPolicy",
-          "kind": "LinkedField",
-          "name": "node",
-          "plural": false,
-          "selections": [
-            (v6/*: any*/),
-            (v8/*: any*/)
-          ],
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    }
-  ],
   "storageKey": null
 };
 return {
@@ -200,8 +145,7 @@ return {
     "argumentDefinitions": [
       (v0/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/),
-      (v3/*: any*/)
+      (v2/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
@@ -209,13 +153,13 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v4/*: any*/),
+        "args": (v3/*: any*/),
         "concreteType": "RetentionPolicyConnection",
         "kind": "LinkedField",
         "name": "adminRetentionPolicies",
         "plural": false,
         "selections": [
-          (v5/*: any*/),
+          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -232,6 +176,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
+                  (v5/*: any*/),
                   (v6/*: any*/),
                   (v7/*: any*/),
                   (v8/*: any*/),
@@ -239,7 +184,6 @@ return {
                   (v10/*: any*/),
                   (v11/*: any*/),
                   (v12/*: any*/),
-                  (v13/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -253,8 +197,7 @@ return {
           }
         ],
         "storageKey": null
-      },
-      (v14/*: any*/)
+      }
     ],
     "type": "Query",
     "abstractKey": null
@@ -262,23 +205,22 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v3/*: any*/),
-      (v1/*: any*/),
       (v2/*: any*/),
-      (v0/*: any*/)
+      (v0/*: any*/),
+      (v1/*: any*/)
     ],
     "kind": "Operation",
     "name": "RetentionPolicyListQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v4/*: any*/),
+        "args": (v3/*: any*/),
         "concreteType": "RetentionPolicyConnection",
         "kind": "LinkedField",
         "name": "adminRetentionPolicies",
         "plural": false,
         "selections": [
-          (v5/*: any*/),
+          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -295,14 +237,14 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
+                  (v5/*: any*/),
                   (v6/*: any*/),
                   (v7/*: any*/),
                   (v8/*: any*/),
                   (v9/*: any*/),
                   (v10/*: any*/),
                   (v11/*: any*/),
-                  (v12/*: any*/),
-                  (v13/*: any*/)
+                  (v12/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -311,21 +253,20 @@ return {
           }
         ],
         "storageKey": null
-      },
-      (v14/*: any*/)
+      }
     ]
   },
   "params": {
-    "cacheID": "cf926be8b16ed574ae83b907b9811acc",
+    "cacheID": "d0c87fdc4bf08a254d9da678c8d4e23b",
     "id": null,
     "metadata": {},
     "name": "RetentionPolicyListQuery",
     "operationKind": "query",
-    "text": "query RetentionPolicyListQuery(\n  $orderBy: [RetentionPolicyOrderBy!]\n  $limit: Int\n  $offset: Int\n  $categoryLimit: Int!\n) {\n  adminRetentionPolicies(orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        category\n        retentionPeriodDays\n        enabled\n        lastSweptAt\n        createdAt\n        updatedAt\n        ...RetentionPolicySettingModalFragment\n      }\n    }\n  }\n  configuredPolicies: adminRetentionPolicies(limit: $categoryLimit) {\n    edges {\n      node {\n        id\n        category\n      }\n    }\n  }\n}\n\nfragment RetentionPolicySettingModalFragment on RetentionPolicy {\n  id\n  entityId\n  category\n  retentionPeriodDays\n  enabled\n}\n"
+    "text": "query RetentionPolicyListQuery(\n  $orderBy: [RetentionPolicyOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminRetentionPolicies(orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        category\n        retentionPeriodDays\n        enabled\n        lastSweptAt\n        createdAt\n        updatedAt\n        ...RetentionPolicySettingModalFragment\n      }\n    }\n  }\n}\n\nfragment RetentionPolicySettingModalFragment on RetentionPolicy {\n  id\n  entityId\n  category\n  retentionPeriodDays\n  enabled\n}\n"
   }
 };
 })();
 
-(node as any).hash = "013a85c3ab6e4f0c07c64f83968bdec4";
+(node as any).hash = "f884944ddccd4acb3ebcff14acf688bf";
 
 export default node;

@@ -2784,6 +2784,7 @@
   },
   "retentionPolicy": {
     "Category": "Категория",
+    "CategoryAlreadyHasPolicy": "Для категории {{category}} уже есть политика. Измените существующую политику.",
     "CategoryDeployments": "Развёртывания",
     "CategoryLogin": "История входов",
     "CategoryLogs": "Журналы",
@@ -2800,6 +2801,7 @@
     "EditPolicy": "Изменить политику",
     "LastSweptAt": "Последняя очистка",
     "NotSweptYet": "Ещё не выполнялась",
+    "OnePolicyPerCategory": "Для каждой категории может существовать только одна политика.",
     "RetentionPeriodDays": "Срок хранения (дни)",
     "RetentionPeriodRequired": "Введите срок хранения не менее 1 дня.",
     "RetentionPolicy": "Политика хранения",
