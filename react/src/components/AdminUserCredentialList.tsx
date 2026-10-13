@@ -10,7 +10,6 @@ import {
 } from '../__generated__/AdminUserCredentialListQuery.graphql';
 import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSettingModalFragment.graphql';
 import { App } from '../app-shim';
-import { useSuspendedBackendaiClient } from '../hooks';
 import BAIRadioGroup from './BAIRadioGroup';
 import KeypairInfoModal from './KeypairInfoModal';
 import KeypairSettingModal from './KeypairSettingModal';
@@ -118,8 +117,6 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
   const { token } = useTheme();
   const { message, modal } = App.useApp();
   const { logger } = useBAILogger();
-  // The manager's keypair create/modify/delete mutations admit superadmins only (#10288).
-  const isSuperAdmin = useSuspendedBackendaiClient().is_superadmin;
 
   const [keypairSettingModalFrgmt, setKeypairSettingModalFrgmt] =
     useState<KeypairSettingModalFragment$key | null>(null);
@@ -346,7 +343,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
           />
         </BAIFlex>
         <BAIFlex gap={'xs'}>
-          {isSuperAdmin && selectedKeypairs.length > 0 && (
+          {selectedKeypairs.length > 0 && (
             <BAIFlex gap="xs">
               <BAISelectionLabel
                 count={selectedKeypairs.length}
@@ -380,17 +377,15 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
               icon={<RotateCw size="1em" />}
             />
           </Tooltip>
-          {isSuperAdmin && (
-            <BAIButton
-              type="primary"
-              icon={<PlusIcon />}
-              onClick={() => {
-                setOpenUserKeypairSettingModal(true);
-              }}
-            >
-              {t('credential.AddCredential')}
-            </BAIButton>
-          )}
+          <BAIButton
+            type="primary"
+            icon={<PlusIcon />}
+            onClick={() => {
+              setOpenUserKeypairSettingModal(true);
+            }}
+          >
+            {t('credential.AddCredential')}
+          </BAIButton>
         </BAIFlex>
       </BAIFlex>
       <BAITable<Keypair>
@@ -401,24 +396,20 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
         // desktop widths. Restores what the antd file carried pre-migration.
         scroll={{ x: 'max-content' }}
         dataSource={filterOutNullAndUndefined(keypair_list?.items)}
-        rowSelection={
-          isSuperAdmin
-            ? {
-                type: 'checkbox',
-                selectedRowKeys: _.compact(
-                  selectedKeypairs.map((keypair) => keypair.id),
-                ),
-                onChange: (keys) => {
-                  const items = filterOutNullAndUndefined(keypair_list?.items);
-                  setSelectedKeypairs(
-                    items.filter(
-                      (keypair) => keypair.id && keys.includes(keypair.id),
-                    ),
-                  );
-                },
-              }
-            : undefined
-        }
+        rowSelection={{
+          type: 'checkbox',
+          selectedRowKeys: _.compact(
+            selectedKeypairs.map((keypair) => keypair.id),
+          ),
+          onChange: (keys) => {
+            const items = filterOutNullAndUndefined(keypair_list?.items);
+            setSelectedKeypairs(
+              items.filter(
+                (keypair) => keypair.id && keys.includes(keypair.id),
+              ),
+            );
+          },
+        }}
         columns={filterOutEmpty([
           {
             key: 'userID',
@@ -572,11 +563,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
                 <BAINameActionCell
                   title={record.user_id}
                   showActions="always"
-                  actions={
-                    isSuperAdmin
-                      ? actions
-                      : actions.filter((action) => action.key === 'info')
-                  }
+                  actions={actions}
                 />
               );
             },
