@@ -101,7 +101,7 @@ export const toSessionMonitorEntry = (
 };
 
 export type SessionMonitorSort = 'deadline' | 'newest' | 'name';
-export const SESSION_MONITOR_ROW_OPTIONS = [5, 10, 20] as const;
+export const SESSION_MONITOR_ROW_OPTIONS = [3, 5, 10, 20] as const;
 
 /** Default: soonest deadline first, then newest session first. */
 export const rankSessions = (
