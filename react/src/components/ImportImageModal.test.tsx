@@ -39,23 +39,26 @@ vi.mock('react-i18next', async () => {
   };
 });
 
-vi.mock('../helper', async (importOriginal) => {
-  const originalModule = await importOriginal<typeof import('../helper')>();
+// `adminScanImage` goes through this seam: a resolved `{ data, errors }` is
+// what Relay hands `onCompleted`, a rejection is a transport failure.
+vi.mock('react-relay', async (importOriginal) => {
+  // CommonJS: the named exports live on `default` under Vitest's interop.
+  const originalModule = await importOriginal<any>();
   return {
     ...originalModule,
-    baiSignedRequestWithPromise: (...args: Array<any>) =>
-      mockScanRequest(...args),
-  };
-});
-
-vi.mock('../hooks', async (importOriginal) => {
-  const originalModule = await importOriginal<typeof import('../hooks')>();
-  return {
-    ...originalModule,
-    useSuspendedBackendaiClient: () => ({
-      _config: { domainName: 'default' },
-      supports: () => true,
-    }),
+    ...originalModule.default,
+    useMutation: () => [
+      (config: any) => {
+        Promise.resolve()
+          .then(() => mockScanRequest({ body: config.variables.input }))
+          .then(
+            (response: any) =>
+              config.onCompleted(response.data, response.errors ?? null),
+            (error: unknown) => config.onError(error),
+          );
+      },
+      false,
+    ],
   };
 });
 
@@ -194,15 +197,19 @@ const PYTORCH = 'nvcr.io/nvidia/pytorch:25.01-py3';
 const MIRRORED = 'mirror.example.com/team-b/python:3.12';
 
 const scanOk = () => ({
-  item: {
-    id: 'image-id',
-    name: 'name',
-    registry: 'cr.backend.ai',
-    project: 'stable',
-    tag: 'tag',
-    architecture: 'x86_64',
+  data: {
+    adminScanImage: {
+      item: {
+        id: 'image-id',
+        identity: { canonicalName: PYTHON, architecture: 'x86_64' },
+      },
+    },
   },
-  errors: [],
+});
+
+const scanGraphQLError = (code: string, message: string) => ({
+  data: { adminScanImage: null },
+  errors: [{ message, extensions: { code } }],
 });
 
 /** Every page the registry query has actually resolved, across refetches. */
@@ -508,12 +515,11 @@ describe('ImportImageModal (FR-3940 review round)', () => {
     );
   });
 
-  it('treats a 200 carrying errors[] as a failed line and shows them', async () => {
+  it('reports a tag or architecture the registry lacks as a failed line', async () => {
     const user = userEvent.setup();
-    mockScanRequest.mockResolvedValue({
-      ...scanOk(),
-      errors: ['manifest unknown', 'rescan aborted'],
-    });
+    mockScanRequest.mockResolvedValue(
+      scanGraphQLError('image_read_not-found', 'No such environment image.'),
+    );
     const { onRequestClose } = renderModal();
     await typeReferences(PYTHON);
 
@@ -527,11 +533,31 @@ describe('ImportImageModal (FR-3940 review round)', () => {
     expect(onRequestClose).not.toHaveBeenCalled();
     expect(mockMessageSuccess).not.toHaveBeenCalled();
     expect(
-      screen.getByText('manifest unknown rescan aborted'),
+      screen.getByText('environment.ImportImageNotFoundInRegistry'),
     ).toBeInTheDocument();
     expect(
       screen.queryByTestId('import-image-added-row'),
     ).not.toBeInTheDocument();
+  });
+
+  it('shows the manager message for a GraphQL error it has no wording for', async () => {
+    const user = userEvent.setup();
+    mockScanRequest.mockResolvedValue(
+      scanGraphQLError(
+        'container-registry_read_not-found',
+        'No such registry for image.',
+      ),
+    );
+    renderModal();
+    await typeReferences(PYTHON);
+
+    await user.click(importButton());
+
+    await waitFor(() =>
+      expect(
+        screen.getByText('No such registry for image.'),
+      ).toBeInTheDocument(),
+    );
   });
 
   it('blocks every dismissal affordance while a scan request is in flight', async () => {

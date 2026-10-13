@@ -3,8 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ImportImageModalRegistriesQuery } from '../__generated__/ImportImageModalRegistriesQuery.graphql';
+import { ImportImageModalScanImageMutation } from '../__generated__/ImportImageModalScanImageMutation.graphql';
 import { App } from '../app-shim';
-import { baiSignedRequestWithPromise } from '../helper';
 import {
   parseImageReferenceLine,
   resolveImageReference,
@@ -12,23 +12,22 @@ import {
   type RegistryRow,
   type ResolvedReference,
 } from '../helper/imageReferenceParser';
-import { useSuspendedBackendaiClient } from '../hooks';
-import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
+import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { usePainKiller } from '../hooks/usePainKiller';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
 import './ImportImageModal.css';
-import { Button } from '@astryxdesign/core/Button';
-import { Center } from '@astryxdesign/core/Center';
-import { Link } from '@astryxdesign/core/Link';
-import { List, ListItem } from '@astryxdesign/core/List';
-import { HStack } from '@astryxdesign/core/Stack';
-import { StatusDot } from '@astryxdesign/core/StatusDot';
-import { Text } from '@astryxdesign/core/Text';
-import { TextArea } from '@astryxdesign/core/TextArea';
+import { Button } from '@lablup/ui-common/Button';
+import { Center } from '@lablup/ui-common/Center';
+import { Link } from '@lablup/ui-common/Link';
+import { List, ListItem } from '@lablup/ui-common/List';
+import { HStack } from '@lablup/ui-common/Stack';
+import { StatusDot } from '@lablup/ui-common/StatusDot';
+import { Text } from '@lablup/ui-common/Text';
+import { TextArea } from '@lablup/ui-common/TextArea';
 import {
   borderVars,
   typeScaleVars,
-} from '@astryxdesign/core/theme/tokens.stylex';
+} from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import {
   BAIFlex,
@@ -44,26 +43,13 @@ import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
 import { Suspense, useDeferredValue, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay';
-import type { IEnvironment } from 'relay-runtime';
-
-/**
- * `RescanImagesResponse` / `ImageDTO` from
- * `ai.backend.common.dto.manager.image.response`. Only the fields this modal
- * reads are declared; the client package cannot host it while `@ts-nocheck`
- * stands on its resource files.
- */
-interface ScanImageResponse {
-  item: {
-    id: string;
-    name: string;
-    registry: string;
-    project: string | null;
-    tag: string | null;
-    architecture: string;
-  };
-  errors: Array<string>;
-}
+import {
+  fetchQuery,
+  graphql,
+  useMutation,
+  useRelayEnvironment,
+} from 'react-relay';
+import type { IEnvironment, PayloadError } from 'relay-runtime';
 
 type LineOutcome = {
   status: 'queued' | 'pending' | 'success' | 'error';
@@ -102,6 +88,25 @@ type RegistryConnection = NonNullable<
   ImportImageModalRegistriesQuery['response']['container_registry_nodes']
 >;
 type RegistryNode = NonNullable<RegistryConnection['edges']>[number];
+
+const scanImageMutation = graphql`
+  mutation ImportImageModalScanImageMutation($input: ScanImageInput!) {
+    adminScanImage(input: $input) {
+      item {
+        id
+        identity {
+          canonicalName
+          architecture
+        }
+      }
+    }
+  }
+`;
+
+/** A GraphQL error as the manager sends it; Relay's type drops `extensions`. */
+type ManagerPayloadError = PayloadError & {
+  extensions?: { code?: string };
+};
 
 const REGISTRY_PAGE_SIZE = 100;
 /** Bounds the loop if a manager ever answers `hasNextPage` without advancing. */
@@ -190,7 +195,6 @@ const ImportImageModalContent: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const baiClient = useSuspendedBackendaiClient();
   const painKiller = usePainKiller();
 
   const [text, setText] = useState('');
@@ -260,19 +264,27 @@ const ImportImageModalContent: React.FC<{
   const hasFailure = _.some(outcomes, (outcome) => outcome.status === 'error');
   const canSubmit = pendingLines.length > 0 && !hasBlockedLine;
 
-  const scanImage = useTanMutation<
-    ScanImageResponse,
-    unknown,
-    { canonical: string; architecture: string }
-  >({
-    mutationFn: (values) =>
-      baiSignedRequestWithPromise<ScanImageResponse>({
-        method: 'POST',
-        url: '/admin/images/rescan',
-        body: values,
-        client: baiClient,
-      }),
-  });
+  const [commitScanImage] =
+    useMutation<ImportImageModalScanImageMutation>(scanImageMutation);
+
+  // Resolves to `null` on success, or to the line's failure message. A
+  // transport failure (timeout, 5xx) rejects and goes through `describeError`.
+  const scanImage = (canonical: string) =>
+    new Promise<string | null>((resolve, reject) => {
+      commitScanImage({
+        variables: { input: { canonical, architecture } },
+        onCompleted: (response, errors) => {
+          if (errors && errors.length > 0) {
+            resolve(describeScanError(errors[0] as ManagerPayloadError));
+          } else if (!response.adminScanImage?.item) {
+            resolve(t('error.UnexpectedError'));
+          } else {
+            resolve(null);
+          }
+        },
+        onError: reject,
+      });
+    });
 
   const describeReason = (resolved: ResolvedReference) => {
     const reasons: Record<ImageReferenceReason, string> = {
@@ -302,15 +314,23 @@ const ImportImageModalContent: React.FC<{
     return resolved.reason ? reasons[resolved.reason] : null;
   };
 
+  // `adminScanImage` answers a tag, repository or architecture the registry
+  // does not have with `image_read_not-found` (lablup/backend.ai#14648).
+  const describeScanError = (error: ManagerPayloadError) => {
+    switch (error.extensions?.code) {
+      case 'image_read_not-found':
+        return t('environment.ImportImageNotFoundInRegistry', {
+          architecture,
+        });
+      default:
+        return describeError({ title: error.message });
+    }
+  };
+
   // Called from a `catch`, so it must never throw and must always return
-  // something the reader can act on. A 404 `image_read_not-found` is today's
-  // behaviour for a canonical the manager's DB does not already carry, and a
-  // 5xx is how a missing tag or manifest surfaces (lablup/backend.ai#14612).
+  // something the reader can act on.
   const describeError = (error: any) => {
     const statusCode = error?.statusCode;
-    if (statusCode === 404 && error?.error_code === 'image_read_not-found') {
-      return t('environment.ImportImageManagerCannotRegisterNewImages');
-    }
     if (statusCode === 403) {
       return t('environment.ImportImageRequiresSuperadmin');
     }
@@ -370,18 +390,9 @@ const ImportImageModalContent: React.FC<{
         }
         runOutcomes[key] = { status: 'pending' };
         setOutcomes({ ...runOutcomes });
-        let failure: string | null = null;
+        let failure: string | null;
         try {
-          const response = await scanImage.mutateAsync({
-            canonical,
-            architecture,
-          });
-          // A 200 only says the rescan ran; a per-image failure comes back in
-          // `errors`, and such an image was not registered.
-          const errors = _.compact(response?.errors);
-          if (errors.length > 0) {
-            failure = errors.join('\n');
-          }
+          failure = await scanImage(canonical);
         } catch (error) {
           failure = describeError(error);
         }

@@ -741,10 +741,10 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
                 startRefreshTransition(() => updateFetchKey());
               }}
             />
-            {/* The Images tab is admin-scoped but the REST route behind this
-                is `superadmin_required`, so the role check cannot be
-                inherited from the route. */}
-            {baiClient.is_superadmin ? (
+            {/* `adminScanImage` is superadmin-only, a narrower role than this
+                admin-scoped tab, and exists from manager 26.10.0. */}
+            {baiClient.is_superadmin &&
+            baiClient.isManagerVersionCompatibleWith('26.10.0') ? (
               <Button
                 variant="secondary"
                 icon={<Import size="1em" />}
