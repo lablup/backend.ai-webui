@@ -16,6 +16,7 @@ type Role = ReturnType<typeof selectProjectAdminRoles>[number];
 const role = (id: string, name: string, userIds: Array<string> = []) =>
   ({
     id,
+    entityId: `uuid-${id}`,
     name,
     users: {
       count: userIds.length,
@@ -105,9 +106,13 @@ describe('groupProjectAdminAssignmentsByUser', () => {
       {
         userId: 'user-1',
         email: 'user-1@example.com',
-        roleIds: ['role-a', 'role-b'],
+        roleIds: ['uuid-role-a', 'uuid-role-b'],
       },
-      { userId: 'user-2', email: 'user-2@example.com', roleIds: ['role-a'] },
+      {
+        userId: 'user-2',
+        email: 'user-2@example.com',
+        roleIds: ['uuid-role-a'],
+      },
     ]);
   });
 

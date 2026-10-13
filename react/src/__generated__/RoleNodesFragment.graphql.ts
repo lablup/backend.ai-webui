@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1a3455ee5e2de8c0109f7c6274117065>>
+ * @generated SignedSource<<58f6600eeffe7b416ad4878fc7d5b249>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,6 +16,7 @@ export type RoleNodesFragment$data = ReadonlyArray<{
   readonly autoAssign: boolean;
   readonly createdAt: string;
   readonly description: string | null | undefined;
+  readonly entityId: string;
   readonly id: string;
   readonly name: string;
   readonly rolePreset: {
@@ -182,6 +183,13 @@ return {
         "storageKey": null
       },
       "action": "NONE"
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
     },
     {
       "kind": "RequiredField",
@@ -417,6 +425,6 @@ return {
 };
 })();
 
-(node as any).hash = "221bd9871ddf37951719f3d1d3369b04";
+(node as any).hash = "7a80860627ab48088385fdbf6ace0cde";
 
 export default node;

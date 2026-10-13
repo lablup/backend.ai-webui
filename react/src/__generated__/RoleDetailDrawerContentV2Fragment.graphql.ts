@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<28d1ca6b868312b7eaeacf0a3f7aa53c>>
+ * @generated SignedSource<<36f2ec5613ccfc58c014a8856d65e27b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,9 +18,7 @@ export type RoleDetailDrawerContentV2Fragment$data = {
   readonly description: string | null | undefined;
   readonly id: string;
   readonly name: string;
-  readonly rolePreset: {
-    readonly id: string;
-  } | null | undefined;
+  readonly rolePresetId: string | null | undefined;
   readonly scope: {
     readonly basicInfo?: {
       readonly email?: string;
@@ -52,18 +50,11 @@ var v0 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v2 = [
-  (v1/*: any*/)
+v1 = [
+  (v0/*: any*/)
 ];
 return {
   "argumentDefinitions": [],
@@ -71,8 +62,14 @@ return {
   "metadata": null,
   "name": "RoleDetailDrawerContentV2Fragment",
   "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "id",
+      "storageKey": null
+    },
     (v0/*: any*/),
-    (v1/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -147,7 +144,7 @@ return {
               "kind": "LinkedField",
               "name": "basicInfo",
               "plural": false,
-              "selections": (v2/*: any*/),
+              "selections": (v1/*: any*/),
               "storageKey": null
             }
           ],
@@ -164,7 +161,7 @@ return {
               "kind": "LinkedField",
               "name": "basicInfo",
               "plural": false,
-              "selections": (v2/*: any*/),
+              "selections": (v1/*: any*/),
               "storageKey": null
             }
           ],
@@ -206,7 +203,7 @@ return {
               "kind": "LinkedField",
               "name": "metadata",
               "plural": false,
-              "selections": (v2/*: any*/),
+              "selections": (v1/*: any*/),
               "storageKey": null
             }
           ],
@@ -248,7 +245,7 @@ return {
               "kind": "LinkedField",
               "name": "metadata",
               "plural": false,
-              "selections": (v2/*: any*/),
+              "selections": (v1/*: any*/),
               "storageKey": null
             }
           ],
@@ -257,7 +254,7 @@ return {
         },
         {
           "kind": "InlineFragment",
-          "selections": (v2/*: any*/),
+          "selections": (v1/*: any*/),
           "type": "ResourceGroup",
           "abstractKey": null
         },
@@ -288,13 +285,8 @@ return {
     {
       "alias": null,
       "args": null,
-      "concreteType": "RolePreset",
-      "kind": "LinkedField",
-      "name": "rolePreset",
-      "plural": false,
-      "selections": [
-        (v0/*: any*/)
-      ],
+      "kind": "ScalarField",
+      "name": "rolePresetId",
       "storageKey": null
     },
     {
@@ -313,6 +305,6 @@ return {
 };
 })();
 
-(node as any).hash = "3c12e7f6ca8b07c991a0257b4c246d2d";
+(node as any).hash = "e6cdd1663018851fca34fff5bfe88e9e";
 
 export default node;

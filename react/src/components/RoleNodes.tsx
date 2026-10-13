@@ -79,6 +79,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
     graphql`
       fragment RoleNodesFragment on Role @relay(plural: true) {
         id @required(action: NONE)
+        entityId
         name @required(action: NONE)
         description
         source
@@ -114,7 +115,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         }
         scopeType @since(version: "26.9.0a4")
         scopeId @since(version: "26.9.0a4")
-        rolePresetId @since(version: "26.9.0rc3")
+        rolePresetId
         rolePreset @since(version: "26.9.0rc3") {
           name
         }
