@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<62f954f1f80cdf21fc96d3a37cb6da5e>>
+ * @generated SignedSource<<53add2790bbbfe9998d36fc594097061>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -27,6 +27,7 @@ export type BAIModelDeploymentNodesFragment$data = ReadonlyArray<{
   readonly defaultDeploymentStrategy: {
     readonly type: DeploymentStrategyType;
   };
+  readonly entityId: string;
   readonly id: string;
   readonly metadata: {
     readonly createdAt: string;
@@ -88,6 +89,13 @@ return {
   "name": "BAIModelDeploymentNodesFragment",
   "selections": [
     (v0/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
+    },
     {
       "alias": null,
       "args": null,
@@ -335,6 +343,6 @@ return {
 };
 })();
 
-(node as any).hash = "48c3e36cd217bc2deed9240ab1bd8105";
+(node as any).hash = "757cbaf1bdf1655d02c427d5cb4cc0bc";
 
 export default node;
