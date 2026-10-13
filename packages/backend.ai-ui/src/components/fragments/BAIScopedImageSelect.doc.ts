@@ -2,7 +2,7 @@ import type { ComponentDoc } from '@astryxdesign/cli/authoring';
 
 export const docs = {
   type: 'component',
-  name: 'BAIAdminImageSelect',
+  name: 'BAIScopedImageSelect',
   displayName: 'BAI Admin Image Select',
   category: 'Data Input',
   keywords: [
@@ -114,7 +114,7 @@ export const docs = {
     },
     {
       name: 'ref',
-      type: 'React.Ref<BAIAdminImageSelectRef>',
+      type: 'React.Ref<BAIScopedImageSelectRef>',
       description:
         'Imperative handle exposing `refetch()`, which bumps the fetch key inside a transition so both queries reload without the control unmounting.',
     },
@@ -123,7 +123,7 @@ export const docs = {
     {
       label: 'Image field inside a preset form',
       code: `<Suspense fallback={<BAISkeleton variant="input" />}>
-  <BAIAdminImageSelect
+  <BAIScopedImageSelect
     label={t('adminDeploymentPreset.Image')}
     isLabelHidden
     value={value}

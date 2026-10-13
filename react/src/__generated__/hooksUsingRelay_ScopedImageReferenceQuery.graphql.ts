@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b785a36338fe3978948fecafce1120e2>>
+ * @generated SignedSource<<148a191e795d4a0f5bc01dd565ef2e2e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,11 +19,11 @@ export type ImageSearchScope = {
 export type UUIDScope = {
   value: string;
 };
-export type hooksUsingRelay_AdminImageReferenceQuery$variables = {
+export type hooksUsingRelay_ScopedImageReferenceQuery$variables = {
   id: string;
   scope: ImageSearchScope;
 };
-export type hooksUsingRelay_AdminImageReferenceQuery$data = {
+export type hooksUsingRelay_ScopedImageReferenceQuery$data = {
   readonly scopedImagesV2: {
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -35,9 +35,9 @@ export type hooksUsingRelay_AdminImageReferenceQuery$data = {
     }>;
   } | null | undefined;
 };
-export type hooksUsingRelay_AdminImageReferenceQuery = {
-  response: hooksUsingRelay_AdminImageReferenceQuery$data;
-  variables: hooksUsingRelay_AdminImageReferenceQuery$variables;
+export type hooksUsingRelay_ScopedImageReferenceQuery = {
+  response: hooksUsingRelay_ScopedImageReferenceQuery$data;
+  variables: hooksUsingRelay_ScopedImageReferenceQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -112,7 +112,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "hooksUsingRelay_AdminImageReferenceQuery",
+    "name": "hooksUsingRelay_ScopedImageReferenceQuery",
     "selections": [
       {
         "alias": null,
@@ -156,7 +156,7 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "hooksUsingRelay_AdminImageReferenceQuery",
+    "name": "hooksUsingRelay_ScopedImageReferenceQuery",
     "selections": [
       {
         "alias": null,
@@ -202,16 +202,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "13e27b264bd4179d657eccaaf70a6ab6",
+    "cacheID": "fab5172f99ca7cbdd0a8ce894b1dff41",
     "id": null,
     "metadata": {},
-    "name": "hooksUsingRelay_AdminImageReferenceQuery",
+    "name": "hooksUsingRelay_ScopedImageReferenceQuery",
     "operationKind": "query",
-    "text": "query hooksUsingRelay_AdminImageReferenceQuery(\n  $id: UUID!\n  $scope: ImageSearchScope!\n) {\n  scopedImagesV2(scope: $scope, filter: {id: {equals: $id}}, limit: 1) {\n    edges {\n      node {\n        identity {\n          canonicalName\n          architecture\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query hooksUsingRelay_ScopedImageReferenceQuery(\n  $id: UUID!\n  $scope: ImageSearchScope!\n) {\n  scopedImagesV2(scope: $scope, filter: {id: {equals: $id}}, limit: 1) {\n    edges {\n      node {\n        identity {\n          canonicalName\n          architecture\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "9815e4470dbaaafa0fe9433affe03c3a";
+(node as any).hash = "64331ab01b07af6759f80b8c8fd0f0a4";
 
 export default node;
