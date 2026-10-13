@@ -19,6 +19,7 @@ import {
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import AdminModelCardSettingModal from './AdminModelCardSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
@@ -155,6 +156,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   tableSettings,
 }) => {
   'use memo';
+  const { domainScope } = useCurrentDomainScope();
 
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -402,6 +404,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                 },
                 renderInput: ({ onAddCondition, value, isDisabled }) => (
                   <BAIAdminProjectSelect
+                    scope={domainScope}
                     label={t('adminModelCard.Project')}
                     isLabelHidden
                     // A model card belongs to a MODEL_STORE project (see the
