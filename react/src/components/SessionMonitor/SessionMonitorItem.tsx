@@ -3,26 +3,21 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { SessionMonitorItemFragment$key } from '../../__generated__/SessionMonitorItemFragment.graphql';
-import { formatDurationAsDays } from '../../helper';
+import { convertToBinaryUnit, formatDurationAsDays } from '../../helper';
 import {
   ATTENTION_THRESHOLD_SEC,
   isRunningStatus,
   isStartingStatus,
   type SessionMonitorEntry,
 } from '../../helper/sessionMonitor';
+import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { getIdleChecksBadgeVariant } from '../ComputeSessionNodeItems/SessionIdleChecks';
 import SessionMonitorUtilizationBars from './SessionMonitorUtilizationBars';
 import { Badge } from '@lablup/ui-common/Badge';
 import { StatusDot } from '@lablup/ui-common/StatusDot';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
-import {
-  BAIFlex,
-  BAIIntervalView,
-  BAILink,
-  BAIResourceNumberWithIcon,
-  toLocalId,
-} from 'backend.ai-ui';
+import { BAIFlex, BAIIntervalView, BAILink, toLocalId } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import React from 'react';
@@ -49,6 +44,7 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
+  const { mergedResourceSlots } = useResourceSlotsDetails();
 
   const session = useFragment(
     graphql`
@@ -71,10 +67,21 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
     sessionDetail: toLocalId(session.id),
   }).toString()}`;
 
-  // The allocation, or the request while the session is still starting.
+  // "GPU 2 · RAM 32G": the allocation, or the request while starting.
   const slots: Record<string, string | undefined> = JSON.parse(
     (isRunning ? session.occupied_slots : session.requested_slots) || '{}',
   );
+  const allocation = _.compact(
+    _.map(slots, (value, key) => {
+      if (!value) return null;
+      const name = mergedResourceSlots?.[key]?.human_readable_name ?? key;
+      if (key === 'mem') {
+        const gib = convertToBinaryUnit(value, 'g', 1)?.number ?? 0;
+        return `${name} ${Number.isInteger(gib) ? gib : gib.toFixed(1)}G`;
+      }
+      return `${name} ${parseFloat(value)}`;
+    }),
+  ).join(' · ');
   const elapsed = session.created_at
     ? dayjs(session.created_at).fromNow(true)
     : null;
@@ -125,19 +132,9 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
             {session.name ?? toLocalId(session.id)}
           </BAILink>
         </BAIFlex>
-        <BAIFlex direction="row" align="center" gap="xs" wrap="nowrap">
-          {_.map(slots, (value, key) =>
-            value ? (
-              <BAIResourceNumberWithIcon
-                key={key}
-                type={key}
-                value={value}
-                hideTooltip
-              />
-            ) : null,
-          )}
-          {elapsed && <Text type="supporting">{elapsed}</Text>}
-        </BAIFlex>
+        <Text type="supporting" maxLines={1} hasTruncateTooltip={false}>
+          {[allocation, elapsed].filter(Boolean).join(' · ')}
+        </Text>
       </BAIFlex>
       <div style={{ width: 170, flex: 'none' }}>
         {isRunning && <SessionMonitorUtilizationBars sessionFrgmt={session} />}
