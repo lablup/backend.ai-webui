@@ -253,7 +253,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "Pääsyavain",
     "CreatedAt": "Luotu klo",
-    "InvalidatedAt": "Mitätöity klo",
+    "LastAccessedAt": "Viimeisin käyttö",
     "User": "Käyttäjä"
   },
   "comp:BAIModal": {
