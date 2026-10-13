@@ -1,7 +1,4 @@
-import {
-  BAIAdminProjectResourcePolicySelect,
-  BAIResourceGroupSelect,
-} from '.';
+import { BAIAdminProjectResourcePolicySelect, BAIResourceGroupSelect } from '.';
 import {
   BAIAllowedHostNamesSelect,
   BAIDynamicUnitInputNumber,
