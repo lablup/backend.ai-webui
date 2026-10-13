@@ -12,6 +12,7 @@ import {
   type SessionMonitorSummary,
 } from '../helper/sessionMonitor';
 import { useCurrentUserInfo } from './backendai';
+import { useCurrentProjectValue } from './useCurrentProject';
 import { INITIAL_FETCH_KEY } from 'backend.ai-ui';
 import { atom } from 'jotai';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -41,12 +42,13 @@ export type SessionMonitorNode = NonNullable<
 >;
 
 /**
- * The user's unfinished sessions across every project, oldest deadline
- * first. Shared by the watcher and the popover so both see one answer.
+ * The user's unfinished sessions in the current project (the session list
+ * page's scope). Shared by the watcher and the popover so both see one answer.
  */
 export const useSessionMonitorData = (fetchKey: string) => {
   'use memo';
   const [currentUser] = useCurrentUserInfo();
+  const currentProject = useCurrentProjectValue();
 
   const data = useLazyLoadQuery<useSessionMonitorQuery>(
     graphql`
@@ -76,8 +78,8 @@ export const useSessionMonitorData = (fetchKey: string) => {
       }
     `,
     {
-      scopeId: `user:${currentUser.uuid}`,
-      filter: SESSION_MONITOR_NOT_FINISHED_FILTER,
+      scopeId: `project:${currentProject.id}`,
+      filter: `${SESSION_MONITOR_NOT_FINISHED_FILTER} & user_id == "${currentUser.uuid}"`,
       first: SESSION_MONITOR_FETCH_LIMIT,
     },
     { fetchPolicy: 'store-and-network', fetchKey },

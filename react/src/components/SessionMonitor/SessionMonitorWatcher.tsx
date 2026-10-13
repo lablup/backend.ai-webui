@@ -13,6 +13,7 @@ import {
 } from '../../helper/sessionMonitor';
 import { useSetBAINotification } from '../../hooks/useBAINotification';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
+import { useIsProjectAgnosticPage } from '../../hooks/useIsProjectAgnosticPage';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import {
   sessionMonitorFetchKeyAtom,
@@ -39,10 +40,17 @@ const idleAlertDescriptionKey = (
       : 'sessionMonitor.idleAlert.SessionLifetime';
 
 /**
- * Polls the user's sessions for the header button, the tab-title badge and
- * the idle-termination alerts. Renders nothing; mounted once in MainLayout.
+ * Polls the user's sessions in the current project for the header button,
+ * the tab-title badge and the idle-termination alerts. Renders nothing;
+ * mounted once in MainLayout, and idle above project scope (ADR-0001).
  */
 const SessionMonitorWatcher: React.FC = () => {
+  'use memo';
+  const isProjectAgnosticPage = useIsProjectAgnosticPage();
+  return isProjectAgnosticPage ? null : <ProjectSessionMonitorWatcher />;
+};
+
+const ProjectSessionMonitorWatcher: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
   const [fetchKey, setFetchKey] = useAtom(sessionMonitorFetchKeyAtom);
