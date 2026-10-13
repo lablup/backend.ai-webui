@@ -57,12 +57,14 @@ export type DeploymentStatusCategory = 'running' | 'finished';
 
 export const AdminDeploymentQuery = graphql`
   query AdminDeploymentQuery(
+    $scope: DeploymentSearchScope!
     $filter: DeploymentFilter
     $orderBy: [DeploymentOrderBy!]
     $limit: Int
     $offset: Int
   ) {
-    adminDeployments(
+    scopedDeployments(
+      scope: $scope
       filter: $filter
       orderBy: $orderBy
       limit: $limit
@@ -163,15 +165,15 @@ const AdminDeployment = ({
   const deferredQueryRef = useDeferredValue(queryRef);
   const isRefetching = deferredQueryRef !== queryRef;
 
-  const { adminDeployments } = usePreloadedQuery<AdminDeploymentQueryType>(
+  const { scopedDeployments } = usePreloadedQuery<AdminDeploymentQueryType>(
     AdminDeploymentQuery,
     deferredQueryRef,
   );
 
   const deploymentNodes = filterOutNullAndUndefined(
-    _.map(adminDeployments?.edges, 'node'),
+    _.map(scopedDeployments?.edges, 'node'),
   );
-  const total = adminDeployments?.count ?? 0;
+  const total = scopedDeployments?.count ?? 0;
   const editingDeployment =
     editingDeploymentId == null
       ? null
