@@ -64,6 +64,12 @@ export const docs = {
         'Fired with the chosen image UUID, or the array of UUIDs in `multiple` mode; the optional second argument carries the picked `{ label, value }` pair(s).',
     },
     {
+      name: 'scope',
+      type: 'ImageSearchScope | null',
+      description:
+        'Lists the images this scope reaches through `scopedImagesV2` instead of every image through the superadmin-only `adminImagesV2` (ADR 0011). Pass it on pages a non-superadmin can open, for example `{ project: [{ value: projectId }], public: true }`; pass `null` on managers below 26.9.0a4 and omit it on superadmin-only pages.',
+    },
+    {
       name: 'filter',
       type: 'ImageV2Filter',
       description:
