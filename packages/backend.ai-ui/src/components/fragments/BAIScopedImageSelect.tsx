@@ -13,7 +13,6 @@ import {
   ImageV2Filter,
 } from '../../__generated__/BAIScopedImageSelectPaginatedQuery.graphql';
 import { BAIScopedImageSelectValueQuery } from '../../__generated__/BAIScopedImageSelectValueQuery.graphql';
-import { toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useControllableValue, useFetchKey } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -116,6 +115,7 @@ const BAIScopedImageSelect: React.FC<BAIScopedImageSelectProps> = ({
           edges {
             node {
               id
+              entityId
               identity {
                 canonicalName
                 architecture
@@ -137,7 +137,7 @@ const BAIScopedImageSelect: React.FC<BAIScopedImageSelectProps> = ({
   );
   const selectedImageMap = _.keyBy(
     _.compact(_.map(selectedImageData.scopedImagesV2?.edges, (e) => e?.node)),
-    (node) => toLocalId(node.id),
+    (node) => node.entityId,
   );
 
   const { paginationData, result, loadNext, isLoadingNext } =
@@ -163,6 +163,7 @@ const BAIScopedImageSelect: React.FC<BAIScopedImageSelectProps> = ({
             edges {
               node {
                 id
+                entityId
                 identity {
                   canonicalName
                   architecture
@@ -190,8 +191,8 @@ const BAIScopedImageSelect: React.FC<BAIScopedImageSelectProps> = ({
       {
         getTotal: (r) => r.scopedImagesV2?.count ?? undefined,
         getItem: (r) => r.scopedImagesV2?.edges?.map((e) => e?.node),
-        // Store UUID (via toLocalId) so callers can pass the value directly to UUID! mutation inputs
-        getId: (item) => (item?.id ? toLocalId(item.id) : item?.id),
+        // The image UUID, so callers can pass the value straight to UUID! inputs.
+        getId: (item) => item?.entityId,
       },
     );
 
@@ -221,7 +222,7 @@ const BAIScopedImageSelect: React.FC<BAIScopedImageSelectProps> = ({
   // the popup draws the row in its place.
   const options = _.compact(
     _.map(paginationData, (item) => {
-      const key = item?.id ? toLocalId(item.id) : undefined;
+      const key = item?.entityId;
       return key
         ? {
             value: key,
