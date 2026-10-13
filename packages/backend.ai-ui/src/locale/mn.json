@@ -38,6 +38,23 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Ресурсын бүлэг сонгох"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "Ангилал",
+    "CategoryDeployments": "Байршуулалт",
+    "CategoryLogin": "Нэвтрэлтийн түүх",
+    "CategoryLogs": "Лог",
+    "CategoryReconcileHistory": "Тохируулгын түүх",
+    "CategoryRolesInvitations": "Үүрэг ба урилга",
+    "CategorySessions": "Сешн",
+    "CategoryUsageBuckets": "Ашиглалтын нэгтгэл",
+    "CategoryUsageRecords": "Ашиглалтын бичлэг",
+    "CreatedAt": "Үүсгэсэн огноо",
+    "Enabled": "Идэвхжсэн",
+    "LastSweptAt": "Сүүлийн цэвэрлэгээ",
+    "NotSweptYet": "Хараахан ажиллаагүй",
+    "RetentionPeriodDays": "Хадгалах хугацаа (өдөр)",
+    "UpdatedAt": "Шинэчлэгдсэн огноо"
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Сесс сонгох"
   },

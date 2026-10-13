@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f128928ba46f33991ea66d324fbb0d17>>
+ * @generated SignedSource<<ec219b55a957ca29e4e2464c3bbf4b0a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -27,14 +27,9 @@ export type RetentionPolicyListQuery$data = {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly category: RetentionCategory;
-        readonly createdAt: string;
-        readonly enabled: boolean;
         readonly entityId: string;
         readonly id: string;
-        readonly lastSweptAt: string | null | undefined;
-        readonly retentionPeriodDays: number;
-        readonly updatedAt: string;
-        readonly " $fragmentSpreads": FragmentRefs<"RetentionPolicySettingModalFragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"BAIAdminRetentionPolicyTableFragment" | "RetentionPolicySettingModalFragment">;
       };
     }>;
   } | null | undefined;
@@ -104,41 +99,6 @@ v7 = {
   "kind": "ScalarField",
   "name": "category",
   "storageKey": null
-},
-v8 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "retentionPeriodDays",
-  "storageKey": null
-},
-v9 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "enabled",
-  "storageKey": null
-},
-v10 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "lastSweptAt",
-  "storageKey": null
-},
-v11 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "createdAt",
-  "storageKey": null
-},
-v12 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "updatedAt",
-  "storageKey": null
 };
 return {
   "fragment": {
@@ -179,15 +139,15 @@ return {
                   (v5/*: any*/),
                   (v6/*: any*/),
                   (v7/*: any*/),
-                  (v8/*: any*/),
-                  (v9/*: any*/),
-                  (v10/*: any*/),
-                  (v11/*: any*/),
-                  (v12/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
                     "name": "RetentionPolicySettingModalFragment"
+                  },
+                  {
+                    "args": null,
+                    "kind": "FragmentSpread",
+                    "name": "BAIAdminRetentionPolicyTableFragment"
                   }
                 ],
                 "storageKey": null
@@ -240,11 +200,41 @@ return {
                   (v5/*: any*/),
                   (v6/*: any*/),
                   (v7/*: any*/),
-                  (v8/*: any*/),
-                  (v9/*: any*/),
-                  (v10/*: any*/),
-                  (v11/*: any*/),
-                  (v12/*: any*/)
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "retentionPeriodDays",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "enabled",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "lastSweptAt",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "createdAt",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "updatedAt",
+                    "storageKey": null
+                  }
                 ],
                 "storageKey": null
               }
@@ -257,16 +247,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d0c87fdc4bf08a254d9da678c8d4e23b",
+    "cacheID": "7a49099799465c85718192a32be48634",
     "id": null,
     "metadata": {},
     "name": "RetentionPolicyListQuery",
     "operationKind": "query",
-    "text": "query RetentionPolicyListQuery(\n  $orderBy: [RetentionPolicyOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminRetentionPolicies(orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        category\n        retentionPeriodDays\n        enabled\n        lastSweptAt\n        createdAt\n        updatedAt\n        ...RetentionPolicySettingModalFragment\n      }\n    }\n  }\n}\n\nfragment RetentionPolicySettingModalFragment on RetentionPolicy {\n  id\n  entityId\n  category\n  retentionPeriodDays\n  enabled\n}\n"
+    "text": "query RetentionPolicyListQuery(\n  $orderBy: [RetentionPolicyOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminRetentionPolicies(orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        category\n        ...RetentionPolicySettingModalFragment\n        ...BAIAdminRetentionPolicyTableFragment\n      }\n    }\n  }\n}\n\nfragment BAIAdminRetentionPolicyTableFragment on RetentionPolicy {\n  id\n  category\n  retentionPeriodDays\n  enabled\n  lastSweptAt\n  createdAt\n  updatedAt\n}\n\nfragment RetentionPolicySettingModalFragment on RetentionPolicy {\n  id\n  entityId\n  category\n  retentionPeriodDays\n  enabled\n}\n"
   }
 };
 })();
 
-(node as any).hash = "f884944ddccd4acb3ebcff14acf688bf";
+(node as any).hash = "1b000a5558aa06443fc029e8aeff4fdf";
 
 export default node;

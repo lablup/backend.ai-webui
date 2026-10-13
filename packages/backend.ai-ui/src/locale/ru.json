@@ -38,6 +38,23 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Выберите группу ресурсов"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "Категория",
+    "CategoryDeployments": "Развёртывания",
+    "CategoryLogin": "История входов",
+    "CategoryLogs": "Журналы",
+    "CategoryReconcileHistory": "История согласования",
+    "CategoryRolesInvitations": "Роли и приглашения",
+    "CategorySessions": "Сеансы",
+    "CategoryUsageBuckets": "Сводки использования",
+    "CategoryUsageRecords": "Записи использования",
+    "CreatedAt": "Дата создания",
+    "Enabled": "Включено",
+    "LastSweptAt": "Последняя очистка",
+    "NotSweptYet": "Ещё не выполнялась",
+    "RetentionPeriodDays": "Срок хранения (дни)",
+    "UpdatedAt": "Обновлено"
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Выберите сеанс"
   },

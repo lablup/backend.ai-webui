@@ -15,19 +15,16 @@ import RetentionPolicySettingModal, {
 } from './RetentionPolicySettingModal';
 import { Switch } from '@lablup/ui-common/Switch';
 import {
+  BAIAdminRetentionPolicyTable,
   BAIAlert,
   BAIButton,
-  BAIColumnsType,
   BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
   BAINameActionCell,
-  BAITable,
-  BAIText,
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
-import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { PlusIcon, SquarePenIcon, Trash2 } from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
@@ -53,12 +50,8 @@ export const RetentionPolicyListQuery = graphql`
           id
           entityId
           category
-          retentionPeriodDays
-          enabled
-          lastSweptAt
-          createdAt
-          updatedAt
           ...RetentionPolicySettingModalFragment
+          ...BAIAdminRetentionPolicyTableFragment
         }
       }
     }
@@ -66,11 +59,6 @@ export const RetentionPolicyListQuery = graphql`
 `;
 
 export const RETENTION_POLICY_LIST_DEFAULT_PAGE_SIZE = 10;
-export const RETENTION_POLICY_SORTER_KEYS = [
-  'category',
-  'createdAt',
-  'lastSweptAt',
-] as const;
 
 type RetentionPolicyNode = NonNullable<
   NonNullable<
@@ -163,88 +151,7 @@ const RetentionPolicyList: React.FC<RetentionPolicyListProps> = ({
     });
   };
 
-  const columns: BAIColumnsType<RetentionPolicyNode> = [
-    {
-      title: t('retentionPolicy.Category'),
-      dataIndex: 'category',
-      key: 'category',
-      fixed: 'left',
-      required: true,
-      sorter: true,
-      render: (_value, row) => (
-        <BAINameActionCell
-          title={getCategoryLabel(row.category)}
-          showActions="always"
-          actions={[
-            {
-              key: 'edit',
-              title: t('button.Edit'),
-              icon: <SquarePenIcon />,
-              onClick: () => {
-                setEditingPolicy(row);
-                setIsOpenSettingModal(true);
-              },
-            },
-            {
-              key: 'delete',
-              title: t('button.Delete'),
-              icon: <Trash2 size="1em" />,
-              type: 'danger',
-              onClick: () => setDeletingPolicy(row),
-            },
-          ]}
-        />
-      ),
-    },
-    {
-      title: t('retentionPolicy.RetentionPeriodDays'),
-      dataIndex: 'retentionPeriodDays',
-      key: 'retentionPeriodDays',
-    },
-    {
-      title: t('general.Enabled'),
-      dataIndex: 'enabled',
-      key: 'enabled',
-      render: (_value, row) => (
-        <Switch
-          label={t('general.Enabled')}
-          isLabelHidden
-          size="sm"
-          value={row.enabled}
-          isLoading={_.includes(togglingIds, row.id)}
-          isDisabled={_.includes(togglingIds, row.id)}
-          onChange={(next) => toggleEnabled(row, next)}
-        />
-      ),
-    },
-    {
-      title: t('retentionPolicy.LastSweptAt'),
-      dataIndex: 'lastSweptAt',
-      key: 'lastSweptAt',
-      sorter: true,
-      render: (value: string | null | undefined) =>
-        value ? (
-          dayjs(value).format('lll')
-        ) : (
-          <BAIText type="secondary">{t('retentionPolicy.NotSweptYet')}</BAIText>
-        ),
-    },
-    {
-      title: t('general.CreatedAt'),
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      sorter: true,
-      defaultHidden: true,
-      render: (value: string) => dayjs(value).format('lll'),
-    },
-    {
-      title: t('general.UpdatedAt'),
-      dataIndex: 'updatedAt',
-      key: 'updatedAt',
-      defaultHidden: true,
-      render: (value: string) => dayjs(value).format('lll'),
-    },
-  ];
+  const findPolicy = (id: string) => _.find(policies, { id }) ?? null;
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
@@ -269,12 +176,8 @@ const RetentionPolicyList: React.FC<RetentionPolicyListProps> = ({
           </BAIButton>
         </BAIFlex>
       </BAIFlex>
-      <BAITable
-        scroll={{ x: 'max-content' }}
-        size="small"
-        rowKey="id"
-        dataSource={policies}
-        columns={columns}
+      <BAIAdminRetentionPolicyTable
+        retentionPoliciesFrgmt={policies}
         loading={isPending}
         order={orderValue}
         onChangeOrder={(nextOrder) => {
@@ -297,6 +200,60 @@ const RetentionPolicyList: React.FC<RetentionPolicyListProps> = ({
             }
           },
         }}
+        customizeColumns={(columns) =>
+          _.map(columns, (column) => {
+            if (column.key === 'category') {
+              return {
+                ...column,
+                render: (value, row, index) => (
+                  <BAINameActionCell
+                    title={column.render?.(value, row, index)}
+                    showActions="always"
+                    actions={[
+                      {
+                        key: 'edit',
+                        title: t('button.Edit'),
+                        icon: <SquarePenIcon />,
+                        onClick: () => {
+                          setEditingPolicy(findPolicy(row.id));
+                          setIsOpenSettingModal(true);
+                        },
+                      },
+                      {
+                        key: 'delete',
+                        title: t('button.Delete'),
+                        icon: <Trash2 size="1em" />,
+                        type: 'danger',
+                        onClick: () => setDeletingPolicy(findPolicy(row.id)),
+                      },
+                    ]}
+                  />
+                ),
+              };
+            }
+            if (column.key === 'enabled') {
+              return {
+                ...column,
+                render: (_value, row) => {
+                  const policy = findPolicy(row.id);
+                  const isToggling = _.includes(togglingIds, row.id);
+                  return (
+                    <Switch
+                      label={t('general.Enabled')}
+                      isLabelHidden
+                      size="sm"
+                      value={row.enabled}
+                      isLoading={isToggling}
+                      isDisabled={isToggling || !policy}
+                      onChange={(next) => policy && toggleEnabled(policy, next)}
+                    />
+                  );
+                },
+              };
+            }
+            return column;
+          })
+        }
       />
       <BAIUnmountAfterClose>
         <RetentionPolicySettingModal

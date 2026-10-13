@@ -199,6 +199,14 @@ export type {
   BAIProjectResourcePolicyV2TableProps,
   ProjectResourcePolicyV2InList,
 } from './BAIProjectResourcePolicyV2Table';
+export {
+  default as BAIAdminRetentionPolicyTable,
+  availableRetentionPolicySorterValues,
+} from './BAIAdminRetentionPolicyTable';
+export type {
+  BAIAdminRetentionPolicyTableProps,
+  RetentionPolicyInList,
+} from './BAIAdminRetentionPolicyTable';
 export type { BAIUncontrolledInputProps } from './BAIUncontrolledInput';
 export { default as BAIUncontrolledInput } from './BAIUncontrolledInput';
 export { default as BAITokenList } from './BAITokenList';
