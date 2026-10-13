@@ -7,6 +7,7 @@ import {
   RoleNodesFragment$key,
 } from '../__generated__/RoleNodesFragment.graphql';
 import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
+import { resolveRBACScopeName } from '../helper/rbacScopeName';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
@@ -133,6 +134,28 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
               userEmail: email
             }
           }
+          ... on VFolder {
+            metadata {
+              name
+            }
+          }
+          ... on SessionV2 {
+            metadata {
+              sessionName: name
+            }
+          }
+          ... on ModelDeployment {
+            metadata {
+              name
+            }
+          }
+          ... on ResourceGroup {
+            name
+          }
+          ... on ContainerRegistryV2 {
+            registryName
+            project
+          }
         }
       }
     `,
@@ -198,11 +221,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
           defaultValue: scopeType,
         });
         const scopeName =
-          scope?.basicInfo?.projectName ??
-          scope?.basicInfo?.domainName ??
-          scope?.basicInfo?.userEmail ??
-          scopeId ??
-          '-';
+          resolveRBACScopeName({ scopeType, scope }) ?? scopeId ?? '-';
         return (
           <BAIFlex gap="xxs" wrap="wrap" align="center">
             <BAIDoubleToken

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f203e8061a11f81c6554b12075faf13c>>
+ * @generated SignedSource<<28d1ca6b868312b7eaeacf0a3f7aa53c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -27,13 +27,12 @@ export type RoleDetailDrawerContentV2Fragment$data = {
       readonly name: string;
     };
     readonly metadata?: {
-      readonly name?: string;
-      readonly sessionName: string;
+      readonly name: string;
+      readonly sessionName?: string;
     };
     readonly name?: string;
     readonly project?: string | null | undefined;
     readonly registryName?: string;
-    readonly vfolderName?: string | null | undefined;
   } | null | undefined;
   readonly scopeId: string;
   readonly scopeType: string;
@@ -201,14 +200,17 @@ return {
           "kind": "InlineFragment",
           "selections": [
             {
-              "alias": "vfolderName",
+              "alias": null,
               "args": null,
-              "kind": "ScalarField",
-              "name": "name",
+              "concreteType": "VFolderMetadataInfo",
+              "kind": "LinkedField",
+              "name": "metadata",
+              "plural": false,
+              "selections": (v2/*: any*/),
               "storageKey": null
             }
           ],
-          "type": "VirtualFolderNode",
+          "type": "VFolder",
           "abstractKey": null
         },
         {
@@ -311,6 +313,6 @@ return {
 };
 })();
 
-(node as any).hash = "f35016987c0d1ef8b2d0388bd9bec55e";
+(node as any).hash = "3c12e7f6ca8b07c991a0257b4c246d2d";
 
 export default node;

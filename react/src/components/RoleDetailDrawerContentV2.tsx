@@ -79,8 +79,10 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
               email
             }
           }
-          ... on VirtualFolderNode {
-            vfolderName: name
+          ... on VFolder {
+            metadata {
+              name
+            }
           }
           ... on SessionV2 {
             metadata {
