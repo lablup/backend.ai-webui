@@ -101,7 +101,7 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
             project
           }
         }
-        rolePresetId @since(version: "26.9.0rc3")
+        rolePresetId
         ...RoleAssignmentTabFragment
         ...RolePermissionSummaryTableFragment
       }
@@ -110,8 +110,8 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
   );
 
   const scopeName = resolveRBACScopeName(role);
-  // Before 26.9.0rc3 a role does not name its preset, so the link falls back to the
-  // kind in the name (`project_member-1a2b3c4d`); the last match beats a scope name.
+  // A role without a preset id falls back to the kind in the name
+  // (`project_member-1a2b3c4d`); the last match beats a scope name.
   const roleKind = role.name?.match(/.*(admin|member)/i)?.[1]?.toLowerCase();
   const presetFilter = role.rolePresetId
     ? { id: { equals: role.rolePresetId } }

@@ -115,7 +115,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         }
         scopeType @since(version: "26.9.0a4")
         scopeId @since(version: "26.9.0a4")
-        rolePresetId @since(version: "26.9.0rc3")
+        rolePresetId
         rolePreset @since(version: "26.9.0rc3") {
           name
         }
