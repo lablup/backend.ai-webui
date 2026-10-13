@@ -19,7 +19,7 @@ import { useBrowserPopstateEffect } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { BAISkeleton, BAICard } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import { parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { Suspense, useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -31,7 +31,10 @@ const tabParser = parseAsStringLiteral([
   'maintenance',
   'retention-policy',
 ]).withDefault('maintenance');
-const orderParser = parseAsString.withDefault('category');
+const orderParser = parseAsStringLiteral([
+  ...RETENTION_POLICY_SORTER_KEYS,
+  ..._.map(RETENTION_POLICY_SORTER_KEYS, (key) => `-${key}` as const),
+]).withDefault('category');
 
 type RetentionPolicyVariables = RetentionPolicyListQueryType['variables'];
 
@@ -45,9 +48,7 @@ const retentionPolicyVariablesOf = (
   pagination: { current: number; pageSize: number },
 ): RetentionPolicyVariables => ({
   orderBy: convertToOrderBy<RetentionPolicyOrderBy>(
-    order && _.includes(RETENTION_POLICY_SORTER_KEYS, order.replace(/^-/, ''))
-      ? order
-      : orderParser.defaultValue,
+    (order && orderParser.parse(order)) ?? orderParser.defaultValue,
   ),
   limit: pagination.pageSize,
   offset: (pagination.current - 1) * pagination.pageSize,
@@ -84,7 +85,7 @@ const MaintenancePage = () => {
       fetchPolicy: 'store-and-network',
       ...options,
     });
-    setQueryParams({ order }, { history: 'replace' });
+    setQueryParams({ order: order ? orderParser.parse(order) : null });
     setTablePaginationOption(pagination);
   };
 

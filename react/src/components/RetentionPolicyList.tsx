@@ -82,7 +82,7 @@ export const RETENTION_POLICY_SORTER_KEYS = [
   'category',
   'createdAt',
   'lastSweptAt',
-];
+] as const;
 
 type RetentionPolicyNode = NonNullable<
   NonNullable<
@@ -153,11 +153,8 @@ const RetentionPolicyList: React.FC<RetentionPolicyListProps> = ({
   const policies = filterOutNullAndUndefined(
     _.map(adminRetentionPolicies?.edges, (edge) => edge?.node),
   );
-  const configuredCategories = _.map(
-    filterOutNullAndUndefined(
-      _.map(configuredPolicies?.edges, (edge) => edge?.node),
-    ),
-    (policy) => policy.category,
+  const configuredCategories = _.compact(
+    _.map(configuredPolicies?.edges, (edge) => edge?.node?.category),
   );
   const unconfiguredCategories = _.difference(
     RETENTION_CATEGORIES,
