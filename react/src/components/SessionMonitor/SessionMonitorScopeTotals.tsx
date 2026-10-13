@@ -4,15 +4,13 @@
  */
 import type { SessionMonitorScopeTotalsDomainQuery } from '../../__generated__/SessionMonitorScopeTotalsDomainQuery.graphql';
 import type { SessionMonitorScopeTotalsProjectQuery } from '../../__generated__/SessionMonitorScopeTotalsProjectQuery.graphql';
-import { convertToBinaryUnit } from '../../helper';
-import { useResourceSlotsDetails } from '../../hooks/backendai';
 import {
   sessionMonitorFetchKeyAtom,
   type SessionMonitorScope,
 } from '../../hooks/useSessionMonitor';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAIResourceNumberWithIcon } from 'backend.ai-ui';
 import { useAtomValue } from 'jotai';
 import * as _ from 'lodash-es';
 import React from 'react';
@@ -102,22 +100,12 @@ const OverviewLine: React.FC<{ overview: Overview | undefined }> = ({
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
-  const { mergedResourceSlots } = useResourceSlotsDetails();
   if (!overview || overview.sessionCount === 0) return null;
 
   const order = (key: string) => (key === 'cpu' ? 1 : key === 'mem' ? 2 : 0);
-  const parts = _.sortBy(overview.slots.entries, (e) => order(e.resourceType))
-    .filter((e) => parseFloat(e.quantity) > 0)
-    .map((e) => {
-      const name =
-        mergedResourceSlots?.[e.resourceType]?.human_readable_name ??
-        e.resourceType;
-      if (e.resourceType === 'mem') {
-        const gib = convertToBinaryUnit(e.quantity, 'g', 1)?.number ?? 0;
-        return `${name} ${Number.isInteger(gib) ? gib : gib.toFixed(1)}G`;
-      }
-      return `${name} ${parseFloat(e.quantity)}`;
-    });
+  const entries = _.sortBy(overview.slots.entries, (e) =>
+    order(e.resourceType),
+  ).filter((e) => parseFloat(e.quantity) > 0);
 
   return (
     <BAIFlex
@@ -133,7 +121,15 @@ const OverviewLine: React.FC<{ overview: Overview | undefined }> = ({
       <Text type="supporting">
         {t('sessionMonitor.InUseAcross', { count: overview.sessionCount })}
       </Text>
-      <Text type="label">{parts.join(' · ')}</Text>
+      <BAIFlex direction="row" align="center" gap="sm" wrap="wrap">
+        {entries.map((e) => (
+          <BAIResourceNumberWithIcon
+            key={e.resourceType}
+            type={e.resourceType}
+            value={_.toString(parseFloat(e.quantity))}
+          />
+        ))}
+      </BAIFlex>
     </BAIFlex>
   );
 };
