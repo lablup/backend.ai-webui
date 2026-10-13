@@ -50,6 +50,20 @@ export const useRetentionCategoryLabel = () => {
     labels[category as RetentionCategory] || category;
 };
 
+type MutationError = { message: string; extensions?: unknown };
+
+// A create answers with RetentionPolicyConflict; an update that moves onto a
+// taken category hits the table's unique constraint instead.
+const DUPLICATE_CATEGORY_CODES = [
+  'retention-policy_create_conflict',
+  'database_generic_already-exists',
+];
+const isDuplicateCategoryError = (error: MutationError) =>
+  _.includes(DUPLICATE_CATEGORY_CODES, _.get(error, 'extensions.code')) ||
+  /already exists|uq_retention_policies_category|duplicate key|unique constraint/i.test(
+    error.message ?? '',
+  );
+
 type RetentionPolicyFormValues = {
   category: RetentionCategory;
   retentionPeriodDays: number;
@@ -61,19 +75,12 @@ interface RetentionPolicySettingModalProps extends Omit<
   'onOk' | 'onCancel'
 > {
   policyFrgmt?: RetentionPolicySettingModalFragment$key | null;
-  /** Categories that already have a policy; the backend allows one each. */
-  configuredCategories?: ReadonlyArray<string>;
   onRequestClose: (success?: boolean) => void;
 }
 
 const RetentionPolicySettingModal: React.FC<
   RetentionPolicySettingModalProps
-> = ({
-  policyFrgmt,
-  configuredCategories,
-  onRequestClose,
-  ...baiModalProps
-}) => {
+> = ({ policyFrgmt, onRequestClose, ...baiModalProps }) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -123,13 +130,41 @@ const RetentionPolicySettingModal: React.FC<
       }
     `);
 
+  // The modal stays open on failure so the user can correct the input and retry.
+  const showFailure = (
+    errors: ReadonlyArray<MutationError>,
+    category: RetentionCategory,
+    mayConflict: boolean,
+  ) => {
+    if (mayConflict && _.some(errors, isDuplicateCategoryError)) {
+      const conflictMessage = t('retentionPolicy.CategoryAlreadyHasPolicy', {
+        category: getCategoryLabel(category),
+      });
+      form.setFields([{ name: 'category', errors: [conflictMessage] }]);
+      message.error(conflictMessage);
+      return;
+    }
+    _.forEach(errors, (err) =>
+      message.error(err.message || t('general.ErrorOccurred')),
+    );
+  };
+
+  // Relay hands a failed mutation's GraphQL errors to onError under `source`.
+  const errorsOf = (error: Error): ReadonlyArray<MutationError> => {
+    const sourceErrors = (
+      error as { source?: { errors?: ReadonlyArray<MutationError> } }
+    ).source?.errors;
+    return sourceErrors && sourceErrors.length > 0 ? sourceErrors : [error];
+  };
+
   const handleResult = (
-    errors: ReadonlyArray<{ message: string }> | null | undefined,
+    errors: ReadonlyArray<MutationError> | null | undefined,
     successMessage: string,
+    category: RetentionCategory,
+    mayConflict: boolean,
   ) => {
     if (errors && errors.length > 0) {
-      // Keep the modal open so the user can correct the input and retry.
-      _.forEach(errors, (err) => message.error(err.message));
+      showFailure(errors, category, mayConflict);
       return;
     }
     message.success(successMessage);
@@ -141,11 +176,12 @@ const RetentionPolicySettingModal: React.FC<
       .validateFields()
       .then((values) => {
         if (policy) {
+          const isCategoryChanged = values.category !== policy.category;
           commitUpdate({
             variables: {
               input: {
                 id: policy.entityId,
-                ...(values.category !== policy.category && {
+                ...(isCategoryChanged && {
                   category: values.category,
                 }),
                 ...(values.retentionPeriodDays !==
@@ -158,10 +194,14 @@ const RetentionPolicySettingModal: React.FC<
               },
             },
             onCompleted: (_res, errors) =>
-              handleResult(errors, t('retentionPolicy.SuccessfullyUpdated')),
-            onError: (error) => {
-              message.error(error.message);
-            },
+              handleResult(
+                errors,
+                t('retentionPolicy.SuccessfullyUpdated'),
+                values.category,
+                isCategoryChanged,
+              ),
+            onError: (error) =>
+              showFailure(errorsOf(error), values.category, isCategoryChanged),
           });
           return;
         }
@@ -174,10 +214,14 @@ const RetentionPolicySettingModal: React.FC<
             },
           },
           onCompleted: (_res, errors) =>
-            handleResult(errors, t('retentionPolicy.SuccessfullyCreated')),
-          onError: (error) => {
-            message.error(error.message);
-          },
+            handleResult(
+              errors,
+              t('retentionPolicy.SuccessfullyCreated'),
+              values.category,
+              true,
+            ),
+          onError: (error) =>
+            showFailure(errorsOf(error), values.category, true),
         });
       })
       .catch((err) => logger.error(err));
@@ -215,15 +259,13 @@ const RetentionPolicySettingModal: React.FC<
           rules={[
             { required: true, message: t('retentionPolicy.CategoryRequired') },
           ]}
+          extra={t('retentionPolicy.OnePolicyPerCategory')}
         >
           <AstryxFormSelector
             label={t('retentionPolicy.Category')}
             options={_.map(RETENTION_CATEGORIES, (category) => ({
               value: category,
               label: getCategoryLabel(category),
-              disabled:
-                category !== policy?.category &&
-                _.includes(configuredCategories, category),
             }))}
           />
         </Form.Item>
