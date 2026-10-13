@@ -57,7 +57,8 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
-  // Resource preset create/modify/delete admit superadmins only (ADR 0011).
+  // TODO(needs-backend): preset writes admit superadmins only until lablup/backend.ai#15527
+  // ships scoped preset mutations; move to them in #10316.
   const isSuperAdmin = useSuspendedBackendaiClient().is_superadmin;
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [resourcePresetsFetchKey, updateResourcePresetsFetchKey] =
