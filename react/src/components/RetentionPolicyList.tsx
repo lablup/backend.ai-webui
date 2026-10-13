@@ -4,12 +4,12 @@
  */
 import { RetentionPolicyListDeleteMutation } from '../__generated__/RetentionPolicyListDeleteMutation.graphql';
 import {
-  RetentionPolicyListQuery,
+  RetentionPolicyListQuery as RetentionPolicyListQueryType,
   RetentionPolicyOrderBy,
 } from '../__generated__/RetentionPolicyListQuery.graphql';
 import { RetentionPolicyListToggleMutation } from '../__generated__/RetentionPolicyListToggleMutation.graphql';
 import { App } from '../app-shim';
-import { convertToOrderBy } from '../helper';
+import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import RetentionPolicySettingModal, {
   RETENTION_CATEGORIES,
   useRetentionCategoryLabel,
@@ -26,73 +26,100 @@ import {
   BAITable,
   BAIText,
   BAIUnmountAfterClose,
-  INITIAL_FETCH_KEY,
   filterOutNullAndUndefined,
-  useFetchKey,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { PlusIcon, SquarePenIcon, Trash2 } from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+import {
+  graphql,
+  useMutation,
+  usePreloadedQuery,
+  type PreloadedQuery,
+  type UseQueryLoaderLoadQueryOptions,
+} from 'react-relay';
+
+// `configuredPolicies` is unpaged: one policy per category caps it at
+// `$categoryLimit`, and the create modal needs every taken category.
+export const RetentionPolicyListQuery = graphql`
+  query RetentionPolicyListQuery(
+    $orderBy: [RetentionPolicyOrderBy!]
+    $limit: Int
+    $offset: Int
+    $categoryLimit: Int!
+  ) {
+    adminRetentionPolicies(orderBy: $orderBy, limit: $limit, offset: $offset) {
+      count
+      edges {
+        node {
+          id
+          entityId
+          category
+          retentionPeriodDays
+          enabled
+          lastSweptAt
+          createdAt
+          updatedAt
+          ...RetentionPolicySettingModalFragment
+        }
+      }
+    }
+    configuredPolicies: adminRetentionPolicies(limit: $categoryLimit) {
+      edges {
+        node {
+          id
+          category
+        }
+      }
+    }
+  }
+`;
+
+export const RETENTION_POLICY_LIST_DEFAULT_PAGE_SIZE = 10;
+export const RETENTION_POLICY_SORTER_KEYS = [
+  'category',
+  'createdAt',
+  'lastSweptAt',
+];
 
 type RetentionPolicyNode = NonNullable<
   NonNullable<
-    RetentionPolicyListQuery['response']['adminRetentionPolicies']
+    RetentionPolicyListQueryType['response']['adminRetentionPolicies']
   >['edges'][number]['node']
 >;
 
-const sortableKeys = ['category', 'createdAt', 'lastSweptAt'];
+interface RetentionPolicyListProps {
+  queryRef: PreloadedQuery<RetentionPolicyListQueryType>;
+  onReload: (
+    variables: RetentionPolicyListQueryType['variables'],
+    options?: UseQueryLoaderLoadQueryOptions,
+  ) => void;
+}
 
-const RetentionPolicyList = () => {
+const RetentionPolicyList: React.FC<RetentionPolicyListProps> = ({
+  queryRef,
+  onReload,
+}) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
   const getCategoryLabel = useRetentionCategoryLabel();
 
-  const [order, setOrder] = useState<string | null>('category');
-  const [fetchKey, updateFetchKey] = useFetchKey();
+  const variables = queryRef.variables;
+  const orderValue = convertFirstOrderByToString(variables.orderBy);
+  const pageSize = variables.limit ?? RETENTION_POLICY_LIST_DEFAULT_PAGE_SIZE;
+  const current = Math.floor((variables.offset ?? 0) / pageSize) + 1;
 
-  const queryVariables = {
-    orderBy: convertToOrderBy<RetentionPolicyOrderBy>(order),
-  };
-  const deferredQueryVariables = useDeferredValue(queryVariables);
-  const deferredFetchKey = useDeferredValue(fetchKey);
-  const isPending =
-    deferredQueryVariables !== queryVariables || deferredFetchKey !== fetchKey;
+  const deferredQueryRef = useDeferredValue(queryRef);
+  const isPending = deferredQueryRef !== queryRef;
 
-  const { adminRetentionPolicies } = useLazyLoadQuery<RetentionPolicyListQuery>(
-    graphql`
-      # One policy per category caps the list at the enum size, so it is
-      # fetched whole: the create modal needs every taken category.
-      query RetentionPolicyListQuery($orderBy: [RetentionPolicyOrderBy!]) {
-        adminRetentionPolicies(orderBy: $orderBy) {
-          edges {
-            node {
-              id
-              entityId
-              category
-              retentionPeriodDays
-              enabled
-              lastSweptAt
-              createdAt
-              updatedAt
-              ...RetentionPolicySettingModalFragment
-            }
-          }
-        }
-      }
-    `,
-    deferredQueryVariables,
-    {
-      fetchPolicy:
-        deferredFetchKey === INITIAL_FETCH_KEY
-          ? 'store-and-network'
-          : 'network-only',
-      fetchKey: deferredFetchKey,
-    },
-  );
+  const { adminRetentionPolicies, configuredPolicies } =
+    usePreloadedQuery<RetentionPolicyListQueryType>(
+      RetentionPolicyListQuery,
+      deferredQueryRef,
+    );
 
   const [commitToggle] = useMutation<RetentionPolicyListToggleMutation>(graphql`
     mutation RetentionPolicyListToggleMutation(
@@ -126,7 +153,12 @@ const RetentionPolicyList = () => {
   const policies = filterOutNullAndUndefined(
     _.map(adminRetentionPolicies?.edges, (edge) => edge?.node),
   );
-  const configuredCategories = _.map(policies, (policy) => policy.category);
+  const configuredCategories = _.map(
+    filterOutNullAndUndefined(
+      _.map(configuredPolicies?.edges, (edge) => edge?.node),
+    ),
+    (policy) => policy.category,
+  );
   const unconfiguredCategories = _.difference(
     RETENTION_CATEGORIES,
     configuredCategories,
@@ -243,8 +275,9 @@ const RetentionPolicyList = () => {
         <BAIFlex gap="xs">
           <BAIFetchKeyButton
             loading={isPending}
-            value={fetchKey}
-            onChange={() => updateFetchKey()}
+            onChange={() => {
+              onReload(variables, { fetchPolicy: 'network-only' });
+            }}
           />
           <BAIButton
             type="primary"
@@ -266,15 +299,27 @@ const RetentionPolicyList = () => {
         dataSource={policies}
         columns={columns}
         loading={isPending}
-        order={order}
+        order={orderValue}
         onChangeOrder={(nextOrder) => {
-          setOrder(
-            nextOrder && _.includes(sortableKeys, nextOrder.replace(/^-/, ''))
-              ? nextOrder
-              : null,
-          );
+          onReload({
+            ...variables,
+            orderBy: convertToOrderBy<RetentionPolicyOrderBy>(nextOrder),
+          });
         }}
-        pagination={false}
+        pagination={{
+          pageSize,
+          total: adminRetentionPolicies?.count || 0,
+          current,
+          onChange: (nextCurrent, nextPageSize) => {
+            if (_.isNumber(nextCurrent) && _.isNumber(nextPageSize)) {
+              onReload({
+                ...variables,
+                limit: nextPageSize,
+                offset: (nextCurrent - 1) * nextPageSize,
+              });
+            }
+          },
+        }}
       />
       <BAIUnmountAfterClose>
         <RetentionPolicySettingModal
@@ -286,7 +331,7 @@ const RetentionPolicyList = () => {
             // An update returns its fields and Relay patches the row in
             // place; only a create changes which rows the list holds.
             if (success && editingPolicy === null) {
-              updateFetchKey();
+              onReload(variables, { fetchPolicy: 'network-only' });
             }
           }}
         />
@@ -321,7 +366,13 @@ const RetentionPolicyList = () => {
               }
               setDeletingPolicy(null);
               message.success(t('retentionPolicy.SuccessfullyDeleted'));
-              updateFetchKey();
+              // Deleting a page's last row steps back so the table is not left empty.
+              onReload(
+                policies.length === 1 && current > 1
+                  ? { ...variables, offset: (current - 2) * pageSize }
+                  : variables,
+                { fetchPolicy: 'network-only' },
+              );
             },
             onError: (error) => {
               message.error(error.message);
