@@ -111,23 +111,9 @@ export type BAIAdminImageSelectPaginatedQuery$variables = {
     limit: number;
     offset: number;
     scope: ImageSearchScope;
-    useScope: boolean;
 };
 export type BAIAdminImageSelectPaginatedQuery$data = {
-    readonly adminImagesV2?: {
-        readonly count: number;
-        readonly edges: ReadonlyArray<{
-            readonly node: {
-                readonly id: string;
-                readonly identity: {
-                    readonly architecture: string;
-                    readonly canonicalName: string;
-                };
-                readonly " $fragmentSpreads": FragmentRefs<"BAIImageNodeSimpleTagV2Fragment">;
-            };
-        }>;
-    } | null | undefined;
-    readonly scopedImagesV2?: {
+    readonly scopedImagesV2: {
         readonly count: number;
         readonly edges: ReadonlyArray<{
             readonly node: {

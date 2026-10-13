@@ -1,6 +1,6 @@
 import { BAIAdminImageSelectPaginatedQuery, ImageSearchScope, ImageV2Filter } from '../../__generated__/BAIAdminImageSelectPaginatedQuery.graphql';
 import { BAIComplexSelectProps, BAILabeledValue } from '../BAIComplexSelect';
-export type AstryxImageV2Node = NonNullable<NonNullable<BAIAdminImageSelectPaginatedQuery['response']['adminImagesV2']>['edges'][number]>['node'];
+export type AstryxImageV2Node = NonNullable<NonNullable<BAIAdminImageSelectPaginatedQuery['response']['scopedImagesV2']>['edges'][number]>['node'];
 export interface BAIAdminImageSelectRef {
     refetch: () => void;
 }
@@ -14,12 +14,12 @@ export interface BAIAdminImageSelectProps extends Omit<BAIComplexSelectProps, 'o
     filter?: ImageV2Filter;
     open?: boolean;
     defaultOpen?: boolean;
-    /** Lists the images this scope reaches; omit on superadmin-only pages (ADR 0011). */
-    scope?: ImageSearchScope | null;
+    /** The images this scope reaches are listed (ADR 0011). */
+    scope: ImageSearchScope;
     ref?: React.Ref<BAIAdminImageSelectRef>;
 }
 /**
- * Paginated image selector backed by `adminImagesV2` (ImageV2).
+ * Paginated image selector backed by `scopedImagesV2` (ImageV2) over the required `scope`.
  * Stored value is the image UUID so callers can pass it directly to
  * mutation inputs that expect `UUID`.
  */

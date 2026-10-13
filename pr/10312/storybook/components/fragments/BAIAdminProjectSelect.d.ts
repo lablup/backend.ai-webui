@@ -1,6 +1,6 @@
 import { BAIAdminProjectSelectPaginatedQuery, ProjectScope } from '../../__generated__/BAIAdminProjectSelectPaginatedQuery.graphql';
 import { BAIComplexSelectProps, BAILabeledValue } from '../BAIComplexSelect';
-export type AstryxAdminProjectNode = NonNullable<NonNullable<BAIAdminProjectSelectPaginatedQuery['response']['adminProjectsV2']>['edges'][number]>['node'];
+export type AstryxAdminProjectNode = NonNullable<NonNullable<BAIAdminProjectSelectPaginatedQuery['response']['scopedProjectsV2']>['edges'][number]>['node'];
 export interface BAIAdminProjectSelectRef {
     refetch: () => void;
 }
@@ -16,8 +16,8 @@ export interface BAIAdminProjectSelectProps extends Omit<BAIComplexSelectProps, 
     onChange?: (value: string | Array<string> | undefined, option?: BAILabeledValue | Array<BAILabeledValue>) => void;
     /** Spread into the page query filter; the search term owns `name`. */
     filter?: Omit<NonNullable<BAIAdminProjectSelectPaginatedQuery['variables']['filter']>, 'name'>;
-    /** Lists the projects this scope reaches; omit on superadmin-only pages (ADR 0011). */
-    scope?: ProjectScope | null;
+    /** The projects this scope reaches are listed, usually the current domain (ADR 0011). */
+    scope: ProjectScope;
     ref?: React.Ref<BAIAdminProjectSelectRef>;
 }
 declare const BAIAdminProjectSelect: React.FC<BAIAdminProjectSelectProps>;

@@ -12,21 +12,9 @@ export type UUIDScope = {
 export type BAIAdminImageSelectValueQuery$variables = {
     ids?: ReadonlyArray<string> | null | undefined;
     scope: ImageSearchScope;
-    skipAdmin: boolean;
-    skipScoped: boolean;
+    skipSelected: boolean;
 };
 export type BAIAdminImageSelectValueQuery$data = {
-    readonly adminImagesV2?: {
-        readonly edges: ReadonlyArray<{
-            readonly node: {
-                readonly id: string;
-                readonly identity: {
-                    readonly architecture: string;
-                    readonly canonicalName: string;
-                };
-            };
-        }>;
-    } | null | undefined;
     readonly scopedImagesV2?: {
         readonly edges: ReadonlyArray<{
             readonly node: {
