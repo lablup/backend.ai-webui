@@ -1941,8 +1941,7 @@ The footer holds four actions:
 ### Data retention
 
 Superadmins can control how long Backend.AI keeps each kind of record on the **Data Retention** tab of the
-Maintenance page. The tab appears only when the connected manager supports retention policies (26.8.0 or
-later). Old records are cleaned up only for categories whose policy is enabled.
+Maintenance page. Old records are cleaned up only for categories whose policy is enabled.
 
 Each row of the list is the policy for one category and shows its **Category**, **Retention Period (Days)**,
 an **Enabled** switch, and the **Last Cleanup** time (or "Not run yet"). The **Created At** and **Updated At** columns
