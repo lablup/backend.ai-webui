@@ -2,39 +2,17 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- BAIAdminImageSelect — ticket-27 Astryx sibling of
- `BAIAdminImageSelect`, built on `BAIComplexSelect` (ticket 26).
-
- FRONTIER RULE: the antd `BAIAdminImageSelect` is NOT touched by this file
- and keeps serving every unmigrated call site until ticket 27 moves them.
- The OUTER value contract stays the same plain key (`string` / `string[]`,
- the image UUID) the antd wrapper exposes today — `labelInValue` lives
- strictly between this wrapper and `BAIComplexSelect`.
-
- CLASS: B (id-valued) — stored value is always `toLocalId(node.id)`, exactly
- as the antd original.
-
- PILOT-DECISIONs:
-  - The antd original layered a `labelCache` (UUID -> label, populated on
-    every `onChange`) plus a `useOptimistic` overlay on top of the value
-    query, to avoid a label flash while the deferred value query catches up.
-    `BAIComplexSelect`'s trigger reads straight off `value.label`, and the
-    established ticket-26 template (`BAIUserSelect`) does not carry
-    this overlay, so it is dropped here too — the resolution query's
-    `label: resolved ?? key` fallback (mandatory per the ticket-27 brief) is
-    the only label source, matching every other converted wrapper.
-  - `notFoundContent={<Skeleton.Input/>}` first-load placeholder dropped
-    (P26-7).
-  - This wrapper never used `optionRender`/`labelRender`; the antd version
-    already composed a single formatted string label
-    (`"<canonicalName>@<architecture>"`), which carries over unchanged.
+ BAIScopedImageSelect — Relay-paginated, id-valued image select over
+ `scopedImagesV2` (ADR 0011). The value is the image UUID; options are
+ labelled `"<canonicalName>@<architecture>"`, and a selected id missing from
+ the loaded pages falls back to the UUID as its label.
 */
 import {
-  BAIAdminImageSelectPaginatedQuery,
+  BAIScopedImageSelectPaginatedQuery,
   ImageSearchScope,
   ImageV2Filter,
-} from '../../__generated__/BAIAdminImageSelectPaginatedQuery.graphql';
-import { BAIAdminImageSelectValueQuery } from '../../__generated__/BAIAdminImageSelectValueQuery.graphql';
+} from '../../__generated__/BAIScopedImageSelectPaginatedQuery.graphql';
+import { BAIScopedImageSelectValueQuery } from '../../__generated__/BAIScopedImageSelectValueQuery.graphql';
 import { toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useControllableValue, useFetchKey } from '../../hooks';
@@ -57,19 +35,19 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export type AstryxImageV2Node = NonNullable<
   NonNullable<
-    BAIAdminImageSelectPaginatedQuery['response']['scopedImagesV2']
+    BAIScopedImageSelectPaginatedQuery['response']['scopedImagesV2']
   >['edges'][number]
 >['node'];
 
-export interface BAIAdminImageSelectRef {
+export interface BAIScopedImageSelectRef {
   refetch: () => void;
 }
 
-export interface BAIAdminImageSelectProps extends Omit<
+export interface BAIScopedImageSelectProps extends Omit<
   BAIComplexSelectProps,
   'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total'
 > {
-  /** Plain key(s), as the antd `BAIAdminImageSelect` exposes. */
+  /** Plain key(s), as the antd `BAIScopedImageSelect` exposes. */
   value?: string | Array<string> | null;
   /** The second argument is the picked option, so a `renderInput` filter can
    * label its token with the image name while the UUID serializes. */
@@ -83,7 +61,7 @@ export interface BAIAdminImageSelectProps extends Omit<
   defaultOpen?: boolean;
   /** The images this scope reaches are listed (ADR 0011). */
   scope: ImageSearchScope;
-  ref?: React.Ref<BAIAdminImageSelectRef>;
+  ref?: React.Ref<BAIScopedImageSelectRef>;
 }
 
 /**
@@ -91,7 +69,7 @@ export interface BAIAdminImageSelectProps extends Omit<
  * Stored value is the image UUID so callers can pass it directly to
  * mutation inputs that expect `UUID`.
  */
-const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
+const BAIScopedImageSelect: React.FC<BAIScopedImageSelectProps> = ({
   filter: filterFromProps,
   scope,
   multiple = false,
@@ -126,9 +104,9 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
   const deferredControllableValue = useDeferredValue(controllableValue);
   const selectedKeys = _.compact(_.castArray(deferredControllableValue ?? []));
 
-  const selectedImageData = useLazyLoadQuery<BAIAdminImageSelectValueQuery>(
+  const selectedImageData = useLazyLoadQuery<BAIScopedImageSelectValueQuery>(
     graphql`
-      query BAIAdminImageSelectValueQuery(
+      query BAIScopedImageSelectValueQuery(
         $ids: [UUID!]
         $scope: ImageSearchScope!
         $skipSelected: Boolean!
@@ -163,9 +141,12 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
   );
 
   const { paginationData, result, loadNext, isLoadingNext } =
-    useLazyPaginatedQuery<BAIAdminImageSelectPaginatedQuery, AstryxImageV2Node>(
+    useLazyPaginatedQuery<
+      BAIScopedImageSelectPaginatedQuery,
+      AstryxImageV2Node
+    >(
       graphql`
-        query BAIAdminImageSelectPaginatedQuery(
+        query BAIScopedImageSelectPaginatedQuery(
           $offset: Int!
           $limit: Int!
           $filter: ImageV2Filter
@@ -297,4 +278,4 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
   );
 };
 
-export default BAIAdminImageSelect;
+export default BAIScopedImageSelect;
