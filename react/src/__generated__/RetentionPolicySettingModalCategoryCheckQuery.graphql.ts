@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<abad205e92ad90c51bebd7ab1a78fa70>>
+ * @generated SignedSource<<f0c7e8ba053e9e2ea63853c552074397>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,7 +19,6 @@ export type RetentionPolicySettingModalCategoryCheckQuery$variables = {
 };
 export type RetentionPolicySettingModalCategoryCheckQuery$data = {
   readonly adminRetentionPolicies: {
-    readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly id: string;
@@ -60,13 +59,6 @@ v1 = [
     "name": "adminRetentionPolicies",
     "plural": false,
     "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "count",
-        "storageKey": null
-      },
       {
         "alias": null,
         "args": null,
@@ -118,16 +110,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "06769e07efcf90bc08f8e8d584d956e3",
+    "cacheID": "5e0ffeb6e84447a6f4d2fe10751c61df",
     "id": null,
     "metadata": {},
     "name": "RetentionPolicySettingModalCategoryCheckQuery",
     "operationKind": "query",
-    "text": "query RetentionPolicySettingModalCategoryCheckQuery(\n  $filter: RetentionPolicyFilter\n) {\n  adminRetentionPolicies(filter: $filter, limit: 1) {\n    count\n    edges {\n      node {\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query RetentionPolicySettingModalCategoryCheckQuery(\n  $filter: RetentionPolicyFilter\n) {\n  adminRetentionPolicies(filter: $filter, limit: 1) {\n    edges {\n      node {\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "a47d1b8ecebaf7058b35bbf8d2473112";
+(node as any).hash = "a38aea51b7a2a6316cc948fb76c73b81";
 
 export default node;
