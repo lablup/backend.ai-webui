@@ -6,7 +6,10 @@ import {
   KeyPairModal,
   UserSettingModal,
 } from '../utils/classes/user/UserSettingModal';
-import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
+import {
+  isManagerVersionCompatible,
+  skipUnlessManagerVersion,
+} from '../utils/feature-gate-util';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import test, {
   expect,
@@ -41,28 +44,29 @@ async function searchForRole(page: Page, roleName: string) {
   ).toBeVisible({ timeout: 10000 });
 }
 
-async function createTestRole(page: Page) {
+async function createTestRole(
+  page: Page,
+  roleName = ROLE_NAME,
+  domainName?: string,
+) {
   await page.getByRole('button', { name: 'Create Role' }).click();
   const modal = page.getByRole('dialog', { name: 'Create Role' });
   await expect(modal).toBeVisible();
-  await modal.getByLabel('Role Name').fill(ROLE_NAME);
+  await modal.getByLabel('Role Name').fill(roleName);
   await modal.getByLabel('Description').fill(ROLE_DESCRIPTION);
 
-  // Fill in the required "Scope Type / Target" field. Both are Astryx
-  // Selector triggers. "Target" starts out disabled (rendered as a
-  // `combobox`, `aria-busy="true"`, while it fetches the domain list after
-  // "Scope Type" is picked) and re-renders as an enabled `button` once
-  // ready -- so target it by role `button`, whose `.click()` naturally
-  // waits out that role/attribute transition.
+  // Target becomes an enabled button once the domain list finishes loading.
   await modal.getByRole('button', { name: 'Scope Type', exact: true }).click();
   await page.getByRole('option', { name: 'Domain', exact: true }).click();
 
   await modal
     .getByRole('button', { name: 'Target', exact: true })
     .click({ timeout: 15000 });
-  const targetOptions = page.getByRole('option');
-  await expect(targetOptions.first()).toBeVisible({ timeout: 10000 });
-  await targetOptions.first().click();
+  const targetOption = domainName
+    ? page.getByRole('option', { name: domainName, exact: true })
+    : page.getByRole('option').first();
+  await expect(targetOption).toBeVisible({ timeout: 10000 });
+  await targetOption.click();
 
   await modal.getByRole('button', { name: 'OK' }).click();
   await expect(modal).toBeHidden({ timeout: 10000 });
@@ -143,12 +147,21 @@ function selectorTrigger(scope: Locator, label: string) {
   return scope.getByRole('button', { name: `${label} ${label}`, exact: true });
 }
 
+// On managers >= 26.9.0a4 the Permissions tab is the in-place Read / Write
+// grid, covered by the single-scope describe block at the end of this file.
+async function skipOnSingleScopeRoleDrawer(page: Page) {
+  test.skip(
+    await isManagerVersionCompatible(page, '26.9.0a4'),
+    'The Add Permission flow is replaced by the Read / Write grid on manager >= 26.9.0a4 (FR-3957)',
+  );
+}
+
 // The role table (900+ roles in the shared nightly env) can take a while to
 // render on a busy shared backend; give the page chrome more headroom than
 // the default wait.
 const SLOW_PAGE_TIMEOUT = 30000;
 
-async function cleanupTestRole(page: Page) {
+async function cleanupTestRole(page: Page, roleName = ROLE_NAME) {
   // Close any lingering drawer from a previous test so it doesn't block clicks.
   const openDrawer = roleDrawer(page);
   if (await openDrawer.isVisible().catch(() => false)) {
@@ -160,14 +173,12 @@ async function cleanupTestRole(page: Page) {
   await statusFilterOption(page, 'Active').click();
   await clearRoleSearch(page);
   // Use name filter to find the role even if it's on a later page
-  await applyRoleNameFilter(page, ROLE_NAME);
+  await applyRoleNameFilter(page, roleName);
 
-  const activeRow = page
-    .getByRole('row')
-    .filter({ hasText: ROLE_NAME })
-    .first();
-  const isActiveVisible = await activeRow
-    .isVisible({ timeout: 2000 })
+  const activeRow = page.getByRole('row').filter({ hasText: roleName }).first();
+  const isActiveVisible = await expect(activeRow)
+    .toBeVisible({ timeout: 10000 })
+    .then(() => true)
     .catch(() => false);
 
   if (isActiveVisible) {
@@ -177,9 +188,10 @@ async function cleanupTestRole(page: Page) {
     // The deactivate action is gated by a Popconfirm — click it then confirm.
     await expect(async () => {
       await activeRow.hover();
-      const deactivateBtn = activeRow
-        .locator('.bai-name-action-cell-actions button')
-        .first();
+      const deactivateBtn = activeRow.getByRole('button', {
+        name: 'Deactivate',
+        exact: true,
+      });
       await expect(deactivateBtn).toBeVisible();
       await deactivateBtn.click();
       // Confirm the Popconfirm that appears after clicking the deactivate button
@@ -196,30 +208,24 @@ async function cleanupTestRole(page: Page) {
   // param), so there's no need to reapply it here.
   await statusFilterOption(page, 'Inactive').click();
 
-  // Purge every inactive row matching the role name. A parallel describe block
-  // in this file may share the same ROLE_NAME and create additional roles while
-  // this cleanup runs, so keep purging until no matching row remains.
+  // Older describe blocks can share ROLE_NAME; purge every matching row.
   while (true) {
     const inactiveRow = page
       .getByRole('row')
-      .filter({ hasText: ROLE_NAME })
+      .filter({ hasText: roleName })
       .first();
-    const isInactiveVisible = await inactiveRow
-      .isVisible({ timeout: 2000 })
+    const isInactiveVisible = await expect(inactiveRow)
+      .toBeVisible({ timeout: 10000 })
+      .then(() => true)
       .catch(() => false);
     if (!isInactiveVisible) break;
 
     await expect(async () => {
-      await inactiveRow
-        .locator('.bai-name-action-cell-actions button')
-        .last()
-        .click();
+      await inactiveRow.hover();
+      await inactiveRow.getByRole('button', { name: 'Purge Role' }).click();
       const purgeModal = page.getByRole('dialog', { name: 'Purge Role' });
       await expect(purgeModal).toBeVisible({ timeout: 5000 });
-      // BAIDeleteConfirmModal requires typing the role name before the Delete
-      // button enables. Its confirm input is the dialog's only textbox — the
-      // Astryx build carries no `#confirmText` id (see project-crud.spec.ts).
-      await purgeModal.getByRole('textbox').fill(ROLE_NAME);
+      await purgeModal.getByRole('textbox').fill(roleName);
       await purgeModal.getByRole('button', { name: 'Delete' }).click();
       await expect(inactiveRow).toBeHidden({ timeout: 5000 });
     }).toPass({ timeout: 20000 });
@@ -290,6 +296,7 @@ test.describe(
     }) => {
       // 1. Login as admin
       await loginAsAdmin(page, request);
+      await skipOnSingleScopeRoleDrawer(page);
 
       // 2. Navigate to RBAC page
       await navigateTo(page, 'rbac');
@@ -424,6 +431,7 @@ test.describe(
       test.setTimeout(60000);
       // 1. Login as admin
       await loginAsAdmin(page, request);
+      await skipOnSingleScopeRoleDrawer(page);
 
       // 2. Navigate to RBAC page
       await navigateTo(page, 'rbac');
@@ -533,6 +541,7 @@ test.describe(
       test.setTimeout(60000);
       // 1. Login as admin
       await loginAsAdmin(page, request);
+      await skipOnSingleScopeRoleDrawer(page);
 
       // 2. Navigate to RBAC page
       await navigateTo(page, 'rbac');
@@ -635,6 +644,7 @@ test.describe(
     }) => {
       // 1. Login as admin
       await loginAsAdmin(page, request);
+      await skipOnSingleScopeRoleDrawer(page);
 
       // 2. Navigate to RBAC page
       await navigateTo(page, 'rbac');
@@ -972,6 +982,204 @@ test.describe(
       // Close the drawer and cleanup test role
       await drawer.getByRole('button', { name: 'close' }).click();
       await cleanupTestRole(page);
+    });
+  },
+);
+
+// Managers >= 26.9.0a4 render `RoleDetailDrawerV2`: a metadata card with the
+// role's one scope, and a Permissions tab that edits grants in place as a
+// Read / Write checkbox grid behind a floating save bar (#9849, ADR 0006).
+// Every Backend.AI install ships the `default` domain.
+const SINGLE_SCOPE_DOMAIN = 'default';
+
+async function openRoleDrawer(page: Page, roleName: string) {
+  await navigateTo(page, 'rbac');
+  await searchForRole(page, roleName);
+  await page
+    .getByRole('row')
+    .filter({ hasText: roleName })
+    .first()
+    .getByRole('button', { name: roleName, exact: true })
+    .click();
+  const drawer = roleDrawer(page);
+  await expect(drawer).toBeVisible({ timeout: 10000 });
+  return drawer;
+}
+
+// Each grid row is one permission type; its cells hold one checkbox per
+// permission bit, named after the bit ("Read", "Create", …). A `has` locator
+// resolves inside the row, so it must be page-rooted, not drawer-rooted.
+function permissionRow(drawer: Locator, permissionType: string) {
+  return drawer.getByRole('row').filter({
+    has: drawer.page().getByRole('cell', { name: permissionType, exact: true }),
+  });
+}
+
+function saveBarText(drawer: Locator) {
+  return drawer.getByText(/unsaved permission change\(s\)/);
+}
+
+test.describe(
+  'RBAC Role Detail Drawer for a single-scope role',
+  { tag: ['@rbac', '@regression', '@functional', '@requires-manager-v26.9'] },
+  () => {
+    let roleName: string;
+    let roleToCleanup: string | undefined;
+
+    test.beforeEach(async ({ page, request }) => {
+      roleToCleanup = undefined;
+      await loginAsAdmin(page, request);
+      await skipUnlessManagerVersion(
+        page,
+        '26.9.0a4',
+        'The single-scope role drawer requires manager >= 26.9.0a4 (FR-3957)',
+      );
+      roleName = `e2e-scope-role-${Date.now().toString(36)}${randomUUID().slice(0, 4)}`;
+      roleToCleanup = roleName;
+      await navigateTo(page, 'rbac');
+      await createTestRole(page, roleName, SINGLE_SCOPE_DOMAIN);
+    });
+
+    test.afterEach(async ({ page }) => {
+      if (!roleToCleanup) return;
+      try {
+        await navigateTo(page, 'rbac');
+        const createModal = page.getByRole('dialog', { name: 'Create Role' });
+        if (await createModal.isVisible()) {
+          await createModal.getByRole('button', { name: 'Cancel' }).click();
+        }
+        await cleanupTestRole(page, roleToCleanup);
+      } catch (error) {
+        console.warn(
+          `[rbac-role-detail] failed to purge role ${roleName}:`,
+          error,
+        );
+      } finally {
+        roleToCleanup = undefined;
+      }
+    });
+
+    test('Superadmin can see the role scope as a type and target token in the role drawer', async ({
+      page,
+    }) => {
+      const drawer = await openRoleDrawer(page, roleName);
+
+      await expect(
+        drawer.getByRole('heading', { name: 'RBAC Role Info' }),
+      ).toBeVisible();
+      await expect(drawer.getByText(roleName, { exact: true })).toBeVisible();
+      await expect(
+        drawer.getByRole('button', { name: 'Copy' }).first(),
+      ).toBeVisible();
+      await expect(
+        drawer.getByText(ROLE_DESCRIPTION, { exact: true }),
+      ).toBeVisible();
+
+      await expect(
+        drawer.getByRole('term').filter({ hasText: 'Scope Type / Target' }),
+      ).toBeVisible();
+      const scopeToken = drawer
+        .getByRole('definition')
+        .filter({ hasText: 'Domain' })
+        .filter({ hasText: SINGLE_SCOPE_DOMAIN });
+      await expect(scopeToken).toBeVisible();
+      await expect(
+        scopeToken.getByText('Domain', { exact: true }),
+      ).toBeVisible();
+      await expect(
+        scopeToken.getByText(SINGLE_SCOPE_DOMAIN, { exact: true }),
+      ).toBeVisible();
+    });
+
+    test('Superadmin can toggle role permissions in the Read and Write grid and save them', async ({
+      page,
+    }) => {
+      let drawer = await openRoleDrawer(page, roleName);
+      await expect(drawerTab(page, 'Permissions')).toHaveAttribute(
+        'aria-current',
+        'true',
+      );
+
+      let folderRow = permissionRow(drawer, 'Folder');
+      await expect(folderRow).toBeVisible({ timeout: 10000 });
+      const readCheckbox = () =>
+        permissionRow(drawer, 'Folder').getByRole('checkbox', {
+          name: 'Read',
+          exact: true,
+        });
+      const createCheckbox = () =>
+        permissionRow(drawer, 'Folder').getByRole('checkbox', {
+          name: 'Create',
+          exact: true,
+        });
+      await expect(readCheckbox()).not.toBeChecked();
+      await expect(createCheckbox()).not.toBeChecked();
+      await expect(saveBarText(drawer)).toBeHidden();
+
+      // Cancel discards every pending toggle.
+      await readCheckbox().check();
+      await createCheckbox().check();
+      await expect(saveBarText(drawer)).toHaveText(
+        '2 unsaved permission change(s)',
+      );
+      await drawer.getByRole('button', { name: 'Cancel' }).click();
+      await expect(saveBarText(drawer)).toBeHidden();
+      await expect(readCheckbox()).not.toBeChecked();
+      await expect(createCheckbox()).not.toBeChecked();
+
+      // Save ships the pending toggle and retires the save bar.
+      await readCheckbox().check();
+      await expect(saveBarText(drawer)).toHaveText(
+        '1 unsaved permission change(s)',
+      );
+      await drawer.getByRole('button', { name: 'Save' }).click();
+      await expect(
+        page.getByText('Permissions saved successfully.').first(),
+      ).toBeVisible({ timeout: 10000 });
+      await expect(saveBarText(drawer)).toBeHidden({ timeout: 10000 });
+      await expect(readCheckbox()).toBeChecked();
+
+      // The grant survives a reload.
+      await page.reload();
+      drawer = await openRoleDrawer(page, roleName);
+      folderRow = permissionRow(drawer, 'Folder');
+      await expect(folderRow).toBeVisible({ timeout: 10000 });
+      await expect(readCheckbox()).toBeChecked();
+      await expect(createCheckbox()).not.toBeChecked();
+      await expect(saveBarText(drawer)).toBeHidden();
+    });
+
+    test('Superadmin can filter the permission rows by permission type', async ({
+      page,
+    }) => {
+      const drawer = await openRoleDrawer(page, roleName);
+      await expect(permissionRow(drawer, 'Agent')).toBeVisible({
+        timeout: 10000,
+      });
+      await expect(permissionRow(drawer, 'Folder')).toBeVisible();
+
+      const filterInput = drawer.getByRole('textbox', {
+        name: 'Filter by permission type',
+      });
+      await filterInput.fill('folder');
+
+      await expect(permissionRow(drawer, 'Folder')).toBeVisible();
+      await expect(permissionRow(drawer, 'Agent')).toBeHidden();
+      const visibleRows = dataRows(page, drawer);
+      await expect(visibleRows.first()).toBeVisible();
+      await expect
+        .poll(async () => {
+          const types = await visibleRows.evaluateAll((rows) =>
+            rows.map((row) => row.querySelector('td')?.textContent ?? ''),
+          );
+          return (
+            types.length > 0 && types.every((type) => /folder/i.test(type))
+          );
+        })
+        .toBe(true);
+
+      await filterInput.fill('');
+      await expect(permissionRow(drawer, 'Agent')).toBeVisible();
     });
   },
 );
