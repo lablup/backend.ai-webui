@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
+  RetentionPolicyFilter,
   RetentionPolicyListQuery as RetentionPolicyListQueryType,
   RetentionPolicyOrderBy,
 } from '../__generated__/RetentionPolicyListQuery.graphql';
@@ -21,7 +22,12 @@ import {
   availableRetentionPolicySorterValues,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { parseAsStringLiteral, useQueryStates } from 'nuqs';
+import {
+  parseAsJson,
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryStates,
+} from 'nuqs';
 import { Suspense, useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -41,22 +47,31 @@ type TabKey = 'maintenance' | 'retention-policy';
 type RetentionPolicyVariables = RetentionPolicyListQueryType['variables'];
 
 type TabSnapshot = {
-  queryParams: { order: typeof orderParser.defaultValue };
+  queryParams: {
+    order: typeof orderParser.defaultValue;
+    filter: string | null;
+  };
   tablePaginationOption: { current: number; pageSize: number };
 };
 
 const defaultSnapshotOf = (_tab: TabKey): TabSnapshot => ({
-  queryParams: { order: orderParser.defaultValue },
+  queryParams: { order: orderParser.defaultValue, filter: null },
   tablePaginationOption: {
     current: 1,
     pageSize: RETENTION_POLICY_LIST_DEFAULT_PAGE_SIZE,
   },
 });
 
+const filterParser = parseAsJson<RetentionPolicyFilter>((value) =>
+  _.pick(value as RetentionPolicyFilter, ['category', 'enabled']),
+);
+
 const retentionPolicyVariablesOf = (
   order: string | null,
+  filter: string | null,
   pagination: { current: number; pageSize: number },
 ): RetentionPolicyVariables => ({
+  filter: (filter && filterParser.parse(filter)) || null,
   orderBy: convertToOrderBy<RetentionPolicyOrderBy>(
     (order && orderParser.parse(order)) ?? orderParser.defaultValue,
   ),
@@ -71,6 +86,7 @@ const MaintenancePage = () => {
     {
       tab: tabParser,
       order: orderParser,
+      filter: parseAsString,
     },
     { history: 'replace' },
   );
@@ -104,11 +120,14 @@ const MaintenancePage = () => {
       pageSize,
     };
     const order = convertFirstOrderByToString(variables.orderBy);
-    loadRetentionPolicyQuery(retentionPolicyVariablesOf(order, pagination), {
-      fetchPolicy: 'store-and-network',
-      ...options,
-    });
-    setQueryParams({ order: order ? orderParser.parse(order) : null });
+    const filter = _.isEmpty(variables.filter)
+      ? null
+      : JSON.stringify(variables.filter);
+    loadRetentionPolicyQuery(
+      retentionPolicyVariablesOf(order, filter, pagination),
+      { fetchPolicy: 'store-and-network', ...options },
+    );
+    setQueryParams({ order: order ? orderParser.parse(order) : null, filter });
     setTablePaginationOption(pagination);
   };
 
@@ -118,6 +137,7 @@ const MaintenancePage = () => {
     loadRetentionPolicyQuery(
       retentionPolicyVariablesOf(
         snapshot.queryParams.order,
+        snapshot.queryParams.filter,
         snapshot.tablePaginationOption,
       ),
       { fetchPolicy: 'store-and-network' },
