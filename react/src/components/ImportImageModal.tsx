@@ -248,7 +248,13 @@ const ImportImageModalContent: React.FC<{
   const lines = text.split('\n').map((raw, index) => ({
     key: `${index}:${raw}`,
     raw,
-    resolved: resolveImageReference(parseImageReferenceLine(raw), registries),
+    resolved: resolveImageReference(
+      parseImageReferenceLine(
+        raw,
+        registries.map((row) => row.registry_name),
+      ),
+      registries,
+    ),
   }));
   const previewLines = lines.filter(
     ({ resolved }) => resolved.kind !== 'blank',

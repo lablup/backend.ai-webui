@@ -5,6 +5,7 @@
 import {
   parseImageReferenceLine,
   resolveImageReference,
+  resolveImageReferenceLines,
   type RegistryRow,
 } from './imageReferenceParser';
 import { describe, expect, it } from 'vitest';
@@ -967,5 +968,16 @@ describe('resolveImageReference registry matching', () => {
     expect(resolved.project).toBeNull();
     expect(resolved.imageName).toBe('nvidia/clara/monai-toolkit');
     expect(resolved.submittable).toBe(true);
+  });
+
+  it('takes a registered registry name without a dot as the host', () => {
+    const registries = [{ registry_name: 'local-harbor', project: 'library' }];
+    const resolved = resolveImageReferenceLines(
+      'local-harbor/library/python:3.9\nother-harbor/library/python:3.9',
+      registries,
+    );
+    expect(resolved[0].canonical).toBe('local-harbor/library/python:3.9');
+    expect(resolved[0].submittable).toBe(true);
+    expect(resolved[1].reason).toBe('host_required');
   });
 });

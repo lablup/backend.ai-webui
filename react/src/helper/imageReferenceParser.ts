@@ -165,6 +165,7 @@ function parseNgcUrl(line: string): ParsedReference {
 function parseCanonical(
   reference: string,
   kind: ImageReferenceKind,
+  registryNames: ReadonlyArray<string>,
 ): ParsedReference {
   if (reference.includes('://') || reference.startsWith('//')) {
     return rejected(kind, 'scheme_in_canonical');
@@ -181,7 +182,12 @@ function parseCanonical(
   const tag = lastColon >= 0 ? withoutDigest.slice(lastColon + 1) : null;
 
   const segments = namePart.split('/');
-  if (segments.length === 1 || !looksLikeHost(segments[0])) {
+  // A registered `registry_name` such as `local-harbor` is a host to the
+  // manager even though Docker's grammar would read it as a path segment.
+  if (
+    segments.length === 1 ||
+    !(looksLikeHost(segments[0]) || registryNames.includes(segments[0]))
+  ) {
     return {
       kind,
       registryHost: null,
@@ -221,7 +227,10 @@ function parseCanonical(
  * project/name split and the submittable decision belong to
  * `resolveImageReference`, which needs the registered registries.
  */
-export function parseImageReferenceLine(line: string): ParsedReference {
+export function parseImageReferenceLine(
+  line: string,
+  registryNames: ReadonlyArray<string> = [],
+): ParsedReference {
   const trimmed = line.trim();
   if (trimmed === '') {
     return blank();
@@ -237,7 +246,7 @@ export function parseImageReferenceLine(line: string): ParsedReference {
     return parseNgcUrl(trimmed);
   }
 
-  return parseCanonical(trimmed, 'canonical');
+  return parseCanonical(trimmed, 'canonical', registryNames);
 }
 
 const registryKey = (row: RegistryRow) =>
@@ -314,9 +323,13 @@ export function resolveImageReferenceLines(
   text: string,
   registries: ReadonlyArray<RegistryRow>,
 ): Array<ResolvedReference> {
+  const registryNames = registries.map((row) => row.registry_name);
   return text
     .split('\n')
     .map((line) =>
-      resolveImageReference(parseImageReferenceLine(line), registries),
+      resolveImageReference(
+        parseImageReferenceLine(line, registryNames),
+        registries,
+      ),
     );
 }
