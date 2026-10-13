@@ -11,12 +11,14 @@ import { RetentionPolicySettingModalFragment$key } from '../__generated__/Retent
 import { RetentionPolicySettingModalUpdateMutation } from '../__generated__/RetentionPolicySettingModalUpdateMutation.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
+import { AstryxFormNumberInput, AstryxFormSwitch } from './astryxFormControls';
 import {
-  AstryxFormNumberInput,
-  AstryxFormSelector,
-  AstryxFormSwitch,
-} from './astryxFormControls';
-import { BAILink, BAIModal, BAIModalProps, useBAILogger } from 'backend.ai-ui';
+  BAILink,
+  BAIModal,
+  BAIModalProps,
+  BAISelect,
+  useBAILogger,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -253,8 +255,8 @@ const RetentionPolicySettingModal: React.FC<
           ]}
           extra={t('retentionPolicy.OnePolicyPerCategory')}
         >
-          <AstryxFormSelector
-            label={t('retentionPolicy.Category')}
+          <BAISelect
+            placeholder={t('retentionPolicy.Category')}
             options={_.map(RETENTION_CATEGORIES, (category) => ({
               value: category,
               label: t(`retentionPolicy.categories.${category}`, {
