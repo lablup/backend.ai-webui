@@ -65,7 +65,7 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({
         // data-testid cannot reach the drop area — `className` can, and both
         // e2e and `DragAndDrop.css` need a repo-owned handle on it (never an
         // `astryx-*` class).
-        className="bai-file-explorer-dropzone"
+        controlClassName="bai-file-explorer-dropzone"
         // The caption has to live INSIDE the drop area: `label` / `description`
         // render above it in the Field, on top of the explorer title (FR-3575).
         label={t('comp:FileExplorer.DragAndDropDesc')}
@@ -84,7 +84,7 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({
         }}
         // `style` lands on the dropzone element, so the drop area itself fills
         // the overlay — the Field wrapper it sits in has no height of its own.
-        style={{ position: 'absolute', inset: 0 }}
+        controlStyle={{ position: 'absolute', inset: 0 }}
       />
     </div>
   );

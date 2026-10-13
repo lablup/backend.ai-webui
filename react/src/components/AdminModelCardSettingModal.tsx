@@ -348,7 +348,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                         label={t('adminModelCard.ModelStorageFolder')}
                         isLabelHidden
                         isDisabled
-                        style={{ flex: 1 }}
+                        controlStyle={{ flex: 1 }}
                       />
                     }
                   >

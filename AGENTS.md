@@ -153,7 +153,7 @@ When reviewing PRs (especially agent-generated ones), check:
 - No hardcoded strings, magic numbers, or debug artifacts left behind
 
 <!-- UI-COMMON:START -->
-@lablup/ui-common v0.2.0-alpha.18 · Astryx v0.6.5 · 166 components
+@lablup/ui-common v0.2.0-alpha.19 · Astryx v0.7.0 · 168 components
 CLI: run every command as `pnpm exec ui-common <cmd>` (shown below as `ui-common ...`).
 
 SETUP (once, first in your entry stylesheet) — without these, components render unstyled:
@@ -163,30 +163,28 @@ SETUP (once, first in your entry stylesheet) — without these, components rende
   @import "@lablup/ui-common/theme/lablup/theme.css";
   @import "@lablup/ui-common/ui-common.css";
 
-WORKFLOW — start every page from a template. Never lay out a page from scratch:
-1. `ui-common build "<idea>"` — START HERE: names the [page] template to start from (always one: the closest match, or the app shell), two other templates, and the [block]s + [component]s for parts it lacks. No args = full playbook.
-2. `ui-common template <name> <path>` — scaffold that template into your project. Keep its frame, gap and padding; replace its data, copy and sections; delete sections you do not need.
-3. `ui-common template <Block>` for a part the template lacks; `ui-common component <Name>` for props + examples before you use or change a component.
-Changing a page you already have? Keep it: skip step 2 and add blocks and components inside its sections.
+WORKFLOW — start every page from a template, never from scratch:
+1. `ui-common build "<idea>"` — names the template to scaffold from and the parts it lacks.
+2. `ui-common template <name> <path>` — scaffold it; keep its frame, gap and padding; replace the content.
+3. `ui-common template <Block>` for parts it lacks; `ui-common component <Name>` to read props before using one.
+Changing an existing page? Keep it: skip step 2 and add blocks/components inside its sections.
 
 RULES:
-- No <div> — components do all layout/spacing, page frame included.
-- Frame first: the template you scaffold sets the page frame. Read `ui-common docs layout` before you change it — region widths, breakpoint behavior.
-- Dense data = rows (Table, List/Item), never Card-wrapped list items; Card is for standalone widgets. Status = StatusDot/Token; Badge = counts only.
-- Custom styling: component props first; else the xstyle prop / StyleX tokens (@lablup/ui-common/theme/tokens.stylex). No raw hex/px.
-- Tokens for every value (`ui-common docs tokens`). Brand/accent belongs in the theme (`ui-common theme list` / `theme add <slug>`, or `ui-common theme template` for a custom one) — never override --color-* in :root.
-- SELF-CHECK before you finish: re-read the file and replace any className=, style={{…}}, raw <div>/<span> layout, imported .css/@apply, or hardcoded #hex/px with the component or the xstyle prop + a token. Confirm the page kept its template's frame, gap and padding. If unsure a component/prop exists, run `ui-common component <Name>` / `ui-common search "<thing>"`; don't hand-roll CSS.
+- No <div> — components handle all layout and spacing.
+- Read `ui-common docs layout` before changing a template's frame.
+- Dense data = rows (Table, List/Item), not Card-wrapped lists. Badge = counts only.
+- Style with component props first, then the xstyle prop / StyleX tokens. No raw hex/px.
+- Palettes and custom colors go through the theme, never :root overrides. Run `ui-common theme add <slug>` to import; `theme eject <slug>` only forks source. See `ui-common docs theme`.
+- SELF-CHECK: re-read the file; replace any className=, style={{…}}, raw <div>/<span>, imported .css/@apply, or hardcoded #hex/px with the component or the xstyle prop + a token.
 
-MORE CLI:
-  search "<query>"   find any component / hook / doc / template / block
-  component --list   166 components by category
-  template --list    page + block recipes
-  docs <topic>       authoring, browser-support, color, elevation, getting-started, icons, illustrations, internationalization, layout, migration, motion, principles, shape, spacing, styling-libraries, styling, theme, tokens, typography, working-with-ai, backend-ai-ui, ui-common
-  docs cli           commands, API reference, integration authoring (one level at a time)
-  swizzle <Name>     eject component source for deep customization
-  upgrade --from <old version> --apply   run after any Astryx or integration dependency bump
+`ui-common help` lists every command. Key ones beyond the workflow:
+  search "<query>"   find any component / hook / doc / template
+  discover <words>   integrations you could add
+  docs <topic>       getting-started, principles, tokens, theme … (`ui-common docs` lists all)
+  docs cli           commands, API reference, integration authoring
+  upgrade --from <old version> --apply   run after a dependency bump
 
-UI-COMMON (@lablup/ui-common v0.2.0-alpha.18 wraps Astryx v0.6.5):
+UI-COMMON (@lablup/ui-common v0.2.0-alpha.19 wraps Astryx v0.7.0):
 - Import only from @lablup/ui-common: the root, or the same subpath Astryx uses (@lablup/ui-common/Button, /theme/tokens.stylex, /lab). Never import @astryxdesign/* directly.
 - Layers: declare `@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;` once, first, in the entry stylesheet. ui-common's styles sit in `ui-common`; yours go in `components` / `utilities`.
 - Use AlertModal (@lablup/ui-common/AlertModal), not AlertDialog: ui-common hides AlertDialog.
@@ -200,7 +198,9 @@ UI-COMMON (@lablup/ui-common v0.2.0-alpha.18 wraps Astryx v0.6.5):
 - The `ui-common` bin is @lablup/ui-common-cli, a devDependency pinned to the same version as @lablup/ui-common; bump both together. Without it installed, `pnpm dlx @lablup/ui-common-cli@next <cmd>` (or `npx @lablup/ui-common-cli@next <cmd>`); drop `@next` once 0.2.0 is published.
 - After bumping @lablup/ui-common and @lablup/ui-common-cli: `pnpm exec ui-common upgrade --from <old version>`, then read ui-common-upgrade-report.md.
 <!-- UI-COMMON:END -->
+
 PROJECT LINES (this repo; outside the generated markers so `ui-common agents --write` keeps them, and they win where they disagree with the block):
+
 - SETUP (this repo): `react/src/index.css` declares the layer order and imports only `reset.css` and `astryx.css`. The theme is webui's own Backend.AI theme family (`react/src/astryx-theme/`, a `defineTheme` over `neutralTheme`), not `lablupTheme` and not `theme/lablup/theme.css`. `ui-common.css` is not imported either: it holds only global scrollbar rules, and each ui-common component imports its own CSS.
 - CLI (this repo): the `ui-common` bin comes from `@lablup/ui-common-cli`, a `react/` devDependency pinned in the catalog next to `@lablup/ui-common`, so `pnpm exec ui-common <cmd>` works inside `react/`. From the repository root run `pnpm run ui-common <cmd>` (root `package.json` proxies it into `react/`); from `packages/backend.ai-ui/`, `pnpm -w run ui-common <cmd>`. `ui-common astryx <cmd>` runs the Astryx CLI without rewriting its output.
 - MIGRATION RELAXATION (antd → Astryx): the className=/style={{…}} part of the SELF-CHECK is relaxed for files carried over from the antd era, which are still full of `className` / inline `style` and `useTheme().token('--…')` reads (the former `theme.useToken()` reads; FR-3605 retired the theme-shim). Do not rewrite those wholesale — convert a file's idioms when you are already changing it for another reason. A style that props/xstyle cannot express goes in a co-located `.css` file the component imports (P17), with `var(--…)` Astryx tokens; never a runtime style engine. In a style position, prefer `'var(--…)'` over a `token()` read: `token()` is for values JS must compute with (numeric props, SVG attributes).
@@ -210,6 +210,7 @@ PROJECT LINES (this repo; outside the generated markers so `ui-common agents --w
 The UI-COMMON block above is `ui-common agents` output, generated from `react/` (StyleX mode is detected there) — **do not hand-edit it**. After every `@lablup/ui-common` / `@lablup/ui-common-cli` bump (they move together), regenerate both copies from `react/`: `pnpm exec ui-common agents --write ../AGENTS.md` and `pnpm exec ui-common agents --write AGENTS.md`. `scripts/verify.sh` fails when either is stale (`ui-common agents --check`). The PROJECT LINES right after the markers are this repository's and survive a rewrite (ADR 0009). The different markers keep `astryx init` / `astryx upgrade` from overwriting the block — do not re-add an `ASTRYX` block.
 
 <!-- BAI-AGENT:start -->
+
 bai-agent · 14 commands
 Agent-facing CLI over this checkout: the user manual, the GraphQL schema, the i18n stores and — once logged in — the live manager.
 CLI: run every command as `pnpm run bai-agent <cmd>` from the repository root (shown below as `bai-agent ...`).
@@ -217,6 +218,7 @@ The proxy runs the bundle, so build it first: `pnpm --filter backend.ai-agent-cl
 Preflight, answer-or-link rules and a ready-to-run query cookbook: the `bai-agent` skill, shipped with the CLI (`packages/backend.ai-agent-cli/skill/SKILL.md`, cookbook at `packages/backend.ai-agent-cli/skill/references/query-cookbook.md`) and installed per user by `pnpm run bai-agent init --skill --no-login`.
 
 WORKFLOW — discover, don't guess. Before answering anything about Backend.AI data:
+
 1. `bai-agent doctor --brief` (`doctor --json` for a specific field) — run it ONCE: checkout and stored session in one pass; exit 0 means the environment is ok. Run `bai-agent whoami` only when doctor's session check is `warn` — exit 3 means log in (see RULES).
 2. `bai-agent search "<english UI term>"` — START HERE: one ranked list over manual + schema + terminology. Every hit carries the `command:` that opens it.
 3. `bai-agent docs show <id>` · `schema show <Type>.<field>` · `explain <Type>.<field>=<VALUE>` — the hit in full. `schema show` is what the SDL declares; `explain` is what it means to a user.
@@ -228,6 +230,7 @@ Piping through `| head` hides the exit code and truncates doctor's alignment/ses
 EXIT: 0 ok · 1 error (schema_mismatch, version_mismatch, repo_not_found, repo_incomplete, internal) · 2 usage · 3 auth_required · 4 mutation_refused · 5 not_found.
 
 RULES:
+
 - Search in the ENGLISH terms the UI shows ("Resource Group", not "scaling_group"). The index is English-only; a non-English query is normalised through the i18n stores, never translated.
 - Never mix GraphQL pagination modes: `first`+`after` XOR `last`+`before` XOR `limit`+`offset`. The `*V2` connections reject a mix at runtime, and page-number paging is `limit`+`offset`. See `.claude/rules/graphql-pagination.md`.
 - `schema_mismatch` is YOUR document, not the manager: the checkout's SDL rejected it locally, before any request. Fix it with `schema show <Type>`; never retry it unchanged.
@@ -241,20 +244,20 @@ RULES:
 - Re-run `bai-agent init --features agents` after any CLI change and re-sync this block.
 
 COMMANDS:
-  version   Print the CLI version and the detected checkout.
-  manifest  Print the CLI capability manifest (commands and their flags).
-  init      Set this machine up (endpoint, data sync, login, skill), or with --features print the CLAUDE.md agent block.
-  doctor    Diagnose the CLI environment and the detected checkout.
-  sync      Fetch the checkout data (SDL, i18n, manual) for use outside a WebUI checkout.
-  search    Rank manual sections, schema entries and terminology for a query.
-  docs      Search the user manual, or print one of its sections.
-  schema    Search the GraphQL schema, print one type / field / enum value, or sync the SDL from a backend release.
-  login     Hand this machine a WebUI session, through the browser or by pasting one.
-  logout    Delete the stored session file. The manager is not contacted.
-  whoami    Show the account the stored session belongs to.
-  query     Run a raw GraphQL document against the manager, pre-validated against the checkout SDL.
-  cookbook  Print a ready-to-run query from the skill cookbook, by entry number or root field.
-  explain   Explain what a schema type, field or value means to a WebUI user, tagged by where each piece came from.
+version Print the CLI version and the detected checkout.
+manifest Print the CLI capability manifest (commands and their flags).
+init Set this machine up (endpoint, data sync, login, skill), or with --features print the CLAUDE.md agent block.
+doctor Diagnose the CLI environment and the detected checkout.
+sync Fetch the checkout data (SDL, i18n, manual) for use outside a WebUI checkout.
+search Rank manual sections, schema entries and terminology for a query.
+docs Search the user manual, or print one of its sections.
+schema Search the GraphQL schema, print one type / field / enum value, or sync the SDL from a backend release.
+login Hand this machine a WebUI session, through the browser or by pasting one.
+logout Delete the stored session file. The manager is not contacted.
+whoami Show the account the stored session belongs to.
+query Run a raw GraphQL document against the manager, pre-validated against the checkout SDL.
+cookbook Print a ready-to-run query from the skill cookbook, by entry number or root field.
+explain Explain what a schema type, field or value means to a WebUI user, tagged by where each piece came from.
 <!-- BAI-AGENT:end -->
 
 The BAI-AGENT block above is `bai-agent init --features agents` output, generated from the CLI's own command registry (`packages/backend.ai-agent-cli/src/registry.ts`) — **do not hand-edit it**. Re-run `pnpm --filter backend.ai-agent-cli build && pnpm run bai-agent init --features agents --write` after any change to the CLI; `src/init/block.test.ts` fails when the committed block and the generator disagree. The prose outside the markers survives a re-write.

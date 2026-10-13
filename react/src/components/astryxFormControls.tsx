@@ -860,6 +860,10 @@ export interface AstryxFormTagsInputProps {
   'data-testid'?: string;
 }
 
+// Tokenizer's ref is its input; the listeners need the control box around it.
+const tokenizerControlBox = (input: HTMLInputElement | null) =>
+  input?.closest<HTMLElement>('.astryx-tokenizer') ?? null;
+
 /**
  * Free-form chip input — antd `Select mode="tags"` (MAPPING §3.1 tags branch).
  * The form field holds `string[]`; the Tokenizer works on `SearchableItem[]`
@@ -887,7 +891,7 @@ export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
   'use memo';
   const { t } = useTranslation();
   const statusProps = useFormControlStatusProps();
-  const rootRef = React.useRef<HTMLDivElement>(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
   const splitOnSeparators = (label: string): Array<string> => {
     if (!tokenSeparators?.length) return [label];
     const pattern = new RegExp(
@@ -978,7 +982,7 @@ export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
   // (antd `mode="tags"` did). Its own Enter path re-focuses the input, so the
   // tags are emitted here and the query is cleared through a native input event.
   const commitPendingTextOnFocusOut = useEffectEvent((event: FocusEvent) => {
-    const root = rootRef.current;
+    const root = tokenizerControlBox(inputRef.current);
     const input = root?.querySelector('input');
     if (!root || !input || !input.value.trim()) return;
     const next = event.relatedTarget;
@@ -1010,7 +1014,7 @@ export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
   });
 
   React.useEffect(() => {
-    const root = rootRef.current;
+    const root = tokenizerControlBox(inputRef.current);
     if (!root) return;
     const keyListener = (event: KeyboardEvent) => handleSeparatorKeyDown(event);
     const focusOutListener = (event: FocusEvent) =>
@@ -1025,7 +1029,7 @@ export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
 
   return (
     <Tokenizer
-      ref={rootRef}
+      ref={inputRef}
       value={(value ?? []).map((tag) => ({ id: tag, label: tag }))}
       onChange={(items) =>
         // antd tags mode deduplicated entries; keep that behavior.

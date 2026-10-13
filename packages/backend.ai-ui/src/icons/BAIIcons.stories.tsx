@@ -73,7 +73,7 @@ const IconsOverview: React.FC = () => {
         value={filter}
         onChange={setFilter}
         hasClear
-        style={{ maxWidth: 300 }}
+        controlStyle={{ maxWidth: 300 }}
       />
       <BAIText type="secondary">
         {filteredIcons.length} icon{filteredIcons.length !== 1 ? 's' : ''} found
