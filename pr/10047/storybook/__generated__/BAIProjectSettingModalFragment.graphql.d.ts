@@ -3,7 +3,6 @@ export type BAIProjectSettingModalFragment$data = {
     readonly allowed_vfolder_hosts: string | null | undefined;
     readonly container_registry: string | null | undefined;
     readonly description: string | null | undefined;
-    readonly domain_name: string | null | undefined;
     readonly id: string;
     readonly integration_id: string | null | undefined;
     readonly is_active: boolean | null | undefined;
