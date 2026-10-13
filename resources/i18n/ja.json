@@ -1002,6 +1002,7 @@
       "FolderUpdated": "フォルダオプションが更新されました",
       "FolderUsage": "フォルダ使用量",
       "FolderUsing": "使用量",
+      "Invite": "招待",
       "InviteByEmail": "メールで招待",
       "InviteUsers": "ユーザーを招待します",
       "KickOut": "共有を停止します",
@@ -1046,7 +1047,7 @@
       "RestoreDescription": "\"{{ folderName }}\"フォルダーを復元しますか？",
       "RestoreMultipleDescription": "{{ folderLength }}フォルダーを復元しますか？",
       "SameFileName": "入力値は、更新するファイル名と同じです。別の名前に変更してください。",
-      "SearchUserOrEnterEmail": "ユーザーを検索するか、メールアドレスを入力してください",
+      "SearchUser": "ユーザーを検索",
       "SelectPermission": "権限を選択する",
       "Serve": "サービス",
       "ShareFolder": "フォルダの共有",
@@ -1065,7 +1066,6 @@
       "TypeFolderNameToLeave": "残すフォルダ名を入力します",
       "TypeNewFolderName": "新しいフォルダ名を入力します",
       "TypeToConfirmDeleteForever": "完全に削除するには、以下の単語を入力してください",
-      "UserOrEmail": "ユーザーまたはメール",
       "View": "見る"
     },
     "invitation": {

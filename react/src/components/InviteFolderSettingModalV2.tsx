@@ -13,32 +13,27 @@ import { InviteFolderSettingModalV2Query } from '../__generated__/InviteFolderSe
 import { InviteFolderSettingModalV2RevokeShareMutation } from '../__generated__/InviteFolderSettingModalV2RevokeShareMutation.graphql';
 import { InviteFolderSettingModalV2SetMountPolicyMutation } from '../__generated__/InviteFolderSettingModalV2SetMountPolicyMutation.graphql';
 import { InviteFolderSettingModalV2UnsetMountPolicyMutation } from '../__generated__/InviteFolderSettingModalV2UnsetMountPolicyMutation.graphql';
-import { InviteFolderSettingModalV2UserSearchQuery } from '../__generated__/InviteFolderSettingModalV2UserSearchQuery.graphql';
 import { App } from '../app-shim';
 import { localeCompare, useBaiSignedRequestWithPromise } from '../helper';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
-import { Banner } from '@lablup/ui-common/Banner';
-import { IconButton } from '@lablup/ui-common/IconButton';
 import { Selector } from '@lablup/ui-common/Selector';
-import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { HStack, StackItem, VStack } from '@lablup/ui-common/Stack';
 import { Heading } from '@lablup/ui-common/Text';
-import {
-  Typeahead,
-  TypeaheadItem,
-  type SearchSource,
-  type SearchableItem,
-} from '@lablup/ui-common/Typeahead';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIBadge,
   BAIButton,
   BAIModal,
   type BAIModalProps,
-  BAIPopconfirm,
+  BAINameActionCell,
+  type BAINameActionCellAction,
   BAIQuestionIconWithTooltip,
+  BAIScopedUserSelect,
   BAISkeleton,
   BAITable,
+  BAIText,
   INITIAL_FETCH_KEY,
   filterOutNullAndUndefined,
   toLocalId,
@@ -50,13 +45,7 @@ import * as _ from 'lodash-es';
 import { CircleXIcon, MailXIcon } from 'lucide-react';
 import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  fetchQuery,
-  graphql,
-  useFragment,
-  useLazyLoadQuery,
-  useRelayEnvironment,
-} from 'react-relay';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 /**
  * First manager tag carrying entity shares (lablup/backend.ai#14275) and
@@ -65,19 +54,24 @@ import {
 export const ENTITY_SHARE_MANAGER_VERSION = '26.9.0a1';
 
 const VFOLDER_ENTITY_TYPE = 'vfolder';
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const EMAIL_ITEM_PREFIX = 'email:';
 
 type MountLevel = 'ro' | 'rw';
 
 type RecipientData =
-  | { kind: 'user'; userId: string; email: string; name?: string | null }
+  | { kind: 'user'; userId: string; email: string }
   | { kind: 'email'; email: string };
-type RecipientItem = SearchableItem<RecipientData>;
 
 interface SharedUser {
   perm: string;
   shared_to: { uuid: string; email: string };
+}
+
+interface SentInvitation {
+  id: string;
+  invitee: string;
+  perm: string;
+  state: string;
+  vfolder_id: string;
 }
 
 interface ShareRow {
@@ -108,27 +102,6 @@ const resolveErrorMessage = (error: unknown, fallback: string) => {
       : _.get(_.castArray(error)[0], 'message');
   return errorMessage || fallback;
 };
-
-const UserSearchQuery = graphql`
-  query InviteFolderSettingModalV2UserSearchQuery(
-    $scope: UserScope!
-    $filter: UserV2Filter
-    $limit: Int!
-  ) {
-    scopedUsersV2(scope: $scope, filter: $filter, limit: $limit) {
-      edges {
-        node {
-          id
-          basicInfo {
-            email
-            username
-            fullName
-          }
-        }
-      }
-    }
-  }
-`;
 
 interface InviteFolderSettingModalV2Props extends Omit<
   BAIModalProps,
@@ -191,7 +164,6 @@ const InviteFolderSettingModalV2Body: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const relayEnv = useRelayEnvironment();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const { getErrorMessage } = useErrorMessageResolver();
   const [currentUser] = useCurrentUserInfo();
@@ -202,8 +174,7 @@ const InviteFolderSettingModalV2Body: React.FC<{
   const deferredFetchKey = useDeferredValue(fetchKey);
   const isRefetching = deferredFetchKey !== fetchKey;
 
-  const [recipient, setRecipient] = useState<RecipientItem | null>(null);
-  const [recipientQuery, setRecipientQuery] = useState('');
+  const [recipient, setRecipient] = useState<RecipientData | null>(null);
   const [mountLevel, setMountLevel] = useState<MountLevel>(defaultMountLevel);
   const [recipientError, setRecipientError] = useState<string | null>(null);
 
@@ -268,8 +239,30 @@ const InviteFolderSettingModalV2Body: React.FC<{
     staleTime: 0,
   });
 
+  // The open offers the caller sent, each with the mount level its invitee is
+  // set to get (their policy row, else the folder default) — what a pending
+  // row shows before the invitee has answered.
+  const { data: sentInvitations } = useTanQuery<Array<SentInvitation>>({
+    queryKey: [
+      'baiClient.vfolder.list_sent_invitations',
+      vfolderId,
+      deferredFetchKey,
+    ],
+    queryFn: () =>
+      baiRequestWithPromise<{ invitations: Array<SentInvitation> }>({
+        method: 'GET',
+        url: '/folders/invitations/list-sent',
+      }).then((res) =>
+        _.filter(res.invitations ?? [], (inv) => inv.vfolder_id === vfolderId),
+      ),
+    staleTime: 0,
+  });
+
   const sharedUserByEmail = _.keyBy(sharedUsers, (user) =>
     user.shared_to.email.toLowerCase(),
+  );
+  const sentInvitationByEmail = _.keyBy(sentInvitations, (inv) =>
+    inv.invitee.toLowerCase(),
   );
   const policyByUserId = _.keyBy(vfolderMountPolicies?.items, 'userId');
 
@@ -293,7 +286,10 @@ const InviteFolderSettingModalV2Body: React.FC<{
           userId,
           mountLevel:
             toMountLevel(userId ? policyByUserId[userId]?.permission : null) ??
-            toMountLevel(sharedUser?.perm),
+            toMountLevel(sharedUser?.perm) ??
+            toMountLevel(
+              sentInvitationByEmail[share.recipientEmail.toLowerCase()]?.perm,
+            ),
         };
       }),
     ),
@@ -359,68 +355,7 @@ const InviteFolderSettingModalV2Body: React.FC<{
       `,
     );
 
-  const searchSource: SearchSource<RecipientItem> = {
-    bootstrap: () => [],
-    search: async (query) => {
-      const trimmed = query.trim();
-      if (!trimmed) return [];
-      let items: Array<RecipientItem> = [];
-      if (memberProjectIds.length > 0) {
-        const data =
-          await fetchQuery<InviteFolderSettingModalV2UserSearchQuery>(
-            relayEnv,
-            UserSearchQuery,
-            {
-              scope: {
-                project: memberProjectIds.map((value) => ({ value })),
-              },
-              filter: { email: { contains: trimmed } },
-              limit: 10,
-            },
-          ).toPromise();
-        items = filterOutNullAndUndefined(
-          _.map(data?.scopedUsersV2?.edges, (edge) => {
-            const user = edge.node;
-            const email = user.basicInfo.email;
-            if (email.toLowerCase() === currentUser?.email?.toLowerCase()) {
-              return null;
-            }
-            const userId = toLocalId(user.id);
-            return {
-              id: userId,
-              label: email,
-              auxiliaryData: {
-                kind: 'user' as const,
-                userId,
-                email,
-                name: user.basicInfo.fullName || user.basicInfo.username,
-              },
-            };
-          }),
-        );
-      }
-      const hasExactMatch = items.some(
-        (item) => item.label.toLowerCase() === trimmed.toLowerCase(),
-      );
-      if (EMAIL_PATTERN.test(trimmed) && !hasExactMatch) {
-        items.push({
-          id: `${EMAIL_ITEM_PREFIX}${trimmed}`,
-          label: trimmed,
-          auxiliaryData: { kind: 'email', email: trimmed },
-        });
-      }
-      return items;
-    },
-  };
-
-  // A typed address that was never picked from the list is still an e-mail
-  // invite, so the form keeps working for someone who types and presses Add.
-  const typedEmail = EMAIL_PATTERN.test(recipientQuery.trim())
-    ? recipientQuery.trim()
-    : null;
-  const inviteTarget: RecipientData | null =
-    recipient?.auxiliaryData ??
-    (typedEmail ? { kind: 'email', email: typedEmail } : null);
+  const inviteTarget = recipient;
   const isEmailInvite = inviteTarget?.kind === 'email';
 
   const handleInvite = async () => {
@@ -462,7 +397,6 @@ const InviteFolderSettingModalV2Body: React.FC<{
       }
       message.success(t('data.invitation.Invited'));
       setRecipient(null);
-      setRecipientQuery('');
       updateFetchKey();
     } catch (error: any) {
       if (error?.statusCode === 409) {
@@ -514,64 +448,112 @@ const InviteFolderSettingModalV2Body: React.FC<{
     }
   };
 
+  const rowActions = (row: ShareRow): Array<BAINameActionCellAction> =>
+    row.status === 'ACCEPTED'
+      ? [
+          {
+            key: 'kick-out',
+            title: t('data.folders.KickOut'),
+            icon: <CircleXIcon />,
+            type: 'danger',
+            popConfirm: {
+              title: t('data.folders.KickOutConfirm', { email: row.email }),
+              okText: t('button.Confirm'),
+              cancelText: t('button.Cancel'),
+              okButtonProps: { danger: true },
+              onConfirm: () => handleStopSharing(row),
+            },
+          },
+        ]
+      : [
+          {
+            key: 'cancel-invitation',
+            title: t('data.folders.CancelInvitation'),
+            icon: <MailXIcon />,
+            type: 'danger',
+            popConfirm: {
+              title: t('data.folders.CancelInvitationConfirm', {
+                email: row.email,
+              }),
+              okText: t('button.Confirm'),
+              cancelText: t('button.Cancel'),
+              okButtonProps: { danger: true },
+              onConfirm: () => handleCancelInvitation(row),
+            },
+          },
+        ];
+
   return (
     <VStack gap={6} align="stretch">
       <VStack gap={3} align="stretch">
         <Heading level={5}>{t('data.folders.InviteUsers')}</Heading>
-        <HStack align="start" gap={2} width="100%">
-          <Typeahead<RecipientItem>
-            label={t('data.folders.UserOrEmail')}
-            isLabelHidden
-            placeholder={t('data.folders.SearchUserOrEnterEmail')}
-            searchSource={searchSource}
-            value={recipient}
-            onChange={(item) => {
-              setRecipient(item);
-              setRecipientError(null);
-            }}
-            onChangeQuery={(query) => {
-              setRecipientQuery(query);
-              setRecipientError(null);
-            }}
-            renderItem={(item) => (
-              <TypeaheadItem
-                item={item}
-                description={
-                  item.auxiliaryData?.kind === 'email'
-                    ? t('data.folders.InviteByEmail')
-                    : (item.auxiliaryData?.name ?? undefined)
+        <HStack align="end" gap={2} width="100%">
+          <StackItem size="fill">
+            <Tooltip
+              content={recipient?.email}
+              isEnabled={!!recipient?.email}
+              placement="above"
+              hasHoverIndication={false}
+            >
+              <BAIScopedUserSelect
+                projectId={memberProjectIds}
+                allowCustomSelect
+                allowClear
+                filter={
+                  currentUser?.email
+                    ? { email: { notEquals: currentUser.email } }
+                    : undefined
                 }
+                label={t('general.E-Mail')}
+                placeholder={t('data.folders.SearchUser')}
+                value={recipient?.email ?? null}
+                onChange={(_value, option) => {
+                  const picked = _.castArray(option ?? [])[0];
+                  setRecipient(
+                    !picked
+                      ? null
+                      : picked.userId
+                        ? {
+                            kind: 'user',
+                            userId: picked.userId,
+                            email: picked.value,
+                          }
+                        : { kind: 'email', email: picked.value },
+                  );
+                  setRecipientError(null);
+                }}
+                status={
+                  recipientError
+                    ? { type: 'error', message: recipientError }
+                    : undefined
+                }
+                width="100%"
               />
-            )}
-            status={
-              recipientError
-                ? { type: 'error', message: recipientError }
-                : undefined
-            }
-            debounceMs={300}
-            width="100%"
-          />
-          <Selector
-            label={t('data.folders.MountPermission')}
-            isLabelHidden
-            placement="below"
-            width={150}
-            options={mountLevelOptions}
-            value={mountLevel}
-            onChange={(next) => setMountLevel(next as MountLevel)}
-            isDisabled={isEmailInvite}
-          />
-          <BAIButton type="primary" action={handleInvite}>
-            {t('general.Add')}
-          </BAIButton>
+            </Tooltip>
+          </StackItem>
+          <StackItem size="static">
+            <Selector
+              label={t('data.folders.MountPermission')}
+              placement="below"
+              width={150}
+              options={mountLevelOptions}
+              value={mountLevel}
+              onChange={(next) => setMountLevel(next as MountLevel)}
+              isDisabled={isEmailInvite}
+            />
+          </StackItem>
+          <StackItem size="static">
+            <BAIButton type="primary" action={handleInvite}>
+              {t('data.folders.Invite')}
+            </BAIButton>
+          </StackItem>
         </HStack>
         {isEmailInvite && (
-          <Banner
-            status="info"
-            title={t('data.folders.EmailInviteUsesSharedMountPermission', {
+          <BAIText type="warning" size="sm">
+            {t('data.folders.EmailInviteUsesSharedMountPermission', {
               permission: mountLevelLabel(defaultMountLevel),
             })}
-          />
+          </BAIText>
         )}
       </VStack>
 
@@ -594,6 +576,13 @@ const InviteFolderSettingModalV2Body: React.FC<{
               title: t('data.explorer.InviteeEmail'),
               dataIndex: 'email',
               sorter: (a, b) => localeCompare(a.email, b.email),
+              render: (email: string, row) => (
+                <BAINameActionCell
+                  title={email}
+                  showActions="always"
+                  actions={rowActions(row)}
+                />
+              ),
             },
             {
               title: t('general.Status'),
@@ -627,50 +616,10 @@ const InviteFolderSettingModalV2Body: React.FC<{
                       handleChangeMountLevel(row, next as MountLevel)
                     }
                   />
+                ) : row.status === 'PENDING' && level ? (
+                  mountLevelLabel(level)
                 ) : (
                   '-'
-                ),
-            },
-            {
-              title: t('general.Control'),
-              key: 'control',
-              render: (__, row) =>
-                row.status === 'ACCEPTED' ? (
-                  <BAIPopconfirm
-                    title={t('data.folders.KickOutConfirm', {
-                      email: row.email,
-                    })}
-                    okText={t('button.Confirm')}
-                    isDanger
-                    onConfirm={() => handleStopSharing(row)}
-                  >
-                    <IconButton
-                      label={t('data.folders.KickOut')}
-                      tooltip={t('data.folders.KickOut')}
-                      variant="ghost"
-                      size="sm"
-                      className="bai-name-action-cell-danger"
-                      icon={<CircleXIcon />}
-                    />
-                  </BAIPopconfirm>
-                ) : (
-                  <BAIPopconfirm
-                    title={t('data.folders.CancelInvitationConfirm', {
-                      email: row.email,
-                    })}
-                    okText={t('button.Confirm')}
-                    isDanger
-                    onConfirm={() => handleCancelInvitation(row)}
-                  >
-                    <IconButton
-                      label={t('data.folders.CancelInvitation')}
-                      tooltip={t('data.folders.CancelInvitation')}
-                      variant="ghost"
-                      size="sm"
-                      className="bai-name-action-cell-danger"
-                      icon={<MailXIcon />}
-                    />
-                  </BAIPopconfirm>
                 ),
             },
           ]}

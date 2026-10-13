@@ -998,6 +998,7 @@
       "FolderUpdated": "อัปเดตตัวเลือกโฟลเดอร์แล้ว",
       "FolderUsage": "การใช้งานโฟลเดอร์",
       "FolderUsing": "กำลังใช้",
+      "Invite": "เชิญ",
       "InviteByEmail": "เชิญทางอีเมล",
       "InviteUsers": "เชิญผู้ใช้",
       "KickOut": "หยุดการแบ่งปัน",
@@ -1042,7 +1043,7 @@
       "RestoreDescription": "คุณต้องการกู้คืนโฟลเดอร์ \"{{ folderName }}\" หรือไม่?",
       "RestoreMultipleDescription": "คุณต้องการกู้คืนโฟลเดอร์ {{ folderLength }} หรือไม่?",
       "SameFileName": "ค่าที่ป้อนเหมือนกับชื่อไฟล์ที่จะอัปเดต กรุณาเปลี่ยนเป็นชื่ออื่น",
-      "SearchUserOrEnterEmail": "ค้นหาผู้ใช้หรือป้อนที่อยู่อีเมล",
+      "SearchUser": "ค้นหาผู้ใช้",
       "SelectPermission": "เลือกสิทธิ์",
       "Serve": "ให้บริการโมเดล",
       "ShareFolder": "แชร์โฟลเดอร์",
@@ -1061,7 +1062,6 @@
       "TypeFolderNameToLeave": "พิมพ์ชื่อโฟลเดอร์เพื่อออก",
       "TypeNewFolderName": "พิมพ์ชื่อโฟลเดอร์ใหม่",
       "TypeToConfirmDeleteForever": "พิมพ์คำด้านล่างเพื่อลบถาวร",
-      "UserOrEmail": "ผู้ใช้หรืออีเมล",
       "View": "ดู"
     },
     "invitation": {

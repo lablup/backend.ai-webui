@@ -1002,6 +1002,7 @@
       "FolderUpdated": "Ενημερώθηκαν οι επιλογές φακέλων",
       "FolderUsage": "Χρήση φακέλου",
       "FolderUsing": "Χρήση του",
+      "Invite": "Πρόσκληση",
       "InviteByEmail": "Πρόσκληση μέσω e-mail",
       "InviteUsers": "Προσκαλέστε χρήστης",
       "KickOut": "Διακοπή",
@@ -1046,7 +1047,7 @@
       "RestoreDescription": "Θέλετε να επαναφέρετε \"{{ folderName }}\" \"Φάκελος;",
       "RestoreMultipleDescription": "Θέλετε να επαναφέρετε τους φακέλους {{ folderLength }};",
       "SameFileName": "Η τιμή εισαγωγής είναι ίδια με το όνομα αρχείου που θέλετε να ενημερώσετε. Αλλάξτε το σε διαφορετικό όνομα.",
-      "SearchUserOrEnterEmail": "Αναζητήστε χρήστη ή εισαγάγετε διεύθυνση e-mail",
+      "SearchUser": "Αναζήτηση χρήστη",
       "SelectPermission": "Επιλέξτε άδεια",
       "Serve": "Μοντέλο που εξυπηρετεί",
       "ShareFolder": "Φάκελος κοινής χρήσης",
@@ -1065,7 +1066,6 @@
       "TypeFolderNameToLeave": "Πληκτρολογήστε το όνομα του φακέλου για αποχώρηση",
       "TypeNewFolderName": "Πληκτρολογήστε νέο όνομα φακέλου",
       "TypeToConfirmDeleteForever": "Πληκτρολογήστε τη λέξη παρακάτω για μόνιμη διαγραφή",
-      "UserOrEmail": "Χρήστης ή e-mail",
       "View": "Θέα"
     },
     "invitation": {

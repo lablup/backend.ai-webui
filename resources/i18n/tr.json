@@ -1002,6 +1002,7 @@
       "FolderUpdated": "Klasör seçenekleri güncellendi",
       "FolderUsage": "Klasör kullanımı",
       "FolderUsing": "Kullanma",
+      "Invite": "Davet et",
       "InviteByEmail": "E-posta ile davet et",
       "InviteUsers": "Kullanıcıyı davet et",
       "KickOut": "Paylaşmayı Durdur",
@@ -1046,7 +1047,7 @@
       "RestoreDescription": "\"{{ folderName }}\" klasörünü geri yüklemek istiyor musunuz?",
       "RestoreMultipleDescription": "{{ folderLength }} klasörleri geri yüklemek ister misiniz?",
       "SameFileName": "Giriş değeri, güncellenecek dosya adıyla aynıdır. Lütfen farklı bir adla değiştirin.",
-      "SearchUserOrEnterEmail": "Bir kullanıcı arayın veya e-posta adresi girin",
+      "SearchUser": "Kullanıcı ara",
       "SelectPermission": "İzin seçin",
       "Serve": "Model servis",
       "ShareFolder": "Paylaşım klasörü",
@@ -1065,7 +1066,6 @@
       "TypeFolderNameToLeave": "Ayrılmak için klasör adını yazın",
       "TypeNewFolderName": "Yeni klasör adını yazın",
       "TypeToConfirmDeleteForever": "Kalıcı olarak silmek için aşağıdaki kelimeyi yazın",
-      "UserOrEmail": "Kullanıcı veya e-posta",
       "View": "Görünüm"
     },
     "invitation": {

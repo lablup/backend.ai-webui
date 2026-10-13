@@ -1002,6 +1002,7 @@
       "FolderUpdated": "Ordneroption(en) aktualisiert",
       "FolderUsage": "Verwendung von Ordnern",
       "FolderUsing": "Verwendung von",
+      "Invite": "Einladen",
       "InviteByEmail": "Per E-Mail einladen",
       "InviteUsers": "Benutzer einladen",
       "KickOut": "Hör auf zu teilen",
@@ -1046,7 +1047,7 @@
       "RestoreDescription": "Möchten Sie \"{{ folderName }}\" -Fordner wiederherstellen?",
       "RestoreMultipleDescription": "Möchten Sie {{ folderLength }} Ordner wiederherstellen?",
       "SameFileName": "Der Eingabewert ist mit dem zu aktualisierenden Dateinamen identisch. Bitte ändern Sie es in einen anderen Namen.",
-      "SearchUserOrEnterEmail": "Benutzer suchen oder E-Mail-Adresse eingeben",
+      "SearchUser": "Benutzer suchen",
       "SelectPermission": "Berechtigung auswählen",
       "Serve": "Das Modell dient",
       "ShareFolder": "Ordner teilen",
@@ -1065,7 +1066,6 @@
       "TypeFolderNameToLeave": "Geben Sie den Ordnernamen ein, um ihn zu verlassen",
       "TypeNewFolderName": "Geben Sie einen neuen Ordnernamen ein",
       "TypeToConfirmDeleteForever": "Geben Sie das folgende Wort ein, um dauerhaft zu löschen",
-      "UserOrEmail": "Benutzer oder E-Mail",
       "View": "Aussicht"
     },
     "invitation": {

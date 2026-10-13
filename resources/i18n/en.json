@@ -989,6 +989,7 @@
       "FolderUpdated": "Folder option(s) updated",
       "FolderUsage": "Folder usage",
       "FolderUsing": "Using",
+      "Invite": "Invite",
       "InviteByEmail": "Invite by e-mail",
       "InviteUsers": "Invite User",
       "KickOut": "Stop sharing",
@@ -1033,7 +1034,7 @@
       "RestoreDescription": "Do you want to restore \"{{ folderName }}\" folder?",
       "RestoreMultipleDescription": "Do you want to restore {{ folderLength }} folders?",
       "SameFileName": "The input value is same as the filename to update. Please change it to a different name.",
-      "SearchUserOrEnterEmail": "Search a user or enter an e-mail address",
+      "SearchUser": "Search user",
       "SelectPermission": "Select permission",
       "Serve": "Model serving",
       "ShareFolder": "Share Folder",
@@ -1052,7 +1053,6 @@
       "TypeFolderNameToLeave": "Type folder name to leave",
       "TypeNewFolderName": "Type new folder name",
       "TypeToConfirmDeleteForever": "Type the word below to permanently delete",
-      "UserOrEmail": "User or e-mail",
       "View": "View"
     },
     "invitation": {

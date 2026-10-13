@@ -1002,6 +1002,7 @@
       "FolderUpdated": "Opción(es) de carpeta actualizada(s)",
       "FolderUsage": "Uso de la carpeta",
       "FolderUsing": "Utilizando",
+      "Invite": "Invitar",
       "InviteByEmail": "Invitar por correo electrónico",
       "InviteUsers": "Invitar al usuario",
       "KickOut": "Dejar de compartir",
@@ -1046,7 +1047,7 @@
       "RestoreDescription": "¿Quieres restaurar la carpeta \"{{ folderName }}\"?",
       "RestoreMultipleDescription": "¿Quieres restaurar las carpetas {{ folderLength }}?",
       "SameFileName": "El valor de entrada es el mismo que el nombre del archivo que se va a actualizar. Por favor, cámbielo por otro nombre.",
-      "SearchUserOrEnterEmail": "Busque un usuario o introduzca una dirección de correo electrónico",
+      "SearchUser": "Buscar usuario",
       "SelectPermission": "Seleccionar permiso",
       "Serve": "Modelo de servicio",
       "ShareFolder": "Compartir carpeta",
@@ -1065,7 +1066,6 @@
       "TypeFolderNameToLeave": "Escriba el nombre de la carpeta que desea abandonar",
       "TypeNewFolderName": "Escriba el nombre de la nueva carpeta",
       "TypeToConfirmDeleteForever": "Escribe la palabra a continuación para eliminar permanentemente",
-      "UserOrEmail": "Usuario o correo electrónico",
       "View": "Ver"
     },
     "invitation": {
