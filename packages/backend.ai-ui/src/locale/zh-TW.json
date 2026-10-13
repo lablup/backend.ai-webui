@@ -40,20 +40,22 @@
   },
   "comp:BAIAdminRetentionPolicyTable": {
     "Category": "類別",
-    "CategoryDeployments": "部署",
-    "CategoryLogin": "登入記錄",
-    "CategoryLogs": "日誌",
-    "CategoryReconcileHistory": "協調記錄",
-    "CategoryRolesInvitations": "角色與邀請",
-    "CategorySessions": "工作階段",
-    "CategoryUsageBuckets": "使用量彙總",
-    "CategoryUsageRecords": "使用記錄",
     "CreatedAt": "建立日期",
     "Enabled": "啟用",
     "LastSweptAt": "上次清理",
     "NotSweptYet": "尚未執行",
     "RetentionPeriodDays": "保留期限（天）",
-    "UpdatedAt": "更新時間"
+    "UpdatedAt": "更新時間",
+    "categories": {
+      "DEPLOYMENTS": "部署",
+      "LOGIN": "登入記錄",
+      "LOGS": "日誌",
+      "RECONCILE_HISTORY": "協調記錄",
+      "ROLES_INVITATIONS": "角色與邀請",
+      "SESSIONS": "工作階段",
+      "USAGE_BUCKETS": "使用量彙總",
+      "USAGE_RECORDS": "使用記錄"
+    }
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "選擇工作階段"
