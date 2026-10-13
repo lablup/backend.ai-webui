@@ -1025,7 +1025,7 @@ version 26.4.0 or later.
 :::
 
 On the **Sessions** tab, you can use the property filter to narrow the list — by **Session ID** when
-needed, by the session's owner (email or full name), by its project or domain, and by session
+needed, by the session's owner (email or full name), by its project, and by session
 attributes such as result, cluster mode, priority, and creation or termination time.
 
 Exporting the list as a CSV file applies the property filter currently in effect, so you can narrow the
@@ -1713,10 +1713,9 @@ Click the Edit button in the Quota Scope ID column to open the modal for configu
 
 #### Set project quota
 
-Setting a quota on project-folder is similar to setting a user quota. The difference between setting
-project quota and user quota is to confirm setting the project quota requires one more procedure,
-which is selecting the domain that the project is dependent on. The rest are the same.
-As in the picture below, you need to first select the domain, and then select the project.
+Setting a quota on project-folder is similar to setting a user quota. The only difference is that you
+set the active sub-tab of the Quota Settings panel to `For Project` and then select the project, as in
+the picture below. The rest are the same.
 
 ![](../images/per_project_quota.png)
 <!-- TODO: Re-capture per_project_quota.png — needs update. -->
