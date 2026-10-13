@@ -6,6 +6,8 @@ import type { useSessionMonitorQuery } from '../__generated__/useSessionMonitorQ
 import type { IdleChecks } from '../components/ComputeSessionNodeItems/SessionIdleChecks';
 import {
   SESSION_MONITOR_FETCH_LIMIT,
+  SESSION_MONITOR_RUNNING_FILTER,
+  SESSION_MONITOR_STARTING_FILTER,
   toSessionMonitorEntry,
   type SessionMonitorEntry,
   type SessionMonitorSummary,
@@ -67,8 +69,24 @@ export const useSessionMonitorData = (
       query useSessionMonitorQuery(
         $scopeId: ScopeField
         $filter: String
+        $runningFilter: String
+        $startingFilter: String
         $first: Int
       ) {
+        runningCount: compute_session_nodes(
+          scope_id: $scopeId
+          filter: $runningFilter
+          first: 0
+        ) {
+          count
+        }
+        startingCount: compute_session_nodes(
+          scope_id: $scopeId
+          filter: $startingFilter
+          first: 0
+        ) {
+          count
+        }
         compute_session_nodes(
           scope_id: $scopeId
           filter: $filter
@@ -92,6 +110,8 @@ export const useSessionMonitorData = (
     {
       scopeId: scope.scopeId,
       filter: scope.filter,
+      runningFilter: `${scope.filter} & ${SESSION_MONITOR_RUNNING_FILTER}`,
+      startingFilter: `${scope.filter} & ${SESSION_MONITOR_STARTING_FILTER}`,
       first: SESSION_MONITOR_FETCH_LIMIT,
     },
     { fetchPolicy: 'store-and-network', fetchKey },
@@ -105,6 +125,10 @@ export const useSessionMonitorData = (
     entries,
     nodesById,
     total: data.compute_session_nodes?.count ?? entries.length,
+    counts: {
+      running: data.runningCount?.count ?? 0,
+      starting: data.startingCount?.count ?? 0,
+    },
     fetchedAt,
   };
 };

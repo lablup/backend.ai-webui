@@ -48,6 +48,11 @@ const STARTING_STATUSES = [
   'PREPARED',
   'CREATING',
 ];
+/** Server-side counts: the page is capped, the counts must not be. */
+export const SESSION_MONITOR_RUNNING_FILTER = 'status == "RUNNING"';
+export const SESSION_MONITOR_STARTING_FILTER = `status in [${STARTING_STATUSES.map(
+  (status) => `"${status}"`,
+).join(',')}]`;
 
 export const isStartingStatus = (status: string | null | undefined) =>
   !!status && STARTING_STATUSES.includes(status);
@@ -55,6 +60,11 @@ export const isStartingStatus = (status: string | null | undefined) =>
 export const isRunningStatus = (status: string | null | undefined) =>
   status === 'RUNNING';
 
+/**
+ * The check that will end the session soonest. A `grace_period` item counts
+ * the time until the first reclamation decision, not until termination, so
+ * it is not a deadline.
+ */
 export const getNearestIdleCheck = (
   idleChecks: IdleChecks | null | undefined,
 ): NearestIdleCheck | null => {
@@ -65,7 +75,12 @@ export const getNearestIdleCheck = (
     'session_lifetime',
   ] as const) {
     const item = idleChecks?.[key];
-    if (!item || typeof item.remaining !== 'number' || item.remaining < 0) {
+    if (
+      !item ||
+      item.remaining_time_type !== 'expire_after' ||
+      typeof item.remaining !== 'number' ||
+      item.remaining < 0
+    ) {
       continue;
     }
     if (!nearest || item.remaining < nearest.remaining) {
@@ -131,18 +146,28 @@ export type SessionMonitorSummary = {
   nearest: SessionMonitorEntry | null;
 };
 
+/**
+ * `counts` come from the server and cover the whole scope; `attentionCount`
+ * and `nearest` can only see the fetched page (`idle_checks` is not sortable
+ * server-side), which is the user's own sessions in the alerting mode.
+ */
 export const summarizeSessions = (
   entries: ReadonlyArray<SessionMonitorEntry>,
   total: number,
   fetchedAt: number,
+  counts?: { running: number; starting: number },
 ): SessionMonitorSummary => {
   const ranked = rankSessions(entries);
   const nearest = ranked.find((entry) => entry.deadline !== null) ?? null;
   return {
     fetchedAt,
     total,
-    running: entries.filter((entry) => isRunningStatus(entry.status)).length,
-    starting: entries.filter((entry) => isStartingStatus(entry.status)).length,
+    running:
+      counts?.running ??
+      entries.filter((entry) => isRunningStatus(entry.status)).length,
+    starting:
+      counts?.starting ??
+      entries.filter((entry) => isStartingStatus(entry.status)).length,
     attentionCount: entries.filter(
       (entry) =>
         entry.deadline !== null &&

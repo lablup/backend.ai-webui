@@ -113,7 +113,7 @@ const ScopedSessionMonitorWatcher: React.FC<{ scope: SessionMonitorScope }> = ({
   const { t } = useTranslation();
   const [fetchKey, setFetchKey] = useAtom(sessionMonitorFetchKeyAtom);
   const deferredFetchKey = useDeferredValue(fetchKey);
-  const { entries, total, fetchedAt } = useSessionMonitorData(
+  const { entries, total, counts, fetchedAt } = useSessionMonitorData(
     deferredFetchKey,
     scope,
   );
@@ -146,7 +146,7 @@ const ScopedSessionMonitorWatcher: React.FC<{ scope: SessionMonitorScope }> = ({
     return () => document.removeEventListener('visibilitychange', onVisible);
   }, []);
 
-  const summary = summarizeSessions(entries, total, fetchedAt);
+  const summary = summarizeSessions(entries, total, fetchedAt, counts);
   useEffect(() => {
     setSummary(summary);
   }, [summary, setSummary]);

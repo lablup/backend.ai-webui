@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bb048c06db83d0e30f931e0564fa29dc>>
+ * @generated SignedSource<<95f8382b01dee6e0ff9a3a00a71c89aa>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,7 +13,9 @@ import { FragmentRefs } from "relay-runtime";
 export type useSessionMonitorQuery$variables = {
   filter?: string | null | undefined;
   first?: number | null | undefined;
+  runningFilter?: string | null | undefined;
   scopeId?: any | null | undefined;
+  startingFilter?: string | null | undefined;
 };
 export type useSessionMonitorQuery$data = {
   readonly compute_session_nodes: {
@@ -28,6 +30,12 @@ export type useSessionMonitorQuery$data = {
         readonly " $fragmentSpreads": FragmentRefs<"SessionMonitorItemFragment">;
       } | null | undefined;
     } | null | undefined>;
+  } | null | undefined;
+  readonly runningCount: {
+    readonly count: number | null | undefined;
+  } | null | undefined;
+  readonly startingCount: {
+    readonly count: number | null | undefined;
   } | null | undefined;
 };
 export type useSessionMonitorQuery = {
@@ -49,9 +57,75 @@ v1 = {
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
+  "name": "runningFilter"
+},
+v3 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
   "name": "scopeId"
 },
-v3 = [
+v4 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "startingFilter"
+},
+v5 = {
+  "kind": "Literal",
+  "name": "first",
+  "value": 0
+},
+v6 = {
+  "kind": "Variable",
+  "name": "scope_id",
+  "variableName": "scopeId"
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "count",
+  "storageKey": null
+},
+v8 = [
+  (v7/*: any*/)
+],
+v9 = {
+  "alias": "runningCount",
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "filter",
+      "variableName": "runningFilter"
+    },
+    (v5/*: any*/),
+    (v6/*: any*/)
+  ],
+  "concreteType": "ComputeSessionConnection",
+  "kind": "LinkedField",
+  "name": "compute_session_nodes",
+  "plural": false,
+  "selections": (v8/*: any*/),
+  "storageKey": null
+},
+v10 = {
+  "alias": "startingCount",
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "filter",
+      "variableName": "startingFilter"
+    },
+    (v5/*: any*/),
+    (v6/*: any*/)
+  ],
+  "concreteType": "ComputeSessionConnection",
+  "kind": "LinkedField",
+  "name": "compute_session_nodes",
+  "plural": false,
+  "selections": (v8/*: any*/),
+  "storageKey": null
+},
+v11 = [
   {
     "kind": "Variable",
     "name": "filter",
@@ -67,48 +141,37 @@ v3 = [
     "name": "order",
     "value": "-created_at"
   },
-  {
-    "kind": "Variable",
-    "name": "scope_id",
-    "variableName": "scopeId"
-  }
+  (v6/*: any*/)
 ],
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "count",
-  "storageKey": null
-},
-v5 = {
+v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v6 = {
+v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v7 = {
+v14 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "status",
   "storageKey": null
 },
-v8 = {
+v15 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "created_at",
   "storageKey": null
 },
-v9 = {
+v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -120,21 +183,25 @@ return {
     "argumentDefinitions": [
       (v0/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/)
+      (v2/*: any*/),
+      (v3/*: any*/),
+      (v4/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "useSessionMonitorQuery",
     "selections": [
+      (v9/*: any*/),
+      (v10/*: any*/),
       {
         "alias": null,
-        "args": (v3/*: any*/),
+        "args": (v11/*: any*/),
         "concreteType": "ComputeSessionConnection",
         "kind": "LinkedField",
         "name": "compute_session_nodes",
         "plural": false,
         "selections": [
-          (v4/*: any*/),
+          (v7/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -151,11 +218,11 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v5/*: any*/),
-                  (v6/*: any*/),
-                  (v7/*: any*/),
-                  (v8/*: any*/),
-                  (v9/*: any*/),
+                  (v12/*: any*/),
+                  (v13/*: any*/),
+                  (v14/*: any*/),
+                  (v15/*: any*/),
+                  (v16/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -177,22 +244,26 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v2/*: any*/),
+      (v3/*: any*/),
       (v0/*: any*/),
+      (v2/*: any*/),
+      (v4/*: any*/),
       (v1/*: any*/)
     ],
     "kind": "Operation",
     "name": "useSessionMonitorQuery",
     "selections": [
+      (v9/*: any*/),
+      (v10/*: any*/),
       {
         "alias": null,
-        "args": (v3/*: any*/),
+        "args": (v11/*: any*/),
         "concreteType": "ComputeSessionConnection",
         "kind": "LinkedField",
         "name": "compute_session_nodes",
         "plural": false,
         "selections": [
-          (v4/*: any*/),
+          (v7/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -209,11 +280,11 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v5/*: any*/),
-                  (v6/*: any*/),
-                  (v7/*: any*/),
-                  (v8/*: any*/),
-                  (v9/*: any*/),
+                  (v12/*: any*/),
+                  (v13/*: any*/),
+                  (v14/*: any*/),
+                  (v15/*: any*/),
+                  (v16/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -266,8 +337,8 @@ return {
                                 "name": "cluster_role",
                                 "storageKey": null
                               },
-                              (v5/*: any*/),
-                              (v7/*: any*/)
+                              (v12/*: any*/),
+                              (v14/*: any*/)
                             ],
                             "storageKey": null
                           }
@@ -310,16 +381,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "33f67272cd6fc17606f89d08d110b7d9",
+    "cacheID": "34b22f023ca18eff7c9a0686bf01a14c",
     "id": null,
     "metadata": {},
     "name": "useSessionMonitorQuery",
     "operationKind": "query",
-    "text": "query useSessionMonitorQuery(\n  $scopeId: ScopeField\n  $filter: String\n  $first: Int\n) {\n  compute_session_nodes(scope_id: $scopeId, filter: $filter, order: \"-created_at\", first: $first) {\n    count\n    edges {\n      node {\n        id\n        name\n        status\n        created_at\n        idle_checks\n        ...SessionMonitorItemFragment\n      }\n    }\n  }\n}\n\nfragment SessionMonitorItemFragment on ComputeSessionNode {\n  id\n  name\n  status\n  created_at\n  occupied_slots\n  requested_slots\n  ...SessionMonitorUtilizationBarsFragment\n  ...SessionStatusBadgeFragment\n}\n\nfragment SessionMonitorUtilizationBarsFragment on ComputeSessionNode {\n  occupied_slots\n  ...useSessionNodeLiveStatSessionFragment\n}\n\nfragment SessionStatusBadgeFragment on ComputeSessionNode {\n  id\n  status\n  status_info\n  queue_position\n  cluster_size\n  kernel_nodes {\n    edges {\n      node {\n        id\n        status\n      }\n    }\n  }\n}\n\nfragment useSessionNodeLiveStatSessionFragment on ComputeSessionNode {\n  id\n  kernel_nodes {\n    edges {\n      node {\n        live_stat\n        cluster_role\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query useSessionMonitorQuery(\n  $scopeId: ScopeField\n  $filter: String\n  $runningFilter: String\n  $startingFilter: String\n  $first: Int\n) {\n  runningCount: compute_session_nodes(scope_id: $scopeId, filter: $runningFilter, first: 0) {\n    count\n  }\n  startingCount: compute_session_nodes(scope_id: $scopeId, filter: $startingFilter, first: 0) {\n    count\n  }\n  compute_session_nodes(scope_id: $scopeId, filter: $filter, order: \"-created_at\", first: $first) {\n    count\n    edges {\n      node {\n        id\n        name\n        status\n        created_at\n        idle_checks\n        ...SessionMonitorItemFragment\n      }\n    }\n  }\n}\n\nfragment SessionMonitorItemFragment on ComputeSessionNode {\n  id\n  name\n  status\n  created_at\n  occupied_slots\n  requested_slots\n  ...SessionMonitorUtilizationBarsFragment\n  ...SessionStatusBadgeFragment\n}\n\nfragment SessionMonitorUtilizationBarsFragment on ComputeSessionNode {\n  occupied_slots\n  ...useSessionNodeLiveStatSessionFragment\n}\n\nfragment SessionStatusBadgeFragment on ComputeSessionNode {\n  id\n  status\n  status_info\n  queue_position\n  cluster_size\n  kernel_nodes {\n    edges {\n      node {\n        id\n        status\n      }\n    }\n  }\n}\n\nfragment useSessionNodeLiveStatSessionFragment on ComputeSessionNode {\n  id\n  kernel_nodes {\n    edges {\n      node {\n        live_stat\n        cluster_role\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "a85cecb2a6fe8603175cb7cf9f3c3173";
+(node as any).hash = "05dd245b87f069f8063643468d796655";
 
 export default node;

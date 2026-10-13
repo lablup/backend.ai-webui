@@ -74,10 +74,8 @@ const ScopedSessionMonitorPopoverContent: React.FC<
     'session_monitor_include_starting',
   );
   const [rows] = useBAISettingUserState('session_monitor_rows');
-  const { entries, nodesById, total, fetchedAt } = useSessionMonitorData(
-    deferredFetchKey,
-    scope,
-  );
+  const { entries, nodesById, total, counts, fetchedAt } =
+    useSessionMonitorData(deferredFetchKey, scope);
 
   const listed =
     (includeStarting ?? true)
@@ -89,8 +87,7 @@ const ScopedSessionMonitorPopoverContent: React.FC<
   // subtracted so the footer agrees with what the list can show.
   const listedTotal = Math.max(0, total - (entries.length - listed.length));
   const hiddenCount = Math.max(0, listedTotal - visible.length);
-  const running = entries.filter((e) => e.status === 'RUNNING').length;
-  const starting = entries.length - running;
+  const { running, starting } = counts;
   // The list that matches the scope: admin, project-admin or the user's own.
   const listPath = buildProjectPath('session', {
     scope:

@@ -34,15 +34,27 @@ describe('getNearestIdleCheck', () => {
         },
         utilization: {
           remaining: 540,
-          remaining_time_type: 'grace_period',
+          remaining_time_type: 'expire_after',
           extra: null,
         },
       }),
     ).toEqual({
       key: 'utilization',
       remaining: 540,
-      remainingTimeType: 'grace_period',
+      remainingTimeType: 'expire_after',
     });
+  });
+
+  it('does not treat a grace period as a deadline', () => {
+    expect(
+      getNearestIdleCheck({
+        utilization: {
+          remaining: 540,
+          remaining_time_type: 'grace_period',
+          extra: null,
+        },
+      }),
+    ).toBeNull();
   });
 
   it('ignores checks without a remaining time', () => {
@@ -66,7 +78,7 @@ describe('toSessionMonitorEntry', () => {
       {
         utilization: {
           remaining: 60,
-          remaining_time_type: 'grace_period',
+          remaining_time_type: 'expire_after',
           extra: null,
         },
       },
@@ -104,6 +116,15 @@ describe('summarizeSessions', () => {
     expect(summary.starting).toBe(1);
     expect(summary.attentionCount).toBe(1);
     expect(summary.nearest?.id).toBe('a');
+  });
+
+  it('prefers server-side counts over the fetched page', () => {
+    const summary = summarizeSessions([entry({ id: 'a' })], 120, NOW, {
+      running: 90,
+      starting: 30,
+    });
+    expect(summary.running).toBe(90);
+    expect(summary.starting).toBe(30);
   });
 });
 
