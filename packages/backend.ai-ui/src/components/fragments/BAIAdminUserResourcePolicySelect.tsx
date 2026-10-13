@@ -81,7 +81,7 @@ const BAIAdminUserResourcePolicySelect: React.FC<
       AdminUserResourcePolicyNode
     >(
       // TODO(needs-backend): superadmin only; a domain admin has no V2 list to
-      // read until core adds a scoped one (#10288).
+      // read until core ships the scoped policy fields; move to them in #10317.
       graphql`
         query BAIAdminUserResourcePolicySelectPaginatedQuery(
           $offset: Int!
