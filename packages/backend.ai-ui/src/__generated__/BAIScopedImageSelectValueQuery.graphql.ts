@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<415becd33d29d1913050c472b4650230>>
+ * @generated SignedSource<<d3803c121a0e15ca244562136bf19fbc>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,12 +19,12 @@ export type ImageSearchScope = {
 export type UUIDScope = {
   value: string;
 };
-export type BAIAdminImageSelectValueQuery$variables = {
+export type BAIScopedImageSelectValueQuery$variables = {
   ids?: ReadonlyArray<string> | null | undefined;
   scope: ImageSearchScope;
   skipSelected: boolean;
 };
-export type BAIAdminImageSelectValueQuery$data = {
+export type BAIScopedImageSelectValueQuery$data = {
   readonly scopedImagesV2?: {
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -37,9 +37,9 @@ export type BAIAdminImageSelectValueQuery$data = {
     }>;
   } | null | undefined;
 };
-export type BAIAdminImageSelectValueQuery = {
-  response: BAIAdminImageSelectValueQuery$data;
-  variables: BAIAdminImageSelectValueQuery$variables;
+export type BAIScopedImageSelectValueQuery = {
+  response: BAIScopedImageSelectValueQuery$data;
+  variables: BAIScopedImageSelectValueQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -167,7 +167,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "BAIAdminImageSelectValueQuery",
+    "name": "BAIScopedImageSelectValueQuery",
     "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -176,20 +176,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "BAIAdminImageSelectValueQuery",
+    "name": "BAIScopedImageSelectValueQuery",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "50062079a3ab2d040a963ea9adf2b195",
+    "cacheID": "2f015e19707bbc022735e8e091ef34b5",
     "id": null,
     "metadata": {},
-    "name": "BAIAdminImageSelectValueQuery",
+    "name": "BAIScopedImageSelectValueQuery",
     "operationKind": "query",
-    "text": "query BAIAdminImageSelectValueQuery(\n  $ids: [UUID!]\n  $scope: ImageSearchScope!\n  $skipSelected: Boolean!\n) {\n  scopedImagesV2(scope: $scope, filter: {id: {in: $ids}}, limit: 100) @skip(if: $skipSelected) {\n    edges {\n      node {\n        id\n        identity {\n          canonicalName\n          architecture\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIScopedImageSelectValueQuery(\n  $ids: [UUID!]\n  $scope: ImageSearchScope!\n  $skipSelected: Boolean!\n) {\n  scopedImagesV2(scope: $scope, filter: {id: {in: $ids}}, limit: 100) @skip(if: $skipSelected) {\n    edges {\n      node {\n        id\n        identity {\n          canonicalName\n          architecture\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "7d937bd91648f491d66e567874fbf00c";
+(node as any).hash = "19fdbd03ced3ca8d1c7ac1899ab1a4b1";
 
 export default node;

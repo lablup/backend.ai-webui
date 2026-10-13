@@ -55,7 +55,7 @@ import { Selector } from '@lablup/ui-common/Selector';
 import { Step, Stepper } from '@lablup/ui-common/Stepper';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIAdminImageSelect,
+  BAIScopedImageSelect,
   BAIButton,
   BAICard,
   BAIFlex,
@@ -131,7 +131,7 @@ export interface AdminDeploymentPresetSettingPageContentProps {
 }
 
 // ---------------------------------------------------------------------------
-// ImageSelectField — thin Suspense wrapper around BAIAdminImageSelect
+// ImageSelectField — thin Suspense wrapper around BAIScopedImageSelect
 // ---------------------------------------------------------------------------
 
 const ImageSelectField: React.FC<{
@@ -168,7 +168,7 @@ const ScopedPresetImageSelect: React.FC<{
   const { t } = useTranslation();
   const { domainScope } = useCurrentDomainScope();
   return (
-    <BAIAdminImageSelect
+    <BAIScopedImageSelect
       scope={{ ...domainScope, public: true }}
       label={t('adminDeploymentPreset.Image')}
       isLabelHidden

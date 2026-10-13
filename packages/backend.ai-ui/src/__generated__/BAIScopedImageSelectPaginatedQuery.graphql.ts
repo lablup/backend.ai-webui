@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8d78f84f56da796b11bf28c48dcbf73f>>
+ * @generated SignedSource<<6582f2f266e43d05d0d6f87d8466d0d0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -117,13 +117,13 @@ export type ImageSearchScope = {
 export type UUIDScope = {
   value: string;
 };
-export type BAIAdminImageSelectPaginatedQuery$variables = {
+export type BAIScopedImageSelectPaginatedQuery$variables = {
   filter?: ImageV2Filter | null | undefined;
   limit: number;
   offset: number;
   scope: ImageSearchScope;
 };
-export type BAIAdminImageSelectPaginatedQuery$data = {
+export type BAIScopedImageSelectPaginatedQuery$data = {
   readonly scopedImagesV2: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
@@ -138,9 +138,9 @@ export type BAIAdminImageSelectPaginatedQuery$data = {
     }>;
   } | null | undefined;
 };
-export type BAIAdminImageSelectPaginatedQuery = {
-  response: BAIAdminImageSelectPaginatedQuery$data;
-  variables: BAIAdminImageSelectPaginatedQuery$variables;
+export type BAIScopedImageSelectPaginatedQuery = {
+  response: BAIScopedImageSelectPaginatedQuery$data;
+  variables: BAIScopedImageSelectPaginatedQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -261,7 +261,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "BAIAdminImageSelectPaginatedQuery",
+    "name": "BAIScopedImageSelectPaginatedQuery",
     "selections": [
       {
         "alias": null,
@@ -317,7 +317,7 @@ return {
       (v3/*: any*/)
     ],
     "kind": "Operation",
-    "name": "BAIAdminImageSelectPaginatedQuery",
+    "name": "BAIScopedImageSelectPaginatedQuery",
     "selections": [
       {
         "alias": null,
@@ -389,16 +389,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "aaa9067f0e1e3bc8bb2408c57c348686",
+    "cacheID": "11de8d2cbe25984f0b787f8ea753b8af",
     "id": null,
     "metadata": {},
-    "name": "BAIAdminImageSelectPaginatedQuery",
+    "name": "BAIScopedImageSelectPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIAdminImageSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: ImageV2Filter\n  $scope: ImageSearchScope!\n) {\n  scopedImagesV2(scope: $scope, offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: ASC}]) {\n    count\n    edges {\n      node {\n        id\n        identity {\n          canonicalName\n          architecture\n        }\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n"
+    "text": "query BAIScopedImageSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: ImageV2Filter\n  $scope: ImageSearchScope!\n) {\n  scopedImagesV2(scope: $scope, offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: ASC}]) {\n    count\n    edges {\n      node {\n        id\n        identity {\n          canonicalName\n          architecture\n        }\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "01ea333f30d42bea610f4c19d45c6ba0";
+(node as any).hash = "743fa3d0da33ac693fb1612c2b369efe";
 
 export default node;
