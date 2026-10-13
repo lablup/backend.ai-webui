@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<794da4aec37ae25195d2a8c4d25ce292>>
+ * @generated SignedSource<<e8673d820679db97a13921663dc29a66>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -98,6 +98,7 @@ export type BAIScopedProjectSelectPaginatedQuery$data = {
         readonly basicInfo: {
           readonly name: string;
         };
+        readonly entityId: string;
         readonly id: string;
       };
     }>;
@@ -202,6 +203,13 @@ v4 = [
               {
                 "alias": null,
                 "args": null,
+                "kind": "ScalarField",
+                "name": "entityId",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
                 "concreteType": "ProjectBasicInfo",
                 "kind": "LinkedField",
                 "name": "basicInfo",
@@ -255,16 +263,16 @@ return {
     "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "af07216998b80d5c9013879f43b89638",
+    "cacheID": "f6696f8ebce09d554ba04441adb6434e",
     "id": null,
     "metadata": {},
     "name": "BAIScopedProjectSelectPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIScopedProjectSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: ProjectV2Filter\n  $scope: ProjectScope!\n) {\n  scopedProjectsV2(scope: $scope, offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: ASC}]) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIScopedProjectSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: ProjectV2Filter\n  $scope: ProjectScope!\n) {\n  scopedProjectsV2(scope: $scope, offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: ASC}]) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b7b33610e135fb91964a7d7be320ca9d";
+(node as any).hash = "8c538a262d1d500601748fe6431e144a";
 
 export default node;

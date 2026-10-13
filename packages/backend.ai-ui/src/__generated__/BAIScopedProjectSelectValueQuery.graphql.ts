@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d3685ab0eed8aa264b788b489f3aafdd>>
+ * @generated SignedSource<<9dbd5c619042373052bde52d8689f8bb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -29,6 +29,7 @@ export type BAIScopedProjectSelectValueQuery$data = {
         readonly basicInfo: {
           readonly name: string;
         };
+        readonly entityId: string;
         readonly id: string;
       };
     }>;
@@ -125,6 +126,13 @@ v1 = [
                   {
                     "alias": null,
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "entityId",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
                     "concreteType": "ProjectBasicInfo",
                     "kind": "LinkedField",
                     "name": "basicInfo",
@@ -170,16 +178,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "73ae8ea768b65ce1d15746a6fb380893",
+    "cacheID": "39a24aea0a6224a55ebe1862b4295d46",
     "id": null,
     "metadata": {},
     "name": "BAIScopedProjectSelectValueQuery",
     "operationKind": "query",
-    "text": "query BAIScopedProjectSelectValueQuery(\n  $projectIds: [UUID!]!\n  $scope: ProjectScope!\n  $skipSelected: Boolean!\n) {\n  scopedProjectsV2(scope: $scope, filter: {id: {in: $projectIds}}, limit: 100) @skip(if: $skipSelected) {\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIScopedProjectSelectValueQuery(\n  $projectIds: [UUID!]!\n  $scope: ProjectScope!\n  $skipSelected: Boolean!\n) {\n  scopedProjectsV2(scope: $scope, filter: {id: {in: $projectIds}}, limit: 100) @skip(if: $skipSelected) {\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "101e3ad0ac14de4a3d409274954eff33";
+(node as any).hash = "8cc00372f7578932897f1cbe2dc0e25d";
 
 export default node;
