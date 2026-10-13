@@ -357,13 +357,7 @@ const AdminRetentionPolicy: React.FC<AdminRetentionPolicyProps> = ({
               }
               setDeletingPolicy(null);
               message.success(t('retentionPolicy.SuccessfullyDeleted'));
-              // Deleting a page's last row steps back so the table is not left empty.
-              onReload(
-                policies.length === 1 && current > 1
-                  ? { ...variables, offset: (current - 2) * pageSize }
-                  : variables,
-                { fetchPolicy: 'network-only' },
-              );
+              onReload(variables, { fetchPolicy: 'network-only' });
             },
             onError: (error) => {
               message.error(error.message);
