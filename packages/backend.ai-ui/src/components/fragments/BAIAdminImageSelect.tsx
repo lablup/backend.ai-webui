@@ -57,7 +57,7 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export type AstryxImageV2Node = NonNullable<
   NonNullable<
-    BAIAdminImageSelectPaginatedQuery['response']['adminImagesV2']
+    BAIAdminImageSelectPaginatedQuery['response']['scopedImagesV2']
   >['edges'][number]
 >['node'];
 
@@ -81,13 +81,13 @@ export interface BAIAdminImageSelectProps extends Omit<
   filter?: ImageV2Filter;
   open?: boolean;
   defaultOpen?: boolean;
-  /** Lists the images this scope reaches; omit on superadmin-only pages (ADR 0011). */
-  scope?: ImageSearchScope | null;
+  /** The images this scope reaches are listed (ADR 0011). */
+  scope: ImageSearchScope;
   ref?: React.Ref<BAIAdminImageSelectRef>;
 }
 
 /**
- * Paginated image selector backed by `adminImagesV2` (ImageV2).
+ * Paginated image selector backed by `scopedImagesV2` (ImageV2) over the required `scope`.
  * Stored value is the image UUID so callers can pass it directly to
  * mutation inputs that expect `UUID`.
  */
@@ -125,32 +125,16 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
 
   const deferredControllableValue = useDeferredValue(controllableValue);
   const selectedKeys = _.compact(_.castArray(deferredControllableValue ?? []));
-  const useScope = !!scope;
-  const scopeVariable = scope ?? { public: false };
 
   const selectedImageData = useLazyLoadQuery<BAIAdminImageSelectValueQuery>(
     graphql`
       query BAIAdminImageSelectValueQuery(
         $ids: [UUID!]
         $scope: ImageSearchScope!
-        $skipScoped: Boolean!
-        $skipAdmin: Boolean!
+        $skipSelected: Boolean!
       ) {
         scopedImagesV2(scope: $scope, filter: { id: { in: $ids } }, limit: 100)
-          @since(version: "26.9.0a4")
-          @skip(if: $skipScoped) {
-          edges {
-            node {
-              id
-              identity {
-                canonicalName
-                architecture
-              }
-            }
-          }
-        }
-        adminImagesV2(filter: { id: { in: $ids } }, limit: 100)
-          @skip(if: $skipAdmin) {
+          @skip(if: $skipSelected) {
           edges {
             node {
               id
@@ -165,9 +149,8 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
     `,
     {
       ids: selectedKeys,
-      scope: scopeVariable,
-      skipScoped: selectedKeys.length === 0 || !useScope,
-      skipAdmin: selectedKeys.length === 0 || useScope,
+      scope,
+      skipSelected: selectedKeys.length === 0,
     },
     {
       fetchPolicy: selectedKeys.length ? 'store-or-network' : 'store-only',
@@ -175,13 +158,7 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
     },
   );
   const selectedImageMap = _.keyBy(
-    _.compact(
-      _.map(
-        (selectedImageData.scopedImagesV2 ?? selectedImageData.adminImagesV2)
-          ?.edges,
-        (e) => e?.node,
-      ),
-    ),
+    _.compact(_.map(selectedImageData.scopedImagesV2?.edges, (e) => e?.node)),
     (node) => toLocalId(node.id),
   );
 
@@ -193,7 +170,6 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
           $limit: Int!
           $filter: ImageV2Filter
           $scope: ImageSearchScope!
-          $useScope: Boolean!
         ) {
           scopedImagesV2(
             scope: $scope
@@ -201,25 +177,7 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
             limit: $limit
             filter: $filter
             orderBy: [{ field: NAME, direction: ASC }]
-          ) @since(version: "26.9.0a4") @include(if: $useScope) {
-            count
-            edges {
-              node {
-                id
-                identity {
-                  canonicalName
-                  architecture
-                }
-                ...BAIImageNodeSimpleTagV2Fragment
-              }
-            }
-          }
-          adminImagesV2(
-            offset: $offset
-            limit: $limit
-            filter: $filter
-            orderBy: [{ field: NAME, direction: ASC }]
-          ) @skip(if: $useScope) {
+          ) {
             count
             edges {
               node {
@@ -236,8 +194,7 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
       `,
       { limit: 20 },
       {
-        scope: scopeVariable,
-        useScope,
+        scope,
         filter: {
           ...(filterFromProps ?? {}),
           ...(debouncedDeferredValue
@@ -250,10 +207,8 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
         fetchKey: deferredFetchKey,
       },
       {
-        getTotal: (r) =>
-          (r.scopedImagesV2 ?? r.adminImagesV2)?.count ?? undefined,
-        getItem: (r) =>
-          (r.scopedImagesV2 ?? r.adminImagesV2)?.edges?.map((e) => e?.node),
+        getTotal: (r) => r.scopedImagesV2?.count ?? undefined,
+        getItem: (r) => r.scopedImagesV2?.edges?.map((e) => e?.node),
         // Store UUID (via toLocalId) so callers can pass the value directly to UUID! mutation inputs
         getId: (item) => (item?.id ? toLocalId(item.id) : item?.id),
       },
@@ -323,9 +278,7 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
         isPendingRefetch
       }
       isLoadingNext={isLoadingNext}
-      total={
-        (result.scopedImagesV2 ?? result.adminImagesV2)?.count ?? undefined
-      }
+      total={result.scopedImagesV2?.count ?? undefined}
       options={options}
       value={labeledValue}
       onChange={(next) => {
