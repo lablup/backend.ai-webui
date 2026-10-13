@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-10-09
+> **Last Updated:** 2026-10-14
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 362 / 512 features covered (71%)**
+**Overall (in-scope routes): 365 / 515 features covered (71%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -49,12 +49,12 @@
 | Plugin System            | (config-based)                                   |    12    |   12    | ✅ 100% |
 | RBAC Management          | `/rbac`                                          |    23    |   22    | 🔶 96%  |
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule`           |    33    |   32    | 🔶 97%  |
-| Deployments              | `/deployments`, `/deployments/:id`               |    19    |   16    | 🔶 84%  |
+| Deployments              | `/deployments`, `/deployments/:id`               |    22    |   19    | 🔶 86%  |
 | Admin Deployment Preset  | `/admin/deployments/deployment-presets/new`      |    5     |    5    | ✅ 100% |
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **512**  | **362** | **71%** |
+| **Total**                |                                                  | **515**  | **365** | **71%** |
 
 ---
 
@@ -1194,7 +1194,7 @@ External portals (LMS) open these routes with a signed `sToken` plus the app and
 
 ### 30. Deployments (`/deployments`, `/deployments/:id`)
 
-**Test files:** [`e2e/serving/deployment-lifecycle.spec.ts`](serving/deployment-lifecycle.spec.ts), [`e2e/serving/deployment-access-token.spec.ts`](serving/deployment-access-token.spec.ts)
+**Test files:** [`e2e/serving/deployment-lifecycle.spec.ts`](serving/deployment-lifecycle.spec.ts), [`e2e/serving/deployment-access-token.spec.ts`](serving/deployment-access-token.spec.ts), [`e2e/serving/admin-deployment-tag-filter.spec.ts`](serving/admin-deployment-tag-filter.spec.ts)
 
 **Requires:** Superadmin login; `deployment-preset` feature flag (manager ≥ 26.4.x) for the revision-attach and access-token tests (they skip with an auditable reason otherwise), plus at least one `bai/ngc-pytorch` or python image. No hand-seeded preset or folder is required — [`e2e/utils/deployment-fixtures.ts`](utils/deployment-fixtures.ts) self-provisions the preset (find-or-create) and model folder per run.
 **Primary action:** "Create Deployment" → detail page → "Add Revision" (`Preset` / `Advanced` mode)
@@ -1205,6 +1205,14 @@ External portals (LMS) open these routes with a signed `sToken` plus the app and
 | ------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------ |
 | List columns, Running/Terminated toggle, reload & Create controls         | ✅     | `Admin can view the deployments list with expected columns and controls` |
 | Create deployment (defaults, auto-redirect) + typed-name permanent delete | ✅     | `Admin can create a new deployment and permanently delete it`            |
+
+#### Admin List — Tag filter (`/admin/deployments`)
+
+| Feature                                                                 | Status | Test                                                                                      |
+| ----------------------------------------------------------------------- | ------ | ----------------------------------------------------------------------------------------- |
+| Tags-column click filters the Running list by the exact tag (`iEquals`) | ✅     | `Admin can filter deployments by clicking a tag`                                          |
+| Tags-column click keeps the Terminated scope                            | ✅     | `Admin can filter terminated deployments by clicking a tag`                               |
+| Detail-page tag opens the Running list filtered by the tag              | ✅     | `Admin can open the running deployment list filtered by a tag from the deployment detail` |
 
 #### Detail Page
 
@@ -1240,7 +1248,7 @@ External portals (LMS) open these routes with a signed `sToken` plus the app and
 | Replica scheduling completion (Lifecycle leaves Pending → replica scheduled)       | ❌     | Deferred — measured ~40s–20min+ on the shared cluster; out of scope for webui e2e                                        |
 | Revision rollback / promote from Revision History                                  | ❌     | -                                                                                                                        |
 
-**Coverage: 🔶 13/17 features (4 deferred to backend-surface testing or future work)**
+**Coverage: 🔶 16/20 features (4 deferred to backend-surface testing or future work)**
 
 ---
 
@@ -1398,6 +1406,7 @@ These are core user workflows that affect the largest number of users.
 | `test-util.ts`      | [`e2e/utils/test-util.ts`](utils/test-util.ts)                                               | Login, config modification, TOML helpers, route-error screen locators (`notFoundPageHeading` / `forbiddenPageHeading`) |
 | `test-util-antd.ts` | [`e2e/utils/test-util-antd.ts`](utils/test-util-antd.ts)                                     | Ant Design component interaction helpers                                                                               |
 | `SessionAPIHelper`  | [`e2e/utils/classes/session/SessionAPIHelper.ts`](utils/classes/session/SessionAPIHelper.ts) | Create and manage sessions via Backend.AI API                                                                          |
+| `admin-api.ts`      | [`e2e/utils/admin-api.ts`](utils/admin-api.ts)                                               | Admin GraphQL helpers: users, projects, deployments (`findDeploymentByName`, `setDeploymentTagsViaApi`, delete/sweep)  |
 
 ### Page Object Models Needed
 

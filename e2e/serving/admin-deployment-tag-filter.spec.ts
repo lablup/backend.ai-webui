@@ -12,12 +12,33 @@ import {
   escapeForRegExp,
 } from '../utils/deployment-fixtures';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
-import { test, expect, type Page } from '@playwright/test';
+import {
+  test,
+  expect,
+  type APIRequestContext,
+  type Page,
+} from '@playwright/test';
 
 const ADMIN_DEPLOYMENTS_PATH = 'admin/deployments?tab=deployments';
 
 // `e2e-plan-` is what the global teardown's deployment sweep removes.
 const TAG_DEPLOYMENT_PREFIX = 'e2e-plan-tag-';
+
+// Deleting goes through STOPPING, which still counts as Running.
+async function stopDeployment(
+  api: APIRequestContext,
+  name: string,
+): Promise<void> {
+  const deployment = await findDeploymentByName(api, name);
+  if (!deployment) throw new Error(`deployment "${name}" not found`);
+  await deleteDeploymentViaApi(api, deployment.id);
+  await expect
+    .poll(async () => (await findDeploymentByName(api, name))?.status, {
+      timeout: 120_000,
+      intervals: [2000],
+    })
+    .toBe('STOPPED');
+}
 
 async function showTagsColumn(page: Page): Promise<void> {
   await page.getByRole('button', { name: 'Table Settings' }).click();
@@ -33,7 +54,13 @@ async function showTagsColumn(page: Page): Promise<void> {
 test.describe(
   'Admin Deployments - Tag filter',
   {
-    tag: ['@serving', '@admin', '@regression', '@requires-manager-v26.4'],
+    tag: [
+      '@serving',
+      '@admin',
+      '@functional',
+      '@regression',
+      '@requires-manager-v26.4',
+    ],
   },
   () => {
     let tag: string;
@@ -74,32 +101,25 @@ test.describe(
           if (!deployment) throw new Error(`deployment "${name}" not found`);
           await setDeploymentTagsViaApi(api, deployment.id, tags);
         }
-        const terminated = await findDeploymentByName(api, terminatedName);
-        await deleteDeploymentViaApi(api, terminated!.id);
-        // Deleting goes through STOPPING, which still counts as Running.
-        await expect
-          .poll(
-            async () =>
-              (await findDeploymentByName(api, terminatedName))?.status,
-            { timeout: 120_000, intervals: [2000] },
-          )
-          .toBe('STOPPED');
+        await stopDeployment(api, terminatedName);
       } finally {
         await api.dispose();
       }
     });
 
     test.afterEach(async () => {
-      const api = await createAdminApiContext();
       try {
-        for (const name of [runningName, similarName, terminatedName]) {
-          const deployment = await findDeploymentByName(api, name).catch(
-            () => null,
-          );
-          if (deployment) await deleteDeploymentViaApi(api, deployment.id);
+        const api = await createAdminApiContext();
+        try {
+          for (const name of [runningName, similarName, terminatedName]) {
+            const deployment = await findDeploymentByName(api, name);
+            if (deployment) await deleteDeploymentViaApi(api, deployment.id);
+          }
+        } finally {
+          await api.dispose();
         }
-      } finally {
-        await api.dispose();
+      } catch (error) {
+        console.warn('[tag-filter] deployment cleanup failed:', error);
       }
     });
 
@@ -124,12 +144,21 @@ test.describe(
     test('Admin can filter terminated deployments by clicking a tag', async ({
       page,
     }) => {
+      // A stopped `${tag}-large` deployment the tag click must filter out.
+      const api = await createAdminApiContext();
+      try {
+        await stopDeployment(api, similarName);
+      } finally {
+        await api.dispose();
+      }
+
       await navigateTo(page, ADMIN_DEPLOYMENTS_PATH);
       await showTagsColumn(page);
       await page.getByRole('radio', { name: 'Terminated' }).check();
       await expect(rowOf(page, terminatedName)).toBeVisible({
         timeout: 30000,
       });
+      await expect(rowOf(page, similarName)).toBeVisible({ timeout: 30000 });
 
       await rowOf(page, terminatedName)
         .getByRole('button', { name: tag, exact: true })
@@ -143,8 +172,8 @@ test.describe(
       await expect(rowOf(page, terminatedName)).toBeVisible({
         timeout: 30000,
       });
+      await expect(rowOf(page, similarName)).toBeHidden({ timeout: 30000 });
       await expect(rowOf(page, runningName)).toBeHidden();
-      await expect(rowOf(page, similarName)).toBeHidden();
     });
 
     test('Admin can open the running deployment list filtered by a tag from the deployment detail', async ({
