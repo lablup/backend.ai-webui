@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7ddd5a822973ebc8e501f8cd67eadbe8>>
+ * @generated SignedSource<<dc0c103977455b91a83f332b6fd40864>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,17 +9,17 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type RetentionPolicyListDeleteMutation$variables = {
+export type AdminRetentionPolicyDeleteMutation$variables = {
   id: string;
 };
-export type RetentionPolicyListDeleteMutation$data = {
+export type AdminRetentionPolicyDeleteMutation$data = {
   readonly adminDeleteRetentionPolicy: {
     readonly id: string;
   } | null | undefined;
 };
-export type RetentionPolicyListDeleteMutation = {
-  response: RetentionPolicyListDeleteMutation$data;
-  variables: RetentionPolicyListDeleteMutation$variables;
+export type AdminRetentionPolicyDeleteMutation = {
+  response: AdminRetentionPolicyDeleteMutation$data;
+  variables: AdminRetentionPolicyDeleteMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -61,7 +61,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "RetentionPolicyListDeleteMutation",
+    "name": "AdminRetentionPolicyDeleteMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -70,20 +70,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "RetentionPolicyListDeleteMutation",
+    "name": "AdminRetentionPolicyDeleteMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "66605dd8475e57818b082064a0ace414",
+    "cacheID": "db275fd1b56d8af75bc028102eb630d0",
     "id": null,
     "metadata": {},
-    "name": "RetentionPolicyListDeleteMutation",
+    "name": "AdminRetentionPolicyDeleteMutation",
     "operationKind": "mutation",
-    "text": "mutation RetentionPolicyListDeleteMutation(\n  $id: UUID!\n) {\n  adminDeleteRetentionPolicy(id: $id) {\n    id\n  }\n}\n"
+    "text": "mutation AdminRetentionPolicyDeleteMutation(\n  $id: UUID!\n) {\n  adminDeleteRetentionPolicy(id: $id) {\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "2bf164d503ca1e806c203cff898f297c";
+(node as any).hash = "6c16a5564da596d6035573a03b3d2deb";
 
 export default node;

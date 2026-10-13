@@ -4,15 +4,15 @@
  */
 import {
   RetentionPolicyFilter,
-  RetentionPolicyListQuery as RetentionPolicyListQueryType,
+  AdminRetentionPolicyQuery as AdminRetentionPolicyQueryType,
   RetentionPolicyOrderBy,
-} from '../__generated__/RetentionPolicyListQuery.graphql';
+} from '../__generated__/AdminRetentionPolicyQuery.graphql';
+import AdminRetentionPolicy, {
+  ADMIN_RETENTION_POLICY_DEFAULT_PAGE_SIZE,
+  AdminRetentionPolicyQuery,
+} from '../components/AdminRetentionPolicy';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import MaintenanceSettingList from '../components/MaintenanceSettingList';
-import RetentionPolicyList, {
-  RETENTION_POLICY_LIST_DEFAULT_PAGE_SIZE,
-  RetentionPolicyListQuery,
-} from '../components/RetentionPolicyList';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { useBrowserPopstateEffect, useKeyedSnapshot } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -44,7 +44,7 @@ const orderParser = parseAsStringLiteral(
 ).withDefault('category');
 
 type TabKey = 'maintenance' | 'retention-policy';
-type RetentionPolicyVariables = RetentionPolicyListQueryType['variables'];
+type RetentionPolicyVariables = AdminRetentionPolicyQueryType['variables'];
 
 type TabSnapshot = {
   queryParams: {
@@ -58,7 +58,7 @@ const defaultSnapshotOf = (_tab: TabKey): TabSnapshot => ({
   queryParams: { order: orderParser.defaultValue, filter: null },
   tablePaginationOption: {
     current: 1,
-    pageSize: RETENTION_POLICY_LIST_DEFAULT_PAGE_SIZE,
+    pageSize: ADMIN_RETENTION_POLICY_DEFAULT_PAGE_SIZE,
   },
 });
 
@@ -96,7 +96,7 @@ const MaintenancePage = () => {
     );
 
   const [retentionPolicyQueryRef, loadRetentionPolicyQuery] =
-    useQueryLoader<RetentionPolicyListQueryType>(RetentionPolicyListQuery);
+    useQueryLoader<AdminRetentionPolicyQueryType>(AdminRetentionPolicyQuery);
 
   // What the URL currently describes — both the snapshot `useKeyedSnapshot`
   // stores for the active tab and what a browser navigation reloads from.
@@ -114,7 +114,8 @@ const MaintenancePage = () => {
     variables: RetentionPolicyVariables,
     options?: UseQueryLoaderLoadQueryOptions,
   ) => {
-    const pageSize = variables.limit ?? RETENTION_POLICY_LIST_DEFAULT_PAGE_SIZE;
+    const pageSize =
+      variables.limit ?? ADMIN_RETENTION_POLICY_DEFAULT_PAGE_SIZE;
     const pagination = {
       current: Math.floor((variables.offset ?? 0) / pageSize) + 1,
       pageSize,
@@ -187,7 +188,7 @@ const MaintenancePage = () => {
         {currentTab === 'retention-policy' && (
           <BAIErrorBoundary>
             {retentionPolicyQueryRef ? (
-              <RetentionPolicyList
+              <AdminRetentionPolicy
                 queryRef={retentionPolicyQueryRef}
                 onReload={handleRetentionPolicyReload}
               />
