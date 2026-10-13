@@ -87,7 +87,6 @@ const RetentionPolicySettingModal: React.FC<
   const relayEnv = useRelayEnvironment();
   const getCategoryLabel = useRetentionCategoryLabel();
   const formRef = useRef<FormInstance<RetentionPolicyFormValues>>(null);
-  // A counter, so a re-select during an in-flight check does not end loading early.
   const [pendingCategoryChecks, setPendingCategoryChecks] = useState(0);
 
   const policy = useFragment(
@@ -132,7 +131,6 @@ const RetentionPolicySettingModal: React.FC<
       }
     `);
 
-  // A failed check resolves: the server's error on submit stays the final guard.
   const validateCategoryIsFree = async (_rule: unknown, value: unknown) => {
     const category = value as RetentionCategory | undefined;
     if (!category || category === policy?.category) return;
