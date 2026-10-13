@@ -30,7 +30,6 @@
 import { BAIAdminKeypairResourcePolicySelectPaginatedQuery } from '../../__generated__/BAIAdminKeypairResourcePolicySelectPaginatedQuery.graphql';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useControllableValue, useFetchKey } from '../../hooks';
-import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import BAIComplexSelect, {
   type BAIComplexSelectProps,
@@ -72,7 +71,6 @@ const BAIAdminKeypairResourcePolicySelect: React.FC<
   BAIAdminKeypairResourcePolicySelectProps
 > = ({ multiple = false, isLoading, ref, ...selectProps }) => {
   'use memo';
-  const { t } = useBAIi18n();
   const [controllableValue, setControllableValue] = useControllableValue<
     string | Array<string> | null | undefined
   >(selectProps as Record<string, unknown>, {
@@ -181,9 +179,6 @@ const BAIAdminKeypairResourcePolicySelect: React.FC<
 
   return (
     <BAIComplexSelect
-      placeholder={t(
-        'comp:BAIAdminKeypairResourcePolicySelect.SelectKeypairResourcePolicy',
-      )}
       {...selectProps}
       multiple={multiple}
       isLoading={

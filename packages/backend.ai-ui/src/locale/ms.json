@@ -29,9 +29,6 @@
     "FailedToActivateArtifacts": "Gagal mengaktifkan artifak.",
     "SuccessfullyActivated": "Artifak yang berjaya diaktifkan."
   },
-  "comp:BAIAdminKeypairResourcePolicySelect": {
-    "SelectKeypairResourcePolicy": "Pilih Dasar Sumber Keypair"
-  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Pilih Perkhidmatan Model"
   },
