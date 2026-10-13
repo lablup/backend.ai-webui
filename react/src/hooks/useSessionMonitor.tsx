@@ -6,13 +6,10 @@ import type { useSessionMonitorQuery } from '../__generated__/useSessionMonitorQ
 import type { IdleChecks } from '../components/ComputeSessionNodeItems/SessionIdleChecks';
 import {
   SESSION_MONITOR_FETCH_LIMIT,
-  SESSION_MONITOR_NOT_FINISHED_FILTER,
   toSessionMonitorEntry,
   type SessionMonitorEntry,
   type SessionMonitorSummary,
 } from '../helper/sessionMonitor';
-import { useCurrentUserInfo } from './backendai';
-import { useCurrentProjectValue } from './useCurrentProject';
 import { INITIAL_FETCH_KEY } from 'backend.ai-ui';
 import { atom } from 'jotai';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -23,6 +20,20 @@ export const sessionMonitorFetchKeyAtom = atom<string>(INITIAL_FETCH_KEY);
 export const sessionMonitorSummaryAtom = atom<SessionMonitorSummary | null>(
   null,
 );
+
+/**
+ * `my`: the user's sessions in the current project; `project`: every session
+ * of the project (project-admin pages); `domain`: every session of the domain
+ * (admin pages, domain admins).
+ */
+export type SessionMonitorMode = 'my' | 'project' | 'domain';
+export type SessionMonitorScope = {
+  mode: SessionMonitorMode;
+  scopeId: string;
+  filter: string;
+};
+/** Resolved by `SessionMonitorWatcher` for the route; null hides the chip. */
+export const sessionMonitorScopeAtom = atom<SessionMonitorScope | null>(null);
 
 const parseIdleChecks = (raw: string | null | undefined): IdleChecks | null => {
   if (!raw) return null;
@@ -42,13 +53,14 @@ export type SessionMonitorNode = NonNullable<
 >;
 
 /**
- * The user's unfinished sessions in the current project (the session list
- * page's scope). Shared by the watcher and the popover so both see one answer.
+ * The unfinished sessions of `scope`, newest first. Shared by the watcher and
+ * the popover so both see one answer.
  */
-export const useSessionMonitorData = (fetchKey: string) => {
+export const useSessionMonitorData = (
+  fetchKey: string,
+  scope: SessionMonitorScope,
+) => {
   'use memo';
-  const [currentUser] = useCurrentUserInfo();
-  const currentProject = useCurrentProjectValue();
 
   const data = useLazyLoadQuery<useSessionMonitorQuery>(
     graphql`
@@ -78,8 +90,8 @@ export const useSessionMonitorData = (fetchKey: string) => {
       }
     `,
     {
-      scopeId: `project:${currentProject.id}`,
-      filter: `${SESSION_MONITOR_NOT_FINISHED_FILTER} & user_id == "${currentUser.uuid}"`,
+      scopeId: scope.scopeId,
+      filter: scope.filter,
       first: SESSION_MONITOR_FETCH_LIMIT,
     },
     { fetchPolicy: 'store-and-network', fetchKey },

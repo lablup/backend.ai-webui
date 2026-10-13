@@ -12,7 +12,10 @@ import { useIsProjectAgnosticPage } from '../../hooks/useIsProjectAgnosticPage';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import {
   sessionMonitorFetchKeyAtom,
+  sessionMonitorScopeAtom,
   useSessionMonitorData,
+  type SessionMonitorMode,
+  type SessionMonitorScope,
 } from '../../hooks/useSessionMonitor';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import WebUILink from '../WebUILink';
@@ -23,7 +26,7 @@ import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFetchKeyButton, BAIFlex } from 'backend.ai-ui';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { ArrowLeft, Settings } from 'lucide-react';
 import React, {
   Suspense,
@@ -41,6 +44,23 @@ const SessionMonitorPopoverContent: React.FC<
   SessionMonitorPopoverContentProps
 > = ({ onNavigate }) => {
   'use memo';
+  const scope = useAtomValue(sessionMonitorScopeAtom);
+  return scope ? (
+    <ScopedSessionMonitorPopoverContent scope={scope} onNavigate={onNavigate} />
+  ) : null;
+};
+
+export const sessionMonitorTitleKey = (mode: SessionMonitorMode) =>
+  mode === 'domain'
+    ? 'sessionMonitor.DomainSessions'
+    : mode === 'project'
+      ? 'sessionMonitor.ProjectSessions'
+      : 'sessionMonitor.MySessions';
+
+const ScopedSessionMonitorPopoverContent: React.FC<
+  SessionMonitorPopoverContentProps & { scope: SessionMonitorScope }
+> = ({ scope, onNavigate }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
   const buildProjectPath = useProjectPath();
@@ -54,8 +74,10 @@ const SessionMonitorPopoverContent: React.FC<
     'session_monitor_include_starting',
   );
   const [rows] = useBAISettingUserState('session_monitor_rows');
-  const { entries, nodesById, total, fetchedAt } =
-    useSessionMonitorData(deferredFetchKey);
+  const { entries, nodesById, total, fetchedAt } = useSessionMonitorData(
+    deferredFetchKey,
+    scope,
+  );
 
   const listed =
     (includeStarting ?? true)
@@ -70,6 +92,15 @@ const SessionMonitorPopoverContent: React.FC<
   const running = entries.filter((e) => e.status === 'RUNNING').length;
   const starting = entries.length - running;
   const showDeadlineColumn = visible.some((e) => e.deadline !== null);
+  // The list that matches the scope: admin, project-admin or the user's own.
+  const listPath = buildProjectPath('session', {
+    scope:
+      scope.mode === 'domain'
+        ? 'admin'
+        : scope.mode === 'project'
+          ? 'projectAdmin'
+          : 'project',
+  });
 
   return (
     <BAIFlex
@@ -89,7 +120,7 @@ const SessionMonitorPopoverContent: React.FC<
         <Text type="label" weight="semibold">
           {view === 'settings'
             ? t('sessionMonitor.MonitorSettings')
-            : t('sessionMonitor.MySessions')}
+            : t(sessionMonitorTitleKey(scope.mode))}
         </Text>
         {view === 'list' && (
           <Text type="supporting">
@@ -116,7 +147,7 @@ const SessionMonitorPopoverContent: React.FC<
           size="sm"
           label={
             view === 'settings'
-              ? t('sessionMonitor.MySessions')
+              ? t(sessionMonitorTitleKey(scope.mode))
               : t('sessionMonitor.MonitorSettings')
           }
           icon={
@@ -153,13 +184,14 @@ const SessionMonitorPopoverContent: React.FC<
                   key={entry.id}
                   sessionFrgmt={node}
                   entry={entry}
+                  listPath={listPath}
                   showDeadlineColumn={showDeadlineColumn}
                   onNavigate={onNavigate}
                 />
               ) : null;
             })
           )}
-          {!isProjectAgnosticPage && (
+          {!isProjectAgnosticPage && scope.mode !== 'domain' && (
             <ErrorBoundaryWithNullFallback>
               <Suspense fallback={null}>
                 <SessionMonitorResourceUsage />
@@ -178,7 +210,7 @@ const SessionMonitorPopoverContent: React.FC<
           >
             <WebUILink
               data-testid="session-monitor-open-list"
-              to={buildProjectPath('session', { scope: 'project' })}
+              to={listPath}
               onClick={onNavigate}
               style={{ textDecoration: 'none' }}
             >

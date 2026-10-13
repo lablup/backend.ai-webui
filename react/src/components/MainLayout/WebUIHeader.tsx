@@ -122,12 +122,8 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
         {/* Same self-scoping reason as `BAINotificationButton` below: both own
             floating surfaces, so neither may sit inside a `MediaTheme`. */}
         <GlobalSearchPaletteButton data-testid="button-global-search" />
-        {/* Owns a `Popover`, so it scopes the band context to its trigger.
-            Project-scoped like the session list, so absent above project
-            scope (ADR-0001). */}
-        {!isProjectAgnosticPage && (
-          <SessionMonitorButton data-testid="button-session-monitor" />
-        )}
+        {/* Owns a `Popover`, so it scopes the band context to its trigger. */}
+        <SessionMonitorButton data-testid="button-session-monitor" />
         {/* `BAINotificationButton` scopes its own on-dark context to its
             button, because it also owns a `Tooltip` whose panel is an inline
             sibling — see that file. */}

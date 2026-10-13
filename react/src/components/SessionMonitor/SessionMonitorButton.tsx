@@ -5,11 +5,16 @@
 import { formatDurationAsDays } from '../../helper';
 import { ATTENTION_THRESHOLD_SEC } from '../../helper/sessionMonitor';
 import { useIsProjectAgnosticPage } from '../../hooks/useIsProjectAgnosticPage';
-import { sessionMonitorSummaryAtom } from '../../hooks/useSessionMonitor';
+import {
+  sessionMonitorScopeAtom,
+  sessionMonitorSummaryAtom,
+} from '../../hooks/useSessionMonitor';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import SessionMonitorAcceleratorSummary from './SessionMonitorAcceleratorSummary';
-import SessionMonitorPopoverContent from './SessionMonitorPopoverContent';
+import SessionMonitorPopoverContent, {
+  sessionMonitorTitleKey,
+} from './SessionMonitorPopoverContent';
 import { Button } from '@lablup/ui-common/Button';
 import { Popover } from '@lablup/ui-common/Popover';
 import { StatusDot } from '@lablup/ui-common/StatusDot';
@@ -50,6 +55,7 @@ const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
   const { isDarkMode } = useThemeMode();
   const isProjectAgnosticPage = useIsProjectAgnosticPage();
   const summary = useAtomValue(sessionMonitorSummaryAtom);
+  const scope = useAtomValue(sessionMonitorScopeAtom);
   const [isOpen, setIsOpen] = useState(false);
   // The band is a reversed surface; the media scope goes on the trigger only
   // so the popover panel (an inline sibling) keeps the app palette.
@@ -75,10 +81,12 @@ const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
     String(deadline),
   );
   const running = summary?.running ?? 0;
+  if (!scope) return null;
+  const title = t(sessionMonitorTitleKey(scope.mode));
 
   return (
     <Popover
-      label={t('sessionMonitor.MySessions')}
+      label={title}
       placement="below"
       alignment="end"
       padding={0}
@@ -110,7 +118,7 @@ const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
           data-testid={props['data-testid']}
           variant="ghost"
           size="sm"
-          label={t('sessionMonitor.MySessions')}
+          label={title}
         >
           <BAIFlex direction="row" align="center" gap="xs">
             <StatusDot
@@ -121,7 +129,7 @@ const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
             <Text type="inherit" textWrap="nowrap">
               {t('sessionMonitor.RunningCount', { count: running })}
             </Text>
-            {!isProjectAgnosticPage && (
+            {!isProjectAgnosticPage && scope.mode !== 'domain' && (
               <ErrorBoundaryWithNullFallback>
                 <Suspense fallback={null}>
                   <SessionMonitorAcceleratorSummary separator={<Separator />} />

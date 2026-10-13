@@ -3287,6 +3287,7 @@
     }
   },
   "sessionMonitor": {
+    "DomainSessions": "이 도메인의 세션",
     "MonitorSettings": "모니터 설정",
     "MoreSessions": "세션 {{count}}개 더 있음",
     "MyResourceUsage": "내 할당 한도 대비 사용량",
@@ -3294,9 +3295,10 @@
     "NoActiveSessions": "실행 중인 세션이 없습니다",
     "OpenSession": "세션 열기",
     "OpenSessionList": "세션 목록 열기",
+    "ProjectSessions": "이 프로젝트의 세션",
     "RunningCount": "실행 {{count}}",
     "StartingCount": "시작 중 {{count}}",
-    "Tooltip": "나의 세션: 실행 수와 가장 가까운 종료 시각",
+    "Tooltip": "세션 모니터: 실행 수와 가장 가까운 종료 시각",
     "idleAlert": {
       "NetworkTimeout": "네트워크 활동이 감지되지 않았습니다. 종료되기 전에 세션에 접속해 주세요.",
       "SessionLifetime": "세션이 최대 수명에 도달하고 있습니다.",

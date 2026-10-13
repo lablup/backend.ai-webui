@@ -11,7 +11,6 @@ import {
   type SessionMonitorEntry,
 } from '../../helper/sessionMonitor';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
-import { useProjectPath } from '../../hooks/useRouteScope';
 import { getIdleChecksBadgeVariant } from '../ComputeSessionNodeItems/SessionIdleChecks';
 import WebUILink from '../WebUILink';
 import SessionMonitorUtilizationBars from './SessionMonitorUtilizationBars';
@@ -29,6 +28,8 @@ import { graphql, useFragment } from 'react-relay';
 interface SessionMonitorItemProps {
   sessionFrgmt: SessionMonitorItemFragment$key;
   entry: SessionMonitorEntry;
+  /** The session list the row's detail link opens on. */
+  listPath: string;
   /** Keeps the time-left column only when some listed session has one. */
   showDeadlineColumn?: boolean;
   onNavigate?: () => void;
@@ -37,13 +38,13 @@ interface SessionMonitorItemProps {
 const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
   sessionFrgmt,
   entry,
+  listPath,
   showDeadlineColumn = true,
   onNavigate,
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
-  const buildProjectPath = useProjectPath();
   const { mergedResourceSlots } = useResourceSlotsDetails();
 
   const session = useFragment(
@@ -63,9 +64,9 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
 
   const { nearest, deadline } = entry;
   const isRunning = isRunningStatus(session.status);
-  const detailPath = `${buildProjectPath('session', { scope: 'project' })}?${new URLSearchParams(
-    { sessionDetail: toLocalId(session.id) },
-  ).toString()}`;
+  const detailPath = `${listPath}?${new URLSearchParams({
+    sessionDetail: toLocalId(session.id),
+  }).toString()}`;
 
   // "GPU 2 · RAM 32G": the allocation (or the request while starting).
   const slots: Record<string, string | undefined> = JSON.parse(

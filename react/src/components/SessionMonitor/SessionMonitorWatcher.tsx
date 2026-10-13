@@ -6,19 +6,24 @@ import {
   applyAttentionTitleBadge,
   pickDueAlerts,
   readAlertedRecords,
+  SESSION_MONITOR_NOT_FINISHED_FILTER,
   SESSION_MONITOR_POLL_INTERVAL_MS,
   summarizeSessions,
   writeAlertedRecords,
   type SessionMonitorEntry,
 } from '../../helper/sessionMonitor';
+import { useCurrentDomainValue } from '../../hooks';
+import { useCurrentUserInfo, useCurrentUserRole } from '../../hooks/backendai';
 import { useSetBAINotification } from '../../hooks/useBAINotification';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
-import { useIsProjectAgnosticPage } from '../../hooks/useIsProjectAgnosticPage';
-import { useProjectPath } from '../../hooks/useRouteScope';
+import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
+import { useProjectPath, useRouteScope } from '../../hooks/useRouteScope';
 import {
   sessionMonitorFetchKeyAtom,
+  sessionMonitorScopeAtom,
   sessionMonitorSummaryAtom,
   useSessionMonitorData,
+  type SessionMonitorScope,
 } from '../../hooks/useSessionMonitor';
 import { toLocalId, useInterval } from 'backend.ai-ui';
 import { useAtom, useSetAtom } from 'jotai';
@@ -40,29 +45,91 @@ const idleAlertDescriptionKey = (
       : 'sessionMonitor.idleAlert.SessionLifetime';
 
 /**
- * Polls the user's sessions in the current project for the header button,
- * the tab-title badge and the idle-termination alerts. Renders nothing;
- * mounted once in MainLayout, and idle above project scope (ADR-0001).
+ * Resolves the monitor's scope from the route and the viewer's role, then
+ * polls it for the header chip, the tab-title badge and (own sessions only)
+ * the idle-termination alerts. Renders nothing; mounted once in MainLayout.
  */
 const SessionMonitorWatcher: React.FC = () => {
   'use memo';
-  const isProjectAgnosticPage = useIsProjectAgnosticPage();
-  return isProjectAgnosticPage ? null : <ProjectSessionMonitorWatcher />;
+  const routeScope = useRouteScope();
+  const role = useCurrentUserRole();
+  const domainName = useCurrentDomainValue();
+  const setScope = useSetAtom(sessionMonitorScopeAtom);
+
+  // Admin routes are project-agnostic (ADR-0001): a domain admin (the
+  // superadmin role counts as one) watches the domain; anyone else gets no
+  // chip there.
+  const isAdminRoute = routeScope === 'admin';
+  const canWatchDomain = role === 'superadmin' || role === 'admin';
+  const hidden = isAdminRoute && !canWatchDomain;
+  useEffect(() => {
+    if (hidden) setScope(null);
+  }, [hidden, setScope]);
+  if (hidden) return null;
+
+  return isAdminRoute ? (
+    <ScopedSessionMonitorWatcher
+      key={`domain:${domainName}`}
+      scope={{
+        mode: 'domain',
+        scopeId: `domain:${domainName}`,
+        filter: SESSION_MONITOR_NOT_FINISHED_FILTER,
+      }}
+    />
+  ) : (
+    <ProjectSessionMonitorWatcher
+      mode={routeScope === 'projectAdmin' ? 'project' : 'my'}
+    />
+  );
 };
 
-const ProjectSessionMonitorWatcher: React.FC = () => {
+const ProjectSessionMonitorWatcher: React.FC<{ mode: 'my' | 'project' }> = ({
+  mode,
+}) => {
+  'use memo';
+  const currentProject = useCurrentProjectValue();
+  const [currentUser] = useCurrentUserInfo();
+  if (!currentProject.id) return null;
+  const scope: SessionMonitorScope = {
+    mode,
+    scopeId: `project:${currentProject.id}`,
+    filter:
+      mode === 'my'
+        ? `${SESSION_MONITOR_NOT_FINISHED_FILTER} & user_id == "${currentUser.uuid}"`
+        : SESSION_MONITOR_NOT_FINISHED_FILTER,
+  };
+  return (
+    <ScopedSessionMonitorWatcher
+      key={`${scope.mode}:${scope.scopeId}`}
+      scope={scope}
+    />
+  );
+};
+
+const ScopedSessionMonitorWatcher: React.FC<{ scope: SessionMonitorScope }> = ({
+  scope,
+}) => {
   'use memo';
   const { t } = useTranslation();
   const [fetchKey, setFetchKey] = useAtom(sessionMonitorFetchKeyAtom);
   const deferredFetchKey = useDeferredValue(fetchKey);
-  const { entries, total, fetchedAt } = useSessionMonitorData(deferredFetchKey);
+  const { entries, total, fetchedAt } = useSessionMonitorData(
+    deferredFetchKey,
+    scope,
+  );
   const setSummary = useSetAtom(sessionMonitorSummaryAtom);
+  const setScope = useSetAtom(sessionMonitorScopeAtom);
   const [idleAlertsSetting] = useBAISettingUserState(
     'session_monitor_idle_alerts',
   );
-  const idleAlertsEnabled = idleAlertsSetting ?? true;
+  const idleAlertsEnabled = (idleAlertsSetting ?? true) && scope.mode === 'my';
   const { upsertNotification } = useSetBAINotification();
   const buildProjectPath = useProjectPath();
+
+  useEffect(() => {
+    setScope(scope);
+    return () => setScope(null);
+  }, [scope, setScope]);
 
   const refetch = () => {
     startTransition(() => setFetchKey(new Date().toISOString()));
