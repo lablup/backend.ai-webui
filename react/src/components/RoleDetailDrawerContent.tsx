@@ -135,7 +135,11 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
           <LegacyRolePermissionTab roleId={toLocalId(role.id)} />
         )}
         {activeTab === 'assignments' && (
-          <RoleAssignmentTab roleNodeFrgmt={role} />
+          <RoleAssignmentTab
+            // Keyed by role: history navigation swaps the role without closing the drawer.
+            key={role.id}
+            roleNodeFrgmt={role}
+          />
         )}
       </Suspense>
     </>
