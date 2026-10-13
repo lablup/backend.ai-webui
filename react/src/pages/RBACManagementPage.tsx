@@ -523,9 +523,7 @@ const RoleListTab: React.FC = () => {
         onOk={() => {
           if (purgingRole) {
             return mutatePurgeRole({
-              input: {
-                id: purgingRole.entityId,
-              },
+              input: { id: purgingRole.entityId },
             })
               .then(() => {
                 message.success(t('rbac.RolePurged'));

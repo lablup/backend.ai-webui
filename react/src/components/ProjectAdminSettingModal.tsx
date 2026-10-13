@@ -150,10 +150,7 @@ export const groupProjectAdminAssignmentsByUser = (
       roles.flatMap((role) =>
         filterOutNullAndUndefined(
           _.map(role.users?.edges, (edge) => edge?.node),
-        ).map((node) => ({
-          ...node,
-          roleId: role.entityId,
-        })),
+        ).map((node) => ({ ...node, roleId: role.entityId })),
       ),
       'userId',
     ),
