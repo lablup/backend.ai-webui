@@ -227,6 +227,21 @@ export async function deleteDeploymentViaApi(
   }
 }
 
+/** Replaces a deployment's tags via `updateModelDeployment`. */
+export async function setDeploymentTagsViaApi(
+  api: APIRequestContext,
+  id: string,
+  tags: string[],
+): Promise<void> {
+  await gqlAdmin(
+    api,
+    `mutation($input: UpdateDeploymentInput!) {
+      updateModelDeployment(input: $input) { deployment { id } }
+    }`,
+    { input: { id: toRawUUID(id), tags } },
+  );
+}
+
 /**
  * Sweep-deletes every deployment whose display name matches `pattern` — by
  * default the `e2e-plan-*` / `e2e-token-*` shells the deployment specs
