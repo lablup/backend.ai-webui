@@ -88,6 +88,7 @@ export type BAIScopedProjectSelectPaginatedQuery$data = {
                 readonly basicInfo: {
                     readonly name: string;
                 };
+                readonly entityId: string;
                 readonly id: string;
             };
         }>;
