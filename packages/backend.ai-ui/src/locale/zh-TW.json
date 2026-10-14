@@ -193,6 +193,18 @@
   "comp:BAIEntityLabelTokens": {
     "Labels": "標籤"
   },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "建立",
+    "Custom": "自訂",
+    "FullAccess": "完整存取",
+    "HardDelete": "永久刪除",
+    "Presets": "預設",
+    "Read": "讀取",
+    "ReadAndWrite": "讀寫",
+    "ReadOnly": "唯讀",
+    "SoftDelete": "刪除",
+    "Update": "修改"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "自動重新整理",
     "EveryHours": "{{count}}小時",

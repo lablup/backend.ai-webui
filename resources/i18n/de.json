@@ -1054,6 +1054,8 @@
       "SelectPermission": "Berechtigung auswählen",
       "Serve": "Das Modell dient",
       "ShareFolder": "Ordner teilen",
+      "SharePermission": "Freigabeberechtigung",
+      "SharePermissionDesc": "Das Höchstmaß dessen, was der eingeladene Benutzer mit dem freigegebenen Ordner tun darf: Inhalte erstellen, lesen, bearbeiten oder löschen. Die Mount-Berechtigung wird separat festgelegt.",
       "SharedFolderAlertDesc": "Dies ist ein extern geteilter Ordner.",
       "SharedMountPermission": "Freigabe-Mount-Berechtigung",
       "SharedMountPermissionDesc": "Die Standard-Mount-Berechtigung für Benutzer, mit denen dieser Ordner geteilt wird. Ein freigegebener Benutzer ohne individuelle Berechtigung erhält diese Berechtigung. Der Ersteller des Ordners erhält immer Lesen & Schreiben.",

@@ -1054,6 +1054,8 @@
       "SelectPermission": "Wybierz uprawnienia",
       "Serve": "Model obsługujący",
       "ShareFolder": "Folder udostępniony",
+      "SharePermission": "Uprawnienie udostępniania",
+      "SharePermissionDesc": "Maksymalny zakres działań zaproszonej osoby w udostępnionym folderze: tworzenie, odczyt, aktualizacja lub usuwanie zawartości. Uprawnienie montowania ustawia się osobno.",
       "SharedFolderAlertDesc": "Jest to folder udostępniony zewnętrznie.",
       "SharedMountPermission": "Udostępnione uprawnienie montowania",
       "SharedMountPermissionDesc": "Domyślne uprawnienie montowania dla użytkowników, którym udostępniono ten folder. Udostępniony użytkownik bez indywidualnego uprawnienia otrzymuje to uprawnienie. Twórca folderu zawsze otrzymuje odczyt i zapis.",

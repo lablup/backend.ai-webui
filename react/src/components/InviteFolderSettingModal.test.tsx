@@ -7,7 +7,7 @@ import '../../__test__/resizeObserver.mock.js';
 import type { InviteFolderSettingModalTestQuery } from '../__generated__/InviteFolderSettingModalTestQuery.graphql';
 import InviteFolderSettingModal from './InviteFolderSettingModal';
 import '@testing-library/jest-dom';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Suspense } from 'react';
 import {
@@ -24,7 +24,10 @@ import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockE
  * accepted user's mount level, invites one recipient at a time, and offers an
  * e-mail invite as an entity share capped at the folder's shared mount
  * permission, with no mount policy of its own.
- * `t` is identity-mapped, so the assertions read as i18n keys.
+ * #10329: the cap is the bits the share permission selector picks, and each
+ * listed share shows its own cap.
+ * `t` is identity-mapped (for BUI's `useBAIi18n` too), so the assertions read
+ * as i18n keys.
  */
 
 vi.mock('react-i18next', () => ({
@@ -177,6 +180,51 @@ const Harness: React.FC<{ onRequestClose?: () => void }> = ({
 
 const h = { hidden: true } as const;
 
+const sharePermissionTrigger = () => {
+  const root = screen.getByTestId('share-permission-selector');
+  return root.tagName === 'BUTTON' ? root : within(root).getByRole('button');
+};
+
+// The permission menu opens through the Popover API, which jsdom lacks. The
+// mock is installed by the one test that opens it and undone right after, as
+// it also changes how the row-action confirm popovers answer `hidden` queries.
+const installPopoverMock = () => {
+  const original = {
+    showPopover: HTMLElement.prototype.showPopover,
+    hidePopover: HTMLElement.prototype.hidePopover,
+    matches: HTMLElement.prototype.matches,
+  };
+  HTMLElement.prototype.showPopover = vi.fn(function (this: HTMLElement) {
+    this.setAttribute('popover-open', '');
+    const event = new Event('toggle');
+    Object.defineProperty(event, 'newState', { value: 'open' });
+    this.dispatchEvent(event);
+  });
+  HTMLElement.prototype.hidePopover = vi.fn(function (this: HTMLElement) {
+    this.removeAttribute('popover-open');
+    const event = new Event('toggle');
+    Object.defineProperty(event, 'newState', { value: 'closed' });
+    this.dispatchEvent(event);
+  });
+  Object.defineProperty(HTMLElement.prototype, 'matches', {
+    configurable: true,
+    value: function (this: HTMLElement, selector: string): boolean {
+      if (selector === ':popover-open') {
+        return this.hasAttribute('popover-open');
+      }
+      return original.matches.call(this, selector);
+    },
+  });
+  return () => {
+    HTMLElement.prototype.showPopover = original.showPopover;
+    HTMLElement.prototype.hidePopover = original.hidePopover;
+    Object.defineProperty(HTMLElement.prototype, 'matches', {
+      configurable: true,
+      value: original.matches,
+    });
+  };
+};
+
 const operationNames = (environment: RelayMockEnvironment) =>
   environment.mock
     .getAllOperations()
@@ -293,6 +341,62 @@ describe('InviteFolderSettingModal (#10295)', () => {
     expect(
       screen.getByText('user3@example.com').closest('tr'),
     ).toHaveTextContent('data.ReadOnly');
+    // Each row shows the cap stored on its share, in the selector's words.
+    expect(
+      screen.getByText('user2@example.com').closest('tr'),
+    ).toHaveTextContent('comp:BAIEntitySharePermissionSelector.ReadOnly');
+    expect(
+      screen.getByText('nobody@example.com').closest('tr'),
+    ).toHaveTextContent('comp:BAIEntitySharePermissionSelector.ReadAndWrite');
+  });
+
+  it('starts the share permission from the folder mount level and sends the picked bits', async () => {
+    const restorePopover = installPopoverMock();
+    const user = userEvent.setup();
+    const environment = await renderModal();
+
+    // READ_ONLY folder default → the Read only preset.
+    expect(sharePermissionTrigger()).toHaveTextContent(
+      'comp:BAIEntitySharePermissionSelector.ReadOnly',
+    );
+    await user.click(sharePermissionTrigger());
+    await user.click(
+      screen.getByTestId('bai-entity-share-permission-full-access'),
+    );
+    expect(sharePermissionTrigger()).toHaveTextContent(
+      'comp:BAIEntitySharePermissionSelector.FullAccess',
+    );
+
+    await user.click(screen.getByText('data.folders.SearchUser'));
+    await resolvePendingQueries(environment);
+    const searchBox = screen
+      .getAllByRole('combobox', h)
+      .find((el) => el.tagName === 'INPUT');
+    await user.type(searchBox!, 'nobody2@example.com');
+    await user.click(
+      await findOptionResolvingQueries(environment, /nobody2@example\.com/),
+    );
+    await user.click(
+      screen.getByRole('button', { name: 'data.folders.Invite' }),
+    );
+
+    await waitFor(() =>
+      expect(operationNames(environment)).toContain(
+        'InviteFolderSettingModalCreateShareMutation',
+      ),
+    );
+    const variables = await resolveMutation(
+      environment,
+      'InviteFolderSettingModalCreateShareMutation',
+    );
+    expect(variables.input.permissions).toEqual([
+      'CREATE',
+      'READ',
+      'UPDATE',
+      'SOFT_DELETE',
+      'HARD_DELETE',
+    ]);
+    restorePopover();
   });
 
   it('offers an e-mail invite as an entity share capped at the folder shared mount permission', async () => {

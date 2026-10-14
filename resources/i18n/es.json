@@ -1054,6 +1054,8 @@
       "SelectPermission": "Seleccionar permiso",
       "Serve": "Modelo de servicio",
       "ShareFolder": "Compartir carpeta",
+      "SharePermission": "Permiso de uso compartido",
+      "SharePermissionDesc": "Lo máximo que el invitado puede hacer con la carpeta compartida: crear, leer, actualizar o eliminar su contenido. El permiso de montaje se establece por separado.",
       "SharedFolderAlertDesc": "Esta es una carpeta compartida externamente.",
       "SharedMountPermission": "Permiso de montaje compartido",
       "SharedMountPermissionDesc": "El permiso de montaje predeterminado para los usuarios con los que se comparte esta carpeta. Un usuario compartido sin permiso individual recibe este permiso. El creador de la carpeta siempre recibe lectura y escritura.",

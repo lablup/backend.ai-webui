@@ -91,6 +91,21 @@ export type {
   BAIComplexSelectValue,
   BAILabeledValue,
 } from './BAIComplexSelect';
+export { default as BAIEntitySharePermissionSelector } from './BAIEntitySharePermissionSelector';
+export {
+  ENTITY_SHARE_PERMISSION_BITS,
+  ENTITY_SHARE_PERMISSION_BIT_CODES,
+  ENTITY_SHARE_PERMISSION_PRESETS,
+  normalizeEntitySharePermissionBits,
+  toEntitySharePermissionChoice,
+  useEntitySharePermissionLabels,
+} from './BAIEntitySharePermissionSelector';
+export type {
+  BAIEntitySharePermissionBit,
+  BAIEntitySharePermissionChoice,
+  BAIEntitySharePermissionPreset,
+  BAIEntitySharePermissionSelectorProps,
+} from './BAIEntitySharePermissionSelector';
 export { default as BAINotificationItem } from './BAINotificationItem';
 export type { BAINotificationItemProps } from './BAINotificationItem';
 export { default as BAIModal } from './BAIModal';

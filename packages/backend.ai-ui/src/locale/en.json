@@ -193,6 +193,18 @@
   "comp:BAIEntityLabelTokens": {
     "Labels": "Labels"
   },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Create",
+    "Custom": "Custom",
+    "FullAccess": "Full access",
+    "HardDelete": "Hard delete",
+    "Presets": "Presets",
+    "Read": "Read",
+    "ReadAndWrite": "Read & write",
+    "ReadOnly": "Read only",
+    "SoftDelete": "Soft delete",
+    "Update": "Update"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Auto Refresh",
     "EveryHours": "{{count}} h",

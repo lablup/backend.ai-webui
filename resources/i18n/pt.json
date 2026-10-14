@@ -1054,6 +1054,8 @@
       "SelectPermission": "Selecione a permissão",
       "Serve": "Serviço de modelo",
       "ShareFolder": "Partilhar pasta",
+      "SharePermission": "Permissão de partilha",
+      "SharePermissionDesc": "O máximo que o convidado pode fazer com a pasta partilhada: criar, ler, atualizar ou eliminar o conteúdo. A permissão de montagem é definida separadamente.",
       "SharedFolderAlertDesc": "Esta é uma pasta compartilhada externamente.",
       "SharedMountPermission": "Permissão de montagem partilhada",
       "SharedMountPermissionDesc": "A permissão de montagem predefinida para os utilizadores com quem esta pasta é partilhada. Um utilizador partilhado sem permissão individual recebe esta permissão. O criador da pasta recebe sempre leitura e escrita.",
