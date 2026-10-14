@@ -131,6 +131,7 @@ const UserFolderPermissionPanelV2: React.FC<
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
       <Banner
+        role="status"
         status="info"
         title={t('storageHost.permission.UserFolderPermissionsNote')}
       />

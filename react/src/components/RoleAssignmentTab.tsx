@@ -291,7 +291,11 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     <BAIFlex align="stretch" direction="column" gap="sm">
       {/* `showIcon` dropped — Banner always shows its status icon (MAPPING §4). */}
       {isReadOnly && (
-        <Banner status="warning" title={t('rbac.SystemRoleNoAssignments')} />
+        <Banner
+          role="alert"
+          status="warning"
+          title={t('rbac.SystemRoleNoAssignments')}
+        />
       )}
       <BAIFlex justify="between" align="start" gap="sm" wrap="wrap">
         <BAIGraphQLPropertyFilter<RoleAssignmentFilter>

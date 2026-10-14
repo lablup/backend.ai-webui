@@ -201,6 +201,7 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
       {/* antd `banner` (full-width, no radius) -> Banner `container="section"`.
           `title` is unconditionally required (ground-truth .d.ts). */}
       <Banner
+        role="status"
         container="section"
         status="info"
         title={t('theme.ThemeJsonConfigurationDesc')}

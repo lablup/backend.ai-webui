@@ -702,7 +702,11 @@ const ComputeSessionListPage = () => {
               }
             />
           ) : (
-            <Banner status="error" title={t('error.FailedToLoadTableData')} />
+            <Banner
+              role="alert"
+              status="error"
+              title={t('error.FailedToLoadTableData')}
+            />
           )}
         </BAIFlex>
       </BAICard>

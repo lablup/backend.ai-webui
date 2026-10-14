@@ -71,6 +71,7 @@ const AnnouncementBanner: React.FC = () => {
   return (
     <>
       <Banner
+        role="status"
         status="info"
         container="section"
         className="webui-announcement-banner"

@@ -31,7 +31,11 @@ const VNCConnectionInfoModal: React.FC<VNCConnectionInfoModalProps> = ({
   return (
     <BAIModal title={t('session.VNCconnection')} footer={null} {...modalProps}>
       <BAIFlex direction="column" align="stretch" gap="md">
-        <Banner status="info" title={t('session.UseYourFavoriteVNCApp')} />
+        <Banner
+          role="status"
+          status="info"
+          title={t('session.UseYourFavoriteVNCApp')}
+        />
         <BAIMetadataList
           columns="single"
           title={t('session.ConnectionInformation')}

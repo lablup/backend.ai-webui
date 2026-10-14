@@ -18,7 +18,7 @@ import { message } from './message';
 import { AppShimModalHost, modal } from './modal';
 import { MODAL_LIVE_ATTRIBUTE } from '@lablup/ui-common/Modal';
 import type { ShowToastFn, ToastOptions } from '@lablup/ui-common/Toast';
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -249,14 +249,17 @@ describe('app-shim modal', () => {
 describe('app-shim toast viewport', () => {
   // ui-common's Modal inerts every body child without a modal root or a
   // `data-uic-modal-live` mark; the toast viewport has to carry the mark.
-  it('stays out of the inert background while a modal is open', () => {
+  it('stays out of the inert background while a modal is open', async () => {
     const { container } = render(
       <BAIAppProvider>
         <button type="button">page</button>
       </BAIAppProvider>,
     );
     const viewport = container.querySelector('[popover]');
-    expect(viewport).toHaveAttribute(MODAL_LIVE_ATTRIBUTE);
+    // The mark sits on the outlet Astryx moves the viewport into.
+    await waitFor(() =>
+      expect(viewport?.closest(`[${MODAL_LIVE_ATTRIBUTE}]`)).not.toBeNull(),
+    );
 
     let handle: ReturnType<typeof modal.confirm> | undefined;
     act(() => {
@@ -264,7 +267,7 @@ describe('app-shim toast viewport', () => {
     });
     expect(screen.getByRole('alertdialog')).toBeInTheDocument();
 
-    expect(viewport).not.toHaveAttribute('inert');
+    expect(viewport?.closest('[inert]')).toBeNull();
     expect(screen.getByRole('button', { name: 'page' })).toHaveAttribute(
       'inert',
     );
