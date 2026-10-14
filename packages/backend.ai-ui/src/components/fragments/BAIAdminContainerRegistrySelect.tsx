@@ -9,7 +9,7 @@
 */
 import { BAIAdminContainerRegistrySelectPaginatedQuery } from '../../__generated__/BAIAdminContainerRegistrySelectPaginatedQuery.graphql';
 import { BAIAdminContainerRegistrySelectValueQuery } from '../../__generated__/BAIAdminContainerRegistrySelectValueQuery.graphql';
-import { combineFilters, toGlobalId } from '../../helper';
+import { combineFilters } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useControllableValue, useFetchKey } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -92,35 +92,37 @@ const BAIAdminContainerRegistrySelect: React.FC<
   const selectedKeys = _.compact(_.castArray(deferredControllableValue ?? []));
   const keyOfNode = (node: AstryxContainerRegistryNode) => node.entityId;
 
-  // Resolves the selected key to a label: a value chosen on page 1 is not in
-  // `options` once `loadNext` has paged past it. `ContainerRegistryV2Filter`
-  // has no id filter, so only the first key goes through `node(id:)`.
-  const selectedKey = selectedKeys[0];
-  const { node: selectedNode } =
+  // Resolves the selected keys to labels: a value chosen on page 1 is not in
+  // `options` once `loadNext` has paged past it.
+  const { adminContainerRegistriesV2: selectedRegistries } =
     useLazyLoadQuery<BAIAdminContainerRegistrySelectValueQuery>(
       graphql`
         query BAIAdminContainerRegistrySelectValueQuery(
-          $nodeId: ID!
+          $selectedFilter: ContainerRegistryV2Filter
+          $limit: Int!
           $skipSelected: Boolean!
         ) {
-          node(id: $nodeId) @skip(if: $skipSelected) {
-            ... on ContainerRegistryV2 {
-              id
-              entityId
-              registryName
-              project
+          adminContainerRegistriesV2(filter: $selectedFilter, limit: $limit)
+            @skip(if: $skipSelected) {
+            edges {
+              node {
+                id
+                entityId
+                registryName
+                project
+              }
             }
           }
         }
       `,
       {
-        nodeId: selectedKey
-          ? toGlobalId('ContainerRegistryV2', selectedKey)
-          : '',
-        skipSelected: !selectedKey,
+        selectedFilter: { entityId: { in: selectedKeys } },
+        limit: Math.max(selectedKeys.length, 1),
+        skipSelected: selectedKeys.length === 0,
       },
       {
-        fetchPolicy: selectedKey ? 'store-or-network' : 'store-only',
+        fetchPolicy:
+          selectedKeys.length > 0 ? 'store-or-network' : 'store-only',
         fetchKey: deferredFetchKey,
       },
     );
@@ -196,22 +198,15 @@ const BAIAdminContainerRegistrySelect: React.FC<
     label: formatLabel(item),
   }));
 
-  // `node(id:)` answers any Node, so the inline-fragment fields are optional.
-  const resolvedNode: AstryxContainerRegistryNode | null =
-    selectedNode?.id && selectedNode.entityId && selectedNode.registryName
-      ? {
-          id: selectedNode.id,
-          entityId: selectedNode.entityId,
-          registryName: selectedNode.registryName,
-          project: selectedNode.project,
-        }
-      : null;
+  const resolvedNodes = _.compact(
+    _.map(selectedRegistries?.edges, (edge) => edge?.node),
+  );
 
   /** Plain keys -> labelInValue, resolving each label where we can. */
   const labeledValue: BAIComplexSelectValue = (() => {
     const labeled: Array<BAILabeledValue> = _.map(selectedKeys, (key) => {
       const node = _.find(
-        resolvedNode ? [resolvedNode, ...loadedNodes] : loadedNodes,
+        [...resolvedNodes, ...loadedNodes],
         (n) => keyOfNode(n) === key,
       );
       return { label: node ? formatLabel(node) : key, value: key };
