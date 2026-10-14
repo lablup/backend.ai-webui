@@ -209,20 +209,22 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
     snapshot: TabSnapshot,
     history: 'push' | 'replace',
   ) => {
+    // What the URL says is what was queried: the snapshot effect stays quiet.
+    queriedRef.current = { tab, ...snapshot };
     setQueryParams({ tab, ...snapshot.queryParams }, { history });
     setTablePaginationOption(snapshot.tablePaginationOption);
   };
 
   // Child-driven reloads: load, then mirror the new variables to the URL.
-  const reloadHandlerOf =
-    <V extends TabVariables>(
-      tab: TabKey,
-      load: (variables: V, options?: UseQueryLoaderLoadQueryOptions) => void,
-    ) =>
-    (variables: V, options?: UseQueryLoaderLoadQueryOptions) => {
-      load(variables, { fetchPolicy: 'store-and-network', ...options });
-      mirrorSnapshot(tab, snapshotOfVariables(variables), 'replace');
-    };
+  const handleReload = <V extends TabVariables>(
+    tab: TabKey,
+    load: (variables: V, options?: UseQueryLoaderLoadQueryOptions) => void,
+    variables: V,
+    options?: UseQueryLoaderLoadQueryOptions,
+  ) => {
+    load(variables, { fetchPolicy: 'store-and-network', ...options });
+    mirrorSnapshot(tab, snapshotOfVariables(variables), 'replace');
+  };
 
   // Mount, back/forward, an in-app link to a tab or to other filters: the
   // URL is queried whenever it is not what the page queried last. Tab clicks
@@ -266,10 +268,14 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
               keypairResourcePolicyQueryRef ? (
                 <KeypairResourcePolicyV2
                   queryRef={keypairResourcePolicyQueryRef}
-                  onReload={reloadHandlerOf(
-                    'keypair',
-                    loadKeypairResourcePolicyQuery,
-                  )}
+                  onReload={(variables, options) =>
+                    handleReload(
+                      'keypair',
+                      loadKeypairResourcePolicyQuery,
+                      variables,
+                      options,
+                    )
+                  }
                 />
               ) : (
                 <BAISkeleton />
@@ -285,10 +291,14 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
               userResourcePolicyQueryRef ? (
                 <UserResourcePolicyV2
                   queryRef={userResourcePolicyQueryRef}
-                  onReload={reloadHandlerOf(
-                    'user',
-                    loadUserResourcePolicyQuery,
-                  )}
+                  onReload={(variables, options) =>
+                    handleReload(
+                      'user',
+                      loadUserResourcePolicyQuery,
+                      variables,
+                      options,
+                    )
+                  }
                 />
               ) : (
                 <BAISkeleton />
@@ -304,10 +314,14 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
               projectResourcePolicyQueryRef ? (
                 <ProjectResourcePolicyV2
                   queryRef={projectResourcePolicyQueryRef}
-                  onReload={reloadHandlerOf(
-                    'project',
-                    loadProjectResourcePolicyQuery,
-                  )}
+                  onReload={(variables, options) =>
+                    handleReload(
+                      'project',
+                      loadProjectResourcePolicyQuery,
+                      variables,
+                      options,
+                    )
+                  }
                 />
               ) : (
                 <BAISkeleton />

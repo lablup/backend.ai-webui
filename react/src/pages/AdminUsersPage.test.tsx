@@ -57,14 +57,28 @@ vi.mock('../hooks', async (importOriginal) => {
 
 // The lists are the page's children; each stub exposes one child-driven
 // reload so the mirror-to-URL path is exercised without the real table.
+// Every distinct query ref the lists receive is one `loadQuery` call, even
+// when Relay folds its request into an identical in-flight one.
+const receivedQueryRefs = vi.hoisted(() => [] as unknown[]);
+const recordQueryRef = (queryRef: unknown) => {
+  if (!receivedQueryRefs.includes(queryRef)) receivedQueryRefs.push(queryRef);
+};
+
 vi.mock('../components/AdminUserManagement', async (importOriginal) => {
   const React = await import('react');
   const originalModule =
     await importOriginal<typeof import('../components/AdminUserManagement')>();
   return {
     ...originalModule,
-    default: ({ onReload }: { onReload: (variables: any) => void }) =>
-      React.createElement(
+    default: ({
+      queryRef,
+      onReload,
+    }: {
+      queryRef: unknown;
+      onReload: (variables: any) => void;
+    }) => {
+      recordQueryRef(queryRef);
+      return React.createElement(
         'div',
         { 'data-testid': 'users-list' },
         React.createElement(
@@ -81,7 +95,8 @@ vi.mock('../components/AdminUserManagement', async (importOriginal) => {
           },
           'reload-inactive-users',
         ),
-      ),
+      );
+    },
   };
 });
 
@@ -93,8 +108,15 @@ vi.mock('../components/AdminUserCredentialList', async (importOriginal) => {
     >();
   return {
     ...originalModule,
-    default: ({ onReload }: { onReload: (variables: any) => void }) =>
-      React.createElement(
+    default: ({
+      queryRef,
+      onReload,
+    }: {
+      queryRef: unknown;
+      onReload: (variables: any) => void;
+    }) => {
+      recordQueryRef(queryRef);
+      return React.createElement(
         'div',
         { 'data-testid': 'credentials-list' },
         React.createElement(
@@ -111,7 +133,8 @@ vi.mock('../components/AdminUserCredentialList', async (importOriginal) => {
           },
           'reload-credentials-page-2',
         ),
-      ),
+      );
+    },
   };
 });
 
@@ -250,9 +273,12 @@ describe('AdminUsersPage tab queries', () => {
     renderPage();
     await settle();
 
+    const refsBefore = receivedQueryRefs.length;
     fireEvent.click(screen.getByText('reload-inactive-users'));
     const started = await settle();
     expect(started.map((s) => s.name)).toEqual(['AdminUserManagementQuery']);
+    // The URL the reload mirrored is what it queried: no second loadQuery.
+    expect(receivedQueryRefs.length - refsBefore).toBe(1);
     expect(started[0].variables).toMatchObject({
       filter: { status: { notEquals: 'ACTIVE' } },
     });
@@ -261,9 +287,11 @@ describe('AdminUsersPage tab queries', () => {
 
     fireEvent.click(screen.getAllByText('credential.Credentials')[0]);
     await settle();
+    const pagedRefsBefore = receivedQueryRefs.length;
     fireEvent.click(screen.getByText('reload-credentials-page-2'));
     const paged = await settle();
     expect(paged.map((s) => s.name)).toEqual(['AdminUserCredentialListQuery']);
+    expect(receivedQueryRefs.length - pagedRefsBefore).toBe(1);
     expect(paged[0].variables).toMatchObject({ limit: 20, offset: 20 });
     expect(await settle()).toHaveLength(0);
   });

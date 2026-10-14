@@ -211,6 +211,9 @@ const AdminUsersPage: React.FC = () => {
     };
   };
 
+  // What the page last queried; the URL is re-queried when it says otherwise.
+  const queriedRef = useRef<({ tab: TabKey } & TabSnapshot) | null>(null);
+
   const handleUsersReload = (
     variables: UsersVariables,
     options?: UseQueryLoaderLoadQueryOptions,
@@ -220,6 +223,7 @@ const AdminUsersPage: React.FC = () => {
       ...options,
     });
     const snapshot = snapshotOfVariables('users', variables);
+    queriedRef.current = { tab: 'users', ...snapshot };
     setQueryParams(
       { tab: 'users', ...snapshot.queryParams },
       { history: 'replace' },
@@ -236,6 +240,7 @@ const AdminUsersPage: React.FC = () => {
       ...options,
     });
     const snapshot = snapshotOfVariables('credentials', variables);
+    queriedRef.current = { tab: 'credentials', ...snapshot };
     setQueryParams(
       { tab: 'credentials', ...snapshot.queryParams },
       { history: 'replace' },
@@ -243,8 +248,6 @@ const AdminUsersPage: React.FC = () => {
     setTablePaginationOption(snapshot.tablePaginationOption);
   };
 
-  // What the page last queried; the URL is re-queried when it says otherwise.
-  const queriedRef = useRef<({ tab: TabKey } & TabSnapshot) | null>(null);
   const loadTabQuery = (tab: TabKey, snapshot: TabSnapshot) => {
     queriedRef.current = { tab, ...snapshot };
     if (tab === 'users') {
