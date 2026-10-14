@@ -23,6 +23,8 @@ export interface BAIModelDeploymentNodesProps extends Omit<BAITableProps<ModelDe
     /** Adds "Edit labels" to the Labels column's hover actions. */
     onEditLabels?: (deployment: ModelDeploymentNodeInList) => void;
     onLabelClick?: (label: BAIEntityLabel) => void;
+    /** Shows the Labels column at the start; otherwise it starts hidden, revealed from the column settings. */
+    showLabelsByDefault?: boolean;
 }
 declare const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps>;
 export default BAIModelDeploymentNodes;

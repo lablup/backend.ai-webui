@@ -18,6 +18,8 @@ interface BAISessionNodesV2Props extends Omit<BAITableProps<SessionV2InList>, 'd
     /** Adds "Edit labels" to the Labels column's hover actions. */
     onEditLabels?: (session: SessionV2InList) => void;
     onLabelClick?: (label: BAIEntityLabel) => void;
+    /** Shows the Labels column at the start; otherwise it starts hidden, revealed from the column settings. */
+    showLabelsByDefault?: boolean;
 }
 declare const BAISessionNodesV2: React.FC<BAISessionNodesV2Props>;
 export default BAISessionNodesV2;
