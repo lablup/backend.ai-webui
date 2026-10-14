@@ -44,7 +44,7 @@ import {
   toEntityLabelFilter,
   useIsLabelableEntityType,
   type ModelDeploymentNodeInList,
-  BAISkeleton,
+  BAISelect,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Trash2, SquarePenIcon } from 'lucide-react';
@@ -276,7 +276,7 @@ const AdminDeployment = ({
       fixedOperator: 'equals' as const,
       rule: uuidRule,
       renderInput: ({ onAddCondition, value, isDisabled }) => (
-        <Suspense fallback={<BAISkeleton variant="input" width={200} />}>
+        <Suspense fallback={<BAISelect disabled loading />}>
           <BAIScopedUserSelect
             scope={domainScope}
             valuePropName="id"

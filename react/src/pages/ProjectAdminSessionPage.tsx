@@ -24,6 +24,7 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import {
+  BAISelect,
   BAISkeleton,
   BAICard,
   BAIEntityLabelBulkEditButton,
@@ -219,9 +220,7 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
                 propertyLabel: t('session.Owner'),
                 type: 'uuid',
                 renderInput: ({ onAddCondition, value, isDisabled }) => (
-                  <Suspense
-                    fallback={<BAISkeleton variant="input" width={200} />}
-                  >
+                  <Suspense fallback={<BAISelect disabled loading />}>
                     <BAIScopedUserSelect
                       scope={{ project: [{ value: projectId }] }}
                       valuePropName="id"
