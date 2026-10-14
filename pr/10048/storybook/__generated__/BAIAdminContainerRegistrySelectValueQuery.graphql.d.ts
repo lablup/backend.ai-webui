@@ -5,6 +5,7 @@ export type BAIAdminContainerRegistrySelectValueQuery$variables = {
 };
 export type BAIAdminContainerRegistrySelectValueQuery$data = {
     readonly node?: {
+        readonly entityId?: string;
         readonly id?: string;
         readonly project?: string | null | undefined;
         readonly registryName?: string;
