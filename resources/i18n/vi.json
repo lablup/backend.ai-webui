@@ -1055,7 +1055,6 @@
       "Serve": "Phục vụ người mẫu",
       "ShareFolder": "Chia sẻ thư mục",
       "SharePermission": "Quyền chia sẻ",
-      "SharePermissionDesc": "Mức tối đa người được mời có thể làm với thư mục được chia sẻ: tạo, đọc, cập nhật hoặc xóa nội dung. Quyền gắn kết được đặt riêng.",
       "SharedFolderAlertDesc": "Đây là một thư mục được chia sẻ bên ngoài.",
       "SharedMountPermission": "Quyền gắn kết chia sẻ",
       "SharedMountPermissionDesc": "Quyền gắn kết mặc định cho những người dùng được chia sẻ thư mục này. Người dùng được chia sẻ không có quyền riêng sẽ nhận quyền này. Người tạo thư mục luôn có quyền đọc và ghi.",

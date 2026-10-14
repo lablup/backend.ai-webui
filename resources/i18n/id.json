@@ -1055,7 +1055,6 @@
       "Serve": "Model penyajian",
       "ShareFolder": "Folder berbagi",
       "SharePermission": "Izin berbagi",
-      "SharePermissionDesc": "Batas maksimal yang dapat dilakukan undangan pada folder bersama: membuat, membaca, memperbarui, atau menghapus isinya. Izin mount diatur secara terpisah.",
       "SharedFolderAlertDesc": "Ini adalah folder bersama secara eksternal.",
       "SharedMountPermission": "Izin mount berbagi",
       "SharedMountPermissionDesc": "Izin mount default untuk pengguna yang berbagi folder ini. Pengguna berbagi tanpa izin individual mendapatkan izin ini. Pembuat folder selalu mendapatkan baca & tulis.",

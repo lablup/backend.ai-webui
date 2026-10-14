@@ -94,7 +94,6 @@ export type {
 export { default as BAIEntitySharePermissionSelector } from './BAIEntitySharePermissionSelector';
 export {
   ENTITY_SHARE_PERMISSION_BITS,
-  ENTITY_SHARE_PERMISSION_BIT_CODES,
   ENTITY_SHARE_PERMISSION_PRESETS,
   normalizeEntitySharePermissionBits,
   toEntitySharePermissionChoice,

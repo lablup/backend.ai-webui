@@ -1055,7 +1055,6 @@
       "Serve": "Modèle en service",
       "ShareFolder": "Dossier de partage",
       "SharePermission": "Autorisation de partage",
-      "SharePermissionDesc": "Ce que l'invité peut faire au maximum avec le dossier partagé : créer, lire, modifier ou supprimer son contenu. L'autorisation de montage se définit séparément.",
       "SharedFolderAlertDesc": "Il s'agit d'un dossier partagé externe.",
       "SharedMountPermission": "Autorisation de montage partagée",
       "SharedMountPermissionDesc": "L'autorisation de montage par défaut pour les utilisateurs avec qui ce dossier est partagé. Un utilisateur partagé sans autorisation individuelle reçoit cette autorisation. Le créateur du dossier reçoit toujours lecture et écriture.",

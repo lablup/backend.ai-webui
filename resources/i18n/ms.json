@@ -1055,7 +1055,6 @@
       "Serve": "Hidangan model",
       "ShareFolder": "Kongsi Folder",
       "SharePermission": "Kebenaran perkongsian",
-      "SharePermissionDesc": "Had maksimum yang boleh dilakukan oleh jemputan pada folder yang dikongsi: mencipta, membaca, mengemas kini atau memadam kandungannya. Kebenaran lekap ditetapkan secara berasingan.",
       "SharedFolderAlertDesc": "Ini adalah folder yang dikongsi secara luaran.",
       "SharedMountPermission": "Kebenaran lekap kongsi",
       "SharedMountPermissionDesc": "Kebenaran lekap lalai untuk pengguna yang dikongsi folder ini. Pengguna kongsi tanpa kebenaran individu menerima kebenaran ini. Pencipta folder sentiasa menerima baca & tulis.",

@@ -1055,7 +1055,6 @@
       "Serve": "Model servis",
       "ShareFolder": "Paylaşım klasörü",
       "SharePermission": "Paylaşım izni",
-      "SharePermissionDesc": "Davet edilen kişinin paylaşılan klasörde yapabileceği en fazla işlem: içerik oluşturma, okuma, güncelleme veya silme. Bağlama izni ayrıca ayarlanır.",
       "SharedFolderAlertDesc": "Bu harici olarak paylaşılan bir klasördür.",
       "SharedMountPermission": "Paylaşım montaj izni",
       "SharedMountPermissionDesc": "Bu klasörün paylaşıldığı kullanıcılar için varsayılan montaj izni. Bireysel izni olmayan paylaşılan kullanıcı bu izni alır. Klasörü oluşturan her zaman okuma ve yazma izni alır.",

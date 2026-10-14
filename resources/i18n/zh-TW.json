@@ -1056,7 +1056,6 @@
       "Serve": "服务模式",
       "ShareFolder": "共享文件夹",
       "SharePermission": "共享權限",
-      "SharePermissionDesc": "受邀使用者對共享資料夾可執行操作的上限（建立、讀取、修改、刪除）。掛載權限另行設定。",
       "SharedFolderAlertDesc": "這是一個外部共享的文件夾。",
       "SharedMountPermission": "共用掛載權限",
       "SharedMountPermissionDesc": "與此資料夾共用的使用者的預設掛載權限。未設定個別權限的共用使用者將獲得此權限。資料夾建立者始終擁有讀寫權限。",

@@ -1055,7 +1055,6 @@
       "Serve": "Malli, joka palvelee",
       "ShareFolder": "Jaa kansio",
       "SharePermission": "Jako-oikeus",
-      "SharePermissionDesc": "Enimmäisoikeudet, jotka kutsutulla on jaettuun kansioon: sisällön luonti, luku, päivitys tai poisto. Liitosoikeus asetetaan erikseen.",
       "SharedFolderAlertDesc": "Tämä on ulkoisesti jaettu kansio.",
       "SharedMountPermission": "Jaettu kiinnityslupa",
       "SharedMountPermissionDesc": "Oletuskiinnityslupa käyttäjille, joille tämä kansio on jaettu. Jaettu käyttäjä ilman yksilöllistä lupaa saa tämän luvan. Kansion luoja saa aina luku- ja kirjoitusoikeuden.",
