@@ -16,7 +16,7 @@ import { BAIFlex, BAILink } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-/** The popover's settings view: what the list shows and how it alerts. */
+/** The popover's settings view: what the list shows. */
 const SessionMonitorSettingsPane: React.FC<{ onNavigate?: () => void }> = ({
   onNavigate,
 }) => {
@@ -28,9 +28,6 @@ const SessionMonitorSettingsPane: React.FC<{ onNavigate?: () => void }> = ({
     'session_monitor_include_starting',
   );
   const [rows, setRows] = useBAISettingUserState('session_monitor_rows');
-  const [idleAlerts, setIdleAlerts] = useBAISettingUserState(
-    'session_monitor_idle_alerts',
-  );
 
   const sortOptions: Array<{ value: SessionMonitorSort; label: string }> = [
     { value: 'deadline', label: t('sessionMonitor.settings.SortDeadline') },
@@ -71,11 +68,6 @@ const SessionMonitorSettingsPane: React.FC<{ onNavigate?: () => void }> = ({
         label={t('sessionMonitor.settings.IncludeStarting')}
         value={includeStarting ?? true}
         onChange={(checked) => setIncludeStarting(checked)}
-      />
-      <Switch
-        label={t('sessionMonitor.settings.IdleAlerts')}
-        value={idleAlerts ?? true}
-        onChange={(checked) => setIdleAlerts(checked)}
       />
       <BAILink
         to={{

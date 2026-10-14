@@ -55,13 +55,14 @@ const SessionMonitorWatcher: React.FC = () => {
   const role = useCurrentUserRole();
   const domainName = useCurrentDomainValue();
   const setScope = useSetAtom(sessionMonitorScopeAtom);
+  const [enabled] = useBAISettingUserState('session_monitor_enabled');
 
   // Admin routes are project-agnostic (ADR-0001): a domain admin (the
   // superadmin role counts as one) watches the domain; anyone else gets no
   // chip there.
   const isAdminRoute = routeScope === 'admin';
   const canWatchDomain = role === 'superadmin' || role === 'admin';
-  const hidden = isAdminRoute && !canWatchDomain;
+  const hidden = enabled === false || (isAdminRoute && !canWatchDomain);
   useEffect(() => {
     if (hidden) setScope(null);
   }, [hidden, setScope]);
@@ -119,10 +120,7 @@ const ScopedSessionMonitorWatcher: React.FC<{ scope: SessionMonitorScope }> = ({
   );
   const setSummary = useSetAtom(sessionMonitorSummaryAtom);
   const setScope = useSetAtom(sessionMonitorScopeAtom);
-  const [idleAlertsSetting] = useBAISettingUserState(
-    'session_monitor_idle_alerts',
-  );
-  const idleAlertsEnabled = (idleAlertsSetting ?? true) && scope.mode === 'my';
+  const idleAlertsEnabled = scope.mode === 'my';
   const { upsertNotification } = useSetBAINotification();
   const buildProjectPath = useProjectPath();
 

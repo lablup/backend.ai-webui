@@ -55,8 +55,8 @@ const UserSettingsGeneralPane = () => {
   const [desktopNotification, setDesktopNotification] = useBAISettingUserState(
     'desktop_notification',
   );
-  const [sessionMonitorIdleAlerts, setSessionMonitorIdleAlerts] =
-    useBAISettingUserState('session_monitor_idle_alerts');
+  const [sessionMonitorEnabled, setSessionMonitorEnabled] =
+    useBAISettingUserState('session_monitor_enabled');
   const [compactSidebar, setCompactSidebar] =
     useBAISettingUserState('compact_sidebar');
   const [selectedLanguage, setSelectedLanguage] =
@@ -222,15 +222,13 @@ const UserSettingsGeneralPane = () => {
           },
         },
         {
-          'data-testid': 'items-session-monitor-idle-alerts',
+          'data-testid': 'items-session-monitor',
           type: 'checkbox',
-          title: t('userSettings.SessionMonitorIdleAlerts'),
-          description: (
-            <Trans i18nKey="userSettings.DescSessionMonitorIdleAlerts" />
-          ),
+          title: t('userSettings.SessionMonitor'),
+          description: <Trans i18nKey="userSettings.DescSessionMonitor" />,
           defaultValue: true,
-          value: sessionMonitorIdleAlerts ?? true,
-          onChange: setSessionMonitorIdleAlerts,
+          value: sessionMonitorEnabled ?? true,
+          onChange: setSessionMonitorEnabled,
         },
         {
           'data-testid': 'items-use-compact-sidebar',

@@ -5327,11 +5327,11 @@
           ]
         },
         {
-          "key": "userSettings.SessionMonitorIdleAlerts",
+          "key": "userSettings.SessionMonitor",
           "tab": "general",
           "groupKey": "userSettings.Preferences",
           "groupId": "group-preferences",
-          "testId": "items-session-monitor-idle-alerts",
+          "testId": "items-session-monitor",
           "descriptionKeys": []
         },
         {
@@ -5486,7 +5486,7 @@
         "userSettings.DescScriptCreated",
         "userSettings.DescScriptDeleted",
         "userSettings.DescScriptUpdated",
-        "userSettings.DescSessionMonitorIdleAlerts",
+        "userSettings.DescSessionMonitor",
         "userSettings.DescUseCompactSidebar",
         "userSettings.ExperimentalFeaturesDesc",
         "userSettings.FollowSystem",
