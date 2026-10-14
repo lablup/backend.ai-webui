@@ -8,13 +8,11 @@ import {
   AdminRetentionPolicyQuery as AdminRetentionPolicyQueryType,
   RetentionPolicyOrderBy,
 } from '../__generated__/AdminRetentionPolicyQuery.graphql';
-import { AdminRetentionPolicyToggleMutation } from '../__generated__/AdminRetentionPolicyToggleMutation.graphql';
 import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import RetentionPolicySettingModal, {
   RETENTION_CATEGORIES,
 } from './RetentionPolicySettingModal';
-import { Switch } from '@lablup/ui-common/Switch';
 import {
   BAIAdminRetentionPolicyTable,
   BAIAlert,
@@ -104,21 +102,6 @@ const AdminRetentionPolicy: React.FC<AdminRetentionPolicyProps> = ({
       deferredQueryRef,
     );
 
-  const [commitToggle] = useMutation<AdminRetentionPolicyToggleMutation>(
-    graphql`
-      mutation AdminRetentionPolicyToggleMutation(
-        $input: UpdateRetentionPolicyInput!
-      ) {
-        adminUpdateRetentionPolicy(input: $input) {
-          policy {
-            id
-            enabled
-            updatedAt
-          }
-        }
-      }
-    `,
-  );
   const [commitDelete, isInflightDelete] =
     useMutation<AdminRetentionPolicyDeleteMutation>(graphql`
       mutation AdminRetentionPolicyDeleteMutation($id: UUID!) {
@@ -128,7 +111,6 @@ const AdminRetentionPolicy: React.FC<AdminRetentionPolicyProps> = ({
       }
     `);
 
-  const [togglingIds, setTogglingIds] = useState<ReadonlyArray<string>>([]);
   const [isOpenSettingModal, setIsOpenSettingModal] = useState(false);
   const [editingPolicy, setEditingPolicy] =
     useState<RetentionPolicyNode | null>(null);
@@ -138,27 +120,6 @@ const AdminRetentionPolicy: React.FC<AdminRetentionPolicyProps> = ({
   const policies = filterOutNullAndUndefined(
     _.map(adminRetentionPolicies?.edges, (edge) => edge?.node),
   );
-
-  const toggleEnabled = (policy: RetentionPolicyNode, enabled: boolean) => {
-    setTogglingIds((ids) => [...ids, policy.id]);
-    const clearToggling = () =>
-      setTogglingIds((ids) => _.without(ids, policy.id));
-    commitToggle({
-      variables: { input: { id: policy.entityId, enabled } },
-      onCompleted: (_res, errors) => {
-        clearToggling();
-        if (errors && errors.length > 0) {
-          _.forEach(errors, (err) => message.error(err.message));
-          return;
-        }
-        message.success(t('retentionPolicy.SuccessfullyUpdated'));
-      },
-      onError: (error) => {
-        clearToggling();
-        message.error(error.message);
-      },
-    });
-  };
 
   const policyById = _.keyBy(policies, 'id');
   const findPolicy = (id: string) => policyById[id] ?? null;
@@ -275,27 +236,6 @@ const AdminRetentionPolicy: React.FC<AdminRetentionPolicyProps> = ({
                     ]}
                   />
                 ),
-              };
-            }
-            if (column.key === 'enabled') {
-              return {
-                ...column,
-                render: (_value, row) => {
-                  const isToggling = _.includes(togglingIds, row.id);
-                  return (
-                    <Switch
-                      label={t('general.Enabled')}
-                      isLabelHidden
-                      size="sm"
-                      value={row.enabled}
-                      isLoading={isToggling}
-                      isDisabled={isToggling}
-                      onChange={(next) =>
-                        toggleEnabled(policyById[row.id], next)
-                      }
-                    />
-                  );
-                },
               };
             }
             return column;
