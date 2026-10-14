@@ -95,11 +95,53 @@ export function isSessionAuthFailure(err: unknown): boolean {
   );
 }
 
+// The manager's own text for a refusal, whichever layer wrapped it.
+function refusalDetail(cause: unknown): string {
+  let current = cause as {
+    description?: unknown;
+    message?: unknown;
+    cause?: unknown;
+    name?: unknown;
+  } | null;
+  while (current && typeof current === 'object') {
+    if (current.name !== 'AuthorizationError') {
+      const text = current.description ?? current.message;
+      if (typeof text === 'string' && text) return text;
+    } else if (typeof current.description === 'string') {
+      return current.description;
+    }
+    current = current.cause as typeof current;
+  }
+  return '';
+}
+
+/** `message` is the manager's text when it sent one, else empty. */
 export class SessionAuthFailureError extends Error {
   readonly cause: unknown;
   constructor(cause: unknown) {
-    super('The webserver holds no session for this browser.');
+    super(refusalDetail(cause));
     this.name = 'SessionAuthFailureError';
+    this.cause = cause;
+  }
+}
+
+/**
+ * The session is live but the manager failed to resolve `keypair` or `user`
+ * (an `errors[]` entry that is not a refusal). Not a reason to log out.
+ * `message` is the manager's text, else empty.
+ */
+export class LoginBootstrapIncompleteError extends Error {
+  readonly cause: unknown;
+  constructor(cause: unknown) {
+    const { errors, message } =
+      (cause as {
+        errors?: Array<{ message?: unknown }>;
+        message?: unknown;
+      } | null) ?? {};
+    const detail =
+      errors?.find((e) => typeof e?.message === 'string')?.message ?? message;
+    super(typeof detail === 'string' ? detail : '');
+    this.name = 'LoginBootstrapIncompleteError';
     this.cause = cause;
   }
 }
@@ -107,7 +149,8 @@ export class SessionAuthFailureError extends Error {
 /**
  * A throwaway Relay environment bound to `client`. The app environment waits
  * for the global client, which is exactly what signing in has yet to create.
- * Same fetch as the app's; only the refusal is reported differently.
+ * Same fetch as the app's; only the refusal and a missing identity are
+ * reported differently.
  */
 function createLoginEnvironment(client: BackendAIClient) {
   const fetch = createFetchFn(async () => client);
@@ -122,10 +165,24 @@ function createLoginEnvironment(client: BackendAIClient) {
       ) {
         throw new SessionAuthFailureError(err);
       }
+      // Any other HTTP failure (a wrapped manager 5xx, a timeout) leaves the
+      // session cookie live; 403 stays a refusal for connectViaGQL's logout.
+      const status = (err as { statusCode?: unknown } | null)?.statusCode;
+      if (typeof status === 'number' && status >= 400 && status !== 403) {
+        throw new LoginBootstrapIncompleteError(err);
+      }
       throw err;
     }
     if (isSessionAuthFailure(result)) {
       throw new SessionAuthFailureError(result);
+    }
+    // Relay would hand back the nulls as data; `client.query` threw instead.
+    const { data, errors } = result as {
+      data?: { keypair?: unknown; user?: unknown } | null;
+      errors?: unknown[];
+    };
+    if (errors?.length && (data?.keypair == null || data?.user == null)) {
+      throw new LoginBootstrapIncompleteError(result);
     }
     return result;
   };
