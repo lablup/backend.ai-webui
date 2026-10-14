@@ -157,24 +157,25 @@ test.describe.serial(
       // 10. Fill in the Description field
       await modal.getByLabel('Description').fill(ROLE_DESCRIPTION);
 
-      // 11. Fill in the required "Scope Type / Target" field.
-      // ScopeRow renders BAISelect (Scope Type) and ScopeIdSelect (Target) as
-      // Astryx Selector triggers (`role="button"`), each opening a floating
-      // `listbox`/`option` panel — not an antd `.ant-select`.
-      await modal.getByRole('button', { name: 'Scope Type' }).click();
-      await page.getByRole('option', { name: 'Domain', exact: true }).click();
-
-      // Wait for the Target select to become enabled (DomainScopeIdSelect
-      // loads its options asynchronously once a scope type is picked) and
-      // pick the first available domain.
+      // 11. Pick the required scope. BAISelect (Scope Type) and ScopeIdSelect
+      // (Target) render as Astryx Selector triggers (`role="button"`), each
+      // opening a floating `listbox`/`option` panel — not an antd
+      // `.ant-select`. A trigger's accessible name is its label plus its
+      // current value, so match the label as a substring.
+      // A Project scope asks for its Target project.
+      const scopeTypeTrigger = modal.getByRole('button', {
+        name: 'Scope Type',
+      });
       const targetTrigger = modal.getByRole('button', { name: 'Target' });
-      await expect(targetTrigger).toBeEnabled({ timeout: 5000 });
-      await targetTrigger.click();
-      const targetOptions = page
-        .getByRole('listbox', { name: 'Target' })
-        .getByRole('option');
-      await expect(targetOptions.first()).toBeVisible({ timeout: 10000 });
-      await targetOptions.first().click();
+      await scopeTypeTrigger.click();
+      await page.getByRole('option', { name: 'Project', exact: true }).click();
+      await expect(targetTrigger).toBeEnabled({ timeout: 10000 });
+
+      // A Domain scope uses the signed-in domain (#10081, FR-4141), so the
+      // Target field goes away.
+      await scopeTypeTrigger.click();
+      await page.getByRole('option', { name: 'Domain', exact: true }).click();
+      await expect(targetTrigger).toBeHidden();
 
       // 12. Click OK to submit
       await modal.getByRole('button', { name: 'OK' }).click();

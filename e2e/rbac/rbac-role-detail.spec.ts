@@ -40,29 +40,22 @@ async function searchForRole(page: Page, roleName: string) {
   ).toBeVisible({ timeout: 10000 });
 }
 
-async function createTestRole(
-  page: Page,
-  roleName = ROLE_NAME,
-  domainName?: string,
-) {
+// Creates a Domain-scoped role. Since #10081 (FR-4141) the modal fills the
+// Domain scope with the signed-in domain and hides the Target field, so the
+// role always lands in the admin's own domain.
+async function createTestRole(page: Page, roleName = ROLE_NAME) {
   await page.getByRole('button', { name: 'Create Role' }).click();
   const modal = page.getByRole('dialog', { name: 'Create Role' });
   await expect(modal).toBeVisible();
   await modal.getByLabel('Role Name').fill(roleName);
   await modal.getByLabel('Description').fill(ROLE_DESCRIPTION);
 
-  // Target becomes an enabled button once the domain list finishes loading.
-  await modal.getByRole('button', { name: 'Scope Type', exact: true }).click();
+  // The Selector trigger's accessible name is the field label plus its
+  // current value ("Scope Type Scope Type" before a pick), so it cannot be
+  // matched exactly.
+  await modal.getByRole('button', { name: 'Scope Type' }).click();
   await page.getByRole('option', { name: 'Domain', exact: true }).click();
-
-  await modal
-    .getByRole('button', { name: 'Target', exact: true })
-    .click({ timeout: 15000 });
-  const targetOption = domainName
-    ? page.getByRole('option', { name: domainName, exact: true })
-    : page.getByRole('option').first();
-  await expect(targetOption).toBeVisible({ timeout: 10000 });
-  await targetOption.click();
+  await expect(modal.getByRole('button', { name: 'Target' })).toBeHidden();
 
   await modal.getByRole('button', { name: 'OK' }).click();
   await expect(modal).toBeHidden({ timeout: 10000 });
@@ -687,7 +680,8 @@ test.describe(
 // Managers >= 26.9.0a4 render `RoleDetailDrawerV2`: a metadata card with the
 // role's one scope, and a Permissions tab that edits grants in place as a
 // Read / Write checkbox grid behind a floating save bar (#9849, ADR 0006).
-// Every Backend.AI install ships the `default` domain.
+// `createTestRole` scopes the role to the signed-in domain, which is
+// `default` for the e2e admin account.
 const SINGLE_SCOPE_DOMAIN = 'default';
 
 async function openRoleDrawer(page: Page, roleName: string) {
@@ -730,7 +724,7 @@ test.describe(
       roleName = `e2e-scope-role-${Date.now().toString(36)}${randomUUID().slice(0, 4)}`;
       roleToCleanup = roleName;
       await navigateTo(page, 'rbac');
-      await createTestRole(page, roleName, SINGLE_SCOPE_DOMAIN);
+      await createTestRole(page, roleName);
     });
 
     test.afterEach(async ({ page }) => {
