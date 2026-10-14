@@ -50,7 +50,10 @@ beforeEach(() => {
 
 const h = { hidden: true } as const;
 const trigger = () => screen.getByRole('button', { name: /Permission/ });
-const presetRows = () => screen.getAllByRole('menuitemradio', h);
+const presetRows = () =>
+  screen
+    .getAllByRole('menuitem', h)
+    .filter((row) => row.getAttribute('aria-haspopup') === null);
 const customRow = () =>
   screen.getByTestId('bai-entity-share-permission-custom');
 const bitRows = () => screen.getAllByRole('menuitemcheckbox', h);
@@ -118,7 +121,7 @@ describe('BAIEntitySharePermissionSelector', () => {
     expect(trigger()).toHaveTextContent('Custom');
   });
 
-  it('lists the three presets, a divider and the Custom row in order', async () => {
+  it('lists the three presets as plain items, a divider and the Custom row in order', async () => {
     const user = userEvent.setup();
     render(
       <BAIEntitySharePermissionSelector label="Permission" value={['READ']} />,
@@ -131,8 +134,7 @@ describe('BAIEntitySharePermissionSelector', () => {
       'Read & write',
       'Read only',
     ]);
-    expect(rows[2]).toHaveAttribute('aria-checked', 'true');
-    expect(rows[0]).toHaveAttribute('aria-checked', 'false');
+    expect(screen.queryAllByRole('menuitemradio', h)).toHaveLength(0);
     expect(screen.getByRole('separator', h)).toBeInTheDocument();
     expect(customRow()).toHaveTextContent('Custom');
   });
@@ -175,11 +177,11 @@ describe('BAIEntitySharePermissionSelector', () => {
 
     const rows = bitRows();
     expect(rows.map((row) => row.textContent)).toEqual([
-      'CreateC',
-      'ReadR',
-      'UpdateU',
-      'Soft deleteSoft-D',
-      'Hard deleteHard-D',
+      'Create',
+      'Read',
+      'Update',
+      'Soft delete',
+      'Hard delete',
     ]);
     expect(rows.map((row) => row.getAttribute('aria-checked'))).toEqual([
       'false',

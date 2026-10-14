@@ -25,7 +25,7 @@ import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockE
  * e-mail invite as an entity share capped at the folder's shared mount
  * permission, with no mount policy of its own.
  * #10329: the cap is the bits the share permission selector picks, and each
- * listed share shows its own cap.
+ * listed share shows its own cap in a selector that restates the share.
  * `t` is identity-mapped (for BUI's `useBAIi18n` too), so the assertions read
  * as i18n keys.
  */
@@ -184,10 +184,20 @@ const sharePermissionTrigger = () => {
   const root = screen.getByTestId('share-permission-selector');
   return root.tagName === 'BUTTON' ? root : within(root).getByRole('button');
 };
+// Every selector on the page keeps its menu in the DOM; the open one is the
+// one the popover mock marked.
+const presetItem = (name: string) => {
+  const item = screen
+    .getAllByRole('menuitem', { name, ...h })
+    .find((el) => el.closest('[popover-open]'));
+  expect(item).toBeDefined();
+  return item!;
+};
 
 // The permission menu opens through the Popover API, which jsdom lacks. The
-// mock is installed by the one test that opens it and undone right after, as
-// it also changes how the row-action confirm popovers answer `hidden` queries.
+// mock is installed by the tests that open it and undone after each, as it
+// also changes how the row-action confirm popovers answer `hidden` queries.
+let restorePopoverMock: (() => void) | null = null;
 const installPopoverMock = () => {
   const original = {
     showPopover: HTMLElement.prototype.showPopover,
@@ -215,13 +225,14 @@ const installPopoverMock = () => {
       return original.matches.call(this, selector);
     },
   });
-  return () => {
+  restorePopoverMock = () => {
     HTMLElement.prototype.showPopover = original.showPopover;
     HTMLElement.prototype.hidePopover = original.hidePopover;
     Object.defineProperty(HTMLElement.prototype, 'matches', {
       configurable: true,
       value: original.matches,
     });
+    restorePopoverMock = null;
   };
 };
 
@@ -318,6 +329,10 @@ describe('InviteFolderSettingModal (#10295)', () => {
     mockRequest.mockResolvedValue({ invited_ids: ['nobody2@example.com'] });
   });
 
+  afterEach(() => {
+    restorePopoverMock?.();
+  });
+
   it('lists accepted and pending shares with the accepted user mount level', async () => {
     await renderModal();
 
@@ -351,7 +366,7 @@ describe('InviteFolderSettingModal (#10295)', () => {
   });
 
   it('starts the share permission from the folder mount level and sends the picked bits', async () => {
-    const restorePopover = installPopoverMock();
+    installPopoverMock();
     const user = userEvent.setup();
     const environment = await renderModal();
 
@@ -361,7 +376,7 @@ describe('InviteFolderSettingModal (#10295)', () => {
     );
     await user.click(sharePermissionTrigger());
     await user.click(
-      screen.getByTestId('bai-entity-share-permission-full-access'),
+      presetItem('comp:BAIEntitySharePermissionSelector.FullAccess'),
     );
     expect(sharePermissionTrigger()).toHaveTextContent(
       'comp:BAIEntitySharePermissionSelector.FullAccess',
@@ -396,7 +411,41 @@ describe('InviteFolderSettingModal (#10295)', () => {
       'SOFT_DELETE',
       'HARD_DELETE',
     ]);
-    restorePopover();
+  });
+
+  it('restates an accepted share with the picked cap, naming the recipient as the share does', async () => {
+    installPopoverMock();
+    const user = userEvent.setup();
+    const environment = await renderModal();
+
+    const cells = screen.getAllByTestId('share-permission-cap');
+    expect(cells).toHaveLength(3);
+    const acceptedCell = cells.find((cell) =>
+      cell.closest('tr')?.textContent?.includes('user2@example.com'),
+    );
+    expect(acceptedCell).toHaveTextContent(
+      'comp:BAIEntitySharePermissionSelector.ReadOnly',
+    );
+    await user.click(acceptedCell!);
+    await user.click(
+      presetItem('comp:BAIEntitySharePermissionSelector.ReadAndWrite'),
+    );
+
+    await waitFor(() =>
+      expect(operationNames(environment)).toContain(
+        'InviteFolderSettingModalCreateShareMutation',
+      ),
+    );
+    const variables = await resolveMutation(
+      environment,
+      'InviteFolderSettingModalCreateShareMutation',
+    );
+    expect(variables.input).toEqual({
+      targetEntityType: 'vfolder',
+      targetEntityId: VFOLDER_ID,
+      recipient: { userId: USER2_ID },
+      permissions: ['READ', 'UPDATE', 'SOFT_DELETE'],
+    });
   });
 
   it('offers an e-mail invite as an entity share capped at the folder shared mount permission', async () => {

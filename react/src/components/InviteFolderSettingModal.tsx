@@ -22,7 +22,6 @@ import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import { Selector } from '@lablup/ui-common/Selector';
 import { HStack, StackItem, VStack } from '@lablup/ui-common/Stack';
 import { Heading } from '@lablup/ui-common/Text';
-import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIBadge,
@@ -41,8 +40,8 @@ import {
   BAIText,
   ENTITY_SHARE_PERMISSION_PRESETS,
   INITIAL_FETCH_KEY,
+  normalizeEntitySharePermissionBits,
   toLocalId,
-  useEntitySharePermissionLabels,
   useErrorMessageResolver,
   useFetchKey,
   useMutationWithPromise,
@@ -68,6 +67,8 @@ interface ShareRow {
   userId: string | null;
   mountLevel: MountLevel;
   permissions: ReadonlyArray<string>;
+  /** How the offer named its recipient; a restated offer must name them the same way. */
+  recipient: { userId: string } | { projectId: string } | { email: string };
 }
 
 const toMountLevel = (permission?: string | null): MountLevel | null =>
@@ -180,7 +181,6 @@ const InviteFolderSettingModalBody: React.FC<{
     Array<BAIEntitySharePermissionBit>
   >([...sharePresetBits(defaultMountLevel)]);
   const [recipientError, setRecipientError] = useState<string | null>(null);
-  const { summary: sharePermissionSummary } = useEntitySharePermissionLabels();
 
   const mountLevelOptions = [
     { label: t('data.ReadOnly'), value: 'ro' },
@@ -294,16 +294,23 @@ const InviteFolderSettingModalBody: React.FC<{
   const rows: Array<ShareRow> = _.sortBy(
     _.map(openShares, (share) => {
       const userId = recipientUserId(share);
+      const email =
+        share.recipientEmail ??
+        (userId ? emailByUserId[userId] : null) ??
+        userId ??
+        share.entityId;
       return {
         shareId: share.entityId,
-        email:
-          share.recipientEmail ??
-          (userId ? emailByUserId[userId] : null) ??
-          userId ??
-          share.entityId,
+        email,
         status: share.status === 'ACCEPTED' ? 'ACCEPTED' : 'PENDING',
         userId,
         permissions: share.permissions,
+        recipient: userId
+          ? { userId }
+          : share.recipientEntityType?.toLowerCase() === 'project' &&
+              share.recipientEntityId
+            ? { projectId: share.recipientEntityId }
+            : { email },
         // No policy row (an address without an account yet) means the folder's
         // shared mount permission; the share's cap never decides the level.
         mountLevel:
@@ -421,6 +428,28 @@ const InviteFolderSettingModalBody: React.FC<{
       }
       message.success(t('data.invitation.Invited'));
       setRecipient(null);
+      updateFetchKey();
+    } catch (error) {
+      message.error(getErrorMessage(error));
+    }
+  };
+
+  // The manager has no update mutation for a share: offering again to the
+  // same recipient restates what the standing share lends, accepted or not.
+  const handleChangeSharePermission = async (
+    row: ShareRow,
+    bits: Array<BAIEntitySharePermissionBit>,
+  ) => {
+    try {
+      await createShare({
+        input: {
+          targetEntityType: VFOLDER_ENTITY_TYPE,
+          targetEntityId: vfolderId,
+          recipient: row.recipient,
+          permissions: bits,
+        },
+      });
+      message.success(t('data.permission.PermissionModified'));
       updateFetchKey();
     } catch (error) {
       message.error(getErrorMessage(error));
@@ -553,7 +582,6 @@ const InviteFolderSettingModalBody: React.FC<{
             <StackItem size="static">
               <BAIEntitySharePermissionSelector
                 label={t('data.folders.SharePermission')}
-                labelTooltip={t('data.folders.SharePermissionDesc')}
                 width={170}
                 value={permissionBits}
                 onChange={(bits) => setPermissionBits(bits)}
@@ -633,16 +661,16 @@ const InviteFolderSettingModalBody: React.FC<{
             {
               title: t('data.folders.SharePermission'),
               dataIndex: 'permissions',
-              render: (permissions: ShareRow['permissions']) =>
-                permissions.length > 0 ? (
-                  <Token
-                    size="sm"
-                    label={sharePermissionSummary(permissions)}
-                    data-testid="share-permission-cap"
-                  />
-                ) : (
-                  '-'
-                ),
+              render: (permissions: ShareRow['permissions'], row) => (
+                <BAIEntitySharePermissionSelector
+                  label={t('data.folders.SharePermission')}
+                  isLabelHidden
+                  width={150}
+                  value={normalizeEntitySharePermissionBits(permissions)}
+                  onChange={(bits) => handleChangeSharePermission(row, bits)}
+                  data-testid="share-permission-cap"
+                />
+              ),
             },
             {
               title: t('data.folders.MountPermission'),

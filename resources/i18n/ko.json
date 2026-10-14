@@ -1052,7 +1052,6 @@
       "Serve": "서비스",
       "ShareFolder": "폴더 공유하기",
       "SharePermission": "공유 권한",
-      "SharePermissionDesc": "초대받은 사용자가 공유 폴더에서 할 수 있는 최대 범위(생성·읽기·수정·삭제)입니다. 마운트 권한은 별도로 설정합니다.",
       "SharedFolderAlertDesc": "이 폴더는 다른 사용자가 공유한 폴더입니다.",
       "SharedMountPermission": "공유 마운트 권한",
       "SharedMountPermissionDesc": "폴더를 공유받은 사용자의 기본 마운트 권한으로 사용됩니다. 개별 권한이 설정되지 않은 공유 사용자는 이 권한을 부여받습니다. 폴더 생성자는 항상 읽기 및 쓰기 권한을 부여받습니다.",

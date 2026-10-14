@@ -25,8 +25,8 @@ const meta: Meta<typeof BAIEntitySharePermissionSelector> = {
         component: `
 **BAIEntitySharePermissionSelector** is a \`DropdownMenu\` in compound mode inside an Astryx \`Field\`.
 
-- **Presets** (radio rows): Full access → \`CREATE, READ, UPDATE, SOFT_DELETE, HARD_DELETE\`; Read & write → \`READ, UPDATE, SOFT_DELETE\`; Read only → \`READ\`. Picking one commits its set and closes the menu.
-- **Custom** (submenu, opens on hover / Right arrow / click): one checkbox per bit, tagged \`C\` / \`R\` / \`U\` / \`Soft-D\` / \`Hard-D\`. Each toggle commits exactly the checked bits and keeps the flyout open; the last checked bit cannot be unchecked, because an empty list means "no ceiling" on the server.
+- **Presets** (plain items): Full access → \`CREATE, READ, UPDATE, SOFT_DELETE, HARD_DELETE\`; Read & write → \`READ, UPDATE, SOFT_DELETE\`; Read only → \`READ\`. Picking one commits its set and closes the menu.
+- **Custom** (submenu, opens on hover / Right arrow / click): one checkbox per bit. Each toggle commits exactly the checked bits and keeps the flyout open; the last checked bit cannot be unchecked, because an empty list means "no ceiling" on the server.
 - The trigger reads the preset the bits match, or **Custom** when they match none — the preset is derived from the value, never stored.
 
 The mount permission (\`NONE\` / \`READ_ONLY\` / \`READ_WRITE\`, a vfolder mount policy) is a separate axis with its own selector.
@@ -100,7 +100,7 @@ export const CustomBits: Story = {
     docs: {
       description: {
         story:
-          'A value that matches no preset reads "Custom" on the trigger, and the Custom row lists the checked codes.',
+          'A value that matches no preset reads "Custom" on the trigger; the Custom flyout shows which bits are checked.',
       },
     },
   },
