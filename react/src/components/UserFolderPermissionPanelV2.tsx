@@ -19,7 +19,7 @@ import {
   BAIScopedUserSelect,
   INITIAL_FETCH_KEY,
   useFetchKey,
-  BAISkeleton,
+  BAISelect,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, {
@@ -161,9 +161,7 @@ const UserFolderPermissionPanelV2: React.FC<
                   type: 'uuid',
                   fixedOperator: 'equals',
                   renderInput: ({ onAddCondition, value, isDisabled }) => (
-                    <Suspense
-                      fallback={<BAISkeleton variant="input" width={200} />}
-                    >
+                    <Suspense fallback={<BAISelect disabled loading />}>
                       <BAIScopedUserSelect
                         scope={domainScope}
                         // The filter row already prints the property label.

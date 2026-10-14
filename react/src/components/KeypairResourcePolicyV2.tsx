@@ -26,7 +26,7 @@ import {
   BAIKeypairResourcePolicyV2Table,
   type BAIKeypairResourcePolicyV2TableProps,
   BAINameActionCell,
-  BAISkeleton,
+  BAISelect,
   BAIScopedUserSelect,
   filterOutNullAndUndefined,
   useFetchKey,
@@ -314,9 +314,7 @@ const KeypairResourcePolicyV2 = ({
               type: 'uuid',
               fixedOperator: 'equals',
               renderInput: ({ onAddCondition, value, isDisabled }) => (
-                <Suspense
-                  fallback={<BAISkeleton variant="input" width={200} />}
-                >
+                <Suspense fallback={<BAISelect disabled loading />}>
                   <BAIScopedUserSelect
                     scope={domainScope}
                     valuePropName="id"
