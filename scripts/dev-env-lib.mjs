@@ -168,17 +168,27 @@ function parseUpstream(raw, warnings) {
   };
 }
 
-/** The board's computed `resolved` block on a policy branch, or null when absent or malformed. */
+const RESOLVED_LISTS = ["floor_servers", "target_servers", "below_floor_servers"];
+
+/**
+ * The board's computed `resolved` block on a policy branch; null when absent
+ * or malformed (one warning), so `compatReport` computes the lists itself.
+ */
 function parseResolved(raw, label, warnings) {
   if (raw == null) return null;
   if (!isObject(raw)) {
-    warnings.push(`${label}: "resolved" is not an object, ignored`);
+    warnings.push(`${label}: "resolved" is not an object, computed here instead`);
+    return null;
+  }
+  const bad = RESOLVED_LISTS.filter((key) => !Array.isArray(raw[key]));
+  if (bad.length > 0) {
+    warnings.push(
+      `${label}: "resolved.${bad.join('", "resolved.')}" is not a list, computed here instead`,
+    );
     return null;
   }
   const names = (key) =>
-    Array.isArray(raw[key])
-      ? raw[key].filter((name) => typeof name === "string" && name !== "")
-      : [];
+    raw[key].filter((name) => typeof name === "string" && name !== "");
   return {
     targetVersion: stringOrNull(raw.target_version),
     floorServers: names("floor_servers"),
@@ -205,6 +215,11 @@ function parsePolicy(raw, warnings) {
   }
   for (const [name, entry] of Object.entries(isObject(rawBranches) ? rawBranches : {})) {
     const label = `policy branch "${name}"`;
+    if (!TRACK.test(name)) {
+      // resolveCompatBranch can never select such a key, so listing it would mislead.
+      warnings.push(`${label}: not "main" or a release branch like "26.9", skipped`);
+      continue;
+    }
     if (!isObject(entry)) {
       warnings.push(`${label}: not an object, skipped`);
       continue;
@@ -576,7 +591,7 @@ export function compatReport(catalog, branchName) {
   };
 }
 
-/** Where `compat` looks for version gates; `__generated__`, tests and stories are skipped. */
+/** Where `compat` looks for version gates; `__generated__`, tests, stories and `.doc.*` catalogs are skipped. */
 export const GATE_SCAN_DIRS = [
   "react/src",
   "packages/backend.ai-ui/src",
@@ -590,7 +605,8 @@ export function isGateScanFile(relativePath) {
   return (
     GATE_SCAN_EXTENSIONS.some((ext) => name.endsWith(ext)) &&
     !relativePath.split("/").includes("__generated__") &&
-    !/\.(test|spec|stories)\./.test(name)
+    // `.doc.ts` is a component's Astryx catalog entry: prose and examples, not a gate.
+    !/\.(test|spec|stories|doc)\./.test(name)
   );
 }
 
@@ -614,6 +630,11 @@ const GATE_PATTERNS = [
   {
     kind: "@sinceMultiple",
     regex: /@sinceMultiple\(\s*versions:\s*\[([^\]]*)\]/g,
+    versions: (m) => quoted(m[1]),
+  },
+  {
+    kind: "@deprecatedSinceMultiple",
+    regex: /@deprecatedSinceMultiple\(\s*versions:\s*\[([^\]]*)\]/g,
     versions: (m) => quoted(m[1]),
   },
 ];

@@ -848,9 +848,14 @@ describe("dev-env manager compatibility policy", () => {
         policy: {
           webui: {
             branches: {
-              main: { min_manager_line: "26.4", target: "next" },
+              main: {
+                min_manager_line: "26.4",
+                target: "next",
+                resolved: { target_version: "x", floor_servers: "a", target_servers: [] },
+              },
               "26.9": { min_manager_line: "26.4.0", target: "26.9" },
               "26.8": "26.4",
+              "feat/x": { min_manager_line: "26.4", target: "main" },
             },
           },
         },
@@ -859,6 +864,7 @@ describe("dev-env manager compatibility policy", () => {
     );
     expect(Object.keys(policy.webui.branches)).toEqual(["main"]);
     expect(policy.webui.branches.main.target).toBeNull();
+    expect(policy.webui.branches.main.resolved).toBeNull();
     expect(servers[0].tracks).toBeNull();
     expect(servers[0].status.freshness).toBeNull();
     expect(warnings).toEqual([
@@ -866,9 +872,26 @@ describe("dev-env manager compatibility policy", () => {
       'server "a": "status.freshness" "fresh" is not one of current, behind, unknown, ignored',
       '"upstream.lines" entry "bad" is malformed, ignored',
       'policy branch "main": "target" "next" is not "main" or a line like "26.9", treated as unknown',
+      'policy branch "main": "resolved.floor_servers", "resolved.below_floor_servers" is not a list, computed here instead',
       'policy branch "26.9": "min_manager_line" "26.4.0" is not a line like "26.4", skipped',
       'policy branch "26.8": not an object, skipped',
+      'policy branch "feat/x": not "main" or a release branch like "26.9", skipped',
     ]);
+  });
+
+  it("falls back to the local server lists when the board's resolved block is malformed", () => {
+    const body = structuredClone(POLICY_BODY);
+    body.policy.webui.branches.main.resolved = "stale";
+    const malformed = parseCatalog(body, NOW);
+    expect(malformed.warnings).toEqual([
+      'policy branch "main": "resolved" is not an object, computed here instead',
+    ]);
+    expect(compatReport(malformed, "main")).toMatchObject({
+      targetVersion: "26.9.0rc1",
+      floorServers: ["staging-lts"],
+      targetServers: ["sujin"],
+      belowFloorServers: ["old-box"],
+    });
   });
 
   it("resolves the policy branch from the git branch", () => {
@@ -930,6 +953,7 @@ describe("dev-env manager compatibility policy", () => {
       '  field @since(version: "26.7.0")',
       '  old @deprecatedSince(version: "26.4.0")',
       '  multi @sinceMultiple(versions: ["26.4.5", "26.9.0"])',
+      '  gone @deprecatedSinceMultiple(versions: ["26.4.3", "26.8.1"])',
       "`;",
     ].join("\n");
     const gates = findVersionGates(source);
@@ -941,11 +965,12 @@ describe("dev-env manager compatibility policy", () => {
       { line: 8, kind: "@since", versions: ["26.7.0"], lines: ["26.7"] },
       { line: 9, kind: "@deprecatedSince", versions: ["26.4.0"], lines: ["26.4"] },
       { line: 10, kind: "@sinceMultiple", versions: ["26.4.5", "26.9.0"], lines: ["26.4", "26.9"] },
+      { line: 11, kind: "@deprecatedSinceMultiple", versions: ["26.4.3", "26.8.1"], lines: ["26.4", "26.8"] },
     ]);
     const atOrBelow = gates.filter((g) => isGateAtOrBelowFloor(g, "26.4")).map((g) => g.line);
     // The backport arrays keep their newer entry, so they stay (ADR 0010).
     expect(atOrBelow).toEqual([2, 9]);
-    expect(gates.filter((g) => isGateAtOrBelowFloor(g, "26.8")).map((g) => g.line)).toEqual([2, 3, 8, 9]);
+    expect(gates.filter((g) => isGateAtOrBelowFloor(g, "26.8")).map((g) => g.line)).toEqual([2, 3, 8, 9, 11]);
   });
 
   it("scans application sources only", () => {
@@ -960,6 +985,8 @@ describe("dev-env manager compatibility policy", () => {
     expect(isGateScanFile("react/src/components/A.test.tsx")).toBe(false);
     expect(isGateScanFile("react/src/components/A.stories.tsx")).toBe(false);
     expect(isGateScanFile("react/src/components/A.spec.ts")).toBe(false);
+    // A component's Astryx catalog entry carries examples, not gates.
+    expect(isGateScanFile("packages/backend.ai-ui/src/components/fragments/BAIDomainSelectV2.doc.ts")).toBe(false);
     expect(isGateScanFile("react/src/locale/en.json")).toBe(false);
   });
 

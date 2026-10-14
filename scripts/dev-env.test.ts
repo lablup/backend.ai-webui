@@ -767,6 +767,9 @@ describe("dev-env CLI", () => {
       writeSource("react/src/components/Old.test.tsx", [
         "isManagerVersionCompatibleWith('24.0.0')",
       ]);
+      writeSource("packages/backend.ai-ui/src/components/Old.doc.ts", [
+        "code: `baiClient.isManagerVersionCompatibleWith('24.0.0')`",
+      ]);
       writeSource("packages/backend.ai-client/src/client.ts", [
         'const legacy = this.isManagerVersionCompatibleWith("26.4.0");',
       ]);
@@ -791,6 +794,7 @@ describe("dev-env CLI", () => {
       expect(result.stdout).not.toContain("isManagerVersionCompatibleWith(26.9.0)");
       expect(result.stdout).not.toContain("__generated__");
       expect(result.stdout).not.toContain("Old.test");
+      expect(result.stdout).not.toContain("Old.doc");
     });
 
     it("reads a release branch's own entry with --branch, as JSON", async () => {
@@ -848,10 +852,14 @@ describe("dev-env CLI", () => {
       expect(closed.stdout).toContain("compat: no policy to read — Could not reach the catalog");
     });
 
-    it("rejects a --branch without a name", async () => {
+    it("rejects a --branch without a name, including one followed by another option", async () => {
       const result = await run(["compat", "--branch"]);
       expect(result.status).toBe(2);
       expect(result.stderr).toContain("--branch needs a branch name");
+      const swallowed = await run(["compat", "--branch", "--json"]);
+      expect(swallowed.status).toBe(2);
+      expect(swallowed.stderr).toContain("--branch needs a branch name");
+      expect(swallowed.stdout).toBe("");
     });
   });
 

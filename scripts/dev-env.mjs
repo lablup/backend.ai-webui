@@ -458,7 +458,8 @@ async function main() {
     const inlineBranch = /^--branch=(.*)$/s.exec(argv[i]);
     if (argv[i] === "--branch" || inlineBranch) {
       branch = inlineBranch ? inlineBranch[1] : argv[++i];
-      if (branch === undefined || branch === "") {
+      // `--branch --json` is a missing name, not a branch called "--json".
+      if (branch === undefined || branch === "" || branch.startsWith("--")) {
         throw new UserError(`--branch needs a branch name\n\n${USAGE}`);
       }
       rest.push("--branch");

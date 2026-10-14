@@ -61,7 +61,7 @@ flowchart TD
 
 | field | 값 | 뜻 |
 |---|---|---|
-| key | `main`, 또는 `^\d+\.\d+$` 꼴의 release branch 이름 | 그 entry를 읽는 webui branch |
+| key | `main`, 또는 `^\d+\.\d+$` 꼴의 release branch 이름 | 그 entry를 읽는 webui branch. `parseCatalog`는 다른 key를 warning과 함께 건너뛴다. |
 | `min_manager_line` | `^\d+\.\d+$` 꼴의 line | floor. 그 line 전체를 뜻하고 최신 patch를 가정한다(ADR 0010의 **Latest patch assumed**). |
 | `target` | `main`(backend.ai의 `main` branch) 또는 line | target. `parseCatalog`는 다른 값을 `null`로 읽고 warning을 남기며, `compat`은 `target: unknown`으로 찍는다. |
 | `notes` | 문자열 | 자유 메모 |
@@ -73,7 +73,7 @@ flowchart TD
 ### 2. `dev-env compat`이 policy를 읽고 보고한다
 
 - **Branch resolution**: `scripts/dev-env.mjs compat`은 `git rev-parse --abbrev-ref HEAD`로 checkout한 branch를 읽고, `--branch <name>`이 있으면 그 이름을 대신 쓴다. 둘 다 `dev-env-lib.mjs`의 `resolveCompatBranch`를 거친다. 이름이 `^\d+\.\d+$`이면 그 entry를, 그 밖의 모든 이름(feature branch, detached HEAD, git checkout이 아닌 곳)은 `main`의 entry를 읽는다.
-- **Report**: 명령은 floor line, target과 board가 GitHub에서 푼 target 버전(`resolved.target_version`), 그리고 아래 세 server 목록을 찍는다. board가 `resolved`를 보내지 않으면 `dev-env-lib.mjs`의 `compatReport`가 catalog의 server, `upstream`, [tracks](#용어), [freshness](#용어)로 같은 목록을 계산한다. live server는 probe의 `status.live`가 `true`인 server다.
+- **Report**: 명령은 floor line, target과 board가 GitHub에서 푼 target 버전(`resolved.target_version`), 그리고 아래 세 server 목록을 찍는다. board가 `resolved`를 보내지 않거나 그 목록 중 하나라도 list가 아니면(warning 하나) `dev-env-lib.mjs`의 `compatReport`가 catalog의 server, `upstream`, [tracks](#용어), [freshness](#용어)로 같은 목록을 계산한다. live server는 probe의 `status.live`가 `true`인 server다.
 
 | 목록 | contract의 field | 조건 |
 |---|---|---|
@@ -81,7 +81,7 @@ flowchart TD
 | target servers | `target_servers` | live server 중 `tracks`가 target과 같고 `freshness`가 `current`인 것 |
 | below the floor | `below_floor_servers` | live server 중 매니저 버전의 line이 floor보다 낮은 것 |
 
-- **Gate scan**: 명령은 `react/src`, `packages/backend.ai-ui/src`, `packages/backend.ai-client/src` 아래 `.ts`, `.tsx`, `.js`, `.jsx`, `.mjs` 파일을 읽고, `__generated__`·`node_modules` 디렉터리와 `*.test.*`, `*.spec.*`, `*.stories.*` 파일은 건너뛴다. `dev-env-lib.mjs`의 `findVersionGates`가 아래 형태를 정규식으로 찾는다.
+- **Gate scan**: 명령은 `react/src`, `packages/backend.ai-ui/src`, `packages/backend.ai-client/src` 아래 `.ts`, `.tsx`, `.js`, `.jsx`, `.mjs` 파일을 읽고, `__generated__`·`node_modules` 디렉터리와 `*.test.*`, `*.spec.*`, `*.stories.*`, `*.doc.*`(component의 Astryx catalog 항목; 예제 코드를 담는다) 파일은 건너뛴다. `dev-env-lib.mjs`의 `findVersionGates`가 아래 형태를 정규식으로 찾는다.
 
 | 형태 | 예 | floor 이하로 세는 조건 |
 |---|---|---|
@@ -90,6 +90,7 @@ flowchart TD
 | `@since(version: "V")` | `@since(version: "26.7.0")` | V의 line이 floor 이하 |
 | `@deprecatedSince(version: "V")` | `@deprecatedSince(version: "26.4.0")` | V의 line이 floor 이하 |
 | `@sinceMultiple(versions: [...])` | `@sinceMultiple(versions: ["26.4.5", "26.9.0"])` | 모든 항목의 line이 floor 이하 |
+| `@deprecatedSinceMultiple(versions: [...])` | `@deprecatedSinceMultiple(versions: ["26.4.3", "26.8.1"])` | 모든 항목의 line이 floor 이하 |
 
 - **Version strings**: `versionLine`은 `<digits>.<digits>`로 시작하지 않는 버전(`x.y.z`)을 무시하고, `compareLines`는 line을 두 숫자 성분으로 비교한다. `packages/backend.ai-client/src/pep440.ts`는 쓰지 않는다.
 - **Report only**: catalog를 읽지 못하면(`WEBUI_DEV_ENV_CATALOG`·`WEBUI_DEV_ENV_CATALOG_URL`·`DEV_GW_CONFIG`가 모두 없고 `~/.config/fw/dev-gw.json`도 없을 때, board에 닿지 않을 때, board가 `policy`를 내지 않을 때) 명령은 `compat: no policy to read — <이유>` 한 줄을 찍고 exit 0으로 끝난다. `--json`은 그 경우 `{ available: false, branch, gitBranch, reason }`을 낸다.
