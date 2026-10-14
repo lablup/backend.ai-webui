@@ -46,7 +46,7 @@ const ResourceGroupDefaultDeploymentOptionsModal: React.FC<
   const { schedulingHandlers } = useFragment(
     graphql`
       fragment ResourceGroupDefaultDeploymentOptionsModal_schedulingHandlers on Query {
-        schedulingHandlers @since(version: "26.4.4rc1") {
+        schedulingHandlers {
           name
           description
         }
@@ -64,7 +64,7 @@ const ResourceGroupDefaultDeploymentOptionsModal: React.FC<
       fragment ResourceGroupDefaultDeploymentOptionsModalFragment on ResourceGroup {
         id
         name
-        defaultDeploymentOptions @since(version: "26.4.4rc1") {
+        defaultDeploymentOptions {
           ...ResourceGroupDefaultDeploymentOptionsModal_options
         }
       }

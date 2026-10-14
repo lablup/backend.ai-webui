@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2e21da6e071b26db1807e410e2b078eb>>
+ * @generated SignedSource<<84a3f08ba842168ffe74a3b8580213df>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -399,12 +399,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "7172e02472eec5122bcc66cad7d30416",
+    "cacheID": "dfdc73ff74c3abb94883875e932f430b",
     "id": null,
     "metadata": {},
     "name": "ResourceGroupDefaultSessionOptionsPanelQuery",
     "operationKind": "query",
-    "text": "query ResourceGroupDefaultSessionOptionsPanelQuery(\n  $filter: ResourceGroupFilter\n) {\n  adminResourceGroups(filter: $filter, first: 1) {\n    edges {\n      node {\n        ...ResourceGroupDefaultSessionOptionsPanelFragment\n        id\n      }\n    }\n  }\n}\n\nfragment ResourceGroupDefaultSessionOptionsModalFragment on ResourceGroup {\n  id\n  name\n  defaultSessionOptions @since(version: \"26.4.4rc1\") {\n    ...ResourceGroupDefaultSessionOptionsModal_options\n  }\n}\n\nfragment ResourceGroupDefaultSessionOptionsModal_options on DefaultSessionOptionsInfo {\n  priority\n  isPreemptible\n  clusterMode\n  defaultFailurePolicy\n  agentSelectionPolicy\n  handlerOptions {\n    default {\n      timeoutSec\n      maxRetryCount\n    }\n    byHandler {\n      handlerName\n      timeoutSec\n      maxRetryCount\n    }\n  }\n  defaultKernelExecutionSpec {\n    imageId\n    resources {\n      resourceType\n      quantity\n    }\n    resourceOpts {\n      shmem\n    }\n    startupCommand\n    bootstrapScript\n    startsAt\n    batchTimeoutSec\n  }\n}\n\nfragment ResourceGroupDefaultSessionOptionsPanelFragment on ResourceGroup {\n  defaultSessionOptions @since(version: \"26.4.4rc1\") {\n    ...ResourceGroupDefaultSessionOptionsPanel_options\n  }\n  ...ResourceGroupDefaultSessionOptionsModalFragment\n}\n\nfragment ResourceGroupDefaultSessionOptionsPanel_options on DefaultSessionOptionsInfo {\n  priority\n  isPreemptible\n  clusterMode\n  defaultFailurePolicy\n  agentSelectionPolicy\n  handlerOptions {\n    default {\n      timeoutSec\n      maxRetryCount\n    }\n    byHandler {\n      handlerName\n      timeoutSec\n      maxRetryCount\n    }\n  }\n  defaultKernelExecutionSpec {\n    imageId\n    resources {\n      resourceType\n      quantity\n    }\n    resourceOpts {\n      shmem\n    }\n    startupCommand\n    bootstrapScript\n    startsAt\n    batchTimeoutSec\n  }\n}\n"
+    "text": "query ResourceGroupDefaultSessionOptionsPanelQuery(\n  $filter: ResourceGroupFilter\n) {\n  adminResourceGroups(filter: $filter, first: 1) {\n    edges {\n      node {\n        ...ResourceGroupDefaultSessionOptionsPanelFragment\n        id\n      }\n    }\n  }\n}\n\nfragment ResourceGroupDefaultSessionOptionsModalFragment on ResourceGroup {\n  id\n  name\n  defaultSessionOptions {\n    ...ResourceGroupDefaultSessionOptionsModal_options\n  }\n}\n\nfragment ResourceGroupDefaultSessionOptionsModal_options on DefaultSessionOptionsInfo {\n  priority\n  isPreemptible\n  clusterMode\n  defaultFailurePolicy\n  agentSelectionPolicy\n  handlerOptions {\n    default {\n      timeoutSec\n      maxRetryCount\n    }\n    byHandler {\n      handlerName\n      timeoutSec\n      maxRetryCount\n    }\n  }\n  defaultKernelExecutionSpec {\n    imageId\n    resources {\n      resourceType\n      quantity\n    }\n    resourceOpts {\n      shmem\n    }\n    startupCommand\n    bootstrapScript\n    startsAt\n    batchTimeoutSec\n  }\n}\n\nfragment ResourceGroupDefaultSessionOptionsPanelFragment on ResourceGroup {\n  defaultSessionOptions {\n    ...ResourceGroupDefaultSessionOptionsPanel_options\n  }\n  ...ResourceGroupDefaultSessionOptionsModalFragment\n}\n\nfragment ResourceGroupDefaultSessionOptionsPanel_options on DefaultSessionOptionsInfo {\n  priority\n  isPreemptible\n  clusterMode\n  defaultFailurePolicy\n  agentSelectionPolicy\n  handlerOptions {\n    default {\n      timeoutSec\n      maxRetryCount\n    }\n    byHandler {\n      handlerName\n      timeoutSec\n      maxRetryCount\n    }\n  }\n  defaultKernelExecutionSpec {\n    imageId\n    resources {\n      resourceType\n      quantity\n    }\n    resourceOpts {\n      shmem\n    }\n    startupCommand\n    bootstrapScript\n    startsAt\n    batchTimeoutSec\n  }\n}\n"
   }
 };
 })();

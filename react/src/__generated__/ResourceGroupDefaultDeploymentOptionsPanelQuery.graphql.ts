@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7e8ff6f85c9aacb340180c592862b678>>
+ * @generated SignedSource<<2669c8d450b9ee9384cf507a8e70ceb0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -301,12 +301,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "fbb033a0dfd4adb1e4bd2c089ed62fea",
+    "cacheID": "38e8ce47bbc89bfcca89b00e35bdac71",
     "id": null,
     "metadata": {},
     "name": "ResourceGroupDefaultDeploymentOptionsPanelQuery",
     "operationKind": "query",
-    "text": "query ResourceGroupDefaultDeploymentOptionsPanelQuery(\n  $filter: ResourceGroupFilter\n) {\n  adminResourceGroups(filter: $filter, last: 1) {\n    edges {\n      node {\n        ...ResourceGroupDefaultDeploymentOptionsPanelFragment\n        id\n      }\n    }\n  }\n  ...ResourceGroupDefaultDeploymentOptionsModal_schedulingHandlers\n}\n\nfragment ResourceGroupDefaultDeploymentOptionsModalFragment on ResourceGroup {\n  id\n  name\n  defaultDeploymentOptions @since(version: \"26.4.4rc1\") {\n    ...ResourceGroupDefaultDeploymentOptionsModal_options\n  }\n}\n\nfragment ResourceGroupDefaultDeploymentOptionsModal_options on DeploymentOptionsInfo {\n  handlerOptions {\n    default {\n      timeoutSec\n      maxRetryCount\n    }\n    byHandler {\n      handlerName\n      timeoutSec\n      maxRetryCount\n    }\n  }\n}\n\nfragment ResourceGroupDefaultDeploymentOptionsModal_schedulingHandlers on Query {\n  schedulingHandlers @since(version: \"26.4.4rc1\") {\n    name\n    description\n  }\n}\n\nfragment ResourceGroupDefaultDeploymentOptionsPanelFragment on ResourceGroup {\n  defaultDeploymentOptions @since(version: \"26.4.4rc1\") {\n    ...ResourceGroupDefaultDeploymentOptionsPanel_options\n  }\n  ...ResourceGroupDefaultDeploymentOptionsModalFragment\n}\n\nfragment ResourceGroupDefaultDeploymentOptionsPanel_options on DeploymentOptionsInfo {\n  handlerOptions {\n    default {\n      timeoutSec\n      maxRetryCount\n    }\n    byHandler {\n      handlerName\n      timeoutSec\n      maxRetryCount\n    }\n  }\n}\n"
+    "text": "query ResourceGroupDefaultDeploymentOptionsPanelQuery(\n  $filter: ResourceGroupFilter\n) {\n  adminResourceGroups(filter: $filter, last: 1) {\n    edges {\n      node {\n        ...ResourceGroupDefaultDeploymentOptionsPanelFragment\n        id\n      }\n    }\n  }\n  ...ResourceGroupDefaultDeploymentOptionsModal_schedulingHandlers\n}\n\nfragment ResourceGroupDefaultDeploymentOptionsModalFragment on ResourceGroup {\n  id\n  name\n  defaultDeploymentOptions {\n    ...ResourceGroupDefaultDeploymentOptionsModal_options\n  }\n}\n\nfragment ResourceGroupDefaultDeploymentOptionsModal_options on DeploymentOptionsInfo {\n  handlerOptions {\n    default {\n      timeoutSec\n      maxRetryCount\n    }\n    byHandler {\n      handlerName\n      timeoutSec\n      maxRetryCount\n    }\n  }\n}\n\nfragment ResourceGroupDefaultDeploymentOptionsModal_schedulingHandlers on Query {\n  schedulingHandlers {\n    name\n    description\n  }\n}\n\nfragment ResourceGroupDefaultDeploymentOptionsPanelFragment on ResourceGroup {\n  defaultDeploymentOptions {\n    ...ResourceGroupDefaultDeploymentOptionsPanel_options\n  }\n  ...ResourceGroupDefaultDeploymentOptionsModalFragment\n}\n\nfragment ResourceGroupDefaultDeploymentOptionsPanel_options on DeploymentOptionsInfo {\n  handlerOptions {\n    default {\n      timeoutSec\n      maxRetryCount\n    }\n    byHandler {\n      handlerName\n      timeoutSec\n      maxRetryCount\n    }\n  }\n}\n"
   }
 };
 })();

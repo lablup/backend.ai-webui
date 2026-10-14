@@ -156,7 +156,8 @@ export const HandlerOptionsFormFields: React.FC<{
                   <Form.Item
                     {...restField}
                     name={[fieldName, 'handlerName']}
-                    style={{ marginBottom: 0, flex: 2 }}
+                    // Equal tracks regardless of the chosen name's length.
+                    style={{ marginBottom: 0, flex: '2 1 0', minWidth: 0 }}
                     rules={[
                       {
                         required: true,
@@ -176,7 +177,7 @@ export const HandlerOptionsFormFields: React.FC<{
                   <Form.Item
                     {...restField}
                     name={[fieldName, 'timeoutSec']}
-                    style={{ marginBottom: 0, flex: 1 }}
+                    style={{ marginBottom: 0, flex: '1 1 0', minWidth: 0 }}
                   >
                     <AstryxFormNumberInput
                       label={t('resourceGroup.Timeout')}
@@ -189,7 +190,7 @@ export const HandlerOptionsFormFields: React.FC<{
                   <Form.Item
                     {...restField}
                     name={[fieldName, 'maxRetryCount']}
-                    style={{ marginBottom: 0, flex: 1 }}
+                    style={{ marginBottom: 0, flex: '1 1 0', minWidth: 0 }}
                   >
                     <AstryxFormNumberInput
                       label={t('modelService.MaxRetries')}
