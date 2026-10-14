@@ -1051,6 +1051,8 @@
       "SelectPermission": "选择权限",
       "Serve": "服务模式",
       "ShareFolder": "共享文件夹",
+      "SharePermission": "共享权限",
+      "SharePermissionDesc": "受邀用户对共享文件夹可执行操作的上限（创建、读取、修改、删除）。挂载权限另行设置。",
       "SharedFolderAlertDesc": "这是一个外部共享的文件夹。",
       "SharedMountPermission": "共享挂载权限",
       "SharedMountPermissionDesc": "与此文件夹共享的用户的默认挂载权限。未设置单独权限的共享用户将获得此权限。文件夹创建者始终拥有读写权限。",

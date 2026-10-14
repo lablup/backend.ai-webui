@@ -1051,6 +1051,8 @@
       "SelectPermission": "権限を選択する",
       "Serve": "サービス",
       "ShareFolder": "フォルダの共有",
+      "SharePermission": "共有権限",
+      "SharePermissionDesc": "招待されたユーザーが共有フォルダに対して行える操作の上限（作成・読み取り・更新・削除）です。マウント権限は別に設定します。",
       "SharedFolderAlertDesc": "これは外部共有フォルダーです。",
       "SharedMountPermission": "共有マウント許可",
       "SharedMountPermissionDesc": "このフォルダを共有されたユーザーのデフォルトのマウント許可です。個別の許可が設定されていない共有ユーザーにはこの許可が適用されます。フォルダの作成者には常に読み書きが許可されます。",
