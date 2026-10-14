@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bc3395b20552edb63d2c3aae0cf3fcee>>
+ * @generated SignedSource<<46f035fdaa1b5184d33e080d2de027e5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,23 +11,23 @@
 import { ReaderFragment } from 'relay-runtime';
 export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
-export type InviteFolderSettingModalV2Fragment$data = {
+export type InviteFolderSettingModalFragment$data = {
   readonly accessControl: {
     readonly permission: VFolderMountPermission;
   };
   readonly id: string;
-  readonly " $fragmentType": "InviteFolderSettingModalV2Fragment";
+  readonly " $fragmentType": "InviteFolderSettingModalFragment";
 };
-export type InviteFolderSettingModalV2Fragment$key = {
-  readonly " $data"?: InviteFolderSettingModalV2Fragment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"InviteFolderSettingModalV2Fragment">;
+export type InviteFolderSettingModalFragment$key = {
+  readonly " $data"?: InviteFolderSettingModalFragment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"InviteFolderSettingModalFragment">;
 };
 
 const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
-  "name": "InviteFolderSettingModalV2Fragment",
+  "name": "InviteFolderSettingModalFragment",
   "selections": [
     {
       "alias": null,
@@ -59,6 +59,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "c2693747465a83340f42f5d4984629be";
+(node as any).hash = "0ea69771c4af66c08c3ed241b158fe2f";
 
 export default node;

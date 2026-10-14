@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4c54ed9c970ab2197a0e3c983c8aa927>>
+ * @generated SignedSource<<e42d73b3cd7ba1f73cc649babd458b55>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,10 +10,10 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type EntityShareStatus = "ACCEPTED" | "CANCELED" | "PENDING" | "REJECTED" | "REVOKED" | "%future added value";
-export type InviteFolderSettingModalV2CancelShareMutation$variables = {
+export type InviteFolderSettingModalCancelShareMutation$variables = {
   id: string;
 };
-export type InviteFolderSettingModalV2CancelShareMutation$data = {
+export type InviteFolderSettingModalCancelShareMutation$data = {
   readonly cancelEntityShare: {
     readonly share: {
       readonly id: string;
@@ -21,9 +21,9 @@ export type InviteFolderSettingModalV2CancelShareMutation$data = {
     };
   } | null | undefined;
 };
-export type InviteFolderSettingModalV2CancelShareMutation = {
-  response: InviteFolderSettingModalV2CancelShareMutation$data;
-  variables: InviteFolderSettingModalV2CancelShareMutation$variables;
+export type InviteFolderSettingModalCancelShareMutation = {
+  response: InviteFolderSettingModalCancelShareMutation$data;
+  variables: InviteFolderSettingModalCancelShareMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -83,7 +83,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "InviteFolderSettingModalV2CancelShareMutation",
+    "name": "InviteFolderSettingModalCancelShareMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -92,20 +92,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "InviteFolderSettingModalV2CancelShareMutation",
+    "name": "InviteFolderSettingModalCancelShareMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "e6ba2a6e766045860efef4ad9aa59cd4",
+    "cacheID": "ab05deae0f3dc5cb1759759f90c2ced9",
     "id": null,
     "metadata": {},
-    "name": "InviteFolderSettingModalV2CancelShareMutation",
+    "name": "InviteFolderSettingModalCancelShareMutation",
     "operationKind": "mutation",
-    "text": "mutation InviteFolderSettingModalV2CancelShareMutation(\n  $id: UUID!\n) {\n  cancelEntityShare(id: $id) {\n    share {\n      id\n      status\n    }\n  }\n}\n"
+    "text": "mutation InviteFolderSettingModalCancelShareMutation(\n  $id: UUID!\n) {\n  cancelEntityShare(id: $id) {\n    share {\n      id\n      status\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "3f2d49ec608bdff9e5e4c289cec9a0ff";
+(node as any).hash = "334c856cfe0d267fe81a76c8696ec3c4";
 
 export default node;

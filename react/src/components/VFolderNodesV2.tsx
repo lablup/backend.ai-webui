@@ -27,9 +27,6 @@ import { ProjectContextOrNull } from '../types/projectContext';
 import DeleteForeverVFolderModalV2 from './DeleteForeverVFolderModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import InviteFolderSettingModal from './InviteFolderSettingModal';
-import InviteFolderSettingModalV2, {
-  ENTITY_SHARE_MANAGER_VERSION,
-} from './InviteFolderSettingModalV2';
 import QuotaPerStorageVolumePanelCard, {
   type VolumeInfo,
 } from './QuotaPerStorageVolumePanelCard';
@@ -522,10 +519,6 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [currentUser] = useCurrentUserInfo();
-  const baiClient = useSuspendedBackendaiClient();
-  const supportsEntityShare = baiClient.isManagerVersionCompatibleWith(
-    ENTITY_SHARE_MANAGER_VERSION,
-  );
   const [inviteVFolder, setInviteVFolder] = useState<VFolderNodeInList | null>(
     null,
   );
@@ -617,7 +610,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
         ...VFolderPermissionCellV2Fragment
         ...VFolderNodeIdenticonV2Fragment
         ...SharedFolderPermissionInfoModalV2Fragment
-        ...InviteFolderSettingModalV2Fragment
+        ...InviteFolderSettingModalFragment
         ...DeleteForeverVFolderModalV2Fragment
         ...BAINodeNotificationItemFragment @alias(as: "notificationFrgmt")
       }
@@ -974,25 +967,15 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           setPurgingVFolders([]);
         }}
       />
-      {supportsEntityShare ? (
-        <BAIUnmountAfterClose>
-          <InviteFolderSettingModalV2
-            onRequestClose={() => {
-              setInviteVFolder(null);
-            }}
-            vfolderFrgmt={inviteVFolder}
-            open={!!inviteVFolder}
-          />
-        </BAIUnmountAfterClose>
-      ) : (
+      <BAIUnmountAfterClose>
         <InviteFolderSettingModal
           onRequestClose={() => {
             setInviteVFolder(null);
           }}
-          vfolderId={inviteVFolder ? toLocalId(inviteVFolder.id) : null}
+          vfolderFrgmt={inviteVFolder}
           open={!!inviteVFolder}
         />
-      )}
+      </BAIUnmountAfterClose>
       <SharedFolderPermissionInfoModalV2
         vfolderFrgmt={currentSharedVFolder}
         open={!!currentSharedVFolder}

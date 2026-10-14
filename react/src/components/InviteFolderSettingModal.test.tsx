@@ -4,8 +4,8 @@
  */
 import '../../__test__/matchMedia.mock.js';
 import '../../__test__/resizeObserver.mock.js';
-import type { InviteFolderSettingModalV2TestQuery } from '../__generated__/InviteFolderSettingModalV2TestQuery.graphql';
-import InviteFolderSettingModalV2 from './InviteFolderSettingModalV2';
+import type { InviteFolderSettingModalTestQuery } from '../__generated__/InviteFolderSettingModalTestQuery.graphql';
+import InviteFolderSettingModal from './InviteFolderSettingModal';
 import '@testing-library/jest-dom';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -20,8 +20,9 @@ import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockE
 
 /**
  * #10295: the share modal lists the folder's entity shares with each
- * accepted user's mount level, invites one recipient at a time, and sends an
- * e-mail invite with the folder's shared mount permission as `perm`.
+ * accepted user's mount level, invites one recipient at a time, and offers an
+ * e-mail invite as an entity share capped at the folder's shared mount
+ * permission, with no mount policy of its own.
  * `t` is identity-mapped, so the assertions read as i18n keys.
  */
 
@@ -140,18 +141,18 @@ const RESOLVERS = {
 const Harness: React.FC<{ onRequestClose?: () => void }> = ({
   onRequestClose = () => {},
 }) => {
-  const data = useLazyLoadQuery<InviteFolderSettingModalV2TestQuery>(
+  const data = useLazyLoadQuery<InviteFolderSettingModalTestQuery>(
     graphql`
-      query InviteFolderSettingModalV2TestQuery($vfolderId: UUID!) {
+      query InviteFolderSettingModalTestQuery($vfolderId: UUID!) {
         vfolderV2(vfolderId: $vfolderId) {
-          ...InviteFolderSettingModalV2Fragment
+          ...InviteFolderSettingModalFragment
         }
       }
     `,
     { vfolderId: VFOLDER_ID },
   );
   return (
-    <InviteFolderSettingModalV2
+    <InviteFolderSettingModal
       vfolderFrgmt={data.vfolderV2 ?? null}
       open
       onRequestClose={onRequestClose}
@@ -235,7 +236,7 @@ const renderModal = async () => {
   return environment;
 };
 
-describe('InviteFolderSettingModalV2 (#10295)', () => {
+describe('InviteFolderSettingModal (#10295)', () => {
   beforeAll(() => {
     // jsdom has no scrollIntoView; the select scrolls its highlighted row.
     Element.prototype.scrollIntoView = vi.fn();
@@ -272,7 +273,7 @@ describe('InviteFolderSettingModalV2 (#10295)', () => {
     ).toHaveTextContent('data.ReadWrite');
   });
 
-  it('sends an e-mail invite with the folder shared mount permission as perm', async () => {
+  it('offers an e-mail invite as an entity share capped at the folder shared mount permission', async () => {
     const user = userEvent.setup();
     const environment = await renderModal();
 
@@ -297,14 +298,22 @@ describe('InviteFolderSettingModalV2 (#10295)', () => {
     );
 
     await waitFor(() =>
-      expect(mockRequest).toHaveBeenCalledWith({
-        method: 'POST',
-        url: `/folders/${VFOLDER_ID}/invite`,
-        body: { user_ids: ['nobody2@example.com'], perm: 'ro' },
-      }),
+      expect(operationNames(environment)).toContain(
+        'InviteFolderSettingModalCreateShareMutation',
+      ),
     );
+    const variables = await resolveMutation(
+      environment,
+      'InviteFolderSettingModalCreateShareMutation',
+    );
+    expect(variables.input).toEqual({
+      targetEntityType: 'vfolder',
+      targetEntityId: VFOLDER_ID,
+      recipient: { email: 'nobody2@example.com' },
+      permissions: ['READ'],
+    });
     expect(operationNames(environment)).not.toContain(
-      'InviteFolderSettingModalV2SetMountPolicyMutation',
+      'InviteFolderSettingModalSetMountPolicyMutation',
     );
   });
 
@@ -321,24 +330,24 @@ describe('InviteFolderSettingModalV2 (#10295)', () => {
 
     await waitFor(() =>
       expect(operationNames(environment)).toContain(
-        'InviteFolderSettingModalV2RevokeShareMutation',
+        'InviteFolderSettingModalRevokeShareMutation',
       ),
     );
     expect(
       await resolveMutation(
         environment,
-        'InviteFolderSettingModalV2RevokeShareMutation',
+        'InviteFolderSettingModalRevokeShareMutation',
       ),
     ).toEqual({ id: ACCEPTED_SHARE_ID });
     await waitFor(() =>
       expect(operationNames(environment)).toContain(
-        'InviteFolderSettingModalV2UnsetMountPolicyMutation',
+        'InviteFolderSettingModalUnsetMountPolicyMutation',
       ),
     );
     expect(
       await resolveMutation(
         environment,
-        'InviteFolderSettingModalV2UnsetMountPolicyMutation',
+        'InviteFolderSettingModalUnsetMountPolicyMutation',
       ),
     ).toEqual({ vfolderId: VFOLDER_ID, input: { userId: USER2_ID } });
   });
@@ -356,13 +365,13 @@ describe('InviteFolderSettingModalV2 (#10295)', () => {
 
     await waitFor(() =>
       expect(operationNames(environment)).toContain(
-        'InviteFolderSettingModalV2CancelShareMutation',
+        'InviteFolderSettingModalCancelShareMutation',
       ),
     );
     expect(
       await resolveMutation(
         environment,
-        'InviteFolderSettingModalV2CancelShareMutation',
+        'InviteFolderSettingModalCancelShareMutation',
       ),
     ).toEqual({ id: PENDING_SHARE_ID });
   });

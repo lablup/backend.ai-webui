@@ -14,7 +14,7 @@ import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import DeleteForeverVFolderModalV2 from '../components/DeleteForeverVFolderModalV2';
 import DeleteVFolderModalV2 from '../components/DeleteVFolderModalV2';
-import FolderCreateModalV2 from '../components/FolderCreateModalV2';
+import FolderCreateModal from '../components/FolderCreateModal';
 import RestoreVFolderModalV2 from '../components/RestoreVFolderModalV2';
 import VFolderNodesV2, {
   VFolderNodeInList,
@@ -604,7 +604,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             toggleDeleteForeverModal();
           }}
         />
-        <FolderCreateModalV2
+        <FolderCreateModal
           open={isOpenCreateModal}
           // ADR-0001: no ambient project context on the admin Data page — the
           // modal renders its own required project selector.
