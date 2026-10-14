@@ -742,9 +742,8 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
               }}
             />
             {/* `adminScanImage` is superadmin-only, a narrower role than this
-                admin-scoped tab, and exists from manager 26.10.0. */}
-            {baiClient.is_superadmin &&
-            baiClient.isManagerVersionCompatibleWith('26.10.0') ? (
+                admin-scoped tab. */}
+            {baiClient.is_superadmin ? (
               <Button
                 variant="secondary"
                 icon={<Import size="1em" />}
