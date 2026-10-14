@@ -3,6 +3,7 @@ export type BAILoginSessionTableFragment$data = ReadonlyArray<{
     readonly accessKey: string;
     readonly createdAt: string;
     readonly id: string;
+    readonly lastAccessedAt: string | null | undefined;
     readonly user: {
         readonly basicInfo: {
             readonly email: string;
