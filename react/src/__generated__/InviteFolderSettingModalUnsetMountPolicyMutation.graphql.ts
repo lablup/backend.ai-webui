@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9d1ee2aca55fea90d7b7f998a82743cf>>
+ * @generated SignedSource<<704a7c58d42f93e9d8e9f15202434ad7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,20 +12,20 @@ import { ConcreteRequest } from 'relay-runtime';
 export type UnsetVFolderMountPolicyInput = {
   userId: string;
 };
-export type InviteFolderSettingModalV2UnsetMountPolicyMutation$variables = {
+export type InviteFolderSettingModalUnsetMountPolicyMutation$variables = {
   input: UnsetVFolderMountPolicyInput;
   vfolderId: string;
 };
-export type InviteFolderSettingModalV2UnsetMountPolicyMutation$data = {
+export type InviteFolderSettingModalUnsetMountPolicyMutation$data = {
   readonly unsetVFolderMountPolicy: {
     readonly removed: boolean;
     readonly userId: string;
     readonly vfolderId: string;
   } | null | undefined;
 };
-export type InviteFolderSettingModalV2UnsetMountPolicyMutation = {
-  response: InviteFolderSettingModalV2UnsetMountPolicyMutation$data;
-  variables: InviteFolderSettingModalV2UnsetMountPolicyMutation$variables;
+export type InviteFolderSettingModalUnsetMountPolicyMutation = {
+  response: InviteFolderSettingModalUnsetMountPolicyMutation$data;
+  variables: InviteFolderSettingModalUnsetMountPolicyMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -92,7 +92,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "InviteFolderSettingModalV2UnsetMountPolicyMutation",
+    "name": "InviteFolderSettingModalUnsetMountPolicyMutation",
     "selections": (v2/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -104,20 +104,20 @@ return {
       (v0/*: any*/)
     ],
     "kind": "Operation",
-    "name": "InviteFolderSettingModalV2UnsetMountPolicyMutation",
+    "name": "InviteFolderSettingModalUnsetMountPolicyMutation",
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "af9d17ce21363f1c2956576a4f37617a",
+    "cacheID": "2ca0c23a2b3ade9bef63a83ffa58955b",
     "id": null,
     "metadata": {},
-    "name": "InviteFolderSettingModalV2UnsetMountPolicyMutation",
+    "name": "InviteFolderSettingModalUnsetMountPolicyMutation",
     "operationKind": "mutation",
-    "text": "mutation InviteFolderSettingModalV2UnsetMountPolicyMutation(\n  $vfolderId: UUID!\n  $input: UnsetVFolderMountPolicyInput!\n) {\n  unsetVFolderMountPolicy(vfolderId: $vfolderId, input: $input) {\n    vfolderId\n    userId\n    removed\n  }\n}\n"
+    "text": "mutation InviteFolderSettingModalUnsetMountPolicyMutation(\n  $vfolderId: UUID!\n  $input: UnsetVFolderMountPolicyInput!\n) {\n  unsetVFolderMountPolicy(vfolderId: $vfolderId, input: $input) {\n    vfolderId\n    userId\n    removed\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "1474ad12138b3ca64126a521279b866e";
+(node as any).hash = "400d965fbff9269751c0ba4ebcbf28bf";
 
 export default node;

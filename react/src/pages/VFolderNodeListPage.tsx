@@ -13,7 +13,7 @@ import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import DeleteForeverVFolderModalV2 from '../components/DeleteForeverVFolderModalV2';
 import DeleteVFolderModalV2 from '../components/DeleteVFolderModalV2';
-import FolderCreateModalV2 from '../components/FolderCreateModalV2';
+import FolderCreateModal from '../components/FolderCreateModal';
 import RestoreVFolderModalV2 from '../components/RestoreVFolderModalV2';
 import VFolderNodesV2, {
   VFolderNodeInList,
@@ -595,7 +595,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           </Suspense>
         </VStack>
       </BAICard>
-      <FolderCreateModalV2
+      <FolderCreateModal
         open={isOpenCreateModal}
         project={projectContext}
         initialValues={{
