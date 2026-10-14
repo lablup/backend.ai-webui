@@ -4,7 +4,7 @@
  */
 import { useSuspendedBackendaiClient } from '.';
 import { maskString } from '../helper';
-import { type UserRole } from '../helper/userRole';
+import { roleFromV2, type UserRole } from '../helper/userRole';
 import {
   useSuspenseTanQuery,
   useTanMutation,
@@ -272,7 +272,7 @@ export const useCurrentUserInfo = () => {
 
 export const useCurrentUserRole = () => {
   const { userRole } = useViewer();
-  return userRole as UserRole;
+  return (userRole ? roleFromV2[userRole] : null) as UserRole;
 };
 
 export const useTOTPSupported = () => {
