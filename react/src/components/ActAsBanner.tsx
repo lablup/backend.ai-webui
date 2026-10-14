@@ -18,6 +18,7 @@ const ActAsBanner: React.FC = () => {
 
   return (
     <Banner
+      role="alert"
       data-testid="act-as-banner"
       status="warning"
       container="section"

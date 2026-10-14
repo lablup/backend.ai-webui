@@ -281,7 +281,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "Ключ доступа",
     "CreatedAt": "Создано в",
-    "InvalidatedAt": "Аннулировано в",
+    "LastAccessedAt": "Последний доступ",
     "User": "Пользователь"
   },
   "comp:BAIModal": {

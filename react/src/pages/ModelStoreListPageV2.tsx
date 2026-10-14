@@ -390,6 +390,7 @@ const ModelStoreListPageV2: React.FC = () => {
   if (!modelStoreProject.id) {
     return (
       <Banner
+        role="alert"
         status="error"
         title={t('modelStore.ProjectNotFound')}
         description={t('modelStore.ProjectNotFoundDescription')}

@@ -21,7 +21,6 @@ import {
   BAIText,
   tokenColorForTagColor,
   tokenColorForStatus,
-  toLocalId,
   useBAIBreakpoint,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -79,8 +78,10 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
               email
             }
           }
-          ... on VirtualFolderNode {
-            vfolderName: name
+          ... on VFolder {
+            metadata {
+              name
+            }
           }
           ... on SessionV2 {
             metadata {
@@ -100,9 +101,7 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
             project
           }
         }
-        rolePreset @since(version: "26.9.0rc1") {
-          id
-        }
+        rolePresetId
         ...RoleAssignmentTabFragment
         ...RolePermissionSummaryTableFragment
       }
@@ -111,11 +110,11 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
   );
 
   const scopeName = resolveRBACScopeName(role);
-  // Before 26.9.0rc1 a role does not name its preset, so the link falls back to the
-  // kind in the name (`project_member-1a2b3c4d`); the last match beats a scope name.
+  // A role without a preset id falls back to the kind in the name
+  // (`project_member-1a2b3c4d`); the last match beats a scope name.
   const roleKind = role.name?.match(/.*(admin|member)/i)?.[1]?.toLowerCase();
-  const presetFilter = role.rolePreset
-    ? { id: { equals: toLocalId(role.rolePreset.id) } }
+  const presetFilter = role.rolePresetId
+    ? { id: { equals: role.rolePresetId } }
     : {
         ...(role.scopeType && {
           scopeType: { equals: role.scopeType.toLowerCase() },

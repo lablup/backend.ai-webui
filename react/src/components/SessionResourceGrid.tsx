@@ -287,7 +287,13 @@ const SessionResourceGrid = ({
   // not know) to a banner instead of escalating to the app-shell boundary.
   const listResult = queryData.compute_session_list;
   if (!listResult.ok) {
-    return <Banner status="error" title={t('error.FailedToLoadTableData')} />;
+    return (
+      <Banner
+        role="alert"
+        status="error"
+        title={t('error.FailedToLoadTableData')}
+      />
+    );
   }
   const totalCount = listResult.value?.total_count ?? 0;
   const sessions: GridSession[] = filterOutNullAndUndefined(
@@ -628,6 +634,7 @@ const SessionResourceGrid = ({
       )}
       {totalCount > SESSION_CAP && (
         <Banner
+          role="status"
           status="info"
           title={t('session.resourceGrid.ShowingFirstNSessions', {
             count: SESSION_CAP,
@@ -637,6 +644,7 @@ const SessionResourceGrid = ({
       )}
       {omittedCount > 0 && (
         <Banner
+          role="status"
           status="info"
           title={t('session.resourceGrid.OmittedNoResource', {
             count: omittedCount,
@@ -680,6 +688,7 @@ const SessionResourceGrid = ({
           // the omitted-count banner above already explains the empty grid.
           omittedCount > 0 ? null : (
             <Banner
+              role="status"
               status="info"
               title={t('session.resourceGrid.NoSessionsMatchingFilter')}
             />

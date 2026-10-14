@@ -91,6 +91,7 @@ const ProjectFolderPermissionPanel: React.FC<
           `showIcon` drops (Banner always shows the status icon); the single
           `description` string becomes `title` since Banner requires one. */}
       <Banner
+        role="status"
         status="info"
         title={t(
           'storageHost.permission.ProjectFolderPermissionsAlertDescription',

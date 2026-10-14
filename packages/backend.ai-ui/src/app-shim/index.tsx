@@ -102,22 +102,34 @@ const BAIAppBridgeMount: React.FC<{
 /**
  * Keeps the toast viewport usable over an open ui-common `Modal`, which inerts
  * everything outside `[data-uic-modal-live]`. `LayerProvider` renders the
- * viewport right after its children and takes no props for it, so this
- * `<template>` (never inerted, never painted) is rendered last to reach it.
+ * viewport's outlet right after its children and takes no props for it, so
+ * this `<template>` (never inerted, never painted) is rendered last to reach
+ * it. Astryx 0.7 moves the viewport into that outlet after this effect runs,
+ * so the outlet is marked once the viewport (`[popover]`) appears in it.
  */
 const ToastViewportLiveMark: React.FC = () => {
   'use memo';
   const anchorRef = useRef<HTMLTemplateElement>(null);
 
   useLayoutEffect(() => {
-    const viewport = anchorRef.current?.nextElementSibling;
     // Only the outermost LayerProvider owns a viewport; a nested one renders
-    // its children bare, and then there is nothing here to mark.
-    if (!viewport?.hasAttribute('popover')) return;
-    viewport.setAttribute(MODAL_LIVE_ATTRIBUTE, '');
-    refreshModalBackground();
+    // its children bare, and then no viewport ever appears here.
+    const outlet = anchorRef.current?.nextElementSibling;
+    if (!outlet) return;
+    let marked = false;
+    const markOnceViewportArrives = () => {
+      if (marked || !outlet.querySelector('[popover]')) return;
+      marked = true;
+      outlet.setAttribute(MODAL_LIVE_ATTRIBUTE, '');
+      refreshModalBackground();
+    };
+    const observer = new MutationObserver(markOnceViewportArrives);
+    observer.observe(outlet, { childList: true, subtree: true });
+    markOnceViewportArrives();
     return () => {
-      viewport.removeAttribute(MODAL_LIVE_ATTRIBUTE);
+      observer.disconnect();
+      if (!marked) return;
+      outlet.removeAttribute(MODAL_LIVE_ATTRIBUTE);
       refreshModalBackground();
     };
   }, []);

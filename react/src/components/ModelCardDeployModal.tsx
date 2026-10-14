@@ -279,6 +279,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
     >
       {noAvailablePresets && (
         <Banner
+          role="status"
           status="info"
           title={t('deployment.NoPresetsAvailable')}
           description={

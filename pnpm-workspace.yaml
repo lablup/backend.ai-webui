@@ -6,12 +6,12 @@ catalog:
   # Astryx pins are exact and move as one set with @lablup/ui-common, which
   # pins the same versions (ADR 0009): a mismatch installs a second core, and
   # scripts/migration-gates/single-astryx-core-gate.mjs fails.
-  "@astryxdesign/cli": 0.6.5
-  "@astryxdesign/core": 0.6.5
-  "@astryxdesign/lab": 0.6.5-canary.8701623
+  "@astryxdesign/cli": 0.7.0
+  "@astryxdesign/core": 0.7.0
+  "@astryxdesign/lab": 0.7.0-canary.97a0d31
   # The library and its CLI release in lockstep; pin both exactly (ADR 0009).
-  "@lablup/ui-common": 0.2.0-alpha.18
-  "@lablup/ui-common-cli": 0.2.0-alpha.18
+  "@lablup/ui-common": 0.2.0-alpha.19
+  "@lablup/ui-common-cli": 0.2.0-alpha.19
   "@babel/core": ^7.29.7
   "@babel/preset-typescript": ^7.29.7
   "@eslint/js": ^9.39.5
@@ -51,7 +51,7 @@ catalog:
   jest-environment-jsdom: ^30.3.0
   jsonc-eslint-parser: ^2.4.2
   lodash-es: ^4.18.1
-  # ^1.x: single-major convergence with @astryxdesign/theme-neutral@0.6.5,
+  # ^1.x: single-major convergence with @astryxdesign/theme-neutral@0.7.0,
   # whose hard dependency is lucide-react ^1.18.0 (to-astryx ticket 07). All
   # 78 icon names the app imports exist in both 0.552 and 1.x (measured);
   # converging up dedupes the two installed majors into one instance.
@@ -90,20 +90,20 @@ minimumReleaseAgeExclude:
   - react@19.2.6
   - react-dom@19.2.6
   - nuqs@2.9.2
-  # Astryx 0.6.5: published 2026-10-02, inside the 7-day window at adoption
-  # time. Remove after 2026-10-09.
-  - "@astryxdesign/core@0.6.5"
-  - "@astryxdesign/theme-neutral@0.6.5"
-  - "@astryxdesign/cli@0.6.5"
+  # Astryx 0.7.0: published 2026-10-13, inside the 7-day window at adoption
+  # time. Remove after 2026-10-20.
+  - "@astryxdesign/core@0.7.0"
+  - "@astryxdesign/theme-neutral@0.7.0"
+  - "@astryxdesign/cli@0.7.0"
   # Astryx Lab canary (to-astryx, ticket 18): MIGRATION-SPEC §1-④ decided
   # canary adoption with an exact pin; canary releases never age past the
   # quarantine window by design, so the exclusion is permanent while the
   # pin exists. Tarball-verified build (MAPPING.md header).
-  - "@astryxdesign/lab@0.6.5-canary.8701623"
-  # ui-common 0.2.0-alpha.18 and its CLI: published 2026-10-10, inside the
-  # 7-day window at adoption time. Remove after 2026-10-17.
-  - "@lablup/ui-common@0.2.0-alpha.18"
-  - "@lablup/ui-common-cli@0.2.0-alpha.18"
+  - "@astryxdesign/lab@0.7.0-canary.97a0d31"
+  # ui-common 0.2.0-alpha.19 and its CLI: published 2026-10-13, inside the
+  # 7-day window at adoption time. Remove after 2026-10-20.
+  - "@lablup/ui-common@0.2.0-alpha.19"
+  - "@lablup/ui-common-cli@0.2.0-alpha.19"
   # e2e agentic test runner (e2e.tester.army): published 2026-10-04, and no
   # release of it is older than 7 days yet. Remove after 2026-10-11.
   - e2e@0.17.0
@@ -155,6 +155,9 @@ allowBuilds:
   utf-8-validate: true
 
 overrides:
+  # The lab canary peers on the core canary it was cut from; run it on the
+  # pinned stable core instead of a second copy (ui-common upgrade adds this).
+  "@astryxdesign/lab>@astryxdesign/core": "0.7.0"
   tar-fs@2: 2.1.4
   # Build-tooling override. `@electron/packager` extracts its downloaded ZIPs
   # via `extract-zip` → `yauzl` (`electron` >= 41 uses its own

@@ -557,14 +557,17 @@ const AdminDeployment = ({
                         metadataFrgmt={record.metadata}
                         stopRowClick
                         onTagClick={(tag) => {
-                          webUINavigate({
-                            pathname: buildPath('admin', 'deployments'),
-                            search: new URLSearchParams({
-                              filter: JSON.stringify({
-                                tags: { iContains: tag },
-                              }),
-                            }).toString(),
-                          });
+                          onReload(
+                            {
+                              ...queryRef.variables,
+                              filter: {
+                                tags: { iEquals: tag },
+                                ...statusCategoryFilterFor(statusCategory),
+                              },
+                              offset: 0,
+                            },
+                            { fetchPolicy: 'network-only' },
+                          );
                         }}
                         fallback={<Text color="secondary">-</Text>}
                       />

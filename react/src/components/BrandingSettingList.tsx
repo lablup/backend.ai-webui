@@ -278,6 +278,7 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
           is unconditionally required (ground-truth .d.ts, not just the doc
           narrative) — the single line of text goes there. */}
       <Banner
+        role="alert"
         title={t('userSettings.theme.CustomThemeSettingAlert')}
         status="warning"
       />

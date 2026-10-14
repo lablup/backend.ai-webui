@@ -7,6 +7,7 @@ import {
   RoleNodesFragment$key,
 } from '../__generated__/RoleNodesFragment.graphql';
 import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
+import { resolveRBACScopeName } from '../helper/rbacScopeName';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
@@ -78,6 +79,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
     graphql`
       fragment RoleNodesFragment on Role @relay(plural: true) {
         id @required(action: NONE)
+        entityId
         name @required(action: NONE)
         description
         source
@@ -113,7 +115,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         }
         scopeType @since(version: "26.9.0a4")
         scopeId @since(version: "26.9.0a4")
-        rolePresetId @since(version: "26.9.0rc3")
+        rolePresetId
         rolePreset @since(version: "26.9.0rc3") {
           name
         }
@@ -132,6 +134,28 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
             basicInfo {
               userEmail: email
             }
+          }
+          ... on VFolder {
+            metadata {
+              name
+            }
+          }
+          ... on SessionV2 {
+            metadata {
+              sessionName: name
+            }
+          }
+          ... on ModelDeployment {
+            metadata {
+              name
+            }
+          }
+          ... on ResourceGroup {
+            name
+          }
+          ... on ContainerRegistryV2 {
+            registryName
+            project
           }
         }
       }
@@ -198,11 +222,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
           defaultValue: scopeType,
         });
         const scopeName =
-          scope?.basicInfo?.projectName ??
-          scope?.basicInfo?.domainName ??
-          scope?.basicInfo?.userEmail ??
-          scopeId ??
-          '-';
+          resolveRBACScopeName({ scopeType, scope }) ?? scopeId ?? '-';
         return (
           <BAIFlex gap="xxs" wrap="wrap" align="center">
             <BAIDoubleToken

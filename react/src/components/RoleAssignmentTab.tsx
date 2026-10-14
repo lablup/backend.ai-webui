@@ -28,7 +28,6 @@ import {
   BAISelectionLabel,
   BAITable,
   BAIUnmountAfterClose,
-  toLocalId,
   useBAILogger,
   useMutationWithPromise,
 } from 'backend.ai-ui';
@@ -99,6 +98,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       )
       @refetchable(queryName: "RoleAssignmentTabRefetchQuery") {
         id
+        entityId
         name
         source
         # Aliased: RoleNodesFragment selects scopes(first: 3) on the same list
@@ -159,7 +159,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     roleNodeFrgmt,
   );
 
-  const roleId = toLocalId(data.id);
+  const roleId = data.entityId;
 
   // Managers >= 26.9.0a4 answer the role's one scope directly; older ones
   // answer a scopes connection.
@@ -291,7 +291,11 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     <BAIFlex align="stretch" direction="column" gap="sm">
       {/* `showIcon` dropped — Banner always shows its status icon (MAPPING §4). */}
       {isReadOnly && (
-        <Banner status="warning" title={t('rbac.SystemRoleNoAssignments')} />
+        <Banner
+          role="alert"
+          status="warning"
+          title={t('rbac.SystemRoleNoAssignments')}
+        />
       )}
       <BAIFlex justify="between" align="start" gap="sm" wrap="wrap">
         <BAIGraphQLPropertyFilter<RoleAssignmentFilter>

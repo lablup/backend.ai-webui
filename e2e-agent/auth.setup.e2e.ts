@@ -14,10 +14,16 @@ test.setup(
     await screen.getByLabel("Email or Username").fill(admin.username);
     await screen.getByLabel("Password").fill(admin.password);
     const endpointInput = screen.getByRole("textbox", "Endpoint");
-    if (!(await endpointInput.isVisible())) {
-      await screen.getByRole("link", "Advanced").tap();
+    const advanced = screen.getByRole("link", "Advanced");
+    if (!(await endpointInput.isVisible()) && (await advanced.isVisible())) {
+      await advanced.tap();
     }
-    await endpointInput.fill(apiEndpoint);
+    // A config.toml that pins apiEndpoint renders no Endpoint field at all.
+    const hasEndpointInput = await expect(endpointInput)
+      .toBeVisible({ timeout: 3_000 })
+      .then(() => true)
+      .catch(() => false);
+    if (hasEndpointInput) await endpointInput.fill(apiEndpoint);
     await screen.getByRole("button", "Login").tap();
 
     await expect(screen.getByTestId("user-dropdown-button")).toBeVisible({
