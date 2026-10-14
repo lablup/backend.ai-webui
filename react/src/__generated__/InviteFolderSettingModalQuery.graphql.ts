@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<724a92a64c7e1b471e8714f5dc1ad9f1>>
+ * @generated SignedSource<<bb755f0068e2c8e625524f55a2e5aa2a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -24,11 +24,11 @@ export type EntityShareTargetScope = {
   entityId: string;
   entityType: string;
 };
-export type InviteFolderSettingModalV2Query$variables = {
+export type InviteFolderSettingModalQuery$variables = {
   scope: EntityShareScope;
   vfolderId: string;
 };
-export type InviteFolderSettingModalV2Query$data = {
+export type InviteFolderSettingModalQuery$data = {
   readonly entityShares: {
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -47,9 +47,9 @@ export type InviteFolderSettingModalV2Query$data = {
     }>;
   } | null | undefined;
 };
-export type InviteFolderSettingModalV2Query = {
-  response: InviteFolderSettingModalV2Query$data;
-  variables: InviteFolderSettingModalV2Query$variables;
+export type InviteFolderSettingModalQuery = {
+  response: InviteFolderSettingModalQuery$data;
+  variables: InviteFolderSettingModalQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -189,7 +189,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "InviteFolderSettingModalV2Query",
+    "name": "InviteFolderSettingModalQuery",
     "selections": (v3/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -201,20 +201,20 @@ return {
       (v0/*: any*/)
     ],
     "kind": "Operation",
-    "name": "InviteFolderSettingModalV2Query",
+    "name": "InviteFolderSettingModalQuery",
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "fed08fc790c161fe98376731a1c0010b",
+    "cacheID": "47cd423f00069b14f8c86097be2ff94c",
     "id": null,
     "metadata": {},
-    "name": "InviteFolderSettingModalV2Query",
+    "name": "InviteFolderSettingModalQuery",
     "operationKind": "query",
-    "text": "query InviteFolderSettingModalV2Query(\n  $vfolderId: UUID!\n  $scope: EntityShareScope!\n) {\n  entityShares(scope: $scope, limit: 100) {\n    edges {\n      node {\n        id\n        entityId\n        recipientEmail\n        status\n      }\n    }\n  }\n  vfolderMountPolicies(vfolderId: $vfolderId) {\n    items {\n      id\n      userId\n      permission\n    }\n  }\n}\n"
+    "text": "query InviteFolderSettingModalQuery(\n  $vfolderId: UUID!\n  $scope: EntityShareScope!\n) {\n  entityShares(scope: $scope, limit: 100) {\n    edges {\n      node {\n        id\n        entityId\n        recipientEmail\n        status\n      }\n    }\n  }\n  vfolderMountPolicies(vfolderId: $vfolderId) {\n    items {\n      id\n      userId\n      permission\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "bacfa906a429191fab9dcd615fd6229c";
+(node as any).hash = "7cf8a481020947b3e2aafee08693e884";
 
 export default node;

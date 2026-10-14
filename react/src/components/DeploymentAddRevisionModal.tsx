@@ -54,7 +54,7 @@ import BAIFormItem from './BAIFormItem';
 import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import EnvVarFormList, { type EnvVarFormListValue } from './EnvVarFormList';
-import FolderCreateModalV2 from './FolderCreateModalV2';
+import FolderCreateModal from './FolderCreateModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ImageEnvironmentSelectFormItems, {
   type ImageEnvironmentFormInput,
@@ -2605,7 +2605,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           />
         </Suspense>
       ) : null}
-      <FolderCreateModalV2
+      <FolderCreateModal
         // Never reach the `project={null}` tier from here: `onRequestClose`
         // would write back a folder this revision cannot mount.
         open={isModelFolderCreateModalOpen && !!deploymentProject}

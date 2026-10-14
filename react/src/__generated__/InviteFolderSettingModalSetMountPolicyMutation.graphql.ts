@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<40edea9d2455a84eca92eb43241ac7c6>>
+ * @generated SignedSource<<360a524c570ada9ab12b8231b9a213bc>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,11 +14,11 @@ export type SetVFolderMountPolicyInput = {
   permission: VFolderMountPermission;
   userId: string;
 };
-export type InviteFolderSettingModalV2SetMountPolicyMutation$variables = {
+export type InviteFolderSettingModalSetMountPolicyMutation$variables = {
   input: SetVFolderMountPolicyInput;
   vfolderId: string;
 };
-export type InviteFolderSettingModalV2SetMountPolicyMutation$data = {
+export type InviteFolderSettingModalSetMountPolicyMutation$data = {
   readonly setVFolderMountPolicy: {
     readonly policy: {
       readonly id: string;
@@ -27,9 +27,9 @@ export type InviteFolderSettingModalV2SetMountPolicyMutation$data = {
     };
   } | null | undefined;
 };
-export type InviteFolderSettingModalV2SetMountPolicyMutation = {
-  response: InviteFolderSettingModalV2SetMountPolicyMutation$data;
-  variables: InviteFolderSettingModalV2SetMountPolicyMutation$variables;
+export type InviteFolderSettingModalSetMountPolicyMutation = {
+  response: InviteFolderSettingModalSetMountPolicyMutation$data;
+  variables: InviteFolderSettingModalSetMountPolicyMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -107,7 +107,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "InviteFolderSettingModalV2SetMountPolicyMutation",
+    "name": "InviteFolderSettingModalSetMountPolicyMutation",
     "selections": (v2/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -119,20 +119,20 @@ return {
       (v0/*: any*/)
     ],
     "kind": "Operation",
-    "name": "InviteFolderSettingModalV2SetMountPolicyMutation",
+    "name": "InviteFolderSettingModalSetMountPolicyMutation",
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "b72525442bb06c6138b505c432e67758",
+    "cacheID": "ae92c2b1b0c209d9e191f82bdec0c4f9",
     "id": null,
     "metadata": {},
-    "name": "InviteFolderSettingModalV2SetMountPolicyMutation",
+    "name": "InviteFolderSettingModalSetMountPolicyMutation",
     "operationKind": "mutation",
-    "text": "mutation InviteFolderSettingModalV2SetMountPolicyMutation(\n  $vfolderId: UUID!\n  $input: SetVFolderMountPolicyInput!\n) {\n  setVFolderMountPolicy(vfolderId: $vfolderId, input: $input) {\n    policy {\n      id\n      userId\n      permission\n    }\n  }\n}\n"
+    "text": "mutation InviteFolderSettingModalSetMountPolicyMutation(\n  $vfolderId: UUID!\n  $input: SetVFolderMountPolicyInput!\n) {\n  setVFolderMountPolicy(vfolderId: $vfolderId, input: $input) {\n    policy {\n      id\n      userId\n      permission\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "89cd3db40ce15943ddf5c7d1369b2f36";
+(node as any).hash = "5a39226b0d2ef5e24cb78148bee601a5";
 
 export default node;
