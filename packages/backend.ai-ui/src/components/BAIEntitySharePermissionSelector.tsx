@@ -10,16 +10,15 @@
 */
 import { useControllableValue } from '../hooks';
 import { useBAIi18n } from '../hooks/useBAIi18n';
+import './BAIEntitySharePermissionSelector.css';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuDivider,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
+  DropdownMenuItem,
   DropdownMenuSubMenu,
 } from '@lablup/ui-common/DropdownMenu';
 import { Field, type FieldProps } from '@lablup/ui-common/Field';
-import { Text } from '@lablup/ui-common/Text';
 import * as _ from 'lodash-es';
 import React, { useId } from 'react';
 
@@ -50,17 +49,6 @@ export const ENTITY_SHARE_PERMISSION_PRESETS: ReadonlyArray<{
   { key: 'READ_WRITE', bits: ['READ', 'UPDATE', 'SOFT_DELETE'] },
   { key: 'READ_ONLY', bits: ['READ'] },
 ];
-
-/** The short code each bit is known by in the flyout and in summaries. */
-export const ENTITY_SHARE_PERMISSION_BIT_CODES: Readonly<
-  Record<BAIEntitySharePermissionBit, string>
-> = {
-  CREATE: 'C',
-  READ: 'R',
-  UPDATE: 'U',
-  SOFT_DELETE: 'Soft-D',
-  HARD_DELETE: 'Hard-D',
-};
 
 /** Drops unknown values and duplicates and puts the bits in flyout order. */
 export const normalizeEntitySharePermissionBits = (
@@ -102,20 +90,18 @@ const BIT_KEYS: Readonly<Record<BAIEntitySharePermissionBit, string>> = {
 export const useEntitySharePermissionLabels = () => {
   'use memo';
   const { t } = useBAIi18n();
+  const bitLabel = (bit: BAIEntitySharePermissionBit) => t(BIT_KEYS[bit]);
   return {
     choiceLabel: (choice: BAIEntitySharePermissionChoice) =>
       t(CHOICE_KEYS[choice]),
-    bitLabel: (bit: BAIEntitySharePermissionBit) => t(BIT_KEYS[bit]),
-    bitCode: (bit: BAIEntitySharePermissionBit) =>
-      ENTITY_SHARE_PERMISSION_BIT_CODES[bit],
-    /** "Read only", or the codes of a custom set: "C, R, U". */
+    bitLabel,
+    /** "Read only", or the bits of a custom set: "Create, Read, Update". */
     summary: (bits: ReadonlyArray<string> | null | undefined) => {
       const choice = toEntitySharePermissionChoice(bits);
       return choice === 'CUSTOM'
-        ? _.map(
-            normalizeEntitySharePermissionBits(bits),
-            (bit) => ENTITY_SHARE_PERMISSION_BIT_CODES[bit],
-          ).join(', ') || t(CHOICE_KEYS.CUSTOM)
+        ? _.map(normalizeEntitySharePermissionBits(bits), bitLabel).join(
+            ', ',
+          ) || t(CHOICE_KEYS.CUSTOM)
         : t(CHOICE_KEYS[choice]);
     },
   };
@@ -169,9 +155,12 @@ const BAIEntitySharePermissionSelector: React.FC<
     'data-testid': testId,
     ...fieldProps
   } = props;
-  const { t } = useBAIi18n();
-  const { choiceLabel, bitLabel, bitCode } = useEntitySharePermissionLabels();
+  const { choiceLabel, bitLabel } = useEntitySharePermissionLabels();
   const inputID = useId();
+  // Several selectors share a page (one per table row), so the rows' test
+  // ids hang off the selector's own.
+  const rowTestId = (suffix: string) =>
+    `${testId ?? 'bai-entity-share-permission'}-${suffix}`;
   const [bits, setBits] = useControllableValue<
     ReadonlyArray<BAIEntitySharePermissionBit>
   >(props, { defaultValue: DEFAULT_BITS });
@@ -199,39 +188,21 @@ const BAIEntitySharePermissionSelector: React.FC<
           size,
           isDisabled,
           width: '100%',
+          className: 'bai-entity-share-permission-selector__trigger',
         }}
       >
-        <DropdownMenuRadioGroup
-          label={t('comp:BAIEntitySharePermissionSelector.Presets')}
-          value={choice === 'CUSTOM' ? undefined : choice}
-          onChange={(key) =>
-            commit(
-              _.find(
-                ENTITY_SHARE_PERMISSION_PRESETS,
-                (preset) => preset.key === key,
-              )?.bits ?? [],
-            )
-          }
-        >
-          {_.map(ENTITY_SHARE_PERMISSION_PRESETS, (preset) => (
-            <DropdownMenuRadioItem
-              key={preset.key}
-              value={preset.key}
-              label={choiceLabel(preset.key)}
-              data-testid={`bai-entity-share-permission-${_.kebabCase(preset.key)}`}
-            />
-          ))}
-        </DropdownMenuRadioGroup>
+        {_.map(ENTITY_SHARE_PERMISSION_PRESETS, (preset) => (
+          <DropdownMenuItem
+            key={preset.key}
+            label={choiceLabel(preset.key)}
+            onClick={() => commit(preset.bits)}
+          />
+        ))}
         <DropdownMenuDivider />
         <DropdownMenuSubMenu
           label={choiceLabel('CUSTOM')}
-          description={
-            choice === 'CUSTOM'
-              ? _.map(selected, bitCode).join(', ')
-              : undefined
-          }
-          data-testid="bai-entity-share-permission-custom"
-          menuDataTestId="bai-entity-share-permission-custom-menu"
+          data-testid={rowTestId('custom')}
+          menuDataTestId={rowTestId('custom-menu')}
         >
           {_.map(ENTITY_SHARE_PERMISSION_BITS, (bit) => {
             const isChecked = _.includes(selected, bit);
@@ -249,12 +220,7 @@ const BAIEntitySharePermissionSelector: React.FC<
                     checked ? [...selected, bit] : _.without(selected, bit),
                   )
                 }
-                endContent={
-                  <Text type="supporting" color="secondary">
-                    {bitCode(bit)}
-                  </Text>
-                }
-                data-testid={`bai-entity-share-permission-bit-${_.kebabCase(bit)}`}
+                data-testid={rowTestId(`bit-${_.kebabCase(bit)}`)}
               />
             );
           })}

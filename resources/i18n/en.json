@@ -1039,7 +1039,6 @@
       "Serve": "Model serving",
       "ShareFolder": "Share Folder",
       "SharePermission": "Share permission",
-      "SharePermissionDesc": "The most the invitee may do with the shared folder: create, read, update or delete its contents. The mount permission is set separately.",
       "SharedFolderAlertDesc": "This is an externally shared folder.",
       "SharedMountPermission": "Shared mount permission",
       "SharedMountPermissionDesc": "The default mount permission for users this folder is shared with. A shared user without an individual permission gets this permission. The folder's creator always gets read & write.",

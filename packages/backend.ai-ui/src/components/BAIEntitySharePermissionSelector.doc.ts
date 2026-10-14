@@ -23,7 +23,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The selector for the permission cap an entity share carries — the `permissions` list of PermissionBits that `createEntityShare` takes (managers >= 26.9.0). It is a DropdownMenu in compound mode wrapped in an Astryx Field: the trigger reads the current preset name, the menu lists the three presets as radio rows (Full access, Read & write, Read only), then a divider, then a Custom submenu whose flyout — opened on hover, Right arrow or click like Figma\'s share menu — holds one checkbox per bit (Create, Read, Update, Soft delete, Hard delete, each tagged with its C / R / U / Soft-D / Hard-D code). The value is always the bit list: a preset commits its fixed set and closes the menu, a checkbox commits exactly the checked bits and keeps the flyout open, and the preset is derived back from the bits, so the trigger reads "Custom" only when they match no preset. Unchecking the last checked bit is blocked, because an empty list means "no ceiling" on the server. The mount permission (the NONE / READ_ONLY / READ_WRITE vfolder mount policy) is a separate axis with its own selector; this component covers the share bits only. The rest of FieldProps passes through — label (required), isLabelHidden, description, status, width, isDisabled.',
+      'The selector for the permission cap an entity share carries — the `permissions` list of PermissionBits that `createEntityShare` takes (managers >= 26.9.0). It is a DropdownMenu in compound mode wrapped in an Astryx Field: the trigger reads the current preset name at its start and the chevron at its end, like a Selector; the menu lists the three presets as plain items (Full access, Read & write, Read only), then a divider, then a Custom submenu whose flyout — opened on hover, Right arrow or click like Figma\'s share menu — holds one checkbox per bit (Create, Read, Update, Soft delete, Hard delete). The value is always the bit list: a preset commits its fixed set and closes the menu, a checkbox commits exactly the checked bits and keeps the flyout open, and the preset is derived back from the bits, so the trigger reads "Custom" only when they match no preset. Unchecking the last checked bit is blocked, because an empty list means "no ceiling" on the server. The mount permission (the NONE / READ_ONLY / READ_WRITE vfolder mount policy) is a separate axis with its own selector; this component covers the share bits only. The rest of FieldProps passes through — label (required), isLabelHidden, description, status, width, isDisabled.',
     bestPractices: [
       {
         guidance: true,
@@ -38,7 +38,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Show a share\'s stored cap with `useEntitySharePermissionLabels().summary(bits)`, so a table cell reads the same words as the menu ("Read only", or "C, R, U" for a custom set).',
+          'Show a share\'s stored cap in a table row with the selector itself (`isLabelHidden`, a fixed `width`), wired to `createEntityShare` for the same recipient: the manager has no update mutation, and offering again restates what the standing share lends. For plain text use `useEntitySharePermissionLabels().summary(bits)` ("Read only", or "Create, Read" for a custom set).',
       },
       {
         guidance: true,
@@ -150,7 +150,7 @@ export const docs = {
       name: 'data-testid',
       type: 'string',
       description:
-        'Test hook on the trigger. The rows carry fixed ids: `bai-entity-share-permission-<full-access|read-write|read-only>`, `-custom` and `-bit-<create|read|update|soft-delete|hard-delete>`.',
+        'Test hook on the trigger. The Custom row is `<data-testid>-custom`, its flyout `<data-testid>-custom-menu` and each checkbox `<data-testid>-bit-<create|read|update|soft-delete|hard-delete>` (the prefix is `bai-entity-share-permission` when no test id is given, so several selectors on one page keep distinct ids); the preset rows are plain menu items, found by role and name.',
     },
   ],
   examples: [
@@ -177,13 +177,28 @@ await createShare({
 });`,
     },
     {
-      label: "A stored cap in a table cell, in the menu's own words",
-      code: `const { summary } = useEntitySharePermissionLabels();
-
-{
+      label: 'A stored cap in a table row, editable by restating the share',
+      code: `{
   title: t('data.folders.SharePermission'),
   dataIndex: 'permissions',
-  render: (bits: ReadonlyArray<string>) => <Token label={summary(bits)} />,
+  render: (permissions: ReadonlyArray<string>, row) => (
+    <BAIEntitySharePermissionSelector
+      label={t('data.folders.SharePermission')}
+      isLabelHidden
+      width={150}
+      value={normalizeEntitySharePermissionBits(permissions)}
+      onChange={(bits) =>
+        createShare({
+          input: {
+            targetEntityType: 'vfolder',
+            targetEntityId: vfolderId,
+            recipient: row.recipient,
+            permissions: bits,
+          },
+        })
+      }
+    />
+  ),
 }`,
     },
   ],
