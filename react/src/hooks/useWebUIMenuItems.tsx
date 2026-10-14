@@ -495,7 +495,8 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
         'reservoir',
         'admin-operations',
       ),
-    baiClient?.supports('fair-share-scheduling') &&
+    isSuperAdmin &&
+      baiClient?.supports('fair-share-scheduling') &&
       createAdminMenuItem(
         t('webui.menu.Scheduler'),
         <ClipboardClock style={{ color: token.colorInfo }} />,
