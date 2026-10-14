@@ -3308,6 +3308,7 @@
     },
     "settings": {
       "IncludeStarting": "시작 중인 세션 포함",
+      "OpenUserSettings": "세션 모니터 설정 →",
       "RowsShown": "표시 행 수",
       "SortBy": "정렬",
       "SortDeadline": "종료 임박순",

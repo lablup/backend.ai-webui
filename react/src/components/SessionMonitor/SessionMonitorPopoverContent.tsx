@@ -155,7 +155,7 @@ const ScopedSessionMonitorPopoverContent: React.FC<
         />
       </BAIFlex>
       {view === 'settings' ? (
-        <SessionMonitorSettingsPane />
+        <SessionMonitorSettingsPane onNavigate={onNavigate} />
       ) : (
         <>
           {visible.length === 0 ? (
