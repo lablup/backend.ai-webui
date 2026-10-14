@@ -444,7 +444,7 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
           labelingDeployment
             ? [
                 {
-                  entityId: toLocalId(labelingDeployment.id),
+                  entityId: labelingDeployment.entityId,
                   name: labelingDeployment.metadata?.name ?? undefined,
                 },
               ]

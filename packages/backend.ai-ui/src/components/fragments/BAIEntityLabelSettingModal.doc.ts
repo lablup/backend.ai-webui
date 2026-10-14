@@ -18,7 +18,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Pass the entity UUID as `entityId` (`toLocalId(node.id)`), not the Relay global id.',
+          'Pass the entity UUID as `entityId` (select `entityId` on the node), not the Relay global id.',
       },
       {
         guidance: false,
@@ -65,7 +65,7 @@ export const docs = {
       code: `<BAIEntityLabelSettingModal
   open={!!labelTarget}
   entityType="vfolder"
-  targets={labelTarget ? [{ entityId: toLocalId(labelTarget.id), name: labelTarget.name }] : []}
+  targets={labelTarget ? [{ entityId: labelTarget.entityId, name: labelTarget.name }] : []}
   entityLabelsFrgmt={labelTarget?.entityLabels}
   onRequestClose={(success) => {
     setLabelTarget(null);

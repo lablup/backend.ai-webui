@@ -45,7 +45,6 @@ import {
   filterOutNullAndUndefined,
   useFetchKey,
   useToggle,
-  toLocalId,
   toEntityLabelFilter,
   useIsLabelableEntityType,
 } from 'backend.ai-ui';
@@ -225,6 +224,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
             edges @required(action: THROW) {
               node @required(action: THROW) {
                 id @required(action: THROW)
+                entityId
                 vfolderStatus: status
                 metadata {
                   name
@@ -385,7 +385,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
                   <BAIEntityLabelBulkEditButton
                     entityType="vfolder"
                     targets={selectedFolderList.map((folder) => ({
-                      entityId: toLocalId(folder.id),
+                      entityId: folder.entityId,
                       name: folder.metadata?.name ?? undefined,
                     }))}
                     onLabelsChanged={() => updateFetchKey()}

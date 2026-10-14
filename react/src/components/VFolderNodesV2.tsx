@@ -554,6 +554,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
     graphql`
       fragment VFolderNodesV2Fragment on VFolder @relay(plural: true) {
         id @required(action: NONE)
+        entityId
         vfolderStatus: status
         host
         unmanagedPath
@@ -1016,7 +1017,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           labelingVFolder
             ? [
                 {
-                  entityId: toLocalId(labelingVFolder.id),
+                  entityId: labelingVFolder.entityId,
                   name: labelingVFolder.metadata?.name ?? undefined,
                 },
               ]

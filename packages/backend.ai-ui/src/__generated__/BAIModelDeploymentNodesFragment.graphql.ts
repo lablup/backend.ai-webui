@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d6917cf0b38c9ffbff026c2963c69032>>
+ * @generated SignedSource<<cf059b72311515e83a439a5e5a315212>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -27,6 +27,7 @@ export type BAIModelDeploymentNodesFragment$data = ReadonlyArray<{
   readonly defaultDeploymentStrategy: {
     readonly type: DeploymentStrategyType;
   };
+  readonly entityId: string;
   readonly entityLabels: {
     readonly " $fragmentSpreads": FragmentRefs<"BAIEntityLabelSettingModalFragment" | "BAIEntityLabelTokensFragment">;
   } | null | undefined;
@@ -91,6 +92,13 @@ return {
   "name": "BAIModelDeploymentNodesFragment",
   "selections": [
     (v0/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
+    },
     {
       "alias": null,
       "args": null,
@@ -365,6 +373,6 @@ return {
 };
 })();
 
-(node as any).hash = "71c34e73a8c1ef73074efc0593e0c033";
+(node as any).hash = "be3fa722d198ff1854ec34ab5a499dc6";
 
 export default node;

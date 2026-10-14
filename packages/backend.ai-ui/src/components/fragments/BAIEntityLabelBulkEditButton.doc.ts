@@ -41,7 +41,7 @@ export const docs = {
       label: 'In a selection toolbar',
       code: `<BAIEntityLabelBulkEditButton
   entityType="vfolder"
-  targets={selectedFolders.map((f) => ({ entityId: toLocalId(f.id), name: f.metadata?.name ?? undefined }))}
+  targets={selectedFolders.map((f) => ({ entityId: f.entityId, name: f.metadata?.name ?? undefined }))}
   onLabelsChanged={() => updateFetchKey()}
 />`,
     },

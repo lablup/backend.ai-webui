@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<cb3ccc916531fbbb9d8f14beda0e3d99>>
+ * @generated SignedSource<<0bbe8e7cd8bbf9c37d5ba10e0f421706>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,7 @@ import { ReaderFragment } from 'relay-runtime';
 export type SessionV2Status = "CANCELLED" | "CREATING" | "DEPRIORITIZING" | "PENDING" | "PREEMPTED" | "PREPARED" | "PREPARING" | "RESCHEDULING" | "RESERVED" | "RUNNING" | "SCHEDULED" | "TERMINATED" | "TERMINATING" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type BAISessionNodesV2Fragment$data = ReadonlyArray<{
+  readonly entityId: string;
   readonly entityLabels: {
     readonly " $fragmentSpreads": FragmentRefs<"BAIEntityLabelSettingModalFragment" | "BAIEntityLabelTokensFragment">;
   } | null | undefined;
@@ -123,6 +124,13 @@ return {
       "kind": "RequiredField",
       "field": (v0/*: any*/),
       "action": "NONE"
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
     },
     {
       "alias": null,
@@ -353,6 +361,6 @@ return {
 };
 })();
 
-(node as any).hash = "6fc02cb83f112977d83879260a129bd0";
+(node as any).hash = "8d86056b6234aad512e78dd11caa12e6";
 
 export default node;

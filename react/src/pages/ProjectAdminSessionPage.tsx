@@ -39,7 +39,6 @@ import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   toEntityLabelFilter,
-  toLocalId,
   useFetchKey,
   useIsLabelableEntityType,
   type SessionV2InList,
@@ -153,6 +152,7 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
           edges {
             node {
               id
+              entityId
               metadata {
                 name
               }
@@ -268,7 +268,7 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
               <BAIEntityLabelBulkEditButton
                 entityType="session"
                 targets={selectedSessionList.map((session) => ({
-                  entityId: toLocalId(session.id),
+                  entityId: session.entityId,
                   name: session.metadata?.name ?? undefined,
                 }))}
                 onLabelsChanged={() => updateFetchKey()}
@@ -396,7 +396,7 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
           labelingSession
             ? [
                 {
-                  entityId: toLocalId(labelingSession.id),
+                  entityId: labelingSession.entityId,
                   name: labelingSession.metadata?.name ?? undefined,
                 },
               ]

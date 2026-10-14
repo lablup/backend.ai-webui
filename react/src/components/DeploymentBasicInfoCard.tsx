@@ -224,6 +224,7 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
     graphql`
       fragment DeploymentBasicInfoCard_deployment on ModelDeployment {
         id
+        entityId
         ...DeploymentSettingModal_deployment
         metadata {
           name
@@ -416,7 +417,7 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
           entityType="deployment"
           targets={[
             {
-              entityId: toLocalId(deployment.id),
+              entityId: deployment.entityId,
               name: deployment.metadata.name,
             },
           ]}

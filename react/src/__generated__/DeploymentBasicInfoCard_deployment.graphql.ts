@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<45108d7d428c2466aee9404a0a020367>>
+ * @generated SignedSource<<ea19289dad1a9d5f3b93c5e2971ea36d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,7 @@ import { ReaderFragment } from 'relay-runtime';
 export type DeploymentStatus = "DEPLOYING" | "PENDING" | "READY" | "SCALING" | "STOPPED" | "STOPPING" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type DeploymentBasicInfoCard_deployment$data = {
+  readonly entityId: string;
   readonly entityLabels: {
     readonly " $fragmentSpreads": FragmentRefs<"BAIEntityLabelSettingModalFragment" | "BAIEntityLabelTokensFragment">;
   } | null | undefined;
@@ -63,6 +64,13 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
       "storageKey": null
     },
     {
@@ -214,6 +222,6 @@ return {
 };
 })();
 
-(node as any).hash = "2171beb403d0f41f74289c97111433e5";
+(node as any).hash = "96ad52ed42bac05bdfc2f17986e99dcc";
 
 export default node;

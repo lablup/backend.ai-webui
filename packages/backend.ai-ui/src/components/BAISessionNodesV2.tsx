@@ -153,6 +153,7 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
     graphql`
       fragment BAISessionNodesV2Fragment on SessionV2 @relay(plural: true) {
         id @required(action: NONE)
+        entityId
         project {
           id
           basicInfo {

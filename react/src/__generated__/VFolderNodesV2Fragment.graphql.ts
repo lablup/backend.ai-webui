@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<588cd7dfa57157cbb72931d62ad95eea>>
+ * @generated SignedSource<<6340b494825faf82e51f3b43daab83ad>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,6 +20,7 @@ export type VFolderNodesV2Fragment$data = ReadonlyArray<{
     readonly ownershipType: VFolderOwnershipType;
     readonly permission: VFolderMountPermission;
   };
+  readonly entityId: string;
   readonly entityLabels: {
     readonly " $fragmentSpreads": FragmentRefs<"BAIEntityLabelSettingModalFragment" | "BAIEntityLabelTokensFragment">;
   } | null | undefined;
@@ -109,6 +110,13 @@ return {
         "storageKey": null
       },
       "action": "NONE"
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
     },
     {
       "alias": "vfolderStatus",
@@ -419,6 +427,6 @@ return {
 };
 })();
 
-(node as any).hash = "e3641517fc04ff37b4761cb0a63d5fd1";
+(node as any).hash = "607ae67fd5df169ab6c7203a711c087e";
 
 export default node;
