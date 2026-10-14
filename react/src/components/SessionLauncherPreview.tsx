@@ -15,7 +15,6 @@ import {
 } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useMountableStorageHosts } from '../hooks/useMountableStorageHosts';
-import { useSuspendedAutoMountedFolders } from '../hooks/useSuspendedAutoMountedFolders';
 import {
   SessionLauncherFormValue,
   ResourceNumbersOfSession,
@@ -44,6 +43,7 @@ import {
   imageNodeTagFacts,
   filterOutEmpty,
   resolveVFolderMounts,
+  useSuspendedAutoMountedVFolders,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -135,7 +135,7 @@ const SessionLauncherPreview: React.FC<{
               (preset) => preset?.id === allocationPreset,
             )?.name ?? allocationPreset
           }`;
-  const autoMountedFolders = useSuspendedAutoMountedFolders({
+  const { autoMountedFolders } = useSuspendedAutoMountedVFolders({
     currentProjectId,
     mountableHosts,
   });

@@ -1,11 +1,10 @@
 import { Form } from '../../form-engine';
-import { convertToUUID } from '../../helper';
 import MockVFolderFileProviders from '../../tests/MockVFolderFileProviders';
 import {
   MOCK_PROJECT_ID,
   MOCK_MOUNTABLE_HOSTS,
-  mockVFolderListItem,
-  mockVFolderListItems,
+  mockMountFolder,
+  mockMountFolders,
   mockVFolderFile as entry,
   type MockVFolderFileTrees,
 } from '../../tests/mockVFolderFileTree';
@@ -27,16 +26,14 @@ const DEMO_WIDTH = 760;
 // The shared folder fixture exercises every gate the select applies; a third
 // mountable folder is added here so the alias modes fit on one screen.
 const fixtureFolders = [
-  ...mockVFolderListItems,
-  mockVFolderListItem({
-    id: 'aaaaaaaabbbbccccddddeeeeffff0006',
+  ...mockMountFolders,
+  mockMountFolder({
+    id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeffff0006',
     name: 'model-checkpoints',
   }),
 ];
 
-// The fixture keys folders by the 32-hex `id`; the select emits the
-// dashed UUID, which is what the row's path picker browses by.
-const folderId = (index: number) => convertToUUID(fixtureFolders[index].id);
+const folderId = (index: number) => fixtureFolders[index].id;
 const folderName = (index: number) => fixtureFolders[index].name;
 
 // Directory trees keyed by vfolder UUID, then by the path notation
@@ -151,15 +148,16 @@ const meta: Meta<typeof BAIVFolderMountConfigInput> = {
 **BAIVFolderMountConfigInput** is a reusable, schema-agnostic controlled input
 for configuring vfolder mounts.
 
-- Picks folders from the whole folder list (\`myVfolders\`) and gates it client
-  side, because the session launcher's mount gates cannot be expressed as a
-  GraphQL filter: the host must be in \`mountableHosts\` (those granting
-  \`mount-in-session\`), the folder must be reachable from \`currentProjectId\`, and
-  folders in \`autoMountedFolders\` are dropped — the session mounts them anyway.
-  \`filter\` hides rows on top of that without shrinking the selection.
-- It **suspends** on that list, so the consumer owns the Suspense boundary. An entry
-  the mount gates reject is dropped from the value with a warning toast; one that
-  merely became auto-mounted is kept, since it is mounted anyway.
+- Pages the options through \`scopedVFoldersV2\` over the caller's and
+  \`currentProjectId\`'s folders, filtered on the server: the host must be in
+  \`mountableHosts\` (those granting \`mount-in-session\`), the folder must be ready,
+  and dotfile folders are left out (the session mounts them anyway). Search runs
+  on the server too, and \`filter\` (a \`VFolderFilter\`) narrows the options further
+  without shrinking the selection. A folder whose mount level is NONE is listed
+  but cannot be picked.
+- It **suspends** on the first page, so the consumer owns the Suspense boundary. A
+  selected folder the loaded options do not cover is looked up by id; one the
+  mount gates reject is dropped from the value with a warning toast.
 - Beside the select sits a button group: **⟳** always re-runs the folder query (also
   exposed imperatively as \`ref.refetch()\`), and **+** is rendered only when
   \`onClickCreateFolder\` is given — the folder-creation modal belongs to the host app.
@@ -169,7 +167,7 @@ for configuring vfolder mounts.
 - \`mountDestination\` stores the **raw alias** the user typed — \`''\` mounts at the default
   \`/home/work/<name>\`, a relative segment like \`data\` resolves to \`/home/work/data\`, and an
   absolute path like \`/data\` is used as-is. Resolve it with the exported \`inputToMountDestination\`.
-- \`autoMountedFolders\` drop out of the offered folder options, join the overlap check (a user
+- \`autoMountedFolders\` join the overlap check (a user
   alias colliding with an auto-mounted folder is flagged) and are shown as read-only badges at the bottom.
 - \`folderExplorerPath\` turns every folder name the component renders — each mount row and each
   auto-mounted badge — into a link into the host app's folder explorer (see **WithFolderExplorerLinks**).
@@ -214,8 +212,9 @@ dropped in the **WithAutoMountedFolders** story.
     },
     filter: {
       control: false,
-      description: 'Display-only folder filter, applied after the mount gates',
-      table: { type: { summary: '(folder: VFolderListItem) => boolean' } },
+      description:
+        'Server-side VFolderFilter ANDed onto the options query; narrows the options only',
+      table: { type: { summary: 'VFolderFilter' } },
     },
     disabled: {
       control: { type: 'boolean' },
@@ -236,7 +235,7 @@ dropped in the **WithAutoMountedFolders** story.
     autoMountedFolders: {
       control: { type: 'object' },
       description:
-        'Auto-mounted folders: dropped from the offered folder options, folded into the overlap check and shown as read-only badges',
+        'Auto-mounted folders: folded into the overlap check and shown as read-only badges',
       table: {
         type: { summary: 'Array<{ vfolderId: string; name: string }>' },
       },
@@ -358,7 +357,7 @@ export const WithAutoMountedFolders: Story = {
     docs: {
       description: {
         story:
-          '`autoMountedFolders` naming `.config` drops that folder from the select and renders it as a read-only badge below the rows. The first folder aliases to `.config`, colliding with the auto-mounted `/home/work/.config`, so it shows the overlap error.',
+          '`autoMountedFolders` naming `.config` renders it as a read-only badge below the rows (dotfile folders are never offered in the select). The first folder aliases to `.config`, colliding with the auto-mounted `/home/work/.config`, so it shows the overlap error.',
       },
     },
   },

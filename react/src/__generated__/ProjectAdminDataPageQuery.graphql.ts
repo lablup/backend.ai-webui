@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c182d3c5295262bfc2541f6c7c9c3afc>>
+ * @generated SignedSource<<f7ff7839d668d51d8e38677e6ad1e3f2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,6 +20,7 @@ export type VFolderFilter = {
   OR?: ReadonlyArray<VFolderFilter> | null | undefined;
   cloneable?: boolean | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   host?: StringFilter | null | undefined;
   labels?: EntityLabelNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;

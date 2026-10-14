@@ -1,4 +1,3 @@
-import type { VFolderListItem } from '../components/fragments/BAIVFolderMountConfigInput';
 import type {
   BAIClient,
   VFolderFile,
@@ -26,26 +25,37 @@ export const mockVFolderFile = (
   modified,
 });
 
+/** A folder as the mount-folder queries return it, flattened for fixtures. */
+export interface MockMountFolder {
+  /** The vfolder UUID. */
+  id: string;
+  name: string;
+  host: string;
+  status: string;
+  usageMode: string;
+  /** The caller's mount level: READ_ONLY, READ_WRITE, RW_DELETE or NONE. */
+  permission: string;
+  ownershipType: 'USER' | 'GROUP';
+  projectId: string | null;
+  creatorEmail: string | null;
+  createdAt: string;
+}
+
 /**
- * A folder-list row with every field filled in, so a story only has
- * to name the handful that its gate or filter actually reads.
+ * A mount folder with every field filled in, so a story only has to name the
+ * handful that its gate or filter actually reads.
  */
-export const mockVFolderListItem = (
-  folder: Pick<VFolderListItem, 'id' | 'name'> & Partial<VFolderListItem>,
-): VFolderListItem => ({
-  quota_scope_id: 'project:00000000-0000-0000-0000-000000000000',
+export const mockMountFolder = (
+  folder: Pick<MockMountFolder, 'id' | 'name'> & Partial<MockMountFolder>,
+): MockMountFolder => ({
   host: 'local:volume1',
-  status: 'ready',
-  usage_mode: 'general',
-  created_at: '2026-07-01T11:20:00+00:00',
-  is_owner: true,
-  permission: 'wd',
-  user: null,
-  group: null,
-  creator: 'user@lablup.com',
-  ownership_type: 'user',
-  type: 'user',
-  cloneable: false,
+  status: 'READY',
+  usageMode: 'GENERAL',
+  permission: 'RW_DELETE',
+  ownershipType: 'USER',
+  projectId: null,
+  creatorEmail: 'user@lablup.com',
+  createdAt: '2026-07-01T11:20:00+00:00',
   ...folder,
 });
 
@@ -56,37 +66,37 @@ const MOCK_OTHER_PROJECT_ID = '88888888-8888-8888-8888-888888888888';
 export const MOCK_MOUNTABLE_HOSTS: Array<string> = ['local:volume1'];
 
 /**
- * The shared folder-list fixture: two mountable folders, one auto-mounted
- * dotfile, one on a host without `mount-in-session`, and one owned by another
- * project — so a story exercises every gate the mount config input applies.
+ * The shared folder fixture: two mountable folders, one auto-mounted dotfile,
+ * one on a host without `mount-in-session`, and one owned by another project,
+ * so a story exercises every gate the mount config input applies.
  */
-export const mockVFolderListItems: Array<VFolderListItem> = [
-  mockVFolderListItem({
-    id: 'aaaaaaaabbbbccccddddeeeeffff0001',
+export const mockMountFolders: Array<MockMountFolder> = [
+  mockMountFolder({
+    id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeffff0001',
     name: 'my-project-data',
   }),
-  mockVFolderListItem({
-    id: 'aaaaaaaabbbbccccddddeeeeffff0002',
+  mockMountFolder({
+    id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeffff0002',
     name: 'shared-datasets',
-    ownership_type: 'group',
-    type: 'group',
-    group: MOCK_PROJECT_ID,
+    ownershipType: 'GROUP',
+    projectId: MOCK_PROJECT_ID,
+    creatorEmail: null,
   }),
-  mockVFolderListItem({
-    id: 'aaaaaaaabbbbccccddddeeeeffff0003',
+  mockMountFolder({
+    id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeffff0003',
     name: '.config',
   }),
-  mockVFolderListItem({
-    id: 'aaaaaaaabbbbccccddddeeeeffff0004',
+  mockMountFolder({
+    id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeffff0004',
     name: 'cold-archive',
     host: 'archive:cold',
   }),
-  mockVFolderListItem({
-    id: 'aaaaaaaabbbbccccddddeeeeffff0005',
+  mockMountFolder({
+    id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeffff0005',
     name: 'other-team-data',
-    ownership_type: 'group',
-    type: 'group',
-    group: MOCK_OTHER_PROJECT_ID,
+    ownershipType: 'GROUP',
+    projectId: MOCK_OTHER_PROJECT_ID,
+    creatorEmail: null,
   }),
 ];
 

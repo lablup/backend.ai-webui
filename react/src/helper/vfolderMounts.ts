@@ -4,11 +4,7 @@
  */
 import {
   convertToUUID,
-  isMountableVFolder,
   mountDestinationToInput,
-  type AutoMountedFolder,
-  type VFolderListItem,
-  type VFolderMountScope,
   type VFolderMountConfigValue,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -63,25 +59,3 @@ export const normalizeLegacyMountFields = <T extends object>(
     }),
   };
 };
-
-/** A dotfile folder is what a session mounts without being asked. */
-export const isAutoMountFolderName = (name: string) => name.startsWith('.');
-
-/**
- * The folders a session mounts on its own — ready dotfile folders — picked out
- * of the folder list the same way VFolderTable does.
- */
-export const autoMountedFoldersFrom = (
-  folders: Array<VFolderListItem>,
-  scope: VFolderMountScope,
-): Array<AutoMountedFolder> =>
-  _.map(
-    _.filter(
-      folders,
-      (folder) =>
-        folder.status === 'ready' &&
-        isAutoMountFolderName(folder.name) &&
-        isMountableVFolder(folder, scope),
-    ),
-    (folder) => ({ vfolderId: convertToUUID(folder.id), name: folder.name }),
-  );

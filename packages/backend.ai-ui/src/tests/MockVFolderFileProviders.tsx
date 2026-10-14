@@ -1,13 +1,14 @@
 import { BAIDirectoryPickerQuery } from '../components/baiClient/FileExplorer/BAIDirectoryPickerModal';
-import type { VFolderListItem } from '../components/fragments/BAIVFolderMountConfigInput';
 import { BAIClientProvider } from '../components/provider/BAIClientProvider';
-import { convertToUUID, toGlobalId } from '../helper';
+import { toGlobalId } from '../helper';
 import {
   createMockVFolderFileClient,
+  type MockMountFolder,
   type MockVFolderFileTrees,
 } from './mockVFolderFileTree';
 import { mockAnonymousClientFactory } from './storybook-mock-utils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import * as _ from 'lodash-es';
 import { Suspense, useState } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
@@ -32,16 +33,67 @@ export interface MockVFolder {
 export interface MockVFolderFileProvidersProps {
   vfolders?: Array<MockVFolder>;
   trees?: MockVFolderFileTrees | (() => MockVFolderFileTrees);
-  /** Rows `myVfolders` answers with. */
-  folders?: Array<VFolderListItem>;
+  /** Folders `scopedVFoldersV2` answers with, after its scope and filter. */
+  folders?: Array<MockMountFolder>;
   /** Fallback for a Suspense boundary around `children`; omit to render bare. */
   suspenseFallback?: React.ReactNode;
   children?: React.ReactNode;
 }
 
+interface MockScope {
+  project?: Array<{ value: string }>;
+}
+
+interface MockStringFilter {
+  equals?: string;
+  notEquals?: string;
+  in?: Array<string>;
+  notIn?: Array<string>;
+  startsWith?: string;
+  notStartsWith?: string;
+  iContains?: string;
+}
+
+interface MockFilter {
+  name?: MockStringFilter;
+  host?: MockStringFilter;
+  status?: MockStringFilter;
+  usageMode?: MockStringFilter;
+  entityId?: MockStringFilter;
+  AND?: Array<MockFilter>;
+  OR?: Array<MockFilter>;
+  NOT?: Array<MockFilter>;
+}
+
+const matchesString = (value: string, filter?: MockStringFilter) =>
+  !filter ||
+  ((filter.equals == null || value === filter.equals) &&
+    (filter.notEquals == null || value !== filter.notEquals) &&
+    (filter.in == null || filter.in.includes(value)) &&
+    (filter.notIn == null || !filter.notIn.includes(value)) &&
+    (filter.startsWith == null || value.startsWith(filter.startsWith)) &&
+    (filter.notStartsWith == null || !value.startsWith(filter.notStartsWith)) &&
+    (filter.iContains == null ||
+      value.toLowerCase().includes(filter.iContains.toLowerCase())));
+
+/** The `VFolderFilter` subset the mount-folder queries send, evaluated in memory. */
+const matchesVFolderFilter = (
+  folder: MockMountFolder,
+  filter?: MockFilter | null,
+): boolean =>
+  !filter ||
+  (_.every(filter.AND, (f) => matchesVFolderFilter(folder, f)) &&
+    (!filter.OR || _.some(filter.OR, (f) => matchesVFolderFilter(folder, f))) &&
+    !_.some(filter.NOT, (f) => matchesVFolderFilter(folder, f)) &&
+    matchesString(folder.name, filter.name) &&
+    matchesString(folder.host, filter.host) &&
+    matchesString(folder.status, filter.status) &&
+    matchesString(folder.usageMode, filter.usageMode) &&
+    matchesString(folder.id, filter.entityId));
+
 /**
  * Everything a vfolder file-browsing story needs without a backend: a mock
- * Relay environment answering `myVfolders` from `folders` and
+ * Relay environment answering `scopedVFoldersV2` from `folders` and
  * `vfolder_nodes` / the picker's `vfolderV2` from `vfolders`, and a mock
  * `BAIClient` whose file APIs read and write `trees`.
  */
@@ -50,7 +102,7 @@ const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
   // The path picker's `vfolderV2` is answered from the same rows by default.
   vfolders = (folders ?? []).map((folder): MockVFolder => ({
     name: folder.name,
-    row_id: convertToUUID(folder.id),
+    row_id: folder.id,
   })),
   trees = {},
   suspenseFallback,
@@ -76,35 +128,40 @@ const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
       },
     }));
 
-    // The rows as `myVfolders` nodes, the inverse of `toVFolderListItem`.
-    const MOUNT_LEVEL_BY_PERMISSION: Record<string, string> = {
-      ro: 'READ_ONLY',
-      rw: 'READ_WRITE',
-      wd: 'RW_DELETE',
+    const scopedVFolders = (variables: Record<string, unknown>) => {
+      const projectIds = _.map(
+        (variables.scope as MockScope | undefined)?.project,
+        'value',
+      );
+      const matched = (folders ?? []).filter(
+        (folder) =>
+          (folder.ownershipType === 'USER' ||
+            projectIds.includes(folder.projectId ?? '')) &&
+          matchesVFolderFilter(folder, variables.filter as MockFilter),
+      );
+      const offset = (variables.offset as number | undefined) ?? 0;
+      const limit = (variables.limit as number | undefined) ?? matched.length;
+      return {
+        count: matched.length,
+        edges: matched.slice(offset, offset + limit).map((folder) => ({
+          node: {
+            id: toGlobalId('VFolder', folder.id),
+            status: folder.status,
+            host: folder.host,
+            metadata: {
+              name: folder.name,
+              usageMode: folder.usageMode,
+              createdAt: folder.createdAt,
+            },
+            accessControl: {
+              permission: folder.permission,
+              ownershipType: folder.ownershipType,
+            },
+            ownership: { creatorEmail: folder.creatorEmail },
+          },
+        })),
+      };
     };
-    const myVfolderEdges = (folders ?? []).map((folder) => ({
-      node: {
-        id: toGlobalId('VFolder', convertToUUID(folder.id)),
-        status: folder.status.toUpperCase().replace(/-/g, '_'),
-        host: folder.host,
-        metadata: {
-          name: folder.name,
-          usageMode: folder.usage_mode.toUpperCase(),
-          quotaScopeId: folder.quota_scope_id,
-          createdAt: folder.created_at,
-          cloneable: folder.cloneable,
-        },
-        accessControl: {
-          permission: MOUNT_LEVEL_BY_PERMISSION[folder.permission] ?? 'NONE',
-          ownershipType: folder.ownership_type.toUpperCase(),
-        },
-        ownership: {
-          userId: folder.user,
-          projectId: folder.group,
-          creatorEmail: folder.creator || null,
-        },
-      },
-    }));
 
     const queuePickerOperation = (rowId: string) =>
       env.mock.queuePendingOperation(BAIDirectoryPickerQuery, {
@@ -124,10 +181,7 @@ const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
           vfolders.find((folder) => folder.row_id === vfolderId) ?? vfolders[0];
         return MockPayloadGenerator.generate(operation, {
           Query: () => ({
-            myVfolders: {
-              count: myVfolderEdges.length,
-              edges: myVfolderEdges,
-            },
+            scopedVFoldersV2: scopedVFolders(operation.request.variables),
             vfolder_nodes: { count: edges.length, edges },
             vfolderV2: requested
               ? {

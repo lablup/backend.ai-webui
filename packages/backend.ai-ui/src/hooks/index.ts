@@ -188,9 +188,15 @@ export {
 } from './useProjectResourceGroups';
 export type { ScalingGroupItem } from './useProjectResourceGroups';
 export {
-  isMountableVFolder,
-  useSuspendedMyVFolders,
-} from './useSuspendedMyVFolders';
-export type { VFolderMountScope } from './useSuspendedMyVFolders';
+  isAutoMountFolderName,
+  mountableVFolderFilter,
+  mountableVFolderScope,
+  useSuspendedAutoMountedVFolders,
+} from './useMountableVFolders';
+export type {
+  AutoMountedFolder,
+  VFolderFilter,
+  VFolderMountScope,
+} from './useMountableVFolders';
 
 export * from './useBAIBreakpoint';
