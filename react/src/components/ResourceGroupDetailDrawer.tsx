@@ -9,13 +9,11 @@ import {
 import { ResourceGroupDetailDrawerQuery } from '../__generated__/ResourceGroupDetailDrawerQuery.graphql';
 import { ResourceGroupDetailDrawerSettingModalQuery } from '../__generated__/ResourceGroupDetailDrawerSettingModalQuery.graphql';
 import { getSessionTypeLabel } from '../helper/sessionTypeLabel';
-import { useSuspendedBackendaiClient } from '../hooks';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import ResourceGroupDefaultDeploymentOptionsPanel from './ResourceGroupDefaultDeploymentOptionsPanel';
 import ResourceGroupDefaultSessionOptionsPanel from './ResourceGroupDefaultSessionOptionsPanel';
 import type { ScalingGroupOpts } from './ResourceGroupList';
 import ResourceGroupSettingModal from './ResourceGroupSettingModal';
-import { Badge } from '@lablup/ui-common/Badge';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import { Tab, TabList } from '@lablup/ui-common/TabList';
@@ -27,17 +25,18 @@ import {
   type BAIDrawerProps,
   BAIFetchKeyButton,
   BAIFlex,
+  BAIIconWithTooltip,
   BAIMetadataList,
   BAISkeleton,
   BAIText,
   BAIUnmountAfterClose,
-  badgeVariantForStatus,
+  tokenColorForStatus,
   useBAIBreakpoint,
   useUpdatableState,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { Check, SquarePenIcon, X } from 'lucide-react';
+import { Check, Info, SquarePenIcon, X } from 'lucide-react';
 import React, {
   Suspense,
   useEffect,
@@ -135,9 +134,6 @@ const ResourceGroupDetailDrawerContent: React.FC<{
   const { t } = useTranslation();
   const { token } = useTheme();
   const { md } = useBAIBreakpoint();
-  const baiClient = useSuspendedBackendaiClient();
-  const supportsDefaultOptions =
-    baiClient.isManagerVersionCompatibleWith('26.4.4rc1');
   const [activeTab, setActiveTab] = useState<TabKey>('defaultSessionOptions');
 
   const resourceGroupName = resourceGroup.name;
@@ -191,8 +187,8 @@ const ResourceGroupDetailDrawerContent: React.FC<{
         <BAICard>
           <BAIMetadataList columns={md ? 2 : 1}>
             <MetadataListItem label={t('resourceGroup.Active')}>
-              <Badge
-                variant={badgeVariantForStatus(
+              <Token
+                color={tokenColorForStatus(
                   'resourceGroup',
                   resourceGroup.status.isActive ? 'ACTIVE' : 'INACTIVE',
                 )}
@@ -241,39 +237,49 @@ const ResourceGroupDetailDrawerContent: React.FC<{
           </BAIMetadataList>
         </BAICard>
       </BAIFlex>
-      {supportsDefaultOptions ? (
-        <BAIFlex direction="column" gap="sm" align="stretch">
-          <TabList
-            hasDivider
-            value={activeTab}
-            onChange={(key) => setActiveTab(key as TabKey)}
-          >
-            <Tab
-              value="defaultSessionOptions"
-              label={t('resourceGroup.DefaultSessionOptions')}
-            />
-            <Tab
-              value="defaultDeploymentOptions"
-              label={t('resourceGroup.DefaultDeploymentOptions')}
-            />
-          </TabList>
-          <BAIErrorBoundary>
-            <Suspense fallback={<BAISkeleton />}>
-              {activeTab === 'defaultSessionOptions' ? (
-                <ResourceGroupDefaultSessionOptionsPanel
-                  resourceGroupName={resourceGroupName}
-                  fetchKey={fetchKey}
-                />
-              ) : (
-                <ResourceGroupDefaultDeploymentOptionsPanel
-                  resourceGroupName={resourceGroupName}
-                  fetchKey={fetchKey}
-                />
-              )}
-            </Suspense>
-          </BAIErrorBoundary>
-        </BAIFlex>
-      ) : null}
+      <BAIFlex direction="column" gap="sm" align="stretch">
+        <TabList
+          hasDivider
+          value={activeTab}
+          onChange={(key) => setActiveTab(key as TabKey)}
+        >
+          <Tab
+            value="defaultSessionOptions"
+            label={t('resourceGroup.DefaultSessionOptions')}
+            endContent={
+              <BAIIconWithTooltip
+                icon={<Info size="1em" aria-hidden />}
+                content={t('resourceGroup.DefaultSessionOptionsDesc')}
+              />
+            }
+          />
+          <Tab
+            value="defaultDeploymentOptions"
+            label={t('resourceGroup.DefaultDeploymentOptions')}
+            endContent={
+              <BAIIconWithTooltip
+                icon={<Info size="1em" aria-hidden />}
+                content={t('resourceGroup.DefaultDeploymentOptionsDesc')}
+              />
+            }
+          />
+        </TabList>
+        <BAIErrorBoundary>
+          <Suspense fallback={<BAISkeleton />}>
+            {activeTab === 'defaultSessionOptions' ? (
+              <ResourceGroupDefaultSessionOptionsPanel
+                resourceGroupName={resourceGroupName}
+                fetchKey={fetchKey}
+              />
+            ) : (
+              <ResourceGroupDefaultDeploymentOptionsPanel
+                resourceGroupName={resourceGroupName}
+                fetchKey={fetchKey}
+              />
+            )}
+          </Suspense>
+        </BAIErrorBoundary>
+      </BAIFlex>
     </BAIFlex>
   );
 };

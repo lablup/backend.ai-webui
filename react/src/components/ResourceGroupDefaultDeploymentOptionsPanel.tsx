@@ -30,7 +30,7 @@ const ResourceGroupDefaultDeploymentOptionsPanelContent: React.FC<
   const resourceGroup = useFragment(
     graphql`
       fragment ResourceGroupDefaultDeploymentOptionsPanelFragment on ResourceGroup {
-        defaultDeploymentOptions @since(version: "26.4.4rc1") {
+        defaultDeploymentOptions {
           ...ResourceGroupDefaultDeploymentOptionsPanel_options
         }
         ...ResourceGroupDefaultDeploymentOptionsModalFragment

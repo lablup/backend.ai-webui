@@ -97,6 +97,12 @@ const bytesToSizeNotation = (bytes: number) => {
     : `${Math.round(bytes / 1024 ** 2)}m`;
 };
 
+// The manager answers shmem as "3 MiB"; the size inputs and chips read "3m".
+export const normalizeShmemExpr = (shmem: string | null | undefined) => {
+  const match = shmem?.match(/^(\d+(?:\.\d+)?)\s*([kmgtpe]?)/i);
+  return match ? `${match[1]}${_.toLower(match[2])}` : null;
+};
+
 export const toSessionExecutionSpecFormValue = (
   info: KernelExecutionSpecInfo | null | undefined,
 ): SessionExecutionSpecFormValue => {
@@ -121,7 +127,7 @@ export const toSessionExecutionSpecFormValue = (
         quantity: String(entry.quantity),
       }),
     ),
-    shmem: info?.resourceOpts?.shmem ?? null,
+    shmem: normalizeShmemExpr(info?.resourceOpts?.shmem),
     isBatchSession: !(
       _.isEmpty(info?.startsAt) &&
       _.isNil(info?.batchTimeoutSec) &&

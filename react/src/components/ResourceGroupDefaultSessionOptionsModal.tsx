@@ -101,7 +101,7 @@ const ResourceGroupDefaultSessionOptionsModal: React.FC<
       fragment ResourceGroupDefaultSessionOptionsModalFragment on ResourceGroup {
         id
         name
-        defaultSessionOptions @since(version: "26.4.4rc1") {
+        defaultSessionOptions {
           ...ResourceGroupDefaultSessionOptionsModal_options
         }
       }
