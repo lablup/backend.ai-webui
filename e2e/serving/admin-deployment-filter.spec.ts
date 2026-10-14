@@ -1,9 +1,12 @@
-// Covers the Owner (`createdUserId`) filter added to Admin Settings >
-// Deployments > Deployments tab in #9639 (FR-3914).
+// Covers the filters on Admin Settings > Deployments > Deployments tab: the
+// Owner (`createdUserId`) filter added in #9639 (FR-3914) and the tag-click
+// filter fixed in #10175 (FR-4169).
 import {
   createAdminApiContext,
   deleteDeploymentViaApi,
+  findDeploymentByName,
   listDeploymentsByPattern,
+  setDeploymentTagsViaApi,
 } from '../utils/admin-api';
 import {
   createDeploymentShell,
@@ -22,6 +25,7 @@ const ADMIN_DEPLOYMENTS_URL = `${webuiEndpoint}/admin/deployments?tab=deployment
 // The `e2e-plan-` prefix is what `sweepLeftoverDeploymentsViaApi` (global
 // teardown) removes, so an interrupted run cannot leak this deployment.
 const DEPLOYMENT_PREFIX = 'e2e-plan-owner-';
+const TAG_DEPLOYMENT_PREFIX = 'e2e-plan-tag-';
 
 // The Owner filter value is a `BAIUserSelect` rendered inside the PowerSearch
 // edit popover; it stages the picked user and the popover's Apply commits it.
@@ -50,30 +54,47 @@ async function applyOwnerFilter(page: Page, email: string): Promise<void> {
   await expect(typeahead).toBeHidden();
 }
 
+// The Tags column is hidden by default; turn it on through Table Settings.
+async function showTagsColumn(page: Page): Promise<void> {
+  await page.getByRole('button', { name: 'Table Settings' }).click();
+  const settings = page
+    .getByRole('dialog')
+    .filter({ has: page.getByRole('checkbox', { name: 'Tags' }) });
+  await expect(settings).toBeVisible();
+  await settings.getByRole('checkbox', { name: 'Tags' }).setChecked(true);
+  await settings.getByRole('button', { name: 'Apply' }).click();
+  await expect(settings).toBeHidden({ timeout: 30000 });
+}
+
 test.describe(
-  'Admin Deployments - Owner filter',
+  'Admin Deployments - Filters',
   {
     tag: ['@serving', '@admin', '@regression', '@requires-manager-v26.4'],
   },
   () => {
     let deploymentName: string;
+    // Further deployments a test creates; afterEach removes them too.
+    let extraDeploymentNames: string[];
 
     test.beforeEach(async ({ page, request }) => {
       deploymentName = `${DEPLOYMENT_PREFIX}${Date.now()}-${Math.random()
         .toString(36)
         .slice(2, 6)}`;
+      extraDeploymentNames = [];
       await loginAsAdmin(page, request);
     });
 
     test.afterEach(async () => {
       const api = await createAdminApiContext();
       try {
-        const leftovers = await listDeploymentsByPattern(
-          api,
-          new RegExp(`^${escapeForRegExp(deploymentName)}$`),
-        );
-        for (const { id } of leftovers) {
-          await deleteDeploymentViaApi(api, id);
+        for (const name of [deploymentName, ...extraDeploymentNames]) {
+          const leftovers = await listDeploymentsByPattern(
+            api,
+            new RegExp(`^${escapeForRegExp(name)}$`),
+          ).catch(() => []);
+          for (const { id } of leftovers) {
+            await deleteDeploymentViaApi(api, id).catch(() => {});
+          }
         }
       } finally {
         await api.dispose();
@@ -134,6 +155,52 @@ test.describe(
       for (const owner of await ownerCells.allTextContents()) {
         expect(owner.trim()).not.toBe(userInfo.admin.email);
       }
+    });
+
+    test('Admin can filter deployments by clicking a tag', async ({ page }) => {
+      // Arrange: one deployment tagged exactly `tag`, and one tagged
+      // `${tag}-large`, which only a substring match would pick up.
+      const suffix = `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+      const tag = `e2e-tag-${suffix}`;
+      const exactName = `${TAG_DEPLOYMENT_PREFIX}exact-${suffix}`;
+      const similarName = `${TAG_DEPLOYMENT_PREFIX}large-${suffix}`;
+      const tagsByName: Record<string, string[]> = {
+        [exactName]: [tag],
+        [similarName]: [`${tag}-large`],
+      };
+      extraDeploymentNames.push(exactName, similarName);
+      for (const name of Object.keys(tagsByName)) {
+        await navigateTo(page, 'deployments');
+        await createDeploymentShell(page, name);
+      }
+      const api = await createAdminApiContext();
+      try {
+        for (const [name, tags] of Object.entries(tagsByName)) {
+          const deployment = await findDeploymentByName(api, name);
+          if (!deployment) throw new Error(`deployment "${name}" not found`);
+          await setDeploymentTagsViaApi(api, deployment.id, tags);
+        }
+      } finally {
+        await api.dispose();
+      }
+
+      const rowOf = (name: string) =>
+        page.getByRole('row', { name: new RegExp(escapeForRegExp(name)) });
+      await page.goto(ADMIN_DEPLOYMENTS_URL);
+      await showTagsColumn(page);
+      await expect(rowOf(exactName)).toBeVisible({ timeout: 30000 });
+      await expect(rowOf(similarName)).toBeVisible({ timeout: 30000 });
+
+      // Act: click the tag in the Tags column.
+      await rowOf(exactName)
+        .getByRole('button', { name: tag, exact: true })
+        .click();
+
+      // The filter shows the tag and matches it exactly.
+      const filterGroup = page.getByRole('group', { name: 'Search filters' });
+      await expect(filterGroup).toContainText(tag);
+      await expect(rowOf(exactName)).toBeVisible({ timeout: 30000 });
+      await expect(rowOf(similarName)).toBeHidden({ timeout: 30000 });
     });
   },
 );
