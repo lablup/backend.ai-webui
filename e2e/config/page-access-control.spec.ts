@@ -3,6 +3,7 @@
 import {
   forbiddenPageHeading,
   loginAsAdmin,
+  loginAsDomainAdmin,
   loginAsUser,
   modifyConfigToml,
   modifyThemeJson,
@@ -329,6 +330,66 @@ test.describe(
         await expect(forbiddenPageHeading(page)).toBeVisible({
           timeout: 15_000,
         });
+      },
+    );
+
+    test(
+      'Domain admin cannot see or open the Scheduler page',
+      { tag: ['@401', '@permission', '@regression'] },
+      async ({ page, request }) => {
+        // 1. Login as domain admin (admin, not superadmin)
+        await loginAsDomainAdmin(page, request);
+
+        // 2. The admin-scope sidebar renders for a domain admin, but the
+        // superadmin-only Scheduler item is not in it
+        await page.goto(`${webuiEndpoint}/admin/users`);
+        await expect(getSideNavItem(page, 'Environments')).toBeVisible({
+          timeout: 15_000,
+        });
+        await expect(getSideNavItem(page, 'Scheduler')).toBeHidden();
+
+        // 3. Entering the canonical URL directly shows the forbidden screen
+        await page.goto(`${webuiEndpoint}/admin/scheduler`);
+        await expect(forbiddenPageHeading(page)).toBeVisible({
+          timeout: 15_000,
+        });
+        await expect(
+          page.getByText("You don't have permission to access this page."),
+        ).toBeVisible();
+      },
+    );
+
+    test(
+      'Superadmin can see and open the Scheduler page',
+      { tag: ['@401', '@permission', '@regression'] },
+      async ({ page, request }) => {
+        // 1. Login as superadmin user
+        await loginAsAdmin(page, request);
+
+        // 2. Open the Scheduler page from the admin-scope sidebar
+        await page.goto(`${webuiEndpoint}/admin/users`);
+        const schedulerMenuItem = getSideNavItem(page, 'Scheduler');
+        await expect(schedulerMenuItem).toBeVisible({ timeout: 15_000 });
+        await schedulerMenuItem.click();
+        await expect(page).toHaveURL(/\/admin\/scheduler/, {
+          timeout: 15_000,
+        });
+        // The Fair Share tab plus its first step prove the page body rendered
+        const fairShareTab = page
+          .getByRole('navigation', { name: 'Tabs' })
+          .getByRole('button', { name: 'Fair Share Setting' });
+        const resourceGroupStep = page.getByRole('button', {
+          name: 'Go to step 1: Resource Group',
+        });
+        await expect(fairShareTab).toBeVisible({ timeout: 15_000 });
+        await expect(resourceGroupStep).toBeVisible({ timeout: 15_000 });
+        await expect(forbiddenPageHeading(page)).toBeHidden();
+
+        // 3. Entering the canonical URL directly opens it as well
+        await page.goto(`${webuiEndpoint}/admin/scheduler`);
+        await expect(fairShareTab).toBeVisible({ timeout: 15_000 });
+        await expect(resourceGroupStep).toBeVisible({ timeout: 15_000 });
+        await expect(forbiddenPageHeading(page)).toBeHidden();
       },
     );
 
