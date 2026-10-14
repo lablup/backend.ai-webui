@@ -77,6 +77,7 @@ export type { BAIDynamicUnitInputNumberProps } from './BAIDynamicUnitInputNumber
 export { default as BAIDynamicUnitInputNumberWithSlider } from './BAIDynamicUnitInputNumberWithSlider';
 export type { BAIDynamicUnitInputNumberWithSliderProps } from './BAIDynamicUnitInputNumberWithSlider';
 export { default as BAIAlert } from './BAIAlert';
+export { bannerLiveRole } from './BAIAlert';
 export type { BAIAlertProps } from './BAIAlert';
 export { default as BAIAppShell } from './BAIAppShell';
 export type { BAIAppShellProps, BAIAppShellDrawer } from './BAIAppShell';

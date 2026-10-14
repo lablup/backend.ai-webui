@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-10-14T01:18:58.609Z",
+  "generatedAt": "2026-10-14T06:58:05.437Z",
   "languages": [
     "en",
     "ja",
@@ -13,8 +13,8 @@
     "en": {
       "totals": {
         "pages": 1,
-        "changes": 7,
-        "added": 7,
+        "changes": 6,
+        "added": 6,
         "modified": 0,
         "removed": 0,
         "images": 0,
@@ -29,19 +29,18 @@
           "url": "next/en/admin_menu.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/en/admin_menu/admin_menu.md",
           "counts": {
-            "added": 7,
+            "added": 6,
             "modified": 0,
             "removed": 0,
             "images": 0,
-            "total": 7
+            "total": 6
           },
           "fingerprints": [
             "dc9e031c8180",
             "6ed9b7c6c267",
-            "ac0221c44b25",
+            "379cd32cba6b",
             "0876659c2845",
             "fffd78644d46",
-            "89f3ea1e339c",
             "5f2775b1b948"
           ]
         }
@@ -50,8 +49,8 @@
     "ja": {
       "totals": {
         "pages": 1,
-        "changes": 7,
-        "added": 7,
+        "changes": 6,
+        "added": 6,
         "modified": 0,
         "removed": 0,
         "images": 0,
@@ -66,19 +65,18 @@
           "url": "next/ja/admin_menu.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/ja/admin_menu/admin_menu.md",
           "counts": {
-            "added": 7,
+            "added": 6,
             "modified": 0,
             "removed": 0,
             "images": 0,
-            "total": 7
+            "total": 6
           },
           "fingerprints": [
             "9413e523e957",
             "05b8e1513331",
-            "a12abe628b54",
+            "9a8772e5fe3d",
             "2d09bde521ee",
             "f3b88946055c",
-            "bc9376d29e0d",
             "799fbec3b5cd"
           ]
         }
@@ -87,8 +85,8 @@
     "ko": {
       "totals": {
         "pages": 1,
-        "changes": 7,
-        "added": 7,
+        "changes": 6,
+        "added": 6,
         "modified": 0,
         "removed": 0,
         "images": 0,
@@ -103,19 +101,18 @@
           "url": "next/ko/admin_menu.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/ko/admin_menu/admin_menu.md",
           "counts": {
-            "added": 7,
+            "added": 6,
             "modified": 0,
             "removed": 0,
             "images": 0,
-            "total": 7
+            "total": 6
           },
           "fingerprints": [
             "040dc228a8c0",
             "ea12a52d6d1a",
-            "7a7528117bc3",
+            "55703741ba87",
             "3516427ea306",
             "3ca283ea4376",
-            "6f815bb12b19",
             "c35998f7a942"
           ]
         }
@@ -124,8 +121,8 @@
     "th": {
       "totals": {
         "pages": 1,
-        "changes": 7,
-        "added": 7,
+        "changes": 6,
+        "added": 6,
         "modified": 0,
         "removed": 0,
         "images": 0,
@@ -140,19 +137,18 @@
           "url": "next/th/admin_menu.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/th/admin_menu/admin_menu.md",
           "counts": {
-            "added": 7,
+            "added": 6,
             "modified": 0,
             "removed": 0,
             "images": 0,
-            "total": 7
+            "total": 6
           },
           "fingerprints": [
             "8b8ac5256105",
             "a5fb8ad33a30",
-            "f301feeb9399",
+            "7526a028ecf9",
             "35a8320f610e",
             "37663cfc522f",
-            "6ab1e4c3e152",
             "c79cda526a4b"
           ]
         }
