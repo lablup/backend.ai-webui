@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<75dd3652f01de05265bf4002133922ba>>
+ * @generated SignedSource<<89597bd7885f0a1829469ac4b0f68bfa>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,7 @@ export type BAIAdminContainerRegistrySelectValueQuery$variables = {
 };
 export type BAIAdminContainerRegistrySelectValueQuery$data = {
   readonly node?: {
+    readonly entityId?: string;
     readonly id?: string;
     readonly project?: string | null | undefined;
     readonly registryName?: string;
@@ -56,10 +57,17 @@ v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "registryName",
+  "name": "entityId",
   "storageKey": null
 },
 v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "registryName",
+  "storageKey": null
+},
+v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -91,7 +99,8 @@ return {
                 "selections": [
                   (v2/*: any*/),
                   (v3/*: any*/),
-                  (v4/*: any*/)
+                  (v4/*: any*/),
+                  (v5/*: any*/)
                 ],
                 "type": "ContainerRegistryV2",
                 "abstractKey": null
@@ -136,7 +145,8 @@ return {
                 "kind": "InlineFragment",
                 "selections": [
                   (v3/*: any*/),
-                  (v4/*: any*/)
+                  (v4/*: any*/),
+                  (v5/*: any*/)
                 ],
                 "type": "ContainerRegistryV2",
                 "abstractKey": null
@@ -149,16 +159,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "2d920aca356e1a274b9f3f2cb050ae70",
+    "cacheID": "847a5351fe4bfab1761c60c12b8ca3dc",
     "id": null,
     "metadata": {},
     "name": "BAIAdminContainerRegistrySelectValueQuery",
     "operationKind": "query",
-    "text": "query BAIAdminContainerRegistrySelectValueQuery(\n  $nodeId: ID!\n  $skipSelected: Boolean!\n) {\n  node(id: $nodeId) @skip(if: $skipSelected) {\n    __typename\n    ... on ContainerRegistryV2 {\n      id\n      registryName\n      project\n    }\n    id\n  }\n}\n"
+    "text": "query BAIAdminContainerRegistrySelectValueQuery(\n  $nodeId: ID!\n  $skipSelected: Boolean!\n) {\n  node(id: $nodeId) @skip(if: $skipSelected) {\n    __typename\n    ... on ContainerRegistryV2 {\n      id\n      entityId\n      registryName\n      project\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "14fd87516046a6401cb4378d2838eae3";
+(node as any).hash = "3480370346a28204f1b8290ddfecd819";
 
 export default node;

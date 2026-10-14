@@ -4,12 +4,12 @@
 
  BAIAdminContainerRegistrySelect — admin container-registry picker on
  `BAIComplexSelect`. The outer value contract is a plain key (`string` /
- `string[]`), the registry UUID (`toLocalId(node.id)`); `labelInValue` stays
+ `string[]`), the registry UUID (`entityId`); `labelInValue` stays
  between this wrapper and `BAIComplexSelect`.
 */
 import { BAIAdminContainerRegistrySelectPaginatedQuery } from '../../__generated__/BAIAdminContainerRegistrySelectPaginatedQuery.graphql';
 import { BAIAdminContainerRegistrySelectValueQuery } from '../../__generated__/BAIAdminContainerRegistrySelectValueQuery.graphql';
-import { combineFilters, toGlobalId, toLocalId } from '../../helper';
+import { combineFilters, toGlobalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useControllableValue, useFetchKey } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -90,7 +90,7 @@ const BAIAdminContainerRegistrySelect: React.FC<
   // Deferred so a fresh selection does not immediately re-run the value query.
   const deferredControllableValue = useDeferredValue(controllableValue);
   const selectedKeys = _.compact(_.castArray(deferredControllableValue ?? []));
-  const keyOfNode = (node: AstryxContainerRegistryNode) => toLocalId(node.id);
+  const keyOfNode = (node: AstryxContainerRegistryNode) => node.entityId;
 
   // Resolves the selected key to a label: a value chosen on page 1 is not in
   // `options` once `loadNext` has paged past it. `ContainerRegistryV2Filter`
@@ -106,6 +106,7 @@ const BAIAdminContainerRegistrySelect: React.FC<
           node(id: $nodeId) @skip(if: $skipSelected) {
             ... on ContainerRegistryV2 {
               id
+              entityId
               registryName
               project
             }
@@ -145,6 +146,7 @@ const BAIAdminContainerRegistrySelect: React.FC<
             edges {
               node {
                 id
+                entityId
                 registryName
                 project
               }
@@ -196,9 +198,10 @@ const BAIAdminContainerRegistrySelect: React.FC<
 
   // `node(id:)` answers any Node, so the inline-fragment fields are optional.
   const resolvedNode: AstryxContainerRegistryNode | null =
-    selectedNode?.id && selectedNode.registryName
+    selectedNode?.id && selectedNode.entityId && selectedNode.registryName
       ? {
           id: selectedNode.id,
+          entityId: selectedNode.entityId,
           registryName: selectedNode.registryName,
           project: selectedNode.project,
         }
