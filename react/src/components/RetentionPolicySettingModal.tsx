@@ -288,6 +288,7 @@ const RetentionPolicySettingModal: React.FC<
           label={t('general.Enabled')}
           name="enabled"
           valuePropName="checked"
+          required
         >
           <AstryxFormSwitch label={t('general.Enabled')} />
         </Form.Item>
