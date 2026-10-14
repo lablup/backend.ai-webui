@@ -43,12 +43,12 @@ export function createBackendAIClient(
 /**
  * Dev-only escape from a hung login. A reviewer's dev server is usually pinned
  * to a backend they cannot reach, and the reachability probe then holds the
- * screen for the client-wide timeout; Esc (see LoginView) aborts it. The
+ * screen for the client-wide timeout; Backspace (see LoginView) aborts it. The
  * production path is untouched — `import.meta.env.DEV` is statically false.
  */
 export class LoginProbeCancelledError extends Error {
   constructor() {
-    super('The login reachability probe was aborted with Esc.');
+    super('The login reachability probe was aborted with Backspace.');
     this.name = 'LoginProbeCancelledError';
   }
 }

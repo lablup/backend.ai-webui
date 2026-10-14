@@ -196,7 +196,7 @@ const LoginView: React.FC<{
     client: ReturnType<typeof createBackendAIClient>['client'];
     bootstrap: LoginBootstrap;
   } | null>(null);
-  // Dev-only Esc bumps this to cancel the login in flight; each step compares
+  // Dev-only Backspace bumps this to cancel the login in flight; each step compares
   // the value it started with after every await and drops a stale result.
   const loginAttemptRef = useRef(0);
 
@@ -772,7 +772,7 @@ const LoginView: React.FC<{
       clientRef.current = client;
 
       // The session probe runs alongside the reachability check, which is
-      // awaited first so Esc can still abort it.
+      // awaited first so Backspace can still abort it.
       const sessionProbe = probeLoginSession(client).catch(() => null);
       try {
         await probeManager(client);
@@ -1153,12 +1153,12 @@ const LoginView: React.FC<{
     ...endpoints.map((endpoint) => ({ endpoint })),
   ];
 
-  // Dev-only: Esc cancels a login stuck on an unreachable endpoint or behind
-  // the splash loader, so the form comes back without waiting out the timeout.
+  // Dev-only: Backspace cancels a login stuck on an unreachable endpoint, so the
+  // form comes back without waiting out the timeout.
   // The loading splash itself is handled by the inline script in index.html.
-  const onDevEscape = useEffectEvent(() => {
+  const onDevCancelLogin = useEffectEvent(() => {
     if (escapeLoginProbe()) {
-      logger.info('[dev] login probe aborted with Esc');
+      logger.info('[dev] login probe aborted with Backspace');
       return;
     }
     if (!isLoading || (globalThis as any).backendaiclient?.ready === true) {
@@ -1169,12 +1169,12 @@ const LoginView: React.FC<{
     setIsBlockPanelOpen(false);
     open();
     setIsLoading(false);
-    logger.info('[dev] login cancelled with Esc');
+    logger.info('[dev] login cancelled with Backspace');
   });
   useEffect(() => {
     if (!import.meta.env.DEV) return;
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onDevEscape();
+      if (e.key === 'Backspace') onDevCancelLogin();
     };
     window.addEventListener('keydown', onKeyDown, true);
     return () => window.removeEventListener('keydown', onKeyDown, true);

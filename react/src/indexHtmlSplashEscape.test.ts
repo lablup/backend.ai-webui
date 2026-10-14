@@ -3,10 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 /**
- * The dev-only Esc handler on the loading splash lives in the inline splash
- * script of the project-root index.html, so it must work before any module of
- * the app has loaded. These tests boot that document alone, with the dev shim
- * react/vite.config.ts injects, and press Esc.
+ * The dev-only Backspace handler on the loading splash lives in the inline
+ * splash script of the project-root index.html, so it must work before any
+ * module of the app has loaded. These tests boot that document alone, with the
+ * dev shim react/vite.config.ts injects, and press Backspace.
  */
 import { INTENTIONAL_LOGOUT_FLAG } from './hooks/useLogout';
 import { JSDOM, VirtualConsole } from 'jsdom';
@@ -44,48 +44,54 @@ function bootIndexHtml({ dev }: { dev: boolean }) {
     },
   });
   const { window } = dom;
-  const pressEscape = () => {
+  const pressBackspace = () => {
     const event = new window.KeyboardEvent('keydown', {
-      key: 'Escape',
+      key: 'Backspace',
       bubbles: true,
       cancelable: true,
     });
     window.document.body.dispatchEvent(event);
     return event;
   };
-  return { window, pressEscape, navigations };
+  return { window, pressBackspace, navigations };
 }
 
-describe('index.html loading-splash Esc (dev only)', () => {
+describe('index.html loading-splash Backspace (dev only)', () => {
   it('reloads to the login form while the splash is loading', () => {
-    const { window, pressEscape, navigations } = bootIndexHtml({ dev: true });
+    const { window, pressBackspace, navigations } = bootIndexHtml({
+      dev: true,
+    });
     expect(window.document.getElementById('splash')?.className).toBe('splash');
 
-    const event = pressEscape();
+    const event = pressBackspace();
 
     expect(event.defaultPrevented).toBe(true);
     expect(window.sessionStorage.getItem(INTENTIONAL_LOGOUT_FLAG)).toBe('1');
     expect(navigations).toHaveLength(1);
   });
 
-  it('leaves Esc alone once the splash is the login backdrop', () => {
-    const { window, pressEscape, navigations } = bootIndexHtml({ dev: true });
+  it('leaves Backspace alone once the splash is the login backdrop', () => {
+    const { window, pressBackspace, navigations } = bootIndexHtml({
+      dev: true,
+    });
     (
       window as unknown as { __enterLoginBackdrop: () => void }
     ).__enterLoginBackdrop();
 
-    const event = pressEscape();
+    const event = pressBackspace();
 
     expect(event.defaultPrevented).toBe(false);
     expect(window.sessionStorage.getItem(INTENTIONAL_LOGOUT_FLAG)).toBeNull();
     expect(navigations).toHaveLength(0);
   });
 
-  it('leaves Esc alone once the splash is dismissed', () => {
-    const { window, pressEscape, navigations } = bootIndexHtml({ dev: true });
+  it('leaves Backspace alone once the splash is dismissed', () => {
+    const { window, pressBackspace, navigations } = bootIndexHtml({
+      dev: true,
+    });
     (window as unknown as { __dismissSplash: () => void }).__dismissSplash();
 
-    const event = pressEscape();
+    const event = pressBackspace();
 
     expect(event.defaultPrevented).toBe(false);
     expect(window.sessionStorage.getItem(INTENTIONAL_LOGOUT_FLAG)).toBeNull();
@@ -93,9 +99,11 @@ describe('index.html loading-splash Esc (dev only)', () => {
   });
 
   it('is not installed in a production document', () => {
-    const { window, pressEscape, navigations } = bootIndexHtml({ dev: false });
+    const { window, pressBackspace, navigations } = bootIndexHtml({
+      dev: false,
+    });
 
-    const event = pressEscape();
+    const event = pressBackspace();
 
     expect(event.defaultPrevented).toBe(false);
     expect(window.sessionStorage.getItem(INTENTIONAL_LOGOUT_FLAG)).toBeNull();
