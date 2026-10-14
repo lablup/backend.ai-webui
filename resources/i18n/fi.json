@@ -3304,7 +3304,6 @@
       "Utilization": "Resurssien käyttö on pysynyt joutokäynnin kynnysarvon alapuolella. Käytä istuntoa ennen kuin se lopetetaan."
     },
     "settings": {
-      "DesktopNotifications": "Työpöytäilmoitusten asetukset →",
       "IncludeStarting": "Sisällytä käynnistyvät istunnot",
       "RowsShown": "Näytetyt rivit",
       "SortBy": "Järjestä",

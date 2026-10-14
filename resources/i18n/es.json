@@ -3304,7 +3304,6 @@
       "Utilization": "El uso de recursos se ha mantenido por debajo del umbral de inactividad. Use la sesión antes de que se cierre."
     },
     "settings": {
-      "DesktopNotifications": "Configuración de notificaciones de escritorio →",
       "IncludeStarting": "Incluir sesiones en inicio",
       "RowsShown": "Filas mostradas",
       "SortBy": "Ordenar",

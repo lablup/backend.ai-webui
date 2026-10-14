@@ -3307,7 +3307,6 @@
       "Utilization": "Wykorzystanie zasobów utrzymuje się poniżej progu bezczynności. Użyj sesji, zanim zostanie zakończona."
     },
     "settings": {
-      "DesktopNotifications": "Ustawienia powiadomień pulpitu →",
       "IncludeStarting": "Uwzględnij uruchamiające się sesje",
       "RowsShown": "Wyświetlane wiersze",
       "SortBy": "Sortuj",

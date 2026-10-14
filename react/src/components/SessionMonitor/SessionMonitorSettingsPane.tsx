@@ -2,24 +2,22 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../../app-shim';
 import {
   SESSION_MONITOR_ROW_OPTIONS,
   SESSION_MONITOR_VISIBLE_LIMIT,
   type SessionMonitorSort,
 } from '../../helper/sessionMonitor';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
-import { SETTING_ARRIVAL_PARAM } from '../../hooks/useSettingArrival';
 import { Selector } from '@lablup/ui-common/Selector';
 import { Switch } from '@lablup/ui-common/Switch';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFlex, BAILink } from 'backend.ai-ui';
+import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-/** The popover's settings view: what the list shows. */
-const SessionMonitorSettingsPane: React.FC<{ onNavigate?: () => void }> = ({
-  onNavigate,
-}) => {
+/** The popover's settings view: what the list shows, and the desktop mirror. */
+const SessionMonitorSettingsPane: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
@@ -28,6 +26,32 @@ const SessionMonitorSettingsPane: React.FC<{ onNavigate?: () => void }> = ({
     'session_monitor_include_starting',
   );
   const [rows, setRows] = useBAISettingUserState('session_monitor_rows');
+  const [desktopNotification, setDesktopNotification] = useBAISettingUserState(
+    'desktop_notification',
+  );
+  const { message } = App.useApp();
+
+  // Same gate as User Settings › General: turning it on asks the browser.
+  const toggleDesktopNotification = (value: boolean) => {
+    setDesktopNotification(value);
+    if (!value || Notification.permission === 'granted') return;
+    if (!('Notification' in window)) {
+      message.error(t('desktopNotification.NotSupported'));
+      setDesktopNotification(false);
+      return;
+    }
+    if (Notification.permission === 'denied') {
+      message.error(t('desktopNotification.PermissionDenied'));
+      setDesktopNotification(false);
+      return;
+    }
+    Notification.requestPermission().then((permission) => {
+      if (permission === 'denied') {
+        message.error(t('desktopNotification.PermissionDenied'));
+        setDesktopNotification(false);
+      }
+    });
+  };
 
   const sortOptions: Array<{ value: SessionMonitorSort; label: string }> = [
     { value: 'deadline', label: t('sessionMonitor.settings.SortDeadline') },
@@ -69,14 +93,11 @@ const SessionMonitorSettingsPane: React.FC<{ onNavigate?: () => void }> = ({
         value={includeStarting ?? true}
         onChange={(checked) => setIncludeStarting(checked)}
       />
-      <BAILink
-        to={{
-          search: `?settings=general&${SETTING_ARRIVAL_PARAM}=userSettings.DesktopNotification`,
-        }}
-        onClick={onNavigate}
-      >
-        {t('sessionMonitor.settings.DesktopNotifications')}
-      </BAILink>
+      <Switch
+        label={t('userSettings.DesktopNotification')}
+        value={desktopNotification ?? false}
+        onChange={(checked) => toggleDesktopNotification(checked)}
+      />
     </BAIFlex>
   );
 };

@@ -3306,7 +3306,6 @@
       "Utilization": "リソース使用率がアイドルしきい値を下回ったままです。終了する前にセッションを使用してください。"
     },
     "settings": {
-      "DesktopNotifications": "デスクトップ通知設定 →",
       "IncludeStarting": "開始中のセッションを含める",
       "RowsShown": "表示行数",
       "SortBy": "並べ替え",

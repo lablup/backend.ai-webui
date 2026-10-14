@@ -3307,7 +3307,6 @@
       "Utilization": "자원 사용률이 유휴 기준에 못 미치고 있습니다. 종료되기 전에 세션을 사용해 주세요."
     },
     "settings": {
-      "DesktopNotifications": "데스크톱 알림 설정 →",
       "IncludeStarting": "시작 중인 세션 포함",
       "RowsShown": "표시 행 수",
       "SortBy": "정렬",

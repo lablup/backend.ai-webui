@@ -3308,7 +3308,6 @@
       "Utilization": "資源使用率持續低於閒置門檻。請在會話終止前使用該會話。"
     },
     "settings": {
-      "DesktopNotifications": "桌面通知設定 →",
       "IncludeStarting": "包含正在啟動的會話",
       "RowsShown": "顯示行數",
       "SortBy": "排序",

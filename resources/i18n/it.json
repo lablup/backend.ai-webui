@@ -3304,7 +3304,6 @@
       "Utilization": "L'utilizzo delle risorse è rimasto sotto la soglia di inattività. Usa la sessione prima che venga terminata."
     },
     "settings": {
-      "DesktopNotifications": "Impostazioni notifiche desktop →",
       "IncludeStarting": "Includi sessioni in avvio",
       "RowsShown": "Righe mostrate",
       "SortBy": "Ordina",

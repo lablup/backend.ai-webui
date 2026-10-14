@@ -3306,7 +3306,6 @@
       "Utilization": "Mức sử dụng tài nguyên vẫn ở dưới ngưỡng không hoạt động. Hãy sử dụng phiên trước khi nó bị chấm dứt."
     },
     "settings": {
-      "DesktopNotifications": "Cài đặt thông báo desktop →",
       "IncludeStarting": "Bao gồm các phiên đang khởi động",
       "RowsShown": "Số dòng hiển thị",
       "SortBy": "Sắp xếp",

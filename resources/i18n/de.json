@@ -3306,7 +3306,6 @@
       "Utilization": "Die Ressourcennutzung liegt unter dem Leerlaufschwellenwert. Verwenden Sie die Sitzung, bevor sie beendet wird."
     },
     "settings": {
-      "DesktopNotifications": "Einstellungen für Desktop-Benachrichtigungen →",
       "IncludeStarting": "Startende Sitzungen einschließen",
       "RowsShown": "Angezeigte Zeilen",
       "SortBy": "Sortieren",

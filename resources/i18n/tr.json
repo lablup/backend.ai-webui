@@ -3304,7 +3304,6 @@
       "Utilization": "Kaynak kullanımı boşta kalma eşiğinin altında kaldı. Sonlandırılmadan önce oturumu kullanın."
     },
     "settings": {
-      "DesktopNotifications": "Masaüstü bildirim ayarları →",
       "IncludeStarting": "Başlayan oturumları dahil et",
       "RowsShown": "Gösterilen satırlar",
       "SortBy": "Sırala",

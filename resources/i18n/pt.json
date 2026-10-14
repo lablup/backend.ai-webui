@@ -3306,7 +3306,6 @@
       "Utilization": "A utilização de recursos manteve-se abaixo do limite de inactividade. Utilize a sessão antes que seja terminada."
     },
     "settings": {
-      "DesktopNotifications": "Definições de notificações da área de trabalho →",
       "IncludeStarting": "Incluir sessões em início",
       "RowsShown": "Linhas exibidas",
       "SortBy": "Ordenar",

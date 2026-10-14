@@ -3306,7 +3306,6 @@
       "Utilization": "资源使用率一直低于空闲阈值。请在会话终止前使用该会话。"
     },
     "settings": {
-      "DesktopNotifications": "桌面通知设置 →",
       "IncludeStarting": "包含正在启动的会话",
       "RowsShown": "显示行数",
       "SortBy": "排序",

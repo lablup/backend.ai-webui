@@ -3307,7 +3307,6 @@
       "Utilization": "L'utilisation des ressources est restée sous le seuil d'inactivité. Utilisez la session avant qu'elle ne soit arrêtée."
     },
     "settings": {
-      "DesktopNotifications": "Paramètres des notifications de bureau →",
       "IncludeStarting": "Inclure les sessions en démarrage",
       "RowsShown": "Lignes affichées",
       "SortBy": "Trier",

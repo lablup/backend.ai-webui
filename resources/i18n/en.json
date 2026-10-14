@@ -3291,7 +3291,6 @@
       "Utilization": "Resource utilization has stayed under the idle threshold. Use the session before it is terminated."
     },
     "settings": {
-      "DesktopNotifications": "Desktop notification settings →",
       "IncludeStarting": "Include starting sessions",
       "RowsShown": "Rows shown",
       "SortBy": "Sort by",
