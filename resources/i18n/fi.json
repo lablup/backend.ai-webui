@@ -3305,6 +3305,7 @@
     },
     "settings": {
       "IncludeStarting": "Sisällytä käynnistyvät istunnot",
+      "OpenUserSettings": "Istuntovalvonnan asetukset →",
       "RowsShown": "Näytetyt rivit",
       "SortBy": "Järjestä",
       "SortDeadline": "Pikaisin päättyminen ensin",

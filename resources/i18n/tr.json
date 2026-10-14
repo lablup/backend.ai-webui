@@ -3305,6 +3305,7 @@
     },
     "settings": {
       "IncludeStarting": "Başlayan oturumları dahil et",
+      "OpenUserSettings": "Oturum monitörü ayarları →",
       "RowsShown": "Gösterilen satırlar",
       "SortBy": "Sırala",
       "SortDeadline": "En yakın sonlanma önce",

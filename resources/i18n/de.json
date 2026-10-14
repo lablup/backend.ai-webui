@@ -3307,6 +3307,7 @@
     },
     "settings": {
       "IncludeStarting": "Startende Sitzungen einschließen",
+      "OpenUserSettings": "Sitzungsmonitor-Einstellungen →",
       "RowsShown": "Angezeigte Zeilen",
       "SortBy": "Sortieren",
       "SortDeadline": "Baldigste Beendigung zuerst",

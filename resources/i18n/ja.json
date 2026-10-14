@@ -3307,6 +3307,7 @@
     },
     "settings": {
       "IncludeStarting": "開始中のセッションを含める",
+      "OpenUserSettings": "セッションモニター設定 →",
       "RowsShown": "表示行数",
       "SortBy": "並べ替え",
       "SortDeadline": "終了が近い順",

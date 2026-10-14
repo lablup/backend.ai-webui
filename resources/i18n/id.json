@@ -3309,6 +3309,7 @@
     },
     "settings": {
       "IncludeStarting": "Sertakan sesi yang sedang dimulai",
+      "OpenUserSettings": "Pengaturan monitor sesi →",
       "RowsShown": "Baris yang ditampilkan",
       "SortBy": "Urutkan",
       "SortDeadline": "Penghentian tercepat lebih dulu",

@@ -3307,6 +3307,7 @@
     },
     "settings": {
       "IncludeStarting": "Bao gồm các phiên đang khởi động",
+      "OpenUserSettings": "Cài đặt giám sát phiên →",
       "RowsShown": "Số dòng hiển thị",
       "SortBy": "Sắp xếp",
       "SortDeadline": "Sắp kết thúc sớm nhất trước",

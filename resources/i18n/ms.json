@@ -3305,6 +3305,7 @@
     },
     "settings": {
       "IncludeStarting": "Sertakan sesi yang sedang dimulakan",
+      "OpenUserSettings": "Tetapan pemantau sesi →",
       "RowsShown": "Baris dipaparkan",
       "SortBy": "Isih",
       "SortDeadline": "Penamatan terdekat dahulu",

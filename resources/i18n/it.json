@@ -3305,6 +3305,7 @@
     },
     "settings": {
       "IncludeStarting": "Includi sessioni in avvio",
+      "OpenUserSettings": "Impostazioni monitor sessioni →",
       "RowsShown": "Righe mostrate",
       "SortBy": "Ordina",
       "SortDeadline": "Terminazione più imminente prima",

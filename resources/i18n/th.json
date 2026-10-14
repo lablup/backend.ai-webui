@@ -3290,6 +3290,7 @@
     },
     "settings": {
       "IncludeStarting": "รวมเซสชันที่กำลังเริ่ม",
+      "OpenUserSettings": "การตั้งค่าตัวตรวจสอบเซสชัน →",
       "RowsShown": "แถวที่แสดง",
       "SortBy": "เรียงลำดับ",
       "SortDeadline": "ใกล้สิ้นสุดก่อน",

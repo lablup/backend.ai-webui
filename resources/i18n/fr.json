@@ -3308,6 +3308,7 @@
     },
     "settings": {
       "IncludeStarting": "Inclure les sessions en démarrage",
+      "OpenUserSettings": "Paramètres du moniteur de sessions →",
       "RowsShown": "Lignes affichées",
       "SortBy": "Trier",
       "SortDeadline": "Arrêt le plus proche en premier",

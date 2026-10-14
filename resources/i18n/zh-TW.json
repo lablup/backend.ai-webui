@@ -3309,6 +3309,7 @@
     },
     "settings": {
       "IncludeStarting": "包含正在啟動的會話",
+      "OpenUserSettings": "會話監控設置 →",
       "RowsShown": "顯示行數",
       "SortBy": "排序",
       "SortDeadline": "即將終止優先",

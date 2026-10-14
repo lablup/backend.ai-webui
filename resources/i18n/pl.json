@@ -3308,6 +3308,7 @@
     },
     "settings": {
       "IncludeStarting": "Uwzględnij uruchamiające się sesje",
+      "OpenUserSettings": "Ustawienia monitora sesji →",
       "RowsShown": "Wyświetlane wiersze",
       "SortBy": "Sortuj",
       "SortDeadline": "Najszybsze zakończenie najpierw",

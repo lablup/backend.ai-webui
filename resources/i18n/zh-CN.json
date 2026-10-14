@@ -3307,6 +3307,7 @@
     },
     "settings": {
       "IncludeStarting": "包含正在启动的会话",
+      "OpenUserSettings": "会话监控设置 →",
       "RowsShown": "显示行数",
       "SortBy": "排序",
       "SortDeadline": "即将终止优先",
