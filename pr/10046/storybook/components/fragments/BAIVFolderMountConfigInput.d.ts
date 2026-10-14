@@ -1,8 +1,8 @@
 import { RuleObject } from '../../form-engine';
-import { VFolderListItem } from '../../hooks/useSuspendedMyVFolders';
+import { AutoMountedFolder, VFolderFilter } from '../../hooks/useMountableVFolders';
 import { default as React } from '../../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.2.8/01dc110d7f872a8caacc052aa0e86f46609c662315b6d5b76a7913331f487dd1/node_modules/react';
 import { LinkProps } from 'react-router-dom';
-export type { VFolderListItem };
+export type { AutoMountedFolder };
 /**
  * A single vfolder mount configuration emitted by BAIVFolderMountConfigInput.
  * `mountDestination` holds the **raw alias** the user typed, verbatim, so the
@@ -19,11 +19,6 @@ export interface VFolderMountConfigValue {
     name?: string;
     mountDestination?: string;
     subpath?: string;
-}
-/** A folder the session mounts on its own, identified so it can be linked. */
-export interface AutoMountedFolder {
-    vfolderId: string;
-    name: string;
 }
 export interface BAIVFolderMountConfigInputRef {
     /** Re-runs the folder list query behind the folder select. */
@@ -45,18 +40,17 @@ export interface BAIVFolderMountConfigInputProps {
      */
     mountableHosts: string[];
     /**
-     * Display-only folder filter, applied after the mount gates. An already
-     * selected folder stays visible even when it filters out.
+     * Server-side filter ANDed onto the options query. It narrows the options
+     * only; a selected folder it excludes stays selected.
      */
-    filter?: (folder: VFolderListItem) => boolean;
+    filter?: VFolderFilter;
     disabled?: boolean;
-    /** Base path prepended to a relative alias input (mirrors VFolderTable). */
+    /** Base path prepended to a relative alias input. */
     aliasBasePath?: string;
     /**
      * Folders that are auto-mounted. Their default mount paths
      * (`${aliasBasePath}${name}`) join the overlap set so a colliding user alias
-     * is flagged, they are shown as a read-only badge list at the bottom, and
-     * they are dropped from the folder options.
+     * is flagged, and they are shown as a read-only token list at the bottom.
      */
     autoMountedFolders?: Array<AutoMountedFolder>;
     /**
@@ -72,10 +66,9 @@ export interface BAIVFolderMountConfigInputProps {
     ref?: React.Ref<BAIVFolderMountConfigInputRef>;
 }
 export declare const vFolderAliasNameRegExp: RegExp;
-/**
- * Convert a user-entered alias input into the resolved mount destination,
- * following the same rule as VFolderTable's `inputToAliasPath`.
- */
+/** Container path a folder mounts under when its alias is left empty. */
+export declare const DEFAULT_ALIAS_BASE_PATH = "/home/work/";
+/** Convert a user-entered alias input into the resolved mount destination. */
 export declare const inputToMountDestination: (name: string, input: string | undefined, basePath?: string) => string;
 /**
  * Inverse of {@link inputToMountDestination}: recover the raw alias a resolved
@@ -84,7 +77,7 @@ export declare const inputToMountDestination: (name: string, input: string | und
  */
 export declare const mountDestinationToInput: (name: string, mountDestination: string | undefined, basePath?: string) => string;
 export interface VFolderMountConfigStatusOptions {
-    /** Base path prepended to a relative alias input (mirrors VFolderTable). */
+    /** Base path prepended to a relative alias input. */
     aliasBasePath?: string;
     /** Auto-mounted folders, included in the overlap check. */
     autoMountedFolders?: ReadonlyArray<Pick<AutoMountedFolder, 'name'>>;
@@ -134,12 +127,10 @@ export declare const toMountCreationConfig: (value: VFolderMountConfigValue[] | 
  */
 export declare const useVFolderMountConfigFormRule: (options?: VFolderMountConfigStatusOptions) => RuleObject;
 /**
- * Reusable, schema-agnostic input for configuring vfolder mounts.
- *
- * The whole folder list is fetched (`useSuspendedMyVFolders`) and gated
- * here, because the `mountableHosts` / `autoMountedFolders` gates the host
- * supplies cannot be expressed as a server-side filter. The component
- * suspends on that fetch, so the consumer owns the Suspense boundary.
+ * Reusable input for configuring vfolder mounts. The options page through
+ * `scopedVFoldersV2` over the caller's and the current project's folders,
+ * filtered on the server; the component suspends on the first page, so the
+ * consumer owns the Suspense boundary.
  *
  * Props, form gating and usage: `BAIVFolderMountConfigInput.doc.ts`.
  */

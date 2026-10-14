@@ -1,4 +1,3 @@
-import { VFolderListItem } from '../components/fragments/BAIVFolderMountConfigInput';
 import { BAIClient, VFolderFile } from '../components/provider/BAIClientProvider/types';
 /**
  * Directory trees keyed by vfolder UUID, then by the same path notation
@@ -6,20 +5,35 @@ import { BAIClient, VFolderFile } from '../components/provider/BAIClientProvider
  */
 export type MockVFolderFileTrees = Record<string, Record<string, Array<VFolderFile>>>;
 export declare const mockVFolderFile: (name: string, type: VFolderFile["type"], modified: string) => VFolderFile;
+/** A folder as the mount-folder queries return it, flattened for fixtures. */
+export interface MockMountFolder {
+    /** The vfolder UUID. */
+    id: string;
+    name: string;
+    host: string;
+    status: string;
+    usageMode: string;
+    /** The caller's mount level: READ_ONLY, READ_WRITE, RW_DELETE or NONE. */
+    permission: string;
+    ownershipType: 'USER' | 'GROUP';
+    projectId: string | null;
+    creatorEmail: string | null;
+    createdAt: string;
+}
 /**
- * A folder-list row with every field filled in, so a story only has
- * to name the handful that its gate or filter actually reads.
+ * A mount folder with every field filled in, so a story only has to name the
+ * handful that its gate or filter actually reads.
  */
-export declare const mockVFolderListItem: (folder: Pick<VFolderListItem, "id" | "name"> & Partial<VFolderListItem>) => VFolderListItem;
+export declare const mockMountFolder: (folder: Pick<MockMountFolder, "id" | "name"> & Partial<MockMountFolder>) => MockMountFolder;
 export declare const MOCK_PROJECT_ID = "99999999-9999-9999-9999-999999999999";
 /** Only `local:volume1` grants `mount-in-session`, so `archive:cold` is gated out. */
 export declare const MOCK_MOUNTABLE_HOSTS: Array<string>;
 /**
- * The shared folder-list fixture: two mountable folders, one auto-mounted
- * dotfile, one on a host without `mount-in-session`, and one owned by another
- * project — so a story exercises every gate the mount config input applies.
+ * The shared folder fixture: two mountable folders, one auto-mounted dotfile,
+ * one on a host without `mount-in-session`, and one owned by another project,
+ * so a story exercises every gate the mount config input applies.
  */
-export declare const mockVFolderListItems: Array<VFolderListItem>;
+export declare const mockMountFolders: Array<MockMountFolder>;
 /**
  * A BAIClient whose `vfolder` file APIs (`list_files` / `mkdir` /
  * `rename_file` / `delete_files`) read and write the given in-memory trees,

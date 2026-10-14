@@ -65,6 +65,6 @@ export type { UseToggleActions } from './useToggle';
 export { default as useUpdateEffect } from './useUpdateEffect';
 export { useProjectResourceGroups, StorageHostFetchError, } from './useProjectResourceGroups';
 export type { ScalingGroupItem } from './useProjectResourceGroups';
-export { isMountableVFolder, useSuspendedMyVFolders, } from './useSuspendedMyVFolders';
-export type { VFolderMountScope } from './useSuspendedMyVFolders';
+export { isAutoMountFolderName, mountableVFolderFilter, mountableVFolderScope, useSuspendedAutoMountedVFolders, } from './useMountableVFolders';
+export type { AutoMountedFolder, VFolderFilter, VFolderMountScope, } from './useMountableVFolders';
 export * from './useBAIBreakpoint';
