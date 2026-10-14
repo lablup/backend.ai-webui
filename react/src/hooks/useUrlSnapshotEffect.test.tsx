@@ -123,7 +123,13 @@ describe('useUrlSnapshotEffect', () => {
     const { onSettled, rerender, result } = renderPage();
 
     // A child reload mirrors `order: undefined`; the URL parses it as null.
-    result.current.current = { tab: 'users', status: 'ACTIVE' } as Snapshot;
+    // A fresh nuqs object re-runs the effect, so the comparison is reached.
+    result.current.current = {
+      tab: 'users',
+      status: 'ACTIVE',
+      order: undefined,
+    } as unknown as Snapshot;
+    nuqsRendersWith('?tab=users');
     rerender({ search: '?tab=users' });
 
     expect(onSettled).toHaveBeenCalledTimes(1);
