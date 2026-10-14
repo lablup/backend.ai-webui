@@ -2790,7 +2790,7 @@
     "CreatePolicy": "Richtlinie erstellen",
     "DataRetention": "Datenaufbewahrung",
     "DeletePolicy": "Aufbewahrungsrichtlinie löschen",
-    "Description": "Legen Sie fest, wie lange jede Art von Eintrag aufbewahrt wird. Alte Einträge werden nur für Kategorien mit aktivierter Richtlinie bereinigt.",
+    "Description": "Legen Sie fest, wie lange die Daten jeder Kategorie aufbewahrt werden. Daten nach Ablauf der Aufbewahrungsdauer werden nur in Kategorien mit aktivierter Richtlinie bereinigt.",
     "EditPolicy": "Richtlinie bearbeiten",
     "OnePolicyPerCategory": "Pro Kategorie kann es nur eine Richtlinie geben.",
     "PolicyAlreadyExistsView": "Für diese Kategorie gibt es bereits eine Richtlinie. <viewLink>Anzeigen</viewLink>",

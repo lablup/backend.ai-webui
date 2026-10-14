@@ -2788,7 +2788,7 @@
     "CreatePolicy": "Crear política",
     "DataRetention": "Retención de datos",
     "DeletePolicy": "Eliminar política de retención",
-    "Description": "Defina cuánto tiempo se conserva cada tipo de registro. Los registros antiguos solo se limpian en las categorías cuya política está habilitada.",
+    "Description": "Defina cuánto tiempo se conservan los datos de cada categoría. Los datos que superan su período de retención solo se limpian en las categorías con una política activada.",
     "EditPolicy": "Editar política",
     "OnePolicyPerCategory": "Solo puede existir una política por categoría.",
     "PolicyAlreadyExistsView": "Ya existe una política para esta categoría. <viewLink>Ver</viewLink>",

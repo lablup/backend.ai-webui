@@ -2791,7 +2791,7 @@
     "CreatePolicy": "Buat kebijakan",
     "DataRetention": "Retensi data",
     "DeletePolicy": "Hapus kebijakan retensi",
-    "Description": "Atur berapa lama setiap jenis catatan disimpan. Catatan lama hanya dibersihkan untuk kategori yang kebijakannya aktif.",
+    "Description": "Atur berapa lama data setiap kategori disimpan. Data yang melewati periode retensinya hanya dibersihkan untuk kategori yang kebijakannya diaktifkan.",
     "EditPolicy": "Edit kebijakan",
     "OnePolicyPerCategory": "Setiap kategori hanya dapat memiliki satu kebijakan.",
     "PolicyAlreadyExistsView": "Kategori ini sudah memiliki kebijakan. <viewLink>Lihat</viewLink>",

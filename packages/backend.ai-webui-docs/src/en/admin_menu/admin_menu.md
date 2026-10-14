@@ -1940,8 +1940,8 @@ The footer holds four actions:
 
 ### Data retention
 
-Superadmins can control how long Backend.AI keeps each kind of record on the **Data Retention** tab of the
-Maintenance page. Old records are cleaned up only for categories whose policy is enabled.
+Superadmins can control how long Backend.AI keeps each category of data on the **Data Retention** tab of the
+Maintenance page. Only categories with an enabled policy have data past its retention period cleaned up.
 
 Each row of the list is the policy for one category and shows its **Category**, **Retention Period (Days)**,
 an **Enabled** switch, and the **Last Cleanup** time (or "Not run yet"). The **Created At** and **Updated At** columns

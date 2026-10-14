@@ -2790,7 +2790,7 @@
     "CreatePolicy": "ポリシーを作成",
     "DataRetention": "データ保持",
     "DeletePolicy": "保持ポリシーを削除",
-    "Description": "記録の種類ごとに保持期間を設定します。古い記録は、ポリシーが有効な種類でのみ整理されます。",
+    "Description": "種類ごとにデータを保持する期間を設定します。ポリシーが有効な種類のみ、保持期間を過ぎたデータがクリーンアップされます。",
     "EditPolicy": "ポリシーを編集",
     "OnePolicyPerCategory": "ポリシーは種類ごとに1つだけ作成できます。",
     "PolicyAlreadyExistsView": "この種類にはすでにポリシーがあります。<viewLink>確認</viewLink>",

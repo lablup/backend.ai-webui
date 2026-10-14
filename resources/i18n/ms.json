@@ -2788,7 +2788,7 @@
     "CreatePolicy": "Cipta dasar",
     "DataRetention": "Pengekalan data",
     "DeletePolicy": "Padam dasar pengekalan",
-    "Description": "Tetapkan tempoh setiap jenis rekod disimpan. Rekod lama hanya dibersihkan bagi kategori yang dasarnya didayakan.",
+    "Description": "Tetapkan tempoh data setiap kategori disimpan. Data yang melepasi tempoh pengekalannya hanya dibersihkan bagi kategori yang dasarnya diaktifkan.",
     "EditPolicy": "Edit dasar",
     "OnePolicyPerCategory": "Setiap kategori hanya boleh mempunyai satu dasar.",
     "PolicyAlreadyExistsView": "Kategori ini sudah mempunyai dasar. <viewLink>Lihat</viewLink>",

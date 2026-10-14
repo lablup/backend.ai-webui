@@ -2790,7 +2790,7 @@
     "CreatePolicy": "Créer une politique",
     "DataRetention": "Conservation des données",
     "DeletePolicy": "Supprimer la politique de conservation",
-    "Description": "Définissez la durée de conservation de chaque type d'enregistrement. Les anciens enregistrements ne sont nettoyés que pour les catégories dont la politique est activée.",
+    "Description": "Définissez la durée de conservation des données de chaque catégorie. Les données ayant dépassé leur durée de conservation ne sont nettoyées que pour les catégories dont la politique est activée.",
     "EditPolicy": "Modifier la politique",
     "OnePolicyPerCategory": "Une seule politique peut exister par catégorie.",
     "PolicyAlreadyExistsView": "Une politique existe déjà pour cette catégorie. <viewLink>Afficher</viewLink>",

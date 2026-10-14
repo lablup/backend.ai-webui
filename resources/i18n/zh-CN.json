@@ -2790,7 +2790,7 @@
     "CreatePolicy": "创建策略",
     "DataRetention": "数据保留",
     "DeletePolicy": "删除保留策略",
-    "Description": "设置每类记录的保留时长。仅对策略已启用的类别清理旧记录。",
+    "Description": "设置每个类别的数据保留时长。仅对已启用策略的类别清理超过保留期限的数据。",
     "EditPolicy": "编辑策略",
     "OnePolicyPerCategory": "每个类别只能有一个策略。",
     "PolicyAlreadyExistsView": "此类别已有策略。<viewLink>查看</viewLink>",

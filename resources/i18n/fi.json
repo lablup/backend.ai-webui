@@ -2788,7 +2788,7 @@
     "CreatePolicy": "Luo käytäntö",
     "DataRetention": "Tietojen säilytys",
     "DeletePolicy": "Poista säilytyskäytäntö",
-    "Description": "Määritä, kuinka kauan kutakin tietuetyyppiä säilytetään. Vanhat tietueet siivotaan vain luokista, joiden käytäntö on käytössä.",
+    "Description": "Määritä, kuinka kauan kunkin luokan tietoja säilytetään. Säilytysajan ylittäneet tiedot siivotaan vain luokista, joiden käytäntö on käytössä.",
     "EditPolicy": "Muokkaa käytäntöä",
     "OnePolicyPerCategory": "Kullakin luokalla voi olla vain yksi käytäntö.",
     "PolicyAlreadyExistsView": "Tälle luokalle on jo käytäntö. <viewLink>Näytä</viewLink>",

@@ -2790,7 +2790,7 @@
     "CreatePolicy": "Utwórz zasadę",
     "DataRetention": "Przechowywanie danych",
     "DeletePolicy": "Usuń zasadę przechowywania",
-    "Description": "Określ, jak długo przechowywany jest każdy rodzaj rekordów. Stare rekordy są czyszczone tylko w kategoriach z włączoną zasadą.",
+    "Description": "Określ, jak długo przechowywane są dane każdej kategorii. Dane, których okres przechowywania minął, są czyszczone tylko w kategoriach z włączoną zasadą.",
     "EditPolicy": "Edytuj zasadę",
     "OnePolicyPerCategory": "Dla każdej kategorii może istnieć tylko jedna zasada.",
     "PolicyAlreadyExistsView": "Dla tej kategorii istnieje już zasada. <viewLink>Wyświetl</viewLink>",

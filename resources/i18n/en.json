@@ -2775,7 +2775,7 @@
     "CreatePolicy": "Create Policy",
     "DataRetention": "Data Retention",
     "DeletePolicy": "Delete Retention Policy",
-    "Description": "Set how long each kind of record is kept. Old records are cleaned up only for categories whose policy is enabled.",
+    "Description": "Set how long each category of data is kept. Only categories with an enabled policy have data past its retention period cleaned up.",
     "EditPolicy": "Edit Policy",
     "OnePolicyPerCategory": "Only one policy can exist per category.",
     "PolicyAlreadyExistsView": "A policy already exists for this category. <viewLink>View</viewLink>",

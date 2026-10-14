@@ -2790,7 +2790,7 @@
     "CreatePolicy": "Tạo chính sách",
     "DataRetention": "Lưu giữ dữ liệu",
     "DeletePolicy": "Xóa chính sách lưu giữ",
-    "Description": "Đặt thời gian lưu giữ cho từng loại bản ghi. Bản ghi cũ chỉ được dọn dẹp ở các danh mục có chính sách đang bật.",
+    "Description": "Đặt thời gian lưu giữ dữ liệu cho từng danh mục. Dữ liệu quá thời gian lưu giữ chỉ được dọn dẹp ở các danh mục có chính sách đã bật.",
     "EditPolicy": "Sửa chính sách",
     "OnePolicyPerCategory": "Mỗi danh mục chỉ có thể có một chính sách.",
     "PolicyAlreadyExistsView": "Danh mục này đã có chính sách. <viewLink>Xem</viewLink>",

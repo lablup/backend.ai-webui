@@ -2788,7 +2788,7 @@
     "CreatePolicy": "Politika oluştur",
     "DataRetention": "Veri saklama",
     "DeletePolicy": "Saklama politikasını sil",
-    "Description": "Her kayıt türünün ne kadar süre saklanacağını belirleyin. Eski kayıtlar yalnızca politikası etkin olan kategorilerde temizlenir.",
+    "Description": "Her kategorideki verilerin ne kadar süre saklanacağını belirleyin. Saklama süresi dolan veriler yalnızca politikası etkin olan kategorilerde temizlenir.",
     "EditPolicy": "Politikayı düzenle",
     "OnePolicyPerCategory": "Her kategori için yalnızca bir politika olabilir.",
     "PolicyAlreadyExistsView": "Bu kategori için zaten bir politika var. <viewLink>Görüntüle</viewLink>",

@@ -2792,7 +2792,7 @@
     "CreatePolicy": "建立政策",
     "DataRetention": "資料保留",
     "DeletePolicy": "刪除保留政策",
-    "Description": "設定每類記錄的保留時長。僅對政策已啟用的類別清理舊記錄。",
+    "Description": "設定每個類別的資料保留時長。僅對已啟用政策的類別清理超過保留期限的資料。",
     "EditPolicy": "編輯政策",
     "OnePolicyPerCategory": "每個類別只能有一個政策。",
     "PolicyAlreadyExistsView": "此類別已有政策。<viewLink>檢視</viewLink>",
