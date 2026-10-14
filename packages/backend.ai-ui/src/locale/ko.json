@@ -41,6 +41,7 @@
   "comp:BAIAdminRetentionPolicyTable": {
     "Category": "종류",
     "CreatedAt": "생성일",
+    "Disabled": "비활성화",
     "Enabled": "활성화",
     "LastSweptAt": "마지막 정리",
     "NotSweptYet": "아직 실행되지 않음",

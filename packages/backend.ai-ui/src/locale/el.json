@@ -41,6 +41,7 @@
   "comp:BAIAdminRetentionPolicyTable": {
     "Category": "Κατηγορία",
     "CreatedAt": "Ημερομηνία δημιουργίας",
+    "Disabled": "Απενεργοποιημένο",
     "Enabled": "Ενεργοποιήθηκε",
     "LastSweptAt": "Τελευταίος καθαρισμός",
     "NotSweptYet": "Δεν έχει εκτελεστεί",

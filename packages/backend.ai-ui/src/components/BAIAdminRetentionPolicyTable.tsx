@@ -99,7 +99,13 @@ const BAIAdminRetentionPolicyTable = ({
         title: t('comp:BAIAdminRetentionPolicyTable.Enabled'),
         dataIndex: 'enabled',
         key: 'enabled',
-        render: (__, row) => <BAIBooleanToken value={row.enabled} />,
+        render: (__, row) => (
+          <BAIBooleanToken
+            value={row.enabled}
+            trueLabel={t('comp:BAIAdminRetentionPolicyTable.Enabled')}
+            falseLabel={t('comp:BAIAdminRetentionPolicyTable.Disabled')}
+          />
+        ),
       },
       {
         title: t('comp:BAIAdminRetentionPolicyTable.LastSweptAt'),
