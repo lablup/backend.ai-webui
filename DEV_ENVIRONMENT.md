@@ -113,6 +113,7 @@ Which API server a dev session talks to, and which test account it logs in with,
 | `pnpm run dev-env config <server> [--all] [--json]`       | The server's probed `config.toml`: the manager-related switches, or every key with `--all`          |
 | `pnpm run dev-env get <server> <account> [--json]`        | One account, password included when the catalog has one                                             |
 | `pnpm run dev-env use <server> [account] [--no-password] [--set <section>.<key>=<value> …]` | Write all three files; `account` defaults to `user`; each `--set` overrides one switch in `config.toml` |
+| `pnpm run dev-env compat [--branch <name>] [--json]` | The manager compatibility policy for this branch: the supported floor line, the target, the servers that run each, and the version gates at or below the floor (see below) |
 
 `<account>` is a role (`user`, `project-admin`, `admin`) or an email. A role picks the first account with that role in the catalog's order; when others share it, `get` and `use` print `also: <emails> — pass the email to pick one`.
 
@@ -137,6 +138,14 @@ The board probes every server about every five minutes and `list` shows the resu
 The probe also fetches the deployment's public `<endpoint>/config.toml`, and `list` prints its deployment switches in one line under each server — e.g. `config: SESSION +enableModelFolders -signupSupport plugin.page=…`, or `config: none (<error>)` for an endpoint that does not serve one (a bare manager endpoint, for instance). `pnpm run dev-env config <server>` prints them as a table. Switches are probed too, so do not write them into notes either. The list of keys (`MANAGER_CONFIG_KEYS` in `scripts/dev-env-lib.mjs`) is shared with the board's Catalog page.
 
 Write in the notes what cannot be queried: what the server is for, what must not be touched, known breakage, why the account exists. What the manager can answer — an account's projects, a resource group's settings — is better asked of it (`bai-agent query`) than copied here.
+
+A server may also say what it `tracks`: `main` (a box built from backend.ai's `main` branch) or a manager line such as `26.9`. The board compares the probed manager version with what GitHub says that track currently is (`main`'s `VERSION` file, or the newest release of the line) and `list` shows the result next to the version — `tracks main (current)` or `tracks 26.9 (behind: expected 26.9.4)`. A version string alone cannot tell a `main` build from the pre-release it is named after, which is why the server declares it.
+
+### Manager compatibility policy (`pnpm run dev-env compat`)
+
+Which manager line a webui branch must keep working on (the **floor**) and which one it is developed against (the **target**) are declared in the same catalog, under `policy.webui.branches`, keyed by webui branch: `main`, or a release branch named `X.Y`. Neither value is written anywhere in this repository — not in an ADR, not in code (ADR 0011). The floor means the whole line with its latest patch assumed; the target is a line or `main` (backend.ai's `main` branch, for a line that has no release yet). A branch missing from the policy is not maintained.
+
+`pnpm run dev-env compat` reads the entry for the checked-out branch (`--branch <name>` overrides; a release branch reads its own entry and any other branch reads `main`) and prints the floor, the target with the version GitHub resolves it to, the live catalog servers that run the floor line and the ones that track the target and are current (the two to check a version-gated change on), any live server below the floor, and the version gates in application code — `isManagerVersionCompatibleWith('V')`, `@since(version: "V")`, `@deprecatedSince(version: "V")` and their array forms under `react/src`, `packages/backend.ai-ui/src` and `packages/backend.ai-client/src` — whose version is at or below the floor line, with `file:line`. Those gates are the ones ADR 0010 says to delete along with their fallback branches; a backport array that still carries a newer entry stays. It is a report: without a gateway config, with the board unreachable, or against a board that predates the policy it prints one notice and exits 0, and `scripts/verify.sh` runs it as the report-only `Compat floor` lane. Raising the floor is a catalog edit followed by a PR that deletes what the command lists.
 
 ## Theme color for visual differentiation
 

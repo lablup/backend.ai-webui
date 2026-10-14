@@ -1,13 +1,22 @@
 // @ts-nocheck
 import {
   CONFIG_GENERATED_MARKER,
+  GATE_SCAN_DIRS,
   MANAGER_CONFIG_KEYS,
   ambiguityNote,
   allSettings,
+  compareLines,
+  compatReport,
   disablePlaceholders,
+  findVersionGates,
+  formatCompatReport,
+  formatTracks,
+  isGateAtOrBelowFloor,
+  isGateScanFile,
   isGeneratedConfig,
   parseConfigSet,
   renderConfigToml,
+  resolveCompatBranch,
   setTomlValue,
   downWarning,
   e2eFallbackWarning,
@@ -26,6 +35,7 @@ import {
   selectAccount,
   serverHealth,
   upsertEnv,
+  versionLine,
 } from "./dev-env-lib.mjs";
 import dotenv from "dotenv";
 import fs from "node:fs";
@@ -585,7 +595,10 @@ describe("dev-env server probe status", () => {
       configFetchedAt: "2026-10-01T23:57:00Z",
       configError: null,
       configTruncated: false,
+      expectedVersion: null,
+      freshness: null,
     });
+    expect(byName("up").tracks).toBeNull();
     expect(byName("down").status).toMatchObject({
       live: false,
       managerVersion: "25.14.2",
@@ -700,6 +713,306 @@ describe("dev-env server probe status", () => {
     );
     expect(downWarning(byName("up"))).toBeNull();
     expect(downWarning(byName("fresh"))).toBeNull();
+  });
+});
+
+describe("dev-env manager compatibility policy", () => {
+  const live = (name, managerVersion, tracks, freshness, expected = null) => ({
+    name,
+    endpoint: `https://${name}.example.test`,
+    tracks,
+    status: {
+      live: true,
+      checked_at: "2026-10-01T23:57:00Z",
+      manager_version: managerVersion,
+      expected_version: expected,
+      freshness,
+    },
+    accounts: [],
+  });
+  const POLICY_BODY = {
+    version: 1,
+    servers: [
+      live("staging-lts", "26.4.13", "26.4", "current", "26.4.13"),
+      live("staging-latest", "26.9.4", "26.9", "current", "26.9.4"),
+      live("sujin", "26.9.0rc1", "main", "current", "26.9.0rc1"),
+      live("sungchul-171", "26.8.9", "main", "behind", "26.9.0rc1"),
+      live("old-box", "25.15.3", null, "unknown"),
+      {
+        name: "down-lts",
+        endpoint: "https://down-lts.example.test",
+        tracks: "26.4",
+        status: { live: false, checked_at: "2026-10-01T23:57:00Z", manager_version: "26.4.12" },
+        accounts: [],
+      },
+    ],
+    upstream: {
+      checked_at: "2026-10-01T23:50:00Z",
+      main_version: "26.9.0rc1",
+      lines: { "26.9": "26.9.4", "26.4": "26.4.13" },
+      error: null,
+    },
+    policy: {
+      updated_at: "2026-10-01T12:00:00Z",
+      webui: {
+        branches: {
+          main: {
+            min_manager_line: "26.4",
+            target: "main",
+            notes: "",
+            resolved: {
+              target_version: "26.9.0rc1",
+              floor_servers: ["staging-lts"],
+              target_servers: ["sujin"],
+              below_floor_servers: ["old-box"],
+            },
+          },
+          "26.9": { min_manager_line: "26.8", target: "26.9", notes: "LTS candidate" },
+        },
+      },
+    },
+  };
+  const catalog = parseCatalog(POLICY_BODY, NOW);
+
+  it("lines and their order", () => {
+    expect(versionLine("26.9.0rc1")).toBe("26.9");
+    expect(versionLine("26.4.13")).toBe("26.4");
+    expect(versionLine("v26.10.0")).toBe("26.10");
+    expect(versionLine("26.04.1")).toBe("26.4");
+    expect(versionLine("x.y.z")).toBeNull();
+    expect(versionLine("2412")).toBeNull();
+    expect(versionLine(null)).toBeNull();
+    expect(compareLines("26.4", "26.10")).toBeLessThan(0);
+    expect(compareLines("26.9", "26.9")).toBe(0);
+    expect(compareLines("27.0", "26.12")).toBeGreaterThan(0);
+  });
+
+  it("maps the contract's policy, upstream, tracks and freshness", () => {
+    expect(catalog.warnings).toEqual([]);
+    expect(catalog.upstream).toEqual({
+      checkedAt: "2026-10-01T23:50:00Z",
+      mainVersion: "26.9.0rc1",
+      lines: { "26.9": "26.9.4", "26.4": "26.4.13" },
+      error: null,
+    });
+    expect(catalog.policy.updatedAt).toBe("2026-10-01T12:00:00Z");
+    expect(catalog.policy.webui.branches.main).toEqual({
+      minManagerLine: "26.4",
+      target: "main",
+      notes: null,
+      resolved: {
+        targetVersion: "26.9.0rc1",
+        floorServers: ["staging-lts"],
+        targetServers: ["sujin"],
+        belowFloorServers: ["old-box"],
+      },
+    });
+    expect(catalog.policy.webui.branches["26.9"]).toEqual({
+      minManagerLine: "26.8",
+      target: "26.9",
+      notes: "LTS candidate",
+      resolved: null,
+    });
+    expect(findServer(catalog, "sungchul-171")).toMatchObject({
+      tracks: "main",
+      status: { freshness: "behind", expectedVersion: "26.9.0rc1" },
+    });
+    expect(findServer(catalog, "old-box")).toMatchObject({
+      tracks: null,
+      status: { freshness: "unknown", expectedVersion: null },
+    });
+  });
+
+  it("reads an old board without policy, upstream or tracks as having none", () => {
+    const old = parseCatalog({ version: 1, servers: [live("x", "26.9.4", undefined, undefined)] }, NOW);
+    expect(old.policy).toBeNull();
+    expect(old.upstream).toBeNull();
+    expect(old.servers[0].tracks).toBeNull();
+    expect(old.servers[0].status.freshness).toBeNull();
+    expect(old.warnings).toEqual([]);
+    expect(compatReport(old, "main")).toEqual({
+      branch: "main",
+      maintained: false,
+      maintainedBranches: [],
+    });
+  });
+
+  it("skips a malformed branch, target, tracks or freshness with a warning", () => {
+    const { policy, servers, warnings } = parseCatalog(
+      {
+        version: 1,
+        servers: [
+          { ...live("a", "26.9.4", "latest", "fresh"), status: { live: true, freshness: "fresh" } },
+        ],
+        upstream: { main_version: "26.9.0rc1", lines: { "26.9": "26.9.4", bad: 1 } },
+        policy: {
+          webui: {
+            branches: {
+              main: { min_manager_line: "26.4", target: "next" },
+              "26.9": { min_manager_line: "26.4.0", target: "26.9" },
+              "26.8": "26.4",
+            },
+          },
+        },
+      },
+      NOW,
+    );
+    expect(Object.keys(policy.webui.branches)).toEqual(["main"]);
+    expect(policy.webui.branches.main.target).toBeNull();
+    expect(servers[0].tracks).toBeNull();
+    expect(servers[0].status.freshness).toBeNull();
+    expect(warnings).toEqual([
+      'server "a": "tracks" "latest" is not "main" or a line like "26.9", ignored',
+      'server "a": "status.freshness" "fresh" is not one of current, behind, unknown, ignored',
+      '"upstream.lines" entry "bad" is malformed, ignored',
+      'policy branch "main": "target" "next" is not "main" or a line like "26.9", treated as unknown',
+      'policy branch "26.9": "min_manager_line" "26.4.0" is not a line like "26.4", skipped',
+      'policy branch "26.8": not an object, skipped',
+    ]);
+  });
+
+  it("resolves the policy branch from the git branch", () => {
+    expect(resolveCompatBranch("main")).toBe("main");
+    expect(resolveCompatBranch("26.9")).toBe("26.9");
+    expect(resolveCompatBranch("feat/gh-10345-compat-floor-catalog")).toBe("main");
+    expect(resolveCompatBranch("26.9.1")).toBe("main");
+    expect(resolveCompatBranch(null)).toBe("main");
+  });
+
+  it("reports the board's resolved lists when it sent them", () => {
+    expect(compatReport(catalog, "main")).toEqual({
+      branch: "main",
+      maintained: true,
+      floor: "26.4",
+      target: "main",
+      notes: null,
+      targetVersion: "26.9.0rc1",
+      floorServers: ["staging-lts"],
+      targetServers: ["sujin"],
+      belowFloorServers: ["old-box"],
+    });
+  });
+
+  it("resolves the lists itself from live servers, tracks and upstream otherwise", () => {
+    expect(compatReport(catalog, "26.9")).toEqual({
+      branch: "26.9",
+      maintained: true,
+      floor: "26.8",
+      target: "26.9",
+      notes: "LTS candidate",
+      targetVersion: "26.9.4",
+      floorServers: ["sungchul-171"],
+      targetServers: ["staging-latest"],
+      belowFloorServers: ["old-box", "staging-lts"],
+    });
+  });
+
+  it("names the maintained branches for one the policy lacks", () => {
+    expect(compatReport(catalog, "26.5")).toEqual({
+      branch: "26.5",
+      maintained: false,
+      maintainedBranches: ["main", "26.9"],
+    });
+    expect(formatCompatReport(compatReport(catalog, "26.5"), [])).toBe(
+      'branch: 26.5\npolicy: not maintained — the catalog policy has no entry for "26.5"; maintained: main, 26.9',
+    );
+  });
+
+  it("finds every gate form with its line, ignoring versions that are not numeric", () => {
+    const source = [
+      "const a = baiClient.isManagerVersionCompatibleWith('26.9.0');",
+      'const b = client.isManagerVersionCompatibleWith("26.4.4rc9");',
+      "const c = baiClient.isManagerVersionCompatibleWith(",
+      "  ['26.4.5', '26.8.2'],",
+      ");",
+      "const d = baiClient.isManagerVersionCompatibleWith('x.y.z');",
+      "graphql`",
+      '  field @since(version: "26.7.0")',
+      '  old @deprecatedSince(version: "26.4.0")',
+      '  multi @sinceMultiple(versions: ["26.4.5", "26.9.0"])',
+      "`;",
+    ].join("\n");
+    const gates = findVersionGates(source);
+    expect(gates).toEqual([
+      { line: 1, kind: "isManagerVersionCompatibleWith", versions: ["26.9.0"], lines: ["26.9"] },
+      { line: 2, kind: "isManagerVersionCompatibleWith", versions: ["26.4.4rc9"], lines: ["26.4"] },
+      { line: 3, kind: "isManagerVersionCompatibleWith", versions: ["26.4.5", "26.8.2"], lines: ["26.4", "26.8"] },
+      { line: 6, kind: "isManagerVersionCompatibleWith", versions: ["x.y.z"], lines: [] },
+      { line: 8, kind: "@since", versions: ["26.7.0"], lines: ["26.7"] },
+      { line: 9, kind: "@deprecatedSince", versions: ["26.4.0"], lines: ["26.4"] },
+      { line: 10, kind: "@sinceMultiple", versions: ["26.4.5", "26.9.0"], lines: ["26.4", "26.9"] },
+    ]);
+    const atOrBelow = gates.filter((g) => isGateAtOrBelowFloor(g, "26.4")).map((g) => g.line);
+    // The backport arrays keep their newer entry, so they stay (ADR 0010).
+    expect(atOrBelow).toEqual([2, 9]);
+    expect(gates.filter((g) => isGateAtOrBelowFloor(g, "26.8")).map((g) => g.line)).toEqual([2, 3, 8, 9]);
+  });
+
+  it("scans application sources only", () => {
+    expect(GATE_SCAN_DIRS).toEqual([
+      "react/src",
+      "packages/backend.ai-ui/src",
+      "packages/backend.ai-client/src",
+    ]);
+    expect(isGateScanFile("react/src/components/A.tsx")).toBe(true);
+    expect(isGateScanFile("packages/backend.ai-client/src/client.ts")).toBe(true);
+    expect(isGateScanFile("react/src/__generated__/A.graphql.ts")).toBe(false);
+    expect(isGateScanFile("react/src/components/A.test.tsx")).toBe(false);
+    expect(isGateScanFile("react/src/components/A.stories.tsx")).toBe(false);
+    expect(isGateScanFile("react/src/components/A.spec.ts")).toBe(false);
+    expect(isGateScanFile("react/src/locale/en.json")).toBe(false);
+  });
+
+  it("prints the report, the warnings and the gate list", () => {
+    const text = formatCompatReport(
+      compatReport(catalog, "main"),
+      [{ file: "react/src/A.tsx", line: 12, kind: "@since", versions: ["26.4.0"] }],
+      { gitBranch: "feat/x" },
+    );
+    expect(text).toBe(
+      [
+        "branch: main (git branch feat/x)",
+        "floor: 26.4 line (latest patch assumed)",
+        "target: main (26.9.0rc1) — backend.ai main branch",
+        "floor servers: staging-lts",
+        "target servers: sujin",
+        "below the floor: old-box",
+        "",
+        "gates at or below the 26.4 line (1; deletable per ADR 0010):",
+        "  react/src/A.tsx:12  @since(26.4.0)",
+      ].join("\n"),
+    );
+    const empty = parseCatalog(
+      { version: 1, servers: [], policy: { webui: { branches: { main: { min_manager_line: "26.4", target: "26.10" } } } } },
+      NOW,
+    );
+    expect(formatCompatReport(compatReport(empty, "main"), [])).toBe(
+      [
+        "branch: main",
+        "floor: 26.4 line (latest patch assumed)",
+        "target: 26.10",
+        "floor servers: (none)",
+        "target servers: (none)",
+        "warning: no live server runs the 26.4 line",
+        "warning: no live, current server tracks 26.10",
+        "",
+        "gates at or below the 26.4 line: none",
+      ].join("\n"),
+    );
+  });
+
+  it("shows tracks and freshness in the list", () => {
+    expect(formatTracks(findServer(catalog, "sujin"))).toBe("tracks main (current)");
+    expect(formatTracks(findServer(catalog, "sungchul-171"))).toBe(
+      "tracks main (behind: expected 26.9.0rc1)",
+    );
+    expect(formatTracks(findServer(catalog, "old-box"))).toBeNull();
+    expect(formatStatus(findServer(catalog, "staging-lts"), NOW)).toBe(
+      "live · manager 26.4.13 · tracks 26.4 (current) · checked 3m ago",
+    );
+    expect(formatCatalog(redactCatalog(catalog), NOW)).toContain(
+      "staging-latest  https://staging-latest.example.test\n  live · manager 26.9.4 · tracks 26.9 (current) · checked 3m ago",
+    );
   });
 });
 

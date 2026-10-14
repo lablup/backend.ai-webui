@@ -714,6 +714,147 @@ describe("dev-env CLI", () => {
     });
   });
 
+  describe("compat", () => {
+    const policyBody = () => ({
+      ...catalogBody(),
+      servers: [
+        ...catalogBody().servers,
+        {
+          name: "lts-26-4",
+          endpoint: "https://lts-26-4.example.test",
+          tracks: "26.4",
+          status: {
+            live: true,
+            checked_at: minutesAgo(1),
+            manager_version: "26.4.13",
+            expected_version: "26.4.13",
+            freshness: "current",
+          },
+          accounts: [],
+        },
+      ],
+      upstream: { main_version: "26.9.0rc1", lines: { "26.4": "26.4.13" } },
+      policy: {
+        updated_at: "2026-10-07T04:00:00Z",
+        webui: {
+          branches: {
+            main: { min_manager_line: "26.4", target: "main" },
+            "26.9": { min_manager_line: "26.8", target: "26.9" },
+          },
+        },
+      },
+    });
+    const writeSource = (relativePath, lines) => {
+      const target = path.join(root, relativePath);
+      fs.mkdirSync(path.dirname(target), { recursive: true });
+      fs.writeFileSync(target, lines.join("\n"));
+    };
+
+    beforeEach(() => {
+      fs.writeFileSync(catalogPath, JSON.stringify(policyBody()));
+      writeSource("react/src/components/Old.tsx", [
+        "const supportsOld = baiClient.isManagerVersionCompatibleWith('26.4.2');",
+        "const supportsNew = baiClient.isManagerVersionCompatibleWith('26.9.0');",
+      ]);
+      writeSource("react/src/components/Mid.tsx", [
+        "graphql`",
+        '  field @since(version: "26.7.0")',
+        "`;",
+      ]);
+      writeSource("react/src/__generated__/Old.graphql.ts", [
+        "// isManagerVersionCompatibleWith('26.4.2')",
+      ]);
+      writeSource("react/src/components/Old.test.tsx", [
+        "isManagerVersionCompatibleWith('24.0.0')",
+      ]);
+      writeSource("packages/backend.ai-client/src/client.ts", [
+        'const legacy = this.isManagerVersionCompatibleWith("26.4.0");',
+      ]);
+    });
+
+    it("reports main's floor, target, servers and the gates at or below the floor", async () => {
+      // The temp root is no git checkout, so the branch falls back to main.
+      const result = await run(["compat"]);
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain("branch: main\n");
+      expect(result.stdout).toContain("floor: 26.4 line (latest patch assumed)");
+      expect(result.stdout).toContain("target: main (26.9.0rc1) — backend.ai main branch");
+      expect(result.stdout).toContain("floor servers: lts-26-4");
+      expect(result.stdout).toContain("target servers: (none)");
+      expect(result.stdout).toContain("below the floor: main");
+      expect(result.stdout).toContain("warning: no live, current server tracks main");
+      expect(result.stdout).toContain(
+        "gates at or below the 26.4 line (2; deletable per ADR 0010):\n" +
+          "  packages/backend.ai-client/src/client.ts:1  isManagerVersionCompatibleWith(26.4.0)\n" +
+          "  react/src/components/Old.tsx:1  isManagerVersionCompatibleWith(26.4.2)",
+      );
+      expect(result.stdout).not.toContain("isManagerVersionCompatibleWith(26.9.0)");
+      expect(result.stdout).not.toContain("__generated__");
+      expect(result.stdout).not.toContain("Old.test");
+    });
+
+    it("reads a release branch's own entry with --branch, as JSON", async () => {
+      const result = await run(["compat", "--branch", "26.9", "--json"]);
+      expect(result.status).toBe(0);
+      const report = JSON.parse(result.stdout);
+      expect(report).toMatchObject({
+        available: true,
+        branch: "26.9",
+        maintained: true,
+        floor: "26.8",
+        target: "26.9",
+        targetVersion: null,
+        policyUpdatedAt: "2026-10-07T04:00:00Z",
+      });
+      expect(report.gates).toEqual([
+        { file: "packages/backend.ai-client/src/client.ts", line: 1, kind: "isManagerVersionCompatibleWith", versions: ["26.4.0"] },
+        { file: "react/src/components/Mid.tsx", line: 2, kind: "@since", versions: ["26.7.0"] },
+        { file: "react/src/components/Old.tsx", line: 1, kind: "isManagerVersionCompatibleWith", versions: ["26.4.2"] },
+      ]);
+    });
+
+    it("maps a feature branch to main and a missing release branch to not maintained", async () => {
+      const feature = await run(["compat", "--branch=feat/gh-1-x"]);
+      expect(feature.status).toBe(0);
+      expect(feature.stdout).toContain("branch: main\n");
+      const missing = await run(["compat", "--branch", "26.5"]);
+      expect(missing.status).toBe(0);
+      expect(missing.stdout).toContain(
+        'policy: not maintained — the catalog policy has no entry for "26.5"; maintained: main, 26.9',
+      );
+      expect(missing.stdout).not.toContain("gates");
+    });
+
+    it("exits 0 with one notice for an old board without policy", async () => {
+      fs.writeFileSync(catalogPath, JSON.stringify(catalogBody()));
+      const result = await run(["compat"]);
+      expect(result.status).toBe(0);
+      expect(result.stdout.trim().split("\n")).toHaveLength(1);
+      expect(result.stdout).toContain('has no "policy"');
+      const json = await run(["compat", "--json"]);
+      expect(JSON.parse(json.stdout)).toMatchObject({ available: false, branch: "main" });
+    });
+
+    it("exits 0 with one notice when there is no gateway or the board is unreachable", async () => {
+      const none = await run(["compat"], { WEBUI_DEV_ENV_CATALOG: undefined });
+      expect(none.status).toBe(0);
+      expect(none.stdout).toContain("compat: no policy to read — No dev box gateway configured");
+      expect(none.stderr).toBe("");
+      const closed = await run(["compat"], {
+        WEBUI_DEV_ENV_CATALOG: undefined,
+        WEBUI_DEV_ENV_CATALOG_URL: "http://127.0.0.1:1/api/catalog",
+      });
+      expect(closed.status).toBe(0);
+      expect(closed.stdout).toContain("compat: no policy to read — Could not reach the catalog");
+    });
+
+    it("rejects a --branch without a name", async () => {
+      const result = await run(["compat", "--branch"]);
+      expect(result.status).toBe(2);
+      expect(result.stderr).toContain("--branch needs a branch name");
+    });
+  });
+
   it("exits 1 with the join hint when no gateway is configured", async () => {
     const result = await run(["list"], { WEBUI_DEV_ENV_CATALOG: undefined });
     expect(result.status).toBe(1);
