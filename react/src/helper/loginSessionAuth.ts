@@ -43,12 +43,12 @@ export function createBackendAIClient(
 /**
  * Dev-only escape from a hung login. A reviewer's dev server is usually pinned
  * to a backend they cannot reach, and the reachability probe then holds the
- * screen for the client-wide timeout; Esc (see LoginView) aborts it. The
+ * screen for the client-wide timeout; Backspace (see LoginView) aborts it. The
  * production path is untouched — `import.meta.env.DEV` is statically false.
  */
 export class LoginProbeCancelledError extends Error {
   constructor() {
-    super('The login reachability probe was aborted with Esc.');
+    super('The login reachability probe was aborted with Backspace.');
     this.name = 'LoginProbeCancelledError';
   }
 }
@@ -89,17 +89,27 @@ export async function probeManager(client: any): Promise<void> {
   }
 }
 
+/** Thrown by `connectViaGQL` when its login attempt was cancelled mid-flight. */
+export class LoginAttemptCancelledError extends Error {
+  constructor() {
+    super('The login attempt was cancelled.');
+    this.name = 'LoginAttemptCancelledError';
+  }
+}
+
 /**
  * Perform GQL connection after successful authentication.
  * Sets up globalThis.backendaiclient with user info, groups, and config.
  * Pass the `bootstrap` a `probeLoginSession` call already fetched to skip
- * the query.
+ * the query. A cancelled attempt (`isCancelled`) leaves the globals and the
+ * login cookie untouched, since a newer attempt may already own them.
  */
 export async function connectViaGQL(
   client: any,
   cfg: LoginConfigState,
   endpoints: string[],
   bootstrap?: LoginBootstrap | null,
+  isCancelled?: () => boolean,
 ): Promise<string[]> {
   // The login cookie is shared with the super admin's other tabs, so an act-as
   // tab must never log it out.
@@ -109,6 +119,7 @@ export async function connectViaGQL(
   try {
     response = bootstrap ?? (await fetchLoginBootstrap(client));
   } catch (err) {
+    if (isCancelled?.()) throw new LoginAttemptCancelledError();
     // A refused session is cleaned up like an empty keypair; a network blip is not.
     const status = (err as { statusCode?: unknown } | null)?.statusCode;
     if (
@@ -121,6 +132,7 @@ export async function connectViaGQL(
     }
     throw err;
   }
+  if (isCancelled?.()) throw new LoginAttemptCancelledError();
 
   (globalThis as any).backendaiclient = client;
 

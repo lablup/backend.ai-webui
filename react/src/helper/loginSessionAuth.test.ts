@@ -5,6 +5,7 @@
 import { SessionAuthFailureError } from './loginBootstrap';
 import type { LoginConfigState } from './loginConfig';
 import {
+  LoginAttemptCancelledError,
   LoginProbeCancelledError,
   connectViaGQL,
   escapeLoginProbe,
@@ -132,6 +133,39 @@ describe('connectViaGQL — keypair query rejects (FR-3998)', () => {
       statusCode: 408,
     });
     expect(logout).not.toHaveBeenCalled();
+  });
+
+  it('does not log out a newer session when its cancelled attempt is refused', async () => {
+    const logout = vi.fn().mockResolvedValue(undefined);
+    const client = failingClient(refusal, logout);
+
+    await expect(
+      connectViaGQL(client, cfg, [], undefined, () => true),
+    ).rejects.toBeInstanceOf(LoginAttemptCancelledError);
+    expect(logout).not.toHaveBeenCalled();
+  });
+});
+
+describe('connectViaGQL — cancelled attempt', () => {
+  afterEach(() => {
+    delete (globalThis as Record<string, unknown>).backendaiclient;
+  });
+
+  it('leaves the current client in place when the bootstrap arrives late', async () => {
+    const current = { ready: true };
+    (globalThis as Record<string, unknown>).backendaiclient = current;
+    const bootstrap = {
+      keypair: { access_key: 'AKIA', resource_policy: 'default' },
+      user: { email: 'stale@example.test', groups: [], role: 'user' },
+      groups: [],
+    } as unknown as Parameters<typeof connectViaGQL>[3];
+
+    await expect(
+      connectViaGQL({ logout: vi.fn() }, cfg, [], bootstrap, () => true),
+    ).rejects.toBeInstanceOf(LoginAttemptCancelledError);
+    expect((globalThis as Record<string, unknown>).backendaiclient).toBe(
+      current,
+    );
   });
 });
 
