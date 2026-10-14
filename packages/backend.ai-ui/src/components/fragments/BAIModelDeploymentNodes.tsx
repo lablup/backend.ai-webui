@@ -78,6 +78,8 @@ export interface BAIModelDeploymentNodesProps extends Omit<
   /** Adds "Edit labels" to the Labels column's hover actions. */
   onEditLabels?: (deployment: ModelDeploymentNodeInList) => void;
   onLabelClick?: (label: BAIEntityLabel) => void;
+  /** Shows the Labels column at the start; otherwise it starts hidden, revealed from the column settings. */
+  showLabelsByDefault?: boolean;
 }
 
 const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
@@ -87,6 +89,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
   onChangeOrder,
   onEditLabels,
   onLabelClick,
+  showLabelsByDefault = false,
   ...tableProps
 }) => {
   'use memo';
@@ -205,17 +208,6 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
             <BAIDeploymentStatusBadge status={status as BAIDeploymentStatus} />
           );
         },
-      },
-      isLabelable && {
-        key: 'labels',
-        title: t('comp:BAIEntityLabelTokens.Labels'),
-        render: (__, record) => (
-          <BAIEntityLabelCell
-            entityLabelsFrgmt={record.entityLabels}
-            onEdit={onEditLabels ? () => onEditLabels(record) : undefined}
-            onLabelClick={onLabelClick}
-          />
-        ),
       },
       {
         key: 'replicaSummary',
@@ -448,6 +440,18 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           record.metadata?.createdAt
             ? dayjs(record.metadata.createdAt).format('lll')
             : '-',
+      },
+      isLabelable && {
+        key: 'labels',
+        title: t('comp:BAIEntityLabelTokens.Labels'),
+        defaultHidden: !showLabelsByDefault,
+        render: (__, record) => (
+          <BAIEntityLabelCell
+            entityLabelsFrgmt={record.entityLabels}
+            onEdit={onEditLabels ? () => onEditLabels(record) : undefined}
+            onLabelClick={onLabelClick}
+          />
+        ),
       },
     ]),
     (column) => {

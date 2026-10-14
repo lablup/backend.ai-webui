@@ -477,6 +477,8 @@ interface VFolderNodesV2Props extends Omit<
   onLabelsChanged?: () => void;
   /** Called when a label token is clicked, to filter the list by it. */
   onLabelClick?: (label: BAIEntityLabel) => void;
+  /** Shows the Labels column at the start; otherwise it starts hidden, revealed from the column settings. */
+  showLabelsByDefault?: boolean;
   /**
    * Explicit project prop contract (ADR-0001, FR-3410). Pass-through for the
    * deployment-creation escalation modal (`DeploymentSettingModal`): the
@@ -507,6 +509,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   onRemoveRow,
   onLabelsChanged,
   onLabelClick,
+  showLabelsByDefault = false,
   project,
   noDeployTooltip,
   disableProjectFolderActions,
@@ -777,30 +780,6 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
             },
             sorter: isEnableSorter('status'),
           },
-          ...(isLabelable
-            ? [
-                {
-                  key: 'labels',
-                  title: t('entityLabel.Labels'),
-                  render: (_value: unknown, vfolder: VFolderNodeInList) => (
-                    <BAIEntityLabelCell
-                      entityLabelsFrgmt={vfolder.entityLabels}
-                      onEdit={
-                        isDeletedCategory(vfolder.vfolderStatus)
-                          ? undefined
-                          : () => setLabelingVFolder(vfolder)
-                      }
-                      editDisabledReason={
-                        _.includes(vfolder.permissions, 'UPDATE')
-                          ? undefined
-                          : t('entityLabel.NoPermissionToEditLabels')
-                      }
-                      onLabelClick={onLabelClick}
-                    />
-                  ),
-                },
-              ]
-            : []),
           {
             key: 'host',
             title: (
@@ -947,6 +926,31 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
             render: (value: string) =>
               value ? dayjs(value).format('ll LT') : '-',
           },
+          ...(isLabelable
+            ? [
+                {
+                  key: 'labels',
+                  title: t('entityLabel.Labels'),
+                  defaultHidden: !showLabelsByDefault,
+                  render: (_value: unknown, vfolder: VFolderNodeInList) => (
+                    <BAIEntityLabelCell
+                      entityLabelsFrgmt={vfolder.entityLabels}
+                      onEdit={
+                        isDeletedCategory(vfolder.vfolderStatus)
+                          ? undefined
+                          : () => setLabelingVFolder(vfolder)
+                      }
+                      editDisabledReason={
+                        _.includes(vfolder.permissions, 'UPDATE')
+                          ? undefined
+                          : t('entityLabel.NoPermissionToEditLabels')
+                      }
+                      onLabelClick={onLabelClick}
+                    />
+                  ),
+                },
+              ]
+            : []),
         ]}
         {...tableProps}
       />

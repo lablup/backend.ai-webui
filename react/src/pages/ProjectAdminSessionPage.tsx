@@ -292,6 +292,7 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
       </BAIFlex>
       <BAISessionNodesV2
         onEditLabels={isLabelable ? setLabelingSession : undefined}
+        showLabelsByDefault
         onLabelClick={(label) => {
           setQueryParams({ filter: toEntityLabelFilter(label) });
           setTablePaginationOption({ current: 1 });

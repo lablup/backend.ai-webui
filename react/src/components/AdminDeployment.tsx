@@ -404,6 +404,7 @@ const AdminDeployment = ({
         </BAIFlex>
         <BAIModelDeploymentNodes
           onEditLabels={isLabelable ? setLabelingDeployment : undefined}
+          showLabelsByDefault
           onLabelClick={(label) => {
             onReload(
               {

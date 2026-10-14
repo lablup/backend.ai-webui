@@ -498,6 +498,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
               });
             }}
             onLabelsChanged={() => updateFetchKey()}
+            showLabelsByDefault
             onLabelClick={(label) => {
               setQuery({ filter: toEntityLabelFilter(label) });
               setTablePaginationOption({ current: 1 });

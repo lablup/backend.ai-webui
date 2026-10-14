@@ -544,6 +544,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                   });
                 }}
                 onLabelsChanged={() => updateFetchKey()}
+                showLabelsByDefault
                 onLabelClick={(label) => {
                   setQuery({ filter: toEntityLabelFilter(label) });
                   setTablePaginationOption({ current: 1 });

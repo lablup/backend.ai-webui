@@ -446,21 +446,6 @@ const ResourceGroupList: React.FC = () => {
         />
       ),
     },
-    isLabelable && {
-      key: 'labels',
-      title: t('entityLabel.Labels'),
-      render: (_value: unknown, record: ResourceGroupNode) => (
-        <BAIEntityLabelCell
-          entityLabelsFrgmt={record.entityLabels}
-          onEdit={() => setLabelingResourceGroup(record)}
-          onLabelClick={(label) => {
-            setFilter(toEntityLabelFilter(label));
-            setTablePaginationOption({ current: 1 });
-            setSelectedRowKeys([]);
-          }}
-        />
-      ),
-    },
     {
       key: 'description',
       title: t('resourceGroup.Description'),
@@ -526,6 +511,21 @@ const ResourceGroupList: React.FC = () => {
       sorter: true,
       render: (value: string | null | undefined) =>
         value ? dayjs(value).format('lll') : '-',
+    },
+    isLabelable && {
+      key: 'labels',
+      title: t('entityLabel.Labels'),
+      render: (_value: unknown, record: ResourceGroupNode) => (
+        <BAIEntityLabelCell
+          entityLabelsFrgmt={record.entityLabels}
+          onEdit={() => setLabelingResourceGroup(record)}
+          onLabelClick={(label) => {
+            setFilter(toEntityLabelFilter(label));
+            setTablePaginationOption({ current: 1 });
+            setSelectedRowKeys([]);
+          }}
+        />
+      ),
     },
   ]);
 

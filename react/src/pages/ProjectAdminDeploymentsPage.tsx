@@ -283,6 +283,7 @@ const ProjectAdminDeploymentsContent: React.FC<
         </BAIFlex>
         <BAIModelDeploymentNodes
           onEditLabels={isLabelable ? setLabelingDeployment : undefined}
+          showLabelsByDefault
           onLabelClick={(label) => {
             setQueryParams({ filter: toEntityLabelFilter(label) });
             setTablePaginationOption({ current: 1 });

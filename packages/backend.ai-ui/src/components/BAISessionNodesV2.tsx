@@ -134,6 +134,8 @@ interface BAISessionNodesV2Props extends Omit<
   /** Adds "Edit labels" to the Labels column's hover actions. */
   onEditLabels?: (session: SessionV2InList) => void;
   onLabelClick?: (label: BAIEntityLabel) => void;
+  /** Shows the Labels column at the start; otherwise it starts hidden, revealed from the column settings. */
+  showLabelsByDefault?: boolean;
 }
 
 const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
@@ -143,6 +145,7 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
   onChangeOrder,
   onEditLabels,
   onLabelClick,
+  showLabelsByDefault = false,
   ...tableProps
 }) => {
   'use memo';
@@ -253,17 +256,6 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
             />
           );
         },
-      },
-      isLabelable && {
-        key: 'labels',
-        title: t('comp:BAIEntityLabelTokens.Labels'),
-        render: (__, session) => (
-          <BAIEntityLabelCell
-            entityLabelsFrgmt={session.entityLabels}
-            onEdit={onEditLabels ? () => onEditLabels(session) : undefined}
-            onLabelClick={onLabelClick}
-          />
-        ),
       },
       // TODO: SessionV2 does not yet expose live utilization (no `live_stat`),
       // so the AI accelerator / CPU / memory columns show only the occupied
@@ -387,6 +379,18 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
         key: 'owner',
         title: t('comp:SessionV2Nodes.OwnerEmail'),
         render: (__, session) => session.user?.basicInfo?.email || '-',
+      },
+      isLabelable && {
+        key: 'labels',
+        title: t('comp:BAIEntityLabelTokens.Labels'),
+        defaultHidden: !showLabelsByDefault,
+        render: (__, session) => (
+          <BAIEntityLabelCell
+            entityLabelsFrgmt={session.entityLabels}
+            onEdit={onEditLabels ? () => onEditLabels(session) : undefined}
+            onLabelClick={onLabelClick}
+          />
+        ),
       },
     ]),
     (column) => {
