@@ -637,6 +637,7 @@ const InviteFolderSettingModalBody: React.FC<{
                   <Token
                     size="sm"
                     label={sharePermissionSummary(permissions)}
+                    data-testid="share-permission-cap"
                   />
                 ) : (
                   '-'
