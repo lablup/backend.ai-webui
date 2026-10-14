@@ -1,6 +1,4 @@
-export type ViewerRole = 'superadmin' | 'admin' | 'user' | 'monitor';
-export declare const resolveViewerRole: (v2Role: string | null | undefined) => ViewerRole | null;
 declare const useViewer: () => {
-    userRole: ViewerRole | null;
+    userRole: import('../__generated__/useViewerQuery.graphql').UserRoleV2 | null;
 };
 export default useViewer;

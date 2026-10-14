@@ -22,6 +22,11 @@ export interface BAIAlertProps {
     children?: ReactNode;
     'data-testid'?: string;
 }
+/**
+ * The live role Astryx `Banner` derived from `status` before 0.7: an error or
+ * warning is announced assertively, anything else politely.
+ */
+export declare const bannerLiveRole: (status: BannerProps["status"]) => "alert" | "status";
 /** BAIAlert's props as `Banner` props; `BAIListAlert` shares the mapping. */
 export declare const toBannerProps: ({ type, title, message, description, showIcon: _showIcon, icon, closable, onClose, banner, action, ghostInfoBg: _ghostInfoBg, className, children: _children, ...restProps }: BAIAlertProps) => Omit<BannerProps, "children">;
 declare const BAIAlert: React.FC<BAIAlertProps>;
