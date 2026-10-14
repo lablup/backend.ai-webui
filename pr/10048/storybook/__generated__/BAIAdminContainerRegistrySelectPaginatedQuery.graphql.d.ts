@@ -4,6 +4,7 @@ export type ContainerRegistryV2Filter = {
     AND?: ReadonlyArray<ContainerRegistryV2Filter> | null | undefined;
     NOT?: ReadonlyArray<ContainerRegistryV2Filter> | null | undefined;
     OR?: ReadonlyArray<ContainerRegistryV2Filter> | null | undefined;
+    entityId?: UUIDFilter | null | undefined;
     isGlobal?: boolean | null | undefined;
     registryName?: StringFilter | null | undefined;
     type?: ContainerRegistryTypeFilter | null | undefined;
@@ -35,6 +36,12 @@ export type ContainerRegistryTypeFilter = {
     in_?: ReadonlyArray<ContainerRegistryType> | null | undefined;
     notEquals?: ContainerRegistryType | null | undefined;
     notIn?: ReadonlyArray<ContainerRegistryType> | null | undefined;
+};
+export type UUIDFilter = {
+    equals?: string | null | undefined;
+    in?: ReadonlyArray<string> | null | undefined;
+    notEquals?: string | null | undefined;
+    notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type BAIAdminContainerRegistrySelectPaginatedQuery$variables = {
     filter?: ContainerRegistryV2Filter | null | undefined;
