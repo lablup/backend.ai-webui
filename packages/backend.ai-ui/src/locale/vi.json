@@ -41,6 +41,7 @@
   "comp:BAIAdminRetentionPolicyTable": {
     "Category": "Danh mục",
     "CreatedAt": "Ngày tạo",
+    "Disabled": "Đã tắt",
     "Enabled": "Đã bật",
     "LastSweptAt": "Lần dọn dẹp gần nhất",
     "NotSweptYet": "Chưa chạy",

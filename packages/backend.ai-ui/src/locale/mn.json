@@ -41,6 +41,7 @@
   "comp:BAIAdminRetentionPolicyTable": {
     "Category": "Ангилал",
     "CreatedAt": "Үүсгэсэн огноо",
+    "Disabled": "Идэвхгүй",
     "Enabled": "Идэвхжсэн",
     "LastSweptAt": "Сүүлийн цэвэрлэгээ",
     "NotSweptYet": "Хараахан ажиллаагүй",

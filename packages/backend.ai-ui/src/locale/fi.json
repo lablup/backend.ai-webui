@@ -41,6 +41,7 @@
   "comp:BAIAdminRetentionPolicyTable": {
     "Category": "Luokka",
     "CreatedAt": "Luontipäivä",
+    "Disabled": "Poistettu käytöstä",
     "Enabled": "Käytössä",
     "LastSweptAt": "Viimeisin siivous",
     "NotSweptYet": "Ei vielä ajettu",

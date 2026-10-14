@@ -41,6 +41,7 @@
   "comp:BAIAdminRetentionPolicyTable": {
     "Category": "Kategori",
     "CreatedAt": "Tanggal dibuat",
+    "Disabled": "Nonaktif",
     "Enabled": "Diaktifkan",
     "LastSweptAt": "Pembersihan terakhir",
     "NotSweptYet": "Belum dijalankan",

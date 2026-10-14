@@ -41,6 +41,7 @@
   "comp:BAIAdminRetentionPolicyTable": {
     "Category": "Kategori",
     "CreatedAt": "Oluşturulma Tarihi",
+    "Disabled": "Devre Dışı",
     "Enabled": "Etkin",
     "LastSweptAt": "Son temizlik",
     "NotSweptYet": "Henüz çalıştırılmadı",

@@ -41,6 +41,7 @@
   "comp:BAIAdminRetentionPolicyTable": {
     "Category": "类别",
     "CreatedAt": "创建日期",
+    "Disabled": "已禁用",
     "Enabled": "启用",
     "LastSweptAt": "上次清理",
     "NotSweptYet": "尚未运行",

@@ -41,6 +41,7 @@
   "comp:BAIAdminRetentionPolicyTable": {
     "Category": "種類",
     "CreatedAt": "作成日",
+    "Disabled": "無効",
     "Enabled": "有効",
     "LastSweptAt": "最終クリーンアップ",
     "NotSweptYet": "未実行",

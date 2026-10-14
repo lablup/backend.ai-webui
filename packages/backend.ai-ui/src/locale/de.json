@@ -41,6 +41,7 @@
   "comp:BAIAdminRetentionPolicyTable": {
     "Category": "Kategorie",
     "CreatedAt": "Erstellungsdatum",
+    "Disabled": "Deaktiviert",
     "Enabled": "aktiviert",
     "LastSweptAt": "Letzte Bereinigung",
     "NotSweptYet": "Noch nicht ausgeführt",
