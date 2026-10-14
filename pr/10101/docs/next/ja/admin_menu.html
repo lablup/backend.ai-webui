@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="管理者機能" />
   <meta name="twitter:description" content="管理者アカウントでログインすると、サイドバー上部に管理者設定メニューが追加されます。これを選択すると、サイドバーは管理者向けメニューのみを表示するように切り替わります。Backend.AIに登録されたユーザー情報は、ユーザー管理メニューに一覧表示されます。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"管理者機能","inLanguage":"ja","description":"管理者アカウントでログインすると、サイドバー上部に管理者設定メニューが追加されます。これを選択すると、サイドバーは管理者向けメニューのみを表示するように切り替わります。Backend.AIに登録されたユーザー情報は、ユーザー管理メニューに一覧表示されます。","dateModified":"2026-10-13T09:14:56.000Z","url":"https://webui.docs.backend.ai/next/ja/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"管理者機能","inLanguage":"ja","description":"管理者アカウントでログインすると、サイドバー上部に管理者設定メニューが追加されます。これを選択すると、サイドバーは管理者向けメニューのみを表示するように切り替わります。Backend.AIに登録されたユーザー情報は、ユーザー管理メニューに一覧表示されます。","dateModified":"2026-10-14T01:17:02.000Z","url":"https://webui.docs.backend.ai/next/ja/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/admin_menu.html" />
   <link rel="alternate" hreflang="en" href="../en/admin_menu.html" />
   <link rel="alternate" hreflang="ja" href="../ja/admin_menu.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.0 (d28ec7c)">v26.10.0-alpha.0 (d28ec7c)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.0 (e5a7b88)">v26.10.0-alpha.0 (e5a7b88)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -1958,9 +1958,9 @@ WebUI から管理できます。</p>
 </ul>
 <p><a id="data-retention"></a></p>
 <h3 data-bai-block="790" id="admin_menu-データ保持">データ保持<a class="hash-link" href="#admin_menu-データ保持" aria-label="Direct link to データ保持">#</a></h3>
-<p data-bai-block="791">スーパー管理者は、補修(メンテナンス)ページの<strong>データ保持</strong>タブで、Backend.AIが各種類の記録をどのくらいの期間保持するかを
+<p data-bai-block="791">スーパー管理者は、補修(メンテナンス)ページの<strong>データ保持</strong>タブで、Backend.AIが種類ごとにデータをどのくらいの期間保持するかを
 設定できます。
-古い記録は、ポリシーが有効な種類についてのみクリーンアップされます。</p>
+ポリシーが有効な種類のみ、保持期間を過ぎたデータがクリーンアップされます。</p>
 <p data-bai-block="792">一覧の各行は1つの種類に対するポリシーで、<strong>種類</strong>、<strong>保持期間（日）</strong>、<strong>有効</strong>スイッチ、<strong>最終クリーンアップ</strong>の
 日時（または「未実行」）が表示されます。<strong>作成日</strong>と<strong>更新日時</strong>の列は、テーブル設定から表示できます。利用可能な種類は、ログ、ログイン履歴、調整履歴、
 ロールと招待、デプロイメント、セッション、使用量記録、使用量バケットです。<strong>種類</strong>、<strong>最終クリーンアップ</strong>、<strong>作成日</strong>の列見出しをクリックすると、
@@ -2119,7 +2119,7 @@ Backend.AIの各コンポーネントに互換性があるかどうかを確認�
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ja/admin_menu/admin_menu.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> このページを編集</a>
-  <span class="last-updated">最終更新日 2026年10月13日</span>
+  <span class="last-updated">最終更新日 2026年10月14日</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./statistics.html">

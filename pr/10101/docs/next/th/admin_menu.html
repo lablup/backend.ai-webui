@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="ฟีเจอร์ผู้ดูแลระบบ" />
   <meta name="twitter:description" content="การเข้าสู่ระบบด้วยบัญชีผู้ดูแลระบบจะเพิ่มเมนู การตั้งค่าผู้ดูแลระบบ ที่ด้านบนของแถบด้านข้าง เมื่อเลือกเมนูนี้…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ฟีเจอร์ผู้ดูแลระบบ","inLanguage":"th","description":"การเข้าสู่ระบบด้วยบัญชีผู้ดูแลระบบจะเพิ่มเมนู การตั้งค่าผู้ดูแลระบบ ที่ด้านบนของแถบด้านข้าง เมื่อเลือกเมนูนี้…","dateModified":"2026-10-13T09:14:56.000Z","url":"https://webui.docs.backend.ai/next/th/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ฟีเจอร์ผู้ดูแลระบบ","inLanguage":"th","description":"การเข้าสู่ระบบด้วยบัญชีผู้ดูแลระบบจะเพิ่มเมนู การตั้งค่าผู้ดูแลระบบ ที่ด้านบนของแถบด้านข้าง เมื่อเลือกเมนูนี้…","dateModified":"2026-10-14T01:17:02.000Z","url":"https://webui.docs.backend.ai/next/th/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/admin_menu.html" />
   <link rel="alternate" hreflang="en" href="../en/admin_menu.html" />
   <link rel="alternate" hreflang="ja" href="../ja/admin_menu.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.0 (d28ec7c)">v26.10.0-alpha.0 (d28ec7c)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.0 (e5a7b88)">v26.10.0-alpha.0 (e5a7b88)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -1858,7 +1858,7 @@ docker registry ที่เชื่อมต่อกับ Backend.AI กา�
 </ul>
 <p><a id="data-retention"></a></p>
 <h3 data-bai-block="789" id="admin_menu-การเกบรกษาขอมล">การเก็บรักษาข้อมูล<a class="hash-link" href="#admin_menu-การเกบรกษาขอมล" aria-label="Direct link to การเก็บรักษาข้อมูล">#</a></h3>
-<p data-bai-block="790">ซูเปอร์แอดมินสามารถกำหนดระยะเวลาที่ Backend.AI เก็บบันทึกแต่ละหมวดหมู่ได้ที่แท็บ <strong>การเก็บรักษาข้อมูล</strong> ในหน้าการบำรุงรักษา บันทึกเก่าจะถูกล้างเฉพาะหมวดหมู่ที่เปิดใช้งานนโยบายเท่านั้น</p>
+<p data-bai-block="790">ซูเปอร์แอดมินสามารถกำหนดระยะเวลาที่ Backend.AI เก็บรักษาข้อมูลของแต่ละหมวดหมู่ได้ที่แท็บ <strong>การเก็บรักษาข้อมูล</strong> ในหน้าการบำรุงรักษา ข้อมูลที่เกินระยะเวลาเก็บรักษาจะถูกล้างเฉพาะหมวดหมู่ที่เปิดใช้งานนโยบายเท่านั้น</p>
 <p data-bai-block="791">แต่ละแถวในรายการคือนโยบายของหนึ่งหมวดหมู่ และแสดง <strong>หมวดหมู่</strong>, <strong>ระยะเวลาเก็บรักษา (วัน)</strong>, สวิตช์ <strong>เปิดใช้งาน</strong>, เวลา <strong>การล้างครั้งล่าสุด</strong> (หรือ &quot;ยังไม่ได้ทำงาน&quot;) คอลัมน์ <strong>วันที่สร้าง</strong> และ <strong>อัปเดตเมื่อ</strong> แสดงได้จากการตั้งค่าตาราง หมวดหมู่ที่มีให้เลือกคือ บันทึก, ประวัติการเข้าสู่ระบบ, ประวัติการกระทบยอด, บทบาทและคำเชิญ, การปรับใช้, เซสชัน, บันทึกการใช้งาน และข้อมูลรวมการใช้งาน คลิกส่วนหัวคอลัมน์ <strong>หมวดหมู่</strong>, <strong>การล้างครั้งล่าสุด</strong> หรือ <strong>วันที่สร้าง</strong> เพื่อเรียงลำดับตามคอลัมน์นั้น</p>
 <ul>
 <li data-bai-block="792"><strong>สร้างนโยบาย</strong>: คลิก <strong>สร้างนโยบาย</strong> เลือกหมวดหมู่ ป้อนระยะเวลาเก็บรักษาอย่างน้อย 1 วัน และเลือกว่าจะเปิดใช้งานนโยบายหรือไม่ แต่ละหมวดหมู่มีนโยบายได้เพียงหนึ่งรายการ การสร้างนโยบายให้หมวดหมู่ที่มีนโยบายอยู่แล้วจะแสดงข้อผิดพลาด ให้แก้ไขนโยบายที่มีอยู่แทน</li>
@@ -1995,7 +1995,7 @@ docker registry ที่เชื่อมต่อกับ Backend.AI กา�
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/th/admin_menu/admin_menu.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> แก้ไขหน้านี้</a>
-  <span class="last-updated">อัปเดตล่าสุด 13 ต.ค. 2569</span>
+  <span class="last-updated">อัปเดตล่าสุด 14 ต.ค. 2569</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./statistics.html">

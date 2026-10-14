@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="관리자 기능" />
   <meta name="twitter:description" content="관리자 계정으로 로그인하면 사이드바 상단에 관리자 설정 메뉴가 추가됩니다. 이 메뉴를 선택하면 사이드바가 관리자 메뉴만 표시하도록 전환됩니다. Backend.AI에 등록된 사용자 정보는 사용자 메뉴에서 볼 수 있습니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"관리자 기능","inLanguage":"ko","description":"관리자 계정으로 로그인하면 사이드바 상단에 관리자 설정 메뉴가 추가됩니다. 이 메뉴를 선택하면 사이드바가 관리자 메뉴만 표시하도록 전환됩니다. Backend.AI에 등록된 사용자 정보는 사용자 메뉴에서 볼 수 있습니다.","dateModified":"2026-10-13T09:14:56.000Z","url":"https://webui.docs.backend.ai/next/ko/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"관리자 기능","inLanguage":"ko","description":"관리자 계정으로 로그인하면 사이드바 상단에 관리자 설정 메뉴가 추가됩니다. 이 메뉴를 선택하면 사이드바가 관리자 메뉴만 표시하도록 전환됩니다. Backend.AI에 등록된 사용자 정보는 사용자 메뉴에서 볼 수 있습니다.","dateModified":"2026-10-14T01:17:02.000Z","url":"https://webui.docs.backend.ai/next/ko/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/admin_menu.html" />
   <link rel="alternate" hreflang="en" href="../en/admin_menu.html" />
   <link rel="alternate" hreflang="ja" href="../ja/admin_menu.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.0 (d28ec7c)">v26.10.0-alpha.0 (d28ec7c)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.0 (e5a7b88)">v26.10.0-alpha.0 (e5a7b88)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -1761,9 +1761,8 @@ WebUI의 어느 화면에서든 편집기를 열 수 있습니다.</li>
 </ul>
 <p><a id="data-retention"></a></p>
 <h3 data-bai-block="790" id="admin_menu-데이터-보존">데이터 보존<a class="hash-link" href="#admin_menu-데이터-보존" aria-label="Direct link to 데이터 보존">#</a></h3>
-<p data-bai-block="791">슈퍼 관리자는 관리 페이지의 <strong>데이터 보존</strong> 탭에서 Backend.AI가 각 종류의 기록을 얼마나 오래 보관할지
-설정할 수 있습니다. 오래된
-기록은 정책이 활성화된 종류에 대해서만 정리됩니다.</p>
+<p data-bai-block="791">슈퍼 관리자는 관리 페이지의 <strong>데이터 보존</strong> 탭에서 Backend.AI가 종류별로 데이터를 얼마나 오래 보존할지
+설정할 수 있습니다. 정책이 활성화된 종류만 보존 기간이 지난 데이터가 정리됩니다.</p>
 <p data-bai-block="792">목록의 각 행은 한 종류에 대한 정책이며 <strong>종류</strong>, <strong>보존 기간 (일)</strong>, <strong>활성화</strong> 스위치, <strong>마지막 정리</strong> 시각
 (또는 &quot;아직 실행되지 않음&quot;)을 보여 줍니다. <strong>생성일</strong>과 <strong>수정일</strong> 열은 표 설정에서 표시할 수 있습니다. 사용 가능한 종류는 로그, 로그인 기록, 조정 기록,
 역할 및 초대, 배포, 세션, 사용량 기록, 사용량 집계입니다. <strong>종류</strong>, <strong>마지막 정리</strong>, <strong>생성일</strong> 열 머리글을 클릭하면 해당 기준으로
@@ -1918,7 +1917,7 @@ WebUI의 어느 화면에서든 편집기를 열 수 있습니다.</li>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/admin_menu/admin_menu.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> 이 페이지 편집</a>
-  <span class="last-updated">마지막 업데이트 2026년 10월 13일</span>
+  <span class="last-updated">마지막 업데이트 2026년 10월 14일</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./statistics.html">
