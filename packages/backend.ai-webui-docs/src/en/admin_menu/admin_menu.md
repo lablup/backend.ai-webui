@@ -1944,7 +1944,7 @@ Superadmins can control how long Backend.AI keeps each category of data on the *
 Maintenance page. Only categories with an enabled policy have data past its retention period cleaned up.
 
 Each row of the list is the policy for one category and shows its **Category**, **Retention Period (Days)**,
-an **Enabled** switch, and the **Last Cleanup** time (or "Not run yet"). The **Created At** and **Updated At** columns
+whether it is **Enabled**, and the **Last Cleanup** time (or "Not run yet"). The **Created At** and **Updated At** columns
 can be shown from the table settings. The
 available categories are Logs, Login History, Reconcile History, Roles & Invitations, Deployments, Sessions,
 Usage Records, and Usage Buckets. The list can be sorted by **Category**, **Last Cleanup**, or **Created At**.
@@ -1954,7 +1954,6 @@ Usage Records, and Usage Buckets. The list can be sorted by **Category**, **Last
   category that already has one fails with an error, so edit the existing policy instead.
 - **Edit**: Use the edit action in the row to change the category, the retention period, or the enabled
   setting. Moving the policy to a category that already has a policy fails with an error.
-- **Enabled switch**: Turn a policy on or off directly from the list, without opening the editor.
 - **Delete**: Use the delete action in the row. Because the policy is removed permanently, you must type
   the category name shown in the dialog before the delete button is enabled.
 
