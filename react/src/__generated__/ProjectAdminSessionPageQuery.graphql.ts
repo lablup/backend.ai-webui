@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<cffda9fdbb8053a571421c0d0049373e>>
+ * @generated SignedSource<<55cbc2168e47db66a42c2387a6a9dd3b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -139,7 +139,7 @@ export type ProjectAdminSessionPageQuery$variables = {
   projectId: string;
 };
 export type ProjectAdminSessionPageQuery$data = {
-  readonly projectSessionsV2: {
+  readonly scopedSessionsV2: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -207,9 +207,21 @@ v5 = [
   {
     "fields": [
       {
-        "kind": "Variable",
-        "name": "projectId",
-        "variableName": "projectId"
+        "items": [
+          {
+            "fields": [
+              {
+                "kind": "Variable",
+                "name": "value",
+                "variableName": "projectId"
+              }
+            ],
+            "kind": "ObjectValue",
+            "name": "project.0"
+          }
+        ],
+        "kind": "ListValue",
+        "name": "project"
       }
     ],
     "kind": "ObjectValue",
@@ -301,7 +313,7 @@ return {
         "args": (v5/*: any*/),
         "concreteType": "SessionV2Connection",
         "kind": "LinkedField",
-        "name": "projectSessionsV2",
+        "name": "scopedSessionsV2",
         "plural": false,
         "selections": [
           (v6/*: any*/),
@@ -372,7 +384,7 @@ return {
         "args": (v5/*: any*/),
         "concreteType": "SessionV2Connection",
         "kind": "LinkedField",
-        "name": "projectSessionsV2",
+        "name": "scopedSessionsV2",
         "plural": false,
         "selections": [
           (v6/*: any*/),
@@ -720,16 +732,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "c820f27d343104a865c15784ce0ceb00",
+    "cacheID": "6c7ddec54c81a54e4919b625f5af7b53",
     "id": null,
     "metadata": {},
     "name": "ProjectAdminSessionPageQuery",
     "operationKind": "query",
-    "text": "query ProjectAdminSessionPageQuery(\n  $projectId: UUID!\n  $filter: SessionV2Filter\n  $orderBy: [SessionV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  projectSessionsV2(scope: {projectId: $projectId}, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        metadata {\n          name\n        }\n        ...BAISessionNodesV2Fragment\n        ...TerminateSessionModalForProjectAdminFragment\n      }\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment BAISessionClusterModeV2Fragment on SessionV2MetadataInfo {\n  clusterMode\n  clusterSize\n}\n\nfragment BAISessionNodesV2Fragment on SessionV2 {\n  id\n  project {\n    id\n    basicInfo {\n      name\n    }\n  }\n  metadata {\n    name\n    ...BAISessionTypeTokenV2Fragment\n    ...BAISessionClusterModeV2Fragment\n  }\n  lifecycle {\n    status\n    createdAt\n    terminatedAt\n  }\n  resource {\n    resourceGroupName\n    allocation {\n      requested {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n      used {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n    }\n  }\n  images {\n    edges {\n      node {\n        id\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n\nfragment BAISessionTypeTokenV2Fragment on SessionV2MetadataInfo {\n  sessionType\n}\n\nfragment TerminateSessionModalForProjectAdminFragment on SessionV2 {\n  id\n  metadata {\n    name\n  }\n  kernels {\n    edges {\n      node {\n        id\n        resource {\n          agentId\n          containerId\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ProjectAdminSessionPageQuery(\n  $projectId: UUID!\n  $filter: SessionV2Filter\n  $orderBy: [SessionV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  scopedSessionsV2(scope: {project: [{value: $projectId}]}, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        metadata {\n          name\n        }\n        ...BAISessionNodesV2Fragment\n        ...TerminateSessionModalForProjectAdminFragment\n      }\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment BAISessionClusterModeV2Fragment on SessionV2MetadataInfo {\n  clusterMode\n  clusterSize\n}\n\nfragment BAISessionNodesV2Fragment on SessionV2 {\n  id\n  project {\n    id\n    basicInfo {\n      name\n    }\n  }\n  metadata {\n    name\n    ...BAISessionTypeTokenV2Fragment\n    ...BAISessionClusterModeV2Fragment\n  }\n  lifecycle {\n    status\n    createdAt\n    terminatedAt\n  }\n  resource {\n    resourceGroupName\n    allocation {\n      requested {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n      used {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n    }\n  }\n  images {\n    edges {\n      node {\n        id\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n\nfragment BAISessionTypeTokenV2Fragment on SessionV2MetadataInfo {\n  sessionType\n}\n\nfragment TerminateSessionModalForProjectAdminFragment on SessionV2 {\n  id\n  metadata {\n    name\n  }\n  kernels {\n    edges {\n      node {\n        id\n        resource {\n          agentId\n          containerId\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0319d10e5f67b53895012b3e1c631bde";
+(node as any).hash = "c79f457dcb9196e725be0e8260c5d482";
 
 export default node;

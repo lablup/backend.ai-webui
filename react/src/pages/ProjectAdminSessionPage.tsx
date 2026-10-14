@@ -49,7 +49,7 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 // (`TerminateSessionModalForProjectAdminFragment`), so row selection / the
 // terminate target list pass these nodes straight to the modal.
 type ProjectSessionNode = NonNullableNodeOnEdges<
-  ProjectAdminSessionPageQuery$data['projectSessionsV2']
+  ProjectAdminSessionPageQuery$data['scopedSessionsV2']
 >;
 
 interface ProjectAdminSessionContentProps {
@@ -133,8 +133,8 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
         $limit: Int
         $offset: Int
       ) {
-        projectSessionsV2(
-          scope: { projectId: $projectId }
+        scopedSessionsV2(
+          scope: { project: [{ value: $projectId }] }
           filter: $filter
           orderBy: $orderBy
           limit: $limit
@@ -165,9 +165,9 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
   );
 
   const sessionNodes = filterOutNullAndUndefined(
-    data.projectSessionsV2?.edges?.map((edge) => edge?.node),
+    data.scopedSessionsV2?.edges?.map((edge) => edge?.node),
   );
-  const total = data.projectSessionsV2?.count ?? 0;
+  const total = data.scopedSessionsV2?.count ?? 0;
 
   const openTerminateModal = (targets: Array<ProjectSessionNode>) => {
     setTerminateTargets(targets);
