@@ -12,8 +12,6 @@ export declare const ENTITY_SHARE_PERMISSION_PRESETS: ReadonlyArray<{
     key: BAIEntitySharePermissionPreset;
     bits: ReadonlyArray<BAIEntitySharePermissionBit>;
 }>;
-/** The short code each bit is known by in the flyout and in summaries. */
-export declare const ENTITY_SHARE_PERMISSION_BIT_CODES: Readonly<Record<BAIEntitySharePermissionBit, string>>;
 /** Drops unknown values and duplicates and puts the bits in flyout order. */
 export declare const normalizeEntitySharePermissionBits: (bits: ReadonlyArray<string> | null | undefined) => Array<BAIEntitySharePermissionBit>;
 /** The preset whose bits equal `bits` as a set, else `CUSTOM`. */
@@ -25,8 +23,7 @@ export declare const toEntitySharePermissionChoice: (bits: ReadonlyArray<string>
 export declare const useEntitySharePermissionLabels: () => {
     choiceLabel: (choice: BAIEntitySharePermissionChoice) => string;
     bitLabel: (bit: BAIEntitySharePermissionBit) => string;
-    bitCode: (bit: BAIEntitySharePermissionBit) => string;
-    /** "Read only", or the codes of a custom set: "C, R, U". */
+    /** "Read only", or the bits of a custom set: "Create, Read, Update". */
     summary: (bits: ReadonlyArray<string> | null | undefined) => string;
 };
 export interface BAIEntitySharePermissionSelectorProps extends Omit<FieldProps, 'children' | 'inputID' | 'labelID' | 'descriptionID' | 'isGroupLabel' | 'onChange'> {

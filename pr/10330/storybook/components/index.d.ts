@@ -48,7 +48,7 @@ export type { BAISelectProps, BAISelectOptionProps, BAISelectOptionGroupProps, }
 export { default as BAIComplexSelect } from './BAIComplexSelect';
 export type { BAIComplexSelectProps, BAIComplexSelectOption, BAIComplexSelectValue, BAILabeledValue, } from './BAIComplexSelect';
 export { default as BAIEntitySharePermissionSelector } from './BAIEntitySharePermissionSelector';
-export { ENTITY_SHARE_PERMISSION_BITS, ENTITY_SHARE_PERMISSION_BIT_CODES, ENTITY_SHARE_PERMISSION_PRESETS, normalizeEntitySharePermissionBits, toEntitySharePermissionChoice, useEntitySharePermissionLabels, } from './BAIEntitySharePermissionSelector';
+export { ENTITY_SHARE_PERMISSION_BITS, ENTITY_SHARE_PERMISSION_PRESETS, normalizeEntitySharePermissionBits, toEntitySharePermissionChoice, useEntitySharePermissionLabels, } from './BAIEntitySharePermissionSelector';
 export type { BAIEntitySharePermissionBit, BAIEntitySharePermissionChoice, BAIEntitySharePermissionPreset, BAIEntitySharePermissionSelectorProps, } from './BAIEntitySharePermissionSelector';
 export { default as BAINotificationItem } from './BAINotificationItem';
 export type { BAINotificationItemProps } from './BAINotificationItem';
