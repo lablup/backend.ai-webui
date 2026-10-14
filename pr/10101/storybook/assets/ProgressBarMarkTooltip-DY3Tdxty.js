@@ -1,0 +1,1 @@
+import{j as t,X as e}from"./iframe-Bo-4v_9m.js";import"./preload-helper-Dp1pzeXC.js";function i({content:o,children:r}){return t.jsx(e,{content:o,placement:"above",focusTrigger:"always",children:r})}export{i as default};
