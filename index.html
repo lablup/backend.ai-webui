@@ -316,8 +316,11 @@
             if (e.key !== 'Backspace' || state !== 'loading') return;
             e.preventDefault();
             e.stopImmediatePropagation();
-            // INTENTIONAL_LOGOUT_FLAG in react/src/hooks/useLogout.ts
-            sessionStorage.setItem('backendai_intentional_logout', '1');
+            // INTENTIONAL_LOGOUT_FLAG in react/src/hooks/useLogout.ts. Already
+            // set means this load is the reload heading to the form: let it finish.
+            var flag = 'backendai_intentional_logout';
+            if (sessionStorage.getItem(flag) === '1') return;
+            sessionStorage.setItem(flag, '1');
             window.location.reload();
           }, true);
         }

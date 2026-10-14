@@ -485,13 +485,8 @@ const LoginView: React.FC<{
         cfg,
         endpoints,
         bootstrap,
+        () => attempt !== loginAttemptRef.current,
       );
-      if (attempt !== loginAttemptRef.current) {
-        if ((globalThis as any).backendaiclient === client) {
-          delete (globalThis as any).backendaiclient;
-        }
-        return;
-      }
       setEndpoints(updatedEndpoints);
 
       postConnectSetup(client);

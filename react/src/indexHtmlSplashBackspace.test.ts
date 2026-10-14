@@ -70,6 +70,19 @@ describe('index.html loading-splash Backspace (dev only)', () => {
     expect(navigations).toHaveLength(1);
   });
 
+  it('does not reload again while the reload to the form is loading', () => {
+    const { window, pressBackspace, navigations } = bootIndexHtml({
+      dev: true,
+    });
+    window.sessionStorage.setItem(INTENTIONAL_LOGOUT_FLAG, '1');
+
+    const event = pressBackspace();
+
+    expect(event.defaultPrevented).toBe(true);
+    expect(window.sessionStorage.getItem(INTENTIONAL_LOGOUT_FLAG)).toBe('1');
+    expect(navigations).toHaveLength(0);
+  });
+
   it('leaves Backspace alone once the splash is the login backdrop', () => {
     const { window, pressBackspace, navigations } = bootIndexHtml({
       dev: true,

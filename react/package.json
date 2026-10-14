@@ -134,7 +134,7 @@
     "@types/big.js": "catalog:",
     "@types/compression": "^1.8.1",
     "@types/jest": "catalog:",
-    "@types/jsdom": "^30.0.0",
+    "@types/jsdom": "^28.0.3",
     "@types/lodash": "catalog:",
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
