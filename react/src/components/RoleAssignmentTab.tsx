@@ -208,7 +208,6 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     _.map(adminRoleAssignments?.edges, (edge) =>
       edge?.node
         ? {
-            id: edge.node.id,
             userId: edge.node.userId,
             email: edge.node.user?.basicInfo?.email,
             fullName: edge.node.user?.basicInfo?.fullName,
@@ -279,10 +278,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
                     />
                   }
                   onClick={() => {
-                    const userIds = assignments
-                      .filter((a) => selectedRowKeys.includes(a.id))
-                      .map((a) => a.userId);
-                    handleBulkRevoke(userIds);
+                    handleBulkRevoke(selectedRowKeys.map(String));
                   }}
                 />
               </Tooltip>
@@ -305,7 +301,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         </BAIFlex>
       </BAIFlex>
       <BAITable
-        rowKey="id"
+        rowKey="userId"
         dataSource={assignments}
         loading={isPendingRefetch}
         size="small"
@@ -324,6 +320,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
                 type: 'checkbox',
                 selectedRowKeys,
                 onChange: (keys) => setSelectedRowKeys(keys),
+                getRowLabel: (record) => record.email ?? record.userId,
               }
         }
         order={queryParams.order}
