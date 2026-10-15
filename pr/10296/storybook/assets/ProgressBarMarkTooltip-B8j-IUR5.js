@@ -1,1 +1,0 @@
-import{j as t,X as e}from"./iframe-DT1jZE-3.js";import"./preload-helper-Dp1pzeXC.js";function i({content:o,children:r}){return t.jsx(e,{content:o,placement:"above",focusTrigger:"always",children:r})}export{i as default};
