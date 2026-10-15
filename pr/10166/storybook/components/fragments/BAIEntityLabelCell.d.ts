@@ -8,6 +8,6 @@ export interface BAIEntityLabelCellProps {
     editDisabledReason?: string;
     onLabelClick?: (label: BAIEntityLabel) => void;
 }
-/** A table cell showing an entity's labels, with "Edit labels" as an always-visible action. */
+/** A table cell showing an entity's labels, with "Edit labels" as a hover action. */
 declare const BAIEntityLabelCell: ({ entityLabelsFrgmt, onEdit, editDisabledReason, onLabelClick, }: BAIEntityLabelCellProps) => import("react").JSX.Element;
 export default BAIEntityLabelCell;
