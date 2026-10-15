@@ -483,74 +483,76 @@ const InviteFolderSettingModalBody: React.FC<{
     <VStack gap={6} align="stretch">
       <VStack gap={3} align="stretch">
         <Heading level={5}>{t('data.folders.InviteUsers')}</Heading>
-        <HStack align="end" gap={2} width="100%">
-          <StackItem size="fill">
-            <Tooltip
-              content={recipient?.email}
-              isEnabled={!!recipient?.email}
-              placement="above"
-              hasHoverIndication={false}
-            >
-              <BAIScopedUserSelect
-                projectId={memberProjectIds}
-                allowCustomSelect
-                allowClear
-                filter={
-                  currentUser?.email
-                    ? { email: { notEquals: currentUser.email } }
-                    : undefined
-                }
-                label={t('general.E-Mail')}
-                placeholder={t('data.folders.SearchUser')}
-                value={recipient?.email ?? null}
-                onChange={(_value, option) => {
-                  const picked = _.castArray(option ?? [])[0];
-                  setRecipient(
-                    !picked
-                      ? null
-                      : picked.userId
-                        ? {
-                            kind: 'user',
-                            userId: picked.userId,
-                            email: picked.value,
-                          }
-                        : { kind: 'email', email: picked.value },
-                  );
-                  setRecipientError(null);
-                }}
-                status={
-                  recipientError
-                    ? { type: 'error', message: recipientError }
-                    : undefined
-                }
-                width="100%"
+        <VStack gap={1} align="stretch">
+          <HStack align="end" gap={2} width="100%">
+            <StackItem size="fill">
+              <Tooltip
+                content={recipient?.email}
+                isEnabled={!!recipient?.email}
+                placement="above"
+                hasHoverIndication={false}
+              >
+                <BAIScopedUserSelect
+                  projectId={memberProjectIds}
+                  allowCustomSelect
+                  allowClear
+                  filter={
+                    currentUser?.email
+                      ? { email: { notEquals: currentUser.email } }
+                      : undefined
+                  }
+                  label={t('general.E-Mail')}
+                  placeholder={t('data.folders.SearchUser')}
+                  value={recipient?.email ?? null}
+                  onChange={(_value, option) => {
+                    const picked = _.castArray(option ?? [])[0];
+                    setRecipient(
+                      !picked
+                        ? null
+                        : picked.userId
+                          ? {
+                              kind: 'user',
+                              userId: picked.userId,
+                              email: picked.value,
+                            }
+                          : { kind: 'email', email: picked.value },
+                    );
+                    setRecipientError(null);
+                  }}
+                  status={
+                    recipientError
+                      ? { type: 'error', message: recipientError }
+                      : undefined
+                  }
+                  width="100%"
+                />
+              </Tooltip>
+            </StackItem>
+            <StackItem size="static">
+              <Selector
+                label={t('data.folders.MountPermission')}
+                placement="below"
+                width={150}
+                options={mountLevelOptions}
+                value={mountLevel}
+                onChange={(next) => setMountLevel(next as MountLevel)}
+                isDisabled={isEmailInvite}
               />
-            </Tooltip>
-          </StackItem>
-          <StackItem size="static">
-            <Selector
-              label={t('data.folders.MountPermission')}
-              placement="below"
-              width={150}
-              options={mountLevelOptions}
-              value={mountLevel}
-              onChange={(next) => setMountLevel(next as MountLevel)}
-              isDisabled={isEmailInvite}
-            />
-          </StackItem>
-          <StackItem size="static">
-            <BAIButton type="primary" action={handleInvite}>
-              {t('data.folders.Invite')}
-            </BAIButton>
-          </StackItem>
-        </HStack>
-        {isEmailInvite && (
-          <BAIText type="warning" size="sm">
-            {t('data.folders.EmailInviteUsesSharedMountPermission', {
-              permission: mountLevelLabel(defaultMountLevel),
-            })}
-          </BAIText>
-        )}
+            </StackItem>
+            <StackItem size="static">
+              <BAIButton type="primary" action={handleInvite}>
+                {t('data.folders.Invite')}
+              </BAIButton>
+            </StackItem>
+          </HStack>
+          {isEmailInvite && (
+            <BAIText type="warning" size="sm">
+              {t('data.folders.EmailInviteUsesSharedMountPermission', {
+                permission: mountLevelLabel(defaultMountLevel),
+              })}
+            </BAIText>
+          )}
+        </VStack>
       </VStack>
 
       <VStack align="stretch" gap={3}>
