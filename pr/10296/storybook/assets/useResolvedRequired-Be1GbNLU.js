@@ -1,0 +1,1 @@
+import{r as o}from"./iframe-DT1jZE-3.js";import{F as s}from"./FieldStatus-BIT-tbOn.js";function i({isRequired:e=!1,isOptional:r=!1}){const{defaultOptionality:t}=o.use(s);return!r&&(e||t==="required")}export{i as u};
