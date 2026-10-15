@@ -168,6 +168,13 @@ inside the detail drawer.
 ![](../images/rename_vfolder.png)
 
 
+## Label folders
+
+
+Select the checkboxes of the folders you want to label, then click **Add labels**
+to attach key-value labels to the whole selection.
+
+
 ## Delete folder
 
 
