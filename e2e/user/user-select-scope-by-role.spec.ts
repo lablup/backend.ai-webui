@@ -53,7 +53,7 @@ async function skipUnlessManager269(page: Page) {
   await page.waitForFunction(
     () => (globalThis as any).backendaiclient?.ready === true,
   );
-  // ADR 0011: scopedUsersV2 and UserV2.organization.domainId need 26.9.0a4.
+  // ADR 0012: scopedUsersV2 and UserV2.organization.domainId need 26.9.0a4.
   const supported = await page.evaluate(() =>
     (globalThis as any).backendaiclient.isManagerVersionCompatibleWith(
       '26.9.0a4',
@@ -154,7 +154,7 @@ test.describe(
           page.getByRole('group', { name: 'Search filters' }),
         ).toContainText(userInfo.user2.email);
 
-        // Both admin roles read the current domain only (ADR 0011).
+        // Both admin roles read the current domain only (ADR 0012).
         const scoped = operations.filter(
           (op) => op.name === 'BAIScopedUserSelectPaginatedQuery',
         );
