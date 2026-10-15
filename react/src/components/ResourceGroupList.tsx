@@ -47,6 +47,7 @@ import {
   toEntityLabelFilter,
   useIsLabelableEntityType,
 } from 'backend.ai-ui';
+import type { BAIEntityLabel } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import {
@@ -95,6 +96,9 @@ type ResourceGroupNode = NonNullable<
 const ResourceGroupInfoModalWithQuery: React.FC<{
   resourceGroupName: string;
   open: boolean;
+  entityLabelsFrgmt?: ResourceGroupNode['entityLabels'] | null;
+  onEditLabels?: () => void;
+  onLabelClick?: (label: BAIEntityLabel) => void;
   onRequestClose: () => void;
 }> = ({ resourceGroupName, onRequestClose, ...modalProps }) => {
   'use memo';
@@ -295,6 +299,11 @@ const ResourceGroupList: React.FC = () => {
   const resourceGroups = filterOutNullAndUndefined(
     _.map(adminResourceGroups?.edges, 'node'),
   );
+  // The Info modal loads its own graphene row; its labels come from this
+  // list's strawberry row of the same name, refreshed with the list.
+  const infoModalResourceGroup = infoModalName
+    ? _.find(resourceGroups, { name: infoModalName })
+    : undefined;
 
   const [commitUpdateResourceGroup] =
     useMutation<ResourceGroupListUpdateMutation>(graphql`
@@ -702,7 +711,11 @@ const ResourceGroupList: React.FC = () => {
         entityLabelsFrgmt={labelingResourceGroup?.entityLabels}
         onRequestClose={(success) => {
           setLabelingResourceGroup(null);
-          if (success) updateFetchKey();
+          if (success) {
+            startRefetchTransition(() => {
+              updateFetchKey();
+            });
+          }
         }}
       />
       <BAIDeleteConfirmModal
@@ -758,6 +771,19 @@ const ResourceGroupList: React.FC = () => {
           <ResourceGroupInfoModalWithQuery
             resourceGroupName={infoModalName}
             open={openInfoModal}
+            entityLabelsFrgmt={infoModalResourceGroup?.entityLabels}
+            onEditLabels={
+              infoModalResourceGroup
+                ? () => setLabelingResourceGroup(infoModalResourceGroup)
+                : undefined
+            }
+            onLabelClick={(label) => {
+              hideInfoModal();
+              setInfoModalName(undefined);
+              setFilter(toEntityLabelFilter(label));
+              setTablePaginationOption({ current: 1 });
+              setSelectedRowKeys([]);
+            }}
             onRequestClose={() => {
               hideInfoModal();
               setInfoModalName(undefined);

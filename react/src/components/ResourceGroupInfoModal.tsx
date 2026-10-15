@@ -10,11 +10,14 @@ import { Text } from '@lablup/ui-common/Text';
 import { Token } from '@lablup/ui-common/Token';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAIEntityLabelCell,
   BAIFlex,
   BAIMetadataList,
   BAIModal,
   BAIModalProps,
+  useIsLabelableEntityType,
 } from 'backend.ai-ui';
+import type { BAIEntityLabel, BAIEntityLabelCellProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Check, X } from 'lucide-react';
 import { useMemo } from 'react';
@@ -23,16 +26,24 @@ import { graphql, useFragment } from 'react-relay';
 
 interface ResourceGroupInfoModalProps extends BAIModalProps {
   resourceGroupFrgmt?: ResourceGroupInfoModalFragment$key | null;
+  /** The strawberry row's labels; the graphene `ScalingGroup` has none. */
+  entityLabelsFrgmt?: BAIEntityLabelCellProps['entityLabelsFrgmt'];
+  onEditLabels?: () => void;
+  onLabelClick?: (label: BAIEntityLabel) => void;
   onRequestClose?: () => void;
 }
 
 const ResourceGroupInfoModal: React.FC<ResourceGroupInfoModalProps> = ({
   resourceGroupFrgmt = null,
+  entityLabelsFrgmt,
+  onEditLabels,
+  onLabelClick,
   onRequestClose,
   ...modalProps
 }) => {
   const { t } = useTranslation();
   const { token } = useTheme();
+  const isLabelable = useIsLabelableEntityType('resource_group');
 
   const resourceGroup = useFragment(
     graphql`
@@ -111,6 +122,15 @@ const ResourceGroupInfoModal: React.FC<ResourceGroupInfoModalProps> = ({
           <MetadataListItem label={t('resourceGroup.AppProxyAddress')}>
             {resourceGroup?.wsproxy_addr || '-'}
           </MetadataListItem>
+          {isLabelable && (
+            <MetadataListItem label={t('entityLabel.Labels')}>
+              <BAIEntityLabelCell
+                entityLabelsFrgmt={entityLabelsFrgmt}
+                onEdit={onEditLabels}
+                onLabelClick={onLabelClick}
+              />
+            </MetadataListItem>
+          )}
         </BAIMetadataList>
         <BAIMetadataList
           title={t('resourceGroup.SchedulerOptions')}
