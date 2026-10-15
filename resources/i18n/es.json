@@ -1070,6 +1070,7 @@
     },
     "invitation": {
       "Accepted": "Aceptada",
+      "AcceptedShareNotFound": "No se encontró ningún uso compartido aceptado de esta carpeta para su cuenta.",
       "FailedToAcceptInvitation": "No se pudo aceptar la invitación",
       "FailedToDeclineInvitation": "No se pudo rechazar la invitación",
       "FolderSharingNotAvailableToUser": "El uso compartido de carpetas no está disponible para los usuarios solicitados.",

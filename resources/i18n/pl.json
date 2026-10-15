@@ -1070,6 +1070,7 @@
     },
     "invitation": {
       "Accepted": "Przyjęte",
+      "AcceptedShareNotFound": "Nie znaleziono zaakceptowanego udostępnienia tego folderu dla Twojego konta.",
       "FailedToAcceptInvitation": "Nie przyjął zaproszenia",
       "FailedToDeclineInvitation": "Nie udało się odmówić zaproszenia",
       "FolderSharingNotAvailableToUser": "Udostępnianie folderów nie jest dostępne dla żądanych użytkowników.",

@@ -1070,6 +1070,7 @@
     },
     "invitation": {
       "Accepted": "수락됨",
+      "AcceptedShareNotFound": "이 폴더에 대해 수락된 공유를 내 계정에서 찾지 못했습니다.",
       "FailedToAcceptInvitation": "초대를 수락하지 못했습니다",
       "FailedToDeclineInvitation": "초대를 거절하지 못했습니다",
       "FolderSharingNotAvailableToUser": "다음 사용자는 폴더 공유가 불가능한 상태입니다: ",

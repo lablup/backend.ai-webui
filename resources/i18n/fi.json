@@ -1070,6 +1070,7 @@
     },
     "invitation": {
       "Accepted": "Hyväksytty",
+      "AcceptedShareNotFound": "Tilillesi ei löytynyt hyväksyttyä jakoa tästä kansiosta.",
       "FailedToAcceptInvitation": "Kutsu epäonnistui",
       "FailedToDeclineInvitation": "Kutsun hylkääminen epäonnistui",
       "FolderSharingNotAvailableToUser": "Kansioiden jakaminen ei ole käytettävissä pyydetyille käyttäjille.",

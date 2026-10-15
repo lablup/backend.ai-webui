@@ -1070,6 +1070,7 @@
     },
     "invitation": {
       "Accepted": "Aceito",
+      "AcceptedShareNotFound": "Nenhum compartilhamento aceito desta pasta foi encontrado para sua conta.",
       "FailedToAcceptInvitation": "Falhou em aceitar convite",
       "FailedToDeclineInvitation": "Falhou em recusar o convite",
       "FolderSharingNotAvailableToUser": "A partilha de pastas não está disponível para o(s) utilizador(es) solicitado(s).",

@@ -1071,6 +1071,7 @@
     },
     "invitation": {
       "Accepted": "已接受",
+      "AcceptedShareNotFound": "未在您的帳戶中找到此資料夾的已接受共享。",
       "FailedToAcceptInvitation": "未能接受邀請",
       "FailedToDeclineInvitation": "未能拒絕邀請",
       "FolderSharingNotAvailableToUser": "请求的用户无法共享文件夹：",

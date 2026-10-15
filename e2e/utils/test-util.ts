@@ -1060,12 +1060,9 @@ export async function acceptAllInvitationAndVerifySpecificFolder(
 }
 
 /**
- * Leave a shared (invited) vfolder via SharedFolderPermissionInfoModal.
- *
- * Regression guard for FR-2978: VFolder.leave_invited used to send `null`
- * as the request body, which the manager's BodyParam[LeaveVFolderReq] rejected
- * with a 400. Driving the full UI flow here ensures the client sends a valid
- * JSON body end-to-end.
+ * Leave a shared (invited) vfolder via SharedFolderPermissionInfoModal, which
+ * looks the recipient's share up in `myEntityShares` and calls
+ * `leaveEntityShare` on it.
  *
  * Caller must already be logged in as the invitee and have accepted the
  * invitation (see acceptAllInvitationAndVerifySpecificFolder).

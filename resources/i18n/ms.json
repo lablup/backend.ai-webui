@@ -1070,6 +1070,7 @@
     },
     "invitation": {
       "Accepted": "Diterima",
+      "AcceptedShareNotFound": "Tiada perkongsian yang diterima untuk folder ini ditemui bagi akaun anda.",
       "FailedToAcceptInvitation": "Gagal menerima jemputan",
       "FailedToDeclineInvitation": "Gagal menolak jemputan",
       "FolderSharingNotAvailableToUser": "Perkongsian folder tidak tersedia untuk pengguna yang diminta.",

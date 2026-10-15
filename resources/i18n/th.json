@@ -1066,6 +1066,7 @@
     },
     "invitation": {
       "Accepted": "ตอบรับแล้ว",
+      "AcceptedShareNotFound": "ไม่พบการแชร์ที่ยอมรับแล้วของโฟลเดอร์นี้สำหรับบัญชีของคุณ",
       "FailedToAcceptInvitation": "ไม่ยอมรับคำเชิญ",
       "FailedToDeclineInvitation": "ล้มเหลวในการปฏิเสธคำเชิญ",
       "FolderSharingNotAvailableToUser": "การแชร์โฟลเดอร์ไม่สามารถใช้ได้สำหรับผู้ใช้ที่ร้องขอ",
