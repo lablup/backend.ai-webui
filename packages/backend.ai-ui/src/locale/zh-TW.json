@@ -111,8 +111,16 @@
     "Operation": "操作",
     "RequestId": "請求 ID",
     "Status": "狀態",
+    "Target": "目標",
     "Time": "時間",
     "TriggeredBy": "觸發者"
+  },
+  "comp:BAIAuditLogTargetCell": {
+    "Global": "全域",
+    "InThisRun": "本次執行共 {{count}} 筆",
+    "NoAffectedEntity": "無受影響的實體",
+    "NotFound": "找不到",
+    "Run": "執行"
   },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "選擇預設"

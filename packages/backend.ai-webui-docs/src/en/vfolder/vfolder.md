@@ -149,14 +149,17 @@ The **Audit Log** tab in the right panel shows a chronological list of all opera
 The audit log shows the following columns, in order:
 
 - **Time**: When the operation occurred.
+- **Action**: The name of the action that wrote the record.
+- **Action Kind**: The shape of the action: Single Entity, Bulk, Scope, Relation, Membership, Global, or Lookup. Records written before the server recorded it show `-`.
 - **Operation**: The type of action (for example, create, update, or delete).
 - **Status**: The result of the operation (for example, SUCCESS or ERROR).
+- **Target**: What the action acted on, shown according to its action kind. A single-entity action shows the entity, by name while it still exists. A bulk action also shows the run ID and how many rows on the current page belong to the same run. A scope, relation, or membership action shows the scopes involved, a global action shows **Global**, and a lookup shows the key it looked up with the entity it found, or **Not found**.
 - **Description**: Additional details about the operation.
 - **Duration**: How long the operation took.
 - **Triggered By**: The user who performed the operation, shown in "email (id)" format.
 - **Client IP**: The IP address the operation was requested from, shown exactly as the server reports it. It may be partially masked by the administrator's client IP masking policy, or `-` when it was not recorded.
 
-You can filter the log by **Time**, **Operation**, **Status**, and **Triggered By**.
+You can filter the log by **Time**, **Action**, **Action Kind**, **Operation**, **Status**, and **Triggered By**.
 
 ## Rename folder
 

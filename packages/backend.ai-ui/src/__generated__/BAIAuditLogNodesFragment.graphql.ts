@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<31c985776ae7c00dc7fb900d5788e577>>
+ * @generated SignedSource<<3ebb3bc46bc3ca95f341576c7126d314>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -34,6 +34,7 @@ export type BAIAuditLogNodesFragment$data = ReadonlyArray<{
     readonly entityId: string;
     readonly id: string;
   } | null | undefined;
+  readonly " $fragmentSpreads": FragmentRefs<"BAIAuditLogTargetCellFragment">;
   readonly " $fragmentType": "BAIAuditLogNodesFragment";
 }>;
 export type BAIAuditLogNodesFragment$key = ReadonlyArray<{
@@ -151,6 +152,11 @@ return {
       "storageKey": null
     },
     {
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "BAIAuditLogTargetCellFragment"
+    },
+    {
       "alias": null,
       "args": null,
       "concreteType": "UserV2",
@@ -187,6 +193,6 @@ return {
 };
 })();
 
-(node as any).hash = "38da143a445e5aefbd68667e0b16ffc1";
+(node as any).hash = "7a8a9a105199939862907fec541fba05";
 
 export default node;

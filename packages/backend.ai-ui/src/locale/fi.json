@@ -111,8 +111,16 @@
     "Operation": "Toiminto",
     "RequestId": "Pyynnön ID",
     "Status": "Tila",
+    "Target": "Kohde",
     "Time": "Aika",
     "TriggeredBy": "Laukaisija"
+  },
+  "comp:BAIAuditLogTargetCell": {
+    "Global": "Globaali",
+    "InThisRun": "{{count}} tässä ajossa",
+    "NoAffectedEntity": "Ei vaikutuksen kohteena olevaa entiteettiä",
+    "NotFound": "Ei löytynyt",
+    "Run": "Ajo"
   },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Valitse esiasetus"

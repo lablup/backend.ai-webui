@@ -111,8 +111,16 @@
     "Operation": "Operação",
     "RequestId": "ID de solicitação",
     "Status": "Status",
+    "Target": "Alvo",
     "Time": "Hora",
     "TriggeredBy": "Acionado por"
+  },
+  "comp:BAIAuditLogTargetCell": {
+    "Global": "Global",
+    "InThisRun": "{{count}} nesta execução",
+    "NoAffectedEntity": "Nenhuma entidade afetada",
+    "NotFound": "Não encontrado",
+    "Run": "Execução"
   },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Selecionar preset"

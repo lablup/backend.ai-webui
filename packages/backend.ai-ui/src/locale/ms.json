@@ -111,8 +111,16 @@
     "Operation": "Operasi",
     "RequestId": "ID Permintaan",
     "Status": "Status",
+    "Target": "Sasaran",
     "Time": "Masa",
     "TriggeredBy": "Dicetuskan oleh"
+  },
+  "comp:BAIAuditLogTargetCell": {
+    "Global": "Global",
+    "InThisRun": "{{count}} dalam larian ini",
+    "NoAffectedEntity": "Tiada entiti terjejas",
+    "NotFound": "Tidak ditemui",
+    "Run": "Larian"
   },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Pilih Pratetap"

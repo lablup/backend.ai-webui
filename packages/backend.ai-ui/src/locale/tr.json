@@ -111,8 +111,16 @@
     "Operation": "İşlem",
     "RequestId": "İstek ID",
     "Status": "Durum",
+    "Target": "Hedef",
     "Time": "Zaman",
     "TriggeredBy": "Tetikleyen"
+  },
+  "comp:BAIAuditLogTargetCell": {
+    "Global": "Genel",
+    "InThisRun": "Bu çalıştırmada {{count}}",
+    "NoAffectedEntity": "Etkilenen varlık yok",
+    "NotFound": "Bulunamadı",
+    "Run": "Çalıştırma"
   },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Ön ayar seçin"

@@ -111,8 +111,16 @@
     "Operation": "Үйлдэл",
     "RequestId": "Хүсэлтийн ID",
     "Status": "Төлөв",
+    "Target": "Зорилт",
     "Time": "Цаг",
     "TriggeredBy": "Өдөөгч"
+  },
+  "comp:BAIAuditLogTargetCell": {
+    "Global": "Глобал",
+    "InThisRun": "Энэ ажиллуулалтад {{count}}",
+    "NoAffectedEntity": "Нөлөөлөгдсөн объект байхгүй",
+    "NotFound": "Олдсонгүй",
+    "Run": "Ажиллуулалт"
   },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Урьдчилан тохиргоо сонгох"

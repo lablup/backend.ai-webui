@@ -17,6 +17,7 @@ import {
   BAITableProps,
 } from '../Table';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
+import BAIAuditLogTargetCell from './BAIAuditLogTargetCell';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
@@ -102,6 +103,7 @@ const BAIAuditLogNodes = ({
         entityId
         triggeredBy
         clientIp @since(version: "26.9.0")
+        ...BAIAuditLogTargetCellFragment
         user {
           id
           entityId
@@ -113,6 +115,8 @@ const BAIAuditLogNodes = ({
     `,
     auditLogFrgmt,
   );
+
+  const runCounts = _.countBy(filterOutNullAndUndefined(auditLogs), 'actionId');
 
   const baseColumns = _.map(
     filterOutEmpty<BAIColumnType<AuditLogNodeInList>>([
@@ -165,6 +169,16 @@ const BAIAuditLogNodes = ({
         sorter: isEnableSorter('status'),
         render: (__, record) => (
           <BAIAuditLogStatusBadge status={toAuditLogStatus(record.status)} />
+        ),
+      },
+      {
+        key: 'target',
+        title: t('comp:BAIAuditLogNodes.Target'),
+        render: (__, record) => (
+          <BAIAuditLogTargetCell
+            auditLogFrgmt={record}
+            runCount={runCounts[record.actionId]}
+          />
         ),
       },
       {

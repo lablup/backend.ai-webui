@@ -111,8 +111,16 @@
     "Operation": "Операция",
     "RequestId": "ID запроса",
     "Status": "Статус",
+    "Target": "Цель",
     "Time": "Время",
     "TriggeredBy": "Инициатор"
+  },
+  "comp:BAIAuditLogTargetCell": {
+    "Global": "Глобальное",
+    "InThisRun": "В этом запуске: {{count}}",
+    "NoAffectedEntity": "Нет затронутого объекта",
+    "NotFound": "Не найдено",
+    "Run": "Запуск"
   },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Выберите пресет"

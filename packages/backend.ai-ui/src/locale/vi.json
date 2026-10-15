@@ -111,8 +111,16 @@
     "Operation": "Thao tác",
     "RequestId": "ID yêu cầu",
     "Status": "Trạng thái",
+    "Target": "Đối tượng",
     "Time": "Thời gian",
     "TriggeredBy": "Kích hoạt bởi"
+  },
+  "comp:BAIAuditLogTargetCell": {
+    "Global": "Toàn cục",
+    "InThisRun": "{{count}} trong lần chạy này",
+    "NoAffectedEntity": "Không có thực thể bị ảnh hưởng",
+    "NotFound": "Không tìm thấy",
+    "Run": "Lần chạy"
   },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Chọn cài đặt sẵn"

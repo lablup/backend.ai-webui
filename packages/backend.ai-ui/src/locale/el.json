@@ -111,8 +111,16 @@
     "Operation": "Λειτουργία",
     "RequestId": "ID αιτήματος",
     "Status": "Κατάσταση",
+    "Target": "Στόχος",
     "Time": "Ώρα",
     "TriggeredBy": "Ενεργοποιήθηκε από"
+  },
+  "comp:BAIAuditLogTargetCell": {
+    "Global": "Καθολική",
+    "InThisRun": "{{count}} σε αυτή την εκτέλεση",
+    "NoAffectedEntity": "Καμία επηρεαζόμενη οντότητα",
+    "NotFound": "Δεν βρέθηκε",
+    "Run": "Εκτέλεση"
   },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Επιλέξτε προεπιλογή"

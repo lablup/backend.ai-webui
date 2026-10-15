@@ -111,8 +111,16 @@
     "Operation": "การดำเนินการ",
     "RequestId": "รหัสคำขอ",
     "Status": "สถานะ",
+    "Target": "เป้าหมาย",
     "Time": "เวลา",
     "TriggeredBy": "ผู้กระตุ้น"
+  },
+  "comp:BAIAuditLogTargetCell": {
+    "Global": "ทั่วทั้งระบบ",
+    "InThisRun": "{{count}} รายการในการรันนี้",
+    "NoAffectedEntity": "ไม่มีเอนทิตีที่ได้รับผลกระทบ",
+    "NotFound": "ไม่พบ",
+    "Run": "การรัน"
   },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "เลือกการตั้งค่าล่วงหน้า"

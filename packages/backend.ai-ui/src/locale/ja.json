@@ -111,8 +111,16 @@
     "Operation": "操作",
     "RequestId": "リクエスト ID",
     "Status": "ステータス",
+    "Target": "対象",
     "Time": "時刻",
     "TriggeredBy": "起動者"
+  },
+  "comp:BAIAuditLogTargetCell": {
+    "Global": "グローバル",
+    "InThisRun": "この実行で {{count}} 件",
+    "NoAffectedEntity": "影響を受けたエンティティなし",
+    "NotFound": "見つかりません",
+    "Run": "実行"
   },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "プリセットを選択"
