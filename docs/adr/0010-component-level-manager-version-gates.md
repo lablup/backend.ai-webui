@@ -1,5 +1,7 @@
 # 0010 — Component-level manager version gates
 
+> Decision 1절의 **Floor location**(기준 line을 이 ADR의 본문이 정한다는 것)은 [ADR 0011](0011-manager-compatibility-policy-in-the-team-dev-catalog.md)이 대신한다. 기준 line은 branch마다 팀 dev catalog의 policy가 선언하고, 지원 범위는 그 line부터 branch 자신의 line까지이며, `pnpm run dev-env compat`이 읽는다. 이 문서가 적은 `26.4`는 결정 당시의 값이다. gate를 지우는 규칙과 나머지 결정은 그대로 발효 중이다.
+
 ## Summary
 
 > 낯선 용어는 문서 맨 아래 [용어](#용어)에 모아 두었다.

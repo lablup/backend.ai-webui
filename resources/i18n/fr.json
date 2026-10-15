@@ -466,6 +466,7 @@
     "Revoke": "Révoquer",
     "Save": "Sauvegarder",
     "SaveAndClose": "Sauver et fermer",
+    "SaveAsDraft": "Enregistrer comme brouillon",
     "SaveChanges": "Sauvegarder les modifications",
     "SaveWithoutClose": "Enregistrer sans fermer",
     "SeeErrorLogs": "Voir l'erreur",
@@ -1529,6 +1530,13 @@
     "SessionStatusIs": "L'état de la session est",
     "SessionStatusIsWithReload": "L'état de la session est {{status}}. Veuillez recharger la page dans quelques instants.",
     "SessionStillPreparing": "La séance est encore en préparation. Actualiser la page après un certain temps"
+  },
+  "entityLabel": {
+    "EditLabels": "Modifier les libellés",
+    "LabelKey": "Clé du libellé",
+    "LabelValue": "Valeur du libellé",
+    "Labels": "Libellés",
+    "NoPermissionToEditLabels": "Vous n’êtes pas autorisé à modifier les libellés."
   },
   "environment": {
     "Action": "action",
@@ -3568,10 +3576,10 @@
     "ActiveSessions": "Sessions actives",
     "Announcement": "Annonce",
     "AnnouncementDeleted": "L'annonce a été supprimée.",
-    "AnnouncementEnabled": "Activé",
+    "AnnouncementDraft": "Brouillon",
     "AnnouncementMessage": "Message",
-    "AnnouncementMessageRequired": "Veuillez saisir un message pour activer l'annonce.",
     "AnnouncementPreview": "Aperçu",
+    "AnnouncementTitle": "Titre",
     "AnnouncementUpdated": "L'annonce a été mise à jour.",
     "CLI": "CLI",
     "CLIDownloadExecutable": "Télécharger l'exécutable autonome",
@@ -3636,12 +3644,13 @@
   },
   "theme": {
     "CannotApplyInvalidJsonConfig": "Les paramètres du thème ne correspondent pas au schéma. Veuillez vérifier le fichier.",
+    "ConvertedV1ThemeConfig": "Le fichier de thème ancien (v1) a été converti au format actuel. Vérifiez-le avant de l'appliquer.",
     "FailedToReadFile": "Impossible de lire le fichier.",
     "InvalidJsonFileAlert": "Format JSON invalide. Veuillez vérifier le contenu du fichier.",
     "JsonConfigAppliedSuccessfully": "Les paramètres du thème ont été appliqués avec succès.",
     "PreviewModeAlert": "Vous êtes actuellement en mode aperçu du thème. Veuillez poursuivre votre travail dans la fenêtre d'origine.",
     "ThemeJsonConfiguration": "Configuration JSON du thème",
-    "ThemeJsonConfigurationDesc": "Importez un fichier JSON pour modifier le thème ou exportez le thème actuel au format JSON. Pour appliquer les modifications à votre site, exportez le fichier JSON et copiez-le dans resources/theme.json sur le serveur web de WebUI.",
+    "ThemeJsonConfigurationDesc": "Importez un fichier JSON pour modifier le thème ou exportez le thème actuel au format JSON. Appuyez sur OK pour le charger dans le brouillon ; Appliquer sur la page Branding enregistre le thème pour ce domaine.",
     "button": {
       "ExportToJson": "Exporter en JSON",
       "ImportFromJson": "Importer JSON",
@@ -3702,6 +3711,8 @@
   },
   "userSettings": {
     "AIAgents": "Agents IA",
+    "ApplyThemeToDomain": "Appliquer le thème au domaine",
+    "ApplyThemeToDomainDesc": "Ce thème sera appliqué à tous les utilisateurs de ce domaine.",
     "AutoLogout": "Déconnexion automatique",
     "AutomaticUpdateCheck": "Vérification automatique des mises à jour",
     "BetaFeatures": "Fonctionnalités bêta",
@@ -3756,6 +3767,8 @@
     "InvalidPortNumber": "Le numéro de port doit être un nombre positif compris entre 1025 et 65534",
     "KeepLoginSessionInformation": "Conserver les informations de session de connexion pendant la déconnexion",
     "Language": "Langue",
+    "LeaveWithoutApplyingTheme": "Quitter sans appliquer le thème ?",
+    "LeaveWithoutApplyingThemeDesc": "Vos modifications du thème n'ont pas été appliquées au domaine et seront abandonnées.",
     "LightMode": "Mode lumière",
     "LightTheme": "Mode clair",
     "LoginHistory": "Historique de connexion",
@@ -3831,7 +3844,6 @@
       }
     },
     "theme": {
-      "CustomThemeSettingAlert": "Le thème mis à jour ne peut pas être appliqué immédiatement. Si vous souhaitez l’appliquer, contactez notre équipe d’assistance en joignant le fichier JSON de configuration exporté.",
       "ErrorColor": "Couleur d'erreur",
       "ErrorColorDesc": "Couleur appliquée aux boutons ou aux alertes représentant des actions critiques, telles que la suppression, pour indiquer des avertissements ou des erreurs.",
       "HeaderBg": "Couleur d’arrière-plan de l’en-tête",

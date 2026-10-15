@@ -466,6 +466,7 @@
     "Revoke": "해지",
     "Save": "저장",
     "SaveAndClose": "저장 후 닫기",
+    "SaveAsDraft": "초안으로 저장",
     "SaveChanges": "변경사항 저장",
     "SaveWithoutClose": "저장 후 유지",
     "SeeErrorLogs": "에러 보기",
@@ -1529,6 +1530,13 @@
     "SessionStatusIs": "세션 상태는 ",
     "SessionStatusIsWithReload": "세션 상태: {{status}}. 잠시 후 새로고침해 주세요.",
     "SessionStillPreparing": "연산 세션이 아직 준비 중입니다. 잠시 후 다시 로드해 주세요."
+  },
+  "entityLabel": {
+    "EditLabels": "라벨 편집",
+    "LabelKey": "라벨 키",
+    "LabelValue": "라벨 값",
+    "Labels": "라벨",
+    "NoPermissionToEditLabels": "라벨을 편집할 권한이 없습니다."
   },
   "environment": {
     "Action": "동작",
@@ -3568,10 +3576,10 @@
     "ActiveSessions": "활성 세션",
     "Announcement": "공지",
     "AnnouncementDeleted": "공지사항이 삭제되었습니다.",
-    "AnnouncementEnabled": "활성화",
+    "AnnouncementDraft": "초안",
     "AnnouncementMessage": "내용",
-    "AnnouncementMessageRequired": "공지사항을 활성화하려면 내용을 입력하세요.",
     "AnnouncementPreview": "미리 보기",
+    "AnnouncementTitle": "제목",
     "AnnouncementUpdated": "공지사항이 수정되었습니다.",
     "CLI": "CLI",
     "CLIDownloadExecutable": "독립 실행 파일 다운로드",
@@ -3636,12 +3644,13 @@
   },
   "theme": {
     "CannotApplyInvalidJsonConfig": "테마 설정이 스키마와 일치하지 않습니다. 파일을 확인해 주세요.",
+    "ConvertedV1ThemeConfig": "이전(v1) 형식의 테마 파일을 현재 형식으로 변환했습니다. 적용하기 전에 확인해 주세요.",
     "FailedToReadFile": "파일을 읽을 수 없습니다.",
     "InvalidJsonFileAlert": "JSON 형식이 유요하지 않습니다. 파일 내용을 확인해주세요.",
     "JsonConfigAppliedSuccessfully": "테마 설정이 적용되었습니다.",
     "PreviewModeAlert": "현재 테마 미리보기 모드를 사용하고 있습니다. 실제 작업은 기존 창에서 진행해 주세요.",
     "ThemeJsonConfiguration": "테마 JSON 설정",
-    "ThemeJsonConfigurationDesc": "JSON 파일을 불러와 테마를 변경하거나 현재 테마의 JSON 파일을 추출할 수 있습니다. 변경된 테마를 사이트에 적용하려면 JSON 파일을 내보낸 후 WebUI 웹서버의 resources/theme.json으로 복사해주세요.",
+    "ThemeJsonConfigurationDesc": "JSON 파일을 가져와 테마를 변경하거나 현재 테마를 JSON으로 내보낼 수 있습니다. 확인을 누르면 편집 초안에 반영되며, 브랜딩 페이지의 적용 버튼으로 이 도메인에 저장됩니다.",
     "button": {
       "ExportToJson": "JSON 내보내기",
       "ImportFromJson": "JSON 가져오기",
@@ -3702,6 +3711,8 @@
   },
   "userSettings": {
     "AIAgents": "AI 에이전트",
+    "ApplyThemeToDomain": "도메인에 테마 적용",
+    "ApplyThemeToDomainDesc": "이 테마가 이 도메인의 모든 사용자에게 적용됩니다.",
     "AutoLogout": "자동 로그아웃",
     "AutomaticUpdateCheck": "자동 업데이트 체크",
     "BetaFeatures": "베타 기능",
@@ -3756,6 +3767,8 @@
     "InvalidPortNumber": "포트 번호는 1025~65534 사이의 양수여야 합니다.",
     "KeepLoginSessionInformation": "로그아웃 후 로그인 정보 유지",
     "Language": "언어",
+    "LeaveWithoutApplyingTheme": "테마를 적용하지 않고 나가시겠습니까?",
+    "LeaveWithoutApplyingThemeDesc": "도메인에 적용하지 않은 테마 변경 사항은 삭제됩니다.",
     "LightMode": "라이트 모드",
     "LightTheme": "라이트 모드",
     "LoginHistory": "로그인 기록",
@@ -3831,7 +3844,6 @@
       }
     },
     "theme": {
-      "CustomThemeSettingAlert": "현재 변경된 테마를 바로 적용하는 기능이 제공되지 않습니다. 테마 적용을 원하시는 경우, 추출된 설정 JSON 파일과 함께 지원팀에 문의해 주세요. ",
       "ErrorColor": "오류 색상",
       "ErrorColorDesc": "삭제 등 중요한 작업에 대한 안내나 버튼 또는 오류 안내에 적용되는 색상입니다.",
       "HeaderBg": "헤더 배경 색상",

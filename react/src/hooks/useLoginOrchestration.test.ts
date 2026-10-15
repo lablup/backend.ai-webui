@@ -240,6 +240,14 @@ describe('useLoginOrchestration - applauncher pages', () => {
     expect(options.onLogin).not.toHaveBeenCalled();
     expect(options.onOpen).not.toHaveBeenCalled();
   });
+
+  it('still consumes INTENTIONAL_LOGOUT_FLAG on an applauncher route', async () => {
+    setWindowPathname('/edu-applauncher/some-app');
+    sessionStorage.setItem(INTENTIONAL_LOGOUT_FLAG, '1');
+    const { options } = await renderOrchestrationHook(true, false);
+    expect(options.onOpen).not.toHaveBeenCalled();
+    expect(sessionStorage.getItem(INTENTIONAL_LOGOUT_FLAG)).toBeNull();
+  });
 });
 
 // ---------------------------------------------------------------------------
