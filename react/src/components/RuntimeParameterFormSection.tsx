@@ -267,6 +267,7 @@ const RuntimeParameterFormSection: React.FC<
     >
       {/* `type` -> `status`; `showIcon` dropped (Banner always shows it). */}
       <Banner
+        role="alert"
         status="warning"
         title={t('modelService.RuntimeParamUnchangedHint')}
       />

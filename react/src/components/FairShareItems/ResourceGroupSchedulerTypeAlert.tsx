@@ -41,6 +41,7 @@ const ResourceGroupSchedulerTypeAlert: React.FC<
 
   return (
     <Banner
+      role="alert"
       status="warning"
       title={t('fairShare.SchedulerDoesNotAppliedToResourceGroup', {
         resourceGroup: resourceGroup.name,

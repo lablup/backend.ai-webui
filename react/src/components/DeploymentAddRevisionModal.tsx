@@ -1869,6 +1869,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           `handleLoadCurrent`). */}
       {!deploymentProject ? (
         <Banner
+          role="alert"
           status="warning"
           style={{ marginBottom: token('--spacing-5') }}
           title={t('deployment.CannotResolveDeploymentProject')}
@@ -1878,6 +1879,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         // antd Alert → Astryx Banner (`showIcon` dropped: Banner always shows
         // the status icon; `action` → `endContent`).
         <Banner
+          role="status"
           status="info"
           style={{ marginBottom: token('--spacing-5') }}
           title={t('deployment.CurrentRevisionAvailableDescription')}
@@ -1895,6 +1897,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           // Empty-state: per spec, when no preset is available in Preset Mode,
           // guide the user to switch to Custom Mode.
           <Banner
+            role="status"
             status="info"
             style={{ marginTop: token('--spacing-2') }}
             title={t('deployment.NoPresetsAvailable')}

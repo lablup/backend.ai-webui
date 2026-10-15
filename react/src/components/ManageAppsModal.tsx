@@ -169,6 +169,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
           marginBottom token becomes BAIFlex column gaps. */}
       <BAIFlex direction="column" align="stretch" gap="md">
         <Banner
+          role="status"
           status="info"
           title={t('environment.AppPortsApplyToNewSessionsOnly')}
         />

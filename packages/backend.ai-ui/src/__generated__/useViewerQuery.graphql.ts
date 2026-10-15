@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<91204fda4bad85f352055cbdf6525a17>>
+ * @generated SignedSource<<2d5472cf16f2f36d8d9c52822cd2dca3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,13 +9,13 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+export type UserRoleV2 = "ADMIN" | "MONITOR" | "SUPERADMIN" | "USER" | "%future added value";
 export type useViewerQuery$variables = Record<PropertyKey, never>;
 export type useViewerQuery$data = {
-  readonly viewer: {
-    readonly encoded_user_role: string | null | undefined;
-    readonly user: {
-      readonly email: string | null | undefined;
-    } | null | undefined;
+  readonly myUserV2: {
+    readonly organization: {
+      readonly role: UserRoleV2 | null | undefined;
+    };
   } | null | undefined;
 };
 export type useViewerQuery = {
@@ -27,15 +27,19 @@ const node: ConcreteRequest = (function(){
 var v0 = {
   "alias": null,
   "args": null,
-  "kind": "ScalarField",
-  "name": "email",
-  "storageKey": null
-},
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "encoded_user_role",
+  "concreteType": "UserV2OrganizationInfo",
+  "kind": "LinkedField",
+  "name": "organization",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "role",
+      "storageKey": null
+    }
+  ],
   "storageKey": null
 };
 return {
@@ -48,24 +52,12 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "Viewer",
+        "concreteType": "UserV2",
         "kind": "LinkedField",
-        "name": "viewer",
+        "name": "myUserV2",
         "plural": false,
         "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "UserNode",
-            "kind": "LinkedField",
-            "name": "user",
-            "plural": false,
-            "selections": [
-              (v0/*: any*/)
-            ],
-            "storageKey": null
-          },
-          (v1/*: any*/)
+          (v0/*: any*/)
         ],
         "storageKey": null
       }
@@ -82,47 +74,35 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "Viewer",
+        "concreteType": "UserV2",
         "kind": "LinkedField",
-        "name": "viewer",
+        "name": "myUserV2",
         "plural": false,
         "selections": [
+          (v0/*: any*/),
           {
             "alias": null,
             "args": null,
-            "concreteType": "UserNode",
-            "kind": "LinkedField",
-            "name": "user",
-            "plural": false,
-            "selections": [
-              (v0/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "id",
-                "storageKey": null
-              }
-            ],
+            "kind": "ScalarField",
+            "name": "id",
             "storageKey": null
-          },
-          (v1/*: any*/)
+          }
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "2e3112eeb7ec9c210923d9e89787c205",
+    "cacheID": "2365c95d23367c591783462fa054bdf6",
     "id": null,
     "metadata": {},
     "name": "useViewerQuery",
     "operationKind": "query",
-    "text": "query useViewerQuery {\n  viewer {\n    user {\n      email\n      id\n    }\n    encoded_user_role\n  }\n}\n"
+    "text": "query useViewerQuery {\n  myUserV2 {\n    organization {\n      role\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "3bb335b115b87782d6e3370eb51afe6f";
+(node as any).hash = "8e32f43bceed495270720030b058c19d";
 
 export default node;

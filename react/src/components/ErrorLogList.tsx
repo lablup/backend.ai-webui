@@ -302,7 +302,11 @@ const ErrorLogList: React.FC<{
         cancelText={t('button.Cancel')}
         onCancel={() => setIsOpenClearLogsModal(false)}
       >
-        <Banner status="warning" title={t('dialog.warning.CannotBeUndone')} />
+        <Banner
+          role="alert"
+          status="warning"
+          title={t('dialog.warning.CannotBeUndone')}
+        />
       </BAIModal>
     </BAIFlex>
   );

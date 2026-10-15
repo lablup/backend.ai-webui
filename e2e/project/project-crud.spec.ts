@@ -6,6 +6,8 @@ import test, { expect, Page } from '@playwright/test';
 const TEST_RUN_ID = Date.now().toString(36);
 const PROJECT_DESCRIPTION = 'Test project for E2E';
 const UPDATED_DESCRIPTION = 'Updated E2E description';
+// The domain the e2e admin account signs in to.
+const ADMIN_DOMAIN = 'default';
 
 // Each CRUD test provisions its own uniquely-named project so that edit,
 // filter and delete no longer depend on a create test having run first.
@@ -133,12 +135,9 @@ async function createProject(page: Page, name: string, description: string) {
   await modal.getByRole('textbox', { name: 'Name' }).fill(name);
   await modal.getByRole('textbox', { name: 'Description' }).fill(description);
 
-  // Select Domain 'default'. `BAIDomainSelect` renders as a Selector trigger
-  // `button` (not a `combobox`) whose accessible name concatenates the field
-  // label with the placeholder ("Domain Select Domain") — match the label as
-  // a substring rather than exactly.
-  await modal.getByRole('button', { name: 'Domain' }).click();
-  await page.getByRole('option', { name: 'default', exact: true }).click();
+  // #10081 (FR-4141) removed the Domain picker: `BAIProjectSettingModal` now
+  // creates the project in the signed-in domain itself.
+  await expect(modal.getByText('Domain', { exact: true })).toHaveCount(0);
 
   // Click OK to create and verify the modal closes
   await modal.getByRole('button', { name: 'OK' }).click();
@@ -147,9 +146,18 @@ async function createProject(page: Page, name: string, description: string) {
   // Verify the new project appears in the table. The name column renders via
   // BAINameActionCell so the cell's accessible name also includes hover-only
   // action labels; match by filter({ hasText }) instead of exact name.
-  await expect(page.getByRole('row').filter({ hasText: name })).toBeVisible({
-    timeout: 10000,
-  });
+  const projectRow = page.getByRole('row').filter({ hasText: name });
+  await expect(projectRow).toBeVisible({ timeout: 10000 });
+
+  // The project lands in the admin's own domain. Read the Domain cell by its
+  // column index: other cells (e.g. the resource policy) can also say
+  // "default".
+  const headers = await page.getByRole('columnheader').allInnerTexts();
+  const domainColumn = headers.findIndex((text) => text.trim() === 'Domain');
+  expect(domainColumn).toBeGreaterThanOrEqual(0);
+  await expect(projectRow.getByRole('cell').nth(domainColumn)).toHaveText(
+    ADMIN_DOMAIN,
+  );
 }
 
 // Independent of the CRUD tests: only reads the default project list, so a
