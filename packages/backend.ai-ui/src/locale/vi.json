@@ -146,6 +146,34 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Số lượng"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "Thêm nhãn"
+  },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Sửa nhãn"
+  },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "Thêm nhãn",
+    "AddLabelsToItems": "Thêm nhãn cho {{count}} mục",
+    "BulkDescription": "Các nhãn này được thêm vào mọi mục đã chọn. Mục đã có khóa đó sẽ nhận giá trị mới; các nhãn khác được giữ nguyên.",
+    "EditLabels": "Sửa nhãn",
+    "Error": "Lỗi",
+    "Key": "Khóa",
+    "KeyMustBeUnique": "Mỗi khóa chỉ được dùng một lần.",
+    "KeyRequired": "Nhập khóa.",
+    "Label": "Nhãn",
+    "LabelsSaved": "Đã lưu nhãn.",
+    "RemoveLabel": "Xóa nhãn",
+    "Save": "Lưu",
+    "SomeLabelsFailed": "{{count}} thay đổi nhãn thất bại",
+    "Target": "Đối tượng",
+    "TooLong": "Tối đa {{max}} ký tự.",
+    "Value": "Giá trị",
+    "ValueRequired": "Nhập giá trị."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "Nhãn"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Tự động làm mới",
     "EveryHours": "{{count}}h",

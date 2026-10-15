@@ -1531,6 +1531,13 @@
     "SessionStatusIsWithReload": "세션 상태: {{status}}. 잠시 후 새로고침해 주세요.",
     "SessionStillPreparing": "연산 세션이 아직 준비 중입니다. 잠시 후 다시 로드해 주세요."
   },
+  "entityLabel": {
+    "EditLabels": "라벨 편집",
+    "LabelKey": "라벨 키",
+    "LabelValue": "라벨 값",
+    "Labels": "라벨",
+    "NoPermissionToEditLabels": "라벨을 편집할 권한이 없습니다."
+  },
   "environment": {
     "Action": "동작",
     "Aliases": "별칭",

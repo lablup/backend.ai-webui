@@ -43,6 +43,7 @@ import {
   BAIOverlayScrollbar,
   BAIResourceSlotsProvider,
   BAISkeleton,
+  useLabelableEntityTypes,
 } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
@@ -151,6 +152,7 @@ function MainLayout() {
       <CSSTokenVariables />
       <Suspense fallback={null}>
         <DismissSplashOnMount />
+        <PrefetchLabelableEntityTypes />
         <BAIAppShell
           data-testid={pageTestId}
           // `wash` paints `--color-background-body` behind nav and content.
@@ -488,6 +490,14 @@ const DismissSplashOnMount = () => {
       (globalThis as any).__mainLayoutReady = false;
     };
   }, []);
+  return null;
+};
+
+// Asks `entityTypes` once after login; label UIs read the cached answer.
+const PrefetchLabelableEntityTypes = () => {
+  'use memo';
+  useSuspendedBackendaiClient();
+  useLabelableEntityTypes();
   return null;
 };
 
