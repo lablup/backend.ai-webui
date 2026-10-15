@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2eaa6802fc0c0ca9636bd31c4d600374>>
+ * @generated SignedSource<<4c0fcaec3f8e39858844844975cd5d3c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,12 +20,12 @@ export type BAIAuditLogNodesFragment$data = ReadonlyArray<{
   readonly createdAt: string;
   readonly description: string;
   readonly duration: string | null | undefined;
-  readonly entityId: string | null | undefined;
   readonly entityType: string | null | undefined;
   readonly id: string;
   readonly operation: string;
   readonly requestId: string | null | undefined;
   readonly status: AuditLogStatus;
+  readonly targetEntityId: string | null | undefined;
   readonly triggeredBy: string | null | undefined;
   readonly user: {
     readonly basicInfo: {
@@ -132,7 +132,7 @@ return {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "entityId",
+      "name": "targetEntityId",
       "storageKey": null
     },
     {
@@ -190,6 +190,6 @@ return {
 };
 })();
 
-(node as any).hash = "de38cd31fddafc65f873cf7906a1fa6a";
+(node as any).hash = "e1f51d9dafafa937ca9f1e07eae56152";
 
 export default node;

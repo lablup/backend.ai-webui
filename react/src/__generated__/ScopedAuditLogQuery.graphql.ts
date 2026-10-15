@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<af61baef4b5358f0542cc11bfcfa39de>>
+ * @generated SignedSource<<407341f5c2c5f31c4c82936c92e2dbf3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -678,7 +678,7 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "entityId",
+                    "name": "targetEntityId",
                     "storageKey": null
                   },
                   {
@@ -693,13 +693,6 @@ return {
                     "args": null,
                     "kind": "ScalarField",
                     "name": "clientIp",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "targetEntityId",
                     "storageKey": null
                   },
                   {
@@ -812,12 +805,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "747c2702a6888b4d7b882e865990698e",
+    "cacheID": "2fc3c1c3ed7303f5af4bdd3d8781d7eb",
     "id": null,
     "metadata": {},
     "name": "ScopedAuditLogQuery",
     "operationKind": "query",
-    "text": "query ScopedAuditLogQuery(\n  $scope: AuditLogScope!\n  $filter: AuditLogFilter\n  $orderBy: [AuditLogOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAIAuditLogNodesFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIAuditLogNodesFragment on AuditLogV2 {\n  id\n  createdAt\n  actionName\n  actionKind\n  operation\n  status\n  description\n  duration\n  requestId\n  actionId\n  entityType\n  entityId\n  triggeredBy\n  clientIp @since(version: \"26.9.0\")\n  ...BAIAuditLogTargetCellFragment\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n\nfragment BAIAuditLogTargetCellEntityFragment on EntityNode {\n  __isEntityNode: __typename\n  __typename\n  ... on UserV2 {\n    basicInfo {\n      email\n    }\n  }\n  ... on ProjectV2 {\n    basicInfo {\n      name\n    }\n  }\n  ... on DomainV2 {\n    basicInfo {\n      name\n    }\n  }\n  ... on ImageV2 {\n    identity {\n      canonicalName\n    }\n  }\n  ... on SessionV2 {\n    metadata {\n      name\n    }\n  }\n  ... on ModelDeployment {\n    metadata {\n      name\n    }\n  }\n  ... on VFolder {\n    metadata {\n      name\n    }\n  }\n  ... on VirtualFolderNode {\n    vfolderName: name\n  }\n  ... on ComputeSessionNode {\n    sessionName: name\n  }\n  ... on ContainerRegistryV2 {\n    registryName\n  }\n  ... on AppConfigAllowList {\n    configName\n  }\n  ... on AppConfigDefinition {\n    configName\n  }\n  ... on AppConfigFragment {\n    configName\n  }\n  ... on StorageNamespace {\n    namespace\n  }\n  ... on Artifact {\n    name\n  }\n  ... on ArtifactRegistry {\n    name\n  }\n  ... on NotificationChannel {\n    name\n  }\n  ... on NotificationRule {\n    name\n  }\n  ... on ResourceGroup {\n    name\n  }\n  ... on Role {\n    name\n  }\n  ... on IdleChecker {\n    name\n  }\n  ... on ObjectStorage {\n    name\n  }\n  ... on RuntimeVariant {\n    name\n  }\n  ... on RuntimeVariantPreset {\n    name\n  }\n  ... on VFSStorage {\n    name\n  }\n}\n\nfragment BAIAuditLogTargetCellFragment on AuditLogV2 {\n  actionId\n  actionKind\n  entityType\n  entityId\n  targetEntityId\n  lookupKind\n  lookupKey\n  entity {\n    __typename\n    ...BAIAuditLogTargetCellEntityFragment\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n    ... on ArtifactRegistry {\n      id\n    }\n  }\n  scopes(first: 3, orderBy: [{field: SCOPE_TYPE, direction: ASC}, {field: SCOPE_ID, direction: ASC}]) {\n    count\n    edges {\n      node {\n        id\n        scopeType\n        scopeId\n        entity {\n          __typename\n          ...BAIAuditLogTargetCellEntityFragment\n          ... on Node {\n            __isNode: __typename\n            id\n          }\n          ... on ArtifactRegistry {\n            id\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ScopedAuditLogQuery(\n  $scope: AuditLogScope!\n  $filter: AuditLogFilter\n  $orderBy: [AuditLogOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAIAuditLogNodesFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIAuditLogNodesFragment on AuditLogV2 {\n  id\n  createdAt\n  actionName\n  actionKind\n  operation\n  status\n  description\n  duration\n  requestId\n  actionId\n  entityType\n  targetEntityId\n  triggeredBy\n  clientIp @since(version: \"26.9.0\")\n  ...BAIAuditLogTargetCellFragment\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n\nfragment BAIAuditLogTargetCellEntityFragment on EntityNode {\n  __isEntityNode: __typename\n  __typename\n  ... on UserV2 {\n    basicInfo {\n      email\n    }\n  }\n  ... on ProjectV2 {\n    basicInfo {\n      name\n    }\n  }\n  ... on DomainV2 {\n    basicInfo {\n      name\n    }\n  }\n  ... on ImageV2 {\n    identity {\n      canonicalName\n    }\n  }\n  ... on SessionV2 {\n    metadata {\n      name\n    }\n  }\n  ... on ModelDeployment {\n    metadata {\n      name\n    }\n  }\n  ... on VFolder {\n    metadata {\n      name\n    }\n  }\n  ... on VirtualFolderNode {\n    vfolderName: name\n  }\n  ... on ComputeSessionNode {\n    sessionName: name\n  }\n  ... on ContainerRegistryV2 {\n    registryName\n  }\n  ... on AppConfigAllowList {\n    configName\n  }\n  ... on AppConfigDefinition {\n    configName\n  }\n  ... on AppConfigFragment {\n    configName\n  }\n  ... on StorageNamespace {\n    namespace\n  }\n  ... on Artifact {\n    name\n  }\n  ... on ArtifactRegistry {\n    name\n  }\n  ... on NotificationChannel {\n    name\n  }\n  ... on NotificationRule {\n    name\n  }\n  ... on ResourceGroup {\n    name\n  }\n  ... on Role {\n    name\n  }\n  ... on IdleChecker {\n    name\n  }\n  ... on ObjectStorage {\n    name\n  }\n  ... on RuntimeVariant {\n    name\n  }\n  ... on RuntimeVariantPreset {\n    name\n  }\n  ... on VFSStorage {\n    name\n  }\n}\n\nfragment BAIAuditLogTargetCellFragment on AuditLogV2 {\n  actionId\n  actionKind\n  entityType\n  targetEntityId\n  lookupKind\n  lookupKey\n  entity {\n    __typename\n    ...BAIAuditLogTargetCellEntityFragment\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n    ... on ArtifactRegistry {\n      id\n    }\n  }\n  scopes(first: 3, orderBy: [{field: SCOPE_TYPE, direction: ASC}, {field: SCOPE_ID, direction: ASC}]) {\n    count\n    edges {\n      node {\n        id\n        scopeType\n        scopeId\n        entity {\n          __typename\n          ...BAIAuditLogTargetCellEntityFragment\n          ... on Node {\n            __isNode: __typename\n            id\n          }\n          ... on ArtifactRegistry {\n            id\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();

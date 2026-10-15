@@ -240,7 +240,6 @@ const BAIAuditLogTargetCell = ({
         actionId
         actionKind
         entityType
-        entityId
         targetEntityId
         lookupKind
         lookupKey
@@ -272,7 +271,7 @@ const BAIAuditLogTargetCell = ({
   );
 
   const entityType = auditLog.entityType || null;
-  const entityId = (auditLog.targetEntityId ?? auditLog.entityId) || null;
+  const entityId = auditLog.targetEntityId || null;
   const scopes: ReadonlyArray<AuditLogScope> = _.map(
     auditLog.scopes.edges,
     'node',

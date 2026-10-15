@@ -87,7 +87,6 @@ const withAuditLog = (auditLog: Record<string, unknown>, runCount?: number) => (
       AuditLogV2: () => ({
         actionId: '0c1d2e3f-4a5b-4c6d-8e9f-0a1b2c3d4e5f',
         entityType: null,
-        entityId: null,
         targetEntityId: null,
         lookupKind: null,
         lookupKey: null,
@@ -233,6 +232,6 @@ export const WithoutActionKind: Story = {
     withAuditLog({
       actionKind: null,
       entityType: 'session',
-      entityId: '3e4f5a6b-7c8d-4e9f-a0b1-c2d3e4f5a6b7',
+      targetEntityId: '3e4f5a6b-7c8d-4e9f-a0b1-c2d3e4f5a6b7',
     }),
 };
