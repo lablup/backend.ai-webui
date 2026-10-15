@@ -39,11 +39,22 @@ const ASTRYX_SIZE = {
   large: 'lg',
 } as const;
 
-// Only `hasClear` is inherited: the rest of NumberInput's surface (number
-// value/min/max, `units`, `size`) is redefined here in size-string form.
-export interface BAIDynamicUnitInputNumberProps extends Pick<
+// The omitted keys are redefined in size-string form or owned by the wrapper;
+// `style` / `className` land on the surrounding InputGroup.
+export interface BAIDynamicUnitInputNumberProps extends Omit<
   NumberInputProps,
-  'hasClear'
+  | 'ref'
+  | 'value'
+  | 'onChange'
+  | 'min'
+  | 'max'
+  | 'units'
+  | 'size'
+  | 'label'
+  | 'isDisabled'
+  | 'width'
+  | 'onBlur'
+  | 'onKeyDown'
 > {
   dynamicSteps?: Array<number>;
   disableAutoUnit?: boolean;
@@ -79,7 +90,6 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
   addonSuffix,
   defaultUnit,
   disabled,
-  hasClear,
   placeholder,
   size,
   label,
@@ -245,10 +255,10 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
     >
       {addonPrefix ? <InputGroupText>{addonPrefix}</InputGroupText> : null}
       <NumberInput
+        {..._.omit(restProps, ['value', 'onChange', 'defaultValue'])}
         label={accessibleLabel}
         isLabelHidden
         value={numValue}
-        hasClear={hasClear}
         onChange={(next: number | null) =>
           setValue(_.isNil(next) ? undefined : `${next}${unit}`)
         }
