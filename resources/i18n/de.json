@@ -1070,6 +1070,7 @@
     },
     "invitation": {
       "Accepted": "Angenommen",
+      "AcceptedShareNotFound": "Für Ihr Konto wurde keine angenommene Freigabe dieses Ordners gefunden.",
       "FailedToAcceptInvitation": "Die Einladung nicht akzeptiert",
       "FailedToDeclineInvitation": "Die Einladung versäumte es, die Einladung abzulehnen",
       "FolderSharingNotAvailableToUser": "Die gemeinsame Nutzung von Ordnern ist für den/die gewünschten Benutzer nicht verfügbar.",

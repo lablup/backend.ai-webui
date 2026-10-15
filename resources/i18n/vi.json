@@ -1070,6 +1070,7 @@
     },
     "invitation": {
       "Accepted": "Đã chấp nhận",
+      "AcceptedShareNotFound": "Không tìm thấy chia sẻ đã chấp nhận nào của thư mục này cho tài khoản của bạn.",
       "FailedToAcceptInvitation": "Không chấp nhận lời mời",
       "FailedToDeclineInvitation": "Không thể từ chối lời mời",
       "FolderSharingNotAvailableToUser": "Chia sẻ thư mục không có sẵn cho (những) người dùng được yêu cầu.",

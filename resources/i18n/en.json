@@ -1057,6 +1057,7 @@
     },
     "invitation": {
       "Accepted": "Accepted",
+      "AcceptedShareNotFound": "No accepted share of this folder was found for your account.",
       "FailedToAcceptInvitation": "Failed to accept invitation",
       "FailedToDeclineInvitation": "Failed to decline invitation",
       "FolderSharingNotAvailableToUser": "Folder sharing is not available for requested user(s).",

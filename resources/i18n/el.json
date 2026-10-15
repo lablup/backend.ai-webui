@@ -1070,6 +1070,7 @@
     },
     "invitation": {
       "Accepted": "Αποδεκτή",
+      "AcceptedShareNotFound": "Δεν βρέθηκε αποδεκτή κοινή χρήση αυτού του φακέλου για τον λογαριασμό σας.",
       "FailedToAcceptInvitation": "Αποτυχία αποδοχής πρόσκλησης",
       "FailedToDeclineInvitation": "Απέτυχε να απορρίψει την πρόσκληση",
       "FolderSharingNotAvailableToUser": "Η κοινή χρήση φακέλων δεν είναι διαθέσιμη για τον/τους ζητούμενο/ους χρήστη/ες.",

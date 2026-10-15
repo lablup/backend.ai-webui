@@ -1070,6 +1070,7 @@
     },
     "invitation": {
       "Accepted": "Kabul edildi",
+      "AcceptedShareNotFound": "Hesabınız için bu klasörün kabul edilmiş bir paylaşımı bulunamadı.",
       "FailedToAcceptInvitation": "Davetiyeyi kabul edemedi",
       "FailedToDeclineInvitation": "Davetiyeyi reddetemedi",
       "FolderSharingNotAvailableToUser": "Klasör paylaşımı istenen kullanıcı(lar) için mevcut değil.",

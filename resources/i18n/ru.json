@@ -1070,6 +1070,7 @@
     },
     "invitation": {
       "Accepted": "Принято",
+      "AcceptedShareNotFound": "Для вашей учётной записи не найден принятый общий доступ к этой папке.",
       "FailedToAcceptInvitation": "Не удалось принять приглашение",
       "FailedToDeclineInvitation": "Не удалось отказаться от приглашения",
       "FolderSharingNotAvailableToUser": "Общий доступ к папкам недоступен для запрашиваемого пользователя (пользователей).",

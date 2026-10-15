@@ -1070,6 +1070,7 @@
     },
     "invitation": {
       "Accepted": "承諾済み",
+      "AcceptedShareNotFound": "このフォルダに対して承認済みの共有がアカウントに見つかりませんでした。",
       "FailedToAcceptInvitation": "招待状を受け入れなかった",
       "FailedToDeclineInvitation": "招待状を拒否できませんでした",
       "FolderSharingNotAvailableToUser": "次のユーザーはフォルダ共有ができない状態です：",

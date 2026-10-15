@@ -1070,6 +1070,7 @@
     },
     "invitation": {
       "Accepted": "Diterima",
+      "AcceptedShareNotFound": "Tidak ditemukan berbagi yang diterima untuk folder ini pada akun Anda.",
       "FailedToAcceptInvitation": "Gagal menerima undangan",
       "FailedToDeclineInvitation": "Gagal menolak undangan",
       "FolderSharingNotAvailableToUser": "Berbagi folder tidak tersedia untuk pengguna yang diminta.",
