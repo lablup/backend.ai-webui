@@ -2,7 +2,7 @@ import { ResourceGroupFilter, ResourceGroupScope } from '../../__generated__/BAI
 import { BAISelectProps } from '../BAISelect';
 export type BAIResourceGroupFilter = Pick<ResourceGroupFilter, 'isActive' | 'isPublic'>;
 /**
- * Names of the resource groups `scope` reaches, ordered by name (ADR 0011).
+ * Names of the resource groups `scope` reaches, ordered by name (ADR 0012).
  * Shares one request with `BAIScopedResourceGroupSelect` given the same `scope` and `filter`.
  */
 export declare const useScopedResourceGroupNames: (scope: ResourceGroupScope, filter?: BAIResourceGroupFilter | null) => string[];
