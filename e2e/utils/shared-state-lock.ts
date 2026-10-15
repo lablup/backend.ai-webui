@@ -95,7 +95,8 @@ export async function withSharedStateLock<T>(
     }
     if (isAbandoned(lockDir)) {
       reclaimIfAbandoned(lockDir);
-      continue;
+      // Fall through: a reclaim blocked by another reclaimer must still
+      // respect the deadline and yield before retrying.
     }
     if (Date.now() > deadline) {
       throw new Error(`Timed out waiting for the e2e lock "${name}"`);
