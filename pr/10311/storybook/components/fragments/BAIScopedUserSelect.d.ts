@@ -13,7 +13,7 @@ export interface BAIScopedUserSelectProps extends Omit<BAIComplexSelectProps, 'o
      * show the email while the raw UUID goes into a filter or mutation input.
      */
     onChange?: (value: string | Array<string> | undefined, option?: BAILabeledValue | Array<BAILabeledValue>) => void;
-    /** The users this scope reaches are listed, usually the current domain (ADR 0011). */
+    /** The users this scope reaches are listed, usually the current domain (ADR 0012). */
     scope: UserScope;
     filter?: BAIScopedUserSelectFilter;
     excludeInactive?: boolean;
