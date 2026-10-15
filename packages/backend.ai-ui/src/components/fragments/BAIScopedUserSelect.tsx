@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- BAIScopedUserSelect — user picker over `scopedUsersV2` (ADR 0011), built on
+ BAIScopedUserSelect — user picker over `scopedUsersV2` (ADR 0012), built on
  `BAIComplexSelect`: offset pagination with scroll-driven `loadNext`,
  server-side search, and a plain-key (`string` / `string[]`) value with
  label-in-value kept inside the wrapper. The caller passes the `scope`.
@@ -59,7 +59,7 @@ export interface BAIScopedUserSelectProps extends Omit<
     value: string | Array<string> | undefined,
     option?: BAILabeledValue | Array<BAILabeledValue>,
   ) => void;
-  /** The users this scope reaches are listed, usually the current domain (ADR 0011). */
+  /** The users this scope reaches are listed, usually the current domain (ADR 0012). */
   scope: UserScope;
   filter?: BAIScopedUserSelectFilter;
   excludeInactive?: boolean;
