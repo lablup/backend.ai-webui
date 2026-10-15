@@ -146,6 +146,34 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "數量"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "新增標籤"
+  },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "編輯標籤"
+  },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "新增標籤",
+    "AddLabelsToItems": "為 {{count}} 個項目新增標籤",
+    "BulkDescription": "以下標籤將新增至所有選取的項目。已有相同鍵的項目會更新其值，其他標籤保持不變。",
+    "EditLabels": "編輯標籤",
+    "Error": "錯誤",
+    "Key": "鍵",
+    "KeyMustBeUnique": "每個鍵只能使用一次。",
+    "KeyRequired": "請輸入鍵。",
+    "Label": "標籤",
+    "LabelsSaved": "標籤已儲存。",
+    "RemoveLabel": "刪除標籤",
+    "Save": "儲存",
+    "SomeLabelsFailed": "{{count}} 項標籤變更失敗",
+    "Target": "對象",
+    "TooLong": "最多輸入 {{max}} 個字元。",
+    "Value": "值",
+    "ValueRequired": "請輸入值。"
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "標籤"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "自動重新整理",
     "EveryHours": "{{count}}小時",

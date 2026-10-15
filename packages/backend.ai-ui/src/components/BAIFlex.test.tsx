@@ -20,13 +20,15 @@ const astryxSpacing = (() => {
     'utf8',
   );
   const vars = new Map<string, number>();
-  for (const [, name, value] of css.matchAll(
-    /(--spacing-[\d-]+):\s*([\d.]+)px/g,
+  // Astryx 0.7 declares spacing in rem; the browser's root is 16px.
+  for (const [, name, value, unit] of css.matchAll(
+    /(--spacing-[\d-]+):\s*([\d.]+)(px|rem)/g,
   )) {
-    if (vars.has(name) && vars.get(name) !== Number(value)) {
+    const px = unit === 'rem' ? Number(value) * 16 : Number(value);
+    if (vars.has(name) && vars.get(name) !== px) {
       throw new Error(`${name} is declared with two values`);
     }
-    vars.set(name, Number(value));
+    vars.set(name, px);
   }
   return vars;
 })();

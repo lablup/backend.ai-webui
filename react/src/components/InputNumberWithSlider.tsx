@@ -261,7 +261,7 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
               }
             }}
             width="100%"
-            style={inputNumberProps?.style}
+            controlStyle={inputNumberProps?.style}
           />
           {inputNumberProps?.addonAfter}
         </InputGroup>

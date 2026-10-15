@@ -109,10 +109,12 @@ const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
     >
       <BAIFlex direction="column" align="stretch" gap="md">
         <Banner
+          role="status"
           status="info"
           title={<Trans i18nKey="session.SFTPDescription" />}
         />
         <Banner
+          role="alert"
           status="warning"
           title={
             <>

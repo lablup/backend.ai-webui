@@ -4,15 +4,21 @@
 // and write the pick into the git-ignored env files.
 // Conventions: DEV_ENVIRONMENT.md ("Dev servers and test accounts").
 import {
+  GATE_SCAN_DIRS,
   PROBE_STALE_MINUTES,
   allSettings,
   ambiguityNote,
+  compatReport,
   downWarning,
   e2eFallbackWarning,
   findServer,
+  findVersionGates,
   formatCatalog,
+  formatCompatReport,
   formatConfigLine,
   formatSettingValue,
+  isGateAtOrBelowFloor,
+  isGateScanFile,
   isGeneratedConfig,
   keptPasswordEmails,
   loginPrefillVars,
@@ -22,12 +28,14 @@ import {
   playwrightVars,
   redactCatalog,
   renderConfigToml,
+  resolveCompatBranch,
   selectAccount,
   serverHealth,
   setTomlValue,
   upsertEnv,
 } from "./dev-env-lib.mjs";
 import dotenv from "dotenv";
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -36,7 +44,11 @@ import { fileURLToPath } from "node:url";
 const REPO_ROOT =
   process.env.WEBUI_DEV_ENV_ROOT ??
   path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const FETCH_TIMEOUT_MS = 10_000;
+// verify.sh's report lane shortens this so a board behind a VPN never holds it up.
+const FETCH_TIMEOUT_MS =
+  Number(process.env.WEBUI_DEV_ENV_FETCH_TIMEOUT_MS) > 0
+    ? Number(process.env.WEBUI_DEV_ENV_FETCH_TIMEOUT_MS)
+    : 10_000;
 
 const USAGE = `Usage: pnpm run dev-env <command>
 
@@ -52,7 +64,16 @@ const USAGE = `Usage: pnpm run dev-env <command>
                              is a role or an email, default "user"),
                              e2e/envs/.env.playwright and config.toml (the sample
                              plus the server's probed switches; --set overrides
-                             one, e.g. --set resources.openPortToPublic=true)`;
+                             one, e.g. --set resources.openPortToPublic=true)
+  compat [--branch <name>] [--json]
+                             The manager compatibility policy for this branch
+                             (a release branch "X.Y" reads its own entry, any
+                             other branch reads "main"): the supported floor
+                             line, every manager line from it up to the
+                             branch's own line with the catalog servers on
+                             each, and the version gates in application code
+                             at or below the floor — deletable per ADR 0010.
+                             Reports only; exit 0 even without a catalog`;
 
 class UserError extends Error {}
 
@@ -158,6 +179,107 @@ async function status() {
     `probe: ${health.live} live, ${health.down} down, ${health.unknown} unknown ` +
       `(never probed, or not in the last ${PROBE_STALE_MINUTES} min)`,
   );
+  const branches = Object.entries(catalog.policy?.webui.branches ?? {});
+  console.log(
+    catalog.policy
+      ? `policy: ${branches.map(([name, b]) => `${name} floor ${b.minManagerLine}`).join("; ") || "no branches"}`
+      : "policy: none (the board predates the compatibility policy)",
+  );
+  for (const warning of catalog.warnings) console.log(`warning: ${warning}`);
+}
+
+/** The checked-out branch, or null outside a git checkout (detached HEAD reads as `HEAD`). */
+function gitBranch() {
+  try {
+    const name = execFileSync("git", ["rev-parse", "--abbrev-ref", "HEAD"], {
+      cwd: REPO_ROOT,
+      stdio: ["ignore", "pipe", "ignore"],
+      encoding: "utf8",
+    }).trim();
+    return name === "" || name === "HEAD" ? null : name;
+  } catch {
+    return null;
+  }
+}
+
+/** Every version gate under GATE_SCAN_DIRS at or below `floorLine`, as `[{ file, line, kind, versions }]`. */
+function gatesAtOrBelow(floorLine) {
+  const found = [];
+  const walk = (dir) => {
+    let entries;
+    try {
+      entries = fs.readdirSync(path.join(REPO_ROOT, dir), { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const entry of entries) {
+      const relative = `${dir}/${entry.name}`;
+      if (entry.isDirectory()) {
+        if (entry.name !== "__generated__" && entry.name !== "node_modules") walk(relative);
+      } else if (entry.isFile() && isGateScanFile(relative)) {
+        const source = fs.readFileSync(path.join(REPO_ROOT, relative), "utf8");
+        for (const gate of findVersionGates(source)) {
+          if (isGateAtOrBelowFloor(gate, floorLine)) {
+            found.push({ file: relative, line: gate.line, kind: gate.kind, versions: gate.versions });
+          }
+        }
+      }
+    }
+  };
+  for (const dir of GATE_SCAN_DIRS) walk(dir);
+  return found.sort((a, b) => a.file.localeCompare(b.file) || a.line - b.line);
+}
+
+/**
+ * Report-only: a missing catalog, an unreachable board or a board without
+ * `policy` is one notice and exit 0, so verify.sh's lane never fails on it.
+ */
+async function compat({ branch: branchFlag, json }) {
+  const detected = gitBranch();
+  const branchName = resolveCompatBranch(branchFlag ?? detected);
+  const unavailable = (reason) => {
+    if (json) {
+      console.log(JSON.stringify({ available: false, branch: branchName, gitBranch: detected, reason }, null, 2));
+    } else {
+      console.log(`compat: no policy to read — ${reason}`);
+    }
+  };
+  let source;
+  let catalog;
+  try {
+    source = catalogSource();
+    catalog = await loadCatalog(source);
+  } catch (error) {
+    if (!(error instanceof UserError)) throw error;
+    return unavailable(error.message.split("\n")[0]);
+  }
+  if (!catalog.policy) {
+    return unavailable(`${source.label} has no "policy" (the board predates the compatibility policy)`);
+  }
+  const report = compatReport(catalog, branchName);
+  const gates =
+    report.maintained && report.gateFloorLine !== null
+      ? gatesAtOrBelow(report.gateFloorLine)
+      : [];
+  if (json) {
+    console.log(
+      JSON.stringify(
+        {
+          available: true,
+          gitBranch: detected,
+          policyUpdatedAt: catalog.policy.updatedAt,
+          upstream: catalog.upstream,
+          ...report,
+          gates,
+          warnings: catalog.warnings,
+        },
+        null,
+        2,
+      ),
+    );
+    return;
+  }
+  console.log(formatCompatReport(report, gates, { gitBranch: detected }));
   for (const warning of catalog.warnings) console.log(`warning: ${warning}`);
 }
 
@@ -327,14 +449,26 @@ const COMMAND_FLAGS = {
   config: ["--all", "--json"],
   get: ["--json"],
   use: ["--no-password", "--set"],
+  compat: ["--branch", "--json"],
 };
 
 async function main() {
   const [command, ...argv] = process.argv.slice(2);
-  // `--set <key>=<value>` is the one option with an argument: collect its pairs first.
+  // `--set <key>=<value>` and `--branch <name>` take an argument: collect those first.
   const rest = [];
   const overrides = [];
+  let branch;
   for (let i = 0; i < argv.length; i += 1) {
+    const inlineBranch = /^--branch=(.*)$/s.exec(argv[i]);
+    if (argv[i] === "--branch" || inlineBranch) {
+      branch = inlineBranch ? inlineBranch[1] : argv[++i];
+      // `--branch --json` is a missing name, not a branch called "--json".
+      if (branch === undefined || branch === "" || branch.startsWith("--")) {
+        throw new UserError(`--branch needs a branch name\n\n${USAGE}`);
+      }
+      rest.push("--branch");
+      continue;
+    }
     const inline = /^--set=(.*)$/s.exec(argv[i]);
     if (argv[i] !== "--set" && !inline) {
       rest.push(argv[i]);
@@ -412,6 +546,10 @@ async function main() {
         password: !flags.has("--no-password"),
         overrides,
       });
+    }
+    case "compat": {
+      if (positional.length !== 0) throw new UserError(USAGE);
+      return compat({ branch, json });
     }
     case undefined:
     case "help":

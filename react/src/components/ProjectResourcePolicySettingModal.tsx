@@ -212,6 +212,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
       {...baiModalProps}
     >
       <Banner
+        role="alert"
         title={t('storageHost.BeCarefulToSetProjectResourcePolicy')}
         status="warning"
         style={{ marginBottom: token('--spacing-5') }}

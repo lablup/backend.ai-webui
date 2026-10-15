@@ -3,6 +3,7 @@ import { createAdminApiContext } from '../utils/admin-api';
 import { FolderExplorerModal } from '../utils/classes/vfolder/FolderExplorerModal';
 import {
   clearAllFilters,
+  getPowerSearchInput,
   loginAsAdmin,
   navigateTo,
   selectPropertyFilter,
@@ -17,7 +18,7 @@ import { test, expect, Page, APIRequestContext } from '@playwright/test';
 // reset the explorer state this spec checks.
 const openFolderExplorer = async (page: Page, folderName: string) => {
   await clearAllFilters(page);
-  await page.getByTestId('vfolder-filter').getByRole('combobox').first().blur();
+  await getPowerSearchInput(page).blur();
   await selectPropertyFilter(page, 'Name', folderName);
   const folderLink = page.getByRole('link', { name: folderName }).first();
   await expect(folderLink).toBeVisible({ timeout: 15000 });

@@ -144,6 +144,7 @@ const ManageImageResourceLimitModal: React.FC<
           BAIFlex column gap. */}
       <BAIFlex direction="column" align="stretch" gap="md">
         <Banner
+          role="status"
           status="info"
           title={t('environment.ResourceLimitAppliesToNewSessionsOnly')}
         />

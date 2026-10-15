@@ -494,12 +494,13 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
         'reservoir',
         'admin-operations',
       ),
-    createAdminMenuItem(
-      t('webui.menu.Scheduler'),
-      <ClipboardClock style={{ color: token('--color-info') }} />,
-      'scheduler',
-      'admin-operations',
-    ),
+    isSuperAdmin &&
+      createAdminMenuItem(
+        t('webui.menu.Scheduler'),
+        <ClipboardClock style={{ color: token('--color-info') }} />,
+        'scheduler',
+        'admin-operations',
+      ),
     createAdminMenuItem(
       t('webui.menu.ResourcePolicies'),
       <FileUser style={{ color: token('--color-info') }} size="1em" />,
