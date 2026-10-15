@@ -205,23 +205,40 @@ export async function skipUnlessAllowedVFolderType(
 /**
  * Returns the entity types the manager accepts labels for — the same
  * `entityTypes` query `useLabelableEntityTypes` reads to decide whether the
- * label UI renders. Empty when the manager does not expose the field.
+ * label UI renders. Empty only when the schema has no `entityTypes` field;
+ * any other failure (auth, HTTP, resolver) is thrown so it is not mistaken
+ * for an unsupported manager.
  */
 export async function listLabelableEntityTypes(page: Page): Promise<string[]> {
   await waitForBackendAIClient(page);
-  return page.evaluate(async () => {
+  const result = await page.evaluate(async () => {
     try {
       const data = await (globalThis as any).backendaiclient?.query(
         'query { entityTypes { name } }',
         {},
       );
-      return (data?.entityTypes ?? []).map(
-        (entityType: { name: string }) => entityType.name,
+      return {
+        entityTypes: (data?.entityTypes ?? []).map(
+          (entityType: { name: string }) => entityType.name,
+        ) as string[],
+      };
+    } catch (error: any) {
+      const messages: string[] = (error?.response?.errors ?? []).map(
+        (e: { message?: string }) => e?.message ?? '',
       );
-    } catch {
-      return [];
+      return {
+        missingField:
+          messages.length > 0 &&
+          messages.every((m) =>
+            /Cannot query field ['"]entityTypes['"]/.test(m),
+          ),
+        message: String(error?.message ?? error?.description ?? error),
+      };
     }
   });
+  if ('entityTypes' in result) return result.entityTypes ?? [];
+  if (result.missingField) return [];
+  throw new Error(`entityTypes capability query failed: ${result.message}`);
 }
 
 /**
