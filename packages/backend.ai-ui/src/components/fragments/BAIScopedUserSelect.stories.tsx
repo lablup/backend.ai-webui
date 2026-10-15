@@ -22,7 +22,7 @@ const meta: Meta<typeof BAIScopedUserSelect> = {
     docs: {
       description: {
         component: `
-**BAIScopedUserSelect** — the user picker for admin and project-admin forms (ADR 0011). Built on \`BAIComplexSelect\`, paged through \`scopedUsersV2\`.
+**BAIScopedUserSelect** — the user picker for admin and project-admin forms (ADR 0012). Built on \`BAIComplexSelect\`, paged through \`scopedUsersV2\`.
 
 - \`scope\` (required): the \`UserScope\` input. Admin pages pass the current domain from \`useCurrentDomainScope()\`; a project-admin page passes \`{ project: [{ value: projectId }] }\`.
 - \`valuePropName\`: \`'email'\` (default) or \`'id'\` — which field is the plain-key value. Only \`'id'\` runs the \`uuid in\` label-resolution query; with emails the key already is the label.
