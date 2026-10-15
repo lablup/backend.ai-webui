@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a118ed5d7aa9d84d77cfc9316dee3fc0>>
+ * @generated SignedSource<<603f5fd5ca3ba8eff10f1f47eba0922e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,10 +9,13 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
+export type AuditLogActionKind = "BULK" | "GLOBAL" | "LOOKUP" | "MEMBERSHIP" | "RELATION" | "SCOPE" | "SINGLE_ENTITY" | "%future added value";
 export type AuditLogStatus = "DENIED" | "ERROR" | "RUNNING" | "SUCCESS" | "UNKNOWN" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type BAIAuditLogNodesFragment$data = ReadonlyArray<{
   readonly actionId: string;
+  readonly actionKind: AuditLogActionKind | null | undefined;
+  readonly actionName: string;
   readonly clientIp: string | null | undefined;
   readonly createdAt: string;
   readonly description: string;
@@ -59,6 +62,20 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "createdAt",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "actionName",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "actionKind",
       "storageKey": null
     },
     {
@@ -167,6 +184,6 @@ return {
 };
 })();
 
-(node as any).hash = "58223a12073484572c69f4644340b796";
+(node as any).hash = "8bea9f6eb3814f14ab6d858be8e79a11";
 
 export default node;

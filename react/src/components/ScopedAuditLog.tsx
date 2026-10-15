@@ -11,6 +11,7 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   filterOutNullAndUndefined,
+  useAuditLogActionKindOptions,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -84,6 +85,7 @@ const ScopedAuditLog = ({
   'use memo';
   const { t } = useTranslation();
   const [fetchKey, updateFetchKey] = useFetchKey();
+  const actionKindOptions = useAuditLogActionKindOptions();
 
   const filter = queryRef.variables.filter ?? undefined;
   const orderBy = queryRef.variables.orderBy?.[0];
@@ -125,6 +127,19 @@ const ScopedAuditLog = ({
                 { label: 'RUNNING', value: 'RUNNING' },
                 { label: 'UNKNOWN', value: 'UNKNOWN' },
               ],
+            },
+            {
+              key: 'actionName',
+              propertyLabel: t('auditLog.Action'),
+              type: 'string',
+              fixedOperator: 'contains',
+            },
+            {
+              key: 'actionKind',
+              propertyLabel: t('auditLog.ActionKind'),
+              type: 'enum',
+              strictSelection: true,
+              options: actionKindOptions,
             },
             {
               key: 'operation',
