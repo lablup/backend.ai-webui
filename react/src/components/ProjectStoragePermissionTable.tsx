@@ -162,7 +162,7 @@ const ProjectStoragePermissionTable: React.FC<
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
 
-  // The current domain's projects (ADR 0011); the domain fragment above is that domain.
+  // The current domain's projects (ADR 0012); the domain fragment above is that domain.
   const { scopedProjectsV2 } =
     useLazyLoadQuery<ProjectStoragePermissionTableQueryType>(
       graphql`

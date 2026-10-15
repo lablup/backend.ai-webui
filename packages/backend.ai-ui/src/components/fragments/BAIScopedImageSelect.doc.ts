@@ -67,7 +67,7 @@ export const docs = {
       name: 'scope',
       type: 'ImageSearchScope',
       description:
-        'Required. The `scopedImagesV2` scope whose images are listed and resolved (ADR 0011), for example `{ ...domainScope, public: true }` for the current domain plus public registries, or `{ project: [{ value: projectId }], public: true }` for one project.',
+        'Required. The `scopedImagesV2` scope whose images are listed and resolved (ADR 0012), for example `{ ...domainScope, public: true }` for the current domain plus public registries, or `{ project: [{ value: projectId }], public: true }` for one project.',
     },
     {
       name: 'filter',
