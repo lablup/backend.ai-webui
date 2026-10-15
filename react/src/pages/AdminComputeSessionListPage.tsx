@@ -688,7 +688,11 @@ const AdminComputeSessionListPage = () => {
             }
           />
         ) : (
-          <Banner status="error" title={t('error.FailedToLoadTableData')} />
+          <Banner
+            role="alert"
+            status="error"
+            title={t('error.FailedToLoadTableData')}
+          />
         )}
       </BAIFlex>
       <TerminateSessionModal

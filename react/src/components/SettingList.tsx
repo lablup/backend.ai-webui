@@ -413,7 +413,11 @@ const SettingList: React.FC<SettingPageProps> = ({
         cancelText={t('button.Cancel')}
         onCancel={() => setIsOpenResetChangesModal()}
       >
-        <Banner status="warning" title={t('dialog.warning.CannotBeUndone')} />
+        <Banner
+          role="alert"
+          status="warning"
+          title={t('dialog.warning.CannotBeUndone')}
+        />
       </BAIModal>
     </>
   );

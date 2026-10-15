@@ -249,6 +249,7 @@ const ImportArtifactRevisionToFolderModal = ({
             {/* antd `Alert` → `Banner` (MAPPING §4): `type` → `status`,
                 `showIcon` dropped (Banner always renders its status icon). */}
             <Banner
+              role="alert"
               status="warning"
               title={t('importArtifactRevisionToFolderModal.OverwriteWarning')}
               style={{ marginBottom: token('--spacing-5') }}

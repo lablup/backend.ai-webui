@@ -174,7 +174,7 @@ const DeploymentTokenSelectWithQuery: React.FC<
         // Fixed width so the token field looks the same across panel sizes
         // instead of following CustomModelForm's responsive 100%/200px width,
         // while still shrinking to fit narrow screens (maxWidth + minWidth 0).
-        style={{ ...style, minWidth: 0 }}
+        controlStyle={{ ...style, minWidth: 0 }}
         width={220}
         options={selectOptions}
         renderOption={renderTokenOption}
@@ -219,7 +219,7 @@ const DeploymentTokenSelect: React.FC<DeploymentTokenSelectProps> = ({
         isLabelHidden
         value={controllableValue ?? ''}
         onChange={(v) => setControllableValue(v)}
-        style={props.style}
+        controlStyle={props.style}
         isDisabled={props.disabled}
       />
     );

@@ -1,4 +1,5 @@
 import { App } from '../../app-shim';
+import { cssLengthToPx } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { useEventNotStable } from '../../hooks/useEventNotStable';
 import BAIButton from '../BAIButton';
@@ -278,7 +279,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
       );
       const titleIconWidth = titleIcon ? titleIcon.clientWidth : 0;
       const minTitleReserve =
-        titleIconWidth + parseFloat(token('--spacing-1')) + minTitleWidth;
+        titleIconWidth + cssLengthToPx(token('--spacing-1')) + minTitleWidth;
       // Account for the more button which is always shown when menuOnlyActions exist
       const moreButtonReserve =
         menuOnlyActions.length > 0 ? MORE_BUTTON_WIDTH + ACTIONS_GAP : 0;

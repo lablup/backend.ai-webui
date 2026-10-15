@@ -3,7 +3,7 @@
 Project-specific guidance for AI coding agents.
 
 <!-- UI-COMMON:START -->
-@lablup/ui-common v0.2.0-alpha.18 · Astryx v0.6.5 · 166 components
+@lablup/ui-common v0.2.0-alpha.19 · Astryx v0.7.0 · 168 components
 CLI: run every command as `pnpm exec ui-common <cmd>` (shown below as `ui-common ...`).
 
 SETUP (once, first in your entry stylesheet) — without these, components render unstyled:
@@ -13,30 +13,28 @@ SETUP (once, first in your entry stylesheet) — without these, components rende
   @import "@lablup/ui-common/theme/lablup/theme.css";
   @import "@lablup/ui-common/ui-common.css";
 
-WORKFLOW — start every page from a template. Never lay out a page from scratch:
-1. `ui-common build "<idea>"` — START HERE: names the [page] template to start from (always one: the closest match, or the app shell), two other templates, and the [block]s + [component]s for parts it lacks. No args = full playbook.
-2. `ui-common template <name> <path>` — scaffold that template into your project. Keep its frame, gap and padding; replace its data, copy and sections; delete sections you do not need.
-3. `ui-common template <Block>` for a part the template lacks; `ui-common component <Name>` for props + examples before you use or change a component.
-Changing a page you already have? Keep it: skip step 2 and add blocks and components inside its sections.
+WORKFLOW — start every page from a template, never from scratch:
+1. `ui-common build "<idea>"` — names the template to scaffold from and the parts it lacks.
+2. `ui-common template <name> <path>` — scaffold it; keep its frame, gap and padding; replace the content.
+3. `ui-common template <Block>` for parts it lacks; `ui-common component <Name>` to read props before using one.
+Changing an existing page? Keep it: skip step 2 and add blocks/components inside its sections.
 
 RULES:
-- No <div> — components do all layout/spacing, page frame included.
-- Frame first: the template you scaffold sets the page frame. Read `ui-common docs layout` before you change it — region widths, breakpoint behavior.
-- Dense data = rows (Table, List/Item), never Card-wrapped list items; Card is for standalone widgets. Status = StatusDot/Token; Badge = counts only.
-- Custom styling: component props first; else the xstyle prop / StyleX tokens (@lablup/ui-common/theme/tokens.stylex). No raw hex/px.
-- Tokens for every value (`ui-common docs tokens`). Brand/accent belongs in the theme (`ui-common theme list` / `theme add <slug>`, or `ui-common theme template` for a custom one) — never override --color-* in :root.
-- SELF-CHECK before you finish: re-read the file and replace any className=, style={{…}}, raw <div>/<span> layout, imported .css/@apply, or hardcoded #hex/px with the component or the xstyle prop + a token. Confirm the page kept its template's frame, gap and padding. If unsure a component/prop exists, run `ui-common component <Name>` / `ui-common search "<thing>"`; don't hand-roll CSS.
+- No <div> — components handle all layout and spacing.
+- Read `ui-common docs layout` before changing a template's frame.
+- Dense data = rows (Table, List/Item), not Card-wrapped lists. Badge = counts only.
+- Style with component props first, then the xstyle prop / StyleX tokens. No raw hex/px.
+- Palettes and custom colors go through the theme, never :root overrides. Run `ui-common theme add <slug>` to import; `theme eject <slug>` only forks source. See `ui-common docs theme`.
+- SELF-CHECK: re-read the file; replace any className=, style={{…}}, raw <div>/<span>, imported .css/@apply, or hardcoded #hex/px with the component or the xstyle prop + a token.
 
-MORE CLI:
-  search "<query>"   find any component / hook / doc / template / block
-  component --list   166 components by category
-  template --list    page + block recipes
-  docs <topic>       authoring, browser-support, color, elevation, getting-started, icons, illustrations, internationalization, layout, migration, motion, principles, shape, spacing, styling-libraries, styling, theme, tokens, typography, working-with-ai, backend-ai-ui, ui-common
-  docs cli           commands, API reference, integration authoring (one level at a time)
-  swizzle <Name>     eject component source for deep customization
-  upgrade --from <old version> --apply   run after any Astryx or integration dependency bump
+`ui-common help` lists every command. Key ones beyond the workflow:
+  search "<query>"   find any component / hook / doc / template
+  discover <words>   integrations you could add
+  docs <topic>       getting-started, principles, tokens, theme … (`ui-common docs` lists all)
+  docs cli           commands, API reference, integration authoring
+  upgrade --from <old version> --apply   run after a dependency bump
 
-UI-COMMON (@lablup/ui-common v0.2.0-alpha.18 wraps Astryx v0.6.5):
+UI-COMMON (@lablup/ui-common v0.2.0-alpha.19 wraps Astryx v0.7.0):
 - Import only from @lablup/ui-common: the root, or the same subpath Astryx uses (@lablup/ui-common/Button, /theme/tokens.stylex, /lab). Never import @astryxdesign/* directly.
 - Layers: declare `@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;` once, first, in the entry stylesheet. ui-common's styles sit in `ui-common`; yours go in `components` / `utilities`.
 - Use AlertModal (@lablup/ui-common/AlertModal), not AlertDialog: ui-common hides AlertDialog.

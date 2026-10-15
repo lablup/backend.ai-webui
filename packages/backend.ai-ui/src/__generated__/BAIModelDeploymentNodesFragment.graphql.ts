@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<53add2790bbbfe9998d36fc594097061>>
+ * @generated SignedSource<<cf059b72311515e83a439a5e5a315212>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -28,6 +28,9 @@ export type BAIModelDeploymentNodesFragment$data = ReadonlyArray<{
     readonly type: DeploymentStrategyType;
   };
   readonly entityId: string;
+  readonly entityLabels: {
+    readonly " $fragmentSpreads": FragmentRefs<"BAIEntityLabelSettingModalFragment" | "BAIEntityLabelTokensFragment">;
+  } | null | undefined;
   readonly id: string;
   readonly metadata: {
     readonly createdAt: string;
@@ -333,6 +336,33 @@ return {
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": [
+        {
+          "kind": "Literal",
+          "name": "limit",
+          "value": 100
+        }
+      ],
+      "concreteType": "EntityLabelConnection",
+      "kind": "LinkedField",
+      "name": "entityLabels",
+      "plural": false,
+      "selections": [
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "BAIEntityLabelTokensFragment"
+        },
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "BAIEntityLabelSettingModalFragment"
+        }
+      ],
+      "storageKey": "entityLabels(limit:100)"
+    },
+    {
       "args": null,
       "kind": "FragmentSpread",
       "name": "BAIDeploymentOwnerInfo_deployment"
@@ -343,6 +373,6 @@ return {
 };
 })();
 
-(node as any).hash = "757cbaf1bdf1655d02c427d5cb4cc0bc";
+(node as any).hash = "be3fa722d198ff1854ec34ab5a499dc6";
 
 export default node;

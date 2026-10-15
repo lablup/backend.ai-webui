@@ -69,6 +69,7 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
 
   return (
     <Banner
+      role="alert"
       status="warning"
       title={t('fairShare.UserNotAllowedInResourceGroup', {
         project: projectV2?.basicInfo?.name,

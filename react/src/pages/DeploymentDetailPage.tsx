@@ -335,12 +335,20 @@ const DeploymentDetailPage: React.FC = () => {
   const cannotUseModelServiceAlert = () => {
     if (hasNoDesiredReplicas) {
       return (
-        <Banner status="warning" title={t('deployment.NoDesiredReplicas')} />
+        <Banner
+          role="alert"
+          status="warning"
+          title={t('deployment.NoDesiredReplicas')}
+        />
       );
     }
     if (hasNoRunningReplicas) {
       return (
-        <Banner status="warning" title={t('deployment.NoRunningReplicas')} />
+        <Banner
+          role="alert"
+          status="warning"
+          title={t('deployment.NoRunningReplicas')}
+        />
       );
     }
   };
@@ -349,6 +357,7 @@ const DeploymentDetailPage: React.FC = () => {
     <BAIFlex direction="column" align="stretch" gap="md">
       {isProjectMismatch && deploymentProjectId && (
         <Banner
+          role="alert"
           status="warning"
           title={t('deployment.NotInProject')}
           endContent={
@@ -365,6 +374,7 @@ const DeploymentDetailPage: React.FC = () => {
         cannotUseModelServiceAlert()}
       {isDeploymentReady && !hasNoRevision && !hasNoActiveReplicas && (
         <Banner
+          role="status"
           status="success"
           title={t('deployment.DeploymentReady')}
           endContent={
@@ -394,6 +404,7 @@ const DeploymentDetailPage: React.FC = () => {
         !isProjectMismatch &&
         !isDeploymentInStoppedCategory(deploymentStatus) && (
           <Banner
+            role="alert"
             status="warning"
             title={t('deployment.NoCurrentRevisionDeployed')}
             endContent={
@@ -414,6 +425,7 @@ const DeploymentDetailPage: React.FC = () => {
         )}
       {isPrivateDeployment && (
         <Banner
+          role="status"
           status="info"
           title={t('deployment.PrivateDeploymentAlertTitle')}
           endContent={
