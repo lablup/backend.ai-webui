@@ -31,7 +31,7 @@ import {
   BAIModalProps,
   BAISelect,
   BAIStorageHostSelect,
-  BAIUserSelect,
+  BAIAdminUserV2Select,
   BAIVFolderSelect,
   useBAILogger,
 } from 'backend.ai-ui';
@@ -203,7 +203,7 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   if (scopeType === 'USER') {
     return (
       <Suspense fallback={fallback}>
-        <BAIUserSelect valuePropName="id" {...branchProps} />
+        <BAIAdminUserV2Select valuePropName="id" {...branchProps} />
       </Suspense>
     );
   }
