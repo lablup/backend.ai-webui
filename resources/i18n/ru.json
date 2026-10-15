@@ -345,6 +345,8 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "Действие",
+    "ActionKind": "Вид действия",
     "AuditLog": "Журнал аудита",
     "Operation": "Операция",
     "Status": "Статус",

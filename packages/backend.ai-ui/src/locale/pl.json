@@ -89,8 +89,19 @@
     "Updated": "Zaktualizowane",
     "Version": "Wersja"
   },
+  "comp:BAIAuditLogActionKindToken": {
+    "Bulk": "Zbiorcza",
+    "Global": "Globalna",
+    "Lookup": "Wyszukiwanie",
+    "Membership": "Członkostwo",
+    "Relation": "Relacja",
+    "Scope": "Zakres",
+    "SingleEntity": "Pojedyncza encja"
+  },
   "comp:BAIAuditLogNodes": {
+    "Action": "Akcja",
     "ActionId": "ID akcji",
+    "ActionKind": "Rodzaj akcji",
     "Actor": "Aktor",
     "ClientIp": "IP klienta",
     "Description": "Opis",

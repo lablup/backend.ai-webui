@@ -89,8 +89,19 @@
     "Updated": "Ενημερωμένος",
     "Version": "Εκδοχή"
   },
+  "comp:BAIAuditLogActionKindToken": {
+    "Bulk": "Μαζική",
+    "Global": "Καθολική",
+    "Lookup": "Αναζήτηση",
+    "Membership": "Συμμετοχή",
+    "Relation": "Συσχέτιση",
+    "Scope": "Εύρος",
+    "SingleEntity": "Μεμονωμένη οντότητα"
+  },
   "comp:BAIAuditLogNodes": {
+    "Action": "Ενέργεια",
     "ActionId": "ID ενέργειας",
+    "ActionKind": "Είδος ενέργειας",
     "Actor": "Εκτελεστής",
     "ClientIp": "IP πελάτη",
     "Description": "Περιγραφή",

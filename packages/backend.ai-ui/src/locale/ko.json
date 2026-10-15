@@ -89,8 +89,19 @@
     "Updated": "업데이트",
     "Version": "버전"
   },
+  "comp:BAIAuditLogActionKindToken": {
+    "Bulk": "일괄",
+    "Global": "전역",
+    "Lookup": "조회",
+    "Membership": "멤버십",
+    "Relation": "관계",
+    "Scope": "범위",
+    "SingleEntity": "단일 엔티티"
+  },
   "comp:BAIAuditLogNodes": {
+    "Action": "액션",
     "ActionId": "액션 ID",
+    "ActionKind": "액션 유형",
     "Actor": "수행자",
     "ClientIp": "클라이언트 IP",
     "Description": "설명",

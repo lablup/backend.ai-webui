@@ -345,6 +345,8 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "ชื่อการดำเนินการ",
+    "ActionKind": "ชนิดการดำเนินการ",
     "AuditLog": "บันทึกการตรวจสอบ",
     "Operation": "การดำเนินการ",
     "Status": "สถานะ",

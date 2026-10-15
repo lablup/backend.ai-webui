@@ -89,8 +89,19 @@
     "Updated": "Шинэчилсэн цаг нь",
     "Version": "Таамаглал"
   },
+  "comp:BAIAuditLogActionKindToken": {
+    "Bulk": "Бөөнөөр",
+    "Global": "Глобал",
+    "Lookup": "Хайлт",
+    "Membership": "Гишүүнчлэл",
+    "Relation": "Холбоо",
+    "Scope": "Хүрээ",
+    "SingleEntity": "Нэг объект"
+  },
   "comp:BAIAuditLogNodes": {
+    "Action": "Үйл",
     "ActionId": "Үйлийн ID",
+    "ActionKind": "Үйлийн төрөл",
     "Actor": "Гүйцэтгэгч",
     "ClientIp": "Клиентийн IP",
     "Description": "Тайлбар",

@@ -345,6 +345,8 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "Aktion",
+    "ActionKind": "Aktionsart",
     "AuditLog": "Audit-Protokoll",
     "Operation": "Vorgang",
     "Status": "Status",

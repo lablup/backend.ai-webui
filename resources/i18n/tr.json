@@ -345,6 +345,8 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "Eylem",
+    "ActionKind": "Eylem Türü",
     "AuditLog": "Denetim Günlüğü",
     "Operation": "İşlem",
     "Status": "Durum",

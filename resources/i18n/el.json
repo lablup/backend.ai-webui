@@ -345,6 +345,8 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "Ενέργεια",
+    "ActionKind": "Είδος ενέργειας",
     "AuditLog": "Καταγραφή ελέγχου",
     "Operation": "Λειτουργία",
     "Status": "Κατάσταση",

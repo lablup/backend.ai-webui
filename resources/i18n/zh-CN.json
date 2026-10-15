@@ -345,6 +345,8 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "操作名称",
+    "ActionKind": "操作类型",
     "AuditLog": "审计日志",
     "Operation": "操作",
     "Status": "状态",

@@ -89,8 +89,19 @@
     "Updated": "更新",
     "Version": "版本"
   },
+  "comp:BAIAuditLogActionKindToken": {
+    "Bulk": "批次",
+    "Global": "全域",
+    "Lookup": "查詢",
+    "Membership": "成員資格",
+    "Relation": "關聯",
+    "Scope": "範圍",
+    "SingleEntity": "單一實體"
+  },
   "comp:BAIAuditLogNodes": {
+    "Action": "操作名稱",
     "ActionId": "操作 ID",
+    "ActionKind": "操作類型",
     "Actor": "執行者",
     "ClientIp": "用戶端 IP",
     "Description": "描述",

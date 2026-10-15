@@ -89,8 +89,19 @@
     "Updated": "Güncellenmiş",
     "Version": "Versiyon"
   },
+  "comp:BAIAuditLogActionKindToken": {
+    "Bulk": "Toplu",
+    "Global": "Genel",
+    "Lookup": "Sorgu",
+    "Membership": "Üyelik",
+    "Relation": "İlişki",
+    "Scope": "Kapsam",
+    "SingleEntity": "Tekil Varlık"
+  },
   "comp:BAIAuditLogNodes": {
+    "Action": "Eylem",
     "ActionId": "Eylem ID",
+    "ActionKind": "Eylem Türü",
     "Actor": "Aktör",
     "ClientIp": "İstemci IP'si",
     "Description": "Açıklama",

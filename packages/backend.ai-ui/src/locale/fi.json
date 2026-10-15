@@ -89,8 +89,19 @@
     "Updated": "Päivitetty",
     "Version": "Versio"
   },
+  "comp:BAIAuditLogActionKindToken": {
+    "Bulk": "Joukko",
+    "Global": "Globaali",
+    "Lookup": "Haku",
+    "Membership": "Jäsenyys",
+    "Relation": "Suhde",
+    "Scope": "Laajuus",
+    "SingleEntity": "Yksittäinen entiteetti"
+  },
   "comp:BAIAuditLogNodes": {
+    "Action": "Toiminnon nimi",
     "ActionId": "Toiminnon ID",
+    "ActionKind": "Toiminnon laji",
     "Actor": "Suorittaja",
     "ClientIp": "Asiakkaan IP",
     "Description": "Kuvaus",

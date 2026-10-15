@@ -345,6 +345,8 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "Hành động",
+    "ActionKind": "Kiểu hành động",
     "AuditLog": "Nhật ký kiểm tra",
     "Operation": "Thao tác",
     "Status": "Trạng thái",

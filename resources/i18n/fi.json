@@ -345,6 +345,8 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "Toiminnon nimi",
+    "ActionKind": "Toiminnon laji",
     "AuditLog": "Tarkastusloki",
     "Operation": "Toiminto",
     "Status": "Tila",

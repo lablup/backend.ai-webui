@@ -89,8 +89,19 @@
     "Updated": "อัปเดต",
     "Version": "รุ่น"
   },
+  "comp:BAIAuditLogActionKindToken": {
+    "Bulk": "แบบกลุ่ม",
+    "Global": "ทั่วทั้งระบบ",
+    "Lookup": "การค้นหา",
+    "Membership": "การเป็นสมาชิก",
+    "Relation": "ความสัมพันธ์",
+    "Scope": "ขอบเขต",
+    "SingleEntity": "เอนทิตีเดียว"
+  },
   "comp:BAIAuditLogNodes": {
+    "Action": "ชื่อการดำเนินการ",
     "ActionId": "รหัสการดำเนินการ",
+    "ActionKind": "ชนิดการดำเนินการ",
     "Actor": "ผู้ดำเนินการ",
     "ClientIp": "IP ของไคลเอ็นต์",
     "Description": "คำอธิบาย",
