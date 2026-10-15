@@ -223,3 +223,8 @@ export declare const DOWNLOAD_PROBE_TIMEOUT_MS = 15000;
  * Rejects with a {@link DownloadFailedError} when the download did not start.
  */
 export declare const initiateDownload: (downloadURL: string, fileName: string) => Promise<void>;
+/**
+ * A CSS length token (`'8px'`, `'0.5rem'`) as a pixel number, for props that
+ * take numbers. Astryx 0.7 declares `--spacing-*` in rem.
+ */
+export declare const cssLengthToPx: (length: string) => number;
