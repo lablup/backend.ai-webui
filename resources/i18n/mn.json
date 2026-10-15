@@ -1070,6 +1070,7 @@
     },
     "invitation": {
       "Accepted": "Хүлээн авсан",
+      "AcceptedShareNotFound": "Таны бүртгэлд энэ хавтасны хүлээн зөвшөөрөгдсөн хуваалцалт олдсонгүй.",
       "FailedToAcceptInvitation": "Урилга хүлээж авч чадсангүй",
       "FailedToDeclineInvitation": "Урилгаас татгалзаж чадсангүй",
       "FolderSharingNotAvailableToUser": "Хүссэн хэрэглэгчдэд хавтас хуваалцах боломжгүй.",

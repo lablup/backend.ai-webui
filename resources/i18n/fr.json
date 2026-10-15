@@ -1070,6 +1070,7 @@
     },
     "invitation": {
       "Accepted": "Acceptée",
+      "AcceptedShareNotFound": "Aucun partage accepté de ce dossier n'a été trouvé pour votre compte.",
       "FailedToAcceptInvitation": "Échec de l'acceptation de l'invitation",
       "FailedToDeclineInvitation": "Échec de la baisse de l'invitation",
       "FolderSharingNotAvailableToUser": "Le partage de dossier n'est pas disponible pour le(s) utilisateur(s) demandé(s) :",
