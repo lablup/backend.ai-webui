@@ -162,8 +162,13 @@ const SettingAtomFamily = atomFamily((param: string) => {
           ? newValueOrUpdater(currentValue)
           : newValueOrUpdater;
 
-      localStorage.setItem(key, settingToRaw(newValue));
       const [namespace, name] = param.split('.', 2);
+      // `undefined` removes the key; writing it would store the string "undefined".
+      if (newValue === undefined) {
+        localStorage.removeItem(key);
+      } else {
+        localStorage.setItem(key, settingToRaw(newValue));
+      }
 
       // only for the reactivity
       const prev = get(settingAtom);
@@ -171,7 +176,11 @@ const SettingAtomFamily = atomFamily((param: string) => {
         ...prev,
         [key]: newValue,
       });
-      backendaiOptions?.set?.(name, newValue, namespace, true);
+      if (newValue === undefined) {
+        backendaiOptions?.delete?.(name, namespace, true);
+      } else {
+        backendaiOptions?.set?.(name, newValue, namespace, true);
+      }
     },
   );
 });
