@@ -1,9 +1,85 @@
+import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
 import { loginAsAdmin } from '../utils/test-util';
 import {
   getNotificationDescriptionBox,
   getNotificationMessageBox,
 } from '../utils/test-util-antd';
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator, type Page } from '@playwright/test';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+
+const ANNOUNCEMENT_TITLE_PREFIX = 'e2e-announcement-';
+
+// The announcement is one per domain, so tests that write it (and their
+// --repeat-each copies on other workers) take turns through a lock directory.
+const ANNOUNCEMENT_LOCK_DIR = path.join(
+  os.tmpdir(),
+  'backend.ai-webui-e2e-domain-announcement.lock',
+);
+const ANNOUNCEMENT_LOCK_STALE_MS = 5 * 60 * 1000;
+
+async function acquireAnnouncementLock() {
+  for (;;) {
+    try {
+      fs.mkdirSync(ANNOUNCEMENT_LOCK_DIR);
+      return;
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error;
+      const ageMs = Date.now() - fs.statSync(ANNOUNCEMENT_LOCK_DIR).mtimeMs;
+      if (ageMs > ANNOUNCEMENT_LOCK_STALE_MS) {
+        fs.rmSync(ANNOUNCEMENT_LOCK_DIR, { recursive: true, force: true });
+      }
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    }
+  }
+}
+
+function releaseAnnouncementLock() {
+  fs.rmSync(ANNOUNCEMENT_LOCK_DIR, { recursive: true, force: true });
+}
+
+async function openAnnouncementEditModal(page: Page): Promise<Locator> {
+  await page
+    .getByTestId('maintenance-announcement')
+    .getByRole('button', { name: 'Edit Announcement' })
+    .click();
+  const modal = page
+    .getByRole('dialog')
+    .filter({ has: page.getByRole('heading', { name: /^Edit Announcement/ }) });
+  // Publish stays disabled until the lazily loaded markdown editor mounts.
+  await expect(
+    modal.getByRole('button', { name: 'Publish', exact: true }),
+  ).toBeEnabled({ timeout: 30 * 1000 });
+  return modal;
+}
+
+function getAnnouncementBanner(page: Page, title: string) {
+  return page.locator('.webui-announcement-banner').filter({ hasText: title });
+}
+
+// Deletes the domain announcement when it is one this spec wrote; an
+// announcement someone else published is left alone.
+async function deleteE2EAnnouncement(page: Page) {
+  await page.goto(new URL('/maintenance', page.url()).toString());
+  const modal = await openAnnouncementEditModal(page);
+  const deleteButton = modal.getByRole('button', { name: 'Delete' });
+  const title = await modal.getByLabel('Title', { exact: true }).inputValue();
+  if (
+    (await deleteButton.isEnabled()) &&
+    title.startsWith(ANNOUNCEMENT_TITLE_PREFIX)
+  ) {
+    await deleteButton.click();
+    const confirm = page
+      .locator('[role=dialog],[role=alertdialog]')
+      .filter({ hasText: 'cannot be undone' });
+    await confirm.getByRole('button', { name: 'Delete' }).click();
+    await expect(page.getByText('Announcement deleted.').first()).toBeVisible();
+    await expect(modal).toBeHidden();
+  } else {
+    await modal.getByRole('button', { name: 'Cancel' }).click();
+  }
+}
 
 test.beforeEach(async ({ page, request }) => {
   await loginAsAdmin(page, request);
@@ -63,6 +139,119 @@ test.describe(
           },
         );
       });
+    });
+  },
+);
+
+test.describe(
+  'System announcement',
+  {
+    tag: [
+      '@regression',
+      '@maintenance',
+      '@functional',
+      '@requires-manager-v26.9',
+    ],
+  },
+  () => {
+    let holdsLock = false;
+
+    test.beforeEach(async ({ page }) => {
+      await skipUnlessManagerVersion(
+        page,
+        '26.9.0',
+        'The announcement lives in the domain app config, which requires manager >= 26.9.0 (FR-3877)',
+      );
+      await acquireAnnouncementLock();
+      holdsLock = true;
+      const modal = await openAnnouncementEditModal(page);
+      const existingTitle = await modal
+        .getByLabel('Title', { exact: true })
+        .inputValue();
+      await modal.getByRole('button', { name: 'Cancel' }).click();
+      await expect(modal).toBeHidden();
+      if (existingTitle.startsWith(ANNOUNCEMENT_TITLE_PREFIX)) {
+        await deleteE2EAnnouncement(page);
+      } else {
+        test.skip(
+          existingTitle !== '',
+          'A real announcement is published on this domain; the test would overwrite it',
+        );
+      }
+    });
+
+    test.afterEach(async ({ page }) => {
+      if (!holdsLock) return;
+      try {
+        await deleteE2EAnnouncement(page);
+      } finally {
+        releaseAnnouncementLock();
+        holdsLock = false;
+      }
+    });
+
+    test('Admin can publish a system announcement with a title', async ({
+      page,
+    }) => {
+      const title = `${ANNOUNCEMENT_TITLE_PREFIX}${Date.now()}`;
+      const body = `Body of ${title}`;
+      await page.goto(new URL('/maintenance', page.url()).toString());
+      const modal = await openAnnouncementEditModal(page);
+
+      // An empty title blocks Publish with a required error.
+      await modal.getByRole('button', { name: 'Publish', exact: true }).click();
+      await expect(modal.getByText('Please enter Title')).toBeVisible();
+      await expect(modal).toBeVisible();
+
+      await modal.getByLabel('Title', { exact: true }).fill(title);
+      await expect(modal.getByText('Please enter Title')).toBeHidden();
+      await modal.locator('.monaco-editor .view-lines').click();
+      await page.keyboard.insertText(body);
+      await modal.getByRole('button', { name: 'Publish', exact: true }).click();
+
+      await expect(
+        page.getByText('Announcement updated.').first(),
+      ).toBeVisible();
+      await expect(modal).toBeHidden();
+
+      const banner = getAnnouncementBanner(page, title);
+      await expect(banner).toBeVisible();
+      await expect(banner).not.toContainText(body);
+      await banner.getByRole('button', { name: 'See Details' }).click();
+      await expect(banner).toContainText(body);
+    });
+
+    test('Admin can save an announcement as a draft without showing the banner', async ({
+      page,
+    }) => {
+      const title = `${ANNOUNCEMENT_TITLE_PREFIX}${Date.now()}`;
+      const body = `Draft body of ${title}`;
+      await page.goto(new URL('/maintenance', page.url()).toString());
+      const modal = await openAnnouncementEditModal(page);
+
+      await modal.getByLabel('Title', { exact: true }).fill(title);
+      await modal.locator('.monaco-editor .view-lines').click();
+      await page.keyboard.insertText(body);
+      await modal.getByRole('button', { name: 'Save as Draft' }).click();
+      await page.getByRole('menuitem', { name: 'Save as Draft' }).click();
+
+      await expect(
+        page.getByText('Announcement updated.').first(),
+      ).toBeVisible();
+      await expect(modal).toBeHidden();
+      await expect(getAnnouncementBanner(page, title)).toHaveCount(0);
+
+      const reopened = await openAnnouncementEditModal(page);
+      await expect(
+        reopened.getByRole('heading', { name: /^Edit Announcement/ }),
+      ).toContainText('Draft');
+      await expect(reopened.getByLabel('Title', { exact: true })).toHaveValue(
+        title,
+      );
+      await expect(reopened).toContainText(body);
+      await reopened.getByRole('button', { name: 'Cancel' }).click();
+      await expect(reopened).toBeHidden();
+      await expect(getAnnouncementBanner(page, title)).toHaveCount(0);
     });
   },
 );

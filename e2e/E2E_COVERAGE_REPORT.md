@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-10-14
+> **Last Updated:** 2026-10-16
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 364 / 514 features covered (71%)**
+**Overall (in-scope routes): 366 / 516 features covered (71%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -35,7 +35,7 @@
 | Resources                | `/agent-summary`, `/agent`                       |    10    |    3    | 🔶 30%  |
 | Resource Policy          | `/resource-policy`                               |    13    |   10    | 🔶 77%  |
 | User Credentials         | `/credential`                                    |    25    |   18    | 🔶 72%  |
-| Maintenance              | `/maintenance`                                   |    3     |    2    | 🔶 67%  |
+| Maintenance              | `/maintenance`                                   |    5     |    4    | 🔶 80%  |
 | User Settings            | `/usersettings`                                  |    10    |    1    | 🔶 10%  |
 | Project                  | `/project`                                       |    6     |    5    | 🔶 83%  |
 | Statistics               | `/statistics`                                    |    2     |    2    | ✅ 100% |
@@ -54,7 +54,7 @@
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **515**  | **365** | **71%** |
+| **Total**                |                                                  | **517**  | **367** | **71%** |
 
 ---
 
@@ -781,13 +781,15 @@
 
 **Test files:** [`e2e/maintenance/maintenance.spec.ts`](maintenance/maintenance.spec.ts)
 
-| Feature                   | Status | Test                                 |
-| ------------------------- | ------ | ------------------------------------ |
-| Recalculate usage         | ✅     | `click the Recalculate Usage button` |
-| Rescan images             | ✅     | `click the Rescan Images button`     |
-| Other maintenance actions | ❌     | -                                    |
+| Feature                     | Status | Test                                                                   |
+| --------------------------- | ------ | ---------------------------------------------------------------------- |
+| Recalculate usage           | ✅     | `click the Recalculate Usage button`                                   |
+| Rescan images               | ✅     | `click the Rescan Images button`                                       |
+| Publish system announcement | ✅     | `Admin can publish a system announcement with a title`                 |
+| Save announcement as draft  | ✅     | `Admin can save an announcement as a draft without showing the banner` |
+| Other maintenance actions   | ❌     | -                                                                      |
 
-**Coverage: 🔶 2/3 features**
+**Coverage: 🔶 4/5 features**
 
 ---
 
