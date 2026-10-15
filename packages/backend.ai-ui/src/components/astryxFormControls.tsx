@@ -232,6 +232,8 @@ export interface AstryxFormNumberInputProps {
   units?: string;
   placeholder?: string;
   disabled?: boolean;
+  /** Shows a clear button; clearing (or emptying the text) emits `null`. */
+  hasClear?: boolean;
   width?: SizeValue;
   [key: `data-${string}`]: string | undefined;
 }
@@ -246,24 +248,32 @@ export const AstryxFormNumberInput: React.FC<AstryxFormNumberInputProps> = ({
   units,
   placeholder,
   disabled,
+  hasClear,
   width = '100%',
   ...rest
 }) => {
   'use memo';
-  return (
+  const commonProps = {
+    ...(rest as object),
+    value: value ?? null,
+    label,
+    isLabelHidden: true,
+    min,
+    max,
+    step,
+    units,
+    placeholder,
+    isDisabled: disabled,
+    width,
+  };
+  // NumberInput's props are a union on `hasClear`, so each branch is spelled out.
+  return hasClear ? (
     <NumberInput
-      {...(rest as object)}
-      value={value ?? null}
+      {...commonProps}
+      hasClear
       onChange={(next) => onChange?.(next)}
-      label={label}
-      isLabelHidden
-      min={min}
-      max={max}
-      step={step}
-      units={units}
-      placeholder={placeholder}
-      isDisabled={disabled}
-      width={width}
     />
+  ) : (
+    <NumberInput {...commonProps} onChange={(next) => onChange?.(next)} />
   );
 };

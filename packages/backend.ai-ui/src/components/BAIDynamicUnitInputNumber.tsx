@@ -49,6 +49,8 @@ export interface BAIDynamicUnitInputNumberProps {
   addonSuffix?: ReactNode;
   defaultUnit?: string;
   disabled?: boolean;
+  /** Shows a clear button; clearing (or emptying the text) emits `undefined`. */
+  allowClear?: boolean;
   placeholder?: string;
   /** antd's `SizeType`, kept for the call sites that already pass it. */
   size?: 'small' | 'middle' | 'large';
@@ -71,6 +73,7 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
   addonSuffix,
   defaultUnit,
   disabled,
+  allowClear,
   placeholder,
   size,
   label,
@@ -225,6 +228,29 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
 
   const accessibleLabel = label ?? placeholder ?? t('general.Select');
 
+  const numberInputProps = {
+    label: accessibleLabel,
+    isLabelHidden: true,
+    value: numValue,
+    onBlur: handleBlur,
+    onKeyDown: handleKeyDown,
+    // TODO: when min and max carry different units they should be
+    // converted first — carried over from the antd implementation.
+    max:
+      maxUnit === unit
+        ? maxNumValue
+        : convertToBinaryUnit(max, unit as SizeUnit)?.number,
+    min:
+      minUnit === unit
+        ? minNumValue
+        : convertToBinaryUnit(min, unit as SizeUnit)?.number,
+    placeholder,
+    isDisabled: disabled,
+    width: '100%',
+  };
+  const handleNumberChange = (next: number | null) =>
+    setValue(_.isNil(next) ? undefined : `${next}${unit}`);
+
   return (
     <InputGroup
       className={className}
@@ -235,31 +261,16 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
       style={style}
     >
       {addonPrefix ? <InputGroupText>{addonPrefix}</InputGroupText> : null}
-      <NumberInput
-        label={accessibleLabel}
-        isLabelHidden
-        value={numValue}
-        onChange={(next) =>
-          setValue(_.isNil(next) ? undefined : `${next}${unit}`)
-        }
-        onBlur={handleBlur}
-        onKeyDown={handleKeyDown}
-        // TODO: when min and max carry different units they should be
-        // converted first — carried over from the antd implementation.
-        max={
-          maxUnit === unit
-            ? maxNumValue
-            : convertToBinaryUnit(max, unit as SizeUnit)?.number
-        }
-        min={
-          minUnit === unit
-            ? minNumValue
-            : convertToBinaryUnit(min, unit as SizeUnit)?.number
-        }
-        placeholder={placeholder}
-        isDisabled={disabled}
-        width="100%"
-      />
+      {/* NumberInput's props are a union on `hasClear`, so each branch is spelled out. */}
+      {allowClear ? (
+        <NumberInput
+          {...numberInputProps}
+          hasClear
+          onChange={handleNumberChange}
+        />
+      ) : (
+        <NumberInput {...numberInputProps} onChange={handleNumberChange} />
+      )}
       <NumberStepper onStep={handleStep} isDisabled={disabled} />
       {/* A single available unit is a static label, not a choice — antd faked
           that with `suffixIcon={null} open={false}` on a Select. */}
