@@ -14,7 +14,7 @@ export interface BAIScopedImageSelectProps extends Omit<BAIComplexSelectProps, '
     filter?: ImageV2Filter;
     open?: boolean;
     defaultOpen?: boolean;
-    /** The images this scope reaches are listed (ADR 0011). */
+    /** The images this scope reaches are listed (ADR 0012). */
     scope: ImageSearchScope;
     ref?: React.Ref<BAIScopedImageSelectRef>;
 }

@@ -3,7 +3,7 @@ import { ResourceGroupScope } from '../../__generated__/BAIScopedResourceGroupSe
 import { BAIModalProps } from '../BAIModal';
 export interface BAIProjectSettingModalProps extends Omit<BAIModalProps, 'title' | 'loading'> {
     projectFragment: BAIProjectSettingModalFragment$key | null;
-    /** Scope of the Allowed Resource Groups picker, usually the current domain (ADR 0011). */
+    /** Scope of the Allowed Resource Groups picker, usually the current domain (ADR 0012). */
     resourceGroupScope: ResourceGroupScope;
 }
 export type BAIProjectSettingModalFragmentKey = BAIProjectSettingModalFragment$key;
