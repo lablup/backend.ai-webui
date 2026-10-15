@@ -17,18 +17,40 @@ const ANNOUNCEMENT_LOCK_DIR = path.join(
   os.tmpdir(),
   'backend.ai-webui-e2e-domain-announcement.lock',
 );
-const ANNOUNCEMENT_LOCK_STALE_MS = 5 * 60 * 1000;
+const ANNOUNCEMENT_LOCK_PID_FILE = path.join(ANNOUNCEMENT_LOCK_DIR, 'pid');
+
+// A lock is stale once its holder process is gone (a killed run); a lock
+// without a pid file yet is only stale after its holder had ample time to write one.
+function isAnnouncementLockStale(): boolean {
+  let pid: number;
+  try {
+    pid = Number(fs.readFileSync(ANNOUNCEMENT_LOCK_PID_FILE, 'utf8'));
+  } catch {
+    try {
+      return Date.now() - fs.statSync(ANNOUNCEMENT_LOCK_DIR).mtimeMs > 10_000;
+    } catch {
+      return false; // released meanwhile; the next mkdir decides
+    }
+  }
+  try {
+    process.kill(pid, 0);
+    return false;
+  } catch (error) {
+    return (error as NodeJS.ErrnoException).code === 'ESRCH';
+  }
+}
 
 async function acquireAnnouncementLock() {
   for (;;) {
     try {
       fs.mkdirSync(ANNOUNCEMENT_LOCK_DIR);
+      fs.writeFileSync(ANNOUNCEMENT_LOCK_PID_FILE, String(process.pid));
       return;
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error;
-      const ageMs = Date.now() - fs.statSync(ANNOUNCEMENT_LOCK_DIR).mtimeMs;
-      if (ageMs > ANNOUNCEMENT_LOCK_STALE_MS) {
+      if (isAnnouncementLockStale()) {
         fs.rmSync(ANNOUNCEMENT_LOCK_DIR, { recursive: true, force: true });
+        continue;
       }
       await new Promise((resolve) => setTimeout(resolve, 500));
     }
@@ -58,9 +80,9 @@ function getAnnouncementBanner(page: Page, title: string) {
   return page.locator('.webui-announcement-banner').filter({ hasText: title });
 }
 
-// Deletes the domain announcement when it is one this spec wrote; an
-// announcement someone else published is left alone.
-async function deleteE2EAnnouncement(page: Page) {
+// Deletes the domain announcement when it is one this spec wrote and returns
+// the title it found; an announcement someone else published is left alone.
+async function deleteE2EAnnouncement(page: Page): Promise<string> {
   await page.goto(new URL('/maintenance', page.url()).toString());
   const modal = await openAnnouncementEditModal(page);
   const deleteButton = modal.getByRole('button', { name: 'Delete' });
@@ -79,6 +101,7 @@ async function deleteE2EAnnouncement(page: Page) {
   } else {
     await modal.getByRole('button', { name: 'Cancel' }).click();
   }
+  return title;
 }
 
 test.beforeEach(async ({ page, request }) => {
@@ -144,7 +167,7 @@ test.describe(
 );
 
 test.describe(
-  'System announcement',
+  'Maintenance - System announcement',
   {
     tag: [
       '@regression',
@@ -164,17 +187,17 @@ test.describe(
       );
       await acquireAnnouncementLock();
       holdsLock = true;
-      const modal = await openAnnouncementEditModal(page);
-      const existingTitle = await modal
-        .getByLabel('Title', { exact: true })
-        .inputValue();
-      await modal.getByRole('button', { name: 'Cancel' }).click();
-      await expect(modal).toBeHidden();
-      if (existingTitle.startsWith(ANNOUNCEMENT_TITLE_PREFIX)) {
-        await deleteE2EAnnouncement(page);
-      } else {
+      // Reloads /maintenance, so an announcement written while this worker
+      // waited for the lock is read fresh.
+      const existingTitle = await deleteE2EAnnouncement(page);
+      if (
+        existingTitle !== '' &&
+        !existingTitle.startsWith(ANNOUNCEMENT_TITLE_PREFIX)
+      ) {
+        releaseAnnouncementLock();
+        holdsLock = false;
         test.skip(
-          existingTitle !== '',
+          true,
           'A real announcement is published on this domain; the test would overwrite it',
         );
       }
@@ -184,6 +207,9 @@ test.describe(
       if (!holdsLock) return;
       try {
         await deleteE2EAnnouncement(page);
+      } catch (error) {
+        // Best effort: the next run's beforeEach deletes a leftover e2e announcement.
+        console.warn(`Announcement cleanup failed: ${String(error)}`);
       } finally {
         releaseAnnouncementLock();
         holdsLock = false;
@@ -195,7 +221,6 @@ test.describe(
     }) => {
       const title = `${ANNOUNCEMENT_TITLE_PREFIX}${Date.now()}`;
       const body = `Body of ${title}`;
-      await page.goto(new URL('/maintenance', page.url()).toString());
       const modal = await openAnnouncementEditModal(page);
 
       // An empty title blocks Publish with a required error.
@@ -226,7 +251,6 @@ test.describe(
     }) => {
       const title = `${ANNOUNCEMENT_TITLE_PREFIX}${Date.now()}`;
       const body = `Draft body of ${title}`;
-      await page.goto(new URL('/maintenance', page.url()).toString());
       const modal = await openAnnouncementEditModal(page);
 
       await modal.getByLabel('Title', { exact: true }).fill(title);
