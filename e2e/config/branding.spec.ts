@@ -42,6 +42,7 @@ async function writeDomainAppearance(
   const next = { ...doc, [domainName]: { ...(doc[domainName] ?? {}) } };
   if (appearance === undefined) {
     delete next[domainName].appearance;
+    if (Object.keys(next[domainName]).length === 0) delete next[domainName];
   } else {
     next[domainName].appearance = appearance;
   }
@@ -93,8 +94,10 @@ function getConfirmDialog(page: Page, title: string) {
 }
 
 test.describe(
-  'Branding',
-  { tag: ['@regression', '@config', '@requires-manager-v26.9'] },
+  'Branding - Admin Domain Theme',
+  {
+    tag: ['@regression', '@functional', '@config', '@requires-manager-v26.9'],
+  },
   () => {
     test.beforeEach(async ({ page, request }) => {
       await loginAsAdmin(page, request);
@@ -121,6 +124,7 @@ test.describe(
 
       await withSharedStateLock('public-domain-appearance', async () => {
         const api = await createAdminApiContext();
+        let restoreError: unknown;
         const originalAppearance = (await readPublicDomainConfig(api))[
           domainName
         ]?.appearance;
@@ -183,16 +187,25 @@ test.describe(
           await expect(resetDialog).toBeHidden();
           await expect(getLightColorTrigger(item)).toHaveText(editedColor);
         } finally {
-          try {
-            await writeDomainAppearance(api, domainName, originalAppearance);
-          } catch (error) {
+          restoreError = await writeDomainAppearance(
+            api,
+            domainName,
+            originalAppearance,
+          ).then(
+            () => undefined,
+            (error: unknown) => error,
+          );
+          if (restoreError) {
             console.error(
               `Failed to restore the ${domainName} domain appearance:`,
-              error,
+              restoreError,
             );
           }
           await api.dispose();
         }
+        // Fail a passing run too: a missed restore leaves the test color
+        // applied domain-wide.
+        if (restoreError) throw restoreError;
       });
     });
 
