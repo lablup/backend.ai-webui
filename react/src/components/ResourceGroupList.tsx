@@ -612,7 +612,11 @@ const ResourceGroupList: React.FC = () => {
         entityLabelsFrgmt={labelingResourceGroup?.entityLabels}
         onRequestClose={(success) => {
           setLabelingResourceGroup(null);
-          if (success) updateFetchKey();
+          if (success) {
+            startRefetchTransition(() => {
+              updateFetchKey();
+            });
+          }
         }}
       />
       <BAIDeleteConfirmModal
@@ -672,6 +676,17 @@ const ResourceGroupList: React.FC = () => {
           open={isDrawerOpen}
           resourceGroupFrgmt={drawerResourceGroup ?? shownResourceGroup}
           onRequestClose={() => setIsDrawerOpen(false)}
+          onEditLabels={
+            drawerResourceGroup
+              ? () => setLabelingResourceGroup(drawerResourceGroup)
+              : undefined
+          }
+          onLabelClick={(label) => {
+            setIsDrawerOpen(false);
+            setFilter(toEntityLabelFilter(label));
+            setTablePaginationOption({ current: 1 });
+            setSelectedRowKeys([]);
+          }}
           onRequestRefetch={() => {
             startRefetchTransition(() => {
               updateFetchKey();
