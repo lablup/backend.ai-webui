@@ -1,1 +1,0 @@
-import{j as u,B as i}from"./iframe-C6zFqoXc.js";import{t as m}from"./index-CyP17H7R.js";const x=t=>{try{return m(t)??t}catch{return t}},B=({uuid:t,globalId:r,copyable:e=!0,ellipsis:o={tooltip:!0},monospace:s=!0,style:a,...c})=>{const n=t??x(r);return u.jsx(i,{copyable:e,ellipsis:o,monospace:s,style:{maxWidth:100,...a},...c,children:n})};export{B};

@@ -6,7 +6,6 @@ export type BAIAuditLogTargetCellFragment$data = {
     readonly entity: {
         readonly " $fragmentSpreads": FragmentRefs<"BAIAuditLogTargetCellEntityFragment">;
     } | null | undefined;
-    readonly entityId: string | null | undefined;
     readonly entityType: string | null | undefined;
     readonly lookupKey: string | null | undefined;
     readonly lookupKind: string | null | undefined;

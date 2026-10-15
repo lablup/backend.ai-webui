@@ -9,12 +9,12 @@ export type BAIAuditLogNodesFragment$data = ReadonlyArray<{
     readonly createdAt: string;
     readonly description: string;
     readonly duration: string | null | undefined;
-    readonly entityId: string | null | undefined;
     readonly entityType: string | null | undefined;
     readonly id: string;
     readonly operation: string;
     readonly requestId: string | null | undefined;
     readonly status: AuditLogStatus;
+    readonly targetEntityId: string | null | undefined;
     readonly triggeredBy: string | null | undefined;
     readonly user: {
         readonly basicInfo: {
