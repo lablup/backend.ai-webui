@@ -371,19 +371,31 @@ describe('connectViaGQL — myUserV2 query rejects (FR-3998)', () => {
   });
 
   it('does not log out a newer session when its cancelled attempt is refused', async () => {
-    const logout = vi.fn().mockResolvedValue(undefined);
-    const client = failingClient(refusal, logout);
+    let cancelled = false;
+    environment.mock.queueOperationResolver(() => {
+      cancelled = true;
+      return authError();
+    });
+    const client = makeClient();
 
     await expect(
-      connectViaGQL(client, cfg, [], undefined, () => true),
+      connectViaGQL(client, cfg, [], undefined, () => cancelled),
     ).rejects.toBeInstanceOf(LoginAttemptCancelledError);
-    expect(logout).not.toHaveBeenCalled();
+    expect(client.logout).not.toHaveBeenCalled();
   });
 });
 
 describe('connectViaGQL — cancelled attempt', () => {
+  const g = globalThis as any;
+  const cfg = getDefaultLoginConfig();
+
+  beforeEach(() => {
+    g.backendaiutils = fakeUtils(null);
+  });
+
   afterEach(() => {
-    delete (globalThis as Record<string, unknown>).backendaiclient;
+    delete g.backendaiclient;
+    delete g.backendaiutils;
   });
 
   it('leaves the current client in place when the bootstrap arrives late', async () => {
@@ -401,6 +413,21 @@ describe('connectViaGQL — cancelled attempt', () => {
     expect((globalThis as Record<string, unknown>).backendaiclient).toBe(
       current,
     );
+  });
+
+  it('puts the current client back when cancelled during the query', async () => {
+    const current = { ready: true };
+    g.backendaiclient = current;
+    let cancelled = false;
+    environment.mock.queueOperationResolver(() => {
+      cancelled = true;
+      return new Error('aborted');
+    });
+
+    await expect(
+      connectViaGQL(makeClient(), cfg, [], undefined, () => cancelled),
+    ).rejects.toBeInstanceOf(LoginAttemptCancelledError);
+    expect(g.backendaiclient).toBe(current);
   });
 });
 

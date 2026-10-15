@@ -175,6 +175,14 @@ export async function connectViaGQL(
   // tab must never log it out.
   const isActingAs = !!client.actAsUserId;
 
+  if (isCancelled?.()) throw new LoginAttemptCancelledError();
+  // The Relay query below reads the global client, so a cancelled attempt
+  // puts the previous one back.
+  const previousClient = (globalThis as any).backendaiclient;
+  const cancel = () => {
+    (globalThis as any).backendaiclient = previousClient;
+    return new LoginAttemptCancelledError();
+  };
   (globalThis as any).backendaiclient = client;
 
   const recentProjectName =
@@ -188,7 +196,7 @@ export async function connectViaGQL(
       { fetchPolicy: 'network-only' },
     ).toPromise();
   } catch (err) {
-    if (isCancelled?.()) throw new LoginAttemptCancelledError();
+    if (isCancelled?.()) throw cancel();
     // A refused session is cleaned up like a missing user; a network blip is not.
     // RelayEnvironment rewraps a 401 as an `AuthorizationError`.
     const e = err as { statusCode?: unknown; name?: unknown } | null;
@@ -201,7 +209,7 @@ export async function connectViaGQL(
       await client.logout().catch(() => {});
     throw err;
   }
-  if (isCancelled?.()) throw new LoginAttemptCancelledError();
+  if (isCancelled?.()) throw cancel();
   if (!response?.myUserV2) {
     if (!isActingAs) await client.logout();
     throw new Error('User information is missing.');
