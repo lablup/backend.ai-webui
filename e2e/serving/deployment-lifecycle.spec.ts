@@ -69,6 +69,26 @@ function revisionTabBar(page: Page) {
   return page.getByRole('navigation', { name: 'Tabs' });
 }
 
+// `MetadataList` renders `<dt>`/`<dd>` pairs; `term` takes no name from its
+// content, so match the term's text and read the `<dd>` right after it.
+function metadataTerm(page: Page, label: string) {
+  return page
+    .getByRole('term')
+    .filter({ hasText: new RegExp(`^${escapeForRegExp(label)}$`) });
+}
+
+function metadataValue(page: Page, label: string) {
+  return metadataTerm(page, label).locator('xpath=following-sibling::dd[1]');
+}
+
+// Astryx `DataGrid` header names carry "Sort by <key>" / "Resize column
+// <key>", so match the visible header text instead of the accessible name.
+function columnHeader(page: Page, label: string) {
+  return page
+    .getByRole('columnheader')
+    .filter({ hasText: new RegExp(`^${escapeForRegExp(label)}`) });
+}
+
 // Local fork of deployment-fixtures.ts's `selectRevisionModalOption`: its
 // popup search box's accessible name is actually "Search options" (confirmed
 // live), not "Search" -- kept spec-local rather than editing the shared
@@ -203,9 +223,11 @@ test.describe(
         await expect(
           createDialog.getByRole('spinbutton', { name: /Desired Replicas/ }),
         ).toHaveValue('1');
+        // Astryx `Tokenizer` carries the hint as the input's `placeholder`
+        // attribute, not as a text node (antd `Select` rendered a span).
         await expect(
-          createDialog.getByText('Enter tags, separated by commas'),
-        ).toBeVisible();
+          createDialog.getByRole('combobox', { name: /Tags/ }),
+        ).toHaveAttribute('placeholder', 'Enter tags, separated by commas');
         const publicCheckbox = createDialog.getByRole('checkbox', {
           name: 'Public',
         });
@@ -342,72 +364,56 @@ test.describe(
       });
       await expect(page.getByRole('button', { name: 'More' })).toBeVisible();
       // `BAIMetadataList` (Astryx `MetadataList`) renders each item as a
-      // `<dl>` term/definition pair, not a table row — role "term", not
-      // "rowheader". Its body hydrates via its own boundary independently of
-      // the header buttons above, same as the Auto-scaling/Access Tokens
-      // sections below — give the first item a generous timeout.
-      await expect(page.getByRole('term', { name: 'Lifecycle' })).toBeVisible({
+      // `<dl>` term/definition pair (see `metadataTerm`). Its body hydrates
+      // via its own boundary independently of the header buttons above,
+      // same as the Auto-scaling/Access Tokens sections below — give the
+      // first item a generous timeout.
+      await expect(metadataTerm(page, 'Lifecycle')).toBeVisible({
         timeout: 20000,
       });
       await expect(
         page.getByRole('button', { name: /Scheduling History/ }),
       ).toBeVisible();
-      await expect(
-        page.getByRole('term', { name: 'Deployment ID' }),
-      ).toBeVisible();
-      await expect(page.getByRole('term', { name: 'Project' })).toBeVisible();
-      await expect(page.getByRole('term', { name: 'Domain' })).toBeVisible();
-      await expect(
-        page.getByRole('term', { name: 'Resource Group' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('term', { name: 'Endpoint URL' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('term', { name: 'Visibility' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('term', { name: 'Desired Replicas' }),
-      ).toBeVisible();
-      await expect(page.getByRole('term', { name: 'Tags' })).toBeVisible();
+      await expect(metadataTerm(page, 'Deployment ID')).toBeVisible();
+      await expect(metadataTerm(page, 'Project')).toBeVisible();
+      await expect(metadataTerm(page, 'Domain')).toBeVisible();
+      await expect(metadataTerm(page, 'Resource Group')).toBeVisible();
+      await expect(metadataTerm(page, 'Endpoint URL')).toBeVisible();
+      await expect(metadataTerm(page, 'Visibility')).toBeVisible();
+      await expect(metadataTerm(page, 'Desired Replicas')).toBeVisible();
+      await expect(metadataTerm(page, 'Tags')).toBeVisible();
 
       // Revision tabs
       await expect(
-        page.getByRole('tab', { name: 'Current Revision', selected: true }),
+        revisionTabBar(page).getByRole('button', { name: 'Current Revision' }),
       ).toBeVisible();
       await expect(
-        page.getByRole('tab', { name: 'Revision History' }),
+        revisionTabBar(page).getByRole('button', { name: 'Revision History' }),
       ).toBeVisible();
-      await expect(page.getByRole('tab', { name: 'Audit Log' })).toBeVisible();
       await expect(
-        page.getByRole('tablist').getByRole('button', { name: 'Add Revision' }),
+        revisionTabBar(page).getByRole('button', { name: 'Audit Log' }),
+      ).toBeVisible();
+      await expect(
+        revisionTabBar(page).getByRole('button', { name: 'Add Revision' }),
       ).toBeVisible();
 
       // Replicas section (`DeploymentReplicasCard.tsx`'s `BAIRadioGroup`
       // toggle — see the deployments list page's toggle comment above).
-      await expect(page.getByText('Replicas', { exact: true })).toBeVisible();
+      // The title shares its element with the help icon's tooltip text, so
+      // anchor on the leading word instead of an exact match.
+      await expect(page.getByText(/^Replicas/)).toBeVisible();
       await expect(page.getByRole('radio', { name: 'Running' })).toBeVisible();
       await expect(
         page.getByRole('radio', { name: 'Terminated' }),
       ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Replica ID' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: /Health Status/ }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: /Traffic Status/ }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Session' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: /Revision \(ID\)/ }),
-      ).toBeVisible();
+      await expect(columnHeader(page, 'Replica ID')).toBeVisible();
+      await expect(columnHeader(page, 'Health Status')).toBeVisible();
+      await expect(columnHeader(page, 'Traffic Status')).toBeVisible();
+      await expect(columnHeader(page, 'Session')).toBeVisible();
+      await expect(columnHeader(page, 'Revision (ID)')).toBeVisible();
 
       // Auto-scaling section
-      await expect(page.getByText('Auto-scaling')).toBeVisible();
+      await expect(page.getByText(/^Auto-scaling/)).toBeVisible();
       // The Auto-scaling card's body (button + table) loads via its own
       // query/Suspense boundary independently of the heading above, and can
       // take longer than the default 5s timeout to hydrate (observed live,
@@ -417,35 +423,21 @@ test.describe(
       await expect(page.getByRole('button', { name: 'Add Rules' })).toBeVisible(
         { timeout: 20000 },
       );
-      await expect(
-        page.getByRole('columnheader', { name: /Metric Source/ }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: /Cooldown Sec\./ }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: /Step Size/ }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: /Min \/ MAX Replicas/ }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: /Last Triggered/ }),
-      ).toBeVisible();
+      await expect(columnHeader(page, 'Metric Source')).toBeVisible();
+      await expect(columnHeader(page, 'Cooldown Sec.')).toBeVisible();
+      await expect(columnHeader(page, 'Step Size')).toBeVisible();
+      await expect(columnHeader(page, 'Min / MAX Replicas')).toBeVisible();
+      await expect(columnHeader(page, 'Last Triggered')).toBeVisible();
 
       // Access Tokens section
-      await expect(page.getByText('Access Tokens')).toBeVisible();
+      await expect(page.getByText(/^Access Tokens/)).toBeVisible();
       // Same independently-loading-body caveat as the Auto-scaling section
       // above.
       await expect(
         page.getByRole('button', { name: 'Create Access Token' }),
       ).toBeDisabled({ timeout: 20000 });
-      await expect(
-        page.getByRole('columnheader', { name: 'Token' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Expiration' }),
-      ).toBeVisible();
+      await expect(columnHeader(page, 'Token')).toBeVisible();
+      await expect(columnHeader(page, 'Expiration')).toBeVisible();
 
       await deleteDeploymentAndVerify(page, deploymentName);
       createdDeploymentName = null;
@@ -987,13 +979,7 @@ test.describe(
       // 4. Click "Save".
       await dialog.getByRole('button', { name: 'Save' }).click();
       await expect(dialog).toBeHidden({ timeout: 20000 });
-      const desiredReplicasCell = page
-        .getByRole('row')
-        .filter({
-          has: page.getByRole('rowheader', { name: 'Desired Replicas' }),
-        })
-        .getByRole('cell')
-        .last();
+      const desiredReplicasCell = metadataValue(page, 'Desired Replicas');
       await expect(desiredReplicasCell).toHaveText('2', { timeout: 20000 });
 
       // 5. Click "Cancel" instead of "Save" on a repeat run to confirm no changes
@@ -1058,9 +1044,11 @@ test.describe(
       await expect(
         getFormItemControlByLabel(page, 'Metric Source'),
       ).toContainText('Kernel');
+      // Free-text input with the known names as its placeholder (the antd
+      // AutoComplete dropdown was dropped, see AutoScalingRuleEditorModal).
       await expect(
-        dialog.getByRole('combobox', { name: /Metric Name/ }),
-      ).toBeVisible();
+        dialog.getByRole('textbox', { name: /Metric Name/ }),
+      ).toHaveAttribute('placeholder', 'cpu_util, mem, net_rx, net_tx');
       // `exact: true` is required here: "Scale In" is a literal prefix
       // substring of "Scale In & Out", so non-exact name matching resolves
       // to both radio inputs (strict-mode violation), confirmed live.
@@ -1120,8 +1108,9 @@ test.describe(
 
       // 2. Set "Metric Name" to a valid value appropriate to the selected
       // "Metric Source".
-      await dialog.getByRole('combobox', { name: /Metric Name/ }).click();
-      await page.getByRole('option', { name: 'cpu_util' }).click();
+      await dialog
+        .getByRole('textbox', { name: /Metric Name/ })
+        .fill('cpu_util');
 
       // 3. Leave "Condition" at "Scale Out" and set a "Max Threshold" value.
       await dialog
