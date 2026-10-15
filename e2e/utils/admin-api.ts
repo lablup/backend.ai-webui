@@ -227,6 +227,43 @@ export async function deleteDeploymentViaApi(
   }
 }
 
+/** Looks a deployment up by its exact name, server-side. */
+export async function findDeploymentByName(
+  api: APIRequestContext,
+  name: string,
+): Promise<{ id: string; status: string } | null> {
+  const data = await gqlAdmin<{
+    adminDeployments: {
+      edges: Array<{ node: { id: string; metadata: { status: string } } }>;
+    };
+  }>(
+    api,
+    `query($name: String!) {
+      adminDeployments(filter: { name: { equals: $name } }) {
+        edges { node { id metadata { status } } }
+      }
+    }`,
+    { name },
+  );
+  const node = data.adminDeployments?.edges?.[0]?.node;
+  return node ? { id: node.id, status: node.metadata.status } : null;
+}
+
+/** Replaces a deployment's tags via `updateModelDeployment`. */
+export async function setDeploymentTagsViaApi(
+  api: APIRequestContext,
+  id: string,
+  tags: string[],
+): Promise<void> {
+  await gqlAdmin(
+    api,
+    `mutation($input: UpdateDeploymentInput!) {
+      updateModelDeployment(input: $input) { deployment { id } }
+    }`,
+    { input: { id: toRawUUID(id), tags } },
+  );
+}
+
 /**
  * Sweep-deletes every deployment whose display name matches `pattern` — by
  * default the `e2e-plan-*` / `e2e-token-*` shells the deployment specs

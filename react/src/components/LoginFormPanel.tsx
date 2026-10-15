@@ -461,6 +461,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
           {/* Login error alert */}
           {loginError && (
             <Banner
+              role="alert"
               status="error"
               title={loginError.message}
               description={loginError.description}

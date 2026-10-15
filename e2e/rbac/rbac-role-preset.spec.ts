@@ -1,6 +1,5 @@
 // Covers the RBAC page's Presets tab and the system-role "View Presets" link
 // added in #9924 (FR-4065). Read-only: no preset or role is created or edited.
-import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import test, { expect, Locator, Page } from '@playwright/test';
 
@@ -133,11 +132,6 @@ test.describe(
   () => {
     test.beforeEach(async ({ page, request }) => {
       await loginAsAdmin(page, request);
-      await skipUnlessManagerVersion(
-        page,
-        '26.9.0a4',
-        'The Presets tab requires manager >= 26.9.0a4 (FR-4065)',
-      );
     });
 
     test('Superadmin can see the role preset list in the Presets tab', async ({
@@ -275,16 +269,6 @@ test.describe(
   () => {
     test.beforeEach(async ({ page, request }) => {
       await loginAsAdmin(page, request);
-      await skipUnlessManagerVersion(
-        page,
-        '26.9.0a4',
-        "The system role's View Presets link requires manager >= 26.9.0a4 (FR-4065)",
-      );
-      await skipUnlessManagerVersion(
-        page,
-        '26.8.0',
-        "Picking a project-scoped role needs the role list's Scope Type filter (manager >= 26.8.0)",
-      );
     });
 
     test('Superadmin can see read-only grants and a View Presets link on a system role', async ({

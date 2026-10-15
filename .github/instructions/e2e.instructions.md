@@ -396,10 +396,12 @@ are only reliable when `isLocalEnvironment` is true.
   `skipUnlessWebUIVersion`, `skipUnlessManagerVersion`, `skipUnlessClientConfig`,
   `skipUnlessAllowedVFolderType` from `e2e/utils/feature-gate-util.ts`.
   A test that depends on a manager version records the minimum version it
-  passes on as a `@requires-manager-vX.Y` tag, even at or below the app's 26.4
-  support floor (ADR 0010), so runs against older managers can
+  passes on as a `@requires-manager-vX.Y` tag, even at or below the app's
+  supported manager floor (ADR 0010), so runs against older managers can
   `--grep-invert` it; `skipUnlessManagerVersion` is only for features newer
-  than 26.4.
+  than the floor. The floor is not a number in this repository: the team dev
+  catalog declares it per branch and `pnpm run dev-env compat` prints it
+  (ADR 0011).
 
 ---
 

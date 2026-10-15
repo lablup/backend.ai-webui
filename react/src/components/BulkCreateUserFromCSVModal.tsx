@@ -67,6 +67,7 @@ import {
   tokenColorForTagColor,
   useBAILogger,
   useBAISignedRequestWithPromise,
+  cssLengthToPx,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
@@ -1280,7 +1281,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                 rowGap={token('--spacing-6')}
                 columnGap={token('--spacing-6')}
                 dividerColor={token('--color-border-emphasized')}
-                dividerInset={parseFloat(token('--spacing-2'))}
+                dividerInset={cssLengthToPx(token('--spacing-2'))}
                 dividerWidth={parseFloat(token('--border-width'))}
               >
                 <BAIPanelItem

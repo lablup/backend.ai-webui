@@ -4,6 +4,7 @@ import {
   compareNumberWithUnits,
   convertToBinaryUnit,
   convertToUUID,
+  cssLengthToPx,
   convertToDecimalUnit,
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -544,5 +545,14 @@ describe('convertToUUID', () => {
 
   test('leaves a non-uuid string alone', () => {
     expect(convertToUUID('not-a-uuid')).toBe('not-a-uuid');
+  });
+});
+
+describe('cssLengthToPx', () => {
+  it('reads px as is and rem against the root font size', () => {
+    expect(cssLengthToPx('8px')).toBe(8);
+    document.documentElement.style.fontSize = '16px';
+    expect(cssLengthToPx('0.5rem')).toBe(8);
+    document.documentElement.style.fontSize = '';
   });
 });

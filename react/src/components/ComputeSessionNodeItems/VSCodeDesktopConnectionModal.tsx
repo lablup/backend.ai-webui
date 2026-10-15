@@ -94,6 +94,7 @@ const VSCodeDesktopConnectionModal: React.FC<
             <BAISkeleton variant="input" />
           ) : (
             <Banner
+              role="alert"
               status="warning"
               title={t('session.VSCodeRemotePasswordFetchError')}
               description={t(

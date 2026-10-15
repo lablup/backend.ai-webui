@@ -26,10 +26,15 @@ import themeJson from '../../../../resources/theme.json';
 import type { BAIThemeConfig } from '../../helper/customThemeConfig';
 import { buildBackendAITheme, themeOptionsFromConfig } from '../backendAiTheme';
 
-export default buildBackendAITheme(
+const theme = buildBackendAITheme(
   themeOptionsFromConfig(
     themeJson.theme as unknown as BAIThemeConfig,
     'brand',
     'default',
   ),
 );
+
+// The registry neutral supplies cannot be imported into the built module (the
+// CLI resolves only a literal `icons:` import), so leave it out: Astryx falls
+// back to core's default icons, as the 0.6 build did by dropping it silently.
+export default { ...theme, icons: undefined };

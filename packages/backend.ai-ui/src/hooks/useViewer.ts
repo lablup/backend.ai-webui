@@ -2,14 +2,13 @@ import { useViewerQuery } from '../__generated__/useViewerQuery.graphql';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const useViewer = () => {
-  const { viewer } = useLazyLoadQuery<useViewerQuery>(
+  const { myUserV2 } = useLazyLoadQuery<useViewerQuery>(
     graphql`
       query useViewerQuery {
-        viewer {
-          user {
-            email
+        myUserV2 {
+          organization {
+            role
           }
-          encoded_user_role
         }
       }
     `,
@@ -20,10 +19,7 @@ const useViewer = () => {
   );
 
   return {
-    viewer,
-    decodedUserRole: viewer?.encoded_user_role
-      ? atob(viewer.encoded_user_role)
-      : null,
+    userRole: myUserV2?.organization.role ?? null,
   };
 };
 

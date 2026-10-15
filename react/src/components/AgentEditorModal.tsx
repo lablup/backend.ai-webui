@@ -259,6 +259,7 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
     >
       {isBuiltin && (
         <Banner
+          role="status"
           status="info"
           style={{ marginBottom: 16 }}
           title={t('aiAgent.BuiltinReadonlyTitle')}
@@ -388,6 +389,7 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
 
         <Divider>{t('aiAgent.ToolConfig')}</Divider>
         <Banner
+          role="status"
           status="info"
           style={{ marginBottom: 16 }}
           title={t('aiAgent.ToolCallingComingSoonTitle')}
