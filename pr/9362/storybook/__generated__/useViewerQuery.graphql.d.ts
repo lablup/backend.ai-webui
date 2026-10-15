@@ -1,11 +1,11 @@
 import { ConcreteRequest } from 'relay-runtime';
+export type UserRoleV2 = "ADMIN" | "MONITOR" | "SUPERADMIN" | "USER" | "%future added value";
 export type useViewerQuery$variables = Record<PropertyKey, never>;
 export type useViewerQuery$data = {
-    readonly viewer: {
-        readonly encoded_user_role: string | null | undefined;
-        readonly user: {
-            readonly email: string | null | undefined;
-        } | null | undefined;
+    readonly myUserV2: {
+        readonly organization: {
+            readonly role: UserRoleV2 | null | undefined;
+        };
     } | null | undefined;
 };
 export type useViewerQuery = {

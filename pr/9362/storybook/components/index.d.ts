@@ -2,6 +2,8 @@ export { default as BAIImageWithFallback } from './BAIImageWithFallback';
 export type { BAIImageWithFallbackProps } from './BAIImageWithFallback';
 export { default as BAIBadge } from './BAIBadge';
 export type { BAIBadgeProps } from './BAIBadge';
+export { default as BAIBoard } from './BAIBoard';
+export type { BAIBoardDataType, BAIBoardItem, BAIBoardItemsChangeEvent, BAIBoardProps, } from './BAIBoard';
 export { default as BAIBoardItemTitle } from './BAIBoardItemTitle';
 export type { BAIBoardItemTitleProps } from './BAIBoardItemTitle';
 export { default as BAIBulkEditFormItem } from './BAIBulkEditFormItem';
@@ -75,6 +77,7 @@ export type { BAIDynamicUnitInputNumberProps } from './BAIDynamicUnitInputNumber
 export { default as BAIDynamicUnitInputNumberWithSlider } from './BAIDynamicUnitInputNumberWithSlider';
 export type { BAIDynamicUnitInputNumberWithSliderProps } from './BAIDynamicUnitInputNumberWithSlider';
 export { default as BAIAlert } from './BAIAlert';
+export { bannerLiveRole } from './BAIAlert';
 export type { BAIAlertProps } from './BAIAlert';
 export { default as BAIAppShell } from './BAIAppShell';
 export type { BAIAppShellProps, BAIAppShellDrawer } from './BAIAppShell';
