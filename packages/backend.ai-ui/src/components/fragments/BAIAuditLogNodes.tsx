@@ -1,10 +1,10 @@
 import {
+  AuditLogActionKind,
   BAIAuditLogNodesFragment$data,
   BAIAuditLogNodesFragment$key,
 } from '../../__generated__/BAIAuditLogNodesFragment.graphql';
 import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import BAIAuditLogActionKindToken from '../BAIAuditLogActionKindToken';
 import BAIAuditLogStatusBadge, {
   AuditLogStatus,
 } from '../BAIAuditLogStatusBadge';
@@ -18,6 +18,7 @@ import {
 } from '../Table';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import BAIAuditLogTargetCell from './BAIAuditLogTargetCell';
+import { Token } from '@lablup/ui-common/Token';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
@@ -148,12 +149,26 @@ const BAIAuditLogNodes = ({
         title: t('comp:BAIAuditLogNodes.ActionKind'),
         dataIndex: 'actionKind',
         sorter: isEnableSorter('actionKind'),
-        render: (__, record) =>
-          record.actionKind ? (
-            <BAIAuditLogActionKindToken actionKind={record.actionKind} />
-          ) : (
-            '-'
-          ),
+        render: (__, record) => {
+          if (!record.actionKind) {
+            return '-';
+          }
+          const actionKindLabels: Partial<Record<AuditLogActionKind, string>> =
+            {
+              SINGLE_ENTITY: t('comp:BAIAuditLogNodes.ActionKindSingleEntity'),
+              BULK: t('comp:BAIAuditLogNodes.ActionKindBulk'),
+              SCOPE: t('comp:BAIAuditLogNodes.ActionKindScope'),
+              RELATION: t('comp:BAIAuditLogNodes.ActionKindRelation'),
+              MEMBERSHIP: t('comp:BAIAuditLogNodes.ActionKindMembership'),
+              GLOBAL: t('comp:BAIAuditLogNodes.ActionKindGlobal'),
+              LOOKUP: t('comp:BAIAuditLogNodes.ActionKindLookup'),
+            };
+          return (
+            <Token
+              label={actionKindLabels[record.actionKind] ?? record.actionKind}
+            />
+          );
+        },
       },
       {
         key: 'operation',

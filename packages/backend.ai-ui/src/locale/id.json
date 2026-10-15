@@ -89,19 +89,17 @@
     "Updated": "Diperbarui",
     "Version": "Versi"
   },
-  "comp:BAIAuditLogActionKindToken": {
-    "Bulk": "Massal",
-    "Global": "Global",
-    "Lookup": "Pencarian",
-    "Membership": "Keanggotaan",
-    "Relation": "Relasi",
-    "Scope": "Cakupan",
-    "SingleEntity": "Entitas Tunggal"
-  },
   "comp:BAIAuditLogNodes": {
     "Action": "Tindakan",
     "ActionId": "ID Tindakan",
     "ActionKind": "Jenis Tindakan",
+    "ActionKindBulk": "Massal",
+    "ActionKindGlobal": "Global",
+    "ActionKindLookup": "Pencarian",
+    "ActionKindMembership": "Keanggotaan",
+    "ActionKindRelation": "Relasi",
+    "ActionKindScope": "Cakupan",
+    "ActionKindSingleEntity": "Entitas Tunggal",
     "Actor": "Pelaku",
     "ClientIp": "IP Klien",
     "Description": "Deskripsi",

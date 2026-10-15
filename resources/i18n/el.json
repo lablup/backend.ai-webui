@@ -347,6 +347,13 @@
   "auditLog": {
     "Action": "Ενέργεια",
     "ActionKind": "Είδος ενέργειας",
+    "ActionKindBulk": "Μαζική",
+    "ActionKindGlobal": "Καθολική",
+    "ActionKindLookup": "Αναζήτηση",
+    "ActionKindMembership": "Συμμετοχή",
+    "ActionKindRelation": "Συσχέτιση",
+    "ActionKindScope": "Εύρος",
+    "ActionKindSingleEntity": "Μεμονωμένη οντότητα",
     "AuditLog": "Καταγραφή ελέγχου",
     "Operation": "Λειτουργία",
     "Status": "Κατάσταση",

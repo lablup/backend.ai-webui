@@ -89,19 +89,17 @@
     "Updated": "Atualizado",
     "Version": "Versão"
   },
-  "comp:BAIAuditLogActionKindToken": {
-    "Bulk": "Em massa",
-    "Global": "Global",
-    "Lookup": "Consulta",
-    "Membership": "Associação",
-    "Relation": "Relação",
-    "Scope": "Âmbito",
-    "SingleEntity": "Entidade única"
-  },
   "comp:BAIAuditLogNodes": {
     "Action": "Ação",
     "ActionId": "ID de ação",
     "ActionKind": "Tipo de ação",
+    "ActionKindBulk": "Em massa",
+    "ActionKindGlobal": "Global",
+    "ActionKindLookup": "Consulta",
+    "ActionKindMembership": "Associação",
+    "ActionKindRelation": "Relação",
+    "ActionKindScope": "Âmbito",
+    "ActionKindSingleEntity": "Entidade única",
     "Actor": "Ator",
     "ClientIp": "IP do cliente",
     "Description": "Descrição",

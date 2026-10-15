@@ -89,19 +89,17 @@
     "Updated": "Cập nhật",
     "Version": "Phiên bản"
   },
-  "comp:BAIAuditLogActionKindToken": {
-    "Bulk": "Hàng loạt",
-    "Global": "Toàn cục",
-    "Lookup": "Tra cứu",
-    "Membership": "Tư cách thành viên",
-    "Relation": "Quan hệ",
-    "Scope": "Phạm vi",
-    "SingleEntity": "Thực thể đơn"
-  },
   "comp:BAIAuditLogNodes": {
     "Action": "Hành động",
     "ActionId": "ID hành động",
     "ActionKind": "Kiểu hành động",
+    "ActionKindBulk": "Hàng loạt",
+    "ActionKindGlobal": "Toàn cục",
+    "ActionKindLookup": "Tra cứu",
+    "ActionKindMembership": "Tư cách thành viên",
+    "ActionKindRelation": "Quan hệ",
+    "ActionKindScope": "Phạm vi",
+    "ActionKindSingleEntity": "Thực thể đơn",
     "Actor": "Người thực hiện",
     "ClientIp": "IP máy khách",
     "Description": "Mô tả",

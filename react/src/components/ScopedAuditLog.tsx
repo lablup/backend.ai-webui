@@ -11,7 +11,6 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   filterOutNullAndUndefined,
-  useAuditLogActionKindOptions,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -85,7 +84,6 @@ const ScopedAuditLog = ({
   'use memo';
   const { t } = useTranslation();
   const [fetchKey, updateFetchKey] = useFetchKey();
-  const actionKindOptions = useAuditLogActionKindOptions();
 
   const filter = queryRef.variables.filter ?? undefined;
   const orderBy = queryRef.variables.orderBy?.[0];
@@ -139,7 +137,21 @@ const ScopedAuditLog = ({
               propertyLabel: t('auditLog.ActionKind'),
               type: 'enum',
               strictSelection: true,
-              options: actionKindOptions,
+              options: [
+                {
+                  label: t('auditLog.ActionKindSingleEntity'),
+                  value: 'SINGLE_ENTITY',
+                },
+                { label: t('auditLog.ActionKindBulk'), value: 'BULK' },
+                { label: t('auditLog.ActionKindScope'), value: 'SCOPE' },
+                { label: t('auditLog.ActionKindRelation'), value: 'RELATION' },
+                {
+                  label: t('auditLog.ActionKindMembership'),
+                  value: 'MEMBERSHIP',
+                },
+                { label: t('auditLog.ActionKindGlobal'), value: 'GLOBAL' },
+                { label: t('auditLog.ActionKindLookup'), value: 'LOOKUP' },
+              ],
             },
             {
               key: 'operation',

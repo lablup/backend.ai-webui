@@ -347,6 +347,13 @@
   "auditLog": {
     "Action": "Tindakan",
     "ActionKind": "Jenis Tindakan",
+    "ActionKindBulk": "Pukal",
+    "ActionKindGlobal": "Global",
+    "ActionKindLookup": "Carian",
+    "ActionKindMembership": "Keahlian",
+    "ActionKindRelation": "Hubungan",
+    "ActionKindScope": "Skop",
+    "ActionKindSingleEntity": "Entiti Tunggal",
     "AuditLog": "Log Audit",
     "Operation": "Operasi",
     "Status": "Status",

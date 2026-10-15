@@ -89,19 +89,17 @@
     "Updated": "更新",
     "Version": "版本"
   },
-  "comp:BAIAuditLogActionKindToken": {
-    "Bulk": "批量",
-    "Global": "全局",
-    "Lookup": "查询",
-    "Membership": "成员资格",
-    "Relation": "关联",
-    "Scope": "范围",
-    "SingleEntity": "单个实体"
-  },
   "comp:BAIAuditLogNodes": {
     "Action": "操作名称",
     "ActionId": "操作 ID",
     "ActionKind": "操作类型",
+    "ActionKindBulk": "批量",
+    "ActionKindGlobal": "全局",
+    "ActionKindLookup": "查询",
+    "ActionKindMembership": "成员资格",
+    "ActionKindRelation": "关联",
+    "ActionKindScope": "范围",
+    "ActionKindSingleEntity": "单个实体",
     "Actor": "执行者",
     "ClientIp": "客户端 IP",
     "Description": "描述",

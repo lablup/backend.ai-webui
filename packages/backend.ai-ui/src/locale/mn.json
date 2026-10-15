@@ -89,19 +89,17 @@
     "Updated": "Шинэчилсэн цаг нь",
     "Version": "Таамаглал"
   },
-  "comp:BAIAuditLogActionKindToken": {
-    "Bulk": "Бөөнөөр",
-    "Global": "Глобал",
-    "Lookup": "Хайлт",
-    "Membership": "Гишүүнчлэл",
-    "Relation": "Холбоо",
-    "Scope": "Хүрээ",
-    "SingleEntity": "Нэг объект"
-  },
   "comp:BAIAuditLogNodes": {
     "Action": "Үйл",
     "ActionId": "Үйлийн ID",
     "ActionKind": "Үйлийн төрөл",
+    "ActionKindBulk": "Бөөнөөр",
+    "ActionKindGlobal": "Глобал",
+    "ActionKindLookup": "Хайлт",
+    "ActionKindMembership": "Гишүүнчлэл",
+    "ActionKindRelation": "Холбоо",
+    "ActionKindScope": "Хүрээ",
+    "ActionKindSingleEntity": "Нэг объект",
     "Actor": "Гүйцэтгэгч",
     "ClientIp": "Клиентийн IP",
     "Description": "Тайлбар",

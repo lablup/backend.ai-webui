@@ -347,6 +347,13 @@
   "auditLog": {
     "Action": "Eylem",
     "ActionKind": "Eylem Türü",
+    "ActionKindBulk": "Toplu",
+    "ActionKindGlobal": "Genel",
+    "ActionKindLookup": "Sorgu",
+    "ActionKindMembership": "Üyelik",
+    "ActionKindRelation": "İlişki",
+    "ActionKindScope": "Kapsam",
+    "ActionKindSingleEntity": "Tekil Varlık",
     "AuditLog": "Denetim Günlüğü",
     "Operation": "İşlem",
     "Status": "Durum",

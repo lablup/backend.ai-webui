@@ -89,19 +89,17 @@
     "Updated": "Обновлено",
     "Version": "Версия"
   },
-  "comp:BAIAuditLogActionKindToken": {
-    "Bulk": "Массовое",
-    "Global": "Глобальное",
-    "Lookup": "Поиск",
-    "Membership": "Членство",
-    "Relation": "Связь",
-    "Scope": "Область",
-    "SingleEntity": "Один объект"
-  },
   "comp:BAIAuditLogNodes": {
     "Action": "Действие",
     "ActionId": "ID действия",
     "ActionKind": "Вид действия",
+    "ActionKindBulk": "Массовое",
+    "ActionKindGlobal": "Глобальное",
+    "ActionKindLookup": "Поиск",
+    "ActionKindMembership": "Членство",
+    "ActionKindRelation": "Связь",
+    "ActionKindScope": "Область",
+    "ActionKindSingleEntity": "Один объект",
     "Actor": "Исполнитель",
     "ClientIp": "IP клиента",
     "Description": "Описание",

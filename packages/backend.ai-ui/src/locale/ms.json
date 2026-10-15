@@ -89,19 +89,17 @@
     "Updated": "Dikemas kini",
     "Version": "Versi"
   },
-  "comp:BAIAuditLogActionKindToken": {
-    "Bulk": "Pukal",
-    "Global": "Global",
-    "Lookup": "Carian",
-    "Membership": "Keahlian",
-    "Relation": "Hubungan",
-    "Scope": "Skop",
-    "SingleEntity": "Entiti Tunggal"
-  },
   "comp:BAIAuditLogNodes": {
     "Action": "Tindakan",
     "ActionId": "ID Tindakan",
     "ActionKind": "Jenis Tindakan",
+    "ActionKindBulk": "Pukal",
+    "ActionKindGlobal": "Global",
+    "ActionKindLookup": "Carian",
+    "ActionKindMembership": "Keahlian",
+    "ActionKindRelation": "Hubungan",
+    "ActionKindScope": "Skop",
+    "ActionKindSingleEntity": "Entiti Tunggal",
     "Actor": "Pelaku",
     "ClientIp": "IP Klien",
     "Description": "Penerangan",

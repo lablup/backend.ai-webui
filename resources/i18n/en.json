@@ -334,6 +334,13 @@
   "auditLog": {
     "Action": "Action",
     "ActionKind": "Action Kind",
+    "ActionKindBulk": "Bulk",
+    "ActionKindGlobal": "Global",
+    "ActionKindLookup": "Lookup",
+    "ActionKindMembership": "Membership",
+    "ActionKindRelation": "Relation",
+    "ActionKindScope": "Scope",
+    "ActionKindSingleEntity": "Single Entity",
     "AuditLog": "Audit Log",
     "Operation": "Operation",
     "Status": "Status",

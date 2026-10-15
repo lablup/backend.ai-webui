@@ -347,6 +347,13 @@
   "auditLog": {
     "Action": "ชื่อการดำเนินการ",
     "ActionKind": "ชนิดการดำเนินการ",
+    "ActionKindBulk": "แบบกลุ่ม",
+    "ActionKindGlobal": "ทั่วทั้งระบบ",
+    "ActionKindLookup": "การค้นหา",
+    "ActionKindMembership": "การเป็นสมาชิก",
+    "ActionKindRelation": "ความสัมพันธ์",
+    "ActionKindScope": "ขอบเขต",
+    "ActionKindSingleEntity": "เอนทิตีเดียว",
     "AuditLog": "บันทึกการตรวจสอบ",
     "Operation": "การดำเนินการ",
     "Status": "สถานะ",
