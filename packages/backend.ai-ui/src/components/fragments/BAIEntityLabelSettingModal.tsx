@@ -263,9 +263,11 @@ const BAIEntityLabelSettingModalContent = ({
             layout="vertical"
             autoComplete="off"
             initialValues={{
-              labels: isBulk
-                ? [{}]
-                : currentLabels.map(({ key, value }) => ({ key, value })),
+              // One empty row to start with, so adding the first label is one step.
+              labels:
+                isBulk || currentLabels.length === 0
+                  ? [{}]
+                  : currentLabels.map(({ key, value }) => ({ key, value })),
             }}
           >
             <Form.List name="labels">
