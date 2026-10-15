@@ -1,7 +1,7 @@
 import { BAIAuditLogNodesFragment$data, BAIAuditLogNodesFragment$key } from '../../__generated__/BAIAuditLogNodesFragment.graphql';
 import { BAIColumnsType, BAITableProps } from '../Table';
 export type AuditLogNodeInList = NonNullable<BAIAuditLogNodesFragment$data[number]>;
-export declare const availableAuditLogSorterValues: readonly ["createdAt", "actionName", "actionKind", "operation", "status", ...("-status" | "-createdAt" | "-actionKind" | "-actionName" | "-operation")[]];
+export declare const availableAuditLogSorterValues: readonly ["createdAt", "actionName", "actionKind", "operation", "status", ...("-status" | "-createdAt" | "-actionName" | "-actionKind" | "-operation")[]];
 export interface BAIAuditLogNodesProps extends Omit<BAITableProps<AuditLogNodeInList>, 'dataSource' | 'columns' | 'onChangeOrder'> {
     auditLogFrgmt: BAIAuditLogNodesFragment$key;
     disableSorter?: boolean;
