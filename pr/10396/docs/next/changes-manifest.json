@@ -1,0 +1,150 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-10-15T16:04:43.275Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 1,
+        "changes": 4,
+        "added": 1,
+        "modified": 3,
+        "removed": 0,
+        "images": 2,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "deployment",
+          "title": "Deployments",
+          "status": "modified",
+          "url": "next/en/deployment.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/deployment/deployment.md",
+          "counts": {
+            "added": 1,
+            "modified": 3,
+            "removed": 0,
+            "images": 2,
+            "total": 4
+          },
+          "fingerprints": [
+            "33d0ed1609e4",
+            "0c0e10305750",
+            "2c344ce550e0",
+            "4a877ec5861c"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 1,
+        "changes": 4,
+        "added": 1,
+        "modified": 3,
+        "removed": 0,
+        "images": 2,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "deployment",
+          "title": "デプロイ",
+          "status": "modified",
+          "url": "next/ja/deployment.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/deployment/deployment.md",
+          "counts": {
+            "added": 1,
+            "modified": 3,
+            "removed": 0,
+            "images": 2,
+            "total": 4
+          },
+          "fingerprints": [
+            "66580170b99d",
+            "769d1cfb4d1b",
+            "2eea228cf8f7",
+            "378081a8f87a"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 1,
+        "changes": 4,
+        "added": 1,
+        "modified": 3,
+        "removed": 0,
+        "images": 2,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "deployment",
+          "title": "배포",
+          "status": "modified",
+          "url": "next/ko/deployment.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/deployment/deployment.md",
+          "counts": {
+            "added": 1,
+            "modified": 3,
+            "removed": 0,
+            "images": 2,
+            "total": 4
+          },
+          "fingerprints": [
+            "ce3497f78625",
+            "c5e7c95141e9",
+            "958f3d5a28a5",
+            "71382f05a4ea"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 1,
+        "changes": 4,
+        "added": 1,
+        "modified": 3,
+        "removed": 0,
+        "images": 2,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "deployment",
+          "title": "การปรับใช้",
+          "status": "modified",
+          "url": "next/th/deployment.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/deployment/deployment.md",
+          "counts": {
+            "added": 1,
+            "modified": 3,
+            "removed": 0,
+            "images": 2,
+            "total": 4
+          },
+          "fingerprints": [
+            "f0c1109906a5",
+            "48c92bf0e8e0",
+            "491cb5ce50d9",
+            "652269b33231"
+          ]
+        }
+      ]
+    }
+  }
+}
