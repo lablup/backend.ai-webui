@@ -34,10 +34,8 @@ interface RoleDetailDrawerContentV2Props {
 }
 
 /**
- * Body of `RoleDetailDrawerV2` (managers >= 26.9.0a4): the role's name and
- * description, its metadata with the one scope it belongs to, and the
- * Permissions / Role Assignments tabs. The scope fields carry `@since` because
- * this fragment rides the role list query every manager receives (ADR 0006).
+ * Body of `RoleDetailDrawerV2`: the role's name and description, its metadata
+ * with the one scope it belongs to, and the Permissions / Role Assignments tabs.
  */
 const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
   roleNodeFrgmt,
@@ -58,11 +56,11 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
         autoAssign
         createdAt
         updatedAt
-        scopeType @since(version: "26.9.0a4")
-        scopeId @since(version: "26.9.0a4")
+        scopeType
+        scopeId
         # Aliases only where nullability differs: the manager caps a document
         # at 20 aliases and the list query carries every drawer fragment.
-        scope @since(version: "26.9.0a4") {
+        scope {
           ... on DomainV2 {
             basicInfo {
               name
