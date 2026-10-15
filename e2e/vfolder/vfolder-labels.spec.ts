@@ -1,6 +1,7 @@
 // Covers the entity labels on the Data page added in #10166: editing a
 // folder's labels, filtering by a label token, and the bulk Add labels action.
 import { cleanupVFolderSafely } from '../utils/cleanup-util';
+import { skipUnlessLabelableEntityType } from '../utils/feature-gate-util';
 import {
   createVFolderAndVerify,
   getVFolderRow,
@@ -38,6 +39,27 @@ async function fillLabelAndSave(
   await expect(modal).toBeHidden({ timeout: 30000 });
 }
 
+// Waits for the folder list query `action` triggers and for the grid to
+// leave its busy state, since the page keeps showing the previous rows while
+// the deferred refetch is in flight.
+async function settleFolderListAfter(
+  page: Page,
+  action: () => Promise<void>,
+): Promise<void> {
+  const refetch = page.waitForResponse(
+    (response) =>
+      (response.request().postData() ?? '').includes(
+        'VFolderNodeListPageQuery',
+      ),
+    { timeout: 20000 },
+  );
+  await action();
+  await refetch;
+  await expect(
+    page.locator('.uic-data-grid__body[aria-busy="true"]'),
+  ).toHaveCount(0, { timeout: 20000 });
+}
+
 const uniqueSuffix = () =>
   `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
 
@@ -55,6 +77,11 @@ test.describe(
     test.beforeEach(async ({ page, request }) => {
       labelFolderNames = [];
       await loginAsUser(page, request);
+      await skipUnlessLabelableEntityType(
+        page,
+        'vfolder',
+        'Folder labels require a manager that accepts vfolder labels (#10166)',
+      );
     });
 
     test.afterEach(async ({ page }) => {
@@ -92,7 +119,7 @@ test.describe(
       await expect(labelToken).toBeVisible({ timeout: 30000 });
 
       // Clicking the token filters the list by that label.
-      await labelToken.click();
+      await settleFolderListAfter(page, () => labelToken.click());
       const filterGroup = page
         .getByRole('group', { name: 'Search filters' })
         .first();
@@ -104,9 +131,13 @@ test.describe(
       ).toBeVisible();
       await expect(row).toBeVisible({ timeout: 30000 });
       const rows = page.locator('tbody tr').filter({ hasText: /\S/ });
-      for (const text of await rows.allTextContents()) {
-        expect(text).toContain('env=prod');
-      }
+      await expect(async () => {
+        const texts = await rows.allTextContents();
+        expect(texts.length).toBeGreaterThan(0);
+        for (const text of texts) {
+          expect(text).toContain('env=prod');
+        }
+      }).toPass({ timeout: 30000 });
     });
 
     test('User can add labels to multiple selected folders', async ({

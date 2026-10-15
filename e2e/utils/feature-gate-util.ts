@@ -201,3 +201,39 @@ export async function skipUnlessAllowedVFolderType(
   const allowedTypes = await listAllowedVFolderTypes(page);
   test.skip(!allowedTypes.includes(type), reason);
 }
+
+/**
+ * Returns the entity types the manager accepts labels for — the same
+ * `entityTypes` query `useLabelableEntityTypes` reads to decide whether the
+ * label UI renders. Empty when the manager does not expose the field.
+ */
+export async function listLabelableEntityTypes(page: Page): Promise<string[]> {
+  await waitForBackendAIClient(page);
+  return page.evaluate(async () => {
+    try {
+      const data = await (globalThis as any).backendaiclient?.query(
+        'query { entityTypes { name } }',
+        {},
+      );
+      return (data?.entityTypes ?? []).map(
+        (entityType: { name: string }) => entityType.name,
+      );
+    } catch {
+      return [];
+    }
+  });
+}
+
+/**
+ * Declarative capability gate: skips the current test (with the given
+ * auditable reason) when the manager does not accept labels on
+ * `entityType` (e.g. `'vfolder'`, `'deployment'`).
+ */
+export async function skipUnlessLabelableEntityType(
+  page: Page,
+  entityType: string,
+  reason: string,
+): Promise<void> {
+  const entityTypes = await listLabelableEntityTypes(page);
+  test.skip(!entityTypes.includes(entityType), reason);
+}

@@ -9,6 +9,7 @@ import {
   createDeploymentShell,
   escapeForRegExp,
 } from '../utils/deployment-fixtures';
+import { skipUnlessLabelableEntityType } from '../utils/feature-gate-util';
 import { loginAsAdmin, navigateTo, webuiEndpoint } from '../utils/test-util';
 import { test, expect, type Page } from '@playwright/test';
 
@@ -19,7 +20,9 @@ const ADMIN_DEPLOYMENTS_URL = `${webuiEndpoint}/admin/deployments?tab=deployment
 const LABEL_DEPLOYMENT_PREFIX = 'e2e-plan-label-';
 
 // Adds a free-text condition from the PowerSearch typeahead; its edit popover
-// commits the typed value with Apply.
+// commits the typed value with Apply. Returns once the list query that Apply
+// triggers has answered and the grid has left its busy state, since the list
+// keeps showing the previous rows while the deferred refetch is in flight.
 async function applyTextFilter(
   page: Page,
   field: string,
@@ -38,15 +41,30 @@ async function applyTextFilter(
   }).toPass({ timeout: 15000 });
   await typeahead.getByRole('option', { name: field, exact: true }).click();
   await page.getByRole('textbox', { name: 'Value' }).fill(value);
+  const refetch = page.waitForResponse(
+    (response) =>
+      (response.request().postData() ?? '').includes('AdminDeploymentQuery'),
+    { timeout: 20000 },
+  );
   await page.getByRole('button', { name: 'Apply', exact: true }).click();
+  await refetch;
   await page.keyboard.press('Escape');
   await expect(typeahead).toBeHidden();
+  await expect(
+    page.locator('.uic-data-grid__body[aria-busy="true"]'),
+  ).toHaveCount(0, { timeout: 20000 });
 }
 
 test.describe(
   'Admin Deployments - Label filter',
   {
-    tag: ['@serving', '@admin', '@regression', '@requires-manager-v26.9'],
+    tag: [
+      '@serving',
+      '@admin',
+      '@functional',
+      '@regression',
+      '@requires-manager-v26.9',
+    ],
   },
   () => {
     let deploymentName: string;
@@ -56,6 +74,11 @@ test.describe(
         .toString(36)
         .slice(2, 6)}`;
       await loginAsAdmin(page, request);
+      await skipUnlessLabelableEntityType(
+        page,
+        'deployment',
+        'Deployment labels require a manager that accepts deployment labels (#10166)',
+      );
     });
 
     test.afterEach(async () => {
@@ -105,7 +128,16 @@ test.describe(
         row.getByRole('button', { name: labelText, exact: true }),
       ).toBeVisible({ timeout: 30000 });
 
+      // A Label value the deployment does not carry filters it out, so the
+      // value condition is not ignored.
+      await applyTextFilter(page, 'Label key', labelKey);
+      await expect(row).toBeVisible({ timeout: 30000 });
+      await applyTextFilter(page, 'Label value', 'e2e-no-match');
+      await expect(row).toBeHidden({ timeout: 30000 });
+
       // Filtering by Label key and Label value leaves only that deployment.
+      await page.goto(ADMIN_DEPLOYMENTS_URL);
+      await expect(row).toBeVisible({ timeout: 30000 });
       await applyTextFilter(page, 'Label key', labelKey);
       await applyTextFilter(page, 'Label value', labelValue);
       const filterGroup = page.getByRole('group', { name: 'Search filters' });
