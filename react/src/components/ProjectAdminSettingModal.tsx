@@ -21,7 +21,6 @@ import {
   BAITable,
   BAIUserSelect,
   filterOutNullAndUndefined,
-  toLocalId,
   useBAILogger,
   useMutationWithPromise,
 } from 'backend.ai-ui';
@@ -50,6 +49,7 @@ export const ProjectAdminSettingQuery = graphql`
       edges {
         node {
           id
+          entityId
           name
           users(limit: $limit, offset: $offset) {
             count
@@ -150,7 +150,7 @@ export const groupProjectAdminAssignmentsByUser = (
       roles.flatMap((role) =>
         filterOutNullAndUndefined(
           _.map(role.users?.edges, (edge) => edge?.node),
-        ).map((node) => ({ ...node, roleId: role.id })),
+        ).map((node) => ({ ...node, roleId: role.entityId })),
       ),
       'userId',
     ),
@@ -262,7 +262,7 @@ const ProjectAdminSettingModal = ({
           roles.map((adminRole, index) =>
             mutateBulkAssignRole({
               input: {
-                roleId: toLocalId(adminRole.id),
+                roleId: adminRole.entityId,
                 userIds: values.userIds,
                 // Passing projectId auto-adds the project to each user's
                 // allowed project list — once is enough, and concurrent
@@ -325,7 +325,7 @@ const ProjectAdminSettingModal = ({
       roleIds.map((roleId) =>
         mutateRevokeRole({
           input: {
-            roleId: toLocalId(roleId),
+            roleId,
             userId,
           },
         }),
@@ -377,8 +377,16 @@ const ProjectAdminSettingModal = ({
       <BAIFlex direction="column" align="stretch" gap="sm">
         {/* antd `Alert` → `Banner` (MAPPING §4): `type` → `status`, `showIcon`
             dropped (Banner always renders its status icon). */}
-        <Banner status="info" title={t('project.DescSetProjectAdmin')} />
-        <Banner status="warning" title={t('project.DescRevokeProjectAdmin')} />
+        <Banner
+          role="status"
+          status="info"
+          title={t('project.DescSetProjectAdmin')}
+        />
+        <Banner
+          role="alert"
+          status="warning"
+          title={t('project.DescRevokeProjectAdmin')}
+        />
         <Form ref={formRef}>
           <BAIFlex gap="xs" align="start">
             <Suspense

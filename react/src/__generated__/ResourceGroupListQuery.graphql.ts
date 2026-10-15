@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<90daf3856cc177f9feadb75dadb7cd0c>>
+ * @generated SignedSource<<1ea1e7e4b19a440da01058e2e5f9c5ce>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -82,6 +82,10 @@ export type ResourceGroupListQuery$data = {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly entityId: string;
+        readonly entityLabels: {
+          readonly " $fragmentSpreads": FragmentRefs<"BAIEntityLabelSettingModalFragment" | "BAIEntityLabelTokensFragment">;
+        } | null | undefined;
         readonly id: string;
         readonly metadata: {
           readonly createdAt: string;
@@ -170,10 +174,24 @@ v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "entityId",
   "storageKey": null
 },
 v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v9 = [
+  {
+    "kind": "Literal",
+    "name": "limit",
+    "value": 100
+  }
+],
+v10 = {
   "alias": null,
   "args": null,
   "concreteType": "ResourceGroupStatus",
@@ -205,7 +223,7 @@ v8 = {
   ],
   "storageKey": null
 },
-v9 = {
+v11 = {
   "alias": null,
   "args": null,
   "concreteType": "ResourceGroupMetadata",
@@ -230,7 +248,7 @@ v9 = {
   ],
   "storageKey": null
 },
-v10 = {
+v12 = {
   "alias": null,
   "args": null,
   "concreteType": "ResourceGroupNetworkConfig",
@@ -248,7 +266,7 @@ v10 = {
   ],
   "storageKey": null
 },
-v11 = {
+v13 = {
   "alias": null,
   "args": null,
   "concreteType": "ResourceGroupSchedulerConfig",
@@ -306,9 +324,31 @@ return {
                   (v6/*: any*/),
                   (v7/*: any*/),
                   (v8/*: any*/),
-                  (v9/*: any*/),
+                  {
+                    "alias": null,
+                    "args": (v9/*: any*/),
+                    "concreteType": "EntityLabelConnection",
+                    "kind": "LinkedField",
+                    "name": "entityLabels",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "args": null,
+                        "kind": "FragmentSpread",
+                        "name": "BAIEntityLabelTokensFragment"
+                      },
+                      {
+                        "args": null,
+                        "kind": "FragmentSpread",
+                        "name": "BAIEntityLabelSettingModalFragment"
+                      }
+                    ],
+                    "storageKey": "entityLabels(limit:100)"
+                  },
                   (v10/*: any*/),
                   (v11/*: any*/),
+                  (v12/*: any*/),
+                  (v13/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -366,9 +406,65 @@ return {
                   (v6/*: any*/),
                   (v7/*: any*/),
                   (v8/*: any*/),
-                  (v9/*: any*/),
+                  {
+                    "alias": null,
+                    "args": (v9/*: any*/),
+                    "concreteType": "EntityLabelConnection",
+                    "kind": "LinkedField",
+                    "name": "entityLabels",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "EntityLabelEdge",
+                        "kind": "LinkedField",
+                        "name": "edges",
+                        "plural": true,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "EntityLabel",
+                            "kind": "LinkedField",
+                            "name": "node",
+                            "plural": false,
+                            "selections": [
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "key",
+                                "storageKey": null
+                              },
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "value",
+                                "storageKey": null
+                              },
+                              (v6/*: any*/),
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "fieldId",
+                                "storageKey": null
+                              }
+                            ],
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": "entityLabels(limit:100)"
+                  },
                   (v10/*: any*/),
-                  (v11/*: any*/)
+                  (v11/*: any*/),
+                  (v12/*: any*/),
+                  (v13/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -381,16 +477,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "33d837066ba64daeba348bd4a671a428",
+    "cacheID": "918480b5874a4e7c12687198b157abce",
     "id": null,
     "metadata": {},
     "name": "ResourceGroupListQuery",
     "operationKind": "query",
-    "text": "query ResourceGroupListQuery(\n  $limit: Int\n  $offset: Int\n  $filter: ResourceGroupFilter\n  $orderBy: [ResourceGroupOrderBy!]\n) {\n  adminResourceGroups(limit: $limit, offset: $offset, filter: $filter, orderBy: $orderBy) {\n    count\n    edges {\n      node {\n        id\n        name\n        status {\n          isActive\n          isPublic\n          isDefault\n        }\n        metadata {\n          description\n          createdAt\n        }\n        network {\n          wsproxyAddr\n        }\n        scheduler {\n          type\n        }\n        ...ResourceGroupDetailDrawerFragment\n      }\n    }\n  }\n}\n\nfragment ResourceGroupDetailDrawerFragment on ResourceGroup {\n  name\n  status {\n    isActive\n    isPublic\n  }\n  metadata {\n    description\n    createdAt\n  }\n  network {\n    wsproxyAddr\n  }\n  scheduler {\n    type\n  }\n}\n"
+    "text": "query ResourceGroupListQuery(\n  $limit: Int\n  $offset: Int\n  $filter: ResourceGroupFilter\n  $orderBy: [ResourceGroupOrderBy!]\n) {\n  adminResourceGroups(limit: $limit, offset: $offset, filter: $filter, orderBy: $orderBy) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        entityLabels(limit: 100) {\n          ...BAIEntityLabelTokensFragment\n          ...BAIEntityLabelSettingModalFragment\n        }\n        status {\n          isActive\n          isPublic\n          isDefault\n        }\n        metadata {\n          description\n          createdAt\n        }\n        network {\n          wsproxyAddr\n        }\n        scheduler {\n          type\n        }\n        ...ResourceGroupDetailDrawerFragment\n      }\n    }\n  }\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment ResourceGroupDetailDrawerFragment on ResourceGroup {\n  name\n  status {\n    isActive\n    isPublic\n  }\n  metadata {\n    description\n    createdAt\n  }\n  network {\n    wsproxyAddr\n  }\n  scheduler {\n    type\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "fef08baf2a1a8d66c8c6e494614f94a5";
+(node as any).hash = "f608be51ab1449c0a52494c949e40ba5";
 
 export default node;

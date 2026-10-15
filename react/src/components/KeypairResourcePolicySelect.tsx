@@ -77,7 +77,7 @@ const KeypairResourcePolicySelect: React.FC<
       isDisabled={disabled}
       isLoading={loading}
       width="100%"
-      style={style}
+      controlStyle={style}
     />
   );
 };

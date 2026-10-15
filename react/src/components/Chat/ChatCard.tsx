@@ -644,6 +644,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
         )}
         {!_.isEmpty(error?.message) ? (
           <Banner
+            role="alert"
             title={error?.message ?? ''}
             status="error"
             style={{
@@ -654,6 +655,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
         ) : null}
         {!baseURL && !showCustomEndpointForm ? (
           <Banner
+            role="alert"
             title={t('error.InvalidBaseURL')}
             status="error"
             style={{

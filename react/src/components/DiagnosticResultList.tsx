@@ -6,7 +6,7 @@ import type { DiagnosticResult } from '../types/diagnostics';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFlex, BAISkeleton } from 'backend.ai-ui';
+import { BAIFlex, BAISkeleton, bannerLiveRole } from 'backend.ai-ui';
 import { CheckCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -51,6 +51,7 @@ const DiagnosticResultList: React.FC<DiagnosticResultListProps> = ({
         <Banner
           key={result.id}
           status={severityToBannerStatus[result.severity]}
+          role={bannerLiveRole(severityToBannerStatus[result.severity])}
           title={t(result.titleKey, result.interpolationValues)}
           description={
             <BAIFlex align="start" direction="column" gap="xxs">

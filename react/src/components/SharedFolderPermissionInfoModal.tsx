@@ -93,6 +93,7 @@ const SharedFolderPermissionInfoModal: React.FC<
     >
       <VStack align="stretch" gap={5}>
         <Banner
+          role="status"
           status="info"
           title={
             vfolder?.ownership_type === 'user'

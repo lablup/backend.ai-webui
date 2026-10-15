@@ -466,6 +466,7 @@
     "Revoke": "Batalkan",
     "Save": "Simpan",
     "SaveAndClose": "Simpan dan tutup",
+    "SaveAsDraft": "Simpan sebagai draf",
     "SaveChanges": "Simpan Perubahan",
     "SaveWithoutClose": "Simpan Tanpa Tutup",
     "SeeErrorLogs": "Lihat ralat",
@@ -1529,6 +1530,13 @@
     "SessionStatusIs": "Status sesi adalah",
     "SessionStatusIsWithReload": "Status sesi ialah {{status}}. Sila muat semula selepas beberapa ketika.",
     "SessionStillPreparing": "Sesi masih dalam persiapan. Muat semula selepas beberapa ketika"
+  },
+  "entityLabel": {
+    "EditLabels": "Edit label",
+    "LabelKey": "Kunci label",
+    "LabelValue": "Nilai label",
+    "Labels": "Label",
+    "NoPermissionToEditLabels": "Anda tiada kebenaran untuk mengedit label."
   },
   "environment": {
     "Action": "Tindakan",
@@ -3597,10 +3605,10 @@
     "ActiveSessions": "Sesi aktif",
     "Announcement": "Pengumuman",
     "AnnouncementDeleted": "Pengumuman telah dipadam.",
-    "AnnouncementEnabled": "Didayakan",
+    "AnnouncementDraft": "Draf",
     "AnnouncementMessage": "Mesej",
-    "AnnouncementMessageRequired": "Sila masukkan mesej untuk mendayakan pengumuman.",
     "AnnouncementPreview": "Pratonton",
+    "AnnouncementTitle": "Tajuk",
     "AnnouncementUpdated": "Pengumuman telah dikemas kini.",
     "CLI": "CLI",
     "CLIDownloadExecutable": "Muat turun boleh laku mandiri",
@@ -3665,12 +3673,13 @@
   },
   "theme": {
     "CannotApplyInvalidJsonConfig": "Tetapan tema tidak sepadan dengan skema. Sila semak fail.",
+    "ConvertedV1ThemeConfig": "Fail tema lama (v1) telah ditukar kepada format semasa. Sila semak sebelum menggunakannya.",
     "FailedToReadFile": "Gagal membaca fail.",
     "InvalidJsonFileAlert": "Format JSON tidak sah. Sila periksa kandungan fail.",
     "JsonConfigAppliedSuccessfully": "Tetapan tema telah berjaya diterapkan.",
     "PreviewModeAlert": "Anda sedang menggunakan mod pratonton tema. Sila teruskan kerja sebenar anda di tetingkap asal.",
     "ThemeJsonConfiguration": "Konfigurasi Tema JSON",
-    "ThemeJsonConfigurationDesc": "Import fail JSON untuk menukar tema atau eksport tema semasa sebagai JSON. Untuk menerapkan perubahan pada laman anda, eksport fail JSON dan salin ke resources/theme.json pada pelayan web WebUI.",
+    "ThemeJsonConfigurationDesc": "Import fail JSON untuk menukar tema atau eksport tema semasa sebagai JSON. Tekan OK untuk memuatkannya ke draf; Guna pada halaman Branding menyimpan tema untuk domain ini.",
     "button": {
       "ExportToJson": "Eksport JSON",
       "ImportFromJson": "Import JSON",
@@ -3731,6 +3740,8 @@
   },
   "userSettings": {
     "AIAgents": "Ejen AI",
+    "ApplyThemeToDomain": "Gunakan tema pada domain",
+    "ApplyThemeToDomainDesc": "Tema ini akan digunakan untuk semua pengguna dalam domain ini.",
     "AutoLogout": "Log Keluar Auto",
     "AutomaticUpdateCheck": "Pemeriksaan Kemas kini Automatik",
     "BetaFeatures": "Ciri Beta",
@@ -3785,6 +3796,8 @@
     "InvalidPortNumber": "Nombor port mestilah nombor positif antara 1025 ~ 65534",
     "KeepLoginSessionInformation": "Simpan Maklumat Sesi Masuk semasa Log Keluar",
     "Language": "Bahasa",
+    "LeaveWithoutApplyingTheme": "Keluar tanpa menggunakan tema?",
+    "LeaveWithoutApplyingThemeDesc": "Perubahan tema anda belum digunakan pada domain dan akan dibuang.",
     "LightMode": "Mod Cahaya",
     "LightTheme": "Mod Terang",
     "LoginHistory": "Sejarah Log Masuk",
@@ -3860,7 +3873,6 @@
       }
     },
     "theme": {
-      "CustomThemeSettingAlert": "Tema yang dikemas kini tidak dapat diterapkan serta-merta. Jika anda ingin menerapkan tema tersebut, sila hubungi pasukan sokongan kami dengan fail konfigurasi JSON yang dieksport.",
       "ErrorColor": "Warna ralat",
       "ErrorColorDesc": "Warna yang digunakan untuk butang atau amaran yang mewakili tindakan kritikal, seperti penghapusan, untuk menunjukkan amaran atau kesilapan.",
       "HeaderBg": "Warna latar belakang header",

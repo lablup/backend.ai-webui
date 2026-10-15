@@ -18,6 +18,7 @@ import {
   BAIFlexProps,
   BAIRowWrapWithDividers,
   useUpdateEffect,
+  cssLengthToPx,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useDeferredValue } from 'react';
@@ -148,7 +149,7 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
         rowGap={token('--spacing-8')}
         columnGap={token('--spacing-8')}
         dividerColor={token('--color-border-emphasized')}
-        dividerInset={parseFloat(token('--spacing-2'))}
+        dividerInset={cssLengthToPx(token('--spacing-2'))}
         dividerWidth={parseFloat(token('--border-width'))}
       >
         <BAIPanelItem
@@ -206,8 +207,8 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
                     // per-site colour decision BAIBadgeCount documents).
                     variant="error"
                     offset={[
-                      -parseFloat(token('--spacing-2')),
-                      -parseFloat(token('--spacing-2')),
+                      -cssLengthToPx(token('--spacing-2')),
+                      -cssLengthToPx(token('--spacing-2')),
                     ]}
                     // As in the antd version: lift the overlay above the
                     // sticky BAIBoardItemTitle band so the pill is not

@@ -32,7 +32,12 @@ export class FolderExplorerModal {
   async verifyPermission(
     permission: 'Read & Write' | 'Read only',
   ): Promise<void> {
-    await expect(this.modal.getByText(permission)).toBeVisible();
+    // Scope to the selector's trigger: its option list is also in the DOM.
+    await expect(
+      this.modal
+        .getByRole('combobox', { name: 'Mount Permission' })
+        .getByText(permission, { exact: true }),
+    ).toBeVisible();
   }
 
   async verifyFileExplorerLoaded(): Promise<void> {

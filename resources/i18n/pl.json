@@ -466,6 +466,7 @@
     "Revoke": "Odwołaj",
     "Save": "Zapisz",
     "SaveAndClose": "Zapisz i zamknij",
+    "SaveAsDraft": "Zapisz jako wersję roboczą",
     "SaveChanges": "Zapisz zmiany",
     "SaveWithoutClose": "Zapisz bez zamykania",
     "SeeErrorLogs": "Zobacz błąd",
@@ -1529,6 +1530,13 @@
     "SessionStatusIs": "Stan sesji to",
     "SessionStatusIsWithReload": "Stan sesji: {{status}}. Odśwież stronę za jakiś czas.",
     "SessionStillPreparing": "Sesja jest wciąż w przygotowaniu. Załaduj ponownie po chwili"
+  },
+  "entityLabel": {
+    "EditLabels": "Edytuj etykiety",
+    "LabelKey": "Klucz etykiety",
+    "LabelValue": "Wartość etykiety",
+    "Labels": "Etykiety",
+    "NoPermissionToEditLabels": "Nie masz uprawnień do edycji etykiet."
   },
   "environment": {
     "Action": "Akcja",
@@ -3600,10 +3608,10 @@
     "ActiveSessions": "Aktywne sesje",
     "Announcement": "Ogłoszenie",
     "AnnouncementDeleted": "Ogłoszenie zostało usunięte.",
-    "AnnouncementEnabled": "Włączono",
+    "AnnouncementDraft": "Wersja robocza",
     "AnnouncementMessage": "Wiadomość",
-    "AnnouncementMessageRequired": "Wprowadź wiadomość, aby włączyć ogłoszenie.",
     "AnnouncementPreview": "Podgląd",
+    "AnnouncementTitle": "Tytuł",
     "AnnouncementUpdated": "Ogłoszenie zostało zaktualizowane.",
     "CLI": "CLI",
     "CLIDownloadExecutable": "Pobierz samodzielny plik wykonywalny",
@@ -3668,12 +3676,13 @@
   },
   "theme": {
     "CannotApplyInvalidJsonConfig": "Ustawienia motywu nie pasują do schematu. Sprawdź plik.",
+    "ConvertedV1ThemeConfig": "Stary plik motywu (v1) został przekonwertowany do bieżącego formatu. Sprawdź go przed zastosowaniem.",
     "FailedToReadFile": "Nie udało się odczytać pliku.",
     "InvalidJsonFileAlert": "Nieprawidłowy format JSON. Sprawdź zawartość pliku.",
     "JsonConfigAppliedSuccessfully": "Ustawienia motywu zostały pomyślnie zastosowane.",
     "PreviewModeAlert": "Obecnie korzystasz z trybu podglądu motywu. Kontynuuj swoją pracę w oryginalnym oknie.",
     "ThemeJsonConfiguration": "Konfiguracja motywu (JSON)",
-    "ThemeJsonConfigurationDesc": "Zaimportuj plik JSON, aby zmienić motyw lub wyeksportuj bieżący motyw jako JSON. Aby zastosować zmiany na swojej stronie, wyeksportuj plik JSON i skopiuj go do resources/theme.json na serwerze WebUI.",
+    "ThemeJsonConfigurationDesc": "Zaimportuj plik JSON, aby zmienić motyw, lub wyeksportuj bieżący motyw jako JSON. Naciśnięcie OK wczytuje go do wersji roboczej; Zastosuj na stronie Branding zapisuje motyw dla tej domeny.",
     "button": {
       "ExportToJson": "Eksportuj JSON",
       "ImportFromJson": "Importuj JSON",
@@ -3734,6 +3743,8 @@
   },
   "userSettings": {
     "AIAgents": "Agenci AI",
+    "ApplyThemeToDomain": "Zastosuj temat do domeny",
+    "ApplyThemeToDomainDesc": "Ten temat zostanie zastosowany do wszystkich użytkowników tej domeny.",
     "AutoLogout": "Automatyczne wylogowanie",
     "AutomaticUpdateCheck": "Automatyczne sprawdzanie aktualizacji",
     "BetaFeatures": "Funkcje beta",
@@ -3788,6 +3799,8 @@
     "InvalidPortNumber": "Numer portu powinien być liczbą dodatnią z zakresu 1025~65534",
     "KeepLoginSessionInformation": "Zachowaj informacje o sesji logowania podczas wylogowania",
     "Language": "Język",
+    "LeaveWithoutApplyingTheme": "Wyjść bez zastosowania motywu?",
+    "LeaveWithoutApplyingThemeDesc": "Zmiany motywu nie zostały zastosowane w domenie i zostaną odrzucone.",
     "LightMode": "Tryb światła",
     "LightTheme": "Tryb jasny",
     "LoginHistory": "Historia logowania",
@@ -3863,7 +3876,6 @@
       }
     },
     "theme": {
-      "CustomThemeSettingAlert": "Zaktualizowanego motywu nie można zastosować od razu. Jeśli chcesz go zastosować, skontaktuj się z naszym zespołem wsparcia i dołącz wyeksportowany plik konfiguracyjny w formacie JSON.",
       "ErrorColor": "Kolor błędu",
       "ErrorColorDesc": "Kolor zastosowany do przycisków lub alertów reprezentujących krytyczne działania, takie jak usuwanie, w celu wskazania ostrzeżeń lub błędów.",
       "HeaderBg": "Kolor tła nagłówka",

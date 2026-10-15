@@ -308,6 +308,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
       {noAvailablePresets && (
         // `type` -> `status`; `showIcon` dropped (Banner always shows it).
         <Banner
+          role="status"
           status="info"
           title={t('deployment.NoPresetsAvailable')}
           description={

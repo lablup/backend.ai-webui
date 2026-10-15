@@ -309,11 +309,14 @@ const AdminDeploymentPage: React.FC = () => {
     switch (tab) {
       case 'deployments':
         if (!deploymentQueryRef) {
+          const urlFilter = params.filter as DeploymentFilter | null;
           loadDeploymentQuery(
             {
-              filter:
-                (params.filter as DeploymentFilter | null) ??
-                deploymentRunningFilter,
+              // A link from elsewhere (e.g. a tag on the detail page) carries
+              // no `status`, so it starts in the running scope.
+              filter: urlFilter?.status
+                ? urlFilter
+                : { ...urlFilter, ...deploymentRunningFilter },
               // `loadTab` runs before the tab mounts, so a URL-supplied
               // sorter the table does not know is dropped here.
               orderBy: convertToOrderBy<DeploymentOrderBy>(

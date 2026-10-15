@@ -860,6 +860,10 @@ export interface AstryxFormTagsInputProps {
   'data-testid'?: string;
 }
 
+// Tokenizer's ref is its input; the listeners need the control box around it.
+const tokenizerControlBox = (input: HTMLInputElement | null) =>
+  input?.closest<HTMLElement>('.astryx-tokenizer') ?? null;
+
 /**
  * Free-form chip input — antd `Select mode="tags"` (MAPPING §3.1 tags branch).
  * The form field holds `string[]`; the Tokenizer works on `SearchableItem[]`
@@ -887,7 +891,7 @@ export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
   'use memo';
   const { t } = useTranslation();
   const statusProps = useFormControlStatusProps();
-  const rootRef = React.useRef<HTMLDivElement>(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
   const splitOnSeparators = (label: string): Array<string> => {
     if (!tokenSeparators?.length) return [label];
     const pattern = new RegExp(
@@ -918,9 +922,9 @@ export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
    * `focus()`/`blur()`. `InputGroup`-style composition does not apply either.
    * The only reachable seam is the DOM.
    *
-   * MECHANISM: `TokenizerProps` extends `Omit<BaseProps<HTMLDivElement>,
-   * 'onChange'>`, so the root div takes a ref. A CAPTURE-phase `keydown`
-   * listener on that root sees the separator key before anything else,
+   * MECHANISM: `Tokenizer`'s ref is its `<input>`; `tokenizerControlBox`
+   * recovers the control box around it (`.astryx-tokenizer`). A CAPTURE-phase
+   * `keydown` listener on that box sees the separator key before anything else,
    * cancels it (a separator is never part of a tag) and re-dispatches a
    * synthetic `Enter` keydown on the same `<input>`. Astryx's own create path
    * then runs unmodified: `BaseTypeahead` selects the highlighted
@@ -978,7 +982,7 @@ export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
   // (antd `mode="tags"` did). Its own Enter path re-focuses the input, so the
   // tags are emitted here and the query is cleared through a native input event.
   const commitPendingTextOnFocusOut = useEffectEvent((event: FocusEvent) => {
-    const root = rootRef.current;
+    const root = tokenizerControlBox(inputRef.current);
     const input = root?.querySelector('input');
     if (!root || !input || !input.value.trim()) return;
     const next = event.relatedTarget;
@@ -1010,7 +1014,7 @@ export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
   });
 
   React.useEffect(() => {
-    const root = rootRef.current;
+    const root = tokenizerControlBox(inputRef.current);
     if (!root) return;
     const keyListener = (event: KeyboardEvent) => handleSeparatorKeyDown(event);
     const focusOutListener = (event: FocusEvent) =>
@@ -1025,7 +1029,7 @@ export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
 
   return (
     <Tokenizer
-      ref={rootRef}
+      ref={inputRef}
       value={(value ?? []).map((tag) => ({ id: tag, label: tag }))}
       onChange={(items) =>
         // antd tags mode deduplicated entries; keep that behavior.

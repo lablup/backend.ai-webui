@@ -1,5 +1,5 @@
 import { modifyConfigToml, webuiEndpoint } from '../utils/test-util';
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, Locator, Page } from '@playwright/test';
 
 // Saved endpoints are what `backendaioptions.set('endpoints', …)` writes after a
 // successful login; seeding the same key skips the login round-trips.
@@ -27,6 +27,31 @@ async function endpointField(page: Page) {
   }
   await expect(input).toBeVisible();
   return input;
+}
+
+/**
+ * The bounding box of `locator` once the animations moving it have finished.
+ * The login dialog opens with a zoom-in animation (a CSS scale), so a box read
+ * right after the form appears is still scaled down (e.g. 344x31 instead of
+ * 352x32) and grows a few pixels later without any layout change. Wait for
+ * every finite animation on the element or one of its ancestors first.
+ */
+async function settledBoundingBox(locator: Locator) {
+  await locator.evaluate((element) =>
+    Promise.all(
+      element.ownerDocument
+        .getAnimations()
+        .filter((animation) => {
+          const target = (animation.effect as KeyframeEffect | null)?.target;
+          const iterations = animation.effect?.getTiming().iterations;
+          return (
+            !!target && target.contains(element) && iterations !== Infinity
+          );
+        })
+        .map((animation) => animation.finished.catch(() => undefined)),
+    ),
+  );
+  return locator.boundingBox();
 }
 
 function endpointRow(page: Page, endpoint: string) {
@@ -86,16 +111,17 @@ test.describe(
         exact: true,
       });
       const before = {
-        login: await loginButton.boundingBox(),
-        input: await input.boundingBox(),
+        login: await settledBoundingBox(loginButton),
+        input: await settledBoundingBox(input),
       };
 
       await input.focus();
       await expect(endpointRow(page, SAVED_ENDPOINTS[0])).toBeVisible();
 
       // The list floats over the dialog, so opening it must not re-centre it.
-      expect(await loginButton.boundingBox()).toEqual(before.login);
-      expect(await input.boundingBox()).toEqual(before.input);
+      // Reading the settled boxes also catches a shift that lands late.
+      expect(await settledBoundingBox(loginButton)).toEqual(before.login);
+      expect(await settledBoundingBox(input)).toEqual(before.input);
     });
 
     test('user can move from the field into the list with the arrow key', async ({

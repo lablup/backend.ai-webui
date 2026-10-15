@@ -466,6 +466,7 @@
     "Revoke": "Thu hồi",
     "Save": "Lưu",
     "SaveAndClose": "Lưu và đóng",
+    "SaveAsDraft": "Lưu dưới dạng bản nháp",
     "SaveChanges": "Lưu thay đổi",
     "SaveWithoutClose": "Lưu mà không đóng",
     "SeeErrorLogs": "Xem lỗi",
@@ -1529,6 +1530,13 @@
     "SessionStatusIs": "Trạng thái phiên là",
     "SessionStatusIsWithReload": "Trạng thái phiên là {{status}}. Vui lòng tải lại sau ít phút.",
     "SessionStillPreparing": "Phiên vẫn đang trong quá trình chuẩn bị. Tải lại sau một thời gian"
+  },
+  "entityLabel": {
+    "EditLabels": "Sửa nhãn",
+    "LabelKey": "Khóa nhãn",
+    "LabelValue": "Giá trị nhãn",
+    "Labels": "Nhãn",
+    "NoPermissionToEditLabels": "Bạn không có quyền sửa nhãn."
   },
   "environment": {
     "Action": "Hoạt động",
@@ -3599,10 +3607,10 @@
     "ActiveSessions": "Phiên hoạt động",
     "Announcement": "Sự thông báo",
     "AnnouncementDeleted": "Thông báo đã được xóa.",
-    "AnnouncementEnabled": "Đã bật",
+    "AnnouncementDraft": "Bản nháp",
     "AnnouncementMessage": "Nội dung",
-    "AnnouncementMessageRequired": "Vui lòng nhập nội dung để bật thông báo.",
     "AnnouncementPreview": "Xem trước",
+    "AnnouncementTitle": "Tiêu đề",
     "AnnouncementUpdated": "Thông báo đã được cập nhật.",
     "CLI": "CLI",
     "CLIDownloadExecutable": "Tải xuống tệp thực thi độc lập",
@@ -3667,12 +3675,13 @@
   },
   "theme": {
     "CannotApplyInvalidJsonConfig": "Cài đặt chủ đề không khớp với lược đồ. Vui lòng kiểm tra tệp.",
+    "ConvertedV1ThemeConfig": "Đã chuyển đổi tệp giao diện cũ (v1) sang định dạng hiện tại. Vui lòng kiểm tra trước khi áp dụng.",
     "FailedToReadFile": "Không thể đọc tệp.",
     "InvalidJsonFileAlert": "Định dạng JSON không hợp lệ. Vui lòng kiểm tra nội dung tệp.",
     "JsonConfigAppliedSuccessfully": "Cài đặt chủ đề đã được áp dụng thành công.",
     "PreviewModeAlert": "Bạn đang ở chế độ xem trước giao diện. Vui lòng quay lại cửa sổ gốc để thực hiện công việc.",
     "ThemeJsonConfiguration": "Cấu hình JSON chủ đề",
-    "ThemeJsonConfigurationDesc": "Nhập một tệp JSON để thay đổi chủ đề hoặc xuất chủ đề hiện tại dưới dạng JSON. Để áp dụng thay đổi lên trang của bạn, xuất tệp JSON và sao chép vào resources/theme.json trên máy chủ WebUI.",
+    "ThemeJsonConfigurationDesc": "Nhập tệp JSON để thay đổi chủ đề hoặc xuất chủ đề hiện tại dưới dạng JSON. Nhấn OK để tải vào bản nháp; Áp dụng trên trang Branding sẽ lưu chủ đề cho miền này.",
     "button": {
       "ExportToJson": "Xuất JSON",
       "ImportFromJson": "Nhập JSON",
@@ -3733,6 +3742,8 @@
   },
   "userSettings": {
     "AIAgents": "Tác nhân AI",
+    "ApplyThemeToDomain": "Áp dụng chủ đề cho miền",
+    "ApplyThemeToDomainDesc": "Chủ đề này sẽ được áp dụng cho tất cả người dùng trong miền này.",
     "AutoLogout": "Đăng xuất tự động",
     "AutomaticUpdateCheck": "Kiểm tra cập nhật tự động",
     "BetaFeatures": "Tính năng Beta",
@@ -3787,6 +3798,8 @@
     "InvalidPortNumber": "Số cổng phải là số dương trong khoảng 1025 ~ 65534",
     "KeepLoginSessionInformation": "Giữ thông tin phiên đăng nhập trong khi đăng xuất",
     "Language": "Ngôn ngữ",
+    "LeaveWithoutApplyingTheme": "Rời đi mà không áp dụng giao diện?",
+    "LeaveWithoutApplyingThemeDesc": "Các thay đổi giao diện chưa được áp dụng cho miền và sẽ bị hủy.",
     "LightMode": "Chế độ sáng",
     "LightTheme": "Chế độ sáng",
     "LoginHistory": "Lịch sử đăng nhập",
@@ -3862,7 +3875,6 @@
       }
     },
     "theme": {
-      "CustomThemeSettingAlert": "Chủ đề vừa cập nhật không thể áp dụng ngay. Nếu bạn muốn áp dụng chủ đề, vui lòng liên hệ bộ phận hỗ trợ của chúng tôi kèm theo tệp JSON cấu hình đã xuất.",
       "ErrorColor": "Màu lỗi",
       "ErrorColorDesc": "Màu được áp dụng cho các nút hoặc cảnh báo thể hiện các hành động quan trọng, chẳng hạn như xóa, để biểu thị cảnh báo hoặc lỗi.",
       "HeaderBg": "Màu nền tiêu đề",

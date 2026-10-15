@@ -466,6 +466,7 @@
     "Revoke": "Цуцлах",
     "Save": "Хадгалах",
     "SaveAndClose": "Хадгалах, хаах",
+    "SaveAsDraft": "Ноорог болгон хадгалах",
     "SaveChanges": "Өөрчлөлтүүдийг хадгалах",
     "SaveWithoutClose": "Хаахгүйгээр хадгалах",
     "SeeErrorLogs": "Үлээс харах",
@@ -1529,6 +1530,13 @@
     "SessionStatusIs": "Session-ий байдал",
     "SessionStatusIsWithReload": "Сессийн төлөв {{status}} байна. Хэсэг хугацааны дараа дахин ачаална уу.",
     "SessionStillPreparing": "Session бэлтгэл ажил үргэлжилж байна. Хэсэг хугацааны дараа дахин ажиллуулна уу"
+  },
+  "entityLabel": {
+    "EditLabels": "Шошго засах",
+    "LabelKey": "Шошгоны түлхүүр",
+    "LabelValue": "Шошгоны утга",
+    "Labels": "Шошго",
+    "NoPermissionToEditLabels": "Танд шошго засах эрх байхгүй."
   },
   "environment": {
     "Action": "Үйлдэл",
@@ -3599,10 +3607,10 @@
     "ActiveSessions": "Идэвхтэй Session-үүд",
     "Announcement": "Зарлал",
     "AnnouncementDeleted": "Зарлал устгагдлаа.",
-    "AnnouncementEnabled": "Идэвхжүүлсэн",
+    "AnnouncementDraft": "Ноорог",
     "AnnouncementMessage": "Зурвас",
-    "AnnouncementMessageRequired": "Зарлалыг идэвхжүүлэхийн тулд зурвас оруулна уу.",
     "AnnouncementPreview": "Урьдчилан харах",
+    "AnnouncementTitle": "Гарчиг",
     "AnnouncementUpdated": "Зарлал шинэчлэгдлээ.",
     "CLI": "CLI",
     "CLIDownloadExecutable": "Бие даасан ажиллах файлыг татах",
@@ -3667,12 +3675,13 @@
   },
   "theme": {
     "CannotApplyInvalidJsonConfig": "Сэдвийн тохиргоо схемд нийцэхгүй байна. Файлыг шалгана уу.",
+    "ConvertedV1ThemeConfig": "Хуучин (v1) загварын файлыг одоогийн хэлбэрт хөрвүүллээ. Хэрэглэхээсээ өмнө шалгана уу.",
     "FailedToReadFile": "Файлыг уншиж чадсангүй.",
     "InvalidJsonFileAlert": "JSON формат буруу байна. Файлын агуулгыг шалгана уу.",
     "JsonConfigAppliedSuccessfully": "Сэдвийн тохиргоог амжилттай хэрэгжүүллээ.",
     "PreviewModeAlert": "Та одоогоор сэдвийн урьдчилсан үзэх горимд байна. Жинхэнэ ажлаа эх цонхонд үргэлжлүүлнэ үү.",
     "ThemeJsonConfiguration": "Сэдэвийн JSON тохиргоо",
-    "ThemeJsonConfigurationDesc": "Сэдвийг өөрчлөхийн тулд JSON файл импортлах эсвэл одоогийн сэдвийг JSON хэлбэрээр экспортлох. Сайтад өөрчлөлтүүдийг хэрэгжүүлэхийн тулд JSON файлыг экспортлаж, WebUI вэб серверийн resources/theme.json руу хуулна.",
+    "ThemeJsonConfigurationDesc": "Загварыг өөрчлөхийн тулд JSON файл импортлох эсвэл одоогийн загварыг JSON болгон экспортлоорой. OK дарахад ноорогт ачаалагдана; Branding хуудасны Хэрэглэх товч энэ домэйнд загварыг хадгална.",
     "button": {
       "ExportToJson": "JSON-аар экспортлах",
       "ImportFromJson": "JSON импортлах",
@@ -3733,6 +3742,8 @@
   },
   "userSettings": {
     "AIAgents": "AI агентууд",
+    "ApplyThemeToDomain": "Сэдвийг домэйнд хэрэглэх",
+    "ApplyThemeToDomainDesc": "Энэ сэдэв энэ домэйны бүх хэрэглэгчид хэрэглэгдэнэ.",
     "AutoLogout": "Автоматаар гарах",
     "AutomaticUpdateCheck": "Шинэчлэлтийг автоматаар шалгах",
     "BetaFeatures": "Бета хувилбарууд",
@@ -3787,6 +3798,8 @@
     "InvalidPortNumber": "Портын дугаар нь 1025 ~ 65534 хооронд эерэг тоо байх ёстой",
     "KeepLoginSessionInformation": "Гарах үед нэвтрэх хуралдааны мэдээллийг хадгалах",
     "Language": "Хэл",
+    "LeaveWithoutApplyingTheme": "Загварыг хэрэгжүүлэхгүйгээр гарах уу?",
+    "LeaveWithoutApplyingThemeDesc": "Домэйнд хэрэгжүүлээгүй загварын өөрчлөлтүүд устгагдана.",
     "LightMode": "Гэрэл горим",
     "LightTheme": "Цайвар горим",
     "LoginHistory": "Нэвтрэх түүх",
@@ -3862,7 +3875,6 @@
       }
     },
     "theme": {
-      "CustomThemeSettingAlert": "Шинэчилсэн сэдвийг шууд хэрэгжүүлэх боломжгүй байна. Хэрэв та сэдвийг хэрэгжүүлэхийг хүсвэл экспортлосон тохиргооны JSON файлыг хавсарган манай дэмжлэгийн багтай холбоо барина уу.",
       "ErrorColor": "Алдааны өнгө",
       "ErrorColorDesc": "Устгах, анхааруулга, сэрэмжлүүлгийг илэрхийлэх, анхааруулга, алдааг зааж өгөх, анхааруулга, алдаа гаргах гэх мэт чухал үйлдлийг илэрхийлсэн өнгөт хэрэглээнд хэрэглэгддэг.",
       "HeaderBg": "Толгой дэвсгэр дэвсгэр өнгө",

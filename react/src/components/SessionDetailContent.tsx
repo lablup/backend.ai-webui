@@ -335,13 +335,22 @@ const SessionDetailContent: React.FC<{
   return session ? (
     <BAIFlex direction="column" gap={'lg'} align="stretch">
       {project !== null && resolvedProjectIdOfSession !== project.id && (
-        <Banner status="warning" title={t('session.NotInProject')} />
+        <Banner
+          role="alert"
+          status="warning"
+          title={t('session.NotInProject')}
+        />
       )}
       {currentUser.uuid !== session?.user_id && (
-        <Banner status="warning" title={t('session.AnotherUserSession')} />
+        <Banner
+          role="alert"
+          status="warning"
+          title={t('session.AnotherUserSession')}
+        />
       )}
       {imminentExpirationTime && imminentExpirationTime < 3600 && (
         <Banner
+          role="alert"
           status="warning"
           title={t('session.IdleCheckExpirationWarning')}
         />
@@ -682,6 +691,7 @@ const SessionDetailContent: React.FC<{
     </BAIFlex>
   ) : (
     <Banner
+      role="alert"
       status="error"
       title={t('session.SessionNotFound')}
       description={id}

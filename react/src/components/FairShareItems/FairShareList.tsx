@@ -187,7 +187,11 @@ const FairShareList: React.FC = () => {
 
   return (
     <BAIFlex direction="column" gap="md" align="stretch">
-      <Banner status="info" title={t('fairShare.step.Description')} />
+      <Banner
+        role="status"
+        status="info"
+        title={t('fairShare.step.Description')}
+      />
       <Stepper
         label={t('fairShare.step.Description')}
         activeStep={stepItems.findIndex((item) => item.key === currentStep)}

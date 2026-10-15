@@ -466,6 +466,7 @@
     "Revoke": "İptal Et",
     "Save": "Kaydet",
     "SaveAndClose": "Kaydet ve kapat",
+    "SaveAsDraft": "Taslak olarak kaydet",
     "SaveChanges": "Değişiklikleri Kaydet",
     "SaveWithoutClose": "Kapatmadan Kaydet",
     "SeeErrorLogs": "Hatayı gör",
@@ -1529,6 +1530,13 @@
     "SessionStatusIs": "Oturum durumu (şimdiki değeri)",
     "SessionStatusIsWithReload": "Oturum durumu {{status}}. Lütfen bir süre sonra sayfayı yeniden yükleyin.",
     "SessionStillPreparing": "Oturum hala hazırlanıyor. Bir süre sonra yeniden yükle"
+  },
+  "entityLabel": {
+    "EditLabels": "Etiketleri düzenle",
+    "LabelKey": "Etiket anahtarı",
+    "LabelValue": "Etiket değeri",
+    "Labels": "Etiketler",
+    "NoPermissionToEditLabels": "Etiketleri düzenleme izniniz yok."
   },
   "environment": {
     "Action": "Aksiyon",
@@ -3597,10 +3605,10 @@
     "ActiveSessions": "Aktif oturumlar",
     "Announcement": "Duyuru",
     "AnnouncementDeleted": "Duyuru silindi.",
-    "AnnouncementEnabled": "Etkin",
+    "AnnouncementDraft": "Taslak",
     "AnnouncementMessage": "Mesaj",
-    "AnnouncementMessageRequired": "Duyuruyu etkinleştirmek için lütfen bir mesaj girin.",
     "AnnouncementPreview": "Önizleme",
+    "AnnouncementTitle": "Başlık",
     "AnnouncementUpdated": "Duyuru güncellendi.",
     "CLI": "CLI",
     "CLIDownloadExecutable": "Bağımsız yürütülebilir dosyayı indir",
@@ -3665,12 +3673,13 @@
   },
   "theme": {
     "CannotApplyInvalidJsonConfig": "Tema ayarları şemaya uymuyor. Lütfen dosyayı kontrol edin.",
+    "ConvertedV1ThemeConfig": "Eski (v1) tema dosyası geçerli biçime dönüştürüldü. Uygulamadan önce gözden geçirin.",
     "FailedToReadFile": "Dosya okunamadı.",
     "InvalidJsonFileAlert": "Geçersiz JSON biçimi. Lütfen dosya içeriğini kontrol edin.",
     "JsonConfigAppliedSuccessfully": "Tema ayarları başarıyla uygulandı.",
     "PreviewModeAlert": "Şu anda tema önizleme modundasınız. Lütfen asıl çalışmanızı orijinal pencerede sürdürün.",
     "ThemeJsonConfiguration": "Tema JSON Yapılandırması",
-    "ThemeJsonConfigurationDesc": "Temayı değiştirmek için bir JSON dosyası içe aktarın veya mevcut temayı JSON olarak dışa aktarın. Değişikliklerin sitenize uygulanması için JSON dosyasını dışa aktarın ve WebUI web sunucusundaki resources/theme.json dosyasına kopyalayın.",
+    "ThemeJsonConfigurationDesc": "Temayı değiştirmek için bir JSON dosyası içe aktarın veya mevcut temayı JSON olarak dışa aktarın. Tamam'a bastığınızda taslağa yüklenir; Branding sayfasındaki Uygula bu alan adı için temayı kaydeder.",
     "button": {
       "ExportToJson": "JSON'u Dışa Aktar",
       "ImportFromJson": "JSON'u İçe Aktar",
@@ -3731,6 +3740,8 @@
   },
   "userSettings": {
     "AIAgents": "AI Ajanları",
+    "ApplyThemeToDomain": "Temayı alana uygula",
+    "ApplyThemeToDomainDesc": "Bu tema, bu alandaki tüm kullanıcılara uygulanacaktır.",
     "AutoLogout": "Otomatik Çıkış",
     "AutomaticUpdateCheck": "Otomatik Güncelleme Kontrolü",
     "BetaFeatures": "Beta Özellikleri",
@@ -3785,6 +3796,8 @@
     "InvalidPortNumber": "Port numarası 1025~65534 arasında pozitif bir sayı olmalıdır",
     "KeepLoginSessionInformation": "Oturumu Kapatırken Oturum Açma Bilgilerini Saklayın",
     "Language": "Dil",
+    "LeaveWithoutApplyingTheme": "Temayı uygulamadan çıkılsın mı?",
+    "LeaveWithoutApplyingThemeDesc": "Tema değişiklikleriniz alana uygulanmadı ve silinecek.",
     "LightMode": "Işık Modu",
     "LightTheme": "Açık Mod",
     "LoginHistory": "Giriş Geçmişi",
@@ -3860,7 +3873,6 @@
       }
     },
     "theme": {
-      "CustomThemeSettingAlert": "Güncellenen tema hemen uygulanamıyor. Temayı uygulamak istiyorsanız, lütfen dışa aktarılan yapılandırma JSON dosyasıyla destek ekibimizle iletişime geçin.",
       "ErrorColor": "Hata Rengi",
       "ErrorColorDesc": "Uyarıları veya hataları belirtmek için silme gibi kritik eylemleri temsil eden düğmelere veya uyarıya uygulanan renk.",
       "HeaderBg": "Başlık Arka Plan Rengi",
