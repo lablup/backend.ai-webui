@@ -1222,7 +1222,6 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                     }))
                   }
                   placeholder={t('credential.NoDefaultPlaceholder')}
-                  style={{ width: '100%' }}
                 />
               </Suspense>
             </BAIFormItem>
