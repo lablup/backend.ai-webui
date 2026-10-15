@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3ebb3bc46bc3ca95f341576c7126d314>>
+ * @generated SignedSource<<37f5abc0ba0251ee68fd6cbe358faff9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,12 +20,12 @@ export type BAIAuditLogNodesFragment$data = ReadonlyArray<{
   readonly createdAt: string;
   readonly description: string;
   readonly duration: string | null | undefined;
-  readonly entityId: string | null | undefined;
   readonly entityType: string | null | undefined;
   readonly id: string;
   readonly operation: string;
   readonly requestId: string | null | undefined;
   readonly status: AuditLogStatus;
+  readonly targetEntityId: string | null | undefined;
   readonly triggeredBy: string | null | undefined;
   readonly user: {
     readonly basicInfo: {
@@ -48,13 +48,6 @@ var v0 = {
   "args": null,
   "kind": "ScalarField",
   "name": "id",
-  "storageKey": null
-},
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "entityId",
   "storageKey": null
 };
 return {
@@ -136,7 +129,13 @@ return {
       "name": "entityType",
       "storageKey": null
     },
-    (v1/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "targetEntityId",
+      "storageKey": null
+    },
     {
       "alias": null,
       "args": null,
@@ -165,7 +164,13 @@ return {
       "plural": false,
       "selections": [
         (v0/*: any*/),
-        (v1/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "entityId",
+          "storageKey": null
+        },
         {
           "alias": null,
           "args": null,
@@ -193,6 +198,6 @@ return {
 };
 })();
 
-(node as any).hash = "7a8a9a105199939862907fec541fba05";
+(node as any).hash = "f98215c92650a524fe49e9620931335d";
 
 export default node;

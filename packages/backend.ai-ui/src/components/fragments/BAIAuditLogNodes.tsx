@@ -101,7 +101,7 @@ const BAIAuditLogNodes = ({
         requestId
         actionId
         entityType
-        entityId
+        targetEntityId
         triggeredBy
         clientIp @since(version: "26.9.0")
         ...BAIAuditLogTargetCellFragment
@@ -254,11 +254,11 @@ const BAIAuditLogNodes = ({
         render: (__, record) => record.entityType || '-',
       },
       {
-        key: 'entityId',
+        key: 'targetEntityId',
         title: t('comp:BAIAuditLogNodes.EntityId'),
         defaultHidden: true,
         render: (__, record) =>
-          record.entityId ? <BAIId uuid={record.entityId} /> : '-',
+          record.targetEntityId ? <BAIId uuid={record.targetEntityId} /> : '-',
       },
       {
         key: 'requestId',

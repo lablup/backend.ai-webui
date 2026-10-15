@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<71c790c5dfdf23cc0daa39c8bdd209cb>>
+ * @generated SignedSource<<8bb7e9c3b77f91da0b87362832ba18bb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -186,13 +186,6 @@ v7 = {
 v8 = {
   "alias": null,
   "args": null,
-  "kind": "ScalarField",
-  "name": "entityId",
-  "storageKey": null
-},
-v9 = {
-  "alias": null,
-  "args": null,
   "concreteType": "UserV2BasicInfo",
   "kind": "LinkedField",
   "name": "basicInfo",
@@ -208,17 +201,17 @@ v9 = {
   ],
   "storageKey": null
 },
-v10 = {
+v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v11 = [
-  (v10/*: any*/)
+v10 = [
+  (v9/*: any*/)
 ],
-v12 = [
+v11 = [
   {
     "alias": null,
     "args": null,
@@ -227,7 +220,7 @@ v12 = [
     "storageKey": null
   }
 ],
-v13 = {
+v12 = {
   "alias": null,
   "args": null,
   "concreteType": null,
@@ -249,7 +242,7 @@ v13 = {
     {
       "kind": "InlineFragment",
       "selections": [
-        (v9/*: any*/)
+        (v8/*: any*/)
       ],
       "type": "UserV2",
       "abstractKey": null
@@ -264,7 +257,7 @@ v13 = {
           "kind": "LinkedField",
           "name": "basicInfo",
           "plural": false,
-          "selections": (v11/*: any*/),
+          "selections": (v10/*: any*/),
           "storageKey": null
         }
       ],
@@ -281,7 +274,7 @@ v13 = {
           "kind": "LinkedField",
           "name": "basicInfo",
           "plural": false,
-          "selections": (v11/*: any*/),
+          "selections": (v10/*: any*/),
           "storageKey": null
         }
       ],
@@ -323,7 +316,7 @@ v13 = {
           "kind": "LinkedField",
           "name": "metadata",
           "plural": false,
-          "selections": (v11/*: any*/),
+          "selections": (v10/*: any*/),
           "storageKey": null
         }
       ],
@@ -340,7 +333,7 @@ v13 = {
           "kind": "LinkedField",
           "name": "metadata",
           "plural": false,
-          "selections": (v11/*: any*/),
+          "selections": (v10/*: any*/),
           "storageKey": null
         }
       ],
@@ -357,7 +350,7 @@ v13 = {
           "kind": "LinkedField",
           "name": "metadata",
           "plural": false,
-          "selections": (v11/*: any*/),
+          "selections": (v10/*: any*/),
           "storageKey": null
         }
       ],
@@ -408,19 +401,19 @@ v13 = {
     },
     {
       "kind": "InlineFragment",
-      "selections": (v12/*: any*/),
+      "selections": (v11/*: any*/),
       "type": "AppConfigAllowList",
       "abstractKey": null
     },
     {
       "kind": "InlineFragment",
-      "selections": (v12/*: any*/),
+      "selections": (v11/*: any*/),
       "type": "AppConfigDefinition",
       "abstractKey": null
     },
     {
       "kind": "InlineFragment",
-      "selections": (v12/*: any*/),
+      "selections": (v11/*: any*/),
       "type": "AppConfigFragment",
       "abstractKey": null
     },
@@ -440,14 +433,14 @@ v13 = {
     },
     {
       "kind": "InlineFragment",
-      "selections": (v11/*: any*/),
+      "selections": (v10/*: any*/),
       "type": "Artifact",
       "abstractKey": null
     },
     {
       "kind": "InlineFragment",
       "selections": [
-        (v10/*: any*/),
+        (v9/*: any*/),
         (v7/*: any*/)
       ],
       "type": "ArtifactRegistry",
@@ -455,55 +448,55 @@ v13 = {
     },
     {
       "kind": "InlineFragment",
-      "selections": (v11/*: any*/),
+      "selections": (v10/*: any*/),
       "type": "NotificationChannel",
       "abstractKey": null
     },
     {
       "kind": "InlineFragment",
-      "selections": (v11/*: any*/),
+      "selections": (v10/*: any*/),
       "type": "NotificationRule",
       "abstractKey": null
     },
     {
       "kind": "InlineFragment",
-      "selections": (v11/*: any*/),
+      "selections": (v10/*: any*/),
       "type": "ResourceGroup",
       "abstractKey": null
     },
     {
       "kind": "InlineFragment",
-      "selections": (v11/*: any*/),
+      "selections": (v10/*: any*/),
       "type": "Role",
       "abstractKey": null
     },
     {
       "kind": "InlineFragment",
-      "selections": (v11/*: any*/),
+      "selections": (v10/*: any*/),
       "type": "IdleChecker",
       "abstractKey": null
     },
     {
       "kind": "InlineFragment",
-      "selections": (v11/*: any*/),
+      "selections": (v10/*: any*/),
       "type": "ObjectStorage",
       "abstractKey": null
     },
     {
       "kind": "InlineFragment",
-      "selections": (v11/*: any*/),
+      "selections": (v10/*: any*/),
       "type": "RuntimeVariant",
       "abstractKey": null
     },
     {
       "kind": "InlineFragment",
-      "selections": (v11/*: any*/),
+      "selections": (v10/*: any*/),
       "type": "RuntimeVariantPreset",
       "abstractKey": null
     },
     {
       "kind": "InlineFragment",
-      "selections": (v11/*: any*/),
+      "selections": (v10/*: any*/),
       "type": "VFSStorage",
       "abstractKey": null
     },
@@ -682,7 +675,13 @@ return {
                     "name": "entityType",
                     "storageKey": null
                   },
-                  (v8/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "targetEntityId",
+                    "storageKey": null
+                  },
                   {
                     "alias": null,
                     "args": null,
@@ -701,13 +700,6 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "targetEntityId",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
                     "name": "lookupKind",
                     "storageKey": null
                   },
@@ -718,7 +710,7 @@ return {
                     "name": "lookupKey",
                     "storageKey": null
                   },
-                  (v13/*: any*/),
+                  (v12/*: any*/),
                   {
                     "alias": null,
                     "args": [
@@ -779,7 +771,7 @@ return {
                                 "name": "scopeId",
                                 "storageKey": null
                               },
-                              (v13/*: any*/)
+                              (v12/*: any*/)
                             ],
                             "storageKey": null
                           }
@@ -798,8 +790,14 @@ return {
                     "plural": false,
                     "selections": [
                       (v7/*: any*/),
-                      (v8/*: any*/),
-                      (v9/*: any*/)
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "entityId",
+                        "storageKey": null
+                      },
+                      (v8/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -815,12 +813,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "8577bc9e0f1105e7daf93be569b9eea1",
+    "cacheID": "d6f517a7ab8d44bcd15f3f7edb695659",
     "id": null,
     "metadata": {},
     "name": "ScopedAuditLogQuery",
     "operationKind": "query",
-    "text": "query ScopedAuditLogQuery(\n  $scope: AuditLogScope!\n  $filter: AuditLogFilter\n  $orderBy: [AuditLogOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAIAuditLogNodesFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIAuditLogNodesFragment on AuditLogV2 {\n  id\n  createdAt\n  actionName\n  actionKind\n  operation\n  status\n  description\n  duration\n  requestId\n  actionId\n  entityType\n  entityId\n  triggeredBy\n  clientIp @since(version: \"26.9.0\")\n  ...BAIAuditLogTargetCellFragment\n  user {\n    id\n    entityId\n    basicInfo {\n      email\n    }\n  }\n}\n\nfragment BAIAuditLogTargetCellEntityFragment on EntityNode {\n  __isEntityNode: __typename\n  __typename\n  ... on UserV2 {\n    basicInfo {\n      email\n    }\n  }\n  ... on ProjectV2 {\n    basicInfo {\n      name\n    }\n  }\n  ... on DomainV2 {\n    basicInfo {\n      name\n    }\n  }\n  ... on ImageV2 {\n    identity {\n      canonicalName\n    }\n  }\n  ... on SessionV2 {\n    metadata {\n      name\n    }\n  }\n  ... on ModelDeployment {\n    metadata {\n      name\n    }\n  }\n  ... on VFolder {\n    metadata {\n      name\n    }\n  }\n  ... on VirtualFolderNode {\n    vfolderName: name\n  }\n  ... on ComputeSessionNode {\n    sessionName: name\n  }\n  ... on ContainerRegistryV2 {\n    registryName\n  }\n  ... on AppConfigAllowList {\n    configName\n  }\n  ... on AppConfigDefinition {\n    configName\n  }\n  ... on AppConfigFragment {\n    configName\n  }\n  ... on StorageNamespace {\n    namespace\n  }\n  ... on Artifact {\n    name\n  }\n  ... on ArtifactRegistry {\n    name\n  }\n  ... on NotificationChannel {\n    name\n  }\n  ... on NotificationRule {\n    name\n  }\n  ... on ResourceGroup {\n    name\n  }\n  ... on Role {\n    name\n  }\n  ... on IdleChecker {\n    name\n  }\n  ... on ObjectStorage {\n    name\n  }\n  ... on RuntimeVariant {\n    name\n  }\n  ... on RuntimeVariantPreset {\n    name\n  }\n  ... on VFSStorage {\n    name\n  }\n}\n\nfragment BAIAuditLogTargetCellFragment on AuditLogV2 {\n  actionId\n  actionKind\n  entityType\n  entityId\n  targetEntityId\n  lookupKind\n  lookupKey\n  entity {\n    __typename\n    ...BAIAuditLogTargetCellEntityFragment\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n    ... on ArtifactRegistry {\n      id\n    }\n  }\n  scopes(first: 3, orderBy: [{field: SCOPE_TYPE, direction: ASC}, {field: SCOPE_ID, direction: ASC}]) {\n    count\n    edges {\n      node {\n        id\n        scopeType\n        scopeId\n        entity {\n          __typename\n          ...BAIAuditLogTargetCellEntityFragment\n          ... on Node {\n            __isNode: __typename\n            id\n          }\n          ... on ArtifactRegistry {\n            id\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ScopedAuditLogQuery(\n  $scope: AuditLogScope!\n  $filter: AuditLogFilter\n  $orderBy: [AuditLogOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAIAuditLogNodesFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIAuditLogNodesFragment on AuditLogV2 {\n  id\n  createdAt\n  actionName\n  actionKind\n  operation\n  status\n  description\n  duration\n  requestId\n  actionId\n  entityType\n  targetEntityId\n  triggeredBy\n  clientIp @since(version: \"26.9.0\")\n  ...BAIAuditLogTargetCellFragment\n  user {\n    id\n    entityId\n    basicInfo {\n      email\n    }\n  }\n}\n\nfragment BAIAuditLogTargetCellEntityFragment on EntityNode {\n  __isEntityNode: __typename\n  __typename\n  ... on UserV2 {\n    basicInfo {\n      email\n    }\n  }\n  ... on ProjectV2 {\n    basicInfo {\n      name\n    }\n  }\n  ... on DomainV2 {\n    basicInfo {\n      name\n    }\n  }\n  ... on ImageV2 {\n    identity {\n      canonicalName\n    }\n  }\n  ... on SessionV2 {\n    metadata {\n      name\n    }\n  }\n  ... on ModelDeployment {\n    metadata {\n      name\n    }\n  }\n  ... on VFolder {\n    metadata {\n      name\n    }\n  }\n  ... on VirtualFolderNode {\n    vfolderName: name\n  }\n  ... on ComputeSessionNode {\n    sessionName: name\n  }\n  ... on ContainerRegistryV2 {\n    registryName\n  }\n  ... on AppConfigAllowList {\n    configName\n  }\n  ... on AppConfigDefinition {\n    configName\n  }\n  ... on AppConfigFragment {\n    configName\n  }\n  ... on StorageNamespace {\n    namespace\n  }\n  ... on Artifact {\n    name\n  }\n  ... on ArtifactRegistry {\n    name\n  }\n  ... on NotificationChannel {\n    name\n  }\n  ... on NotificationRule {\n    name\n  }\n  ... on ResourceGroup {\n    name\n  }\n  ... on Role {\n    name\n  }\n  ... on IdleChecker {\n    name\n  }\n  ... on ObjectStorage {\n    name\n  }\n  ... on RuntimeVariant {\n    name\n  }\n  ... on RuntimeVariantPreset {\n    name\n  }\n  ... on VFSStorage {\n    name\n  }\n}\n\nfragment BAIAuditLogTargetCellFragment on AuditLogV2 {\n  actionId\n  actionKind\n  entityType\n  targetEntityId\n  lookupKind\n  lookupKey\n  entity {\n    __typename\n    ...BAIAuditLogTargetCellEntityFragment\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n    ... on ArtifactRegistry {\n      id\n    }\n  }\n  scopes(first: 3, orderBy: [{field: SCOPE_TYPE, direction: ASC}, {field: SCOPE_ID, direction: ASC}]) {\n    count\n    edges {\n      node {\n        id\n        scopeType\n        scopeId\n        entity {\n          __typename\n          ...BAIAuditLogTargetCellEntityFragment\n          ... on Node {\n            __isNode: __typename\n            id\n          }\n          ... on ArtifactRegistry {\n            id\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
