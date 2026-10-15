@@ -253,27 +253,21 @@ export const AstryxFormNumberInput: React.FC<AstryxFormNumberInputProps> = ({
   ...rest
 }) => {
   'use memo';
-  const commonProps = {
-    ...(rest as object),
-    value: value ?? null,
-    label,
-    isLabelHidden: true,
-    min,
-    max,
-    step,
-    units,
-    placeholder,
-    isDisabled: disabled,
-    width,
-  };
-  // NumberInput's props are a union on `hasClear`, so each branch is spelled out.
-  return hasClear ? (
+  return (
     <NumberInput
-      {...commonProps}
-      hasClear
-      onChange={(next) => onChange?.(next)}
+      {...(rest as object)}
+      value={value ?? null}
+      hasClear={hasClear}
+      onChange={(next: number | null) => onChange?.(next)}
+      label={label}
+      isLabelHidden
+      min={min}
+      max={max}
+      step={step}
+      units={units}
+      placeholder={placeholder}
+      isDisabled={disabled}
+      width={width}
     />
-  ) : (
-    <NumberInput {...commonProps} onChange={(next) => onChange?.(next)} />
   );
 };

@@ -503,7 +503,7 @@ const BAIProjectSettingModal = ({
                   <BAIDynamicUnitInputNumber
                     defaultUnit="g"
                     max="300p"
-                    allowClear
+                    hasClear
                     style={{ width: '100%' }}
                   />
                 ) : (
