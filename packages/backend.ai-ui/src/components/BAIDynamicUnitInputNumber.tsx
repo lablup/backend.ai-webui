@@ -284,7 +284,7 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
           // claims the whole row and the number field shrinks to its flex basis.
           // Size the unit to its own content and let the number field take the
           // rest — antd's `Select` in a `Space.Compact` behaved this way.
-          style={{ flex: '0 0 auto', width: 'auto' }}
+          controlStyle={{ flex: '0 0 auto', width: 'auto' }}
         />
       ) : (
         <InputGroupText>{`${unit.toUpperCase()}iB`}</InputGroupText>

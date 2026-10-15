@@ -47,7 +47,11 @@ const BAIJSONViewerModal: React.FC<BAIJSONViewerModalProps> = ({
           // antd `Alert type="warning" showIcon` -> Astryx `Banner
           // status="warning"`; `showIcon` is dropped (Banner always shows the
           // status icon — MAPPING §4).
-          <Banner status="warning" title={t('general.InvalidJSONFormat')} />
+          <Banner
+            role="alert"
+            status="warning"
+            title={t('general.InvalidJSONFormat')}
+          />
         )}
         {description}
         <BAICodeEditor

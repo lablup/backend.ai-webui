@@ -202,7 +202,11 @@ const ConfigurationsSettingList = () => {
       'data-testid': 'settings-plugins',
       title: t('settings.Plugins'),
       description: (
-        <Banner title={t('settings.NoteAboutFixedSetup')} status="info" />
+        <Banner
+          role="status"
+          title={t('settings.NoteAboutFixedSetup')}
+          status="info"
+        />
       ),
       settingItems: [
         {
@@ -241,7 +245,11 @@ const ConfigurationsSettingList = () => {
       'data-testid': 'settings-enterprise',
       title: t('settings.EnterpriseFeatures'),
       description: (
-        <Banner title={t('settings.NoteAboutFixedSetup')} status="info" />
+        <Banner
+          role="status"
+          title={t('settings.NoteAboutFixedSetup')}
+          status="info"
+        />
       ),
       settingItems: [
         {

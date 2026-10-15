@@ -84,7 +84,9 @@ export function useMutationWithPromise<T extends MutationParameters>(
         variables,
         onCompleted: (response, errors) => {
           if (errors) {
-            reject(errors);
+            // A `data` + `errors` response: surface the GraphQL messages as an
+            // Error so `getErrorMessage` / `error.message` readers see them.
+            reject(new Error(errors.map((e) => e.message).join('\n')));
           } else {
             resolve(response);
           }
@@ -106,6 +108,11 @@ export { default as useViewer } from './useViewer';
 export type { ErrorResponse } from './useErrorMessageResolver';
 export type { ESMClientErrorResponse } from './useErrorMessageResolver';
 export { default as useGetAvailableFolderName } from './useGetAvailableFolderName';
+export {
+  default as useLabelableEntityTypes,
+  useIsLabelableEntityType,
+} from './useLabelableEntityTypes';
+export type { BAILabelableEntityType } from './useLabelableEntityTypes';
 export { useInterval, useIntervalValue } from './useIntervalValue';
 export {
   default as useBAILogger,

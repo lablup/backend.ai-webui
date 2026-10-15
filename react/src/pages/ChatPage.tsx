@@ -367,6 +367,7 @@ const PureChatPage = ({ id }: { id: string }) => {
       >
         {!chatIntroAlertDismissed && (
           <Banner
+            role="status"
             status="info"
             title={t('chatui.intro.Title')}
             description={t('chatui.intro.Description')}

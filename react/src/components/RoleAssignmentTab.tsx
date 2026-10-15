@@ -11,7 +11,6 @@ import {
 } from '../__generated__/RoleAssignmentTabQuery.graphql';
 import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import AssignRoleModal from './AssignRoleModal';
 import { Banner } from '@lablup/ui-common/Banner';
@@ -57,7 +56,6 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
-  const baiClient = useSuspendedBackendaiClient();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const { upsertNotification } = useSetBAINotification();
@@ -89,19 +87,8 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         entityId
         name
         source
-        # Aliased: RoleNodesFragment selects scopes(first: 3) on the same list
-        # nodes the drawer fragment now composes with, and unaliased fields
-        # with different arguments conflict in one query.
-        firstScope: scopes(first: 1) @deprecatedSince(version: "26.9.0a4") {
-          edges {
-            node {
-              scopeType
-              scopeId
-            }
-          }
-        }
-        scopeType @since(version: "26.9.0a4")
-        scopeId @since(version: "26.9.0a4")
+        scopeType
+        scopeId
       }
     `,
     roleNodeFrgmt,
@@ -109,23 +96,16 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
 
   const roleId = data.entityId;
 
-  // Managers >= 26.9.0a4 answer the role's one scope directly; older ones
-  // answer a scopes connection.
-  const roleScope = data.scopeType
-    ? { scopeType: data.scopeType, scopeId: data.scopeId }
-    : data.firstScope?.edges?.[0]?.node;
   const projectScopeId =
-    roleScope?.scopeType?.toUpperCase() === 'PROJECT'
-      ? roleScope.scopeId
+    data.scopeType?.toUpperCase() === 'PROJECT'
+      ? (data.scopeId ?? undefined)
       : undefined;
 
-  // System project admin roles are managed from the project page on managers
-  // >= 26.8.0; older managers only grant project admin here (FR-3424).
+  // System project admin roles are managed from the project page (FR-3424).
   const isReadOnly =
     data.source === 'SYSTEM' &&
     !!projectScopeId &&
-    !!data.name?.toLowerCase().includes('admin') &&
-    baiClient.isManagerVersionCompatibleWith('26.8.0');
+    !!data.name?.toLowerCase().includes('admin');
 
   const mutateBulkRevokeRole =
     useMutationWithPromise<RoleAssignmentTabBulkRevokeMutation>(graphql`
@@ -243,7 +223,11 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     <BAIFlex align="stretch" direction="column" gap="sm">
       {/* `showIcon` dropped — Banner always shows its status icon (MAPPING §4). */}
       {isReadOnly && (
-        <Banner status="warning" title={t('rbac.SystemRoleNoAssignments')} />
+        <Banner
+          role="alert"
+          status="warning"
+          title={t('rbac.SystemRoleNoAssignments')}
+        />
       )}
       <BAIFlex justify="between" align="start" gap="sm" wrap="wrap">
         <BAIGraphQLPropertyFilter<RoleAssignmentFilter>

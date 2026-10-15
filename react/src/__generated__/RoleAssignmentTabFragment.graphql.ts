@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5bbe2c8a2f9a95def5a0b64f801b3cfa>>
+ * @generated SignedSource<<b86cc24a377e69b2b334a4e237d36e32>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,14 +13,6 @@ export type RoleSource = "CUSTOM" | "SYSTEM" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type RoleAssignmentTabFragment$data = {
   readonly entityId: string;
-  readonly firstScope: {
-    readonly edges: ReadonlyArray<{
-      readonly node: {
-        readonly scopeId: string;
-        readonly scopeType: string;
-      };
-    }>;
-  } | null | undefined;
   readonly id: string;
   readonly name: string;
   readonly scopeId: string;
@@ -33,22 +25,7 @@ export type RoleAssignmentTabFragment$key = {
   readonly " $fragmentSpreads": FragmentRefs<"RoleAssignmentTabFragment">;
 };
 
-const node: ReaderFragment = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "scopeType",
-  "storageKey": null
-},
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "scopeId",
-  "storageKey": null
-};
-return {
+const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -83,54 +60,24 @@ return {
       "storageKey": null
     },
     {
-      "alias": "firstScope",
-      "args": [
-        {
-          "kind": "Literal",
-          "name": "first",
-          "value": 1
-        }
-      ],
-      "concreteType": "EntityConnection",
-      "kind": "LinkedField",
-      "name": "scopes",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "EntityRefEdge",
-          "kind": "LinkedField",
-          "name": "edges",
-          "plural": true,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "EntityRef",
-              "kind": "LinkedField",
-              "name": "node",
-              "plural": false,
-              "selections": [
-                (v0/*: any*/),
-                (v1/*: any*/)
-              ],
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
-      ],
-      "storageKey": "scopes(first:1)"
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "scopeType",
+      "storageKey": null
     },
-    (v0/*: any*/),
-    (v1/*: any*/)
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "scopeId",
+      "storageKey": null
+    }
   ],
   "type": "Role",
   "abstractKey": null
 };
-})();
 
-(node as any).hash = "f5897a4b3d884ba2f8bc9ad9d9190569";
+(node as any).hash = "4ea15fa8598a9e61cd0da3a867c7d72f";
 
 export default node;

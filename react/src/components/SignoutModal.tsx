@@ -86,7 +86,11 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
         {/* The warning was wrapped in a state-less `Form.Item name="alert"`
             purely for spacing; it holds no field value, so the wrapper goes
             and the `Alert` becomes an Astryx `Banner` (MAPPING §4). */}
-        <Banner title={t('login.DescConfirmLeave')} status="warning" />
+        <Banner
+          role="alert"
+          title={t('login.DescConfirmLeave')}
+          status="warning"
+        />
         <BAIFormItem
           name="email"
           label={t('general.E-Mail')}

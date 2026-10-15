@@ -78,12 +78,14 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
       >
         {hasNoDesiredReplicas ? (
           <Banner
+            role="alert"
             status="warning"
             title={t('chatui.NoDesiredReplicas')}
             style={{ marginBottom: themeToken('--spacing-4') }}
           />
         ) : null}
         <Banner
+          role="alert"
           status="warning"
           title={t('chatui.CannotFindModel')}
           style={{ marginBottom: themeToken('--spacing-4') }}
