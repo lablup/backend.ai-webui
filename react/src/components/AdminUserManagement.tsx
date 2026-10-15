@@ -200,7 +200,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
     scopedUsersV2?.edges?.find((edge) => edge?.node?.id === id)?.node ?? null;
 
   // User management (create, edit, status, purge, unblock) is out of scope for the
-  // scoped migration and stays superadmin-only by design (ADR 0011).
+  // scoped migration and stays superadmin-only by design (ADR 0012).
   const isSuperAdmin = bailClient.is_superadmin;
 
   const canActAs =

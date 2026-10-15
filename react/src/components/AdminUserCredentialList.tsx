@@ -119,7 +119,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
   const { message, modal } = App.useApp();
   const { logger } = useBAILogger();
   // Keypair management is out of scope for the scoped migration and stays
-  // superadmin-only by design (ADR 0011).
+  // superadmin-only by design (ADR 0012).
   const isSuperAdmin = useSuspendedBackendaiClient().is_superadmin;
 
   const [keypairSettingModalFrgmt, setKeypairSettingModalFrgmt] =
