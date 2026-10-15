@@ -172,12 +172,13 @@ export type {
   BAIRuntimeVariantSelectRef,
   RuntimeVariantNode,
 } from './BAIRuntimeVariantSelect';
-export { default as BAIUserSelect } from './BAIUserSelect';
+export { default as BAIScopedUserSelect } from './BAIScopedUserSelect';
 export type {
-  BAIUserSelectProps,
-  AstryxUserNode,
-  BAIUserSelectRef,
-} from './BAIUserSelect';
+  BAIScopedUserSelectProps,
+  BAIScopedUserSelectFilter,
+  BAIScopedUserSelectRef,
+  ScopedUserNode,
+} from './BAIScopedUserSelect';
 export { default as BAIAdminUserV2Select } from './BAIAdminUserV2Select';
 export type {
   BAIAdminUserV2SelectProps,
