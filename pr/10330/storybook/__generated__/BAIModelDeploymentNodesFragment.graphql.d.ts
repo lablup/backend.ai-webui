@@ -16,6 +16,10 @@ export type BAIModelDeploymentNodesFragment$data = ReadonlyArray<{
     readonly defaultDeploymentStrategy: {
         readonly type: DeploymentStrategyType;
     };
+    readonly entityId: string;
+    readonly entityLabels: {
+        readonly " $fragmentSpreads": FragmentRefs<"BAIEntityLabelSettingModalFragment" | "BAIEntityLabelTokensFragment">;
+    } | null | undefined;
     readonly id: string;
     readonly metadata: {
         readonly createdAt: string;
