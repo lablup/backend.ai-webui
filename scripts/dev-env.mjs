@@ -69,10 +69,11 @@ const USAGE = `Usage: pnpm run dev-env <command>
                              The manager compatibility policy for this branch
                              (a release branch "X.Y" reads its own entry, any
                              other branch reads "main"): the supported floor
-                             line, the target, which catalog servers run each,
-                             and the version gates in application code at or
-                             below the floor — deletable per ADR 0010. Reports
-                             only; exit 0 even without a catalog`;
+                             line, every manager line from it up to the
+                             branch's own line with the catalog servers on
+                             each, and the version gates in application code
+                             at or below the floor — deletable per ADR 0010.
+                             Reports only; exit 0 even without a catalog`;
 
 class UserError extends Error {}
 
@@ -181,7 +182,7 @@ async function status() {
   const branches = Object.entries(catalog.policy?.webui.branches ?? {});
   console.log(
     catalog.policy
-      ? `policy: ${branches.map(([name, b]) => `${name} floor ${b.minManagerLine} target ${b.target ?? "unknown"}`).join("; ") || "no branches"}`
+      ? `policy: ${branches.map(([name, b]) => `${name} floor ${b.minManagerLine}`).join("; ") || "no branches"}`
       : "policy: none (the board predates the compatibility policy)",
   );
   for (const warning of catalog.warnings) console.log(`warning: ${warning}`);
@@ -256,7 +257,10 @@ async function compat({ branch: branchFlag, json }) {
     return unavailable(`${source.label} has no "policy" (the board predates the compatibility policy)`);
   }
   const report = compatReport(catalog, branchName);
-  const gates = report.maintained ? gatesAtOrBelow(report.floor) : [];
+  const gates =
+    report.maintained && report.gateFloorLine !== null
+      ? gatesAtOrBelow(report.gateFloorLine)
+      : [];
   if (json) {
     console.log(
       JSON.stringify(

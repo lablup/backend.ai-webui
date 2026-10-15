@@ -18,6 +18,7 @@ import {
   renderConfigToml,
   resolveCompatBranch,
   setTomlValue,
+  upperLineOf,
   downWarning,
   e2eFallbackWarning,
   findAccount,
@@ -730,6 +731,14 @@ describe("dev-env manager compatibility policy", () => {
     },
     accounts: [],
   });
+  const MAIN_LINES = [
+    { line: "26.4", latest: "26.4.13", servers: ["staging-lts"] },
+    { line: "26.5", latest: "26.5.3", servers: [] },
+    { line: "26.7", latest: "26.7.2", servers: [] },
+    { line: "26.8", latest: "26.8.9", servers: [] },
+    { line: "26.9", latest: "26.9.4", servers: ["staging-latest"] },
+    { line: "main", latest: "26.9.0rc1", servers: ["sujin", "sungchul-171"] },
+  ];
   const POLICY_BODY = {
     version: 1,
     servers: [
@@ -749,7 +758,7 @@ describe("dev-env manager compatibility policy", () => {
     upstream: {
       checked_at: "2026-10-01T23:50:00Z",
       main_version: "26.9.0rc1",
-      lines: { "26.9": "26.9.4", "26.4": "26.4.13" },
+      lines: { "26.4": "26.4.13", "26.5": "26.5.3", "26.7": "26.7.2", "26.8": "26.8.9", "26.9": "26.9.4" },
       error: null,
     },
     policy: {
@@ -758,16 +767,16 @@ describe("dev-env manager compatibility policy", () => {
         branches: {
           main: {
             min_manager_line: "26.4",
-            target: "main",
             notes: "",
             resolved: {
-              target_version: "26.9.0rc1",
-              floor_servers: ["staging-lts"],
-              target_servers: ["sujin"],
+              upper: "main",
+              floor_version: "26.4.13",
+              upper_version: "26.9.0rc1",
+              lines: MAIN_LINES,
               below_floor_servers: ["old-box"],
             },
           },
-          "26.9": { min_manager_line: "26.8", target: "26.9", notes: "LTS candidate" },
+          "26.9": { min_manager_line: "26.8", notes: "LTS candidate" },
         },
       },
     },
@@ -785,6 +794,12 @@ describe("dev-env manager compatibility policy", () => {
     expect(compareLines("26.4", "26.10")).toBeLessThan(0);
     expect(compareLines("26.9", "26.9")).toBe(0);
     expect(compareLines("27.0", "26.12")).toBeGreaterThan(0);
+    // "main" closes every range.
+    expect(compareLines("main", "27.0")).toBeGreaterThan(0);
+    expect(compareLines("26.4", "main")).toBeLessThan(0);
+    expect(compareLines("main", "main")).toBe(0);
+    expect(upperLineOf("main")).toBe("main");
+    expect(upperLineOf("26.9")).toBe("26.9");
   });
 
   it("maps the contract's policy, upstream, tracks and freshness", () => {
@@ -792,24 +807,23 @@ describe("dev-env manager compatibility policy", () => {
     expect(catalog.upstream).toEqual({
       checkedAt: "2026-10-01T23:50:00Z",
       mainVersion: "26.9.0rc1",
-      lines: { "26.9": "26.9.4", "26.4": "26.4.13" },
+      lines: { "26.4": "26.4.13", "26.5": "26.5.3", "26.7": "26.7.2", "26.8": "26.8.9", "26.9": "26.9.4" },
       error: null,
     });
     expect(catalog.policy.updatedAt).toBe("2026-10-01T12:00:00Z");
     expect(catalog.policy.webui.branches.main).toEqual({
       minManagerLine: "26.4",
-      target: "main",
       notes: null,
       resolved: {
-        targetVersion: "26.9.0rc1",
-        floorServers: ["staging-lts"],
-        targetServers: ["sujin"],
+        upper: "main",
+        floorVersion: "26.4.13",
+        upperVersion: "26.9.0rc1",
+        lines: MAIN_LINES,
         belowFloorServers: ["old-box"],
       },
     });
     expect(catalog.policy.webui.branches["26.9"]).toEqual({
       minManagerLine: "26.8",
-      target: "26.9",
       notes: "LTS candidate",
       resolved: null,
     });
@@ -837,7 +851,21 @@ describe("dev-env manager compatibility policy", () => {
     });
   });
 
-  it("skips a malformed branch, target, tracks or freshness with a warning", () => {
+  it("ignores a stored target from the retired contract, without a warning", () => {
+    const { policy, warnings } = parseCatalog(
+      {
+        version: 1,
+        servers: [],
+        policy: { webui: { branches: { main: { min_manager_line: "26.4", target: "main" } } } },
+      },
+      NOW,
+    );
+    expect(warnings).toEqual([]);
+    expect(policy.webui.branches.main).toEqual({ minManagerLine: "26.4", notes: null, resolved: null });
+    expect(policy.webui.branches.main).not.toHaveProperty("target");
+  });
+
+  it("skips a malformed branch, floor, tracks or freshness with a warning", () => {
     const { policy, servers, warnings } = parseCatalog(
       {
         version: 1,
@@ -850,12 +878,11 @@ describe("dev-env manager compatibility policy", () => {
             branches: {
               main: {
                 min_manager_line: "26.4",
-                target: "next",
-                resolved: { target_version: "x", floor_servers: "a", target_servers: [] },
+                resolved: { upper: "main", lines: "all", below_floor_servers: [] },
               },
-              "26.9": { min_manager_line: "26.4.0", target: "26.9" },
+              "26.9": { min_manager_line: "26.4.0" },
               "26.8": "26.4",
-              "feat/x": { min_manager_line: "26.4", target: "main" },
+              "feat/x": { min_manager_line: "26.4" },
             },
           },
         },
@@ -863,7 +890,6 @@ describe("dev-env manager compatibility policy", () => {
       NOW,
     );
     expect(Object.keys(policy.webui.branches)).toEqual(["main"]);
-    expect(policy.webui.branches.main.target).toBeNull();
     expect(policy.webui.branches.main.resolved).toBeNull();
     expect(servers[0].tracks).toBeNull();
     expect(servers[0].status.freshness).toBeNull();
@@ -871,27 +897,11 @@ describe("dev-env manager compatibility policy", () => {
       'server "a": "tracks" "latest" is not "main" or a line like "26.9", ignored',
       'server "a": "status.freshness" "fresh" is not one of current, behind, unknown, ignored',
       '"upstream.lines" entry "bad" is malformed, ignored',
-      'policy branch "main": "target" "next" is not "main" or a line like "26.9", treated as unknown',
-      'policy branch "main": "resolved.floor_servers", "resolved.below_floor_servers" is not a list, computed here instead',
-      'policy branch "26.9": "min_manager_line" "26.4.0" is not a line like "26.4", skipped',
+      'policy branch "main": "resolved" has no "lines" or "below_floor_servers" list, computed here instead',
+      'policy branch "26.9": "min_manager_line" "26.4.0" is not "main" or a line like "26.4", skipped',
       'policy branch "26.8": not an object, skipped',
       'policy branch "feat/x": not "main" or a release branch like "26.9", skipped',
     ]);
-  });
-
-  it("falls back to the local server lists when the board's resolved block is malformed", () => {
-    const body = structuredClone(POLICY_BODY);
-    body.policy.webui.branches.main.resolved = "stale";
-    const malformed = parseCatalog(body, NOW);
-    expect(malformed.warnings).toEqual([
-      'policy branch "main": "resolved" is not an object, computed here instead',
-    ]);
-    expect(compatReport(malformed, "main")).toMatchObject({
-      targetVersion: "26.9.0rc1",
-      floorServers: ["staging-lts"],
-      targetServers: ["sujin"],
-      belowFloorServers: ["old-box"],
-    });
   });
 
   it("resolves the policy branch from the git branch", () => {
@@ -902,31 +912,88 @@ describe("dev-env manager compatibility policy", () => {
     expect(resolveCompatBranch(null)).toBe("main");
   });
 
-  it("reports the board's resolved lists when it sent them", () => {
+  it("reports the board's resolved range when it sent one", () => {
     expect(compatReport(catalog, "main")).toEqual({
       branch: "main",
       maintained: true,
       floor: "26.4",
-      target: "main",
       notes: null,
-      targetVersion: "26.9.0rc1",
-      floorServers: ["staging-lts"],
-      targetServers: ["sujin"],
+      upper: "main",
+      floorVersion: "26.4.13",
+      upperVersion: "26.9.0rc1",
+      lines: MAIN_LINES,
       belowFloorServers: ["old-box"],
+      gateFloorLine: "26.4",
     });
   });
 
-  it("resolves the lists itself from live servers, tracks and upstream otherwise", () => {
+  it("resolves the range itself from upstream, live servers and tracks otherwise", () => {
+    // 26.9's floor is 26.8: lines 26.8 and 26.9, no "main" entry for a release branch.
     expect(compatReport(catalog, "26.9")).toEqual({
       branch: "26.9",
       maintained: true,
       floor: "26.8",
-      target: "26.9",
       notes: "LTS candidate",
-      targetVersion: "26.9.4",
-      floorServers: ["sungchul-171"],
-      targetServers: ["staging-latest"],
+      upper: "26.9",
+      floorVersion: "26.8.9",
+      upperVersion: "26.9.4",
+      lines: [
+        { line: "26.8", latest: "26.8.9", servers: [] },
+        { line: "26.9", latest: "26.9.4", servers: ["staging-latest"] },
+      ],
       belowFloorServers: ["old-box", "staging-lts"],
+      gateFloorLine: "26.8",
+    });
+    // sungchul-171 runs 26.8.9 but tracks main, so it sits on the "main" entry, not on 26.8.
+    const body = structuredClone(POLICY_BODY);
+    delete body.policy.webui.branches.main.resolved;
+    expect(compatReport(parseCatalog(body, NOW), "main")).toMatchObject({
+      upper: "main",
+      floorVersion: "26.4.13",
+      upperVersion: "26.9.0rc1",
+      lines: MAIN_LINES,
+      belowFloorServers: ["old-box"],
+      gateFloorLine: "26.4",
+    });
+  });
+
+  it("treats a floor of main as the single line main's VERSION names", () => {
+    const body = structuredClone(POLICY_BODY);
+    body.policy.webui.branches.main = { min_manager_line: "main" };
+    const report = compatReport(parseCatalog(body, NOW), "main");
+    expect(report).toMatchObject({
+      floor: "main",
+      upper: "main",
+      floorVersion: "26.9.0rc1",
+      upperVersion: "26.9.0rc1",
+      lines: [{ line: "main", latest: "26.9.0rc1", servers: ["sujin", "sungchul-171"] }],
+      // Below main = below 26.9 among servers not built from main.
+      belowFloorServers: ["old-box", "staging-lts"],
+      gateFloorLine: "26.9",
+    });
+    delete body.upstream;
+    expect(compatReport(parseCatalog(body, NOW), "main")).toMatchObject({
+      floorVersion: null,
+      lines: [{ line: "main", latest: null, servers: ["sujin", "sungchul-171"] }],
+      belowFloorServers: [],
+      gateFloorLine: null,
+    });
+  });
+
+  it("falls back to the lines live servers run when upstream is unknown", () => {
+    const body = structuredClone(POLICY_BODY);
+    delete body.upstream;
+    delete body.policy.webui.branches.main.resolved;
+    expect(compatReport(parseCatalog(body, NOW), "main")).toMatchObject({
+      floorVersion: null,
+      upperVersion: null,
+      lines: [
+        { line: "26.4", latest: null, servers: ["staging-lts"] },
+        { line: "26.9", latest: null, servers: ["staging-latest"] },
+        { line: "main", latest: null, servers: ["sujin", "sungchul-171"] },
+      ],
+      belowFloorServers: ["old-box"],
+      gateFloorLine: "26.4",
     });
   });
 
@@ -990,7 +1057,7 @@ describe("dev-env manager compatibility policy", () => {
     expect(isGateScanFile("react/src/locale/en.json")).toBe(false);
   });
 
-  it("prints the report, the warnings and the gate list", () => {
+  it("prints the floor, the range with its gaps, the warnings and the gate list", () => {
     const text = formatCompatReport(
       compatReport(catalog, "main"),
       [{ file: "react/src/A.tsx", line: 12, kind: "@since", versions: ["26.4.0"] }],
@@ -999,31 +1066,47 @@ describe("dev-env manager compatibility policy", () => {
     expect(text).toBe(
       [
         "branch: main (git branch feat/x)",
-        "floor: 26.4 line (latest patch assumed)",
-        "target: main (26.9.0rc1) — backend.ai main branch",
-        "floor servers: staging-lts",
-        "target servers: sujin",
+        "floor: 26.4 line (latest patch 26.4.13)",
+        "range: 26.4 … main (26.9.0rc1), every line at its latest patch",
+        "  26.4 (26.4.13)    staging-lts",
+        "  26.5 (26.5.3)     — no server",
+        "  26.7 (26.7.2)     — no server",
+        "  26.8 (26.8.9)     — no server",
+        "  26.9 (26.9.4)     staging-latest",
+        "  main (26.9.0rc1)  sujin, sungchul-171",
         "below the floor: old-box",
+        "warning: no live server on 26.5, 26.7, 26.8 — coverage gap",
         "",
         "gates at or below the 26.4 line (1; deletable per ADR 0010):",
         "  react/src/A.tsx:12  @since(26.4.0)",
       ].join("\n"),
     );
-    const empty = parseCatalog(
-      { version: 1, servers: [], policy: { webui: { branches: { main: { min_manager_line: "26.4", target: "26.10" } } } } },
-      NOW,
-    );
-    expect(formatCompatReport(compatReport(empty, "main"), [])).toBe(
+    const floorMain = structuredClone(POLICY_BODY);
+    floorMain.policy.webui.branches.main = { min_manager_line: "main" };
+    expect(formatCompatReport(compatReport(parseCatalog(floorMain, NOW), "main"), [])).toBe(
       [
         "branch: main",
-        "floor: 26.4 line (latest patch assumed)",
-        "target: 26.10",
-        "floor servers: (none)",
-        "target servers: (none)",
-        "warning: no live server runs the 26.4 line",
-        "warning: no live, current server tracks 26.10",
+        "floor: main (backend.ai main branch, 26.9.0rc1)",
+        "range: main … main, every line at its latest patch",
+        "  main (26.9.0rc1)  sujin, sungchul-171",
+        "below the floor: old-box, staging-lts",
         "",
-        "gates at or below the 26.4 line: none",
+        "gates at or below the 26.9 line (main's VERSION): none",
+      ].join("\n"),
+    );
+    const empty = parseCatalog(
+      { version: 1, servers: [], policy: { webui: { branches: { "26.9": { min_manager_line: "26.9" } } } } },
+      NOW,
+    );
+    expect(formatCompatReport(compatReport(empty, "26.9"), [])).toBe(
+      [
+        "branch: 26.9",
+        "floor: 26.9 line",
+        "range: 26.9 … 26.9, every line at its latest patch",
+        "  26.9 (?)  — no server",
+        "warning: no live server on 26.9 — coverage gap",
+        "",
+        "gates at or below the 26.9 line: none",
       ].join("\n"),
     );
   });

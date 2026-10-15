@@ -71,7 +71,7 @@ const stringOrNull = (value) =>
 /** A manager line: the first two numeric components of a version (`26.9.0rc1` → `26.9`). */
 const LINE = /^\d+\.\d+$/;
 
-/** `"main"` (backend.ai's main branch) or a line; what a server `tracks` and a branch `target`s. */
+/** `"main"` (backend.ai's main branch) or a line; what a server `tracks` and what a floor may be. */
 const TRACK = /^(main|\d+\.\d+)$/;
 
 /** What a server's probe says about its version against what it tracks. */
@@ -87,12 +87,16 @@ export function versionLine(version) {
 }
 
 /**
- * Numeric compare of two lines (`26.4` < `26.10`). The contract compares
- * lines by their two components only, so this is deliberately not PEP 440:
- * `packages/backend.ai-client/src/pep440.ts` is TypeScript this script does
- * not load, and a line has no pre-release or patch to order.
+ * Numeric compare of two lines (`26.4` < `26.10`); `"main"` sorts after every
+ * numbered line. The contract compares lines by their two components only, so
+ * this is deliberately not PEP 440: `packages/backend.ai-client/src/pep440.ts`
+ * is TypeScript this script does not load, and a line has no pre-release or
+ * patch to order.
  */
 export function compareLines(a, b) {
+  if (a === b) return 0;
+  if (a === "main") return 1;
+  if (b === "main") return -1;
   const [aMajor, aMinor] = a.split(".").map(Number);
   const [bMajor, bMinor] = b.split(".").map(Number);
   return aMajor - bMajor || aMinor - bMinor;
@@ -168,39 +172,53 @@ function parseUpstream(raw, warnings) {
   };
 }
 
-const RESOLVED_LISTS = ["floor_servers", "target_servers", "below_floor_servers"];
+const names = (list) =>
+  list.filter((name) => typeof name === "string" && name !== "");
 
 /**
- * The board's computed `resolved` block on a policy branch; null when absent
- * or malformed (one warning), so `compatReport` computes the lists itself.
+ * The board's computed `resolved` block on a policy branch: the range of
+ * manager lines the branch must work on, each with its latest patch and the
+ * live servers on it. Null when absent or malformed (one warning), so
+ * `compatReport` computes the same block itself.
  */
 function parseResolved(raw, label, warnings) {
   if (raw == null) return null;
-  if (!isObject(raw)) {
-    warnings.push(`${label}: "resolved" is not an object, computed here instead`);
+  const malformed = (what) => {
+    warnings.push(`${label}: "resolved" ${what}, computed here instead`);
     return null;
+  };
+  if (!isObject(raw)) return malformed("is not an object");
+  if (typeof raw.upper !== "string" || !TRACK.test(raw.upper)) {
+    return malformed('has no "upper"');
   }
-  const bad = RESOLVED_LISTS.filter((key) => !Array.isArray(raw[key]));
-  if (bad.length > 0) {
-    warnings.push(
-      `${label}: "resolved.${bad.join('", "resolved.')}" is not a list, computed here instead`,
-    );
-    return null;
+  if (!Array.isArray(raw.lines) || !Array.isArray(raw.below_floor_servers)) {
+    return malformed('has no "lines" or "below_floor_servers" list');
   }
-  const names = (key) =>
-    raw[key].filter((name) => typeof name === "string" && name !== "");
+  const lines = [];
+  for (const entry of raw.lines) {
+    if (!isObject(entry) || typeof entry.line !== "string" || !TRACK.test(entry.line) || !Array.isArray(entry.servers)) {
+      return malformed('has a malformed "lines" entry');
+    }
+    lines.push({
+      line: entry.line,
+      latest: stringOrNull(entry.latest),
+      servers: names(entry.servers),
+    });
+  }
   return {
-    targetVersion: stringOrNull(raw.target_version),
-    floorServers: names("floor_servers"),
-    targetServers: names("target_servers"),
-    belowFloorServers: names("below_floor_servers"),
+    upper: raw.upper,
+    floorVersion: stringOrNull(raw.floor_version),
+    upperVersion: stringOrNull(raw.upper_version),
+    lines,
+    belowFloorServers: names(raw.below_floor_servers),
   };
 }
 
 /**
- * `policy.webui.branches`: the manager floor and target per webui branch.
- * `null` when the document has no policy (a board older than the contract).
- * A branch without a valid `min_manager_line` is skipped with a warning.
+ * `policy.webui.branches`: the manager floor per webui branch. `null` when
+ * the document has no policy (a board older than the contract). A branch
+ * without a valid `min_manager_line` is skipped with a warning; a stored
+ * `target` (the retired first contract) is ignored.
  */
 function parsePolicy(raw, warnings) {
   if (raw == null) return null;
@@ -226,23 +244,14 @@ function parsePolicy(raw, warnings) {
     }
     const minManagerLine =
       typeof entry.min_manager_line === "string" ? entry.min_manager_line.trim() : "";
-    if (!LINE.test(minManagerLine)) {
+    if (!TRACK.test(minManagerLine)) {
       warnings.push(
-        `${label}: "min_manager_line" ${JSON.stringify(entry.min_manager_line)} is not a line like "26.4", skipped`,
+        `${label}: "min_manager_line" ${JSON.stringify(entry.min_manager_line)} is not "main" or a line like "26.4", skipped`,
       );
       continue;
     }
-    let target = null;
-    if (typeof entry.target === "string" && TRACK.test(entry.target.trim())) {
-      target = entry.target.trim();
-    } else {
-      warnings.push(
-        `${label}: "target" ${JSON.stringify(entry.target)} is not "main" or a line like "26.9", treated as unknown`,
-      );
-    }
     branches[name] = {
       minManagerLine,
-      target,
       notes: typeof entry.notes === "string" && entry.notes.trim() !== "" ? entry.notes.trim() : null,
       resolved: parseResolved(entry.resolved, label, warnings),
     };
@@ -537,40 +546,82 @@ export function resolveCompatBranch(gitBranch) {
   return LINE.test(name) ? name : "main";
 }
 
-/** The server lists the board computes per branch, from the servers here; used when the board sent no `resolved`. */
-function resolveLocally(catalog, branch) {
+/** The upper bound of a branch's range: webui `main` → manager `main`, webui `X.Y` → manager line `X.Y`. */
+export function upperLineOf(branchName) {
+  return branchName === "main" ? "main" : branchName;
+}
+
+/** The newest version upstream knows for a line, or null; `"main"` is backend.ai main's VERSION. */
+function latestOf(upstream, line) {
+  if (!upstream) return null;
+  return line === "main" ? upstream.mainVersion : (upstream.lines[line] ?? null);
+}
+
+/**
+ * The board's `resolved` block computed from the servers and `upstream` here,
+ * for a board that sent none. Numbered lines come from `upstream.lines` (plus
+ * the floor and the upper bound themselves, and the lines live servers run
+ * when there is no upstream); `main` closes the range of webui main.
+ */
+function resolveLocally(catalog, branchName, floor) {
+  const upper = upperLineOf(branchName);
   const live = catalog.servers.filter((server) => server.status?.live === true);
-  const line = (server) => versionLine(server.status.managerVersion);
+  const lineOf = (server) => versionLine(server.status.managerVersion);
+  const onMain = (server) => server.tracks === "main";
+  const inRange = (line) =>
+    compareLines(line, floor) >= 0 && compareLines(line, upper) <= 0;
+
+  const candidates = new Set();
+  if (floor !== "main") {
+    candidates.add(floor);
+    if (upper !== "main") candidates.add(upper);
+    const known = catalog.upstream
+      ? Object.keys(catalog.upstream.lines)
+      : live.filter((server) => !onMain(server)).map(lineOf).filter((line) => line !== null);
+    for (const line of known) candidates.add(line);
+  }
+  const lines = [...candidates]
+    .filter(inRange)
+    .sort(compareLines)
+    .map((line) => ({
+      line,
+      latest: latestOf(catalog.upstream, line),
+      servers: live.filter((server) => !onMain(server) && lineOf(server) === line).map((s) => s.name),
+    }));
+  if (upper === "main") {
+    lines.push({
+      line: "main",
+      latest: latestOf(catalog.upstream, "main"),
+      servers: live.filter(onMain).map((server) => server.name),
+    });
+  }
+  // Below "main" means below the line main's VERSION names, for servers not built from main.
+  const floorLine = floor === "main" ? versionLine(latestOf(catalog.upstream, "main")) : floor;
+  const belowFloorServers =
+    floorLine === null
+      ? []
+      : live
+          .filter((server) => {
+            const line = lineOf(server);
+            return !onMain(server) && line !== null && compareLines(line, floorLine) < 0;
+          })
+          .map((server) => server.name);
   return {
-    targetVersion:
-      branch.target === "main"
-        ? (catalog.upstream?.mainVersion ?? null)
-        : (catalog.upstream?.lines?.[branch.target] ?? null),
-    floorServers: live
-      .filter((server) => line(server) === branch.minManagerLine)
-      .map((server) => server.name),
-    targetServers: live
-      .filter(
-        (server) =>
-          branch.target !== null &&
-          server.tracks === branch.target &&
-          server.status.freshness === "current",
-      )
-      .map((server) => server.name),
-    belowFloorServers: live
-      .filter((server) => {
-        const serverLine = line(server);
-        return serverLine !== null && compareLines(serverLine, branch.minManagerLine) < 0;
-      })
-      .map((server) => server.name),
+    upper,
+    floorVersion: latestOf(catalog.upstream, floor),
+    upperVersion: latestOf(catalog.upstream, upper),
+    lines,
+    belowFloorServers,
   };
 }
 
 /**
  * What `compat` reports for a policy branch: `{ maintained: false }` when the
- * policy has no entry for it, else the floor line, the target (with the
- * version `upstream` resolved it to) and the floor / target / below-floor
- * servers, as the board resolved them or, failing that, from the servers here.
+ * policy has no entry for it, else the floor and the resolved range — the
+ * lines from the floor to the branch's own line, each with its latest patch
+ * and live servers — as the board resolved it or, failing that, computed here.
+ * `gateFloorLine` is the line gates are compared against: the floor, or for a
+ * floor of `main` the line of main's VERSION (null when upstream is unknown).
  */
 export function compatReport(catalog, branchName) {
   const branch = catalog.policy?.webui.branches[branchName];
@@ -581,13 +632,16 @@ export function compatReport(catalog, branchName) {
       maintainedBranches: Object.keys(catalog.policy?.webui.branches ?? {}),
     };
   }
+  const floor = branch.minManagerLine;
+  const resolved = branch.resolved ?? resolveLocally(catalog, branchName, floor);
+  const mainVersion = resolved.lines.find((entry) => entry.line === "main")?.latest ?? latestOf(catalog.upstream, "main");
   return {
     branch: branchName,
     maintained: true,
-    floor: branch.minManagerLine,
-    target: branch.target,
+    floor,
     notes: branch.notes,
-    ...(branch.resolved ?? resolveLocally(catalog, branch)),
+    ...resolved,
+    gateFloorLine: floor === "main" ? versionLine(mainVersion) : floor,
   };
 }
 
@@ -692,34 +746,41 @@ export function formatCompatReport(report, gates, { gitBranch } = {}) {
     );
     return lines.join("\n");
   }
-  const names = (list) => (list.length > 0 ? list.join(", ") : "(none)");
-  lines.push(`floor: ${report.floor} line (latest patch assumed)`);
+  const describe = (line, version) =>
+    line === "main"
+      ? `main (backend.ai main branch${version ? `, ${version}` : ""})`
+      : `${line} line${version ? ` (latest patch ${version})` : ""}`;
+  lines.push(`floor: ${describe(report.floor, report.floorVersion)}`);
   lines.push(
-    `target: ${report.target ?? "unknown"}` +
-      (report.targetVersion ? ` (${report.targetVersion})` : "") +
-      (report.target === "main" ? " — backend.ai main branch" : ""),
+    `range: ${report.floor} … ${report.upper}` +
+      (report.upper !== report.floor && report.upperVersion ? ` (${report.upperVersion})` : "") +
+      ", every line at its latest patch",
   );
-  lines.push(`floor servers: ${names(report.floorServers)}`);
-  lines.push(`target servers: ${names(report.targetServers)}`);
+  const width = Math.max(...report.lines.map((entry) => `${entry.line} (${entry.latest ?? "?"})`.length), 0);
+  for (const entry of report.lines) {
+    const label = `${entry.line} (${entry.latest ?? "?"})`.padEnd(width);
+    lines.push(`  ${label}  ${entry.servers.length > 0 ? entry.servers.join(", ") : "— no server"}`);
+  }
   if (report.belowFloorServers.length > 0) {
-    lines.push(`below the floor: ${names(report.belowFloorServers)}`);
+    lines.push(`below the floor: ${report.belowFloorServers.join(", ")}`);
   }
   if (report.notes) lines.push(`notes: ${report.notes}`);
-  if (report.floorServers.length === 0) {
-    lines.push(`warning: no live server runs the ${report.floor} line`);
-  }
-  if (report.targetServers.length === 0) {
-    lines.push(`warning: no live, current server tracks ${report.target ?? "the target"}`);
+  const gaps = report.lines.filter((entry) => entry.servers.length === 0).map((entry) => entry.line);
+  if (gaps.length > 0) {
+    lines.push(`warning: no live server on ${gaps.join(", ")} — coverage gap`);
   }
   lines.push("");
-  if (gates.length === 0) {
-    lines.push(`gates at or below the ${report.floor} line: none`);
+  if (report.gateFloorLine === null) {
+    lines.push("gates at or below the floor: unknown — the floor is main and upstream has no main version");
   } else {
-    lines.push(
-      `gates at or below the ${report.floor} line (${gates.length}; deletable per ADR 0010):`,
-    );
-    for (const gate of gates) {
-      lines.push(`  ${gate.file}:${gate.line}  ${gate.kind}(${gate.versions.join(", ")})`);
+    const at = `the ${report.gateFloorLine} line` + (report.floor === "main" ? " (main's VERSION)" : "");
+    if (gates.length === 0) {
+      lines.push(`gates at or below ${at}: none`);
+    } else {
+      lines.push(`gates at or below ${at} (${gates.length}; deletable per ADR 0010):`);
+      for (const gate of gates) {
+        lines.push(`  ${gate.file}:${gate.line}  ${gate.kind}(${gate.versions.join(", ")})`);
+      }
     }
   }
   return lines.join("\n");

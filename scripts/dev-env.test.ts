@@ -733,13 +733,16 @@ describe("dev-env CLI", () => {
           accounts: [],
         },
       ],
-      upstream: { main_version: "26.9.0rc1", lines: { "26.4": "26.4.13" } },
+      upstream: {
+        main_version: "26.9.0rc1",
+        lines: { "26.4": "26.4.13", "26.8": "26.8.9", "26.9": "26.9.4" },
+      },
       policy: {
         updated_at: "2026-10-07T04:00:00Z",
         webui: {
           branches: {
-            main: { min_manager_line: "26.4", target: "main" },
-            "26.9": { min_manager_line: "26.8", target: "26.9" },
+            main: { min_manager_line: "26.4" },
+            "26.9": { min_manager_line: "26.8" },
           },
         },
       },
@@ -775,17 +778,18 @@ describe("dev-env CLI", () => {
       ]);
     });
 
-    it("reports main's floor, target, servers and the gates at or below the floor", async () => {
+    it("reports main's floor, its range with servers and gaps, and the gates at or below the floor", async () => {
       // The temp root is no git checkout, so the branch falls back to main.
       const result = await run(["compat"]);
       expect(result.status).toBe(0);
       expect(result.stdout).toContain("branch: main\n");
-      expect(result.stdout).toContain("floor: 26.4 line (latest patch assumed)");
-      expect(result.stdout).toContain("target: main (26.9.0rc1) — backend.ai main branch");
-      expect(result.stdout).toContain("floor servers: lts-26-4");
-      expect(result.stdout).toContain("target servers: (none)");
+      expect(result.stdout).toContain("floor: 26.4 line (latest patch 26.4.13)");
+      expect(result.stdout).toContain("range: 26.4 … main (26.9.0rc1), every line at its latest patch");
+      expect(result.stdout).toContain("  26.4 (26.4.13)    lts-26-4");
+      expect(result.stdout).toContain("  26.8 (26.8.9)     — no server");
+      expect(result.stdout).toContain("  main (26.9.0rc1)  — no server");
       expect(result.stdout).toContain("below the floor: main");
-      expect(result.stdout).toContain("warning: no live, current server tracks main");
+      expect(result.stdout).toContain("warning: no live server on 26.8, 26.9, main — coverage gap");
       expect(result.stdout).toContain(
         "gates at or below the 26.4 line (2; deletable per ADR 0010):\n" +
           "  packages/backend.ai-client/src/client.ts:1  isManagerVersionCompatibleWith(26.4.0)\n" +
@@ -795,6 +799,7 @@ describe("dev-env CLI", () => {
       expect(result.stdout).not.toContain("__generated__");
       expect(result.stdout).not.toContain("Old.test");
       expect(result.stdout).not.toContain("Old.doc");
+      expect(result.stdout).not.toMatch(/target/i);
     });
 
     it("reads a release branch's own entry with --branch, as JSON", async () => {
@@ -806,15 +811,34 @@ describe("dev-env CLI", () => {
         branch: "26.9",
         maintained: true,
         floor: "26.8",
-        target: "26.9",
-        targetVersion: null,
+        upper: "26.9",
+        floorVersion: "26.8.9",
+        upperVersion: "26.9.4",
+        lines: [
+          { line: "26.8", latest: "26.8.9", servers: [] },
+          { line: "26.9", latest: "26.9.4", servers: [] },
+        ],
+        belowFloorServers: ["lts-26-4", "main"],
+        gateFloorLine: "26.8",
         policyUpdatedAt: "2026-10-07T04:00:00Z",
       });
+      expect(report).not.toHaveProperty("target");
       expect(report.gates).toEqual([
         { file: "packages/backend.ai-client/src/client.ts", line: 1, kind: "isManagerVersionCompatibleWith", versions: ["26.4.0"] },
         { file: "react/src/components/Mid.tsx", line: 2, kind: "@since", versions: ["26.7.0"] },
         { file: "react/src/components/Old.tsx", line: 1, kind: "isManagerVersionCompatibleWith", versions: ["26.4.2"] },
       ]);
+    });
+
+    it("compares gates against main's VERSION line when the floor is main", async () => {
+      const body = policyBody();
+      body.policy.webui.branches.main = { min_manager_line: "main" };
+      fs.writeFileSync(catalogPath, JSON.stringify(body));
+      const result = await run(["compat"]);
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain("floor: main (backend.ai main branch, 26.9.0rc1)");
+      expect(result.stdout).toContain("gates at or below the 26.9 line (main's VERSION) (4; deletable per ADR 0010):");
+      expect(result.stdout).toContain("react/src/components/Mid.tsx:2  @since(26.7.0)");
     });
 
     it("maps a feature branch to main and a missing release branch to not maintained", async () => {
@@ -827,6 +851,13 @@ describe("dev-env CLI", () => {
         'policy: not maintained — the catalog policy has no entry for "26.5"; maintained: main, 26.9',
       );
       expect(missing.stdout).not.toContain("gates");
+    });
+
+    it("shows the policy in status without any target", async () => {
+      const result = await run(["status"]);
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain("policy: main floor 26.4; 26.9 floor 26.8");
+      expect(result.stdout).not.toMatch(/target/i);
     });
 
     it("exits 0 with one notice for an old board without policy", async () => {
