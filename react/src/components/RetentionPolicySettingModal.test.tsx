@@ -164,9 +164,7 @@ describe('RetentionPolicySettingModal', () => {
       screen.getByText('retentionPolicy.OnePolicyPerCategory'),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('spinbutton', {
-        name: 'retentionPolicy.RetentionPeriodDays',
-      }),
+      screen.getByLabelText('retentionPolicy.RetentionPeriodDays'),
     ).toBeInTheDocument();
     expect(
       screen.getByRole('switch', { name: 'general.Enabled' }),
@@ -183,9 +181,7 @@ describe('RetentionPolicySettingModal', () => {
       EXISTING_POLICY.category,
     );
     expect(
-      screen.getByRole('spinbutton', {
-        name: 'retentionPolicy.RetentionPeriodDays',
-      }),
+      screen.getByLabelText('retentionPolicy.RetentionPeriodDays'),
     ).toHaveValue('30');
     expect(
       screen.getByRole('switch', { name: 'general.Enabled' }),
@@ -215,9 +211,7 @@ describe('RetentionPolicySettingModal', () => {
       'SESSIONS',
     );
     await user.type(
-      screen.getByRole('spinbutton', {
-        name: 'retentionPolicy.RetentionPeriodDays',
-      }),
+      screen.getByLabelText('retentionPolicy.RetentionPeriodDays'),
       '14',
     );
     await user.click(screen.getByRole('switch', { name: 'general.Enabled' }));
@@ -251,9 +245,7 @@ describe('RetentionPolicySettingModal', () => {
       'SESSIONS',
     );
     await user.type(
-      screen.getByRole('spinbutton', {
-        name: 'retentionPolicy.RetentionPeriodDays',
-      }),
+      screen.getByLabelText('retentionPolicy.RetentionPeriodDays'),
       '14',
     );
     await user.click(screen.getByRole('button', { name: /button.Create/ }));
@@ -274,9 +266,9 @@ describe('RetentionPolicySettingModal', () => {
     const user = userEvent.setup();
     const { seenOperations, onRequestClose } = renderEditModal();
 
-    const daysInput = await screen.findByRole('spinbutton', {
-      name: 'retentionPolicy.RetentionPeriodDays',
-    });
+    const daysInput = await screen.findByLabelText(
+      'retentionPolicy.RetentionPeriodDays',
+    );
     await user.clear(daysInput);
     await user.type(daysInput, '90');
     await user.click(screen.getByRole('button', { name: /button.Save/ }));
