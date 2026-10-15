@@ -1,0 +1,314 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-10-15T02:56:03.856Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 3,
+        "changes": 13,
+        "added": 11,
+        "modified": 2,
+        "removed": 0,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "Admin Features",
+          "status": "modified",
+          "url": "next/en/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 3,
+            "modified": 1,
+            "removed": 0,
+            "images": 0,
+            "total": 4
+          },
+          "fingerprints": [
+            "b5d5324d92c1",
+            "0ac06ddcc16e",
+            "42a2f3b24d9c",
+            "de2bfefc51a9"
+          ]
+        },
+        {
+          "slug": "sessions_all",
+          "title": "Compute Sessions",
+          "status": "modified",
+          "url": "next/en/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 5,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 5
+          },
+          "fingerprints": [
+            "5875214fe65a",
+            "27171bef59e2",
+            "2b6f27b2783d",
+            "e7f7b2d79176",
+            "ddb1b3ad18ee"
+          ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "Storage Folders",
+          "status": "modified",
+          "url": "next/en/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/vfolder/vfolder.md",
+          "counts": {
+            "added": 3,
+            "modified": 1,
+            "removed": 0,
+            "images": 0,
+            "total": 4
+          },
+          "fingerprints": [
+            "b5d5324d92c1",
+            "0ac06ddcc16e",
+            "42a2f3b24d9c",
+            "b18082b965e8"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 3,
+        "changes": 13,
+        "added": 11,
+        "modified": 2,
+        "removed": 0,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "管理者機能",
+          "status": "modified",
+          "url": "next/ja/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 3,
+            "modified": 1,
+            "removed": 0,
+            "images": 0,
+            "total": 4
+          },
+          "fingerprints": [
+            "668ae66ae164",
+            "4d74d9408406",
+            "e171d5977707",
+            "99204057bf85"
+          ]
+        },
+        {
+          "slug": "sessions_all",
+          "title": "コンピュートセッション",
+          "status": "modified",
+          "url": "next/ja/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 5,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 5
+          },
+          "fingerprints": [
+            "515707ebc110",
+            "b65d755e200b",
+            "ae1b2d2232b7",
+            "4216951056b1",
+            "4e9c88990c99"
+          ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "ストレージフォルダ",
+          "status": "modified",
+          "url": "next/ja/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/vfolder/vfolder.md",
+          "counts": {
+            "added": 3,
+            "modified": 1,
+            "removed": 0,
+            "images": 0,
+            "total": 4
+          },
+          "fingerprints": [
+            "239cb6fcbae2",
+            "201a34282156",
+            "cbedddd197c3",
+            "c92cb7f2d924"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 3,
+        "changes": 13,
+        "added": 11,
+        "modified": 2,
+        "removed": 0,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "관리자 기능",
+          "status": "modified",
+          "url": "next/ko/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 3,
+            "modified": 1,
+            "removed": 0,
+            "images": 0,
+            "total": 4
+          },
+          "fingerprints": [
+            "3f3dbcd51174",
+            "ed9acde5e29f",
+            "8334fe517652",
+            "a7e0a4efda8e"
+          ]
+        },
+        {
+          "slug": "sessions_all",
+          "title": "연산 세션",
+          "status": "modified",
+          "url": "next/ko/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 5,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 5
+          },
+          "fingerprints": [
+            "cad401dc316e",
+            "825812226493",
+            "311d4ce8f6ec",
+            "e907ccce1a54",
+            "8964e3f51c08"
+          ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "스토리지 폴더",
+          "status": "modified",
+          "url": "next/ko/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/vfolder/vfolder.md",
+          "counts": {
+            "added": 3,
+            "modified": 1,
+            "removed": 0,
+            "images": 0,
+            "total": 4
+          },
+          "fingerprints": [
+            "28b58c5cc9d8",
+            "3260b6bbe0d5",
+            "e139fa52172f",
+            "d5724b550640"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 3,
+        "changes": 13,
+        "added": 11,
+        "modified": 2,
+        "removed": 0,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "ฟีเจอร์ผู้ดูแลระบบ",
+          "status": "modified",
+          "url": "next/th/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 3,
+            "modified": 1,
+            "removed": 0,
+            "images": 0,
+            "total": 4
+          },
+          "fingerprints": [
+            "0e5bf5b5595c",
+            "41c043ebf7d1",
+            "1696c9dc374e",
+            "3daf93b81a83"
+          ]
+        },
+        {
+          "slug": "sessions_all",
+          "title": "เซสชันการคำนวณ",
+          "status": "modified",
+          "url": "next/th/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 5,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 5
+          },
+          "fingerprints": [
+            "7030ad3c5453",
+            "1f5d36664529",
+            "71ec4e55a558",
+            "a09bf8571ce6",
+            "b0b98bf69175"
+          ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "โฟลเดอร์จัดเก็บ",
+          "status": "modified",
+          "url": "next/th/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/vfolder/vfolder.md",
+          "counts": {
+            "added": 3,
+            "modified": 1,
+            "removed": 0,
+            "images": 0,
+            "total": 4
+          },
+          "fingerprints": [
+            "03f6bb56349e",
+            "3dca5783ec59",
+            "b0f7e5ab1267",
+            "313a4a32a07d"
+          ]
+        }
+      ]
+    }
+  }
+}
