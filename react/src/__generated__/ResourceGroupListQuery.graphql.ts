@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b7e5c38023a941a3e629894ebeda22c7>>
+ * @generated SignedSource<<c55b8837d334d14583316230b4e8612f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -326,16 +326,16 @@ return {
     "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "11233065d01fa0653db714a9263daf0e",
+    "cacheID": "1f5e0e66b9f8add32dab2439a26659bd",
     "id": null,
     "metadata": {},
     "name": "ResourceGroupListQuery",
     "operationKind": "query",
-    "text": "query ResourceGroupListQuery(\n  $limit: Int\n  $offset: Int\n  $filter: ResourceGroupFilter\n  $orderBy: [ResourceGroupOrderBy!]\n) {\n  adminResourceGroups(limit: $limit, offset: $offset, filter: $filter, orderBy: $orderBy) {\n    count\n    edges {\n      node {\n        id\n        name\n        status {\n          isActive\n          isPublic\n          isDefault\n        }\n        metadata {\n          description\n          createdAt\n        }\n        network {\n          wsproxyAddr\n        }\n        scheduler {\n          type\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ResourceGroupListQuery(\n  $limit: Int\n  $offset: Int\n  $filter: ResourceGroupFilter\n  $orderBy: [ResourceGroupOrderBy!]\n) {\n  adminResourceGroups(limit: $limit, offset: $offset, filter: $filter, orderBy: $orderBy) {\n    count\n    edges {\n      node {\n        id\n        name\n        status {\n          isActive\n          isPublic\n          isDefault @since(version: \"26.8.0\")\n        }\n        metadata {\n          description\n          createdAt\n        }\n        network {\n          wsproxyAddr\n        }\n        scheduler {\n          type\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5431181fafe12427cb5049c3613c1d0c";
+(node as any).hash = "f85d7fb05bc86e344a34b9d836d9b1a0";
 
 export default node;
