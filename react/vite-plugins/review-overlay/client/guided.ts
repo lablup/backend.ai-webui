@@ -661,11 +661,14 @@ export function startGuidedMode(options: GuidedModeOptions) {
 
   // -------------------------------------------------------------- events
 
-  const typing = () => pop.isTyping() || isEditable(document.activeElement);
-
   /** The focused node, shadow or light — `document.activeElement` is our host. */
+  const activeNode = () => root.activeElement ?? document.activeElement;
+
+  // The composer's textarea sits in our shadow root, next to the popover's.
+  const typing = () => pop.isTyping() || isEditable(activeNode());
+
   const blurActive = () => {
-    const node = root.activeElement ?? document.activeElement;
+    const node = activeNode();
     if (node instanceof HTMLElement) node.blur();
   };
 
