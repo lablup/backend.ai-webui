@@ -1,6 +1,10 @@
 import { ReaderFragment, FragmentRefs } from 'relay-runtime';
 export type SessionV2Status = "CANCELLED" | "CREATING" | "DEPRIORITIZING" | "PENDING" | "PREEMPTED" | "PREPARED" | "PREPARING" | "RESCHEDULING" | "RESERVED" | "RUNNING" | "SCHEDULED" | "TERMINATED" | "TERMINATING" | "%future added value";
 export type BAISessionNodesV2Fragment$data = ReadonlyArray<{
+    readonly entityId: string;
+    readonly entityLabels: {
+        readonly " $fragmentSpreads": FragmentRefs<"BAIEntityLabelSettingModalFragment" | "BAIEntityLabelTokensFragment">;
+    } | null | undefined;
     readonly id: string;
     readonly images: {
         readonly edges: ReadonlyArray<{
