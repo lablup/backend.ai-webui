@@ -9,8 +9,9 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 const STORE = '../../../../.local/share/pnpm/store/v11/links';
+// pnpm files an unscoped package under an `@` bucket: `links/@/react/…`.
 const src = (name: string, version: string, file: string) =>
-  `${STORE}/${name}/${version}/0123abcd/node_modules/${name}/dist/${file}`;
+  `${STORE}/${name.startsWith('@') ? '' : '@/'}${name}/${version}/0123abcd/node_modules/${name}/dist/${file}`;
 
 const cacheWith = (optimized: Record<string, { src: string }>) => {
   const dir = mkdtempSync(join(tmpdir(), 'prebundle-'));

@@ -6,15 +6,17 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 /**
- * `<name>` and `<version>` of a pnpm global-virtual-store path,
- * `…/links/<name>/<version>/<hash>/node_modules/<name>/…`, or null.
+ * `<name>` and `<version>` of a pnpm global-virtual-store path, or null.
+ * Unscoped packages sit in an `@` bucket: `…/links/@/react/<version>/…`.
  */
 export const storePackageOf = (
   path: string,
 ): { name: string; version: string } | null => {
   const match = path
     .replaceAll('\\', '/')
-    .match(/\/links\/((?:@[^/]+\/)?[^/]+)\/([^/]+)\/[^/]+\/node_modules\/\1\//);
+    .match(
+      /\/links\/(?:@\/)?((?:@[^/]+\/)?[^/]+)\/([^/]+)\/[^/]+\/node_modules\/\1\//,
+    );
   return match ? { name: match[1], version: match[2] } : null;
 };
 
