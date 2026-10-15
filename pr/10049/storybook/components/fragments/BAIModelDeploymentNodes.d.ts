@@ -13,7 +13,7 @@ export type ModelDeploymentNodeInList = NonNullable<BAIModelDeploymentNodesFragm
  */
 export declare const availableDeploymentSorterKeys: readonly ["name", "createdAt", "project", "resourceGroup", "tag"];
 export type DeploymentSorterKey = (typeof availableDeploymentSorterKeys)[number];
-export declare const availableDeploymentSorterValues: readonly ["name", "createdAt", "project", "resourceGroup", "tag", ...("-createdAt" | "-name" | "-tag" | "-project" | "-resourceGroup")[]];
+export declare const availableDeploymentSorterValues: readonly ["name", "createdAt", "project", "resourceGroup", "tag", ...("-createdAt" | "-name" | "-tag" | "-resourceGroup" | "-project")[]];
 export type DeploymentOrderValue = (typeof availableDeploymentSorterValues)[number];
 export interface BAIModelDeploymentNodesProps extends Omit<BAITableProps<ModelDeploymentNodeInList>, 'dataSource' | 'columns' | 'onChangeOrder'> {
     deploymentsFrgmt: BAIModelDeploymentNodesFragment$key;
