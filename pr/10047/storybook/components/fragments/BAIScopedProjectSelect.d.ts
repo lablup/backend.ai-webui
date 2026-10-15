@@ -16,7 +16,7 @@ export interface BAIScopedProjectSelectProps extends Omit<BAIComplexSelectProps,
     onChange?: (value: string | Array<string> | undefined, option?: BAILabeledValue | Array<BAILabeledValue>) => void;
     /** Spread into the page query filter; the search term owns `name`. */
     filter?: Omit<NonNullable<BAIScopedProjectSelectPaginatedQuery['variables']['filter']>, 'name'>;
-    /** The projects this scope reaches are listed, usually the current domain (ADR 0011). */
+    /** The projects this scope reaches are listed, usually the current domain (ADR 0012). */
     scope: ProjectScope;
     ref?: React.Ref<BAIScopedProjectSelectRef>;
 }
