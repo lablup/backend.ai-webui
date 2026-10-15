@@ -338,7 +338,6 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
               'name',
               'currentRevisionNumber',
               'status',
-              'labels',
               'replicaSummary',
               'model',
               'createdAt',
