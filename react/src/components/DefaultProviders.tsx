@@ -18,6 +18,7 @@ import {
   useWebUINavigate,
 } from '../hooks';
 import { useDeviceMetaData, useImageMetaData } from '../hooks/backendai';
+import { useLoginConfig } from '../hooks/useWebUIConfig';
 import '../index.css';
 import NotificationHost from './NotificationHost';
 import { useTheme } from '@lablup/ui-common/theme';
@@ -26,6 +27,7 @@ import {
   BAIConfigProvider,
   BAIMetaDataProvider,
   BAIText,
+  BAIWebMCPProvider,
   useUpdateEffect,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -312,6 +314,7 @@ export const DefaultProvidersForReactRoot: React.FC<{
   const [lang] = useCurrentLanguage();
   const { t } = useTranslation();
   const { token } = useTheme();
+  const enableWebMCP = useLoginConfig()?.enableWebMCP ?? false;
 
   const currentLocale =
     buiLanguages[lang as keyof typeof buiLanguages] ?? buiLanguages['en'];
@@ -414,7 +417,10 @@ export const DefaultProvidersForReactRoot: React.FC<{
                       <Suspense>
                         {/* <BrowserRouter> */}
                         {/* <RoutingEventHandler /> */}
-                        {children}
+                        {/* WebMCP tool gate, ADR 0011. */}
+                        <BAIWebMCPProvider enabled={enableWebMCP}>
+                          {children}
+                        </BAIWebMCPProvider>
                         {/* </BrowserRouter> */}
                       </Suspense>
                     </BAIMetaDataProviderWrapper>

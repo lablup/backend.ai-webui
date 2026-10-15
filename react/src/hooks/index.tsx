@@ -744,6 +744,7 @@ type BackendAIConfig = {
   enableInteractiveLoginAccountSwitch: boolean;
   isDirectorySizeVisible: boolean;
   enableReservoir: boolean;
+  enableWebMCP: boolean;
   debug: boolean;
   proxyURL: string;
   allowCustomResourceAllocation: boolean;
