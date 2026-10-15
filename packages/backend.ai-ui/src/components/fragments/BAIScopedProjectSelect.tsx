@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  BAIScopedProjectSelect — Relay-paginated, id-valued project select over
- `scopedProjectsV2` (ADR 0011). The outer value is a plain key (`string` /
+ `scopedProjectsV2` (ADR 0012). The outer value is a plain key (`string` /
  `string[]`); labelInValue stays between this wrapper and `BAIComplexSelect`.
  The page query refetches `network-only` while the popup is open
  (`BAIComplexSelect.onOpenChange`) and reads the store otherwise.
@@ -62,7 +62,7 @@ export interface BAIScopedProjectSelectProps extends Omit<
     NonNullable<BAIScopedProjectSelectPaginatedQuery['variables']['filter']>,
     'name'
   >;
-  /** The projects this scope reaches are listed, usually the current domain (ADR 0011). */
+  /** The projects this scope reaches are listed, usually the current domain (ADR 0012). */
   scope: ProjectScope;
   ref?: React.Ref<BAIScopedProjectSelectRef>;
 }

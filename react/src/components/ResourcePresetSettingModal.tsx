@@ -31,7 +31,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 /**
- * Resource groups of the current domain a preset may be bound to (ADR 0011).
+ * Resource groups of the current domain a preset may be bound to (ADR 0012).
  * Spreading `props` keeps the value/onChange pair `BAIFormItem` injects into its
  * direct child from being swallowed by the Suspense boundary.
  */

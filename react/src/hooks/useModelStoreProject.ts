@@ -11,7 +11,7 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
  * Returns the id and name of the active MODEL_STORE project in the current
  * domain, or nulls when there is none. Assumes one model store per domain.
  * `'user'` scopes `scopedProjectsV2` to the caller's memberships; `'admin'` to
- * the current domain (domain admin or higher), for admin pages (ADR 0011).
+ * the current domain (domain admin or higher), for admin pages (ADR 0012).
  */
 export const useModelStoreProject = (scope: 'user' | 'admin' = 'user') => {
   const baiClient = useSuspendedBackendaiClient();

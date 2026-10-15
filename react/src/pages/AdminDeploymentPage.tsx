@@ -92,7 +92,7 @@ type DeploymentTabQueryParams = {
 const AdminDeploymentPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  // Deployments and model cards of the current domain (ADR 0011).
+  // Deployments and model cards of the current domain (ADR 0012).
   const { domainScope } = useCurrentDomainScope();
 
   // Default status scope for the deployments tab: hide terminated deployments.

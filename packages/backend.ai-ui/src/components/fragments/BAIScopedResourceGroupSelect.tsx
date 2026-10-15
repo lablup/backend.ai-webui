@@ -14,7 +14,7 @@ export type BAIResourceGroupFilter = Pick<
 >;
 
 /**
- * Names of the resource groups `scope` reaches, ordered by name (ADR 0011).
+ * Names of the resource groups `scope` reaches, ordered by name (ADR 0012).
  * Shares one request with `BAIScopedResourceGroupSelect` given the same `scope` and `filter`.
  */
 export const useScopedResourceGroupNames = (

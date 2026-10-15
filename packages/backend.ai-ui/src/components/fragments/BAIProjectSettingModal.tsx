@@ -42,7 +42,7 @@ export interface BAIProjectSettingModalProps extends Omit<
   'title' | 'loading'
 > {
   projectFragment: BAIProjectSettingModalFragment$key | null;
-  /** Scope of the Allowed Resource Groups picker, usually the current domain (ADR 0011). */
+  /** Scope of the Allowed Resource Groups picker, usually the current domain (ADR 0012). */
   resourceGroupScope: ResourceGroupScope;
 }
 

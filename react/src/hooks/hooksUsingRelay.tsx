@@ -145,7 +145,7 @@ export const useImageCanonicalName = (
 /**
  * Resolves an image id to its full reference `<canonicalName>@<architecture>`
  * through `scopedImagesV2` over the current domain and public registries
- * (ADR 0011), for admin pages. Falls back
+ * (ADR 0012), for admin pages. Falls back
  * to the canonical name alone, then the raw id. See `useImageCanonicalName` for
  * null-handling semantics.
  */

@@ -92,7 +92,7 @@ export const useAccessibleProjects = (
       ? ['GENERAL']
       : ['GENERAL', 'MODEL_STORE'];
 
-  // Both lists read `scopedProjectsV2` (ADR 0011): the caller's memberships for
+  // Both lists read `scopedProjectsV2` (ADR 0012): the caller's memberships for
   // everyone, plus every project of the current domain for admins.
   const { domainScope } = useCurrentDomainScope();
   const queryRef = useLazyLoadQuery<useAccessibleProjectsQuery>(

@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  BAIScopedImageSelect — Relay-paginated, id-valued image select over
- `scopedImagesV2` (ADR 0011). The value is the image UUID; options are
+ `scopedImagesV2` (ADR 0012). The value is the image UUID; options are
  labelled `"<canonicalName>@<architecture>"`, and a selected id missing from
  the loaded pages falls back to the UUID as its label.
 */
@@ -58,7 +58,7 @@ export interface BAIScopedImageSelectProps extends Omit<
   filter?: ImageV2Filter;
   open?: boolean;
   defaultOpen?: boolean;
-  /** The images this scope reaches are listed (ADR 0011). */
+  /** The images this scope reaches are listed (ADR 0012). */
   scope: ImageSearchScope;
   ref?: React.Ref<BAIScopedImageSelectRef>;
 }

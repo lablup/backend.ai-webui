@@ -12,7 +12,7 @@ export interface DomainUUIDScope {
 }
 
 /**
- * The signed-in domain as a `scoped*` search scope (ADR 0011), for superadmins
+ * The signed-in domain as a `scoped*` search scope (ADR 0012), for superadmins
  * and domain admins alike. Throws when the manager answers no domain id.
  */
 export const useCurrentDomainScope = () => {
