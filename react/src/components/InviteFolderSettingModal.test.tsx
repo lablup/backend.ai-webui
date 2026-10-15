@@ -16,6 +16,7 @@ import {
   useLazyLoadQuery,
 } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
+import type { MockResolverContext } from 'relay-test-utils/lib/RelayMockPayloadGenerator';
 import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockEnvironment';
 
 /**
@@ -68,36 +69,10 @@ vi.mock('../hooks/backendai', async (importOriginal) => {
 const VFOLDER_ID = '01a12f7c-4178-7cac-a103-8c55e896cfc4';
 const VFOLDER_GLOBAL_ID = btoa(`VFolder:${VFOLDER_ID}`);
 const USER2_ID = '009fb1a4-487c-4f6e-9b1b-228b94b1d040';
+const USER3_ID = '4f13d193-f646-425a-a340-270c4d2b9860';
 const ACCEPTED_SHARE_ID = '01a12f7d-182a-70cc-9a19-78f0fd6f01a4';
 const PENDING_SHARE_ID = '01a12f7e-0644-75be-8e76-b2ab727ce7ac';
-
-const SHARED_USERS = [
-  { perm: 'ro', shared_to: { uuid: USER2_ID, email: 'user2@example.com' } },
-];
-const SENT_INVITATIONS = [
-  {
-    id: PENDING_SHARE_ID,
-    invitee: 'nobody@example.com',
-    perm: 'rw',
-    state: 'pending',
-    vfolder_id: VFOLDER_ID,
-  },
-];
-
-vi.mock('../hooks/reactQueryAlias', async (importOriginal) => {
-  const originalModule =
-    await importOriginal<typeof import('../hooks/reactQueryAlias')>();
-  return {
-    ...originalModule,
-    useTanQuery: ({ queryKey }: { queryKey: Array<unknown> }) => ({
-      data:
-        queryKey[0] === 'baiClient.vfolder.list_sent_invitations'
-          ? SENT_INVITATIONS
-          : SHARED_USERS,
-      isFetching: false,
-    }),
-  };
-});
+const PENDING_USER_SHARE_ID = '01a12f7f-3c1e-7a4b-9d02-5e6f7a8b9c0d';
 
 const RESOLVERS = {
   VFolder: () => ({
@@ -107,18 +82,38 @@ const RESOLVERS = {
   EntityShareConnection: () => ({
     edges: [
       {
+        // An accepted share names its user and carries the address.
         node: {
           id: 'EntityShare:accepted',
           entityId: ACCEPTED_SHARE_ID,
+          recipientEntityType: 'user',
+          recipientEntityId: USER2_ID,
           recipientEmail: 'user2@example.com',
+          permissions: ['READ'],
           status: 'ACCEPTED',
         },
       },
       {
+        // An e-mail invite: no user until it is accepted.
         node: {
           id: 'EntityShare:pending',
           entityId: PENDING_SHARE_ID,
+          recipientEntityType: null,
+          recipientEntityId: null,
           recipientEmail: 'nobody@example.com',
+          permissions: ['READ', 'UPDATE', 'SOFT_DELETE'],
+          status: 'PENDING',
+        },
+      },
+      {
+        // A user-id invite: no address until it is accepted.
+        node: {
+          id: 'EntityShare:pending-user',
+          entityId: PENDING_USER_SHARE_ID,
+          recipientEntityType: 'user',
+          recipientEntityId: USER3_ID,
+          recipientEmail: null,
+          permissions: ['READ'],
           status: 'PENDING',
         },
       },
@@ -126,7 +121,10 @@ const RESOLVERS = {
         node: {
           id: 'EntityShare:revoked',
           entityId: 'revoked-share',
+          recipientEntityType: null,
+          recipientEntityId: null,
           recipientEmail: 'old@example.com',
+          permissions: ['READ'],
           status: 'REVOKED',
         },
       },
@@ -135,7 +133,24 @@ const RESOLVERS = {
   VFolderMountPoliciesPayload: () => ({
     items: [{ id: 'policy-1', userId: USER2_ID, permission: 'READ_WRITE' }],
   }),
-  UserV2Connection: () => ({ edges: [] }),
+  // The recipients query asks for the unnamed users by id; the select's
+  // search queries get an empty page.
+  UserV2Connection: (context: MockResolverContext) => ({
+    edges: (
+      (context.args?.filter as { uuid?: { in?: Array<string> } } | undefined)
+        ?.uuid?.in ?? []
+    ).includes(USER3_ID)
+      ? [
+          {
+            node: {
+              id: btoa(`UserV2:${USER3_ID}`),
+              entityId: USER3_ID,
+              basicInfo: { email: 'user3@example.com' },
+            },
+          },
+        ]
+      : [],
+  }),
 };
 
 const Harness: React.FC<{ onRequestClose?: () => void }> = ({
@@ -229,7 +244,9 @@ const renderModal = async () => {
       </Suspense>
     </RelayEnvironmentProvider>,
   );
-  // The harness query first, then the modal body's own query.
+  // The harness query first, then the modal body's own query, then the
+  // recipients query it issues for the user-id share.
+  await resolvePendingQueries(environment);
   await resolvePendingQueries(environment);
   await resolvePendingQueries(environment);
   await screen.findByText('user2@example.com');
@@ -259,18 +276,22 @@ describe('InviteFolderSettingModal (#10295)', () => {
     expect(screen.getByText('nobody@example.com')).toBeInTheDocument();
     expect(screen.queryByText('old@example.com')).not.toBeInTheDocument();
     expect(screen.getByText('data.invitation.Accepted')).toBeInTheDocument();
-    expect(screen.getByText('data.invitation.Pending')).toBeInTheDocument();
+    expect(screen.getAllByText('data.invitation.Pending')).toHaveLength(2);
     // The accepted row reads its level from the mount policy, not from the
-    // legacy perm (`ro`) or the folder default; the invite row above the
+    // share's cap (`[READ]`) or the folder default; the invite row above the
     // table still shows the default.
     expect(
       screen.getAllByText('data.ReadWrite').some((el) => el.closest('tr')),
     ).toBe(true);
-    // A pending row shows the level the invitee is set to get, read from the
-    // caller's sent invitations.
+    // A pending row shows the level its cap encodes.
     expect(
       screen.getByText('nobody@example.com').closest('tr'),
     ).toHaveTextContent('data.ReadWrite');
+    // A share sent to a user id has no address of its own; it comes from
+    // the recipients query.
+    expect(
+      screen.getByText('user3@example.com').closest('tr'),
+    ).toHaveTextContent('data.ReadOnly');
   });
 
   it('offers an e-mail invite as an entity share capped at the folder shared mount permission', async () => {
@@ -357,7 +378,9 @@ describe('InviteFolderSettingModal (#10295)', () => {
     const environment = await renderModal();
 
     await user.click(
-      screen.getByRole('button', { name: 'data.folders.CancelInvitation' }),
+      screen.getAllByRole('button', {
+        name: 'data.folders.CancelInvitation',
+      })[0],
     );
     await user.click(
       await screen.findByRole('button', { name: 'button.Confirm' }),

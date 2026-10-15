@@ -3,21 +3,19 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  Share modal on the 26.9 model: an invite is an entity share, the invitee's
- mount level is a vfolder mount policy. The invite itself still goes through
- the legacy `/folders/{id}/invite` endpoint, which writes both rows — see the
- TODO(needs-backend) on `handleInvite`.
+ mount level is a vfolder mount policy.
 */
 import { InviteFolderSettingModalCancelShareMutation } from '../__generated__/InviteFolderSettingModalCancelShareMutation.graphql';
 import { InviteFolderSettingModalCreateShareMutation } from '../__generated__/InviteFolderSettingModalCreateShareMutation.graphql';
 import { InviteFolderSettingModalFragment$key } from '../__generated__/InviteFolderSettingModalFragment.graphql';
 import { InviteFolderSettingModalQuery } from '../__generated__/InviteFolderSettingModalQuery.graphql';
+import { InviteFolderSettingModalRecipientsQuery } from '../__generated__/InviteFolderSettingModalRecipientsQuery.graphql';
 import { InviteFolderSettingModalRevokeShareMutation } from '../__generated__/InviteFolderSettingModalRevokeShareMutation.graphql';
 import { InviteFolderSettingModalSetMountPolicyMutation } from '../__generated__/InviteFolderSettingModalSetMountPolicyMutation.graphql';
 import { InviteFolderSettingModalUnsetMountPolicyMutation } from '../__generated__/InviteFolderSettingModalUnsetMountPolicyMutation.graphql';
 import { App } from '../app-shim';
-import { localeCompare, useBaiSignedRequestWithPromise } from '../helper';
+import { localeCompare } from '../helper';
 import { useCurrentUserInfo } from '../hooks/backendai';
-import { useTanQuery } from '../hooks/reactQueryAlias';
 import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import { Selector } from '@lablup/ui-common/Selector';
 import { HStack, StackItem, VStack } from '@lablup/ui-common/Stack';
@@ -36,7 +34,6 @@ import {
   BAITable,
   BAIText,
   INITIAL_FETCH_KEY,
-  filterOutNullAndUndefined,
   toLocalId,
   useErrorMessageResolver,
   useFetchKey,
@@ -55,19 +52,6 @@ type MountLevel = 'ro' | 'rw';
 type RecipientData =
   | { kind: 'user'; userId: string; email: string }
   | { kind: 'email'; email: string };
-
-interface SharedUser {
-  perm: string;
-  shared_to: { uuid: string; email: string };
-}
-
-interface SentInvitation {
-  id: string;
-  invitee: string;
-  perm: string;
-  state: string;
-  vfolder_id: string;
-}
 
 interface ShareRow {
   shareId: string;
@@ -89,6 +73,11 @@ const toMountLevel = (permission?: string | null): MountLevel | null =>
 
 const toMountPermission = (level: MountLevel) =>
   level === 'ro' ? 'READ_ONLY' : 'READ_WRITE';
+
+// The cap an invite was sent with mirrors the mount level (`[READ]` for read
+// only, `[READ, UPDATE, SOFT_DELETE]` for read & write), on both invite paths.
+const capToMountLevel = (permissions: ReadonlyArray<string>): MountLevel =>
+  permissions.includes('UPDATE') ? 'rw' : 'ro';
 
 const resolveErrorMessage = (error: unknown, fallback: string) => {
   const errorMessage =
@@ -159,7 +148,6 @@ const InviteFolderSettingModalBody: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const { getErrorMessage } = useErrorMessageResolver();
   const [currentUser] = useCurrentUserInfo();
   const { accessibleProjects } = useAccessibleProjects();
@@ -192,7 +180,10 @@ const InviteFolderSettingModalBody: React.FC<{
               node {
                 id
                 entityId
+                recipientEntityType
+                recipientEntityId
                 recipientEmail
+                permissions
                 status
               }
             }
@@ -221,73 +212,81 @@ const InviteFolderSettingModalBody: React.FC<{
       },
     );
 
-  // `entityShares` carries the recipient's e-mail but not their user id, and
-  // `vfolderMountPolicies` the reverse. The legacy shared list still joins the
-  // two for everyone who accepted, whatever project they are in.
-  const { data: sharedUsers } = useTanQuery<Array<SharedUser>>({
-    queryKey: ['baiClient.vfolder.list_invitees', vfolderId, deferredFetchKey],
-    queryFn: () =>
-      baiRequestWithPromise<{ shared: Array<SharedUser> }>({
-        method: 'GET',
-        url: `/folders/_/shared?${new URLSearchParams({ vfolder_id: vfolderId }).toString()}`,
-      }).then((res) => res.shared ?? []),
-    staleTime: 0,
-  });
-
-  // The open offers the caller sent, each with the mount level its invitee is
-  // set to get (their policy row, else the folder default) — what a pending
-  // row shows before the invitee has answered.
-  const { data: sentInvitations } = useTanQuery<Array<SentInvitation>>({
-    queryKey: [
-      'baiClient.vfolder.list_sent_invitations',
-      vfolderId,
-      deferredFetchKey,
-    ],
-    queryFn: () =>
-      baiRequestWithPromise<{ invitations: Array<SentInvitation> }>({
-        method: 'GET',
-        url: '/folders/invitations/list-sent',
-      }).then((res) =>
-        _.filter(res.invitations ?? [], (inv) => inv.vfolder_id === vfolderId),
-      ),
-    staleTime: 0,
-  });
-
-  const sharedUserByEmail = _.keyBy(sharedUsers, (user) =>
-    user.shared_to.email.toLowerCase(),
+  const openShares = _.filter(
+    _.map(entityShares?.edges, 'node'),
+    (share) => share.status === 'PENDING' || share.status === 'ACCEPTED',
   );
-  const sentInvitationByEmail = _.keyBy(sentInvitations, (inv) =>
-    inv.invitee.toLowerCase(),
+  const recipientUserId = (share: (typeof openShares)[number]) =>
+    share.recipientEntityType === 'user'
+      ? (share.recipientEntityId ?? null)
+      : null;
+
+  // A share sent to a user id carries no e-mail until it is accepted; look the
+  // address up among the users the caller's projects reach.
+  const unnamedUserIds = _.compact(
+    _.map(
+      _.filter(openShares, (share) => !share.recipientEmail),
+      recipientUserId,
+    ),
+  );
+  const { scopedUsersV2: recipientUsers } =
+    useLazyLoadQuery<InviteFolderSettingModalRecipientsQuery>(
+      graphql`
+        query InviteFolderSettingModalRecipientsQuery(
+          $scope: UserScope!
+          $filter: UserV2Filter
+          $limit: Int!
+          $skip: Boolean!
+        ) {
+          scopedUsersV2(scope: $scope, filter: $filter, limit: $limit)
+            @skip(if: $skip) {
+            edges {
+              node {
+                entityId
+                basicInfo {
+                  email
+                }
+              }
+            }
+          }
+        }
+      `,
+      {
+        scope: { project: _.map(memberProjectIds, (value) => ({ value })) },
+        filter: unnamedUserIds.length ? { uuid: { in: unnamedUserIds } } : null,
+        limit: Math.max(unnamedUserIds.length, 1),
+        skip: unnamedUserIds.length === 0,
+      },
+      {
+        fetchPolicy: unnamedUserIds.length ? 'store-or-network' : 'store-only',
+        fetchKey: deferredFetchKey,
+      },
+    );
+  const emailByUserId = _.fromPairs(
+    _.map(recipientUsers?.edges, (edge) => [
+      edge.node.entityId,
+      edge.node.basicInfo.email,
+    ]),
   );
   const policyByUserId = _.keyBy(vfolderMountPolicies?.items, 'userId');
 
   const rows: Array<ShareRow> = _.sortBy(
-    filterOutNullAndUndefined(
-      _.map(entityShares?.edges, (edge) => {
-        const share = edge.node;
-        if (
-          !share.recipientEmail ||
-          (share.status !== 'PENDING' && share.status !== 'ACCEPTED')
-        ) {
-          return null;
-        }
-        const sharedUser =
-          sharedUserByEmail[share.recipientEmail.toLowerCase()];
-        const userId = sharedUser?.shared_to.uuid ?? null;
-        return {
-          shareId: share.entityId,
-          email: share.recipientEmail,
-          status: share.status,
-          userId,
-          mountLevel:
-            toMountLevel(userId ? policyByUserId[userId]?.permission : null) ??
-            toMountLevel(sharedUser?.perm) ??
-            toMountLevel(
-              sentInvitationByEmail[share.recipientEmail.toLowerCase()]?.perm,
-            ),
-        };
-      }),
-    ),
+    _.map(openShares, (share) => {
+      const userId = recipientUserId(share);
+      return {
+        shareId: share.entityId,
+        email:
+          share.recipientEmail ??
+          (userId ? emailByUserId[userId] : null) ??
+          userId ??
+          share.entityId,
+        status: share.status === 'ACCEPTED' ? 'ACCEPTED' : 'PENDING',
+        userId,
+        mountLevel:
+          toMountLevel(userId ? policyByUserId[userId]?.permission : null) ??
+          capToMountLevel(share.permissions),
+      };
+    }),
     [(row) => (row.status === 'ACCEPTED' ? 0 : 1), (row) => row.email],
   );
 
