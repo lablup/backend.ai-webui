@@ -8,7 +8,7 @@ export const docs = {
   keywords: ['label', 'entity label', 'table cell', 'edit', 'filter'],
   usage: {
     description:
-      'The Labels column cell: a BAINameActionCell whose title is the entity’s clickable label tokens and whose always-visible action is "Edit labels". Editing lives on the Labels column rather than the name cell, next to what it changes. Shows "-" when the entity has no labels.',
+      'The Labels column cell: a BAINameActionCell whose title is the entity’s clickable label tokens and whose hover action is "Edit labels". Editing lives on the Labels column rather than the name cell, next to what it changes. Shows "-" when the entity has no labels.',
     bestPractices: [
       {
         guidance: true,

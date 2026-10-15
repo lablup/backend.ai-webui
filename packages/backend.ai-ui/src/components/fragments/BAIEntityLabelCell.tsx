@@ -15,7 +15,7 @@ export interface BAIEntityLabelCellProps {
   onLabelClick?: (label: BAIEntityLabel) => void;
 }
 
-/** A table cell showing an entity's labels, with "Edit labels" as an always-visible action. */
+/** A table cell showing an entity's labels, with "Edit labels" as a hover action. */
 const BAIEntityLabelCell = ({
   entityLabelsFrgmt,
   onEdit,
@@ -26,7 +26,6 @@ const BAIEntityLabelCell = ({
   const { t } = useBAIi18n();
   return (
     <BAINameActionCell
-      showActions="always"
       title={
         <BAIEntityLabelTokens
           entityLabelsFrgmt={entityLabelsFrgmt}
