@@ -3,7 +3,6 @@ import {
   BAIAuditLogTargetCellEntityFragment$key,
 } from '../../__generated__/BAIAuditLogTargetCellEntityFragment.graphql';
 import { BAIAuditLogTargetCellFragment$key } from '../../__generated__/BAIAuditLogTargetCellFragment.graphql';
-import { resolveAuditLogTarget } from '../../helper/resolveAuditLogTarget';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIFlex from '../BAIFlex';
 import BAIId from '../BAIId';
@@ -272,45 +271,31 @@ const BAIAuditLogTargetCell = ({
     auditLogFrgmt,
   );
 
-  const target = resolveAuditLogTarget<AuditLogScope>({
-    actionKind: auditLog.actionKind,
-    entityType: auditLog.entityType,
-    entityId: auditLog.targetEntityId ?? auditLog.entityId,
-    lookupKind: auditLog.lookupKind,
-    lookupKey: auditLog.lookupKey,
-    scopes: _.map(auditLog.scopes.edges, 'node'),
-    scopeCount: auditLog.scopes.count,
-  });
+  const entityType = auditLog.entityType || null;
+  const entityId = (auditLog.targetEntityId ?? auditLog.entityId) || null;
+  const scopes: ReadonlyArray<AuditLogScope> = _.map(
+    auditLog.scopes.edges,
+    'node',
+  );
+  const hiddenScopeCount = Math.max(auditLog.scopes.count - scopes.length, 0);
 
-  const renderEntity = (entityType: string | null, entityId: string | null) =>
-    entityId ? (
-      <EntityLabel
-        entityType={entityType}
-        entityId={entityId}
-        entityFrgmt={auditLog.entity}
-      />
-    ) : null;
+  const entityLabel = entityId ? (
+    <EntityLabel
+      entityType={entityType}
+      entityId={entityId}
+      entityFrgmt={auditLog.entity}
+    />
+  ) : null;
 
   let content: ReactNode;
-  switch (target.kind) {
-    case 'legacy':
-      content =
-        target.entityType || target.entityId ? (
-          <EntityLabel
-            entityType={target.entityType}
-            entityId={target.entityId}
-          />
-        ) : (
-          '-'
-        );
+  switch (auditLog.actionKind) {
+    case 'SINGLE_ENTITY':
+      content = entityLabel ?? '-';
       break;
-    case 'singleEntity':
-      content = renderEntity(target.entityType, target.entityId) ?? '-';
-      break;
-    case 'bulk':
+    case 'BULK':
       content = (
         <>
-          {renderEntity(target.entityType, target.entityId) ?? '-'}
+          {entityLabel ?? '-'}
           <BAIFlex gap="xs">
             <BAIText type="secondary">
               {t('comp:BAIAuditLogTargetCell.Run')}
@@ -327,66 +312,63 @@ const BAIAuditLogTargetCell = ({
         </>
       );
       break;
-    case 'scope':
+    case 'SCOPE':
       content = (
         <>
-          {renderEntity(target.entityType, target.entityId) ?? (
+          {entityLabel ?? (
             <BAIText type="secondary">
               {t('comp:BAIAuditLogTargetCell.NoAffectedEntity')}
             </BAIText>
           )}
-          <ScopeLine
-            scopes={target.scopes}
-            hiddenScopeCount={target.hiddenScopeCount}
-          />
+          <ScopeLine scopes={scopes} hiddenScopeCount={hiddenScopeCount} />
         </>
       );
       break;
-    case 'relation':
-      content = (
-        <BAIFlex gap="xs" wrap="wrap">
-          <EntityLabel
-            entityType={target.from.scopeType}
-            entityId={target.from.scopeId}
-            entityFrgmt={target.from.entity}
-          />
-          <ArrowLeftRight size="1em" />
-          <EntityLabel
-            entityType={target.to.scopeType}
-            entityId={target.to.scopeId}
-            entityFrgmt={target.to.entity}
-          />
-        </BAIFlex>
-      );
+    case 'RELATION': {
+      const [from, to] = scopes;
+      if (scopes.length >= 2) {
+        content = (
+          <BAIFlex gap="xs" wrap="wrap">
+            <EntityLabel
+              entityType={from.scopeType}
+              entityId={from.scopeId}
+              entityFrgmt={from.entity}
+            />
+            <ArrowLeftRight size="1em" />
+            <EntityLabel
+              entityType={to.scopeType}
+              entityId={to.scopeId}
+              entityFrgmt={to.entity}
+            />
+          </BAIFlex>
+        );
+      } else {
+        content = _.isEmpty(scopes) ? (
+          '-'
+        ) : (
+          <ScopeLine scopes={scopes} hiddenScopeCount={hiddenScopeCount} />
+        );
+      }
       break;
-    case 'incompleteRelation':
-      content = _.isEmpty(target.scopes) ? (
-        '-'
-      ) : (
-        <ScopeLine
-          scopes={target.scopes}
-          hiddenScopeCount={target.hiddenScopeCount}
-        />
-      );
-      break;
-    case 'membership':
+    }
+    case 'MEMBERSHIP':
       content = (
         <>
-          {renderEntity(target.entityType, target.entityId) ?? '-'}
-          {target.scope ? <ScopeLine scopes={[target.scope]} /> : null}
+          {entityLabel ?? '-'}
+          {scopes[0] ? <ScopeLine scopes={[scopes[0]]} /> : null}
         </>
       );
       break;
-    case 'global':
+    case 'GLOBAL':
       content = <Token label={t('comp:BAIAuditLogTargetCell.Global')} />;
       break;
-    case 'lookup':
+    case 'LOOKUP':
       content = (
         <>
           <BAIText monospace ellipsis={{ tooltip: true }}>
-            {`${target.lookupKind ?? '-'}: ${target.lookupKey ?? '-'}`}
+            {`${auditLog.lookupKind || '-'}: ${auditLog.lookupKey || '-'}`}
           </BAIText>
-          {renderEntity(target.entityType, target.entityId) ?? (
+          {entityLabel ?? (
             <BAIText type="secondary">
               {t('comp:BAIAuditLogTargetCell.NotFound')}
             </BAIText>
@@ -394,6 +376,13 @@ const BAIAuditLogTargetCell = ({
         </>
       );
       break;
+    default:
+      content =
+        entityType || entityId ? (
+          <EntityLabel entityType={entityType} entityId={entityId} />
+        ) : (
+          '-'
+        );
   }
 
   return (
