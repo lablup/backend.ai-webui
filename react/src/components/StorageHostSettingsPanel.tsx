@@ -11,7 +11,7 @@ import {
   BAISkeleton,
   BAIScopedProjectSelect,
   BAIFlex,
-  BAIUserSelect,
+  BAIScopedUserSelect,
 } from 'backend.ai-ui';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -83,7 +83,8 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
         ) : (
           // valuePropName="id" makes the picked value the user's id (used as
           // the quota scope entity id), not the email.
-          <BAIUserSelect
+          <BAIScopedUserSelect
+            scope={domainScope}
             label={t('storageHost.ForUser')}
             isLabelHidden
             valuePropName="id"
