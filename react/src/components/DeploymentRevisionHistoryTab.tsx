@@ -176,7 +176,7 @@ const DeploymentRevisionHistoryTab: React.FC<
   // status rather than receiving it as a prop from the parent.
   const deploymentStatus = deployment?.metadata?.status;
 
-  // Images the deployment's project and public registries reach (ADR 0011).
+  // Images the deployment's project and public registries reach (ADR 0012).
   const { domainScope } = useCurrentDomainScope();
   const deploymentProjectId = deployment?.metadata?.projectId;
   const imageFilterScope = deploymentProjectId

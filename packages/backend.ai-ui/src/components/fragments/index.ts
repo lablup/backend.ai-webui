@@ -70,6 +70,24 @@ export type {
   BAIDeactivateArtifactsModalProps,
   BAIDeactivateArtifactsModalArtifactsFragmentKey,
 } from './BAIDeactivateArtifactsModal';
+export { default as BAIEntityLabelBulkEditButton } from './BAIEntityLabelBulkEditButton';
+export type { BAIEntityLabelBulkEditButtonProps } from './BAIEntityLabelBulkEditButton';
+export { default as BAIEntityLabelSettingModal } from './BAIEntityLabelSettingModal';
+export type {
+  BAIEntityLabelSettingModalProps,
+  BAIEntityLabelSettingModalTarget,
+} from './BAIEntityLabelSettingModal';
+export {
+  default as BAIEntityLabelTokens,
+  formatEntityLabel,
+  toEntityLabelFilter,
+} from './BAIEntityLabelTokens';
+export type {
+  BAIEntityLabel,
+  BAIEntityLabelTokensProps,
+} from './BAIEntityLabelTokens';
+export { default as BAIEntityLabelCell } from './BAIEntityLabelCell';
+export type { BAIEntityLabelCellProps } from './BAIEntityLabelCell';
 export { default as BAIActivateArtifactsModal } from './BAIActivateArtifactsModal';
 export type {
   BAIActivateArtifactsModalProps,

@@ -538,6 +538,7 @@ const FairShareWeightSettingModal: React.FC<
       <Suspense fallback={<BAISkeleton />}>
         {resourceGroup && resourceGroup?.scheduler?.type !== 'FAIR_SHARE' && (
           <Banner
+            role="alert"
             status="warning"
             title={t('fairShare.SchedulerDoesNotAppliedToResourceGroup', {
               resourceGroup: resourceGroup?.name || '',
@@ -569,6 +570,7 @@ const FairShareWeightSettingModal: React.FC<
           />
         )}
         <Banner
+          role="status"
           status="info"
           title={t('fairShare.FairShareSettingDescription')}
           style={{ marginBottom: token('--spacing-5') }}

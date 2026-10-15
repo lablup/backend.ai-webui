@@ -13,7 +13,6 @@ import {
 import { RBACManagementPageScopeTypesQuery } from '../__generated__/RBACManagementPageScopeTypesQuery.graphql';
 import { App } from '../app-shim';
 import BAIRadioGroup from '../components/BAIRadioGroup';
-import RoleDetailDrawer from '../components/RoleDetailDrawer';
 import RoleDetailDrawerV2 from '../components/RoleDetailDrawerV2';
 import RoleFormModal from '../components/RoleFormModal';
 import RoleNodes, {
@@ -23,7 +22,6 @@ import RoleNodes, {
 import RolePresetListTab from '../components/RolePresetListTab';
 import { convertToOrderBy } from '../helper';
 import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import {
   BAIButton,
@@ -95,9 +93,6 @@ const RoleListTab: React.FC = () => {
   'use memo';
 
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
-  const supportsMappedScopeFilter =
-    baiClient.isManagerVersionCompatibleWith('26.8.0');
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -152,7 +147,6 @@ const RoleListTab: React.FC = () => {
             node {
               id
               ...RoleNodesFragment
-              ...RoleDetailDrawerFragment
               ...RoleDetailDrawerV2Fragment
             }
           }
@@ -330,7 +324,7 @@ const RoleListTab: React.FC = () => {
                     />
                   ),
                 },
-                supportsMappedScopeFilter && {
+                {
                   key: 'mappedScope.scopeType',
                   propertyLabel: t('rbac.ScopeType'),
                   type: 'enum',
@@ -358,11 +352,9 @@ const RoleListTab: React.FC = () => {
                     </Suspense>
                   ),
                 },
-                supportsMappedScopeFilter && {
+                {
                   key: 'mappedScope.scopeId',
                   propertyLabel: t('rbac.ScopeRawId'),
-                  // `equals` is the one operator both the 26.8 StringFilter
-                  // and the 26.9 UUIDFilter accept.
                   type: 'uuid',
                   fixedOperator: 'equals',
                 },
@@ -490,25 +482,13 @@ const RoleListTab: React.FC = () => {
           }
         }}
       />
-      {/* One drawer per manager shape: the single-scope role (>= 26.9.0a4)
-          gets the V2 drawer, everything older the previous one (ADR 0006). */}
-      {baiClient?.isManagerVersionCompatibleWith('26.9.0a4') ? (
-        <BAIUnmountAfterClose>
-          <RoleDetailDrawerV2
-            open={!!selectedRole}
-            roleFrgmt={selectedRole}
-            onClose={() => setRoleDetailParam({ roleDetail: null })}
-          />
-        </BAIUnmountAfterClose>
-      ) : (
-        <BAIUnmountAfterClose>
-          <RoleDetailDrawer
-            open={!!selectedRole}
-            roleFrgmt={selectedRole}
-            onClose={() => setRoleDetailParam({ roleDetail: null })}
-          />
-        </BAIUnmountAfterClose>
-      )}
+      <BAIUnmountAfterClose>
+        <RoleDetailDrawerV2
+          open={!!selectedRole}
+          roleFrgmt={selectedRole}
+          onClose={() => setRoleDetailParam({ roleDetail: null })}
+        />
+      </BAIUnmountAfterClose>
       <BAIDeleteConfirmModal
         open={!!purgingRole}
         items={
@@ -547,9 +527,6 @@ const RBACManagementPage: React.FC = () => {
   'use memo';
 
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
-  const supportsRolePresets =
-    baiClient.isManagerVersionCompatibleWith('26.9.0a4');
   const [{ tab }, setQueryParams] = useQueryStates(
     {
       tab: parseAsStringLiteral(tabValues).withDefault('roles'),
@@ -565,11 +542,9 @@ const RBACManagementPage: React.FC = () => {
     },
     { history: 'push' },
   );
-  const activeTab = supportsRolePresets ? tab : 'roles';
-
   return (
     <BAICard
-      activeTabKey={activeTab}
+      activeTabKey={tab}
       onTabChange={(key) => {
         setQueryParams({
           tab: key as (typeof tabValues)[number],
@@ -582,13 +557,13 @@ const RBACManagementPage: React.FC = () => {
           presetDetail: null,
         });
       }}
-      tabList={filterOutEmpty([
+      tabList={[
         { key: 'roles', label: t('rbac.Roles') },
-        supportsRolePresets && { key: 'presets', label: t('rbac.Presets') },
-      ])}
+        { key: 'presets', label: t('rbac.Presets') },
+      ]}
     >
       <Suspense fallback={<BAISkeleton rows={4} />}>
-        {activeTab === 'presets' ? <RolePresetListTab /> : <RoleListTab />}
+        {tab === 'presets' ? <RolePresetListTab /> : <RoleListTab />}
       </Suspense>
     </BAICard>
   );

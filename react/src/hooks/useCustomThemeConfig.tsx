@@ -24,8 +24,8 @@ export const DEFAULT_THEME_FAMILY = 'default';
 /**
  * localStorage key of the selected family. Mirrors `themeMode` (NOT under
  * the `.user.` namespace) because the FOUC bootstrap in `index.html` reads it
- * before paint. A server-side `userConfig.themeFamily` store arrives with
- * FR-1964; until then this key is the only store.
+ * before paint. The authoritative store is the server-side
+ * `userConfig.themeFamily`; this key is its FOUC mirror, synced after login.
  */
 export const THEME_FAMILY_STORAGE_KEY = 'backendaiwebui.settings.themeFamily';
 
@@ -35,8 +35,8 @@ export const THEME_FAMILY_STORAGE_KEY = 'backendaiwebui.settings.themeFamily';
  * `resources/theme.json` when no domain document was ever saved — or the
  * per-user draft while in branding preview mode. No deep-merge: "absent"
  * means "follow the shipped defaults" (FR-1964).
- * Shared by `useCustomThemeConfig` and `useDefaultTheme` (the editable
- * document of the Branding page). Safe outside RelayEnvironmentProvider.
+ * Shared by `useCustomThemeConfig` and `usePreviewThemeConfig` (the Branding
+ * page's edits). Safe outside RelayEnvironmentProvider.
  */
 export const useRawCustomThemeConfig = (): BAIAppearanceConfig | undefined => {
   'use memo';
@@ -67,7 +67,9 @@ export const useRawCustomThemeConfig = (): BAIAppearanceConfig | undefined => {
     };
   }, [isThemePreviewMode]);
 
-  if (isThemePreviewMode) {
+  // The Branding page clears the draft on Apply or leave; preview then shows
+  // the applied document instead of the neutral theme.
+  if (isThemePreviewMode && userCustomThemeConfig) {
     return userCustomThemeConfig;
   }
   return customThemeConfig;

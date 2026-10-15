@@ -169,6 +169,7 @@ const CustomEndpointForm: React.FC<CustomEndpointFormProps> = ({
       >
         {failureView ? (
           <Banner
+            role="alert"
             status="error"
             title={failureView.title}
             description={failureView.description}
@@ -187,6 +188,7 @@ const CustomEndpointForm: React.FC<CustomEndpointFormProps> = ({
           />
         ) : isApiKeyMissing ? (
           <Banner
+            role="alert"
             status="warning"
             title={t('chatui.customEndpoint.ApiKeyMissing')}
             style={{ marginBottom: token('--spacing-4') }}

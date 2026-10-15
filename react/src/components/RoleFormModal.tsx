@@ -131,11 +131,14 @@ const useSyncScopeId = (
   }, [scopeId, value, onChange]);
 };
 
-/** Managers >= 26.9.0 (BA-7234) take the domain uuid as a DOMAIN scope id. */
-const CurrentDomainUuidScopeId: React.FC<
-  DomainScopeIdProps & { domainName: string }
-> = ({ domainName, ...props }) => {
+/**
+ * Fills the DOMAIN scope id with the signed-in domain's uuid (BA-7234): the
+ * WebUI has no domain picker.
+ */
+const CurrentDomainScopeId: React.FC<DomainScopeIdProps> = (props) => {
   'use memo';
+  const baiClient = useSuspendedBackendaiClient();
+  const domainName: string = baiClient._config.domainName;
   const { domainV2 } = useLazyLoadQuery<RoleFormModalCurrentDomainQuery>(
     graphql`
       query RoleFormModalCurrentDomainQuery($domainName: String!) {
@@ -149,27 +152,6 @@ const CurrentDomainUuidScopeId: React.FC<
   );
   useSyncScopeId(domainV2?.entityId, props);
   return null;
-};
-
-/** Older managers take the domain name; no query, since `domainV2` may not exist. */
-const CurrentDomainNameScopeId: React.FC<
-  DomainScopeIdProps & { domainName: string }
-> = ({ domainName, ...props }) => {
-  'use memo';
-  useSyncScopeId(domainName, props);
-  return null;
-};
-
-/** Fills the DOMAIN scope id with the signed-in domain: the WebUI has no domain picker. */
-const CurrentDomainScopeId: React.FC<DomainScopeIdProps> = (props) => {
-  'use memo';
-  const baiClient = useSuspendedBackendaiClient();
-  const domainName: string = baiClient._config.domainName;
-  return baiClient.isManagerVersionCompatibleWith('26.9.0') ? (
-    <CurrentDomainUuidScopeId domainName={domainName} {...props} />
-  ) : (
-    <CurrentDomainNameScopeId domainName={domainName} {...props} />
-  );
 };
 
 const ProjectScopeIdSelect: React.FC<ScopeIdBranchProps> = (props) => {
@@ -304,10 +286,6 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const [form] = Form.useForm();
-  const baiClient = useSuspendedBackendaiClient();
-  // Managers >= 26.9.0 take the one scope as `scope`; older ones as `scopes`.
-  const isSingleScopeRole =
-    baiClient.isManagerVersionCompatibleWith('26.9.0a4');
   const scopeType = Form.useWatch('scopeType', form) as string | undefined;
 
   const { rbacPermissionMatrix } =
@@ -461,21 +439,10 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
                 name: values.name,
                 description: values.description || null,
                 autoAssign: values.autoAssign,
-                ...(isSingleScopeRole
-                  ? {
-                      scope: {
-                        scopeType: values.scopeType,
-                        scopeId: values.scopeId,
-                      },
-                    }
-                  : {
-                      scopes: [
-                        {
-                          scopeType: values.scopeType,
-                          scopeId: values.scopeId,
-                        },
-                      ],
-                    }),
+                scope: {
+                  scopeType: values.scopeType,
+                  scopeId: values.scopeId,
+                },
               },
             },
             onCompleted: (_data, errors) => {

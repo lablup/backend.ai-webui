@@ -414,6 +414,34 @@ export async function fillOutVaadinGridCellFilter(
 }
 
 /**
+ * Astryx 0.7.0 (#7339, picked up in #10327) forwards `PowerSearch`'s
+ * `data-testid` through its `Tokenizer` onto the typeahead's combobox
+ * `<input>` itself instead of the field root, so the test id element no
+ * longer contains the tokens or the combobox. The tokens sit next to the
+ * input inside the field's `role="group"` (labelled by the control, e.g.
+ * "Search filters"). Return the test id element plus that enclosing group, so
+ * scoping through it works whether the test id lands on the root (before
+ * 0.7.0) or on the input (0.7.0+).
+ */
+function getPowerSearchScope(page: Page, testId: string = 'vfolder-filter') {
+  const testIdElement = page.getByTestId(testId);
+  return testIdElement.or(
+    page.getByRole('group').filter({ has: testIdElement }),
+  );
+}
+
+/**
+ * The PowerSearch typeahead (`role="combobox"`) of the `BAIPropertyFilter` /
+ * `BAIGraphQLPropertyFilter` with `testId`; see `getPowerSearchScope`.
+ */
+export function getPowerSearchInput(
+  page: Page,
+  testId: string = 'vfolder-filter',
+) {
+  return getPowerSearchScope(page, testId).getByRole('combobox').first();
+}
+
+/**
  * `BAIPropertyFilter` / `BAIGraphQLPropertyFilter` (to-astryx ticket 28) are
  * built on Astryx `PowerSearch`. A committed filter is a token whose remove
  * control carries `aria-label="Remove {label}"`
@@ -425,9 +453,9 @@ export async function fillOutVaadinGridCellFilter(
  */
 export async function removeSearchButton(page: Page, folderName: string) {
   try {
-    const removeButton = page
-      .getByTestId('vfolder-filter')
-      .getByRole('button', { name: `Remove Name: contains ${folderName}` });
+    const removeButton = getPowerSearchScope(page).getByRole('button', {
+      name: `Remove Name: contains ${folderName}`,
+    });
 
     // Only try to click if the filter token exists
     if (await removeButton.isVisible({ timeout: 1000 })) {
@@ -443,9 +471,9 @@ export async function clearAllFilters(page: Page) {
   try {
     // Every token's remove button carries an aria-label starting with
     // "Remove " (see `removeSearchButton` above).
-    const filterChips = page
-      .getByTestId('vfolder-filter')
-      .getByRole('button', { name: /^Remove / });
+    const filterChips = getPowerSearchScope(page).getByRole('button', {
+      name: /^Remove /,
+    });
 
     // Get count of filter chips
     const count = await filterChips.count();
@@ -470,11 +498,9 @@ export async function clearAllFilters(page: Page) {
  * `BAIGraphQLPropertyFilter` component (to-astryx ticket 28 rebuilt both on
  * Astryx `PowerSearch`: a single typeahead that, for a field with no
  * pre-filled value, opens an edit popover (Field/Operator/Value) on
- * selection — `PowerSearch.tsx` `handleTokenizerChange`). The `data-testid`
- * lands on `PowerSearch`'s own root (`data-testid={testId}`,
- * `PowerSearch.tsx`), which contains exactly one `role="combobox"` (the
- * typeahead), so scoping through it stays unambiguous regardless of any
- * per-page `label` override.
+ * selection — `PowerSearch.tsx` `handleTokenizerChange`). The typeahead is
+ * found through `testId` (`getPowerSearchInput`), so it stays unambiguous
+ * regardless of any per-page `label` override.
  * @param page - Playwright Page object
  * @param propertyName - Name of the property to filter by (e.g., 'Name', 'Status')
  * @param searchValue - Value to search for
@@ -486,10 +512,8 @@ export async function selectPropertyFilter(
   searchValue: string,
   testId: string = 'vfolder-filter',
 ) {
-  const filterContainer = page.getByTestId(testId);
-
   // Open the typeahead and pick the field.
-  const searchBar = filterContainer.getByRole('combobox').first();
+  const searchBar = getPowerSearchInput(page, testId);
   await searchBar.click();
   await page.getByRole('option', { name: propertyName, exact: true }).click();
 

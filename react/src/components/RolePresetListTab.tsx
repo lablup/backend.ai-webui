@@ -9,7 +9,6 @@ import {
 } from '../__generated__/RolePresetListTabQuery.graphql';
 import { convertToOrderBy } from '../helper';
 import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import BAIRadioGroup from './BAIRadioGroup';
 import RolePresetDetailDrawer from './RolePresetDetailDrawer';
@@ -41,7 +40,6 @@ const statusFilterValues = ['ACTIVE', 'DELETED'] as const;
 const RolePresetListTab: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -139,16 +137,12 @@ const RolePresetListTab: React.FC = () => {
           />
           <BAIGraphQLPropertyFilter<RolePresetFilter>
             filterProperties={[
-              // The role drawer's View Presets link filters by id (26.9.0rc1+).
-              ...(baiClient.isManagerVersionCompatibleWith('26.9.0rc1')
-                ? [
-                    {
-                      key: 'id',
-                      propertyLabel: t('general.ID'),
-                      type: 'uuid' as const,
-                    },
-                  ]
-                : []),
+              // The role drawer's View Presets link filters by id.
+              {
+                key: 'id',
+                propertyLabel: t('general.ID'),
+                type: 'uuid',
+              },
               {
                 key: 'name',
                 propertyLabel: t('rbac.PresetName'),

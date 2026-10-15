@@ -530,7 +530,9 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
         </span>
       ),
     }),
-    className: classNames(
+    // Astryx 0.7.0 fields take no root `className` / `style`; the control box
+    // is where they landed before and where BAISelect.css targets them.
+    controlClassName: classNames(
       className,
       'bai-select',
       ghost && 'bai-select-ghost',
@@ -565,7 +567,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
           ? ('lg' as const)
           : undefined,
     width: style?.width,
-    style,
+    controlStyle: style,
     renderOption,
   };
 

@@ -185,11 +185,13 @@ const HuggingFaceModelPreview: React.FC<HuggingFaceModelPreviewProps> = ({
             dropped (Banner always shows its status icon). */}
         {data.disabled ? (
           <Banner
+            role="alert"
             status="error"
             title={t('import.HuggingFaceModelIsDisabled')}
           />
         ) : data.gated ? (
           <Banner
+            role="alert"
             status="warning"
             title={t('import.HuggingFaceModelIsGated')}
           />
