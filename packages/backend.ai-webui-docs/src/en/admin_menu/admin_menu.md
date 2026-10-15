@@ -1043,13 +1043,13 @@ own controls, refer to the [Session List View](#session-list-view-and-refresh) s
 ## Fair share scheduler
 
 The Fair Share Scheduler page is available in the
-**Admin Settings** menu. This feature allows administrators to manage fair share scheduling weights
+**Admin Settings** menu. This feature allows superadmins to manage fair share scheduling weights
 across a hierarchical structure of resource groups, domains, projects, and users.
 
 Fair share scheduling allocates compute resources based on historical usage patterns,
 ensuring that resources are distributed fairly among users. Users who have consumed fewer
 resources in the past receive higher scheduling priority, while those who have used more
-resources are given lower priority. Administrators can fine-tune this behavior by adjusting
+resources are given lower priority. Superadmins can fine-tune this behavior by adjusting
 weights at each level of the hierarchy.
 
 :::note
