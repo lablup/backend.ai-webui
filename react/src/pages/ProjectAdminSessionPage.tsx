@@ -26,6 +26,8 @@ import { IconButton } from '@lablup/ui-common/IconButton';
 import {
   BAISkeleton,
   BAICard,
+  BAIEntityLabelBulkEditButton,
+  BAIEntityLabelSettingModal,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
@@ -36,7 +38,10 @@ import {
   availableSessionV2SorterValues,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  toEntityLabelFilter,
   useFetchKey,
+  useIsLabelableEntityType,
+  type SessionV2InList,
 } from 'backend.ai-ui';
 import { PowerOffIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
@@ -49,7 +54,7 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 // (`TerminateSessionModalForProjectAdminFragment`), so row selection / the
 // terminate target list pass these nodes straight to the modal.
 type ProjectSessionNode = NonNullableNodeOnEdges<
-  ProjectAdminSessionPageQuery$data['projectSessionsV2']
+  ProjectAdminSessionPageQuery$data['scopedSessionsV2']
 >;
 
 interface ProjectAdminSessionContentProps {
@@ -69,6 +74,9 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
     Array<ProjectSessionNode>
   >([]);
   const [isTerminateOpen, setIsTerminateOpen] = useState(false);
+  const isLabelable = useIsLabelableEntityType('session');
+  const [labelingSession, setLabelingSession] =
+    useState<SessionV2InList | null>(null);
 
   const {
     baiPaginationOption,
@@ -133,8 +141,8 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
         $limit: Int
         $offset: Int
       ) {
-        projectSessionsV2(
-          scope: { projectId: $projectId }
+        scopedSessionsV2(
+          scope: { project: [{ value: $projectId }] }
           filter: $filter
           orderBy: $orderBy
           limit: $limit
@@ -144,6 +152,7 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
           edges {
             node {
               id
+              entityId
               metadata {
                 name
               }
@@ -165,9 +174,9 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
   );
 
   const sessionNodes = filterOutNullAndUndefined(
-    data.projectSessionsV2?.edges?.map((edge) => edge?.node),
+    data.scopedSessionsV2?.edges?.map((edge) => edge?.node),
   );
-  const total = data.projectSessionsV2?.count ?? 0;
+  const total = data.scopedSessionsV2?.count ?? 0;
 
   const openTerminateModal = (targets: Array<ProjectSessionNode>) => {
     setTerminateTargets(targets);
@@ -227,6 +236,20 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
                   />
                 ),
               },
+              ...(isLabelable
+                ? [
+                    {
+                      key: 'labels.some.key',
+                      propertyLabel: t('entityLabel.LabelKey'),
+                      type: 'string' as const,
+                    },
+                    {
+                      key: 'labels.some.value',
+                      propertyLabel: t('entityLabel.LabelValue'),
+                      type: 'string' as const,
+                    },
+                  ]
+                : []),
             ]}
             value={queryParams.filter ?? undefined}
             onChange={(value) => {
@@ -241,6 +264,14 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
               <BAISelectionLabel
                 count={selectedSessionList.length}
                 onClearSelection={() => setSelectedSessionList([])}
+              />
+              <BAIEntityLabelBulkEditButton
+                entityType="session"
+                targets={selectedSessionList.map((session) => ({
+                  entityId: session.entityId,
+                  name: session.metadata?.name ?? undefined,
+                }))}
+                onLabelsChanged={() => updateFetchKey()}
               />
               <IconButton
                 label={t('session.TerminateSession')}
@@ -260,6 +291,12 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
         </BAIFlex>
       </BAIFlex>
       <BAISessionNodesV2
+        onEditLabels={isLabelable ? setLabelingSession : undefined}
+        showLabelsByDefault
+        onLabelClick={(label) => {
+          setQueryParams({ filter: toEntityLabelFilter(label) });
+          setTablePaginationOption({ current: 1 });
+        }}
         sessionsFrgmt={sessionNodes}
         loading={isLoading}
         order={queryParams.order}
@@ -351,6 +388,25 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
             createdAt: { hidden: false },
           },
           onColumnOverridesChange: setColumnOverrides,
+        }}
+      />
+      <BAIEntityLabelSettingModal
+        open={!!labelingSession}
+        entityType="session"
+        targets={
+          labelingSession
+            ? [
+                {
+                  entityId: labelingSession.entityId,
+                  name: labelingSession.metadata?.name ?? undefined,
+                },
+              ]
+            : []
+        }
+        entityLabelsFrgmt={labelingSession?.entityLabels}
+        onRequestClose={(success) => {
+          setLabelingSession(null);
+          if (success) updateFetchKey();
         }}
       />
       <TerminateSessionModalForProjectAdmin

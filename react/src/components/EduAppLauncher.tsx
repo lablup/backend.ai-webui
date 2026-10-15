@@ -896,6 +896,7 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
         </Stepper>
         {stage.name === 'error' && errorTitle ? (
           <Banner
+            role="alert"
             style={{ marginTop: 16 }}
             status="error"
             title={errorTitle}
@@ -914,6 +915,7 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
         ) : null}
         {stage.name === 'done' ? (
           <Banner
+            role="status"
             style={{ marginTop: 16 }}
             status="success"
             title={t('eduapi.LaunchCompleted')}

@@ -95,10 +95,12 @@ const GeneratedKeypairListModal: React.FC<GeneratedKeypairListModalProps> = ({
     >
       <BAIFlex direction="column" align="stretch" gap="sm">
         <Banner
+          role="status"
           status="success"
           title={t('credential.GeneratedKeypairSuccess')}
         />
         <Banner
+          role="alert"
           status="warning"
           title={t('credential.GeneratedKeypairWarning')}
         />

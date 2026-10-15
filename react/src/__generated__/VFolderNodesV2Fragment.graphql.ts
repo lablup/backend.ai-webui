@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fd65e92099e32d96c0d98a3adf4c1342>>
+ * @generated SignedSource<<6340b494825faf82e51f3b43daab83ad>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,6 +20,10 @@ export type VFolderNodesV2Fragment$data = ReadonlyArray<{
     readonly ownershipType: VFolderOwnershipType;
     readonly permission: VFolderMountPermission;
   };
+  readonly entityId: string;
+  readonly entityLabels: {
+    readonly " $fragmentSpreads": FragmentRefs<"BAIEntityLabelSettingModalFragment" | "BAIEntityLabelTokensFragment">;
+  } | null | undefined;
   readonly host: string;
   readonly id: string;
   readonly metadata: {
@@ -106,6 +110,13 @@ return {
         "storageKey": null
       },
       "action": "NONE"
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
     },
     {
       "alias": "vfolderStatus",
@@ -348,6 +359,33 @@ return {
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": [
+        {
+          "kind": "Literal",
+          "name": "limit",
+          "value": 100
+        }
+      ],
+      "concreteType": "EntityLabelConnection",
+      "kind": "LinkedField",
+      "name": "entityLabels",
+      "plural": false,
+      "selections": [
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "BAIEntityLabelTokensFragment"
+        },
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "BAIEntityLabelSettingModalFragment"
+        }
+      ],
+      "storageKey": "entityLabels(limit:100)"
+    },
+    {
       "args": null,
       "kind": "FragmentSpread",
       "name": "VFolderPermissionCellV2Fragment"
@@ -389,6 +427,6 @@ return {
 };
 })();
 
-(node as any).hash = "cd364f2546922ed4be6b125691a25588";
+(node as any).hash = "607ae67fd5df169ab6c7203a711c087e";
 
 export default node;

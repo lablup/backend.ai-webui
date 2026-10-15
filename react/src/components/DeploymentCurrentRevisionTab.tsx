@@ -79,6 +79,7 @@ const DeploymentCurrentRevisionTab: React.FC<
     <>
       {isDeployingDifferentRevision && (
         <Banner
+          role="status"
           status="info"
           icon={<LoaderCircle className="bai-icon-spin" size="1em" />}
           style={{ marginBottom: token('--spacing-5') }}

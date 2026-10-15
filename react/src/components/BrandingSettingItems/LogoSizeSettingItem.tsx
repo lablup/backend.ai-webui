@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useDefaultTheme } from '../../hooks/useDefaultTheme';
+import { usePreviewThemeConfig } from '../../hooks/usePreviewThemeConfig';
 import { Grid } from '@lablup/ui-common/Grid';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
@@ -39,17 +39,18 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
 
   const { t } = useTranslation();
   const { token } = useTheme();
-  const { getDefaultThemeValue, updateDefaultTheme } = useDefaultTheme();
+  const { getThemeConfigValue, updateThemeConfigValue } =
+    usePreviewThemeConfig();
 
   const { key: sizeKey, defaultSize } = LOGO_SIZE_CONFIG[logoType];
-  const rawSize = getDefaultThemeValue<{ width?: number; height?: number }>(
+  const rawSize = getThemeConfigValue<{ width?: number; height?: number }>(
     sizeKey,
   );
 
   // For about logo, fall back to deprecated aboutModalSize before defaults
   const deprecatedAboutSize =
     logoType === 'about'
-      ? getDefaultThemeValue<{ width?: number; height?: number }>(
+      ? getThemeConfigValue<{ width?: number; height?: number }>(
           'branding.logo.aboutModalSize',
         )
       : undefined;
@@ -76,7 +77,10 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
             type="number"
             defaultValue={logoSizeConfig.width?.toString() ?? ''}
             onCommit={(v) => {
-              updateDefaultTheme(`${sizeKey}.width`, v ? Number(v) : undefined);
+              updateThemeConfigValue(
+                `${sizeKey}.width`,
+                v ? Number(v) : undefined,
+              );
             }}
             style={{ maxWidth: 150 }}
           />
@@ -91,7 +95,7 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
             type="number"
             defaultValue={logoSizeConfig.height?.toString() ?? ''}
             onCommit={(v) => {
-              updateDefaultTheme(
+              updateThemeConfigValue(
                 `${sizeKey}.height`,
                 v ? Number(v) : undefined,
               );

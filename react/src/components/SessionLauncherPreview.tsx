@@ -147,6 +147,7 @@ const SessionLauncherPreview: React.FC<{
     <>
       {form.getFieldValue('bootstrap_script') && (
         <Banner
+          role="status"
           status="info"
           title={t('session.launcher.UsingBootstrapScriptInfo')}
           endContent={
@@ -315,6 +316,7 @@ const SessionLauncherPreview: React.FC<{
             },
           ) && (
             <Banner
+              role="alert"
               status="warning"
               title={t('session.launcher.EnqueueComputeSessionWarning')}
             />
@@ -322,6 +324,7 @@ const SessionLauncherPreview: React.FC<{
           {(form.getFieldWarning(['cluster_size'] as any) as any[]).length >
             0 && (
             <Banner
+              role="alert"
               status="warning"
               title={
                 (form.getFieldWarning(['cluster_size'] as any) as string[])[0]
@@ -448,6 +451,7 @@ const SessionLauncherPreview: React.FC<{
             />
           ) : (
             <Banner
+              role="alert"
               status="warning"
               title={t('session.launcher.NoFolderMounted')}
             />

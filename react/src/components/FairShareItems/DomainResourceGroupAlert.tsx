@@ -59,6 +59,7 @@ const DomainResourceGroupAlert: React.FC<DomainResourceGroupAlertProps> = ({
 
   return (
     <Banner
+      role="alert"
       status="warning"
       title={t('fairShare.DomainNotAllowedInResourceGroup', {
         resourceGroup: resourceGroupName,

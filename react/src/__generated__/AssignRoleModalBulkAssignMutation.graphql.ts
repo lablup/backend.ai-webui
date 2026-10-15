@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<67827bed1eb70084f51f4cfa3fe25402>>
+ * @generated SignedSource<<f0554b255b1420ac1a421c37454bd67f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -25,10 +25,6 @@ export type AssignRoleModalBulkAssignMutation$data = {
       readonly id: string;
       readonly userId: string;
     }>;
-    readonly failed: ReadonlyArray<{
-      readonly message: string;
-      readonly userId: string;
-    }>;
   } | null | undefined;
 };
 export type AssignRoleModalBulkAssignMutation = {
@@ -44,14 +40,7 @@ var v0 = [
     "name": "input"
   }
 ],
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "userId",
-  "storageKey": null
-},
-v2 = [
+v1 = [
   {
     "alias": null,
     "args": [
@@ -81,7 +70,13 @@ v2 = [
             "name": "id",
             "storageKey": null
           },
-          (v1/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "userId",
+            "storageKey": null
+          },
           {
             "alias": null,
             "args": null,
@@ -98,25 +93,6 @@ v2 = [
           }
         ],
         "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "BulkAssignRoleError",
-        "kind": "LinkedField",
-        "name": "failed",
-        "plural": true,
-        "selections": [
-          (v1/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "message",
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
       }
     ],
     "storageKey": null
@@ -128,7 +104,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "AssignRoleModalBulkAssignMutation",
-    "selections": (v2/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -137,19 +113,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AssignRoleModalBulkAssignMutation",
-    "selections": (v2/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "0a500b3f9d7c47505625df63ebd371b9",
+    "cacheID": "cd0a9926aa25e9265864a81606927a8f",
     "id": null,
     "metadata": {},
     "name": "AssignRoleModalBulkAssignMutation",
     "operationKind": "mutation",
-    "text": "mutation AssignRoleModalBulkAssignMutation(\n  $input: BulkAssignRoleInput!\n) {\n  adminBulkAssignRole(input: $input) {\n    assigned {\n      id\n      userId\n      grantedBy\n      grantedAt\n    }\n    failed @deprecatedSince(version: \"26.9.0a4\") {\n      userId\n      message\n    }\n  }\n}\n"
+    "text": "mutation AssignRoleModalBulkAssignMutation(\n  $input: BulkAssignRoleInput!\n) {\n  adminBulkAssignRole(input: $input) {\n    assigned {\n      id\n      userId\n      grantedBy\n      grantedAt\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "8bb1cc806c943b8683dd8bd1546da563";
+(node as any).hash = "2600c468a1ac3c90f5f273212ae8b689";
 
 export default node;
