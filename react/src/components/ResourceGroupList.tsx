@@ -171,6 +171,7 @@ const ResourceGroupList: React.FC = () => {
   // AND/OR/NOT sub-filters only exist on managers with the `sub-filter`
   // capability; older ones reject them, so restrict to a single condition.
   const supportsSubFilter = baiClient.supports('sub-filter');
+  const supportsIsDefault = baiClient.isManagerVersionCompatibleWith('26.8.0');
   const [activeType, setActiveType] = useState<'active' | 'inactive'>('active');
   const [
     openCreateModal,
@@ -255,7 +256,7 @@ const ResourceGroupList: React.FC = () => {
               status {
                 isActive
                 isPublic
-                isDefault
+                isDefault @since(version: "26.8.0")
               }
               metadata {
                 description
@@ -449,6 +450,7 @@ const ResourceGroupList: React.FC = () => {
       key: 'is_default',
       title: t('resourceGroup.Default'),
       dataIndex: ['status', 'isDefault'],
+      hidden: !supportsIsDefault,
       render: renderBooleanCell,
     },
     {
@@ -542,11 +544,15 @@ const ResourceGroupList: React.FC = () => {
                 propertyLabel: t('resourceGroup.Public'),
                 type: 'boolean',
               },
-              {
-                key: 'isDefault',
-                propertyLabel: t('resourceGroup.Default'),
-                type: 'boolean',
-              },
+              ...(supportsIsDefault
+                ? [
+                    {
+                      key: 'isDefault',
+                      propertyLabel: t('resourceGroup.Default'),
+                      type: 'boolean' as const,
+                    },
+                  ]
+                : []),
             ]}
             value={filter}
             onChange={(value) => {
