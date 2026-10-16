@@ -5,6 +5,10 @@
     {
       "name": "--modal-z",
       "reason": "ui-common's modal level stack (useModalLevel in @lablup/ui-common/Modal) writes it inline on each open portal root when it claims a level; BAIDrawerPortal.css reads it with the ladder's modal base as the fallback for a root that has not claimed one yet."
+    },
+    {
+      "name": "--_tokenizer-end-lane-reserve",
+      "reason": "Astryx Tokenizer (useEndLaneReserve) writes it inline on the field wrapper with the measured width of its clear/end lane and removes it when the lane is empty; BAIPowerSearchAdapters.css reads it with 0px (no lane) as the fallback to keep filter chips out from under the clear-all button (#10289)."
     }
   ]
 }

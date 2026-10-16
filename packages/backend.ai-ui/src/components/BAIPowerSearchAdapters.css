@@ -24,6 +24,22 @@
     min-width: 0;
   }
 
+  /* Tokenizer parks its clear-all (x) in an absolutely positioned lane at the
+     field's inline end and spends the lane's measured width
+     (`--_tokenizer-end-lane-reserve`, written inline on this wrapper by
+     Astryx `useEndLaneReserve`) only as padding on the input. Once chips
+     exist and the query is empty the compact input leaves the flow, so
+     nothing keeps a chip, or its remove (x), from running under the lane,
+     and the lane then takes the clicks meant for the chip (#10289,
+     facebook/astryx#7365). Reserve the lane on the wrapper as well, on top of
+     its own end padding; with no lane mounted the property is absent and the
+     padding is the original one. */
+  .bai-power-search .astryx-tokenizer:has(.astryx-token) {
+    padding-inline-end: calc(
+      var(--_tokenizer-end-lane-reserve, 0px) + var(--spacing-1) - 1px
+    );
+  }
+
   /* `Token`'s click target is `all: unset`, which inlines the label and so
      disables its `text-overflow: ellipsis`; a block label truncates. */
   .bai-power-search .astryx-token > button > span:not(.astryx-icon) {
