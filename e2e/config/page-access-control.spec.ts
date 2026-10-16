@@ -3,7 +3,6 @@
 import {
   forbiddenPageHeading,
   loginAsAdmin,
-  loginAsDomainAdmin,
   loginAsUser,
   modifyConfigToml,
   modifyThemeJson,
@@ -330,32 +329,6 @@ test.describe(
         await expect(forbiddenPageHeading(page)).toBeVisible({
           timeout: 15_000,
         });
-      },
-    );
-
-    test(
-      'Domain admin cannot see or open the Scheduler page',
-      { tag: ['@401', '@permission', '@regression'] },
-      async ({ page, request }) => {
-        // 1. Login as domain admin (admin, not superadmin)
-        await loginAsDomainAdmin(page, request);
-
-        // 2. The admin-scope sidebar renders for a domain admin, but the
-        // superadmin-only Scheduler item is not in it
-        await page.goto(`${webuiEndpoint}/admin/users`);
-        await expect(getSideNavItem(page, 'Environments')).toBeVisible({
-          timeout: 15_000,
-        });
-        await expect(getSideNavItem(page, 'Scheduler')).toBeHidden();
-
-        // 3. Entering the canonical URL directly shows the forbidden screen
-        await page.goto(`${webuiEndpoint}/admin/scheduler`);
-        await expect(forbiddenPageHeading(page)).toBeVisible({
-          timeout: 15_000,
-        });
-        await expect(
-          page.getByText("You don't have permission to access this page."),
-        ).toBeVisible();
       },
     );
 

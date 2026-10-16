@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 366 / 516 features covered (71%)**
+**Overall (in-scope routes): 365 / 515 features covered (71%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -39,7 +39,7 @@
 | User Settings            | `/usersettings`                                  |    10    |    1    | 🔶 10%  |
 | Project                  | `/project`                                       |    6     |    5    | 🔶 83%  |
 | Statistics               | `/statistics`                                    |    2     |    2    | ✅ 100% |
-| Scheduler                | `/scheduler`                                     |    8     |    2    | 🔶 25%  |
+| Scheduler                | `/scheduler`                                     |    7     |    1    | 🔶 14%  |
 | Information              | `/information`                                   |    2     |    2    | ✅ 100% |
 | Reservoir                | `/reservoir`, `/reservoir/:artifactId`           |    18    |    0    |  ❌ 0%  |
 | Branding                 | `/branding`                                      |    14    |    0    |  ❌ 0%  |
@@ -54,7 +54,7 @@
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **517**  | **367** | **71%** |
+| **Total**                |                                                  | **516**  | **366** | **71%** |
 
 ---
 
@@ -869,18 +869,17 @@
 **Resource group selector:** `SharedResourceGroupSelectForCurrentProject`
 **Table link:** Session name → `SessionDetailAndContainerLogOpenerLegacy` drawer
 
-| Feature                                       | Status | Test                                                 |
-| --------------------------------------------- | ------ | ---------------------------------------------------- |
-| Menu hidden + 401 for domain admin            | ✅     | `Domain admin cannot see or open the Scheduler page` |
-| Superadmin opens it from the menu and the URL | ✅     | `Superadmin can see and open the Scheduler page`     |
-| Pending session list rendering                | ❌     | -                                                    |
-| Resource group filtering                      | ❌     | -                                                    |
-| Session name click → SessionDetail drawer     | ❌     | -                                                    |
-| Auto-refresh (7s interval)                    | ❌     | -                                                    |
-| Pagination and page size                      | ❌     | -                                                    |
-| Column visibility settings                    | ❌     | -                                                    |
+| Feature                                       | Status | Test                                             |
+| --------------------------------------------- | ------ | ------------------------------------------------ |
+| Superadmin opens it from the menu and the URL | ✅     | `Superadmin can see and open the Scheduler page` |
+| Pending session list rendering                | ❌     | -                                                |
+| Resource group filtering                      | ❌     | -                                                |
+| Session name click → SessionDetail drawer     | ❌     | -                                                |
+| Auto-refresh (7s interval)                    | ❌     | -                                                |
+| Pagination and page size                      | ❌     | -                                                |
+| Column visibility settings                    | ❌     | -                                                |
 
-**Coverage: 🔶 2/8 features**
+**Coverage: 🔶 1/7 features**
 
 ---
 
