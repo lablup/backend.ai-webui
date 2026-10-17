@@ -1051,6 +1051,7 @@
       "SelectPermission": "Sélectionnez l'autorisation",
       "Serve": "Modèle en service",
       "ShareFolder": "Dossier de partage",
+      "SharePermission": "Autorisation de partage",
       "SharedFolderAlertDesc": "Il s'agit d'un dossier partagé externe.",
       "SharedMountPermission": "Autorisation de montage partagée",
       "SharedMountPermissionDesc": "L'autorisation de montage par défaut pour les utilisateurs avec qui ce dossier est partagé. Un utilisateur partagé sans autorisation individuelle reçoit cette autorisation. Le créateur du dossier reçoit toujours lecture et écriture.",

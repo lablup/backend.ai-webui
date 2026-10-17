@@ -1051,6 +1051,7 @@
       "SelectPermission": "Selecione a permissão",
       "Serve": "Serviço de modelo",
       "ShareFolder": "Partilhar pasta",
+      "SharePermission": "Permissão de compartilhamento",
       "SharedFolderAlertDesc": "Esta é uma pasta compartilhada externamente.",
       "SharedMountPermission": "Permissão de montagem compartilhada",
       "SharedMountPermissionDesc": "A permissão de montagem padrão para os usuários com quem esta pasta é compartilhada. Um usuário compartilhado sem permissão individual recebe esta permissão. O criador da pasta sempre recebe leitura e gravação.",

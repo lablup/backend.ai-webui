@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<21f1bc1de6c9e25338ecc1a0e2ef325d>>
+ * @generated SignedSource<<45efcd5f992a9c0b5f8565fe4bbe968b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -143,14 +143,14 @@ v3 = [
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
-                "name": "permissions",
+                "name": "status",
                 "storageKey": null
               },
               {
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
-                "name": "status",
+                "name": "permissions",
                 "storageKey": null
               }
             ],
@@ -230,16 +230,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "730ae65441159dcfa7afdd4af7dd1184",
+    "cacheID": "fe0d2b1ae0057017ada83abca1f64b0a",
     "id": null,
     "metadata": {},
     "name": "InviteFolderSettingModalQuery",
     "operationKind": "query",
-    "text": "query InviteFolderSettingModalQuery(\n  $vfolderId: UUID!\n  $scope: EntityShareScope!\n) {\n  entityShares(scope: $scope, limit: 100) {\n    edges {\n      node {\n        id\n        entityId\n        recipientEntityType\n        recipientEntityId\n        recipientEmail\n        permissions\n        status\n      }\n    }\n  }\n  vfolderMountPolicies(vfolderId: $vfolderId) {\n    items {\n      id\n      userId\n      permission\n    }\n  }\n}\n"
+    "text": "query InviteFolderSettingModalQuery(\n  $vfolderId: UUID!\n  $scope: EntityShareScope!\n) {\n  entityShares(scope: $scope, limit: 100) {\n    edges {\n      node {\n        id\n        entityId\n        recipientEntityType\n        recipientEntityId\n        recipientEmail\n        status\n        permissions\n      }\n    }\n  }\n  vfolderMountPolicies(vfolderId: $vfolderId) {\n    items {\n      id\n      userId\n      permission\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5043eff7903bd8c23f94be6f9e228777";
+(node as any).hash = "50786d29c17100414eafdf1d53350138";
 
 export default node;

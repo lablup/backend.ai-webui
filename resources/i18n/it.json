@@ -1051,6 +1051,7 @@
       "SelectPermission": "Seleziona il permesso",
       "Serve": "Modello di servizio",
       "ShareFolder": "Cartella di condivisione",
+      "SharePermission": "Autorizzazione di condivisione",
       "SharedFolderAlertDesc": "Questa è una cartella condivisa esternamente.",
       "SharedMountPermission": "Autorizzazione di montaggio condivisa",
       "SharedMountPermissionDesc": "L'autorizzazione di montaggio predefinita per gli utenti con cui questa cartella è condivisa. Un utente condiviso senza autorizzazione individuale riceve questa autorizzazione. Il creatore della cartella riceve sempre lettura e scrittura.",
