@@ -261,7 +261,11 @@ const CopyControl: React.FC<{
                 : nodeToText(children);
           // antd's copier: `execCommand('copy')` also works over plain HTTP,
           // where `navigator.clipboard` does not exist.
-          copy(text);
+          // A falsy return means nothing reached the clipboard, so the control
+          // stays in its resting state instead of claiming the copy succeeded.
+          if (!copy(text)) {
+            return;
+          }
           config?.onCopy?.(e);
           setCopied(true);
           timerRef.current = setTimeout(
