@@ -35,13 +35,15 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { Suspense, useEffect } from 'react';
+import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  fetchQuery,
   graphql,
   useFragment,
   useLazyLoadQuery,
   useMutation,
+  useRelayEnvironment,
 } from 'react-relay';
 
 // Scope types with a scope-id picker, in the uppercase spelling of the retired
@@ -118,40 +120,35 @@ const ResourceGroupScopeIdSelect: React.FC<ScopeIdBranchProps> = (props) => {
 export const isDomainScopeType = (scopeType?: string) =>
   scopeType?.toUpperCase() === 'DOMAIN';
 
-type DomainScopeIdProps = Pick<ScopeIdSelectProps, 'value' | 'onChange'>;
+/**
+ * Where the signed-in domain's uuid stands. A DOMAIN scope id is that uuid
+ * (BA-7234) — the WebUI has no domain picker — and it is fetched only once
+ * Domain is picked.
+ */
+export type CurrentDomainIdState =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'ready'; domainId: string }
+  | { status: 'error' };
 
-/** Hands `scopeId` to the form once it is known and differs from `value`. */
-const useSyncScopeId = (
-  scopeId: string | undefined,
-  { value, onChange }: DomainScopeIdProps,
-) => {
-  useEffect(() => {
-    if (scopeId && value !== scopeId) onChange?.(scopeId);
-  }, [scopeId, value, onChange]);
-};
+/** True while a DOMAIN scope waits on the domain uuid; OK stays loading. */
+export const isDomainScopeIdPending = (
+  scopeType: string | undefined,
+  domainIdState: CurrentDomainIdState,
+) => isDomainScopeType(scopeType) && domainIdState.status === 'loading';
 
 /**
- * Fills the DOMAIN scope id with the signed-in domain's uuid (BA-7234): the
- * WebUI has no domain picker.
+ * The scope id a new role is created with: the domain uuid for DOMAIN, the
+ * picked id otherwise. `undefined` when it is not known.
  */
-const CurrentDomainScopeId: React.FC<DomainScopeIdProps> = (props) => {
-  'use memo';
-  const baiClient = useSuspendedBackendaiClient();
-  const domainName: string = baiClient._config.domainName;
-  const { domainV2 } = useLazyLoadQuery<RoleFormModalCurrentDomainQuery>(
-    graphql`
-      query RoleFormModalCurrentDomainQuery($domainName: String!) {
-        domainV2(domainName: $domainName) {
-          entityId
-        }
-      }
-    `,
-    { domainName },
-    { fetchPolicy: 'store-or-network' },
-  );
-  useSyncScopeId(domainV2?.entityId, props);
-  return null;
-};
+export const resolveCreateRoleScopeId = (
+  scopeType: string | undefined,
+  pickedScopeId: string | undefined,
+  currentDomainId: string | null | undefined,
+) =>
+  isDomainScopeType(scopeType)
+    ? currentDomainId || undefined
+    : pickedScopeId || undefined;
 
 export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   scopeType: rawScopeType,
@@ -176,16 +173,6 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
       options={[]}
     />
   );
-  if (scopeType === 'DOMAIN') {
-    return (
-      <Suspense fallback={null}>
-        <CurrentDomainScopeId
-          value={selectProps.value}
-          onChange={selectProps.onChange}
-        />
-      </Suspense>
-    );
-  }
   if (scopeType === 'PROJECT') {
     return (
       <Suspense fallback={fallback}>
@@ -280,6 +267,48 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
   const { logger } = useBAILogger();
   const [form] = Form.useForm();
   const scopeType = Form.useWatch('scopeType', form) as string | undefined;
+  const relayEnv = useRelayEnvironment();
+  const baiClient = useSuspendedBackendaiClient();
+  const [domainIdState, setDomainIdState] = useState<CurrentDomainIdState>({
+    status: 'idle',
+  });
+  const isDomainIdPending = isDomainScopeIdPending(scopeType, domainIdState);
+
+  /**
+   * Fetches the signed-in domain's uuid for a DOMAIN scope. Resolves to the
+   * uuid, or `undefined` after reporting the failure.
+   */
+  const loadCurrentDomainId = (): Promise<string | undefined> => {
+    const domainName: string = baiClient._config.domainName;
+    setDomainIdState({ status: 'loading' });
+    return fetchQuery<RoleFormModalCurrentDomainQuery>(
+      relayEnv,
+      graphql`
+        query RoleFormModalCurrentDomainQuery($domainName: String!) {
+          domainV2(domainName: $domainName) {
+            entityId
+          }
+        }
+      `,
+      { domainName },
+      { fetchPolicy: 'store-or-network' },
+    )
+      .toPromise()
+      .then((data) => {
+        const domainId = data?.domainV2?.entityId;
+        if (!domainId) {
+          throw new Error(`Domain "${domainName}" was not found.`);
+        }
+        setDomainIdState({ status: 'ready', domainId });
+        return domainId;
+      })
+      .catch((error) => {
+        logger.error('Failed to load the current domain id', error);
+        setDomainIdState({ status: 'error' });
+        message.error(error?.message || t('general.ErrorOccurred'));
+        return undefined;
+      });
+  };
 
   const { rbacPermissionMatrix } =
     useLazyLoadQuery<RoleFormModalPermissionMatrixQuery>(
@@ -363,7 +392,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
   const handleOk = () => {
     return form
       .validateFields()
-      .then((values) => {
+      .then(async (values) => {
         if (isEditMode && editingRole) {
           const changedFields: {
             name?: string;
@@ -426,16 +455,27 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
             },
           });
         } else {
+          // OK stays loading while the domain uuid is in flight; after a
+          // failed fetch, OK retries it instead of submitting without one.
+          const currentDomainId = !isDomainScopeType(values.scopeType)
+            ? undefined
+            : domainIdState.status === 'ready'
+              ? domainIdState.domainId
+              : await loadCurrentDomainId();
+          const scopeId = resolveCreateRoleScopeId(
+            values.scopeType,
+            values.scopeId,
+            currentDomainId,
+          );
+          // A failed domain fetch has already been reported.
+          if (!scopeId) return;
           commitCreateRole({
             variables: {
               input: {
                 name: values.name,
                 description: values.description || null,
                 autoAssign: values.autoAssign,
-                scope: {
-                  scopeType: values.scopeType,
-                  scopeId: values.scopeId,
-                },
+                scope: { scopeType: values.scopeType, scopeId },
               },
             },
             onCompleted: (_data, errors) => {
@@ -479,7 +519,9 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
       title={isEditMode ? t('rbac.EditRole') : t('rbac.CreateRole')}
       onOk={handleOk}
       onCancel={() => onRequestClose(false)}
-      confirmLoading={isInFlightCreateRole || isInFlightUpdateRole}
+      confirmLoading={
+        isInFlightCreateRole || isInFlightUpdateRole || isDomainIdPending
+      }
       maskClosable={false}
       {...baiModalProps}
     >
@@ -538,28 +580,39 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
                 showSearch
                 placeholder={t('rbac.ScopeType')}
                 options={scopeTypeOptions}
-                onChange={() => form.setFieldsValue({ scopeId: undefined })}
+                loading={isDomainIdPending}
+                onChange={(value) => {
+                  form.setFieldsValue({ scopeId: undefined });
+                  if (
+                    isDomainScopeType(value as string | undefined) &&
+                    domainIdState.status !== 'ready'
+                  ) {
+                    loadCurrentDomainId();
+                  }
+                }}
               />
             </Form.Item>
-            <Form.Item
-              name="scopeId"
-              label={t('rbac.ScopeId')}
-              hidden={isDomainScopeType(scopeType)}
-              style={{ flex: 1 }}
-              rules={[
-                {
-                  required: true,
-                  message: t('general.ValueRequired', {
-                    name: t('rbac.ScopeId'),
-                  }),
-                },
-              ]}
-            >
-              <ScopeIdSelect
-                scopeType={scopeType}
-                placeholder={t('rbac.ScopeId')}
-              />
-            </Form.Item>
+            {/* DOMAIN takes the domain uuid at submit time: no Target field. */}
+            {!isDomainScopeType(scopeType) && (
+              <Form.Item
+                name="scopeId"
+                label={t('rbac.ScopeId')}
+                style={{ flex: 1 }}
+                rules={[
+                  {
+                    required: true,
+                    message: t('general.ValueRequired', {
+                      name: t('rbac.ScopeId'),
+                    }),
+                  },
+                ]}
+              >
+                <ScopeIdSelect
+                  scopeType={scopeType}
+                  placeholder={t('rbac.ScopeId')}
+                />
+              </Form.Item>
+            )}
           </BAIFlex>
         )}
       </Form>
