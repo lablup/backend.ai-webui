@@ -9,7 +9,7 @@ import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { toProjectContext } from '../types/projectContext';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
-import FolderCreateModalV2 from './FolderCreateModalV2';
+import FolderCreateModal from './FolderCreateModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
 import { IconButton } from '@lablup/ui-common/IconButton';
@@ -308,7 +308,7 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
           />
         ) : null}
       </ButtonGroup>
-      <FolderCreateModalV2
+      <FolderCreateModal
         open={isOpenCreateModal}
         project={toProjectContext(currentProject)}
         initialValues={{ usage_mode: 'model' }}

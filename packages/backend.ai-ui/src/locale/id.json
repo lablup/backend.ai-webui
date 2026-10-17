@@ -558,6 +558,9 @@
     "To": "Status tujuan",
     "UpdatedAt": "Diperbarui pada"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Undang melalui e-mail"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agen"
   },

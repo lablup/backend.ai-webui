@@ -174,9 +174,6 @@ test.describe(
       );
     });
 
-    // Regression guard for FR-2978: previously the leave_invited client
-    // sent `null` as the request body, which the manager's
-    // BodyParam[LeaveVFolderReq] rejected with HTTP 400.
     test('Invitee can leave a shared vFolder', async ({
       page,
       browser,

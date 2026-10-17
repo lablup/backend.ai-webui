@@ -6,7 +6,7 @@ import { Form } from '../form-engine';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useSuspendedAutoMountedFolders } from '../hooks/useSuspendedAutoMountedFolders';
 import { toProjectContext } from '../types/projectContext';
-import FolderCreateModalV2 from './FolderCreateModalV2';
+import FolderCreateModal from './FolderCreateModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import {
   DEFAULT_ALIAS_BASE_PATH,
@@ -292,10 +292,10 @@ const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
         </Suspense>
       )}
       <Suspense>
-        <FolderCreateModalV2
+        <FolderCreateModal
           open={isFolderCreateModalOpen}
           project={toProjectContext(currentProject)}
-          // TODO: hiddenFormItems prop was removed from FolderCreateModalV2.
+          // TODO: hiddenFormItems prop was removed from FolderCreateModal.
           // This component is currently unused; revisit if it gets re-enabled.
           // hiddenFormItems={[
           //   'usage_mode',
