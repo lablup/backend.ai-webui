@@ -285,11 +285,11 @@ export type {
   BAIStorageHostSelectRef,
   StorageHostNode,
 } from './BAIStorageHostSelect';
-export { default as BAIAdminImageSelect } from './BAIAdminImageSelect';
+export { default as BAIScopedImageSelect } from './BAIScopedImageSelect';
 export type {
-  BAIAdminImageSelectProps,
-  BAIAdminImageSelectRef,
+  BAIScopedImageSelectProps,
+  BAIScopedImageSelectRef,
   AstryxImageV2Node,
-} from './BAIAdminImageSelect';
+} from './BAIScopedImageSelect';
 export { default as BAISubStepNodes } from './BAISubStepNodes';
 export type { BAISubStepNodesProps, SubStepInList } from './BAISubStepNodes';

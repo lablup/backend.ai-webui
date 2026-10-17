@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fd7fb2a0ccbc22c5fa6b8653ac28062f>>
+ * @generated SignedSource<<148a191e795d4a0f5bc01dd565ef2e2e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,11 +9,22 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type hooksUsingRelay_AdminImageReferenceQuery$variables = {
-  id: string;
+export type ImageSearchScope = {
+  containerRegistry?: ReadonlyArray<UUIDScope> | null | undefined;
+  domain?: ReadonlyArray<UUIDScope> | null | undefined;
+  project?: ReadonlyArray<UUIDScope> | null | undefined;
+  public?: boolean;
+  user?: ReadonlyArray<UUIDScope> | null | undefined;
 };
-export type hooksUsingRelay_AdminImageReferenceQuery$data = {
-  readonly adminImagesV2: {
+export type UUIDScope = {
+  value: string;
+};
+export type hooksUsingRelay_ScopedImageReferenceQuery$variables = {
+  id: string;
+  scope: ImageSearchScope;
+};
+export type hooksUsingRelay_ScopedImageReferenceQuery$data = {
+  readonly scopedImagesV2: {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly identity: {
@@ -24,9 +35,9 @@ export type hooksUsingRelay_AdminImageReferenceQuery$data = {
     }>;
   } | null | undefined;
 };
-export type hooksUsingRelay_AdminImageReferenceQuery = {
-  response: hooksUsingRelay_AdminImageReferenceQuery$data;
-  variables: hooksUsingRelay_AdminImageReferenceQuery$variables;
+export type hooksUsingRelay_ScopedImageReferenceQuery = {
+  response: hooksUsingRelay_ScopedImageReferenceQuery$data;
+  variables: hooksUsingRelay_ScopedImageReferenceQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -35,6 +46,11 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "id"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "scope"
   }
 ],
 v1 = [
@@ -59,6 +75,11 @@ v1 = [
     "kind": "Literal",
     "name": "limit",
     "value": 1
+  },
+  {
+    "kind": "Variable",
+    "name": "scope",
+    "variableName": "scope"
   }
 ],
 v2 = {
@@ -91,14 +112,14 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "hooksUsingRelay_AdminImageReferenceQuery",
+    "name": "hooksUsingRelay_ScopedImageReferenceQuery",
     "selections": [
       {
         "alias": null,
         "args": (v1/*: any*/),
         "concreteType": "ImageV2Connection",
         "kind": "LinkedField",
-        "name": "adminImagesV2",
+        "name": "scopedImagesV2",
         "plural": false,
         "selections": [
           {
@@ -135,14 +156,14 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "hooksUsingRelay_AdminImageReferenceQuery",
+    "name": "hooksUsingRelay_ScopedImageReferenceQuery",
     "selections": [
       {
         "alias": null,
         "args": (v1/*: any*/),
         "concreteType": "ImageV2Connection",
         "kind": "LinkedField",
-        "name": "adminImagesV2",
+        "name": "scopedImagesV2",
         "plural": false,
         "selections": [
           {
@@ -181,16 +202,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "2488b1b0b7c570c4740c0826f33c1964",
+    "cacheID": "fab5172f99ca7cbdd0a8ce894b1dff41",
     "id": null,
     "metadata": {},
-    "name": "hooksUsingRelay_AdminImageReferenceQuery",
+    "name": "hooksUsingRelay_ScopedImageReferenceQuery",
     "operationKind": "query",
-    "text": "query hooksUsingRelay_AdminImageReferenceQuery(\n  $id: UUID!\n) {\n  adminImagesV2(filter: {id: {equals: $id}}, limit: 1) {\n    edges {\n      node {\n        identity {\n          canonicalName\n          architecture\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query hooksUsingRelay_ScopedImageReferenceQuery(\n  $id: UUID!\n  $scope: ImageSearchScope!\n) {\n  scopedImagesV2(scope: $scope, filter: {id: {equals: $id}}, limit: 1) {\n    edges {\n      node {\n        identity {\n          canonicalName\n          architecture\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "1268865e22264aa8fe7c775602949b70";
+(node as any).hash = "64331ab01b07af6759f80b8c8fd0f0a4";
 
 export default node;

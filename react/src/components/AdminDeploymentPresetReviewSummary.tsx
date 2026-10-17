@@ -5,7 +5,7 @@
 import type { FormInstance } from '../form-engine';
 import { resolvesReadsVfolderConfigFiles } from '../helper/modelServiceCommand';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useAdminImageReference } from '../hooks/hooksUsingRelay';
+import { useScopedImageReference } from '../hooks/hooksUsingRelay';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import type {
   AdminDeploymentPresetFormValue,
@@ -99,7 +99,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
   // `true` includes untouched fields and arrays (e.g. modelDefinition.models)
   // that getFieldsValue() omits; its overload returns `any`, so annotate here.
   const values: AdminDeploymentPresetFormValue = form.getFieldsValue(true);
-  const imageReference = useAdminImageReference(values.imageId);
+  const imageReference = useScopedImageReference(values.imageId);
 
   const basicInfoHasError = BASIC_INFO_FIELDS.some((f) =>
     errorFieldNames.includes(f),

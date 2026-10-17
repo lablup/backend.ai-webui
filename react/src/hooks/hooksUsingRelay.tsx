@@ -3,11 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
-import { hooksUsingRelay_AdminImageReferenceQuery } from '../__generated__/hooksUsingRelay_AdminImageReferenceQuery.graphql';
 import { hooksUsingRelay_ImageCanonicalNameQuery } from '../__generated__/hooksUsingRelay_ImageCanonicalNameQuery.graphql';
 import { hooksUsingRelay_KeyPairQuery } from '../__generated__/hooksUsingRelay_KeyPairQuery.graphql';
 import { hooksUsingRelay_KeyPairResourcePolicyQuery } from '../__generated__/hooksUsingRelay_KeyPairResourcePolicyQuery.graphql';
+import { hooksUsingRelay_ScopedImageReferenceQuery } from '../__generated__/hooksUsingRelay_ScopedImageReferenceQuery.graphql';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import { useCurrentDomainScope } from './useCurrentDomainScope';
 import { useUpdatableState } from 'backend.ai-ui';
 import { useCallback } from 'react';
 import { graphql, FetchPolicy, useLazyLoadQuery } from 'react-relay';
@@ -132,20 +133,28 @@ export const useImageCanonicalName = (
 };
 
 /**
- * Admin-scoped counterpart of `useImageCanonicalName`. Resolves an image id to
- * its full reference `<canonicalName>@<architecture>` via `adminImagesV2` for
- * admin pages where the user-scoped `imageV2` query is not available. Falls back
+ * Resolves an image id to its full reference `<canonicalName>@<architecture>`
+ * through `scopedImagesV2` over the current domain and public registries
+ * (ADR 0012), for admin pages. Falls back
  * to the canonical name alone, then the raw id. See `useImageCanonicalName` for
  * null-handling semantics.
  */
-export const useAdminImageReference = (
+export const useScopedImageReference = (
   imageId: string | null | undefined,
   options: FetchOptions = { fetchPolicy: 'store-or-network' },
 ): string | undefined => {
-  const data = useLazyLoadQuery<hooksUsingRelay_AdminImageReferenceQuery>(
+  const { domainScope } = useCurrentDomainScope();
+  const data = useLazyLoadQuery<hooksUsingRelay_ScopedImageReferenceQuery>(
     graphql`
-      query hooksUsingRelay_AdminImageReferenceQuery($id: UUID!) {
-        adminImagesV2(filter: { id: { equals: $id } }, limit: 1) {
+      query hooksUsingRelay_ScopedImageReferenceQuery(
+        $id: UUID!
+        $scope: ImageSearchScope!
+      ) {
+        scopedImagesV2(
+          scope: $scope
+          filter: { id: { equals: $id } }
+          limit: 1
+        ) {
           edges {
             node {
               identity {
@@ -157,11 +166,11 @@ export const useAdminImageReference = (
         }
       }
     `,
-    { id: imageId ?? '' },
+    { id: imageId ?? '', scope: { ...domainScope, public: true } },
     options,
   );
   if (!imageId) return undefined;
-  const identity = data.adminImagesV2?.edges?.[0]?.node?.identity;
+  const identity = data.scopedImagesV2?.edges?.[0]?.node?.identity;
   if (!identity?.canonicalName) return imageId;
   return identity.architecture
     ? `${identity.canonicalName}@${identity.architecture}`
