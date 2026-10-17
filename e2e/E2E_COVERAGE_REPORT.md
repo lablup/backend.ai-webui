@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 366 / 516 features covered (71%)**
+**Overall (in-scope routes): 365 / 515 features covered (71%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -39,7 +39,7 @@
 | User Settings            | `/usersettings`                                  |    10    |    1    | 🔶 10%  |
 | Project                  | `/project`                                       |    6     |    5    | 🔶 83%  |
 | Statistics               | `/statistics`                                    |    2     |    2    | ✅ 100% |
-| Scheduler                | `/scheduler`                                     |    6     |    0    |  ❌ 0%  |
+| Scheduler                | `/scheduler`                                     |    7     |    1    | 🔶 14%  |
 | Information              | `/information`                                   |    2     |    2    | ✅ 100% |
 | Reservoir                | `/reservoir`, `/reservoir/:artifactId`           |    18    |    0    |  ❌ 0%  |
 | Branding                 | `/branding`                                      |    14    |    0    |  ❌ 0%  |
@@ -54,7 +54,7 @@
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **517**  | **367** | **71%** |
+| **Total**                |                                                  | **516**  | **366** | **71%** |
 
 ---
 
@@ -863,22 +863,23 @@
 
 ### 22. Scheduler (`/scheduler`)
 
-**Test files:** None
+**Test files:** [`e2e/config/page-access-control.spec.ts`](config/page-access-control.spec.ts)
 
 **Primary action:** Refresh (auto-update 7s)
 **Resource group selector:** `SharedResourceGroupSelectForCurrentProject`
 **Table link:** Session name → `SessionDetailAndContainerLogOpenerLegacy` drawer
 
-| Feature                                   | Status | Test |
-| ----------------------------------------- | ------ | ---- |
-| Pending session list rendering            | ❌     | -    |
-| Resource group filtering                  | ❌     | -    |
-| Session name click → SessionDetail drawer | ❌     | -    |
-| Auto-refresh (7s interval)                | ❌     | -    |
-| Pagination and page size                  | ❌     | -    |
-| Column visibility settings                | ❌     | -    |
+| Feature                                       | Status | Test                                             |
+| --------------------------------------------- | ------ | ------------------------------------------------ |
+| Superadmin opens it from the menu and the URL | ✅     | `Superadmin can see and open the Scheduler page` |
+| Pending session list rendering                | ❌     | -                                                |
+| Resource group filtering                      | ❌     | -                                                |
+| Session name click → SessionDetail drawer     | ❌     | -                                                |
+| Auto-refresh (7s interval)                    | ❌     | -                                                |
+| Pagination and page size                      | ❌     | -                                                |
+| Column visibility settings                    | ❌     | -                                                |
 
-**Coverage: ❌ 0/6 features**
+**Coverage: 🔶 1/7 features**
 
 ---
 
@@ -1374,7 +1375,7 @@ These are core user workflows that affect the largest number of users.
 | 9   | **Environment - Presets** (`/environment`)                          | 4 uncovered features for Resource Presets tab. Each with CRUD modals.                                      | Medium               |
 | 10  | **Resources - Resource Groups** (`/agent`)                          | 5 uncovered features with 3 modals (create/edit/info). Agent drawer also untested.                         | Medium               |
 | 11  | **Model Store** (`/model-store`)                                    | Browse/search models. ModelCardModal for detail. Read-only interface.                                      | Low                  |
-| 12  | **Scheduler** (`/scheduler`)                                        | 6 features. Pending session queue monitoring. Admin tool.                                                  | Low                  |
+| 12  | **Scheduler** (`/scheduler`)                                        | 6 uncovered features. Pending session queue monitoring. Superadmin access control is covered.              | Low                  |
 | 13  | **Branding** (`/branding`)                                          | 14 features. Theme/logo customization. Admin tool.                                                         | Medium               |
 | 14  | **Storage Host Settings** (`/storage-settings/:hostname`)           | Niche admin feature.                                                                                       | Low                  |
 | 15  | **Chat** (`/chat/:id?`)                                             | ✅ Covered. Mock-based tests for chat UI, history, multi-pane, sync.                                       | -                    |
@@ -1452,7 +1453,7 @@ To efficiently build new E2E tests, these POMs should be created:
 | `/project`                             |        🔶        |      ❌      |    -     |
 | `/statistics`                          |        ✅        |      ❌      |    -     |
 | `/usersettings`                        |        🔶        |      ❌      |  **P2**  |
-| `/scheduler`                           |        ❌        |      ❌      |    P3    |
+| `/scheduler`                           |        🔶        |      ❌      |    P3    |
 | `/information`                         |        ✅        |      ✅      |    -     |
 | `/reservoir`                           |        ❌        |      ❌      |    P2    |
 | `/branding`                            |        ❌        |      ❌      |    P3    |
