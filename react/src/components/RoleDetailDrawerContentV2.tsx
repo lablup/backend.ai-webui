@@ -236,7 +236,11 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
             />
           )}
           {activeTab === 'assignments' && (
-            <RoleAssignmentTab roleNodeFrgmt={role} />
+            <RoleAssignmentTab
+              // Keyed by role: history navigation swaps the role without closing the drawer.
+              key={role.id}
+              roleNodeFrgmt={role}
+            />
           )}
         </Suspense>
       </BAIFlex>
