@@ -20,6 +20,7 @@ import {
   ResourcePreset,
   useResourceLimitAndRemaining,
 } from '../../hooks/useResourceLimitAndRemaining';
+import { useSessionResourcePresets } from '../../hooks/useSessionResourcePresets';
 import { ProjectContext } from '../../types/projectContext';
 import AgentSelect from '../AgentSelect';
 import {
@@ -48,7 +49,6 @@ import {
   BAISegmentedControlItem,
   BAISelect,
   useEventNotStable,
-  useProjectResourceGroups,
   useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -343,11 +343,6 @@ const ResourceAllocationFormItems: React.FC<
     accessible_scaling_groups,
     (group) => group?.name === currentResourceGroupInForm,
   );
-  // The groups the resource-group select offers; presets of any other group are hidden.
-  const { resourceGroups: selectableResourceGroups } = useProjectResourceGroups(
-    project.name,
-    { includeSFTPResourceGroups },
-  );
   // Names of the resource groups accessible to the PASSED project. Handed to
   // `useResourceLimitAndRemaining` so its "is this resource group valid?"
   // guard is keyed off the `project` prop instead of the ambient current
@@ -372,7 +367,7 @@ const ResourceAllocationFormItems: React.FC<
   // The preset check suspends per resource group; deferring the group keeps the
   // launcher on screen while a group's first check loads, not a page fallback.
   const deferredResourceGroup = useDeferredValue(currentResourceGroupInForm);
-  const [{ currentImageMinM, remaining, resourceLimits, checkPresetInfo }] =
+  const [{ currentImageMinM, remaining, resourceLimits }] =
     useResourceLimitAndRemaining({
       currentProjectName: project.name,
       currentResourceGroup: deferredResourceGroup || undefined, // global currentResourceGroup can be null
@@ -380,6 +375,11 @@ const ResourceAllocationFormItems: React.FC<
       currentImage: currentImage,
       accessibleResourceGroupNames,
     });
+  // Shares its request with `ResourcePresetSelect`, which reads the same query.
+  const sessionPresets = useSessionResourcePresets({
+    projectId: project.id,
+    resourceGroupName: deferredResourceGroup,
+  });
 
   const [resourceSlots] = useResourceSlots();
 
@@ -464,7 +464,7 @@ const ResourceAllocationFormItems: React.FC<
   // contents; a fresh identity would re-run the auto-select effect each render.
   const allocatablePresetIdsKey = JSON.stringify(
     getAllocatablePresetIds(
-      checkPresetInfo?.presets,
+      _.filter(sessionPresets, 'allocatable'),
       resourceLimits,
       currentImage,
     ),
@@ -664,10 +664,7 @@ const ResourceAllocationFormItems: React.FC<
 
   const updateResourceFieldsBasedOnPreset = useEventNotStable(
     (presetId: string) => {
-      const preset = _.find(
-        checkPresetInfo?.presets,
-        (preset) => preset.id === presetId,
-      );
+      const preset = _.find(sessionPresets, (preset) => preset.id === presetId);
       const slots = _.pick(preset?.resource_slots, _.keys(resourceSlotsInRG));
       const mem = convertToBinaryUnit(slots?.mem || 0, 'g', 2)?.value;
       const acceleratorObj = _.omit(slots, ['cpu', 'mem', 'shmem']);
@@ -742,7 +739,7 @@ const ResourceAllocationFormItems: React.FC<
         // if the current preset is custom or minimum-required, do nothing.
       } else {
         const firstAllocatablePreset = _.sortBy(
-          _.filter(checkPresetInfo?.presets, (preset) =>
+          _.filter(sessionPresets, (preset) =>
             allocatablePresetIds.includes(preset.id),
           ),
           'name',
@@ -777,7 +774,7 @@ const ResourceAllocationFormItems: React.FC<
   }, [
     currentAllocationPreset,
     allocatablePresetIds,
-    checkPresetInfo?.presets,
+    sessionPresets,
     resourceSlotsInRG,
     form,
     enableResourcePresets,
@@ -873,7 +870,7 @@ const ResourceAllocationFormItems: React.FC<
                 default: {
                   // Check if the selected preset has a specific shmem setting
                   const selectedPreset = _.find(
-                    checkPresetInfo?.presets,
+                    sessionPresets,
                     (preset) => preset.id === value,
                   );
                   const hasPresetShmem =
@@ -887,12 +884,9 @@ const ResourceAllocationFormItems: React.FC<
                 }
               }
             }}
-            allocatablePresetIds={allocatablePresetIds}
-            selectableResourceGroupNames={_.map(
-              selectableResourceGroups,
-              'name',
-            )}
+            projectId={project.id}
             resourceGroup={currentResourceGroupInForm}
+            allocatablePresetIds={allocatablePresetIds}
           />
         </Form.Item>
       ) : null}
@@ -1892,11 +1886,6 @@ export const getAllocatablePresetIds = (
   );
 
   const bySliderLimit = _.filter(presets, (preset) => {
-    // After allow pending session, we don't need to check allocatable field.
-    // if (_.has(preset, 'allocatable')) {
-    //   return !!preset.allocatable;
-    // }
-
     // Check if all resource slots in the preset are less than or equal to resourceLimits
     // Be careful with the type of values in resourceLimits, they are string or number
     return _.every(preset.resource_slots, (_value, key) => {
