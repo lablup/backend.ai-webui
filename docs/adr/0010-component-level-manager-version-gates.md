@@ -1,6 +1,8 @@
 # 0010 — Component-level manager version gates
 
 > Decision 1절의 **Floor location**(기준 line을 이 ADR의 본문이 정한다는 것)은 [ADR 0011](0011-manager-compatibility-policy-in-the-team-dev-catalog.md)이 대신한다. 기준 line은 branch마다 팀 dev catalog의 policy가 선언하고, 지원 범위는 그 line부터 branch 자신의 line까지이며, `pnpm run dev-env compat`이 읽는다. 이 문서가 적은 `26.4`는 결정 당시의 값이다. gate를 지우는 규칙과 나머지 결정은 그대로 발효 중이다.
+>
+> [ADR 0012](0012-scoped-search-fields-in-place-of-admin-fields.md)가 `scoped*` field와 `UserV2.organization.domainId`로 바꾼 화면은 그 floor와 상관없이 26.9.0a4 이상 매니저를 요구한다.
 
 ## Summary
 
@@ -86,12 +88,12 @@ flowchart TD
 - **supports() surface**: `react/`, BUI, e2e의 코드는 `supports`를 부르지 않는다. `Client.supports(name)`은 API로 남지만 `_features`가 늘 비어 있어 모든 이름에 `false`를 답한다.
 - **ADR 0006 flags**: ADR 0006이 이름으로 부르는 flag는 아래 check가 대신한다.
 
-| ADR 0006의 flag | 최소 버전 | 대신하는 check |
-|---|---|---|
-| `rbac-single-scope-role` | 26.9.0a4 | `useCurrentUserProjectRoles`, `RoleFormModal`, `RBACManagementPage`의 drawer 선택, `RoleAssignmentTab`, `ProjectAdminSettingModal`, `ProjectPage`가 `isManagerVersionCompatibleWith('26.9.0a4')`를 부른다. |
-| `rbac-filter-wrapper` | 26.4.4rc9 | check가 없다. `useCurrentUserProjectRoles`, `LegacyRolePermissionTab`, `LegacyRoleScopeTab`은 permission filter의 `entityType`을 늘 `{ equals: ... }` shape으로 보낸다. |
-| `role-mapped-scope-filter` | 26.8.0 | `RoleDetailDrawerContent`, `RoleAssignmentTab`, `RBACManagementPage`, `ProjectPage`가 `isManagerVersionCompatibleWith('26.8.0')`를 부른다. |
-| `my-roles` | 26.4.0 | check가 없다. `useCurrentUserProjectRoles`는 주 query를 늘 `store-or-network`로 읽는다. |
+| ADR 0006의 flag            | 최소 버전 | 대신하는 check                                                                                                                                                                                             |
+| -------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `rbac-single-scope-role`   | 26.9.0a4  | `useCurrentUserProjectRoles`, `RoleFormModal`, `RBACManagementPage`의 drawer 선택, `RoleAssignmentTab`, `ProjectAdminSettingModal`, `ProjectPage`가 `isManagerVersionCompatibleWith('26.9.0a4')`를 부른다. |
+| `rbac-filter-wrapper`      | 26.4.4rc9 | check가 없다. `useCurrentUserProjectRoles`, `LegacyRolePermissionTab`, `LegacyRoleScopeTab`은 permission filter의 `entityType`을 늘 `{ equals: ... }` shape으로 보낸다.                                    |
+| `role-mapped-scope-filter` | 26.8.0    | `RoleDetailDrawerContent`, `RoleAssignmentTab`, `RBACManagementPage`, `ProjectPage`가 `isManagerVersionCompatibleWith('26.8.0')`를 부른다.                                                                 |
+| `my-roles`                 | 26.4.0    | check가 없다. `useCurrentUserProjectRoles`는 주 query를 늘 `store-or-network`로 읽는다.                                                                                                                    |
 
 ### 4. 테스트와 palette도 버전으로 판정한다
 
@@ -125,8 +127,8 @@ flowchart TD
 
 ## 용어
 
-| 용어 | 뜻 |
-|---|---|
-| version gate | 연결된 매니저 버전에 따라 field 선택, variables, mount할 component, request shape 중 하나를 고르는 분기다. |
-| feature flag | 이 결정 전에 `backend.ai-client`의 `Client`가 `_updateSupportList()`에서 매니저 버전으로 켜던 이름 붙은 boolean이다. `baiClient.supports(name)`으로 읽었고, 지금은 켜는 곳이 없다. |
-| `isManagerVersionCompatibleWith` | `Client`의 method로, 연결된 매니저 버전이 인자 버전 이상이면 `true`를 답한다. 비교는 `pep440.ts`의 `comparePEP440Versions`가 한다. |
+| 용어                             | 뜻                                                                                                                                                                                 |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| version gate                     | 연결된 매니저 버전에 따라 field 선택, variables, mount할 component, request shape 중 하나를 고르는 분기다.                                                                         |
+| feature flag                     | 이 결정 전에 `backend.ai-client`의 `Client`가 `_updateSupportList()`에서 매니저 버전으로 켜던 이름 붙은 boolean이다. `baiClient.supports(name)`으로 읽었고, 지금은 켜는 곳이 없다. |
+| `isManagerVersionCompatibleWith` | `Client`의 method로, 연결된 매니저 버전이 인자 버전 이상이면 `true`를 답한다. 비교는 `pep440.ts`의 `comparePEP440Versions`가 한다.                                                 |
