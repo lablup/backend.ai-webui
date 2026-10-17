@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="ฟีเจอร์ผู้ดูแลโปรเจกต์" />
   <meta name="twitter:description" content="ผู้ดูแลโปรเจกต์ คือผู้ใช้ที่ได้รับสิทธิ์การดูแลระบบสำหรับโปรเจกต์เฉพาะ ผู้ดูแลโปรเจกต์สามารถดูผู้ใช้ที่อยู่ในโปรเจกต์ที่ตนดูแล…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ฟีเจอร์ผู้ดูแลโปรเจกต์","inLanguage":"th","description":"ผู้ดูแลโปรเจกต์ คือผู้ใช้ที่ได้รับสิทธิ์การดูแลระบบสำหรับโปรเจกต์เฉพาะ ผู้ดูแลโปรเจกต์สามารถดูผู้ใช้ที่อยู่ในโปรเจกต์ที่ตนดูแล…","dateModified":"2026-10-11T01:22:32.000Z","url":"https://webui.docs.backend.ai/next/th/project_admin.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ฟีเจอร์ผู้ดูแลโปรเจกต์","inLanguage":"th","description":"ผู้ดูแลโปรเจกต์ คือผู้ใช้ที่ได้รับสิทธิ์การดูแลระบบสำหรับโปรเจกต์เฉพาะ ผู้ดูแลโปรเจกต์สามารถดูผู้ใช้ที่อยู่ในโปรเจกต์ที่ตนดูแล…","dateModified":"2026-10-16T00:13:02.000Z","url":"https://webui.docs.backend.ai/next/th/project_admin.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/project_admin.html" />
   <link rel="alternate" hreflang="en" href="../en/project_admin.html" />
   <link rel="alternate" hreflang="ja" href="../ja/project_admin.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (38dc70e)">v26.10.0-alpha.1 (38dc70e)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (23550b5)">v26.10.0-alpha.1 (23550b5)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -315,121 +315,124 @@
 <li data-bai-block="50"><p><strong>ตัวกรองคุณสมบัติ</strong>: กรองรายการโดยใช้ตัวกรองคุณสมบัติโฟลเดอร์จัดเก็บมาตรฐาน</p>
 </li>
 </ul>
-<h3 data-bai-block="51" id="project_admin-การสรางโฟลเดอร">การสร้างโฟลเดอร์<a class="hash-link" href="#project_admin-การสรางโฟลเดอร" aria-label="Direct link to การสร้างโฟลเดอร์">#</a></h3>
-<p data-bai-block="52">ในการสร้างโฟลเดอร์ใหม่จากหน้านี้:</p>
+<p data-bai-block="51">ใช้การดำเนินการ <strong>แก้ไขป้ายกำกับ</strong> ของโฟลเดอร์เพื่อกำหนดป้ายกำกับแบบคีย์-ค่าให้โฟลเดอร์นั้น หรือเลือกหลายโฟลเดอร์แล้วคลิก <strong>เพิ่มป้ายกำกับ</strong> เพื่อกำหนดป้ายกำกับพร้อมกัน</p>
+<h3 data-bai-block="52" id="project_admin-การสรางโฟลเดอร">การสร้างโฟลเดอร์<a class="hash-link" href="#project_admin-การสรางโฟลเดอร" aria-label="Direct link to การสร้างโฟลเดอร์">#</a></h3>
+<p data-bai-block="53">ในการสร้างโฟลเดอร์ใหม่จากหน้านี้:</p>
 <ol>
-<li data-bai-block="53">คลิกปุ่ม <strong>สร้างโฟลเดอร์</strong> ที่มุมขวาบนของหน้า</li>
-<li data-bai-block="54">กรอกข้อมูลโฟลเดอร์ในโมดอลการสร้าง</li>
-<li data-bai-block="55">คลิก <strong>สร้าง</strong> เพื่อสร้างโฟลเดอร์</li>
+<li data-bai-block="54">คลิกปุ่ม <strong>สร้างโฟลเดอร์</strong> ที่มุมขวาบนของหน้า</li>
+<li data-bai-block="55">กรอกข้อมูลโฟลเดอร์ในโมดอลการสร้าง</li>
+<li data-bai-block="56">คลิก <strong>สร้าง</strong> เพื่อสร้างโฟลเดอร์</li>
 </ol>
-<p><figure data-bai-block="56" class="doc-figure"><img src="./images/project_admin_create_folder_modal.png" alt="" class="doc-image" style="width:650px" loading="lazy" decoding="async" width="1300" height="872" /><figcaption>รูปที่ 20.10</figcaption></figure>
+<p><figure data-bai-block="57" class="doc-figure"><img src="./images/project_admin_create_folder_modal.png" alt="" class="doc-image" style="width:650px" loading="lazy" decoding="async" width="1300" height="872" /><figcaption>รูปที่ 20.10</figcaption></figure>
 </p>
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 <div class="admonition admonition-info">
-<div data-bai-block="57" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"/></svg></span>ข้อมูล</div>
+<div data-bai-block="58" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"/></svg></span>ข้อมูล</div>
 <div class="admonition-content">
 
-<p data-bai-block="58">โฟลเดอร์ที่สร้างจากหน้าข้อมูลของผู้ดูแลโปรเจกต์จะเป็น<strong>โฟลเดอร์โปรเจกต์</strong>เสมอ โมดอลการสร้างไม่มีตัวเลือกประเภทโฟลเดอร์ และจะแสดงข้อความต่อไปนี้เพื่อระบุสิ่งนี้อย่างชัดเจน:</p>
+<p data-bai-block="59">โฟลเดอร์ที่สร้างจากหน้าข้อมูลของผู้ดูแลโปรเจกต์จะเป็น<strong>โฟลเดอร์โปรเจกต์</strong>เสมอ โมดอลการสร้างไม่มีตัวเลือกประเภทโฟลเดอร์ และจะแสดงข้อความต่อไปนี้เพื่อระบุสิ่งนี้อย่างชัดเจน:</p>
 <blockquote>
-<p data-bai-block="59">ในหน้าข้อมูลผู้ดูแลโครงการ โฟลเดอร์จะถูกสร้างเป็นโฟลเดอร์โครงการ</p>
+<p data-bai-block="60">ในหน้าข้อมูลผู้ดูแลโครงการ โฟลเดอร์จะถูกสร้างเป็นโฟลเดอร์โครงการ</p>
 </blockquote>
 </div></div>
 
 
-<p data-bai-block="60">สำหรับรายละเอียดเกี่ยวกับโหมดการใช้งานโฟลเดอร์, สิทธิ์ และโควต้า ดูที่บท<a href="./vfolder.html#vfolders">โฟลเดอร์จัดเก็บ</a></p>
-<h3 data-bai-block="61" id="project_admin-การคนคาหรอลบโฟลเดอรอยางถาวร">การคืนค่าหรือลบโฟลเดอร์อย่างถาวร<a class="hash-link" href="#project_admin-การคนคาหรอลบโฟลเดอรอยางถาวร" aria-label="Direct link to การคืนค่าหรือลบโฟลเดอร์อย่างถาวร">#</a></h3>
-<p data-bai-block="62">สลับไปยังแท็บ <strong>ขยะ</strong> เพื่อดูโฟลเดอร์ที่ถูกลบแบบนุ่ม เลือกโฟลเดอร์หนึ่งรายการหรือมากกว่าโดยใช้ช่องทำเครื่องหมายในแถว จากนั้นใช้ปุ่มการดำเนินการในส่วนหัวที่ปรากฏข้างจำนวนที่เลือก:</p>
+<p data-bai-block="61">สำหรับรายละเอียดเกี่ยวกับโหมดการใช้งานโฟลเดอร์, สิทธิ์ และโควต้า ดูที่บท<a href="./vfolder.html#vfolders">โฟลเดอร์จัดเก็บ</a></p>
+<h3 data-bai-block="62" id="project_admin-การคนคาหรอลบโฟลเดอรอยางถาวร">การคืนค่าหรือลบโฟลเดอร์อย่างถาวร<a class="hash-link" href="#project_admin-การคนคาหรอลบโฟลเดอรอยางถาวร" aria-label="Direct link to การคืนค่าหรือลบโฟลเดอร์อย่างถาวร">#</a></h3>
+<p data-bai-block="63">สลับไปยังแท็บ <strong>ขยะ</strong> เพื่อดูโฟลเดอร์ที่ถูกลบแบบนุ่ม เลือกโฟลเดอร์หนึ่งรายการหรือมากกว่าโดยใช้ช่องทำเครื่องหมายในแถว จากนั้นใช้ปุ่มการดำเนินการในส่วนหัวที่ปรากฏข้างจำนวนที่เลือก:</p>
 <ul>
-<li data-bai-block="63"><strong>คืนค่า</strong>: ย้ายโฟลเดอร์ที่เลือกกลับไปยังแท็บใช้งานอยู่</li>
-<li data-bai-block="64"><strong>ลบถาวร</strong>: ล้างโฟลเดอร์ที่เลือกอย่างถาวร การดำเนินการนี้ไม่สามารถยกเลิกได้ และต้องการให้คุณพิมพ์ชื่อโฟลเดอร์เพื่อยืนยัน</li>
+<li data-bai-block="64"><strong>คืนค่า</strong>: ย้ายโฟลเดอร์ที่เลือกกลับไปยังแท็บใช้งานอยู่</li>
+<li data-bai-block="65"><strong>ลบถาวร</strong>: ล้างโฟลเดอร์ที่เลือกอย่างถาวร การดำเนินการนี้ไม่สามารถยกเลิกได้ และต้องการให้คุณพิมพ์ชื่อโฟลเดอร์เพื่อยืนยัน</li>
 </ul>
-<p><figure data-bai-block="65" class="doc-figure"><img src="./images/project_admin_data_deleted_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 20.11</figcaption></figure>
+<p><figure data-bai-block="66" class="doc-figure"><img src="./images/project_admin_data_deleted_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 20.11</figcaption></figure>
 </p>
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 <div class="admonition admonition-danger">
-<div data-bai-block="66" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"/></svg></span>อันตราย</div>
+<div data-bai-block="67" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"/></svg></span>อันตราย</div>
 <div class="admonition-content">
 
-<p data-bai-block="67">การลบโฟลเดอร์จัดเก็บอย่างถาวรจะลบเนื้อหาทั้งหมดและไม่สามารถยกเลิกได้ โมดอลยืนยันต้องการให้คุณพิมพ์ชื่อโฟลเดอร์ก่อนที่ปุ่มลบจะใช้งานได้</p>
+<p data-bai-block="68">การลบโฟลเดอร์จัดเก็บอย่างถาวรจะลบเนื้อหาทั้งหมดและไม่สามารถยกเลิกได้ โมดอลยืนยันต้องการให้คุณพิมพ์ชื่อโฟลเดอร์ก่อนที่ปุ่มลบจะใช้งานได้</p>
 </div></div>
 
 
 <p><a id="sessions"></a></p>
-<h2 data-bai-block="68" id="project_admin-เซสชน">เซสชัน<a class="hash-link" href="#project_admin-เซสชน" aria-label="Direct link to เซสชัน">#</a></h2>
-<p data-bai-block="69">หน้า <strong>เซสชัน</strong> แสดงเซสชันการคำนวณที่ผู้ใช้ในโปรเจกต์ที่เลือกอยู่ในปัจจุบันเป็นเจ้าของ ใช้หน้านี้เพื่อเฝ้าติดตามภาระงานที่ใช้งานอยู่ ระบุเซสชันที่ทำงานเป็นเวลานาน หรือยุติเซสชันที่ไม่จำเป็นอีกต่อไป</p>
-<p><figure data-bai-block="70" class="doc-figure"><img src="./images/project_admin_sessions_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 20.12</figcaption></figure>
+<h2 data-bai-block="69" id="project_admin-เซสชน">เซสชัน<a class="hash-link" href="#project_admin-เซสชน" aria-label="Direct link to เซสชัน">#</a></h2>
+<p data-bai-block="70">หน้า <strong>เซสชัน</strong> แสดงเซสชันการคำนวณที่ผู้ใช้ในโปรเจกต์ที่เลือกอยู่ในปัจจุบันเป็นเจ้าของ ใช้หน้านี้เพื่อเฝ้าติดตามภาระงานที่ใช้งานอยู่ ระบุเซสชันที่ทำงานเป็นเวลานาน หรือยุติเซสชันที่ไม่จำเป็นอีกต่อไป</p>
+<p><figure data-bai-block="71" class="doc-figure"><img src="./images/project_admin_sessions_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 20.12</figcaption></figure>
 </p>
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
-<p data-bai-block="71">หน้านี้มีตัวควบคุมต่อไปนี้:</p>
+<p data-bai-block="72">หน้านี้มีตัวควบคุมต่อไปนี้:</p>
 <ul>
-<li data-bai-block="72">ตัวควบคุมแบบแบ่งส่วน <strong>กำลังทำงาน / สิ้นสุดแล้ว</strong>: สลับระหว่างเซสชันที่กำลังทำงานในปัจจุบันและเซสชันที่สิ้นสุดแล้ว</li>
-<li data-bai-block="73"><strong>ตัวกรองคุณสมบัติและการจัดเรียง</strong>: กรองรายการตาม ID, ชื่อเซสชัน หรือเจ้าของ ค่าเจ้าของจะเลือกจากรายการบัญชีผู้ใช้ที่ค้นหาได้แทนการพิมพ์ UUID และแท็กตัวกรองที่ได้จะแสดงอีเมลของบัญชีนั้น คลิกที่ส่วนหัวคอลัมน์ที่สามารถจัดเรียงได้เพื่อจัดเรียงตาราง</li>
+<li data-bai-block="73">ตัวควบคุมแบบแบ่งส่วน <strong>กำลังทำงาน / สิ้นสุดแล้ว</strong>: สลับระหว่างเซสชันที่กำลังทำงานในปัจจุบันและเซสชันที่สิ้นสุดแล้ว</li>
+<li data-bai-block="74"><strong>ตัวกรองคุณสมบัติและการจัดเรียง</strong>: กรองรายการตาม ID, ชื่อเซสชัน หรือเจ้าของ ค่าเจ้าของจะเลือกจากรายการบัญชีผู้ใช้ที่ค้นหาได้แทนการพิมพ์ UUID และแท็กตัวกรองที่ได้จะแสดงอีเมลของบัญชีนั้น คลิกที่ส่วนหัวคอลัมน์ที่สามารถจัดเรียงได้เพื่อจัดเรียงตาราง</li>
 </ul>
-<h3 data-bai-block="74" id="project_admin-การยตเซสชน">การยุติเซสชัน<a class="hash-link" href="#project_admin-การยตเซสชน" aria-label="Direct link to การยุติเซสชัน">#</a></h3>
-<p data-bai-block="75">ในการยุติเซสชันหนึ่งหรือหลายเซสชัน:</p>
+<p data-bai-block="75">เซสชันรองรับป้ายกำกับแบบคีย์-ค่าเช่นกัน ใช้การดำเนินการ <strong>แก้ไขป้ายกำกับ</strong> ของเซสชัน หรือเลือกหลายเซสชันแล้วคลิก <strong>เพิ่มป้ายกำกับ</strong> เพื่อกำหนดป้ายกำกับพร้อมกัน</p>
+<h3 data-bai-block="76" id="project_admin-การยตเซสชน">การยุติเซสชัน<a class="hash-link" href="#project_admin-การยตเซสชน" aria-label="Direct link to การยุติเซสชัน">#</a></h3>
+<p data-bai-block="77">ในการยุติเซสชันหนึ่งหรือหลายเซสชัน:</p>
 <ol>
-<li data-bai-block="76">เลือกเซสชันที่ต้องการยุติโดยใช้ช่องทำเครื่องหมายในคอลัมน์ซ้ายสุด หากต้องการยุติเซสชันเดียว คุณสามารถใช้ปุ่ม <strong>ยุติ</strong> ที่อยู่ข้างชื่อเซสชันได้</li>
-<li data-bai-block="77">คลิกไอคอนปิดเครื่องในส่วนหัวของตารางเพื่อเปิดโมดอลยืนยัน</li>
-<li data-bai-block="78">ตรวจสอบรายการเซสชันเป้าหมายในโมดอล</li>
-<li data-bai-block="79">หากต้องการ ให้เลือกช่องทำเครื่องหมาย <strong>บังคับยุติ</strong> เพื่อยุติหรือยกเลิกเซสชันโดยไม่คำนึงถึงสถานะปัจจุบัน การเปิดใช้งานตัวเลือกนี้จะแสดงคำเตือนและเปลี่ยนป้ายกำกับปุ่มยืนยันจาก <strong>ยุติ</strong> เป็น <strong>บังคับยุติ</strong></li>
-<li data-bai-block="80">คลิกปุ่มยืนยันเพื่อยุติเซสชัน</li>
+<li data-bai-block="78">เลือกเซสชันที่ต้องการยุติโดยใช้ช่องทำเครื่องหมายในคอลัมน์ซ้ายสุด หากต้องการยุติเซสชันเดียว คุณสามารถใช้ปุ่ม <strong>ยุติ</strong> ที่อยู่ข้างชื่อเซสชันได้</li>
+<li data-bai-block="79">คลิกไอคอนปิดเครื่องในส่วนหัวของตารางเพื่อเปิดโมดอลยืนยัน</li>
+<li data-bai-block="80">ตรวจสอบรายการเซสชันเป้าหมายในโมดอล</li>
+<li data-bai-block="81">หากต้องการ ให้เลือกช่องทำเครื่องหมาย <strong>บังคับยุติ</strong> เพื่อยุติหรือยกเลิกเซสชันโดยไม่คำนึงถึงสถานะปัจจุบัน การเปิดใช้งานตัวเลือกนี้จะแสดงคำเตือนและเปลี่ยนป้ายกำกับปุ่มยืนยันจาก <strong>ยุติ</strong> เป็น <strong>บังคับยุติ</strong></li>
+<li data-bai-block="82">คลิกปุ่มยืนยันเพื่อยุติเซสชัน</li>
 </ol>
-<p><figure data-bai-block="81" class="doc-figure"><img src="./images/project_admin_terminate_session_modal.png" alt="" class="doc-image" style="width:520px" loading="lazy" decoding="async" width="1040" height="512" /><figcaption>รูปที่ 20.13</figcaption></figure>
+<p><figure data-bai-block="83" class="doc-figure"><img src="./images/project_admin_terminate_session_modal.png" alt="" class="doc-image" style="width:520px" loading="lazy" decoding="async" width="1040" height="512" /><figcaption>รูปที่ 20.13</figcaption></figure>
 </p>
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 <div class="admonition admonition-warning">
-<div data-bai-block="82" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>คำเตือน</div>
+<div data-bai-block="84" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>คำเตือน</div>
 <div class="admonition-content">
 
-<p data-bai-block="83">ใช้ <strong>บังคับยุติ</strong> เฉพาะเมื่อเซสชันค้างและสถานะไม่เปลี่ยนแปลงเป็นระยะเวลานานเกินไปเท่านั้น การบังคับยุติจะไม่ลบคอนเทนเนอร์จริงบนเอเจนต์ ดังนั้นอาจต้องทำความสะอาดด้วยตนเองในภายหลัง</p>
+<p data-bai-block="85">ใช้ <strong>บังคับยุติ</strong> เฉพาะเมื่อเซสชันค้างและสถานะไม่เปลี่ยนแปลงเป็นระยะเวลานานเกินไปเท่านั้น การบังคับยุติจะไม่ลบคอนเทนเนอร์จริงบนเอเจนต์ ดังนั้นอาจต้องทำความสะอาดด้วยตนเองในภายหลัง</p>
 </div></div>
 
 
 <div class="admonition admonition-note">
-<div data-bai-block="84" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="86" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="85">ในขณะนี้ การคลิกชื่อเซสชันบนหน้าเซสชันของผู้ดูแลโปรเจกต์ยังไม่เปิดแผงรายละเอียดเซสชัน สำหรับข้อมูลพื้นฐานเกี่ยวกับเซสชันการคำนวณและมุมมองรายละเอียด ดูที่บท<a href="./session_page.html#session-page">หน้าเซสชัน</a></p>
+<p data-bai-block="87">ในขณะนี้ การคลิกชื่อเซสชันบนหน้าเซสชันของผู้ดูแลโปรเจกต์ยังไม่เปิดแผงรายละเอียดเซสชัน สำหรับข้อมูลพื้นฐานเกี่ยวกับเซสชันการคำนวณและมุมมองรายละเอียด ดูที่บท<a href="./session_page.html#session-page">หน้าเซสชัน</a></p>
 </div></div>
 
 
 <p><a id="deployments"></a></p>
-<h2 data-bai-block="86" id="project_admin-การปรบใช">การปรับใช้<a class="hash-link" href="#project_admin-การปรบใช" aria-label="Direct link to การปรับใช้">#</a></h2>
-<p data-bai-block="87">หน้า <strong>การปรับใช้</strong> แสดงการปรับใช้โมเดลที่โปรเจกต์ที่เลือกอยู่ในปัจจุบันเป็นเจ้าของ ใช้หน้านี้เพื่อดูแลปลายทางการอนุมาน แก้ไขการตั้งค่าการปรับใช้ หรือลบการปรับใช้ที่ไม่ใช้งานแล้ว</p>
-<p><figure data-bai-block="88" class="doc-figure"><img src="./images/project_admin_deployments_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 20.14</figcaption></figure>
+<h2 data-bai-block="88" id="project_admin-การปรบใช">การปรับใช้<a class="hash-link" href="#project_admin-การปรบใช" aria-label="Direct link to การปรับใช้">#</a></h2>
+<p data-bai-block="89">หน้า <strong>การปรับใช้</strong> แสดงการปรับใช้โมเดลที่โปรเจกต์ที่เลือกอยู่ในปัจจุบันเป็นเจ้าของ ใช้หน้านี้เพื่อดูแลปลายทางการอนุมาน แก้ไขการตั้งค่าการปรับใช้ หรือลบการปรับใช้ที่ไม่ใช้งานแล้ว</p>
+<p><figure data-bai-block="90" class="doc-figure"><img src="./images/project_admin_deployments_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 20.14</figcaption></figure>
 </p>
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
-<p data-bai-block="89">หน้านี้มีตัวควบคุมต่อไปนี้:</p>
+<p data-bai-block="91">หน้านี้มีตัวควบคุมต่อไปนี้:</p>
 <ul>
-<li data-bai-block="90">ตัวควบคุมแบบแบ่งส่วน <strong>กำลังทำงาน / สิ้นสุดแล้ว</strong>: สลับระหว่างการปรับใช้ที่กำลังทำงานในปัจจุบันและการปรับใช้ที่สิ้นสุดแล้ว</li>
-<li data-bai-block="91"><strong>ตัวกรองคุณสมบัติ</strong>: กรองรายการตามชื่อ, แท็ก, URL ปลายทาง หรือการเปิดเป็นสาธารณะ</li>
+<li data-bai-block="92">ตัวควบคุมแบบแบ่งส่วน <strong>กำลังทำงาน / สิ้นสุดแล้ว</strong>: สลับระหว่างการปรับใช้ที่กำลังทำงานในปัจจุบันและการปรับใช้ที่สิ้นสุดแล้ว</li>
+<li data-bai-block="93"><strong>ตัวกรองคุณสมบัติ</strong>: กรองรายการตามชื่อ, แท็ก, URL ปลายทาง หรือการเปิดเป็นสาธารณะ</li>
 </ul>
-<p data-bai-block="92">ตารางแสดงคอลัมน์ชื่อ, รีวิชัน, วงจรชีวิต, เรพลิกา, โมเดล, เจ้าของ และวันที่สร้างของการปรับใช้ พร้อมด้วยโดเมน, โปรเจกต์ และกลุ่มทรัพยากรของการปรับใช้ตามความเหมาะสม</p>
-<p data-bai-block="93">คอลัมน์ <strong>รีวิชัน</strong> แสดงรีวิชันปัจจุบันของการปรับใช้เป็นลิงก์ <code>#N</code> ที่คลิกได้ คลิกที่ลิงก์นี้เพื่อเปิดแผงที่แสดงรายละเอียดของรีวิชันปัจจุบัน</p>
-<h3 data-bai-block="94" id="project_admin-การดำเนนการของการปรบใช">การดำเนินการของการปรับใช้<a class="hash-link" href="#project_admin-การดำเนนการของการปรบใช" aria-label="Direct link to การดำเนินการของการปรับใช้">#</a></h3>
-<p data-bai-block="95">การดำเนินการต่อไปนี้พร้อมใช้งานในแต่ละแถวการปรับใช้:</p>
+<p data-bai-block="94">ตารางแสดงคอลัมน์ชื่อ, รีวิชัน, วงจรชีวิต, เรพลิกา, โมเดล, เจ้าของ และวันที่สร้างของการปรับใช้ พร้อมด้วยโดเมน, โปรเจกต์ และกลุ่มทรัพยากรของการปรับใช้ตามความเหมาะสม</p>
+<p data-bai-block="95">คอลัมน์ <strong>รีวิชัน</strong> แสดงรีวิชันปัจจุบันของการปรับใช้เป็นลิงก์ <code>#N</code> ที่คลิกได้ คลิกที่ลิงก์นี้เพื่อเปิดแผงที่แสดงรายละเอียดของรีวิชันปัจจุบัน</p>
+<h3 data-bai-block="96" id="project_admin-การดำเนนการของการปรบใช">การดำเนินการของการปรับใช้<a class="hash-link" href="#project_admin-การดำเนนการของการปรบใช" aria-label="Direct link to การดำเนินการของการปรับใช้">#</a></h3>
+<p data-bai-block="97">การดำเนินการต่อไปนี้พร้อมใช้งานในแต่ละแถวการปรับใช้:</p>
 <ul>
-<li data-bai-block="96">คลิก<strong>ชื่อการปรับใช้</strong>เพื่อไปยังหน้ารายละเอียดการปรับใช้ภายในขอบเขตของผู้ดูแลโปรเจกต์</li>
-<li data-bai-block="97">คลิก<strong>หมายเลขรีวิชัน</strong> (<code>#N</code>) เพื่อเปิดแผงรายละเอียดของรีวิชันปัจจุบัน</li>
-<li data-bai-block="98">คลิก<strong>ไอคอนดินสอ</strong>เพื่อแก้ไขการกำหนดค่าของการปรับใช้ในโมดอลการตั้งค่า</li>
-<li data-bai-block="99">คลิก<strong>ไอคอนถังขยะ</strong>เพื่อลบการปรับใช้ โมดอลยืนยันต้องการให้คุณพิมพ์ชื่อการปรับใช้ก่อนจึงจะดำเนินการลบ</li>
+<li data-bai-block="98">คลิก<strong>ชื่อการปรับใช้</strong>เพื่อไปยังหน้ารายละเอียดการปรับใช้ภายในขอบเขตของผู้ดูแลโปรเจกต์</li>
+<li data-bai-block="99">คลิก<strong>หมายเลขรีวิชัน</strong> (<code>#N</code>) เพื่อเปิดแผงรายละเอียดของรีวิชันปัจจุบัน</li>
+<li data-bai-block="100">คลิก<strong>ไอคอนดินสอ</strong>เพื่อแก้ไขการกำหนดค่าของการปรับใช้ในโมดอลการตั้งค่า</li>
+<li data-bai-block="101">ใช้การดำเนินการ <strong>แก้ไขป้ายกำกับ</strong> เพื่อเพิ่ม เปลี่ยน หรือลบป้ายกำกับแบบคีย์-ค่าของการปรับใช้</li>
+<li data-bai-block="102">คลิก<strong>ไอคอนถังขยะ</strong>เพื่อลบการปรับใช้ โมดอลยืนยันต้องการให้คุณพิมพ์ชื่อการปรับใช้ก่อนจึงจะดำเนินการลบ</li>
 </ul>
-<p><figure data-bai-block="100" class="doc-figure"><img src="./images/project_admin_deployment_detail.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 20.15</figcaption></figure>
+<p><figure data-bai-block="103" class="doc-figure"><img src="./images/project_admin_deployment_detail.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 20.15</figcaption></figure>
 </p>
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
-<p data-bai-block="101">สำหรับรายละเอียดเกี่ยวกับรีวิชัน, เรพลิกา และการกำหนดเส้นทางทราฟฟิกของการปรับใช้ ดูที่บท<a href="./deployment.html#model-serving">การปรับใช้</a></p>
+<p data-bai-block="104">สำหรับรายละเอียดเกี่ยวกับรีวิชัน, เรพลิกา และการกำหนดเส้นทางทราฟฟิกของการปรับใช้ ดูที่บท<a href="./deployment.html#model-serving">การปรับใช้</a></p>
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/th/project_admin/project_admin.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> แก้ไขหน้านี้</a>
-  <span class="last-updated">อัปเดตล่าสุด 11 ต.ค. 2569</span>
+  <span class="last-updated">อัปเดตล่าสุด 16 ต.ค. 2569</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./user_settings.html">
