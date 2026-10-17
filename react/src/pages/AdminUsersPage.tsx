@@ -270,6 +270,8 @@ const AdminUsersPage: React.FC = () => {
   // Back/forward: the hook holds the callback until `queryParams` and
   // `tablePaginationOption` describe the URL the user navigated to.
   useBrowserPopstateEffect(loadTabFromQueryParams);
+  // Nothing queries a router navigation to this same path; an in-app link to
+  // another tab or filter here must reload the document instead (#10265).
 
   const tabItems: BAICardTabItem[] = [
     {

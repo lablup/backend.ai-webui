@@ -558,13 +558,18 @@ export function startGuidedMode(options: GuidedModeOptions) {
 
   /**
    * A stop on another page: the app's own router first, so the walkthrough
-   * keeps its state and the route watcher re-runs resolution. Only a document
-   * that publishes no navigate falls back to a full reload of the set link.
+   * keeps its state and the route watcher re-runs resolution. A stop on this
+   * same path reloads instead: the page stays mounted under a router
+   * navigation, and pages that query on mount would keep the old data. So does
+   * a document that publishes no navigate.
    */
   function navigateTo(stop: WalkthroughStop): void {
     const query = stop.anchor.q ? `?${stop.anchor.q}` : '';
     const target = `${stop.anchor.p}${query}${stop.appHash ? `#${stop.appHash}` : ''}`;
-    const navigate = window.__BAI_REVIEW__?.navigate;
+    const navigate =
+      stop.anchor.p === location.pathname
+        ? undefined
+        : window.__BAI_REVIEW__?.navigate;
     if (navigate) {
       try {
         navigate(target);

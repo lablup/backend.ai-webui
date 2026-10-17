@@ -483,6 +483,49 @@ describe('GlobalSearchPalette', () => {
     );
   });
 
+  it('reloads instead of routing when the hit is on the current path', async () => {
+    const assign = vi.fn();
+    vi.stubGlobal('location', {
+      pathname: '/usersettings',
+      search: '?tab=logs',
+      assign,
+    });
+    try {
+      const user = await openPalette();
+
+      await user.click(screen.getByText('Auto logout'));
+
+      await waitFor(() =>
+        expect(assign).toHaveBeenCalledWith(
+          '/usersettings?tab=general&setting=userSettings.AutoLogout',
+        ),
+      );
+      expect(navigate).not.toHaveBeenCalled();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it('routes on the current path in Electron, which cannot deep-load', async () => {
+    const assign = vi.fn();
+    vi.stubGlobal('location', {
+      pathname: '/usersettings',
+      search: '?tab=logs',
+      assign,
+    });
+    vi.stubGlobal('isElectron', true);
+    try {
+      const user = await openPalette();
+
+      await user.click(screen.getByText('Auto logout'));
+
+      await waitFor(() => expect(navigate).toHaveBeenCalledTimes(1));
+      expect(assign).not.toHaveBeenCalled();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
   it('runs an action hit with the assembled context instead of navigating', async () => {
     const user = await openPalette();
 
