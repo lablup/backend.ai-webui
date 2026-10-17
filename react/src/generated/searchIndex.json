@@ -57,7 +57,6 @@
         "agent.WatcherStart",
         "agent.WatcherStop",
         "button.ClickForMoreDetails",
-        "button.Create",
         "button.Info",
         "button.Remove",
         "button.Unset",
@@ -1099,7 +1098,6 @@
         "autoScalingRule.NoDataAvailable",
         "autoScalingRule.QueryExecutionFailed",
         "autoScalingRule.RefreshPreview",
-        "button.Create",
         "button.DontSave",
         "data.AllowsLettersNumbersAnd-_Dot",
         "data.AutoMount",
@@ -1393,7 +1391,6 @@
         "adminDeploymentPreset.step.ModelAndExecution",
         "adminDeploymentPreset.step.Resources",
         "adminDeploymentPreset.step.Review",
-        "button.Create",
         "button.Next",
         "button.No",
         "button.Previous",
@@ -1552,7 +1549,6 @@
       "keys": [
         "button.Add",
         "button.Confirm",
-        "button.Create",
         "data.AllowsLettersNumbersAnd-_Dot",
         "data.ModelStore",
         "data.Type",
@@ -1761,7 +1757,18 @@
       "scope": "admin",
       "path": "/admin/maintenance",
       "labelKey": "webui.menu.Maintenance",
-      "tabs": [],
+      "tabs": [
+        {
+          "param": "tab",
+          "key": "maintenance",
+          "labelKey": "webui.menu.Maintenance"
+        },
+        {
+          "param": "tab",
+          "key": "retention-policy",
+          "labelKey": "retentionPolicy.DataRetention"
+        }
+      ],
       "settings": [
         {
           "key": "maintenance.MatchDatabase",
@@ -1796,6 +1803,7 @@
         "dialog.ask.DoYouWantToResetChanges",
         "dialog.warning.CannotBeUndone",
         "general.All",
+        "general.ErrorOccurred",
         "maintenance.RecalculateUsage",
         "maintenance.Recalculating",
         "maintenance.RecalculationFailed",
@@ -1804,6 +1812,20 @@
         "maintenance.RescanImageFinished",
         "maintenance.RescanImageScanning",
         "maintenance.RescanImages",
+        "retentionPolicy.Category",
+        "retentionPolicy.CategoryRequired",
+        "retentionPolicy.CreatePolicy",
+        "retentionPolicy.DeletePolicy",
+        "retentionPolicy.Description",
+        "retentionPolicy.EditPolicy",
+        "retentionPolicy.OnePolicyPerCategory",
+        "retentionPolicy.PolicyAlreadyExistsView",
+        "retentionPolicy.RetentionPeriodDays",
+        "retentionPolicy.RetentionPeriodRequired",
+        "retentionPolicy.RetentionPolicy",
+        "retentionPolicy.SuccessfullyCreated",
+        "retentionPolicy.SuccessfullyDeleted",
+        "retentionPolicy.SuccessfullyUpdated",
         "settings.ChangedFromDefault",
         "settings.NoChangesToDisplay",
         "settings.SearchPlaceholder",
@@ -2036,7 +2058,6 @@
       ],
       "settings": [],
       "keys": [
-        "button.Create",
         "button.Info",
         "data.explorer.ValueRequired",
         "general.FailedToExportCSV",
@@ -2766,7 +2787,6 @@
         "actAs.FailedToOpen",
         "actAs.OpenInNewTab",
         "actAs.UseAsThisUser",
-        "button.Create",
         "button.Download",
         "button.Info",
         "button.More",
@@ -3293,7 +3313,6 @@
       ],
       "settings": [],
       "keys": [
-        "button.Create",
         "deployment.AdditionalMounts",
         "deployment.Applying",
         "deployment.ClusterMode",
@@ -3491,7 +3510,6 @@
         "aiAgent.ToolConfig",
         "aiAgent.ToolPermissionOverrides",
         "button.Add",
-        "button.Create",
         "button.MoreActions",
         "button.Reset",
         "general.AIAgent"
@@ -4189,7 +4207,6 @@
       ],
       "settings": [],
       "keys": [
-        "button.Create",
         "deployment.AdditionalMounts",
         "deployment.Applying",
         "deployment.ClusterMode",

@@ -2738,6 +2738,33 @@
     "SharedMemory": "Memoria condivisa",
     "Updated": "Preimpostazione delle risorse aggiornata"
   },
+  "retentionPolicy": {
+    "Category": "Categoria",
+    "CategoryRequired": "Seleziona una categoria.",
+    "CreatePolicy": "Crea criterio",
+    "DataRetention": "Conservazione dei dati",
+    "DeletePolicy": "Elimina criterio di conservazione",
+    "Description": "Imposta per quanto tempo vengono conservati i dati di ogni categoria. I dati che superano il periodo di conservazione vengono puliti solo per le categorie con criterio abilitato.",
+    "EditPolicy": "Modifica criterio",
+    "OnePolicyPerCategory": "Può esistere un solo criterio per categoria.",
+    "PolicyAlreadyExistsView": "Esiste già un criterio per questa categoria. <viewLink>Visualizza</viewLink>",
+    "RetentionPeriodDays": "Periodo di conservazione (giorni)",
+    "RetentionPeriodRequired": "Inserisci un periodo di conservazione di almeno 1 giorno.",
+    "RetentionPolicy": "Criterio di conservazione",
+    "SuccessfullyCreated": "Criterio di conservazione creato.",
+    "SuccessfullyDeleted": "Criterio di conservazione eliminato.",
+    "SuccessfullyUpdated": "Criterio di conservazione aggiornato.",
+    "categories": {
+      "DEPLOYMENTS": "Distribuzioni",
+      "LOGIN": "Cronologia accessi",
+      "LOGS": "Log",
+      "RECONCILE_HISTORY": "Cronologia riconciliazione",
+      "ROLES_INVITATIONS": "Ruoli e inviti",
+      "SESSIONS": "Sessioni",
+      "USAGE_BUCKETS": "Aggregati di utilizzo",
+      "USAGE_RECORDS": "Record di utilizzo"
+    }
+  },
   "route": {
     "CreatedAt": "Creato a",
     "ErrorCode": "Codice di errore",

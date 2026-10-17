@@ -38,6 +38,26 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Ressourcengruppe auswählen"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "Kategorie",
+    "CreatedAt": "Erstellungsdatum",
+    "Disabled": "Deaktiviert",
+    "Enabled": "aktiviert",
+    "LastSweptAt": "Letzte Bereinigung",
+    "NotSweptYet": "Noch nicht ausgeführt",
+    "RetentionPeriodDays": "Aufbewahrungsdauer (Tage)",
+    "UpdatedAt": "Aktualisiert am",
+    "categories": {
+      "DEPLOYMENTS": "Bereitstellungen",
+      "LOGIN": "Anmeldeverlauf",
+      "LOGS": "Protokolle",
+      "RECONCILE_HISTORY": "Abgleichsverlauf",
+      "ROLES_INVITATIONS": "Rollen & Einladungen",
+      "SESSIONS": "Sitzungen",
+      "USAGE_BUCKETS": "Nutzungs-Buckets",
+      "USAGE_RECORDS": "Nutzungsdatensätze"
+    }
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Sitzung auswählen"
   },

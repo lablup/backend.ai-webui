@@ -38,6 +38,26 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "リソースグループを選択"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "種類",
+    "CreatedAt": "作成日",
+    "Disabled": "無効",
+    "Enabled": "有効",
+    "LastSweptAt": "最終クリーンアップ",
+    "NotSweptYet": "未実行",
+    "RetentionPeriodDays": "保持期間（日）",
+    "UpdatedAt": "更新日時",
+    "categories": {
+      "DEPLOYMENTS": "デプロイメント",
+      "LOGIN": "ログイン履歴",
+      "LOGS": "ログ",
+      "RECONCILE_HISTORY": "調整履歴",
+      "ROLES_INVITATIONS": "ロールと招待",
+      "SESSIONS": "セッション",
+      "USAGE_BUCKETS": "使用量バケット",
+      "USAGE_RECORDS": "使用量記録"
+    }
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "セッションを選択"
   },
