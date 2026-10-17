@@ -108,3 +108,25 @@ export function getLatestUserMessage(messages: Array<ChatMessage>) {
   const userMessages = messages.filter((message) => message.role === 'user');
   return userMessages.at(-1);
 }
+
+/**
+ * Drops the attachment placeholders that ChatHistory's `persist()` leaves
+ * behind (a `file` part whose inlined payload was stripped to `url: ''` to fit
+ * the localStorage quota). They stay in the stored history so the message
+ * list can render "attachment not stored", but must never reach a model: an
+ * empty `url` becomes an empty image payload the provider rejects.
+ */
+export function withoutStorageDroppedAttachments(
+  messages: Array<ChatMessage>,
+): Array<ChatMessage> {
+  return messages.map((message) =>
+    message.parts.some((part) => part.type === 'file' && part.url === '')
+      ? {
+          ...message,
+          parts: message.parts.filter(
+            (part) => !(part.type === 'file' && part.url === ''),
+          ),
+        }
+      : message,
+  );
+}
