@@ -397,6 +397,12 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
         );
       }}
       {...tableProps}
+      rowSelection={
+        tableProps.rowSelection && {
+          getRowLabel: (user) => user.basicInfo?.email ?? '',
+          ...tableProps.rowSelection,
+        }
+      }
     />
   );
 };
