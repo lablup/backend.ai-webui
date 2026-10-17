@@ -13,6 +13,7 @@ import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
@@ -30,7 +31,7 @@ import {
   BAINameActionCell,
   type BAITableSettings,
   BAIUnmountAfterClose,
-  BAIUserSelect,
+  BAIScopedUserSelect,
   availableDeploymentSorterKeys,
   DeploymentOrderValue,
   filterOutEmpty,
@@ -43,10 +44,11 @@ import {
   toEntityLabelFilter,
   useIsLabelableEntityType,
   type ModelDeploymentNodeInList,
+  BAISelect,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Trash2, SquarePenIcon } from 'lucide-react';
-import { useDeferredValue, useState } from 'react';
+import { useDeferredValue, useState, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -130,6 +132,7 @@ const AdminDeployment = ({
   tableSettings,
 }: AdminDeploymentProps) => {
   'use memo';
+  const { domainScope } = useCurrentDomainScope();
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
@@ -273,21 +276,24 @@ const AdminDeployment = ({
       fixedOperator: 'equals' as const,
       rule: uuidRule,
       renderInput: ({ onAddCondition, value, isDisabled }) => (
-        <BAIUserSelect
-          valuePropName="id"
-          label={t('deployment.Owner')}
-          isLabelHidden
-          value={value}
-          isDisabled={isDisabled}
-          onChange={(next, option) =>
-            // The picker emits the user UUID; forward the option label
-            // (email) so the condition tag stays readable.
-            onAddCondition(
-              next as string | undefined,
-              Array.isArray(option) ? option[0]?.label : option?.label,
-            )
-          }
-        />
+        <Suspense fallback={<BAISelect disabled loading />}>
+          <BAIScopedUserSelect
+            scope={domainScope}
+            valuePropName="id"
+            label={t('deployment.Owner')}
+            isLabelHidden
+            value={value}
+            isDisabled={isDisabled}
+            onChange={(next, option) =>
+              // The picker emits the user UUID; forward the option label
+              // (email) so the condition tag stays readable.
+              onAddCondition(
+                next as string | undefined,
+                Array.isArray(option) ? option[0]?.label : option?.label,
+              )
+            }
+          />
+        </Suspense>
       ),
     },
     // `replicas.some.X` nests as ReplicaNestedFilter -> ReplicaFilter -> the

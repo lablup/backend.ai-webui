@@ -7,6 +7,7 @@ import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSetting
 import { KeypairSettingModalModifyMutation } from '../__generated__/KeypairSettingModalModifyMutation.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
+import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import BAIFormItem from './BAIFormItem';
 import KeypairResourcePolicySelect from './KeypairResourcePolicySelect';
 import { AstryxFormNumberInput } from './astryxFormControls';
@@ -15,7 +16,7 @@ import {
   BAIModal,
   type BAIModalProps,
   BAISelect,
-  BAIUserSelect,
+  BAIScopedUserSelect,
 } from 'backend.ai-ui';
 import { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -38,6 +39,7 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
   ...modalProps
 }) => {
   const { t } = useTranslation();
+  const { domainScope } = useCurrentDomainScope();
   const { message } = App.useApp();
   const formRef = useRef<FormInstance<KeypairSettingModalFormInput>>(null);
 
@@ -151,7 +153,7 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
         initialValues={keypair ? { ...keypair } : {}}
       >
         {!keypair && (
-          // `BAIUserSelect` is the direct child of `BAIFormItem` so antd binds
+          // `BAIScopedUserSelect` is the direct child of `BAIFormItem` so antd binds
           // its value/onChange automatically. The fallback mirrors the same
           // `BAIFormItem` to keep the field and its required rule registered
           // while the select fetches. Same shape as `ProjectAdminSettingModal`.
@@ -181,7 +183,8 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
                 },
               ]}
             >
-              <BAIUserSelect
+              <BAIScopedUserSelect
+                scope={domainScope}
                 label={t('general.User')}
                 isLabelHidden
                 placeholder={t('credential.SelectUser')}

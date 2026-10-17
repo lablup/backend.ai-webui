@@ -4,13 +4,14 @@
  */
 import { StorageHostSettingsPanel_storageVolumeFrgmt$key } from '../__generated__/StorageHostSettingsPanel_storageVolumeFrgmt.graphql';
 import { QuotaScopeType, addQuotaScopeTypePrefix } from '../helper/index';
+import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import BAIRadioGroup from './BAIRadioGroup';
 import QuotaScopeTable from './QuotaScopeTable';
 import {
   BAISkeleton,
   BAIAdminProjectSelect,
   BAIFlex,
-  BAIUserSelect,
+  BAIScopedUserSelect,
 } from 'backend.ai-ui';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,6 +25,7 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
   storageVolumeFrgmt,
 }) => {
   'use memo';
+  const { domainScope } = useCurrentDomainScope();
   const { t } = useTranslation();
   const storageVolume = useFragment(
     graphql`
@@ -80,7 +82,8 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
         ) : (
           // valuePropName="id" makes the picked value the user's id (used as
           // the quota scope entity id), not the email.
-          <BAIUserSelect
+          <BAIScopedUserSelect
+            scope={domainScope}
             label={t('storageHost.ForUser')}
             isLabelHidden
             valuePropName="id"

@@ -8,6 +8,7 @@ import { ProjectAdminSettingModalRevokeMutation } from '../__generated__/Project
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { useWebUINavigate } from '../hooks';
+import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
@@ -18,7 +19,7 @@ import {
   BAIModalProps,
   BAISelect,
   BAITable,
-  BAIUserSelect,
+  BAIScopedUserSelect,
   filterOutNullAndUndefined,
   useBAILogger,
   useMutationWithPromise,
@@ -169,6 +170,7 @@ const ProjectAdminSettingModal = ({
   ...modalProps
 }: ProjectAdminSettingModalProps) => {
   'use memo';
+  const { domainScope } = useCurrentDomainScope();
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
@@ -350,7 +352,8 @@ const ProjectAdminSettingModal = ({
                 ]}
                 style={{ flex: 1, marginBottom: 0 }}
               >
-                <BAIUserSelect
+                <BAIScopedUserSelect
+                  scope={domainScope}
                   multiple
                   valuePropName="id"
                   label={t('rbac.SelectUsers')}

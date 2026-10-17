@@ -24,6 +24,7 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import {
+  BAISelect,
   BAISkeleton,
   BAICard,
   BAIEntityLabelBulkEditButton,
@@ -33,7 +34,7 @@ import {
   BAINameActionCell,
   BAISelectionLabel,
   BAISessionNodesV2,
-  BAIUserSelect,
+  BAIScopedUserSelect,
   INITIAL_FETCH_KEY,
   availableSessionV2SorterValues,
   filterOutEmpty,
@@ -219,21 +220,24 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
                 propertyLabel: t('session.Owner'),
                 type: 'uuid',
                 renderInput: ({ onAddCondition, value, isDisabled }) => (
-                  <BAIUserSelect
-                    valuePropName="id"
-                    label={t('session.Owner')}
-                    isLabelHidden
-                    value={value}
-                    isDisabled={isDisabled}
-                    onChange={(next, option) =>
-                      onAddCondition(
-                        next as string | undefined,
-                        Array.isArray(option)
-                          ? option[0]?.label
-                          : option?.label,
-                      )
-                    }
-                  />
+                  <Suspense fallback={<BAISelect disabled loading />}>
+                    <BAIScopedUserSelect
+                      scope={{ project: [{ value: projectId }] }}
+                      valuePropName="id"
+                      label={t('session.Owner')}
+                      isLabelHidden
+                      value={value}
+                      isDisabled={isDisabled}
+                      onChange={(next, option) =>
+                        onAddCondition(
+                          next as string | undefined,
+                          Array.isArray(option)
+                            ? option[0]?.label
+                            : option?.label,
+                        )
+                      }
+                    />
+                  </Suspense>
                 ),
               },
               ...(isLabelable
