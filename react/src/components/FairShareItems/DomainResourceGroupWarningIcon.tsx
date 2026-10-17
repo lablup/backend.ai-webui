@@ -2,7 +2,6 @@ import type { DomainResourceGroupWarningIconFragment$key } from '../../__generat
 import type { DomainResourceGroupWarningIconQuery } from '../../__generated__/DomainResourceGroupWarningIconQuery.graphql';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIIconWithTooltip } from 'backend.ai-ui';
-import * as _ from 'lodash-es';
 import { TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
@@ -29,23 +28,28 @@ const DomainResourceGroupWarningIcon: React.FC<
     domainFairShareFrgmt,
   );
 
-  const { domain } = useLazyLoadQuery<DomainResourceGroupWarningIconQuery>(
+  const { domainV2 } = useLazyLoadQuery<DomainResourceGroupWarningIconQuery>(
     graphql`
-      query DomainResourceGroupWarningIconQuery($domainName: String) {
-        domain(name: $domainName) {
-          scaling_groups
+      query DomainResourceGroupWarningIconQuery(
+        $domainName: String!
+        $resourceGroupName: String!
+      ) {
+        domainV2(domainName: $domainName) {
+          resourceGroups(filter: { name: { equals: $resourceGroupName } })
+            @since(version: "26.9.0a1") {
+            count
+          }
         }
       }
     `,
-    { domainName },
+    { domainName, resourceGroupName },
     {
       fetchPolicy: 'store-and-network',
     },
   );
 
-  const scalingGroups = domain?.scaling_groups ?? [];
-
-  if (!resourceGroupName || _.includes(scalingGroups, resourceGroupName)) {
+  // `resourceGroups` is stripped before 26.9.0a1; an unknown answer raises no warning.
+  if (!resourceGroupName || (domainV2?.resourceGroups?.count ?? 1) > 0) {
     return null;
   }
 

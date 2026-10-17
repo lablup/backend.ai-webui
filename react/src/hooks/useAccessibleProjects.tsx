@@ -3,11 +3,17 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '.';
-import { useAccessibleProjectsQuery } from '../__generated__/useAccessibleProjectsQuery.graphql';
+import type { useAccessibleProjectsDomainProjectsPaginationQuery } from '../__generated__/useAccessibleProjectsDomainProjectsPaginationQuery.graphql';
+import {
+  ProjectTypeV2,
+  useAccessibleProjectsQuery,
+} from '../__generated__/useAccessibleProjectsQuery.graphql';
+import type { useAccessibleProjects_domainProjectsFragment$key } from '../__generated__/useAccessibleProjects_domainProjectsFragment.graphql';
 import { useCurrentUserRole } from './backendai';
-import { toLocalId } from 'backend.ai-ui';
+import { useCurrentDomainScope } from './useCurrentDomainScope';
 import * as _ from 'lodash-es';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { useEffect, useState } from 'react';
+import { graphql, useLazyLoadQuery, usePaginationFragment } from 'react-relay';
 import type { FetchPolicy } from 'relay-runtime';
 
 interface UseAccessibleProjectsOptions {
@@ -25,6 +31,32 @@ interface UseAccessibleProjectsOptions {
   fetchPolicy?: FetchPolicy;
 }
 
+/** The legacy `groups` row shape the consumers were written against. */
+export interface AccessibleProject {
+  id: string;
+  name: string;
+  type: ProjectTypeV2;
+  is_active: boolean | null;
+  resource_policy: string;
+}
+
+type ProjectV2Edge = {
+  readonly node: {
+    readonly entityId: string;
+    readonly basicInfo: { readonly name: string; readonly type: ProjectTypeV2 };
+    readonly organization: { readonly resourcePolicy: string };
+    readonly lifecycle: { readonly isActive: boolean | null | undefined };
+  };
+};
+
+const toAccessibleProject = (edge: ProjectV2Edge): AccessibleProject => ({
+  id: edge.node.entityId,
+  name: edge.node.basicInfo.name,
+  type: edge.node.basicInfo.type,
+  is_active: edge.node.lifecycle.isActive ?? null,
+  resource_policy: edge.node.organization.resourcePolicy,
+});
+
 /**
  * The single source of truth for "which projects can the current user
  * enter" (FR-3388). This is exactly the data the header's `ProjectSelect`
@@ -39,6 +71,10 @@ interface UseAccessibleProjectsOptions {
  *
  * RBAC role assignments are deliberately NOT consulted (decision on
  * FR-3388): whatever the selector offers is considered enterable.
+ *
+ * `groups` is every active project of the domain for admins (the
+ * `disableDefaultFilter` surfaces); for other users it is the same list as
+ * `accessibleProjects`, which is what the legacy `groups` field answered them.
  */
 export const useAccessibleProjects = (
   options?: UseAccessibleProjectsOptions,
@@ -50,26 +86,54 @@ export const useAccessibleProjects = (
   const blockList = baiClient?._config?.blockList ?? null;
 
   const domainName = options?.domain ?? currentDomainName;
-  // Membership comes from `ProjectV2`: legacy `UserGroup.id` is the same raw
-  // UUID as `Group.id`, which collides in the Relay store.
-  const { groups, myUserV2 } = useLazyLoadQuery<useAccessibleProjectsQuery>(
+  const isAdmin = userRole === 'admin' || userRole === 'superadmin';
+  const types: Array<ProjectTypeV2> =
+    isAdmin && _.includes(blockList, 'model-store')
+      ? ['GENERAL']
+      : ['GENERAL', 'MODEL_STORE'];
+
+  // Both lists read `scopedProjectsV2` (ADR 0012): the caller's memberships for
+  // everyone, plus every project of the current domain for admins.
+  const { domainScope } = useCurrentDomainScope();
+  const queryRef = useLazyLoadQuery<useAccessibleProjectsQuery>(
     graphql`
-      query useAccessibleProjectsQuery($domain_name: String, $type: [String]) {
-        groups(domain_name: $domain_name, is_active: true, type: $type) {
-          id
-          is_active
-          name
-          resource_policy
-          type
-        }
-        myUserV2 {
-          projects(
-            filter: { isActive: true, domainName: { equals: $domain_name } }
-            limit: 1000
-          ) {
-            edges {
-              node {
-                id
+      query useAccessibleProjectsQuery(
+        $domainScope: ProjectScope!
+        $userScope: ProjectScope!
+        $domainName: String!
+        $types: [ProjectTypeV2!]!
+        $isAdmin: Boolean!
+      ) {
+        ...useAccessibleProjects_domainProjectsFragment
+          @include(if: $isAdmin)
+          @alias(as: "adminDomainProjects")
+          @arguments(
+            scope: $domainScope
+            domainName: $domainName
+            types: $types
+          )
+        memberProjects: scopedProjectsV2(
+          scope: $userScope
+          filter: {
+            isActive: true
+            domainName: { equals: $domainName }
+            type: { in_: $types }
+          }
+          limit: 1000
+        ) {
+          edges {
+            node {
+              id
+              entityId
+              basicInfo {
+                name
+                type
+              }
+              organization {
+                resourcePolicy
+              }
+              lifecycle {
+                isActive
               }
             }
           }
@@ -77,25 +141,90 @@ export const useAccessibleProjects = (
       }
     `,
     {
-      domain_name: domainName,
-      type:
-        (userRole === 'admin' || userRole === 'superadmin') &&
-        _.includes(blockList, 'model-store')
-          ? ['GENERAL']
-          : ['GENERAL', 'MODEL_STORE'],
+      domainScope,
+      userScope: { user: [{ value: baiClient.user_uuid }] },
+      domainName,
+      types,
+      isAdmin,
     },
     {
       fetchPolicy: options?.fetchPolicy ?? 'store-or-network',
     },
   );
+  const { memberProjects, adminDomainProjects } = queryRef;
 
-  // Membership filter: only projects the user actually belongs to.
-  const memberProjectIds = new Set(
-    _.map(myUserV2?.projects?.edges, (edge) => toLocalId(edge.node.id)),
+  // The manager caps a page at 1000 rows; keep loading until the admin list is
+  // complete. Non-admins never spread the fragment, so `data` stays null.
+  const {
+    data: domainProjects,
+    hasNext,
+    isLoadingNext,
+    loadNext,
+  } = usePaginationFragment<
+    useAccessibleProjectsDomainProjectsPaginationQuery,
+    useAccessibleProjects_domainProjectsFragment$key
+  >(
+    graphql`
+      fragment useAccessibleProjects_domainProjectsFragment on Query
+      @refetchable(
+        queryName: "useAccessibleProjectsDomainProjectsPaginationQuery"
+      )
+      @argumentDefinitions(
+        scope: { type: "ProjectScope!" }
+        domainName: { type: "String!" }
+        types: { type: "[ProjectTypeV2!]!" }
+        first: { type: "Int", defaultValue: 1000 }
+        after: { type: "String" }
+      ) {
+        scopedProjectsV2(
+          scope: $scope
+          filter: {
+            isActive: true
+            domainName: { equals: $domainName }
+            type: { in_: $types }
+          }
+          first: $first
+          after: $after
+        ) @connection(key: "useAccessibleProjects_scopedProjectsV2") {
+          edges {
+            node {
+              id
+              entityId
+              basicInfo {
+                name
+                type
+              }
+              organization {
+                resourcePolicy
+              }
+              lifecycle {
+                isActive
+              }
+            }
+          }
+        }
+      }
+    `,
+    adminDomainProjects ?? null,
   );
-  const accessibleProjects = groups?.filter(
-    (project) => !!project?.id && memberProjectIds.has(project.id),
-  );
+  // A failed page leaves `hasNext` true; latch the failure so the effect does
+  // not refetch it in a loop. A different domain or type set starts fresh.
+  const pagingKey = `${domainName}:${types.join(',')}`;
+  const [failedPagingKey, setFailedPagingKey] = useState<string | null>(null);
+  useEffect(() => {
+    if (hasNext && !isLoadingNext && failedPagingKey !== pagingKey) {
+      loadNext(1000, {
+        onComplete: (error) => {
+          if (error) setFailedPagingKey(pagingKey);
+        },
+      });
+    }
+  }, [hasNext, isLoadingNext, loadNext, failedPagingKey, pagingKey]);
+
+  const accessibleProjects = _.map(memberProjects?.edges, toAccessibleProject);
+  const groups = domainProjects?.scopedProjectsV2
+    ? _.map(domainProjects.scopedProjectsV2.edges, toAccessibleProject)
+    : accessibleProjects;
 
   return { groups, accessibleProjects };
 };

@@ -20,6 +20,7 @@ import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
+import { useModelStoreProject } from '../hooks/useModelStoreProject';
 import AdminModelCardSettingModal from './AdminModelCardSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
@@ -90,7 +91,6 @@ export const AdminModelCardQuery = graphql`
     $orderBy: [ModelCardV2OrderBy!]
     $limit: Int
     $offset: Int
-    $domainName: String
     $scope: ModelCardScope!
   ) {
     scopedModelCardsV2(
@@ -132,10 +132,6 @@ export const AdminModelCardQuery = graphql`
           ...AdminModelCardSettingModalFragment
         }
       }
-    }
-    groups(domain_name: $domainName, is_active: true, type: ["MODEL_STORE"]) {
-      id
-      name
     }
   }
 `;
@@ -191,11 +187,11 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   const deferredQueryRef = useDeferredValue(queryRef);
   const isRefetching = deferredQueryRef !== queryRef;
 
-  const { scopedModelCardsV2, groups } =
-    usePreloadedQuery<AdminModelCardQueryType>(
-      AdminModelCardQuery,
-      deferredQueryRef,
-    );
+  const { scopedModelCardsV2 } = usePreloadedQuery<AdminModelCardQueryType>(
+    AdminModelCardQuery,
+    deferredQueryRef,
+  );
+  const modelStoreProject = useModelStoreProject('admin');
 
   const [commitDeleteModelCard] = useMutation<AdminModelCardDeleteMutation>(
     graphql`
@@ -328,7 +324,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
       title: t('adminModelCard.Project'),
       dataIndex: 'projectId',
       sorter: supportsSearchAxes,
-      // Fall back to the raw UUID when the project name does not resolve.
+      // `project` is nullable (deleted project); fall back to the raw UUID.
       render: (projectId, record) => {
         const projectName = record.project?.basicInfo?.name;
         if (!projectName) {
@@ -409,8 +405,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                     scope={domainScope}
                     label={t('adminModelCard.Project')}
                     isLabelHidden
-                    // A model card belongs to a MODEL_STORE project (see the
-                    // `groups(type: ["MODEL_STORE"])` query above).
+                    // A model card belongs to a MODEL_STORE project.
                     filter={{ type: { equals: 'MODEL_STORE' } }}
                     value={value}
                     isDisabled={isDisabled}
@@ -565,7 +560,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
         <AdminModelCardSettingModal
           open={isSettingModalOpen}
           modelCardFrgmt={editingModelCard ?? null}
-          modelStoreProject={groups?.[0] ?? null}
+          modelStoreProject={modelStoreProject}
           onRequestClose={(success) => {
             setIsSettingModalOpen(false);
             setEditingModelCardId(null);

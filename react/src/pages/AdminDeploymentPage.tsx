@@ -349,8 +349,6 @@ const AdminDeploymentPage: React.FC = () => {
               orderBy: convertToOrderBy<ModelCardV2OrderBy>(params.order),
               limit,
               offset,
-              // Every domain has its own MODEL_STORE project.
-              domainName: currentDomain,
               scope: domainScope,
             },
             { fetchPolicy: 'store-and-network' },
