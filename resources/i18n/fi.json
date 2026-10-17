@@ -3254,6 +3254,36 @@
       "SluggedStrings": "Slugged-merkkijonot (>3 merkkiä)"
     }
   },
+  "sessionMonitor": {
+    "DomainSessions": "Tämän toimialueen istunnot",
+    "InUseAcross": "Varattu {{count}} käynnissä olevaan istuntoon",
+    "MonitorSettings": "Valvonta-asetukset",
+    "MoreSessions": "{{count}} lisää (yhteensä {{total}})",
+    "MyResourceUsage": "Minulle varattu, suhteessa rajaani",
+    "MySessions": "Omat istunnot",
+    "NoActiveSessions": "Ei aktiivisia istuntoja",
+    "OpenSession": "Avaa istunto",
+    "OpenSessionList": "Avaa istuntoluettelo",
+    "ProjectSessions": "Tämän hankkeen istunnot",
+    "RunningCount": "{{count}} käynnissä",
+    "StartingCount": "{{count}} käynnistyy",
+    "Tooltip": "Istuntovalvonta: käynnissä olevien määrä ja lähin päättyminen",
+    "idleAlert": {
+      "NetworkTimeout": "Verkkotoimintaa ei havaittu. Yhdistä istuntoon ennen kuin se lopetetaan.",
+      "SessionLifetime": "Istunto on saavuttamassa enimmäiskestoikänsä.",
+      "Title": "{{name}} päättyy {{minutes}} min kuluttua",
+      "Utilization": "Resurssien käyttö on pysynyt joutokäynnin kynnysarvon alapuolella. Käytä istuntoa ennen kuin se lopetetaan."
+    },
+    "settings": {
+      "IncludeStarting": "Sisällytä käynnistyvät istunnot",
+      "OpenUserSettings": "Istuntovalvonnan asetukset →",
+      "RowsShown": "Näytetyt rivit",
+      "SortBy": "Järjestä",
+      "SortDeadline": "Pikaisin päättyminen ensin",
+      "SortName": "Nimi",
+      "SortNewest": "Uusimmat ensin"
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "Atom Max -tuki",
     "ATOMPlusSupport": "ATOM+-tuki",
@@ -3711,6 +3741,7 @@
     "DescScriptCreated": "Käyttäjän konfigurointiskripti luotu. Tätä sovelletaan vain uusiin istuntoihin.",
     "DescScriptDeleted": "Käyttäjän konfigurointiskripti poistettu :",
     "DescScriptUpdated": "Käyttäjän konfigurointiskripti päivitetty. Tätä sovelletaan vain uusiin istuntoihin.",
+    "DescSessionMonitor": "Näyttää istuntovalvonnan otsikkopalkissa: käynnissä olevat istunnot, niiden resurssien käytön ja lähimmän joutokäynnin aiheuttaman päättymisen. Kun se on käytössä, saat myös ilmoituksen 30 ja 10 minuuttia ennen kuin joutokäyntitarkistus päättää jonkin istunnoistasi.",
     "DescThemeFamily": "Aseta teema.",
     "DescThemeMode": "Aseta näyttötila.",
     "DescUseCompactSidebar": "Kompakti sivupalkki tarjoaa enemmän työtilaa. <br />Kun käytössä, kompakti sivupalkki on oletuskäyttöliittymä käynnistyksen yhteydessä.",
@@ -3756,6 +3787,7 @@
     "SSHKeypairGeneration": "SSH-avainparin luominen",
     "SSHKeypairGenerationWarning": "Et pysty enää käyttämään yksityistä avainta tämän ikkunan sulkemisen jälkeen.",
     "SSHKeypairManagement": "SSH-avainparin hallinta",
+    "SessionMonitor": "Istuntovalvonta",
     "SessionResourceGrid": "Istunnon resurssiruudukkonäkymä",
     "SessionTerminationDialog": "Istunnon lopettamista ei voi peruuttaa. Haluatko jatkaa istunnon lopettamista?",
     "ShellEnvironments": "Shell-ympäristöt",

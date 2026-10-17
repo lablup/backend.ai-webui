@@ -3257,6 +3257,36 @@
       "SluggedStrings": "Ucięte ciągi znaków (>3 znaki)"
     }
   },
+  "sessionMonitor": {
+    "DomainSessions": "Sesje w tej domenie",
+    "InUseAcross": "Przydzielone do {{count}} działających sesji",
+    "MonitorSettings": "Ustawienia monitora",
+    "MoreSessions": "{{count}} więcej ({{total}} łącznie)",
+    "MyResourceUsage": "Przydzielone mi, względem mojego limitu",
+    "MySessions": "Moje sesje",
+    "NoActiveSessions": "Brak aktywnych sesji",
+    "OpenSession": "Otwórz sesję",
+    "OpenSessionList": "Otwórz listę sesji",
+    "ProjectSessions": "Sesje w tym projekcie",
+    "RunningCount": "{{count}} działa",
+    "StartingCount": "{{count}} uruchamia się",
+    "Tooltip": "Monitor sesji: liczba działających i najbliższe zakończenie",
+    "idleAlert": {
+      "NetworkTimeout": "Nie wykryto aktywności sieciowej. Połącz się z sesją, zanim zostanie zakończona.",
+      "SessionLifetime": "Sesja osiąga swój maksymalny czas trwania.",
+      "Title": "{{name}} zakończy się za {{minutes}} min",
+      "Utilization": "Wykorzystanie zasobów utrzymuje się poniżej progu bezczynności. Użyj sesji, zanim zostanie zakończona."
+    },
+    "settings": {
+      "IncludeStarting": "Uwzględnij uruchamiające się sesje",
+      "OpenUserSettings": "Ustawienia monitora sesji →",
+      "RowsShown": "Wyświetlane wiersze",
+      "SortBy": "Sortuj",
+      "SortDeadline": "Najszybsze zakończenie najpierw",
+      "SortName": "Nazwa",
+      "SortNewest": "Najnowsze najpierw"
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "Wsparcie Atom Max",
     "ATOMPlusSupport": "Wsparcie ATOM+",
@@ -3714,6 +3744,7 @@
     "DescScriptCreated": "Utworzono skrypt konfiguracji użytkownika. Zostanie to zastosowane tylko do nowych sesji.",
     "DescScriptDeleted": "Skrypt konfiguracji użytkownika został usunięty :",
     "DescScriptUpdated": "Zaktualizowano skrypt konfiguracji użytkownika. Zostanie to zastosowane tylko do nowych sesji.",
+    "DescSessionMonitor": "Wyświetla monitor sesji w nagłówku: działające sesje, ich użycie zasobów i najbliższe zakończenie z powodu bezczynności. Gdy jest włączony, otrzymujesz także powiadomienie 30 i 10 minut przed zakończeniem jednej z Twoich sesji przez kontrolę bezczynności.",
     "DescThemeFamily": "Ustaw temat.",
     "DescThemeMode": "Ustaw tryb wyświetlania.",
     "DescUseCompactSidebar": "Kompaktowy pasek boczny zapewnia więcej przestrzeni roboczej. <br />Po włączeniu kompaktowy pasek boczny będzie domyślnym interfejsem użytkownika przy uruchomieniu.",
@@ -3759,6 +3790,7 @@
     "SSHKeypairGeneration": "Generowanie par kluczy SSH",
     "SSHKeypairGenerationWarning": "Po zamknięciu tego okna nie będzie można uzyskać ponownego dostępu do klucza prywatnego.",
     "SSHKeypairManagement": "Zarządzanie parami kluczy SSH",
+    "SessionMonitor": "Monitor sesji",
     "SessionResourceGrid": "Widok siatki zasobów sesji",
     "SessionTerminationDialog": "Zakończenia sesji nie można cofnąć. Czy chcesz kontynuować, aby zakończyć sesję?",
     "ShellEnvironments": "Środowiska powłoki",

@@ -3256,6 +3256,36 @@
       "SluggedStrings": "Geschliffene Zeichenfolgen (>3 Zeichen)"
     }
   },
+  "sessionMonitor": {
+    "DomainSessions": "Sitzungen in dieser Domäne",
+    "InUseAcross": "Zugewiesen an {{count}} laufende Sitzungen",
+    "MonitorSettings": "Monitor-Einstellungen",
+    "MoreSessions": "{{count}} weitere ({{total}} insgesamt)",
+    "MyResourceUsage": "Mir zugewiesen, im Vergleich zu meinem Limit",
+    "MySessions": "Meine Sitzungen",
+    "NoActiveSessions": "Keine aktiven Sitzungen",
+    "OpenSession": "Sitzung öffnen",
+    "OpenSessionList": "Sitzungsliste öffnen",
+    "ProjectSessions": "Sitzungen in diesem Projekt",
+    "RunningCount": "{{count}} laufend",
+    "StartingCount": "{{count}} startend",
+    "Tooltip": "Sitzungsmonitor: Anzahl laufender Sitzungen und nächste Beendigung",
+    "idleAlert": {
+      "NetworkTimeout": "Es wurde keine Netzwerkaktivität erkannt. Verbinden Sie sich mit der Sitzung, bevor sie beendet wird.",
+      "SessionLifetime": "Die Sitzung erreicht ihre maximale Lebensdauer.",
+      "Title": "{{name}} endet in {{minutes}} Min.",
+      "Utilization": "Die Ressourcennutzung liegt unter dem Leerlaufschwellenwert. Verwenden Sie die Sitzung, bevor sie beendet wird."
+    },
+    "settings": {
+      "IncludeStarting": "Startende Sitzungen einschließen",
+      "OpenUserSettings": "Sitzungsmonitor-Einstellungen →",
+      "RowsShown": "Angezeigte Zeilen",
+      "SortBy": "Sortieren",
+      "SortDeadline": "Baldigste Beendigung zuerst",
+      "SortName": "Name",
+      "SortNewest": "Neueste zuerst"
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "Atom Max -Unterstützung",
     "ATOMPlusSupport": "ATOM+ Unterstützung",
@@ -3713,6 +3743,7 @@
     "DescScriptCreated": "Benutzerkonfigurationsskript erstellt. Dies gilt nur für neue Sitzungen.",
     "DescScriptDeleted": "Benutzerkonfigurationsskript gelöscht:",
     "DescScriptUpdated": "Benutzerkonfigurationsskript aktualisiert. Dies gilt nur für neue Sitzungen.",
+    "DescSessionMonitor": "Zeigt den Sitzungsmonitor in der Kopfzeile: laufende Sitzungen, ihre Ressourcennutzung und die nächste Leerlaufbeendigung. Solange er aktiviert ist, erhalten Sie außerdem 30 und 10 Minuten bevor eine Leerlaufprüfung eine Ihrer Sitzungen beendet eine Benachrichtigung.",
     "DescThemeFamily": "Thema festlegen.",
     "DescThemeMode": "Anzeigemodus festlegen.",
     "DescUseCompactSidebar": "Die kompakte Seitenleiste bietet mehr Arbeitsbereich. <br />Wenn aktiviert, wird die kompakte Seitenleiste beim Start zur Standard-UI.",
@@ -3758,6 +3789,7 @@
     "SSHKeypairGeneration": "SSH-Schlüsselpaargenerierung",
     "SSHKeypairGenerationWarning": "Nach dem Schließen dieses Modals können Sie nicht mehr auf den privaten Schlüssel zugreifen.",
     "SSHKeypairManagement": "SSH-Schlüsselpaarverwaltung",
+    "SessionMonitor": "Sitzungsmonitor",
     "SessionResourceGrid": "Sitzungsressourcenraster-Ansicht",
     "SessionTerminationDialog": "Die Beendigung der Sitzung kann nicht rückgängig gemacht werden. Möchten Sie fortfahren, um die Sitzung zu beenden?",
     "ShellEnvironments": "Shell-Umgebungen",

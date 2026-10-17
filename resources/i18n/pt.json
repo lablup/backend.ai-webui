@@ -3256,6 +3256,36 @@
       "SluggedStrings": "Cadeias de caracteres com slugged (>3 caracteres)"
     }
   },
+  "sessionMonitor": {
+    "DomainSessions": "Sessões deste domínio",
+    "InUseAcross": "Alocado a {{count}} sessões em execução",
+    "MonitorSettings": "Definições do monitor",
+    "MoreSessions": "{{count}} a mais ({{total}} no total)",
+    "MyResourceUsage": "Alocado a mim, relativamente ao meu limite",
+    "MySessions": "As minhas sessões",
+    "NoActiveSessions": "Nenhuma sessão activa",
+    "OpenSession": "Abrir sessão",
+    "OpenSessionList": "Abrir lista de sessões",
+    "ProjectSessions": "Sessões deste projeto",
+    "RunningCount": "{{count}} em execução",
+    "StartingCount": "{{count}} a iniciar",
+    "Tooltip": "Monitor de sessões: número em execução e o próximo término",
+    "idleAlert": {
+      "NetworkTimeout": "Não foi detectada actividade de rede. Ligue-se à sessão antes que seja terminada.",
+      "SessionLifetime": "A sessão está a atingir a sua duração máxima.",
+      "Title": "{{name}} termina em {{minutes}} min",
+      "Utilization": "A utilização de recursos manteve-se abaixo do limite de inactividade. Utilize a sessão antes que seja terminada."
+    },
+    "settings": {
+      "IncludeStarting": "Incluir sessões em início",
+      "OpenUserSettings": "Definições do monitor de sessões →",
+      "RowsShown": "Linhas exibidas",
+      "SortBy": "Ordenar",
+      "SortDeadline": "Término mais próximo primeiro",
+      "SortName": "Nome",
+      "SortNewest": "Mais recentes primeiro"
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "Suporte Atom Max",
     "ATOMPlusSupport": "Suporte ATOM+",
@@ -3713,6 +3743,7 @@
     "DescScriptCreated": "Script de configuração do usuário criado. Isso será aplicado apenas a novas sessões.",
     "DescScriptDeleted": "Script de configuração do usuário excluído:",
     "DescScriptUpdated": "O script de configuração do usuário foi atualizado. Isso será aplicado apenas a novas sessões.",
+    "DescSessionMonitor": "Mostra o monitor de sessões no cabeçalho: sessões em execução, a sua utilização de recursos e o próximo término por inactividade. Enquanto estiver activado, também recebe uma notificação 30 e 10 minutos antes de uma verificação de inactividade terminar uma das suas sessões.",
     "DescThemeFamily": "Definir o tema.",
     "DescThemeMode": "Definir o modo de visualização.",
     "DescUseCompactSidebar": "A barra lateral compacta fornece mais espaço de trabalho. <br />Quando activada, a barra lateral compacta será a interface predefinida na inicialização.",
@@ -3758,6 +3789,7 @@
     "SSHKeypairGeneration": "Geração de par de chaves SSH",
     "SSHKeypairGenerationWarning": "Não poderá aceder à chave privada novamente após fechar esta janela.",
     "SSHKeypairManagement": "Gerenciamento de par de chaves SSH",
+    "SessionMonitor": "Monitor de sessões",
     "SessionResourceGrid": "Vista de grelha de recursos da sessão",
     "SessionTerminationDialog": "O encerramento da sessão não pode ser desfeito. Você deseja prosseguir para encerrar a sessão?",
     "ShellEnvironments": "Ambientes Shell",

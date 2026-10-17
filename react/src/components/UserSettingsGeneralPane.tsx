@@ -76,6 +76,8 @@ const UserSettingsGeneralPane = () => {
   const [desktopNotification, setDesktopNotification] = useBAISettingUserState(
     'desktop_notification',
   );
+  const [sessionMonitorEnabled, setSessionMonitorEnabled] =
+    useBAISettingUserState('session_monitor_enabled');
   const [compactSidebar, setCompactSidebar] =
     useBAISettingUserState('compact_sidebar');
   const [selectedLanguage, setSelectedLanguage] =
@@ -244,6 +246,15 @@ const UserSettingsGeneralPane = () => {
               }
             });
           },
+        },
+        {
+          'data-testid': 'items-session-monitor',
+          type: 'checkbox',
+          title: t('userSettings.SessionMonitor'),
+          description: <Trans i18nKey="userSettings.DescSessionMonitor" />,
+          defaultValue: true,
+          value: sessionMonitorEnabled ?? true,
+          onChange: setSessionMonitorEnabled,
         },
         {
           'data-testid': 'items-use-compact-sidebar',

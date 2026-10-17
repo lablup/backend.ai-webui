@@ -18,6 +18,11 @@ export interface UserSettings {
   has_opened_tour_neo_deployment_validation?: boolean;
   has_opened_tour_deployment_preset_validation?: boolean;
   desktop_notification?: boolean;
+  /** Header session monitor (chip, polling, idle alerts); default on. */
+  session_monitor_enabled?: boolean;
+  session_monitor_sort?: 'deadline' | 'newest' | 'name';
+  session_monitor_include_starting?: boolean;
+  session_monitor_rows?: number;
   compact_sidebar?: boolean;
   preserve_login?: boolean;
   automatic_update_check?: boolean;

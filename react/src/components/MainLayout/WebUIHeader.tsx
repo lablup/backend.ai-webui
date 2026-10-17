@@ -8,6 +8,7 @@ import { useThemeMode } from '../../hooks/useThemeMode';
 import BAINotificationButton from '../BAINotificationButton';
 import GlobalSearchPaletteButton from '../GlobalSearchPalette/GlobalSearchPaletteButton';
 import LoginSessionExtendButton from '../LoginSessionExtendButton';
+import SessionMonitorButton from '../SessionMonitor/SessionMonitorButton';
 import UserDropdownMenu from '../UserDropdownMenu';
 import WEBUIHelpButton from '../WEBUIHelpButton';
 import WebUIThemeToggleButton from '../WebUIThemeToggleButton';
@@ -121,6 +122,8 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
         {/* Same self-scoping reason as `BAINotificationButton` below: both own
             floating surfaces, so neither may sit inside a `MediaTheme`. */}
         <GlobalSearchPaletteButton data-testid="button-global-search" />
+        {/* Owns a `Popover`, so it scopes the band context to its trigger. */}
+        <SessionMonitorButton data-testid="button-session-monitor" />
         {/* `BAINotificationButton` scopes its own on-dark context to its
             button, because it also owns a `Tooltip` whose panel is an inline
             sibling — see that file. */}

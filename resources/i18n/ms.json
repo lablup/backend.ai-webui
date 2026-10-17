@@ -3254,6 +3254,36 @@
       "SluggedStrings": "Rentetan slugged (>3 aksara)"
     }
   },
+  "sessionMonitor": {
+    "DomainSessions": "Sesi dalam domain ini",
+    "InUseAcross": "Diperuntukkan kepada {{count}} sesi yang berjalan",
+    "MonitorSettings": "Tetapan pemantau",
+    "MoreSessions": "{{count}} lagi ({{total}} jumlah)",
+    "MyResourceUsage": "Diperuntukkan kepada saya, berbanding had saya",
+    "MySessions": "Sesi saya",
+    "NoActiveSessions": "Tiada sesi aktif",
+    "OpenSession": "Buka sesi",
+    "OpenSessionList": "Buka senarai sesi",
+    "ProjectSessions": "Sesi dalam projek ini",
+    "RunningCount": "{{count}} berjalan",
+    "StartingCount": "{{count}} bermula",
+    "Tooltip": "Pemantau sesi: bilangan berjalan dan penamatan terdekat",
+    "idleAlert": {
+      "NetworkTimeout": "Tidak ada aktiviti rangkaian dikesan. Sambung ke sesi sebelum ia ditamatkan.",
+      "SessionLifetime": "Sesi hampir mencapai tempoh hayat maksimumnya.",
+      "Title": "{{name}} tamat dalam {{minutes}} minit",
+      "Utilization": "Penggunaan sumber kekal di bawah ambang terbiar. Gunakan sesi sebelum ia ditamatkan."
+    },
+    "settings": {
+      "IncludeStarting": "Sertakan sesi yang sedang dimulakan",
+      "OpenUserSettings": "Tetapan pemantau sesi →",
+      "RowsShown": "Baris dipaparkan",
+      "SortBy": "Isih",
+      "SortDeadline": "Penamatan terdekat dahulu",
+      "SortName": "Nama",
+      "SortNewest": "Terbaru dahulu"
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "Sokongan Atom Max",
     "ATOMPlusSupport": "Sokongan ATOM+",
@@ -3711,6 +3741,7 @@
     "DescScriptCreated": "Skrip konfigurasi pengguna dibuat. Ini akan digunakan untuk sesi baru sahaja.",
     "DescScriptDeleted": "Skrip konfigurasi pengguna dipadamkan:",
     "DescScriptUpdated": "Skrip konfigurasi pengguna dikemas kini. Ini akan digunakan untuk sesi baru sahaja.",
+    "DescSessionMonitor": "Memaparkan pemantau sesi di pengepala: sesi yang berjalan, penggunaan sumbernya dan penamatan terbiar yang terdekat. Semasa ia dihidupkan, anda juga menerima pemberitahuan 30 dan 10 minit sebelum semakan terbiar menamatkan salah satu sesi anda.",
     "DescThemeFamily": "Tetapkan tema.",
     "DescThemeMode": "Tetapkan mod paparan.",
     "DescUseCompactSidebar": "Bar sisi padat menyediakan lebih banyak ruang kerja. <br />Apabila dibolehkan, bar sisi padat akan menjadi UI lalai semasa permulaan.",
@@ -3756,6 +3787,7 @@
     "SSHKeypairGeneration": "Penjanaan Keypair SSH",
     "SSHKeypairGenerationWarning": "Anda tidak akan dapat mengakses kunci peribadi lagi selepas menutup modal ini.",
     "SSHKeypairManagement": "Pengurusan Keypair SSH",
+    "SessionMonitor": "Pemantau sesi",
     "SessionResourceGrid": "Paparan grid sumber sesi",
     "SessionTerminationDialog": "Penamatan sesi tidak boleh dibuat asal. Adakah anda mahu meneruskan untuk menamatkan sesi?",
     "ShellEnvironments": "Persekitaran Shell",

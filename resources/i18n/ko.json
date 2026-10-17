@@ -3257,6 +3257,36 @@
       "SluggedStrings": "최소 4글자 이상의 고유문자열로 입력해 주세요"
     }
   },
+  "sessionMonitor": {
+    "DomainSessions": "이 도메인의 세션",
+    "InUseAcross": "실행 중인 세션 {{count}}개에 할당된 자원",
+    "MonitorSettings": "모니터 설정",
+    "MoreSessions": "{{count}}개 더 (총 {{total}}개)",
+    "MyResourceUsage": "내 할당량 (한도 대비)",
+    "MySessions": "나의 세션",
+    "NoActiveSessions": "실행 중인 세션이 없습니다",
+    "OpenSession": "세션 열기",
+    "OpenSessionList": "세션 목록 열기",
+    "ProjectSessions": "이 프로젝트의 세션",
+    "RunningCount": "실행 {{count}}",
+    "StartingCount": "시작 중 {{count}}",
+    "Tooltip": "세션 모니터: 실행 수와 가장 가까운 종료 시각",
+    "idleAlert": {
+      "NetworkTimeout": "네트워크 활동이 감지되지 않았습니다. 종료되기 전에 세션에 접속해 주세요.",
+      "SessionLifetime": "세션이 최대 수명에 도달하고 있습니다.",
+      "Title": "{{name}} 세션이 {{minutes}}분 후 종료됩니다",
+      "Utilization": "자원 사용률이 유휴 기준에 못 미치고 있습니다. 종료되기 전에 세션을 사용해 주세요."
+    },
+    "settings": {
+      "IncludeStarting": "시작 중인 세션 포함",
+      "OpenUserSettings": "세션 모니터 설정 →",
+      "RowsShown": "표시 행 수",
+      "SortBy": "정렬",
+      "SortDeadline": "종료 임박순",
+      "SortName": "이름순",
+      "SortNewest": "최신순"
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "ATOM Max 지원",
     "ATOMPlusSupport": "ATOM+ 지원",
@@ -3714,6 +3744,7 @@
     "DescScriptCreated": "사용자 스크립트를 생성했습니다. 이 스크립트는 이후 새로 생성하는 세션부터 적용됩니다.",
     "DescScriptDeleted": "다음 사용자 스크립트가 삭제되었습니다. 삭제된 스크립트 : ",
     "DescScriptUpdated": "사용자 스크립트를 수정했습니다. 이 스크립트는 이후 새로 생성하는 세션부터 적용됩니다.",
+    "DescSessionMonitor": "헤더에 세션 모니터를 표시합니다. 실행 중인 세션, 자원 사용량, 가장 가까운 유휴 종료 시각을 보여 줍니다. 켜져 있는 동안에는 유휴 검사가 내 세션을 종료하기 30분, 10분 전에 알림도 받습니다.",
     "DescThemeFamily": "테마를 설정합니다.",
     "DescThemeMode": "화면 모드를 설정합니다.",
     "DescUseCompactSidebar": "간결한 사이드바는 더 많은 작업 공간을 제공합니다. <br />활성화하면 간결한 사이드바가 시작 시 기본 UI가 됩니다.",
@@ -3759,6 +3790,7 @@
     "SSHKeypairGeneration": "SSH 키페어 생성",
     "SSHKeypairGenerationWarning": "모달을 닫은 후에는 개인 키를 다시 확인할 수 없습니다.",
     "SSHKeypairManagement": "SSH 키페어 관리",
+    "SessionMonitor": "세션 모니터",
     "SessionResourceGrid": "세션 리소스 그리드 뷰",
     "SessionTerminationDialog": "세션 종료는 취소할 수 없습니다. 종료하시겠습니까?",
     "ShellEnvironments": "쉘 스크립트 환경",

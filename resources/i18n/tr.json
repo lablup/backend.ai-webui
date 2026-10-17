@@ -3254,6 +3254,36 @@
       "SluggedStrings": "Kesikli dizeler (>3 karakter)"
     }
   },
+  "sessionMonitor": {
+    "DomainSessions": "Bu etki alanının oturumları",
+    "InUseAcross": "{{count}} çalışan oturuma ayrıldı",
+    "MonitorSettings": "Monitör ayarları",
+    "MoreSessions": "{{count}} daha (toplam {{total}})",
+    "MyResourceUsage": "Bana ayrıldı, limitime karşı",
+    "MySessions": "Oturumlarım",
+    "NoActiveSessions": "Aktif oturum yok",
+    "OpenSession": "Oturumu aç",
+    "OpenSessionList": "Oturum listesini aç",
+    "ProjectSessions": "Bu projenin oturumları",
+    "RunningCount": "{{count}} çalışıyor",
+    "StartingCount": "{{count}} başlıyor",
+    "Tooltip": "Oturum monitörü: çalışan sayısı ve en yakın sonlanma",
+    "idleAlert": {
+      "NetworkTimeout": "Ağ etkinliği algılanmadı. Sonlandırılmadan önce oturuma bağlanın.",
+      "SessionLifetime": "Oturum maksimum ömrüne ulaşıyor.",
+      "Title": "{{name}} {{minutes}} dakika içinde sona erecek",
+      "Utilization": "Kaynak kullanımı boşta kalma eşiğinin altında kaldı. Sonlandırılmadan önce oturumu kullanın."
+    },
+    "settings": {
+      "IncludeStarting": "Başlayan oturumları dahil et",
+      "OpenUserSettings": "Oturum monitörü ayarları →",
+      "RowsShown": "Gösterilen satırlar",
+      "SortBy": "Sırala",
+      "SortDeadline": "En yakın sonlanma önce",
+      "SortName": "Ad",
+      "SortNewest": "En yeniler önce"
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "Atom Max Desteği",
     "ATOMPlusSupport": "ATOM+ Desteği",
@@ -3711,6 +3741,7 @@
     "DescScriptCreated": "Kullanıcı yapılandırma komut dosyası oluşturuldu. Bu sadece yeni oturumlara uygulanacaktır.",
     "DescScriptDeleted": "Kullanıcı yapılandırma komut dosyası silindi:",
     "DescScriptUpdated": "Kullanıcı yapılandırma komut dosyası güncellendi. Bu sadece yeni oturumlara uygulanacaktır.",
+    "DescSessionMonitor": "Başlıkta oturum monitörünü gösterir: çalışan oturumlar, kaynak kullanımları ve en yakın boşta kalma sonlandırması. Açık olduğu sürece, bir boşta kalma denetimi oturumlarınızdan birini sonlandırmadan 30 ve 10 dakika önce bildirim de alırsınız.",
     "DescThemeFamily": "Temayı ayarlayın.",
     "DescThemeMode": "Görüntüleme modunu ayarlayın.",
     "DescUseCompactSidebar": "Kompakt kenar çubuğu daha fazla çalışma alanı sağlar. <br />Etkinleştirildiğinde, kompakt kenar çubuğu başlangıçta varsayılan UI olacaktır.",
@@ -3756,6 +3787,7 @@
     "SSHKeypairGeneration": "SSH Anahtar Çifti Oluşturma",
     "SSHKeypairGenerationWarning": "Bu modal kapatıldıktan sonra özel anahtara tekrar erişemeyeceksiniz.",
     "SSHKeypairManagement": "SSH Anahtar Çifti Yönetimi",
+    "SessionMonitor": "Oturum monitörü",
     "SessionResourceGrid": "Oturum kaynak ızgarası görünümü",
     "SessionTerminationDialog": "Oturum sonlandırma geri alınamaz. Oturumu sonlandırmak için devam etmek istiyor musunuz?",
     "ShellEnvironments": "Kabuk Ortamları",

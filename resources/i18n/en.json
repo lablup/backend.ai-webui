@@ -3241,6 +3241,36 @@
       "SluggedStrings": "Slugged strings (>3 chars)"
     }
   },
+  "sessionMonitor": {
+    "DomainSessions": "Sessions in this domain",
+    "InUseAcross": "Allocated to {{count}} running sessions",
+    "MonitorSettings": "Monitor settings",
+    "MoreSessions": "{{count}} more ({{total}} total)",
+    "MyResourceUsage": "Allocated to me, against my limit",
+    "MySessions": "My sessions",
+    "NoActiveSessions": "No active sessions",
+    "OpenSession": "Open session",
+    "OpenSessionList": "Open session list",
+    "ProjectSessions": "Sessions in this project",
+    "RunningCount": "{{count}} running",
+    "StartingCount": "{{count}} starting",
+    "Tooltip": "Session monitor: running count and the nearest termination",
+    "idleAlert": {
+      "NetworkTimeout": "No network activity has been detected. Connect to the session before it is terminated.",
+      "SessionLifetime": "The session is reaching its maximum lifetime.",
+      "Title": "{{name}} ends in {{minutes}} min",
+      "Utilization": "Resource utilization has stayed under the idle threshold. Use the session before it is terminated."
+    },
+    "settings": {
+      "IncludeStarting": "Include starting sessions",
+      "OpenUserSettings": "Session monitor settings →",
+      "RowsShown": "Rows shown",
+      "SortBy": "Sort by",
+      "SortDeadline": "Soonest termination first",
+      "SortName": "Name",
+      "SortNewest": "Newest first"
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "ATOM Max Support",
     "ATOMPlusSupport": "ATOM+ Support",
@@ -3698,6 +3728,7 @@
     "DescScriptCreated": "User config script created. This will be applied to new sessions only.",
     "DescScriptDeleted": "User config script deleted : ",
     "DescScriptUpdated": "User config script updated. This will be applied to new sessions only.",
+    "DescSessionMonitor": "Shows the session monitor in the header: running sessions, their resource use and the nearest idle termination. While it is on, you also get a notification 30 and 10 minutes before an idle check terminates one of your sessions.",
     "DescThemeFamily": "Set the theme.",
     "DescThemeMode": "Set the display mode.",
     "DescUseCompactSidebar": "Compact sidebar provides more workspace. <br />When enabled, the compact sidebar will be the default UI at startup.",
@@ -3743,6 +3774,7 @@
     "SSHKeypairGeneration": "SSH Keypair Generation",
     "SSHKeypairGenerationWarning": "You will not be able to access the private key again after closing this modal.",
     "SSHKeypairManagement": "SSH Keypair Management",
+    "SessionMonitor": "Session monitor",
     "SessionResourceGrid": "Session resource grid view",
     "SessionTerminationDialog": "Session termination cannot be undone. Do you want to proceed to terminate the session?",
     "ShellEnvironments": "Shell Environments",

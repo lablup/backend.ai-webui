@@ -5323,6 +5323,14 @@
           ]
         },
         {
+          "key": "userSettings.SessionMonitor",
+          "tab": "general",
+          "groupKey": "userSettings.Preferences",
+          "groupId": "group-preferences",
+          "testId": "items-session-monitor",
+          "descriptionKeys": []
+        },
+        {
           "key": "userSettings.SessionResourceGrid",
           "tab": "general",
           "groupKey": "userSettings.ExperimentalFeatures",
@@ -5473,6 +5481,7 @@
         "userSettings.DescScriptCreated",
         "userSettings.DescScriptDeleted",
         "userSettings.DescScriptUpdated",
+        "userSettings.DescSessionMonitor",
         "userSettings.DescUseCompactSidebar",
         "userSettings.ExperimentalFeaturesDesc",
         "userSettings.FollowSystem",

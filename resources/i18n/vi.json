@@ -3256,6 +3256,36 @@
       "SluggedStrings": "Chuỗi bị trượt (>3 ký tự)"
     }
   },
+  "sessionMonitor": {
+    "DomainSessions": "Phiên trong miền này",
+    "InUseAcross": "Được cấp phát cho {{count}} phiên đang chạy",
+    "MonitorSettings": "Cài đặt giám sát",
+    "MoreSessions": "{{count}} nữa (tổng {{total}})",
+    "MyResourceUsage": "Được cấp phát cho tôi, so với giới hạn của tôi",
+    "MySessions": "Phiên của tôi",
+    "NoActiveSessions": "Không có phiên hoạt động",
+    "OpenSession": "Mở phiên",
+    "OpenSessionList": "Mở danh sách phiên",
+    "ProjectSessions": "Phiên trong dự án này",
+    "RunningCount": "{{count}} đang chạy",
+    "StartingCount": "{{count}} đang khởi động",
+    "Tooltip": "Giám sát phiên: số lượng đang chạy và thời điểm kết thúc gần nhất",
+    "idleAlert": {
+      "NetworkTimeout": "Không phát hiện hoạt động mạng. Hãy kết nối đến phiên trước khi nó bị chấm dứt.",
+      "SessionLifetime": "Phiên đang đạt đến thời gian tồn tại tối đa.",
+      "Title": "{{name}} kết thúc trong {{minutes}} phút",
+      "Utilization": "Mức sử dụng tài nguyên vẫn ở dưới ngưỡng không hoạt động. Hãy sử dụng phiên trước khi nó bị chấm dứt."
+    },
+    "settings": {
+      "IncludeStarting": "Bao gồm các phiên đang khởi động",
+      "OpenUserSettings": "Cài đặt giám sát phiên →",
+      "RowsShown": "Số dòng hiển thị",
+      "SortBy": "Sắp xếp",
+      "SortDeadline": "Sắp kết thúc sớm nhất trước",
+      "SortName": "Tên",
+      "SortNewest": "Mới nhất trước"
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "Hỗ trợ Atom Max",
     "ATOMPlusSupport": "Hỗ trợ ATOM+",
@@ -3713,6 +3743,7 @@
     "DescScriptCreated": "Đã tạo tập lệnh cấu hình người dùng. Điều này sẽ chỉ được áp dụng cho các phiên mới.",
     "DescScriptDeleted": "Tập lệnh cấu hình người dùng đã bị xóa:",
     "DescScriptUpdated": "Đã cập nhật tập lệnh cấu hình người dùng. Điều này sẽ chỉ được áp dụng cho các phiên mới.",
+    "DescSessionMonitor": "Hiển thị giám sát phiên trên thanh tiêu đề: các phiên đang chạy, mức sử dụng tài nguyên và thời điểm chấm dứt do không hoạt động gần nhất. Khi được bật, bạn cũng nhận thông báo 30 và 10 phút trước khi kiểm tra không hoạt động chấm dứt một phiên của bạn.",
     "DescThemeFamily": "Đặt chủ đề.",
     "DescThemeMode": "Đặt chế độ hiển thị.",
     "DescUseCompactSidebar": "Thanh bên gọn gàng cung cấp nhiều không gian làm việc hơn. <br />Khi được kích hoạt, thanh bên gọn gàng sẽ là giao diện mặc định khi khởi động.",
@@ -3758,6 +3789,7 @@
     "SSHKeypairGeneration": "Tạo cặp khóa SSH",
     "SSHKeypairGenerationWarning": "Bạn sẽ không thể truy cập lại khóa riêng tư sau khi đóng cửa sổ này.",
     "SSHKeypairManagement": "Quản lý cặp khóa SSH",
+    "SessionMonitor": "Giám sát phiên",
     "SessionResourceGrid": "Xem lưới tài nguyên phiên",
     "SessionTerminationDialog": "Không thể hoàn tác việc kết thúc phiên. Bạn có muốn tiếp tục kết thúc phiên này không?",
     "ShellEnvironments": "Môi trường Shell",

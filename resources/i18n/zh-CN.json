@@ -3256,6 +3256,36 @@
       "SluggedStrings": "多字符串（>3 字符）"
     }
   },
+  "sessionMonitor": {
+    "DomainSessions": "此域中的会话",
+    "InUseAcross": "已分配给 {{count}} 个运行中的会话",
+    "MonitorSettings": "监控设置",
+    "MoreSessions": "还有 {{count}} 个 (共 {{total}} 个)",
+    "MyResourceUsage": "已分配给我（与我的限制对比）",
+    "MySessions": "我的会话",
+    "NoActiveSessions": "没有活动会话",
+    "OpenSession": "打开会话",
+    "OpenSessionList": "打开会话列表",
+    "ProjectSessions": "此项目中的会话",
+    "RunningCount": "{{count}} 个运行中",
+    "StartingCount": "{{count}} 个启动中",
+    "Tooltip": "会话监控：运行数量和最近的终止时间",
+    "idleAlert": {
+      "NetworkTimeout": "未检测到网络活动。请在会话终止前连接到该会话。",
+      "SessionLifetime": "会话即将达到最大使用期限。",
+      "Title": "{{name}} 将在 {{minutes}} 分钟后结束",
+      "Utilization": "资源使用率一直低于空闲阈值。请在会话终止前使用该会话。"
+    },
+    "settings": {
+      "IncludeStarting": "包含正在启动的会话",
+      "OpenUserSettings": "会话监控设置 →",
+      "RowsShown": "显示行数",
+      "SortBy": "排序",
+      "SortDeadline": "即将终止优先",
+      "SortName": "名称",
+      "SortNewest": "最新优先"
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "原子最大支持",
     "ATOMPlusSupport": "ATOM+支持",
@@ -3713,6 +3743,7 @@
     "DescScriptCreated": "已创建用户配置脚本。这将仅适用于新会话。",
     "DescScriptDeleted": "用户配置脚本已删除：",
     "DescScriptUpdated": "用户配置脚本已更新。这将仅适用于新会话。",
+    "DescSessionMonitor": "在页眉中显示会话监控：正在运行的会话、资源使用情况以及最近的空闲终止时间。开启时，在空闲检查终止您的会话前30分钟和10分钟，您还会收到通知。",
     "DescThemeFamily": "设置主题。",
     "DescThemeMode": "设置显示模式。",
     "DescUseCompactSidebar": "紧凑侧边栏提供更多工作空间。<br />启用后，紧凑侧边栏将成为启动时的默认界面。",
@@ -3758,6 +3789,7 @@
     "SSHKeypairGeneration": "SSH 密钥对生成",
     "SSHKeypairGenerationWarning": "关闭此窗口后，您将无法再次访问私钥。",
     "SSHKeypairManagement": "SSH 密钥对管理",
+    "SessionMonitor": "会话监控",
     "SessionResourceGrid": "会话资源网格视图",
     "SessionTerminationDialog": "会话终止无法撤消。您要继续终止会话吗？",
     "ShellEnvironments": "外壳环境",

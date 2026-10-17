@@ -3258,6 +3258,36 @@
       "SluggedStrings": "String yang disumbat (>3 karakter)"
     }
   },
+  "sessionMonitor": {
+    "DomainSessions": "Sesi di domain ini",
+    "InUseAcross": "Dialokasikan untuk {{count}} sesi yang berjalan",
+    "MonitorSettings": "Pengaturan monitor",
+    "MoreSessions": "{{count}} lainnya ({{total}} total)",
+    "MyResourceUsage": "Dialokasikan untuk saya, dibandingkan dengan batas saya",
+    "MySessions": "Sesi saya",
+    "NoActiveSessions": "Tidak ada sesi aktif",
+    "OpenSession": "Buka sesi",
+    "OpenSessionList": "Buka daftar sesi",
+    "ProjectSessions": "Sesi di proyek ini",
+    "RunningCount": "{{count}} berjalan",
+    "StartingCount": "{{count}} memulai",
+    "Tooltip": "Monitor sesi: jumlah yang berjalan dan penghentian terdekat",
+    "idleAlert": {
+      "NetworkTimeout": "Tidak ada aktivitas jaringan yang terdeteksi. Sambungkan ke sesi sebelum dihentikan.",
+      "SessionLifetime": "Sesi telah mencapai durasi maksimalnya.",
+      "Title": "{{name}} berakhir dalam {{minutes}} menit",
+      "Utilization": "Penggunaan sumber daya tetap di bawah ambang batas idle. Gunakan sesi sebelum dihentikan."
+    },
+    "settings": {
+      "IncludeStarting": "Sertakan sesi yang sedang dimulai",
+      "OpenUserSettings": "Pengaturan monitor sesi →",
+      "RowsShown": "Baris yang ditampilkan",
+      "SortBy": "Urutkan",
+      "SortDeadline": "Penghentian tercepat lebih dulu",
+      "SortName": "Nama",
+      "SortNewest": "Terbaru lebih dulu"
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "Dukungan Atom Max",
     "ATOMPlusSupport": "Dukungan ATOM+",
@@ -3715,6 +3745,7 @@
     "DescScriptCreated": "Skrip konfigurasi pengguna dibuat. Ini hanya akan diterapkan ke sesi baru.",
     "DescScriptDeleted": "Skrip konfigurasi pengguna dihapus:",
     "DescScriptUpdated": "Skrip konfigurasi pengguna diperbarui. Ini hanya akan diterapkan ke sesi baru.",
+    "DescSessionMonitor": "Menampilkan monitor sesi di header: sesi yang berjalan, penggunaan sumber dayanya, dan penghentian karena idle yang terdekat. Selama aktif, Anda juga menerima notifikasi 30 dan 10 menit sebelum pemeriksaan idle menghentikan salah satu sesi Anda.",
     "DescThemeFamily": "Atur tema.",
     "DescThemeMode": "Atur mode tampilan.",
     "DescUseCompactSidebar": "Sidebar kompak menyediakan ruang kerja lebih banyak. <br />Ketika diaktifkan, sidebar kompak akan menjadi UI default saat startup.",
@@ -3760,6 +3791,7 @@
     "SSHKeypairGeneration": "Pembuatan Pasangan Kunci SSH",
     "SSHKeypairGenerationWarning": "Anda tidak akan dapat mengakses kunci pribadi lagi setelah menutup modal ini.",
     "SSHKeypairManagement": "Manajemen Pasangan Kunci SSH",
+    "SessionMonitor": "Monitor sesi",
     "SessionResourceGrid": "Tampilan grid sumber daya sesi",
     "SessionTerminationDialog": "Penghentian sesi tidak dapat diurungkan. Apakah Anda ingin melanjutkan untuk mengakhiri sesi?",
     "ShellEnvironments": "Lingkungan Shell",
