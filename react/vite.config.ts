@@ -2,6 +2,7 @@ import {
   devReviewOverlayPlugin,
   reviewOverlayBuildPlugin,
 } from './vite-plugins/review-overlay/index';
+import { findStalePrebundle } from './vite-plugins/stale-prebundle';
 import stylexVite from '@stylexjs/unplugin/vite';
 import react from '@vitejs/plugin-react';
 import compression from 'compression';
@@ -693,6 +694,29 @@ export default defineConfig(({ command, mode }) => {
     );
   }
 
+  const cacheDir = resolve(__dirname, 'node_modules/.vite');
+  const stalePrebundle =
+    command === 'serve'
+      ? findStalePrebundle(cacheDir, (name) => {
+          try {
+            return JSON.parse(
+              readFileSync(
+                resolve(__dirname, 'node_modules', name, 'package.json'),
+                'utf8',
+              ),
+            ).version;
+          } catch {
+            return undefined;
+          }
+        })
+      : null;
+  if (stalePrebundle) {
+    console.warn(
+      `[vite] the dependency pre-bundle has ${stalePrebundle.name}@${stalePrebundle.cached}, ` +
+        `but ${stalePrebundle.installed} is installed; re-optimizing every dependency (#10341).`,
+    );
+  }
+
   // Comma-separated list of additional hostnames to whitelist for the dev
   // server's host check (Vite 6 default-blocks anything outside localhost
   // since CVE-2025-30208). Example for SwitchHosts users:
@@ -719,7 +743,7 @@ export default defineConfig(({ command, mode }) => {
     root: __dirname,
     publicDir: false,
     envDir: projectRoot,
-    cacheDir: resolve(__dirname, 'node_modules/.vite'),
+    cacheDir,
 
     resolve: {
       // Force a single instance of shared singletons across the monorepo.
@@ -802,6 +826,8 @@ export default defineConfig(({ command, mode }) => {
     },
 
     optimizeDeps: {
+      // Vite keys the cache on the lockfile hash only; see stale-prebundle.ts.
+      force: stalePrebundle !== null,
       // Tell Vite exactly which files to scan for dependency optimization.
       // Without this, Vite crawls from `root` following all imports, which
       // pulled in stale legacy Lit plugins under scripts/temp-releases/ on
