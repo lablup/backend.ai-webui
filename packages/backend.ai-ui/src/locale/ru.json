@@ -29,17 +29,20 @@
     "FailedToActivateArtifacts": "Не удалось активировать артефакты.",
     "SuccessfullyActivated": "Успешно активированные артефакты."
   },
-  "comp:BAIAdminKeypairResourcePolicySelect": {
-    "SelectKeypairResourcePolicy": "Выберите политику ресурсов ключевой пары"
-  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Выберите сервис модели"
+  },
+  "comp:BAIAdminProjectResourcePolicySelect": {
+    "SelectProjectResourcePolicy": "Выберите политику ресурсов проекта"
   },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Выберите группу ресурсов"
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Выберите сеанс"
+  },
+  "comp:BAIAdminUserResourcePolicySelect": {
+    "SelectUserResourcePolicy": "Выберите политику ресурсов пользователя"
   },
   "comp:BAIArtifactDescriptions": {
     "Description": "Описание",

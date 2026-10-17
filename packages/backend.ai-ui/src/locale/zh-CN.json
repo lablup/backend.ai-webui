@@ -29,17 +29,20 @@
     "FailedToActivateArtifacts": "未能激活伪影。",
     "SuccessfullyActivated": "成功激活的工件。"
   },
-  "comp:BAIAdminKeypairResourcePolicySelect": {
-    "SelectKeypairResourcePolicy": "选择密钥对资源策略"
-  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "选择模型服务"
+  },
+  "comp:BAIAdminProjectResourcePolicySelect": {
+    "SelectProjectResourcePolicy": "选择项目资源策略"
   },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "选择资源组"
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "选择会话"
+  },
+  "comp:BAIAdminUserResourcePolicySelect": {
+    "SelectUserResourcePolicy": "选择用户资源策略"
   },
   "comp:BAIArtifactDescriptions": {
     "Description": "描述",

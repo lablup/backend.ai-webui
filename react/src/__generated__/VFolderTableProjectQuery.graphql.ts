@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6a9112d8eab0fa8667190c09c69c4273>>
+ * @generated SignedSource<<c195c76ada05785237a0fe1a02d064ce>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,20 +9,28 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+export type VFolderHostPermissionV2 = "CREATE_VFOLDER" | "DELETE_VFOLDER" | "DOWNLOAD_FILE" | "INVITE_OTHERS" | "MODIFY_VFOLDER" | "MOUNT_IN_SESSION" | "SET_USER_PERM" | "UPLOAD_FILE" | "%future added value";
 export type VFolderTableProjectQuery$variables = {
   domain_name: string;
   group_id: string;
-  keypair_resource_policy_name: string;
 };
 export type VFolderTableProjectQuery$data = {
   readonly domain: {
     readonly allowed_vfolder_hosts: string | null | undefined;
   } | null | undefined;
-  readonly group: {
-    readonly allowed_vfolder_hosts: string | null | undefined;
+  readonly myKeypairResourcePolicyV2: {
+    readonly allowedVfolderHosts: ReadonlyArray<{
+      readonly host: string;
+      readonly permissions: ReadonlyArray<VFolderHostPermissionV2>;
+    }>;
   } | null | undefined;
-  readonly keypair_resource_policy: {
-    readonly allowed_vfolder_hosts: string | null | undefined;
+  readonly projectV2: {
+    readonly storage: {
+      readonly allowedVfolderHosts: ReadonlyArray<{
+        readonly host: string;
+        readonly permissions: ReadonlyArray<VFolderHostPermissionV2>;
+      }>;
+    };
   } | null | undefined;
 };
 export type VFolderTableProjectQuery = {
@@ -41,84 +49,115 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "group_id"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "keypair_resource_policy_name"
   }
 ],
-v1 = [
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "allowed_vfolder_hosts",
-    "storageKey": null
-  }
-],
+v1 = {
+  "alias": null,
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "name",
+      "variableName": "domain_name"
+    }
+  ],
+  "concreteType": "Domain",
+  "kind": "LinkedField",
+  "name": "domain",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "allowed_vfolder_hosts",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
 v2 = [
   {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "name",
-        "variableName": "domain_name"
-      }
-    ],
-    "concreteType": "Domain",
-    "kind": "LinkedField",
-    "name": "domain",
-    "plural": false,
-    "selections": (v1/*: any*/),
-    "storageKey": null
-  },
-  {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "domain_name",
-        "variableName": "domain_name"
-      },
-      {
-        "kind": "Variable",
-        "name": "id",
-        "variableName": "group_id"
-      }
-    ],
-    "concreteType": "Group",
-    "kind": "LinkedField",
-    "name": "group",
-    "plural": false,
-    "selections": (v1/*: any*/),
-    "storageKey": null
-  },
-  {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "name",
-        "variableName": "keypair_resource_policy_name"
-      }
-    ],
-    "concreteType": "KeyPairResourcePolicy",
-    "kind": "LinkedField",
-    "name": "keypair_resource_policy",
-    "plural": false,
-    "selections": (v1/*: any*/),
-    "storageKey": null
+    "kind": "Variable",
+    "name": "projectId",
+    "variableName": "group_id"
   }
-];
+],
+v3 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "VFolderHostPermissionEntry",
+  "kind": "LinkedField",
+  "name": "allowedVfolderHosts",
+  "plural": true,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "host",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "permissions",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v4 = [
+  (v3/*: any*/)
+],
+v5 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "ProjectStorageInfo",
+  "kind": "LinkedField",
+  "name": "storage",
+  "plural": false,
+  "selections": (v4/*: any*/),
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "VFolderTableProjectQuery",
-    "selections": (v2/*: any*/),
+    "selections": [
+      (v1/*: any*/),
+      {
+        "alias": null,
+        "args": (v2/*: any*/),
+        "concreteType": "ProjectV2",
+        "kind": "LinkedField",
+        "name": "projectV2",
+        "plural": false,
+        "selections": [
+          (v5/*: any*/)
+        ],
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "KeypairResourcePolicyV2",
+        "kind": "LinkedField",
+        "name": "myKeypairResourcePolicyV2",
+        "plural": false,
+        "selections": (v4/*: any*/),
+        "storageKey": null
+      }
+    ],
     "type": "Query",
     "abstractKey": null
   },
@@ -127,19 +166,47 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "VFolderTableProjectQuery",
-    "selections": (v2/*: any*/)
+    "selections": [
+      (v1/*: any*/),
+      {
+        "alias": null,
+        "args": (v2/*: any*/),
+        "concreteType": "ProjectV2",
+        "kind": "LinkedField",
+        "name": "projectV2",
+        "plural": false,
+        "selections": [
+          (v5/*: any*/),
+          (v6/*: any*/)
+        ],
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "KeypairResourcePolicyV2",
+        "kind": "LinkedField",
+        "name": "myKeypairResourcePolicyV2",
+        "plural": false,
+        "selections": [
+          (v3/*: any*/),
+          (v6/*: any*/)
+        ],
+        "storageKey": null
+      }
+    ]
   },
   "params": {
-    "cacheID": "2c2ce905afd89e93c6d761f22ed59f3d",
+    "cacheID": "c881d5e227efdb6f446414729f6de667",
     "id": null,
     "metadata": {},
     "name": "VFolderTableProjectQuery",
     "operationKind": "query",
-    "text": "query VFolderTableProjectQuery(\n  $domain_name: String!\n  $group_id: UUID!\n  $keypair_resource_policy_name: String!\n) {\n  domain(name: $domain_name) {\n    allowed_vfolder_hosts\n  }\n  group(id: $group_id, domain_name: $domain_name) {\n    allowed_vfolder_hosts\n  }\n  keypair_resource_policy(name: $keypair_resource_policy_name) {\n    allowed_vfolder_hosts\n  }\n}\n"
+    "text": "query VFolderTableProjectQuery(\n  $domain_name: String!\n  $group_id: UUID!\n) {\n  domain(name: $domain_name) {\n    allowed_vfolder_hosts\n  }\n  projectV2(projectId: $group_id) {\n    storage {\n      allowedVfolderHosts {\n        host\n        permissions\n      }\n    }\n    id\n  }\n  myKeypairResourcePolicyV2 {\n    allowedVfolderHosts {\n      host\n      permissions\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "ccdbaa52a63c2ea005423e7c541eff80";
+(node as any).hash = "d6a09b14281c9cdacb9842f10c1132ff";
 
 export default node;

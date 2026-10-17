@@ -218,3 +218,35 @@ describe('BAIComplexSelect option and panel mapping', () => {
     );
   });
 });
+
+describe('BAIComplexSelect focus on close', () => {
+  const lightDismiss = () => {
+    const popup = document
+      .getElementById(trigger()?.getAttribute('aria-controls') ?? '')
+      ?.closest<HTMLElement>('[popover]');
+    popup?.hidePopover();
+  };
+
+  it('leaves focus on the field clicked outside the open panel', async () => {
+    const user = userEvent.setup();
+    render(
+      <>
+        <BAIComplexSelect label="Target" options={OPTIONS} />
+        <input aria-label="Rate limit" />
+      </>,
+    );
+    await user.click(trigger());
+    const field = screen.getByRole('textbox', { name: 'Rate limit' });
+    field.focus();
+    lightDismiss();
+    expect(field).toHaveFocus();
+  });
+
+  it('still returns focus to the trigger when closed from the panel', async () => {
+    const user = userEvent.setup();
+    render(<BAIComplexSelect label="Target" options={OPTIONS} />);
+    await user.click(trigger());
+    await user.click(optionRows()[0]);
+    expect(trigger()).toHaveFocus();
+  });
+});
