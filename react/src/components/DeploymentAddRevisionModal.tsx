@@ -38,6 +38,7 @@ import {
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useModelDefinitionPlaceholders } from '../hooks/useModelDefinitionDefaults';
+import { useMountableStorageHosts } from '../hooks/useMountableStorageHosts';
 import {
   buildRuntimeVariantPresetValues,
   type RuntimeParameterGroup,
@@ -71,9 +72,6 @@ import ResourceAllocationFormItems, {
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
   type ResourceAllocationFormValue,
 } from './SessionFormItems/ResourceAllocationFormItems';
-import VFolderTableFormItem, {
-  type VFolderTableFormValues,
-} from './VFolderTableFormItem';
 import { AstryxFormTextInput } from './astryxFormControls';
 import './collapsible-section.css';
 import { Banner } from '@lablup/ui-common/Banner';
@@ -96,14 +94,19 @@ import {
   BAIModalProps,
   BAIRuntimeVariantSelect,
   BAISkeleton,
+  BAIVFolderMountConfigInput,
   BAIVFolderPathPicker,
   BAIVFolderSelect,
   BAIVFolderSelectRef,
   convertToUUID,
+  mountDestinationToInput,
+  resolveVFolderMounts,
   safeDecodeUuid,
   toGlobalId,
   toLocalId,
   useBAILogger,
+  useVFolderMountConfigFormRule,
+  type VFolderMountConfigValue,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { FolderOpenIcon, Info, PlusIcon, RotateCw } from 'lucide-react';
@@ -127,9 +130,10 @@ import {
 } from 'react-relay';
 
 export type FormValues = ImageEnvironmentFormInput &
-  ResourceAllocationFormValue &
-  VFolderTableFormValues & {
+  ResourceAllocationFormValue & {
     runtimeVariantId: string;
+    /** The additional folders mounted next to the model folder. */
+    extraVFolderMounts?: VFolderMountConfigValue[];
     modelFolderId: string;
     // Mount config for the selected model folder (FR-3205): the container mount
     // destination and an optional subpath inside the model folder, rendered as
@@ -361,6 +365,48 @@ const SelectLoadingFallback: React.FC<{ label: string }> = ({ label }) => {
   return <BAIComplexSelect label={label} isLabelHidden isLoading isDisabled />;
 };
 
+/**
+ * The additional folders mounted next to the model folder. Suspends on the
+ * project's mountable hosts and the folder options, so it sits inside the
+ * advanced section's Suspense boundary.
+ */
+const ExtraVFolderMountsFormItem: React.FC<{
+  project: ProjectContextOrNull;
+  modelFolderId?: string;
+}> = ({ project, modelFolderId }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { generateFolderPath } = useFolderExplorerOpener();
+  const mountableHosts = useMountableStorageHosts(project?.id ?? null);
+  const mountConfigRule = useVFolderMountConfigFormRule();
+  const modelFolderUuid = modelFolderId
+    ? safeDecodeUuid(String(modelFolderId))
+    : undefined;
+  return (
+    <BAIFormItem
+      name="extraVFolderMounts"
+      label={t('modelService.AdditionalMounts')}
+      tooltip={t('modelService.AdditionalMountsTooltip')}
+      rules={[mountConfigRule]}
+    >
+      <BAIVFolderMountConfigInput
+        currentProjectId={project?.id}
+        currentProjectName={project?.name}
+        mountableHosts={mountableHosts}
+        folderExplorerPath={generateFolderPath}
+        // The model folder is mounted already, and other model folders are
+        // not data mounts.
+        filter={{
+          usageMode: { notEquals: 'MODEL' },
+          ...(modelFolderUuid
+            ? { NOT: [{ entityId: { equals: modelFolderUuid } }] }
+            : {}),
+        }}
+      />
+    </BAIFormItem>
+  );
+};
+
 const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   onRequestClose,
   deploymentFrgmt,
@@ -427,7 +473,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       }
       extraMounts {
         vfolderId
+        vfolder {
+          name
+        }
         mountDestination
+        subpath
       }
       modelRuntimeConfig {
         runtimeVariantId
@@ -647,19 +697,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const [initialRuntimePresetValues, setInitialRuntimePresetValues] = useState<
     ReadonlyArray<RuntimeVariantPresetValueEntry> | undefined
   >(undefined);
-
-  // Snapshot of prefilled `extraMounts.mountDestination`, keyed by the
-  // dash-stripped vfolder id. Read at submit time as a fallback when
-  // `values.mount_id_map` does not have the entry — VFolderTable's
-  // `onChangeAliasMap` *replaces* (not merges) the alias map and only
-  // surfaces aliases for rows that are visible in the current filtered
-  // table view, so any extra mount that lives outside that view (e.g. a
-  // vfolder owned by another user that the deployment was created with)
-  // would lose its alias as soon as the user edits *any* visible row's
-  // alias. The backend requires `mount_destination`, so without this
-  // fallback the next submit fails with `ExtraVFolderMountInput.__init__()
-  // missing 1 required keyword-only argument: 'mount_destination'`.
-  const prefilledMountAliasesRef = useRef<Record<string, string>>({});
 
   // The preset "empty state" probe runs as a side-effect fetchQuery rather
   // than part of the main `useLazyLoadQuery`, because reading the count
@@ -1012,15 +1049,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       startCommand: service?.startCommand,
     });
 
-    prefilledMountAliasesRef.current = _.fromPairs(
-      (rev.extraMounts ?? [])
-        .filter((m) => !!m.mountDestination)
-        .map((m) => [
-          m.vfolderId.replace(/-/g, ''),
-          m.mountDestination as string,
-        ]),
-    );
-
     // Hydrate the runtime-parameter section from the revision's preset values
     // (non-custom variants). Preset values are their own field now — no longer
     // encoded into `environ` / EXTRA_ARGS — so we feed them through directly,
@@ -1068,20 +1096,19 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           : {}),
       },
       enabledAutomaticShmem: !shmemEntry,
-      // VFolderTable's `rowKey="id"` uses the 32-char-hex form, so
-      // selectedRowKeys must match that shape for prefilled rows to
-      // appear checked.
-      mount_ids: (rev.extraMounts ?? []).map((m) =>
-        m.vfolderId.replace(/-/g, ''),
-      ),
-      mount_id_map: _.fromPairs(
-        (rev.extraMounts ?? [])
-          .filter((m) => !!m.mountDestination)
-          .map((m) => [
-            m.vfolderId.replace(/-/g, ''),
-            m.mountDestination as string,
-          ]),
-      ),
+      extraVFolderMounts: (rev.extraMounts ?? []).map((m) => {
+        const vfolderId = convertToUUID(m.vfolderId);
+        const name = m.vfolder?.name ?? vfolderId;
+        return {
+          vfolderId,
+          name,
+          mountDestination: mountDestinationToInput(
+            name,
+            m.mountDestination ?? undefined,
+          ),
+          subpath: m.subpath ?? '',
+        };
+      }),
       runtimeVariantId: rev.modelRuntimeConfig?.runtimeVariantId ?? undefined,
       modelFolderId: rev.modelMountConfig?.vfolderId
         ? toGlobalId('VirtualFolderNode', rev.modelMountConfig.vfolderId)
@@ -1411,20 +1438,13 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         ? 'SINGLE_NODE'
         : 'MULTI_NODE';
 
-    const vfoldersNameMap: Record<string, string> =
-      values.vfoldersNameMap ?? {};
-    const extraMounts = (values.mount_ids ?? []).map((vfolderId) => {
-      const mountDestination =
-        values.mount_id_map?.[vfolderId] ||
-        prefilledMountAliasesRef.current[vfolderId] ||
-        (vfoldersNameMap[vfolderId]
-          ? `/home/work/${vfoldersNameMap[vfolderId]}`
-          : `/home/work/${vfolderId}`);
-      return {
-        vfolderId: convertToUUID(vfolderId),
-        mountDestination,
-      };
-    });
+    const extraMounts = resolveVFolderMounts(values.extraVFolderMounts).map(
+      (mount) => ({
+        vfolderId: mount.vfolderId,
+        mountDestination: mount.mountDestination,
+        ...(mount.subpath ? { subpath: mount.subpath } : {}),
+      }),
+    );
 
     const variant = runtimeVariantMap[values.runtimeVariantId];
     const variantName = variant?.name ?? '';
@@ -2515,33 +2535,15 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   />
                 </BAIFormItem>
               )}
-              <BAIFormItem
-                noStyle
-                dependencies={['modelFolderId', 'mount_id_map', 'mount_ids']}
-              >
-                {(form) => {
-                  const { getFieldValue } = form as FormInstance<FormValues>;
-                  const modelFolderId = getFieldValue('modelFolderId');
-                  const modelFolderIdNoDash = modelFolderId
-                    ? safeDecodeUuid(String(modelFolderId))?.replace(/-/g, '')
-                    : undefined;
-                  return (
-                    <VFolderTableFormItem
-                      label={t('modelService.AdditionalMounts')}
-                      tooltip={t('modelService.AdditionalMountsTooltip')}
-                      rowKey="id"
-                      tableProps={{
-                        scroll: { x: 'max-content', y: 300 },
-                      }}
-                      rowFilter={(vfolder) =>
-                        vfolder.usage_mode !== 'model' &&
-                        vfolder.status === 'ready' &&
-                        !vfolder.name?.startsWith('.') &&
-                        vfolder.id !== modelFolderIdNoDash
-                      }
-                    />
-                  );
-                }}
+              <BAIFormItem noStyle dependencies={['modelFolderId']}>
+                {(form) => (
+                  <ExtraVFolderMountsFormItem
+                    project={deploymentProject}
+                    modelFolderId={(
+                      form as FormInstance<FormValues>
+                    ).getFieldValue('modelFolderId')}
+                  />
+                )}
               </BAIFormItem>
             </Suspense>
           </Collapsible>

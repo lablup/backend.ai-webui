@@ -143,10 +143,8 @@ export {
   useVFolderMountConfigFormRule,
 } from './BAIVFolderMountConfigInput';
 export type {
-  AutoMountedFolder,
   BAIVFolderMountConfigInputProps,
   BAIVFolderMountConfigInputRef,
-  LegacyVFolder,
   VFolderMountConfigValue,
   VFolderMountConfigStatusOptions,
   VFolderMountConfigEntryStatus,

@@ -26782,6 +26782,9 @@ input VFolderFilter
 
   """Added in 26.9.0. Select entities by the labels on them."""
   labels: EntityLabelNestedFilter = null
+
+  """Added in 26.10.0. Filter by vfolder ID."""
+  entityId: UUIDFilter = null
   AND: [VFolderFilter!] = null
   OR: [VFolderFilter!] = null
   NOT: [VFolderFilter!] = null
