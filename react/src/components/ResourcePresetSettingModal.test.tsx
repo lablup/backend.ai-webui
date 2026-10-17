@@ -33,6 +33,15 @@ import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockE
  * External behavior only: rendered fields + submitted mutation variables.
  */
 
+const CURRENT_DOMAIN_ID = 'b9e676dc-e23e-54c6-b350-e83fba4127e9';
+vi.mock('../hooks/useCurrentDomainScope', () => ({
+  useCurrentDomainScope: () => ({
+    domainName: 'default',
+    domainId: CURRENT_DOMAIN_ID,
+    domainScope: { domain: [{ value: CURRENT_DOMAIN_ID }] },
+  }),
+}));
+
 vi.mock('react-i18next', async () => {
   const React = await import('react');
   return {
@@ -81,7 +90,7 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
         'data-testid': 'mock-project-resource-group-select',
         'data-project-name': props.projectName ?? '',
       }),
-    BAIResourceGroupSelect: (props: any) =>
+    BAIScopedResourceGroupSelect: (props: any) =>
       React.createElement('button', {
         'data-testid': 'mock-admin-resource-group-select',
         'data-allow-clear': String(!!props.allowClear),
@@ -118,7 +127,7 @@ const renderModal = () => {
 };
 
 describe('ResourcePresetSettingModal resource-group scope contract (ADR-0001, FR-3415)', () => {
-  it('lists resource groups at admin scope, independent of any project', async () => {
+  it("lists the current domain's resource groups, independent of any project", async () => {
     renderModal();
 
     expect(

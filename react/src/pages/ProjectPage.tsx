@@ -22,6 +22,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
+import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIButton,
@@ -81,6 +82,7 @@ const DEFAULT_PROJECT_FILTER = 'type != "PERSONAL"';
 
 const ProjectPage = () => {
   'use memo';
+  const { domainScope } = useCurrentDomainScope();
 
   const { t } = useTranslation();
   const { logger } = useBAILogger();
@@ -660,6 +662,7 @@ const ProjectPage = () => {
             setSelectedProject(null);
           }}
           projectFragment={selectedProject}
+          resourceGroupScope={domainScope}
         />
         <BAIProjectBulkEditModal
           open={openBulkEditModal}

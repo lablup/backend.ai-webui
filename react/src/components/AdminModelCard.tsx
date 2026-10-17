@@ -19,6 +19,7 @@ import {
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import AdminModelCardSettingModal from './AdminModelCardSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
@@ -28,7 +29,7 @@ import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIAdminProjectSelect,
+  BAIScopedProjectSelect,
   BAIAlert,
   BAIButton,
   BAIColumnType,
@@ -46,7 +47,6 @@ import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   isValidUUID,
-  toLocalId,
   tokenColorForTagColor,
   useBAILogger,
   type BAITableSettings,
@@ -65,7 +65,7 @@ import {
 } from 'react-relay';
 
 type ModelCardNode = NonNullableNodeOnEdges<
-  AdminModelCardQuery$data['adminModelCardsV2']
+  AdminModelCardQuery$data['scopedModelCardsV2']
 >;
 
 const availableModelCardSorterKeys = [
@@ -91,8 +91,10 @@ export const AdminModelCardQuery = graphql`
     $limit: Int
     $offset: Int
     $domainName: String
+    $scope: ModelCardScope!
   ) {
-    adminModelCardsV2(
+    scopedModelCardsV2(
+      scope: $scope
       filter: $filter
       orderBy: $orderBy
       limit: $limit
@@ -102,6 +104,7 @@ export const AdminModelCardQuery = graphql`
       edges {
         node {
           id
+          entityId
           name
           vfolderId
           vfolder {
@@ -155,6 +158,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   tableSettings,
 }) => {
   'use memo';
+  const { domainScope } = useCurrentDomainScope();
 
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -187,7 +191,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   const deferredQueryRef = useDeferredValue(queryRef);
   const isRefetching = deferredQueryRef !== queryRef;
 
-  const { adminModelCardsV2, groups } =
+  const { scopedModelCardsV2, groups } =
     usePreloadedQuery<AdminModelCardQueryType>(
       AdminModelCardQuery,
       deferredQueryRef,
@@ -240,7 +244,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
     setIsSettingModalOpen(true);
   };
 
-  const modelCards = adminModelCardsV2?.edges?.map((edge) => edge?.node) ?? [];
+  const modelCards = scopedModelCardsV2?.edges?.map((edge) => edge?.node) ?? [];
 
   const editingModelCard = editingModelCardId
     ? modelCards.find((mc) => mc?.id === editingModelCardId)
@@ -401,7 +405,8 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                   validate: (value) => isValidUUID(value),
                 },
                 renderInput: ({ onAddCondition, value, isDisabled }) => (
-                  <BAIAdminProjectSelect
+                  <BAIScopedProjectSelect
+                    scope={domainScope}
                     label={t('adminModelCard.Project')}
                     isLabelHidden
                     // A model card belongs to a MODEL_STORE project (see the
@@ -543,7 +548,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
         pagination={{
           pageSize,
           current,
-          total: adminModelCardsV2?.count ?? 0,
+          total: scopedModelCardsV2?.count ?? 0,
           onChange: (nextCurrent, nextPageSize) => {
             onReload(
               {
@@ -646,7 +651,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
 
               commitDeleteModelCard({
                 variables: {
-                  id: toLocalId(deletingModelCard.id),
+                  id: deletingModelCard.entityId,
                   options: { deleteAssociatedVfolder: alsoDeleteFolder },
                 },
                 onCompleted: (_data, errors) => {
@@ -737,7 +742,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
           </BAIFlex>
         }
         onOk={() => {
-          const ids = selectedModelCards.map((mc) => toLocalId(mc.id));
+          const ids = selectedModelCards.map((mc) => mc.entityId);
           return new Promise<void>((resolve, reject) => {
             commitBulkDeleteModelCards({
               variables: {
@@ -766,7 +771,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                   );
                   setSelectedModelCards(
                     selectedModelCards.filter((mc) =>
-                      failedIds.has(toLocalId(mc.id)),
+                      failedIds.has(mc.entityId),
                     ),
                   );
                   upsertNotification({
@@ -780,7 +785,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                         {failed.map((f) => {
                           const cardName =
                             selectedModelCards.find(
-                              (mc) => toLocalId(mc.id) === f.cardId,
+                              (mc) => mc.entityId === f.cardId,
                             )?.name ?? f.cardId;
                           return (
                             <div key={f.cardId}>

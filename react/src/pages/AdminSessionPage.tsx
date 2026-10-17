@@ -5,7 +5,7 @@
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import PendingSessionNodeList from '../components/PendingSessionNodeList';
 import SessionDetailAndContainerLogOpenerLegacy from '../components/SessionDetailAndContainerLogOpenerLegacy';
-import { useTabQuerySnapshot } from '../hooks';
+import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../hooks';
 import { BAISkeleton, BAICard, filterOutEmpty } from 'backend.ai-ui';
 import { parseAsStringLiteral } from 'nuqs';
 import React, { Suspense } from 'react';
@@ -25,30 +25,34 @@ const AdminSessionPage: React.FC = () => {
 
   const { t } = useTranslation();
   const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
+  // TODO(needs-backend): session_pending_queue admits superadmins only until the backend
+  // reworks the pending queue query (#10300).
+  const isSuperAdmin = useSuspendedBackendaiClient().is_superadmin;
+  const activeTab = isSuperAdmin ? currentTab : 'compute-sessions';
 
   return (
     <>
       <BAICard
-        activeTabKey={currentTab}
+        activeTabKey={activeTab}
         onTabChange={onTabChange}
         tabList={filterOutEmpty([
           {
             key: 'compute-sessions',
             label: t('webui.menu.Sessions'),
           },
-          {
+          isSuperAdmin && {
             key: 'pending-sessions',
             label: t('adminSession.PendingSessions'),
           },
         ])}
       >
         <Suspense fallback={<BAISkeleton />}>
-          {currentTab === 'compute-sessions' && (
+          {activeTab === 'compute-sessions' && (
             <BAIErrorBoundary>
               <AdminComputeSessionListPage />
             </BAIErrorBoundary>
           )}
-          {currentTab === 'pending-sessions' && (
+          {activeTab === 'pending-sessions' && (
             <BAIErrorBoundary>
               <PendingSessionNodeList />
             </BAIErrorBoundary>

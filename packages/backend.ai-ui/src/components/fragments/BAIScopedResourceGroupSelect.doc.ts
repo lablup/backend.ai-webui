@@ -2,7 +2,7 @@ import type { ComponentDoc } from '@astryxdesign/cli/authoring';
 
 export const docs = {
   type: 'component',
-  name: 'BAIResourceGroupSelect',
+  name: 'BAIScopedResourceGroupSelect',
   displayName: 'BAI Resource Group Select',
   category: 'Data Input',
   keywords: [
@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'Picks a resource group by name at admin scope. Unlike the paginated Relay selects, it takes no fragment reference and no query reference: it runs one `adminResourceGroups` query itself (manager 26.2.0+, admin only, ordered by name, capped at 100 groups), and uses the name as both the option label and the option value — so the caller only has to mount it inside a Suspense boundary and bind `value` / `onChange`. The optional `filter` narrows the list (`isActive`, `isPublic`); without it every resource group is listed, inactive ones included. The same query is exposed as the `useResourceGroupNames(filter)` hook: a parent that needs the names during render — to pick a default before its own query runs — calls the hook with the same `filter` it passes to the select, and Relay serves both from one request. It renders BAISelect, and because the whole list is local, filtering happens client-side in the popup. Only the props below are set by this component; everything else, including `value`, `onChange`, `allowClear` and `disabled`, passes straight through to BAISelect.',
+      'Picks a resource group by name within a scope. Unlike the paginated Relay selects, it takes no fragment reference and no query reference: it runs one `scopedResourceGroups` query itself (manager 26.9.0a4+, ordered by name, capped at 100 groups) over the required `scope`, usually the current domain (ADR 0012), and uses the name as both the option label and the option value — so the caller only has to mount it inside a Suspense boundary and bind `value` / `onChange`. The optional `filter` narrows the list (`isActive`, `isPublic`); without it every resource group is listed, inactive ones included. The same query is exposed as the `useScopedResourceGroupNames(scope, filter)` hook: a parent that needs the names during render — to pick a default before its own query runs — calls the hook with the same `scope` and `filter` it passes to the select, and Relay serves both from one request. It renders BAISelect, and because the whole list is local, filtering happens client-side in the popup. Only the props below are set by this component; everything else, including `value`, `onChange`, `allowClear` and `disabled`, passes straight through to BAISelect.',
     bestPractices: [
       {
         guidance: true,
@@ -36,7 +36,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'When the parent must know the list before render, call `useResourceGroupNames` with the exact `filter` object shape the select receives — a different shape is a different Relay request.',
+          'When the parent must know the list before render, call `useScopedResourceGroupNames` with the exact `filter` object shape the select receives — a different shape is a different Relay request.',
       },
       {
         guidance: true,
@@ -57,10 +57,16 @@ export const docs = {
   },
   props: [
     {
+      name: 'scope',
+      type: 'ResourceGroupScope',
+      description:
+        'Required. The `scopedResourceGroups` scope whose resource groups are listed, for example `useCurrentDomainScope().domainScope` in the host (`{ domain: [{ value: <domain UUID> }] }`).',
+    },
+    {
       name: 'filter',
       type: '{ isActive?: boolean | null; isPublic?: boolean | null } | null',
       description:
-        'Server-side narrowing of the admin-scope list, forwarded as the `adminResourceGroups` filter. Omit to list every resource group.',
+        'Server-side narrowing of the scoped list, forwarded as the `scopedResourceGroups` filter. Omit to list every resource group in reach.',
     },
     {
       name: 'placeholder',
@@ -81,18 +87,18 @@ export const docs = {
       label: 'Optional resource group in a form',
       code: `<BAIFormItem label={t('general.ResourceGroup')} name="scaling_group_name">
   <Suspense fallback={<BAISelect loading disabled />}>
-    <BAIResourceGroupSelect allowClear />
+    <BAIScopedResourceGroupSelect scope={domainScope} allowClear />
   </Suspense>
 </BAIFormItem>`,
     },
     {
       label: 'Active groups only, default resolved before render',
-      code: `const resourceGroupNames = useResourceGroupNames({ isActive: true });
+      code: `const resourceGroupNames = useScopedResourceGroupNames(domainScope, { isActive: true });
 const currentResourceGroup = _.includes(resourceGroupNames, fromUrl)
   ? fromUrl
   : _.first(resourceGroupNames);
 
-<BAIResourceGroupSelect
+<BAIScopedResourceGroupSelect
   filter={{ isActive: true }}
   value={currentResourceGroup}
   onChange={(value) => setFromUrl(value ?? null)}
