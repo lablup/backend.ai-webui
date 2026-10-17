@@ -583,6 +583,15 @@ describe('what the reader gives back', () => {
     node<HTMLTextAreaElement>('[data-pact="comment"]')?.focus();
     press('KeyN');
     expect(pillText()).toContain('1 / 2');
+
+    // So is one typed into the composer the review chord opens.
+    const composer = node<HTMLTextAreaElement>('.compose textarea');
+    expect(composer).toBeTruthy();
+    composer?.focus();
+    press('KeyN');
+    press('KeyV');
+    expect(pillText()).toContain('1 / 2');
+    expect(pillText()).toContain('1 viewed');
   });
 });
 
