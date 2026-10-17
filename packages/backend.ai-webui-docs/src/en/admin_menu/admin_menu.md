@@ -1883,7 +1883,7 @@ bar at the top of the page filters the list when you are looking for a specific 
 **Announcement**
 
 - **System announcement**: Click **Edit Announcement** to create or change the announcement banner shown
-  to every user in the domain at the top of every page. See the
+  to every user at the top of every page. See the
   [System announcement](#system-announcement) section below.
 
 :::note
@@ -1895,7 +1895,7 @@ removing unused images or registering periodic maintenance schedules.
 
 ### System announcement
 
-Superadmins can publish a short message that every user in the domain sees as a banner at the top of
+Superadmins can publish a short message that every user sees as a banner at the top of
 every page — for example, a planned maintenance window. The announcement is written in Markdown and is
 managed entirely from the WebUI, whether or not one has been published before.
 
@@ -1918,7 +1918,7 @@ message below it is optional; readers see it when they expand the banner. You wr
 
 The footer holds four actions:
 
-- **Publish**: Saves the announcement and makes the banner visible to every user in the domain.
+- **Publish**: Saves the announcement and makes the banner visible to every user.
 - **Save as Draft**: An option in the **Publish** menu. It saves the announcement without showing it to
   users, and the dialog marks a saved draft as a **Draft**.
 - **Cancel**: Closes the dialog without saving.
@@ -2044,11 +2044,11 @@ The **Branding** page lets superadmins customize the visual identity of the WebU
 
 ![](../images/branding_page.png)
 
-Your edits on this page are a draft: use `Preview` to check them, then click `Apply` to save the theme for the domain, where it applies to every user.
+Your edits on this page are a draft: use `Preview` to check them, then click `Apply` to save the theme and apply it to every user.
 
 The toolbar provides:
 
-- `Apply`: Saves the current settings as the domain's theme.
+- `Apply`: Saves the current settings as the theme.
 - `Preview`: Opens a new window that previews the current theme changes.
 - `JSON Config`: Opens a modal where the theme configuration can be edited directly as JSON and exported. An imported file is loaded into the draft, which you then save with `Apply`.
 - A reset control that restores all branding settings to their defaults.
