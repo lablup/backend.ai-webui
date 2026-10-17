@@ -13,6 +13,7 @@ import { App } from '../app-shim';
 import { localeCompare, numberSorterWithInfinityValue } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import KeypairResourcePolicyInfoModal from './KeypairResourcePolicyInfoModal';
 import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingModal';
@@ -55,6 +56,8 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
   props,
 ) => {
   const { t } = useTranslation();
+  // The legacy create/modify/delete mutations are superadmin-only.
+  const isSuperadmin = !!useSuspendedBackendaiClient().is_superadmin;
   const { message } = App.useApp();
 
   const [keypairResourcePolicyFetchKey, updateKeypairResourcePolicyFetchKey] =
@@ -134,23 +137,27 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
                 });
               },
             },
-            {
-              key: 'edit',
-              title: t('button.Edit'),
-              icon: <SquarePenIcon />,
-              onClick: () => {
-                setEditingKeypairResourcePolicy(row);
-              },
-            },
-            {
-              key: 'delete',
-              title: t('button.Delete'),
-              icon: <Trash2 size="1em" />,
-              type: 'danger',
-              onClick: () => {
-                setDeletingPolicyName(row?.name ?? null);
-              },
-            },
+            ...(isSuperadmin
+              ? [
+                  {
+                    key: 'edit',
+                    title: t('button.Edit'),
+                    icon: <SquarePenIcon />,
+                    onClick: () => {
+                      setEditingKeypairResourcePolicy(row);
+                    },
+                  },
+                  {
+                    key: 'delete',
+                    title: t('button.Delete'),
+                    icon: <Trash2 size="1em" />,
+                    type: 'danger' as const,
+                    onClick: () => {
+                      setDeletingPolicyName(row?.name ?? null);
+                    },
+                  },
+                ]
+              : []),
           ]}
         />
       ),
@@ -352,15 +359,17 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
               }}
             />
           </Tooltip>
-          <BAIButton
-            type="primary"
-            icon={<PlusIcon />}
-            onClick={() => {
-              setIsCreatingPolicySetting(true);
-            }}
-          >
-            {t('resourcePolicy.CreatePolicy')}
-          </BAIButton>
+          {isSuperadmin && (
+            <BAIButton
+              type="primary"
+              icon={<PlusIcon />}
+              onClick={() => {
+                setIsCreatingPolicySetting(true);
+              }}
+            >
+              {t('resourcePolicy.CreatePolicy')}
+            </BAIButton>
+          )}
         </BAIFlex>
       </BAIFlex>
       <BAITable

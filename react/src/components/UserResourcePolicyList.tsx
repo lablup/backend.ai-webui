@@ -15,6 +15,7 @@ import {
   numberSorterWithInfinityValue,
 } from '../helper';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import UserResourcePolicySettingModal from './UserResourcePolicySettingModal';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
@@ -46,6 +47,8 @@ interface UserResourcePolicyListProps {}
 
 const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
   const { t } = useTranslation();
+  // The legacy create/modify/delete mutations are superadmin-only.
+  const isSuperadmin = !!useSuspendedBackendaiClient().is_superadmin;
   const { message } = App.useApp();
 
   const [isRefetchPending, startRefetchTransition] = useTransition();
@@ -107,23 +110,27 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
           title={name}
           showActions="always"
           actions={[
-            {
-              key: 'edit',
-              title: t('button.Edit'),
-              icon: <SquarePenIcon />,
-              onClick: () => {
-                setEditingUserResourcePolicy(row);
-              },
-            },
-            {
-              key: 'delete',
-              title: t('button.Delete'),
-              icon: <Trash2 size="1em" />,
-              type: 'danger',
-              onClick: () => {
-                setDeletingPolicyName(row?.name ?? null);
-              },
-            },
+            ...(isSuperadmin
+              ? [
+                  {
+                    key: 'edit',
+                    title: t('button.Edit'),
+                    icon: <SquarePenIcon />,
+                    onClick: () => {
+                      setEditingUserResourcePolicy(row);
+                    },
+                  },
+                  {
+                    key: 'delete',
+                    title: t('button.Delete'),
+                    icon: <Trash2 size="1em" />,
+                    type: 'danger' as const,
+                    onClick: () => {
+                      setDeletingPolicyName(row?.name ?? null);
+                    },
+                  },
+                ]
+              : []),
           ]}
         />
       ),
@@ -233,15 +240,17 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
               }}
             />
           </Tooltip>
-          <BAIButton
-            type="primary"
-            icon={<PlusIcon />}
-            onClick={() => {
-              setIsCreatingPolicySetting(true);
-            }}
-          >
-            {t('resourcePolicy.CreatePolicy')}
-          </BAIButton>
+          {isSuperadmin && (
+            <BAIButton
+              type="primary"
+              icon={<PlusIcon />}
+              onClick={() => {
+                setIsCreatingPolicySetting(true);
+              }}
+            >
+              {t('resourcePolicy.CreatePolicy')}
+            </BAIButton>
+          )}
         </BAIFlex>
       </BAIFlex>
       <BAITable
