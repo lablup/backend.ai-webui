@@ -224,10 +224,7 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   if (scopeType === 'CONTAINER_REGISTRY') {
     return (
       <Suspense fallback={fallback}>
-        <BAIAdminContainerRegistrySelect
-          valuePropName="row_id"
-          {...branchProps}
-        />
+        <BAIAdminContainerRegistrySelect {...branchProps} />
       </Suspense>
     );
   }

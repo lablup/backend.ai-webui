@@ -107,6 +107,7 @@ export { default as BAIAdminContainerRegistrySelect } from './BAIAdminContainerR
 export type {
   BAIAdminContainerRegistrySelectProps,
   BAIAdminContainerRegistrySelectRef,
+  BAIAdminContainerRegistrySelectFilter,
   AstryxContainerRegistryNode,
 } from './BAIAdminContainerRegistrySelect';
 export { default as BAIDomainSelect } from './BAIDomainSelect';

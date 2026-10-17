@@ -3980,6 +3980,9 @@ input ContainerRegistryV2Filter
   type: ContainerRegistryTypeFilter = null
   isGlobal: Boolean = null
 
+  """Added in 26.10.0. Filter by container registry ID."""
+  entityId: UUIDFilter = null
+
   """Added in 26.7.0. Match all of the given sub-filters."""
   AND: [ContainerRegistryV2Filter!] = null
 
