@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 366 / 516 features covered (71%)**
+**Overall (in-scope routes): 369 / 519 features covered (71%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -25,7 +25,7 @@
 | Serving                  | `/serving`                                       |    7     |    2    | 🔶 29%  |
 | Endpoint Detail          | `/serving/:serviceId`                            |    19    |    8    | 🔶 42%  |
 | Service Launcher         | `/service/start`                                 |    5     |    1    | 🔶 20%  |
-| VFolder / Data           | `/data`                                          |    49    |   36    | 🔶 73%  |
+| VFolder / Data           | `/data`                                          |    51    |   38    | 🔶 75%  |
 | Model Store              | `/model-store`                                   |    6     |    6    | ✅ 100% |
 | Admin Model Store        | `/admin-model-store`                             |    28    |   28    | ✅ 100% |
 | Storage Host             | `/storage-settings/:hostname`                    |    3     |    0    |  ❌ 0%  |
@@ -49,12 +49,12 @@
 | Plugin System            | (config-based)                                   |    12    |   12    | ✅ 100% |
 | RBAC Management          | `/rbac`                                          |    23    |   22    | 🔶 96%  |
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule`           |    33    |   32    | 🔶 97%  |
-| Deployments              | `/deployments`, `/deployments/:id`               |    21    |   18    | 🔶 86%  |
+| Deployments              | `/deployments`, `/deployments/:id`               |    22    |   19    | 🔶 86%  |
 | Admin Deployment Preset  | `/admin/deployments/deployment-presets/new`      |    5     |    5    | ✅ 100% |
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **517**  | **367** | **71%** |
+| **Total**                |                                                  | **520**  | **370** | **71%** |
 
 ---
 
@@ -437,6 +437,8 @@
 | Type selection: Project enabled for general                              | ✅     | `Project radio is enabled when usage mode is general`                                                                                  |
 | Type selection: User-only for regular user                               | ✅     | `Regular user sees only User-type radio (no Project radio)`                                                                            |
 | Type selection: Both types for admin                                     | ✅     | `Admin sees both User-type and Project-type radios`                                                                                    |
+| Edit labels (Labels column hover action) and filter by clicking a label  | ✅     | `User can edit labels on a folder and filter the list by a label`                                                                      |
+| Bulk add labels to selected folders                                      | ✅     | `User can add labels to multiple selected folders`                                                                                     |
 | Active/Deleted tab switching                                             | ❌     | -                                                                                                                                      |
 | Usage mode filtering (general/pipeline/automount/model)                  | ❌     | -                                                                                                                                      |
 | Property filtering (name, status, location)                              | ❌     | -                                                                                                                                      |
@@ -449,7 +451,7 @@
 | Shared folder permission → SharedFolderPermissionInfoModal               | ❌     | -                                                                                                                                      |
 | File download                                                            | ❌     | -                                                                                                                                      |
 
-**Coverage: 🔶 34/47 features (includes 1 skipped)**
+**Coverage: 🔶 36/49 features (includes 1 skipped)**
 
 ---
 
@@ -1210,10 +1212,11 @@ External portals (LMS) open these routes with a signed `sToken` plus the app and
 
 #### Admin List — Filters (`/admin/deployments`)
 
-| Feature                                                          | Status | Test                                             |
-| ---------------------------------------------------------------- | ------ | ------------------------------------------------ |
-| Owner filter (`createdUserId`) shows the owner email, not a UUID | ✅     | `Admin can filter deployments by owner`          |
-| Tags-column click filters by the exact tag (`iEquals`)           | ✅     | `Admin can filter deployments by clicking a tag` |
+| Feature                                                              | Status | Test                                             |
+| -------------------------------------------------------------------- | ------ | ------------------------------------------------ |
+| Owner filter (`createdUserId`) shows the owner email, not a UUID     | ✅     | `Admin can filter deployments by owner`          |
+| Tags-column click filters by the exact tag (`iEquals`)               | ✅     | `Admin can filter deployments by clicking a tag` |
+| Edit labels, filter by Label key / Label value, label on detail card | ✅     | `Admin can filter deployments by label`          |
 
 #### Detail Page
 
@@ -1249,7 +1252,7 @@ External portals (LMS) open these routes with a signed `sToken` plus the app and
 | Replica scheduling completion (Lifecycle leaves Pending → replica scheduled)       | ❌     | Deferred — measured ~40s–20min+ on the shared cluster; out of scope for webui e2e                                        |
 | Revision rollback / promote from Revision History                                  | ❌     | -                                                                                                                        |
 
-**Coverage: 🔶 15/19 features (4 deferred to backend-surface testing or future work)**
+**Coverage: 🔶 16/20 features (4 deferred to backend-surface testing or future work)**
 
 ---
 
