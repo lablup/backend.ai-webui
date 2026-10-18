@@ -11,6 +11,8 @@ import {
 import type { PowerSearchConfig } from '@lablup/ui-common/PowerSearch';
 import { render, renderHook, screen } from '@testing-library/react';
 import * as _ from 'lodash-es';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it, vi } from 'vitest';
 
 const editorFor = (renderInput: FilterRenderInput) => {
@@ -88,5 +90,20 @@ describe('BAIPowerSearchEditor', () => {
         (override) => override.Editor === BAIPowerSearchEditor,
       ),
     ).toBe(true);
+  });
+});
+
+// jsdom applies no stylesheet, so the chip/end-lane spacing is checked at the
+// source. Via a variable: Vite rewrites a literal `new URL('./x.css', …)`.
+describe('BAIPowerSearchAdapters.css', () => {
+  it('keeps filter chips clear of the absolutely-positioned clear button', () => {
+    const relative = './BAIPowerSearchAdapters.css';
+    const css = readFileSync(
+      fileURLToPath(new URL(relative, import.meta.url)),
+      'utf8',
+    );
+    expect(css).toMatch(
+      /\.bai-power-search \.astryx-tokenizer:has\(\.astryx-token\)\s*\{[^}]*padding-inline-end:\s*calc\(\s*var\(--_tokenizer-end-lane-reserve,/,
+    );
   });
 });

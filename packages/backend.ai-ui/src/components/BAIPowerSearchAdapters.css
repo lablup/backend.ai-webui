@@ -24,6 +24,15 @@
     min-width: 0;
   }
 
+  /* The clear/busy end lane is absolutely positioned and reserves room only
+     for the input, so a chip on the first row ran under it and its remove
+     button was unclickable. Reserve the lane's measured width for chips too. */
+  .bai-power-search .astryx-tokenizer:has(.astryx-token) {
+    padding-inline-end: calc(
+      var(--_tokenizer-end-lane-reserve, 0px) + var(--spacing-1)
+    );
+  }
+
   /* `Token`'s click target is `all: unset`, which inlines the label and so
      disables its `text-overflow: ellipsis`; a block label truncates. */
   .bai-power-search .astryx-token > button > span:not(.astryx-icon) {
