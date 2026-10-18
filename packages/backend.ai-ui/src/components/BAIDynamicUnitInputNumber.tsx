@@ -131,6 +131,7 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
   addonSuffix,
   defaultUnit,
   disabled,
+  hasClear,
   placeholder,
   size,
   label,
@@ -313,6 +314,7 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
             ? minNumValue
             : convertToBinaryUnit(min, unit as SizeUnit)?.number
         }
+        hasClear={hasClear}
         placeholder={placeholder}
         isDisabled={disabled}
         width="100%"
