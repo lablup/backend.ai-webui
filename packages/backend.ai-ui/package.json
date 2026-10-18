@@ -24,10 +24,12 @@
   ],
   "exports": {
     ".": {
+      "@backend.ai/source": "./src/index.ts",
       "import": "./dist/backend.ai-ui.js",
       "types": "./dist/index.d.ts"
     },
     "./locale/*": {
+      "@backend.ai/source": "./src/locale/*.ts",
       "import": "./dist/locale/*.js",
       "types": "./dist/locale/*.d.ts"
     },

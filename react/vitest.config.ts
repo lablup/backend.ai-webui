@@ -2,6 +2,7 @@ import stylexVite from '@stylexjs/unplugin/vite';
 import react from '@vitejs/plugin-react';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { defaultClientConditions } from 'vite';
 import svgr from 'vite-plugin-svgr';
 import { defineConfig } from 'vitest/config';
 
@@ -29,17 +30,12 @@ const reactArtifactDir = resolve(reactSrc, '__generated__');
  */
 export default defineConfig({
   resolve: {
+    // Setting `conditions` replaces Vite's defaults, so spread them back.
+    conditions: ['@backend.ai/source', ...defaultClientConditions],
     alias: [
       // Mirror the `src/` baseUrl import in tsconfig.json so
       // `import 'src/hooks/foo'` resolves under Vitest too.
       { find: /^src\//, replacement: reactSrc + '/' },
-      // Workspace package alias (dev-source path, matching the Jest
-      // moduleNameMapper entry for `backend.ai-ui`).
-      { find: /^backend\.ai-ui\/dist(\/|$)/, replacement: buiSrc + '$1' },
-      // The `./locale/*` subpath export points at `dist/`, which CI never
-      // builds before running this suite — resolve it to source instead.
-      { find: /^backend\.ai-ui\/locale\//, replacement: buiSrc + '/locale/' },
-      { find: /^backend\.ai-ui$/, replacement: buiSrc },
       // `backend.ai-client` is mocked in tests (see __test__/backendAiClient.mock.js).
       // The Jest moduleNameMapper handled this explicitly; we use an alias instead.
       {
