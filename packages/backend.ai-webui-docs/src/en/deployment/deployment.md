@@ -513,14 +513,15 @@ The Service Info card displays the following details:
 - **Additional Mounts**: Any extra storage folders mounted.
 - **Environment Variables**: Displayed as a code block.
 - **Image**: The container image used for the service.
+- **Labels**: The key-value labels attached to the deployment.
 
 ![](../images/endpoint_detail_visibility.png)
 
 #### More menu (edit and delete)
 
-The Service Info card's header exposes an **Edit** button alongside a **More** menu. The **Edit** button opens the **Edit Deployment** modal described in [Create deployment modal](#create-deployment). The More menu currently contains the **Delete Deployment** action.
+The Service Info card's header exposes an **Edit** button alongside a **More** menu. The **Edit** button opens the **Edit Deployment** modal described in [Create deployment modal](#create-deployment). The More menu contains **Edit labels**, which opens a dialog for setting the deployment's labels, and **Delete Deployment**.
 
-![=192px](../images/endpoint_detail_more_menu.png)
+![=196px](../images/endpoint_detail_more_menu.png)
 
 <a id="scheduling-history"></a>
 
