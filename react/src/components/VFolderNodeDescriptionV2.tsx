@@ -14,6 +14,7 @@
    blocks the restricted transition.
 */
 import { VFolderNodeDescriptionV2Fragment$key } from '../__generated__/VFolderNodeDescriptionV2Fragment.graphql';
+import { VFolderNodeDescriptionV2LabelsRefreshQuery } from '../__generated__/VFolderNodeDescriptionV2LabelsRefreshQuery.graphql';
 import { VFolderNodeDescriptionV2PermissionRefreshQuery } from '../__generated__/VFolderNodeDescriptionV2PermissionRefreshQuery.graphql';
 import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
@@ -28,11 +29,14 @@ import { Selector } from '@lablup/ui-common/Selector';
 import { HStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
 import {
+  BAIEntityLabelCell,
+  BAIEntityLabelSettingModal,
   BAIMetadataList,
   BAIMetadataListItem,
   filterOutEmpty,
   toLocalId,
   useErrorMessageResolver,
+  useIsLabelableEntityType,
   badgeVariantForStatus,
   BAIText,
 } from 'backend.ai-ui';
@@ -87,9 +91,15 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
     graphql`
       fragment VFolderNodeDescriptionV2Fragment on VFolder {
         id
+        entityId
         host
         status
         unmanagedPath
+        permissions @since(version: "26.9.0rc1")
+        entityLabels(limit: 100) {
+          ...BAIEntityLabelTokensFragment
+          ...BAIEntityLabelSettingModalFragment
+        }
         metadata {
           name
           usageMode
@@ -131,6 +141,27 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
   const { vfolderPath } = useVirtualFolderPathV2(vfolderNode);
 
   const vfolderId = toLocalId(vfolderNode.id);
+
+  const isLabelable = useIsLabelableEntityType('vfolder');
+  const [isLabelModalOpen, setIsLabelModalOpen] = useState(false);
+  const refreshLabels = () =>
+    fetchQuery<VFolderNodeDescriptionV2LabelsRefreshQuery>(
+      relayEnv,
+      graphql`
+        query VFolderNodeDescriptionV2LabelsRefreshQuery($vfolderId: UUID!) {
+          vfolderV2(vfolderId: $vfolderId) {
+            id
+            entityLabels(limit: 100) {
+              ...BAIEntityLabelTokensFragment
+              ...BAIEntityLabelSettingModalFragment
+            }
+          }
+        }
+      `,
+      { vfolderId },
+    )
+      .toPromise()
+      .catch(() => {});
 
   // `accessControl.permission` is the folder's mount permission, not the
   // caller's rights on it; NONE leaves the selector empty instead of guessing.
@@ -360,16 +391,52 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
         ? dayjs(vfolderNode.metadata.createdAt).format('lll')
         : '-',
     },
+    // Tokens are display-only here: the explorer opens over any page, so
+    // there is no single list to filter.
+    isLabelable && {
+      key: 'labels',
+      label: t('entityLabel.Labels'),
+      children: (
+        <BAIEntityLabelCell
+          entityLabelsFrgmt={vfolderNode.entityLabels}
+          onEdit={() => setIsLabelModalOpen(true)}
+          editDisabledReason={
+            _.includes(vfolderNode.permissions, 'UPDATE')
+              ? undefined
+              : t('entityLabel.NoPermissionToEditLabels')
+          }
+        />
+      ),
+    },
   ]);
 
   return (
-    <BAIMetadataList columns="single" {...props}>
-      {items.map((item) => (
-        <BAIMetadataListItem key={item.key} label={item.label}>
-          {item.children}
-        </BAIMetadataListItem>
-      ))}
-    </BAIMetadataList>
+    <>
+      <BAIMetadataList columns="single" {...props}>
+        {items.map((item) => (
+          <BAIMetadataListItem key={item.key} label={item.label}>
+            {item.children}
+          </BAIMetadataListItem>
+        ))}
+      </BAIMetadataList>
+      {isLabelable && (
+        <BAIEntityLabelSettingModal
+          open={isLabelModalOpen}
+          entityType="vfolder"
+          targets={[
+            {
+              entityId: vfolderNode.entityId,
+              name: vfolderNode.metadata?.name ?? undefined,
+            },
+          ]}
+          entityLabelsFrgmt={vfolderNode.entityLabels}
+          onRequestClose={(success) => {
+            setIsLabelModalOpen(false);
+            if (success) void refreshLabels();
+          }}
+        />
+      )}
+    </>
   );
 };
 
