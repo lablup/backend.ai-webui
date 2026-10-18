@@ -37,7 +37,6 @@ export default defineConfig({
       // `import 'src/hooks/foo'` resolves under Vitest too.
       { find: /^src\//, replacement: reactSrc + '/' },
       // `backend.ai-client` is mocked in tests (see __test__/backendAiClient.mock.js).
-      // The Jest moduleNameMapper handled this explicitly; we use an alias instead.
       {
         find: /^backend\.ai-client$/,
         replacement: resolve(__dirname, '__test__/backendAiClient.mock.js'),

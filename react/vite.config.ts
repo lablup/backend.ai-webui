@@ -894,12 +894,8 @@ export default defineConfig(({ command, mode }) => {
       open: false,
       allowedHosts: allowedHosts,
       fs: {
-        // Allow Vite to read files from the whole monorepo so that
-        // `../dist/lib/...` and the workspace packages' sources
-        // (`../packages/*/src`) resolve without FS sandbox 403s. Additionally
-        // allow the pnpm global virtual store root (resolved dynamically above) so that
-        // dependencies hard-linked outside the repo can be served — see
-        // `resolvePnpmStorePath` for the full rationale.
+        // The whole monorepo (workspace sources, `../dist/lib`) and the pnpm
+        // global store — see `resolvePnpmStorePath`.
         allow: [projectRoot, ...(pnpmStorePath ? [pnpmStorePath] : [])],
       },
       watch: {

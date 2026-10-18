@@ -307,7 +307,8 @@ check_astryx_theme_built() {
   local bui=packages/backend.ai-ui
   local stamp="$bui/dist/backend.ai-ui.js"
   if [ ! -f "$stamp" ] || [ -n "$(find "$bui/src" "$bui/package.json" \
-    "$bui/vite.config.ts" -newer "$stamp" -print -quit)" ]; then
+    "$bui/vite.config.ts" -newer "$stamp" -not -name '*.test.*' \
+    -not -name '*.stories.*' -not -name '*.mdx' -print -quit)" ]; then
     note "backend.ai-ui dist missing or stale — rebuilding it"
     pnpm --filter backend.ai-ui run build > /dev/null || return 1
   fi
@@ -395,7 +396,7 @@ start_lane gate "TypeScript" bin react tsc --noEmit --incremental
 # The react lane sees only the backend.ai-ui files react imports (through the
 # `@backend.ai/source` export condition), and nothing pulls in the agent CLI,
 # so each gets its own lane.
-start_lane gate "TypeScript (backend.ai-ui)" bin packages/backend.ai-ui tsc --noEmit
+start_lane gate "TypeScript (backend.ai-ui)" bin packages/backend.ai-ui tsc --noEmit --incremental
 start_lane gate "TypeScript (agent-cli)" bin packages/backend.ai-agent-cli tsc --noEmit
 # The review overlay client is vendored by the Chrome extension (ADR 0008) and
 # built with narrower flags than react's. Deliberately the ROOT TypeScript
