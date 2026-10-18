@@ -342,6 +342,15 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "操作名称",
+    "ActionKind": "操作类型",
+    "ActionKindBulk": "批量",
+    "ActionKindGlobal": "全局",
+    "ActionKindLookup": "查询",
+    "ActionKindMembership": "成员资格",
+    "ActionKindRelation": "关联",
+    "ActionKindScope": "范围",
+    "ActionKindSingleEntity": "单个实体",
     "AuditLog": "审计日志",
     "Operation": "操作",
     "Status": "状态",

@@ -342,6 +342,15 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "Akcja",
+    "ActionKind": "Rodzaj akcji",
+    "ActionKindBulk": "Zbiorcza",
+    "ActionKindGlobal": "Globalna",
+    "ActionKindLookup": "Wyszukiwanie",
+    "ActionKindMembership": "Członkostwo",
+    "ActionKindRelation": "Relacja",
+    "ActionKindScope": "Zakres",
+    "ActionKindSingleEntity": "Pojedyncza encja",
     "AuditLog": "Dziennik audytu",
     "Operation": "Operacja",
     "Status": "Status",

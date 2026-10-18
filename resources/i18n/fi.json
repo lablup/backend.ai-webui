@@ -342,6 +342,15 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "Toiminnon nimi",
+    "ActionKind": "Toiminnon laji",
+    "ActionKindBulk": "Joukko",
+    "ActionKindGlobal": "Globaali",
+    "ActionKindLookup": "Haku",
+    "ActionKindMembership": "Jäsenyys",
+    "ActionKindRelation": "Suhde",
+    "ActionKindScope": "Laajuus",
+    "ActionKindSingleEntity": "Yksittäinen entiteetti",
     "AuditLog": "Tarkastusloki",
     "Operation": "Toiminto",
     "Status": "Tila",

@@ -342,6 +342,15 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "Tindakan",
+    "ActionKind": "Jenis Tindakan",
+    "ActionKindBulk": "Massal",
+    "ActionKindGlobal": "Global",
+    "ActionKindLookup": "Pencarian",
+    "ActionKindMembership": "Keanggotaan",
+    "ActionKindRelation": "Relasi",
+    "ActionKindScope": "Cakupan",
+    "ActionKindSingleEntity": "Entitas Tunggal",
     "AuditLog": "Log Audit",
     "Operation": "Operasi",
     "Status": "Status",

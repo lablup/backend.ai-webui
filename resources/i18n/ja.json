@@ -342,6 +342,15 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "アクション",
+    "ActionKind": "アクション種別",
+    "ActionKindBulk": "一括",
+    "ActionKindGlobal": "グローバル",
+    "ActionKindLookup": "照会",
+    "ActionKindMembership": "メンバーシップ",
+    "ActionKindRelation": "関係",
+    "ActionKindScope": "スコープ",
+    "ActionKindSingleEntity": "単一エンティティ",
     "AuditLog": "監査ログ",
     "Operation": "操作",
     "Status": "状態",

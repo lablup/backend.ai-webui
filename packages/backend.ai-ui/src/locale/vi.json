@@ -70,7 +70,16 @@
     "Version": "Phiên bản"
   },
   "comp:BAIAuditLogNodes": {
+    "Action": "Hành động",
     "ActionId": "ID hành động",
+    "ActionKind": "Kiểu hành động",
+    "ActionKindBulk": "Hàng loạt",
+    "ActionKindGlobal": "Toàn cục",
+    "ActionKindLookup": "Tra cứu",
+    "ActionKindMembership": "Tư cách thành viên",
+    "ActionKindRelation": "Quan hệ",
+    "ActionKindScope": "Phạm vi",
+    "ActionKindSingleEntity": "Thực thể đơn",
     "Actor": "Người thực hiện",
     "ClientIp": "IP máy khách",
     "Description": "Mô tả",
@@ -80,8 +89,16 @@
     "Operation": "Thao tác",
     "RequestId": "ID yêu cầu",
     "Status": "Trạng thái",
+    "Target": "Đối tượng",
     "Time": "Thời gian",
     "TriggeredBy": "Kích hoạt bởi"
+  },
+  "comp:BAIAuditLogTargetCell": {
+    "Global": "Toàn cục",
+    "InThisRun": "{{count}} trong lần chạy này",
+    "NoAffectedEntity": "Không có thực thể bị ảnh hưởng",
+    "NotFound": "Không tìm thấy",
+    "Run": "Lần chạy"
   },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Chọn cài đặt sẵn"

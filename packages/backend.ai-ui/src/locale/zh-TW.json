@@ -70,7 +70,16 @@
     "Version": "版本"
   },
   "comp:BAIAuditLogNodes": {
+    "Action": "操作名稱",
     "ActionId": "操作 ID",
+    "ActionKind": "操作類型",
+    "ActionKindBulk": "批次",
+    "ActionKindGlobal": "全域",
+    "ActionKindLookup": "查詢",
+    "ActionKindMembership": "成員資格",
+    "ActionKindRelation": "關聯",
+    "ActionKindScope": "範圍",
+    "ActionKindSingleEntity": "單一實體",
     "Actor": "執行者",
     "ClientIp": "用戶端 IP",
     "Description": "描述",
@@ -80,8 +89,16 @@
     "Operation": "操作",
     "RequestId": "請求 ID",
     "Status": "狀態",
+    "Target": "目標",
     "Time": "時間",
     "TriggeredBy": "觸發者"
+  },
+  "comp:BAIAuditLogTargetCell": {
+    "Global": "全域",
+    "InThisRun": "本次執行共 {{count}} 筆",
+    "NoAffectedEntity": "無受影響的實體",
+    "NotFound": "找不到",
+    "Run": "執行"
   },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "選擇預設"

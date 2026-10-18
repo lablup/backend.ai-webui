@@ -342,6 +342,15 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "액션",
+    "ActionKind": "액션 유형",
+    "ActionKindBulk": "일괄",
+    "ActionKindGlobal": "전역",
+    "ActionKindLookup": "조회",
+    "ActionKindMembership": "멤버십",
+    "ActionKindRelation": "관계",
+    "ActionKindScope": "범위",
+    "ActionKindSingleEntity": "단일 엔티티",
     "AuditLog": "감사 로그",
     "Operation": "작업",
     "Status": "상태",

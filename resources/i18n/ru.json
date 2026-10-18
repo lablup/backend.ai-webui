@@ -342,6 +342,15 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "Действие",
+    "ActionKind": "Вид действия",
+    "ActionKindBulk": "Массовое",
+    "ActionKindGlobal": "Глобальное",
+    "ActionKindLookup": "Поиск",
+    "ActionKindMembership": "Членство",
+    "ActionKindRelation": "Связь",
+    "ActionKindScope": "Область",
+    "ActionKindSingleEntity": "Один объект",
     "AuditLog": "Журнал аудита",
     "Operation": "Операция",
     "Status": "Статус",

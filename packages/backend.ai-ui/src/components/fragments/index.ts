@@ -257,6 +257,8 @@ export type {
   BAIAuditLogNodesProps,
   AuditLogNodeInList,
 } from './BAIAuditLogNodes';
+export { default as BAIAuditLogTargetCell } from './BAIAuditLogTargetCell';
+export type { BAIAuditLogTargetCellProps } from './BAIAuditLogTargetCell';
 export { default as BAIDeploymentSchedulingHistoryNodes } from './BAIDeploymentSchedulingHistoryNodes';
 export type {
   BAIDeploymentSchedulingHistoryNodesProps,

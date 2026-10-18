@@ -1,4 +1,5 @@
 import {
+  AuditLogActionKind,
   BAIAuditLogNodesFragment$data,
   BAIAuditLogNodesFragment$key,
 } from '../../__generated__/BAIAuditLogNodesFragment.graphql';
@@ -16,6 +17,8 @@ import {
   BAITableProps,
 } from '../Table';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
+import BAIAuditLogTargetCell from './BAIAuditLogTargetCell';
+import { Token } from '@lablup/ui-common/Token';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
@@ -26,6 +29,8 @@ export type AuditLogNodeInList = NonNullable<
 
 const availableAuditLogSorterKeys = [
   'createdAt',
+  'actionName',
+  'actionKind',
   'operation',
   'status',
 ] as const;
@@ -87,6 +92,8 @@ const BAIAuditLogNodes = ({
       fragment BAIAuditLogNodesFragment on AuditLogV2 @relay(plural: true) {
         id
         createdAt
+        actionName
+        actionKind
         operation
         status
         description
@@ -94,9 +101,10 @@ const BAIAuditLogNodes = ({
         requestId
         actionId
         entityType
-        entityId
+        targetEntityId
         triggeredBy
         clientIp @since(version: "26.9.0")
+        ...BAIAuditLogTargetCellFragment
         user {
           id
           basicInfo {
@@ -108,6 +116,8 @@ const BAIAuditLogNodes = ({
     auditLogFrgmt,
   );
 
+  const runCounts = _.countBy(filterOutNullAndUndefined(auditLogs), 'actionId');
+
   const baseColumns = _.map(
     filterOutEmpty<BAIColumnType<AuditLogNodeInList>>([
       {
@@ -117,6 +127,47 @@ const BAIAuditLogNodes = ({
         sorter: isEnableSorter('createdAt'),
         render: (__, record) =>
           record.createdAt ? dayjs(record.createdAt).format('ll LTS') : '-',
+      },
+      {
+        key: 'actionName',
+        title: t('comp:BAIAuditLogNodes.Action'),
+        dataIndex: 'actionName',
+        sorter: isEnableSorter('actionName'),
+        onCell: () => ({ style: { maxWidth: 300 } }),
+        render: (__, record) =>
+          record.actionName ? (
+            <BAIText ellipsis={{ tooltip: true }} style={{ width: '100%' }}>
+              {record.actionName}
+            </BAIText>
+          ) : (
+            '-'
+          ),
+      },
+      {
+        key: 'actionKind',
+        title: t('comp:BAIAuditLogNodes.ActionKind'),
+        dataIndex: 'actionKind',
+        sorter: isEnableSorter('actionKind'),
+        render: (__, record) => {
+          if (!record.actionKind) {
+            return '-';
+          }
+          const actionKindLabels: Partial<Record<AuditLogActionKind, string>> =
+            {
+              SINGLE_ENTITY: t('comp:BAIAuditLogNodes.ActionKindSingleEntity'),
+              BULK: t('comp:BAIAuditLogNodes.ActionKindBulk'),
+              SCOPE: t('comp:BAIAuditLogNodes.ActionKindScope'),
+              RELATION: t('comp:BAIAuditLogNodes.ActionKindRelation'),
+              MEMBERSHIP: t('comp:BAIAuditLogNodes.ActionKindMembership'),
+              GLOBAL: t('comp:BAIAuditLogNodes.ActionKindGlobal'),
+              LOOKUP: t('comp:BAIAuditLogNodes.ActionKindLookup'),
+            };
+          return (
+            <Token
+              label={actionKindLabels[record.actionKind] ?? record.actionKind}
+            />
+          );
+        },
       },
       {
         key: 'operation',
@@ -132,6 +183,16 @@ const BAIAuditLogNodes = ({
         sorter: isEnableSorter('status'),
         render: (__, record) => (
           <BAIAuditLogStatusBadge status={toAuditLogStatus(record.status)} />
+        ),
+      },
+      {
+        key: 'target',
+        title: t('comp:BAIAuditLogNodes.Target'),
+        render: (__, record) => (
+          <BAIAuditLogTargetCell
+            auditLogFrgmt={record}
+            runCount={runCounts[record.actionId]}
+          />
         ),
       },
       {
@@ -166,9 +227,6 @@ const BAIAuditLogNodes = ({
           if (!record.user) {
             return fallback;
           }
-          // Show "email (id)" when the email is available; otherwise fall back
-          // to the user id alone so we never render an empty label before the
-          // parentheses when basicInfo.email is missing/null.
           const email = record.user.basicInfo?.email;
           return email ? (
             <>
@@ -184,8 +242,6 @@ const BAIAuditLogNodes = ({
             key: 'clientIp',
             title: t('comp:BAIAuditLogNodes.ClientIp'),
             dataIndex: 'clientIp',
-            // Shown exactly as the server returns it: the manager already
-            // applies the client IP masking policy, so it may be masked or null.
             render: (__, record) => record.clientIp || '-',
           }
         : undefined,
@@ -197,11 +253,11 @@ const BAIAuditLogNodes = ({
         render: (__, record) => record.entityType || '-',
       },
       {
-        key: 'entityId',
+        key: 'targetEntityId',
         title: t('comp:BAIAuditLogNodes.EntityId'),
         defaultHidden: true,
         render: (__, record) =>
-          record.entityId ? <BAIId uuid={record.entityId} /> : '-',
+          record.targetEntityId ? <BAIId uuid={record.targetEntityId} /> : '-',
       },
       {
         key: 'requestId',

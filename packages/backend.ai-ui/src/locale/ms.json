@@ -70,7 +70,16 @@
     "Version": "Versi"
   },
   "comp:BAIAuditLogNodes": {
+    "Action": "Tindakan",
     "ActionId": "ID Tindakan",
+    "ActionKind": "Jenis Tindakan",
+    "ActionKindBulk": "Pukal",
+    "ActionKindGlobal": "Global",
+    "ActionKindLookup": "Carian",
+    "ActionKindMembership": "Keahlian",
+    "ActionKindRelation": "Hubungan",
+    "ActionKindScope": "Skop",
+    "ActionKindSingleEntity": "Entiti Tunggal",
     "Actor": "Pelaku",
     "ClientIp": "IP Klien",
     "Description": "Penerangan",
@@ -80,8 +89,16 @@
     "Operation": "Operasi",
     "RequestId": "ID Permintaan",
     "Status": "Status",
+    "Target": "Sasaran",
     "Time": "Masa",
     "TriggeredBy": "Dicetuskan oleh"
+  },
+  "comp:BAIAuditLogTargetCell": {
+    "Global": "Global",
+    "InThisRun": "{{count}} dalam larian ini",
+    "NoAffectedEntity": "Tiada entiti terjejas",
+    "NotFound": "Tidak ditemui",
+    "Run": "Larian"
   },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Pilih Pratetap"
