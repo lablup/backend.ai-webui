@@ -76,13 +76,18 @@
   gap: 2px;
 }
 
+/* Hover mode overlays the actions on the end of the title instead of laying
+   them out beside it: an in-flow group that unfolds on hover widens the
+   cell's intrinsic width, and an auto-layout table (DataGrid with scroll-x)
+   then resizes the whole column on every hover (#10371). */
 .bai-nac-actions-hover {
-  flex-shrink: 0;
+  position: absolute;
+  inset-inline-end: 0;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
   gap: 2px;
-  max-width: 0;
-  overflow: hidden;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.15s ease;
@@ -90,10 +95,25 @@
 
 .bai-nac-hover-wrapper:hover .bai-name-action-cell-actions,
 .bai-nac-hover-wrapper:has(:focus-visible) .bai-name-action-cell-actions {
-  max-width: none;
-  overflow: visible;
   opacity: 1;
   pointer-events: auto;
+}
+
+/* Fade the title out under the overlay so the buttons stay legible on any
+   row background. Paint-only (mask, not padding), so the layout above is
+   untouched. `--bai-nac-actions-width` is published by the component. */
+.bai-nac-hover-wrapper:hover .bai-nac-title-area,
+.bai-nac-hover-wrapper:has(:focus-visible) .bai-nac-title-area {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    black calc(100% - var(--bai-nac-actions-width, 0px) - var(--spacing-3)),
+    transparent calc(100% - var(--bai-nac-actions-width, 0px))
+  );
+  mask-image: linear-gradient(
+    to right,
+    black calc(100% - var(--bai-nac-actions-width, 0px) - var(--spacing-3)),
+    transparent calc(100% - var(--bai-nac-actions-width, 0px))
+  );
 }
 
 /* Wraps a more-menu row's icon so its box matches Astryx's own icon slot

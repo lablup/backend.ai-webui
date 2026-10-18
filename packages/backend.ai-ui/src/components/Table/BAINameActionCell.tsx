@@ -129,8 +129,8 @@ export interface BAINameActionCellProps {
   /**
    * Width (px) the title keeps before an action may claim space; actions that
    * no longer fit fold into the more menu. `showActions="always"` only —
-   * hover mode collapses its actions to zero width at rest, so nothing
-   * competes for the title there. The default suits an identifier a few
+   * hover mode overlays its actions on the title, so nothing competes for
+   * the title there. The default suits an identifier a few
    * characters of which already identify the row; raise it where the title is
    * long and the cell narrow (FR-3926).
    */
@@ -283,8 +283,8 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
       // Account for the more button which is always shown when menuOnlyActions exist
       const moreButtonReserve =
         menuOnlyActions.length > 0 ? MORE_BUTTON_WIDTH + ACTIONS_GAP : 0;
-      // Hover mode keeps the whole width: its action group is `max-width: 0`
-      // until the row is hovered, so the title never competes with it at rest.
+      // Hover mode keeps the whole width: its action group is an overlay, so
+      // the title never competes with it.
       const availableWidth =
         (showActions === 'hover'
           ? containerWidth
@@ -349,6 +349,11 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
 
   // More menu: overflowed auto actions + menu-only actions
   const hasMoreMenu = hasOverflow || menuOnlyActions.length > 0;
+  // Width of the overlay in hover mode; the CSS fades the title under it.
+  const buttonCount = visibleActions.length + (hasMoreMenu ? 1 : 0);
+  const actionsWidth =
+    buttonCount * ACTION_BUTTON_WIDTH +
+    Math.max(0, buttonCount - 1) * ACTIONS_GAP;
   // An overflowed action keeps the colour its inline button has (FR-3721).
   // The default row's tint is inline because the menu renders in a Layer
   // outside the container that publishes `--bai-nac-*`.
@@ -477,7 +482,14 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
         showActions === 'hover' && 'bai-nac-hover-wrapper',
         className,
       )}
-      style={style}
+      style={
+        {
+          ...(showActions === 'hover'
+            ? { '--bai-nac-actions-width': `${actionsWidth}px` }
+            : {}),
+          ...style,
+        } as React.CSSProperties
+      }
     >
       <div ref={titleAreaRef} className="bai-nac-title-area">
         {icon && (
