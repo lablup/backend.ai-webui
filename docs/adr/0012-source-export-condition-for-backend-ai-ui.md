@@ -77,7 +77,7 @@ flowchart LR
 
 ### 4. verify가 Node 도구 앞에서 dist를 다시 build한다
 
-- **Stale rebuild**: `scripts/verify.sh`의 `check_astryx_theme_built`는 `dist/backend.ai-ui.js`가 없거나, `src/`·`package.json`·`vite.config.ts` 중 그보다 새 파일이 있으면 `pnpm --filter backend.ai-ui run build`를 실행한 뒤 theme drift를 검사한다.
+- **Stale rebuild**: `scripts/verify.sh`의 `check_astryx_theme_built`는 `dist/backend.ai-ui.js`가 없거나, `src/`(test·story·`.mdx` 제외)·`package.json`·`vite.config.ts` 중 그보다 새 파일이 있으면 `pnpm --filter backend.ai-ui run build`를 실행한 뒤 theme drift를 검사한다.
 - **Next Node tool**: BUI를 import하는 Node 도구를 `verify.sh`나 CI에 더하는 PR은 그 도구 앞에 같은 rebuild 검사를 둔다. 지금 `astryx theme build`는 `verify.sh`에서만 돌고 CI workflow는 돌리지 않는다.
 
 ## 대안과 기각 사유
