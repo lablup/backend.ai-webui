@@ -307,7 +307,7 @@ check_astryx_theme_built() {
   local bui=packages/backend.ai-ui
   local stamp="$bui/dist/backend.ai-ui.js"
   if [ ! -f "$stamp" ] || [ -n "$(find "$bui/src" "$bui/package.json" \
-    "$bui/vite.config.ts" -newer "$stamp" -not -name '*.test.*' \
+    "$bui/vite.config.ts" -type f -newer "$stamp" -not -name '*.test.*' \
     -not -name '*.stories.*' -not -name '*.mdx' -print -quit)" ]; then
     note "backend.ai-ui dist missing or stale — rebuilding it"
     pnpm --filter backend.ai-ui run build > /dev/null || return 1
