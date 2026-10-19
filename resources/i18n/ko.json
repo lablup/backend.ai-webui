@@ -349,7 +349,7 @@
     "AuditLog": "감사 로그",
     "Operation": "작업",
     "Status": "상태",
-    "Time": "시간",
+    "Time": "시각",
     "TriggeredBy": "실행자",
     "TriggeredByFilterPlaceholder": "ID로 검색"
   },

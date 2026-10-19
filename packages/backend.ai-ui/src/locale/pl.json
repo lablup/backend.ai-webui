@@ -101,7 +101,7 @@
     "Operation": "Operacja",
     "RequestId": "ID żądania",
     "Status": "Status",
-    "Time": "Czas",
+    "Time": "Data i godzina",
     "TriggeredBy": "Wywołane przez"
   },
   "comp:BAIAvailablePresetSelect": {

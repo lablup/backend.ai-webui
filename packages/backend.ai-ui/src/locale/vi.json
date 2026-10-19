@@ -101,7 +101,7 @@
     "Operation": "Thao tác",
     "RequestId": "ID yêu cầu",
     "Status": "Trạng thái",
-    "Time": "Thời gian",
+    "Time": "Thời điểm",
     "TriggeredBy": "Kích hoạt bởi"
   },
   "comp:BAIAvailablePresetSelect": {

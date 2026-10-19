@@ -101,7 +101,7 @@
     "Operation": "작업",
     "RequestId": "요청 ID",
     "Status": "상태",
-    "Time": "시간",
+    "Time": "시각",
     "TriggeredBy": "실행자"
   },
   "comp:BAIAvailablePresetSelect": {

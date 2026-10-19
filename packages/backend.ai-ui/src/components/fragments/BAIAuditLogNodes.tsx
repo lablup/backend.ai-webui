@@ -2,7 +2,11 @@ import {
   BAIAuditLogNodesFragment$data,
   BAIAuditLogNodesFragment$key,
 } from '../../__generated__/BAIAuditLogNodesFragment.graphql';
-import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
+import {
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  formatAuditLogDuration,
+} from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIId from '../BAIId';
 import BAIText from '../BAIText';
@@ -160,7 +164,8 @@ const BAIAuditLogNodes = ({
         key: 'duration',
         title: t('comp:BAIAuditLogNodes.Duration'),
         dataIndex: 'duration',
-        render: (__, record) => record.duration || '-',
+        render: (__, record) =>
+          record.duration ? formatAuditLogDuration(record.duration) : '-',
       },
       {
         key: 'triggeredBy',

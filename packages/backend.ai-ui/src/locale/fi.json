@@ -101,7 +101,7 @@
     "Operation": "Toiminto",
     "RequestId": "Pyynnön ID",
     "Status": "Tila",
-    "Time": "Aika",
+    "Time": "Ajankohta",
     "TriggeredBy": "Laukaisija"
   },
   "comp:BAIAvailablePresetSelect": {
