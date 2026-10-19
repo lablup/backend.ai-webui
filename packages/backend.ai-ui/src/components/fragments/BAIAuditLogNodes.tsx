@@ -139,14 +139,23 @@ const BAIAuditLogNodes = ({
       },
       {
         key: 'status',
-        title: t('comp:BAIAuditLogNodes.Status'),
+        title: t('comp:BAIAuditLogNodes.Result'),
         dataIndex: 'status',
         sorter: isEnableSorter('status'),
-        render: (__, record) => (
-          <BAIText type={record.status === 'ERROR' ? 'danger' : undefined}>
-            {record.status}
-          </BAIText>
-        ),
+        render: (__, record) => {
+          const resultLabels: Record<string, string> = {
+            SUCCESS: t('comp:BAIAuditLogNodes.ResultSuccess'),
+            ERROR: t('comp:BAIAuditLogNodes.ResultFailed'),
+            DENIED: t('comp:BAIAuditLogNodes.ResultDenied'),
+            UNKNOWN: t('comp:BAIAuditLogNodes.ResultUnknown'),
+            RUNNING: t('comp:BAIAuditLogNodes.ResultRunning'),
+          };
+          return (
+            <BAIText type={record.status === 'ERROR' ? 'danger' : undefined}>
+              {resultLabels[record.status] ?? record.status}
+            </BAIText>
+          );
+        },
       },
       {
         key: 'description',
@@ -154,7 +163,8 @@ const BAIAuditLogNodes = ({
         dataIndex: 'description',
         onCell: () => ({ style: { maxWidth: 400 } }),
         render: (__, record) =>
-          record.status === 'ERROR' && record.description ? (
+          (record.status === 'ERROR' || record.status === 'DENIED') &&
+          record.description ? (
             <BAIText ellipsis={{ tooltip: true }} style={{ width: '100%' }}>
               {record.description}
             </BAIText>

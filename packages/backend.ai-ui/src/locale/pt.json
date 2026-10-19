@@ -308,7 +308,12 @@
     "EntityType": "Tipo de entidade",
     "Operation": "Operação",
     "RequestId": "ID de solicitação",
-    "Status": "Estado",
+    "Result": "Resultado",
+    "ResultDenied": "Negado",
+    "ResultFailed": "Falhou",
+    "ResultRunning": "Em curso",
+    "ResultSuccess": "Sucesso",
+    "ResultUnknown": "Desconhecido",
     "Time": "Hora",
     "TriggeredBy": "Acionado por"
   },

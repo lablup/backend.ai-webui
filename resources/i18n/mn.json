@@ -348,7 +348,12 @@
     "Action": "Үйл",
     "AuditLog": "Аудитын бүртгэл",
     "Operation": "Үйлдэл",
-    "Status": "Статус",
+    "Result": "Үр дүн",
+    "ResultDenied": "Татгалзсан",
+    "ResultFailed": "Амжилтгүй",
+    "ResultRunning": "Явагдаж байна",
+    "ResultSuccess": "Амжилттай",
+    "ResultUnknown": "Тодорхойгүй",
     "Time": "Цаг",
     "TriggeredBy": "Гүйцэтгэсэн",
     "TriggeredByFilterPlaceholder": "ID-ээр хайх"

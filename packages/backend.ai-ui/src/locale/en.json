@@ -308,7 +308,12 @@
     "EntityType": "Entity Type",
     "Operation": "Operation",
     "RequestId": "Request ID",
-    "Status": "Status",
+    "Result": "Result",
+    "ResultDenied": "Denied",
+    "ResultFailed": "Failed",
+    "ResultRunning": "Running",
+    "ResultSuccess": "Success",
+    "ResultUnknown": "Unknown",
     "Time": "Time",
     "TriggeredBy": "Triggered By"
   },

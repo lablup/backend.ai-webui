@@ -308,7 +308,12 @@
     "EntityType": "實體類型",
     "Operation": "操作",
     "RequestId": "請求 ID",
-    "Status": "狀態",
+    "Result": "結果",
+    "ResultDenied": "已拒絕",
+    "ResultFailed": "失敗",
+    "ResultRunning": "進行中",
+    "ResultSuccess": "成功",
+    "ResultUnknown": "未知",
     "Time": "時間",
     "TriggeredBy": "觸發者"
   },

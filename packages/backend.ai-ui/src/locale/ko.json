@@ -308,7 +308,12 @@
     "EntityType": "엔티티 유형",
     "Operation": "작업",
     "RequestId": "요청 ID",
-    "Status": "상태",
+    "Result": "결과",
+    "ResultDenied": "거부됨",
+    "ResultFailed": "실패",
+    "ResultRunning": "진행 중",
+    "ResultSuccess": "성공",
+    "ResultUnknown": "알 수 없음",
     "Time": "시각",
     "TriggeredBy": "실행자"
   },

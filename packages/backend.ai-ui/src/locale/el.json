@@ -308,7 +308,12 @@
     "EntityType": "Τύπος οντότητας",
     "Operation": "Λειτουργία",
     "RequestId": "ID αιτήματος",
-    "Status": "Κατάσταση",
+    "Result": "Αποτέλεσμα",
+    "ResultDenied": "Απορρίφθηκε",
+    "ResultFailed": "Απέτυχε",
+    "ResultRunning": "Σε εξέλιξη",
+    "ResultSuccess": "Επιτυχία",
+    "ResultUnknown": "Άγνωστο",
     "Time": "Ώρα",
     "TriggeredBy": "Ενεργοποιήθηκε από"
   },

@@ -308,7 +308,12 @@
     "EntityType": "ประเภทเอนทิตี",
     "Operation": "การดำเนินการ",
     "RequestId": "รหัสคำขอ",
-    "Status": "สถานะ",
+    "Result": "ผลลัพธ์",
+    "ResultDenied": "ถูกปฏิเสธ",
+    "ResultFailed": "ล้มเหลว",
+    "ResultRunning": "กำลังดำเนินการ",
+    "ResultSuccess": "สำเร็จ",
+    "ResultUnknown": "ไม่ทราบ",
     "Time": "เวลา",
     "TriggeredBy": "ผู้กระตุ้น"
   },

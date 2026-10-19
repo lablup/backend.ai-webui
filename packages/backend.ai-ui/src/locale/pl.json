@@ -308,7 +308,12 @@
     "EntityType": "Typ encji",
     "Operation": "Operacja",
     "RequestId": "ID żądania",
-    "Status": "Status",
+    "Result": "Wynik",
+    "ResultDenied": "Odmowa",
+    "ResultFailed": "Niepowodzenie",
+    "ResultRunning": "W toku",
+    "ResultSuccess": "Powodzenie",
+    "ResultUnknown": "Nieznany",
     "Time": "Data i godzina",
     "TriggeredBy": "Wywołane przez"
   },

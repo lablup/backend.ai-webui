@@ -335,7 +335,12 @@
     "Action": "Action",
     "AuditLog": "Audit Log",
     "Operation": "Operation",
-    "Status": "Status",
+    "Result": "Result",
+    "ResultDenied": "Denied",
+    "ResultFailed": "Failed",
+    "ResultRunning": "Running",
+    "ResultSuccess": "Success",
+    "ResultUnknown": "Unknown",
     "Time": "Time",
     "TriggeredBy": "Triggered By",
     "TriggeredByFilterPlaceholder": "Search by ID"

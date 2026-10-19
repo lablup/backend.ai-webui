@@ -308,7 +308,12 @@
     "EntityType": "Объектын төрөл",
     "Operation": "Үйлдэл",
     "RequestId": "Хүсэлтийн ID",
-    "Status": "Төлөв",
+    "Result": "Үр дүн",
+    "ResultDenied": "Татгалзсан",
+    "ResultFailed": "Амжилтгүй",
+    "ResultRunning": "Явагдаж байна",
+    "ResultSuccess": "Амжилттай",
+    "ResultUnknown": "Тодорхойгүй",
     "Time": "Цаг",
     "TriggeredBy": "Өдөөгч"
   },

@@ -308,7 +308,12 @@
     "EntityType": "Loại thực thể",
     "Operation": "Thao tác",
     "RequestId": "ID yêu cầu",
-    "Status": "Trạng thái",
+    "Result": "Kết quả",
+    "ResultDenied": "Bị từ chối",
+    "ResultFailed": "Thất bại",
+    "ResultRunning": "Đang thực hiện",
+    "ResultSuccess": "Thành công",
+    "ResultUnknown": "Không xác định",
     "Time": "Thời điểm",
     "TriggeredBy": "Kích hoạt bởi"
   },

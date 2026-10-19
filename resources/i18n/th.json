@@ -348,7 +348,12 @@
     "Action": "ชื่อการดำเนินการ",
     "AuditLog": "บันทึกการตรวจสอบ",
     "Operation": "การดำเนินการ",
-    "Status": "สถานะ",
+    "Result": "ผลลัพธ์",
+    "ResultDenied": "ถูกปฏิเสธ",
+    "ResultFailed": "ล้มเหลว",
+    "ResultRunning": "กำลังดำเนินการ",
+    "ResultSuccess": "สำเร็จ",
+    "ResultUnknown": "ไม่ทราบ",
     "Time": "เวลา",
     "TriggeredBy": "เรียกใช้โดย",
     "TriggeredByFilterPlaceholder": "ค้นหาด้วย ID"

@@ -348,7 +348,12 @@
     "Action": "アクション",
     "AuditLog": "監査ログ",
     "Operation": "操作",
-    "Status": "状態",
+    "Result": "結果",
+    "ResultDenied": "拒否",
+    "ResultFailed": "失敗",
+    "ResultRunning": "実行中",
+    "ResultSuccess": "成功",
+    "ResultUnknown": "不明",
     "Time": "時間",
     "TriggeredBy": "実行者",
     "TriggeredByFilterPlaceholder": "IDで検索"

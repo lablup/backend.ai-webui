@@ -348,7 +348,12 @@
     "Action": "Azione",
     "AuditLog": "Registro di controllo",
     "Operation": "Operazione",
-    "Status": "Stato",
+    "Result": "Risultato",
+    "ResultDenied": "Negato",
+    "ResultFailed": "Non riuscito",
+    "ResultRunning": "In corso",
+    "ResultSuccess": "Riuscito",
+    "ResultUnknown": "Sconosciuto",
     "Time": "Ora",
     "TriggeredBy": "Attivato da",
     "TriggeredByFilterPlaceholder": "Ricerca per ID"

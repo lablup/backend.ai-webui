@@ -348,7 +348,12 @@
     "Action": "Tindakan",
     "AuditLog": "Log Audit",
     "Operation": "Operasi",
-    "Status": "Status",
+    "Result": "Keputusan",
+    "ResultDenied": "Ditolak",
+    "ResultFailed": "Gagal",
+    "ResultRunning": "Sedang berjalan",
+    "ResultSuccess": "Berjaya",
+    "ResultUnknown": "Tidak diketahui",
     "Time": "Masa",
     "TriggeredBy": "Dicetuskan oleh",
     "TriggeredByFilterPlaceholder": "Cari mengikut ID"

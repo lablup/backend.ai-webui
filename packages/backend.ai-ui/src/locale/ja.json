@@ -308,7 +308,12 @@
     "EntityType": "エンティティタイプ",
     "Operation": "操作",
     "RequestId": "リクエスト ID",
-    "Status": "ステータス",
+    "Result": "結果",
+    "ResultDenied": "拒否",
+    "ResultFailed": "失敗",
+    "ResultRunning": "実行中",
+    "ResultSuccess": "成功",
+    "ResultUnknown": "不明",
     "Time": "時刻",
     "TriggeredBy": "起動者"
   },

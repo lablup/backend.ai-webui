@@ -308,7 +308,12 @@
     "EntityType": "Varlık Tipi",
     "Operation": "İşlem",
     "RequestId": "İstek ID",
-    "Status": "Durum",
+    "Result": "Sonuç",
+    "ResultDenied": "Reddedildi",
+    "ResultFailed": "Başarısız",
+    "ResultRunning": "Devam ediyor",
+    "ResultSuccess": "Başarılı",
+    "ResultUnknown": "Bilinmiyor",
     "Time": "Zaman",
     "TriggeredBy": "Tetikleyen"
   },

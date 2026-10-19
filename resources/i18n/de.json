@@ -348,7 +348,12 @@
     "Action": "Aktion",
     "AuditLog": "Audit-Protokoll",
     "Operation": "Vorgang",
-    "Status": "Status",
+    "Result": "Ergebnis",
+    "ResultDenied": "Abgelehnt",
+    "ResultFailed": "Fehlgeschlagen",
+    "ResultRunning": "Läuft",
+    "ResultSuccess": "Erfolgreich",
+    "ResultUnknown": "Unbekannt",
     "Time": "Zeit",
     "TriggeredBy": "Ausgelöst von",
     "TriggeredByFilterPlaceholder": "Suche mit ID"

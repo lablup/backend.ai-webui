@@ -308,7 +308,12 @@
     "EntityType": "Entiteettityyppi",
     "Operation": "Toiminto",
     "RequestId": "Pyynnön ID",
-    "Status": "Tila",
+    "Result": "Tulos",
+    "ResultDenied": "Estetty",
+    "ResultFailed": "Epäonnistui",
+    "ResultRunning": "Käynnissä",
+    "ResultSuccess": "Onnistui",
+    "ResultUnknown": "Tuntematon",
     "Time": "Ajankohta",
     "TriggeredBy": "Laukaisija"
   },

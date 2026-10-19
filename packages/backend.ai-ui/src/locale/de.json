@@ -308,7 +308,12 @@
     "EntityType": "Entitätstyp",
     "Operation": "Vorgang",
     "RequestId": "Anfragen-ID",
-    "Status": "Status",
+    "Result": "Ergebnis",
+    "ResultDenied": "Abgelehnt",
+    "ResultFailed": "Fehlgeschlagen",
+    "ResultRunning": "Läuft",
+    "ResultSuccess": "Erfolgreich",
+    "ResultUnknown": "Unbekannt",
     "Time": "Zeitpunkt",
     "TriggeredBy": "Ausgelöst von"
   },

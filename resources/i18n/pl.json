@@ -348,7 +348,12 @@
     "Action": "Akcja",
     "AuditLog": "Dziennik audytu",
     "Operation": "Operacja",
-    "Status": "Status",
+    "Result": "Wynik",
+    "ResultDenied": "Odmowa",
+    "ResultFailed": "Niepowodzenie",
+    "ResultRunning": "W toku",
+    "ResultSuccess": "Powodzenie",
+    "ResultUnknown": "Nieznany",
     "Time": "Czas",
     "TriggeredBy": "Wywołane przez",
     "TriggeredByFilterPlaceholder": "Szukaj według ID"
