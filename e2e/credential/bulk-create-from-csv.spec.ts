@@ -1,6 +1,8 @@
 // spec: Bulk Create Users from CSV — client-side validation tests
+import { getE2EDomainName, getE2EProjectName } from '../utils/e2e-scope';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import test, { expect, Page } from '@playwright/test';
+import { readFileSync } from 'fs';
 import path from 'path';
 
 const SAMPLES_DIR = path.resolve(__dirname, '../../test-fixtures/csv-samples');
@@ -31,6 +33,45 @@ async function openBulkCreateCSVModal(page: Page) {
   ).toBeVisible({ timeout: 5000 });
 }
 
+// Fixture headers (field keys, aliases and the Korean export labels) whose
+// value names a domain or a project.
+const DOMAIN_COLUMNS = new Set(['domain_name', 'domain', '도메인']);
+const PROJECT_COLUMNS = new Set(['project_name', 'project', '프로젝트']);
+
+/**
+ * The fixtures write `default` for the domain and project; the e2e admin's
+ * own domain and project are not `default` on every cluster. Replace exactly
+ * those cells (other columns, e.g. `resource_policy`, keep `default`). The
+ * fixtures are plain comma-separated with no quoted commas in these columns.
+ */
+async function withRunScope(csv: string): Promise<string> {
+  const [header, ...rows] = csv.split(/\r?\n/);
+  const columns = header
+    .replace(/^\uFEFF/, '')
+    .split(',')
+    .map((column) => column.trim().toLowerCase());
+  const domainIndexes = columns.flatMap((c, i) =>
+    DOMAIN_COLUMNS.has(c) ? [i] : [],
+  );
+  const projectIndexes = columns.flatMap((c, i) =>
+    PROJECT_COLUMNS.has(c) ? [i] : [],
+  );
+  if (domainIndexes.length === 0 && projectIndexes.length === 0) return csv;
+  const domainName = domainIndexes.length ? await getE2EDomainName() : '';
+  const projectName = projectIndexes.length ? await getE2EProjectName() : '';
+  const replaced = rows.map((row) => {
+    const cells = row.split(',');
+    for (const i of domainIndexes) {
+      if (cells[i] === 'default') cells[i] = domainName;
+    }
+    for (const i of projectIndexes) {
+      if (cells[i] === 'default') cells[i] = projectName;
+    }
+    return cells.join(',');
+  });
+  return [header, ...replaced].join('\n');
+}
+
 async function uploadCSV(page: Page, filename: string) {
   const dialog = page.getByRole('dialog', {
     name: 'Bulk Create Users from CSV',
@@ -43,7 +84,12 @@ async function uploadCSV(page: Page, filename: string) {
   const fileInput = dialog
     .getByLabel(UPLOAD_FIELD_LABEL)
     .and(dialog.locator('input[type="file"]'));
-  await fileInput.setInputFiles(path.join(SAMPLES_DIR, filename));
+  const csv = readFileSync(path.join(SAMPLES_DIR, filename), 'utf-8');
+  await fileInput.setInputFiles({
+    name: filename,
+    mimeType: 'text/csv',
+    buffer: Buffer.from(await withRunScope(csv), 'utf-8'),
+  });
 }
 
 /** Read stat numbers from the preview bar by label text */
