@@ -7,9 +7,11 @@ import {
   PrometheusQueryPresetEditorModalFragment$data,
   PrometheusQueryPresetEditorModalFragment$key,
 } from '../__generated__/PrometheusQueryPresetEditorModalFragment.graphql';
+import { PrometheusQueryPresetEditorModalLegacyUpdateMutation } from '../__generated__/PrometheusQueryPresetEditorModalLegacyUpdateMutation.graphql';
 import { PrometheusQueryPresetEditorModalUpdateMutation } from '../__generated__/PrometheusQueryPresetEditorModalUpdateMutation.graphql';
 import { App } from '../app-shim';
 import { Form } from '../form-engine';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import PrometheusCategorySelect from './PrometheusCategorySelect';
 import PrometheusQueryTemplatePreview from './PrometheusQueryTemplatePreview';
@@ -29,6 +31,7 @@ import * as _ from 'lodash-es';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
+import type { PayloadError } from 'relay-runtime';
 
 type PrometheusQueryPresetFormValues = {
   name: string;
@@ -138,9 +141,44 @@ const PrometheusQueryPresetEditorModal: React.FC<
       }
     `);
 
+  // `updatePrometheusQueryPreset` replaces the deprecated
+  // `adminModifyPrometheusQueryPreset` from manager 26.10.0 (#10420).
+  const supportsBaseNameMutations =
+    useSuspendedBackendaiClient().isManagerVersionCompatibleWith('26.10.0');
+
   const [commitUpdateMutation, isInflightUpdate] =
     useMutation<PrometheusQueryPresetEditorModalUpdateMutation>(graphql`
       mutation PrometheusQueryPresetEditorModalUpdateMutation(
+        $id: UUID!
+        $input: ModifyQueryDefinitionInput!
+      ) {
+        updatePrometheusQueryPreset(id: $id, input: $input) {
+          preset {
+            id
+            name
+            description
+            rank
+            categoryId
+            metricName
+            queryTemplate
+            timeWindow
+            options {
+              filterLabels
+              groupLabels
+            }
+            updatedAt
+            category {
+              id
+              name
+            }
+          }
+        }
+      }
+    `);
+
+  const [commitLegacyUpdateMutation, isInflightLegacyUpdate] =
+    useMutation<PrometheusQueryPresetEditorModalLegacyUpdateMutation>(graphql`
+      mutation PrometheusQueryPresetEditorModalLegacyUpdateMutation(
         $id: ID!
         $input: ModifyQueryDefinitionInput!
       ) {
@@ -217,12 +255,15 @@ const PrometheusQueryPresetEditorModal: React.FC<
             };
           }
 
-          commitUpdateMutation({
+          const updateConfig = {
             variables: {
               id: toLocalId(preset.id),
               input,
             },
-            onCompleted: (_res, errors) => {
+            onCompleted: (
+              _res: unknown,
+              errors: ReadonlyArray<PayloadError> | null | undefined,
+            ) => {
               if (errors && errors.length > 0) {
                 const errorMsgList = _.map(errors, (error) => error.message);
                 for (const error of errorMsgList) {
@@ -234,11 +275,16 @@ const PrometheusQueryPresetEditorModal: React.FC<
               message.success(t('prometheusQueryPreset.SuccessfullyUpdated'));
               onRequestClose(true);
             },
-            onError: (error) => {
+            onError: (error: Error) => {
               message.error(error.message);
               // Keep modal open so the user can correct the input and retry
             },
-          });
+          };
+          if (supportsBaseNameMutations) {
+            commitUpdateMutation(updateConfig);
+          } else {
+            commitLegacyUpdateMutation(updateConfig);
+          }
           return;
         }
 
@@ -299,7 +345,9 @@ const PrometheusQueryPresetEditorModal: React.FC<
           : t('prometheusQueryPreset.CreatePreset')
       }
       okText={preset ? t('button.Save') : t('button.Create')}
-      confirmLoading={isInflightCreate || isInflightUpdate}
+      confirmLoading={
+        isInflightCreate || isInflightUpdate || isInflightLegacyUpdate
+      }
     >
       <Form
         form={form}
