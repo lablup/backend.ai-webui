@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<21f1bc1de6c9e25338ecc1a0e2ef325d>>
+ * @generated SignedSource<<f837f1131e512303ea8712d8dcae2250>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,6 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type EntityShareStatus = "ACCEPTED" | "CANCELED" | "PENDING" | "REJECTED" | "REVOKED" | "%future added value";
-export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 export type EntityShareScope = {
   recipient?: ReadonlyArray<UUIDScope> | null | undefined;
@@ -35,7 +34,6 @@ export type InviteFolderSettingModalQuery$data = {
       readonly node: {
         readonly entityId: string;
         readonly id: string;
-        readonly permissions: ReadonlyArray<PermissionBit>;
         readonly recipientEmail: string | null | undefined;
         readonly recipientEntityId: string | null | undefined;
         readonly recipientEntityType: string | null | undefined;
@@ -143,13 +141,6 @@ v3 = [
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
-                "name": "permissions",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
                 "name": "status",
                 "storageKey": null
               }
@@ -230,16 +221,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "730ae65441159dcfa7afdd4af7dd1184",
+    "cacheID": "985ead2b1e6e765ed0d1d9c522b4bfe1",
     "id": null,
     "metadata": {},
     "name": "InviteFolderSettingModalQuery",
     "operationKind": "query",
-    "text": "query InviteFolderSettingModalQuery(\n  $vfolderId: UUID!\n  $scope: EntityShareScope!\n) {\n  entityShares(scope: $scope, limit: 100) {\n    edges {\n      node {\n        id\n        entityId\n        recipientEntityType\n        recipientEntityId\n        recipientEmail\n        permissions\n        status\n      }\n    }\n  }\n  vfolderMountPolicies(vfolderId: $vfolderId) {\n    items {\n      id\n      userId\n      permission\n    }\n  }\n}\n"
+    "text": "query InviteFolderSettingModalQuery(\n  $vfolderId: UUID!\n  $scope: EntityShareScope!\n) {\n  entityShares(scope: $scope, limit: 100) {\n    edges {\n      node {\n        id\n        entityId\n        recipientEntityType\n        recipientEntityId\n        recipientEmail\n        status\n      }\n    }\n  }\n  vfolderMountPolicies(vfolderId: $vfolderId) {\n    items {\n      id\n      userId\n      permission\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5043eff7903bd8c23f94be6f9e228777";
+(node as any).hash = "c4344f146ac2b5cb2ddc0068e7e32346";
 
 export default node;
