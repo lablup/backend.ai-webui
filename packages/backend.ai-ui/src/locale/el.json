@@ -92,14 +92,6 @@
   "comp:BAIAuditLogNodes": {
     "Action": "Ενέργεια",
     "ActionId": "ID ενέργειας",
-    "ActionKind": "Είδος ενέργειας",
-    "ActionKindBulk": "Μαζική",
-    "ActionKindGlobal": "Καθολική",
-    "ActionKindLookup": "Αναζήτηση",
-    "ActionKindMembership": "Συμμετοχή",
-    "ActionKindRelation": "Συσχέτιση",
-    "ActionKindScope": "Εύρος",
-    "ActionKindSingleEntity": "Μεμονωμένη οντότητα",
     "Actor": "Εκτελεστής",
     "ClientIp": "IP πελάτη",
     "Description": "Περιγραφή",
@@ -109,16 +101,8 @@
     "Operation": "Λειτουργία",
     "RequestId": "ID αιτήματος",
     "Status": "Κατάσταση",
-    "Target": "Στόχος",
     "Time": "Ώρα",
     "TriggeredBy": "Ενεργοποιήθηκε από"
-  },
-  "comp:BAIAuditLogTargetCell": {
-    "Global": "Καθολική",
-    "InThisRun": "{{count}} σε αυτή την εκτέλεση",
-    "NoAffectedEntity": "Καμία επηρεαζόμενη οντότητα",
-    "NotFound": "Δεν βρέθηκε",
-    "Run": "Εκτέλεση"
   },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Επιλέξτε προεπιλογή"

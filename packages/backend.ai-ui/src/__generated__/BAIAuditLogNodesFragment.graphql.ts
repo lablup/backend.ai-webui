@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<37f5abc0ba0251ee68fd6cbe358faff9>>
+ * @generated SignedSource<<cf9afd7afb30b3a1bcabb0e385708324>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,12 +9,10 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
-export type AuditLogActionKind = "BULK" | "GLOBAL" | "LOOKUP" | "MEMBERSHIP" | "RELATION" | "SCOPE" | "SINGLE_ENTITY" | "%future added value";
 export type AuditLogStatus = "DENIED" | "ERROR" | "RUNNING" | "SUCCESS" | "UNKNOWN" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type BAIAuditLogNodesFragment$data = ReadonlyArray<{
   readonly actionId: string;
-  readonly actionKind: AuditLogActionKind | null | undefined;
   readonly actionName: string;
   readonly clientIp: string | null | undefined;
   readonly createdAt: string;
@@ -34,7 +32,6 @@ export type BAIAuditLogNodesFragment$data = ReadonlyArray<{
     readonly entityId: string;
     readonly id: string;
   } | null | undefined;
-  readonly " $fragmentSpreads": FragmentRefs<"BAIAuditLogTargetCellFragment">;
   readonly " $fragmentType": "BAIAuditLogNodesFragment";
 }>;
 export type BAIAuditLogNodesFragment$key = ReadonlyArray<{
@@ -71,13 +68,6 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "actionName",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "actionKind",
       "storageKey": null
     },
     {
@@ -151,11 +141,6 @@ return {
       "storageKey": null
     },
     {
-      "args": null,
-      "kind": "FragmentSpread",
-      "name": "BAIAuditLogTargetCellFragment"
-    },
-    {
       "alias": null,
       "args": null,
       "concreteType": "UserV2",
@@ -198,6 +183,6 @@ return {
 };
 })();
 
-(node as any).hash = "f98215c92650a524fe49e9620931335d";
+(node as any).hash = "234037cbd18a67f6864d16b6e07d2cd3";
 
 export default node;

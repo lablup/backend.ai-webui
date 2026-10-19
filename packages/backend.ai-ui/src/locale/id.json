@@ -92,14 +92,6 @@
   "comp:BAIAuditLogNodes": {
     "Action": "Tindakan",
     "ActionId": "ID Tindakan",
-    "ActionKind": "Jenis Tindakan",
-    "ActionKindBulk": "Massal",
-    "ActionKindGlobal": "Global",
-    "ActionKindLookup": "Pencarian",
-    "ActionKindMembership": "Keanggotaan",
-    "ActionKindRelation": "Relasi",
-    "ActionKindScope": "Cakupan",
-    "ActionKindSingleEntity": "Entitas Tunggal",
     "Actor": "Pelaku",
     "ClientIp": "IP Klien",
     "Description": "Deskripsi",
@@ -109,16 +101,8 @@
     "Operation": "Operasi",
     "RequestId": "ID Permintaan",
     "Status": "Status",
-    "Target": "Target",
     "Time": "Waktu",
     "TriggeredBy": "Dipicu oleh"
-  },
-  "comp:BAIAuditLogTargetCell": {
-    "Global": "Global",
-    "InThisRun": "{{count}} dalam eksekusi ini",
-    "NoAffectedEntity": "Tidak ada entitas yang terdampak",
-    "NotFound": "Tidak ditemukan",
-    "Run": "Eksekusi"
   },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Pilih Preset"

@@ -1,5 +1,4 @@
 import {
-  AuditLogActionKind,
   BAIAuditLogNodesFragment$data,
   BAIAuditLogNodesFragment$key,
 } from '../../__generated__/BAIAuditLogNodesFragment.graphql';
@@ -14,8 +13,6 @@ import {
   BAITableProps,
 } from '../Table';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
-import BAIAuditLogTargetCell from './BAIAuditLogTargetCell';
-import { Token } from '@lablup/ui-common/Token';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
@@ -27,7 +24,6 @@ export type AuditLogNodeInList = NonNullable<
 const availableAuditLogSorterKeys = [
   'createdAt',
   'actionName',
-  'actionKind',
   'operation',
   'status',
 ] as const;
@@ -81,7 +77,6 @@ const BAIAuditLogNodes = ({
         id
         createdAt
         actionName
-        actionKind
         operation
         status
         description
@@ -92,7 +87,6 @@ const BAIAuditLogNodes = ({
         targetEntityId
         triggeredBy
         clientIp @since(version: "26.9.0")
-        ...BAIAuditLogTargetCellFragment
         user {
           id
           entityId
@@ -104,8 +98,6 @@ const BAIAuditLogNodes = ({
     `,
     auditLogFrgmt,
   );
-
-  const runCounts = _.countBy(filterOutNullAndUndefined(auditLogs), 'actionId');
 
   const baseColumns = _.map(
     filterOutEmpty<BAIColumnType<AuditLogNodeInList>>([
@@ -133,32 +125,6 @@ const BAIAuditLogNodes = ({
           ),
       },
       {
-        key: 'actionKind',
-        title: t('comp:BAIAuditLogNodes.ActionKind'),
-        dataIndex: 'actionKind',
-        sorter: isEnableSorter('actionKind'),
-        render: (__, record) => {
-          if (!record.actionKind) {
-            return '-';
-          }
-          const actionKindLabels: Partial<Record<AuditLogActionKind, string>> =
-            {
-              SINGLE_ENTITY: t('comp:BAIAuditLogNodes.ActionKindSingleEntity'),
-              BULK: t('comp:BAIAuditLogNodes.ActionKindBulk'),
-              SCOPE: t('comp:BAIAuditLogNodes.ActionKindScope'),
-              RELATION: t('comp:BAIAuditLogNodes.ActionKindRelation'),
-              MEMBERSHIP: t('comp:BAIAuditLogNodes.ActionKindMembership'),
-              GLOBAL: t('comp:BAIAuditLogNodes.ActionKindGlobal'),
-              LOOKUP: t('comp:BAIAuditLogNodes.ActionKindLookup'),
-            };
-          return (
-            <Token
-              label={actionKindLabels[record.actionKind] ?? record.actionKind}
-            />
-          );
-        },
-      },
-      {
         key: 'operation',
         title: t('comp:BAIAuditLogNodes.Operation'),
         dataIndex: 'operation',
@@ -174,16 +140,6 @@ const BAIAuditLogNodes = ({
           <BAIText type={record.status === 'ERROR' ? 'danger' : undefined}>
             {record.status}
           </BAIText>
-        ),
-      },
-      {
-        key: 'target',
-        title: t('comp:BAIAuditLogNodes.Target'),
-        render: (__, record) => (
-          <BAIAuditLogTargetCell
-            auditLogFrgmt={record}
-            runCount={runCounts[record.actionId]}
-          />
         ),
       },
       {

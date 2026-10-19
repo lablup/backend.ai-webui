@@ -92,14 +92,6 @@
   "comp:BAIAuditLogNodes": {
     "Action": "Действие",
     "ActionId": "ID действия",
-    "ActionKind": "Вид действия",
-    "ActionKindBulk": "Массовое",
-    "ActionKindGlobal": "Глобальное",
-    "ActionKindLookup": "Поиск",
-    "ActionKindMembership": "Членство",
-    "ActionKindRelation": "Связь",
-    "ActionKindScope": "Область",
-    "ActionKindSingleEntity": "Один объект",
     "Actor": "Исполнитель",
     "ClientIp": "IP клиента",
     "Description": "Описание",
@@ -109,16 +101,8 @@
     "Operation": "Операция",
     "RequestId": "ID запроса",
     "Status": "Статус",
-    "Target": "Цель",
     "Time": "Время",
     "TriggeredBy": "Инициатор"
-  },
-  "comp:BAIAuditLogTargetCell": {
-    "Global": "Глобальное",
-    "InThisRun": "В этом запуске: {{count}}",
-    "NoAffectedEntity": "Нет затронутого объекта",
-    "NotFound": "Не найдено",
-    "Run": "Запуск"
   },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Выберите пресет"

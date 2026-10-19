@@ -92,14 +92,6 @@
   "comp:BAIAuditLogNodes": {
     "Action": "操作名称",
     "ActionId": "操作 ID",
-    "ActionKind": "操作类型",
-    "ActionKindBulk": "批量",
-    "ActionKindGlobal": "全局",
-    "ActionKindLookup": "查询",
-    "ActionKindMembership": "成员资格",
-    "ActionKindRelation": "关联",
-    "ActionKindScope": "范围",
-    "ActionKindSingleEntity": "单个实体",
     "Actor": "执行者",
     "ClientIp": "客户端 IP",
     "Description": "描述",
@@ -109,16 +101,8 @@
     "Operation": "操作",
     "RequestId": "请求 ID",
     "Status": "状态",
-    "Target": "目标",
     "Time": "时间",
     "TriggeredBy": "触发者"
-  },
-  "comp:BAIAuditLogTargetCell": {
-    "Global": "全局",
-    "InThisRun": "本次运行共 {{count}} 条",
-    "NoAffectedEntity": "无受影响的实体",
-    "NotFound": "未找到",
-    "Run": "运行"
   },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "选择预设"

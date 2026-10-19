@@ -483,16 +483,14 @@ The **Audit Log** tab tracks all action history for the deployment. Each entry i
 
 - **Time**: The timestamp when the action was performed.
 - **Action**: The name of the action that wrote the record.
-- **Action Kind**: The shape of the action: Single Entity, Bulk, Scope, Relation, Membership, Global, or Lookup. Records written before the server recorded it show `-`.
 - **Operation**: The type of action performed.
 - **Status**: The result of the operation.
-- **Target**: What the action acted on, shown according to its action kind. A single-entity action shows the entity, by name while it still exists. A bulk action also shows the run ID and how many rows on the current page belong to the same run. A scope, relation, or membership action shows the scopes involved, a global action shows **Global**, and a lookup shows the key it looked up with the entity it found, or **Not found**.
 - **Description**: Additional details about the operation.
 - **Duration**: The time taken to complete the operation.
 - **Triggered By**: The user who initiated the action.
 - **Client IP**: The IP address the action was requested from, shown exactly as the server reports it. It may be partially masked by the administrator's client IP masking policy, or `-` when it was not recorded.
 
-You can filter entries by **Status**, **Action**, **Action Kind**, **Operation**, **Triggered By**, and a **Time** date-range picker.
+You can filter entries by **Status**, **Action**, **Operation**, **Triggered By**, and a **Time** date-range picker.
 
 <a id="admin-model-store-management"></a>
 

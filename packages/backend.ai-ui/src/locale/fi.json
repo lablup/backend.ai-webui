@@ -92,14 +92,6 @@
   "comp:BAIAuditLogNodes": {
     "Action": "Toiminnon nimi",
     "ActionId": "Toiminnon ID",
-    "ActionKind": "Toiminnon laji",
-    "ActionKindBulk": "Joukko",
-    "ActionKindGlobal": "Globaali",
-    "ActionKindLookup": "Haku",
-    "ActionKindMembership": "Jäsenyys",
-    "ActionKindRelation": "Suhde",
-    "ActionKindScope": "Laajuus",
-    "ActionKindSingleEntity": "Yksittäinen entiteetti",
     "Actor": "Suorittaja",
     "ClientIp": "Asiakkaan IP",
     "Description": "Kuvaus",
@@ -109,16 +101,8 @@
     "Operation": "Toiminto",
     "RequestId": "Pyynnön ID",
     "Status": "Tila",
-    "Target": "Kohde",
     "Time": "Aika",
     "TriggeredBy": "Laukaisija"
-  },
-  "comp:BAIAuditLogTargetCell": {
-    "Global": "Globaali",
-    "InThisRun": "{{count}} tässä ajossa",
-    "NoAffectedEntity": "Ei vaikutuksen kohteena olevaa entiteettiä",
-    "NotFound": "Ei löytynyt",
-    "Run": "Ajo"
   },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Valitse esiasetus"

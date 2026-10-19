@@ -92,14 +92,6 @@
   "comp:BAIAuditLogNodes": {
     "Action": "Ação",
     "ActionId": "ID de ação",
-    "ActionKind": "Tipo de ação",
-    "ActionKindBulk": "Em massa",
-    "ActionKindGlobal": "Global",
-    "ActionKindLookup": "Consulta",
-    "ActionKindMembership": "Associação",
-    "ActionKindRelation": "Relação",
-    "ActionKindScope": "Âmbito",
-    "ActionKindSingleEntity": "Entidade única",
     "Actor": "Ator",
     "ClientIp": "IP do cliente",
     "Description": "Descrição",
@@ -109,16 +101,8 @@
     "Operation": "Operação",
     "RequestId": "ID de solicitação",
     "Status": "Estado",
-    "Target": "Alvo",
     "Time": "Hora",
     "TriggeredBy": "Acionado por"
-  },
-  "comp:BAIAuditLogTargetCell": {
-    "Global": "Global",
-    "InThisRun": "{{count}} nesta execução",
-    "NoAffectedEntity": "Nenhuma entidade afetada",
-    "NotFound": "Não encontrado",
-    "Run": "Execução"
   },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Selecionar preset"
