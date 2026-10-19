@@ -850,9 +850,11 @@ test.describe(
           // minimum footprint (the submit handler itself rejects a missing
           // image, so a cluster with no usable image fails loudly here
           // rather than silently).
+          // Managers with the command/shell path label it "Command"; older
+          // ones keep "Start Command" (ServiceConfigurationFormItems.tsx).
           const startCommandControl = getFormItemControlByLabel(
             page,
-            'Start Command',
+            /^(Start )?Command(?! \()/,
           );
           await expect(startCommandControl).toBeVisible({ timeout: 10000 });
           await startCommandControl
