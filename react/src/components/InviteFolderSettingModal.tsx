@@ -58,7 +58,7 @@ interface ShareRow {
   email: string;
   status: 'PENDING' | 'ACCEPTED';
   userId: string | null;
-  mountLevel: MountLevel | null;
+  mountLevel: MountLevel;
 }
 
 const toMountLevel = (permission?: string | null): MountLevel | null =>
@@ -73,11 +73,6 @@ const toMountLevel = (permission?: string | null): MountLevel | null =>
 
 const toMountPermission = (level: MountLevel) =>
   level === 'ro' ? 'READ_ONLY' : 'READ_WRITE';
-
-// The cap an invite was sent with mirrors the mount level (`[READ]` for read
-// only, `[READ, UPDATE, SOFT_DELETE]` for read & write), on both invite paths.
-const capToMountLevel = (permissions: ReadonlyArray<string>): MountLevel =>
-  permissions.includes('UPDATE') ? 'rw' : 'ro';
 
 const resolveErrorMessage = (error: unknown, fallback: string) => {
   const errorMessage =
@@ -183,7 +178,6 @@ const InviteFolderSettingModalBody: React.FC<{
                 recipientEntityType
                 recipientEntityId
                 recipientEmail
-                permissions
                 status
               }
             }
@@ -282,9 +276,11 @@ const InviteFolderSettingModalBody: React.FC<{
           share.entityId,
         status: share.status === 'ACCEPTED' ? 'ACCEPTED' : 'PENDING',
         userId,
+        // No policy row (an address without an account yet) means the folder's
+        // shared mount permission; the share's cap never decides the level.
         mountLevel:
           toMountLevel(userId ? policyByUserId[userId]?.permission : null) ??
-          capToMountLevel(share.permissions),
+          defaultMountLevel,
       };
     }),
     [(row) => (row.status === 'ACCEPTED' ? 0 : 1), (row) => row.email],
@@ -608,12 +604,12 @@ const InviteFolderSettingModalBody: React.FC<{
                     placement="below"
                     width={130}
                     options={mountLevelOptions}
-                    value={level ?? defaultMountLevel}
+                    value={level}
                     onChange={(next) =>
                       handleChangeMountLevel(row, next as MountLevel)
                     }
                   />
-                ) : row.status === 'PENDING' && level ? (
+                ) : row.status === 'PENDING' ? (
                   mountLevelLabel(level)
                 ) : (
                   '-'

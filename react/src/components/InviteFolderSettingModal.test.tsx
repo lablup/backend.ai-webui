@@ -283,12 +283,13 @@ describe('InviteFolderSettingModal (#10295)', () => {
     expect(
       screen.getAllByText('data.ReadWrite').some((el) => el.closest('tr')),
     ).toBe(true);
-    // A pending row shows the level its cap encodes.
+    // An e-mail invite has no policy row, so it shows the folder's shared
+    // mount permission (READ_ONLY), whatever cap the share carries.
     expect(
       screen.getByText('nobody@example.com').closest('tr'),
-    ).toHaveTextContent('data.ReadWrite');
+    ).toHaveTextContent('data.ReadOnly');
     // A share sent to a user id has no address of its own; it comes from
-    // the recipients query.
+    // the recipients query. Without a policy row it also shows the default.
     expect(
       screen.getByText('user3@example.com').closest('tr'),
     ).toHaveTextContent('data.ReadOnly');
