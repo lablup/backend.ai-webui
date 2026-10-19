@@ -2,6 +2,12 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$ref": "#/definitions/recursiveSchema",
   "definitions": {
+    "rawValueLabels": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
     "recursiveSchema": {
       "type": "object",
       "additionalProperties": false,
@@ -12,7 +18,14 @@
       },
       "patternProperties": {
         "^[0-9A-Z].*$": {
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions/rawValueLabels"
+            }
+          ]
         },
         "^[a-z].*$": {
           "$ref": "#/definitions/recursiveSchema"
