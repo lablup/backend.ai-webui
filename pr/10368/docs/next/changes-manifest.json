@@ -1,0 +1,302 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-10-19T08:56:18.025Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 3,
+        "changes": 10,
+        "added": 6,
+        "modified": 2,
+        "removed": 2,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "Admin Features",
+          "status": "modified",
+          "url": "next/en/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 2,
+            "modified": 1,
+            "removed": 1,
+            "images": 0,
+            "total": 4
+          },
+          "fingerprints": [
+            "b5d5324d92c1",
+            "b17480458542",
+            "bfe726803b3c",
+            "681e6a7c51db"
+          ]
+        },
+        {
+          "slug": "sessions_all",
+          "title": "Compute Sessions",
+          "status": "modified",
+          "url": "next/en/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 2,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 2
+          },
+          "fingerprints": [
+            "5875214fe65a",
+            "e7f7b2d79176"
+          ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "Storage Folders",
+          "status": "modified",
+          "url": "next/en/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/vfolder/vfolder.md",
+          "counts": {
+            "added": 2,
+            "modified": 1,
+            "removed": 1,
+            "images": 0,
+            "total": 4
+          },
+          "fingerprints": [
+            "b5d5324d92c1",
+            "b17480458542",
+            "bfe726803b3c",
+            "33014f2cd9eb"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 3,
+        "changes": 10,
+        "added": 6,
+        "modified": 2,
+        "removed": 2,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "管理者機能",
+          "status": "modified",
+          "url": "next/ja/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 2,
+            "modified": 1,
+            "removed": 1,
+            "images": 0,
+            "total": 4
+          },
+          "fingerprints": [
+            "668ae66ae164",
+            "d43e87634e68",
+            "ded02f48a6ec",
+            "9018cc847554"
+          ]
+        },
+        {
+          "slug": "sessions_all",
+          "title": "コンピュートセッション",
+          "status": "modified",
+          "url": "next/ja/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 2,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 2
+          },
+          "fingerprints": [
+            "515707ebc110",
+            "4216951056b1"
+          ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "ストレージフォルダ",
+          "status": "modified",
+          "url": "next/ja/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/vfolder/vfolder.md",
+          "counts": {
+            "added": 2,
+            "modified": 1,
+            "removed": 1,
+            "images": 0,
+            "total": 4
+          },
+          "fingerprints": [
+            "239cb6fcbae2",
+            "9b518eee373f",
+            "f97c62e8a9fd",
+            "f28531fc072d"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 3,
+        "changes": 11,
+        "added": 5,
+        "modified": 5,
+        "removed": 1,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "관리자 기능",
+          "status": "modified",
+          "url": "next/ko/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 1,
+            "modified": 3,
+            "removed": 0,
+            "images": 0,
+            "total": 4
+          },
+          "fingerprints": [
+            "590064481cf3",
+            "3f3dbcd51174",
+            "b16e4296b73f",
+            "0698a031d193"
+          ]
+        },
+        {
+          "slug": "sessions_all",
+          "title": "연산 세션",
+          "status": "modified",
+          "url": "next/ko/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 2,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 2
+          },
+          "fingerprints": [
+            "cad401dc316e",
+            "e907ccce1a54"
+          ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "스토리지 폴더",
+          "status": "modified",
+          "url": "next/ko/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/vfolder/vfolder.md",
+          "counts": {
+            "added": 2,
+            "modified": 2,
+            "removed": 1,
+            "images": 0,
+            "total": 5
+          },
+          "fingerprints": [
+            "54ff61c69bd8",
+            "28b58c5cc9d8",
+            "a3db83944159",
+            "02ef1cea2b51",
+            "bbd043cebf61"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 3,
+        "changes": 9,
+        "added": 5,
+        "modified": 3,
+        "removed": 1,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "ฟีเจอร์ผู้ดูแลระบบ",
+          "status": "modified",
+          "url": "next/th/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 1,
+            "modified": 2,
+            "removed": 0,
+            "images": 0,
+            "total": 3
+          },
+          "fingerprints": [
+            "0e5bf5b5595c",
+            "82aadc3f99f0",
+            "4936842b54b5"
+          ]
+        },
+        {
+          "slug": "sessions_all",
+          "title": "เซสชันการคำนวณ",
+          "status": "modified",
+          "url": "next/th/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 2,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 2
+          },
+          "fingerprints": [
+            "7030ad3c5453",
+            "a09bf8571ce6"
+          ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "โฟลเดอร์จัดเก็บ",
+          "status": "modified",
+          "url": "next/th/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/vfolder/vfolder.md",
+          "counts": {
+            "added": 2,
+            "modified": 1,
+            "removed": 1,
+            "images": 0,
+            "total": 4
+          },
+          "fingerprints": [
+            "03f6bb56349e",
+            "08e52511a2f0",
+            "773a1d4ffe53",
+            "2e673b93c08b"
+          ]
+        }
+      ]
+    }
+  }
+}
