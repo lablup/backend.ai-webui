@@ -220,6 +220,13 @@ const ImageSelectField: React.FC<{
   );
 };
 
+// The name column of every slot row, so the fixed CPU / MEM rows and the
+// removable custom rows line up although only the latter end with a button.
+const NAME_COLUMN_STYLE: React.CSSProperties = {
+  flex: '0 0 calc(50% - var(--spacing-2) / 2)',
+  minWidth: 0,
+};
+
 // A non-removable row whose name is fixed, matching the deployment preset form.
 const FixedNameRow: React.FC<{
   name: string;
@@ -229,7 +236,7 @@ const FixedNameRow: React.FC<{
   'use memo';
   return (
     <BAIFlex direction="row" align="start" gap="xs">
-      <BAIFormItem style={{ marginBottom: 0, flex: 1 }}>
+      <BAIFormItem style={{ marginBottom: 0, ...NAME_COLUMN_STYLE }}>
         <TextInput
           label={label}
           isLabelHidden
@@ -346,7 +353,7 @@ export const SessionExecutionSpecFormFields: React.FC<{
                     <Form.Item
                       {...restField}
                       name={[fieldName, 'resourceType']}
-                      style={{ marginBottom: 0, flex: 1 }}
+                      style={{ marginBottom: 0, ...NAME_COLUMN_STYLE }}
                       rules={[
                         {
                           required: true,
