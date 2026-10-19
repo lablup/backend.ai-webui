@@ -1318,8 +1318,7 @@
       "ReplicaStatus": "Хуулбарын амьдралын мөчлөг",
       "ReplicaTrafficStatus": "Хуулбарын урсгалын төлөв",
       "ResourceGroup": "Нөөцийн бүлэг",
-      "Status": "Төлөв",
-      "Tags": "Шошго"
+      "Status": "Төлөв"
     },
     "nav": {
       "Next": "Дараах",

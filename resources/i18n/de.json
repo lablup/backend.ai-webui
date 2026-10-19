@@ -1318,8 +1318,7 @@
       "ReplicaStatus": "Replikat-Lebenszyklus",
       "ReplicaTrafficStatus": "Replikat-Datenverkehrsstatus",
       "ResourceGroup": "Ressourcengruppe",
-      "Status": "Status",
-      "Tags": "Tags"
+      "Status": "Status"
     },
     "nav": {
       "Next": "Weiter",
