@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Storage Folders" />
   <meta name="twitter:description" content="Backend.AI supports dedicated storage to preserve user's files." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Storage Folders","inLanguage":"en","description":"Backend.AI supports dedicated storage to preserve user's files.","dateModified":"2026-10-19T08:32:42.000Z","url":"https://webui.docs.backend.ai/next/en/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Storage Folders","inLanguage":"en","description":"Backend.AI supports dedicated storage to preserve user's files.","dateModified":"2026-10-19T09:56:15.000Z","url":"https://webui.docs.backend.ai/next/en/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/vfolder.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (09f24e5)">v26.10.0-alpha.1 (09f24e5)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (4e02b6b)">v26.10.0-alpha.1 (4e02b6b)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -351,13 +351,13 @@ in the directory.</p>
 <li data-bai-block="56"><strong>Time</strong>: When the operation occurred.</li>
 <li data-bai-block="57"><strong>Action</strong>: The name of the action that wrote the record.</li>
 <li data-bai-block="58"><strong>Operation</strong>: The type of action (for example, create, update, or delete).</li>
-<li data-bai-block="59"><strong>Status</strong>: The result of the operation (for example, SUCCESS or ERROR).</li>
-<li data-bai-block="60"><strong>Description</strong>: The error details, shown only when the status is <code>ERROR</code>; other rows show <code>-</code>.</li>
+<li data-bai-block="59"><strong>Result</strong>: The outcome of the operation: <strong>Success</strong>, <strong>Failed</strong> (shown in red), <strong>Denied</strong>, <strong>Running</strong>, or <strong>Unknown</strong>.</li>
+<li data-bai-block="60"><strong>Description</strong>: The error or denial details, shown only when the result is <strong>Failed</strong> or <strong>Denied</strong>; other rows show <code>-</code>.</li>
 <li data-bai-block="61"><strong>Duration</strong>: How long the operation took.</li>
 <li data-bai-block="62"><strong>Triggered By</strong>: The user who performed the operation, shown in &quot;email (id)&quot; format.</li>
 <li data-bai-block="63"><strong>Client IP</strong>: The IP address the operation was requested from, shown exactly as the server reports it. It may be partially masked by the administrator&#39;s client IP masking policy, or <code>-</code> when it was not recorded.</li>
 </ul>
-<p data-bai-block="64">You can filter the log by <strong>Time</strong>, <strong>Action</strong>, <strong>Operation</strong>, <strong>Status</strong>, and <strong>Triggered By</strong>.</p>
+<p data-bai-block="64">You can filter the log by <strong>Time</strong>, <strong>Action</strong>, <strong>Operation</strong>, <strong>Result</strong>, and <strong>Triggered By</strong>.</p>
 <h2 data-bai-block="65" id="vfolder-rename-folder">Rename folder<a class="hash-link" href="#vfolder-rename-folder" aria-label="Direct link to Rename folder">#</a></h2>
 <p data-bai-block="66">If you have permission to rename the storage folder, open the folder&#39;s detail
 drawer and click the edit button next to the folder name. Renaming is performed

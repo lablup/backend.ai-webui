@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="ストレージフォルダ" />
   <meta name="twitter:description" content="Backend.AIは、ユーザーのファイルを安全に保管するための専用ストレージを提供しています。コンピュートセッションのファイルやディレクトリはセッション終了時に削除されるため、ストレージフォルダに保存することを推奨します。ストレージフォルダの一覧は、サイドバーのデータページを選択すると確認できます。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ストレージフォルダ","inLanguage":"ja","description":"Backend.AIは、ユーザーのファイルを安全に保管するための専用ストレージを提供しています。コンピュートセッションのファイルやディレクトリはセッション終了時に削除されるため、ストレージフォルダに保存することを推奨します。ストレージフォルダの一覧は、サイドバーのデータページを選択すると確認できます。","dateModified":"2026-10-19T08:32:42.000Z","url":"https://webui.docs.backend.ai/next/ja/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ストレージフォルダ","inLanguage":"ja","description":"Backend.AIは、ユーザーのファイルを安全に保管するための専用ストレージを提供しています。コンピュートセッションのファイルやディレクトリはセッション終了時に削除されるため、ストレージフォルダに保存することを推奨します。ストレージフォルダの一覧は、サイドバーのデータページを選択すると確認できます。","dateModified":"2026-10-19T09:56:15.000Z","url":"https://webui.docs.backend.ai/next/ja/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/vfolder.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (09f24e5)">v26.10.0-alpha.1 (09f24e5)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (4e02b6b)">v26.10.0-alpha.1 (4e02b6b)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -335,13 +335,13 @@
 <li data-bai-block="56"><strong>時刻</strong>: 操作が発生した時刻。</li>
 <li data-bai-block="57"><strong>アクション</strong>: 記録を書き込んだアクションの名前です。</li>
 <li data-bai-block="58"><strong>操作</strong>: アクションの種類（例：作成、更新、削除）。</li>
-<li data-bai-block="59"><strong>ステータス</strong>: 操作の結果（例えば SUCCESS または ERROR）。</li>
-<li data-bai-block="60"><strong>説明</strong>: エラーの詳細で、ステータスが<code>ERROR</code>の場合にのみ表示され、それ以外の行は<code>-</code>と表示されます。</li>
+<li data-bai-block="59"><strong>結果</strong>: 操作の結果で、<strong>成功</strong>、<strong>失敗</strong>（赤色で表示）、<strong>拒否</strong>、<strong>実行中</strong>、<strong>不明</strong>のいずれかです。</li>
+<li data-bai-block="60"><strong>説明</strong>: エラーまたは拒否の詳細で、結果が<strong>失敗</strong>または<strong>拒否</strong>の場合にのみ表示され、それ以外の行は<code>-</code>と表示されます。</li>
 <li data-bai-block="61"><strong>所要時間</strong>: 操作にかかった時間。</li>
 <li data-bai-block="62"><strong>起動者</strong>: 操作を実行したユーザーで、「メールアドレス (ID)」の形式で表示されます。</li>
 <li data-bai-block="63"><strong>クライアントIP</strong>: 操作を要求したIPアドレスで、サーバーが報告したまま表示されます。管理者のクライアントIPマスキングポリシーによっては一部がマスクされ、記録されていない場合は<code>-</code>と表示されます。</li>
 </ul>
-<p data-bai-block="64">時刻、アクション、操作、ステータス、起動者でログをフィルタリングできます。</p>
+<p data-bai-block="64">時刻、アクション、操作、結果、起動者でログをフィルタリングできます。</p>
 <h2 data-bai-block="65" id="vfolder-フォルダー名を変更">フォルダー名を変更<a class="hash-link" href="#vfolder-フォルダー名を変更" aria-label="Direct link to フォルダー名を変更">#</a></h2>
 <p data-bai-block="66">ストレージフォルダの名前を変更する権限がある場合、フォルダの詳細ドロワーを開き、フォルダ名の横にある編集ボタンをクリックして名前を変更します。名前変更は詳細ドロワー内でのみ行います。</p>
 <p><figure data-bai-block="67" class="doc-figure"><img src="./images/rename_vfolder.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1296" height="795" /><figcaption>図 15.11</figcaption></figure>

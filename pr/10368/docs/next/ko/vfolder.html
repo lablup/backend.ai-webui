@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="스토리지 폴더" />
   <meta name="twitter:description" content="Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용 저장소를 제공합니다. 연산 세션이 종료되면 세션 내에서 생성된 모든 파일과 디렉터리가 삭제되므로, 중요한 데이터는 반드시 스토리지 폴더에 저장하는 것이 좋습니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"스토리지 폴더","inLanguage":"ko","description":"Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용 저장소를 제공합니다. 연산 세션이 종료되면 세션 내에서 생성된 모든 파일과 디렉터리가 삭제되므로, 중요한 데이터는 반드시 스토리지 폴더에 저장하는 것이 좋습니다.","dateModified":"2026-10-19T08:32:42.000Z","url":"https://webui.docs.backend.ai/next/ko/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"스토리지 폴더","inLanguage":"ko","description":"Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용 저장소를 제공합니다. 연산 세션이 종료되면 세션 내에서 생성된 모든 파일과 디렉터리가 삭제되므로, 중요한 데이터는 반드시 스토리지 폴더에 저장하는 것이 좋습니다.","dateModified":"2026-10-19T09:56:15.000Z","url":"https://webui.docs.backend.ai/next/ko/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/vfolder.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (09f24e5)">v26.10.0-alpha.1 (09f24e5)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (4e02b6b)">v26.10.0-alpha.1 (4e02b6b)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -334,13 +334,13 @@
 <li data-bai-block="56"><strong>시각</strong>: 작업이 수행된 시점입니다.</li>
 <li data-bai-block="57"><strong>액션</strong>: 기록을 남긴 액션의 이름입니다.</li>
 <li data-bai-block="58"><strong>작업</strong>: 작업 유형입니다(예: 생성, 수정, 삭제).</li>
-<li data-bai-block="59"><strong>상태</strong>: 작업 결과입니다(예: SUCCESS 또는 ERROR).</li>
-<li data-bai-block="60"><strong>설명</strong>: 오류 세부 정보로, 상태가 <code>ERROR</code>일 때만 표시되며 그 외의 행은 <code>-</code>로 표시됩니다.</li>
+<li data-bai-block="59"><strong>결과</strong>: 작업의 결과로, <strong>성공</strong>, <strong>실패</strong>(빨간색으로 표시), <strong>거부됨</strong>, <strong>진행 중</strong>, <strong>알 수 없음</strong> 중 하나입니다.</li>
+<li data-bai-block="60"><strong>설명</strong>: 오류 또는 거부 세부 정보로, 결과가 <strong>실패</strong> 또는 <strong>거부됨</strong>일 때만 표시되며 그 외의 행은 <code>-</code>로 표시됩니다.</li>
 <li data-bai-block="61"><strong>소요 시간</strong>: 작업에 걸린 시간입니다.</li>
 <li data-bai-block="62"><strong>실행자</strong>: 작업을 수행한 사용자이며, &quot;이메일 (id)&quot; 형식으로 표시됩니다.</li>
 <li data-bai-block="63"><strong>클라이언트 IP</strong>: 작업을 요청한 IP 주소이며, 서버가 보고한 그대로 표시됩니다. 관리자의 클라이언트 IP 마스킹 정책에 따라 일부가 가려질 수 있고, 기록되지 않은 경우 <code>-</code>로 표시됩니다.</li>
 </ul>
-<p data-bai-block="64">시각, 액션, 작업, 상태, 실행자 항목으로 로그를 필터링할 수 있습니다.</p>
+<p data-bai-block="64">시각, 액션, 작업, 결과, 실행자 항목으로 로그를 필터링할 수 있습니다.</p>
 <h2 data-bai-block="65" id="vfolder-폴더-이름-변경">폴더 이름 변경<a class="hash-link" href="#vfolder-폴더-이름-변경" aria-label="Direct link to 폴더 이름 변경">#</a></h2>
 <p data-bai-block="66">스토리지 폴더의 이름을 변경할 권한이 있으면, 폴더 상세 드로어를 열고 폴더 이름 옆의 수정 버튼을 클릭하여 이름을 변경합니다. 이름 변경 작업은 상세 드로어 내부에서만 수행됩니다.</p>
 <p><figure data-bai-block="67" class="doc-figure"><img src="./images/rename_vfolder.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1296" height="795" /><figcaption>그림 15.11</figcaption></figure>

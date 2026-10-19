@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="연산 세션" />
   <meta name="twitter:description" content="여기서는 세션 페이지에서 컨테이너 기반의 연산 세션을 생성하고 각종 웹 애플리케이션을 활용하는 방법을 알아봅니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"연산 세션","inLanguage":"ko","description":"여기서는 세션 페이지에서 컨테이너 기반의 연산 세션을 생성하고 각종 웹 애플리케이션을 활용하는 방법을 알아봅니다.","dateModified":"2026-10-19T08:30:35.000Z","url":"https://webui.docs.backend.ai/next/ko/sessions_all.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"연산 세션","inLanguage":"ko","description":"여기서는 세션 페이지에서 컨테이너 기반의 연산 세션을 생성하고 각종 웹 애플리케이션을 활용하는 방법을 알아봅니다.","dateModified":"2026-10-19T09:56:15.000Z","url":"https://webui.docs.backend.ai/next/ko/sessions_all.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/sessions_all.html" />
   <link rel="alternate" hreflang="en" href="../en/sessions_all.html" />
   <link rel="alternate" hreflang="ja" href="../ja/sessions_all.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (09f24e5)">v26.10.0-alpha.1 (09f24e5)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (4e02b6b)">v26.10.0-alpha.1 (4e02b6b)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -648,13 +648,13 @@
 <li data-bai-block="190"><strong>클라이언트 IP</strong>: 작업을 요청한 IP 주소. 서버가 보고한 그대로 표시되며, 관리자의 클라이언트 IP 마스킹 정책에 따라 일부가 가려지거나 기록되지 않은 경우 <code>-</code>로 표시됨</li>
 <li data-bai-block="191"><strong>작업</strong>: 수행된 작업의 유형 (예: 세션 생성, 종료 또는 자원 변경)</li>
 <li data-bai-block="192"><strong>액션</strong>: 기록을 남긴 액션의 이름</li>
-<li data-bai-block="193"><strong>상태</strong>: 작업의 결과 (<code>SUCCESS</code>, <code>ERROR</code>, <code>RUNNING</code>, <code>DENIED</code> 또는 <code>UNKNOWN</code>). <code>DENIED</code>는 오류로 실패한 것이 아니라 정책에 의해 의도적으로 거부되었음을 의미합니다</li>
+<li data-bai-block="193"><strong>결과</strong>: 작업의 결과 (<strong>성공</strong>, <strong>실패</strong>, <strong>거부됨</strong>, <strong>진행 중</strong> 또는 <strong>알 수 없음</strong>). <strong>거부됨</strong>은 오류로 실패한 것이 아니라 정책에 의해 의도적으로 거부되었음을 의미합니다</li>
 <li data-bai-block="194"><strong>시각</strong>: 작업이 발생한 시각</li>
 </ul>
 <h4 data-bai-block="195" id="sessions_all-감사-로그-필터">감사 로그 필터<a class="hash-link" href="#sessions_all-감사-로그-필터" aria-label="Direct link to 감사 로그 필터">#</a></h4>
 <p data-bai-block="196">테이블 위의 필터 바를 사용하여 로그 항목을 좁혀볼 수 있습니다:</p>
 <ul>
-<li data-bai-block="197"><strong>상태</strong>: 작업 결과로 필터링 (<code>SUCCESS</code>, <code>ERROR</code>, <code>RUNNING</code>, <code>UNKNOWN</code>)</li>
+<li data-bai-block="197"><strong>결과</strong>: 작업 결과로 필터링 (<strong>성공</strong>, <strong>실패</strong>, <strong>거부됨</strong>, <strong>진행 중</strong>, <strong>알 수 없음</strong>)</li>
 <li data-bai-block="198"><strong>작업</strong>: 작업 이름 또는 키워드로 검색</li>
 <li data-bai-block="199"><strong>액션</strong>: 액션 이름 또는 키워드로 검색</li>
 <li data-bai-block="200"><strong>수행자</strong>: 수행자 ID로 검색</li>

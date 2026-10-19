@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="ฟีเจอร์ผู้ดูแลระบบ" />
   <meta name="twitter:description" content="การเข้าสู่ระบบด้วยบัญชีผู้ดูแลระบบจะเพิ่มเมนู การตั้งค่าผู้ดูแลระบบ ที่ด้านบนของแถบด้านข้าง เมื่อเลือกเมนูนี้…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ฟีเจอร์ผู้ดูแลระบบ","inLanguage":"th","description":"การเข้าสู่ระบบด้วยบัญชีผู้ดูแลระบบจะเพิ่มเมนู การตั้งค่าผู้ดูแลระบบ ที่ด้านบนของแถบด้านข้าง เมื่อเลือกเมนูนี้…","dateModified":"2026-10-19T08:55:12.000Z","url":"https://webui.docs.backend.ai/next/th/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ฟีเจอร์ผู้ดูแลระบบ","inLanguage":"th","description":"การเข้าสู่ระบบด้วยบัญชีผู้ดูแลระบบจะเพิ่มเมนู การตั้งค่าผู้ดูแลระบบ ที่ด้านบนของแถบด้านข้าง เมื่อเลือกเมนูนี้…","dateModified":"2026-10-19T09:56:32.000Z","url":"https://webui.docs.backend.ai/next/th/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/admin_menu.html" />
   <link rel="alternate" hreflang="en" href="../en/admin_menu.html" />
   <link rel="alternate" hreflang="ja" href="../ja/admin_menu.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (09f24e5)">v26.10.0-alpha.1 (09f24e5)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (4e02b6b)">v26.10.0-alpha.1 (4e02b6b)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -638,13 +638,13 @@ Backend.AI ได้ใน 15 นาที ตัวอย่างเช่น 
 <li data-bai-block="180"><strong>เวลา (Time)</strong>: การประทับเวลาเมื่อดำเนินการ</li>
 <li data-bai-block="181"><strong>ชื่อการดำเนินการ (Action)</strong>: ชื่อของการดำเนินการที่เขียนบันทึกนี้</li>
 <li data-bai-block="182"><strong>การดำเนินการ (Operation)</strong>: ประเภทของการดำเนินการที่เกิดขึ้น</li>
-<li data-bai-block="183"><strong>สถานะ (Status)</strong>: ผลลัพธ์ของการดำเนินการ</li>
-<li data-bai-block="184"><strong>คำอธิบาย (Description)</strong>: รายละเอียดข้อผิดพลาด ซึ่งแสดงเฉพาะเมื่อสถานะเป็น <code>ERROR</code> แถวอื่นจะแสดงเป็น <code>-</code></li>
+<li data-bai-block="183"><strong>ผลลัพธ์ (Result)</strong>: ผลลัพธ์ของการดำเนินการ ได้แก่ <strong>สำเร็จ</strong>, <strong>ล้มเหลว</strong>, <strong>ถูกปฏิเสธ</strong>, <strong>กำลังดำเนินการ</strong> หรือ <strong>ไม่ทราบ</strong></li>
+<li data-bai-block="184"><strong>คำอธิบาย (Description)</strong>: รายละเอียดข้อผิดพลาดหรือการปฏิเสธ ซึ่งแสดงเฉพาะเมื่อผลลัพธ์เป็น <strong>ล้มเหลว</strong> หรือ <strong>ถูกปฏิเสธ</strong> แถวอื่นจะแสดงเป็น <code>-</code></li>
 <li data-bai-block="185"><strong>ระยะเวลา (Duration)</strong>: เวลาที่ใช้ในการดำเนินการ</li>
 <li data-bai-block="186"><strong>ผู้ดำเนินการ (Triggered By)</strong>: ผู้ใช้ที่เริ่มต้นการดำเนินการ</li>
 <li data-bai-block="187"><strong>IP ของไคลเอ็นต์ (Client IP)</strong>: ที่อยู่ IP ที่ใช้ร้องขอการดำเนินการ แสดงตามที่เซิร์ฟเวอร์รายงานทุกประการ อาจถูกปิดบังบางส่วนตามนโยบายการปิดบัง IP ของไคลเอ็นต์ที่ผู้ดูแลระบบกำหนด และจะแสดงเป็น <code>-</code> หากไม่มีการบันทึก</li>
 </ul>
-<p data-bai-block="188">คุณสามารถกรองรายการตาม <strong>สถานะ (Status)</strong>, <strong>ชื่อการดำเนินการ (Action)</strong>, <strong>การดำเนินการ (Operation)</strong>, <strong>ผู้ดำเนินการ (Triggered By)</strong> และตัวเลือกช่วงวันที่ <strong>เวลา (Time)</strong></p>
+<p data-bai-block="188">คุณสามารถกรองรายการตาม <strong>ผลลัพธ์ (Result)</strong>, <strong>ชื่อการดำเนินการ (Action)</strong>, <strong>การดำเนินการ (Operation)</strong>, <strong>ผู้ดำเนินการ (Triggered By)</strong> และตัวเลือกช่วงวันที่ <strong>เวลา (Time)</strong></p>
 <p><a id="admin-model-store-management"></a></p>
 <h3 data-bai-block="189" id="admin_menu-การจดการคลงโมเดลสำหรบผดแลระบบ">การจัดการคลังโมเดลสำหรับผู้ดูแลระบบ<a class="hash-link" href="#admin_menu-การจดการคลงโมเดลสำหรบผดแลระบบ" aria-label="Direct link to การจัดการคลังโมเดลสำหรับผู้ดูแลระบบ">#</a></h3>
 <p data-bai-block="190">ผู้ดูแลระบบขั้นสูงสามารถจัดการการ์ดโมเดลผ่านแท็บ Model Store Management ในหน้า Admin Deployments การ์ดโมเดลที่สร้างใหม่จะถูกเพิ่มในโปรเจกต์ Model Store โดยอัตโนมัติ</p>

@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="โฟลเดอร์จัดเก็บ" />
   <meta name="twitter:description" content="Backend.AI มีพื้นที่จัดเก็บเฉพาะเพื่อเก็บไฟล์ของผู้ใช้ให้คงอยู่ เนื่องจากไฟล์และไดเรกทอรีของเซสชันการคำนวณจะถูกลบเมื่อเซสชันสิ้นสุดลง…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"โฟลเดอร์จัดเก็บ","inLanguage":"th","description":"Backend.AI มีพื้นที่จัดเก็บเฉพาะเพื่อเก็บไฟล์ของผู้ใช้ให้คงอยู่ เนื่องจากไฟล์และไดเรกทอรีของเซสชันการคำนวณจะถูกลบเมื่อเซสชันสิ้นสุดลง…","dateModified":"2026-10-19T08:32:42.000Z","url":"https://webui.docs.backend.ai/next/th/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"โฟลเดอร์จัดเก็บ","inLanguage":"th","description":"Backend.AI มีพื้นที่จัดเก็บเฉพาะเพื่อเก็บไฟล์ของผู้ใช้ให้คงอยู่ เนื่องจากไฟล์และไดเรกทอรีของเซสชันการคำนวณจะถูกลบเมื่อเซสชันสิ้นสุดลง…","dateModified":"2026-10-19T09:56:15.000Z","url":"https://webui.docs.backend.ai/next/th/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/vfolder.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (09f24e5)">v26.10.0-alpha.1 (09f24e5)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (4e02b6b)">v26.10.0-alpha.1 (4e02b6b)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -334,13 +334,13 @@ storage host นั้น คุณจะสามารถอัปโหลด
 <li data-bai-block="56"><strong>เวลา</strong>: เวลาที่การดำเนินการเกิดขึ้น</li>
 <li data-bai-block="57"><strong>ชื่อการดำเนินการ</strong>: ชื่อของการดำเนินการที่เขียนบันทึกนี้</li>
 <li data-bai-block="58"><strong>การดำเนินการ</strong>: ประเภทของการดำเนินการ (เช่น create, update, หรือ delete)</li>
-<li data-bai-block="59"><strong>สถานะ</strong>: ผลลัพธ์ของการดำเนินการ (เช่น SUCCESS หรือ ERROR)</li>
-<li data-bai-block="60"><strong>คำอธิบาย</strong>: รายละเอียดข้อผิดพลาด ซึ่งแสดงเฉพาะเมื่อสถานะเป็น <code>ERROR</code> แถวอื่นจะแสดงเป็น <code>-</code></li>
+<li data-bai-block="59"><strong>ผลลัพธ์</strong>: ผลลัพธ์ของการดำเนินการ ได้แก่ <strong>สำเร็จ</strong>, <strong>ล้มเหลว</strong> (แสดงเป็นสีแดง), <strong>ถูกปฏิเสธ</strong>, <strong>กำลังดำเนินการ</strong> หรือ <strong>ไม่ทราบ</strong></li>
+<li data-bai-block="60"><strong>คำอธิบาย</strong>: รายละเอียดข้อผิดพลาดหรือการปฏิเสธ ซึ่งแสดงเฉพาะเมื่อผลลัพธ์เป็น <strong>ล้มเหลว</strong> หรือ <strong>ถูกปฏิเสธ</strong> แถวอื่นจะแสดงเป็น <code>-</code></li>
 <li data-bai-block="61"><strong>ระยะเวลา</strong>: ระยะเวลาที่ใช้ในการดำเนินการ</li>
 <li data-bai-block="62"><strong>ผู้กระตุ้น</strong>: ผู้ใช้ที่ดำเนินการ แสดงในรูปแบบ &quot;email (id)&quot;</li>
 <li data-bai-block="63"><strong>IP ของไคลเอ็นต์</strong>: ที่อยู่ IP ที่ใช้ร้องขอการดำเนินการ แสดงตามที่เซิร์ฟเวอร์รายงานทุกประการ อาจถูกปิดบังบางส่วนตามนโยบายการปิดบัง IP ของไคลเอ็นต์ที่ผู้ดูแลระบบกำหนด และจะแสดงเป็น <code>-</code> หากไม่มีการบันทึก</li>
 </ul>
-<p data-bai-block="64">คุณสามารถกรองบันทึกตามเวลา ชื่อการดำเนินการ การดำเนินการ สถานะ และผู้กระตุ้นได้</p>
+<p data-bai-block="64">คุณสามารถกรองบันทึกตามเวลา ชื่อการดำเนินการ การดำเนินการ ผลลัพธ์ และผู้กระตุ้นได้</p>
 <h2 data-bai-block="65" id="vfolder-เปลยนชอโฟลเดอร">เปลี่ยนชื่อโฟลเดอร์<a class="hash-link" href="#vfolder-เปลยนชอโฟลเดอร" aria-label="Direct link to เปลี่ยนชื่อโฟลเดอร์">#</a></h2>
 <p data-bai-block="66">หากคุณมีสิทธิ์ในการเปลี่ยนชื่อโฟลเดอร์จัดเก็บ ให้เปิดลิ้นชักรายละเอียดของโฟลเดอร์แล้วคลิกปุ่มแก้ไขข้างชื่อโฟลเดอร์ การเปลี่ยนชื่อจะดำเนินการภายในลิ้นชักรายละเอียดเท่านั้น</p>
 <p><figure data-bai-block="67" class="doc-figure"><img src="./images/rename_vfolder.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1296" height="795" /><figcaption>รูปที่ 15.11</figcaption></figure>

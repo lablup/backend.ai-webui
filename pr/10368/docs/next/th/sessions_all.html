@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="เซสชันการคำนวณ" />
   <meta name="twitter:description" content="เอกสารนี้จะครอบคลุมวิธีการค้นหาและสร้างเซสชันการคำนวณที่ใช้คอนเทนเนอร์ รวมถึงการใช้งานแอปพลิเคชันเว็บต่าง ๆ ในหน้า 'เซสชัน'" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"เซสชันการคำนวณ","inLanguage":"th","description":"เอกสารนี้จะครอบคลุมวิธีการค้นหาและสร้างเซสชันการคำนวณที่ใช้คอนเทนเนอร์ รวมถึงการใช้งานแอปพลิเคชันเว็บต่าง ๆ ในหน้า 'เซสชัน'","dateModified":"2026-10-19T08:30:35.000Z","url":"https://webui.docs.backend.ai/next/th/sessions_all.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"เซสชันการคำนวณ","inLanguage":"th","description":"เอกสารนี้จะครอบคลุมวิธีการค้นหาและสร้างเซสชันการคำนวณที่ใช้คอนเทนเนอร์ รวมถึงการใช้งานแอปพลิเคชันเว็บต่าง ๆ ในหน้า 'เซสชัน'","dateModified":"2026-10-19T09:56:15.000Z","url":"https://webui.docs.backend.ai/next/th/sessions_all.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/sessions_all.html" />
   <link rel="alternate" hreflang="en" href="../en/sessions_all.html" />
   <link rel="alternate" hreflang="ja" href="../ja/sessions_all.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (09f24e5)">v26.10.0-alpha.1 (09f24e5)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (4e02b6b)">v26.10.0-alpha.1 (4e02b6b)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -721,13 +721,13 @@ ID เซสชัน ID ผู้ใช้ สถานะ ประเภท �
 <li data-bai-block="190"><strong>Client IP</strong>: ที่อยู่ IP ที่ใช้ร้องขอการกระทำ แสดงตามที่เซิร์ฟเวอร์รายงานทุกประการ อาจถูกปิดบังบางส่วนตามนโยบายการปิดบัง IP ของไคลเอ็นต์ที่ผู้ดูแลระบบกำหนด และจะแสดงเป็น <code>-</code> หากไม่มีการบันทึก</li>
 <li data-bai-block="191"><strong>Operation</strong>: ประเภทของการกระทำที่ดำเนินการ (ตัวอย่างเช่น การสร้างเซสชัน การยุติ หรือการเปลี่ยนแปลงทรัพยากร)</li>
 <li data-bai-block="192"><strong>Action</strong>: ชื่อของการดำเนินการที่เขียนบันทึกนี้</li>
-<li data-bai-block="193"><strong>Status</strong>: ผลลัพธ์ของการกระทำ (<code>SUCCESS</code>, <code>ERROR</code>, <code>RUNNING</code>, <code>DENIED</code> หรือ <code>UNKNOWN</code>) โดย <code>DENIED</code> หมายถึงการกระทำถูกปฏิเสธโดยเจตนาตามนโยบาย ไม่ใช่ความล้มเหลวจากข้อผิดพลาด</li>
+<li data-bai-block="193"><strong>Result</strong>: ผลลัพธ์ของการกระทำ (<strong>สำเร็จ</strong>, <strong>ล้มเหลว</strong>, <strong>ถูกปฏิเสธ</strong>, <strong>กำลังดำเนินการ</strong> หรือ <strong>ไม่ทราบ</strong>) โดย <strong>ถูกปฏิเสธ</strong> หมายถึงการกระทำถูกปฏิเสธโดยเจตนาตามนโยบาย ไม่ใช่ความล้มเหลวจากข้อผิดพลาด</li>
 <li data-bai-block="194"><strong>Time</strong>: เวลาที่เกิดการกระทำ</li>
 </ul>
 <h4 data-bai-block="195" id="sessions_all-ตวกรอง-audit-log">ตัวกรอง Audit Log<a class="hash-link" href="#sessions_all-ตวกรอง-audit-log" aria-label="Direct link to ตัวกรอง Audit Log">#</a></h4>
 <p data-bai-block="196">ใช้แถบตัวกรองด้านบนตารางเพื่อจำกัดรายการบันทึก:</p>
 <ul>
-<li data-bai-block="197"><strong>Status</strong>: กรองตามผลลัพธ์ของการกระทำ (<code>SUCCESS</code>, <code>ERROR</code>, <code>RUNNING</code>, <code>UNKNOWN</code>)</li>
+<li data-bai-block="197"><strong>Result</strong>: กรองตามผลลัพธ์ของการกระทำ (<strong>สำเร็จ</strong>, <strong>ล้มเหลว</strong>, <strong>ถูกปฏิเสธ</strong>, <strong>กำลังดำเนินการ</strong>, <strong>ไม่ทราบ</strong>)</li>
 <li data-bai-block="198"><strong>Operation</strong>: ค้นหาตามชื่อหรือคำสำคัญของการดำเนินการ</li>
 <li data-bai-block="199"><strong>Action</strong>: ค้นหาตามชื่อ action หรือคำสำคัญ</li>
 <li data-bai-block="200"><strong>Triggered By</strong>: ค้นหาตาม ID ของผู้ดำเนินการ</li>

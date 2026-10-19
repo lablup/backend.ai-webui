@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Admin Features" />
   <meta name="twitter:description" content="Logging in with an admin account adds an Admin Settings menu at the top of the sidebar." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Admin Features","inLanguage":"en","description":"Logging in with an admin account adds an Admin Settings menu at the top of the sidebar.","dateModified":"2026-10-19T08:55:12.000Z","url":"https://webui.docs.backend.ai/next/en/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Admin Features","inLanguage":"en","description":"Logging in with an admin account adds an Admin Settings menu at the top of the sidebar.","dateModified":"2026-10-19T09:56:32.000Z","url":"https://webui.docs.backend.ai/next/en/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/admin_menu.html" />
   <link rel="alternate" hreflang="en" href="../en/admin_menu.html" />
   <link rel="alternate" hreflang="ja" href="../ja/admin_menu.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (09f24e5)">v26.10.0-alpha.1 (09f24e5)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (4e02b6b)">v26.10.0-alpha.1 (4e02b6b)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -687,13 +687,13 @@ URL changes to this path so that the deployment detail can be linked to or bookm
 <li data-bai-block="179"><strong>Time</strong>: The timestamp when the action was performed.</li>
 <li data-bai-block="180"><strong>Action</strong>: The name of the action that wrote the record.</li>
 <li data-bai-block="181"><strong>Operation</strong>: The type of action performed.</li>
-<li data-bai-block="182"><strong>Status</strong>: The result of the operation.</li>
-<li data-bai-block="183"><strong>Description</strong>: The error details, shown only when the status is <code>ERROR</code>; other rows show <code>-</code>.</li>
+<li data-bai-block="182"><strong>Result</strong>: The outcome of the operation: <strong>Success</strong>, <strong>Failed</strong>, <strong>Denied</strong>, <strong>Running</strong>, or <strong>Unknown</strong>.</li>
+<li data-bai-block="183"><strong>Description</strong>: The error or denial details, shown only when the result is <strong>Failed</strong> or <strong>Denied</strong>; other rows show <code>-</code>.</li>
 <li data-bai-block="184"><strong>Duration</strong>: The time taken to complete the operation.</li>
 <li data-bai-block="185"><strong>Triggered By</strong>: The user who initiated the action.</li>
 <li data-bai-block="186"><strong>Client IP</strong>: The IP address the action was requested from, shown exactly as the server reports it. It may be partially masked by the administrator&#39;s client IP masking policy, or <code>-</code> when it was not recorded.</li>
 </ul>
-<p data-bai-block="187">You can filter entries by <strong>Status</strong>, <strong>Action</strong>, <strong>Operation</strong>, <strong>Triggered By</strong>, and a <strong>Time</strong> date-range picker.</p>
+<p data-bai-block="187">You can filter entries by <strong>Result</strong>, <strong>Action</strong>, <strong>Operation</strong>, <strong>Triggered By</strong>, and a <strong>Time</strong> date-range picker.</p>
 <p><a id="admin-model-store-management"></a></p>
 <h3 data-bai-block="188" id="admin_menu-admin-model-store-management">Admin Model Store management<a class="hash-link" href="#admin_menu-admin-model-store-management" aria-label="Direct link to Admin Model Store management">#</a></h3>
 <p data-bai-block="189">Superadmins can manage model cards through the <strong>Model Store Management</strong> tab on the Admin Deployments page. New model cards are added to the Model Store project automatically.</p>

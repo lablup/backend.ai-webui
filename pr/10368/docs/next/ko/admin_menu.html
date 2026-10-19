@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="관리자 기능" />
   <meta name="twitter:description" content="관리자 계정으로 로그인하면 사이드바 상단에 관리자 설정 메뉴가 추가됩니다. 이 메뉴를 선택하면 사이드바가 관리자 메뉴만 표시하도록 전환됩니다. Backend.AI에 등록된 사용자 정보는 사용자 메뉴에서 볼 수 있습니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"관리자 기능","inLanguage":"ko","description":"관리자 계정으로 로그인하면 사이드바 상단에 관리자 설정 메뉴가 추가됩니다. 이 메뉴를 선택하면 사이드바가 관리자 메뉴만 표시하도록 전환됩니다. Backend.AI에 등록된 사용자 정보는 사용자 메뉴에서 볼 수 있습니다.","dateModified":"2026-10-19T08:55:12.000Z","url":"https://webui.docs.backend.ai/next/ko/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"관리자 기능","inLanguage":"ko","description":"관리자 계정으로 로그인하면 사이드바 상단에 관리자 설정 메뉴가 추가됩니다. 이 메뉴를 선택하면 사이드바가 관리자 메뉴만 표시하도록 전환됩니다. Backend.AI에 등록된 사용자 정보는 사용자 메뉴에서 볼 수 있습니다.","dateModified":"2026-10-19T09:56:32.000Z","url":"https://webui.docs.backend.ai/next/ko/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/admin_menu.html" />
   <link rel="alternate" hreflang="en" href="../en/admin_menu.html" />
   <link rel="alternate" hreflang="ja" href="../ja/admin_menu.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (09f24e5)">v26.10.0-alpha.1 (09f24e5)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (4e02b6b)">v26.10.0-alpha.1 (4e02b6b)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -597,13 +597,13 @@ CSV의 모든 셀에 같은 값을 반복해서 입력할 필요가 없습니다
 <li data-bai-block="179"><strong>시각(Time)</strong>: 작업이 수행된 타임스탬프입니다.</li>
 <li data-bai-block="180"><strong>액션(Action)</strong>: 기록을 남긴 액션의 이름입니다.</li>
 <li data-bai-block="181"><strong>작업(Operation)</strong>: 수행된 작업의 유형입니다.</li>
-<li data-bai-block="182"><strong>상태(Status)</strong>: 작업의 결과 상태입니다.</li>
-<li data-bai-block="183"><strong>설명(Description)</strong>: 오류 세부 정보로, 상태가 <code>ERROR</code>일 때만 표시되며 그 외의 행은 <code>-</code>로 표시됩니다.</li>
+<li data-bai-block="182"><strong>결과(Result)</strong>: 작업의 결과로, <strong>성공</strong>, <strong>실패</strong>, <strong>거부됨</strong>, <strong>진행 중</strong>, <strong>알 수 없음</strong> 중 하나입니다.</li>
+<li data-bai-block="183"><strong>설명(Description)</strong>: 오류 또는 거부 세부 정보로, 결과가 <strong>실패</strong> 또는 <strong>거부됨</strong>일 때만 표시되며 그 외의 행은 <code>-</code>로 표시됩니다.</li>
 <li data-bai-block="184"><strong>소요 시간(Duration)</strong>: 작업이 완료되기까지 걸린 시간입니다.</li>
 <li data-bai-block="185"><strong>실행자(Triggered By)</strong>: 작업을 실행한 사용자입니다.</li>
 <li data-bai-block="186"><strong>클라이언트 IP(Client IP)</strong>: 작업을 요청한 IP 주소입니다. 서버가 보고한 그대로 표시되며, 관리자의 클라이언트 IP 마스킹 정책에 따라 일부가 가려지거나 기록되지 않은 경우 <code>-</code>로 표시됩니다.</li>
 </ul>
-<p data-bai-block="187"><strong>상태(Status)</strong>, <strong>액션(Action)</strong>, <strong>작업(Operation)</strong>, <strong>실행자(Triggered By)</strong>, <strong>시각(Time)</strong> 날짜 범위 필터로 항목을 좁힐 수 있습니다.</p>
+<p data-bai-block="187"><strong>결과(Result)</strong>, <strong>액션(Action)</strong>, <strong>작업(Operation)</strong>, <strong>실행자(Triggered By)</strong>, <strong>시각(Time)</strong> 날짜 범위 필터로 항목을 좁힐 수 있습니다.</p>
 <p><a id="admin-model-store-management"></a></p>
 <h3 data-bai-block="188" id="admin_menu-관리자-모델-스토어-관리">관리자 모델 스토어 관리<a class="hash-link" href="#admin_menu-관리자-모델-스토어-관리" aria-label="Direct link to 관리자 모델 스토어 관리">#</a></h3>
 <p data-bai-block="189">슈퍼 관리자는 관리자 배포 페이지의 모델 스토어 관리(Model Store Management) 탭을 통해 모델 카드를 관리할 수 있습니다. 새로 생성한 모델 카드는 모델 스토어 프로젝트에 자동으로 추가됩니다.</p>

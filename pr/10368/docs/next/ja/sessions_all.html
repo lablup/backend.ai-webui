@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="コンピュートセッション" />
   <meta name="twitter:description" content="本ドキュメントでは、「セッション」ページでコンテナベースのコンピュートセッションを照会・作成し、各種Webアプリケーションを活用する方法について説明します。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"コンピュートセッション","inLanguage":"ja","description":"本ドキュメントでは、「セッション」ページでコンテナベースのコンピュートセッションを照会・作成し、各種Webアプリケーションを活用する方法について説明します。","dateModified":"2026-10-19T08:30:35.000Z","url":"https://webui.docs.backend.ai/next/ja/sessions_all.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"コンピュートセッション","inLanguage":"ja","description":"本ドキュメントでは、「セッション」ページでコンテナベースのコンピュートセッションを照会・作成し、各種Webアプリケーションを活用する方法について説明します。","dateModified":"2026-10-19T09:56:15.000Z","url":"https://webui.docs.backend.ai/next/ja/sessions_all.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/sessions_all.html" />
   <link rel="alternate" hreflang="en" href="../en/sessions_all.html" />
   <link rel="alternate" hreflang="ja" href="../ja/sessions_all.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (09f24e5)">v26.10.0-alpha.1 (09f24e5)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (4e02b6b)">v26.10.0-alpha.1 (4e02b6b)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -727,13 +727,13 @@ Backend.AIは既定で、この値をセッションのCPUコア数と同じに�
 <li data-bai-block="190"><strong>クライアントIP</strong>: アクションを要求したIPアドレス。サーバーが報告したまま表示され、管理者のクライアントIPマスキングポリシーによっては一部がマスクされ、記録されていない場合は<code>-</code>と表示されます</li>
 <li data-bai-block="191"><strong>操作</strong>: 実行されたアクションの種類（例：セッション作成、終了、リソース変更）</li>
 <li data-bai-block="192"><strong>アクション</strong>: 記録を書き込んだアクションの名前</li>
-<li data-bai-block="193"><strong>ステータス</strong>: アクションの結果（<code>SUCCESS</code>、<code>ERROR</code>、<code>RUNNING</code>、<code>DENIED</code>、または<code>UNKNOWN</code>）。<code>DENIED</code>は、エラーで失敗したのではなく、ポリシーによって意図的に拒否されたことを意味します</li>
+<li data-bai-block="193"><strong>結果</strong>: アクションの結果（<strong>成功</strong>、<strong>失敗</strong>、<strong>拒否</strong>、<strong>実行中</strong>、または<strong>不明</strong>）。<strong>拒否</strong>は、エラーで失敗したのではなく、ポリシーによって意図的に拒否されたことを意味します</li>
 <li data-bai-block="194"><strong>時刻</strong>: アクションが発生した日時</li>
 </ul>
 <h4 data-bai-block="195" id="sessions_all-監査ログのフィルター">監査ログのフィルター<a class="hash-link" href="#sessions_all-監査ログのフィルター" aria-label="Direct link to 監査ログのフィルター">#</a></h4>
 <p data-bai-block="196">テーブル上部のフィルターバーを使用して、ログエントリを絞り込むことができます：</p>
 <ul>
-<li data-bai-block="197"><strong>ステータス</strong>: アクションの結果でフィルタリング（<code>SUCCESS</code>、<code>ERROR</code>、<code>RUNNING</code>、<code>UNKNOWN</code>）</li>
+<li data-bai-block="197"><strong>結果</strong>: アクションの結果でフィルタリング（<strong>成功</strong>、<strong>失敗</strong>、<strong>拒否</strong>、<strong>実行中</strong>、<strong>不明</strong>）</li>
 <li data-bai-block="198"><strong>操作</strong>: 操作名またはキーワードで検索</li>
 <li data-bai-block="199"><strong>アクション</strong>: アクション名またはキーワードで検索</li>
 <li data-bai-block="200"><strong>トリガー元</strong>: アクターIDで検索</li>

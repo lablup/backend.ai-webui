@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="管理者機能" />
   <meta name="twitter:description" content="管理者アカウントでログインすると、サイドバー上部に管理者設定メニューが追加されます。これを選択すると、サイドバーは管理者向けメニューのみを表示するように切り替わります。Backend.AIに登録されたユーザー情報は、ユーザー管理メニューに一覧表示されます。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"管理者機能","inLanguage":"ja","description":"管理者アカウントでログインすると、サイドバー上部に管理者設定メニューが追加されます。これを選択すると、サイドバーは管理者向けメニューのみを表示するように切り替わります。Backend.AIに登録されたユーザー情報は、ユーザー管理メニューに一覧表示されます。","dateModified":"2026-10-19T08:55:12.000Z","url":"https://webui.docs.backend.ai/next/ja/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"管理者機能","inLanguage":"ja","description":"管理者アカウントでログインすると、サイドバー上部に管理者設定メニューが追加されます。これを選択すると、サイドバーは管理者向けメニューのみを表示するように切り替わります。Backend.AIに登録されたユーザー情報は、ユーザー管理メニューに一覧表示されます。","dateModified":"2026-10-19T09:56:32.000Z","url":"https://webui.docs.backend.ai/next/ja/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/admin_menu.html" />
   <link rel="alternate" hreflang="en" href="../en/admin_menu.html" />
   <link rel="alternate" hreflang="ja" href="../ja/admin_menu.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (09f24e5)">v26.10.0-alpha.1 (09f24e5)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (4e02b6b)">v26.10.0-alpha.1 (4e02b6b)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -660,13 +660,13 @@ Backend.AIサーバーに対するAPI認証に使用されます。ログイン�
 <li data-bai-block="179"><strong>時間（Time）</strong>: アクションが実行されたタイムスタンプです。</li>
 <li data-bai-block="180"><strong>アクション（Action）</strong>: 記録を書き込んだアクションの名前です。</li>
 <li data-bai-block="181"><strong>操作（Operation）</strong>: 実行されたアクションの種類です。</li>
-<li data-bai-block="182"><strong>ステータス（Status）</strong>: 操作の結果ステータスです。</li>
-<li data-bai-block="183"><strong>説明（Description）</strong>: エラーの詳細で、ステータスが<code>ERROR</code>の場合にのみ表示され、それ以外の行は<code>-</code>と表示されます。</li>
+<li data-bai-block="182"><strong>結果（Result）</strong>: 操作の結果で、<strong>成功</strong>、<strong>失敗</strong>、<strong>拒否</strong>、<strong>実行中</strong>、<strong>不明</strong>のいずれかです。</li>
+<li data-bai-block="183"><strong>説明（Description）</strong>: エラーまたは拒否の詳細で、結果が<strong>失敗</strong>または<strong>拒否</strong>の場合にのみ表示され、それ以外の行は<code>-</code>と表示されます。</li>
 <li data-bai-block="184"><strong>所要時間（Duration）</strong>: 操作が完了するまでにかかった時間です。</li>
 <li data-bai-block="185"><strong>実行者（Triggered By）</strong>: アクションを開始したユーザーです。</li>
 <li data-bai-block="186"><strong>クライアントIP（Client IP）</strong>: アクションを要求したIPアドレスです。サーバーが報告したまま表示され、管理者のクライアントIPマスキングポリシーによっては一部がマスクされ、記録されていない場合は<code>-</code>と表示されます。</li>
 </ul>
-<p data-bai-block="187"><strong>ステータス</strong>（Status）、<strong>アクション</strong>（Action）、<strong>操作</strong>（Operation）、<strong>実行者</strong>（Triggered By）、および<strong>時間</strong>（Time）の日付範囲フィルターで表示を絞り込めます。</p>
+<p data-bai-block="187"><strong>結果</strong>（Result）、<strong>アクション</strong>（Action）、<strong>操作</strong>（Operation）、<strong>実行者</strong>（Triggered By）、および<strong>時間</strong>（Time）の日付範囲フィルターで表示を絞り込めます。</p>
 <p><a id="admin-model-store-management"></a></p>
 <h3 data-bai-block="188" id="admin_menu-管理者モデルストア管理">管理者モデルストア管理<a class="hash-link" href="#admin_menu-管理者モデルストア管理" aria-label="Direct link to 管理者モデルストア管理">#</a></h3>
 <p data-bai-block="189">スーパー管理者は、管理者デプロイページのモデルストア管理（Model Store Management）タブを通じてモデルカードを管理できます。新しく作成したモデルカードは、モデルストアプロジェクトに自動的に追加されます。</p>
