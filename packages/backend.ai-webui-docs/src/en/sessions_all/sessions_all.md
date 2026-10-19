@@ -564,8 +564,6 @@ The Audit Log table includes the following columns:
 - **Operation**: The type of action performed (for example, session creation, termination, or
   resource change)
 - **Action**: The name of the action that wrote the record
-- **Action Kind**: The shape of the action: Single Entity, Bulk, Scope, Relation, Membership, Global, or Lookup. Records written before the server recorded it show `-`
-- **Target**: What the action acted on, shown according to its action kind. A single-entity action shows the entity, by name while it still exists. A bulk action also shows the run ID and how many rows on the current page belong to the same run. A scope, relation, or membership action shows the scopes involved, a global action shows **Global**, and a lookup shows the key it looked up with the entity it found, or **Not found**
 - **Status**: The outcome of the action (`SUCCESS`, `ERROR`, `RUNNING`, `DENIED`, or
   `UNKNOWN`). `DENIED` means the action was deliberately rejected by policy rather than
   having failed with an error
@@ -578,7 +576,6 @@ Use the filter bar above the table to narrow down the log entries:
 - **Status**: Filter by action outcome (`SUCCESS`, `ERROR`, `RUNNING`, `UNKNOWN`)
 - **Operation**: Search by operation name or keyword
 - **Action**: Search by action name or keyword
-- **Action Kind**: Filter by action kind
 - **Triggered By**: Search by actor ID
 - **Time**: Filter by a date-range picker
 

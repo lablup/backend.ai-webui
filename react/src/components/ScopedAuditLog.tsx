@@ -133,27 +133,6 @@ const ScopedAuditLog = ({
               fixedOperator: 'contains',
             },
             {
-              key: 'actionKind',
-              propertyLabel: t('auditLog.ActionKind'),
-              type: 'enum',
-              strictSelection: true,
-              options: [
-                {
-                  label: t('auditLog.ActionKindSingleEntity'),
-                  value: 'SINGLE_ENTITY',
-                },
-                { label: t('auditLog.ActionKindBulk'), value: 'BULK' },
-                { label: t('auditLog.ActionKindScope'), value: 'SCOPE' },
-                { label: t('auditLog.ActionKindRelation'), value: 'RELATION' },
-                {
-                  label: t('auditLog.ActionKindMembership'),
-                  value: 'MEMBERSHIP',
-                },
-                { label: t('auditLog.ActionKindGlobal'), value: 'GLOBAL' },
-                { label: t('auditLog.ActionKindLookup'), value: 'LOOKUP' },
-              ],
-            },
-            {
               key: 'operation',
               propertyLabel: t('auditLog.Operation'),
               type: 'string',

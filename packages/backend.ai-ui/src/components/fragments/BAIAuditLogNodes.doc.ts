@@ -8,7 +8,7 @@ export const docs = {
   keywords: ['audit', 'log', 'history', 'activity', 'event', 'table', 'trail'],
   usage: {
     description:
-      'The shared audit-log table used by the session, vfolder and model-deployment detail surfaces. It reads the plural Relay fragment `BAIAuditLogNodesFragment` on `AuditLogV2`, so the caller spreads that fragment on each audit-log node in its own query and passes the array as `auditLogFrgmt`; null and undefined entries are dropped and rows are keyed by `id`. Up to fourteen columns are built internally — time, action (the action name), action kind (a neutral token with the translated kind label, the raw value for a kind it does not know, or `-` for a record written before the manager recorded it), operation, status (the raw value as text, red for `ERROR`), target (a BAIAuditLogTargetCell, drawn by action kind), description, duration, triggered-by and client IP are visible by default, while entity type, entity id, request id and action id ship as `defaultHidden`. The client IP column is rendered only when the connected manager is 26.9.0 or later, so the component must sit under BAIClientProvider; the value is shown exactly as the manager returns it, since the server applies the client IP masking policy, so the cell may hold a masked address or `-` when the policy records none. Filtering, pagination and refetch stay in the consuming surface; the component renders BAITable with resizing on and size "small", and every BAITable prop except `dataSource`, `columns` and `onChangeOrder` passes through.',
+      'The shared audit-log table used by the session, vfolder and model-deployment detail surfaces. It reads the plural Relay fragment `BAIAuditLogNodesFragment` on `AuditLogV2`, so the caller spreads that fragment on each audit-log node in its own query and passes the array as `auditLogFrgmt`; null and undefined entries are dropped and rows are keyed by `id`. Up to twelve columns are built internally — time, action (the action name), operation, status (the raw value as text, red for `ERROR`), description, duration, triggered-by and client IP are visible by default, while entity type, entity id, request id and action id ship as `defaultHidden`. The client IP column is rendered only when the connected manager is 26.9.0 or later, so the component must sit under BAIClientProvider; the value is shown exactly as the manager returns it, since the server applies the client IP masking policy, so the cell may hold a masked address or `-` when the policy records none. Filtering, pagination and refetch stay in the consuming surface; the component renders BAITable with resizing on and size "small", and every BAITable prop except `dataSource`, `columns` and `onChangeOrder` passes through.',
     bestPractices: [
       {
         guidance: true,
@@ -28,7 +28,7 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Expect duration, description or the id columns to sort — only time, action, action kind, operation and status carry a sorter.',
+          'Expect duration, description or the id columns to sort — only time, action, operation and status carry a sorter.',
       },
       {
         guidance: false,
@@ -49,7 +49,7 @@ export const docs = {
       name: 'disableSorter',
       type: 'boolean',
       description:
-        'Strips the `sorter` flag from every base column, making the time, action, action kind, operation and status headers non-sortable.',
+        'Strips the `sorter` flag from every base column, making the time, action, operation and status headers non-sortable.',
     },
     {
       name: 'customizeColumns',
@@ -61,7 +61,7 @@ export const docs = {
       name: 'onChangeOrder',
       type: '(order: (typeof availableAuditLogSorterValues)[number] | null) => void',
       description:
-        'Called with the active sort key ("createdAt", "actionName", "actionKind", "operation", "status", or their "-" prefixed descending form), or null when sorting is cleared. `convertToOrderBy` maps "actionName" and "actionKind" to the `ACTION_NAME` and `ACTION_KIND` order fields.',
+        'Called with the active sort key ("createdAt", "actionName", "operation", "status", or their "-" prefixed descending form), or null when sorting is cleared. `convertToOrderBy` maps "actionName" to the `ACTION_NAME` order field.',
     },
   ],
   examples: [
