@@ -5,9 +5,6 @@ import {
 } from '../../__generated__/BAIAuditLogNodesFragment.graphql';
 import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import BAIAuditLogStatusBadge, {
-  AuditLogStatus,
-} from '../BAIAuditLogStatusBadge';
 import BAIId from '../BAIId';
 import BAIText from '../BAIText';
 import {
@@ -42,15 +39,6 @@ export const availableAuditLogSorterValues = [
 
 const isEnableSorter = (key: string) => {
   return _.includes(availableAuditLogSorterKeys, key);
-};
-
-const toAuditLogStatus = (status: string): AuditLogStatus | null => {
-  return _.includes(
-    ['SUCCESS', 'ERROR', 'UNKNOWN', 'RUNNING', 'DENIED'],
-    status,
-  )
-    ? (status as AuditLogStatus)
-    : null;
 };
 
 export interface BAIAuditLogNodesProps extends Omit<
@@ -183,7 +171,9 @@ const BAIAuditLogNodes = ({
         dataIndex: 'status',
         sorter: isEnableSorter('status'),
         render: (__, record) => (
-          <BAIAuditLogStatusBadge status={toAuditLogStatus(record.status)} />
+          <BAIText type={record.status === 'ERROR' ? 'danger' : undefined}>
+            {record.status}
+          </BAIText>
         ),
       },
       {
