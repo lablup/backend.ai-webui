@@ -1,5 +1,7 @@
 import {
   compareVersions,
+  isExactVersion,
+  isPreview,
   pinProblem,
   readLocal,
   readPins,
@@ -64,6 +66,22 @@ describe("pinProblem", () => {
       /local/,
     );
     expect(pinProblem("^0.2.0-alpha.19")).toMatch(/not an exact version/);
+  });
+
+  it("recognises a preview on a plain base too", () => {
+    const spec = "0.2.1-pr-78-20261019100754-612c52626";
+    expect(isPreview(spec)).toBe(true);
+    expect(pinProblem(spec)).toMatch(/lablup\/ui-common#78/);
+    expect(isPreview("0.2.1-canary-20261019100754-612c52626")).toBe(false);
+  });
+
+  it("treats a preview as an exact version an upgrade can start from", () => {
+    const preview = "0.2.0-alpha.19.pr-78-20261019100754-612c52626";
+    expect(isExactVersion(preview)).toBe(true);
+    expect(isExactVersion("file:/tmp/a.tgz")).toBe(false);
+    expect(
+      compareVersions("0.2.0-alpha.20.pr-78-20261020000000-abc", preview),
+    ).toBeGreaterThan(0);
   });
 });
 

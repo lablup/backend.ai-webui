@@ -42,7 +42,8 @@ function section(text, key) {
 }
 
 function entryPattern(name) {
-  return new RegExp(`^(  "${name.replace(/[/.]/g, "\\$&")}": )(.+)$`, "m");
+  const escaped = name.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
+  return new RegExp(`^(  "${escaped}": )(.+)$`, "m");
 }
 
 function unquote(value) {
@@ -107,16 +108,27 @@ export function writeLocal(text, specs) {
   return `${out.slice(0, at[0])}${block}\n${out.slice(at[0])}`;
 }
 
+// `0.2.0-alpha.19.pr-78-…` on a prerelease base, `0.2.1-pr-78-…` on a plain one.
+const PREVIEW = /[.-]pr-(\d+)-\d{14}-[0-9a-f]+$/;
+
+export function isExactVersion(spec) {
+  return /^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$/.test(spec);
+}
+
+export function isPreview(spec) {
+  return PREVIEW.test(spec);
+}
+
 /** Why a pin must not merge, or null when it may. */
 export function pinProblem(spec) {
   if (/^(file|link):/.test(spec)) {
     return `${spec} is a local build of a ui-common checkout`;
   }
-  const preview = /\.pr-(\d+)-/.exec(spec);
+  const preview = PREVIEW.exec(spec);
   if (preview) {
     return `${spec} is the preview of lablup/ui-common#${preview[1]}, which may not have merged`;
   }
-  if (!/^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$/.test(spec)) {
+  if (!isExactVersion(spec)) {
     return `${spec} is not an exact version`;
   }
   return null;
@@ -230,7 +242,7 @@ function check(allowPreview) {
     console.log(`ui-common pins are released versions (${specs[0]}).`);
     return 0;
   }
-  if (allowPreview && !local && specs.every((spec) => /\.pr-\d+-/.test(spec))) {
+  if (allowPreview && !local && specs.every(isPreview)) {
     console.log(
       `>> ${problems[0][1]}; CI fails this pin until it is a canary or a release.`,
     );
@@ -259,7 +271,8 @@ function pin(target, dir) {
     writeFileSync(WORKSPACE, writeLocal(writePins(before, specs), null));
     console.log(`ui-common: ${oldSpec} → ${specs[0]}`);
     run("pnpm", ["install"]);
-    if (!pinProblem(oldSpec) && compareVersions(specs[0], oldSpec) > 0) {
+    if (isExactVersion(oldSpec) && compareVersions(specs[0], oldSpec) > 0) {
+      // backend.ai-ui imports ui-common too; one run covers both sources.
       run("pnpm", [
         "--prefix",
         "./react",
@@ -268,6 +281,8 @@ function pin(target, dir) {
         "upgrade",
         "--from",
         oldSpec,
+        "src",
+        "../packages/backend.ai-ui/src",
       ]);
       if (existsSync(join(ROOT, "react/ui-common-upgrade-report.md"))) {
         console.log(
