@@ -3,11 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { AdminPrometheusPresetDeleteMutation } from '../__generated__/AdminPrometheusPresetDeleteMutation.graphql';
-import { AdminPrometheusPresetLegacyDeleteMutation } from '../__generated__/AdminPrometheusPresetLegacyDeleteMutation.graphql';
 import { AdminPrometheusPresetQuery as AdminPrometheusPresetQueryType } from '../__generated__/AdminPrometheusPresetQuery.graphql';
 import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
 import AutoUpdateFetchKeyButton, {
   LONG_AUTO_UPDATE_DELAY_OPTIONS,
 } from './AutoUpdateFetchKeyButton';
@@ -38,7 +36,6 @@ import {
   usePreloadedQuery,
   UseQueryLoaderLoadQueryOptions,
 } from 'react-relay';
-import type { PayloadError } from 'relay-runtime';
 
 export const AdminPrometheusPresetQuery = graphql`
   query AdminPrometheusPresetQuery(
@@ -113,24 +110,10 @@ const AdminPrometheusPreset = ({
     setIsOpenEditorModal(true);
   };
 
-  // `purgePrometheusQueryPreset` replaces the deprecated
-  // `adminDeletePrometheusQueryPreset` from manager 26.10.0 (#10420).
-  const supportsBaseNameMutations =
-    useSuspendedBackendaiClient().isManagerVersionCompatibleWith('26.10.0');
-
   const [commitDeleteMutation, isInflightDelete] =
     useMutation<AdminPrometheusPresetDeleteMutation>(graphql`
       mutation AdminPrometheusPresetDeleteMutation($id: UUID!) {
         purgePrometheusQueryPreset(id: $id) {
-          id
-        }
-      }
-    `);
-
-  const [commitLegacyDeleteMutation, isInflightLegacyDelete] =
-    useMutation<AdminPrometheusPresetLegacyDeleteMutation>(graphql`
-      mutation AdminPrometheusPresetLegacyDeleteMutation($id: ID!) {
-        adminDeletePrometheusQueryPreset(id: $id) {
           id
         }
       }
@@ -282,17 +265,14 @@ const AdminPrometheusPreset = ({
         confirmText={deletingPreset?.name ?? ''}
         requireConfirmInput
         inputProps={{ placeholder: deletingPreset?.name ?? '' }}
-        confirmLoading={isInflightDelete || isInflightLegacyDelete}
+        confirmLoading={isInflightDelete}
         onOk={() => {
           if (!deletingPreset) return;
-          const deleteConfig = {
+          commitDeleteMutation({
             variables: {
               id: toLocalId(deletingPreset.id),
             },
-            onCompleted: (
-              _res: unknown,
-              errors: ReadonlyArray<PayloadError> | null | undefined,
-            ) => {
+            onCompleted: (_res, errors) => {
               if (errors && errors.length > 0) {
                 _.forEach(errors, (err) => message.error(err.message));
                 setDeletingPreset(null);
@@ -302,15 +282,10 @@ const AdminPrometheusPreset = ({
               setDeletingPreset(null);
               onReload(queryRef.variables, { fetchPolicy: 'network-only' });
             },
-            onError: (error: Error) => {
+            onError: (error) => {
               message.error(error.message);
             },
-          };
-          if (supportsBaseNameMutations) {
-            commitDeleteMutation(deleteConfig);
-          } else {
-            commitLegacyDeleteMutation(deleteConfig);
-          }
+          });
         }}
         onCancel={() => setDeletingPreset(null)}
       />
