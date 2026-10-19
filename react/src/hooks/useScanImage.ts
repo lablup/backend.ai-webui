@@ -59,11 +59,8 @@ export interface ScanImageErrorMessages {
 /**
  * Every caller invokes this from a `catch`, so it must never throw and must
  * always return something the reader can act on. A 404 `image_read_not-found`
- * is today's behaviour for a canonical the manager's DB does not already
- * carry, and a 5xx is how a missing tag or manifest surfaces
- * (lablup/backend.ai#14612). What a 404 or a 403 MEANS differs per caller —
- * importing registers a new image, the row action rescans a registered one —
- * so each passes its own copy.
+ * means the manager has no ALIVE row for the canonical, and a 5xx is how a
+ * missing tag or manifest surfaces. The caller words the 404 and 403 copy.
  */
 export const useDescribeScanImageError = () => {
   'use memo';

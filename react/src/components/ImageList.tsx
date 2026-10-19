@@ -15,10 +15,7 @@ import {
 } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
-import {
-  useDescribeScanImageError,
-  useScanImage,
-} from '../hooks/useScanImage';
+import { useDescribeScanImageError, useScanImage } from '../hooks/useScanImage';
 import { ProjectContextOrNull } from '../types/projectContext';
 import AliasedImageTagTokens from './AliasedImageTagTokens';
 import ImageInstallModal from './ImageInstallModal';
