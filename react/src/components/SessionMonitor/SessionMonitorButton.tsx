@@ -17,7 +17,6 @@ import SessionMonitorPopoverContent, {
 } from './SessionMonitorPopoverContent';
 import { Button } from '@lablup/ui-common/Button';
 import { Popover } from '@lablup/ui-common/Popover';
-import { StatusDot } from '@lablup/ui-common/StatusDot';
 import { Text } from '@lablup/ui-common/Text';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useTheme } from '@lablup/ui-common/theme';
@@ -49,7 +48,11 @@ const Separator: React.FC = () => {
   );
 };
 
-/** Header chip: running count, accelerator use, nearest termination. */
+/**
+ * Header chip: running count, accelerator use, nearest termination. Colour
+ * means one thing here — a deadline under 30 minutes — so the chip carries
+ * no status dot.
+ */
 const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
   'use memo';
   const { t } = useTranslation();
@@ -122,11 +125,6 @@ const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
           label={title}
         >
           <BAIFlex direction="row" align="center" gap="xs">
-            <StatusDot
-              variant={running > 0 ? 'success' : 'neutral'}
-              label={t('sessionMonitor.RunningCount', { count: running })}
-              isPulsing={running > 0}
-            />
             <Text type="inherit" textWrap="nowrap">
               {t('sessionMonitor.RunningCount', { count: running })}
             </Text>
