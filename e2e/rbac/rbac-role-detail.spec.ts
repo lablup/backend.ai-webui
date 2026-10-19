@@ -6,6 +6,7 @@ import {
   KeyPairModal,
   UserSettingModal,
 } from '../utils/classes/user/UserSettingModal';
+import { getE2EDomainName } from '../utils/e2e-scope';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import test, {
   expect,
@@ -686,9 +687,8 @@ test.describe(
 // Managers >= 26.9.0a4 render `RoleDetailDrawerV2`: a metadata card with the
 // role's one scope, and a Permissions tab that edits grants in place as a
 // Read / Write checkbox grid behind a floating save bar (#9849, ADR 0006).
-// `createTestRole` scopes the role to the signed-in domain, which is
-// `default` for the e2e admin account.
-const SINGLE_SCOPE_DOMAIN = 'default';
+// `createTestRole` scopes the role to the signed-in domain: the e2e admin's
+// own domain (`getE2EDomainName`), which is not `default` on every cluster.
 
 async function openRoleDrawer(page: Page, roleName: string) {
   await navigateTo(page, 'rbac');
@@ -771,16 +771,17 @@ test.describe(
       await expect(
         drawer.getByRole('term').filter({ hasText: 'Scope Type / Target' }),
       ).toBeVisible();
+      const scopeDomain = await getE2EDomainName();
       const scopeToken = drawer
         .getByRole('definition')
         .filter({ hasText: 'Domain' })
-        .filter({ hasText: SINGLE_SCOPE_DOMAIN });
+        .filter({ hasText: scopeDomain });
       await expect(scopeToken).toBeVisible();
       await expect(
         scopeToken.getByText('Domain', { exact: true }),
       ).toBeVisible();
       await expect(
-        scopeToken.getByText(SINGLE_SCOPE_DOMAIN, { exact: true }),
+        scopeToken.getByText(scopeDomain, { exact: true }),
       ).toBeVisible();
     });
 

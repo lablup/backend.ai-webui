@@ -1,5 +1,6 @@
 import { FolderCreationModal } from '../utils/classes/vfolder/FolderCreationModal';
 import { cleanupVFolderSafely } from '../utils/cleanup-util';
+import { getE2EVFolderHost } from '../utils/e2e-scope';
 import { skipUnlessLabelableEntityType } from '../utils/feature-gate-util';
 import {
   acceptAllInvitationAndVerifySpecificFolder,
@@ -105,8 +106,10 @@ test.describe(
         const folderCreationModal = new FolderCreationModal(page);
         await folderCreationModal.modalToBeVisible();
         await folderCreationModal.fillFolderName(creationFolderName);
-        await folderCreationModal.fillLocationSelector('local');
-        await folderCreationModal.selectLocationOptionByText('local');
+        // A host the user is actually allowed (not `local` on every cluster).
+        const host = await getE2EVFolderHost(userInfo.user);
+        await folderCreationModal.fillLocationSelector(host);
+        await folderCreationModal.selectLocationOptionByText(host);
         await (await folderCreationModal.getCreateButton()).click();
       });
       test('User can create default vFolder', async ({ page }) => {
