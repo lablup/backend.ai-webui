@@ -995,6 +995,7 @@
       "FolderQuota": "ความจุ",
       "FolderRenamed": "เปลี่ยนชื่อโฟลเดอร์แล้ว",
       "FolderRestored": "กู้คืนโฟลเดอร์ {{ folderName }} แล้ว",
+      "FolderSharePermission": "สิทธิ์การแชร์โฟลเดอร์",
       "FolderUpdated": "อัปเดตตัวเลือกโฟลเดอร์แล้ว",
       "FolderUsage": "การใช้งานโฟลเดอร์",
       "FolderUsing": "กำลังใช้",
@@ -1088,6 +1089,7 @@
       "SuccessfullyAcceptedInvitation": "คำเชิญที่ยอมรับได้สำเร็จ",
       "SuccessfullyDeclinedInvitation": "คำเชิญปฏิเสธสำเร็จ",
       "SuccessfullyLeftSharedFolder": "ออกจากโฟลเดอร์ที่ใช้ร่วมกันสำเร็จ",
+      "UnknownUser": "ผู้ใช้ที่ไม่รู้จัก",
       "UserIsAlreadyInvited": "{{email}} ได้รับเชิญไปแล้ว"
     },
     "modelStore": {

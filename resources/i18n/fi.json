@@ -999,6 +999,7 @@
       "FolderQuota": "Kapasiteetti",
       "FolderRenamed": "Kansio nimetty uudelleen",
       "FolderRestored": "Kansio {{ folderName }} on palautettu.",
+      "FolderSharePermission": "Kansion jako-oikeus",
       "FolderUpdated": "Kansiovaihtoehto(t) päivitetty",
       "FolderUsage": "Kansion käyttö",
       "FolderUsing": "Käyttämällä",
@@ -1092,6 +1093,7 @@
       "SuccessfullyAcceptedInvitation": "Onnistuneesti hyväksytty kutsu",
       "SuccessfullyDeclinedInvitation": "Onnistuneesti hylätty kutsu",
       "SuccessfullyLeftSharedFolder": "Jäljellä jaetussa kansiossa",
+      "UnknownUser": "Tuntematon käyttäjä",
       "UserIsAlreadyInvited": "{{email}} on jo kutsuttu"
     },
     "modelStore": {

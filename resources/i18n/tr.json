@@ -999,6 +999,7 @@
       "FolderQuota": "Kapasite",
       "FolderRenamed": "Klasör yeniden adlandırıldı",
       "FolderRestored": "{{ klasörAdı }} klasörü geri yüklendi.",
+      "FolderSharePermission": "Klasör paylaşım izni",
       "FolderUpdated": "Klasör seçenekleri güncellendi",
       "FolderUsage": "Klasör kullanımı",
       "FolderUsing": "Kullanma",
@@ -1092,6 +1093,7 @@
       "SuccessfullyAcceptedInvitation": "Başarılı bir şekilde kabul edilen davetiye",
       "SuccessfullyDeclinedInvitation": "Başarılı bir şekilde reddetti",
       "SuccessfullyLeftSharedFolder": "Paylaşılan klasörü başarıyla bıraktı",
+      "UnknownUser": "Bilinmeyen kullanıcı",
       "UserIsAlreadyInvited": "{{email}} zaten davet edildi"
     },
     "modelStore": {

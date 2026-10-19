@@ -999,6 +999,7 @@
       "FolderQuota": "Dung tích",
       "FolderRenamed": "Thư mục đã được đổi tên",
       "FolderRestored": "Thư mục {{ folderName }} đã được khôi phục.",
+      "FolderSharePermission": "Quyền chia sẻ thư mục",
       "FolderUpdated": "Đã cập nhật (các) tùy chọn thư mục",
       "FolderUsage": "Sử dụng thư mục",
       "FolderUsing": "sử dụng",
@@ -1092,6 +1093,7 @@
       "SuccessfullyAcceptedInvitation": "Lời mời được chấp nhận thành công",
       "SuccessfullyDeclinedInvitation": "Lời mời từ chối thành công",
       "SuccessfullyLeftSharedFolder": "Thành công để lại thư mục chia sẻ",
+      "UnknownUser": "Người dùng không xác định",
       "UserIsAlreadyInvited": "{{email}} đã được mời"
     },
     "modelStore": {

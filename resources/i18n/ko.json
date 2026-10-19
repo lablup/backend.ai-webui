@@ -999,6 +999,7 @@
       "FolderQuota": "가용량",
       "FolderRenamed": "폴더 이름이 변경되었습니다",
       "FolderRestored": "{{ folderName }} 폴더가 복원되었습니다.",
+      "FolderSharePermission": "폴더 공유 권한",
       "FolderUpdated": "폴더 정보가 갱신되었습니다",
       "FolderUsage": "폴더 사용량",
       "FolderUsing": "사용량",
@@ -1092,6 +1093,7 @@
       "SuccessfullyAcceptedInvitation": "초대를 수락했습니다",
       "SuccessfullyDeclinedInvitation": "초대를 거부했습니다",
       "SuccessfullyLeftSharedFolder": "공유 폴더 연결이 해제되었습니다",
+      "UnknownUser": "알 수 없는 사용자",
       "UserIsAlreadyInvited": "{{email}}은 이미 초대되었습니다"
     },
     "modelStore": {

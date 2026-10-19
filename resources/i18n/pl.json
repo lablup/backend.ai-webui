@@ -999,6 +999,7 @@
       "FolderQuota": "Pojemność",
       "FolderRenamed": "Zmieniono nazwę folderu",
       "FolderRestored": "Folder {{ folderName }} został przywrócony.",
+      "FolderSharePermission": "Uprawnienie udostępniania folderu",
       "FolderUpdated": "Zaktualizowano opcje folderów",
       "FolderUsage": "Użycie folderu",
       "FolderUsing": "Korzystanie z",
@@ -1092,6 +1093,7 @@
       "SuccessfullyAcceptedInvitation": "Pomyślnie przyjęte zaproszenie",
       "SuccessfullyDeclinedInvitation": "Pomyślnie odrzucił zaproszenie",
       "SuccessfullyLeftSharedFolder": "Z powodzeniem zostawił wspólny folder",
+      "UnknownUser": "Nieznany użytkownik",
       "UserIsAlreadyInvited": "{{email}} jest już zaproszony"
     },
     "modelStore": {

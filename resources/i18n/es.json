@@ -999,6 +999,7 @@
       "FolderQuota": "Capacidad",
       "FolderRenamed": "Carpeta renombrada",
       "FolderRestored": "La carpeta {{ folderName }} ha sido restaurada.",
+      "FolderSharePermission": "Permiso de compartición de carpeta",
       "FolderUpdated": "Opción(es) de carpeta actualizada(s)",
       "FolderUsage": "Uso de la carpeta",
       "FolderUsing": "Utilizando",
@@ -1092,6 +1093,7 @@
       "SuccessfullyAcceptedInvitation": "Invitación aceptada con éxito",
       "SuccessfullyDeclinedInvitation": "Invitación declinada con éxito",
       "SuccessfullyLeftSharedFolder": "Dejó con éxito la carpeta compartida",
+      "UnknownUser": "Usuario desconocido",
       "UserIsAlreadyInvited": "{{email}} ya está invitado"
     },
     "modelStore": {
