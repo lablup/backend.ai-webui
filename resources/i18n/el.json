@@ -999,6 +999,7 @@
       "FolderQuota": "Χωρητικότητα",
       "FolderRenamed": "Ο φάκελος μετονομάστηκε",
       "FolderRestored": "Ο φάκελος {{ folderName }} έχει αποκατασταθεί.",
+      "FolderSharePermission": "Δικαίωμα κοινής χρήσης φακέλου",
       "FolderUpdated": "Ενημερώθηκαν οι επιλογές φακέλων",
       "FolderUsage": "Χρήση φακέλου",
       "FolderUsing": "Χρήση του",
@@ -1092,6 +1093,7 @@
       "SuccessfullyAcceptedInvitation": "Επιτυχώς αποδεκτή πρόσκληση",
       "SuccessfullyDeclinedInvitation": "Με επιτυχία αρνήθηκε την πρόσκληση",
       "SuccessfullyLeftSharedFolder": "Άφησε επιτυχώς τον κοινόχρηστο φάκελο",
+      "UnknownUser": "Άγνωστος χρήστης",
       "UserIsAlreadyInvited": "{{email}} έχει ήδη προσκληθεί"
     },
     "modelStore": {

@@ -999,6 +999,7 @@
       "FolderQuota": "Capacité",
       "FolderRenamed": "Dossier renommé",
       "FolderRestored": "Le dossier {{ folderName }} a été restauré.",
+      "FolderSharePermission": "Permission de partage du dossier",
       "FolderUpdated": "Option(s) de dossier mise à jour",
       "FolderUsage": "Utilisation des dossiers",
       "FolderUsing": "Utilisation",
@@ -1092,6 +1093,7 @@
       "SuccessfullyAcceptedInvitation": "Invitation acceptée avec succès",
       "SuccessfullyDeclinedInvitation": "Invitation refusée avec succès",
       "SuccessfullyLeftSharedFolder": "Qui a réussi à quitter le dossier partagé",
+      "UnknownUser": "Utilisateur inconnu",
       "UserIsAlreadyInvited": "{{email}} est déjà invité"
     },
     "modelStore": {

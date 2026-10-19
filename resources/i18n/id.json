@@ -999,6 +999,7 @@
       "FolderQuota": "Kapasitas",
       "FolderRenamed": "Folder telah diganti nama",
       "FolderRestored": "Folder {{ folderName }} telah dipulihkan.",
+      "FolderSharePermission": "Izin berbagi folder",
       "FolderUpdated": "Opsi folder diperbarui",
       "FolderUsage": "Penggunaan folder",
       "FolderUsing": "Menggunakan",
@@ -1092,6 +1093,7 @@
       "SuccessfullyAcceptedInvitation": "Undangan yang berhasil diterima",
       "SuccessfullyDeclinedInvitation": "Undangan yang berhasil ditolak",
       "SuccessfullyLeftSharedFolder": "Berhasil meninggalkan folder bersama",
+      "UnknownUser": "Pengguna tidak dikenal",
       "UserIsAlreadyInvited": "{{email}} sudah diundang"
     },
     "modelStore": {

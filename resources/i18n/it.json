@@ -999,6 +999,7 @@
       "FolderQuota": "Capacità",
       "FolderRenamed": "Cartella rinominata",
       "FolderRestored": "La cartella {{ folderName }} è stata ripristinata.",
+      "FolderSharePermission": "Permesso di condivisione della cartella",
       "FolderUpdated": "Opzioni cartella aggiornate",
       "FolderUsage": "Utilizzo della cartella",
       "FolderUsing": "Utilizzo",
@@ -1092,6 +1093,7 @@
       "SuccessfullyAcceptedInvitation": "Invito accettato con successo",
       "SuccessfullyDeclinedInvitation": "Ha rifiutato con successo l'invito",
       "SuccessfullyLeftSharedFolder": "Ha lasciato correttamente la cartella condivisa",
+      "UnknownUser": "Utente sconosciuto",
       "UserIsAlreadyInvited": "{{email}} è già invitato"
     },
     "modelStore": {

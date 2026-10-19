@@ -999,6 +999,7 @@
       "FolderQuota": "Емкость",
       "FolderRenamed": "Папка переименована",
       "FolderRestored": "Папка {{ folderName }} восстановлена.",
+      "FolderSharePermission": "Право доступа к общей папке",
       "FolderUpdated": "Параметры папки обновлены",
       "FolderUsage": "Использование папок",
       "FolderUsing": "Использование сайта",
@@ -1092,6 +1093,7 @@
       "SuccessfullyAcceptedInvitation": "Успешно принятое приглашение",
       "SuccessfullyDeclinedInvitation": "Успешно отказался от приглашения",
       "SuccessfullyLeftSharedFolder": "Успешно оставил общую папку",
+      "UnknownUser": "Неизвестный пользователь",
       "UserIsAlreadyInvited": "{{email}} уже приглашен"
     },
     "modelStore": {

@@ -15,7 +15,6 @@ import {
   InvitationItem,
   useVFolderInvitations,
 } from '../hooks/useVFolderInvitations';
-import VFolderPermissionCell from './VFolderPermissionCell';
 import { Button } from '@lablup/ui-common/Button';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
 import { List, ListItem } from '@lablup/ui-common/List';
@@ -30,6 +29,7 @@ import {
   BAIMetadataList,
   BAIModal,
   type BAIModalProps,
+  useEntitySharePermissionLabels,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -74,6 +74,7 @@ const FolderInvitationResponseModal: React.FC<
   ] = useVFolderInvitations();
   const { getErrorMessage } = useErrorMessageResolver();
   const { upsertNotification } = useSetBAINotification();
+  const { summary: sharePermissionSummary } = useEntitySharePermissionLabels();
 
   useEffect(() => {
     updateInvitations();
@@ -88,10 +89,12 @@ const FolderInvitationResponseModal: React.FC<
       description={
         <BAIMetadataList columns="single">
           <MetadataListItem label={t('data.From')}>
-            {item.inviter_user_email || item.inviter || '-'}
+            {item.inviter_user_email ||
+              item.inviter ||
+              t('data.invitation.UnknownUser')}
           </MetadataListItem>
-          <MetadataListItem label={t('data.Permission')}>
-            <VFolderPermissionCell permission={item.perm} />
+          <MetadataListItem label={t('data.folders.FolderSharePermission')}>
+            {item.permissions ? sharePermissionSummary(item.permissions) : '-'}
           </MetadataListItem>
         </BAIMetadataList>
       }
