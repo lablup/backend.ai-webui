@@ -230,12 +230,11 @@ describe('BAINameActionCell — minTitleWidth reserves width for the title', () 
     expect(screen.getAllByRole('button')).toHaveLength(1);
   });
 
-  it('does not fold them in hover mode, where the actions cost the title nothing at rest', () => {
+  it('folds them in hover mode too, where the reserved width costs the title at rest (#10371)', () => {
     renderTwoActions(NARROW_CELL_WIDTH, 'hover');
 
-    expect(
-      screen.getByRole('button', { name: /Download/ }),
-    ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Delete/ })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Download/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Delete/ })).toBeNull();
+    expect(screen.getAllByRole('button')).toHaveLength(1);
   });
 });
