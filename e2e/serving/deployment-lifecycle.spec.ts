@@ -384,9 +384,12 @@ test.describe(
       await expect(metadataTerm(page, 'Tags')).toBeVisible();
 
       // Revision tabs
+      // Astryx's `TabList` in its `nav` pattern marks the active tab with
+      // `aria-current="true"` (not `aria-selected`, which only the `tabs`
+      // pattern emits).
       await expect(
         revisionTabBar(page).getByRole('button', { name: 'Current Revision' }),
-      ).toBeVisible();
+      ).toHaveAttribute('aria-current', 'true');
       await expect(
         revisionTabBar(page).getByRole('button', { name: 'Revision History' }),
       ).toBeVisible();
