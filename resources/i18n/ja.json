@@ -1002,6 +1002,7 @@
       "FolderQuota": "利用可能量",
       "FolderRenamed": "フォルダの名前が変更されました",
       "FolderRestored": "{{ folderName }} フォルダが復元されました。",
+      "FolderSharePermission": "フォルダ共有権限",
       "FolderUpdated": "フォルダオプションが更新されました",
       "FolderUsage": "フォルダ使用量",
       "FolderUsing": "使用量",
@@ -1095,6 +1096,7 @@
       "SuccessfullyAcceptedInvitation": "招待状に成功しました",
       "SuccessfullyDeclinedInvitation": "招待状を成功裏に拒否しました",
       "SuccessfullyLeftSharedFolder": "共有フォルダーを正常に残しました",
+      "UnknownUser": "不明なユーザー",
       "UserIsAlreadyInvited": "{{email}}はすでに招待されています"
     },
     "modelStore": {

@@ -1002,6 +1002,7 @@
       "FolderQuota": "Kapasiti",
       "FolderRenamed": "Folder dinamakan semula",
       "FolderRestored": "Folder {{ folderName }} telah dipulihkan.",
+      "FolderSharePermission": "Kebenaran perkongsian folder",
       "FolderUpdated": "Pilihan folder dikemas kini",
       "FolderUsage": "Penggunaan folder",
       "FolderUsing": "menggunakan",
@@ -1095,6 +1096,7 @@
       "SuccessfullyAcceptedInvitation": "Jemputan yang berjaya diterima",
       "SuccessfullyDeclinedInvitation": "Berjaya menolak jemputan",
       "SuccessfullyLeftSharedFolder": "Berjaya meninggalkan folder kongsi",
+      "UnknownUser": "Pengguna tidak dikenali",
       "UserIsAlreadyInvited": "{{email}} sudah dijemput"
     },
     "modelStore": {

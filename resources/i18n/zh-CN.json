@@ -1002,6 +1002,7 @@
       "FolderQuota": "容量",
       "FolderRenamed": "文件夹重命名",
       "FolderRestored": "{{ folderName }} 文件夹已恢复。",
+      "FolderSharePermission": "文件夹共享权限",
       "FolderUpdated": "文件夹选项已更新",
       "FolderUsage": "文件夹的使用",
       "FolderUsing": "使用",
@@ -1095,6 +1096,7 @@
       "SuccessfullyAcceptedInvitation": "成功接受的邀请",
       "SuccessfullyDeclinedInvitation": "成功拒绝了邀请",
       "SuccessfullyLeftSharedFolder": "成功离开共享文件夹",
+      "UnknownUser": "未知用户",
       "UserIsAlreadyInvited": "{{email}}已经被邀请"
     },
     "modelStore": {

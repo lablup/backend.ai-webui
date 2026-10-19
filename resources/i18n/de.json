@@ -1002,6 +1002,7 @@
       "FolderQuota": "Kapazität",
       "FolderRenamed": "Ordner umbenannt",
       "FolderRestored": "Der Ordner {{ folderName }} wurde wiederhergestellt.",
+      "FolderSharePermission": "Ordner-Freigabeberechtigung",
       "FolderUpdated": "Ordneroption(en) aktualisiert",
       "FolderUsage": "Verwendung von Ordnern",
       "FolderUsing": "Verwendung von",
@@ -1095,6 +1096,7 @@
       "SuccessfullyAcceptedInvitation": "Erfolgreich akzeptierte Einladung",
       "SuccessfullyDeclinedInvitation": "Erfolgreich abgelehnt Einladung",
       "SuccessfullyLeftSharedFolder": "Erfolgreich den gemeinsam genutzten Ordner verlassen",
+      "UnknownUser": "Unbekannter Benutzer",
       "UserIsAlreadyInvited": "{{email}} ist bereits eingeladen"
     },
     "modelStore": {

@@ -1002,6 +1002,7 @@
       "FolderQuota": "Capacidade",
       "FolderRenamed": "Pasta renomeada",
       "FolderRestored": "A pasta {{ folderName }} foi restaurada.",
+      "FolderSharePermission": "Permissão de compartilhamento da pasta",
       "FolderUpdated": "Opção (ões) de pasta atualizada (s)",
       "FolderUsage": "Utilização da pasta",
       "FolderUsing": "Utilizar",
@@ -1095,6 +1096,7 @@
       "SuccessfullyAcceptedInvitation": "Convite aceito com sucesso",
       "SuccessfullyDeclinedInvitation": "Com sucesso recusou o convite",
       "SuccessfullyLeftSharedFolder": "Deixou com sucesso a pasta compartilhada",
+      "UnknownUser": "Usuário desconhecido",
       "UserIsAlreadyInvited": "{{email}} já está convidado"
     },
     "modelStore": {

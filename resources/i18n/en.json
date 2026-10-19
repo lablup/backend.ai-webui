@@ -989,6 +989,7 @@
       "FolderQuota": "Capacity",
       "FolderRenamed": "Folder renamed",
       "FolderRestored": "The {{ folderName }} folder has been restored.",
+      "FolderSharePermission": "Folder share permission",
       "FolderUpdated": "Folder option(s) updated",
       "FolderUsage": "Folder usage",
       "FolderUsing": "Using",
@@ -1082,6 +1083,7 @@
       "SuccessfullyAcceptedInvitation": "Successfully accepted invitation",
       "SuccessfullyDeclinedInvitation": "Successfully declined invitation",
       "SuccessfullyLeftSharedFolder": "Successfully left the shared folder",
+      "UnknownUser": "Unknown user",
       "UserIsAlreadyInvited": "{{email}} is already invited"
     },
     "modelStore": {
