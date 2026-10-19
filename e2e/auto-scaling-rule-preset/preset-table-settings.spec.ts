@@ -23,7 +23,8 @@ async function createPreset(
   await page.getByRole('button', { name: /Create Preset/i }).click();
   const modal = page.getByRole('dialog');
   await expect(modal).toBeVisible();
-  const nameInput = modal.getByRole('textbox', { name: 'Name', exact: true });
+  // Form.Item's input is named "visible label + hidden label" ("Name Name").
+  const nameInput = modal.getByRole('textbox', { name: /^Name\b/ });
   await expect(nameInput).toBeVisible({ timeout: 30000 });
   await nameInput.fill(name);
   await modal.getByRole('textbox', { name: 'Metric Name' }).fill(metricName);
@@ -303,8 +304,9 @@ test.describe(
       const queryTemplateCell = row.locator('td').nth(2);
       await expect(queryTemplateCell).toBeVisible({ timeout: 15000 });
 
+      // The label flips from "Copy" to "Copied" after a click.
       const copyButton = queryTemplateCell.getByRole('button', {
-        name: /copy/i,
+        name: /^cop(y|ied)$/i,
       });
       await expect(copyButton).toBeVisible();
       await copyButton.click();
