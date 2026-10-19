@@ -24,7 +24,7 @@ async function createPreset(
   await page.getByRole('button', { name: 'Create Preset' }).click();
   const modal = page.getByRole('dialog');
   await expect(modal).toBeVisible({ timeout: 10000 });
-  await modal.getByRole('textbox', { name: 'Name', exact: true }).fill(name);
+  await modal.getByRole('textbox', { name: /^Name\b/ }).fill(name);
   await modal.getByRole('textbox', { name: 'Metric Name' }).fill(metricName);
   await modal
     .getByRole('textbox', { name: 'Query Template' })
@@ -161,7 +161,7 @@ test.describe(
       const createModal = page.getByRole('dialog');
       await expect(createModal).toBeVisible({ timeout: 10000 });
       await createModal
-        .getByRole('textbox', { name: 'Name', exact: true })
+        .getByRole('textbox', { name: /^Name\b/ })
         .fill(presetName);
       await createModal
         .getByRole('textbox', { name: 'Metric Name' })

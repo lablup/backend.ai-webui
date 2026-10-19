@@ -54,7 +54,9 @@ async function createPreset(
   const modal = page.getByRole('dialog');
   await expect(modal).toBeVisible();
   // Wait for modal form inputs to be interactable (Ant Design modal has open animation)
-  const nameInput = modal.getByRole('textbox', { name: 'Name', exact: true });
+  // A field's name is its form-item label plus the input's own hidden label
+  // ("Name Name"); anchor at the start so "Metric Name" does not match.
+  const nameInput = modal.getByRole('textbox', { name: /^Name\b/ });
   await expect(nameInput).toBeVisible({ timeout: 30000 });
   await nameInput.fill(name);
   await modal.getByRole('textbox', { name: 'Metric Name' }).fill(metricName);
@@ -214,15 +216,16 @@ test.describe(
 
       // Verify form fields are visible
       await expect(
-        modal.getByRole('textbox', { name: 'Name', exact: true }),
+        modal.getByRole('textbox', { name: /^Name\b/ }),
       ).toBeVisible();
       await expect(
         modal.getByRole('textbox', { name: 'Description' }),
       ).toBeVisible();
       // The Category field's Selector trigger is a plain <button> (no
       // role="combobox" attribute), unlike the Filter/Group Labels inputs.
+      // Its name is the label followed by the selected value ("No category").
       await expect(
-        modal.getByRole('button', { name: 'Category (optional)', exact: true }),
+        modal.getByRole('button', { name: /^Category \(optional\)/ }),
       ).toBeVisible();
       // Note: 'Rank' field is not exposed in the Create Preset form UI
       await expect(
@@ -270,9 +273,7 @@ test.describe(
       await expect(modal).toBeVisible();
 
       // Fill in the Name field
-      await modal
-        .getByRole('textbox', { name: 'Name', exact: true })
-        .fill(presetName);
+      await modal.getByRole('textbox', { name: /^Name\b/ }).fill(presetName);
 
       // Fill in the Metric Name field
       await modal
@@ -322,10 +323,7 @@ test.describe(
       const modal = page.getByRole('dialog');
       await expect(modal).toBeVisible();
       // Wait for modal open animation and form render before interacting
-      const nameInput = modal.getByRole('textbox', {
-        name: 'Name',
-        exact: true,
-      });
+      const nameInput = modal.getByRole('textbox', { name: /^Name\b/ });
       await expect(nameInput).toBeVisible({ timeout: 30000 });
 
       // Fill Name
@@ -428,7 +426,7 @@ test.describe(
 
       // Fill Name and Query Template but leave Metric Name empty
       await modal
-        .getByRole('textbox', { name: 'Name', exact: true })
+        .getByRole('textbox', { name: /^Name\b/ })
         .fill(`e2e-preset-no-metric-${Date.now()}`);
       await modal.getByRole('textbox', { name: 'Query Template' }).fill('up');
 
@@ -458,7 +456,7 @@ test.describe(
 
       // Fill Name and Metric Name but leave Query Template empty
       await modal
-        .getByRole('textbox', { name: 'Name', exact: true })
+        .getByRole('textbox', { name: /^Name\b/ })
         .fill(`e2e-preset-no-query-${Date.now()}`);
       await modal
         .getByRole('textbox', { name: 'Metric Name' })
@@ -497,9 +495,7 @@ test.describe(
       // In this version of Ant Design, .ant-modal itself has role="dialog"
       const modal = page.getByRole('dialog');
       await expect(modal).toBeVisible();
-      await modal
-        .getByRole('textbox', { name: 'Name', exact: true })
-        .fill(cancelledName);
+      await modal.getByRole('textbox', { name: /^Name\b/ }).fill(cancelledName);
       await modal
         .getByRole('textbox', { name: 'Metric Name' })
         .fill('e2e_metric');
@@ -539,9 +535,7 @@ test.describe(
       // In this version of Ant Design, .ant-modal itself has role="dialog"
       const modal = page.getByRole('dialog');
       await expect(modal).toBeVisible();
-      await modal
-        .getByRole('textbox', { name: 'Name', exact: true })
-        .fill(duplicateName);
+      await modal.getByRole('textbox', { name: /^Name\b/ }).fill(duplicateName);
       await modal
         .getByRole('textbox', { name: 'Metric Name' })
         .fill('e2e_metric_2');
@@ -622,9 +616,11 @@ test.describe(
       await expect(modal).toContainText('Edit Preset');
 
       // Verify the Name textbox is present (form may not pre-fill due to persistent form instance)
-      await expect(
-        modal.getByRole('textbox', { name: 'Name', exact: true }),
-      ).toBeVisible({ timeout: 10000 });
+      await expect(modal.getByRole('textbox', { name: /^Name\b/ })).toBeVisible(
+        {
+          timeout: 10000,
+        },
+      );
 
       // Verify Metric Name field is present
       await expect(
@@ -671,9 +667,7 @@ test.describe(
 
       // The edit modal form does not auto-populate from initialValues on re-open
       // (persistent Form instance). Fill required fields explicitly before saving.
-      await modal
-        .getByRole('textbox', { name: 'Name', exact: true })
-        .fill(presetName);
+      await modal.getByRole('textbox', { name: /^Name\b/ }).fill(presetName);
       await modal.getByRole('textbox', { name: 'Query Template' }).fill('up');
 
       // Fill new Metric Name
@@ -723,9 +717,7 @@ test.describe(
 
       // The edit modal form does not auto-populate from initialValues on re-open
       // (persistent Form instance). Fill required fields explicitly before saving.
-      await modal
-        .getByRole('textbox', { name: 'Name', exact: true })
-        .fill(presetName);
+      await modal.getByRole('textbox', { name: /^Name\b/ }).fill(presetName);
       await modal
         .getByRole('textbox', { name: 'Metric Name' })
         .fill('e2e_metric');
@@ -774,9 +766,7 @@ test.describe(
 
       // The edit modal form does not auto-populate from initialValues on re-open
       // (persistent Form instance). Fill required fields explicitly before saving.
-      await modal
-        .getByRole('textbox', { name: 'Name', exact: true })
-        .fill(presetName);
+      await modal.getByRole('textbox', { name: /^Name\b/ }).fill(presetName);
       await modal
         .getByRole('textbox', { name: 'Metric Name' })
         .fill('e2e_metric');
@@ -832,10 +822,7 @@ test.describe(
       // initialValues on reopen — the Name field is now pre-populated with
       // the preset's current name. Explicitly clear it to exercise the
       // required-field validation.
-      const nameInput = modal.getByRole('textbox', {
-        name: 'Name',
-        exact: true,
-      });
+      const nameInput = modal.getByRole('textbox', { name: /^Name\b/ });
       await expect(nameInput).toHaveValue(presetName);
       await nameInput.fill('');
 
@@ -880,9 +867,9 @@ test.describe(
       // now all pre-populated with the preset's current values. Explicitly
       // clear only the Metric Name field to isolate it as the missing
       // required field, then save to trigger its validation error.
-      await expect(
-        modal.getByRole('textbox', { name: 'Name', exact: true }),
-      ).toHaveValue(presetName);
+      await expect(modal.getByRole('textbox', { name: /^Name\b/ })).toHaveValue(
+        presetName,
+      );
       const metricNameInput = modal.getByRole('textbox', {
         name: 'Metric Name',
       });

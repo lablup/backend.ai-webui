@@ -23,7 +23,7 @@ async function createPreset(
   await page.getByRole('button', { name: /Create Preset/i }).click();
   const modal = page.getByRole('dialog');
   await expect(modal).toBeVisible();
-  const nameInput = modal.getByRole('textbox', { name: 'Name', exact: true });
+  const nameInput = modal.getByRole('textbox', { name: /^Name\b/ });
   await expect(nameInput).toBeVisible({ timeout: 30000 });
   await nameInput.fill(name);
   await modal.getByRole('textbox', { name: 'Metric Name' }).fill(metricName);
