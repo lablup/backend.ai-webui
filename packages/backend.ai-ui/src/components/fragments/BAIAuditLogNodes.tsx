@@ -152,7 +152,7 @@ const BAIAuditLogNodes = ({
         dataIndex: 'description',
         onCell: () => ({ style: { maxWidth: 400 } }),
         render: (__, record) =>
-          record.description ? (
+          record.status === 'ERROR' && record.description ? (
             <BAIText ellipsis={{ tooltip: true }} style={{ width: '100%' }}>
               {record.description}
             </BAIText>

@@ -152,7 +152,7 @@ The audit log shows the following columns, in order:
 - **Action**: The name of the action that wrote the record.
 - **Operation**: The type of action (for example, create, update, or delete).
 - **Status**: The result of the operation (for example, SUCCESS or ERROR).
-- **Description**: Additional details about the operation.
+- **Description**: The error details, shown only when the status is `ERROR`; other rows show `-`.
 - **Duration**: How long the operation took.
 - **Triggered By**: The user who performed the operation, shown in "email (id)" format.
 - **Client IP**: The IP address the operation was requested from, shown exactly as the server reports it. It may be partially masked by the administrator's client IP masking policy, or `-` when it was not recorded.
