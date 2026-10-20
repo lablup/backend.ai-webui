@@ -74,6 +74,9 @@ describe('FolderInvitationResponseModal (#10329)', () => {
     );
     render(<FolderInvitationResponseModal open />);
 
+    // The folder name is a labeled line like the rest, not an icon heading.
+    expect(screen.getByText('data.Foldername')).toBeInTheDocument();
+    expect(screen.getByText('data')).toBeInTheDocument();
     expect(
       screen.getByText('data.folders.FolderSharePermission'),
     ).toBeInTheDocument();

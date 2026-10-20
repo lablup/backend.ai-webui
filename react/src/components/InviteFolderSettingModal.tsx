@@ -283,9 +283,7 @@ const InviteFolderSettingModalBody: React.FC<{
         <VStack gap={1} align="stretch">
           <HStack align="end" gap={2} width="100%">
             <StackItem size="fill">
-              <Suspense
-                fallback={<BAISkeleton variant="input" width="100%" />}
-              >
+              <Suspense fallback={<BAISkeleton variant="input" width="100%" />}>
                 <Tooltip
                   content={recipient?.email}
                   isEnabled={!!recipient?.email}
