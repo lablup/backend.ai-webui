@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9b74fdfd137a9211372d6930d2cc9560>>
+ * @generated SignedSource<<e27ba03f7da8fe3cc3e1a952d2399e02>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,7 @@ import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type ModelCardDrawerFragment$data = {
   readonly createdAt: string;
+  readonly entityId: string;
   readonly id: string;
   readonly metadata: {
     readonly architecture: string | null | undefined;
@@ -60,6 +61,13 @@ v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
+  "name": "entityId",
+  "storageKey": null
+},
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 };
@@ -71,6 +79,7 @@ return {
   "selections": [
     (v0/*: any*/),
     (v1/*: any*/),
+    (v2/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -207,13 +216,7 @@ return {
       "plural": false,
       "selections": [
         (v0/*: any*/),
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "entityId",
-          "storageKey": null
-        },
+        (v1/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -222,7 +225,7 @@ return {
           "name": "metadata",
           "plural": false,
           "selections": [
-            (v1/*: any*/)
+            (v2/*: any*/)
           ],
           "storageKey": null
         },
@@ -245,6 +248,6 @@ return {
 };
 })();
 
-(node as any).hash = "86f301ae178451b7a0323af7c1a8e55c";
+(node as any).hash = "1cd5924e8a7a64641c13b994b5e6e785";
 
 export default node;
