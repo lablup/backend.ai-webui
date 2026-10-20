@@ -9,7 +9,6 @@ import {
 } from '../__generated__/ImageListQuery.graphql';
 import { App } from '../app-shim';
 import { getImageFullName, isPrivateImage } from '../helper';
-import { importedImagesFilter } from '../helper/imageReferenceParser';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
@@ -95,6 +94,9 @@ const isEnableSorter = (key: string) =>
  * `status` is in here because the list is live-only unless the user adds a
  * status condition, so the column would read ALIVE on every row by default.
  */
+/** Newest registration first, so an image imported a moment ago is on page 1. */
+const DEFAULT_IMAGE_ORDER = '-created_at';
+
 const DEFAULT_HIDDEN_IMAGE_COLUMN_KEYS = [
   'status',
   'type',
@@ -281,7 +283,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
     offset: baiPaginationOption.offset,
     first: baiPaginationOption.first,
     filter: imageFilter || undefined,
-    order: queryParams.order || undefined,
+    order: queryParams.order || DEFAULT_IMAGE_ORDER,
     filterByStatuses: filterByStatusesFor(imageFilter),
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
@@ -358,7 +360,6 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
   const imageData = filterOutNullAndUndefined(
     image_nodes?.edges?.map((edge) => edge?.node) ?? [],
   );
-
   const columns: Array<BAIColumnType<EnvironmentImage>> = filterOutEmpty([
     {
       title: t('environment.Status'),
@@ -859,15 +860,9 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
         <ImportImageModal
           open={isOpenImportImageModal}
           onRequestClose={() => setIsOpenImportImageModal(false)}
-          onAdded={(added) => {
-            // A new image sorts anywhere in the list, often pages away, so the
-            // list narrows to what was just imported.
-            const filter = importedImagesFilter(added);
+          onAdded={() => {
             startTransition(() => {
-              if (filter) {
-                setImageFilter(filter);
-                setTablePaginationOption({ current: 1 });
-              }
+              setTablePaginationOption({ current: 1 });
               updateFetchKey();
             });
           }}
