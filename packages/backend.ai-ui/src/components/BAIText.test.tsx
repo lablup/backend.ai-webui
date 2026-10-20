@@ -470,6 +470,17 @@ describe('BAIText copyable', () => {
     expect(button).toHaveAttribute('aria-label', 'Copy');
   });
 
+  it('stays in the resting state when the clipboard refuses the write', async () => {
+    const onCopy = vi.fn();
+    vi.mocked(copy).mockReturnValueOnce(false);
+    render(<BAIText copyable={{ text: 'abc', onCopy }}>abc</BAIText>);
+    const button = screen.getByRole('button');
+    await click(button);
+    expect(onCopy).not.toHaveBeenCalled();
+    expect(button.getAttribute('aria-disabled')).not.toBe('true');
+    expect(button).toHaveAttribute('aria-label', 'Copy');
+  });
+
   it('renders no copy control for copyable={false}', () => {
     render(<BAIText copyable={false}>abc</BAIText>);
     expect(screen.queryByRole('button')).toBeNull();

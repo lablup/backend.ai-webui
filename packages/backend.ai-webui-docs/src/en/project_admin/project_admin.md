@@ -120,6 +120,8 @@ The page provides the following controls:
 
 - **Property filter**: Filter the list using the standard storage-folder property filter.
 
+Use a folder's **Edit labels** action to attach key-value labels to it, or select several folders and click **Add labels** to label them in bulk.
+
 ### Create a folder
 
 To create a new folder from this page:
@@ -167,6 +169,8 @@ The page provides the following controls:
 - **Running / Finished** segmented control: Toggle between currently running sessions and sessions that have already finished.
 - **Property filter and sorting**: Filter the list by ID, Session Name, or Owner. The Owner value is picked from a searchable dropdown of user accounts rather than typed as a UUID, and the resulting filter tag shows the account's email address. Click a sortable column header to sort the table.
 
+Sessions take key-value labels as well: use a session's **Edit labels** action, or select several sessions and click **Add labels** to label them in bulk.
+
 ### Terminate sessions
 
 To terminate one or more sessions:
@@ -213,6 +217,7 @@ The following actions are available on each deployment row:
 - Click the **deployment name** to navigate to the deployment detail page within the project-admin scope.
 - Click the **revision number** (`#N`) to open the revision detail drawer for the current revision.
 - Click the **pencil icon** to edit the deployment's configuration in the settings modal.
+- Use the **Edit labels** action to add, change, or remove the deployment's key-value labels.
 - Click the **trash icon** to delete the deployment. The confirmation modal requires you to type the deployment's name before the deletion is performed.
 
 ![](../images/project_admin_deployment_detail.png)

@@ -404,6 +404,9 @@ start_lane gate "Astryx integration (backend.ai-ui)" check_astryx_integration
 start_lane gate "ui-common agent blocks" check_ui_common_agents
 # ADR 0009's import ban in ESLint covers JS/TS only; this also sees CSS @import.
 start_lane gate "ui-common import mirror" node scripts/ui-common-codemod.mjs --check
+# A local tarball pin fails here; a PR preview only fails in CI (typecheck.yml),
+# so an unmerged ui-common change can still be verified end to end.
+start_lane gate "ui-common pin" node scripts/ui-common-pin.mjs --check --allow-preview
 start_lane gate "Cascade-layer order" check_layer_order
 # The bare-name Astryx patch keys used to trip a second core at install time;
 # with the patches gone (FR-4098) the lockfile is read instead (ADR 0009).

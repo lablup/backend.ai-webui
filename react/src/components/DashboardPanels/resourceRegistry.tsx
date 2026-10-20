@@ -177,7 +177,6 @@ const deploymentConfig: ResourceConfig<
   // Same properties the user-facing deployments page offers.
   getFilterProperties: (t) => [
     { key: 'name', propertyLabel: t('deployment.filter.Name'), type: 'string' },
-    { key: 'tags', propertyLabel: t('deployment.filter.Tags'), type: 'string' },
     {
       key: 'endpointUrl',
       propertyLabel: t('deployment.filter.EndpointUrl'),
