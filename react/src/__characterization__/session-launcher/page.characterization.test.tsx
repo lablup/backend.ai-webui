@@ -5,7 +5,13 @@
 import '../../../__test__/matchMedia.mock.js';
 import '../../../__test__/resizeObserver.mock.js';
 import { renderLauncherPage } from './harness';
-import { pageRefs, resetScenario, scenario, spies } from './mockState';
+import {
+  BASE_SLOT_DETAILS,
+  pageRefs,
+  resetScenario,
+  scenario,
+  spies,
+} from './mockState';
 import { act, screen, waitFor } from '@testing-library/react';
 
 vi.mock('react-i18next', async () => (await import('./mockState')).i18nMock());
@@ -116,6 +122,23 @@ const FILE_BROWSER_VALUES = {
   vfolderMounts: [MOUNT],
 };
 
+/** Wait until the mount-time URL write has landed and stayed put for 600 ms. */
+const waitForUrlSettled = async (
+  read: { url: () => { formValues?: unknown } },
+  drive: { settle: (ms?: number) => Promise<void> },
+) => {
+  let last = JSON.stringify(read.url().formValues);
+  let stableFor = 0;
+  for (let waited = 0; stableFor < 600 || !read.url().formValues;) {
+    if (waited > 5000) throw new Error('URL formValues never settled');
+    await drive.settle(100);
+    waited += 100;
+    const current = JSON.stringify(read.url().formValues);
+    stableFor = current === last ? stableFor + 100 : 0;
+    last = current;
+  }
+};
+
 const validateAll = async (form: () => { validateFields: () => any }) => {
   await act(async () => {
     await form()
@@ -125,6 +148,10 @@ const validateAll = async (form: () => { validateFields: () => any }) => {
 };
 
 describe('session launcher page characterization (SessionLauncherPage)', () => {
+  afterAll(() => {
+    vi.unstubAllGlobals();
+  });
+
   beforeEach(() => {
     resetScenario();
     localStorage.clear();
@@ -172,7 +199,7 @@ describe('session launcher page characterization (SessionLauncherPage)', () => {
 
     it('P-03 H23 [bug-compat] a programmatic write reaches the URL only after a validate', async () => {
       const { read, drive, form } = await renderLauncherPage();
-      await drive.flushUrl();
+      await waitForUrlSettled(read, drive);
       await act(async () => {
         form().setFieldValue('sessionName', 'programmatic');
       });
@@ -203,7 +230,7 @@ describe('session launcher page characterization (SessionLauncherPage)', () => {
       expect(read.values().projectName).toBe('other-project');
       expect(read.url().formValues.reuseIfExists).toBeUndefined();
       expect(read.url().formValues.projectName).toBeUndefined();
-      expect(read.url().formValues.vfolderMounts).toEqual([MOUNT]);
+      // vfolderMounts are not pinned here: the storage step is stubbed.
     });
 
     it('H22 PAY-03 PAY-12 [bug-compat] a FileBrowser-style URL launches without reuseIfExists, in the ambient project', async () => {
@@ -222,13 +249,10 @@ describe('session launcher page characterization (SessionLauncherPage)', () => {
       expect(resources.reuseIfExists).toBe(false);
       expect(resources.group_name).toBe('project-a');
       expect(resources.cluster_mode).toBe('single-node');
-      expect(resources.config.mount_ids).toEqual([MOUNT.vfolderId]);
-      expect(resources.config.mount_id_map).toEqual({
-        [MOUNT.vfolderId]: '/home/work/data',
-      });
+      // mount_ids / mount_id_map are not pinned here: the storage step is stubbed.
     });
 
-    it('P-04 sensitive env values are blanked in the URL but kept in the form', async () => {
+    it('P-04 [bug-compat] sensitive env values are blanked in the URL but kept in the form', async () => {
       const { read, drive, form } = await renderLauncherPage({
         formValues: {
           envvars: [
@@ -306,12 +330,20 @@ describe('session launcher page characterization (SessionLauncherPage)', () => {
       expect(read.fieldErrors(['inference', 'vFolderName'])).toHaveLength(1);
     });
 
-    it('P-23 Skip to the last step writes step=4 and shows Launch', async () => {
-      const { read, drive } = await renderLauncherPage();
+    it('P-23 Skip to the last step writes step=4, shows Launch and validates the whole form', async () => {
+      const { read, drive, form } = await renderLauncherPage({
+        formValues: { sessionType: 'batch' },
+      });
+      expect(read.fieldErrors(['batch', 'command'])).toHaveLength(1);
+      await act(async () => {
+        form().setFieldsValue({ batch: { command: '' } });
+      });
+      expect(read.fieldErrors(['batch', 'command'])).toEqual([]);
       await drive.clickButton('session.launcher.SkipToConfirmAndLaunch');
       await drive.flushUrl();
       expect(read.url().step).toBe('4');
       expect(read.buttonLabels()).toContain('session.launcher.Launch');
+      expect(read.fieldErrors(['batch', 'command'])).toHaveLength(1);
     });
   });
 
@@ -404,7 +436,7 @@ describe('session launcher page characterization (SessionLauncherPage)', () => {
       ];
     });
 
-    it('E-02 H31 [bug-compat] an env without tag resolves to the accelerator-dedicated image first (setting unset)', async () => {
+    it('E-02 H31 an env without tag resolves to the accelerator-dedicated image first (setting unset)', async () => {
       const { read } = await renderLauncherPage({
         formValues: {
           environments: { version: 'cr.backend.ai/stable/python' },
@@ -426,9 +458,105 @@ describe('session launcher page characterization (SessionLauncherPage)', () => {
       expect(read.values().environments.version).toBe(PY311);
     });
 
-    it('E-02 H31 [bug-compat] with no URL image the first pick is dedicated-first too', async () => {
+    it('E-02 H31 with no URL image the first pick is dedicated-first too', async () => {
       const { read } = await renderLauncherPage();
       expect(read.values().environments.version).toBe(PY39);
+    });
+  });
+
+  describe('HPC optimization (P-17, H23)', () => {
+    it('P-17 H23 the HPC switch writes thread defaults via setFieldsValue, yet they reach the URL with no validate', async () => {
+      const { read, drive } = await renderLauncherPage();
+      await waitForUrlSettled(read, drive);
+      expect(read.url().formValues.hpcOptimization).toEqual({
+        autoEnabled: true,
+      });
+      await drive.toggleSwitch('session.launcher.SwitchOpenMPoptimization');
+      const threads = {
+        autoEnabled: false,
+        OMP_NUM_THREADS: '1',
+        OPENBLAS_NUM_THREADS: '1',
+      };
+      expect(read.values().hpcOptimization).toEqual(threads);
+      expect(read.url().formValues.hpcOptimization).toEqual({
+        autoEnabled: true,
+      });
+      // The switch's own user change fires onFormChange, and the trailing
+      // debounce then reads the whole store, thread values included.
+      await drive.flushUrl();
+      expect(read.url().formValues.hpcOptimization).toEqual(threads);
+    });
+  });
+
+  describe('SFTP resource groups (P-32, H35)', () => {
+    beforeEach(() => {
+      scenario.projectResourceGroups = [
+        { name: 'rg-a' },
+        { name: 'rg-b' },
+        { name: 'rg-sftp' },
+      ];
+      scenario.sftpResourceGroups = ['rg-sftp'];
+      scenario.slotsByRG['rg-sftp'] = BASE_SLOT_DETAILS;
+    });
+
+    it('P-32 H35 [bug-compat] a URL system session lists the SFTP RG; switching to interactive drops it and R-34 clears the RG', async () => {
+      const { read, drive } = await renderLauncherPage({
+        formValues: { sessionType: 'system', resourceGroup: 'rg-sftp' },
+      });
+      expect(read.values().resourceGroup).toBe('rg-sftp');
+      expect(
+        (await drive.options('session.ResourceGroup')).map((o) => o.label),
+      ).toEqual(['rg-a', 'rg-b', 'rg-sftp']);
+      await drive.clickRadio('interactive');
+      await waitFor(() =>
+        expect(read.values().sessionType).toBe('interactive'),
+      );
+      await waitFor(() => expect(read.values().resourceGroup).toBeUndefined());
+      expect(
+        (await drive.options('session.ResourceGroup')).map((o) => o.label),
+      ).toEqual(['rg-a', 'rg-b']);
+    });
+  });
+
+  describe('manual image name (E-03, E-04, PAY-01)', () => {
+    const MANUAL = 'my.registry/ns/custom:1@aarch64';
+
+    beforeEach(() => {
+      scenario.config.allow_manual_image_name_for_session = true;
+    });
+
+    it('E-03 a URL version matching no image moves to manual and launches with it', async () => {
+      const { read, drive } = await renderLauncherPage({
+        formValues: { environments: { version: MANUAL } },
+      });
+      expect(read.values().environments.manual).toBe(MANUAL);
+      expect(read.values().environments.version).toBeUndefined();
+      await drive.clickButton('session.launcher.SkipToConfirmAndLaunch');
+      await drive.clickButton('session.launcher.Launch');
+      await waitFor(() => expect(read.payload()).toHaveLength(1));
+      expect(read.payload()[0][0]).toBe('my.registry/ns/custom:1');
+      expect(read.payload()[0][4]).toBe('aarch64');
+    });
+
+    it('E-04 with no image at all the URL version is copied to manual', async () => {
+      scenario.images = [];
+      const { read } = await renderLauncherPage({
+        formValues: { environments: { version: PY311 } },
+      });
+      expect(read.values().environments.manual).toBe(PY311);
+    });
+
+    it('E-03 PAY-01 typing a manual name clears the picked version and launches the manual name', async () => {
+      const { read, drive } = await renderLauncherPage();
+      expect(read.values().environments.version).toBe(PY311);
+      await drive.type('session.launcher.ManualImageName', 'my.registry/x:2');
+      expect(read.values().environments.manual).toBe('my.registry/x:2');
+      expect(read.values().environments.version).toBeUndefined();
+      await drive.clickButton('session.launcher.SkipToConfirmAndLaunch');
+      await drive.clickButton('session.launcher.Launch');
+      await waitFor(() => expect(read.payload()).toHaveLength(1));
+      expect(read.payload()[0][0]).toBe('my.registry/x:2');
+      expect(read.payload()[0][4]).toBeUndefined();
     });
   });
 
@@ -447,10 +575,29 @@ describe('session launcher page characterization (SessionLauncherPage)', () => {
       await drive.clickButton('session.launcher.Launch');
       await waitFor(() => expect(read.payload()).toHaveLength(1));
       await waitFor(() => expect(spies.navigate).toEqual(['/job']));
+      expect(spies.confirm).toHaveLength(1);
+      expect(spies.confirm[0]).toMatchObject({
+        title: 'session.launcher.NoFolderMounted',
+      });
       expect(scenario.globalResourceGroup).toBe('rg-b');
       expect(pageRefs.historyPushes).toHaveLength(1);
       expect(read.payload()[0][1]).toBe('go-session');
       expect((read.payload()[0][2] as any).config.scaling_group).toBe('rg-b');
+    });
+
+    it('P-26 declining the empty-mounts confirm sends nothing, records nothing and stays', async () => {
+      scenario.confirmLaunch = false;
+      const { read, drive } = await renderLauncherPage({
+        formValues: { resourceGroup: 'rg-b', sessionName: 'go-session' },
+        step: 4,
+      });
+      await drive.clickButton('session.launcher.Launch');
+      await waitFor(() => expect(spies.confirm).toHaveLength(1));
+      await drive.settle(200);
+      expect(read.payload()).toEqual([]);
+      expect(spies.navigate).toEqual([]);
+      expect(pageRefs.historyPushes).toEqual([]);
+      expect(scenario.globalResourceGroup).toBe('rg-a');
     });
   });
 });

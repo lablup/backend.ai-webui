@@ -5,8 +5,9 @@
 /**
  * Render harness for the session-launcher characterization suite.
  *
- * A test file must register the `vi.mock`s listed in `MOCKED_MODULES` (each
- * factory delegates to `./mockState`) before importing this module.
+ * A test file must register the `vi.mock`s at the top of
+ * `page.characterization.test.tsx` (each factory delegates to `./mockState`)
+ * before importing this module; the resource suite needs the first six.
  */
 import ResourceAllocationFormItems, {
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
@@ -58,7 +59,9 @@ export const payloadFor = (operation: Operation) => {
         Query: () => ({ images: scenario.images }),
       });
     default:
-      return MockPayloadGenerator.generate(operation);
+      throw new Error(
+        `Unhandled Relay operation ${name} in characterization harness`,
+      );
   }
 };
 
@@ -69,11 +72,9 @@ export const createScenarioEnvironment = () => {
   const makeResolver =
     () =>
     (operation: Operation): ReturnType<typeof payloadFor> => {
-      if (scenario.heldQueries.has(operation.request.node.params.name)) {
-        return undefined as never;
-      }
+      const payload = payloadFor(operation);
       environment.mock.queueOperationResolver(makeResolver());
-      return payloadFor(operation);
+      return payload;
     };
   environment.mock.queueOperationResolver(makeResolver());
   return environment;
@@ -90,13 +91,30 @@ const findFieldItem = (container: HTMLElement, label: string) => {
 
 export const createDriver = (
   container: HTMLElement,
-  environment: RelayMockEnvironment,
   getForm: () => FormInstance,
 ) => {
   const input = (label: string, index = 0) => {
     const el = findFieldItem(container, label).querySelectorAll('input')[index];
     if (!el) throw new Error(`No input #${index} in "${label}"`);
     return el as HTMLInputElement;
+  };
+  const openSelector = async (
+    label: string,
+    user: ReturnType<typeof userEvent.setup>,
+  ) => {
+    const trigger = findFieldItem(container, label).querySelector<HTMLElement>(
+      'button[aria-haspopup="listbox"]',
+    );
+    if (!trigger) throw new Error(`No selector in "${label}"`);
+    await act(async () => {
+      await user.click(trigger);
+    });
+    const listbox = document.getElementById(
+      trigger.getAttribute('aria-controls') ?? '',
+    );
+    return Array.from(
+      (listbox ?? document).querySelectorAll<HTMLElement>('[role="option"]'),
+    );
   };
   const drive = {
     input,
@@ -125,35 +143,49 @@ export const createDriver = (
     },
     /** Open a labelled item's selector and click the option named `option`. */
     select: async (label: string, option: string) => {
-      const item = findFieldItem(container, label);
-      const trigger = item.querySelector<HTMLElement>(
-        'button[aria-haspopup="listbox"]',
-      );
-      if (!trigger) throw new Error(`No selector in "${label}"`);
       const user = userEvent.setup({ delay: null });
-      await act(async () => {
-        await user.click(trigger);
-      });
-      const listbox = document.getElementById(
-        trigger.getAttribute('aria-controls') ?? '',
+      const target = (await openSelector(label, user)).find((el) =>
+        el.textContent?.trim().startsWith(option),
       );
-      const target = Array.from(
-        (listbox ?? document).querySelectorAll<HTMLElement>('[role="option"]'),
-      ).find((el) => el.textContent?.trim().startsWith(option));
       if (!target) throw new Error(`No option "${option}" in "${label}"`);
       await act(async () => {
         await user.click(target);
       });
     },
-    /** Click a segmented/radio control button by its value. */
+    /** Open a labelled item's selector, read its options, and close it. */
+    options: async (label: string) => {
+      const user = userEvent.setup({ delay: null });
+      const options = (await openSelector(label, user)).map((el) => ({
+        label: el.textContent?.trim() ?? '',
+        disabled: el.getAttribute('aria-disabled') === 'true',
+      }));
+      await act(async () => {
+        await user.keyboard('{Escape}');
+      });
+      return options;
+    },
+    /** Click a segmented-control button or a radio-list input by its value. */
     clickRadio: async (value: string) => {
       const button = container.querySelector<HTMLElement>(
-        `[role="radio"][data-value="${value}"]`,
+        `[role="radio"][data-value="${value}"], input[type="radio"][value="${value}"]`,
       );
       if (!button) throw new Error(`No radio "${value}"`);
       const user = userEvent.setup({ delay: null });
       await act(async () => {
         await user.click(button);
+      });
+    },
+    /** Click the switch whose visible label (rendered beside it) is `label`. */
+    toggleSwitch: async (label: string) => {
+      const target = Array.from(
+        container.querySelectorAll<HTMLElement>('[role="switch"]'),
+      ).find(
+        (el) => el.parentElement?.parentElement?.textContent?.trim() === label,
+      );
+      if (!target) throw new Error(`No switch "${label}"`);
+      const user = userEvent.setup({ delay: null });
+      await act(async () => {
+        await user.click(target);
       });
     },
     /** Press a stepper button (`+1` / `-1`) of a labelled number input. */
@@ -168,17 +200,6 @@ export const createDriver = (
       if (!button) throw new Error(`No stepper in "${label}"`);
       await act(async () => {
         fireEvent.click(button);
-      });
-    },
-    /** Resolve held Relay operations of `name` with the scenario payload. */
-    resolveQuery: async (name: string, mutate?: () => void) => {
-      mutate?.();
-      scenario.heldQueries.delete(name);
-      await act(async () => {
-        environment.mock
-          .getAllOperations()
-          .filter((op) => op.request.node.params.name === name)
-          .forEach((op) => environment.mock.resolve(op, payloadFor(op)));
       });
     },
     /** Apply a scenario change and let every reader re-render. */
@@ -210,6 +231,8 @@ export const createReader = (
   container: HTMLElement,
   getForm: () => FormInstance,
 ) => ({
+  // The form store is the observation surface on purpose: the rewrite keeps it
+  // as the view store (useFormBoundSlice); re-point here if that changes.
   values: () => _.cloneDeep(getForm().getFieldsValue(true)),
   registered: () => _.cloneDeep(getForm().getFieldsValue()),
   errors: () =>
@@ -322,7 +345,7 @@ export const renderResourceForm = async ({
         .join(', ')}\n${e}`,
     );
   });
-  const drive = createDriver(utils.container, environment, getForm);
+  const drive = createDriver(utils.container, getForm);
   const read = createReader(utils.container, getForm);
   await drive.settle();
   return { ...utils, environment, form: getForm, drive, read };
@@ -361,12 +384,24 @@ let pageRendered = false;
  */
 const resetNuqsQueues = () => {
   const registry = globalThis as unknown as Record<symbol, any>;
+  let found = 0;
   Object.getOwnPropertySymbols(registry).forEach((key) => {
     const name = key.description ?? '';
     if (!name.startsWith('nuqs.')) return;
-    if (name.endsWith('.debounce-controller')) registry[key].abortAll?.();
-    if (name.endsWith('.throttle-queue')) registry[key].abort?.();
+    if (name.endsWith('.debounce-controller')) {
+      registry[key].abortAll?.();
+      found += 1;
+    }
+    if (name.endsWith('.throttle-queue')) {
+      registry[key].abort?.();
+      found += 1;
+    }
   });
+  if (found === 0) {
+    throw new Error(
+      'resetNuqsQueues found no nuqs.<version>.{debounce-controller,throttle-queue} singleton (written against nuqs 2.9.5); update it for the installed nuqs',
+    );
+  }
 };
 
 export const renderLauncherPage = async (
@@ -449,7 +484,7 @@ export const renderLauncherPage = async (
   });
   const getForm = () => pageRefs.form as FormInstance;
   const drive = {
-    ...createDriver(utils.container, environment, getForm),
+    ...createDriver(utils.container, getForm),
     clickButton: async (name: string) => {
       const button = Array.from(
         utils.container.ownerDocument.querySelectorAll<HTMLElement>('button'),

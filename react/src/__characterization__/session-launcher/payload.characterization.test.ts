@@ -197,7 +197,7 @@ describe('session launcher payload (useStartSession) characterization', () => {
     });
   });
 
-  it('PAY-05 [bug-compat] multi-node x size 1 is rewritten to single-node', async () => {
+  it('PAY-05 multi-node x size 1 is rewritten to single-node', async () => {
     const { calls } = await launch({
       cluster_mode: 'multi-node',
       cluster_size: 1,

@@ -81,8 +81,10 @@ export interface Scenario {
     max_containers_per_session: number;
     max_concurrent_sessions: number;
   };
-  /** Operation names left pending until `drive.resolveQuery`. */
-  heldQueries: Set<string>;
+  /** RGs a storage volume designates for SFTP (`sftp_scaling_groups`). */
+  sftpResourceGroups: string[];
+  /** What the empty-mounts launch confirm resolves to. */
+  confirmLaunch: boolean;
   currentProject: { id: string; name: string };
   globalResourceGroup: string | null;
   settings: Record<string, unknown>;
@@ -150,7 +152,8 @@ const defaultScenario = (): Scenario => ({
   agents: [],
   images: [],
   keypairPolicy: { max_containers_per_session: 4, max_concurrent_sessions: 5 },
-  heldQueries: new Set(),
+  sftpResourceGroups: [],
+  confirmLaunch: true,
   currentProject: { id: 'project-id', name: 'project-a' },
   globalResourceGroup: 'rg-a',
   settings: {},
@@ -167,6 +170,7 @@ export const resetScenario = (overrides: Partial<Scenario> = {}) => {
   spies.createIfNotExists.length = 0;
   spies.checkPresetsCalls.length = 0;
   spies.navigate.length = 0;
+  spies.confirm.length = 0;
   pageRefs.form = undefined;
   pageRefs.template = undefined;
   pageRefs.historyPushes.length = 0;
@@ -219,8 +223,10 @@ export const mockAppShimModule = (original: Record<string, unknown>) => {
       destroy: () => {},
     },
     modal: {
-      // The empty-mounts launch confirm is accepted.
-      confirm: () => Promise.resolve(true),
+      confirm: (config: unknown) => {
+        spies.confirm.push(config);
+        return Promise.resolve(scenario.confirmLaunch);
+      },
       error: () => {},
       info: () => {},
       warning: () => {},
@@ -249,6 +255,7 @@ export const spies = {
   createIfNotExists: [] as unknown[][],
   checkPresetsCalls: [] as unknown[],
   navigate: [] as unknown[],
+  confirm: [] as unknown[],
 };
 
 let client: Record<string, unknown> | undefined;
@@ -342,19 +349,27 @@ export const mockCurrentProjectModule = (
   }),
 });
 
-let cachedGroups: { key: string; value: Array<{ name: string }> } | undefined;
+const cachedGroups = new Map<string, Array<{ name: string }>>();
 export const mockProjectResourceGroupsModule = (
   original: Record<string, unknown>,
 ) => ({
   ...original,
-  useProjectResourceGroups: () => {
+  useProjectResourceGroups: (_projectName: string, options?: unknown) => {
     useScenarioVersion();
+    const select = original.selectProjectResourceGroups as (
+      groups: Array<{ name: string }>,
+      volumeInfo: Record<string, { sftp_scaling_groups: string[] }>,
+      options?: unknown,
+    ) => Array<{ name: string }>;
+    const value = select(
+      scenario.projectResourceGroups,
+      { volume: { sftp_scaling_groups: scenario.sftpResourceGroups } },
+      options,
+    );
     // Stable identity per content: BAIProjectResourceGroupSelect keys an effect on it.
-    const key = JSON.stringify(scenario.projectResourceGroups);
-    if (!cachedGroups || cachedGroups.key !== key) {
-      cachedGroups = { key, value: [...scenario.projectResourceGroups] };
-    }
-    return { resourceGroups: cachedGroups.value };
+    const key = JSON.stringify(value);
+    if (!cachedGroups.has(key)) cachedGroups.set(key, value);
+    return { resourceGroups: cachedGroups.get(key)! };
   },
 });
 

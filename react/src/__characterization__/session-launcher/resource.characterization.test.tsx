@@ -21,7 +21,8 @@ import {
   scenario,
   spies,
 } from './mockState';
-import { act, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 vi.mock('react-i18next', async () => (await import('./mockState')).i18nMock());
 vi.mock('../../hooks', async (importOriginal) =>
@@ -126,7 +127,7 @@ describe('resource section characterization (ResourceAllocationFormItems)', () =
       expect(read.values().enabledAutomaticShmem).toBe(true);
     });
 
-    it('R-03 H11 [bug-compat] auto-pick sorts by code point, not by locale', async () => {
+    it('R-03 [bug-compat sort] auto-pick sorts by code point, not by locale', async () => {
       usePresets([
         { id: 'id-lower', name: 'a-preset', cpu: 1, memG: 1 },
         { id: 'id-upper', name: 'B-preset', cpu: 2, memG: 2 },
@@ -229,7 +230,7 @@ describe('resource section characterization (ResourceAllocationFormItems)', () =
       });
     });
 
-    it('R-03 H27 auto-select waits for the RG slot details and runs when they arrive', async () => {
+    it('R-03 R-31 auto-select waits for the RG slot details and runs when they arrive', async () => {
       usePresets([SMALL]);
       scenario.slotsByRG['rg-a'] = undefined;
       const { read, drive } = await renderResourceForm();
@@ -329,13 +330,18 @@ describe('resource section characterization (ResourceAllocationFormItems)', () =
           : emptyCheck({ presets: [] });
       const { read, drive } = await renderResourceForm();
       expect(read.values().allocationPreset).toBe('minimum-required');
+      const largeOption = async () =>
+        (await drive.options('resourcePreset.ResourcePresets')).find((o) =>
+          o.label.startsWith('large'),
+        );
+      expect((await largeOption())?.disabled).toBe(true);
       await drive.select('session.ResourceGroup', 'rg-b');
       await waitFor(() => expect(read.values().resourceGroup).toBe('rg-b'));
-      await drive.settle(200);
-      expect(spies.checkPresetsCalls).toContainEqual({
-        group: 'project-a',
-        scaling_group: 'rg-b',
-      });
+      // Only rg-b's check-presets result makes `large` allocatable.
+      for (let i = 0; (await largeOption())?.disabled !== false; i++) {
+        if (i >= 30) throw new Error('rg-b presets never applied');
+        await drive.settle(100);
+      }
       expect(read.values().allocationPreset).toBe('minimum-required');
     });
 
@@ -343,7 +349,12 @@ describe('resource section characterization (ResourceAllocationFormItems)', () =
       await renderResourceForm({
         initialValues: { resourceGroup: 'rg-x' },
       });
-      expect(spies.checkPresetsCalls).toContainEqual({ group: 'project-a' });
+      // R-34 later clears the RG, and that call has no scaling_group either.
+      expect(spies.checkPresetsCalls[0]).toEqual({ group: 'project-a' });
+      expect(spies.checkPresetsCalls).not.toContainEqual({
+        group: 'project-a',
+        scaling_group: 'rg-x',
+      });
     });
 
     it('R-34 an RG missing from the project list is reset to undefined', async () => {
@@ -477,6 +488,21 @@ describe('resource section characterization (ResourceAllocationFormItems)', () =
       expect(read.values().resource.shmem).toBe('64m');
     });
 
+    it('R-16 turning automatic shmem on re-derives shmem from memory and flips to custom', async () => {
+      usePresets([{ ...LARGE, shmemG: 0.5 }]);
+      const { read } = await renderResourceForm();
+      expect(read.values().enabledAutomaticShmem).toBe(false);
+      expect(read.values().resource.shmem).toBe('0.5g');
+      await act(async () => {
+        await userEvent
+          .setup({ delay: null })
+          .click(screen.getByRole('switch', { name: 'general.Manual' }));
+      });
+      expect(read.values().enabledAutomaticShmem).toBe(true);
+      expect(read.values().resource.shmem).toBe('1g');
+      expect(read.values().allocationPreset).toBe('custom');
+    });
+
     it('R-15 H15 shmem edit flips to custom when custom allocation is allowed', async () => {
       usePresets([{ ...LARGE, shmemG: 1 }]);
       const { read, drive } = await renderResourceForm();
@@ -487,7 +513,7 @@ describe('resource section characterization (ResourceAllocationFormItems)', () =
       expect(read.values().allocationPreset).toBe('custom');
     });
 
-    it('R-15 H15 [bug-compat] shmem edit keeps the preset when custom allocation is disallowed', async () => {
+    it('R-15 H15 shmem edit keeps the preset when custom allocation is disallowed', async () => {
       scenario.config.allowCustomResourceAllocation = false;
       usePresets([{ ...LARGE, shmemG: 1 }]);
       const { read, drive } = await renderResourceForm();
@@ -497,7 +523,7 @@ describe('resource section characterization (ResourceAllocationFormItems)', () =
       expect(read.values().allocationPreset).toBe('id-large');
     });
 
-    it('R-15 H15 [bug-compat] CPU edit flips to custom even when custom allocation is disallowed', async () => {
+    it('R-15 H15 [bug-compat] [unreachable: CPU item is hidden when custom allocation is disallowed] CPU edit flips to custom even when custom allocation is disallowed', async () => {
       scenario.config.allowCustomResourceAllocation = false;
       usePresets([LARGE]);
       const { read, drive } = await renderResourceForm();
@@ -651,7 +677,7 @@ describe('resource section characterization (ResourceAllocationFormItems)', () =
     });
   });
 
-  describe('accelerators (R-02, R-04, R-07, R-19)', () => {
+  describe('accelerators (R-02, R-04, R-07, R-18, R-19)', () => {
     beforeEach(() => {
       scenario.resourceSlots = {
         cpu: 'count',
@@ -742,6 +768,21 @@ describe('resource section characterization (ResourceAllocationFormItems)', () =
         acceleratorType: 'cuda.device',
       });
     });
+
+    it('R-18 an accelerator edit flips the preset to custom', async () => {
+      usePresets([{ ...LARGE, accel: { 'cuda.device': 2 } }]);
+      const { read, drive } = await renderResourceForm({
+        initialValues: {
+          environments: {
+            image: image([{ key: 'cuda.device', min: '1' }], ['cuda']),
+          },
+        },
+      });
+      expect(read.values().allocationPreset).toBe('id-large');
+      await drive.step('session.launcher.AIAccelerator', 1);
+      expect(read.values().resource.accelerator).toBe(3);
+      expect(read.values().allocationPreset).toBe('custom');
+    });
   });
 
   describe('agent select (R-38..R-40, H19)', () => {
@@ -818,7 +859,9 @@ describe('resource section characterization (ResourceAllocationFormItems)', () =
 
     it('host:deployment prefill with allocationPreset:"custom" keeps the prefilled resource', async () => {
       usePresets([LARGE]);
-      const { read, form } = await renderResourceForm({ host: 'deployment' });
+      const { read, form, drive } = await renderResourceForm({
+        host: 'deployment',
+      });
       await act(async () => {
         form().setFieldsValue({
           cluster_mode: 'single-node',
@@ -827,6 +870,7 @@ describe('resource section characterization (ResourceAllocationFormItems)', () =
           resource: { cpu: 2, mem: '3g', shmem: '64m' },
         });
       });
+      await drive.settle();
       expect(read.values().allocationPreset).toBe('custom');
       expect(read.values().resource.cpu).toBe(2);
       expect(read.values().resource.mem).toBe('3g');
