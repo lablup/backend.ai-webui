@@ -4,9 +4,9 @@
  */
 import { Form } from '../../form-engine';
 import { AstryxFormTextInput } from '../astryxFormControls';
+import { proportional } from '@lablup/ui-common/Table';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIButton, BAIFlex } from 'backend.ai-ui';
-import { CircleMinus, PlusIcon } from 'lucide-react';
+import { BAIFormListInput } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -37,66 +37,57 @@ const PreStartActionsFormList: React.FC<PreStartActionsFormListProps> = ({
         marginTop: token('--spacing-5'),
       }}
     >
-      <Form.List name={[...namePrefix, 'preStartActions']}>
-        {(fields, { add, remove }) => (
-          <BAIFlex direction="column" gap="xs" align="stretch">
-            {fields.map(({ key, name, ...rest }) => (
-              <BAIFlex key={key} direction="row" align="baseline" gap="xs">
-                <Form.Item
-                  {...rest}
-                  name={[name, 'action']}
-                  style={{ marginBottom: 0, flex: 1 }}
-                  rules={[{ required: true, message: '' }]}
-                >
-                  {/* Aria-only label; `Form.Item` renders no visible one
-                      for these in-row fields. */}
-                  <AstryxFormTextInput
-                    label={t('adminDeploymentPreset.modelDef.Action')}
-                    placeholder={t(
-                      'adminDeploymentPreset.modelDef.ActionPlaceholder',
-                    )}
-                  />
-                </Form.Item>
-                <Form.Item
-                  {...rest}
-                  name={[name, 'args']}
-                  style={{ marginBottom: 0, flex: 2 }}
-                  rules={[
-                    { required: true, message: '' },
-                    {
-                      validator: async (_, v) => {
-                        if (!v) return;
-                        try {
-                          JSON.parse(v);
-                        } catch {
-                          return Promise.reject('');
-                        }
-                      },
-                    },
-                  ]}
-                >
-                  <AstryxFormTextInput
-                    label={t('adminDeploymentPreset.modelDef.Args')}
-                    placeholder={t('general.Example', { value: '{}' })}
-                  />
-                </Form.Item>
-                {/* antd MinusCircleOutlined → lucide CircleMinus. */}
-                <CircleMinus size="1em" onClick={() => remove(name)} />
-              </BAIFlex>
-            ))}
-            <Form.Item noStyle>
-              <BAIButton
-                type="dashed"
-                onClick={() => add({ action: '', args: '{}' })}
-                icon={<PlusIcon />}
-                block
-              >
-                {t('adminDeploymentPreset.modelDef.AddPreStartAction')}
-              </BAIButton>
-            </Form.Item>
-          </BAIFlex>
-        )}
-      </Form.List>
+      <BAIFormListInput
+        name={[...namePrefix, 'preStartActions']}
+        label={t('modelService.PreStartActions')}
+        isLabelHidden
+        itemName={t('adminDeploymentPreset.modelDef.PreStartActionItemName')}
+        createValue={() => ({ action: '', args: '{}' })}
+        columns={[
+          {
+            key: 'action',
+            header: t('adminDeploymentPreset.modelDef.Action'),
+            width: proportional(1),
+            formItemProps: () => ({
+              rules: [{ required: true, message: '' }],
+            }),
+            renderInput: ({ label }) => (
+              <AstryxFormTextInput
+                label={label}
+                placeholder={t(
+                  'adminDeploymentPreset.modelDef.ActionPlaceholder',
+                )}
+              />
+            ),
+          },
+          {
+            key: 'args',
+            header: t('adminDeploymentPreset.modelDef.Args'),
+            width: proportional(2),
+            formItemProps: () => ({
+              rules: [
+                { required: true, message: '' },
+                {
+                  validator: async (_, v) => {
+                    if (!v) return;
+                    try {
+                      JSON.parse(v);
+                    } catch {
+                      return Promise.reject('');
+                    }
+                  },
+                },
+              ],
+            }),
+            renderInput: ({ label }) => (
+              <AstryxFormTextInput
+                label={label}
+                placeholder={t('general.Example', { value: '{}' })}
+              />
+            ),
+          },
+        ]}
+      />
     </Form.Item>
   );
 };
