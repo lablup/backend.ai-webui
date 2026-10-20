@@ -254,6 +254,7 @@ never offered but listed as an auto-mounted folder.
     },
   },
   args: {
+    scope: MOCK_MOUNT_SCOPE,
     mountableHosts: MOCK_MOUNTABLE_HOSTS,
   },
 };
@@ -442,7 +443,7 @@ export const WithFormValidation: Story = {
             label="VFolder mounts"
             rules={[mountConfigRule]}
           >
-            <BAIVFolderMountConfigInput scope={MOCK_MOUNT_SCOPE} {...args} />
+            <BAIVFolderMountConfigInput {...args} />
           </Form.Item>
           <BAIButton
             type="primary"
