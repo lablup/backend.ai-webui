@@ -62,7 +62,7 @@ sequenceDiagram
 flowchart LR
   subgraph slices["slice (react/src/features/session-launcher/slices/)"]
     R["resourceSlice<br/>fields: resource.*, allocationPreset, cluster_*, agent, resourceGroup<br/>inputs: limits, presets, resourceSlotsInRG, agents"]
-    E["environmentSlice<br/>fields: environments.*<br/>inputs: images"]
+    E["environmentSlice<br/>fields: environments.*<br/>inputs: imageGroups, images, watched environments"]
     ST["storageSlice<br/>fields: vfolderMounts<br/>inputs: mountableFolders"]
   end
   L["SessionLauncherPage<br/>compose([E, R, ST, …], crossRules: [R-05])"]
