@@ -28,7 +28,6 @@ import {
   BAISkeleton,
   BAICard,
   BAIDeleteConfirmModal,
-  BAIDeploymentTagTokens,
   BAIFlex,
   BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilter,
@@ -214,11 +213,6 @@ const ProjectAdminDeploymentsContent: React.FC<
       type: 'string',
     },
     {
-      key: 'tags',
-      propertyLabel: t('deployment.filter.Tags'),
-      type: 'string',
-    },
-    {
       key: 'endpointUrl',
       propertyLabel: t('deployment.filter.EndpointUrl'),
       type: 'string',
@@ -321,7 +315,6 @@ const ProjectAdminDeploymentsContent: React.FC<
               'owner',
               'id',
               'endpointUrl',
-              'tags',
               'updatedAt',
               'openToPublic',
               'resourceGroup',
@@ -402,27 +395,6 @@ const ProjectAdminDeploymentsContent: React.FC<
                         >{`#${revision.revisionNumber}`}</Link>
                       );
                     },
-                  };
-                } else if (col.key === 'tags') {
-                  next = {
-                    ...col,
-                    render: (_value, record) => (
-                      <BAIDeploymentTagTokens
-                        metadataFrgmt={record.metadata}
-                        stopRowClick
-                        onTagClick={(tag) => {
-                          webUINavigate({
-                            pathname: buildProjectPath('deployments'),
-                            search: new URLSearchParams({
-                              filter: JSON.stringify({
-                                tags: { iEquals: tag },
-                              }),
-                            }).toString(),
-                          });
-                        }}
-                        fallback={<Text color="secondary">-</Text>}
-                      />
-                    ),
                   };
                 }
                 if (col.key === 'name') return next;

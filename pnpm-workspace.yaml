@@ -100,10 +100,11 @@ minimumReleaseAgeExclude:
   # quarantine window by design, so the exclusion is permanent while the
   # pin exists. Tarball-verified build (MAPPING.md header).
   - "@astryxdesign/lab@0.7.0-canary.97a0d31"
-  # ui-common 0.2.0-alpha.19 and its CLI: published 2026-10-13, inside the
-  # 7-day window at adoption time. Remove after 2026-10-20.
-  - "@lablup/ui-common@0.2.0-alpha.19"
-  - "@lablup/ui-common-cli@0.2.0-alpha.19"
+  # ui-common is Lablup's own package, pinned exactly and moved on purpose:
+  # its canaries and PR previews are installed the day they are published
+  # (scripts/ui-common-pin.mjs), so it is excluded by name, permanently.
+  - "@lablup/ui-common"
+  - "@lablup/ui-common-cli"
   # e2e agentic test runner (e2e.tester.army): published 2026-10-04, and no
   # release of it is older than 7 days yet. Remove after 2026-10-11.
   - e2e@0.17.0

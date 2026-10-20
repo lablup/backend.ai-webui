@@ -164,21 +164,6 @@ const DeploymentOverviewContent: React.FC<{
       <MetadataListItem label={t('deployment.Tags')}>
         <BAIDeploymentTagTokens
           metadataFrgmt={deployment?.metadata ?? null}
-          onTagClick={(tag) => {
-            // Stay within the same deployment-list URL space the user came
-            // from (admin / project-admin / user `deployments`) so breadcrumb /
-            // back navigation remain coherent — see FR-2847 (admin) and
-            // FR-2930 (project admin) for the per-scope detail-route precedent.
-            // The current scope (from the route handle) plus the active project
-            // name yield the correct scope-aware list path via `useProjectPath`.
-            const targetPathname = buildProjectPath('deployments');
-            webuiNavigate({
-              pathname: targetPathname,
-              search: new URLSearchParams({
-                filter: JSON.stringify({ tags: { iEquals: tag } }),
-              }).toString(),
-            });
-          }}
           fallback={renderFallback()}
         />
       </MetadataListItem>
