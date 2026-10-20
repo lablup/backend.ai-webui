@@ -1251,7 +1251,6 @@
         "modelService.StartCommand",
         "modelService.Subpath",
         "modelStore.Category",
-        "modelStore.MinResource",
         "modelStore.ModelName",
         "modelStore.ModelPath",
         "modelStore.ProjectNotFound",
