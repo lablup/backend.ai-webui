@@ -6,6 +6,7 @@ import {
   purgeProjectViaApi,
   sweepStaleProjectsViaApi,
 } from '../utils/admin-api';
+import { getE2EDomainName } from '../utils/e2e-scope';
 import { loginAsUser, navigateTo, userInfo } from '../utils/test-util';
 import { expect, test, type APIRequestContext } from '@playwright/test';
 
@@ -44,9 +45,10 @@ test.describe(
           isActive: false,
         }),
       );
+      // Same domain as the user, so only the missing membership hides it.
       projectIds.push(
         await createProjectViaApi(api, nonMemberProject, {
-          domainName: 'default',
+          domainName: await getE2EDomainName(api),
         }),
       );
       await loginAsUser(page, request);

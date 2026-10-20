@@ -1301,8 +1301,7 @@
       "ReplicaStatus": "Replikan elinkaari",
       "ReplicaTrafficStatus": "Replikan liikennetila",
       "ResourceGroup": "Resurssiryhmä",
-      "Status": "Tila",
-      "Tags": "Tunnisteet"
+      "Status": "Tila"
     },
     "nav": {
       "Next": "Seuraava",

@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RoleFormModalCreateMutation } from '../__generated__/RoleFormModalCreateMutation.graphql';
-import { RoleFormModalCurrentDomainQuery } from '../__generated__/RoleFormModalCurrentDomainQuery.graphql';
 import { RoleFormModalFragment$key } from '../__generated__/RoleFormModalFragment.graphql';
 import { RoleFormModalPermissionMatrixQuery } from '../__generated__/RoleFormModalPermissionMatrixQuery.graphql';
 import { RoleFormModalResourceGroupQuery } from '../__generated__/RoleFormModalResourceGroupQuery.graphql';
@@ -11,7 +10,7 @@ import { RoleFormModalUpdateMutation } from '../__generated__/RoleFormModalUpdat
 import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentDomain } from '../hooks';
 import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import {
   AstryxFormCheckbox,
@@ -36,7 +35,7 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { Suspense, useEffect } from 'react';
+import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -119,41 +118,6 @@ const ResourceGroupScopeIdSelect: React.FC<ScopeIdBranchProps> = (props) => {
 export const isDomainScopeType = (scopeType?: string) =>
   scopeType?.toUpperCase() === 'DOMAIN';
 
-type DomainScopeIdProps = Pick<ScopeIdSelectProps, 'value' | 'onChange'>;
-
-/** Hands `scopeId` to the form once it is known and differs from `value`. */
-const useSyncScopeId = (
-  scopeId: string | undefined,
-  { value, onChange }: DomainScopeIdProps,
-) => {
-  useEffect(() => {
-    if (scopeId && value !== scopeId) onChange?.(scopeId);
-  }, [scopeId, value, onChange]);
-};
-
-/**
- * Fills the DOMAIN scope id with the signed-in domain's uuid (BA-7234): the
- * WebUI has no domain picker.
- */
-const CurrentDomainScopeId: React.FC<DomainScopeIdProps> = (props) => {
-  'use memo';
-  const baiClient = useSuspendedBackendaiClient();
-  const domainName: string = baiClient._config.domainName;
-  const { domainV2 } = useLazyLoadQuery<RoleFormModalCurrentDomainQuery>(
-    graphql`
-      query RoleFormModalCurrentDomainQuery($domainName: String!) {
-        domainV2(domainName: $domainName) {
-          entityId
-        }
-      }
-    `,
-    { domainName },
-    { fetchPolicy: 'store-or-network' },
-  );
-  useSyncScopeId(domainV2?.entityId, props);
-  return null;
-};
-
 const ProjectScopeIdSelect: React.FC<ScopeIdBranchProps> = (props) => {
   'use memo';
   const { domainScope } = useCurrentDomainScope();
@@ -183,16 +147,6 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
       options={[]}
     />
   );
-  if (scopeType === 'DOMAIN') {
-    return (
-      <Suspense fallback={null}>
-        <CurrentDomainScopeId
-          value={selectProps.value}
-          onChange={selectProps.onChange}
-        />
-      </Suspense>
-    );
-  }
   if (scopeType === 'PROJECT') {
     return (
       <Suspense fallback={fallback}>
@@ -287,6 +241,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
   const { logger } = useBAILogger();
   const [form] = Form.useForm();
   const scopeType = Form.useWatch('scopeType', form) as string | undefined;
+  const currentDomain = useCurrentDomain();
 
   const { rbacPermissionMatrix } =
     useLazyLoadQuery<RoleFormModalPermissionMatrixQuery>(
@@ -433,16 +388,16 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
             },
           });
         } else {
+          const scopeId = isDomainScopeType(values.scopeType)
+            ? currentDomain.id
+            : values.scopeId;
           commitCreateRole({
             variables: {
               input: {
                 name: values.name,
                 description: values.description || null,
                 autoAssign: values.autoAssign,
-                scope: {
-                  scopeType: values.scopeType,
-                  scopeId: values.scopeId,
-                },
+                scope: { scopeType: values.scopeType, scopeId },
               },
             },
             onCompleted: (_data, errors) => {
@@ -548,25 +503,26 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
                 onChange={() => form.setFieldsValue({ scopeId: undefined })}
               />
             </Form.Item>
-            <Form.Item
-              name="scopeId"
-              label={t('rbac.ScopeId')}
-              hidden={isDomainScopeType(scopeType)}
-              style={{ flex: 1 }}
-              rules={[
-                {
-                  required: true,
-                  message: t('general.ValueRequired', {
-                    name: t('rbac.ScopeId'),
-                  }),
-                },
-              ]}
-            >
-              <ScopeIdSelect
-                scopeType={scopeType}
-                placeholder={t('rbac.ScopeId')}
-              />
-            </Form.Item>
+            {!isDomainScopeType(scopeType) && (
+              <Form.Item
+                name="scopeId"
+                label={t('rbac.ScopeId')}
+                style={{ flex: 1 }}
+                rules={[
+                  {
+                    required: true,
+                    message: t('general.ValueRequired', {
+                      name: t('rbac.ScopeId'),
+                    }),
+                  },
+                ]}
+              >
+                <ScopeIdSelect
+                  scopeType={scopeType}
+                  placeholder={t('rbac.ScopeId')}
+                />
+              </Form.Item>
+            )}
           </BAIFlex>
         )}
       </Form>

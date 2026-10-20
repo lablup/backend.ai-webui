@@ -2,6 +2,10 @@ import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { web } from "@e2e-dev/web";
 import * as dotenv from "dotenv";
 import type { E2EConfig } from "e2e";
+import {
+  lnaBypassEndpoint,
+  needsLnaBypass,
+} from "./e2e-agent/utils/lna-browser";
 
 // .env.e2e-agent overrides .env.playwright (accounts, backend).
 dotenv.config({ path: "./e2e/envs/.env.playwright", quiet: true });
@@ -22,18 +26,23 @@ const model =
       }).chatModel(E2E_LLM_MODEL)
     : undefined;
 
+const appUrl =
+  process.env.E2E_AGENT_APP_URL ??
+  process.env.E2E_WEBUI_ENDPOINT ??
+  "https://backend-ai-webui.localhost:1355";
+
 export default {
   tests: "e2e-agent/**/*.e2e.ts",
   targets: [
     {
       name: "chromium",
-      engine: web({ locale: "en-US" }),
-      app: {
-        url:
-          process.env.E2E_AGENT_APP_URL ??
-          process.env.E2E_WEBUI_ENDPOINT ??
-          "https://backend-ai-webui.localhost:1355",
-      },
+      engine: web({
+        locale: "en-US",
+        ...(needsLnaBypass(appUrl, process.env.E2E_WEBSERVER_ENDPOINT) && {
+          connect: { cdpEndpoint: lnaBypassEndpoint },
+        }),
+      }),
+      app: { url: appUrl },
     },
   ],
   timeout: 180_000,

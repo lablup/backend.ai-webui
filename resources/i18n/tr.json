@@ -1301,8 +1301,7 @@
       "ReplicaStatus": "Replika yaşam döngüsü",
       "ReplicaTrafficStatus": "Replika trafik durumu",
       "ResourceGroup": "Kaynak Grubu",
-      "Status": "Durum",
-      "Tags": "Etiketler"
+      "Status": "Durum"
     },
     "nav": {
       "Next": "İleri",

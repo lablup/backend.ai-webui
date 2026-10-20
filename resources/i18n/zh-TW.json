@@ -1302,8 +1302,7 @@
       "ReplicaStatus": "副本生命週期",
       "ReplicaTrafficStatus": "副本流量狀態",
       "ResourceGroup": "資源群組",
-      "Status": "狀態",
-      "Tags": "標籤"
+      "Status": "狀態"
     },
     "nav": {
       "Next": "下一步",

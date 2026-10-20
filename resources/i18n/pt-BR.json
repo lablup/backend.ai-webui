@@ -1301,8 +1301,7 @@
       "ReplicaStatus": "Ciclo de vida da réplica",
       "ReplicaTrafficStatus": "Status de tráfego da réplica",
       "ResourceGroup": "Grupo de Recursos",
-      "Status": "Status",
-      "Tags": "Tags"
+      "Status": "Status"
     },
     "nav": {
       "Next": "Próximo",

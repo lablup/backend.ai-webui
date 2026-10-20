@@ -1297,8 +1297,7 @@
       "ReplicaStatus": "วงจรชีวิตเรพลิกา",
       "ReplicaTrafficStatus": "สถานะทราฟฟิกเรพลิกา",
       "ResourceGroup": "กลุ่มทรัพยากร",
-      "Status": "สถานะ",
-      "Tags": "แท็ก"
+      "Status": "สถานะ"
     },
     "nav": {
       "Next": "ถัดไป",

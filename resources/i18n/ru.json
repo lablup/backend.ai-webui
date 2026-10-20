@@ -1301,8 +1301,7 @@
       "ReplicaStatus": "Жизненный цикл реплики",
       "ReplicaTrafficStatus": "Состояние трафика реплики",
       "ResourceGroup": "Группа ресурсов",
-      "Status": "Статус",
-      "Tags": "Теги"
+      "Status": "Статус"
     },
     "nav": {
       "Next": "Далее",
