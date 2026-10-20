@@ -146,6 +146,7 @@ const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
         edges: matched.slice(offset, offset + limit).map((folder) => ({
           node: {
             id: toGlobalId('VFolder', folder.id),
+            entityId: folder.id,
             status: folder.status,
             host: folder.host,
             metadata: {

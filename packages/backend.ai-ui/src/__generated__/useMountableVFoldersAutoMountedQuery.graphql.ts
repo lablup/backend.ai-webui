@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<98ec4af15368f9496a521cf865c087cd>>
+ * @generated SignedSource<<23e6b259e729c0c843f7b8ef12a94c23>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -106,6 +106,7 @@ export type useMountableVFoldersAutoMountedQuery$data = {
         readonly accessControl: {
           readonly permission: VFolderMountPermission;
         };
+        readonly entityId: string;
         readonly id: string;
         readonly metadata: {
           readonly name: string;
@@ -196,6 +197,13 @@ v3 = [
               {
                 "alias": null,
                 "args": null,
+                "kind": "ScalarField",
+                "name": "entityId",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
                 "concreteType": "VFolderAccessControlInfo",
                 "kind": "LinkedField",
                 "name": "accessControl",
@@ -265,16 +273,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "1323f32583c30fa3beb15c3fb6d183e5",
+    "cacheID": "0eff8655ae09940347eb79753bdbe520",
     "id": null,
     "metadata": {},
     "name": "useMountableVFoldersAutoMountedQuery",
     "operationKind": "query",
-    "text": "query useMountableVFoldersAutoMountedQuery(\n  $scope: VFolderScope!\n  $filter: VFolderFilter\n  $limit: Int!\n) {\n  scopedVFoldersV2(scope: $scope, filter: $filter, limit: $limit, orderBy: [{field: NAME, direction: ASC}]) {\n    edges {\n      node {\n        id\n        accessControl {\n          permission\n        }\n        metadata {\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query useMountableVFoldersAutoMountedQuery(\n  $scope: VFolderScope!\n  $filter: VFolderFilter\n  $limit: Int!\n) {\n  scopedVFoldersV2(scope: $scope, filter: $filter, limit: $limit, orderBy: [{field: NAME, direction: ASC}]) {\n    edges {\n      node {\n        id\n        entityId\n        accessControl {\n          permission\n        }\n        metadata {\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "11a68537731c3035522507e2a9748788";
+(node as any).hash = "c92878d2e4038d7ced834e4a8b28326c";
 
 export default node;

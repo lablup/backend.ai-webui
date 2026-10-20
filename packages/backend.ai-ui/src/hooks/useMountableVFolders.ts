@@ -4,7 +4,6 @@ import type {
   VFolderScope,
 } from '../__generated__/useMountableVFoldersAutoMountedQuery.graphql';
 import useConnectedBAIClient from '../components/provider/BAIClientProvider/hooks/useConnectedBAIClient';
-import { toLocalId } from '../helper';
 import { useDateISOState } from './useUpdatableState';
 import * as _ from 'lodash-es';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -35,20 +34,23 @@ export const mountableVFolderScope = (
   ...(currentProjectId ? { project: [{ value: currentProjectId }] } : {}),
 });
 
-/** The server-side half of the mount gate: a host granting `mount-in-session`. */
+/**
+ * The server-side half of the mount gate: a host granting `mount-in-session`.
+ * Hosts are sorted so every caller sends the same variables and shares one Relay cache entry.
+ */
 export const mountableVFolderFilter = (
   mountableHosts: ReadonlyArray<string>,
 ): VFolderFilter => ({
-  host: { in: [...mountableHosts] },
+  host: { in: _.sortBy(mountableHosts) },
   status: { notIn: ['DELETE_COMPLETE'] },
 });
 
-/** The page size of every mount-folder read. */
-export const MOUNT_FOLDER_PAGE_SIZE = 100;
+const AUTO_MOUNTED_FOLDER_LIMIT = 100;
 
 /**
  * The ready dotfile folders a session in this project mounts on its own.
- * Suspends; `refetch` re-reads them after the host creates a folder.
+ * Suspends. Callers passing the same scope share one query, so a `refetch`
+ * from any of them updates all.
  */
 export const useSuspendedAutoMountedVFolders = ({
   currentProjectId,
@@ -74,6 +76,7 @@ export const useSuspendedAutoMountedVFolders = ({
             edges {
               node {
                 id
+                entityId
                 accessControl {
                   permission
                 }
@@ -93,7 +96,7 @@ export const useSuspendedAutoMountedVFolders = ({
             { name: { startsWith: '.' }, status: { equals: 'READY' } },
           ],
         },
-        limit: MOUNT_FOLDER_PAGE_SIZE,
+        limit: AUTO_MOUNTED_FOLDER_LIMIT,
       },
       { fetchKey, fetchPolicy: 'store-and-network' },
     );
@@ -103,7 +106,7 @@ export const useSuspendedAutoMountedVFolders = ({
     _.map(scopedVFoldersV2?.edges, ({ node }) =>
       node.accessControl.permission === 'NONE'
         ? null
-        : { vfolderId: toLocalId(node.id), name: node.metadata.name },
+        : { vfolderId: node.entityId, name: node.metadata.name },
     ),
   );
   return { autoMountedFolders, refetch };

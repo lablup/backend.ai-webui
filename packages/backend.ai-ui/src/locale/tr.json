@@ -558,6 +558,11 @@
     "To": "Hedef durum",
     "UpdatedAt": "Güncelleme Tarihi"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "OwnerProject": "Proje",
+    "OwnerUser": "Kullanıcı",
+    "SelectFolder": "Klasör Seç"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Ajan"
   },
@@ -616,8 +621,6 @@
     "CreateFolder": "Yeni bir depolama klasörü oluşturun",
     "DestinationPath": "Konteyner yolu (destination)",
     "Folders": "klasörler",
-    "OwnerProject": "Proje",
-    "OwnerUser": "Kullanıcı",
     "PathAndAliasTooltip": "Klasörün bağlanacağı container içindeki yol. Varsayılan yolu kullanmak için boş bırakın.",
     "Refresh": "Yenile",
     "RemoveFolder": "Kaldır",

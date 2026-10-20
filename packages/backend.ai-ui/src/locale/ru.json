@@ -558,6 +558,11 @@
     "To": "Целевой статус",
     "UpdatedAt": "Обновлено"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "OwnerProject": "Проект",
+    "OwnerUser": "Пользователь",
+    "SelectFolder": "Выбрать папку"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Агент"
   },
@@ -616,8 +621,6 @@
     "CreateFolder": "Создать новую папку для хранения",
     "DestinationPath": "Путь в контейнере (destination)",
     "Folders": "Папки",
-    "OwnerProject": "Проект",
-    "OwnerUser": "Пользователь",
     "PathAndAliasTooltip": "Путь внутри контейнера, в который будет смонтирована папка. Оставьте пустым для использования пути по умолчанию.",
     "Refresh": "Обновить",
     "RemoveFolder": "Удалить",

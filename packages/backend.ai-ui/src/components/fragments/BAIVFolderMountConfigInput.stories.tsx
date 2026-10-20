@@ -1,4 +1,5 @@
 import { Form } from '../../form-engine';
+import { useSuspendedAutoMountedVFolders } from '../../hooks/useMountableVFolders';
 import MockVFolderFileProviders from '../../tests/MockVFolderFileProviders';
 import {
   MOCK_PROJECT_ID,
@@ -148,7 +149,7 @@ const meta: Meta<typeof BAIVFolderMountConfigInput> = {
 **BAIVFolderMountConfigInput** is a reusable, schema-agnostic controlled input
 for configuring vfolder mounts.
 
-- Pages the options through \`scopedVFoldersV2\` over the caller's and
+- Picks folders with \`BAIScopedVFolderSelect\`, which pages \`scopedVFoldersV2\` over the caller's and
   \`currentProjectId\`'s folders, filtered on the server: the host must be in
   \`mountableHosts\` (those granting \`mount-in-session\`), the folder must be ready,
   and dotfile folders are left out (the session mounts them anyway). Search runs
@@ -167,8 +168,8 @@ for configuring vfolder mounts.
 - \`mountDestination\` stores the **raw alias** the user typed — \`''\` mounts at the default
   \`/home/work/<name>\`, a relative segment like \`data\` resolves to \`/home/work/data\`, and an
   absolute path like \`/data\` is used as-is. Resolve it with the exported \`inputToMountDestination\`.
-- \`autoMountedFolders\` join the overlap check (a user
-  alias colliding with an auto-mounted folder is flagged) and are shown as read-only badges at the bottom.
+- It reads the auto-mounted folders (ready dotfile folders in the same scope) itself: they join the
+  overlap check (a user alias colliding with one is flagged) and are shown as read-only tokens at the bottom.
 - \`folderExplorerPath\` turns every folder name the component renders — each mount row and each
   auto-mounted badge — into a link into the host app's folder explorer (see **WithFolderExplorerLinks**).
 - Emits a single \`VFolderMountConfigValue[]\`. The inline per-row errors are advisory UX; to gate a
@@ -178,7 +179,7 @@ for configuring vfolder mounts.
 The stories below mock the folder list behind the providers' \`suspenseFallback\`,
 so of the six fixture folders \`cold-archive\` is dropped (its host is not in
 \`mountableHosts\`), \`other-team-data\` belongs to another project, and \`.config\` is
-dropped in the **WithAutoMountedFolders** story.
+never offered but listed as an auto-mounted folder.
 `,
       },
     },
@@ -232,14 +233,6 @@ dropped in the **WithAutoMountedFolders** story.
         defaultValue: { summary: '/home/work/' },
       },
     },
-    autoMountedFolders: {
-      control: { type: 'object' },
-      description:
-        'Auto-mounted folders: folded into the overlap check and shown as read-only badges',
-      table: {
-        type: { summary: 'Array<{ vfolderId: string; name: string }>' },
-      },
-    },
     folderExplorerPath: {
       control: false,
       description:
@@ -261,7 +254,6 @@ dropped in the **WithAutoMountedFolders** story.
   },
   args: {
     mountableHosts: MOCK_MOUNTABLE_HOSTS,
-    autoMountedFolders: [],
   },
 };
 
@@ -350,14 +342,11 @@ export const OverlappingPaths: Story = {
  * alias that collides with one of them is flagged as an overlap.
  */
 export const WithAutoMountedFolders: Story = {
-  args: {
-    autoMountedFolders: [{ vfolderId: folderId(2), name: folderName(2) }],
-  },
   parameters: {
     docs: {
       description: {
         story:
-          '`autoMountedFolders` naming `.config` renders it as a read-only badge below the rows (dotfile folders are never offered in the select). The first folder aliases to `.config`, colliding with the auto-mounted `/home/work/.config`, so it shows the overlap error.',
+          'The ready dotfile folder `.config` is read as auto-mounted and listed as a read-only token below the rows (dotfile folders are never offered in the select). The first folder aliases to `.config`, colliding with the auto-mounted `/home/work/.config`, so it shows the overlap error.',
       },
     },
   },
@@ -388,7 +377,6 @@ export const WithAutoMountedFolders: Story = {
  */
 export const WithFolderExplorerLinks: Story = {
   args: {
-    autoMountedFolders: [{ vfolderId: folderId(2), name: folderName(2) }],
     // The host builds a real route; here the id just lands in the hash.
     folderExplorerPath: (vfolderId) => `#folder=${vfolderId}`,
   },
@@ -433,9 +421,13 @@ export const WithFormValidation: Story = {
     const FormValidationDemo = () => {
       const [form] = Form.useForm();
       const [result, setResult] = useState<string>('');
+      const { autoMountedFolders } = useSuspendedAutoMountedVFolders({
+        currentProjectId: MOCK_PROJECT_ID,
+        mountableHosts: args.mountableHosts,
+      });
       const mountConfigRule = useVFolderMountConfigFormRule({
         aliasBasePath: args.aliasBasePath,
-        autoMountedFolders: args.autoMountedFolders,
+        autoMountedFolders,
       });
       return (
         <Form

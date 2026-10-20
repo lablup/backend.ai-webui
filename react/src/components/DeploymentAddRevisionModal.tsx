@@ -105,6 +105,7 @@ import {
   toGlobalId,
   toLocalId,
   useBAILogger,
+  useSuspendedAutoMountedVFolders,
   useVFolderMountConfigFormRule,
   type VFolderMountConfigValue,
 } from 'backend.ai-ui';
@@ -378,7 +379,12 @@ const ExtraVFolderMountsFormItem: React.FC<{
   const { t } = useTranslation();
   const { generateFolderPath } = useFolderExplorerOpener();
   const mountableHosts = useMountableStorageHosts(project?.id ?? null);
-  const mountConfigRule = useVFolderMountConfigFormRule();
+  // Shares the query the input reads, so the rule sees what the input lists.
+  const { autoMountedFolders } = useSuspendedAutoMountedVFolders({
+    currentProjectId: project?.id,
+    mountableHosts,
+  });
+  const mountConfigRule = useVFolderMountConfigFormRule({ autoMountedFolders });
   const modelFolderUuid = modelFolderId
     ? safeDecodeUuid(String(modelFolderId))
     : undefined;

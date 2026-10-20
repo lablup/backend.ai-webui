@@ -150,6 +150,10 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
   return {
     ...originalModule,
     BAIVFolderMountConfigInput: () => null,
+    useSuspendedAutoMountedVFolders: () => ({
+      autoMountedFolders: [],
+      refetch: () => {},
+    }),
     BAIVFolderSelect: (props: any) =>
       React.createElement(
         'button',

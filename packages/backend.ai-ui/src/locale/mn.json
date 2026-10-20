@@ -558,6 +558,11 @@
     "To": "Зорилтот төлөв",
     "UpdatedAt": "Шинэчлэгдсэн огноо"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "OwnerProject": "Төсөл",
+    "OwnerUser": "Хэрэглэгч",
+    "SelectFolder": "Хавтас сонгох"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Агент"
   },
@@ -616,8 +621,6 @@
     "CreateFolder": "Шинэ хадгалах фолдер үүсгэх",
     "DestinationPath": "Контейнерийн зам (destination)",
     "Folders": "Фолдерууд",
-    "OwnerProject": "Төсөл",
-    "OwnerUser": "Хэрэглэгч",
     "PathAndAliasTooltip": "Хавтасыг контейнер дотор маунт хийх зам. Анхдагч замыг ашиглахын тулд хоосон үлдээнэ үү.",
     "Refresh": "Сэргээх",
     "RemoveFolder": "Хасах",

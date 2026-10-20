@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7378818d5ee0aea63804238e15b6adb6>>
+ * @generated SignedSource<<cb3f3b4b71c69c8744688fc53b53625d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,7 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
+export type VFolderOwnershipType = "GROUP" | "USER" | "%future added value";
 export type VFolderUsageMode = "DATA" | "GENERAL" | "MODEL" | "%future added value";
 export type VFolderScope = {
   domain?: ReadonlyArray<UUIDScope> | null | undefined;
@@ -94,26 +95,39 @@ export type UUIDFilter = {
   notEquals?: string | null | undefined;
   notIn?: ReadonlyArray<string> | null | undefined;
 };
-export type BAIVFolderMountConfigInputMountableQuery$variables = {
+export type BAIScopedVFolderSelectQuery$variables = {
   filter?: VFolderFilter | null | undefined;
   limit: number;
+  offset: number;
   scope: VFolderScope;
 };
-export type BAIVFolderMountConfigInputMountableQuery$data = {
+export type BAIScopedVFolderSelectQuery$data = {
   readonly scopedVFoldersV2: {
+    readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly accessControl: {
+          readonly ownershipType: VFolderOwnershipType;
           readonly permission: VFolderMountPermission;
         };
+        readonly entityId: string;
+        readonly host: string;
         readonly id: string;
+        readonly metadata: {
+          readonly createdAt: string;
+          readonly name: string;
+          readonly usageMode: VFolderUsageMode;
+        };
+        readonly ownership: {
+          readonly creatorEmail: string | null | undefined;
+        };
       };
     }>;
   } | null | undefined;
 };
-export type BAIVFolderMountConfigInputMountableQuery = {
-  response: BAIVFolderMountConfigInputMountableQuery$data;
-  variables: BAIVFolderMountConfigInputMountableQuery$variables;
+export type BAIScopedVFolderSelectQuery = {
+  response: BAIScopedVFolderSelectQuery$data;
+  variables: BAIScopedVFolderSelectQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -130,9 +144,14 @@ v1 = {
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
+  "name": "offset"
+},
+v3 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
   "name": "scope"
 },
-v3 = [
+v4 = [
   {
     "alias": null,
     "args": [
@@ -148,6 +167,21 @@ v3 = [
       },
       {
         "kind": "Variable",
+        "name": "offset",
+        "variableName": "offset"
+      },
+      {
+        "kind": "Literal",
+        "name": "orderBy",
+        "value": [
+          {
+            "direction": "DESC",
+            "field": "CREATED_AT"
+          }
+        ]
+      },
+      {
+        "kind": "Variable",
         "name": "scope",
         "variableName": "scope"
       }
@@ -157,6 +191,13 @@ v3 = [
     "name": "scopedVFoldersV2",
     "plural": false,
     "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "count",
+        "storageKey": null
+      },
       {
         "alias": null,
         "args": null,
@@ -183,6 +224,52 @@ v3 = [
               {
                 "alias": null,
                 "args": null,
+                "kind": "ScalarField",
+                "name": "entityId",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "host",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "VFolderMetadataInfo",
+                "kind": "LinkedField",
+                "name": "metadata",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "name",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "usageMode",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "createdAt",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
                 "concreteType": "VFolderAccessControlInfo",
                 "kind": "LinkedField",
                 "name": "accessControl",
@@ -193,6 +280,31 @@ v3 = [
                     "args": null,
                     "kind": "ScalarField",
                     "name": "permission",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "ownershipType",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "VFolderOwnershipInfo",
+                "kind": "LinkedField",
+                "name": "ownership",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "creatorEmail",
                     "storageKey": null
                   }
                 ],
@@ -213,37 +325,39 @@ return {
     "argumentDefinitions": [
       (v0/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/)
+      (v2/*: any*/),
+      (v3/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "BAIVFolderMountConfigInputMountableQuery",
-    "selections": (v3/*: any*/),
+    "name": "BAIScopedVFolderSelectQuery",
+    "selections": (v4/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v2/*: any*/),
+      (v3/*: any*/),
       (v0/*: any*/),
-      (v1/*: any*/)
+      (v1/*: any*/),
+      (v2/*: any*/)
     ],
     "kind": "Operation",
-    "name": "BAIVFolderMountConfigInputMountableQuery",
-    "selections": (v3/*: any*/)
+    "name": "BAIScopedVFolderSelectQuery",
+    "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "a38fd82cc6965859dcdca31fab5ff09b",
+    "cacheID": "1fe6dffae012d69842e7ba15ab5124f0",
     "id": null,
     "metadata": {},
-    "name": "BAIVFolderMountConfigInputMountableQuery",
+    "name": "BAIScopedVFolderSelectQuery",
     "operationKind": "query",
-    "text": "query BAIVFolderMountConfigInputMountableQuery(\n  $scope: VFolderScope!\n  $filter: VFolderFilter\n  $limit: Int!\n) {\n  scopedVFoldersV2(scope: $scope, filter: $filter, limit: $limit) {\n    edges {\n      node {\n        id\n        accessControl {\n          permission\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIScopedVFolderSelectQuery(\n  $scope: VFolderScope!\n  $filter: VFolderFilter\n  $limit: Int!\n  $offset: Int!\n) {\n  scopedVFoldersV2(scope: $scope, filter: $filter, limit: $limit, offset: $offset, orderBy: [{field: CREATED_AT, direction: DESC}]) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        host\n        metadata {\n          name\n          usageMode\n          createdAt\n        }\n        accessControl {\n          permission\n          ownershipType\n        }\n        ownership {\n          creatorEmail\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "43528c82db498628c503a99a75f769f4";
+(node as any).hash = "e56e58250e40cdf45afe8744a81510f4";
 
 export default node;

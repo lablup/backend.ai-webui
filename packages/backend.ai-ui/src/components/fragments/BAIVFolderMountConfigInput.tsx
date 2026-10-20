@@ -1,29 +1,17 @@
-import type {
-  BAIVFolderMountConfigInputFoldersQuery,
-  BAIVFolderMountConfigInputFoldersQuery$data,
-} from '../../__generated__/BAIVFolderMountConfigInputFoldersQuery.graphql';
-import type { BAIVFolderMountConfigInputMountableQuery } from '../../__generated__/BAIVFolderMountConfigInputMountableQuery.graphql';
 import { App } from '../../app-shim';
 import { Form, type RuleObject } from '../../form-engine';
-import { toLocalId } from '../../helper';
-import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useControllableValue } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import {
-  MOUNT_FOLDER_PAGE_SIZE,
   mountableVFolderFilter,
   mountableVFolderScope,
+  useSuspendedAutoMountedVFolders,
   type AutoMountedFolder,
   type VFolderFilter,
 } from '../../hooks/useMountableVFolders';
-import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
-import { BAIUserUnionIcon } from '../../icons';
 import BAIButton from '../BAIButton';
 import BAICard from '../BAICard';
-import BAIComplexSelect, {
-  type BAIComplexSelectValue,
-  type BAILabeledValue,
-} from '../BAIComplexSelect';
+import type { BAILabeledValue } from '../BAIComplexSelect';
 import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
 import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
@@ -31,23 +19,19 @@ import BAIText from '../BAIText';
 import BAIVFolderIdenticon from '../BAIVFolderIdenticon';
 import BAIVFolderPathPicker from '../baiClient/FileExplorer/BAIVFolderPathPicker';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
+import BAIScopedVFolderSelect, {
+  type BAIScopedVFolderSelectRef,
+  type ScopedVFolderResolution,
+} from './BAIScopedVFolderSelect';
 import './BAIVFolderMountConfigInput.css';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
 import { TextInput } from '@lablup/ui-common/TextInput';
 import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useTheme } from '@lablup/ui-common/theme';
-import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { ArrowRight, PlusIcon, RotateCw, User, XIcon } from 'lucide-react';
-import React, {
-  useEffect,
-  useEffectEvent,
-  useImperativeHandle,
-  useState,
-  useTransition,
-} from 'react';
-import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay';
+import { ArrowRight, PlusIcon, RotateCw, XIcon } from 'lucide-react';
+import React, { useImperativeHandle, useRef, useTransition } from 'react';
 import type { LinkProps } from 'react-router-dom';
 
 export type { AutoMountedFolder };
@@ -71,7 +55,7 @@ export interface VFolderMountConfigValue {
 }
 
 export interface BAIVFolderMountConfigInputRef {
-  /** Re-runs the folder list query behind the folder select. */
+  /** Re-reads the folder options and the auto-mounted folders. */
   refetch: () => Promise<unknown>;
 }
 
@@ -98,12 +82,6 @@ export interface BAIVFolderMountConfigInputProps {
   disabled?: boolean;
   /** Base path prepended to a relative alias input. */
   aliasBasePath?: string;
-  /**
-   * Folders that are auto-mounted. Their default mount paths
-   * (`${aliasBasePath}${name}`) join the overlap set so a colliding user alias
-   * is flagged, and they are shown as a read-only token list at the bottom.
-   */
-  autoMountedFolders?: Array<AutoMountedFolder>;
   /**
    * Route that opens a folder in the host's folder explorer. Given, every
    * folder name the component renders becomes a link to it.
@@ -329,71 +307,11 @@ export const useVFolderMountConfigFormRule = (
   };
 };
 
-type FolderNode = NonNullable<
-  BAIVFolderMountConfigInputFoldersQuery$data['scopedVFoldersV2']
->['edges'][number]['node'];
-
-const MOUNT_PERMISSION_LETTERS: Record<
-  string,
-  Array<{ label: string; color: 'green' | 'blue' | 'red' }>
-> = {
-  READ_ONLY: [{ label: 'R', color: 'green' }],
-  READ_WRITE: [
-    { label: 'R', color: 'green' },
-    { label: 'W', color: 'blue' },
-  ],
-  RW_DELETE: [
-    { label: 'R', color: 'green' },
-    { label: 'W', color: 'blue' },
-    { label: 'D', color: 'red' },
-  ],
-};
-
-/** The caller's mount level on a folder, as welded tokens in the data page's colours. */
-const VFolderPermissionBadge: React.FC<{ permission: string }> = ({
-  permission,
-}) => {
-  'use memo';
-  return (
-    <span className="bai-vfolder-mount-config__permission">
-      {(MOUNT_PERMISSION_LETTERS[permission] ?? []).map(({ label, color }) => (
-        <Token key={label} label={label} color={color} size="sm" />
-      ))}
-    </span>
-  );
-};
-
-/** Second line of a folder option: who owns it, what it is for, where it is. */
-const VFolderOptionMeta: React.FC<{
-  folder: FolderNode;
-  projectName?: string;
-}> = ({ folder, projectName }) => {
-  'use memo';
-  const { t } = useBAIi18n();
-  const isUserOwned = folder.accessControl.ownershipType === 'USER';
-  const owner = isUserOwned
-    ? folder.ownership.creatorEmail ||
-      t('comp:BAIVFolderMountConfigInput.OwnerUser')
-    : projectName || t('comp:BAIVFolderMountConfigInput.OwnerProject');
-  const createdAt = dayjs(folder.metadata.createdAt);
-  return (
-    <span className="bai-vfolder-mount-config__option-meta">
-      <span>
-        {isUserOwned ? <User size="1em" /> : <BAIUserUnionIcon />}
-        {owner}
-      </span>
-      <span>{folder.metadata.usageMode.toLowerCase()}</span>
-      <span>{folder.host}</span>
-      {createdAt.isValid() && <span>{createdAt.format('ll')}</span>}
-    </span>
-  );
-};
-
 /**
- * Reusable input for configuring vfolder mounts. The options page through
- * `scopedVFoldersV2` over the caller's and the current project's folders,
- * filtered on the server; the component suspends on the first page, so the
- * consumer owns the Suspense boundary.
+ * Reusable input for configuring vfolder mounts. Folders are picked with
+ * `BAIScopedVFolderSelect` over the caller's and the current project's scope,
+ * and the auto-mounted folders are read here too; both suspend on first load,
+ * so the consumer owns the Suspense boundary.
  *
  * Props, form gating and usage: `BAIVFolderMountConfigInput.doc.ts`.
  */
@@ -404,7 +322,6 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   filter,
   disabled,
   aliasBasePath = DEFAULT_ALIAS_BASE_PATH,
-  autoMountedFolders,
   folderExplorerPath,
   onClickCreateFolder,
   ref,
@@ -415,211 +332,57 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   const { message } = App.useApp();
   const { token } = useTheme();
   const baiClient = useConnectedBAIClient();
-  const relayEnv = useRelayEnvironment();
   const [value, setValue] = useControllableValue<VFolderMountConfigValue[]>(
     props,
     { defaultValue: [] },
   );
-  const [searchStr, setSearchStr] = useState('');
-  const deferredSearchStr = useDebouncedDeferredValue(searchStr);
-  const [fetchKey, setFetchKey] = useState(0);
+  const selectRef = useRef<BAIScopedVFolderSelectRef>(null);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
-
-  const scope = mountableVFolderScope(baiClient.user_uuid, currentProjectId);
-  const gateFilter = mountableVFolderFilter(mountableHosts);
-
-  const { paginationData, result, loadNext, isLoadingNext } =
-    useLazyPaginatedQuery<BAIVFolderMountConfigInputFoldersQuery, FolderNode>(
-      graphql`
-        query BAIVFolderMountConfigInputFoldersQuery(
-          $scope: VFolderScope!
-          $filter: VFolderFilter
-          $limit: Int!
-          $offset: Int!
-        ) {
-          scopedVFoldersV2(
-            scope: $scope
-            filter: $filter
-            limit: $limit
-            offset: $offset
-            orderBy: [{ field: CREATED_AT, direction: DESC }]
-          ) {
-            count
-            edges {
-              node {
-                id
-                host
-                metadata {
-                  name
-                  usageMode
-                  createdAt
-                }
-                accessControl {
-                  permission
-                  ownershipType
-                }
-                ownership {
-                  creatorEmail
-                }
-              }
-            }
-          }
-        }
-      `,
-      { limit: MOUNT_FOLDER_PAGE_SIZE },
-      {
-        scope,
-        // Dotfile folders are mounted by the session itself, so never offered.
-        filter: {
-          AND: _.compact([
-            gateFilter,
-            { status: { equals: 'READY' } },
-            { name: { notStartsWith: '.' } },
-            deferredSearchStr
-              ? { name: { iContains: deferredSearchStr } }
-              : null,
-            filter,
-          ]),
-        },
-      },
-      { fetchKey, fetchPolicy: 'store-and-network' },
-      {
-        getTotal: (data) => data.scopedVFoldersV2?.count ?? undefined,
-        getItem: (data) =>
-          data.scopedVFoldersV2?.edges.map((edge) => edge.node),
-        getId: (node) => node?.id,
-      },
-    );
+  const { autoMountedFolders, refetch: refetchAutoMountedFolders } =
+    useSuspendedAutoMountedVFolders({ currentProjectId, mountableHosts });
 
   const refetch = () => {
-    startRefetchTransition(() => setFetchKey((key) => key + 1));
+    startRefetchTransition(() => {
+      selectRef.current?.refetch();
+      refetchAutoMountedFolders();
+    });
     return Promise.resolve();
   };
   useImperativeHandle(ref, () => ({ refetch }));
 
   const mountConfigs = value ?? [];
-  // The select is `labelInValue`-shaped, so the folder name travels with the
-  // selection and no separate name lookup is needed.
-  const selectedFolders: BAILabeledValue[] = mountConfigs.map((entry) => ({
-    value: entry.vfolderId,
-    label: entry.name || entry.vfolderId,
-  }));
-
-  const folderOptions = _.map(paginationData, (folder) => {
-    const uuid = toLocalId(folder.id);
-    return {
-      value: uuid,
-      label: folder.metadata.name,
-      // The server refuses to mount a folder whose mount level is NONE.
-      disabled: folder.accessControl.permission === 'NONE',
-      icon: (
-        <BAIVFolderIdenticon
-          vfolderId={uuid}
-          className="bai-vfolder-mount-config__option-icon"
-        />
-      ),
-      description: (
-        <VFolderOptionMeta folder={folder} projectName={currentProjectName} />
-      ),
-      extra: (
-        <VFolderPermissionBadge permission={folder.accessControl.permission} />
-      ),
-    };
-  });
-  const offeredIdSet = new Set(
-    _.map(
-      _.filter(folderOptions, (option) => !option.disabled),
-      'value',
-    ),
-  );
-  // Resolve each entry's mount destination + validity once via the same
-  // exported helper a consumer uses to gate the form, then read per row below.
   const statusByVFolderId = getVFolderMountConfigStatuses(mountConfigs, {
     aliasBasePath,
     autoMountedFolders,
   });
 
   // A value restored from a template or a URL can name a folder this user and
-  // project cannot mount. Drop it rather than letting the launch fail server
-  // side, and say so. A folder offered in the loaded options is mountable, so
-  // only the rest is looked up by id.
-  const [checkedIds, setCheckedIds] = useState<ReadonlySet<string>>(
-    () => new Set(),
-  );
-  const uncheckedKey = _.sortBy(
-    mountConfigs
-      .map((entry) => entry.vfolderId)
-      .filter((id) => !offeredIdSet.has(id) && !checkedIds.has(id)),
-  ).join(',');
-  const fetchMountableIds = useEffectEvent((ids: string[]) =>
-    fetchQuery<BAIVFolderMountConfigInputMountableQuery>(
-      relayEnv,
-      graphql`
-        query BAIVFolderMountConfigInputMountableQuery(
-          $scope: VFolderScope!
-          $filter: VFolderFilter
-          $limit: Int!
-        ) {
-          scopedVFoldersV2(scope: $scope, filter: $filter, limit: $limit) {
-            edges {
-              node {
-                id
-                accessControl {
-                  permission
-                }
-              }
-            }
-          }
-        }
-      `,
-      {
-        scope,
-        filter: { AND: [gateFilter, { entityId: { in: ids } }] },
-        limit: ids.length,
-      },
-    )
-      .toPromise()
-      .then(
-        (data) =>
-          new Set(
-            _.map(
-              _.filter(
-                data?.scopedVFoldersV2?.edges,
-                (edge) => edge.node.accessControl.permission !== 'NONE',
-              ),
-              (edge) => toLocalId(edge.node.id),
-            ),
-          ),
-      )
-      // A failed check proves nothing, so nothing is dropped on it.
-      .catch(() => new Set(ids)),
-  );
-  const pruneUnmountableEntries = useEffectEvent(
-    (ids: string[], mountableIds: Set<string>) => {
-      setCheckedIds((prev) => new Set([...prev, ...ids]));
-      const removed = ids.filter((id) => !mountableIds.has(id));
-      if (removed.length === 0) return;
-      setValue((prev) =>
-        prev.filter((entry) => !removed.includes(entry.vfolderId)),
-      );
+  // project cannot mount, or carry no name. Drop the former with a warning
+  // rather than letting the launch fail server side; name the latter.
+  const handleResolve = ({ resolved, unresolved }: ScopedVFolderResolution) => {
+    const nameById = _.fromPairs(
+      resolved.map((folder) => [folder.entityId, folder.name]),
+    );
+    const isRenamed = (entry: VFolderMountConfigValue) =>
+      !!nameById[entry.vfolderId] && entry.name !== nameById[entry.vfolderId];
+    if (unresolved.length === 0 && !mountConfigs.some(isRenamed)) return;
+    setValue((prev) =>
+      prev
+        .filter((entry) => !unresolved.includes(entry.vfolderId))
+        .map((entry) =>
+          isRenamed(entry)
+            ? { ...entry, name: nameById[entry.vfolderId] }
+            : entry,
+        ),
+    );
+    if (unresolved.length > 0) {
       message.warning(
         t('comp:BAIVFolderMountConfigInput.UnmountableFoldersRemoved'),
       );
-    },
-  );
-  useEffect(() => {
-    if (!uncheckedKey) return;
-    const ids = uncheckedKey.split(',');
-    void fetchMountableIds(ids).then((mountableIds) =>
-      pruneUnmountableEntries(ids, mountableIds),
-    );
-  }, [uncheckedKey]);
+    }
+  };
 
-  // The select's value carries the folder name, so a new entry is named on the
-  // spot and no backfill pass is needed.
-  const handleSelectionChange = (next: BAIComplexSelectValue) => {
-    const selected =
-      next === null || next === undefined ? [] : _.castArray(next);
+  const handleSelectionChange = (selected: Array<BAILabeledValue>) => {
     setValue(
       selected.map((item) => {
         const existing = mountConfigs.find(
@@ -641,7 +404,8 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   return (
     <BAIFlex direction="column" align="stretch" gap="xs">
       <BAIFlex direction="row" gap="xs" justify="between">
-        <BAIComplexSelect
+        <BAIScopedVFolderSelect
+          ref={selectRef}
           multiple
           allowClear
           selectionMark="checkbox"
@@ -649,15 +413,31 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
           isLabelHidden
           isDisabled={disabled}
           placeholder={t('comp:BAIVFolderMountConfigInput.SelectFolder')}
-          isLoading={searchStr !== deferredSearchStr || isPendingRefetch}
-          isLoadingNext={isLoadingNext}
-          total={result.scopedVFoldersV2?.count ?? undefined}
-          options={folderOptions}
-          value={selectedFolders}
-          onChange={handleSelectionChange}
-          searchValue={searchStr}
-          onSearch={setSearchStr}
-          endReached={loadNext}
+          scope={mountableVFolderScope(baiClient.user_uuid, currentProjectId)}
+          filter={mountableVFolderFilter(mountableHosts)}
+          // Dotfile folders are mounted by the session itself, so never offered.
+          optionFilter={{
+            AND: _.compact([
+              { status: { equals: 'READY' } },
+              { name: { notStartsWith: '.' } },
+              filter,
+            ]),
+          }}
+          // The server refuses to mount a folder whose mount level is NONE.
+          isFolderDisabled={(folder) => folder.permission === 'NONE'}
+          currentProjectName={currentProjectName}
+          value={mountConfigs.map((entry) => entry.vfolderId)}
+          fallbackLabels={_.fromPairs(
+            _.compact(
+              mountConfigs.map((entry) =>
+                entry.name ? [entry.vfolderId, entry.name] : null,
+              ),
+            ),
+          )}
+          onChange={(_ids, options) =>
+            handleSelectionChange(_.castArray(options ?? []))
+          }
+          onResolve={handleResolve}
         />
         <ButtonGroup label={t('comp:BAIVFolderMountConfigInput.Folders')}>
           {onClickCreateFolder ? (
@@ -849,7 +629,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
           </div>
         </BAICard>
       )}
-      {autoMountedFolders && autoMountedFolders.length > 0 && (
+      {autoMountedFolders.length > 0 && (
         <BAIFlex gap="xxs" align="center" wrap="wrap">
           <BAIText type="secondary">
             {t('comp:BAIVFolderMountConfigInput.AutoMountedFolders')}

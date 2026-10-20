@@ -133,6 +133,14 @@ export type {
   BAIVFolderPermission,
   BAIVFolderSelectRef,
 } from './BAIVFolderSelect';
+export { default as BAIScopedVFolderSelect } from './BAIScopedVFolderSelect';
+export type {
+  BAIScopedVFolderSelectProps,
+  BAIScopedVFolderSelectRef,
+  ScopedVFolderNode,
+  ScopedVFolderResolution,
+  ScopedVFolderSummary,
+} from './BAIScopedVFolderSelect';
 export { default as BAIVFolderMountConfigInput } from './BAIVFolderMountConfigInput';
 export {
   inputToMountDestination,

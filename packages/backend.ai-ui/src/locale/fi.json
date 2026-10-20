@@ -558,6 +558,11 @@
     "To": "Kohdetila",
     "UpdatedAt": "Päivitetty"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "OwnerProject": "Projekti",
+    "OwnerUser": "Käyttäjä",
+    "SelectFolder": "Valitse kansio"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agentti"
   },
@@ -616,8 +621,6 @@
     "CreateFolder": "Luo uusi tallennuskansio",
     "DestinationPath": "Kontin polku (destination)",
     "Folders": "Kansiot",
-    "OwnerProject": "Projekti",
-    "OwnerUser": "Käyttäjä",
     "PathAndAliasTooltip": "Polku säilön sisällä, johon kansio liitetään. Jätä tyhjäksi käyttääksesi oletuspolkua.",
     "Refresh": "Päivitä",
     "RemoveFolder": "Poista",

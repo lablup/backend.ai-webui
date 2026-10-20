@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4dfc1394c1b2fbd8611bba4edcc97b5c>>
+ * @generated SignedSource<<b174d8df49c4bb313c96659b96a73d5b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,6 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
-export type VFolderOwnershipType = "GROUP" | "USER" | "%future added value";
 export type VFolderUsageMode = "DATA" | "GENERAL" | "MODEL" | "%future added value";
 export type VFolderScope = {
   domain?: ReadonlyArray<UUIDScope> | null | undefined;
@@ -95,38 +94,31 @@ export type UUIDFilter = {
   notEquals?: string | null | undefined;
   notIn?: ReadonlyArray<string> | null | undefined;
 };
-export type BAIVFolderMountConfigInputFoldersQuery$variables = {
+export type BAIScopedVFolderSelectValueQuery$variables = {
   filter?: VFolderFilter | null | undefined;
   limit: number;
-  offset: number;
   scope: VFolderScope;
 };
-export type BAIVFolderMountConfigInputFoldersQuery$data = {
+export type BAIScopedVFolderSelectValueQuery$data = {
   readonly scopedVFoldersV2: {
-    readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly accessControl: {
-          readonly ownershipType: VFolderOwnershipType;
           readonly permission: VFolderMountPermission;
         };
+        readonly entityId: string;
         readonly host: string;
         readonly id: string;
         readonly metadata: {
-          readonly createdAt: string;
           readonly name: string;
-          readonly usageMode: VFolderUsageMode;
-        };
-        readonly ownership: {
-          readonly creatorEmail: string | null | undefined;
         };
       };
     }>;
   } | null | undefined;
 };
-export type BAIVFolderMountConfigInputFoldersQuery = {
-  response: BAIVFolderMountConfigInputFoldersQuery$data;
-  variables: BAIVFolderMountConfigInputFoldersQuery$variables;
+export type BAIScopedVFolderSelectValueQuery = {
+  response: BAIScopedVFolderSelectValueQuery$data;
+  variables: BAIScopedVFolderSelectValueQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -143,14 +135,9 @@ v1 = {
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "offset"
-},
-v3 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
   "name": "scope"
 },
-v4 = [
+v3 = [
   {
     "alias": null,
     "args": [
@@ -166,21 +153,6 @@ v4 = [
       },
       {
         "kind": "Variable",
-        "name": "offset",
-        "variableName": "offset"
-      },
-      {
-        "kind": "Literal",
-        "name": "orderBy",
-        "value": [
-          {
-            "direction": "DESC",
-            "field": "CREATED_AT"
-          }
-        ]
-      },
-      {
-        "kind": "Variable",
         "name": "scope",
         "variableName": "scope"
       }
@@ -190,13 +162,6 @@ v4 = [
     "name": "scopedVFoldersV2",
     "plural": false,
     "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "count",
-        "storageKey": null
-      },
       {
         "alias": null,
         "args": null,
@@ -224,6 +189,13 @@ v4 = [
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
+                "name": "entityId",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "host",
                 "storageKey": null
               },
@@ -240,20 +212,6 @@ v4 = [
                     "args": null,
                     "kind": "ScalarField",
                     "name": "name",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "usageMode",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "createdAt",
                     "storageKey": null
                   }
                 ],
@@ -272,31 +230,6 @@ v4 = [
                     "args": null,
                     "kind": "ScalarField",
                     "name": "permission",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "ownershipType",
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "VFolderOwnershipInfo",
-                "kind": "LinkedField",
-                "name": "ownership",
-                "plural": false,
-                "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "creatorEmail",
                     "storageKey": null
                   }
                 ],
@@ -317,39 +250,37 @@ return {
     "argumentDefinitions": [
       (v0/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/),
-      (v3/*: any*/)
+      (v2/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "BAIVFolderMountConfigInputFoldersQuery",
-    "selections": (v4/*: any*/),
+    "name": "BAIScopedVFolderSelectValueQuery",
+    "selections": (v3/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v3/*: any*/),
+      (v2/*: any*/),
       (v0/*: any*/),
-      (v1/*: any*/),
-      (v2/*: any*/)
+      (v1/*: any*/)
     ],
     "kind": "Operation",
-    "name": "BAIVFolderMountConfigInputFoldersQuery",
-    "selections": (v4/*: any*/)
+    "name": "BAIScopedVFolderSelectValueQuery",
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "1c78bb603d47638ee3e4eb1100e15f28",
+    "cacheID": "46208ed0ca8e8de79641489fe327c88c",
     "id": null,
     "metadata": {},
-    "name": "BAIVFolderMountConfigInputFoldersQuery",
+    "name": "BAIScopedVFolderSelectValueQuery",
     "operationKind": "query",
-    "text": "query BAIVFolderMountConfigInputFoldersQuery(\n  $scope: VFolderScope!\n  $filter: VFolderFilter\n  $limit: Int!\n  $offset: Int!\n) {\n  scopedVFoldersV2(scope: $scope, filter: $filter, limit: $limit, offset: $offset, orderBy: [{field: CREATED_AT, direction: DESC}]) {\n    count\n    edges {\n      node {\n        id\n        host\n        metadata {\n          name\n          usageMode\n          createdAt\n        }\n        accessControl {\n          permission\n          ownershipType\n        }\n        ownership {\n          creatorEmail\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIScopedVFolderSelectValueQuery(\n  $scope: VFolderScope!\n  $filter: VFolderFilter\n  $limit: Int!\n) {\n  scopedVFoldersV2(scope: $scope, filter: $filter, limit: $limit) {\n    edges {\n      node {\n        id\n        entityId\n        host\n        metadata {\n          name\n        }\n        accessControl {\n          permission\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b54ed991ac1784f1677dc467088a407d";
+(node as any).hash = "deca5d19e764a77491af629a0c73b0aa";
 
 export default node;

@@ -28,11 +28,11 @@ const SessionLauncherStorageStep: React.FC<{
   const mountConfigInputRef = useRef<BAIVFolderMountConfigInputRef>(null);
 
   const mountableHosts = useMountableStorageHosts(project.id);
-  const { autoMountedFolders, refetch: refetchAutoMountedFolders } =
-    useSuspendedAutoMountedVFolders({
-      currentProjectId: project.id,
-      mountableHosts,
-    });
+  // Shares the query the input reads, so the input's refetch reaches this rule.
+  const { autoMountedFolders } = useSuspendedAutoMountedVFolders({
+    currentProjectId: project.id,
+    mountableHosts,
+  });
   const mountConfigRule = useVFolderMountConfigFormRule({ autoMountedFolders });
   const { generateFolderPath } = useFolderExplorerOpener();
 
@@ -52,7 +52,6 @@ const SessionLauncherStorageStep: React.FC<{
             currentProjectId={project.id}
             currentProjectName={project.name}
             mountableHosts={mountableHosts}
-            autoMountedFolders={autoMountedFolders}
             folderExplorerPath={generateFolderPath}
             onClickCreateFolder={() => setIsCreateModalOpen(true)}
           />
@@ -66,10 +65,7 @@ const SessionLauncherStorageStep: React.FC<{
           if (!response) return;
           await mountConfigInputRef.current?.refetch();
           // A dotfile folder is auto-mounted by the session, never selected.
-          if (isAutoMountFolderName(response.metadata.name)) {
-            refetchAutoMountedFolders();
-            return;
-          }
+          if (isAutoMountFolderName(response.metadata.name)) return;
           // The create mutation answers with a Relay global id.
           const vfolderId = safeDecodeUuid(response.id);
           if (!vfolderId) return;

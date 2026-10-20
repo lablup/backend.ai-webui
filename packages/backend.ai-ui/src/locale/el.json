@@ -558,6 +558,11 @@
     "To": "Κατάσταση προορισμού",
     "UpdatedAt": "Ενημερώθηκε στις"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "OwnerProject": "Έργο",
+    "OwnerUser": "Χρήστης",
+    "SelectFolder": "Επιλογή φακέλου"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Μέσο"
   },
@@ -616,8 +621,6 @@
     "CreateFolder": "Δημιουργήστε έναν νέο φάκελο αποθήκευσης",
     "DestinationPath": "Διαδρομή container (destination)",
     "Folders": "Φάκελοι",
-    "OwnerProject": "Έργο",
-    "OwnerUser": "Χρήστης",
     "PathAndAliasTooltip": "Η διαδρομή εντός του container όπου θα προσαρτηθεί ο φάκελος. Αφήστε κενό για να χρησιμοποιηθεί η προεπιλεγμένη διαδρομή.",
     "Refresh": "Φρεσκάρω",
     "RemoveFolder": "Αφαίρεση",
