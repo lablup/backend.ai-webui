@@ -38,7 +38,7 @@ export const useBAIFormListInputCellStatus = ():
   }
   const message = _.find(
     status === 'error' ? errors : warnings,
-    (entry): entry is string => typeof entry === 'string',
+    (entry): entry is string => typeof entry === 'string' && entry !== '',
   );
   return { status: { type: status, message }, statusVariant: 'tooltip' };
 };
