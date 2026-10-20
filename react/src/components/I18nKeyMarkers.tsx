@@ -2,9 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { BAIText } from 'backend.ai-ui';
-import { GlobeIcon } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import './I18nKeyMarkers.css';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { CheckIcon, GlobeIcon } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 // Debug-mode i18n keys ride along in `t()` output as invisible Unicode tag
@@ -48,6 +49,73 @@ interface Anchor {
 
 const ANCHOR_ATTR = 'data-i18n-key-anchor';
 
+// `execCommand` covers plain HTTP and contexts where the Clipboard API is denied.
+const copyText = async (text: string) => {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.append(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    textarea.remove();
+  }
+};
+
+interface HoveredKey {
+  id: number;
+  anchorRef: React.RefObject<HTMLElement | null>;
+  i18nKey: string;
+}
+
+let hoverSequence = 0;
+
+const I18nKeyIcon: React.FC<{
+  i18nKey: string;
+  onHoverChange: (hovered: HoveredKey | null) => void;
+}> = ({ i18nKey, onHoverChange }) => {
+  'use memo';
+  const [copied, setCopied] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(
+    () => () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    },
+    [],
+  );
+
+  return (
+    <span
+      className="i18n-key-marker"
+      role="img"
+      aria-label={i18nKey}
+      onMouseEnter={(e) =>
+        onHoverChange({
+          id: ++hoverSequence,
+          anchorRef: { current: e.currentTarget },
+          i18nKey,
+        })
+      }
+      onMouseLeave={() => onHoverChange(null)}
+      // The icon often sits inside a link or a button; keep the click here.
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        void copyText(i18nKey).then(() => {
+          setCopied(true);
+          if (timerRef.current) clearTimeout(timerRef.current);
+          timerRef.current = setTimeout(() => setCopied(false), 1500);
+        });
+      }}
+    >
+      {copied ? <CheckIcon aria-hidden /> : <GlobeIcon aria-hidden />}
+    </span>
+  );
+};
+
 /**
  * Puts a copyable globe icon after every text node that carries a debug-mode
  * i18n key marker. Each icon renders through a portal into a span inserted
@@ -57,6 +125,7 @@ const I18nKeyMarkers: React.FC = () => {
   'use memo';
   const [active, setActive] = useState(markerAnnounced);
   const [anchors, setAnchors] = useState<Anchor[]>([]);
+  const [hovered, setHovered] = useState<HoveredKey | null>(null);
 
   useEffect(() => {
     if (active) return;
@@ -153,19 +222,22 @@ const I18nKeyMarkers: React.FC = () => {
       {anchors.map(({ container, keys }, anchorIndex) =>
         createPortal(
           keys.map((key, index) => (
-            <BAIText
-              key={index}
-              style={{ marginLeft: 4 }}
-              copyable={{
-                text: key,
-                tooltips: [key, key],
-                icon: <GlobeIcon />,
-              }}
-            />
+            <I18nKeyIcon key={index} i18nKey={key} onHoverChange={setHovered} />
           )),
           container,
           String(anchorIndex),
         ),
+      )}
+      {/* One shared tooltip rendered here: a per-icon Tooltip inside a link
+          or button portals into the label's text-only parent element. */}
+      {hovered && (
+        <Tooltip
+          key={hovered.id}
+          anchorRef={hovered.anchorRef}
+          content={hovered.i18nKey}
+          delay={0}
+          isOpen
+        />
       )}
     </>
   );
