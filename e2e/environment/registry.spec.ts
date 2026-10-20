@@ -790,7 +790,15 @@ test.describe(
         !anchorName,
         'Needs a stable registry whose name does not contain "cr" to verify the list is restored after clearing the filter',
       );
-      const anchorRow = rows.filter({ hasText: anchorName });
+      // Match the name cell exactly: a substring match also catches e2e rows
+      // whose names contain the anchor's (e.g. "test" in "e2e-test-registry-…").
+      const anchorRow = rows.filter({
+        has: page.locator('td:first-child', {
+          hasText: new RegExp(
+            `^${anchorName!.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
+          ),
+        }),
+      });
 
       // Apply filter — the anchor row must be filtered out
       await applyRegistryFilter(page, 'cr');

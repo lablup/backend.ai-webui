@@ -24,6 +24,27 @@
     min-width: 0;
   }
 
+  /* Tokenizer pins its clear/busy lane absolutely over the first row and
+     parks the empty input absolutely behind the chips, so a chip ran under
+     Clear all and a wide chip covered the whole input. Reserve the lane for
+     the chips and keep the input in flow after them. */
+  .bai-power-search .astryx-tokenizer:has(.astryx-token) {
+    padding-inline-end: calc(
+      var(--_tokenizer-end-lane-reserve, 0px) + var(--spacing-1)
+    );
+  }
+
+  .bai-power-search .astryx-tokenizer:has(.astryx-token) > input {
+    position: relative;
+    inset: auto;
+    transform: none;
+    flex: 1 1 40px;
+    width: 0;
+    min-width: 40px;
+    padding-inline-end: 0;
+    text-align: start;
+  }
+
   /* `Token`'s click target is `all: unset`, which inlines the label and so
      disables its `text-overflow: ellipsis`; a block label truncates. */
   .bai-power-search .astryx-token > button > span:not(.astryx-icon) {
