@@ -2,8 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { resolveApiEndpoint } from '../hooks/useResolvedApiEndpoint';
 import { fetchAppConfigOnce } from '../hooks/useWebUIConfig';
+import {
+  fetchPublicDomainConfigOnce,
+  resolvePublicConfigTarget,
+} from './publicAppConfig';
 import * as _ from 'lodash-es';
 
 /**
@@ -242,66 +245,27 @@ function injectFontCSS(fontFamilies: string[]) {
   }
 }
 
-// `general.apiDomainName` from config.toml: webserver-hosted deployments are
-// 1:1 with a domain and expose it there (BA-7405/BA-7406). Electron / direct
-// API mode has no single domain, so this stays undefined and the theme keeps
-// theme.json.
-const resolveConfigDomainName = async (): Promise<string | undefined> => {
-  try {
-    const { config } = await fetchAppConfigOnce();
-    const raw = config?.general?.apiDomainName;
-    return typeof raw === 'string' && raw.trim() ? raw.trim() : undefined;
-  } catch {
-    return undefined;
-  }
-};
-
-// config.toml `apiEndpoint`, else the stored login endpoint.
-const resolveRestBase = async (): Promise<string> => {
-  const endpoint = await resolveApiEndpoint();
-  return endpoint.replace(/^"+|"+$/g, '').replace(/\/+$/, '');
-};
-
 /**
- * `publicConfigByDomain` read path (FR-1964). REST (`POST
- * /func/v2/app-config/public/get`, served anonymously) rather than
- * GraphQL/Relay: this runs once at bootstrap, before login and outside
- * `RelayEnvironmentProvider`, so the domain and endpoint come from config.toml
- * (or the stored login endpoint), never from a connected client. A session
- * that cannot fetch here keeps theme.json until the next reload — accepted per
- * FR-1964; there is no retry and no connect listener.
+ * The domain's saved `appearance` slice out of the one anonymous
+ * `publicConfigByDomain` read per page load (`publicAppConfig.ts`). A
+ * session that cannot fetch it keeps theme.json until the next reload —
+ * accepted per FR-1964; there is no retry and no connect listener.
  */
 const fetchDomainDoc = async (): Promise<BAIAppearanceConfig | undefined> => {
   try {
-    const domainName = await resolveConfigDomainName();
-    if (!domainName) {
+    const { config } = await fetchAppConfigOnce();
+    const target = resolvePublicConfigTarget(config);
+    if (!target) {
       return undefined;
     }
-    const base = await resolveRestBase();
-    if (!base) {
-      return undefined;
-    }
-    const response = await fetch(`${base}/func/v2/app-config/public/get`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ config_names: ['publicConfigByDomain'] }),
-    });
-    if (!response.ok) {
-      throw new Error(
-        `Failed to load the public app config: ${response.status}`,
-      );
-    }
-    const payload = await response.json();
-    const doc = payload?.app_configs?.find(
-      (c: { config_name: string }) => c.config_name === 'publicConfigByDomain',
-    )?.config;
-    const slice = _.get(doc, [domainName, DOMAIN_APPEARANCE_CONFIG_KEY]);
+    const slice = await fetchPublicDomainConfigOnce(target);
+    const doc = slice?.[DOMAIN_APPEARANCE_CONFIG_KEY];
     // No saved slice is the normal case; only a present-but-invalid one warns.
-    return _.isNil(slice)
+    return _.isNil(doc)
       ? undefined
       : pickValidAppearanceConfig(
-          slice,
-          `publicConfigByDomain[${domainName}].appearance`,
+          doc,
+          `publicConfigByDomain[${target.domainName}].appearance`,
         );
   } catch (error) {
     logAppearanceError(

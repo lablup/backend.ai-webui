@@ -17,6 +17,14 @@ import {
   refreshConfigFromToml,
   type LoginConfigState,
 } from '../helper/loginConfig';
+import {
+  fetchPublicDomainConfigOnce,
+  resolvePublicConfigTarget,
+} from '../helper/publicAppConfig';
+import {
+  applyWebUISettings,
+  WEBUI_SETTINGS_CONFIG_KEY,
+} from '../helper/webuiSettings';
 import { useBAILogger } from 'backend.ai-ui';
 import { atom, useAtomValue, useSetAtom, useStore } from 'jotai';
 import type { createStore } from 'jotai';
@@ -341,7 +349,20 @@ export function initializeConfigOnce(
         result.config,
       );
 
-      store.set(loginConfigState, loginConfig);
+      // The domain's public `settings` slice overrides the file for the keys
+      // the login page needs before sign-in (#10436); the file is the
+      // fallback for everything it does not carry.
+      const publicSlice = await fetchPublicDomainConfigOnce(
+        resolvePublicConfigTarget(result.config),
+      );
+      store.set(
+        loginConfigState,
+        applyWebUISettings(
+          loginConfig,
+          publicSlice?.[WEBUI_SETTINGS_CONFIG_KEY],
+          'public',
+        ),
+      );
       store.set(autoLogoutState, autoLogout);
       store.set(proxyUrlState, proxyUrl);
       store.set(loginPluginState, loginPlugin);

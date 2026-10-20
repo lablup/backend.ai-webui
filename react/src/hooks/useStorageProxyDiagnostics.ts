@@ -9,7 +9,7 @@ import {
 } from '../diagnostics/rules/storageProxyRules';
 import type { StorageVolumeInfo } from '../diagnostics/rules/storageProxyRules';
 import type { DiagnosticResult } from '../types/diagnostics';
-import { useRawConfig } from './useWebUIConfig';
+import { useLoginConfig } from './useWebUIConfig';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 /**
@@ -40,9 +40,9 @@ export function useStorageProxyDiagnostics(
 ): DiagnosticResult[] {
   'use memo';
 
-  const rawConfig = useRawConfig();
+  const loginConfig = useLoginConfig();
   const storageWarningThreshold = parseStorageWarningThreshold(
-    rawConfig?.resources?.storageWarningThreshold,
+    loginConfig?.storageWarningThreshold,
   );
 
   const { storage_volume_list: storageVolumeList } =
