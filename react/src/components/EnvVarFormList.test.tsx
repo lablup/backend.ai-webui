@@ -30,8 +30,10 @@ const OPTIONAL_ENV_VARS = [
   { variable: 'HF_TOKEN', placeholder: 'Your Hugging Face access token' },
 ];
 
-const ADD_LABEL = 'session.launcher.AddEnvironmentVariable';
-const VARIABLE_LABEL = 'session.launcher.EnvironmentVariable';
+// ListInput's own "Add {itemName}" action; `t` returns keys in this suite.
+const ADD_LABEL = 'Add session.launcher.EnvironmentVariableItemName';
+// Rows after the first carry ", <item> 2 of 2" after the column header.
+const VARIABLE_LABEL = /^session\.launcher\.EnvironmentVariable(,|$)/;
 const REQUIRED_MESSAGE = 'session.launcher.EnterEnvironmentVariable';
 
 /** Focuses the field the way Tab-navigation would, ahead of typing into it. */

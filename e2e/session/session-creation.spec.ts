@@ -289,19 +289,19 @@ test.describe(
         .getByRole('button', { name: '2 Environments & Resource' })
         .click();
       await page
-        .getByRole('button', { name: 'Add environment variables' })
+        .getByRole('button', { name: 'Add environment variable' })
         .click();
       await page.locator('#envvars_0_variable').fill('abc');
       await page.locator('#envvars_0_variable').press('Tab');
       await page.locator('#envvars_0_value').fill('123');
       await page
-        .getByRole('button', { name: 'Add environment variables' })
+        .getByRole('button', { name: 'Add environment variable' })
         .click();
       await page.locator('#envvars_1_variable').fill('password');
       await page.locator('#envvars_1_variable').press('Tab');
       await page.locator('#envvars_1_value').fill('hello');
       await page
-        .getByRole('button', { name: 'Add environment variables' })
+        .getByRole('button', { name: 'Add environment variable' })
         .click();
       await page.locator('#envvars_2_variable').fill('api_key');
       await page.locator('#envvars_2_variable').press('Tab');
