@@ -238,6 +238,8 @@ const BAIEntityLabelSettingModalContent = ({
               })
             : t('comp:BAIEntityLabelSettingModal.EditLabels')
         }
+        // ListInput stacks every row with its own labels below 640px.
+        width={720}
         {...modalProps}
         open={modalProps.open && failures.length === 0}
         okText={t('comp:BAIEntityLabelSettingModal.Save')}
