@@ -49,7 +49,7 @@ The modal contains the following fields:
 - **Deployment Name**: A unique name used to identify the deployment across the dashboard, API, and the endpoint URL.
 - **Resource Group**: The resource group where the deployment will run. If only one resource group is available to your project, the field is auto-selected and you can proceed without choosing one manually.
 - **Desired Replicas**: The number of replicas to keep running for this deployment. The system scales the active pool toward this target.
-- **Tags**: Optional labels for organizing and filtering deployments. Press Enter or comma to add.
+- **Tags**: Optional labels for organizing deployments. Press Enter or comma to add.
 - **Open to Public**: When enabled, the endpoint is reachable without an access token. When disabled, every request must carry a token. See [Access Tokens](#generating-tokens).
 
 :::warning[The resource group and public access are fixed at creation]
