@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b174d8df49c4bb313c96659b96a73d5b>>
+ * @generated SignedSource<<ff0f0874be56d05bc2f1aae83d9da528>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -98,9 +98,10 @@ export type BAIScopedVFolderSelectValueQuery$variables = {
   filter?: VFolderFilter | null | undefined;
   limit: number;
   scope: VFolderScope;
+  skip: boolean;
 };
 export type BAIScopedVFolderSelectValueQuery$data = {
-  readonly scopedVFoldersV2: {
+  readonly scopedVFoldersV2?: {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly accessControl: {
@@ -137,99 +138,112 @@ v2 = {
   "kind": "LocalArgument",
   "name": "scope"
 },
-v3 = [
+v3 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "skip"
+},
+v4 = [
   {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "filter",
-        "variableName": "filter"
-      },
-      {
-        "kind": "Variable",
-        "name": "limit",
-        "variableName": "limit"
-      },
-      {
-        "kind": "Variable",
-        "name": "scope",
-        "variableName": "scope"
-      }
-    ],
-    "concreteType": "VFolderConnection",
-    "kind": "LinkedField",
-    "name": "scopedVFoldersV2",
-    "plural": false,
+    "condition": "skip",
+    "kind": "Condition",
+    "passingValue": false,
     "selections": [
       {
         "alias": null,
-        "args": null,
-        "concreteType": "VFolderEdge",
+        "args": [
+          {
+            "kind": "Variable",
+            "name": "filter",
+            "variableName": "filter"
+          },
+          {
+            "kind": "Variable",
+            "name": "limit",
+            "variableName": "limit"
+          },
+          {
+            "kind": "Variable",
+            "name": "scope",
+            "variableName": "scope"
+          }
+        ],
+        "concreteType": "VFolderConnection",
         "kind": "LinkedField",
-        "name": "edges",
-        "plural": true,
+        "name": "scopedVFoldersV2",
+        "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "VFolder",
+            "concreteType": "VFolderEdge",
             "kind": "LinkedField",
-            "name": "node",
-            "plural": false,
+            "name": "edges",
+            "plural": true,
             "selections": [
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "id",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "entityId",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "host",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "VFolderMetadataInfo",
+                "concreteType": "VFolder",
                 "kind": "LinkedField",
-                "name": "metadata",
+                "name": "node",
                 "plural": false,
                 "selections": [
                   {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "name",
+                    "name": "id",
                     "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "VFolderAccessControlInfo",
-                "kind": "LinkedField",
-                "name": "accessControl",
-                "plural": false,
-                "selections": [
+                  },
                   {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "permission",
+                    "name": "entityId",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "host",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "VFolderMetadataInfo",
+                    "kind": "LinkedField",
+                    "name": "metadata",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "name",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "VFolderAccessControlInfo",
+                    "kind": "LinkedField",
+                    "name": "accessControl",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "permission",
+                        "storageKey": null
+                      }
+                    ],
                     "storageKey": null
                   }
                 ],
@@ -241,8 +255,7 @@ v3 = [
         ],
         "storageKey": null
       }
-    ],
-    "storageKey": null
+    ]
   }
 ];
 return {
@@ -250,12 +263,13 @@ return {
     "argumentDefinitions": [
       (v0/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/)
+      (v2/*: any*/),
+      (v3/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "BAIScopedVFolderSelectValueQuery",
-    "selections": (v3/*: any*/),
+    "selections": (v4/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -264,23 +278,24 @@ return {
     "argumentDefinitions": [
       (v2/*: any*/),
       (v0/*: any*/),
-      (v1/*: any*/)
+      (v1/*: any*/),
+      (v3/*: any*/)
     ],
     "kind": "Operation",
     "name": "BAIScopedVFolderSelectValueQuery",
-    "selections": (v3/*: any*/)
+    "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "46208ed0ca8e8de79641489fe327c88c",
+    "cacheID": "73154a63d6ebf250135148135a87e7f3",
     "id": null,
     "metadata": {},
     "name": "BAIScopedVFolderSelectValueQuery",
     "operationKind": "query",
-    "text": "query BAIScopedVFolderSelectValueQuery(\n  $scope: VFolderScope!\n  $filter: VFolderFilter\n  $limit: Int!\n) {\n  scopedVFoldersV2(scope: $scope, filter: $filter, limit: $limit) {\n    edges {\n      node {\n        id\n        entityId\n        host\n        metadata {\n          name\n        }\n        accessControl {\n          permission\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIScopedVFolderSelectValueQuery(\n  $scope: VFolderScope!\n  $filter: VFolderFilter\n  $limit: Int!\n  $skip: Boolean!\n) {\n  scopedVFoldersV2(scope: $scope, filter: $filter, limit: $limit) @skip(if: $skip) {\n    edges {\n      node {\n        id\n        entityId\n        host\n        metadata {\n          name\n        }\n        accessControl {\n          permission\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "deca5d19e764a77491af629a0c73b0aa";
+(node as any).hash = "5f9aaa64717834b9c7c5bdb417219a10";
 
 export default node;

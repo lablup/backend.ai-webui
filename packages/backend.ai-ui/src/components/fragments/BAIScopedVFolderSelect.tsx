@@ -24,13 +24,14 @@ import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { User } from 'lucide-react';
 import React, {
+  useDeferredValue,
   useEffect,
   useEffectEvent,
   useImperativeHandle,
   useState,
   useTransition,
 } from 'react';
-import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export type ScopedVFolderNode = NonNullable<
   BAIScopedVFolderSelectQuery$data['scopedVFoldersV2']
@@ -82,12 +83,9 @@ export interface BAIScopedVFolderSelectProps extends Omit<
   optionFilter?: VFolderFilter;
   /** A matching option is listed disabled, and a matching selection is reported unresolved. */
   isFolderDisabled?: (folder: ScopedVFolderSummary) => boolean;
-  /** Labels shown for selected ids until the lookup answers. */
+  /** Labels for selected ids the scope and `filter` do not reach. */
   fallbackLabels?: Record<string, string>;
-  /**
-   * Fires once every selected id is accounted for, and again whenever that
-   * outcome changes. Ids whose lookup failed are in neither list.
-   */
+  /** Fires once the selected ids are looked up, and again whenever the outcome changes. */
   onResolve?: (resolution: ScopedVFolderResolution) => void;
   /** Owner line of a project folder; the folder list carries no project name. */
   currentProjectName?: string;
@@ -95,8 +93,6 @@ export interface BAIScopedVFolderSelectProps extends Omit<
 }
 
 const PAGE_SIZE = 100;
-
-type LookupResult = ScopedVFolderSummary | 'missing' | 'failed';
 
 const toSummary = (node: {
   entityId: string;
@@ -168,9 +164,9 @@ const VFolderOptionMeta: React.FC<{
 
 /**
  * Picks vfolders from `scopedVFoldersV2`, paged and searched on the server.
- * The value is folder UUIDs; a selected id the loaded pages do not cover is
- * looked up by `entityId`, which labels it and tells `onResolve` whether the
- * scope still reaches it. Suspends on the first page.
+ * The value is folder UUIDs. The selected ids are looked up by `entityId`
+ * within `scope` and `filter`, which labels them and tells `onResolve` whether
+ * the scope still reaches them. Suspends on the first page and the lookup.
  *
  * Props and usage: `BAIScopedVFolderSelect.doc.ts`.
  */
@@ -189,7 +185,6 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
 }) => {
   'use memo';
   const { t } = useBAIi18n();
-  const relayEnv = useRelayEnvironment();
   const [controllableValue, setControllableValue] = useControllableValue<
     string | Array<string> | null | undefined
   >(selectProps as Record<string, unknown>, {
@@ -200,7 +195,6 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
   const deferredSearchStr = useDebouncedDeferredValue(searchStr);
   const [fetchKey, setFetchKey] = useState(0);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
-  const [lookup, setLookup] = useState<Record<string, LookupResult>>({});
 
   const { paginationData, result, loadNext, isLoadingNext } =
     useLazyPaginatedQuery<BAIScopedVFolderSelectQuery, ScopedVFolderNode>(
@@ -267,35 +261,25 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
     refetch: () => {
       startRefetchTransition(() => {
         setFetchKey((key) => key + 1);
-        setLookup({});
       });
     },
   }));
 
   const selectedIds = _.compact(_.castArray(controllableValue ?? []));
-  const nodeById = _.keyBy(paginationData, 'entityId');
-  const statusOf = (id: string): LookupResult | undefined =>
-    nodeById[id] ? toSummary(nodeById[id]) : lookup[id];
-
-  // A selected id the loaded pages miss is looked up once by id.
-  const pendingKey = _.sortBy(
-    selectedIds.filter((id) => statusOf(id) === undefined),
-  ).join(',');
-  const lookUpSelected = useEffectEvent((ids: Array<string>) => {
-    const answer = (resultOf: (id: string) => LookupResult) =>
-      setLookup((prev) => ({
-        ...prev,
-        ..._.fromPairs(ids.map((id) => [id, resultOf(id)])),
-      }));
-    fetchQuery<BAIScopedVFolderSelectValueQuery>(
-      relayEnv,
+  // Keyed on the selection only, so paging and search never re-run it.
+  const lookupKey = useDeferredValue(_.sortBy(selectedIds).join(','));
+  const lookupIds = lookupKey ? lookupKey.split(',') : [];
+  const { scopedVFoldersV2: selectedFolders } =
+    useLazyLoadQuery<BAIScopedVFolderSelectValueQuery>(
       graphql`
         query BAIScopedVFolderSelectValueQuery(
           $scope: VFolderScope!
           $filter: VFolderFilter
           $limit: Int!
+          $skip: Boolean!
         ) {
-          scopedVFoldersV2(scope: $scope, filter: $filter, limit: $limit) {
+          scopedVFoldersV2(scope: $scope, filter: $filter, limit: $limit)
+            @skip(if: $skip) {
             edges {
               node {
                 id
@@ -314,52 +298,32 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
       `,
       {
         scope,
-        filter: { AND: _.compact([filter, { entityId: { in: ids } }]) },
-        limit: ids.length,
+        filter: { AND: _.compact([filter, { entityId: { in: lookupIds } }]) },
+        limit: Math.max(lookupIds.length, 1),
+        skip: lookupIds.length === 0,
       },
-    )
-      .toPromise()
-      .then((data) => {
-        const found = _.keyBy(
-          _.map(data?.scopedVFoldersV2?.edges, (edge) => toSummary(edge.node)),
-          'entityId',
-        );
-        answer((id) => found[id] ?? 'missing');
-      })
-      // A failed lookup proves nothing about the id, so it is left unjudged.
-      .catch(() => answer(() => 'failed'));
-  });
+      {
+        fetchKey,
+        fetchPolicy: lookupIds.length ? 'store-and-network' : 'store-only',
+      },
+    );
+  const summaryById = _.keyBy(
+    _.map(selectedFolders?.edges, (edge) => toSummary(edge.node)),
+    'entityId',
+  );
+  const isReachable = (id: string) =>
+    !!summaryById[id] && !isFolderDisabled?.(summaryById[id]);
+  const resolution: ScopedVFolderResolution = {
+    resolved: _.map(_.filter(lookupIds, isReachable), (id) => summaryById[id]),
+    unresolved: _.reject(lookupIds, isReachable),
+  };
+  const resolutionKey = JSON.stringify([
+    _.map(resolution.resolved, (folder) => [folder.entityId, folder.name]),
+    resolution.unresolved,
+  ]);
+  const notifyResolve = useEffectEvent(() => onResolve?.(resolution));
   useEffect(() => {
-    if (pendingKey) lookUpSelected(pendingKey.split(','));
-  }, [pendingKey]);
-
-  const resolution: ScopedVFolderResolution | null = pendingKey
-    ? null
-    : {
-        resolved: _.filter(
-          _.map(selectedIds, statusOf),
-          (status): status is ScopedVFolderSummary =>
-            _.isObject(status) && !isFolderDisabled?.(status),
-        ),
-        unresolved: selectedIds.filter((id) => {
-          const status = statusOf(id);
-          return (
-            status === 'missing' ||
-            (_.isObject(status) && !!isFolderDisabled?.(status))
-          );
-        }),
-      };
-  const resolutionKey = resolution
-    ? JSON.stringify([
-        _.map(resolution.resolved, (folder) => [folder.entityId, folder.name]),
-        resolution.unresolved,
-      ])
-    : '';
-  const notifyResolve = useEffectEvent(() => {
-    if (resolution) onResolve?.(resolution);
-  });
-  useEffect(() => {
-    if (resolutionKey) notifyResolve();
+    notifyResolve();
   }, [resolutionKey]);
 
   const options = _.map(paginationData, (folder) => ({
@@ -380,13 +344,15 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
     ),
   }));
 
-  const labeled: Array<BAILabeledValue> = _.map(selectedIds, (id) => {
-    const status = statusOf(id);
-    return {
-      value: id,
-      label: _.isObject(status) ? status.name : (fallbackLabels?.[id] ?? id),
-    };
-  });
+  const nodeById = _.keyBy(paginationData, 'entityId');
+  const labeled: Array<BAILabeledValue> = _.map(selectedIds, (id) => ({
+    value: id,
+    label:
+      nodeById[id]?.metadata.name ??
+      summaryById[id]?.name ??
+      fallbackLabels?.[id] ??
+      id,
+  }));
   const labeledValue: BAIComplexSelectValue = multiple
     ? labeled
     : (labeled[0] ?? null);
@@ -397,7 +363,10 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
       {...selectProps}
       multiple={multiple}
       isLoading={
-        isLoading || searchStr !== deferredSearchStr || isPendingRefetch
+        isLoading ||
+        searchStr !== deferredSearchStr ||
+        lookupKey !== _.sortBy(selectedIds).join(',') ||
+        isPendingRefetch
       }
       isLoadingNext={isLoadingNext}
       total={result.scopedVFoldersV2?.count ?? undefined}

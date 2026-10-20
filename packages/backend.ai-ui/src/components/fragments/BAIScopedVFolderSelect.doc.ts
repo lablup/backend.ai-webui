@@ -16,12 +16,12 @@ export const docs = {
   ],
   usage: {
     description:
-      "Picks virtual folders from `scopedVFoldersV2` (manager 26.9.0), a BAIComplexSelect over two Relay reads. The options page 100 at a time over the scopes in `scope` (combined with OR), newest first, extended when the popup scrolls to its end, and the popup search runs on the server as a `name iContains` filter. Each option shows a two-line-tall identicon, the name, a second line with the owner (the creator's email for a user folder, `currentProjectName` for a project folder), usage mode, host and creation date, and the caller's mount level as welded R/W/D tokens. The value is folder UUIDs (`VFolder.entityId`), so no global id is decoded anywhere. A selected id the loaded pages do not cover is looked up once by `entityId` within `scope` and `filter`; the answer labels it and decides whether it is still reachable. Once every selected id is accounted for, `onResolve` reports the reachable ones (with their names) and the unreachable ones — not found, or rejected by `isFolderDisabled` — and it fires again whenever that outcome changes. A failed lookup, such as a manager without `VFolderFilter.entityId` (26.10.0), leaves its ids in neither list, so a consumer never drops a selection on a lookup it could not make. The page read suspends on first load; the lookup does not.",
+      "Picks virtual folders from `scopedVFoldersV2` (manager 26.9.0), a BAIComplexSelect over two Relay reads. The options page 100 at a time over the scopes in `scope` (combined with OR), newest first, extended when the popup scrolls to its end, and the popup search runs on the server as a `name iContains` filter. Each option shows a two-line-tall identicon, the name, a second line with the owner (the creator's email for a user folder, `currentProjectName` for a project folder), usage mode, host and creation date, and the caller's mount level as welded R/W/D tokens. The value is folder UUIDs (`VFolder.entityId`), so no global id is decoded anywhere. The selected ids are looked up together by `entityId` within `scope` and `filter` (`VFolderFilter.entityId`, manager 26.10.0); the lookup re-runs only when the selection changes, never on paging or search. Its answer labels each id and decides whether it is still reachable: `onResolve` reports the reachable ones (with their names) and the unreachable ones — not found, or rejected by `isFolderDisabled` — and fires again whenever that outcome changes. Both reads suspend on first load.",
     bestPractices: [
       {
         guidance: true,
         description:
-          'Wrap it, or the form item holding it, in a Suspense boundary — the page read suspends on first load.',
+          'Wrap it, or the form item holding it, in a Suspense boundary — the page read and the lookup suspend on first load.',
       },
       {
         guidance: true,
@@ -31,7 +31,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Pass `fallbackLabels` when the value comes with names the caller already knows, so the trigger shows them before the lookup answers.',
+          'Pass `fallbackLabels` when the value comes with names the caller already knows, so an id the scope no longer reaches still reads as a name.',
       },
       {
         guidance: true,
@@ -86,13 +86,13 @@ export const docs = {
       name: 'fallbackLabels',
       type: 'Record<string, string>',
       description:
-        'Labels for selected ids, used until the options or the lookup supply the name. Without one an unresolved id shows as itself.',
+        'Labels for selected ids the options and the lookup do not name — an id the scope no longer reaches. Without one such an id shows as itself.',
     },
     {
       name: 'onResolve',
       type: '(resolution: { resolved: ScopedVFolderSummary[]; unresolved: string[] }) => void',
       description:
-        'Fired once every selected id is accounted for, and again whenever the outcome changes. Ids whose lookup failed are in neither list.',
+        'Fired once the selected ids are looked up, and again whenever the outcome changes.',
     },
     {
       name: 'currentProjectName',
