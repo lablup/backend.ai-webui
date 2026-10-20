@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f11f683ebcf5d67b601c20af7fac3844>>
+ * @generated SignedSource<<428b06c5afdae2d699cadae664ffe481>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,7 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type ImportImageModalRegistriesQuery$variables = {
   after?: string | null | undefined;
+  domain?: string | null | undefined;
   first?: number | null | undefined;
 };
 export type ImportImageModalRegistriesQuery$data = {
@@ -29,6 +30,9 @@ export type ImportImageModalRegistriesQuery$data = {
       readonly hasNextPage: boolean;
     };
   } | null | undefined;
+  readonly domain: {
+    readonly allowed_docker_registries: ReadonlyArray<string | null | undefined> | null | undefined;
+  } | null | undefined;
 };
 export type ImportImageModalRegistriesQuery = {
   response: ImportImageModalRegistriesQuery$data;
@@ -44,9 +48,38 @@ var v0 = {
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
+  "name": "domain"
+},
+v2 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
   "name": "first"
 },
-v2 = [
+v3 = [
+  {
+    "alias": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "name",
+        "variableName": "domain"
+      }
+    ],
+    "concreteType": "Domain",
+    "kind": "LinkedField",
+    "name": "domain",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "allowed_docker_registries",
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
+  },
   {
     "alias": null,
     "args": [
@@ -156,36 +189,38 @@ return {
   "fragment": {
     "argumentDefinitions": [
       (v0/*: any*/),
-      (v1/*: any*/)
+      (v1/*: any*/),
+      (v2/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "ImportImageModalRegistriesQuery",
-    "selections": (v2/*: any*/),
+    "selections": (v3/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v1/*: any*/),
-      (v0/*: any*/)
+      (v2/*: any*/),
+      (v0/*: any*/),
+      (v1/*: any*/)
     ],
     "kind": "Operation",
     "name": "ImportImageModalRegistriesQuery",
-    "selections": (v2/*: any*/)
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "e444659b41cf29cb46f656d23197cbbf",
+    "cacheID": "fa10b4e07f503629972f5f359f1c370b",
     "id": null,
     "metadata": {},
     "name": "ImportImageModalRegistriesQuery",
     "operationKind": "query",
-    "text": "query ImportImageModalRegistriesQuery(\n  $first: Int\n  $after: String\n) {\n  container_registry_nodes(first: $first, after: $after) @since(version: \"24.09.0\") {\n    edges {\n      node {\n        id\n        registry_name\n        project\n        url\n        type\n      }\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n"
+    "text": "query ImportImageModalRegistriesQuery(\n  $first: Int\n  $after: String\n  $domain: String\n) {\n  domain(name: $domain) {\n    allowed_docker_registries\n  }\n  container_registry_nodes(first: $first, after: $after) @since(version: \"24.09.0\") {\n    edges {\n      node {\n        id\n        registry_name\n        project\n        url\n        type\n      }\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d4070796ffbaf73ca688e4eed76d0418";
+(node as any).hash = "7e6b2763b618a4248747cfe7dd38c9c3";
 
 export default node;

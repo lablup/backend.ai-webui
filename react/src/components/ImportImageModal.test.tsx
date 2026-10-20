@@ -20,6 +20,7 @@ import { createMockEnvironment } from 'relay-test-utils';
  */
 
 const mockScanRequest = vi.fn();
+const mockEnableRequest = vi.fn();
 const mockMessageSuccess = vi.fn();
 const mockMessageError = vi.fn();
 
@@ -40,25 +41,40 @@ vi.mock('react-i18next', async () => {
 });
 
 // `adminScanImage` goes through this seam: a resolved `{ data, errors }` is
-// what Relay hands `onCompleted`, a rejection is a transport failure.
+// what Relay hands `onCompleted`, a rejection is a transport failure. The
+// domain write behind "Enable Registry" is recorded and always succeeds.
 vi.mock('react-relay', async (importOriginal) => {
   // CommonJS: the named exports live on `default` under Vitest's interop.
   const originalModule = await importOriginal<any>();
   return {
     ...originalModule,
     ...originalModule.default,
-    useMutation: () => [
-      (config: any) => {
-        Promise.resolve()
-          .then(() => mockScanRequest({ body: config.variables.input }))
-          .then(
-            (response: any) =>
-              config.onCompleted(response.data, response.errors ?? null),
-            (error: unknown) => config.onError(error),
-          );
-      },
-      false,
-    ],
+    useMutation: (node: any) =>
+      node?.params?.name === 'ImportImageModalEnableRegistryMutation'
+        ? [
+            (config: any) => {
+              mockEnableRequest(config.variables);
+              Promise.resolve().then(() =>
+                config.onCompleted(
+                  { modify_domain: { ok: true, msg: '' } },
+                  null,
+                ),
+              );
+            },
+            false,
+          ]
+        : [
+            (config: any) => {
+              Promise.resolve()
+                .then(() => mockScanRequest({ body: config.variables.input }))
+                .then(
+                  (response: any) =>
+                    config.onCompleted(response.data, response.errors ?? null),
+                  (error: unknown) => config.onError(error),
+                );
+            },
+            false,
+          ],
   };
 });
 
@@ -78,6 +94,16 @@ vi.mock('../hooks/usePainKiller', async (importOriginal) => {
           isPainKillerStubbed ? title : original.relieve(title),
       };
     },
+  };
+});
+
+vi.mock('../hooks', async (importOriginal) => {
+  const originalModule = await importOriginal<typeof import('../hooks')>();
+  return {
+    ...originalModule,
+    useSuspendedBackendaiClient: () => ({
+      _config: { domainName: 'default' },
+    }),
   };
 });
 
@@ -222,6 +248,8 @@ let registryPageFetchCount = 0;
 const queueRegistryPages = (
   environment: ReturnType<typeof createMockEnvironment>,
   registryPages: Array<Array<RegistryNodeShape>>,
+  /** The domain's `allowed_docker_registries`; omitted means not reported. */
+  allowedRegistries?: Array<string>,
 ) => {
   registryPages.forEach((nodes, index) => {
     const hasNextPage = index < registryPages.length - 1;
@@ -229,6 +257,9 @@ const queueRegistryPages = (
       registryPageFetchCount += 1;
       return {
         data: {
+          domain: allowedRegistries
+            ? { allowed_docker_registries: allowedRegistries }
+            : null,
           container_registry_nodes: {
             edges: nodes.map((node) => ({ node })),
             pageInfo: {
@@ -298,6 +329,7 @@ const lastOpenEditorProps = () => {
 describe('ImportImageModal (FR-3940 review round)', () => {
   beforeEach(() => {
     mockScanRequest.mockReset();
+    mockEnableRequest.mockReset();
     mockMessageSuccess.mockReset();
     mockMessageError.mockReset();
     mockRegistryEditorRender.mockReset();
@@ -340,6 +372,56 @@ describe('ImportImageModal (FR-3940 review round)', () => {
         screen.getByText(/environment\.ImportImageReady/),
       ).toBeInTheDocument(),
     );
+  });
+
+  it('warns when the domain does not allow the registry and enables it on request', async () => {
+    const user = userEvent.setup();
+    const environment = createMockEnvironment();
+    queueRegistryPages(
+      environment,
+      [[REGISTRY, NGC_REGISTRY]],
+      ['cr.backend.ai'],
+    );
+    render(
+      <QueryClientProvider client={new QueryClient()}>
+        <RelayEnvironmentProvider environment={environment}>
+          <ImportImageModal open onRequestClose={vi.fn()} />
+        </RelayEnvironmentProvider>
+      </QueryClientProvider>,
+    );
+    await typeReferences(PYTORCH);
+
+    await waitFor(() =>
+      expect(
+        screen.getByText('environment.ImportImageRegistryDisabledInDomain'),
+      ).toBeInTheDocument(),
+    );
+    // A warning, not a block: the image still registers, only the list hides it.
+    expect(importButton()).toBeEnabled();
+
+    queueRegistryPages(
+      environment,
+      [[REGISTRY, NGC_REGISTRY]],
+      ['cr.backend.ai', 'nvcr.io'],
+    );
+    await user.click(
+      screen.getByRole('button', {
+        name: 'environment.ImportImageEnableRegistry',
+      }),
+    );
+
+    expect(mockEnableRequest).toHaveBeenCalledWith({
+      domain: 'default',
+      allowed_docker_registries: ['cr.backend.ai', 'nvcr.io'],
+    });
+    await waitFor(() =>
+      expect(
+        screen.queryByText('environment.ImportImageRegistryDisabledInDomain'),
+      ).not.toBeInTheDocument(),
+    );
+    expect(
+      screen.getByText(/environment\.ImportImageReady/),
+    ).toBeInTheDocument();
   });
 
   it('matches against registries from every page of the connection', async () => {
@@ -507,6 +589,8 @@ describe('ImportImageModal (FR-3940 review round)', () => {
         content: 'registry.RegistrySuccessfullyAdded',
       }),
     );
+    // The domain did not report its allowed list, so nothing is written.
+    expect(mockEnableRequest).not.toHaveBeenCalled();
     await waitFor(() =>
       expect(
         screen.getByText(/environment\.ImportImageReady/),
@@ -519,6 +603,43 @@ describe('ImportImageModal (FR-3940 review round)', () => {
     // The editor closed itself on OK rather than being left open.
     expect(
       screen.queryByTestId('mock-registry-editor-modal'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('enables a registry created from the modal in the current domain', async () => {
+    const user = userEvent.setup();
+    const environment = createMockEnvironment();
+    queueRegistryPages(environment, [[REGISTRY]], ['cr.backend.ai']);
+    render(
+      <QueryClientProvider client={new QueryClient()}>
+        <RelayEnvironmentProvider environment={environment}>
+          <ImportImageModal open onRequestClose={vi.fn()} />
+        </RelayEnvironmentProvider>
+      </QueryClientProvider>,
+    );
+    await typeReferences(PYTORCH);
+    await user.click(
+      await screen.findByRole('button', { name: 'registry.AddRegistry' }),
+    );
+
+    queueRegistryPages(
+      environment,
+      [[REGISTRY, NGC_REGISTRY]],
+      ['cr.backend.ai', 'nvcr.io'],
+    );
+    await user.click(await screen.findByTestId('mock-registry-editor-modal'));
+
+    expect(mockEnableRequest).toHaveBeenCalledWith({
+      domain: 'default',
+      allowed_docker_registries: ['cr.backend.ai', 'nvcr.io'],
+    });
+    await waitFor(() =>
+      expect(
+        screen.getByText(/environment\.ImportImageReady/),
+      ).toBeInTheDocument(),
+    );
+    expect(
+      screen.queryByText('environment.ImportImageRegistryDisabledInDomain'),
     ).not.toBeInTheDocument();
   });
 
