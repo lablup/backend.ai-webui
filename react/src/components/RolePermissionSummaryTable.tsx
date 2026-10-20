@@ -43,11 +43,8 @@ export interface RolePermissionSummaryTableProps {
 }
 
 /**
- * The Permissions tab of `RoleDetailDrawerV2` (managers >= 26.9.0a4, one
- * scope per role): the role's grants in `RBACPermissionGrid`, saved as the two
- * bulk role-permission mutations. Its own query and mutations select the 26.9
- * fields only; the fragment's `scopeType` carries `@since` because it rides
- * the role list query (ADR 0006).
+ * The Permissions tab of `RoleDetailDrawerV2`: the role's grants in
+ * `RBACPermissionGrid`, saved as the two bulk role-permission mutations.
  */
 const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
   roleNodeFrgmt,
@@ -62,13 +59,14 @@ const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
     graphql`
       fragment RolePermissionSummaryTableFragment on Role {
         id
+        entityId
         source
-        scopeType @since(version: "26.9.0a4")
+        scopeType
       }
     `,
     roleNodeFrgmt,
   );
-  const roleId = toLocalId(role.id);
+  const roleId = role.entityId;
   const scopeType = role.scopeType ?? '';
 
   const [fetchKey, updateFetchKey] = useFetchKey();

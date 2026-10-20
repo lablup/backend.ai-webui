@@ -145,6 +145,7 @@ const OwnershipProjectBanner: React.FC<{
   }
   return (
     <Banner
+      role="status"
       title={
         projectName
           ? t('data.NotInProject', { projectName })
@@ -407,6 +408,7 @@ const FolderExplorerBody: React.FC<{
 
   const fileExplorerElement = folderUnmanagedPath ? (
     <Banner
+      role="status"
       status="info"
       title={t('explorer.NoExplorerSupportForUnmanagedFolder')}
     />
@@ -567,6 +569,7 @@ const FolderExplorerBody: React.FC<{
       >
         {!isFolderReadable ? (
           <Banner
+            role="alert"
             title={
               hasDetailError
                 ? t('explorer.FolderDetailUnavailable')
@@ -575,7 +578,11 @@ const FolderExplorerBody: React.FC<{
             status="error"
           />
         ) : hasNoPermissions ? (
-          <Banner title={t('explorer.NoPermissions')} status="error" />
+          <Banner
+            role="alert"
+            title={t('explorer.NoPermissions')}
+            status="error"
+          />
         ) : pageProject !== null &&
           pageProject.id !== vfolderNode?.ownership?.projectId &&
           !!vfolderNode?.ownership?.projectId ? (

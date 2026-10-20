@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1a3455ee5e2de8c0109f7c6274117065>>
+ * @generated SignedSource<<c476d1b0ae3881add0f4a3d41193b01b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,6 +16,7 @@ export type RoleNodesFragment$data = ReadonlyArray<{
   readonly autoAssign: boolean;
   readonly createdAt: string;
   readonly description: string | null | undefined;
+  readonly entityId: string;
   readonly id: string;
   readonly name: string;
   readonly rolePreset: {
@@ -38,22 +39,6 @@ export type RoleNodesFragment$data = ReadonlyArray<{
   } | null | undefined;
   readonly scopeId: string;
   readonly scopeType: string;
-  readonly scopes: {
-    readonly count: number;
-    readonly edges: ReadonlyArray<{
-      readonly node: {
-        readonly scope: {
-          readonly basicInfo?: {
-            readonly domainName?: string;
-            readonly projectName: string;
-            readonly userEmail?: string;
-          };
-        } | null | undefined;
-        readonly scopeId: string;
-        readonly scopeType: string;
-      };
-    }>;
-  } | null | undefined;
   readonly source: RoleSource;
   readonly status: RoleStatus;
   readonly updatedAt: string;
@@ -72,96 +57,7 @@ var v0 = {
   "name": "name",
   "storageKey": null
 },
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "scopeType",
-  "storageKey": null
-},
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "scopeId",
-  "storageKey": null
-},
-v3 = {
-  "kind": "InlineFragment",
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "ProjectBasicInfo",
-      "kind": "LinkedField",
-      "name": "basicInfo",
-      "plural": false,
-      "selections": [
-        {
-          "alias": "projectName",
-          "args": null,
-          "kind": "ScalarField",
-          "name": "name",
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    }
-  ],
-  "type": "ProjectV2",
-  "abstractKey": null
-},
-v4 = {
-  "kind": "InlineFragment",
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "DomainBasicInfo",
-      "kind": "LinkedField",
-      "name": "basicInfo",
-      "plural": false,
-      "selections": [
-        {
-          "alias": "domainName",
-          "args": null,
-          "kind": "ScalarField",
-          "name": "name",
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    }
-  ],
-  "type": "DomainV2",
-  "abstractKey": null
-},
-v5 = {
-  "kind": "InlineFragment",
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "UserV2BasicInfo",
-      "kind": "LinkedField",
-      "name": "basicInfo",
-      "plural": false,
-      "selections": [
-        {
-          "alias": "userEmail",
-          "args": null,
-          "kind": "ScalarField",
-          "name": "email",
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    }
-  ],
-  "type": "UserV2",
-  "abstractKey": null
-},
-v6 = [
+v1 = [
   (v0/*: any*/)
 ];
 return {
@@ -182,6 +78,13 @@ return {
         "storageKey": null
       },
       "action": "NONE"
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
     },
     {
       "kind": "RequiredField",
@@ -232,68 +135,18 @@ return {
     },
     {
       "alias": null,
-      "args": [
-        {
-          "kind": "Literal",
-          "name": "first",
-          "value": 3
-        }
-      ],
-      "concreteType": "EntityConnection",
-      "kind": "LinkedField",
-      "name": "scopes",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "count",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "EntityRefEdge",
-          "kind": "LinkedField",
-          "name": "edges",
-          "plural": true,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "EntityRef",
-              "kind": "LinkedField",
-              "name": "node",
-              "plural": false,
-              "selections": [
-                (v1/*: any*/),
-                (v2/*: any*/),
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": null,
-                  "kind": "LinkedField",
-                  "name": "scope",
-                  "plural": false,
-                  "selections": [
-                    (v3/*: any*/),
-                    (v4/*: any*/),
-                    (v5/*: any*/)
-                  ],
-                  "storageKey": null
-                }
-              ],
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
-      ],
-      "storageKey": "scopes(first:3)"
+      "args": null,
+      "kind": "ScalarField",
+      "name": "scopeType",
+      "storageKey": null
     },
-    (v1/*: any*/),
-    (v2/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "scopeId",
+      "storageKey": null
+    },
     {
       "alias": null,
       "args": null,
@@ -308,7 +161,7 @@ return {
       "kind": "LinkedField",
       "name": "rolePreset",
       "plural": false,
-      "selections": (v6/*: any*/),
+      "selections": (v1/*: any*/),
       "storageKey": null
     },
     {
@@ -319,9 +172,81 @@ return {
       "name": "scope",
       "plural": false,
       "selections": [
-        (v3/*: any*/),
-        (v4/*: any*/),
-        (v5/*: any*/),
+        {
+          "kind": "InlineFragment",
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "ProjectBasicInfo",
+              "kind": "LinkedField",
+              "name": "basicInfo",
+              "plural": false,
+              "selections": [
+                {
+                  "alias": "projectName",
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "name",
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
+          "type": "ProjectV2",
+          "abstractKey": null
+        },
+        {
+          "kind": "InlineFragment",
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "DomainBasicInfo",
+              "kind": "LinkedField",
+              "name": "basicInfo",
+              "plural": false,
+              "selections": [
+                {
+                  "alias": "domainName",
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "name",
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
+          "type": "DomainV2",
+          "abstractKey": null
+        },
+        {
+          "kind": "InlineFragment",
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "UserV2BasicInfo",
+              "kind": "LinkedField",
+              "name": "basicInfo",
+              "plural": false,
+              "selections": [
+                {
+                  "alias": "userEmail",
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "email",
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
+          "type": "UserV2",
+          "abstractKey": null
+        },
         {
           "kind": "InlineFragment",
           "selections": [
@@ -332,7 +257,7 @@ return {
               "kind": "LinkedField",
               "name": "metadata",
               "plural": false,
-              "selections": (v6/*: any*/),
+              "selections": (v1/*: any*/),
               "storageKey": null
             }
           ],
@@ -374,7 +299,7 @@ return {
               "kind": "LinkedField",
               "name": "metadata",
               "plural": false,
-              "selections": (v6/*: any*/),
+              "selections": (v1/*: any*/),
               "storageKey": null
             }
           ],
@@ -383,7 +308,7 @@ return {
         },
         {
           "kind": "InlineFragment",
-          "selections": (v6/*: any*/),
+          "selections": (v1/*: any*/),
           "type": "ResourceGroup",
           "abstractKey": null
         },
@@ -417,6 +342,6 @@ return {
 };
 })();
 
-(node as any).hash = "221bd9871ddf37951719f3d1d3369b04";
+(node as any).hash = "3b76b8c7f183f6512ebe0e630c1a3203";
 
 export default node;

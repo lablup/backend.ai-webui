@@ -2,12 +2,65 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
+import {
+  useMyAppConfig,
+  useRefetchMyAppConfig,
+  useUpdateMyUserAppConfig,
+} from './useAppConfig';
 import { SessionHistory, useBAISettingUserState } from './useBAISetting';
-import { useEventNotStable, generateRandomString } from 'backend.ai-ui';
+import {
+  useEventNotStable,
+  generateRandomString,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { useState } from 'react';
+
+type SessionHistoryKey = 'recentSessionHistory' | 'pinnedSessionHistory';
+
+// Each write replaces the whole `userConfig` document, so concurrent writes
+// (a rename updates both lists) must run one after another.
+let writeQueue: Promise<unknown> = Promise.resolve();
+
+/**
+ * Session history lives in the user's server-side `userConfig` so it follows
+ * the user across browsers. A history this browser kept in localStorage is
+ * shown until the first write carries it over to the server.
+ */
+const useSessionHistoryStore = (key: SessionHistoryKey) => {
+  'use memo';
+  const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
+  const serverValue = useMyAppConfig<Array<SessionHistory>>(key);
+  const [localValue] = useBAISettingUserState(key);
+  const updateMyUserAppConfig = useUpdateMyUserAppConfig();
+  const refetchMyAppConfig = useRefetchMyAppConfig();
+  // Shows the written value while the write and the refetch are in flight.
+  const [pending, setPending] = useState<{ value: Array<SessionHistory> }>();
+
+  const setValue = async (next: Array<SessionHistory>) => {
+    setPending({ value: next });
+    const write = writeQueue.then(async () => {
+      await updateMyUserAppConfig(key, next);
+      await refetchMyAppConfig();
+    });
+    writeQueue = write.catch(() => {});
+    try {
+      await write;
+    } catch (error) {
+      message.error(getErrorMessage(error));
+    } finally {
+      setPending(undefined);
+    }
+  };
+
+  return [pending?.value ?? serverValue ?? localValue, setValue] as const;
+};
 
 export const useRecentSessionHistory = () => {
-  const [recentSessions, setRecentSessionHistory] = useBAISettingUserState(
+  'use memo';
+  const [recentSessions, setRecentSessionHistory] = useSessionHistoryStore(
     'recentSessionHistory',
   );
 
@@ -29,7 +82,7 @@ export const useRecentSessionHistory = () => {
         [newHistory, ...(recentSessions || [])],
         '-createdAt',
       ).slice(0, 5);
-      setRecentSessionHistory(newRecentSessionHistory);
+      return setRecentSessionHistory(newRecentSessionHistory);
     },
   );
   const clear = useEventNotStable(() => setRecentSessionHistory([]));
@@ -37,7 +90,7 @@ export const useRecentSessionHistory = () => {
     const newRecentSessionHistory = (recentSessions || []).filter(
       (item) => item.id !== id,
     );
-    setRecentSessionHistory(newRecentSessionHistory);
+    return setRecentSessionHistory(newRecentSessionHistory);
   });
 
   const update = useEventNotStable((id: string, name: string) => {
@@ -50,7 +103,7 @@ export const useRecentSessionHistory = () => {
       }
       return item;
     });
-    setRecentSessionHistory(newRecentSessionHistory);
+    return setRecentSessionHistory(newRecentSessionHistory);
   });
 
   return [
@@ -65,23 +118,25 @@ export const useRecentSessionHistory = () => {
 };
 
 export const usePinnedSessionHistory = () => {
+  'use memo';
   const [pinnedSessionHistory, setPinnedSessionHistory] =
-    useBAISettingUserState('pinnedSessionHistory');
-  const [recentSessionHistory] = useBAISettingUserState('recentSessionHistory');
+    useSessionHistoryStore('pinnedSessionHistory');
+  const [recentSessionHistory] = useSessionHistoryStore('recentSessionHistory');
 
   const pin = useEventNotStable((id: string) => {
     const pinnedItem = (recentSessionHistory || []).find(
       (item) => item.id === id,
     );
-    pinnedItem &&
-      setPinnedSessionHistory([...(pinnedSessionHistory || []), pinnedItem]);
+    return pinnedItem
+      ? setPinnedSessionHistory([...(pinnedSessionHistory || []), pinnedItem])
+      : Promise.resolve();
   });
 
   const unpin = useEventNotStable((id: string) => {
     const newPinnedSessionHistory = (pinnedSessionHistory || []).filter(
       (item) => item.id !== id,
     );
-    setPinnedSessionHistory(newPinnedSessionHistory);
+    return setPinnedSessionHistory(newPinnedSessionHistory);
   });
 
   const update = useEventNotStable((id: string, name: string) => {
@@ -94,7 +149,7 @@ export const usePinnedSessionHistory = () => {
       }
       return item;
     });
-    setPinnedSessionHistory(newPinnedSessionHistory);
+    return setPinnedSessionHistory(newPinnedSessionHistory);
   });
 
   return [

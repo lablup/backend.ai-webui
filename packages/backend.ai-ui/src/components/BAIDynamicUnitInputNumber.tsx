@@ -18,7 +18,10 @@ import { convertToBinaryUnit, parseValueWithUnit, SizeUnit } from '../helper';
 import { useControllableValue, usePrevious } from '../hooks';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import { InputGroup, InputGroupText } from '@lablup/ui-common/InputGroup';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
+import {
+  NumberInput,
+  type NumberInputProps,
+} from '@lablup/ui-common/NumberInput';
 import { Selector } from '@lablup/ui-common/Selector';
 import {
   NumberStepper,
@@ -36,7 +39,23 @@ const ASTRYX_SIZE = {
   large: 'lg',
 } as const;
 
-export interface BAIDynamicUnitInputNumberProps {
+// The omitted keys are redefined in size-string form or owned by the wrapper;
+// `style` / `className` land on the surrounding InputGroup.
+export interface BAIDynamicUnitInputNumberProps extends Omit<
+  NumberInputProps,
+  | 'ref'
+  | 'value'
+  | 'onChange'
+  | 'min'
+  | 'max'
+  | 'units'
+  | 'size'
+  | 'label'
+  | 'isDisabled'
+  | 'width'
+  | 'onBlur'
+  | 'onKeyDown'
+> {
   dynamicSteps?: Array<number>;
   disableAutoUnit?: boolean;
   max?: string;
@@ -71,6 +90,7 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
   addonSuffix,
   defaultUnit,
   disabled,
+  hasClear,
   placeholder,
   size,
   label,
@@ -236,10 +256,11 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
     >
       {addonPrefix ? <InputGroupText>{addonPrefix}</InputGroupText> : null}
       <NumberInput
+        {..._.omit(restProps, ['value', 'onChange', 'defaultValue'])}
         label={accessibleLabel}
         isLabelHidden
         value={numValue}
-        onChange={(next) =>
+        onChange={(next: number | null) =>
           setValue(_.isNil(next) ? undefined : `${next}${unit}`)
         }
         onBlur={handleBlur}
@@ -256,6 +277,7 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
             ? minNumValue
             : convertToBinaryUnit(min, unit as SizeUnit)?.number
         }
+        hasClear={hasClear}
         placeholder={placeholder}
         isDisabled={disabled}
         width="100%"
@@ -284,7 +306,7 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
           // claims the whole row and the number field shrinks to its flex basis.
           // Size the unit to its own content and let the number field take the
           // rest — antd's `Select` in a `Space.Compact` behaved this way.
-          style={{ flex: '0 0 auto', width: 'auto' }}
+          controlStyle={{ flex: '0 0 auto', width: 'auto' }}
         />
       ) : (
         <InputGroupText>{`${unit.toUpperCase()}iB`}</InputGroupText>

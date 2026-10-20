@@ -31,7 +31,11 @@ const XRDPConnectionInfoModal: React.FC<XRDPConnectionInfoModalProps> = ({
   return (
     <BAIModal title={t('session.XRDPconnection')} footer={null} {...modalProps}>
       <BAIFlex direction="column" align="stretch" gap="md">
-        <Banner status="info" title={t('session.UseYourFavoriteMSTSCApp')} />
+        <Banner
+          role="status"
+          status="info"
+          title={t('session.UseYourFavoriteMSTSCApp')}
+        />
         <BAIMetadataList
           columns="single"
           title={t('session.ConnectionInformation')}

@@ -1,6 +1,6 @@
 {
   "name": "backend-ai-webui-react",
-  "version": "26.10.0-alpha.0",
+  "version": "26.10.0-alpha.1",
   "private": true,
   "type": "module",
   "dependencies": {
@@ -134,6 +134,7 @@
     "@types/big.js": "catalog:",
     "@types/compression": "^1.8.1",
     "@types/jest": "catalog:",
+    "@types/jsdom": "^28.0.3",
     "@types/lodash": "catalog:",
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",

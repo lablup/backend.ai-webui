@@ -376,6 +376,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
         <BAIFlex direction="column" align="stretch" gap="sm">
           {mainAccessKey && (
             <Banner
+              role="status"
               status="info"
               icon={
                 <KeyRoundIcon
@@ -692,6 +693,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
       >
         <BAIFlex direction="column" gap="sm">
           <Banner
+            role="alert"
             status="warning"
             icon={
               <TriangleAlertIcon

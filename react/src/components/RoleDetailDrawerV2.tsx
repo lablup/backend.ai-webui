@@ -32,11 +32,7 @@ interface RoleDetailDrawerV2Props extends Omit<
   roleFrgmt?: RoleDetailDrawerV2Fragment$key | null;
 }
 
-/**
- * The role drawer for managers >= 26.9.0a4, where a role belongs to one scope.
- * `RBACManagementPage` renders `RoleDetailDrawer` instead on older managers
- * (ADR 0006).
- */
+/** The role drawer: a role belongs to one scope. */
 const RoleDetailDrawerV2: React.FC<RoleDetailDrawerV2Props> = ({
   roleFrgmt,
   open = false,

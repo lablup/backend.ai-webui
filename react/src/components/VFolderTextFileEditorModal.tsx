@@ -328,6 +328,7 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
         <Suspense fallback={skeletonWithPadding}>
           {loadError ? (
             <Banner
+              role="alert"
               status="error"
               title={t('data.explorer.FailedToLoadFile')}
               description={t('data.explorer.FailedToLoadFileDescription')}

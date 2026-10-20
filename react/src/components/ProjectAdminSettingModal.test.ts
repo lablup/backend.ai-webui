@@ -16,6 +16,7 @@ type Role = ReturnType<typeof selectProjectAdminRoles>[number];
 const role = (id: string, name: string, userIds: Array<string> = []) =>
   ({
     id,
+    entityId: `uuid-${id}`,
     name,
     users: {
       count: userIds.length,
@@ -35,36 +36,16 @@ const responseOf = (roles: Array<Role>) =>
   }) as unknown as Parameters<typeof selectProjectAdminRoles>[0];
 
 describe('buildProjectAdminRoleFilter', () => {
-  it('asks for the scope_admin permission on single-scope managers', () => {
-    expect(buildProjectAdminRoleFilter(PROJECT_ID, true)).toEqual({
+  it('asks for the scope_admin permission on the project scope', () => {
+    expect(buildProjectAdminRoleFilter(PROJECT_ID)).toEqual({
       status: { equals: 'ACTIVE' },
       mappedScope: {
-        // 26.9 answers the scope type in lowercase (ADR 0006).
+        // The manager answers the scope type in lowercase.
         scopeType: { iEquals: 'project' },
         scopeId: { equals: PROJECT_ID },
       },
       permissions: { some: { entityType: { iEquals: 'scope_admin' } } },
     });
-  });
-
-  it('falls back to the SYSTEM role pair on older managers', () => {
-    expect(buildProjectAdminRoleFilter(PROJECT_ID, false)).toEqual({
-      status: { equals: 'ACTIVE' },
-      source: { equals: 'SYSTEM' },
-      mappedScope: {
-        scopeType: { equals: 'PROJECT' },
-        scopeId: { equals: PROJECT_ID },
-      },
-    });
-  });
-
-  it('never mixes the two branches', () => {
-    expect(buildProjectAdminRoleFilter(PROJECT_ID, true)).not.toHaveProperty(
-      'source',
-    );
-    expect(buildProjectAdminRoleFilter(PROJECT_ID, false)).not.toHaveProperty(
-      'permissions',
-    );
   });
 });
 
@@ -76,21 +57,15 @@ describe('selectProjectAdminRoles', () => {
   ]);
 
   it('keeps every role the permission filter returned, ordered by name', () => {
-    expect(selectProjectAdminRoles(data, true).map((node) => node.id)).toEqual([
+    expect(selectProjectAdminRoles(data).map((node) => node.id)).toEqual([
       'role-3',
       'role-2',
       'role-1',
     ]);
   });
 
-  it('keeps only the name-suffixed admin role on older managers', () => {
-    expect(selectProjectAdminRoles(data, false).map((node) => node.id)).toEqual(
-      ['role-2'],
-    );
-  });
-
   it('returns an empty list when the query answered nothing', () => {
-    expect(selectProjectAdminRoles(undefined, true)).toEqual([]);
+    expect(selectProjectAdminRoles(undefined)).toEqual([]);
   });
 });
 
@@ -105,9 +80,13 @@ describe('groupProjectAdminAssignmentsByUser', () => {
       {
         userId: 'user-1',
         email: 'user-1@example.com',
-        roleIds: ['role-a', 'role-b'],
+        roleIds: ['uuid-role-a', 'uuid-role-b'],
       },
-      { userId: 'user-2', email: 'user-2@example.com', roleIds: ['role-a'] },
+      {
+        userId: 'user-2',
+        email: 'user-2@example.com',
+        roleIds: ['uuid-role-a'],
+      },
     ]);
   });
 

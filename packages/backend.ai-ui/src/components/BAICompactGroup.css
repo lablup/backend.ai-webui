@@ -100,7 +100,7 @@
     :is(
       .astryx-text-input,
       .astryx-number-input,
-      .astryx-textarea,
+      .astryx-text-area,
       .astryx-selector,
       .astryx-multi-selector,
       .astryx-tokenizer,
@@ -112,7 +112,7 @@
     > *:not(:first-child):is(
       .astryx-text-input,
       .astryx-number-input,
-      .astryx-textarea,
+      .astryx-text-area,
       .astryx-selector,
       .astryx-multi-selector,
       .astryx-tokenizer,
@@ -132,7 +132,7 @@
     :is(
       .astryx-text-input,
       .astryx-number-input,
-      .astryx-textarea,
+      .astryx-text-area,
       .astryx-selector,
       .astryx-multi-selector,
       .astryx-tokenizer,
@@ -144,7 +144,7 @@
     > *:not(:last-child):is(
       .astryx-text-input,
       .astryx-number-input,
-      .astryx-textarea,
+      .astryx-text-area,
       .astryx-selector,
       .astryx-multi-selector,
       .astryx-tokenizer,
@@ -170,7 +170,7 @@
     :is(
       .astryx-text-input,
       .astryx-number-input,
-      .astryx-textarea,
+      .astryx-text-area,
       .astryx-selector,
       .astryx-multi-selector,
       .astryx-tokenizer,

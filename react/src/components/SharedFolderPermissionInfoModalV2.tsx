@@ -100,6 +100,7 @@ const SharedFolderPermissionInfoModalV2: React.FC<
     >
       <VStack align="stretch" gap={5}>
         <Banner
+          role="status"
           status="info"
           title={
             isUserOwned
