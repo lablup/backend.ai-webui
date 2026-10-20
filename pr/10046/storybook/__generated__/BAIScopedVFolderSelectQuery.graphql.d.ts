@@ -102,7 +102,6 @@ export type BAIScopedVFolderSelectQuery$data = {
                 };
                 readonly entityId: string;
                 readonly host: string;
-                readonly id: string;
                 readonly metadata: {
                     readonly createdAt: string;
                     readonly name: string;
