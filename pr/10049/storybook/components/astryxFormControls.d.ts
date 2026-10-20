@@ -82,6 +82,8 @@ export interface AstryxFormNumberInputProps {
     units?: string;
     placeholder?: string;
     disabled?: boolean;
+    /** Shows a clear button; clearing (or emptying the text) emits `null`. */
+    hasClear?: boolean;
     width?: SizeValue;
     [key: `data-${string}`]: string | undefined;
 }
