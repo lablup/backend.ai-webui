@@ -19,6 +19,7 @@ import { Token } from '@lablup/ui-common/Token';
 import {
   BAICard,
   BAIDrawer,
+  BAIEntityLabelTargetCell,
   BAISkeleton,
   BAIFlex,
   BAILink,
@@ -26,6 +27,7 @@ import {
   BAIResourceNumberWithIcon,
   BAIUnmountAfterClose,
   toLocalId,
+  useIsLabelableEntityType,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -55,6 +57,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
   const [imageMetaData] = useBackendAIImageMetaData();
   const { generateFolderPath } = useFolderExplorerOpener();
   const [deployModalOpen, setDeployModalOpen] = useState(false);
+  const isLabelable = useIsLabelableEntityType('model_card');
 
   // Defer `open` so the lazy query only fires once the drawer has actually
   // committed to opening. `loading={deferredOpen !== open}` then lets the
@@ -90,6 +93,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
     graphql`
       fragment ModelCardDrawerFragment on ModelCardV2 {
         id
+        entityId
         name
         metadata {
           title
@@ -301,6 +305,15 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
                           </BAIFlex>
                         </MetadataListItem>
                       )}
+                    {isLabelable && (
+                      <MetadataListItem label={t('entityLabel.Labels')}>
+                        <BAIEntityLabelTargetCell
+                          entityType="model_card"
+                          entityId={modelCard.entityId}
+                          name={modelCard.name ?? undefined}
+                        />
+                      </MetadataListItem>
+                    )}
                   </BAIMetadataList>
                 </BAICard>
 
