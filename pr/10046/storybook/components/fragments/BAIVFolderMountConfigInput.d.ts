@@ -1,5 +1,5 @@
 import { RuleObject } from '../../form-engine';
-import { AutoMountedFolder, VFolderFilter } from '../../hooks/useMountableVFolders';
+import { AutoMountedFolder, VFolderFilter, VFolderScope } from '../../hooks/useMountableVFolders';
 import { default as React } from '../../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.2.8/01dc110d7f872a8caacc052aa0e86f46609c662315b6d5b76a7913331f487dd1/node_modules/react';
 import { LinkProps } from 'react-router-dom';
 export type { AutoMountedFolder };
@@ -28,12 +28,11 @@ export interface BAIVFolderMountConfigInputProps {
     value?: VFolderMountConfigValue[];
     defaultValue?: VFolderMountConfigValue[];
     onChange?: (value: VFolderMountConfigValue[]) => void;
-    currentProjectId?: string;
     /**
-     * Name of `currentProjectId`. The folder list carries no project name, so a
-     * project folder's owner line needs it from the host.
+     * The scopes a session mounts from, usually `mountableVFolderScope(userId,
+     * projectId)`. The folder options and the auto-mounted folders are read over it.
      */
-    currentProjectName?: string;
+    scope: VFolderScope;
     /**
      * Hosts granting `mount-in-session`. Which policies merge into that list
      * is the host app's business, so it is supplied rather than queried here.
@@ -122,7 +121,7 @@ export declare const toMountCreationConfig: (value: VFolderMountConfigValue[] | 
 export declare const useVFolderMountConfigFormRule: (options?: VFolderMountConfigStatusOptions) => RuleObject;
 /**
  * Reusable input for configuring vfolder mounts. Folders are picked with
- * `BAIScopedVFolderSelect` over the caller's and the current project's scope,
+ * `BAIScopedVFolderSelect` over the caller's `scope`,
  * and the auto-mounted folders are read here too; both suspend on first load,
  * so the consumer owns the Suspense boundary.
  *

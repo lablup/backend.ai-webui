@@ -26,6 +26,15 @@ export interface MockMountFolder {
  */
 export declare const mockMountFolder: (folder: Pick<MockMountFolder, "id" | "name"> & Partial<MockMountFolder>) => MockMountFolder;
 export declare const MOCK_PROJECT_ID = "99999999-9999-9999-9999-999999999999";
+/** The scope a session in MOCK_PROJECT_ID mounts from. */
+export declare const MOCK_MOUNT_SCOPE: {
+    user: {
+        value: string;
+    }[];
+    project: {
+        value: string;
+    }[];
+};
 /** Only `local:volume1` grants `mount-in-session`, so `archive:cold` is gated out. */
 export declare const MOCK_MOUNTABLE_HOSTS: Array<string>;
 /**

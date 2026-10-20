@@ -37,8 +37,6 @@ export interface BAIScopedVFolderSelectProps extends Omit<BAIComplexSelectProps,
     fallbackLabels?: Record<string, string>;
     /** Fires once the selected ids are looked up, and again whenever the outcome changes. */
     onResolve?: (resolution: ScopedVFolderResolution) => void;
-    /** Owner line of a project folder; the folder list carries no project name. */
-    currentProjectName?: string;
     ref?: React.Ref<BAIScopedVFolderSelectRef>;
 }
 /**

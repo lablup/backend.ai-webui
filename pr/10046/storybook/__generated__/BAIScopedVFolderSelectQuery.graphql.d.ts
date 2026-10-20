@@ -1,7 +1,6 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
-export type VFolderOwnershipType = "GROUP" | "USER" | "%future added value";
 export type VFolderUsageMode = "DATA" | "GENERAL" | "MODEL" | "%future added value";
 export type VFolderScope = {
     domain?: ReadonlyArray<UUIDScope> | null | undefined;
@@ -97,7 +96,6 @@ export type BAIScopedVFolderSelectQuery$data = {
         readonly edges: ReadonlyArray<{
             readonly node: {
                 readonly accessControl: {
-                    readonly ownershipType: VFolderOwnershipType;
                     readonly permission: VFolderMountPermission;
                 };
                 readonly entityId: string;

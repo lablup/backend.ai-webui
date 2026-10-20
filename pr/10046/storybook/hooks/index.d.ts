@@ -68,5 +68,5 @@ export { default as useUpdateEffect } from './useUpdateEffect';
 export { useProjectResourceGroups, StorageHostFetchError, } from './useProjectResourceGroups';
 export type { ScalingGroupItem } from './useProjectResourceGroups';
 export { isAutoMountFolderName, mountableVFolderFilter, mountableVFolderScope, useSuspendedAutoMountedVFolders, } from './useMountableVFolders';
-export type { AutoMountedFolder, VFolderFilter, VFolderMountScope, } from './useMountableVFolders';
+export type { AutoMountedFolder, VFolderFilter, VFolderMountScope, VFolderScope, } from './useMountableVFolders';
 export * from './useBAIBreakpoint';

@@ -6,7 +6,8 @@ export interface AutoMountedFolder {
     name: string;
 }
 export interface VFolderMountScope {
-    currentProjectId?: string;
+    /** The scopes a session mounts from, usually {@link mountableVFolderScope}. */
+    scope: VFolderScope;
     /** Hosts granting `mount-in-session`. */
     mountableHosts: ReadonlyArray<string>;
 }
@@ -20,11 +21,11 @@ export declare const mountableVFolderScope: (userId: string, currentProjectId?: 
  */
 export declare const mountableVFolderFilter: (mountableHosts: ReadonlyArray<string>) => VFolderFilter;
 /**
- * The ready dotfile folders a session in this project mounts on its own.
+ * The ready dotfile folders a session in `scope` mounts on its own.
  * Suspends. Callers passing the same scope share one query, so a `refetch`
  * from any of them updates all.
  */
-export declare const useSuspendedAutoMountedVFolders: ({ currentProjectId, mountableHosts, }: VFolderMountScope) => {
+export declare const useSuspendedAutoMountedVFolders: ({ scope, mountableHosts, }: VFolderMountScope) => {
     autoMountedFolders: AutoMountedFolder[];
     refetch: (newValue?: string | undefined) => void;
 };
