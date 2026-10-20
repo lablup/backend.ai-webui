@@ -162,6 +162,9 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
       onCancel={() => onRequestClose(false)}
       confirmLoading={isInFlightModifyImageInput}
       title={t('environment.ManageApps')}
+      // Wide enough that the app rows keep one header row; ListInput stacks
+      // every row with its own labels below 640px.
+      width={720}
       {...baiModalProps}
     >
       {/* antd Alert type="info" -> Astryx Banner status="info"; `showIcon` is
