@@ -34,9 +34,7 @@ export type BAIModelDeploymentNodesFragment$data = ReadonlyArray<{
         } | null | undefined;
         readonly resourceGroupName: string;
         readonly status: DeploymentStatus;
-        readonly tags: ReadonlyArray<string>;
         readonly updatedAt: string;
-        readonly " $fragmentSpreads": FragmentRefs<"BAIDeploymentTagTokens_metadata">;
     };
     readonly networkAccess: {
         readonly endpointUrl: string | null | undefined;
