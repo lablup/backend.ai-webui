@@ -319,7 +319,6 @@
     "RevisionNumber": "Revisione",
     "RevisionNumberTooltip": "Il numero di revisione corrente del deployment.",
     "StrategyType": "Strategia",
-    "Tags": "Tag",
     "UpdatedAt": "Aggiornato il"
   },
   "comp:BAINameActionCell": {

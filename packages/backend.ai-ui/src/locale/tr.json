@@ -319,7 +319,6 @@
     "RevisionNumber": "Revizyon",
     "RevisionNumberTooltip": "Dağıtımın mevcut revizyon numarası.",
     "StrategyType": "Strateji",
-    "Tags": "Etiketler",
     "UpdatedAt": "Güncellenme Tarihi"
   },
   "comp:BAINameActionCell": {

@@ -319,7 +319,6 @@
     "RevisionNumber": "Αναθεώρηση",
     "RevisionNumberTooltip": "Ο τρέχων αριθμός αναθεώρησης της ανάπτυξης.",
     "StrategyType": "Στρατηγική",
-    "Tags": "Ετικέτες",
     "UpdatedAt": "Ενημερώθηκε"
   },
   "comp:BAINameActionCell": {
