@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ac27fbf0dc63044d2e281037f26b3191>>
+ * @generated SignedSource<<986a38da34e631ace75db7db301f87b4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,7 @@ export type BAIAdminRetentionPolicyTableFragment$data = ReadonlyArray<{
   readonly category: RetentionCategory;
   readonly createdAt: string;
   readonly enabled: boolean;
+  readonly entityId: string;
   readonly id: string;
   readonly lastSweptAt: string | null | undefined;
   readonly retentionPeriodDays: number;
@@ -39,6 +40,13 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
       "storageKey": null
     },
     {
@@ -88,6 +96,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "63edc533347a9559bafe916096a8ae61";
+(node as any).hash = "3058167d1997c0ede8ede1816f778dae";
 
 export default node;

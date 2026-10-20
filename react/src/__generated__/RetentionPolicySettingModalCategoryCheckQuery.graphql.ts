@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f0c7e8ba053e9e2ea63853c552074397>>
+ * @generated SignedSource<<f3d171bf0ab9cb96d7e2f5e92989693b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -21,6 +21,7 @@ export type RetentionPolicySettingModalCategoryCheckQuery$data = {
   readonly adminRetentionPolicies: {
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly entityId: string;
         readonly id: string;
       };
     }>;
@@ -81,6 +82,13 @@ v1 = [
                 "kind": "ScalarField",
                 "name": "id",
                 "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "entityId",
+                "storageKey": null
               }
             ],
             "storageKey": null
@@ -110,16 +118,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "5e0ffeb6e84447a6f4d2fe10751c61df",
+    "cacheID": "1cc9c72a481d5948bb02fb60fa99b168",
     "id": null,
     "metadata": {},
     "name": "RetentionPolicySettingModalCategoryCheckQuery",
     "operationKind": "query",
-    "text": "query RetentionPolicySettingModalCategoryCheckQuery(\n  $filter: RetentionPolicyFilter\n) {\n  adminRetentionPolicies(filter: $filter, limit: 1) {\n    edges {\n      node {\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query RetentionPolicySettingModalCategoryCheckQuery(\n  $filter: RetentionPolicyFilter\n) {\n  adminRetentionPolicies(filter: $filter, limit: 1) {\n    edges {\n      node {\n        id\n        entityId\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "a38aea51b7a2a6316cc948fb76c73b81";
+(node as any).hash = "844994920593debe93abb72f8437eb0a";
 
 export default node;

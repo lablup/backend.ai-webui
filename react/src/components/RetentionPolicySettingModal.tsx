@@ -129,6 +129,7 @@ const RetentionPolicySettingModal: React.FC<
               edges {
                 node {
                   id
+                  entityId
                 }
               }
             }
@@ -143,8 +144,9 @@ const RetentionPolicySettingModal: React.FC<
           return undefined;
         })
         .finally(() => setPendingCategoryChecks((n) => n - 1));
-    const existingId = result?.adminRetentionPolicies?.edges[0]?.node?.id;
-    if (existingId && existingId !== policy?.id) {
+    const existingEntityId =
+      result?.adminRetentionPolicies?.edges[0]?.node?.entityId;
+    if (existingEntityId && existingEntityId !== policy?.entityId) {
       throw (
         <Trans
           i18nKey="retentionPolicy.PolicyAlreadyExistsView"

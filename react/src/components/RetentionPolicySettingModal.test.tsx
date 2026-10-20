@@ -67,7 +67,9 @@ const EXISTING_POLICY = {
 
 type SeenOperation = { name: string; variables: Record<string, any> };
 
-const setupEnvironment = (existingCategoryPolicyId: string | null = null) => {
+const setupEnvironment = (
+  existingCategoryPolicyEntityId: string | null = null,
+) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
   const seenOperations: Array<SeenOperation> = [];
   const resolve = (operation: OperationDescriptor) => {
@@ -77,8 +79,8 @@ const setupEnvironment = (existingCategoryPolicyId: string | null = null) => {
     if (name === 'RetentionPolicySettingModalCategoryCheckQuery') {
       return MockPayloadGenerator.generate(operation, {
         RetentionPolicyConnection: () => ({
-          edges: existingCategoryPolicyId
-            ? [{ node: { id: existingCategoryPolicyId } }]
+          edges: existingCategoryPolicyEntityId
+            ? [{ node: { entityId: existingCategoryPolicyEntityId } }]
             : [],
         }),
       });
@@ -91,9 +93,11 @@ const setupEnvironment = (existingCategoryPolicyId: string | null = null) => {
   return { environment, seenOperations };
 };
 
-const renderCreateModal = (existingCategoryPolicyId: string | null = null) => {
+const renderCreateModal = (
+  existingCategoryPolicyEntityId: string | null = null,
+) => {
   const { environment, seenOperations } = setupEnvironment(
-    existingCategoryPolicyId,
+    existingCategoryPolicyEntityId,
   );
   const onRequestClose = vi.fn();
   render(
@@ -237,7 +241,7 @@ describe('RetentionPolicySettingModal', () => {
   it('blocks creation when the category already has a policy', async () => {
     const user = userEvent.setup();
     const { seenOperations, onRequestClose } = renderCreateModal(
-      'UmV0ZW50aW9uUG9saWN5OjI=',
+      'c4e5f6a7-8b9c-4d0e-9f1a-2b3c4d5e6f70',
     );
 
     await user.selectOptions(
