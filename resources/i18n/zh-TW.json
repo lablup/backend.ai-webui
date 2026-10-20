@@ -1574,7 +1574,7 @@
     "ImagesSuccessfullyAdded": "已成功匯入 {{count}} 個映像檔。",
     "ImportImage": "匯入映像檔",
     "ImportImageAdded": "已匯入",
-    "ImportImageDesc": "從登錄讀取映像中繼資料並將其登記到此清單。每行輸入一個包含標籤的完整映像參照，例如 nvcr.io/nvidia/pytorch:26.09-py3。若要下載到代理程式，請在匯入後使用安裝映像。",
+    "ImportImageDesc": "從登錄讀取映像中繼資料並將其登記到此清單。每行輸入一個包含標籤的完整映像參照。",
     "ImportImageDigestUnsupported": "無法登錄摘要（digest）。請改為輸入標籤。",
     "ImportImageEmptyImageName": "註冊表主機後面缺少映像檔名稱。",
     "ImportImageEnableRegistry": "啟用登錄",

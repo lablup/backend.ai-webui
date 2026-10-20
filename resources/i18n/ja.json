@@ -1573,7 +1573,7 @@
     "ImagesSuccessfullyAdded": "{{count}} 件のイメージをインポートしました。",
     "ImportImage": "イメージをインポート",
     "ImportImageAdded": "インポート済み",
-    "ImportImageDesc": "レジストリからイメージのメタデータを読み取り、この一覧に登録します。1 行に 1 つ、タグを含む完全なイメージ参照を入力します。例: nvcr.io/nvidia/pytorch:26.09-py3。エージェントにダウンロードするには、インポート後にイメージのインストールを使用します。",
+    "ImportImageDesc": "レジストリからイメージのメタデータを読み取り、この一覧に登録します。1 行に 1 つ、タグを含む完全なイメージ参照を入力します。",
     "ImportImageDigestUnsupported": "ダイジェストは登録できません。代わりにタグを入力してください。",
     "ImportImageEmptyImageName": "レジストリホストの後にイメージ名がありません。",
     "ImportImageEnableRegistry": "レジストリを有効化",

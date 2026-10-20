@@ -1573,7 +1573,7 @@
     "ImagesSuccessfullyAdded": "{{count}} imaj başarıyla içe aktarıldı.",
     "ImportImage": "İmajı İçe Aktar",
     "ImportImageAdded": "İçe aktarıldı",
-    "ImportImageDesc": "İmaj meta verilerini kayıt defterinden okur ve imajı bu listeye kaydeder. Her satıra etiketi dahil tam bir imaj referansı girin, örneğin nvcr.io/nvidia/pytorch:26.09-py3. Ajanlara indirmek için içe aktardıktan sonra İmajı Yükle'yi kullanın.",
+    "ImportImageDesc": "İmaj meta verilerini kayıt defterinden okur ve imajı bu listeye kaydeder. Her satıra etiketi dahil tam bir imaj referansı girin.",
     "ImportImageDigestUnsupported": "Bir digest kaydedilemez. Bunun yerine bir etiket girin.",
     "ImportImageEmptyImageName": "Kayıt defteri ana bilgisayarından sonra imaj adı eksik.",
     "ImportImageEnableRegistry": "Kayıt Defterini Etkinleştir",

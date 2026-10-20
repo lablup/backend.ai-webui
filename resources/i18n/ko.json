@@ -1573,7 +1573,7 @@
     "ImagesSuccessfullyAdded": "이미지 {{count}}개를 가져왔습니다.",
     "ImportImage": "이미지 가져오기",
     "ImportImageAdded": "가져옴",
-    "ImportImageDesc": "레지스트리에서 이미지 메타데이터를 읽어 이 목록에 등록합니다. 한 줄에 하나씩 태그까지 포함한 전체 이미지 경로를 입력합니다. 예: nvcr.io/nvidia/pytorch:26.09-py3. 에이전트로 내려받으려면 가져온 뒤 이미지 설치를 사용합니다.",
+    "ImportImageDesc": "레지스트리에서 이미지 메타데이터를 읽어 이 목록에 등록합니다. 한 줄에 하나씩 태그까지 포함한 전체 이미지 경로를 입력합니다.",
     "ImportImageDigestUnsupported": "다이제스트는 등록할 수 없습니다. 태그를 입력하세요.",
     "ImportImageEmptyImageName": "레지스트리 주소 뒤에 이미지 이름이 없습니다.",
     "ImportImageEnableRegistry": "레지스트리 활성화",

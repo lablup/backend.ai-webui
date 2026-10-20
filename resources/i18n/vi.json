@@ -1573,7 +1573,7 @@
     "ImagesSuccessfullyAdded": "Đã nhập thành công {{count}} ảnh.",
     "ImportImage": "Nhập ảnh",
     "ImportImageAdded": "Đã nhập",
-    "ImportImageDesc": "Đọc siêu dữ liệu của image từ registry và đăng ký vào danh sách này. Nhập mỗi dòng một tham chiếu image đầy đủ, kèm tag, ví dụ nvcr.io/nvidia/pytorch:26.09-py3. Để tải xuống các agent, hãy dùng Cài đặt image sau khi nhập.",
+    "ImportImageDesc": "Đọc siêu dữ liệu của image từ registry và đăng ký vào danh sách này. Nhập mỗi dòng một tham chiếu image đầy đủ, kèm tag.",
     "ImportImageDigestUnsupported": "Không thể đăng ký digest. Hãy nhập thẻ thay vào đó.",
     "ImportImageEmptyImageName": "Thiếu tên ảnh sau máy chủ của sổ đăng ký.",
     "ImportImageEnableRegistry": "Bật Registry",

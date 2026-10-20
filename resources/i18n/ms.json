@@ -1573,7 +1573,7 @@
     "ImagesSuccessfullyAdded": "{{count}} Imej berjaya diimport.",
     "ImportImage": "Import Imej",
     "ImportImageAdded": "Diimport",
-    "ImportImageDesc": "Membaca metadata imej daripada registry dan mendaftarkannya dalam senarai ini. Masukkan satu rujukan imej penuh bagi setiap baris, termasuk tag, contohnya nvcr.io/nvidia/pytorch:26.09-py3. Untuk memuat turunnya ke agen, gunakan Pasang Imej selepas import.",
+    "ImportImageDesc": "Membaca metadata imej daripada registry dan mendaftarkannya dalam senarai ini. Masukkan satu rujukan imej penuh bagi setiap baris, termasuk tag.",
     "ImportImageDigestUnsupported": "Digest tidak boleh didaftarkan. Masukkan tag sebaliknya.",
     "ImportImageEmptyImageName": "Nama imej tiada selepas hos pendaftaran.",
     "ImportImageEnableRegistry": "Dayakan Registry",

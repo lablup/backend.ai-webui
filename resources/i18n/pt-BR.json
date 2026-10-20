@@ -1573,7 +1573,7 @@
     "ImagesSuccessfullyAdded": "{{count}} imagem(ns) importada(s) com sucesso.",
     "ImportImage": "Importar imagem",
     "ImportImageAdded": "Importada",
-    "ImportImageDesc": "Lê os metadados da imagem a partir do registro e a registra nesta lista. Informe uma referência de imagem completa por linha, incluindo a tag, por exemplo nvcr.io/nvidia/pytorch:26.09-py3. Para baixá-la nos agentes, use Instalar imagem após importar.",
+    "ImportImageDesc": "Lê os metadados da imagem a partir do registro e a registra nesta lista. Informe uma referência de imagem completa por linha, incluindo a tag.",
     "ImportImageDigestUnsupported": "Não é possível registrar um digest. Informe uma etiqueta.",
     "ImportImageEmptyImageName": "O nome da imagem está faltando após o host do registro.",
     "ImportImageEnableRegistry": "Habilitar registro",

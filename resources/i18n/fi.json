@@ -1573,7 +1573,7 @@
     "ImagesSuccessfullyAdded": "Kuvia tuotu onnistuneesti: {{count}}.",
     "ImportImage": "Tuo kuva",
     "ImportImageAdded": "Tuotu",
-    "ImportImageDesc": "Lukee imagen metatiedot rekisteristä ja rekisteröi sen tähän luetteloon. Kirjoita yksi täydellinen image-viittaus riviä kohden tagi mukaan lukien, esimerkiksi nvcr.io/nvidia/pytorch:26.09-py3. Lataa image agenteille tuonnin jälkeen Asenna image -toiminnolla.",
+    "ImportImageDesc": "Lukee imagen metatiedot rekisteristä ja rekisteröi sen tähän luetteloon. Kirjoita yksi täydellinen image-viittaus riviä kohden tagi mukaan lukien.",
     "ImportImageDigestUnsupported": "Digestiä ei voi rekisteröidä. Anna sen sijaan tunniste.",
     "ImportImageEmptyImageName": "Kuvan nimi puuttuu rekisterin isäntänimen jäljestä.",
     "ImportImageEnableRegistry": "Ota rekisteri käyttöön",

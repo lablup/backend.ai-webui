@@ -1573,7 +1573,7 @@
     "ImagesSuccessfullyAdded": "{{count}} Image berhasil diimpor.",
     "ImportImage": "Impor Image",
     "ImportImageAdded": "Diimpor",
-    "ImportImageDesc": "Membaca metadata image dari registry-nya dan mendaftarkannya ke daftar ini. Masukkan satu referensi image lengkap per baris, termasuk tag, misalnya nvcr.io/nvidia/pytorch:26.09-py3. Untuk mengunduhnya ke agent, gunakan Instal Image setelah impor.",
+    "ImportImageDesc": "Membaca metadata image dari registry-nya dan mendaftarkannya ke daftar ini. Masukkan satu referensi image lengkap per baris, termasuk tag.",
     "ImportImageDigestUnsupported": "Digest tidak dapat didaftarkan. Masukkan tag sebagai gantinya.",
     "ImportImageEmptyImageName": "Nama image tidak ada setelah host registri.",
     "ImportImageEnableRegistry": "Aktifkan Registry",

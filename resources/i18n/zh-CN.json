@@ -1573,7 +1573,7 @@
     "ImagesSuccessfullyAdded": "已成功导入 {{count}} 个镜像。",
     "ImportImage": "导入镜像",
     "ImportImageAdded": "已导入",
-    "ImportImageDesc": "从注册表读取镜像元数据并将其登记到此列表。每行输入一个包含标签的完整镜像引用，例如 nvcr.io/nvidia/pytorch:26.09-py3。要下载到代理，请在导入后使用安装镜像。",
+    "ImportImageDesc": "从注册表读取镜像元数据并将其登记到此列表。每行输入一个包含标签的完整镜像引用。",
     "ImportImageDigestUnsupported": "无法登记摘要（digest）。请改为输入标签。",
     "ImportImageEmptyImageName": "注册表主机后面缺少镜像名称。",
     "ImportImageEnableRegistry": "启用注册表",

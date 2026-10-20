@@ -1573,7 +1573,7 @@
     "ImagesSuccessfullyAdded": "Zaimportowano obrazy: {{count}}.",
     "ImportImage": "Importuj obraz",
     "ImportImageAdded": "Zaimportowano",
-    "ImportImageDesc": "Odczytuje metadane obrazu z jego rejestru i rejestruje go na tej liście. Wpisz jedno pełne odwołanie do obrazu w wierszu, razem z tagiem, na przykład nvcr.io/nvidia/pytorch:26.09-py3. Aby pobrać go na agenty, użyj Zainstaluj obraz po imporcie.",
+    "ImportImageDesc": "Odczytuje metadane obrazu z jego rejestru i rejestruje go na tej liście. Wpisz jedno pełne odwołanie do obrazu w wierszu, razem z tagiem.",
     "ImportImageDigestUnsupported": "Nie można zarejestrować digestu. Podaj zamiast tego tag.",
     "ImportImageEmptyImageName": "Po hoście rejestru brakuje nazwy obrazu.",
     "ImportImageEnableRegistry": "Włącz rejestr",

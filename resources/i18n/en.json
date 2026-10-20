@@ -1560,7 +1560,7 @@
     "ImagesSuccessfullyAdded": "{{count}} image(s) successfully imported.",
     "ImportImage": "Import Image",
     "ImportImageAdded": "Imported",
-    "ImportImageDesc": "Reads the image metadata from its registry and registers it in this list. Enter one full image reference per line, tag included, for example nvcr.io/nvidia/pytorch:26.09-py3. To download it to agents, use Install Image after importing.",
+    "ImportImageDesc": "Reads the image metadata from its registry and registers it in this list. Enter one full image reference per line, tag included.",
     "ImportImageDigestUnsupported": "A digest cannot be registered. Enter a tag instead.",
     "ImportImageEmptyImageName": "The image name is missing after the registry host.",
     "ImportImageEnableRegistry": "Enable Registry",
