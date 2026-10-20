@@ -319,7 +319,6 @@
     "RevisionNumber": "Revisio",
     "RevisionNumberTooltip": "Käyttöönoton nykyinen revisionumero.",
     "StrategyType": "Strategia",
-    "Tags": "Tunnisteet",
     "UpdatedAt": "Päivitetty"
   },
   "comp:BAINameActionCell": {

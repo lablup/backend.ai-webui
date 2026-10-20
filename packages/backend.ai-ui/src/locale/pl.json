@@ -319,7 +319,6 @@
     "RevisionNumber": "Rewizja",
     "RevisionNumberTooltip": "Bieżący numer rewizji wdrożenia.",
     "StrategyType": "Strategia",
-    "Tags": "Tagi",
     "UpdatedAt": "Zaktualizowano"
   },
   "comp:BAINameActionCell": {

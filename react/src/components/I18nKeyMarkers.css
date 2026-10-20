@@ -1,0 +1,13 @@
+/* Sits on the text line like a glyph and takes the text's own colour. */
+.i18n-key-marker {
+  display: inline;
+  margin-inline-start: 0.25em;
+  color: inherit;
+  cursor: copy;
+}
+
+.i18n-key-marker > svg {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.125em;
+}

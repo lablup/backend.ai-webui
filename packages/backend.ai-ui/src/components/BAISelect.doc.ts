@@ -199,7 +199,7 @@ export const docs = {
           name: 'ghost',
           type: 'boolean',
           description:
-            'On-dark treatment for the select that sits on the header’s brand-accent band.',
+            'On-dark treatment for the select that sits on the header’s brand-accent band. The colour follows the band’s polarity by default; a host whose band does not flip with the scheme sets `--bai-select-ghost-on-band` on an ancestor.',
         },
         {
           name: 'tooltip',

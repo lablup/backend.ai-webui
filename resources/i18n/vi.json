@@ -1318,8 +1318,7 @@
       "ReplicaStatus": "Vòng đời bản sao",
       "ReplicaTrafficStatus": "Trạng thái lưu lượng bản sao",
       "ResourceGroup": "Nhóm tài nguyên",
-      "Status": "Trạng thái",
-      "Tags": "Thẻ"
+      "Status": "Trạng thái"
     },
     "nav": {
       "Next": "Tiếp theo",
