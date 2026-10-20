@@ -1,8 +1,8 @@
 import type { BAIAppearanceConfig } from './customThemeConfig';
 import type { Mock } from 'vitest';
 
-// The loader resolves the domain and REST base through these two helpers;
-// both are controlled per test via the hoisted state below.
+// The loader resolves the domain and REST base from config.toml
+// (`publicAppConfig.ts`); both are controlled per test via the hoisted state.
 const resolverState = vi.hoisted(() => ({
   apiDomainName: undefined as string | undefined,
   apiEndpoint: '' as string,
@@ -10,11 +10,13 @@ const resolverState = vi.hoisted(() => ({
 
 vi.mock('../hooks/useWebUIConfig', () => ({
   fetchAppConfigOnce: vi.fn(async () => ({
-    config: { general: { apiDomainName: resolverState.apiDomainName } },
+    config: {
+      general: {
+        apiDomainName: resolverState.apiDomainName,
+        apiEndpoint: resolverState.apiEndpoint,
+      },
+    },
   })),
-}));
-vi.mock('../hooks/useResolvedApiEndpoint', () => ({
-  resolveApiEndpoint: vi.fn(async () => resolverState.apiEndpoint),
 }));
 
 const V2_THEME: BAIAppearanceConfig = {
