@@ -108,6 +108,9 @@ const BAIFormListInput: React.FC<BAIFormListInputProps> = ({
       {(fields, { add, remove }, { errors }) => (
         <>
           <ListInput<ListField>
+            // Its rows are an inline-size container, which takes no width
+            // from its content: without this a centering parent collapses it.
+            style={{ width: '100%' }}
             label={label}
             isLabelHidden={isLabelHidden}
             itemName={itemName}
