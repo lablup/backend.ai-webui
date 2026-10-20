@@ -28,9 +28,6 @@ import InputNumberWithSlider from '../InputNumberWithSlider';
 import ResourcePresetSelect from '../ResourcePresetSelect';
 import RemainingMark from './RemainingMark';
 import SharedMemoryFormItems from './SharedMemoryFormItems';
-// FRONTIER (ticket 17): the launcher's form-visual core. The Form ENGINE and
-// `Form.Item` are self-hosted since ticket 34 (live again since ticket 35),
-// and every control and every piece of chrome below is Astryx now.
 import { Card } from '@lablup/ui-common/Card';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { SegmentedControl } from '@lablup/ui-common/SegmentedControl';
@@ -116,37 +113,18 @@ export type MergedResourceAllocationFormValue = ResourceAllocationFormValue &
   ImageEnvironmentFormInput;
 
 interface ResourceAllocationFormItemsProps {
-  /**
-   * The project that scopes every project-dependent piece of this form
-   * fragment: the `accessible_scaling_groups(project_id:)` query, the
-   * resource-group select, and the resource limit / remaining / preset
-   * lookups. Required and non-null per ADR-0001 (form-fragment tier,
-   * FR-3411): this fragment never reads the ambient current project and
-   * never embeds a project selector — the parent owns any selector and
-   * passes the chosen/derived project down.
-   */
+  /** Scopes every project-dependent lookup here; never the ambient project (ADR 0001). */
   project: ProjectContext;
   enableAgentSelect?: boolean;
   enableResourcePresets?: boolean;
   showRemainingWarning?: boolean;
   forceImageMinValues?: boolean;
   hideClusterFormItems?: boolean;
-  /**
-   * Opt-in: when the form field has no value, auto-select the project's
-   * "default" resource group (or the first available one). Forwarded to
-   * `BAIProjectResourceGroupSelect`'s `autoSelectDefault` prop. Off by
-   * default to preserve existing behavior for shared callers like
-   * `SessionLauncherPage` / `ServiceLauncherPageContent` that pre-fill
-   * the form themselves.
-   */
+  /** Auto-select the "default" (or first) resource group when the field is
+   * empty. Off by default for callers that pre-fill the form. */
   autoSelectFirstResourceGroup?: boolean;
-  /**
-   * Hide the resource group selector while still mounting the underlying
-   * `BAIProjectResourceGroupSelect` (so `autoSelectFirstResourceGroup` and
-   * any external `form.setFieldValue('resourceGroup', ...)` still flow
-   * through). Used by the deployment-revision flow where the resource
-   * group is sourced from the parent deployment rather than chosen here.
-   */
+  /** Hide the selector but keep it mounted, so auto-select and external
+   * `resourceGroup` writes still flow through (deployment revisions). */
   hideResourceGroupFormItem?: boolean;
   /**
    * List the SFTP-designated resource groups in the selector. They are
@@ -170,12 +148,8 @@ const clusterModeSegmentedStyles = stylex.create({
   },
 });
 
-/**
- * Cluster-mode segmented control — the twin of the one in
- * `ClusterModeFormItems`, declared locally for the same reason: each option
- * carries a help tooltip that the shared `AstryxFormSegmented` option shape
- * does not model. The two `Form.Item` contracts are honoured inline.
- */
+// Declared locally: each option carries a help tooltip that the shared
+// `AstryxFormSegmented` option shape does not model.
 const ClusterModeSegmented: React.FC<{
   label: string;
   onValueChange: () => void;
@@ -283,10 +257,8 @@ const ResourceAllocationFormItems: React.FC<
     project.name,
     { includeSFTPResourceGroups },
   );
-  // Names of the resource groups accessible to the PASSED project. Handed to
-  // `useResourceLimitAndRemaining` so its "is this resource group valid?"
-  // guard is keyed off the `project` prop instead of the ambient current
-  // project's derived resource-group atom (ADR-0001).
+  // Keys the hook's resource-group guard off the `project` prop, not the
+  // ambient project (ADR 0001).
   const accessibleResourceGroupNames = _.compact(
     _.map(accessible_scaling_groups, (group) => group?.name),
   );
@@ -480,9 +452,6 @@ const ResourceAllocationFormItems: React.FC<
           />
         </Form.Item>
       ) : null}
-      {/* MAPPING §5.1: antd `Card` -> Astryx `Card`, a bare container. This
-          call site passes no `title`/`extra`/`tabList`, so nothing needs
-          composing around it — only the bottom margin, which stays. */}
       <Card style={{ marginBottom: token('--spacing-4') }}>
         <Form.Item
           shouldUpdate={(prev, cur) =>
@@ -492,13 +461,11 @@ const ResourceAllocationFormItems: React.FC<
         >
           {() => {
             return (
-              // getFieldValue('allocationPreset') === 'custom' && (
               <>
                 {resourceSlotsInRG?.cpu && (
                   <Form.Item
                     name={['resource', 'cpu']}
                     hidden={!baiClient._config.allowCustomResourceAllocation}
-                    // initialValue={0}
                     label={
                       mergedResourceSlots?.cpu?.human_readable_name || 'CPU'
                     }
@@ -654,11 +621,6 @@ const ResourceAllocationFormItems: React.FC<
                                             resourceLimits.mem?.max || '0g',
                                           ) + 'iB',
                                       }),
-                                      // t('session.launcher.MinMemory', {
-                                      //   size: _.toUpper(
-                                      //     resourceLimits.mem?.min || '0g',
-                                      //   ),
-                                      // }),
                                     );
                                   } else {
                                     return Promise.resolve();
@@ -668,12 +630,6 @@ const ResourceAllocationFormItems: React.FC<
                               {
                                 // TODO: min of mem should be shmem + image's mem limit??
                                 validator: async (_rule, value: string) => {
-                                  // const memMinPlusShmem =
-                                  //   addNumberWithUnits(
-                                  //     resourceLimits.mem?.min,
-                                  //     form.getFieldValue(['resource', 'shmem']),
-                                  //   ) || '0b';
-
                                   if (
                                     !_.isEmpty(value) &&
                                     resourceLimits.mem?.min &&
@@ -1178,8 +1134,6 @@ const ResourceAllocationFormItems: React.FC<
               </Form.Item>
             </Suspense>
             <Form.Item noStyle>
-              {/* MAPPING §3.3: icon-only, no children -> `IconButton`, whose
-                  required `label` finally names this refresh control. */}
               <IconButton
                 isLoading={isPendingAgentList}
                 onClick={() => {

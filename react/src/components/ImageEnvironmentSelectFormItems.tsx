@@ -39,8 +39,7 @@ import {
   BAIImageMetaIcon,
   imageNodeTagFacts,
   BAISelect,
-  // BAISelect still accepts antd's children option API via BUI's render-null
-  // carriers; the rich JSX option rows below survive through `renderOption`.
+  // Render-null option carriers; the rich option rows go through `renderOption`.
   BAISelectOptionItem as SelectOption,
   BAISelectOptionGroup as SelectOptGroup,
   BAIText,
@@ -94,11 +93,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
   // On until the user explicitly turns it off.
   const showDedicatedFirst = showDedicatedFirstSetting ?? true;
 
-  // antd `RefSelectProps` restated as the one method these two refs ever
-  // called. `BAISelect` accepts `ref` and never attaches it (P26-8 — Astryx's
-  // `Selector` exposes no imperative handle), so `.focus()` below has already
-  // been a no-op since wave 2; the optional-chained call keeps that harmless
-  // and the declarations keep compiling without antd.
+  // `BAISelect` never attaches `ref` (Astryx `Selector` has no imperative
+  // handle), so `.focus()` below is a harmless no-op (P26-8).
   type SelectFocusHandle = { focus: () => void };
   const envSelectRef = useRef<SelectFocusHandle>(null);
   const versionSelectRef = useRef<SelectFocusHandle>(null);
@@ -311,7 +307,6 @@ const ImageEnvironmentSelectFormItems: React.FC<
             direction="row"
             // set specific class name to handle flex wrap using css
             className={isDarkMode ? 'tag-wrap-dark' : 'tag-wrap-light'}
-            // style={{ flex: 1 }}
             style={{
               marginLeft: token('--spacing-2'),
               flexShrink: 1,
@@ -700,9 +695,6 @@ const ImageEnvironmentSelectFormItems: React.FC<
             : 'none',
         }}
       >
-        {/* antd `Input allowClear` → `AstryxFormTextInput hasClear`
-            (MAPPING §3.6). The handler already read the value rather than the
-            event, which the adapter now guarantees. */}
         <AstryxFormTextInput
           label={t('session.launcher.ManualImageName')}
           hasClear

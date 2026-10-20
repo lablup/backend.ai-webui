@@ -19,8 +19,8 @@ async function navigateToClusterModeSection(
 /**
  * Runtime half of the @requires-webui-v26.4 gate (FR-3114): the
  * "Multi-node with size 1 will be created as a single-node session." warning
- * is rendered by ClusterModeFormItems (FR-2381), introduced after WebUI
- * v26.3.0 and first released in v26.4. Gates on the explicit WebUI version
+ * is rendered by the session launcher's cluster-mode control (FR-2381),
+ * first released in WebUI v26.4. Gates on the explicit WebUI version
  * source (`globalThis.packageVersion`) instead of probing the warning
  * element, so on a capable build a missing warning is a real failure — the
  * `expect(warningMessage).toBeVisible()` at the call site is the failure
@@ -31,7 +31,7 @@ async function skipUnlessSizeOneWarningAvailable(page: Page): Promise<void> {
   await skipUnlessWebUIVersion(
     page,
     '26.4',
-    'Multi-node size-1 warning requires ClusterModeFormItems (FR-2381, @requires-webui-v26.4)',
+    'Multi-node size-1 warning requires FR-2381 (@requires-webui-v26.4)',
   );
 }
 
@@ -51,11 +51,8 @@ test.describe(
       'User sees warning when selecting Multi Node with cluster size 1',
       { tag: ['@regression', '@requires-webui-v26.4'] },
       async ({ page }) => {
-        // NOTE: This test requires ClusterModeFormItems.tsx (feat/FR-2381),
-        // which was introduced in the main branch after v26.3.0.
-        // The warning "Multi-node with size 1 will be created as a single-node session."
-        // is rendered by the new ClusterModeFormItems component. If the test server
-        // runs an older WebUI build, this test will be skipped automatically.
+        // NOTE: Requires the FR-2381 size-1 warning (WebUI v26.4+); skipped
+        // automatically on older builds.
         await navigateToClusterModeSection(page);
 
         // Click the Multi Node label to select the Multi Node radio button
@@ -70,9 +67,8 @@ test.describe(
         ).toBeChecked();
 
         // Cluster size should default to 1 with Multi Node selected.
-        // ClusterModeFormItems (FR-2381) renders the spinbutton inside the
-        // "Cluster mode" form item alongside the radio group; there is no
-        // separate "Cluster size" label in the new UI.
+        // The spinbutton sits inside the "Cluster mode" form item alongside
+        // the radio group; there is no separate "Cluster size" label.
         const clusterSizeInput = page
           .locator('.uic-form-item')
           .filter({ hasText: 'Cluster mode' })
@@ -80,7 +76,6 @@ test.describe(
         await expect(clusterSizeInput).toHaveValue('1');
 
         // Verify the warning message is displayed beneath the cluster size control.
-        // This warning is shown by ClusterModeFormItems (introduced in FR-2381).
         const warningMessage = page.getByText(
           'Multi-node with size 1 will be created as a single-node session.',
         );
@@ -168,7 +163,7 @@ test.describe(
       'User dismisses warning by switching from Multi Node to Single Node',
       { tag: ['@regression', '@requires-webui-v26.4'] },
       async ({ page }) => {
-        // NOTE: Requires ClusterModeFormItems.tsx (feat/FR-2381) — see note above.
+        // NOTE: Requires the FR-2381 size-1 warning — see note above.
         await navigateToClusterModeSection(page);
 
         const multiNodeLabel = page
@@ -196,7 +191,7 @@ test.describe(
       'User sees warning again after switching back from Single Node to Multi Node with size 1',
       { tag: ['@regression', '@requires-webui-v26.4'] },
       async ({ page }) => {
-        // NOTE: Requires ClusterModeFormItems.tsx (feat/FR-2381) — see note above.
+        // NOTE: Requires the FR-2381 size-1 warning — see note above.
         await navigateToClusterModeSection(page);
 
         const multiNodeLabel = page
@@ -255,8 +250,8 @@ test.describe(
         ).toBeChecked();
 
         // Verify the cluster size spinbutton has value '1'.
-        // ClusterModeFormItems (FR-2381) renders the spinbutton inside the
-        // "Cluster mode" form item; there is no separate "Cluster size" label.
+        // The spinbutton sits inside the "Cluster mode" form item; there is no
+        // separate "Cluster size" label.
         const clusterSizeInput = page
           .locator('.uic-form-item')
           .filter({ hasText: 'Cluster mode' })

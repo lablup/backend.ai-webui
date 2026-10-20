@@ -36,15 +36,8 @@ interface Props {
   currentResourceGroupFrgmtForLimit?: useResourceLimitAndRemainingFragment$key | null;
   ignorePerContainerConfig?: boolean;
   fetchKey?: string;
-  /**
-   * Resource-group names known to be valid for the project identified by
-   * `currentProjectName`. When provided, the guard that decides whether
-   * `currentResourceGroup` may be sent as the preset check's
-   * `scaling_group` param uses this list instead of the ambient current
-   * project's derived resource-group atom. Callers that scope to an
-   * explicit project (ADR-0001, e.g. `ResourceAllocationFormItems`) must
-   * pass it so the check never depends on the ambient header selection.
-   */
+  /** Valid resource groups of `currentProjectName`; replaces the ambient-project
+   * guard on `scaling_group`. Required for explicit-project callers (ADR 0001). */
   accessibleResourceGroupNames?: string[];
 }
 

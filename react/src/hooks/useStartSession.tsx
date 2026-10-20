@@ -18,7 +18,6 @@ import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay';
 
-// Type for successful session creation result
 type SessionCreationSuccess = {
   kernelId?: string;
   sessionId: string;
@@ -69,13 +68,8 @@ export type StartSessionValue =
   StartSessionEnvironments &
     // Optional fields from SessionLauncherFormValue
     Partial<Omit<SessionLauncherFormValue, 'environments'>> & {
-      /**
-       * Explicit target project (group) name for the created session
-       * (ADR-0001, FR-3412). When set, `group_name` is pinned to exactly
-       * this project instead of the ambient current project.
-       * Callers that omit it keep the ambient-project fallback — a
-       * sanctioned interim state until they are converted.
-       */
+      /** Pins `group_name` to this project; omitted, the ambient project is
+       * used (ADR 0001, FR-3412). */
       projectName?: string;
     };
 
@@ -129,7 +123,6 @@ export const useStartSession = () => {
       timeoutUnit: 's',
     },
     envvars: [],
-    // set default_session_environment only if set
     ...(baiClient._config?.default_session_environment && {
       environments: normalizeEnvironmentFormat(
         baiClient._config.default_session_environment,
@@ -201,7 +194,6 @@ export const useStartSession = () => {
       async (
         sessionCreations: PromiseSettledResult<SessionCreationSuccess>[],
       ) => {
-        // Group session creations by their status
         const results = _.groupBy(
           sessionCreations,
           'status',
