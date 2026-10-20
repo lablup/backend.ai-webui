@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5bfbeb4d8b71803ee22d398f75c1d90e>>
+ * @generated SignedSource<<29a5824d98c549bbd48f64d437a86648>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -264,12 +264,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "879104e8cf324117c328324b54809fc3",
+    "cacheID": "fcc97d74501de54b6fa029f8cfe4443f",
     "id": null,
     "metadata": {},
     "name": "AdminRetentionPolicyQuery",
     "operationKind": "query",
-    "text": "query AdminRetentionPolicyQuery(\n  $filter: RetentionPolicyFilter\n  $orderBy: [RetentionPolicyOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminRetentionPolicies(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        category\n        ...RetentionPolicySettingModalFragment\n        ...BAIAdminRetentionPolicyTableFragment\n      }\n    }\n  }\n}\n\nfragment BAIAdminRetentionPolicyTableFragment on RetentionPolicy {\n  id\n  category\n  retentionPeriodDays\n  enabled\n  lastSweptAt\n  createdAt\n  updatedAt\n}\n\nfragment RetentionPolicySettingModalFragment on RetentionPolicy {\n  id\n  entityId\n  category\n  retentionPeriodDays\n  enabled\n}\n"
+    "text": "query AdminRetentionPolicyQuery(\n  $filter: RetentionPolicyFilter\n  $orderBy: [RetentionPolicyOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminRetentionPolicies(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        category\n        ...RetentionPolicySettingModalFragment\n        ...BAIAdminRetentionPolicyTableFragment\n      }\n    }\n  }\n}\n\nfragment BAIAdminRetentionPolicyTableFragment on RetentionPolicy {\n  id\n  entityId\n  category\n  retentionPeriodDays\n  enabled\n  lastSweptAt\n  createdAt\n  updatedAt\n}\n\nfragment RetentionPolicySettingModalFragment on RetentionPolicy {\n  id\n  entityId\n  category\n  retentionPeriodDays\n  enabled\n}\n"
   }
 };
 })();

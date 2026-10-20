@@ -65,6 +65,7 @@ const BAIAdminRetentionPolicyTable = ({
         fragment BAIAdminRetentionPolicyTableFragment on RetentionPolicy
         @relay(plural: true) {
           id
+          entityId
           category
           retentionPeriodDays
           enabled
@@ -149,7 +150,7 @@ const BAIAdminRetentionPolicyTable = ({
     <BAITable
       scroll={{ x: 'max-content' }}
       size="small"
-      rowKey="id"
+      rowKey="entityId"
       dataSource={filterOutNullAndUndefined(retentionPolicies)}
       columns={allColumns}
       onChangeOrder={(order) => {

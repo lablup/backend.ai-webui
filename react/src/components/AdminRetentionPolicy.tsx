@@ -121,8 +121,8 @@ const AdminRetentionPolicy: React.FC<AdminRetentionPolicyProps> = ({
     _.map(adminRetentionPolicies?.edges, (edge) => edge?.node),
   );
 
-  const policyById = _.keyBy(policies, 'id');
-  const findPolicy = (id: string) => policyById[id] ?? null;
+  const policyById = _.keyBy(policies, 'entityId');
+  const findPolicy = (entityId: string) => policyById[entityId] ?? null;
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
@@ -222,7 +222,7 @@ const AdminRetentionPolicy: React.FC<AdminRetentionPolicyProps> = ({
                         title: t('button.Edit'),
                         icon: <SquarePenIcon />,
                         onClick: () => {
-                          setEditingPolicy(findPolicy(row.id));
+                          setEditingPolicy(findPolicy(row.entityId));
                           setIsOpenSettingModal(true);
                         },
                       },
@@ -231,7 +231,8 @@ const AdminRetentionPolicy: React.FC<AdminRetentionPolicyProps> = ({
                         title: t('button.Delete'),
                         icon: <Trash2 size="1em" />,
                         type: 'danger',
-                        onClick: () => setDeletingPolicy(findPolicy(row.id)),
+                        onClick: () =>
+                          setDeletingPolicy(findPolicy(row.entityId)),
                       },
                     ]}
                   />
@@ -269,7 +270,7 @@ const AdminRetentionPolicy: React.FC<AdminRetentionPolicyProps> = ({
           deletingPolicy
             ? [
                 {
-                  key: deletingPolicy.id,
+                  key: deletingPolicy.entityId,
                   label: t(
                     `retentionPolicy.categories.${deletingPolicy.category}`,
                     { defaultValue: deletingPolicy.category },
