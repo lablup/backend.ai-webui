@@ -6,15 +6,15 @@ import { ManageAppsModalMutation } from '../__generated__/ManageAppsModalMutatio
 import { ManageAppsModal_image$key } from '../__generated__/ManageAppsModal_image.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
-import BAIFormItem from './BAIFormItem';
 import { AstryxFormTextInput } from './astryxFormControls';
 import { Banner } from '@lablup/ui-common/Banner';
-import { Button } from '@lablup/ui-common/Button';
-import { IconButton } from '@lablup/ui-common/IconButton';
-import { Text } from '@lablup/ui-common/Text';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAIFormListInput,
+  BAIModal,
+  BAIModalProps,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { Trash, PlusIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -165,163 +165,125 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
       {...baiModalProps}
     >
       {/* antd Alert type="info" -> Astryx Banner status="info"; `showIcon` is
-          dropped (Banner shows its icon by default — MAPPING.md §4). The
-          marginBottom token becomes BAIFlex column gaps. */}
+          dropped (Banner shows its icon by default — MAPPING.md §4). */}
       <BAIFlex direction="column" align="stretch" gap="md">
         <Banner
           role="status"
           status="info"
           title={t('environment.AppPortsApplyToNewSessionsOnly')}
         />
-        <BAIFlex direction="row" style={{ width: '100%' }}>
-          <BAIFlex style={{ width: '32%' }}>
-            <Text weight="semibold">{t('environment.AppName')}</Text>
+        <Form
+          ref={formRef}
+          layout="vertical"
+          autoComplete="off"
+          initialValues={{ apps: servicePorts }}
+        >
+          <BAIFlex direction="column">
+            <BAIFormListInput
+              name="apps"
+              label={t('environment.ManageApps')}
+              isLabelHidden
+              itemName={t('environment.AppItemName')}
+              isDisabled={!image}
+              columns={[
+                {
+                  key: 'app',
+                  header: t('environment.AppName'),
+                  formItemProps: () => ({
+                    rules: [
+                      {
+                        required: true,
+                        message: t('environment.AppNameMustNotBeEmpty'),
+                      },
+                    ],
+                  }),
+                  renderInput: ({ label }) => (
+                    <AstryxFormTextInput
+                      label={label}
+                      placeholder={t('general.Example', { value: 'jupyter' })}
+                    />
+                  ),
+                },
+                {
+                  key: 'protocol',
+                  header: t('environment.Protocol'),
+                  formItemProps: () => ({
+                    rules: [
+                      {
+                        pattern: /^(http|tcp|pty|preopen)$/,
+                        required: true,
+                        message: t('environment.ProtocolMustBeOneOfSupported'),
+                      },
+                    ],
+                  }),
+                  renderInput: ({ label }) => (
+                    <AstryxFormTextInput
+                      label={label}
+                      placeholder={t('general.Example', { value: 'http' })}
+                    />
+                  ),
+                },
+                {
+                  key: 'port',
+                  header: t('environment.Port'),
+                  formItemProps: (field) => ({
+                    required: true,
+                    rules: [
+                      {
+                        validator: (_rules, rawValue) => {
+                          const value =
+                            _.isUndefined(rawValue) || rawValue === ''
+                              ? NaN
+                              : _.toNumber(rawValue);
+                          if (_.isNaN(value) || value < 0 || value >= 65535) {
+                            return Promise.reject(
+                              t('environment.PortMustBeInRange'),
+                            );
+                          } else if (
+                            [2000, 2001, 2002, 2003, 2200, 7681].includes(
+                              Number(value),
+                            )
+                          ) {
+                            return Promise.reject(
+                              t('environment.PortReservedForInternalUse'),
+                            );
+                          }
+                          return Promise.resolve();
+                        },
+                      },
+                      {
+                        validator: (_rule, value) => {
+                          const apps = formRef.current?.getFieldValue('apps');
+                          if (
+                            _.isString(value) &&
+                            value.length > 0 &&
+                            apps.some(
+                              (item: any, itemIndex: number) =>
+                                itemIndex !== field.name &&
+                                item?.port === value,
+                            )
+                          ) {
+                            return Promise.reject(
+                              t('environment.PortMustBeUnique'),
+                            );
+                          }
+                          return Promise.resolve();
+                        },
+                      },
+                    ],
+                  }),
+                  renderInput: ({ label }) => (
+                    <AstryxFormTextInput
+                      label={label}
+                      placeholder={t('general.Example', { value: '8888' })}
+                    />
+                  ),
+                },
+              ]}
+            />
           </BAIFlex>
-          <BAIFlex style={{ width: '32%' }}>
-            <Text weight="semibold">{t('environment.Protocol')}</Text>
-          </BAIFlex>
-          <BAIFlex style={{ width: '32%' }}>
-            <Text weight="semibold">{t('environment.Port')}</Text>
-          </BAIFlex>
-          <BAIFlex></BAIFlex>
-        </BAIFlex>
+        </Form>
       </BAIFlex>
-      <Form
-        ref={formRef}
-        layout="vertical"
-        autoComplete="off"
-        initialValues={{ apps: servicePorts }}
-      >
-        <BAIFlex direction="column">
-          <Form.List name="apps">
-            {(fields, { add, remove }) => (
-              <BAIFlex direction="column" style={{ width: '100%' }}>
-                {_.map(fields, (field, index) => (
-                  <BAIFormItem>
-                    <BAIFlex direction="row" key={field.key} gap={'xs'}>
-                      <BAIFormItem
-                        {...field}
-                        name={[field.name, 'app']}
-                        noStyle
-                        rules={[
-                          {
-                            required: true,
-                            message: t('environment.AppNameMustNotBeEmpty'),
-                          },
-                        ]}
-                      >
-                        <AstryxFormTextInput
-                          label={t('environment.AppName')}
-                          placeholder={t('environment.AppName')}
-                        />
-                      </BAIFormItem>
-                      <BAIFormItem
-                        {...field}
-                        name={[field.name, 'protocol']}
-                        noStyle
-                        rules={[
-                          {
-                            pattern: /^(http|tcp|pty|preopen)$/,
-                            required: true,
-                            message: t(
-                              'environment.ProtocolMustBeOneOfSupported',
-                            ),
-                          },
-                        ]}
-                      >
-                        <AstryxFormTextInput
-                          label={t('environment.Protocol')}
-                          placeholder={t('environment.Protocol')}
-                        />
-                      </BAIFormItem>
-                      <BAIFormItem
-                        {...field}
-                        name={[field.name, 'port']}
-                        noStyle
-                        required
-                        rules={[
-                          {
-                            validator: (_rules, rawValue) => {
-                              const value =
-                                _.isUndefined(rawValue) || rawValue === ''
-                                  ? NaN
-                                  : _.toNumber(rawValue);
-                              if (
-                                _.isNaN(value) ||
-                                value < 0 ||
-                                value >= 65535
-                              ) {
-                                return Promise.reject(
-                                  t('environment.PortMustBeInRange'),
-                                );
-                              } else if (
-                                [2000, 2001, 2002, 2003, 2200, 7681].includes(
-                                  Number(value),
-                                )
-                              ) {
-                                return Promise.reject(
-                                  t('environment.PortReservedForInternalUse'),
-                                );
-                              }
-                              return Promise.resolve();
-                            },
-                          },
-                          {
-                            validator: (_rule, value) => {
-                              const apps =
-                                formRef.current?.getFieldValue('apps');
-                              if (
-                                _.isString(value) &&
-                                value.length > 0 &&
-                                apps.some(
-                                  (item: any, itemIndex: number) =>
-                                    itemIndex !== index && item?.port === value,
-                                )
-                              ) {
-                                return Promise.reject(
-                                  t('environment.PortMustBeUnique'),
-                                );
-                              }
-                              return Promise.resolve();
-                            },
-                          },
-                        ]}
-                      >
-                        <AstryxFormTextInput
-                          label={t('environment.Port')}
-                          placeholder={t('environment.Port')}
-                        />
-                      </BAIFormItem>
-                      {/* PILOT-DECISION: antd `type="text" danger` -> ghost
-                          IconButton; the red tint is dropped (closed variant
-                          enum, P5/P11). The first-row marginTop nudge against
-                          antd's label offset is obsolete and dropped. */}
-                      <IconButton
-                        variant="ghost"
-                        label={t('button.Delete')}
-                        tooltip={t('button.Delete')}
-                        onClick={() => remove(field.name)}
-                        icon={<Trash size="1em" />}
-                      />
-                    </BAIFlex>
-                  </BAIFormItem>
-                ))}
-                {/* PILOT-DECISION: antd `type="dashed"` has no Astryx
-                    equivalent -> `variant="secondary"` (MAPPING.md §3.3);
-                    `block` -> width="100%". */}
-                <Button
-                  variant="secondary"
-                  onClick={() => add()}
-                  width="100%"
-                  icon={<PlusIcon />}
-                  isDisabled={!image}
-                  label={t('button.Add')}
-                />
-              </BAIFlex>
-            )}
-          </Form.List>
-        </BAIFlex>
-      </Form>
     </BAIModal>
   );
 };

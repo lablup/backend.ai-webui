@@ -1547,6 +1547,7 @@
     "AllProjects": "Tất cả dự án",
     "AlreadyInstalledImage": "Hình ảnh đã được cài đặt",
     "AppInfoDeleted": "Thông tin ứng dụng đã được xóa thành công.",
+    "AppItemName": "ứng dụng",
     "AppName": "Tên ứng dụng",
     "AppNameMustNotBeEmpty": "Tên ứng dụng không được để trống",
     "AppPortsApplyToNewSessionsOnly": "Các thay đổi về ứng dụng và cổng chỉ áp dụng cho các phiên mới được tạo và không ảnh hưởng đến các phiên đang chạy.",

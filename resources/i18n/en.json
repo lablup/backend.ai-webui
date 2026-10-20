@@ -1534,6 +1534,7 @@
     "AllProjects": "All projects",
     "AlreadyInstalledImage": "Already installed image",
     "AppInfoDeleted": "Deleted App information.",
+    "AppItemName": "app",
     "AppName": "App Name",
     "AppNameMustNotBeEmpty": "App Name must not be empty",
     "AppPortsApplyToNewSessionsOnly": "App and port changes apply to newly created sessions only and do not affect sessions that are already running.",

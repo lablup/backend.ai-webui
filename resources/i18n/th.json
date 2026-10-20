@@ -1542,6 +1542,7 @@
     "AllProjects": "ทุกโปรเจกต์",
     "AlreadyInstalledImage": "อิมเมจที่ติดตั้งแล้ว",
     "AppInfoDeleted": "ลบข้อมูลแอปสำเร็จแล้ว",
+    "AppItemName": "แอป",
     "AppName": "ชื่อแอป",
     "AppNameMustNotBeEmpty": "ชื่อแอปต้องไม่ว่างเปล่า",
     "AppPortsApplyToNewSessionsOnly": "การเปลี่ยนแปลงแอปและพอร์ตจะมีผลกับเซสชันที่สร้างขึ้นใหม่เท่านั้น และไม่ส่งผลต่อเซสชันที่กำลังทำงานอยู่",

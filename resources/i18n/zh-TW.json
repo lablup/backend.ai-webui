@@ -1548,6 +1548,7 @@
     "AllProjects": "全部專案",
     "AlreadyInstalledImage": "已安装的图像",
     "AppInfoDeleted": "應用信息刪除成功。",
+    "AppItemName": "應用程式",
     "AppName": "應用名稱",
     "AppNameMustNotBeEmpty": "應用名稱不能為空",
     "AppPortsApplyToNewSessionsOnly": "應用程式與連接埠的變更僅適用於新建的工作階段，不影響已在執行中的工作階段。",
