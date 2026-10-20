@@ -709,18 +709,23 @@ const LoginView: React.FC<{
       setIsBlockPanelOpen(false);
       if (showError) {
         const e = err as {
+          name?: string;
           title?: string;
           message?: string;
+          description?: string;
           status?: number;
         };
-        if (e.message) {
+        // RelayEnvironment's AuthorizationError keeps the server's reason in `description`.
+        const message =
+          (e.name === 'AuthorizationError' && e.description) || e.message;
+        if (message) {
           if (e.status === 408) {
             notification(
               t('error.LoginSucceededManagerNotResponding'),
-              e.message,
+              message,
             );
           } else {
-            notification(e.title || t('error.LoginFailed'), e.message);
+            notification(e.title || t('error.LoginFailed'), message);
           }
         } else {
           notification(t('error.LoginInformationMismatch'));

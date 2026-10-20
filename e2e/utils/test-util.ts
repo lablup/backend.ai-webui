@@ -115,6 +115,23 @@ export const webServerEndpoint =
 export const isLocalEnvironment =
   webuiEndpoint.includes('127.0.0.1') || webuiEndpoint.includes('localhost');
 
+/**
+ * Remember `endpoint` as the last-used API endpoint before the app loads, so
+ * the login page probes it and attempts the silent `/server/login` on load.
+ * A dev server gets this from `VITE_DEFAULT_API_ENDPOINT`; a production build
+ * with an empty `apiEndpoint` has no endpoint until one is stored.
+ */
+export async function seedStoredApiEndpoint(
+  page: Page,
+  endpoint: string = webServerEndpoint,
+) {
+  await page.addInitScript((ep) => {
+    if (localStorage.getItem('backendaiwebui.api_endpoint') === null) {
+      localStorage.setItem('backendaiwebui.api_endpoint', ep);
+    }
+  }, endpoint);
+}
+
 export async function login(
   page: Page,
   request: APIRequestContext,
