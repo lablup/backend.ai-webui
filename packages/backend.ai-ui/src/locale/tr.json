@@ -153,7 +153,6 @@
     "EditLabels": "Etiketleri düzenle"
   },
   "comp:BAIEntityLabelSettingModal": {
-    "AddLabel": "Etiket ekle",
     "AddLabelsToItems": "{{count}} öğeye etiket ekle",
     "BulkDescription": "Bu etiketler seçilen her öğeye eklenir. Anahtara zaten sahip olan öğe yeni değeri alır; diğer etiketleri korunur.",
     "EditLabels": "Etiketleri düzenle",
@@ -162,8 +161,8 @@
     "KeyMustBeUnique": "Her anahtar yalnızca bir kez kullanılabilir.",
     "KeyRequired": "Bir anahtar girin.",
     "Label": "Etiket",
+    "LabelItemName": "etiket",
     "LabelsSaved": "Etiketler kaydedildi.",
-    "RemoveLabel": "Etiketi kaldır",
     "Save": "Kaydet",
     "SomeLabelsFailed": "{{count}} etiket değişikliği başarısız oldu",
     "Target": "Hedef",
@@ -441,10 +440,10 @@
     "UpdatedAt": "Güncelleme Tarihi"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
-    "AddChoice": "Seçenek Ekle",
     "Category": "Kategori",
     "CategoryPlaceholder": "örn. model_loading",
     "CategoryTooltip": "İlgili parametreleri bir arada düzenlemek için kullanılan UI kategorisi.",
+    "ChoiceItemName": "seçenek",
     "ChoiceLabel": "Etiket",
     "ChoiceLabelPlaceholder": "örn. FP16",
     "ChoiceLabelRequired": "Seçenek etiketi zorunludur.",

@@ -153,7 +153,6 @@
     "EditLabels": "Editar rótulos"
   },
   "comp:BAIEntityLabelSettingModal": {
-    "AddLabel": "Adicionar rótulo",
     "AddLabelsToItems": "Adicionar rótulos a {{count}} itens",
     "BulkDescription": "Estes rótulos são adicionados a todos os itens selecionados. Um item que já tem a chave recebe o novo valor; os seus outros rótulos mantêm-se.",
     "EditLabels": "Editar rótulos",
@@ -162,8 +161,8 @@
     "KeyMustBeUnique": "Cada chave só pode ser usada uma vez.",
     "KeyRequired": "Introduza uma chave.",
     "Label": "Rótulo",
+    "LabelItemName": "etiqueta",
     "LabelsSaved": "Rótulos guardados.",
-    "RemoveLabel": "Remover rótulo",
     "Save": "Guardar",
     "SomeLabelsFailed": "{{count}} alterações de rótulos falharam",
     "Target": "Destino",
@@ -441,10 +440,10 @@
     "UpdatedAt": "Atualizado em"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
-    "AddChoice": "Adicionar Opção",
     "Category": "Categoria",
     "CategoryPlaceholder": "ex., model_loading",
     "CategoryTooltip": "Categoria de UI utilizada para agrupar parâmetros relacionados.",
+    "ChoiceItemName": "opção",
     "ChoiceLabel": "Rótulo",
     "ChoiceLabelPlaceholder": "ex., FP16",
     "ChoiceLabelRequired": "O rótulo da opção é obrigatório.",

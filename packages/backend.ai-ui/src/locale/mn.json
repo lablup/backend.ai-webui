@@ -153,7 +153,6 @@
     "EditLabels": "Шошго засах"
   },
   "comp:BAIEntityLabelSettingModal": {
-    "AddLabel": "Шошго нэмэх",
     "AddLabelsToItems": "{{count}} зүйлд шошго нэмэх",
     "BulkDescription": "Эдгээр шошгыг сонгосон бүх зүйлд нэмнэ. Ижил түлхүүртэй зүйлийн утга шинэчлэгдэж, бусад шошго хэвээр үлдэнэ.",
     "EditLabels": "Шошго засах",
@@ -162,8 +161,8 @@
     "KeyMustBeUnique": "Түлхүүр бүрийг зөвхөн нэг удаа ашиглана.",
     "KeyRequired": "Түлхүүр оруулна уу.",
     "Label": "Шошго",
+    "LabelItemName": "шошго",
     "LabelsSaved": "Шошго хадгалагдлаа.",
-    "RemoveLabel": "Шошго устгах",
     "Save": "Хадгалах",
     "SomeLabelsFailed": "{{count}} шошгоны өөрчлөлт амжилтгүй",
     "Target": "Зорилт",
@@ -441,10 +440,10 @@
     "UpdatedAt": "Шинэчлэгдсэн огноо"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
-    "AddChoice": "Сонголт нэмэх",
     "Category": "Ангилал",
     "CategoryPlaceholder": "жн: model_loading",
     "CategoryTooltip": "Холбоотой параметрүүдийг хамтад нь бүлэглэхэд ашиглагдах UI ангилал.",
+    "ChoiceItemName": "сонголт",
     "ChoiceLabel": "Шошго",
     "ChoiceLabelPlaceholder": "жн: FP16",
     "ChoiceLabelRequired": "Сонголтын шошго заавал шаардлагатай.",

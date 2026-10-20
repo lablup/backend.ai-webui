@@ -153,7 +153,6 @@
     "EditLabels": "Editar etiquetas"
   },
   "comp:BAIEntityLabelSettingModal": {
-    "AddLabel": "Añadir etiqueta",
     "AddLabelsToItems": "Añadir etiquetas a {{count}} elementos",
     "BulkDescription": "Estas etiquetas se añaden a todos los elementos seleccionados. Si un elemento ya tiene la clave, recibe el nuevo valor; sus otras etiquetas se mantienen.",
     "EditLabels": "Editar etiquetas",
@@ -162,8 +161,8 @@
     "KeyMustBeUnique": "Cada clave solo puede usarse una vez.",
     "KeyRequired": "Introduzca una clave.",
     "Label": "Etiqueta",
+    "LabelItemName": "etiqueta",
     "LabelsSaved": "Etiquetas guardadas.",
-    "RemoveLabel": "Quitar etiqueta",
     "Save": "Guardar",
     "SomeLabelsFailed": "Fallaron {{count}} cambios de etiquetas",
     "Target": "Destino",
@@ -441,10 +440,10 @@
     "UpdatedAt": "Actualizado el"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
-    "AddChoice": "Agregar Opción",
     "Category": "Categoría",
     "CategoryPlaceholder": "ej. model_loading",
     "CategoryTooltip": "Categoría de la interfaz utilizada para agrupar parámetros relacionados.",
+    "ChoiceItemName": "opción",
     "ChoiceLabel": "Etiqueta",
     "ChoiceLabelPlaceholder": "ej. FP16",
     "ChoiceLabelRequired": "La etiqueta de la opción es obligatoria.",

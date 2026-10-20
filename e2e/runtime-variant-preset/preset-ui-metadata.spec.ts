@@ -182,7 +182,7 @@ test.describe(
       await labelRows.nth(1).fill('BF16');
 
       // Exercise the remove flow too, not just add: a temporary third row
-      // is added, filled, then removed via its own row Delete button. This
+      // is added, filled, then removed via its own row Remove button. This
       // verifies the row count drops back to 2 and the remaining rows keep
       // their own values (i.e. `remove()` targets the right Form.List index)
       // — a broken remove handler wouldn't fail any test without this.
@@ -191,8 +191,7 @@ test.describe(
       await labelRows.nth(2).fill('INT8');
       await expect(choiceRows).toHaveCount(3);
       await modal
-        .getByRole('button', { name: 'Delete', exact: true })
-        .last()
+        .getByRole('button', { name: 'Remove choice 3', exact: true })
         .click();
       await expect(choiceRows).toHaveCount(2);
       await expect(choiceRows.nth(0)).toHaveValue('fp16');

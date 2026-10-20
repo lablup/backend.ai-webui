@@ -153,7 +153,6 @@
     "EditLabels": "Modifier les libellés"
   },
   "comp:BAIEntityLabelSettingModal": {
-    "AddLabel": "Ajouter un libellé",
     "AddLabelsToItems": "Ajouter des libellés à {{count}} éléments",
     "BulkDescription": "Ces libellés sont ajoutés à chaque élément sélectionné. Un élément qui possède déjà la clé reçoit la nouvelle valeur ; ses autres libellés sont conservés.",
     "EditLabels": "Modifier les libellés",
@@ -162,8 +161,8 @@
     "KeyMustBeUnique": "Chaque clé ne peut être utilisée qu’une fois.",
     "KeyRequired": "Saisissez une clé.",
     "Label": "Libellé",
+    "LabelItemName": "libellé",
     "LabelsSaved": "Libellés enregistrés.",
-    "RemoveLabel": "Supprimer le libellé",
     "Save": "Enregistrer",
     "SomeLabelsFailed": "{{count}} modifications de libellés ont échoué",
     "Target": "Cible",
@@ -441,10 +440,10 @@
     "UpdatedAt": "Mis à jour le"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
-    "AddChoice": "Ajouter un choix",
     "Category": "Catégorie",
     "CategoryPlaceholder": "ex. model_loading",
     "CategoryTooltip": "Catégorie d'interface utilisée pour regrouper les paramètres associés.",
+    "ChoiceItemName": "choix",
     "ChoiceLabel": "Libellé",
     "ChoiceLabelPlaceholder": "ex. FP16",
     "ChoiceLabelRequired": "Le libellé du choix est obligatoire.",

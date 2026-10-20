@@ -153,7 +153,6 @@
     "EditLabels": "Επεξεργασία ετικετών"
   },
   "comp:BAIEntityLabelSettingModal": {
-    "AddLabel": "Προσθήκη ετικέτας",
     "AddLabelsToItems": "Προσθήκη ετικετών σε {{count}} στοιχεία",
     "BulkDescription": "Οι ετικέτες προστίθενται σε κάθε επιλεγμένο στοιχείο. Αν ένα στοιχείο έχει ήδη το κλειδί, παίρνει τη νέα τιμή· οι άλλες ετικέτες του παραμένουν.",
     "EditLabels": "Επεξεργασία ετικετών",
@@ -162,8 +161,8 @@
     "KeyMustBeUnique": "Κάθε κλειδί μπορεί να χρησιμοποιηθεί μόνο μία φορά.",
     "KeyRequired": "Εισαγάγετε κλειδί.",
     "Label": "Ετικέτα",
+    "LabelItemName": "ετικέτα",
     "LabelsSaved": "Οι ετικέτες αποθηκεύτηκαν.",
-    "RemoveLabel": "Αφαίρεση ετικέτας",
     "Save": "Αποθήκευση",
     "SomeLabelsFailed": "Απέτυχαν {{count}} αλλαγές ετικετών",
     "Target": "Στόχος",
@@ -441,10 +440,10 @@
     "UpdatedAt": "Ενημερώθηκε στις"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
-    "AddChoice": "Προσθήκη Επιλογής",
     "Category": "Κατηγορία",
     "CategoryPlaceholder": "π.χ., model_loading",
     "CategoryTooltip": "Κατηγορία UI που χρησιμοποιείται για την οργάνωση σχετικών παραμέτρων μαζί.",
+    "ChoiceItemName": "επιλογή",
     "ChoiceLabel": "Ετικέτα",
     "ChoiceLabelPlaceholder": "π.χ., FP16",
     "ChoiceLabelRequired": "Η ετικέτα επιλογής είναι υποχρεωτική.",
