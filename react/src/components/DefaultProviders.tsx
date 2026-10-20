@@ -59,7 +59,6 @@ import weekday from 'dayjs/plugin/weekday';
 import i18n from 'i18next';
 import Backend from 'i18next-http-backend';
 import { createStore } from 'jotai';
-import { GlobeIcon } from 'lucide-react';
 import React, {
   ReactNode,
   Suspense,
@@ -126,21 +125,10 @@ i18n
         new URLSearchParams(window.location.search).get('debug') === 'true';
       // @ts-ignore
       if (globalThis?.backendaiwebui?.debug === true || isDebugByUrlParam) {
-        // key can be an array in i18next, convert to string for copy functionality
+        // Must stay a string: `t()` also feeds placeholders, tooltips and aria labels.
+        if (typeof value !== 'string') return value;
         const keyString = Array.isArray(key) ? key[0] : String(key);
-        return (
-          <>
-            {value}
-            <BAIText
-              style={{ marginLeft: 4 }}
-              copyable={{
-                text: keyString,
-                tooltips: [keyString, keyString],
-                icon: <GlobeIcon />,
-              }}
-            />
-          </>
-        );
+        return `${value} [${keyString}]`;
       } else {
         return value;
       }
