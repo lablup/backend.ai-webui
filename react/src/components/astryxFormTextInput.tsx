@@ -8,6 +8,7 @@ import { FormItemInputContext } from '../form-engine';
 import type { TextInputProps } from '@lablup/ui-common/TextInput';
 import { TextInput } from '@lablup/ui-common/TextInput';
 import type { SizeValue } from '@lablup/ui-common/utils';
+import { useBAIFormListInputCellStatus } from 'backend.ai-ui';
 import React from 'react';
 
 /**
@@ -47,12 +48,17 @@ import React from 'react';
  * inside a `Field` container that is already `flex column`) — layout-neutral.
  * `astryxFormControls.test.tsx` locks this in.
  */
-export const useFormControlStatusProps = (): {
-  status?: { type: 'error' | 'warning' };
-  statusVariant: 'detached';
-} => {
+export const useFormControlStatusProps = ():
+  | {
+      status?: { type: 'error' | 'warning' };
+      statusVariant: 'detached';
+    }
+  | NonNullable<ReturnType<typeof useBAIFormListInputCellStatus>> => {
   'use memo';
+  // Inside a BAIFormListInput cell the message goes to a tooltip instead.
+  const cellStatus = useBAIFormListInputCellStatus();
   const { status } = React.useContext(FormItemInputContext);
+  if (cellStatus) return cellStatus;
   if (status !== 'error' && status !== 'warning')
     return { statusVariant: 'detached' };
   return { status: { type: status }, statusVariant: 'detached' };

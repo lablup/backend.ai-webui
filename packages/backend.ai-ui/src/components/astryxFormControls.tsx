@@ -29,6 +29,7 @@
  antd-identical API, which is why the reconciliations above still read against
  antd's semantics. These adapters are only the control layer.
 */
+import { useBAIFormListInputCellStatus } from './BAIFormListInput';
 import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { NumberInput } from '@lablup/ui-common/NumberInput';
 import { Switch } from '@lablup/ui-common/Switch';
@@ -70,6 +71,7 @@ export const AstryxFormTextInput: React.FC<AstryxFormTextInputProps> = ({
   ...rest
 }) => {
   'use memo';
+  const cellStatus = useBAIFormListInputCellStatus();
   return (
     <TextInput
       {...(rest as object)}
@@ -85,8 +87,9 @@ export const AstryxFormTextInput: React.FC<AstryxFormTextInputProps> = ({
       status={
         status === 'error' || status === 'warning'
           ? { type: status }
-          : undefined
+          : cellStatus?.status
       }
+      statusVariant={cellStatus?.statusVariant}
       width={width}
     />
   );
