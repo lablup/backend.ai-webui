@@ -56,7 +56,7 @@
     "Replicas": "복제본 수",
     "ReplicasPlaceholder": "예: 2",
     "ReplicasTooltip": "이 프리셋으로 배포를 생성할 때 적용되는 기본 복제본 수입니다.",
-    "ResourceOptItemName": "자원 옵션",
+    "ResourceOptItemName": "리소스 옵션",
     "ResourceOpts": "리소스 옵션",
     "ResourceSlots": "리소스 슬롯",
     "RevisionHistoryLimit": "리비전 기록 한도",
