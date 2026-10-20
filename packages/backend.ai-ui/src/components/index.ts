@@ -110,6 +110,15 @@ export type { BAICheckboxProps } from './BAICheckbox';
 export { default as BAISelectionLabel } from './BAISelectionLabel';
 export type { BAISelectionLabelProps } from './BAISelectionLabel';
 export { default as BAIFetchKeyButton } from './BAIFetchKeyButton';
+export {
+  default as BAIFormListInput,
+  useBAIFormListInputCellStatus,
+} from './BAIFormListInput';
+export type {
+  BAIFormListInputProps,
+  BAIFormListInputColumn,
+  BAIFormListInputCellContext,
+} from './BAIFormListInput';
 export { default as BAICountdownBorder } from './BAICountdownBorder';
 export type { BAICountdownBorderProps } from './BAICountdownBorder';
 export {
