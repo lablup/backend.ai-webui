@@ -1318,8 +1318,7 @@
       "ReplicaStatus": "복제본 라이프사이클",
       "ReplicaTrafficStatus": "복제본 트래픽 상태",
       "ResourceGroup": "자원 그룹",
-      "Status": "상태",
-      "Tags": "태그"
+      "Status": "상태"
     },
     "nav": {
       "Next": "다음",

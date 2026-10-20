@@ -319,7 +319,6 @@
     "RevisionNumber": "Ревизия",
     "RevisionNumberTooltip": "Текущий номер ревизии развёртывания.",
     "StrategyType": "Стратегия",
-    "Tags": "Теги",
     "UpdatedAt": "Обновлено"
   },
   "comp:BAINameActionCell": {

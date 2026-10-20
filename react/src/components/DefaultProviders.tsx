@@ -19,6 +19,7 @@ import {
 } from '../hooks';
 import { useDeviceMetaData, useImageMetaData } from '../hooks/backendai';
 import '../index.css';
+import I18nKeyMarkers, { appendI18nKeyMarker } from './I18nKeyMarkers';
 import NotificationHost from './NotificationHost';
 import { useTheme } from '@lablup/ui-common/theme';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -59,7 +60,6 @@ import weekday from 'dayjs/plugin/weekday';
 import i18n from 'i18next';
 import Backend from 'i18next-http-backend';
 import { createStore } from 'jotai';
-import { GlobeIcon } from 'lucide-react';
 import React, {
   ReactNode,
   Suspense,
@@ -126,21 +126,11 @@ i18n
         new URLSearchParams(window.location.search).get('debug') === 'true';
       // @ts-ignore
       if (globalThis?.backendaiwebui?.debug === true || isDebugByUrlParam) {
-        // key can be an array in i18next, convert to string for copy functionality
+        // Must stay a string: `t()` also feeds placeholders, tooltips and aria labels.
+        // `I18nKeyMarkers` turns the invisible marker into the copy icon.
+        if (typeof value !== 'string') return value;
         const keyString = Array.isArray(key) ? key[0] : String(key);
-        return (
-          <>
-            {value}
-            <BAIText
-              style={{ marginLeft: 4 }}
-              copyable={{
-                text: keyString,
-                tooltips: [keyString, keyString],
-                icon: <GlobeIcon />,
-              }}
-            />
-          </>
-        );
+        return appendI18nKeyMarker(value, keyString);
       } else {
         return value;
       }
@@ -393,6 +383,9 @@ export const DefaultProvidersForReactRoot: React.FC<{
                             the Suspense below so toasts work on every route and
                             in both anonymous and authenticated states. */}
                       <NotificationHost />
+                      {process.env.NODE_ENV === 'development' && (
+                        <I18nKeyMarkers />
+                      )}
                       {/*
                        * to-astryx ticket 33 removed the emotion plumbing that
                        * used to wrap this Suspense: an @emotion/react

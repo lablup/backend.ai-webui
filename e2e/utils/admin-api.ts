@@ -21,11 +21,23 @@ import { request, type APIRequestContext } from '@playwright/test';
  * `/func/admin/gql` calls. The caller owns the context and must `dispose()` it.
  */
 export async function createAdminApiContext(): Promise<APIRequestContext> {
+  return createAccountApiContext(userInfo.admin, 'Admin');
+}
+
+/**
+ * Same as `createAdminApiContext`, signed in as `account` instead — for reads
+ * that must reflect what that account itself is allowed (e.g. its storage
+ * hosts). The caller owns the context and must `dispose()` it.
+ */
+export async function createAccountApiContext(
+  account: { email: string; password: string },
+  label = account.email,
+): Promise<APIRequestContext> {
   const api = await request.newContext({ baseURL: webServerEndpoint });
   const res = await api.post('/server/login', {
     data: {
-      username: userInfo.admin.email,
-      password: userInfo.admin.password,
+      username: account.email,
+      password: account.password,
     },
   });
   const body = await res.json().catch(() => ({}));
@@ -34,7 +46,7 @@ export async function createAdminApiContext(): Promise<APIRequestContext> {
     // Only surface a minimal, known-safe subset of the response — never dump
     // the full login body into CI logs (it may gain sensitive fields later).
     throw new Error(
-      `Admin API login failed (status=${res.status()}, authenticated=${String(
+      `${label} API login failed (status=${res.status()}, authenticated=${String(
         body?.authenticated ?? false,
       )})`,
     );
@@ -292,8 +304,9 @@ export async function sweepLeftoverDeploymentsViaApi(
 }
 
 /**
- * Creates a GENERAL project in `domainName` (default: the first member's domain) and adds `memberEmails`
- * to it. Returns the project's raw UUID for `purgeProjectViaApi`.
+ * Creates a GENERAL project in `domainName` (default: the first member's
+ * domain; one of the two is required) and adds `memberEmails` to it. Returns
+ * the project's raw UUID for `purgeProjectViaApi`.
  */
 export async function createProjectViaApi(
   api: APIRequestContext,
@@ -319,7 +332,14 @@ export async function createProjectViaApi(
       return data.user;
     }),
   );
-  const domainName = options.domainName ?? members[0]?.domain_name ?? 'default';
+  const domainName = options.domainName ?? members[0]?.domain_name;
+  if (!domainName) {
+    // No literal fallback: the e2e accounts are not in `default` everywhere.
+    // Pass `getE2EDomainName()` (e2e-scope.ts) for a project without members.
+    throw new Error(
+      `createProjectViaApi("${name}") needs domainName or memberEmails`,
+    );
+  }
   const created = await gqlAdmin<{
     create_group: { ok: boolean; msg: string; group: { id: string } | null };
   }>(

@@ -464,19 +464,19 @@ test.describe(
       });
       await expect(deployModal).toBeVisible();
 
-      // Click the Resource Group selector dropdown (second combobox in the modal)
-      await deployModal.getByRole('combobox').last().click();
+      // The Resource Group select is an Astryx Selector: a button trigger
+      // whose accessible name starts with its form label, plus a listbox.
+      await deployModal
+        .getByRole('button', { name: /^Resource Group/ })
+        .click();
 
       // Verify resource group options are visible
+      const listbox = page.getByRole('listbox');
       await expect(
-        page.locator('.ant-select-dropdown .ant-select-item-option', {
-          hasText: 'default',
-        }),
+        listbox.getByRole('option', { name: 'default', exact: true }),
       ).toBeVisible();
       await expect(
-        page.locator('.ant-select-dropdown .ant-select-item-option', {
-          hasText: 'gpu-cluster',
-        }),
+        listbox.getByRole('option', { name: 'gpu-cluster', exact: true }),
       ).toBeVisible();
     });
 
@@ -498,6 +498,7 @@ test.describe(
       // Verify the Deploy button in modal footer is enabled (default selections are applied)
       const modalDeployButton = deployModal.getByRole('button', {
         name: 'Deploy',
+        exact: true,
       });
       await expect(modalDeployButton).toBeEnabled();
     });
@@ -538,7 +539,7 @@ test.describe(
 
       // Verify the Deploy button remains enabled after selection change
       await expect(
-        deployModal.getByRole('button', { name: 'Deploy' }),
+        deployModal.getByRole('button', { name: 'Deploy', exact: true }),
       ).toBeEnabled();
     });
 
@@ -557,19 +558,21 @@ test.describe(
       });
       await expect(deployModal).toBeVisible();
 
-      // Click the Resource Group dropdown (second combobox in the modal)
-      await deployModal.getByRole('combobox').last().click();
+      const resourceGroupSelect = deployModal.getByRole('button', {
+        name: /^Resource Group/,
+      });
+      await resourceGroupSelect.click();
 
       // Select "gpu-cluster"
       await page
-        .locator('.ant-select-dropdown .ant-select-item-option', {
-          hasText: 'gpu-cluster',
-        })
+        .getByRole('listbox')
+        .getByRole('option', { name: 'gpu-cluster', exact: true })
         .click();
+      await expect(resourceGroupSelect).toContainText('gpu-cluster');
 
       // Verify the Deploy button remains enabled after selection change
       await expect(
-        deployModal.getByRole('button', { name: 'Deploy' }),
+        deployModal.getByRole('button', { name: 'Deploy', exact: true }),
       ).toBeEnabled();
     });
 
@@ -644,11 +647,13 @@ test.describe(
 
       // Verify the Deploy button is enabled (both preset and resource group have defaults)
       await expect(
-        deployModal.getByRole('button', { name: 'Deploy' }),
+        deployModal.getByRole('button', { name: 'Deploy', exact: true }),
       ).toBeEnabled();
 
       // Click the Deploy button in the modal to trigger deployment
-      await deployModal.getByRole('button', { name: 'Deploy' }).click();
+      await deployModal
+        .getByRole('button', { name: 'Deploy', exact: true })
+        .click();
 
       // Wait for navigation to /deployments/:deploymentId after successful mutation
       // (FR-2664 renamed the URL from /serving/:id to /deployments/:id)
