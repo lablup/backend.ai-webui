@@ -9,11 +9,13 @@ import { Spinner } from '@lablup/ui-common/Spinner';
 import { Token } from '@lablup/ui-common/Token';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAIEntityLabelTargetCell,
   BAIFlex,
   BAIIconWithTooltip,
   BAIMetadataList,
   BAIModal,
   BAIModalProps,
+  useIsLabelableEntityType,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { TriangleAlert } from 'lucide-react';
@@ -34,6 +36,7 @@ const UserInfoModal: React.FC<Props> = ({
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
+  const isLabelable = useIsLabelableEntityType('user');
 
   const { isTOTPSupported, isLoading: isLoadingManagerSupportingTOTP } =
     useTOTPSupported();
@@ -41,6 +44,7 @@ const UserInfoModal: React.FC<Props> = ({
   const user = useFragment(
     graphql`
       fragment UserInfoModalFragment on UserV2 {
+        entityId
         basicInfo {
           email
           username
@@ -132,6 +136,15 @@ const UserInfoModal: React.FC<Props> = ({
             ) : (
               t('button.No')
             )}
+          </MetadataListItem>
+        )}
+        {isLabelable && user && (
+          <MetadataListItem label={t('entityLabel.Labels')}>
+            <BAIEntityLabelTargetCell
+              entityType="user"
+              entityId={user.entityId}
+              name={user.basicInfo.email}
+            />
           </MetadataListItem>
         )}
       </BAIMetadataList>
