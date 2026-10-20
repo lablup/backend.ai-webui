@@ -232,12 +232,19 @@ test.describe(
       // "at least one System cell exists" would also hold on an unfiltered
       // list, so require the Source cell of every returned row to be System.
       await expect(roleDataRows(page).first()).toBeVisible({ timeout: 10000 });
+      // Resolve the Source column from the header text: a fixed index drifts
+      // whenever a column is inserted before it (Auto Assign, #10068).
+      const headers = await page.getByRole('columnheader').allInnerTexts();
+      const sourceIndex = headers.findIndex((text) => text.trim() === 'Source');
+      expect(sourceIndex).toBeGreaterThanOrEqual(0);
       await expect(async () => {
         const rows = await roleDataRows(page).all();
         expect(rows.length).toBeGreaterThan(0);
         for (const row of rows) {
-          // Source is the 5th column (RoleNodes.tsx column order).
-          const source = await row.getByRole('cell').nth(4).innerText();
+          const source = await row
+            .getByRole('cell')
+            .nth(sourceIndex)
+            .innerText();
           expect(source.trim()).toBe('System');
         }
       }).toPass({ timeout: 10000 });
