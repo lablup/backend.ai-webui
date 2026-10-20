@@ -322,7 +322,6 @@
     "RevisionNumber": "リビジョン",
     "RevisionNumberTooltip": "デプロイメントの現在のリビジョン番号。",
     "StrategyType": "戦略",
-    "Tags": "タグ",
     "UpdatedAt": "更新日時"
   },
   "comp:BAINameActionCell": {

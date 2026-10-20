@@ -322,7 +322,6 @@
     "RevisionNumber": "리비전",
     "RevisionNumberTooltip": "배포의 현재 리비전 번호입니다.",
     "StrategyType": "전략",
-    "Tags": "태그",
     "UpdatedAt": "수정 시각"
   },
   "comp:BAINameActionCell": {

@@ -211,11 +211,9 @@ const BAIProjectSettingModal = ({
             return value;
           },
         );
-        // Remove undefined values
-        totalResourceSlots = _.pickBy(
-          totalResourceSlots,
-          _.negate(_.isUndefined),
-        );
+        // A cleared slot is dropped: the manager replaces the whole JSON, so
+        // an absent key removes that limit.
+        totalResourceSlots = _.omitBy(totalResourceSlots, _.isNil);
 
         if (!projectFragment) {
           commitCreateProject({
@@ -519,12 +517,14 @@ const BAIProjectSettingModal = ({
                   <BAIDynamicUnitInputNumber
                     defaultUnit="g"
                     max="300p"
+                    hasClear
                     style={{ width: '100%' }}
                   />
                 ) : (
                   <AstryxFormNumberInput
                     label={resourceSlotKey}
                     min={0}
+                    hasClear
                     units={
                       resourceSlots?.[resourceSlotKey as ResourceSlotName]
                         ?.display_unit ?? undefined

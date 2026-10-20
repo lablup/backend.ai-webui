@@ -23,7 +23,6 @@ import { Text } from '@lablup/ui-common/Text';
 import {
   BAIScopedProjectSelect,
   BAIDeleteConfirmModal,
-  BAIDeploymentTagTokens,
   BAIFlex,
   BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilter,
@@ -214,11 +213,6 @@ const AdminDeployment = ({
     {
       key: 'name',
       propertyLabel: t('deployment.filter.Name'),
-      type: 'string',
-    },
-    {
-      key: 'tags',
-      propertyLabel: t('deployment.filter.Tags'),
       type: 'string',
     },
     {
@@ -474,7 +468,6 @@ const AdminDeployment = ({
               'owner',
               'id',
               'endpointUrl',
-              'tags',
               'updatedAt',
               'openToPublic',
               'resourceGroup',
@@ -556,32 +549,6 @@ const AdminDeployment = ({
                         >{`#${revisionNumber}`}</Link>
                       );
                     },
-                  };
-                }
-                if (col.key === 'tags') {
-                  return {
-                    ...col,
-                    defaultHidden,
-                    render: (_value, record) => (
-                      <BAIDeploymentTagTokens
-                        metadataFrgmt={record.metadata}
-                        stopRowClick
-                        onTagClick={(tag) => {
-                          onReload(
-                            {
-                              ...queryRef.variables,
-                              filter: {
-                                tags: { iEquals: tag },
-                                ...statusCategoryFilterFor(statusCategory),
-                              },
-                              offset: 0,
-                            },
-                            { fetchPolicy: 'network-only' },
-                          );
-                        }}
-                        fallback={<Text color="secondary">-</Text>}
-                      />
-                    ),
                   };
                 }
                 return { ...col, defaultHidden };

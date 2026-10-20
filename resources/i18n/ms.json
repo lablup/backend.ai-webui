@@ -1301,8 +1301,7 @@
       "ReplicaStatus": "Kitar hayat replika",
       "ReplicaTrafficStatus": "Status trafik replika",
       "ResourceGroup": "Kumpulan Sumber",
-      "Status": "Status",
-      "Tags": "Tag"
+      "Status": "Status"
     },
     "nav": {
       "Next": "Seterusnya",

@@ -322,7 +322,6 @@
     "RevisionNumber": "修订版本",
     "RevisionNumberTooltip": "部署的当前修订版本号。",
     "StrategyType": "策略",
-    "Tags": "标签",
     "UpdatedAt": "更新时间"
   },
   "comp:BAINameActionCell": {

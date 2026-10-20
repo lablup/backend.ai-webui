@@ -322,7 +322,6 @@
     "RevisionNumber": "ฉบับแก้ไข",
     "RevisionNumberTooltip": "หมายเลขฉบับแก้ไขปัจจุบันของการปรับใช้",
     "StrategyType": "กลยุทธ์",
-    "Tags": "แท็ก",
     "UpdatedAt": "วันที่อัปเดต"
   },
   "comp:BAINameActionCell": {

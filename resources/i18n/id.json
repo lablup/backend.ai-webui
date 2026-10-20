@@ -1301,8 +1301,7 @@
       "ReplicaStatus": "Siklus hidup replika",
       "ReplicaTrafficStatus": "Status lalu lintas replika",
       "ResourceGroup": "Grup Sumber Daya",
-      "Status": "Status",
-      "Tags": "Tag"
+      "Status": "Status"
     },
     "nav": {
       "Next": "Berikutnya",

@@ -322,7 +322,6 @@
     "RevisionNumber": "Revisi",
     "RevisionNumberTooltip": "Nomor revisi saat ini dari penerapan.",
     "StrategyType": "Strategi",
-    "Tags": "Tag",
     "UpdatedAt": "Diperbarui pada"
   },
   "comp:BAINameActionCell": {

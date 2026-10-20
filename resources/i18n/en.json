@@ -1288,8 +1288,7 @@
       "ReplicaStatus": "Replica Lifecycle",
       "ReplicaTrafficStatus": "Replica Traffic Status",
       "ResourceGroup": "Resource Group",
-      "Status": "Status",
-      "Tags": "Tags"
+      "Status": "Status"
     },
     "nav": {
       "Next": "Next",
