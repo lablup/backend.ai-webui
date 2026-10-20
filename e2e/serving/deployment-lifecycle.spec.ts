@@ -590,7 +590,7 @@ test.describe(
       ).toBeVisible();
       await expect(dialog.getByText('Environments / Version')).toBeVisible();
       await expect(
-        dialog.getByRole('button', { name: 'Add environment variables' }),
+        dialog.getByRole('button', { name: 'Add environment variable' }),
       ).toBeVisible();
       await expect(dialog.getByText('Cluster & Resources')).toBeVisible({
         timeout: 20000,
