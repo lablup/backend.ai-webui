@@ -108,8 +108,11 @@ export interface LoginConfigState {
   maxGaudi2DevicesPerContainer: number;
   maxWarboyDevicesPerContainer: number;
   maxRNGDDevicesPerContainer: number;
+  maxATOMPLUSDevicesPerContainer: number;
+  maxHyperaccelLPUDevicesPerContainer: number;
   maxShmPerContainer: number;
   maxFileUploadSize: number;
+  storageWarningThreshold: number;
   allow_image_list: string[];
   blockList: string[];
   inactiveList: string[];
@@ -179,8 +182,11 @@ export function getDefaultLoginConfig(): LoginConfigState {
     maxGaudi2DevicesPerContainer: 8,
     maxWarboyDevicesPerContainer: 8,
     maxRNGDDevicesPerContainer: 8,
+    maxATOMPLUSDevicesPerContainer: 8,
+    maxHyperaccelLPUDevicesPerContainer: 8,
     maxShmPerContainer: 2,
     maxFileUploadSize: -1,
+    storageWarningThreshold: 90,
     allow_image_list: [],
     blockList: [],
     inactiveList: [],
@@ -560,6 +566,21 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
     value: parseInt(r?.maxRNGDDevicesPerContainer),
   }) as number;
 
+  // The webserver renders the ATOM+ key as `maxATOMPlUS…` (lowercase l).
+  state.maxATOMPLUSDevicesPerContainer = getConfigValueByExists(r, {
+    valueType: 'number',
+    defaultValue: 8,
+    value: parseInt(
+      r?.maxATOMPLUSDevicesPerContainer ?? r?.maxATOMPlUSDevicesPerContainer,
+    ),
+  }) as number;
+
+  state.maxHyperaccelLPUDevicesPerContainer = getConfigValueByExists(r, {
+    valueType: 'number',
+    defaultValue: 8,
+    value: parseInt(r?.maxHyperaccelLPUDevicesPerContainer),
+  }) as number;
+
   state.maxShmPerContainer = getConfigValueByExists(r, {
     valueType: 'number',
     defaultValue: 2,
@@ -570,6 +591,12 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
     valueType: 'number',
     defaultValue: -1,
     value: parseInt(r?.maxFileUploadSize),
+  }) as number;
+
+  state.storageWarningThreshold = getConfigValueByExists(r, {
+    valueType: 'number',
+    defaultValue: 90,
+    value: parseFloat(r?.storageWarningThreshold),
   }) as number;
 
   // -- environments section --
@@ -655,8 +682,13 @@ export function applyConfigToClient(cfg: LoginConfigState): void {
   client._config.maxWarboyDevicesPerContainer =
     cfg.maxWarboyDevicesPerContainer;
   client._config.maxRNGDDevicesPerContainer = cfg.maxRNGDDevicesPerContainer;
+  client._config.maxATOMPLUSDevicesPerContainer =
+    cfg.maxATOMPLUSDevicesPerContainer;
+  client._config.maxHyperaccelLPUDevicesPerContainer =
+    cfg.maxHyperaccelLPUDevicesPerContainer;
   client._config.maxShmPerContainer = cfg.maxShmPerContainer;
   client._config.maxFileUploadSize = cfg.maxFileUploadSize;
+  client._config.storageWarningThreshold = cfg.storageWarningThreshold;
   client._config.allow_image_list = cfg.allow_image_list;
   client._config.showNonInstalledImages = cfg.showNonInstalledImages;
   client._config.maskUserInfo = cfg.maskUserInfo;
@@ -689,5 +721,6 @@ export function applyConfigToClient(cfg: LoginConfigState): void {
   client._config.allowSignout = cfg.allow_signout;
   client._config.enableReservoir = cfg.enableReservoir;
   client._config.enableWebMCP = cfg.enableWebMCP;
+  client._config.eduAppNamePrefix = cfg.eduAppNamePrefix;
   client.ready = true;
 }
