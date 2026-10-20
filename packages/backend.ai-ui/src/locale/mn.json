@@ -559,8 +559,6 @@
     "UpdatedAt": "Шинэчлэгдсэн огноо"
   },
   "comp:BAIScopedVFolderSelect": {
-    "OwnerProject": "Төсөл",
-    "OwnerUser": "Хэрэглэгч",
     "SelectFolder": "Хавтас сонгох"
   },
   "comp:BAISessionAgentIds": {

@@ -559,8 +559,6 @@
     "UpdatedAt": "Cập nhật lúc"
   },
   "comp:BAIScopedVFolderSelect": {
-    "OwnerProject": "Dự án",
-    "OwnerUser": "Người dùng",
     "SelectFolder": "Chọn thư mục"
   },
   "comp:BAISessionAgentIds": {

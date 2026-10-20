@@ -6,7 +6,7 @@ import { mountableVFolderFilter } from '../../hooks/useMountableVFolders';
 import MockVFolderFileProviders from '../../tests/MockVFolderFileProviders';
 import {
   MOCK_MOUNTABLE_HOSTS,
-  MOCK_PROJECT_ID,
+  MOCK_MOUNT_SCOPE,
   mockMountFolders,
 } from '../../tests/mockVFolderFileTree';
 import BAIScopedVFolderSelect, {
@@ -39,7 +39,7 @@ const renderSelect = async (
         <BAIScopedVFolderSelect
           multiple
           label="Folders"
-          scope={{ project: [{ value: MOCK_PROJECT_ID }] }}
+          scope={MOCK_MOUNT_SCOPE}
           filter={mountableVFolderFilter(MOCK_MOUNTABLE_HOSTS)}
           optionFilter={{ name: { notStartsWith: '.' } }}
           value={value}

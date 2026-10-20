@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<87d559a7236a9dea9d700b9369383d2f>>
+ * @generated SignedSource<<fbd913fd714c9e38ad6ba9d6d70df19d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,6 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
-export type VFolderOwnershipType = "GROUP" | "USER" | "%future added value";
 export type VFolderUsageMode = "DATA" | "GENERAL" | "MODEL" | "%future added value";
 export type VFolderScope = {
   domain?: ReadonlyArray<UUIDScope> | null | undefined;
@@ -107,7 +106,6 @@ export type BAIScopedVFolderSelectQuery$data = {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly accessControl: {
-          readonly ownershipType: VFolderOwnershipType;
           readonly permission: VFolderMountPermission;
         };
         readonly entityId: string;
@@ -249,13 +247,6 @@ v9 = {
       "kind": "ScalarField",
       "name": "permission",
       "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "ownershipType",
-      "storageKey": null
     }
   ],
   "storageKey": null
@@ -393,16 +384,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "bd8697f0a0e3357a7f6f5d701b7f43fc",
+    "cacheID": "f8503b094ad7ec0fa9b12716124861dc",
     "id": null,
     "metadata": {},
     "name": "BAIScopedVFolderSelectQuery",
     "operationKind": "query",
-    "text": "query BAIScopedVFolderSelectQuery(\n  $scope: VFolderScope!\n  $filter: VFolderFilter\n  $limit: Int!\n  $offset: Int!\n) {\n  scopedVFoldersV2(scope: $scope, filter: $filter, limit: $limit, offset: $offset, orderBy: [{field: CREATED_AT, direction: DESC}]) {\n    count\n    edges {\n      node {\n        entityId\n        host\n        metadata {\n          name\n          usageMode\n          createdAt\n        }\n        accessControl {\n          permission\n          ownershipType\n        }\n        ownership {\n          creatorEmail\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query BAIScopedVFolderSelectQuery(\n  $scope: VFolderScope!\n  $filter: VFolderFilter\n  $limit: Int!\n  $offset: Int!\n) {\n  scopedVFoldersV2(scope: $scope, filter: $filter, limit: $limit, offset: $offset, orderBy: [{field: CREATED_AT, direction: DESC}]) {\n    count\n    edges {\n      node {\n        entityId\n        host\n        metadata {\n          name\n          usageMode\n          createdAt\n        }\n        accessControl {\n          permission\n        }\n        ownership {\n          creatorEmail\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "9aca8aa6e5755ba2d96205a689c874ff";
+(node as any).hash = "8175ce72d83449756845852dfc7fe0f0";
 
 export default node;

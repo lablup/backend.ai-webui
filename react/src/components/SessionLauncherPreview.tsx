@@ -42,6 +42,7 @@ import {
   BAIText,
   imageNodeTagFacts,
   filterOutEmpty,
+  mountableVFolderScope,
   resolveVFolderMounts,
   useSuspendedAutoMountedVFolders,
 } from 'backend.ai-ui';
@@ -136,7 +137,7 @@ const SessionLauncherPreview: React.FC<{
             )?.name ?? allocationPreset
           }`;
   const { autoMountedFolders } = useSuspendedAutoMountedVFolders({
-    currentProjectId,
+    scope: mountableVFolderScope(baiClient.user_uuid, currentProjectId),
     mountableHosts,
   });
   const { generateFolderPath } = useFolderExplorerOpener();

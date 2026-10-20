@@ -559,8 +559,6 @@
     "UpdatedAt": "Обновлено"
   },
   "comp:BAIScopedVFolderSelect": {
-    "OwnerProject": "Проект",
-    "OwnerUser": "Пользователь",
     "SelectFolder": "Выбрать папку"
   },
   "comp:BAISessionAgentIds": {

@@ -60,6 +60,12 @@ export const mockMountFolder = (
 });
 
 export const MOCK_PROJECT_ID = '99999999-9999-9999-9999-999999999999';
+
+/** The scope a session in MOCK_PROJECT_ID mounts from. */
+export const MOCK_MOUNT_SCOPE = {
+  user: [{ value: '77777777-7777-7777-7777-777777777777' }],
+  project: [{ value: MOCK_PROJECT_ID }],
+};
 const MOCK_OTHER_PROJECT_ID = '88888888-8888-8888-8888-888888888888';
 
 /** Only `local:volume1` grants `mount-in-session`, so `archive:cold` is gated out. */

@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { Form, type FormInstance } from '../form-engine';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useMountableStorageHosts } from '../hooks/useMountableStorageHosts';
 import { SessionLauncherFormValue } from '../pages/SessionLauncherPage';
 import type { ProjectContext } from '../types/projectContext';
@@ -11,6 +12,7 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import {
   BAIVFolderMountConfigInput,
   isAutoMountFolderName,
+  mountableVFolderScope,
   type BAIVFolderMountConfigInputRef,
   useSuspendedAutoMountedVFolders,
   useVFolderMountConfigFormRule,
@@ -26,10 +28,12 @@ const SessionLauncherStorageStep: React.FC<{
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const mountConfigInputRef = useRef<BAIVFolderMountConfigInputRef>(null);
 
+  const baiClient = useSuspendedBackendaiClient();
+  const scope = mountableVFolderScope(baiClient.user_uuid, project.id);
   const mountableHosts = useMountableStorageHosts(project.id);
   // Shares the query the input reads, so the input's refetch reaches this rule.
   const { autoMountedFolders } = useSuspendedAutoMountedVFolders({
-    currentProjectId: project.id,
+    scope,
     mountableHosts,
   });
   const mountConfigRule = useVFolderMountConfigFormRule({ autoMountedFolders });
@@ -48,8 +52,7 @@ const SessionLauncherStorageStep: React.FC<{
         >
           <BAIVFolderMountConfigInput
             ref={mountConfigInputRef}
-            currentProjectId={project.id}
-            currentProjectName={project.name}
+            scope={scope}
             mountableHosts={mountableHosts}
             folderExplorerPath={generateFolderPath}
             onClickCreateFolder={() => setIsCreateModalOpen(true)}

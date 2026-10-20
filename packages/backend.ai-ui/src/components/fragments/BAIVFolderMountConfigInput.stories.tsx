@@ -2,7 +2,7 @@ import { Form } from '../../form-engine';
 import { useSuspendedAutoMountedVFolders } from '../../hooks/useMountableVFolders';
 import MockVFolderFileProviders from '../../tests/MockVFolderFileProviders';
 import {
-  MOCK_PROJECT_ID,
+  MOCK_MOUNT_SCOPE,
   MOCK_MOUNTABLE_HOSTS,
   mockMountFolder,
   mockMountFolders,
@@ -88,7 +88,7 @@ const ControlledDemo = ({
     <div style={{ width: DEMO_WIDTH }}>
       <BAIVFolderMountConfigInput
         ref={inputRef}
-        currentProjectId={MOCK_PROJECT_ID}
+        scope={MOCK_MOUNT_SCOPE}
         mountableHosts={MOCK_MOUNTABLE_HOSTS}
         {...props}
         value={value}
@@ -149,8 +149,8 @@ const meta: Meta<typeof BAIVFolderMountConfigInput> = {
 **BAIVFolderMountConfigInput** is a reusable, schema-agnostic controlled input
 for configuring vfolder mounts.
 
-- Picks folders with \`BAIScopedVFolderSelect\`, which pages \`scopedVFoldersV2\` over the caller's and
-  \`currentProjectId\`'s folders, filtered on the server: the host must be in
+- Picks folders with \`BAIScopedVFolderSelect\`, which pages \`scopedVFoldersV2\` over the
+  \`scope\` the caller passes (usually its own folders and the current project's), filtered on the server: the host must be in
   \`mountableHosts\` (those granting \`mount-in-session\`), the folder must be ready,
   and dotfile folders are left out (the session mounts them anyway). Search runs
   on the server too, and \`filter\` (a \`VFolderFilter\`) narrows the options further
@@ -206,10 +206,11 @@ never offered but listed as an auto-mounted folder.
       action: 'changed',
       description: 'Called with the updated mount configuration list',
     },
-    currentProjectId: {
-      control: { type: 'text' },
-      description: 'Project ID to scope vfolder selection',
-      table: { type: { summary: 'string' } },
+    scope: {
+      control: false,
+      description:
+        'The scopes a session mounts from (usually `mountableVFolderScope(userId, projectId)`)',
+      table: { type: { summary: 'VFolderScope' } },
     },
     filter: {
       control: false,
@@ -422,7 +423,7 @@ export const WithFormValidation: Story = {
       const [form] = Form.useForm();
       const [result, setResult] = useState<string>('');
       const { autoMountedFolders } = useSuspendedAutoMountedVFolders({
-        currentProjectId: MOCK_PROJECT_ID,
+        scope: MOCK_MOUNT_SCOPE,
         mountableHosts: args.mountableHosts,
       });
       const mountConfigRule = useVFolderMountConfigFormRule({
@@ -441,10 +442,7 @@ export const WithFormValidation: Story = {
             label="VFolder mounts"
             rules={[mountConfigRule]}
           >
-            <BAIVFolderMountConfigInput
-              currentProjectId={MOCK_PROJECT_ID}
-              {...args}
-            />
+            <BAIVFolderMountConfigInput scope={MOCK_MOUNT_SCOPE} {...args} />
           </Form.Item>
           <BAIButton
             type="primary"

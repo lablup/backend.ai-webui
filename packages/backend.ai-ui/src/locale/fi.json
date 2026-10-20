@@ -559,8 +559,6 @@
     "UpdatedAt": "Päivitetty"
   },
   "comp:BAIScopedVFolderSelect": {
-    "OwnerProject": "Projekti",
-    "OwnerUser": "Käyttäjä",
     "SelectFolder": "Valitse kansio"
   },
   "comp:BAISessionAgentIds": {

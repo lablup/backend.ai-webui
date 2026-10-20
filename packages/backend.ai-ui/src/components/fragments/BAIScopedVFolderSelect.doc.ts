@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      "Picks virtual folders from `scopedVFoldersV2` (manager 26.9.0), a BAIComplexSelect over two Relay reads. The options page 100 at a time over the scopes in `scope` (combined with OR), newest first, extended when the popup scrolls to its end, and the popup search runs on the server as a `name iContains` filter. Each option shows a two-line-tall identicon, the name, a second line with the owner (the creator's email for a user folder, `currentProjectName` for a project folder), usage mode, host and creation date, and the caller's mount level as welded R/W/D tokens. The value is folder UUIDs (`VFolder.entityId`), so no global id is decoded anywhere. The selected ids are looked up together by `entityId` within `scope` and `filter` (`VFolderFilter.entityId`, manager 26.10.0); the lookup re-runs only when the selection changes, never on paging or search. Its answer labels each id and decides whether it is still reachable: `onResolve` reports the reachable ones (with their names) and the unreachable ones — not found, or rejected by `isFolderDisabled` — and fires again whenever that outcome changes. Both reads suspend on first load.",
+      "Picks virtual folders from `scopedVFoldersV2` (manager 26.9.0), a BAIComplexSelect over two Relay reads. The options page 100 at a time over the scopes in `scope` (combined with OR), newest first, extended when the popup scrolls to its end, and the popup search runs on the server as a `name iContains` filter. Each option shows a two-line-tall identicon, the name, a second line with the creator's email, usage mode, host and creation date, and the caller's mount level as welded R/W/D tokens. The value is folder UUIDs (`VFolder.entityId`), so no global id is decoded anywhere. The selected ids are looked up together by `entityId` within `scope` and `filter` (`VFolderFilter.entityId`, manager 26.10.0); the lookup re-runs only when the selection changes, never on paging or search. Its answer labels each id and decides whether it is still reachable: `onResolve` reports the reachable ones (with their names) and the unreachable ones — not found, or rejected by `isFolderDisabled` — and fires again whenever that outcome changes. Both reads suspend on first load.",
     bestPractices: [
       {
         guidance: true,
@@ -93,12 +93,6 @@ export const docs = {
       type: '(resolution: { resolved: ScopedVFolderSummary[]; unresolved: string[] }) => void',
       description:
         'Fired once the selected ids are looked up, and again whenever the outcome changes.',
-    },
-    {
-      name: 'currentProjectName',
-      type: 'string',
-      description:
-        'Owner shown for a project folder; the folder list carries no project name. Without it the owner line reads the generic "Project".',
     },
     {
       name: 'ref',

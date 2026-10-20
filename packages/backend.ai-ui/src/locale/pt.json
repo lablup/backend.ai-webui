@@ -559,8 +559,6 @@
     "UpdatedAt": "Atualizado em"
   },
   "comp:BAIScopedVFolderSelect": {
-    "OwnerProject": "Projeto",
-    "OwnerUser": "Utilizador",
     "SelectFolder": "Selecionar pasta"
   },
   "comp:BAISessionAgentIds": {

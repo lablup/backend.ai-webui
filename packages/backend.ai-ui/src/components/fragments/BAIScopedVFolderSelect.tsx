@@ -11,7 +11,6 @@ import type {
   VFolderScope,
 } from '../../hooks/useMountableVFolders';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
-import { BAIUserUnionIcon } from '../../icons';
 import BAIComplexSelect, {
   type BAIComplexSelectProps,
   type BAIComplexSelectValue,
@@ -87,8 +86,6 @@ export interface BAIScopedVFolderSelectProps extends Omit<
   fallbackLabels?: Record<string, string>;
   /** Fires once the selected ids are looked up, and again whenever the outcome changes. */
   onResolve?: (resolution: ScopedVFolderResolution) => void;
-  /** Owner line of a project folder; the folder list carries no project name. */
-  currentProjectName?: string;
   ref?: React.Ref<BAIScopedVFolderSelectRef>;
 }
 
@@ -136,25 +133,20 @@ const VFolderPermissionTokens: React.FC<{ permission: string }> = ({
   );
 };
 
-/** Second line of a folder option: who owns it, what it is for, where it is. */
-const VFolderOptionMeta: React.FC<{
-  folder: ScopedVFolderNode;
-  projectName?: string;
-}> = ({ folder, projectName }) => {
+/** Second line of a folder option: who made it, what it is for, where it is. */
+const VFolderOptionMeta: React.FC<{ folder: ScopedVFolderNode }> = ({
+  folder,
+}) => {
   'use memo';
-  const { t } = useBAIi18n();
-  const isUserOwned = folder.accessControl.ownershipType === 'USER';
-  const owner = isUserOwned
-    ? folder.ownership.creatorEmail ||
-      t('comp:BAIScopedVFolderSelect.OwnerUser')
-    : projectName || t('comp:BAIScopedVFolderSelect.OwnerProject');
   const createdAt = dayjs(folder.metadata.createdAt);
   return (
     <span className="bai-scoped-vfolder-select__option-meta">
-      <span>
-        {isUserOwned ? <User size="1em" /> : <BAIUserUnionIcon />}
-        {owner}
-      </span>
+      {folder.ownership.creatorEmail && (
+        <span>
+          <User size="1em" />
+          {folder.ownership.creatorEmail}
+        </span>
+      )}
       <span>{folder.metadata.usageMode.toLowerCase()}</span>
       <span>{folder.host}</span>
       {createdAt.isValid() && <span>{createdAt.format('ll')}</span>}
@@ -177,7 +169,6 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
   isFolderDisabled,
   fallbackLabels,
   onResolve,
-  currentProjectName,
   multiple = false,
   isLoading,
   ref,
@@ -224,7 +215,6 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
                 }
                 accessControl {
                   permission
-                  ownershipType
                 }
                 ownership {
                   creatorEmail
@@ -334,9 +324,7 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
         className="bai-scoped-vfolder-select__option-icon"
       />
     ),
-    description: (
-      <VFolderOptionMeta folder={folder} projectName={currentProjectName} />
-    ),
+    description: <VFolderOptionMeta folder={folder} />,
     extra: (
       <VFolderPermissionTokens permission={folder.accessControl.permission} />
     ),

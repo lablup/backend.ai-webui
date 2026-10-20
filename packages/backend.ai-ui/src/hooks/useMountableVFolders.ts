@@ -3,7 +3,6 @@ import type {
   VFolderFilter,
   VFolderScope,
 } from '../__generated__/useMountableVFoldersAutoMountedQuery.graphql';
-import useConnectedBAIClient from '../components/provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { useDateISOState } from './useUpdatableState';
 import * as _ from 'lodash-es';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -17,7 +16,8 @@ export interface AutoMountedFolder {
 }
 
 export interface VFolderMountScope {
-  currentProjectId?: string;
+  /** The scopes a session mounts from, usually {@link mountableVFolderScope}. */
+  scope: VFolderScope;
   /** Hosts granting `mount-in-session`. */
   mountableHosts: ReadonlyArray<string>;
 }
@@ -48,16 +48,15 @@ export const mountableVFolderFilter = (
 const AUTO_MOUNTED_FOLDER_LIMIT = 100;
 
 /**
- * The ready dotfile folders a session in this project mounts on its own.
+ * The ready dotfile folders a session in `scope` mounts on its own.
  * Suspends. Callers passing the same scope share one query, so a `refetch`
  * from any of them updates all.
  */
 export const useSuspendedAutoMountedVFolders = ({
-  currentProjectId,
+  scope,
   mountableHosts,
 }: VFolderMountScope) => {
   'use memo';
-  const baiClient = useConnectedBAIClient();
   const [fetchKey, refetch] = useDateISOState('first');
   const { scopedVFoldersV2 } =
     useLazyLoadQuery<useMountableVFoldersAutoMountedQuery>(
@@ -88,7 +87,7 @@ export const useSuspendedAutoMountedVFolders = ({
         }
       `,
       {
-        scope: mountableVFolderScope(baiClient.user_uuid, currentProjectId),
+        scope,
         filter: {
           AND: [
             mountableVFolderFilter(mountableHosts),

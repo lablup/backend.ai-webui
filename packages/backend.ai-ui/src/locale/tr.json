@@ -559,8 +559,6 @@
     "UpdatedAt": "Güncelleme Tarihi"
   },
   "comp:BAIScopedVFolderSelect": {
-    "OwnerProject": "Proje",
-    "OwnerUser": "Kullanıcı",
     "SelectFolder": "Klasör Seç"
   },
   "comp:BAISessionAgentIds": {

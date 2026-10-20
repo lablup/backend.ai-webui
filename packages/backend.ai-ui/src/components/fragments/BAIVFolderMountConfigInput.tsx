@@ -4,10 +4,10 @@ import { useControllableValue } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import {
   mountableVFolderFilter,
-  mountableVFolderScope,
   useSuspendedAutoMountedVFolders,
   type AutoMountedFolder,
   type VFolderFilter,
+  type VFolderScope,
 } from '../../hooks/useMountableVFolders';
 import BAIButton from '../BAIButton';
 import BAICard from '../BAICard';
@@ -18,7 +18,6 @@ import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
 import BAIText from '../BAIText';
 import BAIVFolderIdenticon from '../BAIVFolderIdenticon';
 import BAIVFolderPathPicker from '../baiClient/FileExplorer/BAIVFolderPathPicker';
-import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import BAIScopedVFolderSelect, {
   type BAIScopedVFolderSelectRef,
   type ScopedVFolderResolution,
@@ -63,12 +62,11 @@ export interface BAIVFolderMountConfigInputProps {
   value?: VFolderMountConfigValue[];
   defaultValue?: VFolderMountConfigValue[];
   onChange?: (value: VFolderMountConfigValue[]) => void;
-  currentProjectId?: string;
   /**
-   * Name of `currentProjectId`. The folder list carries no project name, so a
-   * project folder's owner line needs it from the host.
+   * The scopes a session mounts from, usually `mountableVFolderScope(userId,
+   * projectId)`. The folder options and the auto-mounted folders are read over it.
    */
-  currentProjectName?: string;
+  scope: VFolderScope;
   /**
    * Hosts granting `mount-in-session`. Which policies merge into that list
    * is the host app's business, so it is supplied rather than queried here.
@@ -309,15 +307,14 @@ export const useVFolderMountConfigFormRule = (
 
 /**
  * Reusable input for configuring vfolder mounts. Folders are picked with
- * `BAIScopedVFolderSelect` over the caller's and the current project's scope,
+ * `BAIScopedVFolderSelect` over the caller's `scope`,
  * and the auto-mounted folders are read here too; both suspend on first load,
  * so the consumer owns the Suspense boundary.
  *
  * Props, form gating and usage: `BAIVFolderMountConfigInput.doc.ts`.
  */
 const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
-  currentProjectId,
-  currentProjectName,
+  scope,
   mountableHosts,
   filter,
   disabled,
@@ -331,7 +328,6 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   const { t } = useBAIi18n();
   const { message } = App.useApp();
   const { token } = useTheme();
-  const baiClient = useConnectedBAIClient();
   const [value, setValue] = useControllableValue<VFolderMountConfigValue[]>(
     props,
     { defaultValue: [] },
@@ -339,7 +335,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   const selectRef = useRef<BAIScopedVFolderSelectRef>(null);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const { autoMountedFolders, refetch: refetchAutoMountedFolders } =
-    useSuspendedAutoMountedVFolders({ currentProjectId, mountableHosts });
+    useSuspendedAutoMountedVFolders({ scope, mountableHosts });
 
   const refetch = () => {
     startRefetchTransition(() => {
@@ -413,7 +409,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
           isLabelHidden
           isDisabled={disabled}
           placeholder={t('comp:BAIVFolderMountConfigInput.SelectFolder')}
-          scope={mountableVFolderScope(baiClient.user_uuid, currentProjectId)}
+          scope={scope}
           filter={mountableVFolderFilter(mountableHosts)}
           // Dotfile folders are mounted by the session itself, so never offered.
           optionFilter={{
@@ -425,7 +421,6 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
           }}
           // The server refuses to mount a folder whose mount level is NONE.
           isFolderDisabled={(folder) => folder.permission === 'NONE'}
-          currentProjectName={currentProjectName}
           value={mountConfigs.map((entry) => entry.vfolderId)}
           fallbackLabels={_.fromPairs(
             _.compact(

@@ -559,8 +559,6 @@
     "UpdatedAt": "Dikemas kini pada"
   },
   "comp:BAIScopedVFolderSelect": {
-    "OwnerProject": "Projek",
-    "OwnerUser": "Pengguna",
     "SelectFolder": "Pilih Folder"
   },
   "comp:BAISessionAgentIds": {

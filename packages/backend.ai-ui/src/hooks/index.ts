@@ -204,6 +204,7 @@ export type {
   AutoMountedFolder,
   VFolderFilter,
   VFolderMountScope,
+  VFolderScope,
 } from './useMountableVFolders';
 
 export * from './useBAIBreakpoint';

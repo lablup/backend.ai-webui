@@ -559,8 +559,6 @@
     "UpdatedAt": "Ενημερώθηκε στις"
   },
   "comp:BAIScopedVFolderSelect": {
-    "OwnerProject": "Έργο",
-    "OwnerUser": "Χρήστης",
     "SelectFolder": "Επιλογή φακέλου"
   },
   "comp:BAISessionAgentIds": {

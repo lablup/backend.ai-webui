@@ -100,6 +100,7 @@ import {
   BAIVFolderSelectRef,
   convertToUUID,
   mountDestinationToInput,
+  mountableVFolderScope,
   resolveVFolderMounts,
   safeDecodeUuid,
   toGlobalId,
@@ -378,10 +379,12 @@ const ExtraVFolderMountsFormItem: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const { generateFolderPath } = useFolderExplorerOpener();
+  const baiClient = useSuspendedBackendaiClient();
+  const scope = mountableVFolderScope(baiClient.user_uuid, project?.id);
   const mountableHosts = useMountableStorageHosts(project?.id ?? null);
   // Shares the query the input reads, so the rule sees what the input lists.
   const { autoMountedFolders } = useSuspendedAutoMountedVFolders({
-    currentProjectId: project?.id,
+    scope,
     mountableHosts,
   });
   const mountConfigRule = useVFolderMountConfigFormRule({ autoMountedFolders });
@@ -396,8 +399,7 @@ const ExtraVFolderMountsFormItem: React.FC<{
       rules={[mountConfigRule]}
     >
       <BAIVFolderMountConfigInput
-        currentProjectId={project?.id}
-        currentProjectName={project?.name}
+        scope={scope}
         mountableHosts={mountableHosts}
         folderExplorerPath={generateFolderPath}
         // The model folder is mounted already, and other model folders are
