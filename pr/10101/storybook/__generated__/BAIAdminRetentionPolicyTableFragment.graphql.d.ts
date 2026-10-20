@@ -4,6 +4,7 @@ export type BAIAdminRetentionPolicyTableFragment$data = ReadonlyArray<{
     readonly category: RetentionCategory;
     readonly createdAt: string;
     readonly enabled: boolean;
+    readonly entityId: string;
     readonly id: string;
     readonly lastSweptAt: string | null | undefined;
     readonly retentionPeriodDays: number;
