@@ -96,6 +96,7 @@ export type useMountableVFoldersAutoMountedQuery$data = {
                 readonly accessControl: {
                     readonly permission: VFolderMountPermission;
                 };
+                readonly entityId: string;
                 readonly id: string;
                 readonly metadata: {
                     readonly name: string;

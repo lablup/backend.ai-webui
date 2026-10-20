@@ -14,13 +14,15 @@ export interface VFolderMountScope {
 export declare const isAutoMountFolderName: (name: string) => boolean;
 /** The caller's own folders plus the current project's, the reach a session mounts from. */
 export declare const mountableVFolderScope: (userId: string, currentProjectId?: string) => VFolderScope;
-/** The server-side half of the mount gate: a host granting `mount-in-session`. */
+/**
+ * The server-side half of the mount gate: a host granting `mount-in-session`.
+ * Hosts are sorted so every caller sends the same variables and shares one Relay cache entry.
+ */
 export declare const mountableVFolderFilter: (mountableHosts: ReadonlyArray<string>) => VFolderFilter;
-/** The page size of every mount-folder read. */
-export declare const MOUNT_FOLDER_PAGE_SIZE = 100;
 /**
  * The ready dotfile folders a session in this project mounts on its own.
- * Suspends; `refetch` re-reads them after the host creates a folder.
+ * Suspends. Callers passing the same scope share one query, so a `refetch`
+ * from any of them updates all.
  */
 export declare const useSuspendedAutoMountedVFolders: ({ currentProjectId, mountableHosts, }: VFolderMountScope) => {
     autoMountedFolders: AutoMountedFolder[];

@@ -1,0 +1,56 @@
+import { BAIScopedVFolderSelectQuery$data } from '../../__generated__/BAIScopedVFolderSelectQuery.graphql';
+import { VFolderFilter, VFolderScope } from '../../hooks/useMountableVFolders';
+import { BAIComplexSelectProps, BAILabeledValue } from '../BAIComplexSelect';
+import { default as React } from '../../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.2.8/01dc110d7f872a8caacc052aa0e86f46609c662315b6d5b76a7913331f487dd1/node_modules/react';
+export type ScopedVFolderNode = NonNullable<BAIScopedVFolderSelectQuery$data['scopedVFoldersV2']>['edges'][number]['node'];
+/** What the select knows about a folder, from an option row or the value lookup. */
+export interface ScopedVFolderSummary {
+    entityId: string;
+    name: string;
+    host: string;
+    /** The caller's mount level: `NONE`, `READ_ONLY`, `READ_WRITE` or `RW_DELETE`. */
+    permission: string;
+}
+export interface ScopedVFolderResolution {
+    /** Selected folders the scope and `filter` reach and `isFolderDisabled` allows. */
+    resolved: Array<ScopedVFolderSummary>;
+    /** Selected ids the scope and `filter` do not reach, or `isFolderDisabled` rejects. */
+    unresolved: Array<string>;
+}
+export interface BAIScopedVFolderSelectRef {
+    /** Re-reads the options and re-checks the selected ids. */
+    refetch: () => void;
+}
+export interface BAIScopedVFolderSelectProps extends Omit<BAIComplexSelectProps, 'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total' | 'isLoadingNext' | 'endReached'> {
+    /** Folder UUIDs (`VFolder.entityId`). Array iff `multiple`. */
+    value?: string | Array<string> | null;
+    onChange?: (value: string | Array<string> | undefined, option?: BAILabeledValue | Array<BAILabeledValue>) => void;
+    /** The scopes whose folders are read, combined with OR. */
+    scope: VFolderScope;
+    /** ANDed onto the options and onto the selected-value lookup. */
+    filter?: VFolderFilter;
+    /** ANDed onto the options only; a selected folder it excludes stays selected. */
+    optionFilter?: VFolderFilter;
+    /** A matching option is listed disabled, and a matching selection is reported unresolved. */
+    isFolderDisabled?: (folder: ScopedVFolderSummary) => boolean;
+    /** Labels shown for selected ids until the lookup answers. */
+    fallbackLabels?: Record<string, string>;
+    /**
+     * Fires once every selected id is accounted for, and again whenever that
+     * outcome changes. Ids whose lookup failed are in neither list.
+     */
+    onResolve?: (resolution: ScopedVFolderResolution) => void;
+    /** Owner line of a project folder; the folder list carries no project name. */
+    currentProjectName?: string;
+    ref?: React.Ref<BAIScopedVFolderSelectRef>;
+}
+/**
+ * Picks vfolders from `scopedVFoldersV2`, paged and searched on the server.
+ * The value is folder UUIDs; a selected id the loaded pages do not cover is
+ * looked up by `entityId`, which labels it and tells `onResolve` whether the
+ * scope still reaches it. Suspends on the first page.
+ *
+ * Props and usage: `BAIScopedVFolderSelect.doc.ts`.
+ */
+declare const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps>;
+export default BAIScopedVFolderSelect;

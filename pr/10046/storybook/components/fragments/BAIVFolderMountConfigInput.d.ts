@@ -21,7 +21,7 @@ export interface VFolderMountConfigValue {
     subpath?: string;
 }
 export interface BAIVFolderMountConfigInputRef {
-    /** Re-runs the folder list query behind the folder select. */
+    /** Re-reads the folder options and the auto-mounted folders. */
     refetch: () => Promise<unknown>;
 }
 export interface BAIVFolderMountConfigInputProps {
@@ -47,12 +47,6 @@ export interface BAIVFolderMountConfigInputProps {
     disabled?: boolean;
     /** Base path prepended to a relative alias input. */
     aliasBasePath?: string;
-    /**
-     * Folders that are auto-mounted. Their default mount paths
-     * (`${aliasBasePath}${name}`) join the overlap set so a colliding user alias
-     * is flagged, and they are shown as a read-only token list at the bottom.
-     */
-    autoMountedFolders?: Array<AutoMountedFolder>;
     /**
      * Route that opens a folder in the host's folder explorer. Given, every
      * folder name the component renders becomes a link to it.
@@ -127,10 +121,10 @@ export declare const toMountCreationConfig: (value: VFolderMountConfigValue[] | 
  */
 export declare const useVFolderMountConfigFormRule: (options?: VFolderMountConfigStatusOptions) => RuleObject;
 /**
- * Reusable input for configuring vfolder mounts. The options page through
- * `scopedVFoldersV2` over the caller's and the current project's folders,
- * filtered on the server; the component suspends on the first page, so the
- * consumer owns the Suspense boundary.
+ * Reusable input for configuring vfolder mounts. Folders are picked with
+ * `BAIScopedVFolderSelect` over the caller's and the current project's scope,
+ * and the auto-mounted folders are read here too; both suspend on first load,
+ * so the consumer owns the Suspense boundary.
  *
  * Props, form gating and usage: `BAIVFolderMountConfigInput.doc.ts`.
  */
