@@ -107,6 +107,11 @@ export const transition = (
   ) => {
     let count = 0;
     for (const patch of patches) {
+      // A validate-only patch never changes a value, so it never keeps the loop going.
+      if (patch.write.method === 'none') {
+        applied.push({ ...patch, provenance: source });
+        continue;
+      }
       if (!includesPath(allowed, patch.path)) {
         throw new LauncherModelError(
           `${source} wrote '${pathKey(patch.path)}' outside its writes`,
@@ -151,15 +156,21 @@ export const transition = (
       }
       provenance[pathKey(path)] = 'restored';
     }
-  } else if (!isDataArrived(event)) {
+  }
+
+  const readyInputs = readyInputsOf(inputs);
+  if (!isRestored(event) && !isDataArrived(event)) {
     const reducer = model.intents[event.type];
     if (!reducer) {
       throw new LauncherModelError(`unknown intent '${event.type}'`);
     }
-    apply(reducer(values, event.payload as never), 'user', model.fields);
+    apply(
+      reducer(values, event.payload as never, readyInputs),
+      'user',
+      model.fields,
+    );
   }
 
-  const readyInputs = readyInputsOf(inputs);
   for (let pass = 0; pass < settleLimit; pass++) {
     let count = 0;
     for (const rule of model.rules) {
@@ -169,6 +180,7 @@ export const transition = (
         provenance,
         event,
         inputs: readyInputs,
+        pass,
       });
       count += apply(patches, ruleProvenance(rule.id), rule.writes);
     }

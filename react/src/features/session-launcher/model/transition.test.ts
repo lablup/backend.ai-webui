@@ -389,3 +389,89 @@ describe('input gating', () => {
     ).not.toThrow();
   });
 });
+
+describe('validate-only patches, passes and reducer inputs', () => {
+  const VALIDATE: Patch = {
+    path: ['one'],
+    value: undefined,
+    policy: 'force',
+    reason: '',
+    write: {
+      method: 'none',
+      validateAfter: [['one']],
+      validateOptions: { recursive: true },
+    },
+  };
+
+  it('keeps a validate-only patch without writing or holding the loop open', () => {
+    const result = runOnce(VALIDATE, 'kept');
+    expect(oneValue(result)).toBe('kept');
+    expect(result.state.provenance).toEqual({});
+    // Emitted every pass, yet the transition settles after the first.
+    expect(result.patches).toEqual([{ ...VALIDATE, provenance: 'rule:P-01' }]);
+  });
+
+  it('hands rules the 0-based pass number', () => {
+    const seen: number[] = [];
+    const model = compose([
+      defineSlice({
+        name: 'one',
+        fields: [ONE],
+        inputs: {},
+        intents: {},
+        rules: [
+          {
+            id: 'P-01',
+            reads: [],
+            writes: [ONE],
+            run: ({ pass }) => {
+              seen.push(pass);
+              return pass === 0
+                ? [
+                    {
+                      path: ONE,
+                      value: 'x',
+                      policy: 'force',
+                      reason: '',
+                      write: WRITE,
+                    },
+                  ]
+                : [];
+            },
+          },
+        ],
+      }),
+    ]);
+    transition(model, { values: {}, provenance: {} }, settle, {});
+    expect(seen).toEqual([0, 1]);
+  });
+
+  it('hands intent reducers the ready inputs', () => {
+    const model = compose([
+      defineSlice({
+        name: 'one',
+        fields: [ONE],
+        inputs: { source: 'required' },
+        intents: {
+          copied: (_values, _payload: undefined, readyInputs) => [
+            {
+              path: ONE,
+              value: readyInputs.source,
+              policy: 'force',
+              reason: '',
+              write: WRITE,
+            },
+          ],
+        },
+        rules: [],
+      }),
+    ]);
+    const { state } = transition(
+      model,
+      { values: {}, provenance: {} },
+      { type: 'copied' },
+      { source: ready('from-input') },
+    );
+    expect(getIn(state.values, ONE)).toBe('from-input');
+  });
+});
