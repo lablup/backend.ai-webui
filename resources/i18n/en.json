@@ -1625,7 +1625,6 @@
     "RegistryID": "Registry ID",
     "RegistryProject": "Registry Project",
     "RescanImage": "Rescan",
-    "RescanImageNotFound": "This image was not found. It may have already been removed from the list.",
     "RescanImageRequiresSuperadmin": "Only a superadmin can rescan an image.",
     "RescanImageSuccess": "{{name}} was rescanned.",
     "ResourceLimit": "Resource limit",

@@ -1638,7 +1638,6 @@
     "RegistryID": "__NOT_TRANSLATED__",
     "RegistryProject": "__NOT_TRANSLATED__",
     "RescanImage": "Quét lại",
-    "RescanImageNotFound": "Không tìm thấy ảnh này. Có thể ảnh đã bị xóa khỏi danh sách.",
     "RescanImageRequiresSuperadmin": "Chỉ siêu quản trị viên mới có thể quét lại ảnh.",
     "RescanImageSuccess": "Đã quét lại {{name}}.",
     "ResourceLimit": "Giới hạn tài nguyên",

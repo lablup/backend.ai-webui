@@ -2,55 +2,68 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useSuspendedBackendaiClient } from '.';
-import { baiSignedRequestWithPromise } from '../helper';
-import { useTanMutation } from './reactQueryAlias';
+import { useScanImageMutation } from '../__generated__/useScanImageMutation.graphql';
 import { usePainKiller } from './usePainKiller';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
-
-/**
- * `RescanImagesResponse` / `ImageDTO` from
- * `ai.backend.common.dto.manager.image.response`. Only the fields the callers
- * read are declared; the client package cannot host it while `@ts-nocheck`
- * stands on its resource files.
- */
-export interface ScanImageResponse {
-  item: {
-    id: string;
-    name: string;
-    registry: string;
-    project: string | null;
-    tag: string | null;
-    architecture: string;
-  };
-  errors: Array<string>;
-}
+import { graphql, useMutation } from 'react-relay';
+import type { PayloadError } from 'relay-runtime';
 
 export interface ScanImageVariables {
   canonical: string;
   architecture: string;
 }
 
-/** `POST /admin/images/rescan` for one already-registered canonical — the Images row action. */
-export const useScanImage = () => {
-  'use memo';
-  const baiClient = useSuspendedBackendaiClient();
-
-  return useTanMutation<ScanImageResponse, unknown, ScanImageVariables>({
-    mutationFn: (values) =>
-      baiSignedRequestWithPromise<ScanImageResponse>({
-        method: 'POST',
-        url: '/admin/images/rescan',
-        body: values,
-        client: baiClient,
-      }),
-  });
+/** A GraphQL error as the manager sends it; Relay's type drops `extensions`. */
+type ManagerPayloadError = PayloadError & {
+  extensions?: { code?: string };
 };
 
-/** The copy only this caller can word: the same status means different things. */
+/**
+ * `adminScanImage` for one canonical — the Images row action. The REST
+ * `POST /admin/images/rescan` cannot serve it on 26.10: the manager answers
+ * every call with a 400 while serializing the image's resource limits.
+ *
+ * Rejects with `{ error_code, title }` for a GraphQL error, or with the
+ * transport error as the client raised it.
+ */
+export const useScanImage = () => {
+  'use memo';
+  const [commitScanImage] = useMutation<useScanImageMutation>(graphql`
+    mutation useScanImageMutation($input: ScanImageInput!) {
+      adminScanImage(input: $input) {
+        item {
+          id
+        }
+      }
+    }
+  `);
+
+  return (input: ScanImageVariables) =>
+    new Promise<void>((resolve, reject) => {
+      commitScanImage({
+        variables: { input },
+        onCompleted: (response, errors) => {
+          const error = _.first(errors) as ManagerPayloadError | undefined;
+          if (error) {
+            reject({
+              error_code: error.extensions?.code,
+              title: error.message,
+            });
+          } else if (!response.adminScanImage?.item) {
+            reject({});
+          } else {
+            resolve();
+          }
+        },
+        onError: reject,
+      });
+    });
+};
+
+/** The copy only this caller can word: the same failure means different things. */
 export interface ScanImageErrorMessages {
-  /** 404 `image_read_not-found`. */
+  /** `image_read_not-found`: the registry has no such tag for the architecture. */
   notFound: string;
   /** 403 — naming the operation the caller was actually attempting. */
   forbidden: string;
@@ -58,9 +71,8 @@ export interface ScanImageErrorMessages {
 
 /**
  * Every caller invokes this from a `catch`, so it must never throw and must
- * always return something the reader can act on. A 404 `image_read_not-found`
- * means the manager has no ALIVE row for the canonical, and a 5xx is how a
- * missing tag or manifest surfaces. The caller words the 404 and 403 copy.
+ * always return something the reader can act on. The caller words the
+ * not-found and 403 copy.
  */
 export const useDescribeScanImageError = () => {
   'use memo';
@@ -68,10 +80,10 @@ export const useDescribeScanImageError = () => {
   const painKiller = usePainKiller();
 
   return (error: any, messages: ScanImageErrorMessages) => {
-    const statusCode = error?.statusCode;
-    if (statusCode === 404 && error?.error_code === 'image_read_not-found') {
+    if (error?.error_code === 'image_read_not-found') {
       return messages.notFound;
     }
+    const statusCode = error?.statusCode;
     if (statusCode === 403) {
       return messages.forbidden;
     }
@@ -87,8 +99,7 @@ export const useDescribeScanImageError = () => {
     let relieved: string | undefined;
     try {
       // `usePainKiller().relieve` reads `globalThis.backendaiwebui.debug`
-      // unguarded and throws when config.toml never loaded; guarded here
-      // rather than in the hook, which every error path shares (FR-3953).
+      // unguarded and throws when config.toml never loaded (FR-3953).
       relieved = title ? painKiller.relieve(title) : undefined;
     } catch {
       relieved = undefined;

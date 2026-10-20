@@ -1639,7 +1639,6 @@
     "RegistryID": "__NOT_TRANSLATED__",
     "RegistryProject": "__NOT_TRANSLATED__",
     "RescanImage": "重新掃描",
-    "RescanImageNotFound": "找不到此映像檔，可能已從清單中移除。",
     "RescanImageRequiresSuperadmin": "只有超級管理員才能重新掃描映像檔。",
     "RescanImageSuccess": "已重新掃描 {{name}}。",
     "ResourceLimit": "資源限制",

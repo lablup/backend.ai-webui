@@ -1638,7 +1638,6 @@
     "RegistryID": "__NOT_TRANSLATED__",
     "RegistryProject": "__NOT_TRANSLATED__",
     "RescanImage": "Reexaminar",
-    "RescanImageNotFound": "Esta imagem não foi encontrada. Ela pode já ter sido removida da lista.",
     "RescanImageRequiresSuperadmin": "Somente um superadministrador pode reexaminar uma imagem.",
     "RescanImageSuccess": "{{name}} foi reexaminada.",
     "ResourceLimit": "Limite de recursos",

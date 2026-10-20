@@ -1638,7 +1638,6 @@
     "RegistryID": "__NOT_TRANSLATED__",
     "RegistryProject": "__NOT_TRANSLATED__",
     "RescanImage": "Imbas Semula",
-    "RescanImageNotFound": "Imej ini tidak ditemui. Ia mungkin telah dibuang daripada senarai.",
     "RescanImageRequiresSuperadmin": "Hanya superadmin boleh mengimbas semula imej.",
     "RescanImageSuccess": "{{name}} telah diimbas semula.",
     "ResourceLimit": "Had sumber",

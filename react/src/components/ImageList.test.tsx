@@ -8,13 +8,13 @@ import ImageList, {
   ALL_IMAGE_STATUSES,
   filterByStatusesFor,
 } from './ImageList';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { NuqsTestingAdapter } from 'nuqs/adapters/testing';
 import { Suspense, useState } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
+import type { OperationDescriptor } from 'relay-runtime';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
 import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockEnvironment';
 
@@ -38,7 +38,6 @@ import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockE
 
 /** The superadmin-only row actions read this; flipped per test. */
 let mockIsSuperadmin = true;
-const mockScanRequest = vi.fn();
 const mockMessageSuccess = vi.fn();
 const mockMessageError = vi.fn();
 
@@ -72,15 +71,6 @@ vi.mock('../hooks', async (importOriginal) => {
         return mockIsSuperadmin;
       },
     }),
-  };
-});
-
-vi.mock('../helper', async (importOriginal) => {
-  const originalModule = await importOriginal<typeof import('../helper')>();
-  return {
-    ...originalModule,
-    baiSignedRequestWithPromise: (...args: Array<any>) =>
-      mockScanRequest(...args),
   };
 });
 
@@ -179,22 +169,6 @@ vi.mock('./ProjectSelectForAdminPage', async () => {
   };
 });
 
-/** The rescan row action is a react-query mutation, so every tree needs one. */
-const withQueryClient = (children: React.ReactNode) => (
-  <QueryClientProvider
-    client={
-      new QueryClient({
-        defaultOptions: {
-          queries: { retry: false, refetchOnWindowFocus: false },
-          mutations: { retry: false },
-        },
-      })
-    }
-  >
-    {children}
-  </QueryClientProvider>
-);
-
 const renderList = (
   project: { id: string; name: string } | null,
   onChangeProject = vi.fn(),
@@ -207,17 +181,15 @@ const renderList = (
     );
   }
   render(
-    withQueryClient(
-      <RelayEnvironmentProvider environment={environment}>
-        <NuqsTestingAdapter searchParams="">
-          <>
-            <Suspense fallback={null}>
-              <ImageList project={project} onChangeProject={onChangeProject} />
-            </Suspense>
-          </>
-        </NuqsTestingAdapter>
-      </RelayEnvironmentProvider>,
-    ),
+    <RelayEnvironmentProvider environment={environment}>
+      <NuqsTestingAdapter searchParams="">
+        <>
+          <Suspense fallback={null}>
+            <ImageList project={project} onChangeProject={onChangeProject} />
+          </Suspense>
+        </>
+      </NuqsTestingAdapter>
+    </RelayEnvironmentProvider>,
   );
   return { environment, onChangeProject };
 };
@@ -349,17 +321,15 @@ describe('ImageList project scope contract (ADR-0001, FR-3415)', () => {
     };
     const user = userEvent.setup();
     render(
-      withQueryClient(
-        <RelayEnvironmentProvider environment={environment}>
-          <NuqsTestingAdapter searchParams="">
-            <>
-              <Suspense fallback={null}>
-                <Harness />
-              </Suspense>
-            </>
-          </NuqsTestingAdapter>
-        </RelayEnvironmentProvider>,
-      ),
+      <RelayEnvironmentProvider environment={environment}>
+        <NuqsTestingAdapter searchParams="">
+          <>
+            <Suspense fallback={null}>
+              <Harness />
+            </Suspense>
+          </>
+        </NuqsTestingAdapter>
+      </RelayEnvironmentProvider>,
     );
 
     await waitFor(() => {
@@ -405,15 +375,13 @@ describe('ImageList private marker (FR-70)', () => {
       }),
     );
     render(
-      withQueryClient(
-        <RelayEnvironmentProvider environment={environment}>
-          <NuqsTestingAdapter searchParams="">
-            <Suspense fallback={null}>
-              <ImageList project={null} onChangeProject={vi.fn()} />
-            </Suspense>
-          </NuqsTestingAdapter>
-        </RelayEnvironmentProvider>,
-      ),
+      <RelayEnvironmentProvider environment={environment}>
+        <NuqsTestingAdapter searchParams="">
+          <Suspense fallback={null}>
+            <ImageList project={null} onChangeProject={vi.fn()} />
+          </Suspense>
+        </NuqsTestingAdapter>
+      </RelayEnvironmentProvider>,
     );
   };
 
@@ -506,12 +474,9 @@ describe('ImageList status filter argument (FR-3911)', () => {
 });
 
 /**
- * Per-image rescan (FR-3948).
- *
- * `POST /admin/images/rescan` is `superadmin_required` and keyed by the
- * manager's own canonical — `<registry>/<namespace>:<tag>` — with the
- * architecture sent alongside it. `ImageNode.name` is NOT that canonical: it
- * resolves to `row.image`, the namespace.
+ * Per-image rescan (FR-3948): `adminScanImage`, keyed by the manager's own
+ * canonical — `<registry>/<namespace>:<tag>` — with the row's architecture.
+ * `ImageNode.name` is NOT that canonical: it resolves to the namespace.
  */
 describe('ImageList rescan row action (FR-3948)', () => {
   const IMAGE = {
@@ -528,25 +493,18 @@ describe('ImageList rescan row action (FR-3948)', () => {
   };
   const CANONICAL = 'cr.backend.ai/stable/python:3.9-ubuntu20.04';
 
-  const scanOk = () => ({
-    item: {
-      id: 'img-rescan',
-      name: 'stable/python',
-      registry: 'cr.backend.ai',
-      project: 'stable',
-      tag: '3.9-ubuntu20.04',
-      architecture: 'x86_64',
-    },
-    errors: [],
-  });
+  const isScanMutation = (operation: OperationDescriptor) =>
+    operation.request.node.params.name === 'useScanImageMutation';
 
   const renderOneImage = (node: Record<string, unknown> = IMAGE) => {
     const environment: RelayMockEnvironment = createMockEnvironment();
     // A queued resolver is consumed by ONE operation, so queue several and
-    // count how many list fetches actually ran.
+    // count how many list fetches actually ran. Returning null leaves the scan
+    // mutation pending for the test to settle.
     let fetchCount = 0;
     Array.from({ length: 4 }).forEach(() => {
       environment.mock.queueOperationResolver((operation) => {
+        if (isScanMutation(operation)) return null;
         fetchCount += 1;
         return MockPayloadGenerator.generate(operation, {
           ImageConnection: () => ({ count: 1, edges: [{ node }] }),
@@ -554,17 +512,23 @@ describe('ImageList rescan row action (FR-3948)', () => {
       });
     });
     render(
-      withQueryClient(
-        <RelayEnvironmentProvider environment={environment}>
-          <NuqsTestingAdapter searchParams="">
-            <Suspense fallback={null}>
-              <ImageList project={null} onChangeProject={vi.fn()} />
-            </Suspense>
-          </NuqsTestingAdapter>
-        </RelayEnvironmentProvider>,
-      ),
+      <RelayEnvironmentProvider environment={environment}>
+        <NuqsTestingAdapter searchParams="">
+          <Suspense fallback={null}>
+            <ImageList project={null} onChangeProject={vi.fn()} />
+          </Suspense>
+        </NuqsTestingAdapter>
+      </RelayEnvironmentProvider>,
     );
-    return { getFetchCount: () => fetchCount };
+    const pendingScan = async () => {
+      let operation: OperationDescriptor | undefined;
+      await waitFor(() => {
+        operation = environment.mock.getAllOperations().find(isScanMutation);
+        expect(operation).toBeDefined();
+      });
+      return operation as OperationDescriptor;
+    };
+    return { environment, pendingScan, getFetchCount: () => fetchCount };
   };
 
   const rescanButton = () =>
@@ -572,26 +536,23 @@ describe('ImageList rescan row action (FR-3948)', () => {
 
   beforeEach(() => {
     mockIsSuperadmin = true;
-    mockScanRequest.mockReset();
     mockMessageSuccess.mockReset();
     mockMessageError.mockReset();
   });
 
-  it('posts the row canonical and architecture, toasts and refetches the list', async () => {
+  it('sends the row canonical and architecture, toasts and refetches the list', async () => {
     const user = userEvent.setup();
-    mockScanRequest.mockResolvedValue(scanOk());
-    const { getFetchCount } = renderOneImage();
+    const { environment, pendingScan, getFetchCount } = renderOneImage();
 
     await user.click(await rescanButton());
 
-    await waitFor(() => expect(mockScanRequest).toHaveBeenCalledTimes(1));
-    expect(mockScanRequest).toHaveBeenCalledWith(
-      expect.objectContaining({
-        method: 'POST',
-        url: '/admin/images/rescan',
-        body: { canonical: CANONICAL, architecture: 'x86_64' },
-      }),
-    );
+    const operation = await pendingScan();
+    expect(operation.request.variables).toEqual({
+      input: { canonical: CANONICAL, architecture: 'x86_64' },
+    });
+    environment.mock.resolve(operation, {
+      data: { adminScanImage: { item: { id: 'ImageV2:img-rescan' } } },
+    });
     await waitFor(() =>
       expect(mockMessageSuccess).toHaveBeenCalledWith(
         `environment.RescanImageSuccess:${CANONICAL}`,
@@ -602,19 +563,56 @@ describe('ImageList rescan row action (FR-3948)', () => {
     expect(mockMessageError).not.toHaveBeenCalled();
   });
 
-  it('reads a bodiless 500 as a scan that failed on the server', async () => {
+  it('reports a tag the registry no longer has, and does not refetch', async () => {
     const user = userEvent.setup();
-    mockScanRequest.mockRejectedValue({
-      statusCode: 500,
-      // `client.ts` reads a bodiless response as `resp.blob()`, so `response`
-      // is an empty Blob rather than null.
-      response: new Blob([]),
-      title: 'internal server error',
-    });
-    renderOneImage();
+    const { environment, pendingScan, getFetchCount } = renderOneImage();
+    const fetchesBeforeClick = getFetchCount();
 
     await user.click(await rescanButton());
 
+    environment.mock.resolve(await pendingScan(), {
+      data: { adminScanImage: null },
+      errors: [
+        {
+          message: 'Image not found',
+          extensions: { code: 'image_read_not-found' },
+        } as any,
+      ],
+    });
+    await waitFor(() =>
+      expect(mockMessageError).toHaveBeenCalledWith(
+        'environment.ImportImageNotFoundInRegistry',
+      ),
+    );
+    expect(mockMessageSuccess).not.toHaveBeenCalled();
+    expect(getFetchCount()).toBe(fetchesBeforeClick);
+  });
+
+  it("shows any other GraphQL error in the manager's words", async () => {
+    const user = userEvent.setup();
+    const { environment, pendingScan } = renderOneImage();
+
+    await user.click(await rescanButton());
+
+    environment.mock.resolve(await pendingScan(), {
+      data: { adminScanImage: null },
+      errors: [{ message: 'registry unreachable' } as any],
+    });
+    await waitFor(() =>
+      expect(mockMessageError).toHaveBeenCalledWith('registry unreachable'),
+    );
+  });
+
+  it('reads a 5xx transport failure as a scan that failed on the server', async () => {
+    const user = userEvent.setup();
+    const { environment, pendingScan } = renderOneImage();
+
+    await user.click(await rescanButton());
+
+    environment.mock.reject(
+      await pendingScan(),
+      Object.assign(new Error('internal server error'), { statusCode: 500 }),
+    );
     await waitFor(() =>
       expect(mockMessageError).toHaveBeenCalledWith(
         'environment.ImportImageScanFailedOnServer',
@@ -623,30 +621,16 @@ describe('ImageList rescan row action (FR-3948)', () => {
     expect(mockMessageSuccess).not.toHaveBeenCalled();
   });
 
-  it('reports a 404 as the row having gone, not as a manager limitation', async () => {
-    const user = userEvent.setup();
-    mockScanRequest.mockRejectedValue({
-      statusCode: 404,
-      error_code: 'image_read_not-found',
-    });
-    renderOneImage();
-
-    await user.click(await rescanButton());
-
-    await waitFor(() =>
-      expect(mockMessageError).toHaveBeenCalledWith(
-        'environment.RescanImageNotFound',
-      ),
-    );
-  });
-
   it('reports a 403 as a refused rescan, not as a refused registration', async () => {
     const user = userEvent.setup();
-    mockScanRequest.mockRejectedValue({ statusCode: 403 });
-    renderOneImage();
+    const { environment, pendingScan } = renderOneImage();
 
     await user.click(await rescanButton());
 
+    environment.mock.reject(
+      await pendingScan(),
+      Object.assign(new Error('forbidden'), { statusCode: 403 }),
+    );
     await waitFor(() =>
       expect(mockMessageError).toHaveBeenCalledWith(
         'environment.RescanImageRequiresSuperadmin',
@@ -656,27 +640,6 @@ describe('ImageList rescan row action (FR-3948)', () => {
     expect(mockMessageError).not.toHaveBeenCalledWith(
       'environment.ImportImageRequiresSuperadmin',
     );
-  });
-
-  it('treats a 200 carrying scan errors as a failure, not a rescan', async () => {
-    const user = userEvent.setup();
-    mockScanRequest.mockResolvedValue({
-      ...scanOk(),
-      errors: ['tag not found in the registry'],
-    });
-    const { getFetchCount } = renderOneImage();
-    const fetchesBeforeClick = getFetchCount();
-
-    await user.click(await rescanButton());
-
-    await waitFor(() =>
-      expect(mockMessageError).toHaveBeenCalledWith(
-        'tag not found in the registry',
-      ),
-    );
-    expect(mockMessageSuccess).not.toHaveBeenCalled();
-    // The image was not rescanned, so the list must not be refetched either.
-    expect(getFetchCount()).toBe(fetchesBeforeClick);
   });
 
   it('hides the action from a non-superadmin', async () => {
@@ -694,7 +657,6 @@ describe('ImageList rescan row action (FR-3948)', () => {
   });
 
   it('hides the action on a row that is not ALIVE', async () => {
-    // The manager resolves the canonical among ALIVE images only.
     renderOneImage({ ...IMAGE, status: 'DELETED' });
 
     expect(

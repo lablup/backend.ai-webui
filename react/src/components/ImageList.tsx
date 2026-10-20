@@ -599,8 +599,8 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
               setManagingApp(row);
             }}
           />
-          {/* `POST /admin/images/rescan` is `superadmin_required` and only
-              resolves ALIVE images; any other status 404s. */}
+          {/* `adminScanImage` is superadmin-only; a non-ALIVE row is not
+              offered a refresh. */}
           {baiClient.is_superadmin && row.status === 'ALIVE' ? (
             <IconButton
               className="bai-action-accent"
@@ -610,18 +610,9 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
               tooltip={t('environment.RescanImage')}
               clickAction={async () => {
                 const canonical = getImageCanonical(row) ?? '';
+                const architecture = row.architecture ?? '';
                 try {
-                  const response = await scanImage.mutateAsync({
-                    canonical,
-                    architecture: row.architecture ?? '',
-                  });
-                  // A 200 only says the rescan ran; a per-image failure comes
-                  // back in `errors`.
-                  const errors = _.compact(response?.errors);
-                  if (errors.length > 0) {
-                    message.error(errors.join('\n'));
-                    return;
-                  }
+                  await scanImage({ canonical, architecture });
                   message.success(
                     t('environment.RescanImageSuccess', { name: canonical }),
                   );
@@ -629,7 +620,9 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
                 } catch (error) {
                   message.error(
                     describeScanError(error, {
-                      notFound: t('environment.RescanImageNotFound'),
+                      notFound: t('environment.ImportImageNotFoundInRegistry', {
+                        architecture,
+                      }),
                       forbidden: t('environment.RescanImageRequiresSuperadmin'),
                     }),
                   );

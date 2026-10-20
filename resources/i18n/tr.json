@@ -1638,7 +1638,6 @@
     "RegistryID": "__NOT_TRANSLATED__",
     "RegistryProject": "__NOT_TRANSLATED__",
     "RescanImage": "Yeniden Tara",
-    "RescanImageNotFound": "Bu imaj bulunamadı. Listeden çoktan kaldırılmış olabilir.",
     "RescanImageRequiresSuperadmin": "Yalnızca bir süper yönetici imajı yeniden tarayabilir.",
     "RescanImageSuccess": "{{name}} yeniden tarandı.",
     "ResourceLimit": "Kaynak sınırı",

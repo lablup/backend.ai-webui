@@ -1638,7 +1638,6 @@
     "RegistryID": "__NOT_TRANSLATED__",
     "RegistryProject": "__NOT_TRANSLATED__",
     "RescanImage": "再スキャン",
-    "RescanImageNotFound": "このイメージが見つかりません。すでに一覧から削除された可能性があります。",
     "RescanImageRequiresSuperadmin": "イメージを再スキャンできるのはスーパー管理者のみです。",
     "RescanImageSuccess": "{{name}} を再スキャンしました。",
     "ResourceLimit": "リソース制限",

@@ -1638,7 +1638,6 @@
     "RegistryID": "__NOT_TRANSLATED__",
     "RegistryProject": "__NOT_TRANSLATED__",
     "RescanImage": "Дахин сканнердах",
-    "RescanImageNotFound": "Энэ имаж олдсонгүй. Жагсаалтаас аль хэдийн хасагдсан байж магадгүй.",
     "RescanImageRequiresSuperadmin": "Зөвхөн супер админ имажийг дахин сканнердаж чадна.",
     "RescanImageSuccess": "{{name}} имажийг дахин сканнердлаа.",
     "ResourceLimit": "Нөөцийн хязгаар",

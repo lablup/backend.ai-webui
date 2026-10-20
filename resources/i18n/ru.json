@@ -1638,7 +1638,6 @@
     "RegistryID": "__NOT_TRANSLATED__",
     "RegistryProject": "__NOT_TRANSLATED__",
     "RescanImage": "Пересканировать",
-    "RescanImageNotFound": "Этот образ не найден. Возможно, он уже удалён из списка.",
     "RescanImageRequiresSuperadmin": "Повторно сканировать образы может только суперадминистратор.",
     "RescanImageSuccess": "Образ {{name}} повторно просканирован.",
     "ResourceLimit": "Лимит ресурсов",

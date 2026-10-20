@@ -1638,7 +1638,6 @@
     "RegistryID": "__NOT_TRANSLATED__",
     "RegistryProject": "__NOT_TRANSLATED__",
     "RescanImage": "Riscansiona",
-    "RescanImageNotFound": "Questa immagine non è stata trovata. Potrebbe essere già stata rimossa dall'elenco.",
     "RescanImageRequiresSuperadmin": "Solo un superamministratore può riscansionare un'immagine.",
     "RescanImageSuccess": "{{name}} è stata riscansionata.",
     "ResourceLimit": "Limite delle risorse",

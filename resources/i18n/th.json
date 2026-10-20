@@ -1630,7 +1630,6 @@
     "Registries": "ทะเบียน",
     "Registry": "ทะเบียน",
     "RescanImage": "สแกนใหม่",
-    "RescanImageNotFound": "ไม่พบอิมเมจนี้ อาจถูกลบออกจากรายการไปแล้ว",
     "RescanImageRequiresSuperadmin": "เฉพาะผู้ดูแลระบบสูงสุดเท่านั้นที่สแกนอิมเมจใหม่ได้",
     "RescanImageSuccess": "สแกนอิมเมจ {{name}} ใหม่แล้ว",
     "ResourceLimit": "ขีดจำกัดทรัพยากร",

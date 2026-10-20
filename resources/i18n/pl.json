@@ -1639,7 +1639,6 @@
     "RegistryID": "__NOT_TRANSLATED__",
     "RegistryProject": "__NOT_TRANSLATED__",
     "RescanImage": "Skanuj ponownie",
-    "RescanImageNotFound": "Nie znaleziono tego obrazu. Mógł już zostać usunięty z listy.",
     "RescanImageRequiresSuperadmin": "Tylko superadministrator może ponownie przeskanować obraz.",
     "RescanImageSuccess": "Obraz {{name}} został ponownie przeskanowany.",
     "ResourceLimit": "Limit zasobów",
