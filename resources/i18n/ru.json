@@ -633,7 +633,7 @@
     "CredentialSuccessfullyDeleted": "Учетные данные успешно удалены.",
     "Credentials": "Реквизиты для входа",
     "CurrentClientIp": "Текущий IP клиента: {{ip}}",
-    "Days": "дни",
+    "Days": "{{value}} дн.",
     "Deactivate": "Деактивировать",
     "DeactivateConfirm": "Вы уверены, что хотите деактивировать эту пару ключей?",
     "DeactivateCredential": "Деактивировать учетные данные",

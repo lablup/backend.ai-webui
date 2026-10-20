@@ -70,9 +70,9 @@ const LoginSessionExtendButton: React.FC<LoginSessionExtendButtonProps> = ({
     const isExpired = duration.asMilliseconds() <= 0;
     setIsLoginSessionExpired(isExpired);
     return gridBreakpoint.xl
-      ? `${days ? days + 'd ' : ''}${duration.format('HH:mm:ss')}`
+      ? `${days ? `${days} d ` : ''}${duration.format('HH:mm:ss')}`
       : days
-        ? days + 'd'
+        ? `${days} d`
         : duration.format('HH:mm:ss');
   };
   const extend = () => startTransition(() => updateFetchKey());

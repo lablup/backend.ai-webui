@@ -536,7 +536,7 @@ test.describe(
         { timeout: 20000 },
       );
       await expect(columnHeader(page, 'Metric Source')).toBeVisible();
-      await expect(columnHeader(page, 'Cooldown Sec.')).toBeVisible();
+      await expect(columnHeader(page, 'Cooldown (s)')).toBeVisible();
       await expect(columnHeader(page, 'Step Size')).toBeVisible();
       await expect(columnHeader(page, 'Min / MAX Replicas')).toBeVisible();
       await expect(columnHeader(page, 'Last Triggered')).toBeVisible();
@@ -1182,7 +1182,7 @@ test.describe(
         dialog.getByRole('spinbutton', { name: /Step Size/ }),
       ).toHaveValue('1');
       await expect(
-        dialog.getByRole('spinbutton', { name: /Cooldown Sec\./ }),
+        dialog.getByRole('spinbutton', { name: /Cooldown \(s\)/ }),
       ).toHaveValue('300');
       await expect(
         dialog.getByRole('spinbutton', { name: /Min Replicas/ }),
@@ -1231,7 +1231,7 @@ test.describe(
         .getByRole('spinbutton', { name: 'Max Threshold' })
         .fill('80');
 
-      // 4. Leave Step Size (1), Cooldown Sec. (300), Min Replicas (0), Max
+      // 4. Leave Step Size (1), Cooldown (s) (300), Min Replicas (0), Max
       // Replicas (5) at their defaults.
 
       // 5. Click "OK".
