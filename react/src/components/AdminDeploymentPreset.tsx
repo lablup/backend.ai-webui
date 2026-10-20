@@ -107,7 +107,7 @@ const AdminDeploymentPreset = ({
   const [commitDeletePreset] = useMutation<AdminDeploymentPresetDeleteMutation>(
     graphql`
       mutation AdminDeploymentPresetDeleteMutation($id: UUID!) {
-        adminDeleteDeploymentRevisionPreset(id: $id) {
+        purgeDeploymentRevisionPreset(id: $id) {
           id
         }
       }
