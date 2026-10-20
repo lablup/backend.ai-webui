@@ -306,6 +306,42 @@ describe('ImportImageModal (FR-3940 review round)', () => {
     (globalThis as any).backendaiwebui = { debug: false };
   });
 
+  it('reads the registries afresh on every open, not the first open’s list', async () => {
+    // One QueryClient across both opens, as in the app: the second open must
+    // see the registry created after the first one.
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+    const open = (registryPage: Array<RegistryNodeShape>) => {
+      const environment = createMockEnvironment();
+      queueRegistryPages(environment, [registryPage]);
+      return render(
+        <QueryClientProvider client={queryClient}>
+          <RelayEnvironmentProvider environment={environment}>
+            <ImportImageModal open onRequestClose={vi.fn()} />
+          </RelayEnvironmentProvider>
+        </QueryClientProvider>,
+      );
+    };
+
+    const first = open([REGISTRY]);
+    await typeReferences(PYTORCH);
+    await waitFor(() =>
+      expect(
+        screen.getByText(/environment\.ImportImageRegistryNotRegistered/),
+      ).toBeInTheDocument(),
+    );
+    first.unmount();
+
+    open([REGISTRY, NGC_REGISTRY]);
+    await typeReferences(PYTORCH);
+    await waitFor(() =>
+      expect(
+        screen.getByText(/environment\.ImportImageReady/),
+      ).toBeInTheDocument(),
+    );
+  });
+
   it('matches against registries from every page of the connection', async () => {
     // `nvcr.io` only exists on the second page: a single-page fetch would
     // report it as an unregistered registry.

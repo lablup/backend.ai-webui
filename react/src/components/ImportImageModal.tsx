@@ -191,7 +191,15 @@ const ImportImageModalContent: React.FC<{
   onAdded?: (added: Array<string>) => void;
   isSubmitting: boolean;
   onSubmittingChange: (isSubmitting: boolean) => void;
-}> = ({ onRequestClose, onAdded, isSubmitting, onSubmittingChange }) => {
+  /** Keys this open's registry list, so a reopen never reuses an earlier one. */
+  openedAt: number;
+}> = ({
+  onRequestClose,
+  onAdded,
+  isSubmitting,
+  onSubmittingChange,
+  openedAt,
+}) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -217,7 +225,11 @@ const ImportImageModalContent: React.FC<{
   // The fetch key is part of the cache key, so a refresh is a new entry
   // rather than react-query staleness; nothing else may re-run the page loop.
   const { data: registryEdges } = useSuspenseTanQuery({
-    queryKey: ['ImportImageModalRegistries', deferredRegistryFetchKey],
+    queryKey: [
+      'ImportImageModalRegistries',
+      openedAt,
+      deferredRegistryFetchKey,
+    ],
     queryFn: () => fetchAllRegistries(relayEnvironment),
     staleTime: Infinity,
   });
@@ -682,6 +694,9 @@ const ImportImageModal: React.FC<ImportImageModalProps> = ({
   // Owned here, not in the content: a dismissal mid-run unmounts the content
   // through `BAIUnmountAfterClose` while its request loop is still going.
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Held here, outside the Suspense boundary: state in the suspending content
+  // is thrown away on every retry, so a nonce there would never settle.
+  const [openedAt] = useState(() => Date.now());
 
   return (
     <BAIModal
@@ -706,6 +721,7 @@ const ImportImageModal: React.FC<ImportImageModalProps> = ({
           onAdded={onAdded}
           isSubmitting={isSubmitting}
           onSubmittingChange={setIsSubmitting}
+          openedAt={openedAt}
         />
       </Suspense>
     </BAIModal>

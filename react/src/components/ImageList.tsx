@@ -9,6 +9,7 @@ import {
 } from '../__generated__/ImageListQuery.graphql';
 import { App } from '../app-shim';
 import { getImageFullName, isPrivateImage } from '../helper';
+import { importedImagesFilter } from '../helper/imageReferenceParser';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
@@ -858,8 +859,15 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
         <ImportImageModal
           open={isOpenImportImageModal}
           onRequestClose={() => setIsOpenImportImageModal(false)}
-          onAdded={() => {
+          onAdded={(added) => {
+            // A new image sorts anywhere in the list, often pages away, so the
+            // list narrows to what was just imported.
+            const filter = importedImagesFilter(added);
             startTransition(() => {
+              if (filter) {
+                setImageFilter(filter);
+                setTablePaginationOption({ current: 1 });
+              }
               updateFetchKey();
             });
           }}

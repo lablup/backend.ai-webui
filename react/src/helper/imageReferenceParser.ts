@@ -318,6 +318,36 @@ export function resolveImageReference(
   };
 }
 
+/**
+ * An image list filter (queryfilter minilang) that narrows the list to the
+ * given canonicals: the `registry`, `namespace` and `tag` conditions they all
+ * share. The property filter reads back only `&`, so differing images widen
+ * the match rather than becoming an OR; nothing in common yields `''`.
+ */
+export function importedImagesFilter(
+  canonicals: ReadonlyArray<string>,
+): string {
+  const parts = canonicals.map((canonical) => {
+    const slash = canonical.indexOf('/');
+    const colon = canonical.lastIndexOf(':');
+    const hasTag = colon > canonical.lastIndexOf('/');
+    return {
+      registry: canonical.slice(0, slash),
+      namespace: canonical.slice(slash + 1, hasTag ? colon : undefined),
+      tag: hasTag ? canonical.slice(colon + 1) : '',
+    };
+  });
+  if (parts.length === 0) return '';
+  return (['registry', 'namespace', 'tag'] as const)
+    .filter(
+      (key) =>
+        parts[0][key] !== '' &&
+        parts.every((part) => part[key] === parts[0][key]),
+    )
+    .map((key) => `${key} == "${parts[0][key]}"`)
+    .join(' & ');
+}
+
 /** Parse and resolve every line of a pasted block, blank lines included. */
 export function resolveImageReferenceLines(
   text: string,

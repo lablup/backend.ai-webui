@@ -6,6 +6,7 @@ import {
   parseImageReferenceLine,
   resolveImageReference,
   resolveImageReferenceLines,
+  importedImagesFilter,
   type RegistryRow,
 } from './imageReferenceParser';
 import { describe, expect, it } from 'vitest';
@@ -979,5 +980,38 @@ describe('resolveImageReference registry matching', () => {
     expect(resolved[0].canonical).toBe('local-harbor/library/python:3.9');
     expect(resolved[0].submittable).toBe(true);
     expect(resolved[1].reason).toBe('host_required');
+  });
+});
+
+describe('importedImagesFilter', () => {
+  it('matches one imported image exactly', () => {
+    expect(importedImagesFilter(['nvcr.io/nvidia/pytorch:26.09-py3'])).toBe(
+      'registry == "nvcr.io" & namespace == "nvidia/pytorch" & tag == "26.09-py3"',
+    );
+  });
+
+  it('keeps only the conditions every image shares', () => {
+    expect(
+      importedImagesFilter([
+        'nvcr.io/nvidia/pytorch:26.09-py3',
+        'nvcr.io/nvidia/pytorch:26.08-py3',
+      ]),
+    ).toBe('registry == "nvcr.io" & namespace == "nvidia/pytorch"');
+    expect(
+      importedImagesFilter([
+        'nvcr.io/nvidia/pytorch:1',
+        'cr.backend.ai/stable/python:1',
+      ]),
+    ).toBe('tag == "1"');
+  });
+
+  it('reads a registry port as part of the host, not the tag', () => {
+    expect(importedImagesFilter(['harbor.local:5000/library/app:2.0'])).toBe(
+      'registry == "harbor.local:5000" & namespace == "library/app" & tag == "2.0"',
+    );
+  });
+
+  it('returns an empty filter for no images', () => {
+    expect(importedImagesFilter([])).toBe('');
   });
 });
