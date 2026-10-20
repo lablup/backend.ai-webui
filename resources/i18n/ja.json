@@ -1318,8 +1318,7 @@
       "ReplicaStatus": "レプリカのライフサイクル",
       "ReplicaTrafficStatus": "レプリカのトラフィックステータス",
       "ResourceGroup": "リソースグループ",
-      "Status": "状態",
-      "Tags": "タグ"
+      "Status": "状態"
     },
     "nav": {
       "Next": "次へ",
