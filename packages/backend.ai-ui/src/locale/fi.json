@@ -153,7 +153,6 @@
     "EditLabels": "Muokkaa tunnisteita"
   },
   "comp:BAIEntityLabelSettingModal": {
-    "AddLabel": "Lisää tunniste",
     "AddLabelsToItems": "Lisää tunnisteita {{count}} kohteeseen",
     "BulkDescription": "Nämä tunnisteet lisätään kaikkiin valittuihin kohteisiin. Jos kohteella on jo sama avain, se saa uuden arvon; muut tunnisteet säilyvät.",
     "EditLabels": "Muokkaa tunnisteita",
@@ -162,8 +161,8 @@
     "KeyMustBeUnique": "Kutakin avainta voi käyttää vain kerran.",
     "KeyRequired": "Anna avain.",
     "Label": "Tunniste",
+    "LabelItemName": "tunniste",
     "LabelsSaved": "Tunnisteet tallennettu.",
-    "RemoveLabel": "Poista tunniste",
     "Save": "Tallenna",
     "SomeLabelsFailed": "{{count}} tunnistemuutosta epäonnistui",
     "Target": "Kohde",
@@ -441,10 +440,10 @@
     "UpdatedAt": "Päivitetty"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
-    "AddChoice": "Lisää vaihtoehto",
     "Category": "Kategoria",
     "CategoryPlaceholder": "esim. model_loading",
     "CategoryTooltip": "Käyttöliittymän kategoria, jota käytetään liittyvien parametrien ryhmittelyyn.",
+    "ChoiceItemName": "vaihtoehto",
     "ChoiceLabel": "Nimike",
     "ChoiceLabelPlaceholder": "esim. FP16",
     "ChoiceLabelRequired": "Vaihtoehdon nimike on pakollinen.",

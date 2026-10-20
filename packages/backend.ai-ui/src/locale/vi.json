@@ -153,7 +153,6 @@
     "EditLabels": "Sửa nhãn"
   },
   "comp:BAIEntityLabelSettingModal": {
-    "AddLabel": "Thêm nhãn",
     "AddLabelsToItems": "Thêm nhãn cho {{count}} mục",
     "BulkDescription": "Các nhãn này được thêm vào mọi mục đã chọn. Mục đã có khóa đó sẽ nhận giá trị mới; các nhãn khác được giữ nguyên.",
     "EditLabels": "Sửa nhãn",
@@ -162,8 +161,8 @@
     "KeyMustBeUnique": "Mỗi khóa chỉ được dùng một lần.",
     "KeyRequired": "Nhập khóa.",
     "Label": "Nhãn",
+    "LabelItemName": "nhãn",
     "LabelsSaved": "Đã lưu nhãn.",
-    "RemoveLabel": "Xóa nhãn",
     "Save": "Lưu",
     "SomeLabelsFailed": "{{count}} thay đổi nhãn thất bại",
     "Target": "Đối tượng",
@@ -441,10 +440,10 @@
     "UpdatedAt": "Cập nhật lúc"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
-    "AddChoice": "Thêm lựa chọn",
     "Category": "Danh mục",
     "CategoryPlaceholder": "vd: model_loading",
     "CategoryTooltip": "Danh mục giao diện dùng để nhóm các tham số liên quan lại với nhau.",
+    "ChoiceItemName": "lựa chọn",
     "ChoiceLabel": "Nhãn",
     "ChoiceLabelPlaceholder": "vd: FP16",
     "ChoiceLabelRequired": "Nhãn lựa chọn là bắt buộc.",

@@ -153,7 +153,6 @@
     "EditLabels": "Modifica etichette"
   },
   "comp:BAIEntityLabelSettingModal": {
-    "AddLabel": "Aggiungi etichetta",
     "AddLabelsToItems": "Aggiungi etichette a {{count}} elementi",
     "BulkDescription": "Queste etichette vengono aggiunte a ogni elemento selezionato. Un elemento che ha già la chiave riceve il nuovo valore; le altre etichette restano.",
     "EditLabels": "Modifica etichette",
@@ -162,8 +161,8 @@
     "KeyMustBeUnique": "Ogni chiave può essere usata una sola volta.",
     "KeyRequired": "Inserisci una chiave.",
     "Label": "Etichetta",
+    "LabelItemName": "etichetta",
     "LabelsSaved": "Etichette salvate.",
-    "RemoveLabel": "Rimuovi etichetta",
     "Save": "Salva",
     "SomeLabelsFailed": "{{count}} modifiche alle etichette non riuscite",
     "Target": "Destinazione",
@@ -441,10 +440,10 @@
     "UpdatedAt": "Aggiornato il"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
-    "AddChoice": "Aggiungi Opzione",
     "Category": "Categoria",
     "CategoryPlaceholder": "es. model_loading",
     "CategoryTooltip": "Categoria dell'interfaccia utilizzata per raggruppare parametri correlati.",
+    "ChoiceItemName": "scelta",
     "ChoiceLabel": "Etichetta",
     "ChoiceLabelPlaceholder": "es. FP16",
     "ChoiceLabelRequired": "L'etichetta dell'opzione è obbligatoria.",

@@ -153,7 +153,6 @@
     "EditLabels": "編輯標籤"
   },
   "comp:BAIEntityLabelSettingModal": {
-    "AddLabel": "新增標籤",
     "AddLabelsToItems": "為 {{count}} 個項目新增標籤",
     "BulkDescription": "以下標籤將新增至所有選取的項目。已有相同鍵的項目會更新其值，其他標籤保持不變。",
     "EditLabels": "編輯標籤",
@@ -162,8 +161,8 @@
     "KeyMustBeUnique": "每個鍵只能使用一次。",
     "KeyRequired": "請輸入鍵。",
     "Label": "標籤",
+    "LabelItemName": "標籤",
     "LabelsSaved": "標籤已儲存。",
-    "RemoveLabel": "刪除標籤",
     "Save": "儲存",
     "SomeLabelsFailed": "{{count}} 項標籤變更失敗",
     "Target": "對象",
@@ -441,10 +440,10 @@
     "UpdatedAt": "更新時間"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
-    "AddChoice": "新增選項",
     "Category": "類別",
     "CategoryPlaceholder": "例如：model_loading",
     "CategoryTooltip": "用於將相關參數歸類在一起的 UI 類別。",
+    "ChoiceItemName": "選項",
     "ChoiceLabel": "標籤",
     "ChoiceLabelPlaceholder": "例如：FP16",
     "ChoiceLabelRequired": "選項標籤為必填項。",

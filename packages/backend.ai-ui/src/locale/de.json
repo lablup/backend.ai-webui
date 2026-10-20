@@ -153,7 +153,6 @@
     "EditLabels": "Labels bearbeiten"
   },
   "comp:BAIEntityLabelSettingModal": {
-    "AddLabel": "Label hinzufügen",
     "AddLabelsToItems": "Labels zu {{count}} Elementen hinzufügen",
     "BulkDescription": "Diese Labels werden allen ausgewählten Elementen hinzugefügt. Hat ein Element den Schlüssel bereits, erhält er den neuen Wert; andere Labels bleiben erhalten.",
     "EditLabels": "Labels bearbeiten",
@@ -162,8 +161,8 @@
     "KeyMustBeUnique": "Jeder Schlüssel darf nur einmal vorkommen.",
     "KeyRequired": "Geben Sie einen Schlüssel ein.",
     "Label": "Label",
+    "LabelItemName": "Label",
     "LabelsSaved": "Labels gespeichert.",
-    "RemoveLabel": "Label entfernen",
     "Save": "Speichern",
     "SomeLabelsFailed": "{{count}} Labeländerungen fehlgeschlagen",
     "Target": "Ziel",
@@ -441,10 +440,10 @@
     "UpdatedAt": "Aktualisiert am"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
-    "AddChoice": "Option hinzufügen",
     "Category": "Kategorie",
     "CategoryPlaceholder": "z. B. model_loading",
     "CategoryTooltip": "UI-Kategorie, mit der zusammengehörige Parameter gruppiert werden.",
+    "ChoiceItemName": "Auswahlmöglichkeit",
     "ChoiceLabel": "Beschriftung",
     "ChoiceLabelPlaceholder": "z. B. FP16",
     "ChoiceLabelRequired": "Die Beschriftung der Option ist erforderlich.",

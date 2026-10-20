@@ -153,7 +153,6 @@
     "EditLabels": "Edit labels"
   },
   "comp:BAIEntityLabelSettingModal": {
-    "AddLabel": "Add label",
     "AddLabelsToItems": "Add labels ({{count}} selected)",
     "BulkDescription": "These labels are added to every selected item. An item that already has a key gets the new value; its other labels stay.",
     "EditLabels": "Edit labels",
@@ -162,8 +161,8 @@
     "KeyMustBeUnique": "Each key can be used only once.",
     "KeyRequired": "Enter a key.",
     "Label": "Label",
+    "LabelItemName": "label",
     "LabelsSaved": "Labels saved.",
-    "RemoveLabel": "Remove label",
     "Save": "Save",
     "SomeLabelsFailed": "{{count}} label changes failed",
     "Target": "Target",
@@ -441,10 +440,10 @@
     "UpdatedAt": "Updated At"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
-    "AddChoice": "Add Choice",
     "Category": "Category",
     "CategoryPlaceholder": "e.g., model_loading",
     "CategoryTooltip": "UI category used to organize related parameters together.",
+    "ChoiceItemName": "choice",
     "ChoiceLabel": "Label",
     "ChoiceLabelPlaceholder": "e.g., FP16",
     "ChoiceLabelRequired": "Choice label is required.",

@@ -153,7 +153,6 @@
     "EditLabels": "라벨 편집"
   },
   "comp:BAIEntityLabelSettingModal": {
-    "AddLabel": "라벨 추가",
     "AddLabelsToItems": "{{count}}개 항목에 라벨 추가",
     "BulkDescription": "선택한 모든 항목에 아래 라벨을 추가합니다. 이미 같은 키가 있는 항목은 값이 바뀌고, 다른 라벨은 그대로 유지됩니다.",
     "EditLabels": "라벨 편집",
@@ -162,8 +161,8 @@
     "KeyMustBeUnique": "같은 키는 한 번만 사용할 수 있습니다.",
     "KeyRequired": "키를 입력하세요.",
     "Label": "라벨",
+    "LabelItemName": "라벨",
     "LabelsSaved": "라벨을 저장했습니다.",
-    "RemoveLabel": "라벨 삭제",
     "Save": "저장",
     "SomeLabelsFailed": "라벨 변경 {{count}}건 실패",
     "Target": "대상",
@@ -441,10 +440,10 @@
     "UpdatedAt": "수정일"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
-    "AddChoice": "선택지 추가",
     "Category": "카테고리",
     "CategoryPlaceholder": "예: model_loading",
     "CategoryTooltip": "관련 파라미터를 함께 그룹화하는 데 사용되는 UI 카테고리입니다.",
+    "ChoiceItemName": "선택지",
     "ChoiceLabel": "라벨",
     "ChoiceLabelPlaceholder": "예: FP16",
     "ChoiceLabelRequired": "선택지 라벨은 필수입니다.",
