@@ -1547,6 +1547,7 @@
     "AllProjects": "Tüm projeler",
     "AlreadyInstalledImage": "Zaten yüklü görüntü",
     "AppInfoDeleted": "Uygulama bilgileri başarıyla silindi.",
+    "AppItemName": "uygulama",
     "AppName": "Uygulama ismi",
     "AppNameMustNotBeEmpty": "Uygulama Adı boş bırakılmamalıdır",
     "AppPortsApplyToNewSessionsOnly": "Uygulama ve bağlantı noktası değişiklikleri yalnızca yeni oluşturulan oturumlara uygulanır ve halihazırda çalışan oturumları etkilemez.",

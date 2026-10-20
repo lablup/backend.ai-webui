@@ -1547,6 +1547,7 @@
     "AllProjects": "すべてのプロジェクト",
     "AlreadyInstalledImage": "すでにインストールされているイメージ",
     "AppInfoDeleted": "アプリ情報が正常に削除されました。",
+    "AppItemName": "アプリ",
     "AppName": "アプリ名",
     "AppNameMustNotBeEmpty": "アプリ名は空であってはなりません",
     "AppPortsApplyToNewSessionsOnly": "アプリとポートの変更は新しく作成されるセッションにのみ適用され、すでに実行中のセッションには影響しません。",

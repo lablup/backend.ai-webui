@@ -1547,6 +1547,7 @@
     "AllProjects": "Semua proyek",
     "AlreadyInstalledImage": "Gambar yang sudah terpasang",
     "AppInfoDeleted": "Informasi aplikasi berhasil dihapus.",
+    "AppItemName": "aplikasi",
     "AppName": "Nama Aplikasi",
     "AppNameMustNotBeEmpty": "Nama Aplikasi wajib diisi",
     "AppPortsApplyToNewSessionsOnly": "Perubahan aplikasi dan port hanya berlaku untuk sesi yang baru dibuat dan tidak memengaruhi sesi yang sudah berjalan.",

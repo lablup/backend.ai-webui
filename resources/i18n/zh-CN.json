@@ -1547,6 +1547,7 @@
     "AllProjects": "全部项目",
     "AlreadyInstalledImage": "已安装的图像",
     "AppInfoDeleted": "应用信息删除成功。",
+    "AppItemName": "应用",
     "AppName": "应用名称",
     "AppNameMustNotBeEmpty": "应用名称不能为空",
     "AppPortsApplyToNewSessionsOnly": "应用和端口的更改仅适用于新建会话，不影响已在运行的会话。",
