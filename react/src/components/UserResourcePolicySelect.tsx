@@ -48,7 +48,6 @@ const UserResourcePolicySelect: React.FC<Props> = ({
             max_quota_scope_size
             # ---------------- END ---------------------
             max_customized_image_count
-            ...UserResourcePolicySettingModalFragment
           }
         }
       `,

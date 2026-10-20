@@ -6,24 +6,17 @@ import type { KeypairResourcePolicyV2Query as KeypairResourcePolicyV2QueryType }
 import type { ProjectResourcePolicyV2Query as ProjectResourcePolicyV2QueryType } from '../__generated__/ProjectResourcePolicyV2Query.graphql';
 import type { UserResourcePolicyV2Query as UserResourcePolicyV2QueryType } from '../__generated__/UserResourcePolicyV2Query.graphql';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
-import KeypairResourcePolicyList from '../components/KeypairResourcePolicyList';
 import KeypairResourcePolicyV2, {
   KeypairResourcePolicyV2Query,
 } from '../components/KeypairResourcePolicyV2';
-import ProjectResourcePolicyList from '../components/ProjectResourcePolicyList';
 import ProjectResourcePolicyV2, {
   ProjectResourcePolicyV2Query,
 } from '../components/ProjectResourcePolicyV2';
-import UserResourcePolicyList from '../components/UserResourcePolicyList';
 import UserResourcePolicyV2, {
   UserResourcePolicyV2Query,
 } from '../components/UserResourcePolicyV2';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
-import {
-  useBrowserPopstateEffect,
-  useKeyedSnapshot,
-  useSuspendedBackendaiClient,
-} from '../hooks';
+import { useBrowserPopstateEffect, useKeyedSnapshot } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import {
   BAISkeleton,
@@ -127,11 +120,6 @@ const snapshotOfVariables = (variables: TabVariables): TabSnapshot => {
 const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
   'use memo';
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
-  // The admin*ResourcePoliciesV2 queries are superadmin-only; domain admins read the legacy lists.
-  // TODO(needs-backend): core has no scoped resource-policy list yet; move to it in #10317.
-  const usesV2Table = !!baiClient.is_superadmin;
-
   const [queryParams, setQueryParams] = useQueryStates(
     {
       tab: tabParser,
@@ -169,8 +157,6 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
   >(queryParams.tab, currentSnapshot);
 
   const loadTabQuery = (tab: TabKey, snapshot: TabSnapshot) => {
-    // The legacy lists fetch on their own; only the V2 tables are preloaded.
-    if (!usesV2Table) return;
     const options = { fetchPolicy: 'store-and-network' } as const;
     if (tab === 'keypair') {
       loadKeypairResourcePolicyQuery(
@@ -263,58 +249,43 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
       <Suspense fallback={<BAISkeleton />}>
         {currentTab === 'keypair' && (
           <BAIErrorBoundary>
-            {usesV2Table ? (
-              keypairResourcePolicyQueryRef ? (
-                <KeypairResourcePolicyV2
-                  queryRef={keypairResourcePolicyQueryRef}
-                  onReload={reloadHandlerOf(
-                    'keypair',
-                    loadKeypairResourcePolicyQuery,
-                  )}
-                />
-              ) : (
-                <BAISkeleton />
-              )
+            {keypairResourcePolicyQueryRef ? (
+              <KeypairResourcePolicyV2
+                queryRef={keypairResourcePolicyQueryRef}
+                onReload={reloadHandlerOf(
+                  'keypair',
+                  loadKeypairResourcePolicyQuery,
+                )}
+              />
             ) : (
-              <KeypairResourcePolicyList />
+              <BAISkeleton />
             )}
           </BAIErrorBoundary>
         )}
         {currentTab === 'user' && (
           <BAIErrorBoundary>
-            {usesV2Table ? (
-              userResourcePolicyQueryRef ? (
-                <UserResourcePolicyV2
-                  queryRef={userResourcePolicyQueryRef}
-                  onReload={reloadHandlerOf(
-                    'user',
-                    loadUserResourcePolicyQuery,
-                  )}
-                />
-              ) : (
-                <BAISkeleton />
-              )
+            {userResourcePolicyQueryRef ? (
+              <UserResourcePolicyV2
+                queryRef={userResourcePolicyQueryRef}
+                onReload={reloadHandlerOf('user', loadUserResourcePolicyQuery)}
+              />
             ) : (
-              <UserResourcePolicyList />
+              <BAISkeleton />
             )}
           </BAIErrorBoundary>
         )}
         {currentTab === 'project' && (
           <BAIErrorBoundary>
-            {usesV2Table ? (
-              projectResourcePolicyQueryRef ? (
-                <ProjectResourcePolicyV2
-                  queryRef={projectResourcePolicyQueryRef}
-                  onReload={reloadHandlerOf(
-                    'project',
-                    loadProjectResourcePolicyQuery,
-                  )}
-                />
-              ) : (
-                <BAISkeleton />
-              )
+            {projectResourcePolicyQueryRef ? (
+              <ProjectResourcePolicyV2
+                queryRef={projectResourcePolicyQueryRef}
+                onReload={reloadHandlerOf(
+                  'project',
+                  loadProjectResourcePolicyQuery,
+                )}
+              />
             ) : (
-              <ProjectResourcePolicyList />
+              <BAISkeleton />
             )}
           </BAIErrorBoundary>
         )}
