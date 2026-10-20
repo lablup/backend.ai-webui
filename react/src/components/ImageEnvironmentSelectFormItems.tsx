@@ -2,19 +2,19 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { ImageEnvironmentSelectFormItemsQuery } from '../__generated__/ImageEnvironmentSelectFormItemsQuery.graphql';
 import {
-  ImageEnvironmentSelectFormItemsQuery,
-  ImageEnvironmentSelectFormItemsQuery$data,
-} from '../__generated__/ImageEnvironmentSelectFormItemsQuery.graphql';
+  buildImageGroups,
+  DEDICATED_OPTION_VALUE_PREFIX,
+  findFullNameMatchedImage,
+  getDedicatedAccelerators,
+  type ImageGroup,
+  type LauncherImage,
+  resolveImage,
+  selectEnvironment,
+} from '../features/session-launcher/domain/image';
 import { Form } from '../form-engine';
-import {
-  compareImageVersions,
-  getImageFullName,
-  isPrivateImage,
-  localeCompare,
-  parseImageString,
-  removeArchitectureFromImageFullName,
-} from '../helper';
+import { getImageFullName } from '../helper';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
@@ -46,40 +46,11 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { ArrowUpDown } from 'lucide-react';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export type Image = NonNullable<
-  NonNullable<ImageEnvironmentSelectFormItemsQuery$data>['images']
->[0];
-
-type ImageGroup = {
-  groupName: string;
-  environmentGroups: {
-    environmentName: string;
-    displayName: string;
-    prefix?: string;
-    images: Image[];
-    dedicatedAccelerators: string[];
-  }[];
-};
-
-// Quick-pick options repeat an environment listed below, so they need their own value.
-// `~` cannot start a registry host, so no real `registry/namespace` carries this prefix.
-const DEDICATED_OPTION_VALUE_PREFIX = '~accelerator-dedicated:';
-
-// An image's explicit `supported_accelerators`; empty for a generic image
-// (`*`, or `''` from pre-BA-2358 managers).
-const getDedicatedAccelerators = (image: Image | undefined): string[] => {
-  if (_.includes(image?.supported_accelerators, '*')) return [];
-  return _.uniq(
-    _.filter(
-      image?.supported_accelerators,
-      (accelerator): accelerator is string => !!accelerator,
-    ),
-  );
-};
+export type Image = LauncherImage;
 
 export type ImageEnvironmentFormInput = {
   environments: {
@@ -194,248 +165,70 @@ const ImageEnvironmentSelectFormItems: React.FC<
     },
   );
 
-  const imageGroups: ImageGroup[] = _.sortBy(
-    _.map(
-      _.groupBy(
-        _.filter(images, (image) => {
-          return (
-            (showPrivate ? true : !isPrivateImage(image)) &&
-            (filter ? filter(image) : true)
-          );
-        }),
-        (image) => {
-          // group by using `group` property of image info
-          return (
-            metadata?.imageInfo[getImageMeta(getImageFullName(image) || '').key]
-              ?.group || 'Custom Environments'
-          );
-        },
-      ),
-      (images, groupName) => {
-        return {
-          groupName,
-          groupSortKey: metadata?.groupSortKeyMap?.[groupName] || groupName,
-          environmentGroups: _.sortBy(
-            _.map(
-              // sub group by using (environment) `name` property of image info
-              _.groupBy(images, (image) => {
-                return (
-                  // metadata?.imageInfo[
-                  //   getImageMeta(getImageFullName(image) || "").key
-                  // ]?.name || image?.name
-                  `${image?.registry}/${image?.namespace}`
-                );
-              }),
-              (images, environmentName) => {
-                const imageKey = environmentName.split('/')?.[2];
-                const displayName =
-                  (imageKey && metadata?.imageInfo[imageKey]?.name) ||
-                  (_.last(environmentName.split('/')) as string);
-                const sortedImages = images.sort(
-                  (a, b) =>
-                    compareImageVersions(
-                      // latest version comes first
-                      b?.tag?.split('-')?.[0] ?? '',
-                      a?.tag?.split('-')?.[0] ?? '',
-                    ) || localeCompare(a?.architecture, b?.architecture),
-                );
-
-                return {
-                  environmentName,
-                  displayName,
-                  prefix: environmentName.split('/').slice(1, -1).join('/'),
-                  // `_.sortBy` is stable, so the version order holds within each half.
-                  images: showDedicatedFirst
-                    ? _.sortBy(sortedImages, (image) =>
-                        _.isEmpty(getDedicatedAccelerators(image)) ? 1 : 0,
-                      )
-                    : sortedImages,
-                  dedicatedAccelerators: _.uniq(
-                    _.flatMap(images, (image) =>
-                      getDedicatedAccelerators(image),
-                    ),
-                  ),
-                };
-              },
-            ),
-            showDedicatedFirst
-              ? [
-                  (item) => (_.isEmpty(item.dedicatedAccelerators) ? 1 : 0),
-                  (item) => item.displayName,
-                ]
-              : (item) => item.displayName,
-          ),
-        };
-      },
-    ),
-    (item) => item.groupSortKey,
-  );
+  const imageGroups: ImageGroup[] = buildImageGroups({
+    images,
+    showPrivate,
+    filter,
+    dedicatedFirst: showDedicatedFirst,
+    groupNameOf: (image) =>
+      metadata?.imageInfo[getImageMeta(getImageFullName(image) || '').key]
+        ?.group,
+    groupSortKeyOf: (groupName) => metadata?.groupSortKeyMap?.[groupName],
+    displayNameOf: (imageKey) => metadata?.imageInfo[imageKey]?.name,
+  });
 
   // If not initial value, select first value
   // auto select when relative field is changed
   useEffect(() => {
-    if (!_.isEmpty(environments?.manual)) {
-      // set undefined fields related to environments when manual is set
-      if (environments.environment || environments.version) {
-        form.setFieldsValue({
-          environments: {
-            environment: undefined,
-            version: undefined,
-            image: undefined,
-          },
-        });
-      }
-      return;
-    }
-
-    let matchedEnvironmentByVersion:
-      ImageGroup['environmentGroups'][0] | undefined;
-    let matchedImageByVersion: Image | undefined;
     const version = form.getFieldValue('environments')?.version;
-
-    // 1. Try exact full name matching (registry/namespace:tag@arch)
-    version &&
-      _.find(imageGroups, (group) => {
-        matchedEnvironmentByVersion = _.find(
-          group.environmentGroups,
-          (environment) => {
-            matchedImageByVersion = _.find(
-              environment.images,
-              (image) => getImageFullName(image) === version,
-            );
-            return !!matchedImageByVersion; // break iteration
-          },
-        );
-        return !!matchedEnvironmentByVersion; // break iteration
+    const resolution = resolveImage({
+      imageGroups,
+      watchedManual: environments?.manual,
+      watchedEnvironment: environments?.environment,
+      watchedVersion: environments?.version,
+      version,
+      environment: form.getFieldValue(['environments', 'environment']),
+      allowManual: baiClient._config.allow_manual_image_name_for_session,
+    });
+    if (resolution.kind === 'clear-for-manual') {
+      form.setFieldsValue({
+        environments: {
+          environment: undefined,
+          version: undefined,
+          image: undefined,
+        },
       });
-
-    // 2. If no exact match, try partial matching
-    if (!matchedEnvironmentByVersion && version) {
-      const { registryAndNamespace, hasTag, hasArch } =
-        parseImageString(version);
-
-      if (!hasArch && hasTag) {
-        // version is "registry/namespace:tag" format without architecture
-        _.find(imageGroups, (group) => {
-          matchedEnvironmentByVersion = _.find(
-            group.environmentGroups,
-            (environment) => {
-              matchedImageByVersion = _.find(environment.images, (image) => {
-                const fullName = getImageFullName(image);
-                // Match by removing architecture from fullName
-                return (
-                  removeArchitectureFromImageFullName(fullName) === version
-                );
-              });
-              return !!matchedImageByVersion;
-            },
-          );
-          return !!matchedEnvironmentByVersion;
-        });
-      } else if (!hasTag) {
-        // version is "registry/namespace" format (no tag, no architecture)
-        // Select the latest version (first image in sorted array)
-        _.find(imageGroups, (group) => {
-          matchedEnvironmentByVersion = _.find(
-            group.environmentGroups,
-            (environment) => {
-              if (environment.environmentName === registryAndNamespace) {
-                // images are already sorted by version (latest first)
-                matchedImageByVersion = environment.images[0];
-                return true;
-              }
-              return false;
-            },
-          );
-          return !!matchedEnvironmentByVersion;
-        });
-      }
-    }
-
-    // if matchedEnvironmentByVersion is not existed, select first values
-    let nextEnvironment: ImageGroup['environmentGroups'][0] | undefined;
-    let nextImage: Image | undefined;
-    if (matchedEnvironmentByVersion) {
-      nextEnvironment = matchedEnvironmentByVersion;
-      nextImage = matchedImageByVersion;
-    } else if (form.getFieldValue(['environments', 'environment'])) {
-      _.find(imageGroups, (group) => {
-        nextEnvironment = _.find(group.environmentGroups, (environment) => {
-          return (
-            environment.environmentName ===
-            form.getFieldValue(['environments', 'environment'])
-          );
-        });
-        nextImage = nextEnvironment?.images[0];
-        return !!nextEnvironment;
+    } else if (resolution.kind === 'manual') {
+      form.setFieldsValue({
+        environments: {
+          environment: undefined,
+          version: undefined,
+          image: undefined,
+          manual: resolution.manual,
+          customizedTag: resolution.customizedTag,
+        },
       });
-    }
-
-    if (!nextEnvironment || !nextImage) {
-      nextEnvironment = imageGroups[0]?.environmentGroups[0];
-      nextImage = nextEnvironment?.images[0];
-    }
-
-    const customizedImageTag = _.find(
-      nextImage?.labels,
-      (item) =>
-        item !== null && item?.key === 'ai.backend.customized-image.name',
-    )?.value;
-
-    if (nextImage) {
-      if (
-        !matchedEnvironmentByVersion &&
-        baiClient._config.allow_manual_image_name_for_session &&
-        version
-      ) {
-        form.setFieldsValue({
-          environments: {
-            environment: undefined,
-            version: undefined,
-            image: undefined,
-            manual: version,
-            customizedTag: customizedImageTag ?? undefined,
-          },
-        });
-      } else {
-        form.setFieldsValue({
-          environments: {
-            environment: nextEnvironment.environmentName,
-            version: getImageFullName(nextImage),
-            image: nextImage,
-            customizedTag: customizedImageTag ?? undefined,
-          },
-        });
-      }
-    } else if (baiClient._config.allow_manual_image_name_for_session) {
-      // if no image is available, only set manual if it's allowed
-      form.setFieldValue(['environments', 'manual'], version);
+    } else if (resolution.kind === 'image') {
+      form.setFieldsValue({
+        environments: {
+          environment: resolution.environment,
+          version: resolution.version,
+          image: resolution.image,
+          customizedTag: resolution.customizedTag,
+        },
+      });
+    } else if (resolution.kind === 'manual-only') {
+      form.setFieldValue(['environments', 'manual'], resolution.manual);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [environments?.version, environments?.manual]); // environments?.environment,
 
   // support search image by full name
-  const { fullNameMatchedImage } = useMemo(() => {
-    let fullNameMatchedImage: Image | undefined;
-    let fullNameMatchedImageGroup:
-      ImageGroup['environmentGroups'][0] | undefined;
-    if (environmentSearch.length) {
-      imageGroups
-        .flatMap((group) => group.environmentGroups)
-        .find((envGroup) => {
-          fullNameMatchedImageGroup = envGroup;
-          fullNameMatchedImage = _.find(envGroup.images, (image) => {
-            return getImageFullName(image) === environmentSearch;
-          });
-          return !!fullNameMatchedImage;
-        });
-    }
-    return {
-      fullNameMatchedImage,
-      fullNameMatchedImageGroup,
-    };
-  }, [environmentSearch, imageGroups]);
+  const fullNameMatchedImage = findFullNameMatchedImage(
+    imageGroups,
+    environmentSearch,
+  );
 
   const renderAcceleratorTokens = (
     accelerators: string[],
@@ -644,52 +437,13 @@ const ImageEnvironmentSelectFormItems: React.FC<
             popupMatchSelectWidth={false}
             defaultActiveFirstOption={true}
             onChange={(selectedValue) => {
-              const value =
-                _.isString(selectedValue) &&
-                selectedValue.startsWith(DEDICATED_OPTION_VALUE_PREFIX)
-                  ? selectedValue.slice(DEDICATED_OPTION_VALUE_PREFIX.length)
-                  : selectedValue;
-              if (fullNameMatchedImage) {
-                form.setFieldsValue({
-                  environments: {
-                    environment: fullNameMatchedImage?.namespace || '',
-                    version: getImageFullName(fullNameMatchedImage),
-                    image: fullNameMatchedImage,
-                  },
-                });
-              } else {
-                // NOTE: when user set environment only then set the version to the first item
-                //
-                // FR-3499 — write the OPTION's own key back, not the image's
-                // bare namespace. Every option in this select is keyed by
-                // `environmentGroup.environmentName`, i.e. `registry/namespace`,
-                // and the rest of the component agrees: the version select finds
-                // `selectedEnvironmentGroup` by `environmentName`, and the
-                // auto-select effect stores `nextEnvironment.environmentName`.
-                // Storing the registry-less `namespace` produced a value no
-                // option matched, so Astryx `Selector` fell back to its
-                // placeholder — the environment trigger read "Select…" and the
-                // version select, keyed off the same field, emptied with it.
-                // Choosing a DIFFERENT environment masked this, because the
-                // resulting `version` change re-ran the effect and it rewrote the
-                // field correctly; choosing the environment that was already
-                // selected left the broken value in place, so on a cluster with a
-                // single environment no image could be selected at all.
-                const selectedEnvironmentGroup = _.find(
-                  _.flatMap(imageGroups, (group) => group.environmentGroups),
-                  (envGroup) => envGroup.environmentName === value,
-                );
-                const firstInListImage: Image | undefined =
-                  selectedEnvironmentGroup?.images[0];
-                form.setFieldsValue({
-                  environments: {
-                    environment:
-                      selectedEnvironmentGroup?.environmentName ?? '',
-                    version: getImageFullName(firstInListImage),
-                    image: firstInListImage,
-                  },
-                });
-              }
+              form.setFieldsValue({
+                environments: selectEnvironment({
+                  imageGroups,
+                  selectedValue,
+                  fullNameMatchedImage,
+                }),
+              });
             }}
             disabled={
               baiClient._config.allow_manual_image_name_for_session &&
