@@ -487,6 +487,8 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
 
   return (
     <BAIModal
+      // ListInput stacks the choice rows with their own labels below 640px.
+      width={720}
       {...baiModalProps}
       title={
         preset
