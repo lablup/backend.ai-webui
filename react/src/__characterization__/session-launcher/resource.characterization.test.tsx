@@ -98,6 +98,13 @@ const usePresets = (
 
 const SMALL: PresetSpec = { id: 'id-small', name: 'small', cpu: 1, memG: 2 };
 const LARGE: PresetSpec = { id: 'id-large', name: 'large', cpu: 4, memG: 8 };
+const FOUR_GIB: PresetSpec = {
+  id: 'id-four',
+  name: 'four',
+  cpu: 2,
+  memG: 4,
+  shmemG: 1,
+};
 
 const image = (
   limits: Array<{ key: string; min: string }> = [],
@@ -244,6 +251,35 @@ describe('resource section characterization (ResourceAllocationFormItems)', () =
         expect(read.values().allocationPreset).toBe('id-small'),
       );
       expect(read.hasField('CPU')).toBe(true);
+    });
+
+    it("R-09 picking a preset rewrites a same-size MiB memory value to the preset's GiB string", async () => {
+      usePresets([FOUR_GIB]);
+      const { read, drive } = await renderResourceForm({
+        initialValues: {
+          allocationPreset: 'custom',
+          resource: { cpu: 1, mem: '4096m', shmem: '1024m', accelerator: 0 },
+        },
+      });
+      expect(read.values().resource.mem).toBe('4096m');
+      await drive.select('resourcePreset.ResourcePresets', 'four');
+      expect(read.values().allocationPreset).toBe('id-four');
+      // The stored string picks the unit the memory input shows (GiB here).
+      expect(read.values().resource.mem).toBe('4g');
+      expect(read.values().resource.shmem).toBe('1g');
+    });
+
+    it("R-03 R-09 auto-select rewrites a restored same-size MiB memory value to the preset's GiB string", async () => {
+      usePresets([FOUR_GIB]);
+      const { read } = await renderResourceForm({
+        initialValues: {
+          allocationPreset: 'auto-select',
+          resource: { cpu: 1, mem: '4096m', shmem: '1024m', accelerator: 0 },
+        },
+      });
+      expect(read.values().allocationPreset).toBe('id-four');
+      expect(read.values().resource.mem).toBe('4g');
+      expect(read.values().resource.shmem).toBe('1g');
     });
   });
 

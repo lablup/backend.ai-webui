@@ -42,18 +42,15 @@ const SIZE_KEYS = ['mem', 'shmem'];
 const isSizePath = (path: NamePath) =>
   SIZE_KEYS.includes(String(_.last(toPath(path))));
 
-/** `mem` / `shmem` strings compare by size, so `1g` equals `1024m`. */
+/**
+ * Strict: `'4g'` over `'4096m'` is a change, since the stored string picks the
+ * unit the input displays. Size order matters only to `raise-only`.
+ */
 export const isSameFieldValue = (
-  path: NamePath,
+  _path: NamePath,
   a: unknown,
   b: unknown,
-): boolean => {
-  if (_.isEqual(a, b)) return true;
-  if (isSizePath(path) && _.isString(a) && _.isString(b)) {
-    return compareNumberWithUnits(a, b) === 0;
-  }
-  return false;
-};
+): boolean => _.isEqual(a, b);
 
 const isGreater = (path: NamePath, next: unknown, current: unknown) => {
   if (_.isNil(current)) return true;

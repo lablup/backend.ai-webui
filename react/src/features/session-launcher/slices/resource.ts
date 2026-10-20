@@ -245,7 +245,8 @@ const applyPreset = (
     resourceSlotKeysInRG: _.keys(inputs.resourceSlotsInRG),
     acceleratorSlotKeysInRG: _.keys(inputs.acceleratorSlotsInRG),
   });
-  // [bug-compat] H24: unconditional, unlike R-08's diffed write.
+  // [bug-compat] H24: not size-diffed like R-08, so `'4g'` over `'4096m'` is
+  // written (the input switches to GiB); only a strictly equal value is dropped.
   setResource(draft, 'R-09', presetValues.resource);
   draft.set(
     'R-09',

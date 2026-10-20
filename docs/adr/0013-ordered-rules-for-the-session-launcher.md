@@ -88,7 +88,7 @@ flowchart LR
 - **Every rule, every event**: `transition`은 event의 종류와 관계없이 목록의 모든 규칙을 돈다. 규칙은 `event`를 읽어 스스로 빠질 수 있다.
 - **Input gating**: 규칙이 `needs`에 적은 입력 중 하나라도 `loading`이거나 host가 넘기지 않았으면 `transition`은 그 규칙을 건너뛴다. slice가 `required`로 선언한 입력을 host가 넘기지 않으면 어댑터가 mount 시점에 `LauncherModelError`를 던진다.
 - **Settle**: `transition`은 목록을 한 번 돌리고, 적용된 patch가 하나라도 있으면 다시 돌린다. 적용된 patch가 없는 pass에서 끝나고, 4번째 pass 뒤에도 적용된 patch가 있으면 `LauncherInvariantError`를 던진다. 테스트와 개발 빌드는 그 오류로 실패하고, production 빌드의 어댑터는 `useBAILogger`로 기록하고 마지막 상태를 쓴다.
-- **Applied patch**: `transition`은 값이 현재 값과 같은 patch(메모리 문자열은 `compareNumberWithUnits`로 비교)와 `policy`가 거부한 patch를 버린다. 남은 patch가 적용된 patch이고, settle 판정과 어댑터 재생은 적용된 patch만 센다. 한 path에 patch가 여러 번 적용되면 어댑터는 순서대로 모두 재생한다.
+- **Applied patch**: `transition`은 값이 현재 값과 같은 patch(`lodash` `isEqual`로 비교, 메모리 문자열도 문자열 그대로 비교한다. `'4g'`와 `'4096m'`은 다른 값이고, `BAIDynamicUnitInputNumber`가 문자열의 단위를 화면에 그리기 때문이다)와 `policy`가 거부한 patch를 버린다. 남은 patch가 적용된 patch이고, settle 판정과 어댑터 재생은 적용된 patch만 센다. 한 path에 patch가 여러 번 적용되면 어댑터는 순서대로 모두 재생한다.
 - **Order test**: `slices/*.test.ts`는 각 slice의 규칙 `id` 순서를 배열로 단언한다. 순서를 바꾸는 것은 동작 변경이다.
 
 ### 2. 상태는 세 가지 event로만 바뀐다
@@ -127,6 +127,7 @@ flowchart LR
 - **Selectors**: `view/selectors.ts`의 `selectLimits(values, inputs)`, `selectRemaining(values, inputs)`, `selectDisabled(values, inputs)`는 순수 함수다. `Form.Item`의 `rules`와 `min`·`max` prop은 이 값을 읽는다.
 - **Drift check**: 개발 빌드(`import.meta.env.DEV`)에서 어댑터는 재생이 끝난 뒤 모델의 값과 `form.getFieldsValue(true)`를 비교해 다르면 `useBAILogger`로 기록한다.
 - **Un-migrated fields**: 어댑터는 모델의 `fields` 밖의 값을 읽지도 쓰지도 않으므로, 같은 폼의 아직 옮기지 않은 필드는 지금처럼 동작한다.
+- **Input churn**: host가 렌더마다 새 객체로 만드는 입력은 렌더마다 `dataArrived`를 일으킨다. 지금 코드의 effect도 그런 값을 dependency로 가져 렌더마다 다시 돌았으므로 같은 동작이다. 그 입력을 memoise하는 것은 규칙이 도는 횟수를 바꾸는 동작 변경이고, #10462의 항목으로 다룬다.
 
 ### 6. 파일 위치
 

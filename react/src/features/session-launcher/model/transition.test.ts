@@ -14,7 +14,12 @@ import {
   syntheticModel,
   WRITE,
 } from './testing/syntheticModel';
-import { LauncherInvariantError, settleLimit, transition } from './transition';
+import {
+  isSameFieldValue,
+  LauncherInvariantError,
+  settleLimit,
+  transition,
+} from './transition';
 import {
   LauncherModelError,
   type LauncherInputs,
@@ -94,8 +99,13 @@ describe('transition', () => {
     expect(state.provenance['size.cpu']).toBe('user');
   });
 
-  it('drops no-op patches, comparing mem/shmem by size', () => {
-    const { patches } = transition(
+  it('drops no-op patches', () => {
+    const { patches } = transition(syntheticModel, base, settle, inputs);
+    expect(patches).toEqual([]);
+  });
+
+  it('writes a same-size mem/shmem string that differs, since the string picks the unit', () => {
+    const { state, patches } = transition(
       syntheticModel,
       withValues({
         ...base.values,
@@ -104,7 +114,15 @@ describe('transition', () => {
       settle,
       inputs,
     );
-    expect(patches).toEqual([]);
+    expect(getIn(state.values, ['size', 'shmem'])).toBe('64m');
+    expect(patches.map((p) => [pathKey(p.path), p.value])).toEqual([
+      ['size.shmem', '64m'],
+    ]);
+  });
+
+  it('compares field values strictly, never by size', () => {
+    expect(isSameFieldValue(MEM, '4g', '4096m')).toBe(false);
+    expect(isSameFieldValue(MEM, '4g', '4g')).toBe(true);
   });
 
   it('carries the write and reason through, and lists a path written twice twice', () => {
