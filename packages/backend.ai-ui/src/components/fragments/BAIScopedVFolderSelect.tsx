@@ -215,7 +215,6 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
             count
             edges {
               node {
-                id
                 entityId
                 host
                 metadata {
@@ -253,7 +252,7 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
         getTotal: (data) => data.scopedVFoldersV2?.count ?? undefined,
         getItem: (data) =>
           data.scopedVFoldersV2?.edges.map((edge) => edge.node),
-        getId: (node) => node?.id,
+        getId: (node) => node?.entityId,
       },
     );
 
@@ -282,7 +281,6 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
             @skip(if: $skip) {
             edges {
               node {
-                id
                 entityId
                 host
                 metadata {

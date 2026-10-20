@@ -75,7 +75,6 @@ export const useSuspendedAutoMountedVFolders = ({
           ) {
             edges {
               node {
-                id
                 entityId
                 accessControl {
                   permission

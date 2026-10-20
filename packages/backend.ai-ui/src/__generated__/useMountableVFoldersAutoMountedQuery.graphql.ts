@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<23e6b259e729c0c843f7b8ef12a94c23>>
+ * @generated SignedSource<<4fb94fbf42717ec6badceb48d3f0723c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -107,7 +107,6 @@ export type useMountableVFoldersAutoMountedQuery$data = {
           readonly permission: VFolderMountPermission;
         };
         readonly entityId: string;
-        readonly id: string;
         readonly metadata: {
           readonly name: string;
         };
@@ -138,115 +137,74 @@ v2 = {
 },
 v3 = [
   {
-    "alias": null,
-    "args": [
+    "kind": "Variable",
+    "name": "filter",
+    "variableName": "filter"
+  },
+  {
+    "kind": "Variable",
+    "name": "limit",
+    "variableName": "limit"
+  },
+  {
+    "kind": "Literal",
+    "name": "orderBy",
+    "value": [
       {
-        "kind": "Variable",
-        "name": "filter",
-        "variableName": "filter"
-      },
-      {
-        "kind": "Variable",
-        "name": "limit",
-        "variableName": "limit"
-      },
-      {
-        "kind": "Literal",
-        "name": "orderBy",
-        "value": [
-          {
-            "direction": "ASC",
-            "field": "NAME"
-          }
-        ]
-      },
-      {
-        "kind": "Variable",
-        "name": "scope",
-        "variableName": "scope"
+        "direction": "ASC",
+        "field": "NAME"
       }
-    ],
-    "concreteType": "VFolderConnection",
-    "kind": "LinkedField",
-    "name": "scopedVFoldersV2",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "VFolderEdge",
-        "kind": "LinkedField",
-        "name": "edges",
-        "plural": true,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "VFolder",
-            "kind": "LinkedField",
-            "name": "node",
-            "plural": false,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "id",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "entityId",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "VFolderAccessControlInfo",
-                "kind": "LinkedField",
-                "name": "accessControl",
-                "plural": false,
-                "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "permission",
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "VFolderMetadataInfo",
-                "kind": "LinkedField",
-                "name": "metadata",
-                "plural": false,
-                "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "name",
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
+    ]
+  },
+  {
+    "kind": "Variable",
+    "name": "scope",
+    "variableName": "scope"
   }
-];
+],
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "entityId",
+  "storageKey": null
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "VFolderAccessControlInfo",
+  "kind": "LinkedField",
+  "name": "accessControl",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "permission",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "VFolderMetadataInfo",
+  "kind": "LinkedField",
+  "name": "metadata",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "name",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": [
@@ -257,7 +215,44 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "useMountableVFoldersAutoMountedQuery",
-    "selections": (v3/*: any*/),
+    "selections": [
+      {
+        "alias": null,
+        "args": (v3/*: any*/),
+        "concreteType": "VFolderConnection",
+        "kind": "LinkedField",
+        "name": "scopedVFoldersV2",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "VFolderEdge",
+            "kind": "LinkedField",
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "VFolder",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  (v4/*: any*/),
+                  (v5/*: any*/),
+                  (v6/*: any*/)
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
     "type": "Query",
     "abstractKey": null
   },
@@ -270,19 +265,63 @@ return {
     ],
     "kind": "Operation",
     "name": "useMountableVFoldersAutoMountedQuery",
-    "selections": (v3/*: any*/)
+    "selections": [
+      {
+        "alias": null,
+        "args": (v3/*: any*/),
+        "concreteType": "VFolderConnection",
+        "kind": "LinkedField",
+        "name": "scopedVFoldersV2",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "VFolderEdge",
+            "kind": "LinkedField",
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "VFolder",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  (v4/*: any*/),
+                  (v5/*: any*/),
+                  (v6/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "id",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ]
   },
   "params": {
-    "cacheID": "0eff8655ae09940347eb79753bdbe520",
+    "cacheID": "e1e328b5bd503f08c2eca311e44d22f5",
     "id": null,
     "metadata": {},
     "name": "useMountableVFoldersAutoMountedQuery",
     "operationKind": "query",
-    "text": "query useMountableVFoldersAutoMountedQuery(\n  $scope: VFolderScope!\n  $filter: VFolderFilter\n  $limit: Int!\n) {\n  scopedVFoldersV2(scope: $scope, filter: $filter, limit: $limit, orderBy: [{field: NAME, direction: ASC}]) {\n    edges {\n      node {\n        id\n        entityId\n        accessControl {\n          permission\n        }\n        metadata {\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query useMountableVFoldersAutoMountedQuery(\n  $scope: VFolderScope!\n  $filter: VFolderFilter\n  $limit: Int!\n) {\n  scopedVFoldersV2(scope: $scope, filter: $filter, limit: $limit, orderBy: [{field: NAME, direction: ASC}]) {\n    edges {\n      node {\n        entityId\n        accessControl {\n          permission\n        }\n        metadata {\n          name\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "c92878d2e4038d7ced834e4a8b28326c";
+(node as any).hash = "7b931aebf8a54ff24ec5713274ca9fbc";
 
 export default node;

@@ -11,7 +11,6 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import {
   BAIVFolderMountConfigInput,
   isAutoMountFolderName,
-  safeDecodeUuid,
   type BAIVFolderMountConfigInputRef,
   useSuspendedAutoMountedVFolders,
   useVFolderMountConfigFormRule,
@@ -66,9 +65,7 @@ const SessionLauncherStorageStep: React.FC<{
           await mountConfigInputRef.current?.refetch();
           // A dotfile folder is auto-mounted by the session, never selected.
           if (isAutoMountFolderName(response.metadata.name)) return;
-          // The create mutation answers with a Relay global id.
-          const vfolderId = safeDecodeUuid(response.id);
-          if (!vfolderId) return;
+          const vfolderId = response.entityId;
           const mounts = form.getFieldValue('vfolderMounts') ?? [];
           if (_.some(mounts, (mount) => mount.vfolderId === vfolderId)) return;
           form.setFieldValue('vfolderMounts', [
