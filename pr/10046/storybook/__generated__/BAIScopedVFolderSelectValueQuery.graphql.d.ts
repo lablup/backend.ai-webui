@@ -88,9 +88,10 @@ export type BAIScopedVFolderSelectValueQuery$variables = {
     filter?: VFolderFilter | null | undefined;
     limit: number;
     scope: VFolderScope;
+    skip: boolean;
 };
 export type BAIScopedVFolderSelectValueQuery$data = {
-    readonly scopedVFoldersV2: {
+    readonly scopedVFoldersV2?: {
         readonly edges: ReadonlyArray<{
             readonly node: {
                 readonly accessControl: {

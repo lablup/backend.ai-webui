@@ -33,12 +33,9 @@ export interface BAIScopedVFolderSelectProps extends Omit<BAIComplexSelectProps,
     optionFilter?: VFolderFilter;
     /** A matching option is listed disabled, and a matching selection is reported unresolved. */
     isFolderDisabled?: (folder: ScopedVFolderSummary) => boolean;
-    /** Labels shown for selected ids until the lookup answers. */
+    /** Labels for selected ids the scope and `filter` do not reach. */
     fallbackLabels?: Record<string, string>;
-    /**
-     * Fires once every selected id is accounted for, and again whenever that
-     * outcome changes. Ids whose lookup failed are in neither list.
-     */
+    /** Fires once the selected ids are looked up, and again whenever the outcome changes. */
     onResolve?: (resolution: ScopedVFolderResolution) => void;
     /** Owner line of a project folder; the folder list carries no project name. */
     currentProjectName?: string;
@@ -46,9 +43,9 @@ export interface BAIScopedVFolderSelectProps extends Omit<BAIComplexSelectProps,
 }
 /**
  * Picks vfolders from `scopedVFoldersV2`, paged and searched on the server.
- * The value is folder UUIDs; a selected id the loaded pages do not cover is
- * looked up by `entityId`, which labels it and tells `onResolve` whether the
- * scope still reaches it. Suspends on the first page.
+ * The value is folder UUIDs. The selected ids are looked up by `entityId`
+ * within `scope` and `filter`, which labels them and tells `onResolve` whether
+ * the scope still reaches them. Suspends on the first page and the lookup.
  *
  * Props and usage: `BAIScopedVFolderSelect.doc.ts`.
  */
