@@ -816,7 +816,7 @@
       "PanelType": "面板類型",
       "PanelTypeRequired": "請選擇面板類型",
       "Table": "表格",
-      "TitleDescription": "顯示為面板標題——建議用於描述篩選條件。",
+      "TitleDescription": "顯示為面板標題 - 建議用於描述篩選條件。",
       "TitleOptional": "標題（選填）"
     }
   },

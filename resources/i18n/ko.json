@@ -816,7 +816,7 @@
       "PanelType": "패널 형식",
       "PanelTypeRequired": "패널 형식을 선택하세요",
       "Table": "테이블",
-      "TitleDescription": "패널 머리글로 표시됩니다 — 조건을 설명하는 제목을 권장합니다.",
+      "TitleDescription": "패널 머리글로 표시됩니다 - 조건을 설명하는 제목을 권장합니다.",
       "TitleOptional": "제목 (선택)"
     }
   },

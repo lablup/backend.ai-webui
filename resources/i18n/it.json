@@ -816,7 +816,7 @@
       "PanelType": "Tipo di pannello",
       "PanelTypeRequired": "Seleziona un tipo di pannello",
       "Table": "Tabella",
-      "TitleDescription": "Mostrato come intestazione del pannello — usalo per descrivere la condizione.",
+      "TitleDescription": "Mostrato come intestazione del pannello - usalo per descrivere la condizione.",
       "TitleOptional": "Titolo (facoltativo)"
     }
   },

@@ -816,7 +816,7 @@
       "PanelType": "Panel türü",
       "PanelTypeRequired": "Bir panel türü seçin",
       "Table": "Tablo",
-      "TitleDescription": "Panel başlığı olarak gösterilir — koşulu açıklamak için kullanın.",
+      "TitleDescription": "Panel başlığı olarak gösterilir - koşulu açıklamak için kullanın.",
       "TitleOptional": "Başlık (isteğe bağlı)"
     }
   },

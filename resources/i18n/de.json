@@ -816,7 +816,7 @@
       "PanelType": "Paneltyp",
       "PanelTypeRequired": "Paneltyp auswählen",
       "Table": "Tabelle",
-      "TitleDescription": "Wird als Panel-Überschrift angezeigt – beschreiben Sie damit die Bedingung.",
+      "TitleDescription": "Wird als Panel-Überschrift angezeigt - beschreiben Sie damit die Bedingung.",
       "TitleOptional": "Titel (optional)"
     }
   },

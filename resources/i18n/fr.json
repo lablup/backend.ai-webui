@@ -816,7 +816,7 @@
       "PanelType": "Type de panneau",
       "PanelTypeRequired": "Sélectionnez un type de panneau",
       "Table": "Tableau",
-      "TitleDescription": "Affiché comme en-tête du panneau — utilisez-le pour décrire la condition.",
+      "TitleDescription": "Affiché comme en-tête du panneau - utilisez-le pour décrire la condition.",
       "TitleOptional": "Titre (facultatif)"
     }
   },

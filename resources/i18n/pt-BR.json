@@ -816,7 +816,7 @@
       "PanelType": "Tipo de painel",
       "PanelTypeRequired": "Selecione um tipo de painel",
       "Table": "Tabela",
-      "TitleDescription": "Exibido como cabeçalho do painel — use-o para descrever a condição.",
+      "TitleDescription": "Exibido como cabeçalho do painel - use-o para descrever a condição.",
       "TitleOptional": "Título (opcional)"
     }
   },

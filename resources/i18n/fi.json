@@ -816,7 +816,7 @@
       "PanelType": "Paneelin tyyppi",
       "PanelTypeRequired": "Valitse paneelin tyyppi",
       "Table": "Taulukko",
-      "TitleDescription": "Näytetään paneelin otsikkona – kuvaa sillä ehto.",
+      "TitleDescription": "Näytetään paneelin otsikkona - kuvaa sillä ehto.",
       "TitleOptional": "Otsikko (valinnainen)"
     }
   },

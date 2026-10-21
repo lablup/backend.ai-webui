@@ -816,7 +816,7 @@
       "PanelType": "Typ panelu",
       "PanelTypeRequired": "Wybierz typ panelu",
       "Table": "Tabela",
-      "TitleDescription": "Wyświetlany jako nagłówek panelu — użyj go do opisania warunku.",
+      "TitleDescription": "Wyświetlany jako nagłówek panelu - użyj go do opisania warunku.",
       "TitleOptional": "Tytuł (opcjonalnie)"
     }
   },

@@ -816,7 +816,7 @@
       "PanelType": "Jenis panel",
       "PanelTypeRequired": "Pilih jenis panel",
       "Table": "Tabel",
-      "TitleDescription": "Ditampilkan sebagai judul panel — gunakan untuk menjelaskan kondisinya.",
+      "TitleDescription": "Ditampilkan sebagai judul panel - gunakan untuk menjelaskan kondisinya.",
       "TitleOptional": "Judul (opsional)"
     }
   },
