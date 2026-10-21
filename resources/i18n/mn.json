@@ -3286,6 +3286,8 @@
     }
   },
   "sessionMonitor": {
+    "ChipStartingCount": "Эхэлж буй {{count}}",
+    "ErrorCount": "Алдаа {{count}}",
     "MonitorSettings": "Хяналтын тохиргоо",
     "MoreSessions": "өөр {{count}} (нийт {{total}})",
     "MyResourceUsage": "Надад хуваарилагдсан, хязгаартай харьцуулсан",
@@ -3294,7 +3296,7 @@
     "OpenSession": "Сесс нээх",
     "OpenSessionList": "Сессийн жагсаалт нээх",
     "RunningCount": "{{count}} ажиллаж байна",
-    "SessionCount": "{{count}} сесс",
+    "SessionCount": "Сесс {{count}}",
     "StartingCount": "{{count}} эхэлж байна",
     "Tooltip": "Сессийн хяналт",
     "WatchedSessions": "Хянаж буй сессүүд",
@@ -3305,13 +3307,19 @@
       "Utilization": "Нөөцийн ашиглалт идэвхгүй байдлын босгоос доогуур байсаар байна. Дуусгахаас өмнө сессийг ашиглана уу."
     },
     "settings": {
+      "ChipError": "Алдаатай сессүүд",
       "ChipIdle": "Хамгийн ойрын идэвхгүй байдлын дуусгавар, анхааруулгатай",
       "ChipResources": "Хуваарилсан нөөц",
+      "ChipStarting": "Эхэлж буй сессүүд",
       "Condition": "Хянах сессүүд",
       "IncludeStarting": "Эхэлж буй сессүүдийг оруулах",
       "List": "Жагсаалт",
       "OnlyMine": "Зөвхөн миний үүсгэсэн сессүүд",
       "OpenUserSettings": "Сессийн хяналтын тохиргоо →",
+      "PresetCurrentProject": "Одоогийн төсөл",
+      "PresetError": "Алдаатай",
+      "PresetRunning": "Ажиллаж буй",
+      "PresetStarting": "Эхэлж буй",
       "RowsShown": "Харуулсан мөрийн тоо",
       "ShowInHeader": "Толгой хэсэгт харуулах",
       "SortBy": "Эрэмбэлэх",

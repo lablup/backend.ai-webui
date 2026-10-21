@@ -3271,6 +3271,8 @@
     }
   },
   "sessionMonitor": {
+    "ChipStartingCount": "Starting {{count}}",
+    "ErrorCount": "Errors {{count}}",
     "MonitorSettings": "Monitor settings",
     "MoreSessions": "{{count}} more ({{total}} total)",
     "MyResourceUsage": "Allocated to me, against my limit",
@@ -3279,7 +3281,7 @@
     "OpenSession": "Open session",
     "OpenSessionList": "Open session list",
     "RunningCount": "{{count}} running",
-    "SessionCount": "{{count}} sessions",
+    "SessionCount": "Sessions {{count}}",
     "StartingCount": "{{count}} starting",
     "Tooltip": "Session monitor",
     "WatchedSessions": "Watched sessions",
@@ -3290,13 +3292,19 @@
       "Utilization": "Resource utilization has stayed under the idle threshold. Use the session before it is terminated."
     },
     "settings": {
+      "ChipError": "Sessions in error",
       "ChipIdle": "Nearest idle termination, with alerts",
       "ChipResources": "Resources allocated to them",
+      "ChipStarting": "Starting sessions",
       "Condition": "Sessions to watch",
       "IncludeStarting": "Include starting sessions",
       "List": "List",
       "OnlyMine": "Only sessions I created",
       "OpenUserSettings": "Session monitor settings →",
+      "PresetCurrentProject": "Current project",
+      "PresetError": "In error",
+      "PresetRunning": "Running",
+      "PresetStarting": "Starting",
       "RowsShown": "Rows shown",
       "ShowInHeader": "Show in the header",
       "SortBy": "Sort by",

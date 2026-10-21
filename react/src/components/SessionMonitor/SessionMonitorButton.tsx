@@ -50,8 +50,9 @@ const Separator: React.FC = () => {
 };
 
 /**
- * Header chip: the watched-session count, plus the allocated resources and
- * the nearest termination when the user turned them on. Colour means one
+ * Header chip: the watched-session count, plus whichever of the starting and
+ * error counts, allocated resources and nearest termination the user turned
+ * on. Colour means one
  * thing here, a deadline under 30 minutes, so the chip carries no status dot.
  */
 const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
@@ -136,6 +137,24 @@ const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
               <Text type="inherit" textWrap="nowrap">
                 {t('sessionMonitor.SessionCount', { count })}
               </Text>
+              {summary?.starting != null && (
+                <>
+                  <Separator />
+                  <Text type="inherit" textWrap="nowrap">
+                    {t('sessionMonitor.ChipStartingCount', {
+                      count: summary.starting,
+                    })}
+                  </Text>
+                </>
+              )}
+              {summary?.errors != null && (
+                <>
+                  <Separator />
+                  <Text type="inherit" textWrap="nowrap">
+                    {t('sessionMonitor.ErrorCount', { count: summary.errors })}
+                  </Text>
+                </>
+              )}
               {summary?.allocated && (
                 <ErrorBoundaryWithNullFallback>
                   <Suspense fallback={null}>

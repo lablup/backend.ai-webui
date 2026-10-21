@@ -3284,6 +3284,8 @@
     }
   },
   "sessionMonitor": {
+    "ChipStartingCount": "Σε εκκίνηση {{count}}",
+    "ErrorCount": "Σφάλματα {{count}}",
     "MonitorSettings": "Ρυθμίσεις παρακολούθησης",
     "MoreSessions": "{{count}} ακόμη ({{total}} σύνολο)",
     "MyResourceUsage": "Διατέθηκε σε εμένα, σε σχέση με το όριό μου",
@@ -3292,7 +3294,7 @@
     "OpenSession": "Άνοιγμα συνεδρίας",
     "OpenSessionList": "Άνοιγμα λίστας συνεδριών",
     "RunningCount": "{{count}} σε εκτέλεση",
-    "SessionCount": "{{count}} συνεδρίες",
+    "SessionCount": "Συνεδρίες {{count}}",
     "StartingCount": "{{count}} ξεκινούν",
     "Tooltip": "Παρακολούθηση συνεδριών",
     "WatchedSessions": "Συνεδρίες υπό παρακολούθηση",
@@ -3303,13 +3305,19 @@
       "Utilization": "Η χρήση πόρων παραμένει κάτω από το όριο αδράνειας. Χρησιμοποιήστε τη συνεδρία πριν τερματιστεί."
     },
     "settings": {
+      "ChipError": "Συνεδρίες με σφάλμα",
       "ChipIdle": "Πλησιέστερος τερματισμός αδράνειας, με ειδοποιήσεις",
       "ChipResources": "Εκχωρημένοι πόροι",
+      "ChipStarting": "Συνεδρίες σε εκκίνηση",
       "Condition": "Συνεδρίες προς παρακολούθηση",
       "IncludeStarting": "Συμπερίληψη συνεδριών που εκκινούν",
       "List": "Λίστα",
       "OnlyMine": "Μόνο συνεδρίες που δημιούργησα",
       "OpenUserSettings": "Ρυθμίσεις παρακολούθησης συνεδριών →",
+      "PresetCurrentProject": "Τρέχον έργο",
+      "PresetError": "Σφάλμα",
+      "PresetRunning": "Σε εκτέλεση",
+      "PresetStarting": "Σε εκκίνηση",
       "RowsShown": "Εμφανιζόμενες γραμμές",
       "ShowInHeader": "Εμφάνιση στην κεφαλίδα",
       "SortBy": "Ταξινόμηση",

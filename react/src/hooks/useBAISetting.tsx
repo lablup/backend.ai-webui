@@ -28,7 +28,9 @@ export interface UserSettings {
   /** Extra queryfilter condition on the watched sessions. */
   session_monitor_condition?: string;
   /** What the header chip shows besides the count; default none. */
-  session_monitor_chip_items?: Array<'resources' | 'idle'>;
+  session_monitor_chip_items?: Array<
+    'starting' | 'error' | 'resources' | 'idle'
+  >;
   compact_sidebar?: boolean;
   preserve_login?: boolean;
   automatic_update_check?: boolean;

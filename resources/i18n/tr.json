@@ -3284,6 +3284,8 @@
     }
   },
   "sessionMonitor": {
+    "ChipStartingCount": "Başlatılıyor {{count}}",
+    "ErrorCount": "Hatalar {{count}}",
     "MonitorSettings": "Monitör ayarları",
     "MoreSessions": "{{count}} daha (toplam {{total}})",
     "MyResourceUsage": "Bana ayrıldı, limitime karşı",
@@ -3292,7 +3294,7 @@
     "OpenSession": "Oturumu aç",
     "OpenSessionList": "Oturum listesini aç",
     "RunningCount": "{{count}} çalışıyor",
-    "SessionCount": "{{count}} oturum",
+    "SessionCount": "Oturumlar {{count}}",
     "StartingCount": "{{count}} başlıyor",
     "Tooltip": "Oturum monitörü",
     "WatchedSessions": "İzlenen oturumlar",
@@ -3303,13 +3305,19 @@
       "Utilization": "Kaynak kullanımı boşta kalma eşiğinin altında kaldı. Sonlandırılmadan önce oturumu kullanın."
     },
     "settings": {
+      "ChipError": "Hatalı oturumlar",
       "ChipIdle": "En yakın boşta kalma sonlandırması, uyarılarla",
       "ChipResources": "Ayrılan kaynaklar",
+      "ChipStarting": "Başlatılan oturumlar",
       "Condition": "İzlenecek oturumlar",
       "IncludeStarting": "Başlayan oturumları dahil et",
       "List": "Liste",
       "OnlyMine": "Yalnızca oluşturduğum oturumlar",
       "OpenUserSettings": "Oturum monitörü ayarları →",
+      "PresetCurrentProject": "Geçerli proje",
+      "PresetError": "Hatalı",
+      "PresetRunning": "Çalışan",
+      "PresetStarting": "Başlatılıyor",
       "RowsShown": "Gösterilen satırlar",
       "ShowInHeader": "Başlıkta göster",
       "SortBy": "Sırala",

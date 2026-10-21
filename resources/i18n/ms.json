@@ -3284,6 +3284,8 @@
     }
   },
   "sessionMonitor": {
+    "ChipStartingCount": "Bermula {{count}}",
+    "ErrorCount": "Ralat {{count}}",
     "MonitorSettings": "Tetapan pemantau",
     "MoreSessions": "{{count}} lagi ({{total}} jumlah)",
     "MyResourceUsage": "Diperuntukkan kepada saya, berbanding had saya",
@@ -3292,7 +3294,7 @@
     "OpenSession": "Buka sesi",
     "OpenSessionList": "Buka senarai sesi",
     "RunningCount": "{{count}} berjalan",
-    "SessionCount": "{{count}} sesi",
+    "SessionCount": "Sesi {{count}}",
     "StartingCount": "{{count}} bermula",
     "Tooltip": "Pemantau sesi",
     "WatchedSessions": "Sesi yang dipantau",
@@ -3303,13 +3305,19 @@
       "Utilization": "Penggunaan sumber kekal di bawah ambang terbiar. Gunakan sesi sebelum ia ditamatkan."
     },
     "settings": {
+      "ChipError": "Sesi dalam ralat",
       "ChipIdle": "Penamatan terbiar terdekat, dengan amaran",
       "ChipResources": "Sumber yang diperuntukkan",
+      "ChipStarting": "Sesi yang sedang bermula",
       "Condition": "Sesi untuk dipantau",
       "IncludeStarting": "Sertakan sesi yang sedang dimulakan",
       "List": "Senarai",
       "OnlyMine": "Hanya sesi yang saya cipta",
       "OpenUserSettings": "Tetapan pemantau sesi →",
+      "PresetCurrentProject": "Projek semasa",
+      "PresetError": "Ralat",
+      "PresetRunning": "Berjalan",
+      "PresetStarting": "Bermula",
       "RowsShown": "Baris dipaparkan",
       "ShowInHeader": "Tunjukkan di pengepala",
       "SortBy": "Isih",

@@ -3286,6 +3286,8 @@
     }
   },
   "sessionMonitor": {
+    "ChipStartingCount": "Startend {{count}}",
+    "ErrorCount": "Fehler {{count}}",
     "MonitorSettings": "Monitor-Einstellungen",
     "MoreSessions": "{{count}} weitere ({{total}} insgesamt)",
     "MyResourceUsage": "Mir zugewiesen, im Vergleich zu meinem Limit",
@@ -3294,7 +3296,7 @@
     "OpenSession": "Sitzung öffnen",
     "OpenSessionList": "Sitzungsliste öffnen",
     "RunningCount": "{{count}} laufend",
-    "SessionCount": "{{count}} Sitzungen",
+    "SessionCount": "Sitzungen {{count}}",
     "StartingCount": "{{count}} startend",
     "Tooltip": "Sitzungsmonitor",
     "WatchedSessions": "Beobachtete Sitzungen",
@@ -3305,13 +3307,19 @@
       "Utilization": "Die Ressourcennutzung liegt unter dem Leerlaufschwellenwert. Verwenden Sie die Sitzung, bevor sie beendet wird."
     },
     "settings": {
+      "ChipError": "Sitzungen mit Fehler",
       "ChipIdle": "Nächste Leerlaufbeendigung, mit Warnungen",
       "ChipResources": "Zugewiesene Ressourcen",
+      "ChipStarting": "Startende Sitzungen",
       "Condition": "Zu beobachtende Sitzungen",
       "IncludeStarting": "Startende Sitzungen einschließen",
       "List": "Liste",
       "OnlyMine": "Nur von mir erstellte Sitzungen",
       "OpenUserSettings": "Sitzungsmonitor-Einstellungen →",
+      "PresetCurrentProject": "Aktuelles Projekt",
+      "PresetError": "Fehler",
+      "PresetRunning": "Laufend",
+      "PresetStarting": "Startend",
       "RowsShown": "Angezeigte Zeilen",
       "ShowInHeader": "In der Kopfzeile anzeigen",
       "SortBy": "Sortieren",

@@ -76,11 +76,15 @@ const ScopedSessionMonitorWatcher: React.FC<{ scope: SessionMonitorScope }> = ({
   // The default chip is a count; only the opt-in segments fetch sessions.
   const showsIdle = chipItems?.includes('idle') ?? false;
   const showsResources = chipItems?.includes('resources') ?? false;
-  const { entries, total, allocated, fetchedAt } = useSessionMonitorData(
-    deferredFetchKey,
-    scope,
-    { withEntries: showsIdle, withSlots: showsResources },
-  );
+  const showsStarting = chipItems?.includes('starting') ?? false;
+  const showsErrors = chipItems?.includes('error') ?? false;
+  const { entries, total, counts, allocated, fetchedAt } =
+    useSessionMonitorData(deferredFetchKey, scope, {
+      withEntries: showsIdle,
+      withSlots: showsResources,
+      withStarting: showsStarting,
+      withErrors: showsErrors,
+    });
   const setSummary = useSetAtom(sessionMonitorSummaryAtom);
   const setScope = useSetAtom(sessionMonitorScopeAtom);
   const { upsertNotification } = useSetBAINotification();
@@ -106,7 +110,10 @@ const ScopedSessionMonitorWatcher: React.FC<{ scope: SessionMonitorScope }> = ({
     return () => document.removeEventListener('visibilitychange', onVisible);
   }, []);
 
-  const summary = summarizeSessions(entries, total, fetchedAt, allocated);
+  const summary = summarizeSessions(entries, total, fetchedAt, allocated, {
+    starting: showsStarting ? counts.starting : null,
+    errors: showsErrors ? counts.errors : null,
+  });
   useEffect(() => {
     setSummary(summary);
   }, [summary, setSummary]);

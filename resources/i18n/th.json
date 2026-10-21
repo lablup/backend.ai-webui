@@ -3269,6 +3269,8 @@
     }
   },
   "sessionMonitor": {
+    "ChipStartingCount": "กำลังเริ่ม {{count}}",
+    "ErrorCount": "ข้อผิดพลาด {{count}}",
     "MonitorSettings": "การตั้งค่าการตรวจสอบ",
     "MoreSessions": "อีก {{count}} (รวม {{total}})",
     "MyResourceUsage": "จัดสรรให้ฉัน เทียบกับขีดจำกัดของฉัน",
@@ -3277,7 +3279,7 @@
     "OpenSession": "เปิดเซสชัน",
     "OpenSessionList": "เปิดรายการเซสชัน",
     "RunningCount": "กำลังทำงาน {{count}}",
-    "SessionCount": "{{count}} เซสชัน",
+    "SessionCount": "เซสชัน {{count}}",
     "StartingCount": "กำลังเริ่ม {{count}}",
     "Tooltip": "ตัวตรวจสอบเซสชัน",
     "WatchedSessions": "เซสชันที่ติดตาม",
@@ -3288,13 +3290,19 @@
       "Utilization": "การใช้ทรัพยากรต่ำกว่าเกณฑ์การไม่ใช้งานมาตลอด กรุณาใช้งานเซสชันก่อนที่จะถูกยุติ"
     },
     "settings": {
+      "ChipError": "เซสชันที่มีข้อผิดพลาด",
       "ChipIdle": "การยุติเนื่องจากไม่ใช้งานที่ใกล้ที่สุด พร้อมการแจ้งเตือน",
       "ChipResources": "ทรัพยากรที่จัดสรร",
+      "ChipStarting": "เซสชันที่กำลังเริ่ม",
       "Condition": "เซสชันที่จะติดตาม",
       "IncludeStarting": "รวมเซสชันที่กำลังเริ่ม",
       "List": "รายการ",
       "OnlyMine": "เฉพาะเซสชันที่ฉันสร้าง",
       "OpenUserSettings": "การตั้งค่าตัวตรวจสอบเซสชัน →",
+      "PresetCurrentProject": "โปรเจกต์ปัจจุบัน",
+      "PresetError": "ข้อผิดพลาด",
+      "PresetRunning": "กำลังทำงาน",
+      "PresetStarting": "กำลังเริ่ม",
       "RowsShown": "แถวที่แสดง",
       "ShowInHeader": "แสดงในส่วนหัว",
       "SortBy": "เรียงลำดับ",

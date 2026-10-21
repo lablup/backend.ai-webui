@@ -3284,6 +3284,8 @@
     }
   },
   "sessionMonitor": {
+    "ChipStartingCount": "Käynnistyy {{count}}",
+    "ErrorCount": "Virheet {{count}}",
     "MonitorSettings": "Valvonta-asetukset",
     "MoreSessions": "{{count}} lisää (yhteensä {{total}})",
     "MyResourceUsage": "Minulle varattu, suhteessa rajaani",
@@ -3292,7 +3294,7 @@
     "OpenSession": "Avaa istunto",
     "OpenSessionList": "Avaa istuntoluettelo",
     "RunningCount": "{{count}} käynnissä",
-    "SessionCount": "{{count}} istuntoa",
+    "SessionCount": "Istunnot {{count}}",
     "StartingCount": "{{count}} käynnistyy",
     "Tooltip": "Istuntovalvonta",
     "WatchedSessions": "Seuratut istunnot",
@@ -3303,13 +3305,19 @@
       "Utilization": "Resurssien käyttö on pysynyt joutokäynnin kynnysarvon alapuolella. Käytä istuntoa ennen kuin se lopetetaan."
     },
     "settings": {
+      "ChipError": "Virhetilaiset istunnot",
       "ChipIdle": "Lähin joutokäynnin aiheuttama päättyminen ja hälytykset",
       "ChipResources": "Varatut resurssit",
+      "ChipStarting": "Käynnistyvät istunnot",
       "Condition": "Seurattavat istunnot",
       "IncludeStarting": "Sisällytä käynnistyvät istunnot",
       "List": "Luettelo",
       "OnlyMine": "Vain luomani istunnot",
       "OpenUserSettings": "Istuntovalvonnan asetukset →",
+      "PresetCurrentProject": "Nykyinen projekti",
+      "PresetError": "Virhe",
+      "PresetRunning": "Käynnissä",
+      "PresetStarting": "Käynnistyy",
       "RowsShown": "Näytetyt rivit",
       "ShowInHeader": "Näytä otsikkopalkissa",
       "SortBy": "Järjestä",

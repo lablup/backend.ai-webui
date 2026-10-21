@@ -3284,6 +3284,8 @@
     }
   },
   "sessionMonitor": {
+    "ChipStartingCount": "Iniciando {{count}}",
+    "ErrorCount": "Erros {{count}}",
     "MonitorSettings": "Configurações do monitor",
     "MoreSessions": "{{count}} a mais ({{total}} no total)",
     "MyResourceUsage": "Alocado a mim, em relação ao meu limite",
@@ -3292,7 +3294,7 @@
     "OpenSession": "Abrir sessão",
     "OpenSessionList": "Abrir lista de sessões",
     "RunningCount": "{{count}} em execução",
-    "SessionCount": "{{count}} sessões",
+    "SessionCount": "Sessões {{count}}",
     "StartingCount": "{{count}} iniciando",
     "Tooltip": "Monitor de sessões",
     "WatchedSessions": "Sessões monitoradas",
@@ -3303,13 +3305,19 @@
       "Utilization": "A utilização de recursos permaneceu abaixo do limite de inatividade. Use a sessão antes que ela seja encerrada."
     },
     "settings": {
+      "ChipError": "Sessões com erro",
       "ChipIdle": "Próximo encerramento por inatividade, com alertas",
       "ChipResources": "Recursos alocados",
+      "ChipStarting": "Sessões iniciando",
       "Condition": "Sessões a monitorar",
       "IncludeStarting": "Incluir sessões em início",
       "List": "Lista",
       "OnlyMine": "Somente as sessões que criei",
       "OpenUserSettings": "Definições do monitor de sessões →",
+      "PresetCurrentProject": "Projeto atual",
+      "PresetError": "Com erro",
+      "PresetRunning": "Em execução",
+      "PresetStarting": "Iniciando",
       "RowsShown": "Linhas exibidas",
       "ShowInHeader": "Mostrar no cabeçalho",
       "SortBy": "Ordenar",

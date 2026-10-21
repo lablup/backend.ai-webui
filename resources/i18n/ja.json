@@ -3286,6 +3286,8 @@
     }
   },
   "sessionMonitor": {
+    "ChipStartingCount": "起動中 {{count}}",
+    "ErrorCount": "エラー {{count}}",
     "MonitorSettings": "モニター設定",
     "MoreSessions": "他に{{count}}件 (合計{{total}}件)",
     "MyResourceUsage": "自分に割り当て済み（上限との比較）",
@@ -3294,7 +3296,7 @@
     "OpenSession": "セッションを開く",
     "OpenSessionList": "セッション一覧を開く",
     "RunningCount": "実行中 {{count}}件",
-    "SessionCount": "{{count}} 件のセッション",
+    "SessionCount": "セッション {{count}}",
     "StartingCount": "起動中 {{count}}件",
     "Tooltip": "セッションモニター",
     "WatchedSessions": "監視中のセッション",
@@ -3305,13 +3307,19 @@
       "Utilization": "リソース使用率がアイドルしきい値を下回ったままです。終了する前にセッションを使用してください。"
     },
     "settings": {
+      "ChipError": "エラー状態のセッション",
       "ChipIdle": "最も近いアイドル終了と通知",
       "ChipResources": "割り当てられたリソース",
+      "ChipStarting": "起動中のセッション",
       "Condition": "監視するセッション",
       "IncludeStarting": "開始中のセッションを含める",
       "List": "一覧",
       "OnlyMine": "自分が作成したセッションのみ",
       "OpenUserSettings": "セッションモニター設定 →",
+      "PresetCurrentProject": "現在のプロジェクト",
+      "PresetError": "エラー",
+      "PresetRunning": "実行中",
+      "PresetStarting": "起動中",
       "RowsShown": "表示行数",
       "ShowInHeader": "ヘッダーに表示",
       "SortBy": "並べ替え",

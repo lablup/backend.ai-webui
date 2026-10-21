@@ -4,14 +4,20 @@
  */
 import {
   SESSION_MONITOR_CHIP_ITEMS,
+  SESSION_MONITOR_ERROR_FILTER,
+  SESSION_MONITOR_RUNNING_FILTER,
+  SESSION_MONITOR_STARTING_FILTER,
   SESSION_MONITOR_ROW_OPTIONS,
   SESSION_MONITOR_VISIBLE_LIMIT,
   type SessionMonitorChipItem,
   type SessionMonitorSort,
 } from '../../helper/sessionMonitor';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
+import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
+import { useIsProjectAgnosticPage } from '../../hooks/useIsProjectAgnosticPage';
 import { SETTING_ARRIVAL_PARAM } from '../../hooks/useSettingArrival';
 import { getSessionFilterProperties } from '../DashboardPanels/sessionFilterProperties';
+import { Button } from '@lablup/ui-common/Button';
 import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { Selector } from '@lablup/ui-common/Selector';
 import { Text } from '@lablup/ui-common/Text';
@@ -34,10 +40,49 @@ const getSessionMonitorFilterProperties = (
   ...getSessionFilterProperties(t),
 ];
 
-const chipItemLabelKey = (item: SessionMonitorChipItem) =>
-  item === 'resources'
-    ? 'sessionMonitor.settings.ChipResources'
-    : 'sessionMonitor.settings.ChipIdle';
+const CHIP_ITEM_LABEL_KEYS: Record<SessionMonitorChipItem, string> = {
+  starting: 'sessionMonitor.settings.ChipStarting',
+  error: 'sessionMonitor.settings.ChipError',
+  resources: 'sessionMonitor.settings.ChipResources',
+  idle: 'sessionMonitor.settings.ChipIdle',
+};
+
+/** One-click conditions; each replaces the condition and stays editable. */
+const STATUS_PRESETS = [
+  {
+    key: 'running',
+    labelKey: 'sessionMonitor.settings.PresetRunning',
+    condition: SESSION_MONITOR_RUNNING_FILTER,
+  },
+  {
+    key: 'starting',
+    labelKey: 'sessionMonitor.settings.PresetStarting',
+    condition: SESSION_MONITOR_STARTING_FILTER,
+  },
+  {
+    key: 'error',
+    labelKey: 'sessionMonitor.settings.PresetError',
+    condition: SESSION_MONITOR_ERROR_FILTER,
+  },
+] as const;
+
+/** Reads the current project, so it is only mounted on project pages. */
+const CurrentProjectPreset: React.FC<{
+  onApply: (condition: string) => void;
+}> = ({ onApply }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const currentProject = useCurrentProjectValue();
+  if (!currentProject.name) return null;
+  return (
+    <Button
+      size="sm"
+      variant="secondary"
+      label={t('sessionMonitor.settings.PresetCurrentProject')}
+      onClick={() => onApply(`group_name == "${currentProject.name}"`)}
+    />
+  );
+};
 
 /** The popover's settings view: which sessions it watches and what shows. */
 const SessionMonitorSettingsPane: React.FC<{
@@ -62,6 +107,7 @@ const SessionMonitorSettingsPane: React.FC<{
   const [chipItems, setChipItems] = useBAISettingUserState(
     'session_monitor_chip_items',
   );
+  const isProjectAgnosticPage = useIsProjectAgnosticPage();
 
   const sortOptions: Array<{ value: SessionMonitorSort; label: string }> = [
     { value: 'deadline', label: t('sessionMonitor.settings.SortDeadline') },
@@ -90,6 +136,20 @@ const SessionMonitorSettingsPane: React.FC<{
           onChange={(checked) => setOnlyMine(checked)}
         />
       )}
+      <BAIFlex direction="row" align="center" gap="xs" wrap="wrap">
+        {STATUS_PRESETS.map((preset) => (
+          <Button
+            key={preset.key}
+            size="sm"
+            variant="secondary"
+            label={t(preset.labelKey)}
+            onClick={() => setCondition(preset.condition)}
+          />
+        ))}
+        {!isProjectAgnosticPage && (
+          <CurrentProjectPreset onApply={setCondition} />
+        )}
+      </BAIFlex>
       <BAIPropertyFilter
         filterProperties={getSessionMonitorFilterProperties(t)}
         value={condition ?? ''}
@@ -103,7 +163,7 @@ const SessionMonitorSettingsPane: React.FC<{
       {SESSION_MONITOR_CHIP_ITEMS.map((item) => (
         <CheckboxInput
           key={item}
-          label={t(chipItemLabelKey(item))}
+          label={t(CHIP_ITEM_LABEL_KEYS[item])}
           value={chipItems?.includes(item) ?? false}
           onChange={(checked) =>
             setChipItems(

@@ -3287,6 +3287,8 @@
     }
   },
   "sessionMonitor": {
+    "ChipStartingCount": "시작 중 {{count}}",
+    "ErrorCount": "오류 {{count}}",
     "MonitorSettings": "모니터 설정",
     "MoreSessions": "{{count}}개 더 (총 {{total}}개)",
     "MyResourceUsage": "내 할당량 (한도 대비)",
@@ -3295,7 +3297,7 @@
     "OpenSession": "세션 열기",
     "OpenSessionList": "세션 목록 열기",
     "RunningCount": "실행 {{count}}",
-    "SessionCount": "세션 {{count}}개",
+    "SessionCount": "세션 {{count}}",
     "StartingCount": "시작 중 {{count}}",
     "Tooltip": "세션 모니터",
     "WatchedSessions": "지켜보는 세션",
@@ -3306,13 +3308,19 @@
       "Utilization": "자원 사용률이 유휴 기준에 못 미치고 있습니다. 종료되기 전에 세션을 사용해 주세요."
     },
     "settings": {
+      "ChipError": "오류 상태 세션",
       "ChipIdle": "가장 가까운 유휴 종료와 알림",
       "ChipResources": "할당된 자원",
+      "ChipStarting": "시작 중인 세션",
       "Condition": "지켜볼 세션",
       "IncludeStarting": "시작 중인 세션 포함",
       "List": "목록",
       "OnlyMine": "내가 만든 세션만",
       "OpenUserSettings": "세션 모니터 설정 →",
+      "PresetCurrentProject": "현재 프로젝트",
+      "PresetError": "오류",
+      "PresetRunning": "실행 중",
+      "PresetStarting": "시작 중",
       "RowsShown": "표시 행 수",
       "ShowInHeader": "헤더에 표시",
       "SortBy": "정렬",

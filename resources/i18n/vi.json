@@ -3286,6 +3286,8 @@
     }
   },
   "sessionMonitor": {
+    "ChipStartingCount": "Đang khởi động {{count}}",
+    "ErrorCount": "Lỗi {{count}}",
     "MonitorSettings": "Cài đặt giám sát",
     "MoreSessions": "{{count}} nữa (tổng {{total}})",
     "MyResourceUsage": "Được cấp phát cho tôi, so với giới hạn của tôi",
@@ -3294,7 +3296,7 @@
     "OpenSession": "Mở phiên",
     "OpenSessionList": "Mở danh sách phiên",
     "RunningCount": "{{count}} đang chạy",
-    "SessionCount": "{{count}} phiên",
+    "SessionCount": "Phiên {{count}}",
     "StartingCount": "{{count}} đang khởi động",
     "Tooltip": "Giám sát phiên",
     "WatchedSessions": "Phiên đang theo dõi",
@@ -3305,13 +3307,19 @@
       "Utilization": "Mức sử dụng tài nguyên vẫn ở dưới ngưỡng không hoạt động. Hãy sử dụng phiên trước khi nó bị chấm dứt."
     },
     "settings": {
+      "ChipError": "Phiên bị lỗi",
       "ChipIdle": "Thời điểm chấm dứt do không hoạt động gần nhất, kèm cảnh báo",
       "ChipResources": "Tài nguyên được cấp phát",
+      "ChipStarting": "Phiên đang khởi động",
       "Condition": "Phiên cần theo dõi",
       "IncludeStarting": "Bao gồm các phiên đang khởi động",
       "List": "Danh sách",
       "OnlyMine": "Chỉ các phiên tôi đã tạo",
       "OpenUserSettings": "Cài đặt giám sát phiên →",
+      "PresetCurrentProject": "Dự án hiện tại",
+      "PresetError": "Lỗi",
+      "PresetRunning": "Đang chạy",
+      "PresetStarting": "Đang khởi động",
       "RowsShown": "Số dòng hiển thị",
       "ShowInHeader": "Hiển thị trên thanh tiêu đề",
       "SortBy": "Sắp xếp",

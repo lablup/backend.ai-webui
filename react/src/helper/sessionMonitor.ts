@@ -59,37 +59,59 @@ export const SESSION_MONITOR_STARTING_FILTER = `status in [${STARTING_STATUSES.m
 export const isStartingStatus = (status: string | null | undefined) =>
   !!status && STARTING_STATUSES.includes(status);
 
-/** What the header chip shows besides the count; both fetch session rows. */
-export type SessionMonitorChipItem = 'resources' | 'idle';
-export const SESSION_MONITOR_CHIP_ITEMS: ReadonlyArray<SessionMonitorChipItem> =
-  ['resources', 'idle'];
+export const SESSION_MONITOR_ERROR_FILTER = 'status == "ERROR"';
 
 /**
- * The watched sessions as one queryfilter string: unfinished (or running
- * only), the viewer's own when `onlyMine`, and the user's condition. Each
- * part is parenthesized so a condition using `|` cannot leak out.
+ * What the header chip shows besides the count. `starting` and `error` add
+ * one count each; `resources` and `idle` fetch session rows.
  */
-export const buildSessionMonitorFilter = ({
+export type SessionMonitorChipItem =
+  'starting' | 'error' | 'resources' | 'idle';
+export const SESSION_MONITOR_CHIP_ITEMS: ReadonlyArray<SessionMonitorChipItem> =
+  ['starting', 'error', 'resources', 'idle'];
+
+/** ANDs non-empty queryfilter parts, each parenthesized. */
+export const joinSessionMonitorFilters = (
+  parts: ReadonlyArray<string | null | undefined>,
+) =>
+  parts
+    .map((part) => part?.trim())
+    .filter((part): part is string => !!part)
+    .map((part) => `(${part})`)
+    .join(' & ');
+
+/** The viewer's own sessions when `onlyMine`, and the user's condition. */
+export const buildSessionMonitorConditionFilter = ({
   userId,
   onlyMine,
   condition,
-  includeStarting,
 }: {
   userId: string;
   onlyMine: boolean;
   condition?: string | null;
+}) =>
+  joinSessionMonitorFilters([
+    onlyMine ? `user_id == "${userId}"` : null,
+    condition,
+  ]);
+
+/**
+ * The watched sessions as one queryfilter string: unfinished (or running
+ * only) and the condition. Parenthesized so a condition using `|` cannot
+ * leak out.
+ */
+export const buildSessionMonitorFilter = ({
+  includeStarting,
+  ...condition
+}: Parameters<typeof buildSessionMonitorConditionFilter>[0] & {
   includeStarting: boolean;
 }) =>
-  [
+  joinSessionMonitorFilters([
     includeStarting
       ? SESSION_MONITOR_NOT_FINISHED_FILTER
       : SESSION_MONITOR_RUNNING_FILTER,
-    onlyMine ? `user_id == "${userId}"` : null,
-    condition?.trim() || null,
-  ]
-    .filter((part): part is string => !!part)
-    .map((part) => `(${part})`)
-    .join(' & ');
+    buildSessionMonitorConditionFilter(condition),
+  ]);
 
 /** Sums `occupied_slots` JSON strings slot by slot, as raw numbers. */
 export const sumOccupiedSlots = (
@@ -203,6 +225,9 @@ export type SessionMonitorSummary = {
   nearest: SessionMonitorEntry | null;
   /** Summed `occupied_slots` of the fetched page; null when not fetched. */
   allocated: Record<string, number> | null;
+  /** Server-side counts; null when the chip does not show them. */
+  starting: number | null;
+  errors: number | null;
 };
 
 /**
@@ -214,6 +239,7 @@ export const summarizeSessions = (
   total: number,
   fetchedAt: number,
   allocated: Record<string, number> | null = null,
+  counts: { starting?: number | null; errors?: number | null } = {},
 ): SessionMonitorSummary => {
   const ranked = rankSessions(entries);
   const nearest = ranked.find((entry) => entry.deadline !== null) ?? null;
@@ -221,6 +247,8 @@ export const summarizeSessions = (
     fetchedAt,
     total,
     allocated,
+    starting: counts.starting ?? null,
+    errors: counts.errors ?? null,
     attentionCount: entries.filter(
       (entry) =>
         entry.deadline !== null &&

@@ -3284,6 +3284,8 @@
     }
   },
   "sessionMonitor": {
+    "ChipStartingCount": "Запуск {{count}}",
+    "ErrorCount": "Ошибки {{count}}",
     "MonitorSettings": "Настройки мониторинга",
     "MoreSessions": "ещё {{count}} (всего {{total}})",
     "MyResourceUsage": "Выделено мне, по сравнению с моим лимитом",
@@ -3292,7 +3294,7 @@
     "OpenSession": "Открыть сеанс",
     "OpenSessionList": "Открыть список сеансов",
     "RunningCount": "{{count}} выполняется",
-    "SessionCount": "Сеансов: {{count}}",
+    "SessionCount": "Сеансы {{count}}",
     "StartingCount": "{{count}} запускается",
     "Tooltip": "Монитор сеансов",
     "WatchedSessions": "Отслеживаемые сеансы",
@@ -3303,13 +3305,19 @@
       "Utilization": "Использование ресурсов остаётся ниже порога простоя. Используйте сеанс, прежде чем он будет завершён."
     },
     "settings": {
+      "ChipError": "Сеансы с ошибкой",
       "ChipIdle": "Ближайшее завершение из-за простоя, с предупреждениями",
       "ChipResources": "Выделенные ресурсы",
+      "ChipStarting": "Запускающиеся сеансы",
       "Condition": "Какие сеансы отслеживать",
       "IncludeStarting": "Включить запускающиеся сеансы",
       "List": "Список",
       "OnlyMine": "Только созданные мной сеансы",
       "OpenUserSettings": "Настройки монитора сеансов →",
+      "PresetCurrentProject": "Текущий проект",
+      "PresetError": "Ошибка",
+      "PresetRunning": "Выполняются",
+      "PresetStarting": "Запускаются",
       "RowsShown": "Отображаемые строки",
       "ShowInHeader": "Показывать в заголовке",
       "SortBy": "Сортировка",

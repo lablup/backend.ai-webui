@@ -3288,6 +3288,8 @@
     }
   },
   "sessionMonitor": {
+    "ChipStartingCount": "Memulai {{count}}",
+    "ErrorCount": "Error {{count}}",
     "MonitorSettings": "Pengaturan monitor",
     "MoreSessions": "{{count}} lainnya ({{total}} total)",
     "MyResourceUsage": "Dialokasikan untuk saya, dibandingkan dengan batas saya",
@@ -3296,7 +3298,7 @@
     "OpenSession": "Buka sesi",
     "OpenSessionList": "Buka daftar sesi",
     "RunningCount": "{{count}} berjalan",
-    "SessionCount": "{{count}} sesi",
+    "SessionCount": "Sesi {{count}}",
     "StartingCount": "{{count}} memulai",
     "Tooltip": "Monitor sesi",
     "WatchedSessions": "Sesi yang dipantau",
@@ -3307,13 +3309,19 @@
       "Utilization": "Penggunaan sumber daya tetap di bawah ambang batas idle. Gunakan sesi sebelum dihentikan."
     },
     "settings": {
+      "ChipError": "Sesi dengan error",
       "ChipIdle": "Penghentian idle terdekat, dengan peringatan",
       "ChipResources": "Sumber daya yang dialokasikan",
+      "ChipStarting": "Sesi yang sedang dimulai",
       "Condition": "Sesi yang dipantau",
       "IncludeStarting": "Sertakan sesi yang sedang dimulai",
       "List": "Daftar",
       "OnlyMine": "Hanya sesi yang saya buat",
       "OpenUserSettings": "Pengaturan monitor sesi →",
+      "PresetCurrentProject": "Proyek saat ini",
+      "PresetError": "Error",
+      "PresetRunning": "Berjalan",
+      "PresetStarting": "Memulai",
       "RowsShown": "Baris yang ditampilkan",
       "ShowInHeader": "Tampilkan di header",
       "SortBy": "Urutkan",

@@ -6,7 +6,10 @@ import { useCurrentDomainValue } from '.';
 import type { useSessionMonitorQuery } from '../__generated__/useSessionMonitorQuery.graphql';
 import type { IdleChecks } from '../components/ComputeSessionNodeItems/SessionIdleChecks';
 import {
+  buildSessionMonitorConditionFilter,
   buildSessionMonitorFilter,
+  joinSessionMonitorFilters,
+  SESSION_MONITOR_ERROR_FILTER,
   SESSION_MONITOR_FETCH_LIMIT,
   SESSION_MONITOR_RUNNING_FILTER,
   SESSION_MONITOR_STARTING_FILTER,
@@ -36,7 +39,10 @@ export const sessionMonitorSummaryAtom = atom<SessionMonitorSummary | null>(
  */
 export type SessionMonitorScope = {
   scopeId: string;
+  /** Status base and condition: what the chip counts and the list shows. */
   filter: string;
+  /** The condition alone, for the per-status counts. */
+  conditionFilter: string;
   /** Only the viewer's own sessions: the default, and what alerts need. */
   onlyMine: boolean;
   /** No condition beyond "mine": the popover is titled "My sessions". */
@@ -73,6 +79,11 @@ export const useSessionMonitorScope = (): SessionMonitorScope => {
       condition,
       includeStarting: includeStarting ?? true,
     }),
+    conditionFilter: buildSessionMonitorConditionFilter({
+      userId,
+      onlyMine,
+      condition,
+    }),
     onlyMine,
     isDefault: onlyMine && !condition?.trim(),
     isDomainAdmin,
@@ -105,6 +116,10 @@ type SessionMonitorDataOptions = {
   withRows?: boolean;
   /** Running and starting counts for the popover header. */
   withBreakdown?: boolean;
+  /** The starting count alone, for the chip. */
+  withStarting?: boolean;
+  /** The count of sessions in ERROR, for the chip. */
+  withErrors?: boolean;
 };
 
 /**
@@ -119,6 +134,8 @@ export const useSessionMonitorData = (
     withSlots = false,
     withRows = false,
     withBreakdown = false,
+    withStarting = false,
+    withErrors = false,
   }: SessionMonitorDataOptions = {},
 ) => {
   'use memo';
@@ -130,11 +147,14 @@ export const useSessionMonitorData = (
         $filter: String
         $runningFilter: String
         $startingFilter: String
+        $errorFilter: String
         $first: Int
         $withEntries: Boolean!
         $withSlots: Boolean!
         $withRows: Boolean!
         $withBreakdown: Boolean!
+        $withStarting: Boolean!
+        $withErrors: Boolean!
       ) {
         matching: compute_session_nodes(
           scope_id: $scopeId
@@ -154,7 +174,14 @@ export const useSessionMonitorData = (
           scope_id: $scopeId
           filter: $startingFilter
           first: 0
-        ) @include(if: $withBreakdown) {
+        ) @include(if: $withStarting) {
+          count
+        }
+        errorCount: compute_session_nodes(
+          scope_id: $scopeId
+          filter: $errorFilter
+          first: 0
+        ) @include(if: $withErrors) {
           count
         }
         compute_session_nodes(
@@ -183,13 +210,25 @@ export const useSessionMonitorData = (
     {
       scopeId: scope.scopeId,
       filter: scope.filter,
-      runningFilter: `(${scope.filter}) & (${SESSION_MONITOR_RUNNING_FILTER})`,
-      startingFilter: `(${scope.filter}) & (${SESSION_MONITOR_STARTING_FILTER})`,
+      runningFilter: joinSessionMonitorFilters([
+        scope.conditionFilter,
+        SESSION_MONITOR_RUNNING_FILTER,
+      ]),
+      startingFilter: joinSessionMonitorFilters([
+        scope.conditionFilter,
+        SESSION_MONITOR_STARTING_FILTER,
+      ]),
+      errorFilter: joinSessionMonitorFilters([
+        scope.conditionFilter,
+        SESSION_MONITOR_ERROR_FILTER,
+      ]),
       first: SESSION_MONITOR_FETCH_LIMIT,
       withEntries: withEntries || withSlots || withRows,
       withSlots,
       withRows,
       withBreakdown,
+      withStarting: withBreakdown || withStarting,
+      withErrors,
     },
     { fetchPolicy: 'store-and-network', fetchKey },
   );
@@ -205,6 +244,7 @@ export const useSessionMonitorData = (
     counts: {
       running: data.runningCount?.count ?? 0,
       starting: data.startingCount?.count ?? 0,
+      errors: data.errorCount?.count ?? 0,
     },
     allocated: withSlots
       ? sumOccupiedSlots(

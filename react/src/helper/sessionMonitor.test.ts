@@ -1,5 +1,6 @@
 import {
   applyAttentionTitleBadge,
+  buildSessionMonitorConditionFilter,
   buildSessionMonitorFilter,
   getNearestIdleCheck,
   pickDueAlerts,
@@ -120,6 +121,25 @@ describe('summarizeSessions', () => {
     expect(summary.attentionCount).toBe(1);
     expect(summary.nearest?.id).toBe('a');
     expect(summary.allocated).toBeNull();
+    expect(summary.starting).toBeNull();
+    expect(summary.errors).toBeNull();
+  });
+
+  it('carries the server-side counts the chip asked for', () => {
+    const summary = summarizeSessions([], 7, NOW, null, {
+      starting: 2,
+      errors: 1,
+    });
+    expect(summary.starting).toBe(2);
+    expect(summary.errors).toBe(1);
+  });
+});
+
+describe('buildSessionMonitorConditionFilter', () => {
+  it('is empty without an owner or a condition', () => {
+    expect(
+      buildSessionMonitorConditionFilter({ userId: 'u1', onlyMine: false }),
+    ).toBe('');
   });
 });
 
@@ -133,7 +153,7 @@ describe('buildSessionMonitorFilter', () => {
         includeStarting: false,
       }),
     ).toBe(
-      '(status == "RUNNING") & (user_id == "u1") & (name ilike "%a%" | type == "batch")',
+      '(status == "RUNNING") & ((user_id == "u1") & (name ilike "%a%" | type == "batch"))',
     );
   });
 
