@@ -240,7 +240,7 @@ The **Cluster and Resources** section lets you specify the compute resources to 
 Expand the **Advanced Settings** collapse panel to point at the model definition file and to mount additional storage folders alongside the model storage folder.
 
 - **Model Definition File Path**: The path to the model definition file within the model storage folder (default: `model-definition.yaml`). Shown only for runtime variants that read their configuration from the model folder, such as `Custom`.
-- **Additional Mounts**: A table of storage folders to mount into the inference server container. Only general-purpose (non-model) folders in `ready` state are listed. Hidden folders (names starting with `.`) and the model storage folder itself are excluded.
+- **Additional Mounts**: Storage folders to mount into the inference server container. Pick a folder with the folder selector to add it as a mount row with its own source and container path fields, as in the session launcher's [Data & Storage](#session-mounts) step.
 
 <a id="custom-runtime-config-files"></a>
 
