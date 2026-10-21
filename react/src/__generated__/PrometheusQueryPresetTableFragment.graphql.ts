@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3a607f622c3ae558059d3c14c9f86daa>>
+ * @generated SignedSource<<611c1b5756f574a51e7e67996c9b85a5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,6 +18,7 @@ export type PrometheusQueryPresetTableFragment$data = ReadonlyArray<{
   readonly categoryId: string | null | undefined;
   readonly createdAt: string;
   readonly description: string | null | undefined;
+  readonly entityId: string;
   readonly id: string;
   readonly metricName: string;
   readonly name: string;
@@ -61,6 +62,13 @@ return {
   "name": "PrometheusQueryPresetTableFragment",
   "selections": [
     (v0/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
+    },
     (v1/*: any*/),
     {
       "alias": null,
@@ -167,6 +175,6 @@ return {
 };
 })();
 
-(node as any).hash = "ccd8a8037083c18deb8d492b261cd634";
+(node as any).hash = "157ac9c8887a9077c67dd0dccffb05fa";
 
 export default node;
