@@ -304,24 +304,26 @@ const RoleListTab: React.FC = () => {
                   type: 'uuid',
                   fixedOperator: 'equals',
                   renderInput: ({ onAddCondition, value, isDisabled }) => (
-                    <BAIAdminUserV2Select
-                      valuePropName="id"
-                      value={value}
-                      isDisabled={isDisabled}
-                      label={t('rbac.AssignedUser')}
-                      isLabelHidden
-                      onChange={(value, option) =>
-                        // The picker emits the user UUID; forward the option
-                        // label (email) so the condition tag stays readable
-                        // (P3C-1 keeps the 2nd argument on this sibling).
-                        onAddCondition(
-                          value as string | undefined,
-                          Array.isArray(option)
-                            ? option[0]?.label
-                            : option?.label,
-                        )
-                      }
-                    />
+                    <Suspense fallback={<BAISelect disabled loading />}>
+                      <BAIAdminUserV2Select
+                        valuePropName="id"
+                        value={value}
+                        isDisabled={isDisabled}
+                        label={t('rbac.AssignedUser')}
+                        isLabelHidden
+                        onChange={(value, option) =>
+                          // The picker emits the user UUID; forward the option
+                          // label (email) so the condition tag stays readable
+                          // (P3C-1 keeps the 2nd argument on this sibling).
+                          onAddCondition(
+                            value as string | undefined,
+                            Array.isArray(option)
+                              ? option[0]?.label
+                              : option?.label,
+                          )
+                        }
+                      />
+                    </Suspense>
                   ),
                 },
                 {
