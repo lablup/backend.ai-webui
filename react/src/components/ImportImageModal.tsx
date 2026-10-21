@@ -653,6 +653,7 @@ const ImportImageModalContent: React.FC<{
           isReferencesMissing ? undefined : t('environment.ImportImageDesc')
         }
         required
+        requiredMarkType="optional"
         status={isReferencesMissing ? 'error' : ''}
         errors={
           isReferencesMissing
@@ -671,20 +672,30 @@ const ImportImageModalContent: React.FC<{
           onChange={(value) => setText(value)}
         />
       </BAIFormItemVisual>
-      <BAISelect
+      <BAIFormItemVisual
         label={t('environment.Architecture')}
-        value={architecture}
-        // One architecture is sent with every line, so it cannot change once
-        // part of the batch is registered.
-        disabled={isSubmitting || addedCanonicals.length > 0}
-        onChange={(value) => setArchitecture(value)}
-        options={ARCHITECTURES.map((value) => ({ label: value, value }))}
-      />
+        required
+        requiredMarkType="optional"
+        style={{ marginBottom: 0 }}
+      >
+        <BAISelect
+          label={t('environment.Architecture')}
+          isLabelHidden
+          value={architecture}
+          // One architecture is sent with every line, so it cannot change once
+          // part of the batch is registered.
+          disabled={isSubmitting || addedCanonicals.length > 0}
+          onChange={(value) => setArchitecture(value)}
+          options={ARCHITECTURES.map((value) => ({ label: value, value }))}
+        />
+      </BAIFormItemVisual>
       {addedCanonicals.length > 0 || previewLines.length > 0 ? (
-        // Imported lines and pending ones share one row idiom and one scroll
-        // box, so a line stays in the single place the reader already looked.
+        // Imported lines and pending ones share one list, so a line stays in
+        // the single place the reader already looked.
         <BAIFormItemVisual
           label={t('environment.ImportImagePreview')}
+          required
+          requiredMarkType="optional"
           status={blockedLineCount > 0 ? 'error' : ''}
           errors={
             blockedLineCount > 0
