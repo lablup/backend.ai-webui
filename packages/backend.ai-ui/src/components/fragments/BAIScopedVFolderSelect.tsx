@@ -89,7 +89,7 @@ export interface BAIScopedVFolderSelectProps extends Omit<
   ref?: React.Ref<BAIScopedVFolderSelectRef>;
 }
 
-const PAGE_SIZE = 100;
+const PAGE_SIZE = 20;
 
 const toSummary = (node: {
   entityId: string;
@@ -158,7 +158,8 @@ const VFolderOptionMeta: React.FC<{ folder: ScopedVFolderNode }> = ({
  * Picks vfolders from `scopedVFoldersV2`, paged and searched on the server.
  * The value is folder UUIDs. The selected ids are looked up by `entityId`
  * within `scope` and `filter`, which labels them and tells `onResolve` whether
- * the scope still reaches them. Suspends on the first page and the lookup.
+ * the scope still reaches them. The options are read only while the popup is
+ * open; the lookup suspends on first load.
  *
  * Props and usage: `BAIScopedVFolderSelect.doc.ts`.
  */
@@ -182,6 +183,16 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
     valuePropName: 'value',
     trigger: 'onChange',
   });
+  const [controllableOpen, setControllableOpen] = useControllableValue<boolean>(
+    selectProps as Record<string, unknown>,
+    {
+      valuePropName: 'open',
+      trigger: 'onOpenChange',
+      defaultValuePropName: 'defaultOpen',
+    },
+  );
+  // The options are read only once the popup opens.
+  const deferredOpen = useDeferredValue(controllableOpen);
   const [searchStr, setSearchStr] = useState('');
   const deferredSearchStr = useDebouncedDeferredValue(searchStr);
   const [fetchKey, setFetchKey] = useState(0);
@@ -237,7 +248,10 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
           ]),
         },
       },
-      { fetchKey, fetchPolicy: 'store-and-network' },
+      {
+        fetchKey,
+        fetchPolicy: deferredOpen ? 'store-and-network' : 'store-only',
+      },
       {
         getTotal: (data) => data.scopedVFoldersV2?.count ?? undefined,
         getItem: (data) =>
@@ -350,6 +364,7 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
       multiple={multiple}
       isLoading={
         isLoading ||
+        (!!controllableOpen && !deferredOpen) ||
         searchStr !== deferredSearchStr ||
         lookupKey !== _.sortBy(selectedIds).join(',') ||
         isPendingRefetch
@@ -368,6 +383,7 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
       }}
       searchValue={searchStr}
       onSearch={setSearchStr}
+      onOpenChange={setControllableOpen}
       endReached={loadNext}
     />
   );

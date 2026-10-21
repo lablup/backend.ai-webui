@@ -16,12 +16,12 @@ export const docs = {
   ],
   usage: {
     description:
-      "Picks virtual folders from `scopedVFoldersV2` (manager 26.9.0), a BAIComplexSelect over two Relay reads. The options page 100 at a time over the scopes in `scope` (combined with OR), newest first, extended when the popup scrolls to its end, and the popup search runs on the server as a `name iContains` filter. Each option shows a two-line-tall identicon, the name, a second line with the creator's email, usage mode, host and creation date, and the caller's mount level as welded R/W/D tokens. The value is folder UUIDs (`VFolder.entityId`), so no global id is decoded anywhere. The selected ids are looked up together by `entityId` within `scope` and `filter` (`VFolderFilter.entityId`, manager 26.10.0); the lookup re-runs only when the selection changes, never on paging or search. Its answer labels each id and decides whether it is still reachable: `onResolve` reports the reachable ones (with their names) and the unreachable ones — not found, or rejected by `isFolderDisabled` — and fires again whenever that outcome changes. Both reads suspend on first load.",
+      "Picks virtual folders from `scopedVFoldersV2` (manager 26.9.0), a BAIComplexSelect over two Relay reads. The options are read only once the popup opens, then page 20 at a time over the scopes in `scope` (combined with OR), newest first, extended when the popup scrolls to its end, and the popup search runs on the server as a `name iContains` filter. Each option shows a two-line-tall identicon, the name, a second line with the creator's email, usage mode, host and creation date, and the caller's mount level as welded R/W/D tokens. The value is folder UUIDs (`VFolder.entityId`), so no global id is decoded anywhere. The selected ids are looked up together by `entityId` within `scope` and `filter` (`VFolderFilter.entityId`, manager 26.10.0); the lookup re-runs only when the selection changes, never on paging or search. Its answer labels each id and decides whether it is still reachable: `onResolve` reports the reachable ones (with their names) and the unreachable ones — not found, or rejected by `isFolderDisabled` — and fires again whenever that outcome changes. The lookup suspends on first load; the closed select sends no options read.",
     bestPractices: [
       {
         guidance: true,
         description:
-          'Wrap it, or the form item holding it, in a Suspense boundary — the page read and the lookup suspend on first load.',
+          'Wrap it, or the form item holding it, in a Suspense boundary — the selected-value lookup suspends on first load.',
       },
       {
         guidance: true,
