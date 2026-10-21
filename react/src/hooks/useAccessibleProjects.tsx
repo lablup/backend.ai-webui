@@ -5,7 +5,6 @@
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '.';
 import { useAccessibleProjectsQuery } from '../__generated__/useAccessibleProjectsQuery.graphql';
 import { useCurrentUserRole } from './backendai';
-import { toLocalId } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import type { FetchPolicy } from 'relay-runtime';
@@ -71,7 +70,7 @@ export const useAccessibleProjects = (
             edges {
               node {
                 id
-                entityId @since(version: "26.9.0")
+                entityId
                 basicInfo {
                   name
                   type
@@ -95,13 +94,9 @@ export const useAccessibleProjects = (
     },
   );
 
-  // `entityId` is stripped below 26.9.0, so fall back to decoding the global id.
-  const toProjectId = (node: { id: string; entityId?: string | null }) =>
-    node.entityId ?? toLocalId(node.id);
-
   // Membership filter: only projects the user actually belongs to.
   const memberProjectIds = new Set(
-    _.map(myUserV2?.projects?.edges, (edge) => toProjectId(edge.node)),
+    _.map(myUserV2?.projects?.edges, (edge) => edge.node.entityId),
   );
   const accessibleProjects = groups?.filter(
     (project) => !!project?.id && memberProjectIds.has(project.id),
@@ -115,7 +110,7 @@ export const useAccessibleProjects = (
   )?.node;
   const personalProject = personalProjectNode
     ? {
-        id: toProjectId(personalProjectNode),
+        id: personalProjectNode.entityId,
         name: personalProjectNode.basicInfo.name,
       }
     : undefined;

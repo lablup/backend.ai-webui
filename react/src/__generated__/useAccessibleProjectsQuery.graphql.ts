@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d66555e4fc4115adade07a8c6fc0ad94>>
+ * @generated SignedSource<<9c4cac1a8c671d88b49273720dd124c6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -249,16 +249,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "2acff7bc7e8e1591d3191941a3b25c09",
+    "cacheID": "706fd94a99fad6f0e28397fcab64dac4",
     "id": null,
     "metadata": {},
     "name": "useAccessibleProjectsQuery",
     "operationKind": "query",
-    "text": "query useAccessibleProjectsQuery(\n  $domain_name: String\n  $type: [String]\n) {\n  groups(domain_name: $domain_name, is_active: true, type: $type) {\n    id\n    is_active\n    name\n    resource_policy\n    type\n  }\n  myUserV2 {\n    projects(filter: {isActive: true, domainName: {equals: $domain_name}}, limit: 1000) {\n      edges {\n        node {\n          id\n          entityId @since(version: \"26.9.0\")\n          basicInfo {\n            name\n            type\n          }\n        }\n      }\n    }\n    id\n  }\n}\n"
+    "text": "query useAccessibleProjectsQuery(\n  $domain_name: String\n  $type: [String]\n) {\n  groups(domain_name: $domain_name, is_active: true, type: $type) {\n    id\n    is_active\n    name\n    resource_policy\n    type\n  }\n  myUserV2 {\n    projects(filter: {isActive: true, domainName: {equals: $domain_name}}, limit: 1000) {\n      edges {\n        node {\n          id\n          entityId\n          basicInfo {\n            name\n            type\n          }\n        }\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "ad96c36aadd1643e60006d90bc1bcbc3";
+(node as any).hash = "0a8f67856e31164ddeaf54cb475aa2c9";
 
 export default node;
