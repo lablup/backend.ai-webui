@@ -8,13 +8,14 @@ import {
   ImageListQuery$variables,
 } from '../__generated__/ImageListQuery.graphql';
 import { App } from '../app-shim';
-import { getImageFullName, isPrivateImage } from '../helper';
+import { getImageCanonical, getImageFullName, isPrivateImage } from '../helper';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
 } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+import { useDescribeScanImageError, useScanImage } from '../hooks/useScanImage';
 import { ProjectContextOrNull } from '../types/projectContext';
 import AliasedImageTagTokens from './AliasedImageTagTokens';
 import ImageInstallModal from './ImageInstallModal';
@@ -54,6 +55,7 @@ import {
   Settings,
   ArrowDownToLine,
   Import,
+  ScanSearch,
   SquarePenIcon,
 } from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
@@ -252,6 +254,8 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
   const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
+  const scanImage = useScanImage();
+  const describeScanError = useDescribeScanImageError();
 
   // Selected rows belong to one scope. Reset during render rather than
   // remounting on a `key`, which would discard the deferred scope transition
@@ -595,6 +599,37 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
               setManagingApp(row);
             }}
           />
+          {/* `adminScanImage` is superadmin-only; a non-ALIVE row is not
+              offered a refresh. */}
+          {baiClient.is_superadmin && row.status === 'ALIVE' ? (
+            <IconButton
+              className="bai-action-accent"
+              variant="ghost"
+              icon={<ScanSearch size="1em" />}
+              label={t('environment.RescanImage')}
+              tooltip={t('environment.RescanImage')}
+              clickAction={async () => {
+                const canonical = getImageCanonical(row) ?? '';
+                const architecture = row.architecture ?? '';
+                try {
+                  await scanImage({ canonical, architecture });
+                  message.success(
+                    t('environment.RescanImageSuccess', { name: canonical }),
+                  );
+                  updateFetchKey();
+                } catch (error) {
+                  message.error(
+                    describeScanError(error, {
+                      notFound: t('environment.ImportImageNotFoundInRegistry', {
+                        architecture,
+                      }),
+                      forbidden: t('environment.RescanImageRequiresSuperadmin'),
+                    }),
+                  );
+                }
+              }}
+            />
+          ) : null}
         </BAIFlex>
       ),
     },
