@@ -29,6 +29,7 @@ const reactArtifactDir = resolve(reactSrc, '__generated__');
  * optimisations are active in tests too).
  */
 export default defineConfig({
+  ssr: { resolve: { conditions: ['@backend.ai/source'] } },
   resolve: {
     // Setting `conditions` replaces Vite's defaults, so spread them back.
     conditions: ['@backend.ai/source', ...defaultClientConditions],

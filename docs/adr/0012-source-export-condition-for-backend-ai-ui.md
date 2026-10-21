@@ -63,12 +63,12 @@ flowchart LR
 |---|---|
 | `react/tsconfig.json` | `"customConditions": ["@backend.ai/source"]` (`moduleResolution: "bundler"`) |
 | `react/vite.config.ts` | `resolve.conditions: ['@backend.ai/source', ...defaultClientConditions]` |
-| `react/vitest.config.ts` | `resolve.conditions: ['@backend.ai/source', ...defaultClientConditions]` |
+| `react/vitest.config.ts` | `resolve.conditions: ['@backend.ai/source', ...defaultClientConditions]`, `ssr.resolve.conditions: ['@backend.ai/source']` |
 
 - **Keep Vite defaults**: Vite 6는 `resolve.conditions`를 설정하면 기본값을 대신하므로 두 config는 `vite`의 `defaultClientConditions`를 뒤에 펼친다.
 - **No redirects**: `react/`의 config는 `backend.ai-ui`를 위한 `paths`, `include`, `resolve.alias`를 두지 않는다. `backend.ai-client`의 `paths`와 alias는 이 결정의 범위 밖이다.
 - **buiSrc stays**: 두 Vite config의 `buiSrc` 상수는 resolve에 쓰이지 않고, `@vitejs/plugin-react`의 babel 설정이 BUI 파일에 BUI의 Relay `artifactDirectory`를 주는 판정에 남는다.
-- **Client environment only**: Vite 6의 top-level `resolve.conditions`는 client environment에만 적용된다. react의 vitest는 `environment: 'jsdom'`으로 client 쪽 resolve를 쓰므로, `@vitest-environment node` test나 SSR 경로를 더하는 PR은 `ssr.resolve.conditions`에도 condition을 넣는다.
+- **SSR environment too**: Vite 6의 top-level `resolve.conditions`는 client environment에만 적용된다. Vitest는 `--changed`의 test 선택(import 추적)과 `@vitest-environment node` test를 ssr environment에서 처리하므로, `react/vitest.config.ts`는 `ssr.resolve.conditions`에도 `@backend.ai/source`를 둔다. 빠지면 그 단계에서 BUI가 `dist/`로 resolve되어, BUI만 바꾼 branch의 `vitest --changed`가 관련 react test를 하나도 고르지 않는다.
 - **Import surface**: `react/eslint.config.js`의 `no-restricted-imports`는 `backend.ai-ui/*`를 막고 `backend.ai-ui/locale`만 허용한다.
 
 ### 3. react의 tsc는 BUI를 import한 만큼만 본다
