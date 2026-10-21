@@ -23,7 +23,6 @@ import {
   BAIUnmountAfterClose,
   type BAITableSettings,
   isValidUUID,
-  toLocalId,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
@@ -61,7 +60,7 @@ export const AdminPrometheusPresetQuery = graphql`
   }
 `;
 
-type DeletingPresetTarget = { id: string; name: string };
+type DeletingPresetTarget = { entityId: string; name: string };
 
 export interface AdminPrometheusPresetProps {
   queryRef: PreloadedQuery<AdminPrometheusPresetQueryType>;
@@ -112,9 +111,9 @@ const AdminPrometheusPreset = ({
 
   const [commitDeleteMutation, isInflightDelete] =
     useMutation<AdminPrometheusPresetDeleteMutation>(graphql`
-      mutation AdminPrometheusPresetDeleteMutation($id: ID!) {
-        adminDeletePrometheusQueryPreset(id: $id) {
-          id
+      mutation AdminPrometheusPresetDeleteMutation($id: UUID!) {
+        purgePrometheusQueryPreset(id: $id) {
+          entityId
         }
       }
     `);
@@ -231,7 +230,7 @@ const AdminPrometheusPreset = ({
         tableSettings={tableSettings}
         onEditPreset={(preset) => openEditor(preset)}
         onDeletePreset={(preset) => {
-          setDeletingPreset({ id: preset.id, name: preset.name });
+          setDeletingPreset({ entityId: preset.entityId, name: preset.name });
         }}
       />
       <BAIUnmountAfterClose>
@@ -259,7 +258,7 @@ const AdminPrometheusPreset = ({
         target={t('webui.menu.PrometheusPreset')}
         items={
           deletingPreset
-            ? [{ key: deletingPreset.id, label: deletingPreset.name }]
+            ? [{ key: deletingPreset.entityId, label: deletingPreset.name }]
             : []
         }
         confirmText={deletingPreset?.name ?? ''}
@@ -270,7 +269,7 @@ const AdminPrometheusPreset = ({
           if (!deletingPreset) return;
           commitDeleteMutation({
             variables: {
-              id: toLocalId(deletingPreset.id),
+              id: deletingPreset.entityId,
             },
             onCompleted: (_res, errors) => {
               if (errors && errors.length > 0) {

@@ -14240,10 +14240,18 @@ type Mutation
   adminCreatePrometheusQueryPreset(input: CreateQueryDefinitionInput!): CreateQueryDefinitionPayload @join__field(graph: STRAWBERRY)
 
   """Added in 26.3.0. Modify an existing query definition (admin only)."""
-  adminModifyPrometheusQueryPreset(id: ID!, input: ModifyQueryDefinitionInput!): ModifyQueryDefinitionPayload @join__field(graph: STRAWBERRY)
+  adminModifyPrometheusQueryPreset(id: ID!, input: ModifyQueryDefinitionInput!): ModifyQueryDefinitionPayload @join__field(graph: STRAWBERRY) @deprecated(reason: "Deprecated since 26.10.0. Use `updatePrometheusQueryPreset`.")
 
   """Added in 26.3.0. Delete a query definition (admin only)"""
-  adminDeletePrometheusQueryPreset(id: ID!): DeleteQueryDefinitionPayload @join__field(graph: STRAWBERRY)
+  adminDeletePrometheusQueryPreset(id: ID!): DeleteQueryDefinitionPayload @join__field(graph: STRAWBERRY) @deprecated(reason: "Deprecated since 26.10.0. Use `purgePrometheusQueryPreset`.")
+
+  """
+  Added in 26.10.0. Update a query definition. Only provided fields will be updated.
+  """
+  updatePrometheusQueryPreset(id: UUID!, input: ModifyQueryDefinitionInput!): ModifyQueryDefinitionPayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 26.10.0. Permanently remove a query definition."""
+  purgePrometheusQueryPreset(id: UUID!): PurgeQueryDefinitionPayload! @join__field(graph: STRAWBERRY)
 
   """Added in 26.3.0. Create a new query preset category (admin only)."""
   adminCreatePrometheusQueryPresetCategory(input: CreateCategoryInput!): CreateCategoryPayload @join__field(graph: STRAWBERRY)
@@ -16795,6 +16803,16 @@ input PurgeResourceSlotTypeInput
 {
   """Slot name identifying the slot type to remove."""
   slotName: String!
+}
+
+type PurgeQueryDefinitionPayload
+  @join__type(graph: STRAWBERRY)
+{
+  """Global ID of the purged query definition."""
+  purgedId: ID!
+
+  """UUID of the purged query definition."""
+  entityId: UUID!
 }
 
 """Added in 26.9.0. Payload for resource slot type removal."""
