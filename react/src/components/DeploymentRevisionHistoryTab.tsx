@@ -10,8 +10,8 @@ import {
 import type { DeploymentRevisionHistoryTab_deployment$key } from '../__generated__/DeploymentRevisionHistoryTab_deployment.graphql';
 import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
+import { useCurrentDomain } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import FolderLink from './FolderLink';
@@ -177,7 +177,8 @@ const DeploymentRevisionHistoryTab: React.FC<
   const deploymentStatus = deployment?.metadata?.status;
 
   // Images the deployment's project and public registries reach (ADR 0012).
-  const { domainScope } = useCurrentDomainScope();
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
   const deploymentProjectId = deployment?.metadata?.projectId;
   const imageFilterScope = deploymentProjectId
     ? { project: [{ value: deploymentProjectId }], public: true }
