@@ -52,12 +52,7 @@ export interface BAIRadioGroupProps {
   value?: any;
   onChange?: (e: BAIRadioChangeEvent) => void;
   className?: string;
-  /** `icon` renders before the label, e.g. a help icon wrapped in a Tooltip. */
-  options?: Array<{
-    label: React.ReactNode;
-    value: string;
-    icon?: React.ReactNode;
-  }>;
+  options?: Array<{ label: React.ReactNode; value: string }>;
   /** Accessible name for the group. Astryx requires one (never rendered). */
   label?: string;
   disabled?: boolean;
@@ -100,7 +95,6 @@ const BAIRadioGroup: React.FC<BAIRadioGroupProps> = ({
           key={option.value}
           value={option.value}
           label={option.label as string}
-          icon={option.icon}
         />
       ))}
     </SegmentedControl>

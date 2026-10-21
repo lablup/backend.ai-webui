@@ -267,15 +267,17 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
               options={[
                 { label: t('deployment.Serving'), value: 'serving' },
                 {
-                  label: t('deployment.Paused'),
-                  value: 'paused',
-                  icon: (
-                    <Tooltip content={t('deployment.PausedTooltip')}>
-                      <Text color="placeholder" style={{ cursor: 'help' }}>
-                        <CircleHelp size="1em" />
-                      </Text>
-                    </Tooltip>
+                  label: (
+                    <BAIFlex gap="xxs" align="center">
+                      {t('deployment.Paused')}
+                      <Tooltip content={t('deployment.PausedTooltip')}>
+                        <Text color="placeholder" style={{ cursor: 'help' }}>
+                          <CircleHelp size="1em" />
+                        </Text>
+                      </Tooltip>
+                    </BAIFlex>
                   ),
+                  value: 'paused',
                 },
                 {
                   label: t('deployment.status.Terminated'),
