@@ -27,5 +27,5 @@ export declare const mountableVFolderFilter: (mountableHosts: ReadonlyArray<stri
  */
 export declare const useSuspendedAutoMountedVFolders: ({ scope, mountableHosts, }: VFolderMountScope) => {
     autoMountedFolders: AutoMountedFolder[];
-    refetch: (newValue?: string | undefined) => void;
+    refetch: () => void;
 };
