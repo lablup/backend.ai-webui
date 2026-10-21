@@ -560,6 +560,9 @@
     "To": "สถานะปลายทาง",
     "UpdatedAt": "อัปเดตเมื่อ"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "เลือกโฟลเดอร์"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "ตัวแทน"
   },
@@ -618,8 +621,6 @@
     "CreateFolder": "สร้างโฟลเดอร์จัดเก็บใหม่",
     "DestinationPath": "พาธในคอนเทนเนอร์ (destination)",
     "Folders": "โฟลเดอร์",
-    "OwnerProject": "โปรเจกต์",
-    "OwnerUser": "ผู้ใช้",
     "PathAndAliasTooltip": "พาธภายใน container ที่โฟลเดอร์จะถูก mount ปล่อยว่างเพื่อใช้พาธเริ่มต้น",
     "Refresh": "รีเฟรช",
     "RemoveFolder": "ลบ",

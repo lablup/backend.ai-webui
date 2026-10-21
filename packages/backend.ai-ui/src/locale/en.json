@@ -560,6 +560,9 @@
     "To": "To Status",
     "UpdatedAt": "Updated At"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Select Folder"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agent"
   },
@@ -618,8 +621,6 @@
     "CreateFolder": "Create a new storage folder",
     "DestinationPath": "Container path (destination)",
     "Folders": "Folders",
-    "OwnerProject": "Project",
-    "OwnerUser": "User",
     "PathAndAliasTooltip": "The path inside the container where the folder will be mounted. Leave empty to use the default path.",
     "Refresh": "Refresh",
     "RemoveFolder": "Remove",

@@ -74,6 +74,7 @@ const PrometheusQueryPresetTable: React.FC<PrometheusQueryPresetTableProps> = ({
       fragment PrometheusQueryPresetTableFragment on QueryDefinition
       @relay(plural: true) {
         id
+        entityId
         name
         description
         rank

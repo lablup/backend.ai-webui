@@ -560,6 +560,9 @@
     "To": "Stato di destinazione",
     "UpdatedAt": "Aggiornato il"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Seleziona cartella"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agente"
   },
@@ -618,8 +621,6 @@
     "CreateFolder": "Crea una nuova cartella di archiviazione",
     "DestinationPath": "Percorso del container (destination)",
     "Folders": "cartelle",
-    "OwnerProject": "Progetto",
-    "OwnerUser": "Utente",
     "PathAndAliasTooltip": "Il percorso all'interno del container dove verrà montata la cartella. Lasciare vuoto per usare il percorso predefinito.",
     "Refresh": "ricaricare",
     "RemoveFolder": "Rimuovi",

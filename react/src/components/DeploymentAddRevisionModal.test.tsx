@@ -135,7 +135,9 @@ vi.mock('./FolderCreateModalV2', async () => {
 vi.mock('./ImageEnvironmentSelectFormItems', () => ({ default: () => null }));
 vi.mock('./RuntimeParameterFormSection', () => ({ default: () => null }));
 vi.mock('./EnvVarFormList', () => ({ default: () => null }));
-vi.mock('./VFolderTableFormItem', () => ({ default: () => null }));
+vi.mock('../hooks/useMountableStorageHosts', () => ({
+  useMountableStorageHosts: () => [],
+}));
 vi.mock('./DeploymentPresetDetailModal', () => ({ default: () => null }));
 
 let presetSelectMounts = 0;
@@ -147,6 +149,11 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
   const originalModule = await importOriginal<typeof import('backend.ai-ui')>();
   return {
     ...originalModule,
+    BAIVFolderMountConfigInput: () => null,
+    useSuspendedAutoMountedVFolders: () => ({
+      autoMountedFolders: [],
+      refetch: () => {},
+    }),
     BAIVFolderSelect: (props: any) =>
       React.createElement(
         'button',
