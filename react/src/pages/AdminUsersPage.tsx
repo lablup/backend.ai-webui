@@ -20,8 +20,8 @@ import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import {
   useBrowserPopstateEffect,
-  useCurrentDomainValue,
   useKeyedSnapshot,
+  useCurrentDomain,
 } from '../hooks';
 import { useSuspendedTOTPSupported } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -95,11 +95,15 @@ const AdminUsersPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
   const isTOTPSupported = useSuspendedTOTPSupported();
-  const currentDomain = useCurrentDomainValue();
+  const { name: currentDomain, id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
   // The list is fixed to the signed-in domain; the condition never reaches the URL.
-  const withCurrentDomain = (variables: UsersVariables): UsersVariables => ({
+  const withCurrentDomain = (
+    variables: Omit<UsersVariables, 'scope'>,
+  ): UsersVariables => ({
     ...variables,
     filter: { ...variables.filter, domainName: { equals: currentDomain } },
+    scope: domainScope,
   });
 
   const [queryParams, setQueryParams] = useQueryStates(
