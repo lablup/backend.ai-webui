@@ -63,6 +63,26 @@ const DEFAULT_RUNNING_FILTER: DeploymentFilter = {
   desiredReplicas: { greaterThanOrEqual: 1 },
 };
 
+/**
+ * Resets the replica-count condition to the target tab's default and keeps the
+ * user's other conditions. `null` lets the tab default apply on its own.
+ */
+const filterForCategory = (
+  filter: DeploymentFilter | null,
+  category: DeploymentStatusCategory,
+): DeploymentFilter | null => {
+  if (filter == null) return null;
+  const remaining = filter.AND
+    ? _.reject(filter.AND, (f) => _.isEqual(_.keys(f), ['desiredReplicas']))
+    : _.isEmpty(_.omit(filter, 'desiredReplicas'))
+      ? []
+      : [_.omit(filter, 'desiredReplicas')];
+  if (remaining.length === 0) return null;
+  const next =
+    category === 'running' ? [...remaining, DEFAULT_RUNNING_FILTER] : remaining;
+  return next.length === 1 ? next[0] : { AND: next };
+};
+
 interface DeploymentListPageContentProps {
   /** Owned by the page so the trigger can live in the card's `extra` slot. */
   isCreating: boolean;
@@ -267,7 +287,11 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
             <BAIRadioGroup
               value={queryParams.statusCategory}
               onChange={(e) => {
-                setQueryParams({ statusCategory: e.target.value });
+                const statusCategory = e.target.value;
+                setQueryParams({
+                  statusCategory,
+                  filter: filterForCategory(queryParams.filter, statusCategory),
+                });
                 setTablePaginationOption({ current: 1 });
               }}
               options={[
