@@ -999,6 +999,9 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
               >
                 <BAIFormListInput
                   name="choices"
+                  // Removing the last row is a step, not an error; the
+                  // at-least-one rule runs on save.
+                  validateTrigger={false}
                   rules={[
                     {
                       validator: async (_, choices) => {
