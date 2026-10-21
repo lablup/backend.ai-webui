@@ -73,7 +73,7 @@ export const docs = {
       name: 'scope',
       type: 'ProjectScope',
       description:
-        'Required. The `scopedProjectsV2` scope whose projects are listed and resolved, for example `useCurrentDomainScope().domainScope` in the host (`{ domain: [{ value: <domain UUID> }] }`). Superadmins pass the current domain as well (ADR 0012).',
+        "Required. The `scopedProjectsV2` scope whose projects are listed and resolved, for example `{ domain: [{ value: id }] }` built from the host's `useCurrentDomain()` (`{ domain: [{ value: <domain UUID> }] }`). Superadmins pass the current domain as well (ADR 0012).",
     },
     {
       name: 'multiple',

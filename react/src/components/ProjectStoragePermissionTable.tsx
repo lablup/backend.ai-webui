@@ -18,8 +18,8 @@ import {
   parseAllowedHosts,
   v2PermissionToKey,
 } from '../helper/storageHostPermission';
+import { useCurrentDomain } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
-import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import StoragePermissionEditModal, {
   type PermissionEditTarget,
 } from './StoragePermissionEditModal';
@@ -151,7 +151,8 @@ const ProjectStoragePermissionTable: React.FC<
   const [fetchKey, updateFetchKey] = useFetchKey();
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const { domainScope } = useCurrentDomainScope();
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
   const queryVariables = {
     scope: domainScope,
     skip: !selectedDomainName,

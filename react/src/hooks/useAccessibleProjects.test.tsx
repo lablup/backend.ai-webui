@@ -10,19 +10,13 @@ import { createMockEnvironment } from 'relay-test-utils';
 import { describe, expect, it, vi } from 'vitest';
 
 const DOMAIN_ID = 'b9e676dc-e23e-54c6-b350-e83fba4127e9';
-vi.mock('./useCurrentDomainScope', () => ({
-  useCurrentDomainScope: () => ({
-    domainName: 'default',
-    domainId: DOMAIN_ID,
-    domainScope: { domain: [{ value: DOMAIN_ID }] },
-  }),
-}));
 vi.mock('.', () => ({
   useSuspendedBackendaiClient: () => ({
     _config: { blockList: null },
     user_uuid: 'dfa9da54-4b28-432f-be29-c0d680c7a412',
   }),
   useCurrentDomainValue: () => 'default',
+  useCurrentDomain: () => ({ name: 'default', id: DOMAIN_ID }),
 }));
 vi.mock('./backendai', () => ({
   useCurrentUserRole: () => 'superadmin',

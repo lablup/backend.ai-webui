@@ -34,14 +34,10 @@ import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockE
  */
 
 const CURRENT_DOMAIN_ID = 'b9e676dc-e23e-54c6-b350-e83fba4127e9';
-vi.mock('../hooks/useCurrentDomainScope', () => ({
-  useCurrentDomainScope: () => ({
-    domainName: 'default',
-    domainId: CURRENT_DOMAIN_ID,
-    domainScope: { domain: [{ value: CURRENT_DOMAIN_ID }] },
-  }),
+vi.mock('../hooks', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../hooks')>()),
+  useCurrentDomain: () => ({ name: 'default', id: CURRENT_DOMAIN_ID }),
 }));
-
 vi.mock('react-i18next', async () => {
   const React = await import('react');
   return {

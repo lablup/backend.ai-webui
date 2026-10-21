@@ -10,8 +10,7 @@ import {
   deriveCommandModeState,
   resolvesReadsVfolderConfigFiles,
 } from '../helper/modelServiceCommand';
-import { useSuspendedBackendaiClient } from '../hooks';
-import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
+import { useSuspendedBackendaiClient, useCurrentDomain } from '../hooks';
 import {
   buildRuntimeVariantPresetValues,
   collectTouchedRuntimePresetParams,
@@ -142,6 +141,7 @@ const ImageSelectField: React.FC<{
 }> = ({ value, onChange }) => {
   'use memo';
   const { t } = useTranslation();
+  const { id: currentDomainId } = useCurrentDomain();
   return (
     <Suspense
       fallback={
@@ -155,26 +155,14 @@ const ImageSelectField: React.FC<{
         />
       }
     >
-      <ScopedPresetImageSelect value={value} onChange={onChange} />
+      <BAIScopedImageSelect
+        scope={{ domain: [{ value: currentDomainId }], public: true }}
+        label={t('adminDeploymentPreset.Image')}
+        isLabelHidden
+        value={value}
+        onChange={onChange}
+      />
     </Suspense>
-  );
-};
-
-const ScopedPresetImageSelect: React.FC<{
-  value?: string | Array<string>;
-  onChange?: (value: string | Array<string> | undefined) => void;
-}> = ({ value, onChange }) => {
-  'use memo';
-  const { t } = useTranslation();
-  const { domainScope } = useCurrentDomainScope();
-  return (
-    <BAIScopedImageSelect
-      scope={{ ...domainScope, public: true }}
-      label={t('adminDeploymentPreset.Image')}
-      isLabelHidden
-      value={value}
-      onChange={onChange}
-    />
   );
 };
 
