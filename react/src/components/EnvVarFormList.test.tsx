@@ -146,6 +146,37 @@ describe('EnvVarFormList suggested variables', () => {
   });
 });
 
+describe('EnvVarFormList cross-row validation', () => {
+  it('leaves empty sibling rows alone while another row is typed into', async () => {
+    const user = userEvent.setup();
+    render(<Harness />);
+
+    for (let i = 0; i < 3; i++) {
+      await user.click(screen.getByRole('button', { name: ADD_LABEL }));
+    }
+    await user.type(screen.getAllByLabelText(VARIABLE_LABEL)[1], 'MY_VAR');
+
+    expect(screen.queryByText(REQUIRED_MESSAGE)).not.toBeInTheDocument();
+  });
+
+  it('still flags a duplicate name in another row', async () => {
+    const user = userEvent.setup();
+    render(<Harness />);
+
+    await user.click(screen.getByRole('button', { name: ADD_LABEL }));
+    await user.click(screen.getByRole('button', { name: ADD_LABEL }));
+    const [first, second] = screen.getAllByLabelText(VARIABLE_LABEL);
+    await user.type(first, 'MY_VAR');
+    await user.type(second, 'MY_VAR');
+
+    expect(
+      await screen.findAllByText(
+        'session.launcher.EnvironmentVariableDuplicateName',
+      ),
+    ).toHaveLength(2);
+  });
+});
+
 // Regression guard: computing the placeholder inline from
 // `form.getFieldValue(...)` left the element stale even with `dependencies`
 // set, because `Form.Item` re-renders the Field but not the element object
