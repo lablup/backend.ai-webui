@@ -20,6 +20,7 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { ReactNode, Suspense, useTransition } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
@@ -38,6 +39,7 @@ const MyResource: React.FC<MyResourceProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
+  const currentProject = useCurrentProjectValue();
 
   const [internalFetchKey, updateInternalFetchKey] = useFetchKey();
   const [isPending, startTransition] = useTransition();
@@ -74,12 +76,26 @@ const MyResource: React.FC<MyResourceProps> = ({
           </BAIFlex>
         }
       />
-      <Suspense fallback={<BAISkeleton />}>
-        <MyResourceStatistics fetchKey={`${fetchKey}${internalFetchKey}`} />
-      </Suspense>
+      {/* A transport failure escapes @catch; keep the title and let refresh retry. */}
+      <ErrorBoundary
+        resetKeys={[fetchKey, internalFetchKey, currentProject.id]}
+        fallbackRender={() => (
+          <ResourceStatistics
+            resourceData={NO_RESOURCE_DATA}
+            displayType="used"
+            progressMode="normal"
+          />
+        )}
+      >
+        <Suspense fallback={<BAISkeleton />}>
+          <MyResourceStatistics fetchKey={`${fetchKey}${internalFetchKey}`} />
+        </Suspense>
+      </ErrorBoundary>
     </BAIFlex>
   );
 };
+
+const NO_RESOURCE_DATA = { cpu: null, memory: null, accelerators: [] };
 
 const MyResourceStatistics: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
   'use memo';
@@ -192,7 +208,7 @@ const MyResourceStatisticsContent: React.FC<{
 
   // Without the keypair figures there is nothing to show, not zero usage.
   const resourceData = !keypair
-    ? { cpu: null, memory: null, accelerators: [] }
+    ? NO_RESOURCE_DATA
     : {
         cpu: cpuSlot
           ? {
