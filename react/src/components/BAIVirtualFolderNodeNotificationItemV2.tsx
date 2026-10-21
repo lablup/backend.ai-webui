@@ -19,7 +19,6 @@ import {
   BAILink,
   BAINotificationItem,
   BAIText,
-  toLocalId,
   useToggle,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -54,6 +53,7 @@ const BAIVirtualFolderNodeNotificationItemV2: React.FC<
     graphql`
       fragment BAIVirtualFolderNodeNotificationItemV2Fragment on VFolder {
         id
+        entityId
         metadata {
           name
         }
@@ -64,7 +64,7 @@ const BAIVirtualFolderNodeNotificationItemV2: React.FC<
 
   if (!node) return null;
 
-  const localId = toLocalId(node.id);
+  const localId = node.entityId;
   const folderName = node.metadata?.name;
 
   return (

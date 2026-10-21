@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5b68509379c2c625b95cb6df1a22d445>>
+ * @generated SignedSource<<eb0b804c29af2e41a3766a3e82e25ada>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -99,6 +99,7 @@ export type ProjectStoragePermissionTableQuery$data = {
         readonly basicInfo: {
           readonly name: string;
         };
+        readonly entityId: string;
         readonly id: string;
         readonly storage: {
           readonly allowedVfolderHosts: ReadonlyArray<{
@@ -225,6 +226,13 @@ v6 = [
                   {
                     "alias": null,
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "entityId",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
                     "concreteType": "ProjectBasicInfo",
                     "kind": "LinkedField",
                     "name": "basicInfo",
@@ -320,16 +328,16 @@ return {
     "selections": (v6/*: any*/)
   },
   "params": {
-    "cacheID": "0e24101ff25d660e5bdbc885ece17b0a",
+    "cacheID": "4d2114fa633e4c87cec370cf3c4bc4a4",
     "id": null,
     "metadata": {},
     "name": "ProjectStoragePermissionTableQuery",
     "operationKind": "query",
-    "text": "query ProjectStoragePermissionTableQuery(\n  $domainName: String!\n  $skip: Boolean!\n  $limit: Int\n  $offset: Int\n  $filter: ProjectV2Filter\n  $orderBy: [ProjectV2OrderBy!]\n) {\n  domainProjectsV2(scope: {domainName: $domainName}, limit: $limit, offset: $offset, filter: $filter, orderBy: $orderBy) @skip(if: $skip) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n        storage {\n          allowedVfolderHosts {\n            host\n            permissions\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ProjectStoragePermissionTableQuery(\n  $domainName: String!\n  $skip: Boolean!\n  $limit: Int\n  $offset: Int\n  $filter: ProjectV2Filter\n  $orderBy: [ProjectV2OrderBy!]\n) {\n  domainProjectsV2(scope: {domainName: $domainName}, limit: $limit, offset: $offset, filter: $filter, orderBy: $orderBy) @skip(if: $skip) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          name\n        }\n        storage {\n          allowedVfolderHosts {\n            host\n            permissions\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "541670c1d64a58c9e84d269258ca2f8e";
+(node as any).hash = "a076975258ec8a33449a2375f9645f21";
 
 export default node;

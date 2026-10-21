@@ -14,7 +14,6 @@ import {
   BAIDeleteConfirmModal,
   type BAIDeleteConfirmModalProps,
   filterOutNullAndUndefined,
-  toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -60,6 +59,7 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
       graphql`
         fragment PurgeUsersModalFragment on UserV2 @relay(plural: true) {
           id
+          entityId
           basicInfo {
             email
           }
@@ -112,7 +112,7 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
       // checked = delete endpoints (don't delegate), unchecked = delegate ownership
       const delegateEndpointOwnership = !deleteModelServices;
 
-      const userIds = userList.map((user) => toLocalId(user.id));
+      const userIds = userList.map((user) => user.entityId);
       commitBulkPurge({
         variables: {
           input: {
@@ -144,15 +144,15 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
             : userList.length - failed.length;
 
           if (failed.length > 0) {
-            const emailByLocalId = _.fromPairs(
-              _.map(userList, (u) => [toLocalId(u.id), u.basicInfo.email]),
+            const emailByUserId = _.fromPairs(
+              _.map(userList, (u) => [u.entityId, u.basicInfo.email]),
             );
             setFailureReport({
               total: userList.length,
               purgedCount,
               failures: _.map(failed, (f) => ({
                 key: f.userId,
-                email: emailByLocalId[f.userId] ?? f.userId,
+                email: emailByUserId[f.userId] ?? f.userId,
                 message: f.message,
               })),
             });

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5fd6870ef26d378b7b9fa31282e72ef6>>
+ * @generated SignedSource<<ce37b3e56805741a5017b81a18ee5dcd>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -321,6 +321,13 @@ return {
                     "kind": "ScalarField",
                     "name": "deleted",
                     "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "entityId",
+                    "storageKey": null
                   }
                 ],
                 "storageKey": null
@@ -334,12 +341,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "12186c8019e3eb51a39007790613ee06",
+    "cacheID": "280c30a810de21d9a04d44e273b2fe86",
     "id": null,
     "metadata": {},
     "name": "RolePresetListTabQuery",
     "operationKind": "query",
-    "text": "query RolePresetListTabQuery(\n  $filter: RolePresetFilter\n  $orderBy: [RolePresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminRolePresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...RolePresetNodesFragment\n        ...RolePresetDetailDrawerFragment\n      }\n    }\n  }\n}\n\nfragment RolePresetDetailDrawerFragment on RolePreset {\n  id\n  name\n  scopeType\n  autoAssign\n  deleted\n  createdAt\n  updatedAt\n  ...RolePresetPermissionTableFragment\n}\n\nfragment RolePresetNodesFragment on RolePreset {\n  id\n  name\n  scopeType\n  autoAssign\n  createdAt\n  updatedAt\n  permissionPresets {\n    count\n  }\n}\n\nfragment RolePresetPermissionTableFragment on RolePreset {\n  id\n  scopeType\n}\n"
+    "text": "query RolePresetListTabQuery(\n  $filter: RolePresetFilter\n  $orderBy: [RolePresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminRolePresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...RolePresetNodesFragment\n        ...RolePresetDetailDrawerFragment\n      }\n    }\n  }\n}\n\nfragment RolePresetDetailDrawerFragment on RolePreset {\n  id\n  name\n  scopeType\n  autoAssign\n  deleted\n  createdAt\n  updatedAt\n  ...RolePresetPermissionTableFragment\n}\n\nfragment RolePresetNodesFragment on RolePreset {\n  id\n  name\n  scopeType\n  autoAssign\n  createdAt\n  updatedAt\n  permissionPresets {\n    count\n  }\n}\n\nfragment RolePresetPermissionTableFragment on RolePreset {\n  id\n  entityId\n  scopeType\n}\n"
   }
 };
 })();

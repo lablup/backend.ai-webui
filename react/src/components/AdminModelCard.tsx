@@ -46,7 +46,6 @@ import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   isValidUUID,
-  toLocalId,
   tokenColorForTagColor,
   useBAILogger,
   type BAITableSettings,
@@ -102,6 +101,7 @@ export const AdminModelCardQuery = graphql`
       edges {
         node {
           id
+          entityId
           name
           vfolderId
           vfolder {
@@ -647,7 +647,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
 
               commitDeleteModelCard({
                 variables: {
-                  id: toLocalId(deletingModelCard.id),
+                  id: deletingModelCard.entityId,
                   options: { deleteAssociatedVfolder: alsoDeleteFolder },
                 },
                 onCompleted: (_data, errors) => {
@@ -739,7 +739,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
           </BAIFlex>
         }
         onOk={() => {
-          const ids = selectedModelCards.map((mc) => toLocalId(mc.id));
+          const ids = selectedModelCards.map((mc) => mc.entityId);
           return new Promise<void>((resolve, reject) => {
             commitBulkDeleteModelCards({
               variables: {
@@ -768,7 +768,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                   );
                   setSelectedModelCards(
                     selectedModelCards.filter((mc) =>
-                      failedIds.has(toLocalId(mc.id)),
+                      failedIds.has(mc.entityId),
                     ),
                   );
                   upsertNotification({
@@ -782,7 +782,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                         {failed.map((f) => {
                           const cardName =
                             selectedModelCards.find(
-                              (mc) => toLocalId(mc.id) === f.cardId,
+                              (mc) => mc.entityId === f.cardId,
                             )?.name ?? f.cardId;
                           return (
                             <div key={f.cardId}>

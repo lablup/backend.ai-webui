@@ -54,6 +54,7 @@ const ScanArtifactModelsFromHuggingFaceModal = ({
               node {
                 artifact {
                   id
+                  entityId
                 }
               }
             }
@@ -104,7 +105,7 @@ const ScanArtifactModelsFromHuggingFaceModal = ({
                   const artifactEdges =
                     res.scanArtifactModels?.artifactRevision?.edges ?? [];
                   const artifactId =
-                    artifactEdges[0]?.node?.artifact?.id ?? null;
+                    artifactEdges[0]?.node?.artifact?.entityId ?? null;
                   if (!artifactId) {
                     message.error(
                       t(

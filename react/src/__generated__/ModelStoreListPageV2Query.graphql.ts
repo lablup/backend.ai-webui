@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a7caa3f2e6d86185f1b3df7c8c58e3c0>>
+ * @generated SignedSource<<dd75138102d0b8afbc6c12cd47b3de36>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -112,6 +112,7 @@ export type ModelStoreListPageV2Query$data = {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly entityId: string;
         readonly id: string;
         readonly " $fragmentSpreads": FragmentRefs<"ModelStoreListPageV2_ModelCardV2Fragment">;
       };
@@ -189,6 +190,13 @@ v7 = {
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
+},
+v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "entityId",
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -229,6 +237,7 @@ return {
                 "plural": false,
                 "selections": [
                   (v7/*: any*/),
+                  (v8/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -285,6 +294,7 @@ return {
                 "plural": false,
                 "selections": [
                   (v7/*: any*/),
+                  (v8/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -373,16 +383,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "dbde5904adf578002ddc9f413150947d",
+    "cacheID": "e834b6f848569b5c600d83e1e88fe5bc",
     "id": null,
     "metadata": {},
     "name": "ModelStoreListPageV2Query",
     "operationKind": "query",
-    "text": "query ModelStoreListPageV2Query(\n  $scope: ProjectModelCardV2Scope!\n  $filter: ModelCardV2Filter\n  $orderBy: [ModelCardV2OrderBy!]\n  $limit: Int!\n  $offset: Int!\n) {\n  projectModelCardsV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...ModelStoreListPageV2_ModelCardV2Fragment\n      }\n    }\n  }\n}\n\nfragment ModelStoreListPageV2_ModelCardV2Fragment on ModelCardV2 {\n  name\n  metadata {\n    title\n    task\n    author\n  }\n  updatedAt\n  createdAt\n  availablePresets(orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    count\n  }\n}\n"
+    "text": "query ModelStoreListPageV2Query(\n  $scope: ProjectModelCardV2Scope!\n  $filter: ModelCardV2Filter\n  $orderBy: [ModelCardV2OrderBy!]\n  $limit: Int!\n  $offset: Int!\n) {\n  projectModelCardsV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        ...ModelStoreListPageV2_ModelCardV2Fragment\n      }\n    }\n  }\n}\n\nfragment ModelStoreListPageV2_ModelCardV2Fragment on ModelCardV2 {\n  name\n  metadata {\n    title\n    task\n    author\n  }\n  updatedAt\n  createdAt\n  availablePresets(orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    count\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "deba47dc7280cb92b05271fb176f72c7";
+(node as any).hash = "2b393592518869141be9b3f50788e3c2";
 
 export default node;

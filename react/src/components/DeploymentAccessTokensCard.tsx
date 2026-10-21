@@ -106,6 +106,7 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
     graphql`
       fragment DeploymentAccessTokensCard_deployment on ModelDeployment {
         id
+        entityId
         networkAccess {
           endpointUrl
         }
@@ -208,7 +209,7 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
               // overlapping dialogs.
               commitCreateMutation({
                 input: {
-                  modelDeploymentId: toLocalId(deployment.id),
+                  modelDeploymentId: deployment.entityId,
                   // Schema requires DateTime! (non-null); map "no expiration" to a far-future date.
                   expiresAt:
                     result.expiresAt ?? new Date('2099-12-31').toISOString(),

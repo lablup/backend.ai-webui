@@ -8,7 +8,7 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { VStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
-import { BAILink, toLocalId, useConnectedBAIClient } from 'backend.ai-ui';
+import { BAILink, useConnectedBAIClient } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { atom, useAtom, useSetAtom } from 'jotai';
 import { atomFamily } from 'jotai-family';
@@ -398,7 +398,7 @@ export const useFileUploadManager = (id?: string, folderName?: string) => {
   const setUploadRequests = useSetAtom(uploadRequestAtom);
 
   const [uploadStatus, setUploadStatus] = useUploadStatusAtomStatus(
-    id ? toLocalId(id).replace(/-/g, '') : '', // since jotai atom doesn't use '-' in key, we need to replace it
+    id ? id.replace(/-/g, '') : '', // since jotai atom doesn't use '-' in key, we need to replace it
   );
 
   const validateUploadRequest = (

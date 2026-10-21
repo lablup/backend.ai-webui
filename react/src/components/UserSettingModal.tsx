@@ -52,7 +52,6 @@ import {
   BAISkeleton,
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
-  toLocalId,
   useBAILogger,
   useToggle,
   useUpdatableState,
@@ -269,6 +268,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
     graphql`
       fragment UserSettingModalFragment on UserV2 {
         id
+        entityId
         basicInfo {
           email
           username
@@ -303,6 +303,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           edges {
             node {
               id
+              entityId
               basicInfo {
                 name
                 type
@@ -319,9 +320,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
   // PERSONAL included: the manager ignores it in `groupIds`, and the selector
   // shows it as a locked option.
   const projectMembershipIds = _.compact(
-    _.map(user?.projects?.edges, (edge) =>
-      edge?.node?.id ? toLocalId(edge.node.id) : null,
-    ),
+    _.map(user?.projects?.edges, (edge) => edge?.node?.entityId),
   );
   const personalProjectNode = _.find(
     user?.projects?.edges,
@@ -329,7 +328,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
   )?.node;
   const personalProject = personalProjectNode
     ? {
-        id: toLocalId(personalProjectNode.id),
+        id: personalProjectNode.entityId,
         name: personalProjectNode.basicInfo.name,
       }
     : undefined;
@@ -378,6 +377,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               edges {
                 node {
                   id
+                  entityId
                   basicInfo {
                     name
                     type
@@ -576,7 +576,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
     if (user) {
       commitUpdateUserV2({
         variables: {
-          userId: toLocalId(user.id),
+          userId: user.entityId,
           input: {
             username: formValues.username,
             password: formValues.password || undefined,
