@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b7d4362b819cd943b7b658b39f4ade88>>
+ * @generated SignedSource<<458600110745825617bbcf155eac657f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,7 +14,7 @@ export type AdminDeploymentPresetDeleteMutation$variables = {
 };
 export type AdminDeploymentPresetDeleteMutation$data = {
   readonly purgeDeploymentRevisionPreset: {
-    readonly id: string;
+    readonly entityId: string;
   };
 };
 export type AdminDeploymentPresetDeleteMutation = {
@@ -40,7 +40,7 @@ v1 = [
         "variableName": "id"
       }
     ],
-    "concreteType": "DeleteDeploymentRevisionPresetPayload",
+    "concreteType": "PurgeDeploymentRevisionPresetPayload",
     "kind": "LinkedField",
     "name": "purgeDeploymentRevisionPreset",
     "plural": false,
@@ -49,7 +49,7 @@ v1 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "id",
+        "name": "entityId",
         "storageKey": null
       }
     ],
@@ -74,16 +74,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "ee50a60d493fc76adc25037006f7260e",
+    "cacheID": "402d79e555ab97617d97713ea60712c9",
     "id": null,
     "metadata": {},
     "name": "AdminDeploymentPresetDeleteMutation",
     "operationKind": "mutation",
-    "text": "mutation AdminDeploymentPresetDeleteMutation(\n  $id: UUID!\n) {\n  purgeDeploymentRevisionPreset(id: $id) {\n    id\n  }\n}\n"
+    "text": "mutation AdminDeploymentPresetDeleteMutation(\n  $id: UUID!\n) {\n  purgeDeploymentRevisionPreset(id: $id) {\n    entityId\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "512556a3a79b1351f35a8bf3e73b26b5";
+(node as any).hash = "ff998942d06a862dcafadbaf41ad9be2";
 
 export default node;

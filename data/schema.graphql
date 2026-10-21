@@ -14477,7 +14477,7 @@ type Mutation
   adminDeleteDeploymentRevisionPreset(id: UUID!): DeleteDeploymentRevisionPresetPayload @join__field(graph: STRAWBERRY) @deprecated(reason: "Deprecated since 26.10.0. Use `purgeDeploymentRevisionPreset`.")
 
   """Added in 26.10.0. Permanently remove a deployment revision preset."""
-  purgeDeploymentRevisionPreset(id: UUID!): DeleteDeploymentRevisionPresetPayload! @join__field(graph: STRAWBERRY)
+  purgeDeploymentRevisionPreset(id: UUID!): PurgeDeploymentRevisionPresetPayload! @join__field(graph: STRAWBERRY)
 
   """Added in 26.4.2. Create a model card (admin only)."""
   adminCreateModelCardV2(input: CreateModelCardV2Input!): CreateModelCardPayload @join__field(graph: STRAWBERRY)
@@ -16653,6 +16653,16 @@ type PurgeAppConfigDefinitionPayload
 {
   """UUID of the purged app config definition."""
   id: UUID!
+}
+
+type PurgeDeploymentRevisionPresetPayload
+  @join__type(graph: STRAWBERRY)
+{
+  """Global ID of the purged deployment revision preset."""
+  purgedId: ID!
+
+  """UUID of the purged deployment revision preset."""
+  entityId: UUID!
 }
 
 """
