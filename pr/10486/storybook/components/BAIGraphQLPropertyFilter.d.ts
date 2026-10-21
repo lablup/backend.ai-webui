@@ -67,6 +67,8 @@ type BaseFilterProperty = {
     operators?: FilterOperator[];
     options?: Array<FilterPropertyOption>;
     strictSelection?: boolean;
+    /** With `type: 'number'`, edits whole numbers only; set it for an `IntFilter` field. */
+    integer?: boolean;
     /**
      * Advisory since ticket 28: a violating token is reported through the
      * control's error status instead of being refused at commit time.
