@@ -18,7 +18,6 @@ import StorageSelect from './StorageSelect';
 import { AstryxFormRadioList, AstryxFormTextInput } from './astryxFormControls';
 import {
   BAIButton,
-  toLocalId,
   useBAILogger,
   useErrorMessageResolver,
   useGetAvailableFolderName,
@@ -34,6 +33,7 @@ const IMPORT_REPO_FORM_CREATE_VFOLDER_MUTATION = graphql`
     createVfolderV2(input: $input) {
       vfolder {
         id
+        entityId
         ...BAINodeNotificationItemFragment @alias(as: "notificationFrgmt")
       }
     }
@@ -288,7 +288,7 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
       return;
     }
 
-    const vfolderLocalId = toLocalId(vfolder.id);
+    const vfolderLocalId = vfolder.entityId;
     upsertNotification({
       key: `folder-create-success-${vfolderLocalId}`,
       icon: 'folder',

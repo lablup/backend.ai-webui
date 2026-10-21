@@ -40,7 +40,6 @@ import {
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
   isValidUUID,
-  toLocalId,
   useBAILogger,
   BAIEntityLabelSettingModal,
   toEntityLabelFilter,
@@ -79,6 +78,7 @@ export const AdminDeploymentQuery = graphql`
       edges {
         node {
           id
+          entityId
           ...BAIModelDeploymentNodesFragment
           ...DeploymentSettingModal_deployment
           metadata {
@@ -502,7 +502,7 @@ const AdminDeployment = ({
                             webUINavigate(
                               buildPath(
                                 'admin',
-                                `deployments/${toLocalId(record.id)}`,
+                                `deployments/${record.entityId}`,
                               ),
                             )
                           }
@@ -614,7 +614,7 @@ const AdminDeployment = ({
           commitDeleteMutation({
             variables: {
               input: {
-                id: toLocalId(deletingDeployment.id) ?? deletingDeployment.id,
+                id: deletingDeployment.entityId,
               },
             },
             onCompleted: (_response, errors) => {

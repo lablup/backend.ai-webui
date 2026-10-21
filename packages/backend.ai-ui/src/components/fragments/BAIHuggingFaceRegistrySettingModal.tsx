@@ -2,7 +2,6 @@ import { BAIHuggingFaceRegistrySettingModalFragment$key } from '../../__generate
 import { BAIHuggingFaceRegistrySettingModalMutation } from '../../__generated__/BAIHuggingFaceRegistrySettingModalMutation.graphql';
 import { App } from '../../app-shim';
 import { Form, FormInstance } from '../../form-engine';
-import { toLocalId } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import { AstryxFormTextInput } from '../astryxFormControls';
@@ -35,6 +34,7 @@ const BAIHuggingFaceRegistrySettingModal: React.FC<
     graphql`
       fragment BAIHuggingFaceRegistrySettingModalFragment on HuggingFaceRegistry {
         id
+        entityId
         token
       }
     `,
@@ -65,7 +65,7 @@ const BAIHuggingFaceRegistrySettingModal: React.FC<
         commitUpdateRegistry({
           variables: {
             input: {
-              id: toLocalId(huggingFaceRegistry.id),
+              id: huggingFaceRegistry.entityId,
               token: values.token || null,
             },
           },

@@ -34,7 +34,6 @@ import {
   BAIModal,
   BAIQuestionIconWithTooltip,
   BAISelect,
-  toLocalId,
   type BAIModalProps,
   useBAILogger,
   useErrorMessageResolver,
@@ -313,7 +312,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
 
     if (vfolderResults) {
       upsertNotification({
-        key: `folder-create-success-${toLocalId(vfolderResults.id)}`,
+        key: `folder-create-success-${vfolderResults.entityId}`,
         icon: 'folder',
         node: vfolderResults.notificationFrgmt,
         description: t('data.folders.FolderCreated'),

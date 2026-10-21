@@ -16,7 +16,6 @@ import {
   BAIModal,
   BAIText,
   filterOutNullAndUndefined,
-  toLocalId,
   type BAIModalProps,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -61,6 +60,7 @@ const TerminateSessionModalForProjectAdmin: React.FC<
         fragment TerminateSessionModalForProjectAdminFragment on SessionV2
         @relay(plural: true) {
           id
+          entityId
           metadata {
             name
           }
@@ -127,7 +127,7 @@ const TerminateSessionModalForProjectAdmin: React.FC<
         }
         commitTerminate({
           variables: {
-            sessionIds: sessions.map((session) => toLocalId(session.id)),
+            sessionIds: sessions.map((session) => session.entityId),
             forced: isForce,
           },
           onCompleted: (_response, errors) => {

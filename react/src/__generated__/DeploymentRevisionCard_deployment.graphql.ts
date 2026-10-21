@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9de24e5c42f155c98c90f2e445f1eddc>>
+ * @generated SignedSource<<69cc8fdf802d52317ee8187e02aca7ee>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type DeploymentRevisionCard_deployment$data = {
+  readonly entityId: string;
   readonly id: string;
   readonly " $fragmentSpreads": FragmentRefs<"DeploymentCurrentRevisionTab_deployment" | "DeploymentRevisionHistoryTab_deployment">;
   readonly " $fragmentType": "DeploymentRevisionCard_deployment";
@@ -34,6 +35,13 @@ const node: ReaderFragment = {
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
+    },
+    {
       "args": null,
       "kind": "FragmentSpread",
       "name": "DeploymentCurrentRevisionTab_deployment"
@@ -48,6 +56,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "2a36e018f7a8b5999cad5c828ae16666";
+(node as any).hash = "1f3164549b0389ce19a3063cfab29aea";
 
 export default node;

@@ -436,6 +436,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     graphql`
       fragment DeploymentAddRevisionModal_deployment on ModelDeployment {
         id
+        entityId
         metadata {
           resourceGroupName
           projectId
@@ -1585,7 +1586,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     commitAdd({
       variables: {
         input: {
-          deploymentId: toLocalId(deployment?.id ?? '') ?? deployment?.id ?? '',
+          deploymentId: deployment?.entityId ?? '',
           clusterConfig: {
             mode: clusterMode,
             size: values.cluster_size,
@@ -1678,7 +1679,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     commitAdd({
       variables: {
         input: {
-          deploymentId: toLocalId(deployment?.id ?? '') ?? deployment?.id ?? '',
+          deploymentId: deployment?.entityId ?? '',
           revisionPresetId: values.revisionPresetId,
           modelMountConfig: {
             vfolderId: mountVfolderId,

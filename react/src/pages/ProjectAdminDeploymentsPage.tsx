@@ -39,7 +39,6 @@ import {
   availableDeploymentSorterValues,
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
-  toLocalId,
   useBAILogger,
   useFetchKey,
   BAIEntityLabelSettingModal,
@@ -153,6 +152,7 @@ const ProjectAdminDeploymentsContent: React.FC<
           edges {
             node {
               id
+              entityId
               ...BAIModelDeploymentNodesFragment
               ...DeploymentSettingModal_deployment
               metadata {
@@ -348,7 +348,7 @@ const ProjectAdminDeploymentsContent: React.FC<
                           onTitleClick={() =>
                             webUINavigate(
                               buildProjectPath(
-                                `deployments/${toLocalId(record.id)}`,
+                                `deployments/${record.entityId}`,
                               ),
                             )
                           }
@@ -462,7 +462,7 @@ const ProjectAdminDeploymentsContent: React.FC<
           commitDeleteMutation({
             variables: {
               input: {
-                id: toLocalId(deletingDeployment.id) ?? deletingDeployment.id,
+                id: deletingDeployment.entityId,
               },
             },
             onCompleted: (_response, errors) => {

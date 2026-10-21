@@ -71,6 +71,7 @@ const DeploymentAutoScalingCard: React.FC<DeploymentAutoScalingCardProps> = ({
     graphql`
       fragment DeploymentAutoScalingCard_deployment on ModelDeployment {
         id
+        entityId
         metadata {
           status
         }
@@ -109,6 +110,7 @@ const DeploymentAutoScalingCard: React.FC<DeploymentAutoScalingCardProps> = ({
       <Suspense fallback={<BAISkeleton />}>
         <DeploymentAutoScalingCardContent
           deploymentId={deployment.id}
+          deploymentEntityId={deployment.entityId}
           isEndpointDestroying={isEndpointDestroying}
           isOwnedByCurrentUser={isOwnedByCurrentUser}
         />
@@ -124,13 +126,19 @@ const DeploymentAutoScalingCard: React.FC<DeploymentAutoScalingCardProps> = ({
 
 interface DeploymentAutoScalingCardContentProps {
   deploymentId: string; // Relay global ID (e.g., toGlobalId('ModelDeployment', uuid))
+  deploymentEntityId: string;
   isEndpointDestroying: boolean;
   isOwnedByCurrentUser: boolean;
 }
 
 const DeploymentAutoScalingCardContent: React.FC<
   DeploymentAutoScalingCardContentProps
-> = ({ deploymentId, isEndpointDestroying, isOwnedByCurrentUser }) => {
+> = ({
+  deploymentId,
+  deploymentEntityId,
+  isEndpointDestroying,
+  isOwnedByCurrentUser,
+}) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -216,6 +224,7 @@ const DeploymentAutoScalingCardContent: React.FC<
             edges {
               node {
                 id
+                entityId
                 name
               }
             }
@@ -230,7 +239,7 @@ const DeploymentAutoScalingCardContent: React.FC<
     if (prometheusQueryPresets?.edges) {
       for (const edge of prometheusQueryPresets.edges) {
         if (edge?.node) {
-          map.set(toLocalId(edge.node.id), edge.node.name);
+          map.set(edge.node.entityId, edge.node.name);
         }
       }
     }
@@ -362,7 +371,7 @@ const DeploymentAutoScalingCardContent: React.FC<
       <BAIUnmountAfterClose>
         <AutoScalingRuleEditorModal
           open={isOpenEditorModal}
-          modelDeploymentId={toLocalId(deploymentId)}
+          modelDeploymentId={deploymentEntityId}
           autoScalingRuleFrgmt={
             editingRuleId
               ? (autoScalingRuleNodes.find((r) => r.id === editingRuleId) ??

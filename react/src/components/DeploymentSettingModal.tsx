@@ -27,7 +27,6 @@ import {
   BAIModalProps,
   BAIProjectResourceGroupSelect,
   BAISkeleton,
-  toLocalId,
 } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -113,6 +112,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
     graphql`
       fragment DeploymentSettingModal_deployment on ModelDeployment {
         id
+        entityId
         metadata {
           name
           tags
@@ -139,6 +139,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
         createModelDeployment(input: $input) {
           deployment {
             id
+            entityId
           }
         }
       }
@@ -177,7 +178,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
           commitUpdate({
             variables: {
               input: {
-                id: toLocalId(deployment.id) ?? deployment.id,
+                id: deployment.entityId,
                 name: values.name,
                 tags: values.tags?.length ? values.tags : null,
                 openToPublic: values.openToPublic,
@@ -242,7 +243,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
                 message.error(t('deployment.FailedToCreateDeployment'));
                 return;
               }
-              const newId = toLocalId(createModelDeployment.deployment.id);
+              const newId = createModelDeployment.deployment.entityId;
               message.success(t('deployment.DeploymentCreated'));
               onRequestClose(true);
               navigate(buildProjectPath(`deployments/${newId}`));
