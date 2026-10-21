@@ -113,7 +113,7 @@ declare const _default: {
   "@astryx.listInput.emptyDescription": "{itemName}を追加して始めましょう。",
   "@astryx.listInput.emptyTitle": "{itemName}はまだありません",
   "@astryx.listInput.fieldLabelWithPosition": "{header}、{itemName}、{total, number} 件中 {position, number} 件目",
-  "@astryx.listInput.removeItem": "{itemName} {position, number} を削除",
+  "@astryx.listInput.removeItem": "削除",
   "@astryx.listInput.removeUnavailable": "リストが無効な間は削除できません",
   "@astryx.listInput.reorderInstructions": "Arrow Up または Arrow Down でこのアイテムを 1 つ移動します。Space または Enter を押してつかむと、キーボードでさらに並べ替え操作ができます。",
   "@astryx.listInput.reorderItem": "{itemName} {position, number} を並べ替え",

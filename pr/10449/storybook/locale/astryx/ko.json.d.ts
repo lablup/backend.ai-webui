@@ -113,7 +113,7 @@ declare const _default: {
   "@astryx.listInput.emptyDescription": "{itemName} 항목을 추가하여 시작하세요.",
   "@astryx.listInput.emptyTitle": "아직 추가된 {itemName} 없음",
   "@astryx.listInput.fieldLabelWithPosition": "{header}, {itemName}, {total, number}개 중 {position, number}번째",
-  "@astryx.listInput.removeItem": "{itemName} {position, number} 제거",
+  "@astryx.listInput.removeItem": "제거",
   "@astryx.listInput.removeUnavailable": "목록이 비활성화된 동안에는 제거할 수 없습니다",
   "@astryx.listInput.reorderInstructions": "Arrow Up 또는 Arrow Down으로 이 항목을 한 칸 이동하세요. Space 또는 Enter를 눌러 항목을 잡은 뒤 키보드로 계속 순서를 변경할 수 있습니다.",
   "@astryx.listInput.reorderItem": "{itemName} {position, number} 순서 변경",

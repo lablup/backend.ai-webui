@@ -113,7 +113,7 @@ declare const _default: {
   "@astryx.listInput.emptyDescription": "Эхлэхийн тулд {itemName} нэмнэ үү.",
   "@astryx.listInput.emptyTitle": "{itemName} одоогоор алга",
   "@astryx.listInput.fieldLabelWithPosition": "{header}, {itemName} {total, number}-аас {position, number}",
-  "@astryx.listInput.removeItem": "{itemName} {position, number}-ийг устгах",
+  "@astryx.listInput.removeItem": "Устгах",
   "@astryx.listInput.removeUnavailable": "Жагсаалт идэвхгүй үед устгах боломжгүй",
   "@astryx.listInput.reorderInstructions": "Энэ зүйлийг нэг байрлал зөөхийн тулд дээш эсвэл доош сумыг ашиглана уу. Гараар үргэлжлүүлэн дараалал өөрчлөхийн тулд Space эсвэл Enter дарж өргөнө үү.",
   "@astryx.listInput.reorderItem": "{itemName} {position, number}-ийн дарааллыг өөрчлөх",

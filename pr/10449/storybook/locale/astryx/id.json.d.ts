@@ -113,7 +113,7 @@ declare const _default: {
   "@astryx.listInput.emptyDescription": "Tambahkan {itemName} untuk memulai.",
   "@astryx.listInput.emptyTitle": "Belum ada {itemName}",
   "@astryx.listInput.fieldLabelWithPosition": "{header}, {itemName} {position, number} dari {total, number}",
-  "@astryx.listInput.removeItem": "Hapus {itemName} {position, number}",
+  "@astryx.listInput.removeItem": "Hapus",
   "@astryx.listInput.removeUnavailable": "Tidak dapat menghapus saat daftar dinonaktifkan",
   "@astryx.listInput.reorderInstructions": "Gunakan Panah Atas atau Panah Bawah untuk memindahkan item ini satu posisi. Tekan Spasi atau Enter untuk mengangkatnya dan terus mengubah urutan dengan keyboard.",
   "@astryx.listInput.reorderItem": "Ubah urutan {itemName} {position, number}",

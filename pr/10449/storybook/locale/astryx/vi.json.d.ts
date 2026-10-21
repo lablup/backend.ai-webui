@@ -113,7 +113,7 @@ declare const _default: {
   "@astryx.listInput.emptyDescription": "Thêm {itemName} để bắt đầu.",
   "@astryx.listInput.emptyTitle": "Chưa có {itemName} nào",
   "@astryx.listInput.fieldLabelWithPosition": "{header}, {itemName} {position, number} trên {total, number}",
-  "@astryx.listInput.removeItem": "Xóa {itemName} {position, number}",
+  "@astryx.listInput.removeItem": "Xóa",
   "@astryx.listInput.removeUnavailable": "Không thể xóa khi danh sách bị vô hiệu hóa",
   "@astryx.listInput.reorderInstructions": "Dùng Arrow Up hoặc Arrow Down để di chuyển mục này một vị trí. Nhấn Space hoặc Enter để nhấc mục lên và sắp xếp lại bằng bàn phím.",
   "@astryx.listInput.reorderItem": "Sắp xếp lại {itemName} {position, number}",

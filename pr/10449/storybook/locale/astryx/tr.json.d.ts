@@ -113,7 +113,7 @@ declare const _default: {
   "@astryx.listInput.emptyDescription": "Başlamak için bir {itemName} ekleyin.",
   "@astryx.listInput.emptyTitle": "Henüz {itemName} eklenmedi",
   "@astryx.listInput.fieldLabelWithPosition": "{header}, {itemName}, {total, number} içinden {position, number}",
-  "@astryx.listInput.removeItem": "{itemName} {position, number} kaldır",
+  "@astryx.listInput.removeItem": "Kaldır",
   "@astryx.listInput.removeUnavailable": "Liste devre dışıyken kaldırma işlemi kullanılamaz",
   "@astryx.listInput.reorderInstructions": "Bu öğeyi bir konum taşımak için Arrow Up veya Arrow Down tuşunu kullanın. Klavyeyle gelişmiş yeniden sıralama için öğeyi almak üzere Space veya Enter tuşuna basın.",
   "@astryx.listInput.reorderItem": "{itemName} {position, number} yeniden sırala",
