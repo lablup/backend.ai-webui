@@ -1020,33 +1020,52 @@ async function importRegistryUnavailableReason(
   api: Awaited<ReturnType<typeof createAdminApiContext>>,
 ): Promise<string | null> {
   const domain = await getE2EDomainName(api);
-  const data = await gqlAdmin<{
+  type RegistriesPage = {
     domain: { allowed_docker_registries: Array<string> | null } | null;
     container_registry_nodes: {
       edges: Array<{
         node: { registry_name: string; project: string | null } | null;
       } | null>;
+      pageInfo: { hasNextPage: boolean; endCursor: string | null };
     } | null;
-  }>(
-    api,
-    `query ($domain: String) {
-      domain(name: $domain) { allowed_docker_registries }
-      container_registry_nodes(first: 100) {
-        edges { node { registry_name project } }
-      }
-    }`,
-    { domain },
-  );
-  const registered = (data.container_registry_nodes?.edges ?? []).some(
-    (edge) =>
-      edge?.node?.registry_name === IMPORT_REGISTRY &&
-      edge.node.project === IMPORT_REGISTRY_PROJECT,
-  );
+  };
+  // Every page, as the modal reads them: the registry may sit past the first.
+  let allowed: Array<string> | null = null;
+  let registered = false;
+  let after: string | null = null;
+  for (let pageIndex = 0; pageIndex < 100; pageIndex++) {
+    const data: RegistriesPage = await gqlAdmin<RegistriesPage>(
+      api,
+      `query ($domain: String, $after: String) {
+        domain(name: $domain) { allowed_docker_registries }
+        container_registry_nodes(first: 100, after: $after) {
+          edges { node { registry_name project } }
+          pageInfo { hasNextPage endCursor }
+        }
+      }`,
+      { domain, after },
+    );
+    if (pageIndex === 0)
+      allowed = data.domain?.allowed_docker_registries ?? null;
+    const connection = data.container_registry_nodes;
+    registered ||= (connection?.edges ?? []).some(
+      (edge) =>
+        edge?.node?.registry_name === IMPORT_REGISTRY &&
+        edge.node.project === IMPORT_REGISTRY_PROJECT,
+    );
+    if (
+      registered ||
+      !connection?.pageInfo.hasNextPage ||
+      !connection.pageInfo.endCursor
+    ) {
+      break;
+    }
+    after = connection.pageInfo.endCursor;
+  }
   if (!registered) {
     return `Registry ${IMPORT_REGISTRY}/${IMPORT_REGISTRY_PROJECT} is not registered`;
   }
-  const allowed = data.domain?.allowed_docker_registries;
-  if (allowed && !allowed.includes(IMPORT_REGISTRY)) {
+  if (allowed && !allowed.some((name) => name === IMPORT_REGISTRY)) {
     return `Registry ${IMPORT_REGISTRY} is not enabled for domain ${domain}`;
   }
   return null;
@@ -1194,6 +1213,13 @@ test.describe(
       const unregisteredHost = 'e2e-unregistered.example.com';
       const unregisteredLine = `${unregisteredHost}/stable/python:3.9`;
 
+      const scanRequests: Array<string> = [];
+      page.on('request', (request) => {
+        if (request.postData()?.includes('adminScanImage')) {
+          scanRequests.push(request.url());
+        }
+      });
+
       const modal = await openImportImageModal(page);
       await modal
         .getByRole('textbox', { name: 'Image references' })
@@ -1229,6 +1255,7 @@ test.describe(
 
       await modal.getByRole('button', { name: 'Cancel' }).click();
       await expect(modal).toBeHidden();
+      expect(scanRequests).toEqual([]);
     });
   },
 );
