@@ -1594,6 +1594,7 @@
     "ImportImageQueued": "En espera",
     "ImportImageReady": "Lista",
     "ImportImageReferences": "Referencias de imagen",
+    "ImportImageReferencesRequired": "Introduzca al menos una referencia de imagen.",
     "ImportImageRegistryAmbiguous": "Más de un registro coincide con esta imagen ({{registries}}). Deje solo uno de ellos en la pestaña Registros.",
     "ImportImageRegistryDisabledInDomain": "El registro {{registry}} no está habilitado para este dominio, por lo que las imágenes importadas no aparecerán en la lista de imágenes.",
     "ImportImageRegistryNotRegistered": "El registro {{registry}} aún no está registrado.",

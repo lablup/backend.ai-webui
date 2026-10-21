@@ -1594,6 +1594,7 @@
     "ImportImageQueued": "Menunggu",
     "ImportImageReady": "Siap",
     "ImportImageReferences": "Referensi image",
+    "ImportImageReferencesRequired": "Masukkan setidaknya satu referensi image.",
     "ImportImageRegistryAmbiguous": "Lebih dari satu registri cocok dengan image ini ({{registries}}). Sisakan hanya satu di tab Registri.",
     "ImportImageRegistryDisabledInDomain": "Registry {{registry}} belum diaktifkan untuk domain ini, sehingga image yang diimpor tidak akan muncul di daftar image.",
     "ImportImageRegistryNotRegistered": "Registri {{registry}} belum terdaftar.",

@@ -1594,6 +1594,7 @@
     "ImportImageQueued": "待機中",
     "ImportImageReady": "準備完了",
     "ImportImageReferences": "イメージ参照",
+    "ImportImageReferencesRequired": "イメージ参照を 1 行以上入力してください。",
     "ImportImageRegistryAmbiguous": "このイメージに一致するレジストリが複数あります（{{registries}}）。レジストリタブでいずれか 1 つだけを残してください。",
     "ImportImageRegistryDisabledInDomain": "レジストリ {{registry}} はこのドメインで有効になっていないため、インポートしたイメージはイメージ一覧に表示されません。",
     "ImportImageRegistryNotRegistered": "レジストリ {{registry}} はまだ登録されていません。",

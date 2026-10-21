@@ -1594,6 +1594,7 @@
     "ImportImageQueued": "Odottaa",
     "ImportImageReady": "Valmis",
     "ImportImageReferences": "Kuvaviittaukset",
+    "ImportImageReferencesRequired": "Kirjoita vähintään yksi image-viittaus.",
     "ImportImageRegistryAmbiguous": "Useampi kuin yksi rekisteri vastaa tätä kuvaa ({{registries}}). Jätä Rekisterit-välilehdelle vain yksi niistä.",
     "ImportImageRegistryDisabledInDomain": "Rekisteri {{registry}} ei ole käytössä tässä toimialueessa, joten tuodut imaget eivät näy imageluettelossa.",
     "ImportImageRegistryNotRegistered": "Rekisteriä {{registry}} ei ole vielä rekisteröity.",

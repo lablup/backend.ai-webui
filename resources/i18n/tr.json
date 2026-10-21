@@ -1594,6 +1594,7 @@
     "ImportImageQueued": "Bekliyor",
     "ImportImageReady": "Hazır",
     "ImportImageReferences": "İmaj referansları",
+    "ImportImageReferencesRequired": "En az bir imaj referansı girin.",
     "ImportImageRegistryAmbiguous": "Bu imajla birden fazla kayıt defteri eşleşiyor ({{registries}}). Kayıtlar sekmesinde yalnızca birini bırakın.",
     "ImportImageRegistryDisabledInDomain": "{{registry}} kayıt defteri bu alan adı için etkin değil, bu nedenle içe aktarılan imajlar imaj listesinde görünmez.",
     "ImportImageRegistryNotRegistered": "{{registry}} kayıt defteri henüz kayıtlı değil.",

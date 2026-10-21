@@ -1594,6 +1594,7 @@
     "ImportImageQueued": "等待中",
     "ImportImageReady": "就绪",
     "ImportImageReferences": "镜像引用",
+    "ImportImageReferencesRequired": "请至少输入一个镜像引用。",
     "ImportImageRegistryAmbiguous": "有多个注册表与此镜像匹配（{{registries}}）。请在“注册表”标签页中只保留其中一个。",
     "ImportImageRegistryDisabledInDomain": "注册表 {{registry}} 未在此域中启用，导入的镜像不会显示在镜像列表中。",
     "ImportImageRegistryNotRegistered": "注册表 {{registry}} 尚未登记。",

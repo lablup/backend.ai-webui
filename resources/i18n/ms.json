@@ -1594,6 +1594,7 @@
     "ImportImageQueued": "Menunggu",
     "ImportImageReady": "Sedia",
     "ImportImageReferences": "Rujukan imej",
+    "ImportImageReferencesRequired": "Masukkan sekurang-kurangnya satu rujukan imej.",
     "ImportImageRegistryAmbiguous": "Lebih daripada satu pendaftaran sepadan dengan imej ini ({{registries}}). Biarkan hanya satu daripadanya pada tab Pendaftaran.",
     "ImportImageRegistryDisabledInDomain": "Registry {{registry}} tidak didayakan untuk domain ini, jadi imej yang diimport tidak akan dipaparkan dalam senarai imej.",
     "ImportImageRegistryNotRegistered": "Pendaftaran {{registry}} belum didaftarkan lagi.",

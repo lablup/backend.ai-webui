@@ -1594,6 +1594,7 @@
     "ImportImageQueued": "Хүлээгдэж байна",
     "ImportImageReady": "Бэлэн",
     "ImportImageReferences": "Имажийн лавлагаа",
+    "ImportImageReferencesRequired": "Дор хаяж нэг image зам оруулна уу.",
     "ImportImageRegistryAmbiguous": "Энэ имажид тохирох бүртгэл нэгээс олон байна ({{registries}}). Бүртгэл таб дээр зөвхөн нэгийг нь үлдээнэ үү.",
     "ImportImageRegistryDisabledInDomain": "{{registry}} бүртгэл энэ домэйнд идэвхжээгүй тул импортолсон image жагсаалтад харагдахгүй.",
     "ImportImageRegistryNotRegistered": "{{registry}} бүртгэл хараахан бүртгэгдээгүй байна.",

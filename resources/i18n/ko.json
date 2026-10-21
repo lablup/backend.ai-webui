@@ -1594,6 +1594,7 @@
     "ImportImageQueued": "대기 중",
     "ImportImageReady": "준비됨",
     "ImportImageReferences": "이미지 경로",
+    "ImportImageReferencesRequired": "이미지 경로를 한 줄 이상 입력하세요.",
     "ImportImageRegistryAmbiguous": "이 이미지에 해당하는 레지스트리가 둘 이상입니다({{registries}}). 레지스트리 탭에서 하나만 남기세요.",
     "ImportImageRegistryDisabledInDomain": "{{registry}} 레지스트리가 이 도메인에서 활성화되어 있지 않아, 가져온 이미지가 이미지 목록에 보이지 않습니다.",
     "ImportImageRegistryNotRegistered": "{{registry}} 레지스트리가 아직 등록되지 않았습니다.",

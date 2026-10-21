@@ -1581,6 +1581,7 @@
     "ImportImageQueued": "Waiting",
     "ImportImageReady": "Ready",
     "ImportImageReferences": "Image references",
+    "ImportImageReferencesRequired": "Enter at least one image reference.",
     "ImportImageRegistryAmbiguous": "More than one registry matches this image ({{registries}}). Leave only one of them on the Registries tab.",
     "ImportImageRegistryDisabledInDomain": "The registry {{registry}} is not enabled for this domain, so imported images will not show in the image list.",
     "ImportImageRegistryNotRegistered": "The registry {{registry}} is not registered yet.",

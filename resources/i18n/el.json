@@ -1594,6 +1594,7 @@
     "ImportImageQueued": "Σε αναμονή",
     "ImportImageReady": "Έτοιμη",
     "ImportImageReferences": "Αναφορές εικόνων",
+    "ImportImageReferencesRequired": "Εισαγάγετε τουλάχιστον μία αναφορά εικόνας.",
     "ImportImageRegistryAmbiguous": "Περισσότερα από ένα μητρώα αντιστοιχούν σε αυτήν την εικόνα ({{registries}}). Αφήστε μόνο ένα από αυτά στην καρτέλα «Μητρώα».",
     "ImportImageRegistryDisabledInDomain": "Το μητρώο {{registry}} δεν είναι ενεργοποιημένο για αυτόν τον τομέα, οπότε οι εισαγόμενες εικόνες δεν θα εμφανίζονται στη λίστα εικόνων.",
     "ImportImageRegistryNotRegistered": "Το μητρώο {{registry}} δεν έχει καταχωριστεί ακόμη.",

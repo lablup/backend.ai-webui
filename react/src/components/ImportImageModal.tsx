@@ -13,6 +13,7 @@ import {
   type RegistryRow,
   type ResolvedReference,
 } from '../helper/imageReferenceParser';
+import { queryWithinOpenModal } from '../helper/openModalRoot';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { usePainKiller } from '../hooks/usePainKiller';
@@ -61,7 +62,7 @@ import {
 } from 'react-relay';
 import type { IEnvironment, PayloadError } from 'relay-runtime';
 
-type ImportFooterState = { canSubmit: boolean; hasFailure: boolean };
+type ImportFooterState = { hasFailure: boolean };
 
 type LineOutcome = {
   status: 'queued' | 'pending' | 'success' | 'error';
@@ -260,6 +261,8 @@ const ImportImageModalContent: React.FC<{
   const domainName: string = baiClient._config.domainName;
 
   const [text, setText] = useState('');
+  // An empty field is only an error once the reader has tried to import.
+  const [hasTriedSubmit, setHasTriedSubmit] = useState(false);
   const [architecture, setArchitecture] = useState<string>(ARCHITECTURES[0]);
   const [outcomes, setOutcomes] = useState<Record<string, LineOutcome>>({});
   /** Every canonical the manager accepted, across the first run and retries. */
@@ -556,6 +559,19 @@ const ImportImageModalContent: React.FC<{
   // `handleAdd` describes every per-line failure itself, so a rejection here is
   // the loop breaking; a bare `void` would leave the user with no word at all.
   const submit = () => {
+    setHasTriedSubmit(true);
+    if (!canSubmit) {
+      // The errored items render on this state change, so look one frame later.
+      // A long preview keeps its blocked lines far below the item's label, so
+      // the first blocked line is the target when there is one.
+      requestAnimationFrame(() => {
+        (
+          queryWithinOpenModal('[data-import-blocked="true"]') ??
+          queryWithinOpenModal('.uic-form-item[data-status="error"]')
+        )?.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
+      });
+      return;
+    }
     handleAdd().catch((error) => {
       message.error({
         key: 'import-image-failed',
@@ -567,11 +583,11 @@ const ImportImageModalContent: React.FC<{
     submitRef.current = submit;
   });
   const reportFooterState = useEffectEvent(() =>
-    onFooterStateChange({ canSubmit, hasFailure }),
+    onFooterStateChange({ hasFailure }),
   );
   useEffect(() => {
     reportFooterState();
-  }, [canSubmit, hasFailure]);
+  }, [hasFailure]);
 
   const describeStatus = (
     outcome: LineOutcome | undefined,
@@ -610,6 +626,8 @@ const ImportImageModalContent: React.FC<{
         };
   };
 
+  const isReferencesMissing =
+    hasTriedSubmit && pendingLines.length === 0 && !hasBlockedLine;
   const blockedLineCount = previewLines.filter(
     ({ resolved }) => !resolved.submittable,
   ).length;
@@ -630,7 +648,17 @@ const ImportImageModalContent: React.FC<{
     <BAIFlex direction="column" align="stretch" gap="md">
       <BAIFormItemVisual
         label={t('environment.ImportImageReferences')}
-        help={t('environment.ImportImageDesc')}
+        // An explicit `help` outranks `errors`, so it steps aside for one.
+        help={
+          isReferencesMissing ? undefined : t('environment.ImportImageDesc')
+        }
+        required
+        status={isReferencesMissing ? 'error' : ''}
+        errors={
+          isReferencesMissing
+            ? [t('environment.ImportImageReferencesRequired')]
+            : undefined
+        }
         style={{ marginBottom: 0 }}
       >
         <TextArea
@@ -733,6 +761,7 @@ const ImportImageModalContent: React.FC<{
               return (
                 <ListItem
                   key={key}
+                  data-import-blocked={!resolved.submittable || undefined}
                   xstyle={styles.row}
                   startContent={renderMarker(status)}
                   label={
@@ -855,7 +884,6 @@ const ImportImageModal: React.FC<ImportImageModalProps> = ({
   const [openedAt] = useState(() => Date.now());
   const submitRef = useRef<(() => void) | null>(null);
   const [footerState, setFooterState] = useState<ImportFooterState>({
-    canSubmit: false,
     hasFailure: false,
   });
 
@@ -872,7 +900,7 @@ const ImportImageModal: React.FC<ImportImageModalProps> = ({
           ? t('environment.ImportImageRetryFailed')
           : t('environment.ImportImage')
       }
-      okButtonProps={{ disabled: !footerState.canSubmit || isSubmitting }}
+      okButtonProps={{ disabled: isSubmitting }}
       confirmLoading={isSubmitting}
       onOk={() => submitRef.current?.()}
       cancelText={t('button.Cancel')}

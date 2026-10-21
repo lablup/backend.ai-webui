@@ -544,6 +544,23 @@ describe('ImportImageModal (FR-3940 review round)', () => {
     expect(mockMessageSuccess).not.toHaveBeenCalled();
   });
 
+  it('reports an empty field on submit instead of disabling the button', async () => {
+    const user = userEvent.setup();
+    renderModal();
+    await typeReferences('');
+
+    expect(
+      screen.queryByText('environment.ImportImageReferencesRequired'),
+    ).not.toBeInTheDocument();
+    expect(importButton()).toBeEnabled();
+    await user.click(importButton());
+
+    expect(
+      await screen.findByText('environment.ImportImageReferencesRequired'),
+    ).toBeInTheDocument();
+    expect(mockScanRequest).not.toHaveBeenCalled();
+  });
+
   it('prefills the registry editor from the sibling row and re-resolves the line once the registry exists', async () => {
     const user = userEvent.setup();
     const { environment } = renderModal([
@@ -557,12 +574,14 @@ describe('ImportImageModal (FR-3940 review round)', () => {
         screen.getByText(/environment\.ImportImageRegistryNotRegistered/),
       ).toBeInTheDocument(),
     );
-    expect(importButton()).toBeDisabled();
-    // The preview item carries the error, so the reason the button is
-    // disabled reads like any form field's validation message.
+    // The preview item carries the error like any field's validation message;
+    // the button stays enabled and a press re-validates without submitting.
     expect(
       screen.getByText('environment.ImportImageLinesBlocked:1'),
     ).toBeInTheDocument();
+    expect(importButton()).toBeEnabled();
+    await user.click(importButton());
+    expect(mockScanRequest).not.toHaveBeenCalled();
 
     await user.click(addRegistryButton());
 

@@ -1594,6 +1594,7 @@
     "ImportImageQueued": "Wartet",
     "ImportImageReady": "Bereit",
     "ImportImageReferences": "Image-Referenzen",
+    "ImportImageReferencesRequired": "Geben Sie mindestens eine Image-Referenz ein.",
     "ImportImageRegistryAmbiguous": "Mehr als eine Registrierung passt zu diesem Image ({{registries}}). Lassen Sie im Tab „Register“ nur eine davon übrig.",
     "ImportImageRegistryDisabledInDomain": "Die Registry {{registry}} ist für diese Domain nicht aktiviert, daher erscheinen importierte Images nicht in der Image-Liste.",
     "ImportImageRegistryNotRegistered": "Die Registrierung {{registry}} ist noch nicht eingetragen.",

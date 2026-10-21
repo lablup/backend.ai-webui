@@ -1594,6 +1594,7 @@
     "ImportImageQueued": "В очереди",
     "ImportImageReady": "Готов",
     "ImportImageReferences": "Ссылки на образы",
+    "ImportImageReferencesRequired": "Введите хотя бы одну ссылку на образ.",
     "ImportImageRegistryAmbiguous": "Этому образу соответствует несколько реестров ({{registries}}). Оставьте только один из них на вкладке «Реестры».",
     "ImportImageRegistryDisabledInDomain": "Реестр {{registry}} не включён для этого домена, поэтому импортированные образы не появятся в списке образов.",
     "ImportImageRegistryNotRegistered": "Реестр {{registry}} ещё не зарегистрирован.",

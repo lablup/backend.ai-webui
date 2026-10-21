@@ -1588,6 +1588,7 @@
     "ImportImageQueued": "รอดำเนินการ",
     "ImportImageReady": "พร้อม",
     "ImportImageReferences": "เส้นทางอิมเมจ",
+    "ImportImageReferencesRequired": "ป้อนการอ้างอิงอิมเมจอย่างน้อยหนึ่งรายการ",
     "ImportImageRegistryAmbiguous": "มีทะเบียนมากกว่าหนึ่งรายการที่ตรงกับอิมเมจนี้ ({{registries}}) กรุณาเหลือไว้เพียงรายการเดียวในแท็บทะเบียน",
     "ImportImageRegistryDisabledInDomain": "รีจิสทรี {{registry}} ยังไม่ได้เปิดใช้งานสำหรับโดเมนนี้ อิมเมจที่นำเข้าจึงจะไม่แสดงในรายการอิมเมจ",
     "ImportImageRegistryNotRegistered": "ทะเบียน {{registry}} ยังไม่ได้ลงทะเบียน",
