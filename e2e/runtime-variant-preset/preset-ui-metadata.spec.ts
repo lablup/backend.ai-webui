@@ -191,7 +191,8 @@ test.describe(
       await labelRows.nth(2).fill('INT8');
       await expect(choiceRows).toHaveCount(3);
       await modal
-        .getByRole('button', { name: 'Remove choice 3', exact: true })
+        .getByRole('button', { name: 'Remove', exact: true })
+        .nth(2)
         .click();
       await expect(choiceRows).toHaveCount(2);
       await expect(choiceRows.nth(0)).toHaveValue('fp16');
