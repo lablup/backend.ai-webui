@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<816be890c5ede1f2c52e7f011f9d497e>>
+ * @generated SignedSource<<d66555e4fc4115adade07a8c6fc0ad94>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -30,6 +30,7 @@ export type useAccessibleProjectsQuery$data = {
             readonly name: string;
             readonly type: ProjectTypeV2;
           };
+          readonly entityId: string;
           readonly id: string;
         };
       }>;
@@ -175,6 +176,13 @@ v5 = {
             {
               "alias": null,
               "args": null,
+              "kind": "ScalarField",
+              "name": "entityId",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
               "concreteType": "ProjectBasicInfo",
               "kind": "LinkedField",
               "name": "basicInfo",
@@ -241,16 +249,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "f2708531997bd9d809eb7ac55de0888c",
+    "cacheID": "2acff7bc7e8e1591d3191941a3b25c09",
     "id": null,
     "metadata": {},
     "name": "useAccessibleProjectsQuery",
     "operationKind": "query",
-    "text": "query useAccessibleProjectsQuery(\n  $domain_name: String\n  $type: [String]\n) {\n  groups(domain_name: $domain_name, is_active: true, type: $type) {\n    id\n    is_active\n    name\n    resource_policy\n    type\n  }\n  myUserV2 {\n    projects(filter: {isActive: true, domainName: {equals: $domain_name}}, limit: 1000) {\n      edges {\n        node {\n          id\n          basicInfo {\n            name\n            type\n          }\n        }\n      }\n    }\n    id\n  }\n}\n"
+    "text": "query useAccessibleProjectsQuery(\n  $domain_name: String\n  $type: [String]\n) {\n  groups(domain_name: $domain_name, is_active: true, type: $type) {\n    id\n    is_active\n    name\n    resource_policy\n    type\n  }\n  myUserV2 {\n    projects(filter: {isActive: true, domainName: {equals: $domain_name}}, limit: 1000) {\n      edges {\n        node {\n          id\n          entityId @since(version: \"26.9.0\")\n          basicInfo {\n            name\n            type\n          }\n        }\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "c42a8145f8df58e2eea0ce41f561822f";
+(node as any).hash = "ad96c36aadd1643e60006d90bc1bcbc3";
 
 export default node;

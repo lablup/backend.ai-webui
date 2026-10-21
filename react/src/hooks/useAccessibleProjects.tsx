@@ -71,6 +71,7 @@ export const useAccessibleProjects = (
             edges {
               node {
                 id
+                entityId @since(version: "26.9.0")
                 basicInfo {
                   name
                   type
@@ -94,9 +95,13 @@ export const useAccessibleProjects = (
     },
   );
 
+  // `entityId` is stripped below 26.9.0, so fall back to decoding the global id.
+  const toProjectId = (node: { id: string; entityId?: string | null }) =>
+    node.entityId ?? toLocalId(node.id);
+
   // Membership filter: only projects the user actually belongs to.
   const memberProjectIds = new Set(
-    _.map(myUserV2?.projects?.edges, (edge) => toLocalId(edge.node.id)),
+    _.map(myUserV2?.projects?.edges, (edge) => toProjectId(edge.node)),
   );
   const accessibleProjects = groups?.filter(
     (project) => !!project?.id && memberProjectIds.has(project.id),
@@ -110,7 +115,7 @@ export const useAccessibleProjects = (
   )?.node;
   const personalProject = personalProjectNode
     ? {
-        id: toLocalId(personalProjectNode.id),
+        id: toProjectId(personalProjectNode),
         name: personalProjectNode.basicInfo.name,
       }
     : undefined;
