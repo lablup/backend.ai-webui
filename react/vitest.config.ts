@@ -2,7 +2,6 @@ import stylexVite from '@stylexjs/unplugin/vite';
 import react from '@vitejs/plugin-react';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { defaultClientConditions } from 'vite';
 import svgr from 'vite-plugin-svgr';
 import { defineConfig } from 'vitest/config';
 
@@ -31,8 +30,7 @@ const reactArtifactDir = resolve(reactSrc, '__generated__');
 export default defineConfig({
   ssr: { resolve: { conditions: ['@backend.ai/source'] } },
   resolve: {
-    // Setting `conditions` replaces Vite's defaults, so spread them back.
-    conditions: ['@backend.ai/source', ...defaultClientConditions],
+    conditions: ['@backend.ai/source'],
     alias: [
       // Mirror the `src/` baseUrl import in tsconfig.json so
       // `import 'src/hooks/foo'` resolves under Vitest too.
