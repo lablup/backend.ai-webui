@@ -11,6 +11,8 @@ import {
 import type { PowerSearchConfig } from '@lablup/ui-common/PowerSearch';
 import { render, renderHook, screen } from '@testing-library/react';
 import * as _ from 'lodash-es';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it, vi } from 'vitest';
 
 const editorFor = (renderInput: FilterRenderInput) => {
@@ -88,5 +90,37 @@ describe('BAIPowerSearchEditor', () => {
         (override) => override.Editor === BAIPowerSearchEditor,
       ),
     ).toBe(true);
+  });
+});
+
+// jsdom applies no stylesheet, so the field layout is checked at the source.
+// Via a variable: Vite rewrites a literal `new URL('./x.css', …)`.
+describe('BAIPowerSearchAdapters.css', () => {
+  const relative = './BAIPowerSearchAdapters.css';
+  const css = readFileSync(
+    fileURLToPath(new URL(relative, import.meta.url)),
+    'utf8',
+  );
+  const ruleBody = (selector: string) => {
+    const escaped = _.escapeRegExp(selector);
+    return new RegExp(`${escaped}\\s*\\{([^}]*)\\}`).exec(css)?.[1] ?? '';
+  };
+
+  it('keeps filter chips clear of the absolutely-positioned clear/busy lane', () => {
+    expect(
+      ruleBody('.bai-power-search .astryx-tokenizer:has(.astryx-token)'),
+    ).toMatch(
+      /padding-inline-end:\s*calc\(\s*var\(--_tokenizer-end-lane-reserve,/,
+    );
+  });
+
+  it('keeps the empty search input in flow after the chips', () => {
+    const body = ruleBody(
+      '.bai-power-search .astryx-tokenizer:has(.astryx-token) > input',
+    );
+    expect(body).toMatch(/position:\s*relative;/);
+    expect(body).toMatch(/inset:\s*auto;/);
+    expect(body).toMatch(/transform:\s*none;/);
+    expect(body).toMatch(/min-width:\s*40px;/);
   });
 });
