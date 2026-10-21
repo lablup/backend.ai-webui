@@ -346,9 +346,10 @@ test.describe(
         modalAfterAdd.getByRole('textbox', { name: /^Port/ }).last(),
       ).toHaveValue(addInfo.port);
 
-      // Reset apps — ListInput names each row's remove action by position.
+      // Reset apps — every row's remove action reads "Remove"; take the last.
       await modalAfterAdd
-        .getByRole('button', { name: `Remove app ${numberOfApps}` })
+        .getByRole('button', { name: 'Remove', exact: true })
+        .nth(numberOfApps - 1)
         .click();
       await modalAfterAdd.getByRole('button', { name: 'OK' }).click();
       if (reinstallationText > 0) {
