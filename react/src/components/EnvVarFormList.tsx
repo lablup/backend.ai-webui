@@ -539,13 +539,21 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
               placeholder={t('general.Example', { value: 'MY_VARIABLE' })}
               suggestions={getSuggestedVariableNames(field.name)}
               onChange={() => {
-                form.validateFields(
-                  fields.map((_field, fieldIndex) => [
+                // Recheck the other named rows for duplicates only; an empty
+                // row the user has not reached yet must not turn red.
+                const otherNamedRows = _.filter(
+                  _.map(fields, (_field, fieldIndex) => [
                     props.name,
                     fieldIndex,
                     'variable',
                   ]),
+                  (path, fieldIndex) =>
+                    fieldIndex !== field.name &&
+                    !_.isEmpty(form.getFieldValue(path)),
                 );
+                if (otherNamedRows.length > 0) {
+                  form.validateFields(otherNamedRows).catch(() => {});
+                }
               }}
             />
           ),
