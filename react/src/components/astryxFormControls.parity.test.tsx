@@ -26,6 +26,7 @@ import { Form } from '../form-engine';
 import {
   AstryxFormNumberInput,
   AstryxFormTagsInput,
+  AstryxFormTextArea,
   AstryxFormTextInput,
 } from './astryxFormControls';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -333,6 +334,28 @@ describe('Form.Item status reaches the control', () => {
     const wrapper = input.closest('.astryx-text-input');
     expect(wrapper).not.toBeNull();
     expect(wrapper?.getAttribute('data-status')).toBe('error');
+  });
+});
+
+describe('Form.Item label names the control once', () => {
+  // Astryx 0.7 honours the item's injected `id`, so the item's `<label for>`
+  // and the control's hidden label both pointed at the input ("Name Name").
+  it.each([
+    ['text input', () => <AstryxFormTextInput label="Name" />],
+    ['text area', () => <AstryxFormTextArea label="Name" />],
+    ['number input', () => <AstryxFormNumberInput label="Name" />],
+  ])('%s', (_kind, renderControl) => {
+    render(
+      <Form>
+        <Form.Item name="name" label="Name">
+          {renderControl()}
+        </Form.Item>
+      </Form>,
+    );
+    const input = document.querySelector('input, textarea') as HTMLElement;
+    expect(input).toHaveAccessibleName('Name');
+    // The item's visible label still targets the control.
+    expect(document.querySelector(`label[for="${input.id}"]`)).not.toBeNull();
   });
 });
 

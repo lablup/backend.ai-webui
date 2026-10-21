@@ -26,8 +26,10 @@
  2. `label` is REQUIRED on every Astryx control and rendered by the control
     itself. `BAIFormItem` already renders the visible label, so the adapters
     pass `label={sameString} isLabelHidden` to keep the accessible name
-    without double-rendering. (`AstryxFormCheckbox` is the exception — antd
-    `Checkbox` renders its children inline and the call sites keep that.)
+    without double-rendering. Controls that honour the item's injected `id`
+    also take `aria-label`, so the two `<label for>` don't name them twice.
+    (`AstryxFormCheckbox` is the exception — antd `Checkbox` renders its
+    children inline and the call sites keep that.)
 
  3. `onChange` receives the VALUE, not the event. antd's default
     `getValueFromEvent` happens to pass a non-event first argument through
@@ -223,6 +225,7 @@ export const AstryxFormTextInput: React.FC<AstryxFormTextInputProps> = ({
       }}
       label={label}
       isLabelHidden
+      aria-label={label}
       placeholder={placeholder}
       isDisabled={disabled}
       hasClear={hasClear ?? allowClear}
@@ -291,6 +294,7 @@ export const AstryxFormTextArea: React.FC<AstryxFormTextAreaProps> = ({
       onChange={(next) => onChange?.(next)}
       label={label}
       isLabelHidden
+      aria-label={label}
       rows={rows}
       placeholder={placeholder}
       isDisabled={disabled}
@@ -566,6 +570,7 @@ export const AstryxFormNumberInput: React.FC<AstryxFormNumberInputProps> = ({
       onChange={(next) => onChange?.(next)}
       label={label}
       isLabelHidden
+      aria-label={label}
       min={min}
       max={max}
       step={step}
@@ -584,6 +589,7 @@ export const AstryxFormNumberInput: React.FC<AstryxFormNumberInputProps> = ({
       onChange={(next: number) => onChange?.(next)}
       label={label}
       isLabelHidden
+      aria-label={label}
       min={min}
       max={max}
       step={step}
