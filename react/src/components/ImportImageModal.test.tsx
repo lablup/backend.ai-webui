@@ -558,6 +558,11 @@ describe('ImportImageModal (FR-3940 review round)', () => {
       ).toBeInTheDocument(),
     );
     expect(importButton()).toBeDisabled();
+    // The preview item carries the error, so the reason the button is
+    // disabled reads like any form field's validation message.
+    expect(
+      screen.getByText('environment.ImportImageLinesBlocked:1'),
+    ).toBeInTheDocument();
 
     await user.click(addRegistryButton());
 
@@ -600,6 +605,9 @@ describe('ImportImageModal (FR-3940 review round)', () => {
       screen.queryByText(/environment\.ImportImageRegistryNotRegistered/),
     ).not.toBeInTheDocument();
     expect(importButton()).toBeEnabled();
+    expect(
+      screen.queryByText(/environment\.ImportImageLinesBlocked/),
+    ).not.toBeInTheDocument();
     // The editor closed itself on OK rather than being left open.
     expect(
       screen.queryByTestId('mock-registry-editor-modal'),

@@ -16,6 +16,7 @@ import {
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { usePainKiller } from '../hooks/usePainKiller';
+import { BAIFormItemVisual } from './BAIFormItem';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
 import './ImportImageModal.css';
 import { Button } from '@lablup/ui-common/Button';
@@ -568,10 +569,14 @@ const ImportImageModalContent: React.FC<{
     return submittable
       ? { variant: 'accent' as const, label: t('environment.ImportImageReady') }
       : {
-          variant: 'warning' as const,
+          variant: 'error' as const,
           label: t('environment.ImportImageNeedsAttention'),
         };
   };
+
+  const blockedLineCount = previewLines.filter(
+    ({ resolved }) => !resolved.submittable,
+  ).length;
 
   const renderMarker = (status: LineStatus) => (
     <Center isInline xstyle={styles.marker}>
@@ -587,15 +592,21 @@ const ImportImageModalContent: React.FC<{
 
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
-      <TextArea
+      <BAIFormItemVisual
         label={t('environment.ImportImageReferences')}
-        description={t('environment.ImportImageDesc')}
-        placeholder={t('environment.ImportImagePlaceholder')}
-        rows={5}
-        value={text}
-        isDisabled={isSubmitting}
-        onChange={(value) => setText(value)}
-      />
+        help={t('environment.ImportImageDesc')}
+        style={{ marginBottom: 0 }}
+      >
+        <TextArea
+          label={t('environment.ImportImageReferences')}
+          isLabelHidden
+          placeholder={t('environment.ImportImagePlaceholder')}
+          rows={5}
+          value={text}
+          isDisabled={isSubmitting}
+          onChange={(value) => setText(value)}
+        />
+      </BAIFormItemVisual>
       <BAISelect
         label={t('environment.Architecture')}
         value={architecture}
@@ -608,135 +619,162 @@ const ImportImageModalContent: React.FC<{
       {addedCanonicals.length > 0 || previewLines.length > 0 ? (
         // Imported lines and pending ones share one row idiom and one scroll
         // box, so a line stays in the single place the reader already looked.
-        <List className="import-image-preview" density="compact" hasDividers>
-          {addedCanonicals.map((canonical) => (
-            <ListItem
-              key={`added-${canonical}`}
-              data-testid="import-image-added-row"
-              xstyle={styles.row}
-              startContent={renderMarker(importedStatus)}
-              label={
-                <Text type="code" hasStrikethrough xstyle={styles.canonical}>
-                  {canonical}
-                </Text>
-              }
-              description={
-                <Text type="supporting">{importedStatus.label}</Text>
-              }
-            />
-          ))}
-          {previewLines.map(({ key, raw, resolved }) => {
-            const outcome = outcomes[key];
-            const disabledRegistry =
-              resolved.submittable &&
-              resolved.registryHost &&
-              outcome?.status !== 'success' &&
-              !isEnabledInDomain(resolved.registryHost)
-                ? resolved.registryHost
-                : null;
-            const status =
-              disabledRegistry && !outcome
-                ? describeStatus(undefined, false)
-                : describeStatus(outcome, resolved.submittable);
-            const metaText = resolved.imageName
+        <BAIFormItemVisual
+          label={t('environment.ImportImagePreview')}
+          status={blockedLineCount > 0 ? 'error' : ''}
+          errors={
+            blockedLineCount > 0
               ? [
-                  resolved.project ?? t('environment.ImportImageNoProject'),
-                  resolved.imageName,
-                  resolved.tag || t('environment.ImportImageNoTag'),
-                ].join(' · ')
-              : null;
-            // The server's word is the newer fact, so it displaces the
-            // client-side reason rather than stacking under it.
-            const detailText =
-              outcome?.message ??
-              describeReason(resolved) ??
-              (disabledRegistry
-                ? t('environment.ImportImageRegistryDisabledInDomain', {
-                    registry: disabledRegistry,
-                  })
-                : null);
-            const tagsUrl =
-              resolved.reason === 'tag_required' && resolved.kind === 'ngc-url'
-                ? ngcTagsUrl(resolved.remotePath)
-                : null;
-            const unregisteredHost =
-              resolved.reason === 'registry_not_registered'
-                ? resolved.registryHost
-                : null;
-            return (
+                  t('environment.ImportImageLinesBlocked', {
+                    count: blockedLineCount,
+                  }),
+                ]
+              : undefined
+          }
+          style={{ marginBottom: 0 }}
+        >
+          <List className="import-image-preview" density="compact" hasDividers>
+            {addedCanonicals.map((canonical) => (
               <ListItem
-                key={key}
+                key={`added-${canonical}`}
+                data-testid="import-image-added-row"
                 xstyle={styles.row}
-                startContent={renderMarker(status)}
+                startContent={renderMarker(importedStatus)}
                 label={
-                  <Text
-                    type="code"
-                    hasStrikethrough={outcome?.status === 'success'}
-                    xstyle={styles.canonical}
-                  >
-                    {resolved.canonical ?? raw.trim()}
+                  <Text type="code" hasStrikethrough xstyle={styles.canonical}>
+                    {canonical}
                   </Text>
                 }
                 description={
-                  <Text type="supporting">
-                    {status.label}
-                    {metaText ? ` · ${metaText}` : null}
-                    {detailText ? (
-                      <>
-                        {' · '}
-                        <Text type="supporting" color="primary">
-                          {detailText}
-                        </Text>
-                      </>
-                    ) : null}
-                  </Text>
-                }
-                endContent={
-                  tagsUrl || unregisteredHost || disabledRegistry ? (
-                    <HStack gap={2} align="center">
-                      {tagsUrl ? (
-                        <Link
-                          href={tagsUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          size="sm"
-                        >
-                          {t('environment.ImportImageOpenCatalogTags')}
-                        </Link>
-                      ) : null}
-                      {unregisteredHost ? (
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          icon={<PlusIcon size="1em" />}
-                          label={t('registry.AddRegistry')}
-                          onClick={() =>
-                            setPrefilledRegistry(
-                              prefillForHost(
-                                unregisteredHost,
-                                resolved.remotePath?.split('/')[0],
-                              ),
-                            )
-                          }
-                        />
-                      ) : null}
-                      {disabledRegistry ? (
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          label={t('environment.ImportImageEnableRegistry')}
-                          isLoading={isInFlightEnableRegistry}
-                          isDisabled={isSubmitting}
-                          onClick={() => enableInDomain(disabledRegistry)}
-                        />
-                      ) : null}
-                    </HStack>
-                  ) : null
+                  <Text type="supporting">{importedStatus.label}</Text>
                 }
               />
-            );
-          })}
-        </List>
+            ))}
+            {previewLines.map(({ key, raw, resolved }) => {
+              const outcome = outcomes[key];
+              const disabledRegistry =
+                resolved.submittable &&
+                resolved.registryHost &&
+                outcome?.status !== 'success' &&
+                !isEnabledInDomain(resolved.registryHost)
+                  ? resolved.registryHost
+                  : null;
+              const status: LineStatus =
+                disabledRegistry && !outcome
+                  ? {
+                      variant: 'warning',
+                      label: t('environment.ImportImageNeedsAttention'),
+                    }
+                  : describeStatus(outcome, resolved.submittable);
+              const isBlocking =
+                !resolved.submittable || outcome?.status === 'error';
+              const metaText = resolved.imageName
+                ? [
+                    resolved.project ?? t('environment.ImportImageNoProject'),
+                    resolved.imageName,
+                    resolved.tag || t('environment.ImportImageNoTag'),
+                  ].join(' / ')
+                : null;
+              // The server's word is the newer fact, so it displaces the
+              // client-side reason rather than stacking under it.
+              const detailText =
+                outcome?.message ??
+                describeReason(resolved) ??
+                (disabledRegistry
+                  ? t('environment.ImportImageRegistryDisabledInDomain', {
+                      registry: disabledRegistry,
+                    })
+                  : null);
+              const tagsUrl =
+                resolved.reason === 'tag_required' &&
+                resolved.kind === 'ngc-url'
+                  ? ngcTagsUrl(resolved.remotePath)
+                  : null;
+              const unregisteredHost =
+                resolved.reason === 'registry_not_registered'
+                  ? resolved.registryHost
+                  : null;
+              return (
+                <ListItem
+                  key={key}
+                  xstyle={styles.row}
+                  startContent={renderMarker(status)}
+                  label={
+                    <Text
+                      type="code"
+                      hasStrikethrough={outcome?.status === 'success'}
+                      xstyle={styles.canonical}
+                    >
+                      {resolved.canonical ?? raw.trim()}
+                    </Text>
+                  }
+                  description={
+                    // "Status: why" when there is something to say, else
+                    // "Status: project / image / tag".
+                    <Text type="supporting">
+                      {status.label}
+                      {detailText ? (
+                        <>
+                          {': '}
+                          <Text
+                            type="supporting"
+                            color={isBlocking ? 'danger' : 'primary'}
+                          >
+                            {detailText}
+                          </Text>
+                        </>
+                      ) : metaText ? (
+                        `: ${metaText}`
+                      ) : null}
+                    </Text>
+                  }
+                  endContent={
+                    tagsUrl || unregisteredHost || disabledRegistry ? (
+                      <HStack gap={2} align="center">
+                        {tagsUrl ? (
+                          <Link
+                            href={tagsUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            size="sm"
+                          >
+                            {t('environment.ImportImageOpenCatalogTags')}
+                          </Link>
+                        ) : null}
+                        {unregisteredHost ? (
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            icon={<PlusIcon size="1em" />}
+                            label={t('registry.AddRegistry')}
+                            onClick={() =>
+                              setPrefilledRegistry(
+                                prefillForHost(
+                                  unregisteredHost,
+                                  resolved.remotePath?.split('/')[0],
+                                ),
+                              )
+                            }
+                          />
+                        ) : null}
+                        {disabledRegistry ? (
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            label={t('environment.ImportImageEnableRegistry')}
+                            isLoading={isInFlightEnableRegistry}
+                            isDisabled={isSubmitting}
+                            onClick={() => enableInDomain(disabledRegistry)}
+                          />
+                        ) : null}
+                      </HStack>
+                    ) : null
+                  }
+                />
+              );
+            })}
+          </List>
+        </BAIFormItemVisual>
       ) : null}
       <BAIFlex justify="end" gap="xs">
         <Button
