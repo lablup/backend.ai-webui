@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      "Picks virtual folders from `scopedVFoldersV2` (manager 26.9.0), a BAIComplexSelect over two Relay reads. The options are read only once the popup opens, then page 20 at a time over the scopes in `scope` (combined with OR), newest first, extended when the popup scrolls to its end, and the popup search runs on the server as a `name iContains` filter. Each option shows a two-line-tall identicon, the name, a second line with the creator's email, usage mode, host and creation date, and the caller's mount level as welded R/W/D tokens. The value is folder UUIDs (`VFolder.entityId`), so no global id is decoded anywhere. The selected ids are looked up together by `entityId` within `scope` and `filter` (`VFolderFilter.entityId`, manager 26.10.0); the lookup re-runs only when the selection changes, never on paging or search. Its answer labels each id and decides whether it is still reachable: `onResolve` reports the reachable ones (with their names) and the unreachable ones — not found, or rejected by `isFolderDisabled` — and fires again whenever that outcome changes. The lookup suspends on first load; the closed select sends no options read.",
+      "Picks virtual folders from `scopedVFoldersV2` (manager 26.9.0), a BAIComplexSelect over two Relay reads. The options are read only once the popup opens, then page 20 at a time over the scopes in `scope` (combined with OR), newest first, extended when the popup scrolls to its end, and the popup search runs on the server as a `name iContains` filter. Each option shows a two-line-tall identicon, the name, a second line with the creator's email, usage mode, host and creation date, and the caller's mount level as welded R/W/D tokens. The value is folder UUIDs (`VFolder.entityId`), so no global id is decoded anywhere. The selected ids are looked up together by `entityId` within `scope` and `filter` (`VFolderFilter.entityId`, manager 26.10.0); the lookup re-runs only when the selection changes, never on paging or search. Its answer labels each id and decides whether it is still reachable: `onResolve` reports the reachable ones (with their names) and the unreachable ones — not found, or rejected by `getFolderDisabled` — and fires again whenever that outcome changes. The lookup suspends on first load; the closed select sends no options read.",
     bestPractices: [
       {
         guidance: true,
@@ -66,10 +66,10 @@ export const docs = {
         'ANDed onto the options only; a selected folder it excludes stays selected and resolved.',
     },
     {
-      name: 'isFolderDisabled',
-      type: '(folder: ScopedVFolderSummary) => boolean',
+      name: 'getFolderDisabled',
+      type: '(folder: ScopedVFolderSummary) => boolean | { reason: string }',
       description:
-        "A matching option is listed disabled, and a matching selection is reported unresolved. The summary carries `entityId`, `name`, `host` and the caller's mount level as `permission`.",
+        "A truthy result lists the option disabled, and reports a matching selection unresolved. Return `{ reason }` to show why under the option's label; a bare `true` disables it silently. The summary carries `entityId`, `name`, `host` and the caller's mount level as `permission`.",
     },
     {
       name: 'value',
@@ -110,7 +110,11 @@ export const docs = {
   scope={mountableVFolderScope(baiClient.user_uuid, currentProject.id)}
   filter={mountableVFolderFilter(mountableHosts)}
   optionFilter={{ status: { equals: 'READY' } }}
-  isFolderDisabled={(folder) => folder.permission === 'NONE'}
+  getFolderDisabled={(folder) =>
+    folder.permission === 'NONE'
+      ? { reason: t('comp:BAIVFolderMountConfigInput.NoMountPermission') }
+      : false
+  }
   value={folderIds}
   onChange={(ids) => setFolderIds(ids as string[])}
   onResolve={({ unresolved }) =>
