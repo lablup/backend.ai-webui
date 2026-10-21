@@ -21,12 +21,12 @@ export const docs = {
   ],
   usage: {
     description:
-      'The user picker behind the keypair, credential, deployment, project-admin and storage-permission forms, and the reference consumer of BAIComplexSelect. It pages scopedUsersV2 (ADR 0012) with the required scope prop, typed as the query\'s UserScope input: an admin page passes the current domain from the host\'s useCurrentDomainScope(), a project-admin page passes { project: [{ value: projectId }] }. The component does no scope lookup of its own, so it suspends only for the value query, and a caller that renders it lazily, such as a filter popover, wraps it in Suspense. RBAC management keeps BAIAdminUserV2Select over adminUsersV2, because its users are not bound to one domain (ADR 0012). The paginated document pages the scoped connection ten rows at a time with limit/offset, ordered by EMAIL ascending, and compiles the debounced search text into an email iContains predicate; the value document re-resolves the selected id(s) into emails through a uuid in filter. That second query is load-bearing rather than cosmetic — the trigger reads its text from the value, and a user chosen on page one is no longer in options once loadNext has paged past it — but it only runs under valuePropName="id", because with emails the key already is the label. The option list is fetched when the popup opens, and the trigger shows a loading state while that fetch is in flight, so nothing suspends on mount for it. scopedUsersV2 exists on managers 26.9.0 and later; there is no fallback for older managers. The outer value stays a plain key — the email by default, or the local user UUID when valuePropName is "id" — and label-in-value stays inside the wrapper, except that onChange also hands back the matching label pair. The rest of BAIComplexSelectProps passes through, including the required label, isLabelHidden, width, isDisabled and status; options, value, onChange, searchValue, onSearch and total are owned here.',
+      'The user picker behind the keypair, credential, deployment, project-admin and storage-permission forms, and the reference consumer of BAIComplexSelect. It pages scopedUsersV2 (ADR 0012) with the required scope prop, typed as the query\'s UserScope input: an admin page passes the current domain from the host\'s useCurrentDomain() id, a project-admin page passes { project: [{ value: projectId }] }. The component does no scope lookup of its own, so it suspends only for the value query, and a caller that renders it lazily, such as a filter popover, wraps it in Suspense. RBAC management keeps BAIAdminUserV2Select over adminUsersV2, because its users are not bound to one domain (ADR 0012). The paginated document pages the scoped connection ten rows at a time with limit/offset, ordered by EMAIL ascending, and compiles the debounced search text into an email iContains predicate; the value document re-resolves the selected id(s) into emails through a uuid in filter. That second query is load-bearing rather than cosmetic — the trigger reads its text from the value, and a user chosen on page one is no longer in options once loadNext has paged past it — but it only runs under valuePropName="id", because with emails the key already is the label. The option list is fetched when the popup opens, and the trigger shows a loading state while that fetch is in flight, so nothing suspends on mount for it. scopedUsersV2 exists on managers 26.9.0 and later; there is no fallback for older managers. The outer value stays a plain key — the email by default, or the local user UUID when valuePropName is "id" — and label-in-value stays inside the wrapper, except that onChange also hands back the matching label pair. The rest of BAIComplexSelectProps passes through, including the required label, isLabelHidden, width, isDisabled and status; options, value, onChange, searchValue, onSearch and total are owned here.',
     bestPractices: [
       {
         guidance: true,
         description:
-          'Pass scope from useCurrentDomainScope().domainScope on an admin page, and { project: [{ value: projectId }] } on a project-admin page.',
+          'Pass { domain: [{ value: id }] } from useCurrentDomain() on an admin page, and { project: [{ value: projectId }] } on a project-admin page.',
       },
       {
         guidance: true,
@@ -151,7 +151,8 @@ export const docs = {
   examples: [
     {
       label: 'User field in a credential form (current domain)',
-      code: `const { domainScope } = useCurrentDomainScope();
+      code: `const { id } = useCurrentDomain();
+const domainScope = { domain: [{ value: id }] };
 
 <Form.Item name="user_id" label={t('general.User')}>
   <BAIScopedUserSelect

@@ -7,8 +7,8 @@ import {
   type KeypairResourcePolicyV2Filter,
 } from '../__generated__/UserFolderPermissionPanelV2Query.graphql';
 import { UserFolderPermissionPanelV2_storageVolumeFrgmt$key } from '../__generated__/UserFolderPermissionPanelV2_storageVolumeFrgmt.graphql';
+import { useCurrentDomain } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
-import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import KeypairResourcePolicyStoragePermissionTableV2 from './KeypairResourcePolicyStoragePermissionTableV2';
 import { Banner } from '@lablup/ui-common/Banner';
 import {
@@ -40,7 +40,8 @@ const UserFolderPermissionPanelV2: React.FC<
   UserFolderPermissionPanelV2Props
 > = ({ storageVolumeFrgmt }) => {
   'use memo';
-  const { domainScope } = useCurrentDomainScope();
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
   const { t } = useTranslation();
 
   const storageVolume = useFragment(
