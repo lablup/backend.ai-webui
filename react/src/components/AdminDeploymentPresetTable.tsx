@@ -74,6 +74,7 @@ const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
       fragment AdminDeploymentPresetTableFragment on DeploymentRevisionPreset
       @relay(plural: true) {
         id @required(action: NONE)
+        entityId
         name @required(action: NONE)
         description
         rank

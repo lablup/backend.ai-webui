@@ -23,7 +23,6 @@ import {
   BAIGraphQLPropertyFilter,
   BAIRuntimeVariantSelect,
   type BAITableSettings,
-  toLocalId,
   useBAILogger,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
@@ -122,7 +121,7 @@ const AdminDeploymentPreset = ({
     webuiNavigate(
       buildPath(
         'admin',
-        `deployments/deployment-presets/${toLocalId(preset.id)}/edit`,
+        `deployments/deployment-presets/${preset.entityId}/edit`,
       ),
     );
   };
@@ -243,7 +242,7 @@ const AdminDeploymentPreset = ({
           if (deletingPreset) {
             await new Promise<void>((resolve, reject) => {
               commitDeletePreset({
-                variables: { id: toLocalId(deletingPreset.id) },
+                variables: { id: deletingPreset.entityId },
                 onCompleted: (_data, errors) => {
                   if (errors && errors.length > 0) {
                     logger.error(errors[0]);

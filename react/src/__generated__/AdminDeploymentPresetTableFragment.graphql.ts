@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<38ed281f6f606eaa781021fc6b2eaa27>>
+ * @generated SignedSource<<bb0985965fbda9e8b9f511a669278811>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -24,6 +24,7 @@ export type AdminDeploymentPresetTableFragment$data = ReadonlyArray<{
     readonly revisionHistoryLimit: number | null | undefined;
   };
   readonly description: string | null | undefined;
+  readonly entityId: string;
   readonly execution: {
     readonly imageId: string | null | undefined;
     readonly startupCommand: string | null | undefined;
@@ -78,6 +79,13 @@ return {
       "kind": "RequiredField",
       "field": (v0/*: any*/),
       "action": "NONE"
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
     },
     {
       "kind": "RequiredField",
@@ -264,6 +272,6 @@ return {
 };
 })();
 
-(node as any).hash = "d26131e1a3ad2889ffe8077460dbd9c5";
+(node as any).hash = "fed7d39cfc6fd40c33d479aca08ee646";
 
 export default node;
