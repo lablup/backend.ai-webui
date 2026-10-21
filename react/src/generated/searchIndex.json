@@ -4218,8 +4218,13 @@
         },
         {
           "param": "statusCategory",
-          "key": "running",
-          "labelKey": "deployment.Running"
+          "key": "paused",
+          "labelKey": "deployment.Paused"
+        },
+        {
+          "param": "statusCategory",
+          "key": "serving",
+          "labelKey": "deployment.Serving"
         }
       ],
       "settings": [],
@@ -4253,6 +4258,7 @@
         "deployment.OpenToPublic",
         "deployment.OpenToPublicCannotBeChanged",
         "deployment.OpenToPublicTooltip",
+        "deployment.PausedTooltip",
         "deployment.Public",
         "deployment.ResourceGroupCannotBeChanged",
         "deployment.RevisionDetail",

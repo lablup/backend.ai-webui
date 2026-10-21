@@ -26,6 +26,7 @@ import { toProjectContext } from '../types/projectContext';
 import { Button } from '@lablup/ui-common/Button';
 import { Link } from '@lablup/ui-common/Link';
 import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAISkeleton,
   BAICard,
@@ -51,37 +52,13 @@ import {
   type ModelDeploymentNodeInList,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { Trash2, SquarePenIcon } from 'lucide-react';
+import { CircleHelp, Trash2, SquarePenIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
-type DeploymentStatusCategory = 'running' | 'finished';
-
-const DEFAULT_RUNNING_FILTER: DeploymentFilter = {
-  desiredReplicas: { greaterThanOrEqual: 1 },
-};
-
-/**
- * Resets the replica-count condition to the target tab's default and keeps the
- * user's other conditions. `null` lets the tab default apply on its own.
- */
-const filterForCategory = (
-  filter: DeploymentFilter | null,
-  category: DeploymentStatusCategory,
-): DeploymentFilter | null => {
-  if (filter == null) return null;
-  const remaining = filter.AND
-    ? _.reject(filter.AND, (f) => _.isEqual(_.keys(f), ['desiredReplicas']))
-    : _.isEmpty(_.omit(filter, 'desiredReplicas'))
-      ? []
-      : [_.omit(filter, 'desiredReplicas')];
-  if (remaining.length === 0) return null;
-  const next =
-    category === 'running' ? [...remaining, DEFAULT_RUNNING_FILTER] : remaining;
-  return next.length === 1 ? next[0] : { AND: next };
-};
+type DeploymentStatusCategory = 'serving' | 'paused' | 'finished';
 
 interface DeploymentListPageContentProps {
   /** Owned by the page so the trigger can live in the card's `extra` slot. */
@@ -127,9 +104,10 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
       ),
       order: parseAsStringLiteral(availableDeploymentSorterValues),
       statusCategory: parseAsStringLiteral<DeploymentStatusCategory>([
-        'running',
+        'serving',
+        'paused',
         'finished',
-      ]).withDefault('running'),
+      ]).withDefault('serving'),
     },
     { history: 'replace' },
   );
@@ -148,17 +126,19 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
   const statusCategoryFilter: DeploymentFilter =
     queryParams.statusCategory === 'finished'
       ? { status: { in: finishedStatuses } }
-      : { status: { notIn: finishedStatuses } };
+      : {
+          status: { notIn: finishedStatuses },
+          desiredReplicas:
+            queryParams.statusCategory === 'serving'
+              ? { greaterThanOrEqual: 1 }
+              : { equals: 0 },
+        };
   const projectFilter: DeploymentFilter = currentProject.id
     ? { projectId: { equals: currentProject.id } }
     : {};
-  // `null` means the user never touched the filter; removing every condition stores `{}`.
-  const userFilter =
-    queryParams.filter ??
-    (queryParams.statusCategory === 'running' ? DEFAULT_RUNNING_FILTER : {});
   const queryVariables = {
     filter: {
-      ...userFilter,
+      ...(queryParams.filter ?? {}),
       ...statusCategoryFilter,
       ...projectFilter,
     },
@@ -257,13 +237,6 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
       propertyLabel: t('deployment.filter.OpenToPublic'),
       type: 'boolean',
     },
-    {
-      key: 'desiredReplicas',
-      propertyLabel: t('deployment.DesiredReplicas'),
-      type: 'number',
-      integer: true,
-      defaultOperator: 'greaterThanOrEqual',
-    },
     ...(isLabelable
       ? [
           {
@@ -288,15 +261,22 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
             <BAIRadioGroup
               value={queryParams.statusCategory}
               onChange={(e) => {
-                const statusCategory = e.target.value;
-                setQueryParams({
-                  statusCategory,
-                  filter: filterForCategory(queryParams.filter, statusCategory),
-                });
+                setQueryParams({ statusCategory: e.target.value });
                 setTablePaginationOption({ current: 1 });
               }}
               options={[
-                { label: t('deployment.Running'), value: 'running' },
+                { label: t('deployment.Serving'), value: 'serving' },
+                {
+                  label: t('deployment.Paused'),
+                  value: 'paused',
+                  icon: (
+                    <Tooltip content={t('deployment.PausedTooltip')}>
+                      <Text color="placeholder" style={{ cursor: 'help' }}>
+                        <CircleHelp size="1em" />
+                      </Text>
+                    </Tooltip>
+                  ),
+                },
                 {
                   label: t('deployment.status.Terminated'),
                   value: 'finished',
@@ -305,9 +285,9 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
             />
             <BAIGraphQLPropertyFilter<DeploymentFilter>
               filterProperties={filterProperties}
-              value={userFilter}
+              value={queryParams.filter ?? undefined}
               onChange={(value) => {
-                setQueryParams({ filter: value ?? {} });
+                setQueryParams({ filter: value ?? null });
                 setTablePaginationOption({ current: 1 });
               }}
             />

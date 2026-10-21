@@ -175,8 +175,6 @@ type BaseFilterProperty = {
   operators?: FilterOperator[];
   options?: Array<FilterPropertyOption>;
   strictSelection?: boolean;
-  /** With `type: 'number'`, edits whole numbers only; set it for an `IntFilter` field. */
-  integer?: boolean;
   /**
    * Advisory since ticket 28: a violating token is reported through the
    * control's error status instead of being refused at commit time.
@@ -613,7 +611,7 @@ function operatorValueFor(
     return { type: 'date_absolute' };
   }
   if (property.type === 'number') {
-    return { type: property.integer ? 'integer' : 'float' };
+    return { type: 'float' };
   }
   if (options && strict) {
     return { type: 'enum', values: toEnumItems(options) };
@@ -648,10 +646,7 @@ export function conditionToTokenValue(
     };
   }
   if (property?.type === 'number') {
-    return {
-      type: property.integer ? 'integer' : 'float',
-      value: Number(raw),
-    };
+    return { type: 'float', value: Number(raw) };
   }
   if (property?.renderInput) {
     return { type: 'custom', value: _.toString(raw) };
