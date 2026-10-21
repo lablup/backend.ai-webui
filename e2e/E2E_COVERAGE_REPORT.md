@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-10-19
+> **Last Updated:** 2026-10-22
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 370 / 520 features covered (71%)**
+**Overall (in-scope routes): 373 / 523 features covered (71%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -30,7 +30,7 @@
 | Admin Model Store        | `/admin-model-store`                             |    28    |   28    | ✅ 100% |
 | Storage Host             | `/storage-settings/:hostname`                    |    3     |    0    |  ❌ 0%  |
 | My Environment           | `/my-environment`                                |    2     |    2    | ✅ 100% |
-| Environment              | `/environment`                                   |    27    |   21    | 🔶 78%  |
+| Environment              | `/environment`                                   |    29    |   23    | 🔶 79%  |
 | Configurations           | `/settings`                                      |    11    |    9    | 🔶 82%  |
 | Resources                | `/agent-summary`, `/agent`                       |    10    |    3    | 🔶 30%  |
 | Resource Policy          | `/resource-policy`                               |    13    |   10    | 🔶 77%  |
@@ -54,7 +54,7 @@
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **521**  | **371** | **71%** |
+| **Total**                |                                                  | **523**  | **373** | **71%** |
 
 ---
 
@@ -553,7 +553,7 @@
 
 #### Images Tab
 
-**Row actions:** `ImageInstallModal`, `ManageAppsModal`, `ManageImageResourceLimitModal`
+**Row actions:** `ImageInstallModal`, `ManageAppsModal`, `ManageImageResourceLimitModal`, Rescan (superadmin, ALIVE rows)
 **Filter:** `BAIPropertyFilter` (Name, Architecture, Status, Type, Registry)
 
 | Feature                                              | Status | Test                                                                        |
@@ -562,6 +562,8 @@
 | Image resource limit → ManageImageResourceLimitModal | ✅     | `user can modify image resource limit`                                      |
 | Image app management → ManageAppsModal               | ✅     | `user can manage apps`                                                      |
 | Image installation → ImageInstallModal               | 🚧     | Skipped: `user can install image`                                           |
+| Rescan a single ALIVE image (row action)             | ✅     | `Superadmin can rescan a single ALIVE image from the Images list`           |
+| Rescan hidden on non-ALIVE rows                      | ✅     | `Superadmin cannot see the Rescan button on a non-ALIVE image row`          |
 | BAIPropertyFilter UI rendering                       | ✅     | `Admin can see the BAIPropertyFilter on the Images tab`                     |
 | Filter by name (free text)                           | ✅     | `Admin can filter images by name using a text value`                        |
 | Filter by architecture (strict selection)            | ✅     | `Admin can filter images by architecture using strict selection`            |
@@ -602,7 +604,7 @@
 | Enable/disable registry toggle                 | ✅     | `Registry Control Operations` suite                            |
 | Registry filtering / search                    | ✅     | `Registry Filtering` suite                                     |
 
-**Coverage: 🔶 21/27 features**
+**Coverage: 🔶 23/29 features**
 
 ---
 
