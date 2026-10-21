@@ -557,6 +557,9 @@
     "To": "Status tujuan",
     "UpdatedAt": "Diperbarui pada"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Pilih Folder"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agen"
   },
@@ -615,8 +618,6 @@
     "CreateFolder": "Buat folder penyimpanan baru",
     "DestinationPath": "Jalur kontainer (destination)",
     "Folders": "Folder",
-    "OwnerProject": "Proyek",
-    "OwnerUser": "Pengguna",
     "PathAndAliasTooltip": "Jalur di dalam container tempat folder akan di-mount. Kosongkan untuk menggunakan jalur default.",
     "Refresh": "Segarkan",
     "RemoveFolder": "Hapus",
