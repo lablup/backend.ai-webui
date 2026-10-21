@@ -13,11 +13,13 @@ import {
   type SessionMonitorEntry,
 } from '../../helper/sessionMonitor';
 import { useCurrentDomainValue } from '../../hooks';
-import { useCurrentUserInfo, useCurrentUserRole } from '../../hooks/backendai';
+import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useSetBAINotification } from '../../hooks/useBAINotification';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
-import { useProjectPath, useRouteScope } from '../../hooks/useRouteScope';
+import { useCurrentUserProjectRoles } from '../../hooks/useCurrentUserProjectRoles';
+import { useIsProjectAgnosticPage } from '../../hooks/useIsProjectAgnosticPage';
+import { useProjectPath } from '../../hooks/useRouteScope';
 import {
   sessionMonitorFetchKeyAtom,
   sessionMonitorScopeAtom,
@@ -45,30 +47,28 @@ const idleAlertDescriptionKey = (
       : 'sessionMonitor.idleAlert.SessionLifetime';
 
 /**
- * Resolves the monitor's scope from the route and the viewer's role, then
- * polls it for the header chip, the tab-title badge and (own sessions only)
- * the idle-termination alerts. Renders nothing; mounted once in MainLayout.
+ * Resolves the monitor's scope from the viewer's role — never from the page —
+ * then polls it for the header chip, the tab-title badge and (own sessions
+ * only) the idle-termination alerts. Renders nothing; mounted in MainLayout.
  */
 const SessionMonitorWatcher: React.FC = () => {
   'use memo';
-  const routeScope = useRouteScope();
-  const role = useCurrentUserRole();
+  const { isSuperAdmin, domainAdminDomains } = useCurrentUserProjectRoles();
+  const isProjectAgnosticPage = useIsProjectAgnosticPage();
   const domainName = useCurrentDomainValue();
   const setScope = useSetAtom(sessionMonitorScopeAtom);
   const [enabled] = useBAISettingUserState('session_monitor_enabled');
 
-  // Admin routes are project-agnostic (ADR-0001): a domain admin (the
-  // superadmin role counts as one) watches the domain; anyone else gets no
-  // chip there.
-  const isAdminRoute = routeScope === 'admin';
-  const canWatchDomain = role === 'superadmin' || role === 'admin';
-  const hidden = enabled === false || (isAdminRoute && !canWatchDomain);
+  const isDomainAdmin = isSuperAdmin || domainAdminDomains.length > 0;
+  // Below domain admin the scope is the current project, which is not read
+  // above project scope (ADR-0001); those routes are admin-only anyway.
+  const hidden = enabled === false || (!isDomainAdmin && isProjectAgnosticPage);
   useEffect(() => {
     if (hidden) setScope(null);
   }, [hidden, setScope]);
   if (hidden) return null;
 
-  return isAdminRoute ? (
+  return isDomainAdmin ? (
     <ScopedSessionMonitorWatcher
       key={`domain:${domainName}`}
       scope={{
@@ -78,19 +78,19 @@ const SessionMonitorWatcher: React.FC = () => {
       }}
     />
   ) : (
-    <ProjectSessionMonitorWatcher
-      mode={routeScope === 'projectAdmin' ? 'project' : 'my'}
-    />
+    <ProjectSessionMonitorWatcher />
   );
 };
 
-const ProjectSessionMonitorWatcher: React.FC<{ mode: 'my' | 'project' }> = ({
-  mode,
-}) => {
+const ProjectSessionMonitorWatcher: React.FC = () => {
   'use memo';
   const currentProject = useCurrentProjectValue();
   const [currentUser] = useCurrentUserInfo();
+  const { projectAdminIds } = useCurrentUserProjectRoles();
   if (!currentProject.id) return null;
+  const mode: 'my' | 'project' = projectAdminIds.includes(currentProject.id)
+    ? 'project'
+    : 'my';
   const scope: SessionMonitorScope = {
     mode,
     scopeId: `project:${currentProject.id}`,
