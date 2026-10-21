@@ -18,7 +18,6 @@ import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { usePainKiller } from '../hooks/usePainKiller';
 import { BAIFormItemVisual } from './BAIFormItem';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
-import './ImportImageModal.css';
 import { Button } from '@lablup/ui-common/Button';
 import { Center } from '@lablup/ui-common/Center';
 import { Link } from '@lablup/ui-common/Link';
@@ -44,7 +43,15 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
-import { Suspense, useDeferredValue, useState, useTransition } from 'react';
+import {
+  Suspense,
+  useDeferredValue,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   fetchQuery,
@@ -53,6 +60,8 @@ import {
   useRelayEnvironment,
 } from 'react-relay';
 import type { IEnvironment, PayloadError } from 'relay-runtime';
+
+type ImportFooterState = { canSubmit: boolean; hasFailure: boolean };
 
 type LineOutcome = {
   status: 'queued' | 'pending' | 'success' | 'error';
@@ -191,6 +200,8 @@ export interface ImportImageModalProps extends Omit<BAIModalProps, 'onOk'> {
 
 const ARCHITECTURES = ['x86_64', 'aarch64'] as const;
 
+const MODAL_MAX_HEIGHT = 'calc(100dvh - var(--spacing-12) * 2)';
+
 /** The catalog page that lists a repository's tags, for a tag-less NGC paste. */
 const ngcTagsUrl = (remotePath: string | null) => {
   const segments = (remotePath ?? '').split('/');
@@ -229,12 +240,17 @@ const ImportImageModalContent: React.FC<{
   onSubmittingChange: (isSubmitting: boolean) => void;
   /** Keys this open's registry list, so a reopen never reuses an earlier one. */
   openedAt: number;
+  /** The modal's own footer runs the import, so the content hands it over. */
+  submitRef: React.RefObject<(() => void) | null>;
+  onFooterStateChange: (state: ImportFooterState) => void;
 }> = ({
   onRequestClose,
   onAdded,
   isSubmitting,
   onSubmittingChange,
   openedAt,
+  submitRef,
+  onFooterStateChange,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -537,6 +553,26 @@ const ImportImageModalContent: React.FC<{
     }
   };
 
+  // `handleAdd` describes every per-line failure itself, so a rejection here is
+  // the loop breaking; a bare `void` would leave the user with no word at all.
+  const submit = () => {
+    handleAdd().catch((error) => {
+      message.error({
+        key: 'import-image-failed',
+        content: describeError(error),
+      });
+    });
+  };
+  useEffect(() => {
+    submitRef.current = submit;
+  });
+  const reportFooterState = useEffectEvent(() =>
+    onFooterStateChange({ canSubmit, hasFailure }),
+  );
+  useEffect(() => {
+    reportFooterState();
+  }, [canSubmit, hasFailure]);
+
   const describeStatus = (
     outcome: LineOutcome | undefined,
     submittable: boolean,
@@ -633,7 +669,7 @@ const ImportImageModalContent: React.FC<{
           }
           style={{ marginBottom: 0 }}
         >
-          <List className="import-image-preview" density="compact" hasDividers>
+          <List density="compact" hasDividers>
             {addedCanonicals.map((canonical) => (
               <ListItem
                 key={`added-${canonical}`}
@@ -776,38 +812,6 @@ const ImportImageModalContent: React.FC<{
           </List>
         </BAIFormItemVisual>
       ) : null}
-      <BAIFlex justify="end" gap="xs">
-        <Button
-          variant="secondary"
-          label={t('button.Cancel')}
-          isDisabled={isSubmitting}
-          onClick={onRequestClose}
-        />
-        {/* `onClick`, not `clickAction`: the latter runs the handler inside a
-            `startTransition`, which holds every state update it makes — the
-            submitting flag included — until the whole loop settles. */}
-        <Button
-          variant="primary"
-          isDisabled={!canSubmit || isSubmitting}
-          isLoading={isSubmitting}
-          label={
-            hasFailure
-              ? t('environment.ImportImageRetryFailed')
-              : t('environment.ImportImage')
-          }
-          onClick={() => {
-            // `handleAdd` describes every per-line failure itself, so a
-            // rejection here is the loop breaking; a bare `void` would swallow
-            // it and the user would be left with no word at all.
-            handleAdd().catch((error) => {
-              message.error({
-                key: 'import-image-failed',
-                content: describeError(error),
-              });
-            });
-          }}
-        />
-      </BAIFlex>
       <BAIUnmountAfterClose>
         <ContainerRegistryEditorModal
           open={!!prefilledRegistry}
@@ -849,13 +853,30 @@ const ImportImageModal: React.FC<ImportImageModalProps> = ({
   // Held here, outside the Suspense boundary: state in the suspending content
   // is thrown away on every retry, so a nonce there would never settle.
   const [openedAt] = useState(() => Date.now());
+  const submitRef = useRef<(() => void) | null>(null);
+  const [footerState, setFooterState] = useState<ImportFooterState>({
+    canSubmit: false,
+    hasFailure: false,
+  });
 
   return (
     <BAIModal
       {...baiModalProps}
       title={t('environment.ImportImageFromRegistry')}
       width={720}
-      footer={null}
+      // Astryx caps a standard dialog at 75dvh; let it grow to the viewport
+      // less an inset so long batches scroll in the body, not the page.
+      maxHeight={MODAL_MAX_HEIGHT}
+      okText={
+        footerState.hasFailure
+          ? t('environment.ImportImageRetryFailed')
+          : t('environment.ImportImage')
+      }
+      okButtonProps={{ disabled: !footerState.canSubmit || isSubmitting }}
+      confirmLoading={isSubmitting}
+      onOk={() => submitRef.current?.()}
+      cancelText={t('button.Cancel')}
+      cancelButtonProps={{ disabled: isSubmitting }}
       maskClosable={false}
       // While the scan loop runs, drop every dismissal affordance: no close
       // icon, and `onCancel` short-circuits so Escape cannot sneak one past.
@@ -874,6 +895,8 @@ const ImportImageModal: React.FC<ImportImageModalProps> = ({
           isSubmitting={isSubmitting}
           onSubmittingChange={setIsSubmitting}
           openedAt={openedAt}
+          submitRef={submitRef}
+          onFooterStateChange={setFooterState}
         />
       </Suspense>
     </BAIModal>
