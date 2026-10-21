@@ -113,7 +113,7 @@ declare const _default: {
   "@astryx.listInput.emptyDescription": "添加 {itemName} 即可开始。",
   "@astryx.listInput.emptyTitle": "尚未添加 {itemName}",
   "@astryx.listInput.fieldLabelWithPosition": "{header}，{itemName} {position, number}，共 {total, number} 项",
-  "@astryx.listInput.removeItem": "移除 {itemName} {position, number}",
+  "@astryx.listInput.removeItem": "移除",
   "@astryx.listInput.removeUnavailable": "列表禁用时无法移除",
   "@astryx.listInput.reorderInstructions": "使用 Arrow Up 或 Arrow Down 将此项目移动一个位置。按 Space 或 Enter 将其拾起，以使用键盘继续重新排序。",
   "@astryx.listInput.reorderItem": "调整 {itemName} {position, number} 的顺序",
