@@ -59,6 +59,10 @@ import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 type DeploymentStatusCategory = 'running' | 'finished';
 
+const DEFAULT_RUNNING_FILTER: DeploymentFilter = {
+  desiredReplicas: { greaterThanOrEqual: 1 },
+};
+
 interface DeploymentListPageContentProps {
   /** Owned by the page so the trigger can live in the card's `extra` slot. */
   isCreating: boolean;
@@ -128,9 +132,13 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
   const projectFilter: DeploymentFilter = currentProject.id
     ? { projectId: { equals: currentProject.id } }
     : {};
+  // `null` means the user never touched the filter; removing every condition stores `{}`.
+  const userFilter =
+    queryParams.filter ??
+    (queryParams.statusCategory === 'running' ? DEFAULT_RUNNING_FILTER : {});
   const queryVariables = {
     filter: {
-      ...(queryParams.filter ?? {}),
+      ...userFilter,
       ...statusCategoryFilter,
       ...projectFilter,
     },
@@ -229,6 +237,12 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
       propertyLabel: t('deployment.filter.OpenToPublic'),
       type: 'boolean',
     },
+    {
+      key: 'desiredReplicas',
+      propertyLabel: t('deployment.DesiredReplicas'),
+      type: 'number',
+      defaultOperator: 'greaterThanOrEqual',
+    },
     ...(isLabelable
       ? [
           {
@@ -266,9 +280,9 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
             />
             <BAIGraphQLPropertyFilter<DeploymentFilter>
               filterProperties={filterProperties}
-              value={queryParams.filter ?? undefined}
+              value={userFilter}
               onChange={(value) => {
-                setQueryParams({ filter: value ?? null });
+                setQueryParams({ filter: value ?? {} });
                 setTablePaginationOption({ current: 1 });
               }}
             />

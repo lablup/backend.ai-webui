@@ -48,6 +48,7 @@ export const availableDeploymentSorterKeys = [
   'createdAt',
   'project',
   'resourceGroup',
+  'desiredReplicas',
 ] as const;
 
 export type DeploymentSorterKey =
@@ -207,6 +208,8 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
       },
       {
         key: 'replicaSummary',
+        dataIndex: 'desiredReplicas',
+        sorter: isEnableSorter('desiredReplicas'),
         title: (
           <BAIFlex gap="xxs" align="center">
             {t('comp:BAIModelDeploymentNodes.ReplicaSummary')}
@@ -255,6 +258,8 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         key: 'replicas',
         title: t('comp:BAIModelDeploymentNodes.Replicas'),
         defaultHidden: true,
+        dataIndex: 'desiredReplicas',
+        sorter: isEnableSorter('desiredReplicas'),
         render: (__, record) => {
           const desired = record.replicaState?.desiredReplicaCount;
           if (!_.isNumber(desired)) {
