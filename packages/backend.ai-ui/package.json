@@ -20,7 +20,8 @@
   "module": "./dist/backend.ai-ui.js",
   "types": "./dist/index.d.ts",
   "sideEffects": [
-    "**/*.css"
+    "**/*.css",
+    "./src/index.ts"
   ],
   "exports": {
     ".": {

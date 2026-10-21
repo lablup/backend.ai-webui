@@ -54,6 +54,7 @@ flowchart LR
 - **Condition first**: resolver는 condition을 객체에 적힌 순서로 고르므로 `@backend.ai/source`는 각 entry의 맨 앞에 둔다.
 - **Namespaced name**: 이름은 `@backend.ai/source`다. 다른 package가 쓸 수 있는 일반 이름(`source`, `development`)과 겹치지 않아, 켜도 node_modules의 다른 package가 source로 바뀌지 않는다.
 - **No styles.css mapping**: `src/index.ts`가 자기 CSS를 직접 import하므로 source로 읽는 소비자는 `styles.css`를 import하지 않는다.
+- **Side-effectful entry**: BUI `package.json`의 `sideEffects`는 `**/*.css`와 함께 `./src/index.ts`를 적는다. condition으로 resolve된 module에는 Vite가 package의 `sideEffects`를 적용하므로, 빠지면 production build가 re-export만 하는 `src/index.ts`를 건너뛰고 거기서만 import하는 전역 CSS(`styles/actionAccent.css`, `styles/backend.ai-ui.css`, `styles/dangerAction.css`)를 버린다. 전역 CSS를 import하는 source entry를 더하는 PR은 그 파일도 `sideEffects`에 적는다.
 - **New subpath exports**: BUI에 subpath export를 더하는 PR은 그 entry에도 `@backend.ai/source`를 맨 앞에 둔다.
 
 ### 2. react의 resolver는 condition만 켠다

@@ -1,8 +1,8 @@
 /// <reference types="vite-plugin-svgr/client" />
 // BUI's stylesheets, kept as the FIRST statements so bundlers that consume BUI
 // from source get them before any component module evaluates.
-// `package.json#sideEffects` lists `**/*.css` precisely so these imports
-// survive tree-shaking; consumers of the built `dist` that bundle CSS
+// `package.json#sideEffects` lists this file as well as `**/*.css`, so these
+// imports survive tree-shaking; consumers of the built `dist` that bundle CSS
 // separately import `backend.ai-ui/styles.css`.
 //
 // The two are ordered alphabetically by the import sorter, NOT by intent, and
