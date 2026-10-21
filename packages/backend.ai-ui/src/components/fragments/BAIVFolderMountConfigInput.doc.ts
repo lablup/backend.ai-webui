@@ -41,7 +41,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Pass `onClickCreateFolder` together with a `ref` when the host has a folder-creation modal: open the modal on the click, then `await ref.current?.refetch()` before appending the created folder to the value, so the select already knows it.',
+          'Pass `onClickCreateFolder` together with a `ref` when the host has a folder-creation modal: open the modal on the click, then call `ref.current?.refetch()` and append the created folder to the value, so the select already knows it.',
       },
       {
         guidance: false,
@@ -132,7 +132,7 @@ export const docs = {
       name: 'ref',
       type: 'React.Ref<BAIVFolderMountConfigInputRef>',
       description:
-        'Exposes `refetch(): Promise<unknown>`, which re-reads the folder options and the auto-mounted folders. Call it after creating a folder from `onClickCreateFolder`, then append the new entry to the value.',
+        'Exposes `refetch(): void`, which re-reads the folder options and the auto-mounted folders. Call it after creating a folder from `onClickCreateFolder`, then append the new entry to the value.',
     },
   ],
   examples: [

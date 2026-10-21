@@ -55,7 +55,7 @@ export interface VFolderMountConfigValue {
 
 export interface BAIVFolderMountConfigInputRef {
   /** Re-reads the folder options and the auto-mounted folders. */
-  refetch: () => Promise<unknown>;
+  refetch: () => void;
 }
 
 export interface BAIVFolderMountConfigInputProps {
@@ -342,7 +342,6 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
       selectRef.current?.refetch();
       refetchAutoMountedFolders();
     });
-    return Promise.resolve();
   };
   useImperativeHandle(ref, () => ({ refetch }));
 
@@ -450,9 +449,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
             disabled={disabled}
             // The query already drives `loading`; `action` would add a transition
             // that can stay pending after the fetch settles.
-            onClick={() => {
-              void refetch();
-            }}
+            onClick={refetch}
           />
         </ButtonGroup>
       </BAIFlex>

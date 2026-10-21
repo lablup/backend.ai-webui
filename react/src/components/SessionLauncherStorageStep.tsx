@@ -62,10 +62,10 @@ const SessionLauncherStorageStep: React.FC<{
       <FolderCreateModalV2
         open={isCreateModalOpen}
         project={project}
-        onRequestClose={async (response) => {
+        onRequestClose={(response) => {
           setIsCreateModalOpen(false);
           if (!response) return;
-          await mountConfigInputRef.current?.refetch();
+          mountConfigInputRef.current?.refetch();
           // A dotfile folder is auto-mounted by the session, never selected.
           if (isAutoMountFolderName(response.metadata.name)) return;
           const vfolderId = response.entityId;
