@@ -104,6 +104,7 @@ const BAIFormListInput: React.FC<BAIFormListInputProps> = ({
   ...formListProps
 }) => {
   'use memo';
+  const form = Form.useFormInstance();
   return (
     <Form.List {...formListProps}>
       {(fields, { add, remove }, { errors }) => (
@@ -133,6 +134,11 @@ const BAIFormListInput: React.FC<BAIFormListInputProps> = ({
             onChange={(_next, change) => {
               if (change.type === 'add') add(createValue?.());
               else if (change.type === 'remove') remove(change.item.name);
+              // A list rule that only runs on submit (`validateTrigger={false}`)
+              // still clears as soon as the rows fix it.
+              if (errors.length > 0) {
+                void form.validateFields([formListProps.name]).catch(() => {});
+              }
             }}
             columns={_.map(columns, (column) => ({
               key: column.key,
