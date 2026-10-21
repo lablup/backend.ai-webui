@@ -12,7 +12,7 @@ import {
   UserScope,
 } from '../../__generated__/BAIScopedUserSelectPaginatedQuery.graphql';
 import { BAIScopedUserSelectValueQuery } from '../../__generated__/BAIScopedUserSelectValueQuery.graphql';
-import { combineFilters, toLocalId } from '../../helper';
+import { combineFilters } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useControllableValue, useFetchKey } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -144,6 +144,7 @@ const BAIScopedUserSelect: React.FC<BAIScopedUserSelectProps> = ({
           edges {
             node {
               id
+              entityId
               basicInfo {
                 email
                 fullName
@@ -191,6 +192,7 @@ const BAIScopedUserSelect: React.FC<BAIScopedUserSelectProps> = ({
             edges {
               node {
                 id
+                entityId
                 basicInfo {
                   email
                   fullName
@@ -228,7 +230,7 @@ const BAIScopedUserSelect: React.FC<BAIScopedUserSelectProps> = ({
   ): string | undefined => {
     if (!user) return undefined;
     return valuePropName === 'id'
-      ? toLocalId(user.id)
+      ? user.entityId
       : (user.basicInfo?.email ?? undefined);
   };
 

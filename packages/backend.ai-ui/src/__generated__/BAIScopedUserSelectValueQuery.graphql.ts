@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a5efd7245a32edcb82b95b95f6679849>>
+ * @generated SignedSource<<ea26717218a42d8c46b684bbc91d779f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -155,6 +155,7 @@ export type BAIScopedUserSelectValueQuery$data = {
           readonly email: string;
           readonly fullName: string | null | undefined;
         };
+        readonly entityId: string;
         readonly id: string;
       };
     }>;
@@ -242,6 +243,13 @@ v4 = [
                   {
                     "alias": null,
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "entityId",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
                     "concreteType": "UserV2BasicInfo",
                     "kind": "LinkedField",
                     "name": "basicInfo",
@@ -304,16 +312,16 @@ return {
     "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "5cf7dc7726706a30767cd934431a93e0",
+    "cacheID": "73f803e1b9de2f6f3006e799975668d7",
     "id": null,
     "metadata": {},
     "name": "BAIScopedUserSelectValueQuery",
     "operationKind": "query",
-    "text": "query BAIScopedUserSelectValueQuery(\n  $scope: UserScope!\n  $selectedFilter: UserV2Filter\n  $limit: Int!\n  $skipSelected: Boolean!\n) {\n  scopedUsersV2(scope: $scope, filter: $selectedFilter, limit: $limit) @skip(if: $skipSelected) {\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIScopedUserSelectValueQuery(\n  $scope: UserScope!\n  $selectedFilter: UserV2Filter\n  $limit: Int!\n  $skipSelected: Boolean!\n) {\n  scopedUsersV2(scope: $scope, filter: $selectedFilter, limit: $limit) @skip(if: $skipSelected) {\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "9e4311845b27711323137b17109f359e";
+(node as any).hash = "411743b8638ae718f2aaa52604b93e2c";
 
 export default node;
