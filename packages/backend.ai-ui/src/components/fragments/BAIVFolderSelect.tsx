@@ -14,8 +14,7 @@
 
  KEY SEMANTICS ARE UNCHANGED from the antd original: when `valuePropName`
  is `'id'` the outer key is the raw Relay **global** id (`node.id`, NOT
- `toLocalId`-converted) — `VFolderMountFormItem` documents that "mount_ids
- stores global IDs (from BAIVFolderSelect)". `toLocalId` is used only for
+ `toLocalId`-converted). `toLocalId` is used only for
  display (the secondary id text) and to build the local-UUID filter value for
  the value-resolution query, exactly as the antd `labelRender`/`optionRender`
  did. When `valuePropName` is `'row_id'` the outer key is the raw UUID

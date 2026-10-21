@@ -557,6 +557,9 @@
     "To": "Status docelowy",
     "UpdatedAt": "Zaktualizowano"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Wybierz folder"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agent"
   },
@@ -615,8 +618,6 @@
     "CreateFolder": "Utwórz nowy folder przechowywania",
     "DestinationPath": "Ścieżka w kontenerze (destination)",
     "Folders": "Foldery",
-    "OwnerProject": "Projekt",
-    "OwnerUser": "Użytkownik",
     "PathAndAliasTooltip": "Ścieżka wewnątrz kontenera, w której zostanie zamontowany folder. Pozostaw puste, aby użyć domyślnej ścieżki.",
     "Refresh": "Odświeżać",
     "RemoveFolder": "Usuń",

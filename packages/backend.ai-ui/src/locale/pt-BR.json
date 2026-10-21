@@ -563,6 +563,9 @@
     "To": "Status de destino",
     "UpdatedAt": "Atualizado em"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Selecionar pasta"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agente"
   },
@@ -621,8 +624,6 @@
     "CreateFolder": "Crie uma nova pasta de armazenamento",
     "DestinationPath": "Caminho do contêiner (destination)",
     "Folders": "Pastas",
-    "OwnerProject": "Projeto",
-    "OwnerUser": "Usuário",
     "PathAndAliasTooltip": "O caminho dentro do container onde a pasta será montada. Deixe em branco para usar o caminho padrão.",
     "Refresh": "Atualizar",
     "RemoveFolder": "Remover",
