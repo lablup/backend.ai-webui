@@ -557,6 +557,9 @@
     "To": "Zielstatus",
     "UpdatedAt": "Aktualisiert am"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Ordner auswählen"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agent"
   },
@@ -615,8 +618,6 @@
     "CreateFolder": "Erstellen Sie einen neuen Speicherordner",
     "DestinationPath": "Container-Pfad (destination)",
     "Folders": "Ordner",
-    "OwnerProject": "Projekt",
-    "OwnerUser": "Benutzer",
     "PathAndAliasTooltip": "Der Pfad im Container, in den der Ordner eingehängt wird. Leer lassen, um den Standardpfad zu verwenden.",
     "Refresh": "Aktualisierung",
     "RemoveFolder": "Entfernen",

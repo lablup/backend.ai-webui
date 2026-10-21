@@ -204,7 +204,7 @@ The **Deployments** page lists the model deployments owned by the currently sele
 The page provides the following controls:
 
 - **Running / Terminated** segmented control: Toggle between currently running deployments and deployments that have been terminated.
-- **Property filter**: Filter the list by Name, Tags, Endpoint URL, or Open to Public.
+- **Property filter**: Filter the list by Name, Endpoint URL, or Open to Public.
 
 The table displays the deployment's Name, Revision, Lifecycle, Replicas, Model, Owner, and Created At columns, along with the deployment's domain, project, and resource group when relevant.
 

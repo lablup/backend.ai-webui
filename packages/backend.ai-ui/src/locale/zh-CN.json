@@ -557,6 +557,9 @@
     "To": "目标状态",
     "UpdatedAt": "更新时间"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "选择文件夹"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "代理人"
   },
@@ -615,8 +618,6 @@
     "CreateFolder": "创建一个新的存储文件夹",
     "DestinationPath": "容器路径 (destination)",
     "Folders": "文件夹",
-    "OwnerProject": "项目",
-    "OwnerUser": "用户",
     "PathAndAliasTooltip": "文件夹在容器内的挂载路径。留空则使用默认路径。",
     "Refresh": "刷新",
     "RemoveFolder": "移除",

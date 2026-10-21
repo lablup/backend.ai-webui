@@ -557,6 +557,9 @@
     "To": "Trạng thái đích",
     "UpdatedAt": "Cập nhật lúc"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Chọn thư mục"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Đại lý"
   },
@@ -615,8 +618,6 @@
     "CreateFolder": "Tạo một thư mục lưu trữ mới",
     "DestinationPath": "Đường dẫn container (destination)",
     "Folders": "Thư mục",
-    "OwnerProject": "Dự án",
-    "OwnerUser": "Người dùng",
     "PathAndAliasTooltip": "Đường dẫn bên trong container nơi thư mục sẽ được mount. Để trống để sử dụng đường dẫn mặc định.",
     "Refresh": "Làm tươi",
     "RemoveFolder": "Xóa",

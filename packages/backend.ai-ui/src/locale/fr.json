@@ -557,6 +557,9 @@
     "To": "Statut de destination",
     "UpdatedAt": "Mis à jour le"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Sélectionner un dossier"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agent"
   },
@@ -615,8 +618,6 @@
     "CreateFolder": "Créer un nouveau dossier de stockage",
     "DestinationPath": "Chemin du conteneur (destination)",
     "Folders": "Dossiers",
-    "OwnerProject": "Projet",
-    "OwnerUser": "Utilisateur",
     "PathAndAliasTooltip": "Le chemin à l'intérieur du conteneur où le dossier sera monté. Laissez vide pour utiliser le chemin par défaut.",
     "Refresh": "Rafraîchir",
     "RemoveFolder": "Supprimer",

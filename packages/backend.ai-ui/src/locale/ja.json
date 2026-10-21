@@ -557,6 +557,9 @@
     "To": "遷移先ステータス",
     "UpdatedAt": "更新日時"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "フォルダを選択"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "エージェント"
   },
@@ -615,8 +618,6 @@
     "CreateFolder": "新規ストレージフォルダー作成",
     "DestinationPath": "コンテナのパス (destination)",
     "Folders": "フォルダー",
-    "OwnerProject": "プロジェクト",
-    "OwnerUser": "ユーザー",
     "PathAndAliasTooltip": "コンテナ内でフォルダがマウントされるパスです。デフォルトのパスを使用する場合は空欄にしてください。",
     "Refresh": "更新",
     "RemoveFolder": "削除",

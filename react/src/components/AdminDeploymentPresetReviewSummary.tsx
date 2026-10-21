@@ -18,13 +18,7 @@ import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import { HStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
 import { Token } from '@lablup/ui-common/Token';
-import {
-  BAICard,
-  BAIFlex,
-  BAIMetadataList,
-  BAIText,
-  toLocalId,
-} from 'backend.ai-ui';
+import { BAICard, BAIFlex, BAIMetadataList, BAIText } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleX } from 'lucide-react';
 import React from 'react';
@@ -60,7 +54,7 @@ interface PresetReviewSummaryProps {
   form: FormInstance<AdminDeploymentPresetFormValue>;
   onGoToStep: (index: number) => void;
   runtimeVariants: ReadonlyArray<{
-    id: string;
+    entityId: string;
     name: string;
     // `readsVfolderConfigFiles` (26.8.0+) is stripped on older managers →
     // undefined; `resolvesReadsVfolderConfigFiles` falls back to the legacy
@@ -113,7 +107,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
   const step2HasError = STEP2_FIELDS.some((f) => errorFieldNames.includes(f));
 
   const selectedRuntimeVariant = runtimeVariants.find(
-    (r) => toLocalId(r.id) === values.runtimeVariantId,
+    (r) => r.entityId === values.runtimeVariantId,
   );
   const runtimeName = selectedRuntimeVariant?.name ?? values.runtimeVariantId;
   // FR-3481 review-parity fix: the Shell/Command/Port rows must only show

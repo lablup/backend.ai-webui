@@ -557,6 +557,9 @@
     "To": "이후 상태",
     "UpdatedAt": "수정일"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "폴더를 선택해주세요"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "실행노드"
   },
@@ -615,8 +618,6 @@
     "CreateFolder": "새 폴더 추가",
     "DestinationPath": "컨테이너 경로 (destination)",
     "Folders": "폴더",
-    "OwnerProject": "프로젝트",
-    "OwnerUser": "사용자",
     "PathAndAliasTooltip": "폴더가 컨테이너 내부에 마운트될 경로입니다. 비워두면 기본 경로가 사용됩니다.",
     "Refresh": "새로고침",
     "RemoveFolder": "제거",

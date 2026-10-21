@@ -557,6 +557,9 @@
     "To": "Estado de destino",
     "UpdatedAt": "Actualizado el"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Seleccionar carpeta"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agente"
   },
@@ -615,8 +618,6 @@
     "CreateFolder": "Crear una nueva carpeta de almacenamiento",
     "DestinationPath": "Ruta del contenedor (destination)",
     "Folders": "Carpetas",
-    "OwnerProject": "Proyecto",
-    "OwnerUser": "Usuario",
     "PathAndAliasTooltip": "La ruta dentro del contenedor donde se montará la carpeta. Déjelo vacío para usar la ruta predeterminada.",
     "Refresh": "Actualizar",
     "RemoveFolder": "Eliminar",
