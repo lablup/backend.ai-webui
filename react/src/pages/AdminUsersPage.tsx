@@ -18,10 +18,13 @@ import AdminUserManagement, {
 } from '../components/AdminUserManagement';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
-import { useBrowserPopstateEffect, useKeyedSnapshot } from '../hooks';
+import {
+  useBrowserPopstateEffect,
+  useKeyedSnapshot,
+  useCurrentDomain,
+} from '../hooks';
 import { useSuspendedTOTPSupported } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 // The tab-list item shape now comes from `BAICard` itself (`BAICardTabItem`,
 // restated in BUI when the card stopped being antd's) instead of the deep
 // `antd/es/card` subpath the frontier note used to point at (P15).
@@ -92,7 +95,8 @@ const AdminUsersPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
   const isTOTPSupported = useSuspendedTOTPSupported();
-  const { domainName: currentDomain, domainScope } = useCurrentDomainScope();
+  const { name: currentDomain, id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
   // The list is fixed to the signed-in domain; the condition never reaches the URL.
   const withCurrentDomain = (
     variables: Omit<UsersVariables, 'scope'>,

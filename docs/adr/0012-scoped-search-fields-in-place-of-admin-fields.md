@@ -5,7 +5,7 @@
 > 낯선 용어는 문서 맨 아래 [용어](#용어)에 모아 두었다.
 
 - 목록을 읽는 component는 `admin*` root field 대신 엔티티마다 하나인 [`scoped*` field](#용어)에 `scope` input 하나를 넘겨 읽는다. 대응하는 `scoped*` field가 있는 `admin*` 읽기는 코드에서 지운다.
-- `scope`는 로그인한 역할과 상관없이 현재 도메인이다. superadmin과 도메인 관리자 모두 `useCurrentDomainScope()`가 답하는 `{ domain: [{ value: <domain UUID> }] }`를 넘긴다.
+- `scope`는 로그인한 역할과 상관없이 현재 도메인이다. superadmin과 도메인 관리자 모두 `useCurrentDomain()`의 `id`로 만든 `{ domain: [{ value: <domain UUID> }] }`를 넘긴다.
 - 공용 component는 범위를 종류별 id prop이 아니라, 그 field의 scope input type을 받는 필수 `scope` prop 하나로 받는다.
 - 이 field들은 26.9.0a4 이상 매니저에서만 쓴다. 26.9 미만 매니저를 위한 대체 field는 두지 않으며, 이 field들에 한해 [ADR 0011](0011-manager-compatibility-policy-in-the-team-dev-catalog.md)이 팀 dev catalog에 둔 지원 floor보다 높은 26.9.0a4를 요구한다.
 
@@ -22,7 +22,7 @@
 
 - **Backend direction**: backend.ai의 `api/gql/AGENTS.md`와 `KNOWLEDGE.md`는 `scoped*` 모양을 규약으로 두고, 범위 종류별 field는 새로 만들지 않는 모양이라고 적는다(BA-7742).
 - **Authorization**: `scoped*` field는 scope에 적힌 모든 범위에서 읽기 권한을 검사하고 하나라도 없으면 요청 전체를 거부한다. superadmin은 모든 검사를 통과한다. 결과는 각 범위로 닿는 행의 합집합이고, `filter`는 그 위에 AND로 붙는다. 범위 목록이 모두 비어 있는 scope는 거부된다.
-- **Domain id**: `scoped*` scope는 도메인을 UUID로 받는다. UUID를 답하는 `UserV2.organization.domainId`는 26.9.0a4에 추가되었다.
+- **Domain id**: `scoped*` scope는 도메인을 UUID로 받는다. `react/src/hooks/index.tsx`의 `useCurrentDomain()`이 로그인 때 `myUserV2`에서 저장한 도메인 이름과 UUID를 `{ name, id }`로 답한다(#10382).
 - **No scoped write**: 사용자·keypair·리소스 정책·resource preset의 생성과 수정, fair share 가중치는 V2 `admin*` mutation과 legacy mutation이 모두 superadmin만 받고, `scoped*` mutation이 없다. `session_pending_queue`, 리소스 정책 목록, `rg*FairShare*` 조회도 도메인 관리자가 읽을 field가 없다.
 
 ## 설계도
@@ -30,13 +30,11 @@
 ```mermaid
 flowchart LR
   manager["manager"]
-  hook["useCurrentDomainScope<br/>myUserV2 query"]
+  hook["useCurrentDomain<br/>로그인 때 저장한 domain id"]
   page["host component<br/>superadmin, domain admin 공통"]
   select["BUI 공용 component<br/>필수 scope prop"]
   transformer["graphql-transformer.ts<br/>RelayEnvironment fetch"]
-  hook -- "myUserV2 query" --> transformer
-  transformer -- "organization.domainId" --> hook
-  hook -- "domainScope" --> page
+  hook -- "name, id" --> page
   page -- "scope prop" --> select
   select -- "scoped* field" --> transformer
   page -- "scoped* field" --> transformer
@@ -53,18 +51,18 @@ flowchart LR
 
 ### 2. scope는 현재 도메인이다
 
-- **Hook**: `react/src/hooks/useCurrentDomainScope.ts`의 `useCurrentDomainScope()`는 `{ domainName, domainId, domainScope }`를 답한다. `domainScope`는 `{ domain: [{ value: domainId }] }`이고 type은 같은 파일의 `DomainUUIDScope`다. 매니저가 `domainId`를 답하지 않으면 오류를 던진다.
+- **Hook**: 호출부는 `useCurrentDomain()`(`react/src/hooks/index.tsx`)의 `id`로 `{ domain: [{ value: id }] }`를 만들어 넘긴다. scope를 만드는 별도 hook이나 type은 두지 않는다.
 - **Every role**: superadmin도 같은 `domainScope`를 넘긴다. superadmin이 보는 목록은 현재 도메인으로 좁혀진다.
 - **Narrower scope**: 화면이 다루는 범위가 도메인보다 좁으면(배포 하나의 프로젝트) 호출부가 그 범위를 직접 만든다(`{ project: [{ value: projectId }], public: true }`).
 
 ### 3. 공용 component는 필수 `scope` prop 하나를 받는다
 
 - **Prop**: BUI의 공용 select와 목록은 `scope: <ScopeInputType>` prop 하나로 범위를 받는다. `<ScopeInputType>`은 그 component의 query가 쓰는 scope input(`UserScope`, `ProjectScope`, `ResourceGroupScope`, `ImageSearchScope`)이고, relay-compiler가 그 query의 `__generated__/<Query>.graphql.ts`에 내보낸 type을 import한다. `domainId`·`projectId`·`userId` 같은 종류별 prop을 더하지 않는다.
-- **Host value**: `DomainUUIDScope`는 위 네 input type에 모두 대입된다.
+- **Host value**: `{ domain: [{ value: id }] }` 모양은 위 네 input type에 모두 대입된다.
 
 ### 4. 이 field들은 26.9.0a4 이상 매니저에서만 쓴다
 
-- **No fallback**: `scoped*` field와 `UserV2.organization.domainId`에 `@since`를 달지 않고, 26.9 미만 매니저를 위한 `admin*`·이름 field 분기를 두지 않는다. 26.9.0a4 미만 매니저에서 이 field를 쓰는 화면은 오류를 낸다.
+- **No fallback**: `scoped*` field에 `@since`를 달지 않고, 26.9 미만 매니저를 위한 `admin*`·이름 field 분기를 두지 않는다. 26.9.0a4 미만 매니저에서 이 field를 쓰는 화면은 오류를 낸다.
 - **Floor**: 이 결정이 바꾼 화면은 catalog가 선언한 지원 floor([ADR 0011](0011-manager-compatibility-policy-in-the-team-dev-catalog.md))와 상관없이 26.9.0a4 이상 매니저를 요구한다. 나머지 코드는 ADR 0010과 ADR 0011을 따른다.
 
 ## 대안과 기각 사유
