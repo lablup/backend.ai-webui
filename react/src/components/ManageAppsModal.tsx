@@ -164,7 +164,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
       title={t('environment.ManageApps')}
       // Wide enough that the app rows keep one header row; ListInput stacks
       // every row with its own labels below 640px.
-      width={720}
+      width={800}
       {...baiModalProps}
     >
       {/* antd Alert type="info" -> Astryx Banner status="info"; `showIcon` is
