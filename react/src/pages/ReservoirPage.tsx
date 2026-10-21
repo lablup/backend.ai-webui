@@ -548,38 +548,6 @@ const ReservoirPage: React.FC = () => {
             }}
           />
         </BAIFlex>
-        {/* TODO: implement audit log for reservoir page */}
-        {/* {curTabKey === 'audit' ? (
-          <Suspense fallback={<Skeleton active />}>
-            <ReservoirAuditLogList
-              auditLogs={filteredAuditLogs}
-              loading={false}
-              filterValue={queryParams.auditFilter}
-              onFilterChange={(value) => {
-                setQuery({ auditFilter: value });
-              }}
-              pagination={{
-                pageSize: tablePaginationOption.pageSize,
-                current: tablePaginationOption.current,
-                total: filteredAuditLogs.length,
-                showTotal: (total) => (
-                  <BAIText type="secondary">
-                    {t('general.TotalItems', { total: total })}
-                  </BAIText>
-                ),
-                onChange: (current, pageSize) => {
-                  if (_.isNumber(current) && _.isNumber(pageSize)) {
-                    setTablePaginationOption({ current, pageSize });
-                  }
-                },
-              }}
-              order={queryParams.auditOrder}
-              onChangeOrder={(order) => {
-                setQuery({ auditOrder: order });
-              }}
-            />
-          </Suspense>
-        ) : null} */}
       </BAICard>
       <BAIImportArtifactModal
         selectedArtifactFrgmt={selectedArtifact}
