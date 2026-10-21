@@ -2,34 +2,36 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useKeypairResourceUsage } from '../../hooks/useKeypairResourceUsage';
-import { sessionMonitorFetchKeyAtom } from '../../hooks/useSessionMonitor';
+import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { Text } from '@lablup/ui-common/Text';
-import { useAtomValue } from 'jotai';
 import * as _ from 'lodash-es';
 import React from 'react';
 
 /**
- * "GPU 5/8": the accelerator the user's keypair uses most, against its
- * policy limit. Suspends; mount under the header's Suspense with a null
- * fallback. Reads the current project, so keep it off project-agnostic pages.
+ * "GPU 5": the accelerator the watched sessions hold most of, else their CPU
+ * cores. Suspends; mount under a Suspense with a null fallback.
  */
 const SessionMonitorAcceleratorSummary: React.FC<{
+  allocated: Record<string, number>;
   separator?: React.ReactNode;
-}> = ({ separator }) => {
+}> = ({ allocated, separator }) => {
   'use memo';
-  const fetchKey = useAtomValue(sessionMonitorFetchKeyAtom);
-  const rows = useKeypairResourceUsage(fetchKey);
-  const accelerators = rows.filter((row) => row.isAccelerator);
-  const shown = _.maxBy(accelerators, (a) => a.using) ?? accelerators[0];
-  if (!shown) return null;
+  const { mergedResourceSlots } = useResourceSlotsDetails();
+  const accelerators = _.pickBy(
+    allocated,
+    (value, key) => key !== 'cpu' && key !== 'mem' && value > 0,
+  );
+  const key =
+    _.maxBy(_.keys(accelerators), (k) => accelerators[k]) ??
+    (allocated.cpu ? 'cpu' : undefined);
+  if (!key) return null;
+  const name = mergedResourceSlots?.[key]?.human_readable_name ?? key;
 
   return (
     <>
       {separator}
       <Text type="inherit" textWrap="nowrap">
-        {shown.name} {shown.using}
-        {shown.limit !== null ? `/${shown.limit}` : ''}
+        {name} {_.round(allocated[key] ?? 0, 2)}
       </Text>
     </>
   );

@@ -3284,8 +3284,6 @@
     }
   },
   "sessionMonitor": {
-    "DomainSessions": "Sessioni in questo dominio",
-    "InUseAcross": "Allocato a {{count}} sessioni in esecuzione",
     "MonitorSettings": "Impostazioni monitor",
     "MoreSessions": "{{count}} in più ({{total}} in totale)",
     "MyResourceUsage": "Allocato a me, rispetto al mio limite",
@@ -3293,10 +3291,11 @@
     "NoActiveSessions": "Nessuna sessione attiva",
     "OpenSession": "Apri sessione",
     "OpenSessionList": "Apri elenco sessioni",
-    "ProjectSessions": "Sessioni in questo progetto",
     "RunningCount": "{{count}} in esecuzione",
+    "SessionCount": "{{count}} sessioni",
     "StartingCount": "{{count}} in avvio",
-    "Tooltip": "Monitor sessioni: numero in esecuzione e prossima terminazione",
+    "Tooltip": "Monitor sessioni: le sessioni che monitori, in ogni pagina",
+    "WatchedSessions": "Sessioni monitorate",
     "idleAlert": {
       "NetworkTimeout": "Non è stata rilevata alcuna attività di rete. Connettiti alla sessione prima che venga terminata.",
       "SessionLifetime": "La sessione sta raggiungendo la sua durata massima.",
@@ -3304,9 +3303,15 @@
       "Utilization": "L'utilizzo delle risorse è rimasto sotto la soglia di inattività. Usa la sessione prima che venga terminata."
     },
     "settings": {
+      "ChipIdle": "Prossima terminazione per inattività, con avvisi",
+      "ChipResources": "Risorse allocate",
+      "Condition": "Sessioni da monitorare",
       "IncludeStarting": "Includi sessioni in avvio",
+      "List": "Elenco",
+      "OnlyMine": "Solo le sessioni che ho creato",
       "OpenUserSettings": "Impostazioni monitor sessioni →",
       "RowsShown": "Righe mostrate",
+      "ShowInHeader": "Mostra nell'intestazione",
       "SortBy": "Ordina",
       "SortDeadline": "Terminazione più imminente prima",
       "SortName": "Nome",
@@ -3767,7 +3772,7 @@
     "DescScriptCreated": "Script di configurazione utente creato. Questo verrà applicato solo alle nuove sessioni.",
     "DescScriptDeleted": "Script di configurazione utente eliminato:",
     "DescScriptUpdated": "Script di configurazione utente aggiornato. Questo verrà applicato solo alle nuove sessioni.",
-    "DescSessionMonitor": "Mostra il monitor sessioni nell'intestazione: sessioni in esecuzione, il loro uso delle risorse e la prossima terminazione per inattività. Finché è attivo, ricevi anche una notifica 30 e 10 minuti prima che un controllo di inattività termini una delle tue sessioni.",
+    "DescSessionMonitor": "Mostra nell'intestazione, in ogni pagina, il numero di sessioni che monitori. Per impostazione predefinita sono le sessioni che hai creato; cambia la condizione nelle impostazioni del monitor. Se lì è attiva la voce sulla terminazione per inattività, ricevi anche una notifica 30 e 10 minuti prima che un controllo di inattività termini una delle tue sessioni.",
     "DescThemeFamily": "Imposta il tema.",
     "DescThemeMode": "Imposta la modalità di visualizzazione.",
     "DescUseCompactSidebar": "La barra laterale compatta fornisce più spazio di lavoro. <br />Quando abilitata, la barra laterale compatta sarà l'interfaccia predefinita all'avvio.",

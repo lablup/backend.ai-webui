@@ -3,23 +3,48 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
+  SESSION_MONITOR_CHIP_ITEMS,
   SESSION_MONITOR_ROW_OPTIONS,
   SESSION_MONITOR_VISIBLE_LIMIT,
+  type SessionMonitorChipItem,
   type SessionMonitorSort,
 } from '../../helper/sessionMonitor';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { SETTING_ARRIVAL_PARAM } from '../../hooks/useSettingArrival';
+import { getSessionFilterProperties } from '../DashboardPanels/sessionFilterProperties';
 import { Selector } from '@lablup/ui-common/Selector';
 import { Switch } from '@lablup/ui-common/Switch';
+import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFlex, BAILink } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAILink,
+  BAIPropertyFilter,
+  type FilterProperty,
+} from 'backend.ai-ui';
+import type { TFunction } from 'i18next';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-/** The popover's settings view: what the list shows. */
-const SessionMonitorSettingsPane: React.FC<{ onNavigate?: () => void }> = ({
-  onNavigate,
-}) => {
+/** The dashboard's session condition fields, plus the project. */
+const getSessionMonitorFilterProperties = (
+  t: TFunction,
+): Array<FilterProperty> => [
+  { key: 'group_name', propertyLabel: t('general.Project'), type: 'string' },
+  ...getSessionFilterProperties(t),
+];
+
+const chipItemLabelKey = (item: SessionMonitorChipItem) =>
+  item === 'resources'
+    ? 'sessionMonitor.settings.ChipResources'
+    : 'sessionMonitor.settings.ChipIdle';
+
+/** The popover's settings view: which sessions it watches and what shows. */
+const SessionMonitorSettingsPane: React.FC<{
+  /** Only a domain admin can see other users' sessions to watch. */
+  isDomainAdmin: boolean;
+  onNavigate?: () => void;
+}> = ({ isDomainAdmin, onNavigate }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
@@ -28,6 +53,15 @@ const SessionMonitorSettingsPane: React.FC<{ onNavigate?: () => void }> = ({
     'session_monitor_include_starting',
   );
   const [rows, setRows] = useBAISettingUserState('session_monitor_rows');
+  const [onlyMine, setOnlyMine] = useBAISettingUserState(
+    'session_monitor_only_mine',
+  );
+  const [condition, setCondition] = useBAISettingUserState(
+    'session_monitor_condition',
+  );
+  const [chipItems, setChipItems] = useBAISettingUserState(
+    'session_monitor_chip_items',
+  );
 
   const sortOptions: Array<{ value: SessionMonitorSort; label: string }> = [
     { value: 'deadline', label: t('sessionMonitor.settings.SortDeadline') },
@@ -46,6 +80,41 @@ const SessionMonitorSettingsPane: React.FC<{ onNavigate?: () => void }> = ({
         borderTop: `1px solid ${token('--color-border')}`,
       }}
     >
+      <Text type="label" weight="semibold">
+        {t('sessionMonitor.settings.Condition')}
+      </Text>
+      {isDomainAdmin && (
+        <Switch
+          label={t('sessionMonitor.settings.OnlyMine')}
+          value={onlyMine ?? true}
+          onChange={(checked) => setOnlyMine(checked)}
+        />
+      )}
+      <BAIPropertyFilter
+        filterProperties={getSessionMonitorFilterProperties(t)}
+        value={condition ?? ''}
+        onChange={(value) => setCondition(value)}
+      />
+      <Text type="label" weight="semibold">
+        {t('sessionMonitor.settings.ShowInHeader')}
+      </Text>
+      {SESSION_MONITOR_CHIP_ITEMS.map((item) => (
+        <Switch
+          key={item}
+          label={t(chipItemLabelKey(item))}
+          value={chipItems?.includes(item) ?? false}
+          onChange={(checked) =>
+            setChipItems(
+              SESSION_MONITOR_CHIP_ITEMS.filter((i) =>
+                i === item ? checked : (chipItems?.includes(i) ?? false),
+              ),
+            )
+          }
+        />
+      ))}
+      <Text type="label" weight="semibold">
+        {t('sessionMonitor.settings.List')}
+      </Text>
       <BAIFlex direction="row" align="center" justify="between" gap="sm">
         <Selector
           label={t('sessionMonitor.settings.SortBy')}

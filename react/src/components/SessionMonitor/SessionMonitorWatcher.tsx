@@ -6,25 +6,21 @@ import {
   applyAttentionTitleBadge,
   pickDueAlerts,
   readAlertedRecords,
-  SESSION_MONITOR_NOT_FINISHED_FILTER,
   SESSION_MONITOR_POLL_INTERVAL_MS,
   summarizeSessions,
   writeAlertedRecords,
   type SessionMonitorEntry,
 } from '../../helper/sessionMonitor';
-import { useCurrentDomainValue } from '../../hooks';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useSetBAINotification } from '../../hooks/useBAINotification';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
-import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
-import { useCurrentUserProjectRoles } from '../../hooks/useCurrentUserProjectRoles';
-import { useIsProjectAgnosticPage } from '../../hooks/useIsProjectAgnosticPage';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import {
   sessionMonitorFetchKeyAtom,
   sessionMonitorScopeAtom,
   sessionMonitorSummaryAtom,
   useSessionMonitorData,
+  useSessionMonitorScope,
   type SessionMonitorScope,
 } from '../../hooks/useSessionMonitor';
 import { toLocalId, useInterval } from 'backend.ai-ui';
@@ -47,64 +43,25 @@ const idleAlertDescriptionKey = (
       : 'sessionMonitor.idleAlert.SessionLifetime';
 
 /**
- * Resolves the monitor's scope from the viewer's role — never from the page —
- * then polls it for the header chip, the tab-title badge and (own sessions
- * only) the idle-termination alerts. Renders nothing; mounted in MainLayout.
+ * Polls the watched sessions for the header chip, the tab-title badge and the
+ * idle-termination alerts. The same on every page; renders nothing.
  */
 const SessionMonitorWatcher: React.FC = () => {
   'use memo';
-  const { isSuperAdmin, domainAdminDomains } = useCurrentUserProjectRoles();
-  const isProjectAgnosticPage = useIsProjectAgnosticPage();
-  const domainName = useCurrentDomainValue();
-  const setScope = useSetAtom(sessionMonitorScopeAtom);
   const [enabled] = useBAISettingUserState('session_monitor_enabled');
-
-  const isDomainAdmin = isSuperAdmin || domainAdminDomains.length > 0;
-  // Below domain admin the scope is the current project, which is not read
-  // above project scope (ADR-0001); those routes are admin-only anyway.
-  const hidden = enabled === false || (!isDomainAdmin && isProjectAgnosticPage);
+  const setScope = useSetAtom(sessionMonitorScopeAtom);
   useEffect(() => {
-    if (hidden) setScope(null);
-  }, [hidden, setScope]);
-  if (hidden) return null;
-
-  return isDomainAdmin ? (
-    <ScopedSessionMonitorWatcher
-      key={`domain:${domainName}`}
-      scope={{
-        mode: 'domain',
-        scopeId: `domain:${domainName}`,
-        filter: SESSION_MONITOR_NOT_FINISHED_FILTER,
-      }}
-    />
-  ) : (
-    <ProjectSessionMonitorWatcher />
-  );
+    if (enabled === false) setScope(null);
+  }, [enabled, setScope]);
+  return enabled === false ? null : <ResolvedSessionMonitorWatcher />;
 };
 
-const ProjectSessionMonitorWatcher: React.FC = () => {
+const ResolvedSessionMonitorWatcher: React.FC = () => {
   'use memo';
-  const currentProject = useCurrentProjectValue();
-  const [currentUser] = useCurrentUserInfo();
-  const { projectAdminIds } = useCurrentUserProjectRoles();
-  if (!currentProject.id) return null;
-  const mode: 'my' | 'project' = projectAdminIds.includes(currentProject.id)
-    ? 'project'
-    : 'my';
-  const scope: SessionMonitorScope = {
-    mode,
-    scopeId: `project:${currentProject.id}`,
-    filter:
-      mode === 'my'
-        ? `${SESSION_MONITOR_NOT_FINISHED_FILTER} & user_id == "${currentUser.uuid}"`
-        : SESSION_MONITOR_NOT_FINISHED_FILTER,
-  };
-  return (
-    <ScopedSessionMonitorWatcher
-      key={`${scope.mode}:${scope.scopeId}`}
-      scope={scope}
-    />
-  );
+  // Deferred, not re-keyed: a new condition keeps the chip on the last
+  // answer while its count loads.
+  const scope = useDeferredValue(useSessionMonitorScope());
+  return <ScopedSessionMonitorWatcher scope={scope} />;
 };
 
 const ScopedSessionMonitorWatcher: React.FC<{ scope: SessionMonitorScope }> = ({
@@ -114,20 +71,25 @@ const ScopedSessionMonitorWatcher: React.FC<{ scope: SessionMonitorScope }> = ({
   const { t } = useTranslation();
   const [fetchKey, setFetchKey] = useAtom(sessionMonitorFetchKeyAtom);
   const deferredFetchKey = useDeferredValue(fetchKey);
-  const { entries, total, counts, fetchedAt } = useSessionMonitorData(
+  const [chipItems] = useBAISettingUserState('session_monitor_chip_items');
+  const [currentUser] = useCurrentUserInfo();
+  // The default chip is a count; only the opt-in segments fetch sessions.
+  const showsIdle = chipItems?.includes('idle') ?? false;
+  const showsResources = chipItems?.includes('resources') ?? false;
+  const { entries, total, allocated, fetchedAt } = useSessionMonitorData(
     deferredFetchKey,
     scope,
+    { withEntries: showsIdle, withSlots: showsResources },
   );
   const setSummary = useSetAtom(sessionMonitorSummaryAtom);
   const setScope = useSetAtom(sessionMonitorScopeAtom);
-  const idleAlertsEnabled = scope.mode === 'my';
   const { upsertNotification } = useSetBAINotification();
   const buildProjectPath = useProjectPath();
 
   useEffect(() => {
     setScope(scope);
-    return () => setScope(null);
   }, [scope, setScope]);
+  useEffect(() => () => setScope(null), [setScope]);
 
   const refetch = () => {
     startTransition(() => setFetchKey(new Date().toISOString()));
@@ -144,7 +106,7 @@ const ScopedSessionMonitorWatcher: React.FC<{ scope: SessionMonitorScope }> = ({
     return () => document.removeEventListener('visibilitychange', onVisible);
   }, []);
 
-  const summary = summarizeSessions(entries, total, fetchedAt, counts);
+  const summary = summarizeSessions(entries, total, fetchedAt, allocated);
   useEffect(() => {
     setSummary(summary);
   }, [summary, setSummary]);
@@ -193,8 +155,11 @@ const ScopedSessionMonitorWatcher: React.FC<{ scope: SessionMonitorScope }> = ({
     });
   });
   useEffect(() => {
-    if (idleAlertsEnabled) raiseDueAlerts(entries);
-  }, [entries, idleAlertsEnabled]);
+    // Only the viewer's own sessions: an admin watching others gets no alerts.
+    if (showsIdle) {
+      raiseDueAlerts(entries.filter((e) => e.userId === currentUser.uuid));
+    }
+  }, [entries, showsIdle, currentUser.uuid]);
 
   return null;
 };

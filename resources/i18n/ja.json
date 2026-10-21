@@ -3286,8 +3286,6 @@
     }
   },
   "sessionMonitor": {
-    "DomainSessions": "このドメインのセッション",
-    "InUseAcross": "実行中のセッション{{count}}件に割り当て済み",
     "MonitorSettings": "モニター設定",
     "MoreSessions": "他に{{count}}件 (合計{{total}}件)",
     "MyResourceUsage": "自分に割り当て済み（上限との比較）",
@@ -3295,10 +3293,11 @@
     "NoActiveSessions": "実行中のセッションはありません",
     "OpenSession": "セッションを開く",
     "OpenSessionList": "セッション一覧を開く",
-    "ProjectSessions": "このプロジェクトのセッション",
     "RunningCount": "実行中 {{count}}件",
+    "SessionCount": "{{count}} 件のセッション",
     "StartingCount": "起動中 {{count}}件",
-    "Tooltip": "セッションモニター: 実行中の件数と最も近い終了予定",
+    "Tooltip": "セッションモニター: どのページでも監視中のセッション",
+    "WatchedSessions": "監視中のセッション",
     "idleAlert": {
       "NetworkTimeout": "ネットワークアクティビティが検出されませんでした。終了する前にセッションに接続してください。",
       "SessionLifetime": "セッションが最大寿命に達しています。",
@@ -3306,9 +3305,15 @@
       "Utilization": "リソース使用率がアイドルしきい値を下回ったままです。終了する前にセッションを使用してください。"
     },
     "settings": {
+      "ChipIdle": "最も近いアイドル終了と通知",
+      "ChipResources": "割り当てられたリソース",
+      "Condition": "監視するセッション",
       "IncludeStarting": "開始中のセッションを含める",
+      "List": "一覧",
+      "OnlyMine": "自分が作成したセッションのみ",
       "OpenUserSettings": "セッションモニター設定 →",
       "RowsShown": "表示行数",
+      "ShowInHeader": "ヘッダーに表示",
       "SortBy": "並べ替え",
       "SortDeadline": "終了が近い順",
       "SortName": "名前順",
@@ -3769,7 +3774,7 @@
     "DescScriptCreated": "ユーザー構成スクリプトが作成されました。これは、新しいセッションにのみ適用されます。",
     "DescScriptDeleted": "ユーザー設定スクリプトが削除されました：",
     "DescScriptUpdated": "ユーザー構成スクリプトが更新されました。これは、新しいセッションにのみ適用されます。",
-    "DescSessionMonitor": "ヘッダーにセッションモニターを表示します。実行中のセッション、リソース使用量、最も近いアイドル終了予定を確認できます。有効な間は、アイドルチェックによって自分のセッションが終了する30分前と10分前に通知も届きます。",
+    "DescSessionMonitor": "どのページでも、監視中のセッション数をヘッダーに表示します。既定では自分が作成したセッションが対象で、条件はモニター自体の設定で変更できます。そこでアイドル終了の項目を有効にすると、アイドルチェックによって自分のセッションが終了する30分前と10分前に通知も届きます。",
     "DescThemeFamily": "テーマを設定します。",
     "DescThemeMode": "表示モードを設定します。",
     "DescUseCompactSidebar": "コンパクトサイドバーはより多くのワークスペースを提供します。<br />有効にすると、起動時にコンパクトサイドバーがデフォルトUIになります。",

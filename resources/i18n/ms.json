@@ -3284,8 +3284,6 @@
     }
   },
   "sessionMonitor": {
-    "DomainSessions": "Sesi dalam domain ini",
-    "InUseAcross": "Diperuntukkan kepada {{count}} sesi yang berjalan",
     "MonitorSettings": "Tetapan pemantau",
     "MoreSessions": "{{count}} lagi ({{total}} jumlah)",
     "MyResourceUsage": "Diperuntukkan kepada saya, berbanding had saya",
@@ -3293,10 +3291,11 @@
     "NoActiveSessions": "Tiada sesi aktif",
     "OpenSession": "Buka sesi",
     "OpenSessionList": "Buka senarai sesi",
-    "ProjectSessions": "Sesi dalam projek ini",
     "RunningCount": "{{count}} berjalan",
+    "SessionCount": "{{count}} sesi",
     "StartingCount": "{{count}} bermula",
-    "Tooltip": "Pemantau sesi: bilangan berjalan dan penamatan terdekat",
+    "Tooltip": "Pemantau sesi: sesi yang anda pantau, di setiap halaman",
+    "WatchedSessions": "Sesi yang dipantau",
     "idleAlert": {
       "NetworkTimeout": "Tidak ada aktiviti rangkaian dikesan. Sambung ke sesi sebelum ia ditamatkan.",
       "SessionLifetime": "Sesi hampir mencapai tempoh hayat maksimumnya.",
@@ -3304,9 +3303,15 @@
       "Utilization": "Penggunaan sumber kekal di bawah ambang terbiar. Gunakan sesi sebelum ia ditamatkan."
     },
     "settings": {
+      "ChipIdle": "Penamatan terbiar terdekat, dengan amaran",
+      "ChipResources": "Sumber yang diperuntukkan",
+      "Condition": "Sesi untuk dipantau",
       "IncludeStarting": "Sertakan sesi yang sedang dimulakan",
+      "List": "Senarai",
+      "OnlyMine": "Hanya sesi yang saya cipta",
       "OpenUserSettings": "Tetapan pemantau sesi →",
       "RowsShown": "Baris dipaparkan",
+      "ShowInHeader": "Tunjukkan di pengepala",
       "SortBy": "Isih",
       "SortDeadline": "Penamatan terdekat dahulu",
       "SortName": "Nama",
@@ -3767,7 +3772,7 @@
     "DescScriptCreated": "Skrip konfigurasi pengguna dibuat. Ini akan digunakan untuk sesi baru sahaja.",
     "DescScriptDeleted": "Skrip konfigurasi pengguna dipadamkan:",
     "DescScriptUpdated": "Skrip konfigurasi pengguna dikemas kini. Ini akan digunakan untuk sesi baru sahaja.",
-    "DescSessionMonitor": "Memaparkan pemantau sesi di pengepala: sesi yang berjalan, penggunaan sumbernya dan penamatan terbiar yang terdekat. Semasa ia dihidupkan, anda juga menerima pemberitahuan 30 dan 10 minit sebelum semakan terbiar menamatkan salah satu sesi anda.",
+    "DescSessionMonitor": "Memaparkan bilangan sesi yang anda pantau di pengepala, di setiap halaman. Secara lalai, ia ialah sesi yang anda cipta; tukar syaratnya dalam tetapan pemantau itu sendiri. Apabila item penamatan terbiar dihidupkan di sana, anda juga menerima pemberitahuan 30 dan 10 minit sebelum semakan terbiar menamatkan salah satu sesi anda.",
     "DescThemeFamily": "Tetapkan tema.",
     "DescThemeMode": "Tetapkan mod paparan.",
     "DescUseCompactSidebar": "Bar sisi padat menyediakan lebih banyak ruang kerja. <br />Apabila dibolehkan, bar sisi padat akan menjadi UI lalai semasa permulaan.",

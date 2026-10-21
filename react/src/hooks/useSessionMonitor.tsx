@@ -2,16 +2,22 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useCurrentDomainValue } from '.';
 import type { useSessionMonitorQuery } from '../__generated__/useSessionMonitorQuery.graphql';
 import type { IdleChecks } from '../components/ComputeSessionNodeItems/SessionIdleChecks';
 import {
+  buildSessionMonitorFilter,
   SESSION_MONITOR_FETCH_LIMIT,
   SESSION_MONITOR_RUNNING_FILTER,
   SESSION_MONITOR_STARTING_FILTER,
+  sumOccupiedSlots,
   toSessionMonitorEntry,
   type SessionMonitorEntry,
   type SessionMonitorSummary,
 } from '../helper/sessionMonitor';
+import { useCurrentUserInfo } from './backendai';
+import { useBAISettingUserState } from './useBAISetting';
+import { useCurrentUserProjectRoles } from './useCurrentUserProjectRoles';
 import { INITIAL_FETCH_KEY } from 'backend.ai-ui';
 import { atom } from 'jotai';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -24,18 +30,54 @@ export const sessionMonitorSummaryAtom = atom<SessionMonitorSummary | null>(
 );
 
 /**
- * `my`: the user's sessions in the current project; `project`: every session
- * of the project (project-admin pages); `domain`: every session of the domain
- * (admin pages, domain admins).
+ * What the monitor watches, the same on every page: `scopeId` is the widest
+ * scope the viewer may read (the domain for domain admins, else the user) and
+ * `filter` narrows it to the user's condition.
  */
-export type SessionMonitorMode = 'my' | 'project' | 'domain';
 export type SessionMonitorScope = {
-  mode: SessionMonitorMode;
   scopeId: string;
   filter: string;
+  /** Only the viewer's own sessions: the default, and what alerts need. */
+  onlyMine: boolean;
+  /** No condition beyond "mine": the popover is titled "My sessions". */
+  isDefault: boolean;
+  /** The viewer may read other users' sessions (domain admin and above). */
+  isDomainAdmin: boolean;
 };
-/** Resolved by `SessionMonitorWatcher` for the route; null hides the chip. */
+/** Written by `SessionMonitorWatcher`; null hides the chip. */
 export const sessionMonitorScopeAtom = atom<SessionMonitorScope | null>(null);
+
+/**
+ * Resolves the scope from the viewer's permission and monitor settings, never
+ * from the page or the current project.
+ */
+export const useSessionMonitorScope = (): SessionMonitorScope => {
+  'use memo';
+  const { isSuperAdmin, domainAdminDomains } = useCurrentUserProjectRoles();
+  const domainName = useCurrentDomainValue();
+  const [currentUser] = useCurrentUserInfo();
+  const [onlyMineSetting] = useBAISettingUserState('session_monitor_only_mine');
+  const [condition] = useBAISettingUserState('session_monitor_condition');
+  const [includeStarting] = useBAISettingUserState(
+    'session_monitor_include_starting',
+  );
+  const isDomainAdmin = isSuperAdmin || domainAdminDomains.length > 0;
+  // Below domain admin the user scope already holds only their sessions.
+  const onlyMine = !isDomainAdmin || (onlyMineSetting ?? true);
+  const userId = currentUser.uuid ?? '';
+  return {
+    scopeId: isDomainAdmin ? `domain:${domainName}` : `user:${userId}`,
+    filter: buildSessionMonitorFilter({
+      userId,
+      onlyMine,
+      condition,
+      includeStarting: includeStarting ?? true,
+    }),
+    onlyMine,
+    isDefault: onlyMine && !condition?.trim(),
+    isDomainAdmin,
+  };
+};
 
 const parseIdleChecks = (raw: string | null | undefined): IdleChecks | null => {
   if (!raw) return null;
@@ -54,16 +96,30 @@ export type SessionMonitorNode = NonNullable<
   >['node']
 >;
 
+type SessionMonitorDataOptions = {
+  /** The session page: needed for the idle countdown, alerts and rows. */
+  withEntries?: boolean;
+  /** `occupied_slots` on the page, for the allocated-resources segment. */
+  withSlots?: boolean;
+  /** The row fragment with per-kernel live stats: the open popover only. */
+  withRows?: boolean;
+  /** Running and starting counts for the popover header. */
+  withBreakdown?: boolean;
+};
+
 /**
- * The unfinished sessions of `scope`, newest first. Shared by the watcher and
- * the popover so both see one answer.
+ * The watched sessions of `scope`. Without options this is one `count`, which
+ * is all the default chip needs; each option adds only what it reads.
  */
 export const useSessionMonitorData = (
   fetchKey: string,
   scope: SessionMonitorScope,
-  // The row fragment carries per-kernel live stats; only the open popover
-  // needs it, so the minute-by-minute watcher leaves it out.
-  { withRows = false }: { withRows?: boolean } = {},
+  {
+    withEntries = false,
+    withSlots = false,
+    withRows = false,
+    withBreakdown = false,
+  }: SessionMonitorDataOptions = {},
 ) => {
   'use memo';
 
@@ -75,20 +131,30 @@ export const useSessionMonitorData = (
         $runningFilter: String
         $startingFilter: String
         $first: Int
+        $withEntries: Boolean!
+        $withSlots: Boolean!
         $withRows: Boolean!
+        $withBreakdown: Boolean!
       ) {
+        matching: compute_session_nodes(
+          scope_id: $scopeId
+          filter: $filter
+          first: 0
+        ) {
+          count
+        }
         runningCount: compute_session_nodes(
           scope_id: $scopeId
           filter: $runningFilter
           first: 0
-        ) {
+        ) @include(if: $withBreakdown) {
           count
         }
         startingCount: compute_session_nodes(
           scope_id: $scopeId
           filter: $startingFilter
           first: 0
-        ) {
+        ) @include(if: $withBreakdown) {
           count
         }
         compute_session_nodes(
@@ -96,15 +162,16 @@ export const useSessionMonitorData = (
           filter: $filter
           order: "-created_at"
           first: $first
-        ) {
-          count
+        ) @include(if: $withEntries) {
           edges {
             node {
               id
               name
               status
               created_at
+              user_id
               idle_checks
+              occupied_slots @include(if: $withSlots)
               ...SessionMonitorItemFragment
                 @include(if: $withRows)
                 @alias(as: "row")
@@ -116,10 +183,13 @@ export const useSessionMonitorData = (
     {
       scopeId: scope.scopeId,
       filter: scope.filter,
-      runningFilter: `${scope.filter} & ${SESSION_MONITOR_RUNNING_FILTER}`,
-      startingFilter: `${scope.filter} & ${SESSION_MONITOR_STARTING_FILTER}`,
+      runningFilter: `(${scope.filter}) & (${SESSION_MONITOR_RUNNING_FILTER})`,
+      startingFilter: `(${scope.filter}) & (${SESSION_MONITOR_STARTING_FILTER})`,
       first: SESSION_MONITOR_FETCH_LIMIT,
+      withEntries: withEntries || withSlots || withRows,
+      withSlots,
       withRows,
+      withBreakdown,
     },
     { fetchPolicy: 'store-and-network', fetchKey },
   );
@@ -131,11 +201,16 @@ export const useSessionMonitorData = (
   return {
     entries,
     nodesById,
-    total: data.compute_session_nodes?.count ?? entries.length,
+    total: data.matching?.count ?? entries.length,
     counts: {
       running: data.runningCount?.count ?? 0,
       starting: data.startingCount?.count ?? 0,
     },
+    allocated: withSlots
+      ? sumOccupiedSlots(
+          Array.from(nodesById.values(), (node) => node.occupied_slots),
+        )
+      : null,
     fetchedAt,
   };
 };

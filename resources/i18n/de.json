@@ -3286,8 +3286,6 @@
     }
   },
   "sessionMonitor": {
-    "DomainSessions": "Sitzungen in dieser Domäne",
-    "InUseAcross": "Zugewiesen an {{count}} laufende Sitzungen",
     "MonitorSettings": "Monitor-Einstellungen",
     "MoreSessions": "{{count}} weitere ({{total}} insgesamt)",
     "MyResourceUsage": "Mir zugewiesen, im Vergleich zu meinem Limit",
@@ -3295,10 +3293,11 @@
     "NoActiveSessions": "Keine aktiven Sitzungen",
     "OpenSession": "Sitzung öffnen",
     "OpenSessionList": "Sitzungsliste öffnen",
-    "ProjectSessions": "Sitzungen in diesem Projekt",
     "RunningCount": "{{count}} laufend",
+    "SessionCount": "{{count}} Sitzungen",
     "StartingCount": "{{count}} startend",
-    "Tooltip": "Sitzungsmonitor: Anzahl laufender Sitzungen und nächste Beendigung",
+    "Tooltip": "Sitzungsmonitor: die beobachteten Sitzungen, auf jeder Seite",
+    "WatchedSessions": "Beobachtete Sitzungen",
     "idleAlert": {
       "NetworkTimeout": "Es wurde keine Netzwerkaktivität erkannt. Verbinden Sie sich mit der Sitzung, bevor sie beendet wird.",
       "SessionLifetime": "Die Sitzung erreicht ihre maximale Lebensdauer.",
@@ -3306,9 +3305,15 @@
       "Utilization": "Die Ressourcennutzung liegt unter dem Leerlaufschwellenwert. Verwenden Sie die Sitzung, bevor sie beendet wird."
     },
     "settings": {
+      "ChipIdle": "Nächste Leerlaufbeendigung, mit Warnungen",
+      "ChipResources": "Zugewiesene Ressourcen",
+      "Condition": "Zu beobachtende Sitzungen",
       "IncludeStarting": "Startende Sitzungen einschließen",
+      "List": "Liste",
+      "OnlyMine": "Nur von mir erstellte Sitzungen",
       "OpenUserSettings": "Sitzungsmonitor-Einstellungen →",
       "RowsShown": "Angezeigte Zeilen",
+      "ShowInHeader": "In der Kopfzeile anzeigen",
       "SortBy": "Sortieren",
       "SortDeadline": "Baldigste Beendigung zuerst",
       "SortName": "Name",
@@ -3769,7 +3774,7 @@
     "DescScriptCreated": "Benutzerkonfigurationsskript erstellt. Dies gilt nur für neue Sitzungen.",
     "DescScriptDeleted": "Benutzerkonfigurationsskript gelöscht:",
     "DescScriptUpdated": "Benutzerkonfigurationsskript aktualisiert. Dies gilt nur für neue Sitzungen.",
-    "DescSessionMonitor": "Zeigt den Sitzungsmonitor in der Kopfzeile: laufende Sitzungen, ihre Ressourcennutzung und die nächste Leerlaufbeendigung. Solange er aktiviert ist, erhalten Sie außerdem 30 und 10 Minuten bevor eine Leerlaufprüfung eine Ihrer Sitzungen beendet eine Benachrichtigung.",
+    "DescSessionMonitor": "Zeigt auf jeder Seite die Anzahl der beobachteten Sitzungen in der Kopfzeile. Standardmäßig sind das die von Ihnen erstellten Sitzungen; die Bedingung ändern Sie in den Einstellungen des Monitors. Ist dort der Eintrag zur Leerlaufbeendigung aktiviert, erhalten Sie außerdem 30 und 10 Minuten bevor eine Leerlaufprüfung eine Ihrer Sitzungen beendet eine Benachrichtigung.",
     "DescThemeFamily": "Thema festlegen.",
     "DescThemeMode": "Anzeigemodus festlegen.",
     "DescUseCompactSidebar": "Die kompakte Seitenleiste bietet mehr Arbeitsbereich. <br />Wenn aktiviert, wird die kompakte Seitenleiste beim Start zur Standard-UI.",

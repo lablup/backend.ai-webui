@@ -23,6 +23,12 @@ export interface UserSettings {
   session_monitor_sort?: 'deadline' | 'newest' | 'name';
   session_monitor_include_starting?: boolean;
   session_monitor_rows?: number;
+  /** Watch only the sessions the viewer created; default on. */
+  session_monitor_only_mine?: boolean;
+  /** Extra queryfilter condition on the watched sessions. */
+  session_monitor_condition?: string;
+  /** What the header chip shows besides the count; default none. */
+  session_monitor_chip_items?: Array<'resources' | 'idle'>;
   compact_sidebar?: boolean;
   preserve_login?: boolean;
   automatic_update_check?: boolean;

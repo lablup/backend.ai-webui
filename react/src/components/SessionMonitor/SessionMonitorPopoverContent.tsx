@@ -3,23 +3,21 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
-  isStartingStatus,
   rankSessions,
   SESSION_MONITOR_VISIBLE_LIMIT,
 } from '../../helper/sessionMonitor';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
+import { useIsProjectAgnosticPage } from '../../hooks/useIsProjectAgnosticPage';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import {
   sessionMonitorFetchKeyAtom,
   sessionMonitorScopeAtom,
   useSessionMonitorData,
-  type SessionMonitorMode,
   type SessionMonitorScope,
 } from '../../hooks/useSessionMonitor';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import SessionMonitorItem from './SessionMonitorItem';
 import SessionMonitorResourceUsage from './SessionMonitorResourceUsage';
-import SessionMonitorScopeTotals from './SessionMonitorScopeTotals';
 import SessionMonitorSettingsPane from './SessionMonitorSettingsPane';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
@@ -44,7 +42,9 @@ const SessionMonitorPopoverContent: React.FC<
   SessionMonitorPopoverContentProps
 > = ({ onNavigate, onOpenSessionDetail }) => {
   'use memo';
-  const scope = useAtomValue(sessionMonitorScopeAtom);
+  // Deferred so editing the condition keeps the open view instead of
+  // suspending the popover back to a skeleton.
+  const scope = useDeferredValue(useAtomValue(sessionMonitorScopeAtom));
   return scope ? (
     <ScopedSessionMonitorPopoverContent
       scope={scope}
@@ -54,12 +54,10 @@ const SessionMonitorPopoverContent: React.FC<
   ) : null;
 };
 
-export const sessionMonitorTitleKey = (mode: SessionMonitorMode) =>
-  mode === 'domain'
-    ? 'sessionMonitor.DomainSessions'
-    : mode === 'project'
-      ? 'sessionMonitor.ProjectSessions'
-      : 'sessionMonitor.MySessions';
+export const sessionMonitorTitleKey = (scope: SessionMonitorScope) =>
+  scope.isDefault
+    ? 'sessionMonitor.MySessions'
+    : 'sessionMonitor.WatchedSessions';
 
 const ScopedSessionMonitorPopoverContent: React.FC<
   SessionMonitorPopoverContentProps & { scope: SessionMonitorScope }
@@ -73,32 +71,21 @@ const ScopedSessionMonitorPopoverContent: React.FC<
   const [isPending, startTransition] = useTransition();
   const [view, setView] = useState<'list' | 'settings'>('list');
   const [sort] = useBAISettingUserState('session_monitor_sort');
-  const [includeStarting] = useBAISettingUserState(
-    'session_monitor_include_starting',
-  );
   const [rows] = useBAISettingUserState('session_monitor_rows');
+  const isProjectAgnosticPage = useIsProjectAgnosticPage();
   const { entries, nodesById, total, counts, fetchedAt } =
-    useSessionMonitorData(deferredFetchKey, scope, { withRows: true });
+    useSessionMonitorData(deferredFetchKey, scope, {
+      withRows: true,
+      withBreakdown: true,
+    });
 
-  const listed =
-    (includeStarting ?? true)
-      ? entries
-      : entries.filter((e) => !isStartingStatus(e.status));
-  const ranked = rankSessions(listed, sort ?? 'deadline');
+  const ranked = rankSessions(entries, sort ?? 'deadline');
   const visible = ranked.slice(0, rows ?? SESSION_MONITOR_VISIBLE_LIMIT);
-  // `total` counts the scope; starting sessions filtered out locally are
-  // subtracted so the footer agrees with what the list can show.
-  const listedTotal = Math.max(0, total - (entries.length - listed.length));
-  const hiddenCount = Math.max(0, listedTotal - visible.length);
+  const hiddenCount = Math.max(0, total - visible.length);
   const { running, starting } = counts;
-  // The list that matches the scope: admin, project-admin or the user's own.
+  // Other users' sessions are only listed on the admin session list.
   const listPath = buildProjectPath('session', {
-    scope:
-      scope.mode === 'domain'
-        ? 'admin'
-        : scope.mode === 'project'
-          ? 'projectAdmin'
-          : 'project',
+    scope: scope.onlyMine ? 'project' : 'admin',
   });
 
   return (
@@ -119,7 +106,7 @@ const ScopedSessionMonitorPopoverContent: React.FC<
         <Text type="label" weight="semibold">
           {view === 'settings'
             ? t('sessionMonitor.MonitorSettings')
-            : t(sessionMonitorTitleKey(scope.mode))}
+            : t(sessionMonitorTitleKey(scope))}
         </Text>
         {view === 'list' && (
           <Text type="supporting">
@@ -146,7 +133,7 @@ const ScopedSessionMonitorPopoverContent: React.FC<
           size="sm"
           label={
             view === 'settings'
-              ? t(sessionMonitorTitleKey(scope.mode))
+              ? t(sessionMonitorTitleKey(scope))
               : t('sessionMonitor.MonitorSettings')
           }
           icon={
@@ -160,7 +147,10 @@ const ScopedSessionMonitorPopoverContent: React.FC<
         />
       </BAIFlex>
       {view === 'settings' ? (
-        <SessionMonitorSettingsPane onNavigate={onNavigate} />
+        <SessionMonitorSettingsPane
+          isDomainAdmin={scope.isDomainAdmin}
+          onNavigate={onNavigate}
+        />
       ) : (
         <>
           {visible.length === 0 ? (
@@ -188,14 +178,8 @@ const ScopedSessionMonitorPopoverContent: React.FC<
               ) : null;
             })
           )}
-          {scope.mode !== 'my' && (
-            <ErrorBoundaryWithNullFallback>
-              <Suspense fallback={null}>
-                <SessionMonitorScopeTotals scope={scope} />
-              </Suspense>
-            </ErrorBoundaryWithNullFallback>
-          )}
-          {scope.mode === 'my' && (
+          {/* The keypair limit is the viewer's; it reads the current project. */}
+          {scope.onlyMine && !isProjectAgnosticPage && (
             <ErrorBoundaryWithNullFallback>
               <Suspense fallback={null}>
                 <SessionMonitorResourceUsage />
@@ -224,7 +208,7 @@ const ScopedSessionMonitorPopoverContent: React.FC<
               <Text type="supporting">
                 {t('sessionMonitor.MoreSessions', {
                   count: hiddenCount,
-                  total: listedTotal,
+                  total,
                 })}
               </Text>
             )}

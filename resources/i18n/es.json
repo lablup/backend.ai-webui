@@ -3284,8 +3284,6 @@
     }
   },
   "sessionMonitor": {
-    "DomainSessions": "Sesiones de este dominio",
-    "InUseAcross": "Asignado a {{count}} sesiones en ejecución",
     "MonitorSettings": "Configuración del monitor",
     "MoreSessions": "{{count}} más ({{total}} en total)",
     "MyResourceUsage": "Asignado a mí, frente a mi límite",
@@ -3293,10 +3291,11 @@
     "NoActiveSessions": "No hay sesiones activas",
     "OpenSession": "Abrir sesión",
     "OpenSessionList": "Abrir lista de sesiones",
-    "ProjectSessions": "Sesiones de este proyecto",
     "RunningCount": "{{count}} en ejecución",
+    "SessionCount": "{{count}} sesiones",
     "StartingCount": "{{count}} iniciando",
-    "Tooltip": "Monitor de sesiones: número en ejecución y la próxima finalización",
+    "Tooltip": "Monitor de sesiones: las sesiones que vigila, en cada página",
+    "WatchedSessions": "Sesiones vigiladas",
     "idleAlert": {
       "NetworkTimeout": "No se ha detectado actividad de red. Conéctese a la sesión antes de que se cierre.",
       "SessionLifetime": "La sesión está alcanzando su duración máxima.",
@@ -3304,9 +3303,15 @@
       "Utilization": "El uso de recursos se ha mantenido por debajo del umbral de inactividad. Use la sesión antes de que se cierre."
     },
     "settings": {
+      "ChipIdle": "Próxima finalización por inactividad, con alertas",
+      "ChipResources": "Recursos asignados",
+      "Condition": "Sesiones a vigilar",
       "IncludeStarting": "Incluir sesiones en inicio",
+      "List": "Lista",
+      "OnlyMine": "Solo las sesiones que creé",
       "OpenUserSettings": "Ajustes del monitor de sesiones →",
       "RowsShown": "Filas mostradas",
+      "ShowInHeader": "Mostrar en el encabezado",
       "SortBy": "Ordenar",
       "SortDeadline": "Finalización más próxima primero",
       "SortName": "Nombre",
@@ -3767,7 +3772,7 @@
     "DescScriptCreated": "Script de configuración de usuario creado. Esto se aplicará sólo a las nuevas sesiones.",
     "DescScriptDeleted": "Script de configuración de usuario borrado :",
     "DescScriptUpdated": "Script de configuración de usuario actualizado. Esto se aplicará sólo a las nuevas sesiones.",
-    "DescSessionMonitor": "Muestra el monitor de sesiones en el encabezado: sesiones en ejecución, su uso de recursos y la próxima finalización por inactividad. Mientras esté activado, también recibirá una notificación 30 y 10 minutos antes de que una comprobación de inactividad finalice una de sus sesiones.",
+    "DescSessionMonitor": "Muestra en el encabezado, en cada página, el número de sesiones que vigila. De forma predeterminada son las sesiones que usted creó; cambie la condición en la configuración del propio monitor. Si allí activa el elemento de finalización por inactividad, también recibirá una notificación 30 y 10 minutos antes de que una comprobación de inactividad finalice una de sus sesiones.",
     "DescThemeFamily": "Establecer el tema.",
     "DescThemeMode": "Establecer el modo de visualización.",
     "DescUseCompactSidebar": "La barra lateral compacta le permite utilizar más espacio de trabajo. <br />Si esta opción está activada, la barra lateral compacta se convierte en la interfaz de usuario inicial al arrancar.",

@@ -1,10 +1,12 @@
 import {
   applyAttentionTitleBadge,
+  buildSessionMonitorFilter,
   getNearestIdleCheck,
   pickDueAlerts,
   rankSessions,
   readAlertedRecords,
   summarizeSessions,
+  sumOccupiedSlots,
   toSessionMonitorEntry,
   type SessionMonitorEntry,
 } from './sessionMonitor';
@@ -16,6 +18,7 @@ const entry = (
   overrides: Partial<SessionMonitorEntry> & { id: string },
 ): SessionMonitorEntry => ({
   name: overrides.id,
+  userId: null,
   status: 'RUNNING',
   createdAt: '2026-01-01T00:00:00Z',
   nearest: null,
@@ -74,7 +77,7 @@ describe('getNearestIdleCheck', () => {
 describe('toSessionMonitorEntry', () => {
   it('anchors the deadline to the fetch time', () => {
     const result = toSessionMonitorEntry(
-      { id: 's1', name: 'train', status: 'RUNNING' },
+      { id: 's1', name: 'train', status: 'RUNNING', user_id: 'u1' },
       {
         utilization: {
           remaining: 60,
@@ -86,6 +89,7 @@ describe('toSessionMonitorEntry', () => {
     );
     expect(result.deadline).toBe(NOW + 60_000);
     expect(result.nearest?.key).toBe('utilization');
+    expect(result.userId).toBe('u1');
   });
 });
 
@@ -102,29 +106,59 @@ describe('rankSessions', () => {
 });
 
 describe('summarizeSessions', () => {
-  it('counts running, starting and attention sessions', () => {
+  it('finds the nearest deadline and the sessions needing attention', () => {
     const summary = summarizeSessions(
       [
         entry({ id: 'a', deadline: NOW + 5 * 60_000 }),
         entry({ id: 'b', deadline: NOW + 5 * 3600_000 }),
         entry({ id: 'c', status: 'PENDING' }),
       ],
-      3,
+      120,
       NOW,
     );
-    expect(summary.running).toBe(2);
-    expect(summary.starting).toBe(1);
+    expect(summary.total).toBe(120);
     expect(summary.attentionCount).toBe(1);
     expect(summary.nearest?.id).toBe('a');
+    expect(summary.allocated).toBeNull();
+  });
+});
+
+describe('buildSessionMonitorFilter', () => {
+  it('scopes to the viewer and keeps the condition parenthesized', () => {
+    expect(
+      buildSessionMonitorFilter({
+        userId: 'u1',
+        onlyMine: true,
+        condition: 'name ilike "%a%" | type == "batch"',
+        includeStarting: false,
+      }),
+    ).toBe(
+      '(status == "RUNNING") & (user_id == "u1") & (name ilike "%a%" | type == "batch")',
+    );
   });
 
-  it('prefers server-side counts over the fetched page', () => {
-    const summary = summarizeSessions([entry({ id: 'a' })], 120, NOW, {
-      running: 90,
-      starting: 30,
-    });
-    expect(summary.running).toBe(90);
-    expect(summary.starting).toBe(30);
+  it('drops the owner and an empty condition', () => {
+    expect(
+      buildSessionMonitorFilter({
+        userId: 'u1',
+        onlyMine: false,
+        condition: '  ',
+        includeStarting: true,
+      }),
+    ).toBe('(status != "TERMINATED" & status != "CANCELLED")');
+  });
+});
+
+describe('sumOccupiedSlots', () => {
+  it('adds slots across sessions and skips unreadable ones', () => {
+    expect(
+      sumOccupiedSlots([
+        '{"cpu": "4", "mem": "1073741824", "cuda.shares": "0.5"}',
+        '{"cpu": 2, "cuda.shares": "1"}',
+        'not json',
+        null,
+      ]),
+    ).toEqual({ cpu: 6, mem: 1073741824, 'cuda.shares': 1.5 });
   });
 });
 

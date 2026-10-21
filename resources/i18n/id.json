@@ -3288,8 +3288,6 @@
     }
   },
   "sessionMonitor": {
-    "DomainSessions": "Sesi di domain ini",
-    "InUseAcross": "Dialokasikan untuk {{count}} sesi yang berjalan",
     "MonitorSettings": "Pengaturan monitor",
     "MoreSessions": "{{count}} lainnya ({{total}} total)",
     "MyResourceUsage": "Dialokasikan untuk saya, dibandingkan dengan batas saya",
@@ -3297,10 +3295,11 @@
     "NoActiveSessions": "Tidak ada sesi aktif",
     "OpenSession": "Buka sesi",
     "OpenSessionList": "Buka daftar sesi",
-    "ProjectSessions": "Sesi di proyek ini",
     "RunningCount": "{{count}} berjalan",
+    "SessionCount": "{{count}} sesi",
     "StartingCount": "{{count}} memulai",
-    "Tooltip": "Monitor sesi: jumlah yang berjalan dan penghentian terdekat",
+    "Tooltip": "Monitor sesi: sesi yang Anda pantau, di setiap halaman",
+    "WatchedSessions": "Sesi yang dipantau",
     "idleAlert": {
       "NetworkTimeout": "Tidak ada aktivitas jaringan yang terdeteksi. Sambungkan ke sesi sebelum dihentikan.",
       "SessionLifetime": "Sesi telah mencapai durasi maksimalnya.",
@@ -3308,9 +3307,15 @@
       "Utilization": "Penggunaan sumber daya tetap di bawah ambang batas idle. Gunakan sesi sebelum dihentikan."
     },
     "settings": {
+      "ChipIdle": "Penghentian idle terdekat, dengan peringatan",
+      "ChipResources": "Sumber daya yang dialokasikan",
+      "Condition": "Sesi yang dipantau",
       "IncludeStarting": "Sertakan sesi yang sedang dimulai",
+      "List": "Daftar",
+      "OnlyMine": "Hanya sesi yang saya buat",
       "OpenUserSettings": "Pengaturan monitor sesi →",
       "RowsShown": "Baris yang ditampilkan",
+      "ShowInHeader": "Tampilkan di header",
       "SortBy": "Urutkan",
       "SortDeadline": "Penghentian tercepat lebih dulu",
       "SortName": "Nama",
@@ -3771,7 +3776,7 @@
     "DescScriptCreated": "Skrip konfigurasi pengguna dibuat. Ini hanya akan diterapkan ke sesi baru.",
     "DescScriptDeleted": "Skrip konfigurasi pengguna dihapus:",
     "DescScriptUpdated": "Skrip konfigurasi pengguna diperbarui. Ini hanya akan diterapkan ke sesi baru.",
-    "DescSessionMonitor": "Menampilkan monitor sesi di header: sesi yang berjalan, penggunaan sumber dayanya, dan penghentian karena idle yang terdekat. Selama aktif, Anda juga menerima notifikasi 30 dan 10 menit sebelum pemeriksaan idle menghentikan salah satu sesi Anda.",
+    "DescSessionMonitor": "Menampilkan jumlah sesi yang Anda pantau di header, di setiap halaman. Secara default, ini adalah sesi yang Anda buat; ubah kondisinya di pengaturan monitor itu sendiri. Jika item penghentian idle diaktifkan di sana, Anda juga menerima notifikasi 30 dan 10 menit sebelum pemeriksaan idle menghentikan salah satu sesi Anda.",
     "DescThemeFamily": "Atur tema.",
     "DescThemeMode": "Atur mode tampilan.",
     "DescUseCompactSidebar": "Sidebar kompak menyediakan ruang kerja lebih banyak. <br />Ketika diaktifkan, sidebar kompak akan menjadi UI default saat startup.",

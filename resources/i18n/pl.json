@@ -3287,8 +3287,6 @@
     }
   },
   "sessionMonitor": {
-    "DomainSessions": "Sesje w tej domenie",
-    "InUseAcross": "Przydzielone do {{count}} działających sesji",
     "MonitorSettings": "Ustawienia monitora",
     "MoreSessions": "{{count}} więcej ({{total}} łącznie)",
     "MyResourceUsage": "Przydzielone mi, względem mojego limitu",
@@ -3296,10 +3294,11 @@
     "NoActiveSessions": "Brak aktywnych sesji",
     "OpenSession": "Otwórz sesję",
     "OpenSessionList": "Otwórz listę sesji",
-    "ProjectSessions": "Sesje w tym projekcie",
     "RunningCount": "{{count}} działa",
+    "SessionCount": "{{count}} sesji",
     "StartingCount": "{{count}} uruchamia się",
-    "Tooltip": "Monitor sesji: liczba działających i najbliższe zakończenie",
+    "Tooltip": "Monitor sesji: obserwowane sesje, na każdej stronie",
+    "WatchedSessions": "Obserwowane sesje",
     "idleAlert": {
       "NetworkTimeout": "Nie wykryto aktywności sieciowej. Połącz się z sesją, zanim zostanie zakończona.",
       "SessionLifetime": "Sesja osiąga swój maksymalny czas trwania.",
@@ -3307,9 +3306,15 @@
       "Utilization": "Wykorzystanie zasobów utrzymuje się poniżej progu bezczynności. Użyj sesji, zanim zostanie zakończona."
     },
     "settings": {
+      "ChipIdle": "Najbliższe zakończenie z powodu bezczynności, z alertami",
+      "ChipResources": "Przydzielone zasoby",
+      "Condition": "Sesje do obserwowania",
       "IncludeStarting": "Uwzględnij uruchamiające się sesje",
+      "List": "Lista",
+      "OnlyMine": "Tylko sesje utworzone przeze mnie",
       "OpenUserSettings": "Ustawienia monitora sesji →",
       "RowsShown": "Wyświetlane wiersze",
+      "ShowInHeader": "Pokaż w nagłówku",
       "SortBy": "Sortuj",
       "SortDeadline": "Najszybsze zakończenie najpierw",
       "SortName": "Nazwa",
@@ -3770,7 +3775,7 @@
     "DescScriptCreated": "Utworzono skrypt konfiguracji użytkownika. Zostanie to zastosowane tylko do nowych sesji.",
     "DescScriptDeleted": "Skrypt konfiguracji użytkownika został usunięty :",
     "DescScriptUpdated": "Zaktualizowano skrypt konfiguracji użytkownika. Zostanie to zastosowane tylko do nowych sesji.",
-    "DescSessionMonitor": "Wyświetla monitor sesji w nagłówku: działające sesje, ich użycie zasobów i najbliższe zakończenie z powodu bezczynności. Gdy jest włączony, otrzymujesz także powiadomienie 30 i 10 minut przed zakończeniem jednej z Twoich sesji przez kontrolę bezczynności.",
+    "DescSessionMonitor": "Wyświetla w nagłówku, na każdej stronie, liczbę obserwowanych sesji. Domyślnie są to sesje utworzone przez Ciebie; warunek zmienisz w ustawieniach samego monitora. Gdy włączysz tam pozycję zakończenia z powodu bezczynności, otrzymasz także powiadomienie 30 i 10 minut przed zakończeniem jednej z Twoich sesji przez kontrolę bezczynności.",
     "DescThemeFamily": "Ustaw temat.",
     "DescThemeMode": "Ustaw tryb wyświetlania.",
     "DescUseCompactSidebar": "Kompaktowy pasek boczny zapewnia więcej przestrzeni roboczej. <br />Po włączeniu kompaktowy pasek boczny będzie domyślnym interfejsem użytkownika przy uruchomieniu.",

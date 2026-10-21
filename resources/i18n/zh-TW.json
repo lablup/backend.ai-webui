@@ -3288,8 +3288,6 @@
     }
   },
   "sessionMonitor": {
-    "DomainSessions": "此網域中的會話",
-    "InUseAcross": "已分配給 {{count}} 個執行中的會話",
     "MonitorSettings": "監控設定",
     "MoreSessions": "還有 {{count}} 個 (共 {{total}} 個)",
     "MyResourceUsage": "已分配給我（與我的限制對比）",
@@ -3297,10 +3295,11 @@
     "NoActiveSessions": "沒有活動會話",
     "OpenSession": "開啟會話",
     "OpenSessionList": "開啟會話清單",
-    "ProjectSessions": "此項目中的會話",
     "RunningCount": "{{count}} 個執行中",
+    "SessionCount": "{{count}} 個會話",
     "StartingCount": "{{count}} 個啟動中",
-    "Tooltip": "會話監控：執行數量與最近的終止時間",
+    "Tooltip": "會話監控：在任何頁面關注的會話",
+    "WatchedSessions": "關注的會話",
     "idleAlert": {
       "NetworkTimeout": "未偵測到網路活動。請在會話終止前連線至該會話。",
       "SessionLifetime": "會話即將達到最大使用期限。",
@@ -3308,9 +3307,15 @@
       "Utilization": "資源使用率持續低於閒置門檻。請在會話終止前使用該會話。"
     },
     "settings": {
+      "ChipIdle": "最近的閒置終止及提醒",
+      "ChipResources": "已分配的資源",
+      "Condition": "要關注的會話",
       "IncludeStarting": "包含正在啟動的會話",
+      "List": "列表",
+      "OnlyMine": "僅限我建立的會話",
       "OpenUserSettings": "會話監控設置 →",
       "RowsShown": "顯示行數",
+      "ShowInHeader": "在頁首顯示",
       "SortBy": "排序",
       "SortDeadline": "即將終止優先",
       "SortName": "名稱",
@@ -3771,7 +3776,7 @@
     "DescScriptCreated": "已創建用戶配置腳本。這將僅適用於新會話。",
     "DescScriptDeleted": "用戶配置腳本已刪除：",
     "DescScriptUpdated": "用戶配置腳本已更新。這將僅適用於新會話。",
-    "DescSessionMonitor": "在頁首顯示會話監控：正在執行的會話、資源使用情況以及最近的閒置終止時間。開啟時，在閒置檢查終止您的會話前30分鐘與10分鐘，您也會收到通知。",
+    "DescSessionMonitor": "在任何頁面的頁首顯示您關注的會話數量。預設關注您建立的會話，可在監控本身的設定中變更條件。在那裡開啟閒置終止項目後，在閒置檢查終止您的會話前30分鐘與10分鐘，您也會收到通知。",
     "DescThemeFamily": "設定主題。",
     "DescThemeMode": "設定顯示模式。",
     "DescUseCompactSidebar": "緊湊側邊欄提供更多工作空間。<br />啟用後，緊湊側邊欄將成為啟動時的預設介面。",

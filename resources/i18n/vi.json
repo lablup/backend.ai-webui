@@ -3286,8 +3286,6 @@
     }
   },
   "sessionMonitor": {
-    "DomainSessions": "Phiên trong miền này",
-    "InUseAcross": "Được cấp phát cho {{count}} phiên đang chạy",
     "MonitorSettings": "Cài đặt giám sát",
     "MoreSessions": "{{count}} nữa (tổng {{total}})",
     "MyResourceUsage": "Được cấp phát cho tôi, so với giới hạn của tôi",
@@ -3295,10 +3293,11 @@
     "NoActiveSessions": "Không có phiên hoạt động",
     "OpenSession": "Mở phiên",
     "OpenSessionList": "Mở danh sách phiên",
-    "ProjectSessions": "Phiên trong dự án này",
     "RunningCount": "{{count}} đang chạy",
+    "SessionCount": "{{count}} phiên",
     "StartingCount": "{{count}} đang khởi động",
-    "Tooltip": "Giám sát phiên: số lượng đang chạy và thời điểm kết thúc gần nhất",
+    "Tooltip": "Giám sát phiên: các phiên bạn theo dõi, trên mọi trang",
+    "WatchedSessions": "Phiên đang theo dõi",
     "idleAlert": {
       "NetworkTimeout": "Không phát hiện hoạt động mạng. Hãy kết nối đến phiên trước khi nó bị chấm dứt.",
       "SessionLifetime": "Phiên đang đạt đến thời gian tồn tại tối đa.",
@@ -3306,9 +3305,15 @@
       "Utilization": "Mức sử dụng tài nguyên vẫn ở dưới ngưỡng không hoạt động. Hãy sử dụng phiên trước khi nó bị chấm dứt."
     },
     "settings": {
+      "ChipIdle": "Thời điểm chấm dứt do không hoạt động gần nhất, kèm cảnh báo",
+      "ChipResources": "Tài nguyên được cấp phát",
+      "Condition": "Phiên cần theo dõi",
       "IncludeStarting": "Bao gồm các phiên đang khởi động",
+      "List": "Danh sách",
+      "OnlyMine": "Chỉ các phiên tôi đã tạo",
       "OpenUserSettings": "Cài đặt giám sát phiên →",
       "RowsShown": "Số dòng hiển thị",
+      "ShowInHeader": "Hiển thị trên thanh tiêu đề",
       "SortBy": "Sắp xếp",
       "SortDeadline": "Sắp kết thúc sớm nhất trước",
       "SortName": "Tên",
@@ -3769,7 +3774,7 @@
     "DescScriptCreated": "Đã tạo tập lệnh cấu hình người dùng. Điều này sẽ chỉ được áp dụng cho các phiên mới.",
     "DescScriptDeleted": "Tập lệnh cấu hình người dùng đã bị xóa:",
     "DescScriptUpdated": "Đã cập nhật tập lệnh cấu hình người dùng. Điều này sẽ chỉ được áp dụng cho các phiên mới.",
-    "DescSessionMonitor": "Hiển thị giám sát phiên trên thanh tiêu đề: các phiên đang chạy, mức sử dụng tài nguyên và thời điểm chấm dứt do không hoạt động gần nhất. Khi được bật, bạn cũng nhận thông báo 30 và 10 phút trước khi kiểm tra không hoạt động chấm dứt một phiên của bạn.",
+    "DescSessionMonitor": "Hiển thị số phiên bạn theo dõi trên thanh tiêu đề ở mọi trang. Mặc định là các phiên bạn đã tạo; hãy đổi điều kiện trong phần cài đặt của chính bộ giám sát. Khi mục chấm dứt do không hoạt động được bật ở đó, bạn cũng nhận thông báo 30 và 10 phút trước khi kiểm tra không hoạt động chấm dứt một phiên của bạn.",
     "DescThemeFamily": "Đặt chủ đề.",
     "DescThemeMode": "Đặt chế độ hiển thị.",
     "DescUseCompactSidebar": "Thanh bên gọn gàng cung cấp nhiều không gian làm việc hơn. <br />Khi được kích hoạt, thanh bên gọn gàng sẽ là giao diện mặc định khi khởi động.",

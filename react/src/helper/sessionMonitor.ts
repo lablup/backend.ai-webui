@@ -33,6 +33,8 @@ export type NearestIdleCheck = {
 export type SessionMonitorEntry = {
   id: string;
   name: string | null;
+  /** The owner; idle alerts are raised for the viewer's own sessions only. */
+  userId: string | null;
   status: string | null;
   createdAt: string | null;
   nearest: NearestIdleCheck | null;
@@ -56,6 +58,58 @@ export const SESSION_MONITOR_STARTING_FILTER = `status in [${STARTING_STATUSES.m
 
 export const isStartingStatus = (status: string | null | undefined) =>
   !!status && STARTING_STATUSES.includes(status);
+
+/** What the header chip shows besides the count; both fetch session rows. */
+export type SessionMonitorChipItem = 'resources' | 'idle';
+export const SESSION_MONITOR_CHIP_ITEMS: ReadonlyArray<SessionMonitorChipItem> =
+  ['resources', 'idle'];
+
+/**
+ * The watched sessions as one queryfilter string: unfinished (or running
+ * only), the viewer's own when `onlyMine`, and the user's condition. Each
+ * part is parenthesized so a condition using `|` cannot leak out.
+ */
+export const buildSessionMonitorFilter = ({
+  userId,
+  onlyMine,
+  condition,
+  includeStarting,
+}: {
+  userId: string;
+  onlyMine: boolean;
+  condition?: string | null;
+  includeStarting: boolean;
+}) =>
+  [
+    includeStarting
+      ? SESSION_MONITOR_NOT_FINISHED_FILTER
+      : SESSION_MONITOR_RUNNING_FILTER,
+    onlyMine ? `user_id == "${userId}"` : null,
+    condition?.trim() || null,
+  ]
+    .filter((part): part is string => !!part)
+    .map((part) => `(${part})`)
+    .join(' & ');
+
+/** Sums `occupied_slots` JSON strings slot by slot, as raw numbers. */
+export const sumOccupiedSlots = (
+  slotsList: ReadonlyArray<string | null | undefined>,
+): Record<string, number> => {
+  const total: Record<string, number> = {};
+  for (const raw of slotsList) {
+    let slots: Record<string, unknown> = {};
+    try {
+      slots = raw ? JSON.parse(raw) : {};
+    } catch {
+      continue;
+    }
+    for (const [key, value] of Object.entries(slots ?? {})) {
+      const n = typeof value === 'number' ? value : parseFloat(String(value));
+      if (Number.isFinite(n)) total[key] = (total[key] ?? 0) + n;
+    }
+  }
+  return total;
+};
 
 export const isRunningStatus = (status: string | null | undefined) =>
   status === 'RUNNING';
@@ -98,6 +152,7 @@ export const toSessionMonitorEntry = (
   node: {
     id: string;
     name?: string | null;
+    user_id?: string | null;
     status?: string | null;
     created_at?: string | null;
   },
@@ -108,6 +163,7 @@ export const toSessionMonitorEntry = (
   return {
     id: node.id,
     name: node.name ?? null,
+    userId: node.user_id ?? null,
     status: node.status ?? null,
     createdAt: node.created_at ?? null,
     nearest,
@@ -141,35 +197,30 @@ export const rankSessions = (
 
 export type SessionMonitorSummary = {
   fetchedAt: number;
+  /** Server-side count of the watched sessions; not capped by the page. */
   total: number;
-  running: number;
-  starting: number;
   attentionCount: number;
   nearest: SessionMonitorEntry | null;
+  /** Summed `occupied_slots` of the fetched page; null when not fetched. */
+  allocated: Record<string, number> | null;
 };
 
 /**
- * `counts` come from the server and cover the whole scope; `attentionCount`
- * and `nearest` can only see the fetched page (`idle_checks` is not sortable
- * server-side), which is the user's own sessions in the alerting mode.
+ * `attentionCount` and `nearest` can only see the fetched page
+ * (`idle_checks` is not sortable server-side).
  */
 export const summarizeSessions = (
   entries: ReadonlyArray<SessionMonitorEntry>,
   total: number,
   fetchedAt: number,
-  counts?: { running: number; starting: number },
+  allocated: Record<string, number> | null = null,
 ): SessionMonitorSummary => {
   const ranked = rankSessions(entries);
   const nearest = ranked.find((entry) => entry.deadline !== null) ?? null;
   return {
     fetchedAt,
     total,
-    running:
-      counts?.running ??
-      entries.filter((entry) => isRunningStatus(entry.status)).length,
-    starting:
-      counts?.starting ??
-      entries.filter((entry) => isStartingStatus(entry.status)).length,
+    allocated,
     attentionCount: entries.filter(
       (entry) =>
         entry.deadline !== null &&

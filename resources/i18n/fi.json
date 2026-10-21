@@ -3284,8 +3284,6 @@
     }
   },
   "sessionMonitor": {
-    "DomainSessions": "Tämän toimialueen istunnot",
-    "InUseAcross": "Varattu {{count}} käynnissä olevaan istuntoon",
     "MonitorSettings": "Valvonta-asetukset",
     "MoreSessions": "{{count}} lisää (yhteensä {{total}})",
     "MyResourceUsage": "Minulle varattu, suhteessa rajaani",
@@ -3293,10 +3291,11 @@
     "NoActiveSessions": "Ei aktiivisia istuntoja",
     "OpenSession": "Avaa istunto",
     "OpenSessionList": "Avaa istuntoluettelo",
-    "ProjectSessions": "Tämän hankkeen istunnot",
     "RunningCount": "{{count}} käynnissä",
+    "SessionCount": "{{count}} istuntoa",
     "StartingCount": "{{count}} käynnistyy",
-    "Tooltip": "Istuntovalvonta: käynnissä olevien määrä ja lähin päättyminen",
+    "Tooltip": "Istuntovalvonta: seuraamasi istunnot jokaisella sivulla",
+    "WatchedSessions": "Seuratut istunnot",
     "idleAlert": {
       "NetworkTimeout": "Verkkotoimintaa ei havaittu. Yhdistä istuntoon ennen kuin se lopetetaan.",
       "SessionLifetime": "Istunto on saavuttamassa enimmäiskestoikänsä.",
@@ -3304,9 +3303,15 @@
       "Utilization": "Resurssien käyttö on pysynyt joutokäynnin kynnysarvon alapuolella. Käytä istuntoa ennen kuin se lopetetaan."
     },
     "settings": {
+      "ChipIdle": "Lähin joutokäynnin aiheuttama päättyminen ja hälytykset",
+      "ChipResources": "Varatut resurssit",
+      "Condition": "Seurattavat istunnot",
       "IncludeStarting": "Sisällytä käynnistyvät istunnot",
+      "List": "Luettelo",
+      "OnlyMine": "Vain luomani istunnot",
       "OpenUserSettings": "Istuntovalvonnan asetukset →",
       "RowsShown": "Näytetyt rivit",
+      "ShowInHeader": "Näytä otsikkopalkissa",
       "SortBy": "Järjestä",
       "SortDeadline": "Pikaisin päättyminen ensin",
       "SortName": "Nimi",
@@ -3767,7 +3772,7 @@
     "DescScriptCreated": "Käyttäjän konfigurointiskripti luotu. Tätä sovelletaan vain uusiin istuntoihin.",
     "DescScriptDeleted": "Käyttäjän konfigurointiskripti poistettu :",
     "DescScriptUpdated": "Käyttäjän konfigurointiskripti päivitetty. Tätä sovelletaan vain uusiin istuntoihin.",
-    "DescSessionMonitor": "Näyttää istuntovalvonnan otsikkopalkissa: käynnissä olevat istunnot, niiden resurssien käytön ja lähimmän joutokäynnin aiheuttaman päättymisen. Kun se on käytössä, saat myös ilmoituksen 30 ja 10 minuuttia ennen kuin joutokäyntitarkistus päättää jonkin istunnoistasi.",
+    "DescSessionMonitor": "Näyttää jokaisella sivulla otsikkopalkissa seuraamiesi istuntojen määrän. Oletuksena ne ovat luomasi istunnot; ehdon voi vaihtaa valvonnan omista asetuksista. Kun joutokäynnin päättymisen kohta on siellä käytössä, saat myös ilmoituksen 30 ja 10 minuuttia ennen kuin joutokäyntitarkistus päättää jonkin istunnoistasi.",
     "DescThemeFamily": "Aseta teema.",
     "DescThemeMode": "Aseta näyttötila.",
     "DescUseCompactSidebar": "Kompakti sivupalkki tarjoaa enemmän työtilaa. <br />Kun käytössä, kompakti sivupalkki on oletuskäyttöliittymä käynnistyksen yhteydessä.",

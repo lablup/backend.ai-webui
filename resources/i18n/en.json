@@ -3271,8 +3271,6 @@
     }
   },
   "sessionMonitor": {
-    "DomainSessions": "Sessions in this domain",
-    "InUseAcross": "Allocated to {{count}} running sessions",
     "MonitorSettings": "Monitor settings",
     "MoreSessions": "{{count}} more ({{total}} total)",
     "MyResourceUsage": "Allocated to me, against my limit",
@@ -3280,10 +3278,11 @@
     "NoActiveSessions": "No active sessions",
     "OpenSession": "Open session",
     "OpenSessionList": "Open session list",
-    "ProjectSessions": "Sessions in this project",
     "RunningCount": "{{count}} running",
+    "SessionCount": "{{count}} sessions",
     "StartingCount": "{{count}} starting",
-    "Tooltip": "Session monitor: running count and the nearest termination",
+    "Tooltip": "Session monitor: the sessions you watch, on every page",
+    "WatchedSessions": "Watched sessions",
     "idleAlert": {
       "NetworkTimeout": "No network activity has been detected. Connect to the session before it is terminated.",
       "SessionLifetime": "The session is reaching its maximum lifetime.",
@@ -3291,9 +3290,15 @@
       "Utilization": "Resource utilization has stayed under the idle threshold. Use the session before it is terminated."
     },
     "settings": {
+      "ChipIdle": "Nearest idle termination, with alerts",
+      "ChipResources": "Resources allocated to them",
+      "Condition": "Sessions to watch",
       "IncludeStarting": "Include starting sessions",
+      "List": "List",
+      "OnlyMine": "Only sessions I created",
       "OpenUserSettings": "Session monitor settings →",
       "RowsShown": "Rows shown",
+      "ShowInHeader": "Show in the header",
       "SortBy": "Sort by",
       "SortDeadline": "Soonest termination first",
       "SortName": "Name",
@@ -3754,7 +3759,7 @@
     "DescScriptCreated": "User config script created. This will be applied to new sessions only.",
     "DescScriptDeleted": "User config script deleted : ",
     "DescScriptUpdated": "User config script updated. This will be applied to new sessions only.",
-    "DescSessionMonitor": "Shows the session monitor in the header: running sessions, their resource use and the nearest idle termination. While it is on, you also get a notification 30 and 10 minutes before an idle check terminates one of your sessions.",
+    "DescSessionMonitor": "Shows the number of sessions you watch in the header, on every page. By default these are the sessions you created; change the condition in the monitor's own settings. When the idle termination item is on there, you also get a notification 30 and 10 minutes before an idle check terminates one of your sessions.",
     "DescThemeFamily": "Set the theme.",
     "DescThemeMode": "Set the display mode.",
     "DescUseCompactSidebar": "Compact sidebar provides more workspace. <br />When enabled, the compact sidebar will be the default UI at startup.",

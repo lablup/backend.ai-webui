@@ -3284,8 +3284,6 @@
     }
   },
   "sessionMonitor": {
-    "DomainSessions": "Sessões deste domínio",
-    "InUseAcross": "Alocado a {{count}} sessões em execução",
     "MonitorSettings": "Configurações do monitor",
     "MoreSessions": "{{count}} a mais ({{total}} no total)",
     "MyResourceUsage": "Alocado a mim, em relação ao meu limite",
@@ -3293,10 +3291,11 @@
     "NoActiveSessions": "Nenhuma sessão ativa",
     "OpenSession": "Abrir sessão",
     "OpenSessionList": "Abrir lista de sessões",
-    "ProjectSessions": "Sessões deste projeto",
     "RunningCount": "{{count}} em execução",
+    "SessionCount": "{{count}} sessões",
     "StartingCount": "{{count}} iniciando",
-    "Tooltip": "Monitor de sessões: número em execução e o próximo término",
+    "Tooltip": "Monitor de sessões: as sessões que você monitora, em todas as páginas",
+    "WatchedSessions": "Sessões monitoradas",
     "idleAlert": {
       "NetworkTimeout": "Nenhuma atividade de rede foi detectada. Conecte-se à sessão antes que ela seja encerrada.",
       "SessionLifetime": "A sessão está atingindo sua duração máxima.",
@@ -3304,9 +3303,15 @@
       "Utilization": "A utilização de recursos permaneceu abaixo do limite de inatividade. Use a sessão antes que ela seja encerrada."
     },
     "settings": {
+      "ChipIdle": "Próximo encerramento por inatividade, com alertas",
+      "ChipResources": "Recursos alocados",
+      "Condition": "Sessões a monitorar",
       "IncludeStarting": "Incluir sessões em início",
+      "List": "Lista",
+      "OnlyMine": "Somente as sessões que criei",
       "OpenUserSettings": "Definições do monitor de sessões →",
       "RowsShown": "Linhas exibidas",
+      "ShowInHeader": "Mostrar no cabeçalho",
       "SortBy": "Ordenar",
       "SortDeadline": "Encerramento mais próximo primeiro",
       "SortName": "Nome",
@@ -3767,7 +3772,7 @@
     "DescScriptCreated": "Script de configuração do usuário criado. Isso será aplicado apenas a novas sessões.",
     "DescScriptDeleted": "Script de configuração do usuário excluído:",
     "DescScriptUpdated": "O script de configuração do usuário foi atualizado. Isso será aplicado apenas a novas sessões.",
-    "DescSessionMonitor": "Mostra o monitor de sessões no cabeçalho: sessões em execução, seu uso de recursos e o próximo encerramento por inatividade. Enquanto estiver ativado, você também recebe uma notificação 30 e 10 minutos antes de uma verificação de inatividade encerrar uma de suas sessões.",
+    "DescSessionMonitor": "Mostra no cabeçalho, em todas as páginas, o número de sessões que você monitora. Por padrão, são as sessões que você criou; altere a condição nas configurações do próprio monitor. Se o item de encerramento por inatividade estiver ativado lá, você também recebe uma notificação 30 e 10 minutos antes de uma verificação de inatividade encerrar uma de suas sessões.",
     "DescThemeFamily": "Definir o tema.",
     "DescThemeMode": "Definir o modo de exibição.",
     "DescUseCompactSidebar": "A barra lateral compacta fornece mais espaço de trabalho. <br />Quando habilitada, a barra lateral compacta será a interface padrão na inicialização.",

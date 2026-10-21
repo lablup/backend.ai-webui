@@ -4,7 +4,7 @@
  */
 import { formatDurationAsDays } from '../../helper';
 import { ATTENTION_THRESHOLD_SEC } from '../../helper/sessionMonitor';
-import { useIsProjectAgnosticPage } from '../../hooks/useIsProjectAgnosticPage';
+import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import {
   sessionMonitorScopeAtom,
   sessionMonitorSummaryAtom,
@@ -50,15 +50,15 @@ const Separator: React.FC = () => {
 };
 
 /**
- * Header chip: running count, accelerator use, nearest termination. Colour
- * means one thing here — a deadline under 30 minutes — so the chip carries
- * no status dot.
+ * Header chip: the watched-session count, plus the allocated resources and
+ * the nearest termination when the user turned them on. Colour means one
+ * thing here, a deadline under 30 minutes, so the chip carries no status dot.
  */
 const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
   'use memo';
   const { t } = useTranslation();
   const { isDarkMode } = useThemeMode();
-  const isProjectAgnosticPage = useIsProjectAgnosticPage();
+  const [chipItems] = useBAISettingUserState('session_monitor_chip_items');
   const summary = useAtomValue(sessionMonitorSummaryAtom);
   const scope = useAtomValue(sessionMonitorScopeAtom);
   const [isOpen, setIsOpen] = useState(false);
@@ -86,9 +86,10 @@ const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
     deadline !== null ? 1000 : null,
     String(deadline),
   );
-  const running = summary?.running ?? 0;
+  const count = summary?.total ?? 0;
   if (!scope) return null;
-  const title = t(sessionMonitorTitleKey(scope.mode));
+  const title = t(sessionMonitorTitleKey(scope));
+  const showsIdle = chipItems?.includes('idle') ?? false;
 
   return (
     <>
@@ -133,18 +134,19 @@ const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
           >
             <BAIFlex direction="row" align="center" gap="xs">
               <Text type="inherit" textWrap="nowrap">
-                {t('sessionMonitor.RunningCount', { count: running })}
+                {t('sessionMonitor.SessionCount', { count })}
               </Text>
-              {!isProjectAgnosticPage && scope.mode !== 'domain' && (
+              {summary?.allocated && (
                 <ErrorBoundaryWithNullFallback>
                   <Suspense fallback={null}>
                     <SessionMonitorAcceleratorSummary
+                      allocated={summary.allocated}
                       separator={<Separator />}
                     />
                   </Suspense>
                 </ErrorBoundaryWithNullFallback>
               )}
-              {tick && (
+              {showsIdle && tick && (
                 <>
                   <Separator />
                   <BAIFlex
@@ -169,7 +171,6 @@ const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
       </Popover>
       <SessionMonitorDetailDrawer
         sessionId={detailSessionId}
-        withProject={scope.mode !== 'domain' && !isProjectAgnosticPage}
         onClose={() => setDetailSessionId(null)}
       />
     </>
