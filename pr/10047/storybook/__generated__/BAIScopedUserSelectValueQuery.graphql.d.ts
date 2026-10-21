@@ -145,6 +145,7 @@ export type BAIScopedUserSelectValueQuery$data = {
                     readonly email: string;
                     readonly fullName: string | null | undefined;
                 };
+                readonly entityId: string;
                 readonly id: string;
             };
         }>;
