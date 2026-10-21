@@ -79,6 +79,15 @@ export type {
   BAISelectOptionProps,
   BAISelectOptionGroupProps,
 } from './BAISelect';
+export {
+  default as BAIDisabledOptionReason,
+  getOptionDisabledReason,
+  withOptionDisabledReason,
+} from './BAIDisabledOptionReason';
+export type {
+  BAIDisabledOptionReasonProps,
+  BAIOptionDisabled,
+} from './BAIDisabledOptionReason';
 export { default as BAIComplexSelect } from './BAIComplexSelect';
 export type {
   BAIComplexSelectProps,

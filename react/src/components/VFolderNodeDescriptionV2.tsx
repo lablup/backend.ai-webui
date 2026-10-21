@@ -35,6 +35,7 @@ import {
   useErrorMessageResolver,
   badgeVariantForStatus,
   BAIText,
+  withOptionDisabledReason,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -227,6 +228,18 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
               disabled: shouldDisableRWPermission,
             },
           ]}
+          renderOption={(option) =>
+            withOptionDisabledReason(
+              option.label,
+              option.value === 'rw' && shouldDisableRWPermission
+                ? {
+                    reason: t(
+                      'data.folders.ModelProjectFolderRestrictedToReadOnly',
+                    ),
+                  }
+                : false,
+            )
+          }
           onChange={(value) => {
             // Defense-in-depth: never persist 'rw' for a restricted folder.
             if (

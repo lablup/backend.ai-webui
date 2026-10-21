@@ -42,7 +42,9 @@ const AccessKeySelect: React.FC<AccessKeySelectProps> = ({
   const options = _.map(keypairs, (kp) => ({
     value: kp?.access_key,
     label: kp?.access_key,
-    disabled: !kp?.is_active,
+    disabled: kp?.is_active
+      ? false
+      : { reason: t('credential.KeypairIsInactive') },
   }));
 
   return (

@@ -23,6 +23,7 @@ import {
   BAIResourceNumberWithIcon,
   useThrottleFn,
   useUpdatableState,
+  withOptionDisabledReason,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Info, SquarePen } from 'lucide-react';
@@ -38,8 +39,6 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
  */
 export interface PresetOptionType extends SelectorOptionData {
   preset?: ResourcePreset;
-  /** Set exactly when the option is disabled; shown on hover. */
-  disabledReason?: string;
 }
 
 export type ResourcePreset = NonNullable<
@@ -172,13 +171,11 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   const presetOptions: PresetOptionType[] = _.map(
     resource_presets,
     (preset) => {
-      const disabledReason = disabledReasonOf(preset);
       return {
         // Names repeat across resource groups; the id is the option's key.
         value: preset?.id ?? '',
         label: preset?.name ?? '',
-        disabled: !!disabledReason,
-        disabledReason,
+        disabled: !!disabledReasonOf(preset),
         preset: preset ?? undefined,
       };
     },
@@ -207,6 +204,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     const presetOption = presetOptions.find((o) => o.value === option.value);
     const preset = presetOption?.preset;
     if (!preset) return option.label;
+    const disabledReason = disabledReasonOf(preset);
     const slotsInfo: {
       [key in ResourceSlotName]: string;
     } = JSON.parse(preset.resource_slots || '{}');
@@ -218,7 +216,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
             // Global presets carry no mark; the token names the group this
             // one belongs to, so same-named rows tell apart. A disabled row
             // already explains itself, so the token stays quiet there.
-            presetOption?.disabledReason ? (
+            disabledReason ? (
               <Token label={preset.scaling_group_name} size="sm" />
             ) : (
               <Tooltip content={onlyInGroupText(preset.scaling_group_name)}>
@@ -252,10 +250,9 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
         </BAIFlex>
       </BAIFlex>
     );
-    return presetOption?.disabledReason ? (
-      <Tooltip content={presetOption.disabledReason}>{row}</Tooltip>
-    ) : (
-      row
+    return withOptionDisabledReason(
+      row,
+      disabledReason ? { reason: disabledReason } : false,
     );
   };
 
