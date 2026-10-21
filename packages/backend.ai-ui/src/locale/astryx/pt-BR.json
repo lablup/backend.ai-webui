@@ -113,7 +113,7 @@
   "@astryx.listInput.emptyDescription": "Adicione {itemName} para começar.",
   "@astryx.listInput.emptyTitle": "Ainda sem {itemName}",
   "@astryx.listInput.fieldLabelWithPosition": "{header}, {itemName} {position, number} de {total, number}",
-  "@astryx.listInput.removeItem": "Remover {itemName} {position, number}",
+  "@astryx.listInput.removeItem": "Remover",
   "@astryx.listInput.removeUnavailable": "Não é possível remover enquanto a lista estiver desativada",
   "@astryx.listInput.reorderInstructions": "Use Arrow Up ou Arrow Down para mover este item uma posição. Pressione Space ou Enter para pegá-lo e iniciar a reordenação pelo teclado.",
   "@astryx.listInput.reorderItem": "Reordenar {itemName} {position, number}",

@@ -113,7 +113,7 @@
   "@astryx.listInput.emptyDescription": "Aby rozpocząć, dodaj: {itemName}.",
   "@astryx.listInput.emptyTitle": "Nie dodano jeszcze: {itemName}",
   "@astryx.listInput.fieldLabelWithPosition": "{header}, {itemName} {position, number} z {total, number}",
-  "@astryx.listInput.removeItem": "Usuń: {itemName} {position, number}",
+  "@astryx.listInput.removeItem": "Usuń",
   "@astryx.listInput.removeUnavailable": "Usuwanie jest niedostępne, gdy lista jest wyłączona",
   "@astryx.listInput.reorderInstructions": "Użyj Arrow Up lub Arrow Down, aby przesunąć ten element o jedną pozycję. Naciśnij Space lub Enter, aby go podnieść i zmieniać kolejność za pomocą klawiatury.",
   "@astryx.listInput.reorderItem": "Przenieś: {itemName} {position, number}",

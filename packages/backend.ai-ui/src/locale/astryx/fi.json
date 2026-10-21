@@ -113,7 +113,7 @@
   "@astryx.listInput.emptyDescription": "Aloita lisäämällä {itemName}.",
   "@astryx.listInput.emptyTitle": "Ei vielä kohteita: {itemName}",
   "@astryx.listInput.fieldLabelWithPosition": "{header}, {itemName} {position, number} / {total, number}",
-  "@astryx.listInput.removeItem": "Poista {itemName} {position, number}",
+  "@astryx.listInput.removeItem": "Poista",
   "@astryx.listInput.removeUnavailable": "Poistaminen ei ole mahdollista, kun luettelo on poissa käytöstä",
   "@astryx.listInput.reorderInstructions": "Siirrä tätä kohdetta yhden paikan verran näppäimellä Arrow Up tai Arrow Down. Poimi kohde painamalla Space tai Enter, niin voit käyttää laajennettua näppäimistöjärjestelyä.",
   "@astryx.listInput.reorderItem": "Järjestä uudelleen {itemName} {position, number}",

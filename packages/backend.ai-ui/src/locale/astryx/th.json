@@ -113,7 +113,7 @@
   "@astryx.listInput.emptyDescription": "เพิ่ม{itemName}เพื่อเริ่มต้น",
   "@astryx.listInput.emptyTitle": "ยังไม่มี{itemName}",
   "@astryx.listInput.fieldLabelWithPosition": "{header}, {itemName} {position, number} จาก {total, number}",
-  "@astryx.listInput.removeItem": "ลบ{itemName} {position, number}",
+  "@astryx.listInput.removeItem": "ลบ",
   "@astryx.listInput.removeUnavailable": "ไม่สามารถลบได้ขณะที่รายการถูกปิดใช้งาน",
   "@astryx.listInput.reorderInstructions": "ใช้ลูกศรขึ้นหรือลูกศรลงเพื่อย้ายรายการนี้หนึ่งตำแหน่ง กด Space หรือ Enter เพื่อยกรายการขึ้นและจัดลำดับต่อด้วยแป้นพิมพ์",
   "@astryx.listInput.reorderItem": "จัดลำดับ{itemName} {position, number}",

@@ -113,7 +113,7 @@
   "@astryx.listInput.emptyDescription": "Fügen Sie einen Eintrag vom Typ „{itemName}“ hinzu, um zu beginnen.",
   "@astryx.listInput.emptyTitle": "Noch keine Einträge vom Typ „{itemName}“",
   "@astryx.listInput.fieldLabelWithPosition": "{header}, {itemName} {position, number} von {total, number}",
-  "@astryx.listInput.removeItem": "{itemName} {position, number} entfernen",
+  "@astryx.listInput.removeItem": "Entfernen",
   "@astryx.listInput.removeUnavailable": "Entfernen ist nicht möglich, solange die Liste deaktiviert ist",
   "@astryx.listInput.reorderInstructions": "Verwenden Sie Arrow Up oder Arrow Down, um dieses Element um eine Position zu verschieben. Drücken Sie Space oder Enter, um es für die erweiterte Umordnung per Tastatur aufzunehmen.",
   "@astryx.listInput.reorderItem": "{itemName} {position, number} neu anordnen",
