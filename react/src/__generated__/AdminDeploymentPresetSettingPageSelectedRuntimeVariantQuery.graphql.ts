@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c67ef780ffdcce3a55b856b295442d28>>
+ * @generated SignedSource<<94b8e29344800745b1f20fec8870cb01>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,7 @@ export type AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery$variable
 };
 export type AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery$data = {
   readonly runtimeVariant?: {
+    readonly entityId: string;
     readonly id: string;
     readonly name: string;
     readonly readsVfolderConfigFiles: boolean;
@@ -69,6 +70,13 @@ v1 = [
             "alias": null,
             "args": null,
             "kind": "ScalarField",
+            "name": "entityId",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "name",
             "storageKey": null
           },
@@ -103,16 +111,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "cd58beb3cbb50f38bb8a66f53ef1a0ce",
+    "cacheID": "d50b2755fe254b0f8b2d44b087f38290",
     "id": null,
     "metadata": {},
     "name": "AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery",
     "operationKind": "query",
-    "text": "query AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery(\n  $id: UUID!\n  $skip: Boolean!\n) {\n  runtimeVariant(id: $id) @skip(if: $skip) {\n    id\n    name\n    readsVfolderConfigFiles @since(version: \"26.8.0\")\n  }\n}\n"
+    "text": "query AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery(\n  $id: UUID!\n  $skip: Boolean!\n) {\n  runtimeVariant(id: $id) @skip(if: $skip) {\n    id\n    entityId\n    name\n    readsVfolderConfigFiles @since(version: \"26.8.0\")\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d88300a88be743c8c68cc0af8e111574";
+(node as any).hash = "f9816fbc885e33f43fdbb2fd00e093fd";
 
 export default node;

@@ -59,7 +59,6 @@ import {
   BAICard,
   BAIFlex,
   BAISkeleton,
-  toLocalId,
   useBAIBreakpoint,
   useDebounceFn,
 } from 'backend.ai-ui';
@@ -106,6 +105,7 @@ export interface AdminDeploymentPresetSettingPageContentProps {
   /** Runtime variants fetched by the parent page layout. */
   runtimeVariants?: ReadonlyArray<{
     id: string;
+    entityId: string;
     name: string;
     // `readsVfolderConfigFiles` (26.8.0+) is stripped on older managers →
     // undefined; call sites fall back to the legacy `name === 'custom'`
@@ -365,7 +365,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   const isFirstStep = currentStepIndex === 0;
 
   const runtimeVariantOptions = runtimeVariants.map((rt) => ({
-    value: toLocalId(rt.id),
+    value: rt.entityId,
     label: rt.name,
   }));
 
@@ -469,7 +469,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   // would silently be dropped on submit if the switch is off.
   const runtimeVariantIdWatched = Form.useWatch('runtimeVariantId', form);
   const selectedRuntimeVariantForServiceConfig = runtimeVariants.find(
-    (rt) => toLocalId(rt.id) === runtimeVariantIdWatched,
+    (rt) => rt.entityId === runtimeVariantIdWatched,
   );
   const readsVfolderConfigFiles = resolvesReadsVfolderConfigFiles(
     selectedRuntimeVariantForServiceConfig,
@@ -893,7 +893,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   formArg as FormInstance<AdminDeploymentPresetFormValue>;
                 const variantId = getFieldValue('runtimeVariantId');
                 const variant = runtimeVariants.find(
-                  (rt) => toLocalId(rt.id) === variantId,
+                  (rt) => rt.entityId === variantId,
                 );
                 const variantName = variant?.name;
                 // Runtime-parameter presets apply only to variants that do NOT

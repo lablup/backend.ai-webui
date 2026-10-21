@@ -28,7 +28,6 @@ import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFlex,
   convertToUUID,
-  toLocalId,
   useBAILogger,
   useMutationWithPromise,
 } from 'backend.ai-ui';
@@ -245,6 +244,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
             edges {
               node {
                 id
+                entityId
                 name
                 readsVfolderConfigFiles @since(version: "26.8.0")
               }
@@ -280,7 +280,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
   const selectedVariantInList =
     !!watchedRuntimeVariantId &&
     paginatedRuntimeVariantList.some(
-      (rt) => toLocalId(rt.id) === watchedRuntimeVariantId,
+      (rt) => rt.entityId === watchedRuntimeVariantId,
     );
   const { runtimeVariant: selectedRuntimeVariantLookup } =
     useLazyLoadQuery<AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery>(
@@ -291,6 +291,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
         ) {
           runtimeVariant(id: $id) @skip(if: $skip) {
             id
+            entityId
             name
             readsVfolderConfigFiles @since(version: "26.8.0")
           }
@@ -425,7 +426,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
     // Resolve whether the selected variant reads vfolder config files so
     // buildModelDefinitionInput can exclude stale command/port data.
     const selectedVariant = runtimeVariantList.find(
-      (rt) => toLocalId(rt.id) === values.runtimeVariantId,
+      (rt) => rt.entityId === values.runtimeVariantId,
     );
     const reads = resolvesReadsVfolderConfigFiles(selectedVariant);
 

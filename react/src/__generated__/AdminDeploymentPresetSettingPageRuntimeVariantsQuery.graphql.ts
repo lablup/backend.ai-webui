@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4cb02aa3f1a4bf84048b8bc83f59a680>>
+ * @generated SignedSource<<ea92598693460da395d65101822f658e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,6 +14,7 @@ export type AdminDeploymentPresetSettingPageRuntimeVariantsQuery$data = {
   readonly runtimeVariants: {
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly entityId: string;
         readonly id: string;
         readonly name: string;
         readonly readsVfolderConfigFiles: boolean;
@@ -69,6 +70,13 @@ var v0 = [
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
+                "name": "entityId",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "name",
                 "storageKey": null
               },
@@ -107,16 +115,16 @@ return {
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "90d316137f9a6db8bab220567b910f76",
+    "cacheID": "d5c21658021096e2ed84326dc2d70745",
     "id": null,
     "metadata": {},
     "name": "AdminDeploymentPresetSettingPageRuntimeVariantsQuery",
     "operationKind": "query",
-    "text": "query AdminDeploymentPresetSettingPageRuntimeVariantsQuery {\n  runtimeVariants(limit: 100) {\n    edges {\n      node {\n        id\n        name\n        readsVfolderConfigFiles @since(version: \"26.8.0\")\n      }\n    }\n  }\n}\n"
+    "text": "query AdminDeploymentPresetSettingPageRuntimeVariantsQuery {\n  runtimeVariants(limit: 100) {\n    edges {\n      node {\n        id\n        entityId\n        name\n        readsVfolderConfigFiles @since(version: \"26.8.0\")\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b6c7581f0a2465ead5b7a6db6a372ca3";
+(node as any).hash = "d5adb48f8d1ded21c0b0efb1f4ddd8c6";
 
 export default node;
