@@ -13,6 +13,7 @@ import {
   getAllocatablePresetIds,
   getAutomaticShmem,
   getUnifiedSlotNameFromTag,
+  isImageForMinimumResolved,
   isUnifiedAcceleratorSlot,
   pickChangedResourceValues,
 } from './ResourceAllocationFormItems';
@@ -251,5 +252,30 @@ describe('pickChangedResourceValues', () => {
     expect(pickChangedResourceValues({ cpu: 1, mem: '2g' }, undefined)).toEqual(
       { cpu: 1, mem: '2g' },
     );
+  });
+});
+
+describe('isImageForMinimumResolved', () => {
+  it('waits while a restored version has not resolved to an image yet', () => {
+    expect(
+      isImageForMinimumResolved({ version: 'cr.example/python:3.11@x86_64' }),
+    ).toBe(false);
+  });
+
+  it('applies once the image resolves or a manual image is set', () => {
+    expect(
+      isImageForMinimumResolved({
+        version: 'cr.example/python:3.11@x86_64',
+        image: {},
+      }),
+    ).toBe(true);
+    expect(isImageForMinimumResolved({ manual: 'cr.example/custom:1' })).toBe(
+      true,
+    );
+  });
+
+  it('applies when there is no image to wait for', () => {
+    expect(isImageForMinimumResolved(undefined)).toBe(true);
+    expect(isImageForMinimumResolved({})).toBe(true);
   });
 });

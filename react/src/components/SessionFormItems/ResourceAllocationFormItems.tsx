@@ -124,6 +124,20 @@ export const pickChangedResourceValues = <T extends Record<string, unknown>>(
   }) as Partial<T>;
 
 /**
+ * Whether the image the minimum-required preset reads from has resolved. A
+ * restored `version` without its `image` is still resolving; writing the
+ * image-less minimum then would replace the restored memory (#10353).
+ */
+export const isImageForMinimumResolved = (environments?: {
+  image?: unknown;
+  version?: string | null;
+  manual?: string | null;
+}) =>
+  !_.isNil(environments?.image) ||
+  !_.isEmpty(environments?.manual) ||
+  _.isEmpty(environments?.version);
+
+/**
  * Returns true when the given accelerator slot name represents a unified
  * memory architecture, where the accelerator memory and the host memory
  * share a single physical pool. Identified by a `.unified` suffix on the
@@ -789,10 +803,18 @@ const ResourceAllocationFormItems: React.FC<
 
   // This effect is for auto updating the resource fields when minimum-required preset is selected
   useEffect(() => {
-    if (currentAllocationPreset === 'minimum-required') {
+    if (
+      currentAllocationPreset === 'minimum-required' &&
+      isImageForMinimumResolved(form.getFieldValue('environments'))
+    ) {
       updateResourceFieldsBasedOnImage(true);
     }
-  }, [currentImage, currentAllocationPreset, updateResourceFieldsBasedOnImage]);
+  }, [
+    currentImage,
+    currentAllocationPreset,
+    updateResourceFieldsBasedOnImage,
+    form,
+  ]);
 
   return (
     <>
