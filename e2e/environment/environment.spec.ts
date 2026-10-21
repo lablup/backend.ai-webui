@@ -1,8 +1,9 @@
 // spec: Image list and environment management E2E tests
 import { createAdminApiContext, gqlAdmin } from '../utils/admin-api';
+import { getE2EDomainName } from '../utils/e2e-scope';
 import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
-import { expect, test, Page, Locator } from '@playwright/test';
+import { expect, test, Page, Locator, TestInfo } from '@playwright/test';
 
 /**
  * The image list is a `BAITable`, i.e. a real `<table>` with a `<thead>` /
@@ -982,9 +983,10 @@ test.describe(
 // ---------------------------------------------------------------------------
 
 const IMPORT_REGISTRY = 'nvcr.io';
+const IMPORT_REGISTRY_PROJECT = 'nvidia';
 const IMPORT_IMAGE_NAME = 'nvidia/cuda';
 // Public NGC tags nightly does not register, so each import is a new row the
-// test owns and purges afterwards (a scan registers every architecture).
+// test owns. Cleanup matches by tag, so every architecture it registered goes.
 const IMPORT_CANDIDATE_TAGS = [
   '12.6.3-base-ubuntu24.04',
   '12.6.3-base-ubuntu22.04',
@@ -1011,6 +1013,78 @@ async function listRegisteredImportImages(
     (image) =>
       image.registry === IMPORT_REGISTRY && image.name === IMPORT_IMAGE_NAME,
   );
+}
+
+/** Why the import cannot run here, or `null` when the registry is usable. */
+async function importRegistryUnavailableReason(
+  api: Awaited<ReturnType<typeof createAdminApiContext>>,
+): Promise<string | null> {
+  const domain = await getE2EDomainName(api);
+  const data = await gqlAdmin<{
+    domain: { allowed_docker_registries: Array<string> | null } | null;
+    container_registry_nodes: {
+      edges: Array<{
+        node: { registry_name: string; project: string | null } | null;
+      } | null>;
+    } | null;
+  }>(
+    api,
+    `query ($domain: String) {
+      domain(name: $domain) { allowed_docker_registries }
+      container_registry_nodes(first: 100) {
+        edges { node { registry_name project } }
+      }
+    }`,
+    { domain },
+  );
+  const registered = (data.container_registry_nodes?.edges ?? []).some(
+    (edge) =>
+      edge?.node?.registry_name === IMPORT_REGISTRY &&
+      edge.node.project === IMPORT_REGISTRY_PROJECT,
+  );
+  if (!registered) {
+    return `Registry ${IMPORT_REGISTRY}/${IMPORT_REGISTRY_PROJECT} is not registered`;
+  }
+  const allowed = data.domain?.allowed_docker_registries;
+  if (allowed && !allowed.includes(IMPORT_REGISTRY)) {
+    return `Registry ${IMPORT_REGISTRY} is not enabled for domain ${domain}`;
+  }
+  return null;
+}
+
+async function purgeImportedTag(
+  api: Awaited<ReturnType<typeof createAdminApiContext>>,
+  tag: string,
+  testInfo: TestInfo,
+  waitForScanMs: number,
+) {
+  const warn = (description: string) =>
+    testInfo.annotations.push({ type: 'cleanup-warning', description });
+  const lookup = async () =>
+    (await listRegisteredImportImages(api)).filter(
+      (image) => image.tag === tag,
+    );
+  let leftovers: Array<RegisteredImage> = [];
+  try {
+    leftovers = await lookup();
+    // A scan the client gave up on keeps running on the manager, so wait for
+    // its row rather than missing it.
+    const deadline = Date.now() + waitForScanMs;
+    while (leftovers.length === 0 && Date.now() < deadline) {
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+      leftovers = await lookup();
+    }
+  } catch (error) {
+    warn(`lookup of ${tag} failed: ${error}`);
+    return;
+  }
+  for (const image of leftovers) {
+    await gqlAdmin(
+      api,
+      `mutation ($id: String!) { purge_image_by_id(image_id: $id) { image { id } } }`,
+      { id: image.id },
+    ).catch((error) => warn(`purge of ${image.id} failed: ${error}`));
+  }
 }
 
 function importImageModalOf(page: Page) {
@@ -1055,22 +1129,23 @@ test.describe(
     test('Superadmin can import an image from a canonical reference', async ({
       page,
     }, testInfo) => {
-      test.setTimeout(180000);
+      test.setTimeout(240000);
       const api = await createAdminApiContext();
       let importedTag: string | undefined;
+      let isImportConfirmed = false;
       try {
-        const registeredTags = new Set(
-          (await listRegisteredImportImages(api)).map((image) => image.tag),
+        const unavailableReason = await importRegistryUnavailableReason(api);
+        test.skip(!!unavailableReason, unavailableReason ?? '');
+        // Each worker owns one fixed tag, so concurrent workers never import
+        // or purge the same image.
+        const tag =
+          IMPORT_CANDIDATE_TAGS[
+            testInfo.parallelIndex % IMPORT_CANDIDATE_TAGS.length
+          ];
+        const isTagRegistered = (await listRegisteredImportImages(api)).some(
+          (image) => image.tag === tag,
         );
-        const freeTags = IMPORT_CANDIDATE_TAGS.filter(
-          (tag) => !registeredTags.has(tag),
-        );
-        test.skip(
-          freeTags.length === 0,
-          'Every candidate tag is already registered',
-        );
-        // Concurrent workers must not import the same image.
-        const tag = freeTags[testInfo.parallelIndex % freeTags.length];
+        test.skip(isTagRegistered, `${tag} is already registered`);
         const canonical = `${IMPORT_REGISTRY}/${IMPORT_IMAGE_NAME}:${tag}`;
 
         const modal = await openImportImageModal(page);
@@ -1090,6 +1165,7 @@ test.describe(
         await expect(
           page.getByText('1 image(s) successfully imported.').first(),
         ).toBeVisible({ timeout: 90000 });
+        isImportConfirmed = true;
         await expect(modal).toBeHidden();
 
         // A successful import resets the list to page 1 of the default
@@ -1100,16 +1176,12 @@ test.describe(
         ).toHaveCount(1, { timeout: 30000 });
       } finally {
         if (importedTag) {
-          const leftovers = (await listRegisteredImportImages(api)).filter(
-            (image) => image.tag === importedTag,
+          await purgeImportedTag(
+            api,
+            importedTag,
+            testInfo,
+            isImportConfirmed ? 0 : 60000,
           );
-          for (const image of leftovers) {
-            await gqlAdmin(
-              api,
-              `mutation ($id: String!) { purge_image_by_id(image_id: $id) { image { id } } }`,
-              { id: image.id },
-            ).catch(() => undefined);
-          }
         }
         await api.dispose();
       }
