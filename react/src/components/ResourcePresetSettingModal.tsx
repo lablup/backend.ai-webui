@@ -9,8 +9,8 @@ import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { convertToBinaryUnit } from '../helper';
 import { reasonMessage } from '../helper/mutationError';
+import { useCurrentDomain } from '../hooks';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
-import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import BAIFormItem from './BAIFormItem';
 import {
   AstryxFormNumberInput,
@@ -39,19 +39,15 @@ const ResourceGroupSelect: React.FC<
   Omit<BAIScopedResourceGroupSelectProps, 'scope'>
 > = (props) => {
   'use memo';
+  const { id: currentDomainId } = useCurrentDomain();
   return (
     <Suspense fallback={<BAISelect {...props} loading disabled />}>
-      <ScopedResourceGroupSelect {...props} />
+      <BAIScopedResourceGroupSelect
+        scope={{ domain: [{ value: currentDomainId }] }}
+        {...props}
+      />
     </Suspense>
   );
-};
-
-const ScopedResourceGroupSelect: React.FC<
-  Omit<BAIScopedResourceGroupSelectProps, 'scope'>
-> = (props) => {
-  'use memo';
-  const { domainScope } = useCurrentDomainScope();
-  return <BAIScopedResourceGroupSelect scope={domainScope} {...props} />;
 };
 
 interface ResourcePresetSettingModalProps extends BAIModalProps {

@@ -2,7 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useCurrentDomainValue, useSuspendedBackendaiClient } from '.';
+import {
+  useCurrentDomainValue,
+  useSuspendedBackendaiClient,
+  useCurrentDomain,
+} from '.';
 import type { useAccessibleProjectsDomainProjectsPaginationQuery } from '../__generated__/useAccessibleProjectsDomainProjectsPaginationQuery.graphql';
 import {
   ProjectTypeV2,
@@ -10,7 +14,6 @@ import {
 } from '../__generated__/useAccessibleProjectsQuery.graphql';
 import type { useAccessibleProjects_domainProjectsFragment$key } from '../__generated__/useAccessibleProjects_domainProjectsFragment.graphql';
 import { useCurrentUserRole } from './backendai';
-import { useCurrentDomainScope } from './useCurrentDomainScope';
 import * as _ from 'lodash-es';
 import { useEffect, useState } from 'react';
 import { graphql, useLazyLoadQuery, usePaginationFragment } from 'react-relay';
@@ -94,7 +97,8 @@ export const useAccessibleProjects = (
 
   // Both lists read `scopedProjectsV2` (ADR 0012): the caller's memberships for
   // everyone, plus every project of the current domain for admins.
-  const { domainScope } = useCurrentDomainScope();
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
   const queryRef = useLazyLoadQuery<useAccessibleProjectsQuery>(
     graphql`
       query useAccessibleProjectsQuery(

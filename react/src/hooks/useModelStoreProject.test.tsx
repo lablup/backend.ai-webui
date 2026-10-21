@@ -11,19 +11,12 @@ import { createMockEnvironment } from 'relay-test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const DOMAIN_ID = 'b9e676dc-e23e-54c6-b350-e83fba4127e9';
-vi.mock('./useCurrentDomainScope', () => ({
-  useCurrentDomainScope: () => ({
-    domainName: 'default',
-    domainId: DOMAIN_ID,
-    domainScope: { domain: [{ value: DOMAIN_ID }] },
-  }),
-}));
-
 vi.mock('.', () => ({
   useSuspendedBackendaiClient: () => ({
     user_uuid: 'dfa9da54-4b28-432f-be29-c0d680c7a412',
   }),
   useCurrentDomainValue: () => 'default',
+  useCurrentDomain: () => ({ name: 'default', id: DOMAIN_ID }),
 }));
 
 const MODEL_STORE_UUID = '8e32dd28-d319-4e3b-8851-ea37837699a5';

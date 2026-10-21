@@ -2,9 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useSuspendedBackendaiClient, useCurrentDomainValue } from '.';
+import {
+  useSuspendedBackendaiClient,
+  useCurrentDomainValue,
+  useCurrentDomain,
+} from '.';
 import { useModelStoreProjectQuery } from '../__generated__/useModelStoreProjectQuery.graphql';
-import { useCurrentDomainScope } from './useCurrentDomainScope';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 /**
@@ -16,7 +19,8 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 export const useModelStoreProject = (scope: 'user' | 'admin' = 'user') => {
   const baiClient = useSuspendedBackendaiClient();
   const domainName = useCurrentDomainValue();
-  const { domainScope } = useCurrentDomainScope();
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
   const projectScope =
     scope === 'admin'
       ? domainScope

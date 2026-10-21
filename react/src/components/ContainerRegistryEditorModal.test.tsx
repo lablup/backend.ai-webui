@@ -17,14 +17,6 @@ import {
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
 
 const CURRENT_DOMAIN_ID = 'b9e676dc-e23e-54c6-b350-e83fba4127e9';
-vi.mock('../hooks/useCurrentDomainScope', () => ({
-  useCurrentDomainScope: () => ({
-    domainName: 'default',
-    domainId: CURRENT_DOMAIN_ID,
-    domainScope: { domain: [{ value: CURRENT_DOMAIN_ID }] },
-  }),
-}));
-
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key,
@@ -39,6 +31,7 @@ vi.mock('../hooks', async (importOriginal) => {
   const originalModule = await importOriginal<typeof import('../hooks')>();
   return {
     ...originalModule,
+    useCurrentDomain: () => ({ name: 'default', id: CURRENT_DOMAIN_ID }),
     useSuspendedBackendaiClient: () => ({
       _config: { domainName: 'default' },
       isManagerVersionCompatibleWith: () => false,

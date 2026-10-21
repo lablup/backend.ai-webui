@@ -7,7 +7,7 @@ import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSetting
 import { KeypairSettingModalModifyMutation } from '../__generated__/KeypairSettingModalModifyMutation.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
-import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
+import { useCurrentDomain } from '../hooks';
 import BAIFormItem from './BAIFormItem';
 import KeypairResourcePolicySelect from './KeypairResourcePolicySelect';
 import { AstryxFormNumberInput } from './astryxFormControls';
@@ -39,7 +39,8 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
   ...modalProps
 }) => {
   const { t } = useTranslation();
-  const { domainScope } = useCurrentDomainScope();
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
   const { message } = App.useApp();
   const formRef = useRef<FormInstance<KeypairSettingModalFormInput>>(null);
 

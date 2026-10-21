@@ -44,10 +44,9 @@ import AdminRuntimeVariantPreset, {
 } from '../components/AdminRuntimeVariantPreset';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
-import { useCurrentDomainValue } from '../hooks';
+import { useCurrentDomainValue, useCurrentDomain } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import { BAISkeleton } from 'backend.ai-ui';
 import { BAICard, type BAICardProps } from 'backend.ai-ui';
 import {
@@ -93,7 +92,8 @@ const AdminDeploymentPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
   // Deployments and model cards of the current domain (ADR 0012).
-  const { domainScope } = useCurrentDomainScope();
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
 
   // Default status scope for the deployments tab: hide terminated deployments.
   // `status` is never a user-settable filter property, so the deployments tab

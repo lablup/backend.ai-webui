@@ -11,7 +11,6 @@ import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
 import { useCurrentDomain } from '../hooks';
-import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import {
   AstryxFormCheckbox,
   AstryxFormSelector,
@@ -118,17 +117,12 @@ const ResourceGroupScopeIdSelect: React.FC<ScopeIdBranchProps> = (props) => {
 export const isDomainScopeType = (scopeType?: string) =>
   scopeType?.toUpperCase() === 'DOMAIN';
 
-const ProjectScopeIdSelect: React.FC<ScopeIdBranchProps> = (props) => {
-  'use memo';
-  const { domainScope } = useCurrentDomainScope();
-  return <BAIScopedProjectSelect scope={domainScope} {...props} />;
-};
-
 export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   scopeType: rawScopeType,
   ...selectProps
 }) => {
   'use memo';
+  const { id: currentDomainId } = useCurrentDomain();
   const { t } = useTranslation();
   const scopeType = rawScopeType?.toUpperCase();
   // The surrounding `Form.Item` already prints "Scope ID", so the Astryx
@@ -150,7 +144,10 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   if (scopeType === 'PROJECT') {
     return (
       <Suspense fallback={fallback}>
-        <ProjectScopeIdSelect {...branchProps} />
+        <BAIScopedProjectSelect
+          scope={{ domain: [{ value: currentDomainId }] }}
+          {...branchProps}
+        />
       </Suspense>
     );
   }

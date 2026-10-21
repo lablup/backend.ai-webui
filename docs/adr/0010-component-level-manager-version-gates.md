@@ -2,7 +2,7 @@
 
 > Decision 1절의 **Floor location**(기준 line을 이 ADR의 본문이 정한다는 것)은 [ADR 0011](0011-manager-compatibility-policy-in-the-team-dev-catalog.md)이 대신한다. 기준 line은 branch마다 팀 dev catalog의 policy가 선언하고, 지원 범위는 그 line부터 branch 자신의 line까지이며, `pnpm run dev-env compat`이 읽는다. 이 문서가 적은 `26.4`는 결정 당시의 값이다. gate를 지우는 규칙과 나머지 결정은 그대로 발효 중이다.
 >
-> [ADR 0012](0012-scoped-search-fields-in-place-of-admin-fields.md)가 `scoped*` field와 `UserV2.organization.domainId`로 바꾼 화면은 그 floor와 상관없이 26.9.0a4 이상 매니저를 요구한다.
+> [ADR 0012](0012-scoped-search-fields-in-place-of-admin-fields.md)가 `scoped*` field로 바꾼 화면은 그 floor와 상관없이 26.9.0a4 이상 매니저를 요구한다.
 
 ## Summary
 

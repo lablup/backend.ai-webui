@@ -60,7 +60,7 @@ export const docs = {
       name: 'scope',
       type: 'ResourceGroupScope',
       description:
-        'Required. The `scopedResourceGroups` scope whose resource groups are listed, for example `useCurrentDomainScope().domainScope` in the host (`{ domain: [{ value: <domain UUID> }] }`).',
+        "Required. The `scopedResourceGroups` scope whose resource groups are listed, for example `{ domain: [{ value: id }] }` built from the host's `useCurrentDomain()` (`{ domain: [{ value: <domain UUID> }] }`).",
     },
     {
       name: 'filter',

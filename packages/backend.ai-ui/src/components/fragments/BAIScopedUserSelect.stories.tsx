@@ -24,7 +24,7 @@ const meta: Meta<typeof BAIScopedUserSelect> = {
         component: `
 **BAIScopedUserSelect** — the user picker for admin and project-admin forms (ADR 0012). Built on \`BAIComplexSelect\`, paged through \`scopedUsersV2\`.
 
-- \`scope\` (required): the \`UserScope\` input. Admin pages pass the current domain from \`useCurrentDomainScope()\`; a project-admin page passes \`{ project: [{ value: projectId }] }\`.
+- \`scope\` (required): the \`UserScope\` input. Admin pages pass the current domain from \`useCurrentDomain()\`; a project-admin page passes \`{ project: [{ value: projectId }] }\`.
 - \`valuePropName\`: \`'email'\` (default) or \`'id'\` — which field is the plain-key value. Only \`'id'\` runs the \`uuid in\` label-resolution query; with emails the key already is the label.
 - \`filter\` / \`excludeInactive\`: composed into a \`UserV2Filter\` through the schema's \`AND\` combinator, together with the debounced \`email: { iContains }\` search.
 - Needs a manager >= 26.9.0, where \`scopedUsersV2\` exists.
@@ -128,7 +128,7 @@ export const DomainScope: Story = {
     docs: {
       description: {
         story:
-          'A domain scope, as admin pages pass from `useCurrentDomainScope()`: the users of that domain.',
+          'A domain scope, as admin pages build from `useCurrentDomain()`: the users of that domain.',
       },
     },
   },
