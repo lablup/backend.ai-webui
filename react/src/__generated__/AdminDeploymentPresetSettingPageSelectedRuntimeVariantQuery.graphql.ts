@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<94b8e29344800745b1f20fec8870cb01>>
+ * @generated SignedSource<<61f969690b217942ef7b4885a8a2f82d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,7 +16,6 @@ export type AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery$variable
 export type AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery$data = {
   readonly runtimeVariant?: {
     readonly entityId: string;
-    readonly id: string;
     readonly name: string;
     readonly readsVfolderConfigFiles: boolean;
   } | null | undefined;
@@ -41,65 +40,61 @@ var v0 = [
 ],
 v1 = [
   {
-    "condition": "skip",
-    "kind": "Condition",
-    "passingValue": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "id",
-            "variableName": "id"
-          }
-        ],
-        "concreteType": "RuntimeVariant",
-        "kind": "LinkedField",
-        "name": "runtimeVariant",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "entityId",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "name",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "readsVfolderConfigFiles",
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ]
+    "kind": "Variable",
+    "name": "id",
+    "variableName": "id"
   }
-];
+],
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "entityId",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "readsVfolderConfigFiles",
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery",
-    "selections": (v1/*: any*/),
+    "selections": [
+      {
+        "condition": "skip",
+        "kind": "Condition",
+        "passingValue": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": (v1/*: any*/),
+            "concreteType": "RuntimeVariant",
+            "kind": "LinkedField",
+            "name": "runtimeVariant",
+            "plural": false,
+            "selections": [
+              (v2/*: any*/),
+              (v3/*: any*/),
+              (v4/*: any*/)
+            ],
+            "storageKey": null
+          }
+        ]
+      }
+    ],
     "type": "Query",
     "abstractKey": null
   },
@@ -108,19 +103,48 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery",
-    "selections": (v1/*: any*/)
+    "selections": [
+      {
+        "condition": "skip",
+        "kind": "Condition",
+        "passingValue": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": (v1/*: any*/),
+            "concreteType": "RuntimeVariant",
+            "kind": "LinkedField",
+            "name": "runtimeVariant",
+            "plural": false,
+            "selections": [
+              (v2/*: any*/),
+              (v3/*: any*/),
+              (v4/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "id",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ]
+      }
+    ]
   },
   "params": {
-    "cacheID": "d50b2755fe254b0f8b2d44b087f38290",
+    "cacheID": "fefd4dd17283aa04d452bd8f07bd1ed3",
     "id": null,
     "metadata": {},
     "name": "AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery",
     "operationKind": "query",
-    "text": "query AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery(\n  $id: UUID!\n  $skip: Boolean!\n) {\n  runtimeVariant(id: $id) @skip(if: $skip) {\n    id\n    entityId\n    name\n    readsVfolderConfigFiles @since(version: \"26.8.0\")\n  }\n}\n"
+    "text": "query AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery(\n  $id: UUID!\n  $skip: Boolean!\n) {\n  runtimeVariant(id: $id) @skip(if: $skip) {\n    entityId\n    name\n    readsVfolderConfigFiles @since(version: \"26.8.0\")\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "f9816fbc885e33f43fdbb2fd00e093fd";
+(node as any).hash = "cbae4b2efbd76213d92f67dd4edbb09a";
 
 export default node;

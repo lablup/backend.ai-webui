@@ -243,7 +243,6 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
           runtimeVariants(limit: 100) {
             edges {
               node {
-                id
                 entityId
                 name
                 readsVfolderConfigFiles @since(version: "26.8.0")
@@ -290,7 +289,6 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
           $skip: Boolean!
         ) {
           runtimeVariant(id: $id) @skip(if: $skip) {
-            id
             entityId
             name
             readsVfolderConfigFiles @since(version: "26.8.0")
@@ -341,7 +339,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
   const runtimeVariantList =
     selectedRuntimeVariantLookup &&
     !paginatedRuntimeVariantList.some(
-      (rt) => rt.id === selectedRuntimeVariantLookup.id,
+      (rt) => rt.entityId === selectedRuntimeVariantLookup.entityId,
     )
       ? [...paginatedRuntimeVariantList, selectedRuntimeVariantLookup]
       : paginatedRuntimeVariantList;

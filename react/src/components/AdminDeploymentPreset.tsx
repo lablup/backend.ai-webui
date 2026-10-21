@@ -54,7 +54,6 @@ export const AdminDeploymentPresetQuery = graphql`
       count
       edges {
         node {
-          id
           name
           ...AdminDeploymentPresetTableFragment
         }
@@ -235,7 +234,7 @@ const AdminDeploymentPreset = ({
         requireConfirmInput
         items={
           deletingPreset
-            ? [{ key: deletingPreset.id, label: deletingPreset.name }]
+            ? [{ key: deletingPreset.entityId, label: deletingPreset.name }]
             : []
         }
         onOk={async () => {

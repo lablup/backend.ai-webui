@@ -104,7 +104,6 @@ export interface AdminDeploymentPresetSettingPageContentProps {
   presetFrgmt?: AdminDeploymentPresetSettingPageContent_preset$key | null;
   /** Runtime variants fetched by the parent page layout. */
   runtimeVariants?: ReadonlyArray<{
-    id: string;
     entityId: string;
     name: string;
     // `readsVfolderConfigFiles` (26.8.0+) is stripped on older managers →

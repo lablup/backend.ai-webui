@@ -54,7 +54,6 @@ interface PresetReviewSummaryProps {
   form: FormInstance<AdminDeploymentPresetFormValue>;
   onGoToStep: (index: number) => void;
   runtimeVariants: ReadonlyArray<{
-    id: string;
     entityId: string;
     name: string;
     // `readsVfolderConfigFiles` (26.8.0+) is stripped on older managers →

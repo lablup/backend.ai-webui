@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bb0985965fbda9e8b9f511a669278811>>
+ * @generated SignedSource<<0068e23f98e620836a5c5e14bca487c0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -29,7 +29,6 @@ export type AdminDeploymentPresetTableFragment$data = ReadonlyArray<{
     readonly imageId: string | null | undefined;
     readonly startupCommand: string | null | undefined;
   };
-  readonly id: string;
   readonly image: {
     readonly id: string;
     readonly identity: {
@@ -57,14 +56,14 @@ var v0 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "id",
+  "name": "name",
   "storageKey": null
 },
 v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "id",
   "storageKey": null
 };
 return {
@@ -76,11 +75,6 @@ return {
   "name": "AdminDeploymentPresetTableFragment",
   "selections": [
     {
-      "kind": "RequiredField",
-      "field": (v0/*: any*/),
-      "action": "NONE"
-    },
-    {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
@@ -89,7 +83,7 @@ return {
     },
     {
       "kind": "RequiredField",
-      "field": (v1/*: any*/),
+      "field": (v0/*: any*/),
       "action": "NONE"
     },
     {
@@ -121,8 +115,8 @@ return {
       "name": "runtimeVariant",
       "plural": false,
       "selections": [
-        (v0/*: any*/),
-        (v1/*: any*/)
+        (v1/*: any*/),
+        (v0/*: any*/)
       ],
       "storageKey": null
     },
@@ -184,7 +178,7 @@ return {
       "name": "image",
       "plural": false,
       "selections": [
-        (v0/*: any*/),
+        (v1/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -272,6 +266,6 @@ return {
 };
 })();
 
-(node as any).hash = "fed7d39cfc6fd40c33d479aca08ee646";
+(node as any).hash = "5209617c87ce852551a44cf9c319b237";
 
 export default node;
