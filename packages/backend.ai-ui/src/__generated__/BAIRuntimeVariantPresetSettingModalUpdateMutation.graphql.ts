@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<68008ff4d7113d1fce7120b4e78f055b>>
+ * @generated SignedSource<<5d36d90d63e6ce8af7eaa413550809fe>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -58,7 +58,7 @@ export type BAIRuntimeVariantPresetSettingModalUpdateMutation$variables = {
   input: UpdateRuntimeVariantPresetInput;
 };
 export type BAIRuntimeVariantPresetSettingModalUpdateMutation$data = {
-  readonly adminUpdateRuntimeVariantPreset: {
+  readonly updateRuntimeVariantPreset: {
     readonly preset: {
       readonly category: string | null | undefined;
       readonly createdAt: string;
@@ -98,7 +98,7 @@ export type BAIRuntimeVariantPresetSettingModalUpdateMutation$data = {
       } | null | undefined;
       readonly updatedAt: string | null | undefined;
     };
-  } | null | undefined;
+  };
 };
 export type BAIRuntimeVariantPresetSettingModalUpdateMutation = {
   response: BAIRuntimeVariantPresetSettingModalUpdateMutation$data;
@@ -139,7 +139,7 @@ v3 = [
     ],
     "concreteType": "UpdateRuntimeVariantPresetPayload",
     "kind": "LinkedField",
-    "name": "adminUpdateRuntimeVariantPreset",
+    "name": "updateRuntimeVariantPreset",
     "plural": false,
     "selections": [
       {
@@ -389,16 +389,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "6e2e520d6de6db09f1a505dca0a80aae",
+    "cacheID": "73592f11c3a57e39dfec90fb175e984f",
     "id": null,
     "metadata": {},
     "name": "BAIRuntimeVariantPresetSettingModalUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation BAIRuntimeVariantPresetSettingModalUpdateMutation(\n  $input: UpdateRuntimeVariantPresetInput!\n) {\n  adminUpdateRuntimeVariantPreset(input: $input) {\n    preset {\n      id\n      runtimeVariantId\n      name\n      description\n      rank\n      targetSpec {\n        presetTarget\n        valueType\n        defaultValue\n        key\n      }\n      required\n      category\n      displayName\n      uiOption {\n        uiType\n        slider {\n          min\n          max\n          step\n        }\n        number {\n          min\n          max\n        }\n        choices {\n          items {\n            value\n            label\n          }\n        }\n        text {\n          placeholder\n        }\n      }\n      createdAt\n      updatedAt\n    }\n  }\n}\n"
+    "text": "mutation BAIRuntimeVariantPresetSettingModalUpdateMutation(\n  $input: UpdateRuntimeVariantPresetInput!\n) {\n  updateRuntimeVariantPreset(input: $input) {\n    preset {\n      id\n      runtimeVariantId\n      name\n      description\n      rank\n      targetSpec {\n        presetTarget\n        valueType\n        defaultValue\n        key\n      }\n      required\n      category\n      displayName\n      uiOption {\n        uiType\n        slider {\n          min\n          max\n          step\n        }\n        number {\n          min\n          max\n        }\n        choices {\n          items {\n            value\n            label\n          }\n        }\n        text {\n          placeholder\n        }\n      }\n      createdAt\n      updatedAt\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "05eb3457ea5eef90987aa0ae97cdc1ba";
+(node as any).hash = "5d07a7c297bbd9a654b1dd3e004664cd";
 
 export default node;

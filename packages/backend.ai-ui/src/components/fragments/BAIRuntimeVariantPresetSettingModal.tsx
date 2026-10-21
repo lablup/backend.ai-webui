@@ -359,7 +359,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
       mutation BAIRuntimeVariantPresetSettingModalUpdateMutation(
         $input: UpdateRuntimeVariantPresetInput!
       ) {
-        adminUpdateRuntimeVariantPreset(input: $input) {
+        updateRuntimeVariantPreset(input: $input) {
           preset {
             id
             runtimeVariantId
