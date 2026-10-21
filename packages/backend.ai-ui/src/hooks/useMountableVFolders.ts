@@ -1,9 +1,9 @@
+import { useFetchKey } from '.';
 import type {
   useMountableVFoldersAutoMountedQuery,
   VFolderFilter,
   VFolderScope,
 } from '../__generated__/useMountableVFoldersAutoMountedQuery.graphql';
-import { useDateISOState } from './useUpdatableState';
 import * as _ from 'lodash-es';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -57,7 +57,7 @@ export const useSuspendedAutoMountedVFolders = ({
   mountableHosts,
 }: VFolderMountScope) => {
   'use memo';
-  const [fetchKey, refetch] = useDateISOState('first');
+  const [fetchKey, updateFetchKey] = useFetchKey();
   const { scopedVFoldersV2 } =
     useLazyLoadQuery<useMountableVFoldersAutoMountedQuery>(
       graphql`
@@ -107,5 +107,5 @@ export const useSuspendedAutoMountedVFolders = ({
         : { vfolderId: node.entityId, name: node.metadata.name },
     ),
   );
-  return { autoMountedFolders, refetch };
+  return { autoMountedFolders, refetch: () => updateFetchKey() };
 };

@@ -4,7 +4,7 @@ import type {
 } from '../../__generated__/BAIScopedVFolderSelectQuery.graphql';
 import type { BAIScopedVFolderSelectValueQuery } from '../../__generated__/BAIScopedVFolderSelectValueQuery.graphql';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
-import { useControllableValue } from '../../hooks';
+import { useControllableValue, useFetchKey } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import type {
   VFolderFilter,
@@ -195,7 +195,7 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
   const deferredOpen = useDeferredValue(controllableOpen);
   const [searchStr, setSearchStr] = useState('');
   const deferredSearchStr = useDebouncedDeferredValue(searchStr);
-  const [fetchKey, setFetchKey] = useState(0);
+  const [fetchKey, updateFetchKey] = useFetchKey();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
   const { paginationData, result, loadNext, isLoadingNext } =
@@ -263,7 +263,7 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
   useImperativeHandle(ref, () => ({
     refetch: () => {
       startRefetchTransition(() => {
-        setFetchKey((key) => key + 1);
+        updateFetchKey();
       });
     },
   }));
