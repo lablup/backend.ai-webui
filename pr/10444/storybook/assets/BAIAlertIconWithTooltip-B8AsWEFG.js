@@ -1,1 +1,0 @@
-import{j as r}from"./iframe-Dd7gFUlb.js";import{B as s}from"./BAIIconWithTooltip-YWaqFTig.js";import{C as c}from"./circle-alert-3N2girbE.js";const m=({iconProps:t,type:o,title:i,placement:n})=>r.jsx(s,{content:i,placement:n,icon:r.jsx(c,{style:{color:o==="warning"?"var(--color-warning)":o==="error"?"var(--color-error)":void 0},...t})});export{m as B};

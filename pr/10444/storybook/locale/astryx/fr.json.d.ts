@@ -113,7 +113,7 @@ declare const _default: {
   "@astryx.listInput.emptyDescription": "Ajoutez un élément de type {itemName} pour commencer.",
   "@astryx.listInput.emptyTitle": "Aucun élément de type {itemName} pour le moment",
   "@astryx.listInput.fieldLabelWithPosition": "{header}, {itemName} {position, number} sur {total, number}",
-  "@astryx.listInput.removeItem": "Supprimer {itemName} {position, number}",
+  "@astryx.listInput.removeItem": "Supprimer",
   "@astryx.listInput.removeUnavailable": "La suppression n’est pas disponible lorsque la liste est désactivée",
   "@astryx.listInput.reorderInstructions": "Utilisez Arrow Up ou Arrow Down pour déplacer cet élément d’une position. Appuyez sur Space ou Enter pour le saisir et activer la réorganisation avancée au clavier.",
   "@astryx.listInput.reorderItem": "Réorganiser {itemName} {position, number}",
