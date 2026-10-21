@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
+  applySessionMonitorPreset,
   SESSION_MONITOR_CHIP_ITEMS,
   SESSION_MONITOR_ERROR_FILTER,
   SESSION_MONITOR_RUNNING_FILTER,
@@ -47,28 +48,31 @@ const CHIP_ITEM_LABEL_KEYS: Record<SessionMonitorChipItem, string> = {
   idle: 'sessionMonitor.settings.ChipIdle',
 };
 
-/** One-click conditions; each replaces the condition and stays editable. */
+/** One-field presets: each swaps its field's part and keeps the rest. */
 const STATUS_PRESETS = [
   {
     key: 'running',
     labelKey: 'sessionMonitor.settings.PresetRunning',
+    field: 'status',
     condition: SESSION_MONITOR_RUNNING_FILTER,
   },
   {
     key: 'starting',
     labelKey: 'sessionMonitor.settings.PresetStarting',
+    field: 'status',
     condition: SESSION_MONITOR_STARTING_FILTER,
   },
   {
     key: 'error',
     labelKey: 'sessionMonitor.settings.PresetError',
+    field: 'status',
     condition: SESSION_MONITOR_ERROR_FILTER,
   },
 ] as const;
 
 /** Reads the current project, so it is only mounted on project pages. */
 const CurrentProjectPreset: React.FC<{
-  onApply: (condition: string) => void;
+  onApply: (field: string, condition: string) => void;
 }> = ({ onApply }) => {
   'use memo';
   const { t } = useTranslation();
@@ -79,7 +83,9 @@ const CurrentProjectPreset: React.FC<{
       size="sm"
       variant="secondary"
       label={t('sessionMonitor.settings.PresetCurrentProject')}
-      onClick={() => onApply(`group_name == "${currentProject.name}"`)}
+      onClick={() =>
+        onApply('group_name', `group_name == "${currentProject.name}"`)
+      }
     />
   );
 };
@@ -108,6 +114,8 @@ const SessionMonitorSettingsPane: React.FC<{
     'session_monitor_chip_items',
   );
   const isProjectAgnosticPage = useIsProjectAgnosticPage();
+  const applyPreset = (field: string, part: string) =>
+    setCondition(applySessionMonitorPreset(condition, field, part));
 
   const sortOptions: Array<{ value: SessionMonitorSort; label: string }> = [
     { value: 'deadline', label: t('sessionMonitor.settings.SortDeadline') },
@@ -143,11 +151,11 @@ const SessionMonitorSettingsPane: React.FC<{
             size="sm"
             variant="secondary"
             label={t(preset.labelKey)}
-            onClick={() => setCondition(preset.condition)}
+            onClick={() => applyPreset(preset.field, preset.condition)}
           />
         ))}
         {!isProjectAgnosticPage && (
-          <CurrentProjectPreset onApply={setCondition} />
+          <CurrentProjectPreset onApply={applyPreset} />
         )}
       </BAIFlex>
       <BAIPropertyFilter

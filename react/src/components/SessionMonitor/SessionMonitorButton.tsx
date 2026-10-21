@@ -11,7 +11,7 @@ import {
 } from '../../hooks/useSessionMonitor';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
-import SessionMonitorAcceleratorSummary from './SessionMonitorAcceleratorSummary';
+import SessionMonitorAllocationSummary from './SessionMonitorAllocationSummary';
 import SessionMonitorDetailDrawer from './SessionMonitorDetailDrawer';
 import SessionMonitorPopoverContent, {
   sessionMonitorTitleKey,
@@ -158,7 +158,7 @@ const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
               {summary?.allocated && (
                 <ErrorBoundaryWithNullFallback>
                   <Suspense fallback={null}>
-                    <SessionMonitorAcceleratorSummary
+                    <SessionMonitorAllocationSummary
                       allocated={summary.allocated}
                       separator={<Separator />}
                     />

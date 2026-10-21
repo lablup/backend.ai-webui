@@ -1,5 +1,6 @@
 import {
   applyAttentionTitleBadge,
+  applySessionMonitorPreset,
   buildSessionMonitorConditionFilter,
   buildSessionMonitorFilter,
   getNearestIdleCheck,
@@ -241,5 +242,43 @@ describe('readAlertedRecords', () => {
     expect(readAlertedRecords(storage, NOW)).toEqual({ fresh: NOW - 1000 });
     expect(readAlertedRecords({ getItem: () => '{not json' }, NOW)).toEqual({});
     expect(readAlertedRecords(undefined, NOW)).toEqual({});
+  });
+});
+
+describe('applySessionMonitorPreset', () => {
+  it('fills an empty condition', () => {
+    expect(applySessionMonitorPreset('', 'status', 'status == "ERROR"')).toBe(
+      'status == "ERROR"',
+    );
+  });
+
+  it('replaces only the parts on the same field', () => {
+    expect(
+      applySessionMonitorPreset(
+        'group_name == "a & b" & status == "RUNNING" & type == "batch"',
+        'status',
+        'status == "ERROR"',
+      ),
+    ).toBe('group_name == "a & b" & type == "batch" & status == "ERROR"');
+  });
+
+  it('keeps an in-list intact and swaps it as one part', () => {
+    expect(
+      applySessionMonitorPreset(
+        'status in ["PENDING","SCHEDULED"] & group_name == "p"',
+        'status',
+        'status == "RUNNING"',
+      ),
+    ).toBe('group_name == "p" & status == "RUNNING"');
+  });
+
+  it('ANDs onto a condition with a top-level or', () => {
+    expect(
+      applySessionMonitorPreset(
+        'type == "batch" | type == "inference"',
+        'group_name',
+        'group_name == "p"',
+      ),
+    ).toBe('(type == "batch" | type == "inference") & group_name == "p"');
   });
 });
