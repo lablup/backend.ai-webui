@@ -1,20 +1,32 @@
 // spec: e2e/credential/user_crud.test-plan.md
+import {
+  createAdminApiContext,
+  gqlAdmin,
+  purgeUserViaApi,
+} from '../utils/admin-api';
 import { PurgeUsersModal } from '../utils/classes/user/PurgeUsersModal';
 import {
   KeyPairModal,
   UserInfoModal,
   UserSettingModal,
 } from '../utils/classes/user/UserSettingModal';
+import { getE2EDomainName } from '../utils/e2e-scope';
+import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
 import {
   loginAsAdmin,
   loginAsCreatedAccount,
   logout,
   modifyConfigToml,
+  userInfo,
   webServerEndpoint,
   webuiEndpoint,
 } from '../utils/test-util';
-import { navigateToUsersPage } from '../utils/user-profile-util';
-import test, { expect } from '@playwright/test';
+import {
+  clickRowAction,
+  navigateToUsersPage,
+} from '../utils/user-profile-util';
+import test, { APIRequestContext, expect, Page } from '@playwright/test';
+import { randomBytes } from 'crypto';
 
 // FR-3331/FR-3339 (PRs #8303/#8315) renamed the User Setting modal's submit
 // button from "OK" to "Create" (create mode) / "Save" (edit mode).
@@ -406,6 +418,219 @@ test.describe.serial(
 
       // 4. Verify user is still on login page
       await expect(page.getByLabel('Email or Username')).toBeVisible();
+    });
+  },
+);
+
+/** The global id of a Strawberry node is base64 `Type:<uuid>`. */
+const toRawUUID = (globalId: string) =>
+  Buffer.from(globalId, 'base64').toString().split(':')[1];
+
+type UserListOperation = { errors?: unknown; count?: number | null };
+
+/** Records every `AdminUserManagementQuery` response the page receives. */
+function recordUserListResponses(page: Page): Array<UserListOperation> {
+  const operations: Array<UserListOperation> = [];
+  page.on('response', async (response) => {
+    const req = response.request();
+    if (req.method() !== 'POST' || !req.url().includes('/admin/gql')) return;
+    let query: string | undefined;
+    try {
+      query = req.postDataJSON()?.query;
+    } catch {
+      return;
+    }
+    if (!query?.match(/query\s+AdminUserManagementQuery\b/)) return;
+    const body = await response.json().catch(() => null);
+    operations.push({
+      errors: body?.errors,
+      count: body?.data?.scopedUsersV2?.count,
+    });
+  });
+  return operations;
+}
+
+// #10310: the Users tab reads scopedUsersV2 (ADR 0012); user management
+// actions stay superadmin-only. The shared backend has no domain admin, so
+// each test signs in as a disposable one in the e2e domain.
+test.describe(
+  'User list - Domain admin',
+  { tag: ['@regression', '@user', '@functional', '@requires-manager-v26.9'] },
+  () => {
+    let api: APIRequestContext | null = null;
+    let domainAdmin: { email: string; password: string };
+    let domainAdminId: string | null = null;
+    let domainAdminRoleId: string | null = null;
+
+    test.beforeEach(async () => {
+      const runId = `${Date.now().toString(36)}${randomBytes(3).toString('hex')}`;
+      domainAdmin = {
+        email: `e2e-domain-admin-${runId}@lablup.com`,
+        password: `e2e-${randomBytes(12).toString('hex')}@Pw`,
+      };
+      api = await createAdminApiContext();
+      const domainName = await getE2EDomainName(api);
+      const { user } = await gqlAdmin<{
+        user: { groups: Array<{ id: string }> | null } | null;
+      }>(
+        api,
+        `query($email: String) { user(email: $email) { groups { id } } }`,
+        {
+          email: userInfo.user.email,
+        },
+      );
+      const created = await gqlAdmin<{
+        create_user: {
+          ok: boolean;
+          msg: string;
+          user: { uuid: string } | null;
+        };
+      }>(
+        api,
+        `mutation($email: String!, $props: UserInput!) {
+          create_user(email: $email, props: $props) { ok msg user { uuid } }
+        }`,
+        {
+          email: domainAdmin.email,
+          props: {
+            username: `e2e-domain-admin-${runId}`,
+            password: domainAdmin.password,
+            need_password_change: false,
+            domain_name: domainName,
+            role: 'admin',
+            group_ids: (user?.groups ?? []).map((g) => g.id),
+          },
+        },
+      );
+      expect(created.create_user.ok, created.create_user.msg).toBe(true);
+      domainAdminId = created.create_user.user?.uuid ?? null;
+
+      // role: 'admin' alone grants no RBAC permission; the scoped reads need
+      // the domain's system admin role.
+      const { domainV2 } = await gqlAdmin<{ domainV2: { entityId: string } }>(
+        api,
+        `query ($name: String!) { domainV2(domainName: $name) { entityId } }`,
+        { name: domainName },
+      );
+      const { adminRoles } = await gqlAdmin<{
+        adminRoles: {
+          edges: Array<{ node: { id: string; name: string } }>;
+        };
+      }>(
+        api,
+        `query ($filter: RoleFilter) {
+          adminRoles(filter: $filter, first: 50) { edges { node { id name } } }
+        }`,
+        {
+          filter: {
+            status: { equals: 'ACTIVE' },
+            source: { equals: 'SYSTEM' },
+            mappedScope: {
+              scopeType: { iEquals: 'domain' },
+              scopeId: { equals: domainV2.entityId },
+            },
+            permissions: { some: { entityType: { iEquals: 'scope_admin' } } },
+          },
+        },
+      );
+      const role =
+        adminRoles.edges.find((e) => e.node.name.startsWith('domain_admin')) ??
+        adminRoles.edges[0];
+      expect(role, 'the e2e domain has a system admin role').toBeTruthy();
+      domainAdminRoleId = toRawUUID(role.node.id);
+      await gqlAdmin(
+        api,
+        `mutation ($input: BulkAssignRoleInput!) {
+          adminBulkAssignRole(input: $input) { assigned { id } }
+        }`,
+        { input: { roleId: domainAdminRoleId, userIds: [domainAdminId] } },
+      );
+    });
+
+    test.afterEach(async () => {
+      if (!api) return;
+      const adminApi = api;
+      api = null;
+      if (domainAdminId && domainAdminRoleId) {
+        await gqlAdmin(
+          adminApi,
+          `mutation ($input: RevokeRoleInput!) { adminRevokeRole(input: $input) { id } }`,
+          { input: { userId: domainAdminId, roleId: domainAdminRoleId } },
+        ).catch((error) => console.warn(`could not revoke the role:`, error));
+      }
+      domainAdminId = null;
+      domainAdminRoleId = null;
+      await purgeUserViaApi(adminApi, domainAdmin.email)
+        .catch((error) =>
+          console.warn(`could not purge ${domainAdmin.email}:`, error),
+        )
+        .finally(() => adminApi.dispose());
+    });
+
+    test('Domain admin can view the domain user list without user management actions', async ({
+      page,
+      request,
+    }) => {
+      const operations = recordUserListResponses(page);
+      await loginAsCreatedAccount(
+        page,
+        request,
+        domainAdmin.email,
+        domainAdmin.password,
+      );
+      await skipUnlessManagerVersion(
+        page,
+        '26.9.0a4',
+        'scopedUsersV2 needs a Backend.AI manager >= 26.9.0a4 (#10302)',
+      );
+
+      await navigateToUsersPage(page);
+
+      const firstRow = page
+        .getByRole('row')
+        .filter({ has: page.getByRole('cell', { name: /@/ }) })
+        .first();
+      await expect(firstRow).toBeVisible({ timeout: 20000 });
+      expect(operations.length).toBeGreaterThan(0);
+      for (const op of operations) {
+        expect(op.errors).toBeUndefined();
+      }
+      expect(operations.at(-1)?.count ?? 0).toBeGreaterThan(0);
+      await expect(
+        page.getByRole('button', { name: 'Create User', exact: true }),
+      ).toHaveCount(0);
+      await expect(
+        page.getByRole('group', { name: 'Create User' }),
+      ).toHaveCount(0);
+
+      // Narrow cells fold row actions into "More actions"; check both paths.
+      const hiddenActions = [
+        'Edit',
+        'Deactivate',
+        'Unblock login',
+        'Permanently Delete',
+      ];
+      await firstRow.hover();
+      for (const name of hiddenActions) {
+        await expect(
+          firstRow.getByRole('button', { name, exact: true }),
+        ).toHaveCount(0);
+      }
+      const moreButton = firstRow.getByRole('button', { name: 'More actions' });
+      if (await moreButton.isVisible().catch(() => false)) {
+        await moreButton.click();
+        await expect(page.getByRole('menuitem').first()).toBeVisible();
+        for (const name of hiddenActions) {
+          await expect(
+            page.getByRole('menuitem', { name, exact: true }),
+          ).toHaveCount(0);
+        }
+        await page.keyboard.press('Escape');
+      }
+
+      await clickRowAction(page, firstRow, 'User Detail');
+      const userInfoModal = new UserInfoModal(page);
+      await userInfoModal.waitForVisible();
     });
   },
 );
