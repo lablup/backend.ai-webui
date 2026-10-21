@@ -3296,7 +3296,7 @@
     "RunningCount": "実行中 {{count}}件",
     "SessionCount": "{{count}} 件のセッション",
     "StartingCount": "起動中 {{count}}件",
-    "Tooltip": "セッションモニター: どのページでも監視中のセッション",
+    "Tooltip": "セッションモニター",
     "WatchedSessions": "監視中のセッション",
     "idleAlert": {
       "NetworkTimeout": "ネットワークアクティビティが検出されませんでした。終了する前にセッションに接続してください。",

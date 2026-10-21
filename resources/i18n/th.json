@@ -3279,7 +3279,7 @@
     "RunningCount": "กำลังทำงาน {{count}}",
     "SessionCount": "{{count}} เซสชัน",
     "StartingCount": "กำลังเริ่ม {{count}}",
-    "Tooltip": "ตัวตรวจสอบเซสชัน: เซสชันที่คุณติดตามในทุกหน้า",
+    "Tooltip": "ตัวตรวจสอบเซสชัน",
     "WatchedSessions": "เซสชันที่ติดตาม",
     "idleAlert": {
       "NetworkTimeout": "ไม่พบการใช้งานเครือข่าย กรุณาเชื่อมต่อกับเซสชันก่อนที่จะถูกยุติ",

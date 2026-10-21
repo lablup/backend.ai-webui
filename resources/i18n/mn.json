@@ -3296,7 +3296,7 @@
     "RunningCount": "{{count}} ажиллаж байна",
     "SessionCount": "{{count}} сесс",
     "StartingCount": "{{count}} эхэлж байна",
-    "Tooltip": "Сессийн хяналт: хуудас бүрт хянаж буй сессүүд",
+    "Tooltip": "Сессийн хяналт",
     "WatchedSessions": "Хянаж буй сессүүд",
     "idleAlert": {
       "NetworkTimeout": "Сүлжээний үйл ажиллагаа илрээгүй байна. Дуусгахаас өмнө сесстэй холбогдоно уу.",

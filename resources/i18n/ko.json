@@ -3297,7 +3297,7 @@
     "RunningCount": "실행 {{count}}",
     "SessionCount": "세션 {{count}}개",
     "StartingCount": "시작 중 {{count}}",
-    "Tooltip": "세션 모니터: 어느 페이지에서든 지켜보는 세션",
+    "Tooltip": "세션 모니터",
     "WatchedSessions": "지켜보는 세션",
     "idleAlert": {
       "NetworkTimeout": "네트워크 활동이 감지되지 않았습니다. 종료되기 전에 세션에 접속해 주세요.",

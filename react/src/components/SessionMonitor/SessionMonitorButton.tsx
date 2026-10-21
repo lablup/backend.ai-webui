@@ -124,7 +124,7 @@ const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
           )
         }
       >
-        <Tooltip content={t('sessionMonitor.Tooltip')}>
+        <Tooltip content={t('sessionMonitor.Tooltip')} placement="start">
           <Button
             data-astryx-media={bandMediaMode}
             data-testid={props['data-testid']}

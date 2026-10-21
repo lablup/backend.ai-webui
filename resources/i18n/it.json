@@ -3294,7 +3294,7 @@
     "RunningCount": "{{count}} in esecuzione",
     "SessionCount": "{{count}} sessioni",
     "StartingCount": "{{count}} in avvio",
-    "Tooltip": "Monitor sessioni: le sessioni che monitori, in ogni pagina",
+    "Tooltip": "Monitor sessioni",
     "WatchedSessions": "Sessioni monitorate",
     "idleAlert": {
       "NetworkTimeout": "Non è stata rilevata alcuna attività di rete. Connettiti alla sessione prima che venga terminata.",

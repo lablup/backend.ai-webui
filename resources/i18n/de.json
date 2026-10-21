@@ -3296,7 +3296,7 @@
     "RunningCount": "{{count}} laufend",
     "SessionCount": "{{count}} Sitzungen",
     "StartingCount": "{{count}} startend",
-    "Tooltip": "Sitzungsmonitor: die beobachteten Sitzungen, auf jeder Seite",
+    "Tooltip": "Sitzungsmonitor",
     "WatchedSessions": "Beobachtete Sitzungen",
     "idleAlert": {
       "NetworkTimeout": "Es wurde keine Netzwerkaktivität erkannt. Verbinden Sie sich mit der Sitzung, bevor sie beendet wird.",

@@ -3297,7 +3297,7 @@
     "RunningCount": "{{count}} działa",
     "SessionCount": "{{count}} sesji",
     "StartingCount": "{{count}} uruchamia się",
-    "Tooltip": "Monitor sesji: obserwowane sesje, na każdej stronie",
+    "Tooltip": "Monitor sesji",
     "WatchedSessions": "Obserwowane sesje",
     "idleAlert": {
       "NetworkTimeout": "Nie wykryto aktywności sieciowej. Połącz się z sesją, zanim zostanie zakończona.",

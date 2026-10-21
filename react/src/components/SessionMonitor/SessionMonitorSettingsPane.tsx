@@ -12,8 +12,8 @@ import {
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { SETTING_ARRIVAL_PARAM } from '../../hooks/useSettingArrival';
 import { getSessionFilterProperties } from '../DashboardPanels/sessionFilterProperties';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { Selector } from '@lablup/ui-common/Selector';
-import { Switch } from '@lablup/ui-common/Switch';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
@@ -84,7 +84,7 @@ const SessionMonitorSettingsPane: React.FC<{
         {t('sessionMonitor.settings.Condition')}
       </Text>
       {isDomainAdmin && (
-        <Switch
+        <CheckboxInput
           label={t('sessionMonitor.settings.OnlyMine')}
           value={onlyMine ?? true}
           onChange={(checked) => setOnlyMine(checked)}
@@ -93,13 +93,15 @@ const SessionMonitorSettingsPane: React.FC<{
       <BAIPropertyFilter
         filterProperties={getSessionMonitorFilterProperties(t)}
         value={condition ?? ''}
-        onChange={(value) => setCondition(value)}
+        // Clearing the last token yields undefined, which the setting store
+        // would persist as the string "undefined"; '' reads back as unset.
+        onChange={(value) => setCondition(value ?? '')}
       />
       <Text type="label" weight="semibold">
         {t('sessionMonitor.settings.ShowInHeader')}
       </Text>
       {SESSION_MONITOR_CHIP_ITEMS.map((item) => (
-        <Switch
+        <CheckboxInput
           key={item}
           label={t(chipItemLabelKey(item))}
           value={chipItems?.includes(item) ?? false}
@@ -133,7 +135,7 @@ const SessionMonitorSettingsPane: React.FC<{
           onChange={(value) => setRows(Number(value))}
         />
       </BAIFlex>
-      <Switch
+      <CheckboxInput
         label={t('sessionMonitor.settings.IncludeStarting')}
         value={includeStarting ?? true}
         onChange={(checked) => setIncludeStarting(checked)}

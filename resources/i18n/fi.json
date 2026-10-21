@@ -3294,7 +3294,7 @@
     "RunningCount": "{{count}} käynnissä",
     "SessionCount": "{{count}} istuntoa",
     "StartingCount": "{{count}} käynnistyy",
-    "Tooltip": "Istuntovalvonta: seuraamasi istunnot jokaisella sivulla",
+    "Tooltip": "Istuntovalvonta",
     "WatchedSessions": "Seuratut istunnot",
     "idleAlert": {
       "NetworkTimeout": "Verkkotoimintaa ei havaittu. Yhdistä istuntoon ennen kuin se lopetetaan.",

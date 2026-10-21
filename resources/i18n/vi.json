@@ -3296,7 +3296,7 @@
     "RunningCount": "{{count}} đang chạy",
     "SessionCount": "{{count}} phiên",
     "StartingCount": "{{count}} đang khởi động",
-    "Tooltip": "Giám sát phiên: các phiên bạn theo dõi, trên mọi trang",
+    "Tooltip": "Giám sát phiên",
     "WatchedSessions": "Phiên đang theo dõi",
     "idleAlert": {
       "NetworkTimeout": "Không phát hiện hoạt động mạng. Hãy kết nối đến phiên trước khi nó bị chấm dứt.",

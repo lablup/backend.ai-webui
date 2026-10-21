@@ -3294,7 +3294,7 @@
     "RunningCount": "{{count}} berjalan",
     "SessionCount": "{{count}} sesi",
     "StartingCount": "{{count}} bermula",
-    "Tooltip": "Pemantau sesi: sesi yang anda pantau, di setiap halaman",
+    "Tooltip": "Pemantau sesi",
     "WatchedSessions": "Sesi yang dipantau",
     "idleAlert": {
       "NetworkTimeout": "Tidak ada aktiviti rangkaian dikesan. Sambung ke sesi sebelum ia ditamatkan.",

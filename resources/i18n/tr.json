@@ -3294,7 +3294,7 @@
     "RunningCount": "{{count}} çalışıyor",
     "SessionCount": "{{count}} oturum",
     "StartingCount": "{{count}} başlıyor",
-    "Tooltip": "Oturum monitörü: her sayfada izlediğiniz oturumlar",
+    "Tooltip": "Oturum monitörü",
     "WatchedSessions": "İzlenen oturumlar",
     "idleAlert": {
       "NetworkTimeout": "Ağ etkinliği algılanmadı. Sonlandırılmadan önce oturuma bağlanın.",

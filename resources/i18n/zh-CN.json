@@ -3296,7 +3296,7 @@
     "RunningCount": "{{count}} 个运行中",
     "SessionCount": "{{count}} 个会话",
     "StartingCount": "{{count}} 个启动中",
-    "Tooltip": "会话监控：在任何页面关注的会话",
+    "Tooltip": "会话监控",
     "WatchedSessions": "关注的会话",
     "idleAlert": {
       "NetworkTimeout": "未检测到网络活动。请在会话终止前连接到该会话。",
