@@ -10,6 +10,7 @@ import {
   type ListField,
   type StoreValue,
 } from '../form-engine';
+import './BAIFormListInput.css';
 import type { InputStatus } from '@lablup/ui-common/Field';
 import {
   ListInput,
@@ -110,6 +111,7 @@ const BAIFormListInput: React.FC<BAIFormListInputProps> = ({
           <ListInput<ListField>
             // Its rows are an inline-size container, which takes no width
             // from its content: without this a centering parent collapses it.
+            className="bai-form-list-input"
             style={{ width: '100%' }}
             label={label}
             isLabelHidden={isLabelHidden}

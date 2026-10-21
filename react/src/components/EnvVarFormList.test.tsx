@@ -6,7 +6,7 @@
 import '../../__test__/matchMedia.mock.js';
 import { Form } from '../form-engine';
 import EnvVarFormList, { sanitizeSensitiveEnv } from './EnvVarFormList';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -139,7 +139,10 @@ describe('EnvVarFormList suggested variables', () => {
     );
 
     expect(screen.getByDisplayValue('HF_TOKEN')).toBeInTheDocument();
-    expect(screen.queryByText(REQUIRED_MESSAGE)).not.toBeInTheDocument();
+    // Revalidation settles after the pick; a loaded CI runner sees it late.
+    await waitFor(() =>
+      expect(screen.queryByText(REQUIRED_MESSAGE)).not.toBeInTheDocument(),
+    );
   });
 });
 
