@@ -1,0 +1,138 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-10-21T16:04:27.898Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 1,
+        "modified": 0,
+        "removed": 0,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "trouble_shooting",
+          "title": "Troubleshooting",
+          "status": "modified",
+          "url": "next/en/trouble_shooting.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/trouble_shooting/trouble_shooting.md",
+          "counts": {
+            "added": 1,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "a5f3e50e5b71"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 1,
+        "modified": 0,
+        "removed": 0,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "trouble_shooting",
+          "title": "FAQ＆トラブルシューティング",
+          "status": "modified",
+          "url": "next/ja/trouble_shooting.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/trouble_shooting/trouble_shooting.md",
+          "counts": {
+            "added": 1,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "4b339edb5e2c"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 1,
+        "modified": 0,
+        "removed": 0,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "trouble_shooting",
+          "title": "FAQ 및 문제 해결",
+          "status": "modified",
+          "url": "next/ko/trouble_shooting.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/trouble_shooting/trouble_shooting.md",
+          "counts": {
+            "added": 1,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "8f2cfd40fd77"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 1,
+        "modified": 0,
+        "removed": 0,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "trouble_shooting",
+          "title": "FAQ และการแก้ไขปัญหา",
+          "status": "modified",
+          "url": "next/th/trouble_shooting.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/trouble_shooting/trouble_shooting.md",
+          "counts": {
+            "added": 1,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "52478e64d3d7"
+          ]
+        }
+      ]
+    }
+  }
+}
