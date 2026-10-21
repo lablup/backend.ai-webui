@@ -21,6 +21,7 @@ import {
   cleanupDeploymentFixtures,
   cleanupDeploymentSafely,
   createDeploymentShell,
+  escapeForRegExp,
   provisionDeploymentModelFolder,
   selectRevisionModalOption,
 } from '../utils/deployment-fixtures';
@@ -268,16 +269,29 @@ test.describe(
     ],
   },
   () => {
+    // Cleanup runs in afterEach so it still has a live page after a timeout.
+    let deploymentName: string | undefined;
+    let modelFolderName: string | undefined;
+    let dataFolderName: string | undefined;
+
+    test.afterEach(async ({ page }) => {
+      if (deploymentName) {
+        await cleanupDeploymentSafely(page, deploymentName);
+      }
+      if (dataFolderName) {
+        await cleanupVFolderSafely(page, dataFolderName);
+      }
+      if (modelFolderName) {
+        await cleanupDeploymentFixtures(page, { folderName: modelFolderName });
+      }
+      deploymentName = modelFolderName = dataFolderName = undefined;
+    });
+
     test('Admin can add a revision that mounts an additional general folder', async ({
       page,
       request,
     }) => {
       test.setTimeout(360_000);
-      const deploymentName = `e2e-gh10038-mounts-${Date.now()}`;
-      let modelFolderName: string | undefined;
-      let dataFolderName = '';
-      let dataFolderCreated = false;
-      let deploymentCreated = false;
 
       // The Environments / Version select only lists installed images unless
       // this flag is on; see deployment-lifecycle's Advanced Mode test.
@@ -291,134 +305,120 @@ test.describe(
         'The paged Additional Mounts select reads scopedVFoldersV2 (manager >= 26.10, #10038)',
       );
 
-      try {
-        modelFolderName = await provisionDeploymentModelFolder(page);
-        // Shares the model folder's name as a prefix, so one search lists both.
-        dataFolderName = `${modelFolderName}-data`;
-        await createVFolderAndVerify(page, dataFolderName, 'general');
-        dataFolderCreated = true;
+      modelFolderName = await provisionDeploymentModelFolder(page);
+      // Shares the model folder's name as a prefix, so one search lists both.
+      // Names are set before creating, so a half-verified create is cleaned up.
+      dataFolderName = `${modelFolderName}-data`;
+      await createVFolderAndVerify(page, dataFolderName, 'general');
 
-        await navigateTo(page, 'deployments');
-        await createDeploymentShell(page, deploymentName);
-        deploymentCreated = true;
+      // `e2e-plan-` keeps it in the global teardown's deployment sweep.
+      deploymentName = `e2e-plan-gh10038-mounts-${Date.now()}`;
+      await navigateTo(page, 'deployments');
+      await createDeploymentShell(page, deploymentName);
 
-        await page
-          .getByRole('navigation', { name: 'Tabs' })
-          .getByRole('button', { name: 'Add Revision' })
-          .click();
-        const dialog = page.getByRole('dialog', { name: /Add Revision/ });
-        await expect(dialog).toBeVisible({ timeout: 20000 });
-        await dialog.getByRole('radio', { name: 'Advanced Mode' }).click();
-        await expect(dialog.getByText('Model & Runtime')).toBeVisible({
-          timeout: 10000,
-        });
+      await page
+        .getByRole('navigation', { name: 'Tabs' })
+        .getByRole('button', { name: 'Add Revision' })
+        .click();
+      const dialog = page.getByRole('dialog', { name: /Add Revision/ });
+      await expect(dialog).toBeVisible({ timeout: 20000 });
+      await dialog.getByRole('radio', { name: 'Advanced Mode' }).click();
+      await expect(dialog.getByText('Model & Runtime')).toBeVisible({
+        timeout: 10000,
+      });
 
-        await selectRevisionModalOption(page, 'Model Folder', modelFolderName);
-        await selectRevisionModalOption(page, 'Runtime', 'custom');
-        const startCommandControl = getFormItemControlByLabel(
-          page,
-          /^(Start )?Command(?! \()/,
-        );
-        await expect(startCommandControl).toBeVisible({ timeout: 10000 });
-        await startCommandControl
-          .getByRole('textbox')
-          .fill('python3 /models/mock_openai_server.py');
+      await selectRevisionModalOption(page, 'Model Folder', modelFolderName);
+      await selectRevisionModalOption(page, 'Runtime', 'custom');
+      const startCommandControl = getFormItemControlByLabel(
+        page,
+        /^(Start )?Command(?! \()/,
+      );
+      await expect(startCommandControl).toBeVisible({ timeout: 10000 });
+      await startCommandControl
+        .getByRole('textbox')
+        .fill('python3 /models/mock_openai_server.py');
 
-        // Resources: above the default image's minimum footprint.
-        await expect(
-          dialog.getByRole('button', { name: 'Resource Presets' }),
-        ).toBeVisible({ timeout: 30000 });
-        const cpuInput = getFormItemControlByLabel(page, 'CPU')
-          .getByRole('spinbutton')
-          .first();
-        await cpuInput.click();
-        await cpuInput.fill('5');
-        await cpuInput.blur();
-        await getFormItemControlByLabel(page, 'Memory')
-          .getByRole('spinbutton')
-          .first()
-          .fill('4');
+      // Resources: above the default image's minimum footprint.
+      await expect(
+        dialog.getByRole('button', { name: 'Resource Presets' }),
+      ).toBeVisible({ timeout: 30000 });
+      const cpuInput = getFormItemControlByLabel(page, 'CPU')
+        .getByRole('spinbutton')
+        .first();
+      await cpuInput.click();
+      await cpuInput.fill('5');
+      await cpuInput.blur();
+      await getFormItemControlByLabel(page, 'Memory')
+        .getByRole('spinbutton')
+        .first()
+        .fill('4');
 
-        // Additional Mounts lives in the collapsed Advanced Settings section.
-        await dialog.getByRole('button', { name: 'Advanced Settings' }).click();
-        const mountsControl = getFormItemControlByLabel(
-          page,
-          'Additional Mounts',
-        );
-        await expect(mountsControl).toBeVisible({ timeout: 30000 });
-        await mountsControl
-          .getByRole('button', { name: 'Select Folder', exact: true })
-          .click();
-        const popup = page.getByRole('dialog', {
-          name: 'Select Folder',
+      // Additional Mounts lives in the collapsed Advanced Settings section.
+      await dialog.getByRole('button', { name: 'Advanced Settings' }).click();
+      const mountsControl = getFormItemControlByLabel(
+        page,
+        'Additional Mounts',
+      );
+      await expect(mountsControl).toBeVisible({ timeout: 30000 });
+      await mountsControl
+        .getByRole('button', { name: 'Select Folder', exact: true })
+        .click();
+      const popup = page.getByRole('dialog', {
+        name: 'Select Folder',
+        exact: true,
+      });
+      await expect(popup).toBeVisible({ timeout: 10000 });
+      // A search matching both folders offers only the general one: model
+      // folders are not offered as data mounts.
+      await popup
+        .getByRole('combobox', { name: 'Search options', exact: true })
+        .fill(modelFolderName);
+      const dataOption = popup.getByRole('option', { name: dataFolderName });
+      await expect(dataOption).toHaveCount(1, { timeout: 15000 });
+      await expect(
+        popup.getByRole('option', {
+          name: new RegExp(`${escapeForRegExp(modelFolderName)}(?!-data)`),
+        }),
+      ).toHaveCount(0);
+      await dataOption.click();
+      await page.keyboard.press('Escape');
+      await expect(popup).toBeHidden({ timeout: 5000 });
+      await expect(dialog).toBeVisible();
+
+      // The picked folder shows as a source → destination row.
+      const mountRow = mountsControl
+        .getByRole('listitem')
+        .filter({ hasText: dataFolderName });
+      await expect(mountRow).toBeVisible();
+      await expect(
+        mountRow.getByRole('textbox', { name: 'Mount path' }),
+      ).toHaveAttribute('placeholder', `/home/work/${dataFolderName}`);
+
+      const autoApply = dialog.getByRole('checkbox', {
+        name: 'Apply immediately after adding',
+      });
+      await autoApply.setChecked(false);
+
+      await dialog
+        .getByRole('button', { name: 'Add Revision', exact: true })
+        .click();
+      await expect(dialog).toBeHidden({ timeout: 20000 });
+
+      // The new revision carries the mount.
+      const revisionDetailDialog = page.getByRole('dialog', {
+        name: 'Revision Detail',
+      });
+      await expect(revisionDetailDialog).toBeVisible({ timeout: 10000 });
+      await expect(
+        revisionDetailDialog.getByText(dataFolderName, { exact: true }),
+      ).toBeVisible();
+      await expect(
+        revisionDetailDialog.getByText(`/home/work/${dataFolderName}`, {
           exact: true,
-        });
-        await expect(popup).toBeVisible({ timeout: 10000 });
-        // A search matching both folders offers only the general one: the
-        // picked model folder is excluded.
-        await popup
-          .getByRole('combobox', { name: 'Search options', exact: true })
-          .fill(modelFolderName);
-        const dataOption = popup.getByRole('option', { name: dataFolderName });
-        await expect(dataOption).toHaveCount(1, { timeout: 15000 });
-        await expect(
-          popup.getByRole('option').filter({ hasNotText: dataFolderName }),
-        ).toHaveCount(0);
-        await dataOption.click();
-        await page.keyboard.press('Escape');
-        await expect(popup).toBeHidden({ timeout: 5000 });
-
-        // The picked folder shows as a source → destination row.
-        const mountRow = mountsControl
-          .getByRole('listitem')
-          .filter({ hasText: dataFolderName });
-        await expect(mountRow).toBeVisible();
-        await expect(
-          mountRow.getByRole('textbox', { name: 'Mount path' }),
-        ).toHaveAttribute('placeholder', `/home/work/${dataFolderName}`);
-
-        const autoApply = dialog.getByRole('checkbox', {
-          name: 'Apply immediately after adding',
-        });
-        if (await autoApply.isChecked()) {
-          await autoApply.uncheck();
-        }
-
-        await dialog
-          .getByRole('button', { name: 'Add Revision', exact: true })
-          .click();
-        await expect(dialog).toBeHidden({ timeout: 20000 });
-
-        // The new revision carries the mount.
-        const revisionDetailDialog = page.getByRole('dialog', {
-          name: 'Revision Detail',
-        });
-        await expect(revisionDetailDialog).toBeVisible({ timeout: 10000 });
-        await expect(
-          revisionDetailDialog.getByText(dataFolderName, { exact: true }),
-        ).toBeVisible();
-        await expect(
-          revisionDetailDialog.getByText(`/home/work/${dataFolderName}`, {
-            exact: true,
-          }),
-        ).toBeVisible();
-        await revisionDetailDialog
-          .getByRole('button', { name: 'Close' })
-          .click();
-        await expect(revisionDetailDialog).toBeHidden({ timeout: 10000 });
-      } finally {
-        if (deploymentCreated) {
-          await cleanupDeploymentSafely(page, deploymentName);
-        }
-        if (dataFolderCreated) {
-          await cleanupVFolderSafely(page, dataFolderName);
-        }
-        if (modelFolderName) {
-          await cleanupDeploymentFixtures(page, {
-            folderName: modelFolderName,
-          });
-        }
-      }
+        }),
+      ).toBeVisible();
+      await revisionDetailDialog.getByRole('button', { name: 'Close' }).click();
+      await expect(revisionDetailDialog).toBeHidden({ timeout: 10000 });
     });
   },
 );
