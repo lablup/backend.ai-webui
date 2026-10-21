@@ -11,12 +11,13 @@ import {
   BAIBulkErrorModal,
   BAIModal,
   BAIModalProps,
+  BAISelect,
   useBAILogger,
   useMutationWithPromise,
   type BAIColumnsType,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { useRef, useState } from 'react';
+import React, { Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql } from 'react-relay';
 
@@ -150,28 +151,36 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
       {...baiModalProps}
     >
       <Form ref={formRef} layout="vertical">
-        <Form.Item
-          name="userIds"
-          label={t('credential.Users')}
-          rules={[{ required: true, message: t('rbac.PleaseSelectUsers') }]}
+        <Suspense
+          fallback={
+            <Form.Item label={t('credential.Users')}>
+              <BAISelect mode="multiple" disabled loading />
+            </Form.Item>
+          }
         >
-          <BAIAdminUserV2Select
-            multiple
-            valuePropName="id"
+          <Form.Item
+            name="userIds"
             label={t('credential.Users')}
-            isLabelHidden
-            placeholder={t('rbac.SelectUsers')}
-            onChange={(value, option) => {
-              _.castArray(option ?? []).forEach((o) => {
-                userLabelsRef.current.set(
-                  String(o.value),
-                  String(o.label ?? o.value),
-                );
-              });
-              setSelectedUserIds(_.castArray(value ?? []));
-            }}
-          />
-        </Form.Item>
+            rules={[{ required: true, message: t('rbac.PleaseSelectUsers') }]}
+          >
+            <BAIAdminUserV2Select
+              multiple
+              valuePropName="id"
+              label={t('credential.Users')}
+              isLabelHidden
+              placeholder={t('rbac.SelectUsers')}
+              onChange={(value, option) => {
+                _.castArray(option ?? []).forEach((o) => {
+                  userLabelsRef.current.set(
+                    String(o.value),
+                    String(o.label ?? o.value),
+                  );
+                });
+                setSelectedUserIds(_.castArray(value ?? []));
+              }}
+            />
+          </Form.Item>
+        </Suspense>
       </Form>
       {/* Per-user errors of a failed assignment (FR-3357). The assign modal
           (and the selection) stays open behind it for a retry. */}
