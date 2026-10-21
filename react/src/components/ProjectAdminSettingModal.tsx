@@ -7,8 +7,7 @@ import { ProjectAdminSettingModalQuery } from '../__generated__/ProjectAdminSett
 import { ProjectAdminSettingModalRevokeMutation } from '../__generated__/ProjectAdminSettingModalRevokeMutation.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
-import { useWebUINavigate } from '../hooks';
-import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
+import { useWebUINavigate, useCurrentDomain } from '../hooks';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
@@ -170,7 +169,8 @@ const ProjectAdminSettingModal = ({
   ...modalProps
 }: ProjectAdminSettingModalProps) => {
   'use memo';
-  const { domainScope } = useCurrentDomainScope();
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { logger } = useBAILogger();

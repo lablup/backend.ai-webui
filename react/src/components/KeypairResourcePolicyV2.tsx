@@ -12,8 +12,8 @@ import { convertToOrderBy } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { CSV_EXPORT_MAX_ROWS } from '../helper/pagedExport';
+import { useCurrentDomain } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import { usePagedCSVExport } from '../hooks/usePagedCSVExport';
 import KeypairResourcePolicyV2SettingModal from './KeypairResourcePolicyV2SettingModal';
 import {
@@ -142,7 +142,8 @@ const KeypairResourcePolicyV2 = ({
   ...tableProps
 }: KeypairResourcePolicyV2Props) => {
   'use memo';
-  const { domainScope } = useCurrentDomainScope();
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [fetchKey, updateFetchKey] = useFetchKey();
