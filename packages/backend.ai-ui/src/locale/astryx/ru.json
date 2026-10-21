@@ -113,7 +113,7 @@
   "@astryx.listInput.emptyDescription": "Для начала добавьте элемент «{itemName}».",
   "@astryx.listInput.emptyTitle": "Пока не добавлено ни одного элемента: {itemName}",
   "@astryx.listInput.fieldLabelWithPosition": "{header}, {itemName} {position, number} из {total, number}",
-  "@astryx.listInput.removeItem": "Удалить {itemName} {position, number}",
+  "@astryx.listInput.removeItem": "Удалить",
   "@astryx.listInput.removeUnavailable": "Удаление недоступно, пока список отключён",
   "@astryx.listInput.reorderInstructions": "Используйте Arrow Up или Arrow Down, чтобы переместить этот элемент на одну позицию. Нажмите Space или Enter, чтобы захватить его для расширенного изменения порядка с клавиатуры.",
   "@astryx.listInput.reorderItem": "Изменить порядок: {itemName} {position, number}",

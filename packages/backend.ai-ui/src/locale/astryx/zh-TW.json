@@ -113,7 +113,7 @@
   "@astryx.listInput.emptyDescription": "新增 {itemName} 即可開始。",
   "@astryx.listInput.emptyTitle": "尚未新增 {itemName}",
   "@astryx.listInput.fieldLabelWithPosition": "{header}，{itemName} {position, number}，共 {total, number} 項",
-  "@astryx.listInput.removeItem": "移除 {itemName} {position, number}",
+  "@astryx.listInput.removeItem": "移除",
   "@astryx.listInput.removeUnavailable": "清單停用時無法移除",
   "@astryx.listInput.reorderInstructions": "使用 Arrow Up 或 Arrow Down 將此項目移動一個位置。按 Space 或 Enter 將其拿起，以使用鍵盤繼續重新排序。",
   "@astryx.listInput.reorderItem": "調整 {itemName} {position, number} 的順序",

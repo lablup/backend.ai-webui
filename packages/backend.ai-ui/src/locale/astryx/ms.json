@@ -113,7 +113,7 @@
   "@astryx.listInput.emptyDescription": "Tambah {itemName} untuk bermula.",
   "@astryx.listInput.emptyTitle": "Belum ada {itemName}",
   "@astryx.listInput.fieldLabelWithPosition": "{header}, {itemName} {position, number} daripada {total, number}",
-  "@astryx.listInput.removeItem": "Alih keluar {itemName} {position, number}",
+  "@astryx.listInput.removeItem": "Alih keluar",
   "@astryx.listInput.removeUnavailable": "Tidak boleh dialih keluar semasa senarai dilumpuhkan",
   "@astryx.listInput.reorderInstructions": "Gunakan Anak Panah Atas atau Anak Panah Bawah untuk mengalihkan item ini satu kedudukan. Tekan Space atau Enter untuk mengangkatnya dan terus menyusun semula dengan papan kekunci.",
   "@astryx.listInput.reorderItem": "Susun semula {itemName} {position, number}",

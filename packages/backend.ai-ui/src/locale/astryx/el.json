@@ -113,7 +113,7 @@
   "@astryx.listInput.emptyDescription": "Προσθέστε {itemName} για να ξεκινήσετε.",
   "@astryx.listInput.emptyTitle": "Δεν έχει προστεθεί ακόμη {itemName}",
   "@astryx.listInput.fieldLabelWithPosition": "{header}, {itemName} {position, number} από {total, number}",
-  "@astryx.listInput.removeItem": "Αφαίρεση {itemName} {position, number}",
+  "@astryx.listInput.removeItem": "Αφαίρεση",
   "@astryx.listInput.removeUnavailable": "Η αφαίρεση δεν είναι διαθέσιμη όσο η λίστα είναι απενεργοποιημένη",
   "@astryx.listInput.reorderInstructions": "Χρησιμοποιήστε τα πλήκτρα Arrow Up ή Arrow Down για να μετακινήσετε αυτό το στοιχείο κατά μία θέση. Πατήστε Space ή Enter για να το ανασηκώσετε και να κάνετε εκτεταμένη αναδιάταξη με το πληκτρολόγιο.",
   "@astryx.listInput.reorderItem": "Αναδιάταξη {itemName} {position, number}",
