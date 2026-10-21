@@ -114,7 +114,7 @@ const AdminPrometheusPreset = ({
     useMutation<AdminPrometheusPresetDeleteMutation>(graphql`
       mutation AdminPrometheusPresetDeleteMutation($id: UUID!) {
         purgePrometheusQueryPreset(id: $id) {
-          id
+          entityId
         }
       }
     `);
