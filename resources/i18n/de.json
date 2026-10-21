@@ -1283,6 +1283,7 @@
     "SelectModelCard": "Modellkarte auswählen",
     "SelectModelCardFirst": "Bitte wählen Sie zuerst eine Modellkarte aus.",
     "Serving": "Aktiv",
+    "ServingTooltip": "Bereitstellungen mit gewünschten Replikaten von 1 oder mehr. Ihre Replikate starten möglicherweise noch oder konnten nicht starten; die Spalte „Replikate“ zeigt, wie viele laufen.",
     "SessionId": "Sitzungs-ID",
     "StartChatTest": "Im Chat testen",
     "SwitchProjectConfirmContent": "Diese Bereitstellung gehört zum Projekt „{{projectName}}“. Sie werden zu diesem Projekt gewechselt, um sie anzuzeigen. Fortfahren?",

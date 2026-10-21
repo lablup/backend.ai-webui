@@ -1283,6 +1283,7 @@
     "SelectModelCard": "モデルカードを選択",
     "SelectModelCardFirst": "先にモデルカードを選択してください。",
     "Serving": "サービス中",
+    "ServingTooltip": "希望レプリカ数が 1 以上のデプロイです。レプリカはまだ起動中か、起動に失敗している場合もあります。実際に実行中の数は「レプリカ」列で確認してください。",
     "SessionId": "セッションID",
     "StartChatTest": "チャットでテスト",
     "SwitchProjectConfirmContent": "このデプロイは「{{projectName}}」プロジェクトに属しています。表示するには、そのプロジェクトに切り替わります。続行しますか？",

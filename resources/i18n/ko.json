@@ -1283,6 +1283,7 @@
     "SelectModelCard": "모델 카드 선택",
     "SelectModelCardFirst": "모델 카드를 먼저 선택해 주세요.",
     "Serving": "서빙 중",
+    "ServingTooltip": "목표 복제본 수가 1 이상인 배포입니다. 복제본이 아직 시작 중이거나 시작에 실패했을 수도 있으니, 실제로 실행 중인 수는 '복제본 수' 열에서 확인하세요.",
     "SessionId": "세션 ID",
     "StartChatTest": "채팅으로 테스트하기",
     "SwitchProjectConfirmContent": "이 배포는 \"{{projectName}}\" 프로젝트에 속해 있습니다. 이 배포를 보려면 해당 프로젝트로 전환합니다. 진행할까요?",

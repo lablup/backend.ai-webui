@@ -1283,6 +1283,7 @@
     "SelectModelCard": "Seleccionar una tarjeta de modelo",
     "SelectModelCardFirst": "Seleccione primero una tarjeta de modelo.",
     "Serving": "En servicio",
+    "ServingTooltip": "Implementaciones con réplicas deseadas de 1 o más. Sus réplicas pueden estar iniciándose aún o haber fallado al iniciar; la columna «Réplicas» muestra cuántas se están ejecutando.",
     "SessionId": "ID de sesión",
     "StartChatTest": "Probar en el chat",
     "SwitchProjectConfirmContent": "Este despliegue pertenece al proyecto \"{{projectName}}\". Se le cambiará a ese proyecto para verlo. ¿Continuar?",

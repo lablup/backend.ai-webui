@@ -1283,6 +1283,7 @@
     "SelectModelCard": "Sélectionner une fiche modèle",
     "SelectModelCardFirst": "Veuillez d'abord sélectionner une fiche modèle.",
     "Serving": "En service",
+    "ServingTooltip": "Déploiements dont les répliques souhaitées sont de 1 ou plus. Leurs répliques peuvent encore être en cours de démarrage ou avoir échoué à démarrer ; la colonne « Réplicas » indique combien sont en cours d'exécution.",
     "SessionId": "ID de session",
     "StartChatTest": "Tester dans le chat",
     "SwitchProjectConfirmContent": "Ce déploiement appartient au projet \"{{projectName}}\". Vous serez basculé vers ce projet pour le consulter. Continuer ?",

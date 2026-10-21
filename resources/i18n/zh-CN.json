@@ -1283,6 +1283,7 @@
     "SelectModelCard": "选择模型卡",
     "SelectModelCardFirst": "请先选择模型卡。",
     "Serving": "服务中",
+    "ServingTooltip": "期望副本数为 1 或以上的部署。其副本可能仍在启动，或启动失败；实际运行的数量请查看“副本数”列。",
     "SessionId": "会话 ID",
     "StartChatTest": "在聊天中测试",
     "SwitchProjectConfirmContent": "此部署属于「{{projectName}}」项目。系统将切换到该项目以便查看。是否继续？",

@@ -1283,6 +1283,7 @@
     "SelectModelCard": "Pilih kad model",
     "SelectModelCardFirst": "Sila pilih kad model dahulu.",
     "Serving": "Sedang melayan",
+    "ServingTooltip": "Deployment dengan Replika yang Diinginkan 1 atau lebih. Replikanya mungkin masih bermula atau gagal bermula; lajur Replika menunjukkan berapa yang sedang berjalan.",
     "SessionId": "ID Sesi",
     "StartChatTest": "Uji di Sembang",
     "SwitchProjectConfirmContent": "Penggunaan ini tergolong dalam projek \"{{projectName}}\". Anda akan ditukar ke projek tersebut untuk melihatnya. Teruskan?",

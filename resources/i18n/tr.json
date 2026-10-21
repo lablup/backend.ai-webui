@@ -1283,6 +1283,7 @@
     "SelectModelCard": "Bir model kartı seçin",
     "SelectModelCardFirst": "Lütfen önce bir model kartı seçin.",
     "Serving": "Hizmette",
+    "ServingTooltip": "İstenen Replika Sayısı 1 veya daha fazla olan dağıtımlar. Replikaları hâlâ başlıyor olabilir veya başlatılamamış olabilir; kaç tanesinin çalıştığını Kopyalar sütunu gösterir.",
     "SessionId": "Oturum Kimliği",
     "StartChatTest": "Sohbette test et",
     "SwitchProjectConfirmContent": "Bu dağıtım \"{{projectName}}\" projesine ait. Görüntülemek için o projeye geçirileceksiniz. Devam edilsin mi?",

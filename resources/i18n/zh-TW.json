@@ -1284,6 +1284,7 @@
     "SelectModelCard": "選擇模型卡",
     "SelectModelCardFirst": "請先選擇模型卡。",
     "Serving": "服務中",
+    "ServingTooltip": "期望副本數為 1 以上的部署。其副本可能仍在啟動，或啟動失敗；實際執行的數量請查看「副本數」欄。",
     "SessionId": "工作階段 ID",
     "StartChatTest": "在聊天中測試",
     "SwitchProjectConfirmContent": "此部署屬於「{{projectName}}」專案。系統將切換至該專案以便查看。是否繼續？",

@@ -60,6 +60,17 @@ import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 type DeploymentStatusCategory = 'serving' | 'paused' | 'finished';
 
+const renderTabLabel = (label: string, help: string) => (
+  <BAIFlex gap="xxs" align="center">
+    {label}
+    <Tooltip content={help}>
+      <Text color="placeholder" style={{ cursor: 'help' }}>
+        <CircleHelp size="1em" />
+      </Text>
+    </Tooltip>
+  </BAIFlex>
+);
+
 interface DeploymentListPageContentProps {
   /** Owned by the page so the trigger can live in the card's `extra` slot. */
   isCreating: boolean;
@@ -265,17 +276,17 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
                 setTablePaginationOption({ current: 1 });
               }}
               options={[
-                { label: t('deployment.Serving'), value: 'serving' },
                 {
-                  label: (
-                    <BAIFlex gap="xxs" align="center">
-                      {t('deployment.Paused')}
-                      <Tooltip content={t('deployment.PausedTooltip')}>
-                        <Text color="placeholder" style={{ cursor: 'help' }}>
-                          <CircleHelp size="1em" />
-                        </Text>
-                      </Tooltip>
-                    </BAIFlex>
+                  label: renderTabLabel(
+                    t('deployment.Serving'),
+                    t('deployment.ServingTooltip'),
+                  ),
+                  value: 'serving',
+                },
+                {
+                  label: renderTabLabel(
+                    t('deployment.Paused'),
+                    t('deployment.PausedTooltip'),
                   ),
                   value: 'paused',
                 },

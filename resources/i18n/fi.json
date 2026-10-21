@@ -1283,6 +1283,7 @@
     "SelectModelCard": "Valitse mallikortti",
     "SelectModelCardFirst": "Valitse ensin mallikortti.",
     "Serving": "Palvelussa",
+    "ServingTooltip": "Käyttöönotot, joiden haluttuja replikoita on 1 tai enemmän. Niiden replikat voivat vielä käynnistyä tai niiden käynnistys on voinut epäonnistua; Kopioita-sarake näyttää, montako on käynnissä.",
     "SessionId": "Istunnon ID",
     "StartChatTest": "Testaa chatissa",
     "SwitchProjectConfirmContent": "Tämä käyttöönotto kuuluu projektiin \"{{projectName}}\". Sinut siirretään kyseiseen projektiin sen tarkastelua varten. Jatketaanko?",

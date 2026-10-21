@@ -1283,6 +1283,7 @@
     "SelectModelCard": "Selecionar um cartão de modelo",
     "SelectModelCardFirst": "Selecione primeiro um cartão de modelo.",
     "Serving": "Em serviço",
+    "ServingTooltip": "Implementações com réplicas desejadas iguais a 1 ou mais. As réplicas podem ainda estar a iniciar ou ter falhado ao iniciar; a coluna \"Réplicas\" mostra quantas estão em execução.",
     "SessionId": "ID da sessão",
     "StartChatTest": "Testar no Chat",
     "SwitchProjectConfirmContent": "Esta implantação pertence ao projeto \"{{projectName}}\". Será mudado para esse projeto para a visualizar. Continuar?",

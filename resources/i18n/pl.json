@@ -1283,6 +1283,7 @@
     "SelectModelCard": "Wybierz kartę modelu",
     "SelectModelCardFirst": "Najpierw wybierz kartę modelu.",
     "Serving": "Obsługuje",
+    "ServingTooltip": "Wdrożenia z żądaną liczbą replik 1 lub większą. Ich repliki mogą się jeszcze uruchamiać lub nie udało się ich uruchomić; kolumna „Repliki” pokazuje, ile działa.",
     "SessionId": "ID sesji",
     "StartChatTest": "Przetestuj w czacie",
     "SwitchProjectConfirmContent": "To wdrożenie należy do projektu „{{projectName}}“. Zostaniesz przełączony na ten projekt, aby je wyświetlić. Kontynuować?",

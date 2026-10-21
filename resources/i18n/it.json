@@ -1283,6 +1283,7 @@
     "SelectModelCard": "Seleziona una scheda modello",
     "SelectModelCardFirst": "Seleziona prima una scheda modello.",
     "Serving": "In servizio",
+    "ServingTooltip": "Distribuzioni con repliche desiderate pari a 1 o più. Le repliche potrebbero essere ancora in avvio o non essere riuscite ad avviarsi; la colonna «Repliche» mostra quante sono in esecuzione.",
     "SessionId": "ID sessione",
     "StartChatTest": "Prova in chat",
     "SwitchProjectConfirmContent": "Questa distribuzione appartiene al progetto \"{{projectName}}\". Verrai spostato su quel progetto per visualizzarla. Continuare?",

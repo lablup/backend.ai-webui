@@ -1283,6 +1283,7 @@
     "SelectModelCard": "Chọn một thẻ mô hình",
     "SelectModelCardFirst": "Vui lòng chọn thẻ mô hình trước.",
     "Serving": "Đang phục vụ",
+    "ServingTooltip": "Các bản triển khai có số bản sao mong muốn từ 1 trở lên. Bản sao có thể vẫn đang khởi động hoặc đã khởi động thất bại; cột \"Số bản sao\" cho biết bao nhiêu bản đang chạy.",
     "SessionId": "ID phiên",
     "StartChatTest": "Thử trong Trò chuyện",
     "SwitchProjectConfirmContent": "Lượt triển khai này thuộc dự án \"{{projectName}}\". Bạn sẽ được chuyển sang dự án đó để xem. Tiếp tục?",
