@@ -10,7 +10,7 @@ import {
   deriveCommandModeState,
   resolvesReadsVfolderConfigFiles,
 } from '../helper/modelServiceCommand';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useCurrentDomain } from '../hooks';
 import {
   buildRuntimeVariantPresetValues,
   collectTouchedRuntimePresetParams,
@@ -54,7 +54,7 @@ import { Selector } from '@lablup/ui-common/Selector';
 import { Step, Stepper } from '@lablup/ui-common/Stepper';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIAdminImageSelect,
+  BAIScopedImageSelect,
   BAIButton,
   BAICard,
   BAIFlex,
@@ -130,7 +130,7 @@ export interface AdminDeploymentPresetSettingPageContentProps {
 }
 
 // ---------------------------------------------------------------------------
-// ImageSelectField — thin Suspense wrapper around BAIAdminImageSelect
+// ImageSelectField — thin Suspense wrapper around BAIScopedImageSelect
 // ---------------------------------------------------------------------------
 
 const ImageSelectField: React.FC<{
@@ -141,6 +141,7 @@ const ImageSelectField: React.FC<{
 }> = ({ value, onChange }) => {
   'use memo';
   const { t } = useTranslation();
+  const { id: currentDomainId } = useCurrentDomain();
   return (
     <Suspense
       fallback={
@@ -154,7 +155,8 @@ const ImageSelectField: React.FC<{
         />
       }
     >
-      <BAIAdminImageSelect
+      <BAIScopedImageSelect
+        scope={{ domain: [{ value: currentDomainId }], public: true }}
         label={t('adminDeploymentPreset.Image')}
         isLabelHidden
         value={value}

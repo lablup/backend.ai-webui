@@ -2,39 +2,17 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- BAIAdminImageSelect — ticket-27 Astryx sibling of
- `BAIAdminImageSelect`, built on `BAIComplexSelect` (ticket 26).
-
- FRONTIER RULE: the antd `BAIAdminImageSelect` is NOT touched by this file
- and keeps serving every unmigrated call site until ticket 27 moves them.
- The OUTER value contract stays the same plain key (`string` / `string[]`,
- the image UUID) the antd wrapper exposes today — `labelInValue` lives
- strictly between this wrapper and `BAIComplexSelect`.
-
- CLASS: B (id-valued) — stored value is always `toLocalId(node.id)`, exactly
- as the antd original.
-
- PILOT-DECISIONs:
-  - The antd original layered a `labelCache` (UUID -> label, populated on
-    every `onChange`) plus a `useOptimistic` overlay on top of the value
-    query, to avoid a label flash while the deferred value query catches up.
-    `BAIComplexSelect`'s trigger reads straight off `value.label`, and the
-    established ticket-26 template (`BAIUserSelect`) does not carry
-    this overlay, so it is dropped here too — the resolution query's
-    `label: resolved ?? key` fallback (mandatory per the ticket-27 brief) is
-    the only label source, matching every other converted wrapper.
-  - `notFoundContent={<Skeleton.Input/>}` first-load placeholder dropped
-    (P26-7).
-  - This wrapper never used `optionRender`/`labelRender`; the antd version
-    already composed a single formatted string label
-    (`"<canonicalName>@<architecture>"`), which carries over unchanged.
+ BAIScopedImageSelect — Relay-paginated, id-valued image select over
+ `scopedImagesV2` (ADR 0012). The value is the image UUID; options are
+ labelled `"<canonicalName>@<architecture>"`, and a selected id missing from
+ the loaded pages falls back to the UUID as its label.
 */
 import {
-  BAIAdminImageSelectPaginatedQuery,
+  BAIScopedImageSelectPaginatedQuery,
+  ImageSearchScope,
   ImageV2Filter,
-} from '../../__generated__/BAIAdminImageSelectPaginatedQuery.graphql';
-import { BAIAdminImageSelectValueQuery } from '../../__generated__/BAIAdminImageSelectValueQuery.graphql';
-import { toLocalId } from '../../helper';
+} from '../../__generated__/BAIScopedImageSelectPaginatedQuery.graphql';
+import { BAIScopedImageSelectValueQuery } from '../../__generated__/BAIScopedImageSelectValueQuery.graphql';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useControllableValue, useFetchKey } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -56,19 +34,19 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export type AstryxImageV2Node = NonNullable<
   NonNullable<
-    BAIAdminImageSelectPaginatedQuery['response']['adminImagesV2']
+    BAIScopedImageSelectPaginatedQuery['response']['scopedImagesV2']
   >['edges'][number]
 >['node'];
 
-export interface BAIAdminImageSelectRef {
+export interface BAIScopedImageSelectRef {
   refetch: () => void;
 }
 
-export interface BAIAdminImageSelectProps extends Omit<
+export interface BAIScopedImageSelectProps extends Omit<
   BAIComplexSelectProps,
   'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total'
 > {
-  /** Plain key(s), as the antd `BAIAdminImageSelect` exposes. */
+  /** Plain key(s), as the antd `BAIScopedImageSelect` exposes. */
   value?: string | Array<string> | null;
   /** The second argument is the picked option, so a `renderInput` filter can
    * label its token with the image name while the UUID serializes. */
@@ -80,16 +58,19 @@ export interface BAIAdminImageSelectProps extends Omit<
   filter?: ImageV2Filter;
   open?: boolean;
   defaultOpen?: boolean;
-  ref?: React.Ref<BAIAdminImageSelectRef>;
+  /** The images this scope reaches are listed (ADR 0012). */
+  scope: ImageSearchScope;
+  ref?: React.Ref<BAIScopedImageSelectRef>;
 }
 
 /**
- * Paginated image selector backed by `adminImagesV2` (ImageV2).
+ * Paginated image selector backed by `scopedImagesV2` (ImageV2) over the required `scope`.
  * Stored value is the image UUID so callers can pass it directly to
  * mutation inputs that expect `UUID`.
  */
-const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
+const BAIScopedImageSelect: React.FC<BAIScopedImageSelectProps> = ({
   filter: filterFromProps,
+  scope,
   multiple = false,
   isLoading,
   ref,
@@ -122,52 +103,57 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
   const deferredControllableValue = useDeferredValue(controllableValue);
   const selectedKeys = _.compact(_.castArray(deferredControllableValue ?? []));
 
-  // Resolve labels for the currently selected value(s) via adminImagesV2 so
-  // admin users can see images that may be filtered by user-level permissions.
-  const { adminImagesV2: selectedImageResult } =
-    useLazyLoadQuery<BAIAdminImageSelectValueQuery>(
-      graphql`
-        query BAIAdminImageSelectValueQuery(
-          $ids: [UUID!]
-          $skipSelected: Boolean!
-        ) {
-          adminImagesV2(filter: { id: { in: $ids } }, limit: 100)
-            @skip(if: $skipSelected) {
-            edges {
-              node {
-                id
-                identity {
-                  canonicalName
-                  architecture
-                }
+  const selectedImageData = useLazyLoadQuery<BAIScopedImageSelectValueQuery>(
+    graphql`
+      query BAIScopedImageSelectValueQuery(
+        $ids: [UUID!]
+        $scope: ImageSearchScope!
+        $skipSelected: Boolean!
+      ) {
+        scopedImagesV2(scope: $scope, filter: { id: { in: $ids } }, limit: 100)
+          @skip(if: $skipSelected) {
+          edges {
+            node {
+              id
+              entityId
+              identity {
+                canonicalName
+                architecture
               }
             }
           }
         }
-      `,
-      {
-        ids: selectedKeys,
-        skipSelected: selectedKeys.length === 0,
-      },
-      {
-        fetchPolicy: selectedKeys.length ? 'store-or-network' : 'store-only',
-        fetchKey: deferredFetchKey,
-      },
-    );
+      }
+    `,
+    {
+      ids: selectedKeys,
+      scope,
+      skipSelected: selectedKeys.length === 0,
+    },
+    {
+      fetchPolicy: selectedKeys.length ? 'store-or-network' : 'store-only',
+      fetchKey: deferredFetchKey,
+    },
+  );
   const selectedImageMap = _.keyBy(
-    _.compact(_.map(selectedImageResult?.edges, (e) => e?.node)),
-    (node) => toLocalId(node.id),
+    _.compact(_.map(selectedImageData.scopedImagesV2?.edges, (e) => e?.node)),
+    (node) => node.entityId,
   );
 
   const { paginationData, result, loadNext, isLoadingNext } =
-    useLazyPaginatedQuery<BAIAdminImageSelectPaginatedQuery, AstryxImageV2Node>(
+    useLazyPaginatedQuery<
+      BAIScopedImageSelectPaginatedQuery,
+      AstryxImageV2Node
+    >(
       graphql`
-        query BAIAdminImageSelectPaginatedQuery(
+        query BAIScopedImageSelectPaginatedQuery(
           $offset: Int!
           $limit: Int!
           $filter: ImageV2Filter
+          $scope: ImageSearchScope!
         ) {
-          adminImagesV2(
+          scopedImagesV2(
+            scope: $scope
             offset: $offset
             limit: $limit
             filter: $filter
@@ -177,6 +163,7 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
             edges {
               node {
                 id
+                entityId
                 identity {
                   canonicalName
                   architecture
@@ -189,6 +176,7 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
       `,
       { limit: 20 },
       {
+        scope,
         filter: {
           ...(filterFromProps ?? {}),
           ...(debouncedDeferredValue
@@ -201,10 +189,10 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
         fetchKey: deferredFetchKey,
       },
       {
-        getTotal: (r) => r.adminImagesV2?.count ?? undefined,
-        getItem: (r) => r.adminImagesV2?.edges?.map((e) => e?.node),
-        // Store UUID (via toLocalId) so callers can pass the value directly to UUID! mutation inputs
-        getId: (item) => (item?.id ? toLocalId(item.id) : item?.id),
+        getTotal: (r) => r.scopedImagesV2?.count ?? undefined,
+        getItem: (r) => r.scopedImagesV2?.edges?.map((e) => e?.node),
+        // The image UUID, so callers can pass the value straight to UUID! inputs.
+        getId: (item) => item?.entityId,
       },
     );
 
@@ -234,7 +222,7 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
   // the popup draws the row in its place.
   const options = _.compact(
     _.map(paginationData, (item) => {
-      const key = item?.id ? toLocalId(item.id) : undefined;
+      const key = item?.entityId;
       return key
         ? {
             value: key,
@@ -272,7 +260,7 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
         isPendingRefetch
       }
       isLoadingNext={isLoadingNext}
-      total={result.adminImagesV2?.count ?? undefined}
+      total={result.scopedImagesV2?.count ?? undefined}
       options={options}
       value={labeledValue}
       onChange={(next) => {
@@ -291,4 +279,4 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
   );
 };
 
-export default BAIAdminImageSelect;
+export default BAIScopedImageSelect;
