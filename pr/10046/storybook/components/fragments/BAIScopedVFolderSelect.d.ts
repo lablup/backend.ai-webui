@@ -43,7 +43,8 @@ export interface BAIScopedVFolderSelectProps extends Omit<BAIComplexSelectProps,
  * Picks vfolders from `scopedVFoldersV2`, paged and searched on the server.
  * The value is folder UUIDs. The selected ids are looked up by `entityId`
  * within `scope` and `filter`, which labels them and tells `onResolve` whether
- * the scope still reaches them. Suspends on the first page and the lookup.
+ * the scope still reaches them. The options are read only while the popup is
+ * open; the lookup suspends on first load.
  *
  * Props and usage: `BAIScopedVFolderSelect.doc.ts`.
  */
