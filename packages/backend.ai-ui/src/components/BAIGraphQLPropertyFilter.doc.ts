@@ -60,7 +60,7 @@ export const docs = {
       name: 'filterProperties',
       type: 'Array<FilterProperty>',
       description:
-        'The filterable columns. Each entry declares `key` (dot paths allowed for nested filters), `propertyLabel`, `type`, and optionally `operators`, `defaultOperator` or `fixedOperator`, `options`, `strictSelection`, `valueMode`, `implicitOperator`, `rule` and `renderInput`.',
+        'The filterable columns. Each entry declares `key` (dot paths allowed for nested filters), `propertyLabel`, `type`, and optionally `operators`, `defaultOperator` or `fixedOperator`, `options`, `strictSelection`, `integer` (whole-number editor for a `number` property), `valueMode`, `implicitOperator`, `rule` and `renderInput`.',
       required: true,
     },
     {

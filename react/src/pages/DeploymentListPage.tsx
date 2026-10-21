@@ -261,6 +261,7 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
       key: 'desiredReplicas',
       propertyLabel: t('deployment.DesiredReplicas'),
       type: 'number',
+      integer: true,
       defaultOperator: 'greaterThanOrEqual',
     },
     ...(isLabelable

@@ -387,6 +387,31 @@ describe('token <-> condition value mapping', () => {
     });
   });
 
+  it('maps a number property to a float token, or an integer token when `integer` is set', () => {
+    const properties: Array<FilterProperty> = [
+      { key: 'ratio', propertyLabel: 'Ratio', type: 'number' },
+      {
+        key: 'desiredReplicas',
+        propertyLabel: 'Desired replicas',
+        type: 'number',
+        integer: true,
+      },
+    ];
+    const tokens = graphQLFilterToPowerSearchFilters(
+      {
+        AND: [
+          { ratio: { greaterThan: 0.5 } },
+          { desiredReplicas: { greaterThanOrEqual: 1 } },
+        ],
+      },
+      properties,
+    );
+    expect(tokens.map((token) => token.value)).toEqual([
+      { type: 'float', value: 0.5 },
+      { type: 'integer', value: 1 },
+    ]);
+  });
+
   it('maps a datetime to an absolute-date token (second precision)', () => {
     const [token] = graphQLFilterToPowerSearchFilters(
       { createdAt: { after: '2026-01-02T03:04:05.000Z' } },
