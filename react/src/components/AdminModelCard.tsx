@@ -17,9 +17,8 @@ import {
   handleRowSelectionChange,
 } from '../helper';
 import { buildPath } from '../helper/pathBuilder';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useCurrentDomain } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import AdminModelCardSettingModal from './AdminModelCardSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
@@ -158,7 +157,8 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   tableSettings,
 }) => {
   'use memo';
-  const { domainScope } = useCurrentDomainScope();
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
 
   const { t } = useTranslation();
   const { message } = App.useApp();

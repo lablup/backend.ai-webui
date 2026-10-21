@@ -9,10 +9,9 @@ import {
 } from '../__generated__/PendingSessionNodeListQuery.graphql';
 import { Form } from '../form-engine';
 import { handleRowSelectionChange } from '../helper';
-import { useWebUINavigate } from '../hooks';
+import { useWebUINavigate, useCurrentDomain } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import EditSessionPriorityModal from './ComputeSessionNodeItems/EditSessionPriorityModal';
 import SessionNodes from './SessionNodes';
@@ -44,7 +43,8 @@ type PendingSessionNode = NonNullableNodeOnEdges<
 
 const PendingSessionNodeList: React.FC = () => {
   'use memo';
-  const { domainScope } = useCurrentDomainScope();
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
   const { t } = useTranslation();
   const { token } = useTheme();
   const [fetchKey, updateFetchKey] = useFetchKey();

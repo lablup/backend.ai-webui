@@ -4,7 +4,7 @@
  */
 import { StorageHostSettingsPanel_storageVolumeFrgmt$key } from '../__generated__/StorageHostSettingsPanel_storageVolumeFrgmt.graphql';
 import { QuotaScopeType, addQuotaScopeTypePrefix } from '../helper/index';
-import { useCurrentDomainScope } from '../hooks/useCurrentDomainScope';
+import { useCurrentDomain } from '../hooks';
 import BAIRadioGroup from './BAIRadioGroup';
 import QuotaScopeTable from './QuotaScopeTable';
 import {
@@ -25,7 +25,8 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
   storageVolumeFrgmt,
 }) => {
   'use memo';
-  const { domainScope } = useCurrentDomainScope();
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
   const { t } = useTranslation();
   const storageVolume = useFragment(
     graphql`
