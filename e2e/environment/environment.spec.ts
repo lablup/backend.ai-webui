@@ -1,4 +1,6 @@
 // spec: Image list and environment management E2E tests
+import { createAdminApiContext, gqlAdmin } from '../utils/admin-api';
+import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import { expect, test, Page, Locator } from '@playwright/test';
 
@@ -971,6 +973,190 @@ test.describe(
       // 4. Cleanup: remove the filter token
       await removeFilterTag(page, noResultsLabel);
       await expect(noResultsTag).not.toBeVisible();
+    });
+  },
+);
+
+// ---------------------------------------------------------------------------
+// Import Image modal (#9674)
+// ---------------------------------------------------------------------------
+
+const IMPORT_REGISTRY = 'nvcr.io';
+const IMPORT_IMAGE_NAME = 'nvidia/cuda';
+// Public NGC tags nightly does not register, so each import is a new row the
+// test owns and purges afterwards (a scan registers every architecture).
+const IMPORT_CANDIDATE_TAGS = [
+  '12.6.3-base-ubuntu24.04',
+  '12.6.3-base-ubuntu22.04',
+  '12.8.1-base-ubuntu24.04',
+  '12.4.1-base-ubuntu22.04',
+];
+
+type RegisteredImage = {
+  id: string;
+  name: string;
+  registry: string;
+  tag: string;
+  architecture: string;
+};
+
+async function listRegisteredImportImages(
+  api: Awaited<ReturnType<typeof createAdminApiContext>>,
+): Promise<Array<RegisteredImage>> {
+  const data = await gqlAdmin<{ images: Array<RegisteredImage> }>(
+    api,
+    `query { images(is_operation: false) { id name registry tag architecture } }`,
+  );
+  return data.images.filter(
+    (image) =>
+      image.registry === IMPORT_REGISTRY && image.name === IMPORT_IMAGE_NAME,
+  );
+}
+
+function importImageModalOf(page: Page) {
+  return page.getByRole('dialog', { name: 'Import Image from Registry' });
+}
+
+async function openImportImageModal(page: Page) {
+  await page.getByRole('button', { name: 'Import Image', exact: true }).click();
+  const modal = importImageModalOf(page);
+  await expect(modal).toBeVisible();
+  // The textarea renders once the registry list (Suspense) has loaded.
+  await expect(
+    modal.getByRole('textbox', { name: 'Image references' }),
+  ).toBeVisible({ timeout: 30000 });
+  return modal;
+}
+
+test.describe(
+  'ImageList - Import Image',
+  {
+    tag: [
+      '@regression',
+      '@environment',
+      '@functional',
+      '@requires-manager-v26.10',
+    ],
+  },
+  () => {
+    test.beforeEach(async ({ page, request }) => {
+      await loginAsAdmin(page, request);
+      await skipUnlessManagerVersion(
+        page,
+        '26.10.0a1',
+        'Import Image needs adminScanImage on manager >= 26.10 (#9674)',
+      );
+      await page.getByRole('link', { name: 'Admin Settings' }).click();
+      await page.getByRole('link', { name: 'Environments' }).click();
+      await expect(page).toHaveURL(/\/environment/);
+      await waitForImageListReady(page);
+    });
+
+    test('Superadmin can import an image from a canonical reference', async ({
+      page,
+    }, testInfo) => {
+      test.setTimeout(180000);
+      const api = await createAdminApiContext();
+      let importedTag: string | undefined;
+      try {
+        const registeredTags = new Set(
+          (await listRegisteredImportImages(api)).map((image) => image.tag),
+        );
+        const freeTags = IMPORT_CANDIDATE_TAGS.filter(
+          (tag) => !registeredTags.has(tag),
+        );
+        test.skip(
+          freeTags.length === 0,
+          'Every candidate tag is already registered',
+        );
+        // Concurrent workers must not import the same image.
+        const tag = freeTags[testInfo.parallelIndex % freeTags.length];
+        const canonical = `${IMPORT_REGISTRY}/${IMPORT_IMAGE_NAME}:${tag}`;
+
+        const modal = await openImportImageModal(page);
+        await modal
+          .getByRole('textbox', { name: 'Image references' })
+          .fill(canonical);
+        await expect(
+          modal.getByRole('button', { name: 'Architecture' }),
+        ).toHaveText('x86_64');
+        await expect(modal.getByRole('img', { name: 'Ready' })).toBeVisible();
+
+        importedTag = tag;
+        await modal
+          .getByRole('button', { name: 'Import Image', exact: true })
+          .click();
+
+        await expect(
+          page.getByText('1 image(s) successfully imported.').first(),
+        ).toBeVisible({ timeout: 90000 });
+        await expect(modal).toBeHidden();
+
+        // A successful import resets the list to page 1 of the default
+        // `-created_at` order, so the new row is on the first page.
+        await waitForImageListSettled(page);
+        await expect(
+          imageListRowsOf(page).filter({ hasText: `${canonical}@x86_64` }),
+        ).toHaveCount(1, { timeout: 30000 });
+      } finally {
+        if (importedTag) {
+          const leftovers = (await listRegisteredImportImages(api)).filter(
+            (image) => image.tag === importedTag,
+          );
+          for (const image of leftovers) {
+            await gqlAdmin(
+              api,
+              `mutation ($id: String!) { purge_image_by_id(image_id: $id) { image { id } } }`,
+              { id: image.id },
+            ).catch(() => undefined);
+          }
+        }
+        await api.dispose();
+      }
+    });
+
+    test('Superadmin cannot import invalid lines or images from an unregistered registry', async ({
+      page,
+    }) => {
+      const invalidLine = `docker pull ${IMPORT_REGISTRY}/${IMPORT_IMAGE_NAME}:${IMPORT_CANDIDATE_TAGS[0]}`;
+      const unregisteredHost = 'e2e-unregistered.example.com';
+      const unregisteredLine = `${unregisteredHost}/stable/python:3.9`;
+
+      const modal = await openImportImageModal(page);
+      await modal
+        .getByRole('textbox', { name: 'Image references' })
+        .fill(`${invalidLine}\n${unregisteredLine}`);
+
+      const previewRows = modal.locator('[data-import-blocked="true"]');
+      await expect(previewRows).toHaveCount(2);
+      await expect(previewRows.filter({ hasText: invalidLine })).toContainText(
+        'This is not a valid image reference.',
+      );
+      const unregisteredRow = previewRows.filter({ hasText: unregisteredLine });
+      await expect(unregisteredRow).toContainText(
+        `The registry ${unregisteredHost} is not registered yet.`,
+      );
+      await expect(
+        unregisteredRow.getByRole('button', { name: 'Add Registry' }),
+      ).toBeVisible();
+      await expect(
+        modal.getByText('2 line(s) cannot be imported. Fix or remove them.'),
+      ).toBeVisible();
+
+      // Submitting is refused client-side: the modal stays open, nothing is
+      // scanned and no success toast appears.
+      await modal
+        .getByRole('button', { name: 'Import Image', exact: true })
+        .click();
+      await expect(modal).toBeVisible();
+      await expect(previewRows).toHaveCount(2);
+      await expect(modal.getByRole('img', { name: 'Scanning' })).toHaveCount(0);
+      await expect(
+        page.getByText(/image\(s\) successfully imported/),
+      ).toHaveCount(0);
+
+      await modal.getByRole('button', { name: 'Cancel' }).click();
+      await expect(modal).toBeHidden();
     });
   },
 );
