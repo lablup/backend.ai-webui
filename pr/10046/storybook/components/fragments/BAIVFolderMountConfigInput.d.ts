@@ -22,7 +22,7 @@ export interface VFolderMountConfigValue {
 }
 export interface BAIVFolderMountConfigInputRef {
     /** Re-reads the folder options and the auto-mounted folders. */
-    refetch: () => Promise<unknown>;
+    refetch: () => void;
 }
 export interface BAIVFolderMountConfigInputProps {
     value?: VFolderMountConfigValue[];
