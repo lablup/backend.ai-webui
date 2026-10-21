@@ -12,6 +12,7 @@ import {
 import { useThemeMode } from '../../hooks/useThemeMode';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import SessionMonitorAcceleratorSummary from './SessionMonitorAcceleratorSummary';
+import SessionMonitorDetailDrawer from './SessionMonitorDetailDrawer';
 import SessionMonitorPopoverContent, {
   sessionMonitorTitleKey,
 } from './SessionMonitorPopoverContent';
@@ -23,7 +24,7 @@ import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex, BAISkeleton, useIntervalValue } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
-import { Clock } from 'lucide-react';
+import { Hourglass } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -61,6 +62,7 @@ const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
   const summary = useAtomValue(sessionMonitorSummaryAtom);
   const scope = useAtomValue(sessionMonitorScopeAtom);
   const [isOpen, setIsOpen] = useState(false);
+  const [detailSessionId, setDetailSessionId] = useState<string | null>(null);
   // The band is a reversed surface; the media scope goes on the trigger only
   // so the popover panel (an inline sibling) keeps the app palette.
   const bandMediaMode = isDarkMode ? 'light' : 'dark';
@@ -89,75 +91,88 @@ const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
   const title = t(sessionMonitorTitleKey(scope.mode));
 
   return (
-    <Popover
-      label={title}
-      placement="below"
-      alignment="end"
-      padding={0}
-      isOpen={isOpen}
-      onOpenChange={setIsOpen}
-      content={
-        isOpen ? (
-          <ErrorBoundaryWithNullFallback>
-            <Suspense
-              fallback={
-                <div style={{ width: 560, padding: 16 }}>
-                  <BAISkeleton />
-                </div>
-              }
-            >
-              <SessionMonitorPopoverContent
-                onNavigate={() => setIsOpen(false)}
-              />
-            </Suspense>
-          </ErrorBoundaryWithNullFallback>
-        ) : (
-          <span />
-        )
-      }
-    >
-      <Tooltip content={t('sessionMonitor.Tooltip')}>
-        <Button
-          data-astryx-media={bandMediaMode}
-          data-testid={props['data-testid']}
-          variant="ghost"
-          size="sm"
-          label={title}
-        >
-          <BAIFlex direction="row" align="center" gap="xs">
-            <Text type="inherit" textWrap="nowrap">
-              {t('sessionMonitor.RunningCount', { count: running })}
-            </Text>
-            {!isProjectAgnosticPage && scope.mode !== 'domain' && (
-              <ErrorBoundaryWithNullFallback>
-                <Suspense fallback={null}>
-                  <SessionMonitorAcceleratorSummary separator={<Separator />} />
-                </Suspense>
-              </ErrorBoundaryWithNullFallback>
-            )}
-            {tick && (
-              <>
-                <Separator />
-                <BAIFlex
-                  direction="row"
-                  align="center"
-                  gap="xxs"
-                  style={{
-                    color: tick.isUrgent ? 'var(--color-error)' : undefined,
-                    fontWeight: tick.isUrgent ? 700 : undefined,
+    <>
+      <Popover
+        label={title}
+        placement="below"
+        alignment="end"
+        padding={0}
+        isOpen={isOpen}
+        onOpenChange={setIsOpen}
+        content={
+          isOpen ? (
+            <ErrorBoundaryWithNullFallback>
+              <Suspense
+                fallback={
+                  <div style={{ width: 560, padding: 16 }}>
+                    <BAISkeleton />
+                  </div>
+                }
+              >
+                <SessionMonitorPopoverContent
+                  onNavigate={() => setIsOpen(false)}
+                  onOpenSessionDetail={(id) => {
+                    setIsOpen(false);
+                    setDetailSessionId(id);
                   }}
-                >
-                  <Clock size="1em" />
-                  <Text type="inherit" color="inherit" textWrap="nowrap">
-                    {tick.text}
-                  </Text>
-                </BAIFlex>
-              </>
-            )}
-          </BAIFlex>
-        </Button>
-      </Tooltip>
-    </Popover>
+                />
+              </Suspense>
+            </ErrorBoundaryWithNullFallback>
+          ) : (
+            <span />
+          )
+        }
+      >
+        <Tooltip content={t('sessionMonitor.Tooltip')}>
+          <Button
+            data-astryx-media={bandMediaMode}
+            data-testid={props['data-testid']}
+            variant="ghost"
+            size="sm"
+            label={title}
+          >
+            <BAIFlex direction="row" align="center" gap="xs">
+              <Text type="inherit" textWrap="nowrap">
+                {t('sessionMonitor.RunningCount', { count: running })}
+              </Text>
+              {!isProjectAgnosticPage && scope.mode !== 'domain' && (
+                <ErrorBoundaryWithNullFallback>
+                  <Suspense fallback={null}>
+                    <SessionMonitorAcceleratorSummary
+                      separator={<Separator />}
+                    />
+                  </Suspense>
+                </ErrorBoundaryWithNullFallback>
+              )}
+              {tick && (
+                <>
+                  <Separator />
+                  <BAIFlex
+                    direction="row"
+                    align="center"
+                    gap="xxs"
+                    style={{
+                      color: tick.isUrgent ? 'var(--color-error)' : undefined,
+                      fontWeight: tick.isUrgent ? 700 : undefined,
+                    }}
+                  >
+                    <Hourglass size="1em" />
+                    <Text type="inherit" color="inherit" textWrap="nowrap">
+                      {tick.text}
+                    </Text>
+                  </BAIFlex>
+                </>
+              )}
+            </BAIFlex>
+          </Button>
+        </Tooltip>
+      </Popover>
+      <SessionMonitorDetailDrawer
+        sessionId={detailSessionId}
+        withProject={scope.mode !== 'domain' && !isProjectAgnosticPage}
+        onClose={() => setDetailSessionId(null)}
+      />
+    </>
   );
 };
 

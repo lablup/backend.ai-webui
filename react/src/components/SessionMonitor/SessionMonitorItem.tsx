@@ -27,15 +27,14 @@ interface SessionMonitorItemProps {
   sessionFrgmt: SessionMonitorItemFragment$key;
   entry: SessionMonitorEntry;
   /** The session list the row's detail link opens on. */
-  listPath: string;
-  onNavigate?: () => void;
+  /** Opens the session's detail drawer in place, without leaving the page. */
+  onOpenDetail?: (sessionId: string) => void;
 }
 
 const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
   sessionFrgmt,
   entry,
-  listPath,
-  onNavigate,
+  onOpenDetail,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -60,9 +59,6 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
 
   const { nearest, deadline } = entry;
   const isRunning = isRunningStatus(session.status);
-  const detailPath = `${listPath}?${new URLSearchParams({
-    sessionDetail: toLocalId(session.id),
-  }).toString()}`;
 
   // "GPU 2 · RAM 32G": the allocation, or the request while starting.
   const slots: Record<string, string | undefined> = JSON.parse(
@@ -114,8 +110,7 @@ const SessionMonitorItem: React.FC<SessionMonitorItemProps> = ({
       >
         <BAIFlex direction="row" align="center" gap="xs">
           <BAILink
-            to={detailPath}
-            onClick={onNavigate}
+            onClick={() => onOpenDetail?.(toLocalId(session.id))}
             ellipsis
             style={{ minWidth: 0, fontWeight: 500 }}
           >

@@ -37,15 +37,20 @@ import { useTranslation } from 'react-i18next';
 
 interface SessionMonitorPopoverContentProps {
   onNavigate?: () => void;
+  onOpenSessionDetail?: (sessionId: string) => void;
 }
 
 const SessionMonitorPopoverContent: React.FC<
   SessionMonitorPopoverContentProps
-> = ({ onNavigate }) => {
+> = ({ onNavigate, onOpenSessionDetail }) => {
   'use memo';
   const scope = useAtomValue(sessionMonitorScopeAtom);
   return scope ? (
-    <ScopedSessionMonitorPopoverContent scope={scope} onNavigate={onNavigate} />
+    <ScopedSessionMonitorPopoverContent
+      scope={scope}
+      onNavigate={onNavigate}
+      onOpenSessionDetail={onOpenSessionDetail}
+    />
   ) : null;
 };
 
@@ -58,7 +63,7 @@ export const sessionMonitorTitleKey = (mode: SessionMonitorMode) =>
 
 const ScopedSessionMonitorPopoverContent: React.FC<
   SessionMonitorPopoverContentProps & { scope: SessionMonitorScope }
-> = ({ scope, onNavigate }) => {
+> = ({ scope, onNavigate, onOpenSessionDetail }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
@@ -178,8 +183,7 @@ const ScopedSessionMonitorPopoverContent: React.FC<
                   key={entry.id}
                   sessionFrgmt={row}
                   entry={entry}
-                  listPath={listPath}
-                  onNavigate={onNavigate}
+                  onOpenDetail={onOpenSessionDetail}
                 />
               ) : null;
             })
