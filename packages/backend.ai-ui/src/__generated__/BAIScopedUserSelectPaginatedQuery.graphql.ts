@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<77bf9ef0397727bdc42363f29933c5a0>>
+ * @generated SignedSource<<fec26dbe1ddb3837681c02f6a1c02f42>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -163,6 +163,7 @@ export type BAIScopedUserSelectPaginatedQuery$data = {
           readonly email: string;
           readonly fullName: string | null | undefined;
         };
+        readonly entityId: string;
         readonly id: string;
       };
     }>;
@@ -267,6 +268,13 @@ v5 = [
               {
                 "alias": null,
                 "args": null,
+                "kind": "ScalarField",
+                "name": "entityId",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
                 "concreteType": "UserV2BasicInfo",
                 "kind": "LinkedField",
                 "name": "basicInfo",
@@ -329,16 +337,16 @@ return {
     "selections": (v5/*: any*/)
   },
   "params": {
-    "cacheID": "d1a03d89d677ba9881260323d9727dde",
+    "cacheID": "efde6092b86268c770cd00e780dc0fef",
     "id": null,
     "metadata": {},
     "name": "BAIScopedUserSelectPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIScopedUserSelectPaginatedQuery(\n  $scope: UserScope!\n  $offset: Int!\n  $limit: Int!\n  $filter: UserV2Filter\n  $orderBy: [UserV2OrderBy!]\n) {\n  scopedUsersV2(scope: $scope, offset: $offset, limit: $limit, filter: $filter, orderBy: $orderBy) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIScopedUserSelectPaginatedQuery(\n  $scope: UserScope!\n  $offset: Int!\n  $limit: Int!\n  $filter: UserV2Filter\n  $orderBy: [UserV2OrderBy!]\n) {\n  scopedUsersV2(scope: $scope, offset: $offset, limit: $limit, filter: $filter, orderBy: $orderBy) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "16db545d7d0cea1dbfdbce1d2742d8c4";
+(node as any).hash = "9f76fb36f1f0267e95d5c7b6c2bf8a87";
 
 export default node;
