@@ -1292,9 +1292,13 @@ test.describe(
       page,
     }) => {
       // Without a status condition the list is live-only, so every row is ALIVE.
+      // The first row is the fixture other tests here edit (resource limits,
+      // apps); rescan the last row so a parallel rescan cannot undo their save.
       await waitForImageListSettled(page);
-      const firstRow = imageListRowsOf(page).first();
-      const rescanButton = firstRow.getByRole('button', {
+      const rows = imageListRowsOf(page);
+      expect(await rows.count()).toBeGreaterThan(1);
+      const targetRow = rows.last();
+      const rescanButton = targetRow.getByRole('button', {
         name: 'Rescan',
         exact: true,
       });
@@ -1302,19 +1306,28 @@ test.describe(
 
       // The canonical (`<registry>/<namespace>:<tag>`) the toast names is the
       // one the row sends as `adminScanImage`'s input.
-      const scanRequest = page.waitForRequest(
-        (req) =>
-          req.url().includes('/admin/gql') &&
-          (req.postData() ?? '').includes('useScanImageMutation'),
-      );
+      let scanResponded = false;
+      const scanResponse = page
+        .waitForResponse(
+          (res) =>
+            res.url().includes('/admin/gql') &&
+            (res.request().postData() ?? '').includes('useScanImageMutation'),
+          { timeout: 60000 },
+        )
+        .then((res) => {
+          scanResponded = true;
+          return res;
+        });
+      // Only a list response after the scan's counts as its refetch.
       const listRefetch = page.waitForResponse(
         (res) =>
+          scanResponded &&
           res.url().includes('/admin/gql') &&
           (res.request().postData() ?? '').includes('ImageListQuery'),
         { timeout: 60000 },
       );
       await rescanButton.click();
-      const { variables } = (await scanRequest).postDataJSON();
+      const { variables } = (await scanResponse).request().postDataJSON();
       const canonical: string = variables.input.canonical;
       expect(canonical).toMatch(/^[^/\s]+\/\S+:\S+$/);
 
@@ -1339,7 +1352,8 @@ test.describe(
         const response = await route.fetch();
         const json = await response.json();
         const firstNode = json?.data?.image_nodes?.edges?.[0]?.node;
-        if (firstNode) firstNode.status = 'DELETED';
+        expect(firstNode).toBeTruthy();
+        firstNode.status = 'DELETED';
         await route.fulfill({ response, json });
       });
       await page.reload();
