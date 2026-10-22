@@ -13,7 +13,6 @@ import { useThemeMode } from '../../hooks/useThemeMode';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import SessionMonitorAllocationSummary from './SessionMonitorAllocationSummary';
 import SessionMonitorDetailDrawer from './SessionMonitorDetailDrawer';
-import SessionMonitorPopoverContent from './SessionMonitorPopoverContent';
 import { Button } from '@lablup/ui-common/Button';
 import { Popover } from '@lablup/ui-common/Popover';
 import { Text } from '@lablup/ui-common/Text';
@@ -25,6 +24,11 @@ import { useAtomValue } from 'jotai';
 import { Hourglass } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+// The popover body (session list, settings pane) loads when first opened.
+const SessionMonitorPopoverContent = React.lazy(
+  () => import('./SessionMonitorPopoverContent'),
+);
 
 interface SessionMonitorButtonProps {
   'data-testid'?: string;

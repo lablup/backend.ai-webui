@@ -3,8 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { DeploymentPresetDetailModalFragment$key } from '../__generated__/DeploymentPresetDetailModalFragment.graphql';
-import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
-import { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
+import { ResourceNumbersOfSession } from './ResourceNumbersOfSession';
+import type { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
 import { Heading } from '@lablup/ui-common/Heading';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import { Text } from '@lablup/ui-common/Text';

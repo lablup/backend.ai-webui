@@ -8,10 +8,8 @@ import {
   usePinnedSessionHistory,
   useRecentSessionHistory,
 } from '../hooks/useRecentSessionHistory';
-import {
-  ResourceNumbersOfSession,
-  SessionLauncherFormValue,
-} from '../pages/SessionLauncherPage';
+import type { SessionLauncherFormValue } from '../pages/SessionLauncherPage';
+import { ResourceNumbersOfSession } from './ResourceNumbersOfSession';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
 import { TextInput } from '@lablup/ui-common/TextInput';

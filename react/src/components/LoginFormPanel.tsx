@@ -28,12 +28,9 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
 import BAIFormItem from './BAIFormItem';
-import SignupModal from './SignupModal';
-import {
-  TOTPActivateForm,
-  type TOTPActivateFormData,
-} from './TOTPActivateModal';
-import { AstryxFormTextInput } from './astryxFormControls';
+import SanitizedHtml from './SanitizedHtml';
+import type { TOTPActivateFormData } from './TOTPActivateModal';
+import { AstryxFormTextInput } from './astryxFormTextInput';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import { Heading } from '@lablup/ui-common/Heading';
@@ -45,6 +42,7 @@ import {
   SegmentedControl,
   SegmentedControlItem,
 } from '@lablup/ui-common/SegmentedControl';
+import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import { focusVars, spacingVars } from '@lablup/ui-common/theme/tokens.stylex';
@@ -57,7 +55,6 @@ import {
   useBAILogger,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
-import DOMPurify from 'dompurify';
 import {
   X,
   ChevronDown,
@@ -66,8 +63,16 @@ import {
   Trash2,
   TriangleAlert,
 } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+// Signup pulls Typeahead/Tokenizer form controls; load it when it opens.
+const SignupModal = React.lazy(() => import('./SignupModal'));
+
+// The QR renderer (qrcode.react) loads only when TOTP setup is shown.
+const TOTPActivateForm = React.lazy(() =>
+  import('./TOTPActivateModal').then((m) => ({ default: m.TOTPActivateForm })),
+);
 
 type ConnectionMode = 'SESSION' | 'API';
 
@@ -767,11 +772,9 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               onClick={() => setHelpPanel(null)}
             />
           </BAIFlex>
-          <div
+          <SanitizedHtml
             style={{ fontSize: 13, lineHeight: 1.6 }}
-            dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(effectiveHelpPanel.content),
-            }}
+            html={effectiveHelpPanel.content}
           />
         </div>
       )}
@@ -803,15 +806,19 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
       />
 
       {/* Signup Modal */}
-      <SignupModal
-        open={showSignupModal}
-        endpoint={apiEndpoint}
-        allowSignupWithoutConfirmation={
-          loginConfig.allowSignupWithoutConfirmation
-        }
-        preloadedToken={signupPreloadedToken}
-        onRequestClose={() => onSetShowSignupModal(false)}
-      />
+      {showSignupModal && (
+        <Suspense fallback={null}>
+          <SignupModal
+            open={showSignupModal}
+            endpoint={apiEndpoint}
+            allowSignupWithoutConfirmation={
+              loginConfig.allowSignupWithoutConfirmation
+            }
+            preloadedToken={signupPreloadedToken}
+            onRequestClose={() => onSetShowSignupModal(false)}
+          />
+        </Suspense>
+      )}
 
       {/* Change Password Email Modal */}
       <BAIUnmountAfterClose>
@@ -1102,11 +1109,19 @@ const TOTPActivateInline: React.FC<{
           )}
         </BAIFlex>
       ) : (
-        <TOTPActivateForm
-          ref={formRef}
-          totp_uri={initializedTotp.totp_uri}
-          totp_key={initializedTotp.totp_key}
-        />
+        <Suspense
+          fallback={
+            <BAIFlex justify="center">
+              <Spinner />
+            </BAIFlex>
+          }
+        >
+          <TOTPActivateForm
+            ref={formRef}
+            totp_uri={initializedTotp.totp_uri}
+            totp_key={initializedTotp.totp_key}
+          />
+        </Suspense>
       )}
     </BAIModal>
   );
