@@ -1259,3 +1259,120 @@ test.describe(
     });
   },
 );
+
+// ---------------------------------------------------------------------------
+// ImageList - per-image rescan row action (#9688)
+// ---------------------------------------------------------------------------
+
+test.describe(
+  'ImageList - rescan a single image',
+  {
+    tag: [
+      '@regression',
+      '@environment',
+      '@functional',
+      '@requires-manager-v26.10',
+    ],
+  },
+  () => {
+    test.beforeEach(async ({ page, request }) => {
+      await loginAsAdmin(page, request);
+      await skipUnlessManagerVersion(
+        page,
+        '26.10.0a1',
+        'The per-image Rescan row action uses adminScanImage, which requires manager >= 26.10 (#9688)',
+      );
+      await page.getByRole('link', { name: 'Admin Settings' }).click();
+      await page.getByRole('link', { name: 'Environments' }).click();
+      await expect(page).toHaveURL(/\/environment/);
+      await waitForImageListReady(page);
+    });
+
+    test('Superadmin can rescan a single ALIVE image from the Images list', async ({
+      page,
+    }) => {
+      // Without a status condition the list is live-only, so every row is ALIVE.
+      // The first row is the fixture other tests here edit (resource limits,
+      // apps); rescan the last row so a parallel rescan cannot undo their save.
+      await waitForImageListSettled(page);
+      const rows = imageListRowsOf(page);
+      expect(await rows.count()).toBeGreaterThan(1);
+      const targetRow = rows.last();
+      const rescanButton = targetRow.getByRole('button', {
+        name: 'Rescan',
+        exact: true,
+      });
+      await expect(rescanButton).toBeVisible();
+
+      // The canonical (`<registry>/<namespace>:<tag>`) the toast names is the
+      // one the row sends as `adminScanImage`'s input.
+      let scanResponded = false;
+      const scanResponse = page
+        .waitForResponse(
+          (res) =>
+            res.url().includes('/admin/gql') &&
+            (res.request().postData() ?? '').includes('useScanImageMutation'),
+          { timeout: 60000 },
+        )
+        .then((res) => {
+          scanResponded = true;
+          return res;
+        });
+      // Only a list response after the scan's counts as its refetch.
+      const listRefetch = page.waitForResponse(
+        (res) =>
+          scanResponded &&
+          res.url().includes('/admin/gql') &&
+          (res.request().postData() ?? '').includes('ImageListQuery'),
+        { timeout: 60000 },
+      );
+      await rescanButton.click();
+      const { variables } = (await scanResponse).request().postDataJSON();
+      const canonical: string = variables.input.canonical;
+      expect(canonical).toMatch(/^[^/\s]+\/\S+:\S+$/);
+
+      // The toast text is mirrored into an Astryx live region; check the toast.
+      await expect(
+        page.getByText(`${canonical} was rescanned.`).first(),
+      ).toBeVisible({ timeout: 60000 });
+      // A successful rescan bumps the list's fetch key, re-running its query.
+      await listRefetch;
+      await waitForImageListReady(page);
+    });
+
+    test('Superadmin cannot see the Rescan button on a non-ALIVE image row', async ({
+      page,
+    }) => {
+      // The shared cluster keeps no DELETED/PURGING image, and deleting one is
+      // irreversible, so mark the first row of the real list response DELETED.
+      await page.route('**/admin/gql', async (route) => {
+        if (!(route.request().postData() ?? '').includes('ImageListQuery')) {
+          return route.fallback();
+        }
+        const response = await route.fetch();
+        const json = await response.json();
+        const firstNode = json?.data?.image_nodes?.edges?.[0]?.node;
+        expect(firstNode).toBeTruthy();
+        firstNode.status = 'DELETED';
+        await route.fulfill({ response, json });
+      });
+      await page.reload();
+      await waitForImageListReady(page);
+      await waitForImageListSettled(page);
+
+      const rows = imageListRowsOf(page);
+      await expect(rows.nth(1)).toBeVisible();
+      const deletedRow = rows.first();
+      // The row keeps its other actions; only Rescan is withheld.
+      await expect(
+        deletedRow.getByRole('button', { name: 'Manage Apps' }),
+      ).toBeVisible();
+      await expect(
+        deletedRow.getByRole('button', { name: 'Rescan', exact: true }),
+      ).toHaveCount(0);
+      await expect(
+        rows.nth(1).getByRole('button', { name: 'Rescan', exact: true }),
+      ).toBeVisible();
+    });
+  },
+);
