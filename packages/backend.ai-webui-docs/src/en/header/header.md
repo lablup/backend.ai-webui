@@ -99,6 +99,26 @@ The palette also offers quick actions in three groups.
 Before you type anything, the results you opened most recently are listed at the
 top under `Recent`.
 
+<a id="session-monitor"></a>
+
+## Session monitor
+
+The session monitor shows the number of sessions you watch, on every page. Click
+it to open the list of those sessions, where the monitor's settings let you
+choose what it watches.
+
+:::note
+The session monitor is an experimental feature and is turned off by default. It
+appears in the top bar only while the **Session monitor** item under
+**Experimental features** on the User Settings page is enabled.
+:::
+
+![=618px](../images/session_monitor_popover.png)
+
+When the idle-termination item is turned on in those settings, you also receive
+a notification 30 and 10 minutes before an idle check terminates one of your
+sessions.
+
 <a id="notification"></a>
 
 ## Notification
