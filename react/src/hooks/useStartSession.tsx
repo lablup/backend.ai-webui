@@ -4,27 +4,16 @@
  */
 import { useSuspendedBackendaiClient } from '.';
 import { useStartSessionCreationQuery } from '../__generated__/useStartSessionCreationQuery.graphql';
-import { transformPortValuesToNumbers } from '../components/PortSelectFormItem';
-import {
-  RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
-  UNIFIED_SLOT_TAG_PREFIX,
-  isUnifiedAcceleratorSlot,
-} from '../components/SessionFormItems/ResourceAllocationFormItems';
-import {
-  SessionLauncherFormValue,
-  SessionResources,
-} from '../pages/SessionLauncherPage';
+import { RESOURCE_ALLOCATION_INITIAL_FORM_VALUES } from '../components/SessionFormItems/ResourceAllocationFormItems';
+import { buildSessionPayload } from '../features/session-launcher/domain/payload';
+import { SessionLauncherFormValue } from '../pages/SessionLauncherPage';
 import { useSetBAINotification } from './useBAINotification';
 import {
   useCurrentProjectValue,
   useCurrentResourceGroupState,
 } from './useCurrentProject';
 import { useResolveImageReference } from './useDefaultImagesWithFallback';
-import {
-  generateRandomString,
-  toGlobalId,
-  toMountCreationConfig,
-} from 'backend.ai-ui';
+import { generateRandomString, toGlobalId } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay';
@@ -36,17 +25,6 @@ type SessionCreationSuccess = {
   sessionName: string;
   servicePorts: Array<{ name: string }>;
 };
-interface CreateSessionInfo {
-  kernelName: string;
-  sessionName: string;
-  // Left `undefined` when the image reference carries no `@arch` suffix, so
-  // that `createIfNotExists()` applies its own `x86_64` default. Passing an
-  // empty string instead would suppress that default and send a blank
-  // architecture to the manager.
-  architecture: string | undefined;
-  batchTimeout?: string;
-  resources: SessionResources;
-}
 
 export const SESSION_LAUNCHER_NOTI_PREFIX = 'session-launcher:';
 
@@ -178,147 +156,20 @@ export const useStartSession = () => {
       projectName?: string;
     },
   ) => {
-    // A manual image (the `allowManualImageNameForSession` escape hatch) is
-    // used verbatim — the user explicitly typed it, so it must not be
-    // rewritten by resolution. `environment` holds a name-only reference (see
-    // `normalizeEnvironmentFormat`); config values such as
-    // `defaultImportEnvironment` may omit the tag and/or the architecture, so
-    // resolve them against the registered image list here to make every
-    // caller of `startSession` behave like the launcher form (FR-3462).
+    // A manual image is used verbatim; anything else (e.g. a tag-less config
+    // value) is resolved against the registered images (FR-3462).
     const imageFullName =
       values.environments.manual ||
       (await resolveImageReference(
         values.environments.version || values.environments.environment,
       ));
-    // `architecture` stays `undefined` for a reference without `@arch` on
-    // purpose — see the note on `CreateSessionInfo.architecture`.
-    const [kernelName = '', architecture] = imageFullName?.split('@') ?? [];
-
-    const sessionName = _.isEmpty(values.sessionName)
-      ? generateSessionId()
-      : values.sessionName;
-
-    const sessionInfo: CreateSessionInfo = {
-      // Basic session information
-      sessionName: sessionName,
-      kernelName,
-      architecture,
-      resources: {
-        enqueueOnly: true,
-        // `projectName` (explicit project contract, FR-3412) wins over the
-        // ambient current project.
-        group_name: values.projectName || currentProject.name || undefined,
-        domain: baiClient._config.domainName,
-
-        // Session configuration
-        type: values.sessionType,
-        // Convert multi-node x1 to single-node x1 since they are functionally
-        // equivalent but multi-node requires overlay network which may not be
-        // configured in all-in-one environments (FR-2381)
-        cluster_mode:
-          values.cluster_mode === 'multi-node' && values.cluster_size === 1
-            ? 'single-node'
-            : values.cluster_mode,
-        cluster_size: values.cluster_size,
-        maxWaitSeconds: 15,
-        reuseIfExists: values.reuseIfExists ?? false,
-
-        // Batch mode settings (optional)
-        ...(values.sessionType === 'batch'
-          ? {
-              starts_at: values.batch.enabled
-                ? values.batch.scheduleDate
-                : undefined,
-              startupCommand: values.batch.command,
-            }
-          : {}),
-
-        // Bootstrap script (optional)
-        ...(values.bootstrap_script
-          ? { bootstrap_script: values.bootstrap_script }
-          : {}),
-
-        // Batch timeout configuration (optional)
-        ...(values?.batch?.timeoutEnabled &&
-        !_.isUndefined(values?.batch?.timeout)
-          ? {
-              batchTimeout:
-                _.toString(values.batch.timeout) + values?.batch?.timeoutUnit,
-            }
-          : undefined),
-
-        // Session dependencies
-        ...(values.dependencies && values.dependencies.length > 0
-          ? { dependencies: values.dependencies }
-          : {}),
-
-        // Temporary marker for unified-memory sessions. There is currently no
-        // dedicated field to tell from session info alone whether a session
-        // uses a unified-memory accelerator, so tag it as
-        // `unified-slot:<accelerator slot name>` (e.g. `unified-slot:cuda.unified`).
-        ...(isUnifiedAcceleratorSlot(values.resource?.acceleratorType)
-          ? {
-              tag: `${UNIFIED_SLOT_TAG_PREFIX}${values.resource?.acceleratorType}`,
-            }
-          : {}),
-
-        config: {
-          // Resource allocation
-          ...(values?.resource && {
-            resources: {
-              cpu: values?.resource?.cpu,
-              mem: values?.resource?.mem,
-              // Add accelerator only if specified. Unified-memory slots
-              // auto-allocate from the shared host pool, so never send an
-              // accelerator quantity for them.
-              ...(values.resource?.acceleratorType &&
-              values.resource?.accelerator &&
-              values.resource?.accelerator > 0 &&
-              !isUnifiedAcceleratorSlot(values.resource.acceleratorType)
-                ? {
-                    [values.resource.acceleratorType]:
-                      values.resource.accelerator,
-                  }
-                : undefined),
-            },
-          }),
-          scaling_group: values.resourceGroup,
-          ...(values?.resource && {
-            resource_opts: {
-              shmem: values?.resource?.shmem,
-              // allow_fractional_resource_fragmentation can be added here if needed
-            },
-          }),
-
-          ...toMountCreationConfig(values.vfolderMounts),
-
-          // Environment variables
-          environ: {
-            ..._.fromPairs(values.envvars.map((v) => [v.variable, v.value])),
-            // set hpcOptimization options: "OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS"
-            ...(values.hpcOptimization.autoEnabled
-              ? {}
-              : _.omit(values.hpcOptimization, 'autoEnabled')),
-          },
-
-          // Networking
-          preopen_ports: transformPortValuesToNumbers(values.ports),
-
-          // Agent selection (optional)
-          ...(!baiClient?._config?.hideAgents &&
-          values.agent !== undefined &&
-          !_.isEqual(_.castArray(values.agent), ['auto'])
-            ? {
-                // Filter out undefined values
-                agent_list: _.filter(
-                  _.castArray(values.agent),
-                  (agent): agent is string => !!agent,
-                ),
-              }
-            : undefined),
-        },
-      },
-    };
+    const sessionInfo = buildSessionPayload(values, {
+      imageFullName,
+      generateSessionName: generateSessionId,
+      currentProjectName: currentProject.name,
+      domainName: baiClient._config.domainName,
+      hideAgents: baiClient?._config?.hideAgents,
+    });
     const sessionPromises = _.map(_.range(values.num_of_sessions || 1), (i) => {
       const formattedSessionName =
         (values.num_of_sessions || 1) > 1
