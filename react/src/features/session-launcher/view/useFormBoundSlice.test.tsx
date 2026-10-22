@@ -118,6 +118,17 @@ describe('useFormBoundSlice', () => {
     expect(dataArrivedCalls()).toHaveLength(3);
   });
 
+  it('runs dataArrived against the inputs that arrived, not the previous render’s', () => {
+    const view = render(<Harness inputs={{ limits: ready({ maxCpu: 8 }) }} />);
+    const next = { limits: ready({ maxCpu: 4 }) };
+    view.rerender(<Harness inputs={next} />);
+    const last = vi
+      .mocked(transition)
+      .mock.calls.filter(([, , event]) => event.type === 'dataArrived')
+      .at(-1);
+    expect(last?.[3]).toBe(next);
+  });
+
   it('throws LauncherModelError at mount when a required input is missing', () => {
     const consoleError = vi
       .spyOn(console, 'error')

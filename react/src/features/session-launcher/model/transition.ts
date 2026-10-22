@@ -42,18 +42,15 @@ const SIZE_KEYS = ['mem', 'shmem'];
 const isSizePath = (path: NamePath) =>
   SIZE_KEYS.includes(String(_.last(toPath(path))));
 
-/** `mem` / `shmem` strings compare by size, so `1g` equals `1024m`. */
+/**
+ * Strict: `'4g'` over `'4096m'` is a change, since the stored string picks the
+ * unit the input displays. Size order matters only to `raise-only`.
+ */
 export const isSameFieldValue = (
-  path: NamePath,
+  _path: NamePath,
   a: unknown,
   b: unknown,
-): boolean => {
-  if (_.isEqual(a, b)) return true;
-  if (isSizePath(path) && _.isString(a) && _.isString(b)) {
-    return compareNumberWithUnits(a, b) === 0;
-  }
-  return false;
-};
+): boolean => _.isEqual(a, b);
 
 const isGreater = (path: NamePath, next: unknown, current: unknown) => {
   if (_.isNil(current)) return true;
@@ -107,6 +104,11 @@ export const transition = (
   ) => {
     let count = 0;
     for (const patch of patches) {
+      // A validate-only patch never changes a value, so it never keeps the loop going.
+      if (patch.write.method === 'none') {
+        applied.push({ ...patch, provenance: source });
+        continue;
+      }
       if (!includesPath(allowed, patch.path)) {
         throw new LauncherModelError(
           `${source} wrote '${pathKey(patch.path)}' outside its writes`,
@@ -151,15 +153,21 @@ export const transition = (
       }
       provenance[pathKey(path)] = 'restored';
     }
-  } else if (!isDataArrived(event)) {
+  }
+
+  const readyInputs = readyInputsOf(inputs);
+  if (!isRestored(event) && !isDataArrived(event)) {
     const reducer = model.intents[event.type];
     if (!reducer) {
       throw new LauncherModelError(`unknown intent '${event.type}'`);
     }
-    apply(reducer(values, event.payload as never), 'user', model.fields);
+    apply(
+      reducer(values, event.payload as never, readyInputs),
+      'user',
+      model.fields,
+    );
   }
 
-  const readyInputs = readyInputsOf(inputs);
   for (let pass = 0; pass < settleLimit; pass++) {
     let count = 0;
     for (const rule of model.rules) {
@@ -169,6 +177,7 @@ export const transition = (
         provenance,
         event,
         inputs: readyInputs,
+        pass,
       });
       count += apply(patches, ruleProvenance(rule.id), rule.writes);
     }

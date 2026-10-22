@@ -32,8 +32,10 @@ export interface LauncherState {
 export type WritePolicy = 'force' | 'unless-user-set' | 'raise-only';
 
 export interface PatchWrite {
-  method: 'setFieldsValue' | 'setFieldValue';
+  /** `none` writes nothing and only replays `validateAfter`, as today's code validates after a no-op. */
+  method: 'setFieldsValue' | 'setFieldValue' | 'none';
   validateAfter?: NamePath[];
+  validateOptions?: { recursive?: boolean };
 }
 
 export interface Patch {
@@ -64,6 +66,8 @@ export interface RuleContext<I extends ReadyInputs = ReadyInputs> {
   provenance: ProvenanceMap;
   event: LauncherEvent;
   inputs: I;
+  /** 0-based settle pass; a rule mirroring a once-per-change effect runs on pass 0 only. */
+  pass: number;
 }
 
 export interface Rule<I extends ReadyInputs = ReadyInputs> {
@@ -78,6 +82,7 @@ export interface Rule<I extends ReadyInputs = ReadyInputs> {
 export type IntentReducer<P = unknown> = (
   values: LauncherValues,
   payload: P,
+  inputs: ReadyInputs,
 ) => Patch[];
 
 export interface SliceDefinition {

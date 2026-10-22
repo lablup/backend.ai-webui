@@ -21,6 +21,7 @@ import {
   type ProvenanceMap,
 } from '../model';
 import { useBAILogger } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import { useEffect, useEffectEvent, useRef, useState } from 'react';
 
 const readModelValues = (form: FormInstance, model: ComposedModel) => {
@@ -34,11 +35,15 @@ const readModelValues = (form: FormInstance, model: ComposedModel) => {
 const replay = (form: FormInstance, patch: AppliedPatch) => {
   if (patch.write.method === 'setFieldValue') {
     form.setFieldValue(patch.path, patch.value);
-  } else {
+  } else if (patch.write.method === 'setFieldsValue') {
     form.setFieldsValue(setIn({}, patch.path, patch.value));
   }
-  if (patch.write.validateAfter) {
-    form.validateFields(patch.write.validateAfter).catch(() => {});
+  const { validateAfter, validateOptions } = patch.write;
+  if (validateAfter) {
+    (validateOptions
+      ? form.validateFields(validateAfter, validateOptions)
+      : form.validateFields(validateAfter)
+    ).catch(() => {});
   }
 };
 
@@ -59,7 +64,7 @@ export const useFormBoundSlice = (
     return { values: readModelValues(form, model), provenance: {} };
   });
 
-  const dispatch = (event: LauncherEvent) => {
+  const run = (event: LauncherEvent, inputs: LauncherInputs) => {
     const current: LauncherState = {
       values: readModelValues(form, model),
       provenance: provenanceRef.current,
@@ -75,8 +80,12 @@ export const useFormBoundSlice = (
       result = { state: error.state, patches: error.patches };
     }
     for (const patch of result.patches) replay(form, patch);
+    // Inputs rebuilt every render arrive every render; a no-op must not re-render.
+    const changed =
+      result.patches.length > 0 ||
+      !_.isEqual(result.state.provenance, provenanceRef.current);
     provenanceRef.current = result.state.provenance;
-    setState(result.state);
+    if (changed) setState(result.state);
 
     if (import.meta.env.DEV) {
       const formValues = readModelValues(form, model);
@@ -100,7 +109,9 @@ export const useFormBoundSlice = (
   // An input arrives when it turns ready or its ready value is replaced
   // (a refetch); a fresh `Loadable` wrapping the same value is churn.
   const previousRef = useRef<Readonly<Record<string, Loadable<unknown>>>>({});
-  const onInputsChange = useEffectEvent(() => {
+  // `inputs` is passed in: read from the effect event's closure it lagged a
+  // render under the compiler, and R-05 missed an image change.
+  const onInputsChange = useEffectEvent((inputs: LauncherInputs) => {
     const previous = previousRef.current;
     previousRef.current = inputs;
     const arrived = Object.keys(inputs).filter((key) => {
@@ -111,11 +122,13 @@ export const useFormBoundSlice = (
         (before?.status !== 'ready' || before.value !== now.value)
       );
     });
-    if (arrived.length > 0) dispatch({ type: 'dataArrived', keys: arrived });
+    if (arrived.length > 0) run({ type: 'dataArrived', keys: arrived }, inputs);
   });
   useEffect(() => {
-    onInputsChange();
+    onInputsChange(inputs);
   }, [inputs]);
+
+  const dispatch = (event: LauncherEvent) => run(event, inputs);
 
   return { dispatch, state };
 };

@@ -81,20 +81,21 @@ flowchart LR
 
 ### 1. 규칙은 순서 있는 목록 하나다
 
-- **Rule shape**: 규칙은 `{ id, reads, writes, needs?, run }`다. `id`는 Dependency map의 번호(`R-03`, `E-02`)다. `reads`와 `writes`는 `NamePath`(`react/src/form-engine`가 re-export하는 ui-common의 경로 타입) 배열이고, `needs`는 규칙이 읽는 입력의 key 목록이다. `run({ values, provenance, event, inputs })`는 `Patch[]`를 답하는 순수 함수이고, `inputs`는 준비된 입력의 값만 담는다(`Loadable`을 벗긴 값).
-- **Patch shape**: patch는 `{ path: NamePath, value, policy, reason, write }`다. `policy`는 `force`, `unless-user-set`, `raise-only` 중 하나이고, `reason`은 i18n key이며, `write`는 `{ method: 'setFieldsValue' | 'setFieldValue', validateAfter?: NamePath[] }`다.
+- **Rule shape**: 규칙은 `{ id, reads, writes, needs?, run }`다. `id`는 Dependency map의 번호(`R-03`, `E-02`)다. `reads`와 `writes`는 `NamePath`(`react/src/form-engine`가 re-export하는 ui-common의 경로 타입) 배열이고, `needs`는 규칙이 읽는 입력의 key 목록이다. `run({ values, provenance, event, inputs, pass })`는 `Patch[]`를 답하는 순수 함수이고, `inputs`는 준비된 입력의 값만 담는다(`Loadable`을 벗긴 값). `pass`는 0부터 세는 settle 회차이고, 지금 코드에서 한 번만 돌던 effect를 옮긴 규칙은 `pass === 0`에서만 patch를 낸다.
+- **Patch shape**: patch는 `{ path: NamePath, value, policy, reason, write }`다. `policy`는 `force`, `unless-user-set`, `raise-only` 중 하나이고, `reason`은 i18n key이며, `write`는 `{ method: 'setFieldsValue' | 'setFieldValue' | 'none', validateAfter?: NamePath[], validateOptions?: { recursive?: boolean } }`다.
+- **Validation-only patch**: `method: 'none'`인 patch는 값을 쓰지 않고 `validateAfter`만 재생한다. 지금 코드가 값이 바뀌지 않아도 `validateFields`를 부르는 자리를 옮길 때 쓴다. 이 patch는 no-op으로 버리지 않고 settle 판정에도 세지 않는다.
 - **Order**: 한 slice의 규칙은 `rules` 배열에 적힌 순서로 돈다. `compose`는 slice 순서대로 각 slice의 규칙을 이어 붙이고 `crossRules`를 맨 뒤에 둔다.
 - **Every rule, every event**: `transition`은 event의 종류와 관계없이 목록의 모든 규칙을 돈다. 규칙은 `event`를 읽어 스스로 빠질 수 있다.
 - **Input gating**: 규칙이 `needs`에 적은 입력 중 하나라도 `loading`이거나 host가 넘기지 않았으면 `transition`은 그 규칙을 건너뛴다. slice가 `required`로 선언한 입력을 host가 넘기지 않으면 어댑터가 mount 시점에 `LauncherModelError`를 던진다.
 - **Settle**: `transition`은 목록을 한 번 돌리고, 적용된 patch가 하나라도 있으면 다시 돌린다. 적용된 patch가 없는 pass에서 끝나고, 4번째 pass 뒤에도 적용된 patch가 있으면 `LauncherInvariantError`를 던진다. 테스트와 개발 빌드는 그 오류로 실패하고, production 빌드의 어댑터는 `useBAILogger`로 기록하고 마지막 상태를 쓴다.
-- **Applied patch**: `transition`은 값이 현재 값과 같은 patch(메모리 문자열은 `compareNumberWithUnits`로 비교)와 `policy`가 거부한 patch를 버린다. 남은 patch가 적용된 patch이고, settle 판정과 어댑터 재생은 적용된 patch만 센다. 한 path에 patch가 여러 번 적용되면 어댑터는 순서대로 모두 재생한다.
+- **Applied patch**: `transition`은 값이 현재 값과 같은 patch(`lodash` `isEqual`로 비교, 메모리 문자열도 문자열 그대로 비교한다. `'4g'`와 `'4096m'`은 다른 값이고, `BAIDynamicUnitInputNumber`가 문자열의 단위를 화면에 그리기 때문이다)와 `policy`가 거부한 patch를 버린다. 남은 patch가 적용된 patch이고, settle 판정과 어댑터 재생은 적용된 patch만 센다. 한 path에 patch가 여러 번 적용되면 어댑터는 순서대로 모두 재생한다.
 - **Order test**: `slices/*.test.ts`는 각 slice의 규칙 `id` 순서를 배열로 단언한다. 순서를 바꾸는 것은 동작 변경이다.
 
 ### 2. 상태는 세 가지 event로만 바뀐다
 
 | event | 누가 보내는가 | 처리 |
 |---|---|---|
-| intent `{ type, payload }` | 필드 component | slice의 `intents[type](values, payload)`이 답한 `Patch[]`를 적용한 뒤 규칙을 돈다. `type`이 어느 slice에도 없으면 `transition`이 `LauncherModelError`를 던진다 |
+| intent `{ type, payload }` | 필드 component | slice의 `intents[type](values, payload, inputs)`이 답한 `Patch[]`를 적용한 뒤 규칙을 돈다. `type`이 어느 slice에도 없으면 `transition`이 `LauncherModelError`를 던진다 |
 | `{ type: 'dataArrived', keys: string[] }` | 어댑터 | 값은 바꾸지 않고 규칙을 돈다. `keys`는 `loading`에서 `ready`로 바뀌었거나 `ready` 값의 참조가 바뀐 입력의 key다 |
 | `{ type: 'restored', from: 'url' \| 'template' \| 'reset', values }` | host | slice가 소유한 모든 필드를 `values`로 교체하고(없는 필드는 `undefined`) provenance를 `restored`로 둔 뒤 규칙을 돈다 |
 
@@ -107,11 +108,11 @@ flowchart LR
 
 - **Provenance values**: `state.provenance[key]`는 `'user'`, `'restored'`, `` `rule:${id}` `` 중 하나이고, `key`는 `NamePath`를 `.`으로 이은 문자열(`resource.cpu`)이다. intent reducer가 쓴 값은 `'user'`, `restored`가 쓴 값은 `'restored'`, 규칙이 쓴 값은 `rule:<id>`다.
 - **Policy**: `force`는 항상 쓴다. `unless-user-set`은 그 path의 provenance가 `'user'`면 쓰지 않는다. `raise-only`는 현재 값이 없거나 patch 값이 현재 값보다 클 때만 쓴다(숫자는 `>`, 메모리 문자열은 `compareNumberWithUnits`). 비교할 수 없는 값이면 쓰지 않는다.
-- **User no-op**: intent reducer의 patch는 값이 현재 값과 같아 버려져도 그 path의 provenance를 `'user'`로 바꾼다. `Form.Item`이 값을 먼저 쓰고 component가 dispatch하므로, 사용자 편집의 patch는 대개 no-op이기 때문이다. 지금 코드를 옮기는 단계에서는 각 규칙의 policy를 지금 동작과 같게 적고, 대부분 `force`다.
+- **User no-op**: intent reducer의 patch는 값이 현재 값과 같아 버려져도 그 path의 provenance를 `'user'`로 바꾼다. 버려진 patch는 재생되지 않으므로, 지금 코드가 같은 값을 `setFieldValue`로 다시 써서 그 필드의 에러를 지우던 자리는 에러가 남는다. 특성화 시나리오 중 이 차이를 보는 것은 없다. `Form.Item`이 값을 먼저 쓰고 component가 dispatch하므로, 사용자 편집의 patch는 대개 no-op이기 때문이다. 지금 코드를 옮기는 단계에서는 각 규칙의 policy를 지금 동작과 같게 적고, 대부분 `force`다.
 
 ### 4. slice는 입력을 선언하고 host가 조합한다
 
-- **Slice shape**: `defineSlice({ name, fields, intents, rules, inputs })`다. `fields`는 slice가 소유한 `NamePath` 목록이고, `intents`는 intent 이름을 key로 reducer `(values, payload) => Patch[]`를 값으로 가진 객체이며, `inputs`는 `{ [key]: 'required' | 'optional' }`이다.
+- **Slice shape**: `defineSlice({ name, fields, intents, rules, inputs })`다. `fields`는 slice가 소유한 `NamePath` 목록이고, `intents`는 intent 이름을 key로 reducer `(values, payload, inputs) => Patch[]`를 값으로 가진 객체이며, `inputs`는 `{ [key]: 'required' | 'optional' }`이다.
 - **Inputs**: 어댑터가 받는 `inputs`의 각 값은 [Loadable](#용어)이다. host에 없는 `optional` 입력은 key 자체가 없다.
 - **Compose**: `compose(slices, { crossRules })`는 module scope에서 한 번 부른다(`const launcherModel = compose(...)`).
 - **Slice checks**: `defineSlice`는 slice 안에서 `fields`가 겹치거나, slice의 규칙이 다른 slice의 필드를 `reads`·`writes`에 적으면 `LauncherModelError`를 던진다. 다른 slice의 필드를 읽는 규칙은 `crossRules`에 둔다.
@@ -121,11 +122,12 @@ flowchart LR
 
 ### 5. 어댑터는 Form store 위에서 동작한다
 
-- **Adapter**: `useFormBoundSlice(form, model, inputs)`는 dispatch마다 `form.getFieldsValue(true)`에서 모델의 `fields`를 읽고, `transition`을 돌리고, 적용된 patch를 `write.method`로 `form`에 쓴 뒤 `write.validateAfter`가 있으면 `form.validateFields(validateAfter)`를 부른다. `inputs`의 `Loadable`이 `loading`에서 `ready`로 바뀌거나 `ready` 값의 참조가 바뀌면 그 key로 `dataArrived`를 보낸다. `{ dispatch, state }`를 답한다.
+- **Adapter**: `useFormBoundSlice(form, model, inputs)`는 dispatch마다 `form.getFieldsValue(true)`에서 모델의 `fields`를 읽고, `transition`을 돌리고, 적용된 patch를 `write.method`로 `form`에 쓴 뒤 `write.validateAfter`가 있으면 `form.validateFields(validateAfter)`를 부른다. `inputs`의 `Loadable`이 `loading`에서 `ready`로 바뀌거나 `ready` 값의 참조가 바뀌면 그 key로 `dataArrived`를 보내고, 그 event는 그 렌더의 `inputs`로 `transition`을 돌린다. 적용된 patch가 없으면 어댑터는 state를 바꾸지 않는다. `{ dispatch, state }`를 답한다.
 - **Write replay**: 각 규칙과 intent reducer는 지금 코드가 그 값을 쓰는 method와 뒤이어 부르는 `validateFields`의 경로를 patch의 `write`에 그대로 적는다. 그래서 H23(규칙의 쓰기가 URL에 늦게 반영되고 보이는 에러가 지워지는 것)은 유지된다.
 - **Selectors**: `view/selectors.ts`의 `selectLimits(values, inputs)`, `selectRemaining(values, inputs)`, `selectDisabled(values, inputs)`는 순수 함수다. `Form.Item`의 `rules`와 `min`·`max` prop은 이 값을 읽는다.
 - **Drift check**: 개발 빌드(`import.meta.env.DEV`)에서 어댑터는 재생이 끝난 뒤 모델의 값과 `form.getFieldsValue(true)`를 비교해 다르면 `useBAILogger`로 기록한다.
 - **Un-migrated fields**: 어댑터는 모델의 `fields` 밖의 값을 읽지도 쓰지도 않으므로, 같은 폼의 아직 옮기지 않은 필드는 지금처럼 동작한다.
+- **Input churn**: host가 렌더마다 새 객체로 만드는 입력은 렌더마다 `dataArrived`를 일으킨다. 지금 코드의 effect도 그런 값을 dependency로 가져 렌더마다 다시 돌았으므로 같은 동작이다. 그 입력을 memoise하는 것은 규칙이 도는 횟수를 바꾸는 동작 변경이고, #10462의 항목으로 다룬다.
 
 ### 6. 파일 위치
 
