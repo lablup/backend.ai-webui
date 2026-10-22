@@ -14496,7 +14496,7 @@ type Mutation
   adminCreateModelCardV2(input: CreateModelCardV2Input!): CreateModelCardPayload @join__field(graph: STRAWBERRY)
 
   """Added in 26.4.2. Update a model card (admin only)."""
-  adminUpdateModelCardV2(input: UpdateModelCardV2Input!): UpdateModelCardPayload @join__field(graph: STRAWBERRY)
+  adminUpdateModelCardV2(input: UpdateModelCardV2Input!): UpdateModelCardPayload @join__field(graph: STRAWBERRY) @deprecated(reason: "Deprecated since 26.10.0. Use `updateModelCardV2`.")
 
   """Added in 26.4.2. Delete a model card (admin only)."""
   adminDeleteModelCardV2(id: UUID!, options: DeleteModelCardV2Options = null): DeleteModelCardPayload @join__field(graph: STRAWBERRY)
@@ -14505,6 +14505,11 @@ type Mutation
   Added in 26.4.4. Bulk-delete model cards (admin only) with per-card partial-failure reporting.
   """
   adminBulkDeleteModelCardsV2(input: BulkDeleteModelCardsV2Input!): BulkDeleteModelCardsV2Payload @join__field(graph: STRAWBERRY)
+
+  """
+  Added in 26.10.0. Update a model card. Only provided fields will be updated.
+  """
+  updateModelCardV2(input: UpdateModelCardV2Input!): UpdateModelCardPayload! @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.4.2. Scan a MODEL_STORE project and upsert model cards from vfolder model-definition.yaml files.
