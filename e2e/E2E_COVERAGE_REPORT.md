@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-10-22
+> **Last Updated:** 2026-10-23
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -49,12 +49,12 @@
 | Plugin System            | (config-based)                                   |    12    |   12    | ✅ 100% |
 | RBAC Management          | `/rbac`                                          |    23    |   22    | 🔶 96%  |
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule`           |    33    |   32    | 🔶 97%  |
-| Deployments              | `/deployments`, `/deployments/:id`               |    22    |   19    | 🔶 86%  |
+| Deployments              | `/deployments`, `/deployments/:id`               |    23    |   20    | 🔶 87%  |
 | Admin Deployment Preset  | `/admin/deployments/deployment-presets/new`      |    5     |    5    | ✅ 100% |
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **523**  | **373** | **71%** |
+| **Total**                |                                                  | **524**  | **374** | **71%** |
 
 ---
 
@@ -1209,10 +1209,11 @@ External portals (LMS) open these routes with a signed `sToken` plus the app and
 
 #### List Page
 
-| Feature                                                                   | Status | Test                                                                     |
-| ------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------ |
-| List columns, Running/Terminated toggle, reload & Create controls         | ✅     | `Admin can view the deployments list with expected columns and controls` |
-| Create deployment (defaults, auto-redirect) + typed-name permanent delete | ✅     | `Admin can create a new deployment and permanently delete it`            |
+| Feature                                                                                   | Status | Test                                                                          |
+| ----------------------------------------------------------------------------------------- | ------ | ----------------------------------------------------------------------------- |
+| List columns, Serving/Paused/Terminated tabs with help tooltips, reload & Create controls | ✅     | `Admin can view the deployments list with expected columns and controls`      |
+| Zero Desired Replicas lists under Paused (not Serving), tab kept in URL across reload     | ✅     | `Admin can find a deployment with zero Desired Replicas under the Paused tab` |
+| Create deployment (defaults, auto-redirect) + typed-name permanent delete                 | ✅     | `Admin can create a new deployment and permanently delete it`                 |
 
 #### Admin List — Filters (`/admin/deployments`)
 
@@ -1256,7 +1257,7 @@ External portals (LMS) open these routes with a signed `sToken` plus the app and
 | Replica scheduling completion (Lifecycle leaves Pending → replica scheduled)       | ❌     | Deferred — measured ~40s–20min+ on the shared cluster; out of scope for webui e2e                                        |
 | Revision rollback / promote from Revision History                                  | ❌     | -                                                                                                                        |
 
-**Coverage: 🔶 16/20 features (4 deferred to backend-surface testing or future work)**
+**Coverage: 🔶 17/21 features (4 deferred to backend-surface testing or future work)**
 
 ---
 
