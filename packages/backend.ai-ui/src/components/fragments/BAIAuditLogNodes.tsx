@@ -123,7 +123,7 @@ const BAIAuditLogNodes = ({
         render: (__, record) =>
           record.actionName ? (
             <BAIText ellipsis={{ tooltip: true }} style={{ width: '100%' }}>
-              {t(`comp:BAIAuditLogNodes.ActionName.${record.actionName}`, {
+              {t(`comp:BAIAuditLogNodes.ActionName_${record.actionName}`, {
                 defaultValue: record.actionName,
               })}
             </BAIText>
