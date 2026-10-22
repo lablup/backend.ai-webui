@@ -26,6 +26,7 @@ import { toProjectContext } from '../types/projectContext';
 import { Button } from '@lablup/ui-common/Button';
 import { Link } from '@lablup/ui-common/Link';
 import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAISkeleton,
   BAICard,
@@ -51,13 +52,24 @@ import {
   type ModelDeploymentNodeInList,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { Trash2, SquarePenIcon } from 'lucide-react';
+import { CircleHelp, Trash2, SquarePenIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
-type DeploymentStatusCategory = 'running' | 'finished';
+type DeploymentStatusCategory = 'serving' | 'paused' | 'finished';
+
+const renderTabLabel = (label: string, help: string) => (
+  <BAIFlex gap="xxs" align="center">
+    {label}
+    <Tooltip content={help}>
+      <Text color="placeholder" style={{ cursor: 'help' }}>
+        <CircleHelp size="1em" />
+      </Text>
+    </Tooltip>
+  </BAIFlex>
+);
 
 interface DeploymentListPageContentProps {
   /** Owned by the page so the trigger can live in the card's `extra` slot. */
@@ -103,9 +115,10 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
       ),
       order: parseAsStringLiteral(availableDeploymentSorterValues),
       statusCategory: parseAsStringLiteral<DeploymentStatusCategory>([
-        'running',
+        'serving',
+        'paused',
         'finished',
-      ]).withDefault('running'),
+      ]).withDefault('serving'),
     },
     { history: 'replace' },
   );
@@ -124,7 +137,13 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
   const statusCategoryFilter: DeploymentFilter =
     queryParams.statusCategory === 'finished'
       ? { status: { in: finishedStatuses } }
-      : { status: { notIn: finishedStatuses } };
+      : {
+          status: { notIn: finishedStatuses },
+          desiredReplicas:
+            queryParams.statusCategory === 'serving'
+              ? { greaterThanOrEqual: 1 }
+              : { equals: 0 },
+        };
   const projectFilter: DeploymentFilter = currentProject.id
     ? { projectId: { equals: currentProject.id } }
     : {};
@@ -257,7 +276,20 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
                 setTablePaginationOption({ current: 1 });
               }}
               options={[
-                { label: t('deployment.Running'), value: 'running' },
+                {
+                  label: renderTabLabel(
+                    t('deployment.Serving'),
+                    t('deployment.ServingTooltip'),
+                  ),
+                  value: 'serving',
+                },
+                {
+                  label: renderTabLabel(
+                    t('deployment.Paused'),
+                    t('deployment.PausedTooltip'),
+                  ),
+                  value: 'paused',
+                },
                 {
                   label: t('deployment.status.Terminated'),
                   value: 'finished',
