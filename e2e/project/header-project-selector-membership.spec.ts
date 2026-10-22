@@ -102,7 +102,7 @@ test.describe(
 test.describe(
   'Header ProjectSelect - Personal Project',
   {
-    tag: ['@regression', '@project', '@functional', '@requires-manager-v26.2'],
+    tag: ['@regression', '@project', '@functional', '@requires-manager-v26.9'],
   },
   () => {
     test('User can switch to their personal project from the header project selector', async ({
@@ -137,9 +137,7 @@ test.describe(
       await expect(selector).toHaveText(personalProject, { timeout: 15000 });
       await expect(page).toHaveURL(isPersonalDataPage);
       await expect(notFoundPageHeading(page)).toBeHidden();
-      await expect(
-        page.getByText(`Project ‘${personalProject}’ was not found`),
-      ).toBeHidden();
+      await expect(page.getByText(/Project .+ was not found/)).toBeHidden();
     });
 
     test('Admin cannot remove the personal project in the user project editor', async ({
