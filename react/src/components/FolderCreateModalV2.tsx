@@ -119,12 +119,11 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
   );
   const effectiveProject = project ?? selectedProject;
 
-  // The usage_mode rule closes over `effectiveProject`, so a validateFields
-  // call inside onSelectProject would still run the previous render's rule.
-  // Re-validate only after the selection commits.
+  // The permission rule closes over `effectiveProject` (model-store read-only
+  // lock), so re-validate only after the in-modal selection commits.
   useEffect(() => {
-    if (formRef.current?.getFieldValue('usage_mode')) {
-      formRef.current.validateFields(['usage_mode']);
+    if (formRef.current?.getFieldValue('permission')) {
+      formRef.current.validateFields(['permission']);
     }
   }, [selectedProject]);
 
@@ -142,8 +141,6 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
   const isFolderTypeLocked = folderType === 'model_project';
   const isModelStoreProject =
     effectiveProject?.name === MODEL_STORE_PROJECT_NAME;
-  const enableModelFolders = !!baiClient._config.enableModelFolders;
-
   // When folderType narrows the form, these preset values override any
   // user-passed initialValues for the affected fields.
   const folderTypePreset: Partial<FolderCreateFormItemsType> | undefined =
@@ -429,22 +426,6 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
             name={'usage_mode'}
             layout="horizontal"
             required
-            rules={[
-              {
-                validator: (__, value) =>
-                  value === 'model' &&
-                  !enableModelFolders &&
-                  !isModelStoreProject
-                    ? Promise.reject(
-                        new Error(
-                          t(
-                            'data.folders.CreateModelFolderOnlyInExclusiveProject',
-                          ),
-                        ),
-                      )
-                    : Promise.resolve(),
-              },
-            ]}
           >
             <AstryxFormRadioList
               label={t('data.UsageMode')}
@@ -462,20 +443,11 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                   label: t('data.General'),
                   'data-testid': 'general-usage-mode',
                 },
-                // With the in-modal selector the target project is not known
-                // up front, so Model stays offered and the validator decides.
-                ...(enableModelFolders ||
-                isModelStoreProject ||
-                isFolderTypeLocked ||
-                project === null
-                  ? [
-                      {
-                        value: 'model',
-                        label: t('data.Models'),
-                        'data-testid': 'model-usage-mode',
-                      },
-                    ]
-                  : []),
+                {
+                  value: 'model',
+                  label: t('data.Models'),
+                  'data-testid': 'model-usage-mode',
+                },
                 {
                   value: 'automount',
                   label: t('data.AutoMount'),
