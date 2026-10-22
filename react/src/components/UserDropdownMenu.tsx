@@ -11,7 +11,6 @@ import {
 } from '../hooks/backendai';
 import { useThemeMode } from '../hooks/useThemeMode';
 import AboutBackendAIModal from './AboutBackendAIModal';
-import DownloadModal from './DownloadModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useUserSettingsModal } from './UserSettingsModalOpener';
 import {
@@ -39,6 +38,9 @@ import {
 import React, { CSSProperties, Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+
+// The download page's code view pulls shiki; load it when the modal opens.
+const DownloadModal = React.lazy(() => import('./DownloadModal'));
 
 const UserProfileSettingModal = React.lazy(
   () => import('./UserProfileSettingModal'),
@@ -273,12 +275,14 @@ const UserDropdownMenu: React.FC<{
               </BAIUnmountAfterClose>
             )}
           </Suspense>
-          <BAIUnmountAfterClose>
-            <DownloadModal
-              open={isDownloadModalOpen}
-              onRequestClose={() => toggleDownloadModal()}
-            />
-          </BAIUnmountAfterClose>
+          <Suspense fallback={null}>
+            <BAIUnmountAfterClose>
+              <DownloadModal
+                open={isDownloadModalOpen}
+                onRequestClose={() => toggleDownloadModal()}
+              />
+            </BAIUnmountAfterClose>
+          </Suspense>
           <BAIUnmountAfterClose>
             <AboutBackendAIModal
               open={isOpenAboutBAIModal}

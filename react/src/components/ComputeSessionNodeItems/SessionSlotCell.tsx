@@ -5,6 +5,7 @@
 import { SessionSlotCellFragment$key } from '../../__generated__/SessionSlotCellFragment.graphql';
 import { convertToBinaryUnit } from '../../helper';
 import { isTransitionalSessionStatus } from '../../helper/sessionStatus';
+import { getUnifiedSlotNameFromTag } from '../../helper/unifiedAcceleratorSlot';
 import {
   UTILIZATION_ERROR_PERCENT,
   UTILIZATION_WARNING_PERCENT,
@@ -14,7 +15,6 @@ import {
   useResourceSlotsDetails,
 } from '../../hooks/backendai';
 import { useSessionLiveStat } from '../../hooks/useSessionNodeLiveStat';
-import { getUnifiedSlotNameFromTag } from '../SessionFormItems/ResourceAllocationFormItems';
 import { displayMemoryUsage } from '../SessionUsageMonitor';
 import { Divider } from '@lablup/ui-common/Divider';
 import { Text } from '@lablup/ui-common/Text';

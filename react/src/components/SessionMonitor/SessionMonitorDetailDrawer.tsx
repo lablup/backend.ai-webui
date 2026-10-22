@@ -2,9 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import SessionDetailDrawer from '../SessionDetailDrawer';
 import { BAIUnmountAfterClose } from 'backend.ai-ui';
-import React from 'react';
+import React, { Suspense } from 'react';
+
+// Session detail and its action buttons load only when a session is opened.
+const SessionDetailDrawer = React.lazy(() => import('../SessionDetailDrawer'));
 
 interface SessionMonitorDetailDrawerProps {
   sessionId: string | null;
@@ -21,14 +23,16 @@ const SessionMonitorDetailDrawer: React.FC<SessionMonitorDetailDrawerProps> = ({
 }) => {
   'use memo';
   return (
-    <BAIUnmountAfterClose>
-      <SessionDetailDrawer
-        open={!!sessionId}
-        sessionId={sessionId ?? undefined}
-        project={null}
-        onClose={onClose}
-      />
-    </BAIUnmountAfterClose>
+    <Suspense fallback={null}>
+      <BAIUnmountAfterClose>
+        <SessionDetailDrawer
+          open={!!sessionId}
+          sessionId={sessionId ?? undefined}
+          project={null}
+          onClose={onClose}
+        />
+      </BAIUnmountAfterClose>
+    </Suspense>
   );
 };
 

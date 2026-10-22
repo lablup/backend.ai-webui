@@ -15,13 +15,13 @@ import {
   VFolderNodesFragment$key,
 } from '../__generated__/VFolderNodesFragment.graphql';
 import { App } from '../app-shim';
+import { isDeletedCategory } from '../helper/vfolderStatus';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import { ProjectContextOrNull } from '../types/projectContext';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import InviteFolderSettingModal from './InviteFolderSettingModal';

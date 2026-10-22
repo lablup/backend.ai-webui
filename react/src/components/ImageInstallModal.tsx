@@ -6,7 +6,7 @@ import { addNumberWithUnits } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { usePainKiller } from '../hooks/usePainKiller';
 import { useStartSession } from '../hooks/useStartSession';
-import { SessionResources } from '../pages/SessionLauncherPage';
+import type { SessionResources } from '../pages/SessionLauncherPage';
 import { ProjectContextOrNull } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
 import { EnvironmentImage } from './ImageList';

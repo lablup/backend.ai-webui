@@ -9,7 +9,7 @@ import { Form, type FormInstance } from '../form-engine';
 import { isIpIncludedInList, isValidIPOrCidr } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import TOTPActivateModal from './TOTPActivateModal';
+import TOTPActivateModal from './TOTPActivateModalLazy';
 import {
   AstryxFormSwitch,
   AstryxFormTagsInput,

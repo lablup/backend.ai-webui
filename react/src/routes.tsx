@@ -39,11 +39,8 @@ import {
 } from './hooks/useWebUIMenuItems';
 import { pluginApiEndpointState } from './hooks/useWebUIPluginState';
 import { AdminRedirect, ProjectScopedRedirect } from './legacyRedirects';
-// High priority to import the component
-import ComputeSessionListPage from './pages/ComputeSessionListPage';
 import Page404 from './pages/Page404';
 import UnknownRoutePage from './pages/UnknownRoutePage';
-import VFolderNodeListPage from './pages/VFolderNodeListPage';
 import { toProjectContext } from './types/projectContext';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAISkeleton, BAIFlex, BAICard } from 'backend.ai-ui';
@@ -53,7 +50,12 @@ import React, { Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RouteObject, useParams } from 'react-router-dom';
 
-const LoginViewLazy = React.lazy(() => import('./components/LoginView'));
+const ComputeSessionListPage = React.lazy(
+  () => import('./pages/ComputeSessionListPage'),
+);
+const VFolderNodeListPage = React.lazy(
+  () => import('./pages/VFolderNodeListPage'),
+);
 
 const Information = React.lazy(() => import('./components/Information'));
 const StartPage = React.lazy(() => import('./pages/StartPage'));
@@ -1690,7 +1692,7 @@ export const routes: RouteObject[] = [
             </Suspense>
             <Suspense>
               <ErrorBoundaryWithNullFallback>
-                <LoginViewLazy />
+                <LoginView />
               </ErrorBoundaryWithNullFallback>
               <ErrorBoundaryWithNullFallback>
                 <FolderExplorerOpener />

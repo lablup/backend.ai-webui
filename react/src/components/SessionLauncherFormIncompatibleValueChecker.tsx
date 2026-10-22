@@ -4,7 +4,7 @@
  */
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
-import { SessionLauncherFormValue } from '../pages/SessionLauncherPage';
+import type { SessionLauncherFormValue } from '../pages/SessionLauncherPage';
 import * as _ from 'lodash-es';
 import React, { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

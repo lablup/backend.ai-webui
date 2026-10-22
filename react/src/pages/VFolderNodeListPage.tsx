@@ -20,6 +20,7 @@ import VFolderNodesV2, {
   availableVFolderSorterValues,
 } from '../components/VFolderNodesV2';
 import { convertToOrderBy, handleRowSelectionChange } from '../helper';
+import { isDeletedCategory } from '../helper/vfolderStatus';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -67,23 +68,7 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export const isDeletedCategory = (status?: string | null) => {
-  return _.includes(
-    [
-      // V1 `VirtualFolderNode.status` (kebab-case)
-      'delete-pending',
-      'delete-ongoing',
-      'delete-complete',
-      'delete-error',
-      // V2 `VFolder.status` (UPPERCASE enum, VFolderOperationStatus)
-      'DELETE_PENDING',
-      'DELETE_ONGOING',
-      'DELETE_COMPLETE',
-      'DELETE_ERROR',
-    ],
-    status,
-  );
-};
+export { isDeletedCategory };
 
 type VFolderNodesType = NonNullableNodeOnEdges<
   VFolderNodeListPageQuery$data['scopedVFoldersV2']

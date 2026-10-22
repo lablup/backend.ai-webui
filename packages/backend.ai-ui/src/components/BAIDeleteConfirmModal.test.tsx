@@ -1,3 +1,4 @@
+import { loadBAILanguage } from '../locale';
 /**
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
@@ -110,6 +111,8 @@ describe('BAIDeleteConfirmModal', () => {
 
   it('shows ui-common’s Korean strings under BAIConfigProvider', async () => {
     const { default: ko } = await import('../locale/ko_KR');
+    // BAIConfigProvider suspends until BUI's lazy `ko` catalog is in.
+    await loadBAILanguage('ko');
     render(
       <BAIConfigProvider locale={ko}>
         <BAIDeleteConfirmModal
