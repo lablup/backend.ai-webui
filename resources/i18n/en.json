@@ -802,7 +802,7 @@
       "PanelType": "Panel type",
       "PanelTypeRequired": "Select a panel type",
       "Table": "Table",
-      "TitleDescription": "Shown as the panel header — use it to describe the condition.",
+      "TitleDescription": "Shown as the panel header - use it to describe the condition.",
       "TitleOptional": "Title (optional)"
     }
   },
@@ -3283,6 +3283,43 @@
       "SluggedStrings": "Slugged strings (>3 chars)"
     }
   },
+  "sessionMonitor": {
+    "ChipStartingCount": "Starting {{count}}",
+    "ErrorCount": "Errors {{count}}",
+    "MonitorSettings": "Session monitor settings",
+    "MoreSessions": "{{count}} more ({{total}} total)",
+    "MyResourceUsage": "Allocated to me, against my limit",
+    "NoActiveSessions": "No active sessions",
+    "OpenSession": "Open session",
+    "RunningCount": "{{count}} running",
+    "SessionCount": "Sessions {{count}}",
+    "StartingCount": "{{count}} starting",
+    "Title": "Session monitor",
+    "idleAlert": {
+      "NetworkTimeout": "No network activity has been detected. Connect to the session before it is terminated.",
+      "SessionLifetime": "The session is reaching its maximum lifetime.",
+      "Title": "{{name}} ends in {{minutes}} min",
+      "Utilization": "Resource utilization has stayed under the idle threshold. Use the session before it is terminated."
+    },
+    "settings": {
+      "ChipError": "Number of sessions in error",
+      "ChipIdle": "Nearest idle termination, with alerts",
+      "ChipResources": "Resources allocated to them",
+      "ChipStarting": "Number of starting sessions",
+      "Condition": "Sessions to watch",
+      "FilterPlaceholder": "Filter",
+      "List": "List",
+      "Me": "Me",
+      "OwnerEmail": "Owner email",
+      "RowsShown": "Rows shown",
+      "ShowInHeader": "Show in the header",
+      "SortBy": "Sort by",
+      "SortDeadline": "Soonest termination first",
+      "SortName": "Name",
+      "SortNewest": "Newest first",
+      "TurnOffHint": "To turn off the session monitor itself, use <a>the Session monitor item in User settings</a>."
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "ATOM Max Support",
     "ATOMPlusSupport": "ATOM+ Support",
@@ -3739,6 +3776,7 @@
     "DescScriptCreated": "User config script created. This will be applied to new sessions only.",
     "DescScriptDeleted": "User config script deleted : ",
     "DescScriptUpdated": "User config script updated. This will be applied to new sessions only.",
+    "DescSessionMonitor": "Shows the number of sessions you watch in the header, on every page. Set what it watches in the monitor's own settings. When the idle termination item is on there, you also get a notification 30 and 10 minutes before an idle check terminates one of your sessions.",
     "DescThemeFamily": "Set the theme.",
     "DescThemeMode": "Set the display mode.",
     "DescUseCompactSidebar": "Compact sidebar provides more workspace. <br />When enabled, the compact sidebar will be the default UI at startup.",
@@ -3784,6 +3822,7 @@
     "SSHKeypairGeneration": "SSH Keypair Generation",
     "SSHKeypairGenerationWarning": "You will not be able to access the private key again after closing this modal.",
     "SSHKeypairManagement": "SSH Keypair Management",
+    "SessionMonitor": "Session monitor",
     "SessionResourceGrid": "Session resource grid view",
     "SessionTerminationDialog": "Session termination cannot be undone. Do you want to proceed to terminate the session?",
     "ShellEnvironments": "Shell Environments",

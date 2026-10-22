@@ -3296,6 +3296,43 @@
       "SluggedStrings": "Cadenas babosas (>3 caracteres)"
     }
   },
+  "sessionMonitor": {
+    "ChipStartingCount": "Iniciando {{count}}",
+    "ErrorCount": "Errores {{count}}",
+    "MonitorSettings": "Ajustes del monitor de sesiones",
+    "MoreSessions": "{{count}} más ({{total}} en total)",
+    "MyResourceUsage": "Asignado a mí, frente a mi límite",
+    "NoActiveSessions": "No hay sesiones activas",
+    "OpenSession": "Abrir sesión",
+    "RunningCount": "{{count}} en ejecución",
+    "SessionCount": "Sesiones {{count}}",
+    "StartingCount": "{{count}} iniciando",
+    "Title": "Monitor de sesiones",
+    "idleAlert": {
+      "NetworkTimeout": "No se ha detectado actividad de red. Conéctese a la sesión antes de que se cierre.",
+      "SessionLifetime": "La sesión está alcanzando su duración máxima.",
+      "Title": "{{name}} finaliza en {{minutes}} min",
+      "Utilization": "El uso de recursos se ha mantenido por debajo del umbral de inactividad. Use la sesión antes de que se cierre."
+    },
+    "settings": {
+      "ChipError": "Número de sesiones con error",
+      "ChipIdle": "Próxima finalización por inactividad, con alertas",
+      "ChipResources": "Recursos asignados",
+      "ChipStarting": "Número de sesiones en inicio",
+      "Condition": "Sesiones a vigilar",
+      "FilterPlaceholder": "Filtro",
+      "List": "Lista",
+      "Me": "Yo",
+      "OwnerEmail": "Correo del propietario",
+      "RowsShown": "Filas mostradas",
+      "ShowInHeader": "Mostrar en el encabezado",
+      "SortBy": "Ordenar",
+      "SortDeadline": "Finalización más próxima primero",
+      "SortName": "Nombre",
+      "SortNewest": "Más recientes primero",
+      "TurnOffHint": "Para desactivar el monitor de sesiones, use <a>la opción Monitor de sesiones en Ajustes de usuario</a>."
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "Soporte de Atom Max",
     "ATOMPlusSupport": "Soporte ATOM+",
@@ -3752,6 +3789,7 @@
     "DescScriptCreated": "Script de configuración de usuario creado. Esto se aplicará sólo a las nuevas sesiones.",
     "DescScriptDeleted": "Script de configuración de usuario borrado :",
     "DescScriptUpdated": "Script de configuración de usuario actualizado. Esto se aplicará sólo a las nuevas sesiones.",
+    "DescSessionMonitor": "Muestra en la cabecera de cada página el número de sesiones que vigila. Defina qué vigila en los ajustes del propio monitor. Si allí activa el elemento de finalización por inactividad, también recibirá un aviso 30 y 10 minutos antes de que una comprobación de inactividad finalice una de sus sesiones.",
     "DescThemeFamily": "Establecer el tema.",
     "DescThemeMode": "Establecer el modo de visualización.",
     "DescUseCompactSidebar": "La barra lateral compacta le permite utilizar más espacio de trabajo. <br />Si esta opción está activada, la barra lateral compacta se convierte en la interfaz de usuario inicial al arrancar.",
@@ -3797,6 +3835,7 @@
     "SSHKeypairGeneration": "Generación de pares de claves SSH",
     "SSHKeypairGenerationWarning": "No podrá acceder a la clave privada de nuevo después de cerrar este modal.",
     "SSHKeypairManagement": "Gestión de pares de claves SSH",
+    "SessionMonitor": "Monitor de sesiones",
     "SessionResourceGrid": "Vista de cuadrícula de recursos de sesión",
     "SessionTerminationDialog": "La finalización de la sesión no se puede deshacer. ¿Desea finalizar la sesión?",
     "ShellEnvironments": "Entornos de conchas",

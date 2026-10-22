@@ -815,7 +815,7 @@
       "PanelType": "Type de panneau",
       "PanelTypeRequired": "Sélectionnez un type de panneau",
       "Table": "Tableau",
-      "TitleDescription": "Affiché comme en-tête du panneau — utilisez-le pour décrire la condition.",
+      "TitleDescription": "Affiché comme en-tête du panneau - utilisez-le pour décrire la condition.",
       "TitleOptional": "Titre (facultatif)"
     }
   },
@@ -3299,6 +3299,43 @@
       "SluggedStrings": "Chaînes de caractères tronquées (>3 chars)"
     }
   },
+  "sessionMonitor": {
+    "ChipStartingCount": "Démarrage {{count}}",
+    "ErrorCount": "Erreurs {{count}}",
+    "MonitorSettings": "Paramètres du moniteur de sessions",
+    "MoreSessions": "{{count}} de plus ({{total}} au total)",
+    "MyResourceUsage": "Alloué à moi, par rapport à ma limite",
+    "NoActiveSessions": "Aucune session active",
+    "OpenSession": "Ouvrir la session",
+    "RunningCount": "{{count}} en cours",
+    "SessionCount": "Sessions {{count}}",
+    "StartingCount": "{{count}} en démarrage",
+    "Title": "Moniteur de sessions",
+    "idleAlert": {
+      "NetworkTimeout": "Aucune activité réseau n'a été détectée. Connectez-vous à la session avant qu'elle ne soit arrêtée.",
+      "SessionLifetime": "La session atteint sa durée de vie maximale.",
+      "Title": "{{name}} se termine dans {{minutes}} min",
+      "Utilization": "L'utilisation des ressources est restée sous le seuil d'inactivité. Utilisez la session avant qu'elle ne soit arrêtée."
+    },
+    "settings": {
+      "ChipError": "Nombre de sessions en erreur",
+      "ChipIdle": "Prochain arrêt pour inactivité, avec alertes",
+      "ChipResources": "Ressources allouées",
+      "ChipStarting": "Nombre de sessions en démarrage",
+      "Condition": "Sessions à surveiller",
+      "FilterPlaceholder": "Filtre",
+      "List": "Liste",
+      "Me": "Moi",
+      "OwnerEmail": "E-mail du propriétaire",
+      "RowsShown": "Lignes affichées",
+      "ShowInHeader": "Afficher dans l'en-tête",
+      "SortBy": "Trier",
+      "SortDeadline": "Arrêt le plus proche en premier",
+      "SortName": "Nom",
+      "SortNewest": "Plus récentes en premier",
+      "TurnOffHint": "Pour désactiver le moniteur de sessions, utilisez <a>l’option Moniteur de sessions des Paramètres utilisateur</a>."
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "ATOM MAX SOUTIEN",
     "ATOMPlusSupport": "Prise en charge ATOM+",
@@ -3755,6 +3792,7 @@
     "DescScriptCreated": "Script de configuration utilisateur créé. Cela ne s'appliquera qu'aux nouvelles sessions.",
     "DescScriptDeleted": "Script de configuration utilisateur supprimé :",
     "DescScriptUpdated": "Script de configuration utilisateur mis à jour. Cela ne s'appliquera qu'aux nouvelles sessions.",
+    "DescSessionMonitor": "Affiche dans l’en-tête de chaque page le nombre de sessions que vous surveillez. Définissez ce qui est surveillé dans les paramètres du moniteur. Si l’élément d’arrêt pour inactivité y est activé, vous êtes aussi averti 30 et 10 minutes avant qu’une vérification d’inactivité n’arrête l’une de vos sessions.",
     "DescThemeFamily": "Définir le thème.",
     "DescThemeMode": "Définir le mode d'affichage.",
     "DescUseCompactSidebar": "La barre latérale compacte fournit plus d'espace de travail. <br />Quand activée, la barre latérale compacte sera l'interface par défaut au démarrage.",
@@ -3800,6 +3838,7 @@
     "SSHKeypairGeneration": "Génération de paires de clés SSH",
     "SSHKeypairGenerationWarning": "Vous ne pourrez plus accéder à la clé privée après avoir fermé cette fenêtre.",
     "SSHKeypairManagement": "Gestion des paires de clés SSH",
+    "SessionMonitor": "Moniteur de sessions",
     "SessionResourceGrid": "Vue de la grille de ressources de session",
     "SessionTerminationDialog": "L'arrêt de la session ne peut pas être annulé. Voulez-vous continuer pour terminer la session ?",
     "ShellEnvironments": "Environnements Shell",

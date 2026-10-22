@@ -815,7 +815,7 @@
       "PanelType": "Paneelin tyyppi",
       "PanelTypeRequired": "Valitse paneelin tyyppi",
       "Table": "Taulukko",
-      "TitleDescription": "Näytetään paneelin otsikkona – kuvaa sillä ehto.",
+      "TitleDescription": "Näytetään paneelin otsikkona - kuvaa sillä ehto.",
       "TitleOptional": "Otsikko (valinnainen)"
     }
   },
@@ -3296,6 +3296,43 @@
       "SluggedStrings": "Slugged-merkkijonot (>3 merkkiä)"
     }
   },
+  "sessionMonitor": {
+    "ChipStartingCount": "Käynnistyy {{count}}",
+    "ErrorCount": "Virheet {{count}}",
+    "MonitorSettings": "Istuntovalvonnan asetukset",
+    "MoreSessions": "{{count}} lisää (yhteensä {{total}})",
+    "MyResourceUsage": "Minulle varattu, suhteessa rajaani",
+    "NoActiveSessions": "Ei aktiivisia istuntoja",
+    "OpenSession": "Avaa istunto",
+    "RunningCount": "{{count}} käynnissä",
+    "SessionCount": "Istunnot {{count}}",
+    "StartingCount": "{{count}} käynnistyy",
+    "Title": "Istuntovalvonta",
+    "idleAlert": {
+      "NetworkTimeout": "Verkkotoimintaa ei havaittu. Yhdistä istuntoon ennen kuin se lopetetaan.",
+      "SessionLifetime": "Istunto on saavuttamassa enimmäiskestoikänsä.",
+      "Title": "{{name}} päättyy {{minutes}} min kuluttua",
+      "Utilization": "Resurssien käyttö on pysynyt joutokäynnin kynnysarvon alapuolella. Käytä istuntoa ennen kuin se lopetetaan."
+    },
+    "settings": {
+      "ChipError": "Virhetilaisten istuntojen määrä",
+      "ChipIdle": "Lähin joutokäynnin aiheuttama päättyminen ja hälytykset",
+      "ChipResources": "Varatut resurssit",
+      "ChipStarting": "Käynnistyvien istuntojen määrä",
+      "Condition": "Seurattavat istunnot",
+      "FilterPlaceholder": "Suodatin",
+      "List": "Luettelo",
+      "Me": "Minä",
+      "OwnerEmail": "Omistajan sähköposti",
+      "RowsShown": "Näytetyt rivit",
+      "ShowInHeader": "Näytä otsikkopalkissa",
+      "SortBy": "Järjestä",
+      "SortDeadline": "Pikaisin päättyminen ensin",
+      "SortName": "Nimi",
+      "SortNewest": "Uusimmat ensin",
+      "TurnOffHint": "Jos haluat poistaa istuntovalvonnan kokonaan käytöstä, käytä <a>Käyttäjäasetusten Istuntovalvonta-kohtaa</a>."
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "Atom Max -tuki",
     "ATOMPlusSupport": "ATOM+-tuki",
@@ -3752,6 +3789,7 @@
     "DescScriptCreated": "Käyttäjän konfigurointiskripti luotu. Tätä sovelletaan vain uusiin istuntoihin.",
     "DescScriptDeleted": "Käyttäjän konfigurointiskripti poistettu :",
     "DescScriptUpdated": "Käyttäjän konfigurointiskripti päivitetty. Tätä sovelletaan vain uusiin istuntoihin.",
+    "DescSessionMonitor": "Näyttää jokaisen sivun otsakkeessa valvomiesi istuntojen määrän. Valvottavat istunnot määritetään valvonnan omissa asetuksissa. Kun siellä on käytössä tyhjäkäyntilopetuksen kohde, saat ilmoituksen myös 30 ja 10 minuuttia ennen kuin tyhjäkäyntitarkistus lopettaa jonkin istunnoistasi.",
     "DescThemeFamily": "Aseta teema.",
     "DescThemeMode": "Aseta näyttötila.",
     "DescUseCompactSidebar": "Kompakti sivupalkki tarjoaa enemmän työtilaa. <br />Kun käytössä, kompakti sivupalkki on oletuskäyttöliittymä käynnistyksen yhteydessä.",
@@ -3797,6 +3835,7 @@
     "SSHKeypairGeneration": "SSH-avainparin luominen",
     "SSHKeypairGenerationWarning": "Et pysty enää käyttämään yksityistä avainta tämän ikkunan sulkemisen jälkeen.",
     "SSHKeypairManagement": "SSH-avainparin hallinta",
+    "SessionMonitor": "Istuntovalvonta",
     "SessionResourceGrid": "Istunnon resurssiruudukkonäkymä",
     "SessionTerminationDialog": "Istunnon lopettamista ei voi peruuttaa. Haluatko jatkaa istunnon lopettamista?",
     "ShellEnvironments": "Shell-ympäristöt",

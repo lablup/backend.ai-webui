@@ -815,7 +815,7 @@
       "PanelType": "Jenis panel",
       "PanelTypeRequired": "Pilih jenis panel",
       "Table": "Jadual",
-      "TitleDescription": "Dipaparkan sebagai tajuk panel — gunakannya untuk menerangkan syarat.",
+      "TitleDescription": "Dipaparkan sebagai tajuk panel - gunakannya untuk menerangkan syarat.",
       "TitleOptional": "Tajuk (pilihan)"
     }
   },
@@ -3296,6 +3296,43 @@
       "SluggedStrings": "Rentetan slugged (>3 aksara)"
     }
   },
+  "sessionMonitor": {
+    "ChipStartingCount": "Bermula {{count}}",
+    "ErrorCount": "Ralat {{count}}",
+    "MonitorSettings": "Tetapan pemantau sesi",
+    "MoreSessions": "{{count}} lagi ({{total}} jumlah)",
+    "MyResourceUsage": "Diperuntukkan kepada saya, berbanding had saya",
+    "NoActiveSessions": "Tiada sesi aktif",
+    "OpenSession": "Buka sesi",
+    "RunningCount": "{{count}} berjalan",
+    "SessionCount": "Sesi {{count}}",
+    "StartingCount": "{{count}} bermula",
+    "Title": "Pemantau sesi",
+    "idleAlert": {
+      "NetworkTimeout": "Tidak ada aktiviti rangkaian dikesan. Sambung ke sesi sebelum ia ditamatkan.",
+      "SessionLifetime": "Sesi hampir mencapai tempoh hayat maksimumnya.",
+      "Title": "{{name}} tamat dalam {{minutes}} minit",
+      "Utilization": "Penggunaan sumber kekal di bawah ambang terbiar. Gunakan sesi sebelum ia ditamatkan."
+    },
+    "settings": {
+      "ChipError": "Bilangan sesi dalam ralat",
+      "ChipIdle": "Penamatan terbiar terdekat, dengan amaran",
+      "ChipResources": "Sumber yang diperuntukkan",
+      "ChipStarting": "Bilangan sesi yang sedang bermula",
+      "Condition": "Sesi untuk dipantau",
+      "FilterPlaceholder": "Penapis",
+      "List": "Senarai",
+      "Me": "Saya",
+      "OwnerEmail": "E-mel pemilik",
+      "RowsShown": "Baris dipaparkan",
+      "ShowInHeader": "Tunjukkan di pengepala",
+      "SortBy": "Isih",
+      "SortDeadline": "Penamatan terdekat dahulu",
+      "SortName": "Nama",
+      "SortNewest": "Terbaru dahulu",
+      "TurnOffHint": "Untuk mematikan pemantau sesi, gunakan <a>item Pemantau sesi dalam Tetapan pengguna</a>."
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "Sokongan Atom Max",
     "ATOMPlusSupport": "Sokongan ATOM+",
@@ -3752,6 +3789,7 @@
     "DescScriptCreated": "Skrip konfigurasi pengguna dibuat. Ini akan digunakan untuk sesi baru sahaja.",
     "DescScriptDeleted": "Skrip konfigurasi pengguna dipadamkan:",
     "DescScriptUpdated": "Skrip konfigurasi pengguna dikemas kini. Ini akan digunakan untuk sesi baru sahaja.",
+    "DescSessionMonitor": "Memaparkan bilangan sesi yang anda pantau di pengepala pada setiap halaman. Tetapkan apa yang dipantau dalam tetapan pemantau itu sendiri. Jika item penamatan melahu dihidupkan di sana, anda juga menerima pemberitahuan 30 dan 10 minit sebelum semakan melahu menamatkan salah satu sesi anda.",
     "DescThemeFamily": "Tetapkan tema.",
     "DescThemeMode": "Tetapkan mod paparan.",
     "DescUseCompactSidebar": "Bar sisi padat menyediakan lebih banyak ruang kerja. <br />Apabila dibolehkan, bar sisi padat akan menjadi UI lalai semasa permulaan.",
@@ -3797,6 +3835,7 @@
     "SSHKeypairGeneration": "Penjanaan Keypair SSH",
     "SSHKeypairGenerationWarning": "Anda tidak akan dapat mengakses kunci peribadi lagi selepas menutup modal ini.",
     "SSHKeypairManagement": "Pengurusan Keypair SSH",
+    "SessionMonitor": "Pemantau sesi",
     "SessionResourceGrid": "Paparan grid sumber sesi",
     "SessionTerminationDialog": "Penamatan sesi tidak boleh dibuat asal. Adakah anda mahu meneruskan untuk menamatkan sesi?",
     "ShellEnvironments": "Persekitaran Shell",

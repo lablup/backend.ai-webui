@@ -815,7 +815,7 @@
       "PanelType": "Typ panelu",
       "PanelTypeRequired": "Wybierz typ panelu",
       "Table": "Tabela",
-      "TitleDescription": "Wyświetlany jako nagłówek panelu — użyj go do opisania warunku.",
+      "TitleDescription": "Wyświetlany jako nagłówek panelu - użyj go do opisania warunku.",
       "TitleOptional": "Tytuł (opcjonalnie)"
     }
   },
@@ -3299,6 +3299,43 @@
       "SluggedStrings": "Ucięte ciągi znaków (>3 znaki)"
     }
   },
+  "sessionMonitor": {
+    "ChipStartingCount": "Uruchamiane {{count}}",
+    "ErrorCount": "Błędy {{count}}",
+    "MonitorSettings": "Ustawienia monitora sesji",
+    "MoreSessions": "{{count}} więcej ({{total}} łącznie)",
+    "MyResourceUsage": "Przydzielone mi, względem mojego limitu",
+    "NoActiveSessions": "Brak aktywnych sesji",
+    "OpenSession": "Otwórz sesję",
+    "RunningCount": "{{count}} działa",
+    "SessionCount": "Sesje {{count}}",
+    "StartingCount": "{{count}} uruchamia się",
+    "Title": "Monitor sesji",
+    "idleAlert": {
+      "NetworkTimeout": "Nie wykryto aktywności sieciowej. Połącz się z sesją, zanim zostanie zakończona.",
+      "SessionLifetime": "Sesja osiąga swój maksymalny czas trwania.",
+      "Title": "{{name}} zakończy się za {{minutes}} min",
+      "Utilization": "Wykorzystanie zasobów utrzymuje się poniżej progu bezczynności. Użyj sesji, zanim zostanie zakończona."
+    },
+    "settings": {
+      "ChipError": "Liczba sesji z błędem",
+      "ChipIdle": "Najbliższe zakończenie z powodu bezczynności, z alertami",
+      "ChipResources": "Przydzielone zasoby",
+      "ChipStarting": "Liczba uruchamianych sesji",
+      "Condition": "Sesje do obserwowania",
+      "FilterPlaceholder": "Filtr",
+      "List": "Lista",
+      "Me": "Ja",
+      "OwnerEmail": "E-mail właściciela",
+      "RowsShown": "Wyświetlane wiersze",
+      "ShowInHeader": "Pokaż w nagłówku",
+      "SortBy": "Sortuj",
+      "SortDeadline": "Najszybsze zakończenie najpierw",
+      "SortName": "Nazwa",
+      "SortNewest": "Najnowsze najpierw",
+      "TurnOffHint": "Aby całkowicie wyłączyć monitor sesji, użyj <a>pozycji Monitor sesji w Ustawieniach użytkownika</a>."
+    }
+  },
   "settings": {
     "ATOMMaxSupport": "Wsparcie Atom Max",
     "ATOMPlusSupport": "Wsparcie ATOM+",
@@ -3755,6 +3792,7 @@
     "DescScriptCreated": "Utworzono skrypt konfiguracji użytkownika. Zostanie to zastosowane tylko do nowych sesji.",
     "DescScriptDeleted": "Skrypt konfiguracji użytkownika został usunięty :",
     "DescScriptUpdated": "Zaktualizowano skrypt konfiguracji użytkownika. Zostanie to zastosowane tylko do nowych sesji.",
+    "DescSessionMonitor": "Pokazuje w nagłówku każdej strony liczbę obserwowanych sesji. To, co jest obserwowane, ustawiasz w ustawieniach samego monitora. Gdy włączysz tam pozycję zakończenia z powodu bezczynności, otrzymasz też powiadomienie 30 i 10 minut przed tym, jak kontrola bezczynności zakończy jedną z Twoich sesji.",
     "DescThemeFamily": "Ustaw temat.",
     "DescThemeMode": "Ustaw tryb wyświetlania.",
     "DescUseCompactSidebar": "Kompaktowy pasek boczny zapewnia więcej przestrzeni roboczej. <br />Po włączeniu kompaktowy pasek boczny będzie domyślnym interfejsem użytkownika przy uruchomieniu.",
@@ -3800,6 +3838,7 @@
     "SSHKeypairGeneration": "Generowanie par kluczy SSH",
     "SSHKeypairGenerationWarning": "Po zamknięciu tego okna nie będzie można uzyskać ponownego dostępu do klucza prywatnego.",
     "SSHKeypairManagement": "Zarządzanie parami kluczy SSH",
+    "SessionMonitor": "Monitor sesji",
     "SessionResourceGrid": "Widok siatki zasobów sesji",
     "SessionTerminationDialog": "Zakończenia sesji nie można cofnąć. Czy chcesz kontynuować, aby zakończyć sesję?",
     "ShellEnvironments": "Środowiska powłoki",
