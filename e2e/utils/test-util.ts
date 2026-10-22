@@ -656,7 +656,6 @@ export async function createVFolderAndVerify(
   page: Page,
   folderName: string,
   usageMode: 'general' | 'model' = 'general',
-  _type: 'user' | 'project' = 'user',
   permission: 'rw' | 'ro' = 'rw',
 ) {
   await navigateTo(page, 'data');
@@ -677,9 +676,6 @@ export async function createVFolderAndVerify(
   } else if (usageMode === 'model') {
     await (await modal.getModelUsageModeRadio()).click();
   }
-
-  // The modal has no Type radio: the Data page creates a project folder of the
-  // current project (#10501), whatever `_type` is.
 
   // Select permission
   if (permission === 'rw') {
