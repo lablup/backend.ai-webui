@@ -8,12 +8,12 @@ export type ModelDeploymentNodeInList = NonNullable<BAIModelDeploymentNodesFragm
  * (see `AdminDeploymentPresetTable`). A sortable column's `dataIndex` matches
  * an entry here, and callers bridge these strings to the server
  * `DeploymentOrderField` enum with the shared `convertToOrderBy` helper
- * (`createdAt` → `CREATED_AT`, `tag` → `TAG`, …). `updatedAt` is
+ * (`createdAt` → `CREATED_AT`, `resourceGroup` → `RESOURCE_GROUP`, …). `updatedAt` is
  * intentionally omitted because the server enum does not include it.
  */
-export declare const availableDeploymentSorterKeys: readonly ["name", "createdAt", "project", "resourceGroup", "tag"];
+export declare const availableDeploymentSorterKeys: readonly ["name", "createdAt", "project", "resourceGroup"];
 export type DeploymentSorterKey = (typeof availableDeploymentSorterKeys)[number];
-export declare const availableDeploymentSorterValues: readonly ["name", "createdAt", "project", "resourceGroup", "tag", ...("-createdAt" | "-name" | "-resourceGroup" | "-tag" | "-project")[]];
+export declare const availableDeploymentSorterValues: readonly ["name", "createdAt", "project", "resourceGroup", ...("-createdAt" | "-name" | "-resourceGroup" | "-project")[]];
 export type DeploymentOrderValue = (typeof availableDeploymentSorterValues)[number];
 export interface BAIModelDeploymentNodesProps extends Omit<BAITableProps<ModelDeploymentNodeInList>, 'dataSource' | 'columns' | 'onChangeOrder'> {
     deploymentsFrgmt: BAIModelDeploymentNodesFragment$key;
