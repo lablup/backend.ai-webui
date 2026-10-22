@@ -301,18 +301,8 @@ check_astryx_theme_built() {
   # The committed `astryx theme build` artifacts under
   # react/src/astryx-theme/built/ must match the theme source; `-c` recompiles
   # in memory and exits non-zero on drift. Rebuild procedure: built/index.ts.
-  # Node resolves the theme's `backend.ai-ui` import to dist (ADR 0013 §4).
-  local bui=packages/backend.ai-ui
-  local stamp="$bui/dist/backend.ai-ui.js"
-  if [ ! -f "$stamp" ] || [ -n "$(find "$bui/src" "$bui/package.json" \
-    "$bui/vite.config.ts" -type f -newer "$stamp" -not -name '*.test.*' \
-    -not -name '*.stories.*' -not -name '*.mdx' -not -name '*.doc.ts' \
-    -not -path "$bui/src/astryx-docs/*" -print -quit)" ]; then
-    note "backend.ai-ui dist missing or stale — rebuilding it"
-    pnpm --filter backend.ai-ui run build > /dev/null || return 1
-  fi
-  # ui-common's dist imports .css, which Node cannot load; the stub empties them.
-  NODE_OPTIONS="--import=$PWD/scripts/astryx-theme-css-stub.mjs" \
+  # The condition resolves `backend.ai-ui/theme` to source (ADR 0013 §4).
+  NODE_OPTIONS="--conditions=@backend.ai/source" \
     bin react astryx theme build -c \
     src/astryx-theme/built/backendai-default.ts \
     -o src/astryx-theme/built/backendai-default-built.css

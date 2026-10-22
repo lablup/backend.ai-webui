@@ -59,7 +59,11 @@ visible in comments across the package:
   Astryx's `useTheme().token()`, and what remains under `src/theme/` is
   measured data, not ported antd code: the alignment tables
   (`antdParity.ts`) and the custom-token builder (`baiCustomTokens.ts`) the
-  app's theme recipe and Storybook's brand theme are both built from.
+  app's theme recipe and Storybook's brand theme are both built from. They
+  are also published on their own as `backend.ai-ui/theme`, so a consumer can
+  apply BUI's theme tokens without the component barrel; the app's theme
+  recipe imports them from there because `astryx theme build` loads it in
+  Node (ADR 0013).
 
 No antd-family package remains, not even in `devDependencies` — the
 workspace's exact-pinned `pnpm-lock.yaml` is what keeps it that way.

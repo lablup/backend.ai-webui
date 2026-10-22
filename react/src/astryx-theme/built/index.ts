@@ -12,7 +12,7 @@ import './backendai-default-built.css';
  this wrapper instead, so a rebuild only touches this one import line.
 
  After changing seeds or bumping `THEME_NAME_REV`:
-   1. cd react && NODE_OPTIONS="--import=$PWD/../scripts/astryx-theme-css-stub.mjs" \
+   1. cd react && NODE_OPTIONS="--conditions=@backend.ai/source" \
         pnpm exec astryx theme build \
         src/astryx-theme/built/backendai-default.ts \
         -o src/astryx-theme/built/backendai-default-built.css

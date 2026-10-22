@@ -34,6 +34,11 @@
       "import": "./dist/locale/*.js",
       "types": "./dist/locale/*.d.ts"
     },
+    "./theme": {
+      "@backend.ai/source": "./src/theme/index.ts",
+      "import": "./dist/theme.js",
+      "types": "./dist/theme/index.d.ts"
+    },
     "./styles.css": "./dist/backend.ai-ui.css"
   },
   "files": [
