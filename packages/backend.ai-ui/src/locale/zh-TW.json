@@ -557,6 +557,9 @@
     "To": "目標狀態",
     "UpdatedAt": "更新時間"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "透過電子郵件邀請"
+  },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "選擇資料夾"
   },
