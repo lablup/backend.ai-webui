@@ -356,6 +356,9 @@ future updates. Each feature is turned on with its **Enabled** checkbox.
   colored by the session's live resource utilization. The toggle appears only
   while this feature is enabled; for the grid's own controls, see
   [Session List View](#session-list-view-and-refresh).
+- **Session monitor**: Adds a session monitor to the header that shows the
+  number of sessions you watch on every page, and notifies you 30 and 10
+  minutes before an idle check terminates one of your sessions.
 
 <a id="logs-tab"></a>
 
