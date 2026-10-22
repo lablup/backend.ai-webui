@@ -50,6 +50,7 @@ import { useControllableValue } from '../hooks';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import {
   baiPowerSearchComponents,
+  optionLabelToString,
   toEnumItems,
   toSearchSource,
   useRenderInputEditors,
@@ -159,6 +160,18 @@ const OPERATOR_I18N_KEYS: Record<string, string> = {
 
 function trimFilterValue(filterValue: string): string {
   return filterValue.replace(/^%|%$/g, '');
+}
+
+function optionLabelFor(
+  filterProperties: ReadonlyArray<FilterProperty>,
+  propertyKey: string,
+  value: string,
+): string | undefined {
+  const option = _.find(
+    _.find(filterProperties, { key: propertyKey })?.options,
+    (option) => _.toString(option.value) === value,
+  );
+  return option ? optionLabelToString(option.label, value) : undefined;
 }
 
 export function mergeFilterValues(
@@ -541,8 +554,11 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
     recordLabel: (property, committed, label) => {
       valueLabelMapRef.current[`${property}::${committed}`] = label;
     },
+    // A value never picked in this session falls back to its option label.
     resolveLabel: (property, committed) =>
-      valueLabelMapRef.current[`${property}::${committed}`] ?? committed,
+      valueLabelMapRef.current[`${property}::${committed}`] ??
+      optionLabelFor(filterProperties, property, committed) ??
+      committed,
   });
 
   const specs = buildFieldSpecs(filterProperties, value);

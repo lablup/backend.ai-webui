@@ -10,6 +10,7 @@ import {
   type SessionMonitorSort,
 } from '../../helper/sessionMonitor';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
+import { useCurrentUserProjectRoles } from '../../hooks/useCurrentUserProjectRoles';
 import { useSessionMonitorCondition } from '../../hooks/useSessionMonitor';
 import { SETTING_ARRIVAL_PARAM } from '../../hooks/useSettingArrival';
 import { getSessionFilterProperties } from '../DashboardPanels/sessionFilterProperties';
@@ -18,6 +19,7 @@ import { Selector } from '@lablup/ui-common/Selector';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAIAdminUserV2Select,
   BAIAlert,
   BAIFlex,
   BAILink,
@@ -25,27 +27,54 @@ import {
   type FilterProperty,
 } from 'backend.ai-ui';
 import type { TFunction } from 'i18next';
+import * as _ from 'lodash-es';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 /**
- * The dashboard's session condition fields, plus the project. User ID is a
- * pick of "Me" so the token reads as a name; others go by user email.
+ * The dashboard's session condition fields, plus the project. `user_id` is the
+ * session's owner: a superadmin picks any user, everyone else only "Me".
  */
 const getSessionMonitorFilterProperties = (
   t: TFunction,
   userId: string,
+  isSuperAdmin: boolean,
 ): Array<FilterProperty> => [
   { key: 'group_name', propertyLabel: t('general.Project'), type: 'string' },
-  ...getSessionFilterProperties(t).map((property) =>
-    property.key === 'user_id'
+  ...getSessionFilterProperties(t).map((property): FilterProperty => {
+    if (property.key === 'user_email') {
+      return {
+        ...property,
+        propertyLabel: t('sessionMonitor.settings.OwnerEmail'),
+      };
+    }
+    if (property.key !== 'user_id') return property;
+    const owner = {
+      ...property,
+      propertyLabel: t('session.Owner'),
+      options: [{ label: t('sessionMonitor.settings.Me'), value: userId }],
+    };
+    return isSuperAdmin
       ? {
-          ...property,
-          options: [{ label: t('sessionMonitor.settings.Me'), value: userId }],
-          strictSelection: true,
+          ...owner,
+          renderInput: ({ onAddCondition, value, isDisabled }) => (
+            <BAIAdminUserV2Select
+              label={t('session.Owner')}
+              isLabelHidden
+              valuePropName="id"
+              value={value}
+              isDisabled={isDisabled}
+              onChange={(next, option) =>
+                onAddCondition(
+                  next as string | undefined,
+                  _.castArray(option ?? [])[0]?.label as string | undefined,
+                )
+              }
+            />
+          ),
         }
-      : property,
-  ),
+      : { ...owner, strictSelection: true };
+  }),
 ];
 
 const CHIP_ITEM_LABEL_KEYS: Record<SessionMonitorChipItem, string> = {
@@ -66,6 +95,7 @@ const SessionMonitorSettingsPane: React.FC<{
   const [rows, setRows] = useBAISettingUserState('session_monitor_rows');
   const [, setCondition] = useBAISettingUserState('session_monitor_condition');
   const { condition, userId } = useSessionMonitorCondition();
+  const { isSuperAdmin } = useCurrentUserProjectRoles();
   const [chipItems, setChipItems] = useBAISettingUserState(
     'session_monitor_chip_items',
   );
@@ -91,7 +121,11 @@ const SessionMonitorSettingsPane: React.FC<{
         {t('sessionMonitor.settings.Condition')}
       </Text>
       <BAIPropertyFilter
-        filterProperties={getSessionMonitorFilterProperties(t, userId)}
+        filterProperties={getSessionMonitorFilterProperties(
+          t,
+          userId,
+          isSuperAdmin,
+        )}
         placeholder={t('sessionMonitor.settings.FilterPlaceholder')}
         value={condition}
         // Clearing yields undefined, which the store would persist as the
