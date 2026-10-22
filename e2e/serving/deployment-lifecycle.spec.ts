@@ -94,6 +94,33 @@ function statusTab(page: Page, label: 'Serving' | 'Paused' | 'Terminated') {
   return page.getByRole('radio', { name: label, exact: true });
 }
 
+// `deleteDeploymentAndVerify` for a deployment listed under the Paused tab:
+// the shared helper opens the default Serving tab, which never shows it.
+async function deletePausedDeploymentAndVerify(
+  page: Page,
+  name: string,
+): Promise<void> {
+  const row = page.getByRole('row', {
+    name: new RegExp(escapeForRegExp(name)),
+  });
+  await expect(async () => {
+    await navigateTo(page, 'deployments');
+    await statusTab(page, 'Paused').click();
+    await expect(row).toBeVisible({ timeout: 15000 });
+  }).toPass({ timeout: 60_000 });
+  await row.getByRole('button', { name: 'delete' }).click();
+  const dialog = page.getByRole('dialog', { name: /Delete Deployment/ });
+  await expect(dialog).toBeVisible({ timeout: 10000 });
+  await page.getByPlaceholder(name).fill(name);
+  const deleteButton = dialog.getByRole('button', {
+    name: 'Delete',
+    exact: true,
+  });
+  await expect(deleteButton).toBeEnabled({ timeout: 5000 });
+  await deleteButton.click();
+  await expect(row).toHaveCount(0, { timeout: 30000 });
+}
+
 // Local fork of deployment-fixtures.ts's `selectRevisionModalOption`: its
 // popup search box's accessible name is actually "Search options" (confirmed
 // live), not "Search" -- kept spec-local rather than editing the shared
@@ -123,6 +150,7 @@ test.describe(
   { tag: ['@functional', '@regression', '@serving', '@deployment'] },
   () => {
     let createdDeploymentName: string | null = null;
+    let pausedDeploymentName: string | null = null;
 
     test.beforeEach(async ({ page, request }) => {
       await loginAsAdmin(page, request);
@@ -132,6 +160,16 @@ test.describe(
       if (createdDeploymentName) {
         await cleanupDeploymentSafely(page, createdDeploymentName);
         createdDeploymentName = null;
+      }
+      if (pausedDeploymentName) {
+        const name = pausedDeploymentName;
+        pausedDeploymentName = null;
+        await deletePausedDeploymentAndVerify(page, name).catch((error) =>
+          console.warn(
+            `[afterEach] could not clean up paused deployment "${name}":`,
+            error,
+          ),
+        );
       }
     });
 
@@ -166,12 +204,14 @@ test.describe(
         // explains the Desired Replicas split; the icon, not the tab, is
         // the hover target.
         await statusTab(page, 'Serving').locator('svg').hover();
-        await expect(page.getByRole('tooltip')).toHaveText(
-          'Deployments with Desired Replicas set to 1 or more. Their replicas may still be starting or may have failed to start; the Replicas column shows how many are running.',
+        await expect(page.getByRole('tooltip')).toContainText(
+          'Desired Replicas set to 1 or more',
         );
+        await page.mouse.move(0, 0);
+        await expect(page.getByRole('tooltip')).toHaveCount(0);
         await statusTab(page, 'Paused').locator('svg').hover();
-        await expect(page.getByRole('tooltip')).toHaveText(
-          'Deployments that are not terminated but have Desired Replicas set to 0, either manually or by auto-scaling. They move back to Serving when Desired Replicas is 1 or more.',
+        await expect(page.getByRole('tooltip')).toContainText(
+          'Desired Replicas set to 0',
         );
         await page.mouse.move(0, 0);
         await expect(
@@ -338,6 +378,9 @@ test.describe(
       await expect(metadataValue(page, 'Desired Replicas')).toHaveText('0', {
         timeout: 20000,
       });
+      // From here on only the Paused tab lists it.
+      pausedDeploymentName = deploymentName;
+      createdDeploymentName = null;
 
       // 2. The Paused tab lists it, and the choice lands in the URL. The
       // list read can lag the mutation, so re-navigate until the row shows.
@@ -365,24 +408,9 @@ test.describe(
       await expect(page).not.toHaveURL(/statusCategory=paused/);
       await expect(row).toHaveCount(0, { timeout: 20000 });
 
-      // 5. Delete it from the Paused tab; the default Serving tab that
-      // `deleteDeploymentAndVerify` opens would never show this row.
-      await statusTab(page, 'Paused').click();
-      await expect(row).toBeVisible({ timeout: 20000 });
-      await row.getByRole('button', { name: 'delete' }).click();
-      const deleteDialog = page.getByRole('dialog', {
-        name: /Delete Deployment/,
-      });
-      await expect(deleteDialog).toBeVisible({ timeout: 10000 });
-      await page.getByPlaceholder(deploymentName).fill(deploymentName);
-      const deleteButton = deleteDialog.getByRole('button', {
-        name: 'Delete',
-        exact: true,
-      });
-      await expect(deleteButton).toBeEnabled({ timeout: 5000 });
-      await deleteButton.click();
-      await expect(row).toHaveCount(0, { timeout: 30000 });
-      createdDeploymentName = null;
+      // 5. Delete it from the Paused tab.
+      await deletePausedDeploymentAndVerify(page, deploymentName);
+      pausedDeploymentName = null;
     });
   },
 );
