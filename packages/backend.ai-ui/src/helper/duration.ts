@@ -1,22 +1,25 @@
 const TIMEDELTA_PATTERN = /^(?:(\d+) days?, )?(\d+):(\d{2}):(\d{2}(?:\.\d+)?)$/;
 
-export const formatAuditLogDuration = (value: string): string => {
+export const parseTimedelta = (value: string): number | null => {
   const match = TIMEDELTA_PATTERN.exec(value.trim());
   if (!match) {
-    return value;
+    return null;
   }
   const [, days = '0', hours, minutes, seconds] = match;
-  const totalMs = Math.round(
+  return Math.round(
     ((Number(days) * 24 + Number(hours)) * 60 + Number(minutes)) * 60_000 +
       Number(seconds) * 1000,
   );
-  if (totalMs < 1000) {
-    return `${totalMs} ms`;
+};
+
+export const formatCompactDuration = (ms: number): string => {
+  if (ms < 1000) {
+    return `${Math.round(ms)} ms`;
   }
-  if (totalMs < 60_000) {
-    return `${Math.floor(totalMs / 10) / 100} s`;
+  if (ms < 60_000) {
+    return `${Math.floor(ms / 10) / 100} s`;
   }
-  const totalSeconds = Math.floor(totalMs / 1000);
+  const totalSeconds = Math.floor(ms / 1000);
   const parts: Array<[number, string]> = [
     [Math.floor(totalSeconds / 86_400), 'd'],
     [Math.floor(totalSeconds / 3600) % 24, 'h'],
