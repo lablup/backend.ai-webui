@@ -999,6 +999,7 @@
       "FolderQuota": "Kapasite",
       "FolderRenamed": "Klasör yeniden adlandırıldı",
       "FolderRestored": "{{ klasörAdı }} klasörü geri yüklendi.",
+      "FolderSharePermission": "Klasör paylaşım izni",
       "FolderUpdated": "Klasör seçenekleri güncellendi",
       "FolderUsage": "Klasör kullanımı",
       "FolderUsing": "Kullanma",
@@ -1051,6 +1052,7 @@
       "SelectPermission": "İzin seçin",
       "Serve": "Model servis",
       "ShareFolder": "Paylaşım klasörü",
+      "SharePermission": "Paylaşım izni",
       "SharedFolderAlertDesc": "Bu harici olarak paylaşılan bir klasördür.",
       "SharedMountPermission": "Paylaşım montaj izni",
       "SharedMountPermissionDesc": "Bu klasörün paylaşıldığı kullanıcılar için varsayılan montaj izni. Bireysel izni olmayan paylaşılan kullanıcı bu izni alır. Klasörü oluşturan her zaman okuma ve yazma izni alır.",
@@ -1091,6 +1093,7 @@
       "SuccessfullyAcceptedInvitation": "Başarılı bir şekilde kabul edilen davetiye",
       "SuccessfullyDeclinedInvitation": "Başarılı bir şekilde reddetti",
       "SuccessfullyLeftSharedFolder": "Paylaşılan klasörü başarıyla bıraktı",
+      "UnknownUser": "Bilinmeyen kullanıcı",
       "UserIsAlreadyInvited": "{{email}} zaten davet edildi"
     },
     "modelStore": {

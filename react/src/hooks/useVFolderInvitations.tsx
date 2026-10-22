@@ -3,14 +3,17 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { backendaiClientPromise, useSuspendedBackendaiClient } from '.';
+import { RelayEnvironment } from '../RelayEnvironment';
 import { useVFolderInvitationsAcceptMutation } from '../__generated__/useVFolderInvitationsAcceptMutation.graphql';
 import { useVFolderInvitationsRejectMutation } from '../__generated__/useVFolderInvitationsRejectMutation.graphql';
+import { useVFolderInvitationsSharesQuery } from '../__generated__/useVFolderInvitationsSharesQuery.graphql';
 import { mutationOptions } from './backendai';
 import { useTanMutation } from './reactQueryAlias';
 import { useMutationWithPromise } from 'backend.ai-ui';
 import { useAtom } from 'jotai';
 import { atomWithDefault } from 'jotai/utils';
-import { graphql } from 'react-relay';
+import * as _ from 'lodash-es';
+import { fetchQuery, graphql } from 'react-relay';
 
 export interface InvitationItem {
   id: string;
@@ -24,21 +27,74 @@ export interface InvitationItem {
   created_at: string;
   modified_at: string | null;
   status: string;
+  /** The mount permission the invite was sent with (`ro` / `rw`). */
   perm: string;
+  /** The entity share's permission cap; missing when no share matches. */
+  permissions?: ReadonlyArray<string>;
 }
+
+interface RecipientShare {
+  entityId: string;
+  permissions: ReadonlyArray<string>;
+}
+
+/** Attaches each invitation's share cap, matched by the shared `id`. */
+export const mergeSharePermissions = (
+  invitations: ReadonlyArray<InvitationItem>,
+  shares: ReadonlyArray<RecipientShare>,
+): InvitationItem[] => {
+  const permissionsById = _.fromPairs(
+    _.map(shares, (share) => [share.entityId, share.permissions]),
+  );
+  return _.map(invitations, (invitation) => {
+    const { permissions: _ignored, ...rest } = invitation;
+    const permissions = permissionsById[invitation.id];
+    return permissions ? { ...rest, permissions } : rest;
+  });
+};
 
 // TODO(needs-backend): the list stays on the legacy REST call because
 // `myEntityShares` carries neither the folder name nor the sharer's e-mail;
 // switch it over once EntityShare exposes them. An invitation `id` is the
-// share's `entityId`, which the accept/reject mutations below already take.
+// share's `entityId`, which is how its permission cap is joined below and
+// what the accept/reject mutations take.
+const sharesQuery = graphql`
+  query useVFolderInvitationsSharesQuery {
+    myEntityShares(sides: [RECIPIENT], limit: 100) {
+      edges {
+        node {
+          entityId
+          permissions
+        }
+      }
+    }
+  }
+`;
+
+const loadInvitations = async (
+  backendaiClient: Awaited<typeof backendaiClientPromise>,
+): Promise<InvitationItem[]> => {
+  const [data, shares] = await Promise.all([
+    backendaiClient.vfolder.invitations(),
+    fetchQuery<useVFolderInvitationsSharesQuery>(
+      RelayEnvironment,
+      sharesQuery,
+      {},
+      { fetchPolicy: 'network-only' },
+    ).toPromise(),
+  ]);
+  return mergeSharePermissions(
+    data.invitations as InvitationItem[],
+    _.map(shares?.myEntityShares?.edges, (edge) => edge.node),
+  );
+};
+
 const vFolderInvitationsAtom = atomWithDefault<
   InvitationItem[] | Promise<InvitationItem[]>
 >(async () => {
   // backendaiClientPromise is a promise instance;
   const backendaiClient = await backendaiClientPromise;
-
-  const data = await backendaiClient.vfolder.invitations();
-  return data.invitations as InvitationItem[];
+  return loadInvitations(backendaiClient);
 });
 
 export const useVFolderInvitations = () => {
@@ -47,8 +103,7 @@ export const useVFolderInvitations = () => {
   const baiClient = useSuspendedBackendaiClient();
 
   const updateInvitations = async () => {
-    const data = await baiClient.vfolder.invitations();
-    setInvitations(data.invitations as InvitationItem[]);
+    setInvitations(await loadInvitations(baiClient));
   };
 
   const acceptShare =

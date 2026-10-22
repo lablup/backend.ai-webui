@@ -999,6 +999,7 @@
       "FolderQuota": "Емкость",
       "FolderRenamed": "Папка переименована",
       "FolderRestored": "Папка {{ folderName }} восстановлена.",
+      "FolderSharePermission": "Право доступа к общей папке",
       "FolderUpdated": "Параметры папки обновлены",
       "FolderUsage": "Использование папок",
       "FolderUsing": "Использование сайта",
@@ -1051,6 +1052,7 @@
       "SelectPermission": "Выберите разрешение",
       "Serve": "Модельная сервировка",
       "ShareFolder": "Папка общего доступа",
+      "SharePermission": "Разрешение на общий доступ",
       "SharedFolderAlertDesc": "Это внешне общая папка.",
       "SharedMountPermission": "Разрешение на монтирование для общего доступа",
       "SharedMountPermissionDesc": "Разрешение на монтирование по умолчанию для пользователей, которым предоставлен доступ к этой папке. Пользователь без индивидуального разрешения получает это разрешение. Создатель папки всегда получает чтение и запись.",
@@ -1091,6 +1093,7 @@
       "SuccessfullyAcceptedInvitation": "Успешно принятое приглашение",
       "SuccessfullyDeclinedInvitation": "Успешно отказался от приглашения",
       "SuccessfullyLeftSharedFolder": "Успешно оставил общую папку",
+      "UnknownUser": "Неизвестный пользователь",
       "UserIsAlreadyInvited": "{{email}} уже приглашен"
     },
     "modelStore": {

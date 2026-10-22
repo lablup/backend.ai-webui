@@ -999,6 +999,7 @@
       "FolderQuota": "Capacidade",
       "FolderRenamed": "Pasta renomeada",
       "FolderRestored": "A pasta {{ folderName }} foi restaurada.",
+      "FolderSharePermission": "Permissão de partilha da pasta",
       "FolderUpdated": "Opção (ões) de pasta atualizada (s)",
       "FolderUsage": "Utilização da pasta",
       "FolderUsing": "Utilizar",
@@ -1051,6 +1052,7 @@
       "SelectPermission": "Selecione a permissão",
       "Serve": "Serviço de modelo",
       "ShareFolder": "Partilhar pasta",
+      "SharePermission": "Permissão de partilha",
       "SharedFolderAlertDesc": "Esta é uma pasta compartilhada externamente.",
       "SharedMountPermission": "Permissão de montagem partilhada",
       "SharedMountPermissionDesc": "A permissão de montagem predefinida para os utilizadores com quem esta pasta é partilhada. Um utilizador partilhado sem permissão individual recebe esta permissão. O criador da pasta recebe sempre leitura e escrita.",
@@ -1091,6 +1093,7 @@
       "SuccessfullyAcceptedInvitation": "Convite aceito com sucesso",
       "SuccessfullyDeclinedInvitation": "Com sucesso recusou o convite",
       "SuccessfullyLeftSharedFolder": "Deixou com sucesso a pasta compartilhada",
+      "UnknownUser": "Utilizador desconhecido",
       "UserIsAlreadyInvited": "{{email}} já está convidado"
     },
     "modelStore": {

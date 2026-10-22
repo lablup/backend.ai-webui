@@ -999,6 +999,7 @@
       "FolderQuota": "利用可能量",
       "FolderRenamed": "フォルダの名前が変更されました",
       "FolderRestored": "{{ folderName }} フォルダが復元されました。",
+      "FolderSharePermission": "フォルダ共有権限",
       "FolderUpdated": "フォルダオプションが更新されました",
       "FolderUsage": "フォルダ使用量",
       "FolderUsing": "使用量",
@@ -1051,6 +1052,7 @@
       "SelectPermission": "権限を選択する",
       "Serve": "サービス",
       "ShareFolder": "フォルダの共有",
+      "SharePermission": "共有権限",
       "SharedFolderAlertDesc": "これは外部共有フォルダーです。",
       "SharedMountPermission": "共有マウント許可",
       "SharedMountPermissionDesc": "このフォルダを共有されたユーザーのデフォルトのマウント許可です。個別の許可が設定されていない共有ユーザーにはこの許可が適用されます。フォルダの作成者には常に読み書きが許可されます。",
@@ -1091,6 +1093,7 @@
       "SuccessfullyAcceptedInvitation": "招待状に成功しました",
       "SuccessfullyDeclinedInvitation": "招待状を成功裏に拒否しました",
       "SuccessfullyLeftSharedFolder": "共有フォルダーを正常に残しました",
+      "UnknownUser": "不明なユーザー",
       "UserIsAlreadyInvited": "{{email}}はすでに招待されています"
     },
     "modelStore": {

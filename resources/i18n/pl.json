@@ -999,6 +999,7 @@
       "FolderQuota": "Pojemność",
       "FolderRenamed": "Zmieniono nazwę folderu",
       "FolderRestored": "Folder {{ folderName }} został przywrócony.",
+      "FolderSharePermission": "Uprawnienie udostępniania folderu",
       "FolderUpdated": "Zaktualizowano opcje folderów",
       "FolderUsage": "Użycie folderu",
       "FolderUsing": "Korzystanie z",
@@ -1051,6 +1052,7 @@
       "SelectPermission": "Wybierz uprawnienia",
       "Serve": "Model obsługujący",
       "ShareFolder": "Folder udostępniony",
+      "SharePermission": "Uprawnienie udostępniania",
       "SharedFolderAlertDesc": "Jest to folder udostępniony zewnętrznie.",
       "SharedMountPermission": "Udostępnione uprawnienie montowania",
       "SharedMountPermissionDesc": "Domyślne uprawnienie montowania dla użytkowników, którym udostępniono ten folder. Udostępniony użytkownik bez indywidualnego uprawnienia otrzymuje to uprawnienie. Twórca folderu zawsze otrzymuje odczyt i zapis.",
@@ -1091,6 +1093,7 @@
       "SuccessfullyAcceptedInvitation": "Pomyślnie przyjęte zaproszenie",
       "SuccessfullyDeclinedInvitation": "Pomyślnie odrzucił zaproszenie",
       "SuccessfullyLeftSharedFolder": "Z powodzeniem zostawił wspólny folder",
+      "UnknownUser": "Nieznany użytkownik",
       "UserIsAlreadyInvited": "{{email}} jest już zaproszony"
     },
     "modelStore": {

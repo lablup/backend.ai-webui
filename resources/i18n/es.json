@@ -999,6 +999,7 @@
       "FolderQuota": "Capacidad",
       "FolderRenamed": "Carpeta renombrada",
       "FolderRestored": "La carpeta {{ folderName }} ha sido restaurada.",
+      "FolderSharePermission": "Permiso de compartición de carpeta",
       "FolderUpdated": "Opción(es) de carpeta actualizada(s)",
       "FolderUsage": "Uso de la carpeta",
       "FolderUsing": "Utilizando",
@@ -1051,6 +1052,7 @@
       "SelectPermission": "Seleccionar permiso",
       "Serve": "Modelo de servicio",
       "ShareFolder": "Compartir carpeta",
+      "SharePermission": "Permiso de uso compartido",
       "SharedFolderAlertDesc": "Esta es una carpeta compartida externamente.",
       "SharedMountPermission": "Permiso de montaje compartido",
       "SharedMountPermissionDesc": "El permiso de montaje predeterminado para los usuarios con los que se comparte esta carpeta. Un usuario compartido sin permiso individual recibe este permiso. El creador de la carpeta siempre recibe lectura y escritura.",
@@ -1091,6 +1093,7 @@
       "SuccessfullyAcceptedInvitation": "Invitación aceptada con éxito",
       "SuccessfullyDeclinedInvitation": "Invitación declinada con éxito",
       "SuccessfullyLeftSharedFolder": "Dejó con éxito la carpeta compartida",
+      "UnknownUser": "Usuario desconocido",
       "UserIsAlreadyInvited": "{{email}} ya está invitado"
     },
     "modelStore": {

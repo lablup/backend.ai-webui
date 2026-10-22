@@ -999,6 +999,7 @@
       "FolderQuota": "Χωρητικότητα",
       "FolderRenamed": "Ο φάκελος μετονομάστηκε",
       "FolderRestored": "Ο φάκελος {{ folderName }} έχει αποκατασταθεί.",
+      "FolderSharePermission": "Δικαίωμα κοινής χρήσης φακέλου",
       "FolderUpdated": "Ενημερώθηκαν οι επιλογές φακέλων",
       "FolderUsage": "Χρήση φακέλου",
       "FolderUsing": "Χρήση του",
@@ -1051,6 +1052,7 @@
       "SelectPermission": "Επιλέξτε άδεια",
       "Serve": "Μοντέλο που εξυπηρετεί",
       "ShareFolder": "Φάκελος κοινής χρήσης",
+      "SharePermission": "Δικαίωμα κοινής χρήσης",
       "SharedFolderAlertDesc": "Πρόκειται για ένα εξωτερικά κοινόχρηστο φάκελο.",
       "SharedMountPermission": "Δικαίωμα προσάρτησης κοινής χρήσης",
       "SharedMountPermissionDesc": "Το προεπιλεγμένο δικαίωμα προσάρτησης για τους χρήστες με τους οποίους κοινοποιείται αυτός ο φάκελος. Ένας χρήστης κοινής χρήσης χωρίς ατομικό δικαίωμα λαμβάνει αυτό το δικαίωμα. Ο δημιουργός του φακέλου λαμβάνει πάντα ανάγνωση και εγγραφή.",
@@ -1091,6 +1093,7 @@
       "SuccessfullyAcceptedInvitation": "Επιτυχώς αποδεκτή πρόσκληση",
       "SuccessfullyDeclinedInvitation": "Με επιτυχία αρνήθηκε την πρόσκληση",
       "SuccessfullyLeftSharedFolder": "Άφησε επιτυχώς τον κοινόχρηστο φάκελο",
+      "UnknownUser": "Άγνωστος χρήστης",
       "UserIsAlreadyInvited": "{{email}} έχει ήδη προσκληθεί"
     },
     "modelStore": {

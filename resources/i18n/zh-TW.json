@@ -999,6 +999,7 @@
       "FolderQuota": "容量",
       "FolderRenamed": "文件夾重命名",
       "FolderRestored": "{{ folderName }} 資料夾已恢復。",
+      "FolderSharePermission": "資料夾共享權限",
       "FolderUpdated": "文件夾選項已更新",
       "FolderUsage": "文件夹的使用",
       "FolderUsing": "使用",
@@ -1052,6 +1053,7 @@
       "SelectPermission": "選擇權限",
       "Serve": "服务模式",
       "ShareFolder": "共享文件夹",
+      "SharePermission": "共享權限",
       "SharedFolderAlertDesc": "這是一個外部共享的文件夾。",
       "SharedMountPermission": "共用掛載權限",
       "SharedMountPermissionDesc": "與此資料夾共用的使用者的預設掛載權限。未設定個別權限的共用使用者將獲得此權限。資料夾建立者始終擁有讀寫權限。",
@@ -1092,6 +1094,7 @@
       "SuccessfullyAcceptedInvitation": "成功接受的邀請",
       "SuccessfullyDeclinedInvitation": "成功拒絕了邀請",
       "SuccessfullyLeftSharedFolder": "成功離開共享文件夾",
+      "UnknownUser": "未知使用者",
       "UserIsAlreadyInvited": "{{email}}已經被邀請"
     },
     "modelStore": {

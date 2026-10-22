@@ -999,6 +999,7 @@
       "FolderQuota": "Kapazität",
       "FolderRenamed": "Ordner umbenannt",
       "FolderRestored": "Der Ordner {{ folderName }} wurde wiederhergestellt.",
+      "FolderSharePermission": "Ordner-Freigabeberechtigung",
       "FolderUpdated": "Ordneroption(en) aktualisiert",
       "FolderUsage": "Verwendung von Ordnern",
       "FolderUsing": "Verwendung von",
@@ -1051,6 +1052,7 @@
       "SelectPermission": "Berechtigung auswählen",
       "Serve": "Das Modell dient",
       "ShareFolder": "Ordner teilen",
+      "SharePermission": "Freigabeberechtigung",
       "SharedFolderAlertDesc": "Dies ist ein extern geteilter Ordner.",
       "SharedMountPermission": "Freigabe-Mount-Berechtigung",
       "SharedMountPermissionDesc": "Die Standard-Mount-Berechtigung für Benutzer, mit denen dieser Ordner geteilt wird. Ein freigegebener Benutzer ohne individuelle Berechtigung erhält diese Berechtigung. Der Ersteller des Ordners erhält immer Lesen & Schreiben.",
@@ -1091,6 +1093,7 @@
       "SuccessfullyAcceptedInvitation": "Erfolgreich akzeptierte Einladung",
       "SuccessfullyDeclinedInvitation": "Erfolgreich abgelehnt Einladung",
       "SuccessfullyLeftSharedFolder": "Erfolgreich den gemeinsam genutzten Ordner verlassen",
+      "UnknownUser": "Unbekannter Benutzer",
       "UserIsAlreadyInvited": "{{email}} ist bereits eingeladen"
     },
     "modelStore": {

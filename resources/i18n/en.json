@@ -986,6 +986,7 @@
       "FolderQuota": "Capacity",
       "FolderRenamed": "Folder renamed",
       "FolderRestored": "The {{ folderName }} folder has been restored.",
+      "FolderSharePermission": "Folder share permission",
       "FolderUpdated": "Folder option(s) updated",
       "FolderUsage": "Folder usage",
       "FolderUsing": "Using",
@@ -1038,6 +1039,7 @@
       "SelectPermission": "Select permission",
       "Serve": "Model serving",
       "ShareFolder": "Share Folder",
+      "SharePermission": "Share permission",
       "SharedFolderAlertDesc": "This is an externally shared folder.",
       "SharedMountPermission": "Shared mount permission",
       "SharedMountPermissionDesc": "The default mount permission for users this folder is shared with. A shared user without an individual permission gets this permission. The folder's creator always gets read & write.",
@@ -1078,6 +1080,7 @@
       "SuccessfullyAcceptedInvitation": "Successfully accepted invitation",
       "SuccessfullyDeclinedInvitation": "Successfully declined invitation",
       "SuccessfullyLeftSharedFolder": "Successfully left the shared folder",
+      "UnknownUser": "Unknown user",
       "UserIsAlreadyInvited": "{{email}} is already invited"
     },
     "modelStore": {

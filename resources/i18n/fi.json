@@ -999,6 +999,7 @@
       "FolderQuota": "Kapasiteetti",
       "FolderRenamed": "Kansio nimetty uudelleen",
       "FolderRestored": "Kansio {{ folderName }} on palautettu.",
+      "FolderSharePermission": "Kansion jako-oikeus",
       "FolderUpdated": "Kansiovaihtoehto(t) päivitetty",
       "FolderUsage": "Kansion käyttö",
       "FolderUsing": "Käyttämällä",
@@ -1051,6 +1052,7 @@
       "SelectPermission": "Valitse lupa",
       "Serve": "Malli, joka palvelee",
       "ShareFolder": "Jaa kansio",
+      "SharePermission": "Jako-oikeus",
       "SharedFolderAlertDesc": "Tämä on ulkoisesti jaettu kansio.",
       "SharedMountPermission": "Jaettu kiinnityslupa",
       "SharedMountPermissionDesc": "Oletuskiinnityslupa käyttäjille, joille tämä kansio on jaettu. Jaettu käyttäjä ilman yksilöllistä lupaa saa tämän luvan. Kansion luoja saa aina luku- ja kirjoitusoikeuden.",
@@ -1091,6 +1093,7 @@
       "SuccessfullyAcceptedInvitation": "Onnistuneesti hyväksytty kutsu",
       "SuccessfullyDeclinedInvitation": "Onnistuneesti hylätty kutsu",
       "SuccessfullyLeftSharedFolder": "Jäljellä jaetussa kansiossa",
+      "UnknownUser": "Tuntematon käyttäjä",
       "UserIsAlreadyInvited": "{{email}} on jo kutsuttu"
     },
     "modelStore": {
