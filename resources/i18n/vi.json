@@ -3311,7 +3311,7 @@
       "Condition": "Phiên cần theo dõi",
       "FilterPlaceholder": "Bộ lọc",
       "List": "Danh sách",
-      "OnlyMine": "Chỉ các phiên tôi đã tạo",
+      "Me": "Tôi",
       "RowsShown": "Số dòng hiển thị",
       "ShowInHeader": "Hiển thị trên thanh tiêu đề",
       "SortBy": "Sắp xếp",

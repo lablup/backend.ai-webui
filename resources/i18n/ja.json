@@ -3311,7 +3311,7 @@
       "Condition": "監視するセッション",
       "FilterPlaceholder": "フィルター",
       "List": "一覧",
-      "OnlyMine": "自分が作成したセッションのみ",
+      "Me": "自分",
       "RowsShown": "表示行数",
       "ShowInHeader": "ヘッダーに表示",
       "SortBy": "並べ替え",

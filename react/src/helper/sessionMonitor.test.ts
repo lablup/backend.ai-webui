@@ -1,6 +1,6 @@
 import {
   applyAttentionTitleBadge,
-  buildSessionMonitorFilter,
+  buildSessionMonitorDefaultCondition,
   getNearestIdleCheck,
   pickDueAlerts,
   rankSessions,
@@ -134,31 +134,23 @@ describe('summarizeSessions', () => {
   });
 });
 
-describe('buildSessionMonitorFilter', () => {
-  it('scopes to the viewer and keeps the condition parenthesized', () => {
+describe('buildSessionMonitorDefaultCondition', () => {
+  it('starts an admin from their own unfinished sessions', () => {
     expect(
-      buildSessionMonitorFilter({
+      buildSessionMonitorDefaultCondition({
         userId: 'u1',
-        onlyMine: true,
-        condition: 'name ilike "%a%" | type == "batch"',
+        isDomainAdmin: true,
       }),
-    ).toBe('(user_id == "u1") & (name ilike "%a%" | type == "batch")');
+    ).toBe('user_id == "u1" & status != "TERMINATED" & status != "CANCELLED"');
   });
 
-  it('falls back to unfinished sessions while the condition is unset', () => {
-    expect(buildSessionMonitorFilter({ userId: 'u1', onlyMine: false })).toBe(
-      '(status != "TERMINATED" & status != "CANCELLED")',
-    );
-  });
-
-  it('keeps a cleared condition empty instead of restoring the default', () => {
+  it('leaves the owner out where the user scope already holds it', () => {
     expect(
-      buildSessionMonitorFilter({
+      buildSessionMonitorDefaultCondition({
         userId: 'u1',
-        onlyMine: false,
-        condition: '',
+        isDomainAdmin: false,
       }),
-    ).toBe('');
+    ).toBe('status != "TERMINATED" & status != "CANCELLED"');
   });
 });
 

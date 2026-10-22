@@ -50,7 +50,6 @@ const SessionMonitorPopoverContent: React.FC<
   if (!scope) return null;
   return view === 'settings' ? (
     <SessionMonitorSettingsView
-      scope={scope}
       onNavigate={onNavigate}
       onBack={() => setView('list')}
     />
@@ -65,10 +64,9 @@ const SessionMonitorPopoverContent: React.FC<
 };
 
 const SessionMonitorSettingsView: React.FC<{
-  scope: SessionMonitorScope;
   onNavigate?: () => void;
   onBack: () => void;
-}> = ({ scope, onNavigate, onBack }) => {
+}> = ({ onNavigate, onBack }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
@@ -100,10 +98,7 @@ const SessionMonitorSettingsView: React.FC<{
           onClick={onBack}
         />
       </BAIFlex>
-      <SessionMonitorSettingsPane
-        isDomainAdmin={scope.isDomainAdmin}
-        onNavigate={onNavigate}
-      />
+      <SessionMonitorSettingsPane onNavigate={onNavigate} />
     </BAIFlex>
   );
 };

@@ -6,7 +6,8 @@ import { useCurrentDomainValue } from '.';
 import type { useSessionMonitorQuery } from '../__generated__/useSessionMonitorQuery.graphql';
 import type { IdleChecks } from '../components/ComputeSessionNodeItems/SessionIdleChecks';
 import {
-  buildSessionMonitorFilter,
+  buildSessionMonitorDefaultCondition,
+  sessionMonitorOwnerFilter,
   joinSessionMonitorFilters,
   SESSION_MONITOR_ERROR_FILTER,
   SESSION_MONITOR_FETCH_LIMIT,
@@ -38,7 +39,7 @@ export const sessionMonitorSummaryAtom = atom<SessionMonitorSummary | null>(
  */
 export type SessionMonitorScope = {
   scopeId: string;
-  /** Owner and condition: what the chip counts and the list shows. */
+  /** The condition: what the chip counts and the list shows. */
   filter: string;
   /** Only the viewer's own sessions: the default, and what alerts need. */
   onlyMine: boolean;
@@ -49,15 +50,23 @@ export type SessionMonitorScope = {
 export const sessionMonitorScopeAtom = atom<SessionMonitorScope | null>(null);
 
 /**
- * The stored condition, or undefined while never set (the default applies).
- * Cleared reads back as null from the store, so stored-ness tells it apart.
+ * The watched condition: the stored one, or the role's default while never
+ * set. Cleared reads back as null from the store, so stored-ness tells it apart.
  */
 export const useSessionMonitorCondition = () => {
   'use memo';
+  const { isSuperAdmin, domainAdminDomains } = useCurrentUserProjectRoles();
+  const [currentUser] = useCurrentUserInfo();
   const [condition] = useBAISettingUserState('session_monitor_condition');
-  return hasStoredUserSetting('session_monitor_condition')
-    ? (condition ?? '')
-    : undefined;
+  const isDomainAdmin = isSuperAdmin || domainAdminDomains.length > 0;
+  const userId = currentUser.uuid ?? '';
+  return {
+    condition: hasStoredUserSetting('session_monitor_condition')
+      ? (condition ?? '')
+      : buildSessionMonitorDefaultCondition({ userId, isDomainAdmin }),
+    isDomainAdmin,
+    userId,
+  };
 };
 
 /**
@@ -66,19 +75,14 @@ export const useSessionMonitorCondition = () => {
  */
 export const useSessionMonitorScope = (): SessionMonitorScope => {
   'use memo';
-  const { isSuperAdmin, domainAdminDomains } = useCurrentUserProjectRoles();
   const domainName = useCurrentDomainValue();
-  const [currentUser] = useCurrentUserInfo();
-  const [onlyMineSetting] = useBAISettingUserState('session_monitor_only_mine');
-  const condition = useSessionMonitorCondition();
-  const isDomainAdmin = isSuperAdmin || domainAdminDomains.length > 0;
-  // Below domain admin the user scope already holds only their sessions.
-  const onlyMine = !isDomainAdmin || (onlyMineSetting ?? true);
-  const userId = currentUser.uuid ?? '';
+  const { condition, isDomainAdmin, userId } = useSessionMonitorCondition();
   return {
     scopeId: isDomainAdmin ? `domain:${domainName}` : `user:${userId}`,
-    filter: buildSessionMonitorFilter({ userId, onlyMine, condition }),
-    onlyMine,
+    filter: condition,
+    // Below domain admin the user scope already holds only their sessions.
+    onlyMine:
+      !isDomainAdmin || condition.includes(sessionMonitorOwnerFilter(userId)),
     isDomainAdmin,
   };
 };

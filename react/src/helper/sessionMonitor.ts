@@ -12,7 +12,7 @@ export const SESSION_MONITOR_FETCH_LIMIT = 50;
 /** Rows the popover shows; the rest collapse into an "N more" link. */
 export const SESSION_MONITOR_VISIBLE_LIMIT = 5;
 export const SESSION_MONITOR_POLL_INTERVAL_MS = 60_000;
-/** The condition until the user edits it: every unfinished session. */
+/** Every unfinished session: the status part of the default condition. */
 export const SESSION_MONITOR_DEFAULT_CONDITION =
   'status != "TERMINATED" & status != "CANCELLED"';
 /** Seconds left that raise an idle-termination alert, loosest first. */
@@ -81,23 +81,20 @@ export const joinSessionMonitorFilters = (
     .map((part) => `(${part})`)
     .join(' & ');
 
-/**
- * The viewer's own sessions when `onlyMine`, and the user's condition (the
- * default one while unset). Parenthesized so a `|` cannot leak out.
- */
-export const buildSessionMonitorFilter = ({
+/** The condition until the user edits it; admins start from their own. */
+export const buildSessionMonitorDefaultCondition = ({
   userId,
-  onlyMine,
-  condition,
+  isDomainAdmin,
 }: {
   userId: string;
-  onlyMine: boolean;
-  condition?: string | null;
+  isDomainAdmin: boolean;
 }) =>
-  joinSessionMonitorFilters([
-    onlyMine ? `user_id == "${userId}"` : null,
-    condition ?? SESSION_MONITOR_DEFAULT_CONDITION,
-  ]);
+  isDomainAdmin
+    ? `${sessionMonitorOwnerFilter(userId)} & ${SESSION_MONITOR_DEFAULT_CONDITION}`
+    : SESSION_MONITOR_DEFAULT_CONDITION;
+
+export const sessionMonitorOwnerFilter = (userId: string) =>
+  `user_id == "${userId}"`;
 
 /** Sums `occupied_slots` JSON strings slot by slot, as raw numbers. */
 export const sumOccupiedSlots = (

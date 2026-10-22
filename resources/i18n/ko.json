@@ -3312,7 +3312,7 @@
       "Condition": "지켜볼 세션",
       "FilterPlaceholder": "필터",
       "List": "목록",
-      "OnlyMine": "내가 만든 세션만",
+      "Me": "나",
       "RowsShown": "표시 행 수",
       "ShowInHeader": "헤더에 표시",
       "SortBy": "정렬",

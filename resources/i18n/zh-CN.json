@@ -3311,7 +3311,7 @@
       "Condition": "要关注的会话",
       "FilterPlaceholder": "筛选",
       "List": "列表",
-      "OnlyMine": "仅我创建的会话",
+      "Me": "我",
       "RowsShown": "显示行数",
       "ShowInHeader": "在页眉中显示",
       "SortBy": "排序",

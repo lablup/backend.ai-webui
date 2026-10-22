@@ -3296,7 +3296,7 @@
       "Condition": "Sessions to watch",
       "FilterPlaceholder": "Filter",
       "List": "List",
-      "OnlyMine": "Only sessions I created",
+      "Me": "Me",
       "RowsShown": "Rows shown",
       "ShowInHeader": "Show in the header",
       "SortBy": "Sort by",

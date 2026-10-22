@@ -4,7 +4,6 @@
  */
 import {
   SESSION_MONITOR_CHIP_ITEMS,
-  SESSION_MONITOR_DEFAULT_CONDITION,
   SESSION_MONITOR_ROW_OPTIONS,
   SESSION_MONITOR_VISIBLE_LIMIT,
   type SessionMonitorChipItem,
@@ -29,12 +28,24 @@ import type { TFunction } from 'i18next';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
-/** The dashboard's session condition fields, plus the project. */
+/**
+ * The dashboard's session condition fields, plus the project. User ID is a
+ * pick of "Me" so the token reads as a name; others go by user email.
+ */
 const getSessionMonitorFilterProperties = (
   t: TFunction,
+  userId: string,
 ): Array<FilterProperty> => [
   { key: 'group_name', propertyLabel: t('general.Project'), type: 'string' },
-  ...getSessionFilterProperties(t),
+  ...getSessionFilterProperties(t).map((property) =>
+    property.key === 'user_id'
+      ? {
+          ...property,
+          options: [{ label: t('sessionMonitor.settings.Me'), value: userId }],
+          strictSelection: true,
+        }
+      : property,
+  ),
 ];
 
 const CHIP_ITEM_LABEL_KEYS: Record<SessionMonitorChipItem, string> = {
@@ -46,20 +57,15 @@ const CHIP_ITEM_LABEL_KEYS: Record<SessionMonitorChipItem, string> = {
 
 /** The popover's settings view: which sessions it watches and what shows. */
 const SessionMonitorSettingsPane: React.FC<{
-  /** Only a domain admin can see other users' sessions to watch. */
-  isDomainAdmin: boolean;
   onNavigate?: () => void;
-}> = ({ isDomainAdmin, onNavigate }) => {
+}> = ({ onNavigate }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
   const [sort, setSort] = useBAISettingUserState('session_monitor_sort');
   const [rows, setRows] = useBAISettingUserState('session_monitor_rows');
-  const [onlyMine, setOnlyMine] = useBAISettingUserState(
-    'session_monitor_only_mine',
-  );
   const [, setCondition] = useBAISettingUserState('session_monitor_condition');
-  const condition = useSessionMonitorCondition();
+  const { condition, userId } = useSessionMonitorCondition();
   const [chipItems, setChipItems] = useBAISettingUserState(
     'session_monitor_chip_items',
   );
@@ -84,17 +90,10 @@ const SessionMonitorSettingsPane: React.FC<{
       <Text type="label" weight="semibold">
         {t('sessionMonitor.settings.Condition')}
       </Text>
-      {isDomainAdmin && (
-        <CheckboxInput
-          label={t('sessionMonitor.settings.OnlyMine')}
-          value={onlyMine ?? true}
-          onChange={(checked) => setOnlyMine(checked)}
-        />
-      )}
       <BAIPropertyFilter
-        filterProperties={getSessionMonitorFilterProperties(t)}
+        filterProperties={getSessionMonitorFilterProperties(t, userId)}
         placeholder={t('sessionMonitor.settings.FilterPlaceholder')}
-        value={condition ?? SESSION_MONITOR_DEFAULT_CONDITION}
+        value={condition}
         // Clearing yields undefined, which the store would persist as the
         // string "undefined"; '' keeps "no condition" apart from "never set".
         onChange={(value) => setCondition(value ?? '')}

@@ -3311,7 +3311,7 @@
       "Condition": "Zu beobachtende Sitzungen",
       "FilterPlaceholder": "Filter",
       "List": "Liste",
-      "OnlyMine": "Nur von mir erstellte Sitzungen",
+      "Me": "Ich",
       "RowsShown": "Angezeigte Zeilen",
       "ShowInHeader": "In der Kopfzeile anzeigen",
       "SortBy": "Sortieren",

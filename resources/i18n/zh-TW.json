@@ -3313,7 +3313,7 @@
       "Condition": "要關注的會話",
       "FilterPlaceholder": "篩選",
       "List": "列表",
-      "OnlyMine": "僅限我建立的會話",
+      "Me": "我",
       "RowsShown": "顯示行數",
       "ShowInHeader": "在頁首顯示",
       "SortBy": "排序",

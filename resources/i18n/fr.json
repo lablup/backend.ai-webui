@@ -3312,7 +3312,7 @@
       "Condition": "Sessions à surveiller",
       "FilterPlaceholder": "Filtre",
       "List": "Liste",
-      "OnlyMine": "Uniquement les sessions que j'ai créées",
+      "Me": "Moi",
       "RowsShown": "Lignes affichées",
       "ShowInHeader": "Afficher dans l'en-tête",
       "SortBy": "Trier",

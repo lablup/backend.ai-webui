@@ -22,9 +22,7 @@ export interface UserSettings {
   session_monitor_enabled?: boolean;
   session_monitor_sort?: 'deadline' | 'newest' | 'name';
   session_monitor_rows?: number;
-  /** Watch only the sessions the viewer created; default on. */
-  session_monitor_only_mine?: boolean;
-  /** Queryfilter on the watched sessions; unset means unfinished ones. */
+  /** Queryfilter on the watched sessions; unset means the role's default. */
   session_monitor_condition?: string;
   /** What the header chip shows besides the count; default none. */
   session_monitor_chip_items?: Array<

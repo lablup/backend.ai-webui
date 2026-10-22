@@ -3309,7 +3309,7 @@
       "Condition": "Sesiones a vigilar",
       "FilterPlaceholder": "Filtro",
       "List": "Lista",
-      "OnlyMine": "Solo las sesiones que creé",
+      "Me": "Yo",
       "RowsShown": "Filas mostradas",
       "ShowInHeader": "Mostrar en el encabezado",
       "SortBy": "Ordenar",

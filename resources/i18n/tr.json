@@ -3309,7 +3309,7 @@
       "Condition": "İzlenecek oturumlar",
       "FilterPlaceholder": "Filtre",
       "List": "Liste",
-      "OnlyMine": "Yalnızca oluşturduğum oturumlar",
+      "Me": "Ben",
       "RowsShown": "Gösterilen satırlar",
       "ShowInHeader": "Başlıkta göster",
       "SortBy": "Sırala",

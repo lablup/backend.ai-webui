@@ -3309,7 +3309,7 @@
       "Condition": "Seurattavat istunnot",
       "FilterPlaceholder": "Suodatin",
       "List": "Luettelo",
-      "OnlyMine": "Vain luomani istunnot",
+      "Me": "Minä",
       "RowsShown": "Näytetyt rivit",
       "ShowInHeader": "Näytä otsikkopalkissa",
       "SortBy": "Järjestä",

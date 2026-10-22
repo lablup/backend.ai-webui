@@ -3312,7 +3312,7 @@
       "Condition": "Sesje do obserwowania",
       "FilterPlaceholder": "Filtr",
       "List": "Lista",
-      "OnlyMine": "Tylko sesje utworzone przeze mnie",
+      "Me": "Ja",
       "RowsShown": "Wyświetlane wiersze",
       "ShowInHeader": "Pokaż w nagłówku",
       "SortBy": "Sortuj",

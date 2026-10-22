@@ -3313,7 +3313,7 @@
       "Condition": "Sesi yang dipantau",
       "FilterPlaceholder": "Filter",
       "List": "Daftar",
-      "OnlyMine": "Hanya sesi yang saya buat",
+      "Me": "Saya",
       "RowsShown": "Baris yang ditampilkan",
       "ShowInHeader": "Tampilkan di header",
       "SortBy": "Urutkan",

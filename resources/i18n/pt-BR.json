@@ -3309,7 +3309,7 @@
       "Condition": "Sessões a monitorar",
       "FilterPlaceholder": "Filtro",
       "List": "Lista",
-      "OnlyMine": "Somente as sessões que criei",
+      "Me": "Eu",
       "RowsShown": "Linhas exibidas",
       "ShowInHeader": "Mostrar no cabeçalho",
       "SortBy": "Ordenar",
