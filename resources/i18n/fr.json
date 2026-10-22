@@ -999,6 +999,7 @@
       "FolderUpdated": "Option(s) de dossier mise à jour",
       "FolderUsage": "Utilisation des dossiers",
       "FolderUsing": "Utilisation",
+      "FolderVisibleToProjectMembers": "Les dossiers créés dans le projet actuel sont visibles par les membres du projet actuel.",
       "InviteUsers": "Inviter l'utilisateur",
       "KickOut": "Arrêter de partager",
       "KickOutConfirm": "Ne plus partager avec {{email}} ?",

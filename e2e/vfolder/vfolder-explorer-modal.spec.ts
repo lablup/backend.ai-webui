@@ -50,7 +50,7 @@ test.describe(
       const rwFolderName = 'e2e-test-folder-rw-' + new Date().getTime();
 
       // 1. Create a VFolder with Read & Write permissions
-      await createVFolderAndVerify(page, rwFolderName, 'general', 'user', 'rw');
+      await createVFolderAndVerify(page, rwFolderName, 'general', 'rw');
 
       // 2. Open the VFolder in FolderExplorerModal
       const modal = await openFolderExplorer(page, rwFolderName);
@@ -89,7 +89,7 @@ test.describe(
       const roFolderName = 'e2e-test-folder-ro-' + new Date().getTime();
 
       // 1. Create a VFolder with Read Only permissions
-      await createVFolderAndVerify(page, roFolderName, 'general', 'user', 'ro');
+      await createVFolderAndVerify(page, roFolderName, 'general', 'ro');
 
       // 2. Verify folder shows "Read only" in the table
       await navigateTo(page, 'data');

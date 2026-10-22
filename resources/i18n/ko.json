@@ -999,6 +999,7 @@
       "FolderUpdated": "폴더 정보가 갱신되었습니다",
       "FolderUsage": "폴더 사용량",
       "FolderUsing": "사용량",
+      "FolderVisibleToProjectMembers": "현재 프로젝트에서 생성한 폴더는 현재 프로젝트의 구성원에게 공개됩니다.",
       "InviteUsers": "사용자 초대",
       "KickOut": "공유 중지",
       "KickOutConfirm": "{{email}}과(와)의 공유를 중지하시겠습니까?",

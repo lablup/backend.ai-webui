@@ -122,6 +122,7 @@ const renderModal = (
   project: { id: string; name: string } | null,
   onRequestClose = vi.fn(),
   initialValues?: Record<string, unknown>,
+  allowAutoMount?: boolean,
 ) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
   render(
@@ -129,7 +130,7 @@ const renderModal = (
       <FolderCreateModalV2
         open
         project={project}
-        folderType="project"
+        allowAutoMount={allowAutoMount}
         initialValues={initialValues}
         onRequestClose={onRequestClose}
       />
@@ -169,6 +170,54 @@ describe('FolderCreateModalV2 project prop contract (ADR-0001)', () => {
     // The mutation carries exactly the project passed by the page.
     expect(operation.request.variables.projectId).toBe('fixed-project-id');
     expect(operation.request.variables.input.name).toBe('contract-folder');
+  });
+
+  it('creates an automount folder as the caller’s own folder', async () => {
+    const user = userEvent.setup();
+    const { environment } = renderModal(
+      { id: 'fixed-project-id', name: 'fixed-project-name' },
+      vi.fn(),
+      { usage_mode: 'automount' },
+      true,
+    );
+
+    expect(screen.getByTestId('automount-usage-mode')).toBeInTheDocument();
+    await fillFolderNameAndSubmit(user, '.contract-folder');
+
+    await waitFor(() => {
+      expect(environment.mock.getAllOperations()).toHaveLength(1);
+    });
+    const operation = environment.mock.getMostRecentOperation();
+    // The manager rejects dot-prefixed project folders.
+    expect(operation.request.node.params.name).toBe(
+      'FolderCreateModalV2PersonalMutation',
+    );
+    expect(operation.request.variables.input).toMatchObject({
+      name: '.contract-folder',
+      usageMode: 'general',
+      projectId: null,
+    });
+  });
+
+  it('does not offer AutoMount unless the page allows it', async () => {
+    const user = userEvent.setup();
+    const { environment } = renderModal(
+      { id: 'fixed-project-id', name: 'fixed-project-name' },
+      vi.fn(),
+      { usage_mode: 'automount' },
+    );
+
+    expect(
+      screen.queryByTestId('automount-usage-mode'),
+    ).not.toBeInTheDocument();
+    await fillFolderNameAndSubmit(user, 'contract-folder');
+
+    await waitFor(() => {
+      expect(environment.mock.getAllOperations()).toHaveLength(1);
+    });
+    expect(
+      environment.mock.getMostRecentOperation().request.variables.input,
+    ).toMatchObject({ name: 'contract-folder', usageMode: 'GENERAL' });
   });
 
   it('ignores a caller `initialValues.group` that disagrees with the `project` prop', async () => {

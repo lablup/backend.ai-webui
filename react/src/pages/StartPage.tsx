@@ -7,6 +7,7 @@ import ActionItemContent from '../components/ActionItemContent';
 import FolderCreateModalV2 from '../components/FolderCreateModalV2';
 import StartFromURLModal from '../components/StartFromURLModal';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useIsPersonalProject } from '../hooks/useAccessibleProjects';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -45,6 +46,7 @@ const StartPage: React.FC = () => {
   const { token } = useTheme();
   const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
+  const isPersonalProject = useIsPersonalProject(currentProject.id);
   const blockList = baiClient?._config?.blockList ?? [];
   const inactiveList = baiClient?._config?.inactiveList ?? [];
   const enableModelFolders = baiClient?._config?.enableModelFolders ?? false;
@@ -311,6 +313,7 @@ const StartPage: React.FC = () => {
         <FolderCreateModalV2
           open={isOpenCreateModal}
           project={toProjectContext(currentProject)}
+          allowAutoMount={isPersonalProject}
           onRequestClose={(response) => {
             setIsOpenCreateModal(false);
             if (response) {

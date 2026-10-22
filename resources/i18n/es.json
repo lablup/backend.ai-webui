@@ -999,6 +999,7 @@
       "FolderUpdated": "Opción(es) de carpeta actualizada(s)",
       "FolderUsage": "Uso de la carpeta",
       "FolderUsing": "Utilizando",
+      "FolderVisibleToProjectMembers": "Las carpetas creadas en el proyecto actual son visibles para los miembros del proyecto actual.",
       "InviteUsers": "Invitar al usuario",
       "KickOut": "Dejar de compartir",
       "KickOutConfirm": "¿Dejar de compartir con {{email}}?",

@@ -53,7 +53,7 @@ test.describe.serial(
     test('User can create RW folder and verify permission', async ({
       page,
     }) => {
-      await createVFolderAndVerify(page, rwFolderName, 'general', 'user', 'rw');
+      await createVFolderAndVerify(page, rwFolderName, 'general', 'rw');
       const modal = await openFolderExplorer(page, rwFolderName);
       await modal.verifyPermission('Read & Write');
       await modal.close();
@@ -74,7 +74,7 @@ test.describe.serial(
     test('User can create RO folder and verify permission', async ({
       page,
     }) => {
-      await createVFolderAndVerify(page, roFolderName, 'general', 'user', 'ro');
+      await createVFolderAndVerify(page, roFolderName, 'general', 'ro');
       const modal = await openFolderExplorer(page, roFolderName);
       await modal.verifyPermission('Read only');
       await modal.close();
