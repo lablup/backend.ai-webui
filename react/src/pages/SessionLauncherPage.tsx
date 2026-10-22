@@ -68,8 +68,6 @@ import { Divider } from '@lablup/ui-common/Divider';
 import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
 import { Grid as AstryxGrid } from '@lablup/ui-common/Grid';
 import { Heading } from '@lablup/ui-common/Heading';
-// The form engine is ui-common's (`@lablup/ui-common/Form`); the controls
-// inside the items go through the shared `astryxFormControls` adapters.
 import { InputGroup } from '@lablup/ui-common/InputGroup';
 import { RadioList, RadioListItem } from '@lablup/ui-common/RadioList';
 import { Step, Stepper } from '@lablup/ui-common/Stepper';
@@ -207,7 +205,6 @@ export type AppOption = {
   'app-services'?: Array<string>;
   runtime?: string;
   filename?: string;
-  // [key in string]: any;
 };
 
 export type SessionLauncherStepKey =
@@ -223,11 +220,7 @@ interface StepPropsWithKey extends StepItem {
   key: SessionLauncherStepKey;
 }
 
-/**
- * Step-section container. `hidden` keeps the original
- * `style={{display:'none'}}` show/hide behaviour, which preserves mounted
- * form state across steps (the form engine requirement).
- */
+/** `hidden` is `display:none`, so mounted form state survives step changes. */
 const StepCard: React.FC<{
   title?: React.ReactNode;
   hidden?: boolean;
@@ -242,12 +235,8 @@ const StepCard: React.FC<{
 };
 
 /**
- * The session-type chooser, as a `Form.Item` child.
- *
- * Local rather than another entry in `astryxFormControls` because the shape it
- * needs — `RadioListItem label` + `description` — is the only place in the app
- * that wants a description under each radio; every other converted radio group
- * is label-only and already served by `AstryxFormRadioList`.
+ * Local: the only radio group with a `description` under each item. Through
+ * the adapter's `endContent` the sentences overlapped their labels (measured).
  */
 const SessionTypeRadioList: React.FC<{
   /** Injected by `Form.Item`. */
@@ -296,11 +285,7 @@ const SessionLauncherPage = () => {
   const mainContentDivRef = useAtomValue(mainContentDivRefState);
   const baiClient = useSuspendedBackendaiClient();
   const [, setCurrentGlobalResourceGroup] = useCurrentResourceGroupState();
-  // ADR-0001 (FR-3411): pages are the only readers of the ambient current
-  // project; ResourceAllocationFormItems takes it as an explicit required
-  // prop. The throw preserves the exact previous behavior — the form
-  // fragment used to raise this error itself when the ambient project was
-  // not resolvable (general pages always have one once login completes).
+  // Pages are the only readers of the ambient project (ADR 0001, FR-3411).
   const currentProject = useCurrentProjectValue();
   const currentProjectContext = toProjectContext(currentProject);
   if (!currentProjectContext) {
@@ -323,7 +308,6 @@ const SessionLauncherPage = () => {
       formValues: formValuesFromQueryParams,
       redirectTo,
       // TODO: handle appOption to launch app with specific options
-      // appOption: appOptionFromQueryParams,
     },
     setQuery,
   ] = useQueryStates(
@@ -345,8 +329,7 @@ const SessionLauncherPage = () => {
 
   const { run: syncFormToURLWithDebounce } = useDebounceFn(
     () => {
-      // To sync the latest form values to URL,
-      // 'trailing' is set to true, and get the form values here."
+      // `trailing` debounce: read the latest values when it fires.
       // eslint-disable-next-line react-hooks/immutability -- forward reference to a later declaration kept as-is
       setQuery({ formValues: toUrlFormValues(form.getFieldsValue()) });
     },
@@ -382,7 +365,7 @@ const SessionLauncherPage = () => {
     if (!_.isEmpty(formValuesFromQueryParams)) {
       form.validateFields().catch(() => {});
     }
-    // Run this memo only for the first time
+    // Once, on mount.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -446,7 +429,6 @@ const SessionLauncherPage = () => {
     {
       title: t('session.launcher.SessionType'),
       key: 'sessionType',
-      // status: form.getFieldError('name').length > 0 ? 'error' : undefined,
     },
     {
       title: `${t('session.launcher.Environments')} & ${t(
@@ -611,8 +593,6 @@ const SessionLauncherPage = () => {
       align="stretch"
       style={{
         justifyContent: 'revert',
-        // height: 500,
-        // overflow: 'scroll',
       }}
       gap={'md'}
     >
@@ -633,7 +613,6 @@ const SessionLauncherPage = () => {
               />
             </BAIFlex>
           </BAIFlex>
-          {/* <Suspense fallback={<FlexActivityIndicator />}> */}
           <Form.Provider
             onFormChange={() => {
               // use OnFormChange instead of Form's onValuesChange,
@@ -652,35 +631,13 @@ const SessionLauncherPage = () => {
                   dispatch({ type: 'legacyMountsDiscarded' });
                 }}
               />
-              <BAIFlex
-                direction="column"
-                align="stretch"
-                gap="md"
-                // style={{  }}
-              >
+              <BAIFlex direction="column" align="stretch" gap="md">
                 {/* Step 0 fields */}
                 <StepCard
                   title={t('session.launcher.SessionType')}
                   hidden={currentStepKey !== 'sessionType'}
                 >
                   <Form.Item name="sessionType">
-                    {/* antd `Radio.Group options=` with ReactNode labels ->
-                        Astryx `RadioList` + `RadioListItem`.
-                        PILOT-DECISION: this uses the RAW controls rather than
-                        the shared `AstryxFormRadioList`, because the two-part
-                        antd label ("<mode name> <one-sentence description>")
-                        splits cleanly onto `RadioListItem`'s `label` +
-                        `description` pair, and the adapter exposes only
-                        `endContent`. Routed through `endContent` the sentences
-                        overlapped their own labels (measured, both
-                        orientations) — `description` is the slot the shape
-                        actually asks for, and it stacks the sentence under the
-                        mode name.
-                        `Text type="code"` on the mode name is DROPPED: `label`
-                        and `description` are plain STRINGS (P2), and a prose
-                        mode name was never code anyway.
-                        `value`/`onChange` are injected by `Form.Item`, so they
-                        are coalesced here the way the shared adapters do. */}
                     <SessionTypeRadioList />
                   </Form.Item>
                   <SessionNameFormItem />
@@ -708,11 +665,7 @@ const SessionLauncherPage = () => {
                         },
                       ]}
                     >
-                      {/* antd `Input.TextArea autoSize` -> the shared
-                          `AstryxFormTextArea`. `autoSize` has no destination —
-                          Astryx `TextArea` takes a fixed `rows` — so the field
-                          keeps the component default height instead of growing
-                          with the command. */}
+                      {/* Astryx `TextArea` has no auto-size; it keeps the default height. */}
                       <AstryxFormTextArea
                         label={t('session.launcher.StartUpCommand')}
                       />
@@ -767,15 +720,7 @@ const SessionLauncherPage = () => {
                                       name={['batch', 'enabled']}
                                       valuePropName="checked"
                                     >
-                                      {/* antd `Checkbox` with an inline text
-                                          child -> `AstryxFormCheckbox`, whose
-                                          `label` renders that same inline
-                                          text. The handler moves from the DOM
-                                          event (`e.target.checked`) to
-                                          `onValueChange`, the adapter's
-                                          explicit side-effect slot — the
-                                          `onChange` slot itself belongs to
-                                          `Form.Item`. */}
+                                      {/* `onChange` belongs to `Form.Item`; side effects go in `onValueChange`. */}
                                       <AstryxFormCheckbox
                                         label={t('session.launcher.Enable')}
                                         onValueChange={(checked) => {
@@ -793,7 +738,6 @@ const SessionLauncherPage = () => {
                                     </Form.Item>
                                     <Form.Item
                                       noStyle
-                                      // dependencies={[['batch', 'enabled']]}
                                       shouldUpdate={(prev, next) => {
                                         return (
                                           // @ts-ignore
@@ -813,7 +757,6 @@ const SessionLauncherPage = () => {
                                               noStyle
                                               rules={[
                                                 {
-                                                  // required: true,
                                                   validator: async (
                                                     _rule,
                                                     value,
@@ -846,12 +789,6 @@ const SessionLauncherPage = () => {
                                                 }}
                                               />
                                             </Form.Item>
-                                            {/* <Form.Item
-                                              noStyle
-                                              name={['batch', 'scheduleTime']}
-                                            >
-                                              <TimePicker disabled={disabled} />
-                                            </Form.Item> */}
                                           </>
                                         );
                                       }}
@@ -904,7 +841,6 @@ const SessionLauncherPage = () => {
                             tooltip={t(
                               'session.launcher.BatchJobTimeoutDurationDesc',
                             )}
-                            // extra={durationText}
                             help={durationText}
                           >
                             <BAIFlex direction="row" gap={'xs'}>
@@ -935,20 +871,11 @@ const SessionLauncherPage = () => {
                                     ]) !== true;
                                   return (
                                     <>
-                                      {/* antd `Space.Compact` (weld the
-                                            number field and its unit select
-                                            into one control) -> Astryx
-                                            `InputGroup`, the documented
-                                            destination for the input flavour
-                                            of Compact (MAPPING §"Space"). */}
                                       <InputGroup
                                         label={t(
                                           'session.launcher.BatchJobTimeoutDuration',
                                         )}
-                                        // `BAIFormItem` already renders the
-                                        // visible label above; without this
-                                        // the group printed it a second time
-                                        // inside the field (measured).
+                                        // `BAIFormItem` already renders the label; without this it shows twice.
                                         isLabelHidden
                                       >
                                         <Form.Item
@@ -973,17 +900,8 @@ const SessionLauncherPage = () => {
                                             },
                                           ]}
                                         >
-                                          {/* antd `InputNumber` ->
-                                                `AstryxFormNumberInput`.
-                                                `style.width:'100%'` becomes
-                                                the adapter's `width` default.
-                                                The cross-field revalidation
-                                                stays on `onChange`: the form
-                                                engine COMPOSES a child's own
-                                                trigger handler after its own
-                                                (`originTriggerFunc` in
-                                                ui-common Form's `Field`), so
-                                                both run. */}
+                                          {/* The form engine runs a child's own `onChange` after its own
+                                              (`originTriggerFunc` in ui-common Form's `Field`), so both run. */}
                                           <AstryxFormNumberInput
                                             label={t(
                                               'session.launcher.BatchJobTimeoutDuration',
@@ -1029,26 +947,8 @@ const SessionLauncherPage = () => {
                                             }),
                                           ]}
                                         >
-                                          {/* antd `Select options=` (five
-                                                static string options) ->
-                                                `AstryxFormSelector`, the
-                                                plain-`Selector` branch of
-                                                MAPPING §3.1. `tabIndex={-1}`
-                                                is DROPPED: it took the unit
-                                                select out of the tab order, so
-                                                a keyboard user could never
-                                                reach it.
-                                                The accessible name repeats the
-                                                group's own label: Astryx
-                                                requires one on BOTH halves of
-                                                what antd drew as a single
-                                                compact control, and there is no
-                                                localized "Unit" string in any
-                                                of the 22 catalogues to name the
-                                                right-hand half with (P8 — reuse
-                                                an existing string rather than
-                                                add a key needing 22
-                                                translations). */}
+                                          {/* The accessible name repeats the group label: each half needs
+                                              one, and no "Unit" string exists in the catalogues (P8). */}
                                           <AstryxFormSelector
                                             label={t(
                                               'session.launcher.BatchJobTimeoutDuration',
@@ -1164,12 +1064,7 @@ const SessionLauncherPage = () => {
                         required
                         noStyle
                       >
-                        {/* antd `Switch` -> the shared `AstryxFormSwitch`.
-                            `checkedChildren`/`unCheckedChildren` (the ON/OFF
-                            text inside the track) have no Astryx destination
-                            and are DROPPED — the adjacent `Text` above already
-                            names what the toggle controls, and the thumb
-                            position carries the state. */}
+                        {/* No ON/OFF track text: the adjacent `Text` names the toggle. */}
                         <AstryxFormSwitch
                           label={t('session.launcher.SwitchOpenMPoptimization')}
                           onChange={(checked) => {
@@ -1197,16 +1092,8 @@ const SessionLauncherPage = () => {
                         'autoEnabled',
                       ]);
                       return (
-                        // Responsive policy R1 (ticket 14): antd
-                        // `Row gutter` + `Col xs={24} sm={12}` -> Astryx Grid
-                        // (2-up from 576px -> minWidth 280, max 2).
-                        // W2A-17: a `Grid` child defaults to `min-width: auto`,
-                        // so a 100%-wide field pushes its track past the
-                        // container. `width="100%"` on the grid plus
-                        // `minWidth: 0` on every direct child is the standing
-                        // fix (it also replaces the `flex: 1` these items
-                        // carried over from their old `Col` wrappers, which a
-                        // grid item ignores).
+                        // A `Grid` child defaults to `min-width: auto`, so a 100%-wide field
+                        // overflows its track: `width="100%"` + `minWidth: 0` per child (W2A-17).
                         <AstryxGrid
                           columns={{ minWidth: 280, max: 2 }}
                           gap={4}
@@ -1220,13 +1107,7 @@ const SessionLauncherPage = () => {
                             style={{ minWidth: 0 }}
                             label={t('session.launcher.NumOpenMPthreads')}
                             name={['hpcOptimization', 'OMP_NUM_THREADS']}
-                            // antd `InputNumber stringMode` kept the stored
-                            // value a STRING; these two fields are spread
-                            // straight into the session's `environ` dict
-                            // (`useStartSession`), where a number would be an
-                            // invalid env value. Astryx's `NumberInput` emits
-                            // `number | null`, so the string contract moves to
-                            // the item's own `getValueFromEvent`.
+                            // `environ` (`useStartSession`) needs strings; `NumberInput` emits numbers.
                             getValueFromEvent={(value) =>
                               _.isNil(value) ? value : String(value)
                             }
@@ -1316,9 +1197,7 @@ const SessionLauncherPage = () => {
 
                 <BAIFlex direction="row" justify="between">
                   <BAIFlex gap={'sm'}>
-                    {/* Reversible action -> anchored one-click confirm
-                        (BAIPopconfirm, gap component 08); the typed
-                        confirm modal stays reserved for irreversible flows. */}
+                    {/* Reversible: anchored confirm (destructive-confirmation.md). */}
                     <BAIPopconfirm
                       title={t('button.Reset')}
                       description={t('session.launcher.ResetFormConfirm')}
@@ -1340,26 +1219,9 @@ const SessionLauncherPage = () => {
                       okText={t('button.Reset')}
                       isDanger
                     >
-                      {/* PILOT-DECISION: antd `Button danger type="link"` (red
-                          text link) -> Astryx ghost Button. A ghost+destructive
-                          combination is inexpressible in the closed variant
-                          enum (P5); the danger signal moves to the confirm
-                          popover. */}
+                      {/* Ghost+destructive is not a variant (P5); the popover carries the danger. */}
                       <Button variant="ghost" label={t('button.Reset')} />
                     </BAIPopconfirm>
-                    {/* {currentStep === steps.length - 1 && (
-                      <Button
-                        icon={<SaveOutlined />}
-                        disabled
-                        onClick={() => {
-                          message.info(
-                            'Not implemented yet: Template edit modal',
-                          );
-                        }}
-                      >
-                        Save as a template
-                      </Button>
-                    )} */}
                   </BAIFlex>
                   <BAIFlex
                     data-test-id="neo-session-launcher-tour-step-navigation"
@@ -1384,9 +1246,6 @@ const SessionLauncherPage = () => {
                         }
                         isEnabled={hasError}
                       >
-                        {/* antd `Space.Compact` + Dropdown split button ->
-                            Astryx ButtonGroup + DropdownMenu (MAPPING.md
-                            §5.3). The dropdown owns its own trigger button. */}
                         <ButtonGroup label={t('session.launcher.Launch')}>
                           <Button
                             variant="primary"
@@ -1420,20 +1279,8 @@ const SessionLauncherPage = () => {
                         </ButtonGroup>
                       </Tooltip>
                     ) : (
-                      // PILOT-DECISION: antd `type="primary" ghost` (outlined
-                      // primary) has no Astryx variant; `secondary` is the
-                      // closest closed-enum destination (P5).
-                      //
-                      // The trailing chevron goes in `endContent`, NOT in
-                      // `children`. Astryx `Button` lays out
-                      // `icon | label | endContent` as three slots and renders
-                      // `children` INSIDE the label slot — a truncating text
-                      // span. An `<svg>` dropped in there is an inline
-                      // replaced element inside that span, so the chevron
-                      // broke onto a second line inside a 32px-tall button
-                      // (measured: 55x32 box, glyph clipped below the text).
-                      // `endContent` is the documented slot for "trailing
-                      // icon or badge" and inherits the variant's color.
+                      // The chevron goes in `endContent`, not `children`: `children` renders in
+                      // the truncating label span and the icon wrapped to a second line (measured).
                       <Button
                         variant="secondary"
                         label={t('button.Next')}
@@ -1444,12 +1291,7 @@ const SessionLauncherPage = () => {
                       />
                     )}
                     {currentStep !== steps.length - 1 && (
-                      // Same `endContent` fix. `ghost` rather than the default
-                      // `secondary`: legacy had TWO emphasis levels here
-                      // (Next = `primary ghost`, Skip = plain default), and
-                      // leaving both on `secondary` collapsed them into two
-                      // identical grey blocks. Within the closed variant enum,
-                      // secondary-over-ghost restores that ordering.
+                      // `ghost` keeps Skip one emphasis level below Next (`secondary`).
                       <Button
                         variant="ghost"
                         label={t('session.launcher.SkipToConfirmAndLaunch')}
@@ -1464,7 +1306,6 @@ const SessionLauncherPage = () => {
               </BAIFlex>
             </Form>
           </Form.Provider>
-          {/* </Suspense> */}
         </BAIFlex>
         {screens.lg && (
           <BAIFlex
@@ -1478,9 +1319,7 @@ const SessionLauncherPage = () => {
               // Keep in sync with the deployment preset rail, which mirrors this one.
               indicatorPosition="on-track"
               activeStep={currentStep}
-              // `Stepper.label` names the whole sequence for assistive tech;
-              // antd's `Steps` had none. Reuses the page's own existing title
-              // string rather than adding a key across 22 catalogues (P8).
+              // Reuses the page title rather than a new key in 22 catalogues (P8).
               label={t('session.launcher.StartNewSession')}
               onStepClick={(nextCurrent) => {
                 setCurrentStep(nextCurrent);
@@ -1527,8 +1366,8 @@ const SessionLauncherPage = () => {
       <SessionTemplateModal
         onRequestClose={(formValue) => {
           if (formValue) {
-            // P-22: today's one `setFieldsValue`, split at the page model's
-            // fields; the store's deep merge makes the two writes equal to it.
+            // P-22: one template write split at the page model's fields; the
+            // store's deep merge makes the two writes equal to a single one.
             const fieldsValue = buildTemplateFieldsValue(formValue, () =>
               generateRandomString(4),
             );
@@ -1579,19 +1418,10 @@ type FormOrResourceRequired = {
   resource: ResourceAllocationFormValue['resource'];
   containerCount?: number;
   /**
-   * Optional reference resource map to compare against `resource`. On the
-   * session detail page this is the requested amount: for any numeric slot
-   * whose primary value differs from the compared value, the compared amount is
-   * appended as a muted `/ <value>` reference with an "allocated / requested"
-   * tooltip on the chip. The component computes the differing slots itself —
-   * callers only pass the two resource maps.
-   *
-   * Comparison is applied to the numeric `slotChips` only. The object-shaped
-   * `{ accelerator, acceleratorType }` branch is not threaded through the
-   * comparison; on the session detail page fGPU is compared via its dotted
-   * `cuda.shares` slot key (which routes through `slotChips`), so that path is
-   * covered. A form-shaped caller relying on `accelerator` would not get a
-   * comparison reference on the accelerator chip.
+   * Reference map, e.g. the requested amount on the session detail page: a
+   * numeric slot that differs gets a muted `/ <value>` and an "allocated /
+   * requested" tooltip. Only `slotChips` are compared, not the object-shaped
+   * `accelerator` branch (fGPU compares through its `cuda.shares` slot key).
    */
   comparedResource?: ResourceAllocationFormValue['resource'];
   /**
@@ -1750,10 +1580,7 @@ export const ResourceNumbersOfSession: React.FC<FormOrResourceRequired> = ({
     <>
       {chips.map(({ key, node }, index) => (
         <React.Fragment key={key}>
-          {/* Separate each resource chip with a vertical divider (same pattern
-              as ImageNodeSimpleTag) so the resources read as distinct items.
-              Opt-in via `showDividers` — column-layout callers leave it off to
-              avoid stray dividers between stacked chips. */}
+          {/* Dividers are opt-in: column-layout callers stack their chips. */}
           {showDividers && index > 0 ? (
             <Divider orientation="vertical" style={{ marginInline: 0 }} />
           ) : null}
