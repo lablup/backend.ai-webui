@@ -28,6 +28,7 @@ import { useCreateActionArrival } from '../hooks/useCreateActionArrival';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
 import { toProjectContext } from '../types/projectContext';
+import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Link } from '@lablup/ui-common/Link';
@@ -323,6 +324,11 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
 
   return (
     <VStack align="stretch" gap={5} {...props}>
+      <Banner
+        role="status"
+        status="info"
+        title={t('data.folders.FolderVisibleToProjectMembers')}
+      />
       <BAICard
         title={t('data.Folders')}
         extra={
@@ -532,7 +538,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             <VFolderNodesV2
               order={queryParams.order}
               loading={deferredQueryVariables !== queryVariables}
-              disableProjectFolderActions
               project={projectContext}
               vfoldersFrgmt={filterOutNullAndUndefined(
                 _.map(scopedVFoldersV2?.edges, 'node'),

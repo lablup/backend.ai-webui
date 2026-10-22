@@ -986,6 +986,7 @@
       "FolderUpdated": "Folder option(s) updated",
       "FolderUsage": "Folder usage",
       "FolderUsing": "Using",
+      "FolderVisibleToProjectMembers": "Folders created in the current project are visible to the members of the current project.",
       "InviteUsers": "Invite User",
       "KickOut": "Stop sharing",
       "KickOutConfirm": "Stop sharing with {{email}}?",

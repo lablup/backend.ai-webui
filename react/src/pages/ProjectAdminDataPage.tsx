@@ -553,7 +553,6 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
       <FolderCreateModalV2
         open={isOpenCreateModal}
         project={project}
-        folderType="project"
         alertMessage={t('data.folders.ProjectAdminDataPageAlert')}
         onRequestClose={(result) => {
           toggleCreateModal();

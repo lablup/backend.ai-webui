@@ -995,6 +995,7 @@
       "FolderUpdated": "อัปเดตตัวเลือกโฟลเดอร์แล้ว",
       "FolderUsage": "การใช้งานโฟลเดอร์",
       "FolderUsing": "กำลังใช้",
+      "FolderVisibleToProjectMembers": "โฟลเดอร์ที่สร้างในโปรเจกต์ปัจจุบันจะมองเห็นได้โดยสมาชิกของโปรเจกต์ปัจจุบัน",
       "InviteUsers": "เชิญผู้ใช้",
       "KickOut": "หยุดการแบ่งปัน",
       "KickOutConfirm": "หยุดการแบ่งปันกับ {{email}}?",

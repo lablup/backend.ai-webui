@@ -999,6 +999,7 @@
       "FolderUpdated": "Đã cập nhật (các) tùy chọn thư mục",
       "FolderUsage": "Sử dụng thư mục",
       "FolderUsing": "sử dụng",
+      "FolderVisibleToProjectMembers": "Các thư mục được tạo trong dự án hiện tại sẽ hiển thị với các thành viên của dự án hiện tại.",
       "InviteUsers": "Mời người dùng",
       "KickOut": "Ngừng chia sẻ",
       "KickOutConfirm": "Dừng chia sẻ với {{email}}?",

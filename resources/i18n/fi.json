@@ -999,6 +999,7 @@
       "FolderUpdated": "Kansiovaihtoehto(t) päivitetty",
       "FolderUsage": "Kansion käyttö",
       "FolderUsing": "Käyttämällä",
+      "FolderVisibleToProjectMembers": "Nykyisessä projektissa luodut kansiot näkyvät nykyisen projektin jäsenille.",
       "InviteUsers": "Kutsua käyttäjää",
       "KickOut": "Lopeta jakaminen",
       "KickOutConfirm": "Lopeta jakaminen {{email}} kanssa?",

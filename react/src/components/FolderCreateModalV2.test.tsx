@@ -129,7 +129,6 @@ const renderModal = (
       <FolderCreateModalV2
         open
         project={project}
-        folderType="project"
         initialValues={initialValues}
         onRequestClose={onRequestClose}
       />
@@ -169,6 +168,31 @@ describe('FolderCreateModalV2 project prop contract (ADR-0001)', () => {
     // The mutation carries exactly the project passed by the page.
     expect(operation.request.variables.projectId).toBe('fixed-project-id');
     expect(operation.request.variables.input.name).toBe('contract-folder');
+  });
+
+  it('creates an automount folder as a GENERAL project folder', async () => {
+    const user = userEvent.setup();
+    const { environment } = renderModal(
+      { id: 'fixed-project-id', name: 'fixed-project-name' },
+      vi.fn(),
+      { usage_mode: 'automount' },
+    );
+
+    expect(screen.getByTestId('automount-usage-mode')).toBeInTheDocument();
+    await fillFolderNameAndSubmit(user, '.contract-folder');
+
+    await waitFor(() => {
+      expect(environment.mock.getAllOperations()).toHaveLength(1);
+    });
+    const operation = environment.mock.getMostRecentOperation();
+    expect(operation.request.node.params.name).toBe(
+      'FolderCreateModalV2ProjectMutation',
+    );
+    expect(operation.request.variables.projectId).toBe('fixed-project-id');
+    expect(operation.request.variables.input).toMatchObject({
+      name: '.contract-folder',
+      usageMode: 'GENERAL',
+    });
   });
 
   it('ignores a caller `initialValues.group` that disagrees with the `project` prop', async () => {

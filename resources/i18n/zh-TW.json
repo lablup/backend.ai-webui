@@ -999,6 +999,7 @@
       "FolderUpdated": "文件夾選項已更新",
       "FolderUsage": "文件夹的使用",
       "FolderUsing": "使用",
+      "FolderVisibleToProjectMembers": "在目前專案中建立的資料夾，目前專案的成員皆可看見。",
       "InviteUsers": "邀請用戶",
       "KickOut": "停止共享",
       "KickOutConfirm": "停止与 {{email}} 共享？",

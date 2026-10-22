@@ -147,13 +147,11 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
     null,
   );
 
-  // Model project folders are read-only by design (FR-1290), matching
-  // FolderCreateModalV2. The manager used to enforce `ro` server-side and no
-  // longer seems to, but we keep enforcing it on the client to preserve that
-  // contract until the project-folder behavior is reworked.
+  // Model folders of the model-store project are read-only (FR-1290); the
+  // manager does not enforce it. Mirrors FolderCreateModalV2.
   const shouldDisableRWPermission =
     vfolderNode.metadata?.usageMode === 'MODEL' &&
-    vfolderNode.accessControl?.ownershipType === 'GROUP';
+    vfolderNode.ownership?.project?.basicInfo?.name === 'model-store';
 
   const items = filterOutEmpty([
     !vfolderNode?.unmanagedPath && {

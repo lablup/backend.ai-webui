@@ -3,10 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
-  FolderCreateModalV2Mutation,
-  FolderCreateModalV2Mutation$data,
-} from '../__generated__/FolderCreateModalV2Mutation.graphql';
-import {
   FolderCreateModalV2ProjectMutation,
   FolderCreateModalV2ProjectMutation$data,
 } from '../__generated__/FolderCreateModalV2ProjectMutation.graphql';
@@ -59,13 +55,9 @@ interface FolderCreateFormItemsType {
   cloneable: boolean;
 }
 
-// Both mutations return the same vfolder selection set; alias either generated
-// type so callers don't need to know which mutation produced the value.
-export type FolderCreationResponse =
-  | NonNullable<FolderCreateModalV2Mutation$data['createVfolderV2']>['vfolder']
-  | NonNullable<
-      FolderCreateModalV2ProjectMutation$data['createVFolderInProject']
-    >['vfolder'];
+export type FolderCreationResponse = NonNullable<
+  FolderCreateModalV2ProjectMutation$data['createVFolderInProject']
+>['vfolder'];
 
 export interface FolderCreateModalProps extends Omit<
   BAIModalProps,
@@ -78,9 +70,11 @@ export interface FolderCreateModalProps extends Omit<
    * Explicit project prop contract (ADR-0001). The page decides the project
    * context; this modal never reads the ambient current project.
    *
-   * - Non-null: no in-modal selector is rendered and project folders are
-   *   created in exactly this project. Model-store usage-mode gating is
-   *   keyed off `project.name`.
+   * Every folder is created as a project folder of this project.
+   *
+   * - Non-null: no in-modal selector is rendered and the folder is created
+   *   in exactly this project. Model-store usage-mode gating is keyed off
+   *   `project.name`.
    * - `null` ("no ambient project context", e.g. super-admin pages): a
    *   required in-modal project selector is rendered and the mutation
    *   targets the project chosen there.
@@ -89,16 +83,10 @@ export interface FolderCreateModalProps extends Omit<
   initialValidate?: boolean;
   initialValues?: Partial<FolderCreateFormItemsType>;
   /**
-   * Decides the folder ownership: unset creates a user folder, both other
-   * values create a project folder (FR-3441 removed the in-form type radio;
-   * the page context now decides).
-   *
-   * - `'model_project'`: additionally locks usage_mode='model',
-   *   permission='ro', cloneable=true. Used by the Model Store admin flow.
-   * - `'project'`: usage_mode (general or model) and permission remain
-   *   editable; automount is not offered. Used by the admin data pages.
+   * `'model_project'` locks usage_mode='model', permission='ro',
+   * cloneable=true. Used by the Model Store admin flow.
    */
-  folderType?: 'model_project' | 'project';
+  folderType?: 'model_project';
   /**
    * Optional banner above the form for caller-specific constraints,
    * rendered as an Astryx `Banner status="warning"`.
@@ -151,10 +139,10 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
     cloneable: false,
   };
 
-  // Ownership is decided by the page context, not an in-form radio (FR-3441).
-  const isProjectFolder =
-    folderType === 'project' || folderType === 'model_project';
   const isFolderTypeLocked = folderType === 'model_project';
+  const isModelStoreProject =
+    effectiveProject?.name === MODEL_STORE_PROJECT_NAME;
+  const enableModelFolders = !!baiClient._config.enableModelFolders;
 
   // When folderType narrows the form, these preset values override any
   // user-passed initialValues for the affected fields.
@@ -175,38 +163,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
     ...(project ? { group: project.id } : {}),
   };
 
-  const commitCreateMutation =
-    useMutationWithPromise<FolderCreateModalV2Mutation>(graphql`
-      mutation FolderCreateModalV2Mutation($input: CreateVFolderV2Input!) {
-        createVfolderV2(input: $input) {
-          vfolder {
-            id
-            entityId
-            vfolderStatus: status
-            host
-            metadata {
-              name
-              usageMode
-              quotaScopeId
-              cloneable
-            }
-            accessControl {
-              permission
-              ownershipType
-            }
-            ownership {
-              userId
-              projectId
-              creatorEmail
-            }
-            ...BAINodeNotificationItemFragment @alias(as: "notificationFrgmt")
-          }
-        }
-      }
-    `);
-
-  // Access is gated server-side by project/domain/super admin role;
-  // `folderType` is set only by admin pages.
+  // Access is gated server-side by project-scoped CREATE permission.
   const commitCreateInProjectMutation =
     useMutationWithPromise<FolderCreateModalV2ProjectMutation>(graphql`
       mutation FolderCreateModalV2ProjectMutation(
@@ -257,39 +214,21 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
         ? `.${values.name}`
         : values.name;
 
-    // Only shape-shared fields: `CreateVFolderV2Input` takes lowercase
-    // strings (`'general'`/`'rw'`) while `CreateVFolderInScopeInput` takes
-    // the GraphQL enums (`GENERAL`/`READ_WRITE`), attached per path below.
-    const baseInput = {
-      name: folderName,
-      host: values.host ?? null,
-      cloneable: !!values.cloneable,
-    };
-    const legacyUsageMode = isAutomount ? 'general' : values.usage_mode;
-
     let vfolderResults: FolderCreationResponse | undefined;
     try {
-      if (isProjectFolder) {
-        vfolderResults = await commitCreateInProjectMutation({
-          // Not `values.group`: the form snapshots initialValues at mount and
-          // never resyncs them to later `project` prop changes.
-          projectId: effectiveProject?.id ?? values.group ?? '',
-          input: {
-            ...baseInput,
-            usageMode: legacyUsageMode === 'model' ? 'MODEL' : 'GENERAL',
-            permission: values.permission === 'ro' ? 'READ_ONLY' : 'READ_WRITE',
-          },
-        }).then((res) => res?.createVFolderInProject?.vfolder);
-      } else {
-        vfolderResults = await commitCreateMutation({
-          input: {
-            ...baseInput,
-            usageMode: legacyUsageMode,
-            permission: values.permission,
-            projectId: null,
-          },
-        }).then((res) => res?.createVfolderV2?.vfolder);
-      }
+      vfolderResults = await commitCreateInProjectMutation({
+        // Not `values.group`: the form snapshots initialValues at mount and
+        // never resyncs them to later `project` prop changes.
+        projectId: effectiveProject?.id ?? values.group ?? '',
+        input: {
+          name: folderName,
+          host: values.host ?? null,
+          cloneable: !!values.cloneable,
+          // An automount folder is a GENERAL folder whose name starts with '.'.
+          usageMode: values.usage_mode === 'model' ? 'MODEL' : 'GENERAL',
+          permission: values.permission === 'ro' ? 'READ_ONLY' : 'READ_WRITE',
+        },
+      }).then((res) => res?.createVFolderInProject?.vfolder);
     } catch (error) {
       const errorDetail = Array.isArray(error)
         ? _.map(error, 'message').join('\n')
@@ -490,25 +429,22 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
             name={'usage_mode'}
             layout="horizontal"
             required
-            rules={
-              isProjectFolder
-                ? [
-                    {
-                      validator: (__, value) =>
-                        value === 'model' &&
-                        effectiveProject?.name !== MODEL_STORE_PROJECT_NAME
-                          ? Promise.reject(
-                              new Error(
-                                t(
-                                  'data.folders.CreateModelFolderOnlyInExclusiveProject',
-                                ),
-                              ),
-                            )
-                          : Promise.resolve(),
-                    },
-                  ]
-                : undefined
-            }
+            rules={[
+              {
+                validator: (__, value) =>
+                  value === 'model' &&
+                  !enableModelFolders &&
+                  !isModelStoreProject
+                    ? Promise.reject(
+                        new Error(
+                          t(
+                            'data.folders.CreateModelFolderOnlyInExclusiveProject',
+                          ),
+                        ),
+                      )
+                    : Promise.resolve(),
+              },
+            ]}
           >
             <AstryxFormRadioList
               label={t('data.UsageMode')}
@@ -526,7 +462,12 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                   label: t('data.General'),
                   'data-testid': 'general-usage-mode',
                 },
-                ...(baiClient._config.enableModelFolders || isProjectFolder
+                // With the in-modal selector the target project is not known
+                // up front, so Model stays offered and the validator decides.
+                ...(enableModelFolders ||
+                isModelStoreProject ||
+                isFolderTypeLocked ||
+                project === null
                   ? [
                       {
                         value: 'model',
@@ -535,22 +476,16 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                       },
                     ]
                   : []),
-                // Project folders cannot be automount folders — hide the
-                // option instead of disabling it (FR-3441).
-                ...(isProjectFolder
-                  ? []
-                  : [
-                      {
-                        value: 'automount',
-                        label: t('data.AutoMount'),
-                        'data-testid': 'automount-usage-mode',
-                        endContent: (
-                          <BAIQuestionIconWithTooltip
-                            title={t('data.AutomountFolderCreationDesc')}
-                          />
-                        ),
-                      },
-                    ]),
+                {
+                  value: 'automount',
+                  label: t('data.AutoMount'),
+                  'data-testid': 'automount-usage-mode',
+                  endContent: (
+                    <BAIQuestionIconWithTooltip
+                      title={t('data.AutomountFolderCreationDesc')}
+                    />
+                  ),
+                },
               ]}
             />
           </BAIFormItem>
@@ -576,11 +511,11 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
 
           <Form.Item dependencies={['usage_mode']} noStyle required>
             {({ getFieldValue }) => {
-              // Model project folders are forced read-only (FR-1290); the
-              // manager no longer enforces it server-side, so the client
-              // keeps the contract. Mirrored in VFolderNodeDescriptionV2.
+              // Model folders of the model-store project are read-only
+              // (FR-1290); the manager does not enforce it. Mirrored in
+              // VFolderNodeDescriptionV2.
               const shouldDisableRWPermission =
-                getFieldValue('usage_mode') === 'model' && isProjectFolder;
+                getFieldValue('usage_mode') === 'model' && isModelStoreProject;
 
               return (
                 <BAIFormItem
