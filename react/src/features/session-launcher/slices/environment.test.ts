@@ -113,7 +113,7 @@ const summary = (patches: AppliedPatch[]) =>
   ]);
 
 describe('environmentSlice', () => {
-  it('runs its rules in the order of the effects they replace (ADR 0012 order test)', () => {
+  it('runs its rules in the order of the effects they replace (ADR 0013 order test)', () => {
     expect(environmentSlice.rules.map((rule) => rule.id)).toEqual(['E-02']);
   });
 

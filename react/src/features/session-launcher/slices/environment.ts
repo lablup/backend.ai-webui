@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-// The environment section's rule and intents (ADR 0012), migrated as-is from
+// The environment section's rule and intents (ADR 0013), migrated as-is from
 // `ImageEnvironmentSelectFormItems`; ids are the Dependency map v2 rows (#10454).
 import { getImageFullName } from '../../../helper';
 import {

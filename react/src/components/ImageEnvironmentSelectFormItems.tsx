@@ -188,7 +188,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
     environmentSearch,
   );
 
-  // E-01..E-07 live in `environmentSlice` (ADR 0012); this component only dispatches.
+  // E-01..E-07 live in `environmentSlice` (ADR 0013); this component only dispatches.
   const { dispatch } = useFormBoundSlice(form, environmentModel, {
     imageGroups: ready(imageGroups),
     images: ready(images),
