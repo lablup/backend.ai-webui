@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-10-19
+> **Last Updated:** 2026-10-22
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -309,7 +309,7 @@
 
 **Test files:**
 
-- [`e2e/serving/add-revision-manual-image.spec.ts`](serving/add-revision-manual-image.spec.ts) (integration; requires a live backend with an existing deployment)
+- [`e2e/serving/add-revision-manual-image.spec.ts`](serving/add-revision-manual-image.spec.ts) (integration; requires a live backend with an existing deployment; the #10038 Additional Mounts test provisions its own deployment and folders)
 - [`e2e/serving/add-revision-command-shell.spec.ts`](serving/add-revision-command-shell.spec.ts) (hybrid mock — real deployment shell + live model folder, modal-internal GraphQL stubbed; FR-3205)
 - [`e2e/serving/add-revision-runtime-defaults.spec.ts`](serving/add-revision-runtime-defaults.spec.ts) (hybrid mock — real deployment shell, runtime-variant / defaults GraphQL stubbed; FR-3342)
 
@@ -335,11 +335,12 @@
 | Model Definition File Path hidden for a non-config-reading variant (FR-3342)                                                                                                                                                       | ✅     | asserted inside `… default-command note for a non-config-reading variant (vllm)`                                                      |
 | Old-manager name-based `readsVfolderConfigFiles` fallback, reachable from a fresh variant select — `BAIRuntimeVariantSelect` resolves the omitted flag via `?? name === 'custom'` before the modal ever sees `undefined` (FR-3342) | ✅     | `Admin sees the custom service config for an old-manager variant (readsVfolderConfigFiles omitted, name === custom)`                  |
 | Health Check on with every detail field blank: fields optional, Path / Max Retries / Startup Grace Period placeholders from the model definition, the rest from manager defaults, mutation sends only `{ enable: true }` (#10223)  | ✅     | `Admin can add a revision with health check enabled and detail fields left blank`                                                     |
+| Additional Mounts folder select: a general folder is listed, model folders (including the picked one) are not, the pick shows as a source → mount path row, and the added revision carries the mount (#10038)                      | ✅     | `Admin can add a revision that mounts an additional general folder`                                                                   |
 | Old-manager name-based `readsVfolderConfigFiles` fallback via the "Load current revision" prefill path                                                                                                                             | ⏸️     | deferred — needs a full `DeploymentDetailPageQuery` mock with a `currentRevision` whose variant name is `custom` and the flag omitted |
 | Command prefill suppressed when the source revision's variant does not read config files (FR-3342)                                                                                                                                 | ⏸️     | same prefill path as the row above — needs the deferred `DeploymentDetailPageQuery` mock                                              |
 | `definitionPath` sent as null for a non-config-reading variant (FR-3342)                                                                                                                                                           | ⏸️     | submit-path guard; the field is unreachable in the UI for those variants, so only the mutation payload shows it                       |
 
-**Coverage: ✅ 16 features (FR-3278 regression guard + FR-3205 Start Command redesign + FR-3342 runtime-variant defaults + #10223 optional health-check fields); 3 deferred**
+**Coverage: ✅ 17 features (FR-3278 regression guard + FR-3205 Start Command redesign + FR-3342 runtime-variant defaults + #10223 optional health-check fields + #10038 Additional Mounts folder select); 3 deferred**
 
 > The FR-3205 preset-side change (the Admin Deployment Preset form no longer coerces
 > Basic mode's `shell` to the client default) has its own suite — see
