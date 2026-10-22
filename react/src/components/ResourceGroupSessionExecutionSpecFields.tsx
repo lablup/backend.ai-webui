@@ -4,6 +4,7 @@
  */
 import { Form } from '../form-engine';
 import { formatDuration } from '../helper';
+import { useCurrentDomain } from '../hooks';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import BAIFormItem from './BAIFormItem';
 import DatePickerISO from './DatePickerISO';
@@ -20,7 +21,7 @@ import { InputGroup } from '@lablup/ui-common/InputGroup';
 import { Selector } from '@lablup/ui-common/Selector';
 import { TextInput } from '@lablup/ui-common/TextInput';
 import {
-  BAIAdminImageSelect,
+  BAIScopedImageSelect,
   BAIButton,
   BAIDynamicUnitInputNumber,
   BAIFlex,
@@ -195,6 +196,7 @@ const ImageSelectField: React.FC<{
 }> = ({ value, onChange }) => {
   'use memo';
   const { t } = useTranslation();
+  const { id: currentDomainId } = useCurrentDomain();
   return (
     <Suspense
       fallback={
@@ -208,7 +210,8 @@ const ImageSelectField: React.FC<{
         />
       }
     >
-      <BAIAdminImageSelect
+      <BAIScopedImageSelect
+        scope={{ domain: [{ value: currentDomainId }], public: true }}
         label={t('general.Image')}
         isLabelHidden
         placeholder={t('adminDeploymentPreset.SelectImage')}
