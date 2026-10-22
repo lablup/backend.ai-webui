@@ -5,7 +5,6 @@
 import { App } from '../app-shim';
 import DatePickerISO from '../components/DatePickerISO';
 import EnvVarFormList, {
-  sanitizeSensitiveEnv,
   EnvVarFormListValue,
 } from '../components/EnvVarFormList';
 import ImageEnvironmentSelectFormItems, {
@@ -37,9 +36,23 @@ import {
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from '../components/astryxFormControls';
+import {
+  buildTemplateFieldsValue,
+  omitOwnedPaths,
+  pickOwnedPaths,
+} from '../features/session-launcher/domain/template';
+import {
+  parseUrlFormValues,
+  toUrlFormValues,
+} from '../features/session-launcher/domain/urlCodec';
+import { compose } from '../features/session-launcher/model';
+import { batchSlice } from '../features/session-launcher/slices/batch';
+import { networkSlice } from '../features/session-launcher/slices/network';
+import { sessionSlice } from '../features/session-launcher/slices/session';
+import { storageSlice } from '../features/session-launcher/slices/storage';
+import { useFormBoundSlice } from '../features/session-launcher/view/useFormBoundSlice';
 import { Form } from '../form-engine';
 import { formatDuration, convertToBinaryUnit } from '../helper';
-import { normalizeLegacyMountFields } from '../helper/vfolderMounts';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import {
@@ -111,11 +124,6 @@ import React, {
 import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-
-type SessionLauncherFormData = Omit<
-  Required<OptionalFieldsOnly<SessionLauncherFormValue>>,
-  'mounts'
->;
 
 export interface SessionResources {
   group_name?: string;
@@ -271,6 +279,15 @@ const SessionTypeRadioList: React.FC<{
   );
 };
 
+/** The page-level slices (ADR 0013); RAFI and IESFI bind their own. */
+const sessionLauncherPageModel = compose([
+  sessionSlice,
+  batchSlice,
+  networkSlice,
+  storageSlice,
+]);
+const NO_PAGE_INPUTS = {};
+
 const SessionLauncherPage = () => {
   const app = App.useApp();
   const { logger } = useBAILogger();
@@ -295,12 +312,8 @@ const SessionLauncherPage = () => {
   const StepParam = parseAsInteger.withDefault(0);
   // Migrate at the parser so every reader of `formValuesFromQueryParams` sees
   // `vfolderMounts`, never the legacy mount fields.
-  const FormValuesParam = parseAsJson<DeepPartial<SessionLauncherFormValue>>(
-    (value) =>
-      normalizeLegacyMountFields(
-        value as DeepPartial<SessionLauncherFormValue>,
-      ),
-  ).withDefault(defaultFormValues);
+  const FormValuesParam =
+    parseAsJson(parseUrlFormValues).withDefault(defaultFormValues);
   const AppOptionParam = parseAsJson<AppOption>(
     (value) => value as AppOption,
   ).withDefault({});
@@ -335,19 +348,7 @@ const SessionLauncherPage = () => {
       // To sync the latest form values to URL,
       // 'trailing' is set to true, and get the form values here."
       // eslint-disable-next-line react-hooks/immutability -- forward reference to a later declaration kept as-is
-      const currentValue = form.getFieldsValue();
-      setQuery({
-        formValues: _.assign(
-          _.omit(form.getFieldsValue(), [
-            'environments.image',
-            'environments.customizedTag',
-            'envvars',
-          ]),
-          {
-            envvars: sanitizeSensitiveEnv(currentValue.envvars),
-          },
-        ),
-      });
+      setQuery({ formValues: toUrlFormValues(form.getFieldsValue()) });
     },
     {
       leading: false,
@@ -371,6 +372,11 @@ const SessionLauncherPage = () => {
   const screens = useBAIBreakpoint();
 
   const [form] = Form.useForm<SessionLauncherFormValue>();
+  const { dispatch } = useFormBoundSlice(
+    form,
+    sessionLauncherPageModel,
+    NO_PAGE_INPUTS,
+  );
 
   useEffect(() => {
     if (!_.isEmpty(formValuesFromQueryParams)) {
@@ -502,9 +508,18 @@ const SessionLauncherPage = () => {
   ] = useState(false);
 
   const [isQueryReset, setIsQueryReset] = useState(false);
+  // P-21: resetting is the form engine's; the model only records the restore.
+  const markResetRestored = useEffectEvent(() => {
+    dispatch({
+      type: 'restored',
+      from: 'reset',
+      values: form.getFieldsValue(true),
+    });
+  });
   useLayoutEffect(() => {
     if (isQueryReset) {
       form.resetFields();
+      markResetRestored();
       // eslint-disable-next-line react-hooks/set-state-in-effect -- legacy query-reset flow kept as-is
       setIsQueryReset(false);
     }
@@ -631,7 +646,12 @@ const SessionLauncherPage = () => {
               layout="vertical"
               initialValues={mergedInitialValues}
             >
-              <SessionLauncherFormIncompatibleValueChecker form={form} />
+              <SessionLauncherFormIncompatibleValueChecker
+                form={form}
+                onDiscardLegacyMounts={() => {
+                  dispatch({ type: 'legacyMountsDiscarded' });
+                }}
+              />
               <BAIFlex
                 direction="column"
                 align="stretch"
@@ -759,30 +779,15 @@ const SessionLauncherPage = () => {
                                       <AstryxFormCheckbox
                                         label={t('session.launcher.Enable')}
                                         onValueChange={(checked) => {
-                                          if (
-                                            checked &&
-                                            _.isEmpty(
-                                              form.getFieldValue([
-                                                'batch',
-                                                'scheduleDate',
-                                              ]),
-                                            )
-                                          ) {
-                                            form.setFieldValue(
-                                              ['batch', 'scheduleDate'],
-                                              dayjs()
+                                          dispatch({
+                                            type: 'scheduleToggled',
+                                            payload: {
+                                              checked,
+                                              defaultScheduleDate: dayjs()
                                                 .add(2, 'minutes')
                                                 .toISOString(),
-                                            );
-                                          } else if (checked === false) {
-                                            form.setFieldValue(
-                                              ['batch', 'scheduleDate'],
-                                              undefined,
-                                            );
-                                          }
-                                          form.validateFields([
-                                            ['batch', 'scheduleDate'],
-                                          ]);
+                                            },
+                                          });
                                         }}
                                       />
                                     </Form.Item>
@@ -911,13 +916,10 @@ const SessionLauncherPage = () => {
                                 <AstryxFormCheckbox
                                   label={t('session.launcher.Enable')}
                                   onValueChange={(checked) => {
-                                    if (checked === false) {
-                                      form.setFieldValue(
-                                        ['batch', 'timeout'],
-                                        undefined,
-                                      );
-                                    }
-                                    form.validateFields([['batch', 'timeout']]);
+                                    dispatch({
+                                      type: 'timeoutToggled',
+                                      payload: checked,
+                                    });
                                   }}
                                 />
                               </Form.Item>
@@ -1171,23 +1173,10 @@ const SessionLauncherPage = () => {
                         <AstryxFormSwitch
                           label={t('session.launcher.SwitchOpenMPoptimization')}
                           onChange={(checked) => {
-                            if (checked) {
-                              form.setFieldsValue({
-                                hpcOptimization: {
-                                  autoEnabled: true,
-                                  OMP_NUM_THREADS: undefined,
-                                  OPENBLAS_NUM_THREADS: undefined,
-                                },
-                              });
-                            } else {
-                              form.setFieldsValue({
-                                hpcOptimization: {
-                                  autoEnabled: false,
-                                  OMP_NUM_THREADS: '1',
-                                  OPENBLAS_NUM_THREADS: '1',
-                                },
-                              });
-                            }
+                            dispatch({
+                              type: 'hpcAutoToggled',
+                              payload: checked,
+                            });
                           }}
                         />
                       </Form.Item>
@@ -1299,8 +1288,10 @@ const SessionLauncherPage = () => {
                   hidden={currentStepKey !== 'storage'}
                 >
                   <SessionLauncherStorageStep
-                    form={form}
                     project={currentProjectContext}
+                    onFolderCreated={(folder) => {
+                      dispatch({ type: 'folderCreated', payload: folder });
+                    }}
                   />
                 </StepCard>
 
@@ -1536,33 +1527,27 @@ const SessionLauncherPage = () => {
       <SessionTemplateModal
         onRequestClose={(formValue) => {
           if (formValue) {
-            const fieldsValue = _.merge(
-              {
-                // reset fields related to optional and nested fields
-                sessionName: '',
-                ports: [],
-                vfolderMounts: [],
-                bootstrap_script: '',
-                num_of_sessions: 1,
-                environments: {
-                  manual: '',
-                },
-                batch: {
-                  enabled: false,
-                  command: undefined,
-                  scheduleDate: undefined,
-                },
-                reuseIfExists: false,
-                agent: ['auto'], // Add the missing 'agent' property
-              } as SessionLauncherFormData,
-              normalizeLegacyMountFields(formValue),
+            // P-22: today's one `setFieldsValue`, split at the page model's
+            // fields; the store's deep merge makes the two writes equal to it.
+            const fieldsValue = buildTemplateFieldsValue(formValue, () =>
+              generateRandomString(4),
             );
-
-            if (!_.isEmpty(fieldsValue.sessionName)) {
-              fieldsValue.sessionName =
-                fieldsValue.sessionName + '-' + generateRandomString(4);
-            }
-            form.setFieldsValue(fieldsValue as SessionLauncherFormData);
+            const pageFields = sessionLauncherPageModel.fields;
+            form.setFieldsValue(
+              omitOwnedPaths(
+                fieldsValue,
+                pageFields,
+              ) as Partial<SessionLauncherFormValue>,
+            );
+            dispatch({
+              type: 'restored',
+              from: 'template',
+              values: pickOwnedPaths(
+                fieldsValue,
+                pageFields,
+                form.getFieldsValue(true),
+              ),
+            });
             setCurrentStep(steps.length - 1);
             form.validateFields().catch(() => {});
           }

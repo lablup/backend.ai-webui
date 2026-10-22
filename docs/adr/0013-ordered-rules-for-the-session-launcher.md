@@ -63,18 +63,20 @@ flowchart LR
   subgraph slices["slice (react/src/features/session-launcher/slices/)"]
     R["resourceSlice<br/>fields: resource.*, allocationPreset, cluster_*, agent, resourceGroup<br/>inputs: limits, presets, resourceSlotsInRG, agents"]
     E["environmentSlice<br/>fields: environments.*<br/>inputs: imageGroups, images, watched environments"]
-    ST["storageSlice<br/>fields: vfolderMounts<br/>inputs: mountableFolders"]
+    P["sessionSlice, batchSlice, networkSlice, storageSlice<br/>fields: sessionType·sessionName·batch.*·hpcOptimization.*·ports·vfolderMounts<br/>rules: 없음, intent만"]
   end
-  L["SessionLauncherPage<br/>compose([E, R, ST, …], crossRules: [R-05])"]
-  D["DeploymentAddRevisionModal<br/>compose([E, R], crossRules: [R-05])"]
-  M["LaunchMultipleSessionsModal<br/>compose([R])"]
-  L -- "project, inputs" --> R
-  L -- "inputs" --> E
-  L -- "inputs" --> ST
-  D -- "project, inputs" --> R
-  D -- "inputs" --> E
-  M -- "project, inputs" --> R
-  E -- "R-05가 environments.image를 읽어 resource.*에 쓴다" --> R
+  RAFI["ResourceAllocationFormItems<br/>compose([R]) + useFormBoundSlice"]
+  IESFI["ImageEnvironmentSelectFormItems<br/>compose([E]) + useFormBoundSlice"]
+  L["SessionLauncherPage<br/>compose([session, batch, network, storage]) + useFormBoundSlice"]
+  D["DeploymentAddRevisionModal"]
+  R --> RAFI
+  E --> IESFI
+  P --> L
+  L -- "project prop, mounts RAFI·IESFI" --> RAFI
+  L -- "mounts" --> IESFI
+  D -- "project prop, mounts RAFI·IESFI" --> RAFI
+  D -- "mounts" --> IESFI
+  IESFI -- "environments.image (숨은 필드)를 R-05가 입력 currentImage로 읽는다" --> RAFI
 ```
 
 ## Decision
@@ -97,10 +99,12 @@ flowchart LR
 |---|---|---|
 | intent `{ type, payload }` | 필드 component | slice의 `intents[type](values, payload, inputs)`이 답한 `Patch[]`를 적용한 뒤 규칙을 돈다. `type`이 어느 slice에도 없으면 `transition`이 `LauncherModelError`를 던진다 |
 | `{ type: 'dataArrived', keys: string[] }` | 어댑터 | 값은 바꾸지 않고 규칙을 돈다. `keys`는 `loading`에서 `ready`로 바뀌었거나 `ready` 값의 참조가 바뀐 입력의 key다 |
-| `{ type: 'restored', from: 'url' \| 'template' \| 'reset', values }` | host | slice가 소유한 모든 필드를 `values`로 교체하고(없는 필드는 `undefined`) provenance를 `restored`로 둔 뒤 규칙을 돈다 |
+| `{ type: 'restored', from: 'url' \| 'template' \| 'reset', values }` | host | slice가 소유한 모든 필드를 `values`로 교체하고(없는 필드는 `undefined`) provenance를 `restored`로 둔 뒤 규칙을 돈다. 지금 코드의 복원이 어떤 필드를 건드리지 않으면 host는 그 필드의 현재 값을 `values`에 넣는다 |
 
 - **Intent naming**: intent 이름은 사용자의 행동을 적는다(`presetSelected`, `cpuEdited`, `clusterModeSelected`). 값이 바뀌었다는 사실은 intent가 아니다. 필드 component는 `onChange`로 받은 값이 현재 값과 다를 때만 dispatch한다.
 - **Intent reducers**: 지금 코드의 `onChange` handler가 하던 연쇄 쓰기(CPU 편집이 preset을 `custom`으로 바꾸는 R-13 등)는 그 intent의 reducer가 patch로 답한다. 지금 코드의 `useEffect`가 하던 쓰기는 규칙이다. 규칙은 `event`를 읽을 수 있으므로 어느 intent 뒤에만 도는 규칙도 쓸 수 있다.
+- **Host-side form operations**: `form.resetFields()`는 폼 엔진 연산이므로 host에 남고, host는 그 직후 `restored { from: 'reset' }`을 보내 provenance만 되돌린다. 템플릿 적용(P-22)은 지금의 `setFieldsValue` 하나를 모델의 `fields` 경계에서 둘로 나눈다. host가 모델 밖의 필드를 `setFieldsValue`로 쓰고, 모델 안의 필드는 `restored { from: 'template' }`로 보낸다. `FormStore`의 deep merge 때문에 결과 store는 같다.
+- **Effect with a side effect**: toast처럼 시점이 중요한 side effect를 가진 effect(P-28 legacy mount 폐기)는 규칙이 되지 않고, 그 effect가 `useEffectEvent`로 intent를 dispatch한다.
 - **No writes from components**: `react/src/features/session-launcher/**`의 파일은 `form.setFieldValue`, `form.setFieldsValue`, `form.setFields`를 부르지 않는다. `react/eslint.config.js`의 `no-restricted-syntax`가 그 member call을 막고, `view/useFormBoundSlice.ts`만 예외다.
 - **ESLint block shape**: 이 경로용 flat-config block은 기존 `no-restricted-syntax` 항목(`<style>` 금지, `astryxDynamicImportBan`, `bailinkEllipsisRestriction`)을 함께 적는다. flat config에서 뒤의 block이 같은 rule을 다시 선언하면 앞의 배열을 대체한다.
 
@@ -117,7 +121,8 @@ flowchart LR
 - **Compose**: `compose(slices, { crossRules })`는 module scope에서 한 번 부른다(`const launcherModel = compose(...)`).
 - **Slice checks**: `defineSlice`는 slice 안에서 `fields`가 겹치거나, slice의 규칙이 다른 slice의 필드를 `reads`·`writes`에 적으면 `LauncherModelError`를 던진다. 다른 slice의 필드를 읽는 규칙은 `crossRules`에 둔다.
 - **Compose checks**: `compose`는 다음 중 하나라도 어긋나면 `LauncherModelError`를 던진다. slice의 `fields`가 서로 겹침, intent 이름이 slice 사이에 겹침, 규칙 `id`가 겹침, intent 이름이 `dataArrived`·`restored`임, `crossRules`의 `reads`·`writes`가 조합된 `fields` 밖임, 규칙의 `needs`가 어느 slice의 `inputs`에도 없음. `transition`은 규칙이 `writes` 밖의 경로에 patch를 내면 `LauncherModelError`를 던진다.
-- **Cross rules**: 다른 slice의 필드를 읽거나 쓰는 규칙은 `crossRules`에 둔다. 해석된 이미지의 최솟값을 리소스에 적용하는 R-05는 `environments.image`(환경 slice의 필드)를 읽고 `resource.*`에 쓰므로 cross rule이다. 환경 slice가 없는 host는 R-05를 등록하지 않는다.
+- **Fragment-owned slices**: 여러 host가 mount하는 공유 fragment(`ResourceAllocationFormItems`, `ImageEnvironmentSelectFormItems`)는 자기 slice를 `compose([slice])`로 스스로 조합하고 자기 `useFormBoundSlice`를 mount한다. 같은 폼 위의 어댑터 여러 개는 각자 자기 `fields`만 읽고 쓴다. host(`SessionLauncherPage`)는 페이지 수준 slice만 조합한다.
+- **Cross rules**: 다른 slice의 필드를 읽거나 쓰는 규칙은 `crossRules`에 둔다. 해석된 이미지의 최솟값을 리소스에 적용하는 R-05는 fragment 경계를 넘으므로 지금은 리소스 slice의 규칙이고, `environments.image`(폼의 숨은 필드)를 입력 `currentImage`로 받는다. 이미지 필드가 없는 host에서는 그 입력이 `undefined`이고 규칙은 지금 코드처럼 아무것도 쓰지 않는다.
 - **Project**: `project`는 ADR 0001대로 host가 prop으로 정해 `inputs.project`로 넘긴다. slice는 ambient hook을 부르지 않는다.
 
 ### 5. 어댑터는 Form store 위에서 동작한다
@@ -135,6 +140,7 @@ flowchart LR
 |---|---|
 | 엔진: `defineSlice`, `compose`, `transition`, provenance, `Loadable`, `Patch`, `Rule` 타입 | `react/src/features/session-launcher/model/` |
 | 순수 계산 | `react/src/features/session-launcher/domain/` (PR #10474) |
+| URL 형식(`?formValues=`의 omit 목록, 민감값 blank, legacy mount 변환) | `react/src/features/session-launcher/domain/urlCodec.ts`. nuqs 호출과 500 ms debounce는 페이지에 남는다 |
 | slice 정의와 순서 테스트 | `react/src/features/session-launcher/slices/<name>.ts`, `<name>.test.ts` |
 | 어댑터, selector, 필드용 hook | `react/src/features/session-launcher/view/` |
 | 모델로 옮긴 필드 component | `react/src/features/session-launcher/view/fields/` |

@@ -6,12 +6,14 @@ import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { SessionLauncherFormValue } from '../pages/SessionLauncherPage';
 import * as _ from 'lodash-es';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useEffectEvent, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const SessionLauncherFormIncompatibleValueChecker: React.FC<{
   form: FormInstance<SessionLauncherFormValue>;
-}> = ({ form }) => {
+  /** P-28: clears `mounts` through the page model. */
+  onDiscardLegacyMounts: () => void;
+}> = ({ form, onDiscardLegacyMounts }) => {
   // `mounts` has no Form.Item of its own; `preserve` reads the raw store.
   const mounts = Form.useWatch('mounts', { form, preserve: true });
   const app = App.useApp();
@@ -20,15 +22,16 @@ const SessionLauncherFormIncompatibleValueChecker: React.FC<{
   const hasIncompatibleMountsParam = useMemo(() => {
     return _.isArray(mounts) && mounts.length > 0;
   }, [mounts]);
+  const discardLegacyMounts = useEffectEvent(() => onDiscardLegacyMounts());
   useEffect(() => {
     if (hasIncompatibleMountsParam) {
       app.message.warning(
         t('session.launcher.InvalidMountsSelectionWarning'),
         5,
       );
-      form.setFieldValue('mounts', undefined);
+      discardLegacyMounts();
     }
-  }, [hasIncompatibleMountsParam, t, app.message, form]);
+  }, [hasIncompatibleMountsParam, t, app.message]);
   return null;
 };
 

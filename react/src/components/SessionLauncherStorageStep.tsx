@@ -2,10 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Form, type FormInstance } from '../form-engine';
+import type { FolderCreatedPayload } from '../features/session-launcher/slices/storage';
+import { Form } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useMountableStorageHosts } from '../hooks/useMountableStorageHosts';
-import { SessionLauncherFormValue } from '../pages/SessionLauncherPage';
 import type { ProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -17,13 +17,13 @@ import {
   useSuspendedAutoMountedVFolders,
   useVFolderMountConfigFormRule,
 } from 'backend.ai-ui';
-import * as _ from 'lodash-es';
 import React, { useRef, useState } from 'react';
 
 const SessionLauncherStorageStep: React.FC<{
-  form: FormInstance<SessionLauncherFormValue>;
   project: ProjectContext;
-}> = ({ form, project }) => {
+  /** V-09: the page appends the folder through its model. */
+  onFolderCreated: (folder: FolderCreatedPayload) => void;
+}> = ({ project, onFolderCreated }) => {
   'use memo';
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const mountConfigInputRef = useRef<BAIVFolderMountConfigInputRef>(null);
@@ -68,18 +68,10 @@ const SessionLauncherStorageStep: React.FC<{
           mountConfigInputRef.current?.refetch();
           // A dotfile folder is auto-mounted by the session, never selected.
           if (isAutoMountFolderName(response.metadata.name)) return;
-          const vfolderId = response.entityId;
-          const mounts = form.getFieldValue('vfolderMounts') ?? [];
-          if (_.some(mounts, (mount) => mount.vfolderId === vfolderId)) return;
-          form.setFieldValue('vfolderMounts', [
-            ...mounts,
-            {
-              vfolderId,
-              name: response.metadata.name,
-              mountDestination: '',
-              subpath: '',
-            },
-          ]);
+          onFolderCreated({
+            vfolderId: response.entityId,
+            name: response.metadata.name,
+          });
         }}
       />
     </>
