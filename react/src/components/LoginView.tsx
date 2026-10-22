@@ -712,6 +712,17 @@ const LoginView: React.FC<{
         return 'reopen';
       }
 
+      // --- A refused post-login query: show the manager's text, not the wrapper's ---
+      if (
+        err instanceof SessionAuthFailureError ||
+        (err as Error | null)?.name === 'AuthorizationError'
+      ) {
+        if (showError) {
+          notification(t('error.LoginFailed'), refusalDetail(err) || undefined);
+        }
+        return 'reopen';
+      }
+
       // --- Unstructured errors (network failures, etc.) ---
       if (showError) {
         if (e.message) {
