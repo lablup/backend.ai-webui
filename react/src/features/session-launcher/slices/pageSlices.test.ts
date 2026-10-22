@@ -33,7 +33,7 @@ const summary = (patches: AppliedPatch[]) =>
 const LATER = '2026-10-20T00:02:00.000Z';
 
 describe('page slices', () => {
-  it('have no rules: every page write is an intent (ADR 0012 order test)', () => {
+  it('have no rules: every page write is an intent (ADR 0013 order test)', () => {
     expect(model.rules.map((rule) => rule.id)).toEqual([]);
     expect(Object.keys(model.intents)).toEqual([
       'scheduleToggled',

@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-// The batch-mode and HPC cards' intents (ADR 0012), migrated as-is from the
+// The batch-mode and HPC cards' intents (ADR 0013), migrated as-is from the
 // handlers in `SessionLauncherPage`; ids are the Dependency map v2 rows (#10454).
 import {
   defineSlice,

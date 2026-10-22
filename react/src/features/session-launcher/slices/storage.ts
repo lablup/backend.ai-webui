@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-// The storage step's writes (ADR 0012), migrated as-is from
+// The storage step's writes (ADR 0013), migrated as-is from
 // `SessionLauncherStorageStep` (V-09) and
 // `SessionLauncherFormIncompatibleValueChecker` (P-28).
 import {

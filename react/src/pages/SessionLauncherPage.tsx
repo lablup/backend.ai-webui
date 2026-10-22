@@ -279,7 +279,7 @@ const SessionTypeRadioList: React.FC<{
   );
 };
 
-/** The page-level slices (ADR 0012); RAFI and IESFI bind their own. */
+/** The page-level slices (ADR 0013); RAFI and IESFI bind their own. */
 const sessionLauncherPageModel = compose([
   sessionSlice,
   batchSlice,
