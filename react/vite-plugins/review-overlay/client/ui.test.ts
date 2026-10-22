@@ -3,7 +3,13 @@
  * pick near the bottom of the viewport pushed its Cancel / Copy row off-screen
  * — the label and the ⚛️ stack are appended AFTER the box opens.
  */
-import { createOverlayUI, EDIT_WARNING, type OverlayUI } from './ui.js';
+import {
+  createOverlayUI,
+  EDIT_WARNING,
+  MODAL_LIVE_ATTR,
+  type OverlayUI,
+} from './ui.js';
+import { MODAL_LIVE_ATTRIBUTE } from '@lablup/ui-common/Modal';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 let ui: OverlayUI;
@@ -62,6 +68,13 @@ beforeEach(() => {
 
 afterEach(() => {
   ui.host.remove();
+});
+
+describe('over an open ui-common Modal', () => {
+  it('marks its host live, with the attribute ui-common reads', () => {
+    expect(MODAL_LIVE_ATTR).toBe(MODAL_LIVE_ATTRIBUTE);
+    expect(ui.host.hasAttribute(MODAL_LIVE_ATTRIBUTE)).toBe(true);
+  });
 });
 
 describe('the dock is gone', () => {

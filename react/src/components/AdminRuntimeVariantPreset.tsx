@@ -108,10 +108,9 @@ const AdminRuntimeVariantPreset = ({
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const baiClient = useSuspendedBackendaiClient();
-  // AND/OR/NOT sub-filters only exist on managers with the `sub-filter`
-  // capability (Strawberry V2). On older managers, restrict the property
-  // filter to a single condition so it emits a flat filter the backend accepts.
-  const supportsSubFilter = baiClient.supports('sub-filter');
+  // AND/OR/NOT sub-filters need manager 26.7.0; older managers get a single
+  // condition so the filter stays flat.
+  const supportsSubFilter = baiClient.isManagerVersionCompatibleWith('26.7.0');
 
   const [deletingPreset, setDeletingPreset] =
     useState<RuntimeVariantPresetNodeInList | null>(null);
@@ -164,7 +163,7 @@ const AdminRuntimeVariantPreset = ({
       <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
         <BAIFlex gap={'sm'} align="start" wrap="wrap" style={{ flexShrink: 1 }}>
           <BAIGraphQLPropertyFilter<RuntimeVariantPresetFilter>
-            singleCondition={!supportsSubFilter}
+            maxConditions={supportsSubFilter ? undefined : 1}
             filterProperties={[
               {
                 key: 'name',
@@ -174,8 +173,8 @@ const AdminRuntimeVariantPreset = ({
               {
                 key: 'runtimeVariantId',
                 propertyLabel: t('adminRuntimeVariantPreset.Runtime'),
-                type: 'uuid',
-                fixedOperator: 'equals',
+                type: 'uuid' as const,
+                fixedOperator: 'equals' as const,
                 rule: uuidRule,
                 renderInput: ({ onAddCondition, value, isDisabled }) => (
                   <BAIRuntimeVariantSelect

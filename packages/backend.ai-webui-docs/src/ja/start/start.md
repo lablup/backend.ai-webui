@@ -20,9 +20,9 @@ navTitle: スタート
 
 ![](../images/start_announcement_banner.png)
 
-長いお知らせは、最初の行を1行に要約した状態で折りたたまれて表示されます。
-バナーの**詳細を見る**をクリックするとお知らせの全文が表示され、
-**詳細を隠す**をクリックすると再び折りたたまれます。
+バナーにはお知らせのタイトルが表示されます。お知らせにメッセージがある場合は、
+**詳細を見る**をクリックするとメッセージが表示され、**詳細を隠す**をクリック
+すると再び折りたたまれます。
 
 閉じるアイコンをクリックするとバナーが閉じます。閉じたバナーは現在のブラウザ
 セッションの間は表示されず、管理者が新しいお知らせを公開したり、既存のお知らせ
@@ -66,7 +66,7 @@ Hugging Faceインポートを有効にすると、**Hugging Face モデルを�
 
 ### ノートブック取り込み
 
-![](../images/start_from_url_notebook.png)
+![=800px](../images/start_from_url_notebook.png)
 
 1. **ノートブックのURL**フィールドにJupyter Notebook URL（`.ipynb`で終わる）を
    入力します
@@ -101,7 +101,7 @@ Markdownのバッジコードをコピーして、プロジェクトのドキュ
 
 ### GitHubリポジトリをインポートする
 
-![](../images/start_from_url_github.png)
+![=800px](../images/start_from_url_github.png)
 
 1. **GitHubのURL**フィールドに有効なGitHubリポジトリURLを入力します
 2. リポジトリを保存する**ストレージホスト**を選択します
@@ -114,7 +114,7 @@ Markdownのバッジコードをコピーして、プロジェクトのドキュ
 
 ### GitLabリポジトリ取り込み
 
-![](../images/start_from_url_gitlab.png)
+![=800px](../images/start_from_url_gitlab.png)
 
 1. **GitLabアドレス**フィールドに有効なGitLabリポジトリURLを入力します
 2. 必要に応じて**GitLab ブランチ名**を指定します（デフォルト: `master`）
@@ -135,7 +135,7 @@ Markdownのバッジコードをコピーして、プロジェクトのドキュ
 将来のアップデートで変更または削除される可能性があります。
 :::
 
-![](../images/start_from_url_huggingface.png)
+![=800px](../images/start_from_url_huggingface.png)
 
 1. **Hugging Face モデルの URL または ID**フィールドにモデルを入力します。
    `https://huggingface.co/openai/gpt-oss-20b`のようなモデルページのURLと、

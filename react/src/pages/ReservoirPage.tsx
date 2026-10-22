@@ -20,13 +20,13 @@ import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { theme } from '../theme-shim';
-import { Button } from '@astryxdesign/core/Button';
-import { Card } from '@astryxdesign/core/Card';
-import { Grid } from '@astryxdesign/core/Grid';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { HStack } from '@astryxdesign/core/Stack';
-import { Stat } from '@astryxdesign/lab';
+import { Button } from '@lablup/ui-common/Button';
+import { Card } from '@lablup/ui-common/Card';
+import { Grid } from '@lablup/ui-common/Grid';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { HStack } from '@lablup/ui-common/Stack';
+import { Stat } from '@lablup/ui-common/lab';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   // TODO(needs-backend): BAIHuggingFaceRegistrySettingModal - uncomment when storage-proxy applies DB config via Redis
   BAIImportArtifactModal,
@@ -86,7 +86,7 @@ type ArtifactNode = NonNullable<
 const ReservoirPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const navigate = useWebUINavigate();
   const { upsertNotification } = useSetBAINotification();
 
@@ -192,7 +192,7 @@ const ReservoirPage: React.FC = () => {
             name
             type
           }
-          huggingfaceRegistries @since(version: "25.14.0") {
+          huggingfaceRegistries {
             edges {
               node {
                 id
@@ -212,7 +212,7 @@ const ReservoirPage: React.FC = () => {
             count
             edges {
               node {
-                id @since(version: "25.17.0")
+                id
                 ...BAIArtifactTableArtifactFragment
                 ...BAIImportArtifactModalArtifactFragment
                 ...BAIDeactivateArtifactsModalArtifactsFragment
@@ -301,7 +301,7 @@ const ReservoirPage: React.FC = () => {
         ]}
         styles={{
           body: {
-            padding: `${token.paddingSM}px ${token.paddingLG}px ${token.paddingLG}px ${token.paddingLG}px`,
+            padding: `${token('--spacing-3')} ${token('--spacing-6')} ${token('--spacing-6')} ${token('--spacing-6')}`,
           },
         }}
       >
@@ -409,9 +409,9 @@ const ReservoirPage: React.FC = () => {
                     }
                     icon={
                       mode === 'ALIVE' ? (
-                        <BanIcon style={{ color: token.colorError }} />
+                        <BanIcon style={{ color: token('--color-error') }} />
                       ) : (
-                        <UndoIcon style={{ color: token.colorInfo }} />
+                        <UndoIcon style={{ color: token('--color-info') }} />
                       )
                     }
                     onClick={() => {
@@ -548,38 +548,6 @@ const ReservoirPage: React.FC = () => {
             }}
           />
         </BAIFlex>
-        {/* TODO: implement audit log for reservoir page */}
-        {/* {curTabKey === 'audit' ? (
-          <Suspense fallback={<Skeleton active />}>
-            <ReservoirAuditLogList
-              auditLogs={filteredAuditLogs}
-              loading={false}
-              filterValue={queryParams.auditFilter}
-              onFilterChange={(value) => {
-                setQuery({ auditFilter: value });
-              }}
-              pagination={{
-                pageSize: tablePaginationOption.pageSize,
-                current: tablePaginationOption.current,
-                total: filteredAuditLogs.length,
-                showTotal: (total) => (
-                  <BAIText type="secondary">
-                    {t('general.TotalItems', { total: total })}
-                  </BAIText>
-                ),
-                onChange: (current, pageSize) => {
-                  if (_.isNumber(current) && _.isNumber(pageSize)) {
-                    setTablePaginationOption({ current, pageSize });
-                  }
-                },
-              }}
-              order={queryParams.auditOrder}
-              onChangeOrder={(order) => {
-                setQuery({ auditOrder: order });
-              }}
-            />
-          </Suspense>
-        ) : null} */}
       </BAICard>
       <BAIImportArtifactModal
         selectedArtifactFrgmt={selectedArtifact}

@@ -39,13 +39,10 @@ import {
 } from './hooks/useWebUIMenuItems';
 import { pluginApiEndpointState } from './hooks/useWebUIPluginState';
 import { AdminRedirect, ProjectScopedRedirect } from './legacyRedirects';
-// High priority to import the component
-import ComputeSessionListPage from './pages/ComputeSessionListPage';
 import Page404 from './pages/Page404';
 import UnknownRoutePage from './pages/UnknownRoutePage';
-import VFolderNodeListPage from './pages/VFolderNodeListPage';
-import { theme } from './theme-shim';
 import { toProjectContext } from './types/projectContext';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAISkeleton, BAIFlex, BAICard } from 'backend.ai-ui';
 import { useSetAtom } from 'jotai';
 import { parseAsString, useQueryStates } from 'nuqs';
@@ -53,7 +50,12 @@ import React, { Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RouteObject, useParams } from 'react-router-dom';
 
-const LoginViewLazy = React.lazy(() => import('./components/LoginView'));
+const ComputeSessionListPage = React.lazy(
+  () => import('./pages/ComputeSessionListPage'),
+);
+const VFolderNodeListPage = React.lazy(
+  () => import('./pages/VFolderNodeListPage'),
+);
 
 const Information = React.lazy(() => import('./components/Information'));
 const StartPage = React.lazy(() => import('./pages/StartPage'));
@@ -332,13 +334,13 @@ export const mainLayoutChildRoutes: RouteObject[] = [
           {
             path: 'start',
             Component: () => {
-              const { token } = theme.useToken();
+              const { token } = useTheme();
               return (
                 <BAIFlex
                   direction="column"
-                  gap={token.paddingContentVerticalLG}
+                  gap="ms"
                   align="stretch"
-                  style={{ paddingBottom: token.paddingContentVerticalLG }}
+                  style={{ paddingBottom: token('--spacing-4') }}
                 >
                   <LocationStateBreadCrumb />
                   <StorageHostFetchErrorBoundary>
@@ -812,36 +814,26 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         children: [
           {
             index: true,
-            Component: () => {
-              const baiClient = useSuspendedBackendaiClient();
-              return baiClient?.supports('reservoir') ? (
-                <Suspense
-                  fallback={
-                    <BAIFlex direction="column" style={{ maxWidth: 700 }}>
-                      <BAISkeleton rows={4} />
-                    </BAIFlex>
-                  }
-                >
-                  <ReservoirPage />
-                </Suspense>
-              ) : (
-                <WebUINavigate to={'/error'} replace />
-              );
-            },
+            element: (
+              <Suspense
+                fallback={
+                  <BAIFlex direction="column" style={{ maxWidth: 700 }}>
+                    <BAISkeleton rows={4} />
+                  </BAIFlex>
+                }
+              >
+                <ReservoirPage />
+              </Suspense>
+            ),
             handle: { scope: 'admin', menuKey: 'reservoir' },
           },
           {
             path: ':artifactId',
-            Component: () => {
-              const baiClient = useSuspendedBackendaiClient();
-              return baiClient?.supports('reservoir') ? (
-                <Suspense fallback={<BAISkeleton rows={4} />}>
-                  <ReservoirArtifactDetailPage />
-                </Suspense>
-              ) : (
-                <WebUINavigate to={'/error'} replace />
-              );
-            },
+            element: (
+              <Suspense fallback={<BAISkeleton rows={4} />}>
+                <ReservoirArtifactDetailPage />
+              </Suspense>
+            ),
             handle: {
               scope: 'admin',
               menuKey: 'reservoir',
@@ -852,22 +844,18 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       },
       {
         path: 'scheduler',
-        Component: () => {
-          const baiClient = useSuspendedBackendaiClient();
-          return baiClient?.supports('fair-share-scheduling') ? (
-            <Suspense fallback={<BAISkeleton rows={4} />}>
-              <SchedulerPage />
-              {/* Super-admin page (ADR-0001): no ambient project context —
-                  the session-detail project-mismatch alert is suppressed. */}
-              <SessionDetailAndContainerLogOpenerLegacy project={null} />
-            </Suspense>
-          ) : (
-            <WebUINavigate to={'/error'} replace />
-          );
-        },
+        element: (
+          <Suspense fallback={<BAISkeleton rows={4} />}>
+            <SchedulerPage />
+            {/* Super-admin page (ADR-0001): no ambient project context —
+                the session-detail project-mismatch alert is suppressed. */}
+            <SessionDetailAndContainerLogOpenerLegacy project={null} />
+          </Suspense>
+        ),
         handle: {
           scope: 'admin',
           menuKey: 'scheduler',
+          access: 'superadmin',
           labelKey: 'webui.menu.Scheduler',
         },
       },
@@ -945,16 +933,11 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       },
       {
         path: 'rbac',
-        Component: () => {
-          const baiClient = useSuspendedBackendaiClient();
-          return baiClient?.supports('rbac') ? (
-            <Suspense fallback={<BAISkeleton rows={4} />}>
-              <RBACManagementPage />
-            </Suspense>
-          ) : (
-            <WebUINavigate to={'/error'} replace />
-          );
-        },
+        element: (
+          <Suspense fallback={<BAISkeleton rows={4} />}>
+            <RBACManagementPage />
+          </Suspense>
+        ),
         handle: {
           scope: 'admin',
           menuKey: 'rbac',
@@ -1709,7 +1692,7 @@ export const routes: RouteObject[] = [
             </Suspense>
             <Suspense>
               <ErrorBoundaryWithNullFallback>
-                <LoginViewLazy />
+                <LoginView />
               </ErrorBoundaryWithNullFallback>
               <ErrorBoundaryWithNullFallback>
                 <FolderExplorerOpener />

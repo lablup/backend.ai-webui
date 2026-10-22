@@ -6,14 +6,14 @@ import { addNumberWithUnits } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { usePainKiller } from '../hooks/usePainKiller';
 import { useStartSession } from '../hooks/useStartSession';
-import { SessionResources } from '../pages/SessionLauncherPage';
+import type { SessionResources } from '../pages/SessionLauncherPage';
 import { ProjectContextOrNull } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
 import { EnvironmentImage } from './ImageList';
 import ProjectSelect from './ProjectSelect';
-import { List, ListItem } from '@astryxdesign/core/List';
-import { Pagination } from '@astryxdesign/core/Pagination';
-import { Text } from '@astryxdesign/core/Text';
+import { List, ListItem } from '@lablup/ui-common/List';
+import { Pagination } from '@lablup/ui-common/Pagination';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAISkeleton,
   BAIFlex,
@@ -114,7 +114,7 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
     setIsInstalling(true);
     try {
       const installPromises = imagesToInstall.map(async (image, index) => {
-        const imageName = `${image?.registry}/${image?.namespace ?? image?.name}:${image?.tag}`;
+        const imageName = `${image?.registry}/${image?.namespace}:${image?.tag}`;
 
         const labels = (image?.labels ?? []).reduce<Record<string, string>>(
           (acc, label) => {
@@ -374,8 +374,7 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
         >
           {(() => {
             const imageNames = imagesToInstall.map(
-              (image) =>
-                `${image?.registry}/${image?.namespace ?? image?.name}:${image?.tag}`,
+              (image) => `${image?.registry}/${image?.namespace}:${image?.tag}`,
             );
             const pagedNames = imageNames.slice(
               (listPage - 1) * LIST_PAGE_SIZE,

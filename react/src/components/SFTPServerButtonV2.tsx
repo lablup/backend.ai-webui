@@ -20,10 +20,10 @@ import {
 import { useVHostInfo } from '../hooks/useVHostInfo';
 import { ProjectContext, ProjectContextOrNull } from '../types/projectContext';
 import { openSFTPFailureModal } from './sftpFailureModal';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIButton,
   BAIButtonProps,

@@ -2,33 +2,29 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { getDefaultDesignToken } from '../../helper/defaultDesignTokens';
-import { useDefaultTheme } from '../../hooks/useDefaultTheme';
+import { getStaticAppearanceConfig } from '../../helper/customThemeConfig';
+import { usePreviewThemeConfig } from '../../hooks/usePreviewThemeConfig';
 import { BAIUncontrolledInput } from 'backend.ai-ui';
 
 const FontFamilySettingItem: React.FC = () => {
   'use memo';
 
-  const { getDefaultThemeValue, updateDefaultTheme } = useDefaultTheme();
+  const { getThemeConfigValue, updateThemeConfigValue } =
+    usePreviewThemeConfig();
 
-  // Was `theme.getDesignToken({ algorithm: theme.defaultAlgorithm })` — the
-  // last antd import in this file. `fontFamily` is a seed, so the shim-backed
-  // helper returns antd's stock stack verbatim.
-  const defaultTokens = getDefaultDesignToken('light');
-
+  // Draft first, then the shipped theme.json — the same rule as the color
+  // pickers. Neither declaring a font means the app renders Astryx's own, so
+  // the field is simply empty rather than showing a made-up default.
   const fontFamily =
-    getDefaultThemeValue<string>('fontFamily') ??
-    getDefaultThemeValue<string>('light.token.fontFamily') ??
-    defaultTokens.fontFamily;
+    getThemeConfigValue<string>('theme.fontFamily') ??
+    getStaticAppearanceConfig()?.theme?.fontFamily ??
+    '';
 
   return (
     <BAIUncontrolledInput
       defaultValue={fontFamily}
       onCommit={(v) => {
-        const value = v || undefined;
-        updateDefaultTheme('fontFamily', value);
-        updateDefaultTheme('light.token.fontFamily', value);
-        updateDefaultTheme('dark.token.fontFamily', value);
+        updateThemeConfigValue('theme.fontFamily', v || undefined);
       }}
       style={{ alignSelf: 'stretch' }}
     />

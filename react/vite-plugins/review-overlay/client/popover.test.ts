@@ -139,7 +139,7 @@ describe('popover placement', () => {
     expect(box().top).toBe(286);
   });
 
-  it('never lets a flipped panel taller than the room go off the top', () => {
+  it('shortens a panel that fits on neither side instead of covering the mark', () => {
     undoMeasure = measurePanelAs(700);
     const pop = make();
 
@@ -147,10 +147,29 @@ describe('popover placement', () => {
       model({ kind: 'located', rect: { left: 300, top: 400, bottom: 440 } }),
     );
 
+    // Below: 900 - 70 - 454 = 376; above: 400 - 14 - 60 = 326. Below wins,
+    // capped to its room, so the panel ends above the pill and clear of the mark.
     const { top } = box();
-    expect(top).toBeGreaterThanOrEqual(0);
-    // Capped at max(200, 900 - 130) = 770, so 700 stands; it ends above the pill.
-    expect(top + 700).toBeLessThanOrEqual(900);
+    expect(top).toBe(454);
+    expect(panel().style.maxHeight).toBe('376px');
+  });
+
+  it('hangs a waiting panel from the control it needs, above it on a short window', () => {
+    undoMeasure = measurePanelAs(420);
+    viewport(1000, 700);
+    const pop = make();
+
+    pop.render(
+      model({
+        kind: 'waiting',
+        via: 'Type “bad/name”',
+        rect: { left: 250, top: 380, bottom: 410 },
+      }),
+    );
+
+    // Below: 700 - 70 - 424 = 206; above: 380 - 14 - 60 = 306 — the larger.
+    expect(box().top).toBe(60);
+    expect(panel().style.maxHeight).toBe('306px');
   });
 
   it('hangs under the mark when there is room', () => {

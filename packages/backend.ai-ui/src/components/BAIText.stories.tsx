@@ -1,7 +1,7 @@
 import BAICard from './BAICard';
 import BAIFlex from './BAIFlex';
 import BAIText from './BAIText';
-import { Kbd } from '@astryxdesign/core/Kbd';
+import { Kbd } from '@lablup/ui-common/Kbd';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 /**
@@ -26,7 +26,7 @@ const meta: Meta<typeof BAIText> = {
     docs: {
       description: {
         component: `
-**BAIText** keeps the [Ant Design Typography.Text](https://ant.design/components/typography)-shaped prop surface and the antd-era structure — one inline span, which becomes an inline-flex row holding the clamp box, the tooltip, the expand link and the copy control when \`ellipsis\` / \`copyable\` are set — rendered on Astryx tokens, with the tooltip on Astryx \`Tooltip\` and the copy control on Astryx \`IconButton\` + \`navigator.clipboard\`.
+**BAIText** keeps the [Ant Design Typography.Text](https://ant.design/components/typography)-shaped prop surface and the antd-era structure — one inline span, which becomes an inline-flex row holding the clamp box, the tooltip and the copy control when \`ellipsis\` / \`copyable\` are set — rendered on Astryx tokens, with the tooltip on Astryx \`Tooltip\` and the copy control on Astryx \`IconButton\` + \`navigator.clipboard\`.
 
 ## BAI-Specific Props
 | Prop | Type | Default | Description |
@@ -41,7 +41,6 @@ const meta: Meta<typeof BAIText> = {
 | CSS-based Ellipsis | Re-implemented ellipsis using CSS with Safari compatibility |
 | Multi-line Truncation | Supports multi-line ellipsis using \`-webkit-line-clamp\` |
 | Tooltip Integration | Automatically shows tooltip when text is truncated |
-| Expandable Text | Built-in expand/collapse functionality for truncated text |
 | Copy with Ellipsis | Copy functionality works correctly with ellipsis |
 
 ## Ellipsis Config
@@ -49,8 +48,6 @@ const meta: Meta<typeof BAIText> = {
 interface EllipsisConfig {
   rows?: number;          // Number of lines before truncation (default: 1)
   tooltip?: boolean | TooltipProps;  // Show tooltip on hover
-  expandable?: boolean;   // Enable expand/collapse functionality
-  onExpand?: (e, info) => void;  // Callback when expanded/collapsed
 }
 \`\`\`
 
@@ -87,7 +84,7 @@ For all other props, see \`BAIText.tsx\` — the antd-shaped types (\`BAITextEll
     ellipsis: {
       control: { type: 'boolean' },
       description:
-        'Enable CSS-based ellipsis with Safari compatibility (BAI-specific implementation). Can be boolean or EllipsisConfig object with rows, tooltip, expandable options',
+        'Enable CSS-based ellipsis with Safari compatibility (BAI-specific implementation). Can be boolean or EllipsisConfig object with rows and tooltip options',
       table: {
         type: { summary: 'boolean | EllipsisConfig' },
         defaultValue: { summary: 'false' },
@@ -406,96 +403,6 @@ export const EllipsisDisabledTooltip: Story = {
   },
 };
 
-export const ExpandableEllipsis: Story = {
-  name: 'ExpandableEllipsis',
-  render: () => (
-    <BAIFlex direction="column" style={{ width: '100%' }}>
-      <BAICard size="small" style={{ width: 300 }}>
-        <BAIText ellipsis={{ rows: 1, expandable: true }}>
-          This is a long text that will be truncated with ellipsis. Click
-          &quot;Expand&quot; to see the full content and &quot;Collapse&quot; to
-          hide it again.
-        </BAIText>
-      </BAICard>
-      <BAICard size="small" style={{ width: 400 }}>
-        <BAIText ellipsis={{ rows: 2, expandable: true, tooltip: true }}>
-          This is a longer text that spans multiple lines. When it exceeds the
-          specified number of rows, it will be truncated with ellipsis. You can
-          click &quot;Expand&quot; to see the full content. The tooltip will
-          also show the full content when you hover over the truncated text.
-        </BAIText>
-      </BAICard>
-      <BAICard size="small" style={{ width: 250 }}>
-        <BAIText
-          ellipsis={{
-            rows: 3,
-            expandable: true,
-            onExpand: (e) => console.log('Expand/Collapse clicked:', e),
-          }}
-          type="secondary"
-        >
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat.
-        </BAIText>
-      </BAICard>
-    </BAIFlex>
-  ),
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Expandable ellipsis allows users to toggle between truncated and full text views. Click the "Expand" link to show full content and "Collapse" to hide it. Works with both single and multi-line ellipsis.',
-      },
-    },
-  },
-};
-
-export const ExpandableWithOtherFeatures: Story = {
-  name: 'ExpandableWithCombinedFeatures',
-  render: () => (
-    <BAIFlex direction="column" style={{ width: '100%' }}>
-      <BAICard size="small" style={{ width: 350 }}>
-        <BAIText
-          ellipsis={{ rows: 1, expandable: true, tooltip: true }}
-          copyable
-        >
-          /home/user/projects/backend.ai-webui/react/src/components/very/long/path/to/file.tsx
-        </BAIText>
-      </BAICard>
-      <BAICard size="small" style={{ width: 300 }}>
-        <BAIText
-          monospace
-          ellipsis={{ rows: 2, expandable: true }}
-          copyable
-          type="secondary"
-        >
-          1234567890abcdefghijklmnopqrstuvwxyz_very_long_api_key_string_that_needs_expansion
-        </BAIText>
-      </BAICard>
-      <BAICard size="small" style={{ width: 400 }}>
-        <BAIText
-          ellipsis={{ rows: 2, expandable: true, tooltip: true }}
-          type="danger"
-        >
-          Error: Failed to load resource at https://example.com/api/v1/endpoint
-          with status 500. Please check your network connection and server
-          configuration, then try again.
-        </BAIText>
-      </BAICard>
-    </BAIFlex>
-  ),
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Expandable ellipsis works seamlessly with other BAIText features like copyable, monospace, tooltips, and semantic types.',
-      },
-    },
-  },
-};
-
 export const Interactive: Story = {
   name: 'InteractiveText',
   render: () => (
@@ -716,12 +623,12 @@ export const RealWorldExamples: Story = {
           strong
           italic
           underline
-          ellipsis={{ expandable: true, rows: 1, tooltip: true }}
+          ellipsis={{ rows: 1, tooltip: true }}
           copyable
           delete
         >
           Monospace strong italic underlined text with ellipsis and copy for
-          very long expandable content that is also marked as deleted
+          very long content that is also marked as deleted
         </BAIText>
       </BAICard>
     </BAIFlex>

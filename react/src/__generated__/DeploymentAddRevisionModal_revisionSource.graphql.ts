@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<12659dd7e6457bbc8629149bc426a132>>
+ * @generated SignedSource<<dad5fab603f5a51e96c8b1ff69f2d9ef>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,6 +18,10 @@ export type DeploymentAddRevisionModal_revisionSource$data = {
   };
   readonly extraMounts: ReadonlyArray<{
     readonly mountDestination: string | null | undefined;
+    readonly subpath: string | null | undefined;
+    readonly vfolder: {
+      readonly name: string | null | undefined;
+    } | null | undefined;
     readonly vfolderId: string;
   }>;
   readonly imageV2: {
@@ -136,6 +140,13 @@ v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
+  "name": "subpath",
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 };
@@ -243,7 +254,20 @@ return {
       "plural": true,
       "selections": [
         (v3/*: any*/),
-        (v4/*: any*/)
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "VirtualFolderNode",
+          "kind": "LinkedField",
+          "name": "vfolder",
+          "plural": false,
+          "selections": [
+            (v0/*: any*/)
+          ],
+          "storageKey": null
+        },
+        (v4/*: any*/),
+        (v5/*: any*/)
       ],
       "storageKey": null
     },
@@ -341,7 +365,7 @@ return {
           "name": "vfolder",
           "plural": false,
           "selections": [
-            (v5/*: any*/),
+            (v6/*: any*/),
             (v0/*: any*/)
           ],
           "storageKey": null
@@ -354,13 +378,7 @@ return {
           "name": "definitionPath",
           "storageKey": null
         },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "subpath",
-          "storageKey": null
-        }
+        (v5/*: any*/)
       ],
       "storageKey": null
     },
@@ -526,7 +544,7 @@ return {
       "name": "imageV2",
       "plural": false,
       "selections": [
-        (v5/*: any*/),
+        (v6/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -561,6 +579,6 @@ return {
 };
 })();
 
-(node as any).hash = "206d602abc3a614afe686c59a18c1786";
+(node as any).hash = "e23028b634ac7a1e1ac9dd2d9a7a88bf";
 
 export default node;

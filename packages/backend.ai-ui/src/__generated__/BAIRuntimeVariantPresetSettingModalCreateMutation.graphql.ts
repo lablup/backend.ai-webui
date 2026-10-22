@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a37aa2d625a20dc7f55ffa23d15e0485>>
+ * @generated SignedSource<<c73ba4f9d33b5937038c3124678ae31d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -388,16 +388,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "0a1778a65223728aa3df5b947cfac3bc",
+    "cacheID": "5277c3d12819892b1d3500839bd7a6d3",
     "id": null,
     "metadata": {},
     "name": "BAIRuntimeVariantPresetSettingModalCreateMutation",
     "operationKind": "mutation",
-    "text": "mutation BAIRuntimeVariantPresetSettingModalCreateMutation(\n  $input: CreateRuntimeVariantPresetInput!\n) {\n  adminCreateRuntimeVariantPreset(input: $input) {\n    preset {\n      id\n      runtimeVariantId\n      name\n      description\n      rank\n      targetSpec {\n        presetTarget\n        valueType\n        defaultValue\n        key\n      }\n      required @since(version: \"26.4.4\")\n      category\n      displayName\n      uiOption {\n        uiType\n        slider {\n          min\n          max\n          step\n        }\n        number {\n          min\n          max\n        }\n        choices {\n          items {\n            value\n            label\n          }\n        }\n        text {\n          placeholder\n        }\n      }\n      createdAt\n      updatedAt\n    }\n  }\n}\n"
+    "text": "mutation BAIRuntimeVariantPresetSettingModalCreateMutation(\n  $input: CreateRuntimeVariantPresetInput!\n) {\n  adminCreateRuntimeVariantPreset(input: $input) {\n    preset {\n      id\n      runtimeVariantId\n      name\n      description\n      rank\n      targetSpec {\n        presetTarget\n        valueType\n        defaultValue\n        key\n      }\n      required\n      category\n      displayName\n      uiOption {\n        uiType\n        slider {\n          min\n          max\n          step\n        }\n        number {\n          min\n          max\n        }\n        choices {\n          items {\n            value\n            label\n          }\n        }\n        text {\n          placeholder\n        }\n      }\n      createdAt\n      updatedAt\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "ddf7197428aaeb05dfbcfa0c35a45bae";
+(node as any).hash = "f5c2aa2ae0219bbcabcbe9d6c146e344";
 
 export default node;

@@ -1,31 +1,19 @@
 ---
 name: dev-server
 description: >
-  Start the project's development server. For backend.ai-webui this means
-  `pnpm dev` (no separate wsproxy needed by default). For other projects,
-  read the project's README.md and package.json to determine the right command.
-  When a Claude Code `/color <name>` slash command is visible in the current
-  conversation history, set VITE_THEME_HEADER_COLOR to the matching hex so the dev
-  server's header reflects this Claude session's color. When `/rename <name>`
-  is visible, slugify the name and pass it as PORTLESS_APP_NAME so the dev
-  URL reflects the session name; dev.mjs prepends the branch's FR number and
-  the PR number itself, and derives a word from the PR title when there is no
-  /rename, so pass the word only. When the current branch's PR description names
-  a backend test server (bare IP, `host:port`, or full URL), set
-  VITE_DEFAULT_API_ENDPOINT so the login screen pre-fills that endpoint; when a
-  live session is connected to a different backend a dev-only banner flags the
-  mismatch instead of forcing a logout. When the user supplies dev test
-  credentials, set VITE_DEFAULT_EMAIL / VITE_DEFAULT_PASSWORD to pre-fill the
-  login form too. Dev servers run without the resident TypeScript program
-  (~1.3 GB per server) by default; pass VITE_DEV_TYPECHECK=on only when the
-  user explicitly asked for type checking, and say either way in the reply.
+  Start the project's development server (`pnpm dev` for backend.ai-webui;
+  discovered from README/package.json elsewhere), deriving the header color,
+  app name, default backend endpoint and login pre-fill from this session's
+  /color and /rename, the branch's PR description, user-supplied test
+  credentials and the team dev catalog (fw:webui-connection-info), and
+  advertising the server on the PRs it serves.
   Trigger on: "start dev server", "run dev", "pnpm dev 띄워", "개발 서버 띄워",
   "dev 서버 시작", "boot the dev environment", "실행해줘 dev".
 ---
 
 # Dev Server
 
-Starts the dev server with optional `VITE_THEME_HEADER_COLOR`, `PORTLESS_APP_NAME`, `VITE_DEFAULT_API_ENDPOINT`, `VITE_DEV_TYPECHECK`, and (when the user supplies them) `VITE_DEFAULT_EMAIL` / `VITE_DEFAULT_PASSWORD`, derived from this Claude Code session's `/color` / `/rename` history, the current branch's PR description, and the user's stated test credentials.
+Starts the dev server with optional `VITE_THEME_HEADER_COLOR`, `PORTLESS_APP_NAME`, `VITE_DEFAULT_API_ENDPOINT`, `VITE_DEV_TYPECHECK`, and (when the user supplies them) `VITE_DEFAULT_EMAIL` / `VITE_DEFAULT_PASSWORD`, derived from this Claude Code session's `/color` / `/rename` history, the current branch's PR description, the user's stated test credentials, and — when those name no backend or account — the team dev catalog.
 
 ## 1. Decide the command
 
@@ -55,6 +43,7 @@ Do not assume `pnpm dev`. Discover the right command:
 Scan the **current conversation** (this session's prior turns, including `<command-name>` blocks and your own messages) for the most recent successful `/color <name>` invocation.
 
 **What counts as "successful":**
+
 - A `<command-name>/color</command-name>` block whose `<command-args>` is exactly one of: `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink`, `cyan`, `default`.
 - AND the accompanying `<local-command-stdout>` does NOT start with `Invalid color`.
 - If multiple `/color` calls appear, take the **most recent** one.
@@ -63,16 +52,16 @@ Scan the **current conversation** (this session's prior turns, including `<comma
 
 **Hex mapping** (use exactly these values):
 
-| Name | Hex |
-|------|-----|
-| `red` | `#DC2626` |
-| `blue` | `#2563EB` |
-| `green` | `#16A34A` |
+| Name     | Hex       |
+| -------- | --------- |
+| `red`    | `#DC2626` |
+| `blue`   | `#2563EB` |
+| `green`  | `#16A34A` |
 | `yellow` | `#CA8A04` |
 | `purple` | `#7C3AED` |
 | `orange` | `#EA580C` |
-| `pink` | `#DB2777` |
-| `cyan` | `#0891B2` |
+| `pink`   | `#DB2777` |
+| `cyan`   | `#0891B2` |
 
 Do not invent additional names or alternate hex values. If the user's `/color` arg doesn't match the table exactly, treat it as unset.
 
@@ -98,11 +87,13 @@ So there is exactly one question for you to answer: **is there a `/rename` to us
    name. Every fallback is already handled.
 
 **Never pass the FR number or the PR number yourself.** `dev.mjs` derives the issue key from
-the branch and looks the PR up with one cached `gh` call, and it strips either identifier from
+the branch — `fr-N` for a legacy `FR-N` branch, `gh-N` on the `type/gh-N-slug` branch of a
+GitHub issue (`gh-10144-pr10150-drawer`) — and looks the PR up with one cached `gh` call, and it strips either identifier from
 your string if you pass it anyway — so `PORTLESS_APP_NAME=fr-3665` just yields `fr-3665-pr9049`,
 losing the descriptive part for nothing.
 
 **Slug rules** (apply to the `/rename` arg before passing as `PORTLESS_APP_NAME`):
+
 - Lowercase.
 - Replace any character that isn't `[a-z0-9-]` with `-` (spaces, underscores, dots, slashes, non-ASCII all become `-`).
 - Collapse repeated `-` into a single `-`.
@@ -137,16 +128,17 @@ This skill auto-derives the value from the current branch's PR description so de
    gh pr view --json body -q '.body' 2>/dev/null
    ```
    Skip silently when the branch has no PR.
-3. **None of the above** — omit the env var. Do **not** invent a default endpoint.
+3. **The team dev catalog** — when neither names an endpoint, pick a server with the `fw:webui-connection-info` skill (live, manager version and `config.toml` switches that fit what the PR changes) and read its endpoint from `pnpm run dev-env list --json` (it never prints a password). Say which server you picked and why.
+4. **None of the above** (no catalog reachable, nothing fits) — omit the env var. Do **not** invent a default endpoint.
 
 **Conversion rules** (apply to the candidate string before passing as `VITE_DEFAULT_API_ENDPOINT`):
 
-| Input | Output |
-|---|---|
-| `10.0.1.5` (bare IPv4) | `http://10.0.1.5:8090` |
-| `10.0.1.5:9090` (bare `host:port`) | `http://10.0.1.5:9090` |
-| `manager.example.com` (bare hostname) | `http://manager.example.com:8090` |
-| `manager.example.com:9090` | `http://manager.example.com:9090` |
+| Input                                   | Output                                    |
+| --------------------------------------- | ----------------------------------------- |
+| `10.0.1.5` (bare IPv4)                  | `http://10.0.1.5:8090`                    |
+| `10.0.1.5:9090` (bare `host:port`)      | `http://10.0.1.5:9090`                    |
+| `manager.example.com` (bare hostname)   | `http://manager.example.com:8090`         |
+| `manager.example.com:9090`              | `http://manager.example.com:9090`         |
 | `http://...` / `https://...` (full URL) | use as-is, with any trailing `/` stripped |
 
 The bare-IP-defaults-to-`8090` rule reflects the project convention that PR descriptions usually list just an IP and the WebUI talks to the manager on `:8090`.
@@ -165,13 +157,13 @@ The bare-IP-defaults-to-`8090` rule reflects the project convention that PR desc
 
 The IPv4 alternative is octet-bounded (rejects `999.999.999.999` and other invalid quads) but still matches version-shaped strings like `1.2.3.4` — Pass 1's contextual filter is what keeps version numbers in changelogs from being adopted. The hostname alternative accepts both 2-label hosts (`example.com`, `manager.com`) and longer ones (`api.staging.example.com`) — TLD is the trailing `[a-z]{2,}` segment.
 
-**Reject the following candidates** even if the regex matches them (apply *after* matching, *before* converting):
+**Reject the following candidates** even if the regex matches them (apply _after_ matching, _before_ converting):
 
 - **Documentation / source-control hosts**: any host equal to or ending in `github.com`, `gitlab.com`, `bitbucket.org`, `lablup.atlassian.net`, `readthedocs.io`, or any host starting with `docs.`. These are referenced from PR bodies all the time and are never the dev backend.
 - **Filename-shaped tails**: if the matched candidate's last segment (after the final `.`, before any `:port` or `/path`) is in this denylist, drop it: `ts | tsx | js | jsx | mjs | cjs | md | mdx | py | rs | go | json | yaml | yml | toml | html | htm | css | scss | svg | png | jpg | jpeg | gif | webp | sh | lock | txt | log`. Catches `app.test.ts`, `README.md`, `package-lock.json`, etc.
 - **Loopback / link-local IPs**: `127.0.0.1`, `0.0.0.0`, `169.254.*.*` — these are almost never the dev backend a PR is targeting; treat as a false match.
 
-If the matched candidate is rejected, keep scanning (within the same pass) for the next candidate. If a pass finishes with all candidates rejected, fall through to the next pass; if both passes finish with no usable candidate, omit `VITE_DEFAULT_API_ENDPOINT`.
+If the matched candidate is rejected, keep scanning (within the same pass) for the next candidate. If a pass finishes with all candidates rejected, fall through to the next pass; if both passes finish with no usable candidate, continue to step 3 (the team dev catalog) and omit `VITE_DEFAULT_API_ENDPOINT` only if that also yields nothing.
 
 **Announce what you did.** When you start the dev server, briefly say which source the endpoint came from and — if you considered and rejected one — what you skipped. Example:
 
@@ -189,7 +181,8 @@ If the resolved value matches the existing default backend the WebUI would other
 
 1. **User explicitly supplied credentials** in the prompt or conversation (e.g. "log in as `admin@lablup.com` / `wJalrXUt`", "use the domain-admin test account") → set both vars from what they said.
 2. **A shared team test server's credentials are already known** to this session — credentials the user pasted earlier for that box → reuse them.
-3. **Otherwise omit both.** Do **not** scrape passwords out of the PR body, invent credentials, or reuse `e2e/envs/.env.playwright` values unless the user pointed you at them. Set the email alone (without a password) only if that is all the user gave.
+3. **The endpoint is a server in the team dev catalog** (picked in 2c step 3, or a PR-body / user endpoint that matches a catalog server's `endpoint`) → choose the account with `fw:webui-connection-info` (least-privileged role that can show the change) and take `email` / `password` from `pnpm run dev-env get <server> <role|email> --json`. A catalog password is one the team agreed may be shared on the dev VPN, and the board already serves it to the same audience the share URL reaches, so it is pre-filled even though step 5 advertises the server — that is what lets a reviewer sign in from the PR link. A password that is not in the catalog (user-supplied, steps 1–2) follows the caveats below. When the account has no password, set the email alone — the person types the password at login. Do not echo the password back in your reply.
+4. **Otherwise omit both.** Do **not** scrape passwords out of the PR body, invent credentials, or reuse `e2e/envs/.env.playwright` values unless the user pointed you at them. Set the email alone (without a password) only if that is all the user gave.
 
 **Security caveats (state them when you use these):**
 
@@ -206,18 +199,54 @@ Do not try to infer the answer from how many servers are running, whether the se
 
 `vite-plugin-checker` holds a resident TypeScript program so type errors appear in the dev terminal and as a browser overlay. That program is the single most expensive thing in a dev server — measured on this repo's `react/` server, module graph warmed:
 
-| | vite RSS |
-|---|---|
-| checker on | 2,195 MB |
-| checker off | 853 MB |
+|             | vite RSS |
+| ----------- | -------- |
+| checker on  | 2,195 MB |
+| checker off | 853 MB   |
 
 A dev server here is usually one of several, next to editors, agents, and other worktrees, so that ~1.3 GB decides how many fit on the machine.
 
 This is the behaviour of `react/vite.config.ts` itself, not something this skill imposes — a hand-typed `pnpm dev` is checker-less too.
 
-**Say which mode you started, in your reply, every time.** Checker off: name the fallback — e.g. *"Type checking is off in this server (the default); `bash scripts/verify.sh` before committing, or `pnpm --filter ./react exec tsc --noEmit` for a one-shot check."* Checker on: say so, and that it costs ~1.3 GB. Vite prints a matching warning on startup when the checker is off. Never let a checker-less server be reported as if it were type-clean.
+**Say which mode you started, in your reply, every time.** Checker off: name the fallback — e.g. _"Type checking is off in this server (the default); `bash scripts/verify.sh` before committing, or `pnpm --filter ./react exec tsc --noEmit` for a one-shot check."_ Checker on: say so, and that it costs ~1.3 GB. Vite prints a matching warning on startup when the checker is off. Never let a checker-less server be reported as if it were type-clean.
 
 Running without it costs no real type safety: `scripts/verify.sh`, the Husky pre-commit hook, and CI each run one-shot `tsc --noEmit` independently of the dev server, and the IDE's own tsserver still flags errors while editing. What is lost is only the in-terminal / in-browser feedback loop while the server runs. If a specific check is needed on a checker-less server, run `pnpm --filter ./react exec tsc --noEmit` once rather than restarting with the checker enabled — a one-shot check frees its memory when it exits, a resident watcher does not.
+
+## 2f. Make sure the worktree has a `config.toml` (webui only)
+
+`config.toml` is git-ignored, so a fresh worktree has none — and Vite then answers
+`/config.toml` with `index.html` (the SPA fallback), every switch takes its default, and
+nothing reports it: a change behind `resources.openPortToPublic` or
+`general.enableModelFolders` simply never shows. `pnpm run dev` prints one warning line
+when the file is missing; do not boot past it.
+
+**Write it with `pnpm run dev-env use`**, the same command 2c–2d already lean on: it builds
+`config.toml` from `config.toml.sample`, the catalog server's probed switches and any
+`--set` overrides (DEV_ENVIRONMENT.md, "Dev servers and test accounts"). When the endpoint
+is a catalog server, run it for that server and account once before boot; it writes
+`.env.development.local` and `e2e/envs/.env.playwright` in the same go, which is the 2c/2d
+pre-fill. A `config.toml` that is already there and **not** written by `use` (no
+`# Written by \`pnpm run dev-env use\`` first line) is the user's: keep it, `--set` still
+applies to it in place.
+
+**Switches the PR needs: the `Config:` line.** A PR whose change sits behind a switch says
+so in its body with one line — `Config: resources.openPortToPublic = true` (several,
+comma-separated: `Config: resources.openPortToPublic = true, general.enableModelFolders = true`).
+Read it from the same `gh pr view --json body` as 2c and pass each pair as
+`--set <section>.<key>=<value>`; repeat it on every `use`, since `use` rewrites the file whole.
+When you are the one opening the PR and your change is behind a `baiClient._config.*` /
+`loginConfig` switch, write that line into the PR body yourself — the reviewer's server
+and the walkthrough are minted from it. Values are TOML literals (`true`, `3`,
+`"SESSION"`); the key is the one the app reads, which `pnpm run dev-env config <server> --all`
+lists and `react/src/helper/loginConfig.ts` maps.
+
+When the endpoint is not a catalog server (a user-named box, a PR IP), `use` cannot be
+run: copy `config.toml.sample` to `config.toml` and apply the `Config:` pairs by hand, and
+say so.
+
+**Verify after boot** (section 6): `curl -sk -o /dev/null -w '%{content_type}' <portless url>/config.toml`
+must not print `text/html`. `text/html` means the file is still missing — fix it before
+advertising the server; a reviewer cannot tell a missing switch from a broken change.
 
 ## 3. Compose the run
 
@@ -285,7 +314,7 @@ bash .claude/skills/dev-server/scripts/advertise.sh advertise --app "$BAI_DEV_AP
 ```
 
 Idempotent: run it again and it edits the same comments. Pass `--teams-thread <url>` (for the
-running PR) or `--teams-thread <pr>=<url>` when Jira has no thread recorded for a PR. Every
+running PR) or `--teams-thread <pr>=<url>` when the PR's GitHub issue has no thread recorded. Every
 line the script prints goes to stderr, so its exit status is not what tells you it worked —
 read the lines.
 
@@ -317,10 +346,14 @@ bash .claude/skills/dev-server/scripts/advertise.sh stop --app "$BAI_DEV_APP"
 - **Teardown never writes a PR's first comment.** `stop` edits only the comments the boot
   record has ids for. A PR whose comment could not be written at boot (`commentId: null`) is
   left alone rather than told a server it never heard about has stopped.
-- **The Teams thread** for each served PR comes from that PR's `Resolves … (FR-XXXX)` key and one
-  Jira GET (`customfield_10176`) at boot — never at request time. Missing is recorded as `null`.
-  The credential reaches `curl` on stdin via `--config -`, never in argv, because `/proc` is
-  readable by every other process on the box.
+- **The Teams thread** for each served PR is its GitHub issue's `Teams thread` field (an
+  organization Issue field, matched by name, read with one `gh api graphql` call at boot —
+  never at request time). The issue is the PR body's `Resolves #N`, else the branch's `gh-N`,
+  else a legacy `FR-XXXX` key (PR body or branch) resolved to its GitHub clone — the issue
+  whose body carries the line `JIRA Issue: FR-XXXX`, found with one GitHub search and cached
+  for good under `~/.cache/backend.ai-webui/fr-clones/`. The record carries `githubIssue: N`,
+  plus `jiraKey` when a legacy key was named (a label only — nothing calls Jira). No issue, no
+  field, no value or no permission to read it is recorded as `null`.
 
 Logic that needs no network is unit-tested: `bash .claude/skills/dev-server/scripts/test-advertise.sh`.
 
@@ -331,8 +364,8 @@ Once the server is up, tell the user **both** the Portless (HTTPS) URL and the u
 ### For backend.ai-webui
 
 - **Portless URL** — **always read from Portless's stdout**, do not construct it yourself:
-  - Portless prints the full URL (scheme + host + port) on startup, e.g. `https://fr-2701.localhost:1356`. Read that line from the background task's output and use it verbatim.
-  - **Never assume port `1355`.** The `dev.mjs` script *requests* `-p 1355`, but if another Portless daemon is already bound there (e.g. another Claude session / worktree), the new instance ends up on a different port (1356, 1357, …). The skill author repeatedly got this wrong by quoting "1355" from this doc instead of reading the actual log line.
+  - Portless prints the full URL (scheme + host + port) on startup, e.g. `https://fr-3665-pr9049-statusline.localhost:1356`. Read that line from the background task's output and use it verbatim.
+  - **Never assume port `1355`.** The `dev.mjs` script _requests_ `-p 1355`, but if another Portless daemon is already bound there (e.g. another Claude session / worktree), the new instance ends up on a different port (1356, 1357, …).
   - Same rule for the subdomain: even though step 2b decided the app name, take the hostname Portless prints — it's the source of truth in case Portless re-sanitized or fell back.
 - **React URL** — the local Vite dev server URL:
   - The webui uses **Vite** (`VITE v6.x ready in <ms>` line), so the `Local:` URL is printed within ~1s of startup — no need to wait for a long bundle compile.
@@ -342,11 +375,15 @@ Once the server is up, tell the user **both** the Portless (HTTPS) URL and the u
 Run a short Bash with an until-loop polling the background bash's output file for **both** the Portless URL line (the `https://…localhost:<port>` line Portless prints on startup) and Vite's `Local:` line (fallback bound ~10–15s, since Vite is fast). Once both URLs are known, present them like this — exactly two lines, no preamble:
 
 ```
-Portless: https://fr-2701.localhost:1356
+Portless: https://fr-3665-pr9049-statusline.localhost:1356
 React:    http://127.0.0.1:4627/
 ```
 
 The Portless port shown above is just an example — use whatever Portless actually printed.
+
+Before announcing, run the `config.toml` check from 2f against the Portless URL: a `text/html`
+content type means the worktree has no `config.toml` and the server is showing defaults, not
+the branch's switches — fix it (2f) before step 5 advertises the server.
 
 If after ~15s the React URL still hasn't appeared (very rare with Vite), announce just the Portless URL and tell the user the React port hasn't been printed yet — don't block indefinitely.
 
@@ -356,11 +393,11 @@ Many projects don't use Portless. Read the dev server's stdout for whatever URL(
 
 ## 7. Edge cases
 
-- **User overrides via env (webui)**: Vite's `loadEnv()` reads `VITE_THEME_HEADER_COLOR`, `VITE_DEFAULT_API_ENDPOINT`, `VITE_DEFAULT_EMAIL`, `VITE_DEFAULT_PASSWORD` from `.env.development.local` and from the shell automatically. If the user already has any of them set, do not override — the user-set value wins. For `PORTLESS_APP_NAME`, the same rule applies: if it's already exported in the inherited env, treat the user-set value as authoritative.
+- **User overrides via env (webui)**: Vite's `loadEnv()` reads `VITE_THEME_HEADER_COLOR`, `VITE_DEFAULT_API_ENDPOINT`, `VITE_DEFAULT_EMAIL`, `VITE_DEFAULT_PASSWORD` from `.env.development.local` and from the shell automatically. If the user already has any of them set, do not override — the user-set value wins. A pick that `pnpm run dev-env use` wrote into this worktree's `.env.development.local` counts as user-set: skip 2c step 3 when the endpoint is already set, and skip 2d step 3 entirely when `VITE_DEFAULT_EMAIL` is already set — an email without a password is a deliberate `--no-password` choice, so never add a catalog password next to it (fetch one only when the user asks, for that exact email). Each worktree has its own file and each server gets its own command-line prefix, so servers in different worktrees can point at different catalog servers and accounts. For `PORTLESS_APP_NAME`, the same rule applies: if it's already exported in the inherited env, treat the user-set value as authoritative.
 - **User overrides via prompt**: if the user says "use a green header" or "no color this time" or "name the dev URL <foo>" or "ignore the PR's IP, use 10.0.0.7 instead", honor their words over the conversation-history and PR-description values.
-- **Multiple Claude windows / worktrees**: each Claude Code session has its own conversation, so both color and app name are naturally session-scoped. Don't try to read either from disk — there's no shared state (built-in `/color` and `/rename` are in-memory only). For `VITE_DEFAULT_API_ENDPOINT`, the *PR* is the shared source of truth; reading it via `gh pr view` works the same from any worktree on that branch.
+- **Multiple Claude windows / worktrees**: each Claude Code session has its own conversation, so both color and app name are naturally session-scoped. Don't try to read either from disk — there's no shared state (built-in `/color` and `/rename` are in-memory only). For `VITE_DEFAULT_API_ENDPOINT`, the _PR_ is the shared source of truth, then the team dev catalog; both read the same from any worktree on that branch.
 - **No `/color` in history but user mentioned a color**: treat the user's mention as the source of truth. If they said "use orange", map `orange` → `#EA580C` and prefix accordingly.
-- **PR description mentions multiple addresses or none**: take the **first** match for the multi-match case; for the no-match case, omit `VITE_DEFAULT_API_ENDPOINT` rather than guessing. The login form will fall back to `localStorage` / `config.toml` like before.
+- **PR description mentions multiple addresses or none**: take the **first** match for the multi-match case; for the no-match case, continue to the team dev catalog (2c step 3), and omit `VITE_DEFAULT_API_ENDPOINT` rather than guessing only when that yields nothing too. The login form then falls back to `localStorage` / `config.toml` like before.
 
 ## 8. Out of scope
 
@@ -368,7 +405,7 @@ Many projects don't use Portless. Read the dev server's stdout for whatever URL(
 - **The sanctioned side effects are exactly three**: the env var prefix, and — on a
   gateway-joined box — the dev-server comment on each served PR plus the boot record under
   `~/.local/state/fw/dev-servers/`, both written only by `advertise.sh` (step 5). Nothing
-  else touches GitHub, Jira or disk: no labels, no PR body edits, no reviewers, no registry
+  else touches GitHub or disk: no labels, no PR body edits, no reviewers, no registry
   entries, and never a comment on a PR this server does not serve.
 - Don't install deps, run lint, or do any other "while we're here" steps. Just start the
   server and advertise it.

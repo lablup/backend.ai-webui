@@ -29,12 +29,12 @@
  antd-identical API, which is why the reconciliations above still read against
  antd's semantics. These adapters are only the control layer.
 */
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { NumberInput } from '@astryxdesign/core/NumberInput';
-import { Switch } from '@astryxdesign/core/Switch';
-import { TextArea } from '@astryxdesign/core/TextArea';
-import { TextInput } from '@astryxdesign/core/TextInput';
-import type { SizeValue } from '@astryxdesign/core/utils';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
+import { Switch } from '@lablup/ui-common/Switch';
+import { TextArea } from '@lablup/ui-common/TextArea';
+import { TextInput } from '@lablup/ui-common/TextInput';
+import type { SizeValue } from '@lablup/ui-common/utils';
 import React from 'react';
 import type { CSSProperties } from 'react';
 
@@ -232,6 +232,8 @@ export interface AstryxFormNumberInputProps {
   units?: string;
   placeholder?: string;
   disabled?: boolean;
+  /** Shows a clear button; clearing (or emptying the text) emits `null`. */
+  hasClear?: boolean;
   width?: SizeValue;
   [key: `data-${string}`]: string | undefined;
 }
@@ -246,6 +248,7 @@ export const AstryxFormNumberInput: React.FC<AstryxFormNumberInputProps> = ({
   units,
   placeholder,
   disabled,
+  hasClear,
   width = '100%',
   ...rest
 }) => {
@@ -254,7 +257,8 @@ export const AstryxFormNumberInput: React.FC<AstryxFormNumberInputProps> = ({
     <NumberInput
       {...(rest as object)}
       value={value ?? null}
-      onChange={(next) => onChange?.(next)}
+      hasClear={hasClear}
+      onChange={(next: number | null) => onChange?.(next)}
       label={label}
       isLabelHidden
       min={min}

@@ -22,7 +22,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
-import { theme } from '../theme-shim';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIButton,
   BAICard,
@@ -85,21 +85,11 @@ const ProjectPage = () => {
   const { t } = useTranslation();
   const { logger } = useBAILogger();
   const { message } = App.useApp();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { getErrorMessage } = useErrorMessageResolver();
   const relayEnvironment = useRelayEnvironment();
   const baiClient = useSuspendedBackendaiClient();
-  // RoleFilter.mappedScope (the role lookup this action relies on) exists
-  // from manager 26.8.0; hide the action on older managers.
-  const supportsProjectAdminSetting = baiClient.supports(
-    'role-mapped-scope-filter',
-  );
-  // From 26.9.0 the project admin grant is a `scope_admin` permission rather
-  // than a name-suffixed SYSTEM role.
-  const matchesProjectAdminByScopeAdminPermission = baiClient.supports(
-    'rbac-single-scope-role',
-  );
-  const supportsTypeFilter = baiClient.supports('group-nodes-type-filter');
+  const supportsTypeFilter = baiClient.isManagerVersionCompatibleWith('26.9.0');
   const [openSettingModal, { toggle: toggleSettingModal }] = useToggle(false);
   const [openBulkEditModal, { toggle: toggleBulkEditModal }] = useToggle(false);
   const [selectedProjectList, setSelectedProjectList] = useState<ProjectNode[]>(
@@ -242,10 +232,7 @@ const ProjectPage = () => {
       return;
     }
     const variables: ProjectAdminSettingModalQuery['variables'] = {
-      filter: buildProjectAdminRoleFilter(
-        project.row_id,
-        matchesProjectAdminByScopeAdminPermission,
-      ),
+      filter: buildProjectAdminRoleFilter(project.row_id),
       limit: 100,
       offset: 0,
     };
@@ -265,10 +252,7 @@ const ProjectPage = () => {
     }
     // The project's admin roles are resolved here, before the modal opens; a
     // project without one only gets an error message.
-    const adminRoles = selectProjectAdminRoles(
-      roleData,
-      matchesProjectAdminByScopeAdminPermission,
-    );
+    const adminRoles = selectProjectAdminRoles(roleData);
     if (_.isEmpty(adminRoles)) {
       message.error(
         t('project.ProjectAdminRoleNotFound', {
@@ -435,11 +419,6 @@ const ProjectPage = () => {
                   propertyLabel: t('project.Name'),
                   type: 'string',
                 },
-                {
-                  key: 'domain_name',
-                  propertyLabel: t('project.Domain'),
-                  type: 'string',
-                },
                 ...(supportsTypeFilter
                   ? [
                       {
@@ -500,7 +479,9 @@ const ProjectPage = () => {
                     was a second, weaker channel for the same string. */}
                 <BAIButton
                   title={t('project.BulkEdit')}
-                  icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
+                  icon={
+                    <SquarePenIcon style={{ color: token('--color-info') }} />
+                  }
                   onClick={toggleBulkEditModal}
                 />
               </>
@@ -561,18 +542,14 @@ const ProjectPage = () => {
                           title={record.name}
                           showActions="always"
                           actions={[
-                            ...(supportsProjectAdminSetting
-                              ? [
-                                  {
-                                    key: 'set-project-admin',
-                                    title: t('project.SetProjectAdmin'),
-                                    icon: <ShieldUserIcon />,
-                                    disabled: isModelStore,
-                                    action: () =>
-                                      openProjectAdminSettingModal(record),
-                                  },
-                                ]
-                              : []),
+                            {
+                              key: 'set-project-admin',
+                              title: t('project.SetProjectAdmin'),
+                              icon: <ShieldUserIcon />,
+                              disabled: isModelStore,
+                              action: () =>
+                                openProjectAdminSettingModal(record),
+                            },
                             {
                               key: 'edit',
                               title: t('project.EditProject'),

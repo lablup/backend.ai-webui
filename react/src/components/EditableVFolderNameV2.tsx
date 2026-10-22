@@ -24,19 +24,19 @@ import { EditableVFolderNameV2RefetchQuery } from '../__generated__/EditableVFol
 import { App } from '../app-shim';
 // Ticket 34: `Form` is the self-hosted engine; `Form.Item` IS BAIFormItem.
 import { Form } from '../form-engine';
+import { isDeletedCategory } from '../helper/vfolderStatus';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
-import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import { ProjectContextOrNull } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Link } from '@astryxdesign/core/Link';
-import { HStack } from '@astryxdesign/core/Stack';
-import { Heading, Text } from '@astryxdesign/core/Text';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Link } from '@lablup/ui-common/Link';
+import { HStack } from '@lablup/ui-common/Stack';
+import { Heading, Text } from '@lablup/ui-common/Text';
 import { toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
 import { PencilIcon } from 'lucide-react';
 import React, { useState } from 'react';

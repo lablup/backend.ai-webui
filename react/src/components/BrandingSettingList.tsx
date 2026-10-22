@@ -2,7 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useDefaultTheme } from '../hooks/useDefaultTheme';
+import { App } from '../app-shim';
+import {
+  APPEARANCE_SCHEMA_VERSION,
+  DOMAIN_APPEARANCE_CONFIG_KEY,
+} from '../helper/customThemeConfig';
+import { useUpdatePublicDomainAppConfig } from '../hooks/useAppConfig';
+import { usePreviewThemeConfig } from '../hooks/usePreviewThemeConfig';
 import FontFamilySettingItem from './BrandingSettingItems/FontFamilySettingItem';
 import LogoPreviewer, {
   getLogoThemeKey,
@@ -10,16 +16,21 @@ import LogoPreviewer, {
 } from './BrandingSettingItems/LogoPreviewer';
 import LogoSizeSettingItem from './BrandingSettingItems/LogoSizeSettingItem';
 import ThemeColorPicker, {
-  ThemeConfigPath,
+  AppearanceSeedPath,
 } from './BrandingSettingItems/ThemeColorPicker';
 import ThemeJsonConfigModal from './BrandingSettingItems/ThemeJsonConfigModal';
 import SettingList, { SettingGroup } from './SettingList';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
-import { Settings, Fullscreen } from 'lucide-react';
-import { useState } from 'react';
+import { Button } from '@lablup/ui-common/Button';
+import {
+  BAIFlex,
+  BAIUnmountAfterClose,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
+import * as _ from 'lodash-es';
+import { Settings, Fullscreen, Check } from 'lucide-react';
+import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useBlocker } from 'react-router-dom';
 
 interface BrandingSettingListProps {}
 
@@ -27,17 +38,111 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
   'use memo';
 
   const { t } = useTranslation();
+  const { message, modal } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
 
   const [openThemeConfigModal, setOpenThemeConfigModal] = useState(false);
 
-  const { resetDefaultTheme } = useDefaultTheme();
+  const {
+    themeConfig,
+    appliedThemeConfig,
+    hasPreviewThemeConfig,
+    updateThemeConfigValue,
+    clearPreviewThemeConfig,
+  } = usePreviewThemeConfig();
+  // Saved WHOLE — families included — as this domain's slice of the public
+  // document; reads replace wholesale rather than merging (FR-1964).
+  const updatePublicDomainAppConfig = useUpdatePublicDomainAppConfig();
 
-  const resetColorThemeConfig = (tokenName: ThemeConfigPath) => {
-    resetDefaultTheme([`light.${tokenName}`, `dark.${tokenName}`]);
+  // Edits live only while this page is open: an entry (refresh included)
+  // starts from the applied document, and leaving drops them.
+  const discardPreview = useEffectEvent(() => {
+    clearPreviewThemeConfig();
+  });
+  useEffect(() => {
+    discardPreview();
+    return () => discardPreview();
+  }, []);
+
+  // Set before the post-Apply reload so neither guard asks to confirm it.
+  const isLeavingAfterApplyRef = useRef(false);
+  const blocker = useBlocker(
+    ({ currentLocation, nextLocation }) =>
+      hasPreviewThemeConfig &&
+      currentLocation.pathname !== nextLocation.pathname,
+  );
+  const confirmLeave = useEffectEvent(() => {
+    modal.confirm({
+      title: t('userSettings.LeaveWithoutApplyingTheme'),
+      content: t('userSettings.LeaveWithoutApplyingThemeDesc'),
+      okText: t('button.Discard'),
+      okButtonProps: { danger: true },
+      cancelText: t('button.Cancel'),
+      onOk: () => blocker.proceed?.(),
+      onCancel: () => blocker.reset?.(),
+    });
+  });
+  useEffect(() => {
+    if (blocker.state === 'blocked') {
+      confirmLeave();
+    }
+  }, [blocker.state]);
+  // Refresh / tab close can only show the browser's own prompt.
+  const shouldConfirmUnload = useEffectEvent(
+    () => hasPreviewThemeConfig && !isLeavingAfterApplyRef.current,
+  );
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (shouldConfirmUnload()) {
+        e.preventDefault();
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
+  const applyThemeToDomain = async () => {
+    if (!themeConfig) {
+      message.error(t('userSettings.FailedToLoadDefaultThemeConfig'));
+      return;
+    }
+    // A domain-wide write: confirm first; the ok button waits on the save.
+    modal.confirm({
+      title: t('userSettings.ApplyThemeToDomain'),
+      content: t('userSettings.ApplyThemeToDomainDesc'),
+      okText: t('button.Apply'),
+      cancelText: t('button.Cancel'),
+      onOk: async () => {
+        try {
+          await updatePublicDomainAppConfig(DOMAIN_APPEARANCE_CONFIG_KEY, {
+            ...themeConfig,
+            schemaVersion: APPEARANCE_SCHEMA_VERSION,
+          });
+          // The reloaded page renders the applied document — that IS the
+          // feedback; the anonymous read path has no refresh API (FR-1964).
+          isLeavingAfterApplyRef.current = true;
+          clearPreviewThemeConfig();
+          window.location.reload();
+        } catch (error) {
+          message.error(getErrorMessage(error));
+        }
+      },
+    });
+  };
+
+  /** Restores the given paths to the applied document's values. */
+  const resetToApplied = (paths: string[]) => {
+    for (const path of paths) {
+      updateThemeConfigValue(path, _.get(appliedThemeConfig, path));
+    }
+  };
+
+  const resetColorThemeConfig = (seedPath: AppearanceSeedPath) => {
+    resetToApplied([seedPath]);
   };
 
   const resetLogoThemeConfig = (mode: LogoPreviewerMode) => {
-    resetDefaultTheme([`logo.${getLogoThemeKey(mode)}`]);
+    resetToApplied([`branding.logo.${getLogoThemeKey(mode)}`]);
   };
 
   const resetLogoSizeConfig = (
@@ -49,18 +154,14 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
       login: 'loginLogoSize',
       about: 'aboutLogoSize',
     } as const;
-    resetDefaultTheme([
-      `logo.${keyMap[logoType]}`,
-      ...(logoType === 'about' ? ['logo.aboutModalSize'] : []),
+    resetToApplied([
+      `branding.logo.${keyMap[logoType]}`,
+      ...(logoType === 'about' ? ['branding.logo.aboutModalSize'] : []),
     ]);
   };
 
   const resetFontFamilyConfig = () => {
-    resetDefaultTheme([
-      'fontFamily',
-      'light.token.fontFamily',
-      'dark.token.fontFamily',
-    ]);
+    resetToApplied(['theme.fontFamily']);
   };
 
   const settingGroups: Array<SettingGroup> = [
@@ -72,63 +173,66 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
           type: 'custom',
           title: t('userSettings.theme.PrimaryColor'),
           description: t('userSettings.theme.PrimaryColorDesc'),
-          children: <ThemeColorPicker tokenName="token.colorPrimary" />,
+          children: (
+            <ThemeColorPicker seedPath="theme.families.default.seeds.accent" />
+          ),
           onReset: () => {
-            resetColorThemeConfig('token.colorPrimary');
+            resetColorThemeConfig('theme.families.default.seeds.accent');
           },
         },
         {
           type: 'custom',
           title: t('userSettings.theme.HeaderBg'),
           description: t('userSettings.theme.HeaderBgDesc'),
-          children: <ThemeColorPicker tokenName="components.Layout.headerBg" />,
+          children: (
+            <ThemeColorPicker seedPath="theme.families.default.headerBg" />
+          ),
           onReset: () => {
-            resetColorThemeConfig('components.Layout.headerBg');
+            resetColorThemeConfig('theme.families.default.headerBg');
           },
         },
         {
           type: 'custom',
           title: t('userSettings.theme.LinkColor'),
           description: t('userSettings.theme.LinkColorDesc'),
-          children: <ThemeColorPicker tokenName="token.colorLink" />,
+          children: (
+            <ThemeColorPicker seedPath="theme.families.default.seeds.link" />
+          ),
           onReset: () => {
-            resetColorThemeConfig('token.colorLink');
+            resetColorThemeConfig('theme.families.default.seeds.link');
           },
         },
         {
           type: 'custom',
           title: t('userSettings.theme.InfoColor'),
           description: t('userSettings.theme.InfoColorDesc'),
-          children: <ThemeColorPicker tokenName="token.colorInfo" />,
+          children: (
+            <ThemeColorPicker seedPath="theme.families.default.seeds.info" />
+          ),
           onReset: () => {
-            resetColorThemeConfig('token.colorInfo');
+            resetColorThemeConfig('theme.families.default.seeds.info');
           },
         },
         {
           type: 'custom',
           title: t('userSettings.theme.ErrorColor'),
           description: t('userSettings.theme.ErrorColorDesc'),
-          children: <ThemeColorPicker tokenName="token.colorError" />,
+          children: (
+            <ThemeColorPicker seedPath="theme.families.default.seeds.error" />
+          ),
           onReset: () => {
-            resetColorThemeConfig('token.colorError');
+            resetColorThemeConfig('theme.families.default.seeds.error');
           },
         },
         {
           type: 'custom',
           title: t('userSettings.theme.SuccessColor'),
           description: t('userSettings.theme.SuccessColorDesc'),
-          children: <ThemeColorPicker tokenName="token.colorSuccess" />,
+          children: (
+            <ThemeColorPicker seedPath="theme.families.default.seeds.success" />
+          ),
           onReset: () => {
-            resetColorThemeConfig('token.colorSuccess');
-          },
-        },
-        {
-          type: 'custom',
-          title: t('userSettings.theme.TextColor'),
-          description: t('userSettings.theme.TextColorDesc'),
-          children: <ThemeColorPicker tokenName="token.colorText" />,
-          onReset: () => {
-            resetColorThemeConfig('token.colorText');
+            resetColorThemeConfig('theme.families.default.seeds.success');
           },
         },
       ],
@@ -275,48 +379,48 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
 
   return (
     <BAIFlex direction="column" gap="md" align="stretch">
-      {/* antd `Alert description` (no `message`) -> Banner. Banner's `title`
-          is unconditionally required (ground-truth .d.ts, not just the doc
-          narrative) — the single line of text goes there. */}
-      <Banner
-        title={t('userSettings.theme.CustomThemeSettingAlert')}
-        status="warning"
-      />
       <SettingList
         showSearchBar
         showResetButton
         onReset={() => {
-          resetDefaultTheme();
+          clearPreviewThemeConfig();
         }}
         settingGroups={settingGroups}
         primaryButton={
           <Button
             variant="primary"
-            icon={<Fullscreen size="1em" />}
-            label={t('userSettings.theme.Preview')}
-            clickAction={async () => {
-              const previewWindow = window.open(
-                window.location.origin,
-                '_blank',
-              );
-              previewWindow?.addEventListener('load', () => {
-                previewWindow?.sessionStorage.setItem(
-                  'isThemePreviewMode',
-                  'true',
-                );
-                previewWindow?.location.reload();
-              });
-            }}
+            icon={<Check size="1em" />}
+            label={t('button.Apply')}
+            clickAction={applyThemeToDomain}
           />
         }
         extraButton={
-          <Button
-            icon={<Settings size="1em" />}
-            label={t('theme.button.JsonConfig')}
-            clickAction={async () => {
-              setOpenThemeConfigModal(true);
-            }}
-          />
+          <BAIFlex gap="sm">
+            <Button
+              icon={<Settings size="1em" />}
+              label={t('theme.button.JsonConfig')}
+              clickAction={async () => {
+                setOpenThemeConfigModal(true);
+              }}
+            />
+            <Button
+              icon={<Fullscreen size="1em" />}
+              label={t('userSettings.theme.Preview')}
+              clickAction={async () => {
+                const previewWindow = window.open(
+                  window.location.origin,
+                  '_blank',
+                );
+                previewWindow?.addEventListener('load', () => {
+                  previewWindow?.sessionStorage.setItem(
+                    'isThemePreviewMode',
+                    'true',
+                  );
+                  previewWindow?.location.reload();
+                });
+              }}
+            />
+          </BAIFlex>
         }
       />
       <BAIUnmountAfterClose>

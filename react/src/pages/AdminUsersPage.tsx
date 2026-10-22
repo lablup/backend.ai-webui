@@ -18,7 +18,11 @@ import AdminUserManagement, {
 } from '../components/AdminUserManagement';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
-import { useBrowserPopstateEffect, useKeyedSnapshot } from '../hooks';
+import {
+  useBrowserPopstateEffect,
+  useKeyedSnapshot,
+  useCurrentDomain,
+} from '../hooks';
 import { useSuspendedTOTPSupported } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 // The tab-list item shape now comes from `BAICard` itself (`BAICardTabItem`,
@@ -91,6 +95,16 @@ const AdminUsersPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
   const isTOTPSupported = useSuspendedTOTPSupported();
+  const { name: currentDomain, id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
+  // The list is fixed to the signed-in domain; the condition never reaches the URL.
+  const withCurrentDomain = (
+    variables: Omit<UsersVariables, 'scope'>,
+  ): UsersVariables => ({
+    ...variables,
+    filter: { ...variables.filter, domainName: { equals: currentDomain } },
+    scope: domainScope,
+  });
 
   const [queryParams, setQueryParams] = useQueryStates(
     {
@@ -136,9 +150,9 @@ const AdminUsersPage: React.FC = () => {
     const order = _.includes(availableUserV2SorterValues, params.order)
       ? params.order
       : null;
-    return {
+    return withCurrentDomain({
       filter: {
-        ..._.omit(filter ?? {}, 'status'),
+        ..._.omit(filter ?? {}, ['status', 'domainName']),
         status:
           params.status === 'ACTIVE'
             ? { equals: 'ACTIVE' }
@@ -148,7 +162,7 @@ const AdminUsersPage: React.FC = () => {
       limit: pagination.pageSize,
       offset: (pagination.current - 1) * pagination.pageSize,
       isNotSupportTotp: !isTOTPSupported,
-    };
+    });
   };
 
   const credentialsVariablesOf = (
@@ -178,7 +192,7 @@ const AdminUsersPage: React.FC = () => {
     };
     if (tab === 'users') {
       const v = variables as UsersVariables;
-      const restFilter = _.omit(v.filter ?? {}, 'status');
+      const restFilter = _.omit(v.filter ?? {}, ['status', 'domainName']);
       return {
         queryParams: {
           filter: _.isEmpty(restFilter) ? null : JSON.stringify(restFilter),
@@ -205,7 +219,7 @@ const AdminUsersPage: React.FC = () => {
     variables: UsersVariables,
     options?: UseQueryLoaderLoadQueryOptions,
   ) => {
-    loadUsersQuery(variables, {
+    loadUsersQuery(withCurrentDomain(variables), {
       fetchPolicy: 'store-and-network',
       ...options,
     });
@@ -260,6 +274,8 @@ const AdminUsersPage: React.FC = () => {
   // Back/forward: the hook holds the callback until `queryParams` and
   // `tablePaginationOption` describe the URL the user navigated to.
   useBrowserPopstateEffect(loadTabFromQueryParams);
+  // Nothing queries a router navigation to this same path; an in-app link to
+  // another tab or filter here must reload the document instead (#10265).
 
   const tabItems: BAICardTabItem[] = [
     {

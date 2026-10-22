@@ -22,18 +22,17 @@ import {
   AstryxFormTagsInput,
 } from '../astryxFormControls';
 import AppLaunchConfirmationModal from './AppLaunchConfirmationModal';
-import SFTPConnectionInfoModal from './SFTPConnectionInfoModal';
 import TCPConnectionInfoModal from './TCPConnectionInfoModal';
 import TensorboardPathModal from './TensorboardPathModal';
 import VNCConnectionInfoModal from './VNCConnectionInfoModal';
 import VSCodeDesktopConnectionModal from './VSCodeDesktopConnectionModal';
 import XRDPConnectionInfoModal from './XRDPConnectionInfoModal';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { Grid } from '@astryxdesign/core/Grid';
-import { Heading } from '@astryxdesign/core/Heading';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Text } from '@astryxdesign/core/Text';
-import { TextInput } from '@astryxdesign/core/TextInput';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { Grid } from '@lablup/ui-common/Grid';
+import { Heading } from '@lablup/ui-common/Heading';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Text } from '@lablup/ui-common/Text';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import * as stylex from '@stylexjs/stylex';
 // FRONTIER (ticket 17): the Form ENGINE is self-hosted since ticket 34 (live
 // again since ticket 35). The CONTROLS inside the items are Astryx now — the
@@ -48,9 +47,14 @@ import {
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { useEffect, useRef, useState } from 'react';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
+
+// Carries SourceCodeView (shiki); load it when the SFTP modal first opens.
+const SFTPConnectionInfoModal = React.lazy(
+  () => import('./SFTPConnectionInfoModal'),
+);
 
 // PILOT-DECISION: antd `ModalProps` -> BUI `BAIModalProps` (§6 — a type-only
 // antd import is still an antd import). The render was already `BAIModal`, so
@@ -563,17 +567,23 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
       </BAIModal>
       {session ? (
         <>
-          <BAIUnmountAfterClose>
-            <SFTPConnectionInfoModal
-              sessionFrgmt={session}
-              open={sftpModalState.open}
-              host={sftpModalState.host}
-              port={sftpModalState.port}
-              onCancel={() => {
-                setSftpModalState({ open: false, host: '127.0.0.1', port: 0 });
-              }}
-            />
-          </BAIUnmountAfterClose>
+          <Suspense fallback={null}>
+            <BAIUnmountAfterClose>
+              <SFTPConnectionInfoModal
+                sessionFrgmt={session}
+                open={sftpModalState.open}
+                host={sftpModalState.host}
+                port={sftpModalState.port}
+                onCancel={() => {
+                  setSftpModalState({
+                    open: false,
+                    host: '127.0.0.1',
+                    port: 0,
+                  });
+                }}
+              />
+            </BAIUnmountAfterClose>
+          </Suspense>
           <BAIUnmountAfterClose>
             <VNCConnectionInfoModal
               open={vncModalState.open}

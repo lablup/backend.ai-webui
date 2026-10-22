@@ -2,10 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { resolveDetailLogoSrc } from '../helper/logoSource';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import { BAILink, BAIModal, BAIModalProps } from 'backend.ai-ui';
 
 interface AboutBackendAIModalProps extends BAIModalProps {
@@ -15,7 +16,7 @@ const AboutBackendAIModal = ({
   onRequestClose,
   ...props
 }: AboutBackendAIModalProps) => {
-  const { themeConfig } = useCustomThemeConfig();
+  const { rawThemeConfig } = useCustomThemeConfig();
   const { isDarkMode } = useThemeMode();
   const baiClient = useSuspendedBackendaiClient();
   // @ts-ignore
@@ -35,24 +36,22 @@ const AboutBackendAIModal = ({
       title={
         <img
           className="about-logo-img"
-          alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
+          alt={rawThemeConfig?.branding?.logo?.alt || 'Backend.AI Logo'}
           src={
-            isDarkMode
-              ? themeConfig?.logo?.aboutLogoSrcDark ||
-                themeConfig?.logo?.src ||
-                '/manifest/backend.ai-white-text.svg'
-              : themeConfig?.logo?.aboutLogoSrc ||
-                themeConfig?.logo?.srcDark ||
-                '/manifest/backend.ai-white-text.svg'
+            resolveDetailLogoSrc(
+              rawThemeConfig?.branding?.logo,
+              'about',
+              isDarkMode ? 'dark' : 'light',
+            ).src
           }
           style={{
             width:
-              themeConfig?.logo?.aboutLogoSize?.width ??
-              themeConfig?.logo?.aboutModalSize?.width ??
+              rawThemeConfig?.branding?.logo?.aboutLogoSize?.width ??
+              rawThemeConfig?.branding?.logo?.aboutModalSize?.width ??
               159,
             height:
-              themeConfig?.logo?.aboutLogoSize?.height ??
-              themeConfig?.logo?.aboutModalSize?.height ??
+              rawThemeConfig?.branding?.logo?.aboutLogoSize?.height ??
+              rawThemeConfig?.branding?.logo?.aboutModalSize?.height ??
               24,
             cursor: 'pointer',
           }}

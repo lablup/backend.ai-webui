@@ -12,9 +12,11 @@
  */
 import GlobalSearchPaletteButton from './GlobalSearchPaletteButton';
 import type { SearchHit } from './types';
+import { MODAL_OPEN_ATTRIBUTE, Modal } from '@lablup/ui-common/Modal';
 import '@testing-library/jest-dom';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { BAIDrawer } from 'backend.ai-ui';
 import { Suspense } from 'react';
 import {
   afterAll,
@@ -380,6 +382,35 @@ describe('GlobalSearchPalette', () => {
     );
   });
 
+  it.each([
+    ['a modal', () => <Modal isOpen onOpenChange={vi.fn()} title="Busy" />],
+    ['a scrimmed drawer', () => <BAIDrawer open title="Busy" />],
+  ])(
+    'does nothing on mod+k while %s is open, and opens once it closes',
+    async (_, overlay) => {
+      const { rerender } = render(
+        <>
+          <GlobalSearchPaletteButton />
+          {overlay()}
+        </>,
+      );
+      expect(
+        document.querySelector(`[${MODAL_OPEN_ATTRIBUTE}]`),
+      ).not.toBeNull();
+
+      pressModK();
+      // The palette chunk is preloaded, so a mount would land within a tick.
+      await act(() => new Promise((resolve) => setTimeout(resolve, 50)));
+      expect(screen.queryByText('Sessions')).not.toBeInTheDocument();
+
+      rerender(<GlobalSearchPaletteButton />);
+      expect(pressModK()).toBe(true);
+      await waitFor(() =>
+        expect(screen.getByText('Sessions')).toBeInTheDocument(),
+      );
+    },
+  );
+
   it('lists the bootstrap rows grouped by the hit group', async () => {
     await openPalette();
 
@@ -450,6 +481,49 @@ describe('GlobalSearchPalette', () => {
     await waitFor(() =>
       expect(screen.queryByText('Auto logout')).not.toBeInTheDocument(),
     );
+  });
+
+  it('reloads instead of routing when the hit is on the current path', async () => {
+    const assign = vi.fn();
+    vi.stubGlobal('location', {
+      pathname: '/usersettings',
+      search: '?tab=logs',
+      assign,
+    });
+    try {
+      const user = await openPalette();
+
+      await user.click(screen.getByText('Auto logout'));
+
+      await waitFor(() =>
+        expect(assign).toHaveBeenCalledWith(
+          '/usersettings?tab=general&setting=userSettings.AutoLogout',
+        ),
+      );
+      expect(navigate).not.toHaveBeenCalled();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it('routes on the current path in Electron, which cannot deep-load', async () => {
+    const assign = vi.fn();
+    vi.stubGlobal('location', {
+      pathname: '/usersettings',
+      search: '?tab=logs',
+      assign,
+    });
+    vi.stubGlobal('isElectron', true);
+    try {
+      const user = await openPalette();
+
+      await user.click(screen.getByText('Auto logout'));
+
+      await waitFor(() => expect(navigate).toHaveBeenCalledTimes(1));
+      expect(assign).not.toHaveBeenCalled();
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 
   it('runs an action hit with the assembled context instead of navigating', async () => {

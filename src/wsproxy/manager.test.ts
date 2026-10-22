@@ -471,3 +471,31 @@ describe('EXT_HTTP_PROXY propagation (FR-3836)', () => {
     expect(constructorArgs).toEqual([[env, extProxyURL]]);
   });
 });
+
+describe('GET /sshd connection page (FR-4166)', () => {
+  let manager: any;
+  let baseURL: string;
+
+  beforeEach(async () => {
+    manager = new Manager('127.0.0.1', '127.0.0.1', 0);
+    const port = await manager.start();
+    baseURL = `http://127.0.0.1:${port}`;
+  });
+
+  afterEach(async () => {
+    await new Promise<void>((resolve) =>
+      manager.listener.close(() => resolve()),
+    );
+  });
+
+  it('serves the SSH connection page for the URL that /add returns for sshd', async () => {
+    const res = await fetch(`${baseURL}/sshd?port=2200&dummy=1`);
+    expect(res.status).toBe(200);
+    expect(await res.text()).toContain('2200');
+  });
+
+  it('rejects an invalid port with 400', async () => {
+    const res = await fetch(`${baseURL}/sshd?port=abc`);
+    expect(res.status).toBe(400);
+  });
+});

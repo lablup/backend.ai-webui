@@ -12,17 +12,20 @@ import type {
 import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { buildPath } from '../helper/pathBuilder';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import {
+  useSuspendedBackendaiClient,
+  useWebUINavigate,
+  useCurrentDomain,
+} from '../hooks';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from './DeploymentSettingModal';
-import { Link } from '@astryxdesign/core/Link';
-import { Text } from '@astryxdesign/core/Text';
+import { Link } from '@lablup/ui-common/Link';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIAdminProjectSelect,
   BAIDeleteConfirmModal,
-  BAIDeploymentTagTokens,
   BAIFlex,
   BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilter,
@@ -30,6 +33,8 @@ import {
   BAINameActionCell,
   type BAITableSettings,
   BAIUnmountAfterClose,
+  BAIScopedUserSelect,
+  availableDeploymentSorterKeys,
   DeploymentOrderValue,
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -37,10 +42,15 @@ import {
   isValidUUID,
   toLocalId,
   useBAILogger,
+  BAIEntityLabelSettingModal,
+  toEntityLabelFilter,
+  useIsLabelableEntityType,
+  type ModelDeploymentNodeInList,
+  BAISelect,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Trash2, SquarePenIcon } from 'lucide-react';
-import { useDeferredValue, useState } from 'react';
+import { useDeferredValue, useState, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -50,7 +60,7 @@ import {
   UseQueryLoaderLoadQueryOptions,
 } from 'react-relay';
 
-type DeploymentStatusCategory = 'running' | 'finished';
+export type DeploymentStatusCategory = 'running' | 'finished';
 
 export const AdminDeploymentQuery = graphql`
   query AdminDeploymentQuery(
@@ -75,7 +85,7 @@ export const AdminDeploymentQuery = graphql`
             name
             status
           }
-          currentRevision @since(version: "26.4.3") {
+          currentRevision {
             id
             revisionNumber
             ...DeploymentRevisionDetail_revision
@@ -96,12 +106,27 @@ export interface AdminDeploymentProps {
 }
 
 const finishedStatuses: ReadonlyArray<DeploymentStatus> = ['STOPPED'];
-const statusCategoryFilterFor = (
+
+/** The hard-coded status scope behind the Running / Terminated toggle. */
+export const statusCategoryFilterFor = (
   category: DeploymentStatusCategory,
 ): DeploymentFilter =>
   category === 'finished'
     ? { status: { in: finishedStatuses } }
     : { status: { notIn: finishedStatuses } };
+
+/**
+ * `order` is `[-]<camelCaseKey>`; a key the table cannot sort by is dropped.
+ * Shared with `AdminDeploymentPage`, which sanitizes URL-supplied `order`
+ * before the tab's first query runs.
+ */
+export const sanitizeDeploymentOrder = (
+  order: string | null | undefined,
+): string | null => {
+  if (!order) return null;
+  const key = order.startsWith('-') ? order.slice(1) : order;
+  return _.includes(availableDeploymentSorterKeys, key) ? order : null;
+};
 
 const AdminDeployment = ({
   queryRef,
@@ -109,6 +134,8 @@ const AdminDeployment = ({
   tableSettings,
 }: AdminDeploymentProps) => {
   'use memo';
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
@@ -121,11 +148,13 @@ const AdminDeployment = ({
   const [deletingDeploymentId, setDeletingDeploymentId] = useState<
     string | null
   >(null);
+  const isLabelable = useIsLabelableEntityType('deployment');
+  const [labelingDeployment, setLabelingDeployment] =
+    useState<ModelDeploymentNodeInList | null>(null);
   const [drawerRevisionId, setDrawerRevisionId] = useState<string | null>(null);
 
-  const supportsExtendedFilter = baiClient.supports(
-    'model-deployment-extended-filter',
-  );
+  const supportsReplicaNestedFilter =
+    baiClient.isManagerVersionCompatibleWith('26.8.0');
 
   const mergedFilter = queryRef.variables.filter as
     DeploymentFilter | undefined;
@@ -189,11 +218,6 @@ const AdminDeployment = ({
       type: 'string',
     },
     {
-      key: 'tags',
-      propertyLabel: t('deployment.filter.Tags'),
-      type: 'string',
-    },
-    {
       key: 'endpointUrl',
       propertyLabel: t('deployment.filter.EndpointUrl'),
       type: 'string',
@@ -203,17 +227,12 @@ const AdminDeployment = ({
       propertyLabel: t('deployment.filter.OpenToPublic'),
       type: 'boolean',
     },
-    supportsExtendedFilter && {
-      key: 'domainName',
-      propertyLabel: t('deployment.filter.DomainName'),
-      type: 'string' as const,
-    },
-    supportsExtendedFilter && {
+    {
       key: 'resourceGroup',
       propertyLabel: t('deployment.filter.ResourceGroup'),
       type: 'string' as const,
     },
-    supportsExtendedFilter && {
+    {
       key: 'projectId',
       propertyLabel: t('deployment.Project'),
       type: 'uuid' as const,
@@ -234,20 +253,101 @@ const AdminDeployment = ({
         />
       ),
     },
-    supportsExtendedFilter && {
+    {
       key: 'createdAt',
       propertyLabel: t('deployment.filter.CreatedAt'),
       type: 'datetime' as const,
       operators: ['after' as const, 'before' as const],
       defaultOperator: 'after' as const,
     },
-    supportsExtendedFilter && {
+    {
       key: 'destroyedAt',
       propertyLabel: t('deployment.filter.DestroyedAt'),
       type: 'datetime' as const,
       operators: ['after' as const, 'before' as const],
       defaultOperator: 'after' as const,
     },
+    {
+      key: 'createdUserId',
+      propertyLabel: t('deployment.Owner'),
+      type: 'uuid' as const,
+      fixedOperator: 'equals' as const,
+      rule: uuidRule,
+      renderInput: ({ onAddCondition, value, isDisabled }) => (
+        <Suspense fallback={<BAISelect disabled loading />}>
+          <BAIScopedUserSelect
+            scope={domainScope}
+            valuePropName="id"
+            label={t('deployment.Owner')}
+            isLabelHidden
+            value={value}
+            isDisabled={isDisabled}
+            onChange={(next, option) =>
+              // The picker emits the user UUID; forward the option label
+              // (email) so the condition tag stays readable.
+              onAddCondition(
+                next as string | undefined,
+                Array.isArray(option) ? option[0]?.label : option?.label,
+              )
+            }
+          />
+        </Suspense>
+      ),
+    },
+    // `replicas.some.X` nests as ReplicaNestedFilter -> ReplicaFilter -> the
+    // per-field filter, which is what `buildNestedFilter` emits from the key.
+    supportsReplicaNestedFilter && {
+      key: 'replicas.some.status',
+      propertyLabel: t('deployment.filter.ReplicaStatus'),
+      type: 'enum' as const,
+      fixedOperator: 'equals' as const,
+      strictSelection: true,
+      options: [
+        { label: t('replicaStatus.Provisioning'), value: 'PROVISIONING' },
+        { label: t('replicaStatus.Running'), value: 'RUNNING' },
+        { label: t('replicaStatus.Terminating'), value: 'TERMINATING' },
+        { label: t('replicaStatus.Terminated'), value: 'TERMINATED' },
+        { label: t('replicaStatus.FailedToStart'), value: 'FAILED_TO_START' },
+      ],
+    },
+    supportsReplicaNestedFilter && {
+      key: 'replicas.some.healthStatus',
+      propertyLabel: t('deployment.filter.ReplicaHealthStatus'),
+      type: 'enum' as const,
+      fixedOperator: 'equals' as const,
+      strictSelection: true,
+      options: [
+        { label: t('replicaStatus.NotChecked'), value: 'NOT_CHECKED' },
+        { label: t('replicaStatus.Healthy'), value: 'HEALTHY' },
+        { label: t('replicaStatus.Unhealthy'), value: 'UNHEALTHY' },
+        { label: t('replicaStatus.Degraded'), value: 'DEGRADED' },
+      ],
+    },
+    supportsReplicaNestedFilter && {
+      key: 'replicas.some.trafficStatus',
+      propertyLabel: t('deployment.filter.ReplicaTrafficStatus'),
+      type: 'enum' as const,
+      fixedOperator: 'equals' as const,
+      strictSelection: true,
+      options: [
+        { label: t('replicaStatus.Active'), value: 'ACTIVE' },
+        { label: t('replicaStatus.Inactive'), value: 'INACTIVE' },
+      ],
+    },
+    ...(isLabelable
+      ? [
+          {
+            key: 'labels.some.key',
+            propertyLabel: t('entityLabel.LabelKey'),
+            type: 'string' as const,
+          },
+          {
+            key: 'labels.some.value',
+            propertyLabel: t('entityLabel.LabelValue'),
+            type: 'string' as const,
+          },
+        ]
+      : []),
   ]);
 
   return (
@@ -307,6 +407,21 @@ const AdminDeployment = ({
           />
         </BAIFlex>
         <BAIModelDeploymentNodes
+          onEditLabels={isLabelable ? setLabelingDeployment : undefined}
+          showLabelsByDefault
+          onLabelClick={(label) => {
+            onReload(
+              {
+                ...queryRef.variables,
+                filter: {
+                  ...toEntityLabelFilter(label),
+                  ...statusCategoryFilterFor(statusCategory),
+                },
+                offset: 0,
+              },
+              { fetchPolicy: 'network-only' },
+            );
+          }}
           deploymentsFrgmt={deploymentNodes}
           loading={isRefetching}
           order={order}
@@ -347,13 +462,13 @@ const AdminDeployment = ({
               'name',
               'currentRevisionNumber',
               'status',
+              'labels',
               'replicaSummary',
               'model',
               'createdAt',
               'owner',
               'id',
               'endpointUrl',
-              'tags',
               'updatedAt',
               'openToPublic',
               'resourceGroup',
@@ -364,6 +479,7 @@ const AdminDeployment = ({
               'name',
               'currentRevisionNumber',
               'status',
+              'labels',
               'replicaSummary',
               'model',
               'createdAt',
@@ -436,34 +552,31 @@ const AdminDeployment = ({
                     },
                   };
                 }
-                if (col.key === 'tags') {
-                  return {
-                    ...col,
-                    defaultHidden,
-                    render: (_value, record) => (
-                      <BAIDeploymentTagTokens
-                        metadataFrgmt={record.metadata}
-                        stopRowClick
-                        onTagClick={(tag) => {
-                          webUINavigate({
-                            pathname: buildPath('admin', 'deployments'),
-                            search: new URLSearchParams({
-                              filter: JSON.stringify({
-                                tags: { iContains: tag },
-                              }),
-                            }).toString(),
-                          });
-                        }}
-                        fallback={<Text color="secondary">-</Text>}
-                      />
-                    ),
-                  };
-                }
                 return { ...col, defaultHidden };
               });
           }}
         />
       </BAIFlex>
+      <BAIEntityLabelSettingModal
+        open={!!labelingDeployment}
+        entityType="deployment"
+        targets={
+          labelingDeployment
+            ? [
+                {
+                  entityId: labelingDeployment.entityId,
+                  name: labelingDeployment.metadata?.name ?? undefined,
+                },
+              ]
+            : []
+        }
+        entityLabelsFrgmt={labelingDeployment?.entityLabels}
+        onRequestClose={(success) => {
+          setLabelingDeployment(null);
+          if (success)
+            onReload(queryRef.variables, { fetchPolicy: 'network-only' });
+        }}
+      />
       {/* Edit-only call site: the deployment already belongs to a project, so
           the props union rejects a `project` here entirely (ADR-0001). That
           member requires a non-null fragment, hence the guard. */}

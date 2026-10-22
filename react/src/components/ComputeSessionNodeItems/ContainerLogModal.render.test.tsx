@@ -51,7 +51,8 @@ vi.mock('../../hooks', () => ({
   useSuspendedBackendaiClient: () => ({ get_logs: getLogs }),
 }));
 
-vi.mock('../../theme-shim', () => ({
+vi.mock('backend.ai-ui', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('backend.ai-ui')>()),
   useBAIBreakpoint: () => ({ md: true }),
 }));
 

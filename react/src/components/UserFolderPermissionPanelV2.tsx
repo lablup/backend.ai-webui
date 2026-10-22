@@ -7,20 +7,23 @@ import {
   type KeypairResourcePolicyV2Filter,
 } from '../__generated__/UserFolderPermissionPanelV2Query.graphql';
 import { UserFolderPermissionPanelV2_storageVolumeFrgmt$key } from '../__generated__/UserFolderPermissionPanelV2_storageVolumeFrgmt.graphql';
+import { useCurrentDomain } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import KeypairResourcePolicyStoragePermissionTableV2 from './KeypairResourcePolicyStoragePermissionTableV2';
-import { Banner } from '@astryxdesign/core/Banner';
+import { Banner } from '@lablup/ui-common/Banner';
 import {
   BAICard,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
-  BAIUserSelect,
+  BAIScopedUserSelect,
   INITIAL_FETCH_KEY,
   useFetchKey,
+  BAISelect,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, {
+  Suspense,
   useDeferredValue,
   useEffect,
   useEffectEvent,
@@ -37,6 +40,8 @@ const UserFolderPermissionPanelV2: React.FC<
   UserFolderPermissionPanelV2Props
 > = ({ storageVolumeFrgmt }) => {
   'use memo';
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
   const { t } = useTranslation();
 
   const storageVolume = useFragment(
@@ -131,6 +136,7 @@ const UserFolderPermissionPanelV2: React.FC<
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
       <Banner
+        role="status"
         status="info"
         title={t('storageHost.permission.UserFolderPermissionsNote')}
       />
@@ -156,25 +162,28 @@ const UserFolderPermissionPanelV2: React.FC<
                   type: 'uuid',
                   fixedOperator: 'equals',
                   renderInput: ({ onAddCondition, value, isDisabled }) => (
-                    <BAIUserSelect
-                      // The filter row already prints the property label.
-                      label={t('storageHost.permission.User')}
-                      isLabelHidden
-                      valuePropName="id"
-                      value={value}
-                      isDisabled={isDisabled}
-                      onChange={(value, option) =>
-                        // Single-select mode (no `multiple` prop) always emits
-                        // a single value, so the P3C-1 `option` argument is the
-                        // single labelInValue pair. Pass its label (email) so
-                        // the condition tag stays human-readable while the UUID
-                        // serializes into the GraphQL filter.
-                        onAddCondition(
-                          value as string | undefined,
-                          _.castArray(option ?? [])[0]?.label,
-                        )
-                      }
-                    />
+                    <Suspense fallback={<BAISelect disabled loading />}>
+                      <BAIScopedUserSelect
+                        scope={domainScope}
+                        // The filter row already prints the property label.
+                        label={t('storageHost.permission.User')}
+                        isLabelHidden
+                        valuePropName="id"
+                        value={value}
+                        isDisabled={isDisabled}
+                        onChange={(value, option) =>
+                          // Single-select mode (no `multiple` prop) always emits
+                          // a single value, so the P3C-1 `option` argument is the
+                          // single labelInValue pair. Pass its label (email) so
+                          // the condition tag stays human-readable while the UUID
+                          // serializes into the GraphQL filter.
+                          onAddCondition(
+                            value as string | undefined,
+                            _.castArray(option ?? [])[0]?.label,
+                          )
+                        }
+                      />
+                    </Suspense>
                   ),
                 },
               ]}

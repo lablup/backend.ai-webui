@@ -13,15 +13,15 @@ import {
 import { RBACManagementPageScopeTypesQuery } from '../__generated__/RBACManagementPageScopeTypesQuery.graphql';
 import { App } from '../app-shim';
 import BAIRadioGroup from '../components/BAIRadioGroup';
-import RoleDetailDrawer from '../components/RoleDetailDrawer';
+import RoleDetailDrawerV2 from '../components/RoleDetailDrawerV2';
 import RoleFormModal from '../components/RoleFormModal';
 import RoleNodes, {
   type RoleNodeInList,
   availableRoleSorterValues,
 } from '../components/RoleNodes';
+import RolePresetListTab from '../components/RolePresetListTab';
 import { convertToOrderBy } from '../helper';
 import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import {
   BAIButton,
@@ -33,10 +33,11 @@ import {
   BAINameActionCell,
   BAISelect,
   type BAISelectProps,
-  BAIUserSelect,
+  BAISkeleton,
+  BAIUnmountAfterClose,
+  BAIAdminUserV2Select,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
-  toLocalId,
   useBAILogger,
   useFetchKey,
   useMutationWithPromise,
@@ -53,6 +54,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 const statusFilterValues = ['ACTIVE', 'DELETED'] as const;
+const tabValues = ['roles', 'presets'] as const;
 
 // Since 26.9.0 scope types are lowercase names the manager lists, not an enum
 // the client could enumerate.
@@ -87,11 +89,10 @@ const ScopeTypeSelect: React.FC<Omit<BAISelectProps, 'options'>> = (props) => {
   );
 };
 
-const RBACManagementPage: React.FC = () => {
+const RoleListTab: React.FC = () => {
   'use memo';
 
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -146,7 +147,7 @@ const RBACManagementPage: React.FC = () => {
             node {
               id
               ...RoleNodesFragment
-              ...RoleDetailDrawerFragment
+              ...RoleDetailDrawerV2Fragment
             }
           }
         }
@@ -209,7 +210,7 @@ const RBACManagementPage: React.FC = () => {
   );
   const handleDeactivateRole = (role: RoleNodeInList) => {
     commitDeactivateRole({
-      variables: { input: { id: toLocalId(role.id) } },
+      variables: { input: { id: role.entityId } },
       onCompleted: (_data, errors) => {
         if (errors && errors.length > 0) {
           logger.error(errors[0]);
@@ -229,7 +230,7 @@ const RBACManagementPage: React.FC = () => {
   const handleActivateRole = (role: RoleNodeInList) => {
     commitActivateRole({
       variables: {
-        input: { id: toLocalId(role.id), status: 'ACTIVE' },
+        input: { id: role.entityId, status: 'ACTIVE' },
       },
       onCompleted: (_data, errors) => {
         if (errors && errors.length > 0) {
@@ -258,15 +259,7 @@ const RBACManagementPage: React.FC = () => {
   const selectedRole = roleNodes.find((role) => role?.id === selectedRoleId);
 
   return (
-    <BAICard
-      activeTabKey="roles"
-      tabList={[
-        {
-          key: 'roles',
-          label: t('webui.menu.RBACManagement'),
-        },
-      ]}
-    >
+    <>
       <BAIFlex direction="column" align="stretch" gap={'sm'}>
         <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
           <BAIFlex
@@ -305,33 +298,35 @@ const RBACManagementPage: React.FC = () => {
                   ],
                   strictSelection: true,
                 },
-                baiClient?.supports('rbac-filter-assigned-user') && {
+                {
                   key: 'assignedUser.userId',
                   propertyLabel: t('rbac.AssignedUser'),
                   type: 'uuid',
                   fixedOperator: 'equals',
                   renderInput: ({ onAddCondition, value, isDisabled }) => (
-                    <BAIUserSelect
-                      valuePropName="id"
-                      value={value}
-                      isDisabled={isDisabled}
-                      label={t('rbac.AssignedUser')}
-                      isLabelHidden
-                      onChange={(value, option) =>
-                        // The picker emits the user UUID; forward the option
-                        // label (email) so the condition tag stays readable
-                        // (P3C-1 keeps the 2nd argument on this sibling).
-                        onAddCondition(
-                          value as string | undefined,
-                          Array.isArray(option)
-                            ? option[0]?.label
-                            : option?.label,
-                        )
-                      }
-                    />
+                    <Suspense fallback={<BAISelect disabled loading />}>
+                      <BAIAdminUserV2Select
+                        valuePropName="id"
+                        value={value}
+                        isDisabled={isDisabled}
+                        label={t('rbac.AssignedUser')}
+                        isLabelHidden
+                        onChange={(value, option) =>
+                          // The picker emits the user UUID; forward the option
+                          // label (email) so the condition tag stays readable
+                          // (P3C-1 keeps the 2nd argument on this sibling).
+                          onAddCondition(
+                            value as string | undefined,
+                            Array.isArray(option)
+                              ? option[0]?.label
+                              : option?.label,
+                          )
+                        }
+                      />
+                    </Suspense>
                   ),
                 },
-                baiClient?.supports('role-mapped-scope-filter') && {
+                {
                   key: 'mappedScope.scopeType',
                   propertyLabel: t('rbac.ScopeType'),
                   type: 'enum',
@@ -359,11 +354,9 @@ const RBACManagementPage: React.FC = () => {
                     </Suspense>
                   ),
                 },
-                baiClient?.supports('role-mapped-scope-filter') && {
+                {
                   key: 'mappedScope.scopeId',
                   propertyLabel: t('rbac.ScopeRawId'),
-                  // `equals` is the one operator both the 26.8 StringFilter
-                  // and the 26.9 UUIDFilter accept.
                   type: 'uuid',
                   fixedOperator: 'equals',
                 },
@@ -491,11 +484,13 @@ const RBACManagementPage: React.FC = () => {
           }
         }}
       />
-      <RoleDetailDrawer
-        open={!!selectedRole}
-        roleFrgmt={selectedRole}
-        onClose={() => setRoleDetailParam({ roleDetail: null })}
-      />
+      <BAIUnmountAfterClose>
+        <RoleDetailDrawerV2
+          open={!!selectedRole}
+          roleFrgmt={selectedRole}
+          onClose={() => setRoleDetailParam({ roleDetail: null })}
+        />
+      </BAIUnmountAfterClose>
       <BAIDeleteConfirmModal
         open={!!purgingRole}
         items={
@@ -510,7 +505,7 @@ const RBACManagementPage: React.FC = () => {
         onOk={() => {
           if (purgingRole) {
             return mutatePurgeRole({
-              input: { id: toLocalId(purgingRole.id) },
+              input: { id: purgingRole.entityId },
             })
               .then(() => {
                 message.success(t('rbac.RolePurged'));
@@ -526,6 +521,52 @@ const RBACManagementPage: React.FC = () => {
         }}
         onCancel={() => setPurgingRole(null)}
       />
+    </>
+  );
+};
+
+const RBACManagementPage: React.FC = () => {
+  'use memo';
+
+  const { t } = useTranslation();
+  const [{ tab }, setQueryParams] = useQueryStates(
+    {
+      tab: parseAsStringLiteral(tabValues).withDefault('roles'),
+      // Tab-owned params, cleared on a tab switch so one tab's list state
+      // never reaches the other's query.
+      status: parseAsString,
+      order: parseAsString,
+      filter: parseAsString,
+      current: parseAsString,
+      pageSize: parseAsString,
+      roleDetail: parseAsString,
+      presetDetail: parseAsString,
+    },
+    { history: 'push' },
+  );
+  return (
+    <BAICard
+      activeTabKey={tab}
+      onTabChange={(key) => {
+        setQueryParams({
+          tab: key as (typeof tabValues)[number],
+          status: null,
+          order: null,
+          filter: null,
+          current: null,
+          pageSize: null,
+          roleDetail: null,
+          presetDetail: null,
+        });
+      }}
+      tabList={[
+        { key: 'roles', label: t('rbac.Roles') },
+        { key: 'presets', label: t('rbac.Presets') },
+      ]}
+    >
+      <Suspense fallback={<BAISkeleton rows={4} />}>
+        {tab === 'presets' ? <RolePresetListTab /> : <RoleListTab />}
+      </Suspense>
     </BAICard>
   );
 };

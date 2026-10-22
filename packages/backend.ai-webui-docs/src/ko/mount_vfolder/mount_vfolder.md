@@ -68,7 +68,7 @@ Backend.AI에서는 연산 세션을 삭제해도 폴더 안의 파일을 보존
 `user2-vfolder` 아래에 `test_file`을 생성합니다.
 파일의 내용을 "file inside user2-vfolder"로 채웁니다.
 
-![](../images/mounted_folders_in_terminal.png)
+![=682px](../images/mounted_folders_in_terminal.png)
 
 `user2-vfolder`에 대해 `ls` 명령을 실행하면 파일이 정상적으로 생성된 것을 확인할 수 있습니다.
 `cat` 명령을 사용하면 파일의 내용도 확인할 수 있습니다.

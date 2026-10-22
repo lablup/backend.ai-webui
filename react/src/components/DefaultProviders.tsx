@@ -9,24 +9,22 @@ import { RelayEnvironment } from '../RelayEnvironment';
 import { BAIAppProvider } from '../app-shim';
 import AstryxBrandTheme from '../astryx-theme/AstryxBrandTheme';
 import { FormConfigProvider } from '../form-engine';
-import { backendaiOptions } from '../global-stores';
-import { buiLanguages } from '../helper/bui-language';
-import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
+import {
+  getLoadedBuiLocale,
+  loadBuiLocale,
+  preloadBuiLocale,
+} from '../helper/bui-language';
+import { resolveStoredLanguage } from '../helper/storedLanguage';
 import {
   backendaiClientPromise,
   createAnonymousBackendaiClient,
   useWebUINavigate,
 } from '../hooks';
 import { useDeviceMetaData, useImageMetaData } from '../hooks/backendai';
-import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
-import { useThemeMode } from '../hooks/useThemeMode';
 import '../index.css';
-// antd `theme.useToken()` drop-in backed by Astryx tokens (to-astryx ticket
-// 03). Renders no DOM and touches no document attributes — mounting it is
-// visually inert; only files that import `theme` from '../theme-shim'
-// (rewritten by scripts/codemods/antd-theme-to-shim.mjs) consume it.
-import { ThemeShimProvider, theme } from '../theme-shim';
+import I18nKeyMarkers, { appendI18nKeyMarker } from './I18nKeyMarkers';
 import NotificationHost from './NotificationHost';
+import { useTheme } from '@lablup/ui-common/theme';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   BAIConfigProvider,
@@ -35,26 +33,6 @@ import {
   useUpdateEffect,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import 'dayjs/locale/de';
-import 'dayjs/locale/el';
-import 'dayjs/locale/es';
-import 'dayjs/locale/fi';
-import 'dayjs/locale/fr';
-import 'dayjs/locale/id';
-import 'dayjs/locale/it';
-import 'dayjs/locale/ja';
-import 'dayjs/locale/ko';
-import 'dayjs/locale/mn';
-import 'dayjs/locale/ms';
-import 'dayjs/locale/pl';
-import 'dayjs/locale/pt';
-import 'dayjs/locale/pt-br';
-import 'dayjs/locale/ru';
-import 'dayjs/locale/th';
-import 'dayjs/locale/tr';
-import 'dayjs/locale/vi';
-import 'dayjs/locale/zh-cn';
-import 'dayjs/locale/zh-tw';
 import duration from 'dayjs/plugin/duration';
 import localeData from 'dayjs/plugin/localeData';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
@@ -65,10 +43,11 @@ import weekday from 'dayjs/plugin/weekday';
 import i18n from 'i18next';
 import Backend from 'i18next-http-backend';
 import { createStore } from 'jotai';
-import { GlobeIcon } from 'lucide-react';
 import React, {
   ReactNode,
   Suspense,
+  startTransition,
+  use,
   useEffect,
   useLayoutEffect,
   useState,
@@ -102,24 +81,6 @@ if (typeof window !== 'undefined') {
   };
 }
 
-// Stored-language candidates for `resolveInitialLanguage`, in precedence
-// order. `BackendAISettingsStore` seeds its in-memory options with
-// `'general.language': 'en'`, so `get('language', …, 'general')` alone cannot
-// tell "a language was persisted on a previous visit" apart from "fresh store
-// default" — and treating the seed as an explicit choice would disable
-// browser-language detection entirely (the FR-2981 bug). So:
-//   1. `user.selected_language` — the user's explicit settings-page choice.
-//      Unseeded; `get()` returns null when the user never chose.
-//   2. `general.language` — the last resolved language, but only when the
-//      localStorage key actually exists (i.e. it was persisted, not seeded).
-const getStoredLanguageCandidates = (): Array<string | null | undefined> => [
-  backendaiOptions?.get('selected_language'),
-  typeof localStorage !== 'undefined' &&
-  localStorage.getItem('backendaiwebui.settings.general.language') !== null
-    ? backendaiOptions?.get('language', undefined, 'general')
-    : undefined,
-];
-
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
   .use(Backend)
@@ -132,21 +93,11 @@ i18n
         new URLSearchParams(window.location.search).get('debug') === 'true';
       // @ts-ignore
       if (globalThis?.backendaiwebui?.debug === true || isDebugByUrlParam) {
-        // key can be an array in i18next, convert to string for copy functionality
+        // Must stay a string: `t()` also feeds placeholders, tooltips and aria labels.
+        // `I18nKeyMarkers` turns the invisible marker into the copy icon.
+        if (typeof value !== 'string') return value;
         const keyString = Array.isArray(key) ? key[0] : String(key);
-        return (
-          <>
-            {value}
-            <BAIText
-              style={{ marginLeft: 4 }}
-              copyable={{
-                text: keyString,
-                tooltips: [keyString, keyString],
-                icon: <GlobeIcon />,
-              }}
-            />
-          </>
-        );
+        return appendI18nKeyMarker(value, keyString);
       } else {
         return value;
       }
@@ -169,7 +120,7 @@ i18n
     // page) render in the user's browser language even when nothing has been
     // persisted yet (e.g. private / incognito browsing). See
     // `helper/resolveInitialLanguage.ts` for the supported-language list.
-    lng: resolveInitialLanguage(...getStoredLanguageCandidates()),
+    lng: resolveStoredLanguage(),
     fallbackLng: 'en',
     interpolation: {
       escapeValue: false, // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
@@ -224,9 +175,7 @@ export const useCurrentLanguage = () => {
   // back to 'default' right after init — undoing the browser-language
   // detection on the login screen — and set `dayjs.locale('default')` /
   // `<html lang="default">` along the way.
-  const [lang, _setLang] = useState(
-    resolveInitialLanguage(...getStoredLanguageCandidates()),
-  );
+  const [lang, _setLang] = useState<string>(resolveStoredLanguage);
   const { i18n } = useTranslation();
 
   useEffect(() => {
@@ -242,9 +191,11 @@ export const useCurrentLanguage = () => {
   useEffect(() => {
     const handler = (e: Event) => {
       //@ts-ignore
-      _setLang(e?.detail?.lang);
-      //@ts-ignore
       const lang: string = e?.detail?.lang || 'en';
+      preloadBuiLocale(lang);
+      // A transition keeps the current UI on screen while the new BUI locale
+      // chunk loads, instead of falling back to the root Suspense boundary.
+      startTransition(() => _setLang(lang));
       i18n?.changeLanguage(lang);
       // For changing locale globally, use dayjs.locale instead of dayjs().locale
       dayjs.locale(lang);
@@ -317,13 +268,11 @@ export const DefaultProvidersForReactRoot: React.FC<{
 }> = ({ children }) => {
   const [lang] = useCurrentLanguage();
   const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const { isDarkMode } = useThemeMode();
+  const { token } = useTheme();
 
-  const { themeConfig } = useCustomThemeConfig();
-
-  const currentLocale =
-    buiLanguages[lang as keyof typeof buiLanguages] ?? buiLanguages['en'];
+  // Non-`en` locales are lazy chunks; `loadBuiLocale` caches one promise per
+  // language, so `use` suspends on the same object across renders.
+  const currentLocale = getLoadedBuiLocale(lang) ?? use(loadBuiLocale(lang));
 
   return (
     <>
@@ -344,30 +293,18 @@ export const DefaultProvidersForReactRoot: React.FC<{
                 comes from `useThemeMode`, which remains the source of truth
                 and is what `<Theme>` syncs onto `<html>`. */}
             <AstryxBrandTheme>
-              <ThemeShimProvider
-                mode={isDarkMode ? 'dark' : 'light'}
-                seeds={{
-                  ...(isDarkMode
-                    ? themeConfig?.dark?.token
-                    : themeConfig?.light?.token),
-                  fontFamily: themeConfig?.fontFamily,
-                  components: (isDarkMode
-                    ? themeConfig?.dark?.components
-                    : themeConfig?.light?.components) as never,
-                }}
-              >
-                {/* Now a pure locale + client provider: Astryx's
+              {/* Now a pure locale + client provider: Astryx's
                     `InternationalizationProvider`, BUI's i18next instance,
                     dayjs's locale and the Backend.AI client context. Its antd
                     `ConfigProvider` leg — and with it the `theme`, `csp`,
                     `modal`, `drawer` and `tag` props this call site used to
                     pass through — went away with the final switch. */}
-                <BAIConfigProvider
-                  locale={currentLocale}
-                  clientPromise={backendaiClientPromise}
-                  anonymousClientFactory={createAnonymousBackendaiClient}
-                >
-                  {/* to-astryx tickets 34 + 35 — form configuration lives on
+              <BAIConfigProvider
+                locale={currentLocale}
+                clientPromise={backendaiClientPromise}
+                anonymousClientFactory={createAnonymousBackendaiClient}
+              >
+                {/* to-astryx tickets 34 + 35 — form configuration lives on
                       the self-hosted engine's own provider, which is now the
                       only form runtime in the tree.
 
@@ -384,65 +321,67 @@ export const DefaultProvidersForReactRoot: React.FC<{
                         That inversion is deliberate product behaviour, not a
                         default — dropping it would put an asterisk on every
                         required field across the app. */}
-                  <FormConfigProvider
-                    requiredMark={(label, { required }) => (
-                      <>
-                        {label}
-                        {!required && (
-                          <BAIText
-                            type="secondary"
-                            style={{ marginLeft: token.marginXXS }}
-                          >
-                            ({t('general.Optional')})
-                          </BAIText>
-                        )}
-                      </>
-                    )}
-                  >
-                    {/*
-                     * No <I18nextProvider> wrap needed here. BUI components
-                     * resolve their translations via `useBAIi18n()` which calls
-                     * `useTranslation(undefined, { i18n: buiI18n })` — explicit
-                     * instance binding bypasses React Context entirely, so the
-                     * host's i18n Context flows through to host components
-                     * unchanged. See FR-2986 / packages/backend.ai-ui/src/hooks/
-                     * useBAIi18n.ts.
-                     */}
-                    <BAIAppProvider message={messageConfig} toast={toastConfig}>
-                      <BAIMetaDataProviderWrapper>
-                        {/* Single app-wide notification renderer. Lives outside
+                <FormConfigProvider
+                  requiredMark={(label, { required }) => (
+                    <>
+                      {label}
+                      {!required && (
+                        <BAIText
+                          type="secondary"
+                          style={{ marginLeft: token('--spacing-1') }}
+                        >
+                          ({t('general.Optional')})
+                        </BAIText>
+                      )}
+                    </>
+                  )}
+                >
+                  {/*
+                   * No <I18nextProvider> wrap needed here. BUI components
+                   * resolve their translations via `useBAIi18n()` which calls
+                   * `useTranslation(undefined, { i18n: buiI18n })` — explicit
+                   * instance binding bypasses React Context entirely, so the
+                   * host's i18n Context flows through to host components
+                   * unchanged. See FR-2986 / packages/backend.ai-ui/src/hooks/
+                   * useBAIi18n.ts.
+                   */}
+                  <BAIAppProvider message={messageConfig} toast={toastConfig}>
+                    <BAIMetaDataProviderWrapper>
+                      {/* Single app-wide notification renderer. Lives outside
                             the Suspense below so toasts work on every route and
                             in both anonymous and authenticated states. */}
-                        <NotificationHost />
-                        {/*
-                         * to-astryx ticket 33 removed the emotion plumbing that
-                         * used to wrap this Suspense: an @emotion/react
-                         * <CacheProvider> (nonce for `createGlobalStyle`) inside
-                         * antd-style's <StyleProvider nonce> (nonce for
-                         * `createStyles`). With the last antd-style call site
-                         * gone, no style engine injects <style> at runtime on
-                         * our behalf — the replacement rules ship as bundled
-                         * same-origin stylesheets, which `style-src 'self'`
-                         * already covers.
-                         *
-                         * The final switch closed the last gap in that story:
-                         * antd's cssinjs — the one runtime style injector left,
-                         * fed the nonce via `<ConfigProvider csp>` — is gone
-                         * too, so NOTHING injects <style> at runtime any more
-                         * and `globalThis.baiNonce` has no remaining consumer
-                         * in the React tree.
-                         */}
-                        <Suspense>
-                          {/* <BrowserRouter> */}
-                          {/* <RoutingEventHandler /> */}
-                          {children}
-                          {/* </BrowserRouter> */}
-                        </Suspense>
-                      </BAIMetaDataProviderWrapper>
-                    </BAIAppProvider>
-                  </FormConfigProvider>
-                </BAIConfigProvider>
-              </ThemeShimProvider>
+                      <NotificationHost />
+                      {process.env.NODE_ENV === 'development' && (
+                        <I18nKeyMarkers />
+                      )}
+                      {/*
+                       * to-astryx ticket 33 removed the emotion plumbing that
+                       * used to wrap this Suspense: an @emotion/react
+                       * <CacheProvider> (nonce for `createGlobalStyle`) inside
+                       * antd-style's <StyleProvider nonce> (nonce for
+                       * `createStyles`). With the last antd-style call site
+                       * gone, no style engine injects <style> at runtime on
+                       * our behalf — the replacement rules ship as bundled
+                       * same-origin stylesheets, which `style-src 'self'`
+                       * already covers.
+                       *
+                       * The final switch closed the last gap in that story:
+                       * antd's cssinjs — the one runtime style injector left,
+                       * fed the nonce via `<ConfigProvider csp>` — is gone
+                       * too, so NOTHING injects <style> at runtime any more
+                       * and `globalThis.baiNonce` has no remaining consumer
+                       * in the React tree.
+                       */}
+                      <Suspense>
+                        {/* <BrowserRouter> */}
+                        {/* <RoutingEventHandler /> */}
+                        {children}
+                        {/* </BrowserRouter> */}
+                      </Suspense>
+                    </BAIMetaDataProviderWrapper>
+                  </BAIAppProvider>
+                </FormConfigProvider>
+              </BAIConfigProvider>
             </AstryxBrandTheme>
           </QueryClientProvider>
         </RelayEnvironmentProvider>

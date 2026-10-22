@@ -1,6 +1,6 @@
 ---
 name: playwright-test-healer
-description: Use this agent when you need to debug and fix failing Playwright tests. Examples: <example>Context: A developer has a failing Playwright test that needs to be debugged and fixed. user: 'The login test is failing, can you fix it?' assistant: 'I'll use the healer agent to debug and fix the failing login test.' <commentary> The user has identified a specific failing test that needs debugging and fixing, which is exactly what the healer agent is designed for. </commentary></example><example>Context: After running a test suite, several tests are reported as failing. user: 'Test user-registration.spec.ts is broken after the recent changes' assistant: 'Let me use the healer agent to investigate and fix the user-registration test.' <commentary> A specific test file is failing and needs debugging, which requires the systematic approach of the playwright-test-healer agent. </commentary></example>
+description: Debug and fix failing Playwright e2e tests: run them, reproduce each failure, find the root cause, and repair the test (or mark it test.fixme with an explanation when the app is at fault). Use when e2e tests fail or break after a UI change.
 tools: Glob, Grep, Read, Write, Edit, MultiEdit, mcp__playwright-test__browser_console_messages, mcp__playwright-test__browser_evaluate, mcp__playwright-test__browser_generate_locator, mcp__playwright-test__browser_network_requests, mcp__playwright-test__browser_snapshot, mcp__playwright-test__test_debug, mcp__playwright-test__test_list, mcp__playwright-test__test_run
 model: sonnet
 color: red
@@ -11,8 +11,8 @@ resolving Playwright test failures. Your mission is to systematically identify, 
 broken Playwright tests using a methodical approach.
 
 Your workflow:
-1. **Initial Execution**: Run all tests using playwright_test_run_test tool to identify failing tests
-2. **Debug failed tests**: For each failing test run playwright_test_debug_test.
+1. **Initial Execution**: Run all tests using the `test_run` tool to identify failing tests
+2. **Debug failed tests**: For each failing test run the `test_debug` tool.
 3. **Error Investigation**: When the test pauses on errors, use available Playwright MCP tools to:
    - Examine the error details
    - Capture page snapshot to understand the context
@@ -168,10 +168,10 @@ await confirmModal.getByRole('button', { name: 'OK' }).click();
 **Form Item Locator:**
 - When locating form controls by their label, use the utility function from `e2e/utils/test-util-antd.ts`
 - **Pattern**: `getFormItemControlByLabel(page, 'Label Text')`
-- The self-hosted form engine (`Form.Item` / `BAIFormItem`) renders every field with `[data-bai-form-item]`, `[data-bai-form-item-label]`, and `[data-bai-form-item-control-input]` attributes (defined in `packages/backend.ai-ui/src/form-engine/FormItemVisual.tsx`). The utility:
-  - Finds the `[data-bai-form-item]` container
-  - Filters it by label text inside `[data-bai-form-item-label]`
-  - Returns the `[data-bai-form-item-control-input]` element
+- The form engine (`@lablup/ui-common/Form`, re-exported by BUI as `form-engine`; `Form.Item` / `BAIFormItem`) renders every field with the `.uic-form-item`, `.uic-form-item__label`, and `.uic-form-item__control-input` classes (its `FormItemVisual` shell). The utility:
+  - Finds the `.uic-form-item` container
+  - Filters it by label text inside `.uic-form-item__label`
+  - Returns the `.uic-form-item__control-input` element
 - There is no antd DOM to fall back on: `Form.Item` **is** `BAIFormItem` now, so this is the only shape the utility ever matches against.
 
 **Examples of Form Item Locator:**
@@ -186,7 +186,7 @@ const nameControl = getFormItemControlByLabel(page, 'Name');
 await nameControl.getByRole('textbox').fill('My Name');
 
 // ❌ Avoid: Direct CSS selectors that may break with DOM changes
-const control = page.locator('[data-bai-form-item]:has-text("Location") [data-bai-form-item-control-input]');
+const control = page.locator('.uic-form-item:has-text("Location") .uic-form-item__control-input');
 ```
 
 **Icon Locators with aria-label:**
@@ -221,8 +221,8 @@ await page.locator('svg[data-icon="upload"]').click();
 - System: `'dashboard'`, `'system monitor'`
 
 **Test Utility Functions:**
-- **Legacy component-locator utilities** (`e2e/utils/test-util-antd.ts` — the filename predates the Astryx migration; some of its helpers still target antd-era classes that are now dead code, since antd is not a dependency of this project. Fix these locators forward to role-based/`data-*` selectors as you touch them):
-  - `getFormItemControlByLabel(page, label)` - Form control locator by label (already migrated to `[data-bai-form-item]`, see above)
+- **Legacy component-locator utilities** (`e2e/utils/test-util-antd.ts` — the filename predates the Astryx migration; some of its helpers still target antd-era classes that are now dead code, since antd is not a dependency of this project. Fix these locators forward to role-based, `data-testid` or `uic-*` selectors as you touch them):
+  - `getFormItemControlByLabel(page, label)` - Form control locator by label (already migrated to `.uic-form-item`, see above)
   - `getMenuItem(page, menuName)` - Menu item locator
   - `getCardItemByCardTitle(page, title)` - Card locator by title (still `.ant-card`-based — broken, migrate on sight)
   - `checkActiveTab(tabsLocator, expectedTabName)` - Tab verification (still `.ant-tabs-tab-active`-based — broken, migrate on sight)

@@ -15,25 +15,24 @@ import {
 import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import {
-  buildDynamicColumnAliases,
   CanonicalUserColumn,
+  RawUserRow,
+  TEMPLATE_CSV,
+  buildDynamicColumnAliases,
   extractRawUserRows,
   findMissingRequiredColumns,
   mapUserCSVColumns,
   mergeColumnAliases,
   parseBoolean,
-  RawUserRow,
-  TEMPLATE_CSV,
 } from '../helper/bulkUserCSV';
 import { downloadBlob, parseCSV } from '../helper/csv-util';
 import { useCurrentDomainValue } from '../hooks';
-import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
 import BAIPanelItem from './BAIPanelItem';
 import {
   BulkCreateUserErrorModal,
-  type FailedUserCreation,
   toFailedUserCreations,
+  type FailedUserCreation,
 } from './BulkCreateUserFailure';
 import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import { passwordPattern } from './LoginFormPanel';
@@ -44,41 +43,42 @@ import {
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { FileInput } from '@astryxdesign/core/FileInput';
-import { Heading } from '@astryxdesign/core/Heading';
-import { Switch } from '@astryxdesign/core/Switch';
-import { Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { FileInput } from '@lablup/ui-common/FileInput';
+import { Heading } from '@lablup/ui-common/Heading';
+import { Switch } from '@lablup/ui-common/Switch';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
   BAIAlert,
   BAIButton,
-  BAIDomainSelect,
   BAIFlex,
   BAIModal,
   BAIModalProps,
   BAIQuestionIconWithTooltip,
   BAIRowWrapWithDividers,
+  BAISkeleton,
   BAITable,
   BAIText,
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
+  tokenColorForTagColor,
   useBAILogger,
   useBAISignedRequestWithPromise,
-  tokenColorForTagColor,
+  cssLengthToPx,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
+  CircleAlert,
   CircleCheck,
   CircleX,
-  Trash,
   Download,
-  CircleAlert,
   FileText,
   Plus,
   RotateCw,
+  Trash,
 } from 'lucide-react';
 import React, {
   Suspense,
@@ -121,7 +121,6 @@ const roleToV2: Record<string, UserRoleV2> = {
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 interface GlobalDefaults {
-  domainName: string;
   groupIds: string[];
   resourcePolicy: string;
   description: string;
@@ -138,7 +137,6 @@ interface ValidatedRow {
   fullName: string;
   role: string;
   status: string;
-  domainName: string;
   description: string;
   needPasswordChange: boolean;
   resourcePolicy: string;
@@ -166,7 +164,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const currentDomainName = useCurrentDomainValue();
@@ -184,7 +182,6 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
     Set<CanonicalUserColumn>
   >(new Set());
   const [globalDefaults, setGlobalDefaults] = useState<GlobalDefaults>({
-    domainName: currentDomainName,
     groupIds: [],
     resourcePolicy: 'default',
     description: '',
@@ -222,8 +219,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   const [groupList, setGroupList] = useState<
     ReadonlyArray<{ id: string; name: string }>
   >([]);
-  // Whether the group list for the current global-defaults domain has finished
-  // loading. Project-name validation is skipped until this is true so rows are
+  // Whether the group list has finished loading. Project-name validation is skipped until this is true so rows are
   // not transiently flagged as "unknown project" while the fetch is in flight.
   const [groupsLoaded, setGroupsLoaded] = useState(false);
   // Keypairs of the just-created users, shown in a download modal on success
@@ -256,9 +252,8 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       }
     `);
 
-  // Imperative query used to resolve project name <-> group id. Loaded into
-  // state whenever the domain changes so the preview can display names and the
-  // mutation can convert them to ids.
+  // Imperative query used to resolve project name <-> group id, so the preview
+  // can display names and the mutation can convert them to ids.
   const groupsQuery = graphql`
     query BulkCreateUserFromCSVModalGroupsQuery(
       $domain_name: String
@@ -271,11 +266,11 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
     }
   `;
 
-  const loadGroups = useEffectEvent((domainName: string) => {
+  const loadGroups = useEffectEvent(() => {
     fetchQuery<BulkCreateUserFromCSVModalGroupsQuery>(
       relayEnvironment,
       groupsQuery,
-      { domain_name: domainName, type: ['GENERAL', 'MODEL_STORE'] },
+      { domain_name: currentDomainName, type: ['GENERAL', 'MODEL_STORE'] },
       { fetchPolicy: 'store-or-network' },
     )
       .toPromise()
@@ -294,18 +289,9 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       });
   });
 
-  // A domain change disables validation until the new fetch resolves.
-  const [prevGroupsDomainName, setPrevGroupsDomainName] = useState(
-    globalDefaults.domainName,
-  );
-  if (prevGroupsDomainName !== globalDefaults.domainName) {
-    setPrevGroupsDomainName(globalDefaults.domainName);
-    setGroupsLoaded(false);
-  }
-
   useEffect(() => {
-    loadGroups(globalDefaults.domainName);
-  }, [globalDefaults.domainName]);
+    loadGroups();
+  }, []);
 
   const loadDynamicAliases = useEffectEvent(() => {
     baiRequest({ method: 'GET', url: '/export/reports/users' })
@@ -347,7 +333,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
     // value.
     const applyDefault = (
       rawVal: string,
-      key: 'domainName' | 'resourcePolicy' | 'description',
+      key: 'resourcePolicy' | 'description',
     ): string => {
       if (rawVal.trim()) return rawVal.trim();
       const def = globalDefaults[key];
@@ -365,7 +351,6 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
     const fullName = raw.full_name.trim();
     const role = (raw.role.trim() || 'user').toLowerCase();
     const status = (raw.status.trim() || 'active').toLowerCase();
-    const domainName = applyDefault(raw.domain_name, 'domainName');
     const resourcePolicy =
       applyDefault(raw.resource_policy, 'resourcePolicy') || 'default';
     const description = applyDefault(raw.description, 'description');
@@ -415,17 +400,11 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       });
     }
 
-    // Project: a per-row project name must resolve to a real group, otherwise
-    // the user would be created with no (or the wrong) project membership and
-    // the admin would never know. The group list is loaded only for the
-    // global-defaults domain (loadGroups), so a row whose domain differs cannot
-    // be validated against it — flag those too instead of resolving against the
-    // wrong domain's groups. Skip while groups are still loading to avoid
-    // transient false errors.
+    // Project: a per-row project name must resolve to a real group of the
+    // current domain, otherwise the user would be created with no project
+    // membership unnoticed. Skip while groups are still loading.
     if (projectName) {
-      const sameDomain =
-        !domainName || domainName === globalDefaults.domainName;
-      if (!sameDomain || (groupsLoaded && !nameToId[projectName])) {
+      if (groupsLoaded && !nameToId[projectName]) {
         fieldErrors.project = t('credential.validation.CSVUnknownProject', {
           project: projectName,
         });
@@ -441,7 +420,6 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       fullName,
       role,
       status,
-      domainName,
       resourcePolicy,
       description,
       needPasswordChange,
@@ -613,7 +591,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
         email: r.email,
         username: r.username,
         password: r.password,
-        domainName: r.domainName || currentDomainName,
+        domainName: currentDomainName,
         needPasswordChange: r.needPasswordChange,
         status: statusToV2[r.status] || 'ACTIVE',
         role: roleToV2[r.role] || 'USER',
@@ -713,14 +691,17 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
 
   const cellStyle = (record: ValidatedRow, field: string) => ({
     style: record.fieldErrors[field]
-      ? { background: token.colorErrorBg, padding: `0 ${token.paddingXS}px` }
-      : { padding: `0 ${token.paddingXS}px` },
+      ? {
+          background: token('--color-error-bg'),
+          padding: `0 ${token('--spacing-2')}`,
+        }
+      : { padding: `0 ${token('--spacing-2')}` },
   });
 
   const requiredLabel = (label: string) => (
     <span>
       {label}
-      <span style={{ color: token.colorError, marginLeft: 2 }}>*</span>
+      <span style={{ color: token('--color-error'), marginLeft: 2 }}>*</span>
     </span>
   );
 
@@ -742,7 +723,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
             <CircleAlert
               role="img"
               aria-label={errorMsg}
-              style={{ color: token.colorError, flexShrink: 0 }}
+              style={{ color: token('--color-error'), flexShrink: 0 }}
               size="1em"
             />
             {mask && val ? (
@@ -782,9 +763,9 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   // whether a default value is *always* applied:
   //   - need_password_change always sends a value (true or false), so its
   //     column is always shown.
-  //   - domain and resource policy always carry a value (current-domain
-  //     fallback / the server-side "default" policy), so they are shown
-  //     whenever a value is selected — including the plain "default" policy.
+  //   - resource policy always carries a value (the server-side "default"
+  //     policy), so it is shown whenever a value is selected — including the
+  //     plain "default" policy.
   //   - description and project become null when empty, so their columns
   //     appear only when the admin actually configures a default.
   const showFullName = presentColumns.has('full_name');
@@ -793,10 +774,6 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   // A need_password_change value is always applied to every row (true or
   // false), so this column is always relevant.
   const showNeedPasswordChange = true;
-  // Domain is always applied (per-row, global default, or current domain),
-  // so it is always relevant to preview.
-  const showDomain =
-    presentColumns.has('domain_name') || !!globalDefaults.domainName;
   // A resource policy value is always applied — the admin may explicitly
   // select "default" (which delegates to the server default), and that is
   // still a configured global default worth showing.
@@ -813,9 +790,9 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       width: 36,
       render: (_: unknown, record: ValidatedRow) =>
         record.isValid ? (
-          <CircleCheck style={{ color: token.colorSuccess }} size="1em" />
+          <CircleCheck style={{ color: token('--color-success') }} size="1em" />
         ) : (
-          <CircleX style={{ color: token.colorError }} size="1em" />
+          <CircleX style={{ color: token('--color-error') }} size="1em" />
         ),
     },
     {
@@ -889,20 +866,6 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
           }
         >
           {val ? t('button.Yes') : t('button.No')}
-        </BAIText>
-      ),
-    },
-    showDomain && {
-      title: t('credential.Domain'),
-      dataIndex: 'domainName',
-      key: 'domainName',
-      width: 120,
-      onCell: (record: ValidatedRow) => cellStyle(record, 'domainName'),
-      render: (val: string, record: ValidatedRow) => (
-        <BAIText
-          type={record.fromDefaults.domainName ? 'secondary' : undefined}
-        >
-          {val || '—'}
         </BAIText>
       ),
     },
@@ -1038,11 +1001,11 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
         style={{
           width: 340,
           flexShrink: 0,
-          borderRight: `1px solid ${token.colorBorderSecondary}`,
+          borderRight: `1px solid ${token('--color-border')}`,
           overflowY: 'auto',
           // The modal body is already inset on all four sides by Astryx
           // `LayoutContent`; only the gutter before the divider is ours.
-          paddingRight: token.paddingMD,
+          paddingRight: token('--spacing-5'),
         }}
       >
         {/* ── Source file section ── */}
@@ -1074,10 +1037,10 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               align="stretch"
               gap="xs"
               style={{
-                border: `1px solid ${token.colorBorderSecondary}`,
-                borderRadius: token.borderRadius,
-                background: token.colorFillQuaternary,
-                padding: `${token.paddingSM}px ${token.paddingMD}px`,
+                border: `1px solid ${token('--color-border')}`,
+                borderRadius: token('--radius-inner'),
+                background: token('--color-fill-quaternary'),
+                padding: `${token('--spacing-3')} ${token('--spacing-5')}`,
               }}
             >
               {/* Row 1: icon + filename + row count */}
@@ -1088,10 +1051,10 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                   style={{
                     width: 36,
                     height: 36,
-                    borderRadius: token.borderRadius,
-                    background: token.colorPrimaryBg,
-                    color: token.colorPrimary,
-                    fontSize: token.fontSizeLG,
+                    borderRadius: token('--radius-inner'),
+                    background: token('--color-primary-bg'),
+                    color: token('--color-accent'),
+                    fontSize: token('--font-size-lg'),
                     flexShrink: 0,
                   }}
                 >
@@ -1181,36 +1144,13 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
 
           <Form layout="vertical" requiredMark={false} component={false}>
             <BAIFormItem
-              label={t('credential.Domain')}
-              style={{ marginBottom: token.marginSM }}
+              label={t('session.launcher.Project')}
+              style={{ marginBottom: token('--spacing-3') }}
             >
               <Suspense fallback={<BAISkeleton />}>
-                <BAIDomainSelect
-                  value={globalDefaults.domainName}
-                  onChange={(v) => {
-                    setGlobalDefaults((prev) => ({
-                      ...prev,
-                      domainName: v ? String(v) : '',
-                      groupIds: [],
-                    }));
-                  }}
-                  style={{ width: '100%' }}
-                />
-              </Suspense>
-            </BAIFormItem>
-
-            <BAIFormItem
-              label={t('session.launcher.Project')}
-              style={{ marginBottom: token.marginSM }}
-            >
-              <Suspense
-                key={globalDefaults.domainName}
-                fallback={<BAISkeleton />}
-              >
                 <ProjectSelect
-                  key={globalDefaults.domainName}
                   mode="multiple"
-                  domain={globalDefaults.domainName}
+                  domain={currentDomainName}
                   disableDefaultFilter
                   lockedProjectTypes={['MODEL_STORE']}
                   value={
@@ -1232,7 +1172,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
 
             <BAIFormItem
               label={t('credential.UserResourcePolicy')}
-              style={{ marginBottom: token.marginSM }}
+              style={{ marginBottom: token('--spacing-3') }}
             >
               <Suspense fallback={<BAISkeleton />}>
                 <UserResourcePolicySelect
@@ -1253,7 +1193,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
 
             <BAIFormItem
               label={t('general.Password')}
-              style={{ marginBottom: token.marginSM }}
+              style={{ marginBottom: token('--spacing-3') }}
             >
               {/* PILOT-DECISION: antd `Input.Password autoComplete="new-password"`
                   (the Chrome-autofill-suppression workaround) is dropped —
@@ -1279,7 +1219,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
             <BAIFormItem
               label={t('credential.DescRequirePasswordChange')}
               tooltip={t('credential.TooltipForRequirePasswordChange')}
-              style={{ marginBottom: token.marginSM }}
+              style={{ marginBottom: token('--spacing-3') }}
             >
               <AstryxFormCheckbox
                 label={t('general.Enable')}
@@ -1323,7 +1263,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
           flex: 1,
           minWidth: 0,
           overflowY: 'auto',
-          paddingLeft: token.paddingMD,
+          paddingLeft: token('--spacing-5'),
         }}
       >
         <BAIFlex align="center" gap="xs">
@@ -1338,28 +1278,28 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
             {/* Stats bar */}
             <BAIFlex align="center" justify="between" gap="md" wrap="wrap">
               <BAIRowWrapWithDividers
-                rowGap={token.marginLG}
-                columnGap={token.marginLG}
-                dividerColor={token.colorBorder}
-                dividerInset={token.marginXS}
-                dividerWidth={token.lineWidth}
+                rowGap={token('--spacing-6')}
+                columnGap={token('--spacing-6')}
+                dividerColor={token('--color-border-emphasized')}
+                dividerInset={cssLengthToPx(token('--spacing-2'))}
+                dividerWidth={parseFloat(token('--border-width'))}
               >
                 <BAIPanelItem
                   title={t('credential.RowsParsed')}
                   value={stats.total}
-                  color={token.colorText}
+                  color={token('--color-text-primary')}
                   style={{ minWidth: 60 }}
                 />
                 <BAIPanelItem
                   title={t('credential.ReadyToCreate')}
                   value={stats.valid}
-                  color={token.colorSuccess}
+                  color={token('--color-success')}
                   style={{ minWidth: 60 }}
                 />
                 <BAIPanelItem
                   title={t('credential.WithErrors')}
                   value={stats.withErrors}
-                  color={token.colorError}
+                  color={token('--color-error')}
                   style={{ minWidth: 60 }}
                 />
               </BAIRowWrapWithDividers>
@@ -1383,15 +1323,21 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                 align="stretch"
                 gap="xs"
                 style={{
-                  border: `1px solid ${token.colorErrorBorder}`,
-                  borderRadius: token.borderRadius,
-                  background: token.colorErrorBg,
-                  padding: `${token.paddingSM}px ${token.paddingMD}px`,
+                  border: `1px solid ${token('--color-error-border')}`,
+                  borderRadius: token('--radius-inner'),
+                  background: token('--color-error-bg'),
+                  padding: `${token('--spacing-3')} ${token('--spacing-5')}`,
                 }}
               >
                 <BAIFlex gap="xs" align="center">
-                  <CircleX style={{ color: token.colorError }} size="1em" />
-                  <Text weight="semibold" style={{ color: token.colorError }}>
+                  <CircleX
+                    style={{ color: token('--color-error') }}
+                    size="1em"
+                  />
+                  <Text
+                    weight="semibold"
+                    style={{ color: token('--color-error') }}
+                  >
                     {t('credential.NOfMRowsError', {
                       errorCount: stats.withErrors,
                       total: stats.total,

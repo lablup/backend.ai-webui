@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useHighlight } from '../../hooks/useHighlight';
-import DOMPurify from 'dompurify';
+import SanitizedHtml from '../SanitizedHtml';
 import { HTMLAttributes, memo } from 'react';
 
 export interface SyntaxHighlighterProps extends HTMLAttributes<HTMLDivElement> {
@@ -22,11 +22,7 @@ export const SyntaxHighlighter = memo<SyntaxHighlighterProps>(
             <code style={{ whiteSpace: 'pre-wrap' }}>{children}</code>
           </pre>
         ) : (
-          <div
-            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(data) }}
-            dir="ltr"
-            {...props}
-          />
+          <SanitizedHtml html={data} dir="ltr" {...props} />
         )}
       </>
     );

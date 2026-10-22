@@ -1,6 +1,9 @@
 import { i18n as buiI18n } from '../locale';
 import BAIText from './BAIText';
 import { act, fireEvent, render, screen } from '@testing-library/react';
+import copy from 'copy-to-clipboard';
+
+vi.mock('copy-to-clipboard', () => ({ default: vi.fn(() => true) }));
 
 /**
  * jsdom does not lay out, so overflow is faked by pinning the metrics the
@@ -217,99 +220,6 @@ describe('BAIText ellipsis', () => {
     expect(box.parentElement).toBe(screen.getByTestId('t'));
   });
 
-  it('re-measures when the children change without a resize', () => {
-    // A fixed-width cell whose value changes does not resize, so the
-    // ResizeObserver never fires; the hook must re-check on new children.
-    setOverflow(false);
-    const { rerender } = render(
-      <BAIText ellipsis={{ expandable: true }}>short</BAIText>,
-    );
-    expect(screen.queryByText('Expand')).toBeNull();
-
-    setOverflow(true);
-    rerender(
-      <BAIText ellipsis={{ expandable: true }}>a much longer value</BAIText>,
-    );
-    expect(screen.getByText('Expand')).toBeInTheDocument();
-
-    setOverflow(false);
-    rerender(<BAIText ellipsis={{ expandable: true }}>short</BAIText>);
-    expect(screen.queryByText('Expand')).toBeNull();
-  });
-
-  it('re-measures when the ResizeObserver fires', () => {
-    const original = global.ResizeObserver;
-    let notify: (() => void) | undefined;
-    global.ResizeObserver = class {
-      constructor(cb: ResizeObserverCallback) {
-        notify = () => cb([], this as unknown as ResizeObserver);
-      }
-      observe() {}
-      unobserve() {}
-      disconnect() {}
-    } as unknown as typeof ResizeObserver;
-    try {
-      setOverflow(false);
-      render(<BAIText ellipsis={{ expandable: true }}>long</BAIText>);
-      expect(screen.queryByText('Expand')).toBeNull();
-      setOverflow(true);
-      act(() => notify?.());
-      expect(screen.getByText('Expand')).toBeInTheDocument();
-    } finally {
-      global.ResizeObserver = original;
-    }
-  });
-
-  it('shows the Expand link only when the text overflows', () => {
-    setOverflow(false);
-    const { unmount } = render(
-      <BAIText ellipsis={{ expandable: true }}>long</BAIText>,
-    );
-    expect(screen.queryByText('Expand')).toBeNull();
-    unmount();
-
-    setOverflow(true);
-    render(<BAIText ellipsis={{ expandable: true }}>long</BAIText>);
-    expect(screen.getByText('Expand')).toBeInTheDocument();
-  });
-
-  it('toggles between Expand and Collapse and reports it', () => {
-    setOverflow(true);
-    const onExpand = vi.fn();
-    render(
-      <BAIText ellipsis={{ rows: 2, expandable: true, onExpand }}>
-        long
-      </BAIText>,
-    );
-    fireEvent.click(screen.getByText('Expand'));
-    expect(onExpand).toHaveBeenLastCalledWith(expect.anything(), {
-      expanded: true,
-    });
-    const box = screen.getByText('long');
-    expect(box).toHaveClass('bai-text-content-expanded');
-    expect(box).not.toHaveClass('bai-text-content-clamp');
-    expect(box.style.webkitLineClamp).toBe('');
-
-    fireEvent.click(screen.getByText('Collapse'));
-    expect(onExpand).toHaveBeenLastCalledWith(expect.anything(), {
-      expanded: false,
-    });
-    expect(screen.getByText('long')).toHaveClass('bai-text-content-clamp');
-  });
-
-  it('follows BUI i18next for the expand link', async () => {
-    setOverflow(true);
-    await act(async () => {
-      await buiI18n.changeLanguage('ko');
-    });
-    render(<BAIText ellipsis={{ expandable: true }}>long</BAIText>);
-    // ko.json -> general.button.Expand = "펼치기"
-    expect(screen.getByText('펼치기')).toBeInTheDocument();
-    await act(async () => {
-      await buiI18n.changeLanguage('en');
-    });
-  });
-
   describe('tooltip', () => {
     beforeEach(() => {
       vi.useFakeTimers();
@@ -380,19 +290,69 @@ describe('BAIText ellipsis', () => {
       hover(box('clipped'));
       expect(screen.queryByRole('tooltip')).toBeNull();
     });
+
+    const unhover = (node: HTMLElement) => {
+      fireEvent.mouseLeave(node);
+      act(() => {
+        vi.runAllTimers();
+      });
+    };
+
+    it('re-measures when the children change without a resize', () => {
+      // A fixed-width cell whose value changes does not resize, so the
+      // ResizeObserver never fires; the hook must re-check on new children.
+      setOverflow(false);
+      const { rerender } = render(
+        <BAIText ellipsis={{ tooltip: true }}>short</BAIText>,
+      );
+      hover(box('short'));
+      expect(screen.queryByRole('tooltip')).toBeNull();
+      unhover(box('short'));
+
+      setOverflow(true);
+      rerender(
+        <BAIText ellipsis={{ tooltip: true }}>a much longer value</BAIText>,
+      );
+      hover(box('a much longer value'));
+      expect(screen.getByRole('tooltip')).toHaveTextContent(
+        'a much longer value',
+      );
+    });
+
+    it('re-measures when the ResizeObserver fires', () => {
+      const original = global.ResizeObserver;
+      let notify: (() => void) | undefined;
+      global.ResizeObserver = class {
+        constructor(cb: ResizeObserverCallback) {
+          notify = () => cb([], this as unknown as ResizeObserver);
+        }
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+      } as unknown as typeof ResizeObserver;
+      try {
+        setOverflow(false);
+        render(<BAIText ellipsis={{ tooltip: true }}>long</BAIText>);
+        hover(box('long'));
+        expect(screen.queryByRole('tooltip')).toBeNull();
+        unhover(box('long'));
+
+        setOverflow(true);
+        act(() => notify?.());
+        hover(box('long'));
+        expect(screen.getByRole('tooltip')).toHaveTextContent('long');
+      } finally {
+        global.ResizeObserver = original;
+      }
+    });
   });
 });
 
 // The copy label must come from the bundle. English alone cannot prove it
 // (a hardcoded 'Copy' also passes); the Korean cases are the real guard.
 describe('BAIText copyable', () => {
-  const writeText = vi.fn(() => Promise.resolve());
   beforeEach(() => {
-    writeText.mockClear();
-    Object.defineProperty(navigator, 'clipboard', {
-      value: { writeText },
-      configurable: true,
-    });
+    vi.mocked(copy).mockClear();
   });
 
   afterEach(async () => {
@@ -441,14 +401,14 @@ describe('BAIText copyable', () => {
       </BAIText>,
     );
     await click(screen.getByRole('button'));
-    expect(writeText).toHaveBeenCalledWith('full-value');
+    expect(copy).toHaveBeenCalledWith('full-value');
   });
 
   it('copies `copyable.text` over the visible children and locks out re-entry', async () => {
     render(<BAIText copyable={{ text: 'full-value' }}>truncated…</BAIText>);
     const button = screen.getByRole('button');
     await click(button);
-    expect(writeText).toHaveBeenCalledWith('full-value');
+    expect(copy).toHaveBeenCalledWith('full-value');
     // Astryx `IconButton isDisabled` announces the lock through `aria-disabled`
     // (an href-less/`tabindex=-1` control), not the `disabled` attribute.
     expect(button.getAttribute('aria-disabled')).toBe('true');
@@ -460,13 +420,13 @@ describe('BAIText copyable', () => {
   it('accepts a `text` function', async () => {
     render(<BAIText copyable={{ text: () => 'computed' }}>shown</BAIText>);
     await click(screen.getByRole('button'));
-    expect(writeText).toHaveBeenCalledWith('computed');
+    expect(copy).toHaveBeenCalledWith('computed');
   });
 
   it('renders a standalone copy control when given no children', async () => {
     render(<BAIText copyable={{ text: 'bare' }} />);
     await click(screen.getByRole('button'));
-    expect(writeText).toHaveBeenCalledWith('bare');
+    expect(copy).toHaveBeenCalledWith('bare');
   });
 
   it('takes antd `[resting, copied]` tuples for icon and tooltips', async () => {
@@ -494,10 +454,26 @@ describe('BAIText copyable', () => {
     expect(screen.getByTestId('copied')).toBeInTheDocument();
   });
 
-  it('stays in the resting state when the clipboard rejects', async () => {
-    writeText.mockImplementationOnce(() => Promise.reject(new Error('denied')));
+  it('stays in the resting state when `text()` rejects', async () => {
     const onCopy = vi.fn();
-    render(<BAIText copyable={{ onCopy }}>abc</BAIText>);
+    render(
+      <BAIText
+        copyable={{ text: () => Promise.reject(new Error('denied')), onCopy }}
+      >
+        abc
+      </BAIText>,
+    );
+    const button = screen.getByRole('button');
+    await click(button);
+    expect(onCopy).not.toHaveBeenCalled();
+    expect(button.getAttribute('aria-disabled')).not.toBe('true');
+    expect(button).toHaveAttribute('aria-label', 'Copy');
+  });
+
+  it('stays in the resting state when the clipboard refuses the write', async () => {
+    const onCopy = vi.fn();
+    vi.mocked(copy).mockReturnValueOnce(false);
+    render(<BAIText copyable={{ text: 'abc', onCopy }}>abc</BAIText>);
     const button = screen.getByRole('button');
     await click(button);
     expect(onCopy).not.toHaveBeenCalled();

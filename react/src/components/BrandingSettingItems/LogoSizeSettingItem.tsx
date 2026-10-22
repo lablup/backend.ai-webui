@@ -2,10 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useDefaultTheme } from '../../hooks/useDefaultTheme';
-import { theme } from '../../theme-shim';
-import { Grid } from '@astryxdesign/core/Grid';
-import { Text } from '@astryxdesign/core/Text';
+import { usePreviewThemeConfig } from '../../hooks/usePreviewThemeConfig';
+import { Grid } from '@lablup/ui-common/Grid';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex, BAIUncontrolledInput } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 
@@ -17,17 +17,17 @@ const LOGO_SIZE_CONFIG: Record<
   NonNullable<LogoSizeSettingItemProps['logoType']>,
   { key: string; defaultSize: { width?: number; height?: number } }
 > = {
-  wide: { key: 'logo.size', defaultSize: { width: 159, height: 24 } },
+  wide: { key: 'branding.logo.size', defaultSize: { width: 159, height: 24 } },
   collapsed: {
-    key: 'logo.sizeCollapsed',
+    key: 'branding.logo.sizeCollapsed',
     defaultSize: { width: 24, height: 24 },
   },
   login: {
-    key: 'logo.loginLogoSize',
+    key: 'branding.logo.loginLogoSize',
     defaultSize: { height: 35 },
   },
   about: {
-    key: 'logo.aboutLogoSize',
+    key: 'branding.logo.aboutLogoSize',
     defaultSize: { width: 159, height: 24 },
   },
 };
@@ -38,19 +38,20 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const { getDefaultThemeValue, updateDefaultTheme } = useDefaultTheme();
+  const { token } = useTheme();
+  const { getThemeConfigValue, updateThemeConfigValue } =
+    usePreviewThemeConfig();
 
   const { key: sizeKey, defaultSize } = LOGO_SIZE_CONFIG[logoType];
-  const rawSize = getDefaultThemeValue<{ width?: number; height?: number }>(
+  const rawSize = getThemeConfigValue<{ width?: number; height?: number }>(
     sizeKey,
   );
 
   // For about logo, fall back to deprecated aboutModalSize before defaults
   const deprecatedAboutSize =
     logoType === 'about'
-      ? getDefaultThemeValue<{ width?: number; height?: number }>(
-          'logo.aboutModalSize',
+      ? getThemeConfigValue<{ width?: number; height?: number }>(
+          'branding.logo.aboutModalSize',
         )
       : undefined;
 
@@ -69,14 +70,17 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
         <BAIFlex
           gap="sm"
           wrap="nowrap"
-          style={{ color: token.colorTextTertiary }}
+          style={{ color: token('--color-text-tertiary') }}
         >
           <Text color="secondary">{t('userSettings.logo.size.Width')}:</Text>
           <BAIUncontrolledInput
             type="number"
             defaultValue={logoSizeConfig.width?.toString() ?? ''}
             onCommit={(v) => {
-              updateDefaultTheme(`${sizeKey}.width`, v ? Number(v) : undefined);
+              updateThemeConfigValue(
+                `${sizeKey}.width`,
+                v ? Number(v) : undefined,
+              );
             }}
             style={{ maxWidth: 150 }}
           />
@@ -84,14 +88,14 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
         <BAIFlex
           gap="sm"
           wrap="nowrap"
-          style={{ color: token.colorTextTertiary }}
+          style={{ color: token('--color-text-tertiary') }}
         >
           <Text color="secondary">{t('userSettings.logo.size.Height')}:</Text>
           <BAIUncontrolledInput
             type="number"
             defaultValue={logoSizeConfig.height?.toString() ?? ''}
             onCommit={(v) => {
-              updateDefaultTheme(
+              updateThemeConfigValue(
                 `${sizeKey}.height`,
                 v ? Number(v) : undefined,
               );

@@ -71,7 +71,7 @@ The example below illustrates what's happening.
 Under the `user2-vfolder`, create a `test_file`.
 Fill the contents with \"file inside user2-vfolder\".
 
-![](../images/mounted_folders_in_terminal.png)
+![=682px](../images/mounted_folders_in_terminal.png)
 
 Running `ls` command against `user2-vfolder`, users can confirm the file was created successfully.
 Please note the contents of the file can be chekced with `cat` command.

@@ -11,8 +11,8 @@
 */
 import { useVirtualFolderNodePathV2Fragment$key } from '../../__generated__/useVirtualFolderNodePathV2Fragment.graphql';
 import { useVirtualFolderPathV2 } from '../../hooks/useVirtualFolderNodePathV2';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
 import { BAIText } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';

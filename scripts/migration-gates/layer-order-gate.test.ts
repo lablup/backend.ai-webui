@@ -21,7 +21,7 @@ const {
 } = await import("./layer-order-gate.mjs");
 
 const ORDER =
-  "reset, theme, base, astryx-base, astryx-theme, components, utilities";
+  "reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities";
 
 const html = (statement: string) =>
   [
@@ -70,6 +70,7 @@ describe("parseLayerOrder", () => {
       "base",
       "astryx-base",
       "astryx-theme",
+      "ui-common",
       "components",
       "utilities",
     ]);
@@ -133,7 +134,7 @@ describe("runLayerOrderGate", () => {
 
   it("flags mirrors that agree on a wrong order", () => {
     const swapped =
-      "reset, theme, base, astryx-theme, astryx-base, components, utilities";
+      "reset, theme, base, astryx-theme, astryx-base, ui-common, components, utilities";
     const { failures } = gate({
       [INDEX_HTML]: html(`  <style>@layer ${swapped};</style>`),
       [APP_CSS]: css(`@layer ${swapped};`),
@@ -153,7 +154,7 @@ describe("runLayerOrderGate", () => {
       [STORYBOOK_CSS]: css(`@layer ${short};`),
     });
     expect(failures).toHaveLength(1);
-    expect(failures[0]).toContain("omits astryx-theme, utilities");
+    expect(failures[0]).toContain("omits astryx-theme, ui-common, utilities");
   });
 
   it("flags an earlier inline <style> that registers layer names first", () => {

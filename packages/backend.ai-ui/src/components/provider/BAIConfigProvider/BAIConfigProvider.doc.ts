@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      "The root provider every `backend.ai-ui` consumer mounts once, at the top of the app. It wires four things: a shared TanStack `QueryClientProvider` (created at module scope, with `refetchOnWindowFocus` and `retry` disabled), Astryx's `InternationalizationProvider` (locale, `dir` from `getLocaleDirection`, and the `@astryx.*` string overrides carried on `locale.astryxLocale`), BUI's own i18next instance plus the dayjs locale — both re-synced in an effect whenever `locale.lang` changes — and, when the client props are present, `BAIClientProvider`. It deliberately does not render an i18next React Context: BUI components bind to BUI's instance explicitly through `useBAIi18n()`, so the host's own i18n context is left untouched. Its props are standalone — there is no underlying component to pass extra props through to.",
+      "The root provider every `backend.ai-ui` consumer mounts once, at the top of the app. It wires four things: a shared TanStack `QueryClientProvider` (created at module scope, with `refetchOnWindowFocus` and `retry` disabled), Astryx's `InternationalizationProvider` (locale, `dir` from `getLocaleDirection`, and the `@astryx.*` and ui-common `uic.*` strings carried on `locale.astryxLocale`), BUI's own i18next instance plus the dayjs locale — both re-synced in an effect whenever `locale.lang` changes (for a non-English language it first suspends until BUI's lazily loaded catalog is in) — and, when the client props are present, `BAIClientProvider`. It deliberately does not render an i18next React Context: BUI components bind to BUI's instance explicitly through `useBAIi18n()`, so the host's own i18n context is left untouched. Its props are standalone — there is no underlying component to pass extra props through to.",
     bestPractices: [
       {
         guidance: true,
@@ -26,7 +26,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          "Pass a `locale` built from the host's current language together with the matching `backend.ai-ui/locale/*` catalog, so BUI strings, dayjs formatting and Astryx's `IntlMessageFormat` plurals/numbers/dates all follow the session language.",
+          "Pass the `backend.ai-ui/locale/*` module for the session language (import non-English ones on demand), so BUI strings, dayjs formatting and Astryx's `IntlMessageFormat` plurals/numbers/dates all follow it. The provider suspends until BUI's catalog for a non-English language has loaded, so keep it under a `Suspense` boundary.",
       },
       {
         guidance: true,
@@ -90,9 +90,12 @@ export const docs = {
     },
     {
       label: 'Locale only',
-      code: `<BAIConfigProvider locale={{ lang: 'ko' }}>
-  <StoryComponent />
-</BAIConfigProvider>`,
+      code: `// const { default: ko_KR } = await import('backend.ai-ui/locale/ko_KR');
+<Suspense fallback={null}>
+  <BAIConfigProvider locale={ko_KR}>
+    <StoryComponent />
+  </BAIConfigProvider>
+</Suspense>`,
     },
   ],
 } satisfies ComponentDoc;

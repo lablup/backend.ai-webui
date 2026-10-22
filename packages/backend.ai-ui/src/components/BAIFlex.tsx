@@ -1,48 +1,31 @@
-import { theme } from '../theme-shim';
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Stays in BUI rather than ui-common (FR-4087): it is the frozen antd `Flex`
+ vocabulary (`direction`, `justify`, `gap="sm"`) of ~290 call sites, and
+ Astryx `Stack`/`HStack`/`VStack` already own the role for new code.
+*/
 import React, { type CSSProperties, type PropsWithChildren } from 'react';
 
 type GapSize = number | 'xxs' | 'xs' | 'sm' | 'ms' | 'md' | 'lg' | 'xl' | 'xxl';
 type GapProp = GapSize | [GapSize | undefined, GapSize | undefined];
 
 /**
- * Named gap -> theme token. Declared as an explicit, TYPED table rather than
- * the old `token['size' + size.toUpperCase()]` string concatenation: that
- * form type-checks against any token object, so when `sizeSM`/`sizeMS`/
- * `sizeMD`/`sizeLG` were missing from the theme-shim's map the lookup
- * returned `undefined`, React dropped the `gap` declaration entirely, and
- * ~470 call sites collapsed to a 0 gap with nothing failing. Keying
- * the shim's token type makes any future hole a compile error here instead.
- *
- * The rung names are keyed off the SHIM's token object (`theme.useToken()`),
- * not `antd`'s `GlobalToken` — the antd type import was this file's only tie
- * to antd and, being a 615-file taint hub in the import graph, the single
- * cheapest thing to remove (to-astryx phase 3, ticket A). The shim returns the
- * same token shape, so the compile-time guarantee is unchanged.
+ * Named gap -> Astryx spacing token. The rungs are the antd `size*` ladder the
+ * theme-shim used to resolve (4/8/12/16/20/24/32/48), which the shim read from
+ * these same variables, so every gap is pixel-identical to the shim's
+ * (`BAIFlex.test.tsx` compares them).
  */
-type BAIGapToken = keyof ReturnType<typeof theme.useToken>['token'];
-
-const GAP_TOKEN: Record<
-  Exclude<GapSize, number>,
-  Extract<
-    BAIGapToken,
-    | 'sizeXXS'
-    | 'sizeXS'
-    | 'sizeSM'
-    | 'sizeMS'
-    | 'sizeMD'
-    | 'sizeLG'
-    | 'sizeXL'
-    | 'sizeXXL'
-  >
-> = {
-  xxs: 'sizeXXS',
-  xs: 'sizeXS',
-  sm: 'sizeSM',
-  ms: 'sizeMS',
-  md: 'sizeMD',
-  lg: 'sizeLG',
-  xl: 'sizeXL',
-  xxl: 'sizeXXL',
+const BAI_FLEX_GAP_VAR: Record<Exclude<GapSize, number>, string> = {
+  xxs: 'var(--spacing-1)',
+  xs: 'var(--spacing-2)',
+  sm: 'var(--spacing-3)',
+  ms: 'var(--spacing-4)',
+  md: 'var(--spacing-5)',
+  lg: 'var(--spacing-6)',
+  xl: 'var(--spacing-8)',
+  xxl: 'var(--spacing-12)',
 };
 
 export interface BAIFlexProps
@@ -68,20 +51,16 @@ const BAIFlex = React.forwardRef<HTMLDivElement, BAIFlexProps>(
     },
     ref,
   ) => {
-    const { token } = theme.useToken();
-
     const getGapSize = (size: GapSize | undefined) => {
-      if (size === undefined) return 0;
-      // `?? 0` is a last-resort guard only: the table above plus
-      // `GlobalToken` keying make an unresolved name impossible at compile
-      // time. It exists so a runtime token object that predates a new rung
-      // degrades to a flat gap rather than dropping the declaration.
-      return typeof size === 'string' ? (token[GAP_TOKEN[size]] ?? 0) : size;
+      if (size === undefined) return '0px';
+      return typeof size === 'string' ? BAI_FLEX_GAP_VAR[size] : `${size}px`;
     };
 
     const gapStyle = Array.isArray(gap)
-      ? `${getGapSize(gap[0])}px ${getGapSize(gap[1])}px`
-      : getGapSize(gap);
+      ? `${getGapSize(gap[0])} ${getGapSize(gap[1])}`
+      : typeof gap === 'number'
+        ? gap
+        : getGapSize(gap);
 
     const transferConst = [justify, align];
     const transferConstStyle = transferConst.map((el) => {

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0ebf2c158b405bf1ca02aaf18d0ac42c>>
+ * @generated SignedSource<<db7ac952a38632622361ed9a9c44ddbd>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -27,6 +27,10 @@ export type BAIModelDeploymentNodesFragment$data = ReadonlyArray<{
   readonly defaultDeploymentStrategy: {
     readonly type: DeploymentStrategyType;
   };
+  readonly entityId: string;
+  readonly entityLabels: {
+    readonly " $fragmentSpreads": FragmentRefs<"BAIEntityLabelSettingModalFragment" | "BAIEntityLabelTokensFragment">;
+  } | null | undefined;
   readonly id: string;
   readonly metadata: {
     readonly createdAt: string;
@@ -41,9 +45,7 @@ export type BAIModelDeploymentNodesFragment$data = ReadonlyArray<{
     } | null | undefined;
     readonly resourceGroupName: string;
     readonly status: DeploymentStatus;
-    readonly tags: ReadonlyArray<string>;
     readonly updatedAt: string;
-    readonly " $fragmentSpreads": FragmentRefs<"BAIDeploymentTagTokens_metadata">;
   };
   readonly networkAccess: {
     readonly endpointUrl: string | null | undefined;
@@ -92,6 +94,13 @@ return {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "currentRevisionId",
       "storageKey": null
     },
@@ -123,13 +132,6 @@ return {
           "args": null,
           "kind": "ScalarField",
           "name": "status",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "tags",
           "storageKey": null
         },
         {
@@ -176,11 +178,6 @@ return {
             (v0/*: any*/)
           ],
           "storageKey": null
-        },
-        {
-          "args": null,
-          "kind": "FragmentSpread",
-          "name": "BAIDeploymentTagTokens_metadata"
         }
       ],
       "storageKey": null
@@ -325,6 +322,33 @@ return {
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": [
+        {
+          "kind": "Literal",
+          "name": "limit",
+          "value": 100
+        }
+      ],
+      "concreteType": "EntityLabelConnection",
+      "kind": "LinkedField",
+      "name": "entityLabels",
+      "plural": false,
+      "selections": [
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "BAIEntityLabelTokensFragment"
+        },
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "BAIEntityLabelSettingModalFragment"
+        }
+      ],
+      "storageKey": "entityLabels(limit:100)"
+    },
+    {
       "args": null,
       "kind": "FragmentSpread",
       "name": "BAIDeploymentOwnerInfo_deployment"
@@ -335,6 +359,6 @@ return {
 };
 })();
 
-(node as any).hash = "4ebd509e7e00bfbeb53378be0c29db25";
+(node as any).hash = "f210ad96eb1180cc8676de514209b77f";
 
 export default node;

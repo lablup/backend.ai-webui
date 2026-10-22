@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Tab } from '@astryxdesign/core/TabList';
+import { Tab } from '@lablup/ui-common/TabList';
 import { BAITabList } from 'backend.ai-ui';
 import React from 'react';
 

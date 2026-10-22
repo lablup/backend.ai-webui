@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useThemeMode } from '../hooks/useThemeMode';
-import { IconButton } from '@astryxdesign/core/IconButton';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import { Moon, Sun } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

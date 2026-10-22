@@ -130,8 +130,12 @@ test.describe(
       const modal = new FolderExplorerModal(page);
       await modal.waitForOpen();
 
-      // 2. Verify error message is displayed in modal
-      await modal.verifyErrorMessage('Folder not found or access denied');
+      // 2. Verify error message is displayed in modal. The manager answers an
+      // unknown id with a field error on `vfolderV2`, which
+      // `FolderExplorerModalV2` reports as "Folder details are unavailable"
+      // since #10051; "Folder not found or access denied" is kept for a plain
+      // `null` node.
+      await modal.verifyErrorMessage('Folder details are unavailable');
 
       // 3. Verify file explorer table is not within the modal body
       // Check that BAIFileExplorer's table is not rendered

@@ -65,9 +65,9 @@ export const docs = {
     },
     {
       name: 'filter',
-      type: "{ type?: { equals?: 'GENERAL' | 'MODEL_STORE' } }",
+      type: "Omit<ProjectV2Filter, 'name'>",
       description:
-        'Extra GraphQL filter narrowing the listed projects. It is spread into the page query filter, where a search term adds `name: { contains: … }` on top of it.',
+        'Extra GraphQL filter narrowing the listed projects — any `ProjectV2Filter` field except `name`, e.g. `{ type: { equals: "MODEL_STORE" } }`, or `{ user: { email: { equals: … } } }` for one user\'s projects. It is spread into the page query filter, where a search term adds `name: { contains: … }` on top of it.',
     },
     {
       name: 'multiple',

@@ -1,4 +1,4 @@
-import { base, react } from 'eslint-config-bai';
+import { base, bailinkEllipsisRestriction, react } from 'eslint-config-bai';
 import jsonSchemaValidator from 'eslint-plugin-json-schema-validator';
 import relayPlugin from 'eslint-plugin-relay';
 import globals from 'globals';
@@ -8,12 +8,28 @@ import jsoncParser from 'jsonc-eslint-parser';
 // below can re-declare the rule (flat-config rule configs replace, not merge)
 // without duplicating these entries.
 const restrictedImportPatterns = [
-  // `locale` is a published export-map alias (→ dist/locale/*), not a deep
-  // reach into package internals.
+  // `locale` and `theme` are published subpath exports, not deep reaches into internals.
   {
-    group: ['backend.ai-ui/*', '!backend.ai-ui/dist', '!backend.ai-ui/locale'],
+    group: ['backend.ai-ui/*', '!backend.ai-ui/locale', '!backend.ai-ui/theme'],
+  },
+  // ADR 0009: Astryx is reached only through its @lablup/ui-common mirror.
+  {
+    group: ['@astryxdesign/*'],
+    message:
+      'Import Astryx through @lablup/ui-common: @astryxdesign/core/<X> -> @lablup/ui-common/<X>, @astryxdesign/lab -> @lablup/ui-common/lab (ADR 0009).',
   },
 ];
+// `no-restricted-imports` sees only static imports and re-exports.
+const astryxDynamicImportBan = [
+  'ImportExpression[source.value=/^@astryxdesign\\u002F/]',
+  'ImportExpression > TemplateLiteral.source[quasis.0.value.cooked=/^@astryxdesign\\u002F/]',
+  "CallExpression[callee.name='require'][arguments.0.value=/^@astryxdesign\\u002F/]",
+  'TSImportType[argument.literal.value=/^@astryxdesign\\u002F/]',
+].map((selector) => ({
+  selector,
+  message:
+    'Import Astryx through @lablup/ui-common, dynamic imports and require() included (ADR 0009).',
+}));
 const restrictedImportPaths = [
   {
     name: 'react-router-dom',
@@ -50,7 +66,9 @@ export default [
   },
 
   {
-    files: ['**/*.ts', '**/*.tsx'],
+    files: ['**/*.ts', '**/*.tsx', 'src/**/*.{js,jsx,mjs,cjs}'],
+    // `astryx theme build` output keeps its @astryxdesign/* ids (ADR 0009).
+    ignores: ['src/astryx-theme/built/**'],
     rules: {
       'no-restricted-imports': [
         'error',
@@ -89,6 +107,8 @@ export default [
           message:
             'Direct <style> elements are forbidden (CSP nonce safety). Import a co-located .css file instead, and drive runtime-variable values through CSS custom properties.',
         },
+        ...astryxDynamicImportBan,
+        bailinkEllipsisRestriction,
       ],
     },
   },
@@ -154,13 +174,8 @@ export default [
         'error',
         {
           patterns: [
-            {
-              group: [
-                'backend.ai-ui/*',
-                '!backend.ai-ui/dist',
-                '@lobehub/fluent-emoji',
-              ],
-            },
+            ...restrictedImportPatterns,
+            { group: ['@lobehub/fluent-emoji'] },
             {
               group: ['**/useCurrentProject'],
               importNames: ['useCurrentProjectValue'],

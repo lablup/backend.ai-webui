@@ -101,6 +101,8 @@ document.body.style.zoom = '';
 
 The resulting PNG will be ~2× the natural CSS dimensions in pixels (e.g., a 450×700 modal becomes a 900×1400 PNG), giving noticeably sharper text and icons in the docs.
 
+> **Set the display width.** A 2× component capture must be referenced with a width hint equal to its natural CSS width (`![=450px](images/foo_modal.png)` for the 900px PNG above), or the web manual shows it at double size. See [Display Width for Component Captures](#display-width-for-component-captures-2-zoom).
+
 > **Note on `Match the Existing Screenshot's Framing`** (below): the framing *scope* contract is unchanged — only the pixel density doubles. A modal that was 450×700 at 1× zoom becomes 900×1400 at 2× zoom; both show the same modal-only scope.
 
 ### Content
@@ -172,9 +174,46 @@ If the framing genuinely needs to change (e.g., the feature now spans more of th
 ![](images/filename.png)
 ```
 
-- No alt text (current convention)
+- No alt text (current convention) — the only allowed alt content is a width hint (below)
 - Relative path from the document file
 - Blank lines before and after the image reference
+
+### Display Width for Component Captures (2× zoom)
+
+The web manual renders an image at its **pixel width**, capped at the
+content column (820px). A 2× capture therefore shows at **twice its real
+on-screen size** unless the reference says otherwise: a 520px-wide modal is
+captured as a 1040px PNG and stretched to the full column, and a 192px
+menu captured at 384px shows as a 384px menu. Readers see buttons and
+text much larger than in the app.
+
+Pin every **2× capture narrower than 1640px** to its real CSS width with the
+toolkit's size hint — half the PNG width:
+
+```markdown
+![=520px](images/user_detail_dialog.png)        <!-- 1040×1108 PNG, 2× -->
+![=192px](images/endpoint_detail_more_menu.png)  <!-- 384×174 PNG, 2× -->
+```
+
+| Capture | Hint |
+|---|---|
+| Modal / dialog / drawer, dropdown / menu / popover, card, toolbar, header strip, sidebar segment, page region — captured at 2× | `=<png width ÷ 2>px` |
+| Full-page / full-viewport capture (PNG ≥ 1640px wide) | none — it fills the column anyway |
+| 1× capture (older images, third-party apps at 1×) | none — it already shows at real size |
+
+Rules:
+
+- Compute the hint **per language** from that language's own PNG
+  (`file src/ko/images/foo.png`), since locale captures can differ in width.
+  Write the same hint into every locale's markdown only when the PNGs match.
+- When you **recapture** an image, re-check its width and update the hint in
+  all four locales; when you change a 1× image to a 2× capture, add the hint.
+- Not sure whether an image is 1× or 2×? Open it at 100%: body text around
+  14px tall is 1×, around 28px is 2×.
+- The hint also drives the PDF (it overrides the PDF's default 0.5 scale with
+  the same value), so the two outputs stay consistent.
+- Do not use `%` hints or upscale (`=` larger than half the PNG width) — the
+  goal is real size, not "fit the column".
 
 ## When to Update Screenshots
 

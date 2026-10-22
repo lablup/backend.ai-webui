@@ -4,7 +4,7 @@
  */
 import type { SessionV2Status } from 'backend.ai-ui';
 
-/** Gated behind the client's `session-preemption-statuses` feature flag. */
+/** Joined `SessionV2Status` in manager 26.8.0; callers gate them on that version. */
 const PREEMPTION_STATUSES: ReadonlyArray<SessionV2Status> = [
   'RESERVED',
   'PREEMPTED',
@@ -38,8 +38,8 @@ export type SessionStatusCategory =
 
 /**
  * The running / finished status buckets, narrowed to what the connected
- * manager's `SessionV2Status` enum actually accepts. Callers read
- * `supports('session-preemption-statuses')` and pass it in.
+ * manager's `SessionV2Status` enum actually accepts. Callers pass whether the
+ * manager is 26.8.0 or later.
  */
 export const getSessionV2StatusBuckets = (
   supportsPreemptionStatuses: boolean,

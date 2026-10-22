@@ -16,29 +16,10 @@ from the code, the types, and the surrounding names. If they could, delete it.
 
 ## Why
 
-This project's instructions were, until this rule, asymmetric: several
-sources *demanded* comments (`component-props-extension.md` — "the reason is
-written down in the file header"; `react.instructions.md` — "each BAI wrapper's
-file header documents its deliberate quirks"; `use-bai-card.md`) and **none**
-limited them. An obligation to justify, with no budget, gets satisfied
-maximally.
-
-Measured on `react/src` + `packages/backend.ai-ui/src` (tests excluded) when
-this rule was written:
-
-Every share below is **comment ÷ (comment + code)**, counting non-blank lines.
-
-```
-comment 24,719 / (24,719 + code 159,747 = 184,466 total)   = 13.4%
-mean comment block                                         = 4.2 lines
-antd/migration-flavoured blocks: 20% of blocks             = 41% of comment lines
-  ...at a mean of                                            8.7 lines each
-worst files: backendAiTheme.ts 791/(791+365)               = 68%
-             antdParity.ts     183/(183+40)                = 82%
-```
-
-So the problem was never "a few too many comments" — it was one *genre* of
-comment, the migration-justification essay, carrying 41% of the mass.
+Several rules ask for the reason behind a decision to be written down
+(`component-props-extension.md`, `react.instructions.md`, `use-bai-card.md`);
+this rule is the budget that bounds them. The comment mass in this tree is
+dominated by one genre, the migration-justification essay.
 
 The cost is not disk space. Long blocks push the code they describe off the
 screen, they rot silently (nothing type-checks prose), and they train the next

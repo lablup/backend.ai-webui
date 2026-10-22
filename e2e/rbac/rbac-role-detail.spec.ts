@@ -1,11 +1,12 @@
 // spec: e2e/.agent-output/test-plan-rbac-management.md
-// Scenarios: 3.1 – 3.4, 4.1 – 4.4, 5.1 – 5.4, 6.2 – 6.3
-// (Role detail drawer, permissions management, user assignments, edge cases)
+// Scenarios: 3.1 – 3.4, 5.1 – 5.4, 6.2 – 6.3
+// (Role detail drawer, user assignments, edge cases)
 import { createAdminApiContext, purgeUserViaApi } from '../utils/admin-api';
 import {
   KeyPairModal,
   UserSettingModal,
 } from '../utils/classes/user/UserSettingModal';
+import { getE2EDomainName } from '../utils/e2e-scope';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import test, {
   expect,
@@ -16,6 +17,11 @@ import test, {
 import { randomUUID } from 'node:crypto';
 
 const TEST_RUN_ID = Date.now().toString(36);
+
+// Relay global ids are base64 `Type:uuid`; filters and URLs carry the uuid.
+function toLocalId(globalId: string) {
+  return Buffer.from(globalId, 'base64').toString('utf8').split(':')[1];
+}
 const ROLE_NAME = `e2e-detail-role-${TEST_RUN_ID}`;
 const ROLE_DESCRIPTION = `E2E detail test role created at ${new Date().toISOString()}`;
 
@@ -35,35 +41,29 @@ async function searchForRole(page: Page, roleName: string) {
   ).toBeVisible({ timeout: 10000 });
 }
 
-async function createTestRole(page: Page) {
+// Creates a Domain-scoped role. Since #10081 (FR-4141) the modal fills the
+// Domain scope with the signed-in domain and hides the Target field, so the
+// role always lands in the admin's own domain.
+async function createTestRole(page: Page, roleName = ROLE_NAME) {
   await page.getByRole('button', { name: 'Create Role' }).click();
   const modal = page.getByRole('dialog', { name: 'Create Role' });
   await expect(modal).toBeVisible();
-  await modal.getByLabel('Role Name').fill(ROLE_NAME);
+  await modal.getByLabel('Role Name').fill(roleName);
   await modal.getByLabel('Description').fill(ROLE_DESCRIPTION);
 
-  // Fill in the required "Scope Type / Target" field. Both are Astryx
-  // Selector triggers. "Target" starts out disabled (rendered as a
-  // `combobox`, `aria-busy="true"`, while it fetches the domain list after
-  // "Scope Type" is picked) and re-renders as an enabled `button` once
-  // ready -- so target it by role `button`, whose `.click()` naturally
-  // waits out that role/attribute transition.
-  await modal.getByRole('button', { name: 'Scope Type', exact: true }).click();
+  // The Selector trigger's accessible name is the field label plus its
+  // current value ("Scope Type Scope Type" before a pick), so it cannot be
+  // matched exactly.
+  await modal.getByRole('button', { name: 'Scope Type' }).click();
   await page.getByRole('option', { name: 'Domain', exact: true }).click();
-
-  await modal
-    .getByRole('button', { name: 'Target', exact: true })
-    .click({ timeout: 15000 });
-  const targetOptions = page.getByRole('option');
-  await expect(targetOptions.first()).toBeVisible({ timeout: 10000 });
-  await targetOptions.first().click();
+  await expect(modal.getByRole('button', { name: 'Target' })).toBeHidden();
 
   await modal.getByRole('button', { name: 'OK' }).click();
   await expect(modal).toBeHidden({ timeout: 10000 });
   // Verify success notification instead of row visibility (pagination may hide the new row)
-  await expect(
-    page.getByRole('alert').filter({ hasText: /Role created successfully/i }),
-  ).toBeVisible({ timeout: 10000 });
+  await expect(toast(page, /Role created successfully/i)).toBeVisible({
+    timeout: 10000,
+  });
 }
 
 // Same PowerSearch interaction as `searchForRole`, without asserting the
@@ -99,11 +99,12 @@ function statusFilterOption(page: Page, status: 'Active' | 'Inactive') {
 
 // `BAICard`'s `tabList` renders a `nav[aria-label="Tabs"]` of plain
 // `<button>`s (BAITabList / Astryx `TabList`), never ARIA `tab` elements —
-// the same contract rbac-role-list.spec.ts already uses.
-function rbacManagementTab(page: Page) {
+// the same contract rbac-role-list.spec.ts already uses. The role list tab
+// is "Roles" since #9924 (formerly "RBAC Management").
+function rolesTab(page: Page) {
   return page
     .getByRole('navigation', { name: 'Tabs' })
-    .getByRole('button', { name: 'RBAC Management' });
+    .getByRole('button', { name: 'Roles', exact: true });
 }
 
 // `RoleDetailDrawer` renders as an Astryx `Dialog` (`role="dialog"`,
@@ -112,8 +113,8 @@ function roleDrawer(page: Page) {
   return page.getByRole('dialog', { name: 'RBAC Role Info' });
 }
 
-// The drawer carries its own BAITabList ("Scopes" / "Permissions" /
-// "Role Assignments"); the active button carries `aria-current="true"`.
+// The drawer carries its own BAITabList ("Permissions" / "Role
+// Assignments"); the active button carries `aria-current="true"`.
 function drawerTab(page: Page, name: string) {
   return roleDrawer(page)
     .getByRole('navigation', { name: 'Tabs' })
@@ -128,13 +129,31 @@ function dataRows(page: Page, scope: Locator | Page = page) {
     .filter({ hasNot: page.getByRole('columnheader') });
 }
 
-// Astryx `Selector` triggers are plain `<button>`s whose accessible name
-// concatenates the field label with its placeholder — which on these fields is
-// the label again ("Permission Permission"). Match that doubled form exactly:
-// a substring "Permission" would also hit "Permission Type" and the drawer's
-// own "Add Permission" button.
-function selectorTrigger(scope: Locator, label: string) {
-  return scope.getByRole('button', { name: `${label} ${label}`, exact: true });
+// The Add User modal's "Users" field is a paged selector: a trigger button
+// opening a "Users" popover with its own "Search options" combobox.
+async function pickAssignUser(page: Page, assignModal: Locator, email: string) {
+  await assignModal.getByRole('button', { name: 'Users' }).click();
+  const userPicker = page.getByRole('dialog', { name: 'Users' });
+  await userPicker
+    .getByRole('combobox', { name: 'Search options' })
+    .fill(email);
+  await userPicker
+    .getByRole('option')
+    .filter({ hasText: email })
+    .first()
+    .click({ timeout: 10000 });
+  // Close the picker so it doesn't block the Add button
+  await page.keyboard.press('Escape');
+  await expect(userPicker).toBeHidden();
+  await expect(
+    assignModal.getByRole('button', { name: 'Users' }),
+  ).toContainText(email);
+}
+
+// The app-shim's `message.*` renders an Astryx toast (role="status") and a
+// live-region copy of it, so the text matches twice.
+function toast(page: Page, text: RegExp) {
+  return page.getByRole('status').filter({ hasText: text }).first();
 }
 
 // The role table (900+ roles in the shared nightly env) can take a while to
@@ -142,7 +161,7 @@ function selectorTrigger(scope: Locator, label: string) {
 // the default wait.
 const SLOW_PAGE_TIMEOUT = 30000;
 
-async function cleanupTestRole(page: Page) {
+async function cleanupTestRole(page: Page, roleName = ROLE_NAME) {
   // Close any lingering drawer from a previous test so it doesn't block clicks.
   const openDrawer = roleDrawer(page);
   if (await openDrawer.isVisible().catch(() => false)) {
@@ -154,14 +173,12 @@ async function cleanupTestRole(page: Page) {
   await statusFilterOption(page, 'Active').click();
   await clearRoleSearch(page);
   // Use name filter to find the role even if it's on a later page
-  await applyRoleNameFilter(page, ROLE_NAME);
+  await applyRoleNameFilter(page, roleName);
 
-  const activeRow = page
-    .getByRole('row')
-    .filter({ hasText: ROLE_NAME })
-    .first();
-  const isActiveVisible = await activeRow
-    .isVisible({ timeout: 2000 })
+  const activeRow = page.getByRole('row').filter({ hasText: roleName }).first();
+  const isActiveVisible = await expect(activeRow)
+    .toBeVisible({ timeout: 10000 })
+    .then(() => true)
     .catch(() => false);
 
   if (isActiveVisible) {
@@ -171,9 +188,10 @@ async function cleanupTestRole(page: Page) {
     // The deactivate action is gated by a Popconfirm — click it then confirm.
     await expect(async () => {
       await activeRow.hover();
-      const deactivateBtn = activeRow
-        .locator('.bai-name-action-cell-actions button')
-        .first();
+      const deactivateBtn = activeRow.getByRole('button', {
+        name: 'Deactivate',
+        exact: true,
+      });
       await expect(deactivateBtn).toBeVisible();
       await deactivateBtn.click();
       // Confirm the Popconfirm that appears after clicking the deactivate button
@@ -190,30 +208,24 @@ async function cleanupTestRole(page: Page) {
   // param), so there's no need to reapply it here.
   await statusFilterOption(page, 'Inactive').click();
 
-  // Purge every inactive row matching the role name. A parallel describe block
-  // in this file may share the same ROLE_NAME and create additional roles while
-  // this cleanup runs, so keep purging until no matching row remains.
+  // Older describe blocks can share ROLE_NAME; purge every matching row.
   while (true) {
     const inactiveRow = page
       .getByRole('row')
-      .filter({ hasText: ROLE_NAME })
+      .filter({ hasText: roleName })
       .first();
-    const isInactiveVisible = await inactiveRow
-      .isVisible({ timeout: 2000 })
+    const isInactiveVisible = await expect(inactiveRow)
+      .toBeVisible({ timeout: 10000 })
+      .then(() => true)
       .catch(() => false);
     if (!isInactiveVisible) break;
 
     await expect(async () => {
-      await inactiveRow
-        .locator('.bai-name-action-cell-actions button')
-        .last()
-        .click();
+      await inactiveRow.hover();
+      await inactiveRow.getByRole('button', { name: 'Purge Role' }).click();
       const purgeModal = page.getByRole('dialog', { name: 'Purge Role' });
       await expect(purgeModal).toBeVisible({ timeout: 5000 });
-      // BAIDeleteConfirmModal requires typing the role name before the Delete
-      // button enables. Its confirm input is the dialog's only textbox — the
-      // Astryx build carries no `#confirmText` id (see project-crud.spec.ts).
-      await purgeModal.getByRole('textbox').fill(ROLE_NAME);
+      await purgeModal.getByRole('textbox').fill(roleName);
       await purgeModal.getByRole('button', { name: 'Delete' }).click();
       await expect(inactiveRow).toBeHidden({ timeout: 5000 });
     }).toPass({ timeout: 20000 });
@@ -239,7 +251,7 @@ test.describe(
       await navigateTo(page, 'rbac');
 
       // 3. Wait for the table to load
-      await expect(rbacManagementTab(page)).toBeVisible({
+      await expect(rolesTab(page)).toBeVisible({
         timeout: SLOW_PAGE_TIMEOUT,
       });
       const roleRows = dataRows(page);
@@ -315,14 +327,6 @@ test.describe(
       const tabs = drawer.getByRole('navigation', { name: 'Tabs' });
 
       // 4. Verify two tabs are visible: "Permissions" and "Role Assignments".
-      // Managers below 26.8.0 (the nightly manager under test) don't support
-      // the merged "Detailed Permissions" view, so the drawer actually shows
-      // three tabs here — "Scopes", "Permissions", "Role Assignments" — with
-      // "Scopes" active by default. See the docblock on
-      // RoleDetailDrawerContent.tsx / RolePermissionDetailTab.tsx for the
-      // version-gated split. Assert the "Permissions" tab becomes active on
-      // click instead of assuming it's the default, so this passes on both
-      // legacy and merged-view managers.
       await expect(
         tabs.getByRole('button', { name: 'Permissions' }),
       ).toBeVisible();
@@ -337,10 +341,8 @@ test.describe(
       ).toHaveAttribute('aria-current', 'true');
 
       // 6. Verify the active tab's content area is visible -- the
-      // Permissions panel's own "Add Permission" button.
-      await expect(
-        drawer.getByRole('button', { name: 'Add Permission' }),
-      ).toBeVisible({
+      // Permissions panel's Read / Write grid, one row per permission type.
+      await expect(drawer.getByRole('row').first()).toBeVisible({
         timeout: 10000,
       });
 
@@ -405,272 +407,6 @@ test.describe(
 // Not serial: each test provisions its own role (cleanupTestRole + createTestRole),
 // so a failure doesn't cascade. mode: 'default' keeps tests sequential on one worker
 // because they share the same ROLE_NAME (fullyParallel would make them race).
-test.describe(
-  'RBAC Role Permissions Management',
-  { tag: ['@rbac', '@critical', '@functional'] },
-  () => {
-    test.describe.configure({ mode: 'default' });
-
-    test('Superadmin can add a permission to a role', async ({
-      page,
-      request,
-    }) => {
-      test.setTimeout(60000);
-      // 1. Login as admin
-      await loginAsAdmin(page, request);
-
-      // 2. Navigate to RBAC page
-      await navigateTo(page, 'rbac');
-
-      // 3. Create a fresh test custom role
-      await cleanupTestRole(page);
-      await createTestRole(page);
-
-      // 4. Search for and click the test custom role's name to open the drawer
-      await searchForRole(page, ROLE_NAME);
-      const roleRow = page
-        .getByRole('row')
-        .filter({ hasText: ROLE_NAME })
-        .first();
-      await roleRow.getByText(ROLE_NAME).click();
-
-      const drawer = roleDrawer(page);
-      await expect(drawer).toBeVisible({ timeout: 10000 });
-
-      // 5. Click the "Permissions" tab
-      await drawerTab(page, 'Permissions').click();
-
-      // 6. Click the "Add Permission" button
-      await drawer.getByRole('button', { name: 'Add Permission' }).click();
-
-      // 7. Verify a modal titled "Add Permission" appears
-      const addModal = page.getByRole('dialog', { name: 'Add Permission' });
-      await expect(addModal).toBeVisible();
-
-      // 8. The role has a Domain scope, so the modal shows a single "Scope Type / Target"
-      // field (roleScopeKey) instead of separate Scope Type and Target fields.
-      await expect(
-        selectorTrigger(addModal, 'Scope Type / Target'),
-      ).toBeVisible();
-
-      // 9. Attempt to click OK without filling any fields – verify validation error
-      await addModal.getByRole('button', { name: 'Add' }).click();
-      await expect(
-        addModal.getByText(/Please enter Scope Type \/ Target/i),
-      ).toBeVisible({
-        timeout: 5000,
-      });
-
-      // 10. Select the role scope from the "Scope Type / Target" dropdown
-      // The dropdown shows combined scope entries like "Domain / <domain-name>"
-      await selectorTrigger(addModal, 'Scope Type / Target').click();
-      const roleScopeOptions = page.getByRole('option');
-      await expect(roleScopeOptions.first()).toBeVisible({ timeout: 10000 });
-      await roleScopeOptions.first().click();
-
-      // Wait for the scope dropdown to fully close
-      await expect(page.getByRole('option').first()).toBeHidden({
-        timeout: 5000,
-      });
-
-      // 11. Verify the Permission Type field becomes enabled
-      await expect(selectorTrigger(addModal, 'Permission Type')).toBeEnabled({
-        timeout: 5000,
-      });
-
-      // 12. Select a Permission Type from the dropdown
-      await selectorTrigger(addModal, 'Permission Type').click();
-      const entityTypeOptions = page.getByRole('option');
-      await expect(entityTypeOptions.first()).toBeVisible({ timeout: 5000 });
-      await entityTypeOptions.first().click();
-
-      // Wait for the entityType dropdown to fully close so the next dropdown
-      // query doesn't resolve to the previous (stale) options.
-      await expect(page.getByRole('option').first()).toBeHidden({
-        timeout: 5000,
-      });
-
-      // 13. Select a permission (operation) from the Permission dropdown
-      await expect(selectorTrigger(addModal, 'Permission')).toBeEnabled({
-        timeout: 5000,
-      });
-      await selectorTrigger(addModal, 'Permission').click();
-      const operationOptions = page.getByRole('option');
-      await expect(operationOptions.first()).toBeVisible({ timeout: 5000 });
-      await operationOptions.first().click();
-
-      // 14. Click "Add" (OK button)
-      await addModal.getByRole('button', { name: 'Add' }).click();
-
-      // 17. Verify the modal closes
-      await expect(addModal).toBeHidden({ timeout: 10000 });
-
-      // 18. Verify a success notification "Permission created successfully." appears
-      await expect(
-        page
-          .getByRole('alert')
-          .filter({ hasText: /Permission created successfully/i }),
-      ).toBeVisible({ timeout: 10000 });
-
-      // 19. Verify the new permission row appears in the Permissions tab table.
-      // Scope to the active tab panel so we don't match rows rendered in the
-      // Scopes tab (which remains in the DOM but is hidden).
-      await expect(dataRows(page, drawer).first()).toBeVisible({
-        timeout: 10000,
-      });
-    });
-
-    test('Superadmin can delete a permission from a role', async ({
-      page,
-      request,
-    }) => {
-      test.setTimeout(60000);
-      // 1. Login as admin
-      await loginAsAdmin(page, request);
-
-      // 2. Navigate to RBAC page
-      await navigateTo(page, 'rbac');
-
-      // 3. Create a fresh test custom role and add a permission to it
-      await cleanupTestRole(page);
-      await createTestRole(page);
-
-      // Open drawer and add a permission first
-      await searchForRole(page, ROLE_NAME);
-      const roleRow = page
-        .getByRole('row')
-        .filter({ hasText: ROLE_NAME })
-        .first();
-      await roleRow.getByText(ROLE_NAME).click();
-      const drawer = roleDrawer(page);
-      await expect(drawer).toBeVisible({ timeout: 10000 });
-      await drawerTab(page, 'Permissions').click();
-      await drawer.getByRole('button', { name: 'Add Permission' }).click();
-
-      const addModal = page.getByRole('dialog', { name: 'Add Permission' });
-      await expect(addModal).toBeVisible();
-      // The role has a Domain scope, so the modal shows "Scope Type / Target" as a single field
-      await selectorTrigger(addModal, 'Scope Type / Target').click();
-      const roleScopeOpts = page.getByRole('option');
-      await expect(roleScopeOpts.first()).toBeVisible({ timeout: 10000 });
-      await roleScopeOpts.first().click();
-      // Wait for scope dropdown to close
-      await expect(page.getByRole('option').first()).toBeHidden({
-        timeout: 5000,
-      });
-      await expect(selectorTrigger(addModal, 'Permission Type')).toBeEnabled({
-        timeout: 5000,
-      });
-      await selectorTrigger(addModal, 'Permission Type').click();
-      const entityTypeOpts = page.getByRole('option');
-      await expect(entityTypeOpts.first()).toBeVisible({ timeout: 5000 });
-      await entityTypeOpts.first().click();
-      await expect(page.getByRole('option').first()).toBeHidden({
-        timeout: 5000,
-      });
-      await expect(selectorTrigger(addModal, 'Permission')).toBeEnabled({
-        timeout: 5000,
-      });
-      await selectorTrigger(addModal, 'Permission').click();
-      const operationOpts = page.getByRole('option');
-      await expect(operationOpts.first()).toBeVisible({ timeout: 5000 });
-      await operationOpts.first().click();
-      // Use dispatchEvent to ensure the click reaches React's event handler
-      // for modal buttons rendered as portals outside the React root.
-      await addModal
-        .getByRole('button', { name: 'Add' })
-        .dispatchEvent('click');
-      await expect(addModal).toBeHidden({ timeout: 10000 });
-      await expect(
-        page
-          .getByRole('alert')
-          .filter({ hasText: /Permission created successfully/i }),
-      ).toBeVisible({ timeout: 10000 });
-
-      // 4. Locate the permission row and hover to reveal action buttons.
-      // Scope to the active tab panel to skip rows rendered in other (hidden) tabs.
-      const permissionRow = dataRows(page, drawer).first();
-      await expect(permissionRow).toBeVisible({ timeout: 10000 });
-      await permissionRow.hover();
-
-      // 5. Click the "Remove Permission" (trash bin icon) action button - last action button in the row
-      await permissionRow
-        .locator('.bai-name-action-cell-actions button')
-        .last()
-        .click();
-
-      // 6. Verify a confirmation modal titled "Remove Permission" appears
-      // (the modal title uses t('rbac.RemovePermission') = "Remove Permission")
-      const deleteModal = page.getByRole('dialog', {
-        name: 'Remove Permission',
-      });
-      await expect(deleteModal).toBeVisible();
-
-      // 7. Click "Remove Permission" to confirm
-      // (the modal okText is t('rbac.RemovePermission') = "Remove Permission")
-      await deleteModal
-        .getByRole('button', { name: 'Remove Permission' })
-        .click();
-
-      // 8. Verify the permission row disappears from the table
-      await expect(permissionRow).toBeHidden({ timeout: 10000 });
-
-      // 9. Verify a success notification "Permission removed from role successfully." appears
-      await expect(
-        page
-          .getByRole('alert')
-          .filter({ hasText: /Permission removed from role successfully/i }),
-      ).toBeVisible({ timeout: 10000 });
-    });
-
-    test('Superadmin sees empty state in Permissions tab when role has no permissions', async ({
-      page,
-      request,
-    }) => {
-      // 1. Login as admin
-      await loginAsAdmin(page, request);
-
-      // 2. Navigate to RBAC page
-      await navigateTo(page, 'rbac');
-
-      // 3. Create a fresh test custom role with no permissions
-      await cleanupTestRole(page);
-      await createTestRole(page);
-
-      // 4. Search for and click the test custom role name to open the drawer
-      await searchForRole(page, ROLE_NAME);
-      const roleRow = page
-        .getByRole('row')
-        .filter({ hasText: ROLE_NAME })
-        .first();
-      await roleRow.getByText(ROLE_NAME).click();
-
-      const drawer = roleDrawer(page);
-      await expect(drawer).toBeVisible({ timeout: 10000 });
-
-      // 5. Click the "Permissions" tab
-      await drawerTab(page, 'Permissions').click();
-
-      // 6. Verify an empty state message is shown
-      await expect(
-        drawer.getByRole('heading', { name: 'No data to display' }),
-      ).toBeVisible({ timeout: 10000 });
-
-      // 7. Verify the "Add Permission" button is still present and enabled
-      await expect(
-        drawer.getByRole('button', { name: 'Add Permission' }),
-      ).toBeVisible();
-      await expect(
-        drawer.getByRole('button', { name: 'Add Permission' }),
-      ).toBeEnabled();
-
-      // Close the drawer and cleanup test role
-      await drawer.getByRole('button', { name: 'close' }).click();
-      await cleanupTestRole(page);
-    });
-  },
-);
-
 // Disposable fixture user for the Role Assignments block. These tests
 // assign / revoke a user to/from a custom role and then purge that role
 // during cleanup. To keep tests fully isolated from the shared
@@ -776,10 +512,10 @@ test.describe(
       const drawer = roleDrawer(page);
       await expect(drawer).toBeVisible({ timeout: 10000 });
 
-      // 5. Click the "Role Assignments" tab (default tab is "Scopes" since the UI update)
+      // 5. Click the "Role Assignments" tab
       await drawerTab(page, 'Role Assignments').click();
       await expect(drawerTab(page, 'Role Assignments')).toHaveAttribute(
-        'aria-selected',
+        'aria-current',
         'true',
       );
 
@@ -789,7 +525,9 @@ test.describe(
       // 7. Verify a modal titled "Add User" appears with a multi-select "Users" field
       const assignModal = page.getByRole('dialog', { name: 'Add User' });
       await expect(assignModal).toBeVisible();
-      await expect(assignModal.getByLabel('Users')).toBeVisible();
+      await expect(
+        assignModal.getByRole('button', { name: 'Users' }),
+      ).toBeVisible();
 
       // 8. Attempt to click "Add" (OK) without selecting any user – verify validation error
       await assignModal.getByRole('button', { name: 'Add' }).click();
@@ -797,19 +535,8 @@ test.describe(
         assignModal.getByText(/Please select at least one user|required/i),
       ).toBeVisible({ timeout: 5000 });
 
-      // 9. Click in the Users select field and type the test user's email
-      await assignModal.getByLabel('Users').click();
-      await assignModal.getByLabel('Users').fill(TEST_USER_EMAIL);
-
-      // 10. Wait for the dropdown option to appear and select it
-      await page
-        .getByRole('option')
-        .filter({ hasText: TEST_USER_EMAIL })
-        .first()
-        .click({ timeout: 10000 });
-
-      // Close the dropdown by pressing Escape so it doesn't block the Add button
-      await page.keyboard.press('Escape');
+      // 9-10. Search the Users picker for the test user's email and select it
+      await pickAssignUser(page, assignModal, TEST_USER_EMAIL);
 
       // 11. Click "Add"
       await assignModal.getByRole('button', { name: 'Add' }).click();
@@ -819,9 +546,7 @@ test.describe(
 
       // 13. Verify a success notification "Users assigned to role successfully." appears
       await expect(
-        page
-          .getByRole('alert')
-          .filter({ hasText: /Users assigned to role successfully/i }),
+        toast(page, /Users assigned to role successfully/i),
       ).toBeVisible({ timeout: 10000 });
 
       // 14. Verify the assigned user appears in the Role Assignments tab table
@@ -855,27 +580,17 @@ test.describe(
       await roleRow.getByText(ROLE_NAME).click();
       const drawer = roleDrawer(page);
       await expect(drawer).toBeVisible({ timeout: 10000 });
-      // Navigate to Role Assignments tab (default tab is "Scopes" since the UI update)
+      // Navigate to Role Assignments tab
       await drawerTab(page, 'Role Assignments').click();
       await drawer.getByRole('button', { name: 'Add User' }).click();
 
       const assignModal = page.getByRole('dialog', { name: 'Add User' });
       await expect(assignModal).toBeVisible();
-      await assignModal.getByLabel('Users').click();
-      await assignModal.getByLabel('Users').fill(TEST_USER_EMAIL);
-      await page
-        .getByRole('option')
-        .filter({ hasText: TEST_USER_EMAIL })
-        .first()
-        .click({ timeout: 10000 });
-      // Close the dropdown so it doesn't block the Add button
-      await page.keyboard.press('Escape');
+      await pickAssignUser(page, assignModal, TEST_USER_EMAIL);
       await assignModal.getByRole('button', { name: 'Add' }).click();
       await expect(assignModal).toBeHidden({ timeout: 10000 });
       await expect(
-        page
-          .getByRole('alert')
-          .filter({ hasText: /Users assigned to role successfully/i }),
+        toast(page, /Users assigned to role successfully/i),
       ).toBeVisible({ timeout: 10000 });
 
       // 4. Locate the assigned user row in the Role Assignments tab
@@ -887,10 +602,9 @@ test.describe(
       // 5. Hover over the User ID cell to reveal action buttons
       await userRow.hover();
 
-      // 6. Click the "Revoke User" (trash bin icon) action button - first (only) action button in the row
+      // 6. Click the row's "Revoke User" (trash bin icon) action button
       await userRow
-        .locator('.bai-name-action-cell-actions button')
-        .first()
+        .getByRole('button', { name: 'Revoke User', exact: true })
         .click();
 
       // 7. Verify a confirmation modal titled "Revoke User" appears
@@ -910,9 +624,7 @@ test.describe(
 
       // 11. Verify a success notification "User removed from role successfully." appears
       await expect(
-        page
-          .getByRole('alert')
-          .filter({ hasText: /User removed from role successfully/i }),
+        toast(page, /User removed from role successfully/i),
       ).toBeVisible({ timeout: 10000 });
     });
 
@@ -941,10 +653,10 @@ test.describe(
       const drawer = roleDrawer(page);
       await expect(drawer).toBeVisible({ timeout: 10000 });
 
-      // 5. Click the "Role Assignments" tab (default tab is "Scopes" since the UI update)
+      // 5. Click the "Role Assignments" tab
       await drawerTab(page, 'Role Assignments').click();
       await expect(drawerTab(page, 'Role Assignments')).toHaveAttribute(
-        'aria-selected',
+        'aria-current',
         'true',
       );
 
@@ -963,9 +675,312 @@ test.describe(
         drawer.getByRole('button', { name: 'Add User' }),
       ).toBeEnabled();
 
-      // Close the drawer and cleanup test role
-      await drawer.getByRole('button', { name: 'close' }).click();
+      // Close the drawer and cleanup test role. Wait for the close animation
+      // so cleanup does not try to close a drawer that is already leaving.
+      await drawer.getByRole('button', { name: 'Close' }).click();
+      await expect(drawer).toBeHidden({ timeout: 5000 });
       await cleanupTestRole(page);
+    });
+  },
+);
+
+// Managers >= 26.9.0a4 render `RoleDetailDrawerV2`: a metadata card with the
+// role's one scope, and a Permissions tab that edits grants in place as a
+// Read / Write checkbox grid behind a floating save bar (#9849, ADR 0006).
+// `createTestRole` scopes the role to the signed-in domain: the e2e admin's
+// own domain (`getE2EDomainName`), which is not `default` on every cluster.
+
+async function openRoleDrawer(page: Page, roleName: string) {
+  await navigateTo(page, 'rbac');
+  await searchForRole(page, roleName);
+  await page
+    .getByRole('row')
+    .filter({ hasText: roleName })
+    .first()
+    .getByRole('button', { name: roleName, exact: true })
+    .click();
+  const drawer = roleDrawer(page);
+  await expect(drawer).toBeVisible({ timeout: 10000 });
+  return drawer;
+}
+
+// Each grid row is one permission type; its cells hold one checkbox per
+// permission bit, named after the bit ("Read", "Create", …). A `has` locator
+// resolves inside the row, so it must be page-rooted, not drawer-rooted.
+function permissionRow(drawer: Locator, permissionType: string) {
+  return drawer.getByRole('row').filter({
+    has: drawer.page().getByRole('cell', { name: permissionType, exact: true }),
+  });
+}
+
+function saveBarText(drawer: Locator) {
+  return drawer.getByText(/unsaved permission change\(s\)/);
+}
+
+test.describe(
+  'RBAC Role Detail Drawer for a single-scope role',
+  { tag: ['@rbac', '@regression', '@functional', '@requires-manager-v26.9'] },
+  () => {
+    let roleName: string;
+    let roleToCleanup: string | undefined;
+
+    test.beforeEach(async ({ page, request }) => {
+      roleToCleanup = undefined;
+      await loginAsAdmin(page, request);
+      roleName = `e2e-scope-role-${Date.now().toString(36)}${randomUUID().slice(0, 4)}`;
+      roleToCleanup = roleName;
+      await navigateTo(page, 'rbac');
+      await createTestRole(page, roleName);
+    });
+
+    test.afterEach(async ({ page }) => {
+      if (!roleToCleanup) return;
+      try {
+        await navigateTo(page, 'rbac');
+        const createModal = page.getByRole('dialog', { name: 'Create Role' });
+        if (await createModal.isVisible()) {
+          await createModal.getByRole('button', { name: 'Cancel' }).click();
+        }
+        await cleanupTestRole(page, roleToCleanup);
+      } catch (error) {
+        console.warn(
+          `[rbac-role-detail] failed to purge role ${roleName}:`,
+          error,
+        );
+      } finally {
+        roleToCleanup = undefined;
+      }
+    });
+
+    test('Superadmin can see the role scope as a type and target token in the role drawer', async ({
+      page,
+    }) => {
+      const drawer = await openRoleDrawer(page, roleName);
+
+      await expect(
+        drawer.getByRole('heading', { name: 'RBAC Role Info' }),
+      ).toBeVisible();
+      await expect(drawer.getByText(roleName, { exact: true })).toBeVisible();
+      await expect(
+        drawer.getByRole('button', { name: 'Copy' }).first(),
+      ).toBeVisible();
+      await expect(
+        drawer.getByText(ROLE_DESCRIPTION, { exact: true }),
+      ).toBeVisible();
+
+      await expect(
+        drawer.getByRole('term').filter({ hasText: 'Scope Type / Target' }),
+      ).toBeVisible();
+      const scopeDomain = await getE2EDomainName();
+      const scopeToken = drawer
+        .getByRole('definition')
+        .filter({ hasText: 'Domain' })
+        .filter({ hasText: scopeDomain });
+      await expect(scopeToken).toBeVisible();
+      await expect(
+        scopeToken.getByText('Domain', { exact: true }),
+      ).toBeVisible();
+      await expect(
+        scopeToken.getByText(scopeDomain, { exact: true }),
+      ).toBeVisible();
+    });
+
+    test('Superadmin can toggle role permissions in the Read and Write grid and save them', async ({
+      page,
+    }) => {
+      let drawer = await openRoleDrawer(page, roleName);
+      await expect(drawerTab(page, 'Permissions')).toHaveAttribute(
+        'aria-current',
+        'true',
+      );
+
+      let folderRow = permissionRow(drawer, 'Folder');
+      await expect(folderRow).toBeVisible({ timeout: 10000 });
+      const readCheckbox = () =>
+        permissionRow(drawer, 'Folder').getByRole('checkbox', {
+          name: 'Read',
+          exact: true,
+        });
+      const createCheckbox = () =>
+        permissionRow(drawer, 'Folder').getByRole('checkbox', {
+          name: 'Create',
+          exact: true,
+        });
+      await expect(readCheckbox()).not.toBeChecked();
+      await expect(createCheckbox()).not.toBeChecked();
+      await expect(saveBarText(drawer)).toBeHidden();
+
+      // Cancel discards every pending toggle.
+      await readCheckbox().check();
+      await createCheckbox().check();
+      await expect(saveBarText(drawer)).toHaveText(
+        '2 unsaved permission change(s)',
+      );
+      await drawer.getByRole('button', { name: 'Cancel' }).click();
+      await expect(saveBarText(drawer)).toBeHidden();
+      await expect(readCheckbox()).not.toBeChecked();
+      await expect(createCheckbox()).not.toBeChecked();
+
+      // Save ships the pending toggle and retires the save bar.
+      await readCheckbox().check();
+      await expect(saveBarText(drawer)).toHaveText(
+        '1 unsaved permission change(s)',
+      );
+      await drawer.getByRole('button', { name: 'Save' }).click();
+      await expect(
+        page.getByText('Permissions saved successfully.').first(),
+      ).toBeVisible({ timeout: 10000 });
+      await expect(saveBarText(drawer)).toBeHidden({ timeout: 10000 });
+      await expect(readCheckbox()).toBeChecked();
+
+      // The grant survives a reload.
+      await page.reload();
+      drawer = await openRoleDrawer(page, roleName);
+      folderRow = permissionRow(drawer, 'Folder');
+      await expect(folderRow).toBeVisible({ timeout: 10000 });
+      await expect(readCheckbox()).toBeChecked();
+      await expect(createCheckbox()).not.toBeChecked();
+      await expect(saveBarText(drawer)).toBeHidden();
+    });
+
+    test('Superadmin can filter the permission rows by permission type', async ({
+      page,
+    }) => {
+      const drawer = await openRoleDrawer(page, roleName);
+      await expect(permissionRow(drawer, 'Agent')).toBeVisible({
+        timeout: 10000,
+      });
+      await expect(permissionRow(drawer, 'Folder')).toBeVisible();
+
+      const filterInput = drawer.getByRole('textbox', {
+        name: 'Filter by permission type',
+      });
+      await filterInput.fill('folder');
+
+      await expect(permissionRow(drawer, 'Folder')).toBeVisible();
+      await expect(permissionRow(drawer, 'Agent')).toBeHidden();
+      const visibleRows = dataRows(page, drawer);
+      await expect(visibleRows.first()).toBeVisible();
+      await expect
+        .poll(async () => {
+          const types = await visibleRows.evaluateAll((rows) =>
+            rows.map((row) => row.querySelector('td')?.textContent ?? ''),
+          );
+          return (
+            types.length > 0 && types.every((type) => /folder/i.test(type))
+          );
+        })
+        .toBe(true);
+
+      await filterInput.fill('');
+      await expect(permissionRow(drawer, 'Agent')).toBeVisible();
+    });
+  },
+);
+
+test.describe(
+  'RBAC Role Detail Drawer - View Presets link',
+  { tag: ['@rbac', '@regression', '@functional', '@requires-manager-v26.9'] },
+  () => {
+    test('Superadmin can open exactly the preset of a system role from the role detail drawer', async ({
+      page,
+      request,
+    }) => {
+      await loginAsAdmin(page, request);
+
+      // The role list query carries each role's `rolePresetId` (a raw
+      // uuid; #10322 dropped `rolePreset { id }`), the identity the link must
+      // land on.
+      const rolePresetIdByRoleName = new Map<string, string>();
+      page.on('response', async (response) => {
+        if (!response.request().postData()?.includes('RBACManagementPageQuery'))
+          return;
+        const body = await response.json().catch(() => null);
+        for (const edge of body?.data?.adminRoles?.edges ?? []) {
+          if (edge?.node?.name && edge.node.rolePresetId) {
+            rolePresetIdByRoleName.set(edge.node.name, edge.node.rolePresetId);
+          }
+        }
+      });
+
+      // Land on the Roles tab already filtered to SYSTEM roles, the only
+      // source whose Permissions tab carries the View Presets link.
+      await navigateTo(
+        page,
+        `admin/rbac?${new URLSearchParams({
+          tab: 'roles',
+          filter: JSON.stringify({ source: { equals: 'SYSTEM' } }),
+        })}`,
+      );
+      const roleRows = dataRows(page);
+      await expect(roleRows.first()).toBeVisible({
+        timeout: SLOW_PAGE_TIMEOUT,
+      });
+      const roleNameButton = roleRows
+        .first()
+        .getByRole('cell')
+        .first()
+        .getByRole('button')
+        .first();
+      const roleName = (await roleNameButton.innerText()).trim();
+      await expect
+        .poll(() => rolePresetIdByRoleName.get(roleName), {
+          message: `role list response names the preset of ${roleName}`,
+        })
+        .toBeTruthy();
+      const expectedPresetId = rolePresetIdByRoleName.get(roleName);
+      await roleNameButton.click();
+
+      const drawer = roleDrawer(page);
+      await expect(drawer).toBeVisible({ timeout: 10000 });
+      const viewPresetsLink = drawer.getByText('View Presets', { exact: true });
+      await expect(viewPresetsLink).toBeVisible({ timeout: 10000 });
+      const presetListResponse = page.waitForResponse(
+        (response) =>
+          !!response.request().postData()?.includes('RolePresetListTabQuery') &&
+          !!response
+            .request()
+            .postData()
+            ?.includes(expectedPresetId ?? ''),
+      );
+      await viewPresetsLink.click();
+
+      await expect(drawer).toBeHidden({ timeout: 10000 });
+      await expect(
+        page
+          .getByRole('navigation', { name: 'Tabs' })
+          .getByRole('button', { name: 'Presets', exact: true }),
+      ).toHaveAttribute('aria-current', 'true');
+
+      await expect(page).toHaveURL(/[?&]tab=presets(&|$)/);
+      expect(
+        JSON.parse(new URL(page.url()).searchParams.get('filter') ?? '{}'),
+      ).toEqual({ id: { equals: expectedPresetId } });
+
+      // The id condition shows as a removable chip in the Presets filter.
+      const searchFilters = page.getByRole('group', { name: 'Search filters' });
+      await expect(
+        searchFilters.getByRole('button', { name: 'ID: equals', exact: true }),
+      ).toBeVisible();
+      await expect(
+        searchFilters.getByRole('button', {
+          name: 'Remove ID: equals',
+          exact: true,
+        }),
+      ).toBeVisible();
+
+      // Exactly one preset is listed, and it is the role's own preset.
+      const presetEdges =
+        (await (await presetListResponse).json())?.data?.adminRolePresets
+          ?.edges ?? [];
+      expect(
+        presetEdges.map((edge: { node: { id: string } }) =>
+          toLocalId(edge.node.id),
+        ),
+      ).toEqual([expectedPresetId]);
+      await expect(dataRows(page)).toHaveCount(1, {
+        timeout: SLOW_PAGE_TIMEOUT,
+      });
     });
   },
 );

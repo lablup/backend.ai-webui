@@ -1,7 +1,9 @@
+import { chunkReport } from './vite-plugins/chunk-report';
 import {
   devReviewOverlayPlugin,
   reviewOverlayBuildPlugin,
 } from './vite-plugins/review-overlay/index';
+import { findStalePrebundle } from './vite-plugins/stale-prebundle';
 import stylexVite from '@stylexjs/unplugin/vite';
 import react from '@vitejs/plugin-react';
 import compression from 'compression';
@@ -27,7 +29,13 @@ import {
   resolve,
 } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { defineConfig, loadEnv, normalizePath, type Plugin } from 'vite';
+import {
+  defaultClientConditions,
+  defineConfig,
+  loadEnv,
+  normalizePath,
+  type Plugin,
+} from 'vite';
 import checker from 'vite-plugin-checker';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -693,6 +701,29 @@ export default defineConfig(({ command, mode }) => {
     );
   }
 
+  const cacheDir = resolve(__dirname, 'node_modules/.vite');
+  const stalePrebundle =
+    command === 'serve'
+      ? findStalePrebundle(cacheDir, (name) => {
+          try {
+            return JSON.parse(
+              readFileSync(
+                resolve(__dirname, 'node_modules', name, 'package.json'),
+                'utf8',
+              ),
+            ).version;
+          } catch {
+            return undefined;
+          }
+        })
+      : null;
+  if (stalePrebundle) {
+    console.warn(
+      `[vite] the dependency pre-bundle has ${stalePrebundle.name}@${stalePrebundle.cached}, ` +
+        `but ${stalePrebundle.installed} is installed; re-optimizing every dependency (#10341).`,
+    );
+  }
+
   // Comma-separated list of additional hostnames to whitelist for the dev
   // server's host check (Vite 6 default-blocks anything outside localhost
   // since CVE-2025-30208). Example for SwitchHosts users:
@@ -719,7 +750,7 @@ export default defineConfig(({ command, mode }) => {
     root: __dirname,
     publicDir: false,
     envDir: projectRoot,
-    cacheDir: resolve(__dirname, 'node_modules/.vite'),
+    cacheDir,
 
     resolve: {
       // Force a single instance of shared singletons across the monorepo.
@@ -738,6 +769,8 @@ export default defineConfig(({ command, mode }) => {
         'i18next',
         'react-i18next',
       ],
+      // Replaces Vite's defaults, hence the spread (ADR 0013).
+      conditions: ['@backend.ai/source', ...defaultClientConditions],
       // Array form lets us mix regex aliases (for `src/` baseUrl imports) with
       // the workspace-package aliases. `find` is matched against the import
       // source; `replacement` replaces the match.
@@ -746,16 +779,6 @@ export default defineConfig(({ command, mode }) => {
         // react/. Replicate that here — regex form ensures we only rewrite
         // imports that start with `src/`, not ones like `backend.ai-ui/src/`.
         { find: /^src\//, replacement: reactSrc + '/' },
-
-        // backend.ai-ui workspace package, dev-aliased to source so HMR
-        // tracks it without a BUI rebuild. `locale/*` is the published
-        // export-map alias for dist/locale/* and gets the same treatment.
-        { find: /^backend\.ai-ui\/dist(\/|$)/, replacement: buiSrc + '$1' },
-        {
-          find: /^backend\.ai-ui\/locale(\/|$)/,
-          replacement: buiSrc + '/locale$1',
-        },
-        { find: /^backend\.ai-ui$/, replacement: buiSrc },
 
         // backend.ai-client workspace package, dev-aliased to source so HMR
         // tracks the SDK without rebuilding tsup output.
@@ -802,6 +825,8 @@ export default defineConfig(({ command, mode }) => {
     },
 
     optimizeDeps: {
+      // Vite keys the cache on the lockfile hash only; see stale-prebundle.ts.
+      force: stalePrebundle !== null,
       // Tell Vite exactly which files to scan for dependency optimization.
       // Without this, Vite crawls from `root` following all imports, which
       // pulled in stale legacy Lit plugins under scripts/temp-releases/ on
@@ -870,12 +895,8 @@ export default defineConfig(({ command, mode }) => {
       open: false,
       allowedHosts: allowedHosts,
       fs: {
-        // Allow Vite to read files from the whole monorepo so that the
-        // alias to `../dist/lib/...` and `../packages/backend.ai-ui/src`
-        // resolves without FS sandbox 403s. Additionally allow the pnpm
-        // global virtual store root (resolved dynamically above) so that
-        // dependencies hard-linked outside the repo can be served — see
-        // `resolvePnpmStorePath` for the full rationale.
+        // The whole monorepo (workspace package sources) and the pnpm global
+        // store — see `resolvePnpmStorePath`.
         allow: [projectRoot, ...(pnpmStorePath ? [pnpmStorePath] : [])],
       },
       watch: {
@@ -1015,6 +1036,21 @@ export default defineConfig(({ command, mode }) => {
         // across react/ and (future) packages/backend.ai-ui builds.
         unstable_moduleResolution: { type: 'commonJS', rootDir: projectRoot },
       }),
+      // StyleX excludes every dependency that peers on @stylexjs/stylex from
+      // the dep optimizer; ui-common must stay pre-bundled like Astryx core, or
+      // a cold dev start deadlocks (StyleX `ctx.load`s optimized deps mid-crawl).
+      {
+        name: 'webui:prebundle-ui-common',
+        enforce: 'post',
+        config(config) {
+          const exclude = config.optimizeDeps?.exclude;
+          if (exclude) {
+            config.optimizeDeps!.exclude = exclude.filter(
+              (name) => name !== '@lablup/ui-common',
+            );
+          }
+        },
+      },
 
       react({
         babel: (id) => {
@@ -1135,6 +1171,10 @@ export default defineConfig(({ command, mode }) => {
           navigateFallback: null,
         },
       }),
+
+      ...(process.env.VITE_CHUNK_REPORT
+        ? [chunkReport(resolve(process.env.VITE_CHUNK_REPORT))]
+        : []),
     ],
 
     build: {
@@ -1144,6 +1184,19 @@ export default defineConfig(({ command, mode }) => {
       // Suppress the warning about chunk size; the app is large and this
       // matches the existing craco/webpack threshold expectation.
       chunkSizeWarningLimit: 2000,
+      rollupOptions: {
+        output: {
+          // Per-function packages shared by many lazy pages otherwise become
+          // one ~1 KB chunk per function (29 lodash-es + 13 lucide chunks on
+          // the login page, measured 2026-10-22); both are mostly in the boot
+          // path already, so one chunk each costs no extra bytes.
+          manualChunks(id) {
+            if (/\/node_modules\/lodash-es\//.test(id)) return 'lodash';
+            if (/\/node_modules\/lucide-react\//.test(id)) return 'icons';
+            return undefined;
+          },
+        },
+      },
     },
   };
 });

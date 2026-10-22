@@ -35,223 +35,33 @@
     that accident (and it does NOT hold for booleans read via
     `e.target.checked`).
 */
-import { FormItemInputContext } from '../form-engine';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { MultiSelector } from '@astryxdesign/core/MultiSelector';
-import { NumberInput } from '@astryxdesign/core/NumberInput';
-import { RadioList, RadioListItem } from '@astryxdesign/core/RadioList';
+import {
+  AstryxFormTextInput,
+  type AstryxFormTextInputProps,
+  useFormControlStatusOnly,
+  useFormControlStatusProps,
+} from './astryxFormTextInput';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { MultiSelector } from '@lablup/ui-common/MultiSelector';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
+import { RadioList, RadioListItem } from '@lablup/ui-common/RadioList';
 import {
   SegmentedControl,
   SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
-import type { SelectorOptionType } from '@astryxdesign/core/Selector';
-import { Selector } from '@astryxdesign/core/Selector';
-import { Switch } from '@astryxdesign/core/Switch';
-import { TextArea } from '@astryxdesign/core/TextArea';
-import type { TextInputProps } from '@astryxdesign/core/TextInput';
-import { TextInput } from '@astryxdesign/core/TextInput';
-import { Tokenizer } from '@astryxdesign/core/Tokenizer';
-import type {
-  SearchableItem,
-  SearchSource,
-} from '@astryxdesign/core/Typeahead';
-import type { SizeValue } from '@astryxdesign/core/utils';
+} from '@lablup/ui-common/SegmentedControl';
+import type { SelectorOptionType } from '@lablup/ui-common/Selector';
+import { Selector } from '@lablup/ui-common/Selector';
+import { Switch } from '@lablup/ui-common/Switch';
+import { TextArea } from '@lablup/ui-common/TextArea';
+import { Tokenizer } from '@lablup/ui-common/Tokenizer';
+import { TypeaheadItem } from '@lablup/ui-common/Typeahead';
+import type { SearchableItem, SearchSource } from '@lablup/ui-common/Typeahead';
+import type { SizeValue } from '@lablup/ui-common/utils';
 import * as _ from 'lodash-es';
 import React, { useEffectEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 
-/**
- * RESTORED (input-parity pass) — **the control paints the field's validation
- * status again.**
- *
- * antd's `Form.Item` published its merged status on `FormItemInputContext` and
- * every antd control read it, which is how an invalid field got a red border
- * without a single call site passing anything. None of the Astryx adapters read
- * that context, so after the migration a failed rule printed a red MESSAGE
- * under a field that still looked pristine — on every `rules=`-bearing item in
- * the app.
- *
- * `statusVariant="detached"` with no `message` is deliberate: it is the one
- * combination that paints the border and NOTHING else. `'attached'` (Astryx's
- * default) would add an in-field status glyph antd never drew unless
- * `hasFeedback` was set — and where `hasFeedback` IS set, the form item already
- * renders that glyph itself, so the field would carry two.
- *
- * `'validating'` / `'success'` are intentionally not forwarded: antd painted
- * neither on the control (they drive the `hasFeedback` icon, which the item
- * owns).
- *
- * **`statusVariant` is CONSTANT — never conditional on `status`.** Astryx's
- * `Field` renders `{children}` inside an extra `<div>` when
- * `statusVariant === 'attached'` (its default) and as a bare fragment
- * otherwise. Returning `{}` while pristine and `{statusVariant: 'detached'}`
- * once a rule fails therefore changed the ELEMENT STRUCTURE at the control's
- * position, so React unmounted the whole control subtree and mounted a fresh
- * one — the `<input>` node was replaced and **focus was lost on the very first
- * keystroke** of any field carrying `rules` (measured on the login screen's
- * `api_endpoint`: character 1 landed, the node was swapped,
- * `document.activeElement` fell back to `<body>`, and characters 2..n went
- * nowhere). Pinning the variant keeps `Field`'s tree stable; with no
- * `status.message` the detached branch renders exactly `{children}`, so the
- * only thing dropped is that wrapper div (`display:flex;flex-direction:column`
- * inside a `Field` container that is already `flex column`) — layout-neutral.
- * `astryxFormControls.test.tsx` locks this in.
- */
-const useFormControlStatusProps = (): {
-  status?: { type: 'error' | 'warning' };
-  statusVariant: 'detached';
-} => {
-  'use memo';
-  const { status } = React.useContext(FormItemInputContext);
-  if (status !== 'error' && status !== 'warning')
-    return { statusVariant: 'detached' };
-  return { status: { type: status }, statusVariant: 'detached' };
-};
-
-/**
- * Status without `statusVariant`, for the controls that are NOT built on
- * Astryx's `Field` (`Switch`, `CheckboxInput`): they accept `status` but do
- * not declare `statusVariant`, so passing it would only land an unknown
- * attribute on the DOM. They render no structural branch on status either, so
- * they never had the remount problem the hook above fixes.
- */
-const useFormControlStatusOnly = (): {
-  status?: { type: 'error' | 'warning' };
-} => {
-  'use memo';
-  const { status } = React.useContext(FormItemInputContext);
-  if (status !== 'error' && status !== 'warning') return {};
-  return { status: { type: status } };
-};
-
-export interface AstryxFormTextInputProps {
-  /** Injected by `Form.Item`. */
-  value?: string;
-  /** Injected by `Form.Item`. */
-  onChange?: (value: string) => void;
-  /** Accessible name. Visually hidden — `BAIFormItem` renders the visible one. */
-  label: string;
-  type?: 'text' | 'password' | 'email';
-  placeholder?: string;
-  disabled?: boolean;
-  /** Astryx spelling. */
-  hasClear?: boolean;
-  /** antd spelling of `hasClear`, kept so migrated call sites read naturally. */
-  allowClear?: boolean;
-  /** antd `prefix` icon -> Astryx `startIcon` (icon component, not element). */
-  startIcon?: TextInputProps['startIcon'];
-  /** Astryx `TextInput.hasAutoFocus` passthrough (inline edit flows). */
-  hasAutoFocus?: boolean;
-  width?: SizeValue;
-  /**
-   * Astryx `TextInput.size`. Inline editors want `lg`, in-row fields want
-   * `sm`; without it those call sites had to hand-roll a local adapter (D10).
-   */
-  size?: TextInputProps['size'];
-  /**
-   * antd `Input.onPressEnter` is Astryx's `onEnter` — with one difference the
-   * adapter papers over: antd guarded the callback with
-   * `!e.nativeEvent.isComposing`, Astryx does not. Without the guard the Enter
-   * that CONFIRMS an IME candidate (Hangul, Kana, Pinyin …) also submits the
-   * field, so a CJK user can never finish a word. See `handleKeyDown` below.
-   */
-  onEnter?: () => void;
-  /**
-   * antd `Input.maxLength` — the native attribute, hard-truncating input.
-   * Astryx does not declare it, but it spreads unknown props onto the
-   * `<input>`, so DECLARING it here is enough to make it work again.
-   */
-  maxLength?: number;
-  /**
-   * Native `autocomplete`. Same mechanism as `maxLength` — Astryx does not
-   * declare it but spreads it onto the `<input>`, and without it browsers and
-   * password managers lose the login form's field roles.
-   */
-  autoComplete?: string;
-  /**
-   * The key event Astryx exposes. antd's `onKeyUp`-based Escape-to-cancel
-   * becomes `onKeyDown` here; inline editors are the only users.
-   */
-  onKeyDown?: TextInputProps['onKeyDown'];
-  /** Native `name` attribute (autofill / password-manager hints). */
-  htmlName?: string;
-  /**
-   * Fired with the new value AFTER `Form.Item`'s injected `onChange`. This is
-   * the reason several call sites forked their own adapter: they need a side
-   * effect (mark dirty, clear a resolved lookup) alongside the form write,
-   * and `onChange` itself is owned by `Form.Item`.
-   */
-  onValueChange?: (value: string) => void;
-  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
-  'data-testid'?: string;
-}
-
-export const AstryxFormTextInput: React.FC<AstryxFormTextInputProps> = ({
-  value,
-  onChange,
-  label,
-  type,
-  placeholder,
-  disabled,
-  hasClear,
-  allowClear,
-  startIcon,
-  hasAutoFocus,
-  width = '100%',
-  size,
-  onEnter,
-  onKeyDown,
-  htmlName,
-  onValueChange,
-  onBlur,
-  ...rest
-}) => {
-  'use memo';
-  const statusProps = useFormControlStatusProps();
-  // antd's IME guard, reinstated. Astryx runs `onEnter` from its own keydown
-  // handler BEFORE it calls ours, so the guard cannot live in `onKeyDown` — it
-  // has to wrap `onEnter` itself, and `onEnter` carries no event. A composition
-  // flag is the substitute: browsers deliver the confirming `keydown`
-  // (`isComposing`/`keyCode === 229`) while the composition is still open, so
-  // the flag is still set when `onEnter` fires.
-  const composingRef = React.useRef(false);
-  return (
-    <TextInput
-      type={type}
-      value={value ?? ''}
-      onChange={(next) => {
-        onChange?.(next);
-        onValueChange?.(next);
-      }}
-      label={label}
-      isLabelHidden
-      placeholder={placeholder}
-      isDisabled={disabled}
-      hasClear={hasClear ?? allowClear}
-      startIcon={startIcon}
-      hasAutoFocus={hasAutoFocus}
-      width={width}
-      size={size}
-      onEnter={
-        onEnter &&
-        (() => {
-          if (composingRef.current) return;
-          onEnter();
-        })
-      }
-      onKeyDown={onKeyDown}
-      htmlName={htmlName}
-      onBlur={onBlur}
-      {...statusProps}
-      {...(rest as object)}
-      onCompositionStart={() => {
-        composingRef.current = true;
-      }}
-      onCompositionEnd={() => {
-        composingRef.current = false;
-      }}
-    />
-  );
-};
+export { AstryxFormTextInput, type AstryxFormTextInputProps };
 
 export interface AstryxFormTextAreaProps {
   /** Injected by `Form.Item`. */
@@ -456,7 +266,7 @@ export const AstryxFormSegmented: React.FC<AstryxFormSegmentedProps> = ({
       onChange={(next) => onChange?.(next)}
       label={label}
       isDisabled={disabled}
-      // `Form.Item`'s `data-bai-field-id` rides through to the root, which is
+      // `Form.Item`'s `data-uic-field-id` rides through to the root, which is
       // what lets scroll-to-first-error find this field.
       {...(rest as object)}
     >
@@ -861,6 +671,10 @@ export interface AstryxFormTagsInputProps {
   'data-testid'?: string;
 }
 
+// Tokenizer's ref is its input; the listeners need the control box around it.
+const tokenizerControlBox = (input: HTMLInputElement | null) =>
+  input?.closest<HTMLElement>('.astryx-tokenizer') ?? null;
+
 /**
  * Free-form chip input — antd `Select mode="tags"` (MAPPING §3.1 tags branch).
  * The form field holds `string[]`; the Tokenizer works on `SearchableItem[]`
@@ -886,8 +700,9 @@ export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
   ...rest
 }) => {
   'use memo';
+  const { t } = useTranslation();
   const statusProps = useFormControlStatusProps();
-  const rootRef = React.useRef<HTMLDivElement>(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
   const splitOnSeparators = (label: string): Array<string> => {
     if (!tokenSeparators?.length) return [label];
     const pattern = new RegExp(
@@ -913,14 +728,14 @@ export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
    * tokenSeparators={[',', ' ']}`, which cut a token on the KEYSTROKE.
    *
    * WHY THERE IS NO PROP: Astryx's `Tokenizer` has no delimiter API —
-   * `astryx component Tokenizer` lists none, `Tokenizer.d.ts` contains no
+   * `ui-common component Tokenizer` lists none, `Tokenizer.d.ts` contains no
    * `separator`/`delimiter`, and `TokenizerHandle` exposes only
    * `focus()`/`blur()`. `InputGroup`-style composition does not apply either.
    * The only reachable seam is the DOM.
    *
-   * MECHANISM: `TokenizerProps` extends `Omit<BaseProps<HTMLDivElement>,
-   * 'onChange'>`, so the root div takes a ref. A CAPTURE-phase `keydown`
-   * listener on that root sees the separator key before anything else,
+   * MECHANISM: `Tokenizer`'s ref is its `<input>`; `tokenizerControlBox`
+   * recovers the control box around it (`.astryx-tokenizer`). A CAPTURE-phase
+   * `keydown` listener on that box sees the separator key before anything else,
    * cancels it (a separator is never part of a tag) and re-dispatches a
    * synthetic `Enter` keydown on the same `<input>`. Astryx's own create path
    * then runs unmodified: `BaseTypeahead` selects the highlighted
@@ -974,17 +789,58 @@ export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
     );
   });
 
+  // Tokenizer leaves uncommitted text in the input on blur; commit it as tags
+  // (antd `mode="tags"` did). Its own Enter path re-focuses the input, so the
+  // tags are emitted here and the query is cleared through a native input event.
+  const commitPendingTextOnFocusOut = useEffectEvent((event: FocusEvent) => {
+    const root = tokenizerControlBox(inputRef.current);
+    const input = root?.querySelector('input');
+    if (!root || !input || !input.value.trim()) return;
+    const next = event.relatedTarget;
+    const listbox = document.getElementById(
+      input.getAttribute('aria-controls') ?? '',
+    );
+    if (
+      next instanceof Node &&
+      (root.contains(next) || listbox?.contains(next))
+    )
+      return;
+
+    const current = value ?? [];
+    const merged = _.uniq([
+      ...current,
+      ...splitOnSeparators(input.value.trim()),
+    ]);
+    const committed =
+      maxEntries == null
+        ? merged
+        : merged.slice(0, Math.max(maxEntries, current.length));
+    if (committed.length > current.length) onChange?.(committed);
+
+    Object.getOwnPropertyDescriptor(
+      HTMLInputElement.prototype,
+      'value',
+    )?.set?.call(input, '');
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+
   React.useEffect(() => {
-    const root = rootRef.current;
+    const root = tokenizerControlBox(inputRef.current);
     if (!root) return;
-    const listener = (event: KeyboardEvent) => handleSeparatorKeyDown(event);
-    root.addEventListener('keydown', listener, true);
-    return () => root.removeEventListener('keydown', listener, true);
+    const keyListener = (event: KeyboardEvent) => handleSeparatorKeyDown(event);
+    const focusOutListener = (event: FocusEvent) =>
+      commitPendingTextOnFocusOut(event);
+    root.addEventListener('keydown', keyListener, true);
+    root.addEventListener('focusout', focusOutListener);
+    return () => {
+      root.removeEventListener('keydown', keyListener, true);
+      root.removeEventListener('focusout', focusOutListener);
+    };
   }, []);
 
   return (
     <Tokenizer
-      ref={rootRef}
+      ref={inputRef}
       value={(value ?? []).map((tag) => ({ id: tag, label: tag }))}
       onChange={(items) =>
         // antd tags mode deduplicated entries; keep that behavior.
@@ -998,6 +854,25 @@ export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
       isLabelHidden
       searchSource={EMPTY_TAG_SEARCH_SOURCE}
       hasCreate
+      // Tokenizer hardcodes the create row's English label; the typed text
+      // rides on `auxiliaryData.__createdValue`.
+      renderItem={(item) => {
+        const createdValue = (
+          item as SearchableItem<{ __createdValue?: unknown }>
+        ).auxiliaryData?.__createdValue;
+        return (
+          <TypeaheadItem
+            item={
+              typeof createdValue === 'string'
+                ? {
+                    ...item,
+                    label: t('general.CreateValue', { value: createdValue }),
+                  }
+                : item
+            }
+          />
+        );
+      }}
       // See the Q-31 block above — the separator keystroke needs the create
       // row to already be in `results`, and the source is free to query.
       debounceMs={0}

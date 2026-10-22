@@ -21,11 +21,11 @@ import {
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Code } from '@astryxdesign/core/Code';
-import { Divider } from '@astryxdesign/core/Divider';
-import { Switch } from '@astryxdesign/core/Switch';
-import { Text } from '@astryxdesign/core/Text';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Code } from '@lablup/ui-common/Code';
+import { Divider } from '@lablup/ui-common/Divider';
+import { Switch } from '@lablup/ui-common/Switch';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIFlex,
   BAIModal,
@@ -259,6 +259,7 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
     >
       {isBuiltin && (
         <Banner
+          role="status"
           status="info"
           style={{ marginBottom: 16 }}
           title={t('aiAgent.BuiltinReadonlyTitle')}
@@ -388,6 +389,7 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
 
         <Divider>{t('aiAgent.ToolConfig')}</Divider>
         <Banner
+          role="status"
           status="info"
           style={{ marginBottom: 16 }}
           title={t('aiAgent.ToolCallingComingSoonTitle')}

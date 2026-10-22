@@ -13,42 +13,7 @@ export function manipulateGraphQLQueryWithClientDirectives(
 ) {
   const ast = parse(query);
 
-  // Optionally normalize fragment type conditions from Query to Queries
   let newAst = ast;
-  // Since the super graph, the query type has been changed from Queries to Query
-  const shouldConvertFragmentTypeToQueries = isNotCompatibleWith('25.14.0');
-  if (shouldConvertFragmentTypeToQueries) {
-    function normalizeFragmentTypeCondition(node: any) {
-      if (!node.typeCondition) return;
-      const current = node.typeCondition.name.value;
-      const next = current === 'Query' ? 'Queries' : current;
-      if (next !== current) {
-        return {
-          ...node,
-          typeCondition: {
-            ...node.typeCondition,
-            name: {
-              ...node.typeCondition.name,
-              value: next,
-            },
-          },
-        };
-      }
-    }
-
-    newAst = visit(newAst, {
-      FragmentDefinition: {
-        enter(node) {
-          return normalizeFragmentTypeCondition(node);
-        },
-      },
-      InlineFragment: {
-        enter(node) {
-          return normalizeFragmentTypeCondition(node);
-        },
-      },
-    });
-  }
 
   // First pass: Remove fields with client directives and clean up directives
   newAst = visit(newAst, {

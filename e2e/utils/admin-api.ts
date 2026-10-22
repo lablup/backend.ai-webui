@@ -21,11 +21,23 @@ import { request, type APIRequestContext } from '@playwright/test';
  * `/func/admin/gql` calls. The caller owns the context and must `dispose()` it.
  */
 export async function createAdminApiContext(): Promise<APIRequestContext> {
+  return createAccountApiContext(userInfo.admin, 'Admin');
+}
+
+/**
+ * Same as `createAdminApiContext`, signed in as `account` instead — for reads
+ * that must reflect what that account itself is allowed (e.g. its storage
+ * hosts). The caller owns the context and must `dispose()` it.
+ */
+export async function createAccountApiContext(
+  account: { email: string; password: string },
+  label = account.email,
+): Promise<APIRequestContext> {
   const api = await request.newContext({ baseURL: webServerEndpoint });
   const res = await api.post('/server/login', {
     data: {
-      username: userInfo.admin.email,
-      password: userInfo.admin.password,
+      username: account.email,
+      password: account.password,
     },
   });
   const body = await res.json().catch(() => ({}));
@@ -34,7 +46,7 @@ export async function createAdminApiContext(): Promise<APIRequestContext> {
     // Only surface a minimal, known-safe subset of the response — never dump
     // the full login body into CI logs (it may gain sensitive fields later).
     throw new Error(
-      `Admin API login failed (status=${res.status()}, authenticated=${String(
+      `${label} API login failed (status=${res.status()}, authenticated=${String(
         body?.authenticated ?? false,
       )})`,
     );
@@ -227,6 +239,43 @@ export async function deleteDeploymentViaApi(
   }
 }
 
+/** Looks a deployment up by its exact name, server-side. */
+export async function findDeploymentByName(
+  api: APIRequestContext,
+  name: string,
+): Promise<{ id: string; status: string } | null> {
+  const data = await gqlAdmin<{
+    adminDeployments: {
+      edges: Array<{ node: { id: string; metadata: { status: string } } }>;
+    };
+  }>(
+    api,
+    `query($name: String!) {
+      adminDeployments(filter: { name: { equals: $name } }) {
+        edges { node { id metadata { status } } }
+      }
+    }`,
+    { name },
+  );
+  const node = data.adminDeployments?.edges?.[0]?.node;
+  return node ? { id: node.id, status: node.metadata.status } : null;
+}
+
+/** Replaces a deployment's tags via `updateModelDeployment`. */
+export async function setDeploymentTagsViaApi(
+  api: APIRequestContext,
+  id: string,
+  tags: string[],
+): Promise<void> {
+  await gqlAdmin(
+    api,
+    `mutation($input: UpdateDeploymentInput!) {
+      updateModelDeployment(input: $input) { deployment { id } }
+    }`,
+    { input: { id: toRawUUID(id), tags } },
+  );
+}
+
 /**
  * Sweep-deletes every deployment whose display name matches `pattern` — by
  * default the `e2e-plan-*` / `e2e-token-*` shells the deployment specs
@@ -252,4 +301,142 @@ export async function sweepLeftoverDeploymentsViaApi(
     console.log(`Swept ${deleted} leftover deployment(s) matching ${pattern}`);
   }
   return deleted;
+}
+
+/**
+ * Creates a GENERAL project in `domainName` (default: the first member's
+ * domain; one of the two is required) and adds `memberEmails` to it. Returns
+ * the project's raw UUID for `purgeProjectViaApi`.
+ */
+export async function createProjectViaApi(
+  api: APIRequestContext,
+  name: string,
+  options: {
+    memberEmails?: string[];
+    isActive?: boolean;
+    domainName?: string;
+  } = {},
+): Promise<string> {
+  const members = await Promise.all(
+    (options.memberEmails ?? []).map(async (email) => {
+      const data = await gqlAdmin<{
+        user: { id: string; domain_name: string } | null;
+      }>(
+        api,
+        `query($email: String) { user(email: $email) { id domain_name } }`,
+        {
+          email,
+        },
+      );
+      if (!data.user) throw new Error(`User ${email} not found`);
+      return data.user;
+    }),
+  );
+  const domainName = options.domainName ?? members[0]?.domain_name;
+  if (!domainName) {
+    // No literal fallback: the e2e accounts are not in `default` everywhere.
+    // Pass `getE2EDomainName()` (e2e-scope.ts) for a project without members.
+    throw new Error(
+      `createProjectViaApi("${name}") needs domainName or memberEmails`,
+    );
+  }
+  const created = await gqlAdmin<{
+    create_group: { ok: boolean; msg: string; group: { id: string } | null };
+  }>(
+    api,
+    `mutation($name: String!, $props: GroupInput!) {
+      create_group(name: $name, props: $props) { ok msg group { id } }
+    }`,
+    {
+      name,
+      props: { domain_name: domainName, is_active: options.isActive ?? true },
+    },
+  );
+  const gid = created.create_group?.group?.id;
+  if (!created.create_group?.ok || !gid) {
+    throw new Error(`create_group failed: ${created.create_group?.msg}`);
+  }
+  if (members.length > 0) {
+    const modified = await gqlAdmin<{
+      modify_group: { ok: boolean; msg: string };
+    }>(
+      api,
+      `mutation($gid: UUID!, $props: ModifyGroupInput!) {
+        modify_group(gid: $gid, props: $props) { ok msg }
+      }`,
+      {
+        gid,
+        props: {
+          user_update_mode: 'add',
+          user_uuids: members.map((m) => m.id),
+        },
+      },
+    );
+    if (!modified.modify_group?.ok) {
+      await purgeProjectViaApi(api, gid);
+      throw new Error(`modify_group failed: ${modified.modify_group?.msg}`);
+    }
+  }
+  return gid;
+}
+
+/**
+ * Deletes then purges a project. Defensive like `purgeUserViaApi`: returns
+ * `false` instead of throwing so teardown never masks the test result.
+ */
+export async function purgeProjectViaApi(
+  api: APIRequestContext,
+  gid: string,
+): Promise<boolean> {
+  await gqlAdmin(
+    api,
+    `mutation($gid: UUID!) { delete_group(gid: $gid) { ok msg } }`,
+    { gid },
+  ).catch(() => {
+    /* already inactive — purge below still applies */
+  });
+  try {
+    const result = await gqlAdmin<{
+      purge_group: { ok: boolean; msg: string };
+    }>(api, `mutation($gid: UUID!) { purge_group(gid: $gid) { ok msg } }`, {
+      gid,
+    });
+    if (!result.purge_group?.ok) {
+      console.warn(
+        `purge_group did not succeed for ${gid}: ${result.purge_group?.msg}`,
+      );
+    }
+    return result.purge_group?.ok === true;
+  } catch (error) {
+    console.warn(`[admin-api] could not purge project ${gid}:`, error);
+    return false;
+  }
+}
+
+/**
+ * Purges projects matching `pattern` that are older than `minAgeMs`, so a
+ * hard-killed run cannot leak them while a concurrent worker's fresh
+ * fixtures are left alone.
+ */
+export async function sweepStaleProjectsViaApi(
+  api: APIRequestContext,
+  pattern: RegExp,
+  minAgeMs = 60 * 60 * 1000,
+): Promise<number> {
+  const data = await gqlAdmin<{
+    groups: Array<{ id: string; name: string; created_at: string }>;
+  }>(api, `query { groups(is_active: null) { id name created_at } }`);
+  const stale = (data.groups ?? []).filter((g) => {
+    const createdAt = new Date(g.created_at).getTime();
+    return (
+      pattern.test(g.name) &&
+      Number.isFinite(createdAt) &&
+      Date.now() - createdAt > minAgeMs
+    );
+  });
+  let purged = 0;
+  for (const { id } of stale) {
+    if (await purgeProjectViaApi(api, id)) purged++;
+  }
+  return purged;
 }

@@ -9,13 +9,13 @@ import { Form, type FormInstance } from '../form-engine';
 import { isIpIncludedInList, isValidIPOrCidr } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import TOTPActivateModal from './TOTPActivateModal';
+import TOTPActivateModal from './TOTPActivateModalLazy';
 import {
   AstryxFormSwitch,
   AstryxFormTagsInput,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIModal,
   BAIText,

@@ -12,20 +12,19 @@ import {
   USER_SETTINGS_CATEGORIES,
   type UserSettingsCategory,
 } from '../helper/userSettingsModal';
-import { useBAIBreakpoint } from '../theme-shim';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import ErrorLogList from './ErrorLogList';
 import LoginHistory, { LoginHistoryQuery } from './LoginHistory';
 import LoginSession, { LoginSessionQuery } from './LoginSession';
 import UserSettingsGeneralPane from './UserSettingsGeneralPane';
 import WEBUIHelpButton from './WEBUIHelpButton';
-import { Button } from '@astryxdesign/core/Button';
-import { Divider } from '@astryxdesign/core/Divider';
-import { Icon } from '@astryxdesign/core/Icon';
-import { List, ListItem } from '@astryxdesign/core/List';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
-import { BAIModal, BAISkeleton } from 'backend.ai-ui';
+import { Button } from '@lablup/ui-common/Button';
+import { Divider } from '@lablup/ui-common/Divider';
+import { Icon } from '@lablup/ui-common/Icon';
+import { List, ListItem } from '@lablup/ui-common/List';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
+import { BAIModal, BAISkeleton, useBAIBreakpoint } from 'backend.ai-ui';
 import {
   ArrowLeft,
   ChevronRight,
@@ -95,7 +94,7 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  // RESPONSIVE-POLICY R3 — the theme-shim hook, never Astryx `useMediaQuery`.
+  // RESPONSIVE-POLICY R3 — the BUI breakpoint hook, never Astryx `useMediaQuery`.
   const { md } = useBAIBreakpoint();
   const isNarrow = !md;
   const [narrowView, setNarrowView] = useState<'nav' | 'detail'>('detail');

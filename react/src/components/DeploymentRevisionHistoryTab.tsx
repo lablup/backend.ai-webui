@@ -10,48 +10,49 @@ import {
 import type { DeploymentRevisionHistoryTab_deployment$key } from '../__generated__/DeploymentRevisionHistoryTab_deployment.graphql';
 import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
+import { useCurrentDomain } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { theme } from '../theme-shim';
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import FolderLink from './FolderLink';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Button } from '@astryxdesign/core/Button';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { Link } from '@astryxdesign/core/Link';
-import { Text } from '@astryxdesign/core/Text';
-import { BAIPopconfirm } from 'backend.ai-ui';
+import { Badge } from '@lablup/ui-common/Badge';
+import { Button } from '@lablup/ui-common/Button';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { Link } from '@lablup/ui-common/Link';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIAdminImageSelect,
-  type BAIColumnType,
+  BAIScopedImageSelect,
   BAIFetchKeyButton,
   BAIFlex,
-  type BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilter,
+  BAIId,
   BAINameActionCell,
+  BAIPopconfirm,
   BAIQuestionIconWithTooltip,
   BAITable,
+  BAIText,
   BAIUnmountAfterClose,
   BAIVFolderSelect,
-  BAIId,
   INITIAL_FETCH_KEY,
-  type GraphQLFilter,
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
   isValidUUID,
   toLocalId,
   useBAILogger,
   useFetchKey,
-  BAIText,
+  type BAIColumnType,
+  type BAIGraphQLFilterProperty,
+  type GraphQLFilter,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import {
-  LoaderCircle,
-  EllipsisVertical,
   CirclePlay,
   CopyPlusIcon,
+  EllipsisVertical,
+  LoaderCircle,
 } from 'lucide-react';
 import {
   parseAsInteger,
@@ -110,7 +111,7 @@ const DeploymentRevisionHistoryTab: React.FC<
 > = ({ deploymentFrgmt, deploymentId, fetchKey }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const [isPending, startTransition] = useTransition();
@@ -174,6 +175,14 @@ const DeploymentRevisionHistoryTab: React.FC<
   // Derive the stopped-category guard from this component's own fragment
   // status rather than receiving it as a prop from the parent.
   const deploymentStatus = deployment?.metadata?.status;
+
+  // Images the deployment's project and public registries reach (ADR 0012).
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
+  const deploymentProjectId = deployment?.metadata?.projectId;
+  const imageFilterScope = deploymentProjectId
+    ? { project: [{ value: deploymentProjectId }], public: true }
+    : { ...domainScope, public: true };
 
   const parseRevisionFilter = (filter: string | null) => {
     if (!filter) return null;
@@ -297,11 +306,11 @@ const DeploymentRevisionHistoryTab: React.FC<
             id
             currentRevisionId
             deployingRevisionId
-            currentRevision @since(version: "26.4.3") {
+            currentRevision {
               id
               ...DeploymentRevisionDetail_revision
             }
-            deployingRevision @since(version: "26.4.3") {
+            deployingRevision {
               id
               ...DeploymentRevisionDetail_revision
             }
@@ -481,7 +490,7 @@ const DeploymentRevisionHistoryTab: React.FC<
               {
                 key: 'duplicate',
                 title: t('deployment.AddNewRevisionFromThis'),
-                icon: <CopyPlusIcon size={token.fontSize} />,
+                icon: <CopyPlusIcon size={token('--font-size-base')} />,
                 showInMenu: 'always',
                 disabled: isDeploymentInStoppedCategory(deploymentStatus),
                 onClick: () => {
@@ -619,7 +628,8 @@ const DeploymentRevisionHistoryTab: React.FC<
       fixedOperator: 'equals' as const,
       rule: uuidRule,
       renderInput: ({ onAddCondition, value, isDisabled }) => (
-        <BAIAdminImageSelect
+        <BAIScopedImageSelect
+          scope={imageFilterScope}
           label={t('deployment.Image')}
           isLabelHidden
           value={value}
@@ -731,7 +741,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                   items={[
                     {
                       label: t('deployment.AddNewRevisionFromThis'),
-                      icon: <CopyPlusIcon size={token.fontSize} />,
+                      icon: <CopyPlusIcon size={token('--font-size-base')} />,
                       isDisabled:
                         isDeploymentInStoppedCategory(deploymentStatus),
                       onClick: () => {
@@ -753,7 +763,7 @@ const DeploymentRevisionHistoryTab: React.FC<
         justify="between"
         align="center"
         gap="xs"
-        style={{ marginBottom: token.marginSM }}
+        style={{ marginBottom: token('--spacing-3') }}
         wrap="wrap"
       >
         <BAIGraphQLPropertyFilter

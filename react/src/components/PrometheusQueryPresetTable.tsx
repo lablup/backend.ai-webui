@@ -6,7 +6,7 @@ import {
   PrometheusQueryPresetTableFragment$data,
   PrometheusQueryPresetTableFragment$key,
 } from '../__generated__/PrometheusQueryPresetTableFragment.graphql';
-import { Token } from '@astryxdesign/core/Token';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAIColumnsType,
   BAIFlex,
@@ -74,6 +74,7 @@ const PrometheusQueryPresetTable: React.FC<PrometheusQueryPresetTableProps> = ({
       fragment PrometheusQueryPresetTableFragment on QueryDefinition
       @relay(plural: true) {
         id
+        entityId
         name
         description
         rank

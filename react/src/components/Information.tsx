@@ -5,12 +5,12 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import DescriptionLabel from './DescriptionLabel';
-import { Grid } from '@astryxdesign/core/Grid';
-import { Icon } from '@astryxdesign/core/Icon';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Overlay } from '@astryxdesign/core/Overlay';
-import { Spinner } from '@astryxdesign/core/Spinner';
-import { Token } from '@astryxdesign/core/Token';
+import { Grid } from '@lablup/ui-common/Grid';
+import { Icon } from '@lablup/ui-common/Icon';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Overlay } from '@lablup/ui-common/Overlay';
+import { Spinner } from '@lablup/ui-common/Spinner';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAICard,
   BAIDoubleToken,

@@ -1,5 +1,4 @@
 // spec: Statistics page tests
-import { skipUnlessClientFeature } from '../utils/feature-gate-util';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import test, { expect, Page } from '@playwright/test';
 
@@ -43,16 +42,7 @@ test.describe('Statistics', { tag: ['@functional', '@statistics'] }, () => {
       await loginAsAdmin(page, request);
       await navigateTo(page, 'statistics');
 
-      // Declarative feature gate (FR-3112): the User Session History tab is
-      // rendered only when the manager supports 'user-metrics'
-      // (manager >= 25.6.0; tab introduced by FR-655).
-      await skipUnlessClientFeature(
-        page,
-        'user-metrics',
-        "User Session History tab requires the 'user-metrics' capability (Backend.AI manager >= 25.6.0, FR-655)",
-      );
-
-      // The backend is capable — the tab MUST be present; absence is a failure.
+      // FR-655: the User Session History tab ships with manager 25.6 (see the tag).
       const userSessionTab = statisticsTab(page, 'User Session History');
       await expect(userSessionTab).toBeVisible();
 

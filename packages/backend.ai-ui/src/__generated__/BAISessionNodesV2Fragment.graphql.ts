@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<19aef1a7819b71d35f432aa53d812759>>
+ * @generated SignedSource<<0bbe8e7cd8bbf9c37d5ba10e0f421706>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,10 @@ import { ReaderFragment } from 'relay-runtime';
 export type SessionV2Status = "CANCELLED" | "CREATING" | "DEPRIORITIZING" | "PENDING" | "PREEMPTED" | "PREPARED" | "PREPARING" | "RESCHEDULING" | "RESERVED" | "RUNNING" | "SCHEDULED" | "TERMINATED" | "TERMINATING" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type BAISessionNodesV2Fragment$data = ReadonlyArray<{
+  readonly entityId: string;
+  readonly entityLabels: {
+    readonly " $fragmentSpreads": FragmentRefs<"BAIEntityLabelSettingModalFragment" | "BAIEntityLabelTokensFragment">;
+  } | null | undefined;
   readonly id: string;
   readonly images: {
     readonly edges: ReadonlyArray<{
@@ -120,6 +124,13 @@ return {
       "kind": "RequiredField",
       "field": (v0/*: any*/),
       "action": "NONE"
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
     },
     {
       "alias": null,
@@ -316,6 +327,33 @@ return {
         }
       ],
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": [
+        {
+          "kind": "Literal",
+          "name": "limit",
+          "value": 100
+        }
+      ],
+      "concreteType": "EntityLabelConnection",
+      "kind": "LinkedField",
+      "name": "entityLabels",
+      "plural": false,
+      "selections": [
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "BAIEntityLabelTokensFragment"
+        },
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "BAIEntityLabelSettingModalFragment"
+        }
+      ],
+      "storageKey": "entityLabels(limit:100)"
     }
   ],
   "type": "SessionV2",
@@ -323,6 +361,6 @@ return {
 };
 })();
 
-(node as any).hash = "01dc6fe81a8e934f2a322fb7442bea58";
+(node as any).hash = "8d86056b6234aad512e78dd11caa12e6";
 
 export default node;

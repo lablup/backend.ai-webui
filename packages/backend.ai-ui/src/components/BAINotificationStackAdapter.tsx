@@ -32,7 +32,7 @@
  rejected a red cross (error).
 */
 import type { BAINotificationStackItem } from './BAINotificationStack';
-import type { BannerStatus } from '@astryxdesign/core/Banner';
+import type { BannerStatus } from '@lablup/ui-common/Banner';
 import type React from 'react';
 
 /**

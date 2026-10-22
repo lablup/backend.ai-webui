@@ -6,7 +6,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import AnnouncementEditModal from './AnnouncementEditModal';
 import SettingList, { SettingGroup } from './SettingList';
-import { Button } from '@astryxdesign/core/Button';
+import { Button } from '@lablup/ui-common/Button';
 import { BAIUnmountAfterClose } from 'backend.ai-ui';
 import { Redo2, SquarePenIcon } from 'lucide-react';
 import { useState } from 'react';

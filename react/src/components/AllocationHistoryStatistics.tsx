@@ -2,19 +2,15 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { convertToBinaryUnit, convertToDecimalUnit, SizeUnit } from '../helper';
-import {
-  UserStatsData,
-  UserStatsDataKey,
-  useSuspendedBackendaiClient,
-} from '../hooks';
+import { SizeUnit, convertToBinaryUnit, convertToDecimalUnit } from '../helper';
+import { UserStatsData, UserStatsDataKey } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
 import useUserUsageStats from '../hooks/useUserUsageStats';
-import { theme } from '../theme-shim';
 import { Period } from './AllocationHistory';
 import './AllocationHistoryStatistics.css';
-import { Heading } from '@astryxdesign/core/Heading';
-import { BAICard, BAIQuestionIconWithTooltip, BAIFlex } from 'backend.ai-ui';
+import { Heading } from '@lablup/ui-common/Heading';
+import { useTheme } from '@lablup/ui-common/theme';
+import { BAICard, BAIFlex, BAIQuestionIconWithTooltip } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import {
@@ -88,7 +84,7 @@ const UsageBarChart: React.FC<UsageBarChartProps> = ({
   height = 200,
 }) => {
   'use memo';
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { isDarkMode } = useThemeMode();
 
   const formatValue = (value: number) => {
@@ -136,10 +132,7 @@ const UsageBarChart: React.FC<UsageBarChartProps> = ({
         data={chartData}
         margin={{ top: 24, right: 16, bottom: 8, left: 8 }}
       >
-        <CartesianGrid
-          strokeDasharray="3 3"
-          stroke={token.colorBorderSecondary}
-        />
+        <CartesianGrid strokeDasharray="3 3" stroke={token('--color-border')} />
         <XAxis
           dataKey="index"
           type="number"
@@ -153,21 +146,21 @@ const UsageBarChart: React.FC<UsageBarChartProps> = ({
             value: displayUnit,
             position: 'top',
             offset: 12,
-            fill: token.colorTextDescription,
+            fill: token('--color-text-description'),
           }}
         />
         <ChartTooltip
           cursor={{
             fill: isDarkMode
-              ? token.colorFillSecondary
-              : token.colorFillTertiary,
+              ? token('--color-fill-secondary')
+              : token('--color-fill-tertiary'),
           }}
           labelFormatter={(i: number) => chartData[i]?.tooltipLabel ?? ''}
         />
         <Bar
           dataKey="value"
           name={displayUnit}
-          fill={token.colorPrimary}
+          fill={token('--color-accent')}
           isAnimationActive
           animationDuration={400}
           animationEasing="ease-out"
@@ -190,7 +183,6 @@ const AllocationHistoryStatistics: React.FC<
   const { data } = useUserUsageStats({
     fetchKey,
   });
-  const baiClient = useSuspendedBackendaiClient();
 
   return (
     <BAIFlex direction="column" align="start" gap="md">
@@ -234,30 +226,6 @@ const AllocationHistoryStatistics: React.FC<
           unitType="count"
         />
       </GraphCard>
-      {!baiClient?.supports('user-metrics') ? (
-        <>
-          <GraphCard title="IO-Read" tooltipText={t('statistics.IOReadDesc')}>
-            <UsageBarChart
-              data={data}
-              dataKey="io_read_bytes"
-              period={period}
-              targetUnit="m"
-              displayUnit="MiB"
-              unitType="decimal"
-            />
-          </GraphCard>
-          <GraphCard title="IO-Write" tooltipText={t('statistics.IOWriteDesc')}>
-            <UsageBarChart
-              data={data}
-              dataKey="io_write_bytes"
-              period={period}
-              targetUnit="m"
-              displayUnit="MiB"
-              unitType="decimal"
-            />
-          </GraphCard>
-        </>
-      ) : null}
     </BAIFlex>
   );
 };

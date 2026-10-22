@@ -7,10 +7,10 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
-import { theme } from '../theme-shim';
 import BAIPanelItem from './BAIPanelItem';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIBadgeCount,
   BAIBoardItemTitle,
@@ -18,6 +18,7 @@ import {
   BAIFlexProps,
   BAIRowWrapWithDividers,
   useUpdateEffect,
+  cssLengthToPx,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useDeferredValue } from 'react';
@@ -42,7 +43,7 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
   ...flexProps
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
   if (!currentProject.name) {
@@ -137,19 +138,19 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
       direction="column"
       align="stretch"
       style={{
-        paddingInline: token.paddingXL,
-        paddingBottom: token.padding,
+        paddingInline: token('--spacing-8'),
+        paddingBottom: token('--spacing-4'),
         ...style,
       }}
       {...flexProps}
     >
       <BAIBoardItemTitle title={t('data.FolderStatus')} />
       <BAIRowWrapWithDividers
-        rowGap={token.marginXL}
-        columnGap={token.marginXL}
-        dividerColor={token.colorBorder}
-        dividerInset={token.marginXS}
-        dividerWidth={token.lineWidth}
+        rowGap={token('--spacing-8')}
+        columnGap={token('--spacing-8')}
+        dividerColor={token('--color-border-emphasized')}
+        dividerInset={cssLengthToPx(token('--spacing-2'))}
+        dividerWidth={parseFloat(token('--border-width'))}
       >
         <BAIPanelItem
           title={t('data.MyFolders')}
@@ -162,7 +163,7 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
           style={{
             maxWidth: PANEL_ITEM_MAX_WIDTH,
           }}
-          color={token.colorText}
+          color={token('--color-text-primary')}
         />
         <BAIPanelItem
           title={t('data.ProjectFolders')}
@@ -175,7 +176,7 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
           style={{
             maxWidth: PANEL_ITEM_MAX_WIDTH,
           }}
-          color={token.colorText}
+          color={token('--color-text-primary')}
         />
         <BAIPanelItem
           title={
@@ -205,7 +206,10 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
                     // invitation semantics are restated explicitly (the
                     // per-site colour decision BAIBadgeCount documents).
                     variant="error"
-                    offset={[-token.sizeXS, -token.sizeXS]}
+                    offset={[
+                      -cssLengthToPx(token('--spacing-2')),
+                      -cssLengthToPx(token('--spacing-2')),
+                    ]}
                     // As in the antd version: lift the overlay above the
                     // sticky BAIBoardItemTitle band so the pill is not
                     // painted over (the original passed zIndex 50 to Badge).

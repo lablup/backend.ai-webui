@@ -6,9 +6,9 @@ import { SFTPConnectionInfoModalFragment$key } from '../../__generated__/SFTPCon
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
 import SourceCodeView from '../SourceCodeView';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Heading } from '@astryxdesign/core/Heading';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Heading } from '@lablup/ui-common/Heading';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import {
   BAIFlex,
   BAIMetadataList,
@@ -50,11 +50,7 @@ const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
         # (unexpected keyword argument) even though the schema declares them,
         # so we fetch all edges and take the first one in JS. Migrate to the
         # V2 VFolder connection once ComputeSessionNode exposes it (see FR-2619).
-        #
-        # @since matches the other vfolder_nodes usages so it merges cleanly on
-        # the shared ComputeSessionNode selection (this project targets >= 26,
-        # so the field is always present and needs no vfolder_mounts fallback).
-        vfolder_nodes @since(version: "25.4.0") {
+        vfolder_nodes {
           edges {
             node {
               name
@@ -113,10 +109,12 @@ const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
     >
       <BAIFlex direction="column" align="stretch" gap="md">
         <Banner
+          role="status"
           status="info"
           title={<Trans i18nKey="session.SFTPDescription" />}
         />
         <Banner
+          role="alert"
           status="warning"
           title={
             <>

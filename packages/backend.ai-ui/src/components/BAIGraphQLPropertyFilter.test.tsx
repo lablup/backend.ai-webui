@@ -407,6 +407,90 @@ describe('token <-> condition value mapping', () => {
       powerSearchFiltersToGraphQLFilter(filters, filterProperties, 'AND', true),
     ).toEqual({ email: { contains: 'b' } });
   });
+
+  // `maxConditions` is what gates the AND/OR combinators on managers whose
+  // filter input has no sub-filter fields (FR-3913).
+  it('never emits a combinator when `maxConditions` is 1, even across properties', () => {
+    const filters = graphQLFilterToPowerSearchFilters(
+      { AND: [{ email: { contains: 'a' } }, { role: { equals: 'ADMIN' } }] },
+      filterProperties,
+    );
+    // `singleCondition` alone is per-property, so it still emits AND here.
+    expect(
+      powerSearchFiltersToGraphQLFilter(filters, filterProperties, 'AND', true),
+    ).toHaveProperty('AND');
+    expect(
+      powerSearchFiltersToGraphQLFilter(
+        filters,
+        filterProperties,
+        'AND',
+        false,
+        1,
+      ),
+    ).toEqual({ role: { equals: 'ADMIN' } });
+  });
+
+  // Deduplicating into an object would keep the newest condition at the
+  // *oldest* slot, so the tail-slice below would drop it for a stale sibling.
+  it('keeps the newest condition when `singleCondition` and `maxConditions` combine', () => {
+    const filters = graphQLFilterToPowerSearchFilters(
+      {
+        AND: [
+          { email: { contains: 'old' } },
+          { role: { equals: 'ADMIN' } },
+          { email: { contains: 'new' } },
+        ],
+      },
+      filterProperties,
+    );
+    expect(
+      powerSearchFiltersToGraphQLFilter(
+        filters,
+        filterProperties,
+        'AND',
+        true,
+        1,
+      ),
+    ).toEqual({ email: { contains: 'new' } });
+  });
+
+  it('keeps the newest `maxConditions` conditions', () => {
+    const filters = graphQLFilterToPowerSearchFilters(
+      {
+        AND: [
+          { email: { contains: 'a' } },
+          { role: { equals: 'ADMIN' } },
+          { isActive: true },
+        ],
+      },
+      filterProperties,
+    );
+    expect(
+      powerSearchFiltersToGraphQLFilter(
+        filters,
+        filterProperties,
+        'AND',
+        false,
+        2,
+      ),
+    ).toEqual({ AND: [{ role: { equals: 'ADMIN' } }, { isActive: true }] });
+  });
+
+  it('leaves the filter untouched when `maxConditions` is not reached', () => {
+    const filter: GraphQLFilter = {
+      AND: [{ email: { contains: 'a' } }, { role: { equals: 'ADMIN' } }],
+    };
+    const filters = graphQLFilterToPowerSearchFilters(filter, filterProperties);
+    expect(
+      powerSearchFiltersToGraphQLFilter(
+        filters,
+        filterProperties,
+        'AND',
+        false,
+        5,
+      ),
+    ).toEqual(filter);
+  });
 });
 
 describe('BAIGraphQLPropertyFilter render', () => {
@@ -426,5 +510,72 @@ describe('BAIGraphQLPropertyFilter render', () => {
         .getByTestId('graphql-property-filter')
         .closest('.bai-power-search'),
     ).not.toBeNull();
+  });
+});
+
+describe('to-many quantifier paths pack into one related row', () => {
+  const LABEL_PROPERTIES: Array<FilterProperty> = [
+    { key: 'metadata.name', propertyLabel: 'Name', type: 'string' },
+    { key: 'labels.some.key', propertyLabel: 'Label key', type: 'string' },
+    { key: 'labels.some.value', propertyLabel: 'Label value', type: 'string' },
+  ];
+  const some = (row: GraphQLFilter): GraphQLFilter => ({
+    labels: { some: row },
+  });
+  const key = (v: string) => ({ key: { iEquals: v } });
+  const value = (v: string) => ({ value: { iEquals: v } });
+
+  it('merges a key chip and a value chip into one `some`', () => {
+    expect(
+      roundTrip(LABEL_PROPERTIES, {
+        AND: [some(key('env')), some(value('prod'))],
+      }),
+    ).toEqual(some({ ...key('env'), ...value('prod') }));
+  });
+
+  it('keeps a filter made by the label token click stable across a re-serialization', () => {
+    const clicked = some({ ...key('env'), ...value('prod') });
+    expect(roundTrip(LABEL_PROPERTIES, clicked)).toEqual(clicked);
+  });
+
+  it('opens a second row when a leaf repeats (two key chips)', () => {
+    expect(
+      roundTrip(LABEL_PROPERTIES, {
+        AND: [some(key('env')), some(key('team'))],
+      }),
+    ).toEqual({ AND: [some(key('env')), some(key('team'))] });
+  });
+
+  it('fills rows in chip order: key + two values', () => {
+    expect(
+      roundTrip(LABEL_PROPERTIES, {
+        AND: [some(key('env')), some(value('prod')), some(value('dev'))],
+      }),
+    ).toEqual({
+      AND: [some({ ...key('env'), ...value('prod') }), some(value('dev'))],
+    });
+  });
+
+  it('leaves a single-leaf row and non-quantifier chips as they were', () => {
+    expect(roundTrip(LABEL_PROPERTIES, some(key('env')))).toEqual(
+      some(key('env')),
+    );
+    expect(
+      roundTrip(LABEL_PROPERTIES, {
+        AND: [{ metadata: { name: { iContains: 'a' } } }, some(key('env'))],
+      }),
+    ).toEqual({
+      AND: [{ metadata: { name: { iContains: 'a' } } }, some(key('env'))],
+    });
+  });
+
+  it('does not merge under OR, where chips are alternatives', () => {
+    expect(
+      roundTrip(
+        LABEL_PROPERTIES,
+        { OR: [some(key('env')), some(value('prod'))] },
+        'OR',
+      ),
+    ).toEqual({ OR: [some(key('env')), some(value('prod'))] });
   });
 });

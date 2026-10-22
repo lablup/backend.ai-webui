@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<caaa03735b1192799bc1ac70d904bae0>>
+ * @generated SignedSource<<cc5b9e25a6a2a3ac550bdf5e50ae7043>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,6 +18,7 @@ export type ResourceGroupFilter = {
   isActive?: boolean | null | undefined;
   isDefault?: boolean | null | undefined;
   isPublic?: boolean | null | undefined;
+  labels?: EntityLabelNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
 };
 export type StringFilter = {
@@ -41,6 +42,27 @@ export type StringFilter = {
   notIn?: ReadonlyArray<string> | null | undefined;
   notStartsWith?: string | null | undefined;
   startsWith?: string | null | undefined;
+};
+export type EntityLabelNestedFilter = {
+  every?: EntityLabelFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: EntityLabelFilter | null | undefined;
+  some?: EntityLabelFilter | null | undefined;
+};
+export type EntityLabelFilter = {
+  AND?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  NOT?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
+  key?: StringFilter | null | undefined;
+  value?: StringFilter | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type BAIAdminResourceGroupSelectPaginationQuery$variables = {
   after?: string | null | undefined;
@@ -219,16 +241,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3a8a567467e18a8f1de11de8fae76d69",
+    "cacheID": "fd4e1d0ab7a5885ce9e9a50f11d5d809",
     "id": null,
     "metadata": {},
     "name": "BAIAdminResourceGroupSelectPaginationQuery",
     "operationKind": "query",
-    "text": "query BAIAdminResourceGroupSelectPaginationQuery(\n  $after: String\n  $filter: ResourceGroupFilter\n  $first: Int = 10\n) {\n  ...BAIAdminResourceGroupSelect_resourceGroupsFragment_G9cLv\n}\n\nfragment BAIAdminResourceGroupSelect_resourceGroupsFragment_G9cLv on Query {\n  adminResourceGroups(first: $first, after: $after, filter: $filter) @since(version: \"26.2.0\") {\n    count\n    edges {\n      node {\n        id\n        name\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query BAIAdminResourceGroupSelectPaginationQuery(\n  $after: String\n  $filter: ResourceGroupFilter\n  $first: Int = 10\n) {\n  ...BAIAdminResourceGroupSelect_resourceGroupsFragment_G9cLv\n}\n\nfragment BAIAdminResourceGroupSelect_resourceGroupsFragment_G9cLv on Query {\n  adminResourceGroups(first: $first, after: $after, filter: $filter) {\n    count\n    edges {\n      node {\n        id\n        name\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "06343f7c21be5c30322e3d95f1f1ea3e";
+(node as any).hash = "08c79340b082e35831eb5b188649ce85";
 
 export default node;

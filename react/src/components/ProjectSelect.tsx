@@ -5,8 +5,7 @@
 import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
-import { theme } from '../theme-shim';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIFlex,
   BAIIconWithTooltip,
@@ -32,8 +31,10 @@ export interface ProjectSelectProps extends BAISelectProps {
   disableDefaultFilter?: boolean;
   lockedProjectTypes?: string[];
   /** The user's personal project, which the domain's option list never
-   * contains; shown as a locked option. */
+   * contains. */
   personalProject?: { id: string; name: string };
+  /** Whether the personal project is a locked option. Defaults to true. */
+  lockPersonalProject?: boolean;
   'aria-label'?: string;
 }
 
@@ -43,12 +44,12 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
   disableDefaultFilter,
   lockedProjectTypes,
   personalProject,
+  lockPersonalProject = true,
   'aria-label': ariaLabel,
   ...selectProps
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   const [value, setValue] = useControllableState_deprecated(selectProps);
   const { projectAdminIds } = useCurrentUserProjectRoles();
@@ -119,16 +120,20 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
         title: key,
         options: _.map(_.sortBy(value, 'name'), (project) => {
           const isAdmin = !!project?.id && projectAdminIds.includes(project.id);
-          const isPersonal =
-            !!personalProject && project?.id === personalProject.id;
+          const isLockedPersonal =
+            lockPersonalProject &&
+            !!personalProject &&
+            project?.id === personalProject.id;
           // Fills the option row so the whole item opens the hint; `pointerEvents`
           // covers single mode, whose disabled Item sets `none` (FR-3837).
           const row = (
             <BAIFlex
-              gap={token.marginXS}
+              gap="xs"
               align="center"
               style={
-                isPersonal ? { flexGrow: 1, pointerEvents: 'auto' } : undefined
+                isLockedPersonal
+                  ? { flexGrow: 1, pointerEvents: 'auto' }
+                  : undefined
               }
             >
               <span>{project?.name}</span>
@@ -137,12 +142,18 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
                   content={t('projectSelect.ProjectAdminBadge')}
                   focusable={false}
                   icon={<ShieldUser />}
+                  // The icon's Text uses `--color-text-secondary`; follow the name's color instead.
+                  style={
+                    {
+                      '--color-text-secondary': 'currentColor',
+                    } as React.CSSProperties
+                  }
                 />
               )}
             </BAIFlex>
           );
           return {
-            label: isPersonal ? (
+            label: isLockedPersonal ? (
               <Tooltip
                 content={t('projectSelect.PersonalProjectCannotBeRemoved')}
               >
@@ -158,7 +169,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
             projectResourcePolicy: project?.resource_policy,
             projectName: project?.name,
             disabled:
-              isPersonal || lockedProjectIds.includes(project?.id ?? ''),
+              isLockedPersonal || lockedProjectIds.includes(project?.id ?? ''),
           };
         }),
       };
@@ -178,6 +189,8 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
       }}
       placeholder={t('storageHost.quotaSettings.SelectProject')}
       popupMatchSelectWidth={false}
+      // Renders a rich option row (e.g. the Project Admin shield) on the closed trigger too.
+      optionLabelProp="children"
       {...selectProps}
       value={value}
       showSearch={{

@@ -22,7 +22,6 @@ import {
   BAIModal,
   BAIModalProps,
   BAISelect,
-  toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -93,6 +92,7 @@ const PrometheusQueryPresetEditorModal: React.FC<
     graphql`
       fragment PrometheusQueryPresetEditorModalFragment on QueryDefinition {
         id
+        entityId
         name
         description
         categoryId
@@ -141,10 +141,10 @@ const PrometheusQueryPresetEditorModal: React.FC<
   const [commitUpdateMutation, isInflightUpdate] =
     useMutation<PrometheusQueryPresetEditorModalUpdateMutation>(graphql`
       mutation PrometheusQueryPresetEditorModalUpdateMutation(
-        $id: ID!
+        $id: UUID!
         $input: ModifyQueryDefinitionInput!
       ) {
-        adminModifyPrometheusQueryPreset(id: $id, input: $input) {
+        updatePrometheusQueryPreset(id: $id, input: $input) {
           preset {
             id
             name
@@ -159,7 +159,7 @@ const PrometheusQueryPresetEditorModal: React.FC<
               groupLabels
             }
             updatedAt
-            category @since(version: "26.4.3") {
+            category {
               id
               name
             }
@@ -219,7 +219,7 @@ const PrometheusQueryPresetEditorModal: React.FC<
 
           commitUpdateMutation({
             variables: {
-              id: toLocalId(preset.id),
+              id: preset.entityId,
               input,
             },
             onCompleted: (_res, errors) => {

@@ -18,13 +18,13 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useSFTPProxyResourceGroupsQuery } from '../hooks/useSFTPResourceGroups';
-import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
 import ResourceGroupInfoModal from './ResourceGroupInfoModal';
 import ResourceGroupSettingModal from './ResourceGroupSettingModal';
 import UpdateResourceGroupsModal from './UpdateResourceGroupsModal';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Token } from '@astryxdesign/core/Token';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Token } from '@lablup/ui-common/Token';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIButton,
   BAIColumnsType,
@@ -41,18 +41,23 @@ import {
   filterOutNullAndUndefined,
   useToggle,
   useUpdatableState,
+  BAIEntityLabelBulkEditButton,
+  BAIEntityLabelCell,
+  BAIEntityLabelSettingModal,
+  toEntityLabelFilter,
+  useIsLabelableEntityType,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import {
-  Check,
-  X,
-  Trash2,
-  Info,
   BanIcon,
+  Check,
+  Info,
   PlusIcon,
   SquarePenIcon,
+  Trash2,
   UndoIcon,
+  X,
 } from 'lucide-react';
 import React, {
   Suspense,
@@ -165,12 +170,12 @@ const ResourceGroupSettingModalWithQuery: React.FC<{
 const ResourceGroupList: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
   const baiClient = useSuspendedBackendaiClient();
-  // AND/OR/NOT sub-filters only exist on managers with the `sub-filter`
-  // capability; older ones reject them, so restrict to a single condition.
-  const supportsSubFilter = baiClient.supports('sub-filter');
+  // AND/OR/NOT sub-filters need manager 26.7.0; older ones reject them, so
+  // restrict to a single condition.
+  const supportsSubFilter = baiClient.isManagerVersionCompatibleWith('26.7.0');
   const [activeType, setActiveType] = useState<'active' | 'inactive'>('active');
   const [
     openCreateModal,
@@ -184,6 +189,9 @@ const ResourceGroupList: React.FC = () => {
   const [selectedResourceGroupName, setSelectedResourceGroupName] =
     useState<string>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const isLabelable = useIsLabelableEntityType('resource_group');
+  const [labelingResourceGroup, setLabelingResourceGroup] =
+    useState<ResourceGroupNode | null>(null);
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.ResourceGroupList',
   );
@@ -251,7 +259,12 @@ const ResourceGroupList: React.FC = () => {
           edges {
             node {
               id
+              entityId
               name
+              entityLabels(limit: 100) {
+                ...BAIEntityLabelTokensFragment
+                ...BAIEntityLabelSettingModalFragment
+              }
               status {
                 isActive
                 isPublic
@@ -308,9 +321,9 @@ const ResourceGroupList: React.FC = () => {
 
   const renderBooleanCell = (value: boolean | null | undefined) =>
     value ? (
-      <Check style={{ color: token.colorSuccess }} size="1em" />
+      <Check style={{ color: token('--color-success') }} size="1em" />
     ) : (
-      <X style={{ color: token.colorTextSecondary }} size="1em" />
+      <X style={{ color: token('--color-text-secondary') }} size="1em" />
     );
 
   const closeSettingModal = (success: boolean) => {
@@ -499,6 +512,21 @@ const ResourceGroupList: React.FC = () => {
       render: (value: string | null | undefined) =>
         value ? dayjs(value).format('lll') : '-',
     },
+    isLabelable && {
+      key: 'labels',
+      title: t('entityLabel.Labels'),
+      render: (_value: unknown, record: ResourceGroupNode) => (
+        <BAIEntityLabelCell
+          entityLabelsFrgmt={record.entityLabels}
+          onEdit={() => setLabelingResourceGroup(record)}
+          onLabelClick={(label) => {
+            setFilter(toEntityLabelFilter(label));
+            setTablePaginationOption({ current: 1 });
+            setSelectedRowKeys([]);
+          }}
+        />
+      ),
+    },
   ]);
 
   return (
@@ -547,6 +575,20 @@ const ResourceGroupList: React.FC = () => {
                 propertyLabel: t('resourceGroup.Default'),
                 type: 'boolean',
               },
+              ...(isLabelable
+                ? [
+                    {
+                      key: 'labels.some.key',
+                      propertyLabel: t('entityLabel.LabelKey'),
+                      type: 'string' as const,
+                    },
+                    {
+                      key: 'labels.some.value',
+                      propertyLabel: t('entityLabel.LabelValue'),
+                      type: 'string' as const,
+                    },
+                  ]
+                : []),
             ]}
             value={filter}
             onChange={(value) => {
@@ -563,10 +605,22 @@ const ResourceGroupList: React.FC = () => {
                 count={selectedRowKeys.length}
                 onClearSelection={() => setSelectedRowKeys([])}
               />
+              <BAIEntityLabelBulkEditButton
+                entityType="resource_group"
+                targets={resourceGroups
+                  .filter((group) => selectedRowKeys.includes(group.name))
+                  .map((group) => ({
+                    entityId: group.entityId,
+                    name: group.name,
+                  }))}
+                onLabelsChanged={() => updateFetchKey()}
+              />
               {/* antd Tooltip + icon-only BAIButton → IconButton with its own
                   `tooltip` (ticket 15/18 idiom: never-disabled icon trigger). */}
               <IconButton
-                icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
+                icon={
+                  <SquarePenIcon style={{ color: token('--color-info') }} />
+                }
                 label={t('general.BulkEdit')}
                 tooltip={t('general.BulkEdit')}
                 onClick={() => setOpenSFTPModal(true)}
@@ -632,6 +686,25 @@ const ResourceGroupList: React.FC = () => {
         }}
       />
 
+      <BAIEntityLabelSettingModal
+        open={!!labelingResourceGroup}
+        entityType="resource_group"
+        targets={
+          labelingResourceGroup
+            ? [
+                {
+                  entityId: labelingResourceGroup.entityId,
+                  name: labelingResourceGroup.name,
+                },
+              ]
+            : []
+        }
+        entityLabelsFrgmt={labelingResourceGroup?.entityLabels}
+        onRequestClose={(success) => {
+          setLabelingResourceGroup(null);
+          if (success) updateFetchKey();
+        }}
+      />
       <BAIDeleteConfirmModal
         open={!!selectedResourceGroupName}
         title={t('resourceGroup.DeleteResourceGroup')}

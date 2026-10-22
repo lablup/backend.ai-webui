@@ -10,20 +10,19 @@ import {
   useTOTPSupported,
 } from '../hooks/backendai';
 import { useThemeMode } from '../hooks/useThemeMode';
-import { useBAIBreakpoint } from '../theme-shim';
 import AboutBackendAIModal from './AboutBackendAIModal';
-import DownloadModal from './DownloadModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useUserSettingsModal } from './UserSettingsModalOpener';
 import {
   DropdownMenu,
   type DropdownMenuOption,
-} from '@astryxdesign/core/DropdownMenu';
+} from '@lablup/ui-common/DropdownMenu';
 import {
   BAIUnmountAfterClose,
   filterOutEmpty,
   useFetchKey,
   useToggle,
+  useBAIBreakpoint,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
@@ -39,6 +38,9 @@ import {
 import React, { CSSProperties, Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+
+// The download page's code view pulls shiki; load it when the modal opens.
+const DownloadModal = React.lazy(() => import('./DownloadModal'));
 
 const UserProfileSettingModal = React.lazy(
   () => import('./UserProfileSettingModal'),
@@ -63,7 +65,6 @@ const UserDropdownMenu: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const [userInfo] = useCurrentUserInfo();
-  // RESPONSIVE-POLICY R3: `Grid.useBreakpoint()` → theme-shim hook.
   const screens = useBAIBreakpoint();
   const { isDarkMode } = useThemeMode();
   const baiClient = useSuspendedBackendaiClient();
@@ -274,12 +275,14 @@ const UserDropdownMenu: React.FC<{
               </BAIUnmountAfterClose>
             )}
           </Suspense>
-          <BAIUnmountAfterClose>
-            <DownloadModal
-              open={isDownloadModalOpen}
-              onRequestClose={() => toggleDownloadModal()}
-            />
-          </BAIUnmountAfterClose>
+          <Suspense fallback={null}>
+            <BAIUnmountAfterClose>
+              <DownloadModal
+                open={isDownloadModalOpen}
+                onRequestClose={() => toggleDownloadModal()}
+              />
+            </BAIUnmountAfterClose>
+          </Suspense>
           <BAIUnmountAfterClose>
             <AboutBackendAIModal
               open={isOpenAboutBAIModal}

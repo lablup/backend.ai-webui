@@ -51,14 +51,14 @@ import {
   type FilterPropertyOption,
   type FilterRenderInput,
 } from './BAIPowerSearchAdapters';
-import { PowerSearch } from '@astryxdesign/core/PowerSearch';
+import { PowerSearch } from '@lablup/ui-common/PowerSearch';
 import type {
   FilterValue,
   OperatorValue,
   PowerSearchConfig,
   PowerSearchField,
   PowerSearchFilter,
-} from '@astryxdesign/core/PowerSearch';
+} from '@lablup/ui-common/PowerSearch';
 import classNames from 'classnames';
 import dayjs from 'dayjs';
 import type { TFunction } from 'i18next';
@@ -220,6 +220,14 @@ export interface BAIGraphQLPropertyFilterProps<
   // for that property instead of appending another — applied to every
   // property.
   singleCondition?: boolean;
+  /**
+   * Hard cap on how many conditions the emitted filter may carry IN TOTAL,
+   * across every property. Unlike `singleCondition` (at most one per
+   * property) this is what bounds the AND/OR combinators: `maxConditions={1}`
+   * never emits `AND`, so it is the gate for managers whose filter input has
+   * no sub-filter fields. The LAST conditions win.
+   */
+  maxConditions?: number;
 }
 
 interface FilterCondition {
@@ -306,6 +314,30 @@ export function buildNestedFilter(path: string, value: any): GraphQLFilter {
   return { [keys[0]]: nested };
 }
 
+const QUANTIFIER_SEGMENTS = new Set(['some', 'every', 'none']);
+
+/**
+ * `labels.some.key` -> `{ parent: 'labels.some', leaf: 'key' }`; undefined
+ * when no inner segment is a to-many quantifier.
+ */
+function splitAtQuantifier(
+  path: string,
+): { parent: string; leaf: string } | undefined {
+  const keys = path.split('.');
+  const at = _.findIndex(
+    keys,
+    (key, i) => i > 0 && i < keys.length - 1 && QUANTIFIER_SEGMENTS.has(key),
+  );
+  return at < 0
+    ? undefined
+    : {
+        parent: keys.slice(0, at + 1).join('.'),
+        leaf: keys.slice(at + 1).join('.'),
+      };
+}
+
+type QuantifierRow = { parent: string; leaves: Map<string, any> };
+
 function convertConditionsToGraphQLFilter(
   conditions: FilterCondition[],
   filterProperties: FilterProperty[],
@@ -313,8 +345,11 @@ function convertConditionsToGraphQLFilter(
 ): GraphQLFilter | undefined {
   if (conditions.length === 0) return undefined;
 
-  // Build individual filter for each condition (no grouping)
-  const filters: GraphQLFilter[] = [];
+  // A to-many quantifier (`some` / `every` / `none`) scopes its conditions to
+  // ONE related row, so under AND the conditions sharing a quantifier path are
+  // packed into one object; a leaf the row already has opens the next row.
+  const entries: Array<{ filter: GraphQLFilter } | { row: QuantifierRow }> = [];
+  const rows: QuantifierRow[] = [];
 
   conditions.forEach((condition) => {
     const propertyConfig = filterProperties.find(
@@ -353,10 +388,42 @@ function convertConditionsToGraphQLFilter(
       filterValue = { [condition.operator]: value };
     }
 
-    // Create a separate filter object for each condition
-    // Supports dot notation for nested objects (e.g., "project.name" -> { project: { name: value } })
-    filters.push(buildNestedFilter(condition.property, filterValue));
+    const split =
+      combinationMode === 'AND'
+        ? splitAtQuantifier(condition.property)
+        : undefined;
+    if (!split) {
+      // Dot notation nests: "project.name" -> { project: { name: value } }
+      entries.push({
+        filter: buildNestedFilter(condition.property, filterValue),
+      });
+      return;
+    }
+    let row = _.find(
+      rows,
+      (r) => r.parent === split.parent && !r.leaves.has(split.leaf),
+    );
+    if (!row) {
+      row = { parent: split.parent, leaves: new Map() };
+      rows.push(row);
+      entries.push({ row });
+    }
+    row.leaves.set(split.leaf, filterValue);
   });
+
+  const filters: GraphQLFilter[] = _.map(entries, (entry) =>
+    'row' in entry
+      ? buildNestedFilter(
+          entry.row.parent,
+          _.merge(
+            {},
+            ...Array.from(entry.row.leaves, ([leaf, value]) =>
+              buildNestedFilter(leaf, value),
+            ),
+          ),
+        )
+      : entry.filter,
+  );
 
   // If there's only one filter, return it directly
   if (filters.length === 1) {
@@ -642,19 +709,22 @@ export function powerSearchFiltersToGraphQLFilter(
   filterProperties: Array<FilterProperty>,
   combinationMode: 'AND' | 'OR' = 'AND',
   singleCondition: boolean = false,
+  maxConditions?: number,
 ): GraphQLFilter | undefined {
   const byKey = _.keyBy(filterProperties, 'key');
-  // `singleCondition` keeps at most one condition per property — the LAST one
-  // wins, matching the antd behaviour where committing overrode.
-  const kept = singleCondition
-    ? _.values(
-        _.reduce(
-          filters,
-          (acc, filter) => ({ ...acc, [filter.field]: filter }),
-          {} as Record<string, PowerSearchFilter>,
-        ),
-      )
+  // `singleCondition` keeps the LAST condition per property (the antd
+  // committing-overrides behaviour) *at* its last position, so the tail-slice
+  // below keeps it rather than an older sibling.
+  const deduped = singleCondition
+    ? _.uniqBy([...filters].reverse(), 'field').reverse()
     : [...filters];
+  // `maxConditions` then caps the total, keeping the newest ones.
+  const kept =
+    _.isNumber(maxConditions) && deduped.length > maxConditions
+      ? maxConditions <= 0
+        ? []
+        : deduped.slice(-maxConditions)
+      : deduped;
 
   const conditions: Array<FilterCondition> = _.map(kept, (filter) => {
     const property = byKey[filter.field];
@@ -684,6 +754,7 @@ const BAIGraphQLPropertyFilter = <
   defaultValue,
   combinationMode = 'AND',
   singleCondition = false,
+  maxConditions,
   label,
   placeholder,
   applyLabel,
@@ -773,6 +844,7 @@ const BAIGraphQLPropertyFilter = <
         filterProperties,
         combinationMode,
         singleCondition,
+        maxConditions,
       ) as TFilter | undefined,
     );
   };

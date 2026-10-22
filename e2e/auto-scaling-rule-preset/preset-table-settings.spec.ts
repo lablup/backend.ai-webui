@@ -7,6 +7,15 @@ import { test, expect, Page } from '@playwright/test';
 // Helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Sortable headers take their accessible name from the sort button, which
+// falls back to the column key ("Sort by createdAt"), so match the header text.
+function presetColumnHeader(page: Page, label: string) {
+  const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return page
+    .getByRole('columnheader')
+    .filter({ hasText: new RegExp(`^${escaped}$`) });
+}
+
 async function createPreset(
   page: Page,
   name: string,
@@ -23,7 +32,8 @@ async function createPreset(
   await page.getByRole('button', { name: /Create Preset/i }).click();
   const modal = page.getByRole('dialog');
   await expect(modal).toBeVisible();
-  const nameInput = modal.getByRole('textbox', { name: 'Name', exact: true });
+  // Form.Item's input is named "visible label + hidden label" ("Name Name").
+  const nameInput = modal.getByRole('textbox', { name: /^Name\b/ });
   await expect(nameInput).toBeVisible({ timeout: 30000 });
   await nameInput.fill(name);
   await modal.getByRole('textbox', { name: 'Metric Name' }).fill(metricName);
@@ -87,15 +97,11 @@ test.describe(
       await expect(page.getByRole('table')).toBeVisible({ timeout: 30000 });
 
       // Verify "Created At" and "Updated At" are NOT visible by default
-      await expect(
-        page.getByRole('columnheader', { name: 'Created At' }),
-      ).toBeHidden();
-      await expect(
-        page.getByRole('columnheader', { name: 'Updated At' }),
-      ).toBeHidden();
+      await expect(presetColumnHeader(page, 'Created At')).toBeHidden();
+      await expect(presetColumnHeader(page, 'Updated At')).toBeHidden();
 
       // Click the column settings (gear) button
-      await page.getByRole('button', { name: 'setting' }).click();
+      await page.getByRole('button', { name: 'Table Settings' }).click();
       const settingsModal = page.getByRole('dialog');
       await expect(settingsModal).toBeVisible();
       await expect(settingsModal).not.toHaveClass(/ant-zoom-appear/, {
@@ -109,22 +115,22 @@ test.describe(
       // Enable "Updated At"
       await settingsModal.getByRole('checkbox', { name: 'Updated At' }).check();
 
-      // Click "OK"
-      await settingsModal.getByRole('button', { name: 'OK' }).click();
+      // Click "Apply"
+      await settingsModal.getByRole('button', { name: 'Apply' }).click();
       await expect(settingsModal).toBeHidden({ timeout: 30000 });
 
       // Verify "Created At" column header is now visible
-      await expect(
-        page.getByRole('columnheader', { name: 'Created At' }),
-      ).toBeVisible({ timeout: 10000 });
+      await expect(presetColumnHeader(page, 'Created At')).toBeVisible({
+        timeout: 10000,
+      });
 
       // Verify "Updated At" column header is now visible
-      await expect(
-        page.getByRole('columnheader', { name: 'Updated At' }),
-      ).toBeVisible({ timeout: 10000 });
+      await expect(presetColumnHeader(page, 'Updated At')).toBeVisible({
+        timeout: 10000,
+      });
 
       // Restore hidden state for cleanup
-      await page.getByRole('button', { name: 'setting' }).click();
+      await page.getByRole('button', { name: 'Table Settings' }).click();
       await expect(settingsModal).toBeVisible();
       await expect(settingsModal).not.toHaveClass(/ant-zoom-appear/, {
         timeout: 10000,
@@ -135,7 +141,7 @@ test.describe(
       await settingsModal
         .getByRole('checkbox', { name: 'Updated At' })
         .uncheck();
-      await settingsModal.getByRole('button', { name: 'OK' }).click();
+      await settingsModal.getByRole('button', { name: 'Apply' }).click();
       await expect(settingsModal).toBeHidden({ timeout: 30000 });
     });
 
@@ -149,7 +155,7 @@ test.describe(
       await expect(page.getByRole('table')).toBeVisible({ timeout: 30000 });
 
       // Open column settings and enable both columns
-      await page.getByRole('button', { name: 'setting' }).click();
+      await page.getByRole('button', { name: 'Table Settings' }).click();
       const settingsModal = page.getByRole('dialog');
       await expect(settingsModal).toBeVisible();
       await expect(settingsModal).not.toHaveClass(/ant-zoom-appear/, {
@@ -157,19 +163,19 @@ test.describe(
       });
       await settingsModal.getByRole('checkbox', { name: 'Created At' }).check();
       await settingsModal.getByRole('checkbox', { name: 'Updated At' }).check();
-      await settingsModal.getByRole('button', { name: 'OK' }).click();
+      await settingsModal.getByRole('button', { name: 'Apply' }).click();
       await expect(settingsModal).toBeHidden({ timeout: 30000 });
 
       // Verify both headers are visible
-      await expect(
-        page.getByRole('columnheader', { name: 'Created At' }),
-      ).toBeVisible({ timeout: 10000 });
-      await expect(
-        page.getByRole('columnheader', { name: 'Updated At' }),
-      ).toBeVisible({ timeout: 10000 });
+      await expect(presetColumnHeader(page, 'Created At')).toBeVisible({
+        timeout: 10000,
+      });
+      await expect(presetColumnHeader(page, 'Updated At')).toBeVisible({
+        timeout: 10000,
+      });
 
       // Open column settings again and disable "Created At"
-      await page.getByRole('button', { name: 'setting' }).click();
+      await page.getByRole('button', { name: 'Table Settings' }).click();
       await expect(settingsModal).toBeVisible();
       await expect(settingsModal).not.toHaveClass(/ant-zoom-appear/, {
         timeout: 10000,
@@ -177,16 +183,14 @@ test.describe(
       await settingsModal
         .getByRole('checkbox', { name: 'Created At' })
         .uncheck();
-      await settingsModal.getByRole('button', { name: 'OK' }).click();
+      await settingsModal.getByRole('button', { name: 'Apply' }).click();
       await expect(settingsModal).toBeHidden({ timeout: 30000 });
 
       // Verify "Created At" header is no longer visible
-      await expect(
-        page.getByRole('columnheader', { name: 'Created At' }),
-      ).toBeHidden();
+      await expect(presetColumnHeader(page, 'Created At')).toBeHidden();
 
       // Open column settings again and disable "Updated At"
-      await page.getByRole('button', { name: 'setting' }).click();
+      await page.getByRole('button', { name: 'Table Settings' }).click();
       await expect(settingsModal).toBeVisible();
       await expect(settingsModal).not.toHaveClass(/ant-zoom-appear/, {
         timeout: 10000,
@@ -194,13 +198,11 @@ test.describe(
       await settingsModal
         .getByRole('checkbox', { name: 'Updated At' })
         .uncheck();
-      await settingsModal.getByRole('button', { name: 'OK' }).click();
+      await settingsModal.getByRole('button', { name: 'Apply' }).click();
       await expect(settingsModal).toBeHidden({ timeout: 30000 });
 
       // Verify "Updated At" header is no longer visible
-      await expect(
-        page.getByRole('columnheader', { name: 'Updated At' }),
-      ).toBeHidden();
+      await expect(presetColumnHeader(page, 'Updated At')).toBeHidden();
     });
   },
 );
@@ -303,8 +305,9 @@ test.describe(
       const queryTemplateCell = row.locator('td').nth(2);
       await expect(queryTemplateCell).toBeVisible({ timeout: 15000 });
 
+      // The label flips from "Copy" to "Copied" after a click.
       const copyButton = queryTemplateCell.getByRole('button', {
-        name: /copy/i,
+        name: /^cop(y|ied)$/i,
       });
       await expect(copyButton).toBeVisible();
       await copyButton.click();

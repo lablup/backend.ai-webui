@@ -21,12 +21,12 @@ import { useRecentSearchHits } from './useRecentSearchHits';
 import {
   CommandPalette,
   CommandPaletteInput,
-} from '@astryxdesign/core/CommandPalette';
-import { Kbd } from '@astryxdesign/core/Kbd';
-import { Skeleton } from '@astryxdesign/core/Skeleton';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
-import { textSizeVars } from '@astryxdesign/core/theme/tokens.stylex';
+} from '@lablup/ui-common/CommandPalette';
+import { Kbd } from '@lablup/ui-common/Kbd';
+import { Skeleton } from '@lablup/ui-common/Skeleton';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
+import { textSizeVars } from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import { useBAILogger } from 'backend.ai-ui';
 import { Settings } from 'lucide-react';
@@ -166,10 +166,22 @@ const GlobalSearchPalette: React.FC<GlobalSearchPaletteProps> = ({
             logger.error('GlobalSearchPalette: action failed', hit.id, error),
           );
         } else if (hit.target) {
-          navigate({
-            pathname: hit.target.path,
-            search: new URLSearchParams(hit.target.search ?? {}).toString(),
-          });
+          const pathname = hit.target.path;
+          const search = new URLSearchParams(
+            hit.target.search ?? {},
+          ).toString();
+          const href = search ? `${pathname}?${search}` : pathname;
+          // A router navigation keeps a same-path page mounted, and pages that
+          // query on mount would keep the old data. Electron cannot deep-load.
+          if (
+            !globalThis.isElectron &&
+            pathname === location.pathname &&
+            href !== `${location.pathname}${location.search}`
+          ) {
+            location.assign(href);
+          } else {
+            navigate({ pathname, search });
+          }
         }
         onRequestClose();
       }}

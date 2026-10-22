@@ -4,26 +4,26 @@
  */
 import { AgentStatsFragment$key } from '../__generated__/AgentStatsFragment.graphql';
 import { useResourceSlotsDetails } from '../hooks/backendai';
-import { theme } from '../theme-shim';
 import {
   SegmentedControl,
   SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
-import { Heading } from '@astryxdesign/core/Text';
+} from '@lablup/ui-common/SegmentedControl';
+import { Heading } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
   BAIBoardItemTitle,
   BAIDoubleBadge,
   BAIFetchKeyButton,
   BAIFlex,
   BAIFlexProps,
+  BAISkeleton,
   ResourceStatistics,
   convertToNumber,
   processMemoryValue,
   useControllableValue,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { useTransition, ReactNode } from 'react';
+import { ReactNode, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
 
@@ -43,7 +43,7 @@ const AgentStats: React.FC<AgentStatsProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
@@ -63,21 +63,20 @@ const AgentStats: React.FC<AgentStatsProps> = ({
         schedulableAgentFilter: { type: "String!" }
       )
       @refetchable(queryName: "AgentStatsRefetchQuery") {
-        agentStats @since(version: "25.15.0") {
+        agentStats {
           totalResource {
             free
             used
             capacity
           }
         }
-        aliveAgents: agent_nodes(filter: $aliveAgentFilter, first: 1)
-          @since(version: "24.12.0") {
+        aliveAgents: agent_nodes(filter: $aliveAgentFilter, first: 1) {
           count
         }
         schedulableAgents: agent_nodes(
           filter: $schedulableAgentFilter
           first: 1
-        ) @since(version: "24.12.0") {
+        ) {
           count
         }
       }
@@ -180,8 +179,8 @@ const AgentStats: React.FC<AgentStatsProps> = ({
       direction="column"
       align="stretch"
       style={{
-        paddingInline: token.paddingXL,
-        paddingBottom: token.padding,
+        paddingInline: token('--spacing-8'),
+        paddingBottom: token('--spacing-4'),
         ...props.style,
       }}
       {..._.omit(props, ['style'])}
