@@ -3273,12 +3273,11 @@
   "sessionMonitor": {
     "ChipStartingCount": "Starting {{count}}",
     "ErrorCount": "Errors {{count}}",
-    "MonitorSettings": "Monitor settings",
+    "MonitorSettings": "Session monitor settings",
     "MoreSessions": "{{count}} more ({{total}} total)",
     "MyResourceUsage": "Allocated to me, against my limit",
     "NoActiveSessions": "No active sessions",
     "OpenSession": "Open session",
-    "OpenSessionList": "Open session list",
     "RunningCount": "{{count}} running",
     "SessionCount": "Sessions {{count}}",
     "StartingCount": "{{count}} starting",
@@ -3290,22 +3289,21 @@
       "Utilization": "Resource utilization has stayed under the idle threshold. Use the session before it is terminated."
     },
     "settings": {
-      "ChipError": "Sessions in error",
+      "ChipError": "Number of sessions in error",
       "ChipIdle": "Nearest idle termination, with alerts",
       "ChipResources": "Resources allocated to them",
-      "ChipStarting": "Starting sessions",
+      "ChipStarting": "Number of starting sessions",
       "Condition": "Sessions to watch",
       "FilterPlaceholder": "Filter",
-      "IncludeStarting": "Include starting sessions",
       "List": "List",
       "OnlyMine": "Only sessions I created",
-      "OpenUserSettings": "Session monitor settings →",
       "RowsShown": "Rows shown",
       "ShowInHeader": "Show in the header",
       "SortBy": "Sort by",
       "SortDeadline": "Soonest termination first",
       "SortName": "Name",
-      "SortNewest": "Newest first"
+      "SortNewest": "Newest first",
+      "TurnOffHint": "To turn off the session monitor itself, use <a>the Session monitor item in User settings</a>."
     }
   },
   "settings": {

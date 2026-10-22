@@ -3289,12 +3289,11 @@
   "sessionMonitor": {
     "ChipStartingCount": "Uruchamiane {{count}}",
     "ErrorCount": "Błędy {{count}}",
-    "MonitorSettings": "Ustawienia monitora",
+    "MonitorSettings": "Ustawienia monitora sesji",
     "MoreSessions": "{{count}} więcej ({{total}} łącznie)",
     "MyResourceUsage": "Przydzielone mi, względem mojego limitu",
     "NoActiveSessions": "Brak aktywnych sesji",
     "OpenSession": "Otwórz sesję",
-    "OpenSessionList": "Otwórz listę sesji",
     "RunningCount": "{{count}} działa",
     "SessionCount": "Sesje {{count}}",
     "StartingCount": "{{count}} uruchamia się",
@@ -3306,22 +3305,21 @@
       "Utilization": "Wykorzystanie zasobów utrzymuje się poniżej progu bezczynności. Użyj sesji, zanim zostanie zakończona."
     },
     "settings": {
-      "ChipError": "Sesje z błędem",
+      "ChipError": "Liczba sesji z błędem",
       "ChipIdle": "Najbliższe zakończenie z powodu bezczynności, z alertami",
       "ChipResources": "Przydzielone zasoby",
-      "ChipStarting": "Uruchamiane sesje",
+      "ChipStarting": "Liczba uruchamianych sesji",
       "Condition": "Sesje do obserwowania",
       "FilterPlaceholder": "Filtr",
-      "IncludeStarting": "Uwzględnij uruchamiające się sesje",
       "List": "Lista",
       "OnlyMine": "Tylko sesje utworzone przeze mnie",
-      "OpenUserSettings": "Ustawienia monitora sesji →",
       "RowsShown": "Wyświetlane wiersze",
       "ShowInHeader": "Pokaż w nagłówku",
       "SortBy": "Sortuj",
       "SortDeadline": "Najszybsze zakończenie najpierw",
       "SortName": "Nazwa",
-      "SortNewest": "Najnowsze najpierw"
+      "SortNewest": "Najnowsze najpierw",
+      "TurnOffHint": "Aby całkowicie wyłączyć monitor sesji, użyj <a>pozycji Monitor sesji w Ustawieniach użytkownika</a>."
     }
   },
   "settings": {

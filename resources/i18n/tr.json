@@ -3286,12 +3286,11 @@
   "sessionMonitor": {
     "ChipStartingCount": "Başlatılıyor {{count}}",
     "ErrorCount": "Hatalar {{count}}",
-    "MonitorSettings": "Monitör ayarları",
+    "MonitorSettings": "Oturum monitörü ayarları",
     "MoreSessions": "{{count}} daha (toplam {{total}})",
     "MyResourceUsage": "Bana ayrıldı, limitime karşı",
     "NoActiveSessions": "Aktif oturum yok",
     "OpenSession": "Oturumu aç",
-    "OpenSessionList": "Oturum listesini aç",
     "RunningCount": "{{count}} çalışıyor",
     "SessionCount": "Oturumlar {{count}}",
     "StartingCount": "{{count}} başlıyor",
@@ -3303,22 +3302,21 @@
       "Utilization": "Kaynak kullanımı boşta kalma eşiğinin altında kaldı. Sonlandırılmadan önce oturumu kullanın."
     },
     "settings": {
-      "ChipError": "Hatalı oturumlar",
+      "ChipError": "Hatalı oturum sayısı",
       "ChipIdle": "En yakın boşta kalma sonlandırması, uyarılarla",
       "ChipResources": "Ayrılan kaynaklar",
-      "ChipStarting": "Başlatılan oturumlar",
+      "ChipStarting": "Başlatılan oturum sayısı",
       "Condition": "İzlenecek oturumlar",
       "FilterPlaceholder": "Filtre",
-      "IncludeStarting": "Başlayan oturumları dahil et",
       "List": "Liste",
       "OnlyMine": "Yalnızca oluşturduğum oturumlar",
-      "OpenUserSettings": "Oturum monitörü ayarları →",
       "RowsShown": "Gösterilen satırlar",
       "ShowInHeader": "Başlıkta göster",
       "SortBy": "Sırala",
       "SortDeadline": "En yakın sonlanma önce",
       "SortName": "Ad",
-      "SortNewest": "En yeniler önce"
+      "SortNewest": "En yeniler önce",
+      "TurnOffHint": "Oturum monitörünü tamamen kapatmak için <a>Kullanıcı ayarlarındaki Oturum monitörü öğesini</a> kullanın."
     }
   },
   "settings": {

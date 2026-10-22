@@ -3288,12 +3288,11 @@
   "sessionMonitor": {
     "ChipStartingCount": "启动中 {{count}}",
     "ErrorCount": "错误 {{count}}",
-    "MonitorSettings": "监控设置",
+    "MonitorSettings": "会话监控设置",
     "MoreSessions": "还有 {{count}} 个 (共 {{total}} 个)",
     "MyResourceUsage": "已分配给我（与我的限制对比）",
     "NoActiveSessions": "没有活动会话",
     "OpenSession": "打开会话",
-    "OpenSessionList": "打开会话列表",
     "RunningCount": "{{count}} 个运行中",
     "SessionCount": "会话 {{count}}",
     "StartingCount": "{{count}} 个启动中",
@@ -3305,22 +3304,21 @@
       "Utilization": "资源使用率一直低于空闲阈值。请在会话终止前使用该会话。"
     },
     "settings": {
-      "ChipError": "错误状态的会话",
+      "ChipError": "错误状态的会话数",
       "ChipIdle": "最近的空闲终止及提醒",
       "ChipResources": "已分配的资源",
-      "ChipStarting": "启动中的会话",
+      "ChipStarting": "启动中的会话数",
       "Condition": "要关注的会话",
       "FilterPlaceholder": "筛选",
-      "IncludeStarting": "包含正在启动的会话",
       "List": "列表",
       "OnlyMine": "仅我创建的会话",
-      "OpenUserSettings": "会话监控设置 →",
       "RowsShown": "显示行数",
       "ShowInHeader": "在页眉中显示",
       "SortBy": "排序",
       "SortDeadline": "即将终止优先",
       "SortName": "名称",
-      "SortNewest": "最新优先"
+      "SortNewest": "最新优先",
+      "TurnOffHint": "如需关闭会话监控本身，请使用<a>“用户设置”中的会话监控选项</a>。"
     }
   },
   "settings": {

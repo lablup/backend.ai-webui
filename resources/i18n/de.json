@@ -3288,12 +3288,11 @@
   "sessionMonitor": {
     "ChipStartingCount": "Startend {{count}}",
     "ErrorCount": "Fehler {{count}}",
-    "MonitorSettings": "Monitor-Einstellungen",
+    "MonitorSettings": "Sitzungsmonitor-Einstellungen",
     "MoreSessions": "{{count}} weitere ({{total}} insgesamt)",
     "MyResourceUsage": "Mir zugewiesen, im Vergleich zu meinem Limit",
     "NoActiveSessions": "Keine aktiven Sitzungen",
     "OpenSession": "Sitzung öffnen",
-    "OpenSessionList": "Sitzungsliste öffnen",
     "RunningCount": "{{count}} laufend",
     "SessionCount": "Sitzungen {{count}}",
     "StartingCount": "{{count}} startend",
@@ -3305,22 +3304,21 @@
       "Utilization": "Die Ressourcennutzung liegt unter dem Leerlaufschwellenwert. Verwenden Sie die Sitzung, bevor sie beendet wird."
     },
     "settings": {
-      "ChipError": "Sitzungen mit Fehler",
+      "ChipError": "Anzahl der Sitzungen mit Fehler",
       "ChipIdle": "Nächste Leerlaufbeendigung, mit Warnungen",
       "ChipResources": "Zugewiesene Ressourcen",
-      "ChipStarting": "Startende Sitzungen",
+      "ChipStarting": "Anzahl startender Sitzungen",
       "Condition": "Zu beobachtende Sitzungen",
       "FilterPlaceholder": "Filter",
-      "IncludeStarting": "Startende Sitzungen einschließen",
       "List": "Liste",
       "OnlyMine": "Nur von mir erstellte Sitzungen",
-      "OpenUserSettings": "Sitzungsmonitor-Einstellungen →",
       "RowsShown": "Angezeigte Zeilen",
       "ShowInHeader": "In der Kopfzeile anzeigen",
       "SortBy": "Sortieren",
       "SortDeadline": "Baldigste Beendigung zuerst",
       "SortName": "Name",
-      "SortNewest": "Neueste zuerst"
+      "SortNewest": "Neueste zuerst",
+      "TurnOffHint": "Um den Sitzungsmonitor ganz auszuschalten, verwenden Sie <a>den Eintrag „Sitzungsmonitor“ in den Benutzereinstellungen</a>."
     }
   },
   "settings": {

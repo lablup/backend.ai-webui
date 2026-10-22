@@ -1,6 +1,5 @@
 import {
   applyAttentionTitleBadge,
-  buildSessionMonitorConditionFilter,
   buildSessionMonitorFilter,
   getNearestIdleCheck,
   pickDueAlerts,
@@ -135,14 +134,6 @@ describe('summarizeSessions', () => {
   });
 });
 
-describe('buildSessionMonitorConditionFilter', () => {
-  it('is empty without an owner or a condition', () => {
-    expect(
-      buildSessionMonitorConditionFilter({ userId: 'u1', onlyMine: false }),
-    ).toBe('');
-  });
-});
-
 describe('buildSessionMonitorFilter', () => {
   it('scopes to the viewer and keeps the condition parenthesized', () => {
     expect(
@@ -150,22 +141,24 @@ describe('buildSessionMonitorFilter', () => {
         userId: 'u1',
         onlyMine: true,
         condition: 'name ilike "%a%" | type == "batch"',
-        includeStarting: false,
       }),
-    ).toBe(
-      '(status == "RUNNING") & ((user_id == "u1") & (name ilike "%a%" | type == "batch"))',
+    ).toBe('(user_id == "u1") & (name ilike "%a%" | type == "batch")');
+  });
+
+  it('falls back to unfinished sessions while the condition is unset', () => {
+    expect(buildSessionMonitorFilter({ userId: 'u1', onlyMine: false })).toBe(
+      '(status != "TERMINATED" & status != "CANCELLED")',
     );
   });
 
-  it('drops the owner and an empty condition', () => {
+  it('keeps a cleared condition empty instead of restoring the default', () => {
     expect(
       buildSessionMonitorFilter({
         userId: 'u1',
         onlyMine: false,
-        condition: '  ',
-        includeStarting: true,
+        condition: '',
       }),
-    ).toBe('(status != "TERMINATED" & status != "CANCELLED")');
+    ).toBe('');
   });
 });
 

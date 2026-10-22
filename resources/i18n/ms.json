@@ -3286,12 +3286,11 @@
   "sessionMonitor": {
     "ChipStartingCount": "Bermula {{count}}",
     "ErrorCount": "Ralat {{count}}",
-    "MonitorSettings": "Tetapan pemantau",
+    "MonitorSettings": "Tetapan pemantau sesi",
     "MoreSessions": "{{count}} lagi ({{total}} jumlah)",
     "MyResourceUsage": "Diperuntukkan kepada saya, berbanding had saya",
     "NoActiveSessions": "Tiada sesi aktif",
     "OpenSession": "Buka sesi",
-    "OpenSessionList": "Buka senarai sesi",
     "RunningCount": "{{count}} berjalan",
     "SessionCount": "Sesi {{count}}",
     "StartingCount": "{{count}} bermula",
@@ -3303,22 +3302,21 @@
       "Utilization": "Penggunaan sumber kekal di bawah ambang terbiar. Gunakan sesi sebelum ia ditamatkan."
     },
     "settings": {
-      "ChipError": "Sesi dalam ralat",
+      "ChipError": "Bilangan sesi dalam ralat",
       "ChipIdle": "Penamatan terbiar terdekat, dengan amaran",
       "ChipResources": "Sumber yang diperuntukkan",
-      "ChipStarting": "Sesi yang sedang bermula",
+      "ChipStarting": "Bilangan sesi yang sedang bermula",
       "Condition": "Sesi untuk dipantau",
       "FilterPlaceholder": "Penapis",
-      "IncludeStarting": "Sertakan sesi yang sedang dimulakan",
       "List": "Senarai",
       "OnlyMine": "Hanya sesi yang saya cipta",
-      "OpenUserSettings": "Tetapan pemantau sesi →",
       "RowsShown": "Baris dipaparkan",
       "ShowInHeader": "Tunjukkan di pengepala",
       "SortBy": "Isih",
       "SortDeadline": "Penamatan terdekat dahulu",
       "SortName": "Nama",
-      "SortNewest": "Terbaru dahulu"
+      "SortNewest": "Terbaru dahulu",
+      "TurnOffHint": "Untuk mematikan pemantau sesi, gunakan <a>item Pemantau sesi dalam Tetapan pengguna</a>."
     }
   },
   "settings": {

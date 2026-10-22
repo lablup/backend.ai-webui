@@ -4,12 +4,14 @@
  */
 import {
   SESSION_MONITOR_CHIP_ITEMS,
+  SESSION_MONITOR_DEFAULT_CONDITION,
   SESSION_MONITOR_ROW_OPTIONS,
   SESSION_MONITOR_VISIBLE_LIMIT,
   type SessionMonitorChipItem,
   type SessionMonitorSort,
 } from '../../helper/sessionMonitor';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
+import { useSessionMonitorCondition } from '../../hooks/useSessionMonitor';
 import { SETTING_ARRIVAL_PARAM } from '../../hooks/useSettingArrival';
 import { getSessionFilterProperties } from '../DashboardPanels/sessionFilterProperties';
 import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
@@ -17,6 +19,7 @@ import { Selector } from '@lablup/ui-common/Selector';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAIAlert,
   BAIFlex,
   BAILink,
   BAIPropertyFilter,
@@ -24,7 +27,7 @@ import {
 } from 'backend.ai-ui';
 import type { TFunction } from 'i18next';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 
 /** The dashboard's session condition fields, plus the project. */
 const getSessionMonitorFilterProperties = (
@@ -51,16 +54,12 @@ const SessionMonitorSettingsPane: React.FC<{
   const { t } = useTranslation();
   const { token } = useTheme();
   const [sort, setSort] = useBAISettingUserState('session_monitor_sort');
-  const [includeStarting, setIncludeStarting] = useBAISettingUserState(
-    'session_monitor_include_starting',
-  );
   const [rows, setRows] = useBAISettingUserState('session_monitor_rows');
   const [onlyMine, setOnlyMine] = useBAISettingUserState(
     'session_monitor_only_mine',
   );
-  const [condition, setCondition] = useBAISettingUserState(
-    'session_monitor_condition',
-  );
+  const [, setCondition] = useBAISettingUserState('session_monitor_condition');
+  const condition = useSessionMonitorCondition();
   const [chipItems, setChipItems] = useBAISettingUserState(
     'session_monitor_chip_items',
   );
@@ -95,9 +94,9 @@ const SessionMonitorSettingsPane: React.FC<{
       <BAIPropertyFilter
         filterProperties={getSessionMonitorFilterProperties(t)}
         placeholder={t('sessionMonitor.settings.FilterPlaceholder')}
-        value={condition ?? ''}
-        // Clearing the last token yields undefined, which the setting store
-        // would persist as the string "undefined"; '' reads back as unset.
+        value={condition ?? SESSION_MONITOR_DEFAULT_CONDITION}
+        // Clearing yields undefined, which the store would persist as the
+        // string "undefined"; '' keeps "no condition" apart from "never set".
         onChange={(value) => setCondition(value ?? '')}
       />
       <Text type="label" weight="semibold">
@@ -138,19 +137,25 @@ const SessionMonitorSettingsPane: React.FC<{
           onChange={(value) => setRows(Number(value))}
         />
       </BAIFlex>
-      <CheckboxInput
-        label={t('sessionMonitor.settings.IncludeStarting')}
-        value={includeStarting ?? true}
-        onChange={(checked) => setIncludeStarting(checked)}
+      <BAIAlert
+        type="info"
+        showIcon
+        description={
+          <Trans
+            i18nKey="sessionMonitor.settings.TurnOffHint"
+            components={{
+              a: (
+                <BAILink
+                  to={{
+                    search: `?settings=general&${SETTING_ARRIVAL_PARAM}=userSettings.SessionMonitor`,
+                  }}
+                  onClick={onNavigate}
+                />
+              ),
+            }}
+          />
+        }
       />
-      <BAILink
-        to={{
-          search: `?settings=general&${SETTING_ARRIVAL_PARAM}=userSettings.SessionMonitor`,
-        }}
-        onClick={onNavigate}
-      >
-        {t('sessionMonitor.settings.OpenUserSettings')}
-      </BAILink>
     </BAIFlex>
   );
 };

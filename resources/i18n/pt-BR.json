@@ -3286,12 +3286,11 @@
   "sessionMonitor": {
     "ChipStartingCount": "Iniciando {{count}}",
     "ErrorCount": "Erros {{count}}",
-    "MonitorSettings": "Configurações do monitor",
+    "MonitorSettings": "Definições do monitor de sessões",
     "MoreSessions": "{{count}} a mais ({{total}} no total)",
     "MyResourceUsage": "Alocado a mim, em relação ao meu limite",
     "NoActiveSessions": "Nenhuma sessão ativa",
     "OpenSession": "Abrir sessão",
-    "OpenSessionList": "Abrir lista de sessões",
     "RunningCount": "{{count}} em execução",
     "SessionCount": "Sessões {{count}}",
     "StartingCount": "{{count}} iniciando",
@@ -3303,22 +3302,21 @@
       "Utilization": "A utilização de recursos permaneceu abaixo do limite de inatividade. Use a sessão antes que ela seja encerrada."
     },
     "settings": {
-      "ChipError": "Sessões com erro",
+      "ChipError": "Número de sessões com erro",
       "ChipIdle": "Próximo encerramento por inatividade, com alertas",
       "ChipResources": "Recursos alocados",
-      "ChipStarting": "Sessões iniciando",
+      "ChipStarting": "Número de sessões iniciando",
       "Condition": "Sessões a monitorar",
       "FilterPlaceholder": "Filtro",
-      "IncludeStarting": "Incluir sessões em início",
       "List": "Lista",
       "OnlyMine": "Somente as sessões que criei",
-      "OpenUserSettings": "Definições do monitor de sessões →",
       "RowsShown": "Linhas exibidas",
       "ShowInHeader": "Mostrar no cabeçalho",
       "SortBy": "Ordenar",
       "SortDeadline": "Encerramento mais próximo primeiro",
       "SortName": "Nome",
-      "SortNewest": "Mais recentes primeiro"
+      "SortNewest": "Mais recentes primeiro",
+      "TurnOffHint": "Para desativar o monitor de sessões, use <a>o item Monitor de sessões nas Configurações do usuário</a>."
     }
   },
   "settings": {

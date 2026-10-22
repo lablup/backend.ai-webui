@@ -6,7 +6,6 @@ import { useCurrentDomainValue } from '.';
 import type { useSessionMonitorQuery } from '../__generated__/useSessionMonitorQuery.graphql';
 import type { IdleChecks } from '../components/ComputeSessionNodeItems/SessionIdleChecks';
 import {
-  buildSessionMonitorConditionFilter,
   buildSessionMonitorFilter,
   joinSessionMonitorFilters,
   SESSION_MONITOR_ERROR_FILTER,
@@ -19,7 +18,7 @@ import {
   type SessionMonitorSummary,
 } from '../helper/sessionMonitor';
 import { useCurrentUserInfo } from './backendai';
-import { useBAISettingUserState } from './useBAISetting';
+import { hasStoredUserSetting, useBAISettingUserState } from './useBAISetting';
 import { useCurrentUserProjectRoles } from './useCurrentUserProjectRoles';
 import { INITIAL_FETCH_KEY } from 'backend.ai-ui';
 import { atom } from 'jotai';
@@ -39,10 +38,8 @@ export const sessionMonitorSummaryAtom = atom<SessionMonitorSummary | null>(
  */
 export type SessionMonitorScope = {
   scopeId: string;
-  /** Status base and condition: what the chip counts and the list shows. */
+  /** Owner and condition: what the chip counts and the list shows. */
   filter: string;
-  /** The condition alone, for the per-status counts. */
-  conditionFilter: string;
   /** Only the viewer's own sessions: the default, and what alerts need. */
   onlyMine: boolean;
   /** The viewer may read other users' sessions (domain admin and above). */
@@ -50,6 +47,18 @@ export type SessionMonitorScope = {
 };
 /** Written by `SessionMonitorWatcher`; null hides the chip. */
 export const sessionMonitorScopeAtom = atom<SessionMonitorScope | null>(null);
+
+/**
+ * The stored condition, or undefined while never set (the default applies).
+ * Cleared reads back as null from the store, so stored-ness tells it apart.
+ */
+export const useSessionMonitorCondition = () => {
+  'use memo';
+  const [condition] = useBAISettingUserState('session_monitor_condition');
+  return hasStoredUserSetting('session_monitor_condition')
+    ? (condition ?? '')
+    : undefined;
+};
 
 /**
  * Resolves the scope from the viewer's permission and monitor settings, never
@@ -61,27 +70,14 @@ export const useSessionMonitorScope = (): SessionMonitorScope => {
   const domainName = useCurrentDomainValue();
   const [currentUser] = useCurrentUserInfo();
   const [onlyMineSetting] = useBAISettingUserState('session_monitor_only_mine');
-  const [condition] = useBAISettingUserState('session_monitor_condition');
-  const [includeStarting] = useBAISettingUserState(
-    'session_monitor_include_starting',
-  );
+  const condition = useSessionMonitorCondition();
   const isDomainAdmin = isSuperAdmin || domainAdminDomains.length > 0;
   // Below domain admin the user scope already holds only their sessions.
   const onlyMine = !isDomainAdmin || (onlyMineSetting ?? true);
   const userId = currentUser.uuid ?? '';
   return {
     scopeId: isDomainAdmin ? `domain:${domainName}` : `user:${userId}`,
-    filter: buildSessionMonitorFilter({
-      userId,
-      onlyMine,
-      condition,
-      includeStarting: includeStarting ?? true,
-    }),
-    conditionFilter: buildSessionMonitorConditionFilter({
-      userId,
-      onlyMine,
-      condition,
-    }),
+    filter: buildSessionMonitorFilter({ userId, onlyMine, condition }),
     onlyMine,
     isDomainAdmin,
   };
@@ -208,15 +204,15 @@ export const useSessionMonitorData = (
       scopeId: scope.scopeId,
       filter: scope.filter,
       runningFilter: joinSessionMonitorFilters([
-        scope.conditionFilter,
+        scope.filter,
         SESSION_MONITOR_RUNNING_FILTER,
       ]),
       startingFilter: joinSessionMonitorFilters([
-        scope.conditionFilter,
+        scope.filter,
         SESSION_MONITOR_STARTING_FILTER,
       ]),
       errorFilter: joinSessionMonitorFilters([
-        scope.conditionFilter,
+        scope.filter,
         SESSION_MONITOR_ERROR_FILTER,
       ]),
       first: SESSION_MONITOR_FETCH_LIMIT,

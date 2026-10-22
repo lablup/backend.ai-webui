@@ -12,7 +12,8 @@ export const SESSION_MONITOR_FETCH_LIMIT = 50;
 /** Rows the popover shows; the rest collapse into an "N more" link. */
 export const SESSION_MONITOR_VISIBLE_LIMIT = 5;
 export const SESSION_MONITOR_POLL_INTERVAL_MS = 60_000;
-export const SESSION_MONITOR_NOT_FINISHED_FILTER =
+/** The condition until the user edits it: every unfinished session. */
+export const SESSION_MONITOR_DEFAULT_CONDITION =
   'status != "TERMINATED" & status != "CANCELLED"';
 /** Seconds left that raise an idle-termination alert, loosest first. */
 export const IDLE_ALERT_THRESHOLDS_SEC = [30 * 60, 10 * 60] as const;
@@ -80,8 +81,11 @@ export const joinSessionMonitorFilters = (
     .map((part) => `(${part})`)
     .join(' & ');
 
-/** The viewer's own sessions when `onlyMine`, and the user's condition. */
-export const buildSessionMonitorConditionFilter = ({
+/**
+ * The viewer's own sessions when `onlyMine`, and the user's condition (the
+ * default one while unset). Parenthesized so a `|` cannot leak out.
+ */
+export const buildSessionMonitorFilter = ({
   userId,
   onlyMine,
   condition,
@@ -92,25 +96,7 @@ export const buildSessionMonitorConditionFilter = ({
 }) =>
   joinSessionMonitorFilters([
     onlyMine ? `user_id == "${userId}"` : null,
-    condition,
-  ]);
-
-/**
- * The watched sessions as one queryfilter string: unfinished (or running
- * only) and the condition. Parenthesized so a condition using `|` cannot
- * leak out.
- */
-export const buildSessionMonitorFilter = ({
-  includeStarting,
-  ...condition
-}: Parameters<typeof buildSessionMonitorConditionFilter>[0] & {
-  includeStarting: boolean;
-}) =>
-  joinSessionMonitorFilters([
-    includeStarting
-      ? SESSION_MONITOR_NOT_FINISHED_FILTER
-      : SESSION_MONITOR_RUNNING_FILTER,
-    buildSessionMonitorConditionFilter(condition),
+    condition ?? SESSION_MONITOR_DEFAULT_CONDITION,
   ]);
 
 /** Sums `occupied_slots` JSON strings slot by slot, as raw numbers. */

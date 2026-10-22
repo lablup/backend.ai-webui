@@ -3286,12 +3286,11 @@
   "sessionMonitor": {
     "ChipStartingCount": "Запуск {{count}}",
     "ErrorCount": "Ошибки {{count}}",
-    "MonitorSettings": "Настройки мониторинга",
+    "MonitorSettings": "Настройки монитора сеансов",
     "MoreSessions": "ещё {{count}} (всего {{total}})",
     "MyResourceUsage": "Выделено мне, по сравнению с моим лимитом",
     "NoActiveSessions": "Нет активных сеансов",
     "OpenSession": "Открыть сеанс",
-    "OpenSessionList": "Открыть список сеансов",
     "RunningCount": "{{count}} выполняется",
     "SessionCount": "Сеансы {{count}}",
     "StartingCount": "{{count}} запускается",
@@ -3303,22 +3302,21 @@
       "Utilization": "Использование ресурсов остаётся ниже порога простоя. Используйте сеанс, прежде чем он будет завершён."
     },
     "settings": {
-      "ChipError": "Сеансы с ошибкой",
+      "ChipError": "Число сеансов с ошибкой",
       "ChipIdle": "Ближайшее завершение из-за простоя, с предупреждениями",
       "ChipResources": "Выделенные ресурсы",
-      "ChipStarting": "Запускающиеся сеансы",
+      "ChipStarting": "Число запускающихся сеансов",
       "Condition": "Какие сеансы отслеживать",
       "FilterPlaceholder": "Фильтр",
-      "IncludeStarting": "Включить запускающиеся сеансы",
       "List": "Список",
       "OnlyMine": "Только созданные мной сеансы",
-      "OpenUserSettings": "Настройки монитора сеансов →",
       "RowsShown": "Отображаемые строки",
       "ShowInHeader": "Показывать в заголовке",
       "SortBy": "Сортировка",
       "SortDeadline": "Сначала скорейшее завершение",
       "SortName": "Имя",
-      "SortNewest": "Сначала новые"
+      "SortNewest": "Сначала новые",
+      "TurnOffHint": "Чтобы полностью отключить монитор сеансов, используйте <a>пункт «Монитор сеансов» в настройках пользователя</a>."
     }
   },
   "settings": {

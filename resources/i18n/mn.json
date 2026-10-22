@@ -3288,12 +3288,11 @@
   "sessionMonitor": {
     "ChipStartingCount": "Эхэлж буй {{count}}",
     "ErrorCount": "Алдаа {{count}}",
-    "MonitorSettings": "Хяналтын тохиргоо",
+    "MonitorSettings": "Сессийн хяналтын тохиргоо",
     "MoreSessions": "өөр {{count}} (нийт {{total}})",
     "MyResourceUsage": "Надад хуваарилагдсан, хязгаартай харьцуулсан",
     "NoActiveSessions": "Идэвхтэй сесс байхгүй",
     "OpenSession": "Сесс нээх",
-    "OpenSessionList": "Сессийн жагсаалт нээх",
     "RunningCount": "{{count}} ажиллаж байна",
     "SessionCount": "Сесс {{count}}",
     "StartingCount": "{{count}} эхэлж байна",
@@ -3305,22 +3304,21 @@
       "Utilization": "Нөөцийн ашиглалт идэвхгүй байдлын босгоос доогуур байсаар байна. Дуусгахаас өмнө сессийг ашиглана уу."
     },
     "settings": {
-      "ChipError": "Алдаатай сессүүд",
+      "ChipError": "Алдаатай сессийн тоо",
       "ChipIdle": "Хамгийн ойрын идэвхгүй байдлын дуусгавар, анхааруулгатай",
       "ChipResources": "Хуваарилсан нөөц",
-      "ChipStarting": "Эхэлж буй сессүүд",
+      "ChipStarting": "Эхэлж буй сессийн тоо",
       "Condition": "Хянах сессүүд",
       "FilterPlaceholder": "Шүүлтүүр",
-      "IncludeStarting": "Эхэлж буй сессүүдийг оруулах",
       "List": "Жагсаалт",
       "OnlyMine": "Зөвхөн миний үүсгэсэн сессүүд",
-      "OpenUserSettings": "Сессийн хяналтын тохиргоо →",
       "RowsShown": "Харуулсан мөрийн тоо",
       "ShowInHeader": "Толгой хэсэгт харуулах",
       "SortBy": "Эрэмбэлэх",
       "SortDeadline": "Хамгийн түрүүнд дуусахыг эхэнд",
       "SortName": "Нэрээр",
-      "SortNewest": "Хамгийн шинийг эхэнд"
+      "SortNewest": "Хамгийн шинийг эхэнд",
+      "TurnOffHint": "Сессийн хяналтыг бүрэн унтраахын тулд <a>Хэрэглэгчийн тохиргооны Сессийн хяналт зүйлийг</a> ашиглана уу."
     }
   },
   "settings": {

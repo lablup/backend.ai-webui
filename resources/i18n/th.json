@@ -3271,12 +3271,11 @@
   "sessionMonitor": {
     "ChipStartingCount": "กำลังเริ่ม {{count}}",
     "ErrorCount": "ข้อผิดพลาด {{count}}",
-    "MonitorSettings": "การตั้งค่าการตรวจสอบ",
+    "MonitorSettings": "การตั้งค่าตัวตรวจสอบเซสชัน",
     "MoreSessions": "อีก {{count}} (รวม {{total}})",
     "MyResourceUsage": "จัดสรรให้ฉัน เทียบกับขีดจำกัดของฉัน",
     "NoActiveSessions": "ไม่มีเซสชันที่ใช้งานอยู่",
     "OpenSession": "เปิดเซสชัน",
-    "OpenSessionList": "เปิดรายการเซสชัน",
     "RunningCount": "กำลังทำงาน {{count}}",
     "SessionCount": "เซสชัน {{count}}",
     "StartingCount": "กำลังเริ่ม {{count}}",
@@ -3288,22 +3287,21 @@
       "Utilization": "การใช้ทรัพยากรต่ำกว่าเกณฑ์การไม่ใช้งานมาตลอด กรุณาใช้งานเซสชันก่อนที่จะถูกยุติ"
     },
     "settings": {
-      "ChipError": "เซสชันที่มีข้อผิดพลาด",
+      "ChipError": "จำนวนเซสชันที่มีข้อผิดพลาด",
       "ChipIdle": "การยุติเนื่องจากไม่ใช้งานที่ใกล้ที่สุด พร้อมการแจ้งเตือน",
       "ChipResources": "ทรัพยากรที่จัดสรร",
-      "ChipStarting": "เซสชันที่กำลังเริ่ม",
+      "ChipStarting": "จำนวนเซสชันที่กำลังเริ่ม",
       "Condition": "เซสชันที่จะติดตาม",
       "FilterPlaceholder": "ตัวกรอง",
-      "IncludeStarting": "รวมเซสชันที่กำลังเริ่ม",
       "List": "รายการ",
       "OnlyMine": "เฉพาะเซสชันที่ฉันสร้าง",
-      "OpenUserSettings": "การตั้งค่าตัวตรวจสอบเซสชัน →",
       "RowsShown": "แถวที่แสดง",
       "ShowInHeader": "แสดงในส่วนหัว",
       "SortBy": "เรียงลำดับ",
       "SortDeadline": "ใกล้สิ้นสุดก่อน",
       "SortName": "ชื่อ",
-      "SortNewest": "ใหม่สุดก่อน"
+      "SortNewest": "ใหม่สุดก่อน",
+      "TurnOffHint": "หากต้องการปิดตัวตรวจสอบเซสชัน ให้ใช้<a>รายการตัวตรวจสอบเซสชันใน \"การตั้งค่าผู้ใช้\"</a>"
     }
   },
   "settings": {

@@ -8,7 +8,6 @@ import {
 } from '../../helper/sessionMonitor';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useIsProjectAgnosticPage } from '../../hooks/useIsProjectAgnosticPage';
-import { useProjectPath } from '../../hooks/useRouteScope';
 import {
   sessionMonitorFetchKeyAtom,
   sessionMonitorScopeAtom,
@@ -22,7 +21,7 @@ import SessionMonitorSettingsPane from './SessionMonitorSettingsPane';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFetchKeyButton, BAIFlex, BAILink } from 'backend.ai-ui';
+import { BAIFetchKeyButton, BAIFlex } from 'backend.ai-ui';
 import { useAtom, useAtomValue } from 'jotai';
 import { ArrowLeft, Settings } from 'lucide-react';
 import React, {
@@ -114,11 +113,10 @@ const ScopedSessionMonitorPopoverContent: React.FC<
     scope: SessionMonitorScope;
     onOpenSettings: () => void;
   }
-> = ({ scope, onNavigate, onOpenSessionDetail, onOpenSettings }) => {
+> = ({ scope, onOpenSessionDetail, onOpenSettings }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
-  const buildProjectPath = useProjectPath();
   const [fetchKey, setFetchKey] = useAtom(sessionMonitorFetchKeyAtom);
   const deferredFetchKey = useDeferredValue(fetchKey);
   const [isPending, startTransition] = useTransition();
@@ -135,10 +133,6 @@ const ScopedSessionMonitorPopoverContent: React.FC<
   const visible = ranked.slice(0, rows ?? SESSION_MONITOR_VISIBLE_LIMIT);
   const hiddenCount = Math.max(0, total - visible.length);
   const { running, starting } = counts;
-  // Other users' sessions are only listed on the admin session list.
-  const listPath = buildProjectPath('session', {
-    scope: scope.onlyMine ? 'project' : 'admin',
-  });
 
   return (
     <BAIFlex
@@ -216,33 +210,24 @@ const ScopedSessionMonitorPopoverContent: React.FC<
             </Suspense>
           </ErrorBoundaryWithNullFallback>
         )}
-        <BAIFlex
-          direction="row"
-          align="center"
-          justify="between"
-          gap="sm"
-          style={{
-            padding: `${token('--spacing-2')} ${token('--spacing-3')}`,
-            borderTop: `1px solid ${token('--color-border')}`,
-          }}
-        >
-          <BAILink
-            data-testid="session-monitor-open-list"
-            to={listPath}
-            onClick={onNavigate}
-            style={{ fontWeight: 600 }}
+        {hiddenCount > 0 && (
+          <BAIFlex
+            direction="row"
+            align="center"
+            justify="end"
+            style={{
+              padding: `${token('--spacing-2')} ${token('--spacing-3')}`,
+              borderTop: `1px solid ${token('--color-border')}`,
+            }}
           >
-            {t('sessionMonitor.OpenSessionList')} →
-          </BAILink>
-          {hiddenCount > 0 && (
             <Text type="supporting">
               {t('sessionMonitor.MoreSessions', {
                 count: hiddenCount,
                 total,
               })}
             </Text>
-          )}
-        </BAIFlex>
+          </BAIFlex>
+        )}
       </>
     </BAIFlex>
   );

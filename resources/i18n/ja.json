@@ -3288,12 +3288,11 @@
   "sessionMonitor": {
     "ChipStartingCount": "起動中 {{count}}",
     "ErrorCount": "エラー {{count}}",
-    "MonitorSettings": "モニター設定",
+    "MonitorSettings": "セッションモニター設定",
     "MoreSessions": "他に{{count}}件 (合計{{total}}件)",
     "MyResourceUsage": "自分に割り当て済み（上限との比較）",
     "NoActiveSessions": "実行中のセッションはありません",
     "OpenSession": "セッションを開く",
-    "OpenSessionList": "セッション一覧を開く",
     "RunningCount": "実行中 {{count}}件",
     "SessionCount": "セッション {{count}}",
     "StartingCount": "起動中 {{count}}件",
@@ -3305,22 +3304,21 @@
       "Utilization": "リソース使用率がアイドルしきい値を下回ったままです。終了する前にセッションを使用してください。"
     },
     "settings": {
-      "ChipError": "エラー状態のセッション",
+      "ChipError": "エラー状態のセッション数",
       "ChipIdle": "最も近いアイドル終了と通知",
       "ChipResources": "割り当てられたリソース",
-      "ChipStarting": "起動中のセッション",
+      "ChipStarting": "起動中のセッション数",
       "Condition": "監視するセッション",
       "FilterPlaceholder": "フィルター",
-      "IncludeStarting": "開始中のセッションを含める",
       "List": "一覧",
       "OnlyMine": "自分が作成したセッションのみ",
-      "OpenUserSettings": "セッションモニター設定 →",
       "RowsShown": "表示行数",
       "ShowInHeader": "ヘッダーに表示",
       "SortBy": "並べ替え",
       "SortDeadline": "終了が近い順",
       "SortName": "名前順",
-      "SortNewest": "新しい順"
+      "SortNewest": "新しい順",
+      "TurnOffHint": "セッションモニター自体をオフにするには、<a>「ユーザー設定」のセッションモニター項目</a>を使用してください。"
     }
   },
   "settings": {

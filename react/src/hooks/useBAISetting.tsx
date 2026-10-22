@@ -21,11 +21,10 @@ export interface UserSettings {
   /** Header session monitor (chip, polling, idle alerts); default on. */
   session_monitor_enabled?: boolean;
   session_monitor_sort?: 'deadline' | 'newest' | 'name';
-  session_monitor_include_starting?: boolean;
   session_monitor_rows?: number;
   /** Watch only the sessions the viewer created; default on. */
   session_monitor_only_mine?: boolean;
-  /** Extra queryfilter condition on the watched sessions. */
+  /** Queryfilter on the watched sessions; unset means unfinished ones. */
   session_monitor_condition?: string;
   /** What the header chip shows besides the count; default none. */
   session_monitor_chip_items?: Array<

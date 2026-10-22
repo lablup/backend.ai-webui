@@ -3290,12 +3290,11 @@
   "sessionMonitor": {
     "ChipStartingCount": "Memulai {{count}}",
     "ErrorCount": "Error {{count}}",
-    "MonitorSettings": "Pengaturan monitor",
+    "MonitorSettings": "Pengaturan monitor sesi",
     "MoreSessions": "{{count}} lainnya ({{total}} total)",
     "MyResourceUsage": "Dialokasikan untuk saya, dibandingkan dengan batas saya",
     "NoActiveSessions": "Tidak ada sesi aktif",
     "OpenSession": "Buka sesi",
-    "OpenSessionList": "Buka daftar sesi",
     "RunningCount": "{{count}} berjalan",
     "SessionCount": "Sesi {{count}}",
     "StartingCount": "{{count}} memulai",
@@ -3307,22 +3306,21 @@
       "Utilization": "Penggunaan sumber daya tetap di bawah ambang batas idle. Gunakan sesi sebelum dihentikan."
     },
     "settings": {
-      "ChipError": "Sesi dengan error",
+      "ChipError": "Jumlah sesi dengan error",
       "ChipIdle": "Penghentian idle terdekat, dengan peringatan",
       "ChipResources": "Sumber daya yang dialokasikan",
-      "ChipStarting": "Sesi yang sedang dimulai",
+      "ChipStarting": "Jumlah sesi yang sedang dimulai",
       "Condition": "Sesi yang dipantau",
       "FilterPlaceholder": "Filter",
-      "IncludeStarting": "Sertakan sesi yang sedang dimulai",
       "List": "Daftar",
       "OnlyMine": "Hanya sesi yang saya buat",
-      "OpenUserSettings": "Pengaturan monitor sesi →",
       "RowsShown": "Baris yang ditampilkan",
       "ShowInHeader": "Tampilkan di header",
       "SortBy": "Urutkan",
       "SortDeadline": "Penghentian tercepat lebih dulu",
       "SortName": "Nama",
-      "SortNewest": "Terbaru lebih dulu"
+      "SortNewest": "Terbaru lebih dulu",
+      "TurnOffHint": "Untuk mematikan monitor sesi, gunakan <a>item Monitor sesi di Pengaturan pengguna</a>."
     }
   },
   "settings": {

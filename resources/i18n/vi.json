@@ -3288,12 +3288,11 @@
   "sessionMonitor": {
     "ChipStartingCount": "Đang khởi động {{count}}",
     "ErrorCount": "Lỗi {{count}}",
-    "MonitorSettings": "Cài đặt giám sát",
+    "MonitorSettings": "Cài đặt giám sát phiên",
     "MoreSessions": "{{count}} nữa (tổng {{total}})",
     "MyResourceUsage": "Được cấp phát cho tôi, so với giới hạn của tôi",
     "NoActiveSessions": "Không có phiên hoạt động",
     "OpenSession": "Mở phiên",
-    "OpenSessionList": "Mở danh sách phiên",
     "RunningCount": "{{count}} đang chạy",
     "SessionCount": "Phiên {{count}}",
     "StartingCount": "{{count}} đang khởi động",
@@ -3305,22 +3304,21 @@
       "Utilization": "Mức sử dụng tài nguyên vẫn ở dưới ngưỡng không hoạt động. Hãy sử dụng phiên trước khi nó bị chấm dứt."
     },
     "settings": {
-      "ChipError": "Phiên bị lỗi",
+      "ChipError": "Số phiên bị lỗi",
       "ChipIdle": "Thời điểm chấm dứt do không hoạt động gần nhất, kèm cảnh báo",
       "ChipResources": "Tài nguyên được cấp phát",
-      "ChipStarting": "Phiên đang khởi động",
+      "ChipStarting": "Số phiên đang khởi động",
       "Condition": "Phiên cần theo dõi",
       "FilterPlaceholder": "Bộ lọc",
-      "IncludeStarting": "Bao gồm các phiên đang khởi động",
       "List": "Danh sách",
       "OnlyMine": "Chỉ các phiên tôi đã tạo",
-      "OpenUserSettings": "Cài đặt giám sát phiên →",
       "RowsShown": "Số dòng hiển thị",
       "ShowInHeader": "Hiển thị trên thanh tiêu đề",
       "SortBy": "Sắp xếp",
       "SortDeadline": "Sắp kết thúc sớm nhất trước",
       "SortName": "Tên",
-      "SortNewest": "Mới nhất trước"
+      "SortNewest": "Mới nhất trước",
+      "TurnOffHint": "Để tắt hẳn giám sát phiên, hãy dùng <a>mục Giám sát phiên trong Cài đặt người dùng</a>."
     }
   },
   "settings": {

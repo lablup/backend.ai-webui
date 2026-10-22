@@ -3290,12 +3290,11 @@
   "sessionMonitor": {
     "ChipStartingCount": "啟動中 {{count}}",
     "ErrorCount": "錯誤 {{count}}",
-    "MonitorSettings": "監控設定",
+    "MonitorSettings": "會話監控設定",
     "MoreSessions": "還有 {{count}} 個 (共 {{total}} 個)",
     "MyResourceUsage": "已分配給我（與我的限制對比）",
     "NoActiveSessions": "沒有活動會話",
     "OpenSession": "開啟會話",
-    "OpenSessionList": "開啟會話清單",
     "RunningCount": "{{count}} 個執行中",
     "SessionCount": "會話 {{count}}",
     "StartingCount": "{{count}} 個啟動中",
@@ -3307,22 +3306,21 @@
       "Utilization": "資源使用率持續低於閒置門檻。請在會話終止前使用該會話。"
     },
     "settings": {
-      "ChipError": "錯誤狀態的會話",
+      "ChipError": "錯誤狀態的會話數",
       "ChipIdle": "最近的閒置終止及提醒",
       "ChipResources": "已分配的資源",
-      "ChipStarting": "啟動中的會話",
+      "ChipStarting": "啟動中的會話數",
       "Condition": "要關注的會話",
       "FilterPlaceholder": "篩選",
-      "IncludeStarting": "包含正在啟動的會話",
       "List": "列表",
       "OnlyMine": "僅限我建立的會話",
-      "OpenUserSettings": "會話監控設置 →",
       "RowsShown": "顯示行數",
       "ShowInHeader": "在頁首顯示",
       "SortBy": "排序",
       "SortDeadline": "即將終止優先",
       "SortName": "名稱",
-      "SortNewest": "最新優先"
+      "SortNewest": "最新優先",
+      "TurnOffHint": "如需關閉會話監控本身，請使用<a>「使用者設定」中的會話監控項目</a>。"
     }
   },
   "settings": {
