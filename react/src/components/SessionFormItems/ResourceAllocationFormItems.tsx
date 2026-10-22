@@ -376,7 +376,7 @@ const ResourceAllocationFormItems: React.FC<
   const allocatablePresetIds: string[] = JSON.parse(allocatablePresetIdsKey);
 
   // R-01..R-05 and the handlers' cascading writes live in `resourceSlice`
-  // (ADR 0012); this component only dispatches.
+  // (ADR 0013); this component only dispatches.
   const { dispatch } = useFormBoundSlice(form, resourceModel, {
     resourceLimits: ready(resourceLimits),
     checkPresetInfo: ready(checkPresetInfo),
