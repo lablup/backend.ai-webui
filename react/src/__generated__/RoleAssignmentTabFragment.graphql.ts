@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<310ad2123f891b9a7b42c2724bfe2795>>
+ * @generated SignedSource<<c4bd8e6ac11ee1923f2b2a0761d3cad1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,36 +12,12 @@ import { ReaderFragment } from 'relay-runtime';
 export type RoleSource = "CUSTOM" | "SYSTEM" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type RoleAssignmentTabFragment$data = {
-  readonly firstScope: {
-    readonly edges: ReadonlyArray<{
-      readonly node: {
-        readonly scopeId: string;
-        readonly scopeType: string;
-      };
-    }>;
-  } | null | undefined;
+  readonly entityId: string;
   readonly id: string;
   readonly name: string;
   readonly scopeId: string;
   readonly scopeType: string;
   readonly source: RoleSource;
-  readonly users: {
-    readonly count: number;
-    readonly edges: ReadonlyArray<{
-      readonly node: {
-        readonly grantedAt: string;
-        readonly id: string;
-        readonly user: {
-          readonly basicInfo: {
-            readonly email: string;
-            readonly fullName: string | null | undefined;
-          };
-          readonly id: string;
-        } | null | undefined;
-        readonly userId: string;
-      };
-    }>;
-  } | null | undefined;
   readonly usersV2: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
@@ -76,65 +52,11 @@ v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "scopeType",
-  "storageKey": null
-},
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "scopeId",
-  "storageKey": null
-},
-v3 = {
-  "kind": "Variable",
-  "name": "limit",
-  "variableName": "limit"
-},
-v4 = {
-  "kind": "Variable",
-  "name": "offset",
-  "variableName": "offset"
-},
-v5 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "count",
-  "storageKey": null
-},
-v6 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "UserV2BasicInfo",
-  "kind": "LinkedField",
-  "name": "basicInfo",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "email",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "fullName",
-      "storageKey": null
-    }
-  ],
+  "name": "entityId",
   "storageKey": null
 };
 return {
   "argumentDefinitions": [
-    {
-      "defaultValue": null,
-      "kind": "LocalArgument",
-      "name": "filter"
-    },
     {
       "defaultValue": 10,
       "kind": "LocalArgument",
@@ -144,11 +66,6 @@ return {
       "defaultValue": 0,
       "kind": "LocalArgument",
       "name": "offset"
-    },
-    {
-      "defaultValue": null,
-      "kind": "LocalArgument",
-      "name": "orderBy"
     },
     {
       "defaultValue": null,
@@ -178,6 +95,7 @@ return {
   "name": "RoleAssignmentTabFragment",
   "selections": [
     (v0/*: any*/),
+    (v1/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -193,121 +111,17 @@ return {
       "storageKey": null
     },
     {
-      "alias": "firstScope",
-      "args": [
-        {
-          "kind": "Literal",
-          "name": "first",
-          "value": 1
-        }
-      ],
-      "concreteType": "EntityConnection",
-      "kind": "LinkedField",
-      "name": "scopes",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "EntityRefEdge",
-          "kind": "LinkedField",
-          "name": "edges",
-          "plural": true,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "EntityRef",
-              "kind": "LinkedField",
-              "name": "node",
-              "plural": false,
-              "selections": [
-                (v1/*: any*/),
-                (v2/*: any*/)
-              ],
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
-      ],
-      "storageKey": "scopes(first:1)"
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "scopeType",
+      "storageKey": null
     },
-    (v1/*: any*/),
-    (v2/*: any*/),
     {
       "alias": null,
-      "args": [
-        {
-          "kind": "Variable",
-          "name": "filter",
-          "variableName": "filter"
-        },
-        (v3/*: any*/),
-        (v4/*: any*/),
-        {
-          "kind": "Variable",
-          "name": "orderBy",
-          "variableName": "orderBy"
-        }
-      ],
-      "concreteType": "RoleAssignmentConnection",
-      "kind": "LinkedField",
-      "name": "users",
-      "plural": false,
-      "selections": [
-        (v5/*: any*/),
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "RoleAssignmentEdge",
-          "kind": "LinkedField",
-          "name": "edges",
-          "plural": true,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "RoleAssignment",
-              "kind": "LinkedField",
-              "name": "node",
-              "plural": false,
-              "selections": [
-                (v0/*: any*/),
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "userId",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "grantedAt",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "UserV2",
-                  "kind": "LinkedField",
-                  "name": "user",
-                  "plural": false,
-                  "selections": [
-                    (v0/*: any*/),
-                    (v6/*: any*/)
-                  ],
-                  "storageKey": null
-                }
-              ],
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
-      ],
+      "args": null,
+      "kind": "ScalarField",
+      "name": "scopeId",
       "storageKey": null
     },
     {
@@ -318,8 +132,16 @@ return {
           "name": "filter",
           "variableName": "userFilter"
         },
-        (v3/*: any*/),
-        (v4/*: any*/),
+        {
+          "kind": "Variable",
+          "name": "limit",
+          "variableName": "limit"
+        },
+        {
+          "kind": "Variable",
+          "name": "offset",
+          "variableName": "offset"
+        },
         {
           "kind": "Variable",
           "name": "orderBy",
@@ -331,7 +153,13 @@ return {
       "name": "usersV2",
       "plural": false,
       "selections": [
-        (v5/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "count",
+          "storageKey": null
+        },
         {
           "alias": null,
           "args": null,
@@ -349,14 +177,32 @@ return {
               "plural": false,
               "selections": [
                 (v0/*: any*/),
+                (v1/*: any*/),
                 {
                   "alias": null,
                   "args": null,
-                  "kind": "ScalarField",
-                  "name": "entityId",
+                  "concreteType": "UserV2BasicInfo",
+                  "kind": "LinkedField",
+                  "name": "basicInfo",
+                  "plural": false,
+                  "selections": [
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "email",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "fullName",
+                      "storageKey": null
+                    }
+                  ],
                   "storageKey": null
-                },
-                (v6/*: any*/)
+                }
               ],
               "storageKey": null
             }
@@ -372,6 +218,6 @@ return {
 };
 })();
 
-(node as any).hash = "c40588e5b4a36e7533b40d0bb2f41dc2";
+(node as any).hash = "bda9609fa45fa888691c0319340c76e3";
 
 export default node;

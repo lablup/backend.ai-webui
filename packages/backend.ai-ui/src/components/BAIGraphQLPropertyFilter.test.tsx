@@ -512,3 +512,70 @@ describe('BAIGraphQLPropertyFilter render', () => {
     ).not.toBeNull();
   });
 });
+
+describe('to-many quantifier paths pack into one related row', () => {
+  const LABEL_PROPERTIES: Array<FilterProperty> = [
+    { key: 'metadata.name', propertyLabel: 'Name', type: 'string' },
+    { key: 'labels.some.key', propertyLabel: 'Label key', type: 'string' },
+    { key: 'labels.some.value', propertyLabel: 'Label value', type: 'string' },
+  ];
+  const some = (row: GraphQLFilter): GraphQLFilter => ({
+    labels: { some: row },
+  });
+  const key = (v: string) => ({ key: { iEquals: v } });
+  const value = (v: string) => ({ value: { iEquals: v } });
+
+  it('merges a key chip and a value chip into one `some`', () => {
+    expect(
+      roundTrip(LABEL_PROPERTIES, {
+        AND: [some(key('env')), some(value('prod'))],
+      }),
+    ).toEqual(some({ ...key('env'), ...value('prod') }));
+  });
+
+  it('keeps a filter made by the label token click stable across a re-serialization', () => {
+    const clicked = some({ ...key('env'), ...value('prod') });
+    expect(roundTrip(LABEL_PROPERTIES, clicked)).toEqual(clicked);
+  });
+
+  it('opens a second row when a leaf repeats (two key chips)', () => {
+    expect(
+      roundTrip(LABEL_PROPERTIES, {
+        AND: [some(key('env')), some(key('team'))],
+      }),
+    ).toEqual({ AND: [some(key('env')), some(key('team'))] });
+  });
+
+  it('fills rows in chip order: key + two values', () => {
+    expect(
+      roundTrip(LABEL_PROPERTIES, {
+        AND: [some(key('env')), some(value('prod')), some(value('dev'))],
+      }),
+    ).toEqual({
+      AND: [some({ ...key('env'), ...value('prod') }), some(value('dev'))],
+    });
+  });
+
+  it('leaves a single-leaf row and non-quantifier chips as they were', () => {
+    expect(roundTrip(LABEL_PROPERTIES, some(key('env')))).toEqual(
+      some(key('env')),
+    );
+    expect(
+      roundTrip(LABEL_PROPERTIES, {
+        AND: [{ metadata: { name: { iContains: 'a' } } }, some(key('env'))],
+      }),
+    ).toEqual({
+      AND: [{ metadata: { name: { iContains: 'a' } } }, some(key('env'))],
+    });
+  });
+
+  it('does not merge under OR, where chips are alternatives', () => {
+    expect(
+      roundTrip(
+        LABEL_PROPERTIES,
+        { OR: [some(key('env')), some(value('prod'))] },
+        'OR',
+      ),
+    ).toEqual({ OR: [some(key('env')), some(value('prod'))] });
+  });
+});

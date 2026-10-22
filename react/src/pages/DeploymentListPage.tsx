@@ -26,11 +26,11 @@ import { toProjectContext } from '../types/projectContext';
 import { Button } from '@lablup/ui-common/Button';
 import { Link } from '@lablup/ui-common/Link';
 import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAISkeleton,
   BAICard,
   BAIDeleteConfirmModal,
-  BAIDeploymentTagTokens,
   BAIFlex,
   BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilter,
@@ -46,15 +46,30 @@ import {
   useBAILogger,
   useFetchKey,
   useToggle,
+  BAIEntityLabelSettingModal,
+  toEntityLabelFilter,
+  useIsLabelableEntityType,
+  type ModelDeploymentNodeInList,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { Trash2, SquarePenIcon } from 'lucide-react';
+import { CircleHelp, Trash2, SquarePenIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
-type DeploymentStatusCategory = 'running' | 'finished';
+type DeploymentStatusCategory = 'serving' | 'paused' | 'finished';
+
+const renderTabLabel = (label: string, help: string) => (
+  <BAIFlex gap="xxs" align="center">
+    {label}
+    <Tooltip content={help}>
+      <Text color="placeholder" style={{ cursor: 'help' }}>
+        <CircleHelp size="1em" />
+      </Text>
+    </Tooltip>
+  </BAIFlex>
+);
 
 interface DeploymentListPageContentProps {
   /** Owned by the page so the trigger can live in the card's `extra` slot. */
@@ -79,6 +94,9 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
   const [deletingDeploymentId, setDeletingDeploymentId] = useState<
     string | null
   >(null);
+  const isLabelable = useIsLabelableEntityType('deployment');
+  const [labelingDeployment, setLabelingDeployment] =
+    useState<ModelDeploymentNodeInList | null>(null);
   const [drawerRevisionFrgmt, setDrawerRevisionFrgmt] =
     useState<DeploymentRevisionDetail_revision$key | null>(null);
 
@@ -97,9 +115,10 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
       ),
       order: parseAsStringLiteral(availableDeploymentSorterValues),
       statusCategory: parseAsStringLiteral<DeploymentStatusCategory>([
-        'running',
+        'serving',
+        'paused',
         'finished',
-      ]).withDefault('running'),
+      ]).withDefault('serving'),
     },
     { history: 'replace' },
   );
@@ -118,7 +137,13 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
   const statusCategoryFilter: DeploymentFilter =
     queryParams.statusCategory === 'finished'
       ? { status: { in: finishedStatuses } }
-      : { status: { notIn: finishedStatuses } };
+      : {
+          status: { notIn: finishedStatuses },
+          desiredReplicas:
+            queryParams.statusCategory === 'serving'
+              ? { greaterThanOrEqual: 1 }
+              : { equals: 0 },
+        };
   const projectFilter: DeploymentFilter = currentProject.id
     ? { projectId: { equals: currentProject.id } }
     : {};
@@ -214,11 +239,6 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
       type: 'string',
     },
     {
-      key: 'tags',
-      propertyLabel: t('deployment.filter.Tags'),
-      type: 'string',
-    },
-    {
       key: 'endpointUrl',
       propertyLabel: t('deployment.filter.EndpointUrl'),
       type: 'string',
@@ -228,6 +248,20 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
       propertyLabel: t('deployment.filter.OpenToPublic'),
       type: 'boolean',
     },
+    ...(isLabelable
+      ? [
+          {
+            key: 'labels.some.key',
+            propertyLabel: t('entityLabel.LabelKey'),
+            type: 'string' as const,
+          },
+          {
+            key: 'labels.some.value',
+            propertyLabel: t('entityLabel.LabelValue'),
+            type: 'string' as const,
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -242,7 +276,20 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
                 setTablePaginationOption({ current: 1 });
               }}
               options={[
-                { label: t('deployment.Running'), value: 'running' },
+                {
+                  label: renderTabLabel(
+                    t('deployment.Serving'),
+                    t('deployment.ServingTooltip'),
+                  ),
+                  value: 'serving',
+                },
+                {
+                  label: renderTabLabel(
+                    t('deployment.Paused'),
+                    t('deployment.PausedTooltip'),
+                  ),
+                  value: 'paused',
+                },
                 {
                   label: t('deployment.status.Terminated'),
                   value: 'finished',
@@ -269,6 +316,11 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
           </BAIFlex>
         </BAIFlex>
         <BAIModelDeploymentNodes
+          onEditLabels={isLabelable ? setLabelingDeployment : undefined}
+          onLabelClick={(label) => {
+            setQueryParams({ filter: toEntityLabelFilter(label) });
+            setTablePaginationOption({ current: 1 });
+          }}
           deploymentsFrgmt={deploymentNodes}
           loading={isPending}
           order={queryParams.order}
@@ -297,12 +349,12 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
               'name',
               'currentRevisionNumber',
               'status',
+              'labels',
               'replicaSummary',
               'model',
               'createdAt',
               'id',
               'endpointUrl',
-              'tags',
               'updatedAt',
               'openToPublic',
               'resourceGroup',
@@ -375,27 +427,6 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
                       );
                     },
                   };
-                } else if (col.key === 'tags') {
-                  next = {
-                    ...col,
-                    render: (_value, record) => (
-                      <BAIDeploymentTagTokens
-                        metadataFrgmt={record.metadata}
-                        stopRowClick
-                        onTagClick={(tag) => {
-                          webuiNavigate({
-                            pathname: buildProjectPath('deployments'),
-                            search: new URLSearchParams({
-                              filter: JSON.stringify({
-                                tags: { iContains: tag },
-                              }),
-                            }).toString(),
-                          });
-                        }}
-                        fallback={<Text color="secondary">-</Text>}
-                      />
-                    ),
-                  };
                 }
                 // `name` is required + fixed:left in the base column; leave
                 // its visibility flags untouched. For every other key,
@@ -409,6 +440,25 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
           }}
         />
       </BAIFlex>
+      <BAIEntityLabelSettingModal
+        open={!!labelingDeployment}
+        entityType="deployment"
+        targets={
+          labelingDeployment
+            ? [
+                {
+                  entityId: labelingDeployment.entityId,
+                  name: labelingDeployment.metadata?.name ?? undefined,
+                },
+              ]
+            : []
+        }
+        entityLabelsFrgmt={labelingDeployment?.entityLabels}
+        onRequestClose={(success) => {
+          setLabelingDeployment(null);
+          if (success) updateFetchKey();
+        }}
+      />
       {/* ADR-0001: general page — the page is the only reader of the ambient
           current project and passes it explicitly. Creation is offered only
           here, from this project-scoped menu, so the modal's props union

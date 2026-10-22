@@ -146,6 +146,34 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Хэмжээ"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "Шошго нэмэх"
+  },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Шошго засах"
+  },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "Шошго нэмэх",
+    "AddLabelsToItems": "{{count}} зүйлд шошго нэмэх",
+    "BulkDescription": "Эдгээр шошгыг сонгосон бүх зүйлд нэмнэ. Ижил түлхүүртэй зүйлийн утга шинэчлэгдэж, бусад шошго хэвээр үлдэнэ.",
+    "EditLabels": "Шошго засах",
+    "Error": "Алдаа",
+    "Key": "Түлхүүр",
+    "KeyMustBeUnique": "Түлхүүр бүрийг зөвхөн нэг удаа ашиглана.",
+    "KeyRequired": "Түлхүүр оруулна уу.",
+    "Label": "Шошго",
+    "LabelsSaved": "Шошго хадгалагдлаа.",
+    "RemoveLabel": "Шошго устгах",
+    "Save": "Хадгалах",
+    "SomeLabelsFailed": "{{count}} шошгоны өөрчлөлт амжилтгүй",
+    "Target": "Зорилт",
+    "TooLong": "Хамгийн ихдээ {{max}} тэмдэгт.",
+    "Value": "Утга",
+    "ValueRequired": "Утга оруулна уу."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "Шошго"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Автоматаар сэргээх",
     "EveryHours": "{{count}}ц",
@@ -253,7 +281,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "Хандалтын түлхүүр",
     "CreatedAt": "Үүсгэсэн",
-    "InvalidatedAt": "Хүчингүй болгосон",
+    "LastAccessedAt": "Сүүлд хандсан",
     "User": "Хэрэглэгч"
   },
   "comp:BAIModal": {
@@ -291,7 +319,6 @@
     "RevisionNumber": "Засвар",
     "RevisionNumberTooltip": "Байршуулалтын одоогийн засварын дугаар.",
     "StrategyType": "Стратеги",
-    "Tags": "Шошго",
     "UpdatedAt": "Шинэчлэгдсэн огноо"
   },
   "comp:BAINameActionCell": {
@@ -319,7 +346,6 @@
     "ContainerRegistryForImageCommit": "Имэйж commit хийхэд зориулсан контейнерийн регистр",
     "CreateProject": "Төсөл үүсгэх",
     "Description": "Тайлбар",
-    "Domain": "Домен",
     "FailedToCreateProject": "Төслийг үүсгэж чадсангүй.",
     "FailedToUpdateProject": "Төслийг шинэчлэхэд амжилтгүй боллоо.",
     "IsActive": "Идэвхтэй юу?",
@@ -531,6 +557,9 @@
     "To": "Зорилтот төлөв",
     "UpdatedAt": "Шинэчлэгдсэн огноо"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Хавтас сонгох"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Агент"
   },
@@ -589,8 +618,6 @@
     "CreateFolder": "Шинэ хадгалах фолдер үүсгэх",
     "DestinationPath": "Контейнерийн зам (destination)",
     "Folders": "Фолдерууд",
-    "OwnerProject": "Төсөл",
-    "OwnerUser": "Хэрэглэгч",
     "PathAndAliasTooltip": "Хавтасыг контейнер дотор маунт хийх зам. Анхдагч замыг ашиглахын тулд хоосон үлдээнэ үү.",
     "Refresh": "Сэргээх",
     "RemoveFolder": "Хасах",

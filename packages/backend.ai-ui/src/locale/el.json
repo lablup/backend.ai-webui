@@ -146,6 +146,34 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Ποσότητα"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "Προσθήκη ετικετών"
+  },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Επεξεργασία ετικετών"
+  },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "Προσθήκη ετικέτας",
+    "AddLabelsToItems": "Προσθήκη ετικετών σε {{count}} στοιχεία",
+    "BulkDescription": "Οι ετικέτες προστίθενται σε κάθε επιλεγμένο στοιχείο. Αν ένα στοιχείο έχει ήδη το κλειδί, παίρνει τη νέα τιμή· οι άλλες ετικέτες του παραμένουν.",
+    "EditLabels": "Επεξεργασία ετικετών",
+    "Error": "Σφάλμα",
+    "Key": "Κλειδί",
+    "KeyMustBeUnique": "Κάθε κλειδί μπορεί να χρησιμοποιηθεί μόνο μία φορά.",
+    "KeyRequired": "Εισαγάγετε κλειδί.",
+    "Label": "Ετικέτα",
+    "LabelsSaved": "Οι ετικέτες αποθηκεύτηκαν.",
+    "RemoveLabel": "Αφαίρεση ετικέτας",
+    "Save": "Αποθήκευση",
+    "SomeLabelsFailed": "Απέτυχαν {{count}} αλλαγές ετικετών",
+    "Target": "Στόχος",
+    "TooLong": "Έως {{max}} χαρακτήρες.",
+    "Value": "Τιμή",
+    "ValueRequired": "Εισαγάγετε τιμή."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "Ετικέτα"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Αυτόματη ανανέωση",
     "EveryHours": "{{count}}ω",
@@ -253,7 +281,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "Κλειδί πρόσβασης",
     "CreatedAt": "Δημιουργήθηκε στο",
-    "InvalidatedAt": "Ακυρώθηκε στο",
+    "LastAccessedAt": "Τελευταία πρόσβαση",
     "User": "Χρήστης"
   },
   "comp:BAIModal": {
@@ -291,7 +319,6 @@
     "RevisionNumber": "Αναθεώρηση",
     "RevisionNumberTooltip": "Ο τρέχων αριθμός αναθεώρησης της ανάπτυξης.",
     "StrategyType": "Στρατηγική",
-    "Tags": "Ετικέτες",
     "UpdatedAt": "Ενημερώθηκε"
   },
   "comp:BAINameActionCell": {
@@ -319,7 +346,6 @@
     "ContainerRegistryForImageCommit": "Αποθετήριο κοντέινερ για καταχώρηση εικόνας",
     "CreateProject": "Δημιουργία έργου",
     "Description": "Περιγραφή",
-    "Domain": "Τομέας",
     "FailedToCreateProject": "Αποτυχία δημιουργίας έργου",
     "FailedToUpdateProject": "Η ενημέρωση του έργου απέτυχε",
     "IsActive": "Είναι ενεργό;",
@@ -531,6 +557,9 @@
     "To": "Κατάσταση προορισμού",
     "UpdatedAt": "Ενημερώθηκε στις"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Επιλογή φακέλου"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Μέσο"
   },
@@ -589,8 +618,6 @@
     "CreateFolder": "Δημιουργήστε έναν νέο φάκελο αποθήκευσης",
     "DestinationPath": "Διαδρομή container (destination)",
     "Folders": "Φάκελοι",
-    "OwnerProject": "Έργο",
-    "OwnerUser": "Χρήστης",
     "PathAndAliasTooltip": "Η διαδρομή εντός του container όπου θα προσαρτηθεί ο φάκελος. Αφήστε κενό για να χρησιμοποιηθεί η προεπιλεγμένη διαδρομή.",
     "Refresh": "Φρεσκάρω",
     "RemoveFolder": "Αφαίρεση",

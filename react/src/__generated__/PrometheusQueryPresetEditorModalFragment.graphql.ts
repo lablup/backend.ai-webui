@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<52f9aff1aeebd2caa6296ce6db3e92f5>>
+ * @generated SignedSource<<57a37e829ac05236a8eef671281e10be>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,6 +13,7 @@ import { FragmentRefs } from "relay-runtime";
 export type PrometheusQueryPresetEditorModalFragment$data = {
   readonly categoryId: string | null | undefined;
   readonly description: string | null | undefined;
+  readonly entityId: string;
   readonly id: string;
   readonly metricName: string;
   readonly name: string;
@@ -40,6 +41,13 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
       "storageKey": null
     },
     {
@@ -114,6 +122,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "6d11a2cb2617e7e07936d5e1245bb36d";
+(node as any).hash = "ff9608c29669d34d2c1639136f79c3a0";
 
 export default node;

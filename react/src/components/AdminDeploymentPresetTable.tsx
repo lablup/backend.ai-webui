@@ -73,7 +73,7 @@ const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
     graphql`
       fragment AdminDeploymentPresetTableFragment on DeploymentRevisionPreset
       @relay(plural: true) {
-        id @required(action: NONE)
+        entityId
         name @required(action: NONE)
         description
         rank
@@ -277,7 +277,7 @@ const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
   return (
     <BAITable
       scroll={{ x: 'max-content' }}
-      rowKey="id"
+      rowKey="entityId"
       dataSource={filteredPresets}
       columns={allColumns}
       onChangeOrder={(order) => {

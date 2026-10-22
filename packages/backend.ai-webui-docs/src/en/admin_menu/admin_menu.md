@@ -75,8 +75,7 @@ The user create/edit dialog contains the following fields:
 - **Resource Policy**: Select the user resource policy
   to which the user belongs. For more information about user resource policies, please
   refer to the [user resource policy](#user-resource-policy) section.
-- **Domain**: The domain to which the user belongs. This field is shown in both the create and edit dialogs.
-- **Projects**: Select one or more projects for the user to belong to. The available projects depend on the domain shown in the dialog.
+- **Projects**: Select one or more projects for the user to belong to.
 - **Allowed Client IPs**: Restrict which IP addresses can access the system using this user account. Enter IP addresses or CIDR notation (e.g., `10.20.30.40`, `10.20.30.0/24`). If left empty, access from any IP is allowed.
 - **Container UID**: The numeric User ID assigned to processes inside the container. This is useful when the container needs to match a specific UID for file permission purposes.
 - **Container GID**: The default numeric Group ID assigned to processes inside the container.
@@ -129,7 +128,7 @@ sequential numbers to the prefix.
   special character, and number).
 - **Password change required**: Defaults to ON for bulk-created users. When enabled,
   each user will be prompted to change their password on first login.
-- All other fields (**Status**, **Role**, **Enable sudo session**, **Resource Policy**, **Domain**, **Projects**, **Allowed Client IPs**, etc.) work the same as in single user creation. See the [Browse and manage users](#create-and-update-users) section.
+- All other fields (**Status**, **Role**, **Enable sudo session**, **Resource Policy**, **Projects**, **Allowed Client IPs**, etc.) work the same as in single user creation. See the [Browse and manage users](#create-and-update-users) section.
 
 ![](../images/bulk_create_user_dialog.png)
 
@@ -182,7 +181,6 @@ A file that is missing one of these two columns is rejected, and the dialog expl
 - **full_name**: The user's display name.
 - **role**: The user's role (`user`, `admin`, or `superadmin`). Defaults to `user` if omitted.
 - **status**: The user's initial status (`active` or `inactive`). Defaults to `active` if omitted.
-- **domain_name**: The domain to assign the user to. Defaults to the current domain if omitted.
 - **description**: An optional description for the user.
 - **need_password_change**: Whether the user must change their password on first login (`true` or `false`). Defaults to `true` if omitted.
 - **resource_policy**: The name of the resource policy to assign.
@@ -192,7 +190,7 @@ A file that is missing one of these two columns is rejected, and the dialog expl
 
 The left side of the dialog holds a **Defaults** panel. Any value you set there fills in the matching
 field for every row that leaves it blank, so you do not have to repeat it in each CSV cell. The panel
-covers **Domain**, **Project**, **Resource Policy**, **Password**, **Password change required**, and
+covers **Project**, **Resource Policy**, **Password**, **Password change required**, and
 **Description**. Fields you leave alone read `No default`.
 
 After selecting your CSV file, the dialog shows a preview table listing all rows with the following indicators:
@@ -226,7 +224,7 @@ If some rows fail, only the successful rows result in new accounts. Failed rows 
 
 ### Bulk edit users
 
-When several accounts need the same change — moving them to another domain or project, switching their
+When several accounts need the same change — moving them to another project, switching their
 resource policy, or setting the container UID/GID — you can edit them in one pass instead of opening each
 user in turn.
 
@@ -243,8 +241,7 @@ restrict the use of folder mounts that were created earlier.
 The dialog exposes the following fields. A field you leave untouched is not changed on any of the
 selected users:
 
-- **Domain**: Move the selected users to another domain. Changing it clears the **Projects** selection.
-- **Projects**: Assign the selected users to one or more projects. A domain must be selected first.
+- **Projects**: Assign the selected users to one or more projects.
 - **User Status**: Set the accounts to Active, Inactive, Inactive (include keypair), or Before Verification.
 - **Resource Policy**: Apply a user resource policy to every selected account.
 - **Container UID**, **Container GID**, **Supplementary GID**: Set the numeric IDs assigned to processes inside the container.
@@ -465,6 +462,8 @@ The Admin Deployments page has up to four tabs:
 - **Model Store Management**: See the [Admin Model Store Management](#admin-model-store-management) section below.
 - **Prometheus Preset**: Lets administrators manage reusable Prometheus query presets. See the [Prometheus Query Presets](#prometheus-query-presets) section below.
 - **Deployment Presets**: Lets administrators manage reusable deployment presets that end users can apply when deploying a model. See the [Deployment Presets](#deployment-presets) section below.
+
+Each deployment's key-value labels appear in the **Labels** column. Use the row's **Edit labels** action to change them.
 
 :::note
 Each individual admin deployment has its own address under the Admin Deployments page,
@@ -1028,7 +1027,7 @@ version 26.4.0 or later.
 :::
 
 On the **Sessions** tab, you can use the property filter to narrow the list — by **Session ID** when
-needed, by the session's owner (email or full name), by its project or domain, and by session
+needed, by the session's owner (email or full name), by its project, and by session
 attributes such as result, cluster mode, priority, and creation or termination time.
 
 Exporting the list as a CSV file applies the property filter currently in effect, so you can narrow the
@@ -1046,13 +1045,13 @@ own controls, refer to the [Session List View](#session-list-view-and-refresh) s
 ## Fair share scheduler
 
 The Fair Share Scheduler page is available in the
-**Admin Settings** menu. This feature allows administrators to manage fair share scheduling weights
+**Admin Settings** menu. This feature allows superadmins to manage fair share scheduling weights
 across a hierarchical structure of resource groups, domains, projects, and users.
 
 Fair share scheduling allocates compute resources based on historical usage patterns,
 ensuring that resources are distributed fairly among users. Users who have consumed fewer
 resources in the past receive higher scheduling priority, while those who have used more
-resources are given lower priority. Administrators can fine-tune this behavior by adjusting
+resources are given lower priority. Superadmins can fine-tune this behavior by adjusting
 weights at each level of the hierarchy.
 
 :::note
@@ -1296,6 +1295,17 @@ you have chosen a project and a resource group. Images in your selection that ar
 are excluded from the request.
 
 ![=520px](../images/image_install_modal.png)
+
+Superadmins can register specific images without rescanning a whole registry. Click **Import Image**
+to open the **Import Image from Registry** dialog, enter one full image reference per line — tag
+included — under **Image references**, choose the **Architecture** to look up, review the
+**Images to import** list, and click **Import Image**. An NVIDIA NGC catalog container URL can be
+pasted in place of a reference.
+
+![=720px](../images/import_image_modal.png)
+
+Superadmins can also refresh a single image's metadata from its registry with the **Rescan** action
+in the image's row.
 
 You can change the minimum resource requirements for each image by clicking the
 **Edit** (pencil) action in the `Controls` panel, which opens the
@@ -1549,6 +1559,9 @@ On managers that do not support combined filter conditions, only one condition c
 The **Default** column marks the default resource group. At most one resource group carries the marker,
 and an agent that registers without a resolvable resource group name falls back to it.
 
+Each resource group's key-value labels appear in the **Labels** column. Use the row's **Edit labels**
+action to change them, or select several resource groups and click **Add labels** to label them in bulk.
+
 <a id="scheduling-methods"></a>
 
 You can edit a resource group by clicking the **Edit** (pencil) action in the Name column, which opens
@@ -1662,9 +1675,9 @@ The drawer contains the following tabs:
 The **Project Folder Permissions** tab of the [Storage Host Detail Drawer](#storage-host-detail-drawer) lets administrators view and manage the permissions of the project folders created on the selected storage host.
 
 ![](../images/project_folder_permission_tab.png)
-<!-- TODO: Capture screenshot of project_folder_permission_tab.png — Project Folder Permissions tab with the domain selector and the tri-state effective-permission indicators -->
+<!-- TODO: Capture screenshot of project_folder_permission_tab.png — Project Folder Permissions tab with the tri-state effective-permission indicators -->
 
-Project folder permissions consist of permissions for the selected domain and permissions for the projects under that domain.
+Project folder permissions consist of permissions for the current domain and permissions for the projects under that domain.
 
 In the Backend.AI structure, a project belongs under a specific domain. Therefore, the storage permissions set on a project inherit the domain's permissions by default.
 
@@ -1716,10 +1729,9 @@ Click the Edit button in the Quota Scope ID column to open the modal for configu
 
 #### Set project quota
 
-Setting a quota on project-folder is similar to setting a user quota. The difference between setting
-project quota and user quota is to confirm setting the project quota requires one more procedure,
-which is selecting the domain that the project is dependent on. The rest are the same.
-As in the picture below, you need to first select the domain, and then select the project.
+Setting a quota on project-folder is similar to setting a user quota. The only difference is that you
+set the active sub-tab of the Quota Settings panel to `For Project` and then select the project, as in
+the picture below. The rest are the same.
 
 ![](../images/per_project_quota.png)
 <!-- TODO: Re-capture per_project_quota.png — needs update. -->
@@ -1882,7 +1894,8 @@ bar at the top of the page filters the list when you are looking for a specific 
 **Announcement**
 
 - **System announcement**: Click **Edit Announcement** to create or change the announcement banner shown
-  to every user at the top of every page. See the [System announcement](#system-announcement) section below.
+  to every user at the top of every page. See the
+  [System announcement](#system-announcement) section below.
 
 :::note
 We will continue to add other settings needed for management, such as
@@ -1893,9 +1906,9 @@ removing unused images or registering periodic maintenance schedules.
 
 ### System announcement
 
-Superadmins can publish a short message that every user sees as a banner at the top of every page — for
-example, a planned maintenance window. The announcement is written in Markdown and is managed entirely
-from the WebUI, whether or not one has been published before.
+Superadmins can publish a short message that every user sees as a banner at the top of
+every page — for example, a planned maintenance window. The announcement is written in Markdown and is
+managed entirely from the WebUI, whether or not one has been published before.
 
 Open the editor in either of two ways:
 
@@ -1906,20 +1919,22 @@ Open the editor in either of two ways:
 
 ![](../images/announcement_edit_modal.png)
 
-The **Edit Announcement** dialog is split into two panes:
+Enter a **Title** for the announcement — a short line of plain text that the banner always shows. The
+message below it is optional; readers see it when they expand the banner. You write it in two panes:
 
 - **Message**: A Markdown editor with a formatting toolbar. The toolbar provides Heading (H1–H3), Bold,
   Italic, Strikethrough, Quote, Code, Link, Image, Bullet List, and Numbered List. Each button applies
   to the current selection, or inserts a placeholder you can type over.
 - **Preview**: A live rendering of the message exactly as users will see it, updated as you type.
 
-The footer holds three actions:
+The footer holds four actions:
 
-- **Publish**: Saves the message and makes the banner visible to all users. The button stays disabled
-  while the message is empty, because an empty announcement cannot be published.
+- **Publish**: Saves the announcement and makes the banner visible to every user.
+- **Save as Draft**: An option in the **Publish** menu. It saves the announcement without showing it to
+  users, and the dialog marks a saved draft as a **Draft**.
 - **Cancel**: Closes the dialog without saving.
 - **Delete**: Removes the published announcement so the banner disappears for everyone. A confirmation
-  dialog appears first. The action is unavailable when nothing is currently published.
+  dialog appears first.
 
 <a id="detailed-information"></a>
 
@@ -1948,7 +1963,7 @@ The list excludes personal projects by default; remove the pre-applied **Type** 
 ![](../images/projects_page.png)
 
 The **Active** and **Inactive** buttons above the list choose which projects are listed, and the property
-filter next to them narrows the list by **Name**, **Domain**, **Resource Policy**, **Project ID**,
+filter next to them narrows the list by **Name**, **Resource Policy**, **Project ID**,
 **Created At**, or **Modified At**. **Project ID** must be a full UUID, and **Created At** and
 **Modified At** take a date and time.
 
@@ -2040,14 +2055,13 @@ The **Branding** page lets superadmins customize the visual identity of the WebU
 
 ![](../images/branding_page.png)
 
-:::warning
-The updated theme cannot be applied immediately from this page. To apply a customized theme, export the configuration as a JSON file and provide it to the support team.
-:::
+Your edits on this page are a draft: use `Preview` to check them, then click `Apply` to save the theme and apply it to every user.
 
 The toolbar provides:
 
+- `Apply`: Saves the current settings as the theme.
 - `Preview`: Opens a new window that previews the current theme changes.
-- `JSON Config`: Opens a modal where the theme configuration can be edited directly as JSON and exported.
+- `JSON Config`: Opens a modal where the theme configuration can be edited directly as JSON and exported. An imported file is loaded into the draft, which you then save with `Apply`.
 - A reset control that restores all branding settings to their defaults.
 - A search bar to filter the settings.
 
@@ -2057,7 +2071,3 @@ The settings are divided into the following groups:
 - **Logo CI**: Upload the main sidebar logo for light and dark mode, along with the collapsed-sidebar logo, and configure their display sizes.
 - **Detail Logo CI**: Upload the logos shown on the login page and in the About modal, for both light and dark mode, with configurable sizes.
 - **Font**: Select the font family used throughout the interface.
-
-:::note
-After uploading an image or changing a color, use `Preview` to see the result. Because the changes are not applied to the live service automatically, export the JSON configuration and contact support to roll it out.
-:::

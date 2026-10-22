@@ -7,6 +7,7 @@ import {
   NotificationState,
   useSetBAINotification,
 } from '../hooks/useBAINotification';
+import './BAINodeNotificationItem.css';
 import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { Card } from '@lablup/ui-common/Card';
@@ -64,6 +65,7 @@ const BAIVirtualFolderNodeNotificationItem: React.FC<
   return (
     node && (
       <BAINotificationItem
+        className="bai-node-notification-item"
         title={
           <BAIText ellipsis>
             {t('general.Folder')}:&nbsp;

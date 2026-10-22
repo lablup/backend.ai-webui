@@ -13661,6 +13661,11 @@ type Mutation
   delete_network(network: String!): DeleteNetwork @join__field(graph: GRAPHENE)
 
   """
+  Added in 26.10.0. Scan one image tag and return the requested architecture, including images not yet registered (superadmin only).
+  """
+  adminScanImage(input: ScanImageInput!): ScanImagePayload @join__field(graph: STRAWBERRY)
+
+  """
   Added in 26.8.0. Change the resource group of an agent (superadmin only). Sessions still running on the agent under the old resource group are cleaned up per the given policy; without force, the change is rejected with a conflict error when such sessions exist.
   """
   adminUpdateAgentResourceGroup(input: UpdateAgentResourceGroupInput!): UpdateAgentResourceGroupPayload @join__field(graph: STRAWBERRY)
@@ -14235,10 +14240,18 @@ type Mutation
   adminCreatePrometheusQueryPreset(input: CreateQueryDefinitionInput!): CreateQueryDefinitionPayload @join__field(graph: STRAWBERRY)
 
   """Added in 26.3.0. Modify an existing query definition (admin only)."""
-  adminModifyPrometheusQueryPreset(id: ID!, input: ModifyQueryDefinitionInput!): ModifyQueryDefinitionPayload @join__field(graph: STRAWBERRY)
+  adminModifyPrometheusQueryPreset(id: ID!, input: ModifyQueryDefinitionInput!): ModifyQueryDefinitionPayload @join__field(graph: STRAWBERRY) @deprecated(reason: "Deprecated since 26.10.0. Use `updatePrometheusQueryPreset`.")
 
   """Added in 26.3.0. Delete a query definition (admin only)"""
-  adminDeletePrometheusQueryPreset(id: ID!): DeleteQueryDefinitionPayload @join__field(graph: STRAWBERRY)
+  adminDeletePrometheusQueryPreset(id: ID!): DeleteQueryDefinitionPayload @join__field(graph: STRAWBERRY) @deprecated(reason: "Deprecated since 26.10.0. Use `purgePrometheusQueryPreset`.")
+
+  """
+  Added in 26.10.0. Update a query definition. Only provided fields will be updated.
+  """
+  updatePrometheusQueryPreset(id: UUID!, input: ModifyQueryDefinitionInput!): ModifyQueryDefinitionPayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 26.10.0. Permanently remove a query definition."""
+  purgePrometheusQueryPreset(id: UUID!): PurgeQueryDefinitionPayload! @join__field(graph: STRAWBERRY)
 
   """Added in 26.3.0. Create a new query preset category (admin only)."""
   adminCreatePrometheusQueryPresetCategory(input: CreateCategoryInput!): CreateCategoryPayload @join__field(graph: STRAWBERRY)
@@ -14474,7 +14487,10 @@ type Mutation
   adminUpdateDeploymentRevisionPreset(input: UpdateDeploymentRevisionPresetInput!): UpdateDeploymentRevisionPresetPayload @join__field(graph: STRAWBERRY)
 
   """Added in 26.4.2. Delete a deployment revision preset (admin only)."""
-  adminDeleteDeploymentRevisionPreset(id: UUID!): DeleteDeploymentRevisionPresetPayload @join__field(graph: STRAWBERRY)
+  adminDeleteDeploymentRevisionPreset(id: UUID!): DeleteDeploymentRevisionPresetPayload @join__field(graph: STRAWBERRY) @deprecated(reason: "Deprecated since 26.10.0. Use `purgeDeploymentRevisionPreset`.")
+
+  """Added in 26.10.0. Permanently remove a deployment revision preset."""
+  purgeDeploymentRevisionPreset(id: UUID!): PurgeDeploymentRevisionPresetPayload! @join__field(graph: STRAWBERRY)
 
   """Added in 26.4.2. Create a model card (admin only)."""
   adminCreateModelCardV2(input: CreateModelCardV2Input!): CreateModelCardPayload @join__field(graph: STRAWBERRY)
@@ -16652,6 +16668,16 @@ type PurgeAppConfigDefinitionPayload
   id: UUID!
 }
 
+type PurgeDeploymentRevisionPresetPayload
+  @join__type(graph: STRAWBERRY)
+{
+  """Global ID of the purged deployment revision preset."""
+  purgedId: ID!
+
+  """UUID of the purged deployment revision preset."""
+  entityId: UUID!
+}
+
 """
 Completely delete domain from DB.
 
@@ -16790,6 +16816,16 @@ input PurgeResourceSlotTypeInput
 {
   """Slot name identifying the slot type to remove."""
   slotName: String!
+}
+
+type PurgeQueryDefinitionPayload
+  @join__type(graph: STRAWBERRY)
+{
+  """Global ID of the purged query definition."""
+  purgedId: ID!
+
+  """UUID of the purged query definition."""
+  entityId: UUID!
 }
 
 """Added in 26.9.0. Payload for resource slot type removal."""
@@ -22120,6 +22156,29 @@ type ScanArtifactsPayload
 }
 
 """
+Added in 26.10.0. Input for scanning one image tag and selecting its architecture.
+"""
+input ScanImageInput
+  @join__type(graph: STRAWBERRY)
+{
+  """
+  Image canonical name to scan. Defaults to latest when the tag is omitted.
+  """
+  canonical: String!
+
+  """Image architecture to return."""
+  architecture: String!
+}
+
+"""Added in 26.10.0. Scanned image matching the requested architecture."""
+type ScanImagePayload
+  @join__type(graph: STRAWBERRY)
+{
+  """Scanned image matching the requested architecture."""
+  item: ImageV2!
+}
+
+"""
 Added in 26.4.2. Result of scanning a MODEL_STORE project for model cards.
 """
 type ScanProjectModelCardsV2Payload
@@ -26782,6 +26841,9 @@ input VFolderFilter
 
   """Added in 26.9.0. Select entities by the labels on them."""
   labels: EntityLabelNestedFilter = null
+
+  """Added in 26.10.0. Filter by vfolder ID."""
+  entityId: UUIDFilter = null
   AND: [VFolderFilter!] = null
   OR: [VFolderFilter!] = null
   NOT: [VFolderFilter!] = null

@@ -262,6 +262,7 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
         // untyped antd default (`info`) becomes an explicit `status="info"`;
         // `showIcon` is dropped (Banner always shows its status icon).
         <Banner
+          role="status"
           status="info"
           title={t('statistics.prometheus.DataMissingInLowUsageDesc')}
         />

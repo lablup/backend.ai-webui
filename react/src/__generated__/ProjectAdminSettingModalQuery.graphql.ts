@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7c1ad04d8f577eb35812b641b9c9ade4>>
+ * @generated SignedSource<<228db8f87ac9cc218066d2d22a8c0998>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -122,6 +122,7 @@ export type ProjectAdminSettingModalQuery$data = {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly entityId: string;
         readonly id: string;
         readonly name: string;
         readonly users: {
@@ -218,6 +219,13 @@ v3 = [
             "plural": false,
             "selections": [
               (v2/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "entityId",
+                "storageKey": null
+              },
               {
                 "alias": null,
                 "args": null,
@@ -336,16 +344,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "7aced2be3883cb104594394af0c33968",
+    "cacheID": "32fe3425c92b04c9266bed60734e0575",
     "id": null,
     "metadata": {},
     "name": "ProjectAdminSettingModalQuery",
     "operationKind": "query",
-    "text": "query ProjectAdminSettingModalQuery(\n  $filter: RoleFilter\n  $limit: Int\n  $offset: Int\n) {\n  adminRoles(filter: $filter, first: 50) {\n    count\n    edges {\n      node {\n        id\n        name\n        users(limit: $limit, offset: $offset) {\n          count\n          edges {\n            node {\n              id\n              userId\n              user {\n                id\n                basicInfo {\n                  email\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ProjectAdminSettingModalQuery(\n  $filter: RoleFilter\n  $limit: Int\n  $offset: Int\n) {\n  adminRoles(filter: $filter, first: 50) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        users(limit: $limit, offset: $offset) {\n          count\n          edges {\n            node {\n              id\n              userId\n              user {\n                id\n                basicInfo {\n                  email\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "799949e432d4e5b70d80ce1669b3af39";
+(node as any).hash = "41eec1d1ac6fd4df5df139bf0bb1803d";
 
 export default node;

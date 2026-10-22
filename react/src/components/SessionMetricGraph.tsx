@@ -20,6 +20,7 @@ import {
   BAIFlex,
   BAIQuestionIconWithTooltip,
   BAISkeleton,
+  cssLengthToPx,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -232,7 +233,7 @@ const SessionMetricGraphBody: React.FC<PrometheusMetricGraphProps> = ({
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis
               dataKey="timestamp"
-              minTickGap={parseFloat(token('--spacing-5'))}
+              minTickGap={cssLengthToPx(token('--spacing-5'))}
             />
             <YAxis domain={[0, 'dataMax']} />
             <ChartTooltip

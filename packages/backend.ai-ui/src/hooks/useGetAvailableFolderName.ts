@@ -11,24 +11,21 @@ export const useGetAvailableFolderName = () => {
     const count = await fetchQuery<useGetAvailableFolderNameQuery>(
       relayEnv,
       graphql`
-        query useGetAvailableFolderNameQuery($filter: String!) {
-          vfolder_nodes(filter: $filter, permission: "read_attribute") {
-            edges {
-              node {
-                name
-                status
-              }
+        query useGetAvailableFolderNameQuery($name: String!) {
+          myVfolders(
+            filter: {
+              name: { equals: $name }
+              status: { notEquals: DELETE_COMPLETE }
             }
+          ) {
             count
           }
         }
       `,
-      {
-        filter: `(name  == "${targetName}") & (status != "delete-complete")`,
-      },
+      { name: targetName },
     )
       .toPromise()
-      .then((data) => data?.vfolder_nodes?.count)
+      .then((data) => data?.myVfolders?.count)
       .catch(() => 0);
 
     const hash = generateRandomString(5);

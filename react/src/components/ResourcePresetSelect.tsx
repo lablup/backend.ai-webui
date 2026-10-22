@@ -327,7 +327,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
         isLabelHidden
         isLoading={isPendingUpdate}
         isDisabled={disabled}
-        style={style}
+        controlStyle={style}
         width="100%"
         hasSearch
         options={options}

@@ -352,6 +352,19 @@ check_layer_order() {
   node scripts/migration-gates/layer-order-gate.mjs
 }
 
+check_compat_floor_report() {
+  # The supported manager floor is read from the team dev catalog (ADR 0011),
+  # which sits behind the dev VPN, so this can only report: the floor and the
+  # application-code gates at or below it. CI has no gateway config and skips.
+  local config="${DEV_GW_CONFIG:-$HOME/.config/fw/dev-gw.json}"
+  if [ -z "${WEBUI_DEV_ENV_CATALOG:-}${WEBUI_DEV_ENV_CATALOG_URL:-}" ] && [ ! -f "$config" ]; then
+    echo "skipped: no dev box gateway config ($config) — run \`pnpm run dev-env compat\` on a box that joined the gateway"
+    return 0
+  fi
+  WEBUI_DEV_ENV_FETCH_TIMEOUT_MS=4000 node scripts/dev-env.mjs compat
+  return 0
+}
+
 check_token_gate_report() {
   # Undeclared `var(--name)` produces no compiler, lint or runtime error. The
   # gate has pre-existing findings, so it is report-only here and the bar is
@@ -391,6 +404,9 @@ start_lane gate "Astryx integration (backend.ai-ui)" check_astryx_integration
 start_lane gate "ui-common agent blocks" check_ui_common_agents
 # ADR 0009's import ban in ESLint covers JS/TS only; this also sees CSS @import.
 start_lane gate "ui-common import mirror" node scripts/ui-common-codemod.mjs --check
+# A local tarball pin fails here; a PR preview only fails in CI (typecheck.yml),
+# so an unmerged ui-common change can still be verified end to end.
+start_lane gate "ui-common pin" node scripts/ui-common-pin.mjs --check --allow-preview
 start_lane gate "Cascade-layer order" check_layer_order
 # The bare-name Astryx patch keys used to trip a second core at install time;
 # with the patches gone (FR-4098) the lockfile is read instead (ADR 0009).
@@ -407,6 +423,8 @@ start_lane report "Terminology self-test (report-only here; hard gate in CI)" \
   node scripts/check-terminology-i18n.selftest.mjs
 start_lane report "Astryx token gate (report-only; bar is no NEW findings)" \
   check_token_gate_report
+start_lane report "Compat floor (report-only; the floor is in the team dev catalog, ADR 0011)" \
+  check_compat_floor_report
 
 if [ -n "${VERIFY_TESTS:-}" ]; then
   start_lane gate "Vitest (react)" vitest_lane react

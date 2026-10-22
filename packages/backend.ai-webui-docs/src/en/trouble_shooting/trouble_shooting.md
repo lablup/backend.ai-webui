@@ -170,3 +170,7 @@ The same row also has a **Delete** action (the trash icon). Deleting a registry
 permanently removes it from Backend.AI — do not confuse it with the **Rescan
 Images** action.
 :::
+
+To refresh the metadata of a single image that is already listed — a re-pushed
+tag, for example — click the **Rescan** action in that image's row on the
+**Images** tab.

@@ -159,7 +159,7 @@ const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
         onClear={() => setSelectedSubPath(undefined)}
         size={size}
         width={width}
-        style={style}
+        controlStyle={style}
       >
         {(_value, _onChange, close, { isOpen }) => (
           <PopoverToModalRedirect

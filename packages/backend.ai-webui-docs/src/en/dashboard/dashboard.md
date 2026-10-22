@@ -120,8 +120,7 @@ place the panel on the board.
 
 **Deployments** panels list the project's model deployments, using the same
 table as the Deployments page: name, status, replica summary, model, and
-created at. Clicking a deployment's name opens its detail page. The condition
-filter offers name, tags, endpoint URL, and public (open to public).
+created at. Clicking a deployment's name opens its detail page.
 
 **Grid** shows the session resource grid: each matching session's allocated
 resources as unit cells, colored by utilization. Clicking a session opens its

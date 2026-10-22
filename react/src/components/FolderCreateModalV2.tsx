@@ -181,6 +181,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
         createVfolderV2(input: $input) {
           vfolder {
             id
+            entityId
             vfolderStatus: status
             host
             metadata {
@@ -215,6 +216,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
         createVFolderInProject(projectId: $projectId, input: $input) {
           vfolder {
             id
+            entityId
             vfolderStatus: status
             host
             metadata {
@@ -371,7 +373,12 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
     >
       {alertMessage ? (
         <div style={{ marginBottom: token('--spacing-5') }}>
-          <Banner status="warning" title={alertMessage} container="section" />
+          <Banner
+            role="alert"
+            status="warning"
+            title={alertMessage}
+            container="section"
+          />
         </div>
       ) : null}
 

@@ -146,6 +146,34 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Quantità"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "Aggiungi etichette"
+  },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Modifica etichette"
+  },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "Aggiungi etichetta",
+    "AddLabelsToItems": "Aggiungi etichette a {{count}} elementi",
+    "BulkDescription": "Queste etichette vengono aggiunte a ogni elemento selezionato. Un elemento che ha già la chiave riceve il nuovo valore; le altre etichette restano.",
+    "EditLabels": "Modifica etichette",
+    "Error": "Errore",
+    "Key": "Chiave",
+    "KeyMustBeUnique": "Ogni chiave può essere usata una sola volta.",
+    "KeyRequired": "Inserisci una chiave.",
+    "Label": "Etichetta",
+    "LabelsSaved": "Etichette salvate.",
+    "RemoveLabel": "Rimuovi etichetta",
+    "Save": "Salva",
+    "SomeLabelsFailed": "{{count}} modifiche alle etichette non riuscite",
+    "Target": "Destinazione",
+    "TooLong": "Al massimo {{max}} caratteri.",
+    "Value": "Valore",
+    "ValueRequired": "Inserisci un valore."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "Etichetta"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Aggiornamento automatico",
     "EveryHours": "{{count}}h",
@@ -253,7 +281,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "Chiave di accesso",
     "CreatedAt": "Creato a",
-    "InvalidatedAt": "Invalidato a",
+    "LastAccessedAt": "Ultimo accesso",
     "User": "Utente"
   },
   "comp:BAIModal": {
@@ -291,7 +319,6 @@
     "RevisionNumber": "Revisione",
     "RevisionNumberTooltip": "Il numero di revisione corrente del deployment.",
     "StrategyType": "Strategia",
-    "Tags": "Tag",
     "UpdatedAt": "Aggiornato il"
   },
   "comp:BAINameActionCell": {
@@ -319,7 +346,6 @@
     "ContainerRegistryForImageCommit": "Registro dei container per il commit delle immagini",
     "CreateProject": "Crea progetto",
     "Description": "Descrizione",
-    "Domain": "Dominio",
     "FailedToCreateProject": "Impossibile creare il progetto",
     "FailedToUpdateProject": "Impossibile aggiornare il progetto",
     "IsActive": "È attivo?",
@@ -531,6 +557,9 @@
     "To": "Stato di destinazione",
     "UpdatedAt": "Aggiornato il"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Seleziona cartella"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agente"
   },
@@ -589,8 +618,6 @@
     "CreateFolder": "Crea una nuova cartella di archiviazione",
     "DestinationPath": "Percorso del container (destination)",
     "Folders": "cartelle",
-    "OwnerProject": "Progetto",
-    "OwnerUser": "Utente",
     "PathAndAliasTooltip": "Il percorso all'interno del container dove verrà montata la cartella. Lasciare vuoto per usare il percorso predefinito.",
     "Refresh": "ricaricare",
     "RemoveFolder": "Rimuovi",

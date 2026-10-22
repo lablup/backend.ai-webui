@@ -146,6 +146,34 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Ilość"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "Dodaj etykiety"
+  },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Edytuj etykiety"
+  },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "Dodaj etykietę",
+    "AddLabelsToItems": "Dodaj etykiety do {{count}} elementów",
+    "BulkDescription": "Te etykiety zostaną dodane do każdego wybranego elementu. Element, który ma już ten klucz, otrzyma nową wartość; pozostałe etykiety zostaną zachowane.",
+    "EditLabels": "Edytuj etykiety",
+    "Error": "Błąd",
+    "Key": "Klucz",
+    "KeyMustBeUnique": "Każdy klucz może wystąpić tylko raz.",
+    "KeyRequired": "Wprowadź klucz.",
+    "Label": "Etykieta",
+    "LabelsSaved": "Etykiety zapisane.",
+    "RemoveLabel": "Usuń etykietę",
+    "Save": "Zapisz",
+    "SomeLabelsFailed": "Nie powiodło się {{count}} zmian etykiet",
+    "Target": "Cel",
+    "TooLong": "Maksymalnie {{max}} znaków.",
+    "Value": "Wartość",
+    "ValueRequired": "Wprowadź wartość."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "Etykieta"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Automatyczne odświeżanie",
     "EveryHours": "{{count}}h",
@@ -253,7 +281,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "Klucz dostępu",
     "CreatedAt": "Utworzono o godz",
-    "InvalidatedAt": "Unieważniono o godz",
+    "LastAccessedAt": "Ostatni dostęp",
     "User": "Użytkownik"
   },
   "comp:BAIModal": {
@@ -291,7 +319,6 @@
     "RevisionNumber": "Rewizja",
     "RevisionNumberTooltip": "Bieżący numer rewizji wdrożenia.",
     "StrategyType": "Strategia",
-    "Tags": "Tagi",
     "UpdatedAt": "Zaktualizowano"
   },
   "comp:BAINameActionCell": {
@@ -319,7 +346,6 @@
     "ContainerRegistryForImageCommit": "Rejestr kontenerów do zatwierdzania obrazów",
     "CreateProject": "Utwórz projekt",
     "Description": "Opis",
-    "Domain": "Domena",
     "FailedToCreateProject": "Nie udało się utworzyć projektu",
     "FailedToUpdateProject": "Nie udało się zaktualizować projektu",
     "IsActive": "Aktywny?",
@@ -531,6 +557,9 @@
     "To": "Status docelowy",
     "UpdatedAt": "Zaktualizowano"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Wybierz folder"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agent"
   },
@@ -589,8 +618,6 @@
     "CreateFolder": "Utwórz nowy folder przechowywania",
     "DestinationPath": "Ścieżka w kontenerze (destination)",
     "Folders": "Foldery",
-    "OwnerProject": "Projekt",
-    "OwnerUser": "Użytkownik",
     "PathAndAliasTooltip": "Ścieżka wewnątrz kontenera, w której zostanie zamontowany folder. Pozostaw puste, aby użyć domyślnej ścieżki.",
     "Refresh": "Odświeżać",
     "RemoveFolder": "Usuń",

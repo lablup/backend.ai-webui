@@ -146,6 +146,34 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Jumlah"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "Tambah label"
+  },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Edit label"
+  },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "Tambah label",
+    "AddLabelsToItems": "Tambah label pada {{count}} item",
+    "BulkDescription": "Label ini ditambah pada setiap item yang dipilih. Item yang sudah mempunyai kunci itu menerima nilai baharu; label lain kekal.",
+    "EditLabels": "Edit label",
+    "Error": "Ralat",
+    "Key": "Kunci",
+    "KeyMustBeUnique": "Setiap kunci hanya boleh digunakan sekali.",
+    "KeyRequired": "Masukkan kunci.",
+    "Label": "Label",
+    "LabelsSaved": "Label disimpan.",
+    "RemoveLabel": "Buang label",
+    "Save": "Simpan",
+    "SomeLabelsFailed": "{{count}} perubahan label gagal",
+    "Target": "Sasaran",
+    "TooLong": "Paling banyak {{max}} aksara.",
+    "Value": "Nilai",
+    "ValueRequired": "Masukkan nilai."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "Label"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Segar semula automatik",
     "EveryHours": "{{count}}h",
@@ -253,7 +281,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "Kunci Akses",
     "CreatedAt": "Dicipta pada",
-    "InvalidatedAt": "Tidak Sah Pada",
+    "LastAccessedAt": "Akses Terakhir",
     "User": "Pengguna"
   },
   "comp:BAIModal": {
@@ -291,7 +319,6 @@
     "RevisionNumber": "Semakan",
     "RevisionNumberTooltip": "Nombor semakan semasa penggunaan.",
     "StrategyType": "Strategi",
-    "Tags": "Tag",
     "UpdatedAt": "Dikemas kini pada"
   },
   "comp:BAINameActionCell": {
@@ -319,7 +346,6 @@
     "ContainerRegistryForImageCommit": "Registri Kontena untuk Commit Imej",
     "CreateProject": "Cipta Projek",
     "Description": "Deskripsi",
-    "Domain": "Domain",
     "FailedToCreateProject": "Gagal membuat projek",
     "FailedToUpdateProject": "Gagal mengemas kini projek",
     "IsActive": "Aktif?",
@@ -531,6 +557,9 @@
     "To": "Status sasaran",
     "UpdatedAt": "Dikemas kini pada"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Pilih Folder"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Ejen"
   },
@@ -589,8 +618,6 @@
     "CreateFolder": "Buat folder storan baru",
     "DestinationPath": "Laluan kontena (destination)",
     "Folders": "Folder",
-    "OwnerProject": "Projek",
-    "OwnerUser": "Pengguna",
     "PathAndAliasTooltip": "Laluan di dalam container tempat folder akan di-mount. Biarkan kosong untuk menggunakan laluan lalai.",
     "Refresh": "Segarkan",
     "RemoveFolder": "Buang",

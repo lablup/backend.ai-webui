@@ -146,6 +146,34 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Quantidade"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "Adicionar rótulos"
+  },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Editar rótulos"
+  },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "Adicionar rótulo",
+    "AddLabelsToItems": "Adicionar rótulos a {{count}} itens",
+    "BulkDescription": "Estes rótulos são adicionados a todos os itens selecionados. Um item que já tem a chave recebe o novo valor; seus outros rótulos permanecem.",
+    "EditLabels": "Editar rótulos",
+    "Error": "Erro",
+    "Key": "Chave",
+    "KeyMustBeUnique": "Cada chave só pode ser usada uma vez.",
+    "KeyRequired": "Insira uma chave.",
+    "Label": "Rótulo",
+    "LabelsSaved": "Rótulos salvos.",
+    "RemoveLabel": "Remover rótulo",
+    "Save": "Salvar",
+    "SomeLabelsFailed": "{{count}} alterações de rótulos falharam",
+    "Target": "Destino",
+    "TooLong": "No máximo {{max}} caracteres.",
+    "Value": "Valor",
+    "ValueRequired": "Insira um valor."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "Rótulo"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Atualização automática",
     "EveryHours": "{{count}}h",
@@ -259,7 +287,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "Chave de acesso",
     "CreatedAt": "Criado em",
-    "InvalidatedAt": "Invalidado em",
+    "LastAccessedAt": "Último acesso",
     "User": "Usuário"
   },
   "comp:BAIModal": {
@@ -297,7 +325,6 @@
     "RevisionNumber": "Revisão",
     "RevisionNumberTooltip": "O número de revisão atual do deployment.",
     "StrategyType": "Estratégia",
-    "Tags": "Tag",
     "UpdatedAt": "Atualizado em"
   },
   "comp:BAINameActionCell": {
@@ -325,7 +352,6 @@
     "ContainerRegistryForImageCommit": "Registro de Contêiner para Commit de Imagem",
     "CreateProject": "Criar projeto",
     "Description": "Descrição",
-    "Domain": "Domínio",
     "FailedToCreateProject": "Não foi possível criar o projeto",
     "FailedToUpdateProject": "Falha ao atualizar o projeto",
     "IsActive": "Ativo?",
@@ -537,6 +563,9 @@
     "To": "Status de destino",
     "UpdatedAt": "Atualizado em"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Selecionar pasta"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agente"
   },
@@ -595,8 +624,6 @@
     "CreateFolder": "Crie uma nova pasta de armazenamento",
     "DestinationPath": "Caminho do contêiner (destination)",
     "Folders": "Pastas",
-    "OwnerProject": "Projeto",
-    "OwnerUser": "Usuário",
     "PathAndAliasTooltip": "O caminho dentro do container onde a pasta será montada. Deixe em branco para usar o caminho padrão.",
     "Refresh": "Atualizar",
     "RemoveFolder": "Remover",

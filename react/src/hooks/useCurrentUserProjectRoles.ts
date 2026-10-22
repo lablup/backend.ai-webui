@@ -3,10 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
-import {
-  useCurrentUserProjectRolesQuery,
-  PermissionNestedFilter,
-} from '../__generated__/useCurrentUserProjectRolesQuery.graphql';
+import { useCurrentUserProjectRolesQuery } from '../__generated__/useCurrentUserProjectRolesQuery.graphql';
 import { useCurrentProjectValue } from './useCurrentProject';
 import { useUrlProjectValidity } from './useUrlProjectValidity';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -24,37 +21,17 @@ export interface CurrentUserProjectRolesResult {
 }
 
 /**
- * Hook that reports which projects the user holds a project-admin role in.
- *
- * Managers >= 26.9.0 answer `myRolesV2`: the user's project-scoped roles that
- * carry a `scope_admin` permission. Older managers answer `myRoles`
- * (assignments) filtered on the retired `PROJECT_ADMIN_PAGE` entity. The
- * request transformer strips whichever root field the connected manager does
- * not know, and `@catch(to: RESULT)` keeps general pages rendering when both fail.
- *
- * `@include` / `@skip` mirror the `@since` / `@deprecatedSince` gates so Relay
- * never expects the root field the transformer stripped; otherwise
- * store-or-network refetches (and suspends) on every mount.
+ * Hook that reports which projects the user holds a project-admin role in:
+ * `myRolesV2` filtered to the user's project-scoped roles that carry a
+ * `scope_admin` permission. `@catch(to: RESULT)` keeps general pages
+ * rendering when the query fails.
  */
 export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
   const baiClient = useSuspendedBackendaiClient();
-  const supportsMyRolesV2 =
-    baiClient.isManagerVersionCompatibleWith('26.9.0a4');
-
-  const PROJECT_ADMIN_PAGE = 'PROJECT_ADMIN_PAGE';
-  const legacyPermissionFilter: PermissionNestedFilter = {
-    // Cast confined to the one field the generated type can't model.
-    entityType: {
-      equals: PROJECT_ADMIN_PAGE,
-    } as PermissionNestedFilter['entityType'],
-  };
 
   const data = useLazyLoadQuery<useCurrentUserProjectRolesQuery>(
     graphql`
-      query useCurrentUserProjectRolesQuery(
-        $legacyPermissionFilter: PermissionNestedFilter
-        $supportsMyRolesV2: Boolean!
-      ) {
+      query useCurrentUserProjectRolesQuery {
         projectAdminRoles: myRolesV2(
           first: 100
           filter: {
@@ -62,10 +39,7 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
             mappedScope: { scopeType: { iEquals: "project" } }
             permissions: { some: { entityType: { iEquals: "scope_admin" } } }
           }
-        )
-          @since(version: "26.9.0a4")
-          @include(if: $supportsMyRolesV2)
-          @catch(to: RESULT) {
+        ) @catch(to: RESULT) {
           edges {
             node {
               id
@@ -73,33 +47,9 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
             }
           }
         }
-        legacyRoles: myRoles(
-          first: 100
-          filter: { permission: $legacyPermissionFilter }
-        )
-          @deprecatedSince(version: "26.9.0a4")
-          @skip(if: $supportsMyRolesV2)
-          @catch(to: RESULT) {
-          edges {
-            node {
-              id
-              role {
-                id
-                scopes(first: 1) {
-                  edges {
-                    node {
-                      scopeId
-                      scopeType
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
       }
     `,
-    { legacyPermissionFilter, supportsMyRolesV2 },
+    {},
     {
       // store-or-network keeps the result cached across pages for the session.
       fetchPolicy: 'store-or-network',
@@ -111,16 +61,6 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
     for (const roleEdge of data.projectAdminRoles.value?.edges ?? []) {
       if (roleEdge?.node?.scopeId) {
         ids.add(roleEdge.node.scopeId);
-      }
-    }
-  }
-  if (data.legacyRoles?.ok === true) {
-    for (const assignmentEdge of data.legacyRoles.value?.edges ?? []) {
-      for (const scopeEdge of assignmentEdge?.node?.role?.scopes?.edges ?? []) {
-        const scope = scopeEdge?.node;
-        if (scope?.scopeType?.toUpperCase() === 'PROJECT' && scope.scopeId) {
-          ids.add(scope.scopeId);
-        }
       }
     }
   }

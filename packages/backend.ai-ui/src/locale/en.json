@@ -146,6 +146,34 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Amount"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "Add labels"
+  },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Edit labels"
+  },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "Add label",
+    "AddLabelsToItems": "Add labels ({{count}} selected)",
+    "BulkDescription": "These labels are added to every selected item. An item that already has a key gets the new value; its other labels stay.",
+    "EditLabels": "Edit labels",
+    "Error": "Error",
+    "Key": "Key",
+    "KeyMustBeUnique": "Each key can be used only once.",
+    "KeyRequired": "Enter a key.",
+    "Label": "Label",
+    "LabelsSaved": "Labels saved.",
+    "RemoveLabel": "Remove label",
+    "Save": "Save",
+    "SomeLabelsFailed": "{{count}} label changes failed",
+    "Target": "Target",
+    "TooLong": "Use at most {{max}} characters.",
+    "Value": "Value",
+    "ValueRequired": "Enter a value."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "Labels"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Auto Refresh",
     "EveryHours": "{{count}}h",
@@ -253,7 +281,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "Access Key",
     "CreatedAt": "Created At",
-    "InvalidatedAt": "Invalidated At",
+    "LastAccessedAt": "Last Accessed",
     "User": "User"
   },
   "comp:BAIModal": {
@@ -291,7 +319,6 @@
     "RevisionNumber": "Revision",
     "RevisionNumberTooltip": "The current revision number of the deployment.",
     "StrategyType": "Strategy",
-    "Tags": "Tags",
     "UpdatedAt": "Updated At"
   },
   "comp:BAINameActionCell": {
@@ -319,7 +346,6 @@
     "ContainerRegistryForImageCommit": "Container Registry for Image Commit",
     "CreateProject": "Create Project",
     "Description": "Description",
-    "Domain": "Domain",
     "FailedToCreateProject": "Failed to create a project",
     "FailedToUpdateProject": "Failed to update a project",
     "IsActive": "Is Active?",
@@ -531,6 +557,9 @@
     "To": "To Status",
     "UpdatedAt": "Updated At"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Select Folder"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agent"
   },
@@ -589,8 +618,6 @@
     "CreateFolder": "Create a new storage folder",
     "DestinationPath": "Container path (destination)",
     "Folders": "Folders",
-    "OwnerProject": "Project",
-    "OwnerUser": "User",
     "PathAndAliasTooltip": "The path inside the container where the folder will be mounted. Leave empty to use the default path.",
     "Refresh": "Refresh",
     "RemoveFolder": "Remove",

@@ -5,11 +5,14 @@
 import { createAdminApiContext, gqlAdmin } from '../utils/admin-api';
 import { FolderCreationModal } from '../utils/classes/vfolder/FolderCreationModal';
 import { cleanupVFolderSafely } from '../utils/cleanup-util';
+import { getE2EProjectName } from '../utils/e2e-scope';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import { test, expect } from '@playwright/test';
 
-// The project chosen inside the modal. Without an override, the first project
-// the selector offers: the admin's domain is not 'default' on every cluster.
+// The project chosen inside the modal. Without an override, the admin's own
+// project in its domain (`getE2EProjectName`): the first option the selector
+// offers can be a project with no storage host allowed, and the admin's domain
+// is not 'default' on every cluster.
 const TARGET_PROJECT_OVERRIDE = process.env.E2E_ADMIN_PROJECT_NAME;
 
 test.describe(
@@ -78,14 +81,11 @@ test.describe(
       const projectSelect = page.getByTestId('folder-create-project-select');
       await expect(projectSelect).toBeVisible();
       await projectSelect.click();
-      const targetOption = TARGET_PROJECT_OVERRIDE
-        ? page.getByRole('option', {
-            name: TARGET_PROJECT_OVERRIDE,
-            exact: true,
-          })
-        : page.getByRole('listbox').getByRole('option').first();
-      const targetProject = (await targetOption.innerText()).trim();
-      expect(targetProject).not.toBe('');
+      const targetProject =
+        TARGET_PROJECT_OVERRIDE ?? (await getE2EProjectName());
+      const targetOption = page
+        .getByRole('listbox')
+        .getByRole('option', { name: targetProject, exact: true });
       await targetOption.click();
       await expect(projectSelect).toContainText(targetProject);
 

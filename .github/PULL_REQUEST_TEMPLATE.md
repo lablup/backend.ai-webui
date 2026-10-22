@@ -11,7 +11,7 @@ and how it affects the users and other developers.
 **Checklist:** (if applicable)
 
 - [ ] Documentation
-- [ ] Minium required manager version
+- [ ] Minimum required manager version (the supported floor is `pnpm run dev-env compat`, not a number in the repository)
 - [ ] Specific setting for review (eg., KB link, endpoint or how to setup)
 - [ ] Minimum requirements to check during review
 - [ ] Test case(s) to demonstrate the difference of before/after

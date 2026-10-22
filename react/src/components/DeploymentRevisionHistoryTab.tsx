@@ -10,6 +10,7 @@ import {
 import type { DeploymentRevisionHistoryTab_deployment$key } from '../__generated__/DeploymentRevisionHistoryTab_deployment.graphql';
 import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
+import { useCurrentDomain } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
@@ -22,7 +23,7 @@ import { Link } from '@lablup/ui-common/Link';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIAdminImageSelect,
+  BAIScopedImageSelect,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -174,6 +175,14 @@ const DeploymentRevisionHistoryTab: React.FC<
   // Derive the stopped-category guard from this component's own fragment
   // status rather than receiving it as a prop from the parent.
   const deploymentStatus = deployment?.metadata?.status;
+
+  // Images the deployment's project and public registries reach (ADR 0012).
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
+  const deploymentProjectId = deployment?.metadata?.projectId;
+  const imageFilterScope = deploymentProjectId
+    ? { project: [{ value: deploymentProjectId }], public: true }
+    : { ...domainScope, public: true };
 
   const parseRevisionFilter = (filter: string | null) => {
     if (!filter) return null;
@@ -619,7 +628,8 @@ const DeploymentRevisionHistoryTab: React.FC<
       fixedOperator: 'equals' as const,
       rule: uuidRule,
       renderInput: ({ onAddCondition, value, isDisabled }) => (
-        <BAIAdminImageSelect
+        <BAIScopedImageSelect
+          scope={imageFilterScope}
           label={t('deployment.Image')}
           isLabelHidden
           value={value}

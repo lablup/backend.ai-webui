@@ -146,6 +146,34 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Количество"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "Добавить метки"
+  },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Изменить метки"
+  },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "Добавить метку",
+    "AddLabelsToItems": "Добавить метки к {{count}} элементам",
+    "BulkDescription": "Эти метки будут добавлены ко всем выбранным элементам. Если у элемента уже есть такой ключ, его значение заменится; остальные метки сохранятся.",
+    "EditLabels": "Изменить метки",
+    "Error": "Ошибка",
+    "Key": "Ключ",
+    "KeyMustBeUnique": "Каждый ключ можно использовать только один раз.",
+    "KeyRequired": "Введите ключ.",
+    "Label": "Метка",
+    "LabelsSaved": "Метки сохранены.",
+    "RemoveLabel": "Удалить метку",
+    "Save": "Сохранить",
+    "SomeLabelsFailed": "Не удалось применить изменений меток: {{count}}",
+    "Target": "Объект",
+    "TooLong": "Не более {{max}} символов.",
+    "Value": "Значение",
+    "ValueRequired": "Введите значение."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "Метка"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Автообновление",
     "EveryHours": "{{count}}ч",
@@ -253,7 +281,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "Ключ доступа",
     "CreatedAt": "Создано в",
-    "InvalidatedAt": "Аннулировано в",
+    "LastAccessedAt": "Последний доступ",
     "User": "Пользователь"
   },
   "comp:BAIModal": {
@@ -291,7 +319,6 @@
     "RevisionNumber": "Ревизия",
     "RevisionNumberTooltip": "Текущий номер ревизии развёртывания.",
     "StrategyType": "Стратегия",
-    "Tags": "Теги",
     "UpdatedAt": "Обновлено"
   },
   "comp:BAINameActionCell": {
@@ -319,7 +346,6 @@
     "ContainerRegistryForImageCommit": "Реестр контейнеров для сохранения образа",
     "CreateProject": "Создать проект",
     "Description": "Описание",
-    "Domain": "Домен",
     "FailedToCreateProject": "Не удалось создать проект",
     "FailedToUpdateProject": "Не удалось обновить проект",
     "IsActive": "Активно?",
@@ -531,6 +557,9 @@
     "To": "Целевой статус",
     "UpdatedAt": "Обновлено"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Выбрать папку"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Агент"
   },
@@ -589,8 +618,6 @@
     "CreateFolder": "Создать новую папку для хранения",
     "DestinationPath": "Путь в контейнере (destination)",
     "Folders": "Папки",
-    "OwnerProject": "Проект",
-    "OwnerUser": "Пользователь",
     "PathAndAliasTooltip": "Путь внутри контейнера, в который будет смонтирована папка. Оставьте пустым для использования пути по умолчанию.",
     "Refresh": "Обновить",
     "RemoveFolder": "Удалить",

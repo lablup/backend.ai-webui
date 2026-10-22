@@ -146,6 +146,34 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "จำนวน"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "เพิ่มป้ายกำกับ"
+  },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "แก้ไขป้ายกำกับ"
+  },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "เพิ่มป้ายกำกับ",
+    "AddLabelsToItems": "เพิ่มป้ายกำกับให้ {{count}} รายการ",
+    "BulkDescription": "ป้ายกำกับเหล่านี้จะถูกเพิ่มให้ทุกรายการที่เลือก รายการที่มีคีย์เดียวกันอยู่แล้วจะได้รับค่าใหม่ ส่วนป้ายกำกับอื่นยังคงอยู่",
+    "EditLabels": "แก้ไขป้ายกำกับ",
+    "Error": "ข้อผิดพลาด",
+    "Key": "คีย์",
+    "KeyMustBeUnique": "แต่ละคีย์ใช้ได้เพียงครั้งเดียว",
+    "KeyRequired": "กรุณาป้อนคีย์",
+    "Label": "ป้ายกำกับ",
+    "LabelsSaved": "บันทึกป้ายกำกับแล้ว",
+    "RemoveLabel": "ลบป้ายกำกับ",
+    "Save": "บันทึก",
+    "SomeLabelsFailed": "การเปลี่ยนป้ายกำกับล้มเหลว {{count}} รายการ",
+    "Target": "เป้าหมาย",
+    "TooLong": "ไม่เกิน {{max}} ตัวอักษร",
+    "Value": "ค่า",
+    "ValueRequired": "กรุณาป้อนค่า"
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "ป้ายกำกับ"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "รีเฟรชอัตโนมัติ",
     "EveryHours": "{{count}}ชม.",
@@ -253,7 +281,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "คีย์การเข้าถึง",
     "CreatedAt": "สร้างเมื่อ",
-    "InvalidatedAt": "ถูกยกเลิกเมื่อ",
+    "LastAccessedAt": "เข้าถึงล่าสุด",
     "User": "ผู้ใช้"
   },
   "comp:BAIModal": {
@@ -291,7 +319,6 @@
     "RevisionNumber": "ฉบับแก้ไข",
     "RevisionNumberTooltip": "หมายเลขฉบับแก้ไขปัจจุบันของการปรับใช้",
     "StrategyType": "กลยุทธ์",
-    "Tags": "แท็ก",
     "UpdatedAt": "วันที่อัปเดต"
   },
   "comp:BAINameActionCell": {
@@ -319,7 +346,6 @@
     "ContainerRegistryForImageCommit": "รีจิสทรีคอนเทนเนอร์สำหรับการคอมมิตอิมเมจ",
     "CreateProject": "สร้างโปรเจกต์",
     "Description": "คำอธิบาย",
-    "Domain": "โดเมน",
     "FailedToCreateProject": "ไม่สามารถสร้างโปรเจกต์ได้",
     "FailedToUpdateProject": "ไม่สามารถอัปเดตโปรเจ็กต์ได้",
     "IsActive": "ใช้งานอยู่หรือไม่?",
@@ -531,6 +557,9 @@
     "To": "สถานะปลายทาง",
     "UpdatedAt": "อัปเดตเมื่อ"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "เลือกโฟลเดอร์"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "ตัวแทน"
   },
@@ -589,8 +618,6 @@
     "CreateFolder": "สร้างโฟลเดอร์จัดเก็บใหม่",
     "DestinationPath": "พาธในคอนเทนเนอร์ (destination)",
     "Folders": "โฟลเดอร์",
-    "OwnerProject": "โปรเจกต์",
-    "OwnerUser": "ผู้ใช้",
     "PathAndAliasTooltip": "พาธภายใน container ที่โฟลเดอร์จะถูก mount ปล่อยว่างเพื่อใช้พาธเริ่มต้น",
     "Refresh": "รีเฟรช",
     "RemoveFolder": "ลบ",

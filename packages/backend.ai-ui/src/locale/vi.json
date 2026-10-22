@@ -146,6 +146,34 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Số lượng"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "Thêm nhãn"
+  },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Sửa nhãn"
+  },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "Thêm nhãn",
+    "AddLabelsToItems": "Thêm nhãn cho {{count}} mục",
+    "BulkDescription": "Các nhãn này được thêm vào mọi mục đã chọn. Mục đã có khóa đó sẽ nhận giá trị mới; các nhãn khác được giữ nguyên.",
+    "EditLabels": "Sửa nhãn",
+    "Error": "Lỗi",
+    "Key": "Khóa",
+    "KeyMustBeUnique": "Mỗi khóa chỉ được dùng một lần.",
+    "KeyRequired": "Nhập khóa.",
+    "Label": "Nhãn",
+    "LabelsSaved": "Đã lưu nhãn.",
+    "RemoveLabel": "Xóa nhãn",
+    "Save": "Lưu",
+    "SomeLabelsFailed": "{{count}} thay đổi nhãn thất bại",
+    "Target": "Đối tượng",
+    "TooLong": "Tối đa {{max}} ký tự.",
+    "Value": "Giá trị",
+    "ValueRequired": "Nhập giá trị."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "Nhãn"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Tự động làm mới",
     "EveryHours": "{{count}}h",
@@ -253,7 +281,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "Khóa truy cập",
     "CreatedAt": "Được tạo tại",
-    "InvalidatedAt": "Bị vô hiệu tại",
+    "LastAccessedAt": "Truy cập lần cuối",
     "User": "Người dùng"
   },
   "comp:BAIModal": {
@@ -291,7 +319,6 @@
     "RevisionNumber": "Phiên bản",
     "RevisionNumberTooltip": "Số phiên bản hiện tại của triển khai.",
     "StrategyType": "Chiến lược",
-    "Tags": "Thẻ",
     "UpdatedAt": "Ngày cập nhật"
   },
   "comp:BAINameActionCell": {
@@ -319,7 +346,6 @@
     "ContainerRegistryForImageCommit": "Container Registry cho việc commit image",
     "CreateProject": "Tạo dự án",
     "Description": "Mô tả",
-    "Domain": "Miền",
     "FailedToCreateProject": "Không thể tạo dự án",
     "FailedToUpdateProject": "Không thể cập nhật dự án",
     "IsActive": "Đang hoạt động?",
@@ -531,6 +557,9 @@
     "To": "Trạng thái đích",
     "UpdatedAt": "Cập nhật lúc"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Chọn thư mục"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Đại lý"
   },
@@ -589,8 +618,6 @@
     "CreateFolder": "Tạo một thư mục lưu trữ mới",
     "DestinationPath": "Đường dẫn container (destination)",
     "Folders": "Thư mục",
-    "OwnerProject": "Dự án",
-    "OwnerUser": "Người dùng",
     "PathAndAliasTooltip": "Đường dẫn bên trong container nơi thư mục sẽ được mount. Để trống để sử dụng đường dẫn mặc định.",
     "Refresh": "Làm tươi",
     "RemoveFolder": "Xóa",

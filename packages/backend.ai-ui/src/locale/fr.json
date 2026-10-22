@@ -146,6 +146,34 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Quantité"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "Ajouter des libellés"
+  },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Modifier les libellés"
+  },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "Ajouter un libellé",
+    "AddLabelsToItems": "Ajouter des libellés à {{count}} éléments",
+    "BulkDescription": "Ces libellés sont ajoutés à chaque élément sélectionné. Un élément qui possède déjà la clé reçoit la nouvelle valeur ; ses autres libellés sont conservés.",
+    "EditLabels": "Modifier les libellés",
+    "Error": "Erreur",
+    "Key": "Clé",
+    "KeyMustBeUnique": "Chaque clé ne peut être utilisée qu’une fois.",
+    "KeyRequired": "Saisissez une clé.",
+    "Label": "Libellé",
+    "LabelsSaved": "Libellés enregistrés.",
+    "RemoveLabel": "Supprimer le libellé",
+    "Save": "Enregistrer",
+    "SomeLabelsFailed": "{{count}} modifications de libellés ont échoué",
+    "Target": "Cible",
+    "TooLong": "{{max}} caractères au maximum.",
+    "Value": "Valeur",
+    "ValueRequired": "Saisissez une valeur."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "Libellé"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Actualisation automatique",
     "EveryHours": "{{count}}h",
@@ -253,7 +281,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "Clé d'accès",
     "CreatedAt": "Créé à",
-    "InvalidatedAt": "Invalidé à",
+    "LastAccessedAt": "Dernier accès",
     "User": "Utilisateur"
   },
   "comp:BAIModal": {
@@ -291,7 +319,6 @@
     "RevisionNumber": "Révision",
     "RevisionNumberTooltip": "Le numéro de révision actuel du déploiement.",
     "StrategyType": "Stratégie",
-    "Tags": "Tags",
     "UpdatedAt": "Mis à jour le"
   },
   "comp:BAINameActionCell": {
@@ -319,7 +346,6 @@
     "ContainerRegistryForImageCommit": "Registre de conteneurs pour le commit d'images",
     "CreateProject": "Créer un projet",
     "Description": "Description",
-    "Domain": "Domaine",
     "FailedToCreateProject": "Échec de la création du projet",
     "FailedToUpdateProject": "Échec de la mise à jour du projet",
     "IsActive": "Actif ?",
@@ -531,6 +557,9 @@
     "To": "Statut de destination",
     "UpdatedAt": "Mis à jour le"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Sélectionner un dossier"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agent"
   },
@@ -589,8 +618,6 @@
     "CreateFolder": "Créer un nouveau dossier de stockage",
     "DestinationPath": "Chemin du conteneur (destination)",
     "Folders": "Dossiers",
-    "OwnerProject": "Projet",
-    "OwnerUser": "Utilisateur",
     "PathAndAliasTooltip": "Le chemin à l'intérieur du conteneur où le dossier sera monté. Laissez vide pour utiliser le chemin par défaut.",
     "Refresh": "Rafraîchir",
     "RemoveFolder": "Supprimer",

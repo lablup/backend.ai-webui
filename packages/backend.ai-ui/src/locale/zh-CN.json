@@ -146,6 +146,34 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "数量"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "添加标签"
+  },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "编辑标签"
+  },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "添加标签",
+    "AddLabelsToItems": "为 {{count}} 个项目添加标签",
+    "BulkDescription": "以下标签将添加到所有选中的项目。已有相同键的项目会更新其值，其他标签保持不变。",
+    "EditLabels": "编辑标签",
+    "Error": "错误",
+    "Key": "键",
+    "KeyMustBeUnique": "每个键只能使用一次。",
+    "KeyRequired": "请输入键。",
+    "Label": "标签",
+    "LabelsSaved": "标签已保存。",
+    "RemoveLabel": "删除标签",
+    "Save": "保存",
+    "SomeLabelsFailed": "{{count}} 项标签更改失败",
+    "Target": "对象",
+    "TooLong": "最多输入 {{max}} 个字符。",
+    "Value": "值",
+    "ValueRequired": "请输入值。"
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "标签"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "自动刷新",
     "EveryHours": "{{count}}小时",
@@ -253,7 +281,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "访问密钥",
     "CreatedAt": "创建于",
-    "InvalidatedAt": "失效于",
+    "LastAccessedAt": "最后访问时间",
     "User": "用户"
   },
   "comp:BAIModal": {
@@ -291,7 +319,6 @@
     "RevisionNumber": "修订版本",
     "RevisionNumberTooltip": "部署的当前修订版本号。",
     "StrategyType": "策略",
-    "Tags": "标签",
     "UpdatedAt": "更新时间"
   },
   "comp:BAINameActionCell": {
@@ -319,7 +346,6 @@
     "ContainerRegistryForImageCommit": "用于提交镜像的容器镜像仓库",
     "CreateProject": "创建项目",
     "Description": "描述",
-    "Domain": "域",
     "FailedToCreateProject": "创建项目失败",
     "FailedToUpdateProject": "更新项目失败",
     "IsActive": "是否启用？",
@@ -531,6 +557,9 @@
     "To": "目标状态",
     "UpdatedAt": "更新时间"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "选择文件夹"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "代理人"
   },
@@ -589,8 +618,6 @@
     "CreateFolder": "创建一个新的存储文件夹",
     "DestinationPath": "容器路径 (destination)",
     "Folders": "文件夹",
-    "OwnerProject": "项目",
-    "OwnerUser": "用户",
     "PathAndAliasTooltip": "文件夹在容器内的挂载路径。留空则使用默认路径。",
     "Refresh": "刷新",
     "RemoveFolder": "移除",

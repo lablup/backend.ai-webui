@@ -29,7 +29,6 @@ const availableUserV2SorterKeys = [
   'email',
   'username',
   'status',
-  'domainName',
   'projectName',
   'createdAt',
   'modifiedAt',
@@ -83,6 +82,7 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
       )
       @relay(plural: true) {
         id @required(action: NONE)
+        entityId @since(version: "26.9.0a4")
         basicInfo {
           email
           fullName

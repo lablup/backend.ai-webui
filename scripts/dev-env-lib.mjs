@@ -66,6 +66,42 @@ function describe(entry, label, warnings) {
 const stringOrNull = (value) =>
   typeof value === "string" && value !== "" ? value : null;
 
+// ---- manager lines ----------------------------------------------------------
+
+/** A manager line: the first two numeric components of a version (`26.9.0rc1` → `26.9`). */
+const LINE = /^\d+\.\d+$/;
+
+/** `"main"` (backend.ai's main branch) or a line; what a server `tracks` and what a floor may be. */
+const TRACK = /^(main|\d+\.\d+)$/;
+
+/** What a server's probe says about its version against what it tracks. */
+export const FRESHNESS = ["current", "behind", "unknown"];
+
+/**
+ * The line of a version string, or null when it does not start with
+ * `<digits>.<digits>`: `26.4.13` → `26.4`, `26.9.0rc1` → `26.9`, `x.y.z` → null.
+ */
+export function versionLine(version) {
+  const m = /^\s*v?(\d+)\.(\d+)(?!\d)/.exec(version ?? "");
+  return m ? `${Number(m[1])}.${Number(m[2])}` : null;
+}
+
+/**
+ * Numeric compare of two lines (`26.4` < `26.10`); `"main"` sorts after every
+ * numbered line. The contract compares lines by their two components only, so
+ * this is deliberately not PEP 440: `packages/backend.ai-client/src/pep440.ts`
+ * is TypeScript this script does not load, and a line has no pre-release or
+ * patch to order.
+ */
+export function compareLines(a, b) {
+  if (a === b) return 0;
+  if (a === "main") return 1;
+  if (b === "main") return -1;
+  const [aMajor, aMinor] = a.split(".").map(Number);
+  const [bMajor, bMinor] = b.split(".").map(Number);
+  return aMajor - bMajor || aMinor - bMinor;
+}
+
 /** The board's read-only probe result; `null` when never probed or malformed (one warning). */
 function parseStatus(raw, label, warnings) {
   if (raw == null) return null;
@@ -75,6 +111,11 @@ function parseStatus(raw, label, warnings) {
   }
   if (raw.config != null && !isObject(raw.config)) {
     warnings.push(`${label}: "status.config" is not an object, ignored`);
+  }
+  if (raw.freshness != null && !FRESHNESS.includes(raw.freshness)) {
+    warnings.push(
+      `${label}: "status.freshness" ${JSON.stringify(raw.freshness)} is not one of ${FRESHNESS.join(", ")}, ignored`,
+    );
   }
   return {
     live: raw.live,
@@ -88,6 +129,136 @@ function parseStatus(raw, label, warnings) {
     configFetchedAt: stringOrNull(raw.config_fetched_at),
     configError: stringOrNull(raw.config_error),
     configTruncated: raw.config_truncated === true,
+    // An old board (no `tracks`) sends neither: null, not "unknown".
+    expectedVersion: stringOrNull(raw.expected_version),
+    freshness: FRESHNESS.includes(raw.freshness) ? raw.freshness : null,
+  };
+}
+
+/** `tracks`: `"main"`, a line, or null; anything else is dropped with a warning. */
+function parseTracks(raw, label, warnings) {
+  if (raw == null) return null;
+  if (typeof raw === "string" && TRACK.test(raw.trim())) return raw.trim();
+  warnings.push(
+    `${label}: "tracks" ${JSON.stringify(raw)} is not "main" or a line like "26.9", ignored`,
+  );
+  return null;
+}
+
+/** The board's probe of backend.ai on GitHub: main's VERSION and the newest release per line. */
+function parseUpstream(raw, warnings) {
+  if (raw == null) return null;
+  if (!isObject(raw)) {
+    warnings.push('"upstream" is not an object, ignored');
+    return null;
+  }
+  const lines = {};
+  if (raw.lines != null && !isObject(raw.lines)) {
+    warnings.push('"upstream.lines" is not an object, ignored');
+  } else if (isObject(raw.lines)) {
+    for (const [line, version] of Object.entries(raw.lines)) {
+      if (LINE.test(line) && typeof version === "string" && version !== "") {
+        lines[line] = version;
+      } else {
+        warnings.push(`"upstream.lines" entry ${JSON.stringify(line)} is malformed, ignored`);
+      }
+    }
+  }
+  return {
+    checkedAt: stringOrNull(raw.checked_at),
+    mainVersion: stringOrNull(raw.main_version),
+    lines,
+    error: stringOrNull(raw.error),
+  };
+}
+
+const names = (list) =>
+  list.filter((name) => typeof name === "string" && name !== "");
+
+/**
+ * The board's computed `resolved` block on a policy branch: the range of
+ * manager lines the branch must work on, each with its latest patch and the
+ * live servers on it. Null when absent or malformed (one warning), so
+ * `compatReport` computes the same block itself.
+ */
+function parseResolved(raw, label, warnings) {
+  if (raw == null) return null;
+  const malformed = (what) => {
+    warnings.push(`${label}: "resolved" ${what}, computed here instead`);
+    return null;
+  };
+  if (!isObject(raw)) return malformed("is not an object");
+  if (typeof raw.upper !== "string" || !TRACK.test(raw.upper)) {
+    return malformed('has no "upper"');
+  }
+  if (!Array.isArray(raw.lines) || !Array.isArray(raw.below_floor_servers)) {
+    return malformed('has no "lines" or "below_floor_servers" list');
+  }
+  const lines = [];
+  for (const entry of raw.lines) {
+    if (!isObject(entry) || typeof entry.line !== "string" || !TRACK.test(entry.line) || !Array.isArray(entry.servers)) {
+      return malformed('has a malformed "lines" entry');
+    }
+    lines.push({
+      line: entry.line,
+      latest: stringOrNull(entry.latest),
+      servers: names(entry.servers),
+    });
+  }
+  return {
+    upper: raw.upper,
+    floorVersion: stringOrNull(raw.floor_version),
+    upperVersion: stringOrNull(raw.upper_version),
+    lines,
+    belowFloorServers: names(raw.below_floor_servers),
+  };
+}
+
+/**
+ * `policy.webui.branches`: the manager floor per webui branch. `null` when
+ * the document has no policy (a board older than the contract). A branch
+ * without a valid `min_manager_line` is skipped with a warning; a stored
+ * `target` (the retired first contract) is ignored.
+ */
+function parsePolicy(raw, warnings) {
+  if (raw == null) return null;
+  if (!isObject(raw)) {
+    warnings.push('"policy" is not an object, ignored');
+    return null;
+  }
+  const branches = {};
+  const rawBranches = raw.webui?.branches;
+  if (rawBranches != null && !isObject(rawBranches)) {
+    warnings.push('"policy.webui.branches" is not an object, ignored');
+  }
+  for (const [name, entry] of Object.entries(isObject(rawBranches) ? rawBranches : {})) {
+    const label = `policy branch "${name}"`;
+    if (!TRACK.test(name)) {
+      // resolveCompatBranch can never select such a key, so listing it would mislead.
+      warnings.push(`${label}: not "main" or a release branch like "26.9", skipped`);
+      continue;
+    }
+    if (!isObject(entry)) {
+      warnings.push(`${label}: not an object, skipped`);
+      continue;
+    }
+    const minManagerLine =
+      typeof entry.min_manager_line === "string" ? entry.min_manager_line.trim() : "";
+    if (!TRACK.test(minManagerLine)) {
+      warnings.push(
+        `${label}: "min_manager_line" ${JSON.stringify(entry.min_manager_line)} is not "main" or a line like "26.4", skipped`,
+      );
+      continue;
+    }
+    branches[name] = {
+      minManagerLine,
+      notes: typeof entry.notes === "string" && entry.notes.trim() !== "" ? entry.notes.trim() : null,
+      resolved: parseResolved(entry.resolved, label, warnings),
+    };
+  }
+  return {
+    updatedAt: stringOrNull(raw.updated_at),
+    webui: { branches },
   };
 }
 
@@ -221,6 +392,17 @@ function ago(iso, now) {
   return `${Math.floor(minutes / (24 * 60))}d ago`;
 }
 
+/** `tracks main (current)` / `tracks 26.9 (behind: expected 26.9.4)`, or null for a server that tracks nothing. */
+export function formatTracks(server) {
+  if (!server.tracks) return null;
+  const { freshness, expectedVersion } = server.status ?? {};
+  const state =
+    freshness === "behind"
+      ? `behind: expected ${expectedVersion ?? "unknown"}`
+      : (freshness ?? "freshness unknown");
+  return `tracks ${server.tracks} (${state})`;
+}
+
 /** One line on the server's last probe, for `list`. */
 export function formatStatus(server, now = new Date()) {
   const status = server.status;
@@ -233,6 +415,7 @@ export function formatStatus(server, now = new Date()) {
       [
         "live",
         status.managerVersion ? `manager ${status.managerVersion}` : null,
+        formatTracks(server),
         `checked ${ago(status.checkedAt, now)}`,
       ]
         .filter(Boolean)
@@ -331,6 +514,7 @@ export function parseCatalog(body) {
       name: raw.name,
       endpoint,
       ...describe(raw, label, warnings),
+      tracks: parseTracks(raw.tracks, label, warnings),
       status: parseStatus(raw.status, label, warnings),
       accounts: [],
     };
@@ -348,8 +532,258 @@ export function parseCatalog(body) {
   return {
     updatedAt: typeof body.updated_at === "string" ? body.updated_at : null,
     servers,
+    upstream: parseUpstream(body.upstream, warnings),
+    policy: parsePolicy(body.policy, warnings),
     warnings,
   };
+}
+
+// ---- manager compatibility policy -----------------------------------------
+
+/** The policy branch a git branch reads: a release branch (`26.9`) is itself, anything else is `main`. */
+export function resolveCompatBranch(gitBranch) {
+  const name = (gitBranch ?? "").trim();
+  return LINE.test(name) ? name : "main";
+}
+
+/** The upper bound of a branch's range: webui `main` → manager `main`, webui `X.Y` → manager line `X.Y`. */
+export function upperLineOf(branchName) {
+  return branchName === "main" ? "main" : branchName;
+}
+
+/** The newest version upstream knows for a line, or null; `"main"` is backend.ai main's VERSION. */
+function latestOf(upstream, line) {
+  if (!upstream) return null;
+  return line === "main" ? upstream.mainVersion : (upstream.lines[line] ?? null);
+}
+
+/**
+ * The board's `resolved` block computed from the servers and `upstream` here,
+ * for a board that sent none. Numbered lines come from `upstream.lines` (plus
+ * the floor and the upper bound themselves, and the lines live servers run
+ * when there is no upstream); `main` closes the range of webui main.
+ */
+function resolveLocally(catalog, branchName, floor) {
+  const upper = upperLineOf(branchName);
+  const live = catalog.servers.filter((server) => server.status?.live === true);
+  const lineOf = (server) => versionLine(server.status.managerVersion);
+  const onMain = (server) => server.tracks === "main";
+  const inRange = (line) =>
+    compareLines(line, floor) >= 0 && compareLines(line, upper) <= 0;
+
+  const candidates = new Set();
+  if (floor !== "main") {
+    candidates.add(floor);
+    if (upper !== "main") candidates.add(upper);
+    const known = catalog.upstream
+      ? Object.keys(catalog.upstream.lines)
+      : live.filter((server) => !onMain(server)).map(lineOf).filter((line) => line !== null);
+    for (const line of known) candidates.add(line);
+  }
+  const lines = [...candidates]
+    .filter(inRange)
+    .sort(compareLines)
+    .map((line) => ({
+      line,
+      latest: latestOf(catalog.upstream, line),
+      servers: live.filter((server) => !onMain(server) && lineOf(server) === line).map((s) => s.name),
+    }));
+  if (upper === "main") {
+    lines.push({
+      line: "main",
+      latest: latestOf(catalog.upstream, "main"),
+      servers: live.filter(onMain).map((server) => server.name),
+    });
+  }
+  // Below "main" means below the line main's VERSION names, for servers not built from main.
+  const floorLine = floor === "main" ? versionLine(latestOf(catalog.upstream, "main")) : floor;
+  const belowFloorServers =
+    floorLine === null
+      ? []
+      : live
+          .filter((server) => {
+            const line = lineOf(server);
+            return !onMain(server) && line !== null && compareLines(line, floorLine) < 0;
+          })
+          .map((server) => server.name);
+  return {
+    upper,
+    floorVersion: latestOf(catalog.upstream, floor),
+    upperVersion: latestOf(catalog.upstream, upper),
+    lines,
+    belowFloorServers,
+  };
+}
+
+/**
+ * What `compat` reports for a policy branch: `{ maintained: false }` when the
+ * policy has no entry for it, else the floor and the resolved range — the
+ * lines from the floor to the branch's own line, each with its latest patch
+ * and live servers — as the board resolved it or, failing that, computed here.
+ * `gateFloorLine` is the line gates are compared against: the floor, or for a
+ * floor of `main` the line of main's VERSION (null when upstream is unknown).
+ */
+export function compatReport(catalog, branchName) {
+  const branch = catalog.policy?.webui.branches[branchName];
+  if (!branch) {
+    return {
+      branch: branchName,
+      maintained: false,
+      maintainedBranches: Object.keys(catalog.policy?.webui.branches ?? {}),
+    };
+  }
+  const floor = branch.minManagerLine;
+  const resolved = branch.resolved ?? resolveLocally(catalog, branchName, floor);
+  const mainVersion = resolved.lines.find((entry) => entry.line === "main")?.latest ?? latestOf(catalog.upstream, "main");
+  return {
+    branch: branchName,
+    maintained: true,
+    floor,
+    notes: branch.notes,
+    ...resolved,
+    gateFloorLine: floor === "main" ? versionLine(mainVersion) : floor,
+  };
+}
+
+/** Where `compat` looks for version gates; `__generated__`, tests, stories and `.doc.*` catalogs are skipped. */
+export const GATE_SCAN_DIRS = [
+  "react/src",
+  "packages/backend.ai-ui/src",
+  "packages/backend.ai-client/src",
+];
+
+export const GATE_SCAN_EXTENSIONS = [".ts", ".tsx", ".js", ".jsx", ".mjs"];
+
+export function isGateScanFile(relativePath) {
+  const name = relativePath.split("/").pop();
+  return (
+    GATE_SCAN_EXTENSIONS.some((ext) => name.endsWith(ext)) &&
+    !relativePath.split("/").includes("__generated__") &&
+    // `.doc.ts` is a component's Astryx catalog entry: prose and examples, not a gate.
+    !/\.(test|spec|stories|doc)\./.test(name)
+  );
+}
+
+const GATE_PATTERNS = [
+  // isManagerVersionCompatibleWith('26.9.0') and the backport array form.
+  {
+    kind: "isManagerVersionCompatibleWith",
+    regex: /isManagerVersionCompatibleWith\(\s*(?:(['"])([^'"]*)\1|\[([^\]]*)\])/g,
+    versions: (m) => (m[3] !== undefined ? quoted(m[3]) : [m[2]]),
+  },
+  {
+    kind: "@since",
+    regex: /@since\(\s*version:\s*"([^"]*)"/g,
+    versions: (m) => [m[1]],
+  },
+  {
+    kind: "@deprecatedSince",
+    regex: /@deprecatedSince\(\s*version:\s*"([^"]*)"/g,
+    versions: (m) => [m[1]],
+  },
+  {
+    kind: "@sinceMultiple",
+    regex: /@sinceMultiple\(\s*versions:\s*\[([^\]]*)\]/g,
+    versions: (m) => quoted(m[1]),
+  },
+  {
+    kind: "@deprecatedSinceMultiple",
+    regex: /@deprecatedSinceMultiple\(\s*versions:\s*\[([^\]]*)\]/g,
+    versions: (m) => quoted(m[1]),
+  },
+];
+
+function quoted(list) {
+  return [...list.matchAll(/(['"])([^'"]*)\1/g)].map((m) => m[2]);
+}
+
+/**
+ * Every version gate in `source`, with its 1-based line: `{ line, kind,
+ * versions, lines }`. `lines` drops a version that is not `<digits>.<digits>…`
+ * (a test's `x.y.z`), so a gate whose versions are all such is reported with
+ * no lines and never counts as deletable.
+ */
+export function findVersionGates(source) {
+  const gates = [];
+  for (const { kind, regex, versions } of GATE_PATTERNS) {
+    for (const m of source.matchAll(regex)) {
+      const found = versions(m);
+      gates.push({
+        line: source.slice(0, m.index).split("\n").length,
+        kind,
+        versions: found,
+        lines: found.map(versionLine).filter((line) => line !== null),
+      });
+    }
+  }
+  return gates.sort((a, b) => a.line - b.line);
+}
+
+/**
+ * ADR 0010's deletion rule: a gate is at or below the floor when every one
+ * of its lines is; a backport array with one newer entry stays.
+ */
+export function isGateAtOrBelowFloor(gate, floorLine) {
+  return (
+    gate.lines.length > 0 &&
+    gate.lines.every((line) => compareLines(line, floorLine) <= 0)
+  );
+}
+
+/** Human-readable `compat` output; `gates` is `[{ file, line, kind, versions }]` already filtered to the floor. */
+export function formatCompatReport(report, gates, { gitBranch } = {}) {
+  const detected =
+    gitBranch && gitBranch !== report.branch
+      ? ` (git branch ${gitBranch})`
+      : "";
+  const lines = [`branch: ${report.branch}${detected}`];
+  if (!report.maintained) {
+    lines.push(
+      `policy: not maintained — the catalog policy has no entry for "${report.branch}"` +
+        (report.maintainedBranches.length > 0
+          ? `; maintained: ${report.maintainedBranches.join(", ")}`
+          : "; it has no branches at all"),
+    );
+    return lines.join("\n");
+  }
+  const describe = (line, version) =>
+    line === "main"
+      ? `main (backend.ai main branch${version ? `, ${version}` : ""})`
+      : `${line} line${version ? ` (latest patch ${version})` : ""}`;
+  lines.push(`floor: ${describe(report.floor, report.floorVersion)}`);
+  lines.push(
+    `range: ${report.floor} … ${report.upper}` +
+      (report.upper !== report.floor && report.upperVersion ? ` (${report.upperVersion})` : "") +
+      ", every line at its latest patch",
+  );
+  const width = Math.max(...report.lines.map((entry) => `${entry.line} (${entry.latest ?? "?"})`.length), 0);
+  for (const entry of report.lines) {
+    const label = `${entry.line} (${entry.latest ?? "?"})`.padEnd(width);
+    lines.push(`  ${label}  ${entry.servers.length > 0 ? entry.servers.join(", ") : "— no server"}`);
+  }
+  if (report.belowFloorServers.length > 0) {
+    lines.push(`below the floor: ${report.belowFloorServers.join(", ")}`);
+  }
+  if (report.notes) lines.push(`notes: ${report.notes}`);
+  const gaps = report.lines.filter((entry) => entry.servers.length === 0).map((entry) => entry.line);
+  if (gaps.length > 0) {
+    lines.push(`warning: no live server on ${gaps.join(", ")} — coverage gap`);
+  }
+  lines.push("");
+  if (report.gateFloorLine === null) {
+    lines.push("gates at or below the floor: unknown — the floor is main and upstream has no main version");
+  } else {
+    const at = `the ${report.gateFloorLine} line` + (report.floor === "main" ? " (main's VERSION)" : "");
+    if (gates.length === 0) {
+      lines.push(`gates at or below ${at}: none`);
+    } else {
+      lines.push(`gates at or below ${at} (${gates.length}; deletable per ADR 0010):`);
+      for (const gate of gates) {
+        lines.push(`  ${gate.file}:${gate.line}  ${gate.kind}(${gate.versions.join(", ")})`);
+      }
+    }
+  }
+  return lines.join("\n");
 }
 
 /** The catalog without passwords — what `list` prints and an agent reads to choose. */
