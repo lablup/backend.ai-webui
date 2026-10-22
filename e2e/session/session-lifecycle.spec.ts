@@ -1,7 +1,10 @@
 import { SessionDetailPage } from '../utils/classes/session/SessionDetailPage';
 import { SessionLauncher } from '../utils/classes/session/SessionLauncher';
-import { loginAsAdmin, navigateTo } from '../utils/test-util';
-import { test, expect } from '@playwright/test';
+import { loginAsAdmin, loginAsUser, navigateTo } from '../utils/test-util';
+import { setupGraphQLMocks } from './mocking/graphql-interceptor';
+import { sessionDetailMockResponse } from './mocking/session-detail-mock';
+import { createMockSessionNode } from './mocking/session-list-mock';
+import { test, expect, type Page } from '@playwright/test';
 
 // NOTE: These tests are currently marked as test.fixme() due to Backend.AI infrastructure limitations.
 // The tests themselves are correct and properly structured. The issue is that the test environment
@@ -338,6 +341,145 @@ test.describe(
 
       // Cleanup
       await sessionDetailPage.terminateSession(createdSessionName);
+    });
+  },
+);
+
+// The header session monitor is an experimental user setting (off by default).
+const setSessionMonitorEnabled = async (page: Page, enabled: boolean) => {
+  await navigateTo(page, 'usersettings');
+  const settingsDialog = page.getByRole('dialog', { name: 'Settings & Logs' });
+  const checkbox = page
+    .getByTestId('items-experimental-session-monitor')
+    .getByRole('checkbox', { name: 'Session monitor' });
+  await checkbox.setChecked(enabled);
+  await settingsDialog.getByRole('button', { name: 'Close' }).click();
+  await expect(settingsDialog).toBeHidden();
+};
+
+const sessionMonitorChip = (page: Page) =>
+  page.getByTestId('button-session-monitor');
+
+const readChipSessionCount = async (page: Page) => {
+  const text = await sessionMonitorChip(page).innerText();
+  const match = text.match(/Sessions\s+(\d+)/);
+  return match ? Number(match[1]) : NaN;
+};
+
+// The user's own sessions that are neither TERMINATED nor CANCELLED.
+const countOwnUnfinishedSessions = (page: Page) =>
+  page.evaluate(async () => {
+    const client = (globalThis as any).backendaiclient;
+    const { user } = await client.query('query { user { uuid } }', {});
+    const result = await client.query(
+      `query ($scopeId: ScopeField, $filter: String) {
+        compute_session_nodes(scope_id: $scopeId, filter: $filter, first: 0) {
+          count
+        }
+      }`,
+      {
+        scopeId: `user:${user.uuid}`,
+        filter: 'status != "TERMINATED" & status != "CANCELLED"',
+      },
+    );
+    return result.compute_session_nodes.count as number;
+  });
+
+test.describe(
+  'Session Monitor in the header',
+  { tag: ['@regression', '@session', '@functional'] },
+  () => {
+    test('User can enable the session monitor and see their unfinished session count in the header', async ({
+      page,
+      request,
+    }) => {
+      await loginAsUser(page, request);
+      await navigateTo(page, 'session');
+      await expect(sessionMonitorChip(page)).toBeHidden();
+
+      await setSessionMonitorEnabled(page, true);
+      await expect(sessionMonitorChip(page)).toBeVisible();
+      await expect(sessionMonitorChip(page)).toContainText(/Sessions \d+/);
+
+      // The chip polls once a minute; reload until it catches up with the API.
+      await expect(async () => {
+        const expected = await countOwnUnfinishedSessions(page);
+        const shown = await readChipSessionCount(page);
+        if (shown !== expected) {
+          await page.reload();
+          await expect(sessionMonitorChip(page)).toContainText(/Sessions \d+/);
+        }
+        expect(await readChipSessionCount(page)).toBe(expected);
+      }).toPass({ timeout: 60_000 });
+
+      await setSessionMonitorEnabled(page, false);
+      await expect(sessionMonitorChip(page)).toBeHidden();
+    });
+
+    test('User can open a watched session in the detail drawer from the session monitor popover', async ({
+      page,
+      request,
+    }) => {
+      // The test server cannot run sessions, so the watched sessions and the
+      // opened session's detail are mocked.
+      const runningSession = createMockSessionNode();
+      const startingSession = createMockSessionNode({
+        id: btoa('ComputeSessionNode:mock-session-uuid-002'),
+        row_id: 'mock-session-uuid-002',
+        name: 'mock-session-monitor-starting',
+        status: 'PENDING',
+        agent_ids: [],
+        occupied_slots: '{}',
+        kernel_nodes: { __typename: 'KernelConnection', edges: [] },
+      });
+      const watched = [runningSession, startingSession];
+      await setupGraphQLMocks(page, {
+        useSessionMonitorQuery: (variables) => ({
+          matching: { count: watched.length },
+          ...(variables.withBreakdown && {
+            runningCount: { count: 1 },
+          }),
+          ...((variables.withBreakdown || variables.withStarting) && {
+            startingCount: { count: 1 },
+          }),
+          ...(variables.withErrors && { errorCount: { count: 0 } }),
+          ...(variables.withEntries && {
+            compute_session_nodes: {
+              edges: watched.map((node) => ({ node })),
+            },
+          }),
+        }),
+        SessionDetailContentQuery: sessionDetailMockResponse,
+      });
+
+      await loginAsUser(page, request);
+      await setSessionMonitorEnabled(page, true);
+      await navigateTo(page, 'data');
+      // The data page redirects to its project-scoped path; wait for it to settle.
+      await expect(page).toHaveURL(/\/project\/[^/]+\/data\/?$/);
+      const pathBefore = new URL(page.url()).pathname.replace(/\/$/, '');
+
+      await expect(sessionMonitorChip(page)).toContainText('Sessions 2');
+      await sessionMonitorChip(page).click();
+
+      const popover = page.getByTestId('session-monitor-popover');
+      await expect(popover).toBeVisible();
+      await expect(popover).toContainText('Session monitor');
+      await expect(popover).toContainText('1 running');
+      await expect(popover).toContainText('1 starting');
+      await expect(
+        popover.getByRole('button', { name: 'mock-session-monitor-starting' }),
+      ).toBeVisible();
+
+      await popover
+        .getByRole('button', { name: String(runningSession.name) })
+        .click();
+
+      const drawer = page.getByRole('dialog', { name: 'Session Info' });
+      await expect(drawer).toBeVisible();
+      await expect(drawer).toContainText(String(runningSession.name));
+      await expect(popover).toBeHidden();
+      expect(new URL(page.url()).pathname.replace(/\/$/, '')).toBe(pathBefore);
     });
   },
 );
