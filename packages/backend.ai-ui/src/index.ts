@@ -35,10 +35,7 @@ export * from './app-shim';
 // `Form` is exported as a NAMED export only — BUI has no default export — and
 // `react/src/form-engine` re-exports it for app files.
 export * from './form-engine';
-// The `locale` prop shape for `<BAIConfigProvider>`. Hosts used to reach the
-// per-language modules under `backend.ai-ui/dist/locale/*` for this; that
-// package export existed only to ship antd `Locale` bundles and went away with
-// the ConfigProvider layer (to-astryx final switch), so the type is published
-// from the main entry instead. The i18next INSTANCE stays unexported on
-// purpose — BUI components bind to it explicitly via `useBAIi18n()`.
+// The `locale` prop shape for `<BAIConfigProvider>`; the per-language values
+// are the `backend.ai-ui/locale/*` export. The i18next INSTANCE stays unexported
+// on purpose — BUI components bind to it explicitly via `useBAIi18n()`.
 export type { BAILocale } from './locale';

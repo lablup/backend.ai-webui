@@ -301,9 +301,7 @@ check_astryx_theme_built() {
   # The committed `astryx theme build` artifacts under
   # react/src/astryx-theme/built/ must match the theme source; `-c` recompiles
   # in memory and exits non-zero on drift. Rebuild procedure: built/index.ts.
-  # The theme source imports `backend.ai-ui`, which Node resolves to its dist
-  # (the source needs the Relay transform, which jiti lacks), so rebuild a
-  # dist that is missing or older than anything it is built from.
+  # Node resolves the theme's `backend.ai-ui` import to dist (ADR 0013 §4).
   local bui=packages/backend.ai-ui
   local stamp="$bui/dist/backend.ai-ui.js"
   if [ ! -f "$stamp" ] || [ -n "$(find "$bui/src" "$bui/package.json" \

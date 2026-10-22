@@ -768,7 +768,7 @@ export default defineConfig(({ command, mode }) => {
         'i18next',
         'react-i18next',
       ],
-      // Setting `conditions` replaces Vite's defaults, so spread them back.
+      // Replaces Vite's defaults, hence the spread (ADR 0013).
       conditions: ['@backend.ai/source', ...defaultClientConditions],
       // Array form lets us mix regex aliases (for `src/` baseUrl imports) with
       // the workspace-package aliases. `find` is matched against the import
@@ -894,8 +894,8 @@ export default defineConfig(({ command, mode }) => {
       open: false,
       allowedHosts: allowedHosts,
       fs: {
-        // The whole monorepo (workspace sources, `../dist/lib`) and the pnpm
-        // global store — see `resolvePnpmStorePath`.
+        // The whole monorepo (workspace package sources) and the pnpm global
+        // store — see `resolvePnpmStorePath`.
         allow: [projectRoot, ...(pnpmStorePath ? [pnpmStorePath] : [])],
       },
       watch: {

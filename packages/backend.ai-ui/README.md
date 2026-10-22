@@ -35,8 +35,9 @@ BUI has **no antd in its source, its peers, or its types**. The last of it went
 in the to-astryx final switch, which removed the antd `ConfigProvider` leg of
 `BAIConfigProvider` and, with it, the 21 `src/locale/*_*.ts` modules that
 existed only to hand antd's `Locale` bundles to that provider (they were also
-the `backend.ai-ui/dist/locale/*` package export — that export is gone too, see
-"Localization" below).
+the `backend.ai-ui/dist/locale/*` package export). The per-language modules
+that exist today are a different export, `backend.ai-ui/locale/*`, which
+carries Astryx's catalogs instead — see "Localization" below.
 
 The path here is worth knowing, because the intermediate states are still
 visible in comments across the package:
@@ -72,8 +73,8 @@ import 'backend.ai-ui/styles.css';
 ```
 
 `src/index.ts` imports it too, so consumers that bundle BUI **from source**
-(this repo's `react/` app does — see the `backend.ai-ui` → `src` alias in
-`react/vite.config.ts`) get it through the module graph and need no explicit
+(this repo's `react/` app does, through the `@backend.ai/source` export
+condition — ADR 0013) get it through the module graph and need no explicit
 import. Consumers of the built `dist` must import it: a Vite/Rollup library
 build strips CSS imports out of the emitted JS and writes
 `dist/backend.ai-ui.css` beside it.
@@ -272,12 +273,11 @@ const App = ({ children }) => {
 };
 ```
 
-> Until the to-astryx final switch this was `import en_US from
-'backend.ai-ui/dist/locale/en_US'`, one of 21 published per-language modules.
-> Each carried an `antd/es/locale/*` bundle in `BAILocale.antdLocale`, whose
-> only consumer was antd `ConfigProvider`'s `locale` prop. With that provider
-> gone the modules, the `./dist/locale/*` package export and the field were all
-> removed rather than left as dead surface.
+> A host that also wants Astryx's built-in strings translated imports the
+> per-language module instead: `import ko_KR from 'backend.ai-ui/locale/ko_KR'`
+> gives `{ lang, astryxLocale }` (`react/src/helper/bui-language.ts`). Until the
+> to-astryx final switch these modules lived at `backend.ai-ui/dist/locale/*`
+> and carried antd bundles in `BAILocale.antdLocale`; that field is gone.
 
 ### How many i18n runtimes are there? (P13)
 

@@ -91,7 +91,7 @@ flowchart LR
 
 ## Consequences
 
-- **One place to change**: BUI의 진입점이나 subpath가 바뀌면 `package.json`의 `exports`만 고친다.
+- **Resolution in one place**: react의 세 resolver가 BUI를 어디로 resolve할지는 `package.json`의 `exports`가 정한다. BUI의 진입점이나 subpath를 바꾸는 PR은 그 밖에 BUI `vite.config.ts`의 lib `entries`(dist build), `react/vite.config.ts`의 `server.warmup` 경로, `react/eslint.config.js`의 `!backend.ai-ui/<subpath>` 허용 목록도 맞춘다.
 - **Dist-free app path**: react의 `tsc`, vitest, `vite build`, dev server는 `dist/`가 없어도 동작한다.
 - **BUI-only type errors**: react가 import하지 않는 BUI 파일의 type error는 BUI lane만 잡는다.
 - **Slow first verify after BUI edits**: test·story·`.mdx`가 아닌 BUI source를 바꾼 뒤의 첫 `verify.sh`는 theme lane에서 BUI를 다시 build한다.
@@ -100,8 +100,9 @@ flowchart LR
 
 - Node.js [Conditional exports](https://nodejs.org/api/packages.html#conditional-exports), TypeScript [`customConditions`](https://www.typescriptlang.org/tsconfig/#customConditions), Vite [`resolve.conditions`](https://vite.dev/config/shared-options#resolve-conditions).
 - FR-1331 (a1d8755c49) — BUI test를 react program에서 뺀 `exclude`.
+- GitHub: #10409, PR #10410.
 - 결정일: 2026-10-18.
-- 관련: ADR 0009 (BUI와 `react/`가 Astryx를 import하는 경로).
+- 관련: [ADR 0009](0009-ui-common-as-the-single-entry-point-to-astryx.md) (BUI와 `react/`가 Astryx를 import하는 경로).
 
 ## 용어
 
