@@ -553,6 +553,8 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
       <FolderCreateModalV2
         open={isOpenCreateModal}
         project={project}
+        // The route is project-admin scoped, so AutoMount is offered here.
+        allowAutoMount
         alertMessage={t('data.folders.ProjectAdminDataPageAlert')}
         onRequestClose={(result) => {
           toggleCreateModal();

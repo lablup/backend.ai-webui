@@ -122,6 +122,7 @@ const renderModal = (
   project: { id: string; name: string } | null,
   onRequestClose = vi.fn(),
   initialValues?: Record<string, unknown>,
+  allowAutoMount?: boolean,
 ) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
   render(
@@ -129,6 +130,7 @@ const renderModal = (
       <FolderCreateModalV2
         open
         project={project}
+        allowAutoMount={allowAutoMount}
         initialValues={initialValues}
         onRequestClose={onRequestClose}
       />
@@ -176,6 +178,7 @@ describe('FolderCreateModalV2 project prop contract (ADR-0001)', () => {
       { id: 'fixed-project-id', name: 'fixed-project-name' },
       vi.fn(),
       { usage_mode: 'automount' },
+      true,
     );
 
     expect(screen.getByTestId('automount-usage-mode')).toBeInTheDocument();
@@ -193,6 +196,27 @@ describe('FolderCreateModalV2 project prop contract (ADR-0001)', () => {
       name: '.contract-folder',
       usageMode: 'GENERAL',
     });
+  });
+
+  it('does not offer AutoMount unless the page allows it', async () => {
+    const user = userEvent.setup();
+    const { environment } = renderModal(
+      { id: 'fixed-project-id', name: 'fixed-project-name' },
+      vi.fn(),
+      { usage_mode: 'automount' },
+    );
+
+    expect(
+      screen.queryByTestId('automount-usage-mode'),
+    ).not.toBeInTheDocument();
+    await fillFolderNameAndSubmit(user, 'contract-folder');
+
+    await waitFor(() => {
+      expect(environment.mock.getAllOperations()).toHaveLength(1);
+    });
+    expect(
+      environment.mock.getMostRecentOperation().request.variables.input,
+    ).toMatchObject({ name: 'contract-folder', usageMode: 'GENERAL' });
   });
 
   it('ignores a caller `initialValues.group` that disagrees with the `project` prop', async () => {

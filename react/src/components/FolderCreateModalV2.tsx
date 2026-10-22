@@ -88,6 +88,11 @@ export interface FolderCreateModalProps extends Omit<
    */
   folderType?: 'model_project';
   /**
+   * Offers the AutoMount usage mode. The page decides: a personal project, or
+   * a project admin on the project admin Data page.
+   */
+  allowAutoMount?: boolean;
+  /**
    * Optional banner above the form for caller-specific constraints,
    * rendered as an Astryx `Banner status="warning"`.
    */
@@ -100,6 +105,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
   initialValidate = false,
   initialValues: initialValuesFromProps = {},
   folderType,
+  allowAutoMount = false,
   alertMessage,
   ...modalProps
 }) => {
@@ -156,6 +162,9 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
     ...INITIAL_FORM_VALUES,
     ...initialValuesFromProps,
     ...folderTypePreset,
+    ...(!allowAutoMount && initialValuesFromProps.usage_mode === 'automount'
+      ? { usage_mode: 'general' as const }
+      : {}),
     // Fixed mode: the `project` prop wins over any caller `initialValues.group`.
     ...(project ? { group: project.id } : {}),
   };
@@ -448,16 +457,20 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                   label: t('data.Models'),
                   'data-testid': 'model-usage-mode',
                 },
-                {
-                  value: 'automount',
-                  label: t('data.AutoMount'),
-                  'data-testid': 'automount-usage-mode',
-                  endContent: (
-                    <BAIQuestionIconWithTooltip
-                      title={t('data.AutomountFolderCreationDesc')}
-                    />
-                  ),
-                },
+                ...(allowAutoMount
+                  ? [
+                      {
+                        value: 'automount',
+                        label: t('data.AutoMount'),
+                        'data-testid': 'automount-usage-mode',
+                        endContent: (
+                          <BAIQuestionIconWithTooltip
+                            title={t('data.AutomountFolderCreationDesc')}
+                          />
+                        ),
+                      },
+                    ]
+                  : []),
               ]}
             />
           </BAIFormItem>

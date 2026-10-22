@@ -23,6 +23,7 @@ import { convertToOrderBy, handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useIsPersonalProject } from '../hooks/useAccessibleProjects';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCreateActionArrival } from '../hooks/useCreateActionArrival';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -152,6 +153,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const isLabelable = useIsLabelableEntityType('vfolder');
   const currentProject = useCurrentProjectValue();
   const projectContext = toProjectContext(currentProject);
+  const isPersonalProject = useIsPersonalProject(currentProject.id);
   const [currentUser] = useCurrentUserInfo();
   const baiClient = useSuspendedBackendaiClient();
   const [invitations] = useVFolderInvitations();
@@ -603,6 +605,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
       <FolderCreateModalV2
         open={isOpenCreateModal}
         project={projectContext}
+        allowAutoMount={isPersonalProject}
         initialValues={{
           usage_mode:
             queryParams.mode === 'model'

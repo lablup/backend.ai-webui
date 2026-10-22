@@ -24,7 +24,7 @@ test(
 
 // ported from: e2e/vfolder/vfolder-type-selection.spec.ts › Auto Mount is not offered for project folders
 test(
-  "the user creates an Auto Mount folder in the current project",
+  "the user creates an Auto Mount folder in their personal project",
   {
     session: "admin",
     tags: ["draft"],
@@ -32,6 +32,35 @@ test(
   },
   async ({ app, agent }) => {
     await app.open("/data");
+    await agent.act(
+      'Choose your own project under "Personal" in the header "Project" selector',
+    );
+    await agent.act('Press "Create Folder"');
+    await agent.act('Choose "Auto Mount" as the usage mode');
+    await agent.act(
+      'Enter a folder name that starts with a dot in the "Folder name" field',
+    );
+    await agent.act('Press "Create"');
+  },
+);
+
+test(
+  "Auto Mount is offered for a shared project only on the project admin Data page",
+  {
+    session: "admin",
+    tags: ["draft"],
+    skip: "draft: act-only flow from #10501, awaiting completion by automation",
+  },
+  async ({ app, agent }) => {
+    await app.open("/data");
+    await agent.act(
+      'Choose a shared (non-personal) project in the header "Project" selector',
+    );
+    await agent.act('Press "Create Folder"');
+    await agent.act(
+      'Check that "Auto Mount" is not offered as a usage mode, then press "Cancel"',
+    );
+    await app.open("/project-data");
     await agent.act('Press "Create Folder"');
     await agent.act('Choose "Auto Mount" as the usage mode');
     await agent.act(
