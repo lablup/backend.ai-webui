@@ -94,8 +94,6 @@ export { default as BAIProjectResourceGroupSelect } from './BAIProjectResourceGr
 export { default as BAITextHighlighter } from './BAITextHighlighter';
 export { default as BAIBooleanToken } from './BAIBooleanToken';
 export type { BAIBooleanTokenProps } from './BAIBooleanToken';
-export { default as BAIUserNodes, availableUserSorterValues, } from './BAIUserNodes';
-export type { UserNodeInList } from './BAIUserNodes';
 export { default as BAIAdminUserV2Table, availableUserV2SorterValues, } from './BAIAdminUserV2Table';
 export type { UserV2InList } from './BAIAdminUserV2Table';
 export { default as BAILoginHistoryTable, availableLoginHistorySorterValues, loginResultFilterOptions, } from './BAILoginHistoryTable';
