@@ -17,12 +17,12 @@ import {
   logout,
   modifyConfigToml,
   navigateTo,
-  userInfo,
   webServerEndpoint,
   webuiEndpoint,
 } from '../utils/test-util';
 import {
   clickRowAction,
+  createUserMoreButton,
   navigateToUsersPage,
 } from '../utils/user-profile-util';
 import test, {
@@ -427,10 +427,6 @@ test.describe.serial(
   },
 );
 
-/** The global id of a Strawberry node is base64 `Type:<uuid>`. */
-const toRawUUID = (globalId: string) =>
-  Buffer.from(globalId, 'base64').toString().split(':')[1];
-
 /** `26.9.0a4` → comparable tuple; a release sorts after its rc/b/a builds. */
 function parseManagerVersion(version: string): Array<number> {
   const m = version.match(/^v?(\d+)\.(\d+)\.(\d+)(?:(a|b|rc)(\d+))?/);
@@ -472,161 +468,88 @@ function recordUserListResponses(page: Page): Array<UserListOperation> {
   return operations;
 }
 
-const HIDDEN_USER_ACTIONS = [
-  'Edit',
-  'Deactivate',
-  'Activate',
-  'Unblock login',
-  'Permanently Delete',
-];
-
 /**
- * Asserts a user row offers User Detail but none of the management actions,
- * whether they render inline or fold into the row's "More actions" menu.
+ * Asserts a BAINameActionCell row offers each named action, either as an
+ * inline button or as an item of the row's "More actions" menu, and that
+ * every `menuOnly` action sits in that menu.
  */
-async function expectRowWithoutManagementActions(page: Page, row: Locator) {
-  const detailButton = row.getByRole('button', {
-    name: 'User Detail',
-    exact: true,
-  });
+async function expectRowActions(
+  page: Page,
+  row: Locator,
+  actions: Array<string>,
+  menuOnly: Array<string> = [],
+) {
+  await row.hover();
   const moreButton = row.getByRole('button', { name: 'More actions' });
-  await expect(detailButton.or(moreButton).first()).toBeVisible({
-    timeout: 10000,
-  });
-  for (const name of HIDDEN_USER_ACTIONS) {
-    await expect(row.getByRole('button', { name, exact: true })).toHaveCount(0);
+  const menu = page.getByRole('menu');
+  if (menuOnly.length > 0) {
+    await expect(moreButton).toBeVisible({ timeout: 10000 });
   }
   if ((await moreButton.count()) > 0) {
     await moreButton.click();
-    const menu = page.getByRole('menu');
     await expect(menu.getByRole('menuitem').first()).toBeVisible();
-    for (const name of HIDDEN_USER_ACTIONS) {
-      await expect(
-        menu.getByRole('menuitem', { name, exact: true }),
-      ).toHaveCount(0);
-    }
+  }
+  for (const name of actions) {
+    const action = row
+      .getByRole('button', { name, exact: true })
+      .or(menu.getByRole('menuitem', { name, exact: true }));
+    await expect(action, `row action "${name}"`).toBeVisible();
+    await expect(action, `row action "${name}"`).toBeEnabled();
+  }
+  for (const name of menuOnly) {
+    const item = menu.getByRole('menuitem', { name, exact: true });
+    await expect(item, `"More actions" item "${name}"`).toBeVisible();
+    await expect(item, `"More actions" item "${name}"`).toBeEnabled();
+  }
+  if ((await moreButton.count()) > 0) {
     await page.keyboard.press('Escape');
+    await expect(menu).toHaveCount(0);
   }
 }
 
-// #10310: the Users tab reads scopedUsersV2 (ADR 0012); user management
-// actions stay superadmin-only. The shared backend has no domain admin, so
-// each test signs in as a disposable one in the e2e domain.
+// #10310: the Users tab reads scopedUsersV2 (ADR 0012) and keeps the user and
+// keypair management actions for superadmins. Signs in as the e2e superadmin.
 test.describe(
-  'User list - Domain admin',
+  'User list - Superadmin',
   { tag: ['@regression', '@user', '@functional', '@requires-manager-v26.9'] },
   () => {
     let api: APIRequestContext | null = null;
-    let domainAdmin: { email: string; password: string };
-    let inactiveEmail: string;
-    let domainAdminId: string | null = null;
-    let domainAdminRoleId: string | null = null;
+    let inactiveEmail: string | null = null;
 
     test.beforeEach(async () => {
       api = await createAdminApiContext();
-      // Gate before any setup: RoleFilter.permissions needs 26.9.
+      // Gate before any setup: scopedUsersV2 needs 26.9.0a4.
       const info = await (await api.get('/func/')).json().catch(() => ({}));
       test.skip(
         !isVersionAtLeast(String(info?.manager ?? ''), '26.9.0a4'),
         'scopedUsersV2 needs a Backend.AI manager >= 26.9.0a4 (#10302)',
       );
 
+      // An inactive row, the only kind that offers Permanently Delete.
       const runId = `${Date.now().toString(36)}${randomBytes(3).toString('hex')}`;
-      domainAdmin = {
-        email: `e2e-domain-admin-${runId}@lablup.com`,
-        password: `e2e-${randomBytes(12).toString('hex')}@Pw`,
-      };
-      inactiveEmail = `e2e-domain-inactive-${runId}@lablup.com`;
+      const email = `e2e-superadmin-inactive-${runId}@lablup.com`;
       const domainName = await getE2EDomainName(api);
-      const { user } = await gqlAdmin<{
-        user: { groups: Array<{ id: string }> | null } | null;
+      const { create_user } = await gqlAdmin<{
+        create_user: { ok: boolean; msg: string };
       }>(
         api,
-        `query($email: String) { user(email: $email) { groups { id } } }`,
-        { email: userInfo.user.email },
-      );
-      const groupIds = (user?.groups ?? []).map((g) => g.id);
-      const createUser = (email: string, props: Record<string, unknown>) =>
-        gqlAdmin<{
-          create_user: {
-            ok: boolean;
-            msg: string;
-            user: { uuid: string } | null;
-          };
-        }>(
-          api!,
-          `mutation($email: String!, $props: UserInput!) {
-            create_user(email: $email, props: $props) { ok msg user { uuid } }
-          }`,
-          {
-            email,
-            props: {
-              username: email.split('@')[0],
-              password: `e2e-${randomBytes(12).toString('hex')}@Pw`,
-              need_password_change: false,
-              domain_name: domainName,
-              group_ids: groupIds,
-              ...props,
-            },
-          },
-        );
-      const created = await createUser(domainAdmin.email, {
-        password: domainAdmin.password,
-        role: 'admin',
-      });
-      expect(created.create_user.ok, created.create_user.msg).toBe(true);
-      domainAdminId = created.create_user.user?.uuid ?? null;
-      expect(domainAdminId, 'create_user returned a uuid').toBeTruthy();
-      // An inactive row, the only kind that would offer Permanently Delete.
-      const inactive = await createUser(inactiveEmail, {
-        is_active: false,
-        status: 'inactive',
-      });
-      expect(inactive.create_user.ok, inactive.create_user.msg).toBe(true);
-
-      // role: 'admin' alone grants no RBAC permission; the scoped reads need
-      // the domain's system admin role.
-      const { domainV2 } = await gqlAdmin<{ domainV2: { entityId: string } }>(
-        api,
-        `query ($name: String!) { domainV2(domainName: $name) { entityId } }`,
-        { name: domainName },
-      );
-      const { adminRoles } = await gqlAdmin<{
-        adminRoles: {
-          edges: Array<{ node: { id: string; name: string } }>;
-        };
-      }>(
-        api,
-        `query ($filter: RoleFilter) {
-          adminRoles(filter: $filter, first: 50) { edges { node { id name } } }
+        `mutation($email: String!, $props: UserInput!) {
+          create_user(email: $email, props: $props) { ok msg }
         }`,
         {
-          filter: {
-            status: { equals: 'ACTIVE' },
-            source: { equals: 'SYSTEM' },
-            mappedScope: {
-              scopeType: { iEquals: 'domain' },
-              scopeId: { equals: domainV2.entityId },
-            },
-            permissions: { some: { entityType: { iEquals: 'scope_admin' } } },
+          email,
+          props: {
+            username: email.split('@')[0],
+            password: `e2e-${randomBytes(12).toString('hex')}@Pw`,
+            need_password_change: false,
+            domain_name: domainName,
+            is_active: false,
+            status: 'inactive',
           },
         },
       );
-      const role = adminRoles.edges.find((e) =>
-        e.node.name.startsWith('domain_admin'),
-      );
-      expect(
-        role,
-        'the e2e domain has a domain_admin system role',
-      ).toBeTruthy();
-      domainAdminRoleId = toRawUUID(role!.node.id);
-      await gqlAdmin(
-        api,
-        `mutation ($input: BulkAssignRoleInput!) {
-          adminBulkAssignRole(input: $input) { assigned { id } }
-        }`,
-        { input: { roleId: domainAdminRoleId, userIds: [domainAdminId] } },
-      );
+      expect(create_user.ok, create_user.msg).toBe(true);
+      inactiveEmail = email;
     });
 
     test.afterEach(async () => {
@@ -634,37 +557,23 @@ test.describe(
       const adminApi = api;
       api = null;
       try {
-        if (domainAdminId && domainAdminRoleId) {
-          await gqlAdmin(
-            adminApi,
-            `mutation ($input: RevokeRoleInput!) { adminRevokeRole(input: $input) { id } }`,
-            { input: { userId: domainAdminId, roleId: domainAdminRoleId } },
-          ).catch((error) => console.warn(`could not revoke the role:`, error));
-        }
-        for (const email of [domainAdmin?.email, inactiveEmail]) {
-          if (!email) continue;
-          await purgeUserViaApi(adminApi, email).catch((error) =>
-            console.warn(`could not purge ${email}:`, error),
+        if (inactiveEmail) {
+          await purgeUserViaApi(adminApi, inactiveEmail).catch((error) =>
+            console.warn(`could not purge ${inactiveEmail}:`, error),
           );
         }
       } finally {
-        domainAdminId = null;
-        domainAdminRoleId = null;
+        inactiveEmail = null;
         await adminApi.dispose();
       }
     });
 
-    test('Domain admin can view the domain user list without user management actions', async ({
+    test('Superadmin can view the domain user list with user management actions', async ({
       page,
       request,
     }) => {
       const operations = recordUserListResponses(page);
-      await loginAsCreatedAccount(
-        page,
-        request,
-        domainAdmin.email,
-        domainAdmin.password,
-      );
+      await loginAsAdmin(page, request);
 
       await navigateToUsersPage(page);
 
@@ -678,15 +587,33 @@ test.describe(
         expect(op.errors).toBeUndefined();
       }
       expect(operations.at(-1)?.count ?? 0).toBeGreaterThan(0);
-      await expect(
-        page.getByRole('button', { name: 'Create User', exact: true }),
-      ).toHaveCount(0);
-      await expect(
-        page.getByRole('group', { name: 'Create User' }),
-      ).toHaveCount(0);
-      await expectRowWithoutManagementActions(page, firstRow);
 
-      // Permanently Delete is only ever offered on inactive rows.
+      // Create User and its More group (Bulk Create / CSV import).
+      const createUserGroup = page.getByRole('group', { name: 'Create User' });
+      const createUserButton = createUserGroup.getByRole('button', {
+        name: 'Create User',
+        exact: true,
+      });
+      await expect(createUserButton).toBeVisible();
+      await expect(createUserButton).toBeEnabled();
+      await createUserMoreButton(page).click();
+      for (const name of ['Bulk Create Users', 'Bulk Create Users from CSV']) {
+        const item = page.getByRole('menuitem', { name, exact: true });
+        await expect(item).toBeVisible();
+        await expect(item).toBeEnabled();
+      }
+      await page.keyboard.press('Escape');
+      await expect(page.getByRole('menu')).toHaveCount(0);
+
+      // Active row: Edit, Deactivate and, in the More actions menu, Unblock login.
+      await expectRowActions(
+        page,
+        firstRow,
+        ['User Detail', 'Edit', 'Deactivate'],
+        ['Unblock login'],
+      );
+
+      // Inactive row: Activate and Permanently Delete.
       await navigateTo(
         page,
         `credential?tab=users&status=INACTIVE&filter=${encodeURIComponent(
@@ -698,13 +625,39 @@ test.describe(
       ).toBeChecked({ timeout: 20000 });
       const inactiveRow = page
         .getByRole('row')
-        .filter({ has: page.getByRole('cell', { name: inactiveEmail }) });
+        .filter({ has: page.getByRole('cell', { name: inactiveEmail! }) });
       await expect(inactiveRow).toBeVisible({ timeout: 20000 });
-      await expectRowWithoutManagementActions(page, inactiveRow);
+      await expectRowActions(
+        page,
+        inactiveRow,
+        ['User Detail', 'Edit', 'Activate', 'Permanently Delete'],
+        ['Unblock login'],
+      );
 
       await clickRowAction(page, inactiveRow, 'User Detail');
       const userInfoModal = new UserInfoModal(page);
       await userInfoModal.waitForVisible();
+      await page.keyboard.press('Escape');
+      await expect(userInfoModal.getModal()).toBeHidden();
+
+      // Credentials tab: Create Credential and the keypair row actions.
+      const credentialsTab = page
+        .getByRole('navigation', { name: 'Tabs' })
+        .getByRole('button', { name: 'Credentials' });
+      await credentialsTab.click();
+      await expect(credentialsTab).toHaveAttribute('aria-current', 'true');
+      const addCredentialButton = page.getByRole('button', {
+        name: 'Create Credential',
+        exact: true,
+      });
+      await expect(addCredentialButton).toBeVisible({ timeout: 20000 });
+      await expect(addCredentialButton).toBeEnabled();
+      const credentialTable = page.locator('table').filter({
+        has: page.getByRole('columnheader').filter({ hasText: 'Access Key' }),
+      });
+      const keypairRow = credentialTable.locator('tbody tr').first();
+      await expect(keypairRow).toBeVisible({ timeout: 20000 });
+      await expectRowActions(page, keypairRow, ['Info', 'Edit', 'Deactivate']);
     });
   },
 );
