@@ -43,7 +43,7 @@ const replay = (form: FormInstance, patch: AppliedPatch) => {
 };
 
 /**
- * Binds a composed launcher model to a Form store (ADR 0012): reads the
+ * Binds a composed launcher model to a Form store (ADR 0013): reads the
  * model's fields from the form, runs `transition`, and replays the writes.
  */
 export const useFormBoundSlice = (

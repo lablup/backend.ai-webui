@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-// Stubs with the ADR 0012 signatures; the resource slice fills them in.
+// Stubs with the ADR 0013 signatures; the resource slice fills them in.
 import type { LauncherInputs, LauncherValues } from '../model';
 
 export type FieldLimits = Readonly<

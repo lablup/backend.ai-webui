@@ -114,7 +114,7 @@ export default [
     },
   },
 
-  // ADR 0012: launcher field components dispatch intents; only the adapter
+  // ADR 0013: launcher field components dispatch intents; only the adapter
   // writes the form. Repeats `restrictedSyntax`, which this block replaces.
   {
     files: ['src/features/session-launcher/**/*.{ts,tsx}'],
@@ -127,7 +127,7 @@ export default [
           selector:
             "CallExpression[callee.type='MemberExpression'][callee.property.name=/^(setFieldValue|setFieldsValue|setFields)$/]",
           message:
-            'Field components dispatch intents; only useFormBoundSlice writes the form (ADR 0012)',
+            'Field components dispatch intents; only useFormBoundSlice writes the form (ADR 0013)',
         },
       ],
     },
