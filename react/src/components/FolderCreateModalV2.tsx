@@ -3,6 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
+  FolderCreateModalV2PersonalMutation,
+  FolderCreateModalV2PersonalMutation$data,
+} from '../__generated__/FolderCreateModalV2PersonalMutation.graphql';
+import {
   FolderCreateModalV2ProjectMutation,
   FolderCreateModalV2ProjectMutation$data,
 } from '../__generated__/FolderCreateModalV2ProjectMutation.graphql';
@@ -55,9 +59,14 @@ interface FolderCreateFormItemsType {
   cloneable: boolean;
 }
 
-export type FolderCreationResponse = NonNullable<
-  FolderCreateModalV2ProjectMutation$data['createVFolderInProject']
->['vfolder'];
+// Both mutations select the same vfolder fields.
+export type FolderCreationResponse =
+  | NonNullable<
+      FolderCreateModalV2ProjectMutation$data['createVFolderInProject']
+    >['vfolder']
+  | NonNullable<
+      FolderCreateModalV2PersonalMutation$data['createVfolderV2']
+    >['vfolder'];
 
 export interface FolderCreateModalProps extends Omit<
   BAIModalProps,
@@ -88,8 +97,9 @@ export interface FolderCreateModalProps extends Omit<
    */
   folderType?: 'model_project';
   /**
-   * Offers the AutoMount usage mode. The page decides: a personal project, or
-   * a project admin on the project admin Data page.
+   * Set only when `project` is the caller's personal project: offers AutoMount,
+   * which is created as the caller's own folder (`createVfolderV2` without a
+   * project) because the manager rejects dot-prefixed project folders.
    */
   allowAutoMount?: boolean;
   /**
@@ -203,6 +213,40 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
       }
     `);
 
+  // Without a project the manager lands the folder in the caller's personal
+  // project; the only path that accepts a dot-prefixed (AutoMount) name.
+  const commitCreatePersonalMutation =
+    useMutationWithPromise<FolderCreateModalV2PersonalMutation>(graphql`
+      mutation FolderCreateModalV2PersonalMutation(
+        $input: CreateVFolderV2Input!
+      ) {
+        createVfolderV2(input: $input) {
+          vfolder {
+            id
+            entityId
+            vfolderStatus: status
+            host
+            metadata {
+              name
+              usageMode
+              quotaScopeId
+              cloneable
+            }
+            accessControl {
+              permission
+              ownershipType
+            }
+            ownership {
+              userId
+              projectId
+              creatorEmail
+            }
+            ...BAINodeNotificationItemFragment @alias(as: "notificationFrgmt")
+          }
+        }
+      }
+    `);
+
   const handleOk = async () => {
     let values: FolderCreateFormItemsType | undefined;
     try {
@@ -222,19 +266,31 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
 
     let vfolderResults: FolderCreationResponse | undefined;
     try {
-      vfolderResults = await commitCreateInProjectMutation({
-        // Not `values.group`: the form snapshots initialValues at mount and
-        // never resyncs them to later `project` prop changes.
-        projectId: effectiveProject?.id ?? values.group ?? '',
-        input: {
-          name: folderName,
-          host: values.host ?? null,
-          cloneable: !!values.cloneable,
-          // An automount folder is a GENERAL folder whose name starts with '.'.
-          usageMode: values.usage_mode === 'model' ? 'MODEL' : 'GENERAL',
-          permission: values.permission === 'ro' ? 'READ_ONLY' : 'READ_WRITE',
-        },
-      }).then((res) => res?.createVFolderInProject?.vfolder);
+      if (isAutomount && allowAutoMount) {
+        vfolderResults = await commitCreatePersonalMutation({
+          input: {
+            name: folderName,
+            host: values.host ?? null,
+            cloneable: !!values.cloneable,
+            usageMode: 'general',
+            permission: values.permission,
+            projectId: null,
+          },
+        }).then((res) => res?.createVfolderV2?.vfolder);
+      } else {
+        vfolderResults = await commitCreateInProjectMutation({
+          // Not `values.group`: the form snapshots initialValues at mount and
+          // never resyncs them to later `project` prop changes.
+          projectId: effectiveProject?.id ?? values.group ?? '',
+          input: {
+            name: folderName,
+            host: values.host ?? null,
+            cloneable: !!values.cloneable,
+            usageMode: values.usage_mode === 'model' ? 'MODEL' : 'GENERAL',
+            permission: values.permission === 'ro' ? 'READ_ONLY' : 'READ_WRITE',
+          },
+        }).then((res) => res?.createVFolderInProject?.vfolder);
+      }
     } catch (error) {
       const errorDetail = Array.isArray(error)
         ? _.map(error, 'message').join('\n')
@@ -285,6 +341,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
       }}
       title={t('data.CreateANewStorageFolder')}
       maskClosable={false}
+      unmountOnClose
       footer={
         <HStack justify="end" gap={2}>
           <Button

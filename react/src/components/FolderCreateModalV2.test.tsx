@@ -172,7 +172,7 @@ describe('FolderCreateModalV2 project prop contract (ADR-0001)', () => {
     expect(operation.request.variables.input.name).toBe('contract-folder');
   });
 
-  it('creates an automount folder as a GENERAL project folder', async () => {
+  it('creates an automount folder as the caller’s own folder', async () => {
     const user = userEvent.setup();
     const { environment } = renderModal(
       { id: 'fixed-project-id', name: 'fixed-project-name' },
@@ -188,13 +188,14 @@ describe('FolderCreateModalV2 project prop contract (ADR-0001)', () => {
       expect(environment.mock.getAllOperations()).toHaveLength(1);
     });
     const operation = environment.mock.getMostRecentOperation();
+    // The manager rejects dot-prefixed project folders.
     expect(operation.request.node.params.name).toBe(
-      'FolderCreateModalV2ProjectMutation',
+      'FolderCreateModalV2PersonalMutation',
     );
-    expect(operation.request.variables.projectId).toBe('fixed-project-id');
     expect(operation.request.variables.input).toMatchObject({
       name: '.contract-folder',
-      usageMode: 'GENERAL',
+      usageMode: 'general',
+      projectId: null,
     });
   });
 
