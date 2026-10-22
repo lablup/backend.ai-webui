@@ -3,22 +3,15 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
-  applySessionMonitorPreset,
   SESSION_MONITOR_CHIP_ITEMS,
-  SESSION_MONITOR_ERROR_FILTER,
-  SESSION_MONITOR_RUNNING_FILTER,
-  SESSION_MONITOR_STARTING_FILTER,
   SESSION_MONITOR_ROW_OPTIONS,
   SESSION_MONITOR_VISIBLE_LIMIT,
   type SessionMonitorChipItem,
   type SessionMonitorSort,
 } from '../../helper/sessionMonitor';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
-import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
-import { useIsProjectAgnosticPage } from '../../hooks/useIsProjectAgnosticPage';
 import { SETTING_ARRIVAL_PARAM } from '../../hooks/useSettingArrival';
 import { getSessionFilterProperties } from '../DashboardPanels/sessionFilterProperties';
-import { Button } from '@lablup/ui-common/Button';
 import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { Selector } from '@lablup/ui-common/Selector';
 import { Text } from '@lablup/ui-common/Text';
@@ -48,48 +41,6 @@ const CHIP_ITEM_LABEL_KEYS: Record<SessionMonitorChipItem, string> = {
   idle: 'sessionMonitor.settings.ChipIdle',
 };
 
-/** One-field presets: each swaps its field's part and keeps the rest. */
-const STATUS_PRESETS = [
-  {
-    key: 'running',
-    labelKey: 'sessionMonitor.settings.PresetRunning',
-    field: 'status',
-    condition: SESSION_MONITOR_RUNNING_FILTER,
-  },
-  {
-    key: 'starting',
-    labelKey: 'sessionMonitor.settings.PresetStarting',
-    field: 'status',
-    condition: SESSION_MONITOR_STARTING_FILTER,
-  },
-  {
-    key: 'error',
-    labelKey: 'sessionMonitor.settings.PresetError',
-    field: 'status',
-    condition: SESSION_MONITOR_ERROR_FILTER,
-  },
-] as const;
-
-/** Reads the current project, so it is only mounted on project pages. */
-const CurrentProjectPreset: React.FC<{
-  onApply: (field: string, condition: string) => void;
-}> = ({ onApply }) => {
-  'use memo';
-  const { t } = useTranslation();
-  const currentProject = useCurrentProjectValue();
-  if (!currentProject.name) return null;
-  return (
-    <Button
-      size="sm"
-      variant="secondary"
-      label={t('sessionMonitor.settings.PresetCurrentProject')}
-      onClick={() =>
-        onApply('group_name', `group_name == "${currentProject.name}"`)
-      }
-    />
-  );
-};
-
 /** The popover's settings view: which sessions it watches and what shows. */
 const SessionMonitorSettingsPane: React.FC<{
   /** Only a domain admin can see other users' sessions to watch. */
@@ -113,9 +64,6 @@ const SessionMonitorSettingsPane: React.FC<{
   const [chipItems, setChipItems] = useBAISettingUserState(
     'session_monitor_chip_items',
   );
-  const isProjectAgnosticPage = useIsProjectAgnosticPage();
-  const applyPreset = (field: string, part: string) =>
-    setCondition(applySessionMonitorPreset(condition, field, part));
 
   const sortOptions: Array<{ value: SessionMonitorSort; label: string }> = [
     { value: 'deadline', label: t('sessionMonitor.settings.SortDeadline') },
@@ -144,22 +92,9 @@ const SessionMonitorSettingsPane: React.FC<{
           onChange={(checked) => setOnlyMine(checked)}
         />
       )}
-      <BAIFlex direction="row" align="center" gap="xs" wrap="wrap">
-        {STATUS_PRESETS.map((preset) => (
-          <Button
-            key={preset.key}
-            size="sm"
-            variant="secondary"
-            label={t(preset.labelKey)}
-            onClick={() => applyPreset(preset.field, preset.condition)}
-          />
-        ))}
-        {!isProjectAgnosticPage && (
-          <CurrentProjectPreset onApply={applyPreset} />
-        )}
-      </BAIFlex>
       <BAIPropertyFilter
         filterProperties={getSessionMonitorFilterProperties(t)}
+        placeholder={t('sessionMonitor.settings.FilterPlaceholder')}
         value={condition ?? ''}
         // Clearing the last token yields undefined, which the setting store
         // would persist as the string "undefined"; '' reads back as unset.

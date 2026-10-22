@@ -45,8 +45,6 @@ export type SessionMonitorScope = {
   conditionFilter: string;
   /** Only the viewer's own sessions: the default, and what alerts need. */
   onlyMine: boolean;
-  /** No condition beyond "mine": the popover is titled "My sessions". */
-  isDefault: boolean;
   /** The viewer may read other users' sessions (domain admin and above). */
   isDomainAdmin: boolean;
 };
@@ -85,7 +83,6 @@ export const useSessionMonitorScope = (): SessionMonitorScope => {
       condition,
     }),
     onlyMine,
-    isDefault: onlyMine && !condition?.trim(),
     isDomainAdmin,
   };
 };

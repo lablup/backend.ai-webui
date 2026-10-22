@@ -13,9 +13,7 @@ import { useThemeMode } from '../../hooks/useThemeMode';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import SessionMonitorAllocationSummary from './SessionMonitorAllocationSummary';
 import SessionMonitorDetailDrawer from './SessionMonitorDetailDrawer';
-import SessionMonitorPopoverContent, {
-  sessionMonitorTitleKey,
-} from './SessionMonitorPopoverContent';
+import SessionMonitorPopoverContent from './SessionMonitorPopoverContent';
 import { Button } from '@lablup/ui-common/Button';
 import { Popover } from '@lablup/ui-common/Popover';
 import { Text } from '@lablup/ui-common/Text';
@@ -89,7 +87,7 @@ const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
   );
   const count = summary?.total ?? 0;
   if (!scope) return null;
-  const title = t(sessionMonitorTitleKey(scope));
+  const title = t('sessionMonitor.Title');
   const showsIdle = chipItems?.includes('idle') ?? false;
 
   return (
@@ -125,7 +123,7 @@ const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
           )
         }
       >
-        <Tooltip content={t('sessionMonitor.Tooltip')} placement="start">
+        <Tooltip content={t('sessionMonitor.Title')} placement="start">
           <Button
             data-astryx-media={bandMediaMode}
             data-testid={props['data-testid']}

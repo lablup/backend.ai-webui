@@ -96,7 +96,7 @@ const SessionMonitorSettingsView: React.FC<{
           data-testid="session-monitor-settings-button"
           variant="ghost"
           size="sm"
-          label={t(sessionMonitorTitleKey(scope))}
+          label={t('sessionMonitor.Title')}
           icon={<ArrowLeft size="1em" />}
           onClick={onBack}
         />
@@ -108,11 +108,6 @@ const SessionMonitorSettingsView: React.FC<{
     </BAIFlex>
   );
 };
-
-export const sessionMonitorTitleKey = (scope: SessionMonitorScope) =>
-  scope.isDefault
-    ? 'sessionMonitor.MySessions'
-    : 'sessionMonitor.WatchedSessions';
 
 const ScopedSessionMonitorPopoverContent: React.FC<
   SessionMonitorPopoverContentProps & {
@@ -161,7 +156,7 @@ const ScopedSessionMonitorPopoverContent: React.FC<
         }}
       >
         <Text type="label" weight="semibold">
-          {t(sessionMonitorTitleKey(scope))}
+          {t('sessionMonitor.Title')}
         </Text>
         <Text type="supporting">
           {t('sessionMonitor.RunningCount', { count: running })}

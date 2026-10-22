@@ -113,52 +113,6 @@ export const buildSessionMonitorFilter = ({
     buildSessionMonitorConditionFilter(condition),
   ]);
 
-/**
- * Splits a queryfilter string at its top-level `&`, ignoring any inside
- * quotes, brackets or parentheses. Null when a top-level `|` makes the parts
- * not independent.
- */
-const splitTopLevelAnd = (condition: string): string[] | null => {
-  const parts: string[] = [];
-  let depth = 0;
-  let quoted = false;
-  let start = 0;
-  for (let i = 0; i < condition.length; i++) {
-    const ch = condition[i];
-    if (ch === '"' && condition[i - 1] !== '\\') quoted = !quoted;
-    if (quoted) continue;
-    if (ch === '(' || ch === '[') depth++;
-    else if (ch === ')' || ch === ']') depth--;
-    else if (depth === 0 && ch === '|') return null;
-    else if (depth === 0 && ch === '&') {
-      parts.push(condition.slice(start, i));
-      start = i + 1;
-    }
-  }
-  parts.push(condition.slice(start));
-  return parts.map((part) => part.trim()).filter(Boolean);
-};
-
-const leadingField = (part: string) =>
-  /^\(*\s*([A-Za-z_]+)/.exec(part)?.[1] ?? null;
-
-/**
- * Applies a one-field preset: drops the condition's parts on `field` and
- * appends `part`, keeping everything else. A condition with a top-level `|`
- * is kept whole and ANDed instead.
- */
-export const applySessionMonitorPreset = (
-  condition: string | null | undefined,
-  field: string,
-  part: string,
-) => {
-  const current = condition?.trim() ?? '';
-  if (!current) return part;
-  const parts = splitTopLevelAnd(current);
-  if (!parts) return `(${current}) & ${part}`;
-  return [...parts.filter((p) => leadingField(p) !== field), part].join(' & ');
-};
-
 /** Sums `occupied_slots` JSON strings slot by slot, as raw numbers. */
 export const sumOccupiedSlots = (
   slotsList: ReadonlyArray<string | null | undefined>,
