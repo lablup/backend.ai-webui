@@ -106,11 +106,11 @@ const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
     const clip = row?.parentElement;
     const first = row?.firstElementChild;
     if (!clip || !first) return;
-    const check = () =>
-      setIsCountCut(
-        first.getBoundingClientRect().right >
-          clip.getBoundingClientRect().right + 0.5,
-      );
+    const check = () => {
+      const item = first.getBoundingClientRect();
+      const box = clip.getBoundingClientRect();
+      setIsCountCut(item.left < box.left - 0.5 || item.right > box.right + 0.5);
+    };
     const observer = new ResizeObserver(check);
     observer.observe(clip);
     return () => observer.disconnect();
@@ -162,11 +162,13 @@ const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
             style={{ visibility: isCountCut ? 'hidden' : undefined }}
           >
             {/* One clipped line: an item that does not fit wraps out of view
-                whole, with its separator, instead of being cut mid-text. */}
+                whole, with its separator, instead of being cut mid-text; the kept
+                items hug the right so no gap opens before the next group. */}
             <BAIFlex
               ref={rowRef}
               direction="row"
               align="center"
+              justify="end"
               gap="xs"
               style={{ flexWrap: 'wrap', height: '1lh', overflow: 'hidden' }}
             >
