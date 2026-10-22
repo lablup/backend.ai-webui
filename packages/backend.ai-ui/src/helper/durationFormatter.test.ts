@@ -1,4 +1,4 @@
-import { formatCompactDuration, parseTimedelta } from './duration';
+import { formatCompactDuration, parseTimedelta } from './durationFormatter';
 
 describe('parseTimedelta', () => {
   test.each([

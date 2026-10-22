@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 
 export * from './astryxTagVariant';
 export * from './combineFilters';
-export * from './duration';
+export * from './durationFormatter';
 export * from './runtimeVariantPresetUI';
 export * from './vfolderHostPermission';
 
