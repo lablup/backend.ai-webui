@@ -345,11 +345,15 @@ test.describe(
   },
 );
 
+// The session name `sessionDetailMockResponse` returns.
+const MOCK_DETAIL_SESSION_NAME = 'mock-session-for-scheduling-history';
+
 // The header session monitor is an experimental user setting (off by default).
 const setSessionMonitorEnabled = async (page: Page, enabled: boolean) => {
   await navigateTo(page, 'usersettings');
   const settingsDialog = page.getByRole('dialog', { name: 'Settings & Logs' });
-  const checkbox = page
+  await expect(settingsDialog).toBeVisible();
+  const checkbox = settingsDialog
     .getByTestId('items-experimental-session-monitor')
     .getByRole('checkbox', { name: 'Session monitor' });
   await checkbox.setChecked(enabled);
@@ -363,7 +367,8 @@ const sessionMonitorChip = (page: Page) =>
 const readChipSessionCount = async (page: Page) => {
   const text = await sessionMonitorChip(page).innerText();
   const match = text.match(/Sessions\s+(\d+)/);
-  return match ? Number(match[1]) : NaN;
+  if (!match) throw new Error(`Unexpected session monitor chip text: ${text}`);
+  return Number(match[1]);
 };
 
 // The user's own sessions that are neither TERMINATED nor CANCELLED.
@@ -386,7 +391,7 @@ const countOwnUnfinishedSessions = (page: Page) =>
   });
 
 test.describe(
-  'Session Monitor in the header',
+  'Session Monitor - Header chip and popover',
   { tag: ['@regression', '@session', '@functional'] },
   () => {
     test('User can enable the session monitor and see their unfinished session count in the header', async ({
@@ -401,7 +406,8 @@ test.describe(
       await expect(sessionMonitorChip(page)).toBeVisible();
       await expect(sessionMonitorChip(page)).toContainText(/Sessions \d+/);
 
-      // The chip polls once a minute; reload until it catches up with the API.
+      // Another worker on this account may change the count between the two
+      // reads, and the chip polls only once a minute; reload and retry.
       await expect(async () => {
         const expected = await countOwnUnfinishedSessions(page);
         const shown = await readChipSessionCount(page);
@@ -422,7 +428,10 @@ test.describe(
     }) => {
       // The test server cannot run sessions, so the watched sessions and the
       // opened session's detail are mocked.
-      const runningSession = createMockSessionNode();
+      // Same name as sessionDetailMockResponse, so the drawer shows this row.
+      const runningSession = createMockSessionNode({
+        name: MOCK_DETAIL_SESSION_NAME,
+      });
       const startingSession = createMockSessionNode({
         id: btoa('ComputeSessionNode:mock-session-uuid-002'),
         row_id: 'mock-session-uuid-002',
@@ -472,12 +481,12 @@ test.describe(
       ).toBeVisible();
 
       await popover
-        .getByRole('button', { name: String(runningSession.name) })
+        .getByRole('button', { name: MOCK_DETAIL_SESSION_NAME })
         .click();
 
       const drawer = page.getByRole('dialog', { name: 'Session Info' });
       await expect(drawer).toBeVisible();
-      await expect(drawer).toContainText(String(runningSession.name));
+      await expect(drawer).toContainText(MOCK_DETAIL_SESSION_NAME);
       await expect(popover).toBeHidden();
       expect(new URL(page.url()).pathname.replace(/\/$/, '')).toBe(pathBefore);
     });
