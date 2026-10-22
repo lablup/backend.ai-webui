@@ -488,7 +488,9 @@ const InviteFolderSettingModalBody: React.FC<{
                 hasHoverIndication={false}
               >
                 <BAIScopedUserSelect
-                  projectId={memberProjectIds}
+                  scope={{
+                    project: _.map(memberProjectIds, (value) => ({ value })),
+                  }}
                   allowCustomSelect
                   allowClear
                   filter={
