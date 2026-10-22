@@ -1,6 +1,7 @@
 import type { BAILocale } from '..';
 import { BAIConfigProvider } from '../../components/provider/BAIConfigProvider';
 import { withUiCommonMessages } from '../uiCommonMessages';
+import { SelectionLabel } from '@lablup/ui-common/components/SelectionLabel';
 import { useTranslator } from '@lablup/ui-common/i18n';
 import { uiCommonMessages } from '@lablup/ui-common/i18n-catalog';
 import { render, screen } from '@testing-library/react';
@@ -44,6 +45,11 @@ describe('ui-common strings through the BUI locale modules', () => {
     expect(Object.keys(modules)).toHaveLength(21);
     for (const [file, load] of Object.entries(modules)) {
       const { default: locale } = await load();
+      // `en` ships no catalog: Astryx and ui-common fall back to English.
+      if (locale.lang === 'en') {
+        expect(locale.astryxLocale, file).toBeUndefined();
+        continue;
+      }
       const confirm = locale.astryxLocale?.['uic.common.confirm'];
       expect(confirm, file).toEqual(expect.any(String));
       // Astryx's own strings are still there.
@@ -51,9 +57,7 @@ describe('ui-common strings through the BUI locale modules', () => {
         Object.keys(uiCommonMessages.en).length,
       );
     }
-    const { default: en } = await import('../en_US');
     const { default: th } = await import('../th_TH');
-    expect(en.astryxLocale?.['uic.common.confirm']).toBe('Confirm');
     expect(th.astryxLocale?.['uic.common.confirm']).toBe('ยืนยัน');
   });
 
@@ -68,6 +72,19 @@ describe('ui-common strings through the BUI locale modules', () => {
         <Probe />
       </BAIConfigProvider>,
     );
-    expect(screen.getByText('선택 취소')).toBeInTheDocument();
+    expect(await screen.findByText('선택 취소')).toBeInTheDocument();
+  });
+
+  it('renders ui-common English defaults for the catalog-less en locale', async () => {
+    const { default: en } = await import('../en_US');
+    render(
+      <BAIConfigProvider locale={en}>
+        <SelectionLabel count={2} onClear={() => {}} />
+      </BAIConfigProvider>,
+    );
+    expect(
+      await screen.findByRole('button', { name: 'Deselect all' }),
+    ).toBeInTheDocument();
+    expect(screen.getByText('2 selected')).toBeInTheDocument();
   });
 });

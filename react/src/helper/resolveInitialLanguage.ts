@@ -10,8 +10,8 @@
  * supports.
  *
  * Keep this list in sync with the translation files under
- * `resources/i18n/*.json`. The BUI locale map in `helper/bui-language.ts` is
- * guarded against drift by its `satisfies Record<SupportedLanguage, …>`
+ * `resources/i18n/*.json`. The BUI locale loader map in `helper/bui-language.ts`
+ * is guarded against drift by its `satisfies Record<SupportedLanguage, …>`
  * clause — a missing or extra key there is a type error.
  */
 export const SUPPORTED_LANGUAGES = [
@@ -95,7 +95,7 @@ export const detectBrowserLanguage = (): SupportedLanguage => {
  * candidates: `BackendAISettingsStore` seeds `general.language` with `'en'`,
  * and treating that seed as an explicit choice would disable browser
  * detection entirely. See `getStoredLanguageCandidates` in
- * `components/DefaultProviders.tsx`.
+ * `helper/storedLanguage.ts`.
  */
 export const resolveInitialLanguage = (
   ...storedValues: Array<string | null | undefined>
