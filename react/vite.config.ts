@@ -1,3 +1,4 @@
+import { chunkReport } from './vite-plugins/chunk-report';
 import {
   devReviewOverlayPlugin,
   reviewOverlayBuildPlugin,
@@ -1176,6 +1177,10 @@ export default defineConfig(({ command, mode }) => {
           navigateFallback: null,
         },
       }),
+
+      ...(process.env.VITE_CHUNK_REPORT
+        ? [chunkReport(resolve(process.env.VITE_CHUNK_REPORT))]
+        : []),
     ],
 
     build: {
@@ -1185,6 +1190,19 @@ export default defineConfig(({ command, mode }) => {
       // Suppress the warning about chunk size; the app is large and this
       // matches the existing craco/webpack threshold expectation.
       chunkSizeWarningLimit: 2000,
+      rollupOptions: {
+        output: {
+          // Per-function packages shared by many lazy pages otherwise become
+          // one ~1 KB chunk per function (29 lodash-es + 13 lucide chunks on
+          // the login page, measured 2026-10-22); both are mostly in the boot
+          // path already, so one chunk each costs no extra bytes.
+          manualChunks(id) {
+            if (/\/node_modules\/lodash-es\//.test(id)) return 'lodash';
+            if (/\/node_modules\/lucide-react\//.test(id)) return 'icons';
+            return undefined;
+          },
+        },
+      },
     },
   };
 });
