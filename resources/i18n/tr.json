@@ -3789,7 +3789,7 @@
     "DescScriptCreated": "Kullanıcı yapılandırma komut dosyası oluşturuldu. Bu sadece yeni oturumlara uygulanacaktır.",
     "DescScriptDeleted": "Kullanıcı yapılandırma komut dosyası silindi:",
     "DescScriptUpdated": "Kullanıcı yapılandırma komut dosyası güncellendi. Bu sadece yeni oturumlara uygulanacaktır.",
-    "DescSessionMonitor": "Her sayfada başlıkta izlediğiniz oturumların sayısını gösterir. Varsayılan olarak bunlar oluşturduğunuz oturumlardır; koşulu monitörün kendi ayarlarından değiştirin. Orada boşta kalma sonlandırması öğesi açıksa, bir boşta kalma denetimi oturumlarınızdan birini sonlandırmadan 30 ve 10 dakika önce bildirim de alırsınız.",
+    "DescSessionMonitor": "Her sayfada başlıkta izlediğiniz oturumların sayısını gösterir. Neyin izleneceğini monitörün kendi ayarlarında belirlersiniz. Orada boşta kalma sonlandırma öğesi açıksa, bir boşta kalma denetimi oturumlarınızdan birini sonlandırmadan 30 ve 10 dakika önce bildirim de alırsınız.",
     "DescThemeFamily": "Temayı ayarlayın.",
     "DescThemeMode": "Görüntüleme modunu ayarlayın.",
     "DescUseCompactSidebar": "Kompakt kenar çubuğu daha fazla çalışma alanı sağlar. <br />Etkinleştirildiğinde, kompakt kenar çubuğu başlangıçta varsayılan UI olacaktır.",

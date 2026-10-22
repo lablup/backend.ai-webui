@@ -3792,7 +3792,7 @@
     "DescScriptCreated": "Utworzono skrypt konfiguracji użytkownika. Zostanie to zastosowane tylko do nowych sesji.",
     "DescScriptDeleted": "Skrypt konfiguracji użytkownika został usunięty :",
     "DescScriptUpdated": "Zaktualizowano skrypt konfiguracji użytkownika. Zostanie to zastosowane tylko do nowych sesji.",
-    "DescSessionMonitor": "Wyświetla w nagłówku, na każdej stronie, liczbę obserwowanych sesji. Domyślnie są to sesje utworzone przez Ciebie; warunek zmienisz w ustawieniach samego monitora. Gdy włączysz tam pozycję zakończenia z powodu bezczynności, otrzymasz także powiadomienie 30 i 10 minut przed zakończeniem jednej z Twoich sesji przez kontrolę bezczynności.",
+    "DescSessionMonitor": "Pokazuje w nagłówku każdej strony liczbę obserwowanych sesji. To, co jest obserwowane, ustawiasz w ustawieniach samego monitora. Gdy włączysz tam pozycję zakończenia z powodu bezczynności, otrzymasz też powiadomienie 30 i 10 minut przed tym, jak kontrola bezczynności zakończy jedną z Twoich sesji.",
     "DescThemeFamily": "Ustaw temat.",
     "DescThemeMode": "Ustaw tryb wyświetlania.",
     "DescUseCompactSidebar": "Kompaktowy pasek boczny zapewnia więcej przestrzeni roboczej. <br />Po włączeniu kompaktowy pasek boczny będzie domyślnym interfejsem użytkownika przy uruchomieniu.",

@@ -3793,7 +3793,7 @@
     "DescScriptCreated": "Skrip konfigurasi pengguna dibuat. Ini hanya akan diterapkan ke sesi baru.",
     "DescScriptDeleted": "Skrip konfigurasi pengguna dihapus:",
     "DescScriptUpdated": "Skrip konfigurasi pengguna diperbarui. Ini hanya akan diterapkan ke sesi baru.",
-    "DescSessionMonitor": "Menampilkan jumlah sesi yang Anda pantau di header, di setiap halaman. Secara default, ini adalah sesi yang Anda buat; ubah kondisinya di pengaturan monitor itu sendiri. Jika item penghentian idle diaktifkan di sana, Anda juga menerima notifikasi 30 dan 10 menit sebelum pemeriksaan idle menghentikan salah satu sesi Anda.",
+    "DescSessionMonitor": "Menampilkan jumlah sesi yang Anda pantau di header pada setiap halaman. Atur apa yang dipantau di pengaturan monitor itu sendiri. Jika item penghentian karena idle diaktifkan di sana, Anda juga mendapat notifikasi 30 dan 10 menit sebelum pemeriksaan idle menghentikan salah satu sesi Anda.",
     "DescThemeFamily": "Atur tema.",
     "DescThemeMode": "Atur mode tampilan.",
     "DescUseCompactSidebar": "Sidebar kompak menyediakan ruang kerja lebih banyak. <br />Ketika diaktifkan, sidebar kompak akan menjadi UI default saat startup.",

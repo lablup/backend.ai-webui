@@ -3776,7 +3776,7 @@
     "DescScriptCreated": "User config script created. This will be applied to new sessions only.",
     "DescScriptDeleted": "User config script deleted : ",
     "DescScriptUpdated": "User config script updated. This will be applied to new sessions only.",
-    "DescSessionMonitor": "Shows the number of sessions you watch in the header, on every page. By default these are the sessions you created; change the condition in the monitor's own settings. When the idle termination item is on there, you also get a notification 30 and 10 minutes before an idle check terminates one of your sessions.",
+    "DescSessionMonitor": "Shows the number of sessions you watch in the header, on every page. Set what it watches in the monitor's own settings. When the idle termination item is on there, you also get a notification 30 and 10 minutes before an idle check terminates one of your sessions.",
     "DescThemeFamily": "Set the theme.",
     "DescThemeMode": "Set the display mode.",
     "DescUseCompactSidebar": "Compact sidebar provides more workspace. <br />When enabled, the compact sidebar will be the default UI at startup.",

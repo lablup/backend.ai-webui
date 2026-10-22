@@ -5366,9 +5366,9 @@
         {
           "key": "userSettings.SessionMonitor",
           "tab": "general",
-          "groupKey": "userSettings.Preferences",
-          "groupId": "group-preferences",
-          "testId": "items-session-monitor",
+          "groupKey": "userSettings.ExperimentalFeatures",
+          "groupId": "group-experimental-features",
+          "testId": "items-experimental-session-monitor",
           "descriptionKeys": []
         },
         {

@@ -3789,7 +3789,7 @@
     "DescScriptCreated": "Skrip konfigurasi pengguna dibuat. Ini akan digunakan untuk sesi baru sahaja.",
     "DescScriptDeleted": "Skrip konfigurasi pengguna dipadamkan:",
     "DescScriptUpdated": "Skrip konfigurasi pengguna dikemas kini. Ini akan digunakan untuk sesi baru sahaja.",
-    "DescSessionMonitor": "Memaparkan bilangan sesi yang anda pantau di pengepala, di setiap halaman. Secara lalai, ia ialah sesi yang anda cipta; tukar syaratnya dalam tetapan pemantau itu sendiri. Apabila item penamatan terbiar dihidupkan di sana, anda juga menerima pemberitahuan 30 dan 10 minit sebelum semakan terbiar menamatkan salah satu sesi anda.",
+    "DescSessionMonitor": "Memaparkan bilangan sesi yang anda pantau di pengepala pada setiap halaman. Tetapkan apa yang dipantau dalam tetapan pemantau itu sendiri. Jika item penamatan melahu dihidupkan di sana, anda juga menerima pemberitahuan 30 dan 10 minit sebelum semakan melahu menamatkan salah satu sesi anda.",
     "DescThemeFamily": "Tetapkan tema.",
     "DescThemeMode": "Tetapkan mod paparan.",
     "DescUseCompactSidebar": "Bar sisi padat menyediakan lebih banyak ruang kerja. <br />Apabila dibolehkan, bar sisi padat akan menjadi UI lalai semasa permulaan.",

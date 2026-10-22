@@ -48,12 +48,13 @@ const idleAlertDescriptionKey = (
  */
 const SessionMonitorWatcher: React.FC = () => {
   'use memo';
-  const [enabled] = useBAISettingUserState('session_monitor_enabled');
+  // Experimental: off until the user turns it on in User settings.
+  const [enabled] = useBAISettingUserState('experimental_session_monitor');
   const setScope = useSetAtom(sessionMonitorScopeAtom);
   useEffect(() => {
-    if (enabled === false) setScope(null);
+    if (!enabled) setScope(null);
   }, [enabled, setScope]);
-  return enabled === false ? null : <ResolvedSessionMonitorWatcher />;
+  return enabled ? <ResolvedSessionMonitorWatcher /> : null;
 };
 
 const ResolvedSessionMonitorWatcher: React.FC = () => {

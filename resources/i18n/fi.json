@@ -3789,7 +3789,7 @@
     "DescScriptCreated": "Käyttäjän konfigurointiskripti luotu. Tätä sovelletaan vain uusiin istuntoihin.",
     "DescScriptDeleted": "Käyttäjän konfigurointiskripti poistettu :",
     "DescScriptUpdated": "Käyttäjän konfigurointiskripti päivitetty. Tätä sovelletaan vain uusiin istuntoihin.",
-    "DescSessionMonitor": "Näyttää jokaisella sivulla otsikkopalkissa seuraamiesi istuntojen määrän. Oletuksena ne ovat luomasi istunnot; ehdon voi vaihtaa valvonnan omista asetuksista. Kun joutokäynnin päättymisen kohta on siellä käytössä, saat myös ilmoituksen 30 ja 10 minuuttia ennen kuin joutokäyntitarkistus päättää jonkin istunnoistasi.",
+    "DescSessionMonitor": "Näyttää jokaisen sivun otsakkeessa valvomiesi istuntojen määrän. Valvottavat istunnot määritetään valvonnan omissa asetuksissa. Kun siellä on käytössä tyhjäkäyntilopetuksen kohde, saat ilmoituksen myös 30 ja 10 minuuttia ennen kuin tyhjäkäyntitarkistus lopettaa jonkin istunnoistasi.",
     "DescThemeFamily": "Aseta teema.",
     "DescThemeMode": "Aseta näyttötila.",
     "DescUseCompactSidebar": "Kompakti sivupalkki tarjoaa enemmän työtilaa. <br />Kun käytössä, kompakti sivupalkki on oletuskäyttöliittymä käynnistyksen yhteydessä.",

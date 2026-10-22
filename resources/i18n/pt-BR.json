@@ -3789,7 +3789,7 @@
     "DescScriptCreated": "Script de configuração do usuário criado. Isso será aplicado apenas a novas sessões.",
     "DescScriptDeleted": "Script de configuração do usuário excluído:",
     "DescScriptUpdated": "O script de configuração do usuário foi atualizado. Isso será aplicado apenas a novas sessões.",
-    "DescSessionMonitor": "Mostra no cabeçalho, em todas as páginas, o número de sessões que você monitora. Por padrão, são as sessões que você criou; altere a condição nas configurações do próprio monitor. Se o item de encerramento por inatividade estiver ativado lá, você também recebe uma notificação 30 e 10 minutos antes de uma verificação de inatividade encerrar uma de suas sessões.",
+    "DescSessionMonitor": "Mostra no cabeçalho de cada página o número de sessões que você acompanha. Defina o que é acompanhado nas configurações do próprio monitor. Com o item de encerramento por inatividade ativado lá, você também recebe um aviso 30 e 10 minutos antes de uma verificação de inatividade encerrar uma das suas sessões.",
     "DescThemeFamily": "Definir o tema.",
     "DescThemeMode": "Definir o modo de exibição.",
     "DescUseCompactSidebar": "A barra lateral compacta fornece mais espaço de trabalho. <br />Quando habilitada, a barra lateral compacta será a interface padrão na inicialização.",

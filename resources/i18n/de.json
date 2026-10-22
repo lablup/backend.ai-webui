@@ -3791,7 +3791,7 @@
     "DescScriptCreated": "Benutzerkonfigurationsskript erstellt. Dies gilt nur für neue Sitzungen.",
     "DescScriptDeleted": "Benutzerkonfigurationsskript gelöscht:",
     "DescScriptUpdated": "Benutzerkonfigurationsskript aktualisiert. Dies gilt nur für neue Sitzungen.",
-    "DescSessionMonitor": "Zeigt auf jeder Seite die Anzahl der beobachteten Sitzungen in der Kopfzeile. Standardmäßig sind das die von Ihnen erstellten Sitzungen; die Bedingung ändern Sie in den Einstellungen des Monitors. Ist dort der Eintrag zur Leerlaufbeendigung aktiviert, erhalten Sie außerdem 30 und 10 Minuten bevor eine Leerlaufprüfung eine Ihrer Sitzungen beendet eine Benachrichtigung.",
+    "DescSessionMonitor": "Zeigt auf jeder Seite in der Kopfzeile die Anzahl der beobachteten Sitzungen. Was beobachtet wird, legen Sie in den Einstellungen des Monitors fest. Ist dort der Eintrag zur Leerlaufbeendigung aktiv, werden Sie 30 und 10 Minuten benachrichtigt, bevor eine Leerlaufprüfung eine Ihrer Sitzungen beendet.",
     "DescThemeFamily": "Thema festlegen.",
     "DescThemeMode": "Anzeigemodus festlegen.",
     "DescUseCompactSidebar": "Die kompakte Seitenleiste bietet mehr Arbeitsbereich. <br />Wenn aktiviert, wird die kompakte Seitenleiste beim Start zur Standard-UI.",

@@ -3791,7 +3791,7 @@
     "DescScriptCreated": "Đã tạo tập lệnh cấu hình người dùng. Điều này sẽ chỉ được áp dụng cho các phiên mới.",
     "DescScriptDeleted": "Tập lệnh cấu hình người dùng đã bị xóa:",
     "DescScriptUpdated": "Đã cập nhật tập lệnh cấu hình người dùng. Điều này sẽ chỉ được áp dụng cho các phiên mới.",
-    "DescSessionMonitor": "Hiển thị số phiên bạn theo dõi trên thanh tiêu đề ở mọi trang. Mặc định là các phiên bạn đã tạo; hãy đổi điều kiện trong phần cài đặt của chính bộ giám sát. Khi mục chấm dứt do không hoạt động được bật ở đó, bạn cũng nhận thông báo 30 và 10 phút trước khi kiểm tra không hoạt động chấm dứt một phiên của bạn.",
+    "DescSessionMonitor": "Hiển thị số phiên bạn đang theo dõi ở phần đầu trang trên mọi trang. Chọn nội dung theo dõi trong cài đặt của chính trình giám sát. Khi bật mục chấm dứt do không hoạt động ở đó, bạn cũng nhận thông báo 30 và 10 phút trước khi một lần kiểm tra không hoạt động chấm dứt một phiên của bạn.",
     "DescThemeFamily": "Đặt chủ đề.",
     "DescThemeMode": "Đặt chế độ hiển thị.",
     "DescUseCompactSidebar": "Thanh bên gọn gàng cung cấp nhiều không gian làm việc hơn. <br />Khi được kích hoạt, thanh bên gọn gàng sẽ là giao diện mặc định khi khởi động.",

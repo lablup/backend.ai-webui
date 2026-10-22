@@ -3792,7 +3792,7 @@
     "DescScriptCreated": "Script de configuration utilisateur créé. Cela ne s'appliquera qu'aux nouvelles sessions.",
     "DescScriptDeleted": "Script de configuration utilisateur supprimé :",
     "DescScriptUpdated": "Script de configuration utilisateur mis à jour. Cela ne s'appliquera qu'aux nouvelles sessions.",
-    "DescSessionMonitor": "Affiche dans l'en-tête, sur chaque page, le nombre de sessions que vous surveillez. Par défaut, ce sont les sessions que vous avez créées ; modifiez la condition dans les paramètres du moniteur. Si l'élément d'arrêt pour inactivité y est activé, vous recevez aussi une notification 30 et 10 minutes avant qu'une vérification d'inactivité arrête l'une de vos sessions.",
+    "DescSessionMonitor": "Affiche dans l’en-tête de chaque page le nombre de sessions que vous surveillez. Définissez ce qui est surveillé dans les paramètres du moniteur. Si l’élément d’arrêt pour inactivité y est activé, vous êtes aussi averti 30 et 10 minutes avant qu’une vérification d’inactivité n’arrête l’une de vos sessions.",
     "DescThemeFamily": "Définir le thème.",
     "DescThemeMode": "Définir le mode d'affichage.",
     "DescUseCompactSidebar": "La barre latérale compacte fournit plus d'espace de travail. <br />Quand activée, la barre latérale compacte sera l'interface par défaut au démarrage.",

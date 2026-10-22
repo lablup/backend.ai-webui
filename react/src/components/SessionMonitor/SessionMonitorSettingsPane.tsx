@@ -9,6 +9,7 @@ import {
   type SessionMonitorChipItem,
   type SessionMonitorSort,
 } from '../../helper/sessionMonitor';
+import { useCurrentDomain } from '../../hooks';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useCurrentUserProjectRoles } from '../../hooks/useCurrentUserProjectRoles';
 import { useSessionMonitorCondition } from '../../hooks/useSessionMonitor';
@@ -19,16 +20,17 @@ import { Selector } from '@lablup/ui-common/Selector';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIAdminUserV2Select,
   BAIAlert,
   BAIFlex,
   BAILink,
   BAIPropertyFilter,
+  BAIScopedUserSelect,
+  BAISelect,
   type FilterProperty,
 } from 'backend.ai-ui';
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 /**
@@ -39,6 +41,7 @@ const getSessionMonitorFilterProperties = (
   t: TFunction,
   userId: string,
   isSuperAdmin: boolean,
+  domainId: string,
 ): Array<FilterProperty> => [
   { key: 'group_name', propertyLabel: t('general.Project'), type: 'string' },
   ...getSessionFilterProperties(t).map((property): FilterProperty => {
@@ -58,19 +61,22 @@ const getSessionMonitorFilterProperties = (
       ? {
           ...owner,
           renderInput: ({ onAddCondition, value, isDisabled }) => (
-            <BAIAdminUserV2Select
-              label={t('session.Owner')}
-              isLabelHidden
-              valuePropName="id"
-              value={value}
-              isDisabled={isDisabled}
-              onChange={(next, option) =>
-                onAddCondition(
-                  next as string | undefined,
-                  _.castArray(option ?? [])[0]?.label as string | undefined,
-                )
-              }
-            />
+            <Suspense fallback={<BAISelect disabled loading />}>
+              <BAIScopedUserSelect
+                scope={{ domain: [{ value: domainId }] }}
+                label={t('session.Owner')}
+                isLabelHidden
+                valuePropName="id"
+                value={value}
+                isDisabled={isDisabled}
+                onChange={(next, option) =>
+                  onAddCondition(
+                    next as string | undefined,
+                    _.castArray(option ?? [])[0]?.label as string | undefined,
+                  )
+                }
+              />
+            </Suspense>
           ),
         }
       : { ...owner, strictSelection: true };
@@ -96,6 +102,7 @@ const SessionMonitorSettingsPane: React.FC<{
   const [, setCondition] = useBAISettingUserState('session_monitor_condition');
   const { condition, userId } = useSessionMonitorCondition();
   const { isSuperAdmin } = useCurrentUserProjectRoles();
+  const { id: domainId } = useCurrentDomain();
   const [chipItems, setChipItems] = useBAISettingUserState(
     'session_monitor_chip_items',
   );
@@ -125,6 +132,7 @@ const SessionMonitorSettingsPane: React.FC<{
           t,
           userId,
           isSuperAdmin,
+          domainId,
         )}
         placeholder={t('sessionMonitor.settings.FilterPlaceholder')}
         value={condition}
