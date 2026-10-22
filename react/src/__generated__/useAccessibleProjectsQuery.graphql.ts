@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<319e83b30fe968549a1d919c1543ff69>>
+ * @generated SignedSource<<9c4cac1a8c671d88b49273720dd124c6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+export type ProjectTypeV2 = "GENERAL" | "MODEL_STORE" | "PERSONAL" | "%future added value";
 export type useAccessibleProjectsQuery$variables = {
   domain_name?: string | null | undefined;
   type?: ReadonlyArray<string | null | undefined> | null | undefined;
@@ -25,6 +26,11 @@ export type useAccessibleProjectsQuery$data = {
     readonly projects: {
       readonly edges: ReadonlyArray<{
         readonly node: {
+          readonly basicInfo: {
+            readonly name: string;
+            readonly type: ProjectTypeV2;
+          };
+          readonly entityId: string;
           readonly id: string;
         };
       }>;
@@ -58,6 +64,20 @@ v1 = {
 },
 v2 = {
   "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "type",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
   "args": [
     {
       "kind": "Variable",
@@ -88,13 +108,7 @@ v2 = {
       "name": "is_active",
       "storageKey": null
     },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "name",
-      "storageKey": null
-    },
+    (v2/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -102,17 +116,11 @@ v2 = {
       "name": "resource_policy",
       "storageKey": null
     },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "type",
-      "storageKey": null
-    }
+    (v3/*: any*/)
   ],
   "storageKey": null
 },
-v3 = {
+v5 = {
   "alias": null,
   "args": [
     {
@@ -164,7 +172,27 @@ v3 = {
           "name": "node",
           "plural": false,
           "selections": [
-            (v1/*: any*/)
+            (v1/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "entityId",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "ProjectBasicInfo",
+              "kind": "LinkedField",
+              "name": "basicInfo",
+              "plural": false,
+              "selections": [
+                (v2/*: any*/),
+                (v3/*: any*/)
+              ],
+              "storageKey": null
+            }
           ],
           "storageKey": null
         }
@@ -181,7 +209,7 @@ return {
     "metadata": null,
     "name": "useAccessibleProjectsQuery",
     "selections": [
-      (v2/*: any*/),
+      (v4/*: any*/),
       {
         "alias": null,
         "args": null,
@@ -190,7 +218,7 @@ return {
         "name": "myUserV2",
         "plural": false,
         "selections": [
-          (v3/*: any*/)
+          (v5/*: any*/)
         ],
         "storageKey": null
       }
@@ -204,7 +232,7 @@ return {
     "kind": "Operation",
     "name": "useAccessibleProjectsQuery",
     "selections": [
-      (v2/*: any*/),
+      (v4/*: any*/),
       {
         "alias": null,
         "args": null,
@@ -213,7 +241,7 @@ return {
         "name": "myUserV2",
         "plural": false,
         "selections": [
-          (v3/*: any*/),
+          (v5/*: any*/),
           (v1/*: any*/)
         ],
         "storageKey": null
@@ -221,16 +249,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "51e0d5029f46dc3b348a5d8e91eee7e9",
+    "cacheID": "706fd94a99fad6f0e28397fcab64dac4",
     "id": null,
     "metadata": {},
     "name": "useAccessibleProjectsQuery",
     "operationKind": "query",
-    "text": "query useAccessibleProjectsQuery(\n  $domain_name: String\n  $type: [String]\n) {\n  groups(domain_name: $domain_name, is_active: true, type: $type) {\n    id\n    is_active\n    name\n    resource_policy\n    type\n  }\n  myUserV2 {\n    projects(filter: {isActive: true, domainName: {equals: $domain_name}}, limit: 1000) {\n      edges {\n        node {\n          id\n        }\n      }\n    }\n    id\n  }\n}\n"
+    "text": "query useAccessibleProjectsQuery(\n  $domain_name: String\n  $type: [String]\n) {\n  groups(domain_name: $domain_name, is_active: true, type: $type) {\n    id\n    is_active\n    name\n    resource_policy\n    type\n  }\n  myUserV2 {\n    projects(filter: {isActive: true, domainName: {equals: $domain_name}}, limit: 1000) {\n      edges {\n        node {\n          id\n          entityId\n          basicInfo {\n            name\n            type\n          }\n        }\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "2529c461b1b475abcbaba0d4ea548f0e";
+(node as any).hash = "0a8f67856e31164ddeaf54cb475aa2c9";
 
 export default node;
