@@ -49,6 +49,11 @@ async function openKeypairModal(page: import('@playwright/test').Page) {
   ).toBeVisible();
 }
 
+// The main access key banner is an info Banner: role="status", not "alert".
+function getMainAccessKeyBanner(modal: import('@playwright/test').Locator) {
+  return modal.getByRole('status').filter({ hasText: 'Main Access Key:' });
+}
+
 // Helper to get the keypair table rows (excluding the antd measure row and
 // the empty-state placeholder "No data" row, which is also a <tr> in tbody).
 function getKeypairTableRows(page: import('@playwright/test').Page) {
@@ -288,13 +293,13 @@ test.describe(
       await openKeypairModal(page);
 
       const modal = page.getByRole('dialog', { name: 'My Keypair Management' });
-      const alert = modal.getByRole('alert');
+      const banner = getMainAccessKeyBanner(modal);
 
-      // Verify the alert shows the main access key label
-      await expect(alert).toContainText('Main Access Key:');
+      // Verify the banner shows the main access key label
+      await expect(banner).toContainText('Main Access Key:');
 
       // Verify a copy button is visible next to the access key
-      await expect(alert.getByRole('button', { name: 'Copy' })).toBeVisible();
+      await expect(banner.getByRole('button', { name: 'Copy' })).toBeVisible();
     });
 
     test('User can see the main access key visually distinguished in the table', async ({
@@ -305,7 +310,7 @@ test.describe(
       const modal = page.getByRole('dialog', { name: 'My Keypair Management' });
 
       // Get the main access key from the alert banner
-      const alertText = await modal.getByRole('alert').textContent();
+      const alertText = await getMainAccessKeyBanner(modal).textContent();
       const mainKeyMatch = alertText?.match(/AKIA[A-Z0-9]+/);
       const mainAccessKey = mainKeyMatch?.[0] ?? '';
       expect(mainAccessKey).toBeTruthy();
@@ -524,7 +529,7 @@ test.describe(
         createdAccessKey = await issueNewKeypair(page);
 
         // Get the main access key from the alert banner
-        const alertText = await modal.getByRole('alert').textContent();
+        const alertText = await getMainAccessKeyBanner(modal).textContent();
         const mainKeyMatch = alertText?.match(/AKIA[A-Z0-9]+/);
         const originalMainKey = mainKeyMatch?.[0] ?? '';
 
@@ -554,7 +559,9 @@ test.describe(
         await visiblePopconfirm.getByRole('button', { name: 'Cancel' }).click();
 
         // Verify main key is unchanged
-        await expect(modal.getByRole('alert')).toContainText(originalMainKey);
+        await expect(getMainAccessKeyBanner(modal)).toContainText(
+          originalMainKey,
+        );
 
         // Verify the Re-login Required dialog did NOT appear
         await expect(
@@ -581,7 +588,7 @@ test.describe(
       const modal = page.getByRole('dialog', { name: 'My Keypair Management' });
 
       // Get the main access key from the alert banner
-      const alertText = await modal.getByRole('alert').textContent();
+      const alertText = await getMainAccessKeyBanner(modal).textContent();
       const mainKeyMatch = alertText?.match(/AKIA[A-Z0-9]+/);
       const mainAccessKey = mainKeyMatch?.[0] ?? '';
       expect(mainAccessKey).toBeTruthy();
@@ -700,7 +707,7 @@ test.describe(
       const modal = page.getByRole('dialog', { name: 'My Keypair Management' });
 
       // Get the main access key from the alert banner
-      const alertText = await modal.getByRole('alert').textContent();
+      const alertText = await getMainAccessKeyBanner(modal).textContent();
       const mainKeyMatch = alertText?.match(/AKIA[A-Z0-9]+/);
       const mainAccessKey = mainKeyMatch?.[0] ?? '';
       expect(mainAccessKey).toBeTruthy();
