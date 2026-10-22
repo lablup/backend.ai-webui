@@ -359,22 +359,6 @@ describe('connectViaGQL — myUserV2 query rejects (FR-3998)', () => {
     expect(client.logout).toHaveBeenCalledTimes(1);
   });
 
-  it("carries the manager's text, the IP-block one included", async () => {
-    const logout = vi.fn().mockResolvedValue(undefined);
-    await expect(
-      connectViaGQL(failingClient(refusal, logout), cfg, []),
-    ).rejects.toThrow('not allowed');
-
-    const ipBlocked = {
-      isError: true,
-      statusCode: 401,
-      description: '10.0.0.1 is not allowed IP address',
-    };
-    await expect(
-      connectViaGQL(failingClient(ipBlocked, logout), cfg, []),
-    ).rejects.toThrow('10.0.0.1 is not allowed IP address');
-  });
-
   it('rethrows the refusal when the cleanup logout also rejects', async () => {
     const refusal = authError();
     rejectWith(refusal);

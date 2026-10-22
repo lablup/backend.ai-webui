@@ -38,6 +38,7 @@ import {
   LoginBootstrapIncompleteError,
   SessionAuthFailureError,
   probeLoginSession,
+  refusalDetail,
   type LoginBootstrap,
 } from '../helper/loginBootstrap';
 import {
@@ -736,8 +737,12 @@ const LoginView: React.FC<{
         message?: string;
         status?: number;
       };
-      if (err instanceof SessionAuthFailureError) {
-        notification(t('error.LoginFailed'), err.message || undefined);
+      // connectViaGQL rethrows the app environment's AuthorizationError as is.
+      if (
+        err instanceof SessionAuthFailureError ||
+        (err as Error | null)?.name === 'AuthorizationError'
+      ) {
+        notification(t('error.LoginFailed'), refusalDetail(err) || undefined);
       } else if (e.message) {
         if (e.status === 408) {
           notification(

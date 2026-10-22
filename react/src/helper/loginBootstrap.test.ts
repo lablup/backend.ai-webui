@@ -6,6 +6,7 @@ import type { BackendAIClient } from '../hooks';
 import {
   LoginBootstrapIncompleteError,
   isSessionAuthFailure,
+  refusalDetail,
   probeLoginSession,
 } from './loginBootstrap';
 import { describe, expect, it, vi } from 'vitest';
@@ -243,5 +244,41 @@ describe('probeLoginSession', () => {
       check_login: vi.fn().mockResolvedValue(false),
     });
     await expect(probeLoginSession(client)).resolves.toBeNull();
+  });
+});
+
+describe('refusalDetail', () => {
+  const authorizationError = (cause: unknown, description?: string) =>
+    Object.assign(new Error('GraphQL Authorization Error'), {
+      name: 'AuthorizationError',
+      description,
+      cause,
+    });
+
+  it("reads the manager's text through the AuthorizationError wrapper", () => {
+    expect(
+      refusalDetail(
+        authorizationError({
+          isError: true,
+          statusCode: 401,
+          message: 'not allowed',
+        }),
+      ),
+    ).toBe('not allowed');
+  });
+
+  it('keeps the IP-block text the wrapper carries', () => {
+    expect(
+      refusalDetail(
+        authorizationError(
+          { isError: true, statusCode: 401 },
+          '10.0.0.1 is not allowed IP address',
+        ),
+      ),
+    ).toBe('10.0.0.1 is not allowed IP address');
+  });
+
+  it('is empty when no layer carries any text', () => {
+    expect(refusalDetail(authorizationError(undefined))).toBe('');
   });
 });

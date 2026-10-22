@@ -95,8 +95,8 @@ export function isSessionAuthFailure(err: unknown): boolean {
   );
 }
 
-// The manager's own text for a refusal, whichever layer wrapped it.
-function refusalDetail(cause: unknown): string {
+/** The manager's own text for a refusal, whichever layer wrapped it. */
+export function refusalDetail(cause: unknown): string {
   let current = cause as {
     description?: unknown;
     message?: unknown;
