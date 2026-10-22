@@ -10,9 +10,10 @@ import {
   getDedicatedAccelerators,
   type ImageGroup,
   type LauncherImage,
-  resolveImage,
-  selectEnvironment,
 } from '../features/session-launcher/domain/image';
+import { compose, type Loadable } from '../features/session-launcher/model';
+import { environmentSlice } from '../features/session-launcher/slices/environment';
+import { useFormBoundSlice } from '../features/session-launcher/view/useFormBoundSlice';
 import { Form } from '../form-engine';
 import { getImageFullName } from '../helper';
 import {
@@ -51,6 +52,10 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export type Image = LauncherImage;
+
+const environmentModel = compose([environmentSlice]);
+
+const ready = <T,>(value: T): Loadable<T> => ({ status: 'ready', value });
 
 export type ImageEnvironmentFormInput = {
   environments: {
@@ -177,58 +182,24 @@ const ImageEnvironmentSelectFormItems: React.FC<
     displayNameOf: (imageKey) => metadata?.imageInfo[imageKey]?.name,
   });
 
-  // If not initial value, select first value
-  // auto select when relative field is changed
-  useEffect(() => {
-    const version = form.getFieldValue('environments')?.version;
-    const resolution = resolveImage({
-      imageGroups,
-      watchedManual: environments?.manual,
-      watchedEnvironment: environments?.environment,
-      watchedVersion: environments?.version,
-      version,
-      environment: form.getFieldValue(['environments', 'environment']),
-      allowManual: baiClient._config.allow_manual_image_name_for_session,
-    });
-    if (resolution.kind === 'clear-for-manual') {
-      form.setFieldsValue({
-        environments: {
-          environment: undefined,
-          version: undefined,
-          image: undefined,
-        },
-      });
-    } else if (resolution.kind === 'manual') {
-      form.setFieldsValue({
-        environments: {
-          environment: undefined,
-          version: undefined,
-          image: undefined,
-          manual: resolution.manual,
-          customizedTag: resolution.customizedTag,
-        },
-      });
-    } else if (resolution.kind === 'image') {
-      form.setFieldsValue({
-        environments: {
-          environment: resolution.environment,
-          version: resolution.version,
-          image: resolution.image,
-          customizedTag: resolution.customizedTag,
-        },
-      });
-    } else if (resolution.kind === 'manual-only') {
-      form.setFieldValue(['environments', 'manual'], resolution.manual);
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [environments?.version, environments?.manual]); // environments?.environment,
-
   // support search image by full name
   const fullNameMatchedImage = findFullNameMatchedImage(
     imageGroups,
     environmentSearch,
   );
+
+  // E-01..E-07 live in `environmentSlice` (ADR 0013); this component only dispatches.
+  const { dispatch } = useFormBoundSlice(form, environmentModel, {
+    imageGroups: ready(imageGroups),
+    images: ready(images),
+    fullNameMatchedImage: ready(fullNameMatchedImage),
+    watchedEnvironment: ready(environments?.environment),
+    watchedVersion: ready(environments?.version),
+    watchedManual: ready(environments?.manual),
+    allowManualImageName: ready(
+      baiClient._config.allow_manual_image_name_for_session,
+    ),
+  });
 
   const renderAcceleratorTokens = (
     accelerators: string[],
@@ -437,13 +408,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
             popupMatchSelectWidth={false}
             defaultActiveFirstOption={true}
             onChange={(selectedValue) => {
-              form.setFieldsValue({
-                environments: selectEnvironment({
-                  imageGroups,
-                  selectedValue,
-                  fullNameMatchedImage,
-                }),
-              });
+              dispatch({ type: 'environmentSelected', payload: selectedValue });
             }}
             disabled={
               baiClient._config.allow_manual_image_name_for_session &&
@@ -541,13 +506,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                   optionLabelProp="children"
                   popupMatchSelectWidth={false}
                   onChange={(value) => {
-                    const selectedImage = _.find(images, (image) => {
-                      return getImageFullName(image) === value;
-                    });
-                    form.setFieldValue(
-                      ['environments', 'image'],
-                      selectedImage,
-                    );
+                    dispatch({ type: 'versionSelected', payload: value });
                   }}
                   showSearch={{
                     searchValue: versionSearch,
@@ -748,16 +707,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
           label={t('session.launcher.ManualImageName')}
           hasClear
           onChange={(value) => {
-            if (!_.isEmpty(value)) {
-              form.setFieldsValue({
-                environments: {
-                  environment: undefined,
-                  version: undefined,
-                  image: undefined,
-                },
-              });
-            } else {
-            }
+            dispatch({ type: 'manualImageEdited', payload: value });
           }}
         />
       </Form.Item>
