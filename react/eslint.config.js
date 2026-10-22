@@ -31,6 +31,22 @@ const astryxDynamicImportBan = [
   message:
     'Import Astryx through @lablup/ui-common, dynamic imports and require() included (ADR 0009).',
 }));
+// CSP: a raw <style> element carries no nonce and is dropped by a strict
+// `style-src 'nonce-...'` policy. Import a co-located .css file instead
+// (bundled, same-origin, covered by `style-src 'self'`) — to-astryx
+// ticket 33 retired the antd-style escape hatch this rule used to point
+// at. Values that must vary at runtime go through CSS custom properties
+// set inline or via `element.style.setProperty` (CSSOM writes are not
+// intercepted by CSP).
+const restrictedSyntax = [
+  {
+    selector: "JSXOpeningElement[name.name='style']",
+    message:
+      'Direct <style> elements are forbidden (CSP nonce safety). Import a co-located .css file instead, and drive runtime-variable values through CSS custom properties.',
+  },
+  ...astryxDynamicImportBan,
+  bailinkEllipsisRestriction,
+];
 const restrictedImportPaths = [
   {
     name: 'react-router-dom',
@@ -94,22 +110,25 @@ export default [
           paths: restrictedImportPaths,
         },
       ],
-      // CSP: a raw <style> element carries no nonce and is dropped by a strict
-      // `style-src 'nonce-...'` policy. Import a co-located .css file instead
-      // (bundled, same-origin, covered by `style-src 'self'`) — to-astryx
-      // ticket 33 retired the antd-style escape hatch this rule used to point
-      // at. Values that must vary at runtime go through CSS custom properties
-      // set inline or via `element.style.setProperty` (CSSOM writes are not
-      // intercepted by CSP).
+      'no-restricted-syntax': ['error', ...restrictedSyntax],
+    },
+  },
+
+  // ADR 0013: launcher field components dispatch intents; only the adapter
+  // writes the form. Repeats `restrictedSyntax`, which this block replaces.
+  {
+    files: ['src/features/session-launcher/**/*.{ts,tsx}'],
+    ignores: ['src/features/session-launcher/view/useFormBoundSlice.ts'],
+    rules: {
       'no-restricted-syntax': [
         'error',
+        ...restrictedSyntax,
         {
-          selector: "JSXOpeningElement[name.name='style']",
+          selector:
+            "CallExpression[callee.type='MemberExpression'][callee.property.name=/^(setFieldValue|setFieldsValue|setFields)$/]",
           message:
-            'Direct <style> elements are forbidden (CSP nonce safety). Import a co-located .css file instead, and drive runtime-variable values through CSS custom properties.',
+            'Field components dispatch intents; only useFormBoundSlice writes the form (ADR 0013)',
         },
-        ...astryxDynamicImportBan,
-        bailinkEllipsisRestriction,
       ],
     },
   },
