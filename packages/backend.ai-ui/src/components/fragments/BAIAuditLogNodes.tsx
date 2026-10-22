@@ -5,7 +5,8 @@ import {
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
-  formatAuditLogDuration,
+  formatCompactDuration,
+  parseTimedelta,
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIId from '../BAIId';
@@ -176,8 +177,11 @@ const BAIAuditLogNodes = ({
         key: 'duration',
         title: t('comp:BAIAuditLogNodes.Duration'),
         dataIndex: 'duration',
-        render: (__, record) =>
-          record.duration ? formatAuditLogDuration(record.duration) : '-',
+        render: (__, record) => {
+          if (!record.duration) return '-';
+          const ms = parseTimedelta(record.duration);
+          return ms === null ? record.duration : formatCompactDuration(ms);
+        },
       },
       {
         key: 'triggeredBy',
