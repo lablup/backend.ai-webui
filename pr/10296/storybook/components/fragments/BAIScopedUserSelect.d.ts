@@ -1,8 +1,7 @@
-import { BAIScopedUserSelectPaginatedQuery } from '../../__generated__/BAIScopedUserSelectPaginatedQuery.graphql';
+import { BAIScopedUserSelectPaginatedQuery, UserScope } from '../../__generated__/BAIScopedUserSelectPaginatedQuery.graphql';
 import { BAIComplexSelectProps, BAILabeledValue } from '../BAIComplexSelect';
 export type BAIScopedUserSelectFilter = NonNullable<BAIScopedUserSelectPaginatedQuery['variables']['filter']>;
-export type BAIScopedUserSelectScope = BAIScopedUserSelectPaginatedQuery['variables']['scope'];
-export type ScopedUserV2Node = NonNullable<NonNullable<BAIScopedUserSelectPaginatedQuery['response']['scopedUsersV2']>['edges'][number]>['node'];
+export type ScopedUserNode = NonNullable<NonNullable<BAIScopedUserSelectPaginatedQuery['response']['scopedUsersV2']>['edges'][number]>['node'];
 export interface BAIScopedUserSelectRef {
     refetch: () => void;
 }
@@ -17,10 +16,12 @@ export interface BAIScopedUserSelectProps extends Omit<BAIComplexSelectProps, 'o
     /** Plain key(s) — the email, or the local user id under `valuePropName="id"`. */
     value?: string | Array<string> | null;
     /**
-     * P3C-1: the second `option` argument carries the labelInValue pair(s), so a
-     * caller can show the email while the raw UUID goes into a mutation input.
+     * The second argument carries the labelInValue pair(s), so a caller can
+     * show the email while the raw UUID goes into a filter or mutation input.
      */
     onChange?: (value: string | Array<string> | undefined, option?: BAIScopedUserSelectOption | Array<BAIScopedUserSelectOption>) => void;
+    /** The users this scope reaches are listed, usually the current domain (ADR 0012). */
+    scope: UserScope;
     /**
      * Offer the typed search text as an option when it is an e-mail address no
      * listed user matches, so an address outside the scope can still be picked.
@@ -28,12 +29,6 @@ export interface BAIScopedUserSelectProps extends Omit<BAIComplexSelectProps, 'o
      * Only under `valuePropName="email"`.
      */
     allowCustomSelect?: boolean;
-    /** Domain id(s) whose users are listed. Left out of the scope when omitted. */
-    domainId?: string | Array<string> | null;
-    /** Project id(s) whose users are listed. Left out of the scope when omitted. */
-    projectId?: string | Array<string> | null;
-    /** Role id(s) whose holders are listed. Left out of the scope when omitted. */
-    roleId?: string | Array<string> | null;
     filter?: BAIScopedUserSelectFilter;
     excludeInactive?: boolean;
     valuePropName?: 'id' | 'email';

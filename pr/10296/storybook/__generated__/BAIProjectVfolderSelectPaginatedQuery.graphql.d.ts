@@ -7,6 +7,7 @@ export type VFolderFilter = {
     OR?: ReadonlyArray<VFolderFilter> | null | undefined;
     cloneable?: boolean | null | undefined;
     createdAt?: DateTimeFilter | null | undefined;
+    entityId?: UUIDFilter | null | undefined;
     host?: StringFilter | null | undefined;
     labels?: EntityLabelNestedFilter | null | undefined;
     name?: StringFilter | null | undefined;

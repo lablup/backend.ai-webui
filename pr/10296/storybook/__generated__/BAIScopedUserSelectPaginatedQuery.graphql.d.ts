@@ -152,8 +152,8 @@ export type BAIScopedUserSelectPaginatedQuery$data = {
                 readonly basicInfo: {
                     readonly email: string;
                     readonly fullName: string | null | undefined;
-                    readonly username: string | null | undefined;
                 };
+                readonly entityId: string;
                 readonly id: string;
             };
         }>;
