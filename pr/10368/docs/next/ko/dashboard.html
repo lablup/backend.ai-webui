@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="대시보드" />
   <meta name="twitter:description" content="대시보드 페이지는 모든 프로젝트와 자원 그룹의 자원 사용량, 한도, 실행 중인 세션 정보를 한눈에 확인할 수 있는 종합 현황 화면입니다. 사용 중인 자원의 분포를 직관적으로 파악하고, 시스템 활동 상태를 실시간으로 모니터링합니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"대시보드","inLanguage":"ko","description":"대시보드 페이지는 모든 프로젝트와 자원 그룹의 자원 사용량, 한도, 실행 중인 세션 정보를 한눈에 확인할 수 있는 종합 현황 화면입니다. 사용 중인 자원의 분포를 직관적으로 파악하고, 시스템 활동 상태를 실시간으로 모니터링합니다.","dateModified":"2026-10-12T08:19:58.000Z","url":"https://webui.docs.backend.ai/next/ko/dashboard.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"대시보드","inLanguage":"ko","description":"대시보드 페이지는 모든 프로젝트와 자원 그룹의 자원 사용량, 한도, 실행 중인 세션 정보를 한눈에 확인할 수 있는 종합 현황 화면입니다. 사용 중인 자원의 분포를 직관적으로 파악하고, 시스템 활동 상태를 실시간으로 모니터링합니다.","dateModified":"2026-10-21T05:18:04.000Z","url":"https://webui.docs.backend.ai/next/ko/dashboard.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/dashboard.html" />
   <link rel="alternate" hreflang="en" href="../en/dashboard.html" />
   <link rel="alternate" hreflang="ja" href="../ja/dashboard.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (4e02b6b)">v26.10.0-alpha.1 (4e02b6b)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (6300af7)">v26.10.0-alpha.1 (6300af7)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -293,7 +293,7 @@
 <p data-bai-block="31">입력 항목 아래의 실시간 미리 보기에는 현재 조건과 일치하는 행이 표시됩니다. 미리 보기에서 열을 정렬하면 해당 정렬 순서가 패널에 적용됩니다. <strong>추가</strong> 버튼을 클릭하면 패널이 보드에 추가됩니다.</p>
 <p><figure data-bai-block="32" class="doc-figure"><img src="./images/dashboard_panel_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1920" height="1352" /><figcaption>그림 8.3</figcaption></figure>
 </p>
-<p data-bai-block="33"><strong>배포</strong> 패널은 배포 페이지와 동일한 테이블(이름, 상태, 복제본 요약, 모델, 생성일)을 사용해 현재 프로젝트의 모델 배포를 나열합니다. 배포 이름을 클릭하면 해당 배포의 상세 페이지가 열립니다. 조건 필터는 이름, 태그, 엔드포인트 URL, 공개 여부를 제공합니다.</p>
+<p data-bai-block="33"><strong>배포</strong> 패널은 배포 페이지와 동일한 테이블(이름, 상태, 복제본 요약, 모델, 생성일)을 사용해 현재 프로젝트의 모델 배포를 나열합니다. 배포 이름을 클릭하면 해당 배포의 상세 페이지가 열립니다.</p>
 <p data-bai-block="34"><strong>그리드</strong>를 선택하면 세션 리소스 그리드가 표시됩니다. 조건에 일치하는 각 세션에 할당된 자원을 사용률에 따라 색이 다른 유닛 셀로 보여 줍니다. 세션을 클릭하면 테이블에서 행을 클릭했을 때와 마찬가지로 세부 정보 드로어가 열립니다. 그리드는 조건에 일치하는 세션 중 최대 100개까지만 표시하며, 그보다 많은 경우 안내 문구가 표시됩니다.</p>
 <p data-bai-block="35">그리드의 표시 설정(리소스/커널 모드, 표시할 자원 또는 메트릭, 메모리 단위, 배치 방식)은 패널 추가/수정 대화 상자의 실시간 미리 보기에서 지정하며 패널과 함께 저장됩니다. 패널 자체에는 이 설정을 바꿀 수 있는 컨트롤이 없으므로, 다른 보기가 필요하면 패널을 하나 더 추가하세요.</p>
 <div class="admonition admonition-note">
@@ -321,7 +321,7 @@
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/dashboard/dashboard.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> 이 페이지 편집</a>
-  <span class="last-updated">마지막 업데이트 2026년 10월 12일</span>
+  <span class="last-updated">마지막 업데이트 2026년 10월 21일</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./start.html">
