@@ -28,7 +28,13 @@ import {
   resolve,
 } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { defineConfig, loadEnv, normalizePath, type Plugin } from 'vite';
+import {
+  defaultClientConditions,
+  defineConfig,
+  loadEnv,
+  normalizePath,
+  type Plugin,
+} from 'vite';
 import checker from 'vite-plugin-checker';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -762,6 +768,8 @@ export default defineConfig(({ command, mode }) => {
         'i18next',
         'react-i18next',
       ],
+      // Replaces Vite's defaults, hence the spread (ADR 0013).
+      conditions: ['@backend.ai/source', ...defaultClientConditions],
       // Array form lets us mix regex aliases (for `src/` baseUrl imports) with
       // the workspace-package aliases. `find` is matched against the import
       // source; `replacement` replaces the match.
@@ -770,16 +778,6 @@ export default defineConfig(({ command, mode }) => {
         // react/. Replicate that here — regex form ensures we only rewrite
         // imports that start with `src/`, not ones like `backend.ai-ui/src/`.
         { find: /^src\//, replacement: reactSrc + '/' },
-
-        // backend.ai-ui workspace package, dev-aliased to source so HMR
-        // tracks it without a BUI rebuild. `locale/*` is the published
-        // export-map alias for dist/locale/* and gets the same treatment.
-        { find: /^backend\.ai-ui\/dist(\/|$)/, replacement: buiSrc + '$1' },
-        {
-          find: /^backend\.ai-ui\/locale(\/|$)/,
-          replacement: buiSrc + '/locale$1',
-        },
-        { find: /^backend\.ai-ui$/, replacement: buiSrc },
 
         // backend.ai-client workspace package, dev-aliased to source so HMR
         // tracks the SDK without rebuilding tsup output.
@@ -896,12 +894,8 @@ export default defineConfig(({ command, mode }) => {
       open: false,
       allowedHosts: allowedHosts,
       fs: {
-        // Allow Vite to read files from the whole monorepo so that the
-        // alias to `../dist/lib/...` and `../packages/backend.ai-ui/src`
-        // resolves without FS sandbox 403s. Additionally allow the pnpm
-        // global virtual store root (resolved dynamically above) so that
-        // dependencies hard-linked outside the repo can be served — see
-        // `resolvePnpmStorePath` for the full rationale.
+        // The whole monorepo (workspace package sources) and the pnpm global
+        // store — see `resolvePnpmStorePath`.
         allow: [projectRoot, ...(pnpmStorePath ? [pnpmStorePath] : [])],
       },
       watch: {

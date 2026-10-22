@@ -28,20 +28,14 @@ const reactArtifactDir = resolve(reactSrc, '__generated__');
  * optimisations are active in tests too).
  */
 export default defineConfig({
+  ssr: { resolve: { conditions: ['@backend.ai/source'] } },
   resolve: {
+    conditions: ['@backend.ai/source'],
     alias: [
       // Mirror the `src/` baseUrl import in tsconfig.json so
       // `import 'src/hooks/foo'` resolves under Vitest too.
       { find: /^src\//, replacement: reactSrc + '/' },
-      // Workspace package alias (dev-source path, matching the Jest
-      // moduleNameMapper entry for `backend.ai-ui`).
-      { find: /^backend\.ai-ui\/dist(\/|$)/, replacement: buiSrc + '$1' },
-      // The `./locale/*` subpath export points at `dist/`, which CI never
-      // builds before running this suite — resolve it to source instead.
-      { find: /^backend\.ai-ui\/locale\//, replacement: buiSrc + '/locale/' },
-      { find: /^backend\.ai-ui$/, replacement: buiSrc },
       // `backend.ai-client` is mocked in tests (see __test__/backendAiClient.mock.js).
-      // The Jest moduleNameMapper handled this explicitly; we use an alias instead.
       {
         find: /^backend\.ai-client$/,
         replacement: resolve(__dirname, '__test__/backendAiClient.mock.js'),

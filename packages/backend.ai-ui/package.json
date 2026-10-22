@@ -20,16 +20,24 @@
   "module": "./dist/backend.ai-ui.js",
   "types": "./dist/index.d.ts",
   "sideEffects": [
-    "**/*.css"
+    "**/*.css",
+    "./src/index.ts"
   ],
   "exports": {
     ".": {
+      "@backend.ai/source": "./src/index.ts",
       "import": "./dist/backend.ai-ui.js",
       "types": "./dist/index.d.ts"
     },
     "./locale/*": {
+      "@backend.ai/source": "./src/locale/*.ts",
       "import": "./dist/locale/*.js",
       "types": "./dist/locale/*.d.ts"
+    },
+    "./theme": {
+      "@backend.ai/source": "./src/theme/index.ts",
+      "import": "./dist/theme.js",
+      "types": "./dist/theme/index.d.ts"
     },
     "./styles.css": "./dist/backend.ai-ui.css"
   },
