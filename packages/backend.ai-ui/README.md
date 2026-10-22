@@ -35,8 +35,9 @@ BUI has **no antd in its source, its peers, or its types**. The last of it went
 in the to-astryx final switch, which removed the antd `ConfigProvider` leg of
 `BAIConfigProvider` and, with it, the 21 `src/locale/*_*.ts` modules that
 existed only to hand antd's `Locale` bundles to that provider (they were also
-the `backend.ai-ui/dist/locale/*` package export — that export is gone too, see
-"Localization" below).
+the `backend.ai-ui/dist/locale/*` package export). The per-language modules
+that exist today are a different export, `backend.ai-ui/locale/*`, which
+carries Astryx's catalogs instead — see "Localization" below.
 
 The path here is worth knowing, because the intermediate states are still
 visible in comments across the package:
@@ -58,7 +59,11 @@ visible in comments across the package:
   Astryx's `useTheme().token()`, and what remains under `src/theme/` is
   measured data, not ported antd code: the alignment tables
   (`antdParity.ts`) and the custom-token builder (`baiCustomTokens.ts`) the
-  app's theme recipe and Storybook's brand theme are both built from.
+  app's theme recipe and Storybook's brand theme are both built from. They
+  are also published on their own as `backend.ai-ui/theme`, so a consumer can
+  apply BUI's theme tokens without the component barrel; the app's theme
+  recipe imports them from there because `astryx theme build` loads it in
+  Node (ADR 0013).
 
 No antd-family package remains, not even in `devDependencies` — the
 workspace's exact-pinned `pnpm-lock.yaml` is what keeps it that way.
@@ -72,8 +77,8 @@ import 'backend.ai-ui/styles.css';
 ```
 
 `src/index.ts` imports it too, so consumers that bundle BUI **from source**
-(this repo's `react/` app does — see the `backend.ai-ui` → `src` alias in
-`react/vite.config.ts`) get it through the module graph and need no explicit
+(this repo's `react/` app does, through the `@backend.ai/source` export
+condition — ADR 0013) get it through the module graph and need no explicit
 import. Consumers of the built `dist` must import it: a Vite/Rollup library
 build strips CSS imports out of the emitted JS and writes
 `dist/backend.ai-ui.css` beside it.
@@ -274,9 +279,13 @@ const App = ({ children }) => (
 );
 ```
 
-A non-English module also registers its `dayjs` locale and starts loading
-BUI's catalog for that language. `BAIConfigProvider` suspends until that
-catalog is in, so mount it under a `<Suspense>` boundary.
+A non-English module (`import ko_KR from 'backend.ai-ui/locale/ko_KR'` gives
+`{ lang, astryxLocale }`, the Astryx chrome strings for that language) also
+registers its `dayjs` locale and starts loading BUI's catalog for that
+language. `BAIConfigProvider` suspends until that catalog is in, so mount it
+under a `<Suspense>` boundary. These modules used to live at
+`backend.ai-ui/dist/locale/*` and carry antd bundles in `BAILocale.antdLocale`;
+that field is gone.
 
 ### How many i18n runtimes are there? (P13)
 

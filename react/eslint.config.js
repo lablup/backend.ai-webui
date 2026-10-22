@@ -8,10 +8,9 @@ import jsoncParser from 'jsonc-eslint-parser';
 // below can re-declare the rule (flat-config rule configs replace, not merge)
 // without duplicating these entries.
 const restrictedImportPatterns = [
-  // `locale` is a published export-map alias (→ dist/locale/*), not a deep
-  // reach into package internals.
+  // `locale` and `theme` are published subpath exports, not deep reaches into internals.
   {
-    group: ['backend.ai-ui/*', '!backend.ai-ui/dist', '!backend.ai-ui/locale'],
+    group: ['backend.ai-ui/*', '!backend.ai-ui/locale', '!backend.ai-ui/theme'],
   },
   // ADR 0009: Astryx is reached only through its @lablup/ui-common mirror.
   {
