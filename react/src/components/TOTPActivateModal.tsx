@@ -8,7 +8,7 @@ import { Form, FormInstance } from '../form-engine';
 import { getTotpActivationErrorMessageKey } from '../helper/totpErrorType';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
-import { AstryxFormTextInput } from './astryxFormControls';
+import { AstryxFormTextInput } from './astryxFormTextInput';
 import { Spinner } from '@lablup/ui-common/Spinner';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIModal, BAIModalProps, BAIFlex, BAIText } from 'backend.ai-ui';
@@ -28,12 +28,12 @@ export type TOTPActivateFormData = {
   otp: number;
 };
 
-interface Props extends BAIModalProps {
+export interface TOTPActivateModalProps extends BAIModalProps {
   userFrgmt?: TOTPActivateModalFragment$key | null;
   onRequestClose: (success?: boolean) => void;
 }
 
-const TOTPActivateModal: React.FC<Props> = ({
+const TOTPActivateModal: React.FC<TOTPActivateModalProps> = ({
   userFrgmt = null,
   onRequestClose,
   ...baiModalProps

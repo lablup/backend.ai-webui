@@ -7,7 +7,7 @@ import { Form, FormInstance } from '../form-engine';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
-import { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
+import type { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
 import { AstryxFormNumberInput } from './astryxFormControls';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import { Text } from '@lablup/ui-common/Text';

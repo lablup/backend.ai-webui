@@ -126,6 +126,7 @@ export function createFetchFn(
             throw Object.assign(new Error('GraphQL Authorization Error'), {
               name: 'AuthorizationError',
               description: isIpBlocked ? err.description : undefined,
+              cause: err,
             });
           }
           throw err;

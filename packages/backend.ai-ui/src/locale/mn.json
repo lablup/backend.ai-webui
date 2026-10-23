@@ -570,6 +570,21 @@
     "MultiNodeShort": "Олон-нүдэт",
     "SingleNodeShort": "Нэг-нүдэт"
   },
+  "comp:BAISessionScene": {
+    "FoundCount": "{{count}} олдсон",
+    "Hero": "Минийх",
+    "Measuring": "Хэмжиж байна",
+    "ResourceShare": "Нөөцийн эзлэх хувь",
+    "ShowAll": "Бүгдийг харуулах",
+    "Utilization": "Ашиглалт",
+    "mood": {
+      "Idle": "Сул",
+      "Leaving": "Дуусгаж байна",
+      "Overheated": "Хэт халсан",
+      "Waiting": "Нөөц хүлээж байна",
+      "Working": "Ажиллаж байна"
+    }
+  },
   "comp:BAISessionTypeToken": {
     "Batch": "Багц",
     "Inference": "Дүгнэлт",

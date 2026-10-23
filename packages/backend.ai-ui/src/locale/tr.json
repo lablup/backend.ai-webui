@@ -570,6 +570,21 @@
     "MultiNodeShort": "Çok",
     "SingleNodeShort": "Bekar"
   },
+  "comp:BAISessionScene": {
+    "FoundCount": "{{count}} bulundu",
+    "Hero": "Benim",
+    "Measuring": "Ölçülüyor",
+    "ResourceShare": "Kaynak payı",
+    "ShowAll": "Tümünü göster",
+    "Utilization": "Kullanım",
+    "mood": {
+      "Idle": "Boşta",
+      "Leaving": "Sonlandırılıyor",
+      "Overheated": "Aşırı ısınmış",
+      "Waiting": "Kaynak bekliyor",
+      "Working": "Çalışıyor"
+    }
+  },
   "comp:BAISessionTypeToken": {
     "Batch": "Toplu İş",
     "Inference": "Çıkarım",

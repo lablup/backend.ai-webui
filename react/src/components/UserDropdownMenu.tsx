@@ -9,9 +9,9 @@ import {
   useCurrentUserRole,
   useTOTPSupported,
 } from '../hooks/backendai';
+import { useOpenHelp } from '../hooks/useHelpURL';
 import { useThemeMode } from '../hooks/useThemeMode';
 import AboutBackendAIModal from './AboutBackendAIModal';
-import DownloadModal from './DownloadModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useUserSettingsModal } from './UserSettingsModalOpener';
 import {
@@ -35,10 +35,16 @@ import {
   LogOut,
   Settings,
   Download,
+  Sun,
+  Moon,
+  CircleHelp,
 } from 'lucide-react';
 import React, { CSSProperties, Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+
+// The download page's code view pulls shiki; load it when the modal opens.
+const DownloadModal = React.lazy(() => import('./DownloadModal'));
 
 const UserProfileSettingModal = React.lazy(
   () => import('./UserProfileSettingModal'),
@@ -59,12 +65,15 @@ const UserProfileSettingModal = React.lazy(
 // prop — see the call site for why it cannot go inside `button`.
 const UserDropdownMenu: React.FC<{
   style?: CSSProperties;
-}> = ({ style }) => {
+  /** Adds the theme toggle and help, which the header hides on mobile. */
+  includesHeaderActions?: boolean;
+}> = ({ style, includesHeaderActions }) => {
   'use memo';
   const { t } = useTranslation();
   const [userInfo] = useCurrentUserInfo();
   const screens = useBAIBreakpoint();
-  const { isDarkMode } = useThemeMode();
+  const { isDarkMode, setThemeMode } = useThemeMode();
+  const openHelp = useOpenHelp();
   const baiClient = useSuspendedBackendaiClient();
 
   const [isOpenUserSettingModal, { set: setIsOpenUserSettingModal }] =
@@ -157,6 +166,18 @@ const UserDropdownMenu: React.FC<{
         openUserSettings('general');
       },
     },
+    includesHeaderActions && {
+      label: isDarkMode
+        ? t('userSettings.LightMode')
+        : t('userSettings.DarkMode'),
+      icon: isDarkMode ? <Sun size="1em" /> : <Moon size="1em" />,
+      onClick: () => setThemeMode(isDarkMode ? 'light' : 'dark'),
+    },
+    includesHeaderActions && {
+      label: t('webui.menu.Help'),
+      icon: <CircleHelp size="1em" />,
+      onClick: openHelp,
+    },
     (baiClient._config.allowAppDownloadPanel ||
       baiClient._config.allowCLIDownloadPanel) && {
       label: t('summary.Downloads'),
@@ -178,7 +199,7 @@ const UserDropdownMenu: React.FC<{
       {/* antd wrapped a `<User>` glyph in a 17px `Avatar` purely to give it a
           light disc behind it; Astryx `Avatar` renders images/initials and
           takes no children (MAPPING §4), so the trigger uses the bare lucide
-          icon as the Button's `icon`. On < lg the label collapses to the icon
+          icon as the Button's `icon`. On < xl the label collapses to the icon
           (`isIconOnly`), which is what the old `screens.lg &&` children
           expression did. */}
       {/* Only the TRIGGER sits on the orange header band, so only the trigger
@@ -241,7 +262,7 @@ const UserDropdownMenu: React.FC<{
           'data-astryx-media': isDarkMode ? 'light' : 'dark',
           variant: 'ghost',
           icon: <User size="1em" />,
-          isIconOnly: !screens.lg,
+          isIconOnly: !screens.xl,
           label: _.truncate(displayName, { length: 30 }),
           style,
         }}
@@ -273,12 +294,14 @@ const UserDropdownMenu: React.FC<{
               </BAIUnmountAfterClose>
             )}
           </Suspense>
-          <BAIUnmountAfterClose>
-            <DownloadModal
-              open={isDownloadModalOpen}
-              onRequestClose={() => toggleDownloadModal()}
-            />
-          </BAIUnmountAfterClose>
+          <Suspense fallback={null}>
+            <BAIUnmountAfterClose>
+              <DownloadModal
+                open={isDownloadModalOpen}
+                onRequestClose={() => toggleDownloadModal()}
+              />
+            </BAIUnmountAfterClose>
+          </Suspense>
           <BAIUnmountAfterClose>
             <AboutBackendAIModal
               open={isOpenAboutBAIModal}

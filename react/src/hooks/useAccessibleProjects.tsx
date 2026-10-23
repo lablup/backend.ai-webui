@@ -65,7 +65,8 @@ const toAccessibleProject = (edge: ProjectV2Edge): AccessibleProject => ({
  * enter" (FR-3388). This is exactly the data the header's `ProjectSelect`
  * renders: active projects of the domain (GENERAL + MODEL_STORE, unless an
  * admin's config blocklist hides the model store) intersected with the
- * user's project membership.
+ * user's project membership. The user's own personal project, which the
+ * domain list never contains, is returned separately as `personalProject`.
  *
  * URL project validation (`useUrlProjectValidity`) and the header's
  * unselected-state check consume this hook instead of the login-time
@@ -106,6 +107,7 @@ export const useAccessibleProjects = (
         $userScope: ProjectScope!
         $domainName: String!
         $types: [ProjectTypeV2!]!
+        $memberTypes: [ProjectTypeV2!]!
         $isAdmin: Boolean!
       ) {
         ...useAccessibleProjects_domainProjectsFragment
@@ -121,7 +123,7 @@ export const useAccessibleProjects = (
           filter: {
             isActive: true
             domainName: { equals: $domainName }
-            type: { in_: $types }
+            type: { in_: $memberTypes }
           }
           limit: 1000
         ) {
@@ -149,6 +151,7 @@ export const useAccessibleProjects = (
       userScope: { user: [{ value: baiClient.user_uuid }] },
       domainName,
       types,
+      memberTypes: [...types, 'PERSONAL'],
       isAdmin,
     },
     {
@@ -225,10 +228,24 @@ export const useAccessibleProjects = (
     }
   }, [hasNext, isLoadingNext, loadNext, failedPagingKey, pagingKey]);
 
-  const accessibleProjects = _.map(memberProjects?.edges, toAccessibleProject);
+  // The personal project rides along in the membership read; the domain list
+  // never contains it, so it is returned separately.
+  const [personalEdges, memberEdges] = _.partition(
+    memberProjects?.edges,
+    (edge) => edge.node.basicInfo.type === 'PERSONAL',
+  );
+  const accessibleProjects = _.map(memberEdges, toAccessibleProject);
   const groups = domainProjects?.scopedProjectsV2
     ? _.map(domainProjects.scopedProjectsV2.edges, toAccessibleProject)
     : accessibleProjects;
 
-  return { groups, accessibleProjects };
+  const personalProjectNode = _.first(personalEdges)?.node;
+  const personalProject = personalProjectNode
+    ? {
+        id: personalProjectNode.entityId,
+        name: personalProjectNode.basicInfo.name,
+      }
+    : undefined;
+
+  return { groups, accessibleProjects, personalProject };
 };

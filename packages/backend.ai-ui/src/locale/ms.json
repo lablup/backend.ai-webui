@@ -570,6 +570,21 @@
     "MultiNodeShort": "MULTI",
     "SingleNodeShort": "Bujang"
   },
+  "comp:BAISessionScene": {
+    "FoundCount": "{{count}} ditemui",
+    "Hero": "Saya",
+    "Measuring": "Mengukur",
+    "ResourceShare": "Bahagian sumber",
+    "ShowAll": "Tunjuk semua",
+    "Utilization": "Penggunaan",
+    "mood": {
+      "Idle": "Melahu",
+      "Leaving": "Menamatkan",
+      "Overheated": "Terlampau panas",
+      "Waiting": "Menunggu sumber",
+      "Working": "Bekerja"
+    }
+  },
   "comp:BAISessionTypeToken": {
     "Batch": "Kelompok",
     "Inference": "Inferens",

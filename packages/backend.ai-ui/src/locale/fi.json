@@ -570,6 +570,21 @@
     "MultiNodeShort": "Moni-",
     "SingleNodeShort": "Yksittäinen"
   },
+  "comp:BAISessionScene": {
+    "FoundCount": "{{count}} löydetty",
+    "Hero": "Omat",
+    "Measuring": "Mitataan",
+    "ResourceShare": "Resurssiosuus",
+    "ShowAll": "Näytä kaikki",
+    "Utilization": "Käyttöaste",
+    "mood": {
+      "Idle": "Vapaana",
+      "Leaving": "Päättyy",
+      "Overheated": "Ylikuumentunut",
+      "Waiting": "Odottaa resursseja",
+      "Working": "Työskentelee"
+    }
+  },
   "comp:BAISessionTypeToken": {
     "Batch": "Erä",
     "Inference": "Päättely",

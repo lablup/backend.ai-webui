@@ -22,7 +22,6 @@ import {
   AstryxFormTagsInput,
 } from '../astryxFormControls';
 import AppLaunchConfirmationModal from './AppLaunchConfirmationModal';
-import SFTPConnectionInfoModal from './SFTPConnectionInfoModal';
 import TCPConnectionInfoModal from './TCPConnectionInfoModal';
 import TensorboardPathModal from './TensorboardPathModal';
 import VNCConnectionInfoModal from './VNCConnectionInfoModal';
@@ -48,9 +47,14 @@ import {
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { useEffect, useRef, useState } from 'react';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
+
+// Carries SourceCodeView (shiki); load it when the SFTP modal first opens.
+const SFTPConnectionInfoModal = React.lazy(
+  () => import('./SFTPConnectionInfoModal'),
+);
 
 // PILOT-DECISION: antd `ModalProps` -> BUI `BAIModalProps` (§6 — a type-only
 // antd import is still an antd import). The render was already `BAIModal`, so
@@ -563,17 +567,23 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
       </BAIModal>
       {session ? (
         <>
-          <BAIUnmountAfterClose>
-            <SFTPConnectionInfoModal
-              sessionFrgmt={session}
-              open={sftpModalState.open}
-              host={sftpModalState.host}
-              port={sftpModalState.port}
-              onCancel={() => {
-                setSftpModalState({ open: false, host: '127.0.0.1', port: 0 });
-              }}
-            />
-          </BAIUnmountAfterClose>
+          <Suspense fallback={null}>
+            <BAIUnmountAfterClose>
+              <SFTPConnectionInfoModal
+                sessionFrgmt={session}
+                open={sftpModalState.open}
+                host={sftpModalState.host}
+                port={sftpModalState.port}
+                onCancel={() => {
+                  setSftpModalState({
+                    open: false,
+                    host: '127.0.0.1',
+                    port: 0,
+                  });
+                }}
+              />
+            </BAIUnmountAfterClose>
+          </Suspense>
           <BAIUnmountAfterClose>
             <VNCConnectionInfoModal
               open={vncModalState.open}

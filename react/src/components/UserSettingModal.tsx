@@ -28,7 +28,7 @@ import {
 } from './BulkCreateUserFailure';
 import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import ProjectSelect from './ProjectSelect';
-import TOTPActivateModal from './TOTPActivateModal';
+import TOTPActivateModal from './TOTPActivateModalLazy';
 import {
   AstryxFormCheckbox,
   AstryxFormNumberInput,
