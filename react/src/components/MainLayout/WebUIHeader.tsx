@@ -68,9 +68,9 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
       direction="row"
       style={{
         height: 'var(--webui-header-height)',
-        backgroundColor: isSystemAdminScope
-          ? 'var(--header-bg-admin)'
-          : token('--header-bg'),
+        backgroundColor: token(
+          isSystemAdminScope ? '--header-bg-admin' : '--header-bg',
+        ),
         paddingRight: token('--spacing-6'),
         paddingLeft: token('--spacing-6'),
         // Groups are told apart by spacing, not rules, so an absent group

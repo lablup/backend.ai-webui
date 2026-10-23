@@ -218,9 +218,11 @@ function MainLayout() {
                     <div
                       style={{
                         height: 'var(--webui-header-height)',
-                        backgroundColor: isSystemAdminScope
-                          ? 'var(--header-bg-admin)'
-                          : token('--header-bg'),
+                        backgroundColor: token(
+                          isSystemAdminScope
+                            ? '--header-bg-admin'
+                            : '--header-bg',
+                        ),
                       }}
                     />
                   }
