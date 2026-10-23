@@ -131,6 +131,8 @@ interface EnvVarNameInputProps {
    * way.
    */
   onChange?: (value: string) => void;
+  /** Injected by `Form.Item` so a blur runs the field's rules. */
+  onBlur?: () => void;
   /** Accessible name; visually hidden — `BAIFormItem` renders the visible one. */
   label: string;
   placeholder?: string;
@@ -155,6 +157,7 @@ interface EnvVarNameInputProps {
 const EnvVarNameInput: React.FC<EnvVarNameInputProps> = ({
   value,
   onChange,
+  onBlur,
   label,
   placeholder,
   suggestions,
@@ -298,6 +301,7 @@ const EnvVarNameInput: React.FC<EnvVarNameInputProps> = ({
           );
         }}
         onBlur={(e) => {
+          onBlur?.();
           if (!popover.isOpen) return;
           const next = e.relatedTarget as Node | null;
           const popoverEl = document.getElementById(popover.id);
@@ -531,6 +535,7 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                 },
               }),
             ],
+            validateTrigger: ['onChange', 'onBlur'],
             ...restFormItemProps,
           }),
           renderInput: ({ field, fields, label }) => (
