@@ -22,7 +22,8 @@ The Deployments page displays a list of all deployments in the current project. 
 
 At the top of the page, you can filter deployments by lifecycle stage:
 
-- **Running**: Shows deployments that are currently running or being created. This is the default view.
+- **Serving**: Shows deployments whose Desired Replicas is 1 or more. This is the default view.
+- **Paused**: Shows deployments that are not terminated but have Desired Replicas set to 0. They move back to **Serving** once Desired Replicas is 1 or more.
 - **Terminated**: Shows deployments that have been terminated.
 
 Click the `Create Deployment` button to open the **Create Deployment** modal.
