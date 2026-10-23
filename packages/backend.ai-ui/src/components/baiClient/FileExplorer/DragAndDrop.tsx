@@ -66,10 +66,9 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({
         // e2e and `DragAndDrop.css` need a repo-owned handle on it (never an
         // `astryx-*` class).
         controlClassName="bai-file-explorer-dropzone"
-        // The caption has to live INSIDE the drop area: `label` / `description`
-        // render above it in the Field, on top of the explorer title (FR-3575).
-        label={t('comp:FileExplorer.DragAndDropDesc')}
-        isLabelHidden
+        // The caption lives INSIDE the drop area (`placeholder`), not above it
+        // on top of the explorer title (FR-3575).
+        aria-label={t('comp:FileExplorer.DragAndDropDesc')}
         placeholder={t('comp:FileExplorer.DragAndDropDesc')}
         isMultiple
         value={null}

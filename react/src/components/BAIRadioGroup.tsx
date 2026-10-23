@@ -81,8 +81,8 @@ const BAIRadioGroup: React.FC<BAIRadioGroupProps> = ({
   return (
     <SegmentedControl
       value={String(value ?? '')}
-      label={label ?? 'options'}
-      isDisabled={disabled}
+      aria-label={label ?? 'options'}
+      disabled={disabled}
       size={size}
       onChange={(next) => {
         // Re-shape Astryx's `(value) => void` back into antd's

@@ -225,12 +225,9 @@ const DiagnosticsPage = () => {
               is not just redundant, it was the only thing giving the toggle an
               accessible name — and it never actually did, because antd's
               Switch and that Text were unassociated siblings. */}
-          <Switch
-            size="sm"
-            value={showOnlyFailed}
-            onChange={setShowOnlyFailed}
-            label={t('diagnostics.ShowOnlyFailedItems')}
-          />
+          <Switch size="sm" value={showOnlyFailed} onChange={setShowOnlyFailed}>
+            {t('diagnostics.ShowOnlyFailedItems')}
+          </Switch>
           <BAIButton
             icon={
               <RotateCw

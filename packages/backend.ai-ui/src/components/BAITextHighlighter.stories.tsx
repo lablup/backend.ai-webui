@@ -255,8 +255,7 @@ export const InteractiveSearch: Story = {
         >
           <BAIFlex direction="column" gap="sm">
             <TextInput
-              label="Search"
-              isLabelHidden
+              aria-label="Search"
               placeholder="Search..."
               value={searchKeyword}
               onChange={setSearchKeyword}

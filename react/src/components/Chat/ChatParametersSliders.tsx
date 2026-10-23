@@ -167,8 +167,7 @@ export const ChatParametersSliders = ({
         </Text>
         <Switch
           value={usingParameters}
-          label={t('chatui.chat.parameter.Title')}
-          isLabelHidden
+          aria-label={t('chatui.chat.parameter.Title')}
           onChange={() => {
             onChangeParameter(!usingParameters, {
               ...currentParameters.current,

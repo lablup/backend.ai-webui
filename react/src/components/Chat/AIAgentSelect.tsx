@@ -58,8 +58,7 @@ const AIAgentSelect: React.FC<ChatAgentSelectProps> = ({
               MAPPING.md §3.1). The agent catalog is small and fully loaded,
               so client-side filtering is behaviourally equivalent here. */}
           <Selector
-            label={t('chatui.SelectAgent')}
-            isLabelHidden
+            aria-label={t('chatui.SelectAgent')}
             hasSearch
             isLoading={isSearchPending || loading}
             options={makeAgentOptions(agents, searchAgent)}

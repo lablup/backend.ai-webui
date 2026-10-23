@@ -165,14 +165,14 @@ settings:
 catalogs:
   default:
     '@astryxdesign/cli':
-      specifier: 0.7.0
-      version: 0.7.0
+      specifier: 0.7.3
+      version: 0.7.3
     '@astryxdesign/core':
-      specifier: 0.7.0
-      version: 0.7.0
+      specifier: 0.7.3
+      version: 0.7.3
     '@astryxdesign/lab':
-      specifier: 0.7.0-canary.97a0d31
-      version: 0.7.0-canary.97a0d31
+      specifier: 0.7.3-canary.cac3d8d
+      version: 0.7.3-canary.cac3d8d
     '@babel/core':
       specifier: ^7.29.7
       version: 7.29.7
@@ -189,11 +189,11 @@ catalogs:
       specifier: 30.3.0
       version: 30.3.0
     '@lablup/ui-common':
-      specifier: 0.2.0-alpha.19
-      version: 0.2.0-alpha.19
+      specifier: 0.2.0-alpha.20
+      version: 0.2.0-alpha.20
     '@lablup/ui-common-cli':
-      specifier: 0.2.0-alpha.19
-      version: 0.2.0-alpha.19
+      specifier: 0.2.0-alpha.20
+      version: 0.2.0-alpha.20
     '@tanstack/react-query':
       specifier: ^5.101.4
       version: 5.101.4
@@ -343,7 +343,7 @@ catalogs:
       version: 5.106.2
 
 overrides:
-  '@astryxdesign/lab>@astryxdesign/core': 0.7.0
+  '@astryxdesign/lab>@astryxdesign/core': 0.7.3
   tar-fs@2: 2.1.4
   yauzl: ^3.3.1
   js-cookie: ^3.0.7
@@ -750,13 +750,13 @@ importers:
     devDependencies:
       '@astryxdesign/cli':
         specifier: 'catalog:'
-        version: 0.7.0(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1)
+        version: 0.7.3(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1)
       '@astryxdesign/core':
         specifier: 'catalog:'
-        version: 0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@astryxdesign/lab':
         specifier: 'catalog:'
-        version: 0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@eslint/js':
         specifier: 'catalog:'
         version: 9.39.5
@@ -768,7 +768,7 @@ importers:
         version: 30.3.0(supports-color@8.1.1)
       '@lablup/ui-common':
         specifier: 'catalog:'
-        version: 0.2.0-alpha.19(@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 0.2.0-alpha.20(@astryxdesign/cli@0.7.3(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@storybook/addon-docs':
         specifier: ^10.5.7
         version: 10.5.7(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(esbuild@0.28.1)(rollup@4.62.4)(storybook@10.5.7(@types/react@19.2.18)(bufferutil@4.1.0)(prettier@3.9.6)(react@19.2.8)(utf-8-validate@6.0.6))(vite@6.4.3(@types/node@22.20.1)(jiti@2.7.0)(lightningcss@1.33.0)(terser@5.49.2)(tsx@4.21.0)(yaml@2.9.0))(webpack@5.106.2)
@@ -933,7 +933,7 @@ importers:
         version: 2.0.230(react@19.2.8)(zod@4.4.3)
       '@astryxdesign/lab':
         specifier: 'catalog:'
-        version: 0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@dicebear/collection':
         specifier: ^9.4.2
         version: 9.4.2(@dicebear/core@9.4.3)
@@ -945,7 +945,7 @@ importers:
         version: 9.4.2(@dicebear/core@9.4.3)
       '@lablup/ui-common':
         specifier: 'catalog:'
-        version: 0.2.0-alpha.19(@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 0.2.0-alpha.20(@astryxdesign/cli@0.7.3(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@lexical/code':
         specifier: 0.46.0
         version: 0.46.0(typescript@6.0.3)
@@ -1168,10 +1168,10 @@ importers:
     devDependencies:
       '@astryxdesign/cli':
         specifier: 'catalog:'
-        version: 0.7.0(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1)
+        version: 0.7.3(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1)
       '@astryxdesign/core':
         specifier: 'catalog:'
-        version: 0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@babel/core':
         specifier: 'catalog:'
         version: 7.29.7(supports-color@8.1.1)
@@ -1195,7 +1195,7 @@ importers:
         version: 9.39.5
       '@lablup/ui-common-cli':
         specifier: 'catalog:'
-        version: 0.2.0-alpha.19(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@lablup/ui-common@0.2.0-alpha.19(@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(supports-color@8.1.1)
+        version: 0.2.0-alpha.20(93aee9e0d3b4b77c75767b250e2313f7)
       '@stylexjs/babel-plugin':
         specifier: 0.19.0
         version: 0.19.0(supports-color@8.1.1)
@@ -1425,8 +1425,8 @@ packages:
   '@asamuzakjp/nwsapi@2.3.9':
     resolution: {integrity: sha512-n8GuYSrI9bF7FFZ/SjhwevlHc8xaVlb/7HmHelnc/PZXBD2ZR49NnN9sMMuDdEGPeeRQ5d0hqlSlEpgCX3Wl0Q==}
 
-  '@astryxdesign/cli@0.7.0':
-    resolution: {integrity: sha512-PIiWZZr6wT3KszTPIv9/oiyrDCcSfU1dmMZCASPJ0AWKfvS1w27OXlZPBX7Rqi1Dipl9bdr54Uts7AxbhdMbUw==}
+  '@astryxdesign/cli@0.7.3':
+    resolution: {integrity: sha512-B5dF5qeylGNXiZF1AfTgW/k414RuG9CUS3d5yMwS5gcZ4y92v42Tb5pKrLJpkSRxwDwyhLFvhaoFuiXqEhw22w==}
     engines: {node: '>=22.13.0'}
     hasBin: true
     peerDependencies:
@@ -1444,17 +1444,17 @@ packages:
       '@astryxdesign/theme-neutral':
         optional: true
 
-  '@astryxdesign/core@0.7.0':
-    resolution: {integrity: sha512-vLsJ1CM3auFGZYzWIWzvXq7OUxRilfsoEi64bro/XdLmWokV/YaHjmgJV3n0kKXZBehor1wKQx9cqt0ObMUELw==}
+  '@astryxdesign/core@0.7.3':
+    resolution: {integrity: sha512-dDVg5pUE7IwpkSl46rw/Oahbwij2e26Imwbao0AK3mLBBZo7yVzibFdf6dLfFKN3p+zy7a2ZMQZeOIb+xSEKpg==}
     peerDependencies:
       '@stylexjs/stylex': ^0.19.0
       react: '>=19.0.0'
       react-dom: '>=19.0.0'
 
-  '@astryxdesign/lab@0.7.0-canary.97a0d31':
-    resolution: {integrity: sha512-Im236byRku+rriCmaCQ1hY8DxzFXa2ivqPm3LYzGQ4cB8ruDCoBJYr2B+X6nJQm+DkvXB/P5yJtUTxC3K8FX6w==}
+  '@astryxdesign/lab@0.7.3-canary.cac3d8d':
+    resolution: {integrity: sha512-ZsHjJEcFm4972UjLfC+N+ayMmehoBhETUN9k1/5PdvK1k7Rpoc2u4T47blr2XUSxZp6A+qRbl148J87CNYQavw==}
     peerDependencies:
-      '@astryxdesign/core': 0.7.0
+      '@astryxdesign/core': 0.7.3
       '@stylexjs/stylex': '>=0.10.0'
       react: '>=19.0.0'
       react-dom: '>=19.0.0'
@@ -1465,10 +1465,10 @@ packages:
       '@astryxdesign/core': 0.6.2
       react: '>=19'
 
-  '@astryxdesign/theme-neutral@0.7.0':
-    resolution: {integrity: sha512-btZ9tT9oJuzzzCZla439iKm0E8kp4xoriS0FTbCNTYoBmuiKLrCRNazu35FVTHN4UHLEbVi/Bq1owcvstNs0Zg==}
+  '@astryxdesign/theme-neutral@0.7.3':
+    resolution: {integrity: sha512-nrPqOzcePy5whCcgSBTR80/WrKpSChYR3anfBuXc3pvutJUA4MMC0oqm6aBH57irFDDLZ6D4GIzOO9fBFYQaAA==}
     peerDependencies:
-      '@astryxdesign/core': 0.7.0
+      '@astryxdesign/core': 0.7.3
       react: '>=19'
 
   '@babel/code-frame@7.29.7':
@@ -3459,22 +3459,25 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@lablup/ui-common-cli@0.2.0-alpha.19':
-    resolution: {integrity: sha512-CPX/jrcZy/m42dupLOB2GK5TVnX9v6cmQp0EENcA8kZxh2KLDYeeRW0JH9bUOi3gPsd2Oi8u4Qox1xQC+PA/XA==}
+  '@lablup/ui-common-cli@0.2.0-alpha.20':
+    resolution: {integrity: sha512-+9SAtTzuWmOvWaWbCFIAkADR130aXm6i2gaZr+1XXeqbkTBYFCNQmZ10MefM3NkUtBIS3djxNrYiHtoMRvbFUQ==}
     engines: {node: '>=22.13.0'}
     hasBin: true
     peerDependencies:
-      '@lablup/ui-common': 0.2.0-alpha.19
+      '@lablup/ui-common': 0.2.0-alpha.20
 
-  '@lablup/ui-common@0.2.0-alpha.19':
-    resolution: {integrity: sha512-wUCYLcX3go6nbIwiMEpsQqbmwjWb61viGx+4WePGFD1bqsj93rT1HLX4ho8mMHWd4px7j8TZdN6ghLfSP908dA==}
+  '@lablup/ui-common@0.2.0-alpha.20':
+    resolution: {integrity: sha512-0whhHrhz/NcY9wdTIfjvNzYu8fFitF9tdc9LR+h0Y316RNBQOMLPcId+2+CivH6xniJaIldC+xvAmwARLPhmWQ==}
     engines: {node: '>=20'}
     peerDependencies:
-      '@astryxdesign/lab': 0.7.0-canary.97a0d31
+      '@astryxdesign/cli': '>=0.6.7'
+      '@astryxdesign/lab': 0.7.3-canary.cac3d8d
       '@stylexjs/stylex': ^0.19.0
       react: ^19.2.0
       react-dom: ^19.2.0
     peerDependenciesMeta:
+      '@astryxdesign/cli':
+        optional: true
       '@astryxdesign/lab':
         optional: true
 
@@ -11368,7 +11371,7 @@ snapshots:
 
   '@asamuzakjp/nwsapi@2.3.9': {}
 
-  '@astryxdesign/cli@0.7.0(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1)':
+  '@astryxdesign/cli@0.7.3(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1)':
     dependencies:
       '@babel/core': 7.29.7(supports-color@8.1.1)
       '@babel/parser': 7.29.8
@@ -11385,23 +11388,23 @@ snapshots:
       recast: 0.23.21
       zod: 4.6.1
     optionalDependencies:
-      '@astryxdesign/core': 0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@astryxdesign/lab': 0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@astryxdesign/theme-neutral': 0.6.2(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/core': 0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/lab': 0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/theme-neutral': 0.6.2(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
     transitivePeerDependencies:
       - '@babel/preset-env'
       - supports-color
 
-  '@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@stylexjs/stylex': 0.19.0
       intl-messageformat: 11.2.13
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
 
-  '@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@astryxdesign/core': 0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/core': 0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@stylexjs/stylex': 0.19.0
       d3-array: 3.2.4
       d3-scale: 4.0.2
@@ -11409,16 +11412,16 @@ snapshots:
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
 
-  '@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)':
+  '@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@astryxdesign/core': 0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/core': 0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       lucide-react: 1.37.0(react@19.2.8)
       react: 19.2.8
     optional: true
 
-  '@astryxdesign/theme-neutral@0.7.0(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)':
+  '@astryxdesign/theme-neutral@0.7.3(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@astryxdesign/core': 0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/core': 0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       lucide-react: 1.37.0(react@19.2.8)
       react: 19.2.8
 
@@ -13690,10 +13693,10 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@lablup/ui-common-cli@0.2.0-alpha.19(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@lablup/ui-common@0.2.0-alpha.19(@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(supports-color@8.1.1)':
+  '@lablup/ui-common-cli@0.2.0-alpha.20(93aee9e0d3b4b77c75767b250e2313f7)':
     dependencies:
-      '@astryxdesign/cli': 0.7.0(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1)
-      '@lablup/ui-common': 0.2.0-alpha.19(@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/cli': 0.7.3(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1)
+      '@lablup/ui-common': 0.2.0-alpha.20(@astryxdesign/cli@0.7.3(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       jscodeshift: 17.4.0(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1)
       postcss: 8.5.26
       postcss-selector-parser: 7.1.6
@@ -13705,10 +13708,10 @@ snapshots:
       - '@babel/preset-env'
       - supports-color
 
-  '@lablup/ui-common@0.2.0-alpha.19(@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@lablup/ui-common@0.2.0-alpha.20(@astryxdesign/cli@0.7.3(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@astryxdesign/core': 0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@astryxdesign/theme-neutral': 0.7.0(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/core': 0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/theme-neutral': 0.7.3(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
       '@dnd-kit/core': 6.3.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@dnd-kit/modifiers': 9.0.0(@dnd-kit/core@6.3.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
       '@dnd-kit/sortable': 10.0.0(@dnd-kit/core@6.3.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
@@ -13719,7 +13722,8 @@ snapshots:
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
     optionalDependencies:
-      '@astryxdesign/lab': 0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/cli': 0.7.3(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1)
+      '@astryxdesign/lab': 0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
 
   '@lexical/clipboard@0.46.0(typescript@6.0.3)':
     dependencies:
@@ -23335,9 +23339,9 @@ time:
   '@ai-sdk/openai-compatible@1.0.47': '2026-07-29T17:35:10.191Z'
   '@ai-sdk/openai-compatible@3.0.0': '2026-06-25T12:47:47.110Z'
   '@ai-sdk/react@2.0.230': '2026-08-05T19:15:48.675Z'
-  '@astryxdesign/cli@0.7.0': '2026-10-13T01:15:14.620Z'
-  '@astryxdesign/core@0.7.0': '2026-10-13T01:17:35.643Z'
-  '@astryxdesign/lab@0.7.0-canary.97a0d31': '2026-10-12T21:21:05.921Z'
+  '@astryxdesign/cli@0.7.3': '2026-10-22T17:53:09.992Z'
+  '@astryxdesign/core@0.7.3': '2026-10-22T17:42:00.820Z'
+  '@astryxdesign/lab@0.7.3-canary.cac3d8d': '2026-10-22T16:18:16.087Z'
   '@babel/core@7.29.7': '2026-05-25T11:16:53.499Z'
   '@babel/plugin-syntax-import-attributes@7.29.7': '2026-05-25T11:15:49.844Z'
   '@babel/plugin-transform-private-property-in-object@7.29.7': '2026-05-25T11:17:04.720Z'
@@ -23353,8 +23357,8 @@ time:
   '@iarna/toml@2.2.5': '2020-04-22T20:16:59.382Z'
   '@jest/expect@30.3.0': '2026-03-10T01:59:52.169Z'
   '@jest/globals@30.3.0': '2026-03-10T01:59:53.839Z'
-  '@lablup/ui-common-cli@0.2.0-alpha.19': '2026-10-13T15:14:51.832Z'
-  '@lablup/ui-common@0.2.0-alpha.19': '2026-10-13T15:15:25.270Z'
+  '@lablup/ui-common-cli@0.2.0-alpha.20': '2026-10-23T03:28:14.466Z'
+  '@lablup/ui-common@0.2.0-alpha.20': '2026-10-23T03:28:31.972Z'
   '@lexical/code@0.46.0': '2026-06-26T04:53:10.477Z'
   '@lexical/headless@0.46.0': '2026-06-26T04:53:54.941Z'
   '@lexical/html@0.46.0': '2026-06-26T04:54:04.106Z'

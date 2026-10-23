@@ -165,10 +165,11 @@ const TerminateSessionModalForProjectAdmin: React.FC<
         {/* MAPPING §4: `checked` -> `value`, `onChange(e)` ->
             `onChange(checked)`, children -> the required `label`. */}
         <CheckboxInput
-          label={t('button.ForceTerminate')}
           value={isForce}
           onChange={(checked) => setIsForce(checked)}
-        />
+        >
+          {t('button.ForceTerminate')}
+        </CheckboxInput>
         {isForce && (
           <BAICard styles={{ body: { padding: token('--spacing-4') } }}>
             {/* `Typography.Paragraph` -> `Text as="p" display="block"`; the

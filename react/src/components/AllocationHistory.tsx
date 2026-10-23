@@ -63,8 +63,7 @@ const AllocationHistory: React.FC = () => {
               `popupMatchSelectWidth={false}` has no destination — Astryx sizes
               its popup to the trigger. */}
           <Selector
-            label={t('statistics.SelectPeriod')}
-            isLabelHidden
+            aria-label={t('statistics.SelectPeriod')}
             options={periodOptions}
             value={selectedPeriod}
             onChange={(value) => setSelectedPeriod(value as Period)}

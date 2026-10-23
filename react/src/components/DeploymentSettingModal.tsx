@@ -86,11 +86,12 @@ const PublicCheckbox: React.FC<{
   'use memo';
   return (
     <CheckboxInput
-      label={label}
       value={checked ?? false}
       onChange={(next) => onChange?.(next)}
-      isDisabled={disabled}
-    />
+      disabled={disabled}
+    >
+      {label}
+    </CheckboxInput>
   );
 };
 

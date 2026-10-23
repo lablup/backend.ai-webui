@@ -526,7 +526,7 @@ const ComputeSessionListPage = () => {
               )}
               {experimentalSessionResourceGrid && (
                 <SegmentedControl
-                  label={t('session.resourceGrid.ViewMode')}
+                  aria-label={t('session.resourceGrid.ViewMode')}
                   value={queryParams.view}
                   onChange={(value) =>
                     setQueryParams({ view: value as 'table' | 'grid' })
