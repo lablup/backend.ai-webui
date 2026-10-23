@@ -23,14 +23,12 @@ import BAIButton from '../BAIButton';
 import BAIFlex from '../BAIFlex';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import BAISelect from '../BAISelect';
-import {
-  AstryxFormCheckbox,
-  AstryxFormNumberInput,
-  AstryxFormTextArea,
-  AstryxFormTextInput,
-} from '../astryxFormControls';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import BAIRuntimeVariantSelect from './BAIRuntimeVariantSelect';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
+import { TextArea } from '@lablup/ui-common/TextArea';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import { PlusIcon, Trash2 } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -654,8 +652,8 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
             },
           ]}
         >
-          <AstryxFormTextInput
-            label={t('comp:BAIRuntimeVariantPresetSettingModal.Name')}
+          <TextInput
+            aria-label={t('comp:BAIRuntimeVariantPresetSettingModal.Name')}
             placeholder={t(
               'comp:BAIRuntimeVariantPresetSettingModal.NamePlaceholder',
             )}
@@ -665,8 +663,10 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
           label={t('comp:BAIRuntimeVariantPresetSettingModal.Description')}
           name="description"
         >
-          <AstryxFormTextArea
-            label={t('comp:BAIRuntimeVariantPresetSettingModal.Description')}
+          <TextArea
+            aria-label={t(
+              'comp:BAIRuntimeVariantPresetSettingModal.Description',
+            )}
             rows={2}
             placeholder={t(
               'comp:BAIRuntimeVariantPresetSettingModal.DescriptionPlaceholder',
@@ -682,7 +682,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                 'comp:BAIRuntimeVariantPresetSettingModal.CategoryTooltip',
               )}
             >
-              {/* PILOT-DECISION: antd `AutoComplete` -> `AstryxFormTextInput`.
+              {/* PILOT-DECISION: antd `AutoComplete` -> `TextInput`.
                   MAPPING §3.15 — free-text AutoComplete does not map to
                   `Typeahead` (it commits `T | null` and cannot keep a typed
                   string), and category must stay free text so a new category
@@ -691,8 +691,10 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   categories (`categoryOptions`) are surfaced in the
                   placeholder instead; the client-side `filterOption` goes
                   with it. */}
-              <AstryxFormTextInput
-                label={t('comp:BAIRuntimeVariantPresetSettingModal.Category')}
+              <TextInput
+                aria-label={t(
+                  'comp:BAIRuntimeVariantPresetSettingModal.Category',
+                )}
                 placeholder={
                   categoryOptions && categoryOptions.length > 0
                     ? categoryOptions.join(', ')
@@ -709,8 +711,8 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                 'comp:BAIRuntimeVariantPresetSettingModal.DisplayNameTooltip',
               )}
             >
-              <AstryxFormTextInput
-                label={t(
+              <TextInput
+                aria-label={t(
                   'comp:BAIRuntimeVariantPresetSettingModal.DisplayName',
                 )}
                 placeholder={t(
@@ -841,8 +843,9 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   ]}
                   style={{ flex: 1, minWidth: 0 }}
                 >
-                  <AstryxFormNumberInput
-                    label={t(
+                  <NumberInput
+                    hasClear={false}
+                    aria-label={t(
                       'comp:BAIRuntimeVariantPresetSettingModal.SliderMin',
                     )}
                   />
@@ -886,8 +889,9 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   ]}
                   style={{ flex: 1, minWidth: 0 }}
                 >
-                  <AstryxFormNumberInput
-                    label={t(
+                  <NumberInput
+                    hasClear={false}
+                    aria-label={t(
                       'comp:BAIRuntimeVariantPresetSettingModal.SliderMax',
                     )}
                   />
@@ -922,8 +926,9 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   ]}
                   style={{ flex: 1, minWidth: 0 }}
                 >
-                  <AstryxFormNumberInput
-                    label={t(
+                  <NumberInput
+                    hasClear={false}
+                    aria-label={t(
                       'comp:BAIRuntimeVariantPresetSettingModal.SliderStep',
                     )}
                     placeholder="1"
@@ -945,8 +950,9 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   name="numberMin"
                   style={{ flex: 1, minWidth: 0 }}
                 >
-                  <AstryxFormNumberInput
-                    label={t(
+                  <NumberInput
+                    hasClear={false}
+                    aria-label={t(
                       'comp:BAIRuntimeVariantPresetSettingModal.NumberMin',
                     )}
                   />
@@ -984,8 +990,9 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   ]}
                   style={{ flex: 1, minWidth: 0 }}
                 >
-                  <AstryxFormNumberInput
-                    label={t(
+                  <NumberInput
+                    hasClear={false}
+                    aria-label={t(
                       'comp:BAIRuntimeVariantPresetSettingModal.NumberMax',
                     )}
                   />
@@ -1033,8 +1040,8 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                               },
                             ]}
                           >
-                            <AstryxFormTextInput
-                              label={t(
+                            <TextInput
+                              aria-label={t(
                                 'comp:BAIRuntimeVariantPresetSettingModal.ChoiceValue',
                               )}
                               placeholder={t(
@@ -1055,8 +1062,8 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                               },
                             ]}
                           >
-                            <AstryxFormTextInput
-                              label={t(
+                            <TextInput
+                              aria-label={t(
                                 'comp:BAIRuntimeVariantPresetSettingModal.ChoiceLabel',
                               )}
                               placeholder={t(
@@ -1097,8 +1104,8 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                 )}
                 name="textPlaceholder"
               >
-                <AstryxFormTextInput
-                  label={t(
+                <TextInput
+                  aria-label={t(
                     'comp:BAIRuntimeVariantPresetSettingModal.TextPlaceholderLabel',
                   )}
                   placeholder={t(
@@ -1121,8 +1128,8 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
             },
           ]}
         >
-          <AstryxFormTextInput
-            label={t('comp:BAIRuntimeVariantPresetSettingModal.Key')}
+          <TextInput
+            aria-label={t('comp:BAIRuntimeVariantPresetSettingModal.Key')}
             placeholder={t(
               'comp:BAIRuntimeVariantPresetSettingModal.KeyPlaceholder',
             )}
@@ -1132,8 +1139,10 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
           label={t('comp:BAIRuntimeVariantPresetSettingModal.DefaultValue')}
           name="defaultValue"
         >
-          <AstryxFormTextInput
-            label={t('comp:BAIRuntimeVariantPresetSettingModal.DefaultValue')}
+          <TextInput
+            aria-label={t(
+              'comp:BAIRuntimeVariantPresetSettingModal.DefaultValue',
+            )}
             placeholder={t(
               'comp:BAIRuntimeVariantPresetSettingModal.DefaultValuePlaceholder',
             )}
@@ -1150,9 +1159,9 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
             'comp:BAIRuntimeVariantPresetSettingModal.RequiredTooltip',
           )}
         >
-          <AstryxFormCheckbox
-            label={t('comp:BAIRuntimeVariantPresetSettingModal.Required')}
-          />
+          <CheckboxInput>
+            {t('comp:BAIRuntimeVariantPresetSettingModal.Required')}
+          </CheckboxInput>
         </Form.Item>
         {preset ? (
           <Form.Item
@@ -1161,14 +1170,11 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
             tooltip={t('comp:BAIRuntimeVariantPresetSettingModal.RankTooltip')}
           >
             {/* PILOT-DECISION (to-astryx final-B): antd `InputNumber
-                precision={0}` -> `AstryxFormNumberInput step={1}`. Astryx's
-                `NumberInput` has no display-precision knob; `step={1}` is the
-                integer contract the field actually wants (rank is an ordinal),
-                and the mutation input is an `Int` the server rejects a
-                fraction for either way. `style={{ width: '100%' }}` is dropped
-                because the adapter already defaults `width` to `'100%'`. */}
-            <AstryxFormNumberInput
-              label={t('comp:BAIRuntimeVariantPresetSettingModal.Rank')}
+                precision={0}` -> `NumberInput step={1}`: Astryx has no
+                display-precision knob, and rank is an `Int` ordinal. */}
+            <NumberInput
+              hasClear={false}
+              aria-label={t('comp:BAIRuntimeVariantPresetSettingModal.Rank')}
               min={0}
               step={1}
             />

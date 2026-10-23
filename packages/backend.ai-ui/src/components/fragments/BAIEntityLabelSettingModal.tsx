@@ -9,11 +9,11 @@ import BAIBulkErrorModal from '../BAIBulkErrorModal';
 import BAIFlex from '../BAIFlex';
 import BAIModal, { type BAIModalProps } from '../BAIModal';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
-import { AstryxFormTextInput } from '../astryxFormControls';
 import { formatEntityLabel } from './BAIEntityLabelTokens';
 import { Button } from '@lablup/ui-common/Button';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import { PlusIcon, Trash2 } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -317,8 +317,8 @@ const BAIEntityLabelSettingModalContent = ({
                           }),
                         ]}
                       >
-                        <AstryxFormTextInput
-                          label={t('comp:BAIEntityLabelSettingModal.Key')}
+                        <TextInput
+                          aria-label={t('comp:BAIEntityLabelSettingModal.Key')}
                           placeholder={t('comp:BAIEntityLabelSettingModal.Key')}
                         />
                       </Form.Item>
@@ -342,8 +342,10 @@ const BAIEntityLabelSettingModalContent = ({
                           },
                         ]}
                       >
-                        <AstryxFormTextInput
-                          label={t('comp:BAIEntityLabelSettingModal.Value')}
+                        <TextInput
+                          aria-label={t(
+                            'comp:BAIEntityLabelSettingModal.Value',
+                          )}
                           placeholder={t(
                             'comp:BAIEntityLabelSettingModal.Value',
                           )}

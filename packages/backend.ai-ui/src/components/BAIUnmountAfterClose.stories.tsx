@@ -3,7 +3,7 @@ import BAIButton from './BAIButton';
 import BAIFlex from './BAIFlex';
 import BAIModal from './BAIModal';
 import BAIUnmountAfterClose from './BAIUnmountAfterClose';
-import { AstryxFormTextInput } from './astryxFormControls';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import React, { useEffect, useState } from 'react';
 
@@ -45,7 +45,7 @@ When you close and reopen a Modal/Drawer with forms, the previous form state per
   <BAIModal open={open} onCancel={() => setOpen(false)}>
     <Form>
       <Form.Item name="email">
-        <AstryxFormTextInput label="Email" />
+        <TextInput aria-label="Email" />
       </Form.Item>
     </Form>
   </BAIModal>
@@ -213,14 +213,14 @@ export const FormStateReset: Story = {
             >
               <Form>
                 <Form.Item label="Name" name="name">
-                  <AstryxFormTextInput
-                    label="Name"
+                  <TextInput
+                    aria-label="Name"
                     placeholder="Type something and close"
                   />
                 </Form.Item>
                 <Form.Item label="Email" name="email">
-                  <AstryxFormTextInput
-                    label="Email"
+                  <TextInput
+                    aria-label="Email"
                     placeholder="Type something and close"
                   />
                 </Form.Item>
@@ -247,14 +247,14 @@ export const FormStateReset: Story = {
           >
             <Form>
               <Form.Item label="Name" name="name">
-                <AstryxFormTextInput
-                  label="Name"
+                <TextInput
+                  aria-label="Name"
                   placeholder="Type something and close"
                 />
               </Form.Item>
               <Form.Item label="Email" name="email">
-                <AstryxFormTextInput
-                  label="Email"
+                <TextInput
+                  aria-label="Email"
                   placeholder="Type something and close"
                 />
               </Form.Item>
@@ -292,15 +292,15 @@ export const WithDrawer: Story = {
           >
             <Form>
               <Form.Item label="Username" name="username">
-                <AstryxFormTextInput
-                  label="Username"
+                <TextInput
+                  aria-label="Username"
                   placeholder="Type and close to see reset"
                 />
               </Form.Item>
               <Form.Item label="Password" name="password">
-                <AstryxFormTextInput
+                <TextInput
                   type="password"
-                  label="Password"
+                  aria-label="Password"
                   placeholder="Type and close to see reset"
                 />
               </Form.Item>
@@ -431,8 +431,8 @@ export const RealWorldExample: Story = {
                   { required: true, message: 'Please enter session name' },
                 ]}
               >
-                <AstryxFormTextInput
-                  label="Session Name"
+                <TextInput
+                  aria-label="Session Name"
                   placeholder="my-jupyter-session"
                 />
               </Form.Item>
@@ -442,8 +442,8 @@ export const RealWorldExample: Story = {
                 name="image"
                 rules={[{ required: true, message: 'Please select image' }]}
               >
-                <AstryxFormTextInput
-                  label="Container Image"
+                <TextInput
+                  aria-label="Container Image"
                   placeholder="python:3.11"
                 />
               </Form.Item>
