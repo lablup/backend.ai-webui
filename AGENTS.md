@@ -156,7 +156,7 @@ When reviewing PRs (especially agent-generated ones), check:
 - No hardcoded strings, magic numbers, or debug artifacts left behind
 
 <!-- UI-COMMON:START -->
-@lablup/ui-common v0.2.0-alpha.20.pr-93-20261023081410-f9c140d62 · Astryx v0.7.3 · 173 components
+@lablup/ui-common v0.2.0-alpha.20.canary-20261023160327-a60e44171 · Astryx v0.7.3 · 173 components
 CLI: run every command as `pnpm exec ui-common <cmd>` (shown below as `ui-common ...`).
 
 SETUP (once, first in your entry stylesheet) — without these, components render unstyled:
@@ -188,11 +188,12 @@ RULES:
   docs authoring     build an integration package, and every field it holds
   upgrade --from <old version> --apply   run after a dependency bump
 
-UI-COMMON (@lablup/ui-common v0.2.0-alpha.20.pr-93-20261023081410-f9c140d62 wraps Astryx v0.7.3):
+UI-COMMON (@lablup/ui-common v0.2.0-alpha.20.canary-20261023160327-a60e44171 wraps Astryx v0.7.3):
 - Import only from @lablup/ui-common: the root, or the same subpath Astryx uses (@lablup/ui-common/Button, /theme/tokens.stylex, /lab). Never import @astryxdesign/* directly.
 - Layers: declare `@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;` once, first, in the entry stylesheet. ui-common's styles sit in `ui-common`; yours go in `components` / `utilities`.
 - Use AlertModal (@lablup/ui-common/AlertModal), not AlertDialog: ui-common hides AlertDialog.
 - Use Modal (@lablup/ui-common/Modal), not Dialog: ui-common hides Dialog.
+- CommandPalette (@lablup/ui-common/CommandPalette) comes from ui-common: Astryx's, wrapped, same API and import path. The palette sits at a fixed offset from the top of the viewport instead of centred, so its input stays put while the result list shrinks or grows. The API is Astryx's.
 - ComplexSelector (@lablup/ui-common/ComplexSelector) comes from ui-common: its own copy of Astryx's, same API and import path. Adds hasClear and onClear, a clear button as Selector has (facebook/astryx#6362).
 - Drawer (@lablup/ui-common/Drawer) comes from ui-common: its own copy of Astryx's, same API and import path. A scrimless drawer stays out of the top layer (show() and a z-index), so ui-common's Modal and notification stack paint above it; a Modal inside a scrimmed drawer opens above it; aria-modal passes through. DrawerHeader is Astryx's, re-exported unchanged.
 - Popover (@lablup/ui-common/Popover) comes from ui-common: Astryx's, wrapped, same API and import path. Its content is not part of the Form.Item it opens from, as antd's: a control inside takes none of the item's status or label. The API is Astryx's.
