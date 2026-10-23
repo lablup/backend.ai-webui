@@ -72,8 +72,8 @@ const WebUISiderNavigation: React.FC<WebUISiderNavigationProps> = ({
   );
   const backToUserView = useBackToUserView();
 
-  // Store the last visited general (non-admin) menu path so the admin header's
-  // "go back" button can return the user to where they were. Use the role-
+  // Store the last visited general (non-admin) menu path so "go back" (the
+  // project-admin header, the user menu) can return the user. Use the role-
   // independent `isCurrentPathAdminCategory`: the role-filtered flags would
   // misclassify an admin page the user's menu excludes as "general" and
   // pollute `goBackPath` with an admin path.
@@ -154,11 +154,9 @@ const WebUISiderNavigation: React.FC<WebUISiderNavigationProps> = ({
         // `AstryxAdminTheme` re-passes `mode`: a nested `<Theme>` otherwise
         // falls back to `system` (MAPPING §5).
         <AstryxAdminTheme>
-          {renderAdminHeader(
-            isProjectAdminView
-              ? t('webui.menu.ProjectSettings')
-              : t('webui.menu.AdminSettings'),
-          )}
+          {/* System admin pages are left from the user menu only. */}
+          {isProjectAdminView &&
+            renderAdminHeader(t('webui.menu.ProjectSettings'))}
           <BAIMenu
             hideGroupName={collapsed}
             selectedKeys={currentMenuKey ? [currentMenuKey] : []}
