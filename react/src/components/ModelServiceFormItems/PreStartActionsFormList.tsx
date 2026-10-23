@@ -49,6 +49,7 @@ const PreStartActionsFormList: React.FC<PreStartActionsFormListProps> = ({
             header: t('adminDeploymentPreset.modelDef.Action'),
             width: proportional(1),
             formItemProps: () => ({
+              validateTrigger: ['onChange', 'onBlur'],
               rules: [{ required: true, message: '' }],
             }),
             renderInput: ({ label }) => (
@@ -65,6 +66,7 @@ const PreStartActionsFormList: React.FC<PreStartActionsFormListProps> = ({
             header: t('adminDeploymentPreset.modelDef.Args'),
             width: proportional(2),
             formItemProps: () => ({
+              validateTrigger: ['onChange', 'onBlur'],
               rules: [
                 { required: true, message: '' },
                 {
