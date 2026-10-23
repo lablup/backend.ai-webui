@@ -1029,6 +1029,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                         'comp:BAIRuntimeVariantPresetSettingModal.ChoiceValue',
                       ),
                       formItemProps: () => ({
+                        validateTrigger: ['onChange', 'onBlur'],
                         rules: [
                           {
                             required: true,
@@ -1053,6 +1054,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                         'comp:BAIRuntimeVariantPresetSettingModal.ChoiceLabel',
                       ),
                       formItemProps: () => ({
+                        validateTrigger: ['onChange', 'onBlur'],
                         rules: [
                           {
                             required: true,
