@@ -15,14 +15,14 @@ import {
 } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useMountableStorageHosts } from '../hooks/useMountableStorageHosts';
-import {
+import type {
   SessionLauncherFormValue,
-  ResourceNumbersOfSession,
   SessionLauncherStepKey,
 } from '../pages/SessionLauncherPage';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { ImageMetaDivider, ImageTagTokens } from './ImageTags';
 import { PortToken } from './PortSelectFormItem';
+import { ResourceNumbersOfSession } from './ResourceNumbersOfSession';
 import SourceCodeView from './SourceCodeView';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';

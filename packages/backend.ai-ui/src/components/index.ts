@@ -253,6 +253,17 @@ export type {
 } from './BAIResourceUnitGrid';
 export { default as BAIResourceUnitGridSkeleton } from './BAIResourceUnitGridSkeleton';
 export type { BAIResourceUnitGridSkeletonProps } from './BAIResourceUnitGridSkeleton';
+export { default as BAISessionCrowdScene } from './BAISessionCrowdScene';
+export { crowdFigureMoods } from './BAISessionCrowdScene';
+export { default as BAISessionPinwheelMeadow } from './BAISessionPinwheelMeadow';
+export type { BAISessionPinwheelMeadowProps } from './BAISessionPinwheelMeadow';
+export type {
+  BAISessionCrowdSceneProps,
+  BAICrowdFigure,
+  BAICrowdFigureMood,
+  BAICrowdFinder,
+  BAICrowdZone,
+} from './BAISessionCrowdScene';
 export { default as BAISegmentedControlItem } from './BAISegmentedControlItem';
 export type { BAISegmentedControlItemProps } from './BAISegmentedControlItem';
 export { default as BAIPopconfirm } from './BAIPopconfirm';

@@ -1,3 +1,4 @@
+import { peerDependencies } from './package.json';
 import react from '@vitejs/plugin-react';
 import glob from 'fast-glob';
 import { basename, dirname, resolve } from 'node:path';
@@ -6,8 +7,6 @@ import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import relay from 'vite-plugin-relay-lite';
 import svgr from 'vite-plugin-svgr';
-
-import { peerDependencies } from './package.json';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -34,6 +33,7 @@ export default defineConfig(({ mode }) => {
   const localeFiles = glob.sync('src/locale/*.ts', { cwd: __dirname });
   const entries: Record<string, string> = {
     'backend.ai-ui': resolve(__dirname, 'src/index.ts'),
+    theme: resolve(__dirname, 'src/theme/index.ts'),
   };
   localeFiles.forEach((file) => {
     const name = basename(file, '.ts');
@@ -94,7 +94,7 @@ export default defineConfig(({ mode }) => {
         compilerOptions: {
           preserveSymlinks: false,
           rootDir: 'src',
-          paths: {}
+          paths: {},
         },
       }),
       svgr(),

@@ -4,7 +4,7 @@
  */
 import { Form } from '../../form-engine';
 import { compareNumberWithUnits, convertToBinaryUnit } from '../../helper';
-import { MergedResourceAllocationFormValue } from './ResourceAllocationFormItems';
+import type { MergedResourceAllocationFormValue } from './ResourceAllocationFormItems';
 import { Switch } from '@lablup/ui-common/Switch';
 import { useTheme } from '@lablup/ui-common/theme';
 import {

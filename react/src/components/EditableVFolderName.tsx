@@ -36,11 +36,11 @@ import { EditableVFolderNameFragment$key } from '../__generated__/EditableVFolde
 import { EditableVFolderNameRefetchQuery } from '../__generated__/EditableVFolderNameRefetchQuery.graphql';
 import { App } from '../app-shim';
 import { Form } from '../form-engine';
+import { isDeletedCategory } from '../helper/vfolderStatus';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import BAIFormItem from './BAIFormItem';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { AstryxFormTextInput } from './astryxFormControls';

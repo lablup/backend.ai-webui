@@ -567,6 +567,21 @@
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Single"
   },
+  "comp:BAISessionScene": {
+    "FoundCount": "{{count}} found",
+    "Hero": "Yours",
+    "Measuring": "Measuring",
+    "ResourceShare": "Resource share",
+    "ShowAll": "Show all",
+    "Utilization": "Utilization",
+    "mood": {
+      "Idle": "Idle",
+      "Leaving": "Terminating",
+      "Overheated": "Overheated",
+      "Waiting": "Waiting for resources",
+      "Working": "Working"
+    }
+  },
   "comp:BAISessionTypeToken": {
     "Batch": "Batch",
     "Inference": "Inference",

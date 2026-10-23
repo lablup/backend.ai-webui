@@ -4,7 +4,10 @@
  */
 import { RelayEnvironment } from '../RelayEnvironment';
 import myUserQueryNode from '../__generated__/loginSessionAuthMyUserQuery.graphql';
-import type { LoginBootstrap } from './loginBootstrap';
+import {
+  LoginBootstrapIncompleteError,
+  type LoginBootstrap,
+} from './loginBootstrap';
 import { getDefaultLoginConfig } from './loginConfig';
 import {
   LoginAttemptCancelledError,
@@ -227,14 +230,20 @@ describe('connectViaGQL', () => {
     expect(g.backendaiclient.current_group).toBe('alpha');
   });
 
-  test('logs out and throws when the session has no user', async () => {
-    queueResponses([{ myUserV2: null }]);
+  test('keeps the session when the manager fails to resolve the user', async () => {
+    environment.mock.queueOperationResolver(
+      () =>
+        ({
+          data: { myUserV2: null },
+          errors: [{ message: 'database is unavailable', path: ['myUserV2'] }],
+        }) as any,
+    );
     const client = makeClient();
 
-    await expect(connectViaGQL(client, cfg, [])).rejects.toThrow(
-      'User information is missing.',
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBeInstanceOf(
+      LoginBootstrapIncompleteError,
     );
-    expect(client.logout).toHaveBeenCalledTimes(1);
+    expect(client.logout).not.toHaveBeenCalled();
   });
 
   test('records the endpoint in the history, keeping the five most recent', async () => {
@@ -366,7 +375,9 @@ describe('connectViaGQL — myUserV2 query rejects (FR-3998)', () => {
     rejectWith(timeout);
     const client = makeClient();
 
-    await expect(connectViaGQL(client, cfg, [])).rejects.toBe(timeout);
+    const result = connectViaGQL(client, cfg, []);
+    await expect(result).rejects.toBeInstanceOf(LoginBootstrapIncompleteError);
+    await expect(result).rejects.toMatchObject({ cause: timeout });
     expect(client.logout).not.toHaveBeenCalled();
   });
 
@@ -467,8 +478,8 @@ describe('connectViaGQL — act-as tab (FR-4111)', () => {
     queueResponses([{ myUserV2: null }]);
     const client = actAsClient();
 
-    await expect(connectViaGQL(client, cfg, [])).rejects.toThrow(
-      'User information is missing.',
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBeInstanceOf(
+      LoginBootstrapIncompleteError,
     );
     expect(client.logout).not.toHaveBeenCalled();
   });

@@ -24,11 +24,11 @@ import { EditableVFolderNameV2RefetchQuery } from '../__generated__/EditableVFol
 import { App } from '../app-shim';
 // Ticket 34: `Form` is the self-hosted engine; `Form.Item` IS BAIFormItem.
 import { Form } from '../form-engine';
+import { isDeletedCategory } from '../helper/vfolderStatus';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
-import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import { ProjectContextOrNull } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
