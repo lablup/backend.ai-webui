@@ -1045,6 +1045,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                     key: 'name',
                     header: t('adminDeploymentPreset.Name'),
                     formItemProps: () => ({
+                      validateTrigger: ['onChange', 'onBlur'],
                       rules: [{ required: true, message: '' }],
                     }),
                     renderInput: ({ label }) => (
@@ -1058,6 +1059,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                     key: 'value',
                     header: t('session.launcher.EnvironmentVariableValue'),
                     formItemProps: () => ({
+                      validateTrigger: ['onChange', 'onBlur'],
                       rules: [{ required: true, message: '' }],
                     }),
                     renderInput: ({ label }) => (
