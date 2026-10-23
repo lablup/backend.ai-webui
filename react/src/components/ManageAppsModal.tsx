@@ -193,6 +193,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                   key: 'app',
                   header: t('environment.AppName'),
                   formItemProps: () => ({
+                    validateTrigger: ['onChange', 'onBlur'],
                     rules: [
                       {
                         required: true,
@@ -211,6 +212,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                   key: 'protocol',
                   header: t('environment.Protocol'),
                   formItemProps: () => ({
+                    validateTrigger: ['onChange', 'onBlur'],
                     rules: [
                       {
                         pattern: /^(http|tcp|pty|preopen)$/,
@@ -230,6 +232,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                   key: 'port',
                   header: t('environment.Port'),
                   formItemProps: (field) => ({
+                    validateTrigger: ['onChange', 'onBlur'],
                     required: true,
                     rules: [
                       {
