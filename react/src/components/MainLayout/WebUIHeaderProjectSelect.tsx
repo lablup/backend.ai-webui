@@ -135,7 +135,7 @@ const WebUIHeaderProjectSelect: React.FC = () => {
       {/* Same reversed-band context as the rest of the header — see
           `WebUIHeader.tsx`. */}
       <MediaTheme mode={bandMediaMode}>
-        {gridBreakpoint.sm && (
+        {gridBreakpoint.lg && (
           <Text type="large" weight="semibold">
             {t('webui.menu.Project')}
           </Text>
@@ -146,7 +146,7 @@ const WebUIHeaderProjectSelect: React.FC = () => {
         ghost
         popupMatchSelectWidth={false}
         style={{
-          minWidth: 100,
+          minWidth: gridBreakpoint.sm ? 100 : 64,
           maxWidth: gridBreakpoint.lg ? undefined : 150,
           // Lands on the Selector TRIGGER, re-declaring the band wash the
           // theme's `field` entry neutralises for the popup panel below it

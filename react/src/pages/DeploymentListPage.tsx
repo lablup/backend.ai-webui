@@ -17,6 +17,7 @@ import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDeta
 import DeploymentSettingModal from '../components/DeploymentSettingModal';
 import { convertToOrderBy } from '../helper';
 import { useWebUINavigate } from '../hooks';
+import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCreateActionArrival } from '../hooks/useCreateActionArrival';
@@ -129,6 +130,7 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
+  const [currentUser] = useCurrentUserInfo();
   const currentProject = useCurrentProjectValue();
   const pageProject = toProjectContext(currentProject);
 
@@ -148,6 +150,7 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
     ? { projectId: { equals: currentProject.id } }
     : {};
   const queryVariables = {
+    scope: { user: [{ value: currentUser.uuid }] },
     filter: {
       ...(queryParams.filter ?? {}),
       ...statusCategoryFilter,
@@ -161,15 +164,17 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const { myDeployments } = useLazyLoadQuery<DeploymentListPageQuery>(
+  const { scopedDeployments } = useLazyLoadQuery<DeploymentListPageQuery>(
     graphql`
       query DeploymentListPageQuery(
+        $scope: DeploymentSearchScope!
         $filter: DeploymentFilter
         $orderBy: [DeploymentOrderBy!]
         $limit: Int
         $offset: Int
       ) {
-        myDeployments(
+        scopedDeployments(
+          scope: $scope
           filter: $filter
           orderBy: $orderBy
           limit: $limit
@@ -206,9 +211,9 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
   );
 
   const deploymentNodes = filterOutNullAndUndefined(
-    _.map(myDeployments?.edges, 'node'),
+    _.map(scopedDeployments?.edges, 'node'),
   );
-  const total = myDeployments?.count ?? 0;
+  const total = scopedDeployments?.count ?? 0;
   const editingDeployment =
     editingDeploymentId == null
       ? null
