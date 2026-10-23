@@ -16,6 +16,7 @@ import {
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import { applyDevServerTitle } from './helper/devServerTitle';
 import { ThemeModeProvider } from './hooks/useThemeMode';
+import reportWebVitals from './reportWebVitals';
 import { Provider as JotaiProvider } from 'jotai';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -100,3 +101,5 @@ root.render(
     </JotaiProvider>
   </React.StrictMode>,
 );
+
+reportWebVitals();
