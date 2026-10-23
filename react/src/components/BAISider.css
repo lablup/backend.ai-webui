@@ -150,6 +150,11 @@ body.electron-macos:not(:has(.webui-announcement-banner))
   transition: all 0.2s ease-in-out;
 }
 
+/* System admin pages: the band takes the admin accent, as the header's darker half. */
+.bai-sider.bai-sider--admin .logo-and-text-container {
+  background-color: var(--color-info);
+}
+
 /*
  * The sticky-bottom band, same cause as the logo band above: Astryx pads it
  * `--spacing-1` top / `--spacing-2` bottom and puts a `--spacing-2` gap before
