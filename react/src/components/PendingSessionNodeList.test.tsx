@@ -17,10 +17,11 @@ import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockE
 /**
  * Contract tests for the pending-sessions tab's resource-group scope
  * (FR-3409). The tab is superadmin-only, so its options come from the root
- * `adminResourceGroups` field (through `BAIResourceGroupSelect`) and never
+ * `scopedResourceGroups` field over the current domain (through `BAIScopedResourceGroupSelect`) and never
  * from the current project.
  */
 
+const CURRENT_DOMAIN_ID = 'b9e676dc-e23e-54c6-b350-e83fba4127e9';
 vi.mock('react-i18next', async () => {
   const React = await import('react');
   return {
@@ -38,6 +39,7 @@ vi.mock('../hooks', async (importOriginal) => {
   const originalModule = await importOriginal<typeof import('../hooks')>();
   return {
     ...originalModule,
+    useCurrentDomain: () => ({ name: 'default', id: CURRENT_DOMAIN_ID }),
     useWebUINavigate: () => vi.fn(),
   };
 });
@@ -80,7 +82,7 @@ vi.mock('./AutoUpdateFetchKeyButton', async () => {
   };
 });
 
-const RESOURCE_GROUPS_QUERY = 'BAIResourceGroupSelectQuery';
+const RESOURCE_GROUPS_QUERY = 'BAIScopedResourceGroupSelectQuery';
 const PENDING_QUEUE_QUERY = 'PendingSessionNodeListQuery';
 
 const renderList = (search: string) => {
@@ -107,7 +109,7 @@ const resolveResourceGroups = (
   expect(operation.request.node.operation.name).toBe(RESOURCE_GROUPS_QUERY);
   environment.mock.resolve(operation, {
     data: {
-      adminResourceGroups: {
+      scopedResourceGroups: {
         edges: names.map((name) => ({ node: { id: name, name } })),
       },
     },
@@ -130,6 +132,7 @@ describe('PendingSessionNodeList resource-group scope (FR-3409)', () => {
     const operation = environment.mock.getMostRecentOperation();
     expect(operation.request.node.operation.name).toBe(RESOURCE_GROUPS_QUERY);
     expect(operation.request.variables).toEqual({
+      scope: { domain: [{ value: CURRENT_DOMAIN_ID }] },
       filter: { isActive: true },
     });
 

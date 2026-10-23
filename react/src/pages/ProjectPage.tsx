@@ -18,7 +18,7 @@ import ProjectAdminSettingModal, {
   buildProjectAdminRoleFilter,
   selectProjectAdminRoles,
 } from '../components/ProjectAdminSettingModal';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useCurrentDomain } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
@@ -81,6 +81,8 @@ const DEFAULT_PROJECT_FILTER = 'type != "PERSONAL"';
 
 const ProjectPage = () => {
   'use memo';
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
 
   const { t } = useTranslation();
   const { logger } = useBAILogger();
@@ -660,6 +662,7 @@ const ProjectPage = () => {
             setSelectedProject(null);
           }}
           projectFragment={selectedProject}
+          resourceGroupScope={domainScope}
         />
         <BAIProjectBulkEditModal
           open={openBulkEditModal}

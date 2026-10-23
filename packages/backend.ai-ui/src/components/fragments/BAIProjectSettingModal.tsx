@@ -1,4 +1,7 @@
-import { BAIProjectResourcePolicySelect, BAIResourceGroupSelect } from '.';
+import {
+  BAIProjectResourcePolicySelect,
+  BAIScopedResourceGroupSelect,
+} from '.';
 import {
   BAIAllowedHostNamesSelect,
   BAIDynamicUnitInputNumber,
@@ -9,6 +12,7 @@ import { BAIProjectSettingModalCreateMutation } from '../../__generated__/BAIPro
 import { BAIProjectSettingModalFragment$key } from '../../__generated__/BAIProjectSettingModalFragment.graphql';
 import { BAIProjectSettingModalModifyMutation } from '../../__generated__/BAIProjectSettingModalModifyMutation.graphql';
 import { BAIProjectSettingModalQuery } from '../../__generated__/BAIProjectSettingModalQuery.graphql';
+import { ResourceGroupScope } from '../../__generated__/BAIScopedResourceGroupSelectQuery.graphql';
 import { App } from '../../app-shim';
 import { Form, FormInstance } from '../../form-engine';
 import { convertToBinaryUnit } from '../../helper';
@@ -38,6 +42,8 @@ export interface BAIProjectSettingModalProps extends Omit<
   'title' | 'loading'
 > {
   projectFragment: BAIProjectSettingModalFragment$key | null;
+  /** Scope of the Allowed Resource Groups picker, usually the current domain (ADR 0012). */
+  resourceGroupScope: ResourceGroupScope;
 }
 
 interface FormValues {
@@ -61,6 +67,7 @@ export type BAIProjectSettingModalFragmentKey =
 
 const BAIProjectSettingModal = ({
   projectFragment,
+  resourceGroupScope,
   ...modalProps
 }: BAIProjectSettingModalProps) => {
   'use memo';
@@ -457,7 +464,11 @@ const BAIProjectSettingModal = ({
           label={t('comp:BAIProjectSettingModal.AllowedResourceGroups')}
           name="scaling_groups"
         >
-          <BAIResourceGroupSelect mode="tags" allowClear />
+          <BAIScopedResourceGroupSelect
+            scope={resourceGroupScope}
+            mode="tags"
+            allowClear
+          />
         </Form.Item>
         <Form.Item
           label={t('comp:BAIProjectSettingModal.AllowedFolderHosts')}

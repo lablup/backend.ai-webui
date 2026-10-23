@@ -44,7 +44,7 @@ import AdminRuntimeVariantPreset, {
 } from '../components/AdminRuntimeVariantPreset';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
-import { useCurrentDomainValue } from '../hooks';
+import { useCurrentDomainValue, useCurrentDomain } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { BAISkeleton } from 'backend.ai-ui';
@@ -91,6 +91,9 @@ type DeploymentTabQueryParams = {
 const AdminDeploymentPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
+  // Deployments and model cards of the current domain (ADR 0012).
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
 
   // Default status scope for the deployments tab: hide terminated deployments.
   // `status` is never a user-settable filter property, so the deployments tab
@@ -172,7 +175,7 @@ const AdminDeploymentPage: React.FC = () => {
       pageSize: nextLimit,
       current: nextOffset > 0 ? Math.floor(nextOffset / nextLimit) + 1 : 1,
     });
-    loadDeploymentQuery(variables, options);
+    loadDeploymentQuery({ ...variables, scope: domainScope }, options);
   };
 
   // --- Model store management tab ---
@@ -207,6 +210,7 @@ const AdminDeploymentPage: React.FC = () => {
     loadModelCardQuery(
       {
         ...variables,
+        scope: domainScope,
         // AND-nesting keeps a user OR/NOT from widening past the domain.
         filter: currentDomain
           ? {
@@ -312,6 +316,7 @@ const AdminDeploymentPage: React.FC = () => {
           const urlFilter = params.filter as DeploymentFilter | null;
           loadDeploymentQuery(
             {
+              scope: domainScope,
               // A link from elsewhere (e.g. a tag on the detail page) carries
               // no `status`, so it starts in the running scope.
               filter: urlFilter?.status
@@ -346,6 +351,7 @@ const AdminDeploymentPage: React.FC = () => {
               offset,
               // Every domain has its own MODEL_STORE project.
               domainName: currentDomain,
+              scope: domainScope,
             },
             { fetchPolicy: 'store-and-network' },
           );

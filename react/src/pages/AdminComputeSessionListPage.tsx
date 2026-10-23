@@ -20,7 +20,7 @@ import { handleRowSelectionChange } from '../helper';
 import { liftProjectPredicate } from '../helper/adminSessionProjectLift';
 import { ExtractResultValue } from '../helper/resultTypes';
 import { buildSessionExportFilter } from '../helper/sessionExportFilter';
-import { useWebUINavigate } from '../hooks';
+import { useWebUINavigate, useCurrentDomain } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -33,7 +33,7 @@ import {
 } from '@lablup/ui-common/SegmentedControl';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
-  BAIAdminProjectSelect,
+  BAIScopedProjectSelect,
   BAIFlex,
   BAIPropertyFilter,
   BAIResourceUnitGridSkeleton,
@@ -89,6 +89,8 @@ const AdminComputeSessionListPage = () => {
   'use memo';
 
   const userRole = useCurrentUserRole();
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
 
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -368,7 +370,8 @@ const AdminComputeSessionListPage = () => {
                   type: 'string',
                   defaultOperator: '==',
                   renderInput: ({ onAddCondition, value, isDisabled }) => (
-                    <BAIAdminProjectSelect
+                    <BAIScopedProjectSelect
+                      scope={domainScope}
                       // The filter row already prints the property label.
                       label={t('data.Project')}
                       isLabelHidden

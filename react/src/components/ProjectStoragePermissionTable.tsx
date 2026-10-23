@@ -18,6 +18,7 @@ import {
   parseAllowedHosts,
   v2PermissionToKey,
 } from '../helper/storageHostPermission';
+import { useCurrentDomain } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import StoragePermissionEditModal, {
   type PermissionEditTarget,
@@ -52,7 +53,7 @@ import {
 type ProjectRow = NonNullable<
   NonNullable<
     NonNullable<
-      ProjectStoragePermissionTableQueryType['response']['domainProjectsV2']
+      ProjectStoragePermissionTableQueryType['response']['scopedProjectsV2']
     >['edges'][number]
   >['node']
 >;
@@ -62,7 +63,7 @@ export interface ProjectStoragePermissionTableProps extends BAITableProps<Projec
   storageVolumeFrgmt: ProjectStoragePermissionTable_storageVolumeFrgmt$key;
   /**
    * Fragment for the selected domain. Read internally for the domain `name`
-   * (which scopes the project list query via `domainProjectsV2`) and
+   * (which gates the project list query) and
    * `allowed_vfolder_hosts` (to compute each project row's effective permission
    * = union(project, domain) and the inherited host-allowed status).
    * Null/undefined when no domain is selected → the project query is skipped
@@ -150,8 +151,10 @@ const ProjectStoragePermissionTable: React.FC<
   const [fetchKey, updateFetchKey] = useFetchKey();
   const deferredFetchKey = useDeferredValue(fetchKey);
 
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
   const queryVariables = {
-    domainName: selectedDomainName ?? '',
+    scope: domainScope,
     skip: !selectedDomainName,
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
@@ -160,23 +163,20 @@ const ProjectStoragePermissionTable: React.FC<
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
 
-  // Server-side paginated/filtered/ordered list of the selected domain's
-  // projects. `domainProjectsV2` returns the same `ProjectV2` node shape as
-  // `adminProjectsV2`, so the row type, V2 permission parsing, and
-  // `modify_group` save path are unchanged.
-  const { domainProjectsV2 } =
+  // The current domain's projects (ADR 0012); the domain fragment above is that domain.
+  const { scopedProjectsV2 } =
     useLazyLoadQuery<ProjectStoragePermissionTableQueryType>(
       graphql`
         query ProjectStoragePermissionTableQuery(
-          $domainName: String!
+          $scope: ProjectScope!
           $skip: Boolean!
           $limit: Int
           $offset: Int
           $filter: ProjectV2Filter
           $orderBy: [ProjectV2OrderBy!]
         ) {
-          domainProjectsV2(
-            scope: { domainName: $domainName }
+          scopedProjectsV2(
+            scope: $scope
             limit: $limit
             offset: $offset
             filter: $filter
@@ -210,7 +210,7 @@ const ProjectStoragePermissionTable: React.FC<
     );
 
   const rows: ProjectRow[] = _.compact(
-    (domainProjectsV2?.edges ?? []).map((edge) => edge?.node ?? null),
+    (scopedProjectsV2?.edges ?? []).map((edge) => edge?.node ?? null),
   );
 
   const [commitModifyGroup] =
@@ -381,7 +381,7 @@ const ProjectStoragePermissionTable: React.FC<
         pagination={{
           pageSize: tablePaginationOption.pageSize,
           current: tablePaginationOption.current,
-          total: domainProjectsV2?.count ?? 0,
+          total: scopedProjectsV2?.count ?? 0,
           onChange: (current, pageSize) => {
             if (_.isNumber(current) && _.isNumber(pageSize)) {
               setTablePaginationOption({ current, pageSize });
