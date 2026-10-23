@@ -159,6 +159,28 @@ describe('BAIComplexSelect option and panel mapping', () => {
     expect(optionRows()[2]).toHaveTextContent('extra-c');
   });
 
+  it('names a `{ reason }` option with a glyph that carries the reason', async () => {
+    const user = userEvent.setup();
+    render(
+      <BAIComplexSelect
+        label="Target"
+        options={[
+          { value: 'a', label: 'alpha' },
+          { value: 'b', label: 'bravo', disabled: { reason: 'No access' } },
+        ]}
+      />,
+    );
+    await user.click(trigger());
+    expect(optionRows()[1]).toHaveAttribute('aria-disabled', 'true');
+    expect(
+      optionRows()[1].querySelector('.bai-disabled-option-reason'),
+    ).not.toBeNull();
+    expect(optionRows()[1]).toHaveTextContent('No access');
+    expect(
+      optionRows()[0].querySelector('.bai-disabled-option-reason'),
+    ).toBeNull();
+  });
+
   it('reports search keystrokes through onSearch', async () => {
     const user = userEvent.setup();
     const onSearch = vi.fn();

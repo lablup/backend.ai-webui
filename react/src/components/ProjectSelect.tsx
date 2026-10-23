@@ -5,7 +5,6 @@
 import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
-import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIFlex,
   BAIIconWithTooltip,
@@ -124,18 +123,8 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
             lockPersonalProject &&
             !!personalProject &&
             project?.id === personalProject.id;
-          // Fills the option row so the whole item opens the hint; `pointerEvents`
-          // covers single mode, whose disabled Item sets `none` (FR-3837).
           const row = (
-            <BAIFlex
-              gap="xs"
-              align="center"
-              style={
-                isLockedPersonal
-                  ? { flexGrow: 1, pointerEvents: 'auto' }
-                  : undefined
-              }
-            >
+            <BAIFlex gap="xs" align="center">
               <span>{project?.name}</span>
               {isAdmin && (
                 <BAIIconWithTooltip
@@ -153,23 +142,16 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
             </BAIFlex>
           );
           return {
-            label: isLockedPersonal ? (
-              <Tooltip
-                content={t('projectSelect.PersonalProjectCannotBeRemoved')}
-              >
-                {row}
-              </Tooltip>
-            ) : isAdmin ? (
-              row
-            ) : (
-              project?.name
-            ),
+            label: isAdmin ? row : project?.name,
             value: project?.id,
             projectId: project?.id,
             projectResourcePolicy: project?.resource_policy,
             projectName: project?.name,
-            disabled:
-              isLockedPersonal || lockedProjectIds.includes(project?.id ?? ''),
+            disabled: isLockedPersonal
+              ? { reason: t('projectSelect.PersonalProjectCannotBeRemoved') }
+              : lockedProjectIds.includes(project?.id ?? '')
+                ? { reason: t('projectSelect.LockedProjectCannotBeRemoved') }
+                : false,
           };
         }),
       };

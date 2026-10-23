@@ -46,9 +46,9 @@ export interface ScopedVFolderSummary {
 }
 
 export interface ScopedVFolderResolution {
-  /** Selected folders the scope and `filter` reach and `isFolderDisabled` allows. */
+  /** Selected folders the scope and `filter` reach and `getFolderDisabled` allows. */
   resolved: Array<ScopedVFolderSummary>;
-  /** Selected ids the scope and `filter` do not reach, or `isFolderDisabled` rejects. */
+  /** Selected ids the scope and `filter` do not reach, or `getFolderDisabled` rejects. */
   unresolved: Array<string>;
 }
 
@@ -80,8 +80,13 @@ export interface BAIScopedVFolderSelectProps extends Omit<
   filter?: VFolderFilter;
   /** ANDed onto the options only; a selected folder it excludes stays selected. */
   optionFilter?: VFolderFilter;
-  /** A matching option is listed disabled, and a matching selection is reported unresolved. */
-  isFolderDisabled?: (folder: ScopedVFolderSummary) => boolean;
+  /**
+   * A truthy result lists the option disabled (with `reason` under its label)
+   * and reports a matching selection unresolved.
+   */
+  getFolderDisabled?: (
+    folder: ScopedVFolderSummary,
+  ) => boolean | { reason: string };
   /** Labels for selected ids the scope and `filter` do not reach. */
   fallbackLabels?: Record<string, string>;
   /** Fires once the selected ids are looked up, and again whenever the outcome changes. */
@@ -167,7 +172,7 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
   scope,
   filter,
   optionFilter,
-  isFolderDisabled,
+  getFolderDisabled,
   fallbackLabels,
   onResolve,
   multiple = false,
@@ -314,7 +319,7 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
     'entityId',
   );
   const isReachable = (id: string) =>
-    !!summaryById[id] && !isFolderDisabled?.(summaryById[id]);
+    !!summaryById[id] && !getFolderDisabled?.(summaryById[id]);
   const resolution: ScopedVFolderResolution = {
     resolved: _.map(_.filter(lookupIds, isReachable), (id) => summaryById[id]),
     unresolved: _.reject(lookupIds, isReachable),
@@ -331,7 +336,7 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
   const options = _.map(paginationData, (folder) => ({
     value: folder.entityId,
     label: folder.metadata.name,
-    disabled: !!isFolderDisabled?.(toSummary(folder)),
+    disabled: getFolderDisabled?.(toSummary(folder)) ?? false,
     icon: (
       <BAIVFolderIdenticon
         vfolderId={folder.entityId}
