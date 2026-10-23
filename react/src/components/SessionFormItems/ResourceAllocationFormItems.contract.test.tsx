@@ -10,6 +10,7 @@ import ResourceAllocationFormItems, {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
+import * as _ from 'lodash-es';
 import { Suspense } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
@@ -48,9 +49,6 @@ vi.mock('react-i18next', async () => {
 // The preset check is the REST side of the contract: the hook must call it
 // with the PASSED project's name as `group`.
 const mockResourcePresetCheck = vi.fn().mockResolvedValue(null);
-const mockUseProjectResourceGroups = vi.fn((_projectName: string) => ({
-  resourceGroups: [{ name: 'mock-rg' }],
-}));
 
 vi.mock('../../hooks', async (importOriginal) => {
   const originalModule = await importOriginal<typeof import('../../hooks')>();
@@ -126,8 +124,6 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
         { 'data-testid': 'mock-resource-group-select' },
         props.projectName,
       ),
-    useProjectResourceGroups: (projectName: string) =>
-      mockUseProjectResourceGroups(projectName),
   };
 });
 
@@ -140,15 +136,27 @@ const renderFormItems = ({
   autoResolve = true,
 }: { autoResolve?: boolean } = {}) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
+  const resolvedOperations: Array<{
+    name: string;
+    variables: Record<string, unknown>;
+  }> = [];
   if (autoResolve) {
-    environment.mock.queueOperationResolver((operation) =>
-      MockPayloadGenerator.generate(operation, {
-        ScalingGroup: () => ({
-          name: 'mock-rg',
-          is_active: true,
-          accelerator_quantum_size: null,
-          resource_allocation_limit_for_sessions: null,
-        }),
+    // One resolver per query: the resource-group query, then the preset check.
+    _.times(2, () =>
+      environment.mock.queueOperationResolver((operation) => {
+        resolvedOperations.push({
+          name: operation.request.node.params.name,
+          variables: operation.request.variables,
+        });
+        return MockPayloadGenerator.generate(operation, {
+          ScalingGroup: () => ({
+            name: 'mock-rg',
+            is_active: true,
+            accelerator_quantum_size: null,
+            resource_allocation_limit_for_sessions: null,
+          }),
+          CheckPresetAvailabilityPayloadV2: () => ({ presets: [] }),
+        });
       }),
     );
   }
@@ -171,7 +179,7 @@ const renderFormItems = ({
       </QueryClientProvider>
     </RelayEnvironmentProvider>,
   );
-  return { environment };
+  return { environment, resolvedOperations };
 };
 
 describe('ResourceAllocationFormItems project prop contract (ADR-0001)', () => {
@@ -195,19 +203,21 @@ describe('ResourceAllocationFormItems project prop contract (ADR-0001)', () => {
   });
 
   it('scopes the resource-group select and the preset check to the passed project', async () => {
-    renderFormItems();
+    const { resolvedOperations } = renderFormItems();
 
     // The resource-group select is keyed to the passed project's name.
     const select = await screen.findByTestId('mock-resource-group-select');
     expect(select).toHaveTextContent('passed-project-name');
     expect(select).not.toHaveTextContent('ambient-project-name');
-    // So is the group list the preset select filters by.
-    expect(mockUseProjectResourceGroups).toHaveBeenCalledWith(
-      'passed-project-name',
-    );
-    expect(mockUseProjectResourceGroups).not.toHaveBeenCalledWith(
-      'ambient-project-name',
-    );
+    // So is the preset availability the preset select lists.
+    expect(resolvedOperations).toContainEqual({
+      name: 'useSessionResourcePresetsQuery',
+      variables: {
+        projectId: 'passed-project-id',
+        resourceGroupName: 'mock-rg',
+        skip: false,
+      },
+    });
 
     // The resource-limit preset check runs against the passed project, and
     // its scaling_group guard is satisfied by the passed project's resource
