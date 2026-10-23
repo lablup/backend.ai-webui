@@ -13,7 +13,7 @@ import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import AppLauncherModal from './AppLauncherModal';
 import ContainerCommitModal from './ContainerCommitModal';
-import ContainerLogModal from './ContainerLogModal';
+import ContainerLogModal from './ContainerLogModalLazy';
 import SFTPConnectionInfoModal from './SFTPConnectionInfoModal';
 import TerminateSessionModal from './TerminateSessionModal';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';

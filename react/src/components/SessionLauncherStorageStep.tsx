@@ -5,7 +5,7 @@
 import { Form, type FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useMountableStorageHosts } from '../hooks/useMountableStorageHosts';
-import { SessionLauncherFormValue } from '../pages/SessionLauncherPage';
+import type { SessionLauncherFormValue } from '../pages/SessionLauncherPage';
 import type { ProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';

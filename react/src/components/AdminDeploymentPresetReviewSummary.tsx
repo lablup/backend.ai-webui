@@ -6,11 +6,11 @@ import type { FormInstance } from '../form-engine';
 import { resolvesReadsVfolderConfigFiles } from '../helper/modelServiceCommand';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useScopedImageReference } from '../hooks/hooksUsingRelay';
-import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import type {
   AdminDeploymentPresetFormValue,
   ModelServiceFormValue,
 } from './AdminDeploymentPresetFormTypes';
+import { ResourceNumbersOfSession } from './ResourceNumbersOfSession';
 import SourceCodeView from './SourceCodeView';
 import { Button } from '@lablup/ui-common/Button';
 import { Code } from '@lablup/ui-common/Code';

@@ -1,6 +1,9 @@
 // spec: Image list and environment management E2E tests
+import { createAdminApiContext, gqlAdmin } from '../utils/admin-api';
+import { getE2EDomainName } from '../utils/e2e-scope';
+import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
-import { expect, test, Page, Locator } from '@playwright/test';
+import { expect, test, Page, Locator, TestInfo } from '@playwright/test';
 
 /**
  * The image list is a `BAITable`, i.e. a real `<table>` with a `<thead>` /
@@ -971,6 +974,405 @@ test.describe(
       // 4. Cleanup: remove the filter token
       await removeFilterTag(page, noResultsLabel);
       await expect(noResultsTag).not.toBeVisible();
+    });
+  },
+);
+
+// ---------------------------------------------------------------------------
+// Import Image modal (#9674)
+// ---------------------------------------------------------------------------
+
+const IMPORT_REGISTRY = 'nvcr.io';
+const IMPORT_REGISTRY_PROJECT = 'nvidia';
+const IMPORT_IMAGE_NAME = 'nvidia/cuda';
+// Public NGC tags nightly does not register, so each import is a new row the
+// test owns. Cleanup matches by tag, so every architecture it registered goes.
+const IMPORT_CANDIDATE_TAGS = [
+  '12.6.3-base-ubuntu24.04',
+  '12.6.3-base-ubuntu22.04',
+  '12.8.1-base-ubuntu24.04',
+  '12.4.1-base-ubuntu22.04',
+];
+
+type RegisteredImage = {
+  id: string;
+  name: string;
+  registry: string;
+  tag: string;
+  architecture: string;
+};
+
+async function listRegisteredImportImages(
+  api: Awaited<ReturnType<typeof createAdminApiContext>>,
+): Promise<Array<RegisteredImage>> {
+  const data = await gqlAdmin<{ images: Array<RegisteredImage> }>(
+    api,
+    `query { images(is_operation: false) { id name registry tag architecture } }`,
+  );
+  return data.images.filter(
+    (image) =>
+      image.registry === IMPORT_REGISTRY && image.name === IMPORT_IMAGE_NAME,
+  );
+}
+
+/** Why the import cannot run here, or `null` when the registry is usable. */
+async function importRegistryUnavailableReason(
+  api: Awaited<ReturnType<typeof createAdminApiContext>>,
+): Promise<string | null> {
+  const domain = await getE2EDomainName(api);
+  type RegistriesPage = {
+    domain: { allowed_docker_registries: Array<string> | null } | null;
+    container_registry_nodes: {
+      edges: Array<{
+        node: { registry_name: string; project: string | null } | null;
+      } | null>;
+      pageInfo: { hasNextPage: boolean; endCursor: string | null };
+    } | null;
+  };
+  // Every page, as the modal reads them: the registry may sit past the first.
+  let allowed: Array<string> | null = null;
+  let registered = false;
+  let after: string | null = null;
+  for (let pageIndex = 0; pageIndex < 100; pageIndex++) {
+    const data: RegistriesPage = await gqlAdmin<RegistriesPage>(
+      api,
+      `query ($domain: String, $after: String) {
+        domain(name: $domain) { allowed_docker_registries }
+        container_registry_nodes(first: 100, after: $after) {
+          edges { node { registry_name project } }
+          pageInfo { hasNextPage endCursor }
+        }
+      }`,
+      { domain, after },
+    );
+    if (pageIndex === 0)
+      allowed = data.domain?.allowed_docker_registries ?? null;
+    const connection = data.container_registry_nodes;
+    registered ||= (connection?.edges ?? []).some(
+      (edge) =>
+        edge?.node?.registry_name === IMPORT_REGISTRY &&
+        edge.node.project === IMPORT_REGISTRY_PROJECT,
+    );
+    if (
+      registered ||
+      !connection?.pageInfo.hasNextPage ||
+      !connection.pageInfo.endCursor
+    ) {
+      break;
+    }
+    after = connection.pageInfo.endCursor;
+  }
+  if (!registered) {
+    return `Registry ${IMPORT_REGISTRY}/${IMPORT_REGISTRY_PROJECT} is not registered`;
+  }
+  if (allowed && !allowed.some((name) => name === IMPORT_REGISTRY)) {
+    return `Registry ${IMPORT_REGISTRY} is not enabled for domain ${domain}`;
+  }
+  return null;
+}
+
+async function purgeImportedTag(
+  api: Awaited<ReturnType<typeof createAdminApiContext>>,
+  tag: string,
+  testInfo: TestInfo,
+  waitForScanMs: number,
+) {
+  const warn = (description: string) =>
+    testInfo.annotations.push({ type: 'cleanup-warning', description });
+  const lookup = async () =>
+    (await listRegisteredImportImages(api)).filter(
+      (image) => image.tag === tag,
+    );
+  let leftovers: Array<RegisteredImage> = [];
+  try {
+    leftovers = await lookup();
+    // A scan the client gave up on keeps running on the manager, so wait for
+    // its row rather than missing it.
+    const deadline = Date.now() + waitForScanMs;
+    while (leftovers.length === 0 && Date.now() < deadline) {
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+      leftovers = await lookup();
+    }
+  } catch (error) {
+    warn(`lookup of ${tag} failed: ${error}`);
+    return;
+  }
+  for (const image of leftovers) {
+    await gqlAdmin(
+      api,
+      `mutation ($id: String!) { purge_image_by_id(image_id: $id) { image { id } } }`,
+      { id: image.id },
+    ).catch((error) => warn(`purge of ${image.id} failed: ${error}`));
+  }
+}
+
+function importImageModalOf(page: Page) {
+  return page.getByRole('dialog', { name: 'Import Image from Registry' });
+}
+
+async function openImportImageModal(page: Page) {
+  await page.getByRole('button', { name: 'Import Image', exact: true }).click();
+  const modal = importImageModalOf(page);
+  await expect(modal).toBeVisible();
+  // The textarea renders once the registry list (Suspense) has loaded.
+  await expect(
+    modal.getByRole('textbox', { name: 'Image references' }),
+  ).toBeVisible({ timeout: 30000 });
+  return modal;
+}
+
+test.describe(
+  'ImageList - Import Image',
+  {
+    tag: [
+      '@regression',
+      '@environment',
+      '@functional',
+      '@requires-manager-v26.10',
+    ],
+  },
+  () => {
+    test.beforeEach(async ({ page, request }) => {
+      await loginAsAdmin(page, request);
+      await skipUnlessManagerVersion(
+        page,
+        '26.10.0a1',
+        'Import Image needs adminScanImage on manager >= 26.10 (#9674)',
+      );
+      await page.getByRole('link', { name: 'Admin Settings' }).click();
+      await page.getByRole('link', { name: 'Environments' }).click();
+      await expect(page).toHaveURL(/\/environment/);
+      await waitForImageListReady(page);
+    });
+
+    test('Superadmin can import an image from a canonical reference', async ({
+      page,
+    }, testInfo) => {
+      test.setTimeout(240000);
+      const api = await createAdminApiContext();
+      let importedTag: string | undefined;
+      let isImportConfirmed = false;
+      try {
+        const unavailableReason = await importRegistryUnavailableReason(api);
+        test.skip(!!unavailableReason, unavailableReason ?? '');
+        // Each worker owns one fixed tag, so concurrent workers never import
+        // or purge the same image.
+        const tag =
+          IMPORT_CANDIDATE_TAGS[
+            testInfo.parallelIndex % IMPORT_CANDIDATE_TAGS.length
+          ];
+        const isTagRegistered = (await listRegisteredImportImages(api)).some(
+          (image) => image.tag === tag,
+        );
+        test.skip(isTagRegistered, `${tag} is already registered`);
+        const canonical = `${IMPORT_REGISTRY}/${IMPORT_IMAGE_NAME}:${tag}`;
+
+        const modal = await openImportImageModal(page);
+        await modal
+          .getByRole('textbox', { name: 'Image references' })
+          .fill(canonical);
+        await expect(
+          modal.getByRole('button', { name: 'Architecture' }),
+        ).toHaveText('x86_64');
+        await expect(modal.getByRole('img', { name: 'Ready' })).toBeVisible();
+
+        importedTag = tag;
+        await modal
+          .getByRole('button', { name: 'Import Image', exact: true })
+          .click();
+
+        await expect(
+          page.getByText('1 image(s) successfully imported.').first(),
+        ).toBeVisible({ timeout: 90000 });
+        isImportConfirmed = true;
+        await expect(modal).toBeHidden();
+
+        // A successful import resets the list to page 1 of the default
+        // `-created_at` order, so the new row is on the first page.
+        await waitForImageListSettled(page);
+        await expect(
+          imageListRowsOf(page).filter({ hasText: `${canonical}@x86_64` }),
+        ).toHaveCount(1, { timeout: 30000 });
+      } finally {
+        if (importedTag) {
+          await purgeImportedTag(
+            api,
+            importedTag,
+            testInfo,
+            isImportConfirmed ? 0 : 60000,
+          );
+        }
+        await api.dispose();
+      }
+    });
+
+    test('Superadmin cannot import invalid lines or images from an unregistered registry', async ({
+      page,
+    }) => {
+      const invalidLine = `docker pull ${IMPORT_REGISTRY}/${IMPORT_IMAGE_NAME}:${IMPORT_CANDIDATE_TAGS[0]}`;
+      const unregisteredHost = 'e2e-unregistered.example.com';
+      const unregisteredLine = `${unregisteredHost}/stable/python:3.9`;
+
+      const scanRequests: Array<string> = [];
+      page.on('request', (request) => {
+        if (request.postData()?.includes('adminScanImage')) {
+          scanRequests.push(request.url());
+        }
+      });
+
+      const modal = await openImportImageModal(page);
+      await modal
+        .getByRole('textbox', { name: 'Image references' })
+        .fill(`${invalidLine}\n${unregisteredLine}`);
+
+      const previewRows = modal.locator('[data-import-blocked="true"]');
+      await expect(previewRows).toHaveCount(2);
+      await expect(previewRows.filter({ hasText: invalidLine })).toContainText(
+        'This is not a valid image reference.',
+      );
+      const unregisteredRow = previewRows.filter({ hasText: unregisteredLine });
+      await expect(unregisteredRow).toContainText(
+        `The registry ${unregisteredHost} is not registered yet.`,
+      );
+      await expect(
+        unregisteredRow.getByRole('button', { name: 'Add Registry' }),
+      ).toBeVisible();
+      await expect(
+        modal.getByText('2 line(s) cannot be imported. Fix or remove them.'),
+      ).toBeVisible();
+
+      // Submitting is refused client-side: the modal stays open, nothing is
+      // scanned and no success toast appears.
+      await modal
+        .getByRole('button', { name: 'Import Image', exact: true })
+        .click();
+      await expect(modal).toBeVisible();
+      await expect(previewRows).toHaveCount(2);
+      await expect(modal.getByRole('img', { name: 'Scanning' })).toHaveCount(0);
+      await expect(
+        page.getByText(/image\(s\) successfully imported/),
+      ).toHaveCount(0);
+
+      await modal.getByRole('button', { name: 'Cancel' }).click();
+      await expect(modal).toBeHidden();
+      expect(scanRequests).toEqual([]);
+    });
+  },
+);
+
+// ---------------------------------------------------------------------------
+// ImageList - per-image rescan row action (#9688)
+// ---------------------------------------------------------------------------
+
+test.describe(
+  'ImageList - rescan a single image',
+  {
+    tag: [
+      '@regression',
+      '@environment',
+      '@functional',
+      '@requires-manager-v26.10',
+    ],
+  },
+  () => {
+    test.beforeEach(async ({ page, request }) => {
+      await loginAsAdmin(page, request);
+      await skipUnlessManagerVersion(
+        page,
+        '26.10.0a1',
+        'The per-image Rescan row action uses adminScanImage, which requires manager >= 26.10 (#9688)',
+      );
+      await page.getByRole('link', { name: 'Admin Settings' }).click();
+      await page.getByRole('link', { name: 'Environments' }).click();
+      await expect(page).toHaveURL(/\/environment/);
+      await waitForImageListReady(page);
+    });
+
+    test('Superadmin can rescan a single ALIVE image from the Images list', async ({
+      page,
+    }) => {
+      // Without a status condition the list is live-only, so every row is ALIVE.
+      // The first row is the fixture other tests here edit (resource limits,
+      // apps); rescan the last row so a parallel rescan cannot undo their save.
+      await waitForImageListSettled(page);
+      const rows = imageListRowsOf(page);
+      expect(await rows.count()).toBeGreaterThan(1);
+      const targetRow = rows.last();
+      const rescanButton = targetRow.getByRole('button', {
+        name: 'Rescan',
+        exact: true,
+      });
+      await expect(rescanButton).toBeVisible();
+
+      // The canonical (`<registry>/<namespace>:<tag>`) the toast names is the
+      // one the row sends as `adminScanImage`'s input.
+      let scanResponded = false;
+      const scanResponse = page
+        .waitForResponse(
+          (res) =>
+            res.url().includes('/admin/gql') &&
+            (res.request().postData() ?? '').includes('useScanImageMutation'),
+          { timeout: 60000 },
+        )
+        .then((res) => {
+          scanResponded = true;
+          return res;
+        });
+      // Only a list response after the scan's counts as its refetch.
+      const listRefetch = page.waitForResponse(
+        (res) =>
+          scanResponded &&
+          res.url().includes('/admin/gql') &&
+          (res.request().postData() ?? '').includes('ImageListQuery'),
+        { timeout: 60000 },
+      );
+      await rescanButton.click();
+      const { variables } = (await scanResponse).request().postDataJSON();
+      const canonical: string = variables.input.canonical;
+      expect(canonical).toMatch(/^[^/\s]+\/\S+:\S+$/);
+
+      // The toast text is mirrored into an Astryx live region; check the toast.
+      await expect(
+        page.getByText(`${canonical} was rescanned.`).first(),
+      ).toBeVisible({ timeout: 60000 });
+      // A successful rescan bumps the list's fetch key, re-running its query.
+      await listRefetch;
+      await waitForImageListReady(page);
+    });
+
+    test('Superadmin cannot see the Rescan button on a non-ALIVE image row', async ({
+      page,
+    }) => {
+      // The shared cluster keeps no DELETED/PURGING image, and deleting one is
+      // irreversible, so mark the first row of the real list response DELETED.
+      await page.route('**/admin/gql', async (route) => {
+        if (!(route.request().postData() ?? '').includes('ImageListQuery')) {
+          return route.fallback();
+        }
+        const response = await route.fetch();
+        const json = await response.json();
+        const firstNode = json?.data?.image_nodes?.edges?.[0]?.node;
+        expect(firstNode).toBeTruthy();
+        firstNode.status = 'DELETED';
+        await route.fulfill({ response, json });
+      });
+      await page.reload();
+      await waitForImageListReady(page);
+      await waitForImageListSettled(page);
+
+      const rows = imageListRowsOf(page);
+      await expect(rows.nth(1)).toBeVisible();
+      const deletedRow = rows.first();
+      // The row keeps its other actions; only Rescan is withheld.
+      await expect(
+        deletedRow.getByRole('button', { name: 'Manage Apps' }),
+      ).toBeVisible();
+      await expect(
+        deletedRow.getByRole('button', { name: 'Rescan', exact: true }),
+      ).toHaveCount(0);
+      await expect(
+        rows.nth(1).getByRole('button', { name: 'Rescan', exact: true }),
+      ).toBeVisible();
     });
   },
 );

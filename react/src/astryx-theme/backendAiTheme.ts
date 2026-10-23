@@ -57,7 +57,7 @@ import {
   ANTD_ALIGN_TOKENS,
   BAI_SELF_COLOR_TOKENS,
   buildBaiCustomTokens,
-} from 'backend.ai-ui';
+} from 'backend.ai-ui/theme';
 
 // Re-exported from BUI so this module keeps its ticket-02 public API.
 export { ANTD_ALIGN_TOKENS };

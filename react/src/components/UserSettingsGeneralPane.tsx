@@ -104,6 +104,8 @@ const UserSettingsGeneralPane = () => {
   ] = useBAISettingUserState('experimental_import_from_huggingface');
   const [experimentalSessionResourceGrid, setExperimentalSessionResourceGrid] =
     useBAISettingUserState('experimental_session_resource_grid');
+  const [experimentalSessionMonitor, setExperimentalSessionMonitor] =
+    useBAISettingUserState('experimental_session_monitor');
   const [shellInfo, setShellInfo] = useState<ShellScriptType>('bootstrap');
   const [isOpenShellScriptEditModal, { toggle: toggleShellScriptEditModal }] =
     useToggle(false);
@@ -465,6 +467,15 @@ const UserSettingsGeneralPane = () => {
           defaultValue: false,
           value: experimentalSessionResourceGrid,
           onChange: setExperimentalSessionResourceGrid,
+        },
+        {
+          'data-testid': 'items-experimental-session-monitor',
+          type: 'checkbox',
+          title: t('userSettings.SessionMonitor'),
+          description: <Trans i18nKey="userSettings.DescSessionMonitor" />,
+          defaultValue: false,
+          value: experimentalSessionMonitor,
+          onChange: setExperimentalSessionMonitor,
         },
       ],
     },
