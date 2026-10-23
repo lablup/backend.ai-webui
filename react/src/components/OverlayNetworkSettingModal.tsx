@@ -7,10 +7,8 @@ import { Form, FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import BAIFormItem from './BAIFormItem';
-import {
-  AstryxFormCheckbox,
-  AstryxFormNumberInput,
-} from './astryxFormControls';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
 import {
   BAIQuestionIconWithTooltip,
   BAIModal,
@@ -140,11 +138,9 @@ const OverlayNetworkSettingModal = ({
                   >
                     {/* No wrapper element here: `Form.Item` clones its DIRECT
                         child, so a `<div style={{flex:1}}>` in between
-                        swallowed `value`/`onChange` and the field never bound.
-                        The adapter already defaults to `width="100%"`, which
-                        is what the flex wrapper was for. */}
-                    <AstryxFormNumberInput
-                      label="MTU"
+                        swallowed `value`/`onChange` and the field never bound. */}
+                    <NumberInput
+                      aria-label="MTU"
                       min={0}
                       max={15000}
                       disabled={
@@ -157,8 +153,7 @@ const OverlayNetworkSettingModal = ({
               }}
             </Form.Item>
             <Form.Item noStyle name="mtu_checkbox" valuePropName="checked">
-              <AstryxFormCheckbox
-                label={t('settings.Unset')}
+              <CheckboxInput
                 disabled={isFetchingMtu}
                 onChange={(checked) => {
                   if (checked) {
@@ -167,7 +162,9 @@ const OverlayNetworkSettingModal = ({
                     });
                   }
                 }}
-              />
+              >
+                {t('settings.Unset')}
+              </CheckboxInput>
             </Form.Item>
           </BAIFlex>
         </BAIFormItem>

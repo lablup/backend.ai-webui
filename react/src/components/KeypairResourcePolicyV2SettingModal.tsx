@@ -22,14 +22,12 @@ import {
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import BAIFormItem from './BAIFormItem';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
-import {
-  AstryxFormNumberInput,
-  AstryxFormSelector,
-  AstryxFormTextInput,
-} from './astryxFormControls';
 import { Card } from '@lablup/ui-common/Card';
 import { Grid } from '@lablup/ui-common/Grid';
 import { Icon } from '@lablup/ui-common/Icon';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
+import { Selector } from '@lablup/ui-common/Selector';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIAllowedHostNamesSelect,
@@ -356,8 +354,8 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
             },
           ]}
         >
-          <AstryxFormTextInput
-            label={t('resourcePolicy.Name')}
+          <TextInput
+            aria-label={t('resourcePolicy.Name')}
             disabled={!!keypairResourcePolicy}
           />
         </BAIFormItem>
@@ -382,8 +380,8 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
           }
           name="default_for_unspecified"
         >
-          <AstryxFormSelector
-            label={t('resourcePolicy.DefaultForUnspecified')}
+          <Selector
+            aria-label={t('resourcePolicy.DefaultForUnspecified')}
             options={[
               { label: 'UNLIMITED', value: 'UNLIMITED' },
               { label: 'LIMITED', value: 'LIMITED' },
@@ -430,8 +428,8 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
                       style={{ width: '100%' }}
                     />
                   ) : (
-                    <AstryxFormNumberInput
-                      label={
+                    <NumberInput
+                      aria-label={
                         _.get(mergedResourceSlots, resourceSlotKey)
                           ?.description || resourceSlotKey
                       }
@@ -457,8 +455,8 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
                 name="max_containers_per_session"
                 disableUnlimited
               >
-                <AstryxFormNumberInput
-                  label={t('resourcePolicy.ClusterSize')}
+                <NumberInput
+                  aria-label={t('resourcePolicy.ClusterSize')}
                   min={0}
                   max={SIGNED_32BIT_MAX_INT}
                 />
@@ -468,8 +466,8 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
                 unlimitedValue={0}
                 label={t('resourcePolicy.MaxSessionLifetime')}
               >
-                <AstryxFormNumberInput
-                  label={t('resourcePolicy.MaxSessionLifetime')}
+                <NumberInput
+                  aria-label={t('resourcePolicy.MaxSessionLifetime')}
                   min={0}
                   max={SIGNED_32BIT_MAX_INT}
                 />
@@ -479,8 +477,8 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
                 unlimitedValue={null}
                 label={t('resourcePolicy.MaxPendingSessionCount')}
               >
-                <AstryxFormNumberInput
-                  label={t('resourcePolicy.MaxPendingSessionCount')}
+                <NumberInput
+                  aria-label={t('resourcePolicy.MaxPendingSessionCount')}
                   min={0}
                   max={SIGNED_32BIT_MAX_INT}
                 />
@@ -490,8 +488,8 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
                 unlimitedValue={0}
                 label={t('resourcePolicy.Concurrency')}
               >
-                <AstryxFormNumberInput
-                  label={t('resourcePolicy.Concurrency')}
+                <NumberInput
+                  aria-label={t('resourcePolicy.Concurrency')}
                   min={0}
                   max={SIGNED_32BIT_MAX_INT}
                 />
@@ -501,8 +499,8 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
                 unlimitedValue={0}
                 label={t('resourcePolicy.IdleTimeoutSec')}
               >
-                <AstryxFormNumberInput
-                  label={t('resourcePolicy.IdleTimeoutSec')}
+                <NumberInput
+                  aria-label={t('resourcePolicy.IdleTimeoutSec')}
                   min={0}
                   max={SIGNED_32BIT_MAX_INT}
                 />
@@ -512,8 +510,8 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
                 unlimitedValue={0}
                 label={t('resourcePolicy.MaxConcurrentSFTPSessions')}
               >
-                <AstryxFormNumberInput
-                  label={t('resourcePolicy.MaxConcurrentSFTPSessions')}
+                <NumberInput
+                  aria-label={t('resourcePolicy.MaxConcurrentSFTPSessions')}
                   min={0}
                   max={SIGNED_32BIT_MAX_INT}
                 />

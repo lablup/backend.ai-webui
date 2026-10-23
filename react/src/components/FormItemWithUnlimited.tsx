@@ -87,10 +87,8 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
           {childrenWithUndefinedValue}
         </BAIFormItem>
       ) : null}
-      {/* Outside the Form.Item value-binding contract: this checkbox drives
-          isUnlimited local state and imperatively pokes the form value, so
-          it stays a plain Astryx control rather than the AstryxFormCheckbox
-          adapter (which exists for controls Form.Item clones props onto). */}
+      {/* Outside the Form.Item value binding: this checkbox drives
+          isUnlimited local state and imperatively pokes the form value. */}
       <CheckboxInput
         // The toggle is secondary to the field it disables, so it uses the
         // compact step instead of the default 24px indicator.

@@ -8,8 +8,8 @@ import { Form, type FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIFormItem from './BAIFormItem';
-import { AstryxFormTextInput } from './astryxFormControls';
 import { Banner } from '@lablup/ui-common/Banner';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIModal,
   BAIModalProps,
@@ -112,7 +112,7 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
             }),
           ]}
         >
-          <AstryxFormTextInput label={t('general.E-Mail')} />
+          <TextInput aria-label={t('general.E-Mail')} />
         </BAIFormItem>
         <BAIFormItem
           name="password"
@@ -131,7 +131,7 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
             }),
           ]}
         >
-          <AstryxFormTextInput type="password" label={t('general.Password')} />
+          <TextInput type="password" aria-label={t('general.Password')} />
         </BAIFormItem>
       </Form>
     </BAIModal>

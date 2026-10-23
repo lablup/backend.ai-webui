@@ -17,11 +17,9 @@ import { GBToBytes, bytesToGB } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import BAIFormItem from './BAIFormItem';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
-import {
-  AstryxFormNumberInput,
-  AstryxFormTextInput,
-} from './astryxFormControls';
 import { Banner } from '@lablup/ui-common/Banner';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -235,8 +233,8 @@ const UserResourcePolicyV2SettingModal: React.FC<
             },
           ]}
         >
-          <AstryxFormTextInput
-            label={t('resourcePolicy.Name')}
+          <TextInput
+            aria-label={t('resourcePolicy.Name')}
             disabled={!!userResourcePolicy}
           />
         </BAIFormItem>
@@ -252,8 +250,8 @@ const UserResourcePolicyV2SettingModal: React.FC<
             label={t('resourcePolicy.MaxFolderCount')}
             style={{ width: '100%', margin: 0 }}
           >
-            <AstryxFormNumberInput
-              label={t('resourcePolicy.MaxFolderCount')}
+            <NumberInput
+              aria-label={t('resourcePolicy.MaxFolderCount')}
               min={0}
               max={SIGNED_32BIT_MAX_INT}
             />
@@ -264,8 +262,8 @@ const UserResourcePolicyV2SettingModal: React.FC<
             label={t('storageHost.MaxFolderSize')}
             style={{ width: '100%', margin: 0 }}
           >
-            <AstryxFormNumberInput
-              label={t('storageHost.MaxFolderSize')}
+            <NumberInput
+              aria-label={t('storageHost.MaxFolderSize')}
               min={0}
               // Maximum safe integer divided by 10^9 to prevent overflow when converting GB to bytes
               max={Math.floor(Number.MAX_SAFE_INTEGER / Math.pow(10, 9))}
@@ -278,8 +276,8 @@ const UserResourcePolicyV2SettingModal: React.FC<
             label={t('resourcePolicy.MaxConcurrentLogins')}
             style={{ width: '100%', margin: 0 }}
           >
-            <AstryxFormNumberInput
-              label={t('resourcePolicy.MaxConcurrentLogins')}
+            <NumberInput
+              aria-label={t('resourcePolicy.MaxConcurrentLogins')}
               min={0}
               max={SIGNED_32BIT_MAX_INT}
             />
@@ -292,8 +290,8 @@ const UserResourcePolicyV2SettingModal: React.FC<
             { required: true, message: t('data.explorer.ValueRequired') },
           ]}
         >
-          <AstryxFormNumberInput
-            label={t('resourcePolicy.MaxSessionCountPerModelSession')}
+          <NumberInput
+            aria-label={t('resourcePolicy.MaxSessionCountPerModelSession')}
             min={0}
             max={SIGNED_32BIT_MAX_INT}
           />
@@ -305,8 +303,8 @@ const UserResourcePolicyV2SettingModal: React.FC<
             { required: true, message: t('data.explorer.ValueRequired') },
           ]}
         >
-          <AstryxFormNumberInput
-            label={t('resourcePolicy.MaxCustomizedImageCount')}
+          <NumberInput
+            aria-label={t('resourcePolicy.MaxCustomizedImageCount')}
             min={0}
             max={SIGNED_32BIT_MAX_INT}
           />

@@ -6,15 +6,10 @@ import { ContainerCommitModalFragment$key } from '../../__generated__/ContainerC
 import { Form, FormInstance } from '../../form-engine';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useSetBAINotification } from '../../hooks/useBAINotification';
-// FRONTIER (ticket 17 / ticket 34): Form + Form.Item stay on the antd
-// form engine (locked SHIM decision); the CONTROL inside the item is Astryx,
-// through the `astryxFormControls` adapter that reconciles the three deltas
-// (required non-null `value`, self-rendered `label`, value-not-event
-// `onChange`).
-import { AstryxFormTextInput } from '../astryxFormControls';
 import { Divider } from '@lablup/ui-common/Divider';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import { Text } from '@lablup/ui-common/Text';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIFlex,
   BAIMetadataList,
@@ -148,8 +143,8 @@ const ContainerCommitModal: React.FC<ContainerCommitModalProps> = ({
               },
             ]}
           >
-            <AstryxFormTextInput
-              label={t('session.CommitImageName')}
+            <TextInput
+              aria-label={t('session.CommitImageName')}
               placeholder={t('inputLimit.4to32chars')}
             />
           </Form.Item>

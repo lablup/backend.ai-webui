@@ -38,16 +38,14 @@ import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import { passwordPattern } from './LoginFormPanel';
 import ProjectSelect from './ProjectSelect';
 import UserResourcePolicySelect from './UserResourcePolicySelect';
-import {
-  AstryxFormCheckbox,
-  AstryxFormTextArea,
-  AstryxFormTextInput,
-} from './astryxFormControls';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
 import { FileInput } from '@lablup/ui-common/FileInput';
 import { Heading } from '@lablup/ui-common/Heading';
 import { Switch } from '@lablup/ui-common/Switch';
 import { Text } from '@lablup/ui-common/Text';
+import { TextArea } from '@lablup/ui-common/TextArea';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { VStack } from '@lablup/ui-common/VStack';
@@ -1196,16 +1194,10 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               label={t('general.Password')}
               style={{ marginBottom: token('--spacing-3') }}
             >
-              {/* PILOT-DECISION: antd `Input.Password autoComplete="new-password"`
-                  (the Chrome-autofill-suppression workaround) is dropped —
-                  `AstryxFormTextInputProps` has no `autoComplete` passthrough
-                  (MIGRATION-SPEC §0 simplicity policy; not worth widening the
-                  shared adapter's type for one call site). Worst case Chrome
-                  may offer to autofill this field; it does not affect
-                  behavior. */}
-              <AstryxFormTextInput
-                label={t('general.Password')}
+              <TextInput
+                aria-label={t('general.Password')}
                 type="password"
+                autoComplete="new-password"
                 value={globalDefaults.defaultPassword}
                 onChange={(next) =>
                   setGlobalDefaults((prev) => ({
@@ -1222,8 +1214,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               tooltip={t('credential.TooltipForRequirePasswordChange')}
               style={{ marginBottom: token('--spacing-3') }}
             >
-              <AstryxFormCheckbox
-                label={t('general.Enable')}
+              <CheckboxInput
                 value={globalDefaults.needPasswordChange}
                 onChange={(next) =>
                   setGlobalDefaults((prev) => ({
@@ -1231,15 +1222,17 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                     needPasswordChange: next,
                   }))
                 }
-              />
+              >
+                {t('general.Enable')}
+              </CheckboxInput>
             </BAIFormItem>
 
             <BAIFormItem
               label={t('credential.Description')}
               style={{ marginBottom: 0 }}
             >
-              <AstryxFormTextArea
-                label={t('credential.Description')}
+              <TextArea
+                aria-label={t('credential.Description')}
                 value={globalDefaults.description}
                 onChange={(next) =>
                   setGlobalDefaults((prev) => ({

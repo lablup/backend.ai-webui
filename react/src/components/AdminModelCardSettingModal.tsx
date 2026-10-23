@@ -12,13 +12,10 @@ import BAIFormItem from './BAIFormItem';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import FolderLink from './FolderLink';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
-import {
-  AstryxFormSelector,
-  AstryxFormTextArea,
-  AstryxFormTagsInput,
-  AstryxFormTextInput,
-} from './astryxFormControls';
 import { Banner } from '@lablup/ui-common/Banner';
+import { Selector } from '@lablup/ui-common/Selector';
+import { TagsInput } from '@lablup/ui-common/TagsInput';
+import { TextArea } from '@lablup/ui-common/TextArea';
 import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIButton,
@@ -317,7 +314,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                 },
               ]}
             >
-              <AstryxFormTextInput label={t('adminModelCard.Name')} />
+              <TextInput aria-label={t('adminModelCard.Name')} />
             </BAIFormItem>
 
             {isEditMode ? (
@@ -387,7 +384,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Author')}
               tooltip={t('adminModelCard.AuthorTooltip')}
             >
-              <AstryxFormTextInput label={t('adminModelCard.Author')} />
+              <TextInput aria-label={t('adminModelCard.Author')} />
             </BAIFormItem>
 
             <BAIFormItem
@@ -395,7 +392,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Title')}
               tooltip={t('adminModelCard.TitleTooltip')}
             >
-              <AstryxFormTextInput label={t('adminModelCard.Title')} />
+              <TextInput aria-label={t('adminModelCard.Title')} />
             </BAIFormItem>
 
             <BAIFormItem
@@ -403,7 +400,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.ModelVersion')}
               tooltip={t('adminModelCard.ModelVersionTooltip')}
             >
-              <AstryxFormTextInput label={t('adminModelCard.ModelVersion')} />
+              <TextInput aria-label={t('adminModelCard.ModelVersion')} />
             </BAIFormItem>
 
             <BAIFormItem
@@ -411,10 +408,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Description')}
               tooltip={t('adminModelCard.DescriptionTooltip')}
             >
-              <AstryxFormTextArea
-                label={t('adminModelCard.Description')}
-                rows={3}
-              />
+              <TextArea aria-label={t('adminModelCard.Description')} rows={3} />
             </BAIFormItem>
 
             <BAIFormItem
@@ -422,8 +416,8 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Task')}
               tooltip={t('adminModelCard.TaskTooltip')}
             >
-              <AstryxFormTextInput
-                label={t('adminModelCard.Task')}
+              <TextInput
+                aria-label={t('adminModelCard.Task')}
                 placeholder={t('adminModelCard.TaskPlaceholder')}
               />
             </BAIFormItem>
@@ -433,8 +427,8 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Category')}
               tooltip={t('adminModelCard.CategoryTooltip')}
             >
-              <AstryxFormTextInput
-                label={t('adminModelCard.Category')}
+              <TextInput
+                aria-label={t('adminModelCard.Category')}
                 placeholder={t('adminModelCard.CategoryPlaceholder')}
               />
             </BAIFormItem>
@@ -444,7 +438,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Architecture')}
               tooltip={t('adminModelCard.ArchitectureTooltip')}
             >
-              <AstryxFormTextInput label={t('adminModelCard.Architecture')} />
+              <TextInput aria-label={t('adminModelCard.Architecture')} />
             </BAIFormItem>
 
             <BAIFormItem
@@ -452,9 +446,9 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Framework')}
               tooltip={t('adminModelCard.FrameworkTooltip')}
             >
-              <AstryxFormTagsInput
+              <TagsInput
                 tokenSeparators={[',', ' ']}
-                label={t('adminModelCard.Framework')}
+                aria-label={t('adminModelCard.Framework')}
                 placeholder={t('adminModelCard.AddFramework')}
               />
             </BAIFormItem>
@@ -464,9 +458,9 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Label')}
               tooltip={t('adminModelCard.LabelTooltip')}
             >
-              <AstryxFormTagsInput
+              <TagsInput
                 tokenSeparators={[',', ' ']}
-                label={t('adminModelCard.Label')}
+                aria-label={t('adminModelCard.Label')}
                 placeholder={t('adminModelCard.AddLabel')}
               />
             </BAIFormItem>
@@ -476,7 +470,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.License')}
               tooltip={t('adminModelCard.LicenseTooltip')}
             >
-              <AstryxFormTextInput label={t('adminModelCard.License')} />
+              <TextInput aria-label={t('adminModelCard.License')} />
             </BAIFormItem>
 
             <BAIFormItem
@@ -484,7 +478,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Readme')}
               tooltip={t('adminModelCard.ReadmeTooltip')}
             >
-              <AstryxFormTextArea label={t('adminModelCard.Readme')} rows={6} />
+              <TextArea aria-label={t('adminModelCard.Readme')} rows={6} />
             </BAIFormItem>
 
             <BAIFormItem
@@ -498,8 +492,8 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                 },
               ]}
             >
-              <AstryxFormSelector
-                label={t('adminModelCard.AccessLevel')}
+              <Selector
+                aria-label={t('adminModelCard.AccessLevel')}
                 options={[
                   {
                     value: 'INTERNAL',

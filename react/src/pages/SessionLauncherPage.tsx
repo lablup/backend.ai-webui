@@ -29,14 +29,6 @@ import SessionNameFormItem, {
   SessionNameFormItemValue,
 } from '../components/SessionNameFormItem';
 import SessionTemplateModal from '../components/SessionTemplateModal';
-import {
-  AstryxFormCheckbox,
-  AstryxFormNumberInput,
-  AstryxFormSelector,
-  AstryxFormSwitch,
-  AstryxFormTextArea,
-  AstryxFormTextInput,
-} from '../components/astryxFormControls';
 import { Form } from '../form-engine';
 import { formatDuration } from '../helper';
 import { normalizeLegacyMountFields } from '../helper/vfolderMounts';
@@ -50,15 +42,19 @@ import { useStartSession } from '../hooks/useStartSession';
 import { toProjectContext } from '../types/projectContext';
 import { Button } from '@lablup/ui-common/Button';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
 import { Grid as AstryxGrid } from '@lablup/ui-common/Grid';
 import { Heading } from '@lablup/ui-common/Heading';
-// The form engine is ui-common's (`@lablup/ui-common/Form`); the controls
-// inside the items go through the shared `astryxFormControls` adapters.
 import { InputGroup } from '@lablup/ui-common/InputGroup';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
 import { RadioList, RadioListItem } from '@lablup/ui-common/RadioList';
+import { Selector } from '@lablup/ui-common/Selector';
 import { Step, Stepper } from '@lablup/ui-common/Stepper';
+import { Switch } from '@lablup/ui-common/Switch';
 import { Text } from '@lablup/ui-common/Text';
+import { TextArea } from '@lablup/ui-common/TextArea';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useTheme } from '@lablup/ui-common/theme';
 import type { SessionResources as ClientSessionResources } from 'backend.ai-client';
@@ -225,43 +221,6 @@ const StepCard: React.FC<{
     <BAICard title={title} style={{ display: hidden ? 'none' : undefined }}>
       {children}
     </BAICard>
-  );
-};
-
-/**
- * The session-type chooser, as a `Form.Item` child.
- *
- * Local rather than another entry in `astryxFormControls` because the shape it
- * needs — `RadioListItem label` + `description` — is the only place in the app
- * that wants a description under each radio; every other converted radio group
- * is label-only and already served by `AstryxFormRadioList`.
- */
-const SessionTypeRadioList: React.FC<{
-  /** Injected by `Form.Item`. */
-  value?: string;
-  /** Injected by `Form.Item`. */
-  onChange?: (value: string) => void;
-}> = ({ value, onChange }) => {
-  'use memo';
-  const { t } = useTranslation();
-  return (
-    <RadioList
-      value={value ?? ''}
-      onChange={(next) => onChange?.(next)}
-      aria-label={t('session.launcher.SessionType')}
-      orientation="vertical"
-    >
-      <RadioListItem
-        value="interactive"
-        label={t('session.launcher.InteractiveMode')}
-        description={t('session.launcher.InteractiveModeDesc')}
-      />
-      <RadioListItem
-        value="batch"
-        label={t('session.launcher.BatchMode')}
-        description={t('session.launcher.BatchModeDesc')}
-      />
-    </RadioList>
   );
 };
 
@@ -640,22 +599,27 @@ const SessionLauncherPage = () => {
                   <Form.Item name="sessionType">
                     {/* antd `Radio.Group options=` with ReactNode labels ->
                         Astryx `RadioList` + `RadioListItem`.
-                        PILOT-DECISION: this uses the RAW controls rather than
-                        the shared `AstryxFormRadioList`, because the two-part
-                        antd label ("<mode name> <one-sentence description>")
-                        splits cleanly onto `RadioListItem`'s `label` +
-                        `description` pair, and the adapter exposes only
-                        `endContent`. Routed through `endContent` the sentences
-                        overlapped their own labels (measured, both
-                        orientations) — `description` is the slot the shape
-                        actually asks for, and it stacks the sentence under the
-                        mode name.
-                        `Text type="code"` on the mode name is DROPPED: `label`
-                        and `description` are plain STRINGS (P2), and a prose
-                        mode name was never code anyway.
-                        `value`/`onChange` are injected by `Form.Item`, so they
-                        are coalesced here the way the shared adapters do. */}
-                    <SessionTypeRadioList />
+                        The two-part antd label ("<mode name> <one-sentence
+                        description>") splits onto `RadioListItem`'s `label` +
+                        `description`; through `endContent` the sentences
+                        overlapped their own labels (measured). `Text
+                        type="code"` on the mode name is DROPPED: both are plain
+                        strings. */}
+                    <RadioList
+                      aria-label={t('session.launcher.SessionType')}
+                      orientation="vertical"
+                    >
+                      <RadioListItem
+                        value="interactive"
+                        label={t('session.launcher.InteractiveMode')}
+                        description={t('session.launcher.InteractiveModeDesc')}
+                      />
+                      <RadioListItem
+                        value="batch"
+                        label={t('session.launcher.BatchMode')}
+                        description={t('session.launcher.BatchModeDesc')}
+                      />
+                    </RadioList>
                   </Form.Item>
                   <SessionNameFormItem />
                   <Form.Item
@@ -663,7 +627,7 @@ const SessionLauncherPage = () => {
                     label="Bootstrap Script"
                     hidden
                   >
-                    <AstryxFormTextInput label="Bootstrap Script" />
+                    <TextInput aria-label="Bootstrap Script" />
                   </Form.Item>
                 </StepCard>
 
@@ -682,13 +646,10 @@ const SessionLauncherPage = () => {
                         },
                       ]}
                     >
-                      {/* antd `Input.TextArea autoSize` -> the shared
-                          `AstryxFormTextArea`. `autoSize` has no destination —
-                          Astryx `TextArea` takes a fixed `rows` — so the field
-                          keeps the component default height instead of growing
-                          with the command. */}
-                      <AstryxFormTextArea
-                        label={t('session.launcher.StartUpCommand')}
+                      {/* antd `autoSize` has no destination — Astryx `TextArea`
+                          takes a fixed `rows`. */}
+                      <TextArea
+                        aria-label={t('session.launcher.StartUpCommand')}
                       />
                     </Form.Item>
                     <Form.Item
@@ -741,18 +702,8 @@ const SessionLauncherPage = () => {
                                       name={['batch', 'enabled']}
                                       valuePropName="checked"
                                     >
-                                      {/* antd `Checkbox` with an inline text
-                                          child -> `AstryxFormCheckbox`, whose
-                                          `label` renders that same inline
-                                          text. The handler moves from the DOM
-                                          event (`e.target.checked`) to
-                                          `onValueChange`, the adapter's
-                                          explicit side-effect slot — the
-                                          `onChange` slot itself belongs to
-                                          `Form.Item`. */}
-                                      <AstryxFormCheckbox
-                                        label={t('session.launcher.Enable')}
-                                        onValueChange={(checked) => {
+                                      <CheckboxInput
+                                        onChange={(checked) => {
                                           if (
                                             checked &&
                                             _.isEmpty(
@@ -778,7 +729,9 @@ const SessionLauncherPage = () => {
                                             ['batch', 'scheduleDate'],
                                           ]);
                                         }}
-                                      />
+                                      >
+                                        {t('session.launcher.Enable')}
+                                      </CheckboxInput>
                                     </Form.Item>
                                     <Form.Item
                                       noStyle
@@ -902,9 +855,8 @@ const SessionLauncherPage = () => {
                                 name={['batch', 'timeoutEnabled']}
                                 valuePropName="checked"
                               >
-                                <AstryxFormCheckbox
-                                  label={t('session.launcher.Enable')}
-                                  onValueChange={(checked) => {
+                                <CheckboxInput
+                                  onChange={(checked) => {
                                     if (checked === false) {
                                       form.setFieldValue(
                                         ['batch', 'timeout'],
@@ -913,7 +865,9 @@ const SessionLauncherPage = () => {
                                     }
                                     form.validateFields([['batch', 'timeout']]);
                                   }}
-                                />
+                                >
+                                  {t('session.launcher.Enable')}
+                                </CheckboxInput>
                               </Form.Item>
                               <Form.Item
                                 noStyle
@@ -965,19 +919,10 @@ const SessionLauncherPage = () => {
                                             },
                                           ]}
                                         >
-                                          {/* antd `InputNumber` ->
-                                                `AstryxFormNumberInput`.
-                                                `style.width:'100%'` becomes
-                                                the adapter's `width` default.
-                                                The cross-field revalidation
-                                                stays on `onChange`: the form
-                                                engine COMPOSES a child's own
-                                                trigger handler after its own
-                                                (`originTriggerFunc` in
-                                                ui-common Form's `Field`), so
-                                                both run. */}
-                                          <AstryxFormNumberInput
-                                            label={t(
+                                          {/* The form engine composes this
+                                                `onChange` after its own. */}
+                                          <NumberInput
+                                            aria-label={t(
                                               'session.launcher.BatchJobTimeoutDuration',
                                             )}
                                             disabled={disabled}
@@ -1021,28 +966,11 @@ const SessionLauncherPage = () => {
                                             }),
                                           ]}
                                         >
-                                          {/* antd `Select options=` (five
-                                                static string options) ->
-                                                `AstryxFormSelector`, the
-                                                plain-`Selector` branch of
-                                                MAPPING §3.1. `tabIndex={-1}`
-                                                is DROPPED: it took the unit
-                                                select out of the tab order, so
-                                                a keyboard user could never
-                                                reach it.
-                                                The accessible name repeats the
-                                                group's own label: Astryx
-                                                requires one on BOTH halves of
-                                                what antd drew as a single
-                                                compact control, and there is no
-                                                localized "Unit" string in any
-                                                of the 22 catalogues to name the
-                                                right-hand half with (P8 — reuse
-                                                an existing string rather than
-                                                add a key needing 22
-                                                translations). */}
-                                          <AstryxFormSelector
-                                            label={t(
+                                          {/* The accessible name repeats the
+                                                group's own label: there is no
+                                                localized "Unit" string (P8). */}
+                                          <Selector
+                                            aria-label={t(
                                               'session.launcher.BatchJobTimeoutDuration',
                                             )}
                                             disabled={disabled}
@@ -1097,8 +1025,8 @@ const SessionLauncherPage = () => {
                     >
                       {/* Optionless placeholder left behind when the model
                           folder select was removed from this step. */}
-                      <AstryxFormSelector
-                        label={t('session.launcher.ModelStorageToMount')}
+                      <Selector
+                        aria-label={t('session.launcher.ModelStorageToMount')}
                         options={[]}
                       />
                     </Form.Item>
@@ -1156,14 +1084,13 @@ const SessionLauncherPage = () => {
                         required
                         noStyle
                       >
-                        {/* antd `Switch` -> the shared `AstryxFormSwitch`.
-                            `checkedChildren`/`unCheckedChildren` (the ON/OFF
-                            text inside the track) have no Astryx destination
-                            and are DROPPED — the adjacent `Text` above already
-                            names what the toggle controls, and the thumb
-                            position carries the state. */}
-                        <AstryxFormSwitch
-                          label={t('session.launcher.SwitchOpenMPoptimization')}
+                        {/* antd `checkedChildren`/`unCheckedChildren` have no
+                            Astryx destination and are DROPPED; the `Text`
+                            above names the toggle. */}
+                        <Switch
+                          aria-label={t(
+                            'session.launcher.SwitchOpenMPoptimization',
+                          )}
                           onChange={(checked) => {
                             if (checked) {
                               form.setFieldsValue({
@@ -1247,8 +1174,10 @@ const SessionLauncherPage = () => {
                             }
                             required
                           >
-                            <AstryxFormNumberInput
-                              label={t('session.launcher.NumOpenMPthreads')}
+                            <NumberInput
+                              aria-label={t(
+                                'session.launcher.NumOpenMPthreads',
+                              )}
                               min={1}
                               max={1000}
                               step={1}
@@ -1274,8 +1203,10 @@ const SessionLauncherPage = () => {
                             }
                             required
                           >
-                            <AstryxFormNumberInput
-                              label={t('session.launcher.NumOpenBLASthreads')}
+                            <NumberInput
+                              aria-label={t(
+                                'session.launcher.NumOpenBLASthreads',
+                              )}
                               min={1}
                               max={1000}
                               step={1}

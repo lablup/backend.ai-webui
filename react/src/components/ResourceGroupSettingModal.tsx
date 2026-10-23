@@ -19,15 +19,13 @@ import {
 } from '../hooks/useSFTPResourceGroups';
 import BAIFormItem from './BAIFormItem';
 import { ScalingGroupOpts } from './ResourceGroupList';
-import {
-  AstryxFormMultiSelector,
-  AstryxFormNumberInput,
-  AstryxFormSelector,
-  AstryxFormSwitch,
-  AstryxFormTextArea,
-  AstryxFormTextInput,
-} from './astryxFormControls';
 import { Grid } from '@lablup/ui-common/Grid';
+import { MultiSelector } from '@lablup/ui-common/MultiSelector';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
+import { Selector } from '@lablup/ui-common/Selector';
+import { Switch } from '@lablup/ui-common/Switch';
+import { TextArea } from '@lablup/ui-common/TextArea';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAICard,
   BAIFlex,
@@ -364,8 +362,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               },
             ]}
           >
-            <AstryxFormTextInput
-              label={t('resourceGroup.Name')}
+            <TextInput
+              aria-label={t('resourceGroup.Name')}
               disabled={!!resourceGroup}
             />
           </BAIFormItem>
@@ -373,7 +371,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
             label={t('resourceGroup.Description')}
             name="description"
           >
-            <AstryxFormTextArea label={t('resourceGroup.Description')} />
+            <TextArea aria-label={t('resourceGroup.Description')} />
           </BAIFormItem>
           <BAIFormItem
             label={t('resourceGroup.AllowedSessionTypes')}
@@ -387,8 +385,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               },
             ]}
           >
-            <AstryxFormMultiSelector
-              label={t('resourceGroup.AllowedSessionTypes')}
+            <MultiSelector
+              aria-label={t('resourceGroup.AllowedSessionTypes')}
               options={_.map(
                 ['batch', 'interactive', 'inference', 'system'],
                 (value) => ({ label: getSessionTypeLabel(t, value), value }),
@@ -400,8 +398,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
             name="wsProxyAddress"
             rules={[{ type: 'url', message: t('error.InvalidUrl') }]}
           >
-            <AstryxFormTextInput
-              label={t('resourceGroup.AppProxyAddress')}
+            <TextInput
+              aria-label={t('resourceGroup.AppProxyAddress')}
               placeholder="http://localhost:10200"
             />
           </BAIFormItem>
@@ -409,8 +407,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
             label={t('resourceGroup.AppProxyAPIToken')}
             name="wsProxyAPIToken"
           >
-            <AstryxFormTextInput
-              label={t('resourceGroup.AppProxyAPIToken')}
+            <TextInput
+              aria-label={t('resourceGroup.AppProxyAPIToken')}
               type="password"
               placeholder={t('resourceGroup.EnterAPIToken')}
             />
@@ -445,7 +443,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               label={t('resourceGroup.Active')}
               name="active"
             >
-              <AstryxFormSwitch label={t('resourceGroup.Active')} />
+              <Switch aria-label={t('resourceGroup.Active')} />
             </BAIFormItem>
             <BAIFormItem
               layout="horizontal"
@@ -453,7 +451,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               name="public"
               tooltip={t('resourceGroup.PublicDesc')}
             >
-              <AstryxFormSwitch label={t('resourceGroup.Public')} />
+              <Switch aria-label={t('resourceGroup.Public')} />
             </BAIFormItem>
           </Grid>
           <BAIFormItem
@@ -468,8 +466,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               },
             ]}
           >
-            <AstryxFormSelector
-              label={t('resourceGroup.Scheduler')}
+            <Selector
+              aria-label={t('resourceGroup.Scheduler')}
               options={[
                 {
                   label: 'FIFO',
@@ -505,8 +503,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                 }
                 name="pendingTimeout"
               >
-                <AstryxFormNumberInput
-                  label={t('resourceGroup.PendingTimeout')}
+                <NumberInput
+                  aria-label={t('resourceGroup.PendingTimeout')}
                   units={t('resourceGroup.TimeoutSeconds')}
                   min={0}
                 />
@@ -519,8 +517,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                 }
                 name="retriesToSkip"
               >
-                <AstryxFormNumberInput
-                  label={t('resourceGroup.RetriesToSkipDesc')}
+                <NumberInput
+                  aria-label={t('resourceGroup.RetriesToSkipDesc')}
                   units={t('resourceGroup.RetriesToSkip')}
                   min={0}
                 />

@@ -9,9 +9,9 @@ import {
   useSuspendedBackendaiClient,
 } from '../../hooks';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
-import { AstryxFormTextInput } from '../astryxFormControls';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { SquarePen } from 'lucide-react';
@@ -137,11 +137,8 @@ const SessionInfoCell: React.FC<{
             }),
           ]}
         >
-          {/* The inline rename field. `onEnter` / `onKeyDown` / `hasAutoFocus`
-              are on the SHARED adapter now (D10 fold-back), so this no longer
-              needs a local copy of the two `Form.Item` contracts. */}
-          <AstryxFormTextInput
-            label={t('session.launcher.SessionName')}
+          <TextInput
+            aria-label={t('session.launcher.SessionName')}
             hasAutoFocus
             onEnter={save}
             onKeyDown={(e) => {

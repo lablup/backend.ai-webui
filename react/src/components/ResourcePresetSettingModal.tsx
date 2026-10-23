@@ -11,10 +11,8 @@ import { convertToBinaryUnit } from '../helper';
 import { reasonMessage } from '../helper/mutationError';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import BAIFormItem from './BAIFormItem';
-import {
-  AstryxFormNumberInput,
-  AstryxFormTextInput,
-} from './astryxFormControls';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIDynamicUnitInputNumber,
   BAIModal,
@@ -225,8 +223,8 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
             },
           ]}
         >
-          <AstryxFormTextInput
-            label={t('resourcePreset.PresetName')}
+          <TextInput
+            aria-label={t('resourcePreset.PresetName')}
             disabled={!!resourcePreset}
           />
         </BAIFormItem>
@@ -307,8 +305,8 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                       // (big-number safety) has no NumberInput equivalent
                       // (MAPPING.md §3.17) and is dropped — slot counts stay
                       // well inside float precision. `suffix` -> `units`.
-                      <AstryxFormNumberInput
-                        label={
+                      <NumberInput
+                        aria-label={
                           _.get(mergedResourceSlots, resourceSlotKey)
                             ?.description || resourceSlotKey
                         }
