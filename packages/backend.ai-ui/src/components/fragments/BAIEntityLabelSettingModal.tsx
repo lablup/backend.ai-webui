@@ -280,6 +280,7 @@ const BAIEntityLabelSettingModalContent = ({
                   key: 'key',
                   header: t('comp:BAIEntityLabelSettingModal.Key'),
                   formItemProps: () => ({
+                    validateTrigger: ['onChange', 'onBlur'],
                     rules: [
                       {
                         required: true,
@@ -318,6 +319,7 @@ const BAIEntityLabelSettingModalContent = ({
                   key: 'value',
                   header: t('comp:BAIEntityLabelSettingModal.Value'),
                   formItemProps: () => ({
+                    validateTrigger: ['onChange', 'onBlur'],
                     rules: [
                       {
                         required: true,
