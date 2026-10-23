@@ -1547,6 +1547,7 @@
     "AllProjects": "Todos os projetos",
     "AlreadyInstalledImage": "Imagem já instalada",
     "AppInfoDeleted": "Informações do aplicativo excluídas com sucesso.",
+    "AppItemName": "aplicativo",
     "AppName": "Nome do aplicativo",
     "AppNameMustNotBeEmpty": "O nome do aplicativo não deve estar vazio",
     "AppPortsApplyToNewSessionsOnly": "As alterações de aplicativos e portas aplicam-se apenas a sessões recém-criadas e não afetam sessões que já estão em execução.",

@@ -269,31 +269,28 @@ test.describe(
       // legitimately opens the modal with zero apps, and the baseline count
       // must stay valid in that case.
       await expect(
-        modal.getByRole('button', { name: 'Add', exact: true }),
+        modal.getByRole('button', { name: 'Add app', exact: true }),
       ).toBeVisible();
-      // ManageAppsModal.tsx renders one un-`noStyle` outer `BAIFormItem` per
-      // app row (`.uic-form-item`); the 3 nested per-field
-      // BAIFormItems inside it are all `noStyle` and render no DOM of their
-      // own, so this still counts exactly one element per row.
-      const numberOfAppsBeforeAdd = await modal
-        .locator('.uic-form-item')
-        .count();
-      await modal.getByRole('button', { name: 'Add', exact: true }).click();
+      // `ListInput` names each cell by its column header, with ", app N of M"
+      // after the first row, so one App Name textbox counts one row.
+      const appNameInputs = (scope: Locator) =>
+        scope.getByRole('textbox', { name: /^App Name/ });
+      const numberOfAppsBeforeAdd = await appNameInputs(modal).count();
+      await modal.getByRole('button', { name: 'Add app', exact: true }).click();
       const addInfo = {
         app: 'e2e-test-app',
         protocol: 'tcp',
         port: '6006',
       };
-      // The three fields of the newly added row. `ManageAppsModal.tsx` gives
-      // each `AstryxFormTextInput` a label/placeholder pair ("App Name",
-      // "Protocol", "Port"); scope through the row's own form item so the
-      // names stay unambiguous across rows.
-      const addedAppRow = modal
-        .locator('.uic-form-item')
-        .nth(numberOfAppsBeforeAdd);
-      await addedAppRow.getByPlaceholder('App Name').fill(addInfo.app);
-      await addedAppRow.getByPlaceholder('Protocol').fill(addInfo.protocol);
-      await addedAppRow.getByPlaceholder('Port').fill(addInfo.port);
+      await appNameInputs(modal).last().fill(addInfo.app);
+      await modal
+        .getByRole('textbox', { name: /^Protocol/ })
+        .last()
+        .fill(addInfo.protocol);
+      await modal
+        .getByRole('textbox', { name: /^Port/ })
+        .last()
+        .fill(addInfo.port);
 
       // Click OK Button
       await modal.getByRole('button', { name: 'OK' }).click();
@@ -314,9 +311,7 @@ test.describe(
         await openManageAppsModal();
         const dialog = page.getByRole('dialog', { name: /Manage Apps/i });
         await expect(dialog).toBeVisible();
-        // One `.uic-form-item` per app row (the 3 nested per-field
-        // items are `noStyle` and render no DOM of their own).
-        const count = await dialog.locator('.uic-form-item').count();
+        const count = await appNameInputs(dialog).count();
         await dialog.getByRole('button', { name: 'Cancel' }).click();
         await expect(dialog).toBeHidden();
         return count;
@@ -334,29 +329,27 @@ test.describe(
       const modalAfterAdd = page.getByRole('dialog', { name: /Manage Apps/i });
       await expect(modalAfterAdd).toBeVisible();
       // Retry the count assertion: the freshly-reopened modal renders its
-      // app form-items asynchronously, so a one-shot `.count()` can read the
-      // old total before the added row mounts (flaky off by one).
-      await expect(modalAfterAdd.locator('.uic-form-item')).toHaveCount(
+      // rows asynchronously, so a one-shot `.count()` can read the old total
+      // before the added row mounts (flaky off by one).
+      await expect(appNameInputs(modalAfterAdd)).toHaveCount(
         numberOfAppsBeforeAdd + 1,
       );
       const numberOfApps = numberOfAppsBeforeAdd + 1;
       // Verify the last row has the added app info
-      const lastRow = modalAfterAdd.locator('.uic-form-item').last();
-      await expect(lastRow.getByPlaceholder('App Name')).toHaveValue(
+      await expect(appNameInputs(modalAfterAdd).last()).toHaveValue(
         addInfo.app,
       );
-      await expect(lastRow.getByPlaceholder('Protocol')).toHaveValue(
-        addInfo.protocol,
-      );
-      await expect(lastRow.getByPlaceholder('Port')).toHaveValue(addInfo.port);
+      await expect(
+        modalAfterAdd.getByRole('textbox', { name: /^Protocol/ }).last(),
+      ).toHaveValue(addInfo.protocol);
+      await expect(
+        modalAfterAdd.getByRole('textbox', { name: /^Port/ }).last(),
+      ).toHaveValue(addInfo.port);
 
-      // Reset apps — scope the removal to the added row's own form item
-      // instead of indexing a flat button list (`ManageAppsModal.tsx` renders
-      // one ghost IconButton `label={t('button.Delete')}` per app row).
+      // Reset apps — every row's remove action reads "Remove"; take the last.
       await modalAfterAdd
-        .locator('.uic-form-item')
+        .getByRole('button', { name: 'Remove', exact: true })
         .nth(numberOfApps - 1)
-        .getByRole('button', { name: 'Delete' })
         .click();
       await modalAfterAdd.getByRole('button', { name: 'OK' }).click();
       if (reinstallationText > 0) {

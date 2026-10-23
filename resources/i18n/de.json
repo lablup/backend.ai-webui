@@ -1547,6 +1547,7 @@
     "AllProjects": "Alle Projekte",
     "AlreadyInstalledImage": "Bereits installiertes Bild",
     "AppInfoDeleted": "App-Informationen erfolgreich gelöscht.",
+    "AppItemName": "App",
     "AppName": "App-Name",
     "AppNameMustNotBeEmpty": "App-Name darf nicht leer sein",
     "AppPortsApplyToNewSessionsOnly": "Änderungen an Apps und Ports gelten nur für neu erstellte Sitzungen und haben keinen Einfluss auf bereits laufende Sitzungen.",

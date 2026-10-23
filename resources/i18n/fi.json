@@ -1547,6 +1547,7 @@
     "AllProjects": "Kaikki projektit",
     "AlreadyInstalledImage": "Jo asennettu kuva",
     "AppInfoDeleted": "Sovelluksen tiedot onnistuneesti poistettu.",
+    "AppItemName": "sovellus",
     "AppName": "Sovelluksen nimi",
     "AppNameMustNotBeEmpty": "Sovelluksen nimi ei saa olla tyhjä",
     "AppPortsApplyToNewSessionsOnly": "Sovellusten ja porttien muutokset koskevat vain uusia istuntoja eivätkä vaikuta jo käynnissä oleviin istuntoihin.",

@@ -1547,6 +1547,7 @@
     "AllProjects": "전체 프로젝트",
     "AlreadyInstalledImage": "이미 설치된 이미지입니다.",
     "AppInfoDeleted": "선택한 앱 정보가 삭제되었습니다.",
+    "AppItemName": "앱",
     "AppName": "앱 이름",
     "AppNameMustNotBeEmpty": "앱 이름은 필수입니다",
     "AppPortsApplyToNewSessionsOnly": "변경된 앱 및 포트 설정은 이미 실행 중인 세션에는 적용되지 않으며, 이후 새로 생성되는 세션부터 적용됩니다.",
