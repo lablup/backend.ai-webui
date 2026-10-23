@@ -16,14 +16,12 @@ import { useErrorMessageResolver } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAICheckbox from '../BAICheckbox';
 import BAIModal, { BAIModalProps } from '../BAIModal';
-import {
-  AstryxFormNumberInput,
-  AstryxFormTextArea,
-  AstryxFormTextInput,
-} from '../astryxFormControls';
 import { useBAIResourceSlots } from '../provider';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
 import { HStack } from '@lablup/ui-common/Stack';
+import { TextArea } from '@lablup/ui-common/TextArea';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import * as _ from 'lodash-es';
 import { useDeferredValue, useRef } from 'react';
 import {
@@ -434,16 +432,16 @@ const BAIProjectSettingModal = ({
             },
           ]}
         >
-          <AstryxFormTextInput
-            label={t('comp:BAIProjectSettingModal.ProjectName')}
+          <TextInput
+            aria-label={t('comp:BAIProjectSettingModal.ProjectName')}
           />
         </Form.Item>
         <Form.Item
           label={t('comp:BAIProjectSettingModal.Description')}
           name="description"
         >
-          <AstryxFormTextArea
-            label={t('comp:BAIProjectSettingModal.Description')}
+          <TextArea
+            aria-label={t('comp:BAIProjectSettingModal.Description')}
             rows={1}
           />
         </Form.Item>
@@ -507,8 +505,8 @@ const BAIProjectSettingModal = ({
                     style={{ width: '100%' }}
                   />
                 ) : (
-                  <AstryxFormNumberInput
-                    label={resourceSlotKey}
+                  <NumberInput
+                    aria-label={resourceSlotKey}
                     min={0}
                     hasClear
                     units={
@@ -550,7 +548,7 @@ const BAIProjectSettingModal = ({
           {/* QA-FINDINGS Q-29: the two inputs need an explicit row.
               Under antd these were `Input`s — `display: inline-block` — so two
               of them at `calc(50% - 8px)` shared a line by pure inline flow,
-              and the gap was a `marginRight` on the first. `AstryxFormTextInput`
+              and the gap was a `marginRight` on the first. `TextInput`
               renders Astryx's `.astryx-field` wrapper, which is a BLOCK
               (`display: flex`), so the same two widths simply stacked: measured
               at y916 and y948, 32px apart, each still correctly 228px wide.
@@ -568,8 +566,8 @@ const BAIProjectSettingModal = ({
                 },
               ]}
             >
-              <AstryxFormTextInput
-                label={t('comp:BAIProjectSettingModal.Registry')}
+              <TextInput
+                aria-label={t('comp:BAIProjectSettingModal.Registry')}
                 placeholder={t('comp:BAIProjectSettingModal.Registry')}
                 width="100%"
               />
@@ -584,8 +582,8 @@ const BAIProjectSettingModal = ({
                 },
               ]}
             >
-              <AstryxFormTextInput
-                label={t('comp:BAIProjectSettingModal.Project')}
+              <TextInput
+                aria-label={t('comp:BAIProjectSettingModal.Project')}
                 placeholder={t('comp:BAIProjectSettingModal.Project')}
                 width="100%"
               />

@@ -44,10 +44,10 @@ const meta: Meta<typeof BAICompactGroup> = {
 \`\`\`tsx
 <BAICompactGroup>
   <Form.Item name="email_prefix" label="E-Mail Prefix" style={{ flex: 1 }}>
-    <AstryxFormTextInput label="E-Mail Prefix" />
+    <TextInput />
   </Form.Item>
   <Form.Item name="email_suffix" label="E-Mail Suffix" style={{ flex: 1 }}>
-    <AstryxFormTextInput label="E-Mail Suffix" />
+    <TextInput />
   </Form.Item>
 </BAICompactGroup>
 \`\`\`
@@ -324,7 +324,7 @@ export const InsideAForm: Story = {
           style={{ flex: 1 }}
           rules={[{ required: true }]}
         >
-          <FormTextInput label="E-Mail Prefix" />
+          <TextInput aria-label="E-Mail Prefix" />
         </Form.Item>
         <Form.Item
           name="email_suffix"
@@ -332,34 +332,9 @@ export const InsideAForm: Story = {
           style={{ flex: 1 }}
           rules={[{ required: true }]}
         >
-          <FormTextInput label="E-Mail Suffix" />
+          <TextInput aria-label="E-Mail Suffix" />
         </Form.Item>
       </BAICompactGroup>
     </Form>
   ),
 };
-
-/**
- * `Form.Item` clones its child with `value` / `onChange`, and Astryx's
- * `TextInput` types `value` as a required `string`. The host app has
- * `AstryxFormTextInput` for this; BUI has no equivalent, so the story declares
- * the minimal adapter it needs rather than importing across the boundary.
- */
-function FormTextInput({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value?: string;
-  onChange?: (value: string) => void;
-}) {
-  return (
-    <TextInput
-      aria-label={label}
-      value={value ?? ''}
-      onChange={(next) => onChange?.(next)}
-      width="100%"
-    />
-  );
-}
