@@ -441,7 +441,7 @@ test.describe(
         .fill('3');
 
       // Pre-Start Actions — add one row.
-      await page.getByRole('button', { name: 'Add Pre-Start Action' }).click();
+      await page.getByRole('button', { name: 'Add pre-start action' }).click();
       await page
         .getByRole('textbox', { name: 'Action', exact: true })
         .fill('warm_cache');
@@ -678,7 +678,7 @@ test.describe(
         .getByRole('spinbutton', { name: 'Startup Grace Period', exact: true })
         .fill('3');
 
-      await page.getByRole('button', { name: 'Add Pre-Start Action' }).click();
+      await page.getByRole('button', { name: 'Add pre-start action' }).click();
       await page
         .getByRole('textbox', { name: 'Action', exact: true })
         .fill('warm_cache');

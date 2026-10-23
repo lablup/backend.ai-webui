@@ -58,6 +58,7 @@ import {
   BAIButton,
   BAICard,
   BAIFlex,
+  BAIFormListInput,
   BAISkeleton,
   useBAIBreakpoint,
   useDebounceFn,
@@ -67,7 +68,6 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronsRight,
-  CircleMinus,
   PlusIcon,
 } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
@@ -1035,62 +1035,42 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               label={t('adminDeploymentPreset.ResourceOpts')}
               style={{ marginBottom: 0, marginTop: token('--spacing-5') }}
             >
-              <Form.List name="resourceOpts">
-                {(fields, { add, remove }) => (
-                  <BAIFlex direction="column" gap="xs" align="stretch">
-                    {fields.map(({ key, name, ...rest }) => (
-                      <BAIFlex
-                        key={key}
-                        direction="row"
-                        align="baseline"
-                        gap="xs"
-                      >
-                        <BAIFormItem
-                          {...rest}
-                          name={[name, 'name']}
-                          style={{ marginBottom: 0, flex: 1 }}
-                          rules={[{ required: true, message: '' }]}
-                        >
-                          {/* PILOT-DECISION: antd `AutoComplete` (free text +
-                              one 'shmem' suggestion) has no Astryx equivalent;
-                              converted to a plain text input — the placeholder
-                              already shows the same example. */}
-                          <AstryxFormTextInput
-                            label={t('adminDeploymentPreset.ResourceOpts')}
-                            placeholder={t('general.Example', {
-                              value: 'shmem',
-                            })}
-                          />
-                        </BAIFormItem>
-                        <BAIFormItem
-                          {...rest}
-                          name={[name, 'value']}
-                          style={{ marginBottom: 0, flex: 1 }}
-                          rules={[{ required: true, message: '' }]}
-                        >
-                          <AstryxFormTextInput
-                            label={t(
-                              'session.launcher.EnvironmentVariableValue',
-                            )}
-                            placeholder={t('general.Example', { value: '64m' })}
-                          />
-                        </BAIFormItem>
-                        <CircleMinus size="1em" onClick={() => remove(name)} />
-                      </BAIFlex>
-                    ))}
-                    <BAIFormItem noStyle>
-                      <BAIButton
-                        type="dashed"
-                        onClick={() => add()}
-                        icon={<PlusIcon />}
-                        block
-                      >
-                        {t('adminDeploymentPreset.AddResourceOpt')}
-                      </BAIButton>
-                    </BAIFormItem>
-                  </BAIFlex>
-                )}
-              </Form.List>
+              <BAIFormListInput
+                name="resourceOpts"
+                label={t('adminDeploymentPreset.ResourceOpts')}
+                isLabelHidden
+                itemName={t('adminDeploymentPreset.ResourceOptItemName')}
+                columns={[
+                  {
+                    key: 'name',
+                    header: t('adminDeploymentPreset.Name'),
+                    formItemProps: () => ({
+                      validateTrigger: ['onChange', 'onBlur'],
+                      rules: [{ required: true, message: '' }],
+                    }),
+                    renderInput: ({ label }) => (
+                      <AstryxFormTextInput
+                        label={label}
+                        placeholder={t('general.Example', { value: 'shmem' })}
+                      />
+                    ),
+                  },
+                  {
+                    key: 'value',
+                    header: t('session.launcher.EnvironmentVariableValue'),
+                    formItemProps: () => ({
+                      validateTrigger: ['onChange', 'onBlur'],
+                      rules: [{ required: true, message: '' }],
+                    }),
+                    renderInput: ({ label }) => (
+                      <AstryxFormTextInput
+                        label={label}
+                        placeholder={t('general.Example', { value: '64m' })}
+                      />
+                    ),
+                  },
+                ]}
+              />
             </BAIFormItem>
             {/* Top-aligned: bottom alignment would push Cluster Size down by
                 the height of Cluster Mode's validation message. */}
