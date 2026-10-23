@@ -212,8 +212,7 @@ const clusterModeSegmentedStyles = stylex.create({
 /**
  * Cluster-mode segmented control — the twin of the one in
  * `ClusterModeFormItems`, declared locally for the same reason: each option
- * carries a help tooltip that the shared `AstryxFormSegmented` option shape
- * does not model. The two `Form.Item` contracts are honoured inline.
+ * carries a help tooltip.
  */
 const ClusterModeSegmented: React.FC<{
   label: string;

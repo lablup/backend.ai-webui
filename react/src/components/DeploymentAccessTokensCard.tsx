@@ -10,9 +10,9 @@ import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import BAIFormItem from './BAIFormItem';
-import { AstryxFormSelector } from './astryxFormControls';
 import { DateTimeInput } from '@lablup/ui-common/DateTimeInput';
 import type { ISODateTimeString } from '@lablup/ui-common/DateTimeInput';
+import { Selector } from '@lablup/ui-common/Selector';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAISkeleton,
@@ -636,8 +636,8 @@ const CreateAccessTokenModal: React.FC<CreateAccessTokenModalProps> = ({
           label={t('deployment.accessToken.Expiration')}
           rules={[{ required: true }]}
         >
-          <AstryxFormSelector
-            label={t('deployment.accessToken.Expiration')}
+          <Selector
+            aria-label={t('deployment.accessToken.Expiration')}
             width={200}
             options={options}
             onChange={(value) => {

@@ -19,14 +19,12 @@ import { MOUNT_IN_SESSION_PERMISSION } from '../helper/storageHostPermission';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import BAIFormItem from './BAIFormItem';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
-import {
-  AstryxFormNumberInput,
-  AstryxFormSelector,
-  AstryxFormTextInput,
-} from './astryxFormControls';
 import { Card } from '@lablup/ui-common/Card';
 import { Icon } from '@lablup/ui-common/Icon';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
+import { Selector } from '@lablup/ui-common/Selector';
 import { HStack } from '@lablup/ui-common/Stack';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
@@ -347,8 +345,8 @@ const KeypairResourcePolicySettingModal: React.FC<
             },
           ]}
         >
-          <AstryxFormTextInput
-            label={t('resourcePolicy.Name')}
+          <TextInput
+            aria-label={t('resourcePolicy.Name')}
             disabled={!!keypairResourcePolicy}
           />
         </BAIFormItem>
@@ -373,8 +371,8 @@ const KeypairResourcePolicySettingModal: React.FC<
           }
           name="default_for_unspecified"
         >
-          <AstryxFormSelector
-            label={t('resourcePolicy.DefaultForUnspecified')}
+          <Selector
+            aria-label={t('resourcePolicy.DefaultForUnspecified')}
             options={[
               {
                 label: 'UNLIMITED',
@@ -441,8 +439,8 @@ const KeypairResourcePolicySettingModal: React.FC<
                         style={{ width: '100%' }}
                       />
                     ) : (
-                      <AstryxFormNumberInput
-                        label={
+                      <NumberInput
+                        aria-label={
                           _.get(mergedResourceSlots, resourceSlotKey)
                             ?.description || resourceSlotKey
                         }
@@ -471,8 +469,8 @@ const KeypairResourcePolicySettingModal: React.FC<
                   style={{ margin: 0, width: '100%' }}
                   disableUnlimited
                 >
-                  <AstryxFormNumberInput
-                    label={t('resourcePolicy.ClusterSize')}
+                  <NumberInput
+                    aria-label={t('resourcePolicy.ClusterSize')}
                     min={0}
                     max={SIGNED_32BIT_MAX_INT}
                   />
@@ -485,8 +483,8 @@ const KeypairResourcePolicySettingModal: React.FC<
                   label={t('resourcePolicy.MaxSessionLifetime')}
                   style={{ margin: 0, width: '100%' }}
                 >
-                  <AstryxFormNumberInput
-                    label={t('resourcePolicy.MaxSessionLifetime')}
+                  <NumberInput
+                    aria-label={t('resourcePolicy.MaxSessionLifetime')}
                     min={0}
                     max={SIGNED_32BIT_MAX_INT}
                   />
@@ -499,8 +497,8 @@ const KeypairResourcePolicySettingModal: React.FC<
                   label={t('resourcePolicy.MaxPendingSessionCount')}
                   style={{ margin: 0, width: '100%' }}
                 >
-                  <AstryxFormNumberInput
-                    label={t('resourcePolicy.MaxPendingSessionCount')}
+                  <NumberInput
+                    aria-label={t('resourcePolicy.MaxPendingSessionCount')}
                     min={0}
                     max={SIGNED_32BIT_MAX_INT}
                   />
@@ -513,8 +511,8 @@ const KeypairResourcePolicySettingModal: React.FC<
                   unlimitedValue={0}
                   style={{ margin: 0, width: '100%' }}
                 >
-                  <AstryxFormNumberInput
-                    label={t('resourcePolicy.Concurrency')}
+                  <NumberInput
+                    aria-label={t('resourcePolicy.Concurrency')}
                     min={0}
                     max={SIGNED_32BIT_MAX_INT}
                   />
@@ -527,8 +525,8 @@ const KeypairResourcePolicySettingModal: React.FC<
                   label={t('resourcePolicy.IdleTimeoutSec')}
                   style={{ margin: 0, width: '100%' }}
                 >
-                  <AstryxFormNumberInput
-                    label={t('resourcePolicy.IdleTimeoutSec')}
+                  <NumberInput
+                    aria-label={t('resourcePolicy.IdleTimeoutSec')}
                     min={0}
                     max={Number.MAX_SAFE_INTEGER}
                   />
@@ -541,8 +539,8 @@ const KeypairResourcePolicySettingModal: React.FC<
                   label={t('resourcePolicy.MaxConcurrentSFTPSessions')}
                   style={{ margin: 0, width: '100%' }}
                 >
-                  <AstryxFormNumberInput
-                    label={t('resourcePolicy.MaxConcurrentSFTPSessions')}
+                  <NumberInput
+                    aria-label={t('resourcePolicy.MaxConcurrentSFTPSessions')}
                     min={0}
                     max={SIGNED_32BIT_MAX_INT}
                   />

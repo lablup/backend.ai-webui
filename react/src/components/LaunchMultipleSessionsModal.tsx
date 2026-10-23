@@ -8,8 +8,8 @@ import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsin
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
 import type { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
-import { AstryxFormNumberInput } from './astryxFormControls';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
@@ -213,12 +213,10 @@ const LaunchMultipleSessionsModal: React.FC<
             ]}
             style={{ marginBottom: 0 }}
           >
-            {/* antd `InputNumber` → `AstryxFormNumberInput` (MAPPING §3.17):
-                `suffix` → `units` (a genuinely better fit), `precision={0}` →
-                `isIntegerOnly`, and `style={{width:'100%'}}` is the adapter's
-                default `width`. */}
-            <AstryxFormNumberInput
-              label={t('session.launcher.LaunchMultipleSessionsSessionCount')}
+            <NumberInput
+              aria-label={t(
+                'session.launcher.LaunchMultipleSessionsSessionCount',
+              )}
               min={MIN_COUNT}
               isIntegerOnly
               step={1}

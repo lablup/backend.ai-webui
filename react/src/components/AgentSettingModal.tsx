@@ -11,7 +11,7 @@ import { AgentSettingModalQuery } from '../__generated__/AgentSettingModalQuery.
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import BAIFormItem from './BAIFormItem';
-import { AstryxFormSwitch } from './astryxFormControls';
+import { Switch } from '@lablup/ui-common/Switch';
 import {
   BAIAdminResourceGroupSelect,
   BAIModal,
@@ -146,7 +146,7 @@ const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
           valuePropName="checked"
           required={true}
         >
-          <AstryxFormSwitch label={t('agent.Schedulable')} />
+          <Switch aria-label={t('agent.Schedulable')} />
         </BAIFormItem>
       </Form>
     </BAIModal>

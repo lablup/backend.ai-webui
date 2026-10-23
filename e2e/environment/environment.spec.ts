@@ -170,7 +170,7 @@ test.describe(
 
       // `ManageImageResourceLimitModal.tsx` renders each slot as a
       // `BAIFormItem` (`.uic-form-item`). The value controls are Astryx
-      // now: `AstryxFormNumberInput` / `BAIDynamicUnitInputNumber` both end in
+      // now: `NumberInput` / `BAIDynamicUnitInputNumber` both end in
       // an Astryx `NumberInput`, which is `role="spinbutton"`
       // (`@astryxdesign/core/src/NumberInput/NumberInput.tsx`), and the memory
       // unit is an Astryx `Selector` labelled "Unit"
@@ -285,7 +285,7 @@ test.describe(
         port: '6006',
       };
       // The three fields of the newly added row. `ManageAppsModal.tsx` gives
-      // each `AstryxFormTextInput` a label/placeholder pair ("App Name",
+      // each `TextInput` a label/placeholder pair ("App Name",
       // "Protocol", "Port"); scope through the row's own form item so the
       // names stay unambiguous across rows.
       const addedAppRow = modal

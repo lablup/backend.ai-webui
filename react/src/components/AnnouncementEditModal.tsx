@@ -15,13 +15,13 @@ import {
 import './AnnouncementEditModal.css';
 import BAICodeEditor from './BAICodeEditor';
 import BAIFormItem from './BAIFormItem';
-import { AstryxFormTextInput } from './astryxFormControls';
 import { Button } from '@lablup/ui-common/Button';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
 import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Markdown } from '@lablup/ui-common/Markdown';
 import { Text } from '@lablup/ui-common/Text';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import { Token } from '@lablup/ui-common/Token';
 import { useTheme } from '@lablup/ui-common/theme';
 import type { OnMount } from '@monaco-editor/react';
@@ -266,7 +266,7 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
             label={t('summary.AnnouncementTitle')}
             rules={[{ required: true, whitespace: true }]}
           >
-            <AstryxFormTextInput label={t('summary.AnnouncementTitle')} />
+            <TextInput aria-label={t('summary.AnnouncementTitle')} />
           </BAIFormItem>
         </Form>
         {!isEditorReady && <BAISkeleton rows={4} />}

@@ -4,11 +4,11 @@
  */
 import { Form } from '../../form-engine';
 import BAIFormItem from '../BAIFormItem';
-import { AstryxFormTextInput } from '../astryxFormControls';
 import { normalizeCustomEndpointURL, type ChatModel } from './ChatModel';
 import { fetchOpenAIModels, type ModelsFetchError } from './openAIModels';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import { LinkIcon } from 'lucide-react';
@@ -213,8 +213,8 @@ const CustomEndpointForm: React.FC<CustomEndpointFormProps> = ({
           ]}
           extra={t('chatui.customEndpoint.BaseURLHint')}
         >
-          <AstryxFormTextInput
-            label={t('chatui.customEndpoint.BaseURL')}
+          <TextInput
+            aria-label={t('chatui.customEndpoint.BaseURL')}
             placeholder="https://api.example.com/v1"
             disabled={isBusy}
             hasAutoFocus={!baseURL}
@@ -226,9 +226,9 @@ const CustomEndpointForm: React.FC<CustomEndpointFormProps> = ({
           name="apiKey"
           extra={t('chatui.customEndpoint.ApiKeyHint')}
         >
-          <AstryxFormTextInput
+          <TextInput
             type="password"
-            label={t('chatui.customEndpoint.ApiKey')}
+            aria-label={t('chatui.customEndpoint.ApiKey')}
             placeholder="sk-…"
             disabled={isBusy}
             autoComplete="off"

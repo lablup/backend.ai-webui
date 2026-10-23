@@ -43,10 +43,10 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAIFormItem from './BAIFormItem';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import { AstryxFormTextInput } from './astryxFormControls';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { HStack } from '@lablup/ui-common/Stack';
 import { Heading, Text } from '@lablup/ui-common/Text';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import { BAILink, toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
 import { PencilIcon } from 'lucide-react';
 import React, { useState } from 'react';
@@ -72,7 +72,7 @@ type EditableVFolderNameProps = {
    * Legacy antd surface, kept so the unmigrated consumer compiles unchanged
    * (frontier rule). `component` and `level` only select `variant="title"`;
    * `ellipsis` is always on (Astryx truncates with `maxLines`); `inputProps`
-   * carried an antd `Input` `size` that `AstryxFormTextInput` does not expose.
+   * is ignored.
    */
   component?: unknown;
   level?: 1 | 2 | 3 | 4 | 5;
@@ -267,7 +267,7 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
                 margin: 0,
               }}
             >
-              <AstryxFormTextInput label={t('data.Foldername')} hasAutoFocus />
+              <TextInput aria-label={t('data.Foldername')} hasAutoFocus />
             </BAIFormItem>
           </span>
         </Form>

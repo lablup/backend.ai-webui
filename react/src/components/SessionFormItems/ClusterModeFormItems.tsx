@@ -33,11 +33,8 @@ const clusterModeSegmentedStyles = stylex.create({
 });
 
 /**
- * The cluster-mode segmented control. A local adapter rather than the shared
- * `AstryxFormSegmented`, because each option carries a help tooltip that the
- * shared option shape does not model. The two `Form.Item` contracts are
- * honoured inline: `value` is coalesced and the change handler takes the
- * VALUE.
+ * The cluster-mode segmented control, local because each option carries a
+ * help tooltip.
  */
 const ClusterModeSegmented: React.FC<{
   label: string;
