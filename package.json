@@ -83,7 +83,7 @@
     "concurrently": "^8.2.2",
     "cors": "^2.8.6",
     "e2e": "0.17.0",
-    "electron": "^41.10.7",
+    "electron": "^44.9.3",
     "eslint": "catalog:",
     "eslint-config-bai": "workspace:*",
     "eslint-config-google": "^0.14.0",
