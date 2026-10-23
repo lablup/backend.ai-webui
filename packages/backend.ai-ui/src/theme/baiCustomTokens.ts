@@ -26,6 +26,7 @@ export type BaiCustomTokenSeeds = {
   info?: BrandSeedPair;
   link?: BrandSeedPair;
   headerBg?: BrandSeedPair;
+  headerBgAdmin?: BrandSeedPair;
   error?: BrandSeedPair;
   success?: BrandSeedPair;
   warning?: BrandSeedPair;
@@ -82,9 +83,11 @@ export const buildBaiCustomTokens = (
   '--header-bg': seeds.headerBg
     ? [seeds.headerBg.light, seeds.headerBg.dark]
     : 'var(--color-background-surface)',
-  // The header band on system-admin pages: the admin accent (`colorInfo`)
-  // lightened as `headerBg` is against the brand accent (~20% white).
-  '--header-bg-admin': 'color-mix(in srgb, var(--color-info) 80%, #FFFFFF)',
+  // Undeclared: the admin accent lightened as `headerBg` is against the
+  // brand accent (~20% white).
+  '--header-bg-admin': seeds.headerBgAdmin
+    ? [seeds.headerBgAdmin.light, seeds.headerBgAdmin.dark]
+    : 'color-mix(in srgb, var(--color-info) 80%, #FFFFFF)',
   '--color-error-bg': seeds.error
     ? tint('--color-error', 10, 15)
     : 'var(--color-error-muted)',
