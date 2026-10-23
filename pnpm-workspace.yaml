@@ -38,7 +38,7 @@ catalog:
   big.js: ^7.0.1
   classnames: ^2.5.1
   dayjs: ^1.11.21
-  dompurify: ^3.4.12
+  dompurify: ^3.4.17
   eslint: ^9.39.5
   eslint-plugin-import: ^2.32.0
   eslint-plugin-json-schema-validator: ^5.5.1
@@ -109,6 +109,11 @@ minimumReleaseAgeExclude:
   # release of it is older than 7 days yet. Remove after 2026-10-11.
   - e2e@0.17.0
   - "@e2e-dev/web@0.12.0"
+  # @yao-pkg/pkg 6.24.0 → pkg-fetch 3.6.7 is the first release that builds the
+  # local proxy on Node 22.23.4 (October 2026 security release); published
+  # 2026-10-23. Remove after 2026-10-30.
+  - "@yao-pkg/pkg@6.24.0"
+  - "@yao-pkg/pkg-fetch@3.6.7"
   # handlebars 4.7.10: published 2026-10-05, inside the 7-day window at
   # adoption time. It is the first release patching two critical advisories
   # in 4.7.9 (GHSA-8r5x-fm3f-whwj, GHSA-p8wg-vrv2-v86f) that fail the
@@ -180,7 +185,7 @@ overrides:
   serialize-javascript: ^7.0.5 # RCE via RegExp.flags, CPU DoS (#279, #386)
   "uuid@^11": ^11.1.1 # buffer bounds check (#387) v11 line
   "uuid@^13": ^13.0.1 # buffer bounds check (#374) v13 line
-  dompurify: ^3.4.12 # align transitives with catalog bump
+  dompurify: ^3.4.17 # SAFE_FOR_TEMPLATES / IN_PLACE bypasses (GHSA-cg2g-xh64-v4q7, GHSA-mrv2-3pqr-j5jr); aligns monaco-editor's copy with the catalog
   # FR-4149. fast-uri ships in the bundle via `ajv` (latest 8.20.0 still
   # ranges ^3.0.1). Was ^3.1.2 under the dev-only block (FR-3014).
   "fast-uri@^3": ^3.1.8 # GHSA-qw65-cvwx-89v3 et al. (high, <3.1.7)
