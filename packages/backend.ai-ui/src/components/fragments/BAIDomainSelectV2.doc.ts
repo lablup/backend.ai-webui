@@ -8,7 +8,7 @@ export const docs = {
   keywords: ['domain', 'select', 'dropdown', 'picker', 'uuid', 'relay'],
   usage: {
     description:
-      'The uuid-valued sibling of BAIDomainSelect: it shows the domain name but emits the domain uuid. It is self-fetching — no fragment reference or queryRef is passed in — but it runs a Relay `adminDomainsV2` query with `store-and-network`, so it must render under a RelayEnvironmentProvider and inside a Suspense boundary. That field is superadmin-only and requires manager 26.9.0 or later, so gate the component behind a manager version check and fall back to BAIDomainSelect otherwise. The whole list arrives in one request — there is no pagination or server-side search — and each option value is the node id run through `toLocalId`. It is a thin wrapper over BAISelect: everything except the props below is passed straight through, and `options` is not accepted because the component owns them.',
+      'The uuid-valued sibling of BAIDomainSelect: it shows the domain name but emits the domain uuid. It is self-fetching — no fragment reference or queryRef is passed in — but it runs a Relay `adminDomainsV2` query with `store-and-network`, so it must render under a RelayEnvironmentProvider and inside a Suspense boundary. That field is superadmin-only and requires manager 26.9.0 or later, so gate the component behind a manager version check and fall back to BAIDomainSelect otherwise. The whole list arrives in one request — there is no pagination or server-side search — and each option value is the node `entityId`. It is a thin wrapper over BAISelect: everything except the props below is passed straight through, and `options` is not accepted because the component owns them.',
     bestPractices: [
       {
         guidance: true,
@@ -18,7 +18,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Store the emitted value as a raw uuid; it is already `toLocalId`-converted, so a second conversion is wrong.',
+          'Store the emitted value as a raw uuid; it is already the node `entityId`, so decoding it again is wrong.',
       },
       {
         guidance: true,

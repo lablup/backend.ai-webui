@@ -31,7 +31,6 @@ import {
   BAIMetadataList,
   BAIMetadataListItem,
   filterOutEmpty,
-  toLocalId,
   useErrorMessageResolver,
   badgeVariantForStatus,
   BAIText,
@@ -87,6 +86,7 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
     graphql`
       fragment VFolderNodeDescriptionV2Fragment on VFolder {
         id
+        entityId
         host
         status
         unmanagedPath
@@ -130,7 +130,7 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
 
   const { vfolderPath } = useVirtualFolderPathV2(vfolderNode);
 
-  const vfolderId = toLocalId(vfolderNode.id);
+  const vfolderId = vfolderNode.entityId;
 
   // `accessControl.permission` is the folder's mount permission, not the
   // caller's rights on it; NONE leaves the selector empty instead of guessing.

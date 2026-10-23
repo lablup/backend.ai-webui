@@ -139,6 +139,7 @@ const ImportArtifactRevisionToFolderModal = ({
               version
               artifact {
                 id
+                entityId
                 name
               }
             }
@@ -225,7 +226,7 @@ const ImportArtifactRevisionToFolderModal = ({
                           taskId: task.taskId!,
                           version: task.artifactRevision.version,
                           artifact: {
-                            id: toLocalId(artifact.id ?? ''),
+                            id: artifact.entityId,
                             name: artifact.name ?? '',
                           },
                         };

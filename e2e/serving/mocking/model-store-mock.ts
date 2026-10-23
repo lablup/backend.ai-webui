@@ -21,20 +21,25 @@ import { MOCK_ENDPOINT_UUID } from './endpoint-detail-mock';
 // Model card IDs
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Use proper UUIDs so that safeDecodeUuid (called by ModelStoreListPageV2 to
-// derive localSelectedModelCardId) returns a valid UUID, which in turn lets
-// ModelCardDrawer set fetchPolicy='store-and-network' and fire the lazy query.
+// Proper UUIDs: the card's `entityId` goes into `?modelCard=`, and
+// ModelCardDrawer only fires its lazy query for a valid UUID.
+const MOCK_MODEL_CARD_WITH_PRESETS_UUID =
+  '00000000-0000-0000-0000-000000000001';
+const MOCK_MODEL_CARD_NO_PRESETS_UUID = '00000000-0000-0000-0000-000000000002';
+const MOCK_MODEL_CARD_SINGLE_PRESET_UUID =
+  '00000000-0000-0000-0000-000000000003';
 export const MOCK_MODEL_CARD_WITH_PRESETS_ID = btoa(
-  'ModelCardV2:00000000-0000-0000-0000-000000000001',
+  `ModelCardV2:${MOCK_MODEL_CARD_WITH_PRESETS_UUID}`,
 );
 export const MOCK_MODEL_CARD_NO_PRESETS_ID = btoa(
-  'ModelCardV2:00000000-0000-0000-0000-000000000002',
+  `ModelCardV2:${MOCK_MODEL_CARD_NO_PRESETS_UUID}`,
 );
 export const MOCK_MODEL_CARD_SINGLE_PRESET_ID = btoa(
-  'ModelCardV2:00000000-0000-0000-0000-000000000003',
+  `ModelCardV2:${MOCK_MODEL_CARD_SINGLE_PRESET_UUID}`,
 );
 
-const MOCK_VFOLDER_ID = btoa('VFolder:00000000-0000-0000-0000-000000000010');
+const MOCK_VFOLDER_UUID = '00000000-0000-0000-0000-000000000010';
+const MOCK_VFOLDER_ID = btoa(`VFolder:${MOCK_VFOLDER_UUID}`);
 
 export const MOCK_DEPLOYMENT_ID = 'deploy-uuid-001';
 
@@ -70,6 +75,7 @@ const BASE_MIN_RESOURCE = [
 
 const BASE_VFOLDER = {
   id: MOCK_VFOLDER_ID,
+  entityId: MOCK_VFOLDER_UUID,
   metadata: { name: 'mock-model-store-folder' },
 };
 
@@ -80,6 +86,7 @@ const BASE_VFOLDER = {
 export const MOCK_MODEL_CARD_WITH_MULTI_PRESETS = {
   __typename: 'ModelCardV2',
   id: MOCK_MODEL_CARD_WITH_PRESETS_ID,
+  entityId: MOCK_MODEL_CARD_WITH_PRESETS_UUID,
   name: 'mock-llm-model',
   metadata: BASE_METADATA,
   minResource: BASE_MIN_RESOURCE,
@@ -93,6 +100,7 @@ export const MOCK_MODEL_CARD_WITH_MULTI_PRESETS = {
       {
         node: {
           id: btoa('Preset:preset-uuid-011'),
+          entityId: 'preset-uuid-011',
           name: 'gpu-small',
           rank: 1,
           runtimeVariantId: RUNTIME_VARIANT_VLLM_LOCAL_ID,
@@ -101,6 +109,7 @@ export const MOCK_MODEL_CARD_WITH_MULTI_PRESETS = {
       {
         node: {
           id: btoa('Preset:preset-uuid-012'),
+          entityId: 'preset-uuid-012',
           name: 'gpu-small',
           rank: 1,
           runtimeVariantId: RUNTIME_VARIANT_TGI_LOCAL_ID,
@@ -113,6 +122,7 @@ export const MOCK_MODEL_CARD_WITH_MULTI_PRESETS = {
 export const MOCK_MODEL_CARD_NO_PRESETS = {
   ...MOCK_MODEL_CARD_WITH_MULTI_PRESETS,
   id: MOCK_MODEL_CARD_NO_PRESETS_ID,
+  entityId: MOCK_MODEL_CARD_NO_PRESETS_UUID,
   name: 'mock-no-preset-model',
   metadata: {
     ...BASE_METADATA,
@@ -127,6 +137,7 @@ export const MOCK_MODEL_CARD_NO_PRESETS = {
 export const MOCK_MODEL_CARD_SINGLE_PRESET = {
   ...MOCK_MODEL_CARD_WITH_MULTI_PRESETS,
   id: MOCK_MODEL_CARD_SINGLE_PRESET_ID,
+  entityId: MOCK_MODEL_CARD_SINGLE_PRESET_UUID,
   name: 'mock-single-preset-model',
   metadata: {
     ...BASE_METADATA,
@@ -138,6 +149,7 @@ export const MOCK_MODEL_CARD_SINGLE_PRESET = {
       {
         node: {
           id: btoa('Preset:preset-uuid-021'),
+          entityId: 'preset-uuid-021',
           name: 'gpu-small',
           rank: 1,
           runtimeVariantId: RUNTIME_VARIANT_VLLM_LOCAL_ID,
@@ -206,6 +218,7 @@ export function modelCardDeployModalQueryMock() {
           node: {
             __typename: 'RuntimeVariant',
             id: btoa('RuntimeVariant:runtime-variant-uuid-011'),
+            entityId: 'runtime-variant-uuid-011',
             name: 'vllm',
           },
         },
@@ -213,6 +226,7 @@ export function modelCardDeployModalQueryMock() {
           node: {
             __typename: 'RuntimeVariant',
             id: btoa('RuntimeVariant:runtime-variant-uuid-012'),
+            entityId: 'runtime-variant-uuid-012',
             name: 'huggingface-tgi',
           },
         },
@@ -234,6 +248,7 @@ export function modelCardDeployModalQuerySingleRGMock() {
           node: {
             __typename: 'RuntimeVariant',
             id: btoa('RuntimeVariant:runtime-variant-uuid-011'),
+            entityId: 'runtime-variant-uuid-011',
             name: 'vllm',
           },
         },
@@ -280,12 +295,14 @@ function buildPresetNode(
   return {
     __typename: 'DeploymentRevisionPreset',
     id: btoa(`DeploymentRevisionPreset:${presetLocalId}`),
+    entityId: presetLocalId,
     name: presetName,
     runtimeVariantId: runtimeVariantLocalId,
     description: null,
     runtimeVariant: {
       __typename: 'RuntimeVariant',
       id: btoa(`RuntimeVariant:${runtimeVariantLocalId}`),
+      entityId: runtimeVariantLocalId,
       name: runtimeVariantName,
     },
     cluster: { clusterMode: 'SINGLE_NODE', clusterSize: 1 },
@@ -316,6 +333,7 @@ export function modelCardDrawerQueryWithMultiPresetsMock() {
     modelCardV2: {
       __typename: 'ModelCardV2',
       id: MOCK_MODEL_CARD_WITH_PRESETS_ID,
+      entityId: MOCK_MODEL_CARD_WITH_PRESETS_UUID,
       name: 'mock-llm-model',
       metadata: BASE_METADATA,
       minResource: BASE_MIN_RESOURCE,
@@ -359,6 +377,7 @@ export function modelCardDrawerQueryWithNoPresetsMock() {
     modelCardV2: {
       __typename: 'ModelCardV2',
       id: MOCK_MODEL_CARD_NO_PRESETS_ID,
+      entityId: MOCK_MODEL_CARD_NO_PRESETS_UUID,
       name: 'mock-no-preset-model',
       metadata: {
         ...BASE_METADATA,
@@ -385,6 +404,7 @@ export function modelCardDrawerQueryWithSinglePresetMock() {
     modelCardV2: {
       __typename: 'ModelCardV2',
       id: MOCK_MODEL_CARD_SINGLE_PRESET_ID,
+      entityId: MOCK_MODEL_CARD_SINGLE_PRESET_UUID,
       name: 'mock-single-preset-model',
       metadata: {
         ...BASE_METADATA,
@@ -460,6 +480,7 @@ const buildModelDeployment = (
 ) => ({
   __typename: 'ModelDeployment' as const,
   id: MOCK_DEPLOYMENT_GLOBAL_ID,
+  entityId: MOCK_ENDPOINT_UUID,
   metadata: { status },
   currentRevision: null,
   revisionHistory: { edges: [] },

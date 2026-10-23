@@ -43,7 +43,6 @@ import {
   availableDeploymentSorterValues,
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
-  toLocalId,
   useBAILogger,
   useFetchKey,
   useToggle,
@@ -184,6 +183,7 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
           edges {
             node {
               id
+              entityId
               ...BAIModelDeploymentNodesFragment
               ...DeploymentSettingModal_deployment
               metadata {
@@ -388,7 +388,7 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
                           title={record.metadata?.name ?? '-'}
                           onTitleClick={() =>
                             webuiNavigate(
-                              `${buildProjectPath('deployments')}/${toLocalId(record.id)}`,
+                              `${buildProjectPath('deployments')}/${record.entityId}`,
                             )
                           }
                           copyable
@@ -507,7 +507,7 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
           commitDeleteMutation({
             variables: {
               input: {
-                id: toLocalId(deletingDeployment.id) ?? deletingDeployment.id,
+                id: deletingDeployment.entityId,
               },
             },
             onCompleted: (_response, errors) => {

@@ -38,7 +38,6 @@ import {
   INITIAL_FETCH_KEY,
   filterOutEmpty,
   safeDecodeUuid,
-  toLocalId,
   type GraphQLFilter,
   BAILink,
 } from 'backend.ai-ui';
@@ -278,6 +277,7 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
                   }
                   sessionV2 {
                     id
+                    entityId
                     metadata {
                       name
                     }
@@ -449,20 +449,20 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
         }
         const name = session.metadata?.name;
         if (!name) {
-          return <BAIId globalId={session.id} />;
+          return <BAIId uuid={session.entityId} />;
         }
         return (
           <>
             <BAILink
               ellipsis
-              onClick={() => setSelectedSessionId(toLocalId(session.id))}
+              onClick={() => setSelectedSessionId(session.entityId)}
               style={{ maxWidth: 160 }}
             >
               {name}
             </BAILink>
             &nbsp;
             <Text color="secondary">
-              (<BAIId globalId={session.id} type="secondary" />)
+              (<BAIId uuid={session.entityId} type="secondary" />)
             </Text>
           </>
         );

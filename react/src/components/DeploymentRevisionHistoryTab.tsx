@@ -162,6 +162,7 @@ const DeploymentRevisionHistoryTab: React.FC<
     graphql`
       fragment DeploymentRevisionHistoryTab_deployment on ModelDeployment {
         id
+        entityId
         metadata {
           status
           projectId
@@ -350,7 +351,7 @@ const DeploymentRevisionHistoryTab: React.FC<
       commitActivate({
         variables: {
           input: {
-            deploymentId: toLocalId(deployment.id),
+            deploymentId: deployment.entityId,
             revisionId: toLocalId(revision.id),
           },
         },

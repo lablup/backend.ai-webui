@@ -44,12 +44,13 @@ const RolePresetPermissionTable: React.FC<RolePresetPermissionTableProps> = ({
     graphql`
       fragment RolePresetPermissionTableFragment on RolePreset {
         id
+        entityId
         scopeType
       }
     `,
     rolePresetFrgmt,
   );
-  const rolePresetId = toLocalId(rolePreset.id);
+  const rolePresetId = rolePreset.entityId;
 
   const [fetchKey, updateFetchKey] = useFetchKey();
   const deferredFetchKey = useDeferredValue(fetchKey);

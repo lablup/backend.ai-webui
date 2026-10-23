@@ -46,7 +46,6 @@ import {
   BAISelectionLabel,
   INITIAL_FETCH_KEY,
   filterOutEmpty,
-  toLocalId,
   useToggle,
   useUpdatableState,
 } from 'backend.ai-ui';
@@ -602,7 +601,7 @@ const ReservoirPage: React.FC = () => {
         open={deferredOpenHuggingFaceModal}
         onRequestClose={(_e, artifactId) => {
           toggleOpenHuggingFaceModal();
-          navigate(buildPath('admin', `reservoir/${toLocalId(artifactId)}`));
+          navigate(buildPath('admin', `reservoir/${artifactId}`));
         }}
         onCancel={toggleOpenHuggingFaceModal}
       />
