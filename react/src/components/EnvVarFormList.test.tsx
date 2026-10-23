@@ -6,7 +6,7 @@
 import '../../__test__/matchMedia.mock.js';
 import { Form } from '../form-engine';
 import EnvVarFormList, { sanitizeSensitiveEnv } from './EnvVarFormList';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -30,8 +30,10 @@ const OPTIONAL_ENV_VARS = [
   { variable: 'HF_TOKEN', placeholder: 'Your Hugging Face access token' },
 ];
 
-const ADD_LABEL = 'session.launcher.AddEnvironmentVariable';
-const VARIABLE_LABEL = 'session.launcher.EnvironmentVariable';
+// ListInput's own "Add {itemName}" action; `t` returns keys in this suite.
+const ADD_LABEL = 'Add session.launcher.EnvironmentVariableItemName';
+// Rows after the first carry ", <item> 2 of 2" after the column header.
+const VARIABLE_LABEL = /^session\.launcher\.EnvironmentVariable(,|$)/;
 const REQUIRED_MESSAGE = 'session.launcher.EnterEnvironmentVariable';
 
 /** Focuses the field the way Tab-navigation would, ahead of typing into it. */
@@ -137,7 +139,41 @@ describe('EnvVarFormList suggested variables', () => {
     );
 
     expect(screen.getByDisplayValue('HF_TOKEN')).toBeInTheDocument();
+    // Revalidation settles after the pick; a loaded CI runner sees it late.
+    await waitFor(() =>
+      expect(screen.queryByText(REQUIRED_MESSAGE)).not.toBeInTheDocument(),
+    );
+  });
+});
+
+describe('EnvVarFormList cross-row validation', () => {
+  it('leaves empty sibling rows alone while another row is typed into', async () => {
+    const user = userEvent.setup();
+    render(<Harness />);
+
+    for (let i = 0; i < 3; i++) {
+      await user.click(screen.getByRole('button', { name: ADD_LABEL }));
+    }
+    await user.type(screen.getAllByLabelText(VARIABLE_LABEL)[1], 'MY_VAR');
+
     expect(screen.queryByText(REQUIRED_MESSAGE)).not.toBeInTheDocument();
+  });
+
+  it('still flags a duplicate name in another row', async () => {
+    const user = userEvent.setup();
+    render(<Harness />);
+
+    await user.click(screen.getByRole('button', { name: ADD_LABEL }));
+    await user.click(screen.getByRole('button', { name: ADD_LABEL }));
+    const [first, second] = screen.getAllByLabelText(VARIABLE_LABEL);
+    await user.type(first, 'MY_VAR');
+    await user.type(second, 'MY_VAR');
+
+    expect(
+      await screen.findAllByText(
+        'session.launcher.EnvironmentVariableDuplicateName',
+      ),
+    ).toHaveLength(2);
   });
 });
 

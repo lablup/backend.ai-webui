@@ -1,0 +1,23 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Unlayered so it outranks Astryx's StyleX output, like the other co-located
+ BUI stylesheets. Column headers read as secondary text, an empty list
+ shows only its Add action instead of ListInput's empty-state block, and the
+ Add action keeps one size whether or not rows exist.
+*/
+.bai-form-list-input [data-list-input-column-label] {
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-normal);
+}
+
+.bai-form-list-input [data-list-input-motion-key='state:empty'] {
+  display: none;
+}
+
+/* Content-width Add action from the fields' start edge, so its size does
+   not change with the row count. */
+.bai-form-list-input [data-list-input-add-content] .astryx-button {
+  width: auto;
+}

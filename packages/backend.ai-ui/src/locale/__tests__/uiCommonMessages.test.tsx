@@ -45,9 +45,11 @@ describe('ui-common strings through the BUI locale modules', () => {
     expect(Object.keys(modules)).toHaveLength(21);
     for (const [file, load] of Object.entries(modules)) {
       const { default: locale } = await load();
-      // `en` ships no catalog: Astryx and ui-common fall back to English.
+      // `en` ships only BUI's overrides: Astryx and ui-common fall back to English.
       if (locale.lang === 'en') {
-        expect(locale.astryxLocale, file).toBeUndefined();
+        expect(locale.astryxLocale, file).toEqual({
+          '@astryx.listInput.removeItem': 'Remove',
+        });
         continue;
       }
       const confirm = locale.astryxLocale?.['uic.common.confirm'];
