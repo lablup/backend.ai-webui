@@ -26,7 +26,7 @@ import {
   parseBoolean,
 } from '../helper/bulkUserCSV';
 import { downloadBlob, parseCSV } from '../helper/csv-util';
-import { useCurrentDomainValue } from '../hooks';
+import { useCurrentDomainValue, useCurrentDomain } from '../hooks';
 import BAIFormItem from './BAIFormItem';
 import BAIPanelItem from './BAIPanelItem';
 import {
@@ -157,6 +157,9 @@ interface BulkCreateUserFromCSVModalProps extends Omit<
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
+// The manager rejects a V2 page larger than this (`MAX_PAGE_LIMIT`).
+const GROUPS_PAGE_SIZE = 1000;
+
 const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   onRequestClose,
   afterClose,
@@ -168,6 +171,8 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const currentDomainName = useCurrentDomainValue();
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
   const baiRequest = useBAISignedRequestWithPromise();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -252,34 +257,63 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       }
     `);
 
-  // Imperative query used to resolve project name <-> group id, so the preview
-  // can display names and the mutation can convert them to ids.
+  // Imperative query resolving project name <-> id in the current domain, so the
+  // preview can show names and the mutation can send ids. Pages of 1000 rows.
   const groupsQuery = graphql`
     query BulkCreateUserFromCSVModalGroupsQuery(
-      $domain_name: String
-      $type: [String]
+      $scope: ProjectScope!
+      $limit: Int!
+      $offset: Int!
     ) {
-      groups(domain_name: $domain_name, is_active: true, type: $type) {
-        id
-        name
+      scopedProjectsV2(
+        scope: $scope
+        filter: { isActive: true, type: { in_: [GENERAL, MODEL_STORE] } }
+        orderBy: [{ field: NAME, direction: ASC }]
+        limit: $limit
+        offset: $offset
+      ) {
+        count
+        edges {
+          node {
+            id
+            entityId
+            basicInfo {
+              name
+            }
+          }
+        }
       }
     }
   `;
 
   const loadGroups = useEffectEvent(() => {
-    fetchQuery<BulkCreateUserFromCSVModalGroupsQuery>(
-      relayEnvironment,
-      groupsQuery,
-      { domain_name: currentDomainName, type: ['GENERAL', 'MODEL_STORE'] },
-      { fetchPolicy: 'store-or-network' },
-    )
-      .toPromise()
-      .then((result) => {
-        setGroupList(
-          _.compact(result?.groups).flatMap((g) =>
-            g.id ? [{ id: g.id, name: g.name ?? g.id }] : [],
-          ),
+    const fetchAllGroups = async () => {
+      const groups: Array<{ id: string; name: string }> = [];
+      for (let offset = 0; ; offset += GROUPS_PAGE_SIZE) {
+        const result = await fetchQuery<BulkCreateUserFromCSVModalGroupsQuery>(
+          relayEnvironment,
+          groupsQuery,
+          { scope: domainScope, limit: GROUPS_PAGE_SIZE, offset },
+          { fetchPolicy: 'store-or-network' },
+        ).toPromise();
+        const edges = result?.scopedProjectsV2?.edges ?? [];
+        groups.push(
+          ..._.map(edges, (edge) => ({
+            id: edge.node.entityId,
+            name: edge.node.basicInfo.name,
+          })),
         );
+        if (
+          _.isEmpty(edges) ||
+          groups.length >= (result?.scopedProjectsV2?.count ?? 0)
+        ) {
+          return groups;
+        }
+      }
+    };
+    fetchAllGroups()
+      .then((groups) => {
+        setGroupList(groups);
         // Only mark loaded on success — on failure leave validation disabled so
         // we degrade to the prior behaviour instead of flagging every project.
         setGroupsLoaded(true);

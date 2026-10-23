@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9c4cac1a8c671d88b49273720dd124c6>>
+ * @generated SignedSource<<1583a3ae8078adeca55cae3d11df772f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,32 +9,45 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+import { FragmentRefs } from "relay-runtime";
 export type ProjectTypeV2 = "GENERAL" | "MODEL_STORE" | "PERSONAL" | "%future added value";
+export type ProjectScope = {
+  domain?: ReadonlyArray<UUIDScope> | null | undefined;
+  resourceGroup?: ReadonlyArray<UUIDScope> | null | undefined;
+  user?: ReadonlyArray<UUIDScope> | null | undefined;
+};
+export type UUIDScope = {
+  value: string;
+};
 export type useAccessibleProjectsQuery$variables = {
-  domain_name?: string | null | undefined;
-  type?: ReadonlyArray<string | null | undefined> | null | undefined;
+  domainName: string;
+  domainScope: ProjectScope;
+  isAdmin: boolean;
+  memberTypes: ReadonlyArray<ProjectTypeV2>;
+  types: ReadonlyArray<ProjectTypeV2>;
+  userScope: ProjectScope;
 };
 export type useAccessibleProjectsQuery$data = {
-  readonly groups: ReadonlyArray<{
-    readonly id: string | null | undefined;
-    readonly is_active: boolean | null | undefined;
-    readonly name: string | null | undefined;
-    readonly resource_policy: string | null | undefined;
-    readonly type: string | null | undefined;
-  } | null | undefined> | null | undefined;
-  readonly myUserV2: {
-    readonly projects: {
-      readonly edges: ReadonlyArray<{
-        readonly node: {
-          readonly basicInfo: {
-            readonly name: string;
-            readonly type: ProjectTypeV2;
-          };
-          readonly entityId: string;
-          readonly id: string;
+  readonly adminDomainProjects?: {
+    readonly " $fragmentSpreads": FragmentRefs<"useAccessibleProjects_domainProjectsFragment">;
+  } | null | undefined;
+  readonly memberProjects: {
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly basicInfo: {
+          readonly name: string;
+          readonly type: ProjectTypeV2;
         };
-      }>;
-    } | null | undefined;
+        readonly entityId: string;
+        readonly id: string;
+        readonly lifecycle: {
+          readonly isActive: boolean | null | undefined;
+        };
+        readonly organization: {
+          readonly resourcePolicy: string;
+        };
+      };
+    }>;
   } | null | undefined;
 };
 export type useAccessibleProjectsQuery = {
@@ -43,103 +56,149 @@ export type useAccessibleProjectsQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "domain_name"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "type"
-  }
-],
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "domainName"
+},
 v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "domainScope"
+},
+v2 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "isAdmin"
+},
+v3 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "memberTypes"
+},
+v4 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "types"
+},
+v5 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "userScope"
+},
+v6 = {
+  "kind": "Variable",
+  "name": "scope",
+  "variableName": "domainScope"
+},
+v7 = {
+  "fields": [
+    {
+      "kind": "Variable",
+      "name": "equals",
+      "variableName": "domainName"
+    }
+  ],
+  "kind": "ObjectValue",
+  "name": "domainName"
+},
+v8 = {
+  "kind": "Literal",
+  "name": "isActive",
+  "value": true
+},
+v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v2 = {
+v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "entityId",
   "storageKey": null
 },
-v3 = {
+v11 = {
   "alias": null,
   "args": null,
-  "kind": "ScalarField",
-  "name": "type",
-  "storageKey": null
-},
-v4 = {
-  "alias": null,
-  "args": [
+  "concreteType": "ProjectBasicInfo",
+  "kind": "LinkedField",
+  "name": "basicInfo",
+  "plural": false,
+  "selections": [
     {
-      "kind": "Variable",
-      "name": "domain_name",
-      "variableName": "domain_name"
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "name",
+      "storageKey": null
     },
     {
-      "kind": "Literal",
-      "name": "is_active",
-      "value": true
-    },
-    {
-      "kind": "Variable",
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "type",
-      "variableName": "type"
+      "storageKey": null
     }
   ],
-  "concreteType": "Group",
+  "storageKey": null
+},
+v12 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "ProjectOrganizationInfo",
   "kind": "LinkedField",
-  "name": "groups",
-  "plural": true,
+  "name": "organization",
+  "plural": false,
   "selections": [
-    (v1/*: any*/),
     {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "is_active",
+      "name": "resourcePolicy",
       "storageKey": null
-    },
-    (v2/*: any*/),
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "resource_policy",
-      "storageKey": null
-    },
-    (v3/*: any*/)
+    }
   ],
   "storageKey": null
 },
-v5 = {
+v13 = {
   "alias": null,
+  "args": null,
+  "concreteType": "ProjectLifecycleInfo",
+  "kind": "LinkedField",
+  "name": "lifecycle",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "isActive",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v14 = {
+  "alias": "memberProjects",
   "args": [
     {
       "fields": [
+        (v7/*: any*/),
+        (v8/*: any*/),
         {
           "fields": [
             {
               "kind": "Variable",
-              "name": "equals",
-              "variableName": "domain_name"
+              "name": "in_",
+              "variableName": "memberTypes"
             }
           ],
           "kind": "ObjectValue",
-          "name": "domainName"
-        },
-        {
-          "kind": "Literal",
-          "name": "isActive",
-          "value": true
+          "name": "type"
         }
       ],
       "kind": "ObjectValue",
@@ -149,11 +208,16 @@ v5 = {
       "kind": "Literal",
       "name": "limit",
       "value": 1000
+    },
+    {
+      "kind": "Variable",
+      "name": "scope",
+      "variableName": "userScope"
     }
   ],
   "concreteType": "ProjectV2Connection",
   "kind": "LinkedField",
-  "name": "projects",
+  "name": "scopedProjectsV2",
   "plural": false,
   "selections": [
     {
@@ -172,27 +236,11 @@ v5 = {
           "name": "node",
           "plural": false,
           "selections": [
-            (v1/*: any*/),
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "entityId",
-              "storageKey": null
-            },
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "ProjectBasicInfo",
-              "kind": "LinkedField",
-              "name": "basicInfo",
-              "plural": false,
-              "selections": [
-                (v2/*: any*/),
-                (v3/*: any*/)
-              ],
-              "storageKey": null
-            }
+            (v9/*: any*/),
+            (v10/*: any*/),
+            (v11/*: any*/),
+            (v12/*: any*/),
+            (v13/*: any*/)
           ],
           "storageKey": null
         }
@@ -201,64 +249,211 @@ v5 = {
     }
   ],
   "storageKey": null
-};
+},
+v15 = [
+  {
+    "fields": [
+      (v7/*: any*/),
+      (v8/*: any*/),
+      {
+        "fields": [
+          {
+            "kind": "Variable",
+            "name": "in_",
+            "variableName": "types"
+          }
+        ],
+        "kind": "ObjectValue",
+        "name": "type"
+      }
+    ],
+    "kind": "ObjectValue",
+    "name": "filter"
+  },
+  {
+    "kind": "Literal",
+    "name": "first",
+    "value": 1000
+  },
+  (v6/*: any*/)
+];
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/),
+      (v2/*: any*/),
+      (v3/*: any*/),
+      (v4/*: any*/),
+      (v5/*: any*/)
+    ],
     "kind": "Fragment",
     "metadata": null,
     "name": "useAccessibleProjectsQuery",
     "selections": [
-      (v4/*: any*/),
       {
-        "alias": null,
-        "args": null,
-        "concreteType": "UserV2",
-        "kind": "LinkedField",
-        "name": "myUserV2",
-        "plural": false,
+        "condition": "isAdmin",
+        "kind": "Condition",
+        "passingValue": true,
         "selections": [
-          (v5/*: any*/)
-        ],
-        "storageKey": null
-      }
+          {
+            "fragment": {
+              "kind": "InlineFragment",
+              "selections": [
+                {
+                  "args": [
+                    {
+                      "kind": "Variable",
+                      "name": "domainName",
+                      "variableName": "domainName"
+                    },
+                    (v6/*: any*/),
+                    {
+                      "kind": "Variable",
+                      "name": "types",
+                      "variableName": "types"
+                    }
+                  ],
+                  "kind": "FragmentSpread",
+                  "name": "useAccessibleProjects_domainProjectsFragment"
+                }
+              ],
+              "type": "Query",
+              "abstractKey": null
+            },
+            "kind": "AliasedInlineFragmentSpread",
+            "name": "adminDomainProjects"
+          }
+        ]
+      },
+      (v14/*: any*/)
     ],
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v1/*: any*/),
+      (v5/*: any*/),
+      (v0/*: any*/),
+      (v4/*: any*/),
+      (v3/*: any*/),
+      (v2/*: any*/)
+    ],
     "kind": "Operation",
     "name": "useAccessibleProjectsQuery",
     "selections": [
-      (v4/*: any*/),
       {
-        "alias": null,
-        "args": null,
-        "concreteType": "UserV2",
-        "kind": "LinkedField",
-        "name": "myUserV2",
-        "plural": false,
+        "condition": "isAdmin",
+        "kind": "Condition",
+        "passingValue": true,
         "selections": [
-          (v5/*: any*/),
-          (v1/*: any*/)
-        ],
-        "storageKey": null
-      }
+          {
+            "alias": null,
+            "args": (v15/*: any*/),
+            "concreteType": "ProjectV2Connection",
+            "kind": "LinkedField",
+            "name": "scopedProjectsV2",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ProjectV2Edge",
+                "kind": "LinkedField",
+                "name": "edges",
+                "plural": true,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "ProjectV2",
+                    "kind": "LinkedField",
+                    "name": "node",
+                    "plural": false,
+                    "selections": [
+                      (v9/*: any*/),
+                      (v10/*: any*/),
+                      (v11/*: any*/),
+                      (v12/*: any*/),
+                      (v13/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "__typename",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "cursor",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "PageInfo",
+                "kind": "LinkedField",
+                "name": "pageInfo",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "endCursor",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "hasNextPage",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": (v15/*: any*/),
+            "filters": [
+              "scope",
+              "filter"
+            ],
+            "handle": "connection",
+            "key": "useAccessibleProjects_scopedProjectsV2",
+            "kind": "LinkedHandle",
+            "name": "scopedProjectsV2"
+          }
+        ]
+      },
+      (v14/*: any*/)
     ]
   },
   "params": {
-    "cacheID": "706fd94a99fad6f0e28397fcab64dac4",
+    "cacheID": "a1493c6666354280196c2dd0d7e6af92",
     "id": null,
     "metadata": {},
     "name": "useAccessibleProjectsQuery",
     "operationKind": "query",
-    "text": "query useAccessibleProjectsQuery(\n  $domain_name: String\n  $type: [String]\n) {\n  groups(domain_name: $domain_name, is_active: true, type: $type) {\n    id\n    is_active\n    name\n    resource_policy\n    type\n  }\n  myUserV2 {\n    projects(filter: {isActive: true, domainName: {equals: $domain_name}}, limit: 1000) {\n      edges {\n        node {\n          id\n          entityId\n          basicInfo {\n            name\n            type\n          }\n        }\n      }\n    }\n    id\n  }\n}\n"
+    "text": "query useAccessibleProjectsQuery(\n  $domainScope: ProjectScope!\n  $userScope: ProjectScope!\n  $domainName: String!\n  $types: [ProjectTypeV2!]!\n  $memberTypes: [ProjectTypeV2!]!\n  $isAdmin: Boolean!\n) {\n  ...useAccessibleProjects_domainProjectsFragment_3pmY80 @include(if: $isAdmin)\n  memberProjects: scopedProjectsV2(scope: $userScope, filter: {isActive: true, domainName: {equals: $domainName}, type: {in_: $memberTypes}}, limit: 1000) {\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          name\n          type\n        }\n        organization {\n          resourcePolicy\n        }\n        lifecycle {\n          isActive\n        }\n      }\n    }\n  }\n}\n\nfragment useAccessibleProjects_domainProjectsFragment_3pmY80 on Query {\n  scopedProjectsV2(scope: $domainScope, filter: {isActive: true, domainName: {equals: $domainName}, type: {in_: $types}}, first: 1000) {\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          name\n          type\n        }\n        organization {\n          resourcePolicy\n        }\n        lifecycle {\n          isActive\n        }\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0a8f67856e31164ddeaf54cb475aa2c9";
+(node as any).hash = "a8f1f3f4b58f6371b95078b8f071d2d2";
 
 export default node;

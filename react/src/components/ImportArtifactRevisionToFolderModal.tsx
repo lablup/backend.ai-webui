@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ImportArtifactRevisionToFolderModalArtifactRevisionFragment$key } from '../__generated__/ImportArtifactRevisionToFolderModalArtifactRevisionFragment.graphql';
-import { ImportArtifactRevisionToFolderModalModelStoreProjectsFragment$key } from '../__generated__/ImportArtifactRevisionToFolderModalModelStoreProjectsFragment.graphql';
 import { ImportArtifactRevisionToFolderModalMutation } from '../__generated__/ImportArtifactRevisionToFolderModalMutation.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
@@ -42,12 +41,10 @@ export interface ImportArtifactRevisionToFolderModalProps extends Omit<
    * Every model-store project the page resolved (ADR-0001, FR-3415 —
    * derive-from-resource tier). An artifact import always lands in the model
    * store, never in the ambient current project, so the destination is picked
-   * from this list. Previously the modal read the ambient project and offered
-   * a "Change Project" confirmation that WROTE the global selection; both are
-   * gone. When several model-store projects exist the in-modal selector is
-   * how the user chooses between them.
+   * from this list. When several exist the in-modal selector is how the user
+   * chooses between them.
    */
-  modelStoreProjectsFrgmt?: ImportArtifactRevisionToFolderModalModelStoreProjectsFragment$key;
+  modelStoreProjects?: Array<{ id: string; name: string }>;
   onOk?: (
     e: React.MouseEvent<HTMLElement>,
     tasks: {
@@ -68,7 +65,7 @@ type ImportArtifactRevisionToFolderModalInput = {
 
 const ImportArtifactRevisionToFolderModal = ({
   selectedArtifactRevisionFrgmt,
-  modelStoreProjectsFrgmt,
+  modelStoreProjects,
   onOk,
   ...modalProps
 }: ImportArtifactRevisionToFolderModalProps) => {
@@ -95,24 +92,10 @@ const ImportArtifactRevisionToFolderModal = ({
     selectedArtifactRevisionFrgmt,
   );
 
-  const modelStoreProjects = useFragment(
-    graphql`
-      fragment ImportArtifactRevisionToFolderModalModelStoreProjectsFragment on Group
-      @relay(plural: true) {
-        id
-        name
-      }
-    `,
-    modelStoreProjectsFrgmt,
-  );
-
-  const modelStoreProjectOptions = _.map(
-    _.filter(modelStoreProjects, (project) => !!project?.id),
-    (project) => ({
-      label: project.name,
-      value: project.id as string,
-    }),
-  );
+  const modelStoreProjectOptions = _.map(modelStoreProjects, (project) => ({
+    label: project.name,
+    value: project.id,
+  }));
 
   // ADR-0001: the destination project comes exclusively from the model-store
   // projects the page passed in. `undefined` falls back to the first one, so a
