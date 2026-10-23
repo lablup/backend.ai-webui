@@ -333,16 +333,16 @@ test.describe(
       await page.locator('#envvars_1_value').blur();
       await page.locator('#envvars_2_value').focus();
       await page.locator('#envvars_2_value').blur();
-      await expect(
-        page
-          .locator('#envvars_1_value_help')
-          .getByText('Please enter a value.'),
-      ).toBeVisible();
-      await expect(
-        page
-          .locator('#envvars_2_value_help')
-          .getByText('Please enter a value.'),
-      ).toBeVisible();
+      // The list shows a cell's error on the field itself (status + tooltip),
+      // not as a help line under it.
+      await expect(page.locator('#envvars_1_value')).toHaveAttribute(
+        'aria-invalid',
+        'true',
+      );
+      await expect(page.locator('#envvars_2_value')).toHaveAttribute(
+        'aria-invalid',
+        'true',
+      );
     });
   },
 );
