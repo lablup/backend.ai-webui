@@ -483,8 +483,8 @@ importers:
         specifier: 0.17.0
         version: 0.17.0(@ai-sdk/openai-compatible@3.0.0(zod@4.6.1))(ai@7.0.0(zod@4.6.1))
       electron:
-        specifier: ^41.10.7
-        version: 41.10.7(supports-color@5.5.0)
+        specifier: ^42.11.9
+        version: 42.11.9(supports-color@5.5.0)
       eslint:
         specifier: 'catalog:'
         version: 9.39.5(jiti@2.7.0)(supports-color@5.5.0)
@@ -6482,8 +6482,8 @@ packages:
   electron-to-chromium@1.5.402:
     resolution: {integrity: sha512-/oOpMaPT6Yg+6/1XQhyIPlzgj7Ye9zf+nNM2Uh6OcE2G2oNptWazFa+qB2Pdqqbsc9KnIDzgAntoYN0dbwOXwA==}
 
-  electron@41.10.7:
-    resolution: {integrity: sha512-AqIiefddlf5i+HYCGatr8VlBuEbWJpad4/yloBFYcMB2r57j7xhW1ogiJ+BfA5kxQyfmSs5yjwy54Me+wJn1jw==}
+  electron@42.11.9:
+    resolution: {integrity: sha512-vPTlQws45virTh1jb/dSROz6xGkXgtEcdyT5n+0+etCmHqMtvp4Pgs6Sx5bvna+AEDAMeq10uRcjdMKCTk2Gtw==}
     engines: {node: '>= 22.12.0'}
     hasBin: true
 
@@ -17230,7 +17230,7 @@ snapshots:
 
   electron-to-chromium@1.5.402: {}
 
-  electron@41.10.7(supports-color@5.5.0):
+  electron@42.11.9(supports-color@5.5.0):
     dependencies:
       '@electron-internal/extract-zip': 1.0.5
       '@electron/get': 5.1.0(supports-color@5.5.0)
@@ -23327,7 +23327,7 @@ time:
   dompurify@3.4.17: '2026-10-12T12:41:28.880Z'
   dotenv@16.6.1: '2025-06-27T16:45:01.088Z'
   e2e@0.17.0: '2026-10-04T07:15:12.634Z'
-  electron@41.10.7: '2026-08-25T00:38:19.980Z'
+  electron@42.11.9: '2026-09-29T19:08:52.034Z'
   es-toolkit@1.50.0: '2026-07-24T08:24:09.928Z'
   eslint-config-google@0.14.0: '2019-09-02T19:10:47.693Z'
   eslint-config-prettier@9.1.2: '2025-07-18T19:19:03.251Z'
