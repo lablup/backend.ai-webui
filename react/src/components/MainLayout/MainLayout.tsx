@@ -110,6 +110,7 @@ function MainLayout() {
   );
 
   const { token } = useTheme();
+  const isSystemAdminScope = useRouteScope() === 'admin';
   const contentScrollFlexRef = useRef<HTMLDivElement>(null);
   const setMainContentDivRefState = useSetAtom(mainContentDivRefState);
   useEffect(() => {
@@ -217,7 +218,11 @@ function MainLayout() {
                     <div
                       style={{
                         height: 'var(--webui-header-height)',
-                        backgroundColor: token('--header-bg'),
+                        backgroundColor: token(
+                          isSystemAdminScope
+                            ? '--header-bg-admin'
+                            : '--header-bg',
+                        ),
                       }}
                     />
                   }

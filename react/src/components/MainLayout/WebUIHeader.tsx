@@ -4,6 +4,7 @@
  */
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useIsProjectAgnosticPage } from '../../hooks/useIsProjectAgnosticPage';
+import { useRouteScope } from '../../hooks/useRouteScope';
 import { sessionMonitorScopeAtom } from '../../hooks/useSessionMonitor';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import BAINotificationButton from '../BAINotificationButton';
@@ -57,6 +58,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
   // header layout keeps `justify="between"`, so the left slot simply
   // collapses (no placeholder needed); the mobile menu button stays.
   const isProjectAgnosticPage = useIsProjectAgnosticPage();
+  const isSystemAdminScope = useRouteScope() === 'admin';
 
   return (
     <BAIFlex
@@ -66,7 +68,9 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
       direction="row"
       style={{
         height: 'var(--webui-header-height)',
-        backgroundColor: token('--header-bg'),
+        backgroundColor: token(
+          isSystemAdminScope ? '--header-bg-admin' : '--header-bg',
+        ),
         paddingRight: token('--spacing-6'),
         paddingLeft: token('--spacing-6'),
         // Groups are told apart by spacing, not rules, so an absent group

@@ -3,14 +3,21 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { UserDropdownMenuQuery } from '../__generated__/UserDropdownMenuQuery.graphql';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import {
   useCurrentUserInfo,
   useCurrentUserRole,
   useTOTPSupported,
 } from '../hooks/backendai';
+import { useBackToUserView } from '../hooks/useBackToUserView';
+import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { useOpenHelp } from '../hooks/useHelpURL';
+import { useActiveProjectName, useRouteScope } from '../hooks/useRouteScope';
 import { useThemeMode } from '../hooks/useThemeMode';
+import {
+  getPathFromMenuKey,
+  useWebUIMenuItems,
+} from '../hooks/useWebUIMenuItems';
 import AboutBackendAIModal from './AboutBackendAIModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useUserSettingsModal } from './UserSettingsModalOpener';
@@ -38,6 +45,8 @@ import {
   Sun,
   Moon,
   CircleHelp,
+  ShieldUser,
+  ArrowLeft,
 } from 'lucide-react';
 import React, { CSSProperties, Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -84,6 +93,18 @@ const UserDropdownMenu: React.FC<{
     useToggle(false);
 
   const userRole = useCurrentUserRole();
+  const webuiNavigate = useWebUINavigate();
+  const activeProjectName = useActiveProjectName();
+  const effectiveAdminRole = useEffectiveAdminRole();
+  const { firstAvailableAdminMenuItem } = useWebUIMenuItems();
+  const backToUserView = useBackToUserView();
+  const isSystemAdminScope = useRouteScope() === 'admin';
+  // A project admin's admin menu is project-scoped; the sider's Project
+  // Settings item serves it, so this entry is for system admins only.
+  const systemAdminMenuItem =
+    effectiveAdminRole === 'superadmin' || effectiveAdminRole === 'domainAdmin'
+      ? firstAvailableAdminMenuItem
+      : null;
 
   // The settings surface is a modal over the current page, not a route.
   const { open: openUserSettings } = useUserSettingsModal();
@@ -145,6 +166,23 @@ const UserDropdownMenu: React.FC<{
       isDisabled: true,
     },
     { type: 'divider' },
+    systemAdminMenuItem &&
+      (isSystemAdminScope
+        ? {
+            label: t('webui.menu.BackToUserView'),
+            icon: <ArrowLeft size="1em" />,
+            onClick: backToUserView,
+          }
+        : {
+            label: t('webui.menu.AdminSettings'),
+            icon: <ShieldUser size="1em" />,
+            onClick: () => {
+              webuiNavigate(
+                getPathFromMenuKey(systemAdminMenuItem.key, activeProjectName),
+              );
+            },
+          }),
+    systemAdminMenuItem && { type: 'divider' as const },
     {
       label: t('webui.menu.AboutBackendAI'),
       icon: <CircleAlert size="1em" />,
