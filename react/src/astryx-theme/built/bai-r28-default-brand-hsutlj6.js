@@ -192,6 +192,7 @@ export const baiR28DefaultBrandHsutlj6Theme = {
     "--color-info": "light-dark(#028DF2, #009BDD)",
     "--color-link": "light-dark(#FF7A00, #DC6B03)",
     "--header-bg": "light-dark(#FF9729, #E88A28)",
+    "--header-bg-admin": "var(--color-info)",
     "--color-error-bg": "light-dark(color-mix(in srgb, var(--color-error) 10%, var(--color-background-surface)), color-mix(in srgb, var(--color-error) 15%, var(--color-background-surface)))",
     "--color-info-bg": "light-dark(color-mix(in srgb, var(--color-info) 10%, var(--color-background-surface)), color-mix(in srgb, var(--color-info) 15%, var(--color-background-surface)))",
     "--color-warning-border-hover": "light-dark(color-mix(in srgb, var(--color-warning) 65%, var(--color-background-surface)), color-mix(in srgb, var(--color-warning) 45%, var(--color-background-surface)))",

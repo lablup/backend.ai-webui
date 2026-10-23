@@ -582,6 +582,15 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
             (item) => !PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string),
           );
 
+  // The sider's Project Settings menu: open to every admin tier, since super
+  // and domain admins can also administer the current project.
+  const projectAdminMenu: Array<WebUIAdminMenuItemType> =
+    effectiveAdminRole === 'none'
+      ? []
+      : fullAdminMenu.filter((item) =>
+          PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string),
+        );
+
   const pluginMap: Record<string, MenuItem[]> = {
     'menuitem-user': generalMenu as unknown as MenuItem[],
     'menuitem-admin': adminMenu as unknown as MenuItem[],
@@ -624,7 +633,11 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   });
 
   _.forEach(
-    [generalMenu as MenuItem[], adminMenu as unknown as MenuItem[]],
+    [
+      generalMenu as MenuItem[],
+      adminMenu as unknown as MenuItem[],
+      projectAdminMenu as unknown as MenuItem[],
+    ],
     (menu) => {
       // Remove menu items that are in blockList
       _.remove(menu, (item) => _.includes(blockList, item?.key));
@@ -752,6 +765,12 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     adminGroupOrder,
   );
 
+  const groupedProjectAdminMenu = buildGroupedMenu(
+    projectAdminMenu,
+    aliasAdminGroupNameMap,
+    adminGroupOrder,
+  );
+
   // First admin menu item reachable by the current user, after role filtering
   // (`adminMenu` is already narrowed by `effectiveAdminRole`) and blocklist /
   // inactive-list filtering. Treat this as the single source of truth for
@@ -795,6 +814,17 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       !_.includes(blockList, item.key) &&
       !_.includes(inactiveList, item.key),
   )?.key;
+
+  // Role-filtered: `undefined` means the user cannot administer this project.
+  const firstAvailableProjectAdminMenuItem = _.find(
+    projectAdminMenu,
+    (item) => !item.disabled,
+  );
+
+  const isSelectedProjectAdminMenu = _.some(
+    projectAdminMenu,
+    (item) => item.key === currentMenuKeyFromRoute,
+  );
 
   const isSelectedAdminCategoryMenu = _.some(adminMenu, (item) => {
     if (item && 'key' in item) {
@@ -885,11 +915,14 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     adminMenu,
     groupedGeneralMenu,
     groupedAdminMenu,
+    groupedProjectAdminMenu,
     isSelectedAdminCategoryMenu,
+    isSelectedProjectAdminMenu,
     isCurrentPathAdminCategory,
     firstAvailableMenuItem,
     firstAvailableAdminMenuItem,
     firstAvailableProjectAdminMenuKey,
+    firstAvailableProjectAdminMenuItem,
     defaultMenuPath,
     isCurrentPageBlocked,
     isPluginLoaded,
