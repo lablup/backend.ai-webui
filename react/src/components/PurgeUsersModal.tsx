@@ -214,15 +214,17 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
         extraContent={
           <VStack gap={1} align="stretch">
             <CheckboxInput
-              label={t('credential.DeleteSharedVirtualFolders')}
               value={purgeSharedVfolders}
               onChange={setPurgeSharedVfolders}
-            />
+            >
+              {t('credential.DeleteSharedVirtualFolders')}
+            </CheckboxInput>
             <CheckboxInput
-              label={t('credential.DeleteDeploymentsAsWell')}
               value={deleteModelServices}
               onChange={setDeleteModelServices}
-            />
+            >
+              {t('credential.DeleteDeploymentsAsWell')}
+            </CheckboxInput>
           </VStack>
         }
         onOk={handleAction}

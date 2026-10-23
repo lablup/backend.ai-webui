@@ -268,8 +268,7 @@ const EnvVarNameInput: React.FC<EnvVarNameInputProps> = ({
             popover.hide();
           }
         }}
-        label={label}
-        isLabelHidden
+        aria-label={label}
         placeholder={placeholder}
         width="100%"
         role="combobox"

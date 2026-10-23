@@ -211,7 +211,7 @@ const AgentStats: React.FC<AgentStatsProps> = ({
                 i18n keys while page tickets run in parallel. */}
             <SegmentedControl
               size="sm"
-              label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
+              aria-label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
               value={displayType}
               onChange={(v) =>
                 setDisplayType(

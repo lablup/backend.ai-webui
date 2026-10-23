@@ -4,82 +4,17 @@
  */
 // The text-input adapter on its own, so the login path does not pull the
 // Typeahead / Tokenizer / MultiSelector controls; see astryxFormControls.tsx.
-import { FormItemInputContext } from '../form-engine';
 import type { TextInputProps } from '@lablup/ui-common/TextInput';
 import { TextInput } from '@lablup/ui-common/TextInput';
 import type { SizeValue } from '@lablup/ui-common/utils';
 import React from 'react';
-
-/**
- * RESTORED (input-parity pass) — **the control paints the field's validation
- * status again.**
- *
- * antd's `Form.Item` published its merged status on `FormItemInputContext` and
- * every antd control read it, which is how an invalid field got a red border
- * without a single call site passing anything. None of the Astryx adapters read
- * that context, so after the migration a failed rule printed a red MESSAGE
- * under a field that still looked pristine — on every `rules=`-bearing item in
- * the app.
- *
- * `statusVariant="detached"` with no `message` is deliberate: it is the one
- * combination that paints the border and NOTHING else. `'attached'` (Astryx's
- * default) would add an in-field status glyph antd never drew unless
- * `hasFeedback` was set — and where `hasFeedback` IS set, the form item already
- * renders that glyph itself, so the field would carry two.
- *
- * `'validating'` / `'success'` are intentionally not forwarded: antd painted
- * neither on the control (they drive the `hasFeedback` icon, which the item
- * owns).
- *
- * **`statusVariant` is CONSTANT — never conditional on `status`.** Astryx's
- * `Field` renders `{children}` inside an extra `<div>` when
- * `statusVariant === 'attached'` (its default) and as a bare fragment
- * otherwise. Returning `{}` while pristine and `{statusVariant: 'detached'}`
- * once a rule fails therefore changed the ELEMENT STRUCTURE at the control's
- * position, so React unmounted the whole control subtree and mounted a fresh
- * one — the `<input>` node was replaced and **focus was lost on the very first
- * keystroke** of any field carrying `rules` (measured on the login screen's
- * `api_endpoint`: character 1 landed, the node was swapped,
- * `document.activeElement` fell back to `<body>`, and characters 2..n went
- * nowhere). Pinning the variant keeps `Field`'s tree stable; with no
- * `status.message` the detached branch renders exactly `{children}`, so the
- * only thing dropped is that wrapper div (`display:flex;flex-direction:column`
- * inside a `Field` container that is already `flex column`) — layout-neutral.
- * `astryxFormControls.test.tsx` locks this in.
- */
-export const useFormControlStatusProps = (): {
-  status?: { type: 'error' | 'warning' };
-  statusVariant: 'detached';
-} => {
-  'use memo';
-  const { status } = React.useContext(FormItemInputContext);
-  if (status !== 'error' && status !== 'warning')
-    return { statusVariant: 'detached' };
-  return { status: { type: status }, statusVariant: 'detached' };
-};
-
-/**
- * Status without `statusVariant`, for the controls that are NOT built on
- * Astryx's `Field` (`Switch`, `CheckboxInput`): they accept `status` but do
- * not declare `statusVariant`, so passing it would only land an unknown
- * attribute on the DOM. They render no structural branch on status either, so
- * they never had the remount problem the hook above fixes.
- */
-export const useFormControlStatusOnly = (): {
-  status?: { type: 'error' | 'warning' };
-} => {
-  'use memo';
-  const { status } = React.useContext(FormItemInputContext);
-  if (status !== 'error' && status !== 'warning') return {};
-  return { status: { type: status } };
-};
 
 export interface AstryxFormTextInputProps {
   /** Injected by `Form.Item`. */
   value?: string;
   /** Injected by `Form.Item`. */
   onChange?: (value: string) => void;
-  /** Accessible name. Visually hidden — `BAIFormItem` renders the visible one. */
+  /** Accessible name (`aria-label`); the enclosing `Form.Item` renders the visible one. */
   label: string;
   type?: 'text' | 'password' | 'email';
   placeholder?: string;
@@ -157,7 +92,6 @@ export const AstryxFormTextInput: React.FC<AstryxFormTextInputProps> = ({
   ...rest
 }) => {
   'use memo';
-  const statusProps = useFormControlStatusProps();
   // antd's IME guard, reinstated. Astryx runs `onEnter` from its own keydown
   // handler BEFORE it calls ours, so the guard cannot live in `onKeyDown` — it
   // has to wrap `onEnter` itself, and `onEnter` carries no event. A composition
@@ -173,10 +107,9 @@ export const AstryxFormTextInput: React.FC<AstryxFormTextInputProps> = ({
         onChange?.(next);
         onValueChange?.(next);
       }}
-      label={label}
-      isLabelHidden
+      aria-label={label}
       placeholder={placeholder}
-      isDisabled={disabled}
+      disabled={disabled}
       hasClear={hasClear ?? allowClear}
       startIcon={startIcon}
       hasAutoFocus={hasAutoFocus}
@@ -192,7 +125,6 @@ export const AstryxFormTextInput: React.FC<AstryxFormTextInputProps> = ({
       onKeyDown={onKeyDown}
       htmlName={htmlName}
       onBlur={onBlur}
-      {...statusProps}
       {...(rest as object)}
       onCompositionStart={() => {
         composingRef.current = true;

@@ -387,12 +387,13 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
             : `${sessions?.length} sessions`}
         </Text>
         <CheckboxInput
-          label={t('button.ForceTerminate')}
           value={isForce}
           onChange={(checked) => {
             setIsForce(checked);
           }}
-        />
+        >
+          {t('button.ForceTerminate')}
+        </CheckboxInput>
         {isForce && (
           <Card variant="muted">
             <Text as="p" display="block" xstyle={styles.dangerText}>

@@ -517,7 +517,7 @@ const SessionResourceGrid = ({
         <BAIFlex gap="sm" wrap="wrap" align="center">
           <SegmentedControl
             size="sm"
-            label={t('session.resourceGrid.GridMode')}
+            aria-label={t('session.resourceGrid.GridMode')}
             value={gridParams.gridMode}
             onChange={(value) =>
               setGridParams({
@@ -538,7 +538,7 @@ const SessionResourceGrid = ({
             <>
               <SegmentedControl
                 size="sm"
-                label={t('session.resourceGrid.Resource')}
+                aria-label={t('session.resourceGrid.Resource')}
                 value={resource}
                 onChange={(value) => setGridParams({ gridResource: value })}
               >
@@ -576,7 +576,7 @@ const SessionResourceGrid = ({
                 parseResourceValue(resource).dimension === 'mem') && (
                 <SegmentedControl
                   size="sm"
-                  label={t('session.resourceGrid.MemoryUnit')}
+                  aria-label={t('session.resourceGrid.MemoryUnit')}
                   value={gridParams.gridMemUnit}
                   onChange={(value) =>
                     setGridParams({
@@ -597,14 +597,13 @@ const SessionResourceGrid = ({
             </>
           ) : (
             <Selector
-              label={t('session.resourceGrid.Metric')}
-              isLabelHidden
+              aria-label={t('session.resourceGrid.Metric')}
               size="sm"
               width={180}
               options={metricOptions}
               value={metric}
               placeholder={t('session.resourceGrid.NoLiveMetrics')}
-              isDisabled={metricOptions.length === 0}
+              disabled={metricOptions.length === 0}
               disabledMessage={t(
                 'session.resourceGrid.NoLiveMetricsForSessionsInView',
               )}
@@ -613,7 +612,7 @@ const SessionResourceGrid = ({
           )}
           <SegmentedControl
             size="sm"
-            label={t('session.resourceGrid.Layout')}
+            aria-label={t('session.resourceGrid.Layout')}
             value={gridParams.gridLayout}
             onChange={(value) =>
               setGridParams({

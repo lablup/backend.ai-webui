@@ -294,8 +294,7 @@ const EditableChatTitle: React.FC<EditableChatTitleProps> = ({
     };
     return (
       <TextInput
-        label={t('chatui.ChatTitle')}
-        isLabelHidden
+        aria-label={t('chatui.ChatTitle')}
         value={draft}
         onChange={setDraft}
         hasAutoFocus

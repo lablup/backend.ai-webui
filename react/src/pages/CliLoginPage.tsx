@@ -166,11 +166,9 @@ export const CliLoginConsent = () => {
               <BAIText type="secondary">
                 {t('cliLogin.MatchCodeDescription')}
               </BAIText>
-              <CheckboxInput
-                label={t('cliLogin.Attestation')}
-                value={agreed}
-                onChange={setAgreed}
-              />
+              <CheckboxInput value={agreed} onChange={setAgreed}>
+                {t('cliLogin.Attestation')}
+              </CheckboxInput>
               <BAIFlex direction="row" justify="end" gap="xs">
                 <Button
                   size="lg"

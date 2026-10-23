@@ -95,9 +95,8 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
         // The toggle is secondary to the field it disables, so it uses the
         // compact step instead of the default 24px indicator.
         size="sm"
-        label={t('resourcePolicy.Unlimited')}
         value={isUnlimited}
-        isDisabled={disableUnlimited}
+        disabled={disableUnlimited}
         onChange={(checked) => {
           setIsUnlimited(checked);
           if (checked) {
@@ -108,7 +107,9 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
             form.resetFields([name]);
           }
         }}
-      />
+      >
+        {t('resourcePolicy.Unlimited')}
+      </CheckboxInput>
     </BAIFlex>
   );
 };

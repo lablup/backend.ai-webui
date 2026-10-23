@@ -663,12 +663,11 @@ const ImportImageModalContent: React.FC<{
         style={{ marginBottom: 0 }}
       >
         <TextArea
-          label={t('environment.ImportImageReferences')}
-          isLabelHidden
+          aria-label={t('environment.ImportImageReferences')}
           placeholder={t('environment.ImportImagePlaceholder')}
           rows={5}
           value={text}
-          isDisabled={isSubmitting}
+          disabled={isSubmitting}
           onChange={(value) => setText(value)}
         />
       </BAIFormItemVisual>

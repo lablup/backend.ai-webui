@@ -23,11 +23,10 @@
     touched, which flips the input from uncontrolled to controlled and logs a
     React warning. The adapters coalesce.
 
- 2. `label` is REQUIRED on every Astryx control and rendered by the control
-    itself. `BAIFormItem` already renders the visible label, so the adapters
-    pass `label={sameString} isLabelHidden` to keep the accessible name
-    without double-rendering. (`AstryxFormCheckbox` is the exception — antd
-    `Checkbox` renders its children inline and the call sites keep that.)
+ 2. The adapters keep a required `label`, passed on as `aria-label`: the
+    ui-common controls take no field chrome (`Form.Item` owns the visible
+    label), and `aria-label` is what names them outside an item. Checkbox and
+    Switch render a visible `label` as their inline `children`.
 
  3. `onChange` receives the VALUE, not the event. antd's default
     `getValueFromEvent` happens to pass a non-event first argument through
@@ -38,8 +37,6 @@
 import {
   AstryxFormTextInput,
   type AstryxFormTextInputProps,
-  useFormControlStatusOnly,
-  useFormControlStatusProps,
 } from './astryxFormTextInput';
 import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { MultiSelector } from '@lablup/ui-common/MultiSelector';
@@ -68,7 +65,7 @@ export interface AstryxFormTextAreaProps {
   value?: string;
   /** Injected by `Form.Item`. */
   onChange?: (value: string) => void;
-  /** Accessible name. Visually hidden — `BAIFormItem` renders the visible one. */
+  /** Accessible name (`aria-label`); the enclosing `Form.Item` renders the visible one. */
   label: string;
   /** antd `Input.TextArea rows`. */
   rows?: number;
@@ -95,19 +92,16 @@ export const AstryxFormTextArea: React.FC<AstryxFormTextAreaProps> = ({
   ...rest
 }) => {
   'use memo';
-  const statusProps = useFormControlStatusProps();
   return (
     <TextArea
       value={value ?? ''}
       onChange={(next) => onChange?.(next)}
-      label={label}
-      isLabelHidden
+      aria-label={label}
       rows={rows}
       placeholder={placeholder}
-      isDisabled={disabled}
+      disabled={disabled}
       width={width}
       maxLength={maxLength}
-      {...statusProps}
       {...(rest as object)}
     />
   );
@@ -150,7 +144,6 @@ export const AstryxFormSwitch: React.FC<AstryxFormSwitchProps> = ({
   ...rest
 }) => {
   'use memo';
-  const statusProps = useFormControlStatusOnly();
   return (
     <Switch
       value={value ?? checked ?? false}
@@ -158,14 +151,14 @@ export const AstryxFormSwitch: React.FC<AstryxFormSwitchProps> = ({
         onChange?.(next);
         onValueChange?.(next);
       }}
-      label={label}
-      isLabelHidden={isLabelHidden}
-      isDisabled={disabled}
+      aria-label={isLabelHidden ? label : undefined}
+      disabled={disabled}
       isLoading={isLoading}
       size={size}
-      {...statusProps}
       {...(rest as object)}
-    />
+    >
+      {isLabelHidden ? undefined : label}
+    </Switch>
   );
 };
 
@@ -203,7 +196,6 @@ export const AstryxFormRadioList: React.FC<AstryxFormRadioListProps> = ({
   onValueChange,
 }) => {
   'use memo';
-  const statusProps = useFormControlStatusProps();
   return (
     <RadioList
       value={value ?? ''}
@@ -211,11 +203,9 @@ export const AstryxFormRadioList: React.FC<AstryxFormRadioListProps> = ({
         onChange?.(next);
         onValueChange?.(next);
       }}
-      label={label}
-      isLabelHidden
-      isDisabled={disabled}
+      aria-label={label}
+      disabled={disabled}
       orientation={orientation}
-      {...statusProps}
     >
       {options.map((option) => (
         <RadioListItem
@@ -264,8 +254,8 @@ export const AstryxFormSegmented: React.FC<AstryxFormSegmentedProps> = ({
     <SegmentedControl
       value={value ?? ''}
       onChange={(next) => onChange?.(next)}
-      label={label}
-      isDisabled={disabled}
+      aria-label={label}
+      disabled={disabled}
       // `Form.Item`'s `data-uic-field-id` rides through to the root, which is
       // what lets scroll-to-first-error find this field.
       {...(rest as object)}
@@ -323,7 +313,6 @@ export const AstryxFormNumberInput: React.FC<AstryxFormNumberInputProps> = ({
   ...rest
 }) => {
   'use memo';
-  const statusProps = useFormControlStatusProps();
   // antd `InputNumber` handed strings through in some call sites; coalesce
   // before Astryx sees it, and treat an unparseable string as "no value"
   // rather than letting NaN reach the input.
@@ -370,41 +359,21 @@ export const AstryxFormNumberInput: React.FC<AstryxFormNumberInputProps> = ({
     onBlur?.(event);
   };
 
-  return hasClear ? (
+  return (
     <NumberInput
-      hasClear
+      hasClear={hasClear}
       value={safeValue}
       onChange={(next) => onChange?.(next)}
-      label={label}
-      isLabelHidden
+      aria-label={label}
       min={min}
       max={max}
       step={step}
       units={units || undefined}
       isIntegerOnly={isIntegerOnly}
       placeholder={placeholder}
-      isDisabled={disabled}
+      disabled={disabled}
       width={width}
       onBlur={handleBlur}
-      {...statusProps}
-      {...(rest as object)}
-    />
-  ) : (
-    <NumberInput
-      value={safeValue}
-      onChange={(next: number) => onChange?.(next)}
-      label={label}
-      isLabelHidden
-      min={min}
-      max={max}
-      step={step}
-      units={units || undefined}
-      isIntegerOnly={isIntegerOnly}
-      placeholder={placeholder}
-      isDisabled={disabled}
-      width={width}
-      onBlur={handleBlur}
-      {...statusProps}
       {...(rest as object)}
     />
   );
@@ -441,7 +410,6 @@ export const AstryxFormCheckbox: React.FC<AstryxFormCheckboxProps> = ({
   ...rest
 }) => {
   'use memo';
-  const statusProps = useFormControlStatusOnly();
   return (
     <CheckboxInput
       value={value ?? checked ?? false}
@@ -449,12 +417,12 @@ export const AstryxFormCheckbox: React.FC<AstryxFormCheckboxProps> = ({
         onChange?.(next);
         onValueChange?.(next);
       }}
-      label={label}
-      isLabelHidden={isLabelHidden}
-      isDisabled={disabled}
-      {...statusProps}
+      aria-label={isLabelHidden ? label : undefined}
+      disabled={disabled}
       {...(rest as object)}
-    />
+    >
+      {isLabelHidden ? undefined : label}
+    </CheckboxInput>
   );
 };
 
@@ -482,7 +450,7 @@ export interface AstryxFormSelectorProps {
   /** Injected by `Form.Item`. */
   value?: string;
   onChange?: (value: string | null) => void;
-  /** Accessible name. Visually hidden — `BAIFormItem` renders the visible one. */
+  /** Accessible name (`aria-label`); the enclosing `Form.Item` renders the visible one. */
   label: string;
   options: AstryxFormSelectorOptions;
   placeholder?: string;
@@ -515,7 +483,6 @@ export const AstryxFormSelector: React.FC<AstryxFormSelectorProps> = ({
   ...rest
 }) => {
   'use memo';
-  const statusProps = useFormControlStatusProps();
   // `hasClear` is a discriminated union on Selector (with it, value/onChange
   // become nullable) — branch instead of passing `boolean | undefined`.
   const selectorOptions = options as SelectorOptionType[];
@@ -533,15 +500,13 @@ export const AstryxFormSelector: React.FC<AstryxFormSelectorProps> = ({
       placement="below"
       value={value ?? null}
       onChange={(next: string | null) => onChange?.(next)}
-      label={label}
-      isLabelHidden
+      aria-label={label}
       options={selectorOptions}
       placeholder={placeholder}
-      isDisabled={disabled}
+      disabled={disabled}
       hasSearch={hasSearch}
       isLoading={isLoading}
       width={width}
-      {...statusProps}
       {...(rest as object)}
     />
   ) : (
@@ -549,15 +514,13 @@ export const AstryxFormSelector: React.FC<AstryxFormSelectorProps> = ({
       placement="below"
       value={value ?? undefined}
       onChange={(next: string) => onChange?.(next)}
-      label={label}
-      isLabelHidden
+      aria-label={label}
       options={selectorOptions}
       placeholder={placeholder}
-      isDisabled={disabled}
+      disabled={disabled}
       hasSearch={hasSearch}
       isLoading={isLoading}
       width={width}
-      {...statusProps}
       {...(rest as object)}
     />
   );
@@ -609,21 +572,18 @@ export const AstryxFormMultiSelector: React.FC<
   ...rest
 }) => {
   'use memo';
-  const statusProps = useFormControlStatusProps();
   return (
     <MultiSelector
       value={value ?? []}
       onChange={(next) => onChange?.(next)}
-      label={label}
-      isLabelHidden
+      aria-label={label}
       options={options as SelectorOptionType[]}
       placeholder={placeholder}
-      isDisabled={disabled}
+      disabled={disabled}
       hasSearch={hasSearch}
       isLoading={isLoading}
       width={width}
       triggerDisplay={triggerDisplay}
-      {...statusProps}
       {...(rest as object)}
     />
   );
@@ -644,7 +604,7 @@ export interface AstryxFormTagsInputProps {
   value?: string[];
   /** Injected by `Form.Item`. */
   onChange?: (value: string[]) => void;
-  /** Accessible name. Visually hidden — `BAIFormItem` renders the visible one. */
+  /** Accessible name (`aria-label`); the enclosing `Form.Item` renders the visible one. */
   label: string;
   placeholder?: string;
   disabled?: boolean;
@@ -701,7 +661,6 @@ export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const statusProps = useFormControlStatusProps();
   const inputRef = React.useRef<HTMLInputElement>(null);
   const splitOnSeparators = (label: string): Array<string> => {
     if (!tokenSeparators?.length) return [label];
@@ -850,8 +809,7 @@ export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
           ).filter(Boolean),
         )
       }
-      label={label}
-      isLabelHidden
+      aria-label={label}
       searchSource={EMPTY_TAG_SEARCH_SOURCE}
       hasCreate
       // Tokenizer hardcodes the create row's English label; the typed text
@@ -879,9 +837,8 @@ export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
       hasClear={hasClear}
       maxEntries={maxEntries}
       placeholder={placeholder}
-      isDisabled={disabled}
+      disabled={disabled}
       width={width}
-      {...statusProps}
       {...(rest as object)}
     />
   );

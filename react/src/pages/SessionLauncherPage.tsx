@@ -248,8 +248,7 @@ const SessionTypeRadioList: React.FC<{
     <RadioList
       value={value ?? ''}
       onChange={(next) => onChange?.(next)}
-      label={t('session.launcher.SessionType')}
-      isLabelHidden
+      aria-label={t('session.launcher.SessionType')}
       orientation="vertical"
     >
       <RadioListItem

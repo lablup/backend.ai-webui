@@ -197,10 +197,9 @@ const SettingItem: React.FC<SettingItemProps> = ({
         // { align-self: flex-start }` rule did.
         <BAIFlex direction="row" gap="sm" align="start">
           <CheckboxInput
-            label={title}
-            isLabelHidden
+            aria-label={title}
             value={!!value}
-            isDisabled={checkboxProps?.disabled}
+            disabled={checkboxProps?.disabled}
             onChange={(checked) => onChange?.(checked)}
           />
           {description && (
@@ -224,11 +223,10 @@ const SettingItem: React.FC<SettingItemProps> = ({
             </Text>
           )}
           <Selector
-            label={title}
-            isLabelHidden
+            aria-label={title}
             options={selectProps?.options ?? []}
             hasSearch={selectProps?.hasSearch}
-            isDisabled={selectProps?.disabled}
+            disabled={selectProps?.disabled}
             isLoading={selectProps?.loading}
             value={value}
             width="fit-content"

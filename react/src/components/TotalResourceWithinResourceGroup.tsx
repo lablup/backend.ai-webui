@@ -448,7 +448,7 @@ const TotalResourceWithinResourceGroup: React.FC<
                 composed from the two option labels to avoid new i18n keys. */}
             <SegmentedControl
               size="sm"
-              label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
+              aria-label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
               value={displayType}
               onChange={(v) =>
                 setDisplayType(

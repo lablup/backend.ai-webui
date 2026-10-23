@@ -176,8 +176,7 @@ const AllowedClientIpInput: React.FC<{
   'use memo';
   return (
     <Tokenizer
-      label={label}
-      isLabelHidden
+      aria-label={label}
       value={(value ?? []).map((ip) => ({ id: ip, label: ip }))}
       onChange={(items) =>
         onChange?.(
@@ -209,10 +208,9 @@ const TotpSwitch: React.FC<{
     <Switch
       value={checked ?? false}
       onChange={(next) => onChange?.(next)}
-      label={label}
-      isLabelHidden
+      aria-label={label}
       isLoading={isLoading}
-      isDisabled={disabled}
+      disabled={disabled}
     />
   );
 };

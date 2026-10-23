@@ -352,8 +352,8 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                 onConnectionModeChange(value as ConnectionMode)
               }
               layout="fill"
-              label={t('login.Login', { postProcess: [] })}
-              isDisabled={!!signinModeDisabled}
+              aria-label={t('login.Login', { postProcess: [] })}
+              disabled={!!signinModeDisabled}
               disabledMessage={
                 typeof signinModeDisabled === 'object'
                   ? signinModeDisabled.reason

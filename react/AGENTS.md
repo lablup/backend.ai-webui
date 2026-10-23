@@ -3,7 +3,7 @@
 Project-specific guidance for AI coding agents.
 
 <!-- UI-COMMON:START -->
-@lablup/ui-common v0.2.0-alpha.19 · Astryx v0.7.0 · 168 components
+@lablup/ui-common v0.2.0-alpha.20.canary-20261023160327-a60e44171 · Astryx v0.7.3 · 173 components
 CLI: run every command as `pnpm exec ui-common <cmd>` (shown below as `ui-common ...`).
 
 SETUP (once, first in your entry stylesheet) — without these, components render unstyled:
@@ -31,20 +31,25 @@ RULES:
   search "<query>"   find any component / hook / doc / template
   discover <words>   integrations you could add
   docs <topic>       getting-started, principles, tokens, theme … (`ui-common docs` lists all)
-  docs cli           commands, API reference, integration authoring
+  docs cli           commands and API reference
+  docs authoring     build an integration package, and every field it holds
   upgrade --from <old version> --apply   run after a dependency bump
 
-UI-COMMON (@lablup/ui-common v0.2.0-alpha.19 wraps Astryx v0.7.0):
+UI-COMMON (@lablup/ui-common v0.2.0-alpha.20.canary-20261023160327-a60e44171 wraps Astryx v0.7.3):
 - Import only from @lablup/ui-common: the root, or the same subpath Astryx uses (@lablup/ui-common/Button, /theme/tokens.stylex, /lab). Never import @astryxdesign/* directly.
 - Layers: declare `@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;` once, first, in the entry stylesheet. ui-common's styles sit in `ui-common`; yours go in `components` / `utilities`.
 - Use AlertModal (@lablup/ui-common/AlertModal), not AlertDialog: ui-common hides AlertDialog.
 - Use Modal (@lablup/ui-common/Modal), not Dialog: ui-common hides Dialog.
+- CommandPalette (@lablup/ui-common/CommandPalette) comes from ui-common: Astryx's, wrapped, same API and import path. The palette sits at a fixed offset from the top of the viewport instead of centred, so its input stays put while the result list shrinks or grows. The API is Astryx's.
 - ComplexSelector (@lablup/ui-common/ComplexSelector) comes from ui-common: its own copy of Astryx's, same API and import path. Adds hasClear and onClear, a clear button as Selector has (facebook/astryx#6362).
-- Drawer (@lablup/ui-common/lab) comes from ui-common: its own copy of Astryx's, same API and import path. An Escape from a layer opened inside the drawer, or one that ends an IME composition, no longer closes it; aria-modal passes through.
+- Drawer (@lablup/ui-common/Drawer) comes from ui-common: its own copy of Astryx's, same API and import path. A scrimless drawer stays out of the top layer (show() and a z-index), so ui-common's Modal and notification stack paint above it; a Modal inside a scrimmed drawer opens above it; aria-modal passes through. DrawerHeader is Astryx's, re-exported unchanged.
+- Popover (@lablup/ui-common/Popover) comes from ui-common: Astryx's, wrapped, same API and import path. Its content is not part of the Form.Item it opens from, as antd's: a control inside takes none of the item's status or label. The API is Astryx's.
 - Tour (@lablup/ui-common/lab) comes from ui-common: its own copy of Astryx's, same API and import path. A step's highlight is promoted into the top layer once, so under StrictMode the spotlight dim no longer covers the callout.
+- Form controls (CheckboxInput, CheckboxList, DateInput, DateRangeInput, DateTimeInput, FileInput, MultiSelector, NumberInput, RadioList, SegmentedControl, Selector, Slider, Switch, TextArea, TextInput, TimeInput, Tokenizer, Typeahead) are ui-common's Form.Item wrappers at Astryx's import paths: no label, description, isRequired or status message props. Use them inside Form.Item, which owns label, extra, rules and help; `status` is "error" | "warning" for the border only.
 - Theme: <Theme theme={lablupTheme}> with lablupTheme from @lablup/ui-common/theme/lablup/built, plus @lablup/ui-common/theme/lablup/theme.css. A product palette is its own defineTheme over lablupTheme.
 - Strings: every built-in string is a prop; defaults come from ui-common's catalog. Pass uiCommonMessages from @lablup/ui-common/i18n-catalog to Astryx's InternationalizationProvider. Never a product i18n runtime.
-- ui-common's own components: AlertModal, Board, BoardItemTitle, BooleanToken, BulkEditFormItem, BulkErrorModal, ColorPicker, ConfirmPopover, CountBadge, CountdownBorder, DataGrid, DeleteConfirmModal, DigitPopIn, DividedRow, DoubleBadge, DoubleToken, ErrorState, Form, IconWithTooltip, ImageWithFallback, ListBanner, Modal, NotificationItem, NotificationStack, OverlayScrollbar, PageHeader, PageLayout, PagedSelector, ProgressWithLabel, SelectionLabel, Skeleton composites, SmoothHeight, StatCard, Statistic, StepNumberInput, TextHighlighter, TokenList, TokenRow, UncontrolledInput, UnitGrid. `pnpm exec ui-common docs ui-common` explains them.
+- ui-common's own components: AlertModal, Board, BoardItemTitle, BooleanToken, BulkEditFormItem, BulkErrorModal, ColorPicker, ConfirmPopover, CountBadge, CountdownBorder, DataGrid, DeleteConfirmModal, DigitPopIn, DividedRow, DoubleBadge, DoubleToken, ErrorState, Form, IconWithTooltip, ImageWithFallback, ListBanner, Modal, NotificationItem, NotificationStack, OverlayScrollbar, PageHeader, PageLayout, PagedSelector, ProgressWithLabel, SelectionLabel, SkeletonCard, SkeletonChart, SkeletonRow, SkeletonText, SmoothHeight, StatCard, Statistic, StepNumberInput, TagsInput, TextHighlighter, TokenList, TokenRow, UncontrolledInput, UnitGrid. `pnpm exec ui-common docs ui-common` explains them.
+- Templates are ui-common's own: create-modal, dashboard-board, detail-drawer, info-modal, list-page, list-toolbar, settings-page, tabbed-page. They import only @lablup/ui-common, react and lucide-react. Astryx's templates are not offered (they import @astryxdesign/* directly).
 - The `ui-common` bin is @lablup/ui-common-cli, a devDependency pinned to the same version as @lablup/ui-common; bump both together. Without it installed, `pnpm dlx @lablup/ui-common-cli@next <cmd>` (or `npx @lablup/ui-common-cli@next <cmd>`); drop `@next` once 0.2.0 is published.
 - After bumping @lablup/ui-common and @lablup/ui-common-cli: `pnpm exec ui-common upgrade --from <old version>`, then read ui-common-upgrade-report.md.
 <!-- UI-COMMON:END -->

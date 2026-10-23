@@ -216,8 +216,7 @@ const ErrorLogList: React.FC<{
         >
           <BAIFlex gap={'xs'}>
             <TextInput
-              label={t('logs.SearchLogs')}
-              isLabelHidden
+              aria-label={t('logs.SearchLogs')}
               hasClear
               startIcon={Search}
               placeholder={t('logs.SearchLogs')}
@@ -228,10 +227,11 @@ const ErrorLogList: React.FC<{
               width={200}
             />
             <CheckboxInput
-              label={t('logs.ShowOnlyError')}
               value={checkedShowOnlyError}
               onChange={(checked) => setCheckedShowOnlyError(checked)}
-            />
+            >
+              {t('logs.ShowOnlyError')}
+            </CheckboxInput>
           </BAIFlex>
           <BAIFlex gap={'xs'}>
             <Button
