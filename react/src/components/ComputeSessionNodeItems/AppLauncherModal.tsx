@@ -17,10 +17,6 @@ import {
   TCP_APPS,
   useBackendAIAppLauncher,
 } from '../../hooks/useBackendAIAppLauncher';
-import {
-  AstryxFormNumberInput,
-  AstryxFormTagsInput,
-} from '../astryxFormControls';
 import AppLaunchConfirmationModal from './AppLaunchConfirmationModal';
 import TCPConnectionInfoModal from './TCPConnectionInfoModal';
 import TensorboardPathModal from './TensorboardPathModal';
@@ -31,13 +27,11 @@ import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { Grid } from '@lablup/ui-common/Grid';
 import { Heading } from '@lablup/ui-common/Heading';
 import { IconButton } from '@lablup/ui-common/IconButton';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
+import { TagsInput } from '@lablup/ui-common/TagsInput';
 import { Text } from '@lablup/ui-common/Text';
 import { TextInput } from '@lablup/ui-common/TextInput';
 import * as stylex from '@stylexjs/stylex';
-// FRONTIER (ticket 17): the Form ENGINE is self-hosted since ticket 34 (live
-// again since ticket 35). The CONTROLS inside the items are Astryx now — the
-// `astryxFormControls` adapters where a `Form.Item` injects `value`/`onChange`,
-// raw Astryx components where it does not.
 import {
   BAIFlex,
   BAIModal,
@@ -480,9 +474,9 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                   },
                 ]}
               >
-                <AstryxFormTagsInput
+                <TagsInput
                   tokenSeparators={[',', ' ']}
-                  label={t('session.OpenToPublic')}
+                  aria-label={t('session.OpenToPublic')}
                   disabled={!openToPublic}
                   placeholder={t('session.AllowedMultipleClientsIps')}
                 />
@@ -512,8 +506,8 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                   },
                 ]}
               >
-                <AstryxFormNumberInput
-                  label={t('session.TryPreferredPort')}
+                <NumberInput
+                  aria-label={t('session.TryPreferredPort')}
                   placeholder="10250"
                   disabled={!tryPreferredPort}
                 />

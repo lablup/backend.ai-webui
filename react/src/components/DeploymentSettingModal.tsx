@@ -11,14 +11,12 @@ import { useCurrentDomainValue, useWebUINavigate } from '../hooks';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { ProjectContext } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
-import {
-  AstryxFormNumberInput,
-  AstryxFormTagsInput,
-  AstryxFormTextInput,
-} from './astryxFormControls';
 import { Button } from '@lablup/ui-common/Button';
 import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
+import { TagsInput } from '@lablup/ui-common/TagsInput';
 import { Text } from '@lablup/ui-common/Text';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIButton,
@@ -316,8 +314,8 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
             tooltip={t('deployment.DeploymentNameTooltip')}
             rules={[{ required: true, message: t('deployment.NameRequired') }]}
           >
-            <AstryxFormTextInput
-              label={t('deployment.DeploymentName')}
+            <TextInput
+              aria-label={t('deployment.DeploymentName')}
               placeholder={t('deployment.NamePlaceholder')}
             />
           </BAIFormItem>
@@ -366,8 +364,8 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
               },
             ]}
           >
-            <AstryxFormNumberInput
-              label={t('deployment.DesiredReplicas')}
+            <NumberInput
+              aria-label={t('deployment.DesiredReplicas')}
               min={deployment ? 0 : 1}
             />
           </BAIFormItem>
@@ -376,12 +374,10 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
             label={t('deployment.Tags')}
             tooltip={t('deployment.TagsTooltip')}
           >
-            {/* The shared adapter, not a local Tokenizer bridge: it is the
-                same component, and it carries `tokenSeparators`, which this
-                field's own placeholder ("Enter tags, separated by commas")
-                promises. */}
-            <AstryxFormTagsInput
-              label={t('deployment.Tags')}
+            {/* `tokenSeparators` is what the placeholder ("Enter tags,
+                separated by commas") promises. */}
+            <TagsInput
+              aria-label={t('deployment.Tags')}
               placeholder={t('deployment.TagsPlaceholder')}
               tokenSeparators={[',', ' ']}
             />

@@ -12,11 +12,11 @@ import {
 } from '../hooks/useStartSession';
 import CopyButton from './Chat/CopyButton';
 import { PrimaryAppOption } from './ComputeSessionNodeItems/SessionActionButtons';
-import { AstryxFormTextInput } from './astryxFormControls';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
 import { Divider } from '@lablup/ui-common/Divider';
 import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
 import { Text } from '@lablup/ui-common/Text';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIButton,
   BAIFlex,
@@ -131,8 +131,8 @@ const ImportNotebookForm: React.FC<ImportNotebookFormProps> = ({
           flex: 1,
         }}
       >
-        <AstryxFormTextInput
-          label={t('import.NotebookURL')}
+        <TextInput
+          aria-label={t('import.NotebookURL')}
           placeholder={t('import.NotebookURL')}
         />
       </Form.Item>

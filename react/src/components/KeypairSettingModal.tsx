@@ -10,8 +10,8 @@ import { Form, FormInstance } from '../form-engine';
 import { useCurrentDomain } from '../hooks';
 import BAIFormItem from './BAIFormItem';
 import KeypairResourcePolicySelect from './KeypairResourcePolicySelect';
-import { AstryxFormNumberInput } from './astryxFormControls';
 import { Grid, GridSpan } from '@lablup/ui-common/Grid';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
 import {
   BAIModal,
   type BAIModalProps,
@@ -257,9 +257,7 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
                 },
               ]}
             >
-              <AstryxFormNumberInput
-                label={t('credential.RateLimitFor15min')}
-              />
+              <NumberInput aria-label={t('credential.RateLimitFor15min')} />
             </BAIFormItem>
           </GridSpan>
         </Grid>

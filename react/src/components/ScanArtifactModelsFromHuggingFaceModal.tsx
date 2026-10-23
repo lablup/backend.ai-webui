@@ -5,7 +5,7 @@
 import { ScanArtifactModelsFromHuggingFaceModalMutation } from '../__generated__/ScanArtifactModelsFromHuggingFaceModalMutation.graphql';
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
-import { AstryxFormTextInput } from './astryxFormControls';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFlex,
@@ -150,8 +150,8 @@ const ScanArtifactModelsFromHuggingFaceModal = ({
               required
               rules={[{ required: true }]}
             >
-              <AstryxFormTextInput
-                label={t('scanArtifactModelsFromHuggingFaceModal.ModelID')}
+              <TextInput
+                aria-label={t('scanArtifactModelsFromHuggingFaceModal.ModelID')}
                 placeholder={t(
                   'scanArtifactModelsFromHuggingFaceModal.EnterAModelID',
                 )}
@@ -161,8 +161,8 @@ const ScanArtifactModelsFromHuggingFaceModal = ({
               label={t('scanArtifactModelsFromHuggingFaceModal.Version')}
               name="revision"
             >
-              <AstryxFormTextInput
-                label={t('scanArtifactModelsFromHuggingFaceModal.Version')}
+              <TextInput
+                aria-label={t('scanArtifactModelsFromHuggingFaceModal.Version')}
                 placeholder={t(
                   'scanArtifactModelsFromHuggingFaceModal.EnterAVersion',
                 )}

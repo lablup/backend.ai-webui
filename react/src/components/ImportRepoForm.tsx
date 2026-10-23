@@ -15,7 +15,8 @@ import {
   useStartSession,
 } from '../hooks/useStartSession';
 import StorageSelect from './StorageSelect';
-import { AstryxFormRadioList, AstryxFormTextInput } from './astryxFormControls';
+import { RadioList, RadioListItem } from '@lablup/ui-common/RadioList';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIButton,
   useBAILogger,
@@ -368,8 +369,8 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
           },
         ]}
       >
-        <AstryxFormTextInput
-          label={
+        <TextInput
+          aria-label={
             urlType == 'github' ? t('import.GitHubURL') : t('import.GitlabURL')
           }
         />
@@ -385,8 +386,8 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
                 `TextInput` has no length cap, and the 200-char limit is
                 already enforced by the form rule on the sibling `url` field's
                 pattern set; over-long branches fail server-side anyway. */}
-            <AstryxFormTextInput
-              label={t('import.GitlabDefaultBranch')}
+            <TextInput
+              aria-label={t('import.GitlabDefaultBranch')}
               placeholder="master"
             />
           </Form.Item>
@@ -406,21 +407,21 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
         hidden={baiClient._config.enableModelFolders !== true}
         required
       >
-        <AstryxFormRadioList
-          label={t('import.VFolderUsageMode')}
-          options={[
-            {
-              value: 'general',
-              label: t('data.General'),
-              'data-testid': 'general-usage-mode',
-            },
-            {
-              value: 'model',
-              label: t('data.Models'),
-              'data-testid': 'model-usage-mode',
-            },
-          ]}
-        />
+        <RadioList
+          aria-label={t('import.VFolderUsageMode')}
+          orientation="horizontal"
+        >
+          <RadioListItem
+            value="general"
+            label={t('data.General')}
+            data-testid="general-usage-mode"
+          />
+          <RadioListItem
+            value="model"
+            label={t('data.Models')}
+            data-testid="model-usage-mode"
+          />
+        </RadioList>
       </Form.Item>
       <Form.Item>
         <BAIButton

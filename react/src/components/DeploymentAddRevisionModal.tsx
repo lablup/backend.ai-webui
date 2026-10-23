@@ -72,7 +72,6 @@ import ResourceAllocationFormItems, {
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
   type ResourceAllocationFormValue,
 } from './SessionFormItems/ResourceAllocationFormItems';
-import { AstryxFormTextInput } from './astryxFormControls';
 import './collapsible-section.css';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
@@ -85,6 +84,7 @@ import {
   SegmentedControl,
   SegmentedControlItem,
 } from '@lablup/ui-common/SegmentedControl';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAvailablePresetSelect,
@@ -2350,8 +2350,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               tooltip={t('modelService.ModelMountTooltip')}
               style={{ flex: 1 }}
             >
-              <AstryxFormTextInput
-                label={t('modelService.ModelMountDestination')}
+              <TextInput
+                aria-label={t('modelService.ModelMountDestination')}
                 hasClear
                 placeholder={modelDefinitionDefaults?.modelMountDestination}
               />
@@ -2538,8 +2538,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   rules={[{ whitespace: true }]}
                   preserve={false}
                 >
-                  <AstryxFormTextInput
-                    label={t('deployment.ModelDefinitionPath')}
+                  <TextInput
+                    aria-label={t('deployment.ModelDefinitionPath')}
                     hasClear
                     placeholder="model-definition.yaml"
                   />

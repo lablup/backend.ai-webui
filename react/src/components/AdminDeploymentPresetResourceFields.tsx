@@ -6,11 +6,10 @@ import { Form } from '../form-engine';
 import type { ResourceSlotTypeInfo } from './AdminDeploymentPresetFormTypes';
 import BAIFormItem from './BAIFormItem';
 import {
-  AstryxFormNumberInput,
-  AstryxFormSelector,
-  AstryxFormTextInput,
-  type AstryxFormNumberInputProps,
-} from './astryxFormControls';
+  NumberInput,
+  type NumberInputProps,
+} from '@lablup/ui-common/NumberInput';
+import { Selector } from '@lablup/ui-common/Selector';
 import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIDynamicUnitInputNumber, BAIFlex } from 'backend.ai-ui';
@@ -31,7 +30,7 @@ import { useTranslation } from 'react-i18next';
 // ---------------------------------------------------------------------------
 
 export interface InputNumberWithUnitProps extends Omit<
-  AstryxFormNumberInputProps,
+  NumberInputProps,
   'units' | 'isIntegerOnly'
 > {
   unit?: string;
@@ -46,11 +45,7 @@ export const InputNumberWithUnit: React.FC<InputNumberWithUnitProps> = ({
 }) => {
   'use memo';
   return (
-    <AstryxFormNumberInput
-      units={unit}
-      isIntegerOnly={precision === 0}
-      {...props}
-    />
+    <NumberInput units={unit} isIntegerOnly={precision === 0} {...props} />
   );
 };
 
@@ -103,8 +98,8 @@ export const ResourceSlotRow: React.FC<{
       >
         {/* PILOT-DECISION: antd's custom `showSearch.filterOption` dropped —
             Astryx Selector's built-in `hasSearch` filtering covers it. */}
-        <AstryxFormSelector
-          label={t('adminDeploymentPreset.ResourceSlots')}
+        <Selector
+          aria-label={t('adminDeploymentPreset.ResourceSlots')}
           options={slotOptions}
           hasSearch
         />
@@ -121,14 +116,14 @@ export const ResourceSlotRow: React.FC<{
       >
         {isNumericType ? (
           <InputNumberWithUnit
-            label={quantityLabel}
+            aria-label={quantityLabel}
             min={0}
             precision={precision}
             step={precision > 0 ? Math.pow(10, -precision) : 1}
             unit={slotType?.displayUnit || undefined}
           />
         ) : (
-          <AstryxFormTextInput label={quantityLabel} />
+          <TextInput aria-label={quantityLabel} />
         )}
       </BAIFormItem>
       <CircleMinus onClick={onRemove} size="1em" />
@@ -189,7 +184,7 @@ export const FixedResourceSlotField: React.FC<{
           })}
         >
           <InputNumberWithUnit
-            label={slotType?.displayName ?? slotName.toUpperCase()}
+            aria-label={slotType?.displayName ?? slotName.toUpperCase()}
             min={0}
             precision={precision}
             step={precision > 0 ? Math.pow(10, -precision) : 1}

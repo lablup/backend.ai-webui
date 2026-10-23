@@ -22,12 +22,12 @@ import {
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useThemeMode } from '../hooks/useThemeMode';
 import { ImageMetaDivider, ImageTagTokens } from './ImageTags';
-import { AstryxFormTextInput } from './astryxFormControls';
 import { Divider } from '@lablup/ui-common/Divider';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
 } from '@lablup/ui-common/DropdownMenu';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import { Token } from '@lablup/ui-common/Token';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
@@ -987,11 +987,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
             : 'none',
         }}
       >
-        {/* antd `Input allowClear` → `AstryxFormTextInput hasClear`
-            (MAPPING §3.6). The handler already read the value rather than the
-            event, which the adapter now guarantees. */}
-        <AstryxFormTextInput
-          label={t('session.launcher.ManualImageName')}
+        <TextInput
+          aria-label={t('session.launcher.ManualImageName')}
           hasClear
           onChange={(value) => {
             if (!_.isEmpty(value)) {
@@ -1008,7 +1005,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
         />
       </Form.Item>
       <Form.Item noStyle hidden name={['environments', 'image']}>
-        <AstryxFormTextInput label={t('session.launcher.Environments')} />
+        <TextInput aria-label={t('session.launcher.Environments')} />
       </Form.Item>
     </>
   );

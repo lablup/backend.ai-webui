@@ -10,17 +10,15 @@ import {
   useRuntimeParameterSchema,
 } from '../hooks/useRuntimeParameterSchema';
 import InputNumberWithSlider from './InputNumberWithSlider';
-import {
-  AstryxFormCheckbox,
-  AstryxFormNumberInput,
-  AstryxFormSelector,
-  AstryxFormTextInput,
-} from './astryxFormControls';
 import './collapsible-section.css';
 import { Banner } from '@lablup/ui-common/Banner';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { Collapsible } from '@lablup/ui-common/Collapsible';
 import { IconButton } from '@lablup/ui-common/IconButton';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
+import { Selector } from '@lablup/ui-common/Selector';
 import { Tab, TabList } from '@lablup/ui-common/TabList';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import { spacingVars } from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
@@ -363,15 +361,8 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
     : undefined;
   const defaultPlaceholder = param.defaultValue ?? undefined;
 
-  // The "user has touched this field" hook.
-  //
-  // Under antd the mark rode on each control's own `onChange`. The Astryx
-  // form-control ADAPTERS own that slot (they normalise `onChange` to receive
-  // the value), and only two of them expose an `onValueChange` escape hatch.
-  // Rather than fork the shared adapters, the mark moves one level up to the
-  // `Form.Item` itself: `getValueFromEvent` runs on exactly the same events,
-  // passes the value through untouched, and works uniformly for every control
-  // type -- including the ones with an escape hatch.
+  // The "user has touched this field" hook, on the `Form.Item` itself so it
+  // works the same for every control type.
   const touchOnChange = <T,>(value: T): T => {
     onTouch();
     return value;
@@ -464,14 +455,10 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
           rules={[...(requiredRules ?? []), ...rangeRules]}
           getValueFromEvent={touchOnChange}
         >
-          {/* MAPPING 3.17: `InputNumber` -> `NumberInput`; `style.width:
-              '100%'` becomes the adapter's `width` (its default). `min`/`max`
-              are deliberately NOT passed to the adapter — it clamps, and the
-              point of `rangeRules` is validation feedback instead of
-              clamping. The adapter still repairs a typed decimal on blur when
-              `isIntegerOnly`, which does not depend on the bounds. */}
-          <AstryxFormNumberInput
-            label={label}
+          {/* `min`/`max` are deliberately NOT passed: `NumberInput` clamps,
+              and `rangeRules` give validation feedback instead. */}
+          <NumberInput
+            aria-label={label}
             step={isInt ? 1 : 0.1}
             isIntegerOnly={isInt}
             placeholder={defaultPlaceholder}
@@ -493,8 +480,8 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
         >
           {/* MAPPING 3.1: a small static option list -> `Selector`;
               `allowClear` -> `hasClear`. */}
-          <AstryxFormSelector
-            label={label}
+          <Selector
+            aria-label={label}
             hasClear
             placeholder={
               param.choices?.items.find(
@@ -521,8 +508,7 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
           rules={requiredRules}
           getValueFromEvent={touchOnChange}
         >
-          {/* MAPPING 4: children -> the required `label` string. */}
-          <AstryxFormCheckbox label={t('general.Enable')} />
+          <CheckboxInput>{t('general.Enable')}</CheckboxInput>
         </Form.Item>
       );
 
@@ -538,8 +524,8 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
           rules={requiredRules}
           getValueFromEvent={touchOnChange}
         >
-          <AstryxFormTextInput
-            label={label}
+          <TextInput
+            aria-label={label}
             placeholder={
               defaultPlaceholder ?? param.text?.placeholder ?? undefined
             }

@@ -7,9 +7,9 @@ import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import { useAnonymousBackendaiClient } from '../hooks';
 import BAIFormItem from './BAIFormItem';
-import { AstryxFormTextInput } from './astryxFormControls';
 import { Button } from '@lablup/ui-common/Button';
 import { Text } from '@lablup/ui-common/Text';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex, BAIModal, ESMClientErrorResponse } from 'backend.ai-ui';
 import { CircleCheck } from 'lucide-react';
@@ -148,8 +148,8 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
                 },
               ]}
             >
-              <AstryxFormTextInput
-                label={t('data.explorer.EnterEmailAddress')}
+              <TextInput
+                aria-label={t('data.explorer.EnterEmailAddress')}
                 hasAutoFocus
               />
             </BAIFormItem>
@@ -171,9 +171,9 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
                 },
               ]}
             >
-              <AstryxFormTextInput
+              <TextInput
                 type="password"
-                label={t('webui.menu.NewPassword')}
+                aria-label={t('webui.menu.NewPassword')}
               />
             </BAIFormItem>
             <BAIFormItem
@@ -194,9 +194,9 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
                 },
               ]}
             >
-              <AstryxFormTextInput
+              <TextInput
                 type="password"
-                label={t('webui.menu.NewPasswordAgain')}
+                aria-label={t('webui.menu.NewPasswordAgain')}
               />
             </BAIFormItem>
           </Form>

@@ -8,7 +8,6 @@ import {
   FormItemProps,
   FormListProps,
 } from '../form-engine';
-import { AstryxFormTextInput } from './astryxFormControls';
 import { usePopover } from '@lablup/ui-common/Popover';
 import { TextInput } from '@lablup/ui-common/TextInput';
 import {
@@ -35,7 +34,7 @@ export interface EnvVarConfig {
  * The value input's placeholder depends on the SIBLING `variable` field.
  *
  * `Form.Item`'s `dependencies` re-renders the *Field*, but the
- * `<AstryxFormTextInput placeholder={…}>` element it renders is still the same
+ * `<TextInput placeholder={…}>` element it renders is still the same
  * static element object created on the last OUTER render, so a placeholder
  * computed inline from `form.getFieldValue(...)` never updates — the field the
  * user just typed into keeps showing the generic hint. `Form.useWatch`
@@ -51,10 +50,7 @@ const EnvVarValueInput: React.FC<
     variableNamePath: Parameters<FormInstance['getFieldValue']>[0];
     getPlaceholderForVariable: (variable: string) => string;
     label: string;
-  } & Omit<
-    React.ComponentProps<typeof AstryxFormTextInput>,
-    'label' | 'placeholder'
-  >
+  } & Omit<React.ComponentProps<typeof TextInput>, 'placeholder'>
 > = ({
   form,
   variableNamePath,
@@ -65,9 +61,9 @@ const EnvVarValueInput: React.FC<
   'use memo';
   const variable = Form.useWatch(variableNamePath, form);
   return (
-    <AstryxFormTextInput
+    <TextInput
       {...controlProps}
-      label={label}
+      aria-label={label}
       placeholder={getPlaceholderForVariable(variable)}
     />
   );
@@ -585,11 +581,7 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
             <BAIButton
               type="dashed"
               // PILOT-DECISION: the antd `InputRef.focus()` that jumped the
-              // caret into the row just added is DROPPED. Astryx uses a
-              // `handleRef` convention rather than `ref` + `InputRef`
-              // (MAPPING §6.2) and `AstryxFormTextInput` exposes no ref
-              // slot; the same call was already made for the select stack
-              // (P26-8).
+              // caret into the row just added is DROPPED (MAPPING §6.2).
               onClick={() => {
                 add();
               }}

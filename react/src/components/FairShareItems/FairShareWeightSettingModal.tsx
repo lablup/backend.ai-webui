@@ -14,14 +14,12 @@ import { FairShareWeightSettingModal_ResourceGroupFragment$key } from '../../__g
 import { FairShareWeightSettingModal_UserFragment$key } from '../../__generated__/FairShareWeightSettingModal_UserFragment.graphql';
 import { App } from '../../app-shim';
 import { Form, FormInstance } from '../../form-engine';
-import {
-  AstryxFormNumberInput,
-  AstryxFormTextInput,
-} from '../astryxFormControls';
 import DomainResourceGroupAlert from './DomainResourceGroupAlert';
 import ProjectResourceGroupAlert from './ProjectResourceGroupAlert';
 import UserResourceGroupAlert from './UserResourceGroupAlert';
 import { Banner } from '@lablup/ui-common/Banner';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIBulkEditFormItem,
@@ -586,10 +584,7 @@ const FairShareWeightSettingModal: React.FC<
             required
             hidden
           >
-            <AstryxFormTextInput
-              label={t('fairShare.ResourceGroup')}
-              disabled
-            />
+            <TextInput aria-label={t('fairShare.ResourceGroup')} disabled />
           </Form.Item>
           <Form.Item
             label={t('fairShare.Domain')}
@@ -605,11 +600,11 @@ const FairShareWeightSettingModal: React.FC<
                 )}
               />
             ) : (
-              <AstryxFormTextInput label={t('fairShare.Domain')} disabled />
+              <TextInput aria-label={t('fairShare.Domain')} disabled />
             )}
           </Form.Item>
           <Form.Item label={t('fairShare.Project')} name="projectId" hidden>
-            <AstryxFormTextInput label={t('fairShare.Project')} />
+            <TextInput aria-label={t('fairShare.Project')} />
           </Form.Item>
           <Form.Item
             label={t('fairShare.Name')}
@@ -625,7 +620,7 @@ const FairShareWeightSettingModal: React.FC<
                 )}
               />
             ) : (
-              <AstryxFormTextInput label={t('fairShare.Name')} disabled />
+              <TextInput aria-label={t('fairShare.Name')} disabled />
             )}
           </Form.Item>
           <Form.Item
@@ -634,7 +629,7 @@ const FairShareWeightSettingModal: React.FC<
             required={editTarget === 'user'}
             hidden
           >
-            <AstryxFormTextInput label={t('fairShare.User')} disabled />
+            <TextInput aria-label={t('fairShare.User')} disabled />
           </Form.Item>
           <Form.Item
             label={t('fairShare.Email')}
@@ -649,7 +644,7 @@ const FairShareWeightSettingModal: React.FC<
                 )}
               />
             ) : (
-              <AstryxFormTextInput label={t('fairShare.Email')} disabled />
+              <TextInput aria-label={t('fairShare.Email')} disabled />
             )}
           </Form.Item>
           {isBulkEdit ? (
@@ -665,8 +660,8 @@ const FairShareWeightSettingModal: React.FC<
               }
               name="weight"
             >
-              <AstryxFormNumberInput
-                label={t('fairShare.Weight')}
+              <NumberInput
+                aria-label={t('fairShare.Weight')}
                 min={0}
                 step={0.1}
               />
@@ -683,8 +678,8 @@ const FairShareWeightSettingModal: React.FC<
               }
               name="weight"
             >
-              <AstryxFormNumberInput
-                label={t('fairShare.Weight')}
+              <NumberInput
+                aria-label={t('fairShare.Weight')}
                 min={0}
                 step={0.1}
               />

@@ -12,9 +12,9 @@ import { Form, type FormInstance } from '../form-engine';
 import { compareNumberWithUnits } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import BAIFormItem from './BAIFormItem';
-import { AstryxFormNumberInput } from './astryxFormControls';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Grid } from '@lablup/ui-common/Grid';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
 import {
   BAIFlex,
   BAIModal,
@@ -222,8 +222,8 @@ const ManageImageResourceLimitModal: React.FC<
                         ) : (
                           // antd InputNumber `suffix` -> Astryx NumberInput
                           // `units` (MAPPING.md §3.17), via the Form adapter.
-                          <AstryxFormNumberInput
-                            label={
+                          <NumberInput
+                            aria-label={
                               _.get(mergedResourceSlots, key)?.description ||
                               _.upperCase(key)
                             }

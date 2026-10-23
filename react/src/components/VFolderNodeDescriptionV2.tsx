@@ -206,13 +206,8 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
       key: 'permission',
       label: t('data.folders.MountPermission'),
       children: (
-        // QA-FINDINGS Q-34 — this Selector bypasses `BAISelect` /
-        // `AstryxFormSelector`, so it needs its own `placement`. With none,
-        // `shouldOverlaySelectedItem` is true (no search field) and Astryx
-        // centres the selected option OVER the trigger via a negative
-        // `margin-block-start` — inside a `MetadataList` row that covers the
-        // "Mount Permission" label as well as the value, which is what the
-        // folder-permission report saw.
+        // QA-FINDINGS Q-34 — without `placement`, Astryx overlays the selected
+        // option on the trigger, covering the "Mount Permission" row label.
         <Selector
           placement="below"
           aria-label={t('data.folders.MountPermission')}

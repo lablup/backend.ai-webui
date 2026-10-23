@@ -31,11 +31,11 @@ import {
   loginConfigState,
 } from '../hooks/useWebUIConfig';
 import BAIFormItem from './BAIFormItem';
-import { AstryxFormTextInput } from './astryxFormTextInput';
 import { Button } from '@lablup/ui-common/Button';
 import { Heading } from '@lablup/ui-common/Heading';
 import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import { BAICard, BAIFlex, useBAILogger } from 'backend.ai-ui';
 import { useAtomValue, useStore } from 'jotai';
 import {
@@ -733,8 +733,8 @@ const TotpInlineForm: React.FC<{
         help={invalidOtp ? t('sTokenLoginBoundary.ErrorTotpInvalidHint') : null}
         style={{ marginBottom: 12 }}
       >
-        <AstryxFormTextInput
-          label={t('sTokenLoginBoundary.TotpPlaceholder')}
+        <TextInput
+          aria-label={t('sTokenLoginBoundary.TotpPlaceholder')}
           disabled={isSubmitting}
         />
       </BAIFormItem>

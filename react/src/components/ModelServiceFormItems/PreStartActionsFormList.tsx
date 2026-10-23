@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { Form } from '../../form-engine';
-import { AstryxFormTextInput } from '../astryxFormControls';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIButton, BAIFlex } from 'backend.ai-ui';
 import { CircleMinus, PlusIcon } from 'lucide-react';
@@ -50,8 +50,8 @@ const PreStartActionsFormList: React.FC<PreStartActionsFormListProps> = ({
                 >
                   {/* Aria-only label; `Form.Item` renders no visible one
                       for these in-row fields. */}
-                  <AstryxFormTextInput
-                    label={t('adminDeploymentPreset.modelDef.Action')}
+                  <TextInput
+                    aria-label={t('adminDeploymentPreset.modelDef.Action')}
                     placeholder={t(
                       'adminDeploymentPreset.modelDef.ActionPlaceholder',
                     )}
@@ -75,8 +75,8 @@ const PreStartActionsFormList: React.FC<PreStartActionsFormListProps> = ({
                     },
                   ]}
                 >
-                  <AstryxFormTextInput
-                    label={t('adminDeploymentPreset.modelDef.Args')}
+                  <TextInput
+                    aria-label={t('adminDeploymentPreset.modelDef.Args')}
                     placeholder={t('general.Example', { value: '{}' })}
                   />
                 </Form.Item>

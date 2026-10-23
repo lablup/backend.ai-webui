@@ -15,10 +15,8 @@ import { useTOTPSupported } from '../hooks/backendai';
 import BAIFormItem from './BAIFormItem';
 import ProjectSelect from './ProjectSelect';
 import UserResourcePolicySelect from './UserResourcePolicySelect';
-import {
-  AstryxFormNumberInput,
-  AstryxFormTagsInput,
-} from './astryxFormControls';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
+import { TagsInput } from '@lablup/ui-common/TagsInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFlex,
@@ -308,8 +306,8 @@ const UpdateUsersModal = ({
               },
             ]}
           >
-            <AstryxFormNumberInput
-              label={t('credential.ContainerUID')}
+            <NumberInput
+              aria-label={t('credential.ContainerUID')}
               max={SIGNED_32BIT_MAX_INT}
               min={1}
             />
@@ -326,8 +324,8 @@ const UpdateUsersModal = ({
               },
             ]}
           >
-            <AstryxFormNumberInput
-              label={t('credential.ContainerGID')}
+            <NumberInput
+              aria-label={t('credential.ContainerGID')}
               max={SIGNED_32BIT_MAX_INT}
               min={1}
             />
@@ -393,9 +391,9 @@ const UpdateUsersModal = ({
               }),
             ]}
           >
-            <AstryxFormTagsInput
+            <TagsInput
               tokenSeparators={[',', ' ']}
-              label={t('credential.ContainerSupplementaryGIDs')}
+              aria-label={t('credential.ContainerSupplementaryGIDs')}
               placeholder={t(
                 'credential.ContainerSupplementaryGIDsPlaceholder',
               )}

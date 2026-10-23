@@ -7,11 +7,9 @@ import { Form, FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIFormItem from './BAIFormItem';
 import { SchedulerType } from './ConfigurationsSettingList';
-import {
-  AstryxFormCheckbox,
-  AstryxFormNumberInput,
-  AstryxFormSelector,
-} from './astryxFormControls';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
+import { Selector } from '@lablup/ui-common/Selector';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAIQuestionIconWithTooltip,
@@ -122,8 +120,8 @@ const SchedulerSettingModal = ({
             </Text>
           }
         >
-          <AstryxFormSelector
-            label={t('settings.Scheduler')}
+          <Selector
+            aria-label={t('settings.Scheduler')}
             isLoading={isUpdatingSchedulerOptions}
             onChange={(value) => {
               if (value !== null) {
@@ -209,10 +207,9 @@ const SchedulerSettingModal = ({
                       {/* No wrapper element: `Form.Item` clones its DIRECT
                           child, so the former `<div style={{flex:1}}>`
                           absorbed `value`/`onChange` and the field never
-                          bound. `width="100%"` (the adapter's default) covers
-                          what the flex wrapper did. */}
-                      <AstryxFormNumberInput
-                        label={t('settings.SessionCreationRetries')}
+                          bound. */}
+                      <NumberInput
+                        aria-label={t('settings.SessionCreationRetries')}
                         min={0}
                         max={1000}
                         disabled={
@@ -235,8 +232,7 @@ const SchedulerSettingModal = ({
                     name="num_retries_to_skip_checkbox"
                     valuePropName="checked"
                   >
-                    <AstryxFormCheckbox
-                      label={t('settings.Unset')}
+                    <CheckboxInput
                       disabled={
                         formRef.current?.getFieldValue('schedulerType') ===
                           undefined || isUpdatingSchedulerOptions
@@ -248,7 +244,9 @@ const SchedulerSettingModal = ({
                           });
                         }
                       }}
-                    />
+                    >
+                      {t('settings.Unset')}
+                    </CheckboxInput>
                   </Form.Item>
                 )}
               </Form.Item>

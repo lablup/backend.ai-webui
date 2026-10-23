@@ -7,7 +7,7 @@ import { Form, type FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIFormItem from './BAIFormItem';
-import { AstryxFormTextArea } from './astryxFormControls';
+import { TextArea } from '@lablup/ui-common/TextArea';
 import {
   BAIModal,
   BAIModalProps,
@@ -65,7 +65,7 @@ const SSHKeypairManualFormModal: React.FC<SSHKeypairManualFormModalProps> = ({
     >
       {/* PILOT-DECISION: the antd `Input.TextArea` sites carried a hand-rolled
           `backgroundColor: rgba(150,150,150,.1)` (mimicking
-          `.ant-typography pre`'s tint) — `AstryxFormTextArea` has no `style`
+          `.ant-typography pre`'s tint) — `TextArea` has no `style`
           escape hatch, dropped; the textarea's own default surface stands
           in. */}
       <Form ref={formRef} preserve={false} layout="vertical">
@@ -74,14 +74,14 @@ const SSHKeypairManualFormModal: React.FC<SSHKeypairManualFormModalProps> = ({
           label={t('userSettings.PublicKey')}
           rules={[{ required: true, message: t('settings.InputRequired') }]}
         >
-          <AstryxFormTextArea label={t('userSettings.PublicKey')} rows={5} />
+          <TextArea aria-label={t('userSettings.PublicKey')} rows={5} />
         </BAIFormItem>
         <BAIFormItem
           name="privkey"
           label={t('userSettings.PrivateKey')}
           rules={[{ required: true, message: t('settings.InputRequired') }]}
         >
-          <AstryxFormTextArea label={t('userSettings.PrivateKey')} rows={5} />
+          <TextArea aria-label={t('userSettings.PrivateKey')} rows={5} />
         </BAIFormItem>
       </Form>
     </BAIModal>

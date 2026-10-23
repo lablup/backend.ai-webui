@@ -7,11 +7,6 @@ import {
   DEFAULT_SESSION_GRID_VIEW,
   type SessionGridViewParams,
 } from '../../helper/sessionResourceGridData';
-import {
-  AstryxFormSegmented,
-  AstryxFormSelector,
-  AstryxFormTextInput,
-} from '../astryxFormControls';
 import { DeploymentNodesPanelContent } from './DeploymentNodesPanel';
 import { ResourceCountContent } from './ResourceCountPanel';
 import { ResourceTableContent } from './ResourceTablePanel';
@@ -25,6 +20,12 @@ import type {
   PersistedPanel,
   ResourceKey,
 } from './types';
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+} from '@lablup/ui-common/SegmentedControl';
+import { Selector } from '@lablup/ui-common/Selector';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIBoardItemErrorBoundary,
@@ -192,13 +193,15 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
             ]}
             style={{ flexShrink: 0 }}
           >
-            <AstryxFormSegmented
-              label={t('dashboard.panelModal.PanelType')}
-              options={panelTypeOptions.map((type) => ({
-                value: type,
-                label: t(panelTypeLabelKeys[type]),
-              }))}
-            />
+            <SegmentedControl aria-label={t('dashboard.panelModal.PanelType')}>
+              {panelTypeOptions.map((type) => (
+                <SegmentedControlItem
+                  key={type}
+                  value={type}
+                  label={t(panelTypeLabelKeys[type])}
+                />
+              ))}
+            </SegmentedControl>
           </Form.Item>
           <Form.Item
             name="resourceType"
@@ -212,8 +215,8 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
             ]}
             style={{ flex: 1, minWidth: 180 }}
           >
-            <AstryxFormSelector
-              label={t('dashboard.panelModal.DataSource')}
+            <Selector
+              aria-label={t('dashboard.panelModal.DataSource')}
               options={resourceOptions.map((key) => ({
                 value: key,
                 label: t(resourceRegistry[key].labelKey),
@@ -226,8 +229,8 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
             extra={t('dashboard.panelModal.TitleDescription')}
             style={{ flex: 1, minWidth: 180 }}
           >
-            <AstryxFormTextInput
-              label={t('dashboard.panelModal.TitleOptional')}
+            <TextInput
+              aria-label={t('dashboard.panelModal.TitleOptional')}
               placeholder={t(config.labelKey)}
               hasClear
             />

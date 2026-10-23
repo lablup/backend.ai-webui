@@ -18,9 +18,8 @@ import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 /**
- * The auto/manual shared-memory toggle. A local adapter rather than the shared
- * `AstryxFormSwitch`, because the visible label flips with the state. The two
- * `Form.Item` contracts are honoured inline.
+ * The auto/manual shared-memory toggle, local because the visible label flips
+ * with the state.
  */
 const AutomaticShmemSwitch: React.FC<{
   autoLabel: string;

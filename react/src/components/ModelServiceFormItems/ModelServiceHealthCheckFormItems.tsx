@@ -4,11 +4,9 @@
  */
 import { Form } from '../../form-engine';
 import type { FormInstance } from '../../form-engine';
-import {
-  AstryxFormCheckbox,
-  AstryxFormNumberInput,
-  AstryxFormTextInput,
-} from '../astryxFormControls';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
@@ -56,7 +54,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
         valuePropName="checked"
         style={{ marginTop: token('--spacing-2'), marginBottom: 0 }}
       >
-        <AstryxFormCheckbox label={t('modelService.EnableHealthCheck')} />
+        <CheckboxInput>{t('modelService.EnableHealthCheck')}</CheckboxInput>
       </Form.Item>
       <Form.Item dependencies={[[...namePrefix, 'enableHealthCheck']]} noStyle>
         {({ getFieldValue }: FormInstance) =>
@@ -67,9 +65,10 @@ const ModelServiceHealthCheckFormItems: React.FC<
                 label={t('adminDeploymentPreset.modelDef.HealthCheckPath')}
                 tooltip={t('modelService.HealthCheckTooltip')}
               >
-                {/* antd `allowClear` → Astryx `hasClear`. */}
-                <AstryxFormTextInput
-                  label={t('adminDeploymentPreset.modelDef.HealthCheckPath')}
+                <TextInput
+                  aria-label={t(
+                    'adminDeploymentPreset.modelDef.HealthCheckPath',
+                  )}
                   placeholder={placeholder('path')}
                   hasClear
                 />
@@ -84,8 +83,8 @@ const ModelServiceHealthCheckFormItems: React.FC<
                   style={{ flex: 1, minWidth: 160 }}
                 >
                   {/* antd `InputNumber suffix` → Astryx `units`. */}
-                  <AstryxFormNumberInput
-                    label={t(
+                  <NumberInput
+                    aria-label={t(
                       'adminDeploymentPreset.modelDef.HealthCheckInterval',
                     )}
                     min={1}
@@ -101,8 +100,8 @@ const ModelServiceHealthCheckFormItems: React.FC<
                   tooltip={t('modelService.MaxRetriesTooltip')}
                   style={{ flex: 1, minWidth: 160 }}
                 >
-                  <AstryxFormNumberInput
-                    label={t(
+                  <NumberInput
+                    aria-label={t(
                       'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
                     )}
                     min={1}
@@ -117,8 +116,8 @@ const ModelServiceHealthCheckFormItems: React.FC<
                   tooltip={t('modelService.MaxWaitTimeTooltip')}
                   style={{ flex: 1, minWidth: 160 }}
                 >
-                  <AstryxFormNumberInput
-                    label={t(
+                  <NumberInput
+                    aria-label={t(
                       'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
                     )}
                     min={1}
@@ -137,8 +136,8 @@ const ModelServiceHealthCheckFormItems: React.FC<
                   style={{ flex: 1, minWidth: 160 }}
                 >
                   {/* Backend `expected_status_code` is `gt=100`, hence 101. */}
-                  <AstryxFormNumberInput
-                    label={t(
+                  <NumberInput
+                    aria-label={t(
                       'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
                     )}
                     min={101}
@@ -154,8 +153,8 @@ const ModelServiceHealthCheckFormItems: React.FC<
                   tooltip={t('modelService.InitialDelayTooltip')}
                   style={{ flex: 1, minWidth: 160 }}
                 >
-                  <AstryxFormNumberInput
-                    label={t(
+                  <NumberInput
+                    aria-label={t(
                       'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
                     )}
                     min={0}

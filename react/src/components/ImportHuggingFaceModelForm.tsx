@@ -14,9 +14,9 @@ import { toProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import HuggingFaceModelPreview from './HuggingFaceModelPreview';
-import { AstryxFormTextInput } from './astryxFormControls';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
 import { IconButton } from '@lablup/ui-common/IconButton';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIButton,
   BAIFlex,
@@ -259,8 +259,8 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
             },
           ]}
         >
-          <AstryxFormTextInput
-            label={t('import.HuggingFaceModelUrlOrId')}
+          <TextInput
+            aria-label={t('import.HuggingFaceModelUrlOrId')}
             placeholder="https://huggingface.co/openai/gpt-oss-20b"
           />
         </Form.Item>
@@ -290,8 +290,8 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
           label={t('import.HuggingFaceRevision')}
           rules={[{ type: 'string', max: 200 }]}
         >
-          <AstryxFormTextInput
-            label={t('import.HuggingFaceRevision')}
+          <TextInput
+            aria-label={t('import.HuggingFaceRevision')}
             placeholder="main"
           />
         </Form.Item>
@@ -301,13 +301,12 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
           rules={[{ type: 'string', max: 512 }]}
           extra={t('import.HuggingFaceTokenAdminVisibleWarning')}
         >
-          {/* antd `Input.Password` → `TextInput type="password"`
-              (MAPPING §3.6). PILOT-DECISION: antd's built-in reveal toggle has
-              no Astryx counterpart and is dropped; `autoComplete="off"` has no
-              adapter prop, and the field is not a login credential. */}
-          <AstryxFormTextInput
-            label={t('import.HuggingFaceToken')}
+          {/* PILOT-DECISION: antd `Input.Password`'s reveal toggle has no
+              Astryx counterpart and is dropped. */}
+          <TextInput
+            aria-label={t('import.HuggingFaceToken')}
             type="password"
+            autoComplete="off"
           />
         </Form.Item>
         <Form.Item
