@@ -38,7 +38,7 @@ catalog:
   big.js: ^7.0.1
   classnames: ^2.5.1
   dayjs: ^1.11.21
-  dompurify: ^3.4.12
+  dompurify: ^3.4.17
   eslint: ^9.39.5
   eslint-plugin-import: ^2.32.0
   eslint-plugin-json-schema-validator: ^5.5.1
@@ -185,7 +185,7 @@ overrides:
   serialize-javascript: ^7.0.5 # RCE via RegExp.flags, CPU DoS (#279, #386)
   "uuid@^11": ^11.1.1 # buffer bounds check (#387) v11 line
   "uuid@^13": ^13.0.1 # buffer bounds check (#374) v13 line
-  dompurify: ^3.4.12 # align transitives with catalog bump
+  dompurify: ^3.4.17 # SAFE_FOR_TEMPLATES / IN_PLACE bypasses (GHSA-cg2g-xh64-v4q7, GHSA-mrv2-3pqr-j5jr); aligns monaco-editor's copy with the catalog
   # FR-4149. fast-uri ships in the bundle via `ajv` (latest 8.20.0 still
   # ranges ^3.0.1). Was ^3.1.2 under the dev-only block (FR-3014).
   "fast-uri@^3": ^3.1.8 # GHSA-qw65-cvwx-89v3 et al. (high, <3.1.7)
