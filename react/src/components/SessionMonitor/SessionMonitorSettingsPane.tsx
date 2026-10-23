@@ -161,7 +161,7 @@ const SessionMonitorSettingsPane: React.FC<{
       <Text type="label" weight="semibold">
         {t('sessionMonitor.settings.List')}
       </Text>
-      <BAIFlex direction="row" align="center" justify="between" gap="sm">
+      <BAIFlex direction="column" align="stretch" gap="xs">
         <Text>{t('sessionMonitor.settings.SortBy')}</Text>
         <Selector
           aria-label={t('sessionMonitor.settings.SortBy')}
@@ -171,7 +171,7 @@ const SessionMonitorSettingsPane: React.FC<{
           onChange={(value) => setSort(value as SessionMonitorSort)}
         />
       </BAIFlex>
-      <BAIFlex direction="row" align="center" justify="between" gap="sm">
+      <BAIFlex direction="column" align="stretch" gap="xs">
         <Text>{t('sessionMonitor.settings.RowsShown')}</Text>
         <Selector
           aria-label={t('sessionMonitor.settings.RowsShown')}
