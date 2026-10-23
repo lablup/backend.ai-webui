@@ -153,7 +153,6 @@
     "EditLabels": "Edit label"
   },
   "comp:BAIEntityLabelSettingModal": {
-    "AddLabel": "Tambah label",
     "AddLabelsToItems": "Tambahkan label ke {{count}} item",
     "BulkDescription": "Label ini ditambahkan ke setiap item yang dipilih. Item yang sudah memiliki kunci tersebut mendapat nilai baru; label lainnya tetap.",
     "EditLabels": "Edit label",
@@ -162,8 +161,8 @@
     "KeyMustBeUnique": "Setiap kunci hanya dapat digunakan sekali.",
     "KeyRequired": "Masukkan kunci.",
     "Label": "Label",
+    "LabelItemName": "label",
     "LabelsSaved": "Label disimpan.",
-    "RemoveLabel": "Hapus label",
     "Save": "Simpan",
     "SomeLabelsFailed": "{{count}} perubahan label gagal",
     "Target": "Target",
@@ -441,10 +440,10 @@
     "UpdatedAt": "Diperbarui pada"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
-    "AddChoice": "Tambah Pilihan",
     "Category": "Kategori",
     "CategoryPlaceholder": "mis. model_loading",
     "CategoryTooltip": "Kategori UI yang digunakan untuk mengelompokkan parameter terkait.",
+    "ChoiceItemName": "pilihan",
     "ChoiceLabel": "Label",
     "ChoiceLabelPlaceholder": "mis. FP16",
     "ChoiceLabelRequired": "Label pilihan wajib diisi.",

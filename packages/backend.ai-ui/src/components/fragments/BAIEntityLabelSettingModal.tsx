@@ -7,14 +7,12 @@ import { useBAIi18n } from '../../hooks/useBAIi18n';
 import type { BAILabelableEntityType } from '../../hooks/useLabelableEntityTypes';
 import BAIBulkErrorModal from '../BAIBulkErrorModal';
 import BAIFlex from '../BAIFlex';
+import BAIFormListInput from '../BAIFormListInput';
 import BAIModal, { type BAIModalProps } from '../BAIModal';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import { AstryxFormTextInput } from '../astryxFormControls';
 import { formatEntityLabel } from './BAIEntityLabelTokens';
-import { Button } from '@lablup/ui-common/Button';
-import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
-import { PlusIcon, Trash2 } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
@@ -240,6 +238,8 @@ const BAIEntityLabelSettingModalContent = ({
               })
             : t('comp:BAIEntityLabelSettingModal.EditLabels')
         }
+        // ListInput stacks every row with its own labels below 640px.
+        width={720}
         {...modalProps}
         open={modalProps.open && failures.length === 0}
         okText={t('comp:BAIEntityLabelSettingModal.Save')}
@@ -270,106 +270,77 @@ const BAIEntityLabelSettingModalContent = ({
                   : currentLabels.map(({ key, value }) => ({ key, value })),
             }}
           >
-            <Form.List name="labels">
-              {(fields, { add, remove }) => (
-                <BAIFlex direction="column" gap="xs" align="stretch">
-                  {fields.map(({ key, name, ...restField }) => (
-                    <BAIFlex
-                      key={key}
-                      direction="row"
-                      align="baseline"
-                      gap="xs"
-                    >
-                      <Form.Item
-                        {...restField}
-                        name={[name, 'key']}
-                        style={{ marginBottom: 0, flex: 1 }}
-                        rules={[
-                          {
-                            required: true,
-                            message: t(
-                              'comp:BAIEntityLabelSettingModal.KeyRequired',
-                            ),
-                          },
-                          {
-                            max: LABEL_MAX_LENGTH,
-                            message: t(
-                              'comp:BAIEntityLabelSettingModal.TooLong',
-                              { max: LABEL_MAX_LENGTH },
-                            ),
-                          },
-                          ({ getFieldValue }) => ({
-                            validator(_rule, labelKey) {
-                              const keys = (
-                                getFieldValue(
-                                  'labels',
-                                ) as LabelFormValues['labels']
-                              ).map((row) => row?.key);
-                              return labelKey &&
-                                keys.filter((k) => k === labelKey).length > 1
-                                ? Promise.reject(
-                                    t(
-                                      'comp:BAIEntityLabelSettingModal.KeyMustBeUnique',
-                                    ),
-                                  )
-                                : Promise.resolve();
-                            },
-                          }),
-                        ]}
-                      >
-                        <AstryxFormTextInput
-                          label={t('comp:BAIEntityLabelSettingModal.Key')}
-                          placeholder={t('comp:BAIEntityLabelSettingModal.Key')}
-                        />
-                      </Form.Item>
-                      <Form.Item
-                        {...restField}
-                        name={[name, 'value']}
-                        style={{ marginBottom: 0, flex: 1 }}
-                        rules={[
-                          {
-                            required: true,
-                            message: t(
-                              'comp:BAIEntityLabelSettingModal.ValueRequired',
-                            ),
-                          },
-                          {
-                            max: LABEL_MAX_LENGTH,
-                            message: t(
-                              'comp:BAIEntityLabelSettingModal.TooLong',
-                              { max: LABEL_MAX_LENGTH },
-                            ),
-                          },
-                        ]}
-                      >
-                        <AstryxFormTextInput
-                          label={t('comp:BAIEntityLabelSettingModal.Value')}
-                          placeholder={t(
-                            'comp:BAIEntityLabelSettingModal.Value',
-                          )}
-                        />
-                      </Form.Item>
-                      <IconButton
-                        variant="ghost"
-                        label={t('comp:BAIEntityLabelSettingModal.RemoveLabel')}
-                        tooltip={t(
-                          'comp:BAIEntityLabelSettingModal.RemoveLabel',
-                        )}
-                        icon={<Trash2 size="1em" />}
-                        onClick={() => remove(name)}
-                      />
-                    </BAIFlex>
-                  ))}
-                  <Button
-                    variant="secondary"
-                    width="100%"
-                    icon={<PlusIcon />}
-                    label={t('comp:BAIEntityLabelSettingModal.AddLabel')}
-                    onClick={() => add()}
-                  />
-                </BAIFlex>
-              )}
-            </Form.List>
+            <BAIFormListInput
+              name="labels"
+              label={t('comp:BAIEntityLabelSettingModal.Label')}
+              isLabelHidden
+              itemName={t('comp:BAIEntityLabelSettingModal.LabelItemName')}
+              columns={[
+                {
+                  key: 'key',
+                  header: t('comp:BAIEntityLabelSettingModal.Key'),
+                  formItemProps: () => ({
+                    validateTrigger: ['onChange', 'onBlur'],
+                    rules: [
+                      {
+                        required: true,
+                        message: t(
+                          'comp:BAIEntityLabelSettingModal.KeyRequired',
+                        ),
+                      },
+                      {
+                        max: LABEL_MAX_LENGTH,
+                        message: t('comp:BAIEntityLabelSettingModal.TooLong', {
+                          max: LABEL_MAX_LENGTH,
+                        }),
+                      },
+                      ({ getFieldValue }) => ({
+                        validator(_rule, labelKey) {
+                          const keys = (
+                            getFieldValue('labels') as LabelFormValues['labels']
+                          ).map((row) => row?.key);
+                          return labelKey &&
+                            keys.filter((k) => k === labelKey).length > 1
+                            ? Promise.reject(
+                                t(
+                                  'comp:BAIEntityLabelSettingModal.KeyMustBeUnique',
+                                ),
+                              )
+                            : Promise.resolve();
+                        },
+                      }),
+                    ],
+                  }),
+                  renderInput: ({ label }) => (
+                    <AstryxFormTextInput label={label} />
+                  ),
+                },
+                {
+                  key: 'value',
+                  header: t('comp:BAIEntityLabelSettingModal.Value'),
+                  formItemProps: () => ({
+                    validateTrigger: ['onChange', 'onBlur'],
+                    rules: [
+                      {
+                        required: true,
+                        message: t(
+                          'comp:BAIEntityLabelSettingModal.ValueRequired',
+                        ),
+                      },
+                      {
+                        max: LABEL_MAX_LENGTH,
+                        message: t('comp:BAIEntityLabelSettingModal.TooLong', {
+                          max: LABEL_MAX_LENGTH,
+                        }),
+                      },
+                    ],
+                  }),
+                  renderInput: ({ label }) => (
+                    <AstryxFormTextInput label={label} />
+                  ),
+                },
+              ]}
+            />
           </Form>
         </BAIFlex>
       </BAIModal>

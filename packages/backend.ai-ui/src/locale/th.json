@@ -153,7 +153,6 @@
     "EditLabels": "แก้ไขป้ายกำกับ"
   },
   "comp:BAIEntityLabelSettingModal": {
-    "AddLabel": "เพิ่มป้ายกำกับ",
     "AddLabelsToItems": "เพิ่มป้ายกำกับให้ {{count}} รายการ",
     "BulkDescription": "ป้ายกำกับเหล่านี้จะถูกเพิ่มให้ทุกรายการที่เลือก รายการที่มีคีย์เดียวกันอยู่แล้วจะได้รับค่าใหม่ ส่วนป้ายกำกับอื่นยังคงอยู่",
     "EditLabels": "แก้ไขป้ายกำกับ",
@@ -162,8 +161,8 @@
     "KeyMustBeUnique": "แต่ละคีย์ใช้ได้เพียงครั้งเดียว",
     "KeyRequired": "กรุณาป้อนคีย์",
     "Label": "ป้ายกำกับ",
+    "LabelItemName": "ป้ายกำกับ",
     "LabelsSaved": "บันทึกป้ายกำกับแล้ว",
-    "RemoveLabel": "ลบป้ายกำกับ",
     "Save": "บันทึก",
     "SomeLabelsFailed": "การเปลี่ยนป้ายกำกับล้มเหลว {{count}} รายการ",
     "Target": "เป้าหมาย",
@@ -441,10 +440,10 @@
     "UpdatedAt": "อัปเดตเมื่อ"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
-    "AddChoice": "เพิ่มตัวเลือก",
     "Category": "หมวดหมู่",
     "CategoryPlaceholder": "เช่น model_loading",
     "CategoryTooltip": "หมวดหมู่ UI ที่ใช้จัดกลุ่มพารามิเตอร์ที่เกี่ยวข้องไว้ด้วยกัน",
+    "ChoiceItemName": "ตัวเลือก",
     "ChoiceLabel": "ป้ายกำกับ",
     "ChoiceLabelPlaceholder": "เช่น FP16",
     "ChoiceLabelRequired": "จำเป็นต้องระบุป้ายกำกับตัวเลือก",

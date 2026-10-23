@@ -20,8 +20,8 @@ import {
 import { useBAILogger } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIAlert from '../BAIAlert';
-import BAIButton from '../BAIButton';
 import BAIFlex from '../BAIFlex';
+import BAIFormListInput from '../BAIFormListInput';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import BAISelect from '../BAISelect';
 import {
@@ -32,7 +32,6 @@ import {
 } from '../astryxFormControls';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import BAIRuntimeVariantSelect from './BAIRuntimeVariantSelect';
-import { PlusIcon, Trash2 } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { graphql, useFragment, useMutation } from 'react-relay';
 import { PayloadError } from 'relay-runtime';
@@ -488,6 +487,8 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
 
   return (
     <BAIModal
+      // ListInput stacks the choice rows with their own labels below 640px.
+      width={720}
       {...baiModalProps}
       title={
         preset
@@ -993,102 +994,88 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
               </BAIFlex>
             ) : null}
             {uiType === 'SELECT' ? (
-              <Form.List
-                name="choices"
-                rules={[
-                  {
-                    validator: async (_, choices) => {
-                      if (!choices || choices.length < 1) {
-                        return Promise.reject(
-                          new Error(
-                            t(
-                              'comp:BAIRuntimeVariantPresetSettingModal.ChoicesRequired',
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                  },
-                ]}
+              <Form.Item
+                label={t('comp:BAIRuntimeVariantPresetSettingModal.Choices')}
               >
-                {(fields, { add, remove }, { errors }) => (
-                  <Form.Item
-                    label={t(
-                      'comp:BAIRuntimeVariantPresetSettingModal.Choices',
-                    )}
-                  >
-                    <BAIFlex direction="column" align="stretch" gap="xs">
-                      {fields.map(({ key, name, ...restField }) => (
-                        <BAIFlex key={key} gap="xs" align="start">
-                          <Form.Item
-                            {...restField}
-                            name={[name, 'value']}
-                            style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
-                            rules={[
-                              {
-                                required: true,
-                                message: t(
-                                  'comp:BAIRuntimeVariantPresetSettingModal.ChoiceValueRequired',
-                                ),
-                              },
-                            ]}
-                          >
-                            <AstryxFormTextInput
-                              label={t(
-                                'comp:BAIRuntimeVariantPresetSettingModal.ChoiceValue',
-                              )}
-                              placeholder={t(
-                                'comp:BAIRuntimeVariantPresetSettingModal.ChoiceValuePlaceholder',
-                              )}
-                            />
-                          </Form.Item>
-                          <Form.Item
-                            {...restField}
-                            name={[name, 'label']}
-                            style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
-                            rules={[
-                              {
-                                required: true,
-                                message: t(
-                                  'comp:BAIRuntimeVariantPresetSettingModal.ChoiceLabelRequired',
-                                ),
-                              },
-                            ]}
-                          >
-                            <AstryxFormTextInput
-                              label={t(
-                                'comp:BAIRuntimeVariantPresetSettingModal.ChoiceLabel',
-                              )}
-                              placeholder={t(
-                                'comp:BAIRuntimeVariantPresetSettingModal.ChoiceLabelPlaceholder',
-                              )}
-                            />
-                          </Form.Item>
-                          <BAIButton
-                            type="text"
-                            danger
-                            icon={<Trash2 />}
-                            aria-label={t('general.button.Delete')}
-                            style={{ flexShrink: 0 }}
-                            onClick={() => remove(name)}
-                          />
-                        </BAIFlex>
-                      ))}
-                      <BAIButton
-                        type="dashed"
-                        icon={<PlusIcon />}
-                        onClick={() => add()}
-                        block
-                      >
-                        {t(
-                          'comp:BAIRuntimeVariantPresetSettingModal.AddChoice',
-                        )}
-                      </BAIButton>
-                      <Form.ErrorList errors={errors} />
-                    </BAIFlex>
-                  </Form.Item>
-                )}
-              </Form.List>
+                <BAIFormListInput
+                  name="choices"
+                  // Removing the last row is a step, not an error; the
+                  // at-least-one rule runs on save.
+                  validateTrigger={false}
+                  rules={[
+                    {
+                      validator: async (_, choices) => {
+                        if (!choices || choices.length < 1) {
+                          return Promise.reject(
+                            new Error(
+                              t(
+                                'comp:BAIRuntimeVariantPresetSettingModal.ChoicesRequired',
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                    },
+                  ]}
+                  label={t('comp:BAIRuntimeVariantPresetSettingModal.Choices')}
+                  isLabelHidden
+                  itemName={t(
+                    'comp:BAIRuntimeVariantPresetSettingModal.ChoiceItemName',
+                  )}
+                  columns={[
+                    {
+                      key: 'value',
+                      header: t(
+                        'comp:BAIRuntimeVariantPresetSettingModal.ChoiceValue',
+                      ),
+                      formItemProps: () => ({
+                        validateTrigger: ['onChange', 'onBlur'],
+                        rules: [
+                          {
+                            required: true,
+                            message: t(
+                              'comp:BAIRuntimeVariantPresetSettingModal.ChoiceValueRequired',
+                            ),
+                          },
+                        ],
+                      }),
+                      renderInput: ({ label }) => (
+                        <AstryxFormTextInput
+                          label={label}
+                          placeholder={t(
+                            'comp:BAIRuntimeVariantPresetSettingModal.ChoiceValuePlaceholder',
+                          )}
+                        />
+                      ),
+                    },
+                    {
+                      key: 'label',
+                      header: t(
+                        'comp:BAIRuntimeVariantPresetSettingModal.ChoiceLabel',
+                      ),
+                      formItemProps: () => ({
+                        validateTrigger: ['onChange', 'onBlur'],
+                        rules: [
+                          {
+                            required: true,
+                            message: t(
+                              'comp:BAIRuntimeVariantPresetSettingModal.ChoiceLabelRequired',
+                            ),
+                          },
+                        ],
+                      }),
+                      renderInput: ({ label }) => (
+                        <AstryxFormTextInput
+                          label={label}
+                          placeholder={t(
+                            'comp:BAIRuntimeVariantPresetSettingModal.ChoiceLabelPlaceholder',
+                          )}
+                        />
+                      ),
+                    },
+                  ]}
+                />
+              </Form.Item>
             ) : null}
             {uiType === 'TEXT_INPUT' ? (
               <Form.Item

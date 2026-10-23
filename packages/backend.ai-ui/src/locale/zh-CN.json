@@ -153,7 +153,6 @@
     "EditLabels": "编辑标签"
   },
   "comp:BAIEntityLabelSettingModal": {
-    "AddLabel": "添加标签",
     "AddLabelsToItems": "为 {{count}} 个项目添加标签",
     "BulkDescription": "以下标签将添加到所有选中的项目。已有相同键的项目会更新其值，其他标签保持不变。",
     "EditLabels": "编辑标签",
@@ -162,8 +161,8 @@
     "KeyMustBeUnique": "每个键只能使用一次。",
     "KeyRequired": "请输入键。",
     "Label": "标签",
+    "LabelItemName": "标签",
     "LabelsSaved": "标签已保存。",
-    "RemoveLabel": "删除标签",
     "Save": "保存",
     "SomeLabelsFailed": "{{count}} 项标签更改失败",
     "Target": "对象",
@@ -441,10 +440,10 @@
     "UpdatedAt": "更新时间"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
-    "AddChoice": "添加选项",
     "Category": "类别",
     "CategoryPlaceholder": "例如：model_loading",
     "CategoryTooltip": "用于将相关参数归类到一起的 UI 类别。",
+    "ChoiceItemName": "选项",
     "ChoiceLabel": "标签",
     "ChoiceLabelPlaceholder": "例如：FP16",
     "ChoiceLabelRequired": "选项标签为必填项。",

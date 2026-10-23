@@ -153,7 +153,6 @@
     "EditLabels": "ラベルを編集"
   },
   "comp:BAIEntityLabelSettingModal": {
-    "AddLabel": "ラベルを追加",
     "AddLabelsToItems": "{{count}}件の項目にラベルを追加",
     "BulkDescription": "選択したすべての項目に以下のラベルを追加します。同じキーを持つ項目は値が更新され、その他のラベルはそのまま残ります。",
     "EditLabels": "ラベルを編集",
@@ -162,8 +161,8 @@
     "KeyMustBeUnique": "同じキーは一度しか使用できません。",
     "KeyRequired": "キーを入力してください。",
     "Label": "ラベル",
+    "LabelItemName": "ラベル",
     "LabelsSaved": "ラベルを保存しました。",
-    "RemoveLabel": "ラベルを削除",
     "Save": "保存",
     "SomeLabelsFailed": "{{count}}件のラベル変更に失敗しました",
     "Target": "対象",
@@ -441,10 +440,10 @@
     "UpdatedAt": "更新日時"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
-    "AddChoice": "選択肢を追加",
     "Category": "カテゴリ",
     "CategoryPlaceholder": "例: model_loading",
     "CategoryTooltip": "関連するパラメータをまとめるために使用されるUIカテゴリです。",
+    "ChoiceItemName": "選択肢",
     "ChoiceLabel": "ラベル",
     "ChoiceLabelPlaceholder": "例: FP16",
     "ChoiceLabelRequired": "選択肢のラベルは必須です。",

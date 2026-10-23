@@ -153,7 +153,6 @@
     "EditLabels": "Изменить метки"
   },
   "comp:BAIEntityLabelSettingModal": {
-    "AddLabel": "Добавить метку",
     "AddLabelsToItems": "Добавить метки к {{count}} элементам",
     "BulkDescription": "Эти метки будут добавлены ко всем выбранным элементам. Если у элемента уже есть такой ключ, его значение заменится; остальные метки сохранятся.",
     "EditLabels": "Изменить метки",
@@ -162,8 +161,8 @@
     "KeyMustBeUnique": "Каждый ключ можно использовать только один раз.",
     "KeyRequired": "Введите ключ.",
     "Label": "Метка",
+    "LabelItemName": "метка",
     "LabelsSaved": "Метки сохранены.",
-    "RemoveLabel": "Удалить метку",
     "Save": "Сохранить",
     "SomeLabelsFailed": "Не удалось применить изменений меток: {{count}}",
     "Target": "Объект",
@@ -441,10 +440,10 @@
     "UpdatedAt": "Обновлено"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
-    "AddChoice": "Добавить вариант",
     "Category": "Категория",
     "CategoryPlaceholder": "например, model_loading",
     "CategoryTooltip": "Категория интерфейса, используемая для группировки связанных параметров.",
+    "ChoiceItemName": "вариант",
     "ChoiceLabel": "Метка",
     "ChoiceLabelPlaceholder": "например, FP16",
     "ChoiceLabelRequired": "Метка варианта обязательна.",
