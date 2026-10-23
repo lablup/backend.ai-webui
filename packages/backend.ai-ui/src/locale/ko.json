@@ -29,17 +29,20 @@
     "FailedToActivateArtifacts": "아티팩트를 활성화하는 데 실패했습니다.",
     "SuccessfullyActivated": "아티팩트를 활성화했습니다."
   },
-  "comp:BAIAdminKeypairResourcePolicySelect": {
-    "SelectKeypairResourcePolicy": "키페어 자원 정책을 선택해주세요"
-  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "모델 서비스를 선택해주세요"
+  },
+  "comp:BAIAdminProjectResourcePolicySelect": {
+    "SelectProjectResourcePolicy": "프로젝트 자원 정책을 선택해주세요"
   },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "자원 그룹을 선택해주세요"
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "세션을 선택해주세요"
+  },
+  "comp:BAIAdminUserResourcePolicySelect": {
+    "SelectUserResourcePolicy": "사용자 자원 정책을 선택해주세요"
   },
   "comp:BAIArtifactDescriptions": {
     "Description": "설명",

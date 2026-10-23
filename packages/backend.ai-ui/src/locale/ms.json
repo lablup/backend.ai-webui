@@ -29,17 +29,20 @@
     "FailedToActivateArtifacts": "Gagal mengaktifkan artifak.",
     "SuccessfullyActivated": "Artifak yang berjaya diaktifkan."
   },
-  "comp:BAIAdminKeypairResourcePolicySelect": {
-    "SelectKeypairResourcePolicy": "Pilih Dasar Sumber Keypair"
-  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Pilih Perkhidmatan Model"
+  },
+  "comp:BAIAdminProjectResourcePolicySelect": {
+    "SelectProjectResourcePolicy": "Pilih Dasar Sumber Projek"
   },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Pilih kumpulan sumber"
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Pilih sesi"
+  },
+  "comp:BAIAdminUserResourcePolicySelect": {
+    "SelectUserResourcePolicy": "Pilih Dasar Sumber Pengguna"
   },
   "comp:BAIArtifactDescriptions": {
     "Description": "Penerangan",

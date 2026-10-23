@@ -98,7 +98,7 @@ export const docs = {
       name: 'placeholder',
       type: 'string',
       description:
-        'Trigger text while nothing is selected. Defaults to the BUI-localized "select keypair resource policy" string; a value passed here replaces it.',
+        'Trigger text while nothing is selected. There is no default, so the trigger stays empty unless a value is passed.',
     },
     {
       name: 'ref',

@@ -15,7 +15,7 @@ import {
   type PagedSelectorOption,
   type PagedSelectorSingleProps,
 } from '@lablup/ui-common/components/PagedSelector';
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 /** antd `labelInValue` shape. */
 export interface BAILabeledValue {
@@ -115,10 +115,48 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
   allowClear = false,
   selectionMark,
   width = '100%',
+  onOpenChange,
   ...pagedSelectorProps
 }) => {
   'use memo';
   const selected = toArray(value);
+
+  // Astryx's ComplexSelector focuses its trigger on every close, a click
+  // outside included, so it takes focus from the field that was just clicked.
+  const [isOpen, setIsOpen] = useState(false);
+  const focusHistoryRef = useRef<Array<HTMLElement>>([]);
+  useEffect(() => {
+    if (!isOpen) return;
+    const record = (event: FocusEvent) => {
+      if (event.target instanceof HTMLElement) {
+        focusHistoryRef.current = [
+          ...focusHistoryRef.current.slice(-4),
+          event.target,
+        ];
+      }
+    };
+    document.addEventListener('focusin', record, true);
+    return () => document.removeEventListener('focusin', record, true);
+  }, [isOpen]);
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      const trigger = document.activeElement;
+      const popupId = trigger?.getAttribute('aria-controls');
+      const popup = popupId
+        ? document.getElementById(popupId)?.closest('[popover]')
+        : null;
+      const previous = focusHistoryRef.current.findLast(
+        (element) => element !== trigger,
+      );
+      if (previous?.isConnected && !popup?.contains(previous)) {
+        previous.focus();
+      }
+    }
+    focusHistoryRef.current = [];
+    setIsOpen(open);
+    onOpenChange?.(open);
+  };
   const shared = {
     ...pagedSelectorProps,
     width,
@@ -137,6 +175,7 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
     triggerDisplay,
     maxTriggerItems: maxTriggerTokens,
     selectionIndicator: selectionMark,
+    onOpenChange: handleOpenChange,
   };
 
   return multiple ? (

@@ -29,17 +29,20 @@
     "FailedToActivateArtifacts": "Không thể kích hoạt hiện vật.",
     "SuccessfullyActivated": "Cổ vật được kích hoạt thành công."
   },
-  "comp:BAIAdminKeypairResourcePolicySelect": {
-    "SelectKeypairResourcePolicy": "Chọn chính sách tài nguyên Keypair"
-  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Chọn dịch vụ mô hình"
+  },
+  "comp:BAIAdminProjectResourcePolicySelect": {
+    "SelectProjectResourcePolicy": "Chọn chính sách tài nguyên dự án"
   },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Chọn nhóm tài nguyên"
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Chọn phiên"
+  },
+  "comp:BAIAdminUserResourcePolicySelect": {
+    "SelectUserResourcePolicy": "Chọn chính sách tài nguyên người dùng"
   },
   "comp:BAIArtifactDescriptions": {
     "Description": "Sự miêu tả",

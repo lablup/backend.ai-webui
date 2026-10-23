@@ -29,17 +29,20 @@
     "FailedToActivateArtifacts": "Échec de l'activation des artefacts.",
     "SuccessfullyActivated": "Artefacts activés avec succès."
   },
-  "comp:BAIAdminKeypairResourcePolicySelect": {
-    "SelectKeypairResourcePolicy": "Sélectionner une politique de ressources keypair"
-  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Sélectionner un service de modèle"
+  },
+  "comp:BAIAdminProjectResourcePolicySelect": {
+    "SelectProjectResourcePolicy": "Sélectionner une politique de ressources projet"
   },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Sélectionner un groupe de ressources"
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Sélectionner une session"
+  },
+  "comp:BAIAdminUserResourcePolicySelect": {
+    "SelectUserResourcePolicy": "Sélectionner une politique de ressources utilisateur"
   },
   "comp:BAIArtifactDescriptions": {
     "Description": "Description",
