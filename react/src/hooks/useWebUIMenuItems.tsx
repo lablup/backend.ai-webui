@@ -7,7 +7,10 @@ import { buildPath, MENU_KEY_TO_SCOPE_FEATURE } from '../helper/pathBuilder';
 import { useCurrentUserRole } from './backendai';
 import { useDiagnosticsBadgeSeverity } from './useAutoDiagnostics';
 import { useBAISettingUserState } from './useBAISetting';
-import { useEffectiveAdminRole } from './useCurrentUserProjectRoles';
+import {
+  useEffectiveAdminRole,
+  useIsCurrentProjectAdmin,
+} from './useCurrentUserProjectRoles';
 import { useCustomThemeConfig } from './useCustomThemeConfig';
 import {
   getRouteScopeAndKey,
@@ -257,6 +260,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   const isPluginLoaded = useWebUIPluginLoadedValue();
   const currentUserRole = useCurrentUserRole();
   const effectiveAdminRole = useEffectiveAdminRole();
+  const isCurrentProjectAdmin = useIsCurrentProjectAdmin();
 
   // Scope-aware current menu key (legacy hyphenated key, e.g. 'admin-session',
   // 'project-data', 'session'). Derived from the matched route `handle.menuKey`
@@ -582,8 +586,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
             (item) => !PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string),
           );
 
-  // The sider's Project Settings menu: open to every admin tier, since super
-  // and domain admins can also administer the current project.
+  // The project-admin pages' sider menu: every admin tier can open them.
   const projectAdminMenu: Array<WebUIAdminMenuItemType> =
     effectiveAdminRole === 'none'
       ? []
@@ -815,11 +818,12 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       !_.includes(inactiveList, item.key),
   )?.key;
 
-  // Role-filtered: `undefined` means the user cannot administer this project.
-  const firstAvailableProjectAdminMenuItem = _.find(
-    projectAdminMenu,
-    (item) => !item.disabled,
-  );
+  // The sider's Project Settings entry: only for a project admin of the
+  // current project, even for super/domain admins (who can still open the
+  // pages by URL).
+  const firstAvailableProjectAdminMenuItem = isCurrentProjectAdmin
+    ? _.find(projectAdminMenu, (item) => !item.disabled)
+    : undefined;
 
   const isSelectedProjectAdminMenu = _.some(
     projectAdminMenu,
