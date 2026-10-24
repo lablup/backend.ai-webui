@@ -1942,6 +1942,7 @@
         "rbac.EditRole",
         "rbac.ErrorMessage",
         "rbac.FilterByPermissionType",
+        "rbac.GrantedAt",
         "rbac.Inactive",
         "rbac.NoPermissionsToDisplay",
         "rbac.PermissionNotEditable",
