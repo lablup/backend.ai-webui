@@ -2784,6 +2784,33 @@
     "SharedMemory": "Udostępniona pamięć",
     "Updated": "Zaktualizowano wstępne ustawienia zasobów"
   },
+  "retentionPolicy": {
+    "Category": "Kategoria",
+    "CategoryRequired": "Wybierz kategorię.",
+    "CreatePolicy": "Utwórz zasadę",
+    "DataRetention": "Przechowywanie danych",
+    "DeletePolicy": "Usuń zasadę przechowywania",
+    "Description": "Określ, jak długo przechowywane są dane każdej kategorii. Dane, których okres przechowywania minął, są czyszczone tylko w kategoriach z włączoną zasadą.",
+    "EditPolicy": "Edytuj zasadę",
+    "OnePolicyPerCategory": "Dla każdej kategorii może istnieć tylko jedna zasada.",
+    "PolicyAlreadyExistsView": "Dla tej kategorii istnieje już zasada. <viewLink>Wyświetl</viewLink>",
+    "RetentionPeriodDays": "Okres przechowywania (dni)",
+    "RetentionPeriodRequired": "Wprowadź okres przechowywania co najmniej 1 dzień.",
+    "RetentionPolicy": "Zasada przechowywania",
+    "SuccessfullyCreated": "Utworzono zasadę przechowywania.",
+    "SuccessfullyDeleted": "Usunięto zasadę przechowywania.",
+    "SuccessfullyUpdated": "Zaktualizowano zasadę przechowywania.",
+    "categories": {
+      "DEPLOYMENTS": "Wdrożenia",
+      "LOGIN": "Historia logowania",
+      "LOGS": "Dzienniki",
+      "RECONCILE_HISTORY": "Historia uzgadniania",
+      "ROLES_INVITATIONS": "Role i zaproszenia",
+      "SESSIONS": "Sesje",
+      "USAGE_BUCKETS": "Agregaty użycia",
+      "USAGE_RECORDS": "Rekordy użycia"
+    }
+  },
   "route": {
     "CreatedAt": "Utworzony w",
     "ErrorCode": "Kod błędu",

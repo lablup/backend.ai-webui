@@ -2784,6 +2784,33 @@
     "SharedMemory": "共享内存",
     "Updated": "资源预设已更新"
   },
+  "retentionPolicy": {
+    "Category": "类别",
+    "CategoryRequired": "请选择类别。",
+    "CreatePolicy": "创建策略",
+    "DataRetention": "数据保留",
+    "DeletePolicy": "删除保留策略",
+    "Description": "设置每个类别的数据保留时长。仅对已启用策略的类别清理超过保留期限的数据。",
+    "EditPolicy": "编辑策略",
+    "OnePolicyPerCategory": "每个类别只能有一个策略。",
+    "PolicyAlreadyExistsView": "此类别已有策略。<viewLink>查看</viewLink>",
+    "RetentionPeriodDays": "保留期限（天）",
+    "RetentionPeriodRequired": "请输入至少 1 天的保留期限。",
+    "RetentionPolicy": "保留策略",
+    "SuccessfullyCreated": "已创建保留策略。",
+    "SuccessfullyDeleted": "已删除保留策略。",
+    "SuccessfullyUpdated": "已更新保留策略。",
+    "categories": {
+      "DEPLOYMENTS": "部署",
+      "LOGIN": "登录历史",
+      "LOGS": "日志",
+      "RECONCILE_HISTORY": "协调历史",
+      "ROLES_INVITATIONS": "角色与邀请",
+      "SESSIONS": "会话",
+      "USAGE_BUCKETS": "使用量汇总",
+      "USAGE_RECORDS": "使用记录"
+    }
+  },
   "route": {
     "CreatedAt": "创建在",
     "ErrorCode": "错误代码",
