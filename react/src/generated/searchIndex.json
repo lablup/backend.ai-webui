@@ -2051,7 +2051,6 @@
       "settings": [],
       "keys": [
         "button.Create",
-        "button.Info",
         "data.explorer.ValueRequired",
         "general.FailedToExportCSV",
         "resourcePolicy.AllowedHosts",
@@ -2060,7 +2059,6 @@
         "resourcePolicy.ClusterSize",
         "resourcePolicy.Concurrency",
         "resourcePolicy.CreateKeypairResourcePolicy",
-        "resourcePolicy.CreatePolicy",
         "resourcePolicy.CreateProjectResourcePolicy",
         "resourcePolicy.CreateUserResourcePolicy",
         "resourcePolicy.CreatedAt",
@@ -2082,8 +2080,6 @@
         "resourcePolicy.MaxFolderCount",
         "resourcePolicy.MaxNetworkCount",
         "resourcePolicy.MaxPendingSessionCount",
-        "resourcePolicy.MaxPendingSessionResourceSlots",
-        "resourcePolicy.MaxQuotaScopeSizeGB",
         "resourcePolicy.MaxSessionCountPerModelSession",
         "resourcePolicy.MaxSessionLifetime",
         "resourcePolicy.MaxVFolderCount",
@@ -2093,13 +2089,8 @@
         "resourcePolicy.ResourcePolicy",
         "resourcePolicy.ResourcePolicyCreated",
         "resourcePolicy.ResourcePolicyDeleted",
-        "resourcePolicy.ResourcePolicyNameAlreadyExists",
         "resourcePolicy.ResourcePolicyUpdated",
         "resourcePolicy.Sessions",
-        "resourcePolicy.StorageNodes",
-        "resourcePolicy.SuccessfullyCreated",
-        "resourcePolicy.SuccessfullyDeleted",
-        "resourcePolicy.SuccessfullyUpdated",
         "resourcePolicy.Unlimited",
         "resourcePolicy.UpdateKeypairResourcePolicy",
         "resourcePolicy.UpdateProjectResourcePolicy",
@@ -2108,8 +2099,7 @@
         "session.MaxSessionLifetime",
         "storageHost.BeCarefulToSetProjectResourcePolicy",
         "storageHost.BeCarefulToSetUserResourcePolicy",
-        "storageHost.MaxFolderSize",
-        "storageHost.ResourcePolicySuccessfullyUpdated"
+        "storageHost.MaxFolderSize"
       ]
     },
     {
