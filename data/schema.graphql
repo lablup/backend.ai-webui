@@ -14475,10 +14475,15 @@ type Mutation
   adminCreateRuntimeVariantPreset(input: CreateRuntimeVariantPresetInput!): CreateRuntimeVariantPresetPayload @join__field(graph: STRAWBERRY)
 
   """Added in 26.4.2. Update a runtime variant preset (superadmin only)."""
-  adminUpdateRuntimeVariantPreset(input: UpdateRuntimeVariantPresetInput!): UpdateRuntimeVariantPresetPayload @join__field(graph: STRAWBERRY)
+  adminUpdateRuntimeVariantPreset(input: UpdateRuntimeVariantPresetInput!): UpdateRuntimeVariantPresetPayload @join__field(graph: STRAWBERRY) @deprecated(reason: "Deprecated since 26.10.0. Use `updateRuntimeVariantPreset`.")
 
   """Added in 26.4.2. Delete a runtime variant preset (superadmin only)."""
   adminDeleteRuntimeVariantPreset(id: UUID!): DeleteRuntimeVariantPresetPayload @join__field(graph: STRAWBERRY)
+
+  """
+  Added in 26.10.0. Update a runtime variant preset. Only provided fields will be updated.
+  """
+  updateRuntimeVariantPreset(input: UpdateRuntimeVariantPresetInput!): UpdateRuntimeVariantPresetPayload! @join__field(graph: STRAWBERRY)
 
   """Added in 26.4.2. Create a deployment revision preset (admin only)."""
   adminCreateDeploymentRevisionPreset(input: CreateDeploymentRevisionPresetInput!): CreateDeploymentRevisionPresetPayload @join__field(graph: STRAWBERRY)
