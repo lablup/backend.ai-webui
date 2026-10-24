@@ -24,10 +24,9 @@
   - antd's `ref` (a `GetRef<typeof DatePicker>` imperative handle) is DROPPED.
     Astryx uses a `handleRef` convention rather than `ref` + `GetRef`
     (MAPPING §6.2), and no consumer holds this ref.
-  - `disabledDate(dayjs)` is translated, not re-typed: Astryx's
-    `dateConstraints` receives a native `Date`, which is wrapped back into a
-    `dayjs` before the consumer's predicate sees it. antd's semantics ("return
-    true to DISABLE") are identical to Astryx's, so the predicate ports as-is.
+  - `disabledDate(dayjs)` returns `true` to DISABLE a date, while an Astryx
+    `dateConstraints` entry returns `true` to ALLOW it, so the predicate is
+    negated (and the native `Date` wrapped back into a `dayjs`).
 */
 import { DateTimeInput } from '@lablup/ui-common/DateTimeInput';
 import type { ISODateTimeString } from '@lablup/ui-common/DateTimeInput';
@@ -97,7 +96,7 @@ const DatePickerISO: React.FC<DatePickerISOProps> = ({
       hasClear
       width="100%"
       dateConstraints={
-        disabledDate ? [(date: Date) => disabledDate(dayjs(date))] : undefined
+        disabledDate ? [(date: Date) => !disabledDate(dayjs(date))] : undefined
       }
       {...rest}
     />
