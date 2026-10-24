@@ -434,9 +434,7 @@ const BAIProjectSettingModal = ({
             },
           ]}
         >
-          <AstryxFormTextInput
-            label={t('comp:BAIProjectSettingModal.ProjectName')}
-          />
+          <AstryxFormTextInput label={t('comp:BAIProjectSettingModal.Name')} />
         </Form.Item>
         <Form.Item
           label={t('comp:BAIProjectSettingModal.Description')}
