@@ -10,8 +10,8 @@ catalog:
   "@astryxdesign/core": 0.7.3
   "@astryxdesign/lab": 0.7.3-canary.cac3d8d
   # The library and its CLI release in lockstep; pin both exactly (ADR 0009).
-  "@lablup/ui-common": 0.2.0-alpha.20.canary-20261023160327-a60e44171
-  "@lablup/ui-common-cli": 0.2.0-alpha.20.canary-20261023160327-a60e44171
+  "@lablup/ui-common": 0.2.0-alpha.20.canary-20261024004224-2768d882e
+  "@lablup/ui-common-cli": 0.2.0-alpha.20.canary-20261024004224-2768d882e
   "@babel/core": ^7.29.7
   "@babel/preset-typescript": ^7.29.7
   "@eslint/js": ^9.39.5
@@ -109,6 +109,9 @@ minimumReleaseAgeExclude:
   # release of it is older than 7 days yet. Remove after 2026-10-11.
   - e2e@0.17.0
   - "@e2e-dev/web@0.12.0"
+  # body-parser 1.20.9 fixes GHSA-27r3-jxmh-p828 (express ships in the local
+  # proxy binary); published 2026-10-22. Remove after 2026-10-29.
+  - body-parser@1.20.9
   # @yao-pkg/pkg 6.24.0 → pkg-fetch 3.6.7 is the first release that builds the
   # local proxy on Node 22.23.4 (October 2026 security release); published
   # 2026-10-23. Remove after 2026-10-30.
