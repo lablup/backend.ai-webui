@@ -17,6 +17,15 @@ import {
   type LoginBootstrap,
 } from './loginBootstrap';
 import { applyConfigToClient, type LoginConfigState } from './loginConfig';
+import {
+  fetchPublicDomainConfigOnce,
+  resolvePublicConfigTarget,
+} from './publicAppConfig';
+import {
+  applyWebUISettings,
+  fetchDomainWebUISettings,
+  WEBUI_SETTINGS_CONFIG_KEY,
+} from './webuiSettings';
 import { toLocalId } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { fetchQuery, graphql } from 'react-relay';
@@ -284,9 +293,17 @@ export async function connectViaGQL(
     ];
   };
 
-  // Apply config
+  // The domain's `settings` document overrides the file-derived config for
+  // the keys it carries (#10436); a failed read keeps the file values.
+  const domainSettings = await fetchDomainWebUISettings(client);
+  if (isCancelled?.()) throw cancel();
+  const effectiveCfg = applyWebUISettings(cfg, domainSettings, 'domain');
+  const { jotaiStore } = await import('../components/DefaultProviders');
+  const { loginConfigState } = await import('../hooks/useWebUIConfig');
+  jotaiStore.set(loginConfigState, effectiveCfg);
+
   applyConfigToClient({
-    ...cfg,
+    ...effectiveCfg,
     domain_name: domainName,
     domain_id: me.domain?.entityId ?? '',
   });
@@ -487,8 +504,17 @@ export async function loadConfigFromWebServer(
     // Re-process the merged config
     const { refreshConfigFromToml } = await import('./loginConfig');
     const { loginConfigState } = await import('../hooks/useWebUIConfig');
-    const loginConfig = refreshConfigFromToml(mergedConfig);
-    jotaiStore.set(loginConfigState, loginConfig);
+    const publicSlice = await fetchPublicDomainConfigOnce(
+      resolvePublicConfigTarget(mergedConfig),
+    );
+    jotaiStore.set(
+      loginConfigState,
+      applyWebUISettings(
+        refreshConfigFromToml(mergedConfig),
+        publicSlice?.[WEBUI_SETTINGS_CONFIG_KEY],
+        'public',
+      ),
+    );
   }
 }
 

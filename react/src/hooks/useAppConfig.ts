@@ -180,6 +180,28 @@ export const useDomainAppConfig = <T = AppConfigDocument>(
 };
 
 /**
+ * Superadmin read of one domain's slice of `publicConfigByDomain` — the raw
+ * PUBLIC document, so it is the edit base for the public setters. Post-login
+ * admin surfaces only.
+ */
+export const usePublicDomainAppConfig = <T = AppConfigDocument>(
+  subKey?: string | Array<string>,
+  domainName?: string,
+): T | undefined => {
+  'use memo';
+  const currentDomainName = useCurrentDomainValue();
+  const data = useLazyLoadQuery<useAppConfigPublicRawQuery>(
+    publicRawQuery,
+    { configNames: ['publicConfigByDomain'] },
+    { fetchPolicy: 'network-only' },
+  );
+  const doc = data?.scopedAppConfigFragmentsByNames?.[0]?.config as
+    AppConfigDocument | undefined;
+  const slice = _.get(doc, [domainName ?? currentDomainName]);
+  return (subKey === undefined ? slice : _.get(slice, subKey)) as T | undefined;
+};
+
+/**
  * Superadmin setter for ONE domain's slice of `publicConfigByDomain`:
  * re-reads the raw public document and replaces only `[domainName, ...subKey]`
  * so other domains' slices survive the whole-document write. Post-login admin

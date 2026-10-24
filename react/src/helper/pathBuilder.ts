@@ -128,5 +128,6 @@ export const MENU_KEY_TO_SCOPE_FEATURE: Record<string, ScopeFeature> = {
   diagnostics: { scope: 'admin', featureKey: 'diagnostics' },
   rbac: { scope: 'admin', featureKey: 'rbac' },
   branding: { scope: 'admin', featureKey: 'branding' },
+  'webui-settings': { scope: 'admin', featureKey: 'webui-settings' },
   information: { scope: 'admin', featureKey: 'information' },
 };
