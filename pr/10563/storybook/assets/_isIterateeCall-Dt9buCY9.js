@@ -1,1 +1,0 @@
-import{al as i,f as t,am as f,an as n}from"./iframe-FT1A3sBL.js";function u(e,a,r){if(!i(r))return!1;var s=typeof a;return(s=="number"?t(r)&&f(a,r.length):s=="string"&&a in r)?n(r[a],e):!1}export{u as i};
