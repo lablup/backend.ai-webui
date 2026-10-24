@@ -3452,6 +3452,7 @@
         "button.Confirm",
         "button.MoreActions",
         "button.RefreshModelInformation",
+        "chatui.AttachmentNotStored",
         "chatui.Attachments",
         "chatui.CannotFindModel",
         "chatui.ChatTitle",
