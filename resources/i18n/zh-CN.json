@@ -342,9 +342,15 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "操作名称",
     "AuditLog": "审计日志",
     "Operation": "操作",
-    "Status": "状态",
+    "Result": "结果",
+    "ResultDenied": "已拒绝",
+    "ResultFailed": "失败",
+    "ResultRunning": "进行中",
+    "ResultSuccess": "成功",
+    "ResultUnknown": "未知",
     "Time": "时间",
     "TriggeredBy": "触发者",
     "TriggeredByFilterPlaceholder": "按 ID 搜索"

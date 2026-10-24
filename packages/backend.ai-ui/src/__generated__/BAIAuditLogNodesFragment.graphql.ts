@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a118ed5d7aa9d84d77cfc9316dee3fc0>>
+ * @generated SignedSource<<075c8171a71ff1b96f7814aabd0f878b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,16 +13,17 @@ export type AuditLogStatus = "DENIED" | "ERROR" | "RUNNING" | "SUCCESS" | "UNKNO
 import { FragmentRefs } from "relay-runtime";
 export type BAIAuditLogNodesFragment$data = ReadonlyArray<{
   readonly actionId: string;
+  readonly actionName: string;
   readonly clientIp: string | null | undefined;
   readonly createdAt: string;
   readonly description: string;
   readonly duration: string | null | undefined;
-  readonly entityId: string | null | undefined;
   readonly entityType: string | null | undefined;
   readonly id: string;
   readonly operation: string;
   readonly requestId: string | null | undefined;
   readonly status: AuditLogStatus;
+  readonly targetEntityId: string | null | undefined;
   readonly triggeredBy: string | null | undefined;
   readonly user: {
     readonly basicInfo: {
@@ -59,6 +60,13 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "createdAt",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "actionName",
       "storageKey": null
     },
     {
@@ -114,7 +122,7 @@ return {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "entityId",
+      "name": "targetEntityId",
       "storageKey": null
     },
     {
@@ -167,6 +175,6 @@ return {
 };
 })();
 
-(node as any).hash = "58223a12073484572c69f4644340b796";
+(node as any).hash = "278dd6b12b39ea9841b97e0aabb8fb60";
 
 export default node;

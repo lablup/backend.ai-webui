@@ -482,14 +482,15 @@ When you open a deployment from the Admin Deployments page, the **Revisions** ca
 The **Audit Log** tab tracks all action history for the deployment. Each entry includes:
 
 - **Time**: The timestamp when the action was performed.
+- **Action**: The name of the action that wrote the record.
 - **Operation**: The type of action performed.
-- **Status**: The result of the operation.
-- **Description**: Additional details about the operation.
+- **Result**: The outcome of the operation: **Success**, **Failed**, **Denied**, **Running**, or **Unknown**.
+- **Description**: The error or denial details, shown only when the result is **Failed** or **Denied**; other rows show `-`.
 - **Duration**: The time taken to complete the operation.
 - **Triggered By**: The user who initiated the action.
 - **Client IP**: The IP address the action was requested from, shown exactly as the server reports it. It may be partially masked by the administrator's client IP masking policy, or `-` when it was not recorded.
 
-You can filter entries by **Status**, **Operation**, **Triggered By**, and a **Time** date-range picker.
+You can filter entries by **Result**, **Action**, **Operation**, **Triggered By**, and a **Time** date-range picker.
 
 <a id="admin-model-store-management"></a>
 

@@ -342,9 +342,15 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "Eylem",
     "AuditLog": "Denetim Günlüğü",
     "Operation": "İşlem",
-    "Status": "Durum",
+    "Result": "Sonuç",
+    "ResultDenied": "Reddedildi",
+    "ResultFailed": "Başarısız",
+    "ResultRunning": "Devam ediyor",
+    "ResultSuccess": "Başarılı",
+    "ResultUnknown": "Bilinmiyor",
     "Time": "Zaman",
     "TriggeredBy": "Tetikleyen",
     "TriggeredByFilterPlaceholder": "ID'ye göre ara"

@@ -342,9 +342,15 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "Действие",
     "AuditLog": "Журнал аудита",
     "Operation": "Операция",
-    "Status": "Статус",
+    "Result": "Результат",
+    "ResultDenied": "Отклонено",
+    "ResultFailed": "Ошибка",
+    "ResultRunning": "Выполняется",
+    "ResultSuccess": "Успешно",
+    "ResultUnknown": "Неизвестно",
     "Time": "Время",
     "TriggeredBy": "Инициировано",
     "TriggeredByFilterPlaceholder": "Поиск по ID"
