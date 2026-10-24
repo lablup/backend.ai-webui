@@ -633,7 +633,7 @@
     "CredentialSuccessfullyDeleted": "資格情報は正常に削除されました。",
     "Credentials": "資格情報",
     "CurrentClientIp": "現在のクライアントIP: {{ip}}",
-    "Days": "日々",
+    "Days": "{{value}}日",
     "Deactivate": "非アクティブ化",
     "DeactivateConfirm": "このキーペアを非アクティブ化してもよろしいですか？",
     "DeactivateCredential": "資格情報を非アクティブ化する",

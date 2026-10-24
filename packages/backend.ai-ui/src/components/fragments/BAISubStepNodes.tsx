@@ -57,9 +57,9 @@ export const formatElapsed = (
   const totalSeconds = Math.round(ms / 1000);
   const minutes = Math.floor(totalSeconds / 60);
   if (minutes < 60) {
-    return `${minutes}m ${String(totalSeconds % 60).padStart(2, '0')}s`;
+    return `${minutes} min ${String(totalSeconds % 60).padStart(2, '0')} s`;
   }
-  return `${Math.floor(minutes / 60)}h ${String(minutes % 60).padStart(2, '0')}m`;
+  return `${Math.floor(minutes / 60)} h ${String(minutes % 60).padStart(2, '0')} min`;
 };
 
 /** `deploying-rolling-back` and `deploying_rolling_back` are the same name. */

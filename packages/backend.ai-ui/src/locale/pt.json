@@ -176,9 +176,9 @@
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Atualização automática",
-    "EveryHours": "{{count}}h",
-    "EveryMinutes": "{{count}}m",
-    "EverySeconds": "{{count}}s",
+    "EveryHours": "{{count}} h",
+    "EveryMinutes": "{{count}} min",
+    "EverySeconds": "{{count}} s",
     "LastUpdated": "Última atualização",
     "Off": "Desligado",
     "Refresh": "Atualizar"
