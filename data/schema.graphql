@@ -2570,8 +2570,10 @@ type BulkAssignRolePayload
   """List of successfully created role assignments."""
   assigned: [RoleAssignment!]!
 
-  """List of errors for users that failed to be assigned."""
-  failed: [BulkAssignRoleError!]! @deprecated(reason: "Always empty. A user already holding the role keeps it; every other refusal raises.")
+  """
+  Users already holding the role, whose assignments are left as they stand. Every other refusal raises.
+  """
+  failed: [BulkAssignRoleError!]!
 }
 
 """
@@ -17335,6 +17337,11 @@ type Query
   Added in 26.9.0. Read the merged config for each of the given names from public fragments only. Served by the `public` subgraph without authentication, for pre-login clients that need config before they have credentials.
   """
   publicAppConfigs(configNames: [String!]!): [AppConfig!]! @join__field(graph: PUBLIC)
+
+  """
+  Added in 26.10.0. Relay Global Object Identification: resolve Nodes by their global IDs, in the given order. An ID matching no node, or one the caller may not read, is null.
+  """
+  nodes(ids: [ID!]!): [Node]! @join__field(graph: STRAWBERRY)
 
   """Added in 25.15.0. Get aggregate agent resource statistics"""
   agentStats: AgentStats @join__field(graph: STRAWBERRY)
