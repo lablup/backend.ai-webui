@@ -406,7 +406,7 @@ importers:
     devDependencies:
       '@ai-sdk/openai-compatible':
         specifier: ^3.0.0
-        version: 3.0.0(zod@4.6.1)
+        version: 3.0.0(zod@4.6.7)
       '@babel/core':
         specifier: 'catalog:'
         version: 7.29.7(supports-color@5.5.0)
@@ -415,7 +415,7 @@ importers:
         version: 7.29.7(@babel/core@7.29.7(supports-color@5.5.0))(supports-color@5.5.0)
       '@e2e-dev/web':
         specifier: 0.12.0
-        version: 0.12.0(e2e@0.17.0(@ai-sdk/openai-compatible@3.0.0(zod@4.6.1))(ai@7.0.0(zod@4.6.1)))
+        version: 0.12.0(e2e@0.17.0(@ai-sdk/openai-compatible@3.0.0(zod@4.6.7))(ai@7.0.0(zod@4.6.7)))
       '@electron/packager':
         specifier: ^18.4.4
         version: 18.4.4(supports-color@5.5.0)
@@ -463,7 +463,7 @@ importers:
         version: 6.24.0(supports-color@5.5.0)
       ai:
         specifier: ^7.0.0
-        version: 7.0.0(zod@4.6.1)
+        version: 7.0.0(zod@4.6.7)
       backend.ai-client:
         specifier: workspace:*
         version: link:packages/backend.ai-client
@@ -481,7 +481,7 @@ importers:
         version: 2.8.6
       e2e:
         specifier: 0.17.0
-        version: 0.17.0(@ai-sdk/openai-compatible@3.0.0(zod@4.6.1))(ai@7.0.0(zod@4.6.1))
+        version: 0.17.0(@ai-sdk/openai-compatible@3.0.0(zod@4.6.7))(ai@7.0.0(zod@4.6.7))
       electron:
         specifier: ^44.9.3
         version: 44.9.3(supports-color@5.5.0)
@@ -927,10 +927,10 @@ importers:
     dependencies:
       '@ai-sdk/openai-compatible':
         specifier: ^1.0.47
-        version: 1.0.47(zod@4.4.3)
+        version: 1.0.47(zod@4.6.6)
       '@ai-sdk/react':
         specifier: ^2.0.230
-        version: 2.0.230(react@19.2.8)(zod@4.4.3)
+        version: 2.0.230(react@19.2.8)(zod@4.6.6)
       '@astryxdesign/lab':
         specifier: 'catalog:'
         version: 0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -999,7 +999,7 @@ importers:
         version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       ai:
         specifier: ^5.0.228
-        version: 5.0.228(zod@4.4.3)
+        version: 5.0.228(zod@4.6.6)
       ajv:
         specifier: ^8.20.0
         version: 8.20.0
@@ -1163,8 +1163,8 @@ importers:
         specifier: ^2.9.0
         version: 2.9.0
       zod:
-        specifier: ^4.4.3
-        version: 4.4.3
+        specifier: ^4.6.6
+        version: 4.6.6
     devDependencies:
       '@astryxdesign/cli':
         specifier: 'catalog:'
@@ -5667,8 +5667,8 @@ packages:
   bn.js@5.2.5:
     resolution: {integrity: sha512-Vq886eXykuP5E6HcKSSStP3bJgrE6In5WKxVUvJ8XGpWWYs2xZHWqUwzCtGgEtBcxyd57KBFDPFoUfNzdaHCNg==}
 
-  body-parser@1.20.4:
-    resolution: {integrity: sha512-ZTgYYLMOXY9qKU/57FAo8F+HA2dGX7bqGc71txDRC1rS4frdFI5R7NhluHxH6M0YItAP0sHB4uqAOcYKxO6uGA==}
+  body-parser@1.20.9:
+    resolution: {integrity: sha512-FISIQxV5u91Y9gvuFq3q/tA/qTqLJn3AhRcEvyozyhJTh5OBFFtv827AdHU7Rbyct4r+Ba1/99oFa1Y3yuFsdw==}
     engines: {node: '>= 0.8', npm: 1.2.8000 || >= 1.4.16}
 
   boolean@3.2.0:
@@ -10576,12 +10576,12 @@ packages:
   undici-types@8.3.0:
     resolution: {integrity: sha512-j375ScV60dom+YkPFIfTLcOiPxkN/buHz5GobjLhixFuANaNs3C9l4GmrWqejgXWJ7BbJcFYpTEUkS1Ge8bpZQ==}
 
-  undici@6.28.1:
-    resolution: {integrity: sha512-zWpdTVD54H48CIybL0rWQ3ukpb9d23wM7eH5RtfdmeP70cWHNjtfo7P4vZX+5CoDcO53J4Pu5uXp7lNfjc6DRA==}
+  undici@6.29.1:
+    resolution: {integrity: sha512-EvRlUt/QqAEvXdQeRMYUfwOQsfzpDztykrG2owGEE/rBOBoYv9uF39ZzsNDh4lTFHhTr2XOZjKkYgueD12ZmGA==}
     engines: {node: '>=18.17'}
 
-  undici@7.29.0:
-    resolution: {integrity: sha512-IDxfleLmmbSskfWSUATiN1nfn2rDuvnMOqb5CWR92iIfojA0Ud+ulOAAEQ57LPr9rWmsreUyf5lwyao+7GNNVw==}
+  undici@7.30.1:
+    resolution: {integrity: sha512-03KrMbjIFDWQR5RNPrSw3bd1r12JpyFQl9/yxjUbJtqkjmllqC5lFjZh6ujeuJCKr8EOQvRW872Oy/az+nLYxg==}
     engines: {node: '>=20.18.1'}
 
   unicode-canonical-property-names-ecmascript@2.0.1:
@@ -11227,11 +11227,14 @@ packages:
     peerDependencies:
       zod: ^3.25.0 || ^4.0.0
 
-  zod@4.4.3:
-    resolution: {integrity: sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==}
-
   zod@4.6.1:
     resolution: {integrity: sha512-341aRWQsve0rvronKNTqZpjmzdbUDlFuzHaI/XLg/Ej82qffDJRRfBTCuv7+9q/rMjB6LSLyEBnW4InJeMtt/Q==}
+
+  zod@4.6.6:
+    resolution: {integrity: sha512-4UmzQUF5fxvfcYHlbjBmejU+w+hbDnWFx4aS8kBx7nPBHcO2SqPbpAG8snbdg+Xse4pRefR98hgjFgIMCI/UhA==}
+
+  zod@4.6.7:
+    resolution: {integrity: sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -11240,47 +11243,47 @@ snapshots:
 
   '@adobe/css-tools@4.5.0': {}
 
-  '@ai-sdk/gateway@2.0.127(zod@4.4.3)':
+  '@ai-sdk/gateway@2.0.127(zod@4.6.6)':
     dependencies:
       '@ai-sdk/provider': 2.0.3
-      '@ai-sdk/provider-utils': 3.0.31(zod@4.4.3)
+      '@ai-sdk/provider-utils': 3.0.31(zod@4.6.6)
       '@vercel/oidc': 3.1.0
-      zod: 4.4.3
+      zod: 4.6.6
 
-  '@ai-sdk/gateway@4.0.0(zod@4.6.1)':
+  '@ai-sdk/gateway@4.0.0(zod@4.6.7)':
     dependencies:
       '@ai-sdk/provider': 4.0.0
-      '@ai-sdk/provider-utils': 5.0.0(zod@4.6.1)
+      '@ai-sdk/provider-utils': 5.0.0(zod@4.6.7)
       '@vercel/oidc': 3.2.0
-      zod: 4.6.1
+      zod: 4.6.7
 
-  '@ai-sdk/openai-compatible@1.0.47(zod@4.4.3)':
+  '@ai-sdk/openai-compatible@1.0.47(zod@4.6.6)':
     dependencies:
       '@ai-sdk/provider': 2.0.3
-      '@ai-sdk/provider-utils': 3.0.31(zod@4.4.3)
-      zod: 4.4.3
+      '@ai-sdk/provider-utils': 3.0.31(zod@4.6.6)
+      zod: 4.6.6
 
-  '@ai-sdk/openai-compatible@3.0.0(zod@4.6.1)':
+  '@ai-sdk/openai-compatible@3.0.0(zod@4.6.7)':
     dependencies:
       '@ai-sdk/provider': 4.0.0
-      '@ai-sdk/provider-utils': 5.0.0(zod@4.6.1)
-      zod: 4.6.1
+      '@ai-sdk/provider-utils': 5.0.0(zod@4.6.7)
+      zod: 4.6.7
 
-  '@ai-sdk/provider-utils@3.0.31(zod@4.4.3)':
+  '@ai-sdk/provider-utils@3.0.31(zod@4.6.6)':
     dependencies:
       '@ai-sdk/provider': 2.0.3
       '@standard-schema/spec': 1.1.0
       eventsource-parser: 3.1.0
-      undici: 6.28.1
-      zod: 4.4.3
+      undici: 6.29.1
+      zod: 4.6.6
 
-  '@ai-sdk/provider-utils@5.0.0(zod@4.6.1)':
+  '@ai-sdk/provider-utils@5.0.0(zod@4.6.7)':
     dependencies:
       '@ai-sdk/provider': 4.0.0
       '@standard-schema/spec': 1.1.0
       '@workflow/serde': 4.1.0
       eventsource-parser: 3.1.0
-      zod: 4.6.1
+      zod: 4.6.7
 
   '@ai-sdk/provider@2.0.3':
     dependencies:
@@ -11294,15 +11297,15 @@ snapshots:
     dependencies:
       json-schema: 0.4.0
 
-  '@ai-sdk/react@2.0.230(react@19.2.8)(zod@4.4.3)':
+  '@ai-sdk/react@2.0.230(react@19.2.8)(zod@4.6.6)':
     dependencies:
-      '@ai-sdk/provider-utils': 3.0.31(zod@4.4.3)
-      ai: 5.0.228(zod@4.4.3)
+      '@ai-sdk/provider-utils': 3.0.31(zod@4.6.6)
+      ai: 5.0.228(zod@4.6.6)
       react: 19.2.8
       swr: 2.5.0(react@19.2.8)
       throttleit: 2.1.0
     optionalDependencies:
-      zod: 4.4.3
+      zod: 4.6.6
 
   '@apideck/better-ajv-errors@0.3.7(ajv@8.20.0)':
     dependencies:
@@ -11345,7 +11348,7 @@ snapshots:
       postcss: 8.5.26
       postcss-selector-parser: 7.1.6
       recast: 0.23.21
-      zod: 4.6.1
+      zod: 4.6.7
     optionalDependencies:
       '@astryxdesign/core': 0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@astryxdesign/lab': 0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -12789,9 +12792,9 @@ snapshots:
 
   '@dual-bundle/import-meta-resolve@4.2.1': {}
 
-  '@e2e-dev/web@0.12.0(e2e@0.17.0(@ai-sdk/openai-compatible@3.0.0(zod@4.6.1))(ai@7.0.0(zod@4.6.1)))':
+  '@e2e-dev/web@0.12.0(e2e@0.17.0(@ai-sdk/openai-compatible@3.0.0(zod@4.6.7))(ai@7.0.0(zod@4.6.7)))':
     dependencies:
-      e2e: 0.17.0(@ai-sdk/openai-compatible@3.0.0(zod@4.6.1))(ai@7.0.0(zod@4.6.1))
+      e2e: 0.17.0(@ai-sdk/openai-compatible@3.0.0(zod@4.6.7))(ai@7.0.0(zod@4.6.7))
       playwright-core: 1.63.0
 
   '@electron-internal/extract-zip@1.0.5': {}
@@ -12825,7 +12828,7 @@ snapshots:
       semver: 7.8.5
       sumchecker: 3.0.1(supports-color@5.5.0)
     optionalDependencies:
-      undici: 7.29.0
+      undici: 7.30.1
     transitivePeerDependencies:
       - supports-color
 
@@ -13958,12 +13961,12 @@ snapshots:
 
   '@modelcontextprotocol/core@2.2.0':
     dependencies:
-      zod: 4.4.3
+      zod: 4.6.7
 
   '@modelcontextprotocol/server@2.2.0':
     dependencies:
       '@modelcontextprotocol/core': 2.2.0
-      zod: 4.4.3
+      zod: 4.6.7
 
   '@monaco-editor/loader@1.7.0':
     dependencies:
@@ -15834,7 +15837,7 @@ snapshots:
       progress: 2.0.3
       semver: 7.8.5
       tar-fs: 3.1.2
-      undici: 7.29.0
+      undici: 7.30.1
       yargs: 16.2.0
     transitivePeerDependencies:
       - bare-abort-controller
@@ -15938,20 +15941,20 @@ snapshots:
       prompts: 2.4.2
       yaml: 2.9.0
 
-  ai@5.0.228(zod@4.4.3):
+  ai@5.0.228(zod@4.6.6):
     dependencies:
-      '@ai-sdk/gateway': 2.0.127(zod@4.4.3)
+      '@ai-sdk/gateway': 2.0.127(zod@4.6.6)
       '@ai-sdk/provider': 2.0.3
-      '@ai-sdk/provider-utils': 3.0.31(zod@4.4.3)
+      '@ai-sdk/provider-utils': 3.0.31(zod@4.6.6)
       '@opentelemetry/api': 1.9.0
-      zod: 4.4.3
+      zod: 4.6.6
 
-  ai@7.0.0(zod@4.6.1):
+  ai@7.0.0(zod@4.6.7):
     dependencies:
-      '@ai-sdk/gateway': 4.0.0(zod@4.6.1)
+      '@ai-sdk/gateway': 4.0.0(zod@4.6.7)
       '@ai-sdk/provider': 4.0.0
-      '@ai-sdk/provider-utils': 5.0.0(zod@4.6.1)
-      zod: 4.6.1
+      '@ai-sdk/provider-utils': 5.0.0(zod@4.6.7)
+      zod: 4.6.7
 
   ajv-draft-04@1.0.0(ajv@8.20.0):
     optionalDependencies:
@@ -16364,7 +16367,7 @@ snapshots:
 
   bn.js@5.2.5: {}
 
-  body-parser@1.20.4(supports-color@5.5.0):
+  body-parser@1.20.9(supports-color@5.5.0):
     dependencies:
       bytes: 3.1.2
       content-type: 1.0.5
@@ -16374,7 +16377,7 @@ snapshots:
       http-errors: 2.0.1
       iconv-lite: 0.4.24
       on-finished: 2.4.1
-      qs: 6.15.2
+      qs: 6.15.3
       raw-body: 2.5.3
       type-is: 1.6.18
       unpipe: 1.0.0
@@ -17207,7 +17210,7 @@ snapshots:
     dependencies:
       readable-stream: 2.3.8
 
-  e2e@0.17.0(@ai-sdk/openai-compatible@3.0.0(zod@4.6.1))(ai@7.0.0(zod@4.6.1)):
+  e2e@0.17.0(@ai-sdk/openai-compatible@3.0.0(zod@4.6.7))(ai@7.0.0(zod@4.6.7)):
     dependencies:
       '@ai-sdk/provider': 4.0.18
       '@clack/prompts': 1.8.1
@@ -17219,8 +17222,8 @@ snapshots:
       tsx: 4.23.14
       zod: 4.6.1
     optionalDependencies:
-      '@ai-sdk/openai-compatible': 3.0.0(zod@4.6.1)
-      ai: 7.0.0(zod@4.6.1)
+      '@ai-sdk/openai-compatible': 3.0.0(zod@4.6.7)
+      ai: 7.0.0(zod@4.6.7)
 
   eastasianwidth@0.2.0: {}
 
@@ -17715,8 +17718,8 @@ snapshots:
       '@babel/parser': 7.29.8
       eslint: 9.39.5(jiti@2.7.0)(supports-color@8.1.1)
       hermes-parser: 0.25.1
-      zod: 4.4.3
-      zod-validation-error: 4.0.2(zod@4.4.3)
+      zod: 4.6.7
+      zod-validation-error: 4.0.2(zod@4.6.7)
     transitivePeerDependencies:
       - supports-color
 
@@ -17981,7 +17984,7 @@ snapshots:
     dependencies:
       accepts: 1.3.8
       array-flatten: 1.1.1
-      body-parser: 1.20.4(supports-color@5.5.0)
+      body-parser: 1.20.9(supports-color@5.5.0)
       content-disposition: 0.5.4
       content-type: 1.0.5
       cookie: 0.7.2
@@ -19316,7 +19319,7 @@ snapshots:
       saxes: 6.0.0
       symbol-tree: 3.2.4
       tough-cookie: 6.0.2
-      undici: 7.29.0
+      undici: 7.30.1
       w3c-xmlserializer: 5.0.0
       webidl-conversions: 8.0.1
       whatwg-mimetype: 5.0.0
@@ -22442,9 +22445,9 @@ snapshots:
 
   undici-types@8.3.0: {}
 
-  undici@6.28.1: {}
+  undici@6.29.1: {}
 
-  undici@7.29.0: {}
+  undici@7.30.1: {}
 
   unicode-canonical-property-names-ecmascript@2.0.1: {}
 
@@ -23224,13 +23227,15 @@ snapshots:
 
   yoctocolors@2.2.0: {}
 
-  zod-validation-error@4.0.2(zod@4.4.3):
+  zod-validation-error@4.0.2(zod@4.6.7):
     dependencies:
-      zod: 4.4.3
-
-  zod@4.4.3: {}
+      zod: 4.6.7
 
   zod@4.6.1: {}
+
+  zod@4.6.6: {}
+
+  zod@4.6.7: {}
 
   zwitch@2.0.4: {}
 
@@ -23444,4 +23449,4 @@ time:
   workbox-sw@7.4.0: '2025-11-19T17:46:24.508Z'
   ws@8.21.1: '2026-07-14T17:12:25.599Z'
   yaml@2.9.0: '2026-05-11T10:16:24.045Z'
-  zod@4.4.3: '2026-05-04T07:06:40.819Z'
+  zod@4.6.6: '2026-10-11T16:18:23.878Z'
