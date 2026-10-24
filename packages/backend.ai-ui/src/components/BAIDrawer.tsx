@@ -181,6 +181,8 @@ const BAIDrawer: React.FC<BAIDrawerProps> = ({
     side,
     width: size,
     label: accessibleName,
+    // The header and body above own the insets; core's default would add a second one.
+    padding: 0 as const,
   };
 
   // A scrimmed lab `Drawer` would `showModal()` and inert every portalled modal
