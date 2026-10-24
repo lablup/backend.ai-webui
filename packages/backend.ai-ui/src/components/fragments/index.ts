@@ -88,6 +88,8 @@ export type {
 } from './BAIEntityLabelTokens';
 export { default as BAIEntityLabelCell } from './BAIEntityLabelCell';
 export type { BAIEntityLabelCellProps } from './BAIEntityLabelCell';
+export { default as BAIEntityLabelTargetCell } from './BAIEntityLabelTargetCell';
+export type { BAIEntityLabelTargetCellProps } from './BAIEntityLabelTargetCell';
 export { default as BAIActivateArtifactsModal } from './BAIActivateArtifactsModal';
 export type {
   BAIActivateArtifactsModalProps,

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c0f5b070824b9c873878b5b8dcb2f64e>>
+ * @generated SignedSource<<5738eba12eb3ee26e1099da17b31f44f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
+export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
 export type VFolderOwnershipType = "GROUP" | "USER" | "%future added value";
@@ -19,6 +20,10 @@ export type VFolderNodeDescriptionV2Fragment$data = {
     readonly ownershipType: VFolderOwnershipType;
     readonly permission: VFolderMountPermission;
   };
+  readonly entityId: string;
+  readonly entityLabels: {
+    readonly " $fragmentSpreads": FragmentRefs<"BAIEntityLabelSettingModalFragment" | "BAIEntityLabelTokensFragment">;
+  } | null | undefined;
   readonly host: string;
   readonly id: string;
   readonly metadata: {
@@ -42,6 +47,7 @@ export type VFolderNodeDescriptionV2Fragment$data = {
     } | null | undefined;
     readonly userId: string | null | undefined;
   };
+  readonly permissions: ReadonlyArray<PermissionBit>;
   readonly quota: {
     readonly maxFiles: number;
     readonly maxSize: {
@@ -83,6 +89,13 @@ return {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "host",
       "storageKey": null
     },
@@ -99,6 +112,40 @@ return {
       "kind": "ScalarField",
       "name": "unmanagedPath",
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "permissions",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": [
+        {
+          "kind": "Literal",
+          "name": "limit",
+          "value": 100
+        }
+      ],
+      "concreteType": "EntityLabelConnection",
+      "kind": "LinkedField",
+      "name": "entityLabels",
+      "plural": false,
+      "selections": [
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "BAIEntityLabelTokensFragment"
+        },
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "BAIEntityLabelSettingModalFragment"
+        }
+      ],
+      "storageKey": "entityLabels(limit:100)"
     },
     {
       "alias": null,
@@ -294,6 +341,6 @@ return {
 };
 })();
 
-(node as any).hash = "0e67f5e87371928e7ba51d46ec56839f";
+(node as any).hash = "f48e2849b4c8f2ddc2648a9ef8467b78";
 
 export default node;

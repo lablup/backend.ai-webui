@@ -26,8 +26,8 @@ import {
   BAIDeleteConfirmModal,
   BAIDeploymentStatusBadge,
   BAIDeploymentTagTokens,
+  BAIEntityLabelCell,
   BAIEntityLabelSettingModal,
-  BAIEntityLabelTokens,
   BAIFetchKeyButton,
   BAIFlex,
   BAIId,
@@ -43,13 +43,7 @@ import {
   useIsLabelableEntityType,
 } from 'backend.ai-ui';
 import type { BAIDeploymentStatus } from 'backend.ai-ui';
-import {
-  Trash2,
-  History,
-  EllipsisVertical,
-  SquarePenIcon,
-  TagsIcon,
-} from 'lucide-react';
+import { Trash2, History, EllipsisVertical, SquarePenIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation, useQueryLoader } from 'react-relay';
@@ -76,9 +70,11 @@ const renderFallback = () => <Text color="secondary">-</Text>;
 const DeploymentOverviewContent: React.FC<{
   deployment: DeploymentSectionData;
   onClickSchedulingHistoryAction?: () => Promise<void>;
+  onEditLabels?: () => void;
 }> = ({
   deployment,
   onClickSchedulingHistoryAction: onClickSchedulingHistory,
+  onEditLabels,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -169,8 +165,14 @@ const DeploymentOverviewContent: React.FC<{
       </MetadataListItem>
       {isLabelable && (
         <MetadataListItem label={t('entityLabel.Labels')}>
-          <BAIEntityLabelTokens
+          <BAIEntityLabelCell
             entityLabelsFrgmt={deployment?.entityLabels}
+            onEdit={onEditLabels}
+            editDisabledReason={
+              isDeploymentInStoppedCategory(deployment?.metadata.status)
+                ? t('deployment.DeploymentStopped')
+                : undefined
+            }
             onLabelClick={(label) => {
               webuiNavigate({
                 pathname: buildProjectPath('deployments'),
@@ -179,7 +181,6 @@ const DeploymentOverviewContent: React.FC<{
                 }).toString(),
               });
             }}
-            fallback={renderFallback()}
           />
         </MetadataListItem>
       )}
@@ -243,7 +244,6 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
   const [settingModalOpen, setSettingModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [historyModalOpen, setHistoryModalOpen] = useState(false);
-  const isLabelable = useIsLabelableEntityType('deployment');
   const [isLabelModalOpen, setIsLabelModalOpen] = useState(false);
   const [deploymentHistoryQueryRef, loadDeploymentHistoryQuery] =
     useQueryLoader<DeploymentSchedulingHistoryModalQuery>(
@@ -330,17 +330,6 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
                 placement="below"
                 alignment="end"
                 items={[
-                  ...(isLabelable
-                    ? [
-                        {
-                          label: t('entityLabel.EditLabels'),
-                          icon: <TagsIcon size="1em" />,
-                          isDisabled:
-                            isDeploymentInStoppedCategory(deploymentStatus),
-                          onClick: () => setIsLabelModalOpen(true),
-                        },
-                      ]
-                    : []),
                   {
                     label: t('deployment.DeleteDeployment'),
                     icon: <Trash2 size="1em" />,
@@ -358,6 +347,7 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
       >
         <DeploymentOverviewContent
           deployment={deployment}
+          onEditLabels={() => setIsLabelModalOpen(true)}
           onClickSchedulingHistoryAction={
             deployment?.id
               ? async () => {

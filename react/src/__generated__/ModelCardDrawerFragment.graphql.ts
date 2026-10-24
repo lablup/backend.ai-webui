@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6cd538bc4008bba3860af0f95174731a>>
+ * @generated SignedSource<<3c7e27e3b2b0737b9b4a9b1c2688ac10>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,7 @@ import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type ModelCardDrawerFragment$data = {
   readonly createdAt: string;
+  readonly entityId: string;
   readonly id: string;
   readonly metadata: {
     readonly architecture: string | null | undefined;
@@ -69,6 +70,13 @@ return {
   "name": "ModelCardDrawerFragment",
   "selections": [
     (v0/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
+    },
     (v1/*: any*/),
     {
       "alias": null,
@@ -237,6 +245,6 @@ return {
 };
 })();
 
-(node as any).hash = "e9733b37b26cc38fa537568c910c4b9f";
+(node as any).hash = "b664008bc5999737ca35f878acd14785";
 
 export default node;
