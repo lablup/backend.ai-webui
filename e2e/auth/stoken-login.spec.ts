@@ -429,7 +429,7 @@ test.describe(
       await expect(page.getByTestId('user-dropdown-button')).toBeVisible();
 
       // The boundary needs a resolved endpoint; point it at the real
-      // webserver so the probe carries the live session cookie.
+      // webserver so the unmocked ping and config requests resolve.
       await modifyConfigToml(page, request, {
         general: { apiEndpoint: webServerEndpoint },
       });
@@ -466,7 +466,14 @@ test.describe(
           exact: true,
         }),
       ).toBeVisible({ timeout: 15_000 });
-      await expect(page.getByRole('button', { name: /retry/i })).toBeVisible();
+      await expect(
+        page.getByRole('button', { name: 'Retry', exact: true }),
+      ).toBeVisible();
+      // Only the boundary card carries this button; LoginView's dialog does not.
+      await expect(
+        page.getByRole('button', { name: 'Copy error details', exact: true }),
+      ).toBeVisible();
+      await expect(page.getByRole('dialog')).toHaveCount(0);
       expect(sideEffects.tokenLogins).toBe(0);
       expect(sideEffects.logouts).toBe(0);
     });
