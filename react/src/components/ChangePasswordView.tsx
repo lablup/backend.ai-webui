@@ -9,9 +9,13 @@ import { useAnonymousBackendaiClient } from '../hooks';
 import BAIFormItem from './BAIFormItem';
 import { Button } from '@lablup/ui-common/Button';
 import { Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFlex, BAIModal, ESMClientErrorResponse } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAIModal,
+  BAITextInput,
+  ESMClientErrorResponse,
+} from 'backend.ai-ui';
 import { CircleCheck } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -148,7 +152,7 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
                 },
               ]}
             >
-              <TextInput
+              <BAITextInput
                 aria-label={t('data.explorer.EnterEmailAddress')}
                 hasAutoFocus
               />
@@ -171,7 +175,7 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
                 },
               ]}
             >
-              <TextInput
+              <BAITextInput
                 type="password"
                 aria-label={t('webui.menu.NewPassword')}
               />
@@ -194,7 +198,7 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
                 },
               ]}
             >
-              <TextInput
+              <BAITextInput
                 type="password"
                 aria-label={t('webui.menu.NewPasswordAgain')}
               />

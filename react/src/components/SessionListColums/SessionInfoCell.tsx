@@ -11,8 +11,7 @@ import {
 import { useTanMutation } from '../../hooks/reactQueryAlias';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAITextInput } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { SquarePen } from 'lucide-react';
 import React, { useRef, useState } from 'react';
@@ -137,7 +136,7 @@ const SessionInfoCell: React.FC<{
             }),
           ]}
         >
-          <TextInput
+          <BAITextInput
             aria-label={t('session.launcher.SessionName')}
             hasAutoFocus
             onEnter={save}

@@ -10,9 +10,7 @@ import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import BAIFormItem from './BAIFormItem';
-import { DateTimeInput } from '@lablup/ui-common/DateTimeInput';
 import type { ISODateTimeString } from '@lablup/ui-common/DateTimeInput';
-import { Selector } from '@lablup/ui-common/Selector';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAISkeleton,
@@ -36,6 +34,8 @@ import {
   useControllableValue,
   useFetchKey,
   useMutationWithPromise,
+  BAIDateTimeInput,
+  BAISelector,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -529,7 +529,7 @@ const DayjsDateTimeInput: React.FC<{
 }> = ({ value, onChange, label }) => {
   'use memo';
   return (
-    <DateTimeInput
+    <BAIDateTimeInput
       aria-label={label}
       hasSeconds
       width="100%"
@@ -639,7 +639,7 @@ const CreateAccessTokenModal: React.FC<CreateAccessTokenModalProps> = ({
           label={t('deployment.accessToken.Expiration')}
           rules={[{ required: true }]}
         >
-          <Selector
+          <BAISelector
             aria-label={t('deployment.accessToken.Expiration')}
             width={200}
             options={options}

@@ -9,11 +9,11 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIFormItem from './BAIFormItem';
 import { Banner } from '@lablup/ui-common/Banner';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIModal,
   BAIModalProps,
   useErrorMessageResolver,
+  BAITextInput,
 } from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -112,7 +112,7 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
             }),
           ]}
         >
-          <TextInput aria-label={t('general.E-Mail')} />
+          <BAITextInput aria-label={t('general.E-Mail')} />
         </BAIFormItem>
         <BAIFormItem
           name="password"
@@ -131,7 +131,7 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
             }),
           ]}
         >
-          <TextInput type="password" aria-label={t('general.Password')} />
+          <BAITextInput type="password" aria-label={t('general.Password')} />
         </BAIFormItem>
       </Form>
     </BAIModal>

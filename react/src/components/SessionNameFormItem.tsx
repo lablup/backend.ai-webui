@@ -4,7 +4,7 @@
  */
 import { Form, type FormItemProps } from '../form-engine';
 import { useValidateSessionName } from '../hooks/useValidateSessionName';
-import { TextInput } from '@lablup/ui-common/TextInput';
+import { BAITextInput } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -33,7 +33,7 @@ const SessionNameFormItem: React.FC<SessionNameFormItemProps> = ({
           dropped — the 64-char bound is already enforced by
           `useValidateSessionName`'s rules, which surface the same limit as a
           validation message. */}
-      <TextInput aria-label={t('session.launcher.SessionName')} hasClear />
+      <BAITextInput aria-label={t('session.launcher.SessionName')} hasClear />
     </Form.Item>
   );
 };

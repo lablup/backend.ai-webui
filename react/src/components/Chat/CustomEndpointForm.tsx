@@ -8,9 +8,8 @@ import { normalizeCustomEndpointURL, type ChatModel } from './ChatModel';
 import { fetchOpenAIModels, type ModelsFetchError } from './openAIModels';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAITextInput } from 'backend.ai-ui';
 import { LinkIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -213,7 +212,7 @@ const CustomEndpointForm: React.FC<CustomEndpointFormProps> = ({
           ]}
           extra={t('chatui.customEndpoint.BaseURLHint')}
         >
-          <TextInput
+          <BAITextInput
             aria-label={t('chatui.customEndpoint.BaseURL')}
             placeholder="https://api.example.com/v1"
             disabled={isBusy}
@@ -226,7 +225,7 @@ const CustomEndpointForm: React.FC<CustomEndpointFormProps> = ({
           name="apiKey"
           extra={t('chatui.customEndpoint.ApiKeyHint')}
         >
-          <TextInput
+          <BAITextInput
             type="password"
             aria-label={t('chatui.customEndpoint.ApiKey')}
             placeholder="sk-…"

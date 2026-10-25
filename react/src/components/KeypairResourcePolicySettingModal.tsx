@@ -21,10 +21,7 @@ import BAIFormItem from './BAIFormItem';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
 import { Card } from '@lablup/ui-common/Card';
 import { Icon } from '@lablup/ui-common/Icon';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
-import { Selector } from '@lablup/ui-common/Selector';
 import { HStack } from '@lablup/ui-common/Stack';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
@@ -33,6 +30,9 @@ import {
   BAIFlex,
   BAIModal,
   BAIModalProps,
+  BAINumberInput,
+  BAISelector,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleHelp } from 'lucide-react';
@@ -345,7 +345,7 @@ const KeypairResourcePolicySettingModal: React.FC<
             },
           ]}
         >
-          <TextInput
+          <BAITextInput
             aria-label={t('resourcePolicy.Name')}
             disabled={!!keypairResourcePolicy}
           />
@@ -371,7 +371,7 @@ const KeypairResourcePolicySettingModal: React.FC<
           }
           name="default_for_unspecified"
         >
-          <Selector
+          <BAISelector
             aria-label={t('resourcePolicy.DefaultForUnspecified')}
             options={[
               {
@@ -439,7 +439,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                         style={{ width: '100%' }}
                       />
                     ) : (
-                      <NumberInput
+                      <BAINumberInput
                         aria-label={
                           _.get(mergedResourceSlots, resourceSlotKey)
                             ?.description || resourceSlotKey
@@ -469,7 +469,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                   style={{ margin: 0, width: '100%' }}
                   disableUnlimited
                 >
-                  <NumberInput
+                  <BAINumberInput
                     aria-label={t('resourcePolicy.ClusterSize')}
                     min={0}
                     max={SIGNED_32BIT_MAX_INT}
@@ -483,7 +483,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                   label={t('resourcePolicy.MaxSessionLifetime')}
                   style={{ margin: 0, width: '100%' }}
                 >
-                  <NumberInput
+                  <BAINumberInput
                     aria-label={t('resourcePolicy.MaxSessionLifetime')}
                     min={0}
                     max={SIGNED_32BIT_MAX_INT}
@@ -497,7 +497,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                   label={t('resourcePolicy.MaxPendingSessionCount')}
                   style={{ margin: 0, width: '100%' }}
                 >
-                  <NumberInput
+                  <BAINumberInput
                     aria-label={t('resourcePolicy.MaxPendingSessionCount')}
                     min={0}
                     max={SIGNED_32BIT_MAX_INT}
@@ -511,7 +511,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                   unlimitedValue={0}
                   style={{ margin: 0, width: '100%' }}
                 >
-                  <NumberInput
+                  <BAINumberInput
                     aria-label={t('resourcePolicy.Concurrency')}
                     min={0}
                     max={SIGNED_32BIT_MAX_INT}
@@ -525,7 +525,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                   label={t('resourcePolicy.IdleTimeoutSec')}
                   style={{ margin: 0, width: '100%' }}
                 >
-                  <NumberInput
+                  <BAINumberInput
                     aria-label={t('resourcePolicy.IdleTimeoutSec')}
                     min={0}
                     max={Number.MAX_SAFE_INTEGER}
@@ -539,7 +539,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                   label={t('resourcePolicy.MaxConcurrentSFTPSessions')}
                   style={{ margin: 0, width: '100%' }}
                 >
-                  <NumberInput
+                  <BAINumberInput
                     aria-label={t('resourcePolicy.MaxConcurrentSFTPSessions')}
                     min={0}
                     max={SIGNED_32BIT_MAX_INT}

@@ -14,11 +14,16 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { InputGroup } from '@lablup/ui-common/InputGroup';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
-import { RadioList, RadioListItem } from '@lablup/ui-common/RadioList';
-import { Selector } from '@lablup/ui-common/Selector';
-import { TextInput } from '@lablup/ui-common/TextInput';
-import { BAIModal, BAIModalProps, useBAILogger } from 'backend.ai-ui';
+import {
+  BAIModal,
+  BAIModalProps,
+  BAINumberInput,
+  BAIRadioList,
+  BAIRadioListItem,
+  BAISelector,
+  BAITextInput,
+  useBAILogger,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -276,7 +281,7 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
           name={'type'}
           rules={[{ required: true }]}
         >
-          <RadioList
+          <BAIRadioList
             aria-label={t('autoScalingRule.ScalingType')}
             orientation="horizontal"
             onChange={(value) => {
@@ -285,16 +290,19 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
                 : formRef.current?.setFieldsValue({ min_replicas: 1 });
             }}
           >
-            <RadioListItem value="out" label={t('autoScalingRule.ScaleOut')} />
-            <RadioListItem value="in" label={t('autoScalingRule.ScaleIn')} />
-          </RadioList>
+            <BAIRadioListItem
+              value="out"
+              label={t('autoScalingRule.ScaleOut')}
+            />
+            <BAIRadioListItem value="in" label={t('autoScalingRule.ScaleIn')} />
+          </BAIRadioList>
         </Form.Item>
         <Form.Item
           label={t('autoScalingRule.MetricSource')}
           name={'metric_source'}
           rules={[{ required: true }]}
         >
-          <Selector
+          <BAISelector
             aria-label={t('autoScalingRule.MetricSource')}
             onChange={(value) => {
               // @ts-ignore
@@ -337,7 +345,7 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
                       placeholder rather than a rebuilt `TextInput` + `Popover`
                       popup; the client-side `onSearch` filter goes with the
                       dropdown. Same call as the V2 editor above. */}
-                  <TextInput
+                  <BAITextInput
                     aria-label={t('autoScalingRule.MetricName')}
                     placeholder={
                       nameOptions.length > 0
@@ -359,7 +367,7 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
                       no `optionLabelProp`, so the two-part row collapses to one
                       string, `"<label> (<value>)"`, which carries both pieces
                       the node did. `style={{width:100}}` -> `width={100}`. */}
-                  <Selector
+                  <BAISelector
                     aria-label={t('autoScalingRule.Comparator')}
                     width={100}
                     options={_.map(COMPARATOR_LABELS, (label, value) => ({
@@ -377,7 +385,7 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
                       surrounding element, so the unit is expressed as the
                       field's placeholder suffix instead of a second addon box
                       (MAPPING §3.6: `TextInput` has no `suffix`). */}
-                  <TextInput
+                  <BAITextInput
                     aria-label={t('autoScalingRule.Threshold')}
                     placeholder={
                       getFieldValue('metric_source') === 'KERNEL'
@@ -412,7 +420,7 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
             },
           ]}
         >
-          <NumberInput
+          <BAINumberInput
             aria-label={t('autoScalingRule.StepSize')}
             min={1}
             step={1}
@@ -446,7 +454,7 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
                   },
                 ]}
               >
-                <NumberInput
+                <BAINumberInput
                   aria-label={t('autoScalingRule.MaxReplicas')}
                   min={0}
                   max={SIGNED_32BIT_MAX_INT}
@@ -478,7 +486,7 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
                   },
                 ]}
               >
-                <NumberInput
+                <BAINumberInput
                   aria-label={t('autoScalingRule.MinReplicas')}
                   min={0}
                   max={SIGNED_32BIT_MAX_INT}
@@ -510,7 +518,7 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
             },
           ]}
         >
-          <NumberInput aria-label={t('autoScalingRule.CoolDownSeconds')} />
+          <BAINumberInput aria-label={t('autoScalingRule.CoolDownSeconds')} />
         </Form.Item>
       </Form>
     </BAIModal>

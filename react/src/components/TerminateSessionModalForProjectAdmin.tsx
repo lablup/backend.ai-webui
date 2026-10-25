@@ -7,7 +7,6 @@ import { TerminateSessionModalForProjectAdminMutation } from '../__generated__/T
 import { App } from '../app-shim';
 import { useCurrentUserRole } from '../hooks/backendai';
 import './TerminateSessionModalForProjectAdmin.css';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
@@ -17,6 +16,7 @@ import {
   BAIText,
   filterOutNullAndUndefined,
   type BAIModalProps,
+  BAICheckboxInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useState } from 'react';
@@ -164,12 +164,12 @@ const TerminateSessionModalForProjectAdmin: React.FC<
         </BAIText>
         {/* MAPPING §4: `checked` -> `value`, `onChange(e)` ->
             `onChange(checked)`, children -> the required `label`. */}
-        <CheckboxInput
+        <BAICheckboxInput
           value={isForce}
           onChange={(checked) => setIsForce(checked)}
         >
           {t('button.ForceTerminate')}
-        </CheckboxInput>
+        </BAICheckboxInput>
         {isForce && (
           <BAICard styles={{ body: { padding: token('--spacing-4') } }}>
             {/* `Typography.Paragraph` -> `Text as="p" display="block"`; the

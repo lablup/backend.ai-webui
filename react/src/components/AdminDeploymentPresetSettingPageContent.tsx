@@ -42,13 +42,7 @@ import RuntimeParameterFormSection, {
 } from './RuntimeParameterFormSection';
 import './collapsible-section.css';
 import { Button } from '@lablup/ui-common/Button';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
-import { Selector } from '@lablup/ui-common/Selector';
 import { Step, Stepper } from '@lablup/ui-common/Stepper';
-import { Switch } from '@lablup/ui-common/Switch';
-import { TextArea } from '@lablup/ui-common/TextArea';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIScopedImageSelect,
@@ -58,6 +52,12 @@ import {
   BAISkeleton,
   useBAIBreakpoint,
   useDebounceFn,
+  BAICheckboxInput,
+  BAINumberInput,
+  BAISelector,
+  BAISwitch,
+  BAITextArea,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
@@ -141,7 +141,7 @@ const ImageSelectField: React.FC<{
   return (
     <Suspense
       fallback={
-        <Selector
+        <BAISelector
           aria-label={t('general.Loading')}
           disabled
           options={[]}
@@ -842,7 +842,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 },
               ]}
             >
-              <TextInput
+              <BAITextInput
                 aria-label={t('adminDeploymentPreset.Name')}
                 placeholder={t('adminDeploymentPreset.NamePlaceholder')}
               />
@@ -851,7 +851,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               name="description"
               label={t('adminDeploymentPreset.Description')}
             >
-              <TextArea
+              <BAITextArea
                 aria-label={t('adminDeploymentPreset.Description')}
                 rows={2}
                 placeholder={t('adminDeploymentPreset.DescriptionPlaceholder')}
@@ -871,7 +871,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               {/* PILOT-DECISION: antd's custom `showSearch.filterOption`
                   (case-insensitive label match) dropped — Astryx Selector's
                   built-in `hasSearch` filtering covers the same UX. */}
-              <Selector
+              <BAISelector
                 aria-label={t('adminDeploymentPreset.Runtime')}
                 options={runtimeVariantOptions}
                 placeholder={t('adminDeploymentPreset.SelectRuntimeVariant')}
@@ -1051,7 +1051,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                               one 'shmem' suggestion) has no Astryx equivalent;
                               converted to a plain text input — the placeholder
                               already shows the same example. */}
-                          <TextInput
+                          <BAITextInput
                             aria-label={t('adminDeploymentPreset.ResourceOpts')}
                             placeholder={t('general.Example', {
                               value: 'shmem',
@@ -1064,7 +1064,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                           style={{ marginBottom: 0, flex: 1 }}
                           rules={[{ required: true, message: '' }]}
                         >
-                          <TextInput
+                          <BAITextInput
                             aria-label={t(
                               'session.launcher.EnvironmentVariableValue',
                             )}
@@ -1121,7 +1121,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   },
                 ]}
               >
-                <Selector
+                <BAISelector
                   aria-label={t('adminDeploymentPreset.ClusterMode')}
                   placeholder={t('adminDeploymentPreset.SelectClusterMode')}
                   options={[
@@ -1148,7 +1148,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   },
                 ]}
               >
-                <NumberInput
+                <BAINumberInput
                   aria-label={t('adminDeploymentPreset.ClusterSize')}
                   min={1}
                   placeholder={t(
@@ -1181,7 +1181,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 </BAIFlex>
               }
             >
-              <TextArea
+              <BAITextArea
                 aria-label={t('adminDeploymentPreset.StartupCommand')}
                 rows={2}
                 placeholder={t(
@@ -1193,7 +1193,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               name="bootstrapScript"
               label={t('adminDeploymentPreset.BootstrapScript')}
             >
-              <TextArea
+              <BAITextArea
                 aria-label={t('adminDeploymentPreset.BootstrapScript')}
                 rows={3}
                 placeholder={t(
@@ -1228,7 +1228,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 valuePropName="checked"
                 noStyle
               >
-                <Switch
+                <BAISwitch
                   aria-label={t('adminDeploymentPreset.ModelDefinition')}
                 />
               </BAIFormItem>
@@ -1269,7 +1269,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 style={{ flex: 1, minWidth: 120 }}
                 rules={[{ required: true }]}
               >
-                <NumberInput
+                <BAINumberInput
                   aria-label={t('adminDeploymentPreset.Replicas')}
                   min={1}
                   placeholder={t('adminDeploymentPreset.ReplicasPlaceholder')}
@@ -1281,7 +1281,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 tooltip={t('adminDeploymentPreset.RevisionHistoryLimitTooltip')}
                 style={{ flex: 1, minWidth: 120 }}
               >
-                <NumberInput
+                <BAINumberInput
                   aria-label={t('adminDeploymentPreset.RevisionHistoryLimit')}
                   min={1}
                   placeholder={t(
@@ -1295,9 +1295,9 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               valuePropName="checked"
               tooltip={t('adminDeploymentPreset.OpenToPublicTooltip')}
             >
-              <CheckboxInput>
+              <BAICheckboxInput>
                 {t('adminDeploymentPreset.OpenToPublic')}
-              </CheckboxInput>
+              </BAICheckboxInput>
             </BAIFormItem>
           </BAICard>
 

@@ -11,9 +11,6 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import BAICodeEditor from './BAICodeEditor';
 import BAIFormItem from './BAIFormItem';
 import HiddenFormItem from './HiddenFormItem';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
-import { Selector } from '@lablup/ui-common/Selector';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAdminProjectSelect,
@@ -21,6 +18,9 @@ import {
   BAIModal,
   BAIModalProps,
   BAISelect,
+  BAICheckboxInput,
+  BAISelector,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useRef } from 'react';
@@ -391,7 +391,7 @@ const ContainerRegistryEditorModal: React.FC<
             },
           ]}
         >
-          <TextInput
+          <BAITextInput
             aria-label={t('registry.RegistryName')}
             disabled={!!containerRegistry}
           />
@@ -428,7 +428,7 @@ const ContainerRegistryEditorModal: React.FC<
             },
           ]}
         >
-          <TextInput aria-label={t('registry.RegistryURL')} />
+          <BAITextInput aria-label={t('registry.RegistryURL')} />
         </BAIFormItem>
 
         <BAIFormItem
@@ -456,7 +456,7 @@ const ContainerRegistryEditorModal: React.FC<
                   },
                 ]}
               >
-                <TextInput aria-label={t('registry.Username')} />
+                <BAITextInput aria-label={t('registry.Username')} />
               </BAIFormItem>
             );
           }}
@@ -471,7 +471,7 @@ const ContainerRegistryEditorModal: React.FC<
           >
             {(form) => (
               <BAIFormItem noStyle name={'password'}>
-                <TextInput
+                <BAITextInput
                   aria-label={t('registry.Password')}
                   type="password"
                   disabled={
@@ -486,7 +486,7 @@ const ContainerRegistryEditorModal: React.FC<
           </BAIFormItem>
           {!_.isEmpty(containerRegistry) && (
             <BAIFormItem noStyle name="isChangedPassword">
-              <CheckboxInput
+              <BAICheckboxInput
                 onChange={(checked) => {
                   if (!checked) {
                     formRef.current?.setFieldValue('password', '');
@@ -494,7 +494,7 @@ const ContainerRegistryEditorModal: React.FC<
                 }}
               >
                 {t('webui.menu.ChangePassword')}
-              </CheckboxInput>
+              </BAICheckboxInput>
             </BAIFormItem>
           )}
         </BAIFormItem>
@@ -509,7 +509,7 @@ const ContainerRegistryEditorModal: React.FC<
             },
           ]}
         >
-          <Selector
+          <BAISelector
             aria-label={t('registry.RegistryType')}
             options={[
               'docker',
@@ -544,16 +544,18 @@ const ContainerRegistryEditorModal: React.FC<
                   },
                 ]}
               >
-                <TextInput aria-label={t('registry.ProjectName')} hasClear />
+                <BAITextInput aria-label={t('registry.ProjectName')} hasClear />
               </BAIFormItem>
             );
           }}
         </BAIFormItem>
         <BAIFormItem name="ssl_verify" label={t('registry.SSLVerify')}>
-          <CheckboxInput>{t('registry.SSLVerifyDescription')}</CheckboxInput>
+          <BAICheckboxInput>
+            {t('registry.SSLVerifyDescription')}
+          </BAICheckboxInput>
         </BAIFormItem>
         <BAIFormItem name="is_global" label={t('registry.IsGlobal')}>
-          <CheckboxInput
+          <BAICheckboxInput
             onChange={(checked) => {
               if (!checked) {
                 formRef.current?.setFieldValue(
@@ -564,7 +566,7 @@ const ContainerRegistryEditorModal: React.FC<
             }}
           >
             {t('registry.IsGlobalDescription')}
-          </CheckboxInput>
+          </BAICheckboxInput>
         </BAIFormItem>
         <BAIFormItem
           noStyle

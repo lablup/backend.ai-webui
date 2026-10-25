@@ -11,8 +11,6 @@ import { convertToBinaryUnit } from '../helper';
 import { reasonMessage } from '../helper/mutationError';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import BAIFormItem from './BAIFormItem';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIDynamicUnitInputNumber,
   BAIModal,
@@ -20,6 +18,8 @@ import {
   BAIResourceGroupSelect,
   BAIResourceGroupSelectProps,
   BAISelect,
+  BAINumberInput,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Fragment, Suspense, useRef } from 'react';
@@ -223,7 +223,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
             },
           ]}
         >
-          <TextInput
+          <BAITextInput
             aria-label={t('resourcePreset.PresetName')}
             disabled={!!resourcePreset}
           />
@@ -305,7 +305,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                       // (big-number safety) has no NumberInput equivalent
                       // (MAPPING.md §3.17) and is dropped — slot counts stay
                       // well inside float precision. `suffix` -> `units`.
-                      <NumberInput
+                      <BAINumberInput
                         aria-label={
                           _.get(mergedResourceSlots, resourceSlotKey)
                             ?.description || resourceSlotKey

@@ -7,15 +7,15 @@ import { Form, FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIFormItem from './BAIFormItem';
 import { SchedulerType } from './ConfigurationsSettingList';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
-import { Selector } from '@lablup/ui-common/Selector';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAIQuestionIconWithTooltip,
   BAIModal,
   BAIModalProps,
   BAIFlex,
+  BAICheckboxInput,
+  BAINumberInput,
+  BAISelector,
 } from 'backend.ai-ui';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -120,7 +120,7 @@ const SchedulerSettingModal = ({
             </Text>
           }
         >
-          <Selector
+          <BAISelector
             aria-label={t('settings.Scheduler')}
             isLoading={isUpdatingSchedulerOptions}
             onChange={(value) => {
@@ -208,7 +208,7 @@ const SchedulerSettingModal = ({
                           child, so the former `<div style={{flex:1}}>`
                           absorbed `value`/`onChange` and the field never
                           bound. */}
-                      <NumberInput
+                      <BAINumberInput
                         aria-label={t('settings.SessionCreationRetries')}
                         min={0}
                         max={1000}
@@ -232,7 +232,7 @@ const SchedulerSettingModal = ({
                     name="num_retries_to_skip_checkbox"
                     valuePropName="checked"
                   >
-                    <CheckboxInput
+                    <BAICheckboxInput
                       disabled={
                         formRef.current?.getFieldValue('schedulerType') ===
                           undefined || isUpdatingSchedulerOptions
@@ -246,7 +246,7 @@ const SchedulerSettingModal = ({
                       }}
                     >
                       {t('settings.Unset')}
-                    </CheckboxInput>
+                    </BAICheckboxInput>
                   </Form.Item>
                 )}
               </Form.Item>

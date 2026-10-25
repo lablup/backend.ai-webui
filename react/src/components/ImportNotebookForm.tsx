@@ -16,13 +16,13 @@ import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
 import { Divider } from '@lablup/ui-common/Divider';
 import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
 import { Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIButton,
   BAIFlex,
   generateRandomString,
   useBAILogger,
   useErrorMessageResolver,
+  BAITextInput,
 } from 'backend.ai-ui';
 import { Ellipsis, FolderInput } from 'lucide-react';
 import { useRef } from 'react';
@@ -131,7 +131,7 @@ const ImportNotebookForm: React.FC<ImportNotebookFormProps> = ({
           flex: 1,
         }}
       >
-        <TextInput
+        <BAITextInput
           aria-label={t('import.NotebookURL')}
           placeholder={t('import.NotebookURL')}
         />

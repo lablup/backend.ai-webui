@@ -12,12 +12,15 @@ import BAIFormItem from './BAIFormItem';
 import PrivacyPolicyModal from './PrivacyPolicyModal';
 import TermsOfServiceModal from './TermsOfServiceModal';
 import { Button } from '@lablup/ui-common/Button';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { Link } from '@lablup/ui-common/Link';
 import { HStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
-import { BAIModal, BAIModalProps } from 'backend.ai-ui';
+import {
+  BAICheckboxInput,
+  BAIModal,
+  BAIModalProps,
+  BAITextInput,
+} from 'backend.ai-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -152,7 +155,7 @@ const SignupModal: React.FC<SignupModalProps> = ({
               },
             ]}
           >
-            <TextInput
+            <BAITextInput
               type="email"
               aria-label={t('signUp.E-mail')}
               placeholder={t('maxLength.64chars')}
@@ -161,7 +164,7 @@ const SignupModal: React.FC<SignupModalProps> = ({
             />
           </BAIFormItem>
           <BAIFormItem name="user_name" label={t('signUp.UserName')}>
-            <TextInput
+            <BAITextInput
               aria-label={t('signUp.UserName')}
               placeholder={t('maxLength.64chars')}
               maxLength={64}
@@ -178,7 +181,7 @@ const SignupModal: React.FC<SignupModalProps> = ({
                 },
               ]}
             >
-              <TextInput
+              <BAITextInput
                 aria-label={t('signUp.InvitationToken')}
                 maxLength={50}
               />
@@ -199,7 +202,7 @@ const SignupModal: React.FC<SignupModalProps> = ({
             ]}
             hasFeedback
           >
-            <TextInput
+            <BAITextInput
               type="password"
               aria-label={t('signUp.Password')}
               maxLength={64}
@@ -227,7 +230,7 @@ const SignupModal: React.FC<SignupModalProps> = ({
               }),
             ]}
           >
-            <TextInput
+            <BAITextInput
               type="password"
               aria-label={t('signUp.PasswordAgain')}
               maxLength={64}
@@ -279,9 +282,9 @@ const SignupModal: React.FC<SignupModalProps> = ({
                 links move to the field's `extra` row, where they are real
                 links instead of anchors nested inside a `<label>` that
                 swallowed their clicks. */}
-            <CheckboxInput>
+            <BAICheckboxInput>
               {`${t('signUp.PolicyAgreement_1')}${t('signUp.TermsOfService')}${t('signUp.PolicyAgreement_2')}${t('signUp.PrivacyPolicy')}${t('signUp.PolicyAgreement_3')}`}
-            </CheckboxInput>
+            </BAICheckboxInput>
           </BAIFormItem>
         </Form>
       </BAIModal>

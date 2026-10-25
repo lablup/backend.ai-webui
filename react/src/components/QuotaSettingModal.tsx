@@ -7,8 +7,12 @@ import { QuotaSettingModalSetMutation } from '../__generated__/QuotaSettingModal
 import { message } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { GBToBytes, bytesToGB } from '../helper';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
-import { BAIModal, BAIModalProps, useBAILogger } from 'backend.ai-ui';
+import {
+  BAIModal,
+  BAIModalProps,
+  BAINumberInput,
+  useBAILogger,
+} from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -130,7 +134,7 @@ const QuotaSettingModal: React.FC<Props> = ({
             },
           ]}
         >
-          <NumberInput
+          <BAINumberInput
             aria-label={t('storageHost.HardLimit')}
             units="GB"
             step={0.25}

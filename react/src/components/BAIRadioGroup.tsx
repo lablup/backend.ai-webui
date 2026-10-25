@@ -2,10 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@lablup/ui-common/SegmentedControl';
+import { BAISegmentedControl, BAISegmentedControlItem } from 'backend.ai-ui';
 import React from 'react';
 
 /**
@@ -79,7 +76,7 @@ const BAIRadioGroup: React.FC<BAIRadioGroupProps> = ({
 }) => {
   'use memo';
   return (
-    <SegmentedControl
+    <BAISegmentedControl
       value={String(value ?? '')}
       aria-label={label ?? 'options'}
       disabled={disabled}
@@ -91,13 +88,13 @@ const BAIRadioGroup: React.FC<BAIRadioGroupProps> = ({
       }}
     >
       {options?.map((option) => (
-        <SegmentedControlItem
+        <BAISegmentedControlItem
           key={option.value}
           value={option.value}
-          label={option.label as string}
+          label={option.label}
         />
       ))}
-    </SegmentedControl>
+    </BAISegmentedControl>
   );
 };
 

@@ -18,10 +18,14 @@ import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import BAIFormItem from './BAIFormItem';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
 import { Banner } from '@lablup/ui-common/Banner';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  BAINumberInput,
+  BAITextInput,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -249,7 +253,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
             },
           ]}
         >
-          <TextInput
+          <BAITextInput
             aria-label={t('resourcePolicy.Name')}
             disabled={!!userResourcePolicy}
           />
@@ -266,7 +270,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
             label={t('resourcePolicy.MaxFolderCount')}
             style={{ width: '100%', margin: 0 }}
           >
-            <NumberInput
+            <BAINumberInput
               aria-label={t('resourcePolicy.MaxFolderCount')}
               min={0}
               max={SIGNED_32BIT_MAX_INT}
@@ -278,7 +282,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
             label={t('storageHost.MaxFolderSize')}
             style={{ width: '100%', margin: 0 }}
           >
-            <NumberInput
+            <BAINumberInput
               aria-label={t('storageHost.MaxFolderSize')}
               min={0}
               // Maximum safe integer divided by 10^9 to prevent overflow when converting GB to bytes
@@ -294,7 +298,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
             { required: true, message: t('data.explorer.ValueRequired') },
           ]}
         >
-          <NumberInput
+          <BAINumberInput
             aria-label={t('resourcePolicy.MaxSessionCountPerModelSession')}
             min={0}
             max={SIGNED_32BIT_MAX_INT}
@@ -307,7 +311,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
             { required: true, message: t('data.explorer.ValueRequired') },
           ]}
         >
-          <NumberInput
+          <BAINumberInput
             aria-label={t('resourcePolicy.MaxCustomizedImageCount')}
             min={0}
             max={SIGNED_32BIT_MAX_INT}

@@ -27,7 +27,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
 } from '@lablup/ui-common/DropdownMenu';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { Token } from '@lablup/ui-common/Token';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
@@ -43,6 +42,7 @@ import {
   BAISelectOptionItem as SelectOption,
   BAISelectOptionGroup as SelectOptGroup,
   BAIText,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { ArrowUpDown } from 'lucide-react';
@@ -987,7 +987,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
             : 'none',
         }}
       >
-        <TextInput
+        <BAITextInput
           aria-label={t('session.launcher.ManualImageName')}
           hasClear
           onChange={(value) => {
@@ -1005,7 +1005,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
         />
       </Form.Item>
       <Form.Item noStyle hidden name={['environments', 'image']}>
-        <TextInput aria-label={t('session.launcher.Environments')} />
+        <BAITextInput aria-label={t('session.launcher.Environments')} />
       </Form.Item>
     </>
   );

@@ -46,8 +46,12 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { HStack } from '@lablup/ui-common/Stack';
 import { Heading, Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
-import { BAILink, toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
+import {
+  BAILink,
+  BAITextInput,
+  toLocalId,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import { PencilIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -267,7 +271,7 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
                 margin: 0,
               }}
             >
-              <TextInput aria-label={t('data.Foldername')} hasAutoFocus />
+              <BAITextInput aria-label={t('data.Foldername')} hasAutoFocus />
             </BAIFormItem>
           </span>
         </Form>

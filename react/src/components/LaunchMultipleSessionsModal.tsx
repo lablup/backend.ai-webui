@@ -9,7 +9,6 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
 import type { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
@@ -18,6 +17,7 @@ import {
   BAIModal,
   BAIModalProps,
   convertToBinaryUnit,
+  BAINumberInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef } from 'react';
@@ -213,7 +213,7 @@ const LaunchMultipleSessionsModal: React.FC<
             ]}
             style={{ marginBottom: 0 }}
           >
-            <NumberInput
+            <BAINumberInput
               aria-label={t(
                 'session.launcher.LaunchMultipleSessionsSessionCount',
               )}

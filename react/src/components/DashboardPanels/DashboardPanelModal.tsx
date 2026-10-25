@@ -20,14 +20,12 @@ import type {
   PersistedPanel,
   ResourceKey,
 } from './types';
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@lablup/ui-common/SegmentedControl';
-import { Selector } from '@lablup/ui-common/Selector';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAISegmentedControl,
+  BAISegmentedControlItem,
+  BAISelector,
+  BAITextInput,
   BAIBoardItemErrorBoundary,
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -193,15 +191,17 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
             ]}
             style={{ flexShrink: 0 }}
           >
-            <SegmentedControl aria-label={t('dashboard.panelModal.PanelType')}>
+            <BAISegmentedControl
+              aria-label={t('dashboard.panelModal.PanelType')}
+            >
               {panelTypeOptions.map((type) => (
-                <SegmentedControlItem
+                <BAISegmentedControlItem
                   key={type}
                   value={type}
                   label={t(panelTypeLabelKeys[type])}
                 />
               ))}
-            </SegmentedControl>
+            </BAISegmentedControl>
           </Form.Item>
           <Form.Item
             name="resourceType"
@@ -215,7 +215,7 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
             ]}
             style={{ flex: 1, minWidth: 180 }}
           >
-            <Selector
+            <BAISelector
               aria-label={t('dashboard.panelModal.DataSource')}
               options={resourceOptions.map((key) => ({
                 value: key,
@@ -229,7 +229,7 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
             extra={t('dashboard.panelModal.TitleDescription')}
             style={{ flex: 1, minWidth: 180 }}
           >
-            <TextInput
+            <BAITextInput
               aria-label={t('dashboard.panelModal.TitleOptional')}
               placeholder={t(config.labelKey)}
               hasClear

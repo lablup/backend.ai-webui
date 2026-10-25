@@ -14,12 +14,12 @@ import { useResourceSlotsDetails } from '../hooks/backendai';
 import BAIFormItem from './BAIFormItem';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Grid } from '@lablup/ui-common/Grid';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
 import {
   BAIFlex,
   BAIModal,
   BAIModalProps,
   BAIDynamicUnitInputNumber,
+  BAINumberInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef, Fragment } from 'react';
@@ -222,7 +222,7 @@ const ManageImageResourceLimitModal: React.FC<
                         ) : (
                           // antd InputNumber `suffix` -> Astryx NumberInput
                           // `units` (MAPPING.md §3.17), via the Form adapter.
-                          <NumberInput
+                          <BAINumberInput
                             aria-label={
                               _.get(mergedResourceSlots, key)?.description ||
                               _.upperCase(key)

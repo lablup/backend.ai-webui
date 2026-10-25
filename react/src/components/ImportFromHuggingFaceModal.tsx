@@ -13,9 +13,7 @@ import { useProjectPath } from '../hooks/useRouteScope';
 import { Button } from '@lablup/ui-common/Button';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
 import { InputGroup } from '@lablup/ui-common/InputGroup';
-import { Switch } from '@lablup/ui-common/Switch';
 import { Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAICard,
@@ -25,6 +23,8 @@ import {
   BAIText,
   useErrorMessageResolver,
   useToggle,
+  BAISwitch,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
@@ -286,7 +286,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
                   },
                 ]}
               >
-                <TextInput
+                <BAITextInput
                   aria-label="Hugging Face URL"
                   onChange={(value) => {
                     setTypedURL(value);
@@ -345,13 +345,15 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
             label={t('data.modelStore.ModelStoreFolderName')}
             name="folder_name"
           >
-            <TextInput aria-label={t('data.modelStore.ModelStoreFolderName')} />
+            <BAITextInput
+              aria-label={t('data.modelStore.ModelStoreFolderName')}
+            />
           </Form.Item>
           <Form.Item
             label={t('data.modelStore.ServiceName')}
             name="service_name"
           >
-            <TextInput aria-label={t('data.modelStore.ServiceName')} />
+            <BAITextInput aria-label={t('data.modelStore.ServiceName')} />
           </Form.Item>
           {huggingFaceURL && huggingFaceModelInfo.data?.markdown ? (
             <Suspense fallback={<ReadmeFallbackCard />}>
@@ -387,7 +389,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
             {/* antd `Switch checked` → Astryx `Switch value` (MAPPING §4);
                 `label` is required and the control renders it, so the sibling
                 caption becomes the label and is hidden as duplicate text. */}
-            <Switch
+            <BAISwitch
               value={isImportOnly}
               aria-label={t('data.modelStore.ImportOnly')}
               onChange={() => {

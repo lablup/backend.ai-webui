@@ -9,7 +9,6 @@ import { useSuspendedBackendaiClient } from '../../hooks';
 import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
 import { Button } from '@lablup/ui-common/Button';
 import { Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
 // FRONTIER (ticket 17 / ticket 34): Form + Form.Item stay on the antd
 // form engine (locked SHIM decision).
 import {
@@ -18,6 +17,7 @@ import {
   BAIModalProps,
   useBAILogger,
   useErrorMessageResolver,
+  BAITextInput,
 } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -120,7 +120,7 @@ const TensorboardPathModal: React.FC<TensorboardPathModalProps> = ({
           }}
         >
           <Form.Item name="tensorboardPath">
-            <TextInput
+            <BAITextInput
               aria-label={t('session.TensorboardPath')}
               placeholder={t('session.DefaultTensorboardPath')}
             />

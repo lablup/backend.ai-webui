@@ -24,7 +24,6 @@ import { useVirtualFolderPathV2 } from '../hooks/useVirtualFolderNodePathV2';
 import { formatBinarySizeInfo } from './VFolderNodesV2';
 import VirtualFolderPathV2 from './VirtualFolderNodeItems/VirtualFolderPathV2';
 import { Badge } from '@lablup/ui-common/Badge';
-import { Selector } from '@lablup/ui-common/Selector';
 import { HStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
 import {
@@ -34,6 +33,7 @@ import {
   useErrorMessageResolver,
   badgeVariantForStatus,
   BAIText,
+  BAISelector,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -208,7 +208,7 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
       children: (
         // QA-FINDINGS Q-34 — without `placement`, Astryx overlays the selected
         // option on the trigger, covering the "Mount Permission" row label.
-        <Selector
+        <BAISelector
           placement="below"
           aria-label={t('data.folders.MountPermission')}
           placeholder={t('data.folders.MountPermissionNotSet')}

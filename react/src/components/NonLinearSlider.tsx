@@ -18,8 +18,8 @@
  - Name it with `aria-label`, or put it in a `Form.Item` whose label names it.
 */
 import useControllableState_deprecated from '../hooks/useControllableState';
-import { Slider } from '@lablup/ui-common/Slider';
 import type { SliderProps } from '@lablup/ui-common/Slider';
+import { BAISlider } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
 
@@ -83,7 +83,7 @@ const NonLinearSlider: React.FC<NonLinearSliderProps> = ({
   }));
 
   return (
-    <Slider
+    <BAISlider
       {...sliderProps}
       marks={allMarks}
       value={_.findIndex(normalizedSteps, { value: controlledValue })}

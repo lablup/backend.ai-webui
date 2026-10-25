@@ -10,16 +10,16 @@ import { isIpIncludedInList, isValidIPOrCidr } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import TOTPActivateModal from './TOTPActivateModalLazy';
-import { Switch } from '@lablup/ui-common/Switch';
-import { TagsInput } from '@lablup/ui-common/TagsInput';
 import { Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIModal,
   BAIText,
   type BAIModalProps,
   useErrorMessageResolver,
   useToggle,
+  BAISwitch,
+  BAITagsInput,
+  BAITextInput,
 } from 'backend.ai-ui';
 import { CircleAlert } from 'lucide-react';
 import React, { useRef } from 'react';
@@ -237,7 +237,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
                 labels from the LIGHT antd theme — MAPPING §5's "a nested
                 <Theme> with no explicit `mode`" hazard. Fixing it belongs to
                 the modal/theme layer, not to this call site. */}
-            <TextInput aria-label={t('webui.menu.FullName')} />
+            <BAITextInput aria-label={t('webui.menu.FullName')} />
           </Form.Item>
           <Form.Item
             name="password"
@@ -249,7 +249,10 @@ const UserProfileSettingModal: React.FC<Props> = ({
               },
             ]}
           >
-            <TextInput aria-label={t('general.NewPassword')} type="password" />
+            <BAITextInput
+              aria-label={t('general.NewPassword')}
+              type="password"
+            />
           </Form.Item>
           <Form.Item
             name="passwordConfirm"
@@ -277,7 +280,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
               }),
             ]}
           >
-            <TextInput
+            <BAITextInput
               aria-label={t('webui.menu.NewPasswordAgain')}
               type="password"
             />
@@ -333,7 +336,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
             ]}
             style={{ marginBottom: 0 }}
           >
-            <TagsInput
+            <BAITagsInput
               tokenSeparators={[',', ' ']}
               aria-label={t('credential.AllowedClientIP')}
               placeholder={t('credential.AllowedClientIPPlaceholder')}
@@ -345,7 +348,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
               label={t('webui.menu.TotpActivated')}
               valuePropName="checked"
             >
-              <Switch
+              <BAISwitch
                 aria-label={t('webui.menu.TotpActivated')}
                 isLoading={mutationToRemoveTotp.isPending}
                 onChange={(checked: boolean) => {

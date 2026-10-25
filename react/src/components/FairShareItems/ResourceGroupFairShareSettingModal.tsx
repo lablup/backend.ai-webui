@@ -11,8 +11,6 @@ import { App } from '../../app-shim';
 import { Form, FormInstance } from '../../form-engine';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { Grid } from '@lablup/ui-common/Grid';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAlert,
@@ -22,6 +20,8 @@ import {
   BAIModalProps,
   BAIQuestionIconWithTooltip,
   useBAILogger,
+  BAINumberInput,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useRef } from 'react';
@@ -187,7 +187,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
           name="resourceGroupName"
           required
         >
-          <TextInput aria-label={t('fairShare.ResourceGroup')} disabled />
+          <BAITextInput aria-label={t('fairShare.ResourceGroup')} disabled />
         </Form.Item>
 
         {/* antd `Row gutter={[24,16]}` + `Col span={12}` (a fixed 2-up over
@@ -212,7 +212,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
           >
             {/* antd `InputNumber suffix` (a unit string) -> `NumberInput
                 units` (MAPPING §3.17). */}
-            <NumberInput
+            <BAINumberInput
               aria-label={t('fairShare.DecayUnitDays')}
               min={1}
               step={1}
@@ -249,7 +249,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
               },
             ]}
           >
-            <NumberInput
+            <BAINumberInput
               aria-label={t('fairShare.HalfLifeDays')}
               min={1}
               step={1}
@@ -286,7 +286,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
               },
             ]}
           >
-            <NumberInput
+            <BAINumberInput
               aria-label={t('fairShare.LookbackDays')}
               min={1}
               step={1}
@@ -313,7 +313,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
               },
             ]}
           >
-            <NumberInput
+            <BAINumberInput
               aria-label={t('fairShare.DefaultWeight')}
               min={0}
               step={0.1}
@@ -355,7 +355,11 @@ const ResourceGroupFairShareSettingModal: React.FC<
                     label={weightLabel}
                     name={['resourceWeights', entry?.resourceType]}
                   >
-                    <NumberInput aria-label={weightLabel} min={0} step={0.1} />
+                    <BAINumberInput
+                      aria-label={weightLabel}
+                      min={0}
+                      step={0.1}
+                    />
                   </Form.Item>
                 );
               })}

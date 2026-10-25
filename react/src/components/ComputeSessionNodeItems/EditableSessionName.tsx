@@ -14,7 +14,7 @@ import { Heading } from '@lablup/ui-common/Heading';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { HStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
+import { BAITextInput } from 'backend.ai-ui';
 import { CheckIcon, CopyIcon, PencilIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -210,7 +210,7 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
                 — MAPPING §3.6 gives `suffix` no `TextInput` destination, and
                 the only route (`InputGroup`) welds a bordered addon box that
                 reads as a button, not as the faint inline hint this was. */}
-            <TextInput
+            <BAITextInput
               aria-label={t('session.SessionName')}
               size="lg"
               hasAutoFocus

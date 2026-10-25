@@ -15,14 +15,15 @@ import {
   useStartSession,
 } from '../hooks/useStartSession';
 import StorageSelect from './StorageSelect';
-import { RadioList, RadioListItem } from '@lablup/ui-common/RadioList';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIButton,
   useBAILogger,
   useErrorMessageResolver,
   useGetAvailableFolderName,
   useMutationWithPromise,
+  BAIRadioList,
+  BAIRadioListItem,
+  BAITextInput,
 } from 'backend.ai-ui';
 import { FolderInput } from 'lucide-react';
 import { useRef } from 'react';
@@ -369,7 +370,7 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
           },
         ]}
       >
-        <TextInput
+        <BAITextInput
           aria-label={
             urlType == 'github' ? t('import.GitHubURL') : t('import.GitlabURL')
           }
@@ -386,7 +387,7 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
                 `TextInput` has no length cap, and the 200-char limit is
                 already enforced by the form rule on the sibling `url` field's
                 pattern set; over-long branches fail server-side anyway. */}
-            <TextInput
+            <BAITextInput
               aria-label={t('import.GitlabDefaultBranch')}
               placeholder="master"
             />
@@ -407,21 +408,21 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
         hidden={baiClient._config.enableModelFolders !== true}
         required
       >
-        <RadioList
+        <BAIRadioList
           aria-label={t('import.VFolderUsageMode')}
           orientation="horizontal"
         >
-          <RadioListItem
+          <BAIRadioListItem
             value="general"
             label={t('data.General')}
             data-testid="general-usage-mode"
           />
-          <RadioListItem
+          <BAIRadioListItem
             value="model"
             label={t('data.Models')}
             data-testid="model-usage-mode"
           />
-        </RadioList>
+        </BAIRadioList>
       </Form.Item>
       <Form.Item>
         <BAIButton

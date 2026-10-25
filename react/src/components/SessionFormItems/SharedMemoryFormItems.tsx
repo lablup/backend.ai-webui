@@ -5,13 +5,13 @@
 import { Form } from '../../form-engine';
 import { compareNumberWithUnits, convertToBinaryUnit } from '../../helper';
 import type { MergedResourceAllocationFormValue } from './ResourceAllocationFormItems';
-import { Switch } from '@lablup/ui-common/Switch';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIDynamicUnitInputNumber,
   BAIDynamicUnitInputNumberProps,
   BAIFlex,
   BAIQuestionIconWithTooltip,
+  BAISwitch,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
@@ -32,7 +32,7 @@ const AutomaticShmemSwitch: React.FC<{
 }> = ({ autoLabel, manualLabel, onToggle, checked, onChange }) => {
   'use memo';
   return (
-    <Switch
+    <BAISwitch
       size="sm"
       value={checked ?? false}
       onChange={(next) => {
@@ -41,7 +41,7 @@ const AutomaticShmemSwitch: React.FC<{
       }}
     >
       {checked ? autoLabel : manualLabel}
-    </Switch>
+    </BAISwitch>
   );
 };
 

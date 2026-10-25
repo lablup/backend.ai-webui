@@ -11,12 +11,12 @@ import { useCurrentDomain } from '../hooks';
 import BAIFormItem from './BAIFormItem';
 import KeypairResourcePolicySelect from './KeypairResourcePolicySelect';
 import { Grid, GridSpan } from '@lablup/ui-common/Grid';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
 import {
   BAIModal,
   type BAIModalProps,
   BAISelect,
   BAIScopedUserSelect,
+  BAINumberInput,
 } from 'backend.ai-ui';
 import { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -257,7 +257,7 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
                 },
               ]}
             >
-              <NumberInput aria-label={t('credential.RateLimitFor15min')} />
+              <BAINumberInput aria-label={t('credential.RateLimitFor15min')} />
             </BAIFormItem>
           </GridSpan>
         </Grid>

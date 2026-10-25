@@ -22,10 +22,7 @@ import StorageSelect from './StorageSelect';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import { Divider } from '@lablup/ui-common/Divider';
-import { RadioList, RadioListItem } from '@lablup/ui-common/RadioList';
 import { HStack, VStack } from '@lablup/ui-common/Stack';
-import { Switch } from '@lablup/ui-common/Switch';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIIconWithTooltip,
@@ -36,6 +33,10 @@ import {
   useBAILogger,
   useErrorMessageResolver,
   useMutationWithPromise,
+  BAIRadioList,
+  BAIRadioListItem,
+  BAISwitch,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { TriangleAlertIcon } from 'lucide-react';
@@ -476,7 +477,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
               }),
             ]}
           >
-            <TextInput
+            <BAITextInput
               aria-label={t('data.Foldername')}
               placeholder={t('maxLength.64chars')}
             />
@@ -507,7 +508,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                 : undefined
             }
           >
-            <RadioList
+            <BAIRadioList
               aria-label={t('data.UsageMode')}
               disabled={isFolderTypeLocked}
               orientation="horizontal"
@@ -519,13 +520,13 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                 }
               }}
             >
-              <RadioListItem
+              <BAIRadioListItem
                 value="general"
                 label={t('data.General')}
                 data-testid="general-usage-mode"
               />
               {(baiClient._config.enableModelFolders || isProjectFolder) && (
-                <RadioListItem
+                <BAIRadioListItem
                   value="model"
                   label={t('data.Models')}
                   data-testid="model-usage-mode"
@@ -534,7 +535,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
               {/* Project folders cannot be automount folders — hide the
                   option instead of disabling it (FR-3441). */}
               {!isProjectFolder && (
-                <RadioListItem
+                <BAIRadioListItem
                   value="automount"
                   label={t('data.AutoMount')}
                   data-testid="automount-usage-mode"
@@ -545,7 +546,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                   }
                 />
               )}
-            </RadioList>
+            </BAIRadioList>
           </BAIFormItem>
 
           <BAIFormItem
@@ -597,12 +598,12 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                     },
                   ]}
                 >
-                  <RadioList
+                  <BAIRadioList
                     aria-label={t('data.folders.MountPermission')}
                     disabled={isFolderTypeLocked}
                     orientation="horizontal"
                   >
-                    <RadioListItem
+                    <BAIRadioListItem
                       value="rw"
                       label={t('data.ReadWrite')}
                       data-testid="rw-permission"
@@ -619,12 +620,12 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                         ) : undefined
                       }
                     />
-                    <RadioListItem
+                    <BAIRadioListItem
                       value="ro"
                       label={t('data.ReadOnly')}
                       data-testid="ro-permission"
                     />
-                  </RadioList>
+                  </BAIRadioList>
                 </BAIFormItem>
               );
             }}
@@ -640,7 +641,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                       name={'cloneable'}
                       layout="horizontal"
                     >
-                      <Switch aria-label={t('data.folders.Cloneable')} />
+                      <BAISwitch aria-label={t('data.folders.Cloneable')} />
                     </BAIFormItem>
                   </>
                 )

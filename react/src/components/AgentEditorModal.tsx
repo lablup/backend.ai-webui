@@ -19,15 +19,13 @@ import BAIFormItem from './BAIFormItem';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Code } from '@lablup/ui-common/Code';
 import { Divider } from '@lablup/ui-common/Divider';
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@lablup/ui-common/SegmentedControl';
-import { Switch } from '@lablup/ui-common/Switch';
 import { Text } from '@lablup/ui-common/Text';
-import { TextArea } from '@lablup/ui-common/TextArea';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import {
+  BAISegmentedControl,
+  BAISegmentedControlItem,
+  BAISwitch,
+  BAITextArea,
+  BAITextInput,
   BAIFlex,
   BAIModal,
   BAIModalProps,
@@ -67,7 +65,7 @@ const AgentTagsInput: React.FC<{
   'use memo';
   const { t } = useTranslation();
   return (
-    <TextInput
+    <BAITextInput
       aria-label={t('aiAgent.Tags')}
       placeholder={t('aiAgent.TagsPlaceholder')}
       value={(value ?? []).join(', ')}
@@ -278,15 +276,15 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
           name="name"
           rules={[{ required: true, message: t('aiAgent.NameRequired') }]}
         >
-          <TextInput aria-label={t('aiAgent.Name')} />
+          <BAITextInput aria-label={t('aiAgent.Name')} />
         </BAIFormItem>
 
         <BAIFormItem label={t('aiAgent.Icon')} name="icon">
-          <TextInput aria-label={t('aiAgent.Icon')} placeholder="🤖" />
+          <BAITextInput aria-label={t('aiAgent.Icon')} placeholder="🤖" />
         </BAIFormItem>
 
         <BAIFormItem label={t('aiAgent.Description')} name="description">
-          <TextArea aria-label={t('aiAgent.Description')} rows={2} />
+          <BAITextArea aria-label={t('aiAgent.Description')} rows={2} />
         </BAIFormItem>
 
         <BAIFormItem label={t('aiAgent.Tags')} name="tags">
@@ -301,7 +299,7 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
           ]}
           tooltip={t('aiAgent.SystemPromptTooltip')}
         >
-          <TextArea aria-label={t('aiAgent.SystemPrompt')} rows={6} />
+          <BAITextArea aria-label={t('aiAgent.SystemPrompt')} rows={6} />
         </BAIFormItem>
 
         <BAIFormItem
@@ -309,7 +307,7 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
           name="instructions"
           tooltip={t('aiAgent.InstructionsTooltip')}
         >
-          <TextArea aria-label={t('aiAgent.Instructions')} rows={3} />
+          <BAITextArea aria-label={t('aiAgent.Instructions')} rows={3} />
         </BAIFormItem>
 
         <BAIFormItem
@@ -317,7 +315,7 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
           name="preferredModelId"
           tooltip={t('aiAgent.PreferredModelIdTooltip')}
         >
-          <TextInput
+          <BAITextInput
             aria-label={t('aiAgent.PreferredModelId')}
             placeholder={t('aiAgent.PreferredModelIdPlaceholder')}
           />
@@ -330,25 +328,25 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
         <Divider>{t('aiAgent.Connection')}</Divider>
 
         <BAIFormItem label={t('aiAgent.ConnectionType')} name="connectionType">
-          <SegmentedControl aria-label={t('aiAgent.ConnectionType')}>
-            <SegmentedControlItem
+          <BAISegmentedControl aria-label={t('aiAgent.ConnectionType')}>
+            <BAISegmentedControlItem
               value="backendai"
               label={t('aiAgent.BackendAIEndpoint')}
             />
-            <SegmentedControlItem
+            <BAISegmentedControlItem
               value="external"
               label={t('aiAgent.ExternalEndpoint')}
             />
-          </SegmentedControl>
+          </BAISegmentedControl>
         </BAIFormItem>
 
         {connectionType === 'backendai' && (
           <>
             <BAIFormItem label={t('aiAgent.EndpointName')} name="endpoint">
-              <TextInput aria-label={t('aiAgent.EndpointName')} />
+              <BAITextInput aria-label={t('aiAgent.EndpointName')} />
             </BAIFormItem>
             <BAIFormItem label={t('aiAgent.EndpointId')} name="endpointId">
-              <TextInput aria-label={t('aiAgent.EndpointId')} />
+              <BAITextInput aria-label={t('aiAgent.EndpointId')} />
             </BAIFormItem>
           </>
         )}
@@ -376,13 +374,13 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
                 },
               ]}
             >
-              <TextInput
+              <BAITextInput
                 aria-label={t('aiAgent.EndpointUrl')}
                 placeholder="https://api.example.com/v1"
               />
             </BAIFormItem>
             <BAIFormItem label={t('aiAgent.ApiKey')} name="apiKey">
-              <TextInput
+              <BAITextInput
                 aria-label={t('aiAgent.ApiKey')}
                 type="password"
                 placeholder={t('aiAgent.ApiKeyPlaceholder')}
@@ -439,7 +437,7 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
         />
         <BAIFlex gap="md" align="center">
           <Text>{t('aiAgent.RequiresToolCalling')}</Text>
-          <Switch
+          <BAISwitch
             value={modelPreferences.requiresToolCalling ?? false}
             aria-label={t('aiAgent.RequiresToolCalling')}
             disabled
@@ -447,7 +445,7 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
         </BAIFlex>
         <BAIFlex gap="md" align="center" style={{ marginTop: 8 }}>
           <Text>{t('aiAgent.RequiresVision')}</Text>
-          <Switch
+          <BAISwitch
             value={modelPreferences.requiresVision ?? false}
             aria-label={t('aiAgent.RequiresVision')}
             disabled

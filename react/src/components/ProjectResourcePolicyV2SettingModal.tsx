@@ -18,10 +18,14 @@ import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import BAIFormItem from './BAIFormItem';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
 import { Banner } from '@lablup/ui-common/Banner';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  BAINumberInput,
+  BAITextInput,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -228,7 +232,7 @@ const ProjectResourcePolicyV2SettingModal: React.FC<
             },
           ]}
         >
-          <TextInput
+          <BAITextInput
             aria-label={t('resourcePolicy.Name')}
             disabled={!!projectResourcePolicy}
           />
@@ -245,7 +249,7 @@ const ProjectResourcePolicyV2SettingModal: React.FC<
             label={t('resourcePolicy.MaxFolderCount')}
             style={{ width: '100%', margin: 0 }}
           >
-            <NumberInput
+            <BAINumberInput
               aria-label={t('resourcePolicy.MaxFolderCount')}
               min={0}
               max={SIGNED_32BIT_MAX_INT}
@@ -257,7 +261,7 @@ const ProjectResourcePolicyV2SettingModal: React.FC<
             label={t('storageHost.MaxFolderSize')}
             style={{ width: '100%', margin: 0 }}
           >
-            <NumberInput
+            <BAINumberInput
               aria-label={t('storageHost.MaxFolderSize')}
               min={0}
               // Maximum safe integer divided by 10^9 to prevent overflow when converting GB to bytes
@@ -271,7 +275,7 @@ const ProjectResourcePolicyV2SettingModal: React.FC<
             label={t('resourcePolicy.MaxNetworkCount')}
             style={{ width: '100%', margin: 0 }}
           >
-            <NumberInput
+            <BAINumberInput
               aria-label={t('resourcePolicy.MaxNetworkCount')}
               min={0}
               max={SIGNED_32BIT_MAX_INT}

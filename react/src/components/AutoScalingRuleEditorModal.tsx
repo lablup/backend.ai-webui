@@ -18,16 +18,15 @@ import {
 import { useCurrentUserRole } from '../hooks/backendai';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import PrometheusQueryTemplatePreview from './PrometheusQueryTemplatePreview';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@lablup/ui-common/SegmentedControl';
-import { Selector, type SelectorOptionType } from '@lablup/ui-common/Selector';
+import type { SelectorOptionType } from '@lablup/ui-common/Selector';
 import { Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAINumberInput,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
+  BAISelector,
+  BAITextInput,
   BAIFlex,
   BAIModal,
   BAIModalProps,
@@ -254,7 +253,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
         tooltip={t('autoScalingRule.MetricSourceTooltip')}
         rules={[{ required: true }]}
       >
-        <Selector
+        <BAISelector
           aria-label={t('autoScalingRule.MetricSource')}
           onChange={(value) => {
             if (!value) return;
@@ -308,7 +307,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
         tooltip={t('autoScalingRule.MetricNameTooltip')}
         rules={[{ required: !isPrometheus }]}
       >
-        <TextInput
+        <BAITextInput
           aria-label={t('autoScalingRule.MetricName')}
           placeholder={
             nameOptions.length > 0
@@ -349,7 +348,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
               ) : undefined
             }
           >
-            <Selector
+            <BAISelector
               aria-label={t('autoScalingRule.PrometheusPreset')}
               onChange={(value) => {
                 setSelectedPresetId(value ?? undefined);
@@ -390,25 +389,25 @@ const AutoScalingRuleEditorModalContent: React.FC<{
             `style` escape hatch for layout. */}
         <div style={{ marginBottom: token('--spacing-3') }}>
           <Form.Item name={'conditionMode'} noStyle>
-            <SegmentedControl
+            <BAISegmentedControl
               aria-label={t('autoScalingRule.Condition')}
               onChange={(value) => {
                 setConditionMode(value as ConditionMode);
               }}
             >
-              <SegmentedControlItem
+              <BAISegmentedControlItem
                 value="scale_in"
                 label={t('autoScalingRule.ScaleIn')}
               />
-              <SegmentedControlItem
+              <BAISegmentedControlItem
                 value="scale_out"
                 label={t('autoScalingRule.ScaleOut')}
               />
-              <SegmentedControlItem
+              <BAISegmentedControlItem
                 value="scale_in_out"
                 label={t('autoScalingRule.ScaleInAndOut')}
               />
-            </SegmentedControl>
+            </BAISegmentedControl>
           </Form.Item>
         </div>
 
@@ -432,7 +431,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
                 },
               ]}
             >
-              <NumberInput
+              <BAINumberInput
                 aria-label={t('autoScalingRule.MinThreshold')}
                 placeholder={t('autoScalingRule.MinThreshold')}
                 min={0}
@@ -458,7 +457,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
                 },
               ]}
             >
-              <NumberInput
+              <BAINumberInput
                 aria-label={t('autoScalingRule.MaxThreshold')}
                 placeholder={t('autoScalingRule.MaxThreshold')}
                 min={0}
@@ -491,7 +490,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
                   },
                 ]}
               >
-                <NumberInput
+                <BAINumberInput
                   aria-label={t('autoScalingRule.MinThreshold')}
                   placeholder={t('autoScalingRule.MinThreshold')}
                   min={0}
@@ -526,7 +525,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
                   }),
                 ]}
               >
-                <NumberInput
+                <BAINumberInput
                   aria-label={t('autoScalingRule.MaxThreshold')}
                   placeholder={t('autoScalingRule.MaxThreshold')}
                   min={0}
@@ -584,7 +583,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
               },
             ]}
           >
-            <NumberInput
+            <BAINumberInput
               aria-label={t('autoScalingRule.StepSize')}
               min={1}
               step={1}
@@ -618,7 +617,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
       >
         {/* antd `InputNumber suffix` (a unit string) -> `NumberInput units`
             (MAPPING §3.17 — the one place Astryx is better than antd here). */}
-        <NumberInput
+        <BAINumberInput
           aria-label={t('autoScalingRule.CoolDownSeconds')}
           min={1}
           step={1}
@@ -649,7 +648,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
           },
         ]}
       >
-        <NumberInput
+        <BAINumberInput
           aria-label={t('autoScalingRule.MinReplicas')}
           min={0}
           max={SIGNED_32BIT_MAX_INT}
@@ -679,7 +678,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
           },
         ]}
       >
-        <NumberInput
+        <BAINumberInput
           aria-label={t('autoScalingRule.MaxReplicas')}
           min={0}
           max={SIGNED_32BIT_MAX_INT}

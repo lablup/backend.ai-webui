@@ -37,13 +37,8 @@ import { IconButton } from '@lablup/ui-common/IconButton';
 import { Link } from '@lablup/ui-common/Link';
 import { List, ListItem } from '@lablup/ui-common/List';
 import { usePopover } from '@lablup/ui-common/Popover';
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@lablup/ui-common/SegmentedControl';
 import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import { focusVars, spacingVars } from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
@@ -54,6 +49,9 @@ import {
   BAIFlex,
   useBAILogger,
   BAIUnmountAfterClose,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
+  BAITextInput,
 } from 'backend.ai-ui';
 import {
   X,
@@ -346,7 +344,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
             {/* `disabledMessage` is the whole control's, not a segment's:
                 Astryx has no per-item reason, and a disabled control swallows
                 the hover an external Tooltip would need. */}
-            <SegmentedControl
+            <BAISegmentedControl
               value={connectionMode}
               onChange={(value) =>
                 onConnectionModeChange(value as ConnectionMode)
@@ -360,12 +358,12 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                   : undefined
               }
             >
-              <SegmentedControlItem
+              <BAISegmentedControlItem
                 value="SESSION"
                 label={t('login.SessionMode')}
               />
-              <SegmentedControlItem value="API" label={t('login.APIMode')} />
-            </SegmentedControl>
+              <BAISegmentedControlItem value="API" label={t('login.APIMode')} />
+            </BAISegmentedControl>
           </div>
         )}
 
@@ -393,7 +391,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                 name="user_id"
                 style={{ marginBottom: token('--spacing-3') }}
               >
-                <TextInput
+                <BAITextInput
                   aria-label={t('login.E-mailOrUsername', { postProcess: [] })}
                   placeholder={t('login.E-mailOrUsername', { postProcess: [] })}
                   maxLength={64}
@@ -409,7 +407,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                 name="password"
                 style={{ marginBottom: token('--spacing-3') }}
               >
-                <TextInput
+                <BAITextInput
                   type="password"
                   aria-label={t('login.Password', { postProcess: [] })}
                   placeholder={t('login.Password', { postProcess: [] })}
@@ -422,7 +420,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                   name="otp"
                   style={{ marginBottom: token('--spacing-3') }}
                 >
-                  <TextInput
+                  <BAITextInput
                     aria-label={t('totp.OTP', { postProcess: [] })}
                     placeholder={t('totp.OTP', { postProcess: [] })}
                     disabled={isLoading}
@@ -440,7 +438,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                 name="api_key"
                 style={{ marginBottom: token('--spacing-3') }}
               >
-                <TextInput
+                <BAITextInput
                   aria-label={t('login.APIKey', { postProcess: [] })}
                   placeholder={t('login.APIKey', { postProcess: [] })}
                   maxLength={20}
@@ -452,7 +450,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                 name="secret_key"
                 style={{ marginBottom: token('--spacing-3') }}
               >
-                <TextInput
+                <BAITextInput
                   type="password"
                   aria-label={t('login.SecretKey', { postProcess: [] })}
                   placeholder={t('login.SecretKey', { postProcess: [] })}
@@ -609,7 +607,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                         },
                       ]}
                     >
-                      <TextInput
+                      <BAITextInput
                         aria-label={t('login.Endpoint', { postProcess: [] })}
                         placeholder={t('login.Endpoint', { postProcess: [] })}
                         disabled={isEndpointDisabled || isLoading}
@@ -959,7 +957,7 @@ const ResetPasswordRequiredInline: React.FC<{
             ]}
             hasFeedback
           >
-            <TextInput
+            <BAITextInput
               type="password"
               aria-label={t('webui.menu.NewPassword')}
             />
@@ -986,7 +984,7 @@ const ResetPasswordRequiredInline: React.FC<{
             {/* antd `Input.Password onPressEnter` -> dropped: the Astryx
                 adapter exposes no Enter hook, and the visible Update button
                 below is the submit affordance. */}
-            <TextInput
+            <BAITextInput
               type="password"
               aria-label={t('webui.menu.NewPasswordAgain')}
             />
@@ -1204,7 +1202,7 @@ const ChangePasswordEmailModal: React.FC<
             },
           ]}
         >
-          <TextInput
+          <BAITextInput
             type="email"
             aria-label={t('signUp.E-mail')}
             hasAutoFocus

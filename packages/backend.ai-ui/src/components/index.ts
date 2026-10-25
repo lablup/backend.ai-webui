@@ -266,6 +266,52 @@ export type {
 } from './BAISessionCrowdScene';
 export { default as BAISegmentedControlItem } from './BAISegmentedControlItem';
 export type { BAISegmentedControlItemProps } from './BAISegmentedControlItem';
+export {
+  BAICheckboxInput,
+  BAICheckboxList,
+  BAICheckboxListItem,
+  BAIDateInput,
+  BAIDateRangeInput,
+  BAIDateTimeInput,
+  BAIFileInput,
+  BAIMultiSelector,
+  BAINumberInput,
+  BAIRadioList,
+  BAIRadioListItem,
+  BAISegmentedControl,
+  BAISelector,
+  BAISlider,
+  BAISwitch,
+  BAITagsInput,
+  BAITextArea,
+  BAITextInput,
+  BAITimeInput,
+  BAITokenizer,
+  BAITypeahead,
+} from './BAIFormControls';
+export type {
+  BAICheckboxInputProps,
+  BAICheckboxListProps,
+  BAICheckboxListItemProps,
+  BAIDateInputProps,
+  BAIDateRangeInputProps,
+  BAIDateTimeInputProps,
+  BAIFileInputProps,
+  BAIMultiSelectorProps,
+  BAINumberInputProps,
+  BAIRadioListProps,
+  BAIRadioListItemProps,
+  BAISegmentedControlProps,
+  BAISelectorProps,
+  BAISliderProps,
+  BAISwitchProps,
+  BAITagsInputProps,
+  BAITextAreaProps,
+  BAITextInputProps,
+  BAITimeInputProps,
+  BAITokenizerProps,
+  BAITypeaheadProps,
+} from './BAIFormControls';
 export { default as BAIPopconfirm } from './BAIPopconfirm';
 export type { BAIPopconfirmProps } from './BAIPopconfirm';
 export { default as BAIBadgeCount } from './BAIBadgeCount';

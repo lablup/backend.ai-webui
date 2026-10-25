@@ -7,11 +7,11 @@ import { Form, type FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIFormItem from './BAIFormItem';
-import { TextArea } from '@lablup/ui-common/TextArea';
 import {
   BAIModal,
   BAIModalProps,
   useErrorMessageResolver,
+  BAITextArea,
 } from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -65,7 +65,7 @@ const SSHKeypairManualFormModal: React.FC<SSHKeypairManualFormModalProps> = ({
     >
       {/* PILOT-DECISION: the antd `Input.TextArea` sites carried a hand-rolled
           `backgroundColor: rgba(150,150,150,.1)` (mimicking
-          `.ant-typography pre`'s tint) — `TextArea` has no `style`
+          `.ant-typography pre`'s tint) — `BAITextArea` has no `style`
           escape hatch, dropped; the textarea's own default surface stands
           in. */}
       <Form ref={formRef} preserve={false} layout="vertical">
@@ -74,14 +74,14 @@ const SSHKeypairManualFormModal: React.FC<SSHKeypairManualFormModalProps> = ({
           label={t('userSettings.PublicKey')}
           rules={[{ required: true, message: t('settings.InputRequired') }]}
         >
-          <TextArea aria-label={t('userSettings.PublicKey')} rows={5} />
+          <BAITextArea aria-label={t('userSettings.PublicKey')} rows={5} />
         </BAIFormItem>
         <BAIFormItem
           name="privkey"
           label={t('userSettings.PrivateKey')}
           rules={[{ required: true, message: t('settings.InputRequired') }]}
         >
-          <TextArea aria-label={t('userSettings.PrivateKey')} rows={5} />
+          <BAITextArea aria-label={t('userSettings.PrivateKey')} rows={5} />
         </BAIFormItem>
       </Form>
     </BAIModal>

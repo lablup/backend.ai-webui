@@ -4,7 +4,7 @@
  */
 import { UserResourcePolicySelectQuery } from '../__generated__/UserResourcePolicySelectQuery.graphql';
 import { localeCompare } from '../helper';
-import { Selector } from '@lablup/ui-common/Selector';
+import { BAISelector } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -75,13 +75,16 @@ const UserResourcePolicySelect: React.FC<Props> = ({
 
   // `hasClear` switches Selector's `onChange` to a nullable value.
   return allowClear ? (
-    <Selector
+    <BAISelector
       {...commonProps}
       hasClear
       onChange={(next: string | null) => onChange?.(next ?? undefined)}
     />
   ) : (
-    <Selector {...commonProps} onChange={(next: string) => onChange?.(next)} />
+    <BAISelector
+      {...commonProps}
+      onChange={(next: string) => onChange?.(next)}
+    />
   );
 };
 

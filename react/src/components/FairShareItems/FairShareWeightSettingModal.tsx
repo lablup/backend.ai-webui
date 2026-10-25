@@ -18,8 +18,6 @@ import DomainResourceGroupAlert from './DomainResourceGroupAlert';
 import ProjectResourceGroupAlert from './ProjectResourceGroupAlert';
 import UserResourceGroupAlert from './UserResourceGroupAlert';
 import { Banner } from '@lablup/ui-common/Banner';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIBulkEditFormItem,
@@ -30,6 +28,8 @@ import {
   BAISkeleton,
   BAITokenList,
   useBAILogger,
+  BAINumberInput,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Suspense, useRef } from 'react';
@@ -584,7 +584,7 @@ const FairShareWeightSettingModal: React.FC<
             required
             hidden
           >
-            <TextInput aria-label={t('fairShare.ResourceGroup')} disabled />
+            <BAITextInput aria-label={t('fairShare.ResourceGroup')} disabled />
           </Form.Item>
           <Form.Item
             label={t('fairShare.Domain')}
@@ -600,11 +600,11 @@ const FairShareWeightSettingModal: React.FC<
                 )}
               />
             ) : (
-              <TextInput aria-label={t('fairShare.Domain')} disabled />
+              <BAITextInput aria-label={t('fairShare.Domain')} disabled />
             )}
           </Form.Item>
           <Form.Item label={t('fairShare.Project')} name="projectId" hidden>
-            <TextInput aria-label={t('fairShare.Project')} />
+            <BAITextInput aria-label={t('fairShare.Project')} />
           </Form.Item>
           <Form.Item
             label={t('fairShare.Name')}
@@ -620,7 +620,7 @@ const FairShareWeightSettingModal: React.FC<
                 )}
               />
             ) : (
-              <TextInput aria-label={t('fairShare.Name')} disabled />
+              <BAITextInput aria-label={t('fairShare.Name')} disabled />
             )}
           </Form.Item>
           <Form.Item
@@ -629,7 +629,7 @@ const FairShareWeightSettingModal: React.FC<
             required={editTarget === 'user'}
             hidden
           >
-            <TextInput aria-label={t('fairShare.User')} disabled />
+            <BAITextInput aria-label={t('fairShare.User')} disabled />
           </Form.Item>
           <Form.Item
             label={t('fairShare.Email')}
@@ -644,7 +644,7 @@ const FairShareWeightSettingModal: React.FC<
                 )}
               />
             ) : (
-              <TextInput aria-label={t('fairShare.Email')} disabled />
+              <BAITextInput aria-label={t('fairShare.Email')} disabled />
             )}
           </Form.Item>
           {isBulkEdit ? (
@@ -660,7 +660,7 @@ const FairShareWeightSettingModal: React.FC<
               }
               name="weight"
             >
-              <NumberInput
+              <BAINumberInput
                 aria-label={t('fairShare.Weight')}
                 min={0}
                 step={0.1}
@@ -678,7 +678,7 @@ const FairShareWeightSettingModal: React.FC<
               }
               name="weight"
             >
-              <NumberInput
+              <BAINumberInput
                 aria-label={t('fairShare.Weight')}
                 min={0}
                 step={0.1}

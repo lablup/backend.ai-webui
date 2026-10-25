@@ -10,13 +10,13 @@ import InputNumberWithSlider from '../InputNumberWithSlider';
 import RemainingMark from './RemainingMark';
 // FRONTIER (ticket 17): the form ENGINE is self-hosted since ticket 34 (live
 // again since ticket 35). The CONTROLS are Astryx now.
-import { SegmentedControl } from '@lablup/ui-common/SegmentedControl';
 import { spacingVars } from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import {
   BAIFlex,
   BAIQuestionIconWithTooltip,
   BAISegmentedControlItem,
+  BAISegmentedControl,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
@@ -47,7 +47,7 @@ const ClusterModeSegmented: React.FC<{
 }> = ({ label, onValueChange, items, value, onChange }) => {
   'use memo';
   return (
-    <SegmentedControl
+    <BAISegmentedControl
       aria-label={label}
       value={value ?? items[0]?.value ?? ''}
       xstyle={clusterModeSegmentedStyles.control}
@@ -73,7 +73,7 @@ const ClusterModeSegmented: React.FC<{
           }
         />
       ))}
-    </SegmentedControl>
+    </BAISegmentedControl>
   );
 };
 

@@ -23,10 +23,8 @@ import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import BAIFormItem from './BAIFormItem';
 import { Button } from '@lablup/ui-common/Button';
 import { IconButton } from '@lablup/ui-common/IconButton';
-import { Selector } from '@lablup/ui-common/Selector';
 import { HStack, VStack } from '@lablup/ui-common/Stack';
 import { Heading } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIPopconfirm,
   BAIModal,
@@ -34,6 +32,8 @@ import {
   BAIQuestionIconWithTooltip,
   BAITable,
   useErrorMessageResolver,
+  BAISelector,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleXIcon } from 'lucide-react';
@@ -219,7 +219,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
                 {/* Enter-to-invite through `onEnter`: `Form.Item` clones its
                     DIRECT child, so a key-handling wrapper would take the
                     field's `value`/`onChange`. */}
-                <TextInput
+                <BAITextInput
                   aria-label={t('general.E-Mail')}
                   placeholder={t('data.explorer.EnterEmailAddress')}
                   maxLength={64}
@@ -232,7 +232,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
                 style={{ marginBottom: 0 }}
                 required
               >
-                <Selector
+                <BAISelector
                   aria-label={t('data.Permission')}
                   options={[
                     { label: t('data.ReadOnly'), value: 'ro' },
@@ -279,7 +279,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
                 render: (perm, record) => {
                   return (
                     <HStack gap={1} align="center">
-                      <Selector
+                      <BAISelector
                         aria-label={t('data.explorer.Permission')}
                         width={130}
                         options={[

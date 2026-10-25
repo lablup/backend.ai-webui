@@ -16,7 +16,6 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import HuggingFaceModelPreview from './HuggingFaceModelPreview';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
 import { IconButton } from '@lablup/ui-common/IconButton';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIButton,
   BAIFlex,
@@ -28,6 +27,7 @@ import {
   toLocalId,
   useBAILogger,
   useErrorMessageResolver,
+  BAITextInput,
 } from 'backend.ai-ui';
 import {
   RotateCw,
@@ -259,7 +259,7 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
             },
           ]}
         >
-          <TextInput
+          <BAITextInput
             aria-label={t('import.HuggingFaceModelUrlOrId')}
             placeholder="https://huggingface.co/openai/gpt-oss-20b"
           />
@@ -290,7 +290,7 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
           label={t('import.HuggingFaceRevision')}
           rules={[{ type: 'string', max: 200 }]}
         >
-          <TextInput
+          <BAITextInput
             aria-label={t('import.HuggingFaceRevision')}
             placeholder="main"
           />
@@ -303,7 +303,7 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
         >
           {/* PILOT-DECISION: antd `Input.Password`'s reveal toggle has no
               Astryx counterpart and is dropped. */}
-          <TextInput
+          <BAITextInput
             aria-label={t('import.HuggingFaceToken')}
             type="password"
             autoComplete="off"

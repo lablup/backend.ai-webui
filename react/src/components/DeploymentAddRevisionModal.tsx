@@ -76,17 +76,15 @@ import './collapsible-section.css';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { Collapsible } from '@lablup/ui-common/Collapsible';
 import { Divider } from '@lablup/ui-common/Divider';
 import { IconButton } from '@lablup/ui-common/IconButton';
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@lablup/ui-common/SegmentedControl';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAICheckboxInput,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
+  BAITextInput,
   BAIAvailablePresetSelect,
   BAIComplexSelect,
   BAIFlex,
@@ -1837,22 +1835,22 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               acted the modal title's bold leaking into the Segmented — Astryx
               SegmentedControl styles its own items, so the override is
               dropped. The `label` is aria-only; reuses an existing key. */}
-          <SegmentedControl
+          <BAISegmentedControl
             value={effectiveMode}
             onChange={(next) => {
               void handleModeChange(next as 'preset' | 'custom');
             }}
             aria-label={t('deployment.AddRevision')}
           >
-            <SegmentedControlItem
+            <BAISegmentedControlItem
               value="preset"
               label={t('deployment.PresetMode')}
             />
-            <SegmentedControlItem
+            <BAISegmentedControlItem
               value="custom"
               label={t('deployment.CustomMode')}
             />
-          </SegmentedControl>
+          </BAISegmentedControl>
         </BAIFlex>
       }
       width={800}
@@ -1860,13 +1858,13 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         <BAIFlex direction="row" align="center" justify="between" gap="sm">
           {/* Standalone (non-form) checkbox → Astryx CheckboxInput: onChange
               receives the boolean value directly (no CheckboxChangeEvent). */}
-          <CheckboxInput
+          <BAICheckboxInput
             value={autoActivate}
             onChange={(next) => setAutoActivate(next)}
             disabled={effectiveMode === 'preset' && hasNoPresets}
           >
             {t('deployment.AutoApply')}
-          </CheckboxInput>
+          </BAICheckboxInput>
           <BAIFlex direction="row" align="center" gap="xs">
             <Button
               label={t('button.Cancel')}
@@ -2350,7 +2348,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               tooltip={t('modelService.ModelMountTooltip')}
               style={{ flex: 1 }}
             >
-              <TextInput
+              <BAITextInput
                 aria-label={t('modelService.ModelMountDestination')}
                 hasClear
                 placeholder={modelDefinitionDefaults?.modelMountDestination}
@@ -2538,7 +2536,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   rules={[{ whitespace: true }]}
                   preserve={false}
                 >
-                  <TextInput
+                  <BAITextInput
                     aria-label={t('deployment.ModelDefinitionPath')}
                     hasClear
                     placeholder="model-definition.yaml"

@@ -9,12 +9,12 @@ import { useSetBAINotification } from '../../hooks/useBAINotification';
 import { Divider } from '@lablup/ui-common/Divider';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import { Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIFlex,
   BAIMetadataList,
   BAIModal,
   BAIModalProps,
+  BAITextInput,
 } from 'backend.ai-ui';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -143,7 +143,7 @@ const ContainerCommitModal: React.FC<ContainerCommitModalProps> = ({
               },
             ]}
           >
-            <TextInput
+            <BAITextInput
               aria-label={t('session.CommitImageName')}
               placeholder={t('inputLimit.4to32chars')}
             />

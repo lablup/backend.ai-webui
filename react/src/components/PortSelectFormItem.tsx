@@ -4,8 +4,8 @@
  */
 import { Form, type FormItemProps } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { TagsInput } from '@lablup/ui-common/TagsInput';
 import { Token } from '@lablup/ui-common/Token';
+import { BAITagsInput } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import type { CSSProperties } from 'react';
 import React from 'react';
@@ -111,7 +111,7 @@ const PortSelectFormItem: React.FC<Props> = ({
         `tokenSeparators` matches the `extra` line above, which tells the user
         to separate values with a comma or a space.
       */}
-      <TagsInput
+      <BAITagsInput
         tokenSeparators={[',', ' ']}
         aria-label={t('session.launcher.PreOpenPortTitle')}
         // An EMPTY placeholder, deliberately: Tokenizer defaults to "Search…",

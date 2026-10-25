@@ -12,13 +12,9 @@ import {
 import InputNumberWithSlider from './InputNumberWithSlider';
 import './collapsible-section.css';
 import { Banner } from '@lablup/ui-common/Banner';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { Collapsible } from '@lablup/ui-common/Collapsible';
 import { IconButton } from '@lablup/ui-common/IconButton';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
-import { Selector } from '@lablup/ui-common/Selector';
 import { Tab, TabList } from '@lablup/ui-common/TabList';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import { spacingVars } from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
@@ -26,6 +22,10 @@ import {
   BAIFlex,
   READ_UI_TYPE_TO_FORM_UI_TYPE,
   isValueTypeCompatibleWithUIType,
+  BAICheckboxInput,
+  BAINumberInput,
+  BAISelector,
+  BAITextInput,
 } from 'backend.ai-ui';
 import { Undo2 } from 'lucide-react';
 import React, { useEffect, useEffectEvent, useState } from 'react';
@@ -457,7 +457,7 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
         >
           {/* `min`/`max` are deliberately NOT passed: `NumberInput` clamps,
               and `rangeRules` give validation feedback instead. */}
-          <NumberInput
+          <BAINumberInput
             aria-label={label}
             step={isInt ? 1 : 0.1}
             isIntegerOnly={isInt}
@@ -480,7 +480,7 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
         >
           {/* MAPPING 3.1: a small static option list -> `Selector`;
               `allowClear` -> `hasClear`. */}
-          <Selector
+          <BAISelector
             aria-label={label}
             hasClear
             placeholder={
@@ -508,7 +508,7 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
           rules={requiredRules}
           getValueFromEvent={touchOnChange}
         >
-          <CheckboxInput>{t('general.Enable')}</CheckboxInput>
+          <BAICheckboxInput>{t('general.Enable')}</BAICheckboxInput>
         </Form.Item>
       );
 
@@ -524,7 +524,7 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
           rules={requiredRules}
           getValueFromEvent={touchOnChange}
         >
-          <TextInput
+          <BAITextInput
             aria-label={label}
             placeholder={
               defaultPlaceholder ?? param.text?.placeholder ?? undefined

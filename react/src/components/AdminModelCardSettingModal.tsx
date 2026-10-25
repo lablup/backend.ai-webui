@@ -13,10 +13,6 @@ import FolderCreateModalV2 from './FolderCreateModalV2';
 import FolderLink from './FolderLink';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import { Banner } from '@lablup/ui-common/Banner';
-import { Selector } from '@lablup/ui-common/Selector';
-import { TagsInput } from '@lablup/ui-common/TagsInput';
-import { TextArea } from '@lablup/ui-common/TextArea';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIButton,
   BAIFlex,
@@ -26,6 +22,10 @@ import {
   type BAIProjectVfolderSelectRef,
   convertToUUID,
   useBAILogger,
+  BAISelector,
+  BAITagsInput,
+  BAITextArea,
+  BAITextInput,
 } from 'backend.ai-ui';
 import { PlusIcon } from 'lucide-react';
 import { Suspense, useRef, useState } from 'react';
@@ -314,7 +314,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                 },
               ]}
             >
-              <TextInput aria-label={t('adminModelCard.Name')} />
+              <BAITextInput aria-label={t('adminModelCard.Name')} />
             </BAIFormItem>
 
             {isEditMode ? (
@@ -341,7 +341,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                 <BAIFlex gap="xs" align="center">
                   <Suspense
                     fallback={
-                      <TextInput
+                      <BAITextInput
                         value=""
                         aria-label={t('adminModelCard.ModelStorageFolder')}
                         disabled
@@ -384,7 +384,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Author')}
               tooltip={t('adminModelCard.AuthorTooltip')}
             >
-              <TextInput aria-label={t('adminModelCard.Author')} />
+              <BAITextInput aria-label={t('adminModelCard.Author')} />
             </BAIFormItem>
 
             <BAIFormItem
@@ -392,7 +392,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Title')}
               tooltip={t('adminModelCard.TitleTooltip')}
             >
-              <TextInput aria-label={t('adminModelCard.Title')} />
+              <BAITextInput aria-label={t('adminModelCard.Title')} />
             </BAIFormItem>
 
             <BAIFormItem
@@ -400,7 +400,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.ModelVersion')}
               tooltip={t('adminModelCard.ModelVersionTooltip')}
             >
-              <TextInput aria-label={t('adminModelCard.ModelVersion')} />
+              <BAITextInput aria-label={t('adminModelCard.ModelVersion')} />
             </BAIFormItem>
 
             <BAIFormItem
@@ -408,7 +408,10 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Description')}
               tooltip={t('adminModelCard.DescriptionTooltip')}
             >
-              <TextArea aria-label={t('adminModelCard.Description')} rows={3} />
+              <BAITextArea
+                aria-label={t('adminModelCard.Description')}
+                rows={3}
+              />
             </BAIFormItem>
 
             <BAIFormItem
@@ -416,7 +419,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Task')}
               tooltip={t('adminModelCard.TaskTooltip')}
             >
-              <TextInput
+              <BAITextInput
                 aria-label={t('adminModelCard.Task')}
                 placeholder={t('adminModelCard.TaskPlaceholder')}
               />
@@ -427,7 +430,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Category')}
               tooltip={t('adminModelCard.CategoryTooltip')}
             >
-              <TextInput
+              <BAITextInput
                 aria-label={t('adminModelCard.Category')}
                 placeholder={t('adminModelCard.CategoryPlaceholder')}
               />
@@ -438,7 +441,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Architecture')}
               tooltip={t('adminModelCard.ArchitectureTooltip')}
             >
-              <TextInput aria-label={t('adminModelCard.Architecture')} />
+              <BAITextInput aria-label={t('adminModelCard.Architecture')} />
             </BAIFormItem>
 
             <BAIFormItem
@@ -446,7 +449,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Framework')}
               tooltip={t('adminModelCard.FrameworkTooltip')}
             >
-              <TagsInput
+              <BAITagsInput
                 tokenSeparators={[',', ' ']}
                 aria-label={t('adminModelCard.Framework')}
                 placeholder={t('adminModelCard.AddFramework')}
@@ -458,7 +461,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Label')}
               tooltip={t('adminModelCard.LabelTooltip')}
             >
-              <TagsInput
+              <BAITagsInput
                 tokenSeparators={[',', ' ']}
                 aria-label={t('adminModelCard.Label')}
                 placeholder={t('adminModelCard.AddLabel')}
@@ -470,7 +473,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.License')}
               tooltip={t('adminModelCard.LicenseTooltip')}
             >
-              <TextInput aria-label={t('adminModelCard.License')} />
+              <BAITextInput aria-label={t('adminModelCard.License')} />
             </BAIFormItem>
 
             <BAIFormItem
@@ -478,7 +481,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Readme')}
               tooltip={t('adminModelCard.ReadmeTooltip')}
             >
-              <TextArea aria-label={t('adminModelCard.Readme')} rows={6} />
+              <BAITextArea aria-label={t('adminModelCard.Readme')} rows={6} />
             </BAIFormItem>
 
             <BAIFormItem
@@ -492,7 +495,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                 },
               ]}
             >
-              <Selector
+              <BAISelector
                 aria-label={t('adminModelCard.AccessLevel')}
                 options={[
                   {

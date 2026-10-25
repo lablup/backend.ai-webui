@@ -13,10 +13,7 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import './FolderCreateModal.css';
 import StorageSelect from './StorageSelect';
 import { Divider } from '@lablup/ui-common/Divider';
-import { RadioList, RadioListItem } from '@lablup/ui-common/RadioList';
 import { Skeleton } from '@lablup/ui-common/Skeleton';
-import { Switch } from '@lablup/ui-common/Switch';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIButton,
   BAIFlex,
@@ -27,6 +24,10 @@ import {
   ESMClientErrorResponse,
   useBAILogger,
   useErrorMessageResolver,
+  BAIRadioList,
+  BAIRadioListItem,
+  BAISwitch,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { TriangleAlertIcon } from 'lucide-react';
@@ -255,7 +256,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         >
           {/* PILOT-DECISION: `RadioListItem.label` is a plain string, so the
               composite AutoMount label splits into `label` + `endContent`. */}
-          <RadioList
+          <BAIRadioList
             aria-label={t('data.UsageMode')}
             orientation="horizontal"
             onChange={() => {
@@ -269,7 +270,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
             }}
           >
             {!_.includes(hiddenFormItems, 'usage_mode_general') && (
-              <RadioListItem
+              <BAIRadioListItem
                 value="general"
                 label={t('data.General')}
                 data-testid="general-usage-mode"
@@ -277,14 +278,14 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
             )}
             {baiClient._config.enableModelFolders &&
               !_.includes(hiddenFormItems, 'usage_mode_model') && (
-                <RadioListItem
+                <BAIRadioListItem
                   value="model"
                   label={t('data.Models')}
                   data-testid="model-usage-mode"
                 />
               )}
             {!_.includes(hiddenFormItems, 'usage_mode_automount') && (
-              <RadioListItem
+              <BAIRadioListItem
                 value="automount"
                 label={t('data.AutoMount')}
                 data-testid="automount-usage-mode"
@@ -295,7 +296,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                 }
               />
             )}
-          </RadioList>
+          </BAIRadioList>
         </Form.Item>
         <Divider />
 
@@ -342,7 +343,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
             }),
           ]}
         >
-          <TextInput
+          <BAITextInput
             aria-label={t('data.Foldername')}
             placeholder={t('maxLength.64chars')}
           />
@@ -444,10 +445,13 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                     radio in a Tooltip. Astryx forbids wrapping a disabled
                     control — the trigger swallows the hover the wrapper needs —
                     so the warning icon in `endContent` carries the tooltip. */}
-                <RadioList aria-label={t('data.Type')} orientation="horizontal">
+                <BAIRadioList
+                  aria-label={t('data.Type')}
+                  orientation="horizontal"
+                >
                   {_.includes(allowedTypes, 'user') &&
                     !_.includes(hiddenFormItems, 'type_user') && (
-                      <RadioListItem
+                      <BAIRadioListItem
                         value="user"
                         label={t('data.User')}
                         data-testid="user-type"
@@ -456,7 +460,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                   {(userRole === 'admin' || userRole === 'superadmin') &&
                     _.includes(allowedTypes, 'group') &&
                     !_.includes(hiddenFormItems, 'type_project') && (
-                      <RadioListItem
+                      <BAIRadioListItem
                         value="project"
                         label={t('data.Project')}
                         data-testid="project-type"
@@ -480,7 +484,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                         }
                       />
                     )}
-                </RadioList>
+                </BAIRadioList>
               </Form.Item>
             );
           }}
@@ -520,12 +524,12 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                   }),
                 ]}
               >
-                <RadioList
+                <BAIRadioList
                   aria-label={t('data.Permission')}
                   orientation="horizontal"
                 >
                   {!_.includes(hiddenFormItems, 'permission_rw') && (
-                    <RadioListItem
+                    <BAIRadioListItem
                       value="rw"
                       label={t('data.ReadWrite')}
                       data-testid="rw-permission"
@@ -544,13 +548,13 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                     />
                   )}
                   {!_.includes(hiddenFormItems, 'permission_ro') && (
-                    <RadioListItem
+                    <BAIRadioListItem
                       value="ro"
                       label={t('data.ReadOnly')}
                       data-testid="ro-permission"
                     />
                   )}
-                </RadioList>
+                </BAIRadioList>
               </Form.Item>
             );
           }}
@@ -567,7 +571,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                     name={'cloneable'}
                     hidden={_.includes(hiddenFormItems, 'cloneable')}
                   >
-                    <Switch aria-label={t('data.folders.Cloneable')} />
+                    <BAISwitch aria-label={t('data.folders.Cloneable')} />
                   </Form.Item>
                 </>
               )

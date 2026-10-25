@@ -15,8 +15,8 @@
 import { KeypairResourcePolicySelectQuery } from '../__generated__/KeypairResourcePolicySelectQuery.graphql';
 import { localeCompare } from '../helper';
 import useControllableState_deprecated from '../hooks/useControllableState';
-import { Selector } from '@lablup/ui-common/Selector';
 import type { SelectorOptionData } from '@lablup/ui-common/Selector';
+import { BAISelector } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -63,7 +63,7 @@ const KeypairResourcePolicySelect: React.FC<
   ).sort((a, b) => localeCompare(a.label, b.label));
 
   return (
-    <Selector
+    <BAISelector
       // `label` is a required string the control renders itself; the
       // surrounding form item already shows the visible one.
       aria-label={t('credential.SelectPolicy')}

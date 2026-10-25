@@ -30,18 +30,18 @@ import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import ProjectSelect from './ProjectSelect';
 import TOTPActivateModal from './TOTPActivateModalLazy';
 import UserResourcePolicySelect from './UserResourcePolicySelect';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
-import { Selector } from '@lablup/ui-common/Selector';
-import { Switch } from '@lablup/ui-common/Switch';
-import { TagsInput } from '@lablup/ui-common/TagsInput';
 import { Text } from '@lablup/ui-common/Text';
-import { TextArea } from '@lablup/ui-common/TextArea';
-import { TextInput } from '@lablup/ui-common/TextInput';
-import { Tokenizer } from '@lablup/ui-common/Tokenizer';
 import type { SearchSource, SearchableItem } from '@lablup/ui-common/Typeahead';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAICheckboxInput,
+  BAINumberInput,
+  BAISelector,
+  BAISwitch,
+  BAITagsInput,
+  BAITextArea,
+  BAITextInput,
+  BAITokenizer,
   BAIAlert,
   BAICompactGroup,
   BAIModal,
@@ -172,7 +172,7 @@ const AllowedClientIpInput: React.FC<{
 }> = ({ value, onChange, label, placeholder }) => {
   'use memo';
   return (
-    <Tokenizer
+    <BAITokenizer
       aria-label={label}
       value={(value ?? []).map((ip) => ({ id: ip, label: ip }))}
       onChange={(items) =>
@@ -754,7 +754,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                     { max: 30 },
                   ]}
                 >
-                  <TextInput
+                  <BAITextInput
                     aria-label={t('credential.EmailPrefix')}
                     placeholder={t('maxLength.30chars')}
                   />
@@ -777,7 +777,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                       "@" glyph inline before the text; Astryx TextInput only
                       supports an icon `startIcon`, not arbitrary prefix text
                       (no equivalent), so the "@" adornment is dropped. */}
-                  <TextInput
+                  <BAITextInput
                     aria-label={t('credential.EmailSuffix')}
                     placeholder={t('maxLength.30chars')}
                   />
@@ -847,7 +847,10 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   </BAIFormItem>
                 }
               >
-                <NumberInput aria-label={t('credential.UserCount')} min={1} />
+                <BAINumberInput
+                  aria-label={t('credential.UserCount')}
+                  min={1}
+                />
               </BAIFormItem>
             </>
           ) : (
@@ -857,7 +860,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 label={t('general.E-Mail')}
                 rules={[{ required: !user }, { type: 'email' }]}
               >
-                <TextInput
+                <BAITextInput
                   aria-label={t('general.E-Mail')}
                   type="email"
                   disabled={!!user}
@@ -875,7 +878,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   },
                 ]}
               >
-                <TextInput
+                <BAITextInput
                   aria-label={t('credential.UserName')}
                   placeholder={t('maxLength.64chars')}
                 />
@@ -889,7 +892,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   },
                 ]}
               >
-                <TextInput
+                <BAITextInput
                   aria-label={t('credential.FullName')}
                   placeholder={t('maxLength.64chars')}
                 />
@@ -909,7 +912,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               },
             ]}
           >
-            <TextInput
+            <BAITextInput
               aria-label={
                 user ? t('general.NewPassword') : t('general.Password')
               }
@@ -946,7 +949,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               }),
             ]}
           >
-            <TextInput
+            <BAITextInput
               aria-label={
                 user
                   ? t('webui.menu.NewPasswordAgain')
@@ -961,20 +964,20 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             valuePropName="checked"
             tooltip={t('credential.TooltipForRequirePasswordChange')}
           >
-            <CheckboxInput>{t('general.Enable')}</CheckboxInput>
+            <BAICheckboxInput>{t('general.Enable')}</BAICheckboxInput>
           </BAIFormItem>
           <BAIFormItem
             name="description"
             label={t('credential.Description')}
             rules={[{ max: 500 }]}
           >
-            <TextArea
+            <BAITextArea
               aria-label={t('credential.Description')}
               placeholder={t('maxLength.500chars')}
             />
           </BAIFormItem>
           <BAIFormItem name="status" label={t('credential.UserStatus')}>
-            <Selector
+            <BAISelector
               aria-label={t('credential.UserStatus')}
               options={[
                 {
@@ -999,7 +1002,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           {!!currentUserRole &&
             currentUserRole in permissionRangeOfRoleChanges && (
               <BAIFormItem name="role" label={t('credential.Role')}>
-                <Selector
+                <BAISelector
                   aria-label={t('credential.Role')}
                   options={_.map(
                     permissionRangeOfRoleChanges[currentUserRole],
@@ -1018,7 +1021,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             label={t('credential.EnableSudoSession')}
             valuePropName="checked"
           >
-            <CheckboxInput>{t('general.Allow')}</CheckboxInput>
+            <BAICheckboxInput>{t('general.Allow')}</BAICheckboxInput>
           </BAIFormItem>
           {!!isTOTPSupported && !bulkCreate && (
             <BAIFormItem
@@ -1033,7 +1036,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 )
               }
             >
-              <Switch
+              <BAISwitch
                 aria-label={t('webui.menu.TotpActivated')}
                 isLoading={
                   isLoadingManagerSupportingTOTP ||
@@ -1165,7 +1168,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   },
                 ]}
               >
-                <NumberInput
+                <BAINumberInput
                   aria-label={t('credential.ContainerUID')}
                   max={SIGNED_32BIT_MAX_INT}
                   min={1}
@@ -1185,7 +1188,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   },
                 ]}
               >
-                <NumberInput
+                <BAINumberInput
                   aria-label={t('credential.ContainerGID')}
                   max={SIGNED_32BIT_MAX_INT}
                   min={1}
@@ -1252,7 +1255,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   }),
                 ]}
               >
-                <TagsInput
+                <BAITagsInput
                   tokenSeparators={[',', ' ']}
                   aria-label={t('credential.ContainerSupplementaryGIDs')}
                   placeholder={t(

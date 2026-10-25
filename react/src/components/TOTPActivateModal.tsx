@@ -9,9 +9,14 @@ import { getTotpActivationErrorMessageKey } from '../helper/totpErrorType';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { Spinner } from '@lablup/ui-common/Spinner';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIModal, BAIModalProps, BAIFlex, BAIText } from 'backend.ai-ui';
+import {
+  BAIModal,
+  BAIModalProps,
+  BAIFlex,
+  BAIText,
+  BAITextInput,
+} from 'backend.ai-ui';
 // PILOT-DECISION (p3-w3b): antd `QRCode` was the last antd RENDER in this
 // file. MAPPING.md §2 grades it **NONE** — neither Astryx core nor lab ships
 // a QR renderer — so closing it meant adopting a dependency. `qrcode.react`
@@ -205,7 +210,7 @@ export const TOTPActivateForm: React.FC<TOTPActiveFormProps> = ({
                 `TextInputProps` is a closed surface with no raw-attribute
                 passthrough; the `Form.Item` rules above already enforce
                 required + digits-only. */}
-            <TextInput
+            <BAITextInput
               aria-label={t('totp.EnterConfirmationCode')}
               size="lg"
               width={200}

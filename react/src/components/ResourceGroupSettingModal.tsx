@@ -20,12 +20,6 @@ import {
 import BAIFormItem from './BAIFormItem';
 import { ScalingGroupOpts } from './ResourceGroupList';
 import { Grid } from '@lablup/ui-common/Grid';
-import { MultiSelector } from '@lablup/ui-common/MultiSelector';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
-import { Selector } from '@lablup/ui-common/Selector';
-import { Switch } from '@lablup/ui-common/Switch';
-import { TextArea } from '@lablup/ui-common/TextArea';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAICard,
   BAIFlex,
@@ -36,6 +30,12 @@ import {
   BAIStorageProxySelect,
   omitNullAndUndefinedFields,
   useBAILogger,
+  BAIMultiSelector,
+  BAINumberInput,
+  BAISelector,
+  BAISwitch,
+  BAITextArea,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useDeferredValue, useMemo, useRef } from 'react';
@@ -362,7 +362,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               },
             ]}
           >
-            <TextInput
+            <BAITextInput
               aria-label={t('resourceGroup.Name')}
               disabled={!!resourceGroup}
             />
@@ -371,7 +371,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
             label={t('resourceGroup.Description')}
             name="description"
           >
-            <TextArea aria-label={t('resourceGroup.Description')} />
+            <BAITextArea aria-label={t('resourceGroup.Description')} />
           </BAIFormItem>
           <BAIFormItem
             label={t('resourceGroup.AllowedSessionTypes')}
@@ -385,7 +385,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               },
             ]}
           >
-            <MultiSelector
+            <BAIMultiSelector
               aria-label={t('resourceGroup.AllowedSessionTypes')}
               options={_.map(
                 ['batch', 'interactive', 'inference', 'system'],
@@ -398,7 +398,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
             name="wsProxyAddress"
             rules={[{ type: 'url', message: t('error.InvalidUrl') }]}
           >
-            <TextInput
+            <BAITextInput
               aria-label={t('resourceGroup.AppProxyAddress')}
               placeholder="http://localhost:10200"
             />
@@ -407,7 +407,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
             label={t('resourceGroup.AppProxyAPIToken')}
             name="wsProxyAPIToken"
           >
-            <TextInput
+            <BAITextInput
               aria-label={t('resourceGroup.AppProxyAPIToken')}
               type="password"
               placeholder={t('resourceGroup.EnterAPIToken')}
@@ -443,7 +443,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               label={t('resourceGroup.Active')}
               name="active"
             >
-              <Switch aria-label={t('resourceGroup.Active')} />
+              <BAISwitch aria-label={t('resourceGroup.Active')} />
             </BAIFormItem>
             <BAIFormItem
               layout="horizontal"
@@ -451,7 +451,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               name="public"
               tooltip={t('resourceGroup.PublicDesc')}
             >
-              <Switch aria-label={t('resourceGroup.Public')} />
+              <BAISwitch aria-label={t('resourceGroup.Public')} />
             </BAIFormItem>
           </Grid>
           <BAIFormItem
@@ -466,7 +466,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               },
             ]}
           >
-            <Selector
+            <BAISelector
               aria-label={t('resourceGroup.Scheduler')}
               options={[
                 {
@@ -503,7 +503,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                 }
                 name="pendingTimeout"
               >
-                <NumberInput
+                <BAINumberInput
                   aria-label={t('resourceGroup.PendingTimeout')}
                   units={t('resourceGroup.TimeoutSeconds')}
                   min={0}
@@ -517,7 +517,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                 }
                 name="retriesToSkip"
               >
-                <NumberInput
+                <BAINumberInput
                   aria-label={t('resourceGroup.RetriesToSkipDesc')}
                   units={t('resourceGroup.RetriesToSkip')}
                   min={0}

@@ -9,14 +9,16 @@ import PreStartActionsFormList from './ModelServiceFormItems/PreStartActionsForm
 import ServiceConfigurationFormItems from './ModelServiceFormItems/ServiceConfigurationFormItems';
 import './collapsible-section.css';
 import { Collapsible } from '@lablup/ui-common/Collapsible';
-import { TagsInput } from '@lablup/ui-common/TagsInput';
-import { TextArea } from '@lablup/ui-common/TextArea';
-import { TextInput } from '@lablup/ui-common/TextInput';
-import { BAIFlex } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAITagsInput,
+  BAITextArea,
+  BAITextInput,
+} from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-// A comma-separated `TagsInput`, shared by this file's two tag fields.
+// A comma-separated `BAITagsInput`, shared by this file's two tag fields.
 
 const TagsField: React.FC<{
   /** Injected by `Form.Item`. */
@@ -29,7 +31,7 @@ const TagsField: React.FC<{
 }> = ({ value, onChange, label, placeholder }) => {
   'use memo';
   return (
-    <TagsInput
+    <BAITagsInput
       aria-label={label}
       value={value}
       onChange={onChange}
@@ -95,7 +97,7 @@ const ModelConfigItem: React.FC<{
           required
           rules={[{ required: true }]}
         >
-          <TextInput
+          <BAITextInput
             aria-label={t('adminDeploymentPreset.modelDef.ModelName')}
             placeholder={t(
               'adminDeploymentPreset.modelDef.ModelNamePlaceholder',
@@ -109,7 +111,7 @@ const ModelConfigItem: React.FC<{
           required
           rules={[{ required: true }]}
         >
-          <TextInput
+          <BAITextInput
             aria-label={t('adminDeploymentPreset.modelDef.ModelPath')}
             placeholder={t(
               'adminDeploymentPreset.modelDef.ModelPathPlaceholder',
@@ -157,7 +159,7 @@ const ModelConfigItem: React.FC<{
               label={t('adminDeploymentPreset.modelDef.Title')}
               style={{ flex: 1, minWidth: 160 }}
             >
-              <TextInput
+              <BAITextInput
                 aria-label={t('adminDeploymentPreset.modelDef.Title')}
               />
             </BAIFormItem>
@@ -166,7 +168,7 @@ const ModelConfigItem: React.FC<{
               label={t('adminDeploymentPreset.modelDef.Author')}
               style={{ flex: 1, minWidth: 160 }}
             >
-              <TextInput
+              <BAITextInput
                 aria-label={t('adminDeploymentPreset.modelDef.Author')}
               />
             </BAIFormItem>
@@ -177,7 +179,7 @@ const ModelConfigItem: React.FC<{
               label={t('adminDeploymentPreset.modelDef.Version')}
               style={{ flex: 1, minWidth: 120 }}
             >
-              <TextInput
+              <BAITextInput
                 aria-label={t('adminDeploymentPreset.modelDef.Version')}
               />
             </BAIFormItem>
@@ -186,7 +188,7 @@ const ModelConfigItem: React.FC<{
               label={t('adminDeploymentPreset.modelDef.License')}
               style={{ flex: 1, minWidth: 120 }}
             >
-              <TextInput
+              <BAITextInput
                 aria-label={t('adminDeploymentPreset.modelDef.License')}
               />
             </BAIFormItem>
@@ -195,7 +197,7 @@ const ModelConfigItem: React.FC<{
             name={modelField('metadata', 'description')}
             label={t('adminDeploymentPreset.modelDef.Description')}
           >
-            <TextArea
+            <BAITextArea
               aria-label={t('adminDeploymentPreset.modelDef.Description')}
               rows={2}
             />
@@ -206,7 +208,7 @@ const ModelConfigItem: React.FC<{
               label={t('adminDeploymentPreset.modelDef.Task')}
               style={{ flex: 1, minWidth: 120 }}
             >
-              <TextInput
+              <BAITextInput
                 aria-label={t('adminDeploymentPreset.modelDef.Task')}
               />
             </BAIFormItem>
@@ -215,7 +217,7 @@ const ModelConfigItem: React.FC<{
               label={t('adminDeploymentPreset.modelDef.Category')}
               style={{ flex: 1, minWidth: 120 }}
             >
-              <TextInput
+              <BAITextInput
                 aria-label={t('adminDeploymentPreset.modelDef.Category')}
               />
             </BAIFormItem>
@@ -224,7 +226,7 @@ const ModelConfigItem: React.FC<{
               label={t('adminDeploymentPreset.modelDef.Architecture')}
               style={{ flex: 1, minWidth: 120 }}
             >
-              <TextInput
+              <BAITextInput
                 aria-label={t('adminDeploymentPreset.modelDef.Architecture')}
               />
             </BAIFormItem>

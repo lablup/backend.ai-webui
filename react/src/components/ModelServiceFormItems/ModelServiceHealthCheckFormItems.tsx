@@ -4,11 +4,13 @@
  */
 import { Form } from '../../form-engine';
 import type { FormInstance } from '../../form-engine';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFlex } from 'backend.ai-ui';
+import {
+  BAICheckboxInput,
+  BAIFlex,
+  BAINumberInput,
+  BAITextInput,
+} from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -54,7 +56,9 @@ const ModelServiceHealthCheckFormItems: React.FC<
         valuePropName="checked"
         style={{ marginTop: token('--spacing-2'), marginBottom: 0 }}
       >
-        <CheckboxInput>{t('modelService.EnableHealthCheck')}</CheckboxInput>
+        <BAICheckboxInput>
+          {t('modelService.EnableHealthCheck')}
+        </BAICheckboxInput>
       </Form.Item>
       <Form.Item dependencies={[[...namePrefix, 'enableHealthCheck']]} noStyle>
         {({ getFieldValue }: FormInstance) =>
@@ -65,7 +69,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
                 label={t('adminDeploymentPreset.modelDef.HealthCheckPath')}
                 tooltip={t('modelService.HealthCheckTooltip')}
               >
-                <TextInput
+                <BAITextInput
                   aria-label={t(
                     'adminDeploymentPreset.modelDef.HealthCheckPath',
                   )}
@@ -83,7 +87,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
                   style={{ flex: 1, minWidth: 160 }}
                 >
                   {/* antd `InputNumber suffix` → Astryx `units`. */}
-                  <NumberInput
+                  <BAINumberInput
                     aria-label={t(
                       'adminDeploymentPreset.modelDef.HealthCheckInterval',
                     )}
@@ -100,7 +104,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
                   tooltip={t('modelService.MaxRetriesTooltip')}
                   style={{ flex: 1, minWidth: 160 }}
                 >
-                  <NumberInput
+                  <BAINumberInput
                     aria-label={t(
                       'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
                     )}
@@ -116,7 +120,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
                   tooltip={t('modelService.MaxWaitTimeTooltip')}
                   style={{ flex: 1, minWidth: 160 }}
                 >
-                  <NumberInput
+                  <BAINumberInput
                     aria-label={t(
                       'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
                     )}
@@ -136,7 +140,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
                   style={{ flex: 1, minWidth: 160 }}
                 >
                   {/* Backend `expected_status_code` is `gt=100`, hence 101. */}
-                  <NumberInput
+                  <BAINumberInput
                     aria-label={t(
                       'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
                     )}
@@ -153,7 +157,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
                   tooltip={t('modelService.InitialDelayTooltip')}
                   style={{ flex: 1, minWidth: 160 }}
                 >
-                  <NumberInput
+                  <BAINumberInput
                     aria-label={t(
                       'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
                     )}

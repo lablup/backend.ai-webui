@@ -38,14 +38,9 @@ import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import { passwordPattern } from './LoginFormPanel';
 import ProjectSelect from './ProjectSelect';
 import UserResourcePolicySelect from './UserResourcePolicySelect';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
-import { FileInput } from '@lablup/ui-common/FileInput';
 import { Heading } from '@lablup/ui-common/Heading';
-import { Switch } from '@lablup/ui-common/Switch';
 import { Text } from '@lablup/ui-common/Text';
-import { TextArea } from '@lablup/ui-common/TextArea';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { VStack } from '@lablup/ui-common/VStack';
@@ -67,6 +62,11 @@ import {
   useBAILogger,
   useBAISignedRequestWithPromise,
   cssLengthToPx,
+  BAICheckboxInput,
+  BAIFileInput,
+  BAISwitch,
+  BAITextArea,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
@@ -1101,7 +1101,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
             <VStack gap={1} align="stretch">
               <Text type="label">{t('credential.UploadCSVFile')}</Text>
               <Text color="secondary">{t('credential.CSVOneRowPerUser')}</Text>
-              <FileInput
+              <BAIFileInput
                 aria-label={t('credential.UploadCSVFile')}
                 mode="dropzone"
                 accept=".csv,text/csv"
@@ -1194,7 +1194,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               label={t('general.Password')}
               style={{ marginBottom: token('--spacing-3') }}
             >
-              <TextInput
+              <BAITextInput
                 aria-label={t('general.Password')}
                 type="password"
                 autoComplete="new-password"
@@ -1214,7 +1214,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               tooltip={t('credential.TooltipForRequirePasswordChange')}
               style={{ marginBottom: token('--spacing-3') }}
             >
-              <CheckboxInput
+              <BAICheckboxInput
                 value={globalDefaults.needPasswordChange}
                 onChange={(next) =>
                   setGlobalDefaults((prev) => ({
@@ -1224,14 +1224,14 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                 }
               >
                 {t('general.Enable')}
-              </CheckboxInput>
+              </BAICheckboxInput>
             </BAIFormItem>
 
             <BAIFormItem
               label={t('credential.Description')}
               style={{ marginBottom: 0 }}
             >
-              <TextArea
+              <BAITextArea
                 aria-label={t('credential.Description')}
                 value={globalDefaults.description}
                 onChange={(next) =>
@@ -1298,7 +1298,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                 />
               </BAIRowWrapWithDividers>
               <BAIFlex gap="xs" align="center">
-                <Switch
+                <BAISwitch
                   size="sm"
                   aria-label={t('credential.OnlyShowErrors')}
                   value={onlyErrors}

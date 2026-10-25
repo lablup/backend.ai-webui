@@ -3,9 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { Form } from '../../form-engine';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIButton, BAIFlex } from 'backend.ai-ui';
+import { BAIButton, BAIFlex, BAITextInput } from 'backend.ai-ui';
 import { CircleMinus, PlusIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -50,7 +49,7 @@ const PreStartActionsFormList: React.FC<PreStartActionsFormListProps> = ({
                 >
                   {/* Aria-only label; `Form.Item` renders no visible one
                       for these in-row fields. */}
-                  <TextInput
+                  <BAITextInput
                     aria-label={t('adminDeploymentPreset.modelDef.Action')}
                     placeholder={t(
                       'adminDeploymentPreset.modelDef.ActionPlaceholder',
@@ -75,7 +74,7 @@ const PreStartActionsFormList: React.FC<PreStartActionsFormListProps> = ({
                     },
                   ]}
                 >
-                  <TextInput
+                  <BAITextInput
                     aria-label={t('adminDeploymentPreset.modelDef.Args')}
                     placeholder={t('general.Example', { value: '{}' })}
                   />

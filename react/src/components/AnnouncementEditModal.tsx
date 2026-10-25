@@ -21,7 +21,6 @@ import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Markdown } from '@lablup/ui-common/Markdown';
 import { Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { Token } from '@lablup/ui-common/Token';
 import { useTheme } from '@lablup/ui-common/theme';
 import type { OnMount } from '@monaco-editor/react';
@@ -32,6 +31,7 @@ import {
   BAISkeleton,
   useBAILogger,
   useErrorMessageResolver,
+  BAITextInput,
 } from 'backend.ai-ui';
 import {
   ALargeSmall,
@@ -266,7 +266,7 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
             label={t('summary.AnnouncementTitle')}
             rules={[{ required: true, whitespace: true }]}
           >
-            <TextInput aria-label={t('summary.AnnouncementTitle')} />
+            <BAITextInput aria-label={t('summary.AnnouncementTitle')} />
           </BAIFormItem>
         </Form>
         {!isEditorReady && <BAISkeleton rows={4} />}

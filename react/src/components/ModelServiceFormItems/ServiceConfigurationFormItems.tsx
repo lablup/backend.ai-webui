@@ -7,12 +7,15 @@ import { COMMAND_SHELL_OPTIONS } from '../../helper/modelServiceCommand';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import '../collapsible-section.css';
 import { Collapsible } from '@lablup/ui-common/Collapsible';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
-import { RadioList, RadioListItem } from '@lablup/ui-common/RadioList';
-import { TextArea } from '@lablup/ui-common/TextArea';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFlex } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAINumberInput,
+  BAIRadioList,
+  BAIRadioListItem,
+  BAITextArea,
+  BAITextInput,
+} from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -98,19 +101,19 @@ const ServiceConfigurationFormItems: React.FC<
             required
             rules={[{ required: true }]}
           >
-            <RadioList
+            <BAIRadioList
               aria-label={t('modelService.Execution')}
               orientation="horizontal"
             >
-              <RadioListItem
+              <BAIRadioListItem
                 value="shell"
                 label={t('modelService.ExecutionShell')}
               />
-              <RadioListItem
+              <BAIRadioListItem
                 value="exec"
                 label={t('modelService.ExecutionExec')}
               />
-            </RadioList>
+            </BAIRadioList>
           </Form.Item>
           <Form.Item dependencies={[[...namePrefix, 'execution']]} noStyle>
             {({ getFieldValue: getExec }: FormInstance) =>
@@ -132,7 +135,7 @@ const ServiceConfigurationFormItems: React.FC<
                       suggestion dropdown is dropped; the known shells
                       are surfaced in the placeholder instead.
                       `allowClear` → `hasClear`. */}
-                  <TextInput
+                  <BAITextInput
                     aria-label={t('modelService.Shell')}
                     placeholder={COMMAND_SHELL_OPTIONS.map((o) => o.value).join(
                       ', ',
@@ -194,13 +197,13 @@ const ServiceConfigurationFormItems: React.FC<
               {!supportsCommandShell ? (
                 // Legacy (<26.8.0): plain single-line input,
                 // tokenized on submit.
-                <TextInput
+                <BAITextInput
                   aria-label={commandLabel}
                   placeholder={placeholders?.command}
                 />
               ) : isExec ? (
                 // Exec: argv example, no shell operators.
-                <TextInput
+                <BAITextInput
                   aria-label={commandLabel}
                   placeholder={placeholders?.command}
                 />
@@ -208,7 +211,7 @@ const ServiceConfigurationFormItems: React.FC<
                 // PILOT-DECISION: antd `autoSize={{ minRows: 2 }}`
                 // (grow-with-content) has no Astryx TextArea
                 // equivalent — fixed `rows={2}` instead.
-                <TextArea
+                <BAITextArea
                   aria-label={commandLabel}
                   placeholder={placeholders?.command}
                   rows={2}
@@ -239,7 +242,7 @@ const ServiceConfigurationFormItems: React.FC<
       >
         {/* Backend `PresetModelServiceConfigInput.port` is `gt=1` exclusive,
             hence min 2. */}
-        <NumberInput
+        <BAINumberInput
           aria-label={t('modelService.Port')}
           min={2}
           max={65535}

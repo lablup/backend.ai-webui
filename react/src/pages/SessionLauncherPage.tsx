@@ -42,19 +42,12 @@ import { useStartSession } from '../hooks/useStartSession';
 import { toProjectContext } from '../types/projectContext';
 import { Button } from '@lablup/ui-common/Button';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
 import { Grid as AstryxGrid } from '@lablup/ui-common/Grid';
 import { Heading } from '@lablup/ui-common/Heading';
 import { InputGroup } from '@lablup/ui-common/InputGroup';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
-import { RadioList, RadioListItem } from '@lablup/ui-common/RadioList';
-import { Selector } from '@lablup/ui-common/Selector';
 import { Step, Stepper } from '@lablup/ui-common/Stepper';
-import { Switch } from '@lablup/ui-common/Switch';
 import { Text } from '@lablup/ui-common/Text';
-import { TextArea } from '@lablup/ui-common/TextArea';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useTheme } from '@lablup/ui-common/theme';
 import type { SessionResources as ClientSessionResources } from 'backend.ai-client';
@@ -73,6 +66,14 @@ import {
   useToggle,
   useUpdatableState,
   useBAIBreakpoint,
+  BAICheckboxInput,
+  BAINumberInput,
+  BAIRadioList,
+  BAIRadioListItem,
+  BAISelector,
+  BAISwitch,
+  BAITextArea,
+  BAITextInput,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
@@ -605,21 +606,21 @@ const SessionLauncherPage = () => {
                         overlapped their own labels (measured). `Text
                         type="code"` on the mode name is DROPPED: both are plain
                         strings. */}
-                    <RadioList
+                    <BAIRadioList
                       aria-label={t('session.launcher.SessionType')}
                       orientation="vertical"
                     >
-                      <RadioListItem
+                      <BAIRadioListItem
                         value="interactive"
                         label={t('session.launcher.InteractiveMode')}
                         description={t('session.launcher.InteractiveModeDesc')}
                       />
-                      <RadioListItem
+                      <BAIRadioListItem
                         value="batch"
                         label={t('session.launcher.BatchMode')}
                         description={t('session.launcher.BatchModeDesc')}
                       />
-                    </RadioList>
+                    </BAIRadioList>
                   </Form.Item>
                   <SessionNameFormItem />
                   <Form.Item
@@ -627,7 +628,7 @@ const SessionLauncherPage = () => {
                     label="Bootstrap Script"
                     hidden
                   >
-                    <TextInput aria-label="Bootstrap Script" />
+                    <BAITextInput aria-label="Bootstrap Script" />
                   </Form.Item>
                 </StepCard>
 
@@ -648,7 +649,7 @@ const SessionLauncherPage = () => {
                     >
                       {/* antd `autoSize` has no destination — Astryx `TextArea`
                           takes a fixed `rows`. */}
-                      <TextArea
+                      <BAITextArea
                         aria-label={t('session.launcher.StartUpCommand')}
                       />
                     </Form.Item>
@@ -702,7 +703,7 @@ const SessionLauncherPage = () => {
                                       name={['batch', 'enabled']}
                                       valuePropName="checked"
                                     >
-                                      <CheckboxInput
+                                      <BAICheckboxInput
                                         onChange={(checked) => {
                                           if (
                                             checked &&
@@ -731,7 +732,7 @@ const SessionLauncherPage = () => {
                                         }}
                                       >
                                         {t('session.launcher.Enable')}
-                                      </CheckboxInput>
+                                      </BAICheckboxInput>
                                     </Form.Item>
                                     <Form.Item
                                       noStyle
@@ -855,7 +856,7 @@ const SessionLauncherPage = () => {
                                 name={['batch', 'timeoutEnabled']}
                                 valuePropName="checked"
                               >
-                                <CheckboxInput
+                                <BAICheckboxInput
                                   onChange={(checked) => {
                                     if (checked === false) {
                                       form.setFieldValue(
@@ -867,7 +868,7 @@ const SessionLauncherPage = () => {
                                   }}
                                 >
                                   {t('session.launcher.Enable')}
-                                </CheckboxInput>
+                                </BAICheckboxInput>
                               </Form.Item>
                               <Form.Item
                                 noStyle
@@ -921,7 +922,7 @@ const SessionLauncherPage = () => {
                                         >
                                           {/* The form engine composes this
                                                 `onChange` after its own. */}
-                                          <NumberInput
+                                          <BAINumberInput
                                             aria-label={t(
                                               'session.launcher.BatchJobTimeoutDuration',
                                             )}
@@ -969,7 +970,7 @@ const SessionLauncherPage = () => {
                                           {/* The accessible name repeats the
                                                 group's own label: there is no
                                                 localized "Unit" string (P8). */}
-                                          <Selector
+                                          <BAISelector
                                             aria-label={t(
                                               'session.launcher.BatchJobTimeoutDuration',
                                             )}
@@ -1025,7 +1026,7 @@ const SessionLauncherPage = () => {
                     >
                       {/* Optionless placeholder left behind when the model
                           folder select was removed from this step. */}
-                      <Selector
+                      <BAISelector
                         aria-label={t('session.launcher.ModelStorageToMount')}
                         options={[]}
                       />
@@ -1087,7 +1088,7 @@ const SessionLauncherPage = () => {
                         {/* antd `checkedChildren`/`unCheckedChildren` have no
                             Astryx destination and are DROPPED; the `Text`
                             above names the toggle. */}
-                        <Switch
+                        <BAISwitch
                           aria-label={t(
                             'session.launcher.SwitchOpenMPoptimization',
                           )}
@@ -1174,7 +1175,7 @@ const SessionLauncherPage = () => {
                             }
                             required
                           >
-                            <NumberInput
+                            <BAINumberInput
                               aria-label={t(
                                 'session.launcher.NumOpenMPthreads',
                               )}
@@ -1203,7 +1204,7 @@ const SessionLauncherPage = () => {
                             }
                             required
                           >
-                            <NumberInput
+                            <BAINumberInput
                               aria-label={t(
                                 'session.launcher.NumOpenBLASthreads',
                               )}

@@ -7,13 +7,13 @@ import { Form, FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import BAIFormItem from './BAIFormItem';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
 import {
   BAIQuestionIconWithTooltip,
   BAIModal,
   BAIModalProps,
   BAIFlex,
+  BAICheckboxInput,
+  BAINumberInput,
 } from 'backend.ai-ui';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -139,7 +139,7 @@ const OverlayNetworkSettingModal = ({
                     {/* No wrapper element here: `Form.Item` clones its DIRECT
                         child, so a `<div style={{flex:1}}>` in between
                         swallowed `value`/`onChange` and the field never bound. */}
-                    <NumberInput
+                    <BAINumberInput
                       aria-label="MTU"
                       min={0}
                       max={15000}
@@ -153,7 +153,7 @@ const OverlayNetworkSettingModal = ({
               }}
             </Form.Item>
             <Form.Item noStyle name="mtu_checkbox" valuePropName="checked">
-              <CheckboxInput
+              <BAICheckboxInput
                 disabled={isFetchingMtu}
                 onChange={(checked) => {
                   if (checked) {
@@ -164,7 +164,7 @@ const OverlayNetworkSettingModal = ({
                 }}
               >
                 {t('settings.Unset')}
-              </CheckboxInput>
+              </BAICheckboxInput>
             </Form.Item>
           </BAIFlex>
         </BAIFormItem>

@@ -11,8 +11,7 @@ import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import { BAIFlex, BAIModal, BAIModalProps, BAITextInput } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Trash, PlusIcon } from 'lucide-react';
 import React from 'react';
@@ -210,7 +209,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                           },
                         ]}
                       >
-                        <TextInput
+                        <BAITextInput
                           aria-label={t('environment.AppName')}
                           placeholder={t('environment.AppName')}
                         />
@@ -229,7 +228,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                           },
                         ]}
                       >
-                        <TextInput
+                        <BAITextInput
                           aria-label={t('environment.Protocol')}
                           placeholder={t('environment.Protocol')}
                         />
@@ -287,7 +286,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                           },
                         ]}
                       >
-                        <TextInput
+                        <BAITextInput
                           aria-label={t('environment.Port')}
                           placeholder={t('environment.Port')}
                         />
