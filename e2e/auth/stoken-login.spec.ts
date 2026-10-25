@@ -22,7 +22,12 @@
  *   - sticky retries fold both `otp` and `force: true` into the same
  *     body when the user satisfies both challenges in sequence.
  */
-import { webuiEndpoint } from '../utils/test-util';
+import {
+  loginAsUser,
+  modifyConfigToml,
+  webServerEndpoint,
+  webuiEndpoint,
+} from '../utils/test-util';
 import { expect, test, type Page } from '@playwright/test';
 
 /**
@@ -408,6 +413,62 @@ test.describe(
         .toBeGreaterThanOrEqual(3);
       // Final body must carry BOTH factors the user satisfied.
       expect(bodies[2]).toMatchObject({ otp: '999111', force: true });
+    });
+  },
+);
+
+test.describe(
+  'sToken login boundary - Live session without user data',
+  { tag: ['@regression', '@auth', '@functional'] },
+  () => {
+    test('sToken entry on a live session without user data shows the account-unavailable card', async ({
+      page,
+      request,
+    }) => {
+      await loginAsUser(page, request);
+      await expect(page.getByTestId('user-dropdown-button')).toBeVisible();
+
+      // The boundary needs a resolved endpoint; point it at the real
+      // webserver so the probe carries the live session cookie.
+      await modifyConfigToml(page, request, {
+        general: { apiEndpoint: webServerEndpoint },
+      });
+      await page.route(`${webServerEndpoint}/func/admin/gql`, async (route) => {
+        if (
+          !/query loginBootstrapQuery\b/.test(route.request().postData() ?? '')
+        ) {
+          await route.fallback();
+          return;
+        }
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            data: { keypair: null, user: null, groups: [] },
+            errors: [{ message: 'e2e: mocked bootstrap resolver failure' }],
+          }),
+        });
+      });
+      const sideEffects = { tokenLogins: 0, logouts: 0 };
+      page.on('request', (req) => {
+        if (req.url() === `${webServerEndpoint}/server/token-login`) {
+          sideEffects.tokenLogins += 1;
+        }
+        if (req.url() === `${webServerEndpoint}/server/logout`) {
+          sideEffects.logouts += 1;
+        }
+      });
+
+      await page.goto(`${webuiEndpoint}/?sToken=${FIXTURE_STOKEN}`);
+
+      await expect(
+        page.getByText("Couldn't load your account information", {
+          exact: true,
+        }),
+      ).toBeVisible({ timeout: 15_000 });
+      await expect(page.getByRole('button', { name: /retry/i })).toBeVisible();
+      expect(sideEffects.tokenLogins).toBe(0);
+      expect(sideEffects.logouts).toBe(0);
     });
   },
 );
