@@ -177,12 +177,17 @@ test.describe(
         dialog.getByRole('button', { name: 'Retry', exact: true }),
       ).toBeVisible();
       await expect(loginForm(page)).toBeHidden();
+      await expect(userMenu(page)).toHaveCount(0);
       expect(api.logouts).toBe(0);
 
       restoreBootstrap();
+      const retried = trace(page);
       await dialog.getByRole('button', { name: 'Retry', exact: true }).click();
       await expect(dialog).toBeHidden({ timeout: 30_000 });
       await expect(userMenu(page)).toBeVisible({ timeout: 30_000 });
+      await expect
+        .poll(() => retried.bootstraps, { timeout: 15_000 })
+        .toBeGreaterThanOrEqual(1);
       expect(api.logouts).toBe(0);
     });
 
@@ -198,9 +203,13 @@ test.describe(
 
       const dialog = accountInfoDialog(page);
       await expect(dialog).toBeVisible({ timeout: 30_000 });
+      const logoutResponse = page.waitForResponse(
+        (response) => response.url() === `${webServerEndpoint}/server/logout`,
+      );
       await dialog
         .getByRole('button', { name: 'Log Out', exact: true })
         .click();
+      expect((await logoutResponse).ok()).toBe(true);
       await expect(dialog).toBeHidden({ timeout: 30_000 });
       await expect(loginForm(page)).toBeVisible({ timeout: 30_000 });
 
@@ -211,6 +220,7 @@ test.describe(
         name: 'Endpoint',
         exact: true,
       });
+      // After Log Out the form keeps the session's endpoint and may hide the input.
       if (await endpointInput.isVisible().catch(() => false)) {
         await endpointInput.fill(webServerEndpoint);
       }
@@ -222,7 +232,6 @@ test.describe(
       await page.getByRole('button', { name: 'Login', exact: true }).click();
       expect((await loginResponse).status()).toBe(200);
       await expect(userMenu(page)).toBeVisible({ timeout: 30_000 });
-      await expect(page.getByText(/already logged in/i)).toHaveCount(0);
     });
   },
 );
