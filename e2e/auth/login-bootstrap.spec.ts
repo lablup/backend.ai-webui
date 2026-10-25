@@ -13,6 +13,7 @@
 import {
   loginAsUser,
   logout,
+  userInfo,
   webServerEndpoint,
   webuiEndpoint,
 } from '../utils/test-util';
@@ -44,7 +45,48 @@ function trace(page: Page): ApiTrace {
   return t;
 }
 
+/**
+ * Answer `loginBootstrapQuery` the way a manager resolver failure does:
+ * `200` with `errors[]` and a null identity. Returns a switch that lets the
+ * real bootstrap through again.
+ */
+async function failBootstrapWithNullIdentity(page: Page) {
+  let failing = true;
+  await page.route(GQL, async (route) => {
+    const isBootstrap = /query loginBootstrapQuery\b/.test(
+      route.request().postData() ?? '',
+    );
+    if (!failing || !isBootstrap) {
+      await route.fallback();
+      return;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        data: { keypair: null, user: null, groups: [] },
+        errors: [{ message: 'e2e: mocked bootstrap resolver failure' }],
+      }),
+    });
+  });
+  return () => {
+    failing = false;
+  };
+}
+
+function countLogouts(page: Page) {
+  const counter = { logouts: 0 };
+  page.on('request', (request) => {
+    if (request.url() === `${webServerEndpoint}/server/logout`) {
+      counter.logouts += 1;
+    }
+  });
+  return counter;
+}
+
 const loginForm = (page: Page) => page.getByLabel('Email or Username');
+const accountInfoDialog = (page: Page) =>
+  page.getByRole('dialog', { name: "Couldn't load your account information" });
 const userMenu = (page: Page) => page.getByTestId('user-dropdown-button');
 
 test.describe(
@@ -107,6 +149,80 @@ test.describe(
       await expect.poll(() => api.bootstraps, { timeout: 15_000 }).toBe(1);
       expect(api.loginChecks).toBe(0);
       await expect(userMenu(page)).toHaveCount(0);
+    });
+  },
+);
+
+test.describe(
+  'Login bootstrap - Account info load failure',
+  { tag: ['@regression', '@auth', '@functional'] },
+  () => {
+    test('Signed-in user can retry when the account info fails to load', async ({
+      page,
+      request,
+    }) => {
+      await loginAsUser(page, request);
+      await expect(userMenu(page)).toBeVisible();
+
+      const restoreBootstrap = await failBootstrapWithNullIdentity(page);
+      const api = countLogouts(page);
+      await page.reload();
+
+      const dialog = accountInfoDialog(page);
+      await expect(dialog).toBeVisible({ timeout: 30_000 });
+      await expect(
+        dialog.getByRole('button', { name: 'Log Out', exact: true }),
+      ).toBeVisible();
+      await expect(
+        dialog.getByRole('button', { name: 'Retry', exact: true }),
+      ).toBeVisible();
+      await expect(loginForm(page)).toBeHidden();
+      expect(api.logouts).toBe(0);
+
+      restoreBootstrap();
+      await dialog.getByRole('button', { name: 'Retry', exact: true }).click();
+      await expect(dialog).toBeHidden({ timeout: 30_000 });
+      await expect(userMenu(page)).toBeVisible({ timeout: 30_000 });
+      expect(api.logouts).toBe(0);
+    });
+
+    test('User can log out from the account info load failure dialog and sign in again', async ({
+      page,
+      request,
+    }) => {
+      await loginAsUser(page, request);
+      await expect(userMenu(page)).toBeVisible();
+
+      const restoreBootstrap = await failBootstrapWithNullIdentity(page);
+      await page.reload();
+
+      const dialog = accountInfoDialog(page);
+      await expect(dialog).toBeVisible({ timeout: 30_000 });
+      await dialog
+        .getByRole('button', { name: 'Log Out', exact: true })
+        .click();
+      await expect(dialog).toBeHidden({ timeout: 30_000 });
+      await expect(loginForm(page)).toBeVisible({ timeout: 30_000 });
+
+      restoreBootstrap();
+      await loginForm(page).fill(userInfo.user.email);
+      await page.getByLabel('Password').fill(userInfo.user.password);
+      const endpointInput = page.getByRole('textbox', {
+        name: 'Endpoint',
+        exact: true,
+      });
+      if (await endpointInput.isVisible().catch(() => false)) {
+        await endpointInput.fill(webServerEndpoint);
+      }
+      const loginResponse = page.waitForResponse(
+        (response) =>
+          response.url() === `${webServerEndpoint}/server/login` &&
+          response.request().method() === 'POST',
+      );
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
+      expect((await loginResponse).status()).toBe(200);
+      await expect(userMenu(page)).toBeVisible({ timeout: 30_000 });
+      await expect(page.getByText(/already logged in/i)).toHaveCount(0);
     });
   },
 );
