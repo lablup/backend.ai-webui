@@ -620,7 +620,9 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
             title: t('credential.KeyAge'),
             dataIndex: 'created_at',
             render: (createdAt) => {
-              return `${dayjs().diff(createdAt, 'day')}${t('credential.Days')}`;
+              return t('credential.Days', {
+                value: dayjs().diff(createdAt, 'day'),
+              });
             },
             sorter: true,
           },

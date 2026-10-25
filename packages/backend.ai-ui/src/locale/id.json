@@ -176,9 +176,9 @@
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Penyegaran otomatis",
-    "EveryHours": "{{count}}h",
-    "EveryMinutes": "{{count}}m",
-    "EverySeconds": "{{count}}s",
+    "EveryHours": "{{count}} h",
+    "EveryMinutes": "{{count}} min",
+    "EverySeconds": "{{count}} s",
     "LastUpdated": "Terakhir diperbarui",
     "Off": "Mati",
     "Refresh": "Segarkan"
