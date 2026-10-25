@@ -13,7 +13,6 @@ import type {
 import { App } from '../app-shim';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
-import BAIRadioGroup from '../components/BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from '../components/DeploymentSettingModal';
 import { convertToOrderBy } from '../helper';
@@ -45,6 +44,8 @@ import {
   toEntityLabelFilter,
   useIsLabelableEntityType,
   type ModelDeploymentNodeInList,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Trash2, SquarePenIcon } from 'lucide-react';
@@ -243,21 +244,24 @@ const ProjectAdminDeploymentsContent: React.FC<
       <BAIFlex direction="column" align="stretch" gap="sm">
         <BAIFlex justify="between" wrap="wrap" gap="sm">
           <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
-            <BAIRadioGroup
-              optionType="button"
+            <BAISegmentedControl
               value={queryParams.statusCategory}
-              onChange={(e) => {
-                setQueryParams({ statusCategory: e.target.value });
+              onChange={(value) => {
+                setQueryParams({
+                  statusCategory: value as typeof queryParams.statusCategory,
+                });
                 setTablePaginationOption({ current: 1 });
               }}
-              options={[
-                { label: t('deployment.Running'), value: 'running' },
-                {
-                  label: t('deployment.status.Terminated'),
-                  value: 'finished',
-                },
-              ]}
-            />
+            >
+              <BAISegmentedControlItem
+                value="running"
+                label={t('deployment.Running')}
+              />
+              <BAISegmentedControlItem
+                value="finished"
+                label={t('deployment.status.Terminated')}
+              />
+            </BAISegmentedControl>
             <BAIGraphQLPropertyFilter<DeploymentFilter>
               filterProperties={filterProperties}
               value={queryParams.filter ?? undefined}

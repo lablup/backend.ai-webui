@@ -16,7 +16,6 @@ import { getSessionV2StatusBuckets } from '../../helper/sessionStatusBuckets';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import AutoUpdateFetchKeyButton from '../AutoUpdateFetchKeyButton';
-import BAIRadioGroup from '../BAIRadioGroup';
 import SessionDetailDrawer from '../SessionDetailDrawer';
 import SessionResourceGrid from '../SessionResourceGrid';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
@@ -175,11 +174,10 @@ const AgentSessions = ({ agentId, queryRef, onReload }: AgentSessionsProps) => {
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex direction="row" justify="between" wrap="wrap" gap="sm">
-        <BAIRadioGroup
-          optionType="button"
+        <BAISegmentedControl
           value={statusCategory}
-          onChange={(e) => {
-            const next = e.target.value as 'running' | 'finished';
+          onChange={(value) => {
+            const next = value as 'running' | 'finished';
             onReload(
               {
                 ...queryRef.variables,
@@ -193,11 +191,16 @@ const AgentSessions = ({ agentId, queryRef, onReload }: AgentSessionsProps) => {
               { fetchPolicy: 'network-only' },
             );
           }}
-          options={[
-            { label: t('session.Running'), value: 'running' },
-            { label: t('session.Finished'), value: 'finished' },
-          ]}
-        />
+        >
+          <BAISegmentedControlItem
+            value="running"
+            label={t('session.Running')}
+          />
+          <BAISegmentedControlItem
+            value="finished"
+            label={t('session.Finished')}
+          />
+        </BAISegmentedControl>
         <BAIFlex gap="xs" align="center">
           {experimentalSessionResourceGrid && (
             <BAISegmentedControl

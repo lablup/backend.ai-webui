@@ -16,7 +16,6 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useResourceGroupsForCurrentProject } from '../hooks/useCurrentProject';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
-import BAIRadioGroup from './BAIRadioGroup';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
@@ -25,6 +24,8 @@ import {
   BAIFlex,
   BAIProgressWithLabel,
   BAIPropertyFilter,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
   BAITable,
   INITIAL_FETCH_KEY,
   ResourceTypeIcon,
@@ -371,23 +372,21 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
           style={{ flex: 1 }}
           wrap="wrap"
         >
-          <BAIRadioGroup
-            options={[
-              {
-                label: t('agent.Connected'),
-                value: 'ALIVE',
-              },
-              {
-                label: t('agent.Terminated'),
-                value: 'TERMINATED',
-              },
-            ]}
+          <BAISegmentedControl
             value={queryParams.status}
-            onChange={(e) => {
-              const value = e.target.value;
+            onChange={(value) => {
               setQuery({ status: value });
             }}
-          />
+          >
+            <BAISegmentedControlItem
+              value="ALIVE"
+              label={t('agent.Connected')}
+            />
+            <BAISegmentedControlItem
+              value="TERMINATED"
+              label={t('agent.Terminated')}
+            />
+          </BAISegmentedControl>
 
           <BAIPropertyFilter
             filterProperties={[

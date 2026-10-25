@@ -9,7 +9,6 @@ import {
 } from '../__generated__/AdminComputeSessionListPageQuery.graphql';
 import { App } from '../app-shim';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
-import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import TerminateSessionModal from '../components/ComputeSessionNodeItems/TerminateSessionModal';
 import SessionNodes, {
@@ -330,25 +329,25 @@ const AdminComputeSessionListPage = () => {
             }}
             wrap="wrap"
           >
-            <BAIRadioGroup
-              optionType="button"
+            <BAISegmentedControl
               value={queryParams.statusCategory}
-              onChange={(e) => {
-                setQueryParams({ statusCategory: e.target.value });
+              onChange={(value) => {
+                setQueryParams({
+                  statusCategory: value as typeof queryParams.statusCategory,
+                });
                 setTablePaginationOption({ current: 1 });
                 setSelectedSessionList([]);
               }}
-              options={[
-                {
-                  label: t('session.Running'),
-                  value: 'running',
-                },
-                {
-                  label: t('session.Finished'),
-                  value: 'finished',
-                },
-              ]}
-            />
+            >
+              <BAISegmentedControlItem
+                value="running"
+                label={t('session.Running')}
+              />
+              <BAISegmentedControlItem
+                value="finished"
+                label={t('session.Finished')}
+              />
+            </BAISegmentedControl>
             <BAIPropertyFilter
               filterProperties={filterOutEmpty([
                 {

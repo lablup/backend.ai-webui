@@ -51,7 +51,6 @@ import type {
   PreStartActionFormValue,
 } from './AdminDeploymentPresetFormTypes';
 import BAIFormItem from './BAIFormItem';
-import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import EnvVarFormList, { type EnvVarFormListValue } from './EnvVarFormList';
 import FolderCreateModalV2 from './FolderCreateModalV2';
@@ -1978,13 +1977,16 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               required
               rules={[{ required: true }]}
             >
-              <BAIRadioGroup
-                label={t('deployment.ModelSource')}
-                options={[
-                  { label: t('deployment.ModelFolder'), value: 'folder' },
-                  { label: t('deployment.ModelCard'), value: 'card' },
-                ]}
-              />
+              <BAISegmentedControl>
+                <BAISegmentedControlItem
+                  value="folder"
+                  label={t('deployment.ModelFolder')}
+                />
+                <BAISegmentedControlItem
+                  value="card"
+                  label={t('deployment.ModelCard')}
+                />
+              </BAISegmentedControl>
             </BAIFormItem>
 
             {/* 2) The source selector — model folder or model card. */}

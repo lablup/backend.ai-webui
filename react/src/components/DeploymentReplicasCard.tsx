@@ -14,7 +14,6 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { ProjectContextOrNull } from '../types/projectContext';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from './BAIErrorBoundary';
-import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import ReplicaStatusBadge, { ReplicaStatus } from './ReplicaStatusBadge';
 import RouteSchedulingHistoryModal, {
@@ -33,6 +32,8 @@ import {
   BAIGraphQLPropertyFilter,
   BAIId,
   BAIQuestionIconWithTooltip,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
   BAITable,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
@@ -523,10 +524,10 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
         style={{ marginBottom: 12 }}
       >
         <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
-          <BAIRadioGroup
+          <BAISegmentedControl
             value={queryParams.rStatusCategory}
-            onChange={(e) => {
-              const category = e.target.value as ReplicaStatusCategory;
+            onChange={(value) => {
+              const category = value as ReplicaStatusCategory;
               const userFilter = queryParams.rFilter
                 ? parseReplicaFilter(queryParams.rFilter)
                 : null;
@@ -536,11 +537,16 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
                 offset: 0,
               });
             }}
-            options={[
-              { label: t('deployment.Running'), value: 'running' },
-              { label: t('deployment.status.Terminated'), value: 'terminated' },
-            ]}
-          />
+          >
+            <BAISegmentedControlItem
+              value="running"
+              label={t('deployment.Running')}
+            />
+            <BAISegmentedControlItem
+              value="terminated"
+              label={t('deployment.status.Terminated')}
+            />
+          </BAISegmentedControl>
           <BAIGraphQLPropertyFilter
             filterProperties={filterProperties}
             value={filterValue}
