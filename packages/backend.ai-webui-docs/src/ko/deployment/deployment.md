@@ -645,7 +645,7 @@ vLLM 배포의 경우 루트 기본값이 `vllm` 섹션과 병합되며(변형 �
 
 - 생성 시간(Created At)과 최근 실행 시점(Last Triggered) 날짜-시간 범위로 규칙을 필터링할 수 있는 속성 필터 바.
 - 서버 측 페이지네이션.
-- 메트릭 소스(Metric Source), 조건(Condition), 쿨다운 초(Cooldown Sec.), 단계 크기(Step Size), 최소 / 최대 복제본 수(Min / Max Replicas), 생성 시간(Created At), 최근 실행 시점(Last Triggered) 컬럼. **단계 크기** 컬럼은 설정한 조건에서 도출된 방향에 따라 `+`, `−`, `±` 부호가 자동으로 표시됩니다.
+- 메트릭 소스(Metric Source), 조건(Condition), 쿨다운 초(Cooldown (s)), 단계 크기(Step Size), 최소 / 최대 복제본 수(Min / Max Replicas), 생성 시간(Created At), 최근 실행 시점(Last Triggered) 컬럼. **단계 크기** 컬럼은 설정한 조건에서 도출된 방향에 따라 `+`, `−`, `±` 부호가 자동으로 표시됩니다.
 - 각 행의 조건 요약 옆에 표시되는 행별 편집 및 삭제 아이콘.
 
 `규칙 추가` 버튼을 클릭하면 **오토스케일링 규칙 추가** 편집기가 열립니다.
@@ -654,7 +654,7 @@ vLLM 배포의 경우 루트 기본값이 `vllm` 섹션과 병합되며(변형 �
 
 - **메트릭 소스(Metric Source)**: `Kernel` 또는 `Prometheus` 중 하나를 선택합니다.
 - **메트릭 이름(Metric Name)**: `Kernel`의 경우 메트릭 이름을 입력합니다. `cpu_util`, `mem`, `net_rx`, `net_tx`와 같은 일반적인 메트릭이 자동 완성 제안으로 제공되며, 사용자 정의 이름을 자유롭게 입력할 수도 있습니다.
-- **메트릭 이름 프리셋(Metric Name (Prometheus Preset))**: 메트릭 소스가 `Prometheus`일 때만 표시됩니다. 드롭다운에서 프리셋을 선택하면 프리셋의 메트릭 이름, 쿼리 템플릿, 그리고 (정의된 경우) 쿨다운 초(Cooldown Sec.)가 자동으로 채워집니다.
+- **메트릭 이름 프리셋(Metric Name (Prometheus Preset))**: 메트릭 소스가 `Prometheus`일 때만 표시됩니다. 드롭다운에서 프리셋을 선택하면 프리셋의 메트릭 이름, 쿼리 템플릿, 그리고 (정의된 경우) 쿨다운 초(Cooldown (s))가 자동으로 채워집니다.
 - **조건(Condition)**: 스케일링 방향을 선택하는 세그먼트 컨트롤입니다. 세 가지 옵션이 있습니다.
 
    * **스케일 인**: 메트릭이 임계값 아래로 떨어지면 복제본을 줄입니다. `Metric < [임계값]` 조건을 설정합니다.
@@ -669,7 +669,7 @@ vLLM 배포의 경우 루트 기본값이 `vllm` 섹션과 병합되며(변형 �
    * 최댓값 임계값만 설정: `[metric] > [maxThreshold]` 조건이 되면 스케일 **아웃**(Scale Out)됩니다.
    * 둘 다 설정: `[metric] < [minThreshold]`이면 스케일 **인**되고, `[metric] > [maxThreshold]`이면 스케일 **아웃**됩니다.
 
-- **쿨다운 초(Cooldown Sec.)**: 스케일링 이벤트 이후 다음 평가까지 대기하는 시간(초 단위)입니다.
+- **쿨다운 초(Cooldown (s))**: 스케일링 이벤트 이후 다음 평가까지 대기하는 시간(초 단위)입니다.
 - **최소 복제본 수(Min Replicas) 및 최대 복제본 수(Max Replicas)**: 오토스케일링이 복제본 수에 대해 강제하는 하한과 상한입니다. 오토스케일링은 복제본 수를 최소 복제본 수 아래로 줄이거나 최대 복제본 수 위로 늘리지 않습니다.
 
 ![=520px](../images/auto_scaling_rules_modal_v2.png)
