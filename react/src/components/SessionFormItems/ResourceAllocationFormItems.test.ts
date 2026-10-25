@@ -13,6 +13,7 @@ import {
   getAllocatablePresetIds,
   getAutomaticShmem,
   getUnifiedSlotNameFromTag,
+  isImageForMinimumPending,
   isUnifiedAcceleratorSlot,
   pickChangedResourceValues,
 } from './ResourceAllocationFormItems';
@@ -251,5 +252,28 @@ describe('pickChangedResourceValues', () => {
     expect(pickChangedResourceValues({ cpu: 1, mem: '2g' }, undefined)).toEqual(
       { cpu: 1, mem: '2g' },
     );
+  });
+});
+
+describe('isImageForMinimumPending', () => {
+  const version = 'cr.example/python:3.11@x86_64';
+
+  it('waits while the rendered image lags a version already in the form', () => {
+    // A restored launcher: the image select may already have stored `image`,
+    // but this render's `resourceLimits` were computed without it.
+    expect(isImageForMinimumPending(undefined, { version })).toBe(true);
+    expect(isImageForMinimumPending(null, { version })).toBe(true);
+  });
+
+  it('applies once the rendered image resolves', () => {
+    expect(isImageForMinimumPending({}, { version })).toBe(false);
+  });
+
+  it('applies when there is no image to wait for', () => {
+    expect(isImageForMinimumPending(undefined, undefined)).toBe(false);
+    expect(isImageForMinimumPending(undefined, {})).toBe(false);
+    expect(
+      isImageForMinimumPending(undefined, { manual: 'cr.example/custom:1' }),
+    ).toBe(false);
   });
 });

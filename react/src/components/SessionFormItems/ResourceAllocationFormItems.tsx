@@ -128,6 +128,18 @@ export const pickChangedResourceValues = <T extends Record<string, unknown>>(
     return true;
   }) as Partial<T>;
 
+/**
+ * Whether the image minimums must wait: the form names a `version` that this
+ * render has not resolved to an image yet, so `resourceLimits` still lack it.
+ */
+export const isImageForMinimumPending = (
+  renderedImage: unknown,
+  environments?: { version?: string | null; manual?: string | null },
+) =>
+  _.isNil(renderedImage) &&
+  _.isEmpty(environments?.manual) &&
+  !_.isEmpty(environments?.version);
+
 export {
   getUnifiedSlotNameFromTag,
   isUnifiedAcceleratorSlot,
@@ -763,10 +775,21 @@ const ResourceAllocationFormItems: React.FC<
 
   // This effect is for auto updating the resource fields when minimum-required preset is selected
   useEffect(() => {
-    if (currentAllocationPreset === 'minimum-required') {
+    if (
+      currentAllocationPreset === 'minimum-required' &&
+      !isImageForMinimumPending(
+        currentImage,
+        form.getFieldValue('environments'),
+      )
+    ) {
       updateResourceFieldsBasedOnImage(true);
     }
-  }, [currentImage, currentAllocationPreset, updateResourceFieldsBasedOnImage]);
+  }, [
+    currentImage,
+    currentAllocationPreset,
+    updateResourceFieldsBasedOnImage,
+    form,
+  ]);
 
   return (
     <>
