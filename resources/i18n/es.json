@@ -805,10 +805,7 @@
       "DefaultBoard": "Predeterminado",
       "EditBoard": "Editar tablero",
       "NewBoard": "Nuevo tablero",
-      "NewBoardTitle": "Tablero {{number}}",
-      "PinnedProjects": "Proyectos fijados",
-      "PinnedProjectsDescription": "El tablero se abre con estos proyectos seleccionados.",
-      "PinnedProjectsMore": "{{name}} +{{count}}"
+      "NewBoardTitle": "Tablero {{number}}"
     },
     "catalog": {
       "group": {

@@ -805,10 +805,7 @@
       "DefaultBoard": "Mặc định",
       "EditBoard": "Chỉnh sửa bảng",
       "NewBoard": "Bảng mới",
-      "NewBoardTitle": "Bảng {{number}}",
-      "PinnedProjects": "Dự án đã ghim",
-      "PinnedProjectsDescription": "Bảng mở với các dự án này được chọn.",
-      "PinnedProjectsMore": "{{name}} +{{count}}"
+      "NewBoardTitle": "Bảng {{number}}"
     },
     "catalog": {
       "group": {

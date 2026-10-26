@@ -805,10 +805,7 @@
       "DefaultBoard": "Standard",
       "EditBoard": "Board bearbeiten",
       "NewBoard": "Neues Board",
-      "NewBoardTitle": "Board {{number}}",
-      "PinnedProjects": "Angeheftete Projekte",
-      "PinnedProjectsDescription": "Das Board öffnet sich mit diesen Projekten ausgewählt.",
-      "PinnedProjectsMore": "{{name}} +{{count}}"
+      "NewBoardTitle": "Board {{number}}"
     },
     "catalog": {
       "group": {

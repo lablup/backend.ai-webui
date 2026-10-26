@@ -805,10 +805,7 @@
       "DefaultBoard": "Lalai",
       "EditBoard": "Edit papan",
       "NewBoard": "Papan baharu",
-      "NewBoardTitle": "Papan {{number}}",
-      "PinnedProjects": "Projek yang disematkan",
-      "PinnedProjectsDescription": "Papan dibuka dengan projek-projek ini dipilih.",
-      "PinnedProjectsMore": "{{name}} +{{count}}"
+      "NewBoardTitle": "Papan {{number}}"
     },
     "catalog": {
       "group": {

@@ -802,10 +802,7 @@
       "DefaultBoard": "ค่าเริ่มต้น",
       "EditBoard": "แก้ไขบอร์ด",
       "NewBoard": "บอร์ดใหม่",
-      "NewBoardTitle": "บอร์ด {{number}}",
-      "PinnedProjects": "โปรเจกต์ที่ปักหมุด",
-      "PinnedProjectsDescription": "บอร์ดจะเปิดพร้อมเลือกโปรเจกต์เหล่านี้",
-      "PinnedProjectsMore": "{{name}} +{{count}}"
+      "NewBoardTitle": "บอร์ด {{number}}"
     },
     "catalog": {
       "group": {

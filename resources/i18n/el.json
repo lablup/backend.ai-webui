@@ -805,10 +805,7 @@
       "DefaultBoard": "Προεπιλογή",
       "EditBoard": "Επεξεργασία πίνακα",
       "NewBoard": "Νέος πίνακας",
-      "NewBoardTitle": "Πίνακας {{number}}",
-      "PinnedProjects": "Καρφιτσωμένα έργα",
-      "PinnedProjectsDescription": "Ο πίνακας ανοίγει με αυτά τα έργα επιλεγμένα.",
-      "PinnedProjectsMore": "{{name}} +{{count}}"
+      "NewBoardTitle": "Πίνακας {{number}}"
     },
     "catalog": {
       "group": {

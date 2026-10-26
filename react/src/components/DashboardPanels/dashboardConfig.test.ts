@@ -2,11 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { syncBoard } from './boardModel';
 import {
   DEFAULT_BOARD_ID,
   DEFAULT_BOARD_VARS,
   addBoard,
-  createBoardFromTemplate,
+  createEmptyBoard,
   migrateLocalStorage,
   removeBoard,
   renameBoard,
@@ -15,7 +16,6 @@ import {
   resolveTemplate,
   sanitizeDashboardConfig,
   selectBoard,
-  setBoardPins,
 } from './dashboardConfig';
 import type {
   DashboardModel,
@@ -225,7 +225,7 @@ describe('sanitizeDashboardConfig', () => {
     expect(sanitized.project?.migrated).toBe(true);
   });
 
-  it('defaults vars and drops malformed pins', () => {
+  it('defaults vars and drops the retired pins', () => {
     const sanitized = sanitizeDashboardConfig(
       {
         admin: {
@@ -233,7 +233,7 @@ describe('sanitizeDashboardConfig', () => {
             {
               ...board('one'),
               vars: { project: ['p1', 'p1'], rg: 7, range: '' },
-              pinned: { project: 'p1' },
+              pinned: { project: ['p1'] },
             },
           ],
           active: 'one',
@@ -248,7 +248,7 @@ describe('sanitizeDashboardConfig', () => {
       range: DEFAULT_BOARD_VARS.range,
       refresh: DEFAULT_BOARD_VARS.refresh,
     });
-    expect(model.pinned).toBeUndefined();
+    expect(model).not.toHaveProperty('pinned');
   });
 
   it('returns an empty config for a non-object', () => {
@@ -342,19 +342,16 @@ describe('board operations', () => {
     active: 'two',
   };
 
-  it('creates a board from the template without its pins and makes it active', () => {
-    const template = board(DEFAULT_BOARD_ID, {
-      pinned: { project: ['p1'] },
-    });
+  it('creates an empty board that every current card counts as seen, and makes it active', () => {
     const next = addBoard(
       config,
-      createBoardFromTemplate(template, { id: 'new', title: 'New' }),
+      createEmptyBoard({ id: 'new', title: 'New' }, definitions, 'project'),
     );
     expect(next.active).toBe('new');
     const created = next.boards[3];
-    expect(created).toMatchObject({ id: 'new', title: 'New' });
-    expect(created.pinned).toBeUndefined();
-    expect(created.panels).not.toBe(template.panels);
+    expect(created).toMatchObject({ id: 'new', title: 'New', panels: [] });
+    expect(created.vars).toEqual(DEFAULT_BOARD_VARS);
+    expect(syncBoard(created, definitions, 'project').panels).toEqual([]);
   });
 
   it('hands the active board over to its neighbour on removal and keeps the last one', () => {
@@ -375,15 +372,12 @@ describe('board operations', () => {
     expect(selectBoard(config, 'missing')).toBe(config);
   });
 
-  it('renames with a trimmed title and stores pins without duplicates', () => {
+  it('renames with a trimmed title', () => {
     const renamed = renameBoard(config, 'one', '  NLP  ');
     expect(renamed.boards[0].title).toBe('NLP');
-    const pinned = setBoardPins(config, 'one', ['p1', 'p2', 'p1']);
-    expect(pinned.boards[0].pinned).toEqual({ project: ['p1', 'p2'] });
-    expect(setBoardPins(pinned, 'one', []).boards[0].pinned).toBeUndefined();
   });
 
-  it('resets the active board to the template panels and keeps its title and pins', () => {
+  it('resets the active board to the template panels and keeps its title', () => {
     const template = board(DEFAULT_BOARD_ID, {
       panels: [{ id: 'b', key: 'b', columnSpan: 2, rowSpan: 2 }],
     });
@@ -391,7 +385,6 @@ describe('board operations', () => {
       boards: [
         board('one', {
           title: 'Mine',
-          pinned: { project: ['p1'] },
           panels: [
             { id: 'a', key: 'a', columnSpan: 6, rowSpan: 6 },
             {
@@ -413,7 +406,6 @@ describe('board operations', () => {
       'project',
     ).boards;
     expect(reset.title).toBe('Mine');
-    expect(reset.pinned).toEqual({ project: ['p1'] });
     expect(reset.panels.map((panel) => panel.id)).toEqual(['b', 'p1']);
     expect(reset.panels[1]).toMatchObject({ columnSpan: 2, rowSpan: 3 });
   });

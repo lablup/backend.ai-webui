@@ -805,10 +805,7 @@
       "DefaultBoard": "Bawaan",
       "EditBoard": "Edit papan",
       "NewBoard": "Papan baru",
-      "NewBoardTitle": "Papan {{number}}",
-      "PinnedProjects": "Proyek yang disematkan",
-      "PinnedProjectsDescription": "Papan dibuka dengan proyek-proyek ini terpilih.",
-      "PinnedProjectsMore": "{{name}} +{{count}}"
+      "NewBoardTitle": "Papan {{number}}"
     },
     "catalog": {
       "group": {

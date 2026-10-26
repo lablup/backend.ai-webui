@@ -805,10 +805,7 @@
       "DefaultBoard": "Predefinita",
       "EditBoard": "Modifica bacheca",
       "NewBoard": "Nuova bacheca",
-      "NewBoardTitle": "Bacheca {{number}}",
-      "PinnedProjects": "Progetti fissati",
-      "PinnedProjectsDescription": "La bacheca si apre con questi progetti selezionati.",
-      "PinnedProjectsMore": "{{name}} +{{count}}"
+      "NewBoardTitle": "Bacheca {{number}}"
     },
     "catalog": {
       "group": {

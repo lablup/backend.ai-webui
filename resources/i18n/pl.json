@@ -805,10 +805,7 @@
       "DefaultBoard": "Domyślna",
       "EditBoard": "Edytuj tablicę",
       "NewBoard": "Nowa tablica",
-      "NewBoardTitle": "Tablica {{number}}",
-      "PinnedProjects": "Przypięte projekty",
-      "PinnedProjectsDescription": "Tablica otwiera się z zaznaczonymi tymi projektami.",
-      "PinnedProjectsMore": "{{name}} +{{count}}"
+      "NewBoardTitle": "Tablica {{number}}"
     },
     "catalog": {
       "group": {

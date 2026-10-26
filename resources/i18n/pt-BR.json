@@ -805,10 +805,7 @@
       "DefaultBoard": "Padrão",
       "EditBoard": "Editar painel",
       "NewBoard": "Novo painel",
-      "NewBoardTitle": "Painel {{number}}",
-      "PinnedProjects": "Projetos fixados",
-      "PinnedProjectsDescription": "O painel abre com estes projetos selecionados.",
-      "PinnedProjectsMore": "{{name}} +{{count}}"
+      "NewBoardTitle": "Painel {{number}}"
     },
     "catalog": {
       "group": {

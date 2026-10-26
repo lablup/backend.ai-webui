@@ -792,10 +792,7 @@
       "DefaultBoard": "Default",
       "EditBoard": "Edit board",
       "NewBoard": "New board",
-      "NewBoardTitle": "Board {{number}}",
-      "PinnedProjects": "Pinned projects",
-      "PinnedProjectsDescription": "The board opens with these projects selected.",
-      "PinnedProjectsMore": "{{name}} +{{count}}"
+      "NewBoardTitle": "Board {{number}}"
     },
     "catalog": {
       "group": {

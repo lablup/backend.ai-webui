@@ -67,7 +67,6 @@ stateDiagram-v2
 | `id`        | `string`                                                                                | page 안에서 유일한 id. template에서 온 첫 보드는 `default`                                  |
 | `title`     | `string`                                                                                | 탭 이름. 빈 문자열이면 탭은 `dashboard.boards.DefaultBoard`를 보여 준다                     |
 | `vars`      | `{ project: string[] \| 'all'; rg: string[] \| 'all'; range: string; refresh: string }` | 보드가 열릴 때의 필터 값                                                                    |
-| `pinned`    | `{ project?: string[] }`                                                                | 보드에 고정한 프로젝트 id                                                                   |
 | `panels`    | `PersistedPanelV2[]`                                                                    | catalog key, 사용자 정의 패널의 filter와 viz, 배치                                          |
 | `knownKeys` | `string[]`                                                                              | 보드가 본 catalog key. 사용자가 뺀 카드는 다시 나오지 않고, 새 release가 더한 카드는 나온다 |
 
@@ -86,13 +85,13 @@ stateDiagram-v2
 
 - **Read path**: `useDashboardBoards(page, catalog)`(`useDashboardBoards.tsx`)가 `useMyAppConfig('dashboard')`의 page 값을 `sanitizeDashboardPageConfig`로 검사한다. 남는 보드가 없으면 저장값이 없는 것으로 본다.
 - **Single writer**: `userConfig.dashboard`는 `useDashboardBoards`만 `useUpdateMyUserAppConfig(['dashboard', page], …)`로 쓴다. 다른 scope의 `userConfig`에 `dashboard` key를 쓰는 코드는 두지 않는다.
-- **Board tabs**: `projectAdmin`과 `admin` page는 `DashboardBoardTabs`로 보드를 고르고, 더하고(template에서 시작), 이름과 고정 프로젝트를 바꾸고, 지운다. 마지막 보드는 지울 수 없다. 보드 삭제는 되돌릴 수 있는 동작이라 `BAIPopconfirm`으로 확인한다. `project` page는 보드 하나만 두고 탭을 그리지 않는다.
+- **Board tabs**: `projectAdmin`과 `admin` page는 `DashboardBoardTabs`로 보드를 고르고, 더하고(빈 보드로 시작), 이름을 바꾸고, 지운다. 마지막 보드는 지울 수 없다. 보드 삭제는 되돌릴 수 있는 동작이라 `BAIPopconfirm`으로 확인한다. `project` page는 보드 하나만 두고 탭을 그리지 않는다.
 
 ### 3. 기본 보드는 template key에서 고른다
 
 - **Precedence**: `resolveTemplate`(`dashboardConfig.ts`)이 page의 template을 `domainConfig.dashboardTemplates[page]`, `publicConfigByDomain[<domain>].dashboardTemplates[page]`, `defaultBoardModel`(catalog의 `seedBoard`) 순서로 고른다. 값이 `DashboardModel`로 검사되지 않으면 다음 순서로 넘어간다.
 - **Template knownKeys**: `knownKeys`가 없는 template은 지금 catalog의 page 카드를 모두 본 것으로 친다. template이 뺀 카드는 보드에 나오지 않는다.
-- **Template use**: 저장된 보드가 없는 page는 template을 그대로 보여 주고, 사용자가 처음 고칠 때 쓴다. "새 보드"는 template의 패널과 필터 값으로 시작하고 고정 프로젝트는 가져오지 않는다. "기본 배치로 초기화"는 열린 보드의 패널을 template으로 되돌리고, template에 없는 사용자 정의 패널과 보드의 이름, 필터 값, 고정 프로젝트는 남긴다.
+- **Template use**: 저장된 보드가 없는 page는 template을 그대로 보여 주고, 사용자가 처음 고칠 때 쓴다. "새 보드"는 패널 없이 시작하고, 지금 catalog의 카드를 모두 본 것으로 쳐서(`createEmptyBoard`) 기본 카드가 채워지지 않는다. "기본 배치로 초기화"는 열린 보드의 패널을 template으로 되돌리고, template에 없는 사용자 정의 패널과 보드의 이름, 필터 값은 남긴다.
 - **Template editing**: template을 고치는 화면은 이 결정의 범위 밖이다. superadmin은 `useUpdateDomainAppConfig`·`useUpdatePublicDomainAppConfig`로 같은 key를 쓴다.
 
 ### 4. 쓰기는 debounce하고 한 번에 하나만 보낸다
@@ -124,7 +123,8 @@ stateDiagram-v2
 - **Admin-provided defaults**: superadmin은 template key를 써서 설치나 도메인의 기본 보드를 바꿀 수 있다. 이미 보드를 저장한 사용자는 "기본 배치로 초기화"를 누를 때 새 template을 받는다.
 - **Write latency**: 보드 변경은 최대 800ms 뒤에 서버로 간다. 그 사이에 탭을 닫으면 마지막 변경이 저장되지 않는다.
 - **Shared queue scope**: queue는 대시보드 쓰기만 줄 세운다. `useRecentSessionHistory`처럼 `userConfig`의 다른 key를 쓰는 기능과 동시에 upsert하면 USER fragment 문서를 두고 경합할 수 있다.
-- **Pins without consumer**: `pinned.project`와 `vars`는 저장되고 탭에 보이지만, 필터 바(#10582)가 생기기 전까지 카드의 데이터 범위를 바꾸지 않는다.
+- **Vars without consumer**: `vars`는 저장되지만, 필터 바(#10582)가 생기기 전까지 카드의 데이터 범위를 바꾸지 않는다.
+- **No pinned projects**: 보드에 프로젝트를 고정하는 field는 두지 않는다. 예전에 저장된 `pinned`는 `sanitizeDashboardModel`이 버린다.
 
 ## 출처
 
@@ -138,5 +138,5 @@ stateDiagram-v2
 | 용어          | 뜻                                                                                                                                                               |
 | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | panel catalog | 대시보드에 놓을 수 있는 카드의 정의 목록 `PANEL_CATALOG`이다. 고정 카드는 `kind: 'custom'`, data source마다 하나인 사용자 정의 패널은 `kind: 'preset'` 항목이다. |
-| role template | 저장된 보드가 없는 사용자와 "새 보드", "기본 배치로 초기화"가 시작점으로 쓰는 page별 기본 보드이다. `dashboardTemplates` key에 `DashboardModel`로 둔다.          |
+| role template | 저장된 보드가 없는 사용자와 "기본 배치로 초기화"가 시작점으로 쓰는 page별 기본 보드이다. `dashboardTemplates` key에 `DashboardModel`로 둔다.                     |
 | USER fragment | 매니저 app config 문서 중 사용자 한 명의 scope에 저장된 원본이다. `useMyAppConfig`가 읽는 view는 이 원본과 PUBLIC, DOMAIN fragment를 합친 값이다.                |

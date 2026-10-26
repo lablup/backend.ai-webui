@@ -805,10 +805,7 @@
       "DefaultBoard": "預設",
       "EditBoard": "編輯看板",
       "NewBoard": "新增看板",
-      "NewBoardTitle": "看板 {{number}}",
-      "PinnedProjects": "固定專案",
-      "PinnedProjectsDescription": "開啟看板時將選取這些專案。",
-      "PinnedProjectsMore": "{{name}} 等 {{count}} 個"
+      "NewBoardTitle": "看板 {{number}}"
     },
     "catalog": {
       "group": {

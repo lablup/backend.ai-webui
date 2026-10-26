@@ -805,10 +805,7 @@
       "DefaultBoard": "Par défaut",
       "EditBoard": "Modifier le tableau",
       "NewBoard": "Nouveau tableau",
-      "NewBoardTitle": "Tableau {{number}}",
-      "PinnedProjects": "Projets épinglés",
-      "PinnedProjectsDescription": "Le tableau s'ouvre avec ces projets sélectionnés.",
-      "PinnedProjectsMore": "{{name}} +{{count}}"
+      "NewBoardTitle": "Tableau {{number}}"
     },
     "catalog": {
       "group": {

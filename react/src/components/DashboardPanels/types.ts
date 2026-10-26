@@ -149,14 +149,12 @@ export interface DashboardBoardVars {
   refresh: string;
 }
 
-/** One saved board: its panels plus the filter values and pins it opens with. */
+/** One saved board: its panels plus the filter values it opens with. */
 export interface DashboardModel extends DashboardBoard {
   id: string;
   /** Empty for the default board, which the tabs label generically. */
   title: string;
   vars: DashboardBoardVars;
-  /** Project ids the board is fixed to; the filter bar does not change them. */
-  pinned?: { project?: Array<string> };
 }
 
 /** One page's boards in `userConfig.dashboard`. */

@@ -805,10 +805,7 @@
       "DefaultBoard": "Үндсэн",
       "EditBoard": "Самбар засах",
       "NewBoard": "Шинэ самбар",
-      "NewBoardTitle": "Самбар {{number}}",
-      "PinnedProjects": "Бэхэлсэн төслүүд",
-      "PinnedProjectsDescription": "Самбарыг нээхэд эдгээр төсөл сонгогдоно.",
-      "PinnedProjectsMore": "{{name}} +{{count}}"
+      "NewBoardTitle": "Самбар {{number}}"
     },
     "catalog": {
       "group": {

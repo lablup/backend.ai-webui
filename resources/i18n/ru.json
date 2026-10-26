@@ -805,10 +805,7 @@
       "DefaultBoard": "По умолчанию",
       "EditBoard": "Изменить доску",
       "NewBoard": "Новая доска",
-      "NewBoardTitle": "Доска {{number}}",
-      "PinnedProjects": "Закреплённые проекты",
-      "PinnedProjectsDescription": "Доска открывается с выбранными проектами.",
-      "PinnedProjectsMore": "{{name}} +{{count}}"
+      "NewBoardTitle": "Доска {{number}}"
     },
     "catalog": {
       "group": {

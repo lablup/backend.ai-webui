@@ -805,10 +805,7 @@
       "DefaultBoard": "Oletus",
       "EditBoard": "Muokkaa taulua",
       "NewBoard": "Uusi taulu",
-      "NewBoardTitle": "Taulu {{number}}",
-      "PinnedProjects": "Kiinnitetyt projektit",
-      "PinnedProjectsDescription": "Taulu avautuu nämä projektit valittuina.",
-      "PinnedProjectsMore": "{{name}} +{{count}}"
+      "NewBoardTitle": "Taulu {{number}}"
     },
     "catalog": {
       "group": {

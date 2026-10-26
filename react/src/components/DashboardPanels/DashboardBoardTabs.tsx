@@ -4,20 +4,16 @@
  */
 import { Form } from '../../form-engine';
 import { generateUUID } from '../../helper/uuid';
-import { useCurrentDomainValue } from '../../hooks';
-import { useAccessibleProjects } from '../../hooks/useAccessibleProjects';
 import BAIFormItem from '../BAIFormItem';
-import ProjectSelect from '../ProjectSelect';
 import { AstryxFormTextInput } from '../astryxFormControls';
 import {
   addBoard,
-  createBoardFromTemplate,
+  createEmptyBoard,
   removeBoard,
   renameBoard,
   selectBoard,
-  setBoardPins,
 } from './dashboardConfig';
-import type { DashboardModel, PanelPage } from './types';
+import type { DashboardModel, PanelDefinition, PanelPage } from './types';
 import type { DashboardBoardsState } from './useDashboardBoards';
 import { Button } from '@lablup/ui-common/Button';
 import { IconButton } from '@lablup/ui-common/IconButton';
@@ -26,67 +22,51 @@ import {
   BAIFlex,
   BAIModal,
   BAIPopconfirm,
-  BAISelect,
   BAITabList,
-  BAIText,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
-import * as _ from 'lodash-es';
-import { Pin, Plus, SquarePenIcon, Trash2 } from 'lucide-react';
-import React, { Suspense, useState } from 'react';
+import { Plus, SquarePenIcon, Trash2 } from 'lucide-react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface DashboardBoardTabsProps {
   page: Extract<PanelPage, 'projectAdmin' | 'admin'>;
   boards: DashboardBoardsState;
+  catalog: ReadonlyArray<PanelDefinition>;
 }
 
 interface BoardFormValues {
   title: string;
-  pinnedProjects?: Array<string>;
 }
 
 /** Switches, adds, edits and removes an admin dashboard's boards. */
 const DashboardBoardTabs: React.FC<DashboardBoardTabsProps> = ({
   page,
   boards,
+  catalog,
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const currentDomain = useCurrentDomainValue();
-  const { groups } = useAccessibleProjects();
   const [editingBoard, setEditingBoard] = useState<DashboardModel | null>(null);
   const [form] = Form.useForm<BoardFormValues>();
-  const { config, activeBoard, template, update } = boards;
+  const { config, activeBoard, update } = boards;
 
-  const projectNameById = new Map(
-    _.compact(groups).map((project) => [project.id, project.name]),
-  );
   const titleOf = (board: DashboardModel) =>
     board.title || t('dashboard.boards.DefaultBoard');
-  const pinSummaryOf = (board: DashboardModel) => {
-    const names = (board.pinned?.project ?? []).map(
-      (id) => projectNameById.get(id) ?? id,
-    );
-    if (names.length === 0) return null;
-    return names.length === 1
-      ? names[0]
-      : t('dashboard.boards.PinnedProjectsMore', {
-          name: names[0],
-          count: names.length - 1,
-        });
-  };
-
   const addNewBoard = () => {
     update((current) =>
       addBoard(
         current,
-        createBoardFromTemplate(template, {
-          id: generateUUID(),
-          title: t('dashboard.boards.NewBoardTitle', {
-            number: current.boards.length + 1,
-          }),
-        }),
+        createEmptyBoard(
+          {
+            id: generateUUID(),
+            title: t('dashboard.boards.NewBoardTitle', {
+              number: current.boards.length + 1,
+            }),
+          },
+          catalog,
+          page,
+        ),
       ),
     );
   };
@@ -140,24 +120,9 @@ const DashboardBoardTabs: React.FC<DashboardBoardTabsProps> = ({
           </BAIFlex>
         }
       >
-        {config.boards.map((board) => {
-          const pinSummary = pinSummaryOf(board);
-          return (
-            <Tab
-              key={board.id}
-              value={board.id}
-              label={titleOf(board)}
-              endContent={
-                pinSummary ? (
-                  <BAIFlex direction="row" align="center" gap="xxs">
-                    <Pin size="0.85em" aria-hidden />
-                    <BAIText type="secondary">{pinSummary}</BAIText>
-                  </BAIFlex>
-                ) : undefined
-              }
-            />
-          );
-        })}
+        {config.boards.map((board) => (
+          <Tab key={board.id} value={board.id} label={titleOf(board)} />
+        ))}
       </BAITabList>
       <BAIUnmountAfterClose>
         <BAIModal
@@ -168,13 +133,9 @@ const DashboardBoardTabs: React.FC<DashboardBoardTabsProps> = ({
           onOk={() => {
             if (!editingBoard) return;
             form.validateFields().then(
-              ({ title, pinnedProjects }) => {
+              ({ title }) => {
                 update((current) =>
-                  setBoardPins(
-                    renameBoard(current, editingBoard.id, title),
-                    editingBoard.id,
-                    pinnedProjects ?? [],
-                  ),
+                  renameBoard(current, editingBoard.id, title),
                 );
                 setEditingBoard(null);
               },
@@ -188,7 +149,6 @@ const DashboardBoardTabs: React.FC<DashboardBoardTabsProps> = ({
             preserve={false}
             initialValues={{
               title: editingBoard ? titleOf(editingBoard) : '',
-              pinnedProjects: editingBoard?.pinned?.project ?? [],
             }}
           >
             <BAIFormItem
@@ -204,20 +164,6 @@ const DashboardBoardTabs: React.FC<DashboardBoardTabsProps> = ({
             >
               <AstryxFormTextInput label={t('dashboard.boards.BoardName')} />
             </BAIFormItem>
-            <Suspense fallback={<BAISelect mode="multiple" loading disabled />}>
-              <BAIFormItem
-                name="pinnedProjects"
-                label={t('dashboard.boards.PinnedProjects')}
-                extra={t('dashboard.boards.PinnedProjectsDescription')}
-              >
-                <ProjectSelect
-                  mode="multiple"
-                  domain={currentDomain}
-                  disableDefaultFilter={page === 'admin'}
-                  aria-label={t('dashboard.boards.PinnedProjects')}
-                />
-              </BAIFormItem>
-            </Suspense>
           </Form>
         </BAIModal>
       </BAIUnmountAfterClose>

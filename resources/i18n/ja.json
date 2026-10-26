@@ -805,10 +805,7 @@
       "DefaultBoard": "デフォルト",
       "EditBoard": "ボードを編集",
       "NewBoard": "新しいボード",
-      "NewBoardTitle": "ボード {{number}}",
-      "PinnedProjects": "固定プロジェクト",
-      "PinnedProjectsDescription": "ボードを開くとこれらのプロジェクトが選択されます。",
-      "PinnedProjectsMore": "{{name}} 他 {{count}}"
+      "NewBoardTitle": "ボード {{number}}"
     },
     "catalog": {
       "group": {

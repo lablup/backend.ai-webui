@@ -68,17 +68,10 @@ export const sanitizeDashboardModel = (
   const board = sanitizeBoard(value, definitions, page);
   const id = nonEmptyString(value.id, fallbackId ?? '');
   if (!board || !id) return null;
-  const pinnedProjects =
-    isRecord(value.pinned) && isStringArray(value.pinned.project)
-      ? _.uniq(value.pinned.project)
-      : [];
   return {
     id,
     title: typeof value.title === 'string' ? value.title : '',
     vars: sanitizeBoardVars(value.vars),
-    ...(pinnedProjects.length > 0
-      ? { pinned: { project: pinnedProjects } }
-      : {}),
     panels: board.panels,
     knownKeys: board.knownKeys,
   };
@@ -277,14 +270,20 @@ export const selectBoard = (
     ? { ...config, active: id }
     : config;
 
-/** A new board on the template's panels and filter values, without its pins. */
-export const createBoardFromTemplate = (
-  template: DashboardModel,
+/**
+ * A new board with no panels. Every current catalog key counts as seen, so
+ * the default cards do not fill it on the next render.
+ */
+export const createEmptyBoard = (
   { id, title }: { id: string; title: string },
+  definitions: ReadonlyArray<PanelDefinition>,
+  page: PanelPage,
 ): DashboardModel => ({
-  ..._.omit(_.cloneDeep(template), 'pinned'),
   id,
   title,
+  vars: { ...DEFAULT_BOARD_VARS },
+  panels: [],
+  knownKeys: seedBoard(definitions, page).knownKeys,
 });
 
 /** Appends a board and makes it active. */
@@ -321,18 +320,7 @@ export const renameBoard = (
 ): DashboardPageConfig =>
   updateBoard(config, id, (board) => ({ ...board, title: title.trim() }));
 
-export const setBoardPins = (
-  config: DashboardPageConfig,
-  id: string,
-  projectIds: ReadonlyArray<string>,
-): DashboardPageConfig =>
-  updateBoard(config, id, (board) =>
-    projectIds.length > 0
-      ? { ...board, pinned: { ...board.pinned, project: _.uniq(projectIds) } }
-      : _.omit(board, 'pinned'),
-  );
-
-/** Puts the active board back on the template's panels; its title, filters and pins stay. */
+/** Puts the active board back on the template's panels; its title and filters stay. */
 export const resetActiveBoard = (
   config: DashboardPageConfig,
   template: DashboardModel,

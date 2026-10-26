@@ -805,10 +805,7 @@
       "DefaultBoard": "기본",
       "EditBoard": "보드 편집",
       "NewBoard": "새 보드",
-      "NewBoardTitle": "보드 {{number}}",
-      "PinnedProjects": "고정 프로젝트",
-      "PinnedProjectsDescription": "보드를 열면 이 프로젝트들이 선택됩니다.",
-      "PinnedProjectsMore": "{{name}} 외 {{count}}"
+      "NewBoardTitle": "보드 {{number}}"
     },
     "catalog": {
       "group": {

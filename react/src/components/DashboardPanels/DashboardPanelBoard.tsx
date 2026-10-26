@@ -114,7 +114,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
       <div ref={boardContainerRef} style={{ flex: 1, minWidth: 0 }}>
         <BAIFlex direction="column" align="stretch" gap="md">
           {boards && page !== 'project' ? (
-            <DashboardBoardTabs page={page} boards={boards} />
+            <DashboardBoardTabs page={page} boards={boards} catalog={catalog} />
           ) : null}
           <BAIBoard
             movable
