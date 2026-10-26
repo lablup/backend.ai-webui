@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r28-default-brand-hsutlj6 theme — built by `pnpm exec astryx theme build`
+ * bai-r28-default-brand-h1g2o6r8 theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR28DefaultBrandHsutlj6Theme } from './bai-r28-default-brand-hsutlj6';
- *   import './bai-r28-default-brand-hsutlj6.css';
+ *   import { baiR28DefaultBrandH1g2o6r8Theme } from './bai-r28-default-brand-h1g2o6r8';
+ *   import './bai-r28-default-brand-h1g2o6r8.css';
  */
-export const baiR28DefaultBrandHsutlj6Theme = {
-  name: 'bai-r28-default-brand-hsutlj6',
+export const baiR28DefaultBrandH1g2o6r8Theme = {
+  name: 'bai-r28-default-brand-h1g2o6r8',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -197,6 +197,7 @@ export const baiR28DefaultBrandHsutlj6Theme = {
     "--color-info": "light-dark(#028DF2, #009BDD)",
     "--color-link": "light-dark(#FF7A00, #DC6B03)",
     "--header-bg": "light-dark(#FF9729, #E88A28)",
+    "--header-bg-admin": "light-dark(#35A4F5, #33AFE4)",
     "--color-error-bg": "light-dark(color-mix(in srgb, var(--color-error) 10%, var(--color-background-surface)), color-mix(in srgb, var(--color-error) 15%, var(--color-background-surface)))",
     "--color-info-bg": "light-dark(color-mix(in srgb, var(--color-info) 10%, var(--color-background-surface)), color-mix(in srgb, var(--color-info) 15%, var(--color-background-surface)))",
     "--color-warning-border-hover": "light-dark(color-mix(in srgb, var(--color-warning) 65%, var(--color-background-surface)), color-mix(in srgb, var(--color-warning) 45%, var(--color-background-surface)))",
@@ -241,7 +242,7 @@ export const baiR28DefaultBrandHsutlj6Theme = {
     "--astryx-theme-neutral-color-destructive-overlay-hover": "neutral",
     "--astryx-theme-neutral-color-destructive-overlay-pressed": "neutral"
   },
-  __localTokenLineage: ["neutral","bai-r28-default-brand-hsutlj6"],
+  __localTokenLineage: ["neutral","bai-r28-default-brand-h1g2o6r8"],
   components: {
     "heading": {
       "level:1": {

@@ -17,6 +17,8 @@ export interface UserSettings {
   has_opened_tour_neo_session_validation?: boolean;
   has_opened_tour_neo_deployment_validation?: boolean;
   has_opened_tour_deployment_preset_validation?: boolean;
+  has_opened_tour_back_to_user_view?: boolean;
+  has_opened_tour_back_to_admin_settings?: boolean;
   desktop_notification?: boolean;
   session_monitor_sort?: 'deadline' | 'newest' | 'name';
   session_monitor_rows?: number;

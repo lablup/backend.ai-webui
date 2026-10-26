@@ -3726,6 +3726,18 @@
     "TypeInAuthKey": "In alternativa, è possibile digitare manualmente il codice di autenticazione qui sotto."
   },
   "tourGuide": {
+    "adminViewSwitch": {
+      "AdminLandingMenuText": "Apri il menu del profilo utente in alto a destra: \"Passa alla console utente\" porta alle pagine utente e \"Passa alla console amministratore\" ti riporta qui.",
+      "AdminLandingMenuTitle": "Le impostazioni amministratore sono nel menu del profilo",
+      "AdminLandingStartText": "Dopo il login ora accedi direttamente alle impostazioni amministratore invece che alle pagine utente.",
+      "AdminLandingStartTitle": "Inizi dalle impostazioni amministratore",
+      "AdminLandingText": "Ecco cosa cambia.",
+      "AdminLandingTitle": "La vista del superamministratore è cambiata",
+      "BackToAdminSettingsText": "Per tornare alle impostazioni amministratore, apri questo menu e scegli \"Passa alla console amministratore\".",
+      "BackToAdminSettingsTitle": "Tornare alle impostazioni amministratore",
+      "BackToUserViewText": "Sei nelle impostazioni amministratore. Per usare sessioni, dati e le altre pagine utente, apri questo menu e scegli \"Passa alla console utente\".",
+      "BackToUserViewTitle": "Passare alla vista utente"
+    },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "Se è presente un campo di errore, il pulsante Crea o Salva è disabilitato. Correggi l'errore e riprova.",
       "FixErrorFieldByModifyButton": "Per quel campo di errore, puoi andare direttamente al pulsante Modifica nell'angolo in alto a destra per modificarlo.",
@@ -4008,6 +4020,7 @@
       "ProjectDeployments": "Distribuzioni",
       "ProjectMembers": "Utenti",
       "ProjectSessions": "Sessioni",
+      "ProjectSettings": "Impostazioni progetto",
       "Projects": "Progetti",
       "PrometheusPreset": "Preset Prometheus",
       "RBACManagement": "Gestione RBAC",
@@ -4025,6 +4038,8 @@
       "Start": "Inizio",
       "Statistics": "Statistiche",
       "Summary": "Sommario",
+      "SwitchToAdminConsole": "Passa alla console amministratore",
+      "SwitchToUserConsole": "Passa alla console utente",
       "Tasks": "Compiti",
       "TermsOfService": "Termini di servizio",
       "TotalResourcesIn": "Risorse totali in",
