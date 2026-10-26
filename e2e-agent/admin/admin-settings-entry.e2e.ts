@@ -11,6 +11,9 @@ test(
   draft,
   async ({ app, agent }) => {
     await app.open("/");
+    await agent.act(
+      'Read the "The superadmin view has changed" dialog and press "Next"',
+    );
     await agent.act('Read the "Switching to the user view" tour and press "Done"');
     await agent.act("Open the user menu in the header");
     await agent.act('Choose "Back to User View"');
