@@ -811,7 +811,6 @@
       "Availability": "Kullanılabilirlik",
       "Available": "Kullanılabilir",
       "Count": "Sayı",
-      "Failed": "Başarısız",
       "FailuresInRange": "Bu aralıktaki hatalar: {{count}}",
       "FailuresOnly": "Yalnızca hataları göster",
       "FolderLimit": "Sınır: {{max}}",
@@ -831,13 +830,9 @@
       "ResourcePresets": "Kaynak ön ayarları",
       "ResourcePresetsTooltip": "Her kaynak ön ayarının, kaynak grubunda hâlâ ayırabileceğiniz miktara sığıp sığmadığı.",
       "Resources": "Kaynaklar",
-      "SessionResults": "Oturum sonuçları",
-      "SessionResultsTooltip": "Seçilen aralıkta biten oturumlarınız, sonuca göre. Değişim, aynı uzunluktaki önceki aralıkla karşılaştırılır.",
       "Share": "Pay",
-      "Succeeded": "Başarılı",
       "Unhealthy": "Sağlıksız",
-      "Unlimited": "Sınırsız",
-      "VsPreviousRange": "önceki aralığa göre"
+      "Unlimited": "Sınırsız"
     },
     "catalog": {
       "group": {

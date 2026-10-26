@@ -18,7 +18,6 @@ import MyResourcesPanel from './memberCards/MyResourcesPanel';
 import MySessionsPanel from './memberCards/MySessionsPanel';
 import ResourceGroupTotalPanel from './memberCards/ResourceGroupTotalPanel';
 import ResourcePresetsPanel from './memberCards/ResourcePresetsPanel';
-import SessionResultPanel from './memberCards/SessionResultPanel';
 import {
   CreateFolderPanel,
   StartBatchSessionPanel,
@@ -225,17 +224,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(2, 2),
     minSize: size(2, 2),
     refresh: { min: '15s' },
-  },
-  {
-    key: 'sessionResult',
-    page: ['project'],
-    group: 'session',
-    titleKey: 'dashboard.card.SessionResults',
-    kind: 'custom',
-    Component: SessionResultPanel,
-    defaultSize: size(2, 2),
-    minSize: size(2, 2),
-    refresh: { min: '1m' },
   },
   {
     key: 'myRecentSessions',

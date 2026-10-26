@@ -811,7 +811,6 @@
       "Availability": "Saatavuus",
       "Available": "Saatavilla",
       "Count": "Määrä",
-      "Failed": "Epäonnistuneet",
       "FailuresInRange": "Epäonnistumiset tällä aikavälillä: {{count}}",
       "FailuresOnly": "Näytä vain epäonnistuneet",
       "FolderLimit": "Raja: {{max}}",
@@ -831,13 +830,9 @@
       "ResourcePresets": "Resurssiesiasetukset",
       "ResourcePresetsTooltip": "Mahtuuko kukin resurssiesiasetus siihen, mitä voit vielä varata resurssiryhmässä.",
       "Resources": "Resurssit",
-      "SessionResults": "Istuntojen tulokset",
-      "SessionResultsTooltip": "Valitulla aikavälillä päättyneet istuntosi tuloksen mukaan. Muutosta verrataan edelliseen yhtä pitkään aikaväliin.",
       "Share": "Osuus",
-      "Succeeded": "Onnistuneet",
       "Unhealthy": "Ongelmia",
-      "Unlimited": "Rajoittamaton",
-      "VsPreviousRange": "verrattuna edelliseen aikaväliin"
+      "Unlimited": "Rajoittamaton"
     },
     "catalog": {
       "group": {

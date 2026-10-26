@@ -811,7 +811,6 @@
       "Availability": "Khả dụng",
       "Available": "Khả dụng",
       "Count": "Số lượng",
-      "Failed": "Thất bại",
       "FailuresInRange": "Số lỗi trong khoảng này: {{count}}",
       "FailuresOnly": "Chỉ hiện lỗi",
       "FolderLimit": "Giới hạn: {{max}}",
@@ -831,13 +830,9 @@
       "ResourcePresets": "Cấu hình tài nguyên đặt sẵn",
       "ResourcePresetsTooltip": "Mỗi cấu hình đặt sẵn có vừa với lượng bạn còn có thể cấp phát trong nhóm tài nguyên hay không.",
       "Resources": "Tài nguyên",
-      "SessionResults": "Kết quả phiên",
-      "SessionResultsTooltip": "Các phiên của bạn kết thúc trong khoảng đã chọn, theo kết quả. Mức thay đổi so với khoảng trước đó có cùng độ dài.",
       "Share": "Tỷ lệ",
-      "Succeeded": "Thành công",
       "Unhealthy": "Có lỗi",
-      "Unlimited": "Không giới hạn",
-      "VsPreviousRange": "so với khoảng trước"
+      "Unlimited": "Không giới hạn"
     },
     "catalog": {
       "group": {

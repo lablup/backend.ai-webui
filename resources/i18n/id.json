@@ -811,7 +811,6 @@
       "Availability": "Ketersediaan",
       "Available": "Tersedia",
       "Count": "Jumlah",
-      "Failed": "Gagal",
       "FailuresInRange": "Kegagalan dalam rentang ini: {{count}}",
       "FailuresOnly": "Tampilkan kegagalan saja",
       "FolderLimit": "Batas: {{max}}",
@@ -831,13 +830,9 @@
       "ResourcePresets": "Preset Sumber Daya",
       "ResourcePresetsTooltip": "Apakah setiap preset sumber daya muat dalam yang masih dapat Anda alokasikan di grup sumber daya.",
       "Resources": "Sumber daya",
-      "SessionResults": "Hasil Sesi",
-      "SessionResultsTooltip": "Sesi Anda yang berakhir dalam rentang yang dipilih, menurut hasil. Perubahan dibandingkan dengan rentang sebelumnya yang sama panjang.",
       "Share": "Porsi",
-      "Succeeded": "Berhasil",
       "Unhealthy": "Tidak sehat",
-      "Unlimited": "Tidak terbatas",
-      "VsPreviousRange": "vs. rentang sebelumnya"
+      "Unlimited": "Tidak terbatas"
     },
     "catalog": {
       "group": {

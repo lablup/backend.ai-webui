@@ -811,7 +811,6 @@
       "Availability": "可用性",
       "Available": "可用",
       "Count": "数量",
-      "Failed": "失败",
       "FailuresInRange": "此时间范围内的失败: {{count}}",
       "FailuresOnly": "仅显示失败",
       "FolderLimit": "上限: {{max}}",
@@ -831,13 +830,9 @@
       "ResourcePresets": "资源预设",
       "ResourcePresetsTooltip": "每个资源预设是否在你于该资源组中仍可分配的范围内。",
       "Resources": "资源",
-      "SessionResults": "会话结果",
-      "SessionResultsTooltip": "你在所选时间范围内结束的会话，按结果统计。变化与等长的上一时间范围比较。",
       "Share": "占比",
-      "Succeeded": "成功",
       "Unhealthy": "异常",
-      "Unlimited": "无限制",
-      "VsPreviousRange": "与上一时间范围相比"
+      "Unlimited": "无限制"
     },
     "catalog": {
       "group": {

@@ -811,7 +811,6 @@
       "Availability": "Verfügbarkeit",
       "Available": "Verfügbar",
       "Count": "Anzahl",
-      "Failed": "Fehlgeschlagen",
       "FailuresInRange": "Fehler in diesem Zeitraum: {{count}}",
       "FailuresOnly": "Nur Fehler anzeigen",
       "FolderLimit": "Limit: {{max}}",
@@ -831,13 +830,9 @@
       "ResourcePresets": "Ressourcen-Presets",
       "ResourcePresetsTooltip": "Ob jedes Ressourcen-Preset in das passt, was Sie in der Ressourcengruppe noch zuweisen können.",
       "Resources": "Ressourcen",
-      "SessionResults": "Sitzungsergebnisse",
-      "SessionResultsTooltip": "Ihre im gewählten Zeitraum beendeten Sitzungen nach Ergebnis. Die Änderung vergleicht mit dem vorherigen, gleich langen Zeitraum.",
       "Share": "Anteil",
-      "Succeeded": "Erfolgreich",
       "Unhealthy": "Fehlerhaft",
-      "Unlimited": "Unbegrenzt",
-      "VsPreviousRange": "ggü. vorherigem Zeitraum"
+      "Unlimited": "Unbegrenzt"
     },
     "catalog": {
       "group": {

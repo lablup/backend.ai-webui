@@ -45,15 +45,7 @@ test.describe(
               .first(),
           ).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-          // 4. Verify the "Session Results" widget is visible
-          await expect(
-            page
-              .locator('.uic-board-item')
-              .filter({ hasText: 'Session Results' })
-              .first(),
-          ).toBeVisible({ timeout: WIDGET_TIMEOUT });
-
-          // 5. Verify the "My Recent Sessions" widget is visible
+          // 4. Verify the "My Recent Sessions" widget is visible
           await expect(
             page
               .locator('.uic-board-item')

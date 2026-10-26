@@ -811,7 +811,6 @@
       "Availability": "Ketersediaan",
       "Available": "Tersedia",
       "Count": "Bilangan",
-      "Failed": "Gagal",
       "FailuresInRange": "Kegagalan dalam julat ini: {{count}}",
       "FailuresOnly": "Tunjukkan kegagalan sahaja",
       "FolderLimit": "Had: {{max}}",
@@ -831,13 +830,9 @@
       "ResourcePresets": "Pratetap Sumber",
       "ResourcePresetsTooltip": "Sama ada setiap pratetap sumber muat dalam apa yang masih boleh anda peruntukkan dalam kumpulan sumber.",
       "Resources": "Sumber",
-      "SessionResults": "Keputusan Sesi",
-      "SessionResultsTooltip": "Sesi anda yang tamat dalam julat yang dipilih, mengikut keputusan. Perubahan dibandingkan dengan julat sebelumnya yang sama panjang.",
       "Share": "Bahagian",
-      "Succeeded": "Berjaya",
       "Unhealthy": "Tidak sihat",
-      "Unlimited": "Tanpa had",
-      "VsPreviousRange": "berbanding julat sebelumnya"
+      "Unlimited": "Tanpa had"
     },
     "catalog": {
       "group": {

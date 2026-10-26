@@ -75,7 +75,6 @@ describe('PANEL_CATALOG', () => {
         'start.deployment',
         'start.url',
         'mySession',
-        'sessionResult',
         'myRecentSessions',
         'myResource',
         'resourcePresets',

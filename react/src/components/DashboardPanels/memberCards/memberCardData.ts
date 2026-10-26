@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { MAX_BUCKETS, type DateTimeWindow } from '../timeRange';
 import * as _ from 'lodash-es';
 
 /** One donut slice and its legend row. */
@@ -131,50 +130,6 @@ export const toPresetRows = (
       })),
   }));
 
-/**
- * Query variables for up to {@link MAX_BUCKETS} bucket count aliases named
- * `<prefix>0..7`: `<prefix>N` holds the filter, `<prefix>NOn` whether the alias runs.
- */
-export const bucketVariables = <TFilter>(
-  prefix: string,
-  buckets: ReadonlyArray<DateTimeWindow>,
-  makeFilter: (window: DateTimeWindow) => TFilter,
-): Record<string, TFilter | boolean | null> =>
-  Object.fromEntries(
-    _.range(MAX_BUCKETS).flatMap((index) => {
-      const window = buckets[index];
-      return [
-        [`${prefix}${index}`, window ? makeFilter(window) : null],
-        [`${prefix}${index}On`, !!window],
-      ];
-    }),
-  );
-
-/** The bucket counts the aliases returned, oldest first; buckets that did not run are left out. */
-export const bucketCounts = (
-  data: Readonly<Record<string, { readonly count: number } | null | undefined>>,
-  prefix: string,
-  bucketCount: number,
-): Array<number> =>
-  _.range(Math.min(bucketCount, MAX_BUCKETS)).map(
-    (index) => data[`${prefix}${index}`]?.count ?? 0,
-  );
-
-/** The window of the same length that ends where `window` starts. */
-export const previousWindow = (window: DateTimeWindow): DateTimeWindow => {
-  const after = new Date(window.after).getTime();
-  const before = new Date(window.before).getTime();
-  return {
-    after: new Date(after - (before - after)).toISOString(),
-    before: window.after,
-  };
-};
-
-export interface CountDelta {
-  value: string;
-  direction: 'up' | 'down' | 'flat';
-}
-
 /** `AuditLogStatus` has no FAILURE: a failed action is recorded as ERROR or DENIED. */
 export const AUDIT_FAILURE_STATUSES = ['ERROR', 'DENIED'] as const;
 
@@ -185,12 +140,3 @@ export const FAILURES_ONLY_FILTER = {
 
 export const isFailuresOnlyFilter = (filter: unknown): boolean =>
   _.isEqual(filter, FAILURES_ONLY_FILTER);
-
-/** The change from the previous range's count, formatted with its sign. */
-export const countDelta = (current: number, previous: number): CountDelta => {
-  const diff = current - previous;
-  return {
-    value: diff > 0 ? `+${diff}` : String(diff),
-    direction: diff > 0 ? 'up' : diff < 0 ? 'down' : 'flat',
-  };
-};

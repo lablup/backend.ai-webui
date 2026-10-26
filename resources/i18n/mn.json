@@ -811,7 +811,6 @@
       "Availability": "Боломж",
       "Available": "Боломжтой",
       "Count": "Тоо",
-      "Failed": "Амжилтгүй",
       "FailuresInRange": "Энэ хугацааны алдаа: {{count}}",
       "FailuresOnly": "Зөвхөн алдааг харуулах",
       "FolderLimit": "Хязгаар: {{max}}",
@@ -831,13 +830,9 @@
       "ResourcePresets": "Нөөцийн урьдчилсан тохиргоо",
       "ResourcePresetsTooltip": "Нөөцийн урьдчилсан тохиргоо бүр нөөцийн бүлэгт таны хуваарилж болох үлдэгдэлд багтах эсэх.",
       "Resources": "Нөөц",
-      "SessionResults": "Сешний үр дүн",
-      "SessionResultsTooltip": "Сонгосон хугацаанд дууссан таны сешнүүд, үр дүнгээр. Өөрчлөлтийг ижил урттай өмнөх хугацаатай харьцуулна.",
       "Share": "Хувь",
-      "Succeeded": "Амжилттай",
       "Unhealthy": "Хэвийн бус",
-      "Unlimited": "Хязгааргүй",
-      "VsPreviousRange": "өмнөх хугацаатай харьцуулахад"
+      "Unlimited": "Хязгааргүй"
     },
     "catalog": {
       "group": {

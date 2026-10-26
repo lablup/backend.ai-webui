@@ -811,7 +811,6 @@
       "Availability": "Доступность",
       "Available": "Доступно",
       "Count": "Количество",
-      "Failed": "С ошибкой",
       "FailuresInRange": "Сбоев за этот период: {{count}}",
       "FailuresOnly": "Только сбои",
       "FolderLimit": "Лимит: {{max}}",
@@ -831,13 +830,9 @@
       "ResourcePresets": "Пресеты ресурсов",
       "ResourcePresetsTooltip": "Помещается ли каждый пресет в то, что вы ещё можете выделить в группе ресурсов.",
       "Resources": "Ресурсы",
-      "SessionResults": "Результаты сеансов",
-      "SessionResultsTooltip": "Ваши сеансы, завершившиеся за выбранный период, по результату. Изменение сравнивается с предыдущим периодом той же длины.",
       "Share": "Доля",
-      "Succeeded": "Успешно",
       "Unhealthy": "Неисправно",
-      "Unlimited": "Без ограничений",
-      "VsPreviousRange": "по сравнению с предыдущим периодом"
+      "Unlimited": "Без ограничений"
     },
     "catalog": {
       "group": {

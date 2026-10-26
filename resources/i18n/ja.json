@@ -811,7 +811,6 @@
       "Availability": "利用可否",
       "Available": "利用可能",
       "Count": "件数",
-      "Failed": "失敗",
       "FailuresInRange": "この期間の失敗: {{count}}件",
       "FailuresOnly": "失敗のみ表示",
       "FolderLimit": "上限: {{max}}",
@@ -831,13 +830,9 @@
       "ResourcePresets": "リソースプリセット",
       "ResourcePresetsTooltip": "各リソースプリセットが、リソースグループでまだ割り当て可能な範囲に収まるかを表示します。",
       "Resources": "リソース",
-      "SessionResults": "セッションの成功/失敗",
-      "SessionResultsTooltip": "選択した期間に終了した自分のセッションを結果別に数えます。増減は同じ長さの直前の期間と比較します。",
       "Share": "割合",
-      "Succeeded": "成功",
       "Unhealthy": "異常",
-      "Unlimited": "無制限",
-      "VsPreviousRange": "前の期間との比較"
+      "Unlimited": "無制限"
     },
     "catalog": {
       "group": {

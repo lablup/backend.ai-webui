@@ -798,7 +798,6 @@
       "Availability": "Availability",
       "Available": "Available",
       "Count": "Count",
-      "Failed": "Failed",
       "FailuresInRange": "Failures in this range: {{count}}",
       "FailuresOnly": "Show failures only",
       "FolderLimit": "Limit: {{max}}",
@@ -818,13 +817,9 @@
       "ResourcePresets": "Resource Presets",
       "ResourcePresetsTooltip": "Whether each resource preset fits in what you can still allocate in the resource group.",
       "Resources": "Resources",
-      "SessionResults": "Session Results",
-      "SessionResultsTooltip": "Your sessions that ended in the selected range, by result. The change compares with the previous range of the same length.",
       "Share": "Share",
-      "Succeeded": "Succeeded",
       "Unhealthy": "Unhealthy",
-      "Unlimited": "Unlimited",
-      "VsPreviousRange": "vs. previous range"
+      "Unlimited": "Unlimited"
     },
     "catalog": {
       "group": {

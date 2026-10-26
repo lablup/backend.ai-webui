@@ -811,7 +811,6 @@
       "Availability": "가능 여부",
       "Available": "가능",
       "Count": "개수",
-      "Failed": "실패",
       "FailuresInRange": "이 기간의 실패: {{count}}건",
       "FailuresOnly": "실패만 보기",
       "FolderLimit": "한도: {{max}}개",
@@ -831,13 +830,9 @@
       "ResourcePresets": "리소스 프리셋",
       "ResourcePresetsTooltip": "각 리소스 프리셋이 자원 그룹에서 아직 할당할 수 있는 자원 안에 들어가는지 보여 줍니다.",
       "Resources": "자원",
-      "SessionResults": "세션 성공/실패",
-      "SessionResultsTooltip": "선택한 기간에 끝난 내 세션을 결과별로 셉니다. 증감은 같은 길이의 직전 기간과 비교합니다.",
       "Share": "비율",
-      "Succeeded": "성공",
       "Unhealthy": "비정상",
-      "Unlimited": "무제한",
-      "VsPreviousRange": "이전 기간 대비"
+      "Unlimited": "무제한"
     },
     "catalog": {
       "group": {

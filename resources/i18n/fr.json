@@ -811,7 +811,6 @@
       "Availability": "Disponibilité",
       "Available": "Disponible",
       "Count": "Nombre",
-      "Failed": "Échouées",
       "FailuresInRange": "Échecs sur cette période : {{count}}",
       "FailuresOnly": "Afficher les échecs uniquement",
       "FolderLimit": "Limite : {{max}}",
@@ -831,13 +830,9 @@
       "ResourcePresets": "Préréglages de ressources",
       "ResourcePresetsTooltip": "Indique si chaque préréglage tient dans ce que vous pouvez encore allouer dans le groupe de ressources.",
       "Resources": "Ressources",
-      "SessionResults": "Résultats des sessions",
-      "SessionResultsTooltip": "Vos sessions terminées sur la période choisie, par résultat. La variation est comparée à la période précédente de même durée.",
       "Share": "Part",
-      "Succeeded": "Réussies",
       "Unhealthy": "Défaillant",
-      "Unlimited": "Illimité",
-      "VsPreviousRange": "par rapport à la période précédente"
+      "Unlimited": "Illimité"
     },
     "catalog": {
       "group": {

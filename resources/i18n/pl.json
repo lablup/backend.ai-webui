@@ -811,7 +811,6 @@
       "Availability": "Dostępność",
       "Available": "Dostępny",
       "Count": "Liczba",
-      "Failed": "Nieudane",
       "FailuresInRange": "Niepowodzenia w tym okresie: {{count}}",
       "FailuresOnly": "Pokaż tylko niepowodzenia",
       "FolderLimit": "Limit: {{max}}",
@@ -831,13 +830,9 @@
       "ResourcePresets": "Ustawienia zasobów",
       "ResourcePresetsTooltip": "Czy każde ustawienie zasobów mieści się w tym, co możesz jeszcze przydzielić w grupie zasobów.",
       "Resources": "Zasoby",
-      "SessionResults": "Wyniki sesji",
-      "SessionResultsTooltip": "Twoje sesje zakończone w wybranym okresie według wyniku. Zmiana jest porównywana z poprzednim okresem tej samej długości.",
       "Share": "Udział",
-      "Succeeded": "Udane",
       "Unhealthy": "Niesprawny",
-      "Unlimited": "Bez limitu",
-      "VsPreviousRange": "w porównaniu z poprzednim okresem"
+      "Unlimited": "Bez limitu"
     },
     "catalog": {
       "group": {

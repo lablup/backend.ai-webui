@@ -2,14 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { MAX_BUCKETS } from '../timeRange';
 import {
   FAILURES_ONLY_FILTER,
-  bucketCounts,
-  bucketVariables,
-  countDelta,
   isFailuresOnlyFilter,
-  previousWindow,
   toDonutRows,
   toPresetRows,
   toUsageRows,
@@ -127,50 +122,6 @@ describe('toPresetRows', () => {
       },
     ]);
     expect(toPresetRows(undefined)).toEqual([]);
-  });
-});
-
-describe('bucket count aliases', () => {
-  const buckets = [
-    { after: '2026-10-26T00:00:00.000Z', before: '2026-10-26T04:00:00.000Z' },
-    { after: '2026-10-26T04:00:00.000Z', before: '2026-10-26T08:00:00.000Z' },
-  ];
-
-  it('fills every alias slot, switching off the ones past the buckets', () => {
-    const variables = bucketVariables('s', buckets, (window) => ({
-      terminatedAt: window,
-    }));
-    expect(Object.keys(variables)).toHaveLength(MAX_BUCKETS * 2);
-    expect(variables.s0).toEqual({ terminatedAt: buckets[0] });
-    expect(variables.s1On).toBe(true);
-    expect(variables.s2).toBeNull();
-    expect(variables.s2On).toBe(false);
-  });
-
-  it('reads the counts back oldest first, a skipped alias as 0', () => {
-    expect(
-      bucketCounts({ s0: { count: 4 }, s1: null, f0: { count: 9 } }, 's', 3),
-    ).toEqual([4, 0, 0]);
-  });
-});
-
-describe('previousWindow and countDelta', () => {
-  it('takes the window of the same length right before', () => {
-    expect(
-      previousWindow({
-        after: '2026-10-25T12:00:00.000Z',
-        before: '2026-10-26T12:00:00.000Z',
-      }),
-    ).toEqual({
-      after: '2026-10-24T12:00:00.000Z',
-      before: '2026-10-25T12:00:00.000Z',
-    });
-  });
-
-  it('signs the change and names its direction', () => {
-    expect(countDelta(12, 9)).toEqual({ value: '+3', direction: 'up' });
-    expect(countDelta(1, 2)).toEqual({ value: '-1', direction: 'down' });
-    expect(countDelta(0, 0)).toEqual({ value: '0', direction: 'flat' });
   });
 });
 

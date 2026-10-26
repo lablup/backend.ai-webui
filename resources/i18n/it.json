@@ -811,7 +811,6 @@
       "Availability": "Disponibilità",
       "Available": "Disponibile",
       "Count": "Numero",
-      "Failed": "Non riuscite",
       "FailuresInRange": "Errori in questo intervallo: {{count}}",
       "FailuresOnly": "Mostra solo errori",
       "FolderLimit": "Limite: {{max}}",
@@ -831,13 +830,9 @@
       "ResourcePresets": "Preset di risorse",
       "ResourcePresetsTooltip": "Indica se ogni preset rientra in ciò che puoi ancora allocare nel gruppo di risorse.",
       "Resources": "Risorse",
-      "SessionResults": "Esiti delle sessioni",
-      "SessionResultsTooltip": "Le tue sessioni terminate nell'intervallo selezionato, per esito. La variazione è rispetto all'intervallo precedente di pari durata.",
       "Share": "Quota",
-      "Succeeded": "Riuscite",
       "Unhealthy": "Non integro",
-      "Unlimited": "Illimitato",
-      "VsPreviousRange": "rispetto all'intervallo precedente"
+      "Unlimited": "Illimitato"
     },
     "catalog": {
       "group": {

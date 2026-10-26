@@ -808,7 +808,6 @@
       "Availability": "ความพร้อมใช้งาน",
       "Available": "พร้อมใช้งาน",
       "Count": "จำนวน",
-      "Failed": "ล้มเหลว",
       "FailuresInRange": "ความล้มเหลวในช่วงนี้: {{count}}",
       "FailuresOnly": "แสดงเฉพาะที่ล้มเหลว",
       "FolderLimit": "ขีดจำกัด: {{max}}",
@@ -828,13 +827,9 @@
       "ResourcePresets": "พรีเซ็ตทรัพยากร",
       "ResourcePresetsTooltip": "แต่ละพรีเซ็ตทรัพยากรพอดีกับทรัพยากรที่คุณยังจัดสรรได้ในกลุ่มทรัพยากรหรือไม่",
       "Resources": "ทรัพยากร",
-      "SessionResults": "ผลลัพธ์เซสชัน",
-      "SessionResultsTooltip": "เซสชันของคุณที่สิ้นสุดในช่วงที่เลือก แยกตามผลลัพธ์ การเปลี่ยนแปลงเทียบกับช่วงก่อนหน้าที่ยาวเท่ากัน",
       "Share": "สัดส่วน",
-      "Succeeded": "สำเร็จ",
       "Unhealthy": "ผิดปกติ",
-      "Unlimited": "ไม่จำกัด",
-      "VsPreviousRange": "เทียบกับช่วงก่อนหน้า"
+      "Unlimited": "ไม่จำกัด"
     },
     "catalog": {
       "group": {
