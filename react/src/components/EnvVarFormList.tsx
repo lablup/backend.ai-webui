@@ -18,7 +18,7 @@ import {
   typeScaleVars,
 } from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
-import { BAIFormListInput, useBAIFormListInputCellStatus } from 'backend.ai-ui';
+import { BAIFormListInput } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -163,7 +163,6 @@ const EnvVarNameInput: React.FC<EnvVarNameInputProps> = ({
   suggestions,
 }) => {
   'use memo';
-  const cellStatus = useBAIFormListInputCellStatus();
   const listboxId = useId();
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [anchorWidth, setAnchorWidth] = useState<number | null>(null);
@@ -273,7 +272,6 @@ const EnvVarNameInput: React.FC<EnvVarNameInputProps> = ({
         }}
         aria-label={label}
         placeholder={placeholder}
-        {...cellStatus}
         width="100%"
         role="combobox"
         aria-expanded={popover.isOpen}

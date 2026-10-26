@@ -11,37 +11,51 @@ import {
   type StoreValue,
 } from '../form-engine';
 import './BAIFormListInput.css';
-import type { InputStatus } from '@lablup/ui-common/Field';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   ListInput,
   type ListInputColumn,
   type ListInputProps,
 } from '@lablup/ui-common/lab';
 import * as _ from 'lodash-es';
-import React, { createContext, useContext } from 'react';
+import React, { useContext } from 'react';
 
-const ListInputCellContext = createContext(false);
+type CellControlProps = {
+  element: React.ReactElement;
+} & Record<string, unknown>;
 
 /**
- * The status a control inside a `BAIFormListInput` cell should render: the
- * cell's `Form.Item` result as a tooltip, so a message never changes the row
- * height. `undefined` outside a cell. The variant is constant per position,
- * so the control's element structure never flips between renders.
+ * The cell's control, given the props its `noStyle` `Form.Item` injects. The
+ * ui-common control paints the item's status border itself; the message goes
+ * in a tooltip, so a failed rule never changes the row height. The tooltip is
+ * always rendered (disabled without a message) so the control never remounts.
  */
-export const useBAIFormListInputCellStatus = ():
-  { status?: InputStatus; statusVariant: 'tooltip' } | undefined => {
+const CellControl: React.FC<CellControlProps> = ({ element, ...injected }) => {
   'use memo';
-  const isInCell = useContext(ListInputCellContext);
   const { status, errors, warnings } = useContext(FormItemInputContext);
-  if (!isInCell) return undefined;
-  if (status !== 'error' && status !== 'warning') {
-    return { statusVariant: 'tooltip' };
-  }
-  const message = _.find(
-    status === 'error' ? errors : warnings,
-    (entry): entry is string => typeof entry === 'string' && entry !== '',
+  const message =
+    status === 'error' || status === 'warning'
+      ? _.find(
+          status === 'error' ? errors : warnings,
+          (entry): entry is string => typeof entry === 'string' && entry !== '',
+        )
+      : undefined;
+  // A control's own handler (a cross-row revalidation, say) runs after the
+  // form's, as `Form.Item` does for a direct child.
+  const props = _.mapValues(injected, (value, key) => {
+    const own = (element.props as Record<string, unknown>)[key];
+    return typeof value === 'function' && typeof own === 'function'
+      ? (...args: unknown[]) => {
+          value(...args);
+          own(...args);
+        }
+      : value;
+  });
+  return (
+    <Tooltip content={message ?? ''} isEnabled={!!message}>
+      {React.cloneElement(element, props)}
+    </Tooltip>
   );
-  return { status: { type: status, message }, statusVariant: 'tooltip' };
 };
 
 export interface BAIFormListInputCellContext {
@@ -145,23 +159,23 @@ const BAIFormListInput: React.FC<BAIFormListInputProps> = ({
               header: column.header,
               width: column.width,
               renderInput: ({ item: { key: _key, ...field }, label }) => (
-                <ListInputCellContext.Provider value>
-                  <Form.Item
-                    {...field}
-                    {...column.formItemProps?.({ key: _key, ...field })}
-                    name={[field.name, column.key]}
-                    noStyle
-                    // The message renders as the control's tooltip instead
-                    // of under the cell or the list.
-                    help={false}
-                  >
-                    {column.renderInput({
+                <Form.Item
+                  {...field}
+                  {...column.formItemProps?.({ key: _key, ...field })}
+                  name={[field.name, column.key]}
+                  noStyle
+                  // The message renders as the control's tooltip instead
+                  // of under the cell or the list.
+                  help={false}
+                >
+                  <CellControl
+                    element={column.renderInput({
                       field: { key: _key, ...field },
                       fields,
                       label,
                     })}
-                  </Form.Item>
-                </ListInputCellContext.Provider>
+                  />
+                </Form.Item>
               ),
             }))}
           />
