@@ -129,6 +129,8 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
       gap="md"
       className="dashboard-edit-sider"
       style={{
+        // Inline, because BAIFlex sets `position: relative` inline.
+        position: 'sticky',
         width: 320,
         flexShrink: 0,
         paddingLeft: token('--spacing-6'),
