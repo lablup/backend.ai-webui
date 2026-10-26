@@ -24,6 +24,7 @@ export type BaiCustomTokenSeeds = {
     info?: BrandSeedPair;
     link?: BrandSeedPair;
     headerBg?: BrandSeedPair;
+    headerBgAdmin?: BrandSeedPair;
     error?: BrandSeedPair;
     success?: BrandSeedPair;
     warning?: BrandSeedPair;

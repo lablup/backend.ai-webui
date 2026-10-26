@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-10-26T09:09:56.339Z",
+  "generatedAt": "2026-10-26T10:29:22.435Z",
   "languages": [
     "en",
     "ja",
@@ -119,9 +119,9 @@
     "ko": {
       "totals": {
         "pages": 2,
-        "changes": 7,
+        "changes": 8,
         "added": 2,
-        "modified": 2,
+        "modified": 3,
         "removed": 3,
         "images": 0,
         "newPages": 0,
@@ -158,12 +158,13 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/ko/user_settings/user_settings.md",
           "counts": {
             "added": 0,
-            "modified": 0,
+            "modified": 1,
             "removed": 1,
             "images": 0,
-            "total": 1
+            "total": 2
           },
           "fingerprints": [
+            "358aafa276e8",
             "4a78995dcefb"
           ]
         }
