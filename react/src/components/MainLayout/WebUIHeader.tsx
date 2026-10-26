@@ -18,6 +18,7 @@ import './WebUIHeader.css';
 import WebUIHeaderProjectSelect from './WebUIHeaderProjectSelect';
 import { useAppShellMobile } from '@lablup/ui-common/AppShell';
 import { IconButton } from '@lablup/ui-common/IconButton';
+import { Text } from '@lablup/ui-common/Text';
 import { MediaTheme, useTheme } from '@lablup/ui-common/theme';
 import {
   ANTD_REVERSED_BAND_OVERLAYS,
@@ -120,6 +121,11 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
                 marginLeft: `calc(${token('--spacing-3')} * -1)`,
               }}
             />
+          )}
+          {isSystemAdminScope && (
+            <Text type="large" weight="semibold">
+              {t('webui.menu.AdminSettings')}
+            </Text>
           )}
         </MediaTheme>
         {!isProjectAgnosticPage && (
