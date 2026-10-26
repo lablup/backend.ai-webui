@@ -6,6 +6,7 @@ import { useSuspendedBackendaiClient } from '.';
 import {
   buildPath,
   type MenuAdminRole,
+  PROJECT_ADMIN_MENU_KEY_ROUTES,
   resolveMenuKeyScopeFeature,
 } from '../helper/pathBuilder';
 import { useCurrentUserRole } from './backendai';
@@ -426,8 +427,8 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   );
 
   const fullAdminMenu: Array<WebUIAdminMenuItemType> = filterOutEmpty([
-    // Domain admins have no dashboard (#10583).
-    (isSuperAdmin || effectiveAdminRole === 'currentProjectAdmin') &&
+    // Superadmins and the current project's admins only; not domain admins.
+    (isSuperAdmin || isCurrentProjectAdmin) &&
       createAdminMenuItem(
         t('webui.menu.Dashboard'),
         <Gauge style={{ color: token('--color-info') }} size="1em" />,
@@ -591,16 +592,29 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
         : fullAdminMenu.filter(
             (item) =>
               !PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string) ||
-              SUPERADMIN_SHARED_PAGE_KEY_SET.has(item.key as string),
+              (isSuperAdmin &&
+                SUPERADMIN_SHARED_PAGE_KEY_SET.has(item.key as string)),
           );
 
-  // The project-admin pages' sider menu: every admin tier can open them.
+  // The project-admin pages' sider menu: every admin tier can open them. A key
+  // with a route per role always leads to its project-admin route here.
   const projectAdminMenu: Array<WebUIAdminMenuItemType> =
     effectiveAdminRole === 'none'
       ? []
-      : fullAdminMenu.filter((item) =>
-          PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string),
-        );
+      : fullAdminMenu
+          .filter((item) => PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string))
+          .map((item) =>
+            PROJECT_ADMIN_MENU_KEY_ROUTES[item.key as string]
+              ? {
+                  ...item,
+                  to: getPathFromMenuKey(
+                    item.key,
+                    activeProjectName,
+                    'currentProjectAdmin',
+                  ),
+                }
+              : item,
+          );
 
   const pluginMap: Record<string, MenuItem[]> = {
     'menuitem-user': generalMenu as unknown as MenuItem[],
@@ -833,17 +847,23 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     ? _.find(projectAdminMenu, (item) => !item.disabled)
     : undefined;
 
+  // A key with a route per role (`admin-dashboard`) is selected only in the
+  // menu whose item points at the current URL's scope.
+  const currentUrlScope = getRouteScopeAndKey(routerLocation.pathname).scope;
+  const isCurrentMenuItem = (item: WebUIAdminMenuItemType) =>
+    item.key === currentMenuKeyFromRoute &&
+    (!PROJECT_ADMIN_MENU_KEY_ROUTES[item.key as string] ||
+      getRouteScopeAndKey(item.to ?? '').scope === currentUrlScope);
+
   const isSelectedProjectAdminMenu = _.some(
     projectAdminMenu,
-    (item) => item.key === currentMenuKeyFromRoute,
+    isCurrentMenuItem,
   );
 
-  const isSelectedAdminCategoryMenu = _.some(adminMenu, (item) => {
-    if (item && 'key' in item) {
-      return item.key === currentMenuKeyFromRoute;
-    }
-    return false;
-  });
+  const isSelectedAdminCategoryMenu = _.some(
+    adminMenu,
+    (item) => !!item && 'key' in item && isCurrentMenuItem(item),
+  );
 
   // Role-independent variant: true when the current path is *any* admin
   // category page, regardless of whether the current user's effective role
@@ -860,7 +880,6 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   // redirect, which used to classify them as "general" and pollute the
   // sider's `goBackPath` with `/admin` — making "go back" a no-op loop
   // (FR-3388, deep-link-then-login repro).
-  const currentUrlScope = getRouteScopeAndKey(routerLocation.pathname).scope;
   const isCurrentPathAdminCategory =
     ALL_ADMIN_PAGE_KEYS.has(currentPageMenuKey) ||
     PROJECT_ADMIN_PAGE_KEY_SET.has(currentPageMenuKey) ||

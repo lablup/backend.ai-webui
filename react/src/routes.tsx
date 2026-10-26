@@ -174,11 +174,7 @@ const RootRedirect: React.FC = () => {
   const isSuperAdmin = useEffectiveAdminRole() === 'superadmin';
   return (
     <WebUINavigate
-      to={
-        isSuperAdmin && firstAvailableAdminMenuItem
-          ? getPathFromMenuKey(firstAvailableAdminMenuItem.key)
-          : defaultMenuPath
-      }
+      to={(isSuperAdmin && firstAvailableAdminMenuItem?.to) || defaultMenuPath}
       replace
     />
   );
