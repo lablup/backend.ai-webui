@@ -15,12 +15,11 @@
  - antd `tooltip={{formatter}}` → `formatValue` + `valueDisplay="tooltip"`
    (the Astryx default). `tooltip.open` / `tooltip.placement` have no
    equivalent and no consumer.
- - Astryx `Slider.label` is a required string the control renders itself; the
-   wrapper surfaces it so a future call site must name the control.
+ - Name it with `aria-label`, or put it in a `Form.Item` whose label names it.
 */
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { Slider } from '@lablup/ui-common/Slider';
-import type { SliderSingleProps } from '@lablup/ui-common/Slider';
+import type { SliderProps } from '@lablup/ui-common/Slider';
 import * as _ from 'lodash-es';
 import React from 'react';
 
@@ -31,6 +30,8 @@ export type StepType =
     }
   | number
   | string;
+// The single-value branch of ui-common's Slider (no field chrome).
+type SliderSingleProps = Extract<SliderProps, { value?: number }>;
 interface NonLinearSliderProps extends Omit<
   SliderSingleProps,
   | 'value'

@@ -202,8 +202,7 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
             `allowClear={false}` -> `hasClear={false}`; the six antd presets
             keep their labels, expressed as day-granular ranges. */}
         <DateRangeInput
-          label={t('statistics.SelectPeriod')}
-          isLabelHidden
+          aria-label={t('statistics.SelectPeriod')}
           hasClear={false}
           max={dayjs().format('YYYY-MM-DD') as ISODateString}
           value={{

@@ -287,8 +287,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
             label={t('userSettings.UserConfigScript')}
           >
             <Selector
-              label={t('userSettings.UserConfigScript')}
-              isLabelHidden
+              aria-label={t('userSettings.UserConfigScript')}
               value={rcfileNames}
               options={[
                 '.bashrc',

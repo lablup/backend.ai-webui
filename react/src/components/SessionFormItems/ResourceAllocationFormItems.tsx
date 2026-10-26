@@ -227,7 +227,7 @@ const ClusterModeSegmented: React.FC<{
   'use memo';
   return (
     <SegmentedControl
-      label={label}
+      aria-label={label}
       value={value ?? items[0]?.value ?? ''}
       xstyle={clusterModeSegmentedStyles.control}
       onChange={(next) => {

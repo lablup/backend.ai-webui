@@ -323,10 +323,9 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
         // RAW KEY as this Selector's accessible name.
         // `resourcePreset.ResourcePresets` is the same string and is present in
         // all 21 locales.
-        label={t('resourcePreset.ResourcePresets')}
-        isLabelHidden
+        aria-label={t('resourcePreset.ResourcePresets')}
         isLoading={isPendingUpdate}
-        isDisabled={disabled}
+        disabled={disabled}
         controlStyle={style}
         width="100%"
         hasSearch

@@ -396,8 +396,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
                 caption becomes the label and is hidden as duplicate text. */}
             <Switch
               value={isImportOnly}
-              label={t('data.modelStore.ImportOnly')}
-              isLabelHidden
+              aria-label={t('data.modelStore.ImportOnly')}
               onChange={() => {
                 toggleIsImportOnly();
               }}

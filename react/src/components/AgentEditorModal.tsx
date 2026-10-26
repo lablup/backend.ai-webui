@@ -437,18 +437,16 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
           <Text>{t('aiAgent.RequiresToolCalling')}</Text>
           <Switch
             value={modelPreferences.requiresToolCalling ?? false}
-            label={t('aiAgent.RequiresToolCalling')}
-            isLabelHidden
-            isDisabled
+            aria-label={t('aiAgent.RequiresToolCalling')}
+            disabled
           />
         </BAIFlex>
         <BAIFlex gap="md" align="center" style={{ marginTop: 8 }}>
           <Text>{t('aiAgent.RequiresVision')}</Text>
           <Switch
             value={modelPreferences.requiresVision ?? false}
-            label={t('aiAgent.RequiresVision')}
-            isLabelHidden
-            isDisabled
+            aria-label={t('aiAgent.RequiresVision')}
+            disabled
           />
         </BAIFlex>
 

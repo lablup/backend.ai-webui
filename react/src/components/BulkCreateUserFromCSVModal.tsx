@@ -50,6 +50,7 @@ import { Switch } from '@lablup/ui-common/Switch';
 import { Text } from '@lablup/ui-common/Text';
 import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { VStack } from '@lablup/ui-common/VStack';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAlert,
@@ -1096,29 +1097,29 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
           ) : (
             // antd `Upload.Dragger` was used purely as a file *picker*
             // (`beforeUpload` returns false, `showUploadList={false}`) →
-            // `FileInput mode="dropzone"` per MAPPING.md §3.12. PILOT-DECISION:
-            // the hand-built icon-in-a-box + two-line text layout is dropped
-            // in favor of FileInput's own label/description slots
-            // (defaults-first; MIGRATION-SPEC §0 simplicity policy) — the
-            // primary/secondary line pairing is preserved via `label`/
-            // `description` instead of custom styling.
-            <FileInput
-              label={t('credential.UploadCSVFile')}
-              description={t('credential.CSVOneRowPerUser')}
-              mode="dropzone"
-              accept=".csv,text/csv"
-              value={null}
-              onChange={(file) => {
-                const selected = Array.isArray(file) ? file[0] : file;
-                if (!selected) return;
-                selected
-                  .text()
-                  .then((text) => loadCSVText(selected.name, text))
-                  .catch(() => {
-                    message.error(t('credential.validation.CSVParseFailed'));
-                  });
-              }}
-            />
+            // `FileInput mode="dropzone"` per MAPPING.md §3.12. ui-common's
+            // FileInput renders no label/description, so the two lines sit
+            // above it as text and `aria-label` names the drop area.
+            <VStack gap={1} align="stretch">
+              <Text type="label">{t('credential.UploadCSVFile')}</Text>
+              <Text color="secondary">{t('credential.CSVOneRowPerUser')}</Text>
+              <FileInput
+                aria-label={t('credential.UploadCSVFile')}
+                mode="dropzone"
+                accept=".csv,text/csv"
+                value={null}
+                onChange={(file) => {
+                  const selected = Array.isArray(file) ? file[0] : file;
+                  if (!selected) return;
+                  selected
+                    .text()
+                    .then((text) => loadCSVText(selected.name, text))
+                    .catch(() => {
+                      message.error(t('credential.validation.CSVParseFailed'));
+                    });
+                }}
+              />
+            </VStack>
           )}
 
           {/* Action buttons */}
@@ -1306,11 +1307,10 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               <BAIFlex gap="xs" align="center">
                 <Switch
                   size="sm"
-                  label={t('credential.OnlyShowErrors')}
-                  isLabelHidden
+                  aria-label={t('credential.OnlyShowErrors')}
                   value={onlyErrors}
                   onChange={setOnlyErrors}
-                  isDisabled={stats.withErrors === 0}
+                  disabled={stats.withErrors === 0}
                 />
                 <Text size="sm">{t('credential.OnlyShowErrors')}</Text>
               </BAIFlex>

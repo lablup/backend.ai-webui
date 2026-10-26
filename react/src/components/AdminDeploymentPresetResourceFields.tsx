@@ -159,10 +159,9 @@ export const FixedResourceSlotField: React.FC<{
             readOnly mode, so `isDisabled` carries the "not editable" state;
             the dashed-border decoration is dropped (defaults-first). */}
         <TextInput
-          label={t('adminDeploymentPreset.ResourceSlots')}
-          isLabelHidden
+          aria-label={t('adminDeploymentPreset.ResourceSlots')}
           value={slotName.toUpperCase()}
-          isDisabled
+          disabled
           width="100%"
         />
       </BAIFormItem>

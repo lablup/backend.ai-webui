@@ -633,7 +633,7 @@
     "CredentialSuccessfullyDeleted": "자격증명이 삭제되었습니다.",
     "Credentials": "자격증명",
     "CurrentClientIp": "현재 접속 IP: {{ip}}",
-    "Days": "일",
+    "Days": "{{value}}일",
     "Deactivate": "비활성화",
     "DeactivateConfirm": "이 키페어를 비활성화하시겠습니까?",
     "DeactivateCredential": "자격증명 비활성화",

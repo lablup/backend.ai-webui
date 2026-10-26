@@ -191,8 +191,7 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
                 // Astryx destination (MAPPING.md §3.4).
                 return editingRow?.id === record.id ? (
                   <TextInput
-                    label={t('data.folders.Rename')}
-                    isLabelHidden
+                    aria-label={t('data.folders.Rename')}
                     value={editingRow.value}
                     onChange={(value) =>
                       setEditingRow({ id: record.id, value })

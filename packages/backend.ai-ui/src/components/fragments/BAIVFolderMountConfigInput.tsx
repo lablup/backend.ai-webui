@@ -571,12 +571,11 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                     style={{ marginBottom: 0, minWidth: 0 }}
                   >
                     <TextInput
-                      label={t(
+                      aria-label={t(
                         'comp:BAIVFolderMountConfigInput.AliasPlaceholder',
                       )}
-                      isLabelHidden
                       hasClear
-                      isDisabled={disabled}
+                      disabled={disabled}
                       placeholder={status.mountDestination}
                       value={aliasInput}
                       onChange={(next) =>

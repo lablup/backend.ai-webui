@@ -35,13 +35,14 @@ const AutomaticShmemSwitch: React.FC<{
   return (
     <Switch
       size="sm"
-      label={checked ? autoLabel : manualLabel}
       value={checked ?? false}
       onChange={(next) => {
         onChange?.(next);
         onToggle?.(next);
       }}
-    />
+    >
+      {checked ? autoLabel : manualLabel}
+    </Switch>
   );
 };
 

@@ -146,7 +146,6 @@ const SessionMonitorSettingsPane: React.FC<{
       {SESSION_MONITOR_CHIP_ITEMS.map((item) => (
         <CheckboxInput
           key={item}
-          label={t(CHIP_ITEM_LABEL_KEYS[item])}
           value={chipItems?.includes(item) ?? false}
           onChange={(checked) =>
             setChipItems(
@@ -155,23 +154,27 @@ const SessionMonitorSettingsPane: React.FC<{
               ),
             )
           }
-        />
+        >
+          {t(CHIP_ITEM_LABEL_KEYS[item])}
+        </CheckboxInput>
       ))}
       <Text type="label" weight="semibold">
         {t('sessionMonitor.settings.List')}
       </Text>
-      <BAIFlex direction="row" align="center" justify="between" gap="sm">
+      <BAIFlex direction="column" align="stretch" gap="xs">
+        <Text>{t('sessionMonitor.settings.SortBy')}</Text>
         <Selector
-          label={t('sessionMonitor.settings.SortBy')}
+          aria-label={t('sessionMonitor.settings.SortBy')}
           size="sm"
           options={sortOptions}
           value={sort ?? 'deadline'}
           onChange={(value) => setSort(value as SessionMonitorSort)}
         />
       </BAIFlex>
-      <BAIFlex direction="row" align="center" justify="between" gap="sm">
+      <BAIFlex direction="column" align="stretch" gap="xs">
+        <Text>{t('sessionMonitor.settings.RowsShown')}</Text>
         <Selector
-          label={t('sessionMonitor.settings.RowsShown')}
+          aria-label={t('sessionMonitor.settings.RowsShown')}
           size="sm"
           options={SESSION_MONITOR_ROW_OPTIONS.map((n) => String(n))}
           value={String(rows ?? SESSION_MONITOR_VISIBLE_LIMIT)}

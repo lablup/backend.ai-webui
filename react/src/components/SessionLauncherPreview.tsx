@@ -51,6 +51,15 @@ import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
+// The batch timeout select's unit values (SessionLauncherPage).
+const BATCH_TIMEOUT_UNIT_LABEL_KEYS: Record<string, string> = {
+  s: 'time.Sec',
+  m: 'time.Min',
+  h: 'time.Hour',
+  d: 'time.Day',
+  w: 'time.Week',
+};
+
 /**
  * The review step's image row. A manually typed image has no parts to
  * decompose, so it stays a copyable code string; a picked image is a legacy
@@ -226,8 +235,11 @@ const SessionLauncherPreview: React.FC<{
               >
                 {form.getFieldValue(['batch', 'timeout']) ? (
                   <Text>
-                    {form.getFieldValue(['batch', 'timeout'])}
-                    {form.getFieldValue(['batch', 'timeoutUnit']) || 's'}
+                    {`${form.getFieldValue(['batch', 'timeout'])} ${t(
+                      BATCH_TIMEOUT_UNIT_LABEL_KEYS[
+                        form.getFieldValue(['batch', 'timeoutUnit']) ?? 's'
+                      ] ?? 'time.Sec',
+                    )}`}
                   </Text>
                 ) : (
                   <Text color="secondary">{t('general.None')}</Text>

@@ -633,7 +633,7 @@
     "CredentialSuccessfullyDeleted": "Итгэмжлэл амжилттай устгагдлаа.",
     "Credentials": "Итгэмжлэх жуух бичиг",
     "CurrentClientIp": "Одоогийн үйлчлүүлэгчийн IP: {{ip}}",
-    "Days": "Өдөр",
+    "Days": "{{value}} өдөр",
     "Deactivate": "Идэвхгүй болгох",
     "DeactivateConfirm": "Энэ түлхүүр хослолыг идэвхгүй болгохдоо итгэлтэй байна уу?",
     "DeactivateCredential": "Итгэмжлэх жуух бичгийг идэвхгүй болгох",

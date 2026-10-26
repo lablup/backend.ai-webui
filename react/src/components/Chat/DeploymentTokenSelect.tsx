@@ -168,8 +168,7 @@ const DeploymentTokenSelectWithQuery: React.FC<
   return (
     <BAIFlex gap="xs" align="center">
       <Selector
-        label={t('chatui.SelectToken')}
-        isLabelHidden
+        aria-label={t('chatui.SelectToken')}
         placeholder={t('chatui.SelectToken')}
         // Fixed width so the token field looks the same across panel sizes
         // instead of following CustomModelForm's responsive 100%/200px width,
@@ -180,7 +179,7 @@ const DeploymentTokenSelectWithQuery: React.FC<
         renderOption={renderTokenOption}
         value={controllableValue || undefined}
         onChange={(v) => setControllableValue(v)}
-        isDisabled={props.disabled}
+        disabled={props.disabled}
         isLoading={loading}
       />
       <WebUILink
@@ -215,12 +214,11 @@ const DeploymentTokenSelect: React.FC<DeploymentTokenSelectProps> = ({
   if (!deploymentId) {
     return (
       <TextInput
-        label={t('chatui.SelectToken')}
-        isLabelHidden
+        aria-label={t('chatui.SelectToken')}
         value={controllableValue ?? ''}
         onChange={(v) => setControllableValue(v)}
         controlStyle={props.style}
-        isDisabled={props.disabled}
+        disabled={props.disabled}
       />
     );
   }

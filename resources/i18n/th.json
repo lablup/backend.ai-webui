@@ -633,7 +633,7 @@
     "CredentialSuccessfullyDeleted": "ลบข้อมูลรับรองสำเร็จแล้ว",
     "Credentials": "ข้อมูลประจำตัว",
     "CurrentClientIp": "IP ไคลเอนต์ปัจจุบัน: {{ip}}",
-    "Days": "วัน",
+    "Days": "{{value}} วัน",
     "Deactivate": "ปิดการใช้งาน",
     "DeactivateConfirm": "คุณแน่ใจหรือไม่ว่าต้องการปิดใช้งานคู่คีย์นี้?",
     "DeactivateCredential": "ปิดใช้งานข้อมูลรับรอง",

@@ -375,11 +375,11 @@ describe('BAILink', () => {
       render(<BAILink type="disabled">Disabled Link</BAILink>);
 
       const link = screen.getByText('Disabled Link').closest('a, button');
-      // Astryx `Link isDisabled` renders an href-less <a> that is out of the
-      // tab order and announces `aria-disabled` (its own docs); that pair is
-      // the contract now, not antd's `ant-typography-disabled` class.
+      // Astryx `Link isDisabled` announces `aria-disabled` and, since 0.7.3,
+      // keeps its Tab stop instead of `tabindex="-1"` (spec AST-085).
       expect(link).toHaveAttribute('aria-disabled', 'true');
-      expect(link).toHaveAttribute('tabindex', '-1');
+      expect(link).not.toHaveAttribute('href');
+      expect(link).not.toHaveAttribute('tabindex', '-1');
       expect(link).toHaveClass('bai-link-disabled');
     });
   });

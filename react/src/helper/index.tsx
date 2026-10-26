@@ -680,7 +680,7 @@ export function formatDuration(duration: Duration, t: TFunction) {
 export function formatDurationAsDays(
   start: string,
   end?: string | null,
-  dayLabel: string = 'd ',
+  dayLabel: string = ' d ',
 ): string {
   const startTime = dayjs(start);
   const endTime = end ? dayjs(end) : dayjs();

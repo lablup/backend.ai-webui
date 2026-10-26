@@ -452,10 +452,11 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                 label={
                   <BAIFlex gap={'xs'}>
                     <CheckboxInput
-                      label={t('session.OpenToPublic')}
                       value={openToPublic}
                       onChange={(checked) => setOpenToPublic(checked)}
-                    />
+                    >
+                      {t('session.OpenToPublic')}
+                    </CheckboxInput>
                   </BAIFlex>
                 }
                 rules={[
@@ -493,10 +494,11 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                 label={
                   <BAIFlex gap={'xs'}>
                     <CheckboxInput
-                      label={t('session.TryPreferredPort')}
                       value={tryPreferredPort}
                       onChange={(checked) => setTryPreferredPort(checked)}
-                    />
+                    >
+                      {t('session.TryPreferredPort')}
+                    </CheckboxInput>
                   </BAIFlex>
                 }
                 rules={[
@@ -525,10 +527,11 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                   label={
                     <BAIFlex gap={'xs'}>
                       <CheckboxInput
-                        label={t('session.UseSubdomain')}
                         value={useSubDomain}
                         onChange={(checked) => setUseSubDomain(checked)}
-                      />
+                      >
+                        {t('session.UseSubdomain')}
+                      </CheckboxInput>
                     </BAIFlex>
                   }
                 >
@@ -536,9 +539,8 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                       the raw Astryx control is used rather than an adapter.
                       `onChange` takes the VALUE, not the event (P3). */}
                   <TextInput
-                    label={t('session.UseSubdomain')}
-                    isLabelHidden
-                    isDisabled={!useSubDomain}
+                    aria-label={t('session.UseSubdomain')}
+                    disabled={!useSubDomain}
                     value={subDomainValue}
                     onChange={(next) => setSubDomainValue(next)}
                     width="100%"
@@ -546,19 +548,21 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                 </Form.Item>
                 <Form.Item>
                   <CheckboxInput
-                    label={t('session.ForceUseV1Proxy')}
                     value={forceUseV1Proxy}
-                    isDisabled={forceUseV2Proxy}
+                    disabled={forceUseV2Proxy}
                     onChange={(checked) => setForceUseV1Proxy(checked)}
-                  />
+                  >
+                    {t('session.ForceUseV1Proxy')}
+                  </CheckboxInput>
                 </Form.Item>
                 <Form.Item>
                   <CheckboxInput
-                    label={t('session.ForceUseV2Proxy')}
                     value={forceUseV2Proxy}
-                    isDisabled={forceUseV1Proxy}
+                    disabled={forceUseV1Proxy}
                     onChange={(checked) => setForceUseV2Proxy(checked)}
-                  />
+                  >
+                    {t('session.ForceUseV2Proxy')}
+                  </CheckboxInput>
                 </Form.Item>
               </>
             ) : null}

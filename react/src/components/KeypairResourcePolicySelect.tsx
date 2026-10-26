@@ -66,15 +66,14 @@ const KeypairResourcePolicySelect: React.FC<
     <Selector
       // `label` is a required string the control renders itself; the
       // surrounding form item already shows the visible one.
-      label={t('credential.SelectPolicy')}
-      isLabelHidden
+      aria-label={t('credential.SelectPolicy')}
       placeholder={t('credential.SelectPolicy')}
       // antd `showSearch` -> `hasSearch`.
       hasSearch
       options={options}
       value={value ?? ''}
       onChange={(next) => setValue(next)}
-      isDisabled={disabled}
+      disabled={disabled}
       isLoading={loading}
       width="100%"
       controlStyle={style}

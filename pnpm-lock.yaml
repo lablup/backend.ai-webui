@@ -165,14 +165,14 @@ settings:
 catalogs:
   default:
     '@astryxdesign/cli':
-      specifier: 0.7.0
-      version: 0.7.0
+      specifier: 0.7.3
+      version: 0.7.3
     '@astryxdesign/core':
-      specifier: 0.7.0
-      version: 0.7.0
+      specifier: 0.7.3
+      version: 0.7.3
     '@astryxdesign/lab':
-      specifier: 0.7.0-canary.97a0d31
-      version: 0.7.0-canary.97a0d31
+      specifier: 0.7.3-canary.cac3d8d
+      version: 0.7.3-canary.cac3d8d
     '@babel/core':
       specifier: ^7.29.7
       version: 7.29.7
@@ -189,11 +189,11 @@ catalogs:
       specifier: 30.3.0
       version: 30.3.0
     '@lablup/ui-common':
-      specifier: 0.2.0-alpha.19
-      version: 0.2.0-alpha.19
+      specifier: 0.2.0-alpha.20.canary-20261024004224-2768d882e
+      version: 0.2.0-alpha.20.canary-20261024004224-2768d882e
     '@lablup/ui-common-cli':
-      specifier: 0.2.0-alpha.19
-      version: 0.2.0-alpha.19
+      specifier: 0.2.0-alpha.20.canary-20261024004224-2768d882e
+      version: 0.2.0-alpha.20.canary-20261024004224-2768d882e
     '@tanstack/react-query':
       specifier: ^5.101.4
       version: 5.101.4
@@ -343,7 +343,7 @@ catalogs:
       version: 5.106.2
 
 overrides:
-  '@astryxdesign/lab>@astryxdesign/core': 0.7.0
+  '@astryxdesign/lab>@astryxdesign/core': 0.7.3
   tar-fs@2: 2.1.4
   yauzl: ^3.3.1
   js-cookie: ^3.0.7
@@ -351,7 +351,7 @@ overrides:
   serialize-javascript: ^7.0.5
   uuid@^11: ^11.1.1
   uuid@^13: ^13.0.1
-  dompurify: ^3.4.12
+  dompurify: ^3.4.17
   fast-uri@^3: ^3.1.8
   undici@^5: ^6.28.1
   path-to-regexp@~0.1: ^0.1.13
@@ -406,7 +406,7 @@ importers:
     devDependencies:
       '@ai-sdk/openai-compatible':
         specifier: ^3.0.0
-        version: 3.0.0(zod@4.6.1)
+        version: 3.0.0(zod@4.6.7)
       '@babel/core':
         specifier: 'catalog:'
         version: 7.29.7(supports-color@5.5.0)
@@ -415,7 +415,7 @@ importers:
         version: 7.29.7(@babel/core@7.29.7(supports-color@5.5.0))(supports-color@5.5.0)
       '@e2e-dev/web':
         specifier: 0.12.0
-        version: 0.12.0(e2e@0.17.0(@ai-sdk/openai-compatible@3.0.0(zod@4.6.1))(ai@7.0.0(zod@4.6.1)))
+        version: 0.12.0(e2e@0.17.0(@ai-sdk/openai-compatible@3.0.0(zod@4.6.7))(ai@7.0.0(zod@4.6.7)))
       '@electron/packager':
         specifier: ^18.4.4
         version: 18.4.4(supports-color@5.5.0)
@@ -459,11 +459,11 @@ importers:
         specifier: ^4.1.10
         version: 4.1.10(vitest@4.1.10)
       '@yao-pkg/pkg':
-        specifier: ^6.14.1
-        version: 6.14.1(supports-color@5.5.0)
+        specifier: ^6.24.0
+        version: 6.24.0(supports-color@5.5.0)
       ai:
         specifier: ^7.0.0
-        version: 7.0.0(zod@4.6.1)
+        version: 7.0.0(zod@4.6.7)
       backend.ai-client:
         specifier: workspace:*
         version: link:packages/backend.ai-client
@@ -481,10 +481,10 @@ importers:
         version: 2.8.6
       e2e:
         specifier: 0.17.0
-        version: 0.17.0(@ai-sdk/openai-compatible@3.0.0(zod@4.6.1))(ai@7.0.0(zod@4.6.1))
+        version: 0.17.0(@ai-sdk/openai-compatible@3.0.0(zod@4.6.7))(ai@7.0.0(zod@4.6.7))
       electron:
-        specifier: ^41.10.7
-        version: 41.10.7(supports-color@5.5.0)
+        specifier: ^44.9.3
+        version: 44.9.3(supports-color@5.5.0)
       eslint:
         specifier: 'catalog:'
         version: 9.39.5(jiti@2.7.0)(supports-color@5.5.0)
@@ -750,13 +750,13 @@ importers:
     devDependencies:
       '@astryxdesign/cli':
         specifier: 'catalog:'
-        version: 0.7.0(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1)
+        version: 0.7.3(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1)
       '@astryxdesign/core':
         specifier: 'catalog:'
-        version: 0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@astryxdesign/lab':
         specifier: 'catalog:'
-        version: 0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@eslint/js':
         specifier: 'catalog:'
         version: 9.39.5
@@ -768,7 +768,7 @@ importers:
         version: 30.3.0(supports-color@8.1.1)
       '@lablup/ui-common':
         specifier: 'catalog:'
-        version: 0.2.0-alpha.19(@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 0.2.0-alpha.20.canary-20261024004224-2768d882e(@astryxdesign/cli@0.7.3(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@storybook/addon-docs':
         specifier: ^10.5.7
         version: 10.5.7(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(esbuild@0.28.1)(rollup@4.62.4)(storybook@10.5.7(@types/react@19.2.18)(bufferutil@4.1.0)(prettier@3.9.6)(react@19.2.8)(utf-8-validate@6.0.6))(vite@6.4.3(@types/node@22.20.1)(jiti@2.7.0)(lightningcss@1.33.0)(terser@5.49.2)(tsx@4.21.0)(yaml@2.9.0))(webpack@5.106.2)
@@ -927,13 +927,13 @@ importers:
     dependencies:
       '@ai-sdk/openai-compatible':
         specifier: ^1.0.47
-        version: 1.0.47(zod@4.4.3)
+        version: 1.0.47(zod@4.6.6)
       '@ai-sdk/react':
         specifier: ^2.0.230
-        version: 2.0.230(react@19.2.8)(zod@4.4.3)
+        version: 2.0.230(react@19.2.8)(zod@4.6.6)
       '@astryxdesign/lab':
         specifier: 'catalog:'
-        version: 0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@dicebear/collection':
         specifier: ^9.4.2
         version: 9.4.2(@dicebear/core@9.4.3)
@@ -945,7 +945,7 @@ importers:
         version: 9.4.2(@dicebear/core@9.4.3)
       '@lablup/ui-common':
         specifier: 'catalog:'
-        version: 0.2.0-alpha.19(@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 0.2.0-alpha.20.canary-20261024004224-2768d882e(@astryxdesign/cli@0.7.3(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@lexical/code':
         specifier: 0.46.0
         version: 0.46.0(typescript@6.0.3)
@@ -999,7 +999,7 @@ importers:
         version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       ai:
         specifier: ^5.0.228
-        version: 5.0.228(zod@4.4.3)
+        version: 5.0.228(zod@4.6.6)
       ajv:
         specifier: ^8.20.0
         version: 8.20.0
@@ -1019,8 +1019,8 @@ importers:
         specifier: 'catalog:'
         version: 1.11.21
       dompurify:
-        specifier: ^3.4.12
-        version: 3.4.13
+        specifier: ^3.4.17
+        version: 3.4.17
       es-toolkit:
         specifier: ^1.50.0
         version: 1.50.0
@@ -1163,15 +1163,15 @@ importers:
         specifier: ^2.9.0
         version: 2.9.0
       zod:
-        specifier: ^4.4.3
-        version: 4.4.3
+        specifier: ^4.6.6
+        version: 4.6.6
     devDependencies:
       '@astryxdesign/cli':
         specifier: 'catalog:'
-        version: 0.7.0(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1)
+        version: 0.7.3(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1)
       '@astryxdesign/core':
         specifier: 'catalog:'
-        version: 0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@babel/core':
         specifier: 'catalog:'
         version: 7.29.7(supports-color@8.1.1)
@@ -1195,7 +1195,7 @@ importers:
         version: 9.39.5
       '@lablup/ui-common-cli':
         specifier: 'catalog:'
-        version: 0.2.0-alpha.19(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@lablup/ui-common@0.2.0-alpha.19(@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(supports-color@8.1.1)
+        version: 0.2.0-alpha.20.canary-20261024004224-2768d882e(397661cfdbbb6eb1f29f72f6057f2bfe)
       '@stylexjs/babel-plugin':
         specifier: 0.19.0
         version: 0.19.0(supports-color@8.1.1)
@@ -1425,8 +1425,8 @@ packages:
   '@asamuzakjp/nwsapi@2.3.9':
     resolution: {integrity: sha512-n8GuYSrI9bF7FFZ/SjhwevlHc8xaVlb/7HmHelnc/PZXBD2ZR49NnN9sMMuDdEGPeeRQ5d0hqlSlEpgCX3Wl0Q==}
 
-  '@astryxdesign/cli@0.7.0':
-    resolution: {integrity: sha512-PIiWZZr6wT3KszTPIv9/oiyrDCcSfU1dmMZCASPJ0AWKfvS1w27OXlZPBX7Rqi1Dipl9bdr54Uts7AxbhdMbUw==}
+  '@astryxdesign/cli@0.7.3':
+    resolution: {integrity: sha512-B5dF5qeylGNXiZF1AfTgW/k414RuG9CUS3d5yMwS5gcZ4y92v42Tb5pKrLJpkSRxwDwyhLFvhaoFuiXqEhw22w==}
     engines: {node: '>=22.13.0'}
     hasBin: true
     peerDependencies:
@@ -1444,17 +1444,17 @@ packages:
       '@astryxdesign/theme-neutral':
         optional: true
 
-  '@astryxdesign/core@0.7.0':
-    resolution: {integrity: sha512-vLsJ1CM3auFGZYzWIWzvXq7OUxRilfsoEi64bro/XdLmWokV/YaHjmgJV3n0kKXZBehor1wKQx9cqt0ObMUELw==}
+  '@astryxdesign/core@0.7.3':
+    resolution: {integrity: sha512-dDVg5pUE7IwpkSl46rw/Oahbwij2e26Imwbao0AK3mLBBZo7yVzibFdf6dLfFKN3p+zy7a2ZMQZeOIb+xSEKpg==}
     peerDependencies:
       '@stylexjs/stylex': ^0.19.0
       react: '>=19.0.0'
       react-dom: '>=19.0.0'
 
-  '@astryxdesign/lab@0.7.0-canary.97a0d31':
-    resolution: {integrity: sha512-Im236byRku+rriCmaCQ1hY8DxzFXa2ivqPm3LYzGQ4cB8ruDCoBJYr2B+X6nJQm+DkvXB/P5yJtUTxC3K8FX6w==}
+  '@astryxdesign/lab@0.7.3-canary.cac3d8d':
+    resolution: {integrity: sha512-ZsHjJEcFm4972UjLfC+N+ayMmehoBhETUN9k1/5PdvK1k7Rpoc2u4T47blr2XUSxZp6A+qRbl148J87CNYQavw==}
     peerDependencies:
-      '@astryxdesign/core': 0.7.0
+      '@astryxdesign/core': 0.7.3
       '@stylexjs/stylex': '>=0.10.0'
       react: '>=19.0.0'
       react-dom: '>=19.0.0'
@@ -1465,10 +1465,10 @@ packages:
       '@astryxdesign/core': 0.6.2
       react: '>=19'
 
-  '@astryxdesign/theme-neutral@0.7.0':
-    resolution: {integrity: sha512-btZ9tT9oJuzzzCZla439iKm0E8kp4xoriS0FTbCNTYoBmuiKLrCRNazu35FVTHN4UHLEbVi/Bq1owcvstNs0Zg==}
+  '@astryxdesign/theme-neutral@0.7.3':
+    resolution: {integrity: sha512-nrPqOzcePy5whCcgSBTR80/WrKpSChYR3anfBuXc3pvutJUA4MMC0oqm6aBH57irFDDLZ6D4GIzOO9fBFYQaAA==}
     peerDependencies:
-      '@astryxdesign/core': 0.7.0
+      '@astryxdesign/core': 0.7.3
       react: '>=19'
 
   '@babel/code-frame@7.29.7':
@@ -1481,10 +1481,6 @@ packages:
 
   '@babel/core@7.29.7':
     resolution: {integrity: sha512-RgHBCvtjbOK2gXSNBNIkNoEc9qoVEtau3hj8gEqKQuL3HZAibKarWFEI3Lfm6EYKkLalOh8eSrj9b+ch9H/VBA==}
-    engines: {node: '>=6.9.0'}
-
-  '@babel/generator@7.29.1':
-    resolution: {integrity: sha512-qsaF+9Qcm2Qv8SRIMMscAvG4O3lJ0F1GuMo5HR/Bp02LopNgnZBC/EkbevHFeGs4ls/oPz9v+Bsmzbkbe+0dUw==}
     engines: {node: '>=6.9.0'}
 
   '@babel/generator@7.29.7':
@@ -1519,10 +1515,6 @@ packages:
     resolution: {integrity: sha512-47UwBLPpQi1NoWzLuHNjRoHlYXMwIJoBf7MFou6viC/sIHWYygpvr0B6IAyh5sBdA2nr2LPIRww8lfaUVQINBA==}
     peerDependencies:
       '@babel/core': ^7.4.0 || ^8.0.0-0 <8.0.0
-
-  '@babel/helper-globals@7.28.0':
-    resolution: {integrity: sha512-+W6cISkXFa1jXsDEdYA8HeevQT/FULhxzR99pxphltZcVaugps53THCeiWA8SguxxpSp3gKPiuYfSWopkLQ4hw==}
-    engines: {node: '>=6.9.0'}
 
   '@babel/helper-globals@7.29.7':
     resolution: {integrity: sha512-3nQVUAtvkKH9zahfWgw96Jc/uFOmjACE1kQz82E2lqWmHBgjzbNlsC22nuQTfahmWeQtTq5nQ/4Nnd2A1wj4zA==}
@@ -1566,16 +1558,8 @@ packages:
     resolution: {integrity: sha512-brcMGQaVzIeUb+6/bs1Av0f8YuNNjKY2JyvfRCsFuFsdKccEQ5Ges2y74D74NZ1Rz8lKJ9ksJkfqwQFJ/iNEyQ==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/helper-string-parser@7.27.1':
-    resolution: {integrity: sha512-qMlSxKbpRlAridDExk92nSobyDdpPijUq2DW6oDnUqd0iOGxmQjyqhMIihI9+zv4LPyZdRje2cavWPbCbWm3eA==}
-    engines: {node: '>=6.9.0'}
-
   '@babel/helper-string-parser@7.29.7':
     resolution: {integrity: sha512-Pb5ijPrZ89GDH8223L4UP8i6QApWxs04RbPQJTeWDV0/keR2E36MeKnyr6LYmUUvqRRI+Iv87SuF1W6ErINzYw==}
-    engines: {node: '>=6.9.0'}
-
-  '@babel/helper-validator-identifier@7.28.5':
-    resolution: {integrity: sha512-qSs4ifwzKJSV39ucNjsvc6WVHs6b7S03sOh2OcHF9UHfVPqWWALUsNUVzhSBiItjRZoLHx7nIarVjqKVusUZ1Q==}
     engines: {node: '>=6.9.0'}
 
   '@babel/helper-validator-identifier@7.29.7':
@@ -1593,11 +1577,6 @@ packages:
   '@babel/helpers@7.29.7':
     resolution: {integrity: sha512-1k2lAGRMfHTcwuNYcCNUmaUffmQv8KWMfh2iJUUeRlwlwH4FdNG7mfPI10NPfLHJFThE4Tyr4mv7kTNZOiPuBg==}
     engines: {node: '>=6.9.0'}
-
-  '@babel/parser@7.29.0':
-    resolution: {integrity: sha512-IyDgFV5GeDUVX4YdF/3CPULtVGSXXMLh1xVIgdCgxApktqnQV0r7/8Nqthg+8YLGaAtdyIlo2qIdZrbCv4+7ww==}
-    engines: {node: '>=6.0.0'}
-    hasBin: true
 
   '@babel/parser@7.29.7':
     resolution: {integrity: sha512-hnORnjP/1P/zFEndoeX+n+t1RwWRJiJpM/jO7FW32Kn9r5+sJB2JWOdYo4L6k78j15eCwY3Gm/7364B1EMwtNg==}
@@ -2217,20 +2196,12 @@ packages:
     resolution: {integrity: sha512-puq+Gf35oI24FeN11LkoUQFqv9uwNeWpxXZi/Ji3rRIoKAzKnxRaZ+Gkj0vKS9ZCiTESfng1N9LyOyXvo+m+Gg==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/traverse@7.29.0':
-    resolution: {integrity: sha512-4HPiQr0X7+waHfyXPZpWPfWL/J7dcN1mx9gL6WdQVMbPnF3+ZhSMs8tCxN7oHddJE9fhNE7+lxdnlyemKfJRuA==}
-    engines: {node: '>=6.9.0'}
-
   '@babel/traverse@7.29.7':
     resolution: {integrity: sha512-EhlfNQtZ+NK22w5BM61ciuiq1m58ed33Wr1Xan//ZRTy6hgjnwyCffRYwzsGXdASJSUJ1guZILsErh1eQcl+zw==}
     engines: {node: '>=6.9.0'}
 
   '@babel/traverse@7.29.8':
     resolution: {integrity: sha512-I5z7H3bf/41ktsNVLtpN0wAa336HkqIHQ5BuPLEhTkt1jVSyZpeNKIzTgEWmlxjdg81R0IgUCcaE+Ok3NvrfZg==}
-    engines: {node: '>=6.9.0'}
-
-  '@babel/types@7.29.0':
-    resolution: {integrity: sha512-LwdZHpScM4Qz8Xw2iKSzS+cfglZzJGvofQICy7W7v4caru4EaAmyUuO6BGrbyQ2mYV11W0U8j5mBhd14dd3B0A==}
     engines: {node: '>=6.9.0'}
 
   '@babel/types@7.29.7':
@@ -3459,22 +3430,25 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@lablup/ui-common-cli@0.2.0-alpha.19':
-    resolution: {integrity: sha512-CPX/jrcZy/m42dupLOB2GK5TVnX9v6cmQp0EENcA8kZxh2KLDYeeRW0JH9bUOi3gPsd2Oi8u4Qox1xQC+PA/XA==}
+  '@lablup/ui-common-cli@0.2.0-alpha.20.canary-20261024004224-2768d882e':
+    resolution: {integrity: sha512-uFOYjdTWwkGhu56xJsI3sozBw1t2zBWM43i3Db19f1qBnsIQawJ6ZMe1iDVjafLL5SJGWFe9bJy1InXGVMl6JA==}
     engines: {node: '>=22.13.0'}
     hasBin: true
     peerDependencies:
-      '@lablup/ui-common': 0.2.0-alpha.19
+      '@lablup/ui-common': 0.2.0-alpha.20.canary-20261024004224-2768d882e
 
-  '@lablup/ui-common@0.2.0-alpha.19':
-    resolution: {integrity: sha512-wUCYLcX3go6nbIwiMEpsQqbmwjWb61viGx+4WePGFD1bqsj93rT1HLX4ho8mMHWd4px7j8TZdN6ghLfSP908dA==}
+  '@lablup/ui-common@0.2.0-alpha.20.canary-20261024004224-2768d882e':
+    resolution: {integrity: sha512-w4+FWhzErecEQkhwAjrvyrn0pfH9qC7zQJAXM2uj5RVtjWnzB8PhXq/gzGIIJfhw7sfYqW4wAqCxHtzPHIKIOg==}
     engines: {node: '>=20'}
     peerDependencies:
-      '@astryxdesign/lab': 0.7.0-canary.97a0d31
+      '@astryxdesign/cli': '>=0.6.7'
+      '@astryxdesign/lab': 0.7.3-canary.cac3d8d
       '@stylexjs/stylex': ^0.19.0
       react: ^19.2.0
       react-dom: ^19.2.0
     peerDependenciesMeta:
+      '@astryxdesign/cli':
+        optional: true
       '@astryxdesign/lab':
         optional: true
 
@@ -4154,6 +4128,10 @@ packages:
   '@remix-run/router@1.23.4':
     resolution: {integrity: sha512-q7j5geK7xs3UJSdm9/iytUNclBnLmYx1EnSeCFXHPeutdqgIMeFeHtUZgS3EhlKxdBEAu8OwtJCwmLrEzpSs7Q==}
     engines: {node: '>=14.0.0'}
+
+  '@roberts_lando/vfs@0.3.3':
+    resolution: {integrity: sha512-YjkxVSLw5WMZQoARaryRAjcxA+GbBzWMJdwYZX5oLUt9cC/gew9as4Dn7tcLzPp7BPoR221VpTZ+78TRPawnjg==}
+    engines: {node: '>= 22'}
 
   '@rolldown/pluginutils@1.0.0-beta.27':
     resolution: {integrity: sha512-+d0F4MKMCbeVUJwG96uQ4SgAznZNSq93I3V+9NHA4OpvqG8mRCpGdKmK8l/dl02h2CCDHwW2FqilnTyDcAnqjA==}
@@ -5272,13 +5250,13 @@ packages:
   '@xtuc/long@4.2.2':
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
 
-  '@yao-pkg/pkg-fetch@3.5.32':
-    resolution: {integrity: sha512-hS8zzze5VVyVAciZoNX4q3ZmCdn0gi34P2SElk4PFbzkA4LPs7qBJ3LhUKb4d4KGw1HVkFJJOMgGomH7cMqQ5Q==}
+  '@yao-pkg/pkg-fetch@3.6.7':
+    resolution: {integrity: sha512-uEeU5druVgHffruTAXzW6nf0wHfREWlCq5LBtQ4hCdLBDbwTteuym5NrxREur3EgNcqFRenEi6Rivwo723PkHg==}
     hasBin: true
 
-  '@yao-pkg/pkg@6.14.1':
-    resolution: {integrity: sha512-kTtxr+r9/pi+POcuuJN9q2YRs1Ekp7iwsgU3du1XO6ozwjlp+F31ZF19WS2ZDIloWYGCvfbURrrXMgQJpWZb+Q==}
-    engines: {node: '>=20.0.0'}
+  '@yao-pkg/pkg@6.24.0':
+    resolution: {integrity: sha512-SMwFLic12noHLbqxhhQVClVX6YZlQtzwwez6dq7Xj64rXX6OFgZTTQbPgw4wgec5IoUN+6rCRKgyW/cnVPOwkA==}
+    engines: {node: '>=22.0.0'}
     hasBin: true
 
   '@zeit/schemas@2.36.0':
@@ -5347,10 +5325,6 @@ packages:
     resolution: {integrity: sha512-lGq+9yr1/GuAWaVYIHRjvvySG5/4VfKIvC8EWxStPdcDh/Ka7FG3twP6v4d5BkravUilhIAsG4Qj83t02LWUPQ==}
     engines: {node: '>=0.4.0'}
     hasBin: true
-
-  agent-base@6.0.2:
-    resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
-    engines: {node: '>= 6.0.0'}
 
   agent-base@7.1.4:
     resolution: {integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==}
@@ -5693,8 +5667,8 @@ packages:
   bn.js@5.2.5:
     resolution: {integrity: sha512-Vq886eXykuP5E6HcKSSStP3bJgrE6In5WKxVUvJ8XGpWWYs2xZHWqUwzCtGgEtBcxyd57KBFDPFoUfNzdaHCNg==}
 
-  body-parser@1.20.4:
-    resolution: {integrity: sha512-ZTgYYLMOXY9qKU/57FAo8F+HA2dGX7bqGc71txDRC1rS4frdFI5R7NhluHxH6M0YItAP0sHB4uqAOcYKxO6uGA==}
+  body-parser@1.20.9:
+    resolution: {integrity: sha512-FISIQxV5u91Y9gvuFq3q/tA/qTqLJn3AhRcEvyozyhJTh5OBFFtv827AdHU7Rbyct4r+Ba1/99oFa1Y3yuFsdw==}
     engines: {node: '>= 0.8', npm: 1.2.8000 || >= 1.4.16}
 
   boolean@3.2.0:
@@ -6452,8 +6426,8 @@ packages:
     resolution: {integrity: sha512-IGBwjF7tNk3cwypFNH/7bfzBcgSCbaMOD3GsaY1AU/JRrnHnYgEM0+9kQt52iZxjNsjBtJYtao146V+f8jFZNw==}
     engines: {node: '>=10'}
 
-  dompurify@3.4.13:
-    resolution: {integrity: sha512-2vmYIoqjze2d+kakP8S/nS5shfsl587kzwEjcGlTdiksUVgFHnFCsLYDVj/JNqJVOQZGSYBTmuycv0PodwmnMQ==}
+  dompurify@3.4.17:
+    resolution: {integrity: sha512-B/pSlYVHQ58kqISD/yDjuJ1yfzI34m1gF4lAod2bwSRhiN4K5Cl3H8Af7hqB2PmTL911tdEudnnXn5FnhRoz0w==}
 
   dot-case@3.0.4:
     resolution: {integrity: sha512-Kv5nKlh6yRrdrGvxeJ2e5y2eRUpkUosIW4A2AS38zwSz27zu7ufDwQPi5Jhs3XAlGNetl3bmnGhQsMtkKJnj3w==}
@@ -6511,8 +6485,8 @@ packages:
   electron-to-chromium@1.5.402:
     resolution: {integrity: sha512-/oOpMaPT6Yg+6/1XQhyIPlzgj7Ye9zf+nNM2Uh6OcE2G2oNptWazFa+qB2Pdqqbsc9KnIDzgAntoYN0dbwOXwA==}
 
-  electron@41.10.7:
-    resolution: {integrity: sha512-AqIiefddlf5i+HYCGatr8VlBuEbWJpad4/yloBFYcMB2r57j7xhW1ogiJ+BfA5kxQyfmSs5yjwy54Me+wJn1jw==}
+  electron@44.9.3:
+    resolution: {integrity: sha512-Cv9/yMnZxNWsMlIe8T4v//NKHdUvbeyoTJoXE3BIcRxus2meeFaO9h/P3zB5d4cBXum51IgAYrT2QjpIDWKpJA==}
     engines: {node: '>= 22.12.0'}
     hasBin: true
 
@@ -7455,10 +7429,6 @@ packages:
 
   https-browserify@1.0.0:
     resolution: {integrity: sha512-J+FkSdyD+0mA0N+81tMotaRMfSL9SGi+xpD3T6YApKsc3bGSXJlfXri3VyFOeYkfLRQisDk1W+jIFFKBeUBbBg==}
-
-  https-proxy-agent@5.0.1:
-    resolution: {integrity: sha512-dFcAjpTQFgoLMzC2VwU+C/CbS7uRL0lWmxDITmqm7C+7F0Odmj6s9l6alZc6AELXhrnggM2CeWSXHGOdX2YtwA==}
-    engines: {node: '>= 6'}
 
   https-proxy-agent@7.0.6:
     resolution: {integrity: sha512-vK9P5/iUfdl95AI+JVyUuIcVtd4ofvtrOr3HNtM2yxC9bnMbEdp3x01OhQNnjb8IJYi38VlTE3mBXwcfvywuSw==}
@@ -8711,8 +8681,8 @@ packages:
   mz@2.7.0:
     resolution: {integrity: sha512-z81GNO7nnYMEhrGh9LeymoE4+Yr0Wn5McHIZMK5cfQCl+NDX08sCZgUc9/6MHni9IWuFLm1Z3HTCXu2z9fN62Q==}
 
-  nanoid@3.3.17:
-    resolution: {integrity: sha512-xQLf0A3HOMlgHq0n247/LRuAOYmB7dXJ/DvAxGvsSBij45XtBSmQycu+F8ODbHwns/XyFZagyL1+J0Offw1E0g==}
+  nanoid@3.3.20:
+    resolution: {integrity: sha512-uKdg2G3GNCKQn9byYOpxbGqrT2fGO5KRt5J/8b3pok8rT6qxGWF6hxMyJiEYtAf+FVyYuD9hRaDqX5uPFYJ4ZQ==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
@@ -9128,10 +9098,6 @@ packages:
   picomatch@2.3.2:
     resolution: {integrity: sha512-V7+vQEJ06Z+c5tSye8S+nHUfI51xoXIXjHQ99cQtKUkQqqO1kO/KCJUfZXuB47h/YBlDhah2H3hdUGXn8ie0oA==}
     engines: {node: '>=8.6'}
-
-  picomatch@4.0.4:
-    resolution: {integrity: sha512-QP88BAKvMam/3NxH6vj2o21R6MjxZUAd6nlwAS/pnGvN9IVLocLHxGYIzFhg6fUQ+5th6P4dv4eW9jX3DSIj7A==}
-    engines: {node: '>=12'}
 
   picomatch@4.0.5:
     resolution: {integrity: sha512-RvwwcruNjI1ncT5xRakeyS9Lf8lcItv34KD+aif+VH9kduAyfYBipGh12274xtenIPZ119/R9BdTBa8gAwSh0A==}
@@ -9981,8 +9947,8 @@ packages:
     resolution: {integrity: sha512-gzx7USv55AFRQ7UCWJHHauwD/ptUHF9MLXCGO3f5M9zauDPZ/4a9H6/VVbOXefdpEoI1unwB/bArHIVMbWBHmA==}
     engines: {node: '>=10'}
 
-  source-map-js@1.2.1:
-    resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
+  source-map-js@1.2.2:
+    resolution: {integrity: sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==}
     engines: {node: '>=0.10.0'}
 
   source-map-support@0.5.21:
@@ -10343,10 +10309,6 @@ packages:
     resolution: {integrity: sha512-QKAl9m8gWWGHV8jZcPeym6j+XULi6tOf1mT83WYJ4Lk2ytW/uwAWkrP0uFsdoYMdueVJ0qs26wZ+23xeB4ibNQ==}
     engines: {node: '>=18'}
 
-  tinyglobby@0.2.15:
-    resolution: {integrity: sha512-j2Zq4NyQYG5XMST4cbs02Ak8iJUdxRM0XI5QyxXuZOzKOINmWurp3smXu3y5wDcJrptwpSjgXHzIQxR0omXljQ==}
-    engines: {node: '>=12.0.0'}
-
   tinyglobby@0.2.17:
     resolution: {integrity: sha512-wXR/dYpcqKmfWpEdZjiKJOwCNFndD0DMnrW/cYjVGttEkBfVgcLFHoNrlj47mjOVic9yyNu65alsgF4NQyTa2g==}
     engines: {node: '>=12.0.0'}
@@ -10614,12 +10576,12 @@ packages:
   undici-types@8.3.0:
     resolution: {integrity: sha512-j375ScV60dom+YkPFIfTLcOiPxkN/buHz5GobjLhixFuANaNs3C9l4GmrWqejgXWJ7BbJcFYpTEUkS1Ge8bpZQ==}
 
-  undici@6.28.1:
-    resolution: {integrity: sha512-zWpdTVD54H48CIybL0rWQ3ukpb9d23wM7eH5RtfdmeP70cWHNjtfo7P4vZX+5CoDcO53J4Pu5uXp7lNfjc6DRA==}
+  undici@6.29.1:
+    resolution: {integrity: sha512-EvRlUt/QqAEvXdQeRMYUfwOQsfzpDztykrG2owGEE/rBOBoYv9uF39ZzsNDh4lTFHhTr2XOZjKkYgueD12ZmGA==}
     engines: {node: '>=18.17'}
 
-  undici@7.29.0:
-    resolution: {integrity: sha512-IDxfleLmmbSskfWSUATiN1nfn2rDuvnMOqb5CWR92iIfojA0Ud+ulOAAEQ57LPr9rWmsreUyf5lwyao+7GNNVw==}
+  undici@7.30.1:
+    resolution: {integrity: sha512-03KrMbjIFDWQR5RNPrSw3bd1r12JpyFQl9/yxjUbJtqkjmllqC5lFjZh6ujeuJCKr8EOQvRW872Oy/az+nLYxg==}
     engines: {node: '>=20.18.1'}
 
   unicode-canonical-property-names-ecmascript@2.0.1:
@@ -11265,11 +11227,14 @@ packages:
     peerDependencies:
       zod: ^3.25.0 || ^4.0.0
 
-  zod@4.4.3:
-    resolution: {integrity: sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==}
-
   zod@4.6.1:
     resolution: {integrity: sha512-341aRWQsve0rvronKNTqZpjmzdbUDlFuzHaI/XLg/Ej82qffDJRRfBTCuv7+9q/rMjB6LSLyEBnW4InJeMtt/Q==}
+
+  zod@4.6.6:
+    resolution: {integrity: sha512-4UmzQUF5fxvfcYHlbjBmejU+w+hbDnWFx4aS8kBx7nPBHcO2SqPbpAG8snbdg+Xse4pRefR98hgjFgIMCI/UhA==}
+
+  zod@4.6.7:
+    resolution: {integrity: sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -11278,47 +11243,47 @@ snapshots:
 
   '@adobe/css-tools@4.5.0': {}
 
-  '@ai-sdk/gateway@2.0.127(zod@4.4.3)':
+  '@ai-sdk/gateway@2.0.127(zod@4.6.6)':
     dependencies:
       '@ai-sdk/provider': 2.0.3
-      '@ai-sdk/provider-utils': 3.0.31(zod@4.4.3)
+      '@ai-sdk/provider-utils': 3.0.31(zod@4.6.6)
       '@vercel/oidc': 3.1.0
-      zod: 4.4.3
+      zod: 4.6.6
 
-  '@ai-sdk/gateway@4.0.0(zod@4.6.1)':
+  '@ai-sdk/gateway@4.0.0(zod@4.6.7)':
     dependencies:
       '@ai-sdk/provider': 4.0.0
-      '@ai-sdk/provider-utils': 5.0.0(zod@4.6.1)
+      '@ai-sdk/provider-utils': 5.0.0(zod@4.6.7)
       '@vercel/oidc': 3.2.0
-      zod: 4.6.1
+      zod: 4.6.7
 
-  '@ai-sdk/openai-compatible@1.0.47(zod@4.4.3)':
+  '@ai-sdk/openai-compatible@1.0.47(zod@4.6.6)':
     dependencies:
       '@ai-sdk/provider': 2.0.3
-      '@ai-sdk/provider-utils': 3.0.31(zod@4.4.3)
-      zod: 4.4.3
+      '@ai-sdk/provider-utils': 3.0.31(zod@4.6.6)
+      zod: 4.6.6
 
-  '@ai-sdk/openai-compatible@3.0.0(zod@4.6.1)':
+  '@ai-sdk/openai-compatible@3.0.0(zod@4.6.7)':
     dependencies:
       '@ai-sdk/provider': 4.0.0
-      '@ai-sdk/provider-utils': 5.0.0(zod@4.6.1)
-      zod: 4.6.1
+      '@ai-sdk/provider-utils': 5.0.0(zod@4.6.7)
+      zod: 4.6.7
 
-  '@ai-sdk/provider-utils@3.0.31(zod@4.4.3)':
+  '@ai-sdk/provider-utils@3.0.31(zod@4.6.6)':
     dependencies:
       '@ai-sdk/provider': 2.0.3
       '@standard-schema/spec': 1.1.0
       eventsource-parser: 3.1.0
-      undici: 6.28.1
-      zod: 4.4.3
+      undici: 6.29.1
+      zod: 4.6.6
 
-  '@ai-sdk/provider-utils@5.0.0(zod@4.6.1)':
+  '@ai-sdk/provider-utils@5.0.0(zod@4.6.7)':
     dependencies:
       '@ai-sdk/provider': 4.0.0
       '@standard-schema/spec': 1.1.0
       '@workflow/serde': 4.1.0
       eventsource-parser: 3.1.0
-      zod: 4.6.1
+      zod: 4.6.7
 
   '@ai-sdk/provider@2.0.3':
     dependencies:
@@ -11332,15 +11297,15 @@ snapshots:
     dependencies:
       json-schema: 0.4.0
 
-  '@ai-sdk/react@2.0.230(react@19.2.8)(zod@4.4.3)':
+  '@ai-sdk/react@2.0.230(react@19.2.8)(zod@4.6.6)':
     dependencies:
-      '@ai-sdk/provider-utils': 3.0.31(zod@4.4.3)
-      ai: 5.0.228(zod@4.4.3)
+      '@ai-sdk/provider-utils': 3.0.31(zod@4.6.6)
+      ai: 5.0.228(zod@4.6.6)
       react: 19.2.8
       swr: 2.5.0(react@19.2.8)
       throttleit: 2.1.0
     optionalDependencies:
-      zod: 4.4.3
+      zod: 4.6.6
 
   '@apideck/better-ajv-errors@0.3.7(ajv@8.20.0)':
     dependencies:
@@ -11368,7 +11333,7 @@ snapshots:
 
   '@asamuzakjp/nwsapi@2.3.9': {}
 
-  '@astryxdesign/cli@0.7.0(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1)':
+  '@astryxdesign/cli@0.7.3(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1)':
     dependencies:
       '@babel/core': 7.29.7(supports-color@8.1.1)
       '@babel/parser': 7.29.8
@@ -11383,25 +11348,25 @@ snapshots:
       postcss: 8.5.26
       postcss-selector-parser: 7.1.6
       recast: 0.23.21
-      zod: 4.6.1
+      zod: 4.6.7
     optionalDependencies:
-      '@astryxdesign/core': 0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@astryxdesign/lab': 0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@astryxdesign/theme-neutral': 0.6.2(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/core': 0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/lab': 0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/theme-neutral': 0.6.2(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
     transitivePeerDependencies:
       - '@babel/preset-env'
       - supports-color
 
-  '@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@stylexjs/stylex': 0.19.0
       intl-messageformat: 11.2.13
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
 
-  '@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@astryxdesign/core': 0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/core': 0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@stylexjs/stylex': 0.19.0
       d3-array: 3.2.4
       d3-scale: 4.0.2
@@ -11409,16 +11374,16 @@ snapshots:
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
 
-  '@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)':
+  '@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@astryxdesign/core': 0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/core': 0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       lucide-react: 1.37.0(react@19.2.8)
       react: 19.2.8
     optional: true
 
-  '@astryxdesign/theme-neutral@0.7.0(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)':
+  '@astryxdesign/theme-neutral@0.7.3(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@astryxdesign/core': 0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/core': 0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       lucide-react: 1.37.0(react@19.2.8)
       react: 19.2.8
 
@@ -11469,14 +11434,6 @@ snapshots:
       semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
-
-  '@babel/generator@7.29.1':
-    dependencies:
-      '@babel/parser': 7.29.0
-      '@babel/types': 7.29.0
-      '@jridgewell/gen-mapping': 0.3.13
-      '@jridgewell/trace-mapping': 0.3.31
-      jsesc: 3.1.0
 
   '@babel/generator@7.29.7':
     dependencies:
@@ -11549,8 +11506,6 @@ snapshots:
       resolve: 1.22.12
     transitivePeerDependencies:
       - supports-color
-
-  '@babel/helper-globals@7.28.0': {}
 
   '@babel/helper-globals@7.29.7': {}
 
@@ -11647,11 +11602,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/helper-string-parser@7.27.1': {}
-
   '@babel/helper-string-parser@7.29.7': {}
-
-  '@babel/helper-validator-identifier@7.28.5': {}
 
   '@babel/helper-validator-identifier@7.29.7': {}
 
@@ -11669,10 +11620,6 @@ snapshots:
     dependencies:
       '@babel/template': 7.29.7
       '@babel/types': 7.29.8
-
-  '@babel/parser@7.29.0':
-    dependencies:
-      '@babel/types': 7.29.0
 
   '@babel/parser@7.29.7':
     dependencies:
@@ -12538,18 +12485,6 @@ snapshots:
       '@babel/parser': 7.29.8
       '@babel/types': 7.29.8
 
-  '@babel/traverse@7.29.0(supports-color@5.5.0)':
-    dependencies:
-      '@babel/code-frame': 7.29.7
-      '@babel/generator': 7.29.1
-      '@babel/helper-globals': 7.28.0
-      '@babel/parser': 7.29.0
-      '@babel/template': 7.29.7
-      '@babel/types': 7.29.0
-      debug: 4.4.3(supports-color@5.5.0)
-    transitivePeerDependencies:
-      - supports-color
-
   '@babel/traverse@7.29.7(supports-color@5.5.0)':
     dependencies:
       '@babel/code-frame': 7.29.7
@@ -12597,11 +12532,6 @@ snapshots:
       debug: 4.4.3(supports-color@8.1.1)
     transitivePeerDependencies:
       - supports-color
-
-  '@babel/types@7.29.0':
-    dependencies:
-      '@babel/helper-string-parser': 7.27.1
-      '@babel/helper-validator-identifier': 7.28.5
 
   '@babel/types@7.29.7':
     dependencies:
@@ -12862,9 +12792,9 @@ snapshots:
 
   '@dual-bundle/import-meta-resolve@4.2.1': {}
 
-  '@e2e-dev/web@0.12.0(e2e@0.17.0(@ai-sdk/openai-compatible@3.0.0(zod@4.6.1))(ai@7.0.0(zod@4.6.1)))':
+  '@e2e-dev/web@0.12.0(e2e@0.17.0(@ai-sdk/openai-compatible@3.0.0(zod@4.6.7))(ai@7.0.0(zod@4.6.7)))':
     dependencies:
-      e2e: 0.17.0(@ai-sdk/openai-compatible@3.0.0(zod@4.6.1))(ai@7.0.0(zod@4.6.1))
+      e2e: 0.17.0(@ai-sdk/openai-compatible@3.0.0(zod@4.6.7))(ai@7.0.0(zod@4.6.7))
       playwright-core: 1.63.0
 
   '@electron-internal/extract-zip@1.0.5': {}
@@ -12898,7 +12828,7 @@ snapshots:
       semver: 7.8.5
       sumchecker: 3.0.1(supports-color@5.5.0)
     optionalDependencies:
-      undici: 7.29.0
+      undici: 7.30.1
     transitivePeerDependencies:
       - supports-color
 
@@ -13690,10 +13620,10 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@lablup/ui-common-cli@0.2.0-alpha.19(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@lablup/ui-common@0.2.0-alpha.19(@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(supports-color@8.1.1)':
+  '@lablup/ui-common-cli@0.2.0-alpha.20.canary-20261024004224-2768d882e(397661cfdbbb6eb1f29f72f6057f2bfe)':
     dependencies:
-      '@astryxdesign/cli': 0.7.0(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1)
-      '@lablup/ui-common': 0.2.0-alpha.19(@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/cli': 0.7.3(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1)
+      '@lablup/ui-common': 0.2.0-alpha.20.canary-20261024004224-2768d882e(@astryxdesign/cli@0.7.3(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       jscodeshift: 17.4.0(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1)
       postcss: 8.5.26
       postcss-selector-parser: 7.1.6
@@ -13705,10 +13635,10 @@ snapshots:
       - '@babel/preset-env'
       - supports-color
 
-  '@lablup/ui-common@0.2.0-alpha.19(@astryxdesign/lab@0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@lablup/ui-common@0.2.0-alpha.20.canary-20261024004224-2768d882e(@astryxdesign/cli@0.7.3(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@astryxdesign/core': 0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@astryxdesign/theme-neutral': 0.7.0(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/core': 0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/theme-neutral': 0.7.3(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
       '@dnd-kit/core': 6.3.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@dnd-kit/modifiers': 9.0.0(@dnd-kit/core@6.3.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
       '@dnd-kit/sortable': 10.0.0(@dnd-kit/core@6.3.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
@@ -13719,7 +13649,8 @@ snapshots:
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
     optionalDependencies:
-      '@astryxdesign/lab': 0.7.0-canary.97a0d31(@astryxdesign/core@0.7.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/cli': 0.7.3(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1)
+      '@astryxdesign/lab': 0.7.3-canary.cac3d8d(@astryxdesign/core@0.7.3(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
 
   '@lexical/clipboard@0.46.0(typescript@6.0.3)':
     dependencies:
@@ -14030,12 +13961,12 @@ snapshots:
 
   '@modelcontextprotocol/core@2.2.0':
     dependencies:
-      zod: 4.4.3
+      zod: 4.6.7
 
   '@modelcontextprotocol/server@2.2.0':
     dependencies:
       '@modelcontextprotocol/core': 2.2.0
-      zod: 4.4.3
+      zod: 4.6.7
 
   '@monaco-editor/loader@1.7.0':
     dependencies:
@@ -14401,6 +14332,8 @@ snapshots:
       react: 19.2.8
 
   '@remix-run/router@1.23.4': {}
+
+  '@roberts_lando/vfs@0.3.3': {}
 
   '@rolldown/pluginutils@1.0.0-beta.27': {}
 
@@ -15764,7 +15697,7 @@ snapshots:
       '@vue/shared': 3.5.41
       entities: 7.0.1
       estree-walker: 2.0.2
-      source-map-js: 1.2.1
+      source-map-js: 1.2.2
 
   '@vue/compiler-dom@3.5.41':
     dependencies:
@@ -15898,46 +15831,43 @@ snapshots:
 
   '@xtuc/long@4.2.2': {}
 
-  '@yao-pkg/pkg-fetch@3.5.32(supports-color@5.5.0)':
+  '@yao-pkg/pkg-fetch@3.6.7':
     dependencies:
-      https-proxy-agent: 5.0.1(supports-color@5.5.0)
-      node-fetch: 2.7.0
       picocolors: 1.1.1
       progress: 2.0.3
       semver: 7.8.5
       tar-fs: 3.1.2
+      undici: 7.30.1
       yargs: 16.2.0
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
-      - encoding
       - react-native-b4a
-      - supports-color
 
-  '@yao-pkg/pkg@6.14.1(supports-color@5.5.0)':
+  '@yao-pkg/pkg@6.24.0(supports-color@5.5.0)':
     dependencies:
-      '@babel/generator': 7.29.1
-      '@babel/parser': 7.29.0
-      '@babel/traverse': 7.29.0(supports-color@5.5.0)
-      '@babel/types': 7.29.0
-      '@yao-pkg/pkg-fetch': 3.5.32(supports-color@5.5.0)
-      esbuild: 0.27.3
+      '@babel/generator': 7.29.8
+      '@babel/parser': 7.29.8
+      '@babel/traverse': 7.29.8(supports-color@5.5.0)
+      '@babel/types': 7.29.8
+      '@roberts_lando/vfs': 0.3.3
+      '@yao-pkg/pkg-fetch': 3.6.7
+      esbuild: 0.28.1
       into-stream: 9.1.0
-      minimist: 1.2.8
       multistream: 4.1.0
       picocolors: 1.1.1
-      picomatch: 4.0.4
+      picomatch: 4.0.5
+      postject: 1.0.0-alpha.6
       prebuild-install: 7.1.3
-      resolve: 1.22.11
+      resolve: 1.22.12
       resolve.exports: 2.0.3
       stream-meter: 1.0.4
       tar: 7.5.12
-      tinyglobby: 0.2.15
+      tinyglobby: 0.2.17
       unzipper: 0.12.3
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
-      - encoding
       - react-native-b4a
       - supports-color
 
@@ -16000,12 +15930,6 @@ snapshots:
 
   acorn@8.18.0: {}
 
-  agent-base@6.0.2(supports-color@5.5.0):
-    dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
-    transitivePeerDependencies:
-      - supports-color
-
   agent-base@7.1.4: {}
 
   agent-install@0.0.6:
@@ -16017,20 +15941,20 @@ snapshots:
       prompts: 2.4.2
       yaml: 2.9.0
 
-  ai@5.0.228(zod@4.4.3):
+  ai@5.0.228(zod@4.6.6):
     dependencies:
-      '@ai-sdk/gateway': 2.0.127(zod@4.4.3)
+      '@ai-sdk/gateway': 2.0.127(zod@4.6.6)
       '@ai-sdk/provider': 2.0.3
-      '@ai-sdk/provider-utils': 3.0.31(zod@4.4.3)
+      '@ai-sdk/provider-utils': 3.0.31(zod@4.6.6)
       '@opentelemetry/api': 1.9.0
-      zod: 4.4.3
+      zod: 4.6.6
 
-  ai@7.0.0(zod@4.6.1):
+  ai@7.0.0(zod@4.6.7):
     dependencies:
-      '@ai-sdk/gateway': 4.0.0(zod@4.6.1)
+      '@ai-sdk/gateway': 4.0.0(zod@4.6.7)
       '@ai-sdk/provider': 4.0.0
-      '@ai-sdk/provider-utils': 5.0.0(zod@4.6.1)
-      zod: 4.6.1
+      '@ai-sdk/provider-utils': 5.0.0(zod@4.6.7)
+      zod: 4.6.7
 
   ajv-draft-04@1.0.0(ajv@8.20.0):
     optionalDependencies:
@@ -16443,7 +16367,7 @@ snapshots:
 
   bn.js@5.2.5: {}
 
-  body-parser@1.20.4(supports-color@5.5.0):
+  body-parser@1.20.9(supports-color@5.5.0):
     dependencies:
       bytes: 3.1.2
       content-type: 1.0.5
@@ -16453,7 +16377,7 @@ snapshots:
       http-errors: 2.0.1
       iconv-lite: 0.4.24
       on-finished: 2.4.1
-      qs: 6.15.2
+      qs: 6.15.3
       raw-body: 2.5.3
       type-is: 1.6.18
       unpipe: 1.0.0
@@ -17035,7 +16959,7 @@ snapshots:
   css-tree@3.2.1:
     dependencies:
       mdn-data: 2.27.1
-      source-map-js: 1.2.1
+      source-map-js: 1.2.2
 
   css.escape@1.5.1: {}
 
@@ -17265,7 +17189,7 @@ snapshots:
 
   domain-browser@4.22.0: {}
 
-  dompurify@3.4.13:
+  dompurify@3.4.17:
     optionalDependencies:
       '@types/trusted-types': 2.0.7
 
@@ -17286,7 +17210,7 @@ snapshots:
     dependencies:
       readable-stream: 2.3.8
 
-  e2e@0.17.0(@ai-sdk/openai-compatible@3.0.0(zod@4.6.1))(ai@7.0.0(zod@4.6.1)):
+  e2e@0.17.0(@ai-sdk/openai-compatible@3.0.0(zod@4.6.7))(ai@7.0.0(zod@4.6.7)):
     dependencies:
       '@ai-sdk/provider': 4.0.18
       '@clack/prompts': 1.8.1
@@ -17298,8 +17222,8 @@ snapshots:
       tsx: 4.23.14
       zod: 4.6.1
     optionalDependencies:
-      '@ai-sdk/openai-compatible': 3.0.0(zod@4.6.1)
-      ai: 7.0.0(zod@4.6.1)
+      '@ai-sdk/openai-compatible': 3.0.0(zod@4.6.7)
+      ai: 7.0.0(zod@4.6.7)
 
   eastasianwidth@0.2.0: {}
 
@@ -17313,7 +17237,7 @@ snapshots:
 
   electron-to-chromium@1.5.402: {}
 
-  electron@41.10.7(supports-color@5.5.0):
+  electron@44.9.3(supports-color@5.5.0):
     dependencies:
       '@electron-internal/extract-zip': 1.0.5
       '@electron/get': 5.1.0(supports-color@5.5.0)
@@ -17794,8 +17718,8 @@ snapshots:
       '@babel/parser': 7.29.8
       eslint: 9.39.5(jiti@2.7.0)(supports-color@8.1.1)
       hermes-parser: 0.25.1
-      zod: 4.4.3
-      zod-validation-error: 4.0.2(zod@4.4.3)
+      zod: 4.6.7
+      zod-validation-error: 4.0.2(zod@4.6.7)
     transitivePeerDependencies:
       - supports-color
 
@@ -18060,7 +17984,7 @@ snapshots:
     dependencies:
       accepts: 1.3.8
       array-flatten: 1.1.1
-      body-parser: 1.20.4(supports-color@5.5.0)
+      body-parser: 1.20.9(supports-color@5.5.0)
       content-disposition: 0.5.4
       content-type: 1.0.5
       cookie: 0.7.2
@@ -18167,10 +18091,6 @@ snapshots:
       ua-parser-js: 1.0.41
     transitivePeerDependencies:
       - encoding
-
-  fdir@6.5.0(picomatch@4.0.4):
-    optionalDependencies:
-      picomatch: 4.0.4
 
   fdir@6.5.0(picomatch@4.0.5):
     optionalDependencies:
@@ -18751,13 +18671,6 @@ snapshots:
       resolve-alpn: 1.2.1
 
   https-browserify@1.0.0: {}
-
-  https-proxy-agent@5.0.1(supports-color@5.5.0):
-    dependencies:
-      agent-base: 6.0.2(supports-color@5.5.0)
-      debug: 4.4.3(supports-color@5.5.0)
-    transitivePeerDependencies:
-      - supports-color
 
   https-proxy-agent@7.0.6(supports-color@5.5.0):
     dependencies:
@@ -19406,7 +19319,7 @@ snapshots:
       saxes: 6.0.0
       symbol-tree: 3.2.4
       tough-cookie: 6.0.2
-      undici: 7.29.0
+      undici: 7.30.1
       w3c-xmlserializer: 5.0.0
       webidl-conversions: 8.0.1
       whatwg-mimetype: 5.0.0
@@ -19729,7 +19642,7 @@ snapshots:
     dependencies:
       '@babel/parser': 7.29.8
       '@babel/types': 7.29.8
-      source-map-js: 1.2.1
+      source-map-js: 1.2.2
 
   make-dir@2.1.0:
     dependencies:
@@ -20251,7 +20164,7 @@ snapshots:
 
   monaco-editor@0.55.1:
     dependencies:
-      dompurify: 3.4.13
+      dompurify: 3.4.17
       marked: 14.0.0
 
   ms@2.0.0: {}
@@ -20273,7 +20186,7 @@ snapshots:
       object-assign: 4.1.1
       thenify-all: 1.6.0
 
-  nanoid@3.3.17: {}
+  nanoid@3.3.20: {}
 
   nanoid@5.1.16: {}
 
@@ -20759,8 +20672,6 @@ snapshots:
 
   picomatch@2.3.2: {}
 
-  picomatch@4.0.4: {}
-
   picomatch@4.0.5: {}
 
   pidtree@0.6.0: {}
@@ -20835,9 +20746,9 @@ snapshots:
 
   postcss@8.5.26:
     dependencies:
-      nanoid: 3.3.17
+      nanoid: 3.3.20
       picocolors: 1.1.1
-      source-map-js: 1.2.1
+      source-map-js: 1.2.2
 
   postject@1.0.0-alpha.6:
     dependencies:
@@ -21804,7 +21715,7 @@ snapshots:
 
   sortobject@4.17.0: {}
 
-  source-map-js@1.2.1: {}
+  source-map-js@1.2.2: {}
 
   source-map-support@0.5.21:
     dependencies:
@@ -22240,11 +22151,6 @@ snapshots:
 
   tinyexec@1.3.0: {}
 
-  tinyglobby@0.2.15:
-    dependencies:
-      fdir: 6.5.0(picomatch@4.0.4)
-      picomatch: 4.0.4
-
   tinyglobby@0.2.17:
     dependencies:
       fdir: 6.5.0(picomatch@4.0.5)
@@ -22539,9 +22445,9 @@ snapshots:
 
   undici-types@8.3.0: {}
 
-  undici@6.28.1: {}
+  undici@6.29.1: {}
 
-  undici@7.29.0: {}
+  undici@7.30.1: {}
 
   unicode-canonical-property-names-ecmascript@2.0.1: {}
 
@@ -22634,7 +22540,7 @@ snapshots:
     dependencies:
       bluebird: 3.7.2
       duplexer2: 0.1.4
-      fs-extra: 11.3.4
+      fs-extra: 11.3.6
       graceful-fs: 4.2.11
       node-int64: 0.4.0
 
@@ -23321,13 +23227,15 @@ snapshots:
 
   yoctocolors@2.2.0: {}
 
-  zod-validation-error@4.0.2(zod@4.4.3):
+  zod-validation-error@4.0.2(zod@4.6.7):
     dependencies:
-      zod: 4.4.3
-
-  zod@4.4.3: {}
+      zod: 4.6.7
 
   zod@4.6.1: {}
+
+  zod@4.6.6: {}
+
+  zod@4.6.7: {}
 
   zwitch@2.0.4: {}
 
@@ -23335,9 +23243,9 @@ time:
   '@ai-sdk/openai-compatible@1.0.47': '2026-07-29T17:35:10.191Z'
   '@ai-sdk/openai-compatible@3.0.0': '2026-06-25T12:47:47.110Z'
   '@ai-sdk/react@2.0.230': '2026-08-05T19:15:48.675Z'
-  '@astryxdesign/cli@0.7.0': '2026-10-13T01:15:14.620Z'
-  '@astryxdesign/core@0.7.0': '2026-10-13T01:17:35.643Z'
-  '@astryxdesign/lab@0.7.0-canary.97a0d31': '2026-10-12T21:21:05.921Z'
+  '@astryxdesign/cli@0.7.3': '2026-10-22T17:53:09.992Z'
+  '@astryxdesign/core@0.7.3': '2026-10-22T17:42:00.820Z'
+  '@astryxdesign/lab@0.7.3-canary.cac3d8d': '2026-10-22T16:18:16.087Z'
   '@babel/core@7.29.7': '2026-05-25T11:16:53.499Z'
   '@babel/plugin-syntax-import-attributes@7.29.7': '2026-05-25T11:15:49.844Z'
   '@babel/plugin-transform-private-property-in-object@7.29.7': '2026-05-25T11:17:04.720Z'
@@ -23353,8 +23261,8 @@ time:
   '@iarna/toml@2.2.5': '2020-04-22T20:16:59.382Z'
   '@jest/expect@30.3.0': '2026-03-10T01:59:52.169Z'
   '@jest/globals@30.3.0': '2026-03-10T01:59:53.839Z'
-  '@lablup/ui-common-cli@0.2.0-alpha.19': '2026-10-13T15:14:51.832Z'
-  '@lablup/ui-common@0.2.0-alpha.19': '2026-10-13T15:15:25.270Z'
+  '@lablup/ui-common-cli@0.2.0-alpha.20.canary-20261024004224-2768d882e': '2026-10-24T00:46:42.998Z'
+  '@lablup/ui-common@0.2.0-alpha.20.canary-20261024004224-2768d882e': '2026-10-24T00:49:50.124Z'
   '@lexical/code@0.46.0': '2026-06-26T04:53:10.477Z'
   '@lexical/headless@0.46.0': '2026-06-26T04:53:54.941Z'
   '@lexical/html@0.46.0': '2026-06-26T04:54:04.106Z'
@@ -23404,7 +23312,7 @@ time:
   '@vitejs/plugin-react@4.7.0': '2025-07-18T03:32:30.541Z'
   '@vitest/coverage-v8@4.1.10': '2026-07-06T06:44:13.365Z'
   '@vueless/storybook-dark-mode@10.0.8': '2026-05-01T14:11:22.038Z'
-  '@yao-pkg/pkg@6.14.1': '2026-02-20T13:22:14.235Z'
+  '@yao-pkg/pkg@6.24.0': '2026-10-23T08:52:42.526Z'
   ai@5.0.228: '2026-08-05T19:16:10.716Z'
   ai@7.0.0: '2026-06-25T12:47:23.880Z'
   ajv@8.20.0: '2026-04-24T15:22:16.529Z'
@@ -23425,10 +23333,10 @@ time:
   cors@2.8.6: '2026-01-22T14:41:30.223Z'
   crypto-es@2.1.0: '2023-10-24T14:53:04.505Z'
   dayjs@1.11.21: '2026-05-26T05:46:12.427Z'
-  dompurify@3.4.13: '2026-08-03T14:16:00.210Z'
+  dompurify@3.4.17: '2026-10-12T12:41:28.880Z'
   dotenv@16.6.1: '2025-06-27T16:45:01.088Z'
   e2e@0.17.0: '2026-10-04T07:15:12.634Z'
-  electron@41.10.7: '2026-08-25T00:38:19.980Z'
+  electron@44.9.3: '2026-10-21T03:31:39.419Z'
   es-toolkit@1.50.0: '2026-07-24T08:24:09.928Z'
   eslint-config-google@0.14.0: '2019-09-02T19:10:47.693Z'
   eslint-config-prettier@9.1.2: '2025-07-18T19:19:03.251Z'
@@ -23541,4 +23449,4 @@ time:
   workbox-sw@7.4.0: '2025-11-19T17:46:24.508Z'
   ws@8.21.1: '2026-07-14T17:12:25.599Z'
   yaml@2.9.0: '2026-05-11T10:16:24.045Z'
-  zod@4.4.3: '2026-05-04T07:06:40.819Z'
+  zod@4.6.6: '2026-10-11T16:18:23.878Z'

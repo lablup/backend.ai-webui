@@ -346,9 +346,8 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                     fallback={
                       <TextInput
                         value=""
-                        label={t('adminModelCard.ModelStorageFolder')}
-                        isLabelHidden
-                        isDisabled
+                        aria-label={t('adminModelCard.ModelStorageFolder')}
+                        disabled
                         controlStyle={{ flex: 1 }}
                       />
                     }

@@ -311,8 +311,7 @@ const SettingList: React.FC<SettingPageProps> = ({
             // "take the remainder" basis has to be set from a wrapper.
             <BAIFlex style={{ flex: 1, minWidth: 0 }}>
               <TextInput
-                label={t('settings.SearchPlaceholder')}
-                isLabelHidden
+                aria-label={t('settings.SearchPlaceholder')}
                 startIcon={Search}
                 placeholder={t('settings.SearchPlaceholder')}
                 onChange={(nextValue) => setSearchValue(nextValue)}
@@ -330,10 +329,11 @@ const SettingList: React.FC<SettingPageProps> = ({
           )}
           {!!showChangedOptionFilter && (
             <CheckboxInput
-              label={t('settings.ShowOnlyChanged')}
               value={changedOptionFilter}
               onChange={(checked) => setChangedOptionFilter(checked)}
-            />
+            >
+              {t('settings.ShowOnlyChanged')}
+            </CheckboxInput>
           )}
           {extraButton}
           {!!showResetButton && (

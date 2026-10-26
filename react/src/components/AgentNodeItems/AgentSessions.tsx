@@ -204,7 +204,7 @@ const AgentSessions = ({ agentId, queryRef, onReload }: AgentSessionsProps) => {
         <BAIFlex gap="xs" align="center">
           {experimentalSessionResourceGrid && (
             <SegmentedControl
-              label={t('session.resourceGrid.ViewMode')}
+              aria-label={t('session.resourceGrid.ViewMode')}
               value={view}
               onChange={(value) => {
                 const next = value as 'table' | 'grid';

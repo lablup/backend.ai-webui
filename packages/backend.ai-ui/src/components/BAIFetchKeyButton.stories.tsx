@@ -317,8 +317,7 @@ export const CountdownBorder: Story = {
               carries the visible description, so the label is kept but
               visually hidden rather than duplicated. */}
           <Switch
-            label="Show countdown border"
-            isLabelHidden
+            aria-label="Show countdown border"
             value={showBorder}
             onChange={setShowBorder}
           />

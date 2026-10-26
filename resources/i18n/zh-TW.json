@@ -633,7 +633,7 @@
     "CredentialSuccessfullyDeleted": "憑證已成功刪除。",
     "Credentials": "證書",
     "CurrentClientIp": "目前用戶端IP: {{ip}}",
-    "Days": "天",
+    "Days": "{{value}}天",
     "Deactivate": "停用",
     "DeactivateConfirm": "確定要停用此金鑰對嗎？",
     "DeactivateCredential": "停用憑證",

@@ -197,13 +197,12 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
           isDisabled={isDisabled}
         >
           <NumberInput
-            label={accessibleLabel}
-            isLabelHidden
+            aria-label={accessibleLabel}
             max={max}
             min={min}
             step={step ?? undefined}
             hasNumberSteppers
-            isDisabled={isDisabled}
+            disabled={isDisabled}
             value={displayValue ?? null}
             placeholder={inputNumberProps?.placeholder}
             // Typed `ReactNode`, but every call site passes a plain string.
@@ -277,13 +276,12 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
           }
         >
           <Slider
-            label={accessibleLabel}
-            isLabelHidden
+            aria-label={accessibleLabel}
             width="100%"
             max={sliderMax}
             min={sliderMin}
             step={step ?? undefined}
-            isDisabled={isDisabled}
+            disabled={isDisabled}
             value={displayValue ?? sliderMin}
             valueDisplay={
               isEmptyMode || sliderProps?.tooltip?.open === false
