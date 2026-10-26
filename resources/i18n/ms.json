@@ -797,13 +797,27 @@
     "Edit": "Edit",
     "Free": "Percuma",
     "Used": "digunakan",
+    "catalog": {
+      "group": {
+        "Activity": "Aktiviti",
+        "Deployments": "Penggunaan",
+        "Other": "Lain-lain",
+        "Resources": "Sumber",
+        "Sessions": "Sesi",
+        "Start": "Bermula"
+      }
+    },
     "editSider": {
+      "Cards": "Kad",
       "Empty": "Belum ada panel tersuai",
       "GridDisabled": "Paparan grid dimatikan (Ciri eksperimen)",
+      "NoMatchingCards": "Tiada kad yang sepadan",
       "RequiresSuperadmin": "Superadmin sahaja",
       "ResetLayout": "Tetapkan semula susun atur",
       "ResetLayoutDescription": "Memulihkan susun atur panel lalai. Panel tersuai akan dikekalkan.",
-      "Title": "Panel tersuai"
+      "SearchCards": "Cari kad",
+      "Title": "Panel tersuai",
+      "Unavailable": "Tidak tersedia dalam persekitaran ini"
     },
     "panelModal": {
       "AddPanel": "Tambah panel",
@@ -3780,7 +3794,6 @@
     "ClearSSHKeypairInput": "Pad Kekunci SSH yang ditulis akan dikeluarkan. Adakah anda pasti mahu meneruskan?",
     "ConfigFilename": "Konfigurasi nama fail",
     "CurrentSSHPublicKey": "Kunci awam semasa",
-    "CustomDashboardPanels": "Panel papan pemuka tersuai",
     "DarkMode": "Mod Gelap",
     "DarkTheme": "Mod Gelap",
     "Default": "Lalai",

@@ -797,13 +797,27 @@
     "Edit": "Bearbeiten",
     "Free": "Frei",
     "Used": "Gebraucht",
+    "catalog": {
+      "group": {
+        "Activity": "Aktivität",
+        "Deployments": "Bereitstellungen",
+        "Other": "Sonstiges",
+        "Resources": "Ressourcen",
+        "Sessions": "Sitzungen",
+        "Start": "Erste Schritte"
+      }
+    },
     "editSider": {
+      "Cards": "Karten",
       "Empty": "Noch keine benutzerdefinierten Panels",
       "GridDisabled": "Rasteransicht aus (Experimentelle Funktionen)",
+      "NoMatchingCards": "Keine passenden Karten",
       "RequiresSuperadmin": "Nur für Superadmins",
       "ResetLayout": "Layout zurücksetzen",
       "ResetLayoutDescription": "Stellt die Standardanordnung der Panels wieder her. Benutzerdefinierte Panels bleiben erhalten.",
-      "Title": "Benutzerdefinierte Panels"
+      "SearchCards": "Karten suchen",
+      "Title": "Benutzerdefinierte Panels",
+      "Unavailable": "In dieser Umgebung nicht verfügbar"
     },
     "panelModal": {
       "AddPanel": "Panel hinzufügen",
@@ -3782,7 +3796,6 @@
     "ClearSSHKeypairInput": "Geschriebenes SSH-Schlüsselpaar wird entfernt. Sind Sie sicher, dass Sie fortfahren möchten?",
     "ConfigFilename": "Name der Konfigurationsdatei",
     "CurrentSSHPublicKey": "Aktueller öffentlicher Schlüssel",
-    "CustomDashboardPanels": "Benutzerdefinierte Dashboard-Panels",
     "DarkMode": "Dunkler Modus",
     "DarkTheme": "Dunkelmodus",
     "Default": "Standard",

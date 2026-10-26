@@ -4,25 +4,11 @@
 //            11 (Recently Created Sessions Widget), 12 (Board Layout)
 // plus: custom panel add flow (edit sider -> panel modal), added after the plan
 import { loginAsAdmin, loginAsUser, navigateTo } from '../utils/test-util';
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
 // Timeout for widget visibility checks - widgets load after GraphQL data fetches,
 // which may be slow when multiple workers run in parallel.
 const WIDGET_TIMEOUT = 30_000;
-
-// Custom dashboard panels are an experimental opt-in. The user-settings atom
-// reads localStorage at app boot, so write the flag and reload rather than
-// toggling it through the settings UI.
-const enableCustomDashboardPanels = async (page: Page) => {
-  await page.evaluate(() => {
-    localStorage.setItem(
-      'backendaiwebui.settings.user.experimental_custom_dashboard_panels',
-      'true',
-    );
-  });
-  await page.reload();
-  await page.waitForSelector('[data-testid="user-dropdown-button"]');
-};
 
 test.describe(
   'Dashboard Page',
@@ -475,7 +461,6 @@ test.describe(
         // 1. Login as admin and navigate to /summary
         await loginAsAdmin(page, request);
         await navigateTo(page, 'summary');
-        await enableCustomDashboardPanels(page);
         await expect(
           page.getByRole('heading', { name: 'Active Sessions' }),
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
@@ -499,10 +484,9 @@ test.describe(
         page,
         request,
       }) => {
-        // 1. Login as admin, open the dashboard, opt in, and enter edit mode
+        // 1. Login as admin, open the dashboard, and enter edit mode
         await loginAsAdmin(page, request);
         await navigateTo(page, 'summary');
-        await enableCustomDashboardPanels(page);
         await expect(
           page.getByRole('heading', { name: 'Active Sessions' }),
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });

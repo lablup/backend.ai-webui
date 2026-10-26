@@ -797,13 +797,27 @@
     "Edit": "Sunting",
     "Free": "Bebas",
     "Used": "Digunakan",
+    "catalog": {
+      "group": {
+        "Activity": "Aktivitas",
+        "Deployments": "Deployment",
+        "Other": "Lainnya",
+        "Resources": "Sumber daya",
+        "Sessions": "Sesi",
+        "Start": "Memulai"
+      }
+    },
     "editSider": {
+      "Cards": "Kartu",
       "Empty": "Belum ada panel kustom",
       "GridDisabled": "Tampilan kisi nonaktif (Fitur eksperimental)",
+      "NoMatchingCards": "Tidak ada kartu yang cocok",
       "RequiresSuperadmin": "Hanya superadmin",
       "ResetLayout": "Atur ulang tata letak",
       "ResetLayoutDescription": "Mengembalikan susunan panel ke pengaturan default. Panel kustom tetap dipertahankan.",
-      "Title": "Panel kustom"
+      "SearchCards": "Cari kartu",
+      "Title": "Panel kustom",
+      "Unavailable": "Tidak tersedia di lingkungan ini"
     },
     "panelModal": {
       "AddPanel": "Tambah panel",
@@ -3784,7 +3798,6 @@
     "ClearSSHKeypairInput": "Pasangan Kunci SSH tertulis akan dihapus. Apakah anda yakin ingin melanjutkan?",
     "ConfigFilename": "Nama file konfigurasi",
     "CurrentSSHPublicKey": "Kunci publik saat ini",
-    "CustomDashboardPanels": "Panel dasbor kustom",
     "DarkMode": "Mode Gelap",
     "DarkTheme": "Mode Gelap",
     "Default": "Bawaan",

@@ -784,13 +784,27 @@
     "Edit": "Edit",
     "Free": "Free",
     "Used": "Used",
+    "catalog": {
+      "group": {
+        "Activity": "Activity",
+        "Deployments": "Deployments",
+        "Other": "Other",
+        "Resources": "Resources",
+        "Sessions": "Sessions",
+        "Start": "Get started"
+      }
+    },
     "editSider": {
+      "Cards": "Cards",
       "Empty": "No custom panels yet",
       "GridDisabled": "Grid view off (Experimental features)",
+      "NoMatchingCards": "No matching cards",
       "RequiresSuperadmin": "Superadmin only",
       "ResetLayout": "Reset layout",
       "ResetLayoutDescription": "Restores the default panel arrangement. Custom panels are kept.",
-      "Title": "Custom panels"
+      "SearchCards": "Search cards",
+      "Title": "Custom panels",
+      "Unavailable": "Not available in this environment"
     },
     "panelModal": {
       "AddPanel": "Add panel",
@@ -3767,7 +3781,6 @@
     "ClearSSHKeypairInput": "Written SSH Keypair will be removed. Are you sure you want to continue?",
     "ConfigFilename": "Config file name",
     "CurrentSSHPublicKey": "Current public key",
-    "CustomDashboardPanels": "Custom dashboard panels",
     "DarkMode": "Dark mode",
     "DarkTheme": "Dark Mode",
     "Default": "Default",

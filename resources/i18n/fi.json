@@ -797,13 +797,27 @@
     "Edit": "Muokkaa",
     "Free": "Ilmainen",
     "Used": "Käytetty",
+    "catalog": {
+      "group": {
+        "Activity": "Toiminta",
+        "Deployments": "Käyttöönotot",
+        "Other": "Muut",
+        "Resources": "Resurssit",
+        "Sessions": "Istunnot",
+        "Start": "Aloitus"
+      }
+    },
     "editSider": {
+      "Cards": "Kortit",
       "Empty": "Ei vielä mukautettuja paneeleja",
       "GridDisabled": "Ruudukkonäkymä pois (Kokeelliset ominaisuudet)",
+      "NoMatchingCards": "Ei vastaavia kortteja",
       "RequiresSuperadmin": "Vain superadmin-käyttäjille",
       "ResetLayout": "Palauta asettelu",
       "ResetLayoutDescription": "Palauttaa paneelien oletusjärjestyksen. Mukautetut paneelit säilytetään.",
-      "Title": "Mukautetut paneelit"
+      "SearchCards": "Hae kortteja",
+      "Title": "Mukautetut paneelit",
+      "Unavailable": "Ei käytettävissä tässä ympäristössä"
     },
     "panelModal": {
       "AddPanel": "Lisää paneeli",
@@ -3780,7 +3794,6 @@
     "ClearSSHKeypairInput": "Kirjoitettu SSH-avainpari poistetaan. Haluatko varmasti jatkaa?",
     "ConfigFilename": "Konfigurointitiedoston nimi",
     "CurrentSSHPublicKey": "Nykyinen julkinen avain",
-    "CustomDashboardPanels": "Mukautetut koontinäytön paneelit",
     "DarkMode": "Tumma tila",
     "DarkTheme": "Tumma tila",
     "Default": "Laiminlyönti",

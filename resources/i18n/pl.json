@@ -797,13 +797,27 @@
     "Edit": "Edytuj",
     "Free": "Bezpłatny",
     "Used": "Używany",
+    "catalog": {
+      "group": {
+        "Activity": "Aktywność",
+        "Deployments": "Wdrożenia",
+        "Other": "Inne",
+        "Resources": "Zasoby",
+        "Sessions": "Sesje",
+        "Start": "Pierwsze kroki"
+      }
+    },
     "editSider": {
+      "Cards": "Karty",
       "Empty": "Brak paneli niestandardowych",
       "GridDisabled": "Widok siatki wyłączony (Funkcje eksperymentalne)",
+      "NoMatchingCards": "Brak pasujących kart",
       "RequiresSuperadmin": "Tylko superadministrator",
       "ResetLayout": "Resetuj układ",
       "ResetLayoutDescription": "Przywraca domyślny układ paneli. Panele niestandardowe zostaną zachowane.",
-      "Title": "Panele niestandardowe"
+      "SearchCards": "Szukaj kart",
+      "Title": "Panele niestandardowe",
+      "Unavailable": "Niedostępne w tym środowisku"
     },
     "panelModal": {
       "AddPanel": "Dodaj panel",
@@ -3783,7 +3797,6 @@
     "ClearSSHKeypairInput": "Zapisana para kluczy SSH zostanie usunięta. Jesteś pewien, że chcesz kontynuować?",
     "ConfigFilename": "Nazwa pliku konfiguracyjnego",
     "CurrentSSHPublicKey": "Aktualny klucz publiczny",
-    "CustomDashboardPanels": "Niestandardowe panele pulpitu",
     "DarkMode": "Tryb ciemny",
     "DarkTheme": "Tryb ciemny",
     "Default": "Domyślny",

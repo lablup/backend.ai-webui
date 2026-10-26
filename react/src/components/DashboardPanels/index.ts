@@ -2,8 +2,32 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-export { useCustomPanels } from './useCustomPanels';
-export type { UseCustomPanelsResult } from './useCustomPanels';
+export { default as DashboardPanelBoard } from './DashboardPanelBoard';
+export {
+  useDashboardBoard,
+  useLocalStorageBoardStore,
+} from './useDashboardBoard';
+export type {
+  BoardStore,
+  UseDashboardBoardOptions,
+  UseDashboardBoardResult,
+} from './useDashboardBoard';
+export { PANEL_CATALOG } from './panelCatalog';
+export {
+  addPanel,
+  applyLayout,
+  catalogFor,
+  migrateLegacyBoard,
+  panelTitleKey,
+  removePanel,
+  resetBoard,
+  sanitizeBoard,
+  sanitizePanels,
+  seedBoard,
+  syncBoard,
+  toBoardLayout,
+} from './boardModel';
+export type { CatalogEntry } from './boardModel';
 export { default as ResourceTablePanel } from './ResourceTablePanel';
 export { default as SessionResourceGridPanel } from './SessionResourceGridPanel';
 export { default as PanelFrame } from './PanelFrame';
@@ -16,12 +40,23 @@ export {
 export { DEFAULT_PANEL_LAYOUTS, createPanel } from './defaults';
 export { resourceRegistry, resourceKeys } from './resourceRegistry';
 export type {
+  DashboardBoard,
+  DashboardPageQueryRefs,
+  DashboardScope,
+  DashboardVars,
+  PanelComponentProps,
+  PanelDefinition,
   PanelDescriptor,
+  PanelGroup,
   PanelInput,
+  PanelPage,
   PanelType,
   PersistedPanel,
+  PersistedPanelV2,
+  RefreshInterval,
   ResourceConfig,
   ResourceConnectionResult,
   ResourceKey,
   ResourceQueryArgs,
+  Viz,
 } from './types';

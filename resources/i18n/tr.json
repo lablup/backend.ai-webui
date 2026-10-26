@@ -797,13 +797,27 @@
     "Edit": "Düzenle",
     "Free": "Özgür",
     "Used": "Kullanılmış",
+    "catalog": {
+      "group": {
+        "Activity": "Etkinlik",
+        "Deployments": "Dağıtımlar",
+        "Other": "Diğer",
+        "Resources": "Kaynaklar",
+        "Sessions": "Oturumlar",
+        "Start": "Başlarken"
+      }
+    },
     "editSider": {
+      "Cards": "Kartlar",
       "Empty": "Henüz özel panel yok",
       "GridDisabled": "Izgara görünümü kapalı (Deneysel özellikler)",
+      "NoMatchingCards": "Eşleşen kart yok",
       "RequiresSuperadmin": "Yalnızca süper yönetici",
       "ResetLayout": "Düzeni sıfırla",
       "ResetLayoutDescription": "Varsayılan panel düzenini geri yükler. Özel paneller korunur.",
-      "Title": "Özel paneller"
+      "SearchCards": "Kart ara",
+      "Title": "Özel paneller",
+      "Unavailable": "Bu ortamda kullanılamaz"
     },
     "panelModal": {
       "AddPanel": "Panel ekle",
@@ -3780,7 +3794,6 @@
     "ClearSSHKeypairInput": "Yazılı SSH Anahtar Çifti kaldırılacaktır. Devam etmek istediğine emin misin?",
     "ConfigFilename": "Yapılandırma dosyası adı",
     "CurrentSSHPublicKey": "Geçerli ortak anahtar",
-    "CustomDashboardPanels": "Özel kontrol paneli panelleri",
     "DarkMode": "Karanlık Mod",
     "DarkTheme": "Karanlık Mod",
     "Default": "Varsayılan",

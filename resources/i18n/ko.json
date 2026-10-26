@@ -797,13 +797,27 @@
     "Edit": "편집",
     "Free": "사용 가능",
     "Used": "사용 중",
+    "catalog": {
+      "group": {
+        "Activity": "활동",
+        "Deployments": "배포",
+        "Other": "기타",
+        "Resources": "자원",
+        "Sessions": "세션",
+        "Start": "시작하기"
+      }
+    },
     "editSider": {
+      "Cards": "카드",
       "Empty": "아직 사용자 정의 패널이 없습니다",
       "GridDisabled": "그리드 보기 꺼짐 (실험적 기능)",
+      "NoMatchingCards": "일치하는 카드가 없습니다",
       "RequiresSuperadmin": "슈퍼 관리자 전용",
       "ResetLayout": "기본 배치로 초기화",
       "ResetLayoutDescription": "패널 배치를 기본값으로 되돌립니다. 사용자 정의 패널은 유지됩니다.",
-      "Title": "사용자 정의 패널"
+      "SearchCards": "카드 검색",
+      "Title": "사용자 정의 패널",
+      "Unavailable": "이 환경에서는 사용할 수 없습니다"
     },
     "panelModal": {
       "AddPanel": "패널 추가",
@@ -3783,7 +3797,6 @@
     "ClearSSHKeypairInput": "지금까지 작성된 SSH 키페어는 삭제될 예정입니다. 계속하겠습니까?",
     "ConfigFilename": "구성 파일 이름 선택",
     "CurrentSSHPublicKey": "현재 공개 키",
-    "CustomDashboardPanels": "사용자 정의 대시보드 패널",
     "DarkMode": "다크 모드",
     "DarkTheme": "다크 모드",
     "Default": "기본",

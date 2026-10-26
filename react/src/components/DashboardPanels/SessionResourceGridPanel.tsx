@@ -7,7 +7,7 @@ import { useWebUINavigate } from '../../hooks';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import SessionResourceGrid from '../SessionResourceGrid';
 import PanelFrame from './PanelFrame';
-import type { PanelComponentProps } from './panelRegistry';
+import type { PanelKindProps } from './panelRegistry';
 import { resolvePanelTitle } from './resourceRegistry';
 import type { PanelDescriptor } from './types';
 import { BAISkeleton } from 'backend.ai-ui';
@@ -16,14 +16,11 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
 /**
- * Session resource grid as a board panel (FR-3570 is experimental; the gate
- * lives in `useCustomPanels`/the modal, not here). The grid's five view
- * settings come from the descriptor and are edited only in the panel modal, so
- * the panel renders no toolbar — a locked board can be read without ever
- * mutating panel config, and multiple grid panels cannot fight over the URL
- * query-state the grid otherwise keeps its settings in.
+ * Session resource grid as a board panel (FR-3570; the gate lives in
+ * `useDashboardBoard` and the modal). Its view settings come from the
+ * descriptor, so it renders no toolbar and grid panels never fight over the URL.
  */
-const SessionResourceGridPanel: React.FC<PanelComponentProps> = ({
+const SessionResourceGridPanel: React.FC<PanelKindProps> = ({
   descriptor,
   fetchKey,
   onEdit,

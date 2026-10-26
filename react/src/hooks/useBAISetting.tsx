@@ -2,7 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { PersistedPanel } from '../components/DashboardPanels/types';
+import type {
+  DashboardBoard,
+  PersistedPanel,
+} from '../components/DashboardPanels/types';
 import { jotaiStore } from '../components/DefaultProviders';
 import type { RecentSearchHit } from '../components/GlobalSearchPalette/types';
 import { backendaiOptions } from '../global-stores';
@@ -43,7 +46,6 @@ export interface UserSettings {
   start_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   start_page_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   experimental_ai_agents?: boolean;
-  experimental_custom_dashboard_panels?: boolean;
   experimental_import_from_huggingface?: boolean;
   experimental_session_resource_grid?: boolean;
   /** Header session monitor (chip, polling, idle alerts); default off. */
@@ -51,10 +53,13 @@ export interface UserSettings {
   extra_ai_agents?: Array<AgentProfile>;
   agent_endpoints?: AgentEndpointBindings;
   session_metrics_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
+  /** Pre-catalog dashboard layouts, read only to migrate into `dashboard_board.*`. */
   dashboard_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   admin_dashboard_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
-  /** Decoupled-dashboard custom panels (serialized descriptors + layout). */
   custom_dashboard_panels?: Array<PersistedPanel>;
+  'dashboard_board.project'?: DashboardBoard;
+  'dashboard_board.projectAdmin'?: DashboardBoard;
+  'dashboard_board.admin'?: DashboardBoard;
   resource_panel_type?:
     | 'MyResource'
     | 'MyResourceWithinResourceGroup'

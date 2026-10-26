@@ -797,13 +797,27 @@
     "Edit": "Editar",
     "Free": "Livre",
     "Used": "Usado",
+    "catalog": {
+      "group": {
+        "Activity": "Atividade",
+        "Deployments": "Implantações",
+        "Other": "Outros",
+        "Resources": "Recursos",
+        "Sessions": "Sessões",
+        "Start": "Primeiros passos"
+      }
+    },
     "editSider": {
+      "Cards": "Cartões",
       "Empty": "Ainda não há painéis personalizados",
       "GridDisabled": "Visualização em grade desativada (Recursos experimentais)",
+      "NoMatchingCards": "Nenhum cartão correspondente",
       "RequiresSuperadmin": "Apenas superadministradores",
       "ResetLayout": "Redefinir layout",
       "ResetLayoutDescription": "Restaura a disposição padrão dos painéis. Os painéis personalizados são mantidos.",
-      "Title": "Painéis personalizados"
+      "SearchCards": "Pesquisar cartões",
+      "Title": "Painéis personalizados",
+      "Unavailable": "Indisponível neste ambiente"
     },
     "panelModal": {
       "AddPanel": "Adicionar painel",
@@ -3780,7 +3794,6 @@
     "ClearSSHKeypairInput": "O par de chaves SSH gravado será removido. Você tem certeza que quer continuar?",
     "ConfigFilename": "Nome do arquivo de configuração",
     "CurrentSSHPublicKey": "Chave pública atual",
-    "CustomDashboardPanels": "Painéis personalizados do painel",
     "DarkMode": "Modo escuro",
     "DarkTheme": "Modo escuro",
     "Default": "Padrão",
