@@ -14,13 +14,13 @@ import { useCurrentDomainValue } from '../hooks';
 import { useTOTPSupported } from '../hooks/backendai';
 import BAIFormItem from './BAIFormItem';
 import ProjectSelect from './ProjectSelect';
-import UserResourcePolicySelect from './UserResourcePolicySelect';
 import {
   AstryxFormNumberInput,
   AstryxFormTagsInput,
 } from './astryxFormControls';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAIAdminUserResourcePolicySelect,
   BAIFlex,
   BAIListAlert,
   BAIModal,
@@ -293,7 +293,11 @@ const UpdateUsersModal = ({
               name="resource_policy"
               label={t('resourcePolicy.ResourcePolicy')}
             >
-              <UserResourcePolicySelect allowClear />
+              <BAIAdminUserResourcePolicySelect
+                label={t('resourcePolicy.ResourcePolicy')}
+                isLabelHidden
+                allowClear
+              />
             </BAIFormItem>
           </Suspense>
           <BAIFormItem
