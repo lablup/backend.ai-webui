@@ -16,12 +16,12 @@ import { useErrorMessageResolver } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAICheckbox from '../BAICheckbox';
 import BAIModal, { BAIModalProps } from '../BAIModal';
+import BAINumberInput from '../BAINumberInput';
+import BAITextArea from '../BAITextArea';
+import BAITextInput from '../BAITextInput';
 import { useBAIResourceSlots } from '../provider';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
 import { HStack } from '@lablup/ui-common/Stack';
-import { TextArea } from '@lablup/ui-common/TextArea';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import * as _ from 'lodash-es';
 import { useDeferredValue, useRef } from 'react';
 import {
@@ -432,13 +432,13 @@ const BAIProjectSettingModal = ({
             },
           ]}
         >
-          <TextInput aria-label={t('comp:BAIProjectSettingModal.Name')} />
+          <BAITextInput aria-label={t('comp:BAIProjectSettingModal.Name')} />
         </Form.Item>
         <Form.Item
           label={t('comp:BAIProjectSettingModal.Description')}
           name="description"
         >
-          <TextArea
+          <BAITextArea
             aria-label={t('comp:BAIProjectSettingModal.Description')}
             rows={1}
           />
@@ -503,7 +503,7 @@ const BAIProjectSettingModal = ({
                     style={{ width: '100%' }}
                   />
                 ) : (
-                  <NumberInput
+                  <BAINumberInput
                     aria-label={resourceSlotKey}
                     min={0}
                     hasClear
@@ -564,7 +564,7 @@ const BAIProjectSettingModal = ({
                 },
               ]}
             >
-              <TextInput
+              <BAITextInput
                 aria-label={t('comp:BAIProjectSettingModal.Registry')}
                 placeholder={t('comp:BAIProjectSettingModal.Registry')}
                 width="100%"
@@ -580,7 +580,7 @@ const BAIProjectSettingModal = ({
                 },
               ]}
             >
-              <TextInput
+              <BAITextInput
                 aria-label={t('comp:BAIProjectSettingModal.Project')}
                 placeholder={t('comp:BAIProjectSettingModal.Project')}
                 width="100%"

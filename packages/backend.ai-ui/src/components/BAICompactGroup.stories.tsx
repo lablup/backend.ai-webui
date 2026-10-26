@@ -1,9 +1,9 @@
 import { Form } from '../form-engine';
 import BAICompactGroup from './BAICompactGroup';
+import BAISelector from './BAISelector';
+import BAITextInput from './BAITextInput';
 import { Button } from '@lablup/ui-common/Button';
 import { HStack } from '@lablup/ui-common/HStack';
-import { Selector } from '@lablup/ui-common/Selector';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
@@ -104,14 +104,14 @@ const EmailPair = ({ status }: { status?: 'error' }) => {
   const [suffix, setSuffix] = useState('lablup.com');
   return (
     <BAICompactGroup>
-      <TextInput
+      <BAITextInput
         aria-label="E-Mail Prefix"
         value={prefix}
         onChange={setPrefix}
         width="100%"
         placeholder="Max. 30 characters"
       />
-      <TextInput
+      <BAITextInput
         aria-label="E-Mail Suffix"
         value={suffix}
         onChange={setSuffix}
@@ -168,13 +168,13 @@ export const AgainstAPlainRow: Story = {
       const [suffix, setSuffix] = useState('lablup.com');
       return (
         <HStack gap={0} width="100%">
-          <TextInput
+          <BAITextInput
             aria-label="E-Mail Prefix"
             value={prefix}
             onChange={setPrefix}
             width="100%"
           />
-          <TextInput
+          <BAITextInput
             aria-label="E-Mail Suffix"
             value={suffix}
             onChange={setSuffix}
@@ -212,7 +212,7 @@ export const WithTrailingButton: Story = {
       const [value, setValue] = useState('');
       return (
         <BAICompactGroup width="auto">
-          <TextInput
+          <BAITextInput
             aria-label="Search"
             value={value}
             onChange={setValue}
@@ -248,20 +248,20 @@ export const ThreeMembers: Story = {
       const [domain, setDomain] = useState<string | null>('lablup.com');
       return (
         <BAICompactGroup>
-          <TextInput
+          <BAITextInput
             aria-label="Prefix"
             value={prefix}
             onChange={setPrefix}
             width="100%"
           />
-          <TextInput
+          <BAITextInput
             aria-label="Team"
             value={middle}
             onChange={setMiddle}
             width="100%"
             placeholder="optional"
           />
-          <Selector
+          <BAISelector
             aria-label="Domain"
             value={domain}
             onChange={setDomain}
@@ -324,7 +324,7 @@ export const InsideAForm: Story = {
           style={{ flex: 1 }}
           rules={[{ required: true }]}
         >
-          <TextInput aria-label="E-Mail Prefix" />
+          <BAITextInput aria-label="E-Mail Prefix" />
         </Form.Item>
         <Form.Item
           name="email_suffix"
@@ -332,7 +332,7 @@ export const InsideAForm: Story = {
           style={{ flex: 1 }}
           rules={[{ required: true }]}
         >
-          <TextInput aria-label="E-Mail Suffix" />
+          <BAITextInput aria-label="E-Mail Suffix" />
         </Form.Item>
       </BAICompactGroup>
     </Form>

@@ -4,9 +4,9 @@ import { App } from '../../app-shim';
 import { Form, FormInstance } from '../../form-engine';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIModal, { BAIModalProps } from '../BAIModal';
+import BAITextInput from '../BAITextInput';
 import { InputGroup } from '@lablup/ui-common/InputGroup';
 import { Link } from '@lablup/ui-common/Link';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { useRef, useState } from 'react';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
@@ -117,7 +117,7 @@ const BAIHuggingFaceRegistrySettingModal: React.FC<
               label={t('comp:BAIHuggingFaceRegistrySettingModal.Token')}
               isLabelHidden
             >
-              <TextInput
+              <BAITextInput
                 aria-label={t('comp:BAIHuggingFaceRegistrySettingModal.Token')}
                 type="password"
                 value="••••••••••••"
@@ -128,7 +128,7 @@ const BAIHuggingFaceRegistrySettingModal: React.FC<
               </Link>
             </InputGroup>
           ) : (
-            <TextInput
+            <BAITextInput
               aria-label={t('comp:BAIHuggingFaceRegistrySettingModal.Token')}
               type="password"
               placeholder={t(

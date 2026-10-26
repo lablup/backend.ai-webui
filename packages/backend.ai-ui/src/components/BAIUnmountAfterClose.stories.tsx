@@ -2,8 +2,8 @@ import { Form } from '../form-engine';
 import BAIButton from './BAIButton';
 import BAIFlex from './BAIFlex';
 import BAIModal from './BAIModal';
+import BAITextInput from './BAITextInput';
 import BAIUnmountAfterClose from './BAIUnmountAfterClose';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import React, { useEffect, useState } from 'react';
 
@@ -213,13 +213,13 @@ export const FormStateReset: Story = {
             >
               <Form>
                 <Form.Item label="Name" name="name">
-                  <TextInput
+                  <BAITextInput
                     aria-label="Name"
                     placeholder="Type something and close"
                   />
                 </Form.Item>
                 <Form.Item label="Email" name="email">
-                  <TextInput
+                  <BAITextInput
                     aria-label="Email"
                     placeholder="Type something and close"
                   />
@@ -247,13 +247,13 @@ export const FormStateReset: Story = {
           >
             <Form>
               <Form.Item label="Name" name="name">
-                <TextInput
+                <BAITextInput
                   aria-label="Name"
                   placeholder="Type something and close"
                 />
               </Form.Item>
               <Form.Item label="Email" name="email">
-                <TextInput
+                <BAITextInput
                   aria-label="Email"
                   placeholder="Type something and close"
                 />
@@ -292,13 +292,13 @@ export const WithDrawer: Story = {
           >
             <Form>
               <Form.Item label="Username" name="username">
-                <TextInput
+                <BAITextInput
                   aria-label="Username"
                   placeholder="Type and close to see reset"
                 />
               </Form.Item>
               <Form.Item label="Password" name="password">
-                <TextInput
+                <BAITextInput
                   type="password"
                   aria-label="Password"
                   placeholder="Type and close to see reset"
@@ -431,7 +431,7 @@ export const RealWorldExample: Story = {
                   { required: true, message: 'Please enter session name' },
                 ]}
               >
-                <TextInput
+                <BAITextInput
                   aria-label="Session Name"
                   placeholder="my-jupyter-session"
                 />
@@ -442,7 +442,7 @@ export const RealWorldExample: Story = {
                 name="image"
                 rules={[{ required: true, message: 'Please select image' }]}
               >
-                <TextInput
+                <BAITextInput
                   aria-label="Container Image"
                   placeholder="python:3.11"
                 />

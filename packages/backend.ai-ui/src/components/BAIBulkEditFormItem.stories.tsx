@@ -2,10 +2,10 @@ import { Form } from '../form-engine';
 import BAIBulkEditFormItem from './BAIBulkEditFormItem';
 import BAIButton from './BAIButton';
 import BAIFlex from './BAIFlex';
+import BAINumberInput from './BAINumberInput';
 import BAISelect from './BAISelect';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
-import { TextArea } from '@lablup/ui-common/TextArea';
-import { TextInput } from '@lablup/ui-common/TextInput';
+import BAITextArea from './BAITextArea';
+import BAITextInput from './BAITextInput';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
@@ -150,7 +150,9 @@ export const Default: Story = {
   args: {
     name: 'nickname',
     label: 'Nickname',
-    children: <TextInput aria-label="Nickname" placeholder="Enter nickname" />,
+    children: (
+      <BAITextInput aria-label="Nickname" placeholder="Enter nickname" />
+    ),
   },
 };
 
@@ -231,7 +233,7 @@ export const WithInputNumber: Story = {
     label: 'Container UID',
     showClear: true,
     children: (
-      <NumberInput
+      <BAINumberInput
         hasClear={false}
         aria-label="Container UID"
         placeholder="Enter UID"
@@ -335,7 +337,7 @@ export const MultipleFields: Story = {
         />
       </BAIBulkEditFormItem>
       <BAIBulkEditFormItem name="notes" label="Notes" showClear>
-        <TextArea aria-label="Notes" rows={3} placeholder="Add notes" />
+        <BAITextArea aria-label="Notes" rows={3} placeholder="Add notes" />
       </BAIBulkEditFormItem>
     </>
   ),

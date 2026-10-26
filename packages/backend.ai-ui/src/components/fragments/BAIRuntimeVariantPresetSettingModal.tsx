@@ -20,15 +20,15 @@ import { useBAILogger } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIAlert from '../BAIAlert';
 import BAIButton from '../BAIButton';
+import BAICheckboxInput from '../BAICheckboxInput';
 import BAIFlex from '../BAIFlex';
 import BAIModal, { BAIModalProps } from '../BAIModal';
+import BAINumberInput from '../BAINumberInput';
 import BAISelect from '../BAISelect';
+import BAITextArea from '../BAITextArea';
+import BAITextInput from '../BAITextInput';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import BAIRuntimeVariantSelect from './BAIRuntimeVariantSelect';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
-import { TextArea } from '@lablup/ui-common/TextArea';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { PlusIcon, Trash2 } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -652,7 +652,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
             },
           ]}
         >
-          <TextInput
+          <BAITextInput
             aria-label={t('comp:BAIRuntimeVariantPresetSettingModal.Name')}
             placeholder={t(
               'comp:BAIRuntimeVariantPresetSettingModal.NamePlaceholder',
@@ -663,7 +663,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
           label={t('comp:BAIRuntimeVariantPresetSettingModal.Description')}
           name="description"
         >
-          <TextArea
+          <BAITextArea
             aria-label={t(
               'comp:BAIRuntimeVariantPresetSettingModal.Description',
             )}
@@ -691,7 +691,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   categories (`categoryOptions`) are surfaced in the
                   placeholder instead; the client-side `filterOption` goes
                   with it. */}
-              <TextInput
+              <BAITextInput
                 aria-label={t(
                   'comp:BAIRuntimeVariantPresetSettingModal.Category',
                 )}
@@ -711,7 +711,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                 'comp:BAIRuntimeVariantPresetSettingModal.DisplayNameTooltip',
               )}
             >
-              <TextInput
+              <BAITextInput
                 aria-label={t(
                   'comp:BAIRuntimeVariantPresetSettingModal.DisplayName',
                 )}
@@ -843,7 +843,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   ]}
                   style={{ flex: 1, minWidth: 0 }}
                 >
-                  <NumberInput
+                  <BAINumberInput
                     hasClear={false}
                     aria-label={t(
                       'comp:BAIRuntimeVariantPresetSettingModal.SliderMin',
@@ -889,7 +889,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   ]}
                   style={{ flex: 1, minWidth: 0 }}
                 >
-                  <NumberInput
+                  <BAINumberInput
                     hasClear={false}
                     aria-label={t(
                       'comp:BAIRuntimeVariantPresetSettingModal.SliderMax',
@@ -926,7 +926,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   ]}
                   style={{ flex: 1, minWidth: 0 }}
                 >
-                  <NumberInput
+                  <BAINumberInput
                     hasClear={false}
                     aria-label={t(
                       'comp:BAIRuntimeVariantPresetSettingModal.SliderStep',
@@ -950,7 +950,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   name="numberMin"
                   style={{ flex: 1, minWidth: 0 }}
                 >
-                  <NumberInput
+                  <BAINumberInput
                     hasClear={false}
                     aria-label={t(
                       'comp:BAIRuntimeVariantPresetSettingModal.NumberMin',
@@ -990,7 +990,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   ]}
                   style={{ flex: 1, minWidth: 0 }}
                 >
-                  <NumberInput
+                  <BAINumberInput
                     hasClear={false}
                     aria-label={t(
                       'comp:BAIRuntimeVariantPresetSettingModal.NumberMax',
@@ -1040,7 +1040,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                               },
                             ]}
                           >
-                            <TextInput
+                            <BAITextInput
                               aria-label={t(
                                 'comp:BAIRuntimeVariantPresetSettingModal.ChoiceValue',
                               )}
@@ -1062,7 +1062,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                               },
                             ]}
                           >
-                            <TextInput
+                            <BAITextInput
                               aria-label={t(
                                 'comp:BAIRuntimeVariantPresetSettingModal.ChoiceLabel',
                               )}
@@ -1104,7 +1104,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                 )}
                 name="textPlaceholder"
               >
-                <TextInput
+                <BAITextInput
                   aria-label={t(
                     'comp:BAIRuntimeVariantPresetSettingModal.TextPlaceholderLabel',
                   )}
@@ -1128,7 +1128,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
             },
           ]}
         >
-          <TextInput
+          <BAITextInput
             aria-label={t('comp:BAIRuntimeVariantPresetSettingModal.Key')}
             placeholder={t(
               'comp:BAIRuntimeVariantPresetSettingModal.KeyPlaceholder',
@@ -1139,7 +1139,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
           label={t('comp:BAIRuntimeVariantPresetSettingModal.DefaultValue')}
           name="defaultValue"
         >
-          <TextInput
+          <BAITextInput
             aria-label={t(
               'comp:BAIRuntimeVariantPresetSettingModal.DefaultValue',
             )}
@@ -1159,9 +1159,9 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
             'comp:BAIRuntimeVariantPresetSettingModal.RequiredTooltip',
           )}
         >
-          <CheckboxInput>
+          <BAICheckboxInput>
             {t('comp:BAIRuntimeVariantPresetSettingModal.Required')}
-          </CheckboxInput>
+          </BAICheckboxInput>
         </Form.Item>
         {preset ? (
           <Form.Item
@@ -1172,7 +1172,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
             {/* PILOT-DECISION (to-astryx final-B): antd `InputNumber
                 precision={0}` -> `NumberInput step={1}`: Astryx has no
                 display-precision knob, and rank is an `Int` ordinal. */}
-            <NumberInput
+            <BAINumberInput
               hasClear={false}
               aria-label={t('comp:BAIRuntimeVariantPresetSettingModal.Rank')}
               min={0}

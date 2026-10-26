@@ -40,12 +40,12 @@ import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import BAIFlex from '../../BAIFlex';
 import BAILink from '../../BAILink';
 import BAIText from '../../BAIText';
+import BAITextInput from '../../BAITextInput';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
 import './EditableFileName.css';
 import { IconButton } from '@lablup/ui-common/IconButton';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import { useMutation } from '@tanstack/react-query';
 import * as _ from 'lodash-es';
@@ -284,7 +284,7 @@ const EditableFileName: React.FC<EditableFileNameProps> = ({
               },
             ]}
           >
-            <TextInput
+            <BAITextInput
               aria-label={t('comp:FileExplorer.FileName')}
               placeholder={fileInfo?.name || undefined}
               hasAutoFocus

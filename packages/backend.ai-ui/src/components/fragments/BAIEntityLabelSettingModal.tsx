@@ -8,12 +8,12 @@ import type { BAILabelableEntityType } from '../../hooks/useLabelableEntityTypes
 import BAIBulkErrorModal from '../BAIBulkErrorModal';
 import BAIFlex from '../BAIFlex';
 import BAIModal, { type BAIModalProps } from '../BAIModal';
+import BAITextInput from '../BAITextInput';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import { formatEntityLabel } from './BAIEntityLabelTokens';
 import { Button } from '@lablup/ui-common/Button';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { PlusIcon, Trash2 } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -317,7 +317,7 @@ const BAIEntityLabelSettingModalContent = ({
                           }),
                         ]}
                       >
-                        <TextInput
+                        <BAITextInput
                           aria-label={t('comp:BAIEntityLabelSettingModal.Key')}
                           placeholder={t('comp:BAIEntityLabelSettingModal.Key')}
                         />
@@ -342,7 +342,7 @@ const BAIEntityLabelSettingModalContent = ({
                           },
                         ]}
                       >
-                        <TextInput
+                        <BAITextInput
                           aria-label={t(
                             'comp:BAIEntityLabelSettingModal.Value',
                           )}

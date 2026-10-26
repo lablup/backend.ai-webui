@@ -103,10 +103,10 @@
 */
 import { nodeToAccessibleLabel } from '../helper/astryxLabel';
 import { useBAIi18n } from '../hooks/useBAIi18n';
+import BAIMultiSelector from './BAIMultiSelector';
 import './BAISelect.css';
-import { MultiSelector } from '@lablup/ui-common/MultiSelector';
+import BAISelector from './BAISelector';
 import {
-  Selector,
   type SelectorOptionData,
   type SelectorOptionType,
 } from '@lablup/ui-common/Selector';
@@ -574,7 +574,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
         ? (defaultValue as Array<unknown>).map(toOptionKey)
         : [];
     return (
-      <MultiSelector
+      <BAIMultiSelector
         {...shared}
         options={optionsWithSlots}
         value={selected}
@@ -596,7 +596,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   }
 
   return (
-    <Selector
+    <BAISelector
       // QA-FINDINGS Q-34 — `placement` is the documented opt-out from
       // Astryx's selected-item overlay, and every search-less `BAISelect`
       // needs it. `Selector` computes
