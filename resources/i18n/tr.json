@@ -2775,7 +2775,6 @@
     "Name": "isim",
     "NoPresetName": "Ön ayar adını girin",
     "NoResourcePresetToDisplay": "Görüntülenecek Kaynak Ön Ayarı yok",
-    "NotEnoughRemainingResources": "Şu anda yeterli boş kaynak yok. Diğer oturumlar kullanıyor olabilir.",
     "OnlyAvailableInResourceGroup": "Yalnızca \"{{name}}\" kaynak grubunda kullanılabilir",
     "PresetName": "Ön Ayar Adı",
     "PresetOnlyAvailableInResourceGroup": "\"{{preset}}\" ön ayarı yalnızca \"{{name}}\" kaynak grubunda kullanılabilir. Lütfen farklı bir kaynak grubu seçin.",

@@ -2777,7 +2777,6 @@
     "Name": "名前",
     "NoPresetName": "プリセット名を入力",
     "NoResourcePresetToDisplay": "リソースプリセット情報がありません。",
-    "NotEnoughRemainingResources": "現在空いているリソースが不足しています。他のセッションが使用している可能性があります。",
     "OnlyAvailableInResourceGroup": "\"{{name}}\" リソースグループでのみ使用できます",
     "PresetName": "プリセット名",
     "PresetOnlyAvailableInResourceGroup": "\"{{preset}}\" プリセットは \"{{name}}\" リソースグループでのみ使用できます。別のリソースグループを選択してください。",

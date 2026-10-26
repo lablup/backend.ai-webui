@@ -2775,7 +2775,6 @@
     "Name": "Ονομα",
     "NoPresetName": "Προεπιλεγμένο όνομα εισαγωγής",
     "NoResourcePresetToDisplay": "Δεν εμφανίζονται Προεπιλογές πόρων",
-    "NotEnoughRemainingResources": "Δεν υπάρχουν αρκετοί ελεύθεροι πόροι αυτή τη στιγμή. Ίσως τους χρησιμοποιούν άλλες συνεδρίες.",
     "OnlyAvailableInResourceGroup": "Διαθέσιμο μόνο στην ομάδα πόρων \"{{name}}\"",
     "PresetName": "Προεπιλεγμένο όνομα",
     "PresetOnlyAvailableInResourceGroup": "Η προεπιλογή \"{{preset}}\" είναι διαθέσιμη μόνο στην ομάδα πόρων \"{{name}}\". Επιλέξτε διαφορετική ομάδα πόρων.",

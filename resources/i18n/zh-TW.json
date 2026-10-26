@@ -2779,7 +2779,6 @@
     "Name": "名稱",
     "NoPresetName": "輸入預設名稱",
     "NoResourcePresetToDisplay": "无资源预置显示",
-    "NotEnoughRemainingResources": "目前可用資源不足，可能正被其他工作階段占用。",
     "OnlyAvailableInResourceGroup": "僅在 \"{{name}}\" 資源組中可用",
     "PresetName": "預設名稱",
     "PresetOnlyAvailableInResourceGroup": "\"{{preset}}\" 預設僅在 \"{{name}}\" 資源組中可用。請選擇其他資源組。",

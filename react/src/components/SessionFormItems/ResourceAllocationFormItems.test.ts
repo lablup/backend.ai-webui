@@ -139,7 +139,7 @@ describe('getPresetUnavailableReason', () => {
       getPresetUnavailableReason(preset, limits, image, slotsInResourceGroup),
     );
 
-  it('checks the image, then the limits, then what the manager says is free', () => {
+  it('checks the image, then the limits, and never what is free right now', () => {
     expect(
       reasonsOf(
         presets,
@@ -148,8 +148,8 @@ describe('getPresetUnavailableReason', () => {
       ),
     ).toEqual([
       { type: 'exceedsLimit', slots: ['cuda.shares'] },
-      // Fits the image and the limits, but the manager has no room for it now.
-      { type: 'notEnoughRemaining' },
+      // Fits the image and the limits; launches as pending when nothing is free.
+      undefined,
       { type: 'imageAccelerator' },
     ]);
   });
@@ -205,11 +205,7 @@ describe('getPresetUnavailableReason', () => {
         { cpu: {}, mem: {}, accelerators: {} },
         image_has_cuda_shares_min1_max1,
       ),
-    ).toEqual([
-      undefined,
-      { type: 'notEnoughRemaining' },
-      { type: 'imageAccelerator' },
-    ]);
+    ).toEqual([undefined, undefined, { type: 'imageAccelerator' }]);
   });
 
   it('skips the image check without an image', () => {
@@ -217,7 +213,7 @@ describe('getPresetUnavailableReason', () => {
       reasonsOf(presets, resourceLimits_cpu4_mem8g_cudashares1, undefined),
     ).toEqual([
       { type: 'exceedsLimit', slots: ['cuda.shares'] },
-      { type: 'notEnoughRemaining' },
+      undefined,
       undefined,
     ]);
   });

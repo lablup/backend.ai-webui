@@ -2777,7 +2777,6 @@
     "Name": "Name",
     "NoPresetName": "Voreinstellungsnamen eingeben",
     "NoResourcePresetToDisplay": "Keine Ressourcenvoreinstellungen anzeigen",
-    "NotEnoughRemainingResources": "Derzeit sind nicht genügend Ressourcen frei. Möglicherweise werden sie von anderen Sitzungen verwendet.",
     "OnlyAvailableInResourceGroup": "Nur in der Ressourcengruppe \"{{name}}\" verfügbar",
     "PresetName": "Voreinstellungsname",
     "PresetOnlyAvailableInResourceGroup": "Die Voreinstellung \"{{preset}}\" ist nur in der Ressourcengruppe \"{{name}}\" verfügbar. Bitte wählen Sie eine andere Ressourcengruppe.",

@@ -2775,7 +2775,6 @@
     "Name": "Nome",
     "NoPresetName": "Inserisci il nome del preset",
     "NoResourcePresetToDisplay": "Nessuna preimpostazione di risorse da visualizzare",
-    "NotEnoughRemainingResources": "Al momento non ci sono abbastanza risorse libere. Potrebbero essere in uso da altre sessioni.",
     "OnlyAvailableInResourceGroup": "Disponibile solo nel gruppo di risorse \"{{name}}\"",
     "PresetName": "Nome predefinito",
     "PresetOnlyAvailableInResourceGroup": "Il preset \"{{preset}}\" è disponibile solo nel gruppo di risorse \"{{name}}\". Seleziona un altro gruppo di risorse.",

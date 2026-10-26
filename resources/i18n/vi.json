@@ -2777,7 +2777,6 @@
     "Name": "Tên",
     "NoPresetName": "Nhập tên đặt trước",
     "NoResourcePresetToDisplay": "Không có cài đặt trước tài nguyên nào để hiển thị",
-    "NotEnoughRemainingResources": "Hiện không đủ tài nguyên trống. Có thể các phiên khác đang sử dụng.",
     "OnlyAvailableInResourceGroup": "Chỉ khả dụng trong nhóm tài nguyên \"{{name}}\"",
     "PresetName": "Tên đặt trước",
     "PresetOnlyAvailableInResourceGroup": "Cấu hình sẵn \"{{preset}}\" chỉ khả dụng trong nhóm tài nguyên \"{{name}}\". Vui lòng chọn nhóm tài nguyên khác.",

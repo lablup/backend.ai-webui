@@ -2775,7 +2775,6 @@
     "Name": "Nimi",
     "NoPresetName": "Tulo esiasetuksen nimi",
     "NoResourcePresetToDisplay": "Ei resurssien esiasetuksia näytettäväksi",
-    "NotEnoughRemainingResources": "Vapaita resursseja ei ole nyt tarpeeksi. Muut istunnot saattavat käyttää niitä.",
     "OnlyAvailableInResourceGroup": "Käytettävissä vain resurssiryhmässä \"{{name}}\"",
     "PresetName": "Esiasetuksen nimi",
     "PresetOnlyAvailableInResourceGroup": "Esiasetus \"{{preset}}\" on käytettävissä vain resurssiryhmässä \"{{name}}\". Valitse toinen resurssiryhmä.",

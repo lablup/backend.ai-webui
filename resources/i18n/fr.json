@@ -2777,7 +2777,6 @@
     "Name": "Nom",
     "NoPresetName": "Saisissez le nom du préréglage",
     "NoResourcePresetToDisplay": "Pas de préréglages de ressources à afficher",
-    "NotEnoughRemainingResources": "Pas assez de ressources libres pour le moment. D'autres sessions les utilisent peut-être.",
     "OnlyAvailableInResourceGroup": "Disponible uniquement dans le groupe de ressources \"{{name}}\"",
     "PresetName": "Nom du préréglage",
     "PresetOnlyAvailableInResourceGroup": "Le préréglage \"{{preset}}\" est disponible uniquement dans le groupe de ressources \"{{name}}\". Veuillez sélectionner un autre groupe de ressources.",

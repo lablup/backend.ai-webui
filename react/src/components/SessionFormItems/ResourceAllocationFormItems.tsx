@@ -1866,8 +1866,7 @@ export default MemoizedResourceAllocationFormItems;
 export type PresetUnavailableReason =
   | { type: 'slotNotInResourceGroup'; slots: string[] }
   | { type: 'imageAccelerator' }
-  | { type: 'exceedsLimit'; slots: string[] }
-  | { type: 'notEnoughRemaining' };
+  | { type: 'exceedsLimit'; slots: string[] };
 
 /** The slots of `preset` above `resourceLimits`; a slot with no limit is unlimited. */
 export const getSlotsOverLimit = (
@@ -1922,8 +1921,8 @@ export const fitsImageAccelerator = (
 
 /**
  * Why `preset` cannot be picked, or `undefined` when it can. `slotsInResourceGroup`
- * is skipped while the group's slots are loading; `allocatable` is the
- * manager's answer for what is free right now, so it is checked last.
+ * is skipped while the group's slots are loading. `allocatable` is not checked:
+ * a preset that fits the limits but not what is free now launches as pending.
  */
 export const getPresetUnavailableReason = (
   preset: ResourcePreset,
@@ -1951,6 +1950,5 @@ export const getPresetUnavailableReason = (
   if (overLimit.length > 0) {
     return { type: 'exceedsLimit', slots: overLimit };
   }
-  if (!preset.allocatable) return { type: 'notEnoughRemaining' };
   return undefined;
 };

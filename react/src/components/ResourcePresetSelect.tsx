@@ -128,8 +128,6 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
         return t('resourcePreset.ExceedsResourceLimit', {
           slots: slotNames(reason.slots),
         });
-      case 'notEnoughRemaining':
-        return t('resourcePreset.NotEnoughRemainingResources');
       default:
         return undefined;
     }

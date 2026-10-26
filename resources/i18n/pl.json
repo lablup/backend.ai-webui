@@ -2777,7 +2777,6 @@
     "Name": "Nazwa",
     "NoPresetName": "Wprowadź nazwę ustawienia wstępnego",
     "NoResourcePresetToDisplay": "Brak ustawień wstępnych zasobów do wyświetlenia",
-    "NotEnoughRemainingResources": "Brak wystarczającej ilości wolnych zasobów. Mogą być używane przez inne sesje.",
     "OnlyAvailableInResourceGroup": "Dostępne tylko w grupie zasobów \"{{name}}\"",
     "PresetName": "Zaprogramowana nazwa",
     "PresetOnlyAvailableInResourceGroup": "Ustawienie wstępne \"{{preset}}\" jest dostępne tylko w grupie zasobów \"{{name}}\". Wybierz inną grupę zasobów.",

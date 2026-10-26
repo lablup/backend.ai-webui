@@ -2777,7 +2777,6 @@
     "Name": "名称",
     "NoPresetName": "输入预设名称",
     "NoResourcePresetToDisplay": "无资源预置显示",
-    "NotEnoughRemainingResources": "当前可用资源不足，可能正被其他会话占用。",
     "OnlyAvailableInResourceGroup": "仅在 \"{{name}}\" 资源组中可用",
     "PresetName": "预设名称",
     "PresetOnlyAvailableInResourceGroup": "\"{{preset}}\" 预设仅在 \"{{name}}\" 资源组中可用。请选择其他资源组。",

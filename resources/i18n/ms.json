@@ -2775,7 +2775,6 @@
     "Name": "Nama",
     "NoPresetName": "Masukkan nama pratetap",
     "NoResourcePresetToDisplay": "Tiada Pratetap Sumber untuk dipaparkan",
-    "NotEnoughRemainingResources": "Sumber yang tersedia tidak mencukupi sekarang. Sesi lain mungkin sedang menggunakannya.",
     "OnlyAvailableInResourceGroup": "Hanya tersedia dalam kumpulan sumber \"{{name}}\"",
     "PresetName": "Nama Pratetap",
     "PresetOnlyAvailableInResourceGroup": "Pratetap \"{{preset}}\" hanya tersedia dalam kumpulan sumber \"{{name}}\". Sila pilih kumpulan sumber yang lain.",

@@ -2775,7 +2775,6 @@
     "Name": "Nombre",
     "NoPresetName": "Nombre de la preselección de entrada",
     "NoResourcePresetToDisplay": "No hay preselecciones de recursos para mostrar",
-    "NotEnoughRemainingResources": "No hay suficientes recursos libres ahora. Es posible que otras sesiones los estén usando.",
     "OnlyAvailableInResourceGroup": "Solo disponible en el grupo de recursos \"{{name}}\"",
     "PresetName": "Nombre predefinido",
     "PresetOnlyAvailableInResourceGroup": "El preajuste \"{{preset}}\" solo está disponible en el grupo de recursos \"{{name}}\". Seleccione otro grupo de recursos.",

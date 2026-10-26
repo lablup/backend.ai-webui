@@ -2775,7 +2775,6 @@
     "Name": "Имя",
     "NoPresetName": "Имя предустановки ввода",
     "NoResourcePresetToDisplay": "Отсутствие отображения предустановок ресурсов",
-    "NotEnoughRemainingResources": "Сейчас недостаточно свободных ресурсов. Возможно, их используют другие сеансы.",
     "OnlyAvailableInResourceGroup": "Доступно только в группе ресурсов \"{{name}}\"",
     "PresetName": "Название предустановки",
     "PresetOnlyAvailableInResourceGroup": "Пресет \"{{preset}}\" доступен только в группе ресурсов \"{{name}}\". Выберите другую группу ресурсов.",

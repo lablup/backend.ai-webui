@@ -2762,7 +2762,6 @@
     "Name": "Name",
     "NoPresetName": "Input preset name",
     "NoResourcePresetToDisplay": "No Resource Presets to display",
-    "NotEnoughRemainingResources": "Not enough resources are free right now. Other sessions may be using them.",
     "OnlyAvailableInResourceGroup": "Only available in the \"{{name}}\" resource group",
     "PresetName": "Preset Name",
     "PresetOnlyAvailableInResourceGroup": "The \"{{preset}}\" preset is only available in the \"{{name}}\" resource group. Please select a different resource group.",
