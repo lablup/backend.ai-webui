@@ -7,11 +7,11 @@ import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { useRouteScope } from '../hooks/useRouteScope';
 import BAITour from './BAITour';
 import useTourTargets from './useTourTargets';
-import { List, ListItem } from '@lablup/ui-common/List';
 import { HStack, VStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
 import { TourStep } from '@lablup/ui-common/lab';
 import { BAIModal } from 'backend.ai-ui';
+import { CircleUserRound, LogIn } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -68,24 +68,30 @@ const AdminViewSwitchTour: React.FC = () => {
       >
         <VStack gap={3}>
           <Text>{t('tourGuide.adminViewSwitch.AdminLandingText')}</Text>
-          <List>
-            <ListItem
-              label={t('tourGuide.adminViewSwitch.AdminLandingStartTitle')}
-              description={
-                <Text color="secondary">
-                  {t('tourGuide.adminViewSwitch.AdminLandingStartText')}
-                </Text>
-              }
-            />
-            <ListItem
-              label={t('tourGuide.adminViewSwitch.AdminLandingMenuTitle')}
-              description={
-                <Text color="secondary">
-                  {t('tourGuide.adminViewSwitch.AdminLandingMenuText')}
-                </Text>
-              }
-            />
-          </List>
+          {[
+            {
+              icon: <LogIn size="1.25em" />,
+              title: t('tourGuide.adminViewSwitch.AdminLandingStartTitle'),
+              text: t('tourGuide.adminViewSwitch.AdminLandingStartText'),
+            },
+            {
+              icon: <CircleUserRound size="1.25em" />,
+              title: t('tourGuide.adminViewSwitch.AdminLandingMenuTitle'),
+              text: t('tourGuide.adminViewSwitch.AdminLandingMenuText'),
+            },
+          ].map(({ icon, title, text }) => (
+            <HStack key={title} align="start" gap={2}>
+              {/* `1lh` is the title's line box, so the icon centres on the
+                  first line rather than on the whole item. */}
+              <HStack align="center" style={{ height: '1lh', flexShrink: 0 }}>
+                {icon}
+              </HStack>
+              <VStack gap={1}>
+                <Text weight="semibold">{title}</Text>
+                <Text color="secondary">{text}</Text>
+              </VStack>
+            </HStack>
+          ))}
         </VStack>
       </BAIModal>
     );
