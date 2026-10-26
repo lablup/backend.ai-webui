@@ -12,7 +12,6 @@ import { HStack, VStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
 import { TourStep } from '@lablup/ui-common/lab';
 import { BAIModal } from 'backend.ai-ui';
-import { CircleUserRound, LogIn } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -70,7 +69,6 @@ const AdminViewSwitchTour: React.FC = () => {
           <Text>{t('tourGuide.adminViewSwitch.AdminLandingText')}</Text>
           <List>
             <ListItem
-              startContent={<LogIn size="1.25em" />}
               label={t('tourGuide.adminViewSwitch.AdminLandingStartTitle')}
               description={
                 <Text type="supporting" color="secondary">
@@ -79,7 +77,6 @@ const AdminViewSwitchTour: React.FC = () => {
               }
             />
             <ListItem
-              startContent={<CircleUserRound size="1.25em" />}
               label={t('tourGuide.adminViewSwitch.AdminLandingMenuTitle')}
               description={
                 <Text type="supporting" color="secondary">
