@@ -27,6 +27,7 @@
  `expandedRowRender` rows span the table; `loading` dims without a spinner.
  Row virtualization is deferred by a product decision (2026-08-07).
 */
+import './BAITable.css';
 import {
   flattenColumns,
   sortKeyOf,
@@ -47,6 +48,9 @@ import {
 } from '@lablup/ui-common/components/DataGrid';
 import * as _ from 'lodash-es';
 import React, { type ReactNode } from 'react';
+
+// DataGrid's own default page-size choices.
+const DEFAULT_PAGE_SIZE_OPTIONS = [10, 20, 50];
 
 type AnyRecord = BAIAnyObject;
 
@@ -249,6 +253,7 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
       hideOnSinglePage,
       extraContent,
       pageSize,
+      pageSizeOptions,
       ...rest
     } = pagination;
     return {
@@ -257,6 +262,15 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
       page: hasOwn(pagination, 'current') ? (current ?? 1) : undefined,
       defaultPage: defaultCurrent,
       pageSize: hasOwn(pagination, 'pageSize') ? (pageSize ?? 10) : undefined,
+      // A page size outside the options would leave the selector empty.
+      pageSizeOptions: pageSize
+        ? _.sortBy(
+            _.uniq([
+              ...(pageSizeOptions ?? DEFAULT_PAGE_SIZE_OPTIONS),
+              pageSize,
+            ]),
+          )
+        : pageSizeOptions,
       totalItems: total,
       onChange,
       hasPageSizeSelector: showSizeChanger !== false,
