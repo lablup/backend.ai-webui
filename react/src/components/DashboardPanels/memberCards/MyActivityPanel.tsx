@@ -19,6 +19,7 @@ import {
   BAIAuditLogNodes,
   BAIFlex,
   BAILink,
+  BAIText,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
 import React, { useDeferredValue } from 'react';
@@ -114,7 +115,27 @@ const MyActivityTable: React.FC<{
         customizeColumns={(columns) =>
           columns
             .filter((column) => VISIBLE_COLUMNS.has(String(column.key)))
-            .map((column) => ({ ...column, defaultHidden: false }))
+            .map((column) => ({
+              ...column,
+              defaultHidden: false,
+              ...(column.key === 'description' && {
+                render: (
+                  _value: unknown,
+                  record: { description?: string | null },
+                ) =>
+                  record.description ? (
+                    <BAIText
+                      copyable
+                      ellipsis={{ tooltip: true }}
+                      style={{ width: '100%' }}
+                    >
+                      {record.description}
+                    </BAIText>
+                  ) : (
+                    '-'
+                  ),
+              }),
+            }))
         }
         pagination={{
           pageSize: tablePaginationOption.pageSize,
