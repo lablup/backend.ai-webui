@@ -21,7 +21,6 @@ import './BAIScopedVFolderSelect.css';
 import { Token } from '@lablup/ui-common/Token';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { User } from 'lucide-react';
 import React, {
   useDeferredValue,
   useEffect,
@@ -147,10 +146,7 @@ const VFolderOptionMeta: React.FC<{ folder: ScopedVFolderNode }> = ({
   return (
     <span className="bai-scoped-vfolder-select__option-meta">
       {folder.ownership.creatorEmail && (
-        <span>
-          <User size="1em" />
-          {folder.ownership.creatorEmail}
-        </span>
+        <span>{folder.ownership.creatorEmail}</span>
       )}
       <span>{folder.metadata.usageMode.toLowerCase()}</span>
       <span>{folder.host}</span>
