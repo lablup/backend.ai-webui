@@ -4,7 +4,6 @@
  */
 import { useSessionResourcePresetsQuery } from '../__generated__/useSessionResourcePresetsQuery.graphql';
 import type { ResourcePreset } from './useResourceLimitAndRemaining';
-import { useMemo } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import type { FetchPolicy } from 'relay-runtime';
 
@@ -28,6 +27,7 @@ export const useSessionResourcePresets = ({
   fetchKey?: string | number;
   fetchPolicy?: FetchPolicy;
 }): SessionResourcePreset[] => {
+  'use memo';
   const { checkPresetAvailabilityV2 } =
     useLazyLoadQuery<useSessionResourcePresetsQuery>(
       graphql`
@@ -66,24 +66,19 @@ export const useSessionResourcePresets = ({
       { fetchKey, fetchPolicy },
     );
 
-  const presets = checkPresetAvailabilityV2?.presets;
-  return useMemo(
-    () =>
-      (presets ?? []).map((preset) => ({
-        id: preset.id,
-        name: preset.name,
-        // Same shape as the REST `check-presets` slots: `Decimal` strings
-        // such as "2.000" become "2", memory stays in bytes.
-        resource_slots: Object.fromEntries(
-          preset.resourceSlots.map((slot) => [
-            slot.resourceType,
-            String(parseFloat(String(slot.quantity))),
-          ]),
-        ) as ResourcePreset['resource_slots'],
-        shared_memory: preset.sharedMemory?.expr ?? null,
-        allocatable: preset.available,
-        resource_group_name: preset.resourceGroupName ?? null,
-      })),
-    [presets],
-  );
+  return (checkPresetAvailabilityV2?.presets ?? []).map((preset) => ({
+    id: preset.id,
+    name: preset.name,
+    // Same shape as the REST `check-presets` slots: `Decimal` strings
+    // such as "2.000" become "2", memory stays in bytes.
+    resource_slots: Object.fromEntries(
+      preset.resourceSlots.map((slot) => [
+        slot.resourceType,
+        String(parseFloat(String(slot.quantity))),
+      ]),
+    ) as ResourcePreset['resource_slots'],
+    shared_memory: preset.sharedMemory?.expr ?? null,
+    allocatable: preset.available,
+    resource_group_name: preset.resourceGroupName ?? null,
+  }));
 };
