@@ -808,14 +808,24 @@
       "NewBoardTitle": "Board {{number}}"
     },
     "card": {
+      "ActiveByType": "Aktiv nach Typ",
+      "AdminCount": "Admins: {{count}}",
+      "AuditLogTrend": "Audit-Log-Einträge pro Intervall",
       "Availability": "Verfügbarkeit",
       "Available": "Verfügbar",
       "Count": "Anzahl",
+      "DeploymentStatus": "Bereitstellungsstatus",
+      "DeploymentStatusTooltip": "Die Bereitstellungen des Projekts mit Replikatzustand, neueste zuerst.",
+      "Failed": "Fehlgeschlagen",
+      "FailedOperations": "Fehlgeschlagene Vorgänge",
+      "FailedOperationsTooltip": "Audit-Log-Einträge des Projekts, die im Zeitraum der Karte mit einem Fehler endeten oder abgelehnt wurden, verglichen mit dem vorherigen Zeitraum gleicher Länge.",
       "FailuresInRange": "Fehler in diesem Zeitraum: {{count}}",
       "FailuresOnly": "Nur Fehler anzeigen",
       "FolderLimit": "Limit: {{max}}",
       "Healthy": "Fehlerfrei",
       "Insufficient": "Nicht genug Ressourcen",
+      "LongRunningSessions": "Lang laufende Sitzungen",
+      "LongRunningSessionsTooltip": "Laufende Sitzungen des Projekts, die vor dem Zeitraum der Karte gestartet sind, älteste zuerst.",
       "MyActivity": "Meine Aktivität",
       "MyActivityTooltip": "Aktionen, die Sie im gewählten Zeitraum ausgeführt haben, aus dem Audit-Log.",
       "MyDeployments": "Meine Deployments",
@@ -826,14 +836,32 @@
       "NoAllocation": "Keine Ressourcen zugewiesen.",
       "NoProject": "Wählen Sie ein Projekt, um diese Karte zu sehen.",
       "NoResourceGroup": "Keine Ressourcengruppe ausgewählt.",
+      "NoUsers": "Keine Benutzer",
+      "NotTriedYet": "Noch nicht versucht",
       "PendingCount": "{{count}} ausstehend",
+      "PendingSessions": "Wartende Sitzungen",
+      "PendingSessionsTooltip": "Sitzungen des Projekts, die auf die Planung warten, am längsten wartende zuerst. Der Grund ist die letzte Meldung des Schedulers; klappen Sie eine Zeile auf, um die Planungsversuche zu sehen.",
+      "ProjectAuditLogTooltip": "Audit-Log des Projekts und der Sitzungen, Ordner und Bereitstellungen darin im Zeitraum der Karte.",
+      "ProjectFoldersTooltip": "Die Ordner des Projekts ohne Papierkorb, verglichen mit dem Ordnerlimit des Projekts.",
+      "ProjectUsersTooltip": "Die Mitglieder des Projekts nach Kontostatus und die Mitglieder seiner Admin-Rolle.",
+      "Reason": "Grund",
       "ReplicaHealth": "Replikat-Zustand",
+      "ResourceAllocation": "Ressourcenzuweisung",
+      "ResourceAllocationTooltip": "Was die Sitzungen des Projekts gegenüber dem Projektlimit belegen.",
+      "ResourceGroupCapacity": "Ressourcengruppen und Kapazität",
+      "ResourceGroupCapacityTooltip": "Belegung gegenüber der Kapazität jeder Ressourcengruppe in den Einstellungen der Karte.",
       "ResourcePresets": "Ressourcen-Presets",
       "ResourcePresetsTooltip": "Ob jedes Ressourcen-Preset in das passt, was Sie in der Ressourcengruppe noch zuweisen können.",
       "Resources": "Ressourcen",
+      "SessionStatus": "Sitzungsstatus",
+      "SessionStatusTooltip": "Die aktuellen Sitzungen des Projekts nach Status; die Zeile darunter teilt die aktiven nach Typ auf.",
       "Share": "Anteil",
+      "Starting": "Wird gestartet",
+      "Succeeded": "Erfolgreich",
       "Unhealthy": "Fehlerhaft",
-      "Unlimited": "Unbegrenzt"
+      "Unlimited": "Unbegrenzt",
+      "VsPreviousRange": "ggü. vorherigem Zeitraum",
+      "Waiting": "Wartezeit"
     },
     "catalog": {
       "group": {
@@ -842,7 +870,8 @@
         "Other": "Sonstiges",
         "Resources": "Ressourcen",
         "Sessions": "Sitzungen",
-        "Start": "Erste Schritte"
+        "Start": "Erste Schritte",
+        "Users": "Benutzer"
       }
     },
     "editSider": {

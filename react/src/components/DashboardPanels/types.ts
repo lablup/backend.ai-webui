@@ -75,6 +75,7 @@ export const PANEL_GROUPS = [
   'session',
   'resource',
   'deployment',
+  'users',
   'activity',
   'other',
 ] as const;

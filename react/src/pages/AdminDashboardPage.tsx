@@ -9,6 +9,7 @@ import {
   useDashboardFetchKey,
 } from '../components/DashboardPanels/DashboardRefreshContext';
 import { PANEL_CATALOG } from '../components/DashboardPanels/panelCatalog';
+import SessionDetailAndContainerLogOpenerLegacy from '../components/SessionDetailAndContainerLogOpenerLegacy';
 import { useCurrentDomainValue } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useUrlProjectValidity } from '../hooks/useUrlProjectValidity';
@@ -77,16 +78,20 @@ const AdminDashboardPageContent: React.FC<AdminDashboardPageProps> = ({
   );
 
   return (
-    <DashboardPanelBoard
-      page={page}
-      project={project}
-      catalog={PANEL_CATALOG}
-      isRefetching={isRefetching}
-      queryRefs={{
-        queryRef,
-        agentStatsQueryRef: queryRef.AgentStatsFragment,
-      }}
-    />
+    <>
+      <DashboardPanelBoard
+        page={page}
+        project={project}
+        catalog={PANEL_CATALOG}
+        isRefetching={isRefetching}
+        queryRefs={{
+          queryRef,
+          agentStatsQueryRef: queryRef.AgentStatsFragment,
+        }}
+      />
+      {/* Session names in the cards open the drawer through `sessionDetail`. */}
+      <SessionDetailAndContainerLogOpenerLegacy project={project} />
+    </>
   );
 };
 

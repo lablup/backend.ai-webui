@@ -808,14 +808,24 @@
       "NewBoardTitle": "Papan {{number}}"
     },
     "card": {
+      "ActiveByType": "Aktif menurut jenis",
+      "AdminCount": "Admin: {{count}}",
+      "AuditLogTrend": "Entri log audit per interval",
       "Availability": "Ketersediaan",
       "Available": "Tersedia",
       "Count": "Jumlah",
+      "DeploymentStatus": "Status Deployment",
+      "DeploymentStatusTooltip": "Deployment proyek beserta kesehatan replikanya, terbaru lebih dulu.",
+      "Failed": "Gagal",
+      "FailedOperations": "Operasi Gagal",
+      "FailedOperationsTooltip": "Entri log audit proyek yang berakhir dengan galat atau ditolak dalam rentang kartu, dibandingkan dengan rentang sebelumnya yang sama panjang.",
       "FailuresInRange": "Kegagalan dalam rentang ini: {{count}}",
       "FailuresOnly": "Tampilkan kegagalan saja",
       "FolderLimit": "Batas: {{max}}",
       "Healthy": "Sehat",
       "Insufficient": "Sumber daya tidak cukup",
+      "LongRunningSessions": "Sesi yang Berjalan Lama",
+      "LongRunningSessionsTooltip": "Sesi berjalan proyek yang dimulai sebelum rentang kartu, terlama lebih dulu.",
       "MyActivity": "Aktivitas Saya",
       "MyActivityTooltip": "Tindakan yang Anda lakukan dalam rentang yang dipilih, dari log audit.",
       "MyDeployments": "Deployment Saya",
@@ -826,14 +836,32 @@
       "NoAllocation": "Tidak ada sumber daya yang dialokasikan.",
       "NoProject": "Pilih proyek untuk melihat kartu ini.",
       "NoResourceGroup": "Tidak ada grup sumber daya yang dipilih.",
+      "NoUsers": "Tidak ada pengguna",
+      "NotTriedYet": "Belum dicoba",
       "PendingCount": "{{count}} tertunda",
+      "PendingSessions": "Sesi Tertunda",
+      "PendingSessionsTooltip": "Sesi proyek yang menunggu dijadwalkan, yang menunggu paling lama lebih dulu. Alasannya adalah pesan terakhir penjadwal; buka baris untuk melihat percobaan penjadwalannya.",
+      "ProjectAuditLogTooltip": "Log audit proyek serta sesi, folder, dan deployment di dalamnya, dalam rentang kartu.",
+      "ProjectFoldersTooltip": "Folder proyek, di luar tempat sampah, dibandingkan dengan batas folder proyek.",
+      "ProjectUsersTooltip": "Anggota proyek menurut status akun, serta anggota peran adminnya.",
+      "Reason": "Alasan",
       "ReplicaHealth": "Kesehatan Replika",
+      "ResourceAllocation": "Alokasi Sumber Daya",
+      "ResourceAllocationTooltip": "Apa yang digunakan sesi proyek dibandingkan dengan batas proyek.",
+      "ResourceGroupCapacity": "Grup Sumber Daya dan Kapasitas",
+      "ResourceGroupCapacityTooltip": "Penggunaan dibandingkan kapasitas tiap grup sumber daya dalam pengaturan kartu.",
       "ResourcePresets": "Preset Sumber Daya",
       "ResourcePresetsTooltip": "Apakah setiap preset sumber daya muat dalam yang masih dapat Anda alokasikan di grup sumber daya.",
       "Resources": "Sumber daya",
+      "SessionStatus": "Status Sesi",
+      "SessionStatusTooltip": "Sesi proyek saat ini menurut status; baris di bawahnya membagi sesi aktif menurut jenis.",
       "Share": "Porsi",
+      "Starting": "Memulai",
+      "Succeeded": "Berhasil",
       "Unhealthy": "Tidak sehat",
-      "Unlimited": "Tidak terbatas"
+      "Unlimited": "Tidak terbatas",
+      "VsPreviousRange": "vs. rentang sebelumnya",
+      "Waiting": "Menunggu"
     },
     "catalog": {
       "group": {
@@ -842,7 +870,8 @@
         "Other": "Lainnya",
         "Resources": "Sumber daya",
         "Sessions": "Sesi",
-        "Start": "Memulai"
+        "Start": "Memulai",
+        "Users": "Pengguna"
       }
     },
     "editSider": {

@@ -85,7 +85,20 @@ describe('PANEL_CATALOG', () => {
         'myActivity',
       ],
     ],
-    ['projectAdmin', ['activeSessions']],
+    [
+      'projectAdmin',
+      [
+        'projectSessionStatus',
+        'pendingSessions',
+        'longRunningSessions',
+        'projectResourceAllocation',
+        'projectDeployments',
+        'projectFolders',
+        'projectUsers',
+        'projectAuditLog',
+        'failedOperations',
+      ],
+    ],
     [
       'admin',
       [
@@ -121,6 +134,15 @@ describe('catalogFor on the real catalog', () => {
         'activeAgents',
         'resource.vfolder',
       ]),
+    );
+  });
+
+  it('offers the resource group capacity card on the project admin page without placing it', () => {
+    expect(
+      keysFor({ page: 'projectAdmin', role: 'user', config: {} }),
+    ).toContain('resourceGroupCapacity');
+    expect(seedBoard(PANEL_CATALOG, 'projectAdmin').knownKeys).toContain(
+      'resourceGroupCapacity',
     );
   });
 

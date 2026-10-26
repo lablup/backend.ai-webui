@@ -808,14 +808,24 @@
       "NewBoardTitle": "ボード {{number}}"
     },
     "card": {
+      "ActiveByType": "タイプ別のアクティブ",
+      "AdminCount": "管理者: {{count}}",
+      "AuditLogTrend": "区間ごとの監査ログ数",
       "Availability": "利用可否",
       "Available": "利用可能",
       "Count": "件数",
+      "DeploymentStatus": "デプロイメントの状態",
+      "DeploymentStatusTooltip": "プロジェクトのデプロイメントとレプリカの状態を新しい順に表示します。",
+      "Failed": "失敗",
+      "FailedOperations": "失敗した操作",
+      "FailedOperationsTooltip": "カードの期間内にプロジェクトでエラーになった、または拒否された監査ログです。増減は同じ長さの直前の期間と比べます。",
       "FailuresInRange": "この期間の失敗: {{count}}件",
       "FailuresOnly": "失敗のみ表示",
       "FolderLimit": "上限: {{max}}",
       "Healthy": "正常",
       "Insufficient": "リソース不足",
+      "LongRunningSessions": "長時間実行中のセッション",
+      "LongRunningSessionsTooltip": "カードの期間の開始前から実行中のプロジェクトのセッションを古い順に表示します。",
       "MyActivity": "自分のアクティビティ",
       "MyActivityTooltip": "選択した期間に自分が行った操作です。監査ログから取得します。",
       "MyDeployments": "自分のデプロイ",
@@ -826,14 +836,32 @@
       "NoAllocation": "割り当てられたリソースはありません。",
       "NoProject": "このカードを表示するにはプロジェクトを選択してください。",
       "NoResourceGroup": "リソースグループが選択されていません。",
+      "NoUsers": "ユーザーなし",
+      "NotTriedYet": "未試行",
       "PendingCount": "{{count}}件保留中",
+      "PendingSessions": "待機中のセッション",
+      "PendingSessionsTooltip": "スケジューリングを待っているプロジェクトのセッションを待ち時間の長い順に表示します。理由はスケジューラーの最後のメッセージです。行を展開するとスケジューリングの試行履歴を確認できます。",
+      "ProjectAuditLogTooltip": "カードの期間内の、プロジェクトとその中のセッション、フォルダ、デプロイメントの監査ログです。",
+      "ProjectFoldersTooltip": "ゴミ箱を除いたプロジェクトのフォルダ数を、プロジェクトのフォルダ上限とともに表示します。",
+      "ProjectUsersTooltip": "プロジェクトのメンバーをアカウント状態別に表示し、管理者ロールのメンバー数も表示します。",
+      "Reason": "理由",
       "ReplicaHealth": "レプリカの状態",
+      "ResourceAllocation": "リソース割り当て",
+      "ResourceAllocationTooltip": "プロジェクトのセッションが使うリソースを、プロジェクトの上限とともに表示します。",
+      "ResourceGroupCapacity": "リソースグループと容量",
+      "ResourceGroupCapacityTooltip": "カード設定の各リソースグループについて、容量に対する使用量を表示します。",
       "ResourcePresets": "リソースプリセット",
       "ResourcePresetsTooltip": "各リソースプリセットが、リソースグループでまだ割り当て可能な範囲に収まるかを表示します。",
       "Resources": "リソース",
+      "SessionStatus": "セッションの状況",
+      "SessionStatusTooltip": "プロジェクトの現在のセッション数を状態別に表示し、下の行でアクティブなセッションをタイプ別に分けます。",
       "Share": "割合",
+      "Starting": "開始中",
+      "Succeeded": "成功",
       "Unhealthy": "異常",
-      "Unlimited": "無制限"
+      "Unlimited": "無制限",
+      "VsPreviousRange": "前の期間との比較",
+      "Waiting": "待ち時間"
     },
     "catalog": {
       "group": {
@@ -842,7 +870,8 @@
         "Other": "その他",
         "Resources": "リソース",
         "Sessions": "セッション",
-        "Start": "はじめに"
+        "Start": "はじめに",
+        "Users": "ユーザー"
       }
     },
     "editSider": {

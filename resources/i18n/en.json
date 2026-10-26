@@ -795,14 +795,24 @@
       "NewBoardTitle": "Board {{number}}"
     },
     "card": {
+      "ActiveByType": "Active by type",
+      "AdminCount": "Admins: {{count}}",
+      "AuditLogTrend": "Audit log entries per interval",
       "Availability": "Availability",
       "Available": "Available",
       "Count": "Count",
+      "DeploymentStatus": "Deployment Status",
+      "DeploymentStatusTooltip": "The project's deployments with replica health, newest first.",
+      "Failed": "Failed",
+      "FailedOperations": "Failed Operations",
+      "FailedOperationsTooltip": "Audit log entries of the project that ended in an error or were denied in the card's time range, against the previous range of the same length.",
       "FailuresInRange": "Failures in this range: {{count}}",
       "FailuresOnly": "Show failures only",
       "FolderLimit": "Limit: {{max}}",
       "Healthy": "Healthy",
       "Insufficient": "Not enough resources",
+      "LongRunningSessions": "Long-running Sessions",
+      "LongRunningSessionsTooltip": "The project's running sessions that started before the card's time range, oldest first.",
       "MyActivity": "My Activity",
       "MyActivityTooltip": "Actions you performed in the selected range, from the audit log.",
       "MyDeployments": "My Deployments",
@@ -813,14 +823,32 @@
       "NoAllocation": "No resources are allocated.",
       "NoProject": "Select a project to see this card.",
       "NoResourceGroup": "No resource group is selected.",
+      "NoUsers": "No users",
+      "NotTriedYet": "Not tried yet",
       "PendingCount": "{{count}} pending",
+      "PendingSessions": "Pending Sessions",
+      "PendingSessionsTooltip": "The project's sessions waiting to be scheduled, longest waiting first. The reason is the scheduler's last message; expand a row to see its scheduling attempts.",
+      "ProjectAuditLogTooltip": "Audit log of the project and of the sessions, folders and deployments in it, in the card's time range.",
+      "ProjectFoldersTooltip": "The project's folders, trash bin apart, against the project's folder limit.",
+      "ProjectUsersTooltip": "The project's members by account status, and the members of its admin role.",
+      "Reason": "Reason",
       "ReplicaHealth": "Replica Health",
+      "ResourceAllocation": "Resource Allocation",
+      "ResourceAllocationTooltip": "What the project's sessions use against the project's own limit.",
+      "ResourceGroupCapacity": "Resource Groups and Capacity",
+      "ResourceGroupCapacityTooltip": "What is used against the capacity of each resource group in the card's settings.",
       "ResourcePresets": "Resource Presets",
       "ResourcePresetsTooltip": "Whether each resource preset fits in what you can still allocate in the resource group.",
       "Resources": "Resources",
+      "SessionStatus": "Session Status",
+      "SessionStatusTooltip": "The project's sessions right now, by status; the line below splits the active ones by type.",
       "Share": "Share",
+      "Starting": "Starting",
+      "Succeeded": "Succeeded",
       "Unhealthy": "Unhealthy",
-      "Unlimited": "Unlimited"
+      "Unlimited": "Unlimited",
+      "VsPreviousRange": "vs. previous range",
+      "Waiting": "Waiting"
     },
     "catalog": {
       "group": {
@@ -829,7 +857,8 @@
         "Other": "Other",
         "Resources": "Resources",
         "Sessions": "Sessions",
-        "Start": "Get started"
+        "Start": "Get started",
+        "Users": "Users"
       }
     },
     "editSider": {

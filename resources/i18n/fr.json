@@ -808,14 +808,24 @@
       "NewBoardTitle": "Tableau {{number}}"
     },
     "card": {
+      "ActiveByType": "Actives par type",
+      "AdminCount": "Administrateurs : {{count}}",
+      "AuditLogTrend": "Entrées du journal d'audit par intervalle",
       "Availability": "Disponibilité",
       "Available": "Disponible",
       "Count": "Nombre",
+      "DeploymentStatus": "État des déploiements",
+      "DeploymentStatusTooltip": "Les déploiements du projet avec l'état de leurs réplicas, les plus récents d'abord.",
+      "Failed": "Échouées",
+      "FailedOperations": "Opérations échouées",
+      "FailedOperationsTooltip": "Entrées du journal d'audit du projet terminées par une erreur ou refusées sur la période de la carte, comparées à la période précédente de même durée.",
       "FailuresInRange": "Échecs sur cette période : {{count}}",
       "FailuresOnly": "Afficher les échecs uniquement",
       "FolderLimit": "Limite : {{max}}",
       "Healthy": "Sain",
       "Insufficient": "Ressources insuffisantes",
+      "LongRunningSessions": "Sessions de longue durée",
+      "LongRunningSessionsTooltip": "Sessions en cours du projet démarrées avant la période de la carte, les plus anciennes d'abord.",
       "MyActivity": "Mon activité",
       "MyActivityTooltip": "Actions que vous avez effectuées sur la période choisie, d'après le journal d'audit.",
       "MyDeployments": "Mes déploiements",
@@ -826,14 +836,32 @@
       "NoAllocation": "Aucune ressource allouée.",
       "NoProject": "Sélectionnez un projet pour afficher cette carte.",
       "NoResourceGroup": "Aucun groupe de ressources sélectionné.",
+      "NoUsers": "Aucun utilisateur",
+      "NotTriedYet": "Pas encore tenté",
       "PendingCount": "{{count}} en attente",
+      "PendingSessions": "Sessions en attente",
+      "PendingSessionsTooltip": "Sessions du projet en attente de planification, les plus longues attentes d'abord. La raison est le dernier message du planificateur ; dépliez une ligne pour voir ses tentatives de planification.",
+      "ProjectAuditLogTooltip": "Journal d'audit du projet et des sessions, dossiers et déploiements qu'il contient, sur la période de la carte.",
+      "ProjectFoldersTooltip": "Les dossiers du projet, hors corbeille, par rapport à la limite de dossiers du projet.",
+      "ProjectUsersTooltip": "Les membres du projet par état du compte, et les membres de son rôle d'administrateur.",
+      "Reason": "Raison",
       "ReplicaHealth": "Santé des réplicas",
+      "ResourceAllocation": "Allocation des ressources",
+      "ResourceAllocationTooltip": "Ce qu'utilisent les sessions du projet par rapport à la limite du projet.",
+      "ResourceGroupCapacity": "Groupes de ressources et capacité",
+      "ResourceGroupCapacityTooltip": "L'utilisation par rapport à la capacité de chaque groupe de ressources des paramètres de la carte.",
       "ResourcePresets": "Préréglages de ressources",
       "ResourcePresetsTooltip": "Indique si chaque préréglage tient dans ce que vous pouvez encore allouer dans le groupe de ressources.",
       "Resources": "Ressources",
+      "SessionStatus": "État des sessions",
+      "SessionStatusTooltip": "Les sessions actuelles du projet par état ; la ligne du dessous répartit les actives par type.",
       "Share": "Part",
+      "Starting": "Démarrage",
+      "Succeeded": "Réussies",
       "Unhealthy": "Défaillant",
-      "Unlimited": "Illimité"
+      "Unlimited": "Illimité",
+      "VsPreviousRange": "par rapport à la période précédente",
+      "Waiting": "Attente"
     },
     "catalog": {
       "group": {
@@ -842,7 +870,8 @@
         "Other": "Autres",
         "Resources": "Ressources",
         "Sessions": "Sessions",
-        "Start": "Bien démarrer"
+        "Start": "Bien démarrer",
+        "Users": "Utilisateurs"
       }
     },
     "editSider": {

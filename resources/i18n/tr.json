@@ -808,14 +808,24 @@
       "NewBoardTitle": "Pano {{number}}"
     },
     "card": {
+      "ActiveByType": "Türe göre etkin",
+      "AdminCount": "Yöneticiler: {{count}}",
+      "AuditLogTrend": "Aralık başına denetim günlüğü girişleri",
       "Availability": "Kullanılabilirlik",
       "Available": "Kullanılabilir",
       "Count": "Sayı",
+      "DeploymentStatus": "Dağıtım Durumu",
+      "DeploymentStatusTooltip": "Projenin dağıtımları ve replika sağlığı, en yeni önce.",
+      "Failed": "Başarısız",
+      "FailedOperations": "Başarısız İşlemler",
+      "FailedOperationsTooltip": "Kartın zaman aralığında projede hatayla biten veya reddedilen denetim günlüğü girişleri, aynı uzunluktaki önceki aralıkla karşılaştırmalı.",
       "FailuresInRange": "Bu aralıktaki hatalar: {{count}}",
       "FailuresOnly": "Yalnızca hataları göster",
       "FolderLimit": "Sınır: {{max}}",
       "Healthy": "Sağlıklı",
       "Insufficient": "Yetersiz kaynak",
+      "LongRunningSessions": "Uzun Süredir Çalışan Oturumlar",
+      "LongRunningSessionsTooltip": "Kartın zaman aralığından önce başlamış, projenin çalışan oturumları, en eski önce.",
       "MyActivity": "Etkinliğim",
       "MyActivityTooltip": "Seçilen aralıkta yaptığınız işlemler, denetim günlüğünden.",
       "MyDeployments": "Dağıtımlarım",
@@ -826,14 +836,32 @@
       "NoAllocation": "Ayrılmış kaynak yok.",
       "NoProject": "Bu kartı görmek için bir proje seçin.",
       "NoResourceGroup": "Kaynak grubu seçilmedi.",
+      "NoUsers": "Kullanıcı yok",
+      "NotTriedYet": "Henüz denenmedi",
       "PendingCount": "{{count}} bekliyor",
+      "PendingSessions": "Bekleyen Oturumlar",
+      "PendingSessionsTooltip": "Projenin zamanlanmayı bekleyen oturumları, en uzun bekleyen önce. Neden, zamanlayıcının son mesajıdır; zamanlama denemelerini görmek için bir satırı genişletin.",
+      "ProjectAuditLogTooltip": "Kartın zaman aralığında projenin ve içindeki oturum, klasör ve dağıtımların denetim günlüğü.",
+      "ProjectFoldersTooltip": "Çöp kutusu hariç projenin klasörleri, projenin klasör sınırına göre.",
+      "ProjectUsersTooltip": "Projenin üyeleri hesap durumuna göre ve yönetici rolünün üyeleri.",
+      "Reason": "Neden",
       "ReplicaHealth": "Replika durumu",
+      "ResourceAllocation": "Kaynak Tahsisi",
+      "ResourceAllocationTooltip": "Projenin oturumlarının, projenin sınırına göre kullandığı kaynaklar.",
+      "ResourceGroupCapacity": "Kaynak Grupları ve Kapasite",
+      "ResourceGroupCapacityTooltip": "Kartın ayarlarındaki her kaynak grubunun kapasitesine göre kullanım.",
       "ResourcePresets": "Kaynak ön ayarları",
       "ResourcePresetsTooltip": "Her kaynak ön ayarının, kaynak grubunda hâlâ ayırabileceğiniz miktara sığıp sığmadığı.",
       "Resources": "Kaynaklar",
+      "SessionStatus": "Oturum Durumu",
+      "SessionStatusTooltip": "Projenin şu anki oturumları duruma göre; alttaki satır etkin olanları türe göre ayırır.",
       "Share": "Pay",
+      "Starting": "Başlatılıyor",
+      "Succeeded": "Başarılı",
       "Unhealthy": "Sağlıksız",
-      "Unlimited": "Sınırsız"
+      "Unlimited": "Sınırsız",
+      "VsPreviousRange": "önceki aralığa göre",
+      "Waiting": "Bekleme"
     },
     "catalog": {
       "group": {
@@ -842,7 +870,8 @@
         "Other": "Diğer",
         "Resources": "Kaynaklar",
         "Sessions": "Oturumlar",
-        "Start": "Başlarken"
+        "Start": "Başlarken",
+        "Users": "Kullanıcılar"
       }
     },
     "editSider": {

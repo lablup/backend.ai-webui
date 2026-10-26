@@ -808,14 +808,24 @@
       "NewBoardTitle": "Painel {{number}}"
     },
     "card": {
+      "ActiveByType": "Ativas por tipo",
+      "AdminCount": "Administradores: {{count}}",
+      "AuditLogTrend": "Entradas do registo de auditoria por intervalo",
       "Availability": "Disponibilidade",
       "Available": "Disponível",
       "Count": "Quantidade",
+      "DeploymentStatus": "Estado das implementações",
+      "DeploymentStatusTooltip": "As implementações do projeto com o estado das réplicas, as mais recentes primeiro.",
+      "Failed": "Falhadas",
+      "FailedOperations": "Operações falhadas",
+      "FailedOperationsTooltip": "Entradas do registo de auditoria do projeto que terminaram em erro ou foram recusadas no intervalo do cartão, face ao intervalo anterior com a mesma duração.",
       "FailuresInRange": "Falhas neste período: {{count}}",
       "FailuresOnly": "Mostrar apenas falhas",
       "FolderLimit": "Limite: {{max}}",
       "Healthy": "Saudável",
       "Insufficient": "Recursos insuficientes",
+      "LongRunningSessions": "Sessões de longa duração",
+      "LongRunningSessionsTooltip": "Sessões em execução do projeto iniciadas antes do intervalo do cartão, as mais antigas primeiro.",
       "MyActivity": "A minha atividade",
       "MyActivityTooltip": "Ações que realizou no período selecionado, a partir do registo de auditoria.",
       "MyDeployments": "As minhas implementações",
@@ -826,14 +836,32 @@
       "NoAllocation": "Nenhum recurso alocado.",
       "NoProject": "Selecione um projeto para ver este cartão.",
       "NoResourceGroup": "Nenhum grupo de recursos selecionado.",
+      "NoUsers": "Sem utilizadores",
+      "NotTriedYet": "Ainda não tentado",
       "PendingCount": "{{count}} pendentes",
+      "PendingSessions": "Sessões pendentes",
+      "PendingSessionsTooltip": "Sessões do projeto a aguardar agendamento, as que esperam há mais tempo primeiro. O motivo é a última mensagem do agendador; expanda uma linha para ver as tentativas de agendamento.",
+      "ProjectAuditLogTooltip": "Registo de auditoria do projeto e das sessões, pastas e implementações nele, no intervalo do cartão.",
+      "ProjectFoldersTooltip": "As pastas do projeto, sem a reciclagem, face ao limite de pastas do projeto.",
+      "ProjectUsersTooltip": "Os membros do projeto por estado da conta e os membros da sua função de administrador.",
+      "Reason": "Motivo",
       "ReplicaHealth": "Estado das réplicas",
+      "ResourceAllocation": "Alocação de recursos",
+      "ResourceAllocationTooltip": "O que as sessões do projeto usam face ao limite do projeto.",
+      "ResourceGroupCapacity": "Grupos de recursos e capacidade",
+      "ResourceGroupCapacityTooltip": "A utilização face à capacidade de cada grupo de recursos das definições do cartão.",
       "ResourcePresets": "Predefinições de recursos",
       "ResourcePresetsTooltip": "Se cada predefinição cabe no que ainda pode alocar no grupo de recursos.",
       "Resources": "Recursos",
+      "SessionStatus": "Estado das sessões",
+      "SessionStatusTooltip": "As sessões atuais do projeto por estado; a linha abaixo divide as ativas por tipo.",
       "Share": "Proporção",
+      "Starting": "A iniciar",
+      "Succeeded": "Concluídas",
       "Unhealthy": "Com problemas",
-      "Unlimited": "Ilimitado"
+      "Unlimited": "Ilimitado",
+      "VsPreviousRange": "vs. período anterior",
+      "Waiting": "Espera"
     },
     "catalog": {
       "group": {
@@ -842,7 +870,8 @@
         "Other": "Outros",
         "Resources": "Recursos",
         "Sessions": "Sessões",
-        "Start": "Primeiros passos"
+        "Start": "Primeiros passos",
+        "Users": "Utilizadores"
       }
     },
     "editSider": {

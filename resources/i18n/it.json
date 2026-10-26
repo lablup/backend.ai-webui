@@ -808,14 +808,24 @@
       "NewBoardTitle": "Bacheca {{number}}"
     },
     "card": {
+      "ActiveByType": "Attive per tipo",
+      "AdminCount": "Amministratori: {{count}}",
+      "AuditLogTrend": "Voci del registro di audit per intervallo",
       "Availability": "Disponibilità",
       "Available": "Disponibile",
       "Count": "Numero",
+      "DeploymentStatus": "Stato dei deployment",
+      "DeploymentStatusTooltip": "I deployment del progetto con lo stato delle repliche, prima i più recenti.",
+      "Failed": "Non riuscite",
+      "FailedOperations": "Operazioni non riuscite",
+      "FailedOperationsTooltip": "Voci del registro di audit del progetto terminate con un errore o negate nell'intervallo della scheda, rispetto all'intervallo precedente della stessa durata.",
       "FailuresInRange": "Errori in questo intervallo: {{count}}",
       "FailuresOnly": "Mostra solo errori",
       "FolderLimit": "Limite: {{max}}",
       "Healthy": "Integro",
       "Insufficient": "Risorse insufficienti",
+      "LongRunningSessions": "Sessioni di lunga durata",
+      "LongRunningSessionsTooltip": "Sessioni in esecuzione del progetto avviate prima dell'intervallo della scheda, prima le più vecchie.",
       "MyActivity": "La mia attività",
       "MyActivityTooltip": "Azioni eseguite nell'intervallo selezionato, dal registro di controllo.",
       "MyDeployments": "I miei deployment",
@@ -826,14 +836,32 @@
       "NoAllocation": "Nessuna risorsa allocata.",
       "NoProject": "Seleziona un progetto per vedere questa scheda.",
       "NoResourceGroup": "Nessun gruppo di risorse selezionato.",
+      "NoUsers": "Nessun utente",
+      "NotTriedYet": "Non ancora tentato",
       "PendingCount": "{{count}} in sospeso",
+      "PendingSessions": "Sessioni in attesa",
+      "PendingSessionsTooltip": "Sessioni del progetto in attesa di pianificazione, prima quelle che attendono da più tempo. Il motivo è l'ultimo messaggio dello scheduler; espandi una riga per vedere i tentativi di pianificazione.",
+      "ProjectAuditLogTooltip": "Registro di audit del progetto e delle sessioni, cartelle e deployment al suo interno, nell'intervallo della scheda.",
+      "ProjectFoldersTooltip": "Le cartelle del progetto, cestino escluso, rispetto al limite di cartelle del progetto.",
+      "ProjectUsersTooltip": "I membri del progetto per stato dell'account e i membri del suo ruolo di amministratore.",
+      "Reason": "Motivo",
       "ReplicaHealth": "Stato delle repliche",
+      "ResourceAllocation": "Allocazione delle risorse",
+      "ResourceAllocationTooltip": "Ciò che usano le sessioni del progetto rispetto al limite del progetto.",
+      "ResourceGroupCapacity": "Gruppi di risorse e capacità",
+      "ResourceGroupCapacityTooltip": "L'utilizzo rispetto alla capacità di ogni gruppo di risorse nelle impostazioni della scheda.",
       "ResourcePresets": "Preset di risorse",
       "ResourcePresetsTooltip": "Indica se ogni preset rientra in ciò che puoi ancora allocare nel gruppo di risorse.",
       "Resources": "Risorse",
+      "SessionStatus": "Stato delle sessioni",
+      "SessionStatusTooltip": "Le sessioni attuali del progetto per stato; la riga sotto divide quelle attive per tipo.",
       "Share": "Quota",
+      "Starting": "Avvio",
+      "Succeeded": "Riuscite",
       "Unhealthy": "Non integro",
-      "Unlimited": "Illimitato"
+      "Unlimited": "Illimitato",
+      "VsPreviousRange": "rispetto all'intervallo precedente",
+      "Waiting": "Attesa"
     },
     "catalog": {
       "group": {
@@ -842,7 +870,8 @@
         "Other": "Altro",
         "Resources": "Risorse",
         "Sessions": "Sessioni",
-        "Start": "Per iniziare"
+        "Start": "Per iniziare",
+        "Users": "Utenti"
       }
     },
     "editSider": {

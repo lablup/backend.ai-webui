@@ -24,6 +24,16 @@ import {
   StartFromURLPanel,
   StartSessionPanel,
 } from './memberCards/StartActionPanels';
+import FailedOperationsPanel from './projectAdminCards/FailedOperationsPanel';
+import LongRunningSessionsPanel from './projectAdminCards/LongRunningSessionsPanel';
+import PendingSessionsPanel from './projectAdminCards/PendingSessionsPanel';
+import ProjectAuditLogPanel from './projectAdminCards/ProjectAuditLogPanel';
+import ProjectDeploymentsPanel from './projectAdminCards/ProjectDeploymentsPanel';
+import ProjectFoldersPanel from './projectAdminCards/ProjectFoldersPanel';
+import ProjectResourceAllocationPanel from './projectAdminCards/ProjectResourceAllocationPanel';
+import ProjectSessionStatusPanel from './projectAdminCards/ProjectSessionStatusPanel';
+import ProjectUsersPanel from './projectAdminCards/ProjectUsersPanel';
+import ResourceGroupCapacityPanel from './projectAdminCards/ResourceGroupCapacityPanel';
 import { resourceKeys, resourceRegistry } from './resourceRegistry';
 import type {
   PanelComponentProps,
@@ -199,7 +209,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
   },
   {
     key: 'activeSessions',
-    page: ['projectAdmin', 'admin'],
+    page: ['admin'],
     group: 'session',
     titleKey: 'session.ActiveSessions',
     kind: 'custom',
@@ -310,6 +320,126 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
   },
 ];
 
+/** The project admin page's cards, in the order its default board places them. */
+const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
+  {
+    key: 'projectSessionStatus',
+    page: ['projectAdmin'],
+    group: 'session',
+    titleKey: 'dashboard.card.SessionStatus',
+    kind: 'custom',
+    Component: ProjectSessionStatusPanel,
+    defaultSize: size(2, 2),
+    minSize: size(2, 2),
+    refresh: { min: '15s' },
+  },
+  {
+    key: 'pendingSessions',
+    page: ['projectAdmin'],
+    group: 'session',
+    titleKey: 'dashboard.card.PendingSessions',
+    kind: 'custom',
+    Component: PendingSessionsPanel,
+    defaultSize: size(4, 3),
+    minSize: size(2, 2),
+    refresh: { min: '15s' },
+  },
+  {
+    key: 'longRunningSessions',
+    page: ['projectAdmin'],
+    group: 'session',
+    titleKey: 'dashboard.card.LongRunningSessions',
+    kind: 'custom',
+    Component: LongRunningSessionsPanel,
+    defaultSize: size(4, 3),
+    minSize: size(2, 2),
+    refresh: { min: '1m' },
+    settings: ['range'],
+  },
+  {
+    key: 'projectResourceAllocation',
+    page: ['projectAdmin'],
+    group: 'resource',
+    titleKey: 'dashboard.card.ResourceAllocation',
+    kind: 'custom',
+    Component: ProjectResourceAllocationPanel,
+    defaultSize: size(2, 2),
+    minSize: size(2, 2),
+    refresh: { min: '30s' },
+  },
+  {
+    key: 'projectDeployments',
+    page: ['projectAdmin'],
+    group: 'deployment',
+    titleKey: 'dashboard.card.DeploymentStatus',
+    requires: { menuKey: 'deployments' },
+    kind: 'custom',
+    Component: ProjectDeploymentsPanel,
+    defaultSize: size(2, 3),
+    minSize: size(2, 2),
+    refresh: { min: '30s' },
+  },
+  {
+    key: 'projectFolders',
+    page: ['projectAdmin'],
+    group: 'resource',
+    titleKey: 'general.Folders',
+    kind: 'custom',
+    Component: ProjectFoldersPanel,
+    defaultSize: size(2, 2),
+    minSize: size(2, 2),
+    refresh: { min: '5m' },
+  },
+  {
+    key: 'projectUsers',
+    page: ['projectAdmin'],
+    group: 'users',
+    titleKey: 'webui.menu.Users',
+    kind: 'custom',
+    Component: ProjectUsersPanel,
+    defaultSize: size(2, 3),
+    minSize: size(2, 2),
+    refresh: { min: '5m' },
+  },
+  {
+    key: 'projectAuditLog',
+    page: ['projectAdmin'],
+    group: 'activity',
+    titleKey: 'auditLog.AuditLog',
+    kind: 'custom',
+    Component: ProjectAuditLogPanel,
+    defaultSize: size(4, 4),
+    minSize: size(2, 3),
+    refresh: { min: '1m' },
+    settings: ['range'],
+  },
+  {
+    key: 'failedOperations',
+    page: ['projectAdmin'],
+    group: 'activity',
+    titleKey: 'dashboard.card.FailedOperations',
+    kind: 'custom',
+    Component: FailedOperationsPanel,
+    defaultSize: size(2, 2),
+    minSize: size(1, 2),
+    refresh: { min: '1m' },
+    settings: ['range'],
+  },
+  {
+    key: 'resourceGroupCapacity',
+    page: ['projectAdmin'],
+    group: 'resource',
+    titleKey: 'dashboard.card.ResourceGroupCapacity',
+    kind: 'custom',
+    Component: ResourceGroupCapacityPanel,
+    defaultSize: size(4, 2),
+    minSize: size(2, 2),
+    refresh: { min: '30s' },
+    settings: ['resourceGroup'],
+    defaultHidden: true,
+  },
+];
+
 /** The admin pages' remaining built-in cards. */
 const ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
   {
@@ -395,6 +525,7 @@ const PRESET_PANELS: ReadonlyArray<PanelDefinition> = resourceKeys.map(
 
 export const PANEL_CATALOG: ReadonlyArray<PanelDefinition> = [
   ...MEMBER_PANELS,
+  ...PROJECT_ADMIN_PANELS,
   ...ADMIN_PANELS,
   ...PRESET_PANELS,
 ];

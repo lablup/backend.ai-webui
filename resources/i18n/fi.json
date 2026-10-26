@@ -808,14 +808,24 @@
       "NewBoardTitle": "Taulu {{number}}"
     },
     "card": {
+      "ActiveByType": "Aktiiviset tyypeittäin",
+      "AdminCount": "Ylläpitäjät: {{count}}",
+      "AuditLogTrend": "Tarkastuslokin merkinnät jaksoittain",
       "Availability": "Saatavuus",
       "Available": "Saatavilla",
       "Count": "Määrä",
+      "DeploymentStatus": "Käyttöönottojen tila",
+      "DeploymentStatusTooltip": "Projektin käyttöönotot replikoiden tilan kanssa, uusimmat ensin.",
+      "Failed": "Epäonnistuneet",
+      "FailedOperations": "Epäonnistuneet toiminnot",
+      "FailedOperationsTooltip": "Projektin tarkastuslokin merkinnät, jotka päättyivät virheeseen tai hylättiin kortin aikavälillä, verrattuna edelliseen yhtä pitkään aikaväliin.",
       "FailuresInRange": "Epäonnistumiset tällä aikavälillä: {{count}}",
       "FailuresOnly": "Näytä vain epäonnistuneet",
       "FolderLimit": "Raja: {{max}}",
       "Healthy": "Kunnossa",
       "Insufficient": "Resurssit eivät riitä",
+      "LongRunningSessions": "Pitkään käynnissä olevat istunnot",
+      "LongRunningSessionsTooltip": "Projektin käynnissä olevat istunnot, jotka alkoivat ennen kortin aikaväliä, vanhimmat ensin.",
       "MyActivity": "Oma toiminta",
       "MyActivityTooltip": "Valitulla aikavälillä tekemäsi toiminnot tarkastuslokista.",
       "MyDeployments": "Omat käyttöönotot",
@@ -826,14 +836,32 @@
       "NoAllocation": "Resursseja ei ole varattu.",
       "NoProject": "Valitse projekti nähdäksesi tämän kortin.",
       "NoResourceGroup": "Resurssiryhmää ei ole valittu.",
+      "NoUsers": "Ei käyttäjiä",
+      "NotTriedYet": "Ei vielä yritetty",
       "PendingCount": "{{count}} odottaa",
+      "PendingSessions": "Odottavat istunnot",
+      "PendingSessionsTooltip": "Projektin istunnot, jotka odottavat ajoitusta, pisimpään odottaneet ensin. Syy on ajoittajan viimeisin viesti; laajenna rivi nähdäksesi ajoitusyritykset.",
+      "ProjectAuditLogTooltip": "Projektin ja sen istuntojen, kansioiden ja käyttöönottojen tarkastusloki kortin aikavälillä.",
+      "ProjectFoldersTooltip": "Projektin kansiot ilman roskakoria suhteessa projektin kansiorajaan.",
+      "ProjectUsersTooltip": "Projektin jäsenet tilin tilan mukaan sekä sen ylläpitäjäroolin jäsenet.",
+      "Reason": "Syy",
       "ReplicaHealth": "Replikoiden kunto",
+      "ResourceAllocation": "Resurssien varaus",
+      "ResourceAllocationTooltip": "Mitä projektin istunnot käyttävät suhteessa projektin rajaan.",
+      "ResourceGroupCapacity": "Resurssiryhmät ja kapasiteetti",
+      "ResourceGroupCapacityTooltip": "Käyttö suhteessa kunkin kortin asetuksissa olevan resurssiryhmän kapasiteettiin.",
       "ResourcePresets": "Resurssiesiasetukset",
       "ResourcePresetsTooltip": "Mahtuuko kukin resurssiesiasetus siihen, mitä voit vielä varata resurssiryhmässä.",
       "Resources": "Resurssit",
+      "SessionStatus": "Istuntojen tila",
+      "SessionStatusTooltip": "Projektin nykyiset istunnot tilan mukaan; alla oleva rivi jakaa aktiiviset tyypeittäin.",
       "Share": "Osuus",
+      "Starting": "Käynnistymässä",
+      "Succeeded": "Onnistuneet",
       "Unhealthy": "Ongelmia",
-      "Unlimited": "Rajoittamaton"
+      "Unlimited": "Rajoittamaton",
+      "VsPreviousRange": "verrattuna edelliseen aikaväliin",
+      "Waiting": "Odotus"
     },
     "catalog": {
       "group": {
@@ -842,7 +870,8 @@
         "Other": "Muut",
         "Resources": "Resurssit",
         "Sessions": "Istunnot",
-        "Start": "Aloitus"
+        "Start": "Aloitus",
+        "Users": "Käyttäjät"
       }
     },
     "editSider": {

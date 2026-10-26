@@ -808,14 +808,24 @@
       "NewBoardTitle": "Tablica {{number}}"
     },
     "card": {
+      "ActiveByType": "Aktywne według typu",
+      "AdminCount": "Administratorzy: {{count}}",
+      "AuditLogTrend": "Wpisy dziennika audytu na przedział",
       "Availability": "Dostępność",
       "Available": "Dostępny",
       "Count": "Liczba",
+      "DeploymentStatus": "Stan wdrożeń",
+      "DeploymentStatusTooltip": "Wdrożenia projektu ze stanem replik, najnowsze najpierw.",
+      "Failed": "Nieudane",
+      "FailedOperations": "Nieudane operacje",
+      "FailedOperationsTooltip": "Wpisy dziennika audytu projektu, które zakończyły się błędem lub zostały odrzucone w zakresie karty, w porównaniu z poprzednim zakresem tej samej długości.",
       "FailuresInRange": "Niepowodzenia w tym okresie: {{count}}",
       "FailuresOnly": "Pokaż tylko niepowodzenia",
       "FolderLimit": "Limit: {{max}}",
       "Healthy": "Sprawny",
       "Insufficient": "Za mało zasobów",
+      "LongRunningSessions": "Długo działające sesje",
+      "LongRunningSessionsTooltip": "Działające sesje projektu, które rozpoczęły się przed zakresem karty, najstarsze najpierw.",
       "MyActivity": "Moja aktywność",
       "MyActivityTooltip": "Działania wykonane przez Ciebie w wybranym okresie, z dziennika audytu.",
       "MyDeployments": "Moje wdrożenia",
@@ -826,14 +836,32 @@
       "NoAllocation": "Brak przydzielonych zasobów.",
       "NoProject": "Wybierz projekt, aby zobaczyć tę kartę.",
       "NoResourceGroup": "Nie wybrano grupy zasobów.",
+      "NoUsers": "Brak użytkowników",
+      "NotTriedYet": "Jeszcze nie próbowano",
       "PendingCount": "Oczekujące: {{count}}",
+      "PendingSessions": "Oczekujące sesje",
+      "PendingSessionsTooltip": "Sesje projektu czekające na zaplanowanie, najdłużej czekające najpierw. Powodem jest ostatni komunikat harmonogramu; rozwiń wiersz, aby zobaczyć próby planowania.",
+      "ProjectAuditLogTooltip": "Dziennik audytu projektu oraz sesji, folderów i wdrożeń w nim, w zakresie karty.",
+      "ProjectFoldersTooltip": "Foldery projektu bez kosza w odniesieniu do limitu folderów projektu.",
+      "ProjectUsersTooltip": "Członkowie projektu według stanu konta oraz członkowie jego roli administratora.",
+      "Reason": "Powód",
       "ReplicaHealth": "Stan replik",
+      "ResourceAllocation": "Przydział zasobów",
+      "ResourceAllocationTooltip": "Ile zużywają sesje projektu w odniesieniu do limitu projektu.",
+      "ResourceGroupCapacity": "Grupy zasobów i pojemność",
+      "ResourceGroupCapacityTooltip": "Wykorzystanie w odniesieniu do pojemności każdej grupy zasobów z ustawień karty.",
       "ResourcePresets": "Ustawienia zasobów",
       "ResourcePresetsTooltip": "Czy każde ustawienie zasobów mieści się w tym, co możesz jeszcze przydzielić w grupie zasobów.",
       "Resources": "Zasoby",
+      "SessionStatus": "Stan sesji",
+      "SessionStatusTooltip": "Bieżące sesje projektu według stanu; wiersz poniżej dzieli aktywne według typu.",
       "Share": "Udział",
+      "Starting": "Uruchamianie",
+      "Succeeded": "Udane",
       "Unhealthy": "Niesprawny",
-      "Unlimited": "Bez limitu"
+      "Unlimited": "Bez limitu",
+      "VsPreviousRange": "w porównaniu z poprzednim okresem",
+      "Waiting": "Oczekiwanie"
     },
     "catalog": {
       "group": {
@@ -842,7 +870,8 @@
         "Other": "Inne",
         "Resources": "Zasoby",
         "Sessions": "Sesje",
-        "Start": "Pierwsze kroki"
+        "Start": "Pierwsze kroki",
+        "Users": "Użytkownicy"
       }
     },
     "editSider": {

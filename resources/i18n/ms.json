@@ -808,14 +808,24 @@
       "NewBoardTitle": "Papan {{number}}"
     },
     "card": {
+      "ActiveByType": "Aktif mengikut jenis",
+      "AdminCount": "Pentadbir: {{count}}",
+      "AuditLogTrend": "Entri log audit setiap selang",
       "Availability": "Ketersediaan",
       "Available": "Tersedia",
       "Count": "Bilangan",
+      "DeploymentStatus": "Status Penggunaan",
+      "DeploymentStatusTooltip": "Penggunaan projek dengan kesihatan replika, terbaharu dahulu.",
+      "Failed": "Gagal",
+      "FailedOperations": "Operasi Gagal",
+      "FailedOperationsTooltip": "Entri log audit projek yang berakhir dengan ralat atau ditolak dalam julat kad, berbanding julat sebelumnya yang sama panjang.",
       "FailuresInRange": "Kegagalan dalam julat ini: {{count}}",
       "FailuresOnly": "Tunjukkan kegagalan sahaja",
       "FolderLimit": "Had: {{max}}",
       "Healthy": "Sihat",
       "Insufficient": "Sumber tidak mencukupi",
+      "LongRunningSessions": "Sesi Berjalan Lama",
+      "LongRunningSessionsTooltip": "Sesi berjalan projek yang bermula sebelum julat kad, tertua dahulu.",
       "MyActivity": "Aktiviti Saya",
       "MyActivityTooltip": "Tindakan yang anda lakukan dalam julat yang dipilih, daripada log audit.",
       "MyDeployments": "Penggunaan Saya",
@@ -826,14 +836,32 @@
       "NoAllocation": "Tiada sumber diperuntukkan.",
       "NoProject": "Pilih projek untuk melihat kad ini.",
       "NoResourceGroup": "Tiada kumpulan sumber dipilih.",
+      "NoUsers": "Tiada pengguna",
+      "NotTriedYet": "Belum dicuba",
       "PendingCount": "{{count}} belum selesai",
+      "PendingSessions": "Sesi Belum Selesai",
+      "PendingSessionsTooltip": "Sesi projek yang menunggu untuk dijadualkan, yang menunggu paling lama dahulu. Sebabnya ialah mesej terakhir penjadual; kembangkan baris untuk melihat cubaan penjadualan.",
+      "ProjectAuditLogTooltip": "Log audit projek serta sesi, folder dan penggunaan di dalamnya, dalam julat kad.",
+      "ProjectFoldersTooltip": "Folder projek, selain tong sampah, berbanding had folder projek.",
+      "ProjectUsersTooltip": "Ahli projek mengikut status akaun, dan ahli peranan pentadbirnya.",
+      "Reason": "Sebab",
       "ReplicaHealth": "Kesihatan Replika",
+      "ResourceAllocation": "Peruntukan Sumber",
+      "ResourceAllocationTooltip": "Apa yang digunakan oleh sesi projek berbanding had projek.",
+      "ResourceGroupCapacity": "Kumpulan Sumber dan Kapasiti",
+      "ResourceGroupCapacityTooltip": "Penggunaan berbanding kapasiti setiap kumpulan sumber dalam tetapan kad.",
       "ResourcePresets": "Pratetap Sumber",
       "ResourcePresetsTooltip": "Sama ada setiap pratetap sumber muat dalam apa yang masih boleh anda peruntukkan dalam kumpulan sumber.",
       "Resources": "Sumber",
+      "SessionStatus": "Status Sesi",
+      "SessionStatusTooltip": "Sesi semasa projek mengikut status; baris di bawah membahagikan yang aktif mengikut jenis.",
       "Share": "Bahagian",
+      "Starting": "Bermula",
+      "Succeeded": "Berjaya",
       "Unhealthy": "Tidak sihat",
-      "Unlimited": "Tanpa had"
+      "Unlimited": "Tanpa had",
+      "VsPreviousRange": "berbanding julat sebelumnya",
+      "Waiting": "Menunggu"
     },
     "catalog": {
       "group": {
@@ -842,7 +870,8 @@
         "Other": "Lain-lain",
         "Resources": "Sumber",
         "Sessions": "Sesi",
-        "Start": "Bermula"
+        "Start": "Bermula",
+        "Users": "Pengguna"
       }
     },
     "editSider": {
