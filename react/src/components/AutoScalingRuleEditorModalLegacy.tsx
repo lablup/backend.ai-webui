@@ -421,6 +421,7 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
           ]}
         >
           <BAINumberInput
+            width="100%"
             aria-label={t('autoScalingRule.StepSize')}
             min={1}
             step={1}
@@ -455,6 +456,7 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
                 ]}
               >
                 <BAINumberInput
+                  width="100%"
                   aria-label={t('autoScalingRule.MaxReplicas')}
                   min={0}
                   max={SIGNED_32BIT_MAX_INT}
@@ -487,6 +489,7 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
                 ]}
               >
                 <BAINumberInput
+                  width="100%"
                   aria-label={t('autoScalingRule.MinReplicas')}
                   min={0}
                   max={SIGNED_32BIT_MAX_INT}
@@ -518,7 +521,10 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
             },
           ]}
         >
-          <BAINumberInput aria-label={t('autoScalingRule.CoolDownSeconds')} />
+          <BAINumberInput
+            width="100%"
+            aria-label={t('autoScalingRule.CoolDownSeconds')}
+          />
         </Form.Item>
       </Form>
     </BAIModal>

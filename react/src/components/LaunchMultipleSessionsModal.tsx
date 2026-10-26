@@ -214,6 +214,7 @@ const LaunchMultipleSessionsModal: React.FC<
             style={{ marginBottom: 0 }}
           >
             <BAINumberInput
+              width="100%"
               aria-label={t(
                 'session.launcher.LaunchMultipleSessionsSessionCount',
               )}

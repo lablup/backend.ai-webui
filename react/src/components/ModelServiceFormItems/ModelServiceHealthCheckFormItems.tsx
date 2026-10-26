@@ -88,6 +88,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
                 >
                   {/* antd `InputNumber suffix` → Astryx `units`. */}
                   <BAINumberInput
+                    width="100%"
                     aria-label={t(
                       'adminDeploymentPreset.modelDef.HealthCheckInterval',
                     )}
@@ -105,6 +106,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
                   style={{ flex: 1, minWidth: 160 }}
                 >
                   <BAINumberInput
+                    width="100%"
                     aria-label={t(
                       'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
                     )}
@@ -121,6 +123,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
                   style={{ flex: 1, minWidth: 160 }}
                 >
                   <BAINumberInput
+                    width="100%"
                     aria-label={t(
                       'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
                     )}
@@ -141,6 +144,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
                 >
                   {/* Backend `expected_status_code` is `gt=100`, hence 101. */}
                   <BAINumberInput
+                    width="100%"
                     aria-label={t(
                       'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
                     )}
@@ -158,6 +162,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
                   style={{ flex: 1, minWidth: 160 }}
                 >
                   <BAINumberInput
+                    width="100%"
                     aria-label={t(
                       'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
                     )}

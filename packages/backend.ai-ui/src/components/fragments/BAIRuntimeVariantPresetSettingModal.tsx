@@ -844,6 +844,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   style={{ flex: 1, minWidth: 0 }}
                 >
                   <BAINumberInput
+                    width="100%"
                     hasClear={false}
                     aria-label={t(
                       'comp:BAIRuntimeVariantPresetSettingModal.SliderMin',
@@ -890,6 +891,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   style={{ flex: 1, minWidth: 0 }}
                 >
                   <BAINumberInput
+                    width="100%"
                     hasClear={false}
                     aria-label={t(
                       'comp:BAIRuntimeVariantPresetSettingModal.SliderMax',
@@ -927,6 +929,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   style={{ flex: 1, minWidth: 0 }}
                 >
                   <BAINumberInput
+                    width="100%"
                     hasClear={false}
                     aria-label={t(
                       'comp:BAIRuntimeVariantPresetSettingModal.SliderStep',
@@ -951,6 +954,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   style={{ flex: 1, minWidth: 0 }}
                 >
                   <BAINumberInput
+                    width="100%"
                     hasClear={false}
                     aria-label={t(
                       'comp:BAIRuntimeVariantPresetSettingModal.NumberMin',
@@ -991,6 +995,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   style={{ flex: 1, minWidth: 0 }}
                 >
                   <BAINumberInput
+                    width="100%"
                     hasClear={false}
                     aria-label={t(
                       'comp:BAIRuntimeVariantPresetSettingModal.NumberMax',
@@ -1173,6 +1178,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                 precision={0}` -> `NumberInput step={1}`: Astryx has no
                 display-precision knob, and rank is an `Int` ordinal. */}
             <BAINumberInput
+              width="100%"
               hasClear={false}
               aria-label={t('comp:BAIRuntimeVariantPresetSettingModal.Rank')}
               min={0}

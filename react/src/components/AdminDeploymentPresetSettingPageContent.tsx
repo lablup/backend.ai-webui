@@ -1149,6 +1149,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 ]}
               >
                 <BAINumberInput
+                  width="100%"
                   aria-label={t('adminDeploymentPreset.ClusterSize')}
                   min={1}
                   placeholder={t(
@@ -1270,6 +1271,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 rules={[{ required: true }]}
               >
                 <BAINumberInput
+                  width="100%"
                   aria-label={t('adminDeploymentPreset.Replicas')}
                   min={1}
                   placeholder={t('adminDeploymentPreset.ReplicasPlaceholder')}
@@ -1282,6 +1284,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 style={{ flex: 1, minWidth: 120 }}
               >
                 <BAINumberInput
+                  width="100%"
                   aria-label={t('adminDeploymentPreset.RevisionHistoryLimit')}
                   min={1}
                   placeholder={t(

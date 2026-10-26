@@ -234,6 +234,7 @@ export const WithInputNumber: Story = {
     showClear: true,
     children: (
       <BAINumberInput
+        width="100%"
         hasClear={false}
         aria-label="Container UID"
         placeholder="Enter UID"

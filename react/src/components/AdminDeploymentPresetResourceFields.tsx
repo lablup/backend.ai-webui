@@ -46,7 +46,12 @@ export const InputNumberWithUnit: React.FC<InputNumberWithUnitProps> = ({
 }) => {
   'use memo';
   return (
-    <BAINumberInput units={unit} isIntegerOnly={precision === 0} {...props} />
+    <BAINumberInput
+      width="100%"
+      units={unit}
+      isIntegerOnly={precision === 0}
+      {...props}
+    />
   );
 };
 

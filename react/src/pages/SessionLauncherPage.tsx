@@ -923,6 +923,7 @@ const SessionLauncherPage = () => {
                                           {/* The form engine composes this
                                                 `onChange` after its own. */}
                                           <BAINumberInput
+                                            width="100%"
                                             aria-label={t(
                                               'session.launcher.BatchJobTimeoutDuration',
                                             )}
@@ -1176,6 +1177,7 @@ const SessionLauncherPage = () => {
                             required
                           >
                             <BAINumberInput
+                              width="100%"
                               aria-label={t(
                                 'session.launcher.NumOpenMPthreads',
                               )}
@@ -1205,6 +1207,7 @@ const SessionLauncherPage = () => {
                             required
                           >
                             <BAINumberInput
+                              width="100%"
                               aria-label={t(
                                 'session.launcher.NumOpenBLASthreads',
                               )}

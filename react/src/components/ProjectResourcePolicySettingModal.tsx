@@ -270,6 +270,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
             style={{ width: '100%', margin: 0 }}
           >
             <BAINumberInput
+              width="100%"
               aria-label={t('resourcePolicy.MaxFolderCount')}
               min={0}
               max={SIGNED_32BIT_MAX_INT}
@@ -282,6 +283,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
             style={{ width: '100%', margin: 0 }}
           >
             <BAINumberInput
+              width="100%"
               aria-label={t('storageHost.MaxFolderSize')}
               min={0}
               // Maximum safe integer divided by 10^9 to prevent overflow when converting GB to bytes
@@ -296,6 +298,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
             style={{ width: '100%', margin: 0 }}
           >
             <BAINumberInput
+              width="100%"
               aria-label={t('resourcePolicy.MaxNetworkCount')}
               min={0}
               max={SIGNED_32BIT_MAX_INT}

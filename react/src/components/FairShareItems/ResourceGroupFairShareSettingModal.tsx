@@ -213,6 +213,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
             {/* antd `InputNumber suffix` (a unit string) -> `NumberInput
                 units` (MAPPING §3.17). */}
             <BAINumberInput
+              width="100%"
               aria-label={t('fairShare.DecayUnitDays')}
               min={1}
               step={1}
@@ -250,6 +251,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
             ]}
           >
             <BAINumberInput
+              width="100%"
               aria-label={t('fairShare.HalfLifeDays')}
               min={1}
               step={1}
@@ -287,6 +289,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
             ]}
           >
             <BAINumberInput
+              width="100%"
               aria-label={t('fairShare.LookbackDays')}
               min={1}
               step={1}
@@ -314,6 +317,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
             ]}
           >
             <BAINumberInput
+              width="100%"
               aria-label={t('fairShare.DefaultWeight')}
               min={0}
               step={0.1}
@@ -356,6 +360,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
                     name={['resourceWeights', entry?.resourceType]}
                   >
                     <BAINumberInput
+                      width="100%"
                       aria-label={weightLabel}
                       min={0}
                       step={0.1}

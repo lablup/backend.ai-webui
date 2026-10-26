@@ -429,6 +429,7 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
                     />
                   ) : (
                     <BAINumberInput
+                      width="100%"
                       aria-label={
                         _.get(mergedResourceSlots, resourceSlotKey)
                           ?.description || resourceSlotKey
@@ -456,6 +457,7 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
                 disableUnlimited
               >
                 <BAINumberInput
+                  width="100%"
                   aria-label={t('resourcePolicy.ClusterSize')}
                   min={0}
                   max={SIGNED_32BIT_MAX_INT}
@@ -467,6 +469,7 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
                 label={t('resourcePolicy.MaxSessionLifetime')}
               >
                 <BAINumberInput
+                  width="100%"
                   aria-label={t('resourcePolicy.MaxSessionLifetime')}
                   min={0}
                   max={SIGNED_32BIT_MAX_INT}
@@ -478,6 +481,7 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
                 label={t('resourcePolicy.MaxPendingSessionCount')}
               >
                 <BAINumberInput
+                  width="100%"
                   aria-label={t('resourcePolicy.MaxPendingSessionCount')}
                   min={0}
                   max={SIGNED_32BIT_MAX_INT}
@@ -489,6 +493,7 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
                 label={t('resourcePolicy.Concurrency')}
               >
                 <BAINumberInput
+                  width="100%"
                   aria-label={t('resourcePolicy.Concurrency')}
                   min={0}
                   max={SIGNED_32BIT_MAX_INT}
@@ -500,6 +505,7 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
                 label={t('resourcePolicy.IdleTimeoutSec')}
               >
                 <BAINumberInput
+                  width="100%"
                   aria-label={t('resourcePolicy.IdleTimeoutSec')}
                   min={0}
                   max={SIGNED_32BIT_MAX_INT}
@@ -511,6 +517,7 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
                 label={t('resourcePolicy.MaxConcurrentSFTPSessions')}
               >
                 <BAINumberInput
+                  width="100%"
                   aria-label={t('resourcePolicy.MaxConcurrentSFTPSessions')}
                   min={0}
                   max={SIGNED_32BIT_MAX_INT}

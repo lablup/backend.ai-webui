@@ -306,6 +306,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                       // (MAPPING.md §3.17) and is dropped — slot counts stay
                       // well inside float precision. `suffix` -> `units`.
                       <BAINumberInput
+                        width="100%"
                         aria-label={
                           _.get(mergedResourceSlots, resourceSlotKey)
                             ?.description || resourceSlotKey

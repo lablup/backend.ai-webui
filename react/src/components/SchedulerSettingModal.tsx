@@ -209,6 +209,7 @@ const SchedulerSettingModal = ({
                           absorbed `value`/`onChange` and the field never
                           bound. */}
                       <BAINumberInput
+                        width="100%"
                         aria-label={t('settings.SessionCreationRetries')}
                         min={0}
                         max={1000}

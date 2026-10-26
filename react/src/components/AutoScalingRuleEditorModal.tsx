@@ -432,6 +432,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
               ]}
             >
               <BAINumberInput
+                width="100%"
                 aria-label={t('autoScalingRule.MinThreshold')}
                 placeholder={t('autoScalingRule.MinThreshold')}
                 min={0}
@@ -458,6 +459,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
               ]}
             >
               <BAINumberInput
+                width="100%"
                 aria-label={t('autoScalingRule.MaxThreshold')}
                 placeholder={t('autoScalingRule.MaxThreshold')}
                 min={0}
@@ -491,6 +493,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
                 ]}
               >
                 <BAINumberInput
+                  width="100%"
                   aria-label={t('autoScalingRule.MinThreshold')}
                   placeholder={t('autoScalingRule.MinThreshold')}
                   min={0}
@@ -526,6 +529,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
                 ]}
               >
                 <BAINumberInput
+                  width="100%"
                   aria-label={t('autoScalingRule.MaxThreshold')}
                   placeholder={t('autoScalingRule.MaxThreshold')}
                   min={0}
@@ -584,6 +588,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
             ]}
           >
             <BAINumberInput
+              width="100%"
               aria-label={t('autoScalingRule.StepSize')}
               min={1}
               step={1}
@@ -618,6 +623,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
         {/* antd `InputNumber suffix` (a unit string) -> `NumberInput units`
             (MAPPING §3.17 — the one place Astryx is better than antd here). */}
         <BAINumberInput
+          width="100%"
           aria-label={t('autoScalingRule.CoolDownSeconds')}
           min={1}
           step={1}
@@ -649,6 +655,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
         ]}
       >
         <BAINumberInput
+          width="100%"
           aria-label={t('autoScalingRule.MinReplicas')}
           min={0}
           max={SIGNED_32BIT_MAX_INT}
@@ -679,6 +686,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
         ]}
       >
         <BAINumberInput
+          width="100%"
           aria-label={t('autoScalingRule.MaxReplicas')}
           min={0}
           max={SIGNED_32BIT_MAX_INT}

@@ -140,6 +140,7 @@ const OverlayNetworkSettingModal = ({
                         child, so a `<div style={{flex:1}}>` in between
                         swallowed `value`/`onChange` and the field never bound. */}
                     <BAINumberInput
+                      width="100%"
                       aria-label="MTU"
                       min={0}
                       max={15000}

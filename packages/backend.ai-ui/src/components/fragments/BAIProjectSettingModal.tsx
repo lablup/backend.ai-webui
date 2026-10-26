@@ -504,6 +504,7 @@ const BAIProjectSettingModal = ({
                   />
                 ) : (
                   <BAINumberInput
+                    width="100%"
                     aria-label={resourceSlotKey}
                     min={0}
                     hasClear

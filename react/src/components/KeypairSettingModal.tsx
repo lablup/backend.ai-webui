@@ -257,7 +257,10 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
                 },
               ]}
             >
-              <BAINumberInput aria-label={t('credential.RateLimitFor15min')} />
+              <BAINumberInput
+                width="100%"
+                aria-label={t('credential.RateLimitFor15min')}
+              />
             </BAIFormItem>
           </GridSpan>
         </Grid>

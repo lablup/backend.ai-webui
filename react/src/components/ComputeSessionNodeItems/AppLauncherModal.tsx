@@ -507,6 +507,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                 ]}
               >
                 <BAINumberInput
+                  width="100%"
                   aria-label={t('session.TryPreferredPort')}
                   placeholder="10250"
                   disabled={!tryPreferredPort}

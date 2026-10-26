@@ -504,6 +504,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                 name="pendingTimeout"
               >
                 <BAINumberInput
+                  width="100%"
                   aria-label={t('resourceGroup.PendingTimeout')}
                   units={t('resourceGroup.TimeoutSeconds')}
                   min={0}
@@ -518,6 +519,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                 name="retriesToSkip"
               >
                 <BAINumberInput
+                  width="100%"
                   aria-label={t('resourceGroup.RetriesToSkipDesc')}
                   units={t('resourceGroup.RetriesToSkip')}
                   min={0}

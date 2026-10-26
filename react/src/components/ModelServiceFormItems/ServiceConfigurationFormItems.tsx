@@ -243,6 +243,7 @@ const ServiceConfigurationFormItems: React.FC<
         {/* Backend `PresetModelServiceConfigInput.port` is `gt=1` exclusive,
             hence min 2. */}
         <BAINumberInput
+          width="100%"
           aria-label={t('modelService.Port')}
           min={2}
           max={65535}

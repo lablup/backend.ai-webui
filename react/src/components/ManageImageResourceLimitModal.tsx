@@ -223,6 +223,7 @@ const ManageImageResourceLimitModal: React.FC<
                           // antd InputNumber `suffix` -> Astryx NumberInput
                           // `units` (MAPPING.md §3.17), via the Form adapter.
                           <BAINumberInput
+                            width="100%"
                             aria-label={
                               _.get(mergedResourceSlots, key)?.description ||
                               _.upperCase(key)

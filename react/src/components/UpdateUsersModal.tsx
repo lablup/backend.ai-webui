@@ -307,6 +307,7 @@ const UpdateUsersModal = ({
             ]}
           >
             <BAINumberInput
+              width="100%"
               aria-label={t('credential.ContainerUID')}
               max={SIGNED_32BIT_MAX_INT}
               min={1}
@@ -325,6 +326,7 @@ const UpdateUsersModal = ({
             ]}
           >
             <BAINumberInput
+              width="100%"
               aria-label={t('credential.ContainerGID')}
               max={SIGNED_32BIT_MAX_INT}
               min={1}

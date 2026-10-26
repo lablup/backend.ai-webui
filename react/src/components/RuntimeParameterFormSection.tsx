@@ -458,6 +458,7 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
           {/* `min`/`max` are deliberately NOT passed: `NumberInput` clamps,
               and `rangeRules` give validation feedback instead. */}
           <BAINumberInput
+            width="100%"
             aria-label={label}
             step={isInt ? 1 : 0.1}
             isIntegerOnly={isInt}

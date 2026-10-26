@@ -171,6 +171,7 @@ const EditSessionPriorityModal: React.FC<EditSessionPriorityModalProps> = ({
           {isBulkEdit ? (
             <BAIBulkEditFormItem label={t('session.Priority')} name="priority">
               <BAINumberInput
+                width="100%"
                 aria-label={t('session.Priority')}
                 min={SESSION_PRIORITY_MIN}
                 max={SESSION_PRIORITY_MAX}
@@ -190,6 +191,7 @@ const EditSessionPriorityModal: React.FC<EditSessionPriorityModalProps> = ({
               ]}
             >
               <BAINumberInput
+                width="100%"
                 aria-label={t('session.Priority')}
                 min={SESSION_PRIORITY_MIN}
                 max={SESSION_PRIORITY_MAX}

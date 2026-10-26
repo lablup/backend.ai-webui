@@ -365,6 +365,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
             ]}
           >
             <BAINumberInput
+              width="100%"
               aria-label={t('deployment.DesiredReplicas')}
               min={deployment ? 0 : 1}
             />

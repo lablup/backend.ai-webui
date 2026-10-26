@@ -661,6 +661,7 @@ const FairShareWeightSettingModal: React.FC<
               name="weight"
             >
               <BAINumberInput
+                width="100%"
                 aria-label={t('fairShare.Weight')}
                 min={0}
                 step={0.1}
@@ -679,6 +680,7 @@ const FairShareWeightSettingModal: React.FC<
               name="weight"
             >
               <BAINumberInput
+                width="100%"
                 aria-label={t('fairShare.Weight')}
                 min={0}
                 step={0.1}
