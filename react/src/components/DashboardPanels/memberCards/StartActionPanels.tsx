@@ -2,10 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { AstryxSecondaryTheme } from '../../../astryx-theme';
 import { useWebUINavigate } from '../../../hooks';
 import { useProjectPath } from '../../../hooks/useRouteScope';
 import type { SessionLauncherFormValue } from '../../../pages/SessionLauncherPage';
+import DeploymentSettingModal from '../../DeploymentSettingModal';
 import FolderCreateModalV2 from '../../FolderCreateModalV2';
 import StartFromURLModal from '../../StartFromURLModal';
 import PanelFrame from '../PanelFrame';
@@ -31,8 +31,6 @@ interface StartActionCardProps {
   icon: React.ReactNode;
   buttonLabel: string;
   onClick: () => void;
-  /** Wraps the button, e.g. in a subtree theme. */
-  renderButton?: (button: React.ReactNode) => React.ReactNode;
 }
 
 /** One of the Start page's actions as a small dashboard card: header, a short description, a button. */
@@ -42,7 +40,6 @@ const StartActionCard: React.FC<StartActionCardProps> = ({
   icon,
   buttonLabel,
   onClick,
-  renderButton = (button) => button,
 }) => {
   'use memo';
   return (
@@ -51,9 +48,7 @@ const StartActionCard: React.FC<StartActionCardProps> = ({
         <Text type="supporting" maxLines={2}>
           {description}
         </Text>
-        {renderButton(
-          <Button variant="primary" label={buttonLabel} onClick={onClick} />,
-        )}
+        <Button variant="primary" label={buttonLabel} onClick={onClick} />
       </BAIFlex>
     </PanelFrame>
   );
@@ -137,18 +132,32 @@ export const StartDeploymentPanel: React.FC<PanelComponentProps> = () => {
   const { t } = useTranslation();
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
+  const project = useDashboardProject();
+  const [isOpen, setIsOpen] = useState(false);
   return (
-    <StartActionCard
-      title={t('start.StartDeployment')}
-      description={t('start.StartDeploymentDesc')}
-      buttonLabel={t('start.button.StartDeployment')}
-      icon={<Grid2x2Plus size="1em" />}
-      onClick={() => webuiNavigate(buildProjectPath('deployments'))}
-      // The deployment action keeps the secondary accent it had on the Start page.
-      renderButton={(button) => (
-        <AstryxSecondaryTheme>{button}</AstryxSecondaryTheme>
+    <>
+      <StartActionCard
+        title={t('start.StartDeployment')}
+        description={t('start.StartDeploymentDesc')}
+        buttonLabel={t('start.button.StartDeployment')}
+        icon={<Grid2x2Plus size="1em" />}
+        onClick={() =>
+          project
+            ? setIsOpen(true)
+            : webuiNavigate(buildProjectPath('deployments'))
+        }
+      />
+      {project && (
+        <BAIUnmountAfterClose>
+          {/* On success the modal itself opens the new deployment's page. */}
+          <DeploymentSettingModal
+            open={isOpen}
+            project={project}
+            onRequestClose={() => setIsOpen(false)}
+          />
+        </BAIUnmountAfterClose>
       )}
-    />
+    </>
   );
 };
 
