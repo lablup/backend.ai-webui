@@ -3714,15 +3714,15 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingMenuText": "Open the user profile menu at the top right: \"Exit Admin Settings\" takes you to the user pages, and \"Admin Settings\" brings you back here.",
+      "AdminLandingMenuText": "Open the user profile menu at the top right: \"Switch to User View\" takes you to the user pages, and \"Switch to Admin View\" brings you back here.",
       "AdminLandingMenuTitle": "Admin Settings moved to the profile menu",
       "AdminLandingStartText": "After logging in, you now go straight to the admin settings instead of the user pages.",
       "AdminLandingStartTitle": "You start in the admin settings",
       "AdminLandingText": "Here is what changed.",
       "AdminLandingTitle": "The superadmin view has changed",
-      "BackToAdminSettingsText": "To return to the admin settings, open this menu and choose \"Admin Settings\".",
+      "BackToAdminSettingsText": "To return to the admin settings, open this menu and choose \"Switch to Admin View\".",
       "BackToAdminSettingsTitle": "Returning to the admin settings",
-      "BackToUserViewText": "You are in the admin settings. To use sessions, data and the other user pages, open this menu and choose \"Exit Admin Settings\".",
+      "BackToUserViewText": "You are in the admin settings. To use sessions, data and the other user pages, open this menu and choose \"Switch to User View\".",
       "BackToUserViewTitle": "Switching to the user view"
     },
     "deploymentPreset": {
@@ -3936,7 +3936,6 @@
       "Architecture": "Architecture",
       "ArtifactDetails": "Artifact Details",
       "AutoScalingRule": "Auto Scaling Rule",
-      "BackToUserView": "Exit Admin Settings",
       "Branding": "Branding",
       "Cancel": "Cancel",
       "ChangePassword": "Change Password",
@@ -4024,6 +4023,8 @@
       "Start": "Start",
       "Statistics": "Statistics",
       "Summary": "Summary",
+      "SwitchToAdminView": "Switch to Admin View",
+      "SwitchToUserView": "Switch to User View",
       "Tasks": "Tasks",
       "TermsOfService": "Terms of Service",
       "TotalResourcesIn": "Total Resources in",

@@ -3727,15 +3727,15 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingMenuText": "Avaa käyttäjäprofiilivalikko oikeasta yläkulmasta: \"Poistu ylläpitäjän asetuksista\" vie käyttäjäsivuille ja \"Ylläpitäjän asetukset\" tuo sinut takaisin tänne.",
+      "AdminLandingMenuText": "Avaa käyttäjäprofiilivalikko oikeasta yläkulmasta: \"Vaihda käyttäjänäkymään\" vie käyttäjäsivuille ja \"Vaihda ylläpitäjänäkymään\" tuo sinut takaisin tänne.",
       "AdminLandingMenuTitle": "Ylläpitäjän asetukset siirtyivät profiilivalikkoon",
       "AdminLandingStartText": "Kirjautumisen jälkeen siirryt nyt suoraan ylläpitäjän asetuksiin käyttäjäsivujen sijaan.",
       "AdminLandingStartTitle": "Aloitat ylläpitäjän asetuksista",
       "AdminLandingText": "Näin näkymä muuttui.",
       "AdminLandingTitle": "Pääylläpitäjän näkymä on muuttunut",
-      "BackToAdminSettingsText": "Palataksesi ylläpitäjän asetuksiin avaa tämä valikko ja valitse \"Ylläpitäjän asetukset\".",
+      "BackToAdminSettingsText": "Palataksesi ylläpitäjän asetuksiin avaa tämä valikko ja valitse \"Vaihda ylläpitäjänäkymään\".",
       "BackToAdminSettingsTitle": "Paluu ylläpitäjän asetuksiin",
-      "BackToUserViewText": "Olet ylläpitäjän asetuksissa. Käyttääksesi istuntoja, dataa ja muita käyttäjäsivuja avaa tämä valikko ja valitse \"Poistu ylläpitäjän asetuksista\".",
+      "BackToUserViewText": "Olet ylläpitäjän asetuksissa. Käyttääksesi istuntoja, dataa ja muita käyttäjäsivuja avaa tämä valikko ja valitse \"Vaihda käyttäjänäkymään\".",
       "BackToUserViewTitle": "Siirtyminen käyttäjänäkymään"
     },
     "deploymentPreset": {
@@ -3949,7 +3949,6 @@
       "Architecture": "Arkkitehtuuri",
       "ArtifactDetails": "Esineiden yksityiskohdat",
       "AutoScalingRule": "Automaattinen skaalaussääntö",
-      "BackToUserView": "Poistu ylläpitäjän asetuksista",
       "Branding": "Brändäys",
       "Cancel": "Peruuta",
       "ChangePassword": "Vaihda salasana",
@@ -4040,6 +4039,8 @@
       "Start": "Aloita",
       "Statistics": "Tilastot",
       "Summary": "Yhteenveto",
+      "SwitchToAdminView": "Vaihda ylläpitäjänäkymään",
+      "SwitchToUserView": "Vaihda käyttäjänäkymään",
       "Tasks": "Tehtävät",
       "TermsOfService": "Käyttöehdot",
       "TotalResourcesIn": "Resurssien kokonaismäärä",

@@ -3727,15 +3727,15 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingMenuText": "Sağ üstteki kullanıcı profili menüsünü açın: \"Yönetici Ayarlarından Çık\" sizi kullanıcı sayfalarına, \"Yönetici Ayarları\" ise buraya geri götürür.",
+      "AdminLandingMenuText": "Sağ üstteki kullanıcı profili menüsünü açın: \"Kullanıcı Görünümüne Geç\" sizi kullanıcı sayfalarına, \"Yönetici Görünümüne Geç\" ise buraya geri götürür.",
       "AdminLandingMenuTitle": "Yönetici Ayarları profil menüsüne taşındı",
       "AdminLandingStartText": "Oturum açtıktan sonra artık kullanıcı sayfaları yerine doğrudan yönetici ayarlarına girersiniz.",
       "AdminLandingStartTitle": "Yönetici ayarlarında başlarsınız",
       "AdminLandingText": "Değişenler şunlar.",
       "AdminLandingTitle": "Süper yönetici görünümü değişti",
-      "BackToAdminSettingsText": "Yönetici ayarlarına dönmek için bu menüyü açın ve \"Yönetici Ayarları\"nı seçin.",
+      "BackToAdminSettingsText": "Yönetici ayarlarına dönmek için bu menüyü açın ve \"Yönetici Görünümüne Geç\" seçeneğini seçin.",
       "BackToAdminSettingsTitle": "Yönetici ayarlarına dönmek",
-      "BackToUserViewText": "Yönetici ayarlarındasınız. Oturumları, verileri ve diğer kullanıcı sayfalarını kullanmak için bu menüyü açın ve \"Yönetici Ayarlarından Çık\" seçeneğini seçin.",
+      "BackToUserViewText": "Yönetici ayarlarındasınız. Oturumları, verileri ve diğer kullanıcı sayfalarını kullanmak için bu menüyü açın ve \"Kullanıcı Görünümüne Geç\" seçeneğini seçin.",
       "BackToUserViewTitle": "Kullanıcı görünümüne geçmek"
     },
     "deploymentPreset": {
@@ -3949,7 +3949,6 @@
       "Architecture": "Mimarlık",
       "ArtifactDetails": "Eser detayları",
       "AutoScalingRule": "Otomatik ölçekleme kuralı",
-      "BackToUserView": "Yönetici Ayarlarından Çık",
       "Branding": "Markalaşma",
       "Cancel": "İptal etmek",
       "ChangePassword": "Şifre değiştir",
@@ -4039,6 +4038,8 @@
       "Start": "Başlangıç",
       "Statistics": "İstatistik",
       "Summary": "Özet",
+      "SwitchToAdminView": "Yönetici Görünümüne Geç",
+      "SwitchToUserView": "Kullanıcı Görünümüne Geç",
       "Tasks": "Görevler",
       "TermsOfService": "Kullanım Şartları",
       "TotalResourcesIn": "Toplam Kaynaklar",

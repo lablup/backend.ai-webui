@@ -10,7 +10,7 @@ const draft = {
 test("Rendering Image List", draft, async ({ app, agent }) => {
   await app.open("/start");
   await agent.act("Open the user menu in the header");
-  await agent.act('Choose "Admin Settings"');
+  await agent.act('Choose "Switch to Admin View"');
   await agent.act('Open "Environments" from the side menu');
   await agent.act("Select an image that is not installed");
   await agent.act('Press "Install Image" and confirm with "Install"');
@@ -20,7 +20,7 @@ test("Rendering Image List", draft, async ({ app, agent }) => {
 test("user can modify image resource limit", draft, async ({ app, agent }) => {
   await app.open("/start");
   await agent.act("Open the user menu in the header");
-  await agent.act('Choose "Admin Settings"');
+  await agent.act('Choose "Switch to Admin View"');
   await agent.act('Open "Environments" from the side menu');
   await agent.act(
     'Press "Edit Minimum Image Resource Limit" on the first image row',
@@ -35,7 +35,7 @@ test("user can modify image resource limit", draft, async ({ app, agent }) => {
 test("user can manage apps", draft, async ({ app, agent }) => {
   await app.open("/start");
   await agent.act("Open the user menu in the header");
-  await agent.act('Choose "Admin Settings"');
+  await agent.act('Choose "Switch to Admin View"');
   await agent.act('Open "Environments" from the side menu');
   await agent.act('Press "Manage Apps" on the first image row');
   await agent.act('Press "Add" and fill in an app name, protocol and port');
@@ -50,7 +50,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Admin Settings"');
+    await agent.act('Choose "Switch to Admin View"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act("Look at the filter bar above the image list");
   },
@@ -63,7 +63,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Admin Settings"');
+    await agent.act('Choose "Switch to Admin View"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act("Filter the images by name with a text value and apply it");
   },
@@ -76,7 +76,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Admin Settings"');
+    await agent.act('Choose "Switch to Admin View"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act("Filter the images by architecture, choosing a listed value");
   },
@@ -89,7 +89,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Admin Settings"');
+    await agent.act('Choose "Switch to Admin View"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act("Filter the images by status, choosing a listed value");
   },
@@ -102,7 +102,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Admin Settings"');
+    await agent.act('Choose "Switch to Admin View"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act("Filter the images by type, choosing a listed value");
   },
@@ -115,7 +115,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Admin Settings"');
+    await agent.act('Choose "Switch to Admin View"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act(
       "Filter the images by registry with a text value and apply it",
@@ -130,7 +130,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Admin Settings"');
+    await agent.act('Choose "Switch to Admin View"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act("Apply a name filter and an architecture filter together");
   },
@@ -143,7 +143,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Admin Settings"');
+    await agent.act('Choose "Switch to Admin View"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act("Apply two filters");
     await agent.act("Remove one filter token with its remove button");
@@ -157,7 +157,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Admin Settings"');
+    await agent.act('Choose "Switch to Admin View"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act("Apply two filters");
     await agent.act("Clear all filters with the clear-all button");
@@ -171,7 +171,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Admin Settings"');
+    await agent.act('Choose "Switch to Admin View"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act("Go to page 2 of the image list");
     await agent.act("Apply a name filter");
@@ -185,7 +185,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Admin Settings"');
+    await agent.act('Choose "Switch to Admin View"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act(
       "Start an architecture filter and type a value that is not in the list",
@@ -200,7 +200,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Admin Settings"');
+    await agent.act('Choose "Switch to Admin View"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act("Filter the images by a name that no image has");
   },
@@ -213,7 +213,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Admin Settings"');
+    await agent.act('Choose "Switch to Admin View"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act('Open the "Import Image" dialog');
     await agent.act(
@@ -230,7 +230,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Admin Settings"');
+    await agent.act('Choose "Switch to Admin View"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act('Open the "Import Image" dialog');
     await agent.act(
@@ -247,7 +247,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Admin Settings"');
+    await agent.act('Choose "Switch to Admin View"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act('Press "Rescan" on an alive image row');
   },
@@ -260,7 +260,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Admin Settings"');
+    await agent.act('Choose "Switch to Admin View"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act("Look at the row actions of a deleted image");
   },

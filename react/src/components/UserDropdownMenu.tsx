@@ -46,8 +46,7 @@ import {
   Sun,
   Moon,
   CircleHelp,
-  ShieldUser,
-  ArrowLeft,
+  ArrowLeftRight,
 } from 'lucide-react';
 import React, { CSSProperties, Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -169,13 +168,13 @@ const UserDropdownMenu: React.FC<{
     systemAdminMenuItem &&
       (isSystemAdminScope
         ? {
-            label: t('webui.menu.BackToUserView'),
-            icon: <ArrowLeft size="1em" />,
+            label: t('webui.menu.SwitchToUserView'),
+            icon: <ArrowLeftRight size="1em" />,
             onClick: backToUserView,
           }
         : {
-            label: t('webui.menu.AdminSettings'),
-            icon: <ShieldUser size="1em" />,
+            label: t('webui.menu.SwitchToAdminView'),
+            icon: <ArrowLeftRight size="1em" />,
             onClick: () => {
               webuiNavigate(
                 getPathFromMenuKey(systemAdminMenuItem.key, activeProjectName),

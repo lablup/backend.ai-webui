@@ -3727,15 +3727,15 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingMenuText": "Apri il menu del profilo utente in alto a destra: \"Esci dalle impostazioni amministratore\" porta alle pagine utente e \"Impostazioni amministratore\" ti riporta qui.",
+      "AdminLandingMenuText": "Apri il menu del profilo utente in alto a destra: \"Passa alla vista utente\" porta alle pagine utente e \"Passa alla vista amministratore\" ti riporta qui.",
       "AdminLandingMenuTitle": "Le impostazioni amministratore sono nel menu del profilo",
       "AdminLandingStartText": "Dopo il login ora accedi direttamente alle impostazioni amministratore invece che alle pagine utente.",
       "AdminLandingStartTitle": "Inizi dalle impostazioni amministratore",
       "AdminLandingText": "Ecco cosa cambia.",
       "AdminLandingTitle": "La vista del superamministratore è cambiata",
-      "BackToAdminSettingsText": "Per tornare alle impostazioni amministratore, apri questo menu e scegli \"Impostazioni amministratore\".",
+      "BackToAdminSettingsText": "Per tornare alle impostazioni amministratore, apri questo menu e scegli \"Passa alla vista amministratore\".",
       "BackToAdminSettingsTitle": "Tornare alle impostazioni amministratore",
-      "BackToUserViewText": "Sei nelle impostazioni amministratore. Per usare sessioni, dati e le altre pagine utente, apri questo menu e scegli \"Esci dalle impostazioni amministratore\".",
+      "BackToUserViewText": "Sei nelle impostazioni amministratore. Per usare sessioni, dati e le altre pagine utente, apri questo menu e scegli \"Passa alla vista utente\".",
       "BackToUserViewTitle": "Passare alla vista utente"
     },
     "deploymentPreset": {
@@ -3949,7 +3949,6 @@
       "Architecture": "Architettura",
       "ArtifactDetails": "Dettagli artefatto",
       "AutoScalingRule": "Regola di scalabilità automatica",
-      "BackToUserView": "Esci dalle impostazioni amministratore",
       "Branding": "Personalizzazione del marchio",
       "Cancel": "Annulla",
       "ChangePassword": "Cambia la password",
@@ -4039,6 +4038,8 @@
       "Start": "Inizio",
       "Statistics": "Statistiche",
       "Summary": "Sommario",
+      "SwitchToAdminView": "Passa alla vista amministratore",
+      "SwitchToUserView": "Passa alla vista utente",
       "Tasks": "Compiti",
       "TermsOfService": "Termini di servizio",
       "TotalResourcesIn": "Risorse totali in",

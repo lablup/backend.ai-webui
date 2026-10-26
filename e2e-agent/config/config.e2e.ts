@@ -29,7 +29,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Admin Settings"');
+    await agent.act('Choose "Switch to Admin View"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act(
       'Sort the images by "Status" and find an image that is not installed',

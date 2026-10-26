@@ -16,7 +16,7 @@ test(
     );
     await agent.act('Read the "Switching to the user view" tour and press "Done"');
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Exit Admin Settings"');
+    await agent.act('Choose "Switch to User View"');
     await agent.act(
       'Read the "Returning to the admin settings" tour and press "Done"',
     );
@@ -29,7 +29,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Admin Settings"');
+    await agent.act('Choose "Switch to Admin View"');
   },
 );
 
@@ -39,9 +39,9 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Admin Settings"');
+    await agent.act('Choose "Switch to Admin View"');
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Exit Admin Settings"');
+    await agent.act('Choose "Switch to User View"');
   },
 );
 

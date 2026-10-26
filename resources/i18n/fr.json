@@ -3730,15 +3730,15 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingMenuText": "Ouvrez le menu du profil utilisateur en haut à droite : \"Quitter les paramètres d'administration\" mène aux pages utilisateur et \"Paramètres d'administration\" vous ramène ici.",
+      "AdminLandingMenuText": "Ouvrez le menu du profil utilisateur en haut à droite : \"Passer à la vue utilisateur\" mène aux pages utilisateur et \"Passer à la vue administrateur\" vous ramène ici.",
       "AdminLandingMenuTitle": "Les paramètres d'administration sont passés dans le menu du profil",
       "AdminLandingStartText": "Après la connexion, vous arrivez désormais directement dans les paramètres d'administration au lieu des pages utilisateur.",
       "AdminLandingStartTitle": "Vous commencez dans les paramètres d'administration",
       "AdminLandingText": "Voici ce qui change.",
       "AdminLandingTitle": "La vue super-administrateur a changé",
-      "BackToAdminSettingsText": "Pour revenir aux paramètres d'administration, ouvrez ce menu et choisissez \"Paramètres d'administration\".",
+      "BackToAdminSettingsText": "Pour revenir aux paramètres d'administration, ouvrez ce menu et choisissez \"Passer à la vue administrateur\".",
       "BackToAdminSettingsTitle": "Revenir aux paramètres d'administration",
-      "BackToUserViewText": "Vous êtes dans les paramètres d'administration. Pour utiliser les sessions, les données et les autres pages utilisateur, ouvrez ce menu et choisissez \"Quitter les paramètres d'administration\".",
+      "BackToUserViewText": "Vous êtes dans les paramètres d'administration. Pour utiliser les sessions, les données et les autres pages utilisateur, ouvrez ce menu et choisissez \"Passer à la vue utilisateur\".",
       "BackToUserViewTitle": "Passer à la vue utilisateur"
     },
     "deploymentPreset": {
@@ -3952,7 +3952,6 @@
       "Architecture": "Architecture",
       "ArtifactDetails": "Détails d'artefacts",
       "AutoScalingRule": "Règle de mise à l'échelle automatique",
-      "BackToUserView": "Quitter les paramètres d'administration",
       "Branding": "Personnalisation de la marque",
       "Cancel": "Annuler",
       "ChangePassword": "Changer le mot de passe",
@@ -4042,6 +4041,8 @@
       "Start": "Commencer",
       "Statistics": "Statistiques",
       "Summary": "Résumé",
+      "SwitchToAdminView": "Passer à la vue administrateur",
+      "SwitchToUserView": "Passer à la vue utilisateur",
       "Tasks": "Tâches",
       "TermsOfService": "Conditions d'utilisation",
       "TotalResourcesIn": "Ressources totales dans",

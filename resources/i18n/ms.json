@@ -3727,15 +3727,15 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingMenuText": "Buka menu profil pengguna di atas kanan: \"Keluar dari Tetapan Pentadbir\" membawa anda ke halaman pengguna, dan \"Tetapan Pentadbir\" membawa anda kembali ke sini.",
+      "AdminLandingMenuText": "Buka menu profil pengguna di atas kanan: \"Tukar ke Paparan Pengguna\" membawa anda ke halaman pengguna, dan \"Tukar ke Paparan Pentadbir\" membawa anda kembali ke sini.",
       "AdminLandingMenuTitle": "Tetapan Pentadbir berpindah ke menu profil",
       "AdminLandingStartText": "Selepas log masuk, anda kini terus masuk ke tetapan pentadbir dan bukan halaman pengguna.",
       "AdminLandingStartTitle": "Anda bermula di tetapan pentadbir",
       "AdminLandingText": "Berikut perubahannya.",
       "AdminLandingTitle": "Paparan superpentadbir telah berubah",
-      "BackToAdminSettingsText": "Untuk kembali ke tetapan pentadbir, buka menu ini dan pilih \"Tetapan Pentadbir\".",
+      "BackToAdminSettingsText": "Untuk kembali ke tetapan pentadbir, buka menu ini dan pilih \"Tukar ke Paparan Pentadbir\".",
       "BackToAdminSettingsTitle": "Kembali ke tetapan pentadbir",
-      "BackToUserViewText": "Anda berada dalam tetapan pentadbir. Untuk menggunakan sesi, data dan halaman pengguna lain, buka menu ini dan pilih \"Keluar dari Tetapan Pentadbir\".",
+      "BackToUserViewText": "Anda berada dalam tetapan pentadbir. Untuk menggunakan sesi, data dan halaman pengguna lain, buka menu ini dan pilih \"Tukar ke Paparan Pengguna\".",
       "BackToUserViewTitle": "Beralih ke paparan pengguna"
     },
     "deploymentPreset": {
@@ -3949,7 +3949,6 @@
       "Architecture": "Seni bina",
       "ArtifactDetails": "Butiran artifak",
       "AutoScalingRule": "Peraturan Penskalaan Auto",
-      "BackToUserView": "Keluar dari Tetapan Pentadbir",
       "Branding": "Penjenamaan",
       "Cancel": "Batal",
       "ChangePassword": "Tukar kata laluan",
@@ -4039,6 +4038,8 @@
       "Start": "Mulakan",
       "Statistics": "Statistik",
       "Summary": "Ringkasan",
+      "SwitchToAdminView": "Tukar ke Paparan Pentadbir",
+      "SwitchToUserView": "Tukar ke Paparan Pengguna",
       "Tasks": "Tugasan",
       "TermsOfService": "Syarat perkhidmatan",
       "TotalResourcesIn": "Jumlah sumber dalam",
