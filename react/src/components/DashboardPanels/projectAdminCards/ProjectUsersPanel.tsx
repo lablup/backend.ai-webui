@@ -68,7 +68,12 @@ const ProjectUserCounts: React.FC<{ projectId: string; fetchKey: string }> = ({
     : [];
 
   return (
-    <BAIFlex direction="column" align="stretch" gap="sm">
+    <BAIFlex
+      direction="column"
+      align="stretch"
+      gap="sm"
+      style={{ flex: 1, minHeight: 0 }}
+    >
       <DonutChart
         label={t('webui.menu.Users')}
         emptyText={t('dashboard.card.NoUsers')}
