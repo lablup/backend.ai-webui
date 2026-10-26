@@ -14,7 +14,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-const STAT_FLEX = { flex: '1 1 96px' } as const;
+// Three equal columns, so the labels and values line up whatever the counts are.
+const STAT_COLUMN = { flex: '1 1 0', minWidth: 0 } as const;
 
 const MyFolderCounts: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
   'use memo';
@@ -60,28 +61,31 @@ const MyFolderCounts: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
   );
   const max = data.myUserResourcePolicyV2?.maxVfolderCount;
 
+  const invitationCount = invitations.length;
+
   return (
-    <BAIFlex direction="row" gap="lg" wrap="wrap" align="start">
-      <BAIFlex style={STAT_FLEX} direction="column">
+    <BAIFlex direction="row" gap="lg" align="start">
+      <BAIFlex style={STAT_COLUMN} direction="column" align="start">
         <Stat
-          label={t('data.MyFolders')}
+          label={t('data.Folders')}
           value={String(data.folders?.count ?? 0)}
           description={
             max ? t('dashboard.card.FolderLimit', { max }) : undefined
           }
         />
       </BAIFlex>
-      <BAIFlex style={STAT_FLEX} direction="column">
+      <BAIFlex style={STAT_COLUMN} direction="column" align="start">
         <Stat
           label={t('data.folders.TrashBin')}
           value={String(data.trash?.count ?? 0)}
         />
       </BAIFlex>
-      <BAIFlex style={STAT_FLEX} direction="column">
+      <BAIFlex style={STAT_COLUMN} direction="column" align="start">
         <Stat
-          label={t('data.InvitedFolders')}
-          value={
-            invitations.length > 0 ? (
+          label={t('data.Invited')}
+          value={String(invitationCount)}
+          media={
+            invitationCount > 0 ? (
               <BAILink
                 onClick={() =>
                   webuiNavigate({
@@ -92,16 +96,9 @@ const MyFolderCounts: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
                   })
                 }
               >
-                {invitations.length}
+                {t('data.InvitedFoldersTooltip', { count: invitationCount })}
               </BAILink>
-            ) : (
-              '0'
-            )
-          }
-          description={
-            invitations.length > 0
-              ? t('data.InvitedFoldersTooltip', { count: invitations.length })
-              : undefined
+            ) : undefined
           }
         />
       </BAIFlex>
