@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { MyDeploymentsPanelQuery } from '../../../__generated__/MyDeploymentsPanelQuery.graphql';
-import { useWebUINavigate } from '../../../hooks';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
 import { useProjectPath } from '../../../hooks/useRouteScope';
 import type { PanelComponentProps } from '../types';
@@ -11,6 +10,7 @@ import MemberCard, { NoProjectText, mineProjectId } from './MemberCard';
 import { Badge } from '@lablup/ui-common/Badge';
 import {
   BAIModelDeploymentNodes,
+  BAINameActionCell,
   filterOutNullAndUndefined,
   toLocalId,
 } from 'backend.ai-ui';
@@ -26,7 +26,6 @@ const MyDeploymentsTable: React.FC<{ projectId: string; fetchKey: string }> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
   const {
     baiPaginationOption,
@@ -100,10 +99,18 @@ const MyDeploymentsTable: React.FC<{ projectId: string; fetchKey: string }> = ({
             column.key === 'name'
               ? {
                   ...column,
-                  onTitleClick: (record: { id: string }) =>
-                    webuiNavigate(
-                      `${buildProjectPath('deployments')}/${toLocalId(record.id)}`,
-                    ),
+                  render: (
+                    _value: unknown,
+                    record: {
+                      id: string;
+                      metadata?: { name?: string | null } | null;
+                    },
+                  ) => (
+                    <BAINameActionCell
+                      title={record.metadata?.name ?? '-'}
+                      to={`${buildProjectPath('deployments')}/${toLocalId(record.id)}`}
+                    />
+                  ),
                 }
               : column,
           ),
