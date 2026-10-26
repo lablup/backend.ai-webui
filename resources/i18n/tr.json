@@ -3727,15 +3727,15 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingMenuText": "Sağ üstteki kullanıcı profili menüsünü açın: \"Kullanıcı Görünümüne Geç\" sizi kullanıcı sayfalarına, \"Yönetici Görünümüne Geç\" ise buraya geri götürür.",
+      "AdminLandingMenuText": "Sağ üstteki kullanıcı profili menüsünü açın: \"Kullanıcı Konsoluna Geç\" sizi kullanıcı sayfalarına, \"Yönetici Konsoluna Geç\" ise buraya geri götürür.",
       "AdminLandingMenuTitle": "Yönetici Ayarları profil menüsüne taşındı",
       "AdminLandingStartText": "Oturum açtıktan sonra artık kullanıcı sayfaları yerine doğrudan yönetici ayarlarına girersiniz.",
       "AdminLandingStartTitle": "Yönetici ayarlarında başlarsınız",
       "AdminLandingText": "Değişenler şunlar.",
       "AdminLandingTitle": "Süper yönetici görünümü değişti",
-      "BackToAdminSettingsText": "Yönetici ayarlarına dönmek için bu menüyü açın ve \"Yönetici Görünümüne Geç\" seçeneğini seçin.",
+      "BackToAdminSettingsText": "Yönetici ayarlarına dönmek için bu menüyü açın ve \"Yönetici Konsoluna Geç\" seçeneğini seçin.",
       "BackToAdminSettingsTitle": "Yönetici ayarlarına dönmek",
-      "BackToUserViewText": "Yönetici ayarlarındasınız. Oturumları, verileri ve diğer kullanıcı sayfalarını kullanmak için bu menüyü açın ve \"Kullanıcı Görünümüne Geç\" seçeneğini seçin.",
+      "BackToUserViewText": "Yönetici ayarlarındasınız. Oturumları, verileri ve diğer kullanıcı sayfalarını kullanmak için bu menüyü açın ve \"Kullanıcı Konsoluna Geç\" seçeneğini seçin.",
       "BackToUserViewTitle": "Kullanıcı görünümüne geçmek"
     },
     "deploymentPreset": {
@@ -4038,8 +4038,8 @@
       "Start": "Başlangıç",
       "Statistics": "İstatistik",
       "Summary": "Özet",
-      "SwitchToAdminView": "Yönetici Görünümüne Geç",
-      "SwitchToUserView": "Kullanıcı Görünümüne Geç",
+      "SwitchToAdminConsole": "Yönetici Konsoluna Geç",
+      "SwitchToUserConsole": "Kullanıcı Konsoluna Geç",
       "Tasks": "Görevler",
       "TermsOfService": "Kullanım Şartları",
       "TotalResourcesIn": "Toplam Kaynaklar",

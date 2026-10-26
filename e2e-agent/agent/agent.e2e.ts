@@ -11,7 +11,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Switch to Admin View"');
+    await agent.act('Choose "Switch to Admin Console"');
     await agent.act('Open "Resources" from the side menu');
     await agent.act('Open the "Agent" tab');
     await agent.act('Choose the "Connected" filter');

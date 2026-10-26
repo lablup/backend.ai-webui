@@ -3727,16 +3727,16 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingMenuText": "Abra el menú del perfil de usuario arriba a la derecha: \"Cambiar a la vista de usuario\" le lleva a las páginas de usuario y \"Cambiar a la vista de administrador\" le trae de vuelta aquí.",
+      "AdminLandingMenuText": "Abra el menú del perfil de usuario arriba a la derecha: \"Cambiar a la consola de usuario\" le lleva a las páginas de usuario y \"Cambiar a la consola de administrador\" le trae de vuelta aquí.",
       "AdminLandingMenuTitle": "Los ajustes de administrador se movieron al menú de perfil",
       "AdminLandingStartText": "Al iniciar sesión, ahora entra directamente en los ajustes de administrador en lugar de las páginas de usuario.",
       "AdminLandingStartTitle": "Empieza en los ajustes de administrador",
       "AdminLandingText": "Estos son los cambios.",
       "AdminLandingTitle": "La vista de superadministrador ha cambiado",
-      "BackToAdminSettingsText": "Para volver a los ajustes de administrador, abra este menú y elija \"Cambiar a la vista de administrador\".",
+      "BackToAdminSettingsText": "Para volver a los ajustes de administrador, abra este menú y elija \"Cambiar a la consola de administrador\".",
       "BackToAdminSettingsTitle": "Volver a los ajustes de administrador",
-      "BackToUserViewText": "Está en los ajustes de administrador. Para usar sesiones, datos y las demás páginas de usuario, abra este menú y elija \"Cambiar a la vista de usuario\".",
-      "BackToUserViewTitle": "Cambiar a la vista de usuario"
+      "BackToUserViewText": "Está en los ajustes de administrador. Para usar sesiones, datos y las demás páginas de usuario, abra este menú y elija \"Cambiar a la consola de usuario\".",
+      "BackToUserViewTitle": "Cambiar a la consola de usuario"
     },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "Si hay un campo de error, el botón Crear o Guardar está deshabilitado. Corrija el error y vuelva a intentarlo.",
@@ -4038,8 +4038,8 @@
       "Start": "Comenzar",
       "Statistics": "Estadísticas",
       "Summary": "Resumen",
-      "SwitchToAdminView": "Cambiar a la vista de administrador",
-      "SwitchToUserView": "Cambiar a la vista de usuario",
+      "SwitchToAdminConsole": "Cambiar a la consola de administrador",
+      "SwitchToUserConsole": "Cambiar a la consola de usuario",
       "Tasks": "Tareas",
       "TermsOfService": "Condiciones de uso",
       "TotalResourcesIn": "Recursos totales en",

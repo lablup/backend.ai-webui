@@ -10,7 +10,7 @@ const draft = {
 test("click the Recalculate Usage button", draft, async ({ app, agent }) => {
   await app.open("/start");
   await agent.act("Open the user menu in the header");
-  await agent.act('Choose "Switch to Admin View"');
+  await agent.act('Choose "Switch to Admin Console"');
   await agent.act('Open "Maintenance" from the side menu');
   await agent.act('Press "Recalculate Usage"');
 });
@@ -19,7 +19,7 @@ test("click the Recalculate Usage button", draft, async ({ app, agent }) => {
 test("click the Rescan Images button", draft, async ({ app, agent }) => {
   await app.open("/start");
   await agent.act("Open the user menu in the header");
-  await agent.act('Choose "Switch to Admin View"');
+  await agent.act('Choose "Switch to Admin Console"');
   await agent.act('Open "Maintenance" from the side menu');
   await agent.act('Press "Rescan Images"');
 });
@@ -31,7 +31,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Switch to Admin View"');
+    await agent.act('Choose "Switch to Admin Console"');
     await agent.act('Open "Maintenance" from the side menu');
     await agent.act('Press "Edit Announcement"');
     await agent.act('Press "Publish" without a title');
@@ -48,7 +48,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Switch to Admin View"');
+    await agent.act('Choose "Switch to Admin Console"');
     await agent.act('Open "Maintenance" from the side menu');
     await agent.act('Press "Edit Announcement"');
     await agent.act("Enter a title and a body for the announcement");

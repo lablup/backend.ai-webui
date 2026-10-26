@@ -168,12 +168,12 @@ const UserDropdownMenu: React.FC<{
     systemAdminMenuItem &&
       (isSystemAdminScope
         ? {
-            label: t('webui.menu.SwitchToUserView'),
+            label: t('webui.menu.SwitchToUserConsole'),
             icon: <ArrowLeftRight size="1em" />,
             onClick: backToUserView,
           }
         : {
-            label: t('webui.menu.SwitchToAdminView'),
+            label: t('webui.menu.SwitchToAdminConsole'),
             icon: <ArrowLeftRight size="1em" />,
             onClick: () => {
               webuiNavigate(

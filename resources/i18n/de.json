@@ -3729,16 +3729,16 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingMenuText": "Öffnen Sie das Benutzerprofilmenü oben rechts: \"Zur Benutzeransicht wechseln\" führt zu den Benutzerseiten, \"Zur Admin-Ansicht wechseln\" bringt Sie hierher zurück.",
+      "AdminLandingMenuText": "Öffnen Sie das Benutzerprofilmenü oben rechts: \"Zur Benutzerkonsole wechseln\" führt zu den Benutzerseiten, \"Zur Admin-Konsole wechseln\" bringt Sie hierher zurück.",
       "AdminLandingMenuTitle": "Admin-Einstellungen sind ins Profilmenü umgezogen",
       "AdminLandingStartText": "Nach der Anmeldung gelangen Sie jetzt direkt zu den Admin-Einstellungen statt zu den Benutzerseiten.",
       "AdminLandingStartTitle": "Sie starten in den Admin-Einstellungen",
       "AdminLandingText": "Das hat sich geändert.",
       "AdminLandingTitle": "Die Superadmin-Ansicht hat sich geändert",
-      "BackToAdminSettingsText": "Um zu den Admin-Einstellungen zurückzukehren, öffnen Sie dieses Menü und wählen Sie \"Zur Admin-Ansicht wechseln\".",
+      "BackToAdminSettingsText": "Um zu den Admin-Einstellungen zurückzukehren, öffnen Sie dieses Menü und wählen Sie \"Zur Admin-Konsole wechseln\".",
       "BackToAdminSettingsTitle": "Zurück zu den Admin-Einstellungen",
-      "BackToUserViewText": "Sie befinden sich in den Admin-Einstellungen. Um Sitzungen, Daten und die anderen Benutzerseiten zu nutzen, öffnen Sie dieses Menü und wählen Sie \"Zur Benutzeransicht wechseln\".",
-      "BackToUserViewTitle": "Zur Benutzeransicht wechseln"
+      "BackToUserViewText": "Sie befinden sich in den Admin-Einstellungen. Um Sitzungen, Daten und die anderen Benutzerseiten zu nutzen, öffnen Sie dieses Menü und wählen Sie \"Zur Benutzerkonsole wechseln\".",
+      "BackToUserViewTitle": "Zur Benutzerkonsole wechseln"
     },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "Wenn ein Fehlerfeld vorhanden ist, ist die Schaltfläche „Erstellen“ oder „Speichern“ deaktiviert. Bitte beheben Sie den Fehler und versuchen Sie es erneut.",
@@ -4040,8 +4040,8 @@
       "Start": "Start",
       "Statistics": "Statistiken",
       "Summary": "Zusammenfassung",
-      "SwitchToAdminView": "Zur Admin-Ansicht wechseln",
-      "SwitchToUserView": "Zur Benutzeransicht wechseln",
+      "SwitchToAdminConsole": "Zur Admin-Konsole wechseln",
+      "SwitchToUserConsole": "Zur Benutzerkonsole wechseln",
       "Tasks": "Aufgaben",
       "TermsOfService": "Nutzungsbedingungen",
       "TotalResourcesIn": "Gesamtressourcen in",

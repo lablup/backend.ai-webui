@@ -3730,15 +3730,15 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingMenuText": "Otwórz menu profilu użytkownika w prawym górnym rogu: \"Przełącz na widok użytkownika\" prowadzi do stron użytkownika, a \"Przełącz na widok admina\" przywraca Cię tutaj.",
+      "AdminLandingMenuText": "Otwórz menu profilu użytkownika w prawym górnym rogu: \"Przełącz na konsolę użytkownika\" prowadzi do stron użytkownika, a \"Przełącz na konsolę admina\" przywraca Cię tutaj.",
       "AdminLandingMenuTitle": "Ustawienia admina przeniesiono do menu profilu",
       "AdminLandingStartText": "Po zalogowaniu trafiasz teraz bezpośrednio do ustawień admina zamiast na strony użytkownika.",
       "AdminLandingStartTitle": "Zaczynasz w ustawieniach admina",
       "AdminLandingText": "Oto zmiany.",
       "AdminLandingTitle": "Widok superadministratora się zmienił",
-      "BackToAdminSettingsText": "Aby wrócić do ustawień admina, otwórz to menu i wybierz \"Przełącz na widok admina\".",
+      "BackToAdminSettingsText": "Aby wrócić do ustawień admina, otwórz to menu i wybierz \"Przełącz na konsolę admina\".",
       "BackToAdminSettingsTitle": "Powrót do ustawień admina",
-      "BackToUserViewText": "Jesteś w ustawieniach admina. Aby korzystać z sesji, danych i innych stron użytkownika, otwórz to menu i wybierz \"Przełącz na widok użytkownika\".",
+      "BackToUserViewText": "Jesteś w ustawieniach admina. Aby korzystać z sesji, danych i innych stron użytkownika, otwórz to menu i wybierz \"Przełącz na konsolę użytkownika\".",
       "BackToUserViewTitle": "Przejście do widoku użytkownika"
     },
     "deploymentPreset": {
@@ -4041,8 +4041,8 @@
       "Start": "Start",
       "Statistics": "Statystyka",
       "Summary": "streszczenie",
-      "SwitchToAdminView": "Przełącz na widok admina",
-      "SwitchToUserView": "Przełącz na widok użytkownika",
+      "SwitchToAdminConsole": "Przełącz na konsolę admina",
+      "SwitchToUserConsole": "Przełącz na konsolę użytkownika",
       "Tasks": "Zadania",
       "TermsOfService": "Warunki usługi",
       "TotalResourcesIn": "Całkowite zasoby w",

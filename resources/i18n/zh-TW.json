@@ -3731,16 +3731,16 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingMenuText": "開啟右上角的使用者個人資料選單：選擇「切換到使用者檢視」前往使用者頁面，選擇「切換到管理員檢視」回到這裡。",
+      "AdminLandingMenuText": "開啟右上角的使用者個人資料選單：選擇「切換到使用者主控台」前往使用者頁面，選擇「切換到管理員主控台」回到這裡。",
       "AdminLandingMenuTitle": "管理員設定已移至個人資料選單",
       "AdminLandingStartText": "登入後，您現在會直接進入管理員設定，而不是使用者頁面。",
       "AdminLandingStartTitle": "從管理員設定開始",
       "AdminLandingText": "以下是變更內容。",
       "AdminLandingTitle": "超級管理員介面已更新",
-      "BackToAdminSettingsText": "要返回管理員設定，請開啟此選單並選擇「切換到管理員檢視」。",
+      "BackToAdminSettingsText": "要返回管理員設定，請開啟此選單並選擇「切換到管理員主控台」。",
       "BackToAdminSettingsTitle": "返回管理員設定",
-      "BackToUserViewText": "您正在管理員設定中。要使用會話、資料等使用者頁面，請開啟此選單並選擇「切換到使用者檢視」。",
-      "BackToUserViewTitle": "切換到使用者檢視"
+      "BackToUserViewText": "您正在管理員設定中。要使用會話、資料等使用者頁面，請開啟此選單並選擇「切換到使用者主控台」。",
+      "BackToUserViewTitle": "切換到使用者主控台"
     },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "如果存在錯誤欄位，則「建立」或「保存」按鈕將被停用。請更正錯誤並重試。",
@@ -4042,8 +4042,8 @@
       "Start": "開始",
       "Statistics": "統計數據",
       "Summary": "概括",
-      "SwitchToAdminView": "切換到管理員檢視",
-      "SwitchToUserView": "切換到使用者檢視",
+      "SwitchToAdminConsole": "切換到管理員主控台",
+      "SwitchToUserConsole": "切換到使用者主控台",
       "Tasks": "任务",
       "TermsOfService": "服務條款",
       "TotalResourcesIn": "總資源中",

@@ -13,7 +13,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Switch to Admin View"');
+    await agent.act('Choose "Switch to Admin Console"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act('Open the "Registries" tab');
   },
@@ -26,7 +26,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Switch to Admin View"');
+    await agent.act('Choose "Switch to Admin Console"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act('Open the "Registries" tab');
   },
@@ -39,7 +39,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Switch to Admin View"');
+    await agent.act('Choose "Switch to Admin Console"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act('Open the "Registries" tab');
   },
@@ -52,7 +52,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Switch to Admin View"');
+    await agent.act('Choose "Switch to Admin Console"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act('Open the "Registries" tab');
   },
@@ -65,7 +65,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Switch to Admin View"');
+    await agent.act('Choose "Switch to Admin Console"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act('Open the "Registries" tab');
     await agent.act('Press "Add Registry"');
@@ -80,7 +80,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Switch to Admin View"');
+    await agent.act('Choose "Switch to Admin Console"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act('Open the "Registries" tab');
     await agent.act("Find the newly added registry in the table");
@@ -94,7 +94,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Switch to Admin View"');
+    await agent.act('Choose "Switch to Admin Console"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act('Open the "Registries" tab');
     await agent.act("Press Edit on the added registry");
@@ -109,7 +109,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Switch to Admin View"');
+    await agent.act('Choose "Switch to Admin Console"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act('Open the "Registries" tab');
     await agent.act("Find the edited registry in the table");
@@ -123,7 +123,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Switch to Admin View"');
+    await agent.act('Choose "Switch to Admin Console"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act('Open the "Registries" tab');
     await agent.act('Press "Add Registry" and look at "Is Global"');
@@ -137,7 +137,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Switch to Admin View"');
+    await agent.act('Choose "Switch to Admin Console"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act('Open the "Registries" tab');
     await agent.act("Press delete on the added registry");
@@ -152,7 +152,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Switch to Admin View"');
+    await agent.act('Choose "Switch to Admin Console"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act('Open the "Registries" tab');
     await agent.act("Toggle a registry's Enabled switch and toggle it back");
@@ -166,7 +166,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Switch to Admin View"');
+    await agent.act('Choose "Switch to Admin Console"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act('Open the "Registries" tab');
     await agent.act("Press delete on a registry and type a wrong name");
@@ -180,7 +180,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Switch to Admin View"');
+    await agent.act('Choose "Switch to Admin Console"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act('Open the "Registries" tab');
     await agent.act('Press delete on a registry and then "Cancel"');
@@ -194,7 +194,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Switch to Admin View"');
+    await agent.act('Choose "Switch to Admin Console"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act('Open the "Registries" tab');
     await agent.act("Press Edit on an existing registry");
@@ -208,7 +208,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Switch to Admin View"');
+    await agent.act('Choose "Switch to Admin Console"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act('Open the "Registries" tab');
     await agent.act("Press Edit on an existing registry");
@@ -223,7 +223,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Switch to Admin View"');
+    await agent.act('Choose "Switch to Admin Console"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act('Open the "Registries" tab');
     await agent.act("Filter the registries by part of a registry name");
@@ -237,7 +237,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Switch to Admin View"');
+    await agent.act('Choose "Switch to Admin Console"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act('Open the "Registries" tab');
     await agent.act("Filter the registries by a name no registry has");
@@ -251,7 +251,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Switch to Admin View"');
+    await agent.act('Choose "Switch to Admin Console"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act('Open the "Registries" tab');
     await agent.act("Filter the registries by name");
@@ -266,7 +266,7 @@ test(
   async ({ app, agent }) => {
     await app.open("/start");
     await agent.act("Open the user menu in the header");
-    await agent.act('Choose "Switch to Admin View"');
+    await agent.act('Choose "Switch to Admin Console"');
     await agent.act('Open "Environments" from the side menu');
     await agent.act('Open the "Registries" tab');
     await agent.act("Open the filter bar's field list");

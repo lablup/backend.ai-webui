@@ -3727,15 +3727,15 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingMenuText": "Apri il menu del profilo utente in alto a destra: \"Passa alla vista utente\" porta alle pagine utente e \"Passa alla vista amministratore\" ti riporta qui.",
+      "AdminLandingMenuText": "Apri il menu del profilo utente in alto a destra: \"Passa alla console utente\" porta alle pagine utente e \"Passa alla console amministratore\" ti riporta qui.",
       "AdminLandingMenuTitle": "Le impostazioni amministratore sono nel menu del profilo",
       "AdminLandingStartText": "Dopo il login ora accedi direttamente alle impostazioni amministratore invece che alle pagine utente.",
       "AdminLandingStartTitle": "Inizi dalle impostazioni amministratore",
       "AdminLandingText": "Ecco cosa cambia.",
       "AdminLandingTitle": "La vista del superamministratore è cambiata",
-      "BackToAdminSettingsText": "Per tornare alle impostazioni amministratore, apri questo menu e scegli \"Passa alla vista amministratore\".",
+      "BackToAdminSettingsText": "Per tornare alle impostazioni amministratore, apri questo menu e scegli \"Passa alla console amministratore\".",
       "BackToAdminSettingsTitle": "Tornare alle impostazioni amministratore",
-      "BackToUserViewText": "Sei nelle impostazioni amministratore. Per usare sessioni, dati e le altre pagine utente, apri questo menu e scegli \"Passa alla vista utente\".",
+      "BackToUserViewText": "Sei nelle impostazioni amministratore. Per usare sessioni, dati e le altre pagine utente, apri questo menu e scegli \"Passa alla console utente\".",
       "BackToUserViewTitle": "Passare alla vista utente"
     },
     "deploymentPreset": {
@@ -4038,8 +4038,8 @@
       "Start": "Inizio",
       "Statistics": "Statistiche",
       "Summary": "Sommario",
-      "SwitchToAdminView": "Passa alla vista amministratore",
-      "SwitchToUserView": "Passa alla vista utente",
+      "SwitchToAdminConsole": "Passa alla console amministratore",
+      "SwitchToUserConsole": "Passa alla console utente",
       "Tasks": "Compiti",
       "TermsOfService": "Termini di servizio",
       "TotalResourcesIn": "Risorse totali in",

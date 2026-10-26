@@ -3729,16 +3729,16 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingMenuText": "Mở menu hồ sơ người dùng ở góc trên bên phải: \"Chuyển sang giao diện người dùng\" đưa bạn đến các trang người dùng, còn \"Chuyển sang giao diện quản trị\" đưa bạn quay lại đây.",
+      "AdminLandingMenuText": "Mở menu hồ sơ người dùng ở góc trên bên phải: \"Chuyển sang bảng điều khiển người dùng\" đưa bạn đến các trang người dùng, còn \"Chuyển sang bảng điều khiển quản trị\" đưa bạn quay lại đây.",
       "AdminLandingMenuTitle": "Cài đặt quản trị đã chuyển vào menu hồ sơ",
       "AdminLandingStartText": "Sau khi đăng nhập, giờ bạn vào thẳng cài đặt quản trị thay vì các trang người dùng.",
       "AdminLandingStartTitle": "Bạn bắt đầu từ cài đặt quản trị",
       "AdminLandingText": "Dưới đây là những thay đổi.",
       "AdminLandingTitle": "Giao diện siêu quản trị viên đã thay đổi",
-      "BackToAdminSettingsText": "Để quay lại cài đặt quản trị, hãy mở menu này và chọn \"Chuyển sang giao diện quản trị\".",
+      "BackToAdminSettingsText": "Để quay lại cài đặt quản trị, hãy mở menu này và chọn \"Chuyển sang bảng điều khiển quản trị\".",
       "BackToAdminSettingsTitle": "Quay lại cài đặt quản trị",
-      "BackToUserViewText": "Bạn đang ở cài đặt quản trị. Để dùng phiên, dữ liệu và các trang người dùng khác, hãy mở menu này và chọn \"Chuyển sang giao diện người dùng\".",
-      "BackToUserViewTitle": "Chuyển sang giao diện người dùng"
+      "BackToUserViewText": "Bạn đang ở cài đặt quản trị. Để dùng phiên, dữ liệu và các trang người dùng khác, hãy mở menu này và chọn \"Chuyển sang bảng điều khiển người dùng\".",
+      "BackToUserViewTitle": "Chuyển sang bảng điều khiển người dùng"
     },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "Nếu có trường lỗi, nút Tạo hoặc Lưu sẽ bị tắt. Vui lòng sửa lỗi và thử lại.",
@@ -4040,8 +4040,8 @@
       "Start": "Bắt đầu",
       "Statistics": "Số liệu thống kê",
       "Summary": "Tóm lược",
-      "SwitchToAdminView": "Chuyển sang giao diện quản trị",
-      "SwitchToUserView": "Chuyển sang giao diện người dùng",
+      "SwitchToAdminConsole": "Chuyển sang bảng điều khiển quản trị",
+      "SwitchToUserConsole": "Chuyển sang bảng điều khiển người dùng",
       "Tasks": "Nhiệm vụ",
       "TermsOfService": "Điều khoản dịch vụ",
       "TotalResourcesIn": "Tổng tài nguyên trong",

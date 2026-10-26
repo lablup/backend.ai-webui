@@ -3729,16 +3729,16 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingMenuText": "打开右上角的用户资料菜单：选择“切换到用户视图”进入用户页面，选择“切换到管理员视图”回到这里。",
+      "AdminLandingMenuText": "打开右上角的用户资料菜单：选择“切换到用户控制台”进入用户页面，选择“切换到管理员控制台”回到这里。",
       "AdminLandingMenuTitle": "管理员设置已移至个人资料菜单",
       "AdminLandingStartText": "登录后，您现在会直接进入管理员设置，而不是用户页面。",
       "AdminLandingStartTitle": "从管理员设置开始",
       "AdminLandingText": "以下是变更内容。",
       "AdminLandingTitle": "超级管理员界面已更新",
-      "BackToAdminSettingsText": "要返回管理员设置，请打开此菜单并选择“切换到管理员视图”。",
+      "BackToAdminSettingsText": "要返回管理员设置，请打开此菜单并选择“切换到管理员控制台”。",
       "BackToAdminSettingsTitle": "返回管理员设置",
-      "BackToUserViewText": "您正在管理员设置中。要使用会话、数据等用户页面，请打开此菜单并选择“切换到用户视图”。",
-      "BackToUserViewTitle": "切换到用户视图"
+      "BackToUserViewText": "您正在管理员设置中。要使用会话、数据等用户页面，请打开此菜单并选择“切换到用户控制台”。",
+      "BackToUserViewTitle": "切换到用户控制台"
     },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "如果存在错误字段，则“创建”或“保存”按钮将被禁用。请更正错误并重试。",
@@ -4040,8 +4040,8 @@
       "Start": "开始",
       "Statistics": "统计数据",
       "Summary": "概括",
-      "SwitchToAdminView": "切换到管理员视图",
-      "SwitchToUserView": "切换到用户视图",
+      "SwitchToAdminConsole": "切换到管理员控制台",
+      "SwitchToUserConsole": "切换到用户控制台",
       "Tasks": "任务",
       "TermsOfService": "服务条款",
       "TotalResourcesIn": "总资源中",
