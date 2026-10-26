@@ -45,10 +45,7 @@ const PaddedSkeleton: React.FC = () => {
   return <BAISkeleton style={{ padding: token('--spacing-5') }} />;
 };
 
-const MySessionPanel: React.FC<PanelComponentProps> = ({
-  queryRefs,
-  isRefetching,
-}) => {
+const MySessionPanel: React.FC<PanelComponentProps> = ({ queryRefs }) => {
   'use memo';
   const { t } = useTranslation();
   const userRole = useCurrentUserRole();
@@ -56,7 +53,6 @@ const MySessionPanel: React.FC<PanelComponentProps> = ({
     <Suspense fallback={<InlineSkeleton />}>
       <SessionCountDashboardItem
         queryRef={queryRefs.queryRef}
-        isRefetching={isRefetching}
         title={
           userRole === 'superadmin'
             ? t('session.ActiveSessions')
@@ -67,17 +63,13 @@ const MySessionPanel: React.FC<PanelComponentProps> = ({
   );
 };
 
-const ActiveSessionsPanel: React.FC<PanelComponentProps> = ({
-  queryRefs,
-  isRefetching,
-}) => {
+const ActiveSessionsPanel: React.FC<PanelComponentProps> = ({ queryRefs }) => {
   'use memo';
   const { t } = useTranslation();
   return (
     <Suspense fallback={<InlineSkeleton />}>
       <SessionCountDashboardItem
         queryRef={queryRefs.queryRef}
-        isRefetching={isRefetching}
         title={t('session.ActiveSessions')}
       />
     </Suspense>
@@ -96,7 +88,11 @@ const MyResourcePanel: React.FC<PanelComponentProps> = ({
       status="error"
     >
       <Suspense fallback={<PaddedSkeleton />}>
-        <MyResource fetchKey={fetchKey} refetching={isRefetching} />
+        <MyResource
+          fetchKey={fetchKey}
+          refetching={isRefetching}
+          hideRefreshButton
+        />
       </Suspense>
     </BAIBoardItemErrorBoundary>
   );
@@ -117,6 +113,7 @@ const MyResourceWithinResourceGroupPanel: React.FC<PanelComponentProps> = ({
         <MyResourceWithinResourceGroup
           fetchKey={fetchKey}
           refetching={isRefetching}
+          hideRefreshButton
         />
       </Suspense>
     </BAIBoardItemErrorBoundary>
@@ -169,21 +166,16 @@ const TotalResourceWithinResourceGroupPanel: React.FC<PanelComponentProps> = ({
     <TotalResourceWithinResourceGroup
       queryRef={queryRefs.totalResourceQueryRef}
       refetching={isRefetching}
+      hideRefreshButton
     />
   ) : null;
 };
 
-const AgentStatsPanel: React.FC<PanelComponentProps> = ({
-  queryRefs,
-  isRefetching,
-}) => {
+const AgentStatsPanel: React.FC<PanelComponentProps> = ({ queryRefs }) => {
   'use memo';
   return queryRefs.agentStatsQueryRef ? (
     <Suspense fallback={<InlineSkeleton />}>
-      <AgentStats
-        queryRef={queryRefs.agentStatsQueryRef}
-        isRefetching={isRefetching}
-      />
+      <AgentStats queryRef={queryRefs.agentStatsQueryRef} />
     </Suspense>
   ) : null;
 };
@@ -202,14 +194,12 @@ const ActiveAgentsPanel: React.FC<PanelComponentProps> = ({
 
 const RecentlyCreatedSessionPanel: React.FC<PanelComponentProps> = ({
   queryRefs,
-  isRefetching,
 }) => {
   'use memo';
   const currentProject = useCurrentProjectValue();
   return (
     <RecentlyCreatedSession
       queryRef={queryRefs.queryRef}
-      isRefetching={isRefetching}
       // The dashboards are project-scoped (ADR-0001 page-level narrowing).
       project={toProjectContext(currentProject)}
     />

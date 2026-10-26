@@ -32,18 +32,16 @@ const SessionResourceGridPanel: React.FC<PanelKindProps> = ({
 
   return (
     <PanelFrame title={title} onEdit={onEdit} onRemove={onRemove}>
-      {(localFetchKey) => (
-        <Suspense fallback={<BAISkeleton />}>
-          {/* Keyed by the query-shaping config so a condition edit resets the
+      <Suspense fallback={<BAISkeleton />}>
+        {/* Keyed by the query-shaping config so a condition edit resets the
               grid and retries out of a stuck error state; `fetchKey` is out of
               the key so a periodic refresh doesn't flash the skeleton. */}
-          <SessionResourceGridContent
-            key={`${JSON.stringify(descriptor.filter ?? null)}:${descriptor.order ?? ''}`}
-            descriptor={descriptor}
-            fetchKey={`${fetchKey ?? ''}:${localFetchKey}`}
-          />
-        </Suspense>
-      )}
+        <SessionResourceGridContent
+          key={`${JSON.stringify(descriptor.filter ?? null)}:${descriptor.order ?? ''}`}
+          descriptor={descriptor}
+          fetchKey={fetchKey}
+        />
+      </Suspense>
     </PanelFrame>
   );
 };

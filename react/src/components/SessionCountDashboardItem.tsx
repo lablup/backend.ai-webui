@@ -10,30 +10,25 @@ import {
   BAIFlexProps,
   BAIRowWrapWithDividers,
   BAIStatistic,
-  BAIFetchKeyButton,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
 
 interface SessionCountDashboardItemProps extends BAIFlexProps {
   queryRef: SessionCountDashboardItemFragment$key;
-  isRefetching?: boolean;
   title?: string;
 }
 
 const SessionCountDashboardItem: React.FC<SessionCountDashboardItemProps> = ({
   queryRef,
-  isRefetching,
   title,
   ...props
 }) => {
   const { t } = useTranslation();
   const { token } = useTheme();
-  const [isPendingRefetch, startRefetchTransition] = useTransition();
 
-  const [data, refetch] = useRefetchableFragment(
+  const [data] = useRefetchableFragment(
     graphql`
         fragment  SessionCountDashboardItemFragment on Query
         @argumentDefinitions(
@@ -90,30 +85,7 @@ const SessionCountDashboardItem: React.FC<SessionCountDashboardItemProps> = ({
       {..._.omit(props, ['style'])}
     >
       {/* Fixed Title Section */}
-      <BAIBoardItemTitle
-        title={title}
-        extra={
-          <BAIFetchKeyButton
-            size="small"
-            loading={isPendingRefetch || isRefetching}
-            value=""
-            onChange={() => {
-              startRefetchTransition(() => {
-                refetch(
-                  {},
-                  {
-                    fetchPolicy: 'network-only',
-                  },
-                );
-              });
-            }}
-            type="text"
-            style={{
-              backgroundColor: 'transparent',
-            }}
-          />
-        }
-      />
+      <BAIBoardItemTitle title={title} />
       <BAIFlex direction="row" wrap="wrap" gap={'lg'}>
         <BAIRowWrapWithDividers
           style={{

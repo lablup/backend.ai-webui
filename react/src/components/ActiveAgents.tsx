@@ -4,8 +4,7 @@
  */
 import AgentList from './AgentList';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIBoardItemTitle, BAIFetchKeyButton, BAIFlex } from 'backend.ai-ui';
-import { useTransition } from 'react';
+import { BAIBoardItemTitle, BAIFlex } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 
 interface ActiveAgentsProps {
@@ -21,7 +20,6 @@ const ActiveAgents: React.FC<ActiveAgentsProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = useTheme();
-  const [isPendingRefetch, startRefetchTransition] = useTransition();
 
   return (
     <BAIFlex
@@ -37,22 +35,6 @@ const ActiveAgents: React.FC<ActiveAgentsProps> = ({
         tooltip={t('activeAgent.ActiveAgentsTooltip', {
           count: 5,
         })}
-        extra={
-          <BAIFetchKeyButton
-            size="small"
-            loading={isPendingRefetch}
-            value=""
-            onChange={(newFetchKey) => {
-              startRefetchTransition(() => {
-                onChangeFetchKey?.(newFetchKey);
-              });
-            }}
-            type="text"
-            style={{
-              backgroundColor: 'transparent',
-            }}
-          />
-        }
       />
 
       <BAIFlex

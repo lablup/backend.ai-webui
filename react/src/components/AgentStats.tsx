@@ -13,7 +13,6 @@ import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIBoardItemTitle,
   BAIDoubleBadge,
-  BAIFetchKeyButton,
   BAIFlex,
   BAIFlexProps,
   BAISkeleton,
@@ -23,13 +22,12 @@ import {
   useControllableValue,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { ReactNode, useTransition } from 'react';
+import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
 
 interface AgentStatsProps extends BAIFlexProps {
   queryRef: AgentStatsFragment$key;
-  isRefetching?: boolean;
   displayType?: 'used' | 'free';
   onDisplayTypeChange?: (type: 'used' | 'free') => void;
   extra?: ReactNode;
@@ -37,15 +35,12 @@ interface AgentStatsProps extends BAIFlexProps {
 
 const AgentStats: React.FC<AgentStatsProps> = ({
   queryRef,
-  isRefetching,
   extra,
   ...props
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
-
-  const [isPendingRefetch, startRefetchTransition] = useTransition();
 
   const [displayType, setDisplayType] = useControllableValue<
     Exclude<AgentStatsProps['displayType'], undefined>
@@ -55,7 +50,7 @@ const AgentStats: React.FC<AgentStatsProps> = ({
     defaultValuePropName: 'defaultDisplayType',
   });
 
-  const [data, refetch] = useRefetchableFragment(
+  const [data] = useRefetchableFragment(
     graphql`
       fragment AgentStatsFragment on Query
       @argumentDefinitions(
@@ -222,25 +217,6 @@ const AgentStats: React.FC<AgentStatsProps> = ({
               <SegmentedControlItem value="used" label={t('dashboard.Used')} />
               <SegmentedControlItem value="free" label={t('dashboard.Free')} />
             </SegmentedControl>
-            <BAIFetchKeyButton
-              size="small"
-              loading={isPendingRefetch || isRefetching}
-              value=""
-              onChange={() => {
-                startRefetchTransition(() => {
-                  refetch(
-                    {},
-                    {
-                      fetchPolicy: 'network-only',
-                    },
-                  );
-                });
-              }}
-              type="text"
-              style={{
-                backgroundColor: 'transparent',
-              }}
-            />
             {extra}
           </BAIFlex>
         }

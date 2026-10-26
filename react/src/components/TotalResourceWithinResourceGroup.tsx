@@ -165,6 +165,8 @@ const useRemainingAgents = ({
 interface TotalResourceWithinResourceGroupProps extends BAIFlexProps {
   queryRef: TotalResourceWithinResourceGroupFragment$key;
   refetching?: boolean;
+  /** Hides the card's own refresh button, for hosts that refresh it themselves. */
+  hideRefreshButton?: boolean;
   displayType?: 'used' | 'free';
   onDisplayTypeChange?: (type: 'used' | 'free') => void;
   extra?: ReactNode;
@@ -181,7 +183,7 @@ export const useIsAvailableTotalResourceWithinResourceGroup = () => {
 
 const TotalResourceWithinResourceGroup: React.FC<
   TotalResourceWithinResourceGroupProps
-> = ({ queryRef, refetching, extra, ...props }) => {
+> = ({ queryRef, refetching, hideRefreshButton, extra, ...props }) => {
   'use memo';
   const { t } = useTranslation();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
@@ -463,6 +465,7 @@ const TotalResourceWithinResourceGroup: React.FC<
               <SegmentedControlItem value="free" label={t('dashboard.Free')} />
             </SegmentedControl>
             <BAIFetchKeyButton
+              hidden={hideRefreshButton}
               size="small"
               loading={isPendingRefetch || refetching || isLoadingRemaining}
               value=""

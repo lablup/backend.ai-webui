@@ -66,36 +66,34 @@ const ResourceTablePanel: React.FC<ResourceTablePanelProps> = ({
 
   return (
     <PanelFrame title={title} onEdit={onEdit} onRemove={onRemove}>
-      {(localFetchKey) => (
-        <Suspense fallback={<BAISkeleton />}>
-          {/* Keyed by the query-shaping config so a descriptor edit (filter/order)
+      <Suspense fallback={<BAISkeleton />}>
+        {/* Keyed by the query-shaping config so a descriptor edit (filter/order)
               resets pagination AND retries out of a stuck error state. */}
-          {resourceRegistry[viewDescriptor.resourceType]?.kind ===
-          'deploymentNodes' ? (
-            <DeploymentNodesPanelContent
-              key={`${viewDescriptor.resourceType}:${JSON.stringify(viewDescriptor.filter ?? null)}:${viewDescriptor.order ?? ''}`}
-              descriptor={viewDescriptor}
-              onChangeOrder={onChangeOrder}
-              fetchKey={`${fetchKey ?? ''}:${localFetchKey}`}
-            />
-          ) : resourceRegistry[viewDescriptor.resourceType]?.kind ===
-            'sessionNodes' ? (
-            <SessionNodesPanelContent
-              key={`${viewDescriptor.resourceType}:${JSON.stringify(viewDescriptor.filter ?? null)}:${viewDescriptor.order ?? ''}`}
-              descriptor={viewDescriptor}
-              onChangeOrder={onChangeOrder}
-              fetchKey={`${fetchKey ?? ''}:${localFetchKey}`}
-            />
-          ) : (
-            <ResourceTableContent
-              key={`${viewDescriptor.resourceType}:${JSON.stringify(viewDescriptor.filter ?? null)}:${viewDescriptor.order ?? ''}`}
-              descriptor={viewDescriptor}
-              onChangeOrder={onChangeOrder}
-              fetchKey={`${fetchKey ?? ''}:${localFetchKey}`}
-            />
-          )}
-        </Suspense>
-      )}
+        {resourceRegistry[viewDescriptor.resourceType]?.kind ===
+        'deploymentNodes' ? (
+          <DeploymentNodesPanelContent
+            key={`${viewDescriptor.resourceType}:${JSON.stringify(viewDescriptor.filter ?? null)}:${viewDescriptor.order ?? ''}`}
+            descriptor={viewDescriptor}
+            onChangeOrder={onChangeOrder}
+            fetchKey={fetchKey}
+          />
+        ) : resourceRegistry[viewDescriptor.resourceType]?.kind ===
+          'sessionNodes' ? (
+          <SessionNodesPanelContent
+            key={`${viewDescriptor.resourceType}:${JSON.stringify(viewDescriptor.filter ?? null)}:${viewDescriptor.order ?? ''}`}
+            descriptor={viewDescriptor}
+            onChangeOrder={onChangeOrder}
+            fetchKey={fetchKey}
+          />
+        ) : (
+          <ResourceTableContent
+            key={`${viewDescriptor.resourceType}:${JSON.stringify(viewDescriptor.filter ?? null)}:${viewDescriptor.order ?? ''}`}
+            descriptor={viewDescriptor}
+            onChangeOrder={onChangeOrder}
+            fetchKey={fetchKey}
+          />
+        )}
+      </Suspense>
     </PanelFrame>
   );
 };
