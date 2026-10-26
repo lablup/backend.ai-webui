@@ -2752,7 +2752,8 @@
     "Created": "Resource preset created",
     "DeleteResourcePreset": "Delete resource preset",
     "Deleted": "Resource preset is successfully deleted.",
-    "ExceedsAllocatableResources": "Exceeds the resources you can allocate with the current resource group and image",
+    "ExceedsResourceLimit": "Exceeds your resource limit ({{slots}}).",
+    "ImageAcceleratorMismatch": "The accelerators in this preset don't match what the selected image needs.",
     "MemoryShouldBeLargerThanSHMEM": "Memory should be larger than shared memory",
     "MinimumCPUUnit": "CPU starts with 1 core",
     "MinimumMemUnit": "Memory starts with 1 GB",
@@ -2761,6 +2762,7 @@
     "Name": "Name",
     "NoPresetName": "Input preset name",
     "NoResourcePresetToDisplay": "No Resource Presets to display",
+    "NotEnoughRemainingResources": "Not enough resources are free right now. Other sessions may be using them.",
     "OnlyAvailableInResourceGroup": "Only available in the \"{{name}}\" resource group",
     "PresetName": "Preset Name",
     "PresetOnlyAvailableInResourceGroup": "The \"{{preset}}\" preset is only available in the \"{{name}}\" resource group. Please select a different resource group.",
@@ -2770,6 +2772,7 @@
     "Resources": "Resources",
     "SHMEMShouldBeSmallerThanMemory": "Shared memory must be smaller than memory",
     "SharedMemory": "Shared Memory",
+    "SlotNotInResourceGroup": "This resource group does not provide {{slots}}, which this preset needs.",
     "Updated": "Resource preset updated"
   },
   "route": {

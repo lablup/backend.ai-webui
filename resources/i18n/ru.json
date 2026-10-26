@@ -2765,7 +2765,8 @@
     "Created": "Набор ресурсов создан",
     "DeleteResourcePreset": "Удалить набор ресурсов",
     "Deleted": "Предварительная настройка ресурса успешно удалена.",
-    "ExceedsAllocatableResources": "Превышает ресурсы, которые можно выделить с текущей группой ресурсов и образом",
+    "ExceedsResourceLimit": "Превышает ваш лимит ресурсов ({{slots}}).",
+    "ImageAcceleratorMismatch": "Ускорители в этом пресете не соответствуют требованиям выбранного образа.",
     "MemoryShouldBeLargerThanSHMEM": "Память должна быть больше общей памяти",
     "MinimumCPUUnit": "ЦП начинается с 1 ядра",
     "MinimumMemUnit": "Память начинается с 1 ГБ",
@@ -2774,6 +2775,7 @@
     "Name": "Имя",
     "NoPresetName": "Имя предустановки ввода",
     "NoResourcePresetToDisplay": "Отсутствие отображения предустановок ресурсов",
+    "NotEnoughRemainingResources": "Сейчас недостаточно свободных ресурсов. Возможно, их используют другие сеансы.",
     "OnlyAvailableInResourceGroup": "Доступно только в группе ресурсов \"{{name}}\"",
     "PresetName": "Название предустановки",
     "PresetOnlyAvailableInResourceGroup": "Пресет \"{{preset}}\" доступен только в группе ресурсов \"{{name}}\". Выберите другую группу ресурсов.",
@@ -2783,6 +2785,7 @@
     "Resources": "Ресурсы",
     "SHMEMShouldBeSmallerThanMemory": "Общая память должна быть меньше памяти",
     "SharedMemory": "Общая память",
+    "SlotNotInResourceGroup": "Эта группа ресурсов не предоставляет {{slots}}, необходимые для этого пресета.",
     "Updated": "Предустановка ресурса обновлена"
   },
   "route": {

@@ -2767,7 +2767,8 @@
     "Created": "Utworzono wstępne ustawienie zasobów",
     "DeleteResourcePreset": "Usuń ustawienie wstępne zasobu",
     "Deleted": "Ustawienie wstępne zasobu zostało pomyślnie usunięte.",
-    "ExceedsAllocatableResources": "Przekracza zasoby, które można przydzielić przy użyciu bieżącej grupy zasobów i obrazu",
+    "ExceedsResourceLimit": "Przekracza limit zasobów ({{slots}}).",
+    "ImageAcceleratorMismatch": "Akceleratory w tym szablonie nie pasują do wymagań wybranego obrazu.",
     "MemoryShouldBeLargerThanSHMEM": "Pamięć powinna być większa niż pamięć współdzielona",
     "MinimumCPUUnit": "Procesor zaczyna się od 1 rdzenia",
     "MinimumMemUnit": "Pamięć zaczyna się od 1 GB",
@@ -2776,6 +2777,7 @@
     "Name": "Nazwa",
     "NoPresetName": "Wprowadź nazwę ustawienia wstępnego",
     "NoResourcePresetToDisplay": "Brak ustawień wstępnych zasobów do wyświetlenia",
+    "NotEnoughRemainingResources": "Brak wystarczającej ilości wolnych zasobów. Mogą być używane przez inne sesje.",
     "OnlyAvailableInResourceGroup": "Dostępne tylko w grupie zasobów \"{{name}}\"",
     "PresetName": "Zaprogramowana nazwa",
     "PresetOnlyAvailableInResourceGroup": "Ustawienie wstępne \"{{preset}}\" jest dostępne tylko w grupie zasobów \"{{name}}\". Wybierz inną grupę zasobów.",
@@ -2785,6 +2787,7 @@
     "Resources": "Zasoby",
     "SHMEMShouldBeSmallerThanMemory": "Pamięć współdzielona musi być mniejsza niż pamięć",
     "SharedMemory": "Udostępniona pamięć",
+    "SlotNotInResourceGroup": "Ta grupa zasobów nie udostępnia {{slots}}, których wymaga ten szablon.",
     "Updated": "Zaktualizowano wstępne ustawienia zasobów"
   },
   "route": {

@@ -2767,7 +2767,8 @@
     "Created": "已创建资源预设",
     "DeleteResourcePreset": "删除资源预设",
     "Deleted": "资源预置已成功删除。",
-    "ExceedsAllocatableResources": "超出当前资源组和镜像可分配的资源",
+    "ExceedsResourceLimit": "超出资源上限（{{slots}}）。",
+    "ImageAcceleratorMismatch": "此预设的加速器配置与所选镜像的要求不符。",
     "MemoryShouldBeLargerThanSHMEM": "内存应该大于共享内存",
     "MinimumCPUUnit": "CPU 从 1 个核心开始",
     "MinimumMemUnit": "内存从 1 GB 开始",
@@ -2776,6 +2777,7 @@
     "Name": "名称",
     "NoPresetName": "输入预设名称",
     "NoResourcePresetToDisplay": "无资源预置显示",
+    "NotEnoughRemainingResources": "当前可用资源不足，可能正被其他会话占用。",
     "OnlyAvailableInResourceGroup": "仅在 \"{{name}}\" 资源组中可用",
     "PresetName": "预设名称",
     "PresetOnlyAvailableInResourceGroup": "\"{{preset}}\" 预设仅在 \"{{name}}\" 资源组中可用。请选择其他资源组。",
@@ -2785,6 +2787,7 @@
     "Resources": "资源",
     "SHMEMShouldBeSmallerThanMemory": "共享内存必须小于内存",
     "SharedMemory": "共享内存",
+    "SlotNotInResourceGroup": "此预设需要该资源组未提供的资源（{{slots}}）。",
     "Updated": "资源预设已更新"
   },
   "route": {

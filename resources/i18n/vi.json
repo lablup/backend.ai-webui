@@ -2767,7 +2767,8 @@
     "Created": "Đã tạo cài đặt trước tài nguyên",
     "DeleteResourcePreset": "Xóa cài đặt trước tài nguyên",
     "Deleted": "Cài đặt trước tài nguyên đã được xóa thành công.",
-    "ExceedsAllocatableResources": "Vượt quá tài nguyên bạn có thể phân bổ với nhóm tài nguyên và ảnh hiện tại",
+    "ExceedsResourceLimit": "Vượt quá giới hạn tài nguyên của bạn ({{slots}}).",
+    "ImageAcceleratorMismatch": "Bộ tăng tốc trong cấu hình sẵn này không khớp với yêu cầu của image đã chọn.",
     "MemoryShouldBeLargerThanSHMEM": "Bộ nhớ phải lớn hơn bộ nhớ dùng chung",
     "MinimumCPUUnit": "CPU bắt đầu với 1 lõi",
     "MinimumMemUnit": "Bộ nhớ bắt đầu với 1 GB",
@@ -2776,6 +2777,7 @@
     "Name": "Tên",
     "NoPresetName": "Nhập tên đặt trước",
     "NoResourcePresetToDisplay": "Không có cài đặt trước tài nguyên nào để hiển thị",
+    "NotEnoughRemainingResources": "Hiện không đủ tài nguyên trống. Có thể các phiên khác đang sử dụng.",
     "OnlyAvailableInResourceGroup": "Chỉ khả dụng trong nhóm tài nguyên \"{{name}}\"",
     "PresetName": "Tên đặt trước",
     "PresetOnlyAvailableInResourceGroup": "Cấu hình sẵn \"{{preset}}\" chỉ khả dụng trong nhóm tài nguyên \"{{name}}\". Vui lòng chọn nhóm tài nguyên khác.",
@@ -2785,6 +2787,7 @@
     "Resources": "Tài nguyên",
     "SHMEMShouldBeSmallerThanMemory": "Bộ nhớ dùng chung phải nhỏ hơn bộ nhớ",
     "SharedMemory": "Bộ nhớ chia sẻ",
+    "SlotNotInResourceGroup": "Nhóm tài nguyên này không cung cấp {{slots}} mà cấu hình sẵn này cần.",
     "Updated": "Đã cập nhật cài đặt trước tài nguyên"
   },
   "route": {

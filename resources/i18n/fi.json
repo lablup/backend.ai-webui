@@ -2765,7 +2765,8 @@
     "Created": "Resurssien esiasetus luotu",
     "DeleteResourcePreset": "Poista resurssin esiasetus",
     "Deleted": "Resurssin esiasetus on onnistuneesti poistettu.",
-    "ExceedsAllocatableResources": "Ylittää resurssit, jotka voit varata nykyisellä resurssiryhmällä ja kuvalla",
+    "ExceedsResourceLimit": "Ylittää resurssirajasi ({{slots}}).",
+    "ImageAcceleratorMismatch": "Esiasetuksen kiihdyttimet eivät vastaa valitun levykuvan vaatimuksia.",
     "MemoryShouldBeLargerThanSHMEM": "Muistin pitäisi olla suurempi kuin jaetun muistin",
     "MinimumCPUUnit": "Suoritin käynnistyy 1 ytimellä",
     "MinimumMemUnit": "Muisti alkaa 1 GB:lla",
@@ -2774,6 +2775,7 @@
     "Name": "Nimi",
     "NoPresetName": "Tulo esiasetuksen nimi",
     "NoResourcePresetToDisplay": "Ei resurssien esiasetuksia näytettäväksi",
+    "NotEnoughRemainingResources": "Vapaita resursseja ei ole nyt tarpeeksi. Muut istunnot saattavat käyttää niitä.",
     "OnlyAvailableInResourceGroup": "Käytettävissä vain resurssiryhmässä \"{{name}}\"",
     "PresetName": "Esiasetuksen nimi",
     "PresetOnlyAvailableInResourceGroup": "Esiasetus \"{{preset}}\" on käytettävissä vain resurssiryhmässä \"{{name}}\". Valitse toinen resurssiryhmä.",
@@ -2783,6 +2785,7 @@
     "Resources": "Resurssit",
     "SHMEMShouldBeSmallerThanMemory": "Jaetun muistin on oltava pienempi kuin muistin",
     "SharedMemory": "Jaettu muisti",
+    "SlotNotInResourceGroup": "Tämä resurssiryhmä ei tarjoa resurssia {{slots}}, jota esiasetus tarvitsee.",
     "Updated": "Resurssien esiasetus päivitetty"
   },
   "route": {

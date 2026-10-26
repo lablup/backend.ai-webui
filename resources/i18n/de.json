@@ -2767,7 +2767,8 @@
     "Created": "Ressourcenvoreinstellung erstellt",
     "DeleteResourcePreset": "Ressourcenvoreinstellung löschen",
     "Deleted": "Die Ressourcenvoreinstellung wurde erfolgreich gelöscht.",
-    "ExceedsAllocatableResources": "Übersteigt die Ressourcen, die mit der aktuellen Ressourcengruppe und dem aktuellen Image zugewiesen werden können",
+    "ExceedsResourceLimit": "Überschreitet Ihr Ressourcenlimit ({{slots}}).",
+    "ImageAcceleratorMismatch": "Die Beschleuniger dieser Vorlage passen nicht zu den Anforderungen des ausgewählten Images.",
     "MemoryShouldBeLargerThanSHMEM": "Speicher sollte größer sein als gemeinsam genutzter Speicher",
     "MinimumCPUUnit": "CPU startet mit 1 Kern",
     "MinimumMemUnit": "Speicher beginnt bei 1 GB",
@@ -2776,6 +2777,7 @@
     "Name": "Name",
     "NoPresetName": "Voreinstellungsnamen eingeben",
     "NoResourcePresetToDisplay": "Keine Ressourcenvoreinstellungen anzeigen",
+    "NotEnoughRemainingResources": "Derzeit sind nicht genügend Ressourcen frei. Möglicherweise werden sie von anderen Sitzungen verwendet.",
     "OnlyAvailableInResourceGroup": "Nur in der Ressourcengruppe \"{{name}}\" verfügbar",
     "PresetName": "Voreinstellungsname",
     "PresetOnlyAvailableInResourceGroup": "Die Voreinstellung \"{{preset}}\" ist nur in der Ressourcengruppe \"{{name}}\" verfügbar. Bitte wählen Sie eine andere Ressourcengruppe.",
@@ -2785,6 +2787,7 @@
     "Resources": "Ressourcen",
     "SHMEMShouldBeSmallerThanMemory": "Gemeinsamer Speicher muss kleiner sein als der Speicher",
     "SharedMemory": "Gemeinsamer Speicher",
+    "SlotNotInResourceGroup": "Diese Ressourcengruppe stellt {{slots}} nicht bereit, was diese Vorlage benötigt.",
     "Updated": "Ressourcenvoreinstellung aktualisiert"
   },
   "route": {

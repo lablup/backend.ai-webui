@@ -2765,7 +2765,8 @@
     "Created": "Pratetap sumber dibuat",
     "DeleteResourcePreset": "Padamkan pratetap sumber",
     "Deleted": "Pratetap sumber berjaya dipadamkan.",
-    "ExceedsAllocatableResources": "Melebihi sumber yang boleh anda peruntukkan dengan kumpulan sumber dan imej semasa",
+    "ExceedsResourceLimit": "Melebihi had sumber anda ({{slots}}).",
+    "ImageAcceleratorMismatch": "Pemecut dalam pratetap ini tidak sepadan dengan keperluan imej yang dipilih.",
     "MemoryShouldBeLargerThanSHMEM": "Ingatan harus lebih besar daripada memori bersama",
     "MinimumCPUUnit": "CPU bermula dengan 1 teras",
     "MinimumMemUnit": "Memori bermula dengan 1 GB",
@@ -2774,6 +2775,7 @@
     "Name": "Nama",
     "NoPresetName": "Masukkan nama pratetap",
     "NoResourcePresetToDisplay": "Tiada Pratetap Sumber untuk dipaparkan",
+    "NotEnoughRemainingResources": "Sumber yang tersedia tidak mencukupi sekarang. Sesi lain mungkin sedang menggunakannya.",
     "OnlyAvailableInResourceGroup": "Hanya tersedia dalam kumpulan sumber \"{{name}}\"",
     "PresetName": "Nama Pratetap",
     "PresetOnlyAvailableInResourceGroup": "Pratetap \"{{preset}}\" hanya tersedia dalam kumpulan sumber \"{{name}}\". Sila pilih kumpulan sumber yang lain.",
@@ -2783,6 +2785,7 @@
     "Resources": "Sumber",
     "SHMEMShouldBeSmallerThanMemory": "Memori yang dikongsi mestilah lebih kecil daripada memori",
     "SharedMemory": "Memori bersama",
+    "SlotNotInResourceGroup": "Kumpulan sumber ini tidak menyediakan {{slots}} yang diperlukan oleh pratetap ini.",
     "Updated": "Pratetap sumber dikemas kini"
   },
   "route": {

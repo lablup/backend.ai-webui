@@ -433,16 +433,25 @@ const ResourceAllocationFormItems: React.FC<
     }
   }, [supportedAcceleratorTypesInRGByImage, form, currentResourceValue]);
 
-  // `resourceLimits` is rebuilt on every render, so key the array by its
+  // `resourceLimits` is rebuilt on every render, so key the result by its
   // contents; a fresh identity would re-run the auto-select effect each render.
-  const allocatablePresetIdsKey = JSON.stringify(
-    getAllocatablePresetIds(
-      _.filter(sessionPresets, 'allocatable'),
-      resourceLimits,
-      currentImage,
-    ),
+  const presetAvailabilityKey = JSON.stringify(
+    _.map(sessionPresets, (preset) => [
+      preset.id,
+      getPresetUnavailableReason(
+        preset,
+        resourceLimits,
+        currentImage,
+        resourceSlotsInRG ? _.keys(resourceSlotsInRG) : undefined,
+      ) ?? null,
+    ]),
   );
-  const allocatablePresetIds: string[] = JSON.parse(allocatablePresetIdsKey);
+  const presetAvailability: Array<[string, PresetUnavailableReason | null]> =
+    JSON.parse(presetAvailabilityKey);
+  const presetUnavailableReasons = _.fromPairs(presetAvailability);
+  const allocatablePresetIds = presetAvailability
+    .filter(([, reason]) => !reason)
+    .map(([id]) => id);
 
   const runShmemAutomationRule = (M_plus_S: string) => {
     const shmem = getAutomaticShmem(M_plus_S, currentImageMinM);
@@ -859,7 +868,7 @@ const ResourceAllocationFormItems: React.FC<
             }}
             projectId={project.id}
             resourceGroup={currentResourceGroupInForm}
-            allocatablePresetIds={allocatablePresetIds}
+            presetUnavailableReasons={presetUnavailableReasons}
           />
         </Form.Item>
       ) : null}
@@ -1853,87 +1862,95 @@ const MemoizedResourceAllocationFormItems = React.memo(
 
 export default MemoizedResourceAllocationFormItems;
 
-export const getAllocatablePresetIds = (
-  presets: Array<ResourcePreset> | undefined,
+/** Why a preset cannot be picked; checked in this order, first match wins. */
+export type PresetUnavailableReason =
+  | { type: 'slotNotInResourceGroup'; slots: string[] }
+  | { type: 'imageAccelerator' }
+  | { type: 'exceedsLimit'; slots: string[] }
+  | { type: 'notEnoughRemaining' };
+
+/** The slots of `preset` above `resourceLimits`; a slot with no limit is unlimited. */
+export const getSlotsOverLimit = (
+  preset: ResourcePreset,
   resourceLimits: MergedResourceLimits,
-  currentImage: Image,
-) => {
-  const currentImageAcceleratorLimits = _.filter(
-    currentImage?.resource_limits,
-    (limit) =>
-      limit ? !_.includes(['cpu', 'mem', 'shmem'], limit.key) : false,
-  );
-
-  const bySliderLimit = _.filter(presets, (preset) => {
-    // Check if all resource slots in the preset are less than or equal to resourceLimits
-    // Be careful with the type of values in resourceLimits, they are string or number
-    return _.every(preset.resource_slots, (_value, key) => {
-      if (key === 'mem') {
-        // if mem resource limit is not defined, it is UNLIMITED
-        const isNoLimit = typeof resourceLimits[key]?.max !== 'string';
-        return isNoLimit
-          ? true
-          : typeof preset.resource_slots[key] === 'string' &&
-              typeof resourceLimits[key]?.max === 'string' &&
-              compareNumberWithUnits(
-                preset.resource_slots[key],
-                resourceLimits[key]?.max,
-              ) <= 0;
-      } else if (key === 'shmem') {
-        // no need to check shmem
-        return true;
-      } else if (key === 'cpu') {
-        // if cpu resource limit is not defined, it is UNLIMITED
-        const isNoLimit = _.isNaN(_.toNumber(resourceLimits[key]?.max));
-        return isNoLimit
-          ? true
-          : (_.toNumber(preset.resource_slots[key]) || 0) <=
-              _.toNumber(resourceLimits[key]?.max);
-      } else {
-        // if accelerator resource limit is not defined, it is UNLIMITED
-        const isNoLimit = _.isNaN(
-          _.toNumber(resourceLimits.accelerators[key]?.max),
-        );
-        return isNoLimit
-          ? true
-          : (_.toNumber(preset.resource_slots[key]) || 0) <=
-              _.toNumber(resourceLimits.accelerators[key]?.max);
-      }
-    });
-  }).map((preset) => preset.id);
-
-  const byImageAcceleratorLimits = _.filter(presets, (preset) => {
-    const acceleratorResourceOfPreset = _.omitBy(
-      preset.resource_slots,
-      (_value, key) => {
-        if (['mem', 'cpu', 'shmem'].includes(key)) return true;
-      },
-    );
-    if (currentImageAcceleratorLimits.length === 0) {
-      // When current image doesn't require any accelerator,
-      // It's available if the preset doesn't have any accelerator
-      if (_.isEmpty(acceleratorResourceOfPreset)) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      // When current image requires some accelerator,
-      // It's available if the preset has a required accelerator value that is larger than the current image's minimum value
+): string[] => {
+  const slots = preset.resource_slots as Record<string, string | undefined>;
+  return _.filter(_.keys(slots), (key) => {
+    const value = slots[key];
+    if (key === 'shmem') return false;
+    if (key === 'mem') {
+      const max = resourceLimits.mem?.max;
+      if (typeof max !== 'string') return false;
       return (
-        currentImageAcceleratorLimits &&
-        _.some(currentImageAcceleratorLimits, (limit) => {
-          return (
-            limit?.key &&
-            acceleratorResourceOfPreset[limit?.key] &&
-            _.toNumber(acceleratorResourceOfPreset[limit?.key]) >=
-              _.toNumber(limit?.min)
-          );
-        })
+        typeof value !== 'string' || compareNumberWithUnits(value, max) > 0
       );
     }
-  }).map((preset) => preset.id);
-  return currentImageAcceleratorLimits.length === 0
-    ? bySliderLimit
-    : _.intersection(bySliderLimit, byImageAcceleratorLimits);
+    const max =
+      key === 'cpu'
+        ? resourceLimits.cpu?.max
+        : resourceLimits.accelerators[key]?.max;
+    if (_.isNaN(_.toNumber(max))) return false;
+    return (_.toNumber(value) || 0) > _.toNumber(max);
+  });
+};
+
+/**
+ * Whether `preset` carries an accelerator the image needs, at the image's
+ * minimum. An image that needs no accelerator accepts every preset.
+ */
+export const fitsImageAccelerator = (
+  preset: ResourcePreset,
+  currentImage: Image,
+): boolean => {
+  const acceleratorLimits = _.filter(currentImage?.resource_limits, (limit) =>
+    limit ? !_.includes(['cpu', 'mem', 'shmem'], limit.key) : false,
+  );
+  if (acceleratorLimits.length === 0) return true;
+  const presetAccelerators = _.omit(preset.resource_slots, [
+    'cpu',
+    'mem',
+    'shmem',
+  ]) as Record<string, string | undefined>;
+  return _.some(
+    acceleratorLimits,
+    (limit) =>
+      !!limit?.key &&
+      !!presetAccelerators[limit.key] &&
+      _.toNumber(presetAccelerators[limit.key]) >= _.toNumber(limit.min),
+  );
+};
+
+/**
+ * Why `preset` cannot be picked, or `undefined` when it can. `slotsInResourceGroup`
+ * is skipped while the group's slots are loading; `allocatable` is the
+ * manager's answer for what is free right now, so it is checked last.
+ */
+export const getPresetUnavailableReason = (
+  preset: ResourcePreset,
+  resourceLimits: MergedResourceLimits,
+  currentImage: Image,
+  slotsInResourceGroup?: string[],
+): PresetUnavailableReason | undefined => {
+  const slots = preset.resource_slots as Record<string, string | undefined>;
+  if (slotsInResourceGroup) {
+    const missing = _.filter(
+      _.keys(slots),
+      (key) =>
+        key !== 'shmem' &&
+        (parseFloat(slots[key] ?? '') || 0) > 0 &&
+        !slotsInResourceGroup.includes(key),
+    );
+    if (missing.length > 0) {
+      return { type: 'slotNotInResourceGroup', slots: missing };
+    }
+  }
+  if (!fitsImageAccelerator(preset, currentImage)) {
+    return { type: 'imageAccelerator' };
+  }
+  const overLimit = getSlotsOverLimit(preset, resourceLimits);
+  if (overLimit.length > 0) {
+    return { type: 'exceedsLimit', slots: overLimit };
+  }
+  if (!preset.allocatable) return { type: 'notEnoughRemaining' };
+  return undefined;
 };

@@ -2765,7 +2765,8 @@
     "Created": "Preimpostazione risorsa creata",
     "DeleteResourcePreset": "Elimina la preimpostazione della risorsa",
     "Deleted": "La preimpostazione della risorsa è stata eliminata con successo.",
-    "ExceedsAllocatableResources": "Supera le risorse allocabili con il gruppo di risorse e l'immagine correnti",
+    "ExceedsResourceLimit": "Supera il tuo limite di risorse ({{slots}}).",
+    "ImageAcceleratorMismatch": "Gli acceleratori di questo preset non corrispondono a quanto richiesto dall'immagine selezionata.",
     "MemoryShouldBeLargerThanSHMEM": "La memoria dovrebbe essere più grande della memoria condivisa",
     "MinimumCPUUnit": "La CPU inizia con 1 core",
     "MinimumMemUnit": "La memoria inizia con 1 GB",
@@ -2774,6 +2775,7 @@
     "Name": "Nome",
     "NoPresetName": "Inserisci il nome del preset",
     "NoResourcePresetToDisplay": "Nessuna preimpostazione di risorse da visualizzare",
+    "NotEnoughRemainingResources": "Al momento non ci sono abbastanza risorse libere. Potrebbero essere in uso da altre sessioni.",
     "OnlyAvailableInResourceGroup": "Disponibile solo nel gruppo di risorse \"{{name}}\"",
     "PresetName": "Nome predefinito",
     "PresetOnlyAvailableInResourceGroup": "Il preset \"{{preset}}\" è disponibile solo nel gruppo di risorse \"{{name}}\". Seleziona un altro gruppo di risorse.",
@@ -2783,6 +2785,7 @@
     "Resources": "risorse",
     "SHMEMShouldBeSmallerThanMemory": "La memoria condivisa deve essere più piccola della memoria",
     "SharedMemory": "Memoria condivisa",
+    "SlotNotInResourceGroup": "Questo gruppo di risorse non fornisce {{slots}}, necessario per questo preset.",
     "Updated": "Preimpostazione delle risorse aggiornata"
   },
   "route": {

@@ -2765,7 +2765,8 @@
     "Created": "Kaynak ön ayarı oluşturuldu",
     "DeleteResourcePreset": "Kaynak ön ayarını sil",
     "Deleted": "Kaynak ön ayarı başarıyla silindi.",
-    "ExceedsAllocatableResources": "Mevcut kaynak grubu ve imaj ile ayırabileceğiniz kaynakları aşıyor",
+    "ExceedsResourceLimit": "Kaynak sınırınızı aşıyor ({{slots}}).",
+    "ImageAcceleratorMismatch": "Bu ön ayardaki hızlandırıcılar seçilen imajın gereksinimleriyle uyuşmuyor.",
     "MemoryShouldBeLargerThanSHMEM": "Bellek, paylaşılan bellekten daha büyük olmalıdır",
     "MinimumCPUUnit": "CPU 1 çekirdekle başlar",
     "MinimumMemUnit": "Bellek 1 GB ile başlar",
@@ -2774,6 +2775,7 @@
     "Name": "isim",
     "NoPresetName": "Ön ayar adını girin",
     "NoResourcePresetToDisplay": "Görüntülenecek Kaynak Ön Ayarı yok",
+    "NotEnoughRemainingResources": "Şu anda yeterli boş kaynak yok. Diğer oturumlar kullanıyor olabilir.",
     "OnlyAvailableInResourceGroup": "Yalnızca \"{{name}}\" kaynak grubunda kullanılabilir",
     "PresetName": "Ön Ayar Adı",
     "PresetOnlyAvailableInResourceGroup": "\"{{preset}}\" ön ayarı yalnızca \"{{name}}\" kaynak grubunda kullanılabilir. Lütfen farklı bir kaynak grubu seçin.",
@@ -2783,6 +2785,7 @@
     "Resources": "Kaynaklar",
     "SHMEMShouldBeSmallerThanMemory": "Paylaşılan bellek, bellekten daha küçük olmalıdır",
     "SharedMemory": "Paylaşılan Bellek",
+    "SlotNotInResourceGroup": "Bu kaynak grubu, bu ön ayarın ihtiyaç duyduğu {{slots}} kaynağını sağlamıyor.",
     "Updated": "Kaynak ön ayarı güncellendi"
   },
   "route": {

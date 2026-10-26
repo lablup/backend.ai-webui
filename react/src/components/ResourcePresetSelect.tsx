@@ -3,12 +3,17 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { localeCompare } from '../helper';
-import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
+import {
+  ResourceSlotName,
+  useResourceSlots,
+  useResourceSlotsDetails,
+} from '../hooks/backendai';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import {
   type SessionResourcePreset,
   useSessionResourcePresets,
 } from '../hooks/useSessionResourcePresets';
+import type { PresetUnavailableReason } from './SessionFormItems/ResourceAllocationFormItems';
 import type {
   SelectorOptionData,
   SelectorOptionType,
@@ -55,8 +60,8 @@ export interface ResourcePresetSelectProps {
   projectId: string;
   /** Lists this group's presets and the global ones; none while unset. */
   resourceGroup?: string;
-  /** Presets outside this list are disabled; all are pickable when unset. */
-  allocatablePresetIds?: string[];
+  /** A preset with a reason is disabled and shows it; all are pickable when unset. */
+  presetUnavailableReasons?: Record<string, PresetUnavailableReason | null>;
   showMinimumRequired?: boolean;
   showCustom?: boolean;
   autoSelectDefault?: boolean;
@@ -66,7 +71,7 @@ export interface ResourcePresetSelectProps {
 const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   projectId,
   resourceGroup,
-  allocatablePresetIds,
+  presetUnavailableReasons,
   showCustom,
   showMinimumRequired,
   autoSelectDefault,
@@ -81,6 +86,9 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     leading: true,
   });
   const [resourceSlots] = useResourceSlots();
+  const { mergedResourceSlots } = useResourceSlotsDetails(
+    resourceGroup || undefined,
+  );
   const { t } = useTranslation();
   const { token } = useTheme();
   const [isPendingUpdate, _startTransition] = useTransition();
@@ -104,13 +112,33 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   const onlyInGroupText = (name: string) =>
     t('resourcePreset.OnlyAvailableInResourceGroup', { name });
 
+  const slotNames = (slots: string[]) =>
+    slots
+      .map((slot) => mergedResourceSlots?.[slot]?.human_readable_name ?? slot)
+      .join(', ');
+
   // Why a preset cannot be picked right now; `undefined` means it can.
   const disabledReasonOf = (
     preset: SessionResourcePreset,
-  ): string | undefined =>
-    allocatablePresetIds && !allocatablePresetIds.includes(preset.id)
-      ? t('resourcePreset.ExceedsAllocatableResources')
-      : undefined;
+  ): string | undefined => {
+    const reason = presetUnavailableReasons?.[preset.id];
+    switch (reason?.type) {
+      case 'slotNotInResourceGroup':
+        return t('resourcePreset.SlotNotInResourceGroup', {
+          slots: slotNames(reason.slots),
+        });
+      case 'imageAccelerator':
+        return t('resourcePreset.ImageAcceleratorMismatch');
+      case 'exceedsLimit':
+        return t('resourcePreset.ExceedsResourceLimit', {
+          slots: slotNames(reason.slots),
+        });
+      case 'notEnoughRemaining':
+        return t('resourcePreset.NotEnoughRemainingResources');
+      default:
+        return undefined;
+    }
+  };
 
   const firstAvailablePreset = resource_presets
     .filter((p) => !disabledReasonOf(p))

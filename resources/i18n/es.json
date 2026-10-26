@@ -2765,7 +2765,8 @@
     "Created": "Preajuste de recursos creado",
     "DeleteResourcePreset": "Eliminar recurso preestablecido",
     "Deleted": "El recurso preestablecido se ha eliminado correctamente.",
-    "ExceedsAllocatableResources": "Supera los recursos que puede asignar con el grupo de recursos y la imagen actuales",
+    "ExceedsResourceLimit": "Supera su límite de recursos ({{slots}}).",
+    "ImageAcceleratorMismatch": "Los aceleradores de este preajuste no coinciden con lo que necesita la imagen seleccionada.",
     "MemoryShouldBeLargerThanSHMEM": "La memoria debe ser mayor que la memoria compartida",
     "MinimumCPUUnit": "La CPU comienza con 1 núcleo",
     "MinimumMemUnit": "Memoria a partir de 1 GB",
@@ -2774,6 +2775,7 @@
     "Name": "Nombre",
     "NoPresetName": "Nombre de la preselección de entrada",
     "NoResourcePresetToDisplay": "No hay preselecciones de recursos para mostrar",
+    "NotEnoughRemainingResources": "No hay suficientes recursos libres ahora. Es posible que otras sesiones los estén usando.",
     "OnlyAvailableInResourceGroup": "Solo disponible en el grupo de recursos \"{{name}}\"",
     "PresetName": "Nombre predefinido",
     "PresetOnlyAvailableInResourceGroup": "El preajuste \"{{preset}}\" solo está disponible en el grupo de recursos \"{{name}}\". Seleccione otro grupo de recursos.",
@@ -2783,6 +2785,7 @@
     "Resources": "Recursos",
     "SHMEMShouldBeSmallerThanMemory": "La memoria compartida debe ser menor que la memoria",
     "SharedMemory": "Memoria compartida",
+    "SlotNotInResourceGroup": "Este grupo de recursos no ofrece {{slots}}, que este preajuste necesita.",
     "Updated": "Preajuste de recursos actualizado"
   },
   "route": {

@@ -2768,7 +2768,8 @@
     "Created": "Preset sumber daya dibuat",
     "DeleteResourcePreset": "Hapus preset sumber daya",
     "Deleted": "Preset sumber daya berhasil dihapus.",
-    "ExceedsAllocatableResources": "Melebihi sumber daya yang dapat Anda alokasikan dengan grup sumber daya dan image saat ini",
+    "ExceedsResourceLimit": "Melebihi batas sumber daya Anda ({{slots}}).",
+    "ImageAcceleratorMismatch": "Akselerator di preset ini tidak sesuai dengan kebutuhan image yang dipilih.",
     "MemoryShouldBeLargerThanSHMEM": "Memori harus lebih besar dari memori bersama",
     "MinimumCPUUnit": "CPU dimulai dengan 1 core",
     "MinimumMemUnit": "Memori dimulai dengan 1 GB",
@@ -2777,6 +2778,7 @@
     "Name": "Nama",
     "NoPresetName": "Masukkan nama preset",
     "NoResourcePresetToDisplay": "Tidak ada Preset Sumber Daya yang akan ditampilkan",
+    "NotEnoughRemainingResources": "Sumber daya yang tersedia saat ini tidak cukup. Mungkin sedang dipakai sesi lain.",
     "OnlyAvailableInResourceGroup": "Hanya tersedia di grup sumber daya \"{{name}}\"",
     "PresetName": "Nama Preset",
     "PresetOnlyAvailableInResourceGroup": "Preset \"{{preset}}\" hanya tersedia di grup sumber daya \"{{name}}\". Silakan pilih grup sumber daya lain.",
@@ -2786,6 +2788,7 @@
     "Resources": "Sumber Daya",
     "SHMEMShouldBeSmallerThanMemory": "Memori bersama harus lebih kecil dari memori",
     "SharedMemory": "Memori bersama",
+    "SlotNotInResourceGroup": "Grup sumber daya ini tidak menyediakan {{slots}} yang dibutuhkan preset ini.",
     "Updated": "Preset sumber daya diperbarui"
   },
   "route": {

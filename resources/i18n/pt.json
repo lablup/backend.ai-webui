@@ -2767,7 +2767,8 @@
     "Created": "Predefinição de recurso criada",
     "DeleteResourcePreset": "Excluir predefinição de recurso",
     "Deleted": "A predefinição de recurso foi eliminada com êxito.",
-    "ExceedsAllocatableResources": "Excede os recursos que é possível alocar com o grupo de recursos e a imagem atuais",
+    "ExceedsResourceLimit": "Excede o seu limite de recursos ({{slots}}).",
+    "ImageAcceleratorMismatch": "Os aceleradores desta predefinição não correspondem ao que a imagem selecionada precisa.",
     "MemoryShouldBeLargerThanSHMEM": "A memória deve ser maior do que a memória compartilhada",
     "MinimumCPUUnit": "CPU começa com 1 núcleo",
     "MinimumMemUnit": "A memória começa com 1 GB",
@@ -2776,6 +2777,7 @@
     "Name": "Nome",
     "NoPresetName": "Nome da predefinição de entrada",
     "NoResourcePresetToDisplay": "Não há predefinições de recursos a apresentar",
+    "NotEnoughRemainingResources": "Não há recursos livres suficientes neste momento. Outras sessões podem estar a utilizá-los.",
     "OnlyAvailableInResourceGroup": "Disponível apenas no grupo de recursos \"{{name}}\"",
     "PresetName": "Nome Predefinido",
     "PresetOnlyAvailableInResourceGroup": "A predefinição \"{{preset}}\" está disponível apenas no grupo de recursos \"{{name}}\". Selecione outro grupo de recursos.",
@@ -2785,6 +2787,7 @@
     "Resources": "Recursos",
     "SHMEMShouldBeSmallerThanMemory": "A memória partilhada deve ser mais pequena do que a memória",
     "SharedMemory": "Memória compartilhada",
+    "SlotNotInResourceGroup": "Este grupo de recursos não disponibiliza {{slots}}, necessário para esta predefinição.",
     "Updated": "Predefinição de recurso atualizada"
   },
   "route": {

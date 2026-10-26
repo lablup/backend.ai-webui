@@ -2767,7 +2767,8 @@
     "Created": "リソースプリセットが作成されました",
     "DeleteResourcePreset": "リソースプリセットの削除",
     "Deleted": "リソースプリセットの削除に成功しました",
-    "ExceedsAllocatableResources": "現在のリソースグループとイメージで割り当て可能なリソースを超えています",
+    "ExceedsResourceLimit": "リソース上限を超えています（{{slots}}）。",
+    "ImageAcceleratorMismatch": "このプリセットのアクセラレータ構成は、選択したイメージに合いません。",
     "MemoryShouldBeLargerThanSHMEM": "メモリは共有メモリよりも大きくする必要があります",
     "MinimumCPUUnit": "CPUは1コアから始まります",
     "MinimumMemUnit": "メモリは1GBから始まります",
@@ -2776,6 +2777,7 @@
     "Name": "名前",
     "NoPresetName": "プリセット名を入力",
     "NoResourcePresetToDisplay": "リソースプリセット情報がありません。",
+    "NotEnoughRemainingResources": "現在空いているリソースが不足しています。他のセッションが使用している可能性があります。",
     "OnlyAvailableInResourceGroup": "\"{{name}}\" リソースグループでのみ使用できます",
     "PresetName": "プリセット名",
     "PresetOnlyAvailableInResourceGroup": "\"{{preset}}\" プリセットは \"{{name}}\" リソースグループでのみ使用できます。別のリソースグループを選択してください。",
@@ -2785,6 +2787,7 @@
     "Resources": "リソース",
     "SHMEMShouldBeSmallerThanMemory": "共有メモリはメモリより小さくなければならない",
     "SharedMemory": "共有メモリ",
+    "SlotNotInResourceGroup": "このリソースグループでは提供されていないリソース（{{slots}}）が必要です。",
     "Updated": "リソースプリセットが更新されました"
   },
   "route": {
