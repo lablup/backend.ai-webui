@@ -155,7 +155,7 @@ test.describe(
         await expect(widget.getByText('Upload Sessions')).toBeVisible();
       });
 
-      test('Admin can manually refresh the session count widget', async ({
+      test('Admin can refresh the dashboard and the session count widget keeps rendering', async ({
         page,
       }) => {
         // 1. Locate the "My Sessions" widget
@@ -165,8 +165,10 @@ test.describe(
           .first();
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-        // 2. Click the refresh (BAIFetchKeyButton) in the widget's header area
-        const refreshButton = widget.getByRole('button', { name: 'Refresh' });
+        // 2. Click the dashboard's refresh button (cards have none of their own)
+        const refreshButton = page
+          .getByTestId('dashboard-filter-bar')
+          .getByRole('button', { name: 'Refresh' });
         await refreshButton.click();
 
         // 3. Verify the widget data remains visible after refresh
@@ -201,7 +203,7 @@ test.describe(
         await expect(widget.getByText(/Memory|RAM/i)).toBeVisible();
       });
 
-      test('Admin can manually refresh the My Resources widget', async ({
+      test('Admin can refresh the dashboard and the My Resources widget keeps rendering', async ({
         page,
       }) => {
         // 1. Locate the "My Resources" widget
@@ -211,8 +213,10 @@ test.describe(
           .first();
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-        // 2. Click the refresh button in the widget header
-        const refreshButton = widget.getByRole('button', { name: 'Refresh' });
+        // 2. Click the dashboard's refresh button (cards have none of their own)
+        const refreshButton = page
+          .getByTestId('dashboard-filter-bar')
+          .getByRole('button', { name: 'Refresh' });
         await refreshButton.click();
 
         // 3. Verify the widget still renders CPU/Memory after refresh
@@ -294,7 +298,7 @@ test.describe(
           ).toBeChecked();
         });
 
-        test('Admin can manually refresh the Agent Stats widget', async ({
+        test('Admin can refresh the dashboard and the Agent Stats widget keeps rendering', async ({
           page,
         }) => {
           const widget = page
@@ -302,8 +306,10 @@ test.describe(
             .filter({ hasText: 'Agent Statistics' });
           await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-          // 2. Click the refresh button in the widget header
-          const refreshButton = widget.getByRole('button', { name: 'Refresh' });
+          // 2. Click the dashboard's refresh button (cards have none of their own)
+          const refreshButton = page
+            .getByTestId('dashboard-filter-bar')
+            .getByRole('button', { name: 'Refresh' });
           await refreshButton.click();
 
           // 3. Verify the widget still renders after refresh (no error state)
@@ -334,7 +340,7 @@ test.describe(
         await expect(widget.getByRole('table')).toBeVisible();
       });
 
-      test('Admin can manually refresh the Recently Created Sessions widget', async ({
+      test('Admin can refresh the dashboard and the Recently Created Sessions widget keeps rendering', async ({
         page,
       }) => {
         // 1. Locate the "Recently Created Sessions" widget
@@ -343,8 +349,10 @@ test.describe(
           .filter({ hasText: 'Recently Created Sessions' });
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-        // 2. Click the refresh button in the widget header
-        const refreshButton = widget.getByRole('button', { name: 'Refresh' });
+        // 2. Click the dashboard's refresh button (cards have none of their own)
+        const refreshButton = page
+          .getByTestId('dashboard-filter-bar')
+          .getByRole('button', { name: 'Refresh' });
         await refreshButton.click();
 
         // 3. Verify the widget still renders after refresh
