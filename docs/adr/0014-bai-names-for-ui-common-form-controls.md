@@ -11,7 +11,7 @@
 - form control을 `Form.Item`에 맞추던 webui의 adapter(`AstryxForm*`)는 두지 않는다. value 보정, item 폭 채우기, label과 status와 disabled 전달은 ui-common이 한다.
 - BUI 쪽 동작이 필요해진 control은 그 `BAI<X>.tsx`의 re-export를 component로 바꾼다. 지금 그런 control은 `BAISegmentedControlItem` 하나다.
 - BUI의 다른 source(component, fragment, story, test)도 form control을 그 `BAI<X>.tsx`에서 상대 경로로 import한다.
-- `react/eslint.config.js`의 `no-restricted-imports`가 `react/`에서 이 component 이름을 ui-common subpath로 import하는 것을 막는다. 같은 subpath의 type과 helper(`SelectorOptionType`, `ISODateTimeString`, `SliderProps` 등)는 그대로 import한다.
+- `react/eslint.config.js`의 `no-restricted-imports`가 `react/`에서 이 component 이름을 ui-common subpath로 import하는 것을 막는다. control 자신의 props type은 `BAI<X>Props`를 쓰고, 같은 subpath의 다른 type과 helper(`SelectorOptionType`, `ISODateTimeString`, `SearchSource` 등)는 그대로 import한다.
 
 ## Context
 
@@ -74,7 +74,7 @@ flowchart LR
 | `BAITypeahead` | `Typeahead` |
 
 - **One file per control**: `BAI<X>.tsx`는 `export { X as default, type XProps as BAIXProps } from '@lablup/ui-common/X'` 한 문장이다. item component는 부모 파일에서 함께 낸다(`BAIRadioList.tsx`의 `BAIRadioListItem`, `BAICheckboxList.tsx`의 `BAICheckboxListItem`). components barrel `index.ts`는 다른 BUI component와 같이 `export { default as BAIX } from './BAIX'`로 낸다.
-- **Props type**: 각 control은 `BAI<X>Props` type도 함께 낸다. 이 type은 ui-common의 `<X>Props`와 같다.
+- **Props type**: 각 control은 `BAI<X>Props` type도 함께 낸다. 이 type은 ui-common의 `<X>Props`와 같다. `react/`와 BUI의 call site는 control 자신의 props type으로 `BAI<X>Props`를 쓰고 ui-common `<X>Props`를 import하지 않는다. 2절대로 promotion되면 두 type이 달라지기 때문이다.
 - **Catalog**: 파일마다 같은 이름의 `BAI<X>.doc.ts`가 있어 `ui-common component` 목록과 `astryxIntegration.test.ts`의 catalog coverage를 채운다. doc의 공통 문장은 `formControlDoc.ts`의 `formControlDoc()`가 만든다.
 - **Not a wrapper**: re-export는 ui-common component 그 자체이므로 `component-props-extension.md`가 말하는 wrapper 규칙(props extend, `...rest` 전달)의 대상이 아니다.
 
@@ -89,13 +89,13 @@ flowchart LR
 - **Rule**: BUI의 component, fragment, story, test는 form control을 `BAI<X>` 이름으로 쓰고, import하는 파일에서 `components/BAI<X>.tsx`까지의 상대 경로로 import한다(`components/`에서는 `./BAITextInput`, `components/fragments/`에서는 `../BAITextInput`). item component는 부모 파일의 named export다(`import BAIRadioList, { BAIRadioListItem } from './BAIRadioList'`). `backend.ai-ui`나 components barrel `index.ts`에서 import하지 않는다. barrel을 거치면 순환 import가 생긴다.
 - **Antd-shaped wrappers included**: `BAISelect`, `BAICheckbox`, `BAIDynamicUnitInputNumber`처럼 2절의 기존 wrapper도 안에서 그리는 control을 `BAI<X>`로 import한다.
 - **Where the subpath stays**: ui-common subpath에서 control component를 import하는 파일은 1절의 `BAI<X>.tsx`와 2절의 promotion된 component(`BAISegmentedControlItem.tsx`)뿐이다.
-- **Props type**: control 자신의 props type은 `BAI<X>.tsx`의 `BAI<X>Props`를 쓴다. 2절대로 promotion되면 `BAI<X>Props`와 ui-common `<X>Props`가 달라지기 때문이다.
+- **Props type**: control 자신의 props type은 1절대로 `BAI<X>.tsx`의 `BAI<X>Props`를 쓴다.
 - **Types stay importable**: 그 밖의 type과 helper(`SelectorOptionData`, `ISODateTimeString`, `SearchSource` 등)는 BUI에서도 ui-common subpath에서 그대로 import한다.
 
 ### 4. ESLint가 `react/`의 직접 import를 막는다
 
 - **Rule**: `react/eslint.config.js`의 `formControlImportBans`가 `no-restricted-imports`의 `paths`에 subpath마다 한 항목을 둔다. 항목은 그 subpath의 component 이름만 `importNames`로 막고, 메시지로 `BAI<X>`를 가리킨다. `restrictedImportPaths`와 project-agnostic page block이 이 배열을 펼친다.
-- **Types stay importable**: `importNames`에 없는 이름(type, helper, `TypeaheadItem` 같은 다른 component)은 막지 않는다.
+- **Types stay importable**: `importNames`에 없는 이름(type, helper, `TypeaheadItem` 같은 다른 component)은 막지 않는다. control 자신의 `<X>Props`도 lint로는 막히지 않으므로 1절의 Props type 규칙은 review가 지킨다.
 ## 대안과 기각 사유
 
 - **Direct ui-common imports**: ADR 0009의 규칙대로 webui가 `@lablup/ui-common/<X>`를 직접 import한다. BUI에 파일을 더하지 않는다는 것이 장점이다. 기각한 이유는 한 화면 안에서 component 출처가 `backend.ai-ui`와 ui-common으로 갈리고, 나중에 BUI 동작을 더하려면 call site를 다시 모두 고쳐야 하기 때문이다.
