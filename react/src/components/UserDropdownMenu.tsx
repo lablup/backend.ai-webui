@@ -165,7 +165,6 @@ const UserDropdownMenu: React.FC<{
       icon: <ShieldCheck size="1em" />,
       isDisabled: true,
     },
-    { type: 'divider' },
     systemAdminMenuItem &&
       (isSystemAdminScope
         ? {
@@ -182,7 +181,7 @@ const UserDropdownMenu: React.FC<{
               );
             },
           }),
-    systemAdminMenuItem && { type: 'divider' as const },
+    { type: 'divider' },
     {
       label: t('webui.menu.AboutBackendAI'),
       icon: <CircleAlert size="1em" />,
