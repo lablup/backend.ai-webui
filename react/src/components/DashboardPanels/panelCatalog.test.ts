@@ -161,4 +161,20 @@ describe('catalogFor on the real catalog', () => {
     expect(entry('user')?.locked).toBe(true);
     expect(entry('superadmin')?.locked).toBe(false);
   });
+
+  it('gives a settings control only to cards that read a resource group or a range', () => {
+    const settingsOf = (key: string) =>
+      PANEL_CATALOG.find((definition) => definition.key === key)?.settings;
+    expect(settingsOf('myResource')).toEqual(['resourceGroup']);
+    expect(settingsOf('resourcePresets')).toEqual(['resourceGroup']);
+    expect(settingsOf('totalResourceWithinResourceGroup')).toEqual([
+      'resourceGroup',
+    ]);
+    expect(settingsOf('myActivity')).toEqual(['range']);
+    expect(settingsOf('resource.session')).toEqual(['resourceGroup']);
+    expect(settingsOf('resource.deployment')).toEqual(['resourceGroup']);
+    expect(settingsOf('resource.vfolder')).toBeUndefined();
+    expect(settingsOf('mySession')).toBeUndefined();
+    expect(settingsOf('folderStatus')).toBeUndefined();
+  });
 });

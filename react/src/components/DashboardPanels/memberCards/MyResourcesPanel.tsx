@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { MyResourcesPanelQuery } from '../../../__generated__/MyResourcesPanelQuery.graphql';
-import { resourceGroupRows } from '../dashboardScope';
 import type { PanelComponentProps } from '../types';
 import MemberCard, { NoProjectText, mineProjectId } from './MemberCard';
 import ResourceUsageBars from './ResourceUsageBars';
@@ -51,7 +50,7 @@ export const MyResourcesInResourceGroup: React.FC<{
   );
 };
 
-/** The viewer's used-vs-limit per slot, one block per resource group of the filter bar. */
+/** The viewer's used-vs-limit per slot, one block per resource group of the card's setting. */
 const MyResourcesPanel: React.FC<PanelComponentProps> = ({
   scope,
   vars,
@@ -60,10 +59,7 @@ const MyResourcesPanel: React.FC<PanelComponentProps> = ({
   'use memo';
   const { t } = useTranslation();
   const projectId = mineProjectId(scope);
-  const resourceGroups = resourceGroupRows(
-    scope.rgs,
-    vars.currentResourceGroup,
-  );
+  const resourceGroups = vars.resourceGroups;
   return (
     <MemberCard
       title={t('webui.menu.MyResources')}

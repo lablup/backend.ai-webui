@@ -7,7 +7,6 @@ import AgentStats from '../AgentStats';
 import QuotaPerStorageVolumeDashboardItem from '../QuotaPerStorageVolumeDashboardItem';
 import RecentlyCreatedSession from '../RecentlyCreatedSession';
 import SessionCountDashboardItem from '../SessionCountDashboardItem';
-import TotalResourceWithinResourceGroup from '../TotalResourceWithinResourceGroup';
 import { useDashboardRefreshQuery } from './DashboardRefreshContext';
 import { DEFAULT_PANEL_LAYOUTS, presetKey } from './defaults';
 import MyActivityPanel from './memberCards/MyActivityPanel';
@@ -81,22 +80,6 @@ const QuotaPerStorageVolumePanel: React.FC<PanelComponentProps> = () => {
       </Suspense>
     </BAIBoardItemErrorBoundary>
   );
-};
-
-const TotalResourceWithinResourceGroupPanel: React.FC<PanelComponentProps> = (
-  props,
-) => {
-  'use memo';
-  const { queryRefs, isRefetching, scope } = props;
-  // The member page follows the filter bar's resource groups with its own query.
-  if (scope.kind === 'mine') return <ResourceGroupTotalPanel {...props} />;
-  return queryRefs.totalResourceQueryRef ? (
-    <TotalResourceWithinResourceGroup
-      queryRef={queryRefs.totalResourceQueryRef}
-      refetching={isRefetching}
-      hideRefreshButton
-    />
-  ) : null;
 };
 
 const AgentStatsPanel: React.FC<PanelComponentProps> = ({ queryRefs }) => {
@@ -246,6 +229,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(2, 3),
     minSize: size(2, 2),
     refresh: { min: '30s' },
+    settings: ['resourceGroup'],
   },
   {
     key: 'resourcePresets',
@@ -257,6 +241,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(2, 3),
     minSize: size(2, 2),
     refresh: { min: '30s' },
+    settings: ['resourceGroup'],
   },
   {
     key: 'totalResourceWithinResourceGroup',
@@ -268,10 +253,11 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
       config: (config, role) => role === 'superadmin' || !config.hideAgents,
     },
     kind: 'custom',
-    Component: TotalResourceWithinResourceGroupPanel,
+    Component: ResourceGroupTotalPanel,
     defaultSize: size(2, 2),
     minSize: size(2, 2),
     refresh: { min: '30s' },
+    settings: ['resourceGroup'],
   },
   {
     key: 'folderStatus',
@@ -317,6 +303,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(4, 3),
     minSize: size(2, 2),
     refresh: { min: '1m' },
+    settings: ['range'],
   },
 ];
 

@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { ResourcePresetsPanelQuery } from '../../../__generated__/ResourcePresetsPanelQuery.graphql';
-import { resourceGroupRows } from '../dashboardScope';
 import type { PanelComponentProps } from '../types';
 import MemberCard, { NoProjectText, mineProjectId } from './MemberCard';
 import { toPresetRows, type PresetRow } from './memberCardData';
@@ -92,7 +91,7 @@ const PresetAvailabilityTable: React.FC<{
   );
 };
 
-/** Which resource presets the viewer can launch now, per resource group of the filter bar. */
+/** Which resource presets the viewer can launch now, per resource group of the card's setting. */
 const ResourcePresetsPanel: React.FC<PanelComponentProps> = ({
   scope,
   vars,
@@ -101,10 +100,7 @@ const ResourcePresetsPanel: React.FC<PanelComponentProps> = ({
   'use memo';
   const { t } = useTranslation();
   const projectId = mineProjectId(scope);
-  const resourceGroups = resourceGroupRows(
-    scope.rgs,
-    vars.currentResourceGroup,
-  );
+  const resourceGroups = vars.resourceGroups;
   return (
     <MemberCard
       title={t('dashboard.card.ResourcePresets')}

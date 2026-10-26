@@ -5,7 +5,6 @@
 import type { ResourceGroupTotalPanelQuery } from '../../../__generated__/ResourceGroupTotalPanelQuery.graphql';
 import { useCurrentUserRole } from '../../../hooks/backendai';
 import TotalResourceWithinResourceGroup from '../../TotalResourceWithinResourceGroup';
-import { resourceGroupRows } from '../dashboardScope';
 import type { PanelComponentProps } from '../types';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIBoardItemErrorBoundary, BAIFlex, BAISkeleton } from 'backend.ai-ui';
@@ -49,13 +48,13 @@ const ResourceGroupTotal: React.FC<{
       queryRef={queryRef}
       resourceGroup={deferredVariables.resourceGroup}
       refetching={isRefetching || deferredVariables !== variables}
+      hideRefreshButton
     />
   );
 };
 
-/** The resource group totals, one block per resource group of the filter bar. */
+/** The resource group totals, one block per resource group of the card's setting. */
 const ResourceGroupTotalPanel: React.FC<PanelComponentProps> = ({
-  scope,
   vars,
   fetchKey,
   isRefetching,
@@ -63,10 +62,7 @@ const ResourceGroupTotalPanel: React.FC<PanelComponentProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
-  const resourceGroups = resourceGroupRows(
-    scope.rgs,
-    vars.currentResourceGroup,
-  );
+  const resourceGroups = vars.resourceGroups;
   return (
     <BAIBoardItemErrorBoundary
       title={t('webui.menu.TotalResourcesInResourceGroup')}

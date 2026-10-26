@@ -5,7 +5,6 @@
 import type { AgentStatsFragment$key } from '../../__generated__/AgentStatsFragment.graphql';
 import type { RecentlyCreatedSessionFragment$key } from '../../__generated__/RecentlyCreatedSessionFragment.graphql';
 import type { SessionCountDashboardItemFragment$key } from '../../__generated__/SessionCountDashboardItemFragment.graphql';
-import type { TotalResourceWithinResourceGroupFragment$key } from '../../__generated__/TotalResourceWithinResourceGroupFragment.graphql';
 import type { SessionGridViewParams } from '../../helper/sessionResourceGridData';
 import type { UserRole } from '../../helper/userRole';
 import type { MenuKeys } from '../../hooks/useWebUIMenuItems';
@@ -216,7 +215,6 @@ export interface PanelCatalogContext {
 export interface DashboardPageQueryRefs {
   queryRef?: SessionCountDashboardItemFragment$key &
     RecentlyCreatedSessionFragment$key;
-  totalResourceQueryRef?: TotalResourceWithinResourceGroupFragment$key | null;
   agentStatsQueryRef?: AgentStatsFragment$key | null;
 }
 
