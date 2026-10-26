@@ -631,6 +631,22 @@ function devCompressionPlugin(): Plugin {
   };
 }
 
+function devLinkedDepSourcemapPlugin(): Plugin {
+  return {
+    name: 'bai-dev-linked-dep-sourcemap',
+    apply: 'serve',
+    enforce: 'post',
+    transform(code, id) {
+      if (!this.environment.depsOptimizer?.isOptimizedDepFile(id)) return;
+      const file = basename(id.split('?')[0]);
+      return {
+        code: `${code}\n//# sourceMappingURL=${file}.map`,
+        map: { mappings: '' },
+      };
+    },
+  };
+}
+
 function monacoStaticPlugin(): Plugin {
   const monacoRoot = resolve(__dirname, 'node_modules/monaco-editor/min/vs');
   const URL_PREFIX = '/resources/monaco/vs/';
@@ -999,6 +1015,7 @@ export default defineConfig(({ command, mode }) => {
       // Compression must come first so its res.write/res.end hooks wrap
       // every downstream middleware's writes (see comment on the plugin).
       devCompressionPlugin(),
+      devLinkedDepSourcemapPlugin(),
       monacoStaticPlugin(),
       projectRootStaticPlugin(devCspHeaders),
       cspBundleNoncePlugin(),
