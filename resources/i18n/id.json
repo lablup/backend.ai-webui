@@ -3733,8 +3733,6 @@
     "adminViewSwitch": {
       "AdminLandingMenuText": "Buka menu profil pengguna di kanan atas: \"Kembali ke Tampilan Pengguna\" membawa Anda ke halaman pengguna, dan \"Pengaturan Admin\" membawa Anda kembali ke sini.",
       "AdminLandingMenuTitle": "Pengaturan Admin pindah ke menu profil",
-      "AdminLandingProjectText": "Entri menu samping yang dulu membuka pengaturan admin kini membuka Pengaturan Proyek untuk proyek yang Anda kelola.",
-      "AdminLandingProjectTitle": "Menu samping menampilkan Pengaturan Proyek",
       "AdminLandingStartText": "Setelah login, Anda kini langsung masuk ke pengaturan admin, bukan halaman pengguna.",
       "AdminLandingStartTitle": "Anda memulai di pengaturan admin",
       "AdminLandingText": "Berikut perubahan untuk superadmin.",

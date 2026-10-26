@@ -12,7 +12,7 @@ import { HStack, VStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
 import { TourStep } from '@lablup/ui-common/lab';
 import { BAIModal } from 'backend.ai-ui';
-import { CircleUserRound, LogIn, ShieldUser } from 'lucide-react';
+import { CircleUserRound, LogIn } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -84,15 +84,6 @@ const AdminViewSwitchTour: React.FC = () => {
               description={
                 <Text type="supporting" color="secondary">
                   {t('tourGuide.adminViewSwitch.AdminLandingMenuText')}
-                </Text>
-              }
-            />
-            <ListItem
-              startContent={<ShieldUser size="1.25em" />}
-              label={t('tourGuide.adminViewSwitch.AdminLandingProjectTitle')}
-              description={
-                <Text type="supporting" color="secondary">
-                  {t('tourGuide.adminViewSwitch.AdminLandingProjectText')}
                 </Text>
               }
             />

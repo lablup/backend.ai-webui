@@ -3732,8 +3732,6 @@
     "adminViewSwitch": {
       "AdminLandingMenuText": "Ouvrez le menu du profil utilisateur en haut à droite : \"Retour à la vue utilisateur\" mène aux pages utilisateur et \"Paramètres d'administration\" vous ramène ici.",
       "AdminLandingMenuTitle": "Les paramètres d'administration sont passés dans le menu du profil",
-      "AdminLandingProjectText": "L'entrée du menu latéral qui ouvrait les paramètres d'administration ouvre maintenant les Paramètres du projet des projets que vous administrez.",
-      "AdminLandingProjectTitle": "Le menu latéral affiche Paramètres du projet",
       "AdminLandingStartText": "Après la connexion, vous arrivez désormais directement dans les paramètres d'administration au lieu des pages utilisateur.",
       "AdminLandingStartTitle": "Vous commencez dans les paramètres d'administration",
       "AdminLandingText": "Voici ce qui change pour les super-administrateurs.",

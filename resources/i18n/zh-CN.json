@@ -3731,8 +3731,6 @@
     "adminViewSwitch": {
       "AdminLandingMenuText": "打开右上角的用户资料菜单：选择“返回用户视图”进入用户页面，选择“管理员设置”回到这里。",
       "AdminLandingMenuTitle": "管理员设置已移至个人资料菜单",
-      "AdminLandingProjectText": "原先打开管理员设置的侧边菜单项，现在会打开您所管理项目的项目设置。",
-      "AdminLandingProjectTitle": "侧边菜单显示项目设置",
       "AdminLandingStartText": "登录后，您现在会直接进入管理员设置，而不是用户页面。",
       "AdminLandingStartTitle": "从管理员设置开始",
       "AdminLandingText": "以下是超级管理员的变更内容。",

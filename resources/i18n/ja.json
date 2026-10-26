@@ -3731,8 +3731,6 @@
     "adminViewSwitch": {
       "AdminLandingMenuText": "右上のユーザープロフィールメニューで「ユーザー画面に戻る」を選ぶとユーザー画面へ、「管理者設定」を選ぶとこの画面に戻ります。",
       "AdminLandingMenuTitle": "管理者設定はプロフィールメニューに移動しました",
-      "AdminLandingProjectText": "管理者設定を開いていたサイドメニューの項目は、管理しているプロジェクトのプロジェクト設定を開くようになりました。",
-      "AdminLandingProjectTitle": "サイドメニューにはプロジェクト設定が表示されます",
       "AdminLandingStartText": "ログイン後、ユーザー画面ではなく管理者設定の画面に直接入るようになりました。",
       "AdminLandingStartTitle": "管理者設定から始まります",
       "AdminLandingText": "スーパー管理者向けの変更点をお知らせします。",

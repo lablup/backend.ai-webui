@@ -3729,8 +3729,6 @@
     "adminViewSwitch": {
       "AdminLandingMenuText": "Avaa käyttäjäprofiilivalikko oikeasta yläkulmasta: \"Takaisin käyttäjänäkymään\" vie käyttäjäsivuille ja \"Ylläpitäjän asetukset\" tuo sinut takaisin tänne.",
       "AdminLandingMenuTitle": "Ylläpitäjän asetukset siirtyivät profiilivalikkoon",
-      "AdminLandingProjectText": "Sivuvalikon kohta, joka avasi ylläpitäjän asetukset, avaa nyt hallinnoimiesi projektien Projektin asetukset.",
-      "AdminLandingProjectTitle": "Sivuvalikossa näkyy Projektin asetukset",
       "AdminLandingStartText": "Kirjautumisen jälkeen siirryt nyt suoraan ylläpitäjän asetuksiin käyttäjäsivujen sijaan.",
       "AdminLandingStartTitle": "Aloitat ylläpitäjän asetuksista",
       "AdminLandingText": "Näin pääylläpitäjien näkymä muuttui.",

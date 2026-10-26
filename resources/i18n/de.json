@@ -3731,8 +3731,6 @@
     "adminViewSwitch": {
       "AdminLandingMenuText": "Öffnen Sie das Benutzerprofilmenü oben rechts: \"Zurück zur Benutzeransicht\" führt zu den Benutzerseiten, \"Admin-Einstellungen\" bringt Sie hierher zurück.",
       "AdminLandingMenuTitle": "Admin-Einstellungen sind ins Profilmenü umgezogen",
-      "AdminLandingProjectText": "Der Eintrag im Seitenmenü, der früher die Admin-Einstellungen öffnete, öffnet jetzt die Projekteinstellungen der Projekte, die Sie verwalten.",
-      "AdminLandingProjectTitle": "Das Seitenmenü zeigt Projekteinstellungen",
       "AdminLandingStartText": "Nach der Anmeldung gelangen Sie jetzt direkt zu den Admin-Einstellungen statt zu den Benutzerseiten.",
       "AdminLandingStartTitle": "Sie starten in den Admin-Einstellungen",
       "AdminLandingText": "Das hat sich für Superadmins geändert.",

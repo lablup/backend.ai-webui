@@ -3729,8 +3729,6 @@
     "adminViewSwitch": {
       "AdminLandingMenuText": "Abra el menú del perfil de usuario arriba a la derecha: \"Volver a la vista de usuario\" le lleva a las páginas de usuario y \"Ajustes de administrador\" le trae de vuelta aquí.",
       "AdminLandingMenuTitle": "Los ajustes de administrador se movieron al menú de perfil",
-      "AdminLandingProjectText": "La entrada del menú lateral que abría los ajustes de administrador ahora abre los Ajustes del proyecto de los proyectos que administra.",
-      "AdminLandingProjectTitle": "El menú lateral muestra Ajustes del proyecto",
       "AdminLandingStartText": "Al iniciar sesión, ahora entra directamente en los ajustes de administrador en lugar de las páginas de usuario.",
       "AdminLandingStartTitle": "Empieza en los ajustes de administrador",
       "AdminLandingText": "Estos son los cambios para los superadministradores.",

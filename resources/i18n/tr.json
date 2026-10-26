@@ -3729,8 +3729,6 @@
     "adminViewSwitch": {
       "AdminLandingMenuText": "Sağ üstteki kullanıcı profili menüsünü açın: \"Kullanıcı Görünümüne Dön\" sizi kullanıcı sayfalarına, \"Yönetici Ayarları\" ise buraya geri götürür.",
       "AdminLandingMenuTitle": "Yönetici Ayarları profil menüsüne taşındı",
-      "AdminLandingProjectText": "Eskiden yönetici ayarlarını açan yan menü öğesi artık yönettiğiniz projelerin Proje Ayarlarını açar.",
-      "AdminLandingProjectTitle": "Yan menüde Proje Ayarları görünür",
       "AdminLandingStartText": "Oturum açtıktan sonra artık kullanıcı sayfaları yerine doğrudan yönetici ayarlarına girersiniz.",
       "AdminLandingStartTitle": "Yönetici ayarlarında başlarsınız",
       "AdminLandingText": "Süper yöneticiler için değişenler.",

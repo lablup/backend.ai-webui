@@ -3716,8 +3716,6 @@
     "adminViewSwitch": {
       "AdminLandingMenuText": "Open the user profile menu at the top right: \"Back to User View\" takes you to the user pages, and \"Admin Settings\" brings you back here.",
       "AdminLandingMenuTitle": "Admin Settings moved to the profile menu",
-      "AdminLandingProjectText": "The side menu entry that used to open the admin settings now opens Project Settings for the projects you administer.",
-      "AdminLandingProjectTitle": "The side menu shows Project Settings",
       "AdminLandingStartText": "After logging in, you now go straight to the admin settings instead of the user pages.",
       "AdminLandingStartTitle": "You start in the admin settings",
       "AdminLandingText": "Here is what changed for superadmins.",

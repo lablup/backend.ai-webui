@@ -3729,8 +3729,6 @@
     "adminViewSwitch": {
       "AdminLandingMenuText": "Buka menu profil pengguna di atas kanan: \"Kembali ke Paparan Pengguna\" membawa anda ke halaman pengguna, dan \"Tetapan Pentadbir\" membawa anda kembali ke sini.",
       "AdminLandingMenuTitle": "Tetapan Pentadbir berpindah ke menu profil",
-      "AdminLandingProjectText": "Item menu sisi yang dahulu membuka tetapan pentadbir kini membuka Tetapan Projek bagi projek yang anda tadbir.",
-      "AdminLandingProjectTitle": "Menu sisi memaparkan Tetapan Projek",
       "AdminLandingStartText": "Selepas log masuk, anda kini terus masuk ke tetapan pentadbir dan bukan halaman pengguna.",
       "AdminLandingStartTitle": "Anda bermula di tetapan pentadbir",
       "AdminLandingText": "Berikut perubahan untuk superpentadbir.",

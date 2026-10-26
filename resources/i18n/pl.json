@@ -3732,8 +3732,6 @@
     "adminViewSwitch": {
       "AdminLandingMenuText": "Otwórz menu profilu użytkownika w prawym górnym rogu: \"Powrót do widoku użytkownika\" prowadzi do stron użytkownika, a \"Ustawienia admina\" przywraca Cię tutaj.",
       "AdminLandingMenuTitle": "Ustawienia admina przeniesiono do menu profilu",
-      "AdminLandingProjectText": "Pozycja menu bocznego, która otwierała ustawienia admina, otwiera teraz Ustawienia projektu dla projektów, którymi zarządzasz.",
-      "AdminLandingProjectTitle": "Menu boczne pokazuje Ustawienia projektu",
       "AdminLandingStartText": "Po zalogowaniu trafiasz teraz bezpośrednio do ustawień admina zamiast na strony użytkownika.",
       "AdminLandingStartTitle": "Zaczynasz w ustawieniach admina",
       "AdminLandingText": "Oto zmiany dla superadministratorów.",
