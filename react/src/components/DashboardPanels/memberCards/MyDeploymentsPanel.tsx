@@ -35,7 +35,8 @@ const MyDeploymentsTable: React.FC<{ projectId: string; fetchKey: string }> = ({
   } = useBAIPaginationOptionState({ current: 1, pageSize: 5 });
 
   const variables = {
-    filter: { projectId: { equals: projectId } },
+    // Destroyed deployments stay in `myDeployments`; only live ones count here.
+    filter: { projectId: { equals: projectId }, destroyedAt: { isNull: true } },
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
   };
