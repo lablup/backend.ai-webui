@@ -3730,6 +3730,8 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
+      "AdminLandingText": "Jako superadministrator po zalogowaniu trafiasz teraz bezpośrednio do ustawień admina. Aby przejść do widoku użytkownika lub wrócić do ustawień admina, użyj menu profilu użytkownika w prawym górnym rogu.",
+      "AdminLandingTitle": "Superadministratorzy zaczynają teraz od ustawień admina",
       "BackToAdminSettingsText": "Aby wrócić do ustawień admina, otwórz to menu i wybierz \"Ustawienia admina\".",
       "BackToAdminSettingsTitle": "Powrót do ustawień admina",
       "BackToUserViewText": "Jesteś w ustawieniach admina. Aby korzystać z sesji, danych i innych stron użytkownika, otwórz to menu i wybierz \"Powrót do widoku użytkownika\".",

@@ -3727,6 +3727,8 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
+      "AdminLandingText": "Pääylläpitäjänä siirryt nyt kirjautumisen jälkeen suoraan ylläpitäjän asetuksiin. Siirry käyttäjänäkymään tai takaisin ylläpitäjän asetuksiin oikean yläkulman käyttäjäprofiilivalikosta.",
+      "AdminLandingTitle": "Pääylläpitäjät aloittavat nyt ylläpitäjän asetuksista",
       "BackToAdminSettingsText": "Palataksesi ylläpitäjän asetuksiin avaa tämä valikko ja valitse \"Ylläpitäjän asetukset\".",
       "BackToAdminSettingsTitle": "Paluu ylläpitäjän asetuksiin",
       "BackToUserViewText": "Olet ylläpitäjän asetuksissa. Käyttääksesi istuntoja, dataa ja muita käyttäjäsivuja avaa tämä valikko ja valitse \"Takaisin käyttäjänäkymään\".",

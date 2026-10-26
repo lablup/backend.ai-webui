@@ -3727,6 +3727,8 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
+      "AdminLandingText": "Come superamministratore, ora accedi direttamente alle impostazioni amministratore dopo il login. Per passare alla vista utente o tornare alle impostazioni amministratore, usa il menu del profilo utente in alto a destra.",
+      "AdminLandingTitle": "I superamministratori ora iniziano dalle impostazioni amministratore",
       "BackToAdminSettingsText": "Per tornare alle impostazioni amministratore, apri questo menu e scegli \"Impostazioni amministratore\".",
       "BackToAdminSettingsTitle": "Tornare alle impostazioni amministratore",
       "BackToUserViewText": "Sei nelle impostazioni amministratore. Per usare sessioni, dati e le altre pagine utente, apri questo menu e scegli \"Torna alla vista utente\".",

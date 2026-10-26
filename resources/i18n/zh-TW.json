@@ -3731,6 +3731,8 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
+      "AdminLandingText": "超級管理員現在登入後會直接進入管理員設定。要切換到使用者檢視或返回管理員設定，請使用右上角的使用者個人資料選單。",
+      "AdminLandingTitle": "超級管理員現在從管理員設定開始",
       "BackToAdminSettingsText": "要返回管理員設定，請開啟此選單並選擇「管理員設定」。",
       "BackToAdminSettingsTitle": "返回管理員設定",
       "BackToUserViewText": "您正在管理員設定中。要使用會話、資料等使用者頁面，請開啟此選單並選擇「返回使用者檢視」。",

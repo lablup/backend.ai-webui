@@ -3731,6 +3731,8 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
+      "AdminLandingText": "Sebagai superadmin, Anda kini langsung masuk ke pengaturan admin setelah login. Untuk beralih ke tampilan pengguna atau kembali ke pengaturan admin, gunakan menu profil pengguna di kanan atas.",
+      "AdminLandingTitle": "Superadmin kini memulai di pengaturan admin",
       "BackToAdminSettingsText": "Untuk kembali ke pengaturan admin, buka menu ini dan pilih \"Pengaturan Admin\".",
       "BackToAdminSettingsTitle": "Kembali ke pengaturan admin",
       "BackToUserViewText": "Anda berada di pengaturan admin. Untuk menggunakan sesi, data, dan halaman pengguna lainnya, buka menu ini dan pilih \"Kembali ke Tampilan Pengguna\".",

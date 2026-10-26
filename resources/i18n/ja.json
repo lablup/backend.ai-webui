@@ -3729,6 +3729,8 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
+      "AdminLandingText": "スーパー管理者はログイン後、管理者設定の画面に直接入るようになりました。ユーザー画面への切り替えや管理者設定への移動は、右上のユーザープロフィールメニューから行えます。",
+      "AdminLandingTitle": "スーパー管理者は管理者設定から始まります",
       "BackToAdminSettingsText": "管理者設定に戻るには、このメニューを開いて「管理者設定」を選択してください。",
       "BackToAdminSettingsTitle": "管理者設定に戻る",
       "BackToUserViewText": "現在は管理者設定の画面です。セッションやデータなどのユーザー画面を使うには、このメニューを開いて「ユーザー画面に戻る」を選択してください。",

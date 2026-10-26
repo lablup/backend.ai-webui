@@ -3714,6 +3714,8 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
+      "AdminLandingText": "As a superadmin, you now go straight to the admin settings after logging in. To switch to the user view, or back to the admin settings, use the user profile menu at the top right.",
+      "AdminLandingTitle": "Superadmins now start in the admin settings",
       "BackToAdminSettingsText": "To return to the admin settings, open this menu and choose \"Admin Settings\".",
       "BackToAdminSettingsTitle": "Returning to the admin settings",
       "BackToUserViewText": "You are in the admin settings. To use sessions, data and the other user pages, open this menu and choose \"Back to User View\".",

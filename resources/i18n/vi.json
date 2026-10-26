@@ -3729,6 +3729,8 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
+      "AdminLandingText": "Với vai trò siêu quản trị viên, giờ đây bạn vào thẳng cài đặt quản trị sau khi đăng nhập. Để chuyển sang giao diện người dùng hoặc quay lại cài đặt quản trị, hãy dùng menu hồ sơ người dùng ở góc trên bên phải.",
+      "AdminLandingTitle": "Siêu quản trị viên giờ bắt đầu từ cài đặt quản trị",
       "BackToAdminSettingsText": "Để quay lại cài đặt quản trị, hãy mở menu này và chọn \"Cài đặt quản trị\".",
       "BackToAdminSettingsTitle": "Quay lại cài đặt quản trị",
       "BackToUserViewText": "Bạn đang ở cài đặt quản trị. Để dùng phiên, dữ liệu và các trang người dùng khác, hãy mở menu này và chọn \"Quay lại giao diện người dùng\".",

@@ -3727,6 +3727,8 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
+      "AdminLandingText": "Como superadministrador, ahora entra directamente en los ajustes de administrador al iniciar sesión. Para cambiar a la vista de usuario o volver a los ajustes de administrador, use el menú del perfil de usuario en la parte superior derecha.",
+      "AdminLandingTitle": "Los superadministradores ahora empiezan en los ajustes de administrador",
       "BackToAdminSettingsText": "Para volver a los ajustes de administrador, abra este menú y elija \"Ajustes de administrador\".",
       "BackToAdminSettingsTitle": "Volver a los ajustes de administrador",
       "BackToUserViewText": "Está en los ajustes de administrador. Para usar sesiones, datos y las demás páginas de usuario, abra este menú y elija \"Volver a la vista de usuario\".",

@@ -3730,6 +3730,8 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
+      "AdminLandingText": "En tant que super-administrateur, vous arrivez désormais directement dans les paramètres d'administration après la connexion. Pour passer à la vue utilisateur ou revenir aux paramètres d'administration, utilisez le menu du profil utilisateur en haut à droite.",
+      "AdminLandingTitle": "Les super-administrateurs commencent désormais dans les paramètres d'administration",
       "BackToAdminSettingsText": "Pour revenir aux paramètres d'administration, ouvrez ce menu et choisissez \"Paramètres d'administration\".",
       "BackToAdminSettingsTitle": "Revenir aux paramètres d'administration",
       "BackToUserViewText": "Vous êtes dans les paramètres d'administration. Pour utiliser les sessions, les données et les autres pages utilisateur, ouvrez ce menu et choisissez \"Retour à la vue utilisateur\".",

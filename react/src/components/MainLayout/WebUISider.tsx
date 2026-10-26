@@ -4,7 +4,6 @@
  */
 import { AstryxReverseTheme } from '../../astryx-theme';
 import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
-import { useRouteScope } from '../../hooks/useRouteScope';
 import BAISider from '../BAISider';
 import SiderToggleButton from '../SiderToggleButton';
 import WebUISiderFooter from './WebUISiderFooter';
@@ -29,13 +28,10 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   'use memo';
   const siderRef = useRef<HTMLElement>(null);
   const isSiderHover = useHover(siderRef);
-  const isSystemAdminScope = useRouteScope() === 'admin';
 
   return (
     <BAISider
-      className={
-        isSystemAdminScope ? 'webui-sider bai-sider--admin' : 'webui-sider'
-      }
+      className="webui-sider"
       ref={siderRef}
       collapsed={props.collapsed}
       onCollapse={(collapsed) => props.onCollapse?.(collapsed, 'clickTrigger')}

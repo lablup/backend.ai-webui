@@ -3727,6 +3727,8 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
+      "AdminLandingText": "Sebagai superpentadbir, anda kini terus masuk ke tetapan pentadbir selepas log masuk. Untuk beralih ke paparan pengguna atau kembali ke tetapan pentadbir, gunakan menu profil pengguna di bahagian atas kanan.",
+      "AdminLandingTitle": "Superpentadbir kini bermula di tetapan pentadbir",
       "BackToAdminSettingsText": "Untuk kembali ke tetapan pentadbir, buka menu ini dan pilih \"Tetapan Pentadbir\".",
       "BackToAdminSettingsTitle": "Kembali ke tetapan pentadbir",
       "BackToUserViewText": "Anda berada dalam tetapan pentadbir. Untuk menggunakan sesi, data dan halaman pengguna lain, buka menu ini dan pilih \"Kembali ke Paparan Pengguna\".",

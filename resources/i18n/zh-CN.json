@@ -3729,6 +3729,8 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
+      "AdminLandingText": "超级管理员现在登录后会直接进入管理员设置。要切换到用户视图或返回管理员设置，请使用右上角的用户资料菜单。",
+      "AdminLandingTitle": "超级管理员现在从管理员设置开始",
       "BackToAdminSettingsText": "要返回管理员设置，请打开此菜单并选择“管理员设置”。",
       "BackToAdminSettingsTitle": "返回管理员设置",
       "BackToUserViewText": "您正在管理员设置中。要使用会话、数据等用户页面，请打开此菜单并选择“返回用户视图”。",
