@@ -54,6 +54,8 @@ export const DeploymentNodesPanelContent: React.FC<{
     setTablePaginationOption,
   } = useBAIPaginationOptionState({ current: 1, pageSize: 10 });
 
+  // The query falls back to the default order; the table shows only a chosen one,
+  // so its sort cycle can reach ascending instead of snapping back to the default.
   const order = descriptor.order ?? config.defaultOrder;
   const variables = config.buildVariables({
     filter: descriptor.filter ?? undefined,
@@ -77,7 +79,7 @@ export const DeploymentNodesPanelContent: React.FC<{
   return (
     <BAIModelDeploymentNodes
       deploymentsFrgmt={deployments}
-      order={order}
+      order={descriptor.order ?? undefined}
       disableSorter={!onChangeOrder}
       onChangeOrder={
         onChangeOrder ? (next) => onChangeOrder(next ?? undefined) : undefined
