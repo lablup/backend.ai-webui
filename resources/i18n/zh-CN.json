@@ -829,25 +829,6 @@
       "Title": "自定义面板",
       "Unavailable": "此环境中不可用"
     },
-    "filterBar": {
-      "AllProjects": "所有项目",
-      "AllResourceGroups": "所有资源组",
-      "CustomRange": "自定义",
-      "Filters": "仪表板筛选",
-      "Last1Hour": "最近 1 小时",
-      "Last24Hours": "最近 24 小时",
-      "Last7Days": "最近 7 天",
-      "Minutes": "{{count}} 分钟",
-      "Off": "关闭",
-      "PinnedToBoard": "已固定到此看板",
-      "Projects": "项目",
-      "RefreshedMinutesAgo": "{{count}} 分钟前刷新",
-      "RefreshedSecondsAgo": "{{count}} 秒前刷新",
-      "ResourceGroups": "资源组",
-      "Seconds": "{{count}} 秒",
-      "TimeRange": "时间范围",
-      "TimeRangeHelp": "显示当前状态的卡片(会话数、资源分配)不受时间范围影响。"
-    },
     "panelModal": {
       "AddPanel": "添加面板",
       "Condition": "条件",

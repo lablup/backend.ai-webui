@@ -2,25 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { RefreshScheduler } from './refreshScheduler';
-
-const createScheduler = () => {
-  let hidden = false;
-  const listeners = new Set<() => void>();
-  const scheduler = new RefreshScheduler({
-    now: () => Date.now(),
-    isHidden: () => hidden,
-    onVisibilityChange: (listener) => {
-      listeners.add(listener);
-      return () => listeners.delete(listener);
-    },
-  });
-  const setHidden = (next: boolean) => {
-    hidden = next;
-    listeners.forEach((listener) => listener());
-  };
-  return { scheduler, setHidden };
-};
+import {
+  REFRESH_DELAY_OPTIONS,
+  RefreshScheduler,
+  isRefreshOption,
+  msToRefresh,
+  refreshToMs,
+} from './refreshScheduler';
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -31,136 +19,87 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
+describe('refresh choices', () => {
+  it('converts between choices and milliseconds', () => {
+    expect(refreshToMs('30s')).toBe(30_000);
+    expect(refreshToMs('5m')).toBe(300_000);
+    expect(refreshToMs('off')).toBeNull();
+    expect(refreshToMs('7x')).toBeNull();
+    expect(msToRefresh(60_000)).toBe('1m');
+    expect(msToRefresh(null)).toBe('off');
+    expect(msToRefresh(7_000)).toBe('off');
+  });
+
+  it('offers every choice but off as an interval', () => {
+    expect(REFRESH_DELAY_OPTIONS).toEqual([
+      5_000, 10_000, 15_000, 30_000, 60_000, 300_000, 600_000,
+    ]);
+    expect(isRefreshOption('10m')).toBe(true);
+    expect(isRefreshOption('2s')).toBe(false);
+  });
+});
+
 describe('RefreshScheduler', () => {
-  it('refreshes a subscriber only after its minimum interval', () => {
-    const { scheduler } = createScheduler();
+  it('refreshes a subscriber on a tick only after its minimum interval', () => {
+    const scheduler = new RefreshScheduler();
     const fast = vi.fn();
     const slow = vi.fn();
     scheduler.register('fast', { minMs: 5_000, refresh: fast });
     scheduler.register('slow', { minMs: 15_000, refresh: slow });
-    scheduler.setInterval(5_000);
-    const stop = scheduler.start();
 
     vi.advanceTimersByTime(5_000);
+    scheduler.tick();
     expect(fast).toHaveBeenCalledTimes(1);
     expect(slow).not.toHaveBeenCalled();
 
     vi.advanceTimersByTime(10_000);
-    expect(fast).toHaveBeenCalledTimes(3);
+    scheduler.tick();
+    expect(fast).toHaveBeenCalledTimes(2);
     expect(slow).toHaveBeenCalledTimes(1);
-
-    vi.advanceTimersByTime(15_000);
-    expect(fast).toHaveBeenCalledTimes(6);
-    expect(slow).toHaveBeenCalledTimes(2);
-    stop();
-  });
-
-  it('uses the slower of the bar interval and the minimum', () => {
-    const { scheduler } = createScheduler();
-    const card = vi.fn();
-    scheduler.register('card', { minMs: 15_000, refresh: card });
-    scheduler.setInterval(60_000);
-    scheduler.start();
-
-    vi.advanceTimersByTime(59_000);
-    expect(card).not.toHaveBeenCalled();
-    vi.advanceTimersByTime(1_000);
-    expect(card).toHaveBeenCalledTimes(1);
-    scheduler.stop();
   });
 
   it('passes the refresh time to the subscriber', () => {
-    const { scheduler } = createScheduler();
+    const scheduler = new RefreshScheduler();
     const card = vi.fn();
     scheduler.register('card', { minMs: 5_000, refresh: card });
-    scheduler.setInterval(5_000);
-    scheduler.start();
     vi.advanceTimersByTime(5_000);
+    scheduler.tick();
     expect(card).toHaveBeenCalledWith(Date.now());
-    scheduler.stop();
   });
 
-  it('pauses while the tab is hidden and catches up when it returns', () => {
-    const { scheduler, setHidden } = createScheduler();
-    const card = vi.fn();
-    scheduler.register('card', { minMs: 10_000, refresh: card });
-    scheduler.setInterval(10_000);
-    scheduler.start();
-
-    setHidden(true);
-    vi.advanceTimersByTime(60_000);
-    expect(card).not.toHaveBeenCalled();
-
-    setHidden(false);
-    expect(card).toHaveBeenCalledTimes(1);
-    vi.advanceTimersByTime(10_000);
-    expect(card).toHaveBeenCalledTimes(2);
-    scheduler.stop();
-  });
-
-  it('does not tick when auto refresh is off', () => {
-    const { scheduler, setHidden } = createScheduler();
-    const card = vi.fn();
-    scheduler.register('card', { minMs: 5_000, refresh: card });
-    scheduler.setInterval(null);
-    scheduler.start();
-    vi.advanceTimersByTime(120_000);
-    setHidden(true);
-    setHidden(false);
-    expect(card).not.toHaveBeenCalled();
-    scheduler.stop();
-  });
-
-  it('refreshes every subscriber by hand and restarts the countdown', () => {
-    const { scheduler } = createScheduler();
+  it('refreshes every subscriber by hand, whatever its minimum', () => {
+    const scheduler = new RefreshScheduler();
     const fast = vi.fn();
     const slow = vi.fn();
     const ticked = vi.fn();
     scheduler.register('fast', { minMs: 5_000, refresh: fast });
     scheduler.register('slow', { minMs: 600_000, refresh: slow });
     scheduler.subscribe(ticked);
-    scheduler.setInterval(30_000);
-    scheduler.start();
 
-    vi.advanceTimersByTime(20_000);
+    vi.advanceTimersByTime(1_000);
     scheduler.refreshAll();
     expect(fast).toHaveBeenCalledTimes(1);
     expect(slow).toHaveBeenCalledTimes(1);
     expect(ticked).toHaveBeenCalledTimes(1);
     expect(scheduler.getLastTickAt()).toBe(Date.now());
 
-    vi.advanceTimersByTime(10_000);
+    // The manual refresh restarts each minimum.
+    vi.advanceTimersByTime(3_000);
+    scheduler.tick();
     expect(fast).toHaveBeenCalledTimes(1);
-    vi.advanceTimersByTime(20_000);
-    expect(fast).toHaveBeenCalledTimes(2);
-    expect(slow).toHaveBeenCalledTimes(1);
-    scheduler.stop();
   });
 
   it('stops refreshing an unregistered subscriber', () => {
-    const { scheduler } = createScheduler();
+    const scheduler = new RefreshScheduler();
     const card = vi.fn();
     const unregister = scheduler.register('card', {
       minMs: 5_000,
       refresh: card,
     });
-    scheduler.setInterval(5_000);
-    scheduler.start();
     unregister();
     vi.advanceTimersByTime(30_000);
+    scheduler.tick();
+    scheduler.refreshAll();
     expect(card).not.toHaveBeenCalled();
-    scheduler.stop();
-  });
-
-  it('applies a new interval at once', () => {
-    const { scheduler } = createScheduler();
-    const card = vi.fn();
-    scheduler.register('card', { minMs: 5_000, refresh: card });
-    scheduler.setInterval(60_000);
-    scheduler.start();
-    scheduler.setInterval(5_000);
-    vi.advanceTimersByTime(5_000);
-    expect(card).toHaveBeenCalledTimes(1);
-    scheduler.stop();
   });
 });

@@ -6,7 +6,8 @@ import {
   useDashboardFetchKey,
   useDashboardRefreshScheduler,
 } from './DashboardRefreshContext';
-import { DEFAULT_BOARD_VARS } from './dashboardConfig';
+import { resourceGroupRows } from './dashboardScope';
+import { DEFAULT_RANGE } from './panelSettings';
 import { rangeToDateTimeFilter } from './timeRange';
 import type {
   DashboardScope,
@@ -33,7 +34,7 @@ export interface DashboardPanelContentProps {
   children: (state: DashboardPanelState) => React.ReactNode;
 }
 
-/** Hands one card the filter bar's values and its own fetch key from the refresh timer. */
+/** Hands one card the page scope, its own settings resolved, and its own fetch key. */
 const DashboardPanelContent: React.FC<DashboardPanelContentProps> = ({
   panel,
   definition,
@@ -49,19 +50,23 @@ const DashboardPanelContent: React.FC<DashboardPanelContentProps> = ({
   );
   // Deferred so a refresh suspends in the background instead of flashing the skeleton.
   const deferredFetchKey = useDeferredValue(fetchKey);
-  const range = filters?.vars.range ?? DEFAULT_BOARD_VARS.range;
+  const range = panel.settings?.range ?? DEFAULT_RANGE;
+  const currentResourceGroup = filters?.currentResourceGroup ?? null;
 
   return children({
     scope: filters?.scope ?? {
       kind: 'mine',
       projectId: filters?.currentProjectId ?? null,
-      rgs: 'all',
     },
     vars: {
       range,
       timeRange: rangeToDateTimeFilter(range, refreshedAt),
       currentProjectId: filters?.currentProjectId ?? null,
-      currentResourceGroup: filters?.currentResourceGroup ?? null,
+      currentResourceGroup,
+      resourceGroups: resourceGroupRows(
+        panel.settings?.resourceGroups,
+        currentResourceGroup,
+      ),
     },
     fetchKey: deferredFetchKey,
     isRefetching: isPageRefetching || fetchKey !== deferredFetchKey,

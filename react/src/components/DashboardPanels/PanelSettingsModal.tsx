@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { Form } from '../../form-engine';
-import { useResourceGroupsForCurrentProject } from '../../hooks/useCurrentProject';
 import BAIFormItem from '../BAIFormItem';
 import {
   DEFAULT_RANGE,
@@ -12,9 +11,14 @@ import {
   hasSetting,
 } from './panelSettings';
 import type { PanelDefinition, PanelSettings } from './types';
-import { BAIModal, BAISelect } from 'backend.ai-ui';
+import {
+  BAIModal,
+  BAIScopedResourceGroupSelect,
+  BAISelect,
+  type BAIScopedResourceGroupSelectProps,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface SettingsFormValues {
@@ -28,6 +32,8 @@ export interface PanelSettingsModalProps {
   title: string;
   definition: Pick<PanelDefinition, 'settings' | 'kind'>;
   settings?: PanelSettings;
+  /** The resource groups the setting offers: the page's projects, else the current domain. */
+  resourceGroupScope: BAIScopedResourceGroupSelectProps['scope'];
   onSubmit: (settings: PanelSettings | undefined) => void;
   onRequestClose: () => void;
   afterClose?: () => void;
@@ -39,6 +45,7 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
   title,
   definition,
   settings,
+  resourceGroupScope,
   onSubmit,
   onRequestClose,
   afterClose,
@@ -46,7 +53,6 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
   'use memo';
   const { t } = useTranslation();
   const [form] = Form.useForm<SettingsFormValues>();
-  const { nonSftpResourceGroups } = useResourceGroupsForCurrentProject();
   // A custom panel reads every resource group by default; a built-in card reads the header's.
   const resourceGroupDefault =
     definition.kind === 'preset'
@@ -92,16 +98,15 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
               default: resourceGroupDefault,
             })}
           >
-            <BAISelect
-              mode="multiple"
-              label={t('dashboard.settings.ResourceGroups')}
-              placeholder={resourceGroupDefault}
-              options={_.map(nonSftpResourceGroups, (group) => ({
-                value: group.name,
-                label: group.name,
-              }))}
-              allowClear
-            />
+            <Suspense fallback={<BAISelect mode="multiple" loading disabled />}>
+              <BAIScopedResourceGroupSelect
+                multiple
+                label={t('dashboard.settings.ResourceGroups')}
+                placeholder={resourceGroupDefault}
+                scope={resourceGroupScope}
+                allowClear
+              />
+            </Suspense>
           </BAIFormItem>
         ) : null}
         {hasSetting(definition, 'range') ? (

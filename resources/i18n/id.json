@@ -829,25 +829,6 @@
       "Title": "Panel kustom",
       "Unavailable": "Tidak tersedia di lingkungan ini"
     },
-    "filterBar": {
-      "AllProjects": "Semua proyek",
-      "AllResourceGroups": "Semua grup sumber daya",
-      "CustomRange": "Kustom",
-      "Filters": "Filter dasbor",
-      "Last1Hour": "1 jam terakhir",
-      "Last24Hours": "24 jam terakhir",
-      "Last7Days": "7 hari terakhir",
-      "Minutes": "{{count}} mnt",
-      "Off": "Mati",
-      "PinnedToBoard": "Disematkan ke papan ini",
-      "Projects": "Proyek",
-      "RefreshedMinutesAgo": "Diperbarui {{count}} mnt lalu",
-      "RefreshedSecondsAgo": "Diperbarui {{count}} dtk lalu",
-      "ResourceGroups": "Grup sumber daya",
-      "Seconds": "{{count}} dtk",
-      "TimeRange": "Rentang waktu",
-      "TimeRangeHelp": "Kartu yang menampilkan status saat ini (jumlah sesi, alokasi) mengabaikan rentang waktu."
-    },
     "panelModal": {
       "AddPanel": "Tambah panel",
       "Condition": "Kondisi",

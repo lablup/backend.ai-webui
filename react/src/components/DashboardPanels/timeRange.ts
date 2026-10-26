@@ -2,12 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { DEFAULT_RANGE } from './panelSettings';
 
-/** The relative ranges the filter bar offers; a custom range is `YYYY-MM-DD/YYYY-MM-DD`. */
-export const TIME_RANGE_PRESETS = ['now-1h', 'now-24h', 'now-7d'] as const;
-export type TimeRangePreset = (typeof TIME_RANGE_PRESETS)[number];
-
-export const DEFAULT_TIME_RANGE: TimeRangePreset = 'now-24h';
+/** A card's default range; a custom range is `YYYY-MM-DD/YYYY-MM-DD`. */
+export const DEFAULT_TIME_RANGE = DEFAULT_RANGE;
 
 /**
  * A time window, `after` inclusive, `before` exclusive. Never pass it as one

@@ -829,25 +829,6 @@
       "Title": "Тусгайлсан самбарууд",
       "Unavailable": "Энэ орчинд ашиглах боломжгүй"
     },
-    "filterBar": {
-      "AllProjects": "Бүх төсөл",
-      "AllResourceGroups": "Бүх нөөцийн бүлэг",
-      "CustomRange": "Өөрөө тохируулах",
-      "Filters": "Хяналтын самбарын шүүлтүүр",
-      "Last1Hour": "Сүүлийн 1 цаг",
-      "Last24Hours": "Сүүлийн 24 цаг",
-      "Last7Days": "Сүүлийн 7 хоног",
-      "Minutes": "{{count}} мин",
-      "Off": "Унтраах",
-      "PinnedToBoard": "Энэ самбарт бэхэлсэн",
-      "Projects": "Төслүүд",
-      "RefreshedMinutesAgo": "{{count}} минутын өмнө шинэчилсэн",
-      "RefreshedSecondsAgo": "{{count}} секундын өмнө шинэчилсэн",
-      "ResourceGroups": "Нөөцийн бүлгүүд",
-      "Seconds": "{{count}} сек",
-      "TimeRange": "Хугацааны муж",
-      "TimeRangeHelp": "Одоогийн төлөвийг харуулах картууд (сессийн тоо, хуваарилалт) хугацааны мужийг үл тооно."
-    },
     "panelModal": {
       "AddPanel": "Самбар нэмэх",
       "Condition": "Нөхцөл",

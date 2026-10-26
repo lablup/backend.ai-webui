@@ -13,6 +13,7 @@ import PanelSettingsModal from './PanelSettingsModal';
 import { boardSortsAtom } from './ResourceTablePanel';
 import type {
   DashboardPageQueryRefs,
+  DashboardScope,
   PanelDefinition,
   PanelPage,
   PersistedPanel,
@@ -22,10 +23,25 @@ import {
   DashboardFilterContext,
   useDashboardFilters,
 } from './useDashboardFilters';
-import { BAIBoard, BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
+import {
+  BAIBoard,
+  BAIFlex,
+  BAIUnmountAfterClose,
+  type BAIScopedResourceGroupSelectProps,
+} from 'backend.ai-ui';
 import { useAtom, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
 import React, { useEffect, useRef, useState } from 'react';
+
+/** The resource groups a card's setting can pick from: the page's projects, else the domain's. */
+const resourceGroupScopeOf = (
+  scope: DashboardScope,
+): BAIScopedResourceGroupSelectProps['scope'] =>
+  scope.kind === 'mine'
+    ? { project: scope.projectId ? [{ value: scope.projectId }] : [] }
+    : scope.projectIds === 'all'
+      ? { domain: [{ value: scope.domain.id }] }
+      : { project: scope.projectIds.map((value) => ({ value })) };
 
 export interface DashboardPanelBoardProps {
   page: PanelPage;
@@ -116,14 +132,18 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     <BAIFlex direction="row" align="stretch" gap="lg" style={{ width: '100%' }}>
       <div ref={boardContainerRef} style={{ flex: 1, minWidth: 0 }}>
         <BAIFlex direction="column" align="stretch" gap="md">
-          {page !== 'project' ? (
-            <DashboardBoardTabs page={page} boards={boards} catalog={catalog} />
-          ) : null}
-          <DashboardFilterBar filters={filters} isRefetching={isRefetching} />
+          <DashboardFilterBar filters={filters} isRefetching={isRefetching}>
+            {page !== 'project' ? (
+              <DashboardBoardTabs
+                page={page}
+                boards={boards}
+                catalog={catalog}
+              />
+            ) : null}
+          </DashboardFilterBar>
           <DashboardFilterContext
             value={{
               scope: filters.scope,
-              vars: filters.vars,
               currentProjectId: filters.currentProjectId,
               currentResourceGroup: filters.currentResourceGroup,
             }}
@@ -167,6 +187,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
           title={settingsTarget?.title ?? ''}
           definition={settingsTarget?.definition ?? { kind: 'custom' }}
           settings={settingsTarget?.settings}
+          resourceGroupScope={resourceGroupScopeOf(filters.scope)}
           onSubmit={(settings) => {
             if (settingsPanelId) updatePanelSettings(settingsPanelId, settings);
           }}

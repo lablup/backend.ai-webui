@@ -225,14 +225,19 @@ describe('sanitizeDashboardConfig', () => {
     expect(sanitized.project?.migrated).toBe(true);
   });
 
-  it('defaults vars and drops the retired pins', () => {
+  it('keeps only the refresh var and drops retired values and pins', () => {
     const sanitized = sanitizeDashboardConfig(
       {
         admin: {
           boards: [
             {
               ...board('one'),
-              vars: { project: ['p1', 'p1'], rg: 7, range: '' },
+              vars: {
+                project: ['p1'],
+                rg: ['g'],
+                range: 'now-1h',
+                refresh: '7s',
+              },
               pinned: { project: ['p1'] },
             },
           ],
@@ -242,12 +247,7 @@ describe('sanitizeDashboardConfig', () => {
       definitions,
     );
     const model = sanitized.admin!.boards[0];
-    expect(model.vars).toEqual({
-      project: ['p1'],
-      rg: 'all',
-      range: DEFAULT_BOARD_VARS.range,
-      refresh: DEFAULT_BOARD_VARS.refresh,
-    });
+    expect(model.vars).toEqual({ refresh: DEFAULT_BOARD_VARS.refresh });
     expect(model).not.toHaveProperty('pinned');
   });
 

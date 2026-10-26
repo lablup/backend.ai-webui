@@ -20,13 +20,12 @@ let fetchKeySeq = 0;
 
 const DashboardRefreshContext = createContext<RefreshScheduler | null>(null);
 
-/** Owns a dashboard page's one refresh timer; the filter bar sets its interval. */
+/** Owns a dashboard page's refresh fan-out; the dashboard's refresh control drives it. */
 export const DashboardRefreshProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   'use memo';
   const [scheduler] = useState(() => new RefreshScheduler());
-  useEffect(() => scheduler.start(), [scheduler]);
   return (
     <DashboardRefreshContext value={scheduler}>
       {children}

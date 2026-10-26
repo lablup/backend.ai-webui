@@ -826,25 +826,6 @@
       "Title": "แผงที่กำหนดเอง",
       "Unavailable": "ไม่พร้อมใช้งานในสภาพแวดล้อมนี้"
     },
-    "filterBar": {
-      "AllProjects": "ทุกโปรเจกต์",
-      "AllResourceGroups": "ทุกกลุ่มทรัพยากร",
-      "CustomRange": "กำหนดเอง",
-      "Filters": "ตัวกรองแดชบอร์ด",
-      "Last1Hour": "1 ชั่วโมงที่ผ่านมา",
-      "Last24Hours": "24 ชั่วโมงที่ผ่านมา",
-      "Last7Days": "7 วันที่ผ่านมา",
-      "Minutes": "{{count}} นาที",
-      "Off": "ปิด",
-      "PinnedToBoard": "ปักหมุดไว้ที่บอร์ดนี้",
-      "Projects": "โปรเจกต์",
-      "RefreshedMinutesAgo": "รีเฟรชเมื่อ {{count}} นาทีที่แล้ว",
-      "RefreshedSecondsAgo": "รีเฟรชเมื่อ {{count}} วินาทีที่แล้ว",
-      "ResourceGroups": "กลุ่มทรัพยากร",
-      "Seconds": "{{count}} วินาที",
-      "TimeRange": "ช่วงเวลา",
-      "TimeRangeHelp": "การ์ดที่แสดงสถานะปัจจุบัน (จำนวนเซสชัน การจัดสรร) จะไม่ใช้ช่วงเวลา"
-    },
     "panelModal": {
       "AddPanel": "เพิ่มแผง",
       "Condition": "เงื่อนไข",

@@ -38,11 +38,7 @@ export {
 } from './panelRegistry';
 export { DEFAULT_PANEL_LAYOUTS, createPanel } from './defaults';
 export { resourceRegistry, resourceKeys } from './resourceRegistry';
-export {
-  isProjectPinned,
-  resolveDashboardScope,
-  resourceGroupRows,
-} from './dashboardScope';
+export { resolveDashboardScope, resourceGroupRows } from './dashboardScope';
 export { bucketize, rangeToDateTimeFilter, withinWindow } from './timeRange';
 export {
   DashboardRefreshProvider,

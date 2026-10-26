@@ -829,25 +829,6 @@
       "Title": "Benutzerdefinierte Panels",
       "Unavailable": "In dieser Umgebung nicht verfügbar"
     },
-    "filterBar": {
-      "AllProjects": "Alle Projekte",
-      "AllResourceGroups": "Alle Ressourcengruppen",
-      "CustomRange": "Benutzerdefiniert",
-      "Filters": "Dashboard-Filter",
-      "Last1Hour": "Letzte Stunde",
-      "Last24Hours": "Letzte 24 Stunden",
-      "Last7Days": "Letzte 7 Tage",
-      "Minutes": "{{count}} Min.",
-      "Off": "Aus",
-      "PinnedToBoard": "An dieses Board angeheftet",
-      "Projects": "Projekte",
-      "RefreshedMinutesAgo": "Vor {{count}} Min. aktualisiert",
-      "RefreshedSecondsAgo": "Vor {{count}} s aktualisiert",
-      "ResourceGroups": "Ressourcengruppen",
-      "Seconds": "{{count}} s",
-      "TimeRange": "Zeitraum",
-      "TimeRangeHelp": "Karten mit dem aktuellen Zustand (Sitzungsanzahl, Zuweisung) ignorieren den Zeitraum."
-    },
     "panelModal": {
       "AddPanel": "Panel hinzufügen",
       "Condition": "Bedingung",

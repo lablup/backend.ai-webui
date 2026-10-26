@@ -829,25 +829,6 @@
       "Title": "Panele niestandardowe",
       "Unavailable": "Niedostępne w tym środowisku"
     },
-    "filterBar": {
-      "AllProjects": "Wszystkie projekty",
-      "AllResourceGroups": "Wszystkie grupy zasobów",
-      "CustomRange": "Niestandardowy",
-      "Filters": "Filtry pulpitu",
-      "Last1Hour": "Ostatnia godzina",
-      "Last24Hours": "Ostatnie 24 godziny",
-      "Last7Days": "Ostatnie 7 dni",
-      "Minutes": "{{count}} min",
-      "Off": "Wył.",
-      "PinnedToBoard": "Przypięte do tej tablicy",
-      "Projects": "Projekty",
-      "RefreshedMinutesAgo": "Odświeżono {{count}} min temu",
-      "RefreshedSecondsAgo": "Odświeżono {{count}} s temu",
-      "ResourceGroups": "Grupy zasobów",
-      "Seconds": "{{count}} s",
-      "TimeRange": "Zakres czasu",
-      "TimeRangeHelp": "Karty pokazujące bieżący stan (liczba sesji, przydział) ignorują zakres czasu."
-    },
     "panelModal": {
       "AddPanel": "Dodaj panel",
       "Condition": "Warunek",

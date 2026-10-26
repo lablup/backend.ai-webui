@@ -829,25 +829,6 @@
       "Title": "Προσαρμοσμένοι πίνακες",
       "Unavailable": "Μη διαθέσιμο σε αυτό το περιβάλλον"
     },
-    "filterBar": {
-      "AllProjects": "Όλα τα έργα",
-      "AllResourceGroups": "Όλες οι ομάδες πόρων",
-      "CustomRange": "Προσαρμογή",
-      "Filters": "Φίλτρα πίνακα ελέγχου",
-      "Last1Hour": "Τελευταία 1 ώρα",
-      "Last24Hours": "Τελευταίες 24 ώρες",
-      "Last7Days": "Τελευταίες 7 ημέρες",
-      "Minutes": "{{count}} λ.",
-      "Off": "Ανενεργό",
-      "PinnedToBoard": "Καρφιτσωμένο σε αυτόν τον πίνακα",
-      "Projects": "Έργα",
-      "RefreshedMinutesAgo": "Ανανεώθηκε πριν από {{count}} λ.",
-      "RefreshedSecondsAgo": "Ανανεώθηκε πριν από {{count}} δ.",
-      "ResourceGroups": "Ομάδες πόρων",
-      "Seconds": "{{count}} δ.",
-      "TimeRange": "Χρονικό διάστημα",
-      "TimeRangeHelp": "Οι κάρτες που δείχνουν την τρέχουσα κατάσταση (αριθμός συνεδριών, κατανομή) αγνοούν το διάστημα."
-    },
     "panelModal": {
       "AddPanel": "Προσθήκη πίνακα",
       "Condition": "Συνθήκη",

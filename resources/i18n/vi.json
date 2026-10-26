@@ -829,25 +829,6 @@
       "Title": "Bảng tùy chỉnh",
       "Unavailable": "Không khả dụng trong môi trường này"
     },
-    "filterBar": {
-      "AllProjects": "Tất cả dự án",
-      "AllResourceGroups": "Tất cả nhóm tài nguyên",
-      "CustomRange": "Tùy chỉnh",
-      "Filters": "Bộ lọc bảng điều khiển",
-      "Last1Hour": "1 giờ qua",
-      "Last24Hours": "24 giờ qua",
-      "Last7Days": "7 ngày qua",
-      "Minutes": "{{count}} phút",
-      "Off": "Tắt",
-      "PinnedToBoard": "Đã ghim vào bảng này",
-      "Projects": "Dự án",
-      "RefreshedMinutesAgo": "Đã làm mới {{count}} phút trước",
-      "RefreshedSecondsAgo": "Đã làm mới {{count}} giây trước",
-      "ResourceGroups": "Nhóm tài nguyên",
-      "Seconds": "{{count}} giây",
-      "TimeRange": "Khoảng thời gian",
-      "TimeRangeHelp": "Các thẻ hiển thị trạng thái hiện tại (số phiên, phân bổ) không áp dụng khoảng thời gian."
-    },
     "panelModal": {
       "AddPanel": "Thêm bảng",
       "Condition": "Điều kiện",

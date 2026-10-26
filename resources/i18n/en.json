@@ -816,25 +816,6 @@
       "Title": "Custom panels",
       "Unavailable": "Not available in this environment"
     },
-    "filterBar": {
-      "AllProjects": "All projects",
-      "AllResourceGroups": "All resource groups",
-      "CustomRange": "Custom",
-      "Filters": "Dashboard filters",
-      "Last1Hour": "Last 1 hour",
-      "Last24Hours": "Last 24 hours",
-      "Last7Days": "Last 7 days",
-      "Minutes": "{{count}}m",
-      "Off": "Off",
-      "PinnedToBoard": "Pinned to this board",
-      "Projects": "Projects",
-      "RefreshedMinutesAgo": "Refreshed {{count}}m ago",
-      "RefreshedSecondsAgo": "Refreshed {{count}}s ago",
-      "ResourceGroups": "Resource groups",
-      "Seconds": "{{count}}s",
-      "TimeRange": "Time range",
-      "TimeRangeHelp": "Cards showing the current state (session counts, allocation) ignore the range."
-    },
     "panelModal": {
       "AddPanel": "Add panel",
       "Condition": "Condition",
