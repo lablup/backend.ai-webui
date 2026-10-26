@@ -9,8 +9,9 @@ navTitle: Dashboard
 The **Dashboard** is the first page you see after logging in. It summarizes your own
 sessions, resources, folders, deployments, and recent activity in the current project,
 and holds the actions that used to live on the Start page.
-Every card counts only what you own; the filter bar above the board decides which
-resource groups and time range the cards read.
+Every card counts only what you own in the current project. Cards that depend on a
+resource group or a time range keep their own setting; see
+[Card Settings](#card-settings).
 
 ![](../images/dashboard.png)
 
@@ -26,46 +27,44 @@ A new dashboard shows the following cards:
     A donut of your active sessions in the current project by type
     (*Interactive*, *Batch*, *Inference*, *Upload*), with a table of counts and shares.
 
-- **Session Results**:
-    How many of your sessions ended successfully or with a failure in the selected
-    time range, the change from the previous range of the same length, and a small
-    trend line. Sessions are counted by the time they ended.
-
 - **My Recent Sessions**:
     Your most recently created sessions in the current project. Click a session name
     to open its detail drawer.
 
 - **My Total Resource Usage**:
-    For each selected resource group (or the resource group chosen in the header when
-    all are selected), how much of each resource your sessions use against the
+    For each resource group in the card's setting (by default, the resource group
+    chosen in the header), how much of each resource your sessions use against the
     lowest of your keypair, project, and domain limits.
 
 - **Resource Presets**:
     Whether each resource preset still fits in what you can allocate in each
-    selected resource group.
+    resource group in the card's setting (by default, the header's resource group).
 
 - **Total Resources in Resource Group**:
-    The used and free resources of the selected resource groups, aggregated from
-    their agents.
+    The used and free resources of the resource groups in the card's setting (by
+    default, the header's resource group), aggregated from their agents.
 
 :::note
-The **Total Resources in Resource Group** card may not be visible depending on your
-system configuration.
+The **Total Resources in Resource Group** card is not shown to regular users when
+your administrator hides agent information.
 :::
 
 - **My Folders**:
-    The number of your folders against your folder limit, the folders in the trash,
-    and pending folder invitations. Click the invitation count to review them.
+    Three counts side by side: your folders (with your folder limit under it), the
+    folders in the trash, and pending folder invitations. When invitations are
+    pending, click the link under the count to review them.
 
 - **Quota per storage volume**:
     Shows the quota available on each storage volume.
     When no storage host supports quota, the card shows a notice instead.
 
 - **My Deployments**:
-    Your deployments in the current project with their replica health.
+    Your deployments in the current project that have not been destroyed, with
+    their replica health.
 
 - **My Activity**:
-    The audit log of actions you performed in the selected time range. Turn on
+    The audit log of actions you performed in the card's time range (by default,
+    the last 24 hours). Turn on
     **Show failures only** in the card header, or click the failure count, to list
     only failed actions; the choice is saved with your board.
 
@@ -107,6 +106,26 @@ shows every card you can place on this dashboard, grouped by kind, with a
 search box above it. Check a card to add it to the board and uncheck it to
 remove it; you can add it back at any time. A card that cannot be used in
 this environment is listed but disabled.
+
+<a id="card-settings"></a>
+
+### Card Settings
+
+Some cards read a resource group or a time range. In the edit sidebar, such a
+card shows its current setting under its name and a settings (sliders) button.
+Click it to choose:
+
+- **Resource groups** for **My Total Resource Usage**, **Resource Presets**, and
+  **Total Resources in Resource Group**: the card shows one block per selected
+  resource group. With none selected, it follows the resource group chosen in
+  the header.
+- **Time range** for **My Activity**: the last hour, 24 hours, or 7 days.
+- **Resource groups** for **Sessions** and **Deployments** custom panels: the
+  panel lists only rows in those resource groups. With none selected, it lists
+  every resource group.
+
+The setting is saved with your board. Cards that do not depend on a resource
+group or a time range have no settings button.
 
 ### Custom Panels
 
@@ -170,6 +189,9 @@ query remains listed in the sidebar but is not shown on the board.
 
 ## Automatic Refresh
 
-The dashboard refreshes its data automatically every 15 seconds, so the panels
-always reflect recent activity without reloading the page. Custom panels
-refresh on the same cycle as the built-in panels.
+The refresh button at the top right of the dashboard is the only refresh control
+on the page: click it to reload every card at once. The arrow next to it sets
+how often the dashboard refreshes by itself (off, or every 5 seconds to
+10 minutes; 30 seconds by default), and the choice is saved with your board.
+Cards whose data changes slowly, such as folder counts, refresh less often than
+the interval you choose.
