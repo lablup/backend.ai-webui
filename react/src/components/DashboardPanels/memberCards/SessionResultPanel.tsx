@@ -8,7 +8,7 @@ import type {
   SessionV2Result,
 } from '../../../__generated__/SessionResultPanelQuery.graphql';
 import TrendStat from '../charts/TrendStat';
-import { bucketize, type DateTimeWindow } from '../timeRange';
+import { bucketize, withinWindow, type DateTimeWindow } from '../timeRange';
 import type { PanelComponentProps } from '../types';
 import MemberCard, { NoProjectText, mineProjectId } from './MemberCard';
 import {
@@ -16,7 +16,6 @@ import {
   bucketVariables,
   countDelta,
   previousWindow,
-  withinWindow,
 } from './memberCardData';
 import { BAIFlex } from 'backend.ai-ui';
 import React, { useDeferredValue } from 'react';

@@ -13,7 +13,6 @@ import {
   toDonutRows,
   toPresetRows,
   toUsageRows,
-  withinWindow,
 } from './memberCardData';
 
 describe('toDonutRows', () => {
@@ -152,22 +151,6 @@ describe('bucket count aliases', () => {
     expect(
       bucketCounts({ s0: { count: 4 }, s1: null, f0: { count: 9 } }, 's', 3),
     ).toEqual([4, 0, 0]);
-  });
-});
-
-describe('withinWindow', () => {
-  it('splits the window into two ANDed bounds on the field', () => {
-    expect(
-      withinWindow('terminatedAt', {
-        after: '2026-10-25T12:00:00.000Z',
-        before: '2026-10-26T12:00:00.000Z',
-      }),
-    ).toEqual({
-      AND: [
-        { terminatedAt: { after: '2026-10-25T12:00:00.000Z' } },
-        { terminatedAt: { before: '2026-10-26T12:00:00.000Z' } },
-      ],
-    });
   });
 });
 

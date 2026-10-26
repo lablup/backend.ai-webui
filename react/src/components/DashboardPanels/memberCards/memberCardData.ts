@@ -160,23 +160,6 @@ export const bucketCounts = (
     (index) => data[`${prefix}${index}`]?.count ?? 0,
   );
 
-/**
- * `field` within `window`, as two ANDed bounds: given both `after` and `before`
- * in one `DateTimeFilter`, manager 26.10.0a3 applies only `before`.
- */
-export const withinWindow = <TField extends string>(
-  field: TField,
-  window: DateTimeWindow,
-): { AND: Array<Record<TField, { after?: string; before?: string }>> } => ({
-  AND: [
-    { [field]: { after: window.after } } as Record<TField, { after: string }>,
-    { [field]: { before: window.before } } as Record<
-      TField,
-      { before: string }
-    >,
-  ],
-});
-
 /** The window of the same length that ends where `window` starts. */
 export const previousWindow = (window: DateTimeWindow): DateTimeWindow => {
   const after = new Date(window.after).getTime();

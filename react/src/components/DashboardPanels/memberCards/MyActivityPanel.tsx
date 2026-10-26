@@ -5,14 +5,13 @@
 import type { MyActivityPanelQuery } from '../../../__generated__/MyActivityPanelQuery.graphql';
 import { useSuspendedBackendaiClient } from '../../../hooks';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
-import type { DateTimeWindow } from '../timeRange';
+import { withinWindow, type DateTimeWindow } from '../timeRange';
 import type { PanelComponentProps } from '../types';
 import MemberCard from './MemberCard';
 import {
   AUDIT_FAILURE_STATUSES,
   FAILURES_ONLY_FILTER,
   isFailuresOnlyFilter,
-  withinWindow,
 } from './memberCardData';
 import { Switch } from '@lablup/ui-common/Switch';
 import { Text } from '@lablup/ui-common/Text';
