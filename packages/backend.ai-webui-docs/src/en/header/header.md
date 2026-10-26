@@ -69,13 +69,6 @@ extension and it has been enabled in the system configuration.
 The magnifier button opens the search palette, which lets you jump to any page,
 page tab, or setting item without leaving the keyboard.
 
-:::note
-The search palette is an experimental feature and is turned off by default. The
-**Search** button appears in the top bar, and its shortcut works, only while the
-**Command palette** item under **Experimental features** on the User Settings
-page is enabled.
-:::
-
 Click the button, or press `Ctrl-K` (`Cmd-K` on macOS), to open the palette. The
 shortcut works even while the cursor is in an input field.
 
