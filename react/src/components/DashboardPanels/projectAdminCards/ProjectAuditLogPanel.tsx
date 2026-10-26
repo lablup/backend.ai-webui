@@ -27,6 +27,7 @@ import { Switch } from '@lablup/ui-common/Switch';
 import {
   BAIAuditLogNodes,
   BAIFlex,
+  BAIText,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
 import React, { useDeferredValue } from 'react';
@@ -266,7 +267,27 @@ const ProjectAuditLog: React.FC<{
         customizeColumns={(columns) =>
           columns
             .filter((column) => VISIBLE_COLUMNS.has(String(column.key)))
-            .map((column) => ({ ...column, defaultHidden: false }))
+            .map((column) => ({
+              ...column,
+              defaultHidden: false,
+              ...(column.key === 'description' && {
+                render: (
+                  _value: unknown,
+                  record: { description?: string | null },
+                ) =>
+                  record.description ? (
+                    <BAIText
+                      copyable
+                      ellipsis={{ tooltip: true }}
+                      style={{ width: '100%' }}
+                    >
+                      {record.description}
+                    </BAIText>
+                  ) : (
+                    '-'
+                  ),
+              }),
+            }))
         }
         pagination={{
           pageSize: tablePaginationOption.pageSize,
