@@ -52,7 +52,7 @@ export interface DashboardPanelBoardProps {
 }
 
 /**
- * A dashboard page's board under its filter bar. Moving and resizing work at
+ * A dashboard page's board under the dashboard bar (board tabs and refresh). Moving and resizing work at
  * all times; edit mode opens the sider that adds and removes cards and
  * manages custom panels. The admin pages keep several boards behind tabs; the
  * member page keeps one. Mount it inside a `DashboardRefreshProvider`.

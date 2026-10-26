@@ -56,7 +56,7 @@ export type BoardStore = (
   save: (board: DashboardBoard) => void;
   /** What "Reset layout" restores; the code default when absent. */
   template?: DashboardBoard;
-  /** The page's boards, for the board tabs and the filter bar. */
+  /** The page's boards, for the board tabs and the refresh interval. */
   boards: DashboardBoardsState;
 };
 

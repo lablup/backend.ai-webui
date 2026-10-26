@@ -93,7 +93,7 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
         {hasSetting(definition, 'resourceGroup') ? (
           <BAIFormItem
             name="resourceGroups"
-            label={t('dashboard.settings.ResourceGroups')}
+            // The selector renders its own field label.
             extra={t('dashboard.settings.ResourceGroupsDescription', {
               default: resourceGroupDefault,
             })}
