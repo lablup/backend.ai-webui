@@ -178,7 +178,10 @@ const SettingAtomFamily = atomFamily((param: string) => {
           ? newValueOrUpdater(currentValue)
           : newValueOrUpdater;
 
-      const [namespace, name] = param.split('.', 2);
+      // Split at the first dot only: a setting name may itself contain dots.
+      const separator = param.indexOf('.');
+      const namespace = param.slice(0, separator);
+      const name = param.slice(separator + 1);
       // `undefined` removes the key; writing it would store the string "undefined".
       if (newValue === undefined) {
         localStorage.removeItem(key);
