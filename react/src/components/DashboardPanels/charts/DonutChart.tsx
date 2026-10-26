@@ -4,12 +4,6 @@
  */
 import type { DonutRow } from '../memberCards/memberCardData';
 import './charts.css';
-import {
-  Table,
-  pixel,
-  proportional,
-  type TableColumn,
-} from '@lablup/ui-common/Table';
 import { Text } from '@lablup/ui-common/Text';
 import {
   RadialChart,
@@ -22,17 +16,18 @@ import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useRef, useState } from 'react';
 
-const RING_MIN = 96;
+const RING_MIN = 64;
 const RING_MAX = 220;
 // RadialChart keeps 40px around the ring for slice labels, which this chart turns off.
 const CHART_LABEL_ROOM = 40;
 // Room the tooltip's hover ring and highlight still draw into.
 const RING_HALO = 16;
-const LEGEND_WIDTH = 224;
-const NAME_MIN_WIDTH = 88;
-const NUMBER_WIDTH = 56;
+// The legend's width before it is first measured.
+const LEGEND_WIDTH_GUESS = 224;
 // The `lg` gap between the ring and the legend.
 const LEGEND_GAP = 24;
+const ROW_HEIGHT = 32;
+const COMPACT_ROW_HEIGHT = 24;
 
 interface LegendRow extends Record<string, unknown> {
   key: string;
@@ -41,6 +36,21 @@ interface LegendRow extends Record<string, unknown> {
   percent: number;
   color: string;
 }
+
+type LegendDensity = {
+  rowHeight: number;
+  hasHeader: boolean;
+};
+
+// Tried in order; the first that fits the height wins.
+const LEGEND_DENSITIES: ReadonlyArray<LegendDensity> = [
+  { rowHeight: ROW_HEIGHT, hasHeader: true },
+  { rowHeight: COMPACT_ROW_HEIGHT, hasHeader: true },
+  { rowHeight: COMPACT_ROW_HEIGHT, hasHeader: false },
+];
+
+const legendHeight = (density: LegendDensity, rowCount: number) =>
+  (rowCount + (density.hasHeader ? 1 : 0)) * density.rowHeight;
 
 export interface DonutChartProps {
   rows: ReadonlyArray<DonutRow>;
@@ -53,9 +63,10 @@ export interface DonutChartProps {
 }
 
 /**
- * A donut of manager-counted values with a compact name / value / share legend
- * beside it. The ring grows with the card up to `RING_MAX`; the legend moves
- * under the ring when the card is too narrow for both.
+ * A donut of manager-counted values with a compact name / value / share
+ * legend. It never outgrows its box: the legend fits first (tighter rows,
+ * then no header row), the ring takes the room left and is dropped when that
+ * is under `RING_MIN`. The legend moves under the ring when the box is narrow.
  */
 const DonutChart: React.FC<DonutChartProps> = ({
   rows,
@@ -65,9 +76,17 @@ const DonutChart: React.FC<DonutChartProps> = ({
 }) => {
   'use memo';
   const rootRef = useRef<HTMLDivElement>(null);
+  const legendRef = useRef<HTMLDivElement>(null);
   const [box, setBox] = useState({ width: 0, height: 0 });
+  const [legendWidth, setLegendWidth] = useState(LEGEND_WIDTH_GUESS);
   useResizeObserver(rootRef, ({ contentRect }) => {
     setBox({ width: contentRect.width, height: contentRect.height });
+  });
+  // Only an unsqueezed legend reports its natural width.
+  useResizeObserver(legendRef, ({ contentRect }) => {
+    if (contentRect.width < (rootRef.current?.clientWidth ?? 0) - 1) {
+      setLegendWidth(Math.ceil(contentRect.width));
+    }
   });
 
   const colors = useChartColors().categorical(Math.max(rows.length, 1));
@@ -77,48 +96,22 @@ const DonutChart: React.FC<DonutChartProps> = ({
   }));
   const hasValue = rows.some((row) => row.value > 0);
 
-  const sideBySide =
-    box.width >= RING_MIN + 2 * RING_HALO + LEGEND_GAP + LEGEND_WIDTH;
-  const ring = _.clamp(
-    (sideBySide
-      ? Math.min(box.height, box.width - LEGEND_WIDTH - LEGEND_GAP)
-      : Math.min(box.width, box.height / 2)) -
-      2 * RING_HALO,
-    RING_MIN,
-    RING_MAX,
-  );
-  const chartSize = ring + 2 * CHART_LABEL_ROOM;
+  const density =
+    LEGEND_DENSITIES.find(
+      (candidate) => legendHeight(candidate, rows.length) <= box.height,
+    ) ?? LEGEND_DENSITIES[LEGEND_DENSITIES.length - 1];
+  const legendBoxHeight = legendHeight(density, rows.length);
 
-  const columns: Array<TableColumn<LegendRow>> = [
-    {
-      key: 'label',
-      header: columnLabels.name,
-      width: proportional(1, { minWidth: NAME_MIN_WIDTH }),
-      renderCell: (row) => (
-        <BAIFlex gap="xs" align="center" wrap="nowrap">
-          {/* The swatch takes the slice's data colour, which no token carries. */}
-          <span
-            className="bai-dashboard-chart-swatch"
-            style={{ backgroundColor: row.color }}
-          />
-          <Text maxLines={1}>{row.label}</Text>
-        </BAIFlex>
-      ),
-    },
-    {
-      key: 'value',
-      header: columnLabels.value,
-      align: 'end',
-      width: pixel(NUMBER_WIDTH),
-    },
-    {
-      key: 'percent',
-      header: columnLabels.percent,
-      align: 'end',
-      width: pixel(NUMBER_WIDTH),
-      renderCell: (row) => `${row.percent}%`,
-    },
-  ];
+  const sideBySide =
+    box.width >= RING_MIN + 2 * RING_HALO + LEGEND_GAP + legendWidth;
+  const ringRoom =
+    (sideBySide
+      ? Math.min(box.height, box.width - legendWidth - LEGEND_GAP)
+      : Math.min(box.width, box.height - legendBoxHeight - LEGEND_GAP)) -
+    2 * RING_HALO;
+  const hasRing = box.width > 0 && ringRoom >= RING_MIN;
+  const ring = _.clamp(ringRoom, RING_MIN, RING_MAX);
+  const chartSize = ring + 2 * CHART_LABEL_ROOM;
 
   // Zero-value slices stay in the legend only; drawn, their separators show as a gap.
   const chartRows = legendRows.filter((row) => row.value > 0);
@@ -126,7 +119,6 @@ const DonutChart: React.FC<DonutChartProps> = ({
     row.value > 0 ? [colors[i]] : [],
   );
 
-  // The root takes the height its parent gives it; the floor keeps the smallest ring inside an unsized parent.
   return (
     <BAIFlex
       ref={rootRef}
@@ -134,9 +126,9 @@ const DonutChart: React.FC<DonutChartProps> = ({
       align="center"
       justify="center"
       gap="lg"
-      style={{ flex: '1 1 0', minHeight: RING_MIN + 2 * RING_HALO }}
+      style={{ flex: '1 1 0', minHeight: 0, overflow: 'hidden' }}
     >
-      {box.width > 0 && (
+      {hasRing && (
         <BAIFlex
           justify="center"
           align="center"
@@ -180,19 +172,52 @@ const DonutChart: React.FC<DonutChartProps> = ({
           )}
         </BAIFlex>
       )}
-      <BAIFlex
-        direction="column"
-        align="stretch"
-        style={{ flex: 'none', width: LEGEND_WIDTH, maxWidth: '100%' }}
+      {/* Numeric columns take their content's width; only the name truncates. */}
+      <div
+        ref={legendRef}
+        role="table"
+        aria-label={label}
+        className="bai-donut-legend"
       >
-        <Table<LegendRow>
-          data={legendRows}
-          columns={columns}
-          idKey="key"
-          density="compact"
-          textOverflow="truncate"
-        />
-      </BAIFlex>
+        {density.hasHeader && (
+          <div
+            role="row"
+            className="bai-donut-legend__row bai-donut-legend__head"
+            style={{ height: density.rowHeight }}
+          >
+            <span role="columnheader">{columnLabels.name}</span>
+            <span role="columnheader" className="bai-donut-legend__number">
+              {columnLabels.value}
+            </span>
+            <span role="columnheader" className="bai-donut-legend__number">
+              {columnLabels.percent}
+            </span>
+          </div>
+        )}
+        {legendRows.map((row) => (
+          <div
+            key={row.key}
+            role="row"
+            className="bai-donut-legend__row"
+            style={{ height: density.rowHeight }}
+          >
+            <span role="cell" className="bai-donut-legend__name">
+              {/* The swatch takes the slice's data colour, which no token carries. */}
+              <span
+                className="bai-dashboard-chart-swatch"
+                style={{ backgroundColor: row.color }}
+              />
+              <Text maxLines={1}>{row.label}</Text>
+            </span>
+            <span role="cell" className="bai-donut-legend__number">
+              {row.value.toLocaleString()}
+            </span>
+            <span role="cell" className="bai-donut-legend__number">
+              {`${row.percent}%`}
+            </span>
+          </div>
+        ))}
+      </div>
     </BAIFlex>
   );
 };
