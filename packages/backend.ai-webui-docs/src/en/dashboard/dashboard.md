@@ -2,66 +2,78 @@
 navTitle: Dashboard
 ---
 
+<a id="dashboard"></a>
+
 # Dashboard
 
-The **Dashboard** provides an at-a-glance summary of your current resource usage,
-available limits, and session information across all your projects and resource groups.
-It helps you quickly understand how your computing resources are being utilized
-and monitor your recent activities in the system.
+The **Dashboard** is the first page you see after logging in. It summarizes your own
+sessions, resources, folders, deployments, and recent activity in the current project,
+and holds the actions that used to live on the Start page.
+Every card counts only what you own; the filter bar above the board decides which
+resource groups and time range the cards read.
 
 ![](../images/dashboard.png)
 
-The page is composed of several main panels:
+A new dashboard shows the following cards:
+
+- **Get started items**: **Start Interactive Session**, **Start Batch Session**,
+    **Create New Storage Folder**, **Start Deployment**, and **Start From URL**.
+    Each card runs the same action the Start page offered; see
+    [Start Actions](#start-page) for details. A card whose menu is disabled by
+    your administrator is not offered.
 
 - **My Sessions**:
-    Shows the number of active sessions by type,
-    such as *Interactive*, *Batch*, *Inference*, and *Upload*.
-    You can quickly see how many sessions of each type are currently running.
+    A donut of your active sessions in the current project by type
+    (*Interactive*, *Batch*, *Inference*, *Upload*), with a table of counts and shares.
+
+- **Session Results**:
+    How many of your sessions ended successfully or with a failure in the selected
+    time range, the change from the previous range of the same length, and a small
+    trend line. Sessions are counted by the time they ended.
+
+- **My Recent Sessions**:
+    Your most recently created sessions in the current project. Click a session name
+    to open its detail drawer.
 
 - **My Total Resource Usage**:
-    Displays the resources you are currently using across all your projects.
-    Each resource shows a usage bar below its value; hover over the bar to see
-    how much of your total limit that usage represents.
-    When multiple limits (domain, project, or keypair) apply,
-    the **most restrictive** one takes effect.
+    For each selected resource group (or the resource group chosen in the header when
+    all are selected), how much of each resource your sessions use against the
+    lowest of your keypair, project, and domain limits.
 
-- **My Resources in Resource Group**:
-    Shows your current resource usage and remaining capacity
-    within the selected resource group of your current project.
-    You can switch groups using the dropdown menu.
-
-- **Folder Status**:
-    Shows how many storage folders you can reach, split into **My Folders**,
-    **Project Folders**, and **Invited Folders**.
-    When invitations are waiting for you, click the **Invited Folders** count
-    to open the Data page and review them.
-
-- **Quota per storage volume**:
-    Shows the quota available on each storage volume.
-    When no storage host supports quota, the panel shows a notice instead.
+- **Resource Presets**:
+    Whether each resource preset still fits in what you can allocate in each
+    selected resource group.
 
 - **Total Resources in Resource Group**:
-    Summarizes the overall used and free resources in the selected resource group.
-    The data is aggregated from all agents that belong to the group.
+    The used and free resources of the selected resource groups, aggregated from
+    their agents.
 
 :::note
-The **Total Resources in Resource Group** panel may not be visible depending on your
+The **Total Resources in Resource Group** card may not be visible depending on your
 system configuration.
 :::
 
-- **Recently Created Sessions**:
-    Lists the most recently created active sessions within the current project.
-    Provides session details such as name, status, CPU/memory usage, environment, resource group,
-    session type, and creation time.
-    By default, the latest 5 active sessions are displayed.
+- **My Folders**:
+    The number of your folders against your folder limit, the folders in the trash,
+    and pending folder invitations. Click the invitation count to review them.
+
+- **Quota per storage volume**:
+    Shows the quota available on each storage volume.
+    When no storage host supports quota, the card shows a notice instead.
+
+- **My Deployments**:
+    Your deployments in the current project with their replica health.
+
+- **My Activity**:
+    The audit log of actions you performed in the selected time range. Turn on
+    **Show failures only** in the card header, or click the failure count, to list
+    only failed actions; the choice is saved with your board.
 
 <a id="superadmin-dashboard"></a>
 
-When you are logged in as a superadmin, the Dashboard page also displays
-**Agent Statistics** and **Active Agents** panels alongside the standard user panels.
-These panels show cluster-wide agent health and resource utilization.
-The **My Sessions** panel is titled **Active Sessions** for superadmins; it still
-counts the sessions of the current project.
+Cluster-wide cards such as **Agent Statistics**, **Active Agents**, and
+**Active Sessions** are on the admin dashboard, the first item of the
+**Admin Settings** menu, for superadmins and project admins.
 
 ## Customizing the Dashboard Layout
 

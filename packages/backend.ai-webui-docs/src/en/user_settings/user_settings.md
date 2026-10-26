@@ -334,7 +334,7 @@ future updates. Each feature is turned on with its **Enabled** checkbox.
   capabilities within the WebUI. When turned on, AI agent functionality becomes
   available for use in your sessions.
 - **Import from Hugging Face**: Adds an **Import Hugging Face Model** tab to the
-  **Start From URL** dialog on the Start page, so you can import a model from
+  **Start From URL** dialog on the Dashboard, so you can import a model from
   Hugging Face directly into a model folder. The tab appears only when model
   deployment is also available in your installation.
 - **Session resource grid view**: Adds a **View mode** toggle -- **Table** or

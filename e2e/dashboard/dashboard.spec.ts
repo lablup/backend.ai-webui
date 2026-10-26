@@ -1,8 +1,11 @@
 // spec: e2e/.agent-output/test-plan-start-dashboard.md
 // scenarios: 6 (Widget Rendering), 7 (Session Count Widget), 8 (My Resources Widget),
-//            9 (My Resources in Resource Group Widget), 10 (Agent Stats Widget),
-//            11 (Recently Created Sessions Widget), 12 (Board Layout)
-// plus: custom panel add flow (edit sider -> panel modal), added after the plan
+//            9 (My Activity Widget, replaces My Resources in Resource Group),
+//            10 (Agent Stats Widget), 11 (Recently Created Sessions Widget),
+//            12 (Board Layout)
+// plus: custom panel add flow (edit sider -> panel modal), added after the plan.
+// The member dashboard reads only the viewer's own data (#10584); Agent Stats
+// and Recently Created Sessions live on the superadmin dashboard.
 import { loginAsAdmin, loginAsUser, navigateTo } from '../utils/test-util';
 import { test, expect } from '@playwright/test';
 
@@ -26,11 +29,11 @@ test.describe(
           await loginAsAdmin(page, request);
           await navigateTo(page, 'summary');
 
-          // 2. Verify the "Active Sessions" widget is visible (superadmin sees "Active Sessions")
+          // 2. Verify the "My Sessions" widget is visible (own sessions, for every role)
           await expect(
             page
               .locator('.uic-board-item')
-              .filter({ hasText: 'Active Sessions' })
+              .filter({ hasText: 'My Sessions' })
               .first(),
           ).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
@@ -42,20 +45,19 @@ test.describe(
               .first(),
           ).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-          // 4. Verify the "My Resources in Resource Group" widget is visible
-          // The widget title is "My Resources in" followed by a resource group selector
+          // 4. Verify the "Session Results" widget is visible
           await expect(
             page
               .locator('.uic-board-item')
-              .filter({ hasText: 'My Resources in' })
+              .filter({ hasText: 'Session Results' })
               .first(),
           ).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-          // 5. Verify the "Recently Created Sessions" widget is visible
+          // 5. Verify the "My Recent Sessions" widget is visible
           await expect(
             page
               .locator('.uic-board-item')
-              .filter({ hasText: 'Recently Created Sessions' })
+              .filter({ hasText: 'My Recent Sessions' })
               .first(),
           ).toBeVisible({ timeout: WIDGET_TIMEOUT });
         },
@@ -108,12 +110,11 @@ test.describe(
             .first(),
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-        // 4. Verify the "My Resources in Resource Group" widget is visible
-        // The widget title is "My Resources in" followed by a resource group selector
+        // 4. Verify the "Resource Presets" widget is visible
         await expect(
           page
             .locator('.uic-board-item')
-            .filter({ hasText: 'My Resources in' })
+            .filter({ hasText: 'Resource Presets' })
             .first(),
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
@@ -125,11 +126,11 @@ test.describe(
             .first(),
         ).not.toBeVisible();
 
-        // 6. Verify the "Recently Created Sessions" table is visible
+        // 6. Verify the "My Recent Sessions" table is visible
         await expect(
           page
             .locator('.uic-board-item')
-            .filter({ hasText: 'Recently Created Sessions' })
+            .filter({ hasText: 'My Recent Sessions' })
             .first(),
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
       });
@@ -147,14 +148,14 @@ test.describe(
       test('Admin can see session type breakdown in the session count widget', async ({
         page,
       }) => {
-        // 1. Locate the "Active Sessions" widget
+        // 1. Locate the "My Sessions" widget
         const widget = page
           .locator('.uic-board-item')
-          .filter({ hasText: 'Active Sessions' })
+          .filter({ hasText: 'My Sessions' })
           .first();
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-        // 2. Verify four session type statistics are displayed
+        // 2. Verify the donut legend lists the four session types
         await expect(widget.getByText('Interactive')).toBeVisible();
         await expect(widget.getByText('Batch')).toBeVisible();
         await expect(widget.getByText('Inference')).toBeVisible();
@@ -165,10 +166,10 @@ test.describe(
       test('Admin can manually refresh the session count widget', async ({
         page,
       }) => {
-        // 1. Locate the "Active Sessions" widget
+        // 1. Locate the "My Sessions" widget
         const widget = page
           .locator('.uic-board-item')
-          .filter({ hasText: 'Active Sessions' })
+          .filter({ hasText: 'My Sessions' })
           .first();
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
@@ -228,96 +229,33 @@ test.describe(
     });
 
     // -----------------------------------------------------------------------
-    // 9. My Resources in Resource Group Widget
+    // 9. My Activity Widget
     // -----------------------------------------------------------------------
-    test.describe('My Resources in Resource Group Widget', () => {
+    test.describe('My Activity Widget', () => {
       test.beforeEach(async ({ page, request }) => {
         await loginAsAdmin(page, request);
         await navigateTo(page, 'summary');
       });
 
-      test('Admin can view resource usage scoped to the current resource group', async ({
+      test('Admin can toggle "Show failures only" on the My Activity widget', async ({
         page,
       }) => {
-        // 1. Locate the "My Resources in Resource Group" widget
-        // The widget title is "My Resources in" followed by a resource group selector
+        // 1. Locate the "My Activity" widget
         const widget = page
           .locator('.uic-board-item')
-          .filter({ hasText: 'My Resources in' })
+          .filter({ hasText: 'My Activity' })
           .first();
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-        // 2. Verify a resource group selector is visible within the widget.
-        // `SharedResourceGroupSelectForCurrentProject` renders `BAISelect` with
-        // `showSearch`, so Astryx `Selector` renders the trigger as a plain
-        // `<button>` (`role: hasSearch ? undefined : 'combobox'`) whose
-        // accessible name falls back to `t('general.Select')` — the call site
-        // passes no `label`/`placeholder` (`BAISelect.tsx`:
-        // `label: accessibleLabel || t('general.Select')`). `exact` is required:
-        // the widget's info-tooltip button's aria-label contains "selected".
-        await expect(
-          widget.getByRole('button', { name: 'Select', exact: true }),
-        ).toBeVisible();
-
-        // 3. Verify the resource content area has finished loading for the current resource group.
-        // The widget may show CPU/RAM statistics when the admin user has resource quota allocated
-        // in the resource group, or show an empty state ("No resource data available") when no
-        // quota is assigned. The skeleton loader disappears once data has been fetched either way.
-        // `MyResourceWithinResourceGroup.tsx` renders `BAISkeleton` while
-        // loading, tagged `data-testid="my-resource-skeleton"` (Astryx
-        // `Skeleton` has no default class to anchor on); the "paragraph"
-        // variant renders several boxes sharing that testid, hence `.first()`.
-        await expect(
-          widget.getByTestId('my-resource-skeleton').first(),
-        ).not.toBeVisible({
-          timeout: WIDGET_TIMEOUT,
+        // 2. The header switch is saved on the board, so turn it on and back off
+        const failuresOnly = widget.getByRole('switch', {
+          name: 'Show failures only',
         });
-
-        // 4. Verify a "Used" / "Free" segmented control is present.
-        // `SegmentedControl` (`@astryxdesign/core/SegmentedControl`) is a
-        // `role="radiogroup"` with `label="Used/Free"` (composed from the two
-        // option labels — `MyResourceWithinResourceGroup.tsx`).
-        const segmentedControl = widget.getByRole('radiogroup', {
-          name: 'Used/Free',
-        });
-        await expect(segmentedControl).toBeVisible();
-        await expect(segmentedControl.getByText('Used')).toBeVisible();
-        await expect(segmentedControl.getByText('Free')).toBeVisible();
-      });
-
-      test('Admin can toggle between "Used" and "Free" resource views', async ({
-        page,
-      }) => {
-        // 1. Locate the "My Resources in Resource Group" widget
-        // The widget title is "My Resources in" followed by a resource group selector
-        const widget = page
-          .locator('.uic-board-item')
-          .filter({ hasText: 'My Resources in' })
-          .first();
-        await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
-
-        // 2. Locate the segmented control (Astryx `SegmentedControl`,
-        // `role="radiogroup"`, `label="Used/Free"` — see the previous test).
-        const segmentedControl = widget.getByRole('radiogroup', {
-          name: 'Used/Free',
-        });
-        await expect(segmentedControl).toBeVisible();
-
-        // 3. Click the "Used" segment
-        await segmentedControl.getByRole('radio', { name: 'Used' }).click();
-
-        // 4. Verify the "Used" segment is now selected
-        await expect(
-          segmentedControl.getByRole('radio', { name: 'Used' }),
-        ).toBeChecked();
-
-        // 5. Click the "Free" segment
-        await segmentedControl.getByRole('radio', { name: 'Free' }).click();
-
-        // 6. Verify the "Free" segment is now selected
-        await expect(
-          segmentedControl.getByRole('radio', { name: 'Free' }),
-        ).toBeChecked();
+        await expect(failuresOnly).not.toBeChecked();
+        await failuresOnly.click();
+        await expect(failuresOnly).toBeChecked();
+        await failuresOnly.click();
+        await expect(failuresOnly).not.toBeChecked();
       });
     });
 
@@ -330,7 +268,7 @@ test.describe(
       () => {
         test.beforeEach(async ({ page, request }) => {
           await loginAsAdmin(page, request);
-          await navigateTo(page, 'summary');
+          await navigateTo(page, 'admin/dashboard');
         });
 
         test('Admin can view cluster-level resource statistics in the Agent Stats widget', async ({
@@ -388,10 +326,10 @@ test.describe(
     test.describe('Recently Created Sessions Widget', () => {
       test.beforeEach(async ({ page, request }) => {
         await loginAsAdmin(page, request);
-        await navigateTo(page, 'summary');
+        await navigateTo(page, 'admin/dashboard');
       });
 
-      test('Admin can view the recently created sessions list on the Dashboard', async ({
+      test('Admin can view the recently created sessions list on the superadmin dashboard', async ({
         page,
       }) => {
         // 1. Locate the "Recently Created Sessions" widget
@@ -436,7 +374,7 @@ test.describe(
 
         // 2. Wait for the dashboard to load by checking for a known widget heading
         await expect(
-          page.getByRole('heading', { name: 'Active Sessions' }),
+          page.getByRole('heading', { name: 'My Sessions' }),
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
         // 3. Verify board container exists with multiple widgets
@@ -462,7 +400,7 @@ test.describe(
         await loginAsAdmin(page, request);
         await navigateTo(page, 'summary');
         await expect(
-          page.getByRole('heading', { name: 'Active Sessions' }),
+          page.getByRole('heading', { name: 'My Sessions' }),
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
         // 2. The edit toggle lives in the breadcrumb bar and opens the sider that
@@ -488,7 +426,7 @@ test.describe(
         await loginAsAdmin(page, request);
         await navigateTo(page, 'summary');
         await expect(
-          page.getByRole('heading', { name: 'Active Sessions' }),
+          page.getByRole('heading', { name: 'My Sessions' }),
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
         await page
           .getByTestId('webui-breadcrumb')

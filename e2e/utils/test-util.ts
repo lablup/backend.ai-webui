@@ -1538,7 +1538,7 @@ export async function modifyThemeJson(
             srcDark: '/manifest/backend.ai-webui-black.svg',
             srcCollapsedDark: '/manifest/backend.ai-brand-simple-black.svg',
             alt: 'Backend.AI Logo',
-            href: '/start',
+            href: '/dashboard',
           },
           companyName: 'Lablup Inc.',
           brandName: 'Backend.AI',
