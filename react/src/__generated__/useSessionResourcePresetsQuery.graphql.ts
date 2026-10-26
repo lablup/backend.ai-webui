@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3abb0ba0c2753dccc421c3773753ac10>>
+ * @generated SignedSource<<02ab89c32df5d7a1d37e475dcb061173>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,8 +18,8 @@ export type useSessionResourcePresetsQuery$data = {
   readonly checkPresetAvailabilityV2?: {
     readonly presets: ReadonlyArray<{
       readonly available: boolean;
-      readonly id: string;
       readonly name: string;
+      readonly presetId: string;
       readonly resourceGroupName: string | null | undefined;
       readonly resourceSlots: ReadonlyArray<{
         readonly quantity: any;
@@ -94,7 +94,7 @@ v1 = [
             "plural": true,
             "selections": [
               {
-                "alias": null,
+                "alias": "presetId",
                 "args": null,
                 "kind": "ScalarField",
                 "name": "id",
@@ -191,16 +191,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "e650e924dd1c3c6497d50b87a1bb93b8",
+    "cacheID": "c93af58091f1c0eb62b81edcd926023f",
     "id": null,
     "metadata": {},
     "name": "useSessionResourcePresetsQuery",
     "operationKind": "query",
-    "text": "query useSessionResourcePresetsQuery(\n  $projectId: UUID!\n  $resourceGroupName: String!\n  $skip: Boolean!\n) {\n  checkPresetAvailabilityV2(input: {projectId: $projectId, resourceGroupName: $resourceGroupName}) @skip(if: $skip) {\n    presets {\n      id\n      name\n      resourceSlots {\n        resourceType\n        quantity\n      }\n      sharedMemory {\n        expr\n      }\n      resourceGroupName\n      available\n    }\n  }\n}\n"
+    "text": "query useSessionResourcePresetsQuery(\n  $projectId: UUID!\n  $resourceGroupName: String!\n  $skip: Boolean!\n) {\n  checkPresetAvailabilityV2(input: {projectId: $projectId, resourceGroupName: $resourceGroupName}) @skip(if: $skip) {\n    presets {\n      presetId: id\n      name\n      resourceSlots {\n        resourceType\n        quantity\n      }\n      sharedMemory {\n        expr\n      }\n      resourceGroupName\n      available\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "877ba3fed8fa4ad12d2c786d9875e9ab";
+(node as any).hash = "0de3821996bc94a1d20f03b806fe0139";
 
 export default node;

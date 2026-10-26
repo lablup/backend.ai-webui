@@ -117,9 +117,7 @@ const SessionLauncherPreview: React.FC<{
   const sessionType = Form.useWatch('sessionType', { form, preserve: true });
   const currentProject = useCurrentProjectValue();
   const mountableHosts = useMountableStorageHosts(currentProjectId);
-  // `allocationPreset` holds the preset's id; the store already has the
-  // list from `ResourceAllocationFormItems`, so this resolves without a
-  // request.
+  // `allocationPreset` holds the preset's id; this resolves it to a name.
   const { resource_presets } = useLazyLoadQuery<SessionLauncherPreviewQuery>(
     graphql`
       query SessionLauncherPreviewQuery {

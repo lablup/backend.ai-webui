@@ -43,7 +43,9 @@ export const useSessionResourcePresets = ({
             }
           ) @skip(if: $skip) {
             presets {
-              id
+              # Aliased so Relay keys each row by its query path: id is the
+              # preset id, shared by every resource group's answer.
+              presetId: id
               name
               resourceSlots {
                 resourceType
@@ -67,7 +69,7 @@ export const useSessionResourcePresets = ({
     );
 
   return (checkPresetAvailabilityV2?.presets ?? []).map((preset) => ({
-    id: preset.id,
+    id: preset.presetId,
     name: preset.name,
     // Same shape as the REST `check-presets` slots: `Decimal` strings
     // such as "2.000" become "2", memory stays in bytes.
