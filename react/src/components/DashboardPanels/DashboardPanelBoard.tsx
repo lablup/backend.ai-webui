@@ -49,12 +49,14 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
   }>({ open: false });
   const boardContainerRef = useRef<HTMLDivElement>(null);
 
-  // The edit-mode atom is global: close it on unmount, or a revisit starts with the sider open.
+  // The edit-mode atom is global: close it when leaving the page, but not when a
+  // suspending query remounts the board on the same path (that would drop an early click).
   useEffect(() => {
+    const mountedPath = window.location.pathname;
     setBreadcrumbExtra(<DashboardEditToggleButton />);
     return () => {
       setBreadcrumbExtra(null);
-      setEditMode(false);
+      if (window.location.pathname !== mountedPath) setEditMode(false);
     };
   }, [setBreadcrumbExtra, setEditMode]);
 
