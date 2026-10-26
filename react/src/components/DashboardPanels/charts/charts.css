@@ -10,8 +10,4 @@
     height: var(--spacing-3);
     border-radius: var(--radius-full);
   }
-
-  .bai-dashboard-chart-legend-label {
-    white-space: nowrap;
-  }
 }
