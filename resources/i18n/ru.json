@@ -797,6 +797,19 @@
     "Edit": "Редактировать",
     "Free": "Бесплатно",
     "Used": "Использовал",
+    "boards": {
+      "BoardName": "Название доски",
+      "BoardNameRequired": "Введите название доски",
+      "Boards": "Доски",
+      "CannotDeleteLastBoard": "Последнюю доску нельзя удалить",
+      "DefaultBoard": "По умолчанию",
+      "EditBoard": "Изменить доску",
+      "NewBoard": "Новая доска",
+      "NewBoardTitle": "Доска {{number}}",
+      "PinnedProjects": "Закреплённые проекты",
+      "PinnedProjectsDescription": "Доска открывается с выбранными проектами.",
+      "PinnedProjectsMore": "{{name}} +{{count}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Активность",

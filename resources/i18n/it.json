@@ -797,6 +797,19 @@
     "Edit": "Modifica",
     "Free": "Gratuito",
     "Used": "Usato",
+    "boards": {
+      "BoardName": "Nome della bacheca",
+      "BoardNameRequired": "Inserisci un nome per la bacheca",
+      "Boards": "Bacheche",
+      "CannotDeleteLastBoard": "L'ultima bacheca non può essere eliminata",
+      "DefaultBoard": "Predefinita",
+      "EditBoard": "Modifica bacheca",
+      "NewBoard": "Nuova bacheca",
+      "NewBoardTitle": "Bacheca {{number}}",
+      "PinnedProjects": "Progetti fissati",
+      "PinnedProjectsDescription": "La bacheca si apre con questi progetti selezionati.",
+      "PinnedProjectsMore": "{{name}} +{{count}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Attività",

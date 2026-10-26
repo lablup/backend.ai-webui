@@ -523,11 +523,25 @@ test.describe(
         await expect(modal).toBeHidden();
 
         // 6. The new panel appears as a board item titled with the panel title.
-        //    (The panel is persisted in localStorage only, and each test runs in
-        //    a fresh browser context, so no cleanup is needed.)
         await expect(
           page.locator('.uic-board-item').filter({ hasText: panelTitle }),
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+
+        // 7. Clean up: the board is saved in the account's app config, so the
+        //    panel would otherwise follow the admin account into later runs.
+        await page
+          .getByText(panelTitle, { exact: true })
+          // The board item renders the title first; the sider row comes last.
+          .last()
+          .locator('xpath=ancestor::*[.//button[@aria-label="Delete"]][1]')
+          .getByRole('button', { name: 'Delete' })
+          .click();
+        await page
+          .getByRole('button', { name: 'Confirm', exact: true })
+          .click();
+        await expect(
+          page.locator('.uic-board-item').filter({ hasText: panelTitle }),
+        ).toHaveCount(0);
       });
     });
   },

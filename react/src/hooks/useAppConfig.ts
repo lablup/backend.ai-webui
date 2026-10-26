@@ -6,6 +6,7 @@ import { useCurrentDomain, useCurrentDomainValue } from '.';
 import { useAppConfigDomainRawQuery } from '../__generated__/useAppConfigDomainRawQuery.graphql';
 import { useAppConfigMyQuery } from '../__generated__/useAppConfigMyQuery.graphql';
 import { useAppConfigMyUpsertMutation } from '../__generated__/useAppConfigMyUpsertMutation.graphql';
+import { useAppConfigPublicQuery } from '../__generated__/useAppConfigPublicQuery.graphql';
 import { useAppConfigPublicRawQuery } from '../__generated__/useAppConfigPublicRawQuery.graphql';
 import { useAppConfigUpsertMutation } from '../__generated__/useAppConfigUpsertMutation.graphql';
 import { useAppConfigUserRawQuery } from '../__generated__/useAppConfigUserRawQuery.graphql';
@@ -31,6 +32,15 @@ export type AppConfigDocument = Record<string, any>;
 const myQuery = graphql`
   query useAppConfigMyQuery($configNames: [String!]!) {
     myAppConfigs(configNames: $configNames) {
+      configName
+      config
+    }
+  }
+`;
+
+const publicQuery = graphql`
+  query useAppConfigPublicQuery($configNames: [String!]!) {
+    publicAppConfigs(configNames: $configNames) {
       configName
       config
     }
@@ -177,6 +187,27 @@ export const useDomainAppConfig = <T = AppConfigDocument>(
   const doc = data.myAppConfigs.find((c) => c.configName === 'domainConfig')
     ?.config as AppConfigDocument | undefined;
   return (subKey === undefined ? doc : _.get(doc, subKey)) as T | undefined;
+};
+
+/**
+ * The current domain's slice of `publicConfigByDomain`, the installation-wide
+ * document every user can read. Read only. Suspends; post-login surfaces
+ * inside `RelayEnvironmentProvider` only (the pre-login theme read is REST).
+ */
+export const usePublicDomainAppConfig = <T = AppConfigDocument>(
+  subKey?: string | Array<string>,
+): T | undefined => {
+  'use memo';
+  const currentDomainName = useCurrentDomainValue();
+  const data = useLazyLoadQuery<useAppConfigPublicQuery>(publicQuery, {
+    configNames: ['publicConfigByDomain'],
+  });
+  const doc = data.publicAppConfigs.find(
+    (c) => c.configName === 'publicConfigByDomain',
+  )?.config as AppConfigDocument | undefined;
+  const slice = _.get(doc, [currentDomainName]) as
+    AppConfigDocument | undefined;
+  return (subKey === undefined ? slice : _.get(slice, subKey)) as T | undefined;
 };
 
 /**

@@ -797,6 +797,19 @@
     "Edit": "Éditer",
     "Free": "Gratuit",
     "Used": "Utilisé",
+    "boards": {
+      "BoardName": "Nom du tableau",
+      "BoardNameRequired": "Saisissez un nom de tableau",
+      "Boards": "Tableaux",
+      "CannotDeleteLastBoard": "Le dernier tableau ne peut pas être supprimé",
+      "DefaultBoard": "Par défaut",
+      "EditBoard": "Modifier le tableau",
+      "NewBoard": "Nouveau tableau",
+      "NewBoardTitle": "Tableau {{number}}",
+      "PinnedProjects": "Projets épinglés",
+      "PinnedProjectsDescription": "Le tableau s'ouvre avec ces projets sélectionnés.",
+      "PinnedProjectsMore": "{{name}} +{{count}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Activité",

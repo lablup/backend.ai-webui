@@ -797,6 +797,19 @@
     "Edit": "Edit",
     "Free": "Percuma",
     "Used": "digunakan",
+    "boards": {
+      "BoardName": "Nama papan",
+      "BoardNameRequired": "Masukkan nama papan",
+      "Boards": "Papan",
+      "CannotDeleteLastBoard": "Papan terakhir tidak boleh dipadam",
+      "DefaultBoard": "Lalai",
+      "EditBoard": "Edit papan",
+      "NewBoard": "Papan baharu",
+      "NewBoardTitle": "Papan {{number}}",
+      "PinnedProjects": "Projek yang disematkan",
+      "PinnedProjectsDescription": "Papan dibuka dengan projek-projek ini dipilih.",
+      "PinnedProjectsMore": "{{name}} +{{count}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Aktiviti",

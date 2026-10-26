@@ -797,6 +797,19 @@
     "Edit": "Düzenle",
     "Free": "Özgür",
     "Used": "Kullanılmış",
+    "boards": {
+      "BoardName": "Pano adı",
+      "BoardNameRequired": "Bir pano adı girin",
+      "Boards": "Panolar",
+      "CannotDeleteLastBoard": "Son pano silinemez",
+      "DefaultBoard": "Varsayılan",
+      "EditBoard": "Panoyu düzenle",
+      "NewBoard": "Yeni pano",
+      "NewBoardTitle": "Pano {{number}}",
+      "PinnedProjects": "Sabitlenmiş projeler",
+      "PinnedProjectsDescription": "Pano bu projeler seçili olarak açılır.",
+      "PinnedProjectsMore": "{{name}} +{{count}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Etkinlik",

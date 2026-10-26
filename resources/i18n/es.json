@@ -797,6 +797,19 @@
     "Edit": "Editar",
     "Free": "Gratis",
     "Used": "Usado",
+    "boards": {
+      "BoardName": "Nombre del tablero",
+      "BoardNameRequired": "Introduzca un nombre de tablero",
+      "Boards": "Tableros",
+      "CannotDeleteLastBoard": "No se puede eliminar el último tablero",
+      "DefaultBoard": "Predeterminado",
+      "EditBoard": "Editar tablero",
+      "NewBoard": "Nuevo tablero",
+      "NewBoardTitle": "Tablero {{number}}",
+      "PinnedProjects": "Proyectos fijados",
+      "PinnedProjectsDescription": "El tablero se abre con estos proyectos seleccionados.",
+      "PinnedProjectsMore": "{{name}} +{{count}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Actividad",

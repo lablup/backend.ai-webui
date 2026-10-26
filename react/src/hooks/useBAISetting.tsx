@@ -53,7 +53,7 @@ export interface UserSettings {
   extra_ai_agents?: Array<AgentProfile>;
   agent_endpoints?: AgentEndpointBindings;
   session_metrics_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
-  /** Pre-catalog dashboard layouts, read only to migrate into `dashboard_board.*`. */
+  /** Dashboard boards this browser kept; read once to migrate into `userConfig.dashboard`, then removed. */
   dashboard_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   admin_dashboard_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   custom_dashboard_panels?: Array<PersistedPanel>;

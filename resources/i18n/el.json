@@ -797,6 +797,19 @@
     "Edit": "Επεξεργασία",
     "Free": "Δωρεάν",
     "Used": "Μεταχειρισμένος",
+    "boards": {
+      "BoardName": "Όνομα πίνακα",
+      "BoardNameRequired": "Εισαγάγετε όνομα πίνακα",
+      "Boards": "Πίνακες",
+      "CannotDeleteLastBoard": "Ο τελευταίος πίνακας δεν μπορεί να διαγραφεί",
+      "DefaultBoard": "Προεπιλογή",
+      "EditBoard": "Επεξεργασία πίνακα",
+      "NewBoard": "Νέος πίνακας",
+      "NewBoardTitle": "Πίνακας {{number}}",
+      "PinnedProjects": "Καρφιτσωμένα έργα",
+      "PinnedProjectsDescription": "Ο πίνακας ανοίγει με αυτά τα έργα επιλεγμένα.",
+      "PinnedProjectsMore": "{{name}} +{{count}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Δραστηριότητα",

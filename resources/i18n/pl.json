@@ -797,6 +797,19 @@
     "Edit": "Edytuj",
     "Free": "Bezpłatny",
     "Used": "Używany",
+    "boards": {
+      "BoardName": "Nazwa tablicy",
+      "BoardNameRequired": "Wprowadź nazwę tablicy",
+      "Boards": "Tablice",
+      "CannotDeleteLastBoard": "Nie można usunąć ostatniej tablicy",
+      "DefaultBoard": "Domyślna",
+      "EditBoard": "Edytuj tablicę",
+      "NewBoard": "Nowa tablica",
+      "NewBoardTitle": "Tablica {{number}}",
+      "PinnedProjects": "Przypięte projekty",
+      "PinnedProjectsDescription": "Tablica otwiera się z zaznaczonymi tymi projektami.",
+      "PinnedProjectsMore": "{{name}} +{{count}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Aktywność",

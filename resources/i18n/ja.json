@@ -797,6 +797,19 @@
     "Edit": "編集",
     "Free": "無料",
     "Used": "使用済み",
+    "boards": {
+      "BoardName": "ボード名",
+      "BoardNameRequired": "ボード名を入力してください",
+      "Boards": "ボード",
+      "CannotDeleteLastBoard": "最後のボードは削除できません",
+      "DefaultBoard": "デフォルト",
+      "EditBoard": "ボードを編集",
+      "NewBoard": "新しいボード",
+      "NewBoardTitle": "ボード {{number}}",
+      "PinnedProjects": "固定プロジェクト",
+      "PinnedProjectsDescription": "ボードを開くとこれらのプロジェクトが選択されます。",
+      "PinnedProjectsMore": "{{name}} 他 {{count}}"
+    },
     "catalog": {
       "group": {
         "Activity": "アクティビティ",

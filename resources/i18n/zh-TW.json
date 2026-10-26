@@ -797,6 +797,19 @@
     "Edit": "編輯",
     "Free": "自由的",
     "Used": "用過的",
+    "boards": {
+      "BoardName": "看板名稱",
+      "BoardNameRequired": "請輸入看板名稱",
+      "Boards": "看板",
+      "CannotDeleteLastBoard": "無法刪除最後一個看板",
+      "DefaultBoard": "預設",
+      "EditBoard": "編輯看板",
+      "NewBoard": "新增看板",
+      "NewBoardTitle": "看板 {{number}}",
+      "PinnedProjects": "固定專案",
+      "PinnedProjectsDescription": "開啟看板時將選取這些專案。",
+      "PinnedProjectsMore": "{{name}} 等 {{count}} 個"
+    },
     "catalog": {
       "group": {
         "Activity": "活動",

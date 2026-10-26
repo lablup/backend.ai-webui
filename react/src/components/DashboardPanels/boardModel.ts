@@ -263,21 +263,23 @@ export const toBoardLayout = (
 };
 
 /**
- * Back to the page's default set and positions. Presets are user-made, so they
- * stay, appended at their default size.
+ * Back to the page's default set and positions (`seeded`, the role template or
+ * the code default). Presets the board has beyond the template are user-made,
+ * so they stay, appended at their default size.
  */
 export const resetBoard = (
   board: DashboardBoard,
   definitions: ReadonlyArray<PanelDefinition>,
   page: PanelPage,
+  seeded: DashboardBoard = seedBoard(definitions, page),
 ): DashboardBoard => {
-  const seeded = seedBoard(definitions, page);
+  const seededIds = new Set(seeded.panels.map((panel) => panel.id));
   const byKey = new Map(
     definitions.map((definition) => [definition.key, definition]),
   );
   const presets = board.panels.flatMap((panel) => {
     const definition = byKey.get(panel.key);
-    if (definition?.kind !== 'preset') return [];
+    if (definition?.kind !== 'preset' || seededIds.has(panel.id)) return [];
     return [
       {
         ..._.omit(panel, 'columnOffset'),

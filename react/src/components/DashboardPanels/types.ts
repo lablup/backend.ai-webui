@@ -141,6 +141,38 @@ export interface DashboardBoard {
   knownKeys: Array<string>;
 }
 
+/** A board's last filter-bar values, `'all'` meaning no restriction. */
+export interface DashboardBoardVars {
+  project: Array<string> | 'all';
+  rg: Array<string> | 'all';
+  range: string;
+  refresh: string;
+}
+
+/** One saved board: its panels plus the filter values and pins it opens with. */
+export interface DashboardModel extends DashboardBoard {
+  id: string;
+  /** Empty for the default board, which the tabs label generically. */
+  title: string;
+  vars: DashboardBoardVars;
+  /** Project ids the board is fixed to; the filter bar does not change them. */
+  pinned?: { project?: Array<string> };
+}
+
+/** One page's boards in `userConfig.dashboard`. */
+export interface DashboardPageConfig {
+  boards: Array<DashboardModel>;
+  active: string;
+  /** Set on every write, so the localStorage migration never runs again. */
+  migrated?: true;
+}
+
+/** `userConfig.dashboard`. */
+export type DashboardConfig = Partial<Record<PanelPage, DashboardPageConfig>>;
+
+/** `dashboardTemplates` in `domainConfig` / `publicConfigByDomain[domain]`. */
+export type DashboardTemplates = Partial<Record<PanelPage, DashboardModel>>;
+
 /** The parts of the WebUI config the catalog reads. */
 export interface PanelCatalogConfig {
   blockList?: ReadonlyArray<string>;

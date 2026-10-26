@@ -797,6 +797,19 @@
     "Edit": "Chỉnh sửa",
     "Free": "Miễn phí",
     "Used": "Đã sử dụng",
+    "boards": {
+      "BoardName": "Tên bảng",
+      "BoardNameRequired": "Nhập tên bảng",
+      "Boards": "Bảng",
+      "CannotDeleteLastBoard": "Không thể xóa bảng cuối cùng",
+      "DefaultBoard": "Mặc định",
+      "EditBoard": "Chỉnh sửa bảng",
+      "NewBoard": "Bảng mới",
+      "NewBoardTitle": "Bảng {{number}}",
+      "PinnedProjects": "Dự án đã ghim",
+      "PinnedProjectsDescription": "Bảng mở với các dự án này được chọn.",
+      "PinnedProjectsMore": "{{name}} +{{count}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Hoạt động",

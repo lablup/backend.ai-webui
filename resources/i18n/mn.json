@@ -797,6 +797,19 @@
     "Edit": "Засах",
     "Free": "Үнэгүй",
     "Used": "Ашиг ашиглагдсан",
+    "boards": {
+      "BoardName": "Самбарын нэр",
+      "BoardNameRequired": "Самбарын нэр оруулна уу",
+      "Boards": "Самбарууд",
+      "CannotDeleteLastBoard": "Сүүлийн самбарыг устгах боломжгүй",
+      "DefaultBoard": "Үндсэн",
+      "EditBoard": "Самбар засах",
+      "NewBoard": "Шинэ самбар",
+      "NewBoardTitle": "Самбар {{number}}",
+      "PinnedProjects": "Бэхэлсэн төслүүд",
+      "PinnedProjectsDescription": "Самбарыг нээхэд эдгээр төсөл сонгогдоно.",
+      "PinnedProjectsMore": "{{name}} +{{count}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Үйл ажиллагаа",

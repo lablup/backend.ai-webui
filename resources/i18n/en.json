@@ -784,6 +784,19 @@
     "Edit": "Edit",
     "Free": "Free",
     "Used": "Used",
+    "boards": {
+      "BoardName": "Board name",
+      "BoardNameRequired": "Enter a board name",
+      "Boards": "Boards",
+      "CannotDeleteLastBoard": "The last board cannot be deleted",
+      "DefaultBoard": "Default",
+      "EditBoard": "Edit board",
+      "NewBoard": "New board",
+      "NewBoardTitle": "Board {{number}}",
+      "PinnedProjects": "Pinned projects",
+      "PinnedProjectsDescription": "The board opens with these projects selected.",
+      "PinnedProjectsMore": "{{name}} +{{count}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Activity",

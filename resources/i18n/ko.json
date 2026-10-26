@@ -797,6 +797,19 @@
     "Edit": "편집",
     "Free": "사용 가능",
     "Used": "사용 중",
+    "boards": {
+      "BoardName": "보드 이름",
+      "BoardNameRequired": "보드 이름을 입력하세요",
+      "Boards": "보드",
+      "CannotDeleteLastBoard": "마지막 보드는 삭제할 수 없습니다",
+      "DefaultBoard": "기본",
+      "EditBoard": "보드 편집",
+      "NewBoard": "새 보드",
+      "NewBoardTitle": "보드 {{number}}",
+      "PinnedProjects": "고정 프로젝트",
+      "PinnedProjectsDescription": "보드를 열면 이 프로젝트들이 선택됩니다.",
+      "PinnedProjectsMore": "{{name}} 외 {{count}}"
+    },
     "catalog": {
       "group": {
         "Activity": "활동",
