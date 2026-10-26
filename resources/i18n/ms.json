@@ -829,6 +829,25 @@
       "Title": "Panel tersuai",
       "Unavailable": "Tidak tersedia dalam persekitaran ini"
     },
+    "filterBar": {
+      "AllProjects": "Semua projek",
+      "AllResourceGroups": "Semua kumpulan sumber",
+      "CustomRange": "Tersuai",
+      "Filters": "Penapis papan pemuka",
+      "Last1Hour": "1 jam lepas",
+      "Last24Hours": "24 jam lepas",
+      "Last7Days": "7 hari lepas",
+      "Minutes": "{{count}} min",
+      "Off": "Mati",
+      "PinnedToBoard": "Disemat pada papan ini",
+      "Projects": "Projek",
+      "RefreshedMinutesAgo": "Dimuat semula {{count}} min lalu",
+      "RefreshedSecondsAgo": "Dimuat semula {{count}} saat lalu",
+      "ResourceGroups": "Kumpulan sumber",
+      "Seconds": "{{count}} saat",
+      "TimeRange": "Julat masa",
+      "TimeRangeHelp": "Kad yang menunjukkan keadaan semasa (bilangan sesi, peruntukan) mengabaikan julat masa."
+    },
     "panelModal": {
       "AddPanel": "Tambah panel",
       "Condition": "Syarat",

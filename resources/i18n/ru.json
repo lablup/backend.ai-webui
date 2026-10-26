@@ -829,6 +829,25 @@
       "Title": "Пользовательские панели",
       "Unavailable": "Недоступно в этой среде"
     },
+    "filterBar": {
+      "AllProjects": "Все проекты",
+      "AllResourceGroups": "Все группы ресурсов",
+      "CustomRange": "Свой период",
+      "Filters": "Фильтры панели",
+      "Last1Hour": "Последний час",
+      "Last24Hours": "Последние 24 часа",
+      "Last7Days": "Последние 7 дней",
+      "Minutes": "{{count}} мин",
+      "Off": "Выкл.",
+      "PinnedToBoard": "Закреплено на этой доске",
+      "Projects": "Проекты",
+      "RefreshedMinutesAgo": "Обновлено {{count}} мин назад",
+      "RefreshedSecondsAgo": "Обновлено {{count}} с назад",
+      "ResourceGroups": "Группы ресурсов",
+      "Seconds": "{{count}} с",
+      "TimeRange": "Период",
+      "TimeRangeHelp": "Карточки с текущим состоянием (число сеансов, выделение) не учитывают период."
+    },
     "panelModal": {
       "AddPanel": "Добавить панель",
       "Condition": "Условие",

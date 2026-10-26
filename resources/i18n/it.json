@@ -829,6 +829,25 @@
       "Title": "Pannelli personalizzati",
       "Unavailable": "Non disponibile in questo ambiente"
     },
+    "filterBar": {
+      "AllProjects": "Tutti i progetti",
+      "AllResourceGroups": "Tutti i gruppi di risorse",
+      "CustomRange": "Personalizzato",
+      "Filters": "Filtri della dashboard",
+      "Last1Hour": "Ultima ora",
+      "Last24Hours": "Ultime 24 ore",
+      "Last7Days": "Ultimi 7 giorni",
+      "Minutes": "{{count}} min",
+      "Off": "Disattivato",
+      "PinnedToBoard": "Fissato a questa bacheca",
+      "Projects": "Progetti",
+      "RefreshedMinutesAgo": "Aggiornato {{count}} min fa",
+      "RefreshedSecondsAgo": "Aggiornato {{count}} s fa",
+      "ResourceGroups": "Gruppi di risorse",
+      "Seconds": "{{count}} s",
+      "TimeRange": "Intervallo di tempo",
+      "TimeRangeHelp": "Le schede che mostrano lo stato attuale (numero di sessioni, allocazione) ignorano l’intervallo."
+    },
     "panelModal": {
       "AddPanel": "Aggiungi pannello",
       "Condition": "Condizione",

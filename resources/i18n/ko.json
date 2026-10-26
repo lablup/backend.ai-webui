@@ -829,6 +829,25 @@
       "Title": "사용자 정의 패널",
       "Unavailable": "이 환경에서는 사용할 수 없습니다"
     },
+    "filterBar": {
+      "AllProjects": "전체 프로젝트",
+      "AllResourceGroups": "전체 자원 그룹",
+      "CustomRange": "직접 지정",
+      "Filters": "대시보드 필터",
+      "Last1Hour": "최근 1시간",
+      "Last24Hours": "최근 24시간",
+      "Last7Days": "최근 7일",
+      "Minutes": "{{count}}분",
+      "Off": "끔",
+      "PinnedToBoard": "이 보드에 고정됨",
+      "Projects": "프로젝트",
+      "RefreshedMinutesAgo": "{{count}}분 전 새로고침",
+      "RefreshedSecondsAgo": "{{count}}초 전 새로고침",
+      "ResourceGroups": "자원 그룹",
+      "Seconds": "{{count}}초",
+      "TimeRange": "기간",
+      "TimeRangeHelp": "지금 상태를 보여 주는 카드(세션 수, 자원 할당 등)에는 기간이 적용되지 않습니다."
+    },
     "panelModal": {
       "AddPanel": "패널 추가",
       "Condition": "조건",

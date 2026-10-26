@@ -829,6 +829,25 @@
       "Title": "カスタムパネル",
       "Unavailable": "この環境では利用できません"
     },
+    "filterBar": {
+      "AllProjects": "すべてのプロジェクト",
+      "AllResourceGroups": "すべてのリソースグループ",
+      "CustomRange": "カスタム",
+      "Filters": "ダッシュボードフィルター",
+      "Last1Hour": "過去1時間",
+      "Last24Hours": "過去24時間",
+      "Last7Days": "過去7日間",
+      "Minutes": "{{count}}分",
+      "Off": "オフ",
+      "PinnedToBoard": "このボードに固定",
+      "Projects": "プロジェクト",
+      "RefreshedMinutesAgo": "{{count}}分前に更新",
+      "RefreshedSecondsAgo": "{{count}}秒前に更新",
+      "ResourceGroups": "リソースグループ",
+      "Seconds": "{{count}}秒",
+      "TimeRange": "期間",
+      "TimeRangeHelp": "現在の状態を表示するカード(セッション数、割り当てなど)には期間が適用されません。"
+    },
     "panelModal": {
       "AddPanel": "パネルを追加",
       "Condition": "条件",

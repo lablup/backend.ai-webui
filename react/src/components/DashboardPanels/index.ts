@@ -38,10 +38,22 @@ export {
 } from './panelRegistry';
 export { DEFAULT_PANEL_LAYOUTS, createPanel } from './defaults';
 export { resourceRegistry, resourceKeys } from './resourceRegistry';
+export {
+  isProjectPinned,
+  resolveDashboardScope,
+  resourceGroupRows,
+} from './dashboardScope';
+export { bucketize, rangeToDateTimeFilter } from './timeRange';
+export {
+  DashboardRefreshProvider,
+  useDashboardFetchKey,
+  useDashboardRefreshQuery,
+} from './DashboardRefreshContext';
 export type {
   DashboardBoard,
   DashboardBoardVars,
   DashboardConfig,
+  DashboardDomain,
   DashboardModel,
   DashboardPageConfig,
   DashboardTemplates,

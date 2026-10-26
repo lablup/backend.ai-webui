@@ -4,6 +4,10 @@
  */
 import { DashboardPageQuery } from '../__generated__/DashboardPageQuery.graphql';
 import DashboardPanelBoard from '../components/DashboardPanels/DashboardPanelBoard';
+import {
+  DashboardRefreshProvider,
+  useDashboardFetchKey,
+} from '../components/DashboardPanels/DashboardRefreshContext';
 import { PANEL_CATALOG } from '../components/DashboardPanels/panelCatalog';
 import { useIsAvailableTotalResourceWithinResourceGroup } from '../components/TotalResourceWithinResourceGroup';
 import { useCurrentUserRole } from '../hooks/backendai';
@@ -11,25 +15,23 @@ import {
   useCurrentProjectValue,
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
-import { INITIAL_FETCH_KEY, useFetchKey, useInterval } from 'backend.ai-ui';
+import { INITIAL_FETCH_KEY } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { useDeferredValue, useTransition } from 'react';
+import { useDeferredValue } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-const DashboardPage: React.FC = () => {
+const DashboardPageContent: React.FC = () => {
   'use memo';
   const currentProject = useCurrentProjectValue();
   const currentResourceGroup = useCurrentResourceGroupValue();
   const userRole = useCurrentUserRole();
 
-  const [fetchKey, updateFetchKey] = useFetchKey();
-  // Deferred so the interval refetch suspends in the background instead of
-  // dropping the whole page into the route fallback every 15s (FR-3386).
+  // The cards that still read this query refresh with it on the dashboard timer.
+  const { fetchKey } = useDashboardFetchKey('page-query', '15s');
+  // Deferred so a refresh suspends in the background instead of dropping the
+  // whole page into the route fallback (FR-3386).
   const deferredFetchKey = useDeferredValue(fetchKey);
-  const [isPendingIntervalRefetch, startIntervalRefetchTransition] =
-    useTransition();
-  const isRefetching =
-    isPendingIntervalRefetch || fetchKey !== deferredFetchKey;
+  const isRefetching = fetchKey !== deferredFetchKey;
 
   const isAvailableTotalResourcePanel =
     useIsAvailableTotalResourceWithinResourceGroup();
@@ -82,17 +84,10 @@ const DashboardPage: React.FC = () => {
     },
   );
 
-  useInterval(() => {
-    startIntervalRefetchTransition(() => {
-      updateFetchKey();
-    });
-  }, 15_000);
-
   return (
     <DashboardPanelBoard
       page="project"
       catalog={PANEL_CATALOG}
-      fetchKey={deferredFetchKey}
       isRefetching={isRefetching}
       queryRefs={{
         queryRef,
@@ -100,9 +95,14 @@ const DashboardPage: React.FC = () => {
           queryRef.TotalResourceWithinResourceGroupFragment,
         agentStatsQueryRef: queryRef.AgentStatsFragment,
       }}
-      onRefresh={() => updateFetchKey()}
     />
   );
 };
+
+const DashboardPage: React.FC = () => (
+  <DashboardRefreshProvider>
+    <DashboardPageContent />
+  </DashboardRefreshProvider>
+);
 
 export default DashboardPage;

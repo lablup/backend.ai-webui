@@ -82,7 +82,7 @@ export const PANEL_GROUPS = [
 ] as const;
 export type PanelGroup = (typeof PANEL_GROUPS)[number];
 
-/** The dashboard refresh choices; `refresh.min` names the slowest one a panel accepts. */
+/** The dashboard refresh choices; `refresh.min` is the shortest gap between two refreshes of a panel. */
 export type RefreshInterval =
   '5s' | '10s' | '15s' | '30s' | '1m' | '5m' | '10m';
 
@@ -90,14 +90,41 @@ export type RefreshInterval =
 export const VIZ_TYPES = ['table', 'stat', 'grid'] as const;
 export type Viz = (typeof VIZ_TYPES)[number];
 
-/** Placeholder until the filter bar lands: every board follows the header's project and resource group. */
-export interface DashboardVars {
-  projectId: string | null;
-  resourceGroup: string | null;
+/** The current domain: `id` for `scoped*` scopes, `name` for fields keyed by name. */
+export interface DashboardDomain {
+  id: string;
+  name: string;
 }
 
-/** Placeholder for the request range a board resolves from the viewer's admin level. */
-export type DashboardScope = { type: 'project'; projectId: string | null };
+/**
+ * What every card on a board reads, resolved from the filter bar. `mine` is
+ * the member page: the viewer's own data in the header project. `projects`
+ * is an admin page; `projectIds` is `'all'` only for a superadmin, meaning
+ * every project of `domain`.
+ */
+export type DashboardScope =
+  | {
+      kind: 'mine';
+      projectId: string | null;
+      rgs: Array<string> | 'all';
+    }
+  | {
+      kind: 'projects';
+      projectIds: Array<string> | 'all';
+      rgs: Array<string> | 'all';
+      domain: DashboardDomain;
+    };
+
+/** The filter-bar values a card reads besides its scope. */
+export interface DashboardVars {
+  /** `now-24h`, or `YYYY-MM-DD/YYYY-MM-DD` for a custom range. */
+  range: string;
+  /** `range` resolved at the card's last refresh, so it stays stable until the next one. */
+  timeRange: { after: string; before: string };
+  /** The header's project and resource group, for cards that read one of each. */
+  currentProjectId: string | null;
+  currentResourceGroup: string | null;
+}
 
 /** The per-card settings a catalog entry can take, edited in edit mode. */
 export const PANEL_SETTING_KINDS = ['resourceGroup', 'range'] as const;
@@ -199,7 +226,7 @@ export interface PanelComponentProps {
   fetchKey: string;
   isRefetching: boolean;
   queryRefs: DashboardPageQueryRefs;
-  /** Asks the page to refetch every panel. */
+  /** Refreshes every card now. */
   onRefresh: () => void;
   onEdit?: () => void;
   onRemove?: () => void;

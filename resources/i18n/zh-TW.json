@@ -829,6 +829,25 @@
       "Title": "自訂面板",
       "Unavailable": "此環境中無法使用"
     },
+    "filterBar": {
+      "AllProjects": "所有專案",
+      "AllResourceGroups": "所有資源群組",
+      "CustomRange": "自訂",
+      "Filters": "儀表板篩選",
+      "Last1Hour": "最近 1 小時",
+      "Last24Hours": "最近 24 小時",
+      "Last7Days": "最近 7 天",
+      "Minutes": "{{count}} 分鐘",
+      "Off": "關閉",
+      "PinnedToBoard": "已固定到此看板",
+      "Projects": "專案",
+      "RefreshedMinutesAgo": "{{count}} 分鐘前重新整理",
+      "RefreshedSecondsAgo": "{{count}} 秒前重新整理",
+      "ResourceGroups": "資源群組",
+      "Seconds": "{{count}} 秒",
+      "TimeRange": "時間範圍",
+      "TimeRangeHelp": "顯示目前狀態的卡片(工作階段數、資源配置)不受時間範圍影響。"
+    },
     "panelModal": {
       "AddPanel": "新增面板",
       "Condition": "條件",

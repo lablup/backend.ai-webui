@@ -829,6 +829,25 @@
       "Title": "Mukautetut paneelit",
       "Unavailable": "Ei käytettävissä tässä ympäristössä"
     },
+    "filterBar": {
+      "AllProjects": "Kaikki projektit",
+      "AllResourceGroups": "Kaikki resurssiryhmät",
+      "CustomRange": "Mukautettu",
+      "Filters": "Kojelaudan suodattimet",
+      "Last1Hour": "Viimeinen tunti",
+      "Last24Hours": "Viimeiset 24 tuntia",
+      "Last7Days": "Viimeiset 7 päivää",
+      "Minutes": "{{count}} min",
+      "Off": "Pois",
+      "PinnedToBoard": "Kiinnitetty tähän tauluun",
+      "Projects": "Projektit",
+      "RefreshedMinutesAgo": "Päivitetty {{count}} min sitten",
+      "RefreshedSecondsAgo": "Päivitetty {{count}} s sitten",
+      "ResourceGroups": "Resurssiryhmät",
+      "Seconds": "{{count}} s",
+      "TimeRange": "Aikaväli",
+      "TimeRangeHelp": "Nykytilaa näyttävät kortit (istuntojen määrä, varaus) eivät käytä aikaväliä."
+    },
     "panelModal": {
       "AddPanel": "Lisää paneeli",
       "Condition": "Ehto",

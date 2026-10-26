@@ -829,6 +829,25 @@
       "Title": "Paneles personalizados",
       "Unavailable": "No disponible en este entorno"
     },
+    "filterBar": {
+      "AllProjects": "Todos los proyectos",
+      "AllResourceGroups": "Todos los grupos de recursos",
+      "CustomRange": "Personalizado",
+      "Filters": "Filtros del panel",
+      "Last1Hour": "Última hora",
+      "Last24Hours": "Últimas 24 horas",
+      "Last7Days": "Últimos 7 días",
+      "Minutes": "{{count}} min",
+      "Off": "Desactivado",
+      "PinnedToBoard": "Fijado a este tablero",
+      "Projects": "Proyectos",
+      "RefreshedMinutesAgo": "Actualizado hace {{count}} min",
+      "RefreshedSecondsAgo": "Actualizado hace {{count}} s",
+      "ResourceGroups": "Grupos de recursos",
+      "Seconds": "{{count}} s",
+      "TimeRange": "Intervalo de tiempo",
+      "TimeRangeHelp": "Las tarjetas que muestran el estado actual (número de sesiones, asignación) ignoran el intervalo."
+    },
     "panelModal": {
       "AddPanel": "Añadir panel",
       "Condition": "Condición",
