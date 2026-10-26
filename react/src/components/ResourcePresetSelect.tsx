@@ -3,11 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { localeCompare } from '../helper';
-import {
-  ResourceSlotName,
-  useResourceSlots,
-  useResourceSlotsDetails,
-} from '../hooks/backendai';
+import { useResourceSlotsDetails } from '../hooks/backendai';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import {
   type SessionResourcePreset,
@@ -85,7 +81,6 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     trailing: false,
     leading: true,
   });
-  const [resourceSlots] = useResourceSlots();
   const { mergedResourceSlots } = useResourceSlotsDetails(
     resourceGroup || undefined,
   );
@@ -217,27 +212,23 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
           ) : null}
         </BAIFlex>
         <BAIFlex direction="row" gap={'xxs'}>
-          {_.map(
-            _.omitBy(slotsInfo, (_slot, key) =>
-              _.isEmpty(resourceSlots[key as ResourceSlotName]),
-            ),
-            (slot, key) => {
-              return (
-                <BAIResourceNumberWithIcon
-                  key={key}
-                  // @ts-ignore
-                  type={key}
-                  value={slot}
-                  hideTooltip
-                  opts={
-                    key === 'mem' && preset.shared_memory
-                      ? { shmem: Number(preset.shared_memory) }
-                      : {}
-                  }
-                />
-              );
-            },
-          )}
+          {/* Every slot the preset requests, including one the box has not registered. */}
+          {_.map(slotsInfo, (slot, key) => {
+            return (
+              <BAIResourceNumberWithIcon
+                key={key}
+                // @ts-ignore
+                type={key}
+                value={slot}
+                hideTooltip
+                opts={
+                  key === 'mem' && preset.shared_memory
+                    ? { shmem: Number(preset.shared_memory) }
+                    : {}
+                }
+              />
+            );
+          })}
         </BAIFlex>
       </BAIFlex>
     );
