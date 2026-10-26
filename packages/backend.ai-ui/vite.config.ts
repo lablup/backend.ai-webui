@@ -1,6 +1,5 @@
 import packageJson from './package.json' with { type: 'json' };
-import babel from '@rolldown/plugin-babel';
-import react, { reactCompilerPreset } from '@vitejs/plugin-react';
+import react from '@vitejs/plugin-react';
 import glob from 'fast-glob';
 import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -63,10 +62,7 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: !isDevMode,
     },
     plugins: [
-      babel({
-        presets: [reactCompilerPreset({ compilationMode: 'annotation' })],
-      }),
-      react(),
+      react({ compiler: { compilationMode: 'annotation' } }),
       relay({
         module: 'esmodule',
         codegen: !isDevMode,

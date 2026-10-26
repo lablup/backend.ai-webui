@@ -1,12 +1,12 @@
 import { chunkReport } from './vite-plugins/chunk-report';
+import { relay } from './vite-plugins/relay';
 import {
   devReviewOverlayPlugin,
   reviewOverlayBuildPlugin,
 } from './vite-plugins/review-overlay/index';
 import { findStalePrebundle } from './vite-plugins/stale-prebundle';
-import babel, { defineRolldownBabelPreset } from '@rolldown/plugin-babel';
 import stylexVite from '@stylexjs/unplugin/vite';
-import react, { reactCompilerPreset } from '@vitejs/plugin-react';
+import react from '@vitejs/plugin-react';
 import compression from 'compression';
 import { execSync } from 'node:child_process';
 import {
@@ -183,19 +183,6 @@ const buiSrc = resolve(projectRoot, 'packages/backend.ai-ui/src');
 const buiArtifactDir = resolve(buiSrc, '__generated__');
 const reactSrc = resolve(__dirname, 'src');
 const reactArtifactDir = resolve(reactSrc, '__generated__');
-
-const relayPreset = (srcDir: string, artifactDirectory: string) =>
-  defineRolldownBabelPreset({
-    preset: () => ({
-      plugins: [['babel-plugin-relay', { artifactDirectory }]],
-    }),
-    rolldown: {
-      filter: {
-        id: new RegExp(`^${srcDir.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/`),
-        code: /\bgraphql\s*`/,
-      },
-    },
-  });
 
 /**
  * Project-root paths that craco's devServer.static block (craco.config.cjs:35-45)
@@ -1031,9 +1018,8 @@ export default defineConfig(({ command, mode }) => {
       // inert (and so a byte-identical bundle) without it.
       reviewOverlayBuildPlugin(),
 
-      // StyleX compiler for Astryx `xstyle` authoring. Both it and
-      // @rolldown/plugin-babel are `enforce: 'pre'`, so this array order makes
-      // the React Compiler and babel-plugin-relay see StyleX-compiled output.
+      // StyleX compiler for Astryx `xstyle` authoring. It, relay() and the
+      // React Compiler in react() are `enforce: 'pre'`, so it must stay first.
       stylexVite({
         // Unlayered output: StyleX's own `:not(#\#)` priority ladder orders
         // rules inside the sheet, and unlayered CSS outranks every named
@@ -1074,14 +1060,11 @@ export default defineConfig(({ command, mode }) => {
         },
       },
 
-      babel({
-        presets: [
-          relayPreset(buiSrc, buiArtifactDir),
-          relayPreset(reactSrc, reactArtifactDir),
-          reactCompilerPreset({ compilationMode: 'annotation' }),
-        ],
-      }),
-      react(),
+      relay([
+        { srcDir: buiSrc, artifactDirectory: buiArtifactDir },
+        { srcDir: reactSrc, artifactDirectory: reactArtifactDir },
+      ]),
+      react({ compiler: { compilationMode: 'annotation' } }),
 
       svgr({
         include: '**/*.svg?react',

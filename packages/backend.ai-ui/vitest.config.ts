@@ -1,5 +1,4 @@
-import babel from '@rolldown/plugin-babel';
-import react, { reactCompilerPreset } from '@vitejs/plugin-react';
+import react from '@vitejs/plugin-react';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import relay from 'vite-plugin-relay-lite';
@@ -32,10 +31,7 @@ export default defineConfig({
   },
 
   plugins: [
-    babel({
-      presets: [reactCompilerPreset({ compilationMode: 'annotation' })],
-    }),
-    react(),
+    react({ compiler: { compilationMode: 'annotation' } }),
     relay({ module: 'esmodule' }),
     svgr(),
   ],
