@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-sJBDdmOt.js";import{t}from"./jsx-runtime-MKhVqBIO.js";import{n,t as r}from"./Stack-Bovfz4OS.js";function i({ref:e,justify:t,align:n,hAlign:i,vAlign:o,...s}){return(0,a.jsx)(r,{...s,direction:`horizontal`,hAlign:i??t,vAlign:o??n,ref:e})}var a;function o(){return(o=e((()=>{n(),a=t(),i.displayName=`HStack`})))()}export{o as n,i as t};

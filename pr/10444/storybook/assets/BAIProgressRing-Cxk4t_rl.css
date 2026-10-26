@@ -1,0 +1,15 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAIProgressRing> (FR-3923), imported by the component
+ itself (P17). The ring is an ICON: it is handed to `Badge`'s `icon` slot, so
+ every value here is either geometry (resolved in the SVG user space, not CSS)
+ or motion timing.
+
+ The three durations are literals on purpose. `--duration-*` tops out at
+ 1300ms, so neither the 1s indeterminate spin — which must stay pixel-identical
+ to the `.bai-icon-spin` glyph this replaces, and that rule is a literal `1s`
+ in this same package — nor the 2.4s determinate turn has a token to name it.
+ The dash transition does have one and uses it.
+*/@keyframes bai-progress-ring-spin{to{transform:rotate(360deg)}}@layer components{.bai-progress-ring{display:inline-block}.bai-progress-ring-track{stroke:currentcolor;stroke-opacity:.25}.bai-progress-ring-arc{stroke:currentcolor;stroke-linecap:round;transform:rotate(-90deg);transform-box:fill-box;transform-origin:center;transition:stroke-dashoffset var(--duration-medium-min) var(--ease-standard)}.bai-progress-ring-spin,.bai-progress-ring-indeterminate{animation-name:bai-progress-ring-spin;animation-timing-function:linear;animation-iteration-count:infinite}.bai-progress-ring-spin{animation-duration:2.4s}.bai-progress-ring-indeterminate{animation-duration:1s}@media(prefers-reduced-motion:reduce){.bai-progress-ring-spin{animation:none}.bai-progress-ring-indeterminate{animation-duration:3s}.bai-progress-ring-arc{transition:none}}}
