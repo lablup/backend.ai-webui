@@ -120,6 +120,12 @@ const DonutChart: React.FC<DonutChartProps> = ({
     },
   ];
 
+  // Zero-value slices stay in the legend only; drawn, their separators show as a gap.
+  const chartRows = legendRows.filter((row) => row.value > 0);
+  const chartColors = legendRows.flatMap((row, i) =>
+    row.value > 0 ? [colors[i]] : [],
+  );
+
   // The root takes the height its parent gives it; the floor keeps the smallest ring inside an unsized parent.
   return (
     <BAIFlex
@@ -149,20 +155,21 @@ const DonutChart: React.FC<DonutChartProps> = ({
               }}
             >
               <RadialChart
-                data={legendRows}
+                data={chartRows}
                 valueKey="value"
                 labelKey="label"
                 innerRadius={0.6}
                 height={chartSize}
                 label={label}
               >
-                <RadialSlice colors={colors} labels={false} />
+                <RadialSlice colors={chartColors} labels={false} />
                 <RadialTooltip
+                  highlight={false}
                   render={(datum) => (
                     <BAIFlex direction="column" align="start">
                       <Text weight="semibold">{datum.label}</Text>
                       <Text>{`${columnLabels.value}: ${datum.value.toLocaleString()}`}</Text>
-                      <Text>{`${columnLabels.percent}: ${legendRows[datum.index]?.percent ?? 0}%`}</Text>
+                      <Text>{`${columnLabels.percent}: ${chartRows[datum.index]?.percent ?? 0}%`}</Text>
                     </BAIFlex>
                   )}
                 />
