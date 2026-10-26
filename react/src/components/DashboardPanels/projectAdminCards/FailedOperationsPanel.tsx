@@ -117,6 +117,7 @@ const FailedOperationsStat: React.FC<{
       description={t('dashboard.card.VsPreviousRange')}
       delta={{ ...delta, sentiment: failureSentiment(delta) }}
       trend={bucketCounts(data, 'f', buckets.length)}
+      buckets={buckets}
       trendColor="negative"
     />
   );

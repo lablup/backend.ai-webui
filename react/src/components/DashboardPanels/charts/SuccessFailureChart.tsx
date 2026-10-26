@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { DateTimeWindow } from '../timeRange';
+import { formatBucketSpan } from './bucketSpan';
 import { Text } from '@lablup/ui-common/Text';
 import {
   Chart,
@@ -45,7 +46,7 @@ const SuccessFailureChart: React.FC<SuccessFailureChartProps> = ({
   const format = spansDays ? 'MM/DD' : 'HH:mm';
   const points = buckets.map((bucket, index) => ({
     bucket: dayjs(bucket.after).format(format),
-    end: dayjs(bucket.before).format(format),
+    span: formatBucketSpan(bucket),
     success: successTrend[index] ?? 0,
     failure: failureTrend[index] ?? 0,
   }));
@@ -67,7 +68,7 @@ const SuccessFailureChart: React.FC<SuccessFailureChartProps> = ({
         <ChartTooltip
           render={(datum) => (
             <BAIFlex direction="column" align="start">
-              <Text type="supporting">{`${datum.bucket} - ${datum.end}`}</Text>
+              <Text type="supporting">{String(datum.span)}</Text>
               <Text>{`${labels.success}: ${datum.success}`}</Text>
               <Text>{`${labels.failure}: ${datum.failure}`}</Text>
             </BAIFlex>

@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { failureSentiment, type SuccessFailureCounts } from '../countAliases';
+import type { DateTimeWindow } from '../timeRange';
 import TrendStat from './TrendStat';
 import { BAIFlex, BAILink } from 'backend.ai-ui';
 import React from 'react';
@@ -12,6 +13,8 @@ export interface SuccessFailureStatsProps {
   counts: SuccessFailureCounts;
   /** Draws each count's bucket sparkline; off when a chart beside it shows the buckets. */
   showTrend?: boolean;
+  /** The bucket windows behind the trends, for the sparkline tooltips. */
+  buckets?: ReadonlyArray<DateTimeWindow>;
   /** Makes the failure count a link, e.g. to turn on "failures only". */
   onClickFailure?: () => void;
 }
@@ -20,6 +23,7 @@ export interface SuccessFailureStatsProps {
 const SuccessFailureStats: React.FC<SuccessFailureStatsProps> = ({
   counts,
   showTrend = true,
+  buckets,
   onClickFailure,
 }) => {
   'use memo';
@@ -33,6 +37,7 @@ const SuccessFailureStats: React.FC<SuccessFailureStatsProps> = ({
           description={t('dashboard.card.VsPreviousRange')}
           delta={counts.successDelta}
           trend={showTrend ? counts.successTrend : undefined}
+          buckets={buckets}
           trendColor="positive"
         />
       </BAIFlex>
@@ -52,6 +57,7 @@ const SuccessFailureStats: React.FC<SuccessFailureStatsProps> = ({
             sentiment: failureSentiment(counts.failureDelta),
           }}
           trend={showTrend ? counts.failureTrend : undefined}
+          buckets={buckets}
           trendColor="negative"
         />
       </BAIFlex>
