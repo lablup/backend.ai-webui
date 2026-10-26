@@ -3726,6 +3726,12 @@
     "TypeInAuthKey": "Alternatif olarak, aşağıdaki kimlik doğrulama kodunu manuel olarak yazabilirsiniz."
   },
   "tourGuide": {
+    "adminViewSwitch": {
+      "BackToAdminSettingsText": "Yönetici ayarlarına dönmek için bu menüyü açın ve \"Yönetici Ayarları\"nı seçin.",
+      "BackToAdminSettingsTitle": "Yönetici ayarlarına dönmek",
+      "BackToUserViewText": "Yönetici ayarlarındasınız. Oturumları, verileri ve diğer kullanıcı sayfalarını kullanmak için bu menüyü açın ve \"Kullanıcı Görünümüne Dön\"ü seçin.",
+      "BackToUserViewTitle": "Kullanıcı görünümüne geçmek"
+    },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "Bir hata alanı varsa Oluştur veya Kaydet düğmesi devre dışı bırakılır. Lütfen hatayı düzeltip tekrar deneyin.",
       "FixErrorFieldByModifyButton": "Bu hata alanını düzenlemek için doğrudan sağ üst köşedeki Düzenle düğmesine gidebilirsiniz.",

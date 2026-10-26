@@ -3726,6 +3726,12 @@
     "TypeInAuthKey": "In alternativa, è possibile digitare manualmente il codice di autenticazione qui sotto."
   },
   "tourGuide": {
+    "adminViewSwitch": {
+      "BackToAdminSettingsText": "Per tornare alle impostazioni amministratore, apri questo menu e scegli \"Impostazioni amministratore\".",
+      "BackToAdminSettingsTitle": "Tornare alle impostazioni amministratore",
+      "BackToUserViewText": "Sei nelle impostazioni amministratore. Per usare sessioni, dati e le altre pagine utente, apri questo menu e scegli \"Torna alla vista utente\".",
+      "BackToUserViewTitle": "Passare alla vista utente"
+    },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "Se è presente un campo di errore, il pulsante Crea o Salva è disabilitato. Correggi l'errore e riprova.",
       "FixErrorFieldByModifyButton": "Per quel campo di errore, puoi andare direttamente al pulsante Modifica nell'angolo in alto a destra per modificarlo.",

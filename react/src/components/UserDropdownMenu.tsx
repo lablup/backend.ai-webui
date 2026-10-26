@@ -19,6 +19,7 @@ import {
   useWebUIMenuItems,
 } from '../hooks/useWebUIMenuItems';
 import AboutBackendAIModal from './AboutBackendAIModal';
+import AdminViewSwitchTour from './AdminViewSwitchTour';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useUserSettingsModal } from './UserSettingsModalOpener';
 import {
@@ -311,6 +312,7 @@ const UserDropdownMenu: React.FC<{
           text colour without adding a layout box. */}
       <div style={{ display: 'contents', color: 'var(--color-text-primary)' }}>
         <ErrorBoundaryWithNullFallback>
+          <AdminViewSwitchTour />
           <Suspense>
             {isOpenUserSettingModal && (
               <BAIUnmountAfterClose>

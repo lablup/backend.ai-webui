@@ -3713,6 +3713,12 @@
     "TypeInAuthKey": "Alternatively, you can type in authentication code below manually."
   },
   "tourGuide": {
+    "adminViewSwitch": {
+      "BackToAdminSettingsText": "To return to the admin settings, open this menu and choose \"Admin Settings\".",
+      "BackToAdminSettingsTitle": "Returning to the admin settings",
+      "BackToUserViewText": "You are in the admin settings. To use sessions, data and the other user pages, open this menu and choose \"Back to User View\".",
+      "BackToUserViewTitle": "Switching to the user view"
+    },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "If there is an error field, the Create or Save button is disabled. Please correct the error and try again.",
       "FixErrorFieldByModifyButton": "For that error field, you can go directly to the Edit button in the top right corner to edit it.",

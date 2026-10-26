@@ -7,6 +7,20 @@ const draft = {
 };
 
 test(
+  "the superadmin lands on the admin settings and follows the first-use tour back to the user view",
+  draft,
+  async ({ app, agent }) => {
+    await app.open("/");
+    await agent.act('Read the "Switching to the user view" tour and press "Done"');
+    await agent.act("Open the user menu in the header");
+    await agent.act('Choose "Back to User View"');
+    await agent.act(
+      'Read the "Returning to the admin settings" tour and press "Done"',
+    );
+  },
+);
+
+test(
   "the superadmin opens the admin settings from the header user menu",
   draft,
   async ({ app, agent }) => {

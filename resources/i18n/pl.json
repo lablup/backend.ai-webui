@@ -3729,6 +3729,12 @@
     "TypeInAuthKey": "Alternatywnie, możesz wpisać poniższy kod uwierzytelniający ręcznie."
   },
   "tourGuide": {
+    "adminViewSwitch": {
+      "BackToAdminSettingsText": "Aby wrócić do ustawień admina, otwórz to menu i wybierz \"Ustawienia admina\".",
+      "BackToAdminSettingsTitle": "Powrót do ustawień admina",
+      "BackToUserViewText": "Jesteś w ustawieniach admina. Aby korzystać z sesji, danych i innych stron użytkownika, otwórz to menu i wybierz \"Powrót do widoku użytkownika\".",
+      "BackToUserViewTitle": "Przejście do widoku użytkownika"
+    },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "Jeśli występuje pole błędu, przycisk Utwórz lub Zapisz jest wyłączony. Popraw błąd i spróbuj ponownie.",
       "FixErrorFieldByModifyButton": "W przypadku tego pola błędu możesz przejść bezpośrednio do przycisku Edytuj w prawym górnym rogu, aby go edytować.",

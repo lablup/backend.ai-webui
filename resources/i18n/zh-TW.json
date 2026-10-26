@@ -3730,6 +3730,12 @@
     "TypeInAuthKey": "或者，您也可以在下面手动输入验证码。"
   },
   "tourGuide": {
+    "adminViewSwitch": {
+      "BackToAdminSettingsText": "要返回管理員設定，請開啟此選單並選擇「管理員設定」。",
+      "BackToAdminSettingsTitle": "返回管理員設定",
+      "BackToUserViewText": "您正在管理員設定中。要使用會話、資料等使用者頁面，請開啟此選單並選擇「返回使用者檢視」。",
+      "BackToUserViewTitle": "切換到使用者檢視"
+    },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "如果存在錯誤欄位，則「建立」或「保存」按鈕將被停用。請更正錯誤並重試。",
       "FixErrorFieldByModifyButton": "對於該錯誤字段，您可以直接進入右上角的編輯按鈕進行編輯。",

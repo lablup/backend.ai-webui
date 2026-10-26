@@ -3726,6 +3726,12 @@
     "TypeInAuthKey": "Sebagai alternatif, anda boleh menaip kod pengesahan di bawah secara manual."
   },
   "tourGuide": {
+    "adminViewSwitch": {
+      "BackToAdminSettingsText": "Untuk kembali ke tetapan pentadbir, buka menu ini dan pilih \"Tetapan Pentadbir\".",
+      "BackToAdminSettingsTitle": "Kembali ke tetapan pentadbir",
+      "BackToUserViewText": "Anda berada dalam tetapan pentadbir. Untuk menggunakan sesi, data dan halaman pengguna lain, buka menu ini dan pilih \"Kembali ke Paparan Pengguna\".",
+      "BackToUserViewTitle": "Beralih ke paparan pengguna"
+    },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "Jika terdapat medan ralat, butang Cipta atau Simpan dinyahdayakan. Sila betulkan ralat dan cuba lagi.",
       "FixErrorFieldByModifyButton": "Untuk medan ralat itu, anda boleh pergi terus ke butang Edit di penjuru kanan sebelah atas untuk mengeditnya.",

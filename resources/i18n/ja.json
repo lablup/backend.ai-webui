@@ -3728,6 +3728,12 @@
     "TypeInAuthKey": "または、下の認証コードを入力して直接二要素認証を有効にすることもできます。"
   },
   "tourGuide": {
+    "adminViewSwitch": {
+      "BackToAdminSettingsText": "管理者設定に戻るには、このメニューを開いて「管理者設定」を選択してください。",
+      "BackToAdminSettingsTitle": "管理者設定に戻る",
+      "BackToUserViewText": "現在は管理者設定の画面です。セッションやデータなどのユーザー画面を使うには、このメニューを開いて「ユーザー画面に戻る」を選択してください。",
+      "BackToUserViewTitle": "ユーザー画面への切り替え"
+    },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "エラーフィールドがある場合、「作成」または「保存」ボタンは無効になります。エラーを修正して再試行してください。",
       "FixErrorFieldByModifyButton": "そのエラー フィールドについては、右上隅にある [編集] ボタンに直接移動して編集できます。",

@@ -3728,6 +3728,12 @@
     "TypeInAuthKey": "或者，您也可以在下面手动输入验证码。"
   },
   "tourGuide": {
+    "adminViewSwitch": {
+      "BackToAdminSettingsText": "要返回管理员设置，请打开此菜单并选择“管理员设置”。",
+      "BackToAdminSettingsTitle": "返回管理员设置",
+      "BackToUserViewText": "您正在管理员设置中。要使用会话、数据等用户页面，请打开此菜单并选择“返回用户视图”。",
+      "BackToUserViewTitle": "切换到用户视图"
+    },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "如果存在错误字段，则“创建”或“保存”按钮将被禁用。请更正错误并重试。",
       "FixErrorFieldByModifyButton": "对于该错误字段，您可以直接进入右上角的编辑按钮进行编辑。",

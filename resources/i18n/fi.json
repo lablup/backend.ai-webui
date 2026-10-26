@@ -3726,6 +3726,12 @@
     "TypeInAuthKey": "Vaihtoehtoisesti voit kirjoittaa alla olevan todennuskoodin manuaalisesti."
   },
   "tourGuide": {
+    "adminViewSwitch": {
+      "BackToAdminSettingsText": "Palataksesi ylläpitäjän asetuksiin avaa tämä valikko ja valitse \"Ylläpitäjän asetukset\".",
+      "BackToAdminSettingsTitle": "Paluu ylläpitäjän asetuksiin",
+      "BackToUserViewText": "Olet ylläpitäjän asetuksissa. Käyttääksesi istuntoja, dataa ja muita käyttäjäsivuja avaa tämä valikko ja valitse \"Takaisin käyttäjänäkymään\".",
+      "BackToUserViewTitle": "Siirtyminen käyttäjänäkymään"
+    },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "Jos virhekenttä on, Luo tai Tallenna -painike ei ole käytössä. Korjaa virhe ja yritä uudelleen.",
       "FixErrorFieldByModifyButton": "Voit muokata virhekenttää suoraan oikeassa yläkulmassa olevasta Muokkaa-painikkeesta.",

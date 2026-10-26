@@ -3730,6 +3730,12 @@
     "TypeInAuthKey": "Sebagai alternatif, Anda dapat mengetikkan kode autentikasi di bawah ini secara manual."
   },
   "tourGuide": {
+    "adminViewSwitch": {
+      "BackToAdminSettingsText": "Untuk kembali ke pengaturan admin, buka menu ini dan pilih \"Pengaturan Admin\".",
+      "BackToAdminSettingsTitle": "Kembali ke pengaturan admin",
+      "BackToUserViewText": "Anda berada di pengaturan admin. Untuk menggunakan sesi, data, dan halaman pengguna lainnya, buka menu ini dan pilih \"Kembali ke Tampilan Pengguna\".",
+      "BackToUserViewTitle": "Beralih ke tampilan pengguna"
+    },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "Jika ada bidang kesalahan, tombol Buat atau Simpan dinonaktifkan. Harap perbaiki kesalahannya dan coba lagi.",
       "FixErrorFieldByModifyButton": "Untuk kolom error tersebut, Anda bisa langsung menuju tombol Edit di pojok kanan atas untuk mengeditnya.",

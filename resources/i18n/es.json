@@ -3726,6 +3726,12 @@
     "TypeInAuthKey": "También puede introducir manualmente el código de autenticación."
   },
   "tourGuide": {
+    "adminViewSwitch": {
+      "BackToAdminSettingsText": "Para volver a los ajustes de administrador, abra este menú y elija \"Ajustes de administrador\".",
+      "BackToAdminSettingsTitle": "Volver a los ajustes de administrador",
+      "BackToUserViewText": "Está en los ajustes de administrador. Para usar sesiones, datos y las demás páginas de usuario, abra este menú y elija \"Volver a la vista de usuario\".",
+      "BackToUserViewTitle": "Cambiar a la vista de usuario"
+    },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "Si hay un campo de error, el botón Crear o Guardar está deshabilitado. Corrija el error y vuelva a intentarlo.",
       "FixErrorFieldByModifyButton": "Para ese campo de error, puede ir directamente al botón Editar en la esquina superior derecha para editarlo.",

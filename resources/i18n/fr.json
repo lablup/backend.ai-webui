@@ -3729,6 +3729,12 @@
     "TypeInAuthKey": "Vous pouvez également saisir manuellement le code d'authentification ci-dessous."
   },
   "tourGuide": {
+    "adminViewSwitch": {
+      "BackToAdminSettingsText": "Pour revenir aux paramètres d'administration, ouvrez ce menu et choisissez \"Paramètres d'administration\".",
+      "BackToAdminSettingsTitle": "Revenir aux paramètres d'administration",
+      "BackToUserViewText": "Vous êtes dans les paramètres d'administration. Pour utiliser les sessions, les données et les autres pages utilisateur, ouvrez ce menu et choisissez \"Retour à la vue utilisateur\".",
+      "BackToUserViewTitle": "Passer à la vue utilisateur"
+    },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "S'il y a un champ d'erreur, le bouton Créer ou Sauvegarder est désactivé. Veuillez corriger l'erreur et réessayer.",
       "FixErrorFieldByModifyButton": "Pour ce champ d'erreur, vous pouvez accéder directement au bouton Modifier dans le coin supérieur droit pour le modifier.",
