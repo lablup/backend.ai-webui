@@ -6,7 +6,7 @@ navTitle: Admin Features
 
 # Admin Features
 
-Logging in with an admin account adds an **Admin Settings** menu at the top of the sidebar. Selecting it switches the sidebar to show only the administration menus. User information registered in Backend.AI is listed under the **Users** menu. A super-admin can see all users' information, and create or deactivate users.
+Superadmins and domain admins open the administration pages by choosing **Switch to Admin Console** in the user menu, and return to the user pages with **Switch to User Console**. Superadmins land on the administration pages right after logging in. While you are on these pages, the sidebar lists only the administration menus. User information registered in Backend.AI is listed under the **Users** menu. A super-admin can see all users' information, and create or deactivate users.
 
 ![](../images/admin_user_page.png)
 
@@ -1060,7 +1060,7 @@ to `FAIR_SHARE`. To configure the scheduler type for a resource group, refer to 
 [Manage resource group](#manage-resource-group) section.
 :::
 
-To access this feature, click the **Scheduler** menu item under **Admin Settings** in the sidebar.
+To access this feature, click the **Scheduler** menu item in the sidebar of the administration pages.
 The page displays a Fair Share Setting tab with a 4-step drill-down interface.
 
 ![](../images/fair_share_resource_group_page.png)
