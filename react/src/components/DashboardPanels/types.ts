@@ -245,6 +245,11 @@ export interface PanelDefinition {
     role?: 'projectAdmin' | 'superadmin';
     /** `import` is a blockList key of its own, though it has no menu item. */
     menuKey?: MenuKeys | 'import';
+    /** True drops the entry for this viewer: not listed and not rendered. */
+    hidden?: (
+      config: PanelCatalogConfig,
+      role: UserRole | null | undefined,
+    ) => boolean;
     /** False locks the entry: listed but disabled, and not rendered. */
     config?: (
       config: PanelCatalogConfig,

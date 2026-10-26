@@ -148,8 +148,8 @@ describe('catalogFor on the real catalog', () => {
     ).toBe(true);
   });
 
-  it('locks the resource group total for a non-superadmin when agents are hidden', () => {
-    const entry = (role: 'user' | 'superadmin') =>
+  it('hides the resource group total from a regular user and locks it for an admin when agents are hidden', () => {
+    const entry = (role: 'user' | 'admin' | 'superadmin') =>
       catalogFor(PANEL_CATALOG, {
         page: 'project',
         role,
@@ -158,7 +158,8 @@ describe('catalogFor on the real catalog', () => {
         ({ definition }) =>
           definition.key === 'totalResourceWithinResourceGroup',
       );
-    expect(entry('user')?.locked).toBe(true);
+    expect(entry('user')).toBeUndefined();
+    expect(entry('admin')?.locked).toBe(true);
     expect(entry('superadmin')?.locked).toBe(false);
   });
 
