@@ -831,6 +831,19 @@
       "Table": "테이블",
       "TitleDescription": "패널 머리글로 표시됩니다 - 조건을 설명하는 제목을 권장합니다.",
       "TitleOptional": "제목 (선택)"
+    },
+    "settings": {
+      "AllResourceGroups": "전체 자원 그룹",
+      "CardSettings": "카드 설정",
+      "CardSettingsOf": "{{name}} 설정",
+      "CurrentResourceGroup": "현재 자원 그룹",
+      "DefaultSettings": "기본 설정",
+      "Last1Hour": "최근 1시간",
+      "Last24Hours": "최근 24시간",
+      "Last7Days": "최근 7일",
+      "ResourceGroups": "자원 그룹",
+      "ResourceGroupsDescription": "선택하지 않으면: {{default}}",
+      "TimeRange": "기간"
     }
   },
   "data": {

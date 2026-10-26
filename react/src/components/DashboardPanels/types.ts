@@ -45,6 +45,8 @@ export interface PanelDescriptor {
   order?: string | null;
   /** View settings of a `sessionResourceGrid` panel, null on other kinds. */
   gridView?: SessionGridViewParams | null;
+  /** The panel's resource group setting, for sources that support one. */
+  resourceGroups?: Array<string> | null;
 }
 
 /** The fields the panel modal collects when creating or editing a panel. */
@@ -97,6 +99,18 @@ export interface DashboardVars {
 /** Placeholder for the request range a board resolves from the viewer's admin level. */
 export type DashboardScope = { type: 'project'; projectId: string | null };
 
+/** The per-card settings a catalog entry can take, edited in edit mode. */
+export const PANEL_SETTING_KINDS = ['resourceGroup', 'range'] as const;
+export type PanelSettingKind = (typeof PANEL_SETTING_KINDS)[number];
+
+/** A card's own settings; an absent field means the card's default. */
+export interface PanelSettings {
+  /** Resource group names; absent means the card's default group. */
+  resourceGroups?: Array<string>;
+  /** A relative range such as `now-24h`. */
+  range?: string;
+}
+
 export interface PanelSize {
   columnSpan: number;
   rowSpan: number;
@@ -115,6 +129,7 @@ export interface PersistedPanelV2 {
   order?: string | null;
   gridView?: SessionGridViewParams | null;
   title?: string;
+  settings?: PanelSettings;
   columnSpan: number;
   rowSpan: number;
   columnOffset?: Record<number, number>;
@@ -189,6 +204,8 @@ export interface PanelDefinition {
     Record<Viz, { defaultSize: PanelSize; minSize: PanelSize }>
   >;
   refresh: { min: RefreshInterval };
+  /** The settings the card reads; only these cards get a settings control. */
+  settings?: ReadonlyArray<PanelSettingKind>;
   /** Like a BAITable column's `defaultHidden`: in the catalog, not on a new board. */
   defaultHidden?: boolean;
 }
@@ -199,6 +216,8 @@ export interface ResourceQueryArgs {
   order?: string | null;
   limit: number;
   offset: number;
+  /** Restricts the rows to these resource groups; absent or empty means all. */
+  resourceGroups?: ReadonlyArray<string> | null;
   /** Ambient project scope (ADR-0001) for project-scoped connections. */
   projectId: string;
 }
@@ -225,6 +244,8 @@ export interface ResourceConfig<
   defaultOrder: string;
   /** Minimum role the connection requires (schema-enforced); undefined = any project member. */
   minRole?: 'superadmin' | 'admin';
+  /** The source can be narrowed to resource groups (the panel's setting). */
+  supportsResourceGroup?: boolean;
   /** Render the list page's own table instead of the generic one. */
   kind?: 'sessionNodes' | 'deploymentNodes';
   getFilterProperties?: (

@@ -367,6 +367,9 @@ const PRESET_PANELS: ReadonlyArray<PanelDefinition> = resourceKeys.map(
         : {}),
       kind: 'preset',
       source,
+      ...(resourceRegistry[source].supportsResourceGroup
+        ? { settings: ['resourceGroup'] as const }
+        : {}),
       viz: 'table',
       ...sizesOf('resourceTable'),
       sizeByViz: {

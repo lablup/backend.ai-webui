@@ -831,6 +831,19 @@
       "Table": "表格",
       "TitleDescription": "顯示為面板標題 - 建議用於描述篩選條件。",
       "TitleOptional": "標題（選填）"
+    },
+    "settings": {
+      "AllResourceGroups": "所有資源群組",
+      "CardSettings": "卡片設定",
+      "CardSettingsOf": "{{name}} 設定",
+      "CurrentResourceGroup": "目前資源群組",
+      "DefaultSettings": "預設設定",
+      "Last1Hour": "最近 1 小時",
+      "Last24Hours": "最近 24 小時",
+      "Last7Days": "最近 7 天",
+      "ResourceGroups": "資源群組",
+      "ResourceGroupsDescription": "未選擇時：{{default}}",
+      "TimeRange": "時間範圍"
     }
   },
   "data": {

@@ -85,6 +85,23 @@ const selectOffsetConnection = <T extends Record<string, any>>(
       }
     : null;
 
+/**
+ * A session minilang filter narrowed to resource groups; undefined when
+ * neither is set.
+ */
+export const withResourceGroupClause = (
+  filter: string | null | undefined,
+  resourceGroups: ReadonlyArray<string> | null | undefined,
+): string | undefined => {
+  const clause = resourceGroups?.length
+    ? resourceGroups
+        .map((name) => `scaling_group == ${JSON.stringify(name)}`)
+        .join(' | ')
+    : '';
+  if (!clause) return filter || undefined;
+  return filter ? `(${filter}) & (${clause})` : clause;
+};
+
 const sessionConfig: ResourceConfig<resourceRegistrySessionQuery, SessionNode> =
   {
     key: 'session',
@@ -119,11 +136,22 @@ const sessionConfig: ResourceConfig<resourceRegistrySessionQuery, SessionNode> =
     // Same condition language as the sessions page's filter, over every field
     // the manager's queryfilter accepts.
     getStringFilterProperties: getSessionFilterProperties,
-    buildVariables: ({ filter, order, limit, offset, projectId }) => ({
+    supportsResourceGroup: true,
+    buildVariables: ({
+      filter,
+      order,
+      limit,
+      offset,
+      projectId,
+      resourceGroups,
+    }) => ({
       scopeId: `project:${projectId}`,
       first: limit,
       offset,
-      filter: typeof filter === 'string' && filter ? filter : undefined,
+      filter: withResourceGroupClause(
+        typeof filter === 'string' ? filter : null,
+        resourceGroups,
+      ),
       order: order ?? '-created_at',
     }),
     // Legacy connection: count and nodes are individually nullable.
@@ -188,10 +216,21 @@ const deploymentConfig: ResourceConfig<
       type: 'boolean',
     },
   ],
-  buildVariables: ({ filter, order, limit, offset, projectId }) => ({
+  supportsResourceGroup: true,
+  buildVariables: ({
+    filter,
+    order,
+    limit,
+    offset,
+    projectId,
+    resourceGroups,
+  }) => ({
     filter: {
       ...(typeof filter === 'string' ? {} : (filter ?? {})),
       ...(projectId ? { projectId: { equals: projectId } } : {}),
+      ...(resourceGroups?.length
+        ? { resourceGroup: { in: [...resourceGroups] } }
+        : {}),
     },
     orderBy: convertToOrderBy(order ?? null),
     limit,

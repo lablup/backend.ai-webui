@@ -831,6 +831,19 @@
       "Table": "Taulukko",
       "TitleDescription": "Näytetään paneelin otsikkona - kuvaa sillä ehto.",
       "TitleOptional": "Otsikko (valinnainen)"
+    },
+    "settings": {
+      "AllResourceGroups": "Kaikki resurssiryhmät",
+      "CardSettings": "Kortin asetukset",
+      "CardSettingsOf": "{{name}}: asetukset",
+      "CurrentResourceGroup": "Nykyinen resurssiryhmä",
+      "DefaultSettings": "Oletusasetukset",
+      "Last1Hour": "Viimeinen tunti",
+      "Last24Hours": "Viimeiset 24 tuntia",
+      "Last7Days": "Viimeiset 7 päivää",
+      "ResourceGroups": "Resurssiryhmät",
+      "ResourceGroupsDescription": "Jos mitään ei valita: {{default}}",
+      "TimeRange": "Aikaväli"
     }
   },
   "data": {

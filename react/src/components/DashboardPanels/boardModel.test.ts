@@ -250,6 +250,54 @@ describe('sanitizeBoard', () => {
     });
   });
 
+  it('keeps only the settings a card declares, valid values only', () => {
+    const withSettings: ReadonlyArray<PanelDefinition> = [
+      card('rg', { settings: ['resourceGroup'] }),
+      card('range', { settings: ['range'] }),
+      card('plain'),
+    ];
+    const sanitized = sanitizeBoard(
+      {
+        panels: [
+          {
+            id: 'rg',
+            key: 'rg',
+            columnSpan: 2,
+            rowSpan: 2,
+            settings: { resourceGroups: ['g1', 'g1', 'g2'], range: 'now-1h' },
+          },
+          {
+            id: 'range',
+            key: 'range',
+            columnSpan: 2,
+            rowSpan: 2,
+            settings: { range: 'now-3y', resourceGroups: ['g1'] },
+          },
+          {
+            id: 'plain',
+            key: 'plain',
+            columnSpan: 2,
+            rowSpan: 2,
+            settings: { range: 'now-1h' },
+          },
+        ],
+      },
+      withSettings,
+      'project',
+    );
+    expect(sanitized?.panels).toEqual([
+      {
+        id: 'rg',
+        key: 'rg',
+        columnSpan: 2,
+        rowSpan: 2,
+        settings: { resourceGroups: ['g1', 'g2'] },
+      },
+      { id: 'range', key: 'range', columnSpan: 2, rowSpan: 2 },
+      { id: 'plain', key: 'plain', columnSpan: 2, rowSpan: 2 },
+    ]);
+  });
+
   it('fills a missing or invalid span from the catalog', () => {
     const sanitized = sanitizeBoard(
       { panels: [{ id: 'b', key: 'b', columnSpan: 0 }] },
@@ -384,7 +432,11 @@ describe('migrateLegacyBoard', () => {
     })!;
     expect(toLegacyPanel(board.panels[0], sessionPreset)).toEqual({
       ...legacyPanel,
-      descriptor: { ...legacyPanel.descriptor, gridView: null },
+      descriptor: {
+        ...legacyPanel.descriptor,
+        gridView: null,
+        resourceGroups: null,
+      },
     });
   });
 });

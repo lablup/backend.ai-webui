@@ -5,6 +5,7 @@
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { panelTitleKey, type CatalogEntry } from './boardModel';
 import { panelTypeLabelKeys } from './panelRegistry';
+import { describePanelSettings } from './panelSettings';
 import { resolvePanelTitle, resourceRegistry } from './resourceRegistry';
 import {
   PANEL_GROUPS,
@@ -12,13 +13,20 @@ import {
   type PersistedPanel,
   type ResourceKey,
 } from './types';
+import type { PanelSettingsTarget } from './useDashboardBoard';
 import { Button } from '@lablup/ui-common/Button';
 import { CheckboxList, CheckboxListItem } from '@lablup/ui-common/CheckboxList';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex, BAIPopconfirm, BAIText } from 'backend.ai-ui';
-import { Plus, RotateCcw, SquarePenIcon, Trash2 } from 'lucide-react';
+import {
+  Plus,
+  RotateCcw,
+  Settings2,
+  SquarePenIcon,
+  Trash2,
+} from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -36,6 +44,9 @@ export interface DashboardEditSiderProps {
   onRemove: (id: string) => void;
   /** Restores the page's default cards and arrangement. */
   onResetLayout: () => void;
+  /** A board panel whose card takes settings; null otherwise. */
+  settingsTargetOf: (id: string) => PanelSettingsTarget | null;
+  onRequestSettings: (id: string) => void;
 }
 
 const GROUP_LABEL_KEYS: Record<PanelGroup, string> = {
@@ -64,6 +75,8 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
   onRequestEdit,
   onRemove,
   onResetLayout,
+  settingsTargetOf,
+  onRequestSettings,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -82,6 +95,25 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
         entry.label.toLowerCase().includes(normalizedSearch),
       )
     : labeledEntries;
+  const settingsButton = (id: string, label: string) =>
+    settingsTargetOf(id) ? (
+      <IconButton
+        variant="ghost"
+        size="sm"
+        label={t('dashboard.settings.CardSettingsOf', { name: label })}
+        tooltip={t('dashboard.settings.CardSettings')}
+        icon={<Settings2 size="1em" />}
+        onClick={() => onRequestSettings(id)}
+      />
+    ) : null;
+  const settingsSummaryOf = (id: string) => {
+    const target = settingsTargetOf(id);
+    return target
+      ? (describePanelSettings(target.settings, t) ??
+          t('dashboard.settings.DefaultSettings'))
+      : undefined;
+  };
+
   const groups = PANEL_GROUPS.map((group) => ({
     group,
     entries: matchingEntries.filter(
@@ -154,7 +186,14 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
                       : entry.definition.requires?.role === 'superadmin' &&
                           group !== 'superadmin'
                         ? t('dashboard.editSider.RequiresSuperadmin')
-                        : undefined
+                        : activeKeys.has(entry.definition.key)
+                          ? settingsSummaryOf(entry.definition.key)
+                          : undefined
+                  }
+                  endContent={
+                    activeKeys.has(entry.definition.key)
+                      ? settingsButton(entry.definition.key, entry.label)
+                      : undefined
                   }
                 />
               ))}
@@ -203,6 +242,9 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
               isAvailable
                 ? undefined
                 : t('dashboard.editSider.RequiresSuperadmin'),
+              settingsTargetOf(panel.id)
+                ? describePanelSettings(settingsTargetOf(panel.id)?.settings, t)
+                : undefined,
             ]
               .filter(Boolean)
               .join(' · ');
@@ -233,6 +275,7 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
                   </BAIText>
                 </BAIFlex>
                 <BAIFlex direction="row" align="center" gap="xxs">
+                  {settingsButton(panel.id, label)}
                   <IconButton
                     variant="ghost"
                     size="sm"

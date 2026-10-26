@@ -828,6 +828,19 @@
       "Table": "ตาราง",
       "TitleDescription": "แสดงเป็นหัวเรื่องของแผง - ใช้เพื่ออธิบายเงื่อนไข",
       "TitleOptional": "ชื่อ (ไม่บังคับ)"
+    },
+    "settings": {
+      "AllResourceGroups": "ทุกกลุ่มทรัพยากร",
+      "CardSettings": "การตั้งค่าการ์ด",
+      "CardSettingsOf": "การตั้งค่า {{name}}",
+      "CurrentResourceGroup": "กลุ่มทรัพยากรปัจจุบัน",
+      "DefaultSettings": "การตั้งค่าเริ่มต้น",
+      "Last1Hour": "1 ชั่วโมงที่ผ่านมา",
+      "Last24Hours": "24 ชั่วโมงที่ผ่านมา",
+      "Last7Days": "7 วันที่ผ่านมา",
+      "ResourceGroups": "กลุ่มทรัพยากร",
+      "ResourceGroupsDescription": "หากไม่ได้เลือก: {{default}}",
+      "TimeRange": "ช่วงเวลา"
     }
   },
   "data": {

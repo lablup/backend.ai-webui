@@ -831,6 +831,19 @@
       "Table": "Tabelle",
       "TitleDescription": "Wird als Panel-Überschrift angezeigt - beschreiben Sie damit die Bedingung.",
       "TitleOptional": "Titel (optional)"
+    },
+    "settings": {
+      "AllResourceGroups": "Alle Ressourcengruppen",
+      "CardSettings": "Karteneinstellungen",
+      "CardSettingsOf": "Einstellungen für {{name}}",
+      "CurrentResourceGroup": "Aktuelle Ressourcengruppe",
+      "DefaultSettings": "Standardeinstellungen",
+      "Last1Hour": "Letzte Stunde",
+      "Last24Hours": "Letzte 24 Stunden",
+      "Last7Days": "Letzte 7 Tage",
+      "ResourceGroups": "Ressourcengruppen",
+      "ResourceGroupsDescription": "Ohne Auswahl: {{default}}",
+      "TimeRange": "Zeitraum"
     }
   },
   "data": {

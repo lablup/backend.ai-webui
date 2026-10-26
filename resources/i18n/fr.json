@@ -831,6 +831,19 @@
       "Table": "Tableau",
       "TitleDescription": "Affiché comme en-tête du panneau - utilisez-le pour décrire la condition.",
       "TitleOptional": "Titre (facultatif)"
+    },
+    "settings": {
+      "AllResourceGroups": "Tous les groupes de ressources",
+      "CardSettings": "Paramètres de la carte",
+      "CardSettingsOf": "Paramètres de {{name}}",
+      "CurrentResourceGroup": "Groupe de ressources actuel",
+      "DefaultSettings": "Paramètres par défaut",
+      "Last1Hour": "Dernière heure",
+      "Last24Hours": "Dernières 24 heures",
+      "Last7Days": "7 derniers jours",
+      "ResourceGroups": "Groupes de ressources",
+      "ResourceGroupsDescription": "Si aucun n’est sélectionné : {{default}}",
+      "TimeRange": "Période"
     }
   },
   "data": {

@@ -831,6 +831,19 @@
       "Table": "Πίνακας",
       "TitleDescription": "Εμφανίζεται ως επικεφαλίδα του πίνακα - χρησιμοποιήστε τον για να περιγράψετε τη συνθήκη.",
       "TitleOptional": "Τίτλος (προαιρετικό)"
+    },
+    "settings": {
+      "AllResourceGroups": "Όλες οι ομάδες πόρων",
+      "CardSettings": "Ρυθμίσεις κάρτας",
+      "CardSettingsOf": "Ρυθμίσεις: {{name}}",
+      "CurrentResourceGroup": "Τρέχουσα ομάδα πόρων",
+      "DefaultSettings": "Προεπιλεγμένες ρυθμίσεις",
+      "Last1Hour": "Τελευταία 1 ώρα",
+      "Last24Hours": "Τελευταίες 24 ώρες",
+      "Last7Days": "Τελευταίες 7 ημέρες",
+      "ResourceGroups": "Ομάδες πόρων",
+      "ResourceGroupsDescription": "Χωρίς επιλογή: {{default}}",
+      "TimeRange": "Χρονικό διάστημα"
     }
   },
   "data": {

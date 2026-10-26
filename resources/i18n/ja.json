@@ -831,6 +831,19 @@
       "Table": "テーブル",
       "TitleDescription": "パネルの見出しとして表示されます。条件を説明するタイトルをおすすめします。",
       "TitleOptional": "タイトル（オプション）"
+    },
+    "settings": {
+      "AllResourceGroups": "すべてのリソースグループ",
+      "CardSettings": "カード設定",
+      "CardSettingsOf": "{{name}}の設定",
+      "CurrentResourceGroup": "現在のリソースグループ",
+      "DefaultSettings": "既定の設定",
+      "Last1Hour": "過去1時間",
+      "Last24Hours": "過去24時間",
+      "Last7Days": "過去7日間",
+      "ResourceGroups": "リソースグループ",
+      "ResourceGroupsDescription": "未選択の場合: {{default}}",
+      "TimeRange": "期間"
     }
   },
   "data": {

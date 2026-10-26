@@ -52,6 +52,7 @@ export const SessionNodesPanelContent: React.FC<{
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
     projectId: currentProject.id ?? '',
+    resourceGroups: descriptor.resourceGroups,
   });
   const deferredVariables = useDeferredValue(variables);
   const deferredFetchKey = useDeferredValue(fetchKey);

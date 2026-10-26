@@ -831,6 +831,19 @@
       "Table": "Таблица",
       "TitleDescription": "Отображается как заголовок панели - используйте его для описания условия.",
       "TitleOptional": "Заголовок (необязательно)"
+    },
+    "settings": {
+      "AllResourceGroups": "Все группы ресурсов",
+      "CardSettings": "Настройки карточки",
+      "CardSettingsOf": "Настройки: {{name}}",
+      "CurrentResourceGroup": "Текущая группа ресурсов",
+      "DefaultSettings": "Настройки по умолчанию",
+      "Last1Hour": "Последний час",
+      "Last24Hours": "Последние 24 часа",
+      "Last7Days": "Последние 7 дней",
+      "ResourceGroups": "Группы ресурсов",
+      "ResourceGroupsDescription": "Если ничего не выбрано: {{default}}",
+      "TimeRange": "Период"
     }
   },
   "data": {

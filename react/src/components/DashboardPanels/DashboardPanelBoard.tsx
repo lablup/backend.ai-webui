@@ -7,6 +7,7 @@ import { breadcrumbExtraAtom } from '../breadcrumbExtraAtom';
 import { dashboardEditModeAtom } from '../dashboardEditModeAtom';
 import DashboardEditSider from './DashboardEditSider';
 import DashboardPanelModal from './DashboardPanelModal';
+import PanelSettingsModal from './PanelSettingsModal';
 import { boardSortsAtom } from './ResourceTablePanel';
 import type {
   DashboardPageQueryRefs,
@@ -49,6 +50,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     open: boolean;
     panel?: PersistedPanel;
   }>({ open: false });
+  const [settingsPanelId, setSettingsPanelId] = useState<string | null>(null);
   const boardContainerRef = useRef<HTMLDivElement>(null);
 
   // The edit-mode atom is global: close it when leaving the page, but not when a
@@ -78,6 +80,8 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     updateCustomPanel,
     removePanel,
     resetLayout,
+    settingsTargetOf,
+    updatePanelSettings,
   } = useDashboardBoard({
     page,
     catalog,
@@ -88,6 +92,9 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     onRequestEditCustomPanel: (panel) =>
       setPanelModalState({ open: true, panel }),
   });
+  const settingsTarget = settingsPanelId
+    ? settingsTargetOf(settingsPanelId)
+    : null;
 
   const scrollBoardEndIntoView = () => {
     // New panels append at the board's end; without this an add looks like a no-op.
@@ -131,8 +138,22 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
           onRequestEdit={(panel) => setPanelModalState({ open: true, panel })}
           onRemove={removePanel}
           onResetLayout={resetLayout}
+          settingsTargetOf={settingsTargetOf}
+          onRequestSettings={setSettingsPanelId}
         />
       ) : null}
+      <BAIUnmountAfterClose>
+        <PanelSettingsModal
+          open={!!settingsTarget}
+          title={settingsTarget?.title ?? ''}
+          definition={settingsTarget?.definition ?? { kind: 'custom' }}
+          settings={settingsTarget?.settings}
+          onSubmit={(settings) => {
+            if (settingsPanelId) updatePanelSettings(settingsPanelId, settings);
+          }}
+          onRequestClose={() => setSettingsPanelId(null)}
+        />
+      </BAIUnmountAfterClose>
       {/* Unmounted after the close animation, so each open starts fresh: two
           consecutive Adds would otherwise share the preview-driven state. */}
       <BAIUnmountAfterClose>

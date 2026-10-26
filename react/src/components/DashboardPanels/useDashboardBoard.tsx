@@ -14,6 +14,7 @@ import {
   addPanel,
   applyLayout,
   catalogFor,
+  panelTitleKey,
   migrateLegacyBoard,
   removePanel,
   resetBoard,
@@ -36,6 +37,7 @@ import type {
   PanelDefinition,
   PanelInput,
   PanelPage,
+  PanelSettings,
   PersistedPanel,
   PersistedPanelV2,
   ResourceKey,
@@ -114,6 +116,18 @@ export interface UseDashboardBoardResult {
   updateCustomPanel: (id: string, input: PanelInput) => void;
   removePanel: (id: string) => void;
   resetLayout: () => void;
+  /** A panel on the board whose card takes settings; null otherwise. */
+  settingsTargetOf: (id: string) => PanelSettingsTarget | null;
+  updatePanelSettings: (
+    id: string,
+    settings: PanelSettings | undefined,
+  ) => void;
+}
+
+export interface PanelSettingsTarget {
+  title: string;
+  definition: PanelDefinition;
+  settings?: PanelSettings;
 }
 
 /** One page's board: the catalog resolved for the viewer, the stored layout, and the content per panel. */
@@ -266,5 +280,20 @@ export const useDashboardBoard = ({
     updateCustomPanel,
     removePanel: removeById,
     resetLayout: () => save(resetBoard(board, catalog, page)),
+    settingsTargetOf: (id) => {
+      const panel = board.panels.find((item) => item.id === id);
+      const definition = panel ? definitionByKey.get(panel.key) : undefined;
+      if (!panel || !definition?.settings?.length) return null;
+      const legacyPanel = toLegacyPanel(panel, definition);
+      return {
+        title: legacyPanel
+          ? resolvePanelTitle(legacyPanel.descriptor, t)
+          : t(panelTitleKey(definition, role)),
+        definition,
+        settings: panel.settings,
+      };
+    },
+    updatePanelSettings: (id, settings) =>
+      save(updatePanel(board, id, { settings })),
   };
 };

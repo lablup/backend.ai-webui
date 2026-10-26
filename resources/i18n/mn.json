@@ -831,6 +831,19 @@
       "Table": "Хүснэгт",
       "TitleDescription": "Самбарын гарчиг болж харагдана - нөхцөлийг тайлбарлахад ашиглана уу.",
       "TitleOptional": "Гарчиг (заавал биш)"
+    },
+    "settings": {
+      "AllResourceGroups": "Бүх нөөцийн бүлэг",
+      "CardSettings": "Картын тохиргоо",
+      "CardSettingsOf": "{{name}}-ийн тохиргоо",
+      "CurrentResourceGroup": "Одоогийн нөөцийн бүлэг",
+      "DefaultSettings": "Үндсэн тохиргоо",
+      "Last1Hour": "Сүүлийн 1 цаг",
+      "Last24Hours": "Сүүлийн 24 цаг",
+      "Last7Days": "Сүүлийн 7 хоног",
+      "ResourceGroups": "Нөөцийн бүлгүүд",
+      "ResourceGroupsDescription": "Сонгоогүй бол: {{default}}",
+      "TimeRange": "Хугацааны муж"
     }
   },
   "data": {

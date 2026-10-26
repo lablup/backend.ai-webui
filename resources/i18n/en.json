@@ -818,6 +818,19 @@
       "Table": "Table",
       "TitleDescription": "Shown as the panel header - use it to describe the condition.",
       "TitleOptional": "Title (optional)"
+    },
+    "settings": {
+      "AllResourceGroups": "All resource groups",
+      "CardSettings": "Card settings",
+      "CardSettingsOf": "{{name}} settings",
+      "CurrentResourceGroup": "Current resource group",
+      "DefaultSettings": "Default settings",
+      "Last1Hour": "Last 1 hour",
+      "Last24Hours": "Last 24 hours",
+      "Last7Days": "Last 7 days",
+      "ResourceGroups": "Resource groups",
+      "ResourceGroupsDescription": "If none is selected: {{default}}",
+      "TimeRange": "Time range"
     }
   },
   "data": {

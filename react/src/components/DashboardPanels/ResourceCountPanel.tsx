@@ -69,6 +69,7 @@ export const ResourceCountContent: React.FC<{
     limit: 1,
     offset: 0,
     projectId: currentProject.id ?? '',
+    resourceGroups: descriptor.resourceGroups,
   });
   const deferredVariables = useDeferredValue(variables);
   const deferredFetchKey = useDeferredValue(fetchKey);

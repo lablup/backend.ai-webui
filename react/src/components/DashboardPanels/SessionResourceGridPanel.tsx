@@ -8,7 +8,7 @@ import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import SessionResourceGrid from '../SessionResourceGrid';
 import PanelFrame from './PanelFrame';
 import type { PanelKindProps } from './panelRegistry';
-import { resolvePanelTitle } from './resourceRegistry';
+import { resolvePanelTitle, withResourceGroupClause } from './resourceRegistry';
 import type { PanelDescriptor } from './types';
 import { BAISkeleton } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
@@ -67,7 +67,12 @@ export const SessionResourceGridContent: React.FC<{
     <SessionResourceGrid
       // The session resource's condition is the sessions page's own minilang
       // filter string, which is exactly what this grid takes.
-      filter={typeof descriptor.filter === 'string' ? descriptor.filter : null}
+      filter={
+        withResourceGroupClause(
+          typeof descriptor.filter === 'string' ? descriptor.filter : null,
+          descriptor.resourceGroups,
+        ) ?? null
+      }
       order={descriptor.order ?? null}
       projectId={currentProject.id ?? null}
       fetchKey={fetchKey ?? ''}

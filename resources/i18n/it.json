@@ -831,6 +831,19 @@
       "Table": "Tabella",
       "TitleDescription": "Mostrato come intestazione del pannello - usalo per descrivere la condizione.",
       "TitleOptional": "Titolo (facoltativo)"
+    },
+    "settings": {
+      "AllResourceGroups": "Tutti i gruppi di risorse",
+      "CardSettings": "Impostazioni della scheda",
+      "CardSettingsOf": "Impostazioni di {{name}}",
+      "CurrentResourceGroup": "Gruppo di risorse corrente",
+      "DefaultSettings": "Impostazioni predefinite",
+      "Last1Hour": "Ultima ora",
+      "Last24Hours": "Ultime 24 ore",
+      "Last7Days": "Ultimi 7 giorni",
+      "ResourceGroups": "Gruppi di risorse",
+      "ResourceGroupsDescription": "Se non ne selezioni nessuno: {{default}}",
+      "TimeRange": "Intervallo di tempo"
     }
   },
   "data": {

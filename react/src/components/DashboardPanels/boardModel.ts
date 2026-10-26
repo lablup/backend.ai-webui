@@ -9,6 +9,7 @@ import {
   VIZ_TO_PANEL_TYPE,
   presetKey,
 } from './defaults';
+import { sanitizePanelSettings } from './panelSettings';
 import {
   PANEL_TYPES,
   RESOURCE_KEYS,
@@ -329,9 +330,11 @@ export const sanitizeBoard = (
     }
     seenIds.add(panel.id);
     const { defaultSize } = sizeOf(definition, panel.viz);
+    const settings = sanitizePanelSettings(panel.settings, definition);
     return [
       {
-        ...panel,
+        ..._.omit(panel, 'settings'),
+        ...(settings ? { settings } : {}),
         columnSpan: isPositiveNumber(panel.columnSpan)
           ? panel.columnSpan
           : defaultSize.columnSpan,
@@ -455,6 +458,7 @@ export const toLegacyPanel = (
       filter: panel.filter ?? null,
       order: panel.order ?? null,
       gridView: panel.gridView ?? null,
+      resourceGroups: panel.settings?.resourceGroups ?? null,
     },
   };
 };
