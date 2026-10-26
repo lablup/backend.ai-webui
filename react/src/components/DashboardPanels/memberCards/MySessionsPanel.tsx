@@ -12,6 +12,7 @@ import DonutChart from '../charts/DonutChart';
 import type { PanelComponentProps } from '../types';
 import MemberCard, { NoProjectText, mineProjectId } from './MemberCard';
 import { toDonutRows } from './memberCardData';
+import { useSessionTypeLabel } from 'backend.ai-ui';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -33,6 +34,7 @@ const MySessionsDonut: React.FC<{ projectId: string; fetchKey: string }> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const sessionTypeLabel = useSessionTypeLabel();
   const variables = {
     interactive: typeFilter(projectId, 'INTERACTIVE'),
     batch: typeFilter(projectId, 'BATCH'),
@@ -79,18 +81,22 @@ const MySessionsDonut: React.FC<{ projectId: string; fetchKey: string }> = ({
       rows={toDonutRows([
         {
           key: 'INTERACTIVE',
-          label: t('session.Interactive'),
+          label: sessionTypeLabel('INTERACTIVE'),
           count: data.interactive?.count,
         },
-        { key: 'BATCH', label: t('session.Batch'), count: data.batch?.count },
+        {
+          key: 'BATCH',
+          label: sessionTypeLabel('BATCH'),
+          count: data.batch?.count,
+        },
         {
           key: 'INFERENCE',
-          label: t('session.Inference'),
+          label: sessionTypeLabel('INFERENCE'),
           count: data.inference?.count,
         },
         {
           key: 'SYSTEM',
-          label: t('session.System'),
+          label: sessionTypeLabel('SYSTEM'),
           count: data.system?.count,
         },
       ])}
