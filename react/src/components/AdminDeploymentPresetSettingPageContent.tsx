@@ -145,9 +145,8 @@ const ImageSelectField: React.FC<{
     <Suspense
       fallback={
         <Selector
-          label={t('general.Loading')}
-          isLabelHidden
-          isDisabled
+          aria-label={t('general.Loading')}
+          disabled
           options={[]}
           placeholder={t('general.Loading')}
           width="100%"

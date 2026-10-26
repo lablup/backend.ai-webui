@@ -298,8 +298,7 @@ const CustomizedImageList: React.FC = () => {
               filter input is uncontrolled in the original, so the local
               search state stays the source of truth here too. */}
           <TextInput
-            label={t('environment.SearchImages')}
-            isLabelHidden
+            aria-label={t('environment.SearchImages')}
             value={imageSearchInput}
             hasClear
             startIcon={Search}

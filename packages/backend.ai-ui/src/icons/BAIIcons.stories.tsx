@@ -67,8 +67,7 @@ const IconsOverview: React.FC = () => {
   return (
     <BAIFlex direction="column" gap="lg">
       <TextInput
-        label="Search icons"
-        isLabelHidden
+        aria-label="Search icons"
         placeholder="Search icons..."
         value={filter}
         onChange={setFilter}

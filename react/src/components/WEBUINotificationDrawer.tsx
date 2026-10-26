@@ -117,7 +117,7 @@ const WEBUINotificationDrawer: React.FC<Props> = ({
               setSelectedCategory(value as NotificationCategory)
             }
             size="sm"
-            label={t('notification.Notifications')}
+            aria-label={t('notification.Notifications')}
           >
             <SegmentedControlItem value="all" label={t('general.All')} />
             <SegmentedControlItem

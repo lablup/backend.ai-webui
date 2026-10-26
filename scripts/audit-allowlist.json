@@ -81,6 +81,13 @@
       "package": "braces",
       "importers": ["packages/eslint-config-bai"],
       "reason": "Lint tooling only (eslint-plugin-import -> typescript-estree -> globby -> fast-glob -> micromatch -> braces under eslint-config-bai, a devDependency of every consumer); no patched version exists, it is never bundled into the web or desktop build, and glob patterns come from our own config, not user input."
+    },
+    {
+      "id": "GHSA-834v-8h66-3h79",
+      "package": "happy-dom",
+      "importers": ["react"],
+      "expires": "2027-01-31",
+      "reason": "Installed only as @lexical/headless's dependency (^20.9.0; the fix is 21.0.4, outside that range). No source file imports @lexical/headless, so happy-dom is never bundled into the web or desktop build and never parses HTML anywhere."
     }
   ]
 }

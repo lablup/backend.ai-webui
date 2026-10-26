@@ -128,7 +128,7 @@ export const CompareWithCrowd: Story = {
     return (
       <BAIFlex direction="column" align="stretch" gap="sm">
         <BAIFlex gap="sm" align="center">
-          <SegmentedControl label="View" value={view} onChange={setView}>
+          <SegmentedControl aria-label="View" value={view} onChange={setView}>
             <SegmentedControlItem value="meadow" label="Pinwheel meadow" />
             <SegmentedControlItem value="crowd" label="Crowd" />
           </SegmentedControl>

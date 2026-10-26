@@ -45,8 +45,7 @@ const DesktopAppDownloadTab: React.FC = () => {
             `options` array; `label` is required and hidden because the
             metadata row already prints it. */}
         <Selector
-          label={t('summary.OS')}
-          isLabelHidden
+          aria-label={t('summary.OS')}
           value={selectedOS}
           // Astryx `Selector` commits a plain `string`; the hook's setter is
           // typed on the OS literal union, so the narrowing happens here.
@@ -156,8 +155,7 @@ const CLIDownloadTab: React.FC = () => {
             <BAIMetadataList columns="single">
               <MetadataListItem label={t('summary.OS')}>
                 <Selector
-                  label={t('summary.OS')}
-                  isLabelHidden
+                  aria-label={t('summary.OS')}
                   value={selectedOS}
                   onChange={(value) =>
                     setSelectedOS(value as typeof selectedOS)

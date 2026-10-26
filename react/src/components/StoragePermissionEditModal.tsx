@@ -168,23 +168,23 @@ const StoragePermissionEditModal: React.FC<Props> = ({
               `value="indeterminate"`, `onChange(e)` -> `onChange(checked, e)`,
               and the children become the required `label` string. */}
           <CheckboxInput
-            label={t('storageHost.permission.All')}
             value={indeterminate ? 'indeterminate' : allSelected}
             onChange={(checked) => {
               setEditedKeys(checked ? [...permissionKeys] : []);
             }}
-          />
+          >
+            {t('storageHost.permission.All')}
+          </CheckboxInput>
           <Text color="secondary">
             {selectedCount} / {totalCount}
           </Text>
         </BAIFlex>
         <Divider />
-        {/* `Checkbox.Group` -> `CheckboxList`, whose required `label` is the
-            heading this section used to render as a separate `Text` — so the
-            heading IS the group's accessible name now instead of a
-            visually-adjacent string with no programmatic association. */}
+        {/* ui-common's CheckboxList renders no label: the heading is visible
+            text, and `aria-label` names the group with the same string. */}
+        <Text type="label">{t('storageHost.permission.Permissions')}</Text>
         <CheckboxList
-          label={t('storageHost.permission.Permissions')}
+          aria-label={t('storageHost.permission.Permissions')}
           density="compact"
           width="100%"
           value={editedKeys}

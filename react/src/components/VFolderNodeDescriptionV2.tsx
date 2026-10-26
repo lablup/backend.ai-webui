@@ -215,8 +215,7 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
         // folder-permission report saw.
         <Selector
           placement="below"
-          label={t('data.folders.MountPermission')}
-          isLabelHidden
+          aria-label={t('data.folders.MountPermission')}
           placeholder={t('data.folders.MountPermissionNotSet')}
           value={pendingPermission ?? currentSelectPermission}
           isLoading={pendingPermission !== null}

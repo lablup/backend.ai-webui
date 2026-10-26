@@ -527,8 +527,7 @@ const DayjsDateTimeInput: React.FC<{
   'use memo';
   return (
     <DateTimeInput
-      label={label}
-      isLabelHidden
+      aria-label={label}
       hasSeconds
       width="100%"
       value={

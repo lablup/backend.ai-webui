@@ -633,7 +633,7 @@
     "CredentialSuccessfullyDeleted": "Το διαπιστευτήριο διαγράφηκε με επιτυχία.",
     "Credentials": "Διαπιστευτήρια",
     "CurrentClientIp": "Τρέχουσα IP πελάτη: {{ip}}",
-    "Days": "Μέρες",
+    "Days": "{{value}} ημέρες",
     "Deactivate": "Απενεργοποίηση",
     "DeactivateConfirm": "Είστε σίγουροι ότι θέλετε να απενεργοποιήσετε αυτό το ζεύγος κλειδιών;",
     "DeactivateCredential": "Απενεργοποίηση διαπιστευτηρίων",

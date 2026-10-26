@@ -1841,7 +1841,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             onChange={(next) => {
               void handleModeChange(next as 'preset' | 'custom');
             }}
-            label={t('deployment.AddRevision')}
+            aria-label={t('deployment.AddRevision')}
           >
             <SegmentedControlItem
               value="preset"
@@ -1860,11 +1860,12 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           {/* Standalone (non-form) checkbox → Astryx CheckboxInput: onChange
               receives the boolean value directly (no CheckboxChangeEvent). */}
           <CheckboxInput
-            label={t('deployment.AutoApply')}
             value={autoActivate}
             onChange={(next) => setAutoActivate(next)}
-            isDisabled={effectiveMode === 'preset' && hasNoPresets}
-          />
+            disabled={effectiveMode === 'preset' && hasNoPresets}
+          >
+            {t('deployment.AutoApply')}
+          </CheckboxInput>
           <BAIFlex direction="row" align="center" gap="xs">
             <Button
               label={t('button.Cancel')}

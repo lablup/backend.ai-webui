@@ -42,9 +42,8 @@ export interface DatePickerISOProps {
   onChange?: (value: string | undefined) => void;
   /** Emit `dayjs().format()` (local + offset) instead of a UTC ISO string. */
   localFormat?: boolean;
-  /** Accessible name. Defaults to a generic one when inside a `Form.Item`. */
+  /** Accessible name (`aria-label`); inside a `Form.Item` the item's label names it. */
   label?: string;
-  isLabelHidden?: boolean;
   disabled?: boolean;
   placeholder?: string;
   /** No-op — `DateTimeInput` always shows the time portion. See the header. */
@@ -59,7 +58,6 @@ const DatePickerISO: React.FC<DatePickerISOProps> = ({
   onChange,
   localFormat,
   label,
-  isLabelHidden = true,
   disabled,
   placeholder,
   showTime: _showTime,
@@ -92,9 +90,8 @@ const DatePickerISO: React.FC<DatePickerISOProps> = ({
           localFormat ? parsed.format() : parsed.tz().toISOString(),
         );
       }}
-      label={label ?? ''}
-      isLabelHidden={isLabelHidden}
-      isDisabled={disabled}
+      aria-label={label}
+      disabled={disabled}
       placeholder={placeholder}
       hourFormat="24h"
       hasClear

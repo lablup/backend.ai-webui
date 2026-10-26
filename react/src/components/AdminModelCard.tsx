@@ -600,10 +600,11 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                 {/* The adjacent visible text is the checkbox label now —
                     CheckboxInput renders it itself. */}
                 <CheckboxInput
-                  label={t('adminModelCard.AlsoDeleteModelFolder')}
                   value={alsoDeleteFolder}
                   onChange={(checked) => setAlsoDeleteFolder(checked)}
-                />
+                >
+                  {t('adminModelCard.AlsoDeleteModelFolder')}
+                </CheckboxInput>
               </Tooltip>
               {deletingModelCard?.vfolder && (
                 <span>
@@ -723,10 +724,11 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                 {/* The adjacent visible text is the checkbox label now —
                     CheckboxInput renders it itself. */}
                 <CheckboxInput
-                  label={t('adminModelCard.AlsoDeleteModelFolders')}
                   value={alsoDeleteFoldersBulk}
                   onChange={(checked) => setAlsoDeleteFoldersBulk(checked)}
-                />
+                >
+                  {t('adminModelCard.AlsoDeleteModelFolders')}
+                </CheckboxInput>
               </Tooltip>
             </BAIFlex>
             {alsoDeleteFoldersBulk && (

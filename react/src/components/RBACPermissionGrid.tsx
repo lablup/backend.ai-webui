@@ -340,8 +340,7 @@ const RBACPermissionGrid: React.FC<RBACPermissionGridProps> = ({
         <BAIFlex gap="sm" align="center" wrap="wrap">
           {toolbarStart}
           <TextInput
-            label={t('rbac.FilterByPermissionType')}
-            isLabelHidden
+            aria-label={t('rbac.FilterByPermissionType')}
             value={filterText}
             hasClear
             startIcon={Search}

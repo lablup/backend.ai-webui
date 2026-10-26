@@ -403,16 +403,13 @@ const ContainerRegistryList: React.FC<{
           // value/isLoading/isDisabled; `label` is required, hidden here
           // because the column header already names the control (P2).
           <Switch
-            label={t('general.Enabled')}
-            isLabelHidden
+            aria-label={t('general.Enabled')}
             value={
               inFlightHostName === record.id + deferredFetchKey
                 ? !isEnabled
                 : isEnabled
             }
-            isDisabled={
-              deferredFetchKey !== fetchKey || isInFlightDomainMutation
-            }
+            disabled={deferredFetchKey !== fetchKey || isInFlightDomainMutation}
             isLoading={
               (deferredFetchKey !== fetchKey || isInFlightDomainMutation) &&
               inFlightHostName === record.id + deferredFetchKey

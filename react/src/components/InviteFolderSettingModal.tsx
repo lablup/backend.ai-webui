@@ -283,8 +283,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
                   return (
                     <HStack gap={1} align="center">
                       <Selector
-                        label={t('data.explorer.Permission')}
-                        isLabelHidden
+                        aria-label={t('data.explorer.Permission')}
                         width={130}
                         options={[
                           { label: t('data.ReadOnly'), value: 'ro' },

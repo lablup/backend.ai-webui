@@ -89,6 +89,38 @@ function columnHeader(page: Page, label: string) {
     .filter({ hasText: new RegExp(`^${escapeForRegExp(label)}`) });
 }
 
+// The deployment list's Serving / Paused / Terminated status tabs.
+function statusTab(page: Page, label: 'Serving' | 'Paused' | 'Terminated') {
+  return page.getByRole('radio', { name: label, exact: true });
+}
+
+// `deleteDeploymentAndVerify` for a deployment listed under the Paused tab:
+// the shared helper opens the default Serving tab, which never shows it.
+async function deletePausedDeploymentAndVerify(
+  page: Page,
+  name: string,
+): Promise<void> {
+  const row = page.getByRole('row', {
+    name: new RegExp(escapeForRegExp(name)),
+  });
+  await expect(async () => {
+    await navigateTo(page, 'deployments');
+    await statusTab(page, 'Paused').click();
+    await expect(row).toBeVisible({ timeout: 15000 });
+  }).toPass({ timeout: 60_000 });
+  await row.getByRole('button', { name: 'delete' }).click();
+  const dialog = page.getByRole('dialog', { name: /Delete Deployment/ });
+  await expect(dialog).toBeVisible({ timeout: 10000 });
+  await page.getByPlaceholder(name).fill(name);
+  const deleteButton = dialog.getByRole('button', {
+    name: 'Delete',
+    exact: true,
+  });
+  await expect(deleteButton).toBeEnabled({ timeout: 5000 });
+  await deleteButton.click();
+  await expect(row).toHaveCount(0, { timeout: 30000 });
+}
+
 // Local fork of deployment-fixtures.ts's `selectRevisionModalOption`: its
 // popup search box's accessible name is actually "Search options" (confirmed
 // live), not "Search" -- kept spec-local rather than editing the shared
@@ -118,6 +150,7 @@ test.describe(
   { tag: ['@functional', '@regression', '@serving', '@deployment'] },
   () => {
     let createdDeploymentName: string | null = null;
+    let pausedDeploymentName: string | null = null;
 
     test.beforeEach(async ({ page, request }) => {
       await loginAsAdmin(page, request);
@@ -127,6 +160,16 @@ test.describe(
       if (createdDeploymentName) {
         await cleanupDeploymentSafely(page, createdDeploymentName);
         createdDeploymentName = null;
+      }
+      if (pausedDeploymentName) {
+        const name = pausedDeploymentName;
+        pausedDeploymentName = null;
+        await deletePausedDeploymentAndVerify(page, name).catch((error) =>
+          console.warn(
+            `[afterEach] could not clean up paused deployment "${name}":`,
+            error,
+          ),
+        );
       }
     });
 
@@ -147,19 +190,30 @@ test.describe(
             .getByRole('navigation', { name: 'Side navigation' })
             .getByText('Deployments', { exact: true }),
         ).toBeVisible({ timeout: 20000 });
-        await expect(page.getByRole('radio', { name: 'Running' })).toBeChecked({
+        // `BAIRadioGroup` renders Astryx `SegmentedControl`: each tab is a
+        // directly-visible `<button role="radio">`.
+        await expect(statusTab(page, 'Serving')).toBeChecked({
           timeout: 20000,
         });
-        // `BAIRadioGroup` (`react/src/components/BAIRadioGroup.tsx`) has
-        // rendered on Astryx `SegmentedControl` since ticket 10 — a real,
-        // directly-visible `<button role="radio">`
-        // (`SegmentedControlItem.tsx`), not antd's button-style radio group
-        // with its opacity:0 input behind a clickable label wrapper. No
-        // `.ant-radio-button-wrapper` workaround is needed any more; the
-        // radio role itself is visible.
-        await expect(
-          page.getByRole('radio', { name: 'Terminated' }),
-        ).toBeVisible();
+        await expect(statusTab(page, 'Paused')).toBeVisible();
+        await expect(statusTab(page, 'Paused')).not.toBeChecked();
+        await expect(statusTab(page, 'Terminated')).toBeVisible();
+        await expect(statusTab(page, 'Terminated')).not.toBeChecked();
+
+        // The Serving and Paused labels carry a help icon whose tooltip
+        // explains the Desired Replicas split; the icon, not the tab, is
+        // the hover target.
+        await statusTab(page, 'Serving').locator('svg').hover();
+        await expect(page.getByRole('tooltip')).toContainText(
+          'Desired Replicas set to 1 or more',
+        );
+        await page.mouse.move(0, 0);
+        await expect(page.getByRole('tooltip')).toHaveCount(0);
+        await statusTab(page, 'Paused').locator('svg').hover();
+        await expect(page.getByRole('tooltip')).toContainText(
+          'Desired Replicas set to 0',
+        );
+        await page.mouse.move(0, 0);
         await expect(
           page.getByRole('button', { name: 'Refresh', exact: true }),
         ).toBeVisible();
@@ -177,9 +231,7 @@ test.describe(
         await expect(
           page.getByRole('columnheader', { name: 'Lifecycle' }),
         ).toBeVisible();
-        await expect(
-          page.getByRole('columnheader', { name: /Replicas/ }),
-        ).toBeVisible();
+        await expect(columnHeader(page, 'Replicas')).toBeVisible();
         await expect(
           page.getByRole('columnheader', { name: 'Model' }),
         ).toBeVisible();
@@ -303,6 +355,63 @@ test.describe(
         createdDeploymentName = null;
       },
     );
+
+    test('Admin can find a deployment with zero Desired Replicas under the Paused tab', async ({
+      page,
+    }) => {
+      const deploymentName = `e2e-plan-paused-${Date.now()}`;
+      await navigateTo(page, 'deployments');
+      await createDeploymentShell(page, deploymentName);
+      createdDeploymentName = deploymentName;
+
+      // 1. Set Desired Replicas to 0 from the detail page's Edit modal.
+      await page.getByRole('button', { name: 'Edit', exact: true }).click();
+      const dialog = page.getByRole('dialog', { name: 'Edit Deployment' });
+      await expect(dialog).toBeVisible({ timeout: 20000 });
+      const replicasInput = dialog.getByRole('spinbutton', {
+        name: /Desired Replicas/,
+      });
+      await expect(replicasInput).toHaveValue('1');
+      await replicasInput.fill('0');
+      await dialog.getByRole('button', { name: 'Save' }).click();
+      await expect(dialog).toBeHidden({ timeout: 20000 });
+      await expect(metadataValue(page, 'Desired Replicas')).toHaveText('0', {
+        timeout: 20000,
+      });
+      // From here on only the Paused tab lists it.
+      pausedDeploymentName = deploymentName;
+      createdDeploymentName = null;
+
+      // 2. The Paused tab lists it, and the choice lands in the URL. The
+      // list read can lag the mutation, so re-navigate until the row shows.
+      const row = page.getByRole('row', {
+        name: new RegExp(escapeForRegExp(deploymentName)),
+      });
+      await expect(async () => {
+        await navigateTo(page, 'deployments');
+        await statusTab(page, 'Paused').click();
+        await expect(row).toBeVisible({ timeout: 15000 });
+      }).toPass({ timeout: 60_000 });
+      await expect(statusTab(page, 'Paused')).toBeChecked();
+      await expect(page).toHaveURL(/[?&]statusCategory=paused(&|$)/);
+
+      // 3. The tab survives a reload.
+      await page.reload();
+      await expect(statusTab(page, 'Paused')).toBeChecked({ timeout: 20000 });
+      await expect(row).toBeVisible({ timeout: 20000 });
+
+      // 4. The Serving tab does not list it. Switching from Paused keeps the
+      // previous rows until the Serving page arrives, so the row disappearing
+      // means the Serving result is the one on screen.
+      await statusTab(page, 'Serving').click();
+      await expect(statusTab(page, 'Serving')).toBeChecked();
+      await expect(page).not.toHaveURL(/statusCategory=paused/);
+      await expect(row).toHaveCount(0, { timeout: 20000 });
+
+      // 5. Delete it from the Paused tab.
+      await deletePausedDeploymentAndVerify(page, deploymentName);
+      pausedDeploymentName = null;
+    });
   },
 );
 
@@ -427,7 +536,7 @@ test.describe(
         { timeout: 20000 },
       );
       await expect(columnHeader(page, 'Metric Source')).toBeVisible();
-      await expect(columnHeader(page, 'Cooldown Sec.')).toBeVisible();
+      await expect(columnHeader(page, 'Cooldown (s)')).toBeVisible();
       await expect(columnHeader(page, 'Step Size')).toBeVisible();
       await expect(columnHeader(page, 'Min / MAX Replicas')).toBeVisible();
       await expect(columnHeader(page, 'Last Triggered')).toBeVisible();
@@ -1073,7 +1182,7 @@ test.describe(
         dialog.getByRole('spinbutton', { name: /Step Size/ }),
       ).toHaveValue('1');
       await expect(
-        dialog.getByRole('spinbutton', { name: /Cooldown Sec\./ }),
+        dialog.getByRole('spinbutton', { name: /Cooldown \(s\)/ }),
       ).toHaveValue('300');
       await expect(
         dialog.getByRole('spinbutton', { name: /Min Replicas/ }),
@@ -1122,7 +1231,7 @@ test.describe(
         .getByRole('spinbutton', { name: 'Max Threshold' })
         .fill('80');
 
-      // 4. Leave Step Size (1), Cooldown Sec. (300), Min Replicas (0), Max
+      // 4. Leave Step Size (1), Cooldown (s) (300), Min Replicas (0), Max
       // Replicas (5) at their defaults.
 
       // 5. Click "OK".

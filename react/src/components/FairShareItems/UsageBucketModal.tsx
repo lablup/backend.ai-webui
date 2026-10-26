@@ -177,8 +177,7 @@ const UsageBucketModal: React.FC<UsageBucketModalProps> = ({
               PILOT-DECISION: `allowClear={false}` → `hasClear={false}`, and
               `maxDate` → `max`. */}
           <DateRangeInput
-            label={t('fairShare.UsageHistory')}
-            isLabelHidden
+            aria-label={t('fairShare.UsageHistory')}
             hasClear={false}
             max={toISODate(dayjs())}
             value={{

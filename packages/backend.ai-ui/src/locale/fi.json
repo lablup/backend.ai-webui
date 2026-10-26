@@ -176,9 +176,9 @@
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Automaattinen päivitys",
-    "EveryHours": "{{count}}h",
-    "EveryMinutes": "{{count}}m",
-    "EverySeconds": "{{count}}s",
+    "EveryHours": "{{count}} h",
+    "EveryMinutes": "{{count}} min",
+    "EverySeconds": "{{count}} s",
     "LastUpdated": "Viimeksi päivitetty",
     "Off": "Pois",
     "Refresh": "Päivitä"
