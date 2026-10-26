@@ -277,6 +277,7 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
                         {index > 0 && (
                           <Divider
                             orientation="vertical"
+                            variant="strong"
                             style={{
                               alignSelf: 'center',
                               height: '0.9em',
