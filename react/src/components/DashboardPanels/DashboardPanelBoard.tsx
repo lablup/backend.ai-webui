@@ -7,6 +7,7 @@ import { breadcrumbExtraAtom } from '../breadcrumbExtraAtom';
 import { dashboardEditModeAtom } from '../dashboardEditModeAtom';
 import DashboardEditSider from './DashboardEditSider';
 import DashboardPanelModal from './DashboardPanelModal';
+import { boardSortsAtom } from './ResourceTablePanel';
 import type {
   DashboardPageQueryRefs,
   PanelDefinition,
@@ -43,6 +44,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
   'use memo';
   const [editMode, setEditMode] = useAtom(dashboardEditModeAtom);
   const setBreadcrumbExtra = useSetAtom(breadcrumbExtraAtom);
+  const setBoardSorts = useSetAtom(boardSortsAtom);
   const [panelModalState, setPanelModalState] = useState<{
     open: boolean;
     panel?: PersistedPanel;
@@ -56,9 +58,12 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     setBreadcrumbExtra(<DashboardEditToggleButton />);
     return () => {
       setBreadcrumbExtra(null);
-      if (window.location.pathname !== mountedPath) setEditMode(false);
+      if (window.location.pathname !== mountedPath) {
+        setEditMode(false);
+        setBoardSorts({});
+      }
     };
-  }, [setBreadcrumbExtra, setEditMode]);
+  }, [setBreadcrumbExtra, setEditMode, setBoardSorts]);
 
   const {
     boardItems,
