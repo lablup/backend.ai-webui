@@ -3729,8 +3729,14 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingText": "Với vai trò siêu quản trị viên, giờ đây bạn vào thẳng cài đặt quản trị sau khi đăng nhập. Để chuyển sang giao diện người dùng hoặc quay lại cài đặt quản trị, hãy dùng menu hồ sơ người dùng ở góc trên bên phải.",
-      "AdminLandingTitle": "Siêu quản trị viên giờ bắt đầu từ cài đặt quản trị",
+      "AdminLandingMenuText": "Mở menu hồ sơ người dùng ở góc trên bên phải: \"Quay lại giao diện người dùng\" đưa bạn đến các trang người dùng, còn \"Cài đặt quản trị\" đưa bạn quay lại đây.",
+      "AdminLandingMenuTitle": "Cài đặt quản trị đã chuyển vào menu hồ sơ",
+      "AdminLandingProjectText": "Mục menu bên trước đây mở cài đặt quản trị nay mở Cài đặt dự án cho các dự án bạn quản lý.",
+      "AdminLandingProjectTitle": "Menu bên hiển thị Cài đặt dự án",
+      "AdminLandingStartText": "Sau khi đăng nhập, giờ bạn vào thẳng cài đặt quản trị thay vì các trang người dùng.",
+      "AdminLandingStartTitle": "Bạn bắt đầu từ cài đặt quản trị",
+      "AdminLandingText": "Dưới đây là những thay đổi dành cho siêu quản trị viên.",
+      "AdminLandingTitle": "Giao diện siêu quản trị viên đã thay đổi",
       "BackToAdminSettingsText": "Để quay lại cài đặt quản trị, hãy mở menu này và chọn \"Cài đặt quản trị\".",
       "BackToAdminSettingsTitle": "Quay lại cài đặt quản trị",
       "BackToUserViewText": "Bạn đang ở cài đặt quản trị. Để dùng phiên, dữ liệu và các trang người dùng khác, hãy mở menu này và chọn \"Quay lại giao diện người dùng\".",

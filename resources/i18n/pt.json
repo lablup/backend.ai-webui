@@ -3729,8 +3729,14 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingText": "Como superadministrador, agora você entra diretamente nas configurações de administrador após o login. Para mudar para a visão de usuário ou voltar às configurações de administrador, use o menu do perfil de usuário no canto superior direito.",
-      "AdminLandingTitle": "Superadministradores agora começam nas configurações de administrador",
+      "AdminLandingMenuText": "Abra o menu do perfil de usuário no canto superior direito: \"Voltar à visão de usuário\" leva às páginas de usuário e \"Config. Admin\" traz você de volta para cá.",
+      "AdminLandingMenuTitle": "Config. Admin foi para o menu do perfil",
+      "AdminLandingProjectText": "O item do menu lateral que abria as configurações de administrador agora abre as Configurações do projeto dos projetos que você administra.",
+      "AdminLandingProjectTitle": "O menu lateral mostra Configurações do projeto",
+      "AdminLandingStartText": "Após o login, agora você entra diretamente nas configurações de administrador em vez das páginas de usuário.",
+      "AdminLandingStartTitle": "Você começa nas configurações de administrador",
+      "AdminLandingText": "Veja o que mudou para os superadministradores.",
+      "AdminLandingTitle": "A visão de superadministrador mudou",
       "BackToAdminSettingsText": "Para voltar às configurações de administrador, abra este menu e escolha \"Config. Admin\".",
       "BackToAdminSettingsTitle": "Voltar às configurações de administrador",
       "BackToUserViewText": "Você está nas configurações de administrador. Para usar sessões, dados e as outras páginas de usuário, abra este menu e escolha \"Voltar à visão de usuário\".",

@@ -3730,8 +3730,14 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingText": "En tant que super-administrateur, vous arrivez désormais directement dans les paramètres d'administration après la connexion. Pour passer à la vue utilisateur ou revenir aux paramètres d'administration, utilisez le menu du profil utilisateur en haut à droite.",
-      "AdminLandingTitle": "Les super-administrateurs commencent désormais dans les paramètres d'administration",
+      "AdminLandingMenuText": "Ouvrez le menu du profil utilisateur en haut à droite : \"Retour à la vue utilisateur\" mène aux pages utilisateur et \"Paramètres d'administration\" vous ramène ici.",
+      "AdminLandingMenuTitle": "Les paramètres d'administration sont passés dans le menu du profil",
+      "AdminLandingProjectText": "L'entrée du menu latéral qui ouvrait les paramètres d'administration ouvre maintenant les Paramètres du projet des projets que vous administrez.",
+      "AdminLandingProjectTitle": "Le menu latéral affiche Paramètres du projet",
+      "AdminLandingStartText": "Après la connexion, vous arrivez désormais directement dans les paramètres d'administration au lieu des pages utilisateur.",
+      "AdminLandingStartTitle": "Vous commencez dans les paramètres d'administration",
+      "AdminLandingText": "Voici ce qui change pour les super-administrateurs.",
+      "AdminLandingTitle": "La vue super-administrateur a changé",
       "BackToAdminSettingsText": "Pour revenir aux paramètres d'administration, ouvrez ce menu et choisissez \"Paramètres d'administration\".",
       "BackToAdminSettingsTitle": "Revenir aux paramètres d'administration",
       "BackToUserViewText": "Vous êtes dans les paramètres d'administration. Pour utiliser les sessions, les données et les autres pages utilisateur, ouvrez ce menu et choisissez \"Retour à la vue utilisateur\".",

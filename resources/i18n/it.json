@@ -3727,8 +3727,14 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingText": "Come superamministratore, ora accedi direttamente alle impostazioni amministratore dopo il login. Per passare alla vista utente o tornare alle impostazioni amministratore, usa il menu del profilo utente in alto a destra.",
-      "AdminLandingTitle": "I superamministratori ora iniziano dalle impostazioni amministratore",
+      "AdminLandingMenuText": "Apri il menu del profilo utente in alto a destra: \"Torna alla vista utente\" porta alle pagine utente e \"Impostazioni amministratore\" ti riporta qui.",
+      "AdminLandingMenuTitle": "Le impostazioni amministratore sono nel menu del profilo",
+      "AdminLandingProjectText": "La voce del menu laterale che apriva le impostazioni amministratore ora apre le Impostazioni progetto dei progetti che amministri.",
+      "AdminLandingProjectTitle": "Il menu laterale mostra Impostazioni progetto",
+      "AdminLandingStartText": "Dopo il login ora accedi direttamente alle impostazioni amministratore invece che alle pagine utente.",
+      "AdminLandingStartTitle": "Inizi dalle impostazioni amministratore",
+      "AdminLandingText": "Ecco cosa cambia per i superamministratori.",
+      "AdminLandingTitle": "La vista del superamministratore è cambiata",
       "BackToAdminSettingsText": "Per tornare alle impostazioni amministratore, apri questo menu e scegli \"Impostazioni amministratore\".",
       "BackToAdminSettingsTitle": "Tornare alle impostazioni amministratore",
       "BackToUserViewText": "Sei nelle impostazioni amministratore. Per usare sessioni, dati e le altre pagine utente, apri questo menu e scegli \"Torna alla vista utente\".",

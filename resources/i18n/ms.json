@@ -3727,8 +3727,14 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingText": "Sebagai superpentadbir, anda kini terus masuk ke tetapan pentadbir selepas log masuk. Untuk beralih ke paparan pengguna atau kembali ke tetapan pentadbir, gunakan menu profil pengguna di bahagian atas kanan.",
-      "AdminLandingTitle": "Superpentadbir kini bermula di tetapan pentadbir",
+      "AdminLandingMenuText": "Buka menu profil pengguna di atas kanan: \"Kembali ke Paparan Pengguna\" membawa anda ke halaman pengguna, dan \"Tetapan Pentadbir\" membawa anda kembali ke sini.",
+      "AdminLandingMenuTitle": "Tetapan Pentadbir berpindah ke menu profil",
+      "AdminLandingProjectText": "Item menu sisi yang dahulu membuka tetapan pentadbir kini membuka Tetapan Projek bagi projek yang anda tadbir.",
+      "AdminLandingProjectTitle": "Menu sisi memaparkan Tetapan Projek",
+      "AdminLandingStartText": "Selepas log masuk, anda kini terus masuk ke tetapan pentadbir dan bukan halaman pengguna.",
+      "AdminLandingStartTitle": "Anda bermula di tetapan pentadbir",
+      "AdminLandingText": "Berikut perubahan untuk superpentadbir.",
+      "AdminLandingTitle": "Paparan superpentadbir telah berubah",
       "BackToAdminSettingsText": "Untuk kembali ke tetapan pentadbir, buka menu ini dan pilih \"Tetapan Pentadbir\".",
       "BackToAdminSettingsTitle": "Kembali ke tetapan pentadbir",
       "BackToUserViewText": "Anda berada dalam tetapan pentadbir. Untuk menggunakan sesi, data dan halaman pengguna lain, buka menu ini dan pilih \"Kembali ke Paparan Pengguna\".",

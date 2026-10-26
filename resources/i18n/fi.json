@@ -3727,8 +3727,14 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingText": "Pääylläpitäjänä siirryt nyt kirjautumisen jälkeen suoraan ylläpitäjän asetuksiin. Siirry käyttäjänäkymään tai takaisin ylläpitäjän asetuksiin oikean yläkulman käyttäjäprofiilivalikosta.",
-      "AdminLandingTitle": "Pääylläpitäjät aloittavat nyt ylläpitäjän asetuksista",
+      "AdminLandingMenuText": "Avaa käyttäjäprofiilivalikko oikeasta yläkulmasta: \"Takaisin käyttäjänäkymään\" vie käyttäjäsivuille ja \"Ylläpitäjän asetukset\" tuo sinut takaisin tänne.",
+      "AdminLandingMenuTitle": "Ylläpitäjän asetukset siirtyivät profiilivalikkoon",
+      "AdminLandingProjectText": "Sivuvalikon kohta, joka avasi ylläpitäjän asetukset, avaa nyt hallinnoimiesi projektien Projektin asetukset.",
+      "AdminLandingProjectTitle": "Sivuvalikossa näkyy Projektin asetukset",
+      "AdminLandingStartText": "Kirjautumisen jälkeen siirryt nyt suoraan ylläpitäjän asetuksiin käyttäjäsivujen sijaan.",
+      "AdminLandingStartTitle": "Aloitat ylläpitäjän asetuksista",
+      "AdminLandingText": "Näin pääylläpitäjien näkymä muuttui.",
+      "AdminLandingTitle": "Pääylläpitäjän näkymä on muuttunut",
       "BackToAdminSettingsText": "Palataksesi ylläpitäjän asetuksiin avaa tämä valikko ja valitse \"Ylläpitäjän asetukset\".",
       "BackToAdminSettingsTitle": "Paluu ylläpitäjän asetuksiin",
       "BackToUserViewText": "Olet ylläpitäjän asetuksissa. Käyttääksesi istuntoja, dataa ja muita käyttäjäsivuja avaa tämä valikko ja valitse \"Takaisin käyttäjänäkymään\".",

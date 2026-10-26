@@ -7,8 +7,12 @@ import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { useRouteScope } from '../hooks/useRouteScope';
 import BAITour from './BAITour';
 import useTourTargets from './useTourTargets';
+import { List, ListItem } from '@lablup/ui-common/List';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
 import { TourStep } from '@lablup/ui-common/lab';
 import { BAIModal } from 'backend.ai-ui';
+import { CircleUserRound, LogIn, ShieldUser } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -56,9 +60,44 @@ const AdminViewSwitchTour: React.FC = () => {
         okText={t('button.Next')}
         onOk={() => setIsIntroDone(true)}
         onCancel={dismiss}
-        footer={(_, { OkBtn }) => <OkBtn />}
+        footer={(_, { OkBtn }) => (
+          <HStack justify="end">
+            <OkBtn />
+          </HStack>
+        )}
       >
-        {t('tourGuide.adminViewSwitch.AdminLandingText')}
+        <VStack gap={3}>
+          <Text>{t('tourGuide.adminViewSwitch.AdminLandingText')}</Text>
+          <List>
+            <ListItem
+              startContent={<LogIn size="1.25em" />}
+              label={t('tourGuide.adminViewSwitch.AdminLandingStartTitle')}
+              description={
+                <Text type="supporting" color="secondary">
+                  {t('tourGuide.adminViewSwitch.AdminLandingStartText')}
+                </Text>
+              }
+            />
+            <ListItem
+              startContent={<CircleUserRound size="1.25em" />}
+              label={t('tourGuide.adminViewSwitch.AdminLandingMenuTitle')}
+              description={
+                <Text type="supporting" color="secondary">
+                  {t('tourGuide.adminViewSwitch.AdminLandingMenuText')}
+                </Text>
+              }
+            />
+            <ListItem
+              startContent={<ShieldUser size="1.25em" />}
+              label={t('tourGuide.adminViewSwitch.AdminLandingProjectTitle')}
+              description={
+                <Text type="supporting" color="secondary">
+                  {t('tourGuide.adminViewSwitch.AdminLandingProjectText')}
+                </Text>
+              }
+            />
+          </List>
+        </VStack>
       </BAIModal>
     );
   }

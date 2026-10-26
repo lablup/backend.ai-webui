@@ -3731,8 +3731,14 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingText": "超級管理員現在登入後會直接進入管理員設定。要切換到使用者檢視或返回管理員設定，請使用右上角的使用者個人資料選單。",
-      "AdminLandingTitle": "超級管理員現在從管理員設定開始",
+      "AdminLandingMenuText": "開啟右上角的使用者個人資料選單：選擇「返回使用者檢視」前往使用者頁面，選擇「管理員設定」回到這裡。",
+      "AdminLandingMenuTitle": "管理員設定已移至個人資料選單",
+      "AdminLandingProjectText": "原本開啟管理員設定的側邊選單項目，現在會開啟您所管理專案的專案設定。",
+      "AdminLandingProjectTitle": "側邊選單顯示專案設定",
+      "AdminLandingStartText": "登入後，您現在會直接進入管理員設定，而不是使用者頁面。",
+      "AdminLandingStartTitle": "從管理員設定開始",
+      "AdminLandingText": "以下是超級管理員的變更內容。",
+      "AdminLandingTitle": "超級管理員介面已更新",
       "BackToAdminSettingsText": "要返回管理員設定，請開啟此選單並選擇「管理員設定」。",
       "BackToAdminSettingsTitle": "返回管理員設定",
       "BackToUserViewText": "您正在管理員設定中。要使用會話、資料等使用者頁面，請開啟此選單並選擇「返回使用者檢視」。",

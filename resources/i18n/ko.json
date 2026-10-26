@@ -3730,8 +3730,14 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingText": "이제 슈퍼 관리자는 로그인하면 바로 관리자 설정 화면으로 들어갑니다. 사용자 화면으로 돌아가거나 관리자 설정으로 이동하려면 오른쪽 위의 사용자 프로필 메뉴를 이용하세요.",
-      "AdminLandingTitle": "슈퍼 관리자는 관리자 설정에서 시작합니다",
+      "AdminLandingMenuText": "오른쪽 위 사용자 프로필 메뉴에서 \"사용자 화면으로 돌아가기\"를 누르면 사용자 화면으로, \"관리자 설정\"을 누르면 다시 이 화면으로 이동합니다.",
+      "AdminLandingMenuTitle": "관리자 설정이 프로필 메뉴로 옮겨졌습니다",
+      "AdminLandingProjectText": "관리자 설정으로 가던 사이드 메뉴 항목은 이제 관리 권한이 있는 프로젝트의 프로젝트 설정으로 이동합니다.",
+      "AdminLandingProjectTitle": "사이드 메뉴에는 프로젝트 설정이 표시됩니다",
+      "AdminLandingStartText": "이제 로그인하면 사용자 화면 대신 바로 관리자 설정 화면으로 들어갑니다.",
+      "AdminLandingStartTitle": "관리자 설정에서 시작합니다",
+      "AdminLandingText": "슈퍼 관리자를 위한 변경 사항을 안내해 드립니다.",
+      "AdminLandingTitle": "슈퍼 관리자 화면이 바뀌었습니다",
       "BackToAdminSettingsText": "관리자 설정으로 돌아가려면 이 메뉴를 열고 \"관리자 설정\"을 선택하세요.",
       "BackToAdminSettingsTitle": "관리자 설정으로 돌아가기",
       "BackToUserViewText": "지금은 관리자 설정 화면입니다. 세션, 데이터 등 사용자 화면을 쓰려면 이 메뉴를 열고 \"사용자 화면으로 돌아가기\"를 선택하세요.",
