@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useCurrentUserRole } from '../../hooks/backendai';
+import './DashboardEditSider.css';
 import { panelTitleKey, type CatalogEntry } from './boardModel';
 import { panelTypeLabelKeys } from './panelRegistry';
 import { describePanelSettings } from './panelSettings';
@@ -126,12 +127,12 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
       direction="column"
       align="stretch"
       gap="md"
+      className="dashboard-edit-sider"
       style={{
         width: 320,
         flexShrink: 0,
         paddingLeft: token('--spacing-6'),
         borderLeft: `1px solid ${token('--color-border-emphasized')}`,
-        overflow: 'auto',
       }}
     >
       <BAIText strong>{t('dashboard.editSider.Cards')}</BAIText>
