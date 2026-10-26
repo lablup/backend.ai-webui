@@ -1,5 +1,6 @@
+import babel, { defineRolldownBabelPreset } from '@rolldown/plugin-babel';
 import stylexVite from '@stylexjs/unplugin/vite';
-import react from '@vitejs/plugin-react';
+import react, { reactCompilerPreset } from '@vitejs/plugin-react';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import svgr from 'vite-plugin-svgr';
@@ -12,6 +13,19 @@ const buiArtifactDir = resolve(buiSrc, '__generated__');
 const reactSrc = resolve(__dirname, 'src');
 const reactArtifactDir = resolve(reactSrc, '__generated__');
 
+const relayPreset = (srcDir: string, artifactDirectory: string) =>
+  defineRolldownBabelPreset({
+    preset: () => ({
+      plugins: [['babel-plugin-relay', { artifactDirectory }]],
+    }),
+    rolldown: {
+      filter: {
+        id: new RegExp(`^${srcDir.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/`),
+        code: /\bgraphql\s*`/,
+      },
+    },
+  });
+
 /**
  * Vitest config for the `react/` workspace (FR-2609).
  *
@@ -19,8 +33,8 @@ const reactArtifactDir = resolve(reactSrc, '__generated__');
  * dev-server middlewares, `transformIndexHtml` hooks, PWA generation, and
  * other things that either do not apply in a test runner or would slow it
  * down. What we share with vite.config.ts is the TRANSFORM pipeline — the
- * `@vitejs/plugin-react` configuration with `babel-plugin-relay`
- * (per-directory artifactDirectory) and `babel-plugin-react-compiler`.
+ * `@rolldown/plugin-babel` presets for `babel-plugin-relay` (per-directory
+ * artifactDirectory) and the React Compiler.
  *
  * The intent is that a single source file produces the same transformed
  * code under both `vite:dev` and `vitest`, so tests and the running app
@@ -61,9 +75,7 @@ export default defineConfig({
     // (ticket 01). Without it, any module that calls `stylex.create()` at
     // import time throws "Unexpected 'stylex.create' call at runtime", which
     // took out 10 test files that merely import a component using `xstyle`
-    // (ticket 30). The plugin declares `enforce: 'pre'` itself, so it sees raw
-    // TSX ahead of @vitejs/plugin-react regardless of position here, and it
-    // only touches files that literally import `@stylexjs/stylex`.
+    // (ticket 30). It must stay ahead of babel(): both are `enforce: 'pre'`.
     //
     // `cssInjectionTarget` is intentionally omitted: vitest aliases every CSS
     // specifier to `__test__/rawCss.mock.js`, so nothing consumes the emitted
@@ -73,27 +85,14 @@ export default defineConfig({
       // Same anchor as the app build so generated class names match.
       unstable_moduleResolution: { type: 'commonJS', rootDir: projectRoot },
     }),
-    react({
-      babel: (id) => {
-        const isBUI = id.startsWith(buiSrc);
-        const isReactSrc = id.startsWith(reactSrc);
-        const plugins: Array<string | [string, unknown]> = [
-          ['babel-plugin-react-compiler', { compilationMode: 'annotation' }],
-        ];
-        if (isBUI) {
-          plugins.push([
-            'babel-plugin-relay',
-            { artifactDirectory: buiArtifactDir },
-          ]);
-        } else if (isReactSrc) {
-          plugins.push([
-            'babel-plugin-relay',
-            { artifactDirectory: reactArtifactDir },
-          ]);
-        }
-        return { plugins };
-      },
+    babel({
+      presets: [
+        relayPreset(buiSrc, buiArtifactDir),
+        relayPreset(reactSrc, reactArtifactDir),
+        reactCompilerPreset({ compilationMode: 'annotation' }),
+      ],
     }),
+    react(),
     svgr({ include: '**/*.svg?react' }),
   ],
 

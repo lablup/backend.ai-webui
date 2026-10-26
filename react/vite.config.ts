@@ -4,8 +4,9 @@ import {
   reviewOverlayBuildPlugin,
 } from './vite-plugins/review-overlay/index';
 import { findStalePrebundle } from './vite-plugins/stale-prebundle';
+import babel, { defineRolldownBabelPreset } from '@rolldown/plugin-babel';
 import stylexVite from '@stylexjs/unplugin/vite';
-import react from '@vitejs/plugin-react';
+import react, { reactCompilerPreset } from '@vitejs/plugin-react';
 import compression from 'compression';
 import { execSync } from 'node:child_process';
 import {
@@ -168,10 +169,10 @@ const isDevTypecheckEnabled = process.env.VITE_DEV_TYPECHECK === 'on';
 
 // `vite-plugin-node-polyfills` injects bare-specifier imports of its own shim
 // paths (`vite-plugin-node-polyfills/shims/{buffer,global,process}`) during
-// production build via `@rollup/plugin-inject`. With
+// production build via Rolldown's `transform.inject`. With
 // `enableGlobalVirtualStore: true` (pnpm-workspace.yaml) the importer of those
 // injected statements lives under `~/Library/pnpm/store/v11/links/...`, and
-// Rollup's walk-up resolution from there cannot reach the plugin in the
+// Rolldown's walk-up resolution from there cannot reach the plugin in the
 // project tree. Pre-resolving each shim's absolute entry via Node's require
 // once and aliasing makes resolution independent of importer location.
 const polyfillShimAlias = (name: 'buffer' | 'global' | 'process') => ({
@@ -182,6 +183,19 @@ const buiSrc = resolve(projectRoot, 'packages/backend.ai-ui/src');
 const buiArtifactDir = resolve(buiSrc, '__generated__');
 const reactSrc = resolve(__dirname, 'src');
 const reactArtifactDir = resolve(reactSrc, '__generated__');
+
+const relayPreset = (srcDir: string, artifactDirectory: string) =>
+  defineRolldownBabelPreset({
+    preset: () => ({
+      plugins: [['babel-plugin-relay', { artifactDirectory }]],
+    }),
+    rolldown: {
+      filter: {
+        id: new RegExp(`^${srcDir.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/`),
+        code: /\bgraphql\s*`/,
+      },
+    },
+  });
 
 /**
  * Project-root paths that craco's devServer.static block (craco.config.cjs:35-45)
@@ -445,11 +459,7 @@ function projectRootStaticPlugin(
         //    client script injection).
         if (url === '/' || url === '/index.html') {
           let html = readFileSync(rootIndexHtml, 'utf-8');
-          html = await server.transformIndexHtml(
-            req.url,
-            html,
-            req.originalUrl,
-          );
+          html = await server.transformIndexHtml(url, html, req.originalUrl);
           res.setHeader('Content-Type', 'text/html; charset=utf-8');
           res.end(html);
           return;
@@ -1004,14 +1014,9 @@ export default defineConfig(({ command, mode }) => {
       // inert (and so a byte-identical bundle) without it.
       reviewOverlayBuildPlugin(),
 
-      // StyleX compiler for Astryx `xstyle` authoring (to-astryx ticket 01),
-      // wired DIRECTLY via `@stylexjs/unplugin` (sole peer: `unplugin` — no
-      // vite peer) instead of `@astryxdesign/build/vite`, which declares peer
-      // `vite ^8`. The plugin sets `enforce: 'pre'` internally, so StyleX
-      // sees raw TSX ahead of @vitejs/plugin-react, and the React Compiler /
-      // babel-plugin-relay see StyleX-compiled output. It only processes
-      // files that literally import `@stylexjs/stylex`, so Astryx's
-      // precompiled dist/ is never re-transformed.
+      // StyleX compiler for Astryx `xstyle` authoring. Both it and
+      // @rolldown/plugin-babel are `enforce: 'pre'`, so this array order makes
+      // the React Compiler and babel-plugin-relay see StyleX-compiled output.
       stylexVite({
         // Unlayered output: StyleX's own `:not(#\#)` priority ladder orders
         // rules inside the sheet, and unlayered CSS outranks every named
@@ -1052,27 +1057,14 @@ export default defineConfig(({ command, mode }) => {
         },
       },
 
-      react({
-        babel: (id) => {
-          const isBUI = id.startsWith(buiSrc);
-          const isReactSrc = id.startsWith(reactSrc);
-          const plugins: Array<string | [string, unknown]> = [
-            ['babel-plugin-react-compiler', { compilationMode: 'annotation' }],
-          ];
-          if (isBUI) {
-            plugins.push([
-              'babel-plugin-relay',
-              { artifactDirectory: buiArtifactDir },
-            ]);
-          } else if (isReactSrc) {
-            plugins.push([
-              'babel-plugin-relay',
-              { artifactDirectory: reactArtifactDir },
-            ]);
-          }
-          return { plugins };
-        },
+      babel({
+        presets: [
+          relayPreset(buiSrc, buiArtifactDir),
+          relayPreset(reactSrc, reactArtifactDir),
+          reactCompilerPreset({ compilationMode: 'annotation' }),
+        ],
       }),
+      react(),
 
       svgr({
         include: '**/*.svg?react',
@@ -1091,7 +1083,7 @@ export default defineConfig(({ command, mode }) => {
           //   shims_buffer` also *imports* it (via the injected prelude),
           //   and the import lands in the same chunk before the export is
           //   initialized → TDZ on first browser load. `'build'` scopes
-          //   the injection to the production rollup build only.
+          //   the injection to the production build only.
           //
           // Why this is safe to do here:
           //   No app code under `react/src` or `packages/backend.ai-ui/src`
@@ -1113,7 +1105,7 @@ export default defineConfig(({ command, mode }) => {
       //
       // Run `tsc --noEmit` in a worker so type errors surface in the dev
       // terminal and as a browser overlay during `vite dev`. Vite itself
-      // only strips types via esbuild, so without this plugin type
+      // only strips types via Oxc, so without this plugin type
       // errors are visible only in the IDE or via `scripts/verify.sh`.
       // `tsconfigPath` pins the checker to the consumer's tsconfig (which has
       // the `paths` workaround for pnpm-global-virtual-store type resolution —
@@ -1184,7 +1176,7 @@ export default defineConfig(({ command, mode }) => {
       // Suppress the warning about chunk size; the app is large and this
       // matches the existing craco/webpack threshold expectation.
       chunkSizeWarningLimit: 2000,
-      rollupOptions: {
+      rolldownOptions: {
         output: {
           // Per-function packages shared by many lazy pages otherwise become
           // one ~1 KB chunk per function (29 lodash-es + 13 lucide chunks on

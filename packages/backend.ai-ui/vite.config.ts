@@ -1,5 +1,6 @@
-import { peerDependencies } from './package.json';
-import react from '@vitejs/plugin-react';
+import packageJson from './package.json' with { type: 'json' };
+import babel from '@rolldown/plugin-babel';
+import react, { reactCompilerPreset } from '@vitejs/plugin-react';
 import glob from 'fast-glob';
 import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -10,12 +11,12 @@ import svgr from 'vite-plugin-svgr';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Rollup matches `external` strings exactly, so bare names left subpaths like
+// Rolldown matches `external` strings exactly, so bare names left subpaths like
 // `react-dom/client` bundled — a second renderer that blank-screens consumers
 // on any other React patch (#8595). i18next / react-i18next are dependencies
 // rather than peers, so they stay bundled and keep BUI's i18n isolated.
 const externalPatterns = [
-  ...Object.keys(peerDependencies).map(
+  ...Object.keys(packageJson.peerDependencies).map(
     // `.` is the only regex metacharacter an npm package name can hold.
     (name) => new RegExp(`^${name.replaceAll('.', '\\.')}(/.*)?$`),
   ),
@@ -54,7 +55,7 @@ export default defineConfig(({ mode }) => {
         entry: entries,
         formats: ['es'],
       },
-      rollupOptions: {
+      rolldownOptions: {
         external: externalPatterns,
       },
       sourcemap: true,
@@ -62,18 +63,10 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: !isDevMode,
     },
     plugins: [
-      react({
-        babel: {
-          plugins: [
-            [
-              'babel-plugin-react-compiler',
-              {
-                compilationMode: 'annotation',
-              },
-            ],
-          ],
-        },
+      babel({
+        presets: [reactCompilerPreset({ compilationMode: 'annotation' })],
       }),
+      react(),
       relay({
         module: 'esmodule',
         codegen: !isDevMode,

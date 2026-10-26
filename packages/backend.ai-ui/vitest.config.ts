@@ -1,4 +1,5 @@
-import react from '@vitejs/plugin-react';
+import babel from '@rolldown/plugin-babel';
+import react, { reactCompilerPreset } from '@vitejs/plugin-react';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import relay from 'vite-plugin-relay-lite';
@@ -31,13 +32,10 @@ export default defineConfig({
   },
 
   plugins: [
-    react({
-      babel: {
-        plugins: [
-          ['babel-plugin-react-compiler', { compilationMode: 'annotation' }],
-        ],
-      },
+    babel({
+      presets: [reactCompilerPreset({ compilationMode: 'annotation' })],
     }),
+    react(),
     relay({ module: 'esmodule' }),
     svgr(),
   ],
@@ -45,9 +43,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: [
-      resolve(__dirname, 'setupTests.ts'),
-    ],
+    setupFiles: [resolve(__dirname, 'setupTests.ts')],
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['**/node_modules/**', '**/dist/**', '**/__generated__/**'],
     // ui-common's own components import their `.css`, which Node cannot load

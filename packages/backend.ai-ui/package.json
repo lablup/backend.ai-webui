@@ -88,9 +88,11 @@
     "@astryxdesign/core": "catalog:",
     "@astryxdesign/lab": "catalog:",
     "@lablup/ui-common": "catalog:",
+    "@babel/core": "catalog:",
     "@eslint/js": "catalog:",
     "@jest/expect": "catalog:",
     "@jest/globals": "catalog:",
+    "@rolldown/plugin-babel": "^0.2.4",
     "@storybook/addon-docs": "^10.5.7",
     "@storybook/addon-onboarding": "^10.5.7",
     "@storybook/react-vite": "^10.5.7",
@@ -106,8 +108,8 @@
     "@types/react-relay": "catalog:",
     "@types/relay-runtime": "catalog:",
     "@types/relay-test-utils": "catalog:",
-    "@vitejs/plugin-react": "^4.7.0",
-    "@vitest/coverage-v8": "^4.1.10",
+    "@vitejs/plugin-react": "^6.1.2",
+    "@vitest/coverage-v8": "^4.1.12",
     "@vueless/storybook-dark-mode": "^10.0.8",
     "babel-plugin-react-compiler": "catalog:",
     "eslint": "catalog:",
@@ -126,11 +128,11 @@
     "storybook": "^10.5.7",
     "typescript": "~6.0.3",
     "typescript-eslint": "catalog:",
-    "vite": "^6.4.3",
+    "vite": "^8.3.4",
     "vite-plugin-dts": "^4.5.4",
     "vite-plugin-relay-lite": "^0.11.0",
     "vite-plugin-svgr": "^4.5.0",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.12"
   },
   "type": "module"
 }
