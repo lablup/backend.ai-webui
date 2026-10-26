@@ -99,8 +99,8 @@ const AdminViewSwitchTour: React.FC = () => {
       key={isAdminTour ? 'admin' : 'user'}
       isActive
       hasBackdrop
-      // A stray click on the dimmed page must not end the tour; Done, the
-      // close button and Escape still do.
+      // A backdrop click must not end the tour. An outside click still does,
+      // via the step popover's light dismiss, which TourStep does not expose.
       onDismiss={(source) => {
         if (source !== 'backdrop') dismiss();
       }}
