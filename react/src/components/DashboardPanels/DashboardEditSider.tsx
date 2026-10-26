@@ -110,6 +110,7 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
         onChange={(value) => setSearch(value)}
         placeholder={t('dashboard.editSider.SearchCards')}
         aria-label={t('dashboard.editSider.SearchCards')}
+        data-testid="dashboard-card-search"
       />
       {groups.length === 0 ? (
         <BAIText type="secondary">
@@ -273,6 +274,7 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
           size="sm"
           icon={<RotateCcw size="1em" />}
           label={t('dashboard.editSider.ResetLayout')}
+          data-testid="dashboard-reset-layout"
         />
       </BAIPopconfirm>
     </BAIFlex>

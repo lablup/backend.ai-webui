@@ -25,6 +25,7 @@ const DashboardEditToggleButton: React.FC = () => {
       icon={<Pencil size="1em" />}
       label={editMode ? t('button.Close') : t('dashboard.Edit')}
       onClick={() => setEditMode((prev) => !prev)}
+      data-testid="dashboard-edit-toggle"
     />
   );
 };
