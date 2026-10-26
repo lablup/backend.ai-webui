@@ -80,7 +80,7 @@ of the ambient hook and pass `project={currentProject}` explicitly.
 - **Prefer "no null state" over the Modal tier when the surface that can
   reach the component is itself always project-scoped.** The in-modal
   selector exists for components an oversight surface can legitimately open
-  without a project. When creation is offered *only* from project-scoped
+  without a project. When creation is offered _only_ from project-scoped
   menus, `null` is not a reachable state and modelling it invites a silent
   wrong-project path plus dead selector UI. In that case make the prop a
   non-null `ProjectContext` — expressed as a props union when the same
@@ -169,10 +169,10 @@ narrowing helper for the loosely-typed ambient value).
       the folder's own `ownership.projectId`, never a page-supplied one.
       Domain admins are excluded: they hold no implicit per-project
       ownership rights.
-    Neither consults `useEffectiveAdminRole`, whose target project comes
-    from the ambient value — which is why the `project` prop dropped out of
-    both gates entirely, and why super-admin abilities no longer flicker
-    with header state.
+      Neither consults `useEffectiveAdminRole`, whose target project comes
+      from the ambient value — which is why the `project` prop dropped out of
+      both gates entirely, and why super-admin abilities no longer flicker
+      with header state.
   - The globally-mounted `FolderExplorerModalV2` (see the route-derivation
     exception below) now keys `useMergedAllowedStorageHostPermission` to
     the folder's own ownership project when the folder is project-owned;
@@ -364,8 +364,6 @@ resource_preset/row.py`). `data/schema.graphql` agrees —
   - **Gating**: `environment` and `reservoir` joined
     `PROJECT_AGNOSTIC_MENU_KEYS` (with their canonical and legacy paths; the
     reservoir entry is a prefix, so the `/:artifactId` child is covered).
-    `admin-dashboard` is now the ONLY excluded `/admin/*` key — the page is
-    unused and still reads ambient state directly.
   - **Fourth copy removed**: `e2e/admin-scope/admin-header-project-selector.spec.ts`
     had its own local `SUPER_ADMIN_ROUTES` constant covering only the original
     three routes. It now derives the list from
@@ -383,6 +381,14 @@ resource_preset/row.py`). `data/schema.graphql` agrees —
   it. Check the manager's data model before assuming an ambient read implies a
   project-scoped resource.
 
+- Dashboards (#10583): `admin-dashboard` joined `PROJECT_AGNOSTIC_MENU_KEYS`
+  for its `/admin/dashboard` route, so no `/admin/*` key is excluded any more.
+  `AdminDashboardPage` passes the URL project (`useUrlProjectValidity`) on the
+  project admin route and `null` on the superadmin route, `DashboardPage`
+  passes its page-level project, and `DashboardPanelBoard` hands that value to
+  every card through its filter context. `AdminDashboardPage` and
+  `components/DashboardPanels/**` are in the ESLint restricted file list.
+
 ## Route-derived project context (`useIsProjectAgnosticPage`)
 
 `react/src/hooks/useIsProjectAgnosticPage.ts` re-exports
@@ -393,14 +399,17 @@ the deepest route `handle.menuKey`, with a pathname fallback for legacy
 unprefixed paths.
 
 ```
-admin-session  admin-deployments  admin-data  credential  environment
-resource-policy  reservoir        scheduler   agent       project
-settings       maintenance        diagnostics rbac        branding
-information
+admin-session  admin-deployments  admin-data  admin-dashboard  credential
+environment    resource-policy    reservoir   scheduler        agent
+project        settings           maintenance diagnostics      rbac
+branding       information
 ```
 
-Excluded: `admin-dashboard` only (out of scope — the page is unused and still
-reads the ambient project directly).
+`admin-dashboard` also names the project admin dashboard
+(`/project/:projectName/admin/dashboard`), which is project-scoped and takes
+its project from the URL. Only the key's `/admin/dashboard` route is
+project-agnostic, so the hook requires the `admin` route scope as well as the
+key (#10583).
 
 Who may call it:
 
@@ -443,5 +452,5 @@ reintroduces the invisible-global failure mode this ADR exists to remove.
 
 - FR-3407 (epic); FR-3408, FR-3410, FR-3411, FR-3412, FR-3413, FR-3414, and
   FR-3415 (the applications, in order — the `/admin/*` surface is complete
-  with the last).
+  with the last); #10583 (the dashboards).
 - Decided 2026-07-29.

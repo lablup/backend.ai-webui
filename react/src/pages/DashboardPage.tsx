@@ -15,6 +15,7 @@ import {
   useCurrentProjectValue,
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
+import { toProjectContext } from '../types/projectContext';
 import { INITIAL_FETCH_KEY } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useDeferredValue } from 'react';
@@ -44,8 +45,6 @@ const DashboardPageContent: React.FC = () => {
         $skipTotalResourceWithinResourceGroup: Boolean!
         $isSuperAdmin: Boolean!
         $agentNodeFilter: String!
-        $aliveAgentFilter: String!
-        $schedulableAgentFilter: String!
       ) {
         ...SessionCountDashboardItemFragment @arguments(scopeId: $scopeId)
         ...RecentlyCreatedSessionFragment @arguments(scopeId: $scopeId)
@@ -57,13 +56,6 @@ const DashboardPageContent: React.FC = () => {
             isSuperAdmin: $isSuperAdmin
             agentNodeFilter: $agentNodeFilter
           )
-        ...AgentStatsFragment
-          @include(if: $isSuperAdmin)
-          @alias
-          @arguments(
-            aliveAgentFilter: $aliveAgentFilter
-            schedulableAgentFilter: $schedulableAgentFilter
-          )
       }
     `,
     {
@@ -72,8 +64,6 @@ const DashboardPageContent: React.FC = () => {
       skipTotalResourceWithinResourceGroup: !isAvailableTotalResourcePanel,
       isSuperAdmin: _.isEqual(userRole, 'superadmin'),
       agentNodeFilter: `schedulable == true & status == "ALIVE" & scaling_group == "${currentResourceGroup}"`,
-      aliveAgentFilter: 'status == "ALIVE"',
-      schedulableAgentFilter: 'status == "ALIVE" & schedulable == true',
     },
     {
       fetchPolicy:
@@ -87,13 +77,13 @@ const DashboardPageContent: React.FC = () => {
   return (
     <DashboardPanelBoard
       page="project"
+      project={toProjectContext(currentProject)}
       catalog={PANEL_CATALOG}
       isRefetching={isRefetching}
       queryRefs={{
         queryRef,
         totalResourceQueryRef:
           queryRef.TotalResourceWithinResourceGroupFragment,
-        agentStatsQueryRef: queryRef.AgentStatsFragment,
       }}
     />
   );

@@ -276,8 +276,9 @@ export interface ResourceQueryArgs {
   offset: number;
   /** Restricts the rows to these resource groups; absent or empty means all. */
   resourceGroups?: ReadonlyArray<string> | null;
-  /** Ambient project scope (ADR-0001) for project-scoped connections. */
-  projectId: string;
+  /** The page's project; `null` on the superadmin page, which reads the current domain. */
+  projectId: string | null;
+  domainName: string;
 }
 
 /** Normalized connection slice the executor renders. */

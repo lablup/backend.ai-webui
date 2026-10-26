@@ -9,10 +9,7 @@ import {
   useActiveProjectName,
   useCurrentMenuKey,
 } from '../../hooks/useRouteScope';
-import {
-  getPathFromMenuKey,
-  useWebUIMenuItems,
-} from '../../hooks/useWebUIMenuItems';
+import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
 import BAIMenu from '../BAIMenu';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { HStack } from '@lablup/ui-common/Stack';
@@ -143,6 +140,7 @@ const WebUISiderNavigation: React.FC<WebUISiderNavigationProps> = ({
               to: getPathFromMenuKey(
                 firstAvailableProjectAdminMenuItem.key,
                 activeProjectName,
+                'currentProjectAdmin',
               ),
               icon: <ShieldUserIcon style={{ color: token('--color-info') }} />,
             },

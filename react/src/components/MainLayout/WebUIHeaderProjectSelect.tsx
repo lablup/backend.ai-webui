@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { modal } from '../../app-shim';
-import { buildPath, MENU_KEY_TO_SCOPE_FEATURE } from '../../helper/pathBuilder';
+import { buildPath, featureKeyInScope } from '../../helper/pathBuilder';
 import { useCurrentDomainValue, useWebUINavigate } from '../../hooks';
 import { useAccessibleProjects } from '../../hooks/useAccessibleProjects';
 import {
@@ -208,10 +208,9 @@ const WebUIHeaderProjectSelect: React.FC = () => {
                 // project segment to the NEW project, so the project-scope
                 // layout does not sync the atom back to the old project.
                 const fallbackFeature =
-                  currentMenuKey &&
-                  MENU_KEY_TO_SCOPE_FEATURE[currentMenuKey]?.scope === 'project'
-                    ? MENU_KEY_TO_SCOPE_FEATURE[currentMenuKey].featureKey
-                    : 'session';
+                  (currentMenuKey &&
+                    featureKeyInScope(currentMenuKey, 'project')) ||
+                  'session';
                 let target = buildPath(
                   'project',
                   fallbackFeature,

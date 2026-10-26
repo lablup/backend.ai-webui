@@ -52,11 +52,10 @@ describe('PANEL_CATALOG', () => {
         'folderStatus',
         'quotaPerStorageVolume',
         'totalResourceWithinResourceGroup',
-        'agentStats',
-        'activeAgents',
         'recentlyCreatedSession',
       ],
     ],
+    ['projectAdmin', ['activeSessions']],
     [
       'admin',
       [
@@ -85,16 +84,21 @@ describe('catalogFor on the real catalog', () => {
     );
   });
 
-  it('shows them to a superadmin', () => {
-    expect(
-      keysFor({ page: 'project', role: 'superadmin', config: {} }),
-    ).toEqual(
+  it('shows them to a superadmin on the superadmin page', () => {
+    expect(keysFor({ page: 'admin', role: 'superadmin', config: {} })).toEqual(
       expect.arrayContaining([
         'agentStats',
         'activeAgents',
         'resource.vfolder',
       ]),
     );
+  });
+
+  it('keeps cluster and project-wide cards off the member dashboard, even for a superadmin', () => {
+    const keys = keysFor({ page: 'project', role: 'superadmin', config: {} });
+    expect(keys).not.toContain('agentStats');
+    expect(keys).not.toContain('activeAgents');
+    expect(keys).not.toContain('activeSessions');
   });
 
   it('locks the resource group total for a non-superadmin when agents are hidden', () => {

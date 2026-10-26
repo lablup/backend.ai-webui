@@ -47,6 +47,7 @@ describe('useCurrentProjectValue dev-mode straggler warning (FR-3414)', () => {
     '/scheduler',
     '/admin/environment', // FR-3415: now has in-page project selection
     '/admin/reservoir/artifact-1', // FR-3415: prefix covers the detail child
+    '/admin/dashboard', // #10583: the superadmin dashboard
   ])('warns once when read under the project-agnostic route %s', (pathname) => {
     renderAt(pathname);
     expect(console.warn).toHaveBeenCalledTimes(1);
@@ -55,7 +56,7 @@ describe('useCurrentProjectValue dev-mode straggler warning (FR-3414)', () => {
 
   it.each([
     '/project/default/session',
-    '/admin/dashboard', // the only excluded admin page
+    '/project/default/admin/dashboard', // the project admin dashboard
   ])('stays silent when read under the project-scoped route %s', (pathname) => {
     renderAt(pathname);
     expect(console.warn).not.toHaveBeenCalled();

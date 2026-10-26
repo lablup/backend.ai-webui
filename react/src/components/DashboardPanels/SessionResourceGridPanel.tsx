@@ -4,12 +4,12 @@
  */
 import { DEFAULT_SESSION_GRID_VIEW } from '../../helper/sessionResourceGridData';
 import { useWebUINavigate } from '../../hooks';
-import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import SessionResourceGrid from '../SessionResourceGrid';
 import PanelFrame from './PanelFrame';
 import type { PanelKindProps } from './panelRegistry';
 import { resolvePanelTitle, withResourceGroupClause } from './resourceRegistry';
 import type { PanelDescriptor } from './types';
+import { useDashboardProject } from './useDashboardFilters';
 import { BAISkeleton } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -59,7 +59,7 @@ export const SessionResourceGridContent: React.FC<{
   disableSessionDetail?: boolean;
 }> = ({ descriptor, fetchKey, onChangeViewParams, disableSessionDetail }) => {
   'use memo';
-  const currentProject = useCurrentProjectValue();
+  const project = useDashboardProject();
   const webUINavigate = useWebUINavigate();
   const location = useLocation();
 
@@ -74,7 +74,7 @@ export const SessionResourceGridContent: React.FC<{
         ) ?? null
       }
       order={descriptor.order ?? null}
-      projectId={currentProject.id ?? null}
+      projectId={project?.id ?? null}
       fetchKey={fetchKey ?? ''}
       viewParams={descriptor.gridView ?? DEFAULT_SESSION_GRID_VIEW}
       onChangeViewParams={onChangeViewParams}

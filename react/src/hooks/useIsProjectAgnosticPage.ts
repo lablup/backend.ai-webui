@@ -6,7 +6,7 @@ import {
   PROJECT_AGNOSTIC_MENU_KEYS,
   PROJECT_AGNOSTIC_PATHNAME_REGEX,
 } from '../helper/projectAgnosticRoutes';
-import { useCurrentMenuKey } from './useRouteScope';
+import { useCurrentMenuKey, useRouteScope } from './useRouteScope';
 import { useLocation } from 'react-router-dom';
 
 export {
@@ -18,10 +18,9 @@ export type { ProjectAgnosticMenuKey } from '../helper/projectAgnosticRoutes';
 
 /**
  * Whether the current route is one of the project-agnostic pages
- * (`PROJECT_AGNOSTIC_MENU_KEYS` -- the whole `/admin/*` surface that operates
- * ABOVE project scope, minus the few pages that still genuinely depend on the
- * ambient project). On these routes the header project selector is not
- * mounted, and ambient-project-derived UI (mismatch alerts, session-launch
+ * (`PROJECT_AGNOSTIC_MENU_KEYS` on an `/admin` route -- the whole `/admin/*`
+ * surface, which operates ABOVE project scope). On these routes the header
+ * project selector is not mounted, and ambient-project-derived UI (mismatch alerts, session-launch
  * buttons, permission scoping) must not key off it.
  *
  * Named "project-agnostic" rather than "super-admin-scoped" (FR-3414):
@@ -43,8 +42,11 @@ export type { ProjectAgnosticMenuKey } from '../helper/projectAgnosticRoutes';
 export const useIsProjectAgnosticPage = (): boolean => {
   'use memo';
   const menuKey = useCurrentMenuKey();
+  const scope = useRouteScope();
   const { pathname } = useLocation();
+  // `admin-dashboard` also has a project-admin route, which stays project-scoped.
   if (
+    scope === 'admin' &&
     (PROJECT_AGNOSTIC_MENU_KEYS as readonly string[]).includes(menuKey ?? '')
   ) {
     return true;

@@ -144,8 +144,9 @@ const sessionConfig: ResourceConfig<resourceRegistrySessionQuery, SessionNode> =
       offset,
       projectId,
       resourceGroups,
+      domainName,
     }) => ({
-      scopeId: `project:${projectId}`,
+      scopeId: projectId ? `project:${projectId}` : `domain:${domainName}`,
       first: limit,
       offset,
       filter: withResourceGroupClause(

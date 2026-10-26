@@ -113,9 +113,8 @@ export default [
     },
   },
 
-  // FR-3414 / FR-3415 (ADR-0001): the project-agnostic surface — the whole `/admin/*`
-  // subtree except the pages that still genuinely depend on the ambient
-  // project — operates above project scope, so its sources must never read
+  // FR-3414 / FR-3415 (ADR 0001): the project-agnostic surface — the whole
+  // `/admin/*` subtree — operates above project scope, so its sources must never read
   // the ambient current project. Converted components receive the decision
   // via their required `project` prop instead. This list must stay in sync
   // with `PROJECT_AGNOSTIC_MENU_KEYS`
@@ -138,14 +137,14 @@ export default [
   //   environment        -> EnvironmentPage                        (FR-3415)
   //   reservoir          -> ReservoirPage / ReservoirArtifactDetailPage
   //                                                                (FR-3415)
+  //   admin-dashboard    -> AdminDashboardPage + DashboardPanels/** (#10583;
+  //                         the project admin variant takes its URL project)
   // NOTE: this block redeclares `no-restricted-imports`, which REPLACES the
   // global options above for these files, so the global paths/patterns are
   // repeated here (patterns must be all-strings or all-objects, hence the
   // object form).
-  // Only `admin-dashboard` (AdminDashboardPage) stays excluded — it still
-  // reads ambient state and is not gated by `PROJECT_AGNOSTIC_MENU_KEYS`
-  // either. DeploymentDetailPage is excluded because it serves three URL
-  // spaces and is the sanctioned page-level ambient reader (see the ADR).
+  // DeploymentDetailPage is excluded because it serves three URL spaces and is
+  // the sanctioned page-level ambient reader (see the ADR).
   {
     files: [
       'src/pages/AdminSessionPage.tsx',
@@ -168,6 +167,8 @@ export default [
       'src/pages/EnvironmentPage.tsx',
       'src/pages/ReservoirPage.tsx',
       'src/pages/ReservoirArtifactDetailPage.tsx',
+      'src/pages/AdminDashboardPage.tsx',
+      'src/components/DashboardPanels/**',
     ],
     rules: {
       'no-restricted-imports': [

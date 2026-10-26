@@ -10,21 +10,34 @@ import {
 } from '../components/DashboardPanels/DashboardRefreshContext';
 import { PANEL_CATALOG } from '../components/DashboardPanels/panelCatalog';
 import { useIsAvailableTotalResourceWithinResourceGroup } from '../components/TotalResourceWithinResourceGroup';
+import { useCurrentDomainValue } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
-import {
-  useCurrentProjectValue,
-  useCurrentResourceGroupValue,
-} from '../hooks/useCurrentProject';
+import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
+import { useUrlProjectValidity } from '../hooks/useUrlProjectValidity';
+import type { ProjectContextOrNull } from '../types/projectContext';
 import { INITIAL_FETCH_KEY } from 'backend.ai-ui';
-import * as _ from 'lodash-es';
 import { useDeferredValue } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-const AdminDashboardPageContent: React.FC = () => {
+export interface AdminDashboardPageProps {
+  /** `projectAdmin` at `/project/:projectName/admin/dashboard`, `admin` at `/admin/dashboard`. */
+  page: 'projectAdmin' | 'admin';
+}
+
+const AdminDashboardPageContent: React.FC<AdminDashboardPageProps> = ({
+  page,
+}) => {
   'use memo';
-  const currentProject = useCurrentProjectValue();
+  // The project admin page takes its project from the URL only (ADR 0001); the
+  // superadmin page has none and reads the current domain (ADR 0012).
+  const { urlProjectName, resolvedId } = useUrlProjectValidity();
+  const project: ProjectContextOrNull =
+    page === 'projectAdmin' && urlProjectName && resolvedId
+      ? { id: resolvedId, name: urlProjectName }
+      : null;
+  const currentDomainName = useCurrentDomainValue();
   const currentResourceGroup = useCurrentResourceGroupValue();
-  const userRole = useCurrentUserRole();
+  const isSuperAdmin = useCurrentUserRole() === 'superadmin';
 
   const { fetchKey } = useDashboardFetchKey('page-query', '30s');
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -55,6 +68,8 @@ const AdminDashboardPageContent: React.FC = () => {
             agentNodeFilter: $agentNodeFilter
           )
         ...AgentStatsFragment
+          @include(if: $isSuperAdmin)
+          @alias
           @arguments(
             aliveAgentFilter: $aliveAgentFilter
             schedulableAgentFilter: $schedulableAgentFilter
@@ -62,10 +77,12 @@ const AdminDashboardPageContent: React.FC = () => {
       }
     `,
     {
-      scopeId: `project:${currentProject.id}`,
+      scopeId: project
+        ? `project:${project.id}`
+        : `domain:${currentDomainName}`,
       resourceGroup: currentResourceGroup || 'default',
       skipTotalResourceWithinResourceGroup: !isAvailableTotalResourcePanel,
-      isSuperAdmin: _.isEqual(userRole, 'superadmin'),
+      isSuperAdmin,
       agentNodeFilter: `schedulable == true & status == "ALIVE" & scaling_group == "${currentResourceGroup}"`,
       aliveAgentFilter: 'status == "ALIVE"',
       schedulableAgentFilter: 'status == "ALIVE" & schedulable == true',
@@ -81,22 +98,23 @@ const AdminDashboardPageContent: React.FC = () => {
 
   return (
     <DashboardPanelBoard
-      page="admin"
+      page={page}
+      project={project}
       catalog={PANEL_CATALOG}
       isRefetching={isRefetching}
       queryRefs={{
         queryRef,
         totalResourceQueryRef:
           queryRef.TotalResourceWithinResourceGroupFragment,
-        agentStatsQueryRef: queryRef,
+        agentStatsQueryRef: queryRef.AgentStatsFragment,
       }}
     />
   );
 };
 
-const AdminDashboardPage: React.FC = () => (
+const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ page }) => (
   <DashboardRefreshProvider>
-    <AdminDashboardPageContent />
+    <AdminDashboardPageContent page={page} />
   </DashboardRefreshProvider>
 );
 

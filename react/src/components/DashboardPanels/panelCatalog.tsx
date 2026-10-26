@@ -4,9 +4,7 @@
  */
 import { useWebUINavigate } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
-import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { useProjectPath } from '../../hooks/useRouteScope';
-import { toProjectContext } from '../../types/projectContext';
 import ActiveAgents from '../ActiveAgents';
 import AgentStats from '../AgentStats';
 import MyResource from '../MyResource';
@@ -26,6 +24,7 @@ import type {
   PanelSize,
   PanelType,
 } from './types';
+import { useDashboardProject } from './useDashboardFilters';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIBoardItemErrorBoundary, BAISkeleton } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
@@ -198,13 +197,9 @@ const RecentlyCreatedSessionPanel: React.FC<PanelComponentProps> = ({
   queryRefs,
 }) => {
   'use memo';
-  const currentProject = useCurrentProjectValue();
+  const project = useDashboardProject();
   return (
-    <RecentlyCreatedSession
-      queryRef={queryRefs.queryRef}
-      // The dashboards are project-scoped (ADR-0001 page-level narrowing).
-      project={toProjectContext(currentProject)}
-    />
+    <RecentlyCreatedSession queryRef={queryRefs.queryRef} project={project} />
   );
 };
 
@@ -235,7 +230,7 @@ const BUILTIN_PANELS: ReadonlyArray<PanelDefinition> = [
   },
   {
     key: 'activeSessions',
-    page: ['admin'],
+    page: ['projectAdmin', 'admin'],
     group: 'session',
     titleKey: 'session.ActiveSessions',
     kind: 'custom',
@@ -305,7 +300,7 @@ const BUILTIN_PANELS: ReadonlyArray<PanelDefinition> = [
   },
   {
     key: 'agentStats',
-    page: ['project', 'admin'],
+    page: ['admin'],
     group: 'superadmin',
     titleKey: 'agentStats.AgentStats',
     requires: { role: 'superadmin' },
@@ -317,7 +312,7 @@ const BUILTIN_PANELS: ReadonlyArray<PanelDefinition> = [
   },
   {
     key: 'activeAgents',
-    page: ['project', 'admin'],
+    page: ['admin'],
     group: 'superadmin',
     titleKey: 'activeAgent.ActiveAgents',
     requires: { role: 'superadmin' },

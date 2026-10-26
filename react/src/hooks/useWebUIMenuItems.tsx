@@ -3,7 +3,11 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
-import { buildPath, MENU_KEY_TO_SCOPE_FEATURE } from '../helper/pathBuilder';
+import {
+  buildPath,
+  type MenuAdminRole,
+  resolveMenuKeyScopeFeature,
+} from '../helper/pathBuilder';
 import { useCurrentUserRole } from './backendai';
 import { useDiagnosticsBadgeSeverity } from './useAutoDiagnostics';
 import { useBAISettingUserState } from './useBAISetting';
@@ -147,14 +151,9 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
 ]);
 
 // Admin-category page keys reachable by a project admin (3-tier admin gating).
-// Project admins see Sessions, Deployments, Data (vfolders) and Members within
-// the admin category. Other admin pages remain visible only to domain admins or
-// superadmins. Kept as a plain array so it can be exported and reused (e.g. for
-// per-page route gating in follow-up PRs).
+// Other admin pages remain visible only to domain admins or superadmins.
 const PROJECT_ADMIN_PAGE_KEYS = [
-  // 'admin-session',
-  // 'admin-deployments',
-  // 'admin-data',
+  'admin-dashboard',
   'project-admin-users',
   'project-data',
   'project-admin-deployments',
@@ -164,6 +163,11 @@ const PROJECT_ADMIN_PAGE_KEYS = [
 export const PROJECT_ADMIN_PAGE_KEY_SET: ReadonlySet<string> = new Set(
   PROJECT_ADMIN_PAGE_KEYS,
 );
+
+// Project-admin keys a superadmin also sees, at the route `resolveMenuKeyScopeFeature` picks.
+const SUPERADMIN_SHARED_PAGE_KEY_SET: ReadonlySet<string> = new Set([
+  'admin-dashboard',
+]);
 
 // Legacy flat path for a menu key (the pre-scope-aware URL, e.g. `/session`,
 // `/project-data`, `/admin-session`). These flat paths are still mounted as
@@ -178,23 +182,18 @@ const getLegacyFlatPath = (key: MenuKeys): string => {
   return `/${key}`;
 };
 
-// Convert a menu key to its scope-aware URL path.
-//
-// Delegates to `buildPath` via `MENU_KEY_TO_SCOPE_FEATURE` so a menu key like
-// `session` (project scope) becomes `/project/<projectName>/session`,
-// `project-data` (project-admin scope) becomes
-// `/project/<projectName>/admin/data`, and `admin-session` (global admin)
-// becomes `/admin/session`.
-//
-// `projectName` is required for project / projectAdmin scopes. When it is
-// missing (e.g. the rare "no current project" edge case), we fall back to the
-// legacy flat path which the redirect shims resolve, rather than building a
-// broken `/project//...` URL. Admin-scope keys never need a project name.
+// Convert a menu key to its scope-aware URL path (`session` ->
+// `/project/<name>/session`, `project-data` -> `/project/<name>/admin/data`,
+// `admin-session` -> `/admin/session`). `adminRole` picks the route of a key
+// that has one per role (`admin-dashboard`). Without a project name a
+// project-scoped key falls back to its legacy flat path, which the redirect
+// shims resolve, instead of a broken `/project//...` URL.
 export const getPathFromMenuKey = (
   key: MenuKeys,
   projectName?: string | null,
+  adminRole?: MenuAdminRole,
 ): string => {
-  const scopeFeature = MENU_KEY_TO_SCOPE_FEATURE[key];
+  const scopeFeature = resolveMenuKeyScopeFeature(key, adminRole);
   if (!scopeFeature) {
     // Unknown key (e.g. a plugin url passed through): preserve legacy behavior.
     return getLegacyFlatPath(key);
@@ -318,7 +317,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     key: MenuKeys,
     group: AdminMenuGroupName,
   ): WebUIAdminMenuItemType => ({
-    to: getPathFromMenuKey(key, activeProjectName),
+    to: getPathFromMenuKey(key, activeProjectName, effectiveAdminRole),
     icon,
     key,
     group,
@@ -427,6 +426,14 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   );
 
   const fullAdminMenu: Array<WebUIAdminMenuItemType> = filterOutEmpty([
+    // Domain admins have no dashboard (#10583).
+    (isSuperAdmin || effectiveAdminRole === 'currentProjectAdmin') &&
+      createAdminMenuItem(
+        t('webui.menu.Dashboard'),
+        <Gauge style={{ color: token('--color-info') }} size="1em" />,
+        'admin-dashboard',
+        'none',
+      ),
     // --- Operations group ---
     createAdminMenuItem(
       t('webui.menu.Users'),
@@ -572,9 +579,8 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   // - 'none': no admin items
   // - 'currentProjectAdmin': only PROJECT_ADMIN_PAGE_KEYS
   // - 'domainAdmin' / 'superadmin': full admin menu MINUS project-admin-only
-  //   pages. Higher-tier admins have broader equivalents (e.g. `credential`
-  //   covers users across the domain/system), so per-project admin pages would
-  //   be redundant and confusing to show.
+  //   pages, which have broader equivalents there (e.g. `credential`), except
+  //   the keys a superadmin shares at its own route.
   const adminMenu: Array<WebUIAdminMenuItemType> =
     effectiveAdminRole === 'none'
       ? []
@@ -583,7 +589,9 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
             PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string),
           )
         : fullAdminMenu.filter(
-            (item) => !PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string),
+            (item) =>
+              !PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string) ||
+              SUPERADMIN_SHARED_PAGE_KEY_SET.has(item.key as string),
           );
 
   // The project-admin pages' sider menu: every admin tier can open them.

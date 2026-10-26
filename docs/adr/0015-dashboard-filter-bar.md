@@ -75,6 +75,7 @@ sequenceDiagram
 | `projects` | `projectAdmin` | `projectIds`: URL 경로의 프로젝트 하나, `domain` |
 | `projects` | `admin`        | `projectIds: 'all'`, `domain`: 현재 도메인       |
 
+- **Page project**: page가 `DashboardPanelBoard`에 `project`(`ProjectContextOrNull`)를 넘긴다. 일반 사용자 page는 page의 현재 프로젝트, 프로젝트 관리자 page는 URL 경로의 프로젝트, superadmin page는 `null`이다. 카드와 패널 modal은 `DashboardFilterContext`에서 `useDashboardProject`로 읽고, 사용자 정의 패널 query는 `useDashboardQueryScope`가 주는 프로젝트를, 그것이 `null`이면 현재 도메인을 범위로 쓴다(ADR 0001).
 - **Current domain**: `useDashboardFilters`가 `useCurrentDomain()`의 `{ id, name }`을 `domain`으로 넘긴다.
 - **Board vars**: 보드의 `vars`(`DashboardBoardVars`)는 `{ refresh }` 하나다. `sanitizeBoardVars`는 예전 보드에 남은 `project`, `rg`, `range`를 버리고, `REFRESH_OPTIONS`에 없는 `refresh`를 `30s`로 바꾼다.
 

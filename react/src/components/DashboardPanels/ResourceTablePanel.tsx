@@ -3,12 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useBAIPaginationOptionState } from '../../hooks/reactPaginationQueryOptions';
-import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { DeploymentNodesPanelContent } from './DeploymentNodesPanel';
 import PanelFrame from './PanelFrame';
 import { SessionNodesPanelContent } from './SessionNodesPanel';
 import { resolvePanelTitle, resourceRegistry } from './resourceRegistry';
 import type { PanelDescriptor } from './types';
+import { useDashboardQueryScope } from './useDashboardFilters';
 import { BAISkeleton, BAITable } from 'backend.ai-ui';
 import { atom, useAtom } from 'jotai';
 import React, { Suspense, useDeferredValue } from 'react';
@@ -110,7 +110,7 @@ export const ResourceTableContent: React.FC<{
 }> = ({ descriptor, fetchKey, onChangeOrder }) => {
   'use memo';
   const { t } = useTranslation();
-  const currentProject = useCurrentProjectValue();
+  const queryScope = useDashboardQueryScope();
   const config = resourceRegistry[descriptor.resourceType];
   const {
     baiPaginationOption,
@@ -126,7 +126,7 @@ export const ResourceTableContent: React.FC<{
     order,
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
-    projectId: currentProject.id ?? '',
+    ...queryScope,
     resourceGroups: descriptor.resourceGroups,
   });
   const deferredVariables = useDeferredValue(variables);
