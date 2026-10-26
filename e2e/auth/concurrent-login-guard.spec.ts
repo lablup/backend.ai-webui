@@ -13,6 +13,7 @@
  */
 import {
   modifyConfigToml,
+  seedStoredApiEndpoint,
   userInfo,
   webServerEndpoint,
   webuiEndpoint,
@@ -127,6 +128,7 @@ async function gotoLoginPage(
     },
   });
   await setupBaseMocks(page);
+  await seedStoredApiEndpoint(page);
   // The app attempts a silent re-login on load; let that request finish
   // before a test installs its own /server/login mock or spy.
   const silentLogin = page.waitForResponse(
