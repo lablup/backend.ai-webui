@@ -14,7 +14,7 @@ import type {
 import type { BAIBoardItem } from 'backend.ai-ui';
 
 /**
- * Seed layout per panel kind. Tables match the built-in cards' minColumnSpan 2;
+ * Seed layout per panel kind. Tables shrink to the built-in cards' 2×2 (the body scrolls);
  * the grid's value is breadth, so it seeds full width like `activeAgents`.
  */
 export const DEFAULT_PANEL_LAYOUTS: Record<
@@ -24,7 +24,7 @@ export const DEFAULT_PANEL_LAYOUTS: Record<
   resourceTable: {
     rowSpan: 3,
     columnSpan: 2,
-    definition: { minRowSpan: 3, minColumnSpan: 2 },
+    definition: { minRowSpan: 2, minColumnSpan: 2 },
   },
   resourceCount: {
     rowSpan: 2,
