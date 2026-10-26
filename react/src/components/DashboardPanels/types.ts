@@ -119,7 +119,10 @@ export type DashboardScope =
 export interface DashboardVars {
   /** `now-24h`, or `YYYY-MM-DD/YYYY-MM-DD` for a custom range. */
   range: string;
-  /** `range` resolved at the card's last refresh, so it stays stable until the next one. */
+  /**
+   * `range` resolved at the card's last refresh, so it stays stable until the
+   * next one. Filter with `withinWindow`, never as one `DateTimeFilter`.
+   */
   timeRange: { after: string; before: string };
   /** The header's project and resource group, for cards that read one of each. */
   currentProjectId: string | null;

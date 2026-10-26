@@ -9,7 +9,10 @@ export type TimeRangePreset = (typeof TIME_RANGE_PRESETS)[number];
 
 export const DEFAULT_TIME_RANGE: TimeRangePreset = 'now-24h';
 
-/** A `DateTimeFilter`-shaped window: `after` inclusive, `before` exclusive. */
+/**
+ * A time window, `after` inclusive, `before` exclusive. Never pass it as one
+ * `DateTimeFilter`; filter with {@link withinWindow}.
+ */
 export interface DateTimeWindow {
   after: string;
   before: string;
@@ -97,7 +100,7 @@ const windowMs = (
 };
 
 /**
- * The range as a `DateTimeFilter` window. `now` must be stable between
+ * The range as a window. `now` must be stable between
  * refreshes (a card's last refresh time), or every render changes the query.
  * An unparsable range falls back to the default.
  */
@@ -140,3 +143,20 @@ export const bucketize = (
     before: new Date(edges[index + 1]).toISOString(),
   }));
 };
+
+/**
+ * `field` within `window`, as two ANDed bounds: given both `after` and `before`
+ * in one `DateTimeFilter`, manager 26.10.0a3 applies only `before`.
+ */
+export const withinWindow = <TField extends string>(
+  field: TField,
+  window: DateTimeWindow,
+): { AND: Array<Record<TField, { after?: string; before?: string }>> } => ({
+  AND: [
+    { [field]: { after: window.after } } as Record<TField, { after: string }>,
+    { [field]: { before: window.before } } as Record<
+      TField,
+      { before: string }
+    >,
+  ],
+});

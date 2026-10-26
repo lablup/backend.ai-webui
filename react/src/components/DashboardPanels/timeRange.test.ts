@@ -8,6 +8,7 @@ import {
   customRange,
   parseTimeRange,
   rangeToDateTimeFilter,
+  withinWindow,
 } from './timeRange';
 
 const NOW = Date.UTC(2026, 9, 26, 12, 0, 0);
@@ -127,5 +128,32 @@ describe('bucketize', () => {
       new Date(2026, 9, 1).getTime(),
       new Date(2026, 9, 2).getTime(),
     );
+  });
+});
+
+describe('withinWindow', () => {
+  it('splits the window into two ANDed bounds on the field', () => {
+    expect(
+      withinWindow('terminatedAt', {
+        after: '2026-10-25T12:00:00.000Z',
+        before: '2026-10-26T12:00:00.000Z',
+      }),
+    ).toEqual({
+      AND: [
+        { terminatedAt: { after: '2026-10-25T12:00:00.000Z' } },
+        { terminatedAt: { before: '2026-10-26T12:00:00.000Z' } },
+      ],
+    });
+  });
+
+  it('bounds every bucket the same way', () => {
+    const filters = bucketize('now-1h', NOW).map((bucket) =>
+      withinWindow('createdAt', bucket),
+    );
+    filters.forEach((filter) => {
+      expect(filter.AND).toHaveLength(2);
+      expect(Object.keys(filter.AND[0].createdAt)).toEqual(['after']);
+      expect(Object.keys(filter.AND[1].createdAt)).toEqual(['before']);
+    });
   });
 });

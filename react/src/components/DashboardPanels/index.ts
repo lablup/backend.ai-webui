@@ -43,7 +43,7 @@ export {
   resolveDashboardScope,
   resourceGroupRows,
 } from './dashboardScope';
-export { bucketize, rangeToDateTimeFilter } from './timeRange';
+export { bucketize, rangeToDateTimeFilter, withinWindow } from './timeRange';
 export {
   DashboardRefreshProvider,
   useDashboardFetchKey,
