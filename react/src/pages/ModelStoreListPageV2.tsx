@@ -27,6 +27,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAISelect,
   BAIStorageHostSelect,
+  isValidUUID,
   useUpdatableState,
   BAITextHighlighter,
 } from 'backend.ai-ui';
@@ -354,6 +355,11 @@ const ModelStoreListPageV2: React.FC = () => {
   // only kicks in once the drawer actually commits to opening.
   const selectedModelCardId = queryParams.modelCard;
   const drawerOpen = !!selectedModelCardId;
+  // A hand-edited `?modelCard=` must not reach the `UUID!` query variable.
+  const validModelCardId =
+    selectedModelCardId && isValidUUID(selectedModelCardId)
+      ? selectedModelCardId
+      : undefined;
 
   const isPendingPage =
     deferredLimit !== baiPaginationOption.limit ||
@@ -514,7 +520,7 @@ const ModelStoreListPageV2: React.FC = () => {
       )}
 
       <ModelCardDrawer
-        modelCardId={selectedModelCardId ?? undefined}
+        modelCardId={validModelCardId}
         open={drawerOpen}
         onClose={() => {
           setQueryParams({ modelCard: null });

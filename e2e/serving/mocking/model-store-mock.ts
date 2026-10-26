@@ -21,8 +21,8 @@ import { MOCK_ENDPOINT_UUID } from './endpoint-detail-mock';
 // Model card IDs
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Proper UUIDs: the card's `entityId` goes into `?modelCard=`, and
-// ModelCardDrawer only fires its lazy query for a valid UUID.
+// Proper UUIDs: the card's `entityId` goes into `?modelCard=`, and the page
+// only hands a valid UUID to ModelCardDrawer's lazy query.
 const MOCK_MODEL_CARD_WITH_PRESETS_UUID =
   '00000000-0000-0000-0000-000000000001';
 const MOCK_MODEL_CARD_NO_PRESETS_UUID = '00000000-0000-0000-0000-000000000002';
