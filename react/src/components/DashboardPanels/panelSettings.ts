@@ -51,16 +51,23 @@ export const sanitizePanelSettings = (
   return _.isEmpty(settings) ? undefined : settings;
 };
 
-/** A one-line summary of a card's settings for the edit sider; undefined when all are default. */
-export const describePanelSettings = (
+/** A card's non-default settings, one label each, for the edit sider caption. */
+export const panelSettingsParts = (
   settings: PanelSettings | undefined,
   t: TFunction,
-): string | undefined => {
-  const parts = _.compact([
+): string[] =>
+  _.compact([
     settings?.resourceGroups?.join(', '),
     settings?.range && isRangePreset(settings.range)
       ? t(RANGE_LABEL_KEYS[settings.range])
       : undefined,
   ]);
+
+/** A one-line summary of a card's settings; undefined when all are default. */
+export const describePanelSettings = (
+  settings: PanelSettings | undefined,
+  t: TFunction,
+): string | undefined => {
+  const parts = panelSettingsParts(settings, t);
   return parts.length ? parts.join(' · ') : undefined;
 };

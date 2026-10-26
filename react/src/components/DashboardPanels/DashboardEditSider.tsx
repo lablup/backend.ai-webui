@@ -6,7 +6,7 @@ import { useCurrentUserRole } from '../../hooks/backendai';
 import './DashboardEditSider.css';
 import { panelTitleKey, type CatalogEntry } from './boardModel';
 import { panelTypeLabelKeys } from './panelRegistry';
-import { describePanelSettings } from './panelSettings';
+import { describePanelSettings, panelSettingsParts } from './panelSettings';
 import { resolvePanelTitle, resourceRegistry } from './resourceRegistry';
 import {
   PANEL_GROUPS,
@@ -17,6 +17,7 @@ import {
 import type { PanelSettingsTarget } from './useDashboardBoard';
 import { Button } from '@lablup/ui-common/Button';
 import { CheckboxList, CheckboxListItem } from '@lablup/ui-common/CheckboxList';
+import { Divider } from '@lablup/ui-common/Divider';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
@@ -237,7 +238,7 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
               panel.panelType === 'sessionResourceGrid' && !gridEnabled;
             // An untitled panel already reads as its data source; the degraded
             // grid hint names the kind itself, so it replaces it.
-            const caption = [
+            const captionParts = [
               isGridDegraded
                 ? t('dashboard.editSider.GridDisabled')
                 : t(panelTypeLabelKeys[panel.panelType] ?? panel.panelType),
@@ -245,12 +246,8 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
               isAvailable
                 ? undefined
                 : t('dashboard.editSider.RequiresSuperadmin'),
-              settingsTargetOf(panel.id)
-                ? describePanelSettings(settingsTargetOf(panel.id)?.settings, t)
-                : undefined,
-            ]
-              .filter(Boolean)
-              .join(' · ');
+              ...panelSettingsParts(settingsTargetOf(panel.id)?.settings, t),
+            ].filter((part): part is string => !!part);
             return (
               <BAIFlex
                 key={panel.id}
@@ -269,13 +266,38 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
                   style={{ flex: 1, minWidth: 0 }}
                 >
                   <BAIText ellipsis>{label}</BAIText>
-                  <BAIText
-                    type="secondary"
-                    ellipsis={{ tooltip: caption }}
-                    style={{ fontSize: token('--font-size-sm') }}
+                  <BAIFlex
+                    direction="row"
+                    align="center"
+                    wrap="nowrap"
+                    style={{ minWidth: 0, overflow: 'hidden' }}
                   >
-                    {caption}
-                  </BAIText>
+                    {captionParts.map((part, index) => (
+                      <React.Fragment key={part}>
+                        {index > 0 && (
+                          <Divider
+                            orientation="vertical"
+                            style={{
+                              alignSelf: 'center',
+                              height: '0.9em',
+                              marginInline: token('--spacing-1'),
+                            }}
+                          />
+                        )}
+                        <BAIText
+                          type="secondary"
+                          ellipsis={{ tooltip: part }}
+                          style={{
+                            fontSize: token('--font-size-sm'),
+                            minWidth: 0,
+                            flexShrink: index === 0 ? 0 : 1,
+                          }}
+                        >
+                          {part}
+                        </BAIText>
+                      </React.Fragment>
+                    ))}
+                  </BAIFlex>
                 </BAIFlex>
                 <BAIFlex direction="row" align="center" gap="xxs">
                   {settingsButton(panel.id, label)}
