@@ -59,6 +59,7 @@ const AdminViewSwitchTour: React.FC = () => {
         okText={t('button.Next')}
         onOk={() => setIsIntroDone(true)}
         onCancel={dismiss}
+        maskClosable={false}
         footer={(_, { OkBtn }) => (
           <HStack justify="end">
             <OkBtn />
@@ -71,7 +72,7 @@ const AdminViewSwitchTour: React.FC = () => {
             <ListItem
               label={t('tourGuide.adminViewSwitch.AdminLandingStartTitle')}
               description={
-                <Text type="supporting" color="secondary">
+                <Text color="secondary">
                   {t('tourGuide.adminViewSwitch.AdminLandingStartText')}
                 </Text>
               }
@@ -79,7 +80,7 @@ const AdminViewSwitchTour: React.FC = () => {
             <ListItem
               label={t('tourGuide.adminViewSwitch.AdminLandingMenuTitle')}
               description={
-                <Text type="supporting" color="secondary">
+                <Text color="secondary">
                   {t('tourGuide.adminViewSwitch.AdminLandingMenuText')}
                 </Text>
               }
@@ -98,7 +99,11 @@ const AdminViewSwitchTour: React.FC = () => {
       key={isAdminTour ? 'admin' : 'user'}
       isActive
       hasBackdrop
-      onDismiss={dismiss}
+      // A stray click on the dimmed page must not end the tour; Done, the
+      // close button and Escape still do.
+      onDismiss={(source) => {
+        if (source !== 'backdrop') dismiss();
+      }}
     >
       <TourStep
         targetRef={{ current: target }}
