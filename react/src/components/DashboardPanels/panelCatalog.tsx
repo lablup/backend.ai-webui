@@ -124,7 +124,7 @@ const ALL_PAGES: ReadonlyArray<PanelPage> = [
   'admin',
 ];
 
-const START_SIZE = { defaultSize: size(1, 3), minSize: size(1, 2) };
+const START_SIZE = { defaultSize: size(1, 2), minSize: size(1, 2) };
 
 /** The member page's cards and the shared ones, in the order a new board places them. */
 const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [

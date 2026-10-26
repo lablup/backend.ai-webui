@@ -3,12 +3,15 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import PanelEditControls from './PanelEditControls';
+import { Heading } from '@lablup/ui-common/Heading';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIBoardItemTitle, BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 
 export interface PanelFrameProps {
   title: string;
+  /** A small glyph before the title. */
+  icon?: React.ReactNode;
   tooltip?: React.ReactNode;
   /** Card controls shown in the title row. */
   extra?: React.ReactNode;
@@ -25,6 +28,7 @@ export interface PanelFrameProps {
  */
 const PanelFrame: React.FC<PanelFrameProps> = ({
   title,
+  icon,
   tooltip,
   extra,
   onEdit,
@@ -41,7 +45,18 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
       style={{ paddingInline: token('--spacing-8'), height: '100%' }}
     >
       <BAIBoardItemTitle
-        title={title}
+        title={
+          icon ? (
+            <BAIFlex align="center" gap="xs">
+              {icon}
+              <Heading level={5} maxLines={1}>
+                {title}
+              </Heading>
+            </BAIFlex>
+          ) : (
+            title
+          )
+        }
         tooltip={tooltip}
         extra={
           <BAIFlex align="center" gap="xxs">

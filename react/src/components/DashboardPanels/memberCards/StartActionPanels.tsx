@@ -6,14 +6,16 @@ import { AstryxSecondaryTheme } from '../../../astryx-theme';
 import { useWebUINavigate } from '../../../hooks';
 import { useProjectPath } from '../../../hooks/useRouteScope';
 import type { SessionLauncherFormValue } from '../../../pages/SessionLauncherPage';
-import ActionItemContent from '../../ActionItemContent';
 import FolderCreateModalV2 from '../../FolderCreateModalV2';
 import StartFromURLModal from '../../StartFromURLModal';
+import PanelFrame from '../PanelFrame';
 import type { PanelComponentProps } from '../types';
 import { useDashboardProject } from '../useDashboardFilters';
-import { useTheme } from '@lablup/ui-common/theme';
+import { Button } from '@lablup/ui-common/Button';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIBatchSessionIcon,
+  BAIFlex,
   BAIInteractiveSessionIcon,
   BAINewFolderIcon,
   BAIUnmountAfterClose,
@@ -23,9 +25,39 @@ import { Grid2x2Plus } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-// The Start page's five actions, one board item each.
+interface StartActionCardProps {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  buttonLabel: string;
+  onClick: () => void;
+  /** Wraps the button, e.g. in a subtree theme. */
+  renderButton?: (button: React.ReactNode) => React.ReactNode;
+}
 
-const FILL = { height: '100%' } as const;
+/** One of the Start page's actions as a small dashboard card: header, a short description, a button. */
+const StartActionCard: React.FC<StartActionCardProps> = ({
+  title,
+  description,
+  icon,
+  buttonLabel,
+  onClick,
+  renderButton = (button) => button,
+}) => {
+  'use memo';
+  return (
+    <PanelFrame title={title} icon={icon}>
+      <BAIFlex direction="column" align="start" gap="sm">
+        <Text type="supporting" maxLines={2}>
+          {description}
+        </Text>
+        {renderButton(
+          <Button variant="primary" label={buttonLabel} onClick={onClick} />,
+        )}
+      </BAIFlex>
+    </PanelFrame>
+  );
+};
 
 export const StartSessionPanel: React.FC<PanelComponentProps> = () => {
   'use memo';
@@ -33,12 +65,11 @@ export const StartSessionPanel: React.FC<PanelComponentProps> = () => {
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
   return (
-    <ActionItemContent
+    <StartActionCard
       title={t('start.StartSession')}
       description={t('start.StartSessionDesc')}
-      buttonText={t('start.button.StartSession')}
+      buttonLabel={t('start.button.StartSession')}
       icon={<BAIInteractiveSessionIcon />}
-      style={FILL}
       onClick={() => webuiNavigate(buildProjectPath('session/start'))}
     />
   );
@@ -50,12 +81,11 @@ export const StartBatchSessionPanel: React.FC<PanelComponentProps> = () => {
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
   return (
-    <ActionItemContent
+    <StartActionCard
       title={t('start.StartBatchSession')}
       description={t('start.StartBatchSessionDesc')}
-      buttonText={t('start.button.StartSession')}
+      buttonLabel={t('start.button.StartSession')}
       icon={<BAIBatchSessionIcon />}
-      style={FILL}
       onClick={() => {
         const launcherValue: DeepPartial<SessionLauncherFormValue> = {
           sessionType: 'batch',
@@ -81,12 +111,11 @@ export const CreateFolderPanel: React.FC<PanelComponentProps> = () => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
-      <ActionItemContent
+      <StartActionCard
         title={t('start.CreateFolder')}
         description={t('start.CreateFolderDesc')}
-        buttonText={t('start.button.CreateFolder')}
+        buttonLabel={t('start.button.CreateFolder')}
         icon={<BAINewFolderIcon />}
-        style={FILL}
         onClick={() => setIsOpen(true)}
       />
       <BAIUnmountAfterClose>
@@ -106,22 +135,20 @@ export const CreateFolderPanel: React.FC<PanelComponentProps> = () => {
 export const StartDeploymentPanel: React.FC<PanelComponentProps> = () => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = useTheme();
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
   return (
-    // The title and icon read `themeColor`; the subtree theme only reaches the Button.
-    <AstryxSecondaryTheme>
-      <ActionItemContent
-        title={t('start.StartDeployment')}
-        description={t('start.StartDeploymentDesc')}
-        buttonText={t('start.button.StartDeployment')}
-        icon={<Grid2x2Plus size="1em" />}
-        themeColor={token('--color-success')}
-        style={FILL}
-        onClick={() => webuiNavigate(buildProjectPath('deployments'))}
-      />
-    </AstryxSecondaryTheme>
+    <StartActionCard
+      title={t('start.StartDeployment')}
+      description={t('start.StartDeploymentDesc')}
+      buttonLabel={t('start.button.StartDeployment')}
+      icon={<Grid2x2Plus size="1em" />}
+      onClick={() => webuiNavigate(buildProjectPath('deployments'))}
+      // The deployment action keeps the secondary accent it had on the Start page.
+      renderButton={(button) => (
+        <AstryxSecondaryTheme>{button}</AstryxSecondaryTheme>
+      )}
+    />
   );
 };
 
@@ -131,12 +158,11 @@ export const StartFromURLPanel: React.FC<PanelComponentProps> = () => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
-      <ActionItemContent
+      <StartActionCard
         title={t('start.StartFromURL')}
         description={t('start.StartFromURLDesc')}
-        buttonText={t('start.button.StartNow')}
+        buttonLabel={t('start.button.StartNow')}
         icon={<BAIURLStartIcon />}
-        style={FILL}
         onClick={() => setIsOpen(true)}
       />
       <BAIUnmountAfterClose>
