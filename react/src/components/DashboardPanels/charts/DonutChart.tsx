@@ -120,6 +120,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
     },
   ];
 
+  // The root takes the height its parent gives it; the floor keeps the smallest ring inside an unsized parent.
   return (
     <BAIFlex
       ref={rootRef}
@@ -127,7 +128,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
       align="center"
       justify="center"
       gap="lg"
-      style={{ flex: '1 1 0', minHeight: 0 }}
+      style={{ flex: '1 1 0', minHeight: RING_MIN + 2 * RING_HALO }}
     >
       {box.width > 0 && (
         <BAIFlex
