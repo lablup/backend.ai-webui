@@ -826,6 +826,7 @@
       "NoAllocation": "Ayrılmış kaynak yok.",
       "NoProject": "Bu kartı görmek için bir proje seçin.",
       "NoResourceGroup": "Kaynak grubu seçilmedi.",
+      "PendingCount": "{{count}} bekliyor",
       "ReplicaHealth": "Replika durumu",
       "ResourcePresets": "Kaynak ön ayarları",
       "ResourcePresetsTooltip": "Her kaynak ön ayarının, kaynak grubunda hâlâ ayırabileceğiniz miktara sığıp sığmadığı.",

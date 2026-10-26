@@ -826,6 +826,7 @@
       "NoAllocation": "Brak przydzielonych zasobów.",
       "NoProject": "Wybierz projekt, aby zobaczyć tę kartę.",
       "NoResourceGroup": "Nie wybrano grupy zasobów.",
+      "PendingCount": "Oczekujące: {{count}}",
       "ReplicaHealth": "Stan replik",
       "ResourcePresets": "Ustawienia zasobów",
       "ResourcePresetsTooltip": "Czy każde ustawienie zasobów mieści się w tym, co możesz jeszcze przydzielić w grupie zasobów.",

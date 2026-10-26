@@ -826,6 +826,7 @@
       "NoAllocation": "Nessuna risorsa allocata.",
       "NoProject": "Seleziona un progetto per vedere questa scheda.",
       "NoResourceGroup": "Nessun gruppo di risorse selezionato.",
+      "PendingCount": "{{count}} in sospeso",
       "ReplicaHealth": "Stato delle repliche",
       "ResourcePresets": "Preset di risorse",
       "ResourcePresetsTooltip": "Indica se ogni preset rientra in ciò che puoi ancora allocare nel gruppo di risorse.",

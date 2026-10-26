@@ -3,13 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { MyFoldersPanelQuery } from '../../../__generated__/MyFoldersPanelQuery.graphql';
-import { useWebUINavigate } from '../../../hooks';
-import { useProjectPath } from '../../../hooks/useRouteScope';
 import { useVFolderInvitations } from '../../../hooks/useVFolderInvitations';
 import type { PanelComponentProps } from '../types';
 import MemberCard from './MemberCard';
 import { Stat } from '@lablup/ui-common/lab';
 import { BAIFlex, BAILink, useUpdateEffect } from 'backend.ai-ui';
+import { parseAsString, useQueryState } from 'nuqs';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -20,8 +19,11 @@ const STAT_COLUMN = { flex: '1 1 0', minWidth: 0 } as const;
 const MyFolderCounts: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
   'use memo';
   const { t } = useTranslation();
-  const webuiNavigate = useWebUINavigate();
-  const buildProjectPath = useProjectPath();
+  // The app-wide FolderInvitationResponseModalOpener opens on `?invitation=true`, as the invitation notification does.
+  const [, setInvitationParam] = useQueryState(
+    'invitation',
+    parseAsString.withOptions({ history: 'replace' }),
+  );
   const [invitations, { updateInvitations }] = useVFolderInvitations();
   useUpdateEffect(() => {
     updateInvitations();
@@ -88,16 +90,9 @@ const MyFolderCounts: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
             invitationCount > 0 ? (
               <BAILink
                 style={{ textAlign: 'start' }}
-                onClick={() =>
-                  webuiNavigate({
-                    pathname: buildProjectPath('data'),
-                    search: new URLSearchParams({
-                      invitation: 'true',
-                    }).toString(),
-                  })
-                }
+                onClick={() => setInvitationParam('true')}
               >
-                {t('data.InvitedFoldersTooltip', { count: invitationCount })}
+                {t('dashboard.card.PendingCount', { count: invitationCount })}
               </BAILink>
             ) : undefined
           }

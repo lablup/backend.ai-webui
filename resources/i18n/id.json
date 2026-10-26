@@ -826,6 +826,7 @@
       "NoAllocation": "Tidak ada sumber daya yang dialokasikan.",
       "NoProject": "Pilih proyek untuk melihat kartu ini.",
       "NoResourceGroup": "Tidak ada grup sumber daya yang dipilih.",
+      "PendingCount": "{{count}} tertunda",
       "ReplicaHealth": "Kesehatan Replika",
       "ResourcePresets": "Preset Sumber Daya",
       "ResourcePresetsTooltip": "Apakah setiap preset sumber daya muat dalam yang masih dapat Anda alokasikan di grup sumber daya.",

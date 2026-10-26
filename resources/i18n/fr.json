@@ -826,6 +826,7 @@
       "NoAllocation": "Aucune ressource allouée.",
       "NoProject": "Sélectionnez un projet pour afficher cette carte.",
       "NoResourceGroup": "Aucun groupe de ressources sélectionné.",
+      "PendingCount": "{{count}} en attente",
       "ReplicaHealth": "Santé des réplicas",
       "ResourcePresets": "Préréglages de ressources",
       "ResourcePresetsTooltip": "Indique si chaque préréglage tient dans ce que vous pouvez encore allouer dans le groupe de ressources.",

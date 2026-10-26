@@ -826,6 +826,7 @@
       "NoAllocation": "割り当てられたリソースはありません。",
       "NoProject": "このカードを表示するにはプロジェクトを選択してください。",
       "NoResourceGroup": "リソースグループが選択されていません。",
+      "PendingCount": "{{count}}件保留中",
       "ReplicaHealth": "レプリカの状態",
       "ResourcePresets": "リソースプリセット",
       "ResourcePresetsTooltip": "各リソースプリセットが、リソースグループでまだ割り当て可能な範囲に収まるかを表示します。",

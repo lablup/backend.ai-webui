@@ -826,6 +826,7 @@
       "NoAllocation": "Nenhum recurso alocado.",
       "NoProject": "Selecione um projeto para ver este cartão.",
       "NoResourceGroup": "Nenhum grupo de recursos selecionado.",
+      "PendingCount": "{{count}} pendentes",
       "ReplicaHealth": "Saúde das réplicas",
       "ResourcePresets": "Predefinições de recursos",
       "ResourcePresetsTooltip": "Se cada predefinição cabe no que você ainda pode alocar no grupo de recursos.",

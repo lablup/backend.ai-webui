@@ -826,6 +826,7 @@
       "NoAllocation": "Resursseja ei ole varattu.",
       "NoProject": "Valitse projekti nähdäksesi tämän kortin.",
       "NoResourceGroup": "Resurssiryhmää ei ole valittu.",
+      "PendingCount": "{{count}} odottaa",
       "ReplicaHealth": "Replikoiden kunto",
       "ResourcePresets": "Resurssiesiasetukset",
       "ResourcePresetsTooltip": "Mahtuuko kukin resurssiesiasetus siihen, mitä voit vielä varata resurssiryhmässä.",

@@ -826,6 +826,7 @@
       "NoAllocation": "Chưa cấp phát tài nguyên nào.",
       "NoProject": "Chọn một dự án để xem thẻ này.",
       "NoResourceGroup": "Chưa chọn nhóm tài nguyên.",
+      "PendingCount": "{{count}} đang chờ",
       "ReplicaHealth": "Tình trạng bản sao",
       "ResourcePresets": "Cấu hình tài nguyên đặt sẵn",
       "ResourcePresetsTooltip": "Mỗi cấu hình đặt sẵn có vừa với lượng bạn còn có thể cấp phát trong nhóm tài nguyên hay không.",

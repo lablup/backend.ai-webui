@@ -826,6 +826,7 @@
       "NoAllocation": "Tiada sumber diperuntukkan.",
       "NoProject": "Pilih projek untuk melihat kad ini.",
       "NoResourceGroup": "Tiada kumpulan sumber dipilih.",
+      "PendingCount": "{{count}} belum selesai",
       "ReplicaHealth": "Kesihatan Replika",
       "ResourcePresets": "Pratetap Sumber",
       "ResourcePresetsTooltip": "Sama ada setiap pratetap sumber muat dalam apa yang masih boleh anda peruntukkan dalam kumpulan sumber.",

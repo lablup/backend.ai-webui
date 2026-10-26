@@ -826,6 +826,7 @@
       "NoAllocation": "Keine Ressourcen zugewiesen.",
       "NoProject": "Wählen Sie ein Projekt, um diese Karte zu sehen.",
       "NoResourceGroup": "Keine Ressourcengruppe ausgewählt.",
+      "PendingCount": "{{count}} ausstehend",
       "ReplicaHealth": "Replikat-Zustand",
       "ResourcePresets": "Ressourcen-Presets",
       "ResourcePresetsTooltip": "Ob jedes Ressourcen-Preset in das passt, was Sie in der Ressourcengruppe noch zuweisen können.",

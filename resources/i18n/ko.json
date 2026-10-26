@@ -826,6 +826,7 @@
       "NoAllocation": "할당된 자원이 없습니다.",
       "NoProject": "이 카드를 보려면 프로젝트를 선택하세요.",
       "NoResourceGroup": "선택한 자원 그룹이 없습니다.",
+      "PendingCount": "{{count}}개 대기 중",
       "ReplicaHealth": "복제본 상태",
       "ResourcePresets": "리소스 프리셋",
       "ResourcePresetsTooltip": "각 리소스 프리셋이 자원 그룹에서 아직 할당할 수 있는 자원 안에 들어가는지 보여 줍니다.",

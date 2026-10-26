@@ -813,6 +813,7 @@
       "NoAllocation": "No resources are allocated.",
       "NoProject": "Select a project to see this card.",
       "NoResourceGroup": "No resource group is selected.",
+      "PendingCount": "{{count}} pending",
       "ReplicaHealth": "Replica Health",
       "ResourcePresets": "Resource Presets",
       "ResourcePresetsTooltip": "Whether each resource preset fits in what you can still allocate in the resource group.",

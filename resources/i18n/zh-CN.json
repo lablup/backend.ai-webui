@@ -826,6 +826,7 @@
       "NoAllocation": "未分配资源。",
       "NoProject": "选择项目以查看此卡片。",
       "NoResourceGroup": "未选择资源组。",
+      "PendingCount": "{{count}} 个待处理",
       "ReplicaHealth": "副本健康状况",
       "ResourcePresets": "资源预设",
       "ResourcePresetsTooltip": "每个资源预设是否在你于该资源组中仍可分配的范围内。",
