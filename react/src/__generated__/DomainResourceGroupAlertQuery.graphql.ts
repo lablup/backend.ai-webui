@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ba6efd17d82bfd2f1099c569ac9fa000>>
+ * @generated SignedSource<<8c516582b52b142a5ac5a00ec96b38c1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,11 +10,14 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type DomainResourceGroupAlertQuery$variables = {
-  domainName?: string | null | undefined;
+  domainName: string;
+  resourceGroupName: string;
 };
 export type DomainResourceGroupAlertQuery$data = {
-  readonly domain: {
-    readonly scaling_groups: ReadonlyArray<string | null | undefined> | null | undefined;
+  readonly domainV2: {
+    readonly resourceGroups: {
+      readonly count: number;
+    } | null | undefined;
   } | null | undefined;
 };
 export type DomainResourceGroupAlertQuery = {
@@ -28,41 +31,76 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "domainName"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "resourceGroupName"
   }
 ],
 v1 = [
   {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "name",
-        "variableName": "domainName"
-      }
-    ],
-    "concreteType": "Domain",
-    "kind": "LinkedField",
-    "name": "domain",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "scaling_groups",
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
+    "kind": "Variable",
+    "name": "domainName",
+    "variableName": "domainName"
   }
-];
+],
+v2 = {
+  "alias": null,
+  "args": [
+    {
+      "fields": [
+        {
+          "fields": [
+            {
+              "kind": "Variable",
+              "name": "equals",
+              "variableName": "resourceGroupName"
+            }
+          ],
+          "kind": "ObjectValue",
+          "name": "name"
+        }
+      ],
+      "kind": "ObjectValue",
+      "name": "filter"
+    }
+  ],
+  "concreteType": "ResourceGroupConnection",
+  "kind": "LinkedField",
+  "name": "resourceGroups",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "count",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "DomainResourceGroupAlertQuery",
-    "selections": (v1/*: any*/),
+    "selections": [
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "DomainV2",
+        "kind": "LinkedField",
+        "name": "domainV2",
+        "plural": false,
+        "selections": [
+          (v2/*: any*/)
+        ],
+        "storageKey": null
+      }
+    ],
     "type": "Query",
     "abstractKey": null
   },
@@ -71,19 +109,39 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "DomainResourceGroupAlertQuery",
-    "selections": (v1/*: any*/)
+    "selections": [
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "DomainV2",
+        "kind": "LinkedField",
+        "name": "domainV2",
+        "plural": false,
+        "selections": [
+          (v2/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ]
   },
   "params": {
-    "cacheID": "957173e27a6fe2ad1d5faabfa22446ed",
+    "cacheID": "4b119aee9537d6fdf896ba60341c633c",
     "id": null,
     "metadata": {},
     "name": "DomainResourceGroupAlertQuery",
     "operationKind": "query",
-    "text": "query DomainResourceGroupAlertQuery(\n  $domainName: String\n) {\n  domain(name: $domainName) {\n    scaling_groups\n  }\n}\n"
+    "text": "query DomainResourceGroupAlertQuery(\n  $domainName: String!\n  $resourceGroupName: String!\n) {\n  domainV2(domainName: $domainName) {\n    resourceGroups(filter: {name: {equals: $resourceGroupName}}) @since(version: \"26.9.0a1\") {\n      count\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "3f7ad0811b89344329942504378b0334";
+(node as any).hash = "41cc38552be27a35d7fc6fad12531589";
 
 export default node;

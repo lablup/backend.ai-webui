@@ -192,12 +192,6 @@ export type {
   AdminUserV2Node,
   BAIAdminUserV2SelectRef,
 } from './BAIAdminUserV2Select';
-export { default as BAIProjectSelect } from './BAIProjectSelect';
-export type {
-  BAIProjectSelectProps,
-  AstryxProjectNode,
-  BAIProjectSelectRef,
-} from './BAIProjectSelect';
 export { default as BAIKeypairSelect } from './BAIKeypairSelect';
 export type {
   BAIKeypairSelectProps,
