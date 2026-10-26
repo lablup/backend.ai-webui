@@ -3727,7 +3727,7 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingMenuText": "Abra el menú del perfil de usuario arriba a la derecha: \"Volver a la vista de usuario\" le lleva a las páginas de usuario y \"Ajustes de administrador\" le trae de vuelta aquí.",
+      "AdminLandingMenuText": "Abra el menú del perfil de usuario arriba a la derecha: \"Salir de los ajustes de administrador\" le lleva a las páginas de usuario y \"Ajustes de administrador\" le trae de vuelta aquí.",
       "AdminLandingMenuTitle": "Los ajustes de administrador se movieron al menú de perfil",
       "AdminLandingStartText": "Al iniciar sesión, ahora entra directamente en los ajustes de administrador en lugar de las páginas de usuario.",
       "AdminLandingStartTitle": "Empieza en los ajustes de administrador",
@@ -3735,7 +3735,7 @@
       "AdminLandingTitle": "La vista de superadministrador ha cambiado",
       "BackToAdminSettingsText": "Para volver a los ajustes de administrador, abra este menú y elija \"Ajustes de administrador\".",
       "BackToAdminSettingsTitle": "Volver a los ajustes de administrador",
-      "BackToUserViewText": "Está en los ajustes de administrador. Para usar sesiones, datos y las demás páginas de usuario, abra este menú y elija \"Volver a la vista de usuario\".",
+      "BackToUserViewText": "Está en los ajustes de administrador. Para usar sesiones, datos y las demás páginas de usuario, abra este menú y elija \"Salir de los ajustes de administrador\".",
       "BackToUserViewTitle": "Cambiar a la vista de usuario"
     },
     "deploymentPreset": {
@@ -3949,7 +3949,7 @@
       "Architecture": "Arquitectura",
       "ArtifactDetails": "Detalles de artefactos",
       "AutoScalingRule": "Regla de escala automática",
-      "BackToUserView": "Volver a la vista de usuario",
+      "BackToUserView": "Salir de los ajustes de administrador",
       "Branding": "Personalización de marca",
       "Cancel": "Cancelar",
       "ChangePassword": "Cambiar contraseña",

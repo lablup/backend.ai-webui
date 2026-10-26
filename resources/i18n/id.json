@@ -3731,7 +3731,7 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingMenuText": "Buka menu profil pengguna di kanan atas: \"Kembali ke Tampilan Pengguna\" membawa Anda ke halaman pengguna, dan \"Pengaturan Admin\" membawa Anda kembali ke sini.",
+      "AdminLandingMenuText": "Buka menu profil pengguna di kanan atas: \"Keluar dari Pengaturan Admin\" membawa Anda ke halaman pengguna, dan \"Pengaturan Admin\" membawa Anda kembali ke sini.",
       "AdminLandingMenuTitle": "Pengaturan Admin pindah ke menu profil",
       "AdminLandingStartText": "Setelah login, Anda kini langsung masuk ke pengaturan admin, bukan halaman pengguna.",
       "AdminLandingStartTitle": "Anda memulai di pengaturan admin",
@@ -3739,7 +3739,7 @@
       "AdminLandingTitle": "Tampilan superadmin telah berubah",
       "BackToAdminSettingsText": "Untuk kembali ke pengaturan admin, buka menu ini dan pilih \"Pengaturan Admin\".",
       "BackToAdminSettingsTitle": "Kembali ke pengaturan admin",
-      "BackToUserViewText": "Anda berada di pengaturan admin. Untuk menggunakan sesi, data, dan halaman pengguna lainnya, buka menu ini dan pilih \"Kembali ke Tampilan Pengguna\".",
+      "BackToUserViewText": "Anda berada di pengaturan admin. Untuk menggunakan sesi, data, dan halaman pengguna lainnya, buka menu ini dan pilih \"Keluar dari Pengaturan Admin\".",
       "BackToUserViewTitle": "Beralih ke tampilan pengguna"
     },
     "deploymentPreset": {
@@ -3953,7 +3953,7 @@
       "Architecture": "Arsitektur",
       "ArtifactDetails": "Detail Artefak",
       "AutoScalingRule": "Aturan Skala Otomatis",
-      "BackToUserView": "Kembali ke Tampilan Pengguna",
+      "BackToUserView": "Keluar dari Pengaturan Admin",
       "Branding": "Penjenamaan",
       "Cancel": "Batal",
       "ChangePassword": "Ganti kata sandi",

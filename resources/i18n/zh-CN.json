@@ -3729,7 +3729,7 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingMenuText": "打开右上角的用户资料菜单：选择“返回用户视图”进入用户页面，选择“管理员设置”回到这里。",
+      "AdminLandingMenuText": "打开右上角的用户资料菜单：选择“退出管理员设置”进入用户页面，选择“管理员设置”回到这里。",
       "AdminLandingMenuTitle": "管理员设置已移至个人资料菜单",
       "AdminLandingStartText": "登录后，您现在会直接进入管理员设置，而不是用户页面。",
       "AdminLandingStartTitle": "从管理员设置开始",
@@ -3737,7 +3737,7 @@
       "AdminLandingTitle": "超级管理员界面已更新",
       "BackToAdminSettingsText": "要返回管理员设置，请打开此菜单并选择“管理员设置”。",
       "BackToAdminSettingsTitle": "返回管理员设置",
-      "BackToUserViewText": "您正在管理员设置中。要使用会话、数据等用户页面，请打开此菜单并选择“返回用户视图”。",
+      "BackToUserViewText": "您正在管理员设置中。要使用会话、数据等用户页面，请打开此菜单并选择“退出管理员设置”。",
       "BackToUserViewTitle": "切换到用户视图"
     },
     "deploymentPreset": {
@@ -3951,7 +3951,7 @@
       "Architecture": "建筑学",
       "ArtifactDetails": "文物细节",
       "AutoScalingRule": "自动缩放规则",
-      "BackToUserView": "返回用户视图",
+      "BackToUserView": "退出管理员设置",
       "Branding": "品牌",
       "Cancel": "取消",
       "ChangePassword": "更改密码",

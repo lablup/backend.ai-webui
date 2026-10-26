@@ -3729,7 +3729,7 @@
   },
   "tourGuide": {
     "adminViewSwitch": {
-      "AdminLandingMenuText": "Mở menu hồ sơ người dùng ở góc trên bên phải: \"Quay lại giao diện người dùng\" đưa bạn đến các trang người dùng, còn \"Cài đặt quản trị\" đưa bạn quay lại đây.",
+      "AdminLandingMenuText": "Mở menu hồ sơ người dùng ở góc trên bên phải: \"Thoát cài đặt quản trị\" đưa bạn đến các trang người dùng, còn \"Cài đặt quản trị\" đưa bạn quay lại đây.",
       "AdminLandingMenuTitle": "Cài đặt quản trị đã chuyển vào menu hồ sơ",
       "AdminLandingStartText": "Sau khi đăng nhập, giờ bạn vào thẳng cài đặt quản trị thay vì các trang người dùng.",
       "AdminLandingStartTitle": "Bạn bắt đầu từ cài đặt quản trị",
@@ -3737,7 +3737,7 @@
       "AdminLandingTitle": "Giao diện siêu quản trị viên đã thay đổi",
       "BackToAdminSettingsText": "Để quay lại cài đặt quản trị, hãy mở menu này và chọn \"Cài đặt quản trị\".",
       "BackToAdminSettingsTitle": "Quay lại cài đặt quản trị",
-      "BackToUserViewText": "Bạn đang ở cài đặt quản trị. Để dùng phiên, dữ liệu và các trang người dùng khác, hãy mở menu này và chọn \"Quay lại giao diện người dùng\".",
+      "BackToUserViewText": "Bạn đang ở cài đặt quản trị. Để dùng phiên, dữ liệu và các trang người dùng khác, hãy mở menu này và chọn \"Thoát cài đặt quản trị\".",
       "BackToUserViewTitle": "Chuyển sang giao diện người dùng"
     },
     "deploymentPreset": {
@@ -3951,7 +3951,7 @@
       "Architecture": "Ngành kiến trúc",
       "ArtifactDetails": "Chi tiết tạo tác",
       "AutoScalingRule": "Quy tắc tự động mở rộng",
-      "BackToUserView": "Quay lại giao diện người dùng",
+      "BackToUserView": "Thoát cài đặt quản trị",
       "Branding": "Thương hiệu",
       "Cancel": "Huỷ bỏ",
       "ChangePassword": "Đổi mật khẩu",
