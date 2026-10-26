@@ -39,7 +39,6 @@ import {
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
   isValidUUID,
-  toLocalId,
   useBAILogger,
   useFetchKey,
   type BAIColumnType,
@@ -247,6 +246,7 @@ const DeploymentRevisionHistoryTab: React.FC<
               edges {
                 node {
                   id
+                  fieldId
                   revisionNumber
                   createdAt
 
@@ -352,7 +352,7 @@ const DeploymentRevisionHistoryTab: React.FC<
         variables: {
           input: {
             deploymentId: deployment.entityId,
-            revisionId: toLocalId(revision.id),
+            revisionId: revision.fieldId,
           },
         },
         onCompleted: (_res, errors) => {
@@ -396,13 +396,8 @@ const DeploymentRevisionHistoryTab: React.FC<
       fixed: 'left',
       sorter: true,
       render: (_value, record) => {
-        // `currentRevisionId` and `deployingRevisionId` come back as raw
-        // UUIDs from the scalar fields, while `record.id` is the
-        // Strawberry global id (`ModelRevision:<uuid>` base64). Compare
-        // in the same shape so the disable check actually matches.
-        const recordLocalId = toLocalId(record.id);
-        const isCurrent = recordLocalId === currentRevisionId;
-        const isDeploying = recordLocalId === deployingRevisionId;
+        const isCurrent = record.fieldId === currentRevisionId;
+        const isDeploying = record.fieldId === deployingRevisionId;
         // The reason carries the disabled state — every branch that blocks
         // Apply names itself, so none of them can go silent.
         const deployDisabledReason =
@@ -435,7 +430,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                 </Link>
                 <BAIFlex gap={0} align="center">
                   {'('}
-                  <BAIId globalId={record.id} />
+                  <BAIId uuid={record.fieldId} />
                   {')'}
                 </BAIFlex>
                 {isCurrent ? (

@@ -13,7 +13,6 @@ import RBACPermissionGrid, {
 } from './RBACPermissionGrid';
 import {
   INITIAL_FETCH_KEY,
-  toLocalId,
   useBAILogger,
   useFetchKey,
   useMutationWithPromise,
@@ -70,6 +69,7 @@ const RolePresetPermissionTable: React.FC<RolePresetPermissionTableProps> = ({
             edges {
               node {
                 id
+                fieldId
                 entityType
                 permission
               }
@@ -129,7 +129,7 @@ const RolePresetPermissionTable: React.FC<RolePresetPermissionTableProps> = ({
       (edge) => edge?.node,
     ),
   ).map((node) => ({
-    id: toLocalId(node.id),
+    id: node.fieldId,
     entityType: node.entityType,
     permission: node.permission,
   }));

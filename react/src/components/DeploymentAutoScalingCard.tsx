@@ -30,7 +30,6 @@ import {
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
-  toLocalId,
   useFetchKey,
   useMutationWithPromise,
 } from 'backend.ai-ui';
@@ -149,6 +148,7 @@ const DeploymentAutoScalingCardContent: React.FC<
   const [isOpenEditorModal, setIsOpenEditorModal] = useState(false);
   const [deletingRule, setDeletingRule] = useState<{
     id: string;
+    fieldId: string;
     metricName: string;
   } | null>(null);
 
@@ -200,6 +200,7 @@ const DeploymentAutoScalingCardContent: React.FC<
             edges {
               node {
                 id
+                fieldId
                 metricName
                 ...AutoScalingRuleListNodesFragment
                 ...AutoScalingRuleEditorModalFragment
@@ -278,7 +279,9 @@ const DeploymentAutoScalingCardContent: React.FC<
   };
 
   const handleDeleteRule = (ruleId: string, metricName: string) => {
-    setDeletingRule({ id: ruleId, metricName });
+    const rule = _.find(autoScalingRuleNodes, (node) => node.id === ruleId);
+    if (!rule) return;
+    setDeletingRule({ id: ruleId, fieldId: rule.fieldId, metricName });
   };
 
   return (
@@ -402,7 +405,7 @@ const DeploymentAutoScalingCardContent: React.FC<
         onOk={() => {
           if (!deletingRule) return;
           return commitDeleteMutation({
-            input: { id: toLocalId(deletingRule.id) },
+            input: { id: deletingRule.fieldId },
           })
             .then(() => {
               setDeletingRule(null);

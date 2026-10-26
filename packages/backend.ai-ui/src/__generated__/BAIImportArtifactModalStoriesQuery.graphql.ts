@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9a4c00e307f351692d706796156c803c>>
+ * @generated SignedSource<<df978a48b3121afa9a3f919ce035590d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -265,6 +265,13 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
+                    "name": "fieldId",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "version",
                     "storageKey": null
                   },
@@ -294,12 +301,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "2827e3233233526d07e24b4855114fa9",
+    "cacheID": "e2b3f70afea0f5dae44f15a93d48db98",
     "id": null,
     "metadata": {},
     "name": "BAIImportArtifactModalStoriesQuery",
     "operationKind": "query",
-    "text": "query BAIImportArtifactModalStoriesQuery {\n  artifacts(offset: 0, first: 1) {\n    edges {\n      node {\n        ...BAIImportArtifactModalArtifactFragment\n        id\n      }\n    }\n  }\n  artifactRevisions(offset: 0, first: 10) {\n    edges {\n      node {\n        ...BAIImportArtifactModalArtifactRevisionFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIArtifactDescriptionsFragment on Artifact {\n  name\n  description\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTokenFragment\n}\n\nfragment BAIArtifactTypeTokenFragment on Artifact {\n  type\n}\n\nfragment BAIImportArtifactModalArtifactFragment on Artifact {\n  id\n  entityId\n  name\n  ...BAIArtifactDescriptionsFragment\n}\n\nfragment BAIImportArtifactModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  version\n  size\n  status\n}\n"
+    "text": "query BAIImportArtifactModalStoriesQuery {\n  artifacts(offset: 0, first: 1) {\n    edges {\n      node {\n        ...BAIImportArtifactModalArtifactFragment\n        id\n      }\n    }\n  }\n  artifactRevisions(offset: 0, first: 10) {\n    edges {\n      node {\n        ...BAIImportArtifactModalArtifactRevisionFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIArtifactDescriptionsFragment on Artifact {\n  name\n  description\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTokenFragment\n}\n\nfragment BAIArtifactTypeTokenFragment on Artifact {\n  type\n}\n\nfragment BAIImportArtifactModalArtifactFragment on Artifact {\n  id\n  entityId\n  name\n  ...BAIArtifactDescriptionsFragment\n}\n\nfragment BAIImportArtifactModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  fieldId\n  version\n  size\n  status\n}\n"
   }
 };
 })();

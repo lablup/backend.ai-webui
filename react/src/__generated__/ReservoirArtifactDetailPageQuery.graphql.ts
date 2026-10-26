@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3464d386e2f08af669bb2b6950858207>>
+ * @generated SignedSource<<6f12530ad164024119781209a1ee6745>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -378,7 +378,14 @@ v25 = [
       "MODEL_STORE"
     ]
   }
-];
+],
+v26 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "fieldId",
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": [
@@ -657,6 +664,7 @@ return {
                     "selections": [
                       (v5/*: any*/),
                       (v15/*: any*/),
+                      (v26/*: any*/),
                       (v22/*: any*/),
                       (v16/*: any*/)
                     ],
@@ -710,7 +718,8 @@ return {
                       (v5/*: any*/),
                       (v21/*: any*/),
                       (v22/*: any*/),
-                      (v15/*: any*/)
+                      (v15/*: any*/),
+                      (v26/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -749,7 +758,8 @@ return {
                       (v15/*: any*/),
                       (v22/*: any*/),
                       (v21/*: any*/),
-                      (v11/*: any*/)
+                      (v11/*: any*/),
+                      (v26/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -785,7 +795,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "bdcb921f7ab62935724d29e388ce2067",
+    "cacheID": "83360b636e5bce7285feace5b50edc3c",
     "id": null,
     "metadata": {
       "connection": [
@@ -802,7 +812,7 @@ return {
     },
     "name": "ReservoirArtifactDetailPageQuery",
     "operationKind": "query",
-    "text": "query ReservoirArtifactDetailPageQuery(\n  $id: ID!\n  $offset: Int!\n  $limit: Int!\n  $filter: ArtifactRevisionFilter!\n) {\n  artifact(id: $id) {\n    id\n    name\n    ...BAIArtifactTypeTokenFragment\n    description\n    registry {\n      name\n      url\n    }\n    source {\n      name\n      url\n    }\n    updatedAt\n    pullingArtifactRevisions: revisions(filter: {status: {equals: PULLING}}, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}]) {\n      count\n      edges {\n        node {\n          id\n          status\n          ...BAIPullingArtifactRevisionAlertFragment\n          __typename\n        }\n        cursor\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n    latestVersion: revisions(limit: 1, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}]) {\n      edges {\n        node {\n          id\n          size\n          version\n          status\n          ...BAIImportArtifactModalArtifactRevisionFragment\n          ...BAIArtifactRevisionTableLatestRevisionFragment\n        }\n      }\n    }\n    revisions(offset: $offset, limit: $limit, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}], filter: $filter) {\n      count\n      edges {\n        node {\n          id\n          status\n          ...BAIArtifactRevisionTableArtifactRevisionFragment\n          ...BAIImportArtifactModalArtifactRevisionFragment\n          ...BAIDeleteArtifactRevisionsModalArtifactRevisionFragment\n          ...BAIArtifactRevisionDeleteButtonFragment\n          ...BAIArtifactRevisionDownloadButtonFragment\n          ...ImportArtifactRevisionToFolderButtonFragment\n          ...ImportArtifactRevisionToFolderModalArtifactRevisionFragment\n        }\n      }\n    }\n    ...BAIImportArtifactModalArtifactFragment\n    ...BAIDeleteArtifactRevisionsModalArtifactFragment\n  }\n  groups(is_active: true, type: [\"MODEL_STORE\"]) {\n    ...ImportArtifactRevisionToFolderModalModelStoreProjectsFragment\n  }\n}\n\nfragment BAIArtifactDescriptionsFragment on Artifact {\n  name\n  description\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTokenFragment\n}\n\nfragment BAIArtifactRevisionDeleteButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactRevisionDownloadButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactRevisionTableArtifactRevisionFragment on ArtifactRevision {\n  id\n  version\n  size\n  status\n  updatedAt\n  ...BAIArtifactStatusBadgeFragment\n  ...BAIArtifactRevisionDownloadButtonFragment\n  ...BAIArtifactRevisionDeleteButtonFragment\n}\n\nfragment BAIArtifactRevisionTableLatestRevisionFragment on ArtifactRevision {\n  id\n}\n\nfragment BAIArtifactStatusBadgeFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactTypeTokenFragment on Artifact {\n  type\n}\n\nfragment BAIDeleteArtifactRevisionsModalArtifactFragment on Artifact {\n  id\n  ...BAIArtifactDescriptionsFragment\n}\n\nfragment BAIDeleteArtifactRevisionsModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  version\n  size\n  status\n}\n\nfragment BAIImportArtifactModalArtifactFragment on Artifact {\n  id\n  entityId\n  name\n  ...BAIArtifactDescriptionsFragment\n}\n\nfragment BAIImportArtifactModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  version\n  size\n  status\n}\n\nfragment BAIPullingArtifactRevisionAlertFragment on ArtifactRevision {\n  id\n  status\n  version\n}\n\nfragment ImportArtifactRevisionToFolderButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment ImportArtifactRevisionToFolderModalArtifactRevisionFragment on ArtifactRevision {\n  id\n}\n\nfragment ImportArtifactRevisionToFolderModalModelStoreProjectsFragment on Group {\n  id\n  name\n}\n"
+    "text": "query ReservoirArtifactDetailPageQuery(\n  $id: ID!\n  $offset: Int!\n  $limit: Int!\n  $filter: ArtifactRevisionFilter!\n) {\n  artifact(id: $id) {\n    id\n    name\n    ...BAIArtifactTypeTokenFragment\n    description\n    registry {\n      name\n      url\n    }\n    source {\n      name\n      url\n    }\n    updatedAt\n    pullingArtifactRevisions: revisions(filter: {status: {equals: PULLING}}, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}]) {\n      count\n      edges {\n        node {\n          id\n          status\n          ...BAIPullingArtifactRevisionAlertFragment\n          __typename\n        }\n        cursor\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n    latestVersion: revisions(limit: 1, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}]) {\n      edges {\n        node {\n          id\n          size\n          version\n          status\n          ...BAIImportArtifactModalArtifactRevisionFragment\n          ...BAIArtifactRevisionTableLatestRevisionFragment\n        }\n      }\n    }\n    revisions(offset: $offset, limit: $limit, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}], filter: $filter) {\n      count\n      edges {\n        node {\n          id\n          status\n          ...BAIArtifactRevisionTableArtifactRevisionFragment\n          ...BAIImportArtifactModalArtifactRevisionFragment\n          ...BAIDeleteArtifactRevisionsModalArtifactRevisionFragment\n          ...BAIArtifactRevisionDeleteButtonFragment\n          ...BAIArtifactRevisionDownloadButtonFragment\n          ...ImportArtifactRevisionToFolderButtonFragment\n          ...ImportArtifactRevisionToFolderModalArtifactRevisionFragment\n        }\n      }\n    }\n    ...BAIImportArtifactModalArtifactFragment\n    ...BAIDeleteArtifactRevisionsModalArtifactFragment\n  }\n  groups(is_active: true, type: [\"MODEL_STORE\"]) {\n    ...ImportArtifactRevisionToFolderModalModelStoreProjectsFragment\n  }\n}\n\nfragment BAIArtifactDescriptionsFragment on Artifact {\n  name\n  description\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTokenFragment\n}\n\nfragment BAIArtifactRevisionDeleteButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactRevisionDownloadButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactRevisionTableArtifactRevisionFragment on ArtifactRevision {\n  id\n  version\n  size\n  status\n  updatedAt\n  ...BAIArtifactStatusBadgeFragment\n  ...BAIArtifactRevisionDownloadButtonFragment\n  ...BAIArtifactRevisionDeleteButtonFragment\n}\n\nfragment BAIArtifactRevisionTableLatestRevisionFragment on ArtifactRevision {\n  id\n}\n\nfragment BAIArtifactStatusBadgeFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactTypeTokenFragment on Artifact {\n  type\n}\n\nfragment BAIDeleteArtifactRevisionsModalArtifactFragment on Artifact {\n  id\n  ...BAIArtifactDescriptionsFragment\n}\n\nfragment BAIDeleteArtifactRevisionsModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  fieldId\n  version\n  size\n  status\n}\n\nfragment BAIImportArtifactModalArtifactFragment on Artifact {\n  id\n  entityId\n  name\n  ...BAIArtifactDescriptionsFragment\n}\n\nfragment BAIImportArtifactModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  fieldId\n  version\n  size\n  status\n}\n\nfragment BAIPullingArtifactRevisionAlertFragment on ArtifactRevision {\n  id\n  fieldId\n  status\n  version\n}\n\nfragment ImportArtifactRevisionToFolderButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment ImportArtifactRevisionToFolderModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  fieldId\n}\n\nfragment ImportArtifactRevisionToFolderModalModelStoreProjectsFragment on Group {\n  id\n  name\n}\n"
   }
 };
 })();

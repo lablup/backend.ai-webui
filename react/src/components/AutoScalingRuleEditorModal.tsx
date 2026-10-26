@@ -32,7 +32,6 @@ import {
   BAIModal,
   BAIModalProps,
   BAISkeleton,
-  toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -713,6 +712,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
     graphql`
       fragment AutoScalingRuleEditorModalFragment on AutoScalingRule {
         id
+        fieldId
         metricSource
         metricName
         minThreshold
@@ -806,7 +806,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
           commitUpdateMutation({
             variables: {
               input: {
-                id: toLocalId(autoScalingRule.id),
+                id: autoScalingRule.fieldId,
                 metricSource: values.metricSource,
                 metricName,
                 minThreshold:

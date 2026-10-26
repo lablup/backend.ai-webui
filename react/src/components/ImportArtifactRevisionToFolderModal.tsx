@@ -20,7 +20,6 @@ import {
   BAISelect,
   BAIVFolderSelect,
   BAIVFolderSelectRef,
-  convertToUUID,
   mergeFilterValues,
   toGlobalId,
   toLocalId,
@@ -90,6 +89,7 @@ const ImportArtifactRevisionToFolderModal = ({
       fragment ImportArtifactRevisionToFolderModalArtifactRevisionFragment on ArtifactRevision
       @relay(plural: true) {
         id @required(action: THROW)
+        fieldId
       }
     `,
     selectedArtifactRevisionFrgmt,
@@ -150,7 +150,7 @@ const ImportArtifactRevisionToFolderModal = ({
 
   const selectedArtifactRevisionIds = _.map(
     selectedArtifactRevisions,
-    (revision) => revision.id,
+    (revision) => revision.fieldId,
   );
 
   return (
@@ -179,10 +179,7 @@ const ImportArtifactRevisionToFolderModal = ({
               importArtifacts({
                 variables: {
                   input: {
-                    artifactRevisionIds: _.map(
-                      selectedArtifactRevisionIds,
-                      (id) => toLocalId(id),
-                    ),
+                    artifactRevisionIds: selectedArtifactRevisionIds,
                     vfolderId: values.vfolderId
                       ? toLocalId(values.vfolderId)
                       : null,
@@ -363,13 +360,8 @@ const ImportArtifactRevisionToFolderModal = ({
         onRequestClose={(result) => {
           toggleIsOpenCreateModal();
           if (result) {
-            // Set the created folder as the selected value in the vfolderId
-            // TODO: FolderCreateModalV2 returns id without '-'.
             formRef.current?.setFieldsValue({
-              vfolderId: toGlobalId(
-                'VirtualFolderNode',
-                convertToUUID(result.id),
-              ),
+              vfolderId: toGlobalId('VirtualFolderNode', result.entityId),
             });
             vfolderSelectRef.current?.refetch();
           }

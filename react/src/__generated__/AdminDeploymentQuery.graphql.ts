@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3058811af5eb38ca3ae6ce3fb0a5a864>>
+ * @generated SignedSource<<ab06d892df41de445c30a6107d0459ab>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -316,23 +316,30 @@ v15 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
+  "name": "fieldId",
+  "storageKey": null
+},
+v16 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
   "name": "value",
   "storageKey": null
 },
-v16 = [
+v17 = [
   (v8/*: any*/),
-  (v15/*: any*/)
+  (v16/*: any*/)
 ],
-v17 = {
+v18 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "key",
   "storageKey": null
 },
-v18 = [
-  (v17/*: any*/),
-  (v15/*: any*/)
+v19 = [
+  (v18/*: any*/),
+  (v16/*: any*/)
 ];
 return {
   "fragment": {
@@ -673,6 +680,7 @@ return {
                         ],
                         "storageKey": null
                       },
+                      (v15/*: any*/),
                       (v11/*: any*/),
                       {
                         "alias": null,
@@ -747,7 +755,7 @@ return {
                                 "kind": "LinkedField",
                                 "name": "entries",
                                 "plural": true,
-                                "selections": (v16/*: any*/),
+                                "selections": (v17/*: any*/),
                                 "storageKey": null
                               }
                             ],
@@ -799,7 +807,7 @@ return {
                                 "kind": "LinkedField",
                                 "name": "entries",
                                 "plural": true,
-                                "selections": (v16/*: any*/),
+                                "selections": (v17/*: any*/),
                                 "storageKey": null
                               }
                             ],
@@ -820,7 +828,7 @@ return {
                                 "name": "presetId",
                                 "storageKey": null
                               },
-                              (v15/*: any*/),
+                              (v16/*: any*/),
                               {
                                 "alias": null,
                                 "args": null,
@@ -845,7 +853,7 @@ return {
                                     "name": "targetSpec",
                                     "plural": false,
                                     "selections": [
-                                      (v17/*: any*/)
+                                      (v18/*: any*/)
                                     ],
                                     "storageKey": null
                                   },
@@ -929,7 +937,7 @@ return {
                                 "kind": "LinkedField",
                                 "name": "tags",
                                 "plural": true,
-                                "selections": (v18/*: any*/),
+                                "selections": (v19/*: any*/),
                                 "storageKey": null
                               },
                               {
@@ -939,7 +947,7 @@ return {
                                 "kind": "LinkedField",
                                 "name": "labels",
                                 "plural": true,
-                                "selections": (v18/*: any*/),
+                                "selections": (v19/*: any*/),
                                 "storageKey": null
                               }
                             ],
@@ -1128,16 +1136,10 @@ return {
                             "name": "node",
                             "plural": false,
                             "selections": [
-                              (v17/*: any*/),
-                              (v15/*: any*/),
+                              (v18/*: any*/),
+                              (v16/*: any*/),
                               (v6/*: any*/),
-                              {
-                                "alias": null,
-                                "args": null,
-                                "kind": "ScalarField",
-                                "name": "fieldId",
-                                "storageKey": null
-                              }
+                              (v15/*: any*/)
                             ],
                             "storageKey": null
                           }
@@ -1203,12 +1205,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "2a5a397d9043b9b4ab2548e377937e95",
+    "cacheID": "aa512d35836997142ef7df6b97d03b14",
     "id": null,
     "metadata": {},
     "name": "AdminDeploymentQuery",
     "operationKind": "query",
-    "text": "query AdminDeploymentQuery(\n  $filter: DeploymentFilter\n  $orderBy: [DeploymentOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminDeployments(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        ...BAIModelDeploymentNodesFragment\n        ...DeploymentSettingModal_deployment\n        metadata {\n          name\n          status\n        }\n        currentRevision {\n          id\n          revisionNumber\n          ...DeploymentRevisionDetail_revision\n        }\n      }\n    }\n  }\n}\n\nfragment BAIDeploymentOwnerInfo_deployment on ModelDeployment {\n  id\n  creator {\n    id\n    basicInfo {\n      email\n      username\n      fullName\n    }\n  }\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment BAIModelDeploymentNodesFragment on ModelDeployment {\n  id\n  entityId\n  currentRevisionId\n  metadata {\n    projectId\n    domainName\n    name\n    status\n    createdAt\n    updatedAt\n    resourceGroupName\n    projectV2 {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n  networkAccess {\n    endpointUrl\n    preferredDomainName\n    openToPublic\n  }\n  defaultDeploymentStrategy {\n    type\n  }\n  replicaState {\n    desiredReplicaCount\n  }\n  runningReplicas: replicas(filter: {status: {equals: RUNNING}}) {\n    count\n  }\n  currentRevision {\n    id\n    revisionNumber\n    modelMountConfig {\n      vfolder {\n        id\n        name\n      }\n    }\n  }\n  entityLabels(limit: 100) {\n    ...BAIEntityLabelTokensFragment\n    ...BAIEntityLabelSettingModalFragment\n  }\n  ...BAIDeploymentOwnerInfo_deployment\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    inferenceRuntimeConfig\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues {\n      presetId\n      value\n      preset {\n        name\n        displayName\n        targetSpec {\n          key\n        }\n        id\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    subpath\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n    ...BAIImageNodeSimpleTagV2Fragment\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n}\n\nfragment DeploymentSettingModal_deployment on ModelDeployment {\n  id\n  entityId\n  metadata {\n    name\n    tags\n    resourceGroupName\n  }\n  networkAccess {\n    openToPublic\n  }\n  replicaState {\n    desiredReplicaCount\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
+    "text": "query AdminDeploymentQuery(\n  $filter: DeploymentFilter\n  $orderBy: [DeploymentOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminDeployments(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        ...BAIModelDeploymentNodesFragment\n        ...DeploymentSettingModal_deployment\n        metadata {\n          name\n          status\n        }\n        currentRevision {\n          id\n          revisionNumber\n          ...DeploymentRevisionDetail_revision\n        }\n      }\n    }\n  }\n}\n\nfragment BAIDeploymentOwnerInfo_deployment on ModelDeployment {\n  id\n  creator {\n    id\n    basicInfo {\n      email\n      username\n      fullName\n    }\n  }\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment BAIModelDeploymentNodesFragment on ModelDeployment {\n  id\n  entityId\n  currentRevisionId\n  metadata {\n    projectId\n    domainName\n    name\n    status\n    createdAt\n    updatedAt\n    resourceGroupName\n    projectV2 {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n  networkAccess {\n    endpointUrl\n    preferredDomainName\n    openToPublic\n  }\n  defaultDeploymentStrategy {\n    type\n  }\n  replicaState {\n    desiredReplicaCount\n  }\n  runningReplicas: replicas(filter: {status: {equals: RUNNING}}) {\n    count\n  }\n  currentRevision {\n    id\n    revisionNumber\n    modelMountConfig {\n      vfolder {\n        id\n        name\n      }\n    }\n  }\n  entityLabels(limit: 100) {\n    ...BAIEntityLabelTokensFragment\n    ...BAIEntityLabelSettingModalFragment\n  }\n  ...BAIDeploymentOwnerInfo_deployment\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  fieldId\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    inferenceRuntimeConfig\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues {\n      presetId\n      value\n      preset {\n        name\n        displayName\n        targetSpec {\n          key\n        }\n        id\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    subpath\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n    ...BAIImageNodeSimpleTagV2Fragment\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n}\n\nfragment DeploymentSettingModal_deployment on ModelDeployment {\n  id\n  entityId\n  metadata {\n    name\n    tags\n    resourceGroupName\n  }\n  networkAccess {\n    openToPublic\n  }\n  replicaState {\n    desiredReplicaCount\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
   }
 };
 })();
