@@ -1,0 +1,182 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-10-26T17:07:26.774Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 1,
+        "changes": 12,
+        "added": 0,
+        "modified": 12,
+        "removed": 0,
+        "images": 11,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "rbac_management",
+          "title": "RBAC Management",
+          "status": "modified",
+          "url": "next/en/rbac_management.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/rbac_management/rbac_management.md",
+          "counts": {
+            "added": 0,
+            "modified": 12,
+            "removed": 0,
+            "images": 11,
+            "total": 12
+          },
+          "fingerprints": [
+            "93ebae15b7fd",
+            "b62fe4944d88",
+            "2ea8f60beab8",
+            "5b130bb5f945",
+            "2f3e0cc7a1c7",
+            "51a58ad09961",
+            "4903fe5e3622",
+            "96ddac3951e1",
+            "3a0685a2ca95",
+            "266bd0c33af5",
+            "6c7073061c66",
+            "cea2037709f8"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 1,
+        "changes": 12,
+        "added": 0,
+        "modified": 12,
+        "removed": 0,
+        "images": 11,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "rbac_management",
+          "title": "RBAC管理",
+          "status": "modified",
+          "url": "next/ja/rbac_management.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/rbac_management/rbac_management.md",
+          "counts": {
+            "added": 0,
+            "modified": 12,
+            "removed": 0,
+            "images": 11,
+            "total": 12
+          },
+          "fingerprints": [
+            "0d365af2ff3c",
+            "00beb0520fa3",
+            "2da9eef2b8d5",
+            "6ce9ec8d6b0a",
+            "a35a384a81f0",
+            "a0207e54830e",
+            "331cd6436d70",
+            "17ecb07bcf20",
+            "b145fe35ef1a",
+            "fbeb6c1ee6d5",
+            "2d77f90f1ae1",
+            "4703f63ccabc"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 1,
+        "changes": 12,
+        "added": 0,
+        "modified": 12,
+        "removed": 0,
+        "images": 11,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "rbac_management",
+          "title": "RBAC 관리",
+          "status": "modified",
+          "url": "next/ko/rbac_management.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/rbac_management/rbac_management.md",
+          "counts": {
+            "added": 0,
+            "modified": 12,
+            "removed": 0,
+            "images": 11,
+            "total": 12
+          },
+          "fingerprints": [
+            "3e4699d4418e",
+            "887c673271d9",
+            "86e20261823a",
+            "f74fc6bd397d",
+            "1651b8888763",
+            "b0fb8e4cd6f9",
+            "19cf4fc455cc",
+            "058ce2f03f61",
+            "159dcf84866c",
+            "af9325fea533",
+            "490b08e0e309",
+            "bb53e45aa2a9"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 1,
+        "changes": 12,
+        "added": 0,
+        "modified": 12,
+        "removed": 0,
+        "images": 11,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "rbac_management",
+          "title": "การจัดการ RBAC",
+          "status": "modified",
+          "url": "next/th/rbac_management.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/rbac_management/rbac_management.md",
+          "counts": {
+            "added": 0,
+            "modified": 12,
+            "removed": 0,
+            "images": 11,
+            "total": 12
+          },
+          "fingerprints": [
+            "d350081c96cd",
+            "fdbbb57b4ce6",
+            "495d65664876",
+            "e92b25952d87",
+            "b1c9ee931410",
+            "609bdbe0415f",
+            "8ae6760c4905",
+            "7c41f810f278",
+            "d472256e5e45",
+            "f7c43e546442",
+            "aaa0af99a20c",
+            "bcc14ad5b611"
+          ]
+        }
+      ]
+    }
+  }
+}
