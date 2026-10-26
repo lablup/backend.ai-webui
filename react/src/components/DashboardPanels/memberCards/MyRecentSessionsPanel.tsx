@@ -3,10 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { MyRecentSessionsPanelQuery } from '../../../__generated__/MyRecentSessionsPanelQuery.graphql';
-import { useWebUINavigate } from '../../../hooks';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../../../hooks/useBAISetting';
 import type { PanelComponentProps } from '../types';
+import { useOpenSessionDetail } from '../useOpenSessionDetail';
 import MemberCard, { NoProjectText, mineProjectId } from './MemberCard';
 import {
   BAILink,
@@ -16,7 +16,6 @@ import {
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { useLocation } from 'react-router-dom';
 
 const PAGE_SIZE = 5;
 
@@ -25,8 +24,7 @@ const MyRecentSessionsTable: React.FC<{
   fetchKey: string;
 }> = ({ projectId, fetchKey }) => {
   'use memo';
-  const location = useLocation();
-  const webuiNavigate = useWebUINavigate();
+  const openSessionDetail = useOpenSessionDetail();
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.DashboardMyRecentSessions',
   );
@@ -67,17 +65,6 @@ const MyRecentSessionsTable: React.FC<{
     deferredVariables,
     { fetchPolicy: 'store-and-network', fetchKey },
   );
-
-  // The page's session-detail opener reads `sessionDetail`, as on the session list.
-  const openSessionDetail = (sessionId: string) => {
-    const params = new URLSearchParams(location.search);
-    params.set('sessionDetail', sessionId);
-    webuiNavigate({
-      pathname: location.pathname,
-      hash: location.hash,
-      search: params.toString(),
-    });
-  };
 
   return (
     <BAISessionNodesV2

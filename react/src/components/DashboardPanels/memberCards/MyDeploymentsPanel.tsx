@@ -4,29 +4,19 @@
  */
 import type { MyDeploymentsPanelQuery } from '../../../__generated__/MyDeploymentsPanelQuery.graphql';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
-import { useProjectPath } from '../../../hooks/useRouteScope';
 import type { PanelComponentProps } from '../types';
+import DeploymentHealthTable from './DeploymentHealthTable';
 import MemberCard, { NoProjectText, mineProjectId } from './MemberCard';
-import { Badge } from '@lablup/ui-common/Badge';
-import {
-  BAIModelDeploymentNodes,
-  BAINameActionCell,
-  filterOutNullAndUndefined,
-  toLocalId,
-} from 'backend.ai-ui';
+import { filterOutNullAndUndefined } from 'backend.ai-ui';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-
-const COLUMN_KEYS = ['name', 'status', 'replicaSummary'];
 
 const MyDeploymentsTable: React.FC<{ projectId: string; fetchKey: string }> = ({
   projectId,
   fetchKey,
 }) => {
   'use memo';
-  const { t } = useTranslation();
-  const buildProjectPath = useProjectPath();
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -74,71 +64,17 @@ const MyDeploymentsTable: React.FC<{ projectId: string; fetchKey: string }> = ({
     deferredVariables,
     { fetchPolicy: 'store-and-network', fetchKey },
   );
-  const nodes = filterOutNullAndUndefined(
-    data.myDeployments?.edges.map((edge) => edge?.node),
-  );
-  const healthById = new Map(
-    nodes.map((node) => [
-      node.id,
-      {
-        healthy: node.healthyReplicas?.count ?? 0,
-        desired: node.replicaState?.desiredReplicaCount ?? 0,
-      },
-    ]),
-  );
-
   return (
-    <BAIModelDeploymentNodes
-      deploymentsFrgmt={nodes}
-      disableSorter
+    <DeploymentHealthTable
+      nodes={filterOutNullAndUndefined(
+        data.myDeployments?.edges.map((edge) => edge?.node),
+      )}
+      total={data.myDeployments?.count ?? 0}
       loading={deferredVariables !== variables}
-      customizeColumns={(base) => [
-        ...base
-          .filter((column) => COLUMN_KEYS.includes(String(column.key)))
-          .map((column) =>
-            column.key === 'name'
-              ? {
-                  ...column,
-                  render: (
-                    _value: unknown,
-                    record: {
-                      id: string;
-                      metadata?: { name?: string | null } | null;
-                    },
-                  ) => (
-                    <BAINameActionCell
-                      title={record.metadata?.name ?? '-'}
-                      to={`${buildProjectPath('deployments')}/${toLocalId(record.id)}`}
-                    />
-                  ),
-                }
-              : column,
-          ),
-        {
-          key: 'health',
-          title: t('dashboard.card.ReplicaHealth'),
-          render: (_value: unknown, record: { id: string }) => {
-            const health = healthById.get(record.id);
-            if (!health || health.desired === 0) return '-';
-            const isHealthy = health.healthy >= health.desired;
-            return (
-              <Badge
-                variant={isHealthy ? 'success' : 'warning'}
-                label={
-                  isHealthy
-                    ? t('dashboard.card.Healthy')
-                    : t('dashboard.card.Unhealthy')
-                }
-              />
-            );
-          },
-        },
-      ]}
       pagination={{
         pageSize: tablePaginationOption.pageSize,
         current: tablePaginationOption.current,
-        total: data.myDeployments?.count ?? 0,
-        onChange: (current: number, pageSize: number) =>
+        onChange: (current, pageSize) =>
           setTablePaginationOption({ current, pageSize }),
       }}
     />
