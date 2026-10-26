@@ -87,6 +87,7 @@ const MyFolderCounts: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
           media={
             invitationCount > 0 ? (
               <BAILink
+                style={{ textAlign: 'start' }}
                 onClick={() =>
                   webuiNavigate({
                     pathname: buildProjectPath('data'),
