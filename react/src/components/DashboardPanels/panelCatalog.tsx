@@ -2,20 +2,30 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useWebUINavigate } from '../../hooks';
-import { useCurrentUserRole } from '../../hooks/backendai';
-import { useProjectPath } from '../../hooks/useRouteScope';
 import ActiveAgents from '../ActiveAgents';
 import AgentStats from '../AgentStats';
-import MyResource from '../MyResource';
-import MyResourceWithinResourceGroup from '../MyResourceWithinResourceGroup';
 import QuotaPerStorageVolumeDashboardItem from '../QuotaPerStorageVolumeDashboardItem';
 import RecentlyCreatedSession from '../RecentlyCreatedSession';
 import SessionCountDashboardItem from '../SessionCountDashboardItem';
-import StorageStatusPanelCard from '../StorageStatusPanelCard';
 import TotalResourceWithinResourceGroup from '../TotalResourceWithinResourceGroup';
 import { useDashboardRefreshQuery } from './DashboardRefreshContext';
 import { DEFAULT_PANEL_LAYOUTS, presetKey } from './defaults';
+import MyActivityPanel from './memberCards/MyActivityPanel';
+import MyDeploymentsPanel from './memberCards/MyDeploymentsPanel';
+import MyFoldersPanel from './memberCards/MyFoldersPanel';
+import MyRecentSessionsPanel from './memberCards/MyRecentSessionsPanel';
+import MyResourcesPanel from './memberCards/MyResourcesPanel';
+import MySessionsPanel from './memberCards/MySessionsPanel';
+import ResourceGroupTotalPanel from './memberCards/ResourceGroupTotalPanel';
+import ResourcePresetsPanel from './memberCards/ResourcePresetsPanel';
+import SessionResultPanel from './memberCards/SessionResultPanel';
+import {
+  CreateFolderPanel,
+  StartBatchSessionPanel,
+  StartDeploymentPanel,
+  StartFromURLPanel,
+  StartSessionPanel,
+} from './memberCards/StartActionPanels';
 import { resourceKeys, resourceRegistry } from './resourceRegistry';
 import type {
   PanelComponentProps,
@@ -30,8 +40,8 @@ import { BAIBoardItemErrorBoundary, BAISkeleton } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
-// The built-in cards as catalog components, each wrapped exactly as the pages
-// wrapped it before the catalog existed.
+// The admin pages' built-in cards, each wrapped as the page wrapped it before
+// the catalog existed; the member cards live in `memberCards/`.
 
 const InlineSkeleton: React.FC = () => {
   'use memo';
@@ -45,101 +55,17 @@ const PaddedSkeleton: React.FC = () => {
   return <BAISkeleton style={{ padding: token('--spacing-5') }} />;
 };
 
-const MySessionPanel: React.FC<PanelComponentProps> = ({ queryRefs }) => {
-  'use memo';
-  const { t } = useTranslation();
-  const userRole = useCurrentUserRole();
-  return (
-    <Suspense fallback={<InlineSkeleton />}>
-      <SessionCountDashboardItem
-        queryRef={queryRefs.queryRef}
-        title={
-          userRole === 'superadmin'
-            ? t('session.ActiveSessions')
-            : t('session.MySessions')
-        }
-      />
-    </Suspense>
-  );
-};
-
 const ActiveSessionsPanel: React.FC<PanelComponentProps> = ({ queryRefs }) => {
   'use memo';
   const { t } = useTranslation();
-  return (
+  return queryRefs.queryRef ? (
     <Suspense fallback={<InlineSkeleton />}>
       <SessionCountDashboardItem
         queryRef={queryRefs.queryRef}
         title={t('session.ActiveSessions')}
       />
     </Suspense>
-  );
-};
-
-const MyResourcePanel: React.FC<PanelComponentProps> = ({
-  fetchKey,
-  isRefetching,
-}) => {
-  'use memo';
-  const { t } = useTranslation();
-  return (
-    <BAIBoardItemErrorBoundary
-      title={t('webui.menu.MyResources')}
-      status="error"
-    >
-      <Suspense fallback={<PaddedSkeleton />}>
-        <MyResource
-          fetchKey={fetchKey}
-          refetching={isRefetching}
-          hideRefreshButton
-        />
-      </Suspense>
-    </BAIBoardItemErrorBoundary>
-  );
-};
-
-const MyResourceWithinResourceGroupPanel: React.FC<PanelComponentProps> = ({
-  fetchKey,
-  isRefetching,
-}) => {
-  'use memo';
-  const { t } = useTranslation();
-  return (
-    <BAIBoardItemErrorBoundary
-      title={t('webui.menu.MyResourcesInResourceGroup')}
-      status="error"
-    >
-      <Suspense fallback={<PaddedSkeleton />}>
-        <MyResourceWithinResourceGroup
-          fetchKey={fetchKey}
-          refetching={isRefetching}
-          hideRefreshButton
-        />
-      </Suspense>
-    </BAIBoardItemErrorBoundary>
-  );
-};
-
-const FolderStatusPanel: React.FC<PanelComponentProps> = ({ fetchKey }) => {
-  'use memo';
-  const { t } = useTranslation();
-  const webuiNavigate = useWebUINavigate();
-  const buildProjectPath = useProjectPath();
-  return (
-    <BAIBoardItemErrorBoundary title={t('data.FolderStatus')} status="error">
-      <Suspense fallback={<PaddedSkeleton />}>
-        <StorageStatusPanelCard
-          fetchKey={fetchKey}
-          onRequestBadgeClick={() => {
-            webuiNavigate({
-              pathname: buildProjectPath('data'),
-              search: new URLSearchParams({ invitation: 'true' }).toString(),
-            });
-          }}
-        />
-      </Suspense>
-    </BAIBoardItemErrorBoundary>
-  );
+  ) : null;
 };
 
 const QuotaPerStorageVolumePanel: React.FC<PanelComponentProps> = () => {
@@ -158,11 +84,13 @@ const QuotaPerStorageVolumePanel: React.FC<PanelComponentProps> = () => {
   );
 };
 
-const TotalResourceWithinResourceGroupPanel: React.FC<PanelComponentProps> = ({
-  queryRefs,
-  isRefetching,
-}) => {
+const TotalResourceWithinResourceGroupPanel: React.FC<PanelComponentProps> = (
+  props,
+) => {
   'use memo';
+  const { queryRefs, isRefetching, scope } = props;
+  // The member page follows the filter bar's resource groups with its own query.
+  if (scope.kind === 'mine') return <ResourceGroupTotalPanel {...props} />;
   return queryRefs.totalResourceQueryRef ? (
     <TotalResourceWithinResourceGroup
       queryRef={queryRefs.totalResourceQueryRef}
@@ -198,9 +126,9 @@ const RecentlyCreatedSessionPanel: React.FC<PanelComponentProps> = ({
 }) => {
   'use memo';
   const project = useDashboardProject();
-  return (
+  return queryRefs.queryRef ? (
     <RecentlyCreatedSession queryRef={queryRefs.queryRef} project={project} />
-  );
+  ) : null;
 };
 
 const size = (columnSpan: number, rowSpan: number): PanelSize => ({
@@ -214,17 +142,76 @@ const ALL_PAGES: ReadonlyArray<PanelPage> = [
   'admin',
 ];
 
-/** The cards the project and admin dashboards hard-coded before the catalog. */
-const BUILTIN_PANELS: ReadonlyArray<PanelDefinition> = [
+const START_SIZE = { defaultSize: size(1, 3), minSize: size(1, 2) };
+
+/** The member page's cards and the shared ones, in the order a new board places them. */
+const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
+  {
+    key: 'start.session',
+    page: ['project'],
+    group: 'start',
+    titleKey: 'start.StartSession',
+    requires: { menuKey: 'job' },
+    kind: 'custom',
+    Component: StartSessionPanel,
+    ...START_SIZE,
+    refresh: { min: '10m' },
+  },
+  {
+    key: 'start.batchSession',
+    page: ['project'],
+    group: 'start',
+    titleKey: 'start.StartBatchSession',
+    requires: { menuKey: 'job' },
+    kind: 'custom',
+    Component: StartBatchSessionPanel,
+    ...START_SIZE,
+    refresh: { min: '10m' },
+  },
+  {
+    key: 'start.folder',
+    page: ['project'],
+    group: 'start',
+    titleKey: 'start.CreateFolder',
+    requires: { menuKey: 'data' },
+    kind: 'custom',
+    Component: CreateFolderPanel,
+    ...START_SIZE,
+    refresh: { min: '10m' },
+  },
+  {
+    key: 'start.deployment',
+    page: ['project'],
+    group: 'start',
+    titleKey: 'start.StartDeployment',
+    requires: {
+      menuKey: 'deployments',
+      config: (config) => !!config.enableModelFolders,
+    },
+    kind: 'custom',
+    Component: StartDeploymentPanel,
+    ...START_SIZE,
+    refresh: { min: '10m' },
+  },
+  {
+    key: 'start.url',
+    page: ['project'],
+    group: 'start',
+    titleKey: 'start.StartFromURL',
+    requires: { menuKey: 'import' },
+    kind: 'custom',
+    Component: StartFromURLPanel,
+    ...START_SIZE,
+    refresh: { min: '10m' },
+  },
   {
     key: 'mySession',
     page: ['project'],
     group: 'session',
     titleKey: 'session.MySessions',
-    superadminTitleKey: 'session.ActiveSessions',
     kind: 'custom',
-    Component: MySessionPanel,
-    defaultSize: size(2, 2),
+    Component: MySessionsPanel,
+    defaultSize: size(2, 3),
     minSize: size(2, 2),
     refresh: { min: '15s' },
   },
@@ -240,48 +227,48 @@ const BUILTIN_PANELS: ReadonlyArray<PanelDefinition> = [
     refresh: { min: '15s' },
   },
   {
+    key: 'sessionResult',
+    page: ['project'],
+    group: 'session',
+    titleKey: 'dashboard.card.SessionResults',
+    kind: 'custom',
+    Component: SessionResultPanel,
+    defaultSize: size(2, 2),
+    minSize: size(2, 2),
+    refresh: { min: '1m' },
+  },
+  {
+    key: 'myRecentSessions',
+    page: ['project'],
+    group: 'session',
+    titleKey: 'dashboard.card.MyRecentSessions',
+    kind: 'custom',
+    Component: MyRecentSessionsPanel,
+    defaultSize: size(4, 3),
+    minSize: size(2, 2),
+    refresh: { min: '1m' },
+  },
+  {
     key: 'myResource',
     page: ['project'],
     group: 'resource',
     titleKey: 'webui.menu.MyResources',
     kind: 'custom',
-    Component: MyResourcePanel,
-    defaultSize: size(2, 2),
+    Component: MyResourcesPanel,
+    defaultSize: size(2, 3),
     minSize: size(2, 2),
     refresh: { min: '30s' },
   },
   {
-    key: 'myResourceWithinResourceGroup',
+    key: 'resourcePresets',
     page: ['project'],
     group: 'resource',
-    titleKey: 'webui.menu.MyResourcesInResourceGroup',
+    titleKey: 'dashboard.card.ResourcePresets',
     kind: 'custom',
-    Component: MyResourceWithinResourceGroupPanel,
-    defaultSize: size(2, 2),
+    Component: ResourcePresetsPanel,
+    defaultSize: size(2, 3),
     minSize: size(2, 2),
     refresh: { min: '30s' },
-  },
-  {
-    key: 'folderStatus',
-    page: ['project'],
-    group: 'resource',
-    titleKey: 'data.FolderStatus',
-    kind: 'custom',
-    Component: FolderStatusPanel,
-    defaultSize: size(2, 2),
-    minSize: size(2, 2),
-    refresh: { min: '5m' },
-  },
-  {
-    key: 'quotaPerStorageVolume',
-    page: ['project'],
-    group: 'resource',
-    titleKey: 'data.QuotaPerStorageVolume',
-    kind: 'custom',
-    Component: QuotaPerStorageVolumePanel,
-    defaultSize: size(2, 2),
-    minSize: size(2, 2),
-    refresh: { min: '5m' },
   },
   {
     key: 'totalResourceWithinResourceGroup',
@@ -298,6 +285,55 @@ const BUILTIN_PANELS: ReadonlyArray<PanelDefinition> = [
     minSize: size(2, 2),
     refresh: { min: '30s' },
   },
+  {
+    key: 'folderStatus',
+    page: ['project'],
+    group: 'resource',
+    titleKey: 'data.MyFolders',
+    kind: 'custom',
+    Component: MyFoldersPanel,
+    defaultSize: size(2, 2),
+    minSize: size(2, 2),
+    refresh: { min: '5m' },
+  },
+  {
+    key: 'quotaPerStorageVolume',
+    page: ['project'],
+    group: 'resource',
+    titleKey: 'data.QuotaPerStorageVolume',
+    kind: 'custom',
+    Component: QuotaPerStorageVolumePanel,
+    defaultSize: size(2, 2),
+    minSize: size(2, 2),
+    refresh: { min: '5m' },
+  },
+  {
+    key: 'myDeployments',
+    page: ['project'],
+    group: 'deployment',
+    titleKey: 'dashboard.card.MyDeployments',
+    requires: { menuKey: 'deployments' },
+    kind: 'custom',
+    Component: MyDeploymentsPanel,
+    defaultSize: size(2, 3),
+    minSize: size(2, 2),
+    refresh: { min: '30s' },
+  },
+  {
+    key: 'myActivity',
+    page: ['project'],
+    group: 'activity',
+    titleKey: 'dashboard.card.MyActivity',
+    kind: 'custom',
+    Component: MyActivityPanel,
+    defaultSize: size(4, 3),
+    minSize: size(2, 2),
+    refresh: { min: '1m' },
+  },
+];
+
+/** The admin pages' remaining built-in cards. */
+const ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
   {
     key: 'agentStats',
     page: ['admin'],
@@ -324,7 +360,7 @@ const BUILTIN_PANELS: ReadonlyArray<PanelDefinition> = [
   },
   {
     key: 'recentlyCreatedSession',
-    page: ['project', 'admin'],
+    page: ['admin'],
     group: 'session',
     titleKey: 'session.RecentlyCreatedSessions',
     kind: 'custom',
@@ -380,6 +416,7 @@ const PRESET_PANELS: ReadonlyArray<PanelDefinition> = resourceKeys.map(
 );
 
 export const PANEL_CATALOG: ReadonlyArray<PanelDefinition> = [
-  ...BUILTIN_PANELS,
+  ...MEMBER_PANELS,
+  ...ADMIN_PANELS,
   ...PRESET_PANELS,
 ];

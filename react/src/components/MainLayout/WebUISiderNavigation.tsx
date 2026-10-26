@@ -121,7 +121,7 @@ const WebUISiderNavigation: React.FC<WebUISiderNavigationProps> = ({
         <BAIMenu
           hideGroupName={collapsed}
           selectedKeys={filterOutEmpty([
-            currentMenuKey || 'start',
+            currentMenuKey || 'dashboard',
             // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
             //       and change 'job' key to 'session'
             currentMenuKey === 'session' ? 'job' : '',

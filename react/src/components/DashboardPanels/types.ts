@@ -203,6 +203,7 @@ export interface PanelCatalogConfig {
   blockList?: ReadonlyArray<string>;
   inactiveList?: ReadonlyArray<string>;
   hideAgents?: boolean;
+  enableModelFolders?: boolean;
 }
 
 export interface PanelCatalogContext {
@@ -211,9 +212,9 @@ export interface PanelCatalogContext {
   config: PanelCatalogConfig;
 }
 
-/** Fragment keys of the page queries the built-in cards still read (until they get their own queries). */
+/** Fragment keys of the admin page query the built-in admin cards still read. */
 export interface DashboardPageQueryRefs {
-  queryRef: SessionCountDashboardItemFragment$key &
+  queryRef?: SessionCountDashboardItemFragment$key &
     RecentlyCreatedSessionFragment$key;
   totalResourceQueryRef?: TotalResourceWithinResourceGroupFragment$key | null;
   agentStatsQueryRef?: AgentStatsFragment$key | null;
@@ -228,6 +229,8 @@ export interface PanelComponentProps {
   queryRefs: DashboardPageQueryRefs;
   /** Refreshes every card now. */
   onRefresh: () => void;
+  /** Saves the card's own filter on the board. */
+  onChangeFilter?: (filter: PersistedPanelV2['filter']) => void;
   onEdit?: () => void;
   onRemove?: () => void;
 }
@@ -242,7 +245,8 @@ export interface PanelDefinition {
   superadminTitleKey?: string;
   requires?: {
     role?: 'projectAdmin' | 'superadmin';
-    menuKey?: MenuKeys;
+    /** `import` is a blockList key of its own, though it has no menu item. */
+    menuKey?: MenuKeys | 'import';
     /** False locks the entry: listed but disabled, and not rendered. */
     config?: (
       config: PanelCatalogConfig,

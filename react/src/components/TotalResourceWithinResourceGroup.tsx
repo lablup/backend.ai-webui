@@ -170,6 +170,8 @@ interface TotalResourceWithinResourceGroupProps extends BAIFlexProps {
   displayType?: 'used' | 'free';
   onDisplayTypeChange?: (type: 'used' | 'free') => void;
   extra?: ReactNode;
+  /** Fixes the resource group (the parent query's); without it the header's group and a picker are used. */
+  resourceGroup?: string;
 }
 
 export const useIsAvailableTotalResourceWithinResourceGroup = () => {
@@ -183,11 +185,19 @@ export const useIsAvailableTotalResourceWithinResourceGroup = () => {
 
 const TotalResourceWithinResourceGroup: React.FC<
   TotalResourceWithinResourceGroupProps
-> = ({ queryRef, refetching, hideRefreshButton, extra, ...props }) => {
+> = ({
+  queryRef,
+  refetching,
+  hideRefreshButton,
+  extra,
+  resourceGroup,
+  ...props
+}) => {
   'use memo';
   const { t } = useTranslation();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
-  const currentResourceGroup = useCurrentResourceGroupValue();
+  const headerResourceGroup = useCurrentResourceGroupValue();
+  const currentResourceGroup = resourceGroup ?? headerResourceGroup;
   const deferredSelectedResourceGroup = useDeferredValue(currentResourceGroup);
   const userRole = useCurrentUserRole();
   const { token } = useTheme();
@@ -247,13 +257,13 @@ const TotalResourceWithinResourceGroup: React.FC<
   });
 
   useEffect(() => {
-    if (deferredSelectedResourceGroup) {
+    if (deferredSelectedResourceGroup && !resourceGroup) {
       refetch({
         resourceGroup: deferredSelectedResourceGroup,
         isSuperAdmin: userRole === 'superadmin',
       });
     }
-  }, [deferredSelectedResourceGroup, refetch, userRole]);
+  }, [deferredSelectedResourceGroup, refetch, userRole, resourceGroup]);
 
   const firstPageAgents: Array<AgentSlots> = filterOutNullAndUndefined(
     agent_nodes
@@ -433,14 +443,18 @@ const TotalResourceWithinResourceGroup: React.FC<
                 fontWeightStrong). 16px is heading-5 on the restored antd type
                 ramp; `level={3}` tracked the same 16px under Astryx's own. */}
             <Heading level={5}>{t('webui.menu.TotalResourcesIn')}</Heading>
-            <SharedResourceGroupSelectForCurrentProject
-              size="small"
-              showSearch
-              style={{ minWidth: 100 }}
-              loading={currentResourceGroup !== deferredSelectedResourceGroup}
-              popupMatchSelectWidth={false}
-              tooltip={t('general.ResourceGroup')}
-            />
+            {resourceGroup ? (
+              <Heading level={5}>{resourceGroup}</Heading>
+            ) : (
+              <SharedResourceGroupSelectForCurrentProject
+                size="small"
+                showSearch
+                style={{ minWidth: 100 }}
+                loading={currentResourceGroup !== deferredSelectedResourceGroup}
+                popupMatchSelectWidth={false}
+                tooltip={t('general.ResourceGroup')}
+              />
+            )}
           </BAIFlex>
         }
         tooltip={t('webui.menu.TotalResourcesInResourceGroupDescription')}

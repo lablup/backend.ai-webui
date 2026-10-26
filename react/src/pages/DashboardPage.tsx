@@ -2,97 +2,40 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { DashboardPageQuery } from '../__generated__/DashboardPageQuery.graphql';
 import DashboardPanelBoard from '../components/DashboardPanels/DashboardPanelBoard';
-import {
-  DashboardRefreshProvider,
-  useDashboardFetchKey,
-} from '../components/DashboardPanels/DashboardRefreshContext';
+import { DashboardRefreshProvider } from '../components/DashboardPanels/DashboardRefreshContext';
 import { PANEL_CATALOG } from '../components/DashboardPanels/panelCatalog';
-import { useIsAvailableTotalResourceWithinResourceGroup } from '../components/TotalResourceWithinResourceGroup';
-import { useCurrentUserRole } from '../hooks/backendai';
-import {
-  useCurrentProjectValue,
-  useCurrentResourceGroupValue,
-} from '../hooks/useCurrentProject';
+import ErrorBoundaryWithNullFallback from '../components/ErrorBoundaryWithNullFallback';
+import FolderInvitationNotifier from '../components/FolderInvitationNotifier';
+import SessionDetailAndContainerLogOpenerLegacy from '../components/SessionDetailAndContainerLogOpenerLegacy';
+import StartFromURLDeepLinkOpener from '../components/StartFromURLDeepLinkOpener';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { toProjectContext } from '../types/projectContext';
-import { INITIAL_FETCH_KEY } from 'backend.ai-ui';
-import * as _ from 'lodash-es';
-import { useDeferredValue } from 'react';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { Suspense } from 'react';
 
-const DashboardPageContent: React.FC = () => {
+/** The member dashboard: every card owns its query and follows the filter bar. */
+const DashboardPage: React.FC = () => {
   'use memo';
-  const currentProject = useCurrentProjectValue();
-  const currentResourceGroup = useCurrentResourceGroupValue();
-  const userRole = useCurrentUserRole();
-
-  // The cards that still read this query refresh with it on the dashboard timer.
-  const { fetchKey } = useDashboardFetchKey('page-query', '15s');
-  // Deferred so a refresh suspends in the background instead of dropping the
-  // whole page into the route fallback (FR-3386).
-  const deferredFetchKey = useDeferredValue(fetchKey);
-  const isRefetching = fetchKey !== deferredFetchKey;
-
-  const isAvailableTotalResourcePanel =
-    useIsAvailableTotalResourceWithinResourceGroup();
-
-  const queryRef = useLazyLoadQuery<DashboardPageQuery>(
-    graphql`
-      query DashboardPageQuery(
-        $scopeId: ScopeField
-        $resourceGroup: String
-        $skipTotalResourceWithinResourceGroup: Boolean!
-        $isSuperAdmin: Boolean!
-        $agentNodeFilter: String!
-      ) {
-        ...SessionCountDashboardItemFragment @arguments(scopeId: $scopeId)
-        ...RecentlyCreatedSessionFragment @arguments(scopeId: $scopeId)
-        ...TotalResourceWithinResourceGroupFragment
-          @skip(if: $skipTotalResourceWithinResourceGroup)
-          @alias
-          @arguments(
-            resourceGroup: $resourceGroup
-            isSuperAdmin: $isSuperAdmin
-            agentNodeFilter: $agentNodeFilter
-          )
-      }
-    `,
-    {
-      scopeId: `project:${currentProject.id}`,
-      resourceGroup: currentResourceGroup || 'default',
-      skipTotalResourceWithinResourceGroup: !isAvailableTotalResourcePanel,
-      isSuperAdmin: _.isEqual(userRole, 'superadmin'),
-      agentNodeFilter: `schedulable == true & status == "ALIVE" & scaling_group == "${currentResourceGroup}"`,
-    },
-    {
-      fetchPolicy:
-        deferredFetchKey === INITIAL_FETCH_KEY
-          ? 'store-and-network'
-          : 'network-only',
-      fetchKey: deferredFetchKey,
-    },
-  );
-
+  const project = toProjectContext(useCurrentProjectValue());
   return (
-    <DashboardPanelBoard
-      page="project"
-      project={toProjectContext(currentProject)}
-      catalog={PANEL_CATALOG}
-      isRefetching={isRefetching}
-      queryRefs={{
-        queryRef,
-        totalResourceQueryRef:
-          queryRef.TotalResourceWithinResourceGroupFragment,
-      }}
-    />
+    <DashboardRefreshProvider>
+      <DashboardPanelBoard
+        page="project"
+        project={project}
+        catalog={PANEL_CATALOG}
+        isRefetching={false}
+        queryRefs={{}}
+      />
+      {/* The session cards and the custom session panels open the drawer through `sessionDetail`. */}
+      <SessionDetailAndContainerLogOpenerLegacy project={project} />
+      <StartFromURLDeepLinkOpener />
+      <ErrorBoundaryWithNullFallback>
+        <Suspense fallback={null}>
+          <FolderInvitationNotifier />
+        </Suspense>
+      </ErrorBoundaryWithNullFallback>
+    </DashboardRefreshProvider>
   );
 };
-
-const DashboardPage: React.FC = () => (
-  <DashboardRefreshProvider>
-    <DashboardPageContent />
-  </DashboardRefreshProvider>
-);
 
 export default DashboardPage;

@@ -40,7 +40,6 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
-  CirclePlay,
   Gauge,
   MessageSquare,
   CloudUpload,
@@ -84,7 +83,7 @@ export type AdminMenuGroupName =
  */
 export const VALID_MENU_KEYS = [
   // generalMenu keys
-  'start',
+  'start', // alias to dashboard: the retired Start page, kept for old links and configs
   'dashboard',
   'summary', // alias to dashboard for backward compatibility
   'session',
@@ -179,7 +178,7 @@ const SUPERADMIN_SHARED_PAGE_KEY_SET: ReadonlySet<string> = new Set([
 const getLegacyFlatPath = (key: MenuKeys): string => {
   // 'job' is an alias for '/session' (backward compatibility)
   if (key === 'job') return '/session';
-  if (key === 'summary') return '/dashboard';
+  if (key === 'summary' || key === 'start') return '/dashboard';
   return `/${key}`;
 };
 
@@ -326,12 +325,6 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   });
 
   const generalMenu = filterOutEmpty<WebUIGeneralMenuItemType>([
-    createMenuItem(
-      t('webui.menu.Start'),
-      <CirclePlay style={{ color: token('--color-accent') }} size="1em" />,
-      'start',
-      'none',
-    ),
     createMenuItem(
       t('webui.menu.Dashboard'),
       <Gauge style={{ color: token('--color-accent') }} size="1em" />,
@@ -930,16 +923,16 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   const { rawThemeConfig } = useCustomThemeConfig();
 
   // Default menu path considering theme config's logo href.
-  // Priority: rawThemeConfig.branding.logo.href > firstAvailableMenuItem path > '/start'.
+  // Priority: rawThemeConfig.branding.logo.href > firstAvailableMenuItem path > '/dashboard'.
   // Project-aware: `getPathFromMenuKey` builds `/project/<name>/<feature>` for
   // the first general menu item using the active project name. When no project
-  // is resolvable it falls back to the legacy flat path (e.g. `/start`), which
+  // is resolvable it falls back to the legacy flat path (e.g. `/dashboard`), which
   // the redirect shims resolve to the canonical project URL at runtime.
   const defaultMenuPath =
     rawThemeConfig?.branding?.logo?.href ||
     (firstAvailableMenuItem?.key
       ? getPathFromMenuKey(firstAvailableMenuItem.key, activeProjectName)
-      : '/start');
+      : '/dashboard');
 
   return {
     generalMenu,

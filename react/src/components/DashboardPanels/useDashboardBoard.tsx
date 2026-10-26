@@ -149,6 +149,7 @@ export const useDashboardBoard = ({
     blockList: baiClient?._config?.blockList ?? [],
     inactiveList: baiClient?._config?.inactiveList ?? [],
     hideAgents: !!baiClient?._config?.hideAgents,
+    enableModelFolders: !!baiClient?._config?.enableModelFolders,
   };
   const visibleEntries = catalogFor(catalog, { page, role, config });
   const visibleByKey = new Map(
@@ -212,7 +213,14 @@ export const useDashboardBoard = ({
           isPageRefetching={isRefetching}
         >
           {(state) => (
-            <Component panel={panel} queryRefs={queryRefs} {...state} />
+            <Component
+              panel={panel}
+              queryRefs={queryRefs}
+              onChangeFilter={(filter) =>
+                save(updatePanel(board, panel.id, { filter }))
+              }
+              {...state}
+            />
           )}
         </DashboardPanelContent>
       ) : null;

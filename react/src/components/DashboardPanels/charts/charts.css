@@ -1,0 +1,13 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+*/
+@layer components {
+  .bai-dashboard-chart-swatch {
+    display: inline-block;
+    flex: none;
+    width: var(--spacing-3);
+    height: var(--spacing-3);
+    border-radius: var(--radius-full);
+  }
+}

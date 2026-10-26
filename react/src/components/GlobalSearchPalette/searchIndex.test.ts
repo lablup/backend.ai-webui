@@ -32,7 +32,7 @@ const INVENTORY = {
  * - `pipeline` is rendered by the FastTrack plugin, not by `routes.tsx`.
  * (`/logs` is likewise route-less, but it is not a menu key.)
  */
-const MENU_KEYS_WITHOUT_ROUTE = ['summary', 'job', 'pipeline'];
+const MENU_KEYS_WITHOUT_ROUTE = ['summary', 'job', 'start', 'pipeline'];
 
 describe('generated search index', () => {
   const index = getSearchIndex();

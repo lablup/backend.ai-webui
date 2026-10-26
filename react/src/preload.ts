@@ -14,7 +14,6 @@ export function preloadPostLoginChunks() {
   const load = () => {
     // Common first pages after login
     import('./pages/DashboardPage');
-    import('./pages/StartPage');
     // Always-rendered lazy components at root route
     import('./components/FolderExplorerOpener');
     import('./components/FolderInvitationResponseModalOpener');

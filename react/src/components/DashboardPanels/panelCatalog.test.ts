@@ -69,13 +69,21 @@ describe('PANEL_CATALOG', () => {
     [
       'project',
       [
+        'start.session',
+        'start.batchSession',
+        'start.folder',
+        'start.deployment',
+        'start.url',
         'mySession',
+        'sessionResult',
+        'myRecentSessions',
         'myResource',
-        'myResourceWithinResourceGroup',
+        'resourcePresets',
+        'totalResourceWithinResourceGroup',
         'folderStatus',
         'quotaPerStorageVolume',
-        'totalResourceWithinResourceGroup',
-        'recentlyCreatedSession',
+        'myDeployments',
+        'myActivity',
       ],
     ],
     ['projectAdmin', ['activeSessions']],
@@ -89,7 +97,7 @@ describe('PANEL_CATALOG', () => {
         'recentlyCreatedSession',
       ],
     ],
-  ])('seeds the %s board with the cards it hard-coded before', (page, keys) => {
+  ])('seeds the %s board with its default cards', (page, keys) => {
     expect(
       seedBoard(PANEL_CATALOG, page).panels.map((panel) => panel.id),
     ).toEqual(keys);
@@ -122,6 +130,23 @@ describe('catalogFor on the real catalog', () => {
     expect(keys).not.toContain('agentStats');
     expect(keys).not.toContain('activeAgents');
     expect(keys).not.toContain('activeSessions');
+  });
+
+  it('drops a Start item whose menu is blocked and locks the deployment one without model folders', () => {
+    const entries = catalogFor(PANEL_CATALOG, {
+      page: 'project',
+      role: 'user',
+      config: { blockList: ['import'], inactiveList: ['job'] },
+    });
+    const keys = entries.map(({ definition }) => definition.key);
+    expect(keys).not.toContain('start.url');
+    expect(keys).not.toContain('start.session');
+    expect(keys).not.toContain('start.batchSession');
+    expect(keys).toContain('start.folder');
+    expect(
+      entries.find(({ definition }) => definition.key === 'start.deployment')
+        ?.locked,
+    ).toBe(true);
   });
 
   it('locks the resource group total for a non-superadmin when agents are hidden', () => {

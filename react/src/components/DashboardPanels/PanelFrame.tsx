@@ -9,6 +9,9 @@ import React from 'react';
 
 export interface PanelFrameProps {
   title: string;
+  tooltip?: React.ReactNode;
+  /** Card controls shown in the title row. */
+  extra?: React.ReactNode;
   onEdit?: () => void;
   onRemove?: () => void;
   children: React.ReactNode;
@@ -22,6 +25,8 @@ export interface PanelFrameProps {
  */
 const PanelFrame: React.FC<PanelFrameProps> = ({
   title,
+  tooltip,
+  extra,
   onEdit,
   onRemove,
   children,
@@ -37,12 +42,16 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
     >
       <BAIBoardItemTitle
         title={title}
+        tooltip={tooltip}
         extra={
-          <PanelEditControls
-            title={title}
-            onEdit={onEdit}
-            onRemove={onRemove}
-          />
+          <BAIFlex align="center" gap="xxs">
+            {extra}
+            <PanelEditControls
+              title={title}
+              onEdit={onEdit}
+              onRemove={onRemove}
+            />
+          </BAIFlex>
         }
       />
       <BAIFlex
