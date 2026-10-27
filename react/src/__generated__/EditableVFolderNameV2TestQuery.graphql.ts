@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9710fbc0728845731f35c4a67224a589>>
+ * @generated SignedSource<<50814d485fa636f62be373fef0b9efbf>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -96,6 +96,13 @@ return {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
+            "name": "entityId",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "status",
             "storageKey": null
           },
@@ -148,7 +155,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "89a2a86e6cc2336bddaca4eb2031f5f9",
+    "cacheID": "d17784ca732eefc2820a978cab1f082f",
     "id": null,
     "metadata": {
       "relayTestingSelectionTypeInfo": {
@@ -157,6 +164,12 @@ return {
           "nullable": true,
           "plural": false,
           "type": "VFolder"
+        },
+        "vfolderV2.entityId": {
+          "enumValues": null,
+          "nullable": false,
+          "plural": false,
+          "type": "UUID"
         },
         "vfolderV2.id": {
           "enumValues": null,
@@ -201,7 +214,7 @@ return {
     },
     "name": "EditableVFolderNameV2TestQuery",
     "operationKind": "query",
-    "text": "query EditableVFolderNameV2TestQuery(\n  $vfolderId: UUID!\n) {\n  vfolderV2(vfolderId: $vfolderId) {\n    ...EditableVFolderNameV2Fragment\n    id\n  }\n}\n\nfragment EditableVFolderNameV2Fragment on VFolder {\n  id\n  status\n  metadata {\n    name\n  }\n  ownership {\n    userId\n    projectId\n  }\n}\n"
+    "text": "query EditableVFolderNameV2TestQuery(\n  $vfolderId: UUID!\n) {\n  vfolderV2(vfolderId: $vfolderId) {\n    ...EditableVFolderNameV2Fragment\n    id\n  }\n}\n\nfragment EditableVFolderNameV2Fragment on VFolder {\n  id\n  entityId\n  status\n  metadata {\n    name\n  }\n  ownership {\n    userId\n    projectId\n  }\n}\n"
   }
 };
 })();

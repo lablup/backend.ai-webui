@@ -28,7 +28,6 @@ import {
   BAIProjectVfolderSelect,
   type BAIProjectVfolderSelectRef,
   convertToUUID,
-  toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
 import { PlusIcon } from 'lucide-react';
@@ -81,6 +80,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
     graphql`
       fragment AdminModelCardSettingModalFragment on ModelCardV2 {
         id
+        entityId
         name
         vfolderId
         vfolder {
@@ -221,7 +221,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
           commitUpdateModelCard({
             variables: {
               input: {
-                id: toLocalId(modelCard.id),
+                id: modelCard.entityId,
                 ...metadataInput,
               },
             },
@@ -526,7 +526,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
           setIsOpenCreateFolderModal(false);
           if (result) {
             formRef.current?.setFieldsValue({
-              vfolderId: toLocalId(result.id),
+              vfolderId: result.entityId,
             });
             vfolderSelectRef.current?.refetch();
           }

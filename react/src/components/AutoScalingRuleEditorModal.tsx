@@ -32,7 +32,6 @@ import {
   BAIModal,
   BAIModalProps,
   BAISkeleton,
-  toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -122,6 +121,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
             edges {
               node {
                 id
+                entityId
                 name
                 description
                 rank
@@ -155,8 +155,8 @@ const AutoScalingRuleEditorModalContent: React.FC<{
   const [selectedPresetId, setSelectedPresetId] = useState<string | undefined>(
     autoScalingRule?.prometheusQueryPresetId
       ? presetNodes.find(
-          (p) => toLocalId(p.id) === autoScalingRule.prometheusQueryPresetId,
-        )?.id
+          (p) => p.entityId === autoScalingRule.prometheusQueryPresetId,
+        )?.entityId
       : undefined,
   );
   const [nameOptions, setNameOptions] = useState<Array<string>>(
@@ -167,7 +167,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
   );
 
   const selectedPreset = React.useMemo(
-    () => presetNodes.find((p) => p.id === selectedPresetId),
+    () => presetNodes.find((p) => p.entityId === selectedPresetId),
     [presetNodes, selectedPresetId],
   );
 
@@ -189,7 +189,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
 
     const toOption = (preset: (typeof sorted)[number]): PresetOption => ({
       label: preset.name,
-      value: preset.id,
+      value: preset.entityId,
     });
 
     const grouped = _.groupBy(withCategory, (p) => p.category!.name);
@@ -357,7 +357,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
               label={t('autoScalingRule.PrometheusPreset')}
               onChange={(value) => {
                 setSelectedPresetId(value ?? undefined);
-                const preset = presetNodes.find((p) => p.id === value);
+                const preset = presetNodes.find((p) => p.entityId === value);
                 if (preset) {
                   // Auto-fill metricName
                   formRef.current?.setFieldsValue({
@@ -712,6 +712,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
     graphql`
       fragment AutoScalingRuleEditorModalFragment on AutoScalingRule {
         id
+        fieldId
         metricSource
         metricName
         minThreshold
@@ -797,7 +798,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
         // Determine prometheusQueryPresetId
         const prometheusQueryPresetId =
           values.metricSource === 'PROMETHEUS' && values.prometheusQueryPresetId
-            ? toLocalId(values.prometheusQueryPresetId)
+            ? values.prometheusQueryPresetId
             : null;
 
         if (autoScalingRule) {
@@ -805,7 +806,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
           commitUpdateMutation({
             variables: {
               input: {
-                id: toLocalId(autoScalingRule.id),
+                id: autoScalingRule.fieldId,
                 metricSource: values.metricSource,
                 metricName,
                 minThreshold:

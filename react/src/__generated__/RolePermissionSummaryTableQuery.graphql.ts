@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<329981a66e3586c9d8d7e3a587614fa2>>
+ * @generated SignedSource<<62fd4a5f29b9681d0b19096ea8583c45>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,6 +20,7 @@ export type RolePermissionSummaryTableQuery$data = {
       readonly edges: ReadonlyArray<{
         readonly node: {
           readonly entityType: string;
+          readonly fieldId: string;
           readonly id: string;
           readonly permission: PermissionBit;
         };
@@ -88,6 +89,13 @@ v4 = {
           "plural": false,
           "selections": [
             (v3/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "fieldId",
+              "storageKey": null
+            },
             {
               "alias": null,
               "args": null,
@@ -162,16 +170,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "822f73e90110c752ce6633f75aba0b35",
+    "cacheID": "24039a21eed2e566ddd4d7cf29d9cc94",
     "id": null,
     "metadata": {},
     "name": "RolePermissionSummaryTableQuery",
     "operationKind": "query",
-    "text": "query RolePermissionSummaryTableQuery(\n  $roleId: UUID!\n  $permissionLimit: Int\n) {\n  adminRole(id: $roleId) {\n    permissions(limit: $permissionLimit) {\n      edges {\n        node {\n          id\n          entityType\n          permission\n        }\n      }\n    }\n    id\n  }\n}\n"
+    "text": "query RolePermissionSummaryTableQuery(\n  $roleId: UUID!\n  $permissionLimit: Int\n) {\n  adminRole(id: $roleId) {\n    permissions(limit: $permissionLimit) {\n      edges {\n        node {\n          id\n          fieldId\n          entityType\n          permission\n        }\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "3481ff7378afac46ed480763e6d37554";
+(node as any).hash = "f267a26ad9a741257ca459399fb516bb";
 
 export default node;

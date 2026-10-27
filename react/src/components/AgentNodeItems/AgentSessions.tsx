@@ -33,7 +33,6 @@ import {
   availableSessionV2SorterValues,
   filterOutNullAndUndefined,
   mergeFilterValues,
-  toLocalId,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -306,7 +305,7 @@ const AgentSessions = ({ agentId, queryRef, onReload }: AgentSessionsProps) => {
                 render: (_value, session) => (
                   <BAILink
                     type="hover"
-                    onClick={() => setSessionDetailId(toLocalId(session.id))}
+                    onClick={() => setSessionDetailId(session.entityId)}
                   >
                     {session.metadata?.name ?? '-'}
                   </BAILink>

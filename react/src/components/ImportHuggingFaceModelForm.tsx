@@ -24,7 +24,6 @@ import {
   BAIVFolderSelect,
   BAIVFolderSelectRef,
   generateRandomString,
-  safeDecodeUuid,
   toGlobalId,
   toLocalId,
   useBAILogger,
@@ -425,17 +424,11 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
             app.message.warning(t('import.CreatedFolderIsReadOnly'));
             return;
           }
-          if (result?.id) {
-            // `createVfolderV2` returns a `VFolder` (Strawberry) global ID,
-            // but BAIVFolderSelect's value query reads from `vfolder_nodes`
-            // (`VirtualFolderNode`, Graphene). Both encode the same UUID but
-            // with different `__typename:` prefixes, so re-encode to the
-            // VirtualFolderNode global ID form before selecting it.
-            const newFolderUuid = safeDecodeUuid(result.id);
-            if (!newFolderUuid) return;
+          if (result?.entityId) {
+            // BAIVFolderSelect's value is a `VirtualFolderNode` global ID.
             const newFolderGlobalId = toGlobalId(
               'VirtualFolderNode',
-              newFolderUuid,
+              result.entityId,
             );
             if (result.metadata?.name) {
               setFolderNameMap((prev) => ({

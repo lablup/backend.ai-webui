@@ -32,7 +32,6 @@ import {
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   filterOutNullAndUndefined,
-  toLocalId,
   useBAILogger,
   useControllableValue,
   useFetchKey,
@@ -106,6 +105,7 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
     graphql`
       fragment DeploymentAccessTokensCard_deployment on ModelDeployment {
         id
+        entityId
         networkAccess {
           endpointUrl
         }
@@ -208,7 +208,7 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
               // overlapping dialogs.
               commitCreateMutation({
                 input: {
-                  modelDeploymentId: toLocalId(deployment.id),
+                  modelDeploymentId: deployment.entityId,
                   // Schema requires DateTime! (non-null); map "no expiration" to a far-future date.
                   expiresAt:
                     result.expiresAt ?? new Date('2099-12-31').toISOString(),
@@ -305,6 +305,7 @@ const DeploymentAccessTokensTable: React.FC<
   const { logger } = useBAILogger();
   const [deletingToken, setDeletingToken] = useState<{
     id: string;
+    fieldId: string;
     token: string;
   } | null>(null);
 
@@ -337,6 +338,7 @@ const DeploymentAccessTokensTable: React.FC<
               edges {
                 node {
                   id
+                  fieldId
                   token
                   createdAt
                   expiresAt
@@ -427,6 +429,7 @@ const DeploymentAccessTokensTable: React.FC<
                       onClick: () =>
                         setDeletingToken({
                           id: row.id,
+                          fieldId: row.fieldId,
                           token: row.token ?? '',
                         }),
                     },
@@ -470,7 +473,7 @@ const DeploymentAccessTokensTable: React.FC<
           if (!deletingToken) return;
           commitDelete({
             variables: {
-              input: { id: toLocalId(deletingToken.id) ?? deletingToken.id },
+              input: { id: deletingToken.fieldId },
             },
             onCompleted: (_res, errors) => {
               if (errors && errors.length > 0) {

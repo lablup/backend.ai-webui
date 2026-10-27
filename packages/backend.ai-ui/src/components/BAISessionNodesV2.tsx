@@ -239,7 +239,7 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
         key: 'sessionId',
         title: t('comp:SessionV2Nodes.SessionId'),
         defaultHidden: true,
-        render: (__, session) => <BAIId globalId={session.id} />,
+        render: (__, session) => <BAIId uuid={session.entityId} />,
       },
       {
         key: 'status',

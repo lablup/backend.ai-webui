@@ -37,8 +37,6 @@ import {
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   filterOutEmpty,
-  safeDecodeUuid,
-  toLocalId,
   type GraphQLFilter,
   BAILink,
 } from 'backend.ai-ui';
@@ -265,6 +263,7 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
               edges {
                 node {
                   id
+                  fieldId
                   sessionId
                   revisionId
                   status
@@ -273,11 +272,13 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
                   createdAt
                   revision {
                     id
+                    fieldId
                     revisionNumber
                     ...DeploymentRevisionDetail_revision
                   }
                   sessionV2 {
                     id
+                    entityId
                     metadata {
                       name
                     }
@@ -339,7 +340,7 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
       dataIndex: 'id',
       fixed: 'left',
       sorter: isEnableSorter('id'),
-      render: (value: string) => <BAIId globalId={value} copyable />,
+      render: (_id: string, record) => <BAIId uuid={record.fieldId} copyable />,
     },
     {
       // Lifecycle status (PROVISIONING → RUNNING → TERMINATING …) shown
@@ -369,11 +370,10 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
             label={t('route.RouteSchedulingHistory')}
             tooltip={t('route.RouteSchedulingHistory')}
             clickAction={async () => {
-              const id = safeDecodeUuid(record.id) ?? record.id;
               // Render-as-you-fetch: start the request in the open event.
               loadRouteHistoryQuery(
                 {
-                  scope: { routeId: id },
+                  scope: { routeId: record.fieldId },
                   orderBy: [{ field: 'UPDATED_AT', direction: 'DESC' }],
                   limit: 10,
                   offset: 0,
@@ -449,20 +449,20 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
         }
         const name = session.metadata?.name;
         if (!name) {
-          return <BAIId globalId={session.id} />;
+          return <BAIId uuid={session.entityId} />;
         }
         return (
           <>
             <BAILink
               ellipsis
-              onClick={() => setSelectedSessionId(toLocalId(session.id))}
+              onClick={() => setSelectedSessionId(session.entityId)}
               style={{ maxWidth: 160 }}
             >
               {name}
             </BAILink>
             &nbsp;
             <Text color="secondary">
-              (<BAIId globalId={session.id} type="secondary" />)
+              (<BAIId uuid={session.entityId} type="secondary" />)
             </Text>
           </>
         );
@@ -498,7 +498,7 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
             </Link>
             &nbsp;
             <Text color="secondary">
-              (<BAIId globalId={revision.id} type="secondary" />)
+              (<BAIId uuid={revision.fieldId} type="secondary" />)
             </Text>
           </>
         );

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0f6cb09a415202d4277149447c6e2e7b>>
+ * @generated SignedSource<<05f8d8ee68a7073ba41d5c1d866c6c83>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -64,6 +64,7 @@ export type useRuntimeParameterSchemaPresetsQuery$data = {
         readonly category: string | null | undefined;
         readonly description: string | null | undefined;
         readonly displayName: string | null | undefined;
+        readonly entityId: string;
         readonly id: string;
         readonly name: string;
         readonly rank: number;
@@ -176,6 +177,13 @@ v3 = {
               "args": null,
               "kind": "ScalarField",
               "name": "id",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "entityId",
               "storageKey": null
             },
             {
@@ -399,16 +407,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "2445954f7e75b75312adb8dc4b6715b2",
+    "cacheID": "e0f6f205436947047e5d0259273a9224",
     "id": null,
     "metadata": {},
     "name": "useRuntimeParameterSchemaPresetsQuery",
     "operationKind": "query",
-    "text": "query useRuntimeParameterSchemaPresetsQuery(\n  $filter: RuntimeVariantPresetFilter\n  $orderBy: [RuntimeVariantPresetOrderBy!]\n) {\n  runtimeVariantPresetsResult: runtimeVariantPresets(filter: $filter, orderBy: $orderBy, first: 100) {\n    edges {\n      node {\n        id\n        name\n        description\n        rank\n        category\n        displayName\n        required\n        targetSpec {\n          presetTarget\n          valueType\n          defaultValue\n          key\n        }\n        uiOption {\n          uiType\n          slider {\n            min\n            max\n            step\n          }\n          number {\n            min\n            max\n          }\n          choices {\n            items {\n              value\n              label\n            }\n          }\n          text {\n            placeholder\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query useRuntimeParameterSchemaPresetsQuery(\n  $filter: RuntimeVariantPresetFilter\n  $orderBy: [RuntimeVariantPresetOrderBy!]\n) {\n  runtimeVariantPresetsResult: runtimeVariantPresets(filter: $filter, orderBy: $orderBy, first: 100) {\n    edges {\n      node {\n        id\n        entityId\n        name\n        description\n        rank\n        category\n        displayName\n        required\n        targetSpec {\n          presetTarget\n          valueType\n          defaultValue\n          key\n        }\n        uiOption {\n          uiType\n          slider {\n            min\n            max\n            step\n          }\n          number {\n            min\n            max\n          }\n          choices {\n            items {\n              value\n              label\n            }\n          }\n          text {\n            placeholder\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "ce7dffcae5ebed903f93c2c289b56982";
+(node as any).hash = "d34e09b4e2ba3bd0a65813bd8fabbf5d";
 
 export default node;

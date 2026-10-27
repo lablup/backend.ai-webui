@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fefbc594629e4304a91ccea9ad729145>>
+ * @generated SignedSource<<a63639923052d48f0b06597990367785>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -89,6 +89,13 @@ return {
           {
             "alias": null,
             "args": null,
+            "kind": "ScalarField",
+            "name": "entityId",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
             "concreteType": "ModelDeploymentNetworkAccess",
             "kind": "LinkedField",
             "name": "networkAccess",
@@ -110,12 +117,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "9450b956e2c61fad038388405405a421",
+    "cacheID": "a4cf648a7b763f43fbb3df15d185c07a",
     "id": null,
     "metadata": {},
     "name": "DeploymentAccessTokensCardTestQuery",
     "operationKind": "query",
-    "text": "query DeploymentAccessTokensCardTestQuery(\n  $deploymentId: ID!\n) {\n  deployment(id: $deploymentId) {\n    ...DeploymentAccessTokensCard_deployment\n    id\n  }\n}\n\nfragment DeploymentAccessTokensCard_deployment on ModelDeployment {\n  id\n  networkAccess {\n    endpointUrl\n  }\n}\n"
+    "text": "query DeploymentAccessTokensCardTestQuery(\n  $deploymentId: ID!\n) {\n  deployment(id: $deploymentId) {\n    ...DeploymentAccessTokensCard_deployment\n    id\n  }\n}\n\nfragment DeploymentAccessTokensCard_deployment on ModelDeployment {\n  id\n  entityId\n  networkAccess {\n    endpointUrl\n  }\n}\n"
   }
 };
 })();

@@ -436,6 +436,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     graphql`
       fragment DeploymentAddRevisionModal_deployment on ModelDeployment {
         id
+        entityId
         metadata {
           resourceGroupName
           projectId
@@ -1585,7 +1586,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     commitAdd({
       variables: {
         input: {
-          deploymentId: toLocalId(deployment?.id ?? '') ?? deployment?.id ?? '',
+          deploymentId: deployment?.entityId ?? '',
           clusterConfig: {
             mode: clusterMode,
             size: values.cluster_size,
@@ -1678,7 +1679,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     commitAdd({
       variables: {
         input: {
-          deploymentId: toLocalId(deployment?.id ?? '') ?? deployment?.id ?? '',
+          deploymentId: deployment?.entityId ?? '',
           revisionPresetId: values.revisionPresetId,
           modelMountConfig: {
             vfolderId: mountVfolderId,
@@ -2613,19 +2614,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         initialValues={{ usage_mode: 'model' }}
         onRequestClose={(result) => {
           setIsModelFolderCreateModalOpen(false);
-          if (result?.id) {
-            // `createVfolderV2` returns a `VFolder` (Strawberry) global ID,
-            // but BAIVFolderSelect's value query reads from `vfolder_nodes`
-            // (`VirtualFolderNode`, Graphene). Both encode the same UUID
-            // but with different `__typename:` prefixes, so the select's
-            // option matching (`edge.node.id === value`) would fail if we
-            // set the raw mutation id directly. Re-encode to the
-            // VirtualFolderNode global ID form.
-            const newFolderUuid = safeDecodeUuid(result.id);
-            if (!newFolderUuid) return;
+          if (result?.entityId) {
+            // BAIVFolderSelect's value is a `VirtualFolderNode` global ID.
             const newFolderGlobalId = toGlobalId(
               'VirtualFolderNode',
-              newFolderUuid,
+              result.entityId,
             );
             const activeForm =
               effectiveMode === 'preset' ? presetForm : customForm;

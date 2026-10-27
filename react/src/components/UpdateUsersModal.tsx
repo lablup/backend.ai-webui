@@ -26,7 +26,6 @@ import {
   BAIModal,
   BAIModalProps,
   BAISelect,
-  toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -76,6 +75,7 @@ const UpdateUsersModal = ({
     graphql`
       fragment UpdateUsersModalFragment on UserV2 @relay(plural: true) {
         id
+        entityId
         basicInfo {
           email
         }
@@ -186,7 +186,7 @@ const UpdateUsersModal = ({
               variables: {
                 input: {
                   users: users.map((user) => ({
-                    userId: toLocalId(user.id),
+                    userId: user.entityId,
                     input,
                   })),
                 },

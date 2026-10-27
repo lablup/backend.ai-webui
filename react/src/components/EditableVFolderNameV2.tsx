@@ -37,7 +37,7 @@ import { IconButton } from '@lablup/ui-common/IconButton';
 import { Link } from '@lablup/ui-common/Link';
 import { HStack } from '@lablup/ui-common/Stack';
 import { Heading, Text } from '@lablup/ui-common/Text';
-import { toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
+import { useErrorMessageResolver } from 'backend.ai-ui';
 import { PencilIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -82,6 +82,7 @@ const EditableVFolderNameV2: React.FC<EditableVFolderNameV2Props> = ({
     graphql`
       fragment EditableVFolderNameV2Fragment on VFolder {
         id
+        entityId
         status
         metadata {
           name
@@ -104,7 +105,7 @@ const EditableVFolderNameV2: React.FC<EditableVFolderNameV2Props> = ({
   const baiClient = useSuspendedBackendaiClient();
   const renameMutation = useTanMutation({
     mutationFn: (input: { id: string; name: string }) => {
-      return baiClient.vfolder.rename(input.name, toLocalId(vfolderNode?.id));
+      return baiClient.vfolder.rename(input.name, vfolderNode.entityId);
     },
   });
   const relayEnv = useRelayEnvironment();
@@ -135,7 +136,7 @@ const EditableVFolderNameV2: React.FC<EditableVFolderNameV2Props> = ({
   const displayedName = isPendingRenameMutation
     ? optimisticName
     : vfolderNode.metadata?.name;
-  const folderPath = generateFolderPath(toLocalId(vfolderNode?.id));
+  const folderPath = generateFolderPath(vfolderNode.entityId);
 
   const nameNode =
     variant === 'title' ? (
@@ -221,7 +222,7 @@ const EditableVFolderNameV2: React.FC<EditableVFolderNameV2Props> = ({
                       }
                     `,
                     {
-                      vfolderId: toLocalId(vfolderNode.id),
+                      vfolderId: vfolderNode.entityId,
                     },
                   ).toPromise();
                 },

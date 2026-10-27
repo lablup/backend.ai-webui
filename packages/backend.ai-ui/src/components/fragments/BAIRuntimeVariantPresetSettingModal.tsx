@@ -13,7 +13,6 @@ import { Form } from '../../form-engine';
 import {
   isValueTypeCompatibleWithUIType,
   READ_UI_TYPE_TO_FORM_UI_TYPE,
-  toLocalId,
   type RuntimeVariantPresetUIType as UIType,
   type RuntimeVariantPresetValueType as ValueType,
 } from '../../helper';
@@ -146,6 +145,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
     graphql`
       fragment BAIRuntimeVariantPresetSettingModalFragment on RuntimeVariantPreset {
         id
+        entityId
         runtimeVariantId
         name
         description
@@ -444,7 +444,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
           : {};
         if (preset) {
           const input: UpdateRuntimeVariantPresetInput = {
-            id: toLocalId(preset.id),
+            id: preset.entityId,
             name: values.name,
             description: values.description ?? null,
             rank: values.rank,

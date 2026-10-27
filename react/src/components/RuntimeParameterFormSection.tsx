@@ -28,7 +28,6 @@ import {
   BAIFlex,
   READ_UI_TYPE_TO_FORM_UI_TYPE,
   isValueTypeCompatibleWithUIType,
-  toLocalId,
 } from 'backend.ai-ui';
 import { Undo2 } from 'lucide-react';
 import React, { useEffect, useEffectEvent, useState } from 'react';
@@ -159,15 +158,12 @@ const RuntimeParameterFormSection: React.FC<
     if (!groups) return;
 
     if (initialPresetValues && initialPresetValues.length > 0) {
-      // Map preset id → preset definition so queried `{ presetId, value }`
-      // entries can hydrate the controls. Accept either the local UUID or the
-      // Relay global id, since the source of the id can vary across call sites.
+      // Map preset UUID → preset definition so queried `{ presetId, value }`
+      // entries can hydrate the controls.
       const idToParam = new Map<string, RuntimeVariantPresetDef>();
       for (const group of groups) {
         for (const param of group.params) {
-          idToParam.set(param.id, param);
-          const localId = toLocalId(param.id);
-          if (localId) idToParam.set(localId, param);
+          idToParam.set(param.entityId, param);
         }
       }
 
