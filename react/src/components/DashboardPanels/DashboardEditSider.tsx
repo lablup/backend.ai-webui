@@ -45,6 +45,8 @@ export interface DashboardEditSiderProps {
   /** A board panel whose card takes settings; null otherwise. */
   settingsTargetOf: (id: string) => PanelSettingsTarget | null;
   onRequestSettings: (id: string) => void;
+  /** The board block above the cards, on the pages that keep several boards. */
+  boardSection?: React.ReactNode;
 }
 
 const GROUP_LABEL_KEYS: Record<PanelGroup, string> = {
@@ -59,8 +61,9 @@ const GROUP_LABEL_KEYS: Record<PanelGroup, string> = {
 
 /**
  * Edit-mode side panel, a flex sibling of the board so the board reflows. The
- * card checklist adds and removes catalog cards; the custom panel block lists
- * user-made panels, created and edited through the panel modal.
+ * board block (admin pages) manages the boards; the card checklist adds and
+ * removes catalog cards; the custom panel block lists user-made panels,
+ * created and edited through the panel modal.
  */
 const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
   catalogEntries,
@@ -73,6 +76,7 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
   onResetLayout,
   settingsTargetOf,
   onRequestSettings,
+  boardSection,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -146,7 +150,13 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
         borderLeft: `1px solid ${token('--color-border-emphasized')}`,
       }}
     >
-      <BAIText strong>{t('dashboard.editSider.Cards')}</BAIText>
+      {boardSection}
+      <BAIText
+        strong
+        style={boardSection ? { paddingTop: token('--spacing-3') } : undefined}
+      >
+        {t('dashboard.editSider.Cards')}
+      </BAIText>
       <BAITextInput
         size="sm"
         hasClear

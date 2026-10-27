@@ -803,7 +803,7 @@
       "Boards": "보드",
       "CannotDeleteLastBoard": "마지막 보드는 삭제할 수 없습니다",
       "DefaultBoard": "기본",
-      "EditBoard": "보드 편집",
+      "DeleteBoard": "보드 삭제",
       "NewBoard": "새 보드",
       "NewBoardTitle": "보드 {{number}}"
     },

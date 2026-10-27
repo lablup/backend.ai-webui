@@ -803,7 +803,7 @@
       "Boards": "Bacheche",
       "CannotDeleteLastBoard": "L'ultima bacheca non può essere eliminata",
       "DefaultBoard": "Predefinita",
-      "EditBoard": "Modifica bacheca",
+      "DeleteBoard": "Elimina bacheca",
       "NewBoard": "Nuova bacheca",
       "NewBoardTitle": "Bacheca {{number}}"
     },
