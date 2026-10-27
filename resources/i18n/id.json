@@ -2778,6 +2778,7 @@
     "PresetName": "Nama Preset",
     "PresetOnlyAvailableInResourceGroup": "Preset \"{{preset}}\" hanya tersedia di grup sumber daya \"{{name}}\". Silakan pilih grup sumber daya lain.",
     "RAM": "RAM (GB)",
+    "RequiresSlotsNotInResourceGroup": "Memerlukan {{slots}}, yang tidak disediakan oleh grup sumber daya yang dipilih",
     "ResourcePreset": "Preset Sumber Daya",
     "ResourcePresets": "Preset Sumber Daya",
     "Resources": "Sumber Daya",

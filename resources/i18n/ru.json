@@ -2775,6 +2775,7 @@
     "PresetName": "Название предустановки",
     "PresetOnlyAvailableInResourceGroup": "Пресет \"{{preset}}\" доступен только в группе ресурсов \"{{name}}\". Выберите другую группу ресурсов.",
     "RAM": "RAM (ГБ)",
+    "RequiresSlotsNotInResourceGroup": "Требуется {{slots}}, чего нет в выбранной группе ресурсов",
     "ResourcePreset": "Предустановка ресурса",
     "ResourcePresets": "Предустановки ресурсов",
     "Resources": "Ресурсы",

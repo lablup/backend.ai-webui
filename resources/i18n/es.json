@@ -2775,6 +2775,7 @@
     "PresetName": "Nombre predefinido",
     "PresetOnlyAvailableInResourceGroup": "El preajuste \"{{preset}}\" solo está disponible en el grupo de recursos \"{{name}}\". Seleccione otro grupo de recursos.",
     "RAM": "RAM (GB)",
+    "RequiresSlotsNotInResourceGroup": "Requiere {{slots}}, que el grupo de recursos seleccionado no ofrece",
     "ResourcePreset": "Recurso preestablecido",
     "ResourcePresets": "Recursos preestablecidos",
     "Resources": "Recursos",

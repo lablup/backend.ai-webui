@@ -2775,6 +2775,7 @@
     "PresetName": "Ön Ayar Adı",
     "PresetOnlyAvailableInResourceGroup": "\"{{preset}}\" ön ayarı yalnızca \"{{name}}\" kaynak grubunda kullanılabilir. Lütfen farklı bir kaynak grubu seçin.",
     "RAM": "RAM (GB)",
+    "RequiresSlotsNotInResourceGroup": "Seçili kaynak grubunun sağlamadığı {{slots}} gerektirir",
     "ResourcePreset": "Kaynak Ön Ayarı",
     "ResourcePresets": "Kaynak Ön Ayarları",
     "Resources": "Kaynaklar",

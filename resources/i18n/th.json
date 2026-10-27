@@ -2763,6 +2763,7 @@
     "NoResourcePresetToDisplay": "ไม่มีค่าที่กำหนดไว้ล่วงหน้าของทรัพยากรที่จะแสดง",
     "PresetName": "ชื่อค่าที่กำหนดไว้ล่วงหน้า",
     "RAM": "RAM (GB)",
+    "RequiresSlotsNotInResourceGroup": "ต้องใช้ {{slots}} ซึ่งกลุ่มทรัพยากรที่เลือกไม่มีให้",
     "ResourcePreset": "ค่าที่กำหนดไว้ล่วงหน้าของทรัพยากร",
     "ResourcePresets": "ค่าที่กำหนดไว้ล่วงหน้าของทรัพยากร",
     "Resources": "ทรัพยากร",

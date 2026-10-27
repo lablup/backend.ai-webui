@@ -2776,6 +2776,7 @@
     "PresetName": "Урьдчилан тохируулсан нэр",
     "PresetOnlyAvailableInResourceGroup": "\"{{preset}}\" урьдчилсан тохиргоог зөвхөн \"{{name}}\" нөөцийн бүлэгт ашиглах боломжтой. Өөр нөөцийн бүлэг сонгоно уу.",
     "RAM": "RAM (GB)",
+    "RequiresSlotsNotInResourceGroup": "Сонгосон нөөцийн бүлэгт байхгүй {{slots}} шаардлагатай",
     "ResourcePreset": "Нөөцийн урьдчилж тохируулсан",
     "ResourcePresets": "Нөөцийн урьдчилсан тохируулга",
     "Resources": "Нөөц",

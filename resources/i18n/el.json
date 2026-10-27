@@ -2775,6 +2775,7 @@
     "PresetName": "Προεπιλεγμένο όνομα",
     "PresetOnlyAvailableInResourceGroup": "Η προεπιλογή \"{{preset}}\" είναι διαθέσιμη μόνο στην ομάδα πόρων \"{{name}}\". Επιλέξτε διαφορετική ομάδα πόρων.",
     "RAM": "RAM (GB)",
+    "RequiresSlotsNotInResourceGroup": "Απαιτεί {{slots}}, που δεν παρέχει η επιλεγμένη ομάδα πόρων",
     "ResourcePreset": "Προεπιλογή πόρων",
     "ResourcePresets": "Προεπιλογές πόρων",
     "Resources": "Πόροι",

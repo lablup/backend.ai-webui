@@ -2777,6 +2777,7 @@
     "PresetName": "预设名称",
     "PresetOnlyAvailableInResourceGroup": "\"{{preset}}\" 预设仅在 \"{{name}}\" 资源组中可用。请选择其他资源组。",
     "RAM": "内存 (GB)",
+    "RequiresSlotsNotInResourceGroup": "需要所选资源组未提供的 {{slots}}",
     "ResourcePreset": "资源预设",
     "ResourcePresets": "资源预设",
     "Resources": "资源",

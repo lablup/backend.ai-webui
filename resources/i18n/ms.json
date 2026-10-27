@@ -2775,6 +2775,7 @@
     "PresetName": "Nama Pratetap",
     "PresetOnlyAvailableInResourceGroup": "Pratetap \"{{preset}}\" hanya tersedia dalam kumpulan sumber \"{{name}}\". Sila pilih kumpulan sumber yang lain.",
     "RAM": "RAM (GB)",
+    "RequiresSlotsNotInResourceGroup": "Memerlukan {{slots}}, yang tidak disediakan oleh kumpulan sumber yang dipilih",
     "ResourcePreset": "Pratetap Sumber",
     "ResourcePresets": "Pratetap Sumber",
     "Resources": "Sumber",
