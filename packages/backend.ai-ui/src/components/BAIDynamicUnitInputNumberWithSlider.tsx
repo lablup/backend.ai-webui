@@ -41,7 +41,7 @@ import BAIDynamicUnitInputNumber, {
   BAIDynamicUnitInputNumberProps,
 } from './BAIDynamicUnitInputNumber';
 import BAIFlex from './BAIFlex';
-import { Slider } from '@lablup/ui-common/Slider';
+import BAISlider from './BAISlider';
 import * as _ from 'lodash-es';
 import React, { useEffect, useMemo } from 'react';
 
@@ -210,7 +210,7 @@ const BAIDynamicUnitInputNumberWithSlider: React.FC<
               ></div>
             </BAIFlex>
           )} */}
-          <Slider
+          <BAISlider
             aria-label={t('comp:BAIDynamicUnitInputNumberWithSlider.Amount')}
             // antd's `Slider` filled its flex track; Astryx's sizes to its
             // CONTENT unless told otherwise, which collapsed the rail to a

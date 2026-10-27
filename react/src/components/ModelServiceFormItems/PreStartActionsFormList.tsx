@@ -3,10 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { Form } from '../../form-engine';
-import { AstryxFormTextInput } from '../astryxFormControls';
 import { proportional } from '@lablup/ui-common/Table';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFormListInput } from 'backend.ai-ui';
+import { BAIFormListInput, BAITextInput } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -53,8 +52,8 @@ const PreStartActionsFormList: React.FC<PreStartActionsFormListProps> = ({
               rules: [{ required: true, message: '' }],
             }),
             renderInput: ({ label }) => (
-              <AstryxFormTextInput
-                label={label}
+              <BAITextInput
+                aria-label={label}
                 placeholder={t(
                   'adminDeploymentPreset.modelDef.ActionPlaceholder',
                 )}
@@ -82,8 +81,8 @@ const PreStartActionsFormList: React.FC<PreStartActionsFormListProps> = ({
               ],
             }),
             renderInput: ({ label }) => (
-              <AstryxFormTextInput
-                label={label}
+              <BAITextInput
+                aria-label={label}
                 placeholder={t('general.Example', { value: '{}' })}
               />
             ),

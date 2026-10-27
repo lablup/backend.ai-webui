@@ -11,7 +11,6 @@ import type {
 } from '../__generated__/ProjectAdminSessionPageQuery.graphql';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
-import BAIRadioGroup from '../components/BAIRadioGroup';
 import TerminateSessionModalForProjectAdmin from '../components/TerminateSessionModalForProjectAdmin';
 import { convertToOrderBy, handleRowSelectionChange } from '../helper';
 import {
@@ -43,6 +42,8 @@ import {
   useFetchKey,
   useIsLabelableEntityType,
   type SessionV2InList,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import { PowerOffIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
@@ -191,18 +192,24 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex direction="row" justify="between" wrap="wrap" gap="sm">
         <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
-          <BAIRadioGroup
-            optionType="button"
+          <BAISegmentedControl
             value={queryParams.statusCategory}
-            onChange={(e) => {
-              setQueryParams({ statusCategory: e.target.value });
+            onChange={(value) => {
+              setQueryParams({
+                statusCategory: value as typeof queryParams.statusCategory,
+              });
               setTablePaginationOption({ current: 1 });
             }}
-            options={[
-              { label: t('session.Running'), value: 'running' },
-              { label: t('session.Finished'), value: 'finished' },
-            ]}
-          />
+          >
+            <BAISegmentedControlItem
+              value="running"
+              label={t('session.Running')}
+            />
+            <BAISegmentedControlItem
+              value="finished"
+              label={t('session.Finished')}
+            />
+          </BAISegmentedControl>
           <BAIGraphQLPropertyFilter<SessionV2Filter>
             filterProperties={[
               {

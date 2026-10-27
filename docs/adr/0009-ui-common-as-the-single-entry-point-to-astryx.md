@@ -1,5 +1,7 @@
 # 0009 — @lablup/ui-common as the single entry point to Astryx
 
+> 1절 "New code" 항목의 form control 부분은 ADR 0014가 대신한다.
+
 ## Summary
 
 > 낯선 용어는 문서 맨 아래 [용어](#용어)에 모아 두었다.
@@ -100,7 +102,7 @@ flowchart TB
 - **Form engine**: 자체 form engine(`Form`, `Form.Item`, `Form.List`, `Form.useForm`, validation rule, `FormConfigProvider`, item shell)은 `@lablup/ui-common/Form`에 있다. engine은 component prop이 아니라 form state API이므로 antd 모양의 API를 그대로 유지한다. BUI의 `form-engine`은 re-export만 하므로 call site는 바뀌지 않는다. item의 DOM hook은 `.uic-form-item*` class와 `data-uic-field-id`다. `BAIBulkEditFormItem`은 ui-common `BulkEditFormItem`의 adapter가 되고, `BAICheckbox`는 `CheckboxInput` 위의 antd 어휘와 status 읽기뿐이라 BUI에 남는다 (FR-4097).
 - **ui-common's own CSS**: ui-common custom component의 style은 각 component가 직접 import하고, 모든 rule이 `@layer ui-common` 안에 있다. 전역 scrollbar rule만 담은 `@lablup/ui-common/ui-common.css`는 webui의 모양을 바꾸므로 `react/src/index.css`도 Storybook도 import하지 않는다.
 - **Product theme stays**: `react/src/astryx-theme/`의 Backend.AI theme family는 webui의 제품 theme으로 남는다. 손으로 쓴 파일은 `defineTheme`과 `Theme`을 `@lablup/ui-common/theme`에서, `neutralTheme`을 `@lablup/ui-common/theme/neutral`에서 import한다.
-- **New code**: 새 webui code는 BUI에 `BAI*` adapter가 있으면 그것을, 없으면 ui-common component를 직접 쓴다.
+- **New code**: 새 webui code는 BUI에 `BAI*` adapter가 있으면 그것을, 없으면 ui-common component를 직접 쓴다. form control은 ADR 0014가 정한 `BAI<X>` 이름으로 쓴다.
 
 ### 2. ESLint가 `@astryxdesign/*` import를 막는다
 
