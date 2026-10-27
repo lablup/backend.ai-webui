@@ -123,6 +123,7 @@ export type BAIAdminSessionSelectValueQuery$data = {
     readonly adminSessionsV2?: {
         readonly edges: ReadonlyArray<{
             readonly node: {
+                readonly entityId: string;
                 readonly id: string;
                 readonly metadata: {
                     readonly name: string;

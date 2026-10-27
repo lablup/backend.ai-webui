@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-sJBDdmOt.js";import{t}from"./jsx-runtime-MKhVqBIO.js";import{i as n,u as r}from"./context-B5I7OTSe.js";import{n as i,t as a}from"./Popover-BHDkRpY0.js";function o({content:e,...t}){return(0,s.jsx)(a,{...t,content:(0,s.jsx)(r,{children:e})})}var s;function c(){return(c=e((()=>{n(),s=t(),i()})))()}export{o as n,c as t};
