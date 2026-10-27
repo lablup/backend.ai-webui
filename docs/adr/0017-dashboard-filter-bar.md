@@ -1,4 +1,4 @@
-# 0016 — Dashboard refresh bar and per-card settings
+# 0017 — Dashboard refresh bar and per-card settings
 
 ## Summary
 
@@ -14,7 +14,7 @@
 
 - **Card scope**: #10580 이전의 대시보드 카드는 각자 범위를 정했다. "My Sessions" 카드는 관리자에게 프로젝트 전체 세션을 세었고, 어떤 범위인지 화면에 표시되지 않았다(#9839, #7843).
 - **Global filters ignored**: 보드 위에 전역 자원 그룹, 기간, 프로젝트 picker를 두자 카드 대부분이 그중 일부만 따랐다. 세션 수 카드는 기간을 무시했고, 도움말이 그 차이를 설명해야 했다. 2026-10-26 회의에서 전역 picker를 없애고 카드 설정으로 옮기기로 했다.
-- **Board model**: [ADR 0015](0015-dashboard-boards-in-manager-app-config.md)가 보드를 `DashboardModel`로 저장한다. 카드 하나는 보드의 `PersistedPanelV2`이다.
+- **Board model**: [ADR 0016](0016-dashboard-boards-in-manager-app-config.md)가 보드를 `DashboardModel`로 저장한다. 카드 하나는 보드의 `PersistedPanelV2`이다.
 - **Manager bug**: 26.10.0a3 매니저는 `DateTimeFilter` 하나에 `after`와 `before`를 함께 주면 `after`를 무시한다.
 
 ## 설계도
@@ -133,7 +133,7 @@ sequenceDiagram
 - #10422 (epic), #10582, #9839, #7843, 2026-10-26 회의.
 - #10422의 role-based dashboard 제안(기간과 갱신, 저장과 마이그레이션).
 
-관련: [ADR 0012](0012-scoped-search-fields-in-place-of-admin-fields.md), [ADR 0015](0015-dashboard-boards-in-manager-app-config.md).
+관련: [ADR 0012](0012-scoped-search-fields-in-place-of-admin-fields.md), [ADR 0016](0016-dashboard-boards-in-manager-app-config.md).
 
 ## 용어
 
@@ -141,7 +141,7 @@ sequenceDiagram
 | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | 대시보드 바   | 대시보드 보드 위의 한 줄이다. 보드 탭과 자동 새로고침 control을 담고 `DashboardFilterBar`가 그린다.                                            |
 | 카드 설정     | 카드 하나가 보드에 저장하는 자원 그룹과 기간 값이다. `PersistedPanelV2.settings`이며, 카드 정의가 `settings`로 적은 것만 갖는다.               |
-| 보드          | 카드 배치와 설정을 담아 저장한 대시보드 한 장이다. `DashboardModel`이며 [ADR 0015](0015-dashboard-boards-in-manager-app-config.md)가 정의한다. |
+| 보드          | 카드 배치와 설정을 담아 저장한 대시보드 한 장이다. `DashboardModel`이며 [ADR 0016](0016-dashboard-boards-in-manager-app-config.md)가 정의한다. |
 | fetch key     | Relay `useLazyLoadQuery`의 `fetchKey` 옵션에 넘기는 문자열이다. 값이 바뀌면 query가 서버에서 다시 읽힌다.                                      |
 | count alias   | 같은 connection field를 한 GraphQL 요청 안에서 filter만 달리해 여러 번 부르고, 각 결과의 `count`만 이름을 붙여 읽는 방식이다.                  |
 | `refresh.min` | `PanelDefinition`이 정하는 카드의 최소 refresh 간격이다. 바의 간격이 이보다 짧아도 카드는 이 간격보다 자주 다시 읽지 않는다.                   |
