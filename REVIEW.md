@@ -109,6 +109,7 @@ ones, so a default worth keeping is listed here again.
 **/REVIEW.md
 **/AGENTS.md
 **/CLAUDE.md
+**/SKILL.md
 **/.claude/**
 .github/**
 scripts/**
@@ -117,9 +118,14 @@ react/scripts/**
 docs/adr/**
 docs/ARCHITECTURE.md
 **/*.config.{js,mjs,ts,cjs,mts}
-**/vitest.config.*
-**/playwright*.config.*
 **/tsconfig*.json
+packages/eslint-config-bai/**
+react/vite-plugins/**
+**/.prettierrc*
+**/.prettierignore
+**/.npmrc
+.nvmrc
+Makefile
 package.json
 **/package.json
 pnpm-workspace.yaml
@@ -131,8 +137,7 @@ electron-app/**
 preload.js
 app-packager.js
 packages/backend.ai-client/src/**
-packages/backend.ai-agent-cli/src/mutation-allowlist.ts
-packages/backend.ai-agent-cli/src/**/*login*
+packages/backend.ai-agent-cli/src/**
 react/src/routes.tsx
 react/src/hooks/useRouteAccess*
 react/src/hooks/useSToken*
@@ -148,10 +153,19 @@ react/src/**/*purge*
 react/src/**/*terminate*
 packages/backend.ai-ui/src/**/*login*
 packages/backend.ai-ui/src/**/*keypair*
+packages/backend.ai-ui/src/**/*credential*
 packages/backend.ai-ui/src/**/*permission*
+packages/backend.ai-ui/src/**/*rbac*
+packages/backend.ai-ui/src/**/*role*
 packages/backend.ai-ui/src/**/*scoped*
 packages/backend.ai-ui/src/**/*delete*
+packages/backend.ai-ui/src/**/*purge*
+packages/backend.ai-ui/src/**/*terminate*
 packages/backend.ai-ui/src/app-shim/**
+e2e/**/*login*
+e2e/**/auth*
+e2e-agent/**/*login*
+e2e-agent/**/auth*
 ```
 
 ### Low
@@ -171,3 +185,8 @@ e2e-agent/**
 **/__generated__/**
 react/src/generated/**
 ```
+
+The security stems are scoped to `react/src`, BUI `src` and the e2e login helpers rather than
+kept as the gate's repo-wide `**/auth*` / `**/*credential*` defaults, which match
+`AuthorIcon.tsx` and the manual's screenshots. The client package's docs and tests fall to Low
+on purpose; its `src/**` and `.prettierrc*` stay High.

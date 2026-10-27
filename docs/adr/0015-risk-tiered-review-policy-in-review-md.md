@@ -51,6 +51,7 @@ flowchart LR
 | High | xhigh | 실행 | 2 |
 
 - **Override scope**: `REVIEW.md`의 `### High`·`### Low` 목록은 gate의 기본 목록을 통째로 대신한다. 기본 목록에서 유지할 glob은 `REVIEW.md`에 다시 적는다.
+- **Dropped defaults**: `REVIEW.md` 목록은 gate 기본 목록 중 일부를 일부러 빼거나 좁힌다. `**/auth*`는 `AuthorIcon.tsx` 같은 무관한 파일에 맞아서 뺐고, 저장소 전체의 `*credential*`·`*purge*`·`*delete*`는 매뉴얼 screenshot에 맞아서 `react/src`와 BUI `src`로 좁혔다. `**/electron*/**`는 실제 경로인 `electron-app/**`로 바꿨다. `packages/backend.ai-client/**`는 `src/**`로 좁혀, client package의 문서와 테스트는 Low로 떨어진다.
 
 ### 3. finding은 tag를 달고 모두 답을 받는다
 
