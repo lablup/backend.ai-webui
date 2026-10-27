@@ -2005,6 +2005,8 @@
     "AgentId": "Agenten -ID",
     "ContainerId": "Container -ID",
     "ContainerLogs": "Containerprotokolle",
+    "ContainerLogsNotReadyYet": "Containerprotokolle noch nicht verfügbar",
+    "ContainerLogsNotReadyYetDescription": "Der Container wurde noch keinem Agenten zugewiesen. Die Protokolle erscheinen, sobald die Sitzung startet.",
     "FailedToLoadContainerLogs": "Containerprotokolle konnten nicht geladen werden",
     "Hostname": "Hostname",
     "Kernel": "Kernel",

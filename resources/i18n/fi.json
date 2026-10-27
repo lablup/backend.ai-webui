@@ -2003,6 +2003,8 @@
     "AgentId": "Agenttitunnus",
     "ContainerId": "Konttitunnus",
     "ContainerLogs": "Säiliölokit",
+    "ContainerLogsNotReadyYet": "Säiliölokeja ei ole vielä saatavilla",
+    "ContainerLogsNotReadyYetDescription": "Säiliötä ei ole vielä liitetty agenttiin. Lokit näkyvät, kun istunto alkaa.",
     "FailedToLoadContainerLogs": "Säiliölokien lataaminen epäonnistui",
     "Hostname": "Isäntänimi",
     "Kernel": "Ytimen",

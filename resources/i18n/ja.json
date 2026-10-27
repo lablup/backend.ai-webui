@@ -2005,6 +2005,8 @@
     "AgentId": "エージェントID",
     "ContainerId": "コンテナID",
     "ContainerLogs": "コンテナログ",
+    "ContainerLogsNotReadyYet": "コンテナログはまだありません",
+    "ContainerLogsNotReadyYetDescription": "コンテナはまだエージェントに割り当てられていません。セッションが開始するとログが表示されます。",
     "FailedToLoadContainerLogs": "コンテナログの読み込みに失敗しました",
     "Hostname": "ホスト名",
     "Kernel": "カーネル",

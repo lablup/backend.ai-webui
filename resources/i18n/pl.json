@@ -2004,6 +2004,8 @@
     "AgentId": "Identyfikator agenta",
     "ContainerId": "Identyfikator kontenera",
     "ContainerLogs": "Dzienniki kontenera",
+    "ContainerLogsNotReadyYet": "Dzienniki kontenera nie są jeszcze dostępne",
+    "ContainerLogsNotReadyYetDescription": "Kontener nie został jeszcze przypisany do agenta. Dzienniki pojawią się po uruchomieniu sesji.",
     "FailedToLoadContainerLogs": "Nie udało się załadować dzienników kontenera",
     "Hostname": "Nazwa hosta",
     "Kernel": "Jądro",

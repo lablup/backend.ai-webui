@@ -2003,6 +2003,8 @@
     "AgentId": "Ajan kimliği",
     "ContainerId": "Konteyner kimliği",
     "ContainerLogs": "Konteyner Günlükleri",
+    "ContainerLogsNotReadyYet": "Konteyner günlükleri henüz kullanılamıyor",
+    "ContainerLogsNotReadyYetDescription": "Kapsayıcı henüz bir ajana atanmadı. Günlükler oturum başladığında görünecek.",
     "FailedToLoadContainerLogs": "Konteyner günlükleri yüklenemedi",
     "Hostname": "Ana bilgisayar adı",
     "Kernel": "Çekirdek",

@@ -2006,6 +2006,8 @@
     "AgentId": "ID Agen",
     "ContainerId": "ID Kontainer",
     "ContainerLogs": "Log Kontainer",
+    "ContainerLogsNotReadyYet": "Log kontainer belum tersedia",
+    "ContainerLogsNotReadyYetDescription": "Kontainer belum ditugaskan ke agen. Log akan muncul setelah sesi dimulai.",
     "FailedToLoadContainerLogs": "Gagal memuat log kontainer",
     "Hostname": "Nama host",
     "Kernel": "Inti",
