@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9b553e987e0aec8cf8336e04b796cbdd>>
+ * @generated SignedSource<<7f3812116529c76175df94cfc7ef10cd>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -87,6 +87,7 @@ export type EntityLabelFilter = {
   OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
   entityId?: UUIDFilter | null | undefined;
   entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   key?: StringFilter | null | undefined;
   value?: StringFilter | null | undefined;
 };

@@ -3,42 +3,47 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
-  type InvitationItem,
-  mergeSharePermissions,
+  type RecipientShare,
+  toInvitationItems,
 } from './useVFolderInvitations';
 
-const invitation = (id: string): InvitationItem => ({
-  id,
-  vfolder_id: 'vf-1',
-  vfolder_name: 'data',
-  inviter: 'admin@example.com',
-  mount_permission: 'ro',
-  created_at: '2026-10-19T00:00:00Z',
-  modified_at: null,
-  status: 'pending',
-  perm: 'ro',
+const share = (overrides: Partial<RecipientShare>): RecipientShare => ({
+  entityId: 'share-1',
+  status: 'PENDING',
+  permissions: ['READ'],
+  targetEntityType: 'vfolder',
+  targetEntityId: 'vf-1',
+  createdAt: '2026-10-19T00:00:00Z',
+  sharer: { basicInfo: { email: 'admin@example.com' } },
+  targetEntity: { __typename: 'VFolder', metadata: { name: 'data' } },
+  ...overrides,
 });
 
-describe('mergeSharePermissions (#10329)', () => {
-  it('attaches the share cap whose entityId is the invitation id', () => {
-    const [full, bare] = mergeSharePermissions(
-      [invitation('share-1'), invitation('share-2')],
-      [
-        { entityId: 'share-1', permissions: ['READ', 'UPDATE', 'CREATE'] },
-        { entityId: 'share-9', permissions: ['READ'] },
-      ],
-    );
-    expect(full.permissions).toEqual(['READ', 'UPDATE', 'CREATE']);
-    // The mount permission the invite was sent with stays what it was.
-    expect(full.perm).toBe('ro');
-    expect(bare.permissions).toBeUndefined();
+describe('toInvitationItems (#10329)', () => {
+  it('keeps only the pending folder shares, newest first', () => {
+    const items = toInvitationItems([
+      share({ entityId: 'old', createdAt: '2026-10-18T00:00:00Z' }),
+      share({ entityId: 'accepted', status: 'ACCEPTED' }),
+      share({ entityId: 'session', targetEntityType: 'session' }),
+      share({ entityId: 'new', createdAt: '2026-10-20T00:00:00Z' }),
+    ]);
+    expect(items.map((item) => item.id)).toEqual(['new', 'old']);
+    expect(items[0]).toEqual({
+      id: 'new',
+      vfolderId: 'vf-1',
+      vfolderName: 'data',
+      sharerEmail: 'admin@example.com',
+      permissions: ['READ'],
+      createdAt: '2026-10-20T00:00:00Z',
+    });
   });
 
-  it('drops a cap the invitation no longer has a share for', () => {
-    const [item] = mergeSharePermissions(
-      [{ ...invitation('share-1'), permissions: ['READ'] }],
-      [],
-    );
-    expect(item.permissions).toBeUndefined();
+  it('leaves the sharer and the folder name empty when the caller may not read them', () => {
+    const [item] = toInvitationItems([
+      share({ sharer: null, targetEntity: null }),
+    ]);
+    expect(item.sharerEmail).toBeNull();
+    expect(item.vfolderName).toBeNull();
+    expect(item.vfolderId).toBe('vf-1');
   });
 });

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ac63d8f4d978d5c4a90442a190719991>>
+ * @generated SignedSource<<01f137f09e08ab75365b93bee7277d26>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,7 +18,7 @@ export type CreateVFolderInScopeInput = {
   cloneable?: boolean;
   host?: string | null | undefined;
   name: string;
-  permission?: VFolderMountPermission;
+  permission?: VFolderMountPermission | null | undefined;
   usageMode?: VFolderUsageMode;
 };
 export type FolderCreateModalProjectMutation$variables = {
