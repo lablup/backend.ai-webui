@@ -74,16 +74,17 @@ export default defineConfig(({ mode }) => {
         // library, so they have no business in the published types.
         exclude: [
           '**/*.{stories,test}.{ts,tsx}',
+          '**/*TestFixtures.{ts,tsx}',
           'src/locale/*.json',
           '**/*.doc.ts',
           'src/astryx-docs/**',
         ],
         rollupTypes: false,
         insertTypesEntry: true,
+        pathsToAliases: false,
         compilerOptions: {
           preserveSymlinks: false,
           rootDir: 'src',
-          paths: {},
         },
       }),
       svgr(),
