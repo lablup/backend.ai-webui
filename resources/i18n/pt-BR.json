@@ -911,6 +911,7 @@
       "ResetLayout": "Redefinir layout",
       "ResetLayoutDescription": "Restaura a disposição padrão dos painéis. Os painéis personalizados são mantidos.",
       "SearchCards": "Pesquisar cartões",
+      "SelectAll": "Selecionar tudo",
       "Title": "Painéis personalizados"
     },
     "panelModal": {

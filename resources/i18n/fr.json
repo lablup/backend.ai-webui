@@ -911,6 +911,7 @@
       "ResetLayout": "Réinitialiser la disposition",
       "ResetLayoutDescription": "Restaure la disposition par défaut des panneaux. Les panneaux personnalisés sont conservés.",
       "SearchCards": "Rechercher des cartes",
+      "SelectAll": "Tout sélectionner",
       "Title": "Panneaux personnalisés"
     },
     "panelModal": {
