@@ -7,7 +7,7 @@
 // The member dashboard reads only the viewer's own data (#10584); Agent Stats
 // and Recently Created Sessions live on the superadmin dashboard.
 import { loginAsAdmin, loginAsUser, navigateTo } from '../utils/test-util';
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
 // Timeout for widget visibility checks - widgets load after GraphQL data fetches,
 // which may be slow when multiple workers run in parallel.
@@ -168,7 +168,7 @@ test.describe(
         // 2. Click the dashboard's refresh button (cards have none of their own)
         const refreshButton = page
           .getByTestId('dashboard-filter-bar')
-          .getByRole('button', { name: 'Refresh' });
+          .getByRole('button', { name: 'Refresh', exact: true });
         await refreshButton.click();
 
         // 3. Verify the widget data remains visible after refresh
@@ -216,7 +216,7 @@ test.describe(
         // 2. Click the dashboard's refresh button (cards have none of their own)
         const refreshButton = page
           .getByTestId('dashboard-filter-bar')
-          .getByRole('button', { name: 'Refresh' });
+          .getByRole('button', { name: 'Refresh', exact: true });
         await refreshButton.click();
 
         // 3. Verify the widget still renders CPU/Memory after refresh
@@ -309,7 +309,7 @@ test.describe(
           // 2. Click the dashboard's refresh button (cards have none of their own)
           const refreshButton = page
             .getByTestId('dashboard-filter-bar')
-            .getByRole('button', { name: 'Refresh' });
+            .getByRole('button', { name: 'Refresh', exact: true });
           await refreshButton.click();
 
           // 3. Verify the widget still renders after refresh (no error state)
@@ -322,9 +322,31 @@ test.describe(
     // 11. Recently Created Sessions Widget
     // -----------------------------------------------------------------------
     test.describe('Recently Created Sessions Widget', () => {
+      // The card is hidden on a new superadmin board, so each test shows it
+      // from the edit sider and hides it again when it was not there before.
+      let addedCard = false;
+      const setCardShown = async (page: Page, shown: boolean) => {
+        const dashboardBar = page.getByTestId('dashboard-filter-bar');
+        await dashboardBar.getByRole('button', { name: 'Edit' }).click();
+        const checkbox = page.getByRole('checkbox', {
+          name: 'Recently Created Sessions',
+          exact: true,
+        });
+        await expect(checkbox).toBeVisible({ timeout: WIDGET_TIMEOUT });
+        const wasShown = await checkbox.isChecked();
+        if (wasShown !== shown) await checkbox.click();
+        await dashboardBar.getByRole('button', { name: 'Close' }).click();
+        return wasShown;
+      };
+
       test.beforeEach(async ({ page, request }) => {
         await loginAsAdmin(page, request);
         await navigateTo(page, 'admin/dashboard');
+        addedCard = !(await setCardShown(page, true));
+      });
+
+      test.afterEach(async ({ page }) => {
+        if (addedCard) await setCardShown(page, false);
       });
 
       test('Admin can view the recently created sessions list on the superadmin dashboard', async ({
@@ -352,7 +374,7 @@ test.describe(
         // 2. Click the dashboard's refresh button (cards have none of their own)
         const refreshButton = page
           .getByTestId('dashboard-filter-bar')
-          .getByRole('button', { name: 'Refresh' });
+          .getByRole('button', { name: 'Refresh', exact: true });
         await refreshButton.click();
 
         // 3. Verify the widget still renders after refresh

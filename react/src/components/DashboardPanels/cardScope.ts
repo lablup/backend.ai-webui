@@ -5,7 +5,7 @@
 import type { DashboardScope } from './types';
 
 /**
- * Whose data a card reads (ADR 0016): the viewer's own in the page's project,
+ * Whose data a card reads (ADR 0017): the viewer's own in the page's project,
  * one project, or every project of the current domain. A card shared by
  * several pages picks its fields from this and keeps one UI.
  */
