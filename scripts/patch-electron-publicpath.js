@@ -95,6 +95,22 @@ if (fs.existsSync(assetsDir)) {
 
 console.log(`\nDone. Patched ${patchedCount} file(s).`);
 
+// Lazy-chunk preload deps must be chunk-relative (react/vite.config.ts `renderBuiltUrl`).
+if (fs.existsSync(assetsDir)) {
+  const absoluteDeps = fs
+    .readdirSync(assetsDir)
+    .filter((f) => f.endsWith('.js'))
+    .filter((f) =>
+      fs.readFileSync(path.join(assetsDir, f), 'utf-8').includes('m.f=["assets/'),
+    );
+  if (absoluteDeps.length > 0) {
+    console.error(
+      `✗ Verification failed: ${absoluteDeps[0]} preloads its dependencies from the base-absolute "/assets/", which es6:// resolves to es6://assets/assets/.`,
+    );
+    process.exit(1);
+  }
+}
+
 // Verify the patch worked by checking index.html
 const indexPath = path.join(buildDir, 'index.html');
 if (fs.existsSync(indexPath)) {

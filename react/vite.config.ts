@@ -757,6 +757,10 @@ export default defineConfig(({ command, mode }) => {
   // (per FR-2612 policy: one build, post-patch — never a second `vite build`).
   return {
     base: '/',
+    experimental: {
+      renderBuiltUrl: (_filename, { hostType }) =>
+        hostType === 'js' ? { relative: true } : undefined,
+    },
     // Keep root at `react/` so pnpm's react/react-dom installed in
     // react/node_modules resolve correctly. Static assets from projectRoot
     // are handled by projectRootStaticPlugin above.
