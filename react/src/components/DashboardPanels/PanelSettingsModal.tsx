@@ -58,6 +58,12 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
     definition.kind === 'preset'
       ? t('dashboard.settings.AllResourceGroups')
       : t('dashboard.settings.CurrentResourceGroup');
+  const resourceGroupsExtra = t(
+    'dashboard.settings.ResourceGroupsDescription',
+    {
+      default: resourceGroupDefault,
+    },
+  );
 
   return (
     <BAIModal
@@ -91,14 +97,19 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
         }}
       >
         {hasSetting(definition, 'resourceGroup') ? (
-          <BAIFormItem
-            name="resourceGroups"
-            // The selector renders its own field label.
-            extra={t('dashboard.settings.ResourceGroupsDescription', {
-              default: resourceGroupDefault,
-            })}
+          // Form.Item binds value/onChange to its direct child, so Suspense stays outside it.
+          <Suspense
+            fallback={
+              <BAIFormItem extra={resourceGroupsExtra}>
+                <BAISelect mode="multiple" loading disabled />
+              </BAIFormItem>
+            }
           >
-            <Suspense fallback={<BAISelect mode="multiple" loading disabled />}>
+            <BAIFormItem
+              name="resourceGroups"
+              // The selector renders its own field label.
+              extra={resourceGroupsExtra}
+            >
               <BAIScopedResourceGroupSelect
                 multiple
                 label={t('dashboard.settings.ResourceGroups')}
@@ -106,8 +117,8 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
                 scope={resourceGroupScope}
                 allowClear
               />
-            </Suspense>
-          </BAIFormItem>
+            </BAIFormItem>
+          </Suspense>
         ) : null}
         {hasSetting(definition, 'range') ? (
           <BAIFormItem
