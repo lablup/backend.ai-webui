@@ -826,6 +826,7 @@
       "ResetLayout": "Đặt lại bố cục",
       "ResetLayoutDescription": "Khôi phục cách sắp xếp bảng mặc định. Các bảng tùy chỉnh vẫn được giữ nguyên.",
       "SearchCards": "Tìm thẻ",
+      "SelectAll": "Chọn tất cả",
       "Title": "Bảng tùy chỉnh",
       "Unavailable": "Không khả dụng trong môi trường này"
     },

@@ -826,6 +826,7 @@
       "ResetLayout": "Atur ulang tata letak",
       "ResetLayoutDescription": "Mengembalikan susunan panel ke pengaturan default. Panel kustom tetap dipertahankan.",
       "SearchCards": "Cari kartu",
+      "SelectAll": "Pilih Semua",
       "Title": "Panel kustom",
       "Unavailable": "Tidak tersedia di lingkungan ini"
     },

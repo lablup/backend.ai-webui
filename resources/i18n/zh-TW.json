@@ -826,6 +826,7 @@
       "ResetLayout": "重置佈局",
       "ResetLayoutDescription": "將面板佈局恢復為預設設定。自訂面板將被保留。",
       "SearchCards": "搜尋卡片",
+      "SelectAll": "全選",
       "Title": "自訂面板",
       "Unavailable": "此環境中無法使用"
     },

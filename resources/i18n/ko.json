@@ -826,6 +826,7 @@
       "ResetLayout": "기본 배치로 초기화",
       "ResetLayoutDescription": "패널 배치를 기본값으로 되돌립니다. 사용자 정의 패널은 유지됩니다.",
       "SearchCards": "카드 검색",
+      "SelectAll": "전체 선택",
       "Title": "사용자 정의 패널",
       "Unavailable": "이 환경에서는 사용할 수 없습니다"
     },

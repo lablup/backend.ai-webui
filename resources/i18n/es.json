@@ -826,6 +826,7 @@
       "ResetLayout": "Restablecer diseño",
       "ResetLayoutDescription": "Restaura la disposición predeterminada de los paneles. Los paneles personalizados se conservan.",
       "SearchCards": "Buscar tarjetas",
+      "SelectAll": "Seleccionar todo",
       "Title": "Paneles personalizados",
       "Unavailable": "No disponible en este entorno"
     },

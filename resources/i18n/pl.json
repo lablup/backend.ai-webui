@@ -826,6 +826,7 @@
       "ResetLayout": "Resetuj układ",
       "ResetLayoutDescription": "Przywraca domyślny układ paneli. Panele niestandardowe zostaną zachowane.",
       "SearchCards": "Szukaj kart",
+      "SelectAll": "Zaznacz wszystkie",
       "Title": "Panele niestandardowe",
       "Unavailable": "Niedostępne w tym środowisku"
     },
