@@ -1,0 +1,25 @@
+import{n as e,o as t}from"./rolldown-runtime-2s6bX4vc.js";import{l as n}from"./iframe-DR2sIF5r.js";import{Suspense as r,useEffect as i,useEffectEvent as a,useState as o}from"react";import{jsx as s,jsxs as c}from"react/jsx-runtime";import{c as l}from"react/compiler-runtime";import{VStack as u}from"@lablup/ui-common/Stack";import{useTheme as d}from"@lablup/ui-common/theme";import{AppShell as f,useAppShellMobile as p}from"@lablup/ui-common/AppShell";import{MobileNav as m}from"@lablup/ui-common/MobileNav";import{SideNav as h,SideNavItem as g,SideNavRenderContext as _,SideNavSection as v}from"@lablup/ui-common/SideNav";var y,b,x,S;function C(){return(C=e((()=>{y=t(n(),1),b=240,x=e=>{"use memo";let t=l(28),{"data-testid":n,banner:i,sideNav:a,drawer:p,pathname:h,variant:g,contentPadding:v,children:x}=e,C=g===void 0?`wash`:g,w=v===void 0?0:v,[T,E]=o(!1),{mode:D}=d(),[O,k]=o(h);h!==void 0&&O!==h&&(k(h),E(!1));let A=null;if(p){let e=p[`data-testid`],n=D===`dark`?`bai-app-shell-drawer--on-light`:`bai-app-shell-drawer--on-dark`,r;t[0]===n?r=t[1]:(r=(0,y.default)(`bai-app-shell-drawer`,n),t[0]=n,t[1]=r);let i=p.width??b,a;t[2]===p.header?a=t[3]:(a=s(`div`,{className:`bai-app-shell-drawer-brand`,children:p.header}),t[2]=p.header,t[3]=a);let o;t[4]===p.children?o=t[5]:(o=s(_,{value:`drawer-content`,children:s(u,{className:`bai-nav-surface`,align:`stretch`,gap:0,children:p.children})}),t[4]=p.children,t[5]=o);let c;t[6]!==p.label||t[7]!==e||t[8]!==r||t[9]!==i||t[10]!==a||t[11]!==o?(c=s(m,{"data-testid":e,className:r,label:p.label,width:i,side:`start`,header:a,children:o}),t[6]=p.label,t[7]=e,t[8]=r,t[9]=i,t[10]=a,t[11]=o,t[12]=c):c=t[12];let l=c,d;t[13]!==p||t[14]!==l?(d=p.wrap?.(l)??l,t[13]=p,t[14]=l,t[15]=d):d=t[15],A=d}let j;t[16]!==A||t[17]!==T?(j=A?{hasToggle:!1,breakpoint:`md`,isOpen:T,onOpenChange:E,content:s(r,{fallback:null,children:A})}:!1,t[16]=A,t[17]=T,t[18]=j):j=t[18];let M;t[19]===Symbol.for(`react.memo_cache_sentinel`)?(M=s(S,{onLeaveMobile:()=>E(!1)}),t[19]=M):M=t[19];let N;return t[20]!==i||t[21]!==x||t[22]!==w||t[23]!==n||t[24]!==a||t[25]!==j||t[26]!==C?(N=c(f,{"data-testid":n,variant:C,height:`fill`,contentPadding:w,banner:i,sideNav:a,mobileNav:j,children:[M,x]}),t[20]=i,t[21]=x,t[22]=w,t[23]=n,t[24]=a,t[25]=j,t[26]=C,t[27]=N):N=t[27],N},S=e=>{"use memo";let t=l(5),{onLeaveMobile:n}=e,{isMobile:r}=p(),o=a(n),s;t[0]!==r||t[1]!==o?(s=()=>{r||o()},t[0]=r,t[1]=o,t[2]=s):s=t[2];let c;return t[3]===r?c=t[4]:(c=[r],t[3]=r,t[4]=c),i(s,c),null}})))()}var w,T,E,D;function O(){return(O=e((()=>{C(),w={title:`Layout/BAIAppShell`,component:x,tags:[`autodocs`],parameters:{layout:`fullscreen`,docs:{description:{component:"\n**BAIAppShell** composes Astryx `AppShell` + `MobileNav` into one reusable shell.\n\n## Props\n| Name | Type | Default | Description |\n|------|------|---------|-------------|\n| `banner` | `ReactNode` | – | Full-width slot above everything (announcements) |\n| `sideNav` | `ReactNode` | – | Inline side navigation, >=768px |\n| `drawer` | `BAIAppShellDrawer` | – | Mobile drawer (<768px). Omit to disable mobile nav entirely |\n| `pathname` | `string` | – | Current route pathname; a CHANGE closes the drawer |\n| `variant` | `AppShellVariant` | `'wash'` | Astryx AppShell background variant |\n| `contentPadding` | `SpacingStep` | `0` | Padding of the main content area |\n\nNarrow the preview below the `md` breakpoint to see the drawer replace the rail.\n        "}}}},T=()=>c(v,{title:`Workloads`,children:[s(g,{label:`Sessions`,href:`#sessions`}),s(g,{label:`Storage`,href:`#storage`}),s(g,{label:`Models`,href:`#models`})]}),E={render:()=>s(`div`,{style:{height:480},children:s(x,{"data-testid":`story-app-shell`,banner:s(`div`,{style:{padding:`var(--spacing-2) var(--spacing-4)`,background:`var(--color-background-surface)`},children:`Scheduled maintenance tonight at 23:00 KST.`}),sideNav:s(h,{children:s(T,{})}),drawer:{label:`Menu`,header:s(`strong`,{children:`Backend.AI`}),children:s(T,{})},pathname:`/sessions`,children:s(`div`,{style:{padding:`var(--spacing-6)`},children:`Page content lives here. The shell never scrolls it — the host owns its own scroll column inside this slot.`})})})},E.parameters={...E.parameters,docs:{...E.parameters?.docs,source:{originalSource:`{
+  render: () => <div style={{
+    height: 480
+  }}>
+      <BAIAppShell data-testid="story-app-shell" banner={<div style={{
+      padding: 'var(--spacing-2) var(--spacing-4)',
+      background: 'var(--color-background-surface)'
+    }}>
+            Scheduled maintenance tonight at 23:00 KST.
+          </div>} sideNav={<SideNav>
+            <DemoNav />
+          </SideNav>} drawer={{
+      label: 'Menu',
+      header: <strong>Backend.AI</strong>,
+      children: <DemoNav />
+    }} pathname="/sessions">
+        <div style={{
+        padding: 'var(--spacing-6)'
+      }}>
+          Page content lives here. The shell never scrolls it — the host owns
+          its own scroll column inside this slot.
+        </div>
+      </BAIAppShell>
+    </div>
+}`,...E.parameters?.docs?.source}}},D=[`Default`]})))()}O();export{E as Default,D as __namedExportsOrder,w as default};

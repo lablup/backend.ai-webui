@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-2s6bX4vc.js";import{i as t,n,r,t as i}from"./toString-D-HqYh4D.js";import{n as a,t as o}from"./toInteger-Bwm_SNjN.js";import{n as s,t as c}from"./_baseClamp-C1ZnFaZZ.js";function l(e,t,i){return e=n(e),i=i==null?0:c(a(i),0,e.length),t=r(t),e.slice(i,i+t.length)==t}function u(){return(u=e((()=>{s(),t(),o(),i()})))()}export{l as n,u as t};

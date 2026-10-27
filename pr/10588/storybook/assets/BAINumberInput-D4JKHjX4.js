@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-2s6bX4vc.js";import{NumberInput as t}from"@lablup/ui-common/NumberInput";function n(){return(n=e((()=>{})))()}export{n,t};

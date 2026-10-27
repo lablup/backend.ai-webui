@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-2s6bX4vc.js";import{Switch as t}from"@lablup/ui-common/Switch";function n(){return(n=e((()=>{})))()}export{n,t};

@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-sJBDdmOt.js";import{n as t,t as n}from"./_defineProperty-BZYcXsEc.js";function r(e,t,r){t==`__proto__`&&n?n(e,t,{configurable:!0,enumerable:!0,value:r,writable:!0}):e[t]=r}function i(){return(i=e((()=>{t()})))()}export{i as n,r as t};

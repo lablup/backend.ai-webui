@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-2s6bX4vc.js";import{a as t,n,o as r,s as i,t as a}from"./chunk-DRQKCCAG-B5NVtvpv.js";var o;function s(){return(s=e((()=>{a(),r(),o=(0,t(n(),1).default)(2)(async(e,t)=>e===!1?t:i(t))})))()}s();export{o as formatter};

@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-2s6bX4vc.js";import{l as t,u as n}from"./isObject-BhsmWKjo.js";import{i as r,r as i}from"./_Map-K7Xb5pfL.js";var a;function o(){return(o=e((()=>{r(),t(),a=i(n,`Set`)})))()}export{o as n,a as t};

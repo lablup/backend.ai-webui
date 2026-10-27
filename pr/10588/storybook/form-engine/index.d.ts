@@ -15,4 +15,4 @@
  */
 export * from '@lablup/ui-common/Form';
 export { default } from '@lablup/ui-common/Form';
-export { FormItem as BAIFormItem, FormItemVisual as BAIFormItemVisual, type FormItemVisualProps as BAIFormItemVisualProps, } from '@lablup/ui-common/Form';
+export { Form, FormItem as BAIFormItem, FormItemVisual as BAIFormItemVisual, type FormItemVisualProps as BAIFormItemVisualProps, } from '@lablup/ui-common/Form';

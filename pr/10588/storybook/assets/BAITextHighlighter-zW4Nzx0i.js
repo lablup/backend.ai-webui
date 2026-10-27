@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-2s6bX4vc.js";import{jsx as t}from"react/jsx-runtime";import{TextHighlighter as n}from"@lablup/ui-common/components/TextHighlighter";var r;function i(){return(i=e((()=>{r=({children:e,keyword:r,style:i})=>t(n,{keyword:r,highlightStyle:i,children:e})})))()}export{i as n,r as t};
