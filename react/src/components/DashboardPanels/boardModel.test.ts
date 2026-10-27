@@ -6,6 +6,7 @@ import {
   addPanel,
   applyLayout,
   catalogFor,
+  siderEntries,
   migrateLegacyBoard,
   removePanel,
   resetBoard,
@@ -342,6 +343,18 @@ describe('catalogFor', () => {
     expect(keys('superadmin')).toEqual(
       expect.arrayContaining(['superadmin', 'projectAdmin']),
     );
+  });
+
+  it('leaves a locked entry out of the edit sider', () => {
+    const keys = siderEntries(
+      catalogFor(entries, {
+        page: 'project',
+        role: 'user',
+        config: { hideAgents: true },
+      }),
+    ).map((entry) => entry.definition.key);
+    expect(keys).not.toContain('agents');
+    expect(keys).toContain('everyone');
   });
 
   it('locks an entry whose config check fails instead of dropping it', () => {

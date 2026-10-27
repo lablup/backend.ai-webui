@@ -822,12 +822,10 @@
       "Empty": "尚無自訂面板",
       "GridDisabled": "網格檢視已關閉（實驗性功能）",
       "NoMatchingCards": "沒有符合的卡片",
-      "RequiresSuperadmin": "僅限超級管理員",
       "ResetLayout": "重置佈局",
       "ResetLayoutDescription": "將面板佈局恢復為預設設定。自訂面板將被保留。",
       "SearchCards": "搜尋卡片",
-      "Title": "自訂面板",
-      "Unavailable": "此環境中無法使用"
+      "Title": "自訂面板"
     },
     "panelModal": {
       "AddPanel": "新增面板",

@@ -809,12 +809,10 @@
       "Empty": "No custom panels yet",
       "GridDisabled": "Grid view off (Experimental features)",
       "NoMatchingCards": "No matching cards",
-      "RequiresSuperadmin": "Superadmin only",
       "ResetLayout": "Reset layout",
       "ResetLayoutDescription": "Restores the default panel arrangement. Custom panels are kept.",
       "SearchCards": "Search cards",
-      "Title": "Custom panels",
-      "Unavailable": "Not available in this environment"
+      "Title": "Custom panels"
     },
     "panelModal": {
       "AddPanel": "Add panel",

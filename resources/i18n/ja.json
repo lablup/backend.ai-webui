@@ -822,12 +822,10 @@
       "Empty": "カスタムパネルはまだありません",
       "GridDisabled": "グリッド表示オフ (実験的機能)",
       "NoMatchingCards": "一致するカードはありません",
-      "RequiresSuperadmin": "スーパー管理者専用",
       "ResetLayout": "レイアウトを初期化",
       "ResetLayoutDescription": "パネルの配置をデフォルトに戻します。カスタムパネルは維持されます。",
       "SearchCards": "カードを検索",
-      "Title": "カスタムパネル",
-      "Unavailable": "この環境では利用できません"
+      "Title": "カスタムパネル"
     },
     "panelModal": {
       "AddPanel": "パネルを追加",

@@ -16,6 +16,7 @@ import {
   resetBoard,
   sanitizeBoard,
   seedBoard,
+  siderEntries,
   sizeOf,
   syncBoard,
   toBoardLayout,
@@ -266,9 +267,7 @@ export const useDashboardBoard = ({
   return {
     boardItems,
     onLayoutChange: (reported) => save(applyLayout(board, reported)),
-    catalogEntries: visibleEntries.filter(
-      (entry) => entry.definition.kind === 'custom',
-    ),
+    catalogEntries: siderEntries(visibleEntries),
     activeKeys: new Set(board.panels.map((panel) => panel.key)),
     setPanelActive,
     customPanels,

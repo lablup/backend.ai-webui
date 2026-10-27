@@ -822,12 +822,10 @@
       "Empty": "Ainda não há painéis personalizados",
       "GridDisabled": "Vista de grelha desativada (Funcionalidades experimentais)",
       "NoMatchingCards": "Nenhum cartão correspondente",
-      "RequiresSuperadmin": "Apenas superadministradores",
       "ResetLayout": "Redefinir layout",
       "ResetLayoutDescription": "Restaura a disposição predefinida dos painéis. Os painéis personalizados são mantidos.",
       "SearchCards": "Pesquisar cartões",
-      "Title": "Painéis personalizados",
-      "Unavailable": "Indisponível neste ambiente"
+      "Title": "Painéis personalizados"
     },
     "panelModal": {
       "AddPanel": "Adicionar painel",

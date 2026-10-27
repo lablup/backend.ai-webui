@@ -11,6 +11,29 @@ const keysFor = (context: PanelCatalogContext) =>
   catalogFor(PANEL_CATALOG, context).map((entry) => entry.definition.key);
 
 describe('PANEL_CATALOG', () => {
+  it.each<['admin' | 'user', PanelPage]>([
+    ['admin', 'project'],
+    ['admin', 'projectAdmin'],
+    ['user', 'project'],
+    ['user', 'projectAdmin'],
+  ])('offers a %s no superadmin-only card on the %s page', (role, page) => {
+    catalogFor(PANEL_CATALOG, { page, role, config: {} }).forEach(
+      ({ definition }) =>
+        expect(definition.requires?.role).not.toBe('superadmin'),
+    );
+  });
+
+  it.each<PanelPage>(['project', 'projectAdmin'])(
+    'offers a superadmin on the %s page only the cards placed on it',
+    (page) => {
+      catalogFor(PANEL_CATALOG, {
+        page,
+        role: 'superadmin',
+        config: {},
+      }).forEach(({ definition }) => expect(definition.page).toContain(page));
+    },
+  );
+
   it('has unique keys', () => {
     const keys = PANEL_CATALOG.map((definition) => definition.key);
     expect(new Set(keys).size).toBe(keys.length);

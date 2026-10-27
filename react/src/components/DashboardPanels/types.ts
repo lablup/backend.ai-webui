@@ -77,7 +77,6 @@ export const PANEL_GROUPS = [
   'resource',
   'deployment',
   'activity',
-  'superadmin',
   'other',
 ] as const;
 export type PanelGroup = (typeof PANEL_GROUPS)[number];

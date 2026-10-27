@@ -822,12 +822,10 @@
       "Empty": "Non ci sono ancora pannelli personalizzati",
       "GridDisabled": "Vista a griglia disattivata (Funzionalità sperimentali)",
       "NoMatchingCards": "Nessuna scheda corrispondente",
-      "RequiresSuperadmin": "Solo superamministratori",
       "ResetLayout": "Reimposta layout",
       "ResetLayoutDescription": "Ripristina la disposizione predefinita dei pannelli. I pannelli personalizzati vengono mantenuti.",
       "SearchCards": "Cerca schede",
-      "Title": "Pannelli personalizzati",
-      "Unavailable": "Non disponibile in questo ambiente"
+      "Title": "Pannelli personalizzati"
     },
     "panelModal": {
       "AddPanel": "Aggiungi pannello",

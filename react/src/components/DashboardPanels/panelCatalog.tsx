@@ -301,7 +301,7 @@ const BUILTIN_PANELS: ReadonlyArray<PanelDefinition> = [
   {
     key: 'agentStats',
     page: ['admin'],
-    group: 'superadmin',
+    group: 'resource',
     titleKey: 'agentStats.AgentStats',
     requires: { role: 'superadmin' },
     kind: 'custom',
@@ -313,7 +313,7 @@ const BUILTIN_PANELS: ReadonlyArray<PanelDefinition> = [
   {
     key: 'activeAgents',
     page: ['admin'],
-    group: 'superadmin',
+    group: 'resource',
     titleKey: 'activeAgent.ActiveAgents',
     requires: { role: 'superadmin' },
     kind: 'custom',

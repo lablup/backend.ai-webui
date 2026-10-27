@@ -822,12 +822,10 @@
       "Empty": "Brak paneli niestandardowych",
       "GridDisabled": "Widok siatki wyłączony (Funkcje eksperymentalne)",
       "NoMatchingCards": "Brak pasujących kart",
-      "RequiresSuperadmin": "Tylko superadministrator",
       "ResetLayout": "Resetuj układ",
       "ResetLayoutDescription": "Przywraca domyślny układ paneli. Panele niestandardowe zostaną zachowane.",
       "SearchCards": "Szukaj kart",
-      "Title": "Panele niestandardowe",
-      "Unavailable": "Niedostępne w tym środowisku"
+      "Title": "Panele niestandardowe"
     },
     "panelModal": {
       "AddPanel": "Dodaj panel",

@@ -822,12 +822,10 @@
       "Empty": "Chưa có bảng tùy chỉnh nào",
       "GridDisabled": "Tắt chế độ xem lưới (Tính năng thử nghiệm)",
       "NoMatchingCards": "Không có thẻ phù hợp",
-      "RequiresSuperadmin": "Chỉ dành cho siêu quản trị viên",
       "ResetLayout": "Đặt lại bố cục",
       "ResetLayoutDescription": "Khôi phục cách sắp xếp bảng mặc định. Các bảng tùy chỉnh vẫn được giữ nguyên.",
       "SearchCards": "Tìm thẻ",
-      "Title": "Bảng tùy chỉnh",
-      "Unavailable": "Không khả dụng trong môi trường này"
+      "Title": "Bảng tùy chỉnh"
     },
     "panelModal": {
       "AddPanel": "Thêm bảng",

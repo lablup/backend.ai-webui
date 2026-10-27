@@ -71,6 +71,12 @@ export const catalogFor = (
     }));
 };
 
+/** What the edit sider offers: single-instance cards the viewer can use, never a locked one. */
+export const siderEntries = (entries: ReadonlyArray<CatalogEntry>) =>
+  entries.filter(
+    (entry) => entry.definition.kind === 'custom' && !entry.locked,
+  );
+
 export const panelTitleKey = (
   definition: PanelDefinition,
   role: PanelCatalogContext['role'],

@@ -822,12 +822,10 @@
       "Empty": "Henüz özel panel yok",
       "GridDisabled": "Izgara görünümü kapalı (Deneysel özellikler)",
       "NoMatchingCards": "Eşleşen kart yok",
-      "RequiresSuperadmin": "Yalnızca süper yönetici",
       "ResetLayout": "Düzeni sıfırla",
       "ResetLayoutDescription": "Varsayılan panel düzenini geri yükler. Özel paneller korunur.",
       "SearchCards": "Kart ara",
-      "Title": "Özel paneller",
-      "Unavailable": "Bu ortamda kullanılamaz"
+      "Title": "Özel paneller"
     },
     "panelModal": {
       "AddPanel": "Panel ekle",

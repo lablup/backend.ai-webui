@@ -822,12 +822,10 @@
       "Empty": "Ei vielä mukautettuja paneeleja",
       "GridDisabled": "Ruudukkonäkymä pois (Kokeelliset ominaisuudet)",
       "NoMatchingCards": "Ei vastaavia kortteja",
-      "RequiresSuperadmin": "Vain superadmin-käyttäjille",
       "ResetLayout": "Palauta asettelu",
       "ResetLayoutDescription": "Palauttaa paneelien oletusjärjestyksen. Mukautetut paneelit säilytetään.",
       "SearchCards": "Hae kortteja",
-      "Title": "Mukautetut paneelit",
-      "Unavailable": "Ei käytettävissä tässä ympäristössä"
+      "Title": "Mukautetut paneelit"
     },
     "panelModal": {
       "AddPanel": "Lisää paneeli",

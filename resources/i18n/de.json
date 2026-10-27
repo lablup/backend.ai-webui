@@ -822,12 +822,10 @@
       "Empty": "Noch keine benutzerdefinierten Panels",
       "GridDisabled": "Rasteransicht aus (Experimentelle Funktionen)",
       "NoMatchingCards": "Keine passenden Karten",
-      "RequiresSuperadmin": "Nur für Superadmins",
       "ResetLayout": "Layout zurücksetzen",
       "ResetLayoutDescription": "Stellt die Standardanordnung der Panels wieder her. Benutzerdefinierte Panels bleiben erhalten.",
       "SearchCards": "Karten suchen",
-      "Title": "Benutzerdefinierte Panels",
-      "Unavailable": "In dieser Umgebung nicht verfügbar"
+      "Title": "Benutzerdefinierte Panels"
     },
     "panelModal": {
       "AddPanel": "Panel hinzufügen",

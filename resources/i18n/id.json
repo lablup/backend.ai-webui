@@ -822,12 +822,10 @@
       "Empty": "Belum ada panel kustom",
       "GridDisabled": "Tampilan kisi nonaktif (Fitur eksperimental)",
       "NoMatchingCards": "Tidak ada kartu yang cocok",
-      "RequiresSuperadmin": "Hanya superadmin",
       "ResetLayout": "Atur ulang tata letak",
       "ResetLayoutDescription": "Mengembalikan susunan panel ke pengaturan default. Panel kustom tetap dipertahankan.",
       "SearchCards": "Cari kartu",
-      "Title": "Panel kustom",
-      "Unavailable": "Tidak tersedia di lingkungan ini"
+      "Title": "Panel kustom"
     },
     "panelModal": {
       "AddPanel": "Tambah panel",
