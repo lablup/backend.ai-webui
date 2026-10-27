@@ -3,9 +3,11 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
+import { useCurrentUserProjectRolesMembershipQuery } from '../__generated__/useCurrentUserProjectRolesMembershipQuery.graphql';
 import { useCurrentUserProjectRolesQuery } from '../__generated__/useCurrentUserProjectRolesQuery.graphql';
 import { useCurrentProjectValue } from './useCurrentProject';
 import { useUrlProjectValidity } from './useUrlProjectValidity';
+import * as _ from 'lodash-es';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export interface CurrentUserProjectRolesResult {
@@ -14,58 +16,90 @@ export interface CurrentUserProjectRolesResult {
   /** Domain names the user has domain-admin rights over (derived from baiClient for now). */
   domainAdminDomains: string[];
   /**
-   * Project UUIDs where the user holds a project-scoped admin role. Grants
-   * inherited from the domain or global scope are not counted.
+   * UUIDs of the user's member projects on which they hold the `scope_admin`
+   * permission, through any scope that governs the project.
    */
   projectAdminIds: string[];
 }
 
+// `myAtomicBulkScopePermissions` refuses more than 100 targets.
+const MAX_PERMISSION_TARGETS = 100;
+
 /**
- * Hook that reports which projects the user holds a project-admin role in:
- * `myRolesV2` filtered to the user's project-scoped roles that carry a
- * `scope_admin` permission. `@catch(to: RESULT)` keeps general pages
- * rendering when the query fails.
+ * Hook that reports which of the user's member projects grant the
+ * `scope_admin` permission, asked through `myAtomicBulkScopePermissions`.
+ * A super-admin bypasses RBAC, so every member project counts for them.
+ * `@catch` keeps general pages rendering when either query fails.
  */
 export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
+  'use memo';
   const baiClient = useSuspendedBackendaiClient();
+
+  // store-or-network keeps both results cached across pages for the session.
+  const { myUserV2 } =
+    useLazyLoadQuery<useCurrentUserProjectRolesMembershipQuery>(
+      graphql`
+        query useCurrentUserProjectRolesMembershipQuery {
+          myUserV2 @catch(to: NULL) {
+            projects(filter: { isActive: true }, limit: 100) {
+              edges {
+                node {
+                  id
+                  entityId
+                }
+              }
+            }
+          }
+        }
+      `,
+      {},
+      { fetchPolicy: 'store-or-network' },
+    );
+
+  const memberProjectIds = _.uniq(
+    _.compact(_.map(myUserV2?.projects?.edges, (edge) => edge?.node?.entityId)),
+  )
+    .sort()
+    .slice(0, MAX_PERMISSION_TARGETS);
 
   const data = useLazyLoadQuery<useCurrentUserProjectRolesQuery>(
     graphql`
-      query useCurrentUserProjectRolesQuery {
-        projectAdminRoles: myRolesV2(
-          first: 100
-          filter: {
-            status: { equals: ACTIVE }
-            mappedScope: { scopeType: { iEquals: "project" } }
-            permissions: { some: { entityType: { iEquals: "scope_admin" } } }
-          }
+      query useCurrentUserProjectRolesQuery($targets: [PermissionTarget!]!) {
+        projectAdminPermissions: myAtomicBulkScopePermissions(
+          input: { targets: $targets }
         ) @catch(to: RESULT) {
-          edges {
-            node {
-              id
-              scopeId
-            }
+          items {
+            scopeId
+            permissions
           }
         }
       }
     `,
-    {},
     {
-      // store-or-network keeps the result cached across pages for the session.
-      fetchPolicy: 'store-or-network',
+      targets: _.map(memberProjectIds, (scopeId) => ({
+        scopeType: 'project',
+        scopeId,
+        entityType: 'scope_admin',
+      })),
+    },
+    {
+      fetchPolicy:
+        memberProjectIds.length > 0 ? 'store-or-network' : 'store-only',
     },
   );
 
-  const ids = new Set<string>();
-  if (data.projectAdminRoles?.ok === true) {
-    for (const roleEdge of data.projectAdminRoles.value?.edges ?? []) {
-      if (roleEdge?.node?.scopeId) {
-        ids.add(roleEdge.node.scopeId);
-      }
-    }
-  }
-  // Sort for deterministic output across fetches.
-  const projectAdminIds = Array.from(ids).sort();
+  const projectAdminIds =
+    data.projectAdminPermissions?.ok === true
+      ? _.uniq(
+          _.map(
+            _.filter(
+              data.projectAdminPermissions.value?.items,
+              (item) => item.permissions.length > 0,
+            ),
+            'scopeId',
+          ),
+        ).sort()
+      : [];
 
   const isSuperAdmin: boolean = !!baiClient?.is_superadmin;
   // Domain-admin detection via RBAC is out of scope for this PR (no stable
