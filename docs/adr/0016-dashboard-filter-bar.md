@@ -60,7 +60,7 @@ sequenceDiagram
 
 ### 1. 바는 보드 탭과 refresh control만 둔다
 
-- **Bar layout**: `DashboardFilterBar`(`react/src/components/DashboardPanels/DashboardFilterBar.tsx`)는 한 줄에 보드 탭(`projectAdmin`, `admin` page의 `DashboardBoardTabs`)을 왼쪽에, `BAIFetchKeyButton` 하나를 오른쪽에 그린다. `project` page는 탭이 없어 refresh control만 보인다.
+- **Bar layout**: `DashboardFilterBar`(`react/src/components/DashboardPanels/DashboardFilterBar.tsx`)는 한 줄에 보드 탭(`projectAdmin`, `admin` page의 `DashboardBoardTabs`)을 왼쪽에, `BAIFetchKeyButton` 하나와 그 바로 뒤의 편집 토글(`DashboardEditToggleButton`, refresh control과 같은 크기의 secondary 버튼)을 오른쪽에 그린다. 편집 진입점은 세 page 모두 이 자리 하나이고, breadcrumb에는 두지 않는다. `project` page는 탭이 없어 refresh control과 편집 토글만 보인다.
 - **Refresh control**: `BAIFetchKeyButton`에 `autoUpdateDelay`와 `onChangeAutoUpdateDelay`를 넘겨 간격 dropdown을 연다. 선택지는 끔, 5초, 10초, 15초, 30초, 1분, 5분, 10분(`REFRESH_OPTIONS`, `refreshScheduler.ts`)이고 기본은 30초다. 고른 간격은 열린 보드의 `vars.refresh`에 저장한다.
 - **No pickers**: 바에는 프로젝트, 자원 그룹, 기간 control이 없다. 도메인 control도 없다.
 - **No URL state**: 바의 값은 URL query에 쓰지 않는다. 남은 값이 새로고침 간격 하나뿐이라 링크로 나눌 이유가 없다.

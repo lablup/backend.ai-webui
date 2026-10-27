@@ -2,8 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import DashboardEditToggleButton from '../DashboardEditToggleButton';
-import { breadcrumbExtraAtom } from '../breadcrumbExtraAtom';
 import { dashboardEditModeAtom } from '../dashboardEditModeAtom';
 import DashboardBoardSection from './DashboardBoardSection';
 import DashboardBoardTabs from './DashboardBoardTabs';
@@ -66,7 +64,6 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
 }) => {
   'use memo';
   const [editMode, setEditMode] = useAtom(dashboardEditModeAtom);
-  const setBreadcrumbExtra = useSetAtom(breadcrumbExtraAtom);
   const setBoardSorts = useSetAtom(boardSortsAtom);
   const [panelModalState, setPanelModalState] = useState<{
     open: boolean;
@@ -79,15 +76,13 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
   // suspending query remounts the board on the same path (that would drop an early click).
   useEffect(() => {
     const mountedPath = window.location.pathname;
-    setBreadcrumbExtra(<DashboardEditToggleButton />);
     return () => {
-      setBreadcrumbExtra(null);
       if (window.location.pathname !== mountedPath) {
         setEditMode(false);
         setBoardSorts({});
       }
     };
-  }, [setBreadcrumbExtra, setEditMode, setBoardSorts]);
+  }, [setEditMode, setBoardSorts]);
 
   const {
     boardItems,
