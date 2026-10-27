@@ -17,6 +17,7 @@ export type BAIAuditLogNodesFragment$data = ReadonlyArray<{
         readonly basicInfo: {
             readonly email: string;
         };
+        readonly entityId: string;
         readonly id: string;
     } | null | undefined;
     readonly " $fragmentType": "BAIAuditLogNodesFragment";

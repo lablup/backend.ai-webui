@@ -1,6 +1,7 @@
 import { ReaderFragment, FragmentRefs } from 'relay-runtime';
 export type ArtifactStatus = "AVAILABLE" | "FAILED" | "NEEDS_APPROVAL" | "PULLED" | "PULLING" | "REJECTED" | "SCANNED" | "VERIFYING" | "%future added value";
 export type BAIPullingArtifactRevisionAlertFragment$data = {
+    readonly fieldId: string;
     readonly id: string;
     readonly status: ArtifactStatus;
     readonly version: string;
