@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="대시보드" />
   <meta name="twitter:description" content="대시보드는 로그인하면 가장 먼저 보이는 페이지입니다. 현재 프로젝트에서 내가 만들고 가진 세션, 자원, 폴더, 배포, 최근 활동을 한눈에 보여 주며, 예전 시작 페이지에 있던 작업도 이곳에서 시작합니다. 모든 카드는 현재 프로젝트에서 내 것만 집계합니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"대시보드","inLanguage":"ko","description":"대시보드는 로그인하면 가장 먼저 보이는 페이지입니다. 현재 프로젝트에서 내가 만들고 가진 세션, 자원, 폴더, 배포, 최근 활동을 한눈에 보여 주며, 예전 시작 페이지에 있던 작업도 이곳에서 시작합니다. 모든 카드는 현재 프로젝트에서 내 것만 집계합니다.","dateModified":"2026-10-26T08:08:27.000Z","url":"https://webui.docs.backend.ai/next/ko/dashboard.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"대시보드","inLanguage":"ko","description":"대시보드는 로그인하면 가장 먼저 보이는 페이지입니다. 현재 프로젝트에서 내가 만들고 가진 세션, 자원, 폴더, 배포, 최근 활동을 한눈에 보여 주며, 예전 시작 페이지에 있던 작업도 이곳에서 시작합니다. 모든 카드는 현재 프로젝트에서 내 것만 집계합니다.","dateModified":"2026-10-27T08:50:10.000Z","url":"https://webui.docs.backend.ai/next/ko/dashboard.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/dashboard.html" />
   <link rel="alternate" hreflang="en" href="../en/dashboard.html" />
   <link rel="alternate" hreflang="ja" href="../ja/dashboard.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (e1305f0)">v26.10.0-alpha.1 (e1305f0)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (0b0a8eb)">v26.10.0-alpha.1 (0b0a8eb)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -227,58 +227,56 @@
 <li data-bai-block="7"><p><strong>나의 총자원 사용량:</strong>
   카드 설정의 자원 그룹마다(기본값은 헤더에서 선택한 자원 그룹) 내 세션이 쓰는 자원을 키페어, 프로젝트, 도메인 한도 중 가장 낮은 한도와 함께 보여 줍니다.</p>
 </li>
-<li data-bai-block="8"><p><strong>리소스 프리셋:</strong>
-  카드 설정의 자원 그룹마다(기본값은 헤더에서 선택한 자원 그룹) 각 리소스 프리셋이 아직 할당할 수 있는 자원 안에 들어가는지 보여 줍니다.</p>
-</li>
-<li data-bai-block="9"><p><strong>자원 그룹 내 총자원:</strong>
+<li data-bai-block="8"><p><strong>자원 그룹 내 총자원:</strong>
   카드 설정의 자원 그룹(기본값은 헤더에서 선택한 자원 그룹)의 사용량과 가용량을 그룹 내 에이전트 데이터를 합산해 보여 줍니다.</p>
 </li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="10" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div data-bai-block="9" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
 <div class="admonition-content">
 
-<p data-bai-block="11">관리자가 에이전트 정보를 숨기도록 설정하면 일반 사용자에게는 <strong>자원 그룹 내 총자원</strong> 카드가 표시되지 않습니다.</p>
+<p data-bai-block="10">관리자가 에이전트 정보를 숨기도록 설정하면 일반 사용자에게는 <strong>자원 그룹 내 총자원</strong> 카드가 표시되지 않습니다.</p>
 </div></div>
 
 
 <ul>
-<li data-bai-block="12"><p><strong>내 폴더:</strong>
+<li data-bai-block="11"><p><strong>내 폴더:</strong>
   <strong>폴더</strong>(아래에 폴더 한도 표시), <strong>휴지통</strong>, <strong>초대받음</strong> 세 개수를 나란히 보여 줍니다. 대기 중인 초대가 있으면 초대 개수 아래의 링크를 클릭해 초대 내역을 확인할 수 있습니다.</p>
 </li>
-<li data-bai-block="13"><p><strong>스토리지 볼륨별 가용량:</strong>
+<li data-bai-block="12"><p><strong>스토리지 볼륨별 가용량:</strong>
   각 스토리지 볼륨에서 사용할 수 있는 가용량을 표시합니다. 가용량 설정을 지원하는 스토리지 호스트가 없는 경우에는 대신 안내 문구가 표시됩니다.</p>
 </li>
-<li data-bai-block="14"><p><strong>내 배포:</strong>
+<li data-bai-block="13"><p><strong>내 배포:</strong>
   현재 프로젝트에서 삭제되지 않은 내 배포와 복제본 상태를 보여 줍니다.</p>
 </li>
-<li data-bai-block="15"><p><strong>내 활동 이력:</strong>
+<li data-bai-block="14"><p><strong>내 활동 이력:</strong>
   카드 설정의 기간(기본값은 최근 24시간)에 내가 한 작업의 감사 로그입니다. 카드 머리글의 <strong>실패만 보기</strong>를 켜거나 실패 개수를 클릭하면 실패한 작업만 표시되며, 이 선택은 보드에 저장됩니다.</p>
 </li>
 </ul>
 <p><a id="superadmin-dashboard"></a></p>
-<p data-bai-block="16"><strong>에이전트 통계</strong>, <strong>활성 에이전트</strong>, <strong>활성 세션</strong>처럼 클러스터나 프로젝트 전체를 집계하는 카드는 슈퍼 관리자와 프로젝트 관리자용 어드민 대시보드(<strong>관리자 설정</strong> 메뉴의 첫 항목)에 있습니다.</p>
-<h2 data-bai-block="17" id="dashboard-대시보드-레이아웃-사용자화">대시보드 레이아웃 사용자화<a class="hash-link" href="#dashboard-대시보드-레이아웃-사용자화" aria-label="Direct link to 대시보드 레이아웃 사용자화">#</a></h2>
-<p data-bai-block="18">보드는 별도의 모드로 전환하지 않아도 언제든지 재배치할 수 있습니다.</p>
+<p data-bai-block="15"><strong>에이전트 통계</strong>, <strong>활성 에이전트</strong>, <strong>활성 세션</strong>처럼 클러스터나 프로젝트 전체를 집계하는 카드는 슈퍼 관리자와 프로젝트 관리자용 어드민 대시보드(<strong>관리자 설정</strong> 메뉴의 첫 항목)에 있습니다.</p>
+<h2 data-bai-block="16" id="dashboard-대시보드-레이아웃-사용자화">대시보드 레이아웃 사용자화<a class="hash-link" href="#dashboard-대시보드-레이아웃-사용자화" aria-label="Direct link to 대시보드 레이아웃 사용자화">#</a></h2>
+<p data-bai-block="17">보드는 별도의 모드로 전환하지 않아도 언제든지 재배치할 수 있습니다.</p>
 <ul>
-<li data-bai-block="19"><strong>패널 이동</strong>: 패널의 헤더를 드래그하여 보드 내에서 위치를 변경할 수 있습니다.</li>
-<li data-bai-block="20"><strong>패널 크기 조정</strong>: 패널의 우측 하단 모서리를 드래그하여 크기를 조정할 수 있습니다. 각 패널은 콘텐츠의 가독성을 보장하기 위한 최소 크기가 설정되어 있습니다.</li>
+<li data-bai-block="18"><strong>패널 이동</strong>: 패널의 헤더를 드래그하여 보드 내에서 위치를 변경할 수 있습니다.</li>
+<li data-bai-block="19"><strong>패널 크기 조정</strong>: 패널의 우측 하단 모서리를 드래그하여 크기를 조정할 수 있습니다. 각 패널은 콘텐츠의 가독성을 보장하기 위한 최소 크기가 설정되어 있습니다.</li>
 </ul>
-<p><figure data-bai-block="21" class="doc-figure"><img src="./images/dashboard_edit_mode.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 8.2</figcaption></figure>
+<p><figure data-bai-block="20" class="doc-figure"><img src="./images/dashboard_edit_mode.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 8.2</figcaption></figure>
 </p>
-<p data-bai-block="22">사용자화된 레이아웃은 자동으로 저장되어 브라우저 세션 간에 유지됩니다. 레이아웃은 사용자별로 저장되므로, 각 사용자가 자신만의 배치를 설정할 수 있습니다. 배치를 기본 상태로 되돌리려면 편집 사이드바 하단의 <strong>기본 배치로 초기화</strong> 버튼을 클릭한 뒤 확인합니다. 배치를 초기화하면 뺐던 기본 카드도 다시 놓이며, 사용자 정의 패널은 삭제되지 않습니다.</p>
+<p data-bai-block="21">사용자화된 레이아웃은 자동으로 저장되어 브라우저 세션 간에 유지됩니다. 레이아웃은 사용자별로 저장되므로, 각 사용자가 자신만의 배치를 설정할 수 있습니다. 배치를 기본 상태로 되돌리려면 편집 사이드바 하단의 <strong>기본 배치로 초기화</strong> 버튼을 클릭한 뒤 확인합니다. 배치를 초기화하면 뺐던 기본 카드도 다시 놓이며, 사용자 정의 패널은 삭제되지 않습니다.</p>
 <div class="admonition admonition-tip">
-<div data-bai-block="23" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>팁</div>
+<div data-bai-block="22" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>팁</div>
 <div class="admonition-content">
 
-<p data-bai-block="24">WebUI 업데이트로 새로운 대시보드 패널이 추가되면, 저장된 사용자화 레이아웃이 있더라도
+<p data-bai-block="23">WebUI 업데이트로 새로운 대시보드 패널이 추가되면, 저장된 사용자화 레이아웃이 있더라도
 새 패널이 대시보드에 자동으로 표시됩니다.</p>
 </div></div>
 
 
 <p><a id="adding-and-removing-cards"></a></p>
-<h3 data-bai-block="25" id="dashboard-카드-추가와-제거">카드 추가와 제거<a class="hash-link" href="#dashboard-카드-추가와-제거" aria-label="Direct link to 카드 추가와 제거">#</a></h3>
-<p data-bai-block="26">페이지 우측 상단의 <strong>편집</strong> 버튼을 클릭하면 보드 오른쪽에 편집 사이드바가 열리고, <strong>닫기</strong>를 클릭하면 다시 숨겨집니다. 사이드바의 <strong>카드</strong> 목록에는 이 대시보드에 놓을 수 있는 카드가 종류별로 묶여 표시되며, 위쪽의 검색 칸으로 찾을 수 있습니다. 카드를 체크하면 보드에 추가되고, 체크를 해제하면 보드에서 빠집니다. 뺀 카드는 언제든지 다시 추가할 수 있습니다. 이 환경에서 사용할 수 없는 카드는 목록에 비활성 상태로 표시됩니다.</p>
+<h3 data-bai-block="24" id="dashboard-카드-추가와-제거">카드 추가와 제거<a class="hash-link" href="#dashboard-카드-추가와-제거" aria-label="Direct link to 카드 추가와 제거">#</a></h3>
+<p data-bai-block="25">대시보드 우측 상단, 새로고침 버튼 옆의 <strong>편집</strong> 버튼을 클릭하면 보드 오른쪽에 편집 사이드바가 열리고, <strong>닫기</strong>를 클릭하면 다시 숨겨집니다. 사이드바의 <strong>카드</strong> 목록에는 이 대시보드에 놓을 수 있는 카드가 종류별로 묶여 표시되며, 위쪽의 검색 칸으로 찾을 수 있습니다. 카드를 체크하면 보드에 추가되고, 체크를 해제하면 보드에서 빠집니다. 뺀 카드는 언제든지 다시 추가할 수 있습니다. 이 환경에서 사용할 수 없는 카드는 목록에 비활성 상태로 표시됩니다.</p>
+<p data-bai-block="26"><strong>리소스 프리셋</strong> 카드는 카드 설정의 자원 그룹마다(기본값은 헤더에서 선택한 자원 그룹) 각 리소스 프리셋이 아직 할당할 수 있는 자원 안에 들어가는지 보여 줍니다. 새 대시보드에는 놓이지 않으므로, <strong>카드</strong> 목록에서 체크해 추가합니다.</p>
 <p><a id="card-settings"></a></p>
 <h3 data-bai-block="27" id="dashboard-카드-설정">카드 설정<a class="hash-link" href="#dashboard-카드-설정" aria-label="Direct link to 카드 설정">#</a></h3>
 <p data-bai-block="28">일부 카드는 자원 그룹이나 기간에 따라 내용이 달라집니다. 편집 사이드바에서 이런 카드는 이름 아래에 현재 설정을 표시하고 설정(슬라이더) 버튼을 함께 보여 줍니다. 버튼을 클릭해 다음 항목을 지정합니다.</p>
@@ -329,7 +327,7 @@
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/dashboard/dashboard.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> 이 페이지 편집</a>
-  <span class="last-updated">마지막 업데이트 2026년 10월 26일</span>
+  <span class="last-updated">마지막 업데이트 2026년 10월 27일</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./start.html">
