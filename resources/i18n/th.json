@@ -796,7 +796,7 @@
       "Boards": "บอร์ด",
       "CannotDeleteLastBoard": "ไม่สามารถลบบอร์ดสุดท้ายได้",
       "DefaultBoard": "ค่าเริ่มต้น",
-      "EditBoard": "แก้ไขบอร์ด",
+      "DeleteBoard": "ลบบอร์ด",
       "NewBoard": "บอร์ดใหม่",
       "NewBoardTitle": "บอร์ด {{number}}"
     },

@@ -36,10 +36,6 @@ A new dashboard shows the following cards:
     chosen in the header), how much of each resource your sessions use against the
     lowest of your keypair, project, and domain limits.
 
-- **Resource Presets**:
-    Whether each resource preset still fits in what you can allocate in each
-    resource group in the card's setting (by default, the header's resource group).
-
 - **Total Resources in Resource Group**:
     The used and free resources of the resource groups in the card's setting (by
     default, the header's resource group), aggregated from their agents.
@@ -100,12 +96,17 @@ automatically appear on your dashboard even if you have a saved custom layout.
 
 ### Adding and Removing Cards
 
-Click the **Edit** button at the top right of the page to open the edit
-sidebar beside the board, and **Close** to hide it again. Its **Cards** list
-shows every card you can place on this dashboard, grouped by kind, with a
-search box above it. Check a card to add it to the board and uncheck it to
-remove it; you can add it back at any time. A card that cannot be used in
-this environment is listed but disabled.
+Click the **Edit** button next to the refresh button at the top right of the
+dashboard to open the edit sidebar beside the board, and **Close** to hide it
+again. Its **Cards** list shows every card you can place on this dashboard,
+grouped by kind, with a search box above it. Check a card to add it to the
+board and uncheck it to remove it; you can add it back at any time. A card that
+cannot be used in this environment is listed but disabled.
+
+The **Resource Presets** card, which shows whether each resource preset still
+fits in what you can allocate in each resource group in the card's setting (by
+default, the header's resource group), is not on a new dashboard. Check it in
+the **Cards** list to add it.
 
 <a id="card-settings"></a>
 

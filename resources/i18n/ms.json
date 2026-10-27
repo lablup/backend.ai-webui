@@ -799,7 +799,7 @@
       "Boards": "Papan",
       "CannotDeleteLastBoard": "Papan terakhir tidak boleh dipadam",
       "DefaultBoard": "Lalai",
-      "EditBoard": "Edit papan",
+      "DeleteBoard": "Padam papan",
       "NewBoard": "Papan baharu",
       "NewBoardTitle": "Papan {{number}}"
     },

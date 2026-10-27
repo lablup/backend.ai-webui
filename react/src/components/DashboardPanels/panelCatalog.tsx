@@ -244,6 +244,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     minSize: size(2, 2),
     refresh: { min: '30s' },
     settings: ['resourceGroup'],
+    defaultHidden: true,
   },
   {
     key: 'totalResourceWithinResourceGroup',

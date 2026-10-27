@@ -799,7 +799,7 @@
       "Boards": "Tableros",
       "CannotDeleteLastBoard": "No se puede eliminar el último tablero",
       "DefaultBoard": "Predeterminado",
-      "EditBoard": "Editar tablero",
+      "DeleteBoard": "Eliminar tablero",
       "NewBoard": "Nuevo tablero",
       "NewBoardTitle": "Tablero {{number}}"
     },

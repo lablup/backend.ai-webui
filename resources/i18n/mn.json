@@ -799,7 +799,7 @@
       "Boards": "Самбарууд",
       "CannotDeleteLastBoard": "Сүүлийн самбарыг устгах боломжгүй",
       "DefaultBoard": "Үндсэн",
-      "EditBoard": "Самбар засах",
+      "DeleteBoard": "Самбар устгах",
       "NewBoard": "Шинэ самбар",
       "NewBoardTitle": "Самбар {{number}}"
     },

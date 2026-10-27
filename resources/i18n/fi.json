@@ -799,7 +799,7 @@
       "Boards": "Taulut",
       "CannotDeleteLastBoard": "Viimeistä taulua ei voi poistaa",
       "DefaultBoard": "Oletus",
-      "EditBoard": "Muokkaa taulua",
+      "DeleteBoard": "Poista taulu",
       "NewBoard": "Uusi taulu",
       "NewBoardTitle": "Taulu {{number}}"
     },
