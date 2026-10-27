@@ -62,8 +62,7 @@ const AuditLogTable: React.FC<{
   timeRange: DateTimeWindow;
   failuresOnly: boolean;
   fetchKey: string;
-  onShowFailures: () => void;
-}> = ({ scope, range, timeRange, failuresOnly, fetchKey, onShowFailures }) => {
+}> = ({ scope, range, timeRange, failuresOnly, fetchKey }) => {
   'use memo';
   const {
     baiPaginationOption,
@@ -237,11 +236,7 @@ const AuditLogTable: React.FC<{
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
-      <SuccessFailureStats
-        counts={counts}
-        buckets={buckets}
-        onClickFailure={failuresOnly ? undefined : onShowFailures}
-      />
+      <SuccessFailureStats counts={counts} buckets={buckets} />
       <BAIAuditLogNodes
         auditLogFrgmt={filterOutNullAndUndefined(
           data.logs?.edges.map((edge) => edge?.node),
@@ -343,7 +338,6 @@ const AuditLogPanel: React.FC<PanelComponentProps> = ({
           timeRange={vars.timeRange}
           failuresOnly={failuresOnly}
           fetchKey={key}
-          onShowFailures={() => setFailuresOnly(true)}
         />
       )}
     </ScopedCard>
