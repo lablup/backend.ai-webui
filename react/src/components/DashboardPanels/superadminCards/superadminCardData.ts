@@ -5,7 +5,6 @@
 import type { AuditLogFilter } from '../../../__generated__/FailuresByEntityTypePanelQuery.graphql';
 import { AUDIT_FAILURE_STATUSES } from '../memberCards/memberCardData';
 import { withinWindow, type DateTimeWindow } from '../timeRange';
-import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 
 /** Scheduling results that mean an attempt did not place the session, in donut order. */
@@ -94,8 +93,6 @@ export const entityTypeFailureFilters = (
  * buckets are whole days and `DateFilter.after` is exclusive, so the day
  * before the window's first day.
  */
-export const bucketDayAfter = (window: DateTimeWindow): string =>
-  dayjs(window.after).subtract(1, 'day').format('YYYY-MM-DD');
 
 const toNumber = (value: unknown): number => {
   const number = Number(value);

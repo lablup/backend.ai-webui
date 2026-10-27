@@ -2,15 +2,14 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { TopProjectsUsagePanelLatestDayQuery } from '../../../__generated__/TopProjectsUsagePanelLatestDayQuery.graphql';
 import type {
   TopProjectsUsagePanelQuery,
   TopProjectsUsagePanelQuery$data,
 } from '../../../__generated__/TopProjectsUsagePanelQuery.graphql';
 import ScopedCard from '../cards/ScopedCard';
-import type { DateTimeWindow } from '../timeRange';
 import type { PanelComponentProps } from '../types';
 import {
-  bucketDayAfter,
   byCpuUsage,
   coreHours,
   formatAmount,
@@ -29,25 +28,80 @@ type BucketRow = NonNullable<
   >['node']
 >;
 
-// Days × projects × resource groups in a 7-day range stay well under this on 26.10.
+// Projects × resource groups of one day stay well under this on 26.10.
 const ROW_LIMIT = 200;
 
-const ProjectUsageTable: React.FC<{
+type UsageFilter = TopProjectsUsagePanelQuery['variables']['filter'];
+
+const scopeFilter = (
+  domainName: string,
+  resourceGroups: ReadonlyArray<string> | undefined,
+): UsageFilter => ({
+  domainName: { equals: domainName },
+  ...(resourceGroups?.length
+    ? { resourceGroup: { in: [...resourceGroups] } }
+    : {}),
+});
+
+/**
+ * The manager keeps one bucket per project, resource group and day and sums
+ * none of them, so the card shows the latest recorded day: one row per project
+ * and resource group.
+ */
+const LatestUsageDay: React.FC<{
   domainName: string;
-  timeRange: DateTimeWindow;
   resourceGroups: ReadonlyArray<string> | undefined;
   fetchKey: string;
-}> = ({ domainName, timeRange, resourceGroups, fetchKey }) => {
+}> = ({ domainName, resourceGroups, fetchKey }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const filter = scopeFilter(domainName, resourceGroups);
+  const data = useLazyLoadQuery<TopProjectsUsagePanelLatestDayQuery>(
+    graphql`
+      query TopProjectsUsagePanelLatestDayQuery(
+        $filter: ProjectUsageBucketFilter!
+      ) {
+        latest: adminProjectUsageBuckets(
+          filter: $filter
+          orderBy: [{ field: PERIOD_START, direction: DESC }]
+          limit: 1
+        ) {
+          edges {
+            node {
+              metadata {
+                periodStart
+              }
+            }
+          }
+        }
+      }
+    `,
+    useDeferredValue({ filter }),
+    { fetchPolicy: 'store-and-network', fetchKey },
+  );
+  const day = data.latest?.edges[0]?.node.metadata.periodStart;
+  if (!day) {
+    return <Text type="supporting">{t('dashboard.card.NoUsageRecorded')}</Text>;
+  }
+  return (
+    <BAIFlex direction="column" align="stretch" gap="xs">
+      <Text type="supporting">{t('dashboard.card.UsageOnDay', { day })}</Text>
+      <ProjectUsageTable
+        filter={{ ...filter, periodStart: { equals: day } }}
+        fetchKey={fetchKey}
+      />
+    </BAIFlex>
+  );
+};
+
+const ProjectUsageTable: React.FC<{
+  filter: UsageFilter;
+  fetchKey: string;
+}> = ({ filter, fetchKey }) => {
   'use memo';
   const { t } = useTranslation();
   const variables = useDeferredValue<TopProjectsUsagePanelQuery['variables']>({
-    filter: {
-      domainName: { equals: domainName },
-      periodStart: { after: bucketDayAfter(timeRange) },
-      ...(resourceGroups?.length
-        ? { resourceGroup: { in: [...resourceGroups] } }
-        : {}),
-    },
+    filter,
     limit: ROW_LIMIT,
   });
   const data = useLazyLoadQuery<TopProjectsUsagePanelQuery>(
@@ -66,9 +120,6 @@ const ProjectUsageTable: React.FC<{
             node {
               id
               resourceGroupName
-              metadata {
-                periodStart
-              }
               resourceUsage {
                 entries {
                   resourceType
@@ -112,11 +163,6 @@ const ProjectUsageTable: React.FC<{
             render: (_value, row) => row.resourceGroupName,
           },
           {
-            key: 'day',
-            title: t('dashboard.card.Day'),
-            render: (_value, row) => row.metadata.periodStart,
-          },
-          {
             key: 'cpu',
             title: t('dashboard.card.CpuCoreHours'),
             align: 'right',
@@ -146,11 +192,10 @@ const ProjectUsageTable: React.FC<{
   );
 };
 
-/** The domain's daily project usage buckets in the card's range, the heaviest first. */
+/** The domain's projects by their usage on the latest recorded day, the heaviest first. */
 const TopProjectsUsagePanel: React.FC<PanelComponentProps> = ({
   panel,
   scope,
-  vars,
   fetchKey,
 }) => {
   'use memo';
@@ -167,9 +212,8 @@ const TopProjectsUsagePanel: React.FC<PanelComponentProps> = ({
     >
       {(cardScope, key) =>
         cardScope.kind === 'domain' ? (
-          <ProjectUsageTable
+          <LatestUsageDay
             domainName={cardScope.domainName}
-            timeRange={vars.timeRange}
             resourceGroups={panel.settings?.resourceGroups}
             fetchKey={key}
           />
