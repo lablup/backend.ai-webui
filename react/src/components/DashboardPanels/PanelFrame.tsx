@@ -2,17 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useWebUINavigate } from '../../hooks';
-import { useProjectPath } from '../../hooks/useRouteScope';
+import PanelDetailLinkButton from './PanelDetailLinkButton';
 import PanelEditControls from './PanelEditControls';
-import { DetailLinkContext } from './detailLink';
-import { Button } from '@lablup/ui-common/Button';
 import { Heading } from '@lablup/ui-common/Heading';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIBoardItemTitle, BAIFlex } from 'backend.ai-ui';
-import { ChevronRight } from 'lucide-react';
-import React, { useContext } from 'react';
-import { useTranslation } from 'react-i18next';
+import React from 'react';
 
 export interface PanelFrameProps {
   title: string;
@@ -42,14 +37,7 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
   children,
 }) => {
   'use memo';
-  const { t } = useTranslation();
   const { token } = useTheme();
-  const navigate = useWebUINavigate();
-  const buildPath = useProjectPath();
-  const detailLink = useContext(DetailLinkContext);
-  const detailLabel = detailLink
-    ? t('dashboard.card.ViewIn', { name: t(detailLink.labelKey) })
-    : undefined;
 
   return (
     <BAIFlex
@@ -74,23 +62,7 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
         extra={
           <BAIFlex align="center" gap="xxs">
             {extra}
-            {detailLink && detailLabel ? (
-              <Button
-                variant="ghost"
-                size="sm"
-                label={t('dashboard.card.ViewAll')}
-                aria-label={detailLabel}
-                tooltip={detailLabel}
-                endContent={<ChevronRight size="1em" />}
-                onClick={() =>
-                  navigate(
-                    buildPath(detailLink.feature, {
-                      scope: detailLink.scope,
-                    }) + detailLink.search,
-                  )
-                }
-              />
-            ) : null}
+            <PanelDetailLinkButton />
             <PanelEditControls
               title={title}
               onEdit={onEdit}
