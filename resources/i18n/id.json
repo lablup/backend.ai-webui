@@ -799,7 +799,7 @@
       "Boards": "Papan",
       "CannotDeleteLastBoard": "Papan terakhir tidak dapat dihapus",
       "DefaultBoard": "Bawaan",
-      "EditBoard": "Edit papan",
+      "DeleteBoard": "Hapus papan",
       "NewBoard": "Papan baru",
       "NewBoardTitle": "Papan {{number}}"
     },

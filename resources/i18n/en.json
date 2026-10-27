@@ -786,7 +786,7 @@
       "Boards": "Boards",
       "CannotDeleteLastBoard": "The last board cannot be deleted",
       "DefaultBoard": "Default",
-      "EditBoard": "Edit board",
+      "DeleteBoard": "Delete board",
       "NewBoard": "New board",
       "NewBoardTitle": "Board {{number}}"
     },

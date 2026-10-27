@@ -799,7 +799,7 @@
       "Boards": "Tablice",
       "CannotDeleteLastBoard": "Nie można usunąć ostatniej tablicy",
       "DefaultBoard": "Domyślna",
-      "EditBoard": "Edytuj tablicę",
+      "DeleteBoard": "Usuń tablicę",
       "NewBoard": "Nowa tablica",
       "NewBoardTitle": "Tablica {{number}}"
     },

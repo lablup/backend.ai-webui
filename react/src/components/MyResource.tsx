@@ -190,7 +190,11 @@ const MyResourceStatisticsContent: React.FC<{
   const allocation = data.effectiveResourceAllocationV2.ok
     ? data.effectiveResourceAllocationV2.value
     : undefined;
-  const usageRows = toUsageRows(allocation, undefined, false);
+  const usageRows = allocation
+    ? toUsageRows(allocation.breakdown.keypair.used, [allocation.assignable], {
+        dropEmpty: false,
+      })
+    : [];
 
   // Raw units (cores, bytes, device counts); the manager's effective limit
   // across scopes, undefined when unlimited.

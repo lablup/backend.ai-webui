@@ -33,7 +33,7 @@ flowchart LR
   local["localStorage<br/>dashboard_board.page, legacy keys"]
   hook["useDashboardBoards<br/>resolveBoards, optimistic atom"]
   queue["dashboardWriter<br/>debounce 800ms, 한 번에 하나"]
-  board["DashboardPanelBoard<br/>useDashboardBoard, DashboardBoardTabs"]
+  board["DashboardPanelBoard<br/>useDashboardBoard, DashboardBoardTabs,<br/>DashboardBoardSection"]
   user -- "useMyAppConfig merged view" --> hook
   domain -- "useDomainAppConfig" --> hook
   public -- "usePublicDomainAppConfig" --> hook
@@ -85,7 +85,7 @@ stateDiagram-v2
 
 - **Read path**: `useDashboardBoards(page, catalog)`(`useDashboardBoards.tsx`)가 `useMyAppConfig('dashboard')`의 page 값을 `sanitizeDashboardPageConfig`로 검사한다. 남는 보드가 없으면 저장값이 없는 것으로 본다.
 - **Single writer**: `userConfig.dashboard`는 `useDashboardBoards`만 `useUpdateMyUserAppConfig(['dashboard', page], …)`로 쓴다. 다른 scope의 `userConfig`에 `dashboard` key를 쓰는 코드는 두지 않는다.
-- **Board tabs**: `projectAdmin`과 `admin` page는 `DashboardBoardTabs`로 보드를 고르고, 더하고(빈 보드로 시작), 이름을 바꾸고, 지운다. 마지막 보드는 지울 수 없다. 보드 삭제는 되돌릴 수 있는 동작이라 `BAIPopconfirm`으로 확인한다. `project` page는 보드 하나만 두고 탭을 그리지 않는다.
+- **Board tabs and board section**: `projectAdmin`과 `admin` page는 `DashboardBoardTabs`로 보드를 고르기만 한다. 보드를 더하고(빈 보드로 시작), 이름을 바꾸고, 지우는 일은 편집 모드 사이드 패널 맨 위의 `DashboardBoardSection`이 맡는다. 이 section은 보드 selector(탭을 누른 것과 같이 active 보드를 바꾼다), 이름 입력(blur나 Enter에 저장하고 빈 이름은 저장하지 않는다), 새 보드 버튼, 보드 삭제 버튼을 둔다. 마지막 보드는 지울 수 없다. 보드 삭제는 되돌릴 수 있는 동작이라 `BAIPopconfirm`으로 확인한다. `project` page는 보드 하나만 두고 탭도 board section도 그리지 않는다.
 
 ### 3. 기본 보드는 template key에서 고른다
 
