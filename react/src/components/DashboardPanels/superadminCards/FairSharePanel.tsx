@@ -154,7 +154,10 @@ const FairSharePanel: React.FC<PanelComponentProps> = ({
             {vars.resourceGroups.map((resourceGroupName, index) => (
               <Fragment key={resourceGroupName}>
                 {index > 0 ? <Divider /> : null}
-                <Text weight="semibold">{resourceGroupName}</Text>
+                <BAIFlex direction="row" align="baseline" gap="xs">
+                  <Text type="supporting">{`${t('general.ResourceGroup')}:`}</Text>
+                  <Text weight="semibold">{resourceGroupName}</Text>
+                </BAIFlex>
                 <ResourceGroupFairShares
                   resourceGroupName={resourceGroupName}
                   domainName={cardScope.domainName}
