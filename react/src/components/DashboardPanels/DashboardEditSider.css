@@ -11,5 +11,4 @@
   overflow-y: auto;
   /* Keeps the checklist clear of its own scrollbar. */
   scrollbar-gutter: stable;
-  padding-right: var(--spacing-4);
 }
