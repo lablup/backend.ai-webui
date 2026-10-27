@@ -2,11 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { AuditLogPanelAdminQuery } from '../../../__generated__/AuditLogPanelAdminQuery.graphql';
 import type {
   AuditLogFilter,
-  AuditLogPanelQuery,
+  AuditLogPanelScopedQuery,
+  AuditLogPanelScopedQuery$data,
   AuditLogScope,
-} from '../../../__generated__/AuditLogPanelQuery.graphql';
+} from '../../../__generated__/AuditLogPanelScopedQuery.graphql';
 import { useSuspendedBackendaiClient } from '../../../hooks';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
 import type { CardScope } from '../cardScope';
@@ -56,38 +58,39 @@ export const auditOutcomeFilter = (
       : { in: [...AUDIT_FAILURE_STATUSES] },
 });
 
-const AuditLogTable: React.FC<{
+type AuditVariables = Omit<AuditLogPanelScopedQuery['variables'], 'scope'>;
+type AuditData = AuditLogPanelScopedQuery$data;
+
+/**
+ * Whose audit log a scope reads: the viewer's own actions, or a project and
+ * the entities in it. Null on the superadmin page, which reads
+ * `adminAuditLogsV2`: a domain entity scope leaves out the sessions, folders
+ * and deployments in it (checked on manager 26.10).
+ */
+export const auditLogScope = (
+  scope: CardScope,
+  userId: string,
+): AuditLogScope | null => {
+  switch (scope.kind) {
+    case 'mine':
+      return { triggeredUser: [{ value: userId }] };
+    case 'project':
+      return projectAuditScope(scope.projectId);
+    case 'domain':
+      return null;
+  }
+};
+
+const ScopedAuditLog: React.FC<{
   scope: AuditLogScope;
-  range: string;
-  timeRange: DateTimeWindow;
-  failuresOnly: boolean;
+  variables: AuditVariables;
   fetchKey: string;
-}> = ({ scope, range, timeRange, failuresOnly, fetchKey }) => {
+  children: (data: AuditData) => React.ReactNode;
+}> = ({ scope, variables, fetchKey, children }) => {
   'use memo';
-  const {
-    baiPaginationOption,
-    tablePaginationOption,
-    setTablePaginationOption,
-  } = useBAIPaginationOptionState({ current: 1, pageSize: 5 });
-  const { buckets, variables: countVariables } = successFailureVariables(
-    auditOutcomeFilter,
-    range,
-    timeRange,
-  );
-  const variables: AuditLogPanelQuery['variables'] = {
-    scope,
-    filter: {
-      ...withinWindow('createdAt', timeRange),
-      ...(failuresOnly ? FAILURES_ONLY_FILTER : {}),
-    },
-    limit: baiPaginationOption.limit,
-    offset: baiPaginationOption.offset,
-    ...countVariables,
-  };
-  const deferredVariables = useDeferredValue(variables);
-  const data = useLazyLoadQuery<AuditLogPanelQuery>(
+  const data = useLazyLoadQuery<AuditLogPanelScopedQuery>(
     graphql`
-      query AuditLogPanelQuery(
+      query AuditLogPanelScopedQuery(
         $scope: AuditLogScope!
         $filter: AuditLogFilter!
         $limit: Int!
@@ -229,65 +232,233 @@ const AuditLogTable: React.FC<{
         }
       }
     `,
-    deferredVariables,
+    { scope, ...variables },
     { fetchPolicy: 'store-and-network', fetchKey },
   );
-  const counts = readSuccessFailure(data, buckets.length, timeRange);
-
-  return (
-    <BAIFlex direction="column" align="stretch" gap="sm">
-      <SuccessFailureStats counts={counts} buckets={buckets} />
-      <BAIAuditLogNodes
-        auditLogFrgmt={filterOutNullAndUndefined(
-          data.logs?.edges.map((edge) => edge?.node),
-        )}
-        disableSorter
-        loading={deferredVariables !== variables}
-        customizeColumns={(columns) =>
-          columns
-            .filter((column) => VISIBLE_COLUMNS.has(String(column.key)))
-            .map((column) => ({
-              ...column,
-              defaultHidden: false,
-              ...(column.key === 'description' && {
-                render: (
-                  _value: unknown,
-                  record: { description?: string | null },
-                ) =>
-                  record.description ? (
-                    <BAIText
-                      copyable
-                      ellipsis={{ tooltip: true }}
-                      style={{ width: '100%' }}
-                    >
-                      {record.description}
-                    </BAIText>
-                  ) : (
-                    '-'
-                  ),
-              }),
-            }))
-        }
-        pagination={{
-          pageSize: tablePaginationOption.pageSize,
-          current: tablePaginationOption.current,
-          total: data.logs?.count ?? 0,
-          onChange: (current, pageSize) =>
-            setTablePaginationOption({ current, pageSize }),
-        }}
-      />
-    </BAIFlex>
-  );
+  return children(data);
 };
 
-/** Whose audit log a scope reads: the viewer's own actions, or a project and the entities in it. */
-export const auditLogScope = (
-  scope: CardScope,
-  userId: string,
-): AuditLogScope =>
-  scope.kind === 'mine'
-    ? { triggeredUser: [{ value: userId }] }
-    : projectAuditScope(scope.projectId);
+const AdminAuditLog: React.FC<{
+  variables: AuditVariables;
+  fetchKey: string;
+  children: (data: AuditData) => React.ReactNode;
+}> = ({ variables, fetchKey, children }) => {
+  'use memo';
+  const data = useLazyLoadQuery<AuditLogPanelAdminQuery>(
+    graphql`
+      query AuditLogPanelAdminQuery(
+        $filter: AuditLogFilter!
+        $limit: Int!
+        $offset: Int!
+        $success: AuditLogFilter!
+        $failure: AuditLogFilter!
+        $previousSuccess: AuditLogFilter!
+        $previousFailure: AuditLogFilter!
+        $s0: AuditLogFilter
+        $s0On: Boolean!
+        $s1: AuditLogFilter
+        $s1On: Boolean!
+        $s2: AuditLogFilter
+        $s2On: Boolean!
+        $s3: AuditLogFilter
+        $s3On: Boolean!
+        $s4: AuditLogFilter
+        $s4On: Boolean!
+        $s5: AuditLogFilter
+        $s5On: Boolean!
+        $s6: AuditLogFilter
+        $s6On: Boolean!
+        $s7: AuditLogFilter
+        $s7On: Boolean!
+        $f0: AuditLogFilter
+        $f0On: Boolean!
+        $f1: AuditLogFilter
+        $f1On: Boolean!
+        $f2: AuditLogFilter
+        $f2On: Boolean!
+        $f3: AuditLogFilter
+        $f3On: Boolean!
+        $f4: AuditLogFilter
+        $f4On: Boolean!
+        $f5: AuditLogFilter
+        $f5On: Boolean!
+        $f6: AuditLogFilter
+        $f6On: Boolean!
+        $f7: AuditLogFilter
+        $f7On: Boolean!
+      ) {
+        logs: adminAuditLogsV2(
+          filter: $filter
+          orderBy: [{ field: CREATED_AT, direction: DESC }]
+          limit: $limit
+          offset: $offset
+        ) {
+          count
+          edges {
+            node {
+              ...BAIAuditLogNodesFragment
+            }
+          }
+        }
+        success: adminAuditLogsV2(filter: $success, limit: 1) {
+          count
+        }
+        failure: adminAuditLogsV2(filter: $failure, limit: 1) {
+          count
+        }
+        previousSuccess: adminAuditLogsV2(filter: $previousSuccess, limit: 1) {
+          count
+        }
+        previousFailure: adminAuditLogsV2(filter: $previousFailure, limit: 1) {
+          count
+        }
+        s0: adminAuditLogsV2(filter: $s0, limit: 1) @include(if: $s0On) {
+          count
+        }
+        s1: adminAuditLogsV2(filter: $s1, limit: 1) @include(if: $s1On) {
+          count
+        }
+        s2: adminAuditLogsV2(filter: $s2, limit: 1) @include(if: $s2On) {
+          count
+        }
+        s3: adminAuditLogsV2(filter: $s3, limit: 1) @include(if: $s3On) {
+          count
+        }
+        s4: adminAuditLogsV2(filter: $s4, limit: 1) @include(if: $s4On) {
+          count
+        }
+        s5: adminAuditLogsV2(filter: $s5, limit: 1) @include(if: $s5On) {
+          count
+        }
+        s6: adminAuditLogsV2(filter: $s6, limit: 1) @include(if: $s6On) {
+          count
+        }
+        s7: adminAuditLogsV2(filter: $s7, limit: 1) @include(if: $s7On) {
+          count
+        }
+        f0: adminAuditLogsV2(filter: $f0, limit: 1) @include(if: $f0On) {
+          count
+        }
+        f1: adminAuditLogsV2(filter: $f1, limit: 1) @include(if: $f1On) {
+          count
+        }
+        f2: adminAuditLogsV2(filter: $f2, limit: 1) @include(if: $f2On) {
+          count
+        }
+        f3: adminAuditLogsV2(filter: $f3, limit: 1) @include(if: $f3On) {
+          count
+        }
+        f4: adminAuditLogsV2(filter: $f4, limit: 1) @include(if: $f4On) {
+          count
+        }
+        f5: adminAuditLogsV2(filter: $f5, limit: 1) @include(if: $f5On) {
+          count
+        }
+        f6: adminAuditLogsV2(filter: $f6, limit: 1) @include(if: $f6On) {
+          count
+        }
+        f7: adminAuditLogsV2(filter: $f7, limit: 1) @include(if: $f7On) {
+          count
+        }
+      }
+    `,
+    variables,
+    { fetchPolicy: 'store-and-network', fetchKey },
+  );
+  return children(data);
+};
+
+const AuditLogTable: React.FC<{
+  scope: AuditLogScope | null;
+  range: string;
+  timeRange: DateTimeWindow;
+  failuresOnly: boolean;
+  fetchKey: string;
+}> = ({ scope, range, timeRange, failuresOnly, fetchKey }) => {
+  'use memo';
+  const {
+    baiPaginationOption,
+    tablePaginationOption,
+    setTablePaginationOption,
+  } = useBAIPaginationOptionState({ current: 1, pageSize: 5 });
+  const { buckets, variables: countVariables } = successFailureVariables(
+    auditOutcomeFilter,
+    range,
+    timeRange,
+  );
+  const variables: AuditVariables = {
+    filter: {
+      ...withinWindow('createdAt', timeRange),
+      ...(failuresOnly ? FAILURES_ONLY_FILTER : {}),
+    },
+    limit: baiPaginationOption.limit,
+    offset: baiPaginationOption.offset,
+    ...countVariables,
+  };
+  const deferredVariables = useDeferredValue(variables);
+
+  const renderLog = (data: AuditData) => {
+    const counts = readSuccessFailure(data, buckets.length, timeRange);
+    return (
+      <BAIFlex direction="column" align="stretch" gap="sm">
+        <SuccessFailureStats counts={counts} buckets={buckets} />
+        <BAIAuditLogNodes
+          auditLogFrgmt={filterOutNullAndUndefined(
+            data.logs?.edges.map((edge) => edge?.node),
+          )}
+          disableSorter
+          loading={deferredVariables !== variables}
+          customizeColumns={(columns) =>
+            columns
+              .filter((column) => VISIBLE_COLUMNS.has(String(column.key)))
+              .map((column) => ({
+                ...column,
+                defaultHidden: false,
+                ...(column.key === 'description' && {
+                  render: (
+                    _value: unknown,
+                    record: { description?: string | null },
+                  ) =>
+                    record.description ? (
+                      <BAIText
+                        copyable
+                        ellipsis={{ tooltip: true }}
+                        style={{ width: '100%' }}
+                      >
+                        {record.description}
+                      </BAIText>
+                    ) : (
+                      '-'
+                    ),
+                }),
+              }))
+          }
+          pagination={{
+            pageSize: tablePaginationOption.pageSize,
+            current: tablePaginationOption.current,
+            total: data.logs?.count ?? 0,
+            onChange: (current, pageSize) =>
+              setTablePaginationOption({ current, pageSize }),
+          }}
+        />
+      </BAIFlex>
+    );
+  };
+
+  return scope ? (
+    <ScopedAuditLog
+      scope={scope}
+      variables={deferredVariables}
+      fetchKey={fetchKey}
+    >
+      {renderLog}
+    </ScopedAuditLog>
+  ) : (
+    <AdminAuditLog variables={deferredVariables} fetchKey={fetchKey}>
+      {renderLog}
+    </AdminAuditLog>
+  );
+};
 
 /** The audit log in the page's scope over the card's range; "failures only" is saved on the board. */
 const AuditLogPanel: React.FC<PanelComponentProps> = ({
@@ -316,6 +487,10 @@ const AuditLogPanel: React.FC<PanelComponentProps> = ({
         project: {
           title: t('auditLog.AuditLog'),
           tooltip: t('dashboard.card.ProjectAuditLogTooltip'),
+        },
+        domain: {
+          title: t('auditLog.AuditLog'),
+          tooltip: t('dashboard.card.ClusterAuditLogTooltip'),
         },
       }}
       extra={

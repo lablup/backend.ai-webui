@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { SessionStatusPanelDomainQuery } from '../../../__generated__/SessionStatusPanelDomainQuery.graphql';
 import type { SessionStatusPanelMineQuery } from '../../../__generated__/SessionStatusPanelMineQuery.graphql';
 import type {
   SessionStatusPanelProjectQuery,
@@ -272,6 +273,97 @@ const ProjectSessionCounts: React.FC<{
   return <SessionStatusView data={data} />;
 };
 
+const DomainSessionCounts: React.FC<{ domainId: string; fetchKey: string }> = ({
+  domainId,
+  fetchKey,
+}) => {
+  'use memo';
+  const variables = useDeferredValue({ domainId, ...sessionCountFilters() });
+  const data = useLazyLoadQuery<SessionStatusPanelDomainQuery>(
+    graphql`
+      query SessionStatusPanelDomainQuery(
+        $domainId: UUID!
+        $pending: SessionV2Filter!
+        $starting: SessionV2Filter!
+        $running: SessionV2Filter!
+        $terminating: SessionV2Filter!
+        $interactive: SessionV2Filter!
+        $batch: SessionV2Filter!
+        $inference: SessionV2Filter!
+        $system: SessionV2Filter!
+        $active: SessionV2Filter!
+      ) {
+        pending: scopedSessionsV2(
+          scope: { domain: [{ value: $domainId }] }
+          filter: $pending
+          limit: 1
+        ) {
+          count
+        }
+        starting: scopedSessionsV2(
+          scope: { domain: [{ value: $domainId }] }
+          filter: $starting
+          limit: 1
+        ) {
+          count
+        }
+        running: scopedSessionsV2(
+          scope: { domain: [{ value: $domainId }] }
+          filter: $running
+          limit: 1
+        ) {
+          count
+        }
+        terminating: scopedSessionsV2(
+          scope: { domain: [{ value: $domainId }] }
+          filter: $terminating
+          limit: 1
+        ) {
+          count
+        }
+        interactive: scopedSessionsV2(
+          scope: { domain: [{ value: $domainId }] }
+          filter: $interactive
+          limit: 1
+        ) {
+          count
+        }
+        batch: scopedSessionsV2(
+          scope: { domain: [{ value: $domainId }] }
+          filter: $batch
+          limit: 1
+        ) {
+          count
+        }
+        inference: scopedSessionsV2(
+          scope: { domain: [{ value: $domainId }] }
+          filter: $inference
+          limit: 1
+        ) {
+          count
+        }
+        system: scopedSessionsV2(
+          scope: { domain: [{ value: $domainId }] }
+          filter: $system
+          limit: 1
+        ) {
+          count
+        }
+        active: scopedSessionsV2(
+          scope: { domain: [{ value: $domainId }] }
+          filter: $active
+          limit: 1
+        ) {
+          count
+        }
+      }
+    `,
+    variables,
+    { fetchPolicy: 'store-and-network', fetchKey },
+  );
+  return <SessionStatusView data={data} />;
+};
+
 const SessionCounts: React.FC<{ scope: CardScope; fetchKey: string }> = ({
   scope,
   fetchKey,
@@ -286,9 +378,12 @@ const SessionCounts: React.FC<{ scope: CardScope; fetchKey: string }> = ({
       return (
         <ProjectSessionCounts projectId={scope.projectId} fetchKey={fetchKey} />
       );
+    case 'domain':
+      return (
+        <DomainSessionCounts domainId={scope.domainId} fetchKey={fetchKey} />
+      );
   }
 };
-
 /** Sessions right now by status, and the active ones by type, in the page's scope. */
 const SessionStatusPanel: React.FC<PanelComponentProps> = ({
   scope,

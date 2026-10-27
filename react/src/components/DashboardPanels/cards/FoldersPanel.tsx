@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { FoldersPanelDomainQuery } from '../../../__generated__/FoldersPanelDomainQuery.graphql';
 import type { FoldersPanelMineQuery } from '../../../__generated__/FoldersPanelMineQuery.graphql';
 import type { FoldersPanelProjectQuery } from '../../../__generated__/FoldersPanelProjectQuery.graphql';
 import { useVFolderInvitations } from '../../../hooks/useVFolderInvitations';
@@ -169,6 +170,48 @@ const ProjectFolders: React.FC<{ projectId: string; fetchKey: string }> = ({
   return <StatRow items={items} />;
 };
 
+/** Folders of every project and user in the domain; the domain has no folder limit. */
+const DomainFolders: React.FC<{ domainId: string; fetchKey: string }> = ({
+  domainId,
+  fetchKey,
+}) => {
+  'use memo';
+  const variables = useDeferredValue({ domainId });
+  const data = useLazyLoadQuery<FoldersPanelDomainQuery>(
+    graphql`
+      query FoldersPanelDomainQuery($domainId: UUID!) {
+        ready: scopedVFoldersV2(
+          scope: { domain: [{ value: $domainId }] }
+          filter: {
+            status: {
+              notIn: [
+                DELETE_PENDING
+                DELETE_ONGOING
+                DELETE_COMPLETE
+                DELETE_ERROR
+              ]
+            }
+          }
+          limit: 1
+        ) {
+          count
+        }
+        trash: scopedVFoldersV2(
+          scope: { domain: [{ value: $domainId }] }
+          filter: { status: { equals: DELETE_PENDING } }
+          limit: 1
+        ) {
+          count
+        }
+      }
+    `,
+    variables,
+    { fetchPolicy: 'store-and-network', fetchKey },
+  );
+  const items = useFolderStats(data.ready, data.trash, null);
+  return <StatRow items={items} />;
+};
+
 const FolderCounts: React.FC<{ scope: CardScope; fetchKey: string }> = ({
   scope,
   fetchKey,
@@ -179,9 +222,10 @@ const FolderCounts: React.FC<{ scope: CardScope; fetchKey: string }> = ({
       return <MineFolders fetchKey={fetchKey} />;
     case 'project':
       return <ProjectFolders projectId={scope.projectId} fetchKey={fetchKey} />;
+    case 'domain':
+      return <DomainFolders domainId={scope.domainId} fetchKey={fetchKey} />;
   }
 };
-
 /** Folders in the page's scope (trash apart) against the folder limit, and the trash. */
 const FoldersPanel: React.FC<PanelComponentProps> = ({ scope, fetchKey }) => {
   'use memo';
@@ -195,6 +239,10 @@ const FoldersPanel: React.FC<PanelComponentProps> = ({ scope, fetchKey }) => {
         project: {
           title: t('general.Folders'),
           tooltip: t('dashboard.card.ProjectFoldersTooltip'),
+        },
+        domain: {
+          title: t('general.Folders'),
+          tooltip: t('dashboard.card.DomainFoldersTooltip'),
         },
       }}
     >

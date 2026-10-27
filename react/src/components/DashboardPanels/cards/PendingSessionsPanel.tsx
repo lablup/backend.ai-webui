@@ -14,7 +14,11 @@ import type { PanelComponentProps } from '../types';
 import { useOpenSessionDetail } from '../useOpenSessionDetail';
 import './PendingSessionsPanel.css';
 import ScopedCard from './ScopedCard';
-import SessionList from './SessionList';
+import SessionList, {
+  crossProjectColumns,
+  inResourceGroups,
+  type SessionV2Filter,
+} from './SessionList';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAIFlex,
@@ -32,8 +36,8 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const PAGE_SIZE = 5;
 const ATTEMPT_COLUMNS = ['updatedAt', 'phase', 'result', 'attempts', 'message'];
-const VISIBLE_COLUMNS = new Set(['name', 'owner', 'elapsedTime']);
-const PENDING_FILTER = { status: { in: ['PENDING' as const] } };
+const BASE_COLUMNS = ['name', 'owner', 'elapsedTime'];
+const PENDING_FILTER: SessionV2Filter = { status: { in: ['PENDING'] } };
 // Longest waiting first.
 const ORDER_BY = [{ field: 'CREATED_AT' as const, direction: 'ASC' as const }];
 
@@ -157,10 +161,15 @@ const SchedulingAttempts: React.FC<{ sessionId: string }> = ({ sessionId }) => {
 
 const PendingSessionTable: React.FC<{
   scope: CardScope;
+  resourceGroups: ReadonlyArray<string> | undefined;
   fetchKey: string;
-}> = ({ scope, fetchKey }) => {
+}> = ({ scope, resourceGroups, fetchKey }) => {
   'use memo';
   const { t } = useTranslation();
+  const visibleColumns = new Set([
+    ...BASE_COLUMNS,
+    ...crossProjectColumns(scope),
+  ]);
   const openSessionDetail = useOpenSessionDetail();
   const {
     baiPaginationOption,
@@ -172,7 +181,7 @@ const PendingSessionTable: React.FC<{
   return (
     <SessionList
       scope={scope}
-      filter={PENDING_FILTER}
+      filter={inResourceGroups(PENDING_FILTER, resourceGroups)}
       orderBy={ORDER_BY}
       limit={baiPaginationOption.limit}
       offset={deferredOffset}
@@ -191,7 +200,7 @@ const PendingSessionTable: React.FC<{
               loading={deferredOffset !== baiPaginationOption.offset}
               customizeColumns={(columns) => [
                 ...columns
-                  .filter((column) => VISIBLE_COLUMNS.has(String(column.key)))
+                  .filter((column) => visibleColumns.has(String(column.key)))
                   .map((column) =>
                     column.key === 'name'
                       ? {
@@ -258,6 +267,7 @@ const PendingSessionTable: React.FC<{
 
 /** Pending sessions in the page's scope, longest waiting first, with the scheduler's last message. */
 const PendingSessionsPanel: React.FC<PanelComponentProps> = ({
+  panel,
   scope,
   fetchKey,
 }) => {
@@ -272,10 +282,18 @@ const PendingSessionsPanel: React.FC<PanelComponentProps> = ({
           title: t('dashboard.card.PendingSessions'),
           tooltip: t('dashboard.card.PendingSessionsTooltip'),
         },
+        domain: {
+          title: t('dashboard.card.PendingSessions'),
+          tooltip: t('dashboard.card.DomainPendingSessionsTooltip'),
+        },
       }}
     >
       {(cardScope, key) => (
-        <PendingSessionTable scope={cardScope} fetchKey={key} />
+        <PendingSessionTable
+          scope={cardScope}
+          resourceGroups={panel.settings?.resourceGroups}
+          fetchKey={key}
+        />
       )}
     </ScopedCard>
   );

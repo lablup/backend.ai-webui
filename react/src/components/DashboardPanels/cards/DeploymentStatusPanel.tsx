@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { DeploymentStatusPanelDomainQuery } from '../../../__generated__/DeploymentStatusPanelDomainQuery.graphql';
 import type { DeploymentStatusPanelMineQuery } from '../../../__generated__/DeploymentStatusPanelMineQuery.graphql';
 import type { DeploymentStatusPanelProjectQuery } from '../../../__generated__/DeploymentStatusPanelProjectQuery.graphql';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
@@ -150,6 +151,52 @@ const ProjectDeployments: React.FC<
   return children(useProjectDeployments(projectId, args));
 };
 
+const DomainDeployments: React.FC<
+  PageArgs & {
+    domainId: string;
+    children: (page: DeploymentPage) => React.ReactNode;
+  }
+> = ({ domainId, children, limit, offset, fetchKey }) => {
+  'use memo';
+  const data = useLazyLoadQuery<DeploymentStatusPanelDomainQuery>(
+    graphql`
+      query DeploymentStatusPanelDomainQuery(
+        $domainId: UUID!
+        $filter: DeploymentFilter!
+        $limit: Int!
+        $offset: Int!
+      ) {
+        deployments: scopedDeployments(
+          scope: { domain: [{ value: $domainId }] }
+          filter: $filter
+          orderBy: [{ field: CREATED_AT, direction: DESC }]
+          limit: $limit
+          offset: $offset
+        ) {
+          count
+          edges {
+            node {
+              id
+              replicaState {
+                desiredReplicaCount
+              }
+              healthyReplicas: replicas(
+                filter: { healthStatus: { equals: HEALTHY } }
+              ) {
+                count
+              }
+              ...BAIModelDeploymentNodesFragment
+            }
+          }
+        }
+      }
+    `,
+    { domainId, filter: LIVE, limit, offset },
+    { fetchPolicy: 'store-and-network', fetchKey },
+  );
+  return children(toPage(data.deployments));
+};
+
 /** One page of live deployments in the scope, newest first. */
 const DeploymentPageOf: React.FC<
   PageArgs & {
@@ -163,9 +210,10 @@ const DeploymentPageOf: React.FC<
       return <MineDeployments projectId={scope.projectId} {...args} />;
     case 'project':
       return <ProjectDeployments projectId={scope.projectId} {...args} />;
+    case 'domain':
+      return <DomainDeployments domainId={scope.domainId} {...args} />;
   }
 };
-
 const DeploymentList: React.FC<{ scope: CardScope; fetchKey: string }> = ({
   scope,
   fetchKey,
@@ -216,6 +264,10 @@ const DeploymentStatusPanel: React.FC<PanelComponentProps> = ({
         project: {
           title: t('dashboard.card.DeploymentStatus'),
           tooltip: t('dashboard.card.DeploymentStatusTooltip'),
+        },
+        domain: {
+          title: t('dashboard.card.DeploymentStatus'),
+          tooltip: t('dashboard.card.DomainDeploymentStatusTooltip'),
         },
       }}
     >

@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { SessionListDomainQuery } from '../../../__generated__/SessionListDomainQuery.graphql';
 import type { SessionListMineQuery } from '../../../__generated__/SessionListMineQuery.graphql';
 import type {
   SessionListProjectQuery,
@@ -131,6 +132,45 @@ const ProjectSessions: React.FC<
   return children(toPage(data.sessions));
 };
 
+const DomainSessions: React.FC<
+  SessionQueryArgs & {
+    domainId: string;
+    children: (page: SessionPage) => React.ReactNode;
+  }
+> = ({ domainId, filter, orderBy, limit, offset, fetchKey, children }) => {
+  'use memo';
+  const data = useLazyLoadQuery<SessionListDomainQuery>(
+    graphql`
+      query SessionListDomainQuery(
+        $domainId: UUID!
+        $filter: SessionV2Filter!
+        $orderBy: [SessionV2OrderBy!]!
+        $limit: Int!
+        $offset: Int!
+      ) {
+        sessions: scopedSessionsV2(
+          scope: { domain: [{ value: $domainId }] }
+          filter: $filter
+          orderBy: $orderBy
+          limit: $limit
+          offset: $offset
+        ) {
+          count
+          edges {
+            node {
+              entityId
+              ...BAISessionNodesV2Fragment
+            }
+          }
+        }
+      }
+    `,
+    { domainId, filter, orderBy: [...orderBy], limit, offset },
+    { fetchPolicy: 'store-and-network', fetchKey },
+  );
+  return children(toPage(data.sessions));
+};
+
 /** One page of sessions in the card's scope, for the session list cards. */
 const SessionList: React.FC<SessionListProps> = ({ scope, ...props }) => {
   'use memo';
@@ -139,7 +179,24 @@ const SessionList: React.FC<SessionListProps> = ({ scope, ...props }) => {
       return <MineSessions projectId={scope.projectId} {...props} />;
     case 'project':
       return <ProjectSessions projectId={scope.projectId} {...props} />;
+    case 'domain':
+      return <DomainSessions domainId={scope.domainId} {...props} />;
   }
 };
 
 export default SessionList;
+
+export type { SessionV2Filter };
+
+/** Columns a session list adds when its rows span projects: which project and resource group. */
+export const crossProjectColumns = (scope: CardScope): Array<string> =>
+  scope.kind === 'domain' ? ['project', 'resourceGroup'] : [];
+
+/** Narrows a session filter to the card's resource group setting; no setting reads every group. */
+export const inResourceGroups = (
+  filter: SessionV2Filter,
+  resourceGroups: ReadonlyArray<string> | undefined,
+): SessionV2Filter =>
+  resourceGroups?.length
+    ? { ...filter, resourceGroupName: { in: [...resourceGroups] } }
+    : filter;

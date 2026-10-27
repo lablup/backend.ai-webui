@@ -8,7 +8,7 @@ import type { DateTimeWindow } from '../timeRange';
 import type { PanelComponentProps } from '../types';
 import { useOpenSessionDetail } from '../useOpenSessionDetail';
 import ScopedCard from './ScopedCard';
-import SessionList from './SessionList';
+import SessionList, { crossProjectColumns } from './SessionList';
 import {
   BAILink,
   BAISessionNodesV2,
@@ -18,14 +18,14 @@ import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const PAGE_SIZE = 5;
-const VISIBLE_COLUMNS = new Set([
+const BASE_COLUMNS = [
   'name',
   'owner',
   'elapsedTime',
   'accelerator',
   'cpu',
   'mem',
-]);
+];
 // Oldest first.
 const ORDER_BY = [{ field: 'STARTS_AT' as const, direction: 'ASC' as const }];
 
@@ -68,7 +68,11 @@ const LongRunningSessionTable: React.FC<{
           }
           customizeColumns={(columns) =>
             columns
-              .filter((column) => VISIBLE_COLUMNS.has(String(column.key)))
+              .filter((column) =>
+                [...BASE_COLUMNS, ...crossProjectColumns(scope)].includes(
+                  String(column.key),
+                ),
+              )
               .map((column) =>
                 column.key === 'name'
                   ? {
@@ -115,6 +119,10 @@ const LongRunningSessionsPanel: React.FC<PanelComponentProps> = ({
         project: {
           title: t('dashboard.card.LongRunningSessions'),
           tooltip: t('dashboard.card.LongRunningSessionsTooltip'),
+        },
+        domain: {
+          title: t('dashboard.card.LongRunningSessions'),
+          tooltip: t('dashboard.card.DomainLongRunningSessionsTooltip'),
         },
       }}
     >

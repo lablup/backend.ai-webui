@@ -26,8 +26,8 @@ import {
   StartFromURLPanel,
   StartSessionPanel,
 } from './memberCards/StartActionPanels';
-import ProjectResourceAllocationPanel from './projectAdminCards/ProjectResourceAllocationPanel';
-import ProjectUsersPanel from './projectAdminCards/ProjectUsersPanel';
+import ResourceAllocationPanel from './cards/ResourceAllocationPanel';
+import UsersPanel from './cards/UsersPanel';
 import ResourceGroupCapacityPanel from './projectAdminCards/ResourceGroupCapacityPanel';
 import { resourceKeys, resourceRegistry } from './resourceRegistry';
 import type {
@@ -357,7 +357,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     group: 'resource',
     titleKey: 'dashboard.card.ResourceAllocation',
     kind: 'custom',
-    Component: ProjectResourceAllocationPanel,
+    Component: ResourceAllocationPanel,
     defaultSize: size(2, 2),
     minSize: size(2, 2),
     refresh: { min: '30s' },
@@ -391,7 +391,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     group: 'users',
     titleKey: 'webui.menu.Users',
     kind: 'custom',
-    Component: ProjectUsersPanel,
+    Component: UsersPanel,
     defaultSize: size(2, 2),
     minSize: size(2, 2),
     refresh: { min: '5m' },
