@@ -1,6 +1,7 @@
 import { ReaderFragment, FragmentRefs } from 'relay-runtime';
 export type ArtifactStatus = "AVAILABLE" | "FAILED" | "NEEDS_APPROVAL" | "PULLED" | "PULLING" | "REJECTED" | "SCANNED" | "VERIFYING" | "%future added value";
 export type BAIImportArtifactModalArtifactRevisionFragment$data = ReadonlyArray<{
+    readonly fieldId: string;
     readonly id: string;
     readonly size: any | null | undefined;
     readonly status: ArtifactStatus;
