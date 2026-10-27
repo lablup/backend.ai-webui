@@ -384,6 +384,39 @@ test.describe(
         ).toBeVisible();
       });
 
+      test('Admin can refresh every card from the dashboard bar', async ({
+        page,
+        request,
+      }) => {
+        await loginAsAdmin(page, request);
+        await navigateTo(page, 'summary');
+        const widget = page
+          .locator('.uic-board-item')
+          .filter({ hasText: 'Active Sessions' })
+          .first();
+        await expect(widget.getByText('Interactive')).toBeVisible({
+          timeout: WIDGET_TIMEOUT,
+        });
+
+        // The cards carry no refresh button of their own; the bar's one control refreshes them all.
+        await expect(
+          widget.getByRole('button', { name: 'Refresh', exact: true }),
+        ).toHaveCount(0);
+        await page
+          .getByTestId('dashboard-filter-bar')
+          .getByRole('button', { name: 'Refresh', exact: true })
+          .click();
+
+        await expect(widget.getByText('Interactive')).toBeVisible();
+        await expect(
+          page
+            .locator('.uic-board-item')
+            .filter({ hasText: 'My Total Resource Usage' })
+            .first()
+            .getByText(/CPU/i),
+        ).toBeVisible();
+      });
+
       test('Admin can open and close the dashboard edit sider', async ({
         page,
         request,
