@@ -10,13 +10,14 @@ import BAINodeNotificationItem from './BAINodeNotificationItem';
 import './WEBUINotificationDrawer.css';
 import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@lablup/ui-common/SegmentedControl';
 import { VStack } from '@lablup/ui-common/Stack';
 import { StatusDot } from '@lablup/ui-common/StatusDot';
-import { BAIDrawer, BAIFlex } from 'backend.ai-ui';
+import {
+  BAIDrawer,
+  BAIFlex,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
+} from 'backend.ai-ui';
 import { BellOff, EllipsisVertical } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -111,7 +112,7 @@ const WEBUINotificationDrawer: React.FC<Props> = ({
             into a plain `VStack`, not Astryx `List` — "don't place interactive
             elements inside an interactive list item" is an Astryx rule. */}
         <BAIFlex justify="end">
-          <SegmentedControl
+          <BAISegmentedControl
             value={selectedCategory}
             onChange={(value) =>
               setSelectedCategory(value as NotificationCategory)
@@ -119,8 +120,8 @@ const WEBUINotificationDrawer: React.FC<Props> = ({
             size="sm"
             aria-label={t('notification.Notifications')}
           >
-            <SegmentedControlItem value="all" label={t('general.All')} />
-            <SegmentedControlItem
+            <BAISegmentedControlItem value="all" label={t('general.All')} />
+            <BAISegmentedControlItem
               value="in progress"
               label={t('general.InProgress')}
               // `SegmentedControlItem.label` is a required STRING (P2), so
@@ -134,7 +135,7 @@ const WEBUINotificationDrawer: React.FC<Props> = ({
                 ) : undefined
               }
             />
-          </SegmentedControl>
+          </BAISegmentedControl>
         </BAIFlex>
         {visibleNotifications.length === 0 ? (
           <EmptyState

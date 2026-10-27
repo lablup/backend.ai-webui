@@ -9,8 +9,8 @@ import BAIBulkErrorModal from '../BAIBulkErrorModal';
 import BAIFlex from '../BAIFlex';
 import BAIFormListInput from '../BAIFormListInput';
 import BAIModal, { type BAIModalProps } from '../BAIModal';
+import BAITextInput from '../BAITextInput';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
-import { AstryxFormTextInput } from '../astryxFormControls';
 import { formatEntityLabel } from './BAIEntityLabelTokens';
 import { Text } from '@lablup/ui-common/Text';
 import { useRef, useState } from 'react';
@@ -312,7 +312,7 @@ const BAIEntityLabelSettingModalContent = ({
                     ],
                   }),
                   renderInput: ({ label }) => (
-                    <AstryxFormTextInput label={label} />
+                    <BAITextInput aria-label={label} />
                   ),
                 },
                 {
@@ -336,7 +336,7 @@ const BAIEntityLabelSettingModalContent = ({
                     ],
                   }),
                   renderInput: ({ label }) => (
-                    <AstryxFormTextInput label={label} />
+                    <BAITextInput aria-label={label} />
                   ),
                 },
               ]}

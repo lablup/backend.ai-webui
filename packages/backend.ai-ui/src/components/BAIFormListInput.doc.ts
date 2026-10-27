@@ -88,13 +88,13 @@ export const docs = {
       header: t('session.launcher.EnvironmentVariable'),
       formItemProps: () => ({ rules: [{ required: true }] }),
       renderInput: ({ label }) => (
-        <AstryxFormTextInput label={label} placeholder="e.g., MY_VARIABLE" />
+        <BAITextInput aria-label={label} placeholder="e.g., MY_VARIABLE" />
       ),
     },
     {
       key: 'value',
       header: t('session.launcher.EnvironmentVariableValue'),
-      renderInput: ({ label }) => <AstryxFormTextInput label={label} />,
+      renderInput: ({ label }) => <BAITextInput aria-label={label} />,
     },
   ]}
 />`,

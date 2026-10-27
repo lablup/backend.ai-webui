@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2b3f69529c00ccc95b826a54e3293702>>
+ * @generated SignedSource<<1c7cac1c2a7446b9f3708bf1fcb288aa>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,7 @@ export type SharedFolderPermissionInfoModalV2Fragment$data = {
   readonly accessControl: {
     readonly ownershipType: VFolderOwnershipType;
   };
+  readonly entityId: string;
   readonly id: string;
   readonly metadata: {
     readonly name: string;
@@ -46,6 +47,13 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
       "storageKey": null
     },
     {
@@ -141,6 +149,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "5a18839a6dffea1a5a545710cc7e8bda";
+(node as any).hash = "a1013e9210e40e3008608f68177940d4";
 
 export default node;

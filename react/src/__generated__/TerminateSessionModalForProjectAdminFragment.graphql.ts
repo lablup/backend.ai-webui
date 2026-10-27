@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7bf0f76957c2a150ffeeced598b5c73a>>
+ * @generated SignedSource<<6fc2eec9d01d48fe36ca4876dcdae98d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type TerminateSessionModalForProjectAdminFragment$data = ReadonlyArray<{
+  readonly entityId: string;
   readonly id: string;
   readonly kernels: {
     readonly edges: ReadonlyArray<{
@@ -50,6 +51,13 @@ return {
   "name": "TerminateSessionModalForProjectAdminFragment",
   "selections": [
     (v0/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
+    },
     {
       "alias": null,
       "args": null,
@@ -133,6 +141,6 @@ return {
 };
 })();
 
-(node as any).hash = "7f806d407dac1670a060b0f1979cba15";
+(node as any).hash = "7012eaf26b1804672778ddb998dd1c1e";
 
 export default node;

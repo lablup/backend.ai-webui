@@ -118,7 +118,7 @@ export const docs = {
       code: `<Suspense fallback={fallback}>
   <BAIAvailablePresetSelect
     label={t('modelStore.Preset')}
-    modelCardId={toLocalId(modelCard.id)}
+    modelCardId={modelCard.entityId}
     value={presetId}
     onChange={(value) => setPresetId(value as string | undefined)}
   />

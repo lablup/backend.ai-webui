@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e896b52b64ab2eb9e1c102b726177d5e>>
+ * @generated SignedSource<<fdd79e019c6bb6fb7db7b08577082744>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -47,6 +47,7 @@ export type BAIRuntimeVariantSelectPaginatedQuery$data = {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly entityId: string;
         readonly id: string;
         readonly name: string;
         readonly readsVfolderConfigFiles: boolean;
@@ -144,6 +145,13 @@ v3 = [
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
+                "name": "entityId",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "name",
                 "storageKey": null
               },
@@ -190,16 +198,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "efaf624f7d5575f263fb5cdb118297f4",
+    "cacheID": "7e97f307f159a14a6cd7feac4967275e",
     "id": null,
     "metadata": {},
     "name": "BAIRuntimeVariantSelectPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIRuntimeVariantSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: RuntimeVariantFilter\n) {\n  runtimeVariants(offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: \"ASC\"}]) {\n    count\n    edges {\n      node {\n        id\n        name\n        readsVfolderConfigFiles @since(version: \"26.8.0\")\n      }\n    }\n  }\n}\n"
+    "text": "query BAIRuntimeVariantSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: RuntimeVariantFilter\n) {\n  runtimeVariants(offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: \"ASC\"}]) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        readsVfolderConfigFiles @since(version: \"26.8.0\")\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "184889e70ee760a562c9af7dbb69496a";
+(node as any).hash = "2c40f4d14bfdfd9e4a20305a7c93b842";
 
 export default node;

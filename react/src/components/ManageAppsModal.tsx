@@ -6,13 +6,13 @@ import { ManageAppsModalMutation } from '../__generated__/ManageAppsModalMutatio
 import { ManageAppsModal_image$key } from '../__generated__/ManageAppsModal_image.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
-import { AstryxFormTextInput } from './astryxFormControls';
 import { Banner } from '@lablup/ui-common/Banner';
 import {
   BAIFlex,
   BAIFormListInput,
   BAIModal,
   BAIModalProps,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
@@ -202,8 +202,8 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                     ],
                   }),
                   renderInput: ({ label }) => (
-                    <AstryxFormTextInput
-                      label={label}
+                    <BAITextInput
+                      aria-label={label}
                       placeholder={t('general.Example', { value: 'jupyter' })}
                     />
                   ),
@@ -222,8 +222,8 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                     ],
                   }),
                   renderInput: ({ label }) => (
-                    <AstryxFormTextInput
-                      label={label}
+                    <BAITextInput
+                      aria-label={label}
                       placeholder={t('general.Example', { value: 'http' })}
                     />
                   ),
@@ -279,8 +279,8 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                     ],
                   }),
                   renderInput: ({ label }) => (
-                    <AstryxFormTextInput
-                      label={label}
+                    <BAITextInput
+                      aria-label={label}
                       placeholder={t('general.Example', { value: '8888' })}
                     />
                   ),

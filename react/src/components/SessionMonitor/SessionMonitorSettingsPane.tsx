@@ -15,8 +15,6 @@ import { useCurrentUserProjectRoles } from '../../hooks/useCurrentUserProjectRol
 import { useSessionMonitorCondition } from '../../hooks/useSessionMonitor';
 import { SETTING_ARRIVAL_PARAM } from '../../hooks/useSettingArrival';
 import { getSessionFilterProperties } from '../DashboardPanels/sessionFilterProperties';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
-import { Selector } from '@lablup/ui-common/Selector';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
@@ -27,6 +25,8 @@ import {
   BAIScopedUserSelect,
   BAISelect,
   type FilterProperty,
+  BAICheckboxInput,
+  BAISelector,
 } from 'backend.ai-ui';
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
@@ -144,7 +144,7 @@ const SessionMonitorSettingsPane: React.FC<{
         {t('sessionMonitor.settings.ShowInHeader')}
       </Text>
       {SESSION_MONITOR_CHIP_ITEMS.map((item) => (
-        <CheckboxInput
+        <BAICheckboxInput
           key={item}
           value={chipItems?.includes(item) ?? false}
           onChange={(checked) =>
@@ -156,14 +156,14 @@ const SessionMonitorSettingsPane: React.FC<{
           }
         >
           {t(CHIP_ITEM_LABEL_KEYS[item])}
-        </CheckboxInput>
+        </BAICheckboxInput>
       ))}
       <Text type="label" weight="semibold">
         {t('sessionMonitor.settings.List')}
       </Text>
       <BAIFlex direction="column" align="stretch" gap="xs">
         <Text>{t('sessionMonitor.settings.SortBy')}</Text>
-        <Selector
+        <BAISelector
           aria-label={t('sessionMonitor.settings.SortBy')}
           size="sm"
           options={sortOptions}
@@ -173,7 +173,7 @@ const SessionMonitorSettingsPane: React.FC<{
       </BAIFlex>
       <BAIFlex direction="column" align="stretch" gap="xs">
         <Text>{t('sessionMonitor.settings.RowsShown')}</Text>
-        <Selector
+        <BAISelector
           aria-label={t('sessionMonitor.settings.RowsShown')}
           size="sm"
           options={SESSION_MONITOR_ROW_OPTIONS.map((n) => String(n))}
