@@ -373,6 +373,7 @@ export const SessionExecutionSpecFormFields: React.FC<{
             <BAIFormItem name={[name, 'mem']} style={{ marginBottom: 0 }}>
               <BAIDynamicUnitInputNumber
                 defaultUnit="g"
+                hasClear
                 style={{ width: '100%' }}
               />
             </BAIFormItem>
@@ -481,6 +482,7 @@ export const SessionExecutionSpecFormFields: React.FC<{
           <BAIFormItem name={[name, 'shmem']} style={{ marginBottom: 0 }}>
             <BAIDynamicUnitInputNumber
               defaultUnit="m"
+              hasClear
               style={{ width: '100%' }}
             />
           </BAIFormItem>
