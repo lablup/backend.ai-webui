@@ -60,9 +60,9 @@ const GROUP_LABEL_KEYS: Record<PanelGroup, string> = {
 
 /**
  * Edit-mode side panel, a flex sibling of the board so the board reflows. The
- * board block (admin pages) manages the boards; the card checklist adds and
- * removes catalog cards; the custom panel block lists user-made panels,
- * created and edited through the panel modal.
+ * board block (admin pages) manages the boards; the custom panel block lists
+ * user-made panels, created and edited through the panel modal; the card
+ * checklist below it adds and removes catalog cards.
  */
 const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
   catalogEntries,
@@ -150,10 +150,81 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
       }}
     >
       {boardSection}
-      <BAIText
-        strong
+      <BAIFlex
+        direction="row"
+        justify="between"
+        align="center"
+        gap="sm"
         style={boardSection ? { paddingTop: token('--spacing-3') } : undefined}
       >
+        <BAIText strong>{t('dashboard.editSider.Title')}</BAIText>
+        <Button
+          variant="primary"
+          size="sm"
+          icon={<Plus size="1em" />}
+          label={t('button.Add')}
+          onClick={onRequestAdd}
+        />
+      </BAIFlex>
+
+      {panels.length === 0 ? (
+        <BAIText type="secondary">{t('dashboard.editSider.Empty')}</BAIText>
+      ) : (
+        <BAIFlex direction="column" align="stretch">
+          {panels.map((panel) => {
+            const label = resolvePanelTitle(panel.descriptor, t);
+            return (
+              <BAIFlex
+                key={panel.id}
+                direction="row"
+                justify="between"
+                align="center"
+                gap="sm"
+                style={{
+                  paddingBlock: token('--spacing-2'),
+                  borderBottom: `1px solid ${token('--color-border')}`,
+                }}
+              >
+                <BAIFlex
+                  direction="column"
+                  align="stretch"
+                  style={{ flex: 1, minWidth: 0 }}
+                >
+                  <BAIText ellipsis>{label}</BAIText>
+                </BAIFlex>
+                <BAIFlex direction="row" align="center" gap="xxs">
+                  {settingsButton(panel.id, label)}
+                  <IconButton
+                    variant="ghost"
+                    size="sm"
+                    label={t('button.Edit')}
+                    tooltip={t('button.Edit')}
+                    icon={<SquarePenIcon size="1em" />}
+                    onClick={() => onRequestEdit(panel)}
+                  />
+                  <BAIPopconfirm
+                    title={t('dialog.ask.DoYouWantToDeleteSomething', {
+                      name: label,
+                    })}
+                    isDanger
+                    onConfirm={() => onRemove(panel.id)}
+                  >
+                    <IconButton
+                      variant="ghost"
+                      size="sm"
+                      label={t('button.Delete')}
+                      tooltip={t('button.Delete')}
+                      icon={<Trash2 size="1em" />}
+                    />
+                  </BAIPopconfirm>
+                </BAIFlex>
+              </BAIFlex>
+            );
+          })}
+        </BAIFlex>
+      )}
+
+      <BAIText strong style={{ paddingTop: token('--spacing-3') }}>
         {t('dashboard.editSider.Cards')}
       </BAIText>
       <BAITextInput
@@ -231,80 +302,6 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
             </BAICheckboxList>
           </BAIFlex>
         ))
-      )}
-
-      <BAIFlex
-        direction="row"
-        justify="between"
-        align="center"
-        gap="sm"
-        style={{ paddingTop: token('--spacing-3') }}
-      >
-        <BAIText strong>{t('dashboard.editSider.Title')}</BAIText>
-        <Button
-          variant="primary"
-          size="sm"
-          icon={<Plus size="1em" />}
-          label={t('button.Add')}
-          onClick={onRequestAdd}
-        />
-      </BAIFlex>
-
-      {panels.length === 0 ? (
-        <BAIText type="secondary">{t('dashboard.editSider.Empty')}</BAIText>
-      ) : (
-        <BAIFlex direction="column" align="stretch">
-          {panels.map((panel) => {
-            const label = resolvePanelTitle(panel.descriptor, t);
-            return (
-              <BAIFlex
-                key={panel.id}
-                direction="row"
-                justify="between"
-                align="center"
-                gap="sm"
-                style={{
-                  paddingBlock: token('--spacing-2'),
-                  borderBottom: `1px solid ${token('--color-border')}`,
-                }}
-              >
-                <BAIFlex
-                  direction="column"
-                  align="stretch"
-                  style={{ flex: 1, minWidth: 0 }}
-                >
-                  <BAIText ellipsis>{label}</BAIText>
-                </BAIFlex>
-                <BAIFlex direction="row" align="center" gap="xxs">
-                  {settingsButton(panel.id, label)}
-                  <IconButton
-                    variant="ghost"
-                    size="sm"
-                    label={t('button.Edit')}
-                    tooltip={t('button.Edit')}
-                    icon={<SquarePenIcon size="1em" />}
-                    onClick={() => onRequestEdit(panel)}
-                  />
-                  <BAIPopconfirm
-                    title={t('dialog.ask.DoYouWantToDeleteSomething', {
-                      name: label,
-                    })}
-                    isDanger
-                    onConfirm={() => onRemove(panel.id)}
-                  >
-                    <IconButton
-                      variant="ghost"
-                      size="sm"
-                      label={t('button.Delete')}
-                      tooltip={t('button.Delete')}
-                      icon={<Trash2 size="1em" />}
-                    />
-                  </BAIPopconfirm>
-                </BAIFlex>
-              </BAIFlex>
-            );
-          })}
-        </BAIFlex>
       )}
 
       <BAIPopconfirm
