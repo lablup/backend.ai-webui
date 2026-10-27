@@ -1,0 +1,11 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+@layer components {
+  /* A danger cue on a secondary button, without the destructive fill. */
+  .dashboard-board-delete:not(:disabled):not([aria-disabled='true']) {
+    color: var(--color-error);
+    border-color: var(--color-error);
+  }
+}
