@@ -168,7 +168,26 @@ const DonutChart: React.FC<DonutChartProps> = ({
               </RadialChart>
             </BAIFlex>
           ) : (
-            <Text type="supporting">{emptyText}</Text>
+            // An empty track the ring's size keeps the layout of the filled state.
+            <BAIFlex
+              justify="center"
+              align="center"
+              role="img"
+              aria-label={emptyText}
+              title={emptyText}
+              style={{
+                flex: 'none',
+                width: ring,
+                height: ring,
+                borderRadius: '50%',
+                border: `${Math.round(ring * 0.2)}px solid var(--color-border)`,
+                boxSizing: 'border-box',
+              }}
+            >
+              <Text type="supporting" weight="semibold">
+                0
+              </Text>
+            </BAIFlex>
           )}
         </BAIFlex>
       )}
