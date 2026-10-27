@@ -380,96 +380,99 @@ export const SessionExecutionSpecFormFields: React.FC<{
         </BAIFlex>
       </BAIFormItem>
       {/* The other slots (accelerators) are a list of their own under the
-          fixed CPU / MEM rows, with a column header instead of placeholders. */}
-      <BAIFormItem label={t('resourceGroup.AdditionalResourceSlots')}>
-        <Form.List name={[name, 'resources']}>
-          {(fields, { add, remove }) => (
-            <BAIFlex direction="column" gap="xs" align="stretch">
-              {fields.length > 0 && (
-                <FormListColumnHeader
-                  removeLabel={t('button.Remove')}
-                  columns={[
-                    {
-                      key: 'resourceType',
-                      label: t('adminDeploymentPreset.ResourceSlots'),
-                      style: NAME_COLUMN_STYLE,
-                    },
-                    {
-                      key: 'quantity',
-                      label: t('resourceGroup.Quantity'),
-                      style: QUANTITY_COLUMN_STYLE,
-                    },
-                  ]}
-                />
-              )}
-              {fields.map(({ key, name: fieldName, ...restField }) => (
-                <BAIFlex key={key} direction="row" align="start" gap="xs">
-                  <Form.Item
-                    {...restField}
-                    name={[fieldName, 'resourceType']}
-                    style={{ marginBottom: 0, ...NAME_COLUMN_STYLE }}
-                    rules={[
+          fixed CPU / MEM rows; a group that reports none (and a spec that
+          uses none) has nothing to pick, so the item is not shown. */}
+      {!_.isEmpty(slotOptions) && (
+        <BAIFormItem label={t('resourceGroup.AdditionalResourceSlots')}>
+          <Form.List name={[name, 'resources']}>
+            {(fields, { add, remove }) => (
+              <BAIFlex direction="column" gap="xs" align="stretch">
+                {fields.length > 0 && (
+                  <FormListColumnHeader
+                    removeLabel={t('button.Remove')}
+                    columns={[
                       {
-                        required: true,
-                        message: t('general.ValueRequired', {
-                          name: t('adminDeploymentPreset.ResourceSlots'),
-                        }),
+                        key: 'resourceType',
+                        label: t('adminDeploymentPreset.ResourceSlots'),
+                        style: NAME_COLUMN_STYLE,
                       },
-                      { validator: validateUniqueSlot },
-                    ]}
-                  >
-                    <AstryxFormSelector
-                      label={t('adminDeploymentPreset.ResourceSlots')}
-                      placeholder={t('adminDeploymentPreset.ResourceSlots')}
-                      options={slotOptions}
-                      hasSearch
-                      onChange={() => revalidateSlotNames()}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    {...restField}
-                    name={[fieldName, 'quantity']}
-                    style={{ marginBottom: 0, ...QUANTITY_COLUMN_STYLE }}
-                    rules={[
                       {
-                        required: true,
-                        whitespace: true,
-                        message: t('general.ValueRequired', {
-                          name: t('resourceGroup.Quantity'),
-                        }),
+                        key: 'quantity',
+                        label: t('resourceGroup.Quantity'),
+                        style: QUANTITY_COLUMN_STYLE,
                       },
                     ]}
-                  >
-                    <AstryxFormTextInput
-                      label={t('resourceGroup.Quantity')}
-                      placeholder={
-                        resourceSlotsInRG?.[
-                          currentResources?.[fieldName]?.resourceType ?? ''
-                        ]?.display_unit || undefined
-                      }
-                    />
-                  </Form.Item>
-                  <IconButton
-                    variant="ghost"
-                    icon={<CircleMinus aria-hidden />}
-                    label={t('button.Remove')}
-                    tooltip={t('button.Remove')}
-                    onClick={() => remove(fieldName)}
                   />
-                </BAIFlex>
-              ))}
-              <BAIButton
-                type="dashed"
-                icon={<PlusIcon />}
-                block
-                onClick={() => add({ resourceType: undefined, quantity: '' })}
-              >
-                {t('adminDeploymentPreset.AddResourceSlot')}
-              </BAIButton>
-            </BAIFlex>
-          )}
-        </Form.List>
-      </BAIFormItem>
+                )}
+                {fields.map(({ key, name: fieldName, ...restField }) => (
+                  <BAIFlex key={key} direction="row" align="start" gap="xs">
+                    <Form.Item
+                      {...restField}
+                      name={[fieldName, 'resourceType']}
+                      style={{ marginBottom: 0, ...NAME_COLUMN_STYLE }}
+                      rules={[
+                        {
+                          required: true,
+                          message: t('general.ValueRequired', {
+                            name: t('adminDeploymentPreset.ResourceSlots'),
+                          }),
+                        },
+                        { validator: validateUniqueSlot },
+                      ]}
+                    >
+                      <AstryxFormSelector
+                        label={t('adminDeploymentPreset.ResourceSlots')}
+                        placeholder={t('adminDeploymentPreset.ResourceSlots')}
+                        options={slotOptions}
+                        hasSearch
+                        onChange={() => revalidateSlotNames()}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      {...restField}
+                      name={[fieldName, 'quantity']}
+                      style={{ marginBottom: 0, ...QUANTITY_COLUMN_STYLE }}
+                      rules={[
+                        {
+                          required: true,
+                          whitespace: true,
+                          message: t('general.ValueRequired', {
+                            name: t('resourceGroup.Quantity'),
+                          }),
+                        },
+                      ]}
+                    >
+                      <AstryxFormTextInput
+                        label={t('resourceGroup.Quantity')}
+                        placeholder={
+                          resourceSlotsInRG?.[
+                            currentResources?.[fieldName]?.resourceType ?? ''
+                          ]?.display_unit || undefined
+                        }
+                      />
+                    </Form.Item>
+                    <IconButton
+                      variant="ghost"
+                      icon={<CircleMinus aria-hidden />}
+                      label={t('button.Remove')}
+                      tooltip={t('button.Remove')}
+                      onClick={() => remove(fieldName)}
+                    />
+                  </BAIFlex>
+                ))}
+                <BAIButton
+                  type="dashed"
+                  icon={<PlusIcon />}
+                  block
+                  onClick={() => add({ resourceType: undefined, quantity: '' })}
+                >
+                  {t('adminDeploymentPreset.AddResourceSlot')}
+                </BAIButton>
+              </BAIFlex>
+            )}
+          </Form.List>
+        </BAIFormItem>
+      )}
       <BAIFormItem label={t('adminDeploymentPreset.ResourceOpts')}>
         <FixedNameRow
           name="SHMEM"
