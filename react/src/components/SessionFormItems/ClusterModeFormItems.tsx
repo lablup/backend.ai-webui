@@ -10,13 +10,13 @@ import InputNumberWithSlider from '../InputNumberWithSlider';
 import RemainingMark from './RemainingMark';
 // FRONTIER (ticket 17): the form ENGINE is self-hosted since ticket 34 (live
 // again since ticket 35). The CONTROLS are Astryx now.
-import { SegmentedControl } from '@lablup/ui-common/SegmentedControl';
 import { spacingVars } from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import {
   BAIFlex,
   BAIQuestionIconWithTooltip,
   BAISegmentedControlItem,
+  BAISegmentedControl,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
@@ -33,11 +33,8 @@ const clusterModeSegmentedStyles = stylex.create({
 });
 
 /**
- * The cluster-mode segmented control. A local adapter rather than the shared
- * `AstryxFormSegmented`, because each option carries a help tooltip that the
- * shared option shape does not model. The two `Form.Item` contracts are
- * honoured inline: `value` is coalesced and the change handler takes the
- * VALUE.
+ * The cluster-mode segmented control, local because each option carries a
+ * help tooltip.
  */
 const ClusterModeSegmented: React.FC<{
   label: string;
@@ -50,7 +47,7 @@ const ClusterModeSegmented: React.FC<{
 }> = ({ label, onValueChange, items, value, onChange }) => {
   'use memo';
   return (
-    <SegmentedControl
+    <BAISegmentedControl
       aria-label={label}
       value={value ?? items[0]?.value ?? ''}
       xstyle={clusterModeSegmentedStyles.control}
@@ -76,7 +73,7 @@ const ClusterModeSegmented: React.FC<{
           }
         />
       ))}
-    </SegmentedControl>
+    </BAISegmentedControl>
   );
 };
 

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e5c6df598969cf171cc9756e7543917f>>
+ * @generated SignedSource<<16681bdb150a1b08ad6a6de7ee36a5e4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,7 @@ export type BAIRuntimeVariantSelectValueQuery$variables = {
 };
 export type BAIRuntimeVariantSelectValueQuery$data = {
   readonly runtimeVariant?: {
+    readonly entityId: string;
     readonly id: string;
     readonly name: string;
     readonly readsVfolderConfigFiles: boolean;
@@ -69,6 +70,13 @@ v1 = [
             "alias": null,
             "args": null,
             "kind": "ScalarField",
+            "name": "entityId",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "name",
             "storageKey": null
           },
@@ -103,16 +111,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "2a822235c81302b2cbd0d4a3eee411ff",
+    "cacheID": "4214ff207cb6641360fac2aa5a5cf176",
     "id": null,
     "metadata": {},
     "name": "BAIRuntimeVariantSelectValueQuery",
     "operationKind": "query",
-    "text": "query BAIRuntimeVariantSelectValueQuery(\n  $id: UUID!\n  $skip: Boolean!\n) {\n  runtimeVariant(id: $id) @skip(if: $skip) {\n    id\n    name\n    readsVfolderConfigFiles @since(version: \"26.8.0\")\n  }\n}\n"
+    "text": "query BAIRuntimeVariantSelectValueQuery(\n  $id: UUID!\n  $skip: Boolean!\n) {\n  runtimeVariant(id: $id) @skip(if: $skip) {\n    id\n    entityId\n    name\n    readsVfolderConfigFiles @since(version: \"26.8.0\")\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "31a6b79681e2665e15af3d38135c04ad";
+(node as any).hash = "8037dc81ff8034d5163dd318c6bd5325";
 
 export default node;

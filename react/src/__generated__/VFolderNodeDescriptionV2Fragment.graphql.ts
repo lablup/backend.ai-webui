@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c0f5b070824b9c873878b5b8dcb2f64e>>
+ * @generated SignedSource<<4415f7d6a78cc8330a3bc8a068fbcb3a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,6 +19,7 @@ export type VFolderNodeDescriptionV2Fragment$data = {
     readonly ownershipType: VFolderOwnershipType;
     readonly permission: VFolderMountPermission;
   };
+  readonly entityId: string;
   readonly host: string;
   readonly id: string;
   readonly metadata: {
@@ -77,6 +78,13 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
       "storageKey": null
     },
     {
@@ -294,6 +302,6 @@ return {
 };
 })();
 
-(node as any).hash = "0e67f5e87371928e7ba51d46ec56839f";
+(node as any).hash = "5b7517f9bda5f798fd8b54628c781d4f";
 
 export default node;
