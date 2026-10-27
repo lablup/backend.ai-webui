@@ -4169,7 +4169,7 @@
       "Tasks": "작업",
       "TermsOfService": "약관",
       "TotalResourcesIn": "자원 그룹별 총자원",
-      "TotalResourcesInResourceGroup": "자원 그룹 내 총자원",
+      "TotalResourcesInResourceGroup": "자원 그룹별 총자원",
       "TotalResourcesInResourceGroupDescription": "이 패널은 선택한 자원 그룹에서 총 사용 중인 자원과 사용 가능한 자원을 보여줍니다. 값은 해당 자원 그룹을 사용하는 모든 에이전트의 사용량과 사용 가능량을 합산하여 계산됩니다.",
       "TotpActivated": "이중 인증 사용",
       "Update": "변경",

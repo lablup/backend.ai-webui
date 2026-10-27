@@ -27,6 +27,7 @@ import {
   useControllableValue,
   BAISegmentedControl,
   BAISegmentedControlItem,
+  BAIText,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
@@ -170,8 +171,8 @@ interface TotalResourceWithinResourceGroupProps extends BAIFlexProps {
   extra?: ReactNode;
   /** Fixes the resource group (the parent query's); without it the header's group and a picker are used. */
   resourceGroup?: string;
-  /** Drawn in place of the fixed resource group's name, e.g. a picker the host owns. */
-  resourceGroupTitle?: ReactNode;
+  /** Draws the fixed resource group's name over its statistics instead of a title row, for a host that owns the card header. */
+  asSection?: boolean;
 }
 
 export const useIsAvailableTotalResourceWithinResourceGroup = () => {
@@ -191,7 +192,7 @@ const TotalResourceWithinResourceGroup: React.FC<
   hideRefreshButton,
   extra,
   resourceGroup,
-  resourceGroupTitle,
+  asSection,
   ...props
 }) => {
   'use memo';
@@ -437,82 +438,86 @@ const TotalResourceWithinResourceGroup: React.FC<
       }}
       {..._.omit(props, ['style'])}
     >
-      <BAIBoardItemTitle
-        title={
-          <BAIFlex gap={'xs'} wrap="wrap" align="center">
-            {/* antd Typography.Text (fontSizeHeading5 = 16px +
+      {asSection ? (
+        <BAIText strong>{resourceGroup}</BAIText>
+      ) : (
+        <BAIBoardItemTitle
+          title={
+            <BAIFlex gap={'xs'} wrap="wrap" align="center">
+              {/* antd Typography.Text (fontSizeHeading5 = 16px +
                 fontWeightStrong). 16px is heading-5 on the restored antd type
                 ramp; `level={3}` tracked the same 16px under Astryx's own. */}
-            <Heading level={5}>{t('webui.menu.TotalResourcesIn')}</Heading>
-            {resourceGroupTitle ? (
-              resourceGroupTitle
-            ) : resourceGroup ? (
-              <Heading level={5}>{resourceGroup}</Heading>
-            ) : (
-              <SharedResourceGroupSelectForCurrentProject
-                size="small"
-                showSearch
-                style={{ minWidth: 100 }}
-                loading={currentResourceGroup !== deferredSelectedResourceGroup}
-                popupMatchSelectWidth={false}
-                tooltip={t('general.ResourceGroup')}
-              />
-            )}
-          </BAIFlex>
-        }
-        tooltip={t('webui.menu.TotalResourcesInResourceGroupDescription')}
-        extra={
-          <BAIFlex gap={'xs'} wrap="wrap">
-            {/* PILOT-DECISION: SegmentedControl.label is aria-only and required;
+              <Heading level={5}>{t('webui.menu.TotalResourcesIn')}</Heading>
+              {resourceGroup ? (
+                <Heading level={5}>{resourceGroup}</Heading>
+              ) : (
+                <SharedResourceGroupSelectForCurrentProject
+                  size="small"
+                  showSearch
+                  style={{ minWidth: 100 }}
+                  loading={
+                    currentResourceGroup !== deferredSelectedResourceGroup
+                  }
+                  popupMatchSelectWidth={false}
+                  tooltip={t('general.ResourceGroup')}
+                />
+              )}
+            </BAIFlex>
+          }
+          tooltip={t('webui.menu.TotalResourcesInResourceGroupDescription')}
+          extra={
+            <BAIFlex gap={'xs'} wrap="wrap">
+              {/* PILOT-DECISION: SegmentedControl.label is aria-only and required;
                 composed from the two option labels to avoid new i18n keys. */}
-            <BAISegmentedControl
-              size="sm"
-              aria-label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
-              value={displayType}
-              onChange={(v) =>
-                setDisplayType(
-                  v as Exclude<
-                    TotalResourceWithinResourceGroupProps['displayType'],
-                    undefined
-                  >,
-                )
-              }
-            >
-              <BAISegmentedControlItem
-                value="used"
-                label={t('dashboard.Used')}
+              <BAISegmentedControl
+                size="sm"
+                aria-label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
+                value={displayType}
+                onChange={(v) =>
+                  setDisplayType(
+                    v as Exclude<
+                      TotalResourceWithinResourceGroupProps['displayType'],
+                      undefined
+                    >,
+                  )
+                }
+              >
+                <BAISegmentedControlItem
+                  value="used"
+                  label={t('dashboard.Used')}
+                />
+                <BAISegmentedControlItem
+                  value="free"
+                  label={t('dashboard.Free')}
+                />
+              </BAISegmentedControl>
+              <BAIFetchKeyButton
+                hidden={hideRefreshButton}
+                size="small"
+                loading={isPendingRefetch || refetching || isLoadingRemaining}
+                value=""
+                onChange={() => {
+                  // Handle local refetching
+                  startRefetchTransition(() => {
+                    refetch(
+                      {
+                        resourceGroup: deferredSelectedResourceGroup,
+                        isSuperAdmin: _.isEqual(userRole, 'superadmin'),
+                      },
+                      {
+                        fetchPolicy: 'network-only',
+                      },
+                    );
+                  });
+                }}
+                variant="link"
+                color="default"
               />
-              <BAISegmentedControlItem
-                value="free"
-                label={t('dashboard.Free')}
-              />
-            </BAISegmentedControl>
-            <BAIFetchKeyButton
-              hidden={hideRefreshButton}
-              size="small"
-              loading={isPendingRefetch || refetching || isLoadingRemaining}
-              value=""
-              onChange={() => {
-                // Handle local refetching
-                startRefetchTransition(() => {
-                  refetch(
-                    {
-                      resourceGroup: deferredSelectedResourceGroup,
-                      isSuperAdmin: _.isEqual(userRole, 'superadmin'),
-                    },
-                    {
-                      fetchPolicy: 'network-only',
-                    },
-                  );
-                });
-              }}
-              variant="link"
-              color="default"
-            />
-            {extra}
-          </BAIFlex>
-        }
-      />
+              {extra}
+            </BAIFlex>
+          }
+        />
+      )}
 
       <ResourceStatistics
         resourceData={resourceData}
