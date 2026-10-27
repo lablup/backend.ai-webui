@@ -18,6 +18,7 @@ export * from '@lablup/ui-common/Form';
 // '../form-engine'` sites need this line.
 export { default } from '@lablup/ui-common/Form';
 export {
+  Form,
   FormItem as BAIFormItem,
   FormItemVisual as BAIFormItemVisual,
   type FormItemVisualProps as BAIFormItemVisualProps,
