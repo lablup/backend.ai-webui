@@ -37,6 +37,6 @@
       > .uic-board-item__title > .bai-board-item-title-slot:empty
     )
     + .uic-board-item__content {
-    padding-block-start: var(--_board-item-padding-top);
+    padding-block-start: var(--board-item-padding-top, var(--spacing-5));
   }
 }
