@@ -75,6 +75,11 @@ let mainContent;
 let devtools;
 const manager = new ProxyManager();
 let mainURL;
+// Set to true only when config.toml explicitly opts into
+// `wsproxy.disableCertCheck` — the certificate-error handler must not
+// accept invalid certificates otherwise (any network MITM could otherwise
+// serve the whole UI and capture the user's API keys).
+let allowInvalidCertificates = false;
 
 app.once('ready', function () {
   let template;
@@ -411,6 +416,7 @@ function createWindow() {
           config.wsproxy.disableCertCheck == true
         ) {
           process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+          allowInvalidCertificates = true;
         }
         if (
           'server' in config &&
@@ -582,6 +588,13 @@ app.on('ready', () => {
     // Remove trailing slash that browsers may add
     const filePath = request.url.replace('es6://', '').replace(/\/$/, '');
     const fullPath = npjoin(es6Path, filePath);
+    // Confine the resolved path to the app/ directory: `path.join` collapses
+    // `..` segments, so a crafted URL could otherwise escape into the
+    // parent directories.
+    const resolvedPath = path.resolve(fullPath);
+    if (!resolvedPath.startsWith(es6Path + path.sep)) {
+      return { error: -2 };
+    }
     try {
       const data = await fs.readFile(fullPath);
       const mimeType = mime.lookup(filePath) || 'application/octet-stream';
@@ -603,8 +616,11 @@ app.on('ready', () => {
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
   if (mainWindow) {
-    e.preventDefault();
     mainWindow.webContents.send('app-close-window');
+  } else if (process.platform !== 'darwin') {
+    // All windows are already gone (e.g. the prevented 'close' never
+    // re-showed a window) — quit like the default Electron behavior.
+    app.quit();
   }
 });
 
@@ -618,8 +634,16 @@ app.on('activate', function () {
 app.on(
   'certificate-error',
   function (event, webContents, url, error, certificate, callback) {
-    event.preventDefault();
-    callback(true);
+    // Accept invalid certificates only when the operator explicitly opted in
+    // via `wsproxy.disableCertCheck` in config.toml. Otherwise keep Chromium's
+    // default behavior (reject and show the standard error page) so a MITM
+    // cannot present a self-signed cert for the Backend.AI endpoint.
+    if (allowInvalidCertificates) {
+      event.preventDefault();
+      callback(true);
+    } else {
+      callback(false);
+    }
   },
 );
 // Let windows without node integration
