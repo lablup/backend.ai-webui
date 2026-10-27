@@ -5,7 +5,6 @@
 import { Form } from '../../form-engine';
 import { generateUUID } from '../../helper/uuid';
 import BAIFormItem from '../BAIFormItem';
-import { AstryxFormTextInput } from '../astryxFormControls';
 import {
   addBoard,
   createEmptyBoard,
@@ -23,6 +22,7 @@ import {
   BAIModal,
   BAIPopconfirm,
   BAITabList,
+  BAITextInput,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import { Plus, SquarePenIcon, Trash2 } from 'lucide-react';
@@ -162,7 +162,7 @@ const DashboardBoardTabs: React.FC<DashboardBoardTabsProps> = ({
                 },
               ]}
             >
-              <AstryxFormTextInput label={t('dashboard.boards.BoardName')} />
+              <BAITextInput aria-label={t('dashboard.boards.BoardName')} />
             </BAIFormItem>
           </Form>
         </BAIModal>
