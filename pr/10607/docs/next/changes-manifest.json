@@ -1,0 +1,150 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-10-26T17:07:00.667Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 1,
+        "changes": 4,
+        "added": 1,
+        "modified": 3,
+        "removed": 0,
+        "images": 3,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "header",
+          "title": "Top Bar",
+          "status": "modified",
+          "url": "next/en/header.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/header/header.md",
+          "counts": {
+            "added": 1,
+            "modified": 3,
+            "removed": 0,
+            "images": 3,
+            "total": 4
+          },
+          "fingerprints": [
+            "9b5aad45040c",
+            "c6db6a108521",
+            "27ab6e4fe806",
+            "93924eb2a30d"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 1,
+        "changes": 4,
+        "added": 1,
+        "modified": 3,
+        "removed": 0,
+        "images": 3,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "header",
+          "title": "トップバー",
+          "status": "modified",
+          "url": "next/ja/header.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/header/header.md",
+          "counts": {
+            "added": 1,
+            "modified": 3,
+            "removed": 0,
+            "images": 3,
+            "total": 4
+          },
+          "fingerprints": [
+            "21b5b2c1e5cd",
+            "b4bed72f67b7",
+            "4b8da4f23f0c",
+            "8041aebee1a5"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 1,
+        "changes": 4,
+        "added": 1,
+        "modified": 3,
+        "removed": 0,
+        "images": 3,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "header",
+          "title": "상단 바",
+          "status": "modified",
+          "url": "next/ko/header.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/header/header.md",
+          "counts": {
+            "added": 1,
+            "modified": 3,
+            "removed": 0,
+            "images": 3,
+            "total": 4
+          },
+          "fingerprints": [
+            "b63d8ddceb36",
+            "64a68f7ab700",
+            "15ad93e0a78b",
+            "ea53ba12a041"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 1,
+        "changes": 4,
+        "added": 1,
+        "modified": 3,
+        "removed": 0,
+        "images": 3,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "header",
+          "title": "แถบด้านบน",
+          "status": "modified",
+          "url": "next/th/header.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/header/header.md",
+          "counts": {
+            "added": 1,
+            "modified": 3,
+            "removed": 0,
+            "images": 3,
+            "total": 4
+          },
+          "fingerprints": [
+            "f6a01c25116c",
+            "10d048f1d3bc",
+            "fcdcc7f6c0c5",
+            "0dcc8bfcb70a"
+          ]
+        }
+      ]
+    }
+  }
+}
