@@ -5,15 +5,23 @@ export const docs = {
   name: 'BAIEntityLabelTargetCell',
   displayName: 'BAI Entity Label Target Cell',
   category: 'Table & List',
-  keywords: ['label', 'entity label', 'detail', 'drawer', 'modal', 'edit'],
+  keywords: [
+    'label',
+    'entity label',
+    'detail',
+    'drawer',
+    'modal',
+    'table',
+    'edit',
+  ],
   usage: {
     description:
-      'BAIEntityLabelCell plus its editor for a detail drawer or modal whose entity type has no `entityLabels` field: it loads the labels through the root `entityLabels(scope:)` query by entity type and UUID, opens BAIEntityLabelSettingModal from "Edit labels", and refetches after a save.',
+      'BAIEntityLabelCell plus its editor for a detail drawer, modal or table row whose entity type has no `entityLabels` field: it loads the labels through the root `entityLabels(scope:)` query by entity type and UUID, opens BAIEntityLabelSettingModal from "Edit labels", and refetches after a save. In a table it is one query per row, so it suits paged admin lists, not long scrolling ones.',
     bestPractices: [
       {
         guidance: true,
         description:
-          'Render it inside a MetadataListItem only when `useIsLabelableEntityType` reports the type, as the other Labels rows do.',
+          'Render it, as a MetadataListItem or a table column, only when `useIsLabelableEntityType` reports the type, as the other Labels rows do.',
       },
       {
         guidance: true,

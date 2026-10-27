@@ -1,5 +1,6 @@
 import {
   BAIColumnType,
+  BAIEntityLabelTargetCell,
   BAIFlex,
   BAIQuestionIconWithTooltip,
   BAITable,
@@ -9,6 +10,7 @@ import {
   BAIBooleanToken,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  useIsLabelableEntityType,
 } from '..';
 import type {
   BAIAdminUserV2TableFragment$data,
@@ -72,6 +74,7 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
 }) => {
   'use memo';
   const { t } = useBAIi18n();
+  const isLabelable = useIsLabelableEntityType('user');
 
   const users = useFragment(
     graphql`
@@ -372,6 +375,21 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
           record.timestamps?.modifiedAt
             ? dayjs(record.timestamps.modifiedAt).format('lll')
             : '-',
+      },
+      // UserV2 carries no entityLabels field, so each row loads its own.
+      isLabelable && {
+        key: 'labels',
+        title: t('comp:BAIEntityLabelTokens.Labels'),
+        render: (__, record) =>
+          record.entityId ? (
+            <BAIEntityLabelTargetCell
+              entityType="user"
+              entityId={record.entityId}
+              name={record.basicInfo?.email ?? undefined}
+            />
+          ) : (
+            '-'
+          ),
       },
     ]),
     (column) => {
