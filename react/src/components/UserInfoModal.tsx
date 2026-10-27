@@ -161,8 +161,6 @@ const UserInfoModal: React.FC<Props> = ({
         <MetadataListItem label={t('credential.ResourcePolicy')}>
           {user?.organization.resourcePolicy}
         </MetadataListItem>
-      </BAIMetadataList>
-      <BAIMetadataList label={{ position: 'start', width: '50%' }}>
         <MetadataListItem label={t('credential.ProjectAndGroup')}>
           {user && !user.projects ? (
             <BAIIconWithTooltip
