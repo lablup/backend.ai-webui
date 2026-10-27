@@ -17,6 +17,7 @@ import { App } from '../app-shim';
 import { localeCompare } from '../helper';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
+import { Field } from '@lablup/ui-common/Field';
 import { HStack, StackItem, VStack } from '@lablup/ui-common/Stack';
 import { Heading } from '@lablup/ui-common/Text';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
@@ -41,7 +42,7 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleXIcon, MailXIcon } from 'lucide-react';
-import React, { Suspense, useDeferredValue, useState } from 'react';
+import React, { Suspense, useDeferredValue, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
@@ -81,6 +82,33 @@ const resolveErrorMessage = (error: unknown, fallback: string) => {
       : _.get(_.castArray(error)[0], 'message');
   return errorMessage || fallback;
 };
+
+const useMountLevelLabels = () => {
+  'use memo';
+  const { t } = useTranslation();
+  const options = [
+    { label: t('data.ReadOnly'), value: 'ro' },
+    { label: t('data.ReadWrite'), value: 'rw' },
+  ];
+  const labelOf = (level: MountLevel) =>
+    level === 'ro' ? t('data.ReadOnly') : t('data.ReadWrite');
+  return { options, labelOf };
+};
+
+const SetMountPolicyMutation = graphql`
+  mutation InviteFolderSettingModalSetMountPolicyMutation(
+    $vfolderId: UUID!
+    $input: SetVFolderMountPolicyInput!
+  ) {
+    setVFolderMountPolicy(vfolderId: $vfolderId, input: $input) {
+      policy {
+        id
+        userId
+        permission
+      }
+    }
+  }
+`;
 
 interface InviteFolderSettingModalProps extends Omit<
   BAIModalProps,
@@ -122,16 +150,14 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
       footer={null}
       width={640}
     >
-      <Suspense fallback={<BAISkeleton />}>
-        {baiModalProps.open && vfolder ? (
-          <InviteFolderSettingModalBody
-            vfolderId={toLocalId(vfolder.id)}
-            defaultMountLevel={
-              toMountLevel(vfolder.accessControl?.permission) ?? 'ro'
-            }
-          />
-        ) : null}
-      </Suspense>
+      {baiModalProps.open && vfolder ? (
+        <InviteFolderSettingModalBody
+          vfolderId={toLocalId(vfolder.id)}
+          defaultMountLevel={
+            toMountLevel(vfolder.accessControl?.permission) ?? 'ro'
+          }
+        />
+      ) : null}
     </BAIModal>
   );
 };
@@ -147,21 +173,211 @@ const InviteFolderSettingModalBody: React.FC<{
   const [currentUser] = useCurrentUserInfo();
   const { accessibleProjects } = useAccessibleProjects();
   const memberProjectIds = _.compact(_.map(accessibleProjects, 'id'));
+  const { options: mountLevelOptions, labelOf: mountLevelLabel } =
+    useMountLevelLabels();
+  const mountLevelInputId = useId();
 
   const [fetchKey, updateFetchKey] = useFetchKey();
-  const deferredFetchKey = useDeferredValue(fetchKey);
-  const isRefetching = deferredFetchKey !== fetchKey;
 
   const [recipient, setRecipient] = useState<RecipientData | null>(null);
   const [mountLevel, setMountLevel] = useState<MountLevel>(defaultMountLevel);
   const [recipientError, setRecipientError] = useState<string | null>(null);
 
-  const mountLevelOptions = [
-    { label: t('data.ReadOnly'), value: 'ro' },
-    { label: t('data.ReadWrite'), value: 'rw' },
-  ];
-  const mountLevelLabel = (level: MountLevel) =>
-    level === 'ro' ? t('data.ReadOnly') : t('data.ReadWrite');
+  const setMountPolicy =
+    useMutationWithPromise<InviteFolderSettingModalSetMountPolicyMutation>(
+      SetMountPolicyMutation,
+    );
+  const createShare =
+    useMutationWithPromise<InviteFolderSettingModalCreateShareMutation>(graphql`
+      mutation InviteFolderSettingModalCreateShareMutation(
+        $input: CreateEntityShareInput!
+      ) {
+        createEntityShare(input: $input) {
+          share {
+            id
+            entityId
+            recipientEmail
+            status
+          }
+        }
+      }
+    `);
+
+  const inviteTarget = recipient;
+  const isEmailInvite = inviteTarget?.kind === 'email';
+
+  const handleInvite = async () => {
+    if (!inviteTarget) {
+      setRecipientError(t('data.InvalidEmail'));
+      return;
+    }
+    setRecipientError(null);
+    try {
+      // The offer is an entity share capped like the legacy invite was; the
+      // mount level is a policy row, which an address without an account
+      // only gets at the folder default once it has one.
+      // TODO(needs-backend): the manager rejects the OneOf `recipient` input
+      // with one key set (BA-8482), so the invite fails until that lands.
+      const level =
+        inviteTarget.kind === 'user' ? mountLevel : defaultMountLevel;
+      await createShare({
+        input: {
+          targetEntityType: VFOLDER_ENTITY_TYPE,
+          targetEntityId: vfolderId,
+          recipient:
+            inviteTarget.kind === 'user'
+              ? { userId: inviteTarget.userId }
+              : { email: inviteTarget.email },
+          permissions:
+            level === 'ro' ? ['READ'] : ['READ', 'UPDATE', 'SOFT_DELETE'],
+        },
+      });
+      if (inviteTarget.kind === 'user') {
+        await setMountPolicy({
+          vfolderId,
+          input: {
+            userId: inviteTarget.userId,
+            permission: toMountPermission(mountLevel),
+          },
+        });
+      }
+      message.success(t('data.invitation.Invited'));
+      setRecipient(null);
+      updateFetchKey();
+    } catch (error) {
+      message.error(getErrorMessage(error));
+    }
+  };
+
+  return (
+    <VStack gap={6} align="stretch">
+      <VStack gap={3} align="stretch">
+        <Heading level={5}>{t('data.folders.InviteUsers')}</Heading>
+        <VStack gap={1} align="stretch">
+          <HStack align="end" gap={2} width="100%">
+            <StackItem size="fill">
+              <Suspense fallback={<BAISkeleton variant="input" width="100%" />}>
+                <Tooltip
+                  content={recipient?.email}
+                  isEnabled={!!recipient?.email}
+                  placement="above"
+                  hasHoverIndication={false}
+                >
+                  <BAIScopedUserSelect
+                    scope={{
+                      project: _.map(memberProjectIds, (value) => ({ value })),
+                    }}
+                    allowCustomSelect
+                    allowClear
+                    filter={
+                      currentUser?.email
+                        ? { email: { notEquals: currentUser.email } }
+                        : undefined
+                    }
+                    label={t('general.E-Mail')}
+                    placeholder={t('data.folders.SearchUser')}
+                    value={recipient?.email ?? null}
+                    onChange={(_value, option) => {
+                      const picked = _.castArray(option ?? [])[0];
+                      setRecipient(
+                        !picked
+                          ? null
+                          : picked.userId
+                            ? {
+                                kind: 'user',
+                                userId: picked.userId,
+                                email: picked.value,
+                              }
+                            : { kind: 'email', email: picked.value },
+                      );
+                      setRecipientError(null);
+                    }}
+                    status={
+                      recipientError
+                        ? { type: 'error', message: recipientError }
+                        : undefined
+                    }
+                    width="100%"
+                  />
+                </Tooltip>
+              </Suspense>
+            </StackItem>
+            <StackItem size="static">
+              <Field
+                label={t('data.folders.MountPermission')}
+                inputID={mountLevelInputId}
+                isDisabled={isEmailInvite}
+              >
+                <BAISelector
+                  id={mountLevelInputId}
+                  aria-label={t('data.folders.MountPermission')}
+                  placement="below"
+                  width={150}
+                  options={mountLevelOptions}
+                  value={mountLevel}
+                  onChange={(next) => setMountLevel(next as MountLevel)}
+                  disabled={isEmailInvite}
+                />
+              </Field>
+            </StackItem>
+            <StackItem size="static">
+              <BAIButton type="primary" action={handleInvite}>
+                {t('data.folders.Invite')}
+              </BAIButton>
+            </StackItem>
+          </HStack>
+          {isEmailInvite && (
+            <BAIText type="warning" size="sm">
+              {t('data.folders.EmailInviteUsesSharedMountPermission', {
+                permission: mountLevelLabel(defaultMountLevel),
+              })}
+            </BAIText>
+          )}
+        </VStack>
+      </VStack>
+
+      <VStack align="stretch" gap={3}>
+        <HStack gap={2} align="center">
+          <Heading level={5}>{t('data.folders.SharedUser')}</Heading>
+          <BAIQuestionIconWithTooltip
+            title={t('data.folders.SharedUsersAndInvitationsDesc')}
+          />
+        </HStack>
+        <Suspense fallback={<BAISkeleton />}>
+          <SharedUserTable
+            vfolderId={vfolderId}
+            defaultMountLevel={defaultMountLevel}
+            memberProjectIds={memberProjectIds}
+            fetchKey={fetchKey}
+            updateFetchKey={updateFetchKey}
+          />
+        </Suspense>
+      </VStack>
+    </VStack>
+  );
+};
+
+const SharedUserTable: React.FC<{
+  vfolderId: string;
+  defaultMountLevel: MountLevel;
+  memberProjectIds: Array<string>;
+  fetchKey: string;
+  updateFetchKey: () => void;
+}> = ({
+  vfolderId,
+  defaultMountLevel,
+  memberProjectIds,
+  fetchKey,
+  updateFetchKey,
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { message } = App.useApp();
+  const { options: mountLevelOptions, labelOf: mountLevelLabel } =
+    useMountLevelLabels();
+
+  const deferredFetchKey = useDeferredValue(fetchKey);
+  const isRefetching = deferredFetchKey !== fetchKey;
 
   const { entityShares, vfolderMountPolicies } =
     useLazyLoadQuery<InviteFolderSettingModalQuery>(
@@ -288,20 +504,7 @@ const InviteFolderSettingModalBody: React.FC<{
 
   const setMountPolicy =
     useMutationWithPromise<InviteFolderSettingModalSetMountPolicyMutation>(
-      graphql`
-        mutation InviteFolderSettingModalSetMountPolicyMutation(
-          $vfolderId: UUID!
-          $input: SetVFolderMountPolicyInput!
-        ) {
-          setVFolderMountPolicy(vfolderId: $vfolderId, input: $input) {
-            policy {
-              id
-              userId
-              permission
-            }
-          }
-        }
-      `,
+      SetMountPolicyMutation,
     );
   const unsetMountPolicy =
     useMutationWithPromise<InviteFolderSettingModalUnsetMountPolicyMutation>(
@@ -329,21 +532,6 @@ const InviteFolderSettingModalBody: React.FC<{
         }
       }
     `);
-  const createShare =
-    useMutationWithPromise<InviteFolderSettingModalCreateShareMutation>(graphql`
-      mutation InviteFolderSettingModalCreateShareMutation(
-        $input: CreateEntityShareInput!
-      ) {
-        createEntityShare(input: $input) {
-          share {
-            id
-            entityId
-            recipientEmail
-            status
-          }
-        }
-      }
-    `);
   const cancelShare =
     useMutationWithPromise<InviteFolderSettingModalCancelShareMutation>(graphql`
       mutation InviteFolderSettingModalCancelShareMutation($id: UUID!) {
@@ -355,52 +543,6 @@ const InviteFolderSettingModalBody: React.FC<{
         }
       }
     `);
-
-  const inviteTarget = recipient;
-  const isEmailInvite = inviteTarget?.kind === 'email';
-
-  const handleInvite = async () => {
-    if (!inviteTarget) {
-      setRecipientError(t('data.InvalidEmail'));
-      return;
-    }
-    setRecipientError(null);
-    try {
-      // The offer is an entity share capped like the legacy invite was; the
-      // mount level is a policy row, which an address without an account
-      // only gets at the folder default once it has one.
-      // TODO(needs-backend): the manager rejects the OneOf `recipient` input
-      // with one key set (BA-8482), so the invite fails until that lands.
-      const level =
-        inviteTarget.kind === 'user' ? mountLevel : defaultMountLevel;
-      await createShare({
-        input: {
-          targetEntityType: VFOLDER_ENTITY_TYPE,
-          targetEntityId: vfolderId,
-          recipient:
-            inviteTarget.kind === 'user'
-              ? { userId: inviteTarget.userId }
-              : { email: inviteTarget.email },
-          permissions:
-            level === 'ro' ? ['READ'] : ['READ', 'UPDATE', 'SOFT_DELETE'],
-        },
-      });
-      if (inviteTarget.kind === 'user') {
-        await setMountPolicy({
-          vfolderId,
-          input: {
-            userId: inviteTarget.userId,
-            permission: toMountPermission(mountLevel),
-          },
-        });
-      }
-      message.success(t('data.invitation.Invited'));
-      setRecipient(null);
-      updateFetchKey();
-    } catch (error) {
-      message.error(getErrorMessage(error));
-    }
-  };
 
   const handleChangeMountLevel = async (row: ShareRow, level: MountLevel) => {
     if (!row.userId) return;
@@ -475,151 +617,59 @@ const InviteFolderSettingModalBody: React.FC<{
         ];
 
   return (
-    <VStack gap={6} align="stretch">
-      <VStack gap={3} align="stretch">
-        <Heading level={5}>{t('data.folders.InviteUsers')}</Heading>
-        <VStack gap={1} align="stretch">
-          <HStack align="end" gap={2} width="100%">
-            <StackItem size="fill">
-              <Tooltip
-                content={recipient?.email}
-                isEnabled={!!recipient?.email}
-                placement="above"
-                hasHoverIndication={false}
-              >
-                <BAIScopedUserSelect
-                  scope={{
-                    project: _.map(memberProjectIds, (value) => ({ value })),
-                  }}
-                  allowCustomSelect
-                  allowClear
-                  filter={
-                    currentUser?.email
-                      ? { email: { notEquals: currentUser.email } }
-                      : undefined
-                  }
-                  label={t('general.E-Mail')}
-                  placeholder={t('data.folders.SearchUser')}
-                  value={recipient?.email ?? null}
-                  onChange={(_value, option) => {
-                    const picked = _.castArray(option ?? [])[0];
-                    setRecipient(
-                      !picked
-                        ? null
-                        : picked.userId
-                          ? {
-                              kind: 'user',
-                              userId: picked.userId,
-                              email: picked.value,
-                            }
-                          : { kind: 'email', email: picked.value },
-                    );
-                    setRecipientError(null);
-                  }}
-                  status={
-                    recipientError
-                      ? { type: 'error', message: recipientError }
-                      : undefined
-                  }
-                  width="100%"
-                />
-              </Tooltip>
-            </StackItem>
-            <StackItem size="static">
+    <BAITable<ShareRow>
+      scroll={{ x: 'max-content' }}
+      bordered
+      pagination={false}
+      loading={isRefetching}
+      dataSource={rows}
+      rowKey="shareId"
+      columns={[
+        {
+          title: t('data.explorer.InviteeEmail'),
+          dataIndex: 'email',
+          sorter: (a, b) => localeCompare(a.email, b.email),
+          render: (email: string, row) => (
+            <BAINameActionCell
+              title={email}
+              showActions="always"
+              actions={rowActions(row)}
+            />
+          ),
+        },
+        {
+          title: t('general.Status'),
+          dataIndex: 'status',
+          render: (status: ShareRow['status']) =>
+            status === 'ACCEPTED' ? (
+              <BAIBadge color="success" text={t('data.invitation.Accepted')} />
+            ) : (
+              <BAIBadge color="warning" text={t('data.invitation.Pending')} />
+            ),
+        },
+        {
+          title: t('data.folders.MountPermission'),
+          dataIndex: 'mountLevel',
+          render: (level: ShareRow['mountLevel'], row) =>
+            row.status === 'ACCEPTED' && row.userId ? (
               <BAISelector
                 aria-label={t('data.folders.MountPermission')}
                 placement="below"
-                width={150}
+                width={130}
                 options={mountLevelOptions}
-                value={mountLevel}
-                onChange={(next) => setMountLevel(next as MountLevel)}
-                disabled={isEmailInvite}
+                value={level}
+                onChange={(next) =>
+                  handleChangeMountLevel(row, next as MountLevel)
+                }
               />
-            </StackItem>
-            <StackItem size="static">
-              <BAIButton type="primary" action={handleInvite}>
-                {t('data.folders.Invite')}
-              </BAIButton>
-            </StackItem>
-          </HStack>
-          {isEmailInvite && (
-            <BAIText type="warning" size="sm">
-              {t('data.folders.EmailInviteUsesSharedMountPermission', {
-                permission: mountLevelLabel(defaultMountLevel),
-              })}
-            </BAIText>
-          )}
-        </VStack>
-      </VStack>
-
-      <VStack align="stretch" gap={3}>
-        <HStack gap={2} align="center">
-          <Heading level={5}>{t('data.folders.SharedUser')}</Heading>
-          <BAIQuestionIconWithTooltip
-            title={t('data.folders.SharedUsersAndInvitationsDesc')}
-          />
-        </HStack>
-        <BAITable<ShareRow>
-          scroll={{ x: 'max-content' }}
-          bordered
-          pagination={false}
-          loading={isRefetching}
-          dataSource={rows}
-          rowKey="shareId"
-          columns={[
-            {
-              title: t('data.explorer.InviteeEmail'),
-              dataIndex: 'email',
-              sorter: (a, b) => localeCompare(a.email, b.email),
-              render: (email: string, row) => (
-                <BAINameActionCell
-                  title={email}
-                  showActions="always"
-                  actions={rowActions(row)}
-                />
-              ),
-            },
-            {
-              title: t('general.Status'),
-              dataIndex: 'status',
-              render: (status: ShareRow['status']) =>
-                status === 'ACCEPTED' ? (
-                  <BAIBadge
-                    color="success"
-                    text={t('data.invitation.Accepted')}
-                  />
-                ) : (
-                  <BAIBadge
-                    color="warning"
-                    text={t('data.invitation.Pending')}
-                  />
-                ),
-            },
-            {
-              title: t('data.folders.MountPermission'),
-              dataIndex: 'mountLevel',
-              render: (level: ShareRow['mountLevel'], row) =>
-                row.status === 'ACCEPTED' && row.userId ? (
-                  <BAISelector
-                    aria-label={t('data.folders.MountPermission')}
-                    placement="below"
-                    width={130}
-                    options={mountLevelOptions}
-                    value={level}
-                    onChange={(next) =>
-                      handleChangeMountLevel(row, next as MountLevel)
-                    }
-                  />
-                ) : row.status === 'PENDING' ? (
-                  mountLevelLabel(level)
-                ) : (
-                  '-'
-                ),
-            },
-          ]}
-        />
-      </VStack>
-    </VStack>
+            ) : row.status === 'PENDING' ? (
+              mountLevelLabel(level)
+            ) : (
+              '-'
+            ),
+        },
+      ]}
+    />
   );
 };
 
