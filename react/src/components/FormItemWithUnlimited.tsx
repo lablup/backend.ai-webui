@@ -5,8 +5,7 @@
 import { Form } from '../form-engine';
 import BAIFormItem from './BAIFormItem';
 import type { BAIFormItemProps } from './BAIFormItem';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAICheckboxInput, BAIFlex } from 'backend.ai-ui';
 import React, {
   Attributes,
   cloneElement,
@@ -87,11 +86,9 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
           {childrenWithUndefinedValue}
         </BAIFormItem>
       ) : null}
-      {/* Outside the Form.Item value-binding contract: this checkbox drives
-          isUnlimited local state and imperatively pokes the form value, so
-          it stays a plain Astryx control rather than the AstryxFormCheckbox
-          adapter (which exists for controls Form.Item clones props onto). */}
-      <CheckboxInput
+      {/* Outside the Form.Item value binding: this checkbox drives
+          isUnlimited local state and imperatively pokes the form value. */}
+      <BAICheckboxInput
         // The toggle is secondary to the field it disables, so it uses the
         // compact step instead of the default 24px indicator.
         size="sm"
@@ -109,7 +106,7 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
         }}
       >
         {t('resourcePolicy.Unlimited')}
-      </CheckboxInput>
+      </BAICheckboxInput>
     </BAIFlex>
   );
 };

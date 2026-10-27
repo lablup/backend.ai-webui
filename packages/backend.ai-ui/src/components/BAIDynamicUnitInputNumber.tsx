@@ -17,12 +17,9 @@
 import { convertToBinaryUnit, parseValueWithUnit, SizeUnit } from '../helper';
 import { useControllableValue, usePrevious } from '../hooks';
 import { useBAIi18n } from '../hooks/useBAIi18n';
+import BAINumberInput, { type BAINumberInputProps } from './BAINumberInput';
+import BAISelector from './BAISelector';
 import { InputGroup, InputGroupText } from '@lablup/ui-common/InputGroup';
-import {
-  NumberInput,
-  type NumberInputProps,
-} from '@lablup/ui-common/NumberInput';
-import { Selector } from '@lablup/ui-common/Selector';
 import {
   NumberStepper,
   getNextStepIndex,
@@ -42,7 +39,7 @@ const ASTRYX_SIZE = {
 // The omitted keys are redefined in size-string form or owned by the wrapper;
 // `style` / `className` land on the surrounding InputGroup.
 export interface BAIDynamicUnitInputNumberProps extends Omit<
-  NumberInputProps,
+  BAINumberInputProps,
   | 'ref'
   | 'value'
   | 'onChange'
@@ -255,7 +252,7 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
       style={style}
     >
       {addonPrefix ? <InputGroupText>{addonPrefix}</InputGroupText> : null}
-      <NumberInput
+      <BAINumberInput
         {..._.omit(restProps, ['value', 'onChange', 'defaultValue'])}
         aria-label={accessibleLabel}
         value={numValue}
@@ -290,7 +287,7 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
         // `placement == null && !hasSearch` puts the option list on top of the
         // unit the user currently has selected. Name the placement so the panel
         // takes the standard layer position (below, offset 0).
-        <Selector
+        <BAISelector
           placement="below"
           aria-label={t('general.Unit')}
           value={unit}

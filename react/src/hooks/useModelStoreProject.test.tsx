@@ -20,6 +20,7 @@ vi.mock('.', () => ({
 const MODEL_STORE_UUID = '8e32dd28-d319-4e3b-8851-ea37837699a5';
 const modelStoreNode = {
   id: btoa(`ProjectV2:${MODEL_STORE_UUID}`),
+  entityId: MODEL_STORE_UUID,
   basicInfo: { name: 'model-store' },
 };
 

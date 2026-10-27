@@ -9,7 +9,6 @@ import {
   convertToDecimalUnit,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  toLocalId,
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIAlert from '../BAIAlert';
@@ -69,6 +68,7 @@ const BAIImportArtifactModal = ({
       graphql`
         fragment BAIImportArtifactModalArtifactFragment on Artifact {
           id @required(action: THROW)
+          entityId
           name @required(action: THROW)
           ...BAIArtifactDescriptionsFragment
         }
@@ -81,6 +81,7 @@ const BAIImportArtifactModal = ({
         fragment BAIImportArtifactModalArtifactRevisionFragment on ArtifactRevision
         @relay(plural: true) {
           id
+          fieldId
           version
           size
           status
@@ -147,8 +148,8 @@ const BAIImportArtifactModal = ({
           importArtifacts({
             variables: {
               input: {
-                artifactRevisionIds: filteredSelectedRevisions.map((revision) =>
-                  toLocalId(revision.id),
+                artifactRevisionIds: filteredSelectedRevisions.map(
+                  (revision) => revision.fieldId,
                 ),
               },
               connectionIds: connectionIds ?? [],
@@ -183,7 +184,7 @@ const BAIImportArtifactModal = ({
                     taskId: task.taskId!,
                     version: task.artifactRevision.version,
                     artifact: {
-                      id: toLocalId(selectedArtifact?.id ?? ''),
+                      id: selectedArtifact?.entityId ?? '',
                       name: selectedArtifact?.name ?? '',
                     },
                   })),

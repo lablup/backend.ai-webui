@@ -9,7 +9,6 @@ import {
   BAIBooleanToken,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  toLocalId,
 } from '..';
 import type {
   BAIAdminUserV2TableFragment$data,
@@ -167,7 +166,7 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
             monospace
             style={{ maxWidth: 100 }}
           >
-            {toLocalId(record.id)}
+            {record.entityId}
           </BAIText>
         ),
       },

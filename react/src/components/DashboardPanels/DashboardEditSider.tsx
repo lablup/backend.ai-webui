@@ -10,11 +10,16 @@ import { resolvePanelTitle } from './resourceRegistry';
 import { PANEL_GROUPS, type PanelGroup, type PersistedPanel } from './types';
 import type { PanelSettingsTarget } from './useDashboardBoard';
 import { Button } from '@lablup/ui-common/Button';
-import { CheckboxList, CheckboxListItem } from '@lablup/ui-common/CheckboxList';
 import { IconButton } from '@lablup/ui-common/IconButton';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFlex, BAIPopconfirm, BAIText } from 'backend.ai-ui';
+import {
+  BAICheckboxList,
+  BAICheckboxListItem,
+  BAIFlex,
+  BAIPopconfirm,
+  BAIText,
+  BAITextInput,
+} from 'backend.ai-ui';
 import {
   Plus,
   RotateCcw,
@@ -126,7 +131,7 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
       }}
     >
       <BAIText strong>{t('dashboard.editSider.Cards')}</BAIText>
-      <TextInput
+      <BAITextInput
         size="sm"
         hasClear
         value={search}
@@ -148,7 +153,7 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
             >
               {t(GROUP_LABEL_KEYS[group])}
             </BAIText>
-            <CheckboxList
+            <BAICheckboxList
               aria-label={t(GROUP_LABEL_KEYS[group])}
               density="compact"
               width="100%"
@@ -166,7 +171,7 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
               }}
             >
               {entries.map((entry) => (
-                <CheckboxListItem
+                <BAICheckboxListItem
                   key={entry.definition.key}
                   value={entry.definition.key}
                   label={entry.label}
@@ -182,7 +187,7 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
                   }
                 />
               ))}
-            </CheckboxList>
+            </BAICheckboxList>
           </BAIFlex>
         ))
       )}

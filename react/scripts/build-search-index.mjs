@@ -467,6 +467,23 @@ function structuredSurfaces(file, src) {
       }
     }
 
+    // Segmented strips written as JSX: `<BAISegmentedControlItem value="…" label={t('…')} />`.
+    if (
+      ts.isJsxSelfClosingElement(node) &&
+      /SegmentedControlItem$/.test(node.tagName.getText(sf))
+    ) {
+      const attr = (name) => {
+        const a = node.attributes.properties.find(
+          (p) => ts.isJsxAttribute(p) && p.name.getText(sf) === name,
+        );
+        const init = a?.initializer;
+        return init && ts.isJsxExpression(init) ? init.expression : init;
+      };
+      const k = textOfString(attr('value'));
+      const lk = tCallKey(attr('label'));
+      if (k && lk) labelByKey.set(k, lk);
+    }
+
     // SettingGroup: { 'data-testid', title: t(), settingItems: [...] }
     if (ts.isObjectLiteralExpression(node)) {
       const itemsNode = propOf(node, 'settingItems');

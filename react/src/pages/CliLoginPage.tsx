@@ -6,7 +6,6 @@ import { CSSTokenVariables } from '../components/MainLayout/MainLayout';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { Button } from '@lablup/ui-common/Button';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { Code } from '@lablup/ui-common/Code';
 import { CodeBlock } from '@lablup/ui-common/CodeBlock';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
@@ -17,6 +16,7 @@ import {
   BAIFlex,
   BAIMetadataList,
   BAIText,
+  BAICheckboxInput,
 } from 'backend.ai-ui';
 import { Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -166,9 +166,9 @@ export const CliLoginConsent = () => {
               <BAIText type="secondary">
                 {t('cliLogin.MatchCodeDescription')}
               </BAIText>
-              <CheckboxInput value={agreed} onChange={setAgreed}>
+              <BAICheckboxInput value={agreed} onChange={setAgreed}>
                 {t('cliLogin.Attestation')}
-              </CheckboxInput>
+              </BAICheckboxInput>
               <BAIFlex direction="row" justify="end" gap="xs">
                 <Button
                   size="lg"
