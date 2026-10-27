@@ -1,5 +1,6 @@
 import { ReaderFragment, FragmentRefs } from 'relay-runtime';
 export type BAIImportArtifactModalArtifactFragment$data = {
+    readonly entityId: string;
     readonly id: string;
     readonly name: string;
     readonly " $fragmentSpreads": FragmentRefs<"BAIArtifactDescriptionsFragment">;

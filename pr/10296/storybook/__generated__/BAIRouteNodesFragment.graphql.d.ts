@@ -5,6 +5,7 @@ export type RouteTrafficStatus = "ACTIVE" | "INACTIVE" | "%future added value";
 export type BAIRouteNodesFragment$data = ReadonlyArray<{
     readonly createdAt: string | null | undefined;
     readonly errorData: any | null | undefined;
+    readonly fieldId: string;
     readonly healthStatus: RouteHealthStatus;
     readonly id: string;
     readonly session: string | null | undefined;

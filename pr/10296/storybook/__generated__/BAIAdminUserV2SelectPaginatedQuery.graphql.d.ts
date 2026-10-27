@@ -145,6 +145,7 @@ export type BAIAdminUserV2SelectPaginatedQuery$data = {
                     readonly fullName: string | null | undefined;
                     readonly username: string | null | undefined;
                 };
+                readonly entityId: string;
                 readonly id: string;
             };
         }>;

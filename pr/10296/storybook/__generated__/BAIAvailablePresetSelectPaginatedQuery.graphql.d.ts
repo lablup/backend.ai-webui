@@ -46,6 +46,7 @@ export type BAIAvailablePresetSelectPaginatedQuery$data = {
         readonly edges: ReadonlyArray<{
             readonly node: {
                 readonly description: string | null | undefined;
+                readonly entityId: string;
                 readonly id: string;
                 readonly name: string;
                 readonly rank: number;
