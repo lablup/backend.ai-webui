@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 // Build flag, env vars and privacy defaults: docs/adr/0017-opt-in-posthog-analytics-build.md
+import type { UserRole } from '../helper/userRole';
 import { LogLevel, useBAILogger } from 'backend.ai-ui';
 import posthog, { type CaptureResult, type Properties } from 'posthog-js';
 import { useEffect, useEffectEvent } from 'react';
@@ -46,6 +47,11 @@ const isDuplicateException = (event: CaptureResult) => {
     ]),
   );
   const now = Date.now();
+  for (const [sentKey, sentAt] of lastExceptionSentAt) {
+    if (now - sentAt >= EXCEPTION_DEDUPE_WINDOW_MS) {
+      lastExceptionSentAt.delete(sentKey);
+    }
+  }
   const lastSentAt = lastExceptionSentAt.get(key);
   if (
     lastSentAt !== undefined &&
@@ -64,14 +70,12 @@ const identifyCurrentUser = () => {
   if (posthog._isIdentified() && posthog.get_distinct_id() !== userId) {
     posthog.reset();
   }
-  posthog.identify(userId, {
-    role: client.is_superadmin
-      ? 'superadmin'
-      : client.is_admin
-        ? 'admin'
-        : 'user',
-    domain: client._config?.domainName,
-  });
+  const role: UserRole = client.is_superadmin
+    ? 'superadmin'
+    : client.is_admin
+      ? 'admin'
+      : 'user';
+  posthog.identify(userId, { role, domain: client._config?.domainName });
 };
 
 const ProductAnalytics: React.FC = () => {

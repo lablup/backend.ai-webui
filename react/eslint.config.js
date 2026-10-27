@@ -21,7 +21,6 @@ const baseRestrictedImportPatterns = [
 ];
 const restrictedImportPatterns = [
   ...baseRestrictedImportPatterns,
-  // ADR 0017: only the lazily loaded analytics component may reach posthog-js.
   {
     group: ['posthog-js', 'posthog-js/*'],
     message:
