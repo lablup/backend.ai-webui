@@ -149,8 +149,7 @@ and consider changing your password.
 :::
 
 After logging in, you can check the information of the current resource usage on
-the Start page. Superadmins land on the administration pages instead; choose
-**Switch to User Console** in the user menu to open the user pages.
+the Start page.
 
 By clicking the user icon in the upper-right corner, you will see the user menu.
 You can log out by selecting the `Log Out` menu item.
@@ -196,10 +195,9 @@ your system administrator.
 
 ### Menus available to your role
 
-The sidebar lists only the pages you are allowed to open. Superadmins and domain
-admins open the administration pages from the user menu with
-**Switch to Admin Console**; when you are a project admin of the selected
-project, the sidebar also shows a **Project Settings** entry.
+The sidebar lists only the pages you are allowed to open. When you are a
+project admin of the selected project, it also shows a **Project Settings**
+entry.
 
 Project-admin entries are evaluated against **the currently selected project**,
 not against your account as a whole. The project you are working in is
