@@ -3,8 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
-import { useCurrentUserProjectRolesMembershipQuery } from '../__generated__/useCurrentUserProjectRolesMembershipQuery.graphql';
 import { useCurrentUserProjectRolesQuery } from '../__generated__/useCurrentUserProjectRolesQuery.graphql';
+import { useAccessibleProjects } from './useAccessibleProjects';
 import { useCurrentProjectValue } from './useCurrentProject';
 import { useUrlProjectValidity } from './useUrlProjectValidity';
 import * as _ from 'lodash-es';
@@ -26,38 +26,22 @@ export interface CurrentUserProjectRolesResult {
 const MAX_PERMISSION_TARGETS = 100;
 
 /**
- * Hook that reports which of the user's member projects grant the
+ * Hook that reports which projects the header's selector lists grant the
  * `scope_admin` permission, asked through `myAtomicBulkScopePermissions`.
- * A super-admin bypasses RBAC, so every member project counts for them.
- * `@catch` keeps general pages rendering when either query fails.
+ * A super-admin bypasses RBAC, so every listed project counts for them.
+ * `@catch(to: RESULT)` keeps general pages rendering when the query fails.
  */
 export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
   'use memo';
   const baiClient = useSuspendedBackendaiClient();
 
-  // store-or-network keeps both results cached across pages for the session.
-  const { myUserV2 } =
-    useLazyLoadQuery<useCurrentUserProjectRolesMembershipQuery>(
-      graphql`
-        query useCurrentUserProjectRolesMembershipQuery {
-          myUserV2 @catch(to: NULL) {
-            projects(filter: { isActive: true }, limit: 100) {
-              edges {
-                node {
-                  id
-                  entityId
-                }
-              }
-            }
-          }
-        }
-      `,
-      {},
-      { fetchPolicy: 'store-or-network' },
-    );
-
+  // The same member list the header's project selector renders.
+  const { accessibleProjects, personalProject } = useAccessibleProjects();
   const memberProjectIds = _.uniq(
-    _.compact(_.map(myUserV2?.projects?.edges, (edge) => edge?.node?.entityId)),
+    _.compact([
+      ..._.map(accessibleProjects, (project) => project?.id),
+      personalProject?.id,
+    ]),
   )
     .sort()
     .slice(0, MAX_PERMISSION_TARGETS);
