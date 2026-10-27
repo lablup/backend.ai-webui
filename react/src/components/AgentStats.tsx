@@ -4,6 +4,7 @@
  */
 import { AgentStatsFragment$key } from '../__generated__/AgentStatsFragment.graphql';
 import { useResourceSlotsDetails } from '../hooks/backendai';
+import PanelDetailLinkButton from './DashboardPanels/PanelDetailLinkButton';
 import { Heading } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
@@ -228,6 +229,7 @@ const AgentStats: React.FC<AgentStatsProps> = ({
                 label={t('dashboard.Free')}
               />
             </BAISegmentedControl>
+            <PanelDetailLinkButton />
             {extra}
           </BAIFlex>
         }
