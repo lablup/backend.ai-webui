@@ -13,6 +13,7 @@ import { Button } from '@lablup/ui-common/Button';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAICheckboxInput,
   BAICheckboxList,
   BAICheckboxListItem,
   BAIFlex,
@@ -34,7 +35,7 @@ export interface DashboardEditSiderProps {
   /** Single-instance catalog entries, checked when on the board. */
   catalogEntries: ReadonlyArray<CatalogEntry>;
   activeKeys: ReadonlySet<string>;
-  onTogglePanel: (key: string, active: boolean) => void;
+  onTogglePanels: (keys: ReadonlyArray<string>, active: boolean) => void;
   panels: ReadonlyArray<PersistedPanel>;
   onRequestAdd: () => void;
   onRequestEdit: (panel: PersistedPanel) => void;
@@ -63,7 +64,7 @@ const GROUP_LABEL_KEYS: Record<PanelGroup, string> = {
 const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
   catalogEntries,
   activeKeys,
-  onTogglePanel,
+  onTogglePanels,
   panels,
   onRequestAdd,
   onRequestEdit,
@@ -107,6 +108,20 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
       : undefined;
   };
 
+  // Select all acts on the cards the search leaves visible.
+  const selectableKeys = matchingEntries
+    .filter((entry) => !entry.locked)
+    .map((entry) => entry.definition.key);
+  const activeCount = selectableKeys.filter((key) =>
+    activeKeys.has(key),
+  ).length;
+  const selectAllValue =
+    activeCount === 0
+      ? false
+      : activeCount === selectableKeys.length
+        ? true
+        : ('indeterminate' as const);
+
   const groups = PANEL_GROUPS.map((group) => ({
     group,
     entries: matchingEntries.filter(
@@ -139,6 +154,21 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
         aria-label={t('dashboard.editSider.SearchCards')}
         data-testid="dashboard-card-search"
       />
+      {selectableKeys.length > 0 ? (
+        <BAICheckboxInput
+          size="sm"
+          value={selectAllValue}
+          onChange={(checked) =>
+            onTogglePanels(
+              selectableKeys.filter((key) => activeKeys.has(key) !== checked),
+              checked,
+            )
+          }
+          data-testid="dashboard-card-select-all"
+        >
+          {t('dashboard.editSider.SelectAll')}
+        </BAICheckboxInput>
+      ) : null}
       {groups.length === 0 ? (
         <BAIText type="secondary">
           {t('dashboard.editSider.NoMatchingCards')}
@@ -161,12 +191,13 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
                 .map((entry) => entry.definition.key)}
               onChange={(values) => {
                 const checked = new Set(values);
-                entries.forEach(({ definition }) => {
-                  const isActive = activeKeys.has(definition.key);
-                  if (checked.has(definition.key) !== isActive) {
-                    onTogglePanel(definition.key, !isActive);
-                  }
-                });
+                const changed = entries
+                  .map(({ definition }) => definition.key)
+                  .filter((key) => checked.has(key) !== activeKeys.has(key));
+                const added = changed.filter((key) => checked.has(key));
+                const removed = changed.filter((key) => !checked.has(key));
+                if (added.length) onTogglePanels(added, true);
+                if (removed.length) onTogglePanels(removed, false);
               }}
             >
               {entries.map((entry) => (

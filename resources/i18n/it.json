@@ -825,6 +825,7 @@
       "ResetLayout": "Reimposta layout",
       "ResetLayoutDescription": "Ripristina la disposizione predefinita dei pannelli. I pannelli personalizzati vengono mantenuti.",
       "SearchCards": "Cerca schede",
+      "SelectAll": "Seleziona tutto",
       "Title": "Pannelli personalizzati"
     },
     "panelModal": {

@@ -99,7 +99,8 @@ export interface UseDashboardBoardResult {
   /** Single-instance entries for the sider checklist. */
   catalogEntries: Array<CatalogEntry>;
   activeKeys: ReadonlySet<string>;
-  setPanelActive: (key: string, active: boolean) => void;
+  /** Adds or removes several catalog cards in one save. */
+  setPanelsActive: (keys: ReadonlyArray<string>, active: boolean) => void;
   customPanels: Array<PersistedPanel>;
   availableResources: ReadonlyArray<ResourceKey>;
   /** `experimental_session_resource_grid`, which gates the grid panel kind. */
@@ -194,10 +195,14 @@ export const useDashboardBoard = ({
     save(updatePanel(board, id, { ...next, ...resized }));
   };
 
-  const setPanelActive = (key: string, active: boolean) => {
-    const definition = definitionByKey.get(key);
-    if (!definition) return;
-    save(active ? addPanel(board, definition) : removePanel(board, key));
+  const setPanelsActive = (keys: ReadonlyArray<string>, active: boolean) => {
+    // Folded into one board: saving per key would keep only the last change.
+    const next = keys.reduce((current, key) => {
+      const definition = definitionByKey.get(key);
+      if (!definition) return current;
+      return active ? addPanel(current, definition) : removePanel(current, key);
+    }, board);
+    if (next !== board) save(next);
   };
 
   const contentOf = (panel: PersistedPanelV2): React.ReactNode => {
@@ -269,7 +274,7 @@ export const useDashboardBoard = ({
     onLayoutChange: (reported) => save(applyLayout(board, reported)),
     catalogEntries: siderEntries(visibleEntries),
     activeKeys: new Set(board.panels.map((panel) => panel.key)),
-    setPanelActive,
+    setPanelsActive,
     customPanels,
     availableResources: availableResourceKeys(role),
     gridEnabled: !!gridEnabled,
