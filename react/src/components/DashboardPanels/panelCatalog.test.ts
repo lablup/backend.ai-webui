@@ -78,7 +78,6 @@ describe('PANEL_CATALOG', () => {
         'myRecentSessions',
         'myResource',
         'totalResourceWithinResourceGroup',
-        'folderStatus',
         'quotaPerStorageVolume',
         'myDeployments',
         'myActivity',
@@ -235,6 +234,5 @@ describe('catalogFor on the real catalog', () => {
     expect(settingsOf('resource.deployment')).toEqual(['resourceGroup']);
     expect(settingsOf('resource.vfolder')).toBeUndefined();
     expect(settingsOf('mySession')).toBeUndefined();
-    expect(settingsOf('folderStatus')).toBeUndefined();
   });
 });
