@@ -486,7 +486,7 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     key: 'fairShare',
     page: ['admin'],
     group: 'resource',
-    titleKey: 'dashboard.card.FairShare',
+    titleKey: 'webui.menu.FairShare',
     requires: SUPERADMIN_ONLY,
     kind: 'custom',
     Component: FairSharePanel,

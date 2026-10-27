@@ -86,7 +86,7 @@ const ResourceGroupFairShares: React.FC<{
         },
         {
           key: 'factor',
-          title: t('dashboard.card.FairShareFactor'),
+          title: t('fairShare.FairShareFactor'),
           align: 'right',
           render: (_value, row) =>
             formatAmount(Number(row.calculationSnapshot.fairShareFactor), 3),
@@ -119,7 +119,7 @@ const FairSharePanel: React.FC<PanelComponentProps> = ({
   'use memo';
   const { t } = useTranslation();
   const heading = {
-    title: t('dashboard.card.FairShare'),
+    title: t('webui.menu.FairShare'),
     tooltip: t('dashboard.card.FairShareTooltip'),
   };
   return (
