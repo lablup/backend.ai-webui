@@ -14,9 +14,9 @@
  (`src/styles/zIndexLadder.ts`): it stacks over the explorer body, not the window.
 */
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
+import BAIFileInput from '../../BAIFileInput';
 import './DragAndDrop.css';
 import type { RcFile } from './hooks';
-import { FileInput } from '@lablup/ui-common/FileInput';
 import { useRef } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -59,7 +59,7 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({
         backdropFilter: 'blur(4px)',
       }}
     >
-      <FileInput
+      <BAIFileInput
         mode="dropzone"
         // `FileInput` spreads unknown props onto its hidden <input>, so a
         // data-testid cannot reach the drop area — `controlClassName` can, and both

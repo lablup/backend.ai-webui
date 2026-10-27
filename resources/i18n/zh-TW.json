@@ -3713,6 +3713,18 @@
     "TypeInAuthKey": "或者，您也可以在下面手动输入验证码。"
   },
   "tourGuide": {
+    "adminViewSwitch": {
+      "AdminLandingMenuText": "開啟右上角的使用者個人資料選單：選擇「切換到使用者主控台」前往使用者頁面，選擇「切換到管理員主控台」回到這裡。",
+      "AdminLandingMenuTitle": "管理員設定已移至個人資料選單",
+      "AdminLandingStartText": "登入後，您現在會直接進入管理員設定，而不是使用者頁面。",
+      "AdminLandingStartTitle": "從管理員設定開始",
+      "AdminLandingText": "以下是變更內容。",
+      "AdminLandingTitle": "超級管理員介面已更新",
+      "BackToAdminSettingsText": "要返回管理員設定，請開啟此選單並選擇「切換到管理員主控台」。",
+      "BackToAdminSettingsTitle": "返回管理員設定",
+      "BackToUserViewText": "您正在管理員設定中。要使用會話、資料等使用者頁面，請開啟此選單並選擇「切換到使用者主控台」。",
+      "BackToUserViewTitle": "切換到使用者主控台"
+    },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "如果存在錯誤欄位，則「建立」或「保存」按鈕將被停用。請更正錯誤並重試。",
       "FixErrorFieldByModifyButton": "對於該錯誤字段，您可以直接進入右上角的編輯按鈕進行編輯。",
@@ -3753,7 +3765,6 @@
     "BootstrapScriptEmpty": "腳本是空的。\n請輸入腳本。",
     "BootstrapScriptUpdated": "引導腳本已更新。",
     "ClearSSHKeypairInput": "書面 SSH 密鑰對將被刪除。你確定你要繼續嗎？",
-    "CommandPalette": "命令選擇區",
     "ConfigFilename": "配置文件名",
     "CurrentSSHPublicKey": "當前公鑰",
     "CustomDashboardPanels": "自訂儀表板面板",
@@ -3995,6 +4006,7 @@
       "ProjectDeployments": "部署",
       "ProjectMembers": "使用者",
       "ProjectSessions": "會話",
+      "ProjectSettings": "專案設定",
       "Projects": "項目",
       "PrometheusPreset": "Prometheus 預設",
       "RBACManagement": "RBAC管理",
@@ -4012,6 +4024,8 @@
       "Start": "開始",
       "Statistics": "統計數據",
       "Summary": "概括",
+      "SwitchToAdminConsole": "切換到管理員主控台",
+      "SwitchToUserConsole": "切換到使用者主控台",
       "Tasks": "任务",
       "TermsOfService": "服務條款",
       "TotalResourcesIn": "總資源中",

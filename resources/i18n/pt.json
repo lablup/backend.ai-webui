@@ -3711,6 +3711,18 @@
     "TypeInAuthKey": "Em alternativa, pode introduzir manualmente o código de autenticação abaixo."
   },
   "tourGuide": {
+    "adminViewSwitch": {
+      "AdminLandingMenuText": "Abra o menu do perfil de usuário no canto superior direito: \"Mudar para o console de usuário\" leva às páginas de usuário e \"Mudar para o console de administrador\" traz você de volta para cá.",
+      "AdminLandingMenuTitle": "Config. Admin foi para o menu do perfil",
+      "AdminLandingStartText": "Após o login, agora você entra diretamente nas configurações de administrador em vez das páginas de usuário.",
+      "AdminLandingStartTitle": "Você começa nas configurações de administrador",
+      "AdminLandingText": "Veja o que mudou.",
+      "AdminLandingTitle": "A visão de superadministrador mudou",
+      "BackToAdminSettingsText": "Para voltar às configurações de administrador, abra este menu e escolha \"Mudar para o console de administrador\".",
+      "BackToAdminSettingsTitle": "Voltar às configurações de administrador",
+      "BackToUserViewText": "Você está nas configurações de administrador. Para usar sessões, dados e as outras páginas de usuário, abra este menu e escolha \"Mudar para o console de usuário\".",
+      "BackToUserViewTitle": "Mudar para o console de usuário"
+    },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "Se houver um campo de erro, o botão Criar ou Salvar estará desabilitado. Corrija o erro e tente novamente.",
       "FixErrorFieldByModifyButton": "Para esse campo de erro, você pode ir diretamente ao botão Editar no canto superior direito para editá-lo.",
@@ -3751,7 +3763,6 @@
     "BootstrapScriptEmpty": "O script está vazio. \nPor favor insira o roteiro.",
     "BootstrapScriptUpdated": "Script de bootstrap atualizado.",
     "ClearSSHKeypairInput": "O par de chaves SSH gravado será removido. Você tem certeza que quer continuar?",
-    "CommandPalette": "Paleta de comandos",
     "ConfigFilename": "Nome do arquivo de configuração",
     "CurrentSSHPublicKey": "Chave pública atual",
     "CustomDashboardPanels": "Painéis personalizados do painel de controlo",
@@ -3993,6 +4004,7 @@
       "ProjectDeployments": "Implantações",
       "ProjectMembers": "Usuários",
       "ProjectSessions": "Sessões",
+      "ProjectSettings": "Configurações do projeto",
       "Projects": "Projetos",
       "PrometheusPreset": "Predefinição Prometheus",
       "RBACManagement": "Gestão RBAC",
@@ -4010,6 +4022,8 @@
       "Start": "Começar",
       "Statistics": "Estatisticas",
       "Summary": "Resumo",
+      "SwitchToAdminConsole": "Mudar para o console de administrador",
+      "SwitchToUserConsole": "Mudar para o console de usuário",
       "Tasks": "Tarefas",
       "TermsOfService": "Termos de serviço",
       "TotalResourcesIn": "Recursos totais em",

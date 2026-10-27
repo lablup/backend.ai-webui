@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'Info banner announcing that one artifact revision is currently being pulled, with a Cancel action in its action slot. It reads `BAIPullingArtifactRevisionAlertFragment` on `ArtifactRevision` (`id`, `status`, `version`) and prints the version in the message. Cancel opens a confirmation modal that warns the pull will restart from the beginning, and on confirm runs the `cancelImportArtifact` mutation with the revision id converted by `toLocalId`; success and failure are reported through the app-shim message API. The component renders one banner per revision and does no filtering of its own — the caller queries the revisions whose status is `PULLING` and maps over them.',
+      'Info banner announcing that one artifact revision is currently being pulled, with a Cancel action in its action slot. It reads `BAIPullingArtifactRevisionAlertFragment` on `ArtifactRevision` (`id`, `fieldId`, `status`, `version`) and prints the version in the message. Cancel opens a confirmation modal that warns the pull will restart from the beginning, and on confirm runs the `cancelImportArtifact` mutation with the revision `fieldId`; success and failure are reported through the app-shim message API. The component renders one banner per revision and does no filtering of its own — the caller queries the revisions whose status is `PULLING` and maps over them.',
     bestPractices: [
       {
         guidance: true,

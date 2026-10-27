@@ -12,12 +12,6 @@ import { Form } from '../form-engine';
 import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
 import { useCurrentDomain } from '../hooks';
 import {
-  AstryxFormCheckbox,
-  AstryxFormSelector,
-  AstryxFormTextArea,
-  AstryxFormTextInput,
-} from './astryxFormControls';
-import {
   BAIAdminContainerRegistrySelect,
   BAIAdminModelServiceSelect,
   BAIScopedProjectSelect,
@@ -32,6 +26,10 @@ import {
   BAIAdminUserV2Select,
   BAIVFolderSelect,
   useBAILogger,
+  BAICheckboxInput,
+  BAISelector,
+  BAITextArea,
+  BAITextInput,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense } from 'react';
@@ -133,8 +131,8 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
     isLabelHidden: true,
   };
   const fallback = (
-    <AstryxFormSelector
-      label={t('rbac.ScopeId')}
+    <BAISelector
+      aria-label={t('rbac.ScopeId')}
       placeholder={selectProps.placeholder}
       isLoading
       disabled
@@ -212,8 +210,8 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   }
   // No scope type picked yet: an inert, empty field.
   return (
-    <AstryxFormSelector
-      label={t('rbac.ScopeId')}
+    <BAISelector
+      aria-label={t('rbac.ScopeId')}
       placeholder={selectProps.placeholder}
       value={selectProps.value}
       disabled
@@ -465,10 +463,10 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
             },
           ]}
         >
-          <AstryxFormTextInput label={t('rbac.RoleName')} hasAutoFocus />
+          <BAITextInput aria-label={t('rbac.RoleName')} hasAutoFocus />
         </Form.Item>
         <Form.Item name="description" label={t('rbac.RoleDescription')}>
-          <AstryxFormTextArea label={t('rbac.RoleDescription')} rows={1} />
+          <BAITextArea aria-label={t('rbac.RoleDescription')} rows={1} />
         </Form.Item>
         <Form.Item
           name="autoAssign"
@@ -476,7 +474,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
           valuePropName="checked"
           tooltip={t('rbac.AutoAssignDescription')}
         >
-          <AstryxFormCheckbox label={t('general.Enable')} />
+          <BAICheckboxInput>{t('general.Enable')}</BAICheckboxInput>
         </Form.Item>
         {!isEditMode && (
           <BAIFlex direction="row" gap="xs" align="start">

@@ -3711,6 +3711,18 @@
     "TypeInAuthKey": "Ngoài ra, bạn có thể nhập mã xác thực bên dưới theo cách thủ công."
   },
   "tourGuide": {
+    "adminViewSwitch": {
+      "AdminLandingMenuText": "Mở menu hồ sơ người dùng ở góc trên bên phải: \"Chuyển sang bảng điều khiển người dùng\" đưa bạn đến các trang người dùng, còn \"Chuyển sang bảng điều khiển quản trị\" đưa bạn quay lại đây.",
+      "AdminLandingMenuTitle": "Cài đặt quản trị đã chuyển vào menu hồ sơ",
+      "AdminLandingStartText": "Sau khi đăng nhập, giờ bạn vào thẳng cài đặt quản trị thay vì các trang người dùng.",
+      "AdminLandingStartTitle": "Bạn bắt đầu từ cài đặt quản trị",
+      "AdminLandingText": "Dưới đây là những thay đổi.",
+      "AdminLandingTitle": "Giao diện siêu quản trị viên đã thay đổi",
+      "BackToAdminSettingsText": "Để quay lại cài đặt quản trị, hãy mở menu này và chọn \"Chuyển sang bảng điều khiển quản trị\".",
+      "BackToAdminSettingsTitle": "Quay lại cài đặt quản trị",
+      "BackToUserViewText": "Bạn đang ở cài đặt quản trị. Để dùng phiên, dữ liệu và các trang người dùng khác, hãy mở menu này và chọn \"Chuyển sang bảng điều khiển người dùng\".",
+      "BackToUserViewTitle": "Chuyển sang bảng điều khiển người dùng"
+    },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "Nếu có trường lỗi, nút Tạo hoặc Lưu sẽ bị tắt. Vui lòng sửa lỗi và thử lại.",
       "FixErrorFieldByModifyButton": "Đối với trường lỗi đó, bạn có thể vào thẳng nút Chỉnh sửa ở góc trên cùng bên phải để chỉnh sửa.",
@@ -3751,7 +3763,6 @@
     "BootstrapScriptEmpty": "Kịch bản trống rỗng. \nVui lòng nhập kịch bản.",
     "BootstrapScriptUpdated": "Đã cập nhật tập lệnh Bootstrap.",
     "ClearSSHKeypairInput": "Cặp khóa SSH đã viết sẽ bị xóa. Bạn có chắc chắn muốn tiếp tục không?",
-    "CommandPalette": "Bảng lệnh",
     "ConfigFilename": "Định cấu hình tên tệp",
     "CurrentSSHPublicKey": "Khóa công khai hiện tại",
     "CustomDashboardPanels": "Bảng điều khiển tùy chỉnh",
@@ -3993,6 +4004,7 @@
       "ProjectDeployments": "Triển khai",
       "ProjectMembers": "Người dùng",
       "ProjectSessions": "Phiên",
+      "ProjectSettings": "Cài đặt dự án",
       "Projects": "Dự án",
       "PrometheusPreset": "Cài đặt sẵn Prometheus",
       "RBACManagement": "Quản lý RBAC",
@@ -4010,6 +4022,8 @@
       "Start": "Bắt đầu",
       "Statistics": "Số liệu thống kê",
       "Summary": "Tóm lược",
+      "SwitchToAdminConsole": "Chuyển sang bảng điều khiển quản trị",
+      "SwitchToUserConsole": "Chuyển sang bảng điều khiển người dùng",
       "Tasks": "Nhiệm vụ",
       "TermsOfService": "Điều khoản dịch vụ",
       "TotalResourcesIn": "Tổng tài nguyên trong",

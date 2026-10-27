@@ -1,6 +1,6 @@
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BAIFlex from './BAIFlex';
-import { Switch } from '@lablup/ui-common/Switch';
+import BAISwitch from './BAISwitch';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
@@ -316,7 +316,7 @@ export const CountdownBorder: Story = {
           {/* Astryx Switch requires a `label`; the adjacent <span> already
               carries the visible description, so the label is kept but
               visually hidden rather than duplicated. */}
-          <Switch
+          <BAISwitch
             aria-label="Show countdown border"
             value={showBorder}
             onChange={setShowBorder}

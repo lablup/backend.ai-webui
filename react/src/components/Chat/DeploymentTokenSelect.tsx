@@ -10,15 +10,15 @@ import { CATALOG_FETCH_LIMIT } from '../../helper/const-vars';
 import WebUILink from '../WebUILink';
 import { Code } from '@lablup/ui-common/Code';
 import type { SelectorOptionData } from '@lablup/ui-common/Selector';
-import { Selector } from '@lablup/ui-common/Selector';
 import { Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIFlex,
   BAIIconWithTooltip,
   filterOutNullAndUndefined,
   toGlobalId,
   useControllableValue,
+  BAISelector,
+  BAITextInput,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { maxBy } from 'lodash-es';
@@ -167,7 +167,7 @@ const DeploymentTokenSelectWithQuery: React.FC<
   // Tokens — a convenient shortcut shown regardless of whether tokens exist.
   return (
     <BAIFlex gap="xs" align="center">
-      <Selector
+      <BAISelector
         aria-label={t('chatui.SelectToken')}
         placeholder={t('chatui.SelectToken')}
         // Fixed width so the token field looks the same across panel sizes
@@ -213,7 +213,7 @@ const DeploymentTokenSelect: React.FC<DeploymentTokenSelectProps> = ({
 
   if (!deploymentId) {
     return (
-      <TextInput
+      <BAITextInput
         aria-label={t('chatui.SelectToken')}
         value={controllableValue ?? ''}
         onChange={(v) => setControllableValue(v)}

@@ -3695,6 +3695,18 @@
     "TypeInAuthKey": "หรือคุณสามารถพิมพ์รหัสยืนยันตัวตนด้านล่างด้วยตนเอง"
   },
   "tourGuide": {
+    "adminViewSwitch": {
+      "AdminLandingMenuText": "เปิดเมนูโปรไฟล์ผู้ใช้ที่มุมขวาบน: \"สลับไปยังคอนโซลผู้ใช้\" จะพาคุณไปยังหน้าผู้ใช้ และ \"สลับไปยังคอนโซลผู้ดูแลระบบ\" จะพาคุณกลับมาที่นี่",
+      "AdminLandingMenuTitle": "การตั้งค่าผู้ดูแลระบบย้ายไปอยู่ในเมนูโปรไฟล์",
+      "AdminLandingStartText": "หลังเข้าสู่ระบบ ตอนนี้คุณจะเข้าสู่การตั้งค่าผู้ดูแลระบบทันทีแทนหน้าผู้ใช้",
+      "AdminLandingStartTitle": "คุณจะเริ่มต้นที่การตั้งค่าผู้ดูแลระบบ",
+      "AdminLandingText": "นี่คือสิ่งที่เปลี่ยนไป",
+      "AdminLandingTitle": "มุมมองของซูเปอร์แอดมินเปลี่ยนไปแล้ว",
+      "BackToAdminSettingsText": "หากต้องการกลับไปยังการตั้งค่าผู้ดูแลระบบ ให้เปิดเมนูนี้แล้วเลือก \"สลับไปยังคอนโซลผู้ดูแลระบบ\"",
+      "BackToAdminSettingsTitle": "กลับไปยังการตั้งค่าผู้ดูแลระบบ",
+      "BackToUserViewText": "คุณอยู่ในการตั้งค่าผู้ดูแลระบบ หากต้องการใช้เซสชัน ข้อมูล และหน้าผู้ใช้อื่นๆ ให้เปิดเมนูนี้แล้วเลือก \"สลับไปยังคอนโซลผู้ใช้\"",
+      "BackToUserViewTitle": "สลับไปยังคอนโซลผู้ใช้"
+    },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "หากมีช่องที่ผิดพลาด ปุ่มสร้างหรือบันทึกจะถูกปิดใช้งาน กรุณาแก้ไขข้อผิดพลาดและลองอีกครั้ง",
       "FixErrorFieldByModifyButton": "สำหรับช่องที่มีข้อผิดพลาดนั้น คุณสามารถไปที่ปุ่มแก้ไขที่มุมขวาบนโดยตรงเพื่อแก้ไขได้",
@@ -3735,7 +3747,6 @@
     "BootstrapScriptEmpty": "สคริปต์ว่างเปล่า \nกรุณาป้อนสคริปต์",
     "BootstrapScriptUpdated": "อัปเดตสคริปต์บูตสแตรปแล้ว",
     "ClearSSHKeypairInput": "คู่คีย์ SSH ที่เขียนไว้จะถูกลบ คุณแน่ใจหรือไม่ที่จะดำเนินการต่อ?",
-    "CommandPalette": "แผงคำสั่ง",
     "ConfigFilename": "ชื่อไฟล์การกำหนดค่า",
     "CurrentSSHPublicKey": "คีย์สาธารณะปัจจุบัน",
     "CustomDashboardPanels": "แผงแดชบอร์ดที่กำหนดเอง",
@@ -3977,6 +3988,7 @@
       "ProjectDeployments": "การปรับใช้",
       "ProjectMembers": "ผู้ใช้",
       "ProjectSessions": "เซสชัน",
+      "ProjectSettings": "การตั้งค่าโปรเจกต์",
       "Projects": "โครงการ",
       "PrometheusPreset": "พรีเซต Prometheus",
       "RBACManagement": "การจัดการ RBAC",
@@ -3994,6 +4006,8 @@
       "Start": "เริ่ม",
       "Statistics": "สถิติ",
       "Summary": "สรุป",
+      "SwitchToAdminConsole": "สลับไปยังคอนโซลผู้ดูแลระบบ",
+      "SwitchToUserConsole": "สลับไปยังคอนโซลผู้ใช้",
       "Tasks": "งาน",
       "TermsOfService": "ข้อตกลงการใช้บริการ",
       "TotalResourcesIn": "ทรัพยากรทั้งหมดใน",

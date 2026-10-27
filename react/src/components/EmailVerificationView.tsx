@@ -7,9 +7,8 @@ import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import { useAnonymousBackendaiClient } from '../hooks';
 import BAIFormItem from './BAIFormItem';
-import { AstryxFormTextInput } from './astryxFormControls';
 import { Button } from '@lablup/ui-common/Button';
-import { BAIFlex, BAIModal } from 'backend.ai-ui';
+import { BAIFlex, BAIModal, BAITextInput } from 'backend.ai-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -149,8 +148,8 @@ const EmailVerificationView: React.FC<EmailVerificationViewProps> = ({
                 },
               ]}
             >
-              <AstryxFormTextInput
-                label={t('data.explorer.EnterEmailAddress')}
+              <BAITextInput
+                aria-label={t('data.explorer.EnterEmailAddress')}
                 placeholder={t('data.explorer.EnterEmailAddress')}
                 hasAutoFocus
               />

@@ -18,21 +18,19 @@ import {
 import { useCurrentUserRole } from '../hooks/backendai';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import PrometheusQueryTemplatePreview from './PrometheusQueryTemplatePreview';
-import {
-  AstryxFormNumberInput,
-  AstryxFormSegmented,
-  AstryxFormSelector,
-  AstryxFormTextInput,
-  type AstryxFormSelectorOptions,
-} from './astryxFormControls';
+import type { SelectorOptionType } from '@lablup/ui-common/Selector';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAINumberInput,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
+  BAISelector,
+  BAITextInput,
   BAIFlex,
   BAIModal,
   BAIModalProps,
   BAISkeleton,
-  toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -122,6 +120,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
             edges {
               node {
                 id
+                entityId
                 name
                 description
                 rank
@@ -155,8 +154,8 @@ const AutoScalingRuleEditorModalContent: React.FC<{
   const [selectedPresetId, setSelectedPresetId] = useState<string | undefined>(
     autoScalingRule?.prometheusQueryPresetId
       ? presetNodes.find(
-          (p) => toLocalId(p.id) === autoScalingRule.prometheusQueryPresetId,
-        )?.id
+          (p) => p.entityId === autoScalingRule.prometheusQueryPresetId,
+        )?.entityId
       : undefined,
   );
   const [nameOptions, setNameOptions] = useState<Array<string>>(
@@ -167,7 +166,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
   );
 
   const selectedPreset = React.useMemo(
-    () => presetNodes.find((p) => p.id === selectedPresetId),
+    () => presetNodes.find((p) => p.entityId === selectedPresetId),
     [presetNodes, selectedPresetId],
   );
 
@@ -178,18 +177,14 @@ const AutoScalingRuleEditorModalContent: React.FC<{
 
   // Group presets by category name for optgroup display.
   // Presets without a category are shown in a flat list at the end.
-  // antd `DefaultOptionType` (a type-only antd import, §6) -> Astryx's own
-  // `SelectorOptionType` union, reached through the adapter's
-  // `AstryxFormSelectorOptions`. antd's `<OptGroup>`-shaped `{label, options}`
-  // becomes Astryx's `{type: 'section', title, options}`.
-  const presetOptions: AstryxFormSelectorOptions = React.useMemo(() => {
+  const presetOptions: SelectorOptionType[] = React.useMemo(() => {
     const sorted = _.orderBy(presetNodes, ['rank'], ['asc']);
     const withCategory = sorted.filter((p) => p.category?.name);
     const withoutCategory = sorted.filter((p) => !p.category?.name);
 
     const toOption = (preset: (typeof sorted)[number]): PresetOption => ({
       label: preset.name,
-      value: preset.id,
+      value: preset.entityId,
     });
 
     const grouped = _.groupBy(withCategory, (p) => p.category!.name);
@@ -258,8 +253,8 @@ const AutoScalingRuleEditorModalContent: React.FC<{
         tooltip={t('autoScalingRule.MetricSourceTooltip')}
         rules={[{ required: true }]}
       >
-        <AstryxFormSelector
-          label={t('autoScalingRule.MetricSource')}
+        <BAISelector
+          aria-label={t('autoScalingRule.MetricSource')}
           onChange={(value) => {
             if (!value) return;
             setSelectedMetricSource(value);
@@ -295,7 +290,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
       </Form.Item>
 
       {/* Metric Name (KERNEL / INFERENCE_FRAMEWORK) — always mounted so validateFields includes it.
-          PILOT-DECISION: antd `AutoComplete` -> `AstryxFormTextInput`.
+          PILOT-DECISION: antd `AutoComplete` -> `TextInput`.
           MAPPING §3.15 is explicit that free-text AutoComplete does NOT map to
           `Typeahead` (which commits `T | null` and cannot keep a typed
           string), and free text is REQUIRED here: `METRIC_NAMES_MAP` has an
@@ -312,14 +307,14 @@ const AutoScalingRuleEditorModalContent: React.FC<{
         tooltip={t('autoScalingRule.MetricNameTooltip')}
         rules={[{ required: !isPrometheus }]}
       >
-        <AstryxFormTextInput
-          label={t('autoScalingRule.MetricName')}
+        <BAITextInput
+          aria-label={t('autoScalingRule.MetricName')}
           placeholder={
             nameOptions.length > 0
               ? nameOptions.join(', ')
               : t('autoScalingRule.MetricName')
           }
-          allowClear
+          hasClear
         />
       </Form.Item>
 
@@ -353,11 +348,11 @@ const AutoScalingRuleEditorModalContent: React.FC<{
               ) : undefined
             }
           >
-            <AstryxFormSelector
-              label={t('autoScalingRule.PrometheusPreset')}
+            <BAISelector
+              aria-label={t('autoScalingRule.PrometheusPreset')}
               onChange={(value) => {
                 setSelectedPresetId(value ?? undefined);
-                const preset = presetNodes.find((p) => p.id === value);
+                const preset = presetNodes.find((p) => p.entityId === value);
                 if (preset) {
                   // Auto-fill metricName
                   formRef.current?.setFieldsValue({
@@ -390,32 +385,29 @@ const AutoScalingRuleEditorModalContent: React.FC<{
         required
         tooltip={t('autoScalingRule.ConditionTooltip')}
       >
-        {/* antd `Radio.Group optionType="button"` -> `SegmentedControl` via
-            the form adapter (MAPPING §3.10). `onChange` takes the VALUE, not
-            the event (P3), and the `marginBottom` moves to a wrapper because
-            Astryx controls take no `style` escape hatch for layout. */}
+        {/* The `marginBottom` is on a wrapper because Astryx controls take no
+            `style` escape hatch for layout. */}
         <div style={{ marginBottom: token('--spacing-3') }}>
           <Form.Item name={'conditionMode'} noStyle>
-            <AstryxFormSegmented
-              label={t('autoScalingRule.Condition')}
+            <BAISegmentedControl
+              aria-label={t('autoScalingRule.Condition')}
               onChange={(value) => {
                 setConditionMode(value as ConditionMode);
               }}
-              options={[
-                {
-                  label: t('autoScalingRule.ScaleIn'),
-                  value: 'scale_in',
-                },
-                {
-                  label: t('autoScalingRule.ScaleOut'),
-                  value: 'scale_out',
-                },
-                {
-                  label: t('autoScalingRule.ScaleInAndOut'),
-                  value: 'scale_in_out',
-                },
-              ]}
-            />
+            >
+              <BAISegmentedControlItem
+                value="scale_in"
+                label={t('autoScalingRule.ScaleIn')}
+              />
+              <BAISegmentedControlItem
+                value="scale_out"
+                label={t('autoScalingRule.ScaleOut')}
+              />
+              <BAISegmentedControlItem
+                value="scale_in_out"
+                label={t('autoScalingRule.ScaleInAndOut')}
+              />
+            </BAISegmentedControl>
           </Form.Item>
         </div>
 
@@ -439,8 +431,9 @@ const AutoScalingRuleEditorModalContent: React.FC<{
                 },
               ]}
             >
-              <AstryxFormNumberInput
-                label={t('autoScalingRule.MinThreshold')}
+              <BAINumberInput
+                width="100%"
+                aria-label={t('autoScalingRule.MinThreshold')}
                 placeholder={t('autoScalingRule.MinThreshold')}
                 min={0}
               />
@@ -465,8 +458,9 @@ const AutoScalingRuleEditorModalContent: React.FC<{
                 },
               ]}
             >
-              <AstryxFormNumberInput
-                label={t('autoScalingRule.MaxThreshold')}
+              <BAINumberInput
+                width="100%"
+                aria-label={t('autoScalingRule.MaxThreshold')}
                 placeholder={t('autoScalingRule.MaxThreshold')}
                 min={0}
               />
@@ -498,8 +492,9 @@ const AutoScalingRuleEditorModalContent: React.FC<{
                   },
                 ]}
               >
-                <AstryxFormNumberInput
-                  label={t('autoScalingRule.MinThreshold')}
+                <BAINumberInput
+                  width="100%"
+                  aria-label={t('autoScalingRule.MinThreshold')}
                   placeholder={t('autoScalingRule.MinThreshold')}
                   min={0}
                 />
@@ -533,8 +528,9 @@ const AutoScalingRuleEditorModalContent: React.FC<{
                   }),
                 ]}
               >
-                <AstryxFormNumberInput
-                  label={t('autoScalingRule.MaxThreshold')}
+                <BAINumberInput
+                  width="100%"
+                  aria-label={t('autoScalingRule.MaxThreshold')}
                   placeholder={t('autoScalingRule.MaxThreshold')}
                   min={0}
                 />
@@ -591,8 +587,9 @@ const AutoScalingRuleEditorModalContent: React.FC<{
               },
             ]}
           >
-            <AstryxFormNumberInput
-              label={t('autoScalingRule.StepSize')}
+            <BAINumberInput
+              width="100%"
+              aria-label={t('autoScalingRule.StepSize')}
               min={1}
               step={1}
             />
@@ -625,8 +622,9 @@ const AutoScalingRuleEditorModalContent: React.FC<{
       >
         {/* antd `InputNumber suffix` (a unit string) -> `NumberInput units`
             (MAPPING §3.17 — the one place Astryx is better than antd here). */}
-        <AstryxFormNumberInput
-          label={t('autoScalingRule.CoolDownSeconds')}
+        <BAINumberInput
+          width="100%"
+          aria-label={t('autoScalingRule.CoolDownSeconds')}
           min={1}
           step={1}
           units={t('autoScalingRule.Seconds')}
@@ -656,8 +654,9 @@ const AutoScalingRuleEditorModalContent: React.FC<{
           },
         ]}
       >
-        <AstryxFormNumberInput
-          label={t('autoScalingRule.MinReplicas')}
+        <BAINumberInput
+          width="100%"
+          aria-label={t('autoScalingRule.MinReplicas')}
           min={0}
           max={SIGNED_32BIT_MAX_INT}
         />
@@ -686,8 +685,9 @@ const AutoScalingRuleEditorModalContent: React.FC<{
           },
         ]}
       >
-        <AstryxFormNumberInput
-          label={t('autoScalingRule.MaxReplicas')}
+        <BAINumberInput
+          width="100%"
+          aria-label={t('autoScalingRule.MaxReplicas')}
           min={0}
           max={SIGNED_32BIT_MAX_INT}
         />
@@ -712,6 +712,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
     graphql`
       fragment AutoScalingRuleEditorModalFragment on AutoScalingRule {
         id
+        fieldId
         metricSource
         metricName
         minThreshold
@@ -797,7 +798,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
         // Determine prometheusQueryPresetId
         const prometheusQueryPresetId =
           values.metricSource === 'PROMETHEUS' && values.prometheusQueryPresetId
-            ? toLocalId(values.prometheusQueryPresetId)
+            ? values.prometheusQueryPresetId
             : null;
 
         if (autoScalingRule) {
@@ -805,7 +806,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
           commitUpdateMutation({
             variables: {
               input: {
-                id: toLocalId(autoScalingRule.id),
+                id: autoScalingRule.fieldId,
                 metricSource: values.metricSource,
                 metricName,
                 minThreshold:

@@ -13,16 +13,14 @@ import { useCurrentDomain } from '../hooks';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import BAIFormItem from './BAIFormItem';
 import {
-  AstryxFormNumberInput,
-  AstryxFormTextInput,
-} from './astryxFormControls';
-import {
   BAIDynamicUnitInputNumber,
   BAIModal,
   BAIModalProps,
   BAIScopedResourceGroupSelect,
   BAIScopedResourceGroupSelectProps,
   BAISelect,
+  BAINumberInput,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Fragment, Suspense, useRef } from 'react';
@@ -226,8 +224,8 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
             },
           ]}
         >
-          <AstryxFormTextInput
-            label={t('resourcePreset.PresetName')}
+          <BAITextInput
+            aria-label={t('resourcePreset.PresetName')}
             disabled={!!resourcePreset}
           />
         </BAIFormItem>
@@ -308,8 +306,9 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                       // (big-number safety) has no NumberInput equivalent
                       // (MAPPING.md §3.17) and is dropped — slot counts stay
                       // well inside float precision. `suffix` -> `units`.
-                      <AstryxFormNumberInput
-                        label={
+                      <BAINumberInput
+                        width="100%"
+                        aria-label={
                           _.get(mergedResourceSlots, resourceSlotKey)
                             ?.description || resourceSlotKey
                         }

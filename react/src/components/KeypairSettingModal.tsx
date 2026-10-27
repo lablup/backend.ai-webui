@@ -9,7 +9,6 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { useCurrentDomain } from '../hooks';
 import BAIFormItem from './BAIFormItem';
-import { AstryxFormNumberInput } from './astryxFormControls';
 import { Grid, GridSpan } from '@lablup/ui-common/Grid';
 import {
   BAIAdminKeypairResourcePolicySelect,
@@ -17,6 +16,7 @@ import {
   type BAIModalProps,
   BAISelect,
   BAIScopedUserSelect,
+  BAINumberInput,
 } from 'backend.ai-ui';
 import { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -259,8 +259,9 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
                 },
               ]}
             >
-              <AstryxFormNumberInput
-                label={t('credential.RateLimitFor15min')}
+              <BAINumberInput
+                width="100%"
+                aria-label={t('credential.RateLimitFor15min')}
               />
             </BAIFormItem>
           </GridSpan>

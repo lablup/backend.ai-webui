@@ -46,11 +46,6 @@ import './SessionResourceGrid.css';
 import { Badge } from '@lablup/ui-common/Badge';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Divider } from '@lablup/ui-common/Divider';
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@lablup/ui-common/SegmentedControl';
-import { Selector } from '@lablup/ui-common/Selector';
 import { Text } from '@lablup/ui-common/Text';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
@@ -59,6 +54,9 @@ import {
   BAIUnitGridGroup,
   badgeVariantForStatus,
   filterOutNullAndUndefined,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
+  BAISelector,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { Duration } from 'dayjs/plugin/duration';
@@ -515,7 +513,7 @@ const SessionResourceGrid = ({
     <BAIFlex direction="column" align="stretch" gap="sm">
       {showControls && (
         <BAIFlex gap="sm" wrap="wrap" align="center">
-          <SegmentedControl
+          <BAISegmentedControl
             size="sm"
             aria-label={t('session.resourceGrid.GridMode')}
             value={gridParams.gridMode}
@@ -525,18 +523,18 @@ const SessionResourceGrid = ({
               })
             }
           >
-            <SegmentedControlItem
+            <BAISegmentedControlItem
               value="resource"
               label={t('session.resourceGrid.Resource')}
             />
-            <SegmentedControlItem
+            <BAISegmentedControlItem
               value="kernel"
               label={t('session.resourceGrid.Kernel')}
             />
-          </SegmentedControl>
+          </BAISegmentedControl>
           {gridParams.gridMode === 'resource' ? (
             <>
-              <SegmentedControl
+              <BAISegmentedControl
                 size="sm"
                 aria-label={t('session.resourceGrid.Resource')}
                 value={resource}
@@ -558,7 +556,7 @@ const SessionResourceGrid = ({
                         : slotLabel(slot);
                   if (slot === 'cpu' || slot === 'mem') {
                     return (
-                      <SegmentedControlItem
+                      <BAISegmentedControlItem
                         key={value}
                         value={value}
                         label={label}
@@ -567,14 +565,14 @@ const SessionResourceGrid = ({
                   }
                   return (
                     <Tooltip key={value} content={slotFullName(slot)}>
-                      <SegmentedControlItem value={value} label={label} />
+                      <BAISegmentedControlItem value={value} label={label} />
                     </Tooltip>
                   );
                 })}
-              </SegmentedControl>
+              </BAISegmentedControl>
               {(resource === 'mem' ||
                 parseResourceValue(resource).dimension === 'mem') && (
-                <SegmentedControl
+                <BAISegmentedControl
                   size="sm"
                   aria-label={t('session.resourceGrid.MemoryUnit')}
                   value={gridParams.gridMemUnit}
@@ -586,17 +584,17 @@ const SessionResourceGrid = ({
                   }
                 >
                   {sessionGridMemUnitValues.map((u) => (
-                    <SegmentedControlItem
+                    <BAISegmentedControlItem
                       key={u}
                       value={u}
                       label={t('session.resourceGrid.NGiB', { value: u })}
                     />
                   ))}
-                </SegmentedControl>
+                </BAISegmentedControl>
               )}
             </>
           ) : (
-            <Selector
+            <BAISelector
               aria-label={t('session.resourceGrid.Metric')}
               size="sm"
               width={180}
@@ -610,7 +608,7 @@ const SessionResourceGrid = ({
               onChange={(value) => setGridParams({ gridMetric: value ?? '' })}
             />
           )}
-          <SegmentedControl
+          <BAISegmentedControl
             size="sm"
             aria-label={t('session.resourceGrid.Layout')}
             value={gridParams.gridLayout}
@@ -620,15 +618,15 @@ const SessionResourceGrid = ({
               })
             }
           >
-            <SegmentedControlItem
+            <BAISegmentedControlItem
               value="serpentine"
               label={t('session.resourceGrid.Serpentine')}
             />
-            <SegmentedControlItem
+            <BAISegmentedControlItem
               value="wordwrap"
               label={t('session.resourceGrid.WordWrap')}
             />
-          </SegmentedControl>
+          </BAISegmentedControl>
         </BAIFlex>
       )}
       {totalCount > SESSION_CAP && (
