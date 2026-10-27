@@ -40,17 +40,20 @@ interface LegendRow extends Record<string, unknown> {
 type LegendDensity = {
   rowHeight: number;
   hasHeader: boolean;
+  columns: 1 | 2;
 };
 
 // Tried in order; the first that fits the height wins.
 const LEGEND_DENSITIES: ReadonlyArray<LegendDensity> = [
-  { rowHeight: ROW_HEIGHT, hasHeader: true },
-  { rowHeight: COMPACT_ROW_HEIGHT, hasHeader: true },
-  { rowHeight: COMPACT_ROW_HEIGHT, hasHeader: false },
+  { rowHeight: ROW_HEIGHT, hasHeader: true, columns: 1 },
+  { rowHeight: COMPACT_ROW_HEIGHT, hasHeader: true, columns: 1 },
+  { rowHeight: COMPACT_ROW_HEIGHT, hasHeader: false, columns: 1 },
+  { rowHeight: COMPACT_ROW_HEIGHT, hasHeader: false, columns: 2 },
 ];
 
 const legendHeight = (density: LegendDensity, rowCount: number) =>
-  (rowCount + (density.hasHeader ? 1 : 0)) * density.rowHeight;
+  (Math.ceil(rowCount / density.columns) + (density.hasHeader ? 1 : 0)) *
+  density.rowHeight;
 
 export interface DonutChartProps {
   rows: ReadonlyArray<DonutRow>;
@@ -67,8 +70,8 @@ export interface DonutChartProps {
 /**
  * A donut of manager-counted values with a compact name / value / share
  * legend. It never outgrows its box: the legend fits first (tighter rows,
- * then no header row), the ring takes the room left and is dropped when that
- * is under `RING_MIN`. The legend moves under the ring when the box is narrow.
+ * then no header row, then two columns), the ring takes the room left and is
+ * dropped when that is under `RING_MIN`. The legend moves under the ring when the box is narrow.
  */
 const DonutChart: React.FC<DonutChartProps> = ({
   rows,
@@ -214,7 +217,11 @@ const DonutChart: React.FC<DonutChartProps> = ({
         ref={legendRef}
         role="table"
         aria-label={label}
-        className="bai-donut-legend"
+        className={
+          density.columns === 2
+            ? 'bai-donut-legend bai-donut-legend--two-columns'
+            : 'bai-donut-legend'
+        }
       >
         {density.hasHeader && (
           <div
