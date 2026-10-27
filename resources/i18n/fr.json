@@ -834,7 +834,7 @@
       "NoResourceGroup": "Aucun groupe de ressources sélectionné.",
       "NotTriedYet": "Pas encore tenté",
       "PendingCount": "{{count}} en attente",
-      "PendingSessions": "Sessions en attente",
+      "PendingSessions": "Sessions en attente et raisons",
       "PendingSessionsTooltip": "Sessions du projet en attente de planification, les plus longues attentes d'abord. La raison est le dernier message du planificateur ; dépliez une ligne pour voir ses tentatives de planification.",
       "ProjectAuditLogTooltip": "Journal d'audit du projet et des sessions, dossiers et déploiements qu'il contient, sur la période de la carte.",
       "ProjectFoldersTooltip": "Les dossiers du projet, hors corbeille, par rapport à la limite de dossiers du projet.",

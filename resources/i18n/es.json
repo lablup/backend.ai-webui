@@ -834,7 +834,7 @@
       "NoResourceGroup": "No hay ningún grupo de recursos seleccionado.",
       "NotTriedYet": "Aún no intentado",
       "PendingCount": "{{count}} pendientes",
-      "PendingSessions": "Sesiones pendientes",
+      "PendingSessions": "Sesiones pendientes y motivos",
       "PendingSessionsTooltip": "Sesiones del proyecto que esperan ser programadas, las que más esperan primero. El motivo es el último mensaje del planificador; expanda una fila para ver sus intentos de programación.",
       "ProjectAuditLogTooltip": "Registro de auditoría del proyecto y de las sesiones, carpetas e implementaciones que contiene, en el rango de la tarjeta.",
       "ProjectFoldersTooltip": "Las carpetas del proyecto, sin la papelera, frente al límite de carpetas del proyecto.",

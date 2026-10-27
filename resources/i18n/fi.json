@@ -834,7 +834,7 @@
       "NoResourceGroup": "Resurssiryhmää ei ole valittu.",
       "NotTriedYet": "Ei vielä yritetty",
       "PendingCount": "{{count}} odottaa",
-      "PendingSessions": "Odottavat istunnot",
+      "PendingSessions": "Odotuksessa olevat istunnot ja syyt",
       "PendingSessionsTooltip": "Projektin istunnot, jotka odottavat ajoitusta, pisimpään odottaneet ensin. Syy on ajoittajan viimeisin viesti; laajenna rivi nähdäksesi ajoitusyritykset.",
       "ProjectAuditLogTooltip": "Projektin ja sen istuntojen, kansioiden ja käyttöönottojen tarkastusloki kortin aikavälillä.",
       "ProjectFoldersTooltip": "Projektin kansiot ilman roskakoria suhteessa projektin kansiorajaan.",

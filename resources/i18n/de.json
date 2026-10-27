@@ -834,7 +834,7 @@
       "NoResourceGroup": "Keine Ressourcengruppe ausgewählt.",
       "NotTriedYet": "Noch nicht versucht",
       "PendingCount": "{{count}} ausstehend",
-      "PendingSessions": "Wartende Sitzungen",
+      "PendingSessions": "Ausstehende Sitzungen und Gründe",
       "PendingSessionsTooltip": "Sitzungen des Projekts, die auf die Planung warten, am längsten wartende zuerst. Der Grund ist die letzte Meldung des Schedulers; klappen Sie eine Zeile auf, um die Planungsversuche zu sehen.",
       "ProjectAuditLogTooltip": "Audit-Log des Projekts und der Sitzungen, Ordner und Bereitstellungen darin im Zeitraum der Karte.",
       "ProjectFoldersTooltip": "Die Ordner des Projekts ohne Papierkorb, verglichen mit dem Ordnerlimit des Projekts.",

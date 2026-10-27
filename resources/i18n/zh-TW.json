@@ -834,7 +834,7 @@
       "NoResourceGroup": "未選擇資源群組。",
       "NotTriedYet": "尚未嘗試",
       "PendingCount": "{{count}} 個待處理",
-      "PendingSessions": "等待中的工作階段",
+      "PendingSessions": "待處理工作階段及原因",
       "PendingSessionsTooltip": "專案中等待排程的工作階段，等待最久的排在前面。原因是排程器的最後一則訊息；展開列可查看排程嘗試紀錄。",
       "ProjectAuditLogTooltip": "卡片時間範圍內專案及其中工作階段、資料夾與部署的稽核日誌。",
       "ProjectFoldersTooltip": "專案的資料夾（不含資源回收筒），對照專案的資料夾上限。",

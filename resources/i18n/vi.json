@@ -834,7 +834,7 @@
       "NoResourceGroup": "Chưa chọn nhóm tài nguyên.",
       "NotTriedYet": "Chưa thử",
       "PendingCount": "{{count}} đang chờ",
-      "PendingSessions": "Phiên đang chờ",
+      "PendingSessions": "Phiên đang chờ và lý do",
       "PendingSessionsTooltip": "Các phiên của dự án đang chờ được lập lịch, chờ lâu nhất trước. Lý do là thông báo cuối cùng của bộ lập lịch; mở rộng một hàng để xem các lần thử lập lịch.",
       "ProjectAuditLogTooltip": "Nhật ký kiểm tra của dự án và các phiên, thư mục, triển khai trong đó, trong khoảng thời gian của thẻ.",
       "ProjectFoldersTooltip": "Thư mục của dự án, không tính thùng rác, so với giới hạn thư mục của dự án.",

@@ -834,7 +834,7 @@
       "NoResourceGroup": "Tidak ada grup sumber daya yang dipilih.",
       "NotTriedYet": "Belum dicoba",
       "PendingCount": "{{count}} tertunda",
-      "PendingSessions": "Sesi Tertunda",
+      "PendingSessions": "Sesi Tertunda dan Alasannya",
       "PendingSessionsTooltip": "Sesi proyek yang menunggu dijadwalkan, yang menunggu paling lama lebih dulu. Alasannya adalah pesan terakhir penjadwal; buka baris untuk melihat percobaan penjadwalannya.",
       "ProjectAuditLogTooltip": "Log audit proyek serta sesi, folder, dan deployment di dalamnya, dalam rentang kartu.",
       "ProjectFoldersTooltip": "Folder proyek, di luar tempat sampah, dibandingkan dengan batas folder proyek.",

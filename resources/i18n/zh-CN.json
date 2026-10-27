@@ -834,7 +834,7 @@
       "NoResourceGroup": "未选择资源组。",
       "NotTriedYet": "尚未尝试",
       "PendingCount": "{{count}} 个待处理",
-      "PendingSessions": "等待中的会话",
+      "PendingSessions": "待处理会话及原因",
       "PendingSessionsTooltip": "项目中等待调度的会话，等待最久的排在前面。原因是调度器的最后一条消息；展开行可查看调度尝试记录。",
       "ProjectAuditLogTooltip": "卡片时间范围内项目及其中会话、文件夹和部署的审计日志。",
       "ProjectFoldersTooltip": "项目的文件夹（不含回收站），对照项目的文件夹上限。",

@@ -834,7 +834,7 @@
       "NoResourceGroup": "Kaynak grubu seçilmedi.",
       "NotTriedYet": "Henüz denenmedi",
       "PendingCount": "{{count}} bekliyor",
-      "PendingSessions": "Bekleyen Oturumlar",
+      "PendingSessions": "Bekleyen Oturumlar ve Nedenleri",
       "PendingSessionsTooltip": "Projenin zamanlanmayı bekleyen oturumları, en uzun bekleyen önce. Neden, zamanlayıcının son mesajıdır; zamanlama denemelerini görmek için bir satırı genişletin.",
       "ProjectAuditLogTooltip": "Kartın zaman aralığında projenin ve içindeki oturum, klasör ve dağıtımların denetim günlüğü.",
       "ProjectFoldersTooltip": "Çöp kutusu hariç projenin klasörleri, projenin klasör sınırına göre.",

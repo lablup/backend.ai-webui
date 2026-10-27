@@ -834,7 +834,7 @@
       "NoResourceGroup": "リソースグループが選択されていません。",
       "NotTriedYet": "未試行",
       "PendingCount": "{{count}}件保留中",
-      "PendingSessions": "待機中のセッション",
+      "PendingSessions": "保留中のセッションと理由",
       "PendingSessionsTooltip": "スケジューリングを待っているプロジェクトのセッションを待ち時間の長い順に表示します。理由はスケジューラーの最後のメッセージです。行を展開するとスケジューリングの試行履歴を確認できます。",
       "ProjectAuditLogTooltip": "カードの期間内の、プロジェクトとその中のセッション、フォルダ、デプロイメントの監査ログです。",
       "ProjectFoldersTooltip": "ゴミ箱を除いたプロジェクトのフォルダ数を、プロジェクトのフォルダ上限とともに表示します。",

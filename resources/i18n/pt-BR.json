@@ -834,7 +834,7 @@
       "NoResourceGroup": "Nenhum grupo de recursos selecionado.",
       "NotTriedYet": "Ainda não tentado",
       "PendingCount": "{{count}} pendentes",
-      "PendingSessions": "Sessões pendentes",
+      "PendingSessions": "Sessões pendentes e motivos",
       "PendingSessionsTooltip": "Sessões do projeto aguardando agendamento, as que esperam há mais tempo primeiro. O motivo é a última mensagem do agendador; expanda uma linha para ver as tentativas de agendamento.",
       "ProjectAuditLogTooltip": "Log de auditoria do projeto e das sessões, pastas e implantações nele, no intervalo do cartão.",
       "ProjectFoldersTooltip": "As pastas do projeto, sem a lixeira, em relação ao limite de pastas do projeto.",

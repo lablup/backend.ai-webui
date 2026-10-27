@@ -834,7 +834,7 @@
       "NoResourceGroup": "Nie wybrano grupy zasobów.",
       "NotTriedYet": "Jeszcze nie próbowano",
       "PendingCount": "Oczekujące: {{count}}",
-      "PendingSessions": "Oczekujące sesje",
+      "PendingSessions": "Oczekujące sesje i powody",
       "PendingSessionsTooltip": "Sesje projektu czekające na zaplanowanie, najdłużej czekające najpierw. Powodem jest ostatni komunikat harmonogramu; rozwiń wiersz, aby zobaczyć próby planowania.",
       "ProjectAuditLogTooltip": "Dziennik audytu projektu oraz sesji, folderów i wdrożeń w nim, w zakresie karty.",
       "ProjectFoldersTooltip": "Foldery projektu bez kosza w odniesieniu do limitu folderów projektu.",
