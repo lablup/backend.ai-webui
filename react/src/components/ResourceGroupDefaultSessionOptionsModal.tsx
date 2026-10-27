@@ -26,13 +26,16 @@ import {
   toKernelExecutionSpecInput,
   toSessionExecutionSpecFormValue,
 } from './ResourceGroupSessionExecutionSpecFields';
-import {
-  AstryxFormNumberInput,
-  AstryxFormSelector,
-  AstryxFormSwitch,
-} from './astryxFormControls';
 import { Grid } from '@lablup/ui-common/Grid';
-import { BAIAlert, BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import {
+  BAIAlert,
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  BAINumberInput,
+  BAISelector,
+  BAISwitch,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -257,8 +260,9 @@ const ResourceGroupDefaultSessionOptionsModal: React.FC<
                   name="priority"
                   rules={[{ required: true }]}
                 >
-                  <AstryxFormNumberInput
-                    label={t('session.Priority')}
+                  <BAINumberInput
+                    width="100%"
+                    aria-label={t('session.Priority')}
                     min={0}
                     max={100}
                     isIntegerOnly
@@ -270,7 +274,7 @@ const ResourceGroupDefaultSessionOptionsModal: React.FC<
                   name="isPreemptible"
                   tooltip={t('resourceGroup.PreemptibleDesc')}
                 >
-                  <AstryxFormSwitch label={t('resourceGroup.Preemptible')} />
+                  <BAISwitch aria-label={t('resourceGroup.Preemptible')} />
                 </BAIFormItem>
                 <BAIFormItem
                   label={t('resourceGroup.FailurePolicy')}
@@ -284,8 +288,8 @@ const ResourceGroupDefaultSessionOptionsModal: React.FC<
                   rules={[{ required: true }]}
                   style={{ marginBottom: 0 }}
                 >
-                  <AstryxFormSelector
-                    label={t('resourceGroup.FailurePolicy')}
+                  <BAISelector
+                    aria-label={t('resourceGroup.FailurePolicy')}
                     options={[
                       {
                         label: t('resourceGroup.FailurePolicyStrict'),
@@ -313,8 +317,8 @@ const ResourceGroupDefaultSessionOptionsModal: React.FC<
                   rules={[{ required: true }]}
                   style={{ marginBottom: 0 }}
                 >
-                  <AstryxFormSelector
-                    label={t('resourceGroup.AgentSelectionPolicy')}
+                  <BAISelector
+                    aria-label={t('resourceGroup.AgentSelectionPolicy')}
                     options={[
                       {
                         label: t('resourceGroup.AgentSelectionStrict'),

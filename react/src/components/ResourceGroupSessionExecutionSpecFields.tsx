@@ -10,22 +10,18 @@ import BAIFormItem from './BAIFormItem';
 import DatePickerISO from './DatePickerISO';
 import FormListColumnHeader from './FormListColumnHeader';
 import ResourceGroupOptionsCollapsible from './ResourceGroupOptionsCollapsible';
-import {
-  AstryxFormCheckbox,
-  AstryxFormNumberInput,
-  AstryxFormSelector,
-  AstryxFormTextArea,
-  AstryxFormTextInput,
-} from './astryxFormControls';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { InputGroup } from '@lablup/ui-common/InputGroup';
-import { Selector } from '@lablup/ui-common/Selector';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIScopedImageSelect,
   BAIButton,
+  BAICheckboxInput,
   BAIDynamicUnitInputNumber,
   BAIFlex,
+  BAINumberInput,
+  BAISelector,
+  BAITextArea,
+  BAITextInput,
   convertToBinaryUnit,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -213,10 +209,9 @@ const ImageSelectField: React.FC<{
   return (
     <Suspense
       fallback={
-        <Selector
-          label={t('general.Loading')}
-          isLabelHidden
-          isDisabled
+        <BAISelector
+          aria-label={t('general.Loading')}
+          disabled
           options={[]}
           placeholder={t('general.Loading')}
           width="100%"
@@ -254,13 +249,7 @@ const FixedNameRow: React.FC<{
   return (
     <BAIFlex direction="row" align="start" gap="xs">
       <BAIFormItem style={{ marginBottom: 0, ...NAME_COLUMN_STYLE }}>
-        <TextInput
-          label={label}
-          isLabelHidden
-          value={name}
-          isDisabled
-          width="100%"
-        />
+        <BAITextInput aria-label={label} value={name} disabled width="100%" />
       </BAIFormItem>
       <BAIFlex direction="column" align="stretch" style={{ flex: 1 }}>
         {children}
@@ -387,8 +376,9 @@ export const SessionExecutionSpecFormFields: React.FC<{
             label={t('adminDeploymentPreset.ResourceSlots')}
           >
             <BAIFormItem name={[name, 'cpu']} style={{ marginBottom: 0 }}>
-              <AstryxFormNumberInput
-                label="CPU"
+              <BAINumberInput
+                width="100%"
+                aria-label="CPU"
                 units={resourceSlotsInRG?.cpu?.display_unit || undefined}
                 min={0}
               />
@@ -449,8 +439,8 @@ export const SessionExecutionSpecFormFields: React.FC<{
                         { validator: validateUniqueSlot },
                       ]}
                     >
-                      <AstryxFormSelector
-                        label={t('adminDeploymentPreset.ResourceSlots')}
+                      <BAISelector
+                        aria-label={t('adminDeploymentPreset.ResourceSlots')}
                         placeholder={t('adminDeploymentPreset.ResourceSlots')}
                         options={slotOptions}
                         hasSearch
@@ -471,8 +461,8 @@ export const SessionExecutionSpecFormFields: React.FC<{
                         },
                       ]}
                     >
-                      <AstryxFormTextInput
-                        label={t('resourceGroup.Quantity')}
+                      <BAITextInput
+                        aria-label={t('resourceGroup.Quantity')}
                         placeholder={
                           resourceSlotsInRG?.[
                             currentResources?.[fieldName]?.resourceType ?? ''
@@ -521,8 +511,8 @@ export const SessionExecutionSpecFormFields: React.FC<{
         name={clusterModeName}
         rules={[{ required: true }]}
       >
-        <AstryxFormSelector
-          label={t('session.ClusterMode')}
+        <BAISelector
+          aria-label={t('session.ClusterMode')}
           options={[
             { label: t('session.launcher.SingleNode'), value: 'single-node' },
             { label: t('session.launcher.MultiNode'), value: 'multi-node' },
@@ -534,7 +524,9 @@ export const SessionExecutionSpecFormFields: React.FC<{
         valuePropName="checked"
         style={{ marginBottom: isBatchSession ? undefined : 0 }}
       >
-        <AstryxFormCheckbox label={t('resourceGroup.RunAsBatchSession')} />
+        <BAICheckboxInput>
+          {t('resourceGroup.RunAsBatchSession')}
+        </BAICheckboxInput>
       </BAIFormItem>
       {isBatchSession ? (
         <>
@@ -545,14 +537,15 @@ export const SessionExecutionSpecFormFields: React.FC<{
                 name={[name, 'startsAtEnabled']}
                 valuePropName="checked"
               >
-                <AstryxFormCheckbox
-                  label={t('session.launcher.Enable')}
-                  onValueChange={(checked) => {
+                <BAICheckboxInput
+                  onChange={(checked) => {
                     if (!checked) {
                       form.setFieldValue([name, 'startsAt'], undefined);
                     }
                   }}
-                />
+                >
+                  {t('session.launcher.Enable')}
+                </BAICheckboxInput>
               </Form.Item>
               <Form.Item
                 name={[name, 'startsAt']}
@@ -573,9 +566,8 @@ export const SessionExecutionSpecFormFields: React.FC<{
                 name={[name, 'batchTimeoutEnabled']}
                 valuePropName="checked"
               >
-                <AstryxFormCheckbox
-                  label={t('session.launcher.Enable')}
-                  onValueChange={(checked) => {
+                <BAICheckboxInput
+                  onChange={(checked) => {
                     if (!checked) {
                       form.setFieldValue([name, 'batchTimeout'], undefined);
                     } else if (
@@ -585,7 +577,9 @@ export const SessionExecutionSpecFormFields: React.FC<{
                     }
                     form.validateFields([[name, 'batchTimeout']]);
                   }}
-                />
+                >
+                  {t('session.launcher.Enable')}
+                </BAICheckboxInput>
               </Form.Item>
               <InputGroup
                 label={t('session.launcher.BatchJobTimeoutDuration')}
@@ -597,16 +591,17 @@ export const SessionExecutionSpecFormFields: React.FC<{
                   dependencies={[[name, 'batchTimeoutEnabled']]}
                   rules={[{ required: !!batchTimeoutEnabled, message: '' }]}
                 >
-                  <AstryxFormNumberInput
-                    label={t('session.launcher.BatchJobTimeoutDuration')}
+                  <BAINumberInput
+                    width="100%"
+                    aria-label={t('session.launcher.BatchJobTimeoutDuration')}
                     disabled={!batchTimeoutEnabled}
                     min={1}
                     isIntegerOnly
                   />
                 </Form.Item>
                 <Form.Item noStyle name={[name, 'batchTimeoutUnit']}>
-                  <AstryxFormSelector
-                    label={t('session.launcher.BatchJobTimeoutDuration')}
+                  <BAISelector
+                    aria-label={t('session.launcher.BatchJobTimeoutDuration')}
                     disabled={!batchTimeoutEnabled}
                     width={100}
                     options={[
@@ -625,8 +620,8 @@ export const SessionExecutionSpecFormFields: React.FC<{
             label={t('session.launcher.StartUpCommand')}
             name={[name, 'startupCommand']}
           >
-            <AstryxFormTextArea
-              label={t('session.launcher.StartUpCommand')}
+            <BAITextArea
+              aria-label={t('session.launcher.StartUpCommand')}
               rows={2}
             />
           </BAIFormItem>
@@ -635,8 +630,8 @@ export const SessionExecutionSpecFormFields: React.FC<{
             name={[name, 'bootstrapScript']}
             style={{ marginBottom: 0 }}
           >
-            <AstryxFormTextArea
-              label={t('adminDeploymentPreset.BootstrapScript')}
+            <BAITextArea
+              aria-label={t('adminDeploymentPreset.BootstrapScript')}
               placeholder={t(
                 'adminDeploymentPreset.BootstrapScriptPlaceholder',
               )}

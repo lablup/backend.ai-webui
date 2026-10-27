@@ -6,16 +6,14 @@ import { Form, useFormInstance, useWatch } from '../form-engine';
 import BAIFormItem from './BAIFormItem';
 import FormListColumnHeader from './FormListColumnHeader';
 import ResourceGroupOptionsCollapsible from './ResourceGroupOptionsCollapsible';
-import {
-  AstryxFormNumberInput,
-  AstryxFormSelector,
-} from './astryxFormControls';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import {
   BAIButton,
   BAIFlex,
   BAIMetadataList,
+  BAINumberInput,
+  BAISelector,
   BAITable,
   type BAIColumnsType,
   useBAIBreakpoint,
@@ -169,8 +167,9 @@ export const HandlerOptionsFormFields: React.FC<{
           name={[name, 'default', 'timeoutSec']}
           style={{ flex: 1 }}
         >
-          <AstryxFormNumberInput
-            label={t('resourceGroup.DefaultTimeout')}
+          <BAINumberInput
+            width="100%"
+            aria-label={t('resourceGroup.DefaultTimeout')}
             units={t('resourceGroup.TimeoutSeconds')}
             placeholder={unlimited}
             min={0}
@@ -182,8 +181,9 @@ export const HandlerOptionsFormFields: React.FC<{
           name={[name, 'default', 'maxRetryCount']}
           style={{ flex: 1 }}
         >
-          <AstryxFormNumberInput
-            label={t('resourceGroup.DefaultMaxRetries')}
+          <BAINumberInput
+            width="100%"
+            aria-label={t('resourceGroup.DefaultMaxRetries')}
             placeholder={unlimited}
             min={0}
             isIntegerOnly
@@ -235,8 +235,8 @@ export const HandlerOptionsFormFields: React.FC<{
                       { validator: validateUniqueHandler },
                     ]}
                   >
-                    <AstryxFormSelector
-                      label={t('resourceGroup.HandlerName')}
+                    <BAISelector
+                      aria-label={t('resourceGroup.HandlerName')}
                       placeholder={t('resourceGroup.SelectHandlerName')}
                       options={optionsForRow(fieldName)}
                       hasSearch
@@ -248,8 +248,9 @@ export const HandlerOptionsFormFields: React.FC<{
                     name={[fieldName, 'timeoutSec']}
                     style={{ marginBottom: 0, ...VALUE_COLUMN_STYLE }}
                   >
-                    <AstryxFormNumberInput
-                      label={t('resourceGroup.Timeout')}
+                    <BAINumberInput
+                      width="100%"
+                      aria-label={t('resourceGroup.Timeout')}
                       placeholder={timeoutPlaceholder}
                       units={t('resourceGroup.TimeoutSecondsShort')}
                       min={0}
@@ -261,8 +262,9 @@ export const HandlerOptionsFormFields: React.FC<{
                     name={[fieldName, 'maxRetryCount']}
                     style={{ marginBottom: 0, ...VALUE_COLUMN_STYLE }}
                   >
-                    <AstryxFormNumberInput
-                      label={t('modelService.MaxRetries')}
+                    <BAINumberInput
+                      width="100%"
+                      aria-label={t('modelService.MaxRetries')}
                       placeholder={maxRetriesPlaceholder}
                       min={0}
                       isIntegerOnly
