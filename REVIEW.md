@@ -36,6 +36,10 @@ Report these. Each points at the rule that defines it; cite the rule in the find
 - **An `antd` or `@astryxdesign/*` import**, or a host-side twin of a BUI / ui-common component.
   (`CLAUDE.md` — Architecture; `docs/adr/0009-ui-common-as-the-single-entry-point-to-astryx.md`;
   `.claude/rules/bui-component-home.md`.)
+- **A security hole.** HTML rendered without sanitising (`dangerouslySetInnerHTML` with user or
+  server data), a user-controlled URL passed to `window.open`, an `href` or a redirect, or a
+  credential or token written to a log, a URL or the PR body. The gate runs `/security-review`
+  only on High-tier PRs, so a Medium-tier reviewer checks these themselves.
 - **A decision that contradicts an ADR in force** without a superseding ADR in the same PR.
   (`.claude/rules/adr.md`.)
 
@@ -88,23 +92,34 @@ plainly when nothing needs fixing: `0 findings — nothing to fix`.
 
 ## Risk tiers
 
-The ready gate (`fw:pr-ready-gate`, `scripts/risk-tier.sh`) reads the two lists below. Globs
-match the changed path case-insensitively. **High**: any changed file matches. **Low**: every
-changed file matches. Everything else is **Medium**. The tier sets the review: Low → `/code-review
-medium`, 0 suggested approvals; Medium → `high`, 1 approval; High → `xhigh` plus a security
-review, 2 approvals. Approvals are a suggestion; branch protection decides. Files that steer
-the reviewer, the agents or CI (`REVIEW.md`, `AGENTS.md`, `.claude/**`, `.github/**`, the
-verification harness) are High even though most are Markdown: High wins over Low.
+The ready gate — the fw plugin's `pr-ready-gate` skill (`scripts/risk-tier.sh` next to its
+SKILL.md) — reads the two lists below; `docs/adr/0015-risk-tiered-review-policy-in-review-md.md`
+records why. Globs match the changed path case-insensitively. **High**: any changed file
+matches. **Low**: every changed file matches. Everything else is **Medium**. The tier sets the
+review: Low → `/code-review medium`, 0 suggested approvals; Medium → `high`, 1 approval; High →
+`xhigh` plus a security review, 2 approvals. Approvals are a suggestion; branch protection
+decides. Files that steer the reviewer, the agents or CI (`REVIEW.md`, `AGENTS.md`, `.claude/**`,
+`.github/**`, the verification harness and its lanes, lint/build/test configs, ADRs) are High
+even though some are Markdown: High wins over Low. These lists replace the gate's built-in
+ones, so a default worth keeping is listed here again.
 
 ### High
 
 ```
-REVIEW.md
-AGENTS.md
-CLAUDE.md
-.claude/**
+**/REVIEW.md
+**/AGENTS.md
+**/CLAUDE.md
+**/.claude/**
 .github/**
-scripts/verify.sh
+scripts/**
+react/scripts/**
+.husky/**
+docs/adr/**
+docs/ARCHITECTURE.md
+**/*.config.{js,mjs,ts,cjs,mts}
+**/vitest.config.*
+**/playwright*.config.*
+**/tsconfig*.json
 package.json
 **/package.json
 pnpm-workspace.yaml
@@ -115,7 +130,7 @@ customHttp.yml
 electron-app/**
 preload.js
 app-packager.js
-packages/backend.ai-client/**
+packages/backend.ai-client/src/**
 packages/backend.ai-agent-cli/src/mutation-allowlist.ts
 packages/backend.ai-agent-cli/src/**/*login*
 react/src/routes.tsx
@@ -151,6 +166,8 @@ packages/backend.ai-ui/src/locale/**
 **/*.test.*
 **/*.spec.*
 e2e/**
+e2e-agent/**
+**/*.e2e.*
 **/__generated__/**
 react/src/generated/**
 ```
