@@ -8,10 +8,14 @@ import type {
 } from '../../../__generated__/FairSharePanelQuery.graphql';
 import ScopedCard from '../cards/ScopedCard';
 import type { PanelComponentProps } from '../types';
-import { formatAmount } from './superadminCardData';
 import { Divider } from '@lablup/ui-common/Divider';
 import { Text } from '@lablup/ui-common/Text';
-import { BAIFlex, BAITable, filterOutNullAndUndefined } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAITable,
+  filterOutNullAndUndefined,
+  toFixedFloorWithoutTrailingZeros,
+} from 'backend.ai-ui';
 import React, { Fragment, useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -23,6 +27,12 @@ type FairShareRow = NonNullable<
 >;
 
 const PAGE_SIZE = 5;
+
+// The Fair Share page's number format.
+const fixed = (value: unknown, digits: number) =>
+  value === null || value === undefined
+    ? '-'
+    : toFixedFloorWithoutTrailingZeros(Number(value), digits);
 
 const ResourceGroupFairShares: React.FC<{
   resourceGroupName: string;
@@ -52,6 +62,7 @@ const ResourceGroupFairShares: React.FC<{
               id
               spec {
                 weight
+                usesDefault
               }
               calculationSnapshot {
                 fairShareFactor
@@ -87,22 +98,28 @@ const ResourceGroupFairShares: React.FC<{
         {
           key: 'factor',
           title: t('fairShare.FairShareFactor'),
-          align: 'right',
           render: (_value, row) =>
-            formatAmount(Number(row.calculationSnapshot.fairShareFactor), 3),
+            fixed(row.calculationSnapshot.fairShareFactor, 2),
         },
         {
           key: 'usage',
           title: t('dashboard.card.NormalizedUsage'),
-          align: 'right',
           render: (_value, row) =>
-            formatAmount(Number(row.calculationSnapshot.normalizedUsage), 3),
+            fixed(row.calculationSnapshot.normalizedUsage, 2),
         },
         {
           key: 'weight',
-          title: t('dashboard.card.Weight'),
-          align: 'right',
-          render: (_value, row) => formatAmount(Number(row.spec.weight), 2),
+          title: t('fairShare.Weight'),
+          render: (_value, row) => (
+            <BAIFlex gap="xxs">
+              <Text>{fixed(row.spec.weight, 1)}</Text>
+              {row.spec.usesDefault ? (
+                <Text type="supporting" size="sm">
+                  ({t('fairShare.UsingDefault')})
+                </Text>
+              ) : null}
+            </BAIFlex>
+          ),
         },
       ]}
       pagination={{ pageSize: PAGE_SIZE, showSizeChanger: false }}

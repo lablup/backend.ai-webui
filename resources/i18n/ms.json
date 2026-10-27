@@ -810,7 +810,6 @@
       "AgentsTooltip": "Semua ejen kluster mengikut status, dan ejen dengan kumpulan sumber serta kontenanya.",
       "Availability": "Ketersediaan",
       "Available": "Tersedia",
-      "ClientIP": "IP klien",
       "ClusterAuditLogTooltip": "Log audit seluruh kluster dalam julat masa kad. Skop domain akan meninggalkan sesi, folder dan pengerahan di dalamnya, jadi kad ini membaca semua domain.",
       "ContainerRegistries": "Pendaftaran kontena",
       "Containers": "Kontena",
@@ -834,14 +833,12 @@
       "FailuresOnly": "Tunjukkan kegagalan sahaja",
       "FairShareTooltip": "Bahagian saksama setiap projek dalam kumpulan sumber kad (lalai: kumpulan pengepala), daripada pengiraan terakhir penjadual. Faktor bahagian saksama yang lebih rendah bermakna penggunaan terkini lebih tinggi.",
       "FolderLimit": "Had: {{max}}",
-      "Global": "Global",
       "Healthy": "Sihat",
       "InactiveKeypairs": "Pasangan kunci tidak aktif",
       "Insufficient": "Sumber tidak mencukupi",
       "Keypairs": "Pasangan kunci",
       "KeypairsAndLogins": "Pasangan kunci dan log masuk",
       "KeypairsAndLoginsTooltip": "Pasangan kunci seluruh kluster dan yang tidak aktif, serta log masuk gagal domain semasa dalam julat masa kad berbanding julat sebelumnya.",
-      "LoginResult": "Keputusan",
       "LongRunningSessions": "Sesi Berjalan Lama",
       "LongRunningSessionsTooltip": "Sesi berjalan projek yang bermula sebelum julat kad, tertua dahulu.",
       "MemoryGiBHours": "Memori (GiB-jam)",
@@ -897,8 +894,7 @@
       "Unlimited": "Tanpa had",
       "UsageRowsCapped": "Memaparkan {{shown}} baris terbaru daripada {{total}}.",
       "VsPreviousRange": "berbanding julat sebelumnya",
-      "Waiting": "Menunggu",
-      "Weight": "Pemberat"
+      "Waiting": "Menunggu"
     },
     "catalog": {
       "group": {

@@ -810,7 +810,6 @@
       "AgentsTooltip": "Todos los agentes del clúster por estado, y los agentes con su grupo de recursos y contenedores.",
       "Availability": "Disponibilidad",
       "Available": "Disponible",
-      "ClientIP": "IP del cliente",
       "ClusterAuditLogTooltip": "Registro de auditoría de todo el clúster en el periodo de la tarjeta. Un ámbito de dominio omitiría sus sesiones, carpetas e implementaciones, por eso esta tarjeta lee todos los dominios.",
       "ContainerRegistries": "Registros de contenedores",
       "Containers": "Contenedores",
@@ -834,14 +833,12 @@
       "FailuresOnly": "Mostrar solo fallos",
       "FairShareTooltip": "El reparto justo de cada proyecto en los grupos de recursos de la tarjeta (por defecto el del encabezado), según el último cálculo del planificador. Un factor de reparto equitativo menor indica más uso reciente.",
       "FolderLimit": "Límite: {{max}}",
-      "Global": "Global",
       "Healthy": "Correcto",
       "InactiveKeypairs": "Pares de claves inactivos",
       "Insufficient": "Recursos insuficientes",
       "Keypairs": "Pares de claves",
       "KeypairsAndLogins": "Pares de claves e inicios de sesión",
       "KeypairsAndLoginsTooltip": "Pares de claves de todo el clúster y los inactivos, y los inicios de sesión fallidos del dominio actual en el periodo de la tarjeta frente al anterior.",
-      "LoginResult": "Resultado",
       "LongRunningSessions": "Sesiones de larga duración",
       "LongRunningSessionsTooltip": "Sesiones en ejecución del proyecto que comenzaron antes del rango de la tarjeta, las más antiguas primero.",
       "MemoryGiBHours": "Memoria (GiB-hora)",
@@ -897,8 +894,7 @@
       "Unlimited": "Ilimitado",
       "UsageRowsCapped": "Se muestran las {{shown}} filas más recientes de {{total}}.",
       "VsPreviousRange": "frente al periodo anterior",
-      "Waiting": "Espera",
-      "Weight": "Peso"
+      "Waiting": "Espera"
     },
     "catalog": {
       "group": {

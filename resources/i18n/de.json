@@ -810,7 +810,6 @@
       "AgentsTooltip": "Alle Agents des Clusters nach Status sowie die Agents mit Ressourcengruppe und Containern.",
       "Availability": "Verfügbarkeit",
       "Available": "Verfügbar",
-      "ClientIP": "Client-IP",
       "ClusterAuditLogTooltip": "Audit-Log des gesamten Clusters im Zeitraum der Karte. Ein Domänenbereich würde die Sitzungen, Ordner und Deployments darin auslassen, daher liest diese Karte alle Domänen.",
       "ContainerRegistries": "Container-Registries",
       "Containers": "Container",
@@ -834,14 +833,12 @@
       "FailuresOnly": "Nur Fehler anzeigen",
       "FairShareTooltip": "Die faire Zuteilung jedes Projekts in den Ressourcengruppen der Karte (standardmäßig die der Kopfzeile), aus der letzten Berechnung des Schedulers. Ein niedrigerer Fair-Share-Faktor bedeutet stärkere jüngste Nutzung.",
       "FolderLimit": "Limit: {{max}}",
-      "Global": "Global",
       "Healthy": "Fehlerfrei",
       "InactiveKeypairs": "Inaktive Schlüsselpaare",
       "Insufficient": "Nicht genug Ressourcen",
       "Keypairs": "Schlüsselpaare",
       "KeypairsAndLogins": "Schlüsselpaare und Anmeldungen",
       "KeypairsAndLoginsTooltip": "Schlüsselpaare des gesamten Clusters und die inaktiven, sowie die fehlgeschlagenen Anmeldungen der aktuellen Domäne im Zeitraum der Karte gegenüber dem vorherigen.",
-      "LoginResult": "Ergebnis",
       "LongRunningSessions": "Lang laufende Sitzungen",
       "LongRunningSessionsTooltip": "Laufende Sitzungen des Projekts, die vor dem Zeitraum der Karte gestartet sind, älteste zuerst.",
       "MemoryGiBHours": "Speicher (GiB-Stunden)",
@@ -897,8 +894,7 @@
       "Unlimited": "Unbegrenzt",
       "UsageRowsCapped": "Die {{shown}} neuesten von {{total}} Zeilen werden angezeigt.",
       "VsPreviousRange": "ggü. vorherigem Zeitraum",
-      "Waiting": "Wartezeit",
-      "Weight": "Gewichtung"
+      "Waiting": "Wartezeit"
     },
     "catalog": {
       "group": {

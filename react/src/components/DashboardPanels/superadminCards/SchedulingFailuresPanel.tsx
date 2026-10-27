@@ -4,7 +4,6 @@
  */
 import type {
   SchedulingFailuresPanelQuery,
-  SchedulingFailuresPanelQuery$data,
   SessionSchedulingHistoryFilter,
 } from '../../../__generated__/SchedulingFailuresPanelQuery.graphql';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
@@ -21,21 +20,13 @@ import {
 import {
   BAIFlex,
   BAILink,
-  BAISchedulingResultBadge,
-  BAITable,
+  BAISchedulingHistoryNodes,
   BAIText,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
-import dayjs from 'dayjs';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-
-type HistoryRow = NonNullable<
-  NonNullable<
-    NonNullable<SchedulingFailuresPanelQuery$data['histories']>['edges'][number]
-  >['node']
->;
 
 const ALIAS: Record<
   SchedulingFailureResult,
@@ -113,11 +104,10 @@ const SchedulingFailures: React.FC<{
           edges {
             node {
               id
-              result
               phase
               errorCode
               message
-              createdAt
+              ...BAISchedulingHistoryNodesFragment
               session {
                 entityId
                 metadata {
@@ -140,6 +130,7 @@ const SchedulingFailures: React.FC<{
   const rows = filterOutNullAndUndefined(
     data.histories?.edges.map((edge) => edge?.node),
   );
+  const rowById = new Map(rows.map((row) => [row.id, row]));
 
   return (
     <BAIFlex
@@ -164,68 +155,60 @@ const SchedulingFailures: React.FC<{
           })),
         )}
       />
-      <BAITable<HistoryRow>
+      <BAISchedulingHistoryNodes
+        schedulingHistoryFrgmt={rows}
+        disableSorter
         size="small"
-        rowKey="id"
-        dataSource={rows}
         loading={deferredVariables !== variables}
-        scroll={{ x: 'max-content' }}
-        columns={[
-          {
-            key: 'createdAt',
-            title: t('dashboard.card.Time'),
-            render: (_value, row) => dayjs(row.createdAt).format('lll'),
-          },
-          {
-            key: 'session',
-            title: t('session.SessionName'),
-            render: (_value, row) =>
-              row.session ? (
-                <BAILink
-                  type="hover"
-                  onClick={() =>
-                    row.session && openSessionDetail(row.session.entityId)
-                  }
-                >
-                  {row.session.metadata.name}
-                </BAILink>
-              ) : (
-                '-'
-              ),
-          },
-          {
-            key: 'project',
-            title: t('general.Project'),
-            render: (_value, row) =>
-              row.session?.project?.basicInfo.name ?? '-',
-          },
-          {
-            key: 'result',
-            title: t('dashboard.card.SchedulingResult'),
-            render: (_value, row) => (
-              <BAISchedulingResultBadge
-                result={
-                  row.result === '%future added value' ? null : row.result
-                }
-              />
-            ),
-          },
-          {
-            key: 'message',
-            title: t('dashboard.card.Reason'),
-            render: (_value, row) => {
-              const reason = row.errorCode ?? row.message ?? row.phase;
-              return (
-                <BAIText
-                  ellipsis={{ tooltip: reason }}
-                  style={{ maxWidth: 320 }}
-                >
-                  {reason}
-                </BAIText>
-              );
+        customizeColumns={(columns) => {
+          const pick = (key: string) => columns.find((c) => c.key === key);
+          const message = pick('message');
+          return filterOutNullAndUndefined([
+            pick('createdAt'),
+            {
+              key: 'session',
+              title: t('session.SessionName'),
+              render: (_value: unknown, history: { id: string }) => {
+                const session = rowById.get(history.id)?.session;
+                return session ? (
+                  <BAILink
+                    type="hover"
+                    onClick={() => openSessionDetail(session.entityId)}
+                  >
+                    {session.metadata.name}
+                  </BAILink>
+                ) : (
+                  '-'
+                );
+              },
             },
-          },
-        ]}
+            {
+              key: 'project',
+              title: t('general.Project'),
+              render: (_value: unknown, history: { id: string }) =>
+                rowById.get(history.id)?.session?.project?.basicInfo.name ??
+                '-',
+            },
+            pick('result'),
+            message && {
+              ...message,
+              title: t('dashboard.card.Reason'),
+              onCell: undefined,
+              render: (_value: unknown, history: { id: string }) => {
+                const row = rowById.get(history.id);
+                const reason = row?.errorCode ?? row?.message ?? row?.phase;
+                return (
+                  <BAIText
+                    ellipsis={{ tooltip: reason }}
+                    style={{ maxWidth: 320 }}
+                  >
+                    {reason}
+                  </BAIText>
+                );
+              },
+            },
+          ]);
+        }}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
           current: tablePaginationOption.current,

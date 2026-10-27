@@ -810,7 +810,6 @@
       "AgentsTooltip": "按状态显示集群中的所有代理，并列出每个代理的资源组和容器数。",
       "Availability": "可用性",
       "Available": "可用",
-      "ClientIP": "客户端 IP",
       "ClusterAuditLogTooltip": "卡片时间范围内整个集群的审计日志。域范围会遗漏其中的会话、文件夹和部署，因此此卡片读取所有域。",
       "ContainerRegistries": "容器镜像仓库",
       "Containers": "容器",
@@ -834,14 +833,12 @@
       "FailuresOnly": "仅显示失败",
       "FairShareTooltip": "各项目在卡片资源组(默认为页眉的资源组)中的公平份额，取自调度器的最近一次计算。公平份额系数越低表示近期使用越多。",
       "FolderLimit": "上限: {{max}}",
-      "Global": "全局",
       "Healthy": "正常",
       "InactiveKeypairs": "未激活的密钥对",
       "Insufficient": "资源不足",
       "Keypairs": "密钥对",
       "KeypairsAndLogins": "密钥对与登录",
       "KeypairsAndLoginsTooltip": "整个集群的密钥对及未激活的密钥对，以及卡片时间范围内当前域的登录失败次数(与上一个范围对比)。",
-      "LoginResult": "结果",
       "LongRunningSessions": "长时间运行的会话",
       "LongRunningSessionsTooltip": "项目中在卡片时间范围开始前就已运行的会话，按最早排序。",
       "MemoryGiBHours": "内存 (GiB 小时)",
@@ -897,8 +894,7 @@
       "Unlimited": "无限制",
       "UsageRowsCapped": "显示 {{total}} 行中最新的 {{shown}} 行。",
       "VsPreviousRange": "与上一时间范围相比",
-      "Waiting": "等待时间",
-      "Weight": "权重"
+      "Waiting": "等待时间"
     },
     "catalog": {
       "group": {

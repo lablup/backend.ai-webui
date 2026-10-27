@@ -810,7 +810,6 @@
       "AgentsTooltip": "Tất cả agent của cụm theo trạng thái, và các agent cùng nhóm tài nguyên và container.",
       "Availability": "Khả dụng",
       "Available": "Khả dụng",
-      "ClientIP": "IP máy khách",
       "ClusterAuditLogTooltip": "Nhật ký kiểm toán của toàn cụm trong khoảng thời gian của thẻ. Phạm vi miền sẽ bỏ sót các phiên, thư mục và bản triển khai bên trong, nên thẻ này đọc mọi miền.",
       "ContainerRegistries": "Kho container",
       "Containers": "Container",
@@ -834,14 +833,12 @@
       "FailuresOnly": "Chỉ hiện lỗi",
       "FairShareTooltip": "Phân bổ công bằng của mỗi dự án trong các nhóm tài nguyên của thẻ (mặc định là nhóm ở tiêu đề), theo lần tính gần nhất của bộ lập lịch. Hệ số chia công bằng thấp hơn nghĩa là dùng nhiều hơn gần đây.",
       "FolderLimit": "Giới hạn: {{max}}",
-      "Global": "Toàn cục",
       "Healthy": "Ổn định",
       "InactiveKeypairs": "Cặp khóa không hoạt động",
       "Insufficient": "Không đủ tài nguyên",
       "Keypairs": "Cặp khóa",
       "KeypairsAndLogins": "Cặp khóa và đăng nhập",
       "KeypairsAndLoginsTooltip": "Các cặp khóa của toàn cụm và cặp không hoạt động, cùng số lần đăng nhập thất bại của miền hiện tại trong khoảng thời gian của thẻ so với khoảng trước.",
-      "LoginResult": "Kết quả",
       "LongRunningSessions": "Phiên chạy lâu",
       "LongRunningSessionsTooltip": "Các phiên đang chạy của dự án bắt đầu trước khoảng thời gian của thẻ, cũ nhất trước.",
       "MemoryGiBHours": "Bộ nhớ (GiB-giờ)",
@@ -897,8 +894,7 @@
       "Unlimited": "Không giới hạn",
       "UsageRowsCapped": "Đang hiển thị {{shown}} hàng mới nhất trong {{total}}.",
       "VsPreviousRange": "so với khoảng trước",
-      "Waiting": "Thời gian chờ",
-      "Weight": "Trọng số"
+      "Waiting": "Thời gian chờ"
     },
     "catalog": {
       "group": {

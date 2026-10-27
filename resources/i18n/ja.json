@@ -810,7 +810,6 @@
       "AgentsTooltip": "クラスターのすべてのエージェントを状態別に、各エージェントをリソースグループとコンテナ数と共に表示します。",
       "Availability": "利用可否",
       "Available": "利用可能",
-      "ClientIP": "クライアントIP",
       "ClusterAuditLogTooltip": "カードの期間におけるクラスター全体の監査ログです。ドメイン範囲ではその中のセッション、フォルダー、デプロイが含まれないため、このカードはすべてのドメインを読み取ります。",
       "ContainerRegistries": "コンテナレジストリ",
       "Containers": "コンテナ",
@@ -834,14 +833,12 @@
       "FailuresOnly": "失敗のみ表示",
       "FairShareTooltip": "カードのリソースグループ(既定: ヘッダーのグループ)における各プロジェクトの公平配分を、スケジューラーの最新の計算値で表示します。フェアシェア係数が低いほど最近の使用量が多いことを示します。",
       "FolderLimit": "上限: {{max}}",
-      "Global": "グローバル",
       "Healthy": "正常",
       "InactiveKeypairs": "非アクティブなキーペア",
       "Insufficient": "リソース不足",
       "Keypairs": "キーペア",
       "KeypairsAndLogins": "キーペアとサインイン",
       "KeypairsAndLoginsTooltip": "クラスター全体のキーペアと非アクティブなキーペア、およびカードの期間における現在のドメインのサインイン失敗を直前の期間と比較して表示します。",
-      "LoginResult": "結果",
       "LongRunningSessions": "長時間実行中のセッション",
       "LongRunningSessionsTooltip": "カードの期間の開始前から実行中のプロジェクトのセッションを古い順に表示します。",
       "MemoryGiBHours": "メモリ (GiB時間)",
@@ -897,8 +894,7 @@
       "Unlimited": "無制限",
       "UsageRowsCapped": "{{total}} 行のうち新しい {{shown}} 行を表示しています。",
       "VsPreviousRange": "前の期間との比較",
-      "Waiting": "待ち時間",
-      "Weight": "重み"
+      "Waiting": "待ち時間"
     },
     "catalog": {
       "group": {

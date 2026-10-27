@@ -810,7 +810,6 @@
       "AgentsTooltip": "Tutti gli agenti del cluster per stato, e gli agenti con il loro gruppo di risorse e i container.",
       "Availability": "Disponibilità",
       "Available": "Disponibile",
-      "ClientIP": "IP client",
       "ClusterAuditLogTooltip": "Registro di audit dell'intero cluster nel periodo della scheda. Un ambito di dominio escluderebbe le sessioni, le cartelle e i deployment al suo interno, quindi la scheda legge tutti i domini.",
       "ContainerRegistries": "Registri di container",
       "Containers": "Container",
@@ -834,14 +833,12 @@
       "FailuresOnly": "Mostra solo errori",
       "FairShareTooltip": "La quota equa di ogni progetto nei gruppi di risorse della scheda (per impostazione predefinita quello dell'intestazione), dall'ultimo calcolo dello scheduler. Un fattore di ripartizione equa più basso indica un uso recente maggiore.",
       "FolderLimit": "Limite: {{max}}",
-      "Global": "Globale",
       "Healthy": "Integro",
       "InactiveKeypairs": "Coppie di chiavi inattive",
       "Insufficient": "Risorse insufficienti",
       "Keypairs": "Coppie di chiavi",
       "KeypairsAndLogins": "Coppie di chiavi e accessi",
       "KeypairsAndLoginsTooltip": "Coppie di chiavi dell'intero cluster e quelle inattive, e gli accessi non riusciti del dominio corrente nel periodo della scheda rispetto al precedente.",
-      "LoginResult": "Risultato",
       "LongRunningSessions": "Sessioni di lunga durata",
       "LongRunningSessionsTooltip": "Sessioni in esecuzione del progetto avviate prima dell'intervallo della scheda, prima le più vecchie.",
       "MemoryGiBHours": "Memoria (GiB-ore)",
@@ -897,8 +894,7 @@
       "Unlimited": "Illimitato",
       "UsageRowsCapped": "Sono mostrate le {{shown}} righe più recenti su {{total}}.",
       "VsPreviousRange": "rispetto all'intervallo precedente",
-      "Waiting": "Attesa",
-      "Weight": "Peso"
+      "Waiting": "Attesa"
     },
     "catalog": {
       "group": {

@@ -810,7 +810,6 @@
       "AgentsTooltip": "依狀態顯示叢集中的所有代理程式，並列出每個代理程式的資源群組和容器數。",
       "Availability": "可用性",
       "Available": "可用",
-      "ClientIP": "用戶端 IP",
       "ClusterAuditLogTooltip": "卡片時間範圍內整個叢集的稽核記錄。網域範圍會遺漏其中的工作階段、資料夾和部署，因此此卡片讀取所有網域。",
       "ContainerRegistries": "容器映像倉庫",
       "Containers": "容器",
@@ -834,14 +833,12 @@
       "FailuresOnly": "僅顯示失敗",
       "FairShareTooltip": "各專案在卡片資源群組(預設為頁首的資源群組)中的公平份額，取自排程器的最近一次計算。公平分配係數越低表示近期使用越多。",
       "FolderLimit": "上限: {{max}}",
-      "Global": "全域",
       "Healthy": "正常",
       "InactiveKeypairs": "未啟用的金鑰對",
       "Insufficient": "資源不足",
       "Keypairs": "金鑰對",
       "KeypairsAndLogins": "金鑰對與登入",
       "KeypairsAndLoginsTooltip": "整個叢集的金鑰對及未啟用的金鑰對，以及卡片時間範圍內目前網域的登入失敗次數(與上一個範圍對比)。",
-      "LoginResult": "結果",
       "LongRunningSessions": "長時間執行的工作階段",
       "LongRunningSessionsTooltip": "專案中在卡片時間範圍開始前就已執行的工作階段，依最舊排序。",
       "MemoryGiBHours": "記憶體 (GiB 小時)",
@@ -897,8 +894,7 @@
       "Unlimited": "無限制",
       "UsageRowsCapped": "顯示 {{total}} 列中最新的 {{shown}} 列。",
       "VsPreviousRange": "與上一時間範圍相比",
-      "Waiting": "等待時間",
-      "Weight": "權重"
+      "Waiting": "等待時間"
     },
     "catalog": {
       "group": {

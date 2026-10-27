@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c443b7d6d9d8f8ccda5fdc4e249a91e2>>
+ * @generated SignedSource<<fbaa078bfb89df9feb5c2c7dfcf726ac>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+import { FragmentRefs } from "relay-runtime";
 export type LoginAttemptResult = "EVICTED" | "EXPIRED" | "FAILED_BLOCKED" | "FAILED_INVALID_CREDENTIALS" | "FAILED_PASSWORD_EXPIRED" | "FAILED_REJECTED_BY_HOOK" | "FAILED_SESSION_ALREADY_EXISTS" | "FAILED_USER_INACTIVE" | "LOGOUT" | "REVOKED_BY_ADMIN" | "REVOKED_BY_USER" | "SUCCESS" | "%future added value";
 export type LoginHistoryFilter = {
   AND?: ReadonlyArray<LoginHistoryFilter> | null | undefined;
@@ -63,15 +64,13 @@ export type KeypairsLoginsPanelQuery$data = {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly clientIp: string | null | undefined;
-        readonly createdAt: string;
         readonly id: string;
-        readonly result: LoginAttemptResult;
         readonly user: {
           readonly basicInfo: {
             readonly email: string;
           };
         } | null | undefined;
+        readonly " $fragmentSpreads": FragmentRefs<"BAILoginHistoryTableFragment">;
       };
     }>;
   } | null | undefined;
@@ -211,27 +210,6 @@ v11 = {
 v12 = {
   "alias": null,
   "args": null,
-  "kind": "ScalarField",
-  "name": "result",
-  "storageKey": null
-},
-v13 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "clientIp",
-  "storageKey": null
-},
-v14 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "createdAt",
-  "storageKey": null
-},
-v15 = {
-  "alias": null,
-  "args": null,
   "concreteType": "UserV2BasicInfo",
   "kind": "LinkedField",
   "name": "basicInfo",
@@ -288,9 +266,6 @@ return {
                 "plural": false,
                 "selections": [
                   (v11/*: any*/),
-                  (v12/*: any*/),
-                  (v13/*: any*/),
-                  (v14/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -299,9 +274,14 @@ return {
                     "name": "user",
                     "plural": false,
                     "selections": [
-                      (v15/*: any*/)
+                      (v12/*: any*/)
                     ],
                     "storageKey": null
+                  },
+                  {
+                    "args": null,
+                    "kind": "FragmentSpread",
+                    "name": "BAILoginHistoryTableFragment"
                   }
                 ],
                 "storageKey": null
@@ -356,9 +336,6 @@ return {
                 "plural": false,
                 "selections": [
                   (v11/*: any*/),
-                  (v12/*: any*/),
-                  (v13/*: any*/),
-                  (v14/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -367,9 +344,44 @@ return {
                     "name": "user",
                     "plural": false,
                     "selections": [
-                      (v15/*: any*/),
+                      (v12/*: any*/),
                       (v11/*: any*/)
                     ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "result",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "domainName",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "clientIp",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "failReason",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "createdAt",
                     "storageKey": null
                   }
                 ],
@@ -384,16 +396,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "78ecf21187b0b3d2309c268cc8890810",
+    "cacheID": "16fd68698cc547922950f0ac5a53f65f",
     "id": null,
     "metadata": {},
     "name": "KeypairsLoginsPanelQuery",
     "operationKind": "query",
-    "text": "query KeypairsLoginsPanelQuery(\n  $failed: LoginHistoryFilter!\n  $previousFailed: LoginHistoryFilter!\n  $limit: Int!\n  $offset: Int!\n) {\n  keypairs: adminKeypairsV2(limit: 1) {\n    count\n  }\n  inactiveKeypairs: adminKeypairsV2(filter: {isActive: false}, limit: 1) {\n    count\n  }\n  previousFailed: adminLoginHistoryV2(filter: $previousFailed, limit: 1) {\n    count\n  }\n  failedLogins: adminLoginHistoryV2(filter: $failed, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        result\n        clientIp\n        createdAt\n        user {\n          basicInfo {\n            email\n          }\n          id\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query KeypairsLoginsPanelQuery(\n  $failed: LoginHistoryFilter!\n  $previousFailed: LoginHistoryFilter!\n  $limit: Int!\n  $offset: Int!\n) {\n  keypairs: adminKeypairsV2(limit: 1) {\n    count\n  }\n  inactiveKeypairs: adminKeypairsV2(filter: {isActive: false}, limit: 1) {\n    count\n  }\n  previousFailed: adminLoginHistoryV2(filter: $previousFailed, limit: 1) {\n    count\n  }\n  failedLogins: adminLoginHistoryV2(filter: $failed, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        user {\n          basicInfo {\n            email\n          }\n          id\n        }\n        ...BAILoginHistoryTableFragment\n      }\n    }\n  }\n}\n\nfragment BAILoginHistoryTableFragment on LoginHistoryV2 {\n  id\n  result\n  domainName\n  clientIp @since(version: \"26.9.0\")\n  failReason\n  createdAt\n}\n"
   }
 };
 })();
 
-(node as any).hash = "17e5c8fced74d0ed8488198b4c4115d9";
+(node as any).hash = "5f018fc9874916d1b045b769af758f52";
 
 export default node;

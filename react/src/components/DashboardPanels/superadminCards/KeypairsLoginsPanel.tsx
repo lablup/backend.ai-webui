@@ -4,7 +4,6 @@
  */
 import type {
   KeypairsLoginsPanelQuery,
-  KeypairsLoginsPanelQuery$data,
   LoginHistoryFilter,
 } from '../../../__generated__/KeypairsLoginsPanelQuery.graphql';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
@@ -14,23 +13,14 @@ import { countDelta, failureSentiment, previousWindow } from '../countAliases';
 import { withinWindow, type DateTimeWindow } from '../timeRange';
 import type { PanelComponentProps } from '../types';
 import { LOGIN_FAILURE_RESULTS } from './superadminCardData';
-import { Token } from '@lablup/ui-common/Token';
 import {
   BAIFlex,
-  BAITable,
+  BAILoginHistoryTable,
   filterOutNullAndUndefined,
-  tokenColorForStatus,
 } from 'backend.ai-ui';
-import dayjs from 'dayjs';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-
-type LoginRow = NonNullable<
-  NonNullable<
-    NonNullable<KeypairsLoginsPanelQuery$data['failedLogins']>['edges'][number]
-  >['node']
->;
 
 const failedLogins = (
   domainName: string,
@@ -90,14 +80,12 @@ const KeypairsAndLogins: React.FC<{
           edges {
             node {
               id
-              result
-              clientIp
-              createdAt
               user {
                 basicInfo {
                   email
                 }
               }
+              ...BAILoginHistoryTableFragment
             }
           }
         }
@@ -107,7 +95,13 @@ const KeypairsAndLogins: React.FC<{
     { fetchPolicy: 'store-and-network', fetchKey },
   );
   const failed = data.failedLogins?.count ?? 0;
-  const delta = countDelta(failed, data.previousFailed?.count ?? 0);
+  const logins = filterOutNullAndUndefined(
+    data.failedLogins?.edges.map((edge) => edge?.node),
+  );
+  const emails = new Map(
+    logins.map((login) => [login.id, login.user?.basicInfo.email]),
+  );
+  const delta = countDelta(failed, data.previousFailed?.count ?? 0, timeRange);
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
@@ -132,41 +126,29 @@ const KeypairsAndLogins: React.FC<{
           },
         ]}
       />
-      <BAITable<LoginRow>
-        size="small"
-        rowKey="id"
-        dataSource={filterOutNullAndUndefined(
-          data.failedLogins?.edges.map((edge) => edge?.node),
-        )}
+      <BAILoginHistoryTable
+        loginHistoryFrgmt={logins}
+        disableSorter
+        resizable={false}
         loading={deferredVariables !== variables}
-        scroll={{ x: 'max-content' }}
-        columns={[
-          {
-            key: 'createdAt',
-            title: t('dashboard.card.Time'),
-            render: (_value, row) => dayjs(row.createdAt).format('lll'),
-          },
-          {
-            key: 'user',
-            title: t('credential.UserID'),
-            render: (_value, row) => row.user?.basicInfo.email ?? '-',
-          },
-          {
-            key: 'result',
-            title: t('dashboard.card.LoginResult'),
-            render: (_value, row) => (
-              <Token
-                color={tokenColorForStatus('loginHistory', row.result)}
-                label={row.result}
-              />
-            ),
-          },
-          {
-            key: 'clientIp',
-            title: t('dashboard.card.ClientIP'),
-            render: (_value, row) => row.clientIp ?? '-',
-          },
-        ]}
+        customizeColumns={(columns) => {
+          // `result` is pinned left on the login history page; here it sits mid-row.
+          const pick = (key: string) => {
+            const column = columns.find((c) => c.key === key);
+            return column && { ...column, fixed: undefined };
+          };
+          return filterOutNullAndUndefined([
+            pick('createdAt'),
+            {
+              key: 'user',
+              title: t('credential.UserID'),
+              render: (_value: unknown, login: { id: string }) =>
+                emails.get(login.id) ?? '-',
+            },
+            pick('result'),
+            pick('clientIp'),
+          ]);
+        }}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
           current: tablePaginationOption.current,

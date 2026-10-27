@@ -810,7 +810,6 @@
       "AgentsTooltip": "Semua agen kluster menurut status, serta agen dengan grup sumber daya dan kontainernya.",
       "Availability": "Ketersediaan",
       "Available": "Tersedia",
-      "ClientIP": "IP klien",
       "ClusterAuditLogTooltip": "Log audit seluruh kluster dalam rentang waktu kartu. Cakupan domain akan melewatkan sesi, folder, dan deployment di dalamnya, jadi kartu ini membaca semua domain.",
       "ContainerRegistries": "Registri kontainer",
       "Containers": "Kontainer",
@@ -834,14 +833,12 @@
       "FailuresOnly": "Tampilkan kegagalan saja",
       "FairShareTooltip": "Alokasi adil setiap proyek di grup sumber daya kartu (bawaan: milik header), dari perhitungan terakhir penjadwal. Faktor pembagian adil yang lebih rendah berarti penggunaan terbaru lebih tinggi.",
       "FolderLimit": "Batas: {{max}}",
-      "Global": "Global",
       "Healthy": "Sehat",
       "InactiveKeypairs": "Pasangan kunci tidak aktif",
       "Insufficient": "Sumber daya tidak cukup",
       "Keypairs": "Pasangan kunci",
       "KeypairsAndLogins": "Pasangan kunci dan login",
       "KeypairsAndLoginsTooltip": "Pasangan kunci seluruh kluster dan yang tidak aktif, serta login gagal domain saat ini dalam rentang waktu kartu dibandingkan rentang sebelumnya.",
-      "LoginResult": "Hasil",
       "LongRunningSessions": "Sesi yang Berjalan Lama",
       "LongRunningSessionsTooltip": "Sesi berjalan proyek yang dimulai sebelum rentang kartu, terlama lebih dulu.",
       "MemoryGiBHours": "Memori (GiB-jam)",
@@ -897,8 +894,7 @@
       "Unlimited": "Tidak terbatas",
       "UsageRowsCapped": "Menampilkan {{shown}} baris terbaru dari {{total}}.",
       "VsPreviousRange": "vs. rentang sebelumnya",
-      "Waiting": "Menunggu",
-      "Weight": "Bobot"
+      "Waiting": "Menunggu"
     },
     "catalog": {
       "group": {

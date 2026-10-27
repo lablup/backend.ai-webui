@@ -810,7 +810,6 @@
       "AgentsTooltip": "Wszystkie agenty klastra według stanu oraz agenty z grupą zasobów i kontenerami.",
       "Availability": "Dostępność",
       "Available": "Dostępny",
-      "ClientIP": "IP klienta",
       "ClusterAuditLogTooltip": "Dziennik audytu całego klastra w zakresie czasu karty. Zakres domeny pominąłby sesje, foldery i wdrożenia w niej, dlatego karta odczytuje wszystkie domeny.",
       "ContainerRegistries": "Rejestry kontenerów",
       "Containers": "Kontenery",
@@ -834,14 +833,12 @@
       "FailuresOnly": "Pokaż tylko niepowodzenia",
       "FairShareTooltip": "Sprawiedliwy udział każdego projektu w grupach zasobów karty (domyślnie z nagłówka), z ostatniego obliczenia planisty. Niższy współczynnik sprawiedliwego udziału oznacza większe niedawne użycie.",
       "FolderLimit": "Limit: {{max}}",
-      "Global": "Globalny",
       "Healthy": "Sprawny",
       "InactiveKeypairs": "Nieaktywne pary kluczy",
       "Insufficient": "Za mało zasobów",
       "Keypairs": "Pary kluczy",
       "KeypairsAndLogins": "Pary kluczy i logowania",
       "KeypairsAndLoginsTooltip": "Pary kluczy całego klastra i nieaktywne oraz nieudane logowania bieżącej domeny w zakresie czasu karty w porównaniu z poprzednim.",
-      "LoginResult": "Wynik",
       "LongRunningSessions": "Długo działające sesje",
       "LongRunningSessionsTooltip": "Działające sesje projektu, które rozpoczęły się przed zakresem karty, najstarsze najpierw.",
       "MemoryGiBHours": "Pamięć (GiB-godziny)",
@@ -897,8 +894,7 @@
       "Unlimited": "Bez limitu",
       "UsageRowsCapped": "Wyświetlane są {{shown}} najnowsze z {{total}} wierszy.",
       "VsPreviousRange": "w porównaniu z poprzednim okresem",
-      "Waiting": "Oczekiwanie",
-      "Weight": "Waga"
+      "Waiting": "Oczekiwanie"
     },
     "catalog": {
       "group": {

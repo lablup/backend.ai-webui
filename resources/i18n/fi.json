@@ -810,7 +810,6 @@
       "AgentsTooltip": "Klusterin kaikki agentit tilan mukaan sekä agentit resurssiryhmineen ja kontteineen.",
       "Availability": "Saatavuus",
       "Available": "Saatavilla",
-      "ClientIP": "Asiakkaan IP",
       "ClusterAuditLogTooltip": "Koko klusterin auditointiloki kortin aikavälillä. Toimialueen rajaus jättäisi pois sen istunnot, kansiot ja käyttöönotot, joten kortti lukee kaikki toimialueet.",
       "ContainerRegistries": "Konttirekisterit",
       "Containers": "Kontit",
@@ -834,14 +833,12 @@
       "FailuresOnly": "Näytä vain epäonnistuneet",
       "FairShareTooltip": "Kunkin projektin oikeudenmukainen osuus kortin resurssiryhmissä (oletuksena otsakkeen ryhmä) ajoittajan viimeisimmästä laskennasta. Pienempi tasapuolisen jaon kerroin tarkoittaa runsaampaa viimeaikaista käyttöä.",
       "FolderLimit": "Raja: {{max}}",
-      "Global": "Globaali",
       "Healthy": "Kunnossa",
       "InactiveKeypairs": "Passiiviset avainparit",
       "Insufficient": "Resurssit eivät riitä",
       "Keypairs": "Avainparit",
       "KeypairsAndLogins": "Avainparit ja kirjautumiset",
       "KeypairsAndLoginsTooltip": "Koko klusterin avainparit ja passiiviset avainparit sekä nykyisen toimialueen epäonnistuneet kirjautumiset kortin aikavälillä edelliseen verrattuna.",
-      "LoginResult": "Tulos",
       "LongRunningSessions": "Pitkään käynnissä olevat istunnot",
       "LongRunningSessionsTooltip": "Projektin käynnissä olevat istunnot, jotka alkoivat ennen kortin aikaväliä, vanhimmat ensin.",
       "MemoryGiBHours": "Muisti (GiB-tunnit)",
@@ -897,8 +894,7 @@
       "Unlimited": "Rajoittamaton",
       "UsageRowsCapped": "Näytetään {{total}} rivistä {{shown}} uusinta.",
       "VsPreviousRange": "verrattuna edelliseen aikaväliin",
-      "Waiting": "Odotus",
-      "Weight": "Paino"
+      "Waiting": "Odotus"
     },
     "catalog": {
       "group": {

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3431db18b2b71cd9629b42c6148b9ec9>>
+ * @generated SignedSource<<b8a87e87f397a77e5194526c11129500>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+import { FragmentRefs } from "relay-runtime";
 export type SchedulingResult = "EXPIRED" | "FAILURE" | "GIVE_UP" | "NEED_RETRY" | "SKIPPED" | "STALE" | "SUCCESS" | "%future added value";
 export type SessionSchedulingHistoryFilter = {
   AND?: ReadonlyArray<SessionSchedulingHistoryFilter> | null | undefined;
@@ -88,12 +89,10 @@ export type SchedulingFailuresPanelQuery$data = {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly createdAt: string;
         readonly errorCode: string | null | undefined;
         readonly id: string;
         readonly message: string | null | undefined;
         readonly phase: string;
-        readonly result: SchedulingResult;
         readonly session: {
           readonly entityId: string;
           readonly metadata: {
@@ -105,6 +104,7 @@ export type SchedulingFailuresPanelQuery$data = {
             };
           } | null | undefined;
         } | null | undefined;
+        readonly " $fragmentSpreads": FragmentRefs<"BAISchedulingHistoryNodesFragment">;
       };
     }>;
   } | null | undefined;
@@ -274,45 +274,31 @@ v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "result",
+  "name": "phase",
   "storageKey": null
 },
 v17 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "phase",
+  "name": "errorCode",
   "storageKey": null
 },
 v18 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "errorCode",
+  "name": "message",
   "storageKey": null
 },
 v19 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "message",
-  "storageKey": null
-},
-v20 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "createdAt",
-  "storageKey": null
-},
-v21 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
   "name": "entityId",
   "storageKey": null
 },
-v22 = [
+v20 = [
   {
     "alias": null,
     "args": null,
@@ -321,24 +307,24 @@ v22 = [
     "storageKey": null
   }
 ],
-v23 = {
+v21 = {
   "alias": null,
   "args": null,
   "concreteType": "SessionV2MetadataInfo",
   "kind": "LinkedField",
   "name": "metadata",
   "plural": false,
-  "selections": (v22/*: any*/),
+  "selections": (v20/*: any*/),
   "storageKey": null
 },
-v24 = {
+v22 = {
   "alias": null,
   "args": null,
   "concreteType": "ProjectBasicInfo",
   "kind": "LinkedField",
   "name": "basicInfo",
   "plural": false,
-  "selections": (v22/*: any*/),
+  "selections": (v20/*: any*/),
   "storageKey": null
 };
 return {
@@ -389,8 +375,11 @@ return {
                   (v16/*: any*/),
                   (v17/*: any*/),
                   (v18/*: any*/),
-                  (v19/*: any*/),
-                  (v20/*: any*/),
+                  {
+                    "args": null,
+                    "kind": "FragmentSpread",
+                    "name": "BAISchedulingHistoryNodesFragment"
+                  },
                   {
                     "alias": null,
                     "args": null,
@@ -399,8 +388,8 @@ return {
                     "name": "session",
                     "plural": false,
                     "selections": [
+                      (v19/*: any*/),
                       (v21/*: any*/),
-                      (v23/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -409,7 +398,7 @@ return {
                         "name": "project",
                         "plural": false,
                         "selections": [
-                          (v24/*: any*/)
+                          (v22/*: any*/)
                         ],
                         "storageKey": null
                       }
@@ -476,8 +465,48 @@ return {
                   (v16/*: any*/),
                   (v17/*: any*/),
                   (v18/*: any*/),
-                  (v19/*: any*/),
-                  (v20/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "attempts",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "createdAt",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "updatedAt",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "fromStatus",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "toStatus",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "result",
+                    "storageKey": null
+                  },
                   {
                     "alias": null,
                     "args": null,
@@ -486,8 +515,8 @@ return {
                     "name": "session",
                     "plural": false,
                     "selections": [
+                      (v19/*: any*/),
                       (v21/*: any*/),
-                      (v23/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -496,7 +525,7 @@ return {
                         "name": "project",
                         "plural": false,
                         "selections": [
-                          (v24/*: any*/),
+                          (v22/*: any*/),
                           (v15/*: any*/)
                         ],
                         "storageKey": null
@@ -517,16 +546,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "61743511da63741e7e87fa3141680961",
+    "cacheID": "6bd64a2e48366e3e2e3b778d192a52a6",
     "id": null,
     "metadata": {},
     "name": "SchedulingFailuresPanelQuery",
     "operationKind": "query",
-    "text": "query SchedulingFailuresPanelQuery(\n  $filter: SessionSchedulingHistoryFilter!\n  $failure: SessionSchedulingHistoryFilter!\n  $giveUp: SessionSchedulingHistoryFilter!\n  $expired: SessionSchedulingHistoryFilter!\n  $needRetry: SessionSchedulingHistoryFilter!\n  $limit: Int!\n  $offset: Int!\n) {\n  failure: adminSessionSchedulingHistories(filter: $failure, limit: 1) {\n    count\n  }\n  giveUp: adminSessionSchedulingHistories(filter: $giveUp, limit: 1) {\n    count\n  }\n  expired: adminSessionSchedulingHistories(filter: $expired, limit: 1) {\n    count\n  }\n  needRetry: adminSessionSchedulingHistories(filter: $needRetry, limit: 1) {\n    count\n  }\n  histories: adminSessionSchedulingHistories(filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        result\n        phase\n        errorCode\n        message\n        createdAt\n        session {\n          entityId\n          metadata {\n            name\n          }\n          project {\n            basicInfo {\n              name\n            }\n            id\n          }\n          id\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query SchedulingFailuresPanelQuery(\n  $filter: SessionSchedulingHistoryFilter!\n  $failure: SessionSchedulingHistoryFilter!\n  $giveUp: SessionSchedulingHistoryFilter!\n  $expired: SessionSchedulingHistoryFilter!\n  $needRetry: SessionSchedulingHistoryFilter!\n  $limit: Int!\n  $offset: Int!\n) {\n  failure: adminSessionSchedulingHistories(filter: $failure, limit: 1) {\n    count\n  }\n  giveUp: adminSessionSchedulingHistories(filter: $giveUp, limit: 1) {\n    count\n  }\n  expired: adminSessionSchedulingHistories(filter: $expired, limit: 1) {\n    count\n  }\n  needRetry: adminSessionSchedulingHistories(filter: $needRetry, limit: 1) {\n    count\n  }\n  histories: adminSessionSchedulingHistories(filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        phase\n        errorCode\n        message\n        ...BAISchedulingHistoryNodesFragment\n        session {\n          entityId\n          metadata {\n            name\n          }\n          project {\n            basicInfo {\n              name\n            }\n            id\n          }\n          id\n        }\n      }\n    }\n  }\n}\n\nfragment BAISchedulingHistoryNodesFragment on SessionSchedulingHistory {\n  id\n  attempts\n  createdAt\n  updatedAt\n  fromStatus\n  toStatus\n  message\n  phase\n  result\n}\n"
   }
 };
 })();
 
-(node as any).hash = "57261447b6c165693d41caca21a4b938";
+(node as any).hash = "b2c7138dfa96ce16b31d3bdc185df21d";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9dabdbf9bd84bd0e5ad498bb290ddfe7>>
+ * @generated SignedSource<<0c53d2f7fc55a6c2cac3b18aad5454c3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -29,6 +29,7 @@ export type FairSharePanelQuery$data = {
           };
         } | null | undefined;
         readonly spec: {
+          readonly usesDefault: boolean;
           readonly weight: any;
         };
       };
@@ -111,6 +112,13 @@ v5 = {
       "args": null,
       "kind": "ScalarField",
       "name": "weight",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "usesDefault",
       "storageKey": null
     }
   ],
@@ -284,16 +292,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "ed092c0b1378c6bf36ed1f33e7d06c4a",
+    "cacheID": "abc6d2bf26f319fdaa1abd0253b2a537",
     "id": null,
     "metadata": {},
     "name": "FairSharePanelQuery",
     "operationKind": "query",
-    "text": "query FairSharePanelQuery(\n  $resourceGroupName: String!\n  $domainName: String!\n) {\n  projects: rgProjectFairShares(scope: {resourceGroupName: $resourceGroupName, domainName: $domainName}, orderBy: [{field: FAIR_SHARE_FACTOR, direction: ASC}], limit: 50) {\n    count\n    edges {\n      node {\n        id\n        spec {\n          weight\n        }\n        calculationSnapshot {\n          fairShareFactor\n          normalizedUsage\n        }\n        project {\n          basicInfo {\n            name\n          }\n          id\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query FairSharePanelQuery(\n  $resourceGroupName: String!\n  $domainName: String!\n) {\n  projects: rgProjectFairShares(scope: {resourceGroupName: $resourceGroupName, domainName: $domainName}, orderBy: [{field: FAIR_SHARE_FACTOR, direction: ASC}], limit: 50) {\n    count\n    edges {\n      node {\n        id\n        spec {\n          weight\n          usesDefault\n        }\n        calculationSnapshot {\n          fairShareFactor\n          normalizedUsage\n        }\n        project {\n          basicInfo {\n            name\n          }\n          id\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "a54527b48de4d71ba9ef69b0e3a476aa";
+(node as any).hash = "f40cdc142a9d929d07a847a0b03dfa0c";
 
 export default node;

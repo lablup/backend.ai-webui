@@ -810,7 +810,6 @@
       "AgentsTooltip": "Kümedeki tüm ajanlar duruma göre, ajanlar kaynak grubu ve konteynerleriyle birlikte.",
       "Availability": "Kullanılabilirlik",
       "Available": "Kullanılabilir",
-      "ClientIP": "İstemci IP",
       "ClusterAuditLogTooltip": "Kartın zaman aralığında tüm kümenin denetim günlüğü. Etki alanı kapsamı içindeki oturumları, klasörleri ve dağıtımları dışarıda bırakacağından bu kart tüm etki alanlarını okur.",
       "ContainerRegistries": "Konteyner kayıt defterleri",
       "Containers": "Konteynerler",
@@ -834,14 +833,12 @@
       "FailuresOnly": "Yalnızca hataları göster",
       "FairShareTooltip": "Her projenin kartın kaynak gruplarındaki (varsayılan: başlıktaki grup) adil paylaşımı, zamanlayıcının son hesaplamasından. Düşük adil paylaşım faktörü daha yoğun yakın kullanım demektir.",
       "FolderLimit": "Sınır: {{max}}",
-      "Global": "Genel",
       "Healthy": "Sağlıklı",
       "InactiveKeypairs": "Etkin olmayan anahtar çiftleri",
       "Insufficient": "Yetersiz kaynak",
       "Keypairs": "Anahtar çiftleri",
       "KeypairsAndLogins": "Anahtar çiftleri ve oturum açmalar",
       "KeypairsAndLoginsTooltip": "Tüm kümenin anahtar çiftleri ve etkin olmayanlar ile geçerli etki alanının kartın zaman aralığındaki başarısız oturum açmaları, önceki aralığa göre.",
-      "LoginResult": "Sonuç",
       "LongRunningSessions": "Uzun Süredir Çalışan Oturumlar",
       "LongRunningSessionsTooltip": "Kartın zaman aralığından önce başlamış, projenin çalışan oturumları, en eski önce.",
       "MemoryGiBHours": "Bellek (GiB-saat)",
@@ -897,8 +894,7 @@
       "Unlimited": "Sınırsız",
       "UsageRowsCapped": "{{total}} satırdan en yeni {{shown}} tanesi gösteriliyor.",
       "VsPreviousRange": "önceki aralığa göre",
-      "Waiting": "Bekleme",
-      "Weight": "Ağırlık"
+      "Waiting": "Bekleme"
     },
     "catalog": {
       "group": {

@@ -810,7 +810,6 @@
       "AgentsTooltip": "Tous les agents du cluster par statut, et les agents avec leur groupe de ressources et leurs conteneurs.",
       "Availability": "Disponibilité",
       "Available": "Disponible",
-      "ClientIP": "IP du client",
       "ClusterAuditLogTooltip": "Journal d'audit de tout le cluster sur la période de la carte. Une portée de domaine omettrait ses sessions, dossiers et déploiements, cette carte lit donc tous les domaines.",
       "ContainerRegistries": "Registres de conteneurs",
       "Containers": "Conteneurs",
@@ -834,14 +833,12 @@
       "FailuresOnly": "Afficher les échecs uniquement",
       "FairShareTooltip": "Le partage équitable de chaque projet dans les groupes de ressources de la carte (par défaut celui de l'en-tête), d'après le dernier calcul du planificateur. Un facteur de partage équitable plus bas signifie une utilisation récente plus forte.",
       "FolderLimit": "Limite : {{max}}",
-      "Global": "Global",
       "Healthy": "Sain",
       "InactiveKeypairs": "Paires de clés inactives",
       "Insufficient": "Ressources insuffisantes",
       "Keypairs": "Paires de clés",
       "KeypairsAndLogins": "Paires de clés et connexions",
       "KeypairsAndLoginsTooltip": "Paires de clés de tout le cluster et les inactives, et les connexions échouées du domaine actuel sur la période de la carte par rapport à la précédente.",
-      "LoginResult": "Résultat",
       "LongRunningSessions": "Sessions de longue durée",
       "LongRunningSessionsTooltip": "Sessions en cours du projet démarrées avant la période de la carte, les plus anciennes d'abord.",
       "MemoryGiBHours": "Mémoire (Gio-heures)",
@@ -897,8 +894,7 @@
       "Unlimited": "Illimité",
       "UsageRowsCapped": "Affichage des {{shown}} lignes les plus récentes sur {{total}}.",
       "VsPreviousRange": "par rapport à la période précédente",
-      "Waiting": "Attente",
-      "Weight": "Poids"
+      "Waiting": "Attente"
     },
     "catalog": {
       "group": {

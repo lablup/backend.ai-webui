@@ -797,7 +797,6 @@
       "AgentsTooltip": "Every agent of the cluster by status, and the agents with their resource group and containers.",
       "Availability": "Availability",
       "Available": "Available",
-      "ClientIP": "Client IP",
       "ClusterAuditLogTooltip": "Audit log of the whole cluster in the card's time range. A domain scope would leave out the sessions, folders and deployments in it, so this card reads every domain.",
       "ContainerRegistries": "Container Registries",
       "Containers": "Containers",
@@ -821,14 +820,12 @@
       "FailuresOnly": "Show failures only",
       "FairShareTooltip": "Each project's Fair Share in the card's resource groups (the header's by default), from the scheduler's last calculation. A lower Fair Share Factor means heavier recent use.",
       "FolderLimit": "Limit: {{max}}",
-      "Global": "Global",
       "Healthy": "Healthy",
       "InactiveKeypairs": "Inactive keypairs",
       "Insufficient": "Not enough resources",
       "Keypairs": "Keypairs",
       "KeypairsAndLogins": "Keypairs and Sign-ins",
       "KeypairsAndLoginsTooltip": "Keypairs of the whole cluster and the inactive ones, and the current domain's failed sign-ins in the card's time range against the previous range.",
-      "LoginResult": "Result",
       "LongRunningSessions": "Long-running Sessions",
       "LongRunningSessionsTooltip": "The project's running sessions that started before the card's time range, oldest first.",
       "MemoryGiBHours": "Memory (GiB-hours)",
@@ -884,8 +881,7 @@
       "Unlimited": "Unlimited",
       "UsageRowsCapped": "Showing the {{shown}} newest of {{total}} rows.",
       "VsPreviousRange": "vs. previous range",
-      "Waiting": "Waiting",
-      "Weight": "Weight"
+      "Waiting": "Waiting"
     },
     "catalog": {
       "group": {

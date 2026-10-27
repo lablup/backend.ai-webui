@@ -77,7 +77,7 @@ const RegistryList: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
       columns={[
         {
           key: 'registryName',
-          title: t('registry.Hostname'),
+          title: t('registry.RegistryName'),
           render: (_value, row) => row.registryName,
         },
         {
@@ -88,16 +88,17 @@ const RegistryList: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
         {
           key: 'type',
           title: t('registry.Type'),
-          render: (_value, row) => <Token label={row.type} />,
+          render: (_value, row) => row.type,
         },
         {
           key: 'project',
-          title: t('registry.ProjectName'),
-          render: (_value, row) => row.project ?? '-',
+          title: t('registry.Project'),
+          render: (_value, row) =>
+            row.project ? <Token label={row.project} /> : null,
         },
         {
           key: 'isGlobal',
-          title: t('dashboard.card.Global'),
+          title: t('registry.Global'),
           render: (_value, row) => <BAIBooleanToken value={!!row.isGlobal} />,
         },
       ]}

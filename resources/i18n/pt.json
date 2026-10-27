@@ -810,7 +810,6 @@
       "AgentsTooltip": "Todos os agentes do cluster por estado, e os agentes com o seu grupo de recursos e contentores.",
       "Availability": "Disponibilidade",
       "Available": "Disponível",
-      "ClientIP": "IP do cliente",
       "ClusterAuditLogTooltip": "Registo de auditoria de todo o cluster no período do cartão. Um âmbito de domínio omitiria as sessões, pastas e implementações nele, por isso este cartão lê todos os domínios.",
       "ContainerRegistries": "Registos de contentores",
       "Containers": "Contentores",
@@ -834,14 +833,12 @@
       "FailuresOnly": "Mostrar apenas falhas",
       "FairShareTooltip": "A cota justa de cada projeto nos grupos de recursos do cartão (por predefinição o do cabeçalho), do último cálculo do agendador. Um fator de compartilhamento justo mais baixo indica maior uso recente.",
       "FolderLimit": "Limite: {{max}}",
-      "Global": "Global",
       "Healthy": "Saudável",
       "InactiveKeypairs": "Pares de chaves inativos",
       "Insufficient": "Recursos insuficientes",
       "Keypairs": "Pares de chaves",
       "KeypairsAndLogins": "Pares de chaves e inícios de sessão",
       "KeypairsAndLoginsTooltip": "Pares de chaves de todo o cluster e os inativos, e os inícios de sessão falhados do domínio atual no período do cartão face ao anterior.",
-      "LoginResult": "Resultado",
       "LongRunningSessions": "Sessões de longa duração",
       "LongRunningSessionsTooltip": "Sessões em execução do projeto iniciadas antes do intervalo do cartão, as mais antigas primeiro.",
       "MemoryGiBHours": "Memória (GiB-hora)",
@@ -897,8 +894,7 @@
       "Unlimited": "Ilimitado",
       "UsageRowsCapped": "A mostrar as {{shown}} linhas mais recentes de {{total}}.",
       "VsPreviousRange": "vs. período anterior",
-      "Waiting": "Espera",
-      "Weight": "Peso"
+      "Waiting": "Espera"
     },
     "catalog": {
       "group": {
