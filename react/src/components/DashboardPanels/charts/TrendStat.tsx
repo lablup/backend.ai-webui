@@ -96,13 +96,19 @@ const TrendStat: React.FC<TrendStatProps> = ({
   // The sparkline keeps its own point tooltip, so it sits outside the stat's.
   return (
     <BAIFlex direction="column" align="stretch" gap="xs">
-      <Tooltip content={deltaExplanation} hasHoverIndication={false}>
+      {/* Anchored to the text's own width so the tooltip opens beside the number, not mid-card. */}
+      <Tooltip
+        content={deltaExplanation}
+        placement="end"
+        hasHoverIndication={false}
+      >
         <Stat
           size="md"
           {...statProps}
           delta={statDelta}
           media={undefined}
           tabIndex={0}
+          style={{ alignSelf: 'flex-start', width: 'fit-content' }}
         />
       </Tooltip>
       {media}
