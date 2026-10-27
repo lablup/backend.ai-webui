@@ -7,7 +7,7 @@ import jsoncParser from 'jsonc-eslint-parser';
 // Shared base for `no-restricted-imports` so the per-file allowlist blocks
 // below can re-declare the rule (flat-config rule configs replace, not merge)
 // without duplicating these entries.
-const restrictedImportPatterns = [
+const baseRestrictedImportPatterns = [
   // `locale` and `theme` are published subpath exports, not deep reaches into internals.
   {
     group: ['backend.ai-ui/*', '!backend.ai-ui/locale', '!backend.ai-ui/theme'],
@@ -26,6 +26,15 @@ const restrictedImportPatterns = [
     ],
     message:
       'Page-local modules are private to their page folder; move the module to react/src (or BUI / ui-common) once shared code needs it (ADR 0024).',
+  },
+];
+const restrictedImportPatterns = [
+  ...baseRestrictedImportPatterns,
+  // ADR 0017: only the lazily loaded analytics component may reach posthog-js.
+  {
+    group: ['posthog-js', 'posthog-js/*'],
+    message:
+      'posthog-js is imported only by src/components/ProductAnalytics.tsx, which routes.tsx loads behind VITE_ANALYTICS_BUILD (ADR 0017).',
   },
 ];
 // `no-restricted-imports` sees only static imports and re-exports.
@@ -260,6 +269,19 @@ export default [
         'error',
         {
           patterns: restrictedImportPatterns,
+          paths: restrictedImportPaths,
+        },
+      ],
+    },
+  },
+
+  {
+    files: ['src/components/ProductAnalytics.tsx'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: baseRestrictedImportPatterns,
           paths: restrictedImportPaths,
         },
       ],
