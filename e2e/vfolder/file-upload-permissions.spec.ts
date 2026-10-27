@@ -22,14 +22,15 @@ const openFolderExplorer = async (
   return modal;
 };
 
-// Keep serial: the permission-change tests (currently fixme — FR-3110) reuse
-// the RW/RO folders created by the preceding creation tests in this block.
+// Since #10647 the create modal offers no mount permission: every folder is
+// created read-only for shared users, and the default is changed from the
+// share modal's folder settings card. Keep serial: the change test (fixme —
+// FR-3110) reuses the folder created by the first test.
 test.describe.serial(
   'Upload Permission Controls',
   { tag: ['@critical', '@vfolder', '@functional'] },
   () => {
-    const rwFolderName = 'e2e-test-perm-rw-' + Date.now();
-    const roFolderName = 'e2e-test-perm-ro-' + Date.now();
+    const folderName = 'e2e-test-perm-' + Date.now();
 
     test.beforeEach(async ({ page, request }) => {
       await loginAsUser(page, request);
@@ -43,53 +44,56 @@ test.describe.serial(
       const page = await context.newPage();
       await loginAsUser(page, request);
 
-      for (const folderName of [rwFolderName, roFolderName]) {
-        await cleanupVFolderSafely(page, folderName);
-      }
+      await cleanupVFolderSafely(page, folderName);
 
       await context.close();
     });
 
-    test('User can create RW folder and verify permission', async ({
+    test('User creates a folder and it is read-only for shared users', async ({
       page,
     }) => {
-      await createVFolderAndVerify(page, rwFolderName, 'general', 'user', 'rw');
-      const modal = await openFolderExplorer(page, rwFolderName);
-      await modal.verifyPermission('Read & Write');
+      await createVFolderAndVerify(page, folderName);
+
+      // The list shows the shared-user mount permission, read-only by default.
+      await navigateTo(page, 'data');
+      const folderRow = page.getByRole('row', {
+        name: new RegExp(folderName),
+      });
+      await expect(folderRow.getByText('Read only').first()).toBeVisible();
+
+      // The explorer no longer shows or edits the mount permission; the owner
+      // still writes to the folder.
+      const modal = await openFolderExplorer(page, folderName);
+      await modal.verifyFolderDetails();
+      await expect(await modal.getUploadButton()).toBeEnabled();
       await modal.close();
     });
 
     // FIXME: Server returns "Cannot read properties of null (reading 'type')" on update-options API
-    test.fixme('User can change permission from RW to RO', async ({ page }) => {
-      const modal = await openFolderExplorer(page, rwFolderName);
-      await modal.changePermission('Read only');
-      await modal.close();
-
-      // Re-open and verify the permission persisted
-      const modal2 = await openFolderExplorer(page, rwFolderName);
-      await modal2.verifyPermission('Read only');
-      await modal2.close();
-    });
-
-    test('User can create RO folder and verify permission', async ({
+    test.fixme('User can change the default mount permission from the share modal', async ({
       page,
     }) => {
-      await createVFolderAndVerify(page, roFolderName, 'general', 'user', 'ro');
-      const modal = await openFolderExplorer(page, roFolderName);
-      await modal.verifyPermission('Read only');
-      await modal.close();
-    });
-
-    // FIXME: Server returns "Cannot read properties of null (reading 'type')" on update-options API
-    test.fixme('User can change permission from RO to RW', async ({ page }) => {
-      const modal = await openFolderExplorer(page, roFolderName);
-      await modal.changePermission('Read & Write');
-      await modal.close();
-
-      // Re-open and verify the permission persisted
-      const modal2 = await openFolderExplorer(page, roFolderName);
-      await modal2.verifyPermission('Read & Write');
-      await modal2.close();
+      // Open the folder's share modal from the row's share action, press Edit
+      // on the folder settings card, pick "Read & Write" and save; the list
+      // row then shows "Read & Write".
+      await navigateTo(page, 'data');
+      const folderRow = page.getByRole('row', {
+        name: new RegExp(folderName),
+      });
+      await folderRow.getByRole('button', { name: 'Share' }).click();
+      const shareModal = page
+        .getByRole('dialog')
+        .filter({ hasText: 'Share Folder' });
+      await shareModal.getByRole('button', { name: 'Edit' }).click();
+      const editModal = page
+        .getByRole('dialog')
+        .filter({ hasText: /default mount permission/i })
+        .last();
+      await editModal.getByLabel('Read & Write', { exact: true }).click();
+      await editModal.getByRole('button', { name: 'Save' }).click();
+      await expect(
+        shareModal.getByText('Read & Write', { exact: true }).first(),
+      ).toBeVisible();
     });
   },
 );

@@ -3,9 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  Share modal on the 26.9 model: an invite is an entity share capped at the
- bits the share permission selector picks, the invitee's mount level is a
- vfolder mount policy — two axes, two controls. See the TODO(needs-backend)
- on `handleInvite`.
+ bits the share permission selector picks; a shared user mounts at the
+ folder's default mount permission (edited from the folder settings card,
+ #10647) unless a vfolder mount policy of their own, set in the table, says
+ otherwise. See the TODO(needs-backend) on `handleInvite`.
 */
 import { InviteFolderSettingModalCancelShareMutation } from '../__generated__/InviteFolderSettingModalCancelShareMutation.graphql';
 import { InviteFolderSettingModalCreateShareMutation } from '../__generated__/InviteFolderSettingModalCreateShareMutation.graphql';
@@ -19,18 +20,25 @@ import { App } from '../app-shim';
 import { localeCompare } from '../helper';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
-import { Field } from '@lablup/ui-common/Field';
+import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
+import FolderDefaultMountPermissionModal, {
+  type FolderMountLevel,
+} from './FolderDefaultMountPermissionModal';
+import { Button } from '@lablup/ui-common/Button';
 import { HStack, StackItem, VStack } from '@lablup/ui-common/Stack';
 import { Heading } from '@lablup/ui-common/Text';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIBadge,
   BAIButton,
+  BAICard,
   BAIEntitySharePermissionSelector,
   type BAIEntitySharePermissionBit,
   type BAIEntitySharePermissionPreset,
   BAIModal,
   type BAIModalProps,
+  BAIMetadataList,
+  BAIMetadataListItem,
   BAINameActionCell,
   type BAINameActionCellAction,
   BAIQuestionIconWithTooltip,
@@ -48,14 +56,14 @@ import {
   BAISelector,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { CircleXIcon, MailXIcon } from 'lucide-react';
-import React, { Suspense, useDeferredValue, useId, useState } from 'react';
+import { CircleXIcon, MailXIcon, PencilIcon } from 'lucide-react';
+import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 const VFOLDER_ENTITY_TYPE = 'vfolder';
 
-type MountLevel = 'ro' | 'rw';
+type MountLevel = FolderMountLevel;
 
 type RecipientData =
   | { kind: 'user'; userId: string; email: string }
@@ -168,8 +176,17 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
     graphql`
       fragment InviteFolderSettingModalFragment on VFolder {
         id
+        metadata {
+          name
+          usageMode
+        }
         accessControl {
           permission
+          ownershipType
+        }
+        ownership {
+          userId
+          projectId
         }
       }
     `,
@@ -191,9 +208,17 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
       {baiModalProps.open && vfolder ? (
         <InviteFolderSettingModalBody
           vfolderId={toLocalId(vfolder.id)}
+          folderName={vfolder.metadata?.name ?? ''}
           defaultMountLevel={
             toMountLevel(vfolder.accessControl?.permission) ?? 'ro'
           }
+          // Model project folders stay read-only (FR-1290).
+          restrictToReadOnly={
+            vfolder.metadata?.usageMode === 'MODEL' &&
+            vfolder.accessControl?.ownershipType === 'GROUP'
+          }
+          ownerUserId={vfolder.ownership?.userId ?? null}
+          ownerProjectId={vfolder.ownership?.projectId ?? null}
         />
       ) : null}
     </BAIModal>
@@ -202,8 +227,19 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
 
 const InviteFolderSettingModalBody: React.FC<{
   vfolderId: string;
+  folderName: string;
   defaultMountLevel: MountLevel;
-}> = ({ vfolderId, defaultMountLevel }) => {
+  restrictToReadOnly: boolean;
+  ownerUserId: string | null;
+  ownerProjectId: string | null;
+}> = ({
+  vfolderId,
+  folderName,
+  defaultMountLevel,
+  restrictToReadOnly,
+  ownerUserId,
+  ownerProjectId,
+}) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -211,30 +247,23 @@ const InviteFolderSettingModalBody: React.FC<{
   const [currentUser] = useCurrentUserInfo();
   const { accessibleProjects } = useAccessibleProjects();
   const memberProjectIds = _.compact(_.map(accessibleProjects, 'id'));
-  const { options: mountLevelOptions, labelOf: mountLevelLabel } =
-    useMountLevelLabels();
-  const mountLevelInputId = useId();
+  const { labelOf: mountLevelLabel } = useMountLevelLabels();
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
   const [recipient, setRecipient] = useState<RecipientData | null>(null);
-  const [mountLevel, setMountLevel] = useState<MountLevel>(defaultMountLevel);
   const [permissionBits, setPermissionBits] = useState<
     Array<BAIEntitySharePermissionBit>
   >([...sharePresetBits(defaultMountLevel)]);
   const [recipientError, setRecipientError] = useState<string | null>(null);
+  const [isDefaultMountModalOpen, setIsDefaultMountModalOpen] = useState(false);
 
-  const setMountPolicy =
-    useMutationWithPromise<InviteFolderSettingModalSetMountPolicyMutation>(
-      SetMountPolicyMutation,
-    );
   const createShare =
     useMutationWithPromise<InviteFolderSettingModalCreateShareMutation>(
       CreateShareMutation,
     );
 
   const inviteTarget = recipient;
-  const isEmailInvite = inviteTarget?.kind === 'email';
 
   const handleInvite = async () => {
     if (!inviteTarget) {
@@ -243,9 +272,9 @@ const InviteFolderSettingModalBody: React.FC<{
     }
     setRecipientError(null);
     try {
-      // The offer is an entity share capped at the picked bits; the mount
-      // level is a policy row, which an address without an account only
-      // gets at the folder default once it has one.
+      // The offer is an entity share capped at the picked bits; the invitee
+      // mounts at the folder default until a policy row is set for them in
+      // the table below.
       // TODO(needs-backend): the manager rejects the OneOf `recipient` input
       // with one key set (BA-8482), so the invite fails until that lands.
       await createShare({
@@ -259,15 +288,6 @@ const InviteFolderSettingModalBody: React.FC<{
           permissions: permissionBits,
         },
       });
-      if (inviteTarget.kind === 'user') {
-        await setMountPolicy({
-          vfolderId,
-          input: {
-            userId: inviteTarget.userId,
-            permission: toMountPermission(mountLevel),
-          },
-        });
-      }
       message.success(t('data.invitation.Invited'));
       setRecipient(null);
       updateFetchKey();
@@ -278,6 +298,22 @@ const InviteFolderSettingModalBody: React.FC<{
 
   return (
     <VStack gap={6} align="stretch">
+      <Suspense fallback={<BAISkeleton />}>
+        <FolderSharingSettingsCard
+          folderName={folderName}
+          defaultMountLevel={defaultMountLevel}
+          ownerUserId={ownerUserId}
+          ownerProjectId={ownerProjectId}
+          onEdit={() => setIsDefaultMountModalOpen(true)}
+        />
+      </Suspense>
+      <FolderDefaultMountPermissionModal
+        open={isDefaultMountModalOpen}
+        vfolderId={vfolderId}
+        mountLevel={defaultMountLevel}
+        restrictToReadOnly={restrictToReadOnly}
+        onRequestClose={() => setIsDefaultMountModalOpen(false)}
+      />
       <VStack gap={3} align="stretch">
         <Heading level={5}>{t('data.folders.InviteUsers')}</Heading>
         <VStack gap={1} align="stretch">
@@ -339,36 +375,16 @@ const InviteFolderSettingModalBody: React.FC<{
               />
             </StackItem>
             <StackItem size="static">
-              <Field
-                label={t('data.folders.MountPermission')}
-                inputID={mountLevelInputId}
-                isDisabled={isEmailInvite}
-              >
-                <BAISelector
-                  id={mountLevelInputId}
-                  aria-label={t('data.folders.MountPermission')}
-                  placement="below"
-                  width={150}
-                  options={mountLevelOptions}
-                  value={mountLevel}
-                  onChange={(next) => setMountLevel(next as MountLevel)}
-                  disabled={isEmailInvite}
-                />
-              </Field>
-            </StackItem>
-            <StackItem size="static">
               <BAIButton type="primary" action={handleInvite}>
                 {t('data.folders.Invite')}
               </BAIButton>
             </StackItem>
           </HStack>
-          {isEmailInvite && (
-            <BAIText type="warning" size="sm">
-              {t('data.folders.EmailInviteUsesSharedMountPermission', {
-                permission: mountLevelLabel(defaultMountLevel),
-              })}
-            </BAIText>
-          )}
+          <BAIText type="secondary" size="sm">
+            {t('data.folders.InviteStartsWithDefaultMountPermission', {
+              permission: mountLevelLabel(defaultMountLevel),
+            })}
+          </BAIText>
         </VStack>
       </VStack>
 
@@ -390,6 +406,73 @@ const InviteFolderSettingModalBody: React.FC<{
         </Suspense>
       </VStack>
     </VStack>
+  );
+};
+
+// The folder-level sharing settings: what the folder is and how a shared user
+// mounts it by default. Editing is for the owner, a superadmin or an admin of
+// the owning project; domain admins have no per-project ownership rights.
+const FolderSharingSettingsCard: React.FC<{
+  folderName: string;
+  defaultMountLevel: MountLevel;
+  ownerUserId: string | null;
+  ownerProjectId: string | null;
+  onEdit: () => void;
+}> = ({
+  folderName,
+  defaultMountLevel,
+  ownerUserId,
+  ownerProjectId,
+  onEdit,
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  const [currentUser] = useCurrentUserInfo();
+  const { isSuperAdmin, projectAdminIds } = useCurrentUserProjectRoles();
+  const { labelOf: mountLevelLabel } = useMountLevelLabels();
+
+  const canEdit =
+    (!!ownerUserId && ownerUserId === currentUser?.uuid) ||
+    isSuperAdmin ||
+    (!!ownerProjectId && projectAdminIds.includes(ownerProjectId));
+
+  return (
+    <BAICard
+      size="small"
+      title={t('data.folders.FolderSharingSettings')}
+      extra={
+        canEdit ? (
+          <Button
+            variant="secondary"
+            size="sm"
+            icon={<PencilIcon size="1em" />}
+            label={t('button.Edit')}
+            onClick={onEdit}
+            data-testid="edit-default-mount-permission"
+          />
+        ) : undefined
+      }
+    >
+      <BAIMetadataList columns="single">
+        <BAIMetadataListItem label={t('data.folders.Name')}>
+          {folderName}
+        </BAIMetadataListItem>
+        <BAIMetadataListItem
+          label={
+            <HStack gap={1} align="center">
+              {t('data.folders.DefaultMountPermission')}
+              <BAIQuestionIconWithTooltip
+                title={t('data.folders.SharedMountPermissionDesc')}
+              />
+            </HStack>
+          }
+        >
+          <BAIText data-testid="default-mount-permission">
+            {mountLevelLabel(defaultMountLevel)}
+          </BAIText>
+        </BAIMetadataListItem>
+      </BAIMetadataList>
+    </BAICard>
   );
 };
 

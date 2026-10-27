@@ -5,21 +5,12 @@
  Ticket 16 — converted to Astryx. antd `Descriptions bordered size="small"`
  becomes `MetadataList columns="single"` (MAPPING §4: `bordered`/`size` have
  no destination and are DROPPED, defaults-first). The status tag routes
- through the repo-global ticket-13 lookup, the permission select becomes an
- Astryx `Selector`, and copyable values use `BAIText copyable`.
-
- PILOT-DECISIONs:
- - The disabled 'rw' option's inline Tooltip is dropped — Astryx `Selector`
-   options take string labels; the client-side guard in `onChange` still
-   blocks the restricted transition.
+ through the repo-global ticket-13 lookup and copyable values use
+ `BAIText copyable`. The mount permission is edited from the share modal
+ (#10647), not here.
 */
 import { VFolderNodeDescriptionV2Fragment$key } from '../__generated__/VFolderNodeDescriptionV2Fragment.graphql';
-import { VFolderNodeDescriptionV2PermissionRefreshQuery } from '../__generated__/VFolderNodeDescriptionV2PermissionRefreshQuery.graphql';
-import { App } from '../app-shim';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
-import { useTanMutation } from '../hooks/reactQueryAlias';
-import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
 import { useVirtualFolderPathV2 } from '../hooks/useVirtualFolderNodePathV2';
 import { formatBinarySizeInfo } from './VFolderNodesV2';
 import VirtualFolderPathV2 from './VirtualFolderNodeItems/VirtualFolderPathV2';
@@ -30,10 +21,8 @@ import {
   BAIMetadataList,
   BAIMetadataListItem,
   filterOutEmpty,
-  useErrorMessageResolver,
   badgeVariantForStatus,
   BAIText,
-  BAISelector,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -43,14 +32,9 @@ import {
   UserIcon,
   UsersIcon,
 } from 'lucide-react';
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  graphql,
-  fetchQuery,
-  useFragment,
-  useRelayEnvironment,
-} from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface VFolderNodeDescriptionV2Props {
   vfolderNodeFrgmt: VFolderNodeDescriptionV2Fragment$key;
@@ -62,31 +46,11 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { message } = App.useApp();
-  const { getErrorMessage } = useErrorMessageResolver();
-
-  const relayEnv = useRelayEnvironment();
-  const baiClient = useSuspendedBackendaiClient();
   const [currentUser] = useCurrentUserInfo();
-  // Not `useEffectiveAdminRole` — it resolves its target from the ambient
-  // project. Authorization here is derived from the folder's own ownership.
-  const { isSuperAdmin, projectAdminIds } = useCurrentUserProjectRoles();
-
-  // TODO(needs-backend): the mount-permission update still goes through the
-  // legacy REST endpoint (`baiClient.vfolder.update_folder`) because the V2
-  // GraphQL schema does not yet expose a corresponding mutation. Replace this
-  // with a V2 mutation once the backend provides one — see FR-2619 follow-up.
-  const updateMutation = useTanMutation({
-    mutationFn: ({ permission, id }: { permission: string; id: string }) => {
-      return baiClient.vfolder.update_folder({ permission }, id);
-    },
-  });
-
   const vfolderNode = useFragment(
     graphql`
       fragment VFolderNodeDescriptionV2Fragment on VFolder {
         id
-        entityId
         host
         status
         unmanagedPath
@@ -97,7 +61,6 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
           createdAt
         }
         accessControl {
-          permission
           ownershipType
         }
         quota {
@@ -107,8 +70,6 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
           }
         }
         ownership {
-          userId
-          projectId
           creatorId
           user {
             basicInfo {
@@ -121,7 +82,6 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
             }
           }
         }
-        ...VFolderPermissionCellV2Fragment
         ...useVirtualFolderNodePathV2Fragment
       }
     `,
@@ -129,31 +89,6 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
   );
 
   const { vfolderPath } = useVirtualFolderPathV2(vfolderNode);
-
-  const vfolderId = vfolderNode.entityId;
-
-  // `accessControl.permission` is the folder's mount permission, not the
-  // caller's rights on it; NONE leaves the selector empty instead of guessing.
-  const mountPermission = vfolderNode.accessControl?.permission;
-  const currentSelectPermission =
-    mountPermission === 'READ_WRITE' || mountPermission === 'RW_DELETE'
-      ? 'rw'
-      : mountPermission === 'READ_ONLY'
-        ? 'ro'
-        : undefined;
-  // The value the user just picked, shown until the update and the store
-  // refresh land (or the update fails and the server value returns).
-  const [pendingPermission, setPendingPermission] = useState<string | null>(
-    null,
-  );
-
-  // Model project folders are read-only by design (FR-1290), matching
-  // FolderCreateModal. The manager used to enforce `ro` server-side and no
-  // longer seems to, but we keep enforcing it on the client to preserve that
-  // contract until the project-folder behavior is reworked.
-  const shouldDisableRWPermission =
-    vfolderNode.metadata?.usageMode === 'MODEL' &&
-    vfolderNode.accessControl?.ownershipType === 'GROUP';
 
   const items = filterOutEmpty([
     !vfolderNode?.unmanagedPath && {
@@ -195,88 +130,6 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
             <UsersIcon size="1em" />
           </HStack>
         ),
-    },
-    // Allowed for the folder owner, super admins, or an admin of the project
-    // that owns the folder. Domain admins are excluded — they have no
-    // implicit per-project ownership rights.
-    (vfolderNode?.ownership?.userId === currentUser.uuid ||
-      isSuperAdmin ||
-      (!!vfolderNode?.ownership?.projectId &&
-        projectAdminIds.includes(vfolderNode.ownership.projectId))) && {
-      key: 'permission',
-      label: t('data.folders.MountPermission'),
-      children: (
-        // QA-FINDINGS Q-34 — without `placement`, Astryx overlays the selected
-        // option on the trigger, covering the "Mount Permission" row label.
-        <BAISelector
-          placement="below"
-          aria-label={t('data.folders.MountPermission')}
-          placeholder={t('data.folders.MountPermissionNotSet')}
-          value={pendingPermission ?? currentSelectPermission}
-          isLoading={pendingPermission !== null}
-          options={[
-            { value: 'ro', label: t('data.ReadOnly') },
-            {
-              value: 'rw',
-              label: t('data.ReadWrite'),
-              disabled: shouldDisableRWPermission,
-            },
-          ]}
-          onChange={(value) => {
-            // Defense-in-depth: never persist 'rw' for a restricted folder.
-            if (
-              (shouldDisableRWPermission && value === 'rw') ||
-              pendingPermission !== null ||
-              value === currentSelectPermission
-            ) {
-              return;
-            }
-            setPendingPermission(value);
-            updateMutation.mutate(
-              { permission: value, id: vfolderId },
-              {
-                onSuccess: () => {
-                  message.success(t('data.permission.PermissionModified'));
-                  document.dispatchEvent(
-                    new CustomEvent('backend-ai-folder-updated'),
-                  );
-
-                  // Refresh the V2 VFolder record so the UI reflects the new
-                  // `accessControl.permission` value. Failures are swallowed
-                  // so a background refresh error does not surface as an
-                  // unhandled promise rejection; the pending value is cleared
-                  // either way.
-                  void fetchQuery<VFolderNodeDescriptionV2PermissionRefreshQuery>(
-                    relayEnv,
-                    graphql`
-                      query VFolderNodeDescriptionV2PermissionRefreshQuery(
-                        $vfolderId: UUID!
-                      ) {
-                        vfolderV2(vfolderId: $vfolderId) {
-                          id
-                          accessControl {
-                            permission
-                          }
-                        }
-                      }
-                    `,
-                    {
-                      vfolderId,
-                    },
-                  )
-                    .toPromise()
-                    .catch(() => {})
-                    .finally(() => setPendingPermission(null));
-                },
-                onError: (error) => {
-                  setPendingPermission(null);
-                  message.error(getErrorMessage(error));
-                },
-              },
-            );
-          }}
-        />
-      ),
     },
     {
       key: 'owner',

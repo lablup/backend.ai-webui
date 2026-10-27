@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d470488ecaea58c1e6aec2b1caa35862>>
+ * @generated SignedSource<<e55f92ffd77e30273ae65f3901334953>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,10 +10,10 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
-export type VFolderNodeDescriptionV2PermissionRefreshQuery$variables = {
+export type FolderDefaultMountPermissionModalRefreshQuery$variables = {
   vfolderId: string;
 };
-export type VFolderNodeDescriptionV2PermissionRefreshQuery$data = {
+export type FolderDefaultMountPermissionModalRefreshQuery$data = {
   readonly vfolderV2: {
     readonly accessControl: {
       readonly permission: VFolderMountPermission;
@@ -21,9 +21,9 @@ export type VFolderNodeDescriptionV2PermissionRefreshQuery$data = {
     readonly id: string;
   } | null | undefined;
 };
-export type VFolderNodeDescriptionV2PermissionRefreshQuery = {
-  response: VFolderNodeDescriptionV2PermissionRefreshQuery$data;
-  variables: VFolderNodeDescriptionV2PermissionRefreshQuery$variables;
+export type FolderDefaultMountPermissionModalRefreshQuery = {
+  response: FolderDefaultMountPermissionModalRefreshQuery$data;
+  variables: FolderDefaultMountPermissionModalRefreshQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -83,7 +83,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "VFolderNodeDescriptionV2PermissionRefreshQuery",
+    "name": "FolderDefaultMountPermissionModalRefreshQuery",
     "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -92,20 +92,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "VFolderNodeDescriptionV2PermissionRefreshQuery",
+    "name": "FolderDefaultMountPermissionModalRefreshQuery",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "9f379e3964c93287ed58f4d0853e1e71",
+    "cacheID": "dfdeda56897f3ffbb2c84cf2b6f27e78",
     "id": null,
     "metadata": {},
-    "name": "VFolderNodeDescriptionV2PermissionRefreshQuery",
+    "name": "FolderDefaultMountPermissionModalRefreshQuery",
     "operationKind": "query",
-    "text": "query VFolderNodeDescriptionV2PermissionRefreshQuery(\n  $vfolderId: UUID!\n) {\n  vfolderV2(vfolderId: $vfolderId) {\n    id\n    accessControl {\n      permission\n    }\n  }\n}\n"
+    "text": "query FolderDefaultMountPermissionModalRefreshQuery(\n  $vfolderId: UUID!\n) {\n  vfolderV2(vfolderId: $vfolderId) {\n    id\n    accessControl {\n      permission\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "942a189557b6595abe36788f36464c89";
+(node as any).hash = "6fb2f31a8db235c4b567a954077ea2fb";
 
 export default node;

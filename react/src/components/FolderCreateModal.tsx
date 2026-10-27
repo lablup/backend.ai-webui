@@ -25,7 +25,6 @@ import { Divider } from '@lablup/ui-common/Divider';
 import { HStack, VStack } from '@lablup/ui-common/Stack';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIIconWithTooltip,
   BAIModal,
   BAIQuestionIconWithTooltip,
   BAISelect,
@@ -39,7 +38,6 @@ import {
   BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { TriangleAlertIcon } from 'lucide-react';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql } from 'react-relay';
@@ -53,7 +51,6 @@ interface FolderCreateFormItemsType {
   host: string | undefined;
   group: string | undefined;
   usage_mode: 'general' | 'model' | 'automount';
-  permission: 'rw' | 'ro';
   cloneable: boolean;
 }
 
@@ -91,10 +88,10 @@ export interface FolderCreateModalProps extends Omit<
    * values create a project folder (FR-3441 removed the in-form type radio;
    * the page context now decides).
    *
-   * - `'model_project'`: additionally locks usage_mode='model',
-   *   permission='ro', cloneable=true. Used by the Model Store admin flow.
-   * - `'project'`: usage_mode (general or model) and permission remain
-   *   editable; automount is not offered. Used by the admin data pages.
+   * - `'model_project'`: additionally locks usage_mode='model' and
+   *   cloneable=true. Used by the Model Store admin flow.
+   * - `'project'`: usage_mode (general or model) remains editable; automount
+   *   is not offered. Used by the admin data pages.
    */
   folderType?: 'model_project' | 'project';
   /**
@@ -145,7 +142,6 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
     host: undefined,
     group: project?.id,
     usage_mode: 'general',
-    permission: 'rw',
     cloneable: false,
   };
 
@@ -160,7 +156,6 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
     folderType === 'model_project'
       ? {
           usage_mode: 'model',
-          permission: 'ro',
           cloneable: true,
         }
       : undefined;
@@ -256,8 +251,10 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         : values.name;
 
     // Only shape-shared fields: `CreateVFolderV2Input` takes lowercase
-    // strings (`'general'`/`'rw'`) while `CreateVFolderInScopeInput` takes
-    // the GraphQL enums (`GENERAL`/`READ_WRITE`), attached per path below.
+    // strings (`'general'`/`'ro'`) while `CreateVFolderInScopeInput` takes
+    // the GraphQL enums (`GENERAL`/`READ_ONLY`), attached per path below.
+    // Every folder starts read-only for shared users (#10647); the default
+    // mount permission is changed from the share modal.
     const baseInput = {
       name: folderName,
       host: values.host ?? null,
@@ -275,7 +272,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
           input: {
             ...baseInput,
             usageMode: legacyUsageMode === 'model' ? 'MODEL' : 'GENERAL',
-            permission: values.permission === 'ro' ? 'READ_ONLY' : 'READ_WRITE',
+            permission: 'READ_ONLY',
           },
         }).then((res) => res?.createVFolderInProject?.vfolder);
       } else {
@@ -283,7 +280,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
           input: {
             ...baseInput,
             usageMode: legacyUsageMode,
-            permission: values.permission,
+            permission: 'ro',
             projectId: null,
           },
         }).then((res) => res?.createVfolderV2?.vfolder);
@@ -567,76 +564,6 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
             </Suspense>
           </BAIFormItem>
           {project !== null && <Form.Item hidden name={'group'} />}
-
-          <Form.Item dependencies={['usage_mode']} noStyle required>
-            {({ getFieldValue }) => {
-              // Model project folders are forced read-only (FR-1290); the
-              // manager no longer enforces it server-side, so the client
-              // keeps the contract. Mirrored in VFolderNodeDescriptionV2.
-              const shouldDisableRWPermission =
-                getFieldValue('usage_mode') === 'model' && isProjectFolder;
-
-              return (
-                <BAIFormItem
-                  label={
-                    <HStack gap={1} align="center">
-                      {t('data.folders.SharedMountPermission')}
-                      <BAIQuestionIconWithTooltip
-                        title={t('data.folders.SharedMountPermissionDesc')}
-                      />
-                    </HStack>
-                  }
-                  name={'permission'}
-                  layout="horizontal"
-                  required
-                  dependencies={['usage_mode']}
-                  rules={[
-                    {
-                      validator: (__, value) =>
-                        shouldDisableRWPermission && value === 'rw'
-                          ? Promise.reject(
-                              new Error(
-                                t(
-                                  'data.folders.ModelProjectFolderRestrictedToReadOnly',
-                                ),
-                              ),
-                            )
-                          : Promise.resolve(),
-                    },
-                  ]}
-                >
-                  <BAIRadioList
-                    aria-label={t('data.folders.SharedMountPermission')}
-                    disabled={isFolderTypeLocked}
-                    orientation="horizontal"
-                  >
-                    <BAIRadioListItem
-                      value="rw"
-                      label={t('data.ReadWrite')}
-                      data-testid="rw-permission"
-                      isDisabled={shouldDisableRWPermission}
-                      endContent={
-                        !isFolderTypeLocked && shouldDisableRWPermission ? (
-                          <BAIIconWithTooltip
-                            content={t(
-                              'data.folders.ModelProjectFolderRestrictedToReadOnly',
-                            )}
-                            focusable={false}
-                            icon={<TriangleAlertIcon />}
-                          />
-                        ) : undefined
-                      }
-                    />
-                    <BAIRadioListItem
-                      value="ro"
-                      label={t('data.ReadOnly')}
-                      data-testid="ro-permission"
-                    />
-                  </BAIRadioList>
-                </BAIFormItem>
-              );
-            }}
-          </Form.Item>
 
           <Form.Item dependencies={['usage_mode']} noStyle>
             {({ getFieldValue }) => {
