@@ -931,14 +931,16 @@
     "settings": {
       "AllResourceGroups": "Tất cả nhóm tài nguyên",
       "BackToSavedSetting": "Quay lại cài đặt đã lưu ({{value}})",
-      "CardSettings": "Cài đặt thẻ",
-      "CardSettingsOf": "Cài đặt {{name}}",
       "CurrentResourceGroup": "Nhóm tài nguyên hiện tại",
+      "DefaultCardSettings": "Cài đặt mặc định của thẻ",
+      "DefaultResourceGroups": "Nhóm tài nguyên mặc định",
       "DefaultSettings": "Cài đặt mặc định",
+      "DefaultSettingsHelp": "Hiển thị khi mở bảng. Có thể đổi tạm thời từ tiêu đề thẻ.",
+      "DefaultSettingsOf": "Cài đặt mặc định: {{name}}",
+      "DefaultTimeRange": "Khoảng thời gian mặc định",
       "Last1Hour": "1 giờ qua",
       "Last24Hours": "24 giờ qua",
       "Last7Days": "7 ngày qua",
-      "ResourceGroups": "Nhóm tài nguyên",
       "ResourceGroupsDescription": "Nếu không chọn: {{default}}",
       "TimeRange": "Khoảng thời gian"
     }

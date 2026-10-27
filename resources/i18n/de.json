@@ -931,14 +931,16 @@
     "settings": {
       "AllResourceGroups": "Alle Ressourcengruppen",
       "BackToSavedSetting": "Zur gespeicherten Einstellung zurück ({{value}})",
-      "CardSettings": "Karteneinstellungen",
-      "CardSettingsOf": "Einstellungen für {{name}}",
       "CurrentResourceGroup": "Aktuelle Ressourcengruppe",
+      "DefaultCardSettings": "Standardeinstellungen der Karte",
+      "DefaultResourceGroups": "Standard-Ressourcengruppen",
       "DefaultSettings": "Standardeinstellungen",
+      "DefaultSettingsHelp": "Wird beim Öffnen des Boards angezeigt. Im Kartenkopf lässt sich der Wert vorübergehend ändern.",
+      "DefaultSettingsOf": "Standardeinstellungen: {{name}}",
+      "DefaultTimeRange": "Standardzeitraum",
       "Last1Hour": "Letzte Stunde",
       "Last24Hours": "Letzte 24 Stunden",
       "Last7Days": "Letzte 7 Tage",
-      "ResourceGroups": "Ressourcengruppen",
       "ResourceGroupsDescription": "Ohne Auswahl: {{default}}",
       "TimeRange": "Zeitraum"
     }

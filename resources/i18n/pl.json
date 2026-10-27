@@ -931,14 +931,16 @@
     "settings": {
       "AllResourceGroups": "Wszystkie grupy zasobów",
       "BackToSavedSetting": "Wróć do zapisanego ustawienia ({{value}})",
-      "CardSettings": "Ustawienia karty",
-      "CardSettingsOf": "Ustawienia: {{name}}",
       "CurrentResourceGroup": "Bieżąca grupa zasobów",
+      "DefaultCardSettings": "Domyślne ustawienia karty",
+      "DefaultResourceGroups": "Domyślne grupy zasobów",
       "DefaultSettings": "Ustawienia domyślne",
+      "DefaultSettingsHelp": "Wyświetlane po otwarciu tablicy. Nagłówek karty pozwala chwilowo to zmienić.",
+      "DefaultSettingsOf": "Ustawienia domyślne: {{name}}",
+      "DefaultTimeRange": "Domyślny zakres czasu",
       "Last1Hour": "Ostatnia godzina",
       "Last24Hours": "Ostatnie 24 godziny",
       "Last7Days": "Ostatnie 7 dni",
-      "ResourceGroups": "Grupy zasobów",
       "ResourceGroupsDescription": "Jeśli nic nie wybrano: {{default}}",
       "TimeRange": "Zakres czasu"
     }

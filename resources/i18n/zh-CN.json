@@ -931,14 +931,16 @@
     "settings": {
       "AllResourceGroups": "所有资源组",
       "BackToSavedSetting": "恢复为已保存的设置（{{value}}）",
-      "CardSettings": "卡片设置",
-      "CardSettingsOf": "{{name}} 设置",
       "CurrentResourceGroup": "当前资源组",
+      "DefaultCardSettings": "卡片默认设置",
+      "DefaultResourceGroups": "默认资源组",
       "DefaultSettings": "默认设置",
+      "DefaultSettingsHelp": "打开看板时显示的值。可在卡片标题栏中临时更改。",
+      "DefaultSettingsOf": "默认设置：{{name}}",
+      "DefaultTimeRange": "默认时间范围",
       "Last1Hour": "最近 1 小时",
       "Last24Hours": "最近 24 小时",
       "Last7Days": "最近 7 天",
-      "ResourceGroups": "资源组",
       "ResourceGroupsDescription": "未选择时：{{default}}",
       "TimeRange": "时间范围"
     }

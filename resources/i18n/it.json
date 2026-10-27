@@ -931,14 +931,16 @@
     "settings": {
       "AllResourceGroups": "Tutti i gruppi di risorse",
       "BackToSavedSetting": "Torna all'impostazione salvata ({{value}})",
-      "CardSettings": "Impostazioni della scheda",
-      "CardSettingsOf": "Impostazioni di {{name}}",
       "CurrentResourceGroup": "Gruppo di risorse corrente",
+      "DefaultCardSettings": "Impostazioni predefinite della scheda",
+      "DefaultResourceGroups": "Gruppi di risorse predefiniti",
       "DefaultSettings": "Impostazioni predefinite",
+      "DefaultSettingsHelp": "Mostrato all'apertura della bacheca. L'intestazione della scheda può cambiarlo per un momento.",
+      "DefaultSettingsOf": "Impostazioni predefinite: {{name}}",
+      "DefaultTimeRange": "Intervallo di tempo predefinito",
       "Last1Hour": "Ultima ora",
       "Last24Hours": "Ultime 24 ore",
       "Last7Days": "Ultimi 7 giorni",
-      "ResourceGroups": "Gruppi di risorse",
       "ResourceGroupsDescription": "Se non ne selezioni nessuno: {{default}}",
       "TimeRange": "Intervallo di tempo"
     }

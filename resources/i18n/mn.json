@@ -931,14 +931,16 @@
     "settings": {
       "AllResourceGroups": "Бүх нөөцийн бүлэг",
       "BackToSavedSetting": "Хадгалсан тохиргоо руу буцах ({{value}})",
-      "CardSettings": "Картын тохиргоо",
-      "CardSettingsOf": "{{name}}-ийн тохиргоо",
       "CurrentResourceGroup": "Одоогийн нөөцийн бүлэг",
+      "DefaultCardSettings": "Картын үндсэн тохиргоо",
+      "DefaultResourceGroups": "Үндсэн нөөцийн бүлгүүд",
       "DefaultSettings": "Үндсэн тохиргоо",
+      "DefaultSettingsHelp": "Самбарыг нээхэд харагдана. Картын толгойгоос түр зуур өөрчилж болно.",
+      "DefaultSettingsOf": "Үндсэн тохиргоо: {{name}}",
+      "DefaultTimeRange": "Үндсэн хугацааны муж",
       "Last1Hour": "Сүүлийн 1 цаг",
       "Last24Hours": "Сүүлийн 24 цаг",
       "Last7Days": "Сүүлийн 7 хоног",
-      "ResourceGroups": "Нөөцийн бүлгүүд",
       "ResourceGroupsDescription": "Сонгоогүй бол: {{default}}",
       "TimeRange": "Хугацааны муж"
     }

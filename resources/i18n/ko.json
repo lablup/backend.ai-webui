@@ -931,14 +931,16 @@
     "settings": {
       "AllResourceGroups": "전체 자원 그룹",
       "BackToSavedSetting": "저장된 설정으로 되돌리기 ({{value}})",
-      "CardSettings": "카드 설정",
-      "CardSettingsOf": "{{name}} 설정",
       "CurrentResourceGroup": "현재 자원 그룹",
+      "DefaultCardSettings": "카드 기본 설정",
+      "DefaultResourceGroups": "기본 자원 그룹",
       "DefaultSettings": "기본 설정",
+      "DefaultSettingsHelp": "보드를 열 때 보이는 값입니다. 카드 헤더에서 잠시 바꿔 볼 수 있습니다.",
+      "DefaultSettingsOf": "기본 설정: {{name}}",
+      "DefaultTimeRange": "기본 기간",
       "Last1Hour": "최근 1시간",
       "Last24Hours": "최근 24시간",
       "Last7Days": "최근 7일",
-      "ResourceGroups": "자원 그룹",
       "ResourceGroupsDescription": "선택하지 않으면: {{default}}",
       "TimeRange": "기간"
     }

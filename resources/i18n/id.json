@@ -931,14 +931,16 @@
     "settings": {
       "AllResourceGroups": "Semua grup sumber daya",
       "BackToSavedSetting": "Kembali ke pengaturan tersimpan ({{value}})",
-      "CardSettings": "Pengaturan kartu",
-      "CardSettingsOf": "Pengaturan {{name}}",
       "CurrentResourceGroup": "Grup sumber daya saat ini",
+      "DefaultCardSettings": "Pengaturan default kartu",
+      "DefaultResourceGroups": "Grup sumber daya default",
       "DefaultSettings": "Pengaturan default",
+      "DefaultSettingsHelp": "Ditampilkan saat papan dibuka. Header kartu dapat mengubahnya sementara.",
+      "DefaultSettingsOf": "Pengaturan default: {{name}}",
+      "DefaultTimeRange": "Rentang waktu default",
       "Last1Hour": "1 jam terakhir",
       "Last24Hours": "24 jam terakhir",
       "Last7Days": "7 hari terakhir",
-      "ResourceGroups": "Grup sumber daya",
       "ResourceGroupsDescription": "Jika tidak ada yang dipilih: {{default}}",
       "TimeRange": "Rentang waktu"
     }

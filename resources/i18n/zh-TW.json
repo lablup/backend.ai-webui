@@ -931,14 +931,16 @@
     "settings": {
       "AllResourceGroups": "所有資源群組",
       "BackToSavedSetting": "還原為已儲存的設定（{{value}}）",
-      "CardSettings": "卡片設定",
-      "CardSettingsOf": "{{name}} 設定",
       "CurrentResourceGroup": "目前資源群組",
+      "DefaultCardSettings": "卡片預設設定",
+      "DefaultResourceGroups": "預設資源群組",
       "DefaultSettings": "預設設定",
+      "DefaultSettingsHelp": "開啟看板時顯示的值。可在卡片標題列中暫時變更。",
+      "DefaultSettingsOf": "預設設定：{{name}}",
+      "DefaultTimeRange": "預設時間範圍",
       "Last1Hour": "最近 1 小時",
       "Last24Hours": "最近 24 小時",
       "Last7Days": "最近 7 天",
-      "ResourceGroups": "資源群組",
       "ResourceGroupsDescription": "未選擇時：{{default}}",
       "TimeRange": "時間範圍"
     }

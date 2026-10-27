@@ -95,8 +95,8 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
       <IconButton
         variant="ghost"
         size="sm"
-        label={t('dashboard.settings.CardSettingsOf', { name: label })}
-        tooltip={t('dashboard.settings.CardSettings')}
+        label={t('dashboard.settings.DefaultSettingsOf', { name: label })}
+        tooltip={t('dashboard.settings.DefaultCardSettings')}
         icon={<Settings2 size="1em" />}
         onClick={() => onRequestSettings(id)}
       />

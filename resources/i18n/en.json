@@ -918,14 +918,16 @@
     "settings": {
       "AllResourceGroups": "All resource groups",
       "BackToSavedSetting": "Back to the saved setting ({{value}})",
-      "CardSettings": "Card settings",
-      "CardSettingsOf": "{{name}} settings",
       "CurrentResourceGroup": "Current resource group",
+      "DefaultCardSettings": "Default card settings",
+      "DefaultResourceGroups": "Default resource groups",
       "DefaultSettings": "Default settings",
+      "DefaultSettingsHelp": "Shown when the board opens. The card header can change it for a moment.",
+      "DefaultSettingsOf": "Default settings: {{name}}",
+      "DefaultTimeRange": "Default time range",
       "Last1Hour": "Last 1 hour",
       "Last24Hours": "Last 24 hours",
       "Last7Days": "Last 7 days",
-      "ResourceGroups": "Resource groups",
       "ResourceGroupsDescription": "If none is selected: {{default}}",
       "TimeRange": "Time range"
     }

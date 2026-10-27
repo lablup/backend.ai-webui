@@ -931,14 +931,16 @@
     "settings": {
       "AllResourceGroups": "Todos os grupos de recursos",
       "BackToSavedSetting": "Voltar à configuração salva ({{value}})",
-      "CardSettings": "Configurações do cartão",
-      "CardSettingsOf": "Configurações de {{name}}",
       "CurrentResourceGroup": "Grupo de recursos atual",
+      "DefaultCardSettings": "Configurações padrão do cartão",
+      "DefaultResourceGroups": "Grupos de recursos padrão",
       "DefaultSettings": "Configurações padrão",
+      "DefaultSettingsHelp": "Exibido ao abrir o painel. O cabeçalho do cartão pode alterá-lo por um momento.",
+      "DefaultSettingsOf": "Configurações padrão: {{name}}",
+      "DefaultTimeRange": "Intervalo de tempo padrão",
       "Last1Hour": "Última 1 hora",
       "Last24Hours": "Últimas 24 horas",
       "Last7Days": "Últimos 7 dias",
-      "ResourceGroups": "Grupos de recursos",
       "ResourceGroupsDescription": "Se nenhum for selecionado: {{default}}",
       "TimeRange": "Intervalo de tempo"
     }

@@ -11,7 +11,9 @@ import {
   hasSetting,
 } from './panelSettings';
 import type { PanelDefinition, PanelSettings } from './types';
+import { Text } from '@lablup/ui-common/Text';
 import {
+  BAIFlex,
   BAIModal,
   BAIScopedResourceGroupSelect,
   BAISelect,
@@ -62,7 +64,7 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
   return (
     <BAIModal
       open={open}
-      title={t('dashboard.settings.CardSettingsOf', { name: title })}
+      title={t('dashboard.settings.DefaultSettingsOf', { name: title })}
       okText={t('button.Save')}
       onCancel={onRequestClose}
       afterClose={afterClose}
@@ -81,50 +83,57 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
         onRequestClose();
       }}
     >
-      <Form
-        form={form}
-        layout="vertical"
-        preserve={false}
-        initialValues={{
-          resourceGroups: settings?.resourceGroups ?? [],
-          range: settings?.range ?? DEFAULT_RANGE,
-        }}
-      >
-        {hasSetting(definition, 'resourceGroup') ? (
-          <BAIFormItem
-            name="resourceGroups"
-            // The selector renders its own field label.
-            extra={t('dashboard.settings.ResourceGroupsDescription', {
-              default: resourceGroupDefault,
-            })}
-          >
-            <Suspense fallback={<BAISelect mode="multiple" loading disabled />}>
-              <BAIScopedResourceGroupSelect
-                multiple
-                label={t('dashboard.settings.ResourceGroups')}
-                placeholder={resourceGroupDefault}
-                scope={resourceGroupScope}
-                allowClear
+      <BAIFlex direction="column" align="stretch" gap="md">
+        <Text type="supporting">
+          {t('dashboard.settings.DefaultSettingsHelp')}
+        </Text>
+        <Form
+          form={form}
+          layout="vertical"
+          preserve={false}
+          initialValues={{
+            resourceGroups: settings?.resourceGroups ?? [],
+            range: settings?.range ?? DEFAULT_RANGE,
+          }}
+        >
+          {hasSetting(definition, 'resourceGroup') ? (
+            <BAIFormItem
+              name="resourceGroups"
+              // The selector renders its own field label.
+              extra={t('dashboard.settings.ResourceGroupsDescription', {
+                default: resourceGroupDefault,
+              })}
+            >
+              <Suspense
+                fallback={<BAISelect mode="multiple" loading disabled />}
+              >
+                <BAIScopedResourceGroupSelect
+                  multiple
+                  label={t('dashboard.settings.DefaultResourceGroups')}
+                  placeholder={resourceGroupDefault}
+                  scope={resourceGroupScope}
+                  allowClear
+                />
+              </Suspense>
+            </BAIFormItem>
+          ) : null}
+          {hasSetting(definition, 'range') ? (
+            <BAIFormItem
+              name="range"
+              label={t('dashboard.settings.DefaultTimeRange')}
+              rules={[{ required: true }]}
+            >
+              <BAISelect
+                label={t('dashboard.settings.DefaultTimeRange')}
+                options={RANGE_PRESETS.map((preset) => ({
+                  value: preset,
+                  label: t(RANGE_LABEL_KEYS[preset]),
+                }))}
               />
-            </Suspense>
-          </BAIFormItem>
-        ) : null}
-        {hasSetting(definition, 'range') ? (
-          <BAIFormItem
-            name="range"
-            label={t('dashboard.settings.TimeRange')}
-            rules={[{ required: true }]}
-          >
-            <BAISelect
-              label={t('dashboard.settings.TimeRange')}
-              options={RANGE_PRESETS.map((preset) => ({
-                value: preset,
-                label: t(RANGE_LABEL_KEYS[preset]),
-              }))}
-            />
-          </BAIFormItem>
-        ) : null}
-      </Form>
+            </BAIFormItem>
+          ) : null}
+        </Form>
+      </BAIFlex>
     </BAIModal>
   );
 };

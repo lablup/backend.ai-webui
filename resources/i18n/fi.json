@@ -931,14 +931,16 @@
     "settings": {
       "AllResourceGroups": "Kaikki resurssiryhmät",
       "BackToSavedSetting": "Palaa tallennettuun asetukseen ({{value}})",
-      "CardSettings": "Kortin asetukset",
-      "CardSettingsOf": "{{name}}: asetukset",
       "CurrentResourceGroup": "Nykyinen resurssiryhmä",
+      "DefaultCardSettings": "Kortin oletusasetukset",
+      "DefaultResourceGroups": "Oletusresurssiryhmät",
       "DefaultSettings": "Oletusasetukset",
+      "DefaultSettingsHelp": "Näytetään, kun taulu avataan. Kortin otsakkeesta arvon voi vaihtaa hetkeksi.",
+      "DefaultSettingsOf": "Oletusasetukset: {{name}}",
+      "DefaultTimeRange": "Oletusaikaväli",
       "Last1Hour": "Viimeinen tunti",
       "Last24Hours": "Viimeiset 24 tuntia",
       "Last7Days": "Viimeiset 7 päivää",
-      "ResourceGroups": "Resurssiryhmät",
       "ResourceGroupsDescription": "Jos mitään ei valita: {{default}}",
       "TimeRange": "Aikaväli"
     }

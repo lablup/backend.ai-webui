@@ -931,14 +931,16 @@
     "settings": {
       "AllResourceGroups": "Semua kumpulan sumber",
       "BackToSavedSetting": "Kembali ke tetapan yang disimpan ({{value}})",
-      "CardSettings": "Tetapan kad",
-      "CardSettingsOf": "Tetapan {{name}}",
       "CurrentResourceGroup": "Kumpulan sumber semasa",
+      "DefaultCardSettings": "Tetapan lalai kad",
+      "DefaultResourceGroups": "Kumpulan sumber lalai",
       "DefaultSettings": "Tetapan lalai",
+      "DefaultSettingsHelp": "Dipaparkan apabila papan dibuka. Pengepala kad boleh mengubahnya buat seketika.",
+      "DefaultSettingsOf": "Tetapan lalai: {{name}}",
+      "DefaultTimeRange": "Julat masa lalai",
       "Last1Hour": "1 jam lepas",
       "Last24Hours": "24 jam lepas",
       "Last7Days": "7 hari lepas",
-      "ResourceGroups": "Kumpulan sumber",
       "ResourceGroupsDescription": "Jika tiada yang dipilih: {{default}}",
       "TimeRange": "Julat masa"
     }

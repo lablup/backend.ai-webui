@@ -931,14 +931,16 @@
     "settings": {
       "AllResourceGroups": "すべてのリソースグループ",
       "BackToSavedSetting": "保存された設定に戻す ({{value}})",
-      "CardSettings": "カード設定",
-      "CardSettingsOf": "{{name}}の設定",
       "CurrentResourceGroup": "現在のリソースグループ",
+      "DefaultCardSettings": "カードの既定の設定",
+      "DefaultResourceGroups": "既定のリソースグループ",
       "DefaultSettings": "既定の設定",
+      "DefaultSettingsHelp": "ボードを開いたときに表示される値です。カードのヘッダーで一時的に変更できます。",
+      "DefaultSettingsOf": "既定の設定: {{name}}",
+      "DefaultTimeRange": "既定の期間",
       "Last1Hour": "過去1時間",
       "Last24Hours": "過去24時間",
       "Last7Days": "過去7日間",
-      "ResourceGroups": "リソースグループ",
       "ResourceGroupsDescription": "未選択の場合: {{default}}",
       "TimeRange": "期間"
     }

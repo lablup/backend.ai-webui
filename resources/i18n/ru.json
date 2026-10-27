@@ -931,14 +931,16 @@
     "settings": {
       "AllResourceGroups": "Все группы ресурсов",
       "BackToSavedSetting": "Вернуть сохранённую настройку ({{value}})",
-      "CardSettings": "Настройки карточки",
-      "CardSettingsOf": "Настройки: {{name}}",
       "CurrentResourceGroup": "Текущая группа ресурсов",
+      "DefaultCardSettings": "Настройки карточки по умолчанию",
+      "DefaultResourceGroups": "Группы ресурсов по умолчанию",
       "DefaultSettings": "Настройки по умолчанию",
+      "DefaultSettingsHelp": "Показывается при открытии доски. В заголовке карточки его можно временно изменить.",
+      "DefaultSettingsOf": "Настройки по умолчанию: {{name}}",
+      "DefaultTimeRange": "Период по умолчанию",
       "Last1Hour": "Последний час",
       "Last24Hours": "Последние 24 часа",
       "Last7Days": "Последние 7 дней",
-      "ResourceGroups": "Группы ресурсов",
       "ResourceGroupsDescription": "Если ничего не выбрано: {{default}}",
       "TimeRange": "Период"
     }

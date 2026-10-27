@@ -931,14 +931,16 @@
     "settings": {
       "AllResourceGroups": "Tüm kaynak grupları",
       "BackToSavedSetting": "Kaydedilen ayara dön ({{value}})",
-      "CardSettings": "Kart ayarları",
-      "CardSettingsOf": "{{name}} ayarları",
       "CurrentResourceGroup": "Geçerli kaynak grubu",
+      "DefaultCardSettings": "Varsayılan kart ayarları",
+      "DefaultResourceGroups": "Varsayılan kaynak grupları",
       "DefaultSettings": "Varsayılan ayarlar",
+      "DefaultSettingsHelp": "Pano açıldığında gösterilir. Kart başlığından bir süreliğine değiştirilebilir.",
+      "DefaultSettingsOf": "Varsayılan ayarlar: {{name}}",
+      "DefaultTimeRange": "Varsayılan zaman aralığı",
       "Last1Hour": "Son 1 saat",
       "Last24Hours": "Son 24 saat",
       "Last7Days": "Son 7 gün",
-      "ResourceGroups": "Kaynak grupları",
       "ResourceGroupsDescription": "Hiçbiri seçilmezse: {{default}}",
       "TimeRange": "Zaman aralığı"
     }
