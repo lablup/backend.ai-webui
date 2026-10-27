@@ -45,8 +45,6 @@ export { default as BAIId } from './BAIId';
 export type { BAIIdProps } from './BAIId';
 export { default as BAISelect, BAISelectOptionItem, BAISelectOptionGroup, } from './BAISelect';
 export type { BAISelectProps, BAISelectOptionProps, BAISelectOptionGroupProps, } from './BAISelect';
-export { default as BAIDisabledOptionReason, getOptionDisabledReason, withOptionDisabledReason, } from './BAIDisabledOptionReason';
-export type { BAIDisabledOptionReasonProps, BAIOptionDisabled, } from './BAIDisabledOptionReason';
 export { default as BAIComplexSelect } from './BAIComplexSelect';
 export type { BAIComplexSelectProps, BAIComplexSelectOption, BAIComplexSelectValue, BAILabeledValue, } from './BAIComplexSelect';
 export { default as BAINotificationItem } from './BAINotificationItem';

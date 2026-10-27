@@ -1,11 +1,12 @@
-import { BAIOptionDisabled } from './BAIDisabledOptionReason';
 import { default as React, CSSProperties, ReactNode } from '../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.2.8/01dc110d7f872a8caacc052aa0e86f46609c662315b6d5b76a7913331f487dd1/node_modules/react';
 /** antd `DefaultOptionType`, restated locally. */
 export interface BAISelectOption {
     value?: string | number | null;
     label?: ReactNode;
-    /** `{ reason }` also puts a glyph at the row's end whose tooltip says why. */
-    disabled?: BAIOptionDisabled;
+    /** `{ reason }` also puts a glyph at the end of the row whose tooltip says why. */
+    disabled?: boolean | {
+        reason: string;
+    };
     title?: string;
     [key: string]: any;
 }
@@ -136,8 +137,8 @@ export interface BAISelectOptionProps {
      * live in props the text flattener cannot reach (FR-3544).
      */
     label?: string;
-    /** `{ reason }` also puts a glyph at the row's end whose tooltip says why. */
-    disabled?: BAIOptionDisabled;
+    /** `{ reason }` also puts a glyph at the end of the row whose tooltip says why. */
+    disabled?: BAISelectOption['disabled'];
     /**
      * Accepted and IGNORED, for antd's `optionFilterProp="filterValue"` call
      * sites. Search matches the option's visible text only — Astryx renders the
