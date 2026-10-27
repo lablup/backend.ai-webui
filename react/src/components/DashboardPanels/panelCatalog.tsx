@@ -166,8 +166,8 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'session.MySessions',
     kind: 'custom',
     Component: SessionStatusPanel,
-    defaultSize: size(2, 3),
-    minSize: size(2, 3),
+    defaultSize: size(2, 2),
+    minSize: size(2, 2),
     refresh: { min: '15s' },
   },
   {
