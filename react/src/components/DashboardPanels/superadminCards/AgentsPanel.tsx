@@ -2,35 +2,22 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type {
-  AgentsPanelQuery,
-  AgentsPanelQuery$data,
-} from '../../../__generated__/AgentsPanelQuery.graphql';
+import type { AgentsPanelQuery } from '../../../__generated__/AgentsPanelQuery.graphql';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
 import ScopedCard from '../cards/ScopedCard';
-import DonutChart from '../charts/DonutChart';
-import { toDonutRows } from '../memberCards/memberCardData';
+import StatRow from '../charts/StatRow';
 import type { PanelComponentProps } from '../types';
 import { AGENT_STATUSES } from './superadminCardData';
-import { Badge } from '@lablup/ui-common/Badge';
-import { Text } from '@lablup/ui-common/Text';
 import {
-  BAIBooleanToken,
+  BAIAgentTable,
   BAIFlex,
-  BAITable,
-  badgeVariantForStatus,
   filterOutNullAndUndefined,
-  toLocalId,
 } from 'backend.ai-ui';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-type AgentRow = NonNullable<
-  NonNullable<
-    NonNullable<AgentsPanelQuery$data['agents']>['edges'][number]
-  >['node']
->;
+const COLUMN_KEYS = ['row_id', 'scaling_group', 'status', 'schedulable'];
 
 const AgentList: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
   'use memo';
@@ -40,14 +27,15 @@ const AgentList: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
     tablePaginationOption,
     setTablePaginationOption,
   } = useBAIPaginationOptionState({ current: 1, pageSize: 5 });
+  // The legacy connection takes `first` + `offset` as its offset mode, like the agent list page.
   const variables = {
-    limit: baiPaginationOption.limit,
+    first: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
   };
   const deferredVariables = useDeferredValue(variables);
   const data = useLazyLoadQuery<AgentsPanelQuery>(
     graphql`
-      query AgentsPanelQuery($limit: Int!, $offset: Int!) {
+      query AgentsPanelQuery($first: Int!, $offset: Int!) {
         alive: agentsV2(filter: { status: { equals: ALIVE } }, limit: 1) {
           count
         }
@@ -66,27 +54,13 @@ const AgentList: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
         ) {
           count
         }
-        agents: agentsV2(
-          orderBy: [
-            { field: STATUS, direction: ASC }
-            { field: ID, direction: ASC }
-          ]
-          limit: $limit
-          offset: $offset
-        ) {
+        agents: agent_nodes(order: "status", first: $first, offset: $offset) {
           count
           edges {
             node {
               id
-              scalingGroup
-              containerCount
-              networkInfo {
-                addr
-              }
-              statusInfo {
-                status
-                schedulable
-              }
+              container_count
+              ...BAIAgentTableFragment
             }
           }
         }
@@ -101,81 +75,37 @@ const AgentList: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
     RESTARTING: data.restarting?.count,
     TERMINATED: data.terminated?.count,
   };
+  const nodes = filterOutNullAndUndefined(
+    data.agents?.edges.map((edge) => edge?.node),
+  );
+  const containerCounts = new Map(
+    nodes.map((node) => [node.id, node.container_count ?? 0]),
+  );
 
   return (
-    <BAIFlex
-      direction="column"
-      align="stretch"
-      gap="md"
-      style={{ flex: 1, minHeight: 0 }}
-    >
-      <DonutChart
-        label={t('dashboard.card.Agents')}
-        emptyText={t('agent.NoAgentToDisplay')}
-        columnLabels={{
-          name: t('agent.Status'),
-          value: t('dashboard.card.Count'),
-          percent: t('dashboard.card.Share'),
-        }}
-        rows={toDonutRows(
-          AGENT_STATUSES.map((status) => ({
-            key: status,
-            label: status,
-            count: counts[status],
-          })),
-        )}
+    <BAIFlex direction="column" align="stretch" gap="sm">
+      <StatRow
+        items={AGENT_STATUSES.map((status) => ({
+          key: status,
+          label: status,
+          value: String(counts[status] ?? 0),
+          size: 'sm',
+        }))}
       />
-      <BAITable<AgentRow>
+      <BAIAgentTable
         size="small"
-        rowKey="id"
-        dataSource={filterOutNullAndUndefined(
-          data.agents?.edges.map((edge) => edge?.node),
-        )}
+        agentsFragment={nodes}
         loading={deferredVariables !== variables}
-        scroll={{ x: 'max-content' }}
-        columns={[
-          {
-            key: 'agent',
-            title: t('agent.Agent'),
-            // AgentV2 carries the agent's own id only in its Relay id.
-            render: (_value, agent) => (
-              <BAIFlex direction="column" align="start">
-                <Text>{toLocalId(agent.id)}</Text>
-                <Text type="supporting" size="sm">
-                  {agent.networkInfo.addr}
-                </Text>
-              </BAIFlex>
-            ),
-          },
-          {
-            key: 'scalingGroup',
-            title: t('agent.ResourceGroup'),
-            render: (_value, agent) => agent.scalingGroup,
-          },
-          {
-            key: 'status',
-            title: t('agent.Status'),
-            render: (_value, agent) => (
-              <Badge
-                variant={badgeVariantForStatus(
-                  'agent',
-                  agent.statusInfo.status,
-                )}
-                label={agent.statusInfo.status}
-              />
-            ),
-          },
-          {
-            key: 'schedulable',
-            title: t('agent.Schedulable'),
-            render: (_value, agent) => (
-              <BAIBooleanToken value={agent.statusInfo.schedulable} />
-            ),
-          },
+        customizeColumns={(columns) => [
+          ...columns
+            .filter((column) => COLUMN_KEYS.includes(String(column.key)))
+            .map((column) => ({ ...column, sorter: false })),
           {
             key: 'containers',
             title: t('dashboard.card.Containers'),
-            render: (_value, agent) => agent.containerCount ?? 0,
+            align: 'right',
+            render: (_value: unknown, agent: { id: string }) =>
+              containerCounts.get(agent.id) ?? 0,
           },
         ]}
         pagination={{

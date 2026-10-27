@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ad69dfb41e7904919856c31c642e3faf>>
+ * @generated SignedSource<<dede0c9bcc6f2d3cb6cdc29948cf03c5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,28 +9,21 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type AgentStatusEnum = "ALIVE" | "LOST" | "RESTARTING" | "TERMINATED" | "%future added value";
+import { FragmentRefs } from "relay-runtime";
 export type AgentsPanelQuery$variables = {
-  limit: number;
+  first: number;
   offset: number;
 };
 export type AgentsPanelQuery$data = {
   readonly agents: {
-    readonly count: number;
+    readonly count: number | null | undefined;
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly containerCount: number | null | undefined;
+        readonly container_count: number | null | undefined;
         readonly id: string;
-        readonly networkInfo: {
-          readonly addr: string;
-        };
-        readonly scalingGroup: string;
-        readonly statusInfo: {
-          readonly schedulable: boolean;
-          readonly status: AgentStatusEnum;
-        };
-      };
-    }>;
+        readonly " $fragmentSpreads": FragmentRefs<"BAIAgentTableFragment">;
+      } | null | undefined;
+    } | null | undefined>;
   } | null | undefined;
   readonly alive: {
     readonly count: number;
@@ -55,7 +48,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "limit"
+    "name": "first"
   },
   {
     "defaultValue": null,
@@ -78,201 +71,163 @@ v2 = {
 v3 = [
   (v2/*: any*/)
 ],
-v4 = [
-  {
-    "alias": "alive",
-    "args": [
-      {
-        "kind": "Literal",
-        "name": "filter",
-        "value": {
-          "status": {
-            "equals": "ALIVE"
-          }
+v4 = {
+  "alias": "alive",
+  "args": [
+    {
+      "kind": "Literal",
+      "name": "filter",
+      "value": {
+        "status": {
+          "equals": "ALIVE"
         }
-      },
-      (v1/*: any*/)
-    ],
-    "concreteType": "AgentV2Connection",
-    "kind": "LinkedField",
-    "name": "agentsV2",
-    "plural": false,
-    "selections": (v3/*: any*/),
-    "storageKey": "agentsV2(filter:{\"status\":{\"equals\":\"ALIVE\"}},limit:1)"
-  },
-  {
-    "alias": "lost",
-    "args": [
-      {
-        "kind": "Literal",
-        "name": "filter",
-        "value": {
-          "status": {
-            "equals": "LOST"
-          }
-        }
-      },
-      (v1/*: any*/)
-    ],
-    "concreteType": "AgentV2Connection",
-    "kind": "LinkedField",
-    "name": "agentsV2",
-    "plural": false,
-    "selections": (v3/*: any*/),
-    "storageKey": "agentsV2(filter:{\"status\":{\"equals\":\"LOST\"}},limit:1)"
-  },
-  {
-    "alias": "restarting",
-    "args": [
-      {
-        "kind": "Literal",
-        "name": "filter",
-        "value": {
-          "status": {
-            "equals": "RESTARTING"
-          }
-        }
-      },
-      (v1/*: any*/)
-    ],
-    "concreteType": "AgentV2Connection",
-    "kind": "LinkedField",
-    "name": "agentsV2",
-    "plural": false,
-    "selections": (v3/*: any*/),
-    "storageKey": "agentsV2(filter:{\"status\":{\"equals\":\"RESTARTING\"}},limit:1)"
-  },
-  {
-    "alias": "terminated",
-    "args": [
-      {
-        "kind": "Literal",
-        "name": "filter",
-        "value": {
-          "status": {
-            "equals": "TERMINATED"
-          }
-        }
-      },
-      (v1/*: any*/)
-    ],
-    "concreteType": "AgentV2Connection",
-    "kind": "LinkedField",
-    "name": "agentsV2",
-    "plural": false,
-    "selections": (v3/*: any*/),
-    "storageKey": "agentsV2(filter:{\"status\":{\"equals\":\"TERMINATED\"}},limit:1)"
-  },
-  {
-    "alias": "agents",
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "limit",
-        "variableName": "limit"
-      },
-      {
-        "kind": "Variable",
-        "name": "offset",
-        "variableName": "offset"
-      },
-      {
-        "kind": "Literal",
-        "name": "orderBy",
-        "value": [
-          {
-            "direction": "ASC",
-            "field": "STATUS"
-          },
-          {
-            "direction": "ASC",
-            "field": "ID"
-          }
-        ]
       }
-    ],
-    "concreteType": "AgentV2Connection",
-    "kind": "LinkedField",
-    "name": "agentsV2",
-    "plural": false,
+    },
+    (v1/*: any*/)
+  ],
+  "concreteType": "AgentV2Connection",
+  "kind": "LinkedField",
+  "name": "agentsV2",
+  "plural": false,
+  "selections": (v3/*: any*/),
+  "storageKey": "agentsV2(filter:{\"status\":{\"equals\":\"ALIVE\"}},limit:1)"
+},
+v5 = {
+  "alias": "lost",
+  "args": [
+    {
+      "kind": "Literal",
+      "name": "filter",
+      "value": {
+        "status": {
+          "equals": "LOST"
+        }
+      }
+    },
+    (v1/*: any*/)
+  ],
+  "concreteType": "AgentV2Connection",
+  "kind": "LinkedField",
+  "name": "agentsV2",
+  "plural": false,
+  "selections": (v3/*: any*/),
+  "storageKey": "agentsV2(filter:{\"status\":{\"equals\":\"LOST\"}},limit:1)"
+},
+v6 = {
+  "alias": "restarting",
+  "args": [
+    {
+      "kind": "Literal",
+      "name": "filter",
+      "value": {
+        "status": {
+          "equals": "RESTARTING"
+        }
+      }
+    },
+    (v1/*: any*/)
+  ],
+  "concreteType": "AgentV2Connection",
+  "kind": "LinkedField",
+  "name": "agentsV2",
+  "plural": false,
+  "selections": (v3/*: any*/),
+  "storageKey": "agentsV2(filter:{\"status\":{\"equals\":\"RESTARTING\"}},limit:1)"
+},
+v7 = {
+  "alias": "terminated",
+  "args": [
+    {
+      "kind": "Literal",
+      "name": "filter",
+      "value": {
+        "status": {
+          "equals": "TERMINATED"
+        }
+      }
+    },
+    (v1/*: any*/)
+  ],
+  "concreteType": "AgentV2Connection",
+  "kind": "LinkedField",
+  "name": "agentsV2",
+  "plural": false,
+  "selections": (v3/*: any*/),
+  "storageKey": "agentsV2(filter:{\"status\":{\"equals\":\"TERMINATED\"}},limit:1)"
+},
+v8 = [
+  {
+    "kind": "Variable",
+    "name": "first",
+    "variableName": "first"
+  },
+  {
+    "kind": "Variable",
+    "name": "offset",
+    "variableName": "offset"
+  },
+  {
+    "kind": "Literal",
+    "name": "order",
+    "value": "status"
+  }
+],
+v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v10 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "container_count",
+  "storageKey": null
+};
+return {
+  "fragment": {
+    "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "AgentsPanelQuery",
     "selections": [
-      (v2/*: any*/),
+      (v4/*: any*/),
+      (v5/*: any*/),
+      (v6/*: any*/),
+      (v7/*: any*/),
       {
-        "alias": null,
-        "args": null,
-        "concreteType": "AgentV2Edge",
+        "alias": "agents",
+        "args": (v8/*: any*/),
+        "concreteType": "AgentConnection",
         "kind": "LinkedField",
-        "name": "edges",
-        "plural": true,
+        "name": "agent_nodes",
+        "plural": false,
         "selections": [
+          (v2/*: any*/),
           {
             "alias": null,
             "args": null,
-            "concreteType": "AgentV2",
+            "concreteType": "AgentEdge",
             "kind": "LinkedField",
-            "name": "node",
-            "plural": false,
+            "name": "edges",
+            "plural": true,
             "selections": [
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "id",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "scalingGroup",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "containerCount",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "AgentNetworkInfo",
+                "concreteType": "AgentNode",
                 "kind": "LinkedField",
-                "name": "networkInfo",
+                "name": "node",
                 "plural": false,
                 "selections": [
+                  (v9/*: any*/),
+                  (v10/*: any*/),
                   {
-                    "alias": null,
                     "args": null,
-                    "kind": "ScalarField",
-                    "name": "addr",
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "AgentStatusInfo",
-                "kind": "LinkedField",
-                "name": "statusInfo",
-                "plural": false,
-                "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "status",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "schedulable",
-                    "storageKey": null
+                    "kind": "FragmentSpread",
+                    "name": "BAIAgentTableFragment"
                   }
                 ],
                 "storageKey": null
@@ -284,16 +239,6 @@ v4 = [
         "storageKey": null
       }
     ],
-    "storageKey": null
-  }
-];
-return {
-  "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
-    "kind": "Fragment",
-    "metadata": null,
-    "name": "AgentsPanelQuery",
-    "selections": (v4/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -302,19 +247,158 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AgentsPanelQuery",
-    "selections": (v4/*: any*/)
+    "selections": [
+      (v4/*: any*/),
+      (v5/*: any*/),
+      (v6/*: any*/),
+      (v7/*: any*/),
+      {
+        "alias": "agents",
+        "args": (v8/*: any*/),
+        "concreteType": "AgentConnection",
+        "kind": "LinkedField",
+        "name": "agent_nodes",
+        "plural": false,
+        "selections": [
+          (v2/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "AgentEdge",
+            "kind": "LinkedField",
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "AgentNode",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  (v9/*: any*/),
+                  (v10/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "row_id",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "addr",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "region",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "architecture",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "first_contact",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "occupied_slots",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "available_slots",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "live_stat",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "status",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "scaling_group",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "compute_plugins",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "version",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "schedulable",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "lost_at",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ]
   },
   "params": {
-    "cacheID": "dc8b2db351e4bd55cdc184080aa32e15",
+    "cacheID": "cdee5b06993d43ead140d9b68892441a",
     "id": null,
     "metadata": {},
     "name": "AgentsPanelQuery",
     "operationKind": "query",
-    "text": "query AgentsPanelQuery(\n  $limit: Int!\n  $offset: Int!\n) {\n  alive: agentsV2(filter: {status: {equals: ALIVE}}, limit: 1) {\n    count\n  }\n  lost: agentsV2(filter: {status: {equals: LOST}}, limit: 1) {\n    count\n  }\n  restarting: agentsV2(filter: {status: {equals: RESTARTING}}, limit: 1) {\n    count\n  }\n  terminated: agentsV2(filter: {status: {equals: TERMINATED}}, limit: 1) {\n    count\n  }\n  agents: agentsV2(orderBy: [{field: STATUS, direction: ASC}, {field: ID, direction: ASC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        scalingGroup\n        containerCount\n        networkInfo {\n          addr\n        }\n        statusInfo {\n          status\n          schedulable\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query AgentsPanelQuery(\n  $first: Int!\n  $offset: Int!\n) {\n  alive: agentsV2(filter: {status: {equals: ALIVE}}, limit: 1) {\n    count\n  }\n  lost: agentsV2(filter: {status: {equals: LOST}}, limit: 1) {\n    count\n  }\n  restarting: agentsV2(filter: {status: {equals: RESTARTING}}, limit: 1) {\n    count\n  }\n  terminated: agentsV2(filter: {status: {equals: TERMINATED}}, limit: 1) {\n    count\n  }\n  agents: agent_nodes(order: \"status\", first: $first, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        container_count\n        ...BAIAgentTableFragment\n      }\n    }\n  }\n}\n\nfragment BAIAgentTableFragment on AgentNode {\n  id\n  row_id\n  addr\n  region\n  architecture\n  first_contact\n  occupied_slots\n  available_slots\n  live_stat\n  status\n  scaling_group\n  compute_plugins\n  version\n  schedulable\n  lost_at\n}\n"
   }
 };
 })();
 
-(node as any).hash = "3350a4265cbe22d5a91be6c09df8c6d4";
+(node as any).hash = "a652df24a8376beeb15c297dc5793029";
 
 export default node;
