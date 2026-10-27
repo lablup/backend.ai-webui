@@ -159,7 +159,7 @@ const FairShareWeightSettingModal: React.FC<
       mutation FairShareWeightSettingModal_ModifyDomainWeightMutation(
         $input: UpsertDomainFairShareWeightInput!
       ) {
-        adminUpsertDomainFairShareWeight(input: $input) {
+        upsertDomainFairShareWeight(input: $input) {
           domainFairShare {
             id
             spec {
@@ -178,7 +178,7 @@ const FairShareWeightSettingModal: React.FC<
         mutation FairShareWeightSettingModal_BulkModifyDomainWeightMutation(
           $input: BulkUpsertDomainFairShareWeightInput!
         ) {
-          adminBulkUpsertDomainFairShareWeight(input: $input) {
+          atomicBulkUpsertDomainFairShareWeights(input: $input) {
             upsertedCount
           }
         }
@@ -191,7 +191,7 @@ const FairShareWeightSettingModal: React.FC<
         mutation FairShareWeightSettingModal_ModifyProjectWeightMutation(
           $input: UpsertProjectFairShareWeightInput!
         ) {
-          adminUpsertProjectFairShareWeight(input: $input) {
+          upsertProjectFairShareWeight(input: $input) {
             projectFairShare {
               id
               spec {
@@ -211,7 +211,7 @@ const FairShareWeightSettingModal: React.FC<
         mutation FairShareWeightSettingModal_BulkModifyProjectWeightMutation(
           $input: BulkUpsertProjectFairShareWeightInput!
         ) {
-          adminBulkUpsertProjectFairShareWeight(input: $input) {
+          atomicBulkUpsertProjectFairShareWeights(input: $input) {
             upsertedCount
           }
         }
@@ -223,7 +223,7 @@ const FairShareWeightSettingModal: React.FC<
       mutation FairShareWeightSettingModal_ModifyUserWeightMutation(
         $input: UpsertUserFairShareWeightInput!
       ) {
-        adminUpsertUserFairShareWeight(input: $input) {
+        upsertUserFairShareWeight(input: $input) {
           userFairShare {
             id
             spec {
@@ -242,7 +242,7 @@ const FairShareWeightSettingModal: React.FC<
         mutation FairShareWeightSettingModal_BulkModifyUserWeightMutation(
           $input: BulkUpsertUserFairShareWeightInput!
         ) {
-          adminBulkUpsertUserFairShareWeight(input: $input) {
+          atomicBulkUpsertUserFairShareWeights(input: $input) {
             upsertedCount
           }
         }
@@ -315,7 +315,7 @@ const FairShareWeightSettingModal: React.FC<
                   }
                   return;
                 }
-                if (!res?.adminBulkUpsertDomainFairShareWeight) {
+                if (!res?.atomicBulkUpsertDomainFairShareWeights) {
                   message.error(t('dialog.ErrorOccurred'));
                   return;
                 }
@@ -352,7 +352,7 @@ const FairShareWeightSettingModal: React.FC<
                   }
                   return;
                 }
-                if (!res?.adminBulkUpsertProjectFairShareWeight) {
+                if (!res?.atomicBulkUpsertProjectFairShareWeights) {
                   message.error(t('dialog.ErrorOccurred'));
                   return;
                 }
@@ -392,7 +392,7 @@ const FairShareWeightSettingModal: React.FC<
                   }
                   return;
                 }
-                if (!res?.adminBulkUpsertUserFairShareWeight) {
+                if (!res?.atomicBulkUpsertUserFairShareWeights) {
                   message.error(t('dialog.ErrorOccurred'));
                   return;
                 }
@@ -425,7 +425,7 @@ const FairShareWeightSettingModal: React.FC<
                   }
                   return;
                 }
-                if (!res?.adminUpsertDomainFairShareWeight) {
+                if (!res?.upsertDomainFairShareWeight) {
                   message.error(t('dialog.ErrorOccurred'));
                   return;
                 }
@@ -458,7 +458,7 @@ const FairShareWeightSettingModal: React.FC<
                   }
                   return;
                 }
-                if (!res?.adminUpsertProjectFairShareWeight) {
+                if (!res?.upsertProjectFairShareWeight) {
                   message.error(t('dialog.ErrorOccurred'));
                   return;
                 }
@@ -491,7 +491,7 @@ const FairShareWeightSettingModal: React.FC<
                   }
                   return;
                 }
-                if (!res?.adminUpsertUserFairShareWeight) {
+                if (!res?.upsertUserFairShareWeight) {
                   message.error(t('dialog.ErrorOccurred'));
                   return;
                 }
