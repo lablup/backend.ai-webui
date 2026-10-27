@@ -103,10 +103,6 @@
 */
 import { nodeToAccessibleLabel } from '../helper/astryxLabel';
 import { useBAIi18n } from '../hooks/useBAIi18n';
-import {
-  type BAIOptionDisabled,
-  withOptionDisabledReason,
-} from './BAIDisabledOptionReason';
 import BAIMultiSelector from './BAIMultiSelector';
 import './BAISelect.css';
 import BAISelector from './BAISelector';
@@ -123,8 +119,8 @@ import type { CSSProperties, ReactNode } from 'react';
 export interface BAISelectOption {
   value?: string | number | null;
   label?: ReactNode;
-  /** `{ reason }` also puts a glyph at the row's end whose tooltip says why. */
-  disabled?: BAIOptionDisabled;
+  /** `{ reason }` also puts a glyph at the end of the row whose tooltip says why. */
+  disabled?: boolean | { reason: string };
   title?: string;
   // antd's `DefaultOptionType` carried an open index signature and call sites
   // read arbitrary keys off it (`option.data.description`,
@@ -320,7 +316,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
         const childProps = child.props as {
           value?: unknown;
           label?: ReactNode;
-          disabled?: BAIOptionDisabled;
+          disabled?: BAISelectOption['disabled'];
           filterValue?: string;
           children?: ReactNode;
         };
@@ -343,7 +339,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
             options: groupOptions.map((option) => ({
               value: toOptionKey(option.value),
               label: option.title ?? toOptionKey(option.value),
-              disabled: !!option.disabled,
+              disabled: option.disabled,
             })),
           });
           return;
@@ -377,7 +373,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
         out.push({
           value: toOptionKey(childProps.value),
           label: displayLabel,
-          disabled: !!childProps.disabled,
+          disabled: childProps.disabled,
         });
       });
       return out;
@@ -415,7 +411,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   const toAstryxOption = (option: BAISelectOption): SelectorOptionData => {
     const key = toOptionKey(option.value);
     const text = option.title ?? (nodeToAccessibleLabel(option.label) || key);
-    return { value: key, label: text, disabled: !!option.disabled };
+    return { value: key, label: text, disabled: option.disabled };
   };
   const astryxOptions: Array<SelectorOptionType> =
     childSections.length > 0
@@ -456,15 +452,14 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
     const original = rawOptions.find(
       (candidate) => toOptionKey(candidate.value) === option.value,
     );
-    const content =
-      optionRender && original
-        ? optionRender({
-            data: original,
-            label: original.label,
-            value: original.value,
-          })
-        : (nodeLabels.get(option.value) ?? option.label ?? option.value);
-    return withOptionDisabledReason(content, original?.disabled);
+    if (optionRender && original) {
+      return optionRender({
+        data: original,
+        label: original.label,
+        value: original.value,
+      });
+    }
+    return nodeLabels.get(option.value) ?? option.label ?? option.value;
   };
 
   const emitChange = (nextKey: string | null) => {
@@ -652,8 +647,8 @@ export interface BAISelectOptionProps {
    * live in props the text flattener cannot reach (FR-3544).
    */
   label?: string;
-  /** `{ reason }` also puts a glyph at the row's end whose tooltip says why. */
-  disabled?: BAIOptionDisabled;
+  /** `{ reason }` also puts a glyph at the end of the row whose tooltip says why. */
+  disabled?: BAISelectOption['disabled'];
   /**
    * Accepted and IGNORED, for antd's `optionFilterProp="filterValue"` call
    * sites. Search matches the option's visible text only — Astryx renders the

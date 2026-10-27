@@ -10,10 +10,6 @@
  it onto PagedSelector's props (`component-props-extension.md`).
 */
 import './BAIComplexSelect.css';
-import BAIDisabledOptionReason, {
-  type BAIOptionDisabled,
-  getOptionDisabledReason,
-} from './BAIDisabledOptionReason';
 import {
   PagedSelector,
   type PagedSelectorOption,
@@ -45,8 +41,8 @@ export interface BAIComplexSelectOption {
   description?: React.ReactNode;
   /** Trailing content (tokens, meta). */
   extra?: React.ReactNode;
-  /** `{ reason }` also puts a glyph at the row's end whose tooltip says why. */
-  disabled?: BAIOptionDisabled;
+  /** `{ reason }` also puts a glyph at the end of the row whose tooltip says why. */
+  disabled?: boolean | { reason: string };
 }
 
 /** PagedSelector props this adapter renames or owns. */
@@ -100,19 +96,7 @@ const toArray = (value: BAIComplexSelectValue | undefined) =>
 
 const toPagedOption = (option: BAIComplexSelectOption): PagedSelectorOption => {
   const { extra, disabled, ...rest } = option;
-  const reason = getOptionDisabledReason(disabled);
-  return {
-    ...rest,
-    endContent: reason ? (
-      <>
-        <BAIDisabledOptionReason reason={reason} />
-        {extra}
-      </>
-    ) : (
-      extra
-    ),
-    isDisabled: !!disabled,
-  };
+  return { ...rest, endContent: extra, isDisabled: disabled };
 };
 
 const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({

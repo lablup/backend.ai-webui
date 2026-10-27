@@ -173,11 +173,11 @@ describe('BAIComplexSelect option and panel mapping', () => {
     await user.click(trigger());
     expect(optionRows()[1]).toHaveAttribute('aria-disabled', 'true');
     expect(
-      optionRows()[1].querySelector('.bai-disabled-option-reason'),
+      optionRows()[1].querySelector('.uic-option-disabled-reason'),
     ).not.toBeNull();
     expect(optionRows()[1]).toHaveTextContent('No access');
     expect(
-      optionRows()[0].querySelector('.bai-disabled-option-reason'),
+      optionRows()[0].querySelector('.uic-option-disabled-reason'),
     ).toBeNull();
   });
 

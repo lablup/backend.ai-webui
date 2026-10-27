@@ -23,7 +23,6 @@ import {
   useThrottleFn,
   useUpdatableState,
   BAISelector,
-  withOptionDisabledReason,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Info, SquarePen } from 'lucide-react';
@@ -171,16 +170,17 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   const presetOptions: PresetOptionType[] = _.map(
     resource_presets,
     (preset) => {
+      const disabledReason = disabledReasonOf(preset);
       return {
         // Names repeat across resource groups; the id is the option's key.
         value: preset?.id ?? '',
         label: preset?.name ?? '',
-        disabled: !!disabledReasonOf(preset),
+        disabled: disabledReason ? { reason: disabledReason } : false,
         preset: preset ?? undefined,
       };
     },
   )
-    .sort((a, b) => (a.disabled === b.disabled ? 0 : a.disabled ? 1 : -1))
+    .sort((a, b) => (!!a.disabled === !!b.disabled ? 0 : a.disabled ? 1 : -1))
     .sort((a, b) => localeCompare(a.label, b.label));
 
   const renderResourceRow = (option: SelectorOptionData) => {
@@ -208,7 +208,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     const slotsInfo: {
       [key in ResourceSlotName]: string;
     } = JSON.parse(preset.resource_slots || '{}');
-    const row = (
+    return (
       <BAIFlex direction="row" justify="between" gap={'xs'} style={{ flex: 1 }}>
         <BAIFlex direction="row" gap={'xs'} align="center">
           {preset.name}
@@ -249,10 +249,6 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
           )}
         </BAIFlex>
       </BAIFlex>
-    );
-    return withOptionDisabledReason(
-      row,
-      disabledReason ? { reason: disabledReason } : false,
     );
   };
 
