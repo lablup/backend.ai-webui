@@ -5,15 +5,15 @@
 import type { PendingSessionsPanelAttemptsQuery } from '../../../__generated__/PendingSessionsPanelAttemptsQuery.graphql';
 import type { PendingSessionsPanelReasonQuery } from '../../../__generated__/PendingSessionsPanelReasonQuery.graphql';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
-import MemberCard, { NoProjectText } from '../memberCards/MemberCard';
-import type { PanelComponentProps } from '../types';
-import { useOpenSessionDetail } from '../useOpenSessionDetail';
-import ProjectSessionList from './ProjectSessionList';
+import { legacyScopeId, type CardScope } from '../cardScope';
 import {
-  adminProjectId,
   legacySessionIdFilter,
   pendingReason,
-} from './projectCardData';
+} from '../projectAdminCards/projectCardData';
+import type { PanelComponentProps } from '../types';
+import { useOpenSessionDetail } from '../useOpenSessionDetail';
+import ScopedCard from './ScopedCard';
+import SessionList from './SessionList';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAILink,
@@ -38,11 +38,11 @@ type Reasons = Readonly<Record<string, string | null>>;
 
 /** The legacy session node's scheduler message for the listed sessions, in one query. */
 const PendingReasons: React.FC<{
-  projectId: string;
+  scope: CardScope;
   sessionIds: ReadonlyArray<string>;
   fetchKey: string;
   children: (reasons: Reasons) => React.ReactNode;
-}> = ({ projectId, sessionIds, fetchKey, children }) => {
+}> = ({ scope, sessionIds, fetchKey, children }) => {
   'use memo';
   const data = useLazyLoadQuery<PendingSessionsPanelReasonQuery>(
     graphql`
@@ -68,7 +68,7 @@ const PendingReasons: React.FC<{
       }
     `,
     {
-      scopeId: `project:${projectId}`,
+      scopeId: legacyScopeId(scope),
       filter: legacySessionIdFilter(sessionIds),
       first: Math.max(1, sessionIds.length),
       skip: sessionIds.length === 0,
@@ -121,9 +121,9 @@ const SchedulingAttempts: React.FC<{ sessionId: string }> = ({ sessionId }) => {
 };
 
 const PendingSessionTable: React.FC<{
-  projectId: string;
+  scope: CardScope;
   fetchKey: string;
-}> = ({ projectId, fetchKey }) => {
+}> = ({ scope, fetchKey }) => {
   'use memo';
   const { t } = useTranslation();
   const openSessionDetail = useOpenSessionDetail();
@@ -135,8 +135,8 @@ const PendingSessionTable: React.FC<{
   const deferredOffset = useDeferredValue(baiPaginationOption.offset);
 
   return (
-    <ProjectSessionList
-      projectId={projectId}
+    <SessionList
+      scope={scope}
       filter={PENDING_FILTER}
       orderBy={ORDER_BY}
       limit={baiPaginationOption.limit}
@@ -145,7 +145,7 @@ const PendingSessionTable: React.FC<{
     >
       {({ count, rows }) => (
         <PendingReasons
-          projectId={projectId}
+          scope={scope}
           sessionIds={rows.map((row) => row.entityId)}
           fetchKey={fetchKey}
         >
@@ -217,32 +217,32 @@ const PendingSessionTable: React.FC<{
           )}
         </PendingReasons>
       )}
-    </ProjectSessionList>
+    </SessionList>
   );
 };
 
-/** The project's pending sessions, longest waiting first, with the scheduler's last message. */
+/** Pending sessions in the page's scope, longest waiting first, with the scheduler's last message. */
 const PendingSessionsPanel: React.FC<PanelComponentProps> = ({
   scope,
   fetchKey,
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const projectId = adminProjectId(scope);
   return (
-    <MemberCard
-      title={t('dashboard.card.PendingSessions')}
-      tooltip={t('dashboard.card.PendingSessionsTooltip')}
+    <ScopedCard
+      scope={scope}
       fetchKey={fetchKey}
+      heading={{
+        project: {
+          title: t('dashboard.card.PendingSessions'),
+          tooltip: t('dashboard.card.PendingSessionsTooltip'),
+        },
+      }}
     >
-      {(key) =>
-        projectId ? (
-          <PendingSessionTable projectId={projectId} fetchKey={key} />
-        ) : (
-          <NoProjectText />
-        )
-      }
-    </MemberCard>
+      {(cardScope, key) => (
+        <PendingSessionTable scope={cardScope} fetchKey={key} />
+      )}
+    </ScopedCard>
   );
 };
 

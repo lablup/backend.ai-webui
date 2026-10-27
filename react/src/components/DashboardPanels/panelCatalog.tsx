@@ -8,13 +8,15 @@ import QuotaPerStorageVolumeDashboardItem from '../QuotaPerStorageVolumeDashboar
 import RecentlyCreatedSession from '../RecentlyCreatedSession';
 import SessionCountDashboardItem from '../SessionCountDashboardItem';
 import { useDashboardRefreshQuery } from './DashboardRefreshContext';
+import AuditLogPanel from './cards/AuditLogPanel';
+import DeploymentStatusPanel from './cards/DeploymentStatusPanel';
+import FoldersPanel from './cards/FoldersPanel';
+import LongRunningSessionsPanel from './cards/LongRunningSessionsPanel';
+import PendingSessionsPanel from './cards/PendingSessionsPanel';
+import RecentSessionsPanel from './cards/RecentSessionsPanel';
+import SessionStatusPanel from './cards/SessionStatusPanel';
 import { DEFAULT_PANEL_LAYOUTS, presetKey } from './defaults';
-import MyActivityPanel from './memberCards/MyActivityPanel';
-import MyDeploymentsPanel from './memberCards/MyDeploymentsPanel';
-import MyFoldersPanel from './memberCards/MyFoldersPanel';
-import MyRecentSessionsPanel from './memberCards/MyRecentSessionsPanel';
 import MyResourcesPanel from './memberCards/MyResourcesPanel';
-import MySessionsPanel from './memberCards/MySessionsPanel';
 import ResourceGroupTotalPanel from './memberCards/ResourceGroupTotalPanel';
 import ResourcePresetsPanel from './memberCards/ResourcePresetsPanel';
 import {
@@ -24,13 +26,7 @@ import {
   StartFromURLPanel,
   StartSessionPanel,
 } from './memberCards/StartActionPanels';
-import LongRunningSessionsPanel from './projectAdminCards/LongRunningSessionsPanel';
-import PendingSessionsPanel from './projectAdminCards/PendingSessionsPanel';
-import ProjectAuditLogPanel from './projectAdminCards/ProjectAuditLogPanel';
-import ProjectDeploymentsPanel from './projectAdminCards/ProjectDeploymentsPanel';
-import ProjectFoldersPanel from './projectAdminCards/ProjectFoldersPanel';
 import ProjectResourceAllocationPanel from './projectAdminCards/ProjectResourceAllocationPanel';
-import ProjectSessionStatusPanel from './projectAdminCards/ProjectSessionStatusPanel';
 import ProjectUsersPanel from './projectAdminCards/ProjectUsersPanel';
 import ResourceGroupCapacityPanel from './projectAdminCards/ResourceGroupCapacityPanel';
 import { resourceKeys, resourceRegistry } from './resourceRegistry';
@@ -201,7 +197,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     group: 'session',
     titleKey: 'session.MySessions',
     kind: 'custom',
-    Component: MySessionsPanel,
+    Component: SessionStatusPanel,
     defaultSize: size(2, 2),
     minSize: size(2, 2),
     refresh: { min: '15s' },
@@ -223,7 +219,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     group: 'session',
     titleKey: 'dashboard.card.MyRecentSessions',
     kind: 'custom',
-    Component: MyRecentSessionsPanel,
+    Component: RecentSessionsPanel,
     defaultSize: size(4, 3),
     minSize: size(2, 2),
     refresh: { min: '1m' },
@@ -277,7 +273,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     group: 'resource',
     titleKey: 'data.MyFolders',
     kind: 'custom',
-    Component: MyFoldersPanel,
+    Component: FoldersPanel,
     defaultSize: size(2, 2),
     minSize: size(2, 2),
     refresh: { min: '5m' },
@@ -300,7 +296,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'dashboard.card.MyDeployments',
     requires: { menuKey: 'deployments' },
     kind: 'custom',
-    Component: MyDeploymentsPanel,
+    Component: DeploymentStatusPanel,
     defaultSize: size(2, 3),
     minSize: size(2, 2),
     refresh: { min: '30s' },
@@ -311,7 +307,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     group: 'activity',
     titleKey: 'dashboard.card.MyActivity',
     kind: 'custom',
-    Component: MyActivityPanel,
+    Component: AuditLogPanel,
     defaultSize: size(4, 3),
     minSize: size(2, 2),
     refresh: { min: '1m' },
@@ -327,7 +323,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     group: 'session',
     titleKey: 'dashboard.card.SessionStatus',
     kind: 'custom',
-    Component: ProjectSessionStatusPanel,
+    Component: SessionStatusPanel,
     defaultSize: size(4, 3),
     minSize: size(2, 3),
     refresh: { min: '15s' },
@@ -373,7 +369,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'dashboard.card.DeploymentStatus',
     requires: { menuKey: 'deployments' },
     kind: 'custom',
-    Component: ProjectDeploymentsPanel,
+    Component: DeploymentStatusPanel,
     defaultSize: size(2, 3),
     minSize: size(2, 2),
     refresh: { min: '30s' },
@@ -384,7 +380,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     group: 'resource',
     titleKey: 'general.Folders',
     kind: 'custom',
-    Component: ProjectFoldersPanel,
+    Component: FoldersPanel,
     defaultSize: size(2, 2),
     minSize: size(2, 2),
     refresh: { min: '5m' },
@@ -406,7 +402,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     group: 'activity',
     titleKey: 'auditLog.AuditLog',
     kind: 'custom',
-    Component: ProjectAuditLogPanel,
+    Component: AuditLogPanel,
     defaultSize: size(4, 4),
     minSize: size(2, 3),
     refresh: { min: '1m' },

@@ -3,12 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
-import MemberCard, { NoProjectText } from '../memberCards/MemberCard';
+import type { CardScope } from '../cardScope';
 import type { DateTimeWindow } from '../timeRange';
 import type { PanelComponentProps } from '../types';
 import { useOpenSessionDetail } from '../useOpenSessionDetail';
-import ProjectSessionList from './ProjectSessionList';
-import { adminProjectId } from './projectCardData';
+import ScopedCard from './ScopedCard';
+import SessionList from './SessionList';
 import {
   BAILink,
   BAISessionNodesV2,
@@ -30,10 +30,10 @@ const VISIBLE_COLUMNS = new Set([
 const ORDER_BY = [{ field: 'STARTS_AT' as const, direction: 'ASC' as const }];
 
 const LongRunningSessionTable: React.FC<{
-  projectId: string;
+  scope: CardScope;
   timeRange: DateTimeWindow;
   fetchKey: string;
-}> = ({ projectId, timeRange, fetchKey }) => {
+}> = ({ scope, timeRange, fetchKey }) => {
   'use memo';
   const openSessionDetail = useOpenSessionDetail();
   const {
@@ -50,8 +50,8 @@ const LongRunningSessionTable: React.FC<{
   const deferredOffset = useDeferredValue(baiPaginationOption.offset);
 
   return (
-    <ProjectSessionList
-      projectId={projectId}
+    <SessionList
+      scope={scope}
       filter={deferredFilter}
       orderBy={ORDER_BY}
       limit={baiPaginationOption.limit}
@@ -95,11 +95,11 @@ const LongRunningSessionTable: React.FC<{
           }}
         />
       )}
-    </ProjectSessionList>
+    </SessionList>
   );
 };
 
-/** The project's running sessions that started before the card's range, oldest first. */
+/** Running sessions in the page's scope that started before the card's range, oldest first. */
 const LongRunningSessionsPanel: React.FC<PanelComponentProps> = ({
   scope,
   vars,
@@ -107,25 +107,25 @@ const LongRunningSessionsPanel: React.FC<PanelComponentProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const projectId = adminProjectId(scope);
   return (
-    <MemberCard
-      title={t('dashboard.card.LongRunningSessions')}
-      tooltip={t('dashboard.card.LongRunningSessionsTooltip')}
+    <ScopedCard
+      scope={scope}
       fetchKey={fetchKey}
+      heading={{
+        project: {
+          title: t('dashboard.card.LongRunningSessions'),
+          tooltip: t('dashboard.card.LongRunningSessionsTooltip'),
+        },
+      }}
     >
-      {(key) =>
-        projectId ? (
-          <LongRunningSessionTable
-            projectId={projectId}
-            timeRange={vars.timeRange}
-            fetchKey={key}
-          />
-        ) : (
-          <NoProjectText />
-        )
-      }
-    </MemberCard>
+      {(cardScope, key) => (
+        <LongRunningSessionTable
+          scope={cardScope}
+          timeRange={vars.timeRange}
+          fetchKey={key}
+        />
+      )}
+    </ScopedCard>
   );
 };
 

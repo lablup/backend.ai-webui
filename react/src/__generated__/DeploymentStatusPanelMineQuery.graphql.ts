@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9d2ed50794eba4caa01a98fac2ecc82b>>
+ * @generated SignedSource<<f63476ffa069de9b5ed1b1d0352b6b8f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -148,13 +148,13 @@ export type ScalingStateFilter = {
   notEquals?: ScalingState | null | undefined;
   notIn?: ReadonlyArray<ScalingState> | null | undefined;
 };
-export type MyDeploymentsPanelQuery$variables = {
+export type DeploymentStatusPanelMineQuery$variables = {
   filter: DeploymentFilter;
   limit: number;
   offset: number;
 };
-export type MyDeploymentsPanelQuery$data = {
-  readonly myDeployments: {
+export type DeploymentStatusPanelMineQuery$data = {
+  readonly deployments: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -170,9 +170,9 @@ export type MyDeploymentsPanelQuery$data = {
     }>;
   } | null | undefined;
 };
-export type MyDeploymentsPanelQuery = {
-  response: MyDeploymentsPanelQuery$data;
-  variables: MyDeploymentsPanelQuery$variables;
+export type DeploymentStatusPanelMineQuery = {
+  response: DeploymentStatusPanelMineQuery$data;
+  variables: DeploymentStatusPanelMineQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -287,10 +287,10 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "MyDeploymentsPanelQuery",
+    "name": "DeploymentStatusPanelMineQuery",
     "selections": [
       {
-        "alias": null,
+        "alias": "deployments",
         "args": (v1/*: any*/),
         "concreteType": "ModelDeploymentConnection",
         "kind": "LinkedField",
@@ -339,10 +339,10 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "MyDeploymentsPanelQuery",
+    "name": "DeploymentStatusPanelMineQuery",
     "selections": [
       {
-        "alias": null,
+        "alias": "deployments",
         "args": (v1/*: any*/),
         "concreteType": "ModelDeploymentConnection",
         "kind": "LinkedField",
@@ -691,16 +691,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "0ceaac5705a4c9250d04d7a013b1cd7a",
+    "cacheID": "4b675152fcaf8bfde35b1a35b7dad7f1",
     "id": null,
     "metadata": {},
-    "name": "MyDeploymentsPanelQuery",
+    "name": "DeploymentStatusPanelMineQuery",
     "operationKind": "query",
-    "text": "query MyDeploymentsPanelQuery(\n  $filter: DeploymentFilter!\n  $limit: Int!\n  $offset: Int!\n) {\n  myDeployments(filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        replicaState {\n          desiredReplicaCount\n        }\n        healthyReplicas: replicas(filter: {healthStatus: {equals: HEALTHY}}) {\n          count\n        }\n        ...BAIModelDeploymentNodesFragment\n      }\n    }\n  }\n}\n\nfragment BAIDeploymentOwnerInfo_deployment on ModelDeployment {\n  id\n  creator {\n    id\n    basicInfo {\n      email\n      username\n      fullName\n    }\n  }\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIModelDeploymentNodesFragment on ModelDeployment {\n  id\n  entityId\n  currentRevisionId\n  metadata {\n    projectId\n    domainName\n    name\n    status\n    createdAt\n    updatedAt\n    resourceGroupName\n    projectV2 {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n  networkAccess {\n    endpointUrl\n    preferredDomainName\n    openToPublic\n  }\n  defaultDeploymentStrategy {\n    type\n  }\n  replicaState {\n    desiredReplicaCount\n  }\n  runningReplicas: replicas(filter: {status: {equals: RUNNING}}) {\n    count\n  }\n  currentRevision {\n    id\n    revisionNumber\n    modelMountConfig {\n      vfolder {\n        id\n        name\n      }\n    }\n  }\n  entityLabels(limit: 100) {\n    ...BAIEntityLabelTokensFragment\n    ...BAIEntityLabelSettingModalFragment\n  }\n  ...BAIDeploymentOwnerInfo_deployment\n}\n"
+    "text": "query DeploymentStatusPanelMineQuery(\n  $filter: DeploymentFilter!\n  $limit: Int!\n  $offset: Int!\n) {\n  deployments: myDeployments(filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        replicaState {\n          desiredReplicaCount\n        }\n        healthyReplicas: replicas(filter: {healthStatus: {equals: HEALTHY}}) {\n          count\n        }\n        ...BAIModelDeploymentNodesFragment\n      }\n    }\n  }\n}\n\nfragment BAIDeploymentOwnerInfo_deployment on ModelDeployment {\n  id\n  creator {\n    id\n    basicInfo {\n      email\n      username\n      fullName\n    }\n  }\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIModelDeploymentNodesFragment on ModelDeployment {\n  id\n  entityId\n  currentRevisionId\n  metadata {\n    projectId\n    domainName\n    name\n    status\n    createdAt\n    updatedAt\n    resourceGroupName\n    projectV2 {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n  networkAccess {\n    endpointUrl\n    preferredDomainName\n    openToPublic\n  }\n  defaultDeploymentStrategy {\n    type\n  }\n  replicaState {\n    desiredReplicaCount\n  }\n  runningReplicas: replicas(filter: {status: {equals: RUNNING}}) {\n    count\n  }\n  currentRevision {\n    id\n    revisionNumber\n    modelMountConfig {\n      vfolder {\n        id\n        name\n      }\n    }\n  }\n  entityLabels(limit: 100) {\n    ...BAIEntityLabelTokensFragment\n    ...BAIEntityLabelSettingModalFragment\n  }\n  ...BAIDeploymentOwnerInfo_deployment\n}\n"
   }
 };
 })();
 
-(node as any).hash = "3e722fd58e207763bcdb84f76c4c4740";
+(node as any).hash = "91a94fce5e6845c23ee7ab35552867aa";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1d3d8af209cecaa36950754529f70cba>>
+ * @generated SignedSource<<f17772467012ee5253d1c00c13dbeb9a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -131,14 +131,13 @@ export type SessionV2OrderBy = {
   direction?: OrderDirection;
   field: SessionV2OrderField;
 };
-export type ProjectSessionListQuery$variables = {
+export type SessionListMineQuery$variables = {
   filter: SessionV2Filter;
   limit: number;
   offset: number;
   orderBy: ReadonlyArray<SessionV2OrderBy>;
-  projectId: string;
 };
-export type ProjectSessionListQuery$data = {
+export type SessionListMineQuery$data = {
   readonly sessions: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
@@ -149,9 +148,9 @@ export type ProjectSessionListQuery$data = {
     }>;
   } | null | undefined;
 };
-export type ProjectSessionListQuery = {
-  response: ProjectSessionListQuery$data;
-  variables: ProjectSessionListQuery$variables;
+export type SessionListMineQuery = {
+  response: SessionListMineQuery$data;
+  variables: SessionListMineQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -175,12 +174,7 @@ v3 = {
   "kind": "LocalArgument",
   "name": "orderBy"
 },
-v4 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "projectId"
-},
-v5 = [
+v4 = [
   {
     "kind": "Variable",
     "name": "filter",
@@ -200,48 +194,37 @@ v5 = [
     "kind": "Variable",
     "name": "orderBy",
     "variableName": "orderBy"
-  },
-  {
-    "fields": [
-      {
-        "kind": "Variable",
-        "name": "projectId",
-        "variableName": "projectId"
-      }
-    ],
-    "kind": "ObjectValue",
-    "name": "scope"
   }
 ],
-v6 = {
+v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "count",
   "storageKey": null
 },
-v7 = {
+v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "entityId",
   "storageKey": null
 },
-v8 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v9 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v10 = [
+v9 = [
   {
     "alias": null,
     "args": null,
@@ -268,23 +251,23 @@ v10 = [
     "storageKey": null
   }
 ],
-v11 = {
+v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "key",
   "storageKey": null
 },
-v12 = {
+v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "value",
   "storageKey": null
 },
-v13 = [
-  (v11/*: any*/),
-  (v12/*: any*/)
+v12 = [
+  (v10/*: any*/),
+  (v11/*: any*/)
 ];
 return {
   "fragment": {
@@ -292,22 +275,21 @@ return {
       (v0/*: any*/),
       (v1/*: any*/),
       (v2/*: any*/),
-      (v3/*: any*/),
-      (v4/*: any*/)
+      (v3/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "ProjectSessionListQuery",
+    "name": "SessionListMineQuery",
     "selections": [
       {
         "alias": "sessions",
-        "args": (v5/*: any*/),
+        "args": (v4/*: any*/),
         "concreteType": "SessionV2Connection",
         "kind": "LinkedField",
-        "name": "projectSessionsV2",
+        "name": "mySessionsV2",
         "plural": false,
         "selections": [
-          (v6/*: any*/),
+          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -324,7 +306,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v7/*: any*/),
+                  (v6/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -346,24 +328,23 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v4/*: any*/),
       (v0/*: any*/),
       (v3/*: any*/),
       (v1/*: any*/),
       (v2/*: any*/)
     ],
     "kind": "Operation",
-    "name": "ProjectSessionListQuery",
+    "name": "SessionListMineQuery",
     "selections": [
       {
         "alias": "sessions",
-        "args": (v5/*: any*/),
+        "args": (v4/*: any*/),
         "concreteType": "SessionV2Connection",
         "kind": "LinkedField",
-        "name": "projectSessionsV2",
+        "name": "mySessionsV2",
         "plural": false,
         "selections": [
-          (v6/*: any*/),
+          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -380,8 +361,8 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
+                  (v6/*: any*/),
                   (v7/*: any*/),
-                  (v8/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -390,7 +371,7 @@ return {
                     "name": "project",
                     "plural": false,
                     "selections": [
-                      (v8/*: any*/),
+                      (v7/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -399,7 +380,7 @@ return {
                         "name": "basicInfo",
                         "plural": false,
                         "selections": [
-                          (v9/*: any*/)
+                          (v8/*: any*/)
                         ],
                         "storageKey": null
                       }
@@ -414,7 +395,7 @@ return {
                     "name": "metadata",
                     "plural": false,
                     "selections": [
-                      (v9/*: any*/),
+                      (v8/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -501,7 +482,7 @@ return {
                             "kind": "LinkedField",
                             "name": "requested",
                             "plural": false,
-                            "selections": (v10/*: any*/),
+                            "selections": (v9/*: any*/),
                             "storageKey": null
                           },
                           {
@@ -511,7 +492,7 @@ return {
                             "kind": "LinkedField",
                             "name": "used",
                             "plural": false,
-                            "selections": (v10/*: any*/),
+                            "selections": (v9/*: any*/),
                             "storageKey": null
                           }
                         ],
@@ -544,7 +525,7 @@ return {
                             "name": "node",
                             "plural": false,
                             "selections": [
-                              (v8/*: any*/),
+                              (v7/*: any*/),
                               {
                                 "alias": null,
                                 "args": null,
@@ -585,7 +566,7 @@ return {
                                     "kind": "LinkedField",
                                     "name": "tags",
                                     "plural": true,
-                                    "selections": (v13/*: any*/),
+                                    "selections": (v12/*: any*/),
                                     "storageKey": null
                                   },
                                   {
@@ -595,7 +576,7 @@ return {
                                     "kind": "LinkedField",
                                     "name": "labels",
                                     "plural": true,
-                                    "selections": (v13/*: any*/),
+                                    "selections": (v12/*: any*/),
                                     "storageKey": null
                                   }
                                 ],
@@ -618,7 +599,7 @@ return {
                     "name": "user",
                     "plural": false,
                     "selections": [
-                      (v8/*: any*/),
+                      (v7/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -670,9 +651,9 @@ return {
                             "name": "node",
                             "plural": false,
                             "selections": [
+                              (v10/*: any*/),
                               (v11/*: any*/),
-                              (v12/*: any*/),
-                              (v8/*: any*/),
+                              (v7/*: any*/),
                               {
                                 "alias": null,
                                 "args": null,
@@ -701,16 +682,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "9fc6421de1198785b31c863ec9abdf07",
+    "cacheID": "3cb9a77f9e76dd4966c84e4b39446c7d",
     "id": null,
     "metadata": {},
-    "name": "ProjectSessionListQuery",
+    "name": "SessionListMineQuery",
     "operationKind": "query",
-    "text": "query ProjectSessionListQuery(\n  $projectId: UUID!\n  $filter: SessionV2Filter!\n  $orderBy: [SessionV2OrderBy!]!\n  $limit: Int!\n  $offset: Int!\n) {\n  sessions: projectSessionsV2(scope: {projectId: $projectId}, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        entityId\n        ...BAISessionNodesV2Fragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment BAISessionClusterModeV2Fragment on SessionV2MetadataInfo {\n  clusterMode\n  clusterSize\n}\n\nfragment BAISessionNodesV2Fragment on SessionV2 {\n  id\n  entityId\n  project {\n    id\n    basicInfo {\n      name\n    }\n  }\n  metadata {\n    name\n    ...BAISessionTypeTokenV2Fragment\n    ...BAISessionClusterModeV2Fragment\n  }\n  lifecycle {\n    status\n    createdAt\n    terminatedAt\n  }\n  resource {\n    resourceGroupName\n    allocation {\n      requested {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n      used {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n    }\n  }\n  images {\n    edges {\n      node {\n        id\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n  entityLabels(limit: 100) {\n    ...BAIEntityLabelTokensFragment\n    ...BAIEntityLabelSettingModalFragment\n  }\n}\n\nfragment BAISessionTypeTokenV2Fragment on SessionV2MetadataInfo {\n  sessionType\n}\n"
+    "text": "query SessionListMineQuery(\n  $filter: SessionV2Filter!\n  $orderBy: [SessionV2OrderBy!]!\n  $limit: Int!\n  $offset: Int!\n) {\n  sessions: mySessionsV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        entityId\n        ...BAISessionNodesV2Fragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment BAISessionClusterModeV2Fragment on SessionV2MetadataInfo {\n  clusterMode\n  clusterSize\n}\n\nfragment BAISessionNodesV2Fragment on SessionV2 {\n  id\n  entityId\n  project {\n    id\n    basicInfo {\n      name\n    }\n  }\n  metadata {\n    name\n    ...BAISessionTypeTokenV2Fragment\n    ...BAISessionClusterModeV2Fragment\n  }\n  lifecycle {\n    status\n    createdAt\n    terminatedAt\n  }\n  resource {\n    resourceGroupName\n    allocation {\n      requested {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n      used {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n    }\n  }\n  images {\n    edges {\n      node {\n        id\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n  entityLabels(limit: 100) {\n    ...BAIEntityLabelTokensFragment\n    ...BAIEntityLabelSettingModalFragment\n  }\n}\n\nfragment BAISessionTypeTokenV2Fragment on SessionV2MetadataInfo {\n  sessionType\n}\n"
   }
 };
 })();
 
-(node as any).hash = "6a7cdf0e00c50002df834593fd91a04b";
+(node as any).hash = "dd0e2975e251c935cca69d1ebbd25aba";
 
 export default node;

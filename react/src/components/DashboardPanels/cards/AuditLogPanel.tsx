@@ -4,24 +4,27 @@
  */
 import type {
   AuditLogFilter,
-  ProjectAuditLogPanelQuery,
-} from '../../../__generated__/ProjectAuditLogPanelQuery.graphql';
+  AuditLogPanelQuery,
+  AuditLogScope,
+} from '../../../__generated__/AuditLogPanelQuery.graphql';
+import { useSuspendedBackendaiClient } from '../../../hooks';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
+import type { CardScope } from '../cardScope';
 import SuccessFailureStats from '../charts/SuccessFailureStats';
 import {
   readSuccessFailure,
   successFailureVariables,
   type Outcome,
 } from '../countAliases';
-import MemberCard, { NoProjectText } from '../memberCards/MemberCard';
 import {
   AUDIT_FAILURE_STATUSES,
   FAILURES_ONLY_FILTER,
   isFailuresOnlyFilter,
 } from '../memberCards/memberCardData';
+import { projectAuditScope } from '../projectAdminCards/projectCardData';
 import { withinWindow, type DateTimeWindow } from '../timeRange';
 import type { PanelComponentProps } from '../types';
-import { adminProjectId, projectAuditScope } from './projectCardData';
+import ScopedCard from './ScopedCard';
 import { Switch } from '@lablup/ui-common/Switch';
 import {
   BAIAuditLogNodes,
@@ -42,7 +45,7 @@ const VISIBLE_COLUMNS = new Set([
   'description',
 ]);
 
-const auditOutcomeFilter = (
+export const auditOutcomeFilter = (
   outcome: Outcome,
   window: DateTimeWindow,
 ): AuditLogFilter => ({
@@ -53,21 +56,14 @@ const auditOutcomeFilter = (
       : { in: [...AUDIT_FAILURE_STATUSES] },
 });
 
-const ProjectAuditLog: React.FC<{
-  projectId: string;
+const AuditLogTable: React.FC<{
+  scope: AuditLogScope;
   range: string;
   timeRange: DateTimeWindow;
   failuresOnly: boolean;
   fetchKey: string;
   onShowFailures: () => void;
-}> = ({
-  projectId,
-  range,
-  timeRange,
-  failuresOnly,
-  fetchKey,
-  onShowFailures,
-}) => {
+}> = ({ scope, range, timeRange, failuresOnly, fetchKey, onShowFailures }) => {
   'use memo';
   const {
     baiPaginationOption,
@@ -79,8 +75,8 @@ const ProjectAuditLog: React.FC<{
     range,
     timeRange,
   );
-  const variables: ProjectAuditLogPanelQuery['variables'] = {
-    scope: projectAuditScope(projectId),
+  const variables: AuditLogPanelQuery['variables'] = {
+    scope,
     filter: {
       ...withinWindow('createdAt', timeRange),
       ...(failuresOnly ? FAILURES_ONLY_FILTER : {}),
@@ -90,9 +86,9 @@ const ProjectAuditLog: React.FC<{
     ...countVariables,
   };
   const deferredVariables = useDeferredValue(variables);
-  const data = useLazyLoadQuery<ProjectAuditLogPanelQuery>(
+  const data = useLazyLoadQuery<AuditLogPanelQuery>(
     graphql`
-      query ProjectAuditLogPanelQuery(
+      query AuditLogPanelQuery(
         $scope: AuditLogScope!
         $filter: AuditLogFilter!
         $limit: Int!
@@ -289,8 +285,17 @@ const ProjectAuditLog: React.FC<{
   );
 };
 
-/** The audit log of the project and the entities in it over the card's range; "failures only" is saved on the board. */
-const ProjectAuditLogPanel: React.FC<PanelComponentProps> = ({
+/** Whose audit log a scope reads: the viewer's own actions, or a project and the entities in it. */
+export const auditLogScope = (
+  scope: CardScope,
+  userId: string,
+): AuditLogScope =>
+  scope.kind === 'mine'
+    ? { triggeredUser: [{ value: userId }] }
+    : projectAuditScope(scope.projectId);
+
+/** The audit log in the page's scope over the card's range; "failures only" is saved on the board. */
+const AuditLogPanel: React.FC<PanelComponentProps> = ({
   panel,
   scope,
   vars,
@@ -299,16 +304,25 @@ const ProjectAuditLogPanel: React.FC<PanelComponentProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const projectId = adminProjectId(scope);
+  const baiClient = useSuspendedBackendaiClient();
   const failuresOnly = isFailuresOnlyFilter(panel.filter);
   const setFailuresOnly = (next: boolean) =>
     onChangeFilter?.(next ? FAILURES_ONLY_FILTER : null);
 
   return (
-    <MemberCard
-      title={t('auditLog.AuditLog')}
-      tooltip={t('dashboard.card.ProjectAuditLogTooltip')}
+    <ScopedCard
+      scope={scope}
       fetchKey={fetchKey}
+      heading={{
+        mine: {
+          title: t('dashboard.card.MyActivity'),
+          tooltip: t('dashboard.card.MyActivityTooltip'),
+        },
+        project: {
+          title: t('auditLog.AuditLog'),
+          tooltip: t('dashboard.card.ProjectAuditLogTooltip'),
+        },
+      }}
       extra={
         <Switch
           size="sm"
@@ -320,24 +334,20 @@ const ProjectAuditLogPanel: React.FC<PanelComponentProps> = ({
         </Switch>
       }
     >
-      {(key) =>
-        projectId ? (
-          <ProjectAuditLog
-            // A new filter starts on the first page.
-            key={String(failuresOnly)}
-            projectId={projectId}
-            range={vars.range}
-            timeRange={vars.timeRange}
-            failuresOnly={failuresOnly}
-            fetchKey={key}
-            onShowFailures={() => setFailuresOnly(true)}
-          />
-        ) : (
-          <NoProjectText />
-        )
-      }
-    </MemberCard>
+      {(cardScope, key) => (
+        <AuditLogTable
+          // A new filter starts on the first page.
+          key={String(failuresOnly)}
+          scope={auditLogScope(cardScope, baiClient.user_uuid)}
+          range={vars.range}
+          timeRange={vars.timeRange}
+          failuresOnly={failuresOnly}
+          fetchKey={key}
+          onShowFailures={() => setFailuresOnly(true)}
+        />
+      )}
+    </ScopedCard>
   );
 };
 
-export default ProjectAuditLogPanel;
+export default AuditLogPanel;

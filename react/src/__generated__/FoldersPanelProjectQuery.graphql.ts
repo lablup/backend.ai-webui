@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c711021abba69eabc62c1ae682ba890f>>
+ * @generated SignedSource<<95d920ab2a257ed32bb1ec1f0462888d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,11 +10,11 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { Result } from "relay-runtime";
-export type ProjectFoldersPanelQuery$variables = {
+export type FoldersPanelProjectQuery$variables = {
   policyProjectId: string;
   projectId: string;
 };
-export type ProjectFoldersPanelQuery$data = {
+export type FoldersPanelProjectQuery$data = {
   readonly policy: Result<{
     readonly maxVfolderCount: number;
   } | null | undefined, unknown>;
@@ -25,9 +25,9 @@ export type ProjectFoldersPanelQuery$data = {
     readonly count: number;
   } | null | undefined;
 };
-export type ProjectFoldersPanelQuery = {
-  response: ProjectFoldersPanelQuery$data;
-  variables: ProjectFoldersPanelQuery$variables;
+export type FoldersPanelProjectQuery = {
+  response: FoldersPanelProjectQuery$data;
+  variables: FoldersPanelProjectQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -131,7 +131,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "ProjectFoldersPanelQuery",
+    "name": "FoldersPanelProjectQuery",
     "selections": [
       (v5/*: any*/),
       (v6/*: any*/),
@@ -162,7 +162,7 @@ return {
       (v0/*: any*/)
     ],
     "kind": "Operation",
-    "name": "ProjectFoldersPanelQuery",
+    "name": "FoldersPanelProjectQuery",
     "selections": [
       (v5/*: any*/),
       (v6/*: any*/),
@@ -188,16 +188,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "9ff293c3c91d20c4649553e43e74e6a4",
+    "cacheID": "0cccb944b11b34e9bf27cb8218d0fbf2",
     "id": null,
     "metadata": {},
-    "name": "ProjectFoldersPanelQuery",
+    "name": "FoldersPanelProjectQuery",
     "operationKind": "query",
-    "text": "query ProjectFoldersPanelQuery(\n  $projectId: UUID!\n  $policyProjectId: ID!\n) {\n  ready: projectVfolders(projectId: $projectId, filter: {status: {notIn: [DELETE_PENDING, DELETE_ONGOING, DELETE_COMPLETE, DELETE_ERROR]}}, limit: 1) {\n    count\n  }\n  trash: projectVfolders(projectId: $projectId, filter: {status: {equals: DELETE_PENDING}}, limit: 1) {\n    count\n  }\n  policy: scopedProjectResourcePolicyV2(projectId: $policyProjectId) {\n    maxVfolderCount\n    id\n  }\n}\n"
+    "text": "query FoldersPanelProjectQuery(\n  $projectId: UUID!\n  $policyProjectId: ID!\n) {\n  ready: projectVfolders(projectId: $projectId, filter: {status: {notIn: [DELETE_PENDING, DELETE_ONGOING, DELETE_COMPLETE, DELETE_ERROR]}}, limit: 1) {\n    count\n  }\n  trash: projectVfolders(projectId: $projectId, filter: {status: {equals: DELETE_PENDING}}, limit: 1) {\n    count\n  }\n  policy: scopedProjectResourcePolicyV2(projectId: $policyProjectId) {\n    maxVfolderCount\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "e2925121ccea58422547371ecb23e814";
+(node as any).hash = "5ff9cbe5dc56fdc5fe3c984149e81a03";
 
 export default node;
