@@ -803,7 +803,7 @@
       "Boards": "Panolar",
       "CannotDeleteLastBoard": "Son pano silinemez",
       "DefaultBoard": "Varsayılan",
-      "EditBoard": "Panoyu düzenle",
+      "DeleteBoard": "Panoyu sil",
       "NewBoard": "Yeni pano",
       "NewBoardTitle": "Pano {{number}}"
     },

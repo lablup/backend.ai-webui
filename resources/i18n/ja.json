@@ -803,7 +803,7 @@
       "Boards": "ボード",
       "CannotDeleteLastBoard": "最後のボードは削除できません",
       "DefaultBoard": "デフォルト",
-      "EditBoard": "ボードを編集",
+      "DeleteBoard": "ボードを削除",
       "NewBoard": "新しいボード",
       "NewBoardTitle": "ボード {{number}}"
     },
