@@ -4,6 +4,7 @@
  */
 import { Form, useFormInstance, useWatch } from '../form-engine';
 import BAIFormItem from './BAIFormItem';
+import FormListColumnHeader from './FormListColumnHeader';
 import ResourceGroupOptionsCollapsible from './ResourceGroupOptionsCollapsible';
 import {
   AstryxFormNumberInput,
@@ -80,6 +81,13 @@ export const toHandlerOptionsInput = (value?: HandlerOptionsFormValue) => ({
   })),
 });
 
+// Row tracks of the per-handler override list, shared by its column header.
+const HANDLER_COLUMN_STYLE: React.CSSProperties = {
+  flex: '2 1 0',
+  minWidth: 0,
+};
+const VALUE_COLUMN_STYLE: React.CSSProperties = { flex: '1 1 0', minWidth: 0 };
+
 export const HandlerOptionsFormFields: React.FC<{
   name: string;
   // The names the manager accepts in `byHandler`; it rejects any other.
@@ -91,6 +99,9 @@ export const HandlerOptionsFormFields: React.FC<{
   const form = useFormInstance();
   const byHandler = useWatch([name, 'byHandler'], form) as
     HandlerOptionsFormValue['byHandler'] | undefined;
+  const defaults = useWatch([name, 'default'], form) as
+    HandlerOptionsFormValue['default'] | undefined;
+  const unlimited = t('resourcePolicy.Unlimited');
 
   // One override per handler: the manager rejects a duplicate name, so a
   // name chosen in another row leaves this row's list.
@@ -112,6 +123,41 @@ export const HandlerOptionsFormFields: React.FC<{
   const hasUnchosenName =
     _.size(_.compact(chosenNames)) < _.size(handlerNameOptions);
 
+  // A stored spec may still carry the same handler twice.
+  const validateUniqueHandler = (_rule: unknown, handlerName: string) => {
+    const names = _.map(
+      form.getFieldValue([name, 'byHandler']) as
+        HandlerOptionsFormValue['byHandler'] | undefined,
+      (entry) => entry?.handlerName,
+    );
+    return !_.isEmpty(handlerName) &&
+      _.filter(names, (n) => n === handlerName).length > 1
+      ? Promise.reject(new Error(t('resourceGroup.DuplicateHandlerOverride')))
+      : Promise.resolve();
+  };
+  // Re-check the rows that have a name; a row still waiting for one stays quiet.
+  const revalidateHandlerNames = () =>
+    form.validateFields(
+      _.compact(
+        _.map(
+          form.getFieldValue([name, 'byHandler']) as
+            HandlerOptionsFormValue['byHandler'] | undefined,
+          (entry, index) =>
+            _.isEmpty(entry?.handlerName)
+              ? null
+              : [name, 'byHandler', index, 'handlerName'],
+        ),
+      ),
+    );
+
+  // An empty override falls back to the default, so the default is the placeholder.
+  const timeoutPlaceholder = _.isNil(defaults?.timeoutSec)
+    ? unlimited
+    : String(defaults.timeoutSec);
+  const maxRetriesPlaceholder = _.isNil(defaults?.maxRetryCount)
+    ? unlimited
+    : String(defaults.maxRetryCount);
+
   return (
     <ResourceGroupOptionsCollapsible
       title={t('resourceGroup.HandlerOptions')}
@@ -126,7 +172,7 @@ export const HandlerOptionsFormFields: React.FC<{
           <AstryxFormNumberInput
             label={t('resourceGroup.DefaultTimeout')}
             units={t('resourceGroup.TimeoutSeconds')}
-            placeholder={t('resourcePolicy.Unlimited')}
+            placeholder={unlimited}
             min={0}
             isIntegerOnly
           />
@@ -138,7 +184,7 @@ export const HandlerOptionsFormFields: React.FC<{
         >
           <AstryxFormNumberInput
             label={t('resourceGroup.DefaultMaxRetries')}
-            placeholder={t('resourcePolicy.Unlimited')}
+            placeholder={unlimited}
             min={0}
             isIntegerOnly
           />
@@ -151,13 +197,34 @@ export const HandlerOptionsFormFields: React.FC<{
         <Form.List name={[name, 'byHandler']}>
           {(fields, { add, remove }) => (
             <BAIFlex direction="column" gap="xs" align="stretch">
+              {fields.length > 0 && (
+                <FormListColumnHeader
+                  removeLabel={t('button.Remove')}
+                  columns={[
+                    {
+                      key: 'handlerName',
+                      label: t('resourceGroup.HandlerName'),
+                      style: HANDLER_COLUMN_STYLE,
+                    },
+                    {
+                      key: 'timeoutSec',
+                      label: t('resourceGroup.Timeout'),
+                      style: VALUE_COLUMN_STYLE,
+                    },
+                    {
+                      key: 'maxRetryCount',
+                      label: t('modelService.MaxRetries'),
+                      style: VALUE_COLUMN_STYLE,
+                    },
+                  ]}
+                />
+              )}
               {fields.map(({ key, name: fieldName, ...restField }) => (
                 <BAIFlex key={key} direction="row" align="start" gap="xs">
                   <Form.Item
                     {...restField}
                     name={[fieldName, 'handlerName']}
-                    // Equal tracks regardless of the chosen name's length.
-                    style={{ marginBottom: 0, flex: '2 1 0', minWidth: 0 }}
+                    style={{ marginBottom: 0, ...HANDLER_COLUMN_STYLE }}
                     rules={[
                       {
                         required: true,
@@ -165,6 +232,7 @@ export const HandlerOptionsFormFields: React.FC<{
                           name: t('resourceGroup.HandlerName'),
                         }),
                       },
+                      { validator: validateUniqueHandler },
                     ]}
                   >
                     <AstryxFormSelector
@@ -172,17 +240,18 @@ export const HandlerOptionsFormFields: React.FC<{
                       placeholder={t('resourceGroup.SelectHandlerName')}
                       options={optionsForRow(fieldName)}
                       hasSearch
+                      onChange={() => revalidateHandlerNames()}
                     />
                   </Form.Item>
                   <Form.Item
                     {...restField}
                     name={[fieldName, 'timeoutSec']}
-                    style={{ marginBottom: 0, flex: '1 1 0', minWidth: 0 }}
+                    style={{ marginBottom: 0, ...VALUE_COLUMN_STYLE }}
                   >
                     <AstryxFormNumberInput
                       label={t('resourceGroup.Timeout')}
-                      placeholder={t('resourceGroup.Timeout')}
-                      units={t('resourceGroup.TimeoutSeconds')}
+                      placeholder={timeoutPlaceholder}
+                      units={t('resourceGroup.TimeoutSecondsShort')}
                       min={0}
                       isIntegerOnly
                     />
@@ -190,11 +259,11 @@ export const HandlerOptionsFormFields: React.FC<{
                   <Form.Item
                     {...restField}
                     name={[fieldName, 'maxRetryCount']}
-                    style={{ marginBottom: 0, flex: '1 1 0', minWidth: 0 }}
+                    style={{ marginBottom: 0, ...VALUE_COLUMN_STYLE }}
                   >
                     <AstryxFormNumberInput
                       label={t('modelService.MaxRetries')}
-                      placeholder={t('modelService.MaxRetries')}
+                      placeholder={maxRetriesPlaceholder}
                       min={0}
                       isIntegerOnly
                     />
