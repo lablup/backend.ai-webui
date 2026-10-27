@@ -6,6 +6,7 @@ import type { AgentStatsFragment$key } from '../../__generated__/AgentStatsFragm
 import type { SessionGridViewParams } from '../../helper/sessionResourceGridData';
 import type { UserRole } from '../../helper/userRole';
 import type { MenuKeys } from '../../hooks/useWebUIMenuItems';
+import type { PanelDetailLink, PanelDetailLinkContext } from './detailLink';
 import type {
   BAIColumnsType,
   BAIGraphQLFilterProperty,
@@ -271,6 +272,8 @@ export interface PanelDefinition {
   defaultHidden?: boolean | ReadonlyArray<PanelPage>;
   /** Where a new board of the page places the card; cards without one follow, in catalog order. */
   order?: Partial<Record<PanelPage, number>>;
+  /** The list page behind the card, opened from its header; null on a page that has none. */
+  detailLink?: (context: PanelDetailLinkContext) => PanelDetailLink | null;
 }
 
 /** Inputs the generic executor hands to a resource's `buildVariables`. */

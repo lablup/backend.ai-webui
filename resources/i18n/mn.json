@@ -888,6 +888,7 @@
       "Unhealthy": "Хэвийн бус",
       "Unlimited": "Хязгааргүй",
       "UsageRowsCapped": "{{total}} мөрөөс хамгийн шинэ {{shown}}-ийг харуулж байна.",
+      "ViewIn": "{{name}} хэсэгт харах",
       "VsPreviousRange": "өмнөх хугацаатай харьцуулахад",
       "Waiting": "Хүлээлт"
     },

@@ -888,6 +888,7 @@
       "Unhealthy": "Niesprawny",
       "Unlimited": "Bez limitu",
       "UsageRowsCapped": "Wyświetlane są {{shown}} najnowsze z {{total}} wierszy.",
+      "ViewIn": "Pokaż w: {{name}}",
       "VsPreviousRange": "w porównaniu z poprzednim okresem",
       "Waiting": "Oczekiwanie"
     },

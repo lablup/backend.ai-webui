@@ -888,6 +888,7 @@
       "Unhealthy": "Com problemas",
       "Unlimited": "Ilimitado",
       "UsageRowsCapped": "A mostrar as {{shown}} linhas mais recentes de {{total}}.",
+      "ViewIn": "Ver em {{name}}",
       "VsPreviousRange": "vs. período anterior",
       "Waiting": "Espera"
     },

@@ -885,6 +885,7 @@
       "Unhealthy": "ผิดปกติ",
       "Unlimited": "ไม่จำกัด",
       "UsageRowsCapped": "แสดง {{shown}} แถวล่าสุดจาก {{total}} แถว",
+      "ViewIn": "ดูใน {{name}}",
       "VsPreviousRange": "เทียบกับช่วงก่อนหน้า",
       "Waiting": "เวลารอ"
     },

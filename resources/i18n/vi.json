@@ -888,6 +888,7 @@
       "Unhealthy": "Có lỗi",
       "Unlimited": "Không giới hạn",
       "UsageRowsCapped": "Đang hiển thị {{shown}} hàng mới nhất trong {{total}}.",
+      "ViewIn": "Xem trong {{name}}",
       "VsPreviousRange": "so với khoảng trước",
       "Waiting": "Thời gian chờ"
     },

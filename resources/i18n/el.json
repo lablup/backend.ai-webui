@@ -888,6 +888,7 @@
       "Unhealthy": "Μη υγιές",
       "Unlimited": "Απεριόριστο",
       "UsageRowsCapped": "Εμφανίζονται οι {{shown}} νεότερες από {{total}} γραμμές.",
+      "ViewIn": "Προβολή σε {{name}}",
       "VsPreviousRange": "έναντι προηγούμενου διαστήματος",
       "Waiting": "Αναμονή"
     },

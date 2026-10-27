@@ -888,6 +888,7 @@
       "Unhealthy": "Fehlerhaft",
       "Unlimited": "Unbegrenzt",
       "UsageRowsCapped": "Die {{shown}} neuesten von {{total}} Zeilen werden angezeigt.",
+      "ViewIn": "In {{name}} anzeigen",
       "VsPreviousRange": "ggü. vorherigem Zeitraum",
       "Waiting": "Wartezeit"
     },

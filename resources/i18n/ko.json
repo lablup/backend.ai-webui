@@ -888,6 +888,7 @@
       "Unhealthy": "비정상",
       "Unlimited": "무제한",
       "UsageRowsCapped": "{{total}}개 행 중 최근 {{shown}}개를 보여 줍니다.",
+      "ViewIn": "{{name}}에서 보기",
       "VsPreviousRange": "이전 기간 대비",
       "Waiting": "대기 시간"
     },

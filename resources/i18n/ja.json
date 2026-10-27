@@ -888,6 +888,7 @@
       "Unhealthy": "異常",
       "Unlimited": "無制限",
       "UsageRowsCapped": "{{total}} 行のうち新しい {{shown}} 行を表示しています。",
+      "ViewIn": "{{name}}で表示",
       "VsPreviousRange": "前の期間との比較",
       "Waiting": "待ち時間"
     },

@@ -888,6 +888,7 @@
       "Unhealthy": "Ongelmia",
       "Unlimited": "Rajoittamaton",
       "UsageRowsCapped": "Näytetään {{total}} rivistä {{shown}} uusinta.",
+      "ViewIn": "Näytä kohteessa {{name}}",
       "VsPreviousRange": "verrattuna edelliseen aikaväliin",
       "Waiting": "Odotus"
     },

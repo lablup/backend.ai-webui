@@ -875,6 +875,7 @@
       "Unhealthy": "Unhealthy",
       "Unlimited": "Unlimited",
       "UsageRowsCapped": "Showing the {{shown}} newest of {{total}} rows.",
+      "ViewIn": "View in {{name}}",
       "VsPreviousRange": "vs. previous range",
       "Waiting": "Waiting"
     },

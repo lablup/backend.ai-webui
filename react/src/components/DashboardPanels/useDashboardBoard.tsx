@@ -26,6 +26,7 @@ import {
 } from './boardModel';
 import { activeBoardOf, updateBoard } from './dashboardConfig';
 import { createPanel, panelConfigFromInput } from './defaults';
+import { DetailLinkContext, resolveDetailLink } from './detailLink';
 import { effectivePanelType, panelRegistry } from './panelRegistry';
 import { availableResourceKeys, resolvePanelTitle } from './resourceRegistry';
 import type {
@@ -213,14 +214,21 @@ export const useDashboardBoard = ({
           isPageRefetching={isRefetching}
         >
           {(state) => (
-            <Component
-              panel={panel}
-              queryRefs={queryRefs}
-              onChangeFilter={(filter) =>
-                save(updatePanel(board, panel.id, { filter }))
-              }
-              {...state}
-            />
+            <DetailLinkContext.Provider
+              value={resolveDetailLink(definition, {
+                page,
+                settings: panel.settings,
+              })}
+            >
+              <Component
+                panel={panel}
+                queryRefs={queryRefs}
+                onChangeFilter={(filter) =>
+                  save(updatePanel(board, panel.id, { filter }))
+                }
+                {...state}
+              />
+            </DetailLinkContext.Provider>
           )}
         </DashboardPanelContent>
       ) : null;

@@ -888,6 +888,7 @@
       "Unhealthy": "Sağlıksız",
       "Unlimited": "Sınırsız",
       "UsageRowsCapped": "{{total}} satırdan en yeni {{shown}} tanesi gösteriliyor.",
+      "ViewIn": "{{name}} içinde görüntüle",
       "VsPreviousRange": "önceki aralığa göre",
       "Waiting": "Bekleme"
     },

@@ -888,6 +888,7 @@
       "Unhealthy": "Неисправно",
       "Unlimited": "Без ограничений",
       "UsageRowsCapped": "Показаны {{shown}} новейших из {{total}} строк.",
+      "ViewIn": "Открыть в разделе «{{name}}»",
       "VsPreviousRange": "по сравнению с предыдущим периодом",
       "Waiting": "Ожидание"
     },

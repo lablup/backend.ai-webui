@@ -2,11 +2,17 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useWebUINavigate } from '../../hooks';
+import { useProjectPath } from '../../hooks/useRouteScope';
 import PanelEditControls from './PanelEditControls';
+import { DetailLinkContext } from './detailLink';
 import { Heading } from '@lablup/ui-common/Heading';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIBoardItemTitle, BAIFlex } from 'backend.ai-ui';
-import React from 'react';
+import { ArrowUpRight } from 'lucide-react';
+import React, { useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export interface PanelFrameProps {
   title: string;
@@ -36,7 +42,14 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
   children,
 }) => {
   'use memo';
+  const { t } = useTranslation();
   const { token } = useTheme();
+  const navigate = useWebUINavigate();
+  const buildPath = useProjectPath();
+  const detailLink = useContext(DetailLinkContext);
+  const detailLabel = detailLink
+    ? t('dashboard.card.ViewIn', { name: t(detailLink.labelKey) })
+    : undefined;
 
   return (
     <BAIFlex
@@ -61,6 +74,22 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
         extra={
           <BAIFlex align="center" gap="xxs">
             {extra}
+            {detailLink && detailLabel ? (
+              <IconButton
+                variant="ghost"
+                size="sm"
+                label={detailLabel}
+                tooltip={detailLabel}
+                icon={<ArrowUpRight size="1em" />}
+                onClick={() =>
+                  navigate(
+                    buildPath(detailLink.feature, {
+                      scope: detailLink.scope,
+                    }) + detailLink.search,
+                  )
+                }
+              />
+            ) : null}
             <PanelEditControls
               title={title}
               onEdit={onEdit}

@@ -87,6 +87,44 @@ const AgentStatsPanel: React.FC<PanelComponentProps> = ({ queryRefs }) => {
   ) : null;
 };
 
+/** A card's list page, labelled by the destination menu of each page it opens from. */
+const listLink =
+  (
+    feature: string,
+    labelKeys: Partial<Record<PanelPage, string>>,
+    query?: Readonly<Record<string, string>>,
+  ): NonNullable<PanelDefinition['detailLink']> =>
+  ({ page }) => {
+    const labelKey = labelKeys[page];
+    return labelKey ? { feature, labelKey, query } : null;
+  };
+
+const SESSIONS = {
+  project: 'webui.menu.Sessions',
+  projectAdmin: 'webui.menu.ProjectSessions',
+  admin: 'webui.menu.Sessions',
+} as const;
+const RUNNING_SESSIONS = listLink('session', SESSIONS, {
+  statusCategory: 'running',
+});
+
+/** Pending sessions have their own tab on the superadmin session page only. */
+const pendingSessionsLink: NonNullable<PanelDefinition['detailLink']> = ({
+  page,
+  settings,
+}) => {
+  if (page !== 'admin') return null;
+  const resourceGroup = settings?.resourceGroups?.[0];
+  return {
+    feature: 'session',
+    labelKey: 'adminSession.PendingSessions',
+    query: {
+      tab: 'pending-sessions',
+      ...(resourceGroup ? { resourceGroup } : {}),
+    },
+  };
+};
+
 const size = (columnSpan: number, rowSpan: number): PanelSize => ({
   columnSpan,
   rowSpan,
@@ -166,6 +204,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'session.MySessions',
     kind: 'custom',
     Component: SessionStatusPanel,
+    detailLink: RUNNING_SESSIONS,
     defaultSize: size(2, 2),
     minSize: size(2, 2),
     refresh: { min: '15s' },
@@ -177,6 +216,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'dashboard.card.MyRecentSessions',
     kind: 'custom',
     Component: RecentSessionsPanel,
+    detailLink: listLink('session', SESSIONS),
     defaultSize: size(4, 3),
     minSize: size(2, 2),
     refresh: { min: '1m' },
@@ -231,6 +271,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'data.MyFolders',
     kind: 'custom',
     Component: FoldersPanel,
+    detailLink: listLink('data', { project: 'webui.menu.Data' }),
     defaultSize: size(2, 2),
     minSize: size(2, 2),
     refresh: { min: '5m' },
@@ -254,6 +295,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     requires: { menuKey: 'deployments' },
     kind: 'custom',
     Component: DeploymentStatusPanel,
+    detailLink: listLink('deployments', { project: 'webui.menu.Deployments' }),
     defaultSize: size(2, 3),
     minSize: size(2, 2),
     refresh: { min: '30s' },
@@ -301,6 +343,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'dashboard.card.SessionStatus',
     kind: 'custom',
     Component: SessionStatusPanel,
+    detailLink: RUNNING_SESSIONS,
     defaultSize: size(4, 3),
     minSize: size(2, 3),
     refresh: { min: '15s' },
@@ -313,6 +356,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'dashboard.card.PendingSessions',
     kind: 'custom',
     Component: PendingSessionsPanel,
+    detailLink: pendingSessionsLink,
     defaultSize: size(4, 3),
     minSize: size(2, 2),
     refresh: { min: '15s' },
@@ -326,6 +370,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'dashboard.card.LongRunningSessions',
     kind: 'custom',
     Component: LongRunningSessionsPanel,
+    detailLink: RUNNING_SESSIONS,
     defaultSize: size(4, 3),
     minSize: size(2, 2),
     refresh: { min: '1m' },
@@ -352,6 +397,10 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     requires: { menuKey: 'deployments' },
     kind: 'custom',
     Component: DeploymentStatusPanel,
+    detailLink: listLink('deployments', {
+      projectAdmin: 'webui.menu.ProjectDeployments',
+      admin: 'webui.menu.Deployments',
+    }),
     defaultSize: size(2, 3),
     minSize: size(2, 2),
     refresh: { min: '30s' },
@@ -364,6 +413,10 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'general.Folders',
     kind: 'custom',
     Component: FoldersPanel,
+    detailLink: listLink('data', {
+      projectAdmin: 'webui.menu.Data',
+      admin: 'webui.menu.Data',
+    }),
     defaultSize: size(2, 2),
     minSize: size(2, 2),
     refresh: { min: '5m' },
@@ -376,6 +429,10 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'webui.menu.Users',
     kind: 'custom',
     Component: UsersPanel,
+    detailLink: listLink('users', {
+      projectAdmin: 'webui.menu.ProjectMembers',
+      admin: 'webui.menu.Users',
+    }),
     defaultSize: size(2, 2),
     minSize: size(2, 2),
     refresh: { min: '5m' },
@@ -435,6 +492,11 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     requires: SUPERADMIN_ONLY,
     kind: 'custom',
     Component: AgentsPanel,
+    detailLink: listLink(
+      'agent',
+      { admin: 'webui.menu.Resources' },
+      { status: 'ALIVE' },
+    ),
     defaultSize: size(4, 4),
     minSize: size(2, 3),
     refresh: { min: '15s' },
@@ -448,6 +510,7 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     requires: SUPERADMIN_ONLY,
     kind: 'custom',
     Component: AgentStatsPanel,
+    detailLink: listLink('agent', { admin: 'webui.menu.Resources' }),
     defaultSize: size(2, 2),
     minSize: size(2, 2),
     refresh: { min: '30s' },
@@ -489,6 +552,7 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     requires: SUPERADMIN_ONLY,
     kind: 'custom',
     Component: FairSharePanel,
+    detailLink: listLink('scheduler', { admin: 'webui.menu.Scheduler' }),
     defaultSize: size(4, 3),
     minSize: size(2, 3),
     refresh: { min: '5m' },
@@ -503,6 +567,7 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'session.RecentlyCreatedSessions',
     kind: 'custom',
     Component: RecentSessionsPanel,
+    detailLink: listLink('session', SESSIONS),
     defaultSize: size(4, 3),
     minSize: size(2, 2),
     refresh: { min: '1m' },
@@ -516,6 +581,9 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     requires: SUPERADMIN_ONLY,
     kind: 'custom',
     Component: ResourcePoliciesPanel,
+    detailLink: listLink('resource-policy', {
+      admin: 'webui.menu.ResourcePolicies',
+    }),
     defaultSize: size(2, 2),
     minSize: size(2, 2),
     refresh: { min: '10m' },
@@ -529,6 +597,11 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     requires: SUPERADMIN_ONLY,
     kind: 'custom',
     Component: KeypairsLoginsPanel,
+    detailLink: listLink(
+      'users',
+      { admin: 'webui.menu.Users' },
+      { tab: 'credentials' },
+    ),
     defaultSize: size(4, 3),
     minSize: size(2, 3),
     refresh: { min: '1m' },
@@ -543,6 +616,11 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     requires: SUPERADMIN_ONLY,
     kind: 'custom',
     Component: ContainerRegistriesPanel,
+    detailLink: listLink(
+      'environment',
+      { admin: 'webui.menu.Environments' },
+      { tab: 'registry' },
+    ),
     defaultSize: size(4, 3),
     minSize: size(2, 2),
     refresh: { min: '10m' },
