@@ -170,9 +170,7 @@ describe('RetentionPolicySettingModal', () => {
     expect(
       screen.getByLabelText('retentionPolicy.RetentionPeriodDays'),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole('switch', { name: 'general.Enabled' }),
-    ).toBeChecked();
+    expect(screen.getByLabelText('general.Enabled')).toBeChecked();
     expect(
       screen.getByRole('button', { name: /button.Create/ }),
     ).toBeInTheDocument();
@@ -187,9 +185,7 @@ describe('RetentionPolicySettingModal', () => {
     expect(
       screen.getByLabelText('retentionPolicy.RetentionPeriodDays'),
     ).toHaveValue('30');
-    expect(
-      screen.getByRole('switch', { name: 'general.Enabled' }),
-    ).toBeChecked();
+    expect(screen.getByLabelText('general.Enabled')).toBeChecked();
     expect(
       screen.getByRole('button', { name: /button.Save/ }),
     ).toBeInTheDocument();
@@ -218,7 +214,7 @@ describe('RetentionPolicySettingModal', () => {
       screen.getByLabelText('retentionPolicy.RetentionPeriodDays'),
       '14',
     );
-    await user.click(screen.getByRole('switch', { name: 'general.Enabled' }));
+    await user.click(screen.getByLabelText('general.Enabled'));
     await user.click(screen.getByRole('button', { name: /button.Create/ }));
 
     await waitFor(() => {
