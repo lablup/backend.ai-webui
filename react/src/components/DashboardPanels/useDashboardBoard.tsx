@@ -6,6 +6,7 @@ import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import DashboardPanelContent from './DashboardPanelContent';
+import { PanelHeaderSettingsContext } from './PanelSettingsHeaderControls';
 import type { BoardLayoutEntry } from './boardLayout';
 import {
   addPanel,
@@ -28,6 +29,13 @@ import { activeBoardOf, updateBoard } from './dashboardConfig';
 import { createPanel, panelConfigFromInput } from './defaults';
 import { DetailLinkContext, resolveDetailLink } from './detailLink';
 import { effectivePanelType, panelRegistry } from './panelRegistry';
+import {
+  effectivePanelSettings,
+  nextOverride,
+  overrideKeyOf,
+  overriddenSettings,
+  panelSettingOverridesAtom,
+} from './panelSettingOverrides';
 import { availableResourceKeys, resolvePanelTitle } from './resourceRegistry';
 import type {
   DashboardBoard,
@@ -46,6 +54,8 @@ import {
   type DashboardBoardsState,
 } from './useDashboardBoards';
 import { BAIBoardItemErrorBoundary, type BAIBoardItem } from 'backend.ai-ui';
+import { useAtom } from 'jotai';
+import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 
 /** Where a board is kept. The next storage backend replaces `useBoardStore`, nothing else. */
@@ -146,6 +156,20 @@ export const useDashboardBoard = ({
     template,
     boards,
   } = useBoardStore(page, catalog);
+  const [settingOverrides, setSettingOverrides] = useAtom(
+    panelSettingOverridesAtom,
+  );
+  const overrideKey = (panelId: string) =>
+    overrideKeyOf(boards.activeBoard.id, panelId);
+  const setOverride = (
+    panelId: string,
+    override: (typeof settingOverrides)[string] | undefined,
+  ) =>
+    setSettingOverrides((prev) =>
+      override
+        ? { ...prev, [overrideKey(panelId)]: override }
+        : _.omit(prev, overrideKey(panelId)),
+    );
 
   const config: PanelCatalogConfig = {
     blockList: baiClient?._config?.blockList ?? [],
@@ -207,58 +231,94 @@ export const useDashboardBoard = ({
     if (next !== board) save(next);
   };
 
+  // A card reads its header pick over its saved settings; edits and saves keep using `panel`.
   const contentOf = (panel: PersistedPanelV2): React.ReactNode => {
     const definition = definitionByKey.get(panel.key);
     if (!definition) return null;
+    const override = settingOverrides[overrideKey(panel.id)];
+    const effective = effectivePanelSettings(
+      panel.settings,
+      override,
+      definition,
+    );
+    const viewPanel: PersistedPanelV2 = { ...panel, settings: effective };
+    const withHeaderSettings = (content: React.ReactNode) =>
+      definition.settings?.length ? (
+        <PanelHeaderSettingsContext.Provider
+          value={{
+            definition,
+            saved: panel.settings,
+            effective,
+            overridden: overriddenSettings(
+              panel.settings,
+              override,
+              definition,
+            ),
+            onChange: (change) =>
+              setOverride(
+                panel.id,
+                nextOverride(override, change, panel.settings, definition),
+              ),
+            onReset: () => setOverride(panel.id, undefined),
+          }}
+        >
+          {content}
+        </PanelHeaderSettingsContext.Provider>
+      ) : (
+        content
+      );
     if (definition.kind === 'custom') {
       const Component = definition.Component;
-      return Component ? (
-        <DashboardPanelContent
-          panel={panel}
-          definition={definition}
-          isPageRefetching={isRefetching}
-        >
-          {(state) => (
-            <DetailLinkContext.Provider
-              value={resolveDetailLink(definition, {
-                page,
-                settings: panel.settings,
-              })}
+      return Component
+        ? withHeaderSettings(
+            <DashboardPanelContent
+              panel={viewPanel}
+              definition={definition}
+              isPageRefetching={isRefetching}
             >
-              <Component
-                panel={panel}
-                queryRefs={queryRefs}
-                onChangeFilter={(filter) =>
-                  save(updatePanel(board, panel.id, { filter }))
-                }
-                {...state}
-              />
-            </DetailLinkContext.Provider>
-          )}
-        </DashboardPanelContent>
-      ) : null;
+              {(state) => (
+                <DetailLinkContext.Provider
+                  value={resolveDetailLink(definition, {
+                    page,
+                    settings: effective,
+                  })}
+                >
+                  <Component
+                    panel={viewPanel}
+                    queryRefs={queryRefs}
+                    onChangeFilter={(filter) =>
+                      save(updatePanel(board, panel.id, { filter }))
+                    }
+                    {...state}
+                  />
+                </DetailLinkContext.Provider>
+              )}
+            </DashboardPanelContent>,
+          )
+        : null;
     }
     const legacyPanel = toLegacyPanel(panel, definition);
-    if (!legacyPanel) return null;
+    const viewLegacyPanel = toLegacyPanel(viewPanel, definition);
+    if (!legacyPanel || !viewLegacyPanel) return null;
     const Panel =
       panelRegistry[
-        effectivePanelType(legacyPanel, { gridEnabled: !!gridEnabled })
+        effectivePanelType(viewLegacyPanel, { gridEnabled: !!gridEnabled })
       ];
-    return (
+    return withHeaderSettings(
       <BAIBoardItemErrorBoundary
         // Keyed by kind and descriptor so a config edit clears a stuck error state.
-        key={`${legacyPanel.panelType}:${JSON.stringify(legacyPanel.descriptor)}`}
-        title={resolvePanelTitle(legacyPanel.descriptor, t)}
+        key={`${viewLegacyPanel.panelType}:${JSON.stringify(viewLegacyPanel.descriptor)}`}
+        title={resolvePanelTitle(viewLegacyPanel.descriptor, t)}
         status="error"
       >
         <DashboardPanelContent
-          panel={panel}
+          panel={viewPanel}
           definition={definition}
           isPageRefetching={isRefetching}
         >
           {({ fetchKey }) => (
             <Panel
-              descriptor={legacyPanel.descriptor}
+              descriptor={viewLegacyPanel.descriptor}
               fetchKey={fetchKey}
               panelId={panel.id}
               onEdit={() => onRequestEditCustomPanel(legacyPanel)}
@@ -266,7 +326,7 @@ export const useDashboardBoard = ({
             />
           )}
         </DashboardPanelContent>
-      </BAIBoardItemErrorBoundary>
+      </BAIBoardItemErrorBoundary>,
     );
   };
 
@@ -310,8 +370,10 @@ export const useDashboardBoard = ({
         settings: panel.settings,
       };
     },
-    updatePanelSettings: (id, settings) =>
-      save(updatePanel(board, id, { settings })),
+    updatePanelSettings: (id, settings) => {
+      save(updatePanel(board, id, { settings }));
+      setOverride(id, undefined);
+    },
     resetLayout: () => save(resetBoard(board, catalog, page, template)),
     boards,
   };

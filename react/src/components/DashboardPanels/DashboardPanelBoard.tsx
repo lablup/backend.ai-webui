@@ -12,9 +12,10 @@ import DashboardFilterBar from './DashboardFilterBar';
 import DashboardPanelModal from './DashboardPanelModal';
 import PanelSettingsModal from './PanelSettingsModal';
 import { boardSortsAtom } from './ResourceTablePanel';
+import { resourceGroupScopeOf } from './dashboardScope';
+import { panelSettingOverridesAtom } from './panelSettingOverrides';
 import type {
   DashboardPageQueryRefs,
-  DashboardScope,
   PanelDefinition,
   PanelPage,
   PersistedPanel,
@@ -24,25 +25,11 @@ import {
   DashboardFilterContext,
   useDashboardFilters,
 } from './useDashboardFilters';
-import {
-  BAIBoard,
-  BAIFlex,
-  BAIUnmountAfterClose,
-  type BAIScopedResourceGroupSelectProps,
-} from 'backend.ai-ui';
+import { useResetOnLeavingPath } from './useResetOnLeavingPath';
+import { BAIBoard, BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
 import { useAtom, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
 import React, { useEffect, useRef, useState } from 'react';
-
-/** The resource groups a card's setting can pick from: the page's projects, else the domain's. */
-const resourceGroupScopeOf = (
-  scope: DashboardScope,
-): BAIScopedResourceGroupSelectProps['scope'] =>
-  scope.kind === 'mine'
-    ? { project: scope.projectId ? [{ value: scope.projectId }] : [] }
-    : scope.projectIds === 'all'
-      ? { domain: [{ value: scope.domain.id }] }
-      : { project: scope.projectIds.map((value) => ({ value })) };
 
 export interface DashboardPanelBoardProps {
   page: PanelPage;
@@ -71,6 +58,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
   const [editMode, setEditMode] = useAtom(dashboardEditModeAtom);
   const setBreadcrumbExtra = useSetAtom(breadcrumbExtraAtom);
   const setBoardSorts = useSetAtom(boardSortsAtom);
+  const setSettingOverrides = useSetAtom(panelSettingOverridesAtom);
   const [panelModalState, setPanelModalState] = useState<{
     open: boolean;
     panel?: PersistedPanel;
@@ -78,19 +66,17 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
   const [settingsPanelId, setSettingsPanelId] = useState<string | null>(null);
   const boardContainerRef = useRef<HTMLDivElement>(null);
 
-  // The edit-mode atom is global: close it when leaving the page, but not when a
-  // suspending query remounts the board on the same path (that would drop an early click).
   useEffect(() => {
-    const mountedPath = window.location.pathname;
     setBreadcrumbExtra(<DashboardEditToggleButton />);
-    return () => {
-      setBreadcrumbExtra(null);
-      if (window.location.pathname !== mountedPath) {
-        setEditMode(false);
-        setBoardSorts({});
-      }
-    };
-  }, [setBreadcrumbExtra, setEditMode, setBoardSorts]);
+    return () => setBreadcrumbExtra(null);
+  }, [setBreadcrumbExtra]);
+  // These atoms are global: clear them when leaving the page, but not when a
+  // suspending query remounts the board on the same path (that would drop an early click).
+  useResetOnLeavingPath(() => {
+    setEditMode(false);
+    setBoardSorts({});
+    setSettingOverrides({});
+  });
 
   const {
     boardItems,

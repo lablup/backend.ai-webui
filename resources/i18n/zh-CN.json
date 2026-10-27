@@ -930,6 +930,7 @@
     },
     "settings": {
       "AllResourceGroups": "所有资源组",
+      "BackToSavedSetting": "恢复为已保存的设置（{{value}}）",
       "CardSettings": "卡片设置",
       "CardSettingsOf": "{{name}} 设置",
       "CurrentResourceGroup": "当前资源组",

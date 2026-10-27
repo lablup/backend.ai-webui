@@ -930,6 +930,7 @@
     },
     "settings": {
       "AllResourceGroups": "Todos os grupos de recursos",
+      "BackToSavedSetting": "Voltar à definição guardada ({{value}})",
       "CardSettings": "Definições do cartão",
       "CardSettingsOf": "Definições de {{name}}",
       "CurrentResourceGroup": "Grupo de recursos atual",

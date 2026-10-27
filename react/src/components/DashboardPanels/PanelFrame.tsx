@@ -5,6 +5,7 @@
 import { useWebUINavigate } from '../../hooks';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import PanelEditControls from './PanelEditControls';
+import PanelSettingsHeaderControls from './PanelSettingsHeaderControls';
 import { DetailLinkContext } from './detailLink';
 import { Heading } from '@lablup/ui-common/Heading';
 import { IconButton } from '@lablup/ui-common/IconButton';
@@ -73,6 +74,7 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
         tooltip={tooltip}
         extra={
           <BAIFlex align="center" gap="xxs">
+            <PanelSettingsHeaderControls />
             {extra}
             {detailLink && detailLabel ? (
               <IconButton

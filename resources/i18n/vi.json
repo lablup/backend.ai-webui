@@ -930,6 +930,7 @@
     },
     "settings": {
       "AllResourceGroups": "Tất cả nhóm tài nguyên",
+      "BackToSavedSetting": "Quay lại cài đặt đã lưu ({{value}})",
       "CardSettings": "Cài đặt thẻ",
       "CardSettingsOf": "Cài đặt {{name}}",
       "CurrentResourceGroup": "Nhóm tài nguyên hiện tại",

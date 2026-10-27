@@ -927,6 +927,7 @@
     },
     "settings": {
       "AllResourceGroups": "ทุกกลุ่มทรัพยากร",
+      "BackToSavedSetting": "กลับไปใช้การตั้งค่าที่บันทึกไว้ ({{value}})",
       "CardSettings": "การตั้งค่าการ์ด",
       "CardSettingsOf": "การตั้งค่า {{name}}",
       "CurrentResourceGroup": "กลุ่มทรัพยากรปัจจุบัน",
