@@ -5,7 +5,7 @@ export interface AstryxFormTextInputProps {
     value?: string;
     /** Injected by `Form.Item`. */
     onChange?: (value: string) => void;
-    /** Accessible name. Visually hidden — the `Form.Item` renders the visible one. */
+    /** Accessible name (`aria-label`); the `Form.Item` renders the visible one. */
     label: string;
     type?: 'text' | 'password' | 'email';
     placeholder?: string;
