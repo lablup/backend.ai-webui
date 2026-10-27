@@ -16,13 +16,8 @@ import { getSessionV2StatusBuckets } from '../../helper/sessionStatusBuckets';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import AutoUpdateFetchKeyButton from '../AutoUpdateFetchKeyButton';
-import BAIRadioGroup from '../BAIRadioGroup';
 import SessionDetailDrawer from '../SessionDetailDrawer';
 import SessionResourceGrid from '../SessionResourceGrid';
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@lablup/ui-common/SegmentedControl';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIFlex,
@@ -34,6 +29,8 @@ import {
   filterOutNullAndUndefined,
   mergeFilterValues,
   useFetchKey,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { LayoutGridIcon, TableIcon } from 'lucide-react';
@@ -177,11 +174,10 @@ const AgentSessions = ({ agentId, queryRef, onReload }: AgentSessionsProps) => {
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex direction="row" justify="between" wrap="wrap" gap="sm">
-        <BAIRadioGroup
-          optionType="button"
+        <BAISegmentedControl
           value={statusCategory}
-          onChange={(e) => {
-            const next = e.target.value as 'running' | 'finished';
+          onChange={(value) => {
+            const next = value as 'running' | 'finished';
             onReload(
               {
                 ...queryRef.variables,
@@ -195,14 +191,19 @@ const AgentSessions = ({ agentId, queryRef, onReload }: AgentSessionsProps) => {
               { fetchPolicy: 'network-only' },
             );
           }}
-          options={[
-            { label: t('session.Running'), value: 'running' },
-            { label: t('session.Finished'), value: 'finished' },
-          ]}
-        />
+        >
+          <BAISegmentedControlItem
+            value="running"
+            label={t('session.Running')}
+          />
+          <BAISegmentedControlItem
+            value="finished"
+            label={t('session.Finished')}
+          />
+        </BAISegmentedControl>
         <BAIFlex gap="xs" align="center">
           {experimentalSessionResourceGrid && (
-            <SegmentedControl
+            <BAISegmentedControl
               aria-label={t('session.resourceGrid.ViewMode')}
               value={view}
               onChange={(value) => {
@@ -216,7 +217,7 @@ const AgentSessions = ({ agentId, queryRef, onReload }: AgentSessionsProps) => {
               }}
             >
               <Tooltip content={t('session.resourceGrid.TableView')}>
-                <SegmentedControlItem
+                <BAISegmentedControlItem
                   value="table"
                   label={t('session.resourceGrid.TableView')}
                   isLabelHidden
@@ -224,14 +225,14 @@ const AgentSessions = ({ agentId, queryRef, onReload }: AgentSessionsProps) => {
                 />
               </Tooltip>
               <Tooltip content={t('session.resourceGrid.GridView')}>
-                <SegmentedControlItem
+                <BAISegmentedControlItem
                   value="grid"
                   label={t('session.resourceGrid.GridView')}
                   isLabelHidden
                   icon={<LayoutGridIcon size="1em" />}
                 />
               </Tooltip>
-            </SegmentedControl>
+            </BAISegmentedControl>
           )}
           <AutoUpdateFetchKeyButton
             settingId="agent-detail-sessions"

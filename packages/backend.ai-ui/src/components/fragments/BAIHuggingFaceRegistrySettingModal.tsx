@@ -4,7 +4,7 @@ import { App } from '../../app-shim';
 import { Form, FormInstance } from '../../form-engine';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIModal, { BAIModalProps } from '../BAIModal';
-import { AstryxFormTextInput } from '../astryxFormControls';
+import BAITextInput from '../BAITextInput';
 import { InputGroup } from '@lablup/ui-common/InputGroup';
 import { Link } from '@lablup/ui-common/Link';
 import { useRef, useState } from 'react';
@@ -117,8 +117,8 @@ const BAIHuggingFaceRegistrySettingModal: React.FC<
               label={t('comp:BAIHuggingFaceRegistrySettingModal.Token')}
               isLabelHidden
             >
-              <AstryxFormTextInput
-                label={t('comp:BAIHuggingFaceRegistrySettingModal.Token')}
+              <BAITextInput
+                aria-label={t('comp:BAIHuggingFaceRegistrySettingModal.Token')}
                 type="password"
                 value="••••••••••••"
                 disabled
@@ -128,8 +128,8 @@ const BAIHuggingFaceRegistrySettingModal: React.FC<
               </Link>
             </InputGroup>
           ) : (
-            <AstryxFormTextInput
-              label={t('comp:BAIHuggingFaceRegistrySettingModal.Token')}
+            <BAITextInput
+              aria-label={t('comp:BAIHuggingFaceRegistrySettingModal.Token')}
               type="password"
               placeholder={t(
                 'comp:BAIHuggingFaceRegistrySettingModal.EnterToken',

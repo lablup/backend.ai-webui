@@ -15,10 +15,6 @@ import { useTOTPSupported } from '../hooks/backendai';
 import BAIFormItem from './BAIFormItem';
 import ProjectSelect from './ProjectSelect';
 import UserResourcePolicySelect from './UserResourcePolicySelect';
-import {
-  AstryxFormNumberInput,
-  AstryxFormTagsInput,
-} from './astryxFormControls';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFlex,
@@ -27,6 +23,8 @@ import {
   BAIModalProps,
   BAISelect,
   useBAILogger,
+  BAINumberInput,
+  BAITagsInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Suspense, useRef, useState } from 'react';
@@ -308,8 +306,9 @@ const UpdateUsersModal = ({
               },
             ]}
           >
-            <AstryxFormNumberInput
-              label={t('credential.ContainerUID')}
+            <BAINumberInput
+              width="100%"
+              aria-label={t('credential.ContainerUID')}
               max={SIGNED_32BIT_MAX_INT}
               min={1}
             />
@@ -326,8 +325,9 @@ const UpdateUsersModal = ({
               },
             ]}
           >
-            <AstryxFormNumberInput
-              label={t('credential.ContainerGID')}
+            <BAINumberInput
+              width="100%"
+              aria-label={t('credential.ContainerGID')}
               max={SIGNED_32BIT_MAX_INT}
               min={1}
             />
@@ -393,9 +393,9 @@ const UpdateUsersModal = ({
               }),
             ]}
           >
-            <AstryxFormTagsInput
+            <BAITagsInput
               tokenSeparators={[',', ' ']}
-              label={t('credential.ContainerSupplementaryGIDs')}
+              aria-label={t('credential.ContainerSupplementaryGIDs')}
               placeholder={t(
                 'credential.ContainerSupplementaryGIDsPlaceholder',
               )}

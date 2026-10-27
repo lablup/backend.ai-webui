@@ -9,7 +9,6 @@ import type {
 } from '../__generated__/ProjectAdminUsersPageQuery.graphql';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
-import BAIRadioGroup from '../components/BAIRadioGroup';
 import { convertToOrderBy } from '../helper';
 import { useTOTPSupported } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -23,6 +22,8 @@ import {
   BAIAdminUserV2Table,
   INITIAL_FETCH_KEY,
   useFetchKey,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { Suspense, useDeferredValue } from 'react';
@@ -131,18 +132,22 @@ const ProjectAdminUsersContent: React.FC<ProjectAdminUsersContentProps> = ({
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex direction="row" justify="between" wrap="wrap" gap="sm">
         <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
-          <BAIRadioGroup
-            optionType="button"
+          <BAISegmentedControl
             value={queryParams.status}
-            onChange={(e) => {
-              setQueryParams({ status: e.target.value });
+            onChange={(value) => {
+              setQueryParams({ status: value as typeof queryParams.status });
               setTablePaginationOption({ current: 1 });
             }}
-            options={[
-              { label: t('general.Active'), value: 'ACTIVE' },
-              { label: t('general.Inactive'), value: 'INACTIVE' },
-            ]}
-          />
+          >
+            <BAISegmentedControlItem
+              value="ACTIVE"
+              label={t('general.Active')}
+            />
+            <BAISegmentedControlItem
+              value="INACTIVE"
+              label={t('general.Inactive')}
+            />
+          </BAISegmentedControl>
           <BAIGraphQLPropertyFilter<UserV2Filter>
             filterProperties={[
               {

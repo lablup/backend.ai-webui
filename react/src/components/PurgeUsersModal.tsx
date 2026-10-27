@@ -6,7 +6,6 @@ import { PurgeUsersModalBulkMutation } from '../__generated__/PurgeUsersModalBul
 import { PurgeUsersModalFragment$key } from '../__generated__/PurgeUsersModalFragment.graphql';
 import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { VStack } from '@lablup/ui-common/Stack';
 import {
   BAIBulkErrorModal,
@@ -15,6 +14,7 @@ import {
   type BAIDeleteConfirmModalProps,
   filterOutNullAndUndefined,
   useBAILogger,
+  BAICheckboxInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useState } from 'react';
@@ -213,18 +213,18 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
         cancelText={t('button.Cancel')}
         extraContent={
           <VStack gap={1} align="stretch">
-            <CheckboxInput
+            <BAICheckboxInput
               value={purgeSharedVfolders}
               onChange={setPurgeSharedVfolders}
             >
               {t('credential.DeleteSharedVirtualFolders')}
-            </CheckboxInput>
-            <CheckboxInput
+            </BAICheckboxInput>
+            <BAICheckboxInput
               value={deleteModelServices}
               onChange={setDeleteModelServices}
             >
               {t('credential.DeleteDeploymentsAsWell')}
-            </CheckboxInput>
+            </BAICheckboxInput>
           </VStack>
         }
         onOk={handleAction}

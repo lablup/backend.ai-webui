@@ -11,7 +11,6 @@ import { Button } from '@lablup/ui-common/Button';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
 import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
 import { IconButton } from '@lablup/ui-common/IconButton';
-import { Selector } from '@lablup/ui-common/Selector';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAIPopconfirm,
@@ -21,6 +20,7 @@ import {
   BAIDeleteConfirmModal,
   useErrorMessageResolver,
   useBAILogger,
+  BAISelector,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Trash2, ChevronDown } from 'lucide-react';
@@ -286,7 +286,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
             }}
             label={t('userSettings.UserConfigScript')}
           >
-            <Selector
+            <BAISelector
               aria-label={t('userSettings.UserConfigScript')}
               value={rcfileNames}
               options={[

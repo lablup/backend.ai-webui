@@ -7,12 +7,11 @@ import { ManageAppsModal_image$key } from '../__generated__/ManageAppsModal_imag
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import BAIFormItem from './BAIFormItem';
-import { AstryxFormTextInput } from './astryxFormControls';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import { BAIFlex, BAIModal, BAIModalProps, BAITextInput } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Trash, PlusIcon } from 'lucide-react';
 import React from 'react';
@@ -210,8 +209,8 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                           },
                         ]}
                       >
-                        <AstryxFormTextInput
-                          label={t('environment.AppName')}
+                        <BAITextInput
+                          aria-label={t('environment.AppName')}
                           placeholder={t('environment.AppName')}
                         />
                       </BAIFormItem>
@@ -229,8 +228,8 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                           },
                         ]}
                       >
-                        <AstryxFormTextInput
-                          label={t('environment.Protocol')}
+                        <BAITextInput
+                          aria-label={t('environment.Protocol')}
                           placeholder={t('environment.Protocol')}
                         />
                       </BAIFormItem>
@@ -287,8 +286,8 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                           },
                         ]}
                       >
-                        <AstryxFormTextInput
-                          label={t('environment.Port')}
+                        <BAITextInput
+                          aria-label={t('environment.Port')}
                           placeholder={t('environment.Port')}
                         />
                       </BAIFormItem>

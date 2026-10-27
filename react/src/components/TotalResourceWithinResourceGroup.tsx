@@ -11,10 +11,6 @@ import {
 } from '../hooks/backendai';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@lablup/ui-common/SegmentedControl';
 import { Heading } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
@@ -29,6 +25,8 @@ import {
   processMemoryValue,
   subNumberWithUnits,
   useControllableValue,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
@@ -446,7 +444,7 @@ const TotalResourceWithinResourceGroup: React.FC<
           <BAIFlex gap={'xs'} wrap="wrap">
             {/* PILOT-DECISION: SegmentedControl.label is aria-only and required;
                 composed from the two option labels to avoid new i18n keys. */}
-            <SegmentedControl
+            <BAISegmentedControl
               size="sm"
               aria-label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
               value={displayType}
@@ -459,9 +457,15 @@ const TotalResourceWithinResourceGroup: React.FC<
                 )
               }
             >
-              <SegmentedControlItem value="used" label={t('dashboard.Used')} />
-              <SegmentedControlItem value="free" label={t('dashboard.Free')} />
-            </SegmentedControl>
+              <BAISegmentedControlItem
+                value="used"
+                label={t('dashboard.Used')}
+              />
+              <BAISegmentedControlItem
+                value="free"
+                label={t('dashboard.Free')}
+              />
+            </BAISegmentedControl>
             <BAIFetchKeyButton
               size="small"
               loading={isPendingRefetch || refetching || isLoadingRemaining}

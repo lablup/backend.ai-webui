@@ -6,9 +6,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFlex,
@@ -17,6 +15,8 @@ import {
   useUpdatableState,
   type BAIColumnsType,
   BAITextHighlighter,
+  BAICheckboxInput,
+  BAITextInput,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -215,7 +215,7 @@ const ErrorLogList: React.FC<{
           style={{ flexShrink: 1 }}
         >
           <BAIFlex gap={'xs'}>
-            <TextInput
+            <BAITextInput
               aria-label={t('logs.SearchLogs')}
               hasClear
               startIcon={Search}
@@ -226,12 +226,12 @@ const ErrorLogList: React.FC<{
               }}
               width={200}
             />
-            <CheckboxInput
+            <BAICheckboxInput
               value={checkedShowOnlyError}
               onChange={(checked) => setCheckedShowOnlyError(checked)}
             >
               {t('logs.ShowOnlyError')}
-            </CheckboxInput>
+            </BAICheckboxInput>
           </BAIFlex>
           <BAIFlex gap={'xs'}>
             <Button

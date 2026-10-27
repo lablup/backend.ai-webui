@@ -18,7 +18,6 @@ import {
   useCurrentDomain,
 } from '../hooks';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
-import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from './DeploymentSettingModal';
 import { Link } from '@lablup/ui-common/Link';
@@ -34,6 +33,8 @@ import {
   type BAITableSettings,
   BAIUnmountAfterClose,
   BAIScopedUserSelect,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
   availableDeploymentSorterKeys,
   DeploymentOrderValue,
   filterOutEmpty,
@@ -355,10 +356,10 @@ const AdminDeployment = ({
       <BAIFlex direction="column" align="stretch" gap="sm">
         <BAIFlex justify="between" wrap="wrap" gap="sm">
           <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
-            <BAIRadioGroup
+            <BAISegmentedControl
               value={statusCategory}
-              onChange={(e) => {
-                const nextCategory = e.target.value as DeploymentStatusCategory;
+              onChange={(value) => {
+                const nextCategory = value as DeploymentStatusCategory;
                 onReload(
                   {
                     ...queryRef.variables,
@@ -371,14 +372,16 @@ const AdminDeployment = ({
                   { fetchPolicy: 'network-only' },
                 );
               }}
-              options={[
-                { label: t('deployment.Running'), value: 'running' },
-                {
-                  label: t('deployment.status.Terminated'),
-                  value: 'finished',
-                },
-              ]}
-            />
+            >
+              <BAISegmentedControlItem
+                value="running"
+                label={t('deployment.Running')}
+              />
+              <BAISegmentedControlItem
+                value="finished"
+                label={t('deployment.status.Terminated')}
+              />
+            </BAISegmentedControl>
             <BAIGraphQLPropertyFilter<DeploymentFilter>
               filterProperties={filterProperties}
               value={userFilter ?? undefined}
