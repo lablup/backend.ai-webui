@@ -93,7 +93,7 @@ const SessionStatusView: React.FC<{ data: StatusCounts }> = ({ data }) => {
     <BAIFlex
       direction="column"
       align="stretch"
-      gap="md"
+      gap="sm"
       style={{ flex: 1, minHeight: 0 }}
     >
       <StatRow
@@ -101,6 +101,7 @@ const SessionStatusView: React.FC<{ data: StatusCounts }> = ({ data }) => {
           key,
           label: statusLabels[key],
           value: String(data[key]?.count ?? 0),
+          size: 'sm',
         }))}
       />
       <DonutChart
