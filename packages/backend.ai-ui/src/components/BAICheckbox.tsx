@@ -12,7 +12,7 @@
 */
 import { nodeToAccessibleLabel } from '../helper/astryxLabel';
 import { useBAIi18n } from '../hooks/useBAIi18n';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import BAICheckboxInput from './BAICheckboxInput';
 import React from 'react';
 import type { ChangeEvent, ReactNode } from 'react';
 
@@ -56,7 +56,7 @@ const BAICheckbox: React.FC<BAICheckboxProps> = ({
   const hideLabel = isLabelHidden ?? !hasInlineLabel;
 
   return (
-    <CheckboxInput
+    <BAICheckboxInput
       {...restProps}
       value={indeterminate ? 'indeterminate' : (value ?? checked ?? false)}
       aria-label={
@@ -70,7 +70,7 @@ const BAICheckbox: React.FC<BAICheckboxProps> = ({
       onChange={onChange}
     >
       {hideLabel ? undefined : inlineLabel}
-    </CheckboxInput>
+    </BAICheckboxInput>
   );
 };
 

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<626b8ce8ab9cc2d7a18b9d5ac704faef>>
+ * @generated SignedSource<<ad768f8a5de090fade8f9686c1cf2c00>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -108,6 +108,7 @@ export type ModelCardSelectQuery$data = {
         readonly availablePresets: {
           readonly count: number;
         } | null | undefined;
+        readonly entityId: string;
         readonly id: string;
         readonly metadata: {
           readonly title: string | null | undefined;
@@ -219,6 +220,13 @@ v5 = [
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
+                "name": "entityId",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "name",
                 "storageKey": null
               },
@@ -308,16 +316,16 @@ return {
     "selections": (v5/*: any*/)
   },
   "params": {
-    "cacheID": "0936960d48e141acf4d47c6b46e1db49",
+    "cacheID": "802c9dc845276b5887091d34225408bd",
     "id": null,
     "metadata": {},
     "name": "ModelCardSelectQuery",
     "operationKind": "query",
-    "text": "query ModelCardSelectQuery(\n  $scope: ProjectModelCardV2Scope!\n  $filter: ModelCardV2Filter\n  $limit: Int!\n  $offset: Int!\n) {\n  projectModelCardsV2(scope: $scope, filter: $filter, orderBy: [{field: CREATED_AT, direction: \"DESC\"}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        vfolderId\n        metadata {\n          title\n        }\n        availablePresets(orderBy: [{field: RANK, direction: \"ASC\"}]) {\n          count\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ModelCardSelectQuery(\n  $scope: ProjectModelCardV2Scope!\n  $filter: ModelCardV2Filter\n  $limit: Int!\n  $offset: Int!\n) {\n  projectModelCardsV2(scope: $scope, filter: $filter, orderBy: [{field: CREATED_AT, direction: \"DESC\"}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        vfolderId\n        metadata {\n          title\n        }\n        availablePresets(orderBy: [{field: RANK, direction: \"ASC\"}]) {\n          count\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "a9c11d2888d65e5a6fcb22aed92f3330";
+(node as any).hash = "1ea154428b1816494216e61dbc85be84";
 
 export default node;

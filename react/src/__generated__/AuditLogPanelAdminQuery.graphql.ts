@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f1f3d28f49054128e1300deefb59012a>>
+ * @generated SignedSource<<930d98d5a8e773af0e045efbc30a3e25>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -875,6 +875,13 @@ v63 = {
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
+},
+v64 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "entityId",
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -1114,13 +1121,7 @@ return {
                     "name": "entityType",
                     "storageKey": null
                   },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "entityId",
-                    "storageKey": null
-                  },
+                  (v64/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -1144,6 +1145,7 @@ return {
                     "plural": false,
                     "selections": [
                       (v63/*: any*/),
+                      (v64/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -1197,12 +1199,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "6907ca9bf75ef7555da871e8172c634c",
+    "cacheID": "a2e55440362abab8a8bb239e6d6350fe",
     "id": null,
     "metadata": {},
     "name": "AuditLogPanelAdminQuery",
     "operationKind": "query",
-    "text": "query AuditLogPanelAdminQuery(\n  $filter: AuditLogFilter!\n  $limit: Int!\n  $offset: Int!\n  $success: AuditLogFilter!\n  $failure: AuditLogFilter!\n  $previousSuccess: AuditLogFilter!\n  $previousFailure: AuditLogFilter!\n  $s0: AuditLogFilter\n  $s0On: Boolean!\n  $s1: AuditLogFilter\n  $s1On: Boolean!\n  $s2: AuditLogFilter\n  $s2On: Boolean!\n  $s3: AuditLogFilter\n  $s3On: Boolean!\n  $s4: AuditLogFilter\n  $s4On: Boolean!\n  $s5: AuditLogFilter\n  $s5On: Boolean!\n  $s6: AuditLogFilter\n  $s6On: Boolean!\n  $s7: AuditLogFilter\n  $s7On: Boolean!\n  $f0: AuditLogFilter\n  $f0On: Boolean!\n  $f1: AuditLogFilter\n  $f1On: Boolean!\n  $f2: AuditLogFilter\n  $f2On: Boolean!\n  $f3: AuditLogFilter\n  $f3On: Boolean!\n  $f4: AuditLogFilter\n  $f4On: Boolean!\n  $f5: AuditLogFilter\n  $f5On: Boolean!\n  $f6: AuditLogFilter\n  $f6On: Boolean!\n  $f7: AuditLogFilter\n  $f7On: Boolean!\n) {\n  logs: adminAuditLogsV2(filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAIAuditLogNodesFragment\n        id\n      }\n    }\n  }\n  success: adminAuditLogsV2(filter: $success, limit: 1) {\n    count\n  }\n  failure: adminAuditLogsV2(filter: $failure, limit: 1) {\n    count\n  }\n  previousSuccess: adminAuditLogsV2(filter: $previousSuccess, limit: 1) {\n    count\n  }\n  previousFailure: adminAuditLogsV2(filter: $previousFailure, limit: 1) {\n    count\n  }\n  s0: adminAuditLogsV2(filter: $s0, limit: 1) @include(if: $s0On) {\n    count\n  }\n  s1: adminAuditLogsV2(filter: $s1, limit: 1) @include(if: $s1On) {\n    count\n  }\n  s2: adminAuditLogsV2(filter: $s2, limit: 1) @include(if: $s2On) {\n    count\n  }\n  s3: adminAuditLogsV2(filter: $s3, limit: 1) @include(if: $s3On) {\n    count\n  }\n  s4: adminAuditLogsV2(filter: $s4, limit: 1) @include(if: $s4On) {\n    count\n  }\n  s5: adminAuditLogsV2(filter: $s5, limit: 1) @include(if: $s5On) {\n    count\n  }\n  s6: adminAuditLogsV2(filter: $s6, limit: 1) @include(if: $s6On) {\n    count\n  }\n  s7: adminAuditLogsV2(filter: $s7, limit: 1) @include(if: $s7On) {\n    count\n  }\n  f0: adminAuditLogsV2(filter: $f0, limit: 1) @include(if: $f0On) {\n    count\n  }\n  f1: adminAuditLogsV2(filter: $f1, limit: 1) @include(if: $f1On) {\n    count\n  }\n  f2: adminAuditLogsV2(filter: $f2, limit: 1) @include(if: $f2On) {\n    count\n  }\n  f3: adminAuditLogsV2(filter: $f3, limit: 1) @include(if: $f3On) {\n    count\n  }\n  f4: adminAuditLogsV2(filter: $f4, limit: 1) @include(if: $f4On) {\n    count\n  }\n  f5: adminAuditLogsV2(filter: $f5, limit: 1) @include(if: $f5On) {\n    count\n  }\n  f6: adminAuditLogsV2(filter: $f6, limit: 1) @include(if: $f6On) {\n    count\n  }\n  f7: adminAuditLogsV2(filter: $f7, limit: 1) @include(if: $f7On) {\n    count\n  }\n}\n\nfragment BAIAuditLogNodesFragment on AuditLogV2 {\n  id\n  createdAt\n  operation\n  status\n  description\n  duration\n  requestId\n  actionId\n  entityType\n  entityId\n  triggeredBy\n  clientIp @since(version: \"26.9.0\")\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n"
+    "text": "query AuditLogPanelAdminQuery(\n  $filter: AuditLogFilter!\n  $limit: Int!\n  $offset: Int!\n  $success: AuditLogFilter!\n  $failure: AuditLogFilter!\n  $previousSuccess: AuditLogFilter!\n  $previousFailure: AuditLogFilter!\n  $s0: AuditLogFilter\n  $s0On: Boolean!\n  $s1: AuditLogFilter\n  $s1On: Boolean!\n  $s2: AuditLogFilter\n  $s2On: Boolean!\n  $s3: AuditLogFilter\n  $s3On: Boolean!\n  $s4: AuditLogFilter\n  $s4On: Boolean!\n  $s5: AuditLogFilter\n  $s5On: Boolean!\n  $s6: AuditLogFilter\n  $s6On: Boolean!\n  $s7: AuditLogFilter\n  $s7On: Boolean!\n  $f0: AuditLogFilter\n  $f0On: Boolean!\n  $f1: AuditLogFilter\n  $f1On: Boolean!\n  $f2: AuditLogFilter\n  $f2On: Boolean!\n  $f3: AuditLogFilter\n  $f3On: Boolean!\n  $f4: AuditLogFilter\n  $f4On: Boolean!\n  $f5: AuditLogFilter\n  $f5On: Boolean!\n  $f6: AuditLogFilter\n  $f6On: Boolean!\n  $f7: AuditLogFilter\n  $f7On: Boolean!\n) {\n  logs: adminAuditLogsV2(filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAIAuditLogNodesFragment\n        id\n      }\n    }\n  }\n  success: adminAuditLogsV2(filter: $success, limit: 1) {\n    count\n  }\n  failure: adminAuditLogsV2(filter: $failure, limit: 1) {\n    count\n  }\n  previousSuccess: adminAuditLogsV2(filter: $previousSuccess, limit: 1) {\n    count\n  }\n  previousFailure: adminAuditLogsV2(filter: $previousFailure, limit: 1) {\n    count\n  }\n  s0: adminAuditLogsV2(filter: $s0, limit: 1) @include(if: $s0On) {\n    count\n  }\n  s1: adminAuditLogsV2(filter: $s1, limit: 1) @include(if: $s1On) {\n    count\n  }\n  s2: adminAuditLogsV2(filter: $s2, limit: 1) @include(if: $s2On) {\n    count\n  }\n  s3: adminAuditLogsV2(filter: $s3, limit: 1) @include(if: $s3On) {\n    count\n  }\n  s4: adminAuditLogsV2(filter: $s4, limit: 1) @include(if: $s4On) {\n    count\n  }\n  s5: adminAuditLogsV2(filter: $s5, limit: 1) @include(if: $s5On) {\n    count\n  }\n  s6: adminAuditLogsV2(filter: $s6, limit: 1) @include(if: $s6On) {\n    count\n  }\n  s7: adminAuditLogsV2(filter: $s7, limit: 1) @include(if: $s7On) {\n    count\n  }\n  f0: adminAuditLogsV2(filter: $f0, limit: 1) @include(if: $f0On) {\n    count\n  }\n  f1: adminAuditLogsV2(filter: $f1, limit: 1) @include(if: $f1On) {\n    count\n  }\n  f2: adminAuditLogsV2(filter: $f2, limit: 1) @include(if: $f2On) {\n    count\n  }\n  f3: adminAuditLogsV2(filter: $f3, limit: 1) @include(if: $f3On) {\n    count\n  }\n  f4: adminAuditLogsV2(filter: $f4, limit: 1) @include(if: $f4On) {\n    count\n  }\n  f5: adminAuditLogsV2(filter: $f5, limit: 1) @include(if: $f5On) {\n    count\n  }\n  f6: adminAuditLogsV2(filter: $f6, limit: 1) @include(if: $f6On) {\n    count\n  }\n  f7: adminAuditLogsV2(filter: $f7, limit: 1) @include(if: $f7On) {\n    count\n  }\n}\n\nfragment BAIAuditLogNodesFragment on AuditLogV2 {\n  id\n  createdAt\n  operation\n  status\n  description\n  duration\n  requestId\n  actionId\n  entityType\n  entityId\n  triggeredBy\n  clientIp @since(version: \"26.9.0\")\n  user {\n    id\n    entityId\n    basicInfo {\n      email\n    }\n  }\n}\n"
   }
 };
 })();

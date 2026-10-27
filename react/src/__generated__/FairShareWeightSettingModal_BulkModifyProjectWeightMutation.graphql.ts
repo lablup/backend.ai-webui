@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bb66fa7f6b88e8c00b8a9e8235968549>>
+ * @generated SignedSource<<1c9ee4a2499cfcc8695e80cde447d13d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,7 +22,7 @@ export type FairShareWeightSettingModal_BulkModifyProjectWeightMutation$variable
   input: BulkUpsertProjectFairShareWeightInput;
 };
 export type FairShareWeightSettingModal_BulkModifyProjectWeightMutation$data = {
-  readonly adminBulkUpsertProjectFairShareWeight: {
+  readonly atomicBulkUpsertProjectFairShareWeights: {
     readonly upsertedCount: number;
   } | null | undefined;
 };
@@ -51,7 +51,7 @@ v1 = [
     ],
     "concreteType": "BulkUpsertProjectFairShareWeightPayload",
     "kind": "LinkedField",
-    "name": "adminBulkUpsertProjectFairShareWeight",
+    "name": "atomicBulkUpsertProjectFairShareWeights",
     "plural": false,
     "selections": [
       {
@@ -83,16 +83,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "451f413446eb70383e926b8894c05b96",
+    "cacheID": "1d60bce9f2ab28bc7386de306ef0807f",
     "id": null,
     "metadata": {},
     "name": "FairShareWeightSettingModal_BulkModifyProjectWeightMutation",
     "operationKind": "mutation",
-    "text": "mutation FairShareWeightSettingModal_BulkModifyProjectWeightMutation(\n  $input: BulkUpsertProjectFairShareWeightInput!\n) {\n  adminBulkUpsertProjectFairShareWeight(input: $input) {\n    upsertedCount\n  }\n}\n"
+    "text": "mutation FairShareWeightSettingModal_BulkModifyProjectWeightMutation(\n  $input: BulkUpsertProjectFairShareWeightInput!\n) {\n  atomicBulkUpsertProjectFairShareWeights(input: $input) {\n    upsertedCount\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "3afbbc36270ec769288d8a9c694849fc";
+(node as any).hash = "c001f771fb35a8f86dd0d191f8d37680";
 
 export default node;

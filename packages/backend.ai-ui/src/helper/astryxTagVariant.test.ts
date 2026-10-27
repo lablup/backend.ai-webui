@@ -84,13 +84,24 @@ describe('badgeVariantForStatus', () => {
     expect(badgeVariantForStatus('session', 'PENDING')).toBe('neutral');
   });
 
+  it('colours a kernel status the same as the session status of the same name', () => {
+    const { session, kernel } = STATUS_BADGE_VARIANT;
+    for (const status of Object.keys(kernel)) {
+      if (status in session) {
+        expect(kernel[status as keyof typeof kernel]).toBe(
+          session[status as keyof typeof session],
+        );
+      }
+    }
+  });
+
   it('maps preemption lifecycle states and reasons', () => {
     // No new hue: RESERVED progresses toward RUNNING like SCHEDULED, the two
     // victim states lose resources like TERMINATING.
     expect(badgeVariantForStatus('session', 'RESERVED')).toBe('info');
     expect(badgeVariantForStatus('session', 'PREEMPTED')).toBe('warning');
     expect(badgeVariantForStatus('session', 'RESCHEDULING')).toBe('warning');
-    expect(badgeVariantForStatus('kernel', 'RESERVED')).toBe('success');
+    expect(badgeVariantForStatus('kernel', 'RESERVED')).toBe('info');
     expect(
       badgeVariantForStatus('sessionStatusInfo', 'PREEMPTED_BY_SCHEDULER'),
     ).toBe('warning');

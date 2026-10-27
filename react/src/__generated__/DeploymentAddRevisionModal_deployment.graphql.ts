@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c84b0f4e1b71865ad9f12976c17dd653>>
+ * @generated SignedSource<<81977e70b3013a051dcaf208f4a62862>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,7 @@ export type DeploymentAddRevisionModal_deployment$data = {
     } | null | undefined;
     readonly " $fragmentSpreads": FragmentRefs<"DeploymentAddRevisionModal_revisionSource">;
   } | null | undefined;
+  readonly entityId: string;
   readonly id: string;
   readonly metadata: {
     readonly projectId: string;
@@ -45,6 +46,13 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
       "storageKey": null
     },
     {
@@ -140,6 +148,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "323589a671e03a55fd84e3bf7f8183d7";
+(node as any).hash = "53528ece27f449c66552e272c594899f";
 
 export default node;

@@ -23,7 +23,7 @@ export interface ScopedCardProps {
   children: (scope: CardScope, fetchKey: string) => React.ReactNode;
 }
 
-/** A card shared by several dashboard pages: one UI, the page's scope as input (ADR 0015). */
+/** A card shared by several dashboard pages: one UI, the page's scope as input (ADR 0016). */
 const ScopedCard: React.FC<ScopedCardProps> = ({
   scope,
   heading,

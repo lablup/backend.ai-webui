@@ -272,7 +272,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         key: 'id',
         title: t('comp:BAIModelDeploymentNodes.DeploymentID'),
         defaultHidden: true,
-        render: (__, record) => <BAIId globalId={record.id} copyable />,
+        render: (__, record) => <BAIId uuid={record.entityId} copyable />,
       },
       {
         key: 'projectId',
