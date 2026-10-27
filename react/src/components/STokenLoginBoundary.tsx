@@ -15,7 +15,10 @@ import { App } from '../app-shim';
 // Ticket 34: `Form` is the self-hosted engine (was the antd SHIM).
 import { Form } from '../form-engine';
 import { extractErrorType } from '../helper';
-import { probeLoginSession } from '../helper/loginBootstrap';
+import {
+  LoginBootstrapIncompleteError,
+  probeLoginSession,
+} from '../helper/loginBootstrap';
 import { getDefaultLoginConfig } from '../helper/loginConfig';
 import {
   connectViaGQL,
@@ -28,12 +31,11 @@ import {
   loginConfigState,
 } from '../hooks/useWebUIConfig';
 import BAIFormItem from './BAIFormItem';
-import { AstryxFormTextInput } from './astryxFormControls';
 import { Button } from '@lablup/ui-common/Button';
 import { Heading } from '@lablup/ui-common/Heading';
 import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
-import { BAICard, BAIFlex, useBAILogger } from 'backend.ai-ui';
+import { BAICard, BAIFlex, BAITextInput, useBAILogger } from 'backend.ai-ui';
 import { useAtomValue, useStore } from 'jotai';
 import {
   Suspense,
@@ -73,6 +75,8 @@ export type STokenLoginError =
    * mirroring LoginView's `forceLoginApprovedRef`).
    */
   | { kind: 'concurrent-session'; cause: unknown }
+  /** A live session whose user the manager could not return; retry may help. */
+  | { kind: 'account-unavailable'; cause: unknown }
   | { kind: 'unknown'; cause: unknown };
 
 /**
@@ -316,7 +320,9 @@ const STokenLoginBoundaryInner: React.FC<STokenLoginBoundaryProps> = ({
 
     // The session probe runs alongside the reachability check; a browser the
     // webserver already knows skips `token_login` (also without a URL token).
-    const sessionProbe = probeLoginSession(client).catch(() => null);
+    const sessionProbe = probeLoginSession(client).catch((err: unknown) =>
+      err instanceof LoginBootstrapIncompleteError ? err : null,
+    );
     try {
       await client.get_manager_version();
     } catch (cause) {
@@ -324,7 +330,15 @@ const STokenLoginBoundaryInner: React.FC<STokenLoginBoundaryProps> = ({
       surfaceError({ kind: 'server-unreachable', cause });
       return;
     }
-    const bootstrap = (await sessionProbe) ?? null;
+    const probed = (await sessionProbe) ?? null;
+    // A live session whose user the manager could not return: token_login
+    // would only be refused as "already logged in", so offer a retry.
+    if (probed instanceof LoginBootstrapIncompleteError) {
+      logger.error('[STokenLoginBoundary] bootstrap incomplete', probed);
+      surfaceError({ kind: 'account-unavailable', cause: probed });
+      return;
+    }
+    const bootstrap = probed;
     const alreadyLoggedIn = bootstrap !== null;
 
     // Only after the session check do we surface `missing-token`: a bare
@@ -563,8 +577,15 @@ const DefaultErrorCard: React.FC<{
   const { logger } = useBAILogger();
 
   const kindKey = kindToI18nKey(error.kind);
-  const title = t(`sTokenLoginBoundary.Error${kindKey}Title`);
-  const description = t(`sTokenLoginBoundary.Error${kindKey}Description`);
+  // Shares LoginView's copy for the same failure.
+  const title =
+    error.kind === 'account-unavailable'
+      ? t('login.AccountInfoLoadFailed')
+      : t(`sTokenLoginBoundary.Error${kindKey}Title`);
+  const description =
+    error.kind === 'account-unavailable'
+      ? t('login.AccountInfoLoadFailedDesc')
+      : t(`sTokenLoginBoundary.Error${kindKey}Description`);
   const causeDetail =
     'cause' in error && error.cause
       ? String((error.cause as Error)?.message ?? error.cause)
@@ -711,8 +732,8 @@ const TotpInlineForm: React.FC<{
         help={invalidOtp ? t('sTokenLoginBoundary.ErrorTotpInvalidHint') : null}
         style={{ marginBottom: 12 }}
       >
-        <AstryxFormTextInput
-          label={t('sTokenLoginBoundary.TotpPlaceholder')}
+        <BAITextInput
+          aria-label={t('sTokenLoginBoundary.TotpPlaceholder')}
           disabled={isSubmitting}
         />
       </BAIFormItem>

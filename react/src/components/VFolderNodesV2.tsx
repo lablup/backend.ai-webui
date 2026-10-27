@@ -16,13 +16,13 @@ import {
 import { VFolderNodesV2RestoreMutation } from '../__generated__/VFolderNodesV2RestoreMutation.graphql';
 import { App } from '../app-shim';
 import { convertToDecimalUnit } from '../helper';
+import { isDeletedCategory } from '../helper/vfolderStatus';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useSuspenseTanQuery, useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import { ProjectContextOrNull } from '../types/projectContext';
 import DeleteForeverVFolderModalV2 from './DeleteForeverVFolderModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -55,7 +55,6 @@ import {
   StorageUsageBadge,
   badgeVariantForStatus,
   filterOutNullAndUndefined,
-  toLocalId,
   useErrorMessageResolver,
   useIsLabelableEntityType,
   type BAIEntityLabel,
@@ -168,7 +167,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
       ? t('data.folders.ManageProjectFolderInAdmin')
       : undefined;
 
-  const vfolderId = toLocalId(vfolder.id ?? '');
+  const vfolderId = vfolder.entityId;
   const folderPath = generateFolderPath(vfolderId);
 
   const actions: Array<BAINameActionCellAction> = filterOutNullAndUndefined([
@@ -698,14 +697,14 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
                   disableProjectFolderActions={disableProjectFolderActions}
                   onShare={() => {
                     vfolder?.ownership?.userId === currentUser?.uuid
-                      ? setInviteFolderId(toLocalId(vfolder?.id ?? null))
+                      ? setInviteFolderId(vfolder.entityId)
                       : setCurrentSharedVFolder(vfolder);
                   }}
                   onDelete={() => {
                     const folderId = vfolder?.id;
                     if (!folderId) return;
                     commitDeleteMutation({
-                      variables: { vfolderId: toLocalId(folderId) },
+                      variables: { vfolderId: vfolder.entityId },
                       onCompleted: (_data, errors) => {
                         if (errors && errors.length > 0) {
                           handleDeleteError(
@@ -736,7 +735,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
                       });
                     };
                     commitRestoreMutation({
-                      variables: { vfolderId: toLocalId(folderId) },
+                      variables: { vfolderId: vfolder.entityId },
                       onCompleted: (_data, errors) => {
                         if (errors && errors.length > 0) {
                           handleError(new Error(errors[0]?.message ?? ''));

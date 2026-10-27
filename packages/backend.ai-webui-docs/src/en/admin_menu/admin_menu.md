@@ -401,7 +401,7 @@ The dialog contains the following fields:
   pick the account the new keypair belongs to. Because the account is chosen from the list, it is no
   longer possible to submit an address that does not belong to a real user.
 - **Resource Policy**: The keypair resource policy to apply to the new keypair.
-- **Rate Limit (for 15 min.)**: The maximum number of requests that can be sent to the Backend.AI server
+- **Rate Limit (for 15 min)**: The maximum number of requests that can be sent to the Backend.AI server
   in 15 minutes. For example, if set to 1000 and the keypair sends more than 1000 API requests in 15
   minutes, the server throws an error and does not accept the request. It is recommended to use the
   default value and increase it when the API request frequency goes up high according to the user's
@@ -835,7 +835,7 @@ About details of each option in resource policy dialog, see the description belo
 - Sessions
   - Cluster Size: Set the maximum limit for the number of multi-containers or
     multi-nodes that can be configured when creating a session.
-  - Session Lifetime (sec.): Limits the maximum lifetime of a compute session
+  - Session Lifetime (s): Limits the maximum lifetime of a compute session
     from the reservation in the active status, including `PENDING` and
     `RUNNING` statuses. After this time, the session will be force-terminated
     even if it is fully utilized. This will be useful to prevent the session
@@ -845,7 +845,7 @@ About details of each option in resource policy dialog, see the description belo
   - Concurrent Sessions: Maximum number of concurrent compute session per keypair.
     If this value is set to 3, for example, users bound to this resource policy
     cannot create more than 3 compute sessions simultaneously. (max value: 100)
-  - Idle timeout (sec.): Configurable period of time during which the user can
+  - Idle timeout (s): Configurable period of time during which the user can
     leave their session untouched. If there is no activity at all on a
     compute session for idle timeout, the session will be garbage collected
     and destroyed automatically. The criteria of the "idleness" can be
@@ -1295,6 +1295,17 @@ you have chosen a project and a resource group. Images in your selection that ar
 are excluded from the request.
 
 ![=520px](../images/image_install_modal.png)
+
+Superadmins can register specific images without rescanning a whole registry. Click **Import Image**
+to open the **Import Image from Registry** dialog, enter one full image reference per line — tag
+included — under **Image references**, choose the **Architecture** to look up, review the
+**Images to import** list, and click **Import Image**. An NVIDIA NGC catalog container URL can be
+pasted in place of a reference.
+
+![=720px](../images/import_image_modal.png)
+
+Superadmins can also refresh a single image's metadata from its registry with the **Rescan** action
+in the image's row.
 
 You can change the minimum resource requirements for each image by clicking the
 **Edit** (pencil) action in the `Controls` panel, which opens the

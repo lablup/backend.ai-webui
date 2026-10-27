@@ -176,9 +176,9 @@
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Automaattinen päivitys",
-    "EveryHours": "{{count}}h",
-    "EveryMinutes": "{{count}}m",
-    "EverySeconds": "{{count}}s",
+    "EveryHours": "{{count}} h",
+    "EveryMinutes": "{{count}} min",
+    "EverySeconds": "{{count}} s",
     "LastUpdated": "Viimeksi päivitetty",
     "Off": "Pois",
     "Refresh": "Päivitä"
@@ -566,6 +566,21 @@
   "comp:BAISessionClusterMode": {
     "MultiNodeShort": "Moni-",
     "SingleNodeShort": "Yksittäinen"
+  },
+  "comp:BAISessionScene": {
+    "FoundCount": "{{count}} löydetty",
+    "Hero": "Omat",
+    "Measuring": "Mitataan",
+    "ResourceShare": "Resurssiosuus",
+    "ShowAll": "Näytä kaikki",
+    "Utilization": "Käyttöaste",
+    "mood": {
+      "Idle": "Vapaana",
+      "Leaving": "Päättyy",
+      "Overheated": "Ylikuumentunut",
+      "Waiting": "Odottaa resursseja",
+      "Working": "Työskentelee"
+    }
   },
   "comp:BAISessionTypeToken": {
     "Batch": "Erä",

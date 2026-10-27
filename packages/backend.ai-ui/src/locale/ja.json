@@ -567,6 +567,21 @@
     "MultiNodeShort": "マルチ",
     "SingleNodeShort": "シングル"
   },
+  "comp:BAISessionScene": {
+    "FoundCount": "{{count}}件発見",
+    "Hero": "自分のセッション",
+    "Measuring": "測定中",
+    "ResourceShare": "リソース占有",
+    "ShowAll": "すべて表示",
+    "Utilization": "使用率",
+    "mood": {
+      "Idle": "アイドル",
+      "Leaving": "終了中",
+      "Overheated": "過熱",
+      "Waiting": "リソース待ち",
+      "Working": "作業中"
+    }
+  },
   "comp:BAISessionTypeToken": {
     "Batch": "バッチ",
     "Inference": "推論",

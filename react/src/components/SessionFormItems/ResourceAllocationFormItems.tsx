@@ -9,6 +9,11 @@ import {
   compareNumberWithUnits,
   convertToBinaryUnit,
 } from '../../helper';
+import {
+  getUnifiedSlotNameFromTag,
+  isUnifiedAcceleratorSlot,
+  UNIFIED_SLOT_TAG_PREFIX,
+} from '../../helper/unifiedAcceleratorSlot';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import {
   useResourceSlots,
@@ -35,7 +40,6 @@ import SharedMemoryFormItems from './SharedMemoryFormItems';
 // and every control and every piece of chrome below is Astryx now.
 import { Card } from '@lablup/ui-common/Card';
 import { IconButton } from '@lablup/ui-common/IconButton';
-import { SegmentedControl } from '@lablup/ui-common/SegmentedControl';
 import { VStack } from '@lablup/ui-common/Stack';
 import { useTheme } from '@lablup/ui-common/theme';
 import { spacingVars } from '@lablup/ui-common/theme/tokens.stylex';
@@ -50,6 +54,7 @@ import {
   useEventNotStable,
   useProjectResourceGroups,
   useUpdatableState,
+  BAISegmentedControl,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { RotateCw } from 'lucide-react';
@@ -123,41 +128,10 @@ export const pickChangedResourceValues = <T extends Record<string, unknown>>(
     return true;
   }) as Partial<T>;
 
-/**
- * Returns true when the given accelerator slot name represents a unified
- * memory architecture, where the accelerator memory and the host memory
- * share a single physical pool. Identified by a `.unified` suffix on the
- * slot name (e.g. `cuda.unified`).
- */
-export const isUnifiedAcceleratorSlot = (slotName?: string | null): boolean => {
-  return !!slotName && _.endsWith(slotName, '.unified');
-};
-
-/**
- * Prefix of the session `tag` that marks a session as using a unified-memory
- * accelerator slot (e.g. `unified-slot:cuda.unified`). This is a temporary
- * marker until the session model exposes unified-memory usage directly.
- */
-export const UNIFIED_SLOT_TAG_PREFIX = 'unified-slot:';
-
-/**
- * Extracts the unified-memory accelerator slot name from a session `tag`
- * (e.g. `unified-slot:cuda.unified` -> `cuda.unified`). Returns `undefined`
- * when the tag carries no unified-slot marker, or when the marked slot is not
- * actually a unified-memory slot (i.e. does not end with `.unified`) — this
- * guards the downstream UI, which assumes a genuine unified slot. The tag is
- * treated as a comma/whitespace-separated list so it stays correct even if
- * other markers are appended later.
- */
-export const getUnifiedSlotNameFromTag = (
-  tag?: string | null,
-): string | undefined => {
-  if (!tag) return undefined;
-  const token = tag
-    .split(/[,\s]+/)
-    .find((part) => part.startsWith(UNIFIED_SLOT_TAG_PREFIX));
-  const slotName = token?.slice(UNIFIED_SLOT_TAG_PREFIX.length);
-  return isUnifiedAcceleratorSlot(slotName) ? slotName : undefined;
+export {
+  getUnifiedSlotNameFromTag,
+  isUnifiedAcceleratorSlot,
+  UNIFIED_SLOT_TAG_PREFIX,
 };
 
 export interface ResourceAllocationFormValue {
@@ -238,8 +212,7 @@ const clusterModeSegmentedStyles = stylex.create({
 /**
  * Cluster-mode segmented control — the twin of the one in
  * `ClusterModeFormItems`, declared locally for the same reason: each option
- * carries a help tooltip that the shared `AstryxFormSegmented` option shape
- * does not model. The two `Form.Item` contracts are honoured inline.
+ * carries a help tooltip.
  */
 const ClusterModeSegmented: React.FC<{
   label: string;
@@ -252,8 +225,8 @@ const ClusterModeSegmented: React.FC<{
 }> = ({ label, onValueChange, items, value, onChange }) => {
   'use memo';
   return (
-    <SegmentedControl
-      label={label}
+    <BAISegmentedControl
+      aria-label={label}
       value={value ?? items[0]?.value ?? ''}
       xstyle={clusterModeSegmentedStyles.control}
       onChange={(next) => {
@@ -278,7 +251,7 @@ const ClusterModeSegmented: React.FC<{
           }
         />
       ))}
-    </SegmentedControl>
+    </BAISegmentedControl>
   );
 };
 

@@ -13,7 +13,6 @@ import RBACPermissionGrid, {
 } from './RBACPermissionGrid';
 import {
   INITIAL_FETCH_KEY,
-  toLocalId,
   useBAILogger,
   useFetchKey,
   useMutationWithPromise,
@@ -44,12 +43,13 @@ const RolePresetPermissionTable: React.FC<RolePresetPermissionTableProps> = ({
     graphql`
       fragment RolePresetPermissionTableFragment on RolePreset {
         id
+        entityId
         scopeType
       }
     `,
     rolePresetFrgmt,
   );
-  const rolePresetId = toLocalId(rolePreset.id);
+  const rolePresetId = rolePreset.entityId;
 
   const [fetchKey, updateFetchKey] = useFetchKey();
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -69,6 +69,7 @@ const RolePresetPermissionTable: React.FC<RolePresetPermissionTableProps> = ({
             edges {
               node {
                 id
+                fieldId
                 entityType
                 permission
               }
@@ -128,7 +129,7 @@ const RolePresetPermissionTable: React.FC<RolePresetPermissionTableProps> = ({
       (edge) => edge?.node,
     ),
   ).map((node) => ({
-    id: toLocalId(node.id),
+    id: node.fieldId,
     entityType: node.entityType,
     permission: node.permission,
   }));

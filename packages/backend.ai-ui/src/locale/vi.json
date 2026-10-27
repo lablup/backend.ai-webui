@@ -176,9 +176,9 @@
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Tự động làm mới",
-    "EveryHours": "{{count}}h",
-    "EveryMinutes": "{{count}}m",
-    "EverySeconds": "{{count}}s",
+    "EveryHours": "{{count}} h",
+    "EveryMinutes": "{{count}} min",
+    "EverySeconds": "{{count}} s",
     "LastUpdated": "Cập nhật lần cuối",
     "Off": "Tắt",
     "Refresh": "Làm mới"
@@ -566,6 +566,21 @@
   "comp:BAISessionClusterMode": {
     "MultiNodeShort": "Đa",
     "SingleNodeShort": "Đơn"
+  },
+  "comp:BAISessionScene": {
+    "FoundCount": "Tìm thấy {{count}}",
+    "Hero": "Của tôi",
+    "Measuring": "Đang đo",
+    "ResourceShare": "Tỷ lệ tài nguyên",
+    "ShowAll": "Hiện tất cả",
+    "Utilization": "Mức sử dụng",
+    "mood": {
+      "Idle": "Nhàn rỗi",
+      "Leaving": "Đang kết thúc",
+      "Overheated": "Quá nóng",
+      "Waiting": "Đang chờ tài nguyên",
+      "Working": "Đang làm việc"
+    }
   },
   "comp:BAISessionTypeToken": {
     "Batch": "Hàng loạt",

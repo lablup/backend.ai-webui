@@ -12,10 +12,8 @@ import {
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useDomainAppConfig } from '../hooks/useAppConfig';
 import './AnnouncementBanner.css';
-import AnnouncementEditModal from './AnnouncementEditModal';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
-import { Markdown } from '@lablup/ui-common/Markdown';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIUnmountAfterClose,
@@ -23,8 +21,16 @@ import {
   useToggle,
 } from 'backend.ai-ui';
 import { ChevronDownIcon, ChevronUpIcon, SquarePenIcon } from 'lucide-react';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
+
+// The markdown engine and the editor load only when expanded / opened.
+const Markdown = React.lazy(() =>
+  import('@lablup/ui-common/Markdown').then((m) => ({ default: m.Markdown })),
+);
+const AnnouncementEditModal = React.lazy(
+  () => import('./AnnouncementEditModal'),
+);
 
 /**
  * The domain's system announcement as AppShell's top banner (FR-3612), read
@@ -126,14 +132,25 @@ const AnnouncementBanner: React.FC = () => {
               // Must use the same renderer settings as the editor preview
               // (FR-3402); the banner sits above the page h1, so markdown `#`
               // starts at h3.
-              <Markdown
-                className="webui-announcement-body"
-                density="compact"
-                headingLevelStart={3}
-                autolink="gfm"
+              <Suspense
+                fallback={
+                  <span
+                    className="webui-announcement-body"
+                    style={{ whiteSpace: 'pre-wrap' }}
+                  >
+                    {body}
+                  </span>
+                }
               >
-                {body}
-              </Markdown>
+                <Markdown
+                  className="webui-announcement-body"
+                  density="compact"
+                  headingLevelStart={3}
+                  autolink="gfm"
+                >
+                  {body}
+                </Markdown>
+              </Suspense>
             ) : undefined
           ) : (
             <span className="webui-announcement-text">{title}</span>
@@ -152,12 +169,14 @@ const AnnouncementBanner: React.FC = () => {
         }
       />
       {isSuperAdmin && (
-        <BAIUnmountAfterClose>
-          <AnnouncementEditModal
-            open={isEditOpen}
-            onRequestClose={toggleEditModal}
-          />
-        </BAIUnmountAfterClose>
+        <Suspense fallback={null}>
+          <BAIUnmountAfterClose>
+            <AnnouncementEditModal
+              open={isEditOpen}
+              onRequestClose={toggleEditModal}
+            />
+          </BAIUnmountAfterClose>
+        </Suspense>
       )}
     </>
   );

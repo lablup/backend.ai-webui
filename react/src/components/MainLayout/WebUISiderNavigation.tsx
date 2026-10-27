@@ -3,11 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { AstryxAdminTheme } from '../../astryx-theme';
-import { useWebUINavigate } from '../../hooks';
+import { useBackToUserView } from '../../hooks/useBackToUserView';
 import { useRouteAccessDecision } from '../../hooks/useRouteAccess';
 import {
-  getRouteScopeAndKey,
-  rewriteProjectNameInPath,
   useActiveProjectName,
   useCurrentMenuKey,
 } from '../../hooks/useRouteScope';
@@ -43,24 +41,24 @@ const WebUISiderNavigation: React.FC<WebUISiderNavigationProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
-  const webuiNavigate = useWebUINavigate();
   const location = useLocation();
   // Scope-aware current menu key (route handle), correct under the
   // `/project/:name/<feature>` and `/admin/<feature>` URL shapes where the
   // first pathname segment is the scope prefix, not the feature key.
   const currentMenuKey = useCurrentMenuKey();
   // Active project NAME (URL `:projectName` if present, else current project
-  // atom). Used to build the scope-aware admin-settings link and to rewrite the
-  // stored `goBackPath` to the current project on read.
+  // atom), for the scope-aware Project Settings link.
   const activeProjectName = useActiveProjectName();
 
   const {
     groupedGeneralMenu,
     groupedAdminMenu,
+    groupedProjectAdminMenu,
     isSelectedAdminCategoryMenu,
+    isSelectedProjectAdminMenu,
     isCurrentPathAdminCategory,
     firstAvailableAdminMenuItem,
-    defaultMenuPath,
+    firstAvailableProjectAdminMenuItem,
   } = useWebUIMenuItems({
     hideGroupName: collapsed,
   });
@@ -69,18 +67,16 @@ const WebUISiderNavigation: React.FC<WebUISiderNavigationProps> = ({
   // menu (the admin sider would be empty/misleading).
   const isCurrentPageUnauthorized = useRouteAccessDecision() === 'unauthorized';
 
-  const [goBackPath, setGoBackPath] = useSessionStorageState<string>(
+  const [, setGoBackPath] = useSessionStorageState<string>(
     'backendaiwebui.last_visited_general_path',
   );
+  const backToUserView = useBackToUserView();
 
-  // Store the last visited general (non-admin) menu path so the admin header's
-  // "go back" button can return the user to where they were. Use the role-
-  // independent `isCurrentPathAdminCategory` instead of
-  // `isSelectedAdminCategoryMenu`: the latter is role-filtered and would
-  // misclassify an admin page as "general" for users whose admin menu
-  // excludes that page (e.g. superadmin on `/project-admin-users`), which
-  // would pollute `goBackPath` with an admin path and make a later go-back
-  // navigate to the same page.
+  // Store the last visited general (non-admin) menu path so "go back" (the
+  // project-admin header, the user menu) can return the user. Use the role-
+  // independent `isCurrentPathAdminCategory`: the role-filtered flags would
+  // misclassify an admin page the user's menu excludes as "general" and
+  // pollute `goBackPath` with an admin path.
   useEffect(() => {
     if (!isCurrentPathAdminCategory) {
       setGoBackPath(location.pathname);
@@ -89,11 +85,19 @@ const WebUISiderNavigation: React.FC<WebUISiderNavigationProps> = ({
     // react-doctor-disable-next-line react-doctor/no-mutable-in-deps
   }, [setGoBackPath, location.pathname, isCurrentPathAdminCategory]);
 
+  const isProjectAdminView =
+    isSelectedProjectAdminMenu && !isCurrentPageUnauthorized;
+  const isSystemAdminView =
+    !isProjectAdminView &&
+    !!firstAvailableAdminMenuItem &&
+    isSelectedAdminCategoryMenu &&
+    !isCurrentPageUnauthorized;
+
   // The row must occupy the same box a `side-nav-item` row does (40px height,
   // 2px block margin, icon at 32–48px, label at 56px) or toggling between the
   // general and the admin menu makes the top row appear to jump. Geometry
   // rationale + measurements: FR-3482 ticket 24, POLISH-3 item 3.
-  const adminHeader = (
+  const renderAdminHeader = (title: string) => (
     <HStack
       align="center"
       gap={0}
@@ -110,34 +114,11 @@ const WebUISiderNavigation: React.FC<WebUISiderNavigationProps> = ({
         label={t('webui.menu.GoBack')}
         tooltip={t('webui.menu.GoBack')}
         icon={<ArrowLeftIcon size="1em" />}
-        onClick={() => {
-          // `goBackPath` stores the last visited general (project-scoped)
-          // path, e.g. `/project/<oldName>/session`. If the user switched
-          // projects while in admin mode, rewrite its `:projectName` segment
-          // to the current project so "go back" lands on the active project,
-          // not the stale one. Non-project paths pass through unchanged.
-          //
-          // Healing guard: a stored path that itself parses to an admin
-          // scope (e.g. `/admin` polluted by the pre-fix bare-scope-root
-          // bug, possibly persisted in sessionStorage from an older build)
-          // would make "go back" a no-op loop — fall back to the default
-          // general page instead of navigating back into admin.
-          const storedTarget = goBackPath
-            ? rewriteProjectNameInPath(goBackPath, activeProjectName)
-            : undefined;
-          const isStoredTargetAdmin =
-            !!storedTarget &&
-            getRouteScopeAndKey(storedTarget).scope !== 'project';
-          webuiNavigate(
-            storedTarget && !isStoredTargetAdmin
-              ? storedTarget
-              : defaultMenuPath,
-          );
-        }}
+        onClick={backToUserView}
       />
       {!collapsed && (
         <Text type="large" weight="semibold">
-          {t('webui.menu.AdminSettings')}
+          {title}
         </Text>
       )}
     </HStack>
@@ -145,7 +126,7 @@ const WebUISiderNavigation: React.FC<WebUISiderNavigationProps> = ({
 
   return (
     <>
-      {(!isSelectedAdminCategoryMenu || isCurrentPageUnauthorized) && (
+      {!isProjectAdminView && !isSystemAdminView && (
         <BAIMenu
           hideGroupName={collapsed}
           selectedKeys={filterOutEmpty([
@@ -155,12 +136,12 @@ const WebUISiderNavigation: React.FC<WebUISiderNavigationProps> = ({
             currentMenuKey === 'session' ? 'job' : '',
           ])}
           items={filterOutEmpty([
-            firstAvailableAdminMenuItem && {
-              // Go to first page of admin setting pages.
-              key: 'admin-settings',
-              labelText: t('webui.menu.AdminSettings'),
+            firstAvailableProjectAdminMenuItem && {
+              // System admin pages are entered from the user menu instead.
+              key: 'project-settings',
+              labelText: t('webui.menu.ProjectSettings'),
               to: getPathFromMenuKey(
-                firstAvailableAdminMenuItem.key,
+                firstAvailableProjectAdminMenuItem.key,
                 activeProjectName,
               ),
               icon: <ShieldUserIcon style={{ color: token('--color-info') }} />,
@@ -169,16 +150,19 @@ const WebUISiderNavigation: React.FC<WebUISiderNavigationProps> = ({
           ])}
         />
       )}
-      {firstAvailableAdminMenuItem && isSelectedAdminCategoryMenu && (
-        // The admin region carries its own accent; `AstryxAdminTheme`
-        // (FR-3482 ticket 02) re-passes `mode` explicitly because a nested
-        // `<Theme>` otherwise falls back to `system` (MAPPING §5).
+      {(isProjectAdminView || isSystemAdminView) && (
+        // `AstryxAdminTheme` re-passes `mode`: a nested `<Theme>` otherwise
+        // falls back to `system` (MAPPING §5).
         <AstryxAdminTheme>
-          {adminHeader}
+          {/* System admin pages are left from the user menu only. */}
+          {isProjectAdminView &&
+            renderAdminHeader(t('webui.menu.ProjectSettings'))}
           <BAIMenu
             hideGroupName={collapsed}
             selectedKeys={currentMenuKey ? [currentMenuKey] : []}
-            items={groupedAdminMenu}
+            items={
+              isProjectAdminView ? groupedProjectAdminMenu : groupedAdminMenu
+            }
           />
         </AstryxAdminTheme>
       )}

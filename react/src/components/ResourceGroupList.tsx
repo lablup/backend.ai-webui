@@ -16,7 +16,6 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useSFTPProxyResourceGroupsQuery } from '../hooks/useSFTPResourceGroups';
-import BAIRadioGroup from './BAIRadioGroup';
 import ResourceGroupDetailDrawer from './ResourceGroupDetailDrawer';
 import ResourceGroupSettingModal from './ResourceGroupSettingModal';
 import UpdateResourceGroupsModal from './UpdateResourceGroupsModal';
@@ -32,6 +31,8 @@ import {
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
   BAIQuestionIconWithTooltip,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
   BAISelectionLabel,
   BAITable,
   BAIUnmountAfterClose,
@@ -428,25 +429,23 @@ const ResourceGroupList: React.FC = () => {
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex justify="between" gap="sm" align="start" wrap="wrap">
         <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
-          <BAIRadioGroup
+          <BAISegmentedControl
             value={activeType}
             onChange={(value) => {
-              setActiveType(value.target.value);
+              setActiveType(value as typeof activeType);
               setTablePaginationOption({ current: 1 });
               setSelectedRowKeys([]);
             }}
-            optionType="button"
-            options={[
-              {
-                label: t('general.Active'),
-                value: 'active',
-              },
-              {
-                label: t('general.Inactive'),
-                value: 'inactive',
-              },
-            ]}
-          />
+          >
+            <BAISegmentedControlItem
+              value="active"
+              label={t('general.Active')}
+            />
+            <BAISegmentedControlItem
+              value="inactive"
+              label={t('general.Inactive')}
+            />
+          </BAISegmentedControl>
           <BAIGraphQLPropertyFilter<ResourceGroupFilter>
             singleCondition={!supportsSubFilter}
             filterProperties={[

@@ -10,15 +10,15 @@ import { CATALOG_FETCH_LIMIT } from '../../helper/const-vars';
 import WebUILink from '../WebUILink';
 import { Code } from '@lablup/ui-common/Code';
 import type { SelectorOptionData } from '@lablup/ui-common/Selector';
-import { Selector } from '@lablup/ui-common/Selector';
 import { Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIFlex,
   BAIIconWithTooltip,
   filterOutNullAndUndefined,
   toGlobalId,
   useControllableValue,
+  BAISelector,
+  BAITextInput,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { maxBy } from 'lodash-es';
@@ -167,9 +167,8 @@ const DeploymentTokenSelectWithQuery: React.FC<
   // Tokens — a convenient shortcut shown regardless of whether tokens exist.
   return (
     <BAIFlex gap="xs" align="center">
-      <Selector
-        label={t('chatui.SelectToken')}
-        isLabelHidden
+      <BAISelector
+        aria-label={t('chatui.SelectToken')}
         placeholder={t('chatui.SelectToken')}
         // Fixed width so the token field looks the same across panel sizes
         // instead of following CustomModelForm's responsive 100%/200px width,
@@ -180,7 +179,7 @@ const DeploymentTokenSelectWithQuery: React.FC<
         renderOption={renderTokenOption}
         value={controllableValue || undefined}
         onChange={(v) => setControllableValue(v)}
-        isDisabled={props.disabled}
+        disabled={props.disabled}
         isLoading={loading}
       />
       <WebUILink
@@ -214,13 +213,12 @@ const DeploymentTokenSelect: React.FC<DeploymentTokenSelectProps> = ({
 
   if (!deploymentId) {
     return (
-      <TextInput
-        label={t('chatui.SelectToken')}
-        isLabelHidden
+      <BAITextInput
+        aria-label={t('chatui.SelectToken')}
         value={controllableValue ?? ''}
         onChange={(v) => setControllableValue(v)}
         controlStyle={props.style}
-        isDisabled={props.disabled}
+        disabled={props.disabled}
       />
     );
   }

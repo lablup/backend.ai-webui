@@ -51,7 +51,6 @@ import type {
   PreStartActionFormValue,
 } from './AdminDeploymentPresetFormTypes';
 import BAIFormItem from './BAIFormItem';
-import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import EnvVarFormList, { type EnvVarFormListValue } from './EnvVarFormList';
 import FolderCreateModalV2 from './FolderCreateModalV2';
@@ -72,21 +71,19 @@ import ResourceAllocationFormItems, {
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
   type ResourceAllocationFormValue,
 } from './SessionFormItems/ResourceAllocationFormItems';
-import { AstryxFormTextInput } from './astryxFormControls';
 import './collapsible-section.css';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { Collapsible } from '@lablup/ui-common/Collapsible';
 import { Divider } from '@lablup/ui-common/Divider';
 import { IconButton } from '@lablup/ui-common/IconButton';
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@lablup/ui-common/SegmentedControl';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAICheckboxInput,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
+  BAITextInput,
   BAIAvailablePresetSelect,
   BAIComplexSelect,
   BAIFlex,
@@ -436,6 +433,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     graphql`
       fragment DeploymentAddRevisionModal_deployment on ModelDeployment {
         id
+        entityId
         metadata {
           resourceGroupName
           projectId
@@ -1585,7 +1583,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     commitAdd({
       variables: {
         input: {
-          deploymentId: toLocalId(deployment?.id ?? '') ?? deployment?.id ?? '',
+          deploymentId: deployment?.entityId ?? '',
           clusterConfig: {
             mode: clusterMode,
             size: values.cluster_size,
@@ -1678,7 +1676,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     commitAdd({
       variables: {
         input: {
-          deploymentId: toLocalId(deployment?.id ?? '') ?? deployment?.id ?? '',
+          deploymentId: deployment?.entityId ?? '',
           revisionPresetId: values.revisionPresetId,
           modelMountConfig: {
             vfolderId: mountVfolderId,
@@ -1836,22 +1834,22 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               acted the modal title's bold leaking into the Segmented — Astryx
               SegmentedControl styles its own items, so the override is
               dropped. The `label` is aria-only; reuses an existing key. */}
-          <SegmentedControl
+          <BAISegmentedControl
             value={effectiveMode}
             onChange={(next) => {
               void handleModeChange(next as 'preset' | 'custom');
             }}
-            label={t('deployment.AddRevision')}
+            aria-label={t('deployment.AddRevision')}
           >
-            <SegmentedControlItem
+            <BAISegmentedControlItem
               value="preset"
               label={t('deployment.PresetMode')}
             />
-            <SegmentedControlItem
+            <BAISegmentedControlItem
               value="custom"
               label={t('deployment.CustomMode')}
             />
-          </SegmentedControl>
+          </BAISegmentedControl>
         </BAIFlex>
       }
       width={800}
@@ -1859,12 +1857,13 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         <BAIFlex direction="row" align="center" justify="between" gap="sm">
           {/* Standalone (non-form) checkbox → Astryx CheckboxInput: onChange
               receives the boolean value directly (no CheckboxChangeEvent). */}
-          <CheckboxInput
-            label={t('deployment.AutoApply')}
+          <BAICheckboxInput
             value={autoActivate}
             onChange={(next) => setAutoActivate(next)}
-            isDisabled={effectiveMode === 'preset' && hasNoPresets}
-          />
+            disabled={effectiveMode === 'preset' && hasNoPresets}
+          >
+            {t('deployment.AutoApply')}
+          </BAICheckboxInput>
           <BAIFlex direction="row" align="center" gap="xs">
             <Button
               label={t('button.Cancel')}
@@ -1978,13 +1977,16 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               required
               rules={[{ required: true }]}
             >
-              <BAIRadioGroup
-                label={t('deployment.ModelSource')}
-                options={[
-                  { label: t('deployment.ModelFolder'), value: 'folder' },
-                  { label: t('deployment.ModelCard'), value: 'card' },
-                ]}
-              />
+              <BAISegmentedControl>
+                <BAISegmentedControlItem
+                  value="folder"
+                  label={t('deployment.ModelFolder')}
+                />
+                <BAISegmentedControlItem
+                  value="card"
+                  label={t('deployment.ModelCard')}
+                />
+              </BAISegmentedControl>
             </BAIFormItem>
 
             {/* 2) The source selector — model folder or model card. */}
@@ -2348,8 +2350,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               tooltip={t('modelService.ModelMountTooltip')}
               style={{ flex: 1 }}
             >
-              <AstryxFormTextInput
-                label={t('modelService.ModelMountDestination')}
+              <BAITextInput
+                aria-label={t('modelService.ModelMountDestination')}
                 hasClear
                 placeholder={modelDefinitionDefaults?.modelMountDestination}
               />
@@ -2536,8 +2538,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   rules={[{ whitespace: true }]}
                   preserve={false}
                 >
-                  <AstryxFormTextInput
-                    label={t('deployment.ModelDefinitionPath')}
+                  <BAITextInput
+                    aria-label={t('deployment.ModelDefinitionPath')}
                     hasClear
                     placeholder="model-definition.yaml"
                   />
@@ -2612,19 +2614,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         initialValues={{ usage_mode: 'model' }}
         onRequestClose={(result) => {
           setIsModelFolderCreateModalOpen(false);
-          if (result?.id) {
-            // `createVfolderV2` returns a `VFolder` (Strawberry) global ID,
-            // but BAIVFolderSelect's value query reads from `vfolder_nodes`
-            // (`VirtualFolderNode`, Graphene). Both encode the same UUID
-            // but with different `__typename:` prefixes, so the select's
-            // option matching (`edge.node.id === value`) would fail if we
-            // set the raw mutation id directly. Re-encode to the
-            // VirtualFolderNode global ID form.
-            const newFolderUuid = safeDecodeUuid(result.id);
-            if (!newFolderUuid) return;
+          if (result?.entityId) {
+            // BAIVFolderSelect's value is a `VirtualFolderNode` global ID.
             const newFolderGlobalId = toGlobalId(
               'VirtualFolderNode',
-              newFolderUuid,
+              result.entityId,
             );
             const activeForm =
               effectiveMode === 'preset' ? presetForm : customForm;

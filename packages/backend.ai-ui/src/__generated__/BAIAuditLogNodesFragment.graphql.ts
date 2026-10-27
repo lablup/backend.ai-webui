@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a118ed5d7aa9d84d77cfc9316dee3fc0>>
+ * @generated SignedSource<<fedeac7e61925eadea1ed07970150bb1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -28,6 +28,7 @@ export type BAIAuditLogNodesFragment$data = ReadonlyArray<{
     readonly basicInfo: {
       readonly email: string;
     };
+    readonly entityId: string;
     readonly id: string;
   } | null | undefined;
   readonly " $fragmentType": "BAIAuditLogNodesFragment";
@@ -43,6 +44,13 @@ var v0 = {
   "args": null,
   "kind": "ScalarField",
   "name": "id",
+  "storageKey": null
+},
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "entityId",
   "storageKey": null
 };
 return {
@@ -110,13 +118,7 @@ return {
       "name": "entityType",
       "storageKey": null
     },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "entityId",
-      "storageKey": null
-    },
+    (v1/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -140,6 +142,7 @@ return {
       "plural": false,
       "selections": [
         (v0/*: any*/),
+        (v1/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -167,6 +170,6 @@ return {
 };
 })();
 
-(node as any).hash = "58223a12073484572c69f4644340b796";
+(node as any).hash = "9fce850f98a6482bc7b42adaa2ba1353";
 
 export default node;

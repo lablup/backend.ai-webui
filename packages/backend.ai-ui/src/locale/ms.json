@@ -176,9 +176,9 @@
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Segar semula automatik",
-    "EveryHours": "{{count}}h",
-    "EveryMinutes": "{{count}}m",
-    "EverySeconds": "{{count}}s",
+    "EveryHours": "{{count}} h",
+    "EveryMinutes": "{{count}} min",
+    "EverySeconds": "{{count}} s",
     "LastUpdated": "Dikemaskini terakhir",
     "Off": "Mati",
     "Refresh": "Segarkan"
@@ -566,6 +566,21 @@
   "comp:BAISessionClusterMode": {
     "MultiNodeShort": "MULTI",
     "SingleNodeShort": "Bujang"
+  },
+  "comp:BAISessionScene": {
+    "FoundCount": "{{count}} ditemui",
+    "Hero": "Saya",
+    "Measuring": "Mengukur",
+    "ResourceShare": "Bahagian sumber",
+    "ShowAll": "Tunjuk semua",
+    "Utilization": "Penggunaan",
+    "mood": {
+      "Idle": "Melahu",
+      "Leaving": "Menamatkan",
+      "Overheated": "Terlampau panas",
+      "Waiting": "Menunggu sumber",
+      "Working": "Bekerja"
+    }
   },
   "comp:BAISessionTypeToken": {
     "Batch": "Kelompok",

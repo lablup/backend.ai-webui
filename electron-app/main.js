@@ -90,8 +90,9 @@ app.once('ready', function () {
               ' (rev.' +
               versions.revision +
               ')',
-            click: function () {
-              clipboard.writeText(
+            click: async function () {
+              // Electron 44: clipboard.writeText returns a Promise.
+              await clipboard.writeText(
                 versions.package + ' (rev.' + versions.revision + ')',
               );
               const response = dialog.showMessageBox({

@@ -117,6 +117,12 @@ const meta: Meta<typeof BAICard> = {
 | Sub-component | `Components/[Parent]/[Name]` | `Components/BAITable/BAITableSettingModal` |
 | Layout | `Layout/[Name]` | `Layout/BAIFlex` |
 | Relay Fragment | `Fragments/[Name]` | `Fragments/BAISessionTypeToken` |
+| Experimental | `Lab/[Name]` | `Lab/BAISessionCrowdScene` |
+
+`Lab/` holds experimental components: UI ideas shown in Storybook before anyone
+decides they belong in the app. Nothing under `react/` imports them, and they
+may change or be removed without notice. Moving one into the app is its own
+issue, and its story then leaves `Lab/` for its real category.
 
 ### Layout Options
 

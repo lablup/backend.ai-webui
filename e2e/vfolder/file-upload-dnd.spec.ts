@@ -177,9 +177,10 @@ test.describe(
       });
       await expect(dragOverlay).not.toBeVisible({ timeout: 5000 });
 
-      // 6c. Cancelling the drag (Escape) fires no drag event at all. Mouse
-      //     events stay suppressed for the whole drag, so the first movement
-      //     afterwards is what dismisses the overlay.
+      // 6c. Cancelling the drag (Escape) fires no drag event at all, so the
+      //     user's next keydown / mousedown / wheel dismisses the overlay.
+      //     Pointer motion deliberately does not (FR-3575): it is not
+      //     suppressed mid-drag on every platform.
       await page.evaluate(() => {
         document.dispatchEvent(
           new DragEvent('dragenter', {
@@ -190,6 +191,8 @@ test.describe(
       });
       await expect(dragOverlay).toBeVisible({ timeout: 5000 });
       await page.mouse.move(10, 10);
+      await expect(dragOverlay).toBeVisible();
+      await page.keyboard.press('Shift');
       await expect(dragOverlay).not.toBeVisible({ timeout: 5000 });
 
       // 7. Bring the overlay back up and release the file onto the dropzone —

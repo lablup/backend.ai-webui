@@ -176,9 +176,9 @@
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Auto Refresh",
-    "EveryHours": "{{count}}h",
-    "EveryMinutes": "{{count}}m",
-    "EverySeconds": "{{count}}s",
+    "EveryHours": "{{count}} h",
+    "EveryMinutes": "{{count}} min",
+    "EverySeconds": "{{count}} s",
     "LastUpdated": "Last Updated",
     "Off": "Off",
     "Refresh": "Refresh"
@@ -566,6 +566,21 @@
   "comp:BAISessionClusterMode": {
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Single"
+  },
+  "comp:BAISessionScene": {
+    "FoundCount": "{{count}} found",
+    "Hero": "Yours",
+    "Measuring": "Measuring",
+    "ResourceShare": "Resource share",
+    "ShowAll": "Show all",
+    "Utilization": "Utilization",
+    "mood": {
+      "Idle": "Idle",
+      "Leaving": "Terminating",
+      "Overheated": "Overheated",
+      "Waiting": "Waiting for resources",
+      "Working": "Working"
+    }
   },
   "comp:BAISessionTypeToken": {
     "Batch": "Batch",

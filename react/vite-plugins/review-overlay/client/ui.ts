@@ -16,6 +16,7 @@
  */
 import { icon, ICON_STYLE } from './icons.js';
 import { fractionWithin, projectFraction, type Box } from './selection.js';
+import { liftAboveTopLayer } from './top-layer.js';
 import type { AnchorRect, CopyPayload, OverlayPalette } from './types.js';
 
 /**
@@ -558,6 +559,7 @@ ${ICON_STYLE}
 
   /** Placement reads the box, so it runs once the box is displayed. */
   function finishOpen() {
+    syncLift();
     placeCompose();
     syncPickHighlight();
     focusGuardUntil = Date.now() + FOCUS_GUARD_MS;
@@ -654,6 +656,7 @@ ${ICON_STYLE}
     composeAnchor = null;
     focusGuardUntil = 0;
     setHoverRect(null);
+    syncLift();
     callbacks.onComposeClosed();
   }
 
@@ -677,6 +680,18 @@ ${ICON_STYLE}
 
   function setPickActive(active: boolean) {
     pickActive = active;
+    syncLift();
+  }
+
+  /** While picking or composing, an open menu must not cover the overlay. */
+  let dropLift: (() => void) | null = null;
+  function syncLift() {
+    const wanted = pickActive || isComposeOpen();
+    if (wanted && !dropLift) dropLift = liftAboveTopLayer(host);
+    else if (!wanted && dropLift) {
+      dropLift();
+      dropLift = null;
+    }
   }
 
   /**

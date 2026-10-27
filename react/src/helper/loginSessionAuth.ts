@@ -12,9 +12,11 @@ import { RelayEnvironment } from '../RelayEnvironment';
 import { loginSessionAuthMyUserQuery } from '../__generated__/loginSessionAuthMyUserQuery.graphql';
 import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
 import { getActAsTarget } from './actAs';
-import type { LoginBootstrap } from './loginBootstrap';
+import {
+  LoginBootstrapIncompleteError,
+  type LoginBootstrap,
+} from './loginBootstrap';
 import { applyConfigToClient, type LoginConfigState } from './loginConfig';
-import { toLocalId } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { fetchQuery, graphql } from 'react-relay';
 
@@ -27,6 +29,7 @@ const myUserQuery = graphql`
   ) {
     myUserV2 {
       id
+      entityId
       basicInfo {
         email
         fullName
@@ -52,6 +55,7 @@ const myUserQuery = graphql`
         edges {
           node {
             id
+            entityId
             basicInfo {
               name
             }
@@ -66,6 +70,7 @@ const myUserQuery = graphql`
         edges {
           node {
             id
+            entityId
             basicInfo {
               name
             }
@@ -207,18 +212,30 @@ export async function connectViaGQL(
         e?.statusCode === 403)
     )
       await client.logout().catch(() => {});
+    // Any other HTTP failure (a wrapped manager 5xx, a timeout) leaves the
+    // session live; the recovery dialog handles it.
+    const status = e?.statusCode;
+    if (
+      typeof status === 'number' &&
+      status >= 400 &&
+      status !== 401 &&
+      status !== 403
+    ) {
+      throw new LoginBootstrapIncompleteError(err);
+    }
     throw err;
   }
   if (isCancelled?.()) throw cancel();
+  // The session is live; the manager failed to resolve the user (an errors[]
+  // entry Relay hands back as null data). Not a reason to log out.
   if (!response?.myUserV2) {
-    if (!isActingAs) await client.logout();
-    throw new Error('User information is missing.');
+    throw new LoginBootstrapIncompleteError(response);
   }
   const me = response.myUserV2;
   const projects = _.uniqBy(
     _.map(
       [...(me.recentProject?.edges ?? []), ...(me.defaultProject?.edges ?? [])],
-      ({ node }) => ({ id: toLocalId(node.id), name: node.basicInfo.name }),
+      ({ node }) => ({ id: node.entityId, name: node.basicInfo.name }),
     ),
     'name',
   );
@@ -240,7 +257,7 @@ export async function connectViaGQL(
     me.organization.domainName ?? me.domain?.basicInfo.name ?? '';
 
   (globalThis as any).backendaiclient.email = me.basicInfo.email;
-  (globalThis as any).backendaiclient.user_uuid = toLocalId(me.id);
+  (globalThis as any).backendaiclient.user_uuid = me.entityId;
   (globalThis as any).backendaiclient.full_name = me.basicInfo.fullName;
   (globalThis as any).backendaiclient.is_admin = [
     'superadmin',
