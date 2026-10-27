@@ -897,6 +897,7 @@
       "ResetLayout": "Reset layout",
       "ResetLayoutDescription": "Restores the default panel arrangement. Custom panels are kept.",
       "SearchCards": "Search cards",
+      "SelectAll": "Select all",
       "Title": "Custom panels"
     },
     "panelModal": {
