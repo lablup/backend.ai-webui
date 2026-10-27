@@ -161,6 +161,10 @@ const AdminRetentionPolicy: React.FC<AdminRetentionPolicyProps> = ({
               key: 'enabled',
               propertyLabel: t('general.Enabled'),
               type: 'boolean',
+              options: [
+                { label: t('general.Enabled'), value: 'true' },
+                { label: t('general.Disabled'), value: 'false' },
+              ],
             },
           ]}
         />
