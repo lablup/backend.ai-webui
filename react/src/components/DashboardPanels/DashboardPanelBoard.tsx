@@ -5,6 +5,7 @@
 import DashboardEditToggleButton from '../DashboardEditToggleButton';
 import { breadcrumbExtraAtom } from '../breadcrumbExtraAtom';
 import { dashboardEditModeAtom } from '../dashboardEditModeAtom';
+import DashboardBoardSection from './DashboardBoardSection';
 import DashboardBoardTabs from './DashboardBoardTabs';
 import DashboardEditSider from './DashboardEditSider';
 import DashboardPanelModal from './DashboardPanelModal';
@@ -114,7 +115,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
       <div ref={boardContainerRef} style={{ flex: 1, minWidth: 0 }}>
         <BAIFlex direction="column" align="stretch" gap="md">
           {boards && page !== 'project' ? (
-            <DashboardBoardTabs page={page} boards={boards} catalog={catalog} />
+            <DashboardBoardTabs boards={boards} />
           ) : null}
           <BAIBoard
             movable
@@ -146,6 +147,15 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
           onResetLayout={resetLayout}
           settingsTargetOf={settingsTargetOf}
           onRequestSettings={setSettingsPanelId}
+          boardSection={
+            boards && page !== 'project' ? (
+              <DashboardBoardSection
+                page={page}
+                boards={boards}
+                catalog={catalog}
+              />
+            ) : undefined
+          }
         />
       ) : null}
       <BAIUnmountAfterClose>
