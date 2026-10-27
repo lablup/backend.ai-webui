@@ -813,6 +813,7 @@
       "Availability": "Khả dụng",
       "Available": "Khả dụng",
       "Count": "Số lượng",
+      "DeltaTooltip": "Khoảng trước ({{previousSpan}}): {{previous}} → khoảng này ({{currentSpan}}): {{current}}",
       "DeploymentStatus": "Trạng thái triển khai",
       "DeploymentStatusTooltip": "Các triển khai của dự án cùng tình trạng bản sao, mới nhất trước.",
       "Failed": "Thất bại",

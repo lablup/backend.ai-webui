@@ -800,6 +800,7 @@
       "Availability": "Availability",
       "Available": "Available",
       "Count": "Count",
+      "DeltaTooltip": "Previous range ({{previousSpan}}): {{previous}} → this range ({{currentSpan}}): {{current}}",
       "DeploymentStatus": "Deployment Status",
       "DeploymentStatusTooltip": "The project's deployments with replica health, newest first.",
       "Failed": "Failed",

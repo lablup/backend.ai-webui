@@ -813,6 +813,7 @@
       "Availability": "Боломж",
       "Available": "Боломжтой",
       "Count": "Тоо",
+      "DeltaTooltip": "Өмнөх хугацаа ({{previousSpan}}): {{previous}} → энэ хугацаа ({{currentSpan}}): {{current}}",
       "DeploymentStatus": "Байршуулалтын төлөв",
       "DeploymentStatusTooltip": "Төслийн байршуулалт ба хуулбаруудын төлөв, шинээс нь эхлэн.",
       "Failed": "Амжилтгүй",

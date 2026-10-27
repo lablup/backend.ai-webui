@@ -51,9 +51,20 @@ describe('previousWindow and countDelta', () => {
   });
 
   it('signs the change, names its direction, and reads a rise in failures as negative', () => {
-    expect(countDelta(12, 9)).toEqual({ value: '+3', direction: 'up' });
-    expect(countDelta(1, 2)).toEqual({ value: '-1', direction: 'down' });
-    expect(countDelta(0, 0)).toEqual({ value: '0', direction: 'flat' });
+    expect(countDelta(12, 9)).toEqual({
+      value: '+3',
+      direction: 'up',
+      current: 12,
+      previous: 9,
+    });
+    expect(countDelta(1, 2, WINDOW)).toEqual({
+      value: '-1',
+      direction: 'down',
+      current: 1,
+      previous: 2,
+      window: WINDOW,
+    });
+    expect(countDelta(0, 0)).toMatchObject({ value: '0', direction: 'flat' });
     expect(failureSentiment(countDelta(3, 1))).toBe('negative');
     expect(failureSentiment(countDelta(1, 3))).toBe('positive');
   });
@@ -92,8 +103,8 @@ describe('successFailureVariables and readSuccessFailure', () => {
     ).toEqual({
       success: 5,
       failure: 2,
-      successDelta: { value: '-2', direction: 'down' },
-      failureDelta: { value: '+2', direction: 'up' },
+      successDelta: { value: '-2', direction: 'down', current: 5, previous: 7 },
+      failureDelta: { value: '+2', direction: 'up', current: 2, previous: 0 },
       successTrend: [5, 0],
       failureTrend: [0, 2],
     });

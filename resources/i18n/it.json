@@ -813,6 +813,7 @@
       "Availability": "Disponibilità",
       "Available": "Disponibile",
       "Count": "Numero",
+      "DeltaTooltip": "Periodo precedente ({{previousSpan}}): {{previous}} → questo periodo ({{currentSpan}}): {{current}}",
       "DeploymentStatus": "Stato dei deployment",
       "DeploymentStatusTooltip": "I deployment del progetto con lo stato delle repliche, prima i più recenti.",
       "Failed": "Non riuscite",

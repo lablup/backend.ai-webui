@@ -813,6 +813,7 @@
       "Availability": "Kullanılabilirlik",
       "Available": "Kullanılabilir",
       "Count": "Sayı",
+      "DeltaTooltip": "Önceki dönem ({{previousSpan}}): {{previous}} → bu dönem ({{currentSpan}}): {{current}}",
       "DeploymentStatus": "Dağıtım Durumu",
       "DeploymentStatusTooltip": "Projenin dağıtımları ve replika sağlığı, en yeni önce.",
       "Failed": "Başarısız",

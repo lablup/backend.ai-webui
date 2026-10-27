@@ -813,6 +813,7 @@
       "Availability": "Διαθεσιμότητα",
       "Available": "Διαθέσιμο",
       "Count": "Πλήθος",
+      "DeltaTooltip": "Προηγούμενο διάστημα ({{previousSpan}}): {{previous}} → αυτό το διάστημα ({{currentSpan}}): {{current}}",
       "DeploymentStatus": "Κατάσταση αναπτύξεων",
       "DeploymentStatusTooltip": "Οι αναπτύξεις του έργου με την κατάσταση των αντιγράφων, πρώτα οι νεότερες.",
       "Failed": "Απέτυχαν",

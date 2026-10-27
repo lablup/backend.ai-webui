@@ -813,6 +813,7 @@
       "Availability": "Доступность",
       "Available": "Доступно",
       "Count": "Количество",
+      "DeltaTooltip": "Предыдущий период ({{previousSpan}}): {{previous}} → этот период ({{currentSpan}}): {{current}}",
       "DeploymentStatus": "Состояние развертываний",
       "DeploymentStatusTooltip": "Развертывания проекта с состоянием реплик, сначала новые.",
       "Failed": "С ошибкой",

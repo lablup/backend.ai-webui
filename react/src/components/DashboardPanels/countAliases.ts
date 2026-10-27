@@ -56,14 +56,25 @@ export const previousWindow = (window: DateTimeWindow): DateTimeWindow => {
 export interface CountDelta {
   value: string;
   direction: 'up' | 'down' | 'flat';
+  current: number;
+  previous: number;
+  /** The range `current` counts; the previous range is the one right before it. */
+  window?: DateTimeWindow;
 }
 
 /** The change from the previous range's count, formatted with its sign. */
-export const countDelta = (current: number, previous: number): CountDelta => {
+export const countDelta = (
+  current: number,
+  previous: number,
+  window?: DateTimeWindow,
+): CountDelta => {
   const diff = current - previous;
   return {
     value: diff > 0 ? `+${diff}` : String(diff),
     direction: diff > 0 ? 'up' : diff < 0 ? 'down' : 'flat',
+    current,
+    previous,
+    ...(window ? { window } : {}),
   };
 };
 
@@ -131,14 +142,23 @@ export interface SuccessFailureCounts {
 export const readSuccessFailure = (
   data: Readonly<Record<string, CountAlias>>,
   bucketCount: number,
+  timeRange?: DateTimeWindow,
 ): SuccessFailureCounts => {
   const success = data.success?.count ?? 0;
   const failure = data.failure?.count ?? 0;
   return {
     success,
     failure,
-    successDelta: countDelta(success, data.previousSuccess?.count ?? 0),
-    failureDelta: countDelta(failure, data.previousFailure?.count ?? 0),
+    successDelta: countDelta(
+      success,
+      data.previousSuccess?.count ?? 0,
+      timeRange,
+    ),
+    failureDelta: countDelta(
+      failure,
+      data.previousFailure?.count ?? 0,
+      timeRange,
+    ),
     successTrend: bucketCounts(data, 's', bucketCount),
     failureTrend: bucketCounts(data, 'f', bucketCount),
   };

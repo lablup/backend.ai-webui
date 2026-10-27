@@ -813,6 +813,7 @@
       "Availability": "Saatavuus",
       "Available": "Saatavilla",
       "Count": "Määrä",
+      "DeltaTooltip": "Edellinen jakso ({{previousSpan}}): {{previous}} → tämä jakso ({{currentSpan}}): {{current}}",
       "DeploymentStatus": "Käyttöönottojen tila",
       "DeploymentStatusTooltip": "Projektin käyttöönotot replikoiden tilan kanssa, uusimmat ensin.",
       "Failed": "Epäonnistuneet",

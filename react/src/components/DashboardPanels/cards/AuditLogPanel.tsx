@@ -232,7 +232,7 @@ const AuditLogTable: React.FC<{
     deferredVariables,
     { fetchPolicy: 'store-and-network', fetchKey },
   );
-  const counts = readSuccessFailure(data, buckets.length);
+  const counts = readSuccessFailure(data, buckets.length, timeRange);
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">

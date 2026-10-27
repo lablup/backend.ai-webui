@@ -813,6 +813,7 @@
       "Availability": "Ketersediaan",
       "Available": "Tersedia",
       "Count": "Bilangan",
+      "DeltaTooltip": "Julat sebelumnya ({{previousSpan}}): {{previous}} → julat ini ({{currentSpan}}): {{current}}",
       "DeploymentStatus": "Status Penggunaan",
       "DeploymentStatusTooltip": "Penggunaan projek dengan kesihatan replika, terbaharu dahulu.",
       "Failed": "Gagal",

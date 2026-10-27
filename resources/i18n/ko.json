@@ -813,6 +813,7 @@
       "Availability": "가능 여부",
       "Available": "가능",
       "Count": "개수",
+      "DeltaTooltip": "이전 기간({{previousSpan}}) {{previous}}건 → 이번 기간({{currentSpan}}) {{current}}건",
       "DeploymentStatus": "배포 상태",
       "DeploymentStatusTooltip": "프로젝트의 배포와 복제본 상태를 최근에 만든 순서로 보여 줍니다.",
       "Failed": "실패",

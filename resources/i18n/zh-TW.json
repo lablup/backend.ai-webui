@@ -813,6 +813,7 @@
       "Availability": "可用性",
       "Available": "可用",
       "Count": "數量",
+      "DeltaTooltip": "上一時段（{{previousSpan}}）{{previous}} → 本時段（{{currentSpan}}）{{current}}",
       "DeploymentStatus": "部署狀態",
       "DeploymentStatusTooltip": "專案的部署及其複本健康狀態，依最新排序。",
       "Failed": "失敗",

@@ -813,6 +813,7 @@
       "Availability": "利用可否",
       "Available": "利用可能",
       "Count": "件数",
+      "DeltaTooltip": "前の期間（{{previousSpan}}）{{previous}}件 → 今回の期間（{{currentSpan}}）{{current}}件",
       "DeploymentStatus": "デプロイメントの状態",
       "DeploymentStatusTooltip": "プロジェクトのデプロイメントとレプリカの状態を新しい順に表示します。",
       "Failed": "失敗",

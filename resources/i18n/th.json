@@ -810,6 +810,7 @@
       "Availability": "ความพร้อมใช้งาน",
       "Available": "พร้อมใช้งาน",
       "Count": "จำนวน",
+      "DeltaTooltip": "ช่วงก่อนหน้า ({{previousSpan}}): {{previous}} → ช่วงนี้ ({{currentSpan}}): {{current}}",
       "DeploymentStatus": "สถานะการปรับใช้",
       "DeploymentStatusTooltip": "การปรับใช้ของโปรเจกต์พร้อมสถานะของเรพลิกา เรียงจากใหม่ไปเก่า",
       "Failed": "ล้มเหลว",
