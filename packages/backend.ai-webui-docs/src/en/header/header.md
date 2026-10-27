@@ -170,8 +170,8 @@ reference. These items are not clickable.
 
 Below the user information, the following action items are available.
 
-- `Switch to Admin Console` / `Switch to User Console`: For superadmins and
-  domain admins, moves between the user pages and the administration pages.
+- `Switch to Admin Console` / `Switch to User Console`: For superadmins, moves
+  between the user pages and the administration pages.
 - `About Backend.AI`: Displays information such as the version of Backend.AI WebUI,
   license type, etc.
 - `My Account`: Check and update information of the current logged-in user.
