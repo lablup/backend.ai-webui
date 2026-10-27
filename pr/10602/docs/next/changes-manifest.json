@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-10-26T17:05:56.431Z",
+  "generatedAt": "2026-10-27T15:17:57.796Z",
   "languages": [
     "en",
     "ja",
@@ -13,9 +13,9 @@
     "en": {
       "totals": {
         "pages": 1,
-        "changes": 20,
+        "changes": 21,
         "added": 0,
-        "modified": 20,
+        "modified": 21,
         "removed": 0,
         "images": 18,
         "newPages": 0,
@@ -30,16 +30,17 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/en/admin_menu/admin_menu.md",
           "counts": {
             "added": 0,
-            "modified": 20,
+            "modified": 21,
             "removed": 0,
             "images": 18,
-            "total": 20
+            "total": 21
           },
           "fingerprints": [
-            "8377621f6443",
+            "c0f934459be0",
             "d1fcf3ec6b19",
             "ab7bb9880063",
             "ca9be7dd4781",
+            "33f4f51cafd6",
             "ac52efc9eb9e",
             "35d188d7e22b",
             "3bbb633be6f0",
@@ -63,9 +64,9 @@
     "ja": {
       "totals": {
         "pages": 1,
-        "changes": 20,
+        "changes": 21,
         "added": 0,
-        "modified": 20,
+        "modified": 21,
         "removed": 0,
         "images": 18,
         "newPages": 0,
@@ -80,16 +81,17 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/ja/admin_menu/admin_menu.md",
           "counts": {
             "added": 0,
-            "modified": 20,
+            "modified": 21,
             "removed": 0,
             "images": 18,
-            "total": 20
+            "total": 21
           },
           "fingerprints": [
-            "fbc89e5ec226",
+            "706e78c3abbc",
             "295018bd59c5",
             "0c0af4318826",
             "c9bc97a09d9b",
+            "64d497e2b107",
             "c400a371f1bc",
             "31fe084e72fd",
             "056ed1fbf553",
@@ -113,9 +115,9 @@
     "ko": {
       "totals": {
         "pages": 1,
-        "changes": 20,
+        "changes": 21,
         "added": 0,
-        "modified": 20,
+        "modified": 21,
         "removed": 0,
         "images": 18,
         "newPages": 0,
@@ -130,16 +132,17 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/ko/admin_menu/admin_menu.md",
           "counts": {
             "added": 0,
-            "modified": 20,
+            "modified": 21,
             "removed": 0,
             "images": 18,
-            "total": 20
+            "total": 21
           },
           "fingerprints": [
-            "80d3902d17c4",
+            "2e127c302a31",
             "965d616d8a41",
             "73805f2ba97f",
             "f3fb900eef29",
+            "e83a20a999e3",
             "753b71bb2bec",
             "27b1e2a7446e",
             "2000da88e994",
@@ -163,9 +166,9 @@
     "th": {
       "totals": {
         "pages": 1,
-        "changes": 20,
+        "changes": 21,
         "added": 0,
-        "modified": 20,
+        "modified": 21,
         "removed": 0,
         "images": 18,
         "newPages": 0,
@@ -180,16 +183,17 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/th/admin_menu/admin_menu.md",
           "counts": {
             "added": 0,
-            "modified": 20,
+            "modified": 21,
             "removed": 0,
             "images": 18,
-            "total": 20
+            "total": 21
           },
           "fingerprints": [
-            "e700428faca1",
+            "07432bdb643f",
             "52cad007d16f",
             "bb950a5ecdcc",
             "e4070e07db82",
+            "6a57492c635a",
             "19816cfa33c7",
             "d1f4562b7ef8",
             "9ae1bdc223c9",
