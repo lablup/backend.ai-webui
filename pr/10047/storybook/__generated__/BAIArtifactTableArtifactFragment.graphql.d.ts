@@ -4,6 +4,7 @@ export type ArtifactStatus = "AVAILABLE" | "FAILED" | "NEEDS_APPROVAL" | "PULLED
 export type BAIArtifactTableArtifactFragment$data = ReadonlyArray<{
     readonly availability: ArtifactAvailability;
     readonly description: string | null | undefined;
+    readonly entityId: string;
     readonly id: string;
     readonly latestVersion: {
         readonly edges: ReadonlyArray<{
