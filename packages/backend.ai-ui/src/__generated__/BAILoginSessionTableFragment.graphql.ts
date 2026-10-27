@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<adf0fa3cf06123ea43f5a843b9818147>>
+ * @generated SignedSource<<f99fa345b7f57555c857f08f5f188c1b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,6 +13,7 @@ import { FragmentRefs } from "relay-runtime";
 export type BAILoginSessionTableFragment$data = ReadonlyArray<{
   readonly accessKey: string;
   readonly createdAt: string;
+  readonly fieldId: string;
   readonly id: string;
   readonly lastAccessedAt: string | null | undefined;
   readonly user: {
@@ -45,6 +46,13 @@ return {
   "name": "BAILoginSessionTableFragment",
   "selections": [
     (v0/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "fieldId",
+      "storageKey": null
+    },
     {
       "alias": null,
       "args": null,
@@ -102,6 +110,6 @@ return {
 };
 })();
 
-(node as any).hash = "85b10af09f4ce6cf5fadfe77dc5e3e29";
+(node as any).hash = "951db8f8c2f9e63e9dc2d1aa3a7b896b";
 
 export default node;

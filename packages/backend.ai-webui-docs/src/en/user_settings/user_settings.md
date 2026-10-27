@@ -328,6 +328,7 @@ Access new experimental features early -- these may change or be removed in
 future updates. Each feature is turned on with its **Enabled** checkbox.
 
 ![](../images/experimental_features.png)
+<!-- TODO: Recapture without the removed "Command palette" row (#10546) -->
 
 - **AI Agents**: Enable the AI Agents feature, which provides agent-based AI
   capabilities within the WebUI. When turned on, AI agent functionality becomes
@@ -338,13 +339,6 @@ future updates. Each feature is turned on with its **Enabled** checkbox.
   turning it off later hides them without deleting them, and turning it back
   on restores them exactly as they were. See
   [Custom Panels](#custom-panels) for how to add and manage them.
-- **Command palette**: Adds a **Search** button to the header and the `Ctrl+K`
-  (`⌘K` on macOS) shortcut, both of which open a palette for searching pages,
-  page tabs, and setting items. The palette also offers quick actions such as
-  switching between dark and light mode, changing the UI language, opening
-  notifications, toggling the sidebar, and opening the manual for the current
-  page. The button and the shortcut are available only while this feature is
-  enabled. See [Search](#search) for details.
 - **Import from Hugging Face**: Adds an **Import Hugging Face Model** tab to the
   **Start From URL** dialog on the Start page, so you can import a model from
   Hugging Face directly into a model folder. The tab appears only when model

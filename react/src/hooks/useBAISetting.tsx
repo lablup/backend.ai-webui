@@ -17,6 +17,8 @@ export interface UserSettings {
   has_opened_tour_neo_session_validation?: boolean;
   has_opened_tour_neo_deployment_validation?: boolean;
   has_opened_tour_deployment_preset_validation?: boolean;
+  has_opened_tour_back_to_user_view?: boolean;
+  has_opened_tour_back_to_admin_settings?: boolean;
   desktop_notification?: boolean;
   session_monitor_sort?: 'deadline' | 'newest' | 'name';
   session_monitor_rows?: number;
@@ -42,7 +44,6 @@ export interface UserSettings {
   start_page_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   experimental_ai_agents?: boolean;
   experimental_custom_dashboard_panels?: boolean;
-  experimental_global_search?: boolean;
   experimental_import_from_huggingface?: boolean;
   experimental_session_resource_grid?: boolean;
   /** Header session monitor (chip, polling, idle alerts); default off. */

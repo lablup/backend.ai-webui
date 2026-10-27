@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c8e8844b1ea71717903f069dd41b6b9b>>
+ * @generated SignedSource<<11c5d95512426deb7473bfb0d6974175>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -145,6 +145,7 @@ export type BAIAdminUserV2SelectValueQuery$data = {
         readonly basicInfo: {
           readonly email: string;
         };
+        readonly entityId: string;
         readonly id: string;
       };
     }>;
@@ -222,6 +223,13 @@ v3 = [
                   {
                     "alias": null,
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "entityId",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
                     "concreteType": "UserV2BasicInfo",
                     "kind": "LinkedField",
                     "name": "basicInfo",
@@ -275,16 +283,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "0a609f6f54a1625212fe62168903b81c",
+    "cacheID": "61cb5dc45fcae42e7aad0e471b20a661",
     "id": null,
     "metadata": {},
     "name": "BAIAdminUserV2SelectValueQuery",
     "operationKind": "query",
-    "text": "query BAIAdminUserV2SelectValueQuery(\n  $selectedFilter: UserV2Filter\n  $limit: Int!\n  $skipSelected: Boolean!\n) {\n  adminUsersV2(filter: $selectedFilter, limit: $limit) @skip(if: $skipSelected) {\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIAdminUserV2SelectValueQuery(\n  $selectedFilter: UserV2Filter\n  $limit: Int!\n  $skipSelected: Boolean!\n) {\n  adminUsersV2(filter: $selectedFilter, limit: $limit) @skip(if: $skipSelected) {\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          email\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "77a6ea8cc05760ecebb6a139b466b99f";
+(node as any).hash = "d22655746aecaf91c90c662fb52bffde";
 
 export default node;

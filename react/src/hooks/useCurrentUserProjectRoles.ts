@@ -102,16 +102,24 @@ export type EffectiveAdminRole =
  * what converges the atom to the URL — from ever mounting.
  */
 export const useEffectiveAdminRole = (): EffectiveAdminRole => {
-  const { isSuperAdmin, domainAdminDomains, projectAdminIds } =
-    useCurrentUserProjectRoles();
-
-  const { urlProjectName, resolvedId } = useUrlProjectValidity();
-  const currentProjectId = useCurrentProjectValue()?.id;
-  const targetProjectId = urlProjectName ? resolvedId : currentProjectId;
+  const { isSuperAdmin, domainAdminDomains } = useCurrentUserProjectRoles();
+  const isCurrentProjectAdmin = useIsCurrentProjectAdmin();
 
   if (isSuperAdmin) return 'superadmin';
   if (domainAdminDomains.length > 0) return 'domainAdmin';
-  if (targetProjectId && projectAdminIds.includes(targetProjectId))
-    return 'currentProjectAdmin';
+  if (isCurrentProjectAdmin) return 'currentProjectAdmin';
   return 'none';
+};
+
+/**
+ * Whether the user holds a project-scoped admin role in the target project
+ * (URL project, else the current-project atom), regardless of super/domain
+ * admin rights.
+ */
+export const useIsCurrentProjectAdmin = (): boolean => {
+  const { projectAdminIds } = useCurrentUserProjectRoles();
+  const { urlProjectName, resolvedId } = useUrlProjectValidity();
+  const currentProjectId = useCurrentProjectValue()?.id;
+  const targetProjectId = urlProjectName ? resolvedId : currentProjectId;
+  return !!targetProjectId && projectAdminIds.includes(targetProjectId);
 };

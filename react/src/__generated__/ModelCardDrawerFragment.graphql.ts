@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6cd538bc4008bba3860af0f95174731a>>
+ * @generated SignedSource<<9b74fdfd137a9211372d6930d2cc9560>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -33,6 +33,7 @@ export type ModelCardDrawerFragment$data = {
   readonly readme: string | null | undefined;
   readonly updatedAt: string | null | undefined;
   readonly vfolder: {
+    readonly entityId: string;
     readonly id: string;
     readonly metadata: {
       readonly name: string;
@@ -209,6 +210,13 @@ return {
         {
           "alias": null,
           "args": null,
+          "kind": "ScalarField",
+          "name": "entityId",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
           "concreteType": "VFolderMetadataInfo",
           "kind": "LinkedField",
           "name": "metadata",
@@ -237,6 +245,6 @@ return {
 };
 })();
 
-(node as any).hash = "e9733b37b26cc38fa537568c910c4b9f";
+(node as any).hash = "86f301ae178451b7a0323af7c1a8e55c";
 
 export default node;

@@ -3728,6 +3728,18 @@
     "TypeInAuthKey": "Alternativ können Sie den nachstehenden Authentifizierungscode auch manuell eingeben."
   },
   "tourGuide": {
+    "adminViewSwitch": {
+      "AdminLandingMenuText": "Öffnen Sie das Benutzerprofilmenü oben rechts: \"Zur Benutzerkonsole wechseln\" führt zu den Benutzerseiten, \"Zur Admin-Konsole wechseln\" bringt Sie hierher zurück.",
+      "AdminLandingMenuTitle": "Admin-Einstellungen sind ins Profilmenü umgezogen",
+      "AdminLandingStartText": "Nach der Anmeldung gelangen Sie jetzt direkt zu den Admin-Einstellungen statt zu den Benutzerseiten.",
+      "AdminLandingStartTitle": "Sie starten in den Admin-Einstellungen",
+      "AdminLandingText": "Das hat sich geändert.",
+      "AdminLandingTitle": "Die Superadmin-Ansicht hat sich geändert",
+      "BackToAdminSettingsText": "Um zu den Admin-Einstellungen zurückzukehren, öffnen Sie dieses Menü und wählen Sie \"Zur Admin-Konsole wechseln\".",
+      "BackToAdminSettingsTitle": "Zurück zu den Admin-Einstellungen",
+      "BackToUserViewText": "Sie befinden sich in den Admin-Einstellungen. Um Sitzungen, Daten und die anderen Benutzerseiten zu nutzen, öffnen Sie dieses Menü und wählen Sie \"Zur Benutzerkonsole wechseln\".",
+      "BackToUserViewTitle": "Zur Benutzerkonsole wechseln"
+    },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "Wenn ein Fehlerfeld vorhanden ist, ist die Schaltfläche „Erstellen“ oder „Speichern“ deaktiviert. Bitte beheben Sie den Fehler und versuchen Sie es erneut.",
       "FixErrorFieldByModifyButton": "Für dieses Fehlerfeld können Sie direkt auf die Schaltfläche „Bearbeiten“ in der oberen rechten Ecke gehen, um es zu bearbeiten.",
@@ -3768,7 +3780,6 @@
     "BootstrapScriptEmpty": "Das Skript ist leer. \nBitte geben Sie das Skript ein.",
     "BootstrapScriptUpdated": "Bootstrap-Skript aktualisiert.",
     "ClearSSHKeypairInput": "Geschriebenes SSH-Schlüsselpaar wird entfernt. Sind Sie sicher, dass Sie fortfahren möchten?",
-    "CommandPalette": "Befehlspalette",
     "ConfigFilename": "Name der Konfigurationsdatei",
     "CurrentSSHPublicKey": "Aktueller öffentlicher Schlüssel",
     "CustomDashboardPanels": "Benutzerdefinierte Dashboard-Panels",
@@ -4010,6 +4021,7 @@
       "ProjectDeployments": "Bereitstellungen",
       "ProjectMembers": "Benutzer",
       "ProjectSessions": "Sitzungen",
+      "ProjectSettings": "Projekteinstellungen",
       "Projects": "Projekte",
       "PrometheusPreset": "Prometheus-Voreinstellung",
       "RBACManagement": "RBAC-Verwaltung",
@@ -4027,6 +4039,8 @@
       "Start": "Start",
       "Statistics": "Statistiken",
       "Summary": "Zusammenfassung",
+      "SwitchToAdminConsole": "Zur Admin-Konsole wechseln",
+      "SwitchToUserConsole": "Zur Benutzerkonsole wechseln",
       "Tasks": "Aufgaben",
       "TermsOfService": "Nutzungsbedingungen",
       "TotalResourcesIn": "Gesamtressourcen in",

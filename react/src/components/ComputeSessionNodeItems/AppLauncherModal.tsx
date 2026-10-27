@@ -17,28 +17,22 @@ import {
   TCP_APPS,
   useBackendAIAppLauncher,
 } from '../../hooks/useBackendAIAppLauncher';
-import {
-  AstryxFormNumberInput,
-  AstryxFormTagsInput,
-} from '../astryxFormControls';
 import AppLaunchConfirmationModal from './AppLaunchConfirmationModal';
 import TCPConnectionInfoModal from './TCPConnectionInfoModal';
 import TensorboardPathModal from './TensorboardPathModal';
 import VNCConnectionInfoModal from './VNCConnectionInfoModal';
 import VSCodeDesktopConnectionModal from './VSCodeDesktopConnectionModal';
 import XRDPConnectionInfoModal from './XRDPConnectionInfoModal';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { Grid } from '@lablup/ui-common/Grid';
 import { Heading } from '@lablup/ui-common/Heading';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import * as stylex from '@stylexjs/stylex';
-// FRONTIER (ticket 17): the Form ENGINE is self-hosted since ticket 34 (live
-// again since ticket 35). The CONTROLS inside the items are Astryx now — the
-// `astryxFormControls` adapters where a `Form.Item` injects `value`/`onChange`,
-// raw Astryx components where it does not.
 import {
+  BAICheckboxInput,
+  BAINumberInput,
+  BAITagsInput,
+  BAITextInput,
   BAIFlex,
   BAIModal,
   type BAIModalProps,
@@ -451,12 +445,12 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                 tooltip={<Trans i18nKey="session.OpenToPublicDesc" />}
                 label={
                   <BAIFlex gap={'xs'}>
-                    <CheckboxInput
+                    <BAICheckboxInput
                       value={openToPublic}
                       onChange={(checked) => setOpenToPublic(checked)}
                     >
                       {t('session.OpenToPublic')}
-                    </CheckboxInput>
+                    </BAICheckboxInput>
                   </BAIFlex>
                 }
                 rules={[
@@ -480,9 +474,9 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                   },
                 ]}
               >
-                <AstryxFormTagsInput
+                <BAITagsInput
                   tokenSeparators={[',', ' ']}
-                  label={t('session.OpenToPublic')}
+                  aria-label={t('session.OpenToPublic')}
                   disabled={!openToPublic}
                   placeholder={t('session.AllowedMultipleClientsIps')}
                 />
@@ -493,12 +487,12 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                 name={'preferredPort'}
                 label={
                   <BAIFlex gap={'xs'}>
-                    <CheckboxInput
+                    <BAICheckboxInput
                       value={tryPreferredPort}
                       onChange={(checked) => setTryPreferredPort(checked)}
                     >
                       {t('session.TryPreferredPort')}
-                    </CheckboxInput>
+                    </BAICheckboxInput>
                   </BAIFlex>
                 }
                 rules={[
@@ -512,8 +506,9 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                   },
                 ]}
               >
-                <AstryxFormNumberInput
-                  label={t('session.TryPreferredPort')}
+                <BAINumberInput
+                  width="100%"
+                  aria-label={t('session.TryPreferredPort')}
                   placeholder="10250"
                   disabled={!tryPreferredPort}
                 />
@@ -526,19 +521,19 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                 <Form.Item
                   label={
                     <BAIFlex gap={'xs'}>
-                      <CheckboxInput
+                      <BAICheckboxInput
                         value={useSubDomain}
                         onChange={(checked) => setUseSubDomain(checked)}
                       >
                         {t('session.UseSubdomain')}
-                      </CheckboxInput>
+                      </BAICheckboxInput>
                     </BAIFlex>
                   }
                 >
                   {/* Not a bound field (the `Form.Item` has no `name`), so
                       the raw Astryx control is used rather than an adapter.
                       `onChange` takes the VALUE, not the event (P3). */}
-                  <TextInput
+                  <BAITextInput
                     aria-label={t('session.UseSubdomain')}
                     disabled={!useSubDomain}
                     value={subDomainValue}
@@ -547,22 +542,22 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                   />
                 </Form.Item>
                 <Form.Item>
-                  <CheckboxInput
+                  <BAICheckboxInput
                     value={forceUseV1Proxy}
                     disabled={forceUseV2Proxy}
                     onChange={(checked) => setForceUseV1Proxy(checked)}
                   >
                     {t('session.ForceUseV1Proxy')}
-                  </CheckboxInput>
+                  </BAICheckboxInput>
                 </Form.Item>
                 <Form.Item>
-                  <CheckboxInput
+                  <BAICheckboxInput
                     value={forceUseV2Proxy}
                     disabled={forceUseV1Proxy}
                     onChange={(checked) => setForceUseV2Proxy(checked)}
                   >
                     {t('session.ForceUseV2Proxy')}
-                  </CheckboxInput>
+                  </BAICheckboxInput>
                 </Form.Item>
               </>
             ) : null}

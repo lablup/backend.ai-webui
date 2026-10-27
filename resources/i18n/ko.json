@@ -2085,7 +2085,7 @@
     "NotAUser": "아직 가입 전이면",
     "Password": "비밀번호",
     "PasswordChanged": "비밀번호가 변경되었습니다",
-    "PleaseInputLoginInfo": "로그인을 위한 ID 와 PW를 입력해 주세요.",
+    "PleaseInputLoginInfo": "로그인을 위한 이메일(또는 사용자 이름)과 비밀번호를 입력해 주세요.",
     "PleaseInputOTPCode": "이중 인증 코드를 입력해 주세요.",
     "PleaseWait": "로그인하고 있습니다. 잠시만 기다려주세요.",
     "SecretKey": "비밀 키",
@@ -3729,6 +3729,18 @@
     "TypeInAuthKey": "혹은, 하단의 인증 코드를 입력하여 직접 이중 인증을 활성화할 수도 있습니다."
   },
   "tourGuide": {
+    "adminViewSwitch": {
+      "AdminLandingMenuText": "오른쪽 위 사용자 프로필 메뉴에서 \"사용자 콘솔로 전환\"을 누르면 사용자 화면으로, \"관리자 콘솔로 전환\"을 누르면 다시 이 화면으로 이동합니다.",
+      "AdminLandingMenuTitle": "관리자 설정이 프로필 메뉴로 옮겨졌습니다",
+      "AdminLandingStartText": "이제 로그인하면 사용자 화면 대신 바로 관리자 설정 화면으로 들어갑니다.",
+      "AdminLandingStartTitle": "관리자 설정에서 시작합니다",
+      "AdminLandingText": "변경 사항을 안내해 드립니다.",
+      "AdminLandingTitle": "슈퍼 관리자 화면이 바뀌었습니다",
+      "BackToAdminSettingsText": "관리자 설정으로 돌아가려면 이 메뉴를 열고 \"관리자 콘솔로 전환\"을 선택하세요.",
+      "BackToAdminSettingsTitle": "관리자 설정으로 돌아가기",
+      "BackToUserViewText": "지금은 관리자 설정 화면입니다. 세션, 데이터 등 사용자 화면을 쓰려면 이 메뉴를 열고 \"사용자 콘솔로 전환\"을 선택하세요.",
+      "BackToUserViewTitle": "사용자 화면으로 이동하기"
+    },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "오류 필드가 있는 경우, 생성 또는 저장 버튼이 비활성화 됩니다. 오류 수정 후 다시 시도해 주세요.",
       "FixErrorFieldByModifyButton": "해당 오류 필드에 대해, 우측 상단의 수정 버튼으로 바로 이동하여 수정할 수 있습니다.",
@@ -3769,7 +3781,6 @@
     "BootstrapScriptEmpty": "스크립트가 비어있습니다. 스크립트를 입력해 주세요.",
     "BootstrapScriptUpdated": "부트스트랩 스크립트가 갱신되었습니다.",
     "ClearSSHKeypairInput": "지금까지 작성된 SSH 키페어는 삭제될 예정입니다. 계속하겠습니까?",
-    "CommandPalette": "커맨드 팔레트",
     "ConfigFilename": "구성 파일 이름 선택",
     "CurrentSSHPublicKey": "현재 공개 키",
     "CustomDashboardPanels": "사용자 정의 대시보드 패널",
@@ -4011,6 +4022,7 @@
       "ProjectDeployments": "배포",
       "ProjectMembers": "사용자",
       "ProjectSessions": "세션",
+      "ProjectSettings": "프로젝트 설정",
       "Projects": "프로젝트",
       "PrometheusPreset": "프로메테우스 프리셋",
       "RBACManagement": "RBAC 관리",
@@ -4028,6 +4040,8 @@
       "Start": "시작",
       "Statistics": "통계",
       "Summary": "요약",
+      "SwitchToAdminConsole": "관리자 콘솔로 전환",
+      "SwitchToUserConsole": "사용자 콘솔로 전환",
       "Tasks": "작업",
       "TermsOfService": "약관",
       "TotalResourcesIn": "자원 그룹별 총자원",

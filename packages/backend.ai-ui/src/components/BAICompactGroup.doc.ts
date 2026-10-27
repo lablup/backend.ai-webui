@@ -76,7 +76,7 @@ export const docs = {
     style={{ flex: 1 }}
     rules={[{ required: true }, { max: 30 }]}
   >
-    <AstryxFormTextInput label={t('credential.EmailPrefix')} />
+    <TextInput />
   </BAIFormItem>
   <BAIFormItem
     name="email_suffix"
@@ -84,7 +84,7 @@ export const docs = {
     style={{ flex: 1 }}
     rules={[{ required: true }, { max: 30 }]}
   >
-    <AstryxFormTextInput label={t('credential.EmailSuffix')} />
+    <TextInput />
   </BAIFormItem>
 </BAICompactGroup>`,
     },

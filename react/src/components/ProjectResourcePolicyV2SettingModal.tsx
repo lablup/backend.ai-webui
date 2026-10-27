@@ -17,13 +17,15 @@ import { GBToBytes, bytesToGB } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import BAIFormItem from './BAIFormItem';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
-import {
-  AstryxFormNumberInput,
-  AstryxFormTextInput,
-} from './astryxFormControls';
 import { Banner } from '@lablup/ui-common/Banner';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  BAINumberInput,
+  BAITextInput,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -230,8 +232,8 @@ const ProjectResourcePolicyV2SettingModal: React.FC<
             },
           ]}
         >
-          <AstryxFormTextInput
-            label={t('resourcePolicy.Name')}
+          <BAITextInput
+            aria-label={t('resourcePolicy.Name')}
             disabled={!!projectResourcePolicy}
           />
         </BAIFormItem>
@@ -247,8 +249,9 @@ const ProjectResourcePolicyV2SettingModal: React.FC<
             label={t('resourcePolicy.MaxFolderCount')}
             style={{ width: '100%', margin: 0 }}
           >
-            <AstryxFormNumberInput
-              label={t('resourcePolicy.MaxFolderCount')}
+            <BAINumberInput
+              width="100%"
+              aria-label={t('resourcePolicy.MaxFolderCount')}
               min={0}
               max={SIGNED_32BIT_MAX_INT}
             />
@@ -259,8 +262,9 @@ const ProjectResourcePolicyV2SettingModal: React.FC<
             label={t('storageHost.MaxFolderSize')}
             style={{ width: '100%', margin: 0 }}
           >
-            <AstryxFormNumberInput
-              label={t('storageHost.MaxFolderSize')}
+            <BAINumberInput
+              width="100%"
+              aria-label={t('storageHost.MaxFolderSize')}
               min={0}
               // Maximum safe integer divided by 10^9 to prevent overflow when converting GB to bytes
               max={Math.floor(Number.MAX_SAFE_INTEGER / Math.pow(10, 9))}
@@ -273,8 +277,9 @@ const ProjectResourcePolicyV2SettingModal: React.FC<
             label={t('resourcePolicy.MaxNetworkCount')}
             style={{ width: '100%', margin: 0 }}
           >
-            <AstryxFormNumberInput
-              label={t('resourcePolicy.MaxNetworkCount')}
+            <BAINumberInput
+              width="100%"
+              aria-label={t('resourcePolicy.MaxNetworkCount')}
               min={0}
               max={SIGNED_32BIT_MAX_INT}
             />

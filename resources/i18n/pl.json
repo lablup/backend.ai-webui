@@ -3729,6 +3729,18 @@
     "TypeInAuthKey": "Alternatywnie, możesz wpisać poniższy kod uwierzytelniający ręcznie."
   },
   "tourGuide": {
+    "adminViewSwitch": {
+      "AdminLandingMenuText": "Otwórz menu profilu użytkownika w prawym górnym rogu: \"Przełącz na konsolę użytkownika\" prowadzi do stron użytkownika, a \"Przełącz na konsolę admina\" przywraca Cię tutaj.",
+      "AdminLandingMenuTitle": "Ustawienia admina przeniesiono do menu profilu",
+      "AdminLandingStartText": "Po zalogowaniu trafiasz teraz bezpośrednio do ustawień admina zamiast na strony użytkownika.",
+      "AdminLandingStartTitle": "Zaczynasz w ustawieniach admina",
+      "AdminLandingText": "Oto zmiany.",
+      "AdminLandingTitle": "Widok superadministratora się zmienił",
+      "BackToAdminSettingsText": "Aby wrócić do ustawień admina, otwórz to menu i wybierz \"Przełącz na konsolę admina\".",
+      "BackToAdminSettingsTitle": "Powrót do ustawień admina",
+      "BackToUserViewText": "Jesteś w ustawieniach admina. Aby korzystać z sesji, danych i innych stron użytkownika, otwórz to menu i wybierz \"Przełącz na konsolę użytkownika\".",
+      "BackToUserViewTitle": "Przejście do widoku użytkownika"
+    },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "Jeśli występuje pole błędu, przycisk Utwórz lub Zapisz jest wyłączony. Popraw błąd i spróbuj ponownie.",
       "FixErrorFieldByModifyButton": "W przypadku tego pola błędu możesz przejść bezpośrednio do przycisku Edytuj w prawym górnym rogu, aby go edytować.",
@@ -3769,7 +3781,6 @@
     "BootstrapScriptEmpty": "Skrypt jest pusty. \nProszę wprowadzić skrypt.",
     "BootstrapScriptUpdated": "Zaktualizowano skrypt Bootstrap.",
     "ClearSSHKeypairInput": "Zapisana para kluczy SSH zostanie usunięta. Jesteś pewien, że chcesz kontynuować?",
-    "CommandPalette": "Paleta poleceń",
     "ConfigFilename": "Nazwa pliku konfiguracyjnego",
     "CurrentSSHPublicKey": "Aktualny klucz publiczny",
     "CustomDashboardPanels": "Niestandardowe panele pulpitu",
@@ -4011,6 +4022,7 @@
       "ProjectDeployments": "Wdrożenia",
       "ProjectMembers": "Użytkownicy",
       "ProjectSessions": "Sesje",
+      "ProjectSettings": "Ustawienia projektu",
       "Projects": "Projekty",
       "PrometheusPreset": "Szablon Prometheus",
       "RBACManagement": "Zarządzanie RBAC",
@@ -4028,6 +4040,8 @@
       "Start": "Start",
       "Statistics": "Statystyka",
       "Summary": "streszczenie",
+      "SwitchToAdminConsole": "Przełącz na konsolę admina",
+      "SwitchToUserConsole": "Przełącz na konsolę użytkownika",
       "Tasks": "Zadania",
       "TermsOfService": "Warunki usługi",
       "TotalResourcesIn": "Całkowite zasoby w",

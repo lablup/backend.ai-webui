@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b34835a887636fd31bc20bf51b701d8d>>
+ * @generated SignedSource<<da1ed7a3153f83cabe8e58b5462358fc>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -258,6 +258,13 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
+                    "name": "fieldId",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "version",
                     "storageKey": null
                   },
@@ -287,12 +294,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "dce7be04285aeb014d5359c8a8e882f6",
+    "cacheID": "d17d10a95746d621fca6c70d41733383",
     "id": null,
     "metadata": {},
     "name": "BAIDeleteArtifactRevisionsModalStoriesQuery",
     "operationKind": "query",
-    "text": "query BAIDeleteArtifactRevisionsModalStoriesQuery {\n  artifacts(offset: 0, first: 1) {\n    edges {\n      node {\n        ...BAIDeleteArtifactRevisionsModalArtifactFragment\n        id\n      }\n    }\n  }\n  artifactRevisions(offset: 0, first: 10) {\n    edges {\n      node {\n        ...BAIDeleteArtifactRevisionsModalArtifactRevisionFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIArtifactDescriptionsFragment on Artifact {\n  name\n  description\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTokenFragment\n}\n\nfragment BAIArtifactTypeTokenFragment on Artifact {\n  type\n}\n\nfragment BAIDeleteArtifactRevisionsModalArtifactFragment on Artifact {\n  id\n  ...BAIArtifactDescriptionsFragment\n}\n\nfragment BAIDeleteArtifactRevisionsModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  version\n  size\n  status\n}\n"
+    "text": "query BAIDeleteArtifactRevisionsModalStoriesQuery {\n  artifacts(offset: 0, first: 1) {\n    edges {\n      node {\n        ...BAIDeleteArtifactRevisionsModalArtifactFragment\n        id\n      }\n    }\n  }\n  artifactRevisions(offset: 0, first: 10) {\n    edges {\n      node {\n        ...BAIDeleteArtifactRevisionsModalArtifactRevisionFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIArtifactDescriptionsFragment on Artifact {\n  name\n  description\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTokenFragment\n}\n\nfragment BAIArtifactTypeTokenFragment on Artifact {\n  type\n}\n\nfragment BAIDeleteArtifactRevisionsModalArtifactFragment on Artifact {\n  id\n  ...BAIArtifactDescriptionsFragment\n}\n\nfragment BAIDeleteArtifactRevisionsModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  fieldId\n  version\n  size\n  status\n}\n"
   }
 };
 })();

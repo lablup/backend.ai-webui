@@ -22,7 +22,6 @@ import { useSetBAINotification } from '../hooks/useBAINotification';
 import AdminModelCardSettingModal from './AdminModelCardSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { Text } from '@lablup/ui-common/Text';
 import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
@@ -49,6 +48,7 @@ import {
   tokenColorForTagColor,
   useBAILogger,
   type BAITableSettings,
+  BAICheckboxInput,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -599,12 +599,12 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
               >
                 {/* The adjacent visible text is the checkbox label now —
                     CheckboxInput renders it itself. */}
-                <CheckboxInput
+                <BAICheckboxInput
                   value={alsoDeleteFolder}
                   onChange={(checked) => setAlsoDeleteFolder(checked)}
                 >
                   {t('adminModelCard.AlsoDeleteModelFolder')}
-                </CheckboxInput>
+                </BAICheckboxInput>
               </Tooltip>
               {deletingModelCard?.vfolder && (
                 <span>
@@ -723,12 +723,12 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
               >
                 {/* The adjacent visible text is the checkbox label now —
                     CheckboxInput renders it itself. */}
-                <CheckboxInput
+                <BAICheckboxInput
                   value={alsoDeleteFoldersBulk}
                   onChange={(checked) => setAlsoDeleteFoldersBulk(checked)}
                 >
                   {t('adminModelCard.AlsoDeleteModelFolders')}
-                </CheckboxInput>
+                </BAICheckboxInput>
               </Tooltip>
             </BAIFlex>
             {alsoDeleteFoldersBulk && (

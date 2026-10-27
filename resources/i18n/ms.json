@@ -3726,6 +3726,18 @@
     "TypeInAuthKey": "Sebagai alternatif, anda boleh menaip kod pengesahan di bawah secara manual."
   },
   "tourGuide": {
+    "adminViewSwitch": {
+      "AdminLandingMenuText": "Buka menu profil pengguna di atas kanan: \"Tukar ke Konsol Pengguna\" membawa anda ke halaman pengguna, dan \"Tukar ke Konsol Pentadbir\" membawa anda kembali ke sini.",
+      "AdminLandingMenuTitle": "Tetapan Pentadbir berpindah ke menu profil",
+      "AdminLandingStartText": "Selepas log masuk, anda kini terus masuk ke tetapan pentadbir dan bukan halaman pengguna.",
+      "AdminLandingStartTitle": "Anda bermula di tetapan pentadbir",
+      "AdminLandingText": "Berikut perubahannya.",
+      "AdminLandingTitle": "Paparan superpentadbir telah berubah",
+      "BackToAdminSettingsText": "Untuk kembali ke tetapan pentadbir, buka menu ini dan pilih \"Tukar ke Konsol Pentadbir\".",
+      "BackToAdminSettingsTitle": "Kembali ke tetapan pentadbir",
+      "BackToUserViewText": "Anda berada dalam tetapan pentadbir. Untuk menggunakan sesi, data dan halaman pengguna lain, buka menu ini dan pilih \"Tukar ke Konsol Pengguna\".",
+      "BackToUserViewTitle": "Beralih ke paparan pengguna"
+    },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "Jika terdapat medan ralat, butang Cipta atau Simpan dinyahdayakan. Sila betulkan ralat dan cuba lagi.",
       "FixErrorFieldByModifyButton": "Untuk medan ralat itu, anda boleh pergi terus ke butang Edit di penjuru kanan sebelah atas untuk mengeditnya.",
@@ -3766,7 +3778,6 @@
     "BootstrapScriptEmpty": "Skripnya kosong. \nSila masukkan skrip.",
     "BootstrapScriptUpdated": "Skrip bootstrap dikemas kini.",
     "ClearSSHKeypairInput": "Pad Kekunci SSH yang ditulis akan dikeluarkan. Adakah anda pasti mahu meneruskan?",
-    "CommandPalette": "Palet perintah",
     "ConfigFilename": "Konfigurasi nama fail",
     "CurrentSSHPublicKey": "Kunci awam semasa",
     "CustomDashboardPanels": "Panel papan pemuka tersuai",
@@ -4008,6 +4019,7 @@
       "ProjectDeployments": "Penggunaan",
       "ProjectMembers": "Pengguna",
       "ProjectSessions": "Sesi",
+      "ProjectSettings": "Tetapan Projek",
       "Projects": "Projek",
       "PrometheusPreset": "Pratetap Prometheus",
       "RBACManagement": "Pengurusan RBAC",
@@ -4025,6 +4037,8 @@
       "Start": "Mulakan",
       "Statistics": "Statistik",
       "Summary": "Ringkasan",
+      "SwitchToAdminConsole": "Tukar ke Konsol Pentadbir",
+      "SwitchToUserConsole": "Tukar ke Konsol Pengguna",
       "Tasks": "Tugasan",
       "TermsOfService": "Syarat perkhidmatan",
       "TotalResourcesIn": "Jumlah sumber dalam",

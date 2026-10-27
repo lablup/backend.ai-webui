@@ -9,7 +9,6 @@ import {
 } from '../__generated__/AdminComputeSessionListPageQuery.graphql';
 import { App } from '../app-shim';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
-import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import TerminateSessionModal from '../components/ComputeSessionNodeItems/TerminateSessionModal';
 import SessionNodes, {
@@ -27,10 +26,6 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
 import { Banner } from '@lablup/ui-common/Banner';
 import { IconButton } from '@lablup/ui-common/IconButton';
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@lablup/ui-common/SegmentedControl';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIScopedProjectSelect,
@@ -45,6 +40,8 @@ import {
   mergeFilterValues,
   useBAILogger,
   useFetchKey,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { LayoutGridIcon, PowerOffIcon, TableIcon } from 'lucide-react';
@@ -334,25 +331,25 @@ const AdminComputeSessionListPage = () => {
             }}
             wrap="wrap"
           >
-            <BAIRadioGroup
-              optionType="button"
+            <BAISegmentedControl
               value={queryParams.statusCategory}
-              onChange={(e) => {
-                setQueryParams({ statusCategory: e.target.value });
+              onChange={(value) => {
+                setQueryParams({
+                  statusCategory: value as typeof queryParams.statusCategory,
+                });
                 setTablePaginationOption({ current: 1 });
                 setSelectedSessionList([]);
               }}
-              options={[
-                {
-                  label: t('session.Running'),
-                  value: 'running',
-                },
-                {
-                  label: t('session.Finished'),
-                  value: 'finished',
-                },
-              ]}
-            />
+            >
+              <BAISegmentedControlItem
+                value="running"
+                label={t('session.Running')}
+              />
+              <BAISegmentedControlItem
+                value="finished"
+                label={t('session.Finished')}
+              />
+            </BAISegmentedControl>
             <BAIPropertyFilter
               filterProperties={filterOutEmpty([
                 {
@@ -506,7 +503,7 @@ const AdminComputeSessionListPage = () => {
               </>
             )}
             {experimentalSessionResourceGrid && (
-              <SegmentedControl
+              <BAISegmentedControl
                 aria-label={t('session.resourceGrid.ViewMode')}
                 value={queryParams.view}
                 onChange={(value) =>
@@ -514,7 +511,7 @@ const AdminComputeSessionListPage = () => {
                 }
               >
                 <Tooltip content={t('session.resourceGrid.TableView')}>
-                  <SegmentedControlItem
+                  <BAISegmentedControlItem
                     value="table"
                     label={t('session.resourceGrid.TableView')}
                     isLabelHidden
@@ -522,14 +519,14 @@ const AdminComputeSessionListPage = () => {
                   />
                 </Tooltip>
                 <Tooltip content={t('session.resourceGrid.GridView')}>
-                  <SegmentedControlItem
+                  <BAISegmentedControlItem
                     value="grid"
                     label={t('session.resourceGrid.GridView')}
                     isLabelHidden
                     icon={<LayoutGridIcon size="1em" />}
                   />
                 </Tooltip>
-              </SegmentedControl>
+              </BAISegmentedControl>
             )}
             <AutoUpdateFetchKeyButton
               settingId="admin-session-list"

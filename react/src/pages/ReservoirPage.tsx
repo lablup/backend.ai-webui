@@ -12,7 +12,6 @@ import {
   ArtifactOrderField,
 } from '../__generated__/ReservoirPageQuery.graphql';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
-import BAIRadioGroup from '../components/BAIRadioGroup';
 import ScanArtifactModelsFromHuggingFaceModal from '../components/ScanArtifactModelsFromHuggingFaceModal';
 import { convertToOrderBy } from '../helper';
 import { buildPath } from '../helper/pathBuilder';
@@ -46,9 +45,10 @@ import {
   BAISelectionLabel,
   INITIAL_FETCH_KEY,
   filterOutEmpty,
-  toLocalId,
   useToggle,
   useUpdatableState,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { BanIcon, Brain, UndoIcon } from 'lucide-react';
@@ -315,27 +315,25 @@ const ReservoirPage: React.FC = () => {
               }}
               wrap="wrap"
             >
-              <BAIRadioGroup
-                optionType="button"
-                options={[
-                  {
-                    label: t('reservoirPage.Active'),
-                    value: 'ALIVE',
-                  },
-                  {
-                    label: t('reservoirPage.Inactive'),
-                    value: 'DELETED',
-                  },
-                ]}
+              <BAISegmentedControl
                 value={queryParams.mode}
-                onChange={(e) => {
-                  setQuery({ mode: e.target.value });
+                onChange={(value) => {
+                  setQuery({ mode: value });
                   setTablePaginationOption({ current: 1 });
                   setSelectedArtifactIdList([]);
                   setSelectedArtifacts([]);
                   setSelectedRestoreArtifacts([]);
                 }}
-              />
+              >
+                <BAISegmentedControlItem
+                  value="ALIVE"
+                  label={t('reservoirPage.Active')}
+                />
+                <BAISegmentedControlItem
+                  value="DELETED"
+                  label={t('reservoirPage.Inactive')}
+                />
+              </BAISegmentedControl>
               <BAIGraphQLPropertyFilter
                 combinationMode="AND"
                 onChange={(value) => {
@@ -602,7 +600,7 @@ const ReservoirPage: React.FC = () => {
         open={deferredOpenHuggingFaceModal}
         onRequestClose={(_e, artifactId) => {
           toggleOpenHuggingFaceModal();
-          navigate(buildPath('admin', `reservoir/${toLocalId(artifactId)}`));
+          navigate(buildPath('admin', `reservoir/${artifactId}`));
         }}
         onCancel={toggleOpenHuggingFaceModal}
       />

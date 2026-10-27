@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<840c7624709333fe2300314787705e76>>
+ * @generated SignedSource<<22374723c40e2abdb955d219c9d1ce66>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -81,6 +81,13 @@ return {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
+            "name": "fieldId",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "status",
             "storageKey": null
           },
@@ -97,12 +104,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "48eef0100b716d30964bc30242bb953a",
+    "cacheID": "7ea13ce7a349644de23f406d2cd82136",
     "id": null,
     "metadata": {},
     "name": "BAIPullingArtifactRevisionAlertStoriesQuery",
     "operationKind": "query",
-    "text": "query BAIPullingArtifactRevisionAlertStoriesQuery {\n  artifactRevision(id: \"test-id\") {\n    ...BAIPullingArtifactRevisionAlertFragment\n    id\n  }\n}\n\nfragment BAIPullingArtifactRevisionAlertFragment on ArtifactRevision {\n  id\n  status\n  version\n}\n"
+    "text": "query BAIPullingArtifactRevisionAlertStoriesQuery {\n  artifactRevision(id: \"test-id\") {\n    ...BAIPullingArtifactRevisionAlertFragment\n    id\n  }\n}\n\nfragment BAIPullingArtifactRevisionAlertFragment on ArtifactRevision {\n  id\n  fieldId\n  status\n  version\n}\n"
   }
 };
 })();

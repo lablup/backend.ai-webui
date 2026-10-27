@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<01bee93512b434b360780bfb4af497a4>>
+ * @generated SignedSource<<e6e3d58b3cdf67ba6de59c01c4d58af7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type BAIVirtualFolderNodeNotificationItemV2Fragment$data = {
+  readonly entityId: string;
   readonly id: string;
   readonly metadata: {
     readonly name: string;
@@ -38,6 +39,13 @@ const node: ReaderFragment = {
     {
       "alias": null,
       "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "VFolderMetadataInfo",
       "kind": "LinkedField",
       "name": "metadata",
@@ -58,6 +66,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "fa10614a1c6a63fb585a7384c9a20fb0";
+(node as any).hash = "4c0d28677ba601bb716303321454174d";
 
 export default node;
