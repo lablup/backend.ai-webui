@@ -311,13 +311,16 @@ function MainLayout() {
                               }}
                             />
                           ) : (
-                            <WebUIBreadcrumb
-                              style={{
-                                marginBottom: token('--spacing-5'),
-                                marginLeft: `calc(${token('--spacing-6')} * -1)`,
-                                marginRight: `calc(${token('--spacing-6')} * -1)`,
-                              }}
-                            />
+                            // The breadcrumb's extra slot (e.g. the dashboard Edit button) takes the admin accent too.
+                            <AutoAdminPrimaryColorProvider>
+                              <WebUIBreadcrumb
+                                style={{
+                                  marginBottom: token('--spacing-5'),
+                                  marginLeft: `calc(${token('--spacing-6')} * -1)`,
+                                  marginRight: `calc(${token('--spacing-6')} * -1)`,
+                                }}
+                              />
+                            </AutoAdminPrimaryColorProvider>
                           )}
                         </RouteAccessBreadcrumbGate>
                       </ErrorBoundaryWithNullFallback>
