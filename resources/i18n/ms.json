@@ -799,7 +799,7 @@
       "Boards": "Papan",
       "CannotDeleteLastBoard": "Papan terakhir tidak boleh dipadam",
       "DefaultBoard": "Lalai",
-      "EditBoard": "Edit papan",
+      "DeleteBoard": "Padam papan",
       "NewBoard": "Papan baharu",
       "NewBoardTitle": "Papan {{number}}"
     },
@@ -889,6 +889,7 @@
       "Unlimited": "Tanpa had",
       "UsageOnDay": "Penggunaan pada {{day}}",
       "UsageRowsCapped": "Memaparkan {{shown}} baris terbaru daripada {{total}}.",
+      "ViewAll": "Lihat semua",
       "ViewIn": "Lihat dalam {{name}}",
       "VsPreviousRange": "berbanding julat sebelumnya",
       "Waiting": "Menunggu"

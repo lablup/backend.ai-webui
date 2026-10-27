@@ -31,12 +31,17 @@ export const MyResourcesInResourceGroup: React.FC<{
             quantity
             unlimited
           }
-          breakdown {
-            keypair {
-              used {
-                resourceType
-                quantity
-              }
+        }
+        myUserResourceAllocationV2 {
+          user {
+            used {
+              resourceType
+              quantity
+            }
+            assignable {
+              resourceType
+              quantity
+              unlimited
             }
           }
         }
@@ -45,8 +50,16 @@ export const MyResourcesInResourceGroup: React.FC<{
     deferredVariables,
     { fetchPolicy: 'store-and-network', fetchKey },
   );
+  const effective = data.effectiveResourceAllocationV2;
+  const user = data.myUserResourceAllocationV2?.user;
   return (
-    <ResourceUsageBars rows={toUsageRows(data.effectiveResourceAllocationV2)} />
+    <ResourceUsageBars
+      rows={
+        effective && user
+          ? toUsageRows(user.used, [effective.assignable, user.assignable])
+          : []
+      }
+    />
   );
 };
 

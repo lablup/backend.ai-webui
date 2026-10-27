@@ -786,7 +786,7 @@
       "Boards": "Boards",
       "CannotDeleteLastBoard": "The last board cannot be deleted",
       "DefaultBoard": "Default",
-      "EditBoard": "Edit board",
+      "DeleteBoard": "Delete board",
       "NewBoard": "New board",
       "NewBoardTitle": "Board {{number}}"
     },
@@ -876,6 +876,7 @@
       "Unlimited": "Unlimited",
       "UsageOnDay": "Usage on {{day}}",
       "UsageRowsCapped": "Showing the {{shown}} newest of {{total}} rows.",
+      "ViewAll": "View all",
       "ViewIn": "View in {{name}}",
       "VsPreviousRange": "vs. previous range",
       "Waiting": "Waiting"

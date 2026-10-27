@@ -799,7 +799,7 @@
       "Boards": "Самбарууд",
       "CannotDeleteLastBoard": "Сүүлийн самбарыг устгах боломжгүй",
       "DefaultBoard": "Үндсэн",
-      "EditBoard": "Самбар засах",
+      "DeleteBoard": "Самбар устгах",
       "NewBoard": "Шинэ самбар",
       "NewBoardTitle": "Самбар {{number}}"
     },
@@ -889,6 +889,7 @@
       "Unlimited": "Хязгааргүй",
       "UsageOnDay": "{{day}}-ний хэрэглээ",
       "UsageRowsCapped": "{{total}} мөрөөс хамгийн шинэ {{shown}}-ийг харуулж байна.",
+      "ViewAll": "Бүгдийг харах",
       "ViewIn": "{{name}} хэсэгт харах",
       "VsPreviousRange": "өмнөх хугацаатай харьцуулахад",
       "Waiting": "Хүлээлт"

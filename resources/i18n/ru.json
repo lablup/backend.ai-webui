@@ -799,7 +799,7 @@
       "Boards": "Доски",
       "CannotDeleteLastBoard": "Последнюю доску нельзя удалить",
       "DefaultBoard": "По умолчанию",
-      "EditBoard": "Изменить доску",
+      "DeleteBoard": "Удалить доску",
       "NewBoard": "Новая доска",
       "NewBoardTitle": "Доска {{number}}"
     },
@@ -889,6 +889,7 @@
       "Unlimited": "Без ограничений",
       "UsageOnDay": "Использование за {{day}}",
       "UsageRowsCapped": "Показаны {{shown}} новейших из {{total}} строк.",
+      "ViewAll": "Показать все",
       "ViewIn": "Открыть в разделе «{{name}}»",
       "VsPreviousRange": "по сравнению с предыдущим периодом",
       "Waiting": "Ожидание"

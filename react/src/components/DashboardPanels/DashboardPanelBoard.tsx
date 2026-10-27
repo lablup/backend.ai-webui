@@ -3,9 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { ProjectContextOrNull } from '../../types/projectContext';
-import DashboardEditToggleButton from '../DashboardEditToggleButton';
-import { breadcrumbExtraAtom } from '../breadcrumbExtraAtom';
 import { dashboardEditModeAtom } from '../dashboardEditModeAtom';
+import DashboardBoardSection from './DashboardBoardSection';
 import DashboardBoardTabs from './DashboardBoardTabs';
 import DashboardEditSider from './DashboardEditSider';
 import DashboardFilterBar from './DashboardFilterBar';
@@ -29,7 +28,7 @@ import { useResetOnLeavingPath } from './useResetOnLeavingPath';
 import { BAIBoard, BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
 import { useAtom, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 export interface DashboardPanelBoardProps {
   page: PanelPage;
@@ -56,7 +55,6 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
 }) => {
   'use memo';
   const [editMode, setEditMode] = useAtom(dashboardEditModeAtom);
-  const setBreadcrumbExtra = useSetAtom(breadcrumbExtraAtom);
   const setBoardSorts = useSetAtom(boardSortsAtom);
   const setSettingOverrides = useSetAtom(panelSettingOverridesAtom);
   const [panelModalState, setPanelModalState] = useState<{
@@ -66,10 +64,6 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
   const [settingsPanelId, setSettingsPanelId] = useState<string | null>(null);
   const boardContainerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    setBreadcrumbExtra(<DashboardEditToggleButton />);
-    return () => setBreadcrumbExtra(null);
-  }, [setBreadcrumbExtra]);
   // These atoms are global: clear them when leaving the page, but not when a
   // suspending query remounts the board on the same path (that would drop an early click).
   useResetOnLeavingPath(() => {
@@ -138,11 +132,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
           <BAIFlex direction="column" align="stretch" gap="md">
             <DashboardFilterBar filters={filters} isRefetching={isRefetching}>
               {page !== 'project' ? (
-                <DashboardBoardTabs
-                  page={page}
-                  boards={boards}
-                  catalog={catalog}
-                />
+                <DashboardBoardTabs boards={boards} />
               ) : null}
             </DashboardFilterBar>
             <BAIBoard
@@ -175,6 +165,15 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
             onResetLayout={resetLayout}
             settingsTargetOf={settingsTargetOf}
             onRequestSettings={setSettingsPanelId}
+            boardSection={
+              page !== 'project' ? (
+                <DashboardBoardSection
+                  page={page}
+                  boards={boards}
+                  catalog={catalog}
+                />
+              ) : undefined
+            }
           />
         ) : null}
         <BAIUnmountAfterClose>

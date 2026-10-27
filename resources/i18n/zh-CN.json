@@ -799,7 +799,7 @@
       "Boards": "看板",
       "CannotDeleteLastBoard": "无法删除最后一个看板",
       "DefaultBoard": "默认",
-      "EditBoard": "编辑看板",
+      "DeleteBoard": "删除看板",
       "NewBoard": "新建看板",
       "NewBoardTitle": "看板 {{number}}"
     },
@@ -889,6 +889,7 @@
       "Unlimited": "无限制",
       "UsageOnDay": "{{day}} 的使用量",
       "UsageRowsCapped": "显示 {{total}} 行中最新的 {{shown}} 行。",
+      "ViewAll": "查看全部",
       "ViewIn": "在{{name}}中查看",
       "VsPreviousRange": "与上一时间范围相比",
       "Waiting": "等待时间"

@@ -42,55 +42,74 @@ describe('toDonutRows', () => {
 });
 
 describe('toUsageRows', () => {
-  const allocation = {
+  const effectiveAssignable = [
+    { resourceType: 'mem', quantity: '34359738368', unlimited: false },
+    { resourceType: 'cuda.shares', quantity: '0.5', unlimited: false },
+    { resourceType: 'cpu', quantity: '10', unlimited: false },
+    { resourceType: 'cuda.device', quantity: '0', unlimited: false },
+    { resourceType: 'tpu.device', quantity: null, unlimited: true },
+  ];
+  const user = {
+    used: [
+      { resourceType: 'cpu', quantity: '9' },
+      { resourceType: 'mem', quantity: '25769803776' },
+      { resourceType: 'cuda.shares', quantity: '1.5' },
+    ],
     assignable: [
-      { resourceType: 'mem', quantity: '34359738368', unlimited: false },
-      { resourceType: 'cuda.shares', quantity: '0.5', unlimited: false },
-      { resourceType: 'cpu', quantity: '10', unlimited: false },
-      { resourceType: 'cuda.device', quantity: '0', unlimited: false },
+      { resourceType: 'cpu', quantity: '7', unlimited: false },
+      { resourceType: 'mem', quantity: '68719476736', unlimited: false },
+      { resourceType: 'cuda.shares', quantity: null, unlimited: true },
       { resourceType: 'tpu.device', quantity: null, unlimited: true },
     ],
-    breakdown: {
-      keypair: {
-        used: [
-          { resourceType: 'cpu', quantity: '6' },
-          { resourceType: 'mem', quantity: '17179869184' },
-          { resourceType: 'cuda.shares', quantity: '1.5' },
-        ],
-      },
-    },
   };
 
-  it('adds the remainder to the keypair usage and orders cpu, mem, then the rest', () => {
-    expect(toUsageRows(allocation)).toEqual([
-      { resourceType: 'cpu', used: 6, limit: 16 },
-      { resourceType: 'mem', used: 17179869184, limit: 51539607552 },
+  it("adds the smaller remainder to the user's usage and orders cpu, mem, then the rest", () => {
+    expect(
+      toUsageRows(user.used, [effectiveAssignable, user.assignable]),
+    ).toEqual([
+      // The user's remainder (7) is under the effective one (10).
+      { resourceType: 'cpu', used: 9, limit: 16 },
+      // The effective remainder (32 GiB) is under the user's (64 GiB).
+      { resourceType: 'mem', used: 25769803776, limit: 60129542144 },
+      // Unlimited for the user, so the effective remainder (0.5) holds.
       { resourceType: 'cuda.shares', used: 1.5, limit: 2 },
       { resourceType: 'tpu.device', used: 0, limit: null },
     ]);
   });
 
+  it('keeps a slot unlimited only when no list limits it', () => {
+    expect(
+      toUsageRows(
+        [{ resourceType: 'cpu', quantity: '3' }],
+        [
+          [
+            { resourceType: 'cpu', quantity: null, unlimited: true },
+            { resourceType: 'mem', quantity: null, unlimited: true },
+          ],
+          [
+            { resourceType: 'cpu', quantity: '5', unlimited: false },
+            { resourceType: 'mem', quantity: null, unlimited: true },
+          ],
+        ],
+      ),
+    ).toEqual([
+      { resourceType: 'cpu', used: 3, limit: 8 },
+      { resourceType: 'mem', used: 0, limit: null },
+    ]);
+  });
+
   it('keeps a slot with nothing used or assignable when asked to', () => {
-    expect(toUsageRows(allocation, ['cpu', 'mem'], false)).toContainEqual({
-      resourceType: 'cuda.device',
-      used: 0,
-      limit: 0,
-    });
+    expect(
+      toUsageRows(user.used, [effectiveAssignable, user.assignable], {
+        dropEmpty: false,
+      }),
+    ).toContainEqual({ resourceType: 'cuda.device', used: 0, limit: 0 });
   });
 
   it('counts a used slot without an assignable entry as unlimited', () => {
     expect(
-      toUsageRows({
-        assignable: [],
-        breakdown: {
-          keypair: { used: [{ resourceType: 'cpu', quantity: 2 }] },
-        },
-      }),
+      toUsageRows([{ resourceType: 'cpu', quantity: 2 }], [[], []]),
     ).toEqual([{ resourceType: 'cpu', used: 2, limit: null }]);
-  });
-
-  it('returns no rows without an allocation', () => {
-    expect(toUsageRows(null)).toEqual([]);
   });
 });
 
