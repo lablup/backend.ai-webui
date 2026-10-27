@@ -1,7 +1,7 @@
 import type { ComponentDoc } from '@astryxdesign/cli/authoring';
 
+// Unstamped: the stamped schema has no multi-component variant.
 export const docs = {
-  type: 'component',
   name: 'BAIBoardItemTitle',
   displayName: 'BAI Board Item Title',
   category: 'Layout',
@@ -39,37 +39,54 @@ export const docs = {
       },
     ],
   },
-  props: [
+  components: [
     {
-      name: 'title',
-      type: 'React.ReactNode | string',
+      name: 'BAIBoardItemTitle',
+      displayName: 'BAI Board Item Title',
       description:
-        'Panel title. A string renders as a level-5 heading; a node is rendered as given, for a heading paired with an inline control.',
-      required: true,
+        'The header row: title, optional help tooltip, and the trailing action slot.',
+      props: [
+        {
+          name: 'title',
+          type: 'React.ReactNode | string',
+          description:
+            'Panel title. A string renders as a level-5 heading; a node is rendered as given, for a heading paired with an inline control.',
+          required: true,
+        },
+        {
+          name: 'tooltip',
+          type: 'React.ReactNode',
+          description:
+            'Explanatory content shown from a question-mark icon next to the title. Nothing is rendered when it is omitted.',
+        },
+        {
+          name: 'tooltipIcon',
+          type: 'React.ReactNode',
+          description:
+            'Glyph of the help tooltip. Defaults to the lucide CircleHelp question mark.',
+        },
+        {
+          name: 'extra',
+          type: 'React.ReactNode',
+          description:
+            'Trailing action slot, right-aligned and wrapping. Holds refresh buttons, view toggles, and other panel-scoped controls.',
+        },
+      ],
     },
     {
-      name: 'tooltip',
-      type: 'React.ReactNode',
+      name: 'BAIBoardItemInlineTitles',
+      displayName: 'BAI Board Item Inline Titles',
       description:
-        'Explanatory content shown from a question-mark icon next to the title. Nothing is rendered when it is omitted.',
-    },
-    {
-      name: 'tooltipIcon',
-      type: 'React.ReactNode',
-      description:
-        'Glyph of the help tooltip. Defaults to the lucide CircleHelp question mark.',
-    },
-    {
-      name: 'extra',
-      type: 'React.ReactNode',
-      description:
-        'Trailing action slot, right-aligned and wrapping. Holds refresh buttons, view toggles, and other panel-scoped controls.',
-    },
-    {
-      name: 'style',
-      type: 'React.CSSProperties',
-      description:
-        'Inline style merged over the header row defaults, applied after them — mainly for padding adjustments in a panel with its own rhythm.',
+        'Wraps a second section inside one board item. The item title row is already taken, so every `BAIBoardItemTitle` below it renders where it stands, in the body. Outside a `BAIBoard` item it renders its children unchanged.',
+      props: [
+        {
+          name: 'children',
+          type: 'React.ReactNode',
+          description:
+            'The section whose `BAIBoardItemTitle` should stay in the item body.',
+          required: true,
+        },
+      ],
     },
   ],
   examples: [
