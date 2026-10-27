@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ebfcb74007d16746af5d2d2a24658742>>
+ * @generated SignedSource<<a1d90def450c2e1262a751a6570614d4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,8 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type AuditLogOrderField = "CREATED_AT" | "ENTITY_TYPE" | "OPERATION" | "STATUS" | "%future added value";
+export type AuditLogActionKind = "BULK" | "GLOBAL" | "LOOKUP" | "MEMBERSHIP" | "RELATION" | "SCOPE" | "SINGLE_ENTITY" | "%future added value";
+export type AuditLogOrderField = "ACTION_KIND" | "ACTION_NAME" | "CREATED_AT" | "ENTITY_TYPE" | "OPERATION" | "STATUS" | "%future added value";
 export type AuditLogStatus = "DENIED" | "ERROR" | "RUNNING" | "SUCCESS" | "UNKNOWN" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type AuditLogScope = {
@@ -29,11 +30,18 @@ export type AuditLogFilter = {
   NOT?: ReadonlyArray<AuditLogFilter> | null | undefined;
   OR?: ReadonlyArray<AuditLogFilter> | null | undefined;
   actedAs?: UUIDFilter | null | undefined;
+  actionId?: UUIDFilter | null | undefined;
+  actionKind?: AuditLogActionKindFilter | null | undefined;
+  actionName?: StringFilter | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
   entityId?: StringFilter | null | undefined;
   entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
+  lookupKey?: StringFilter | null | undefined;
+  lookupKind?: StringFilter | null | undefined;
   operation?: StringFilter | null | undefined;
   status?: AuditLogStatusFilter | null | undefined;
+  targetEntityId?: UUIDFilter | null | undefined;
   triggeredBy?: StringFilter | null | undefined;
 };
 export type StringFilter = {
@@ -58,6 +66,12 @@ export type StringFilter = {
   notStartsWith?: string | null | undefined;
   startsWith?: string | null | undefined;
 };
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
+};
 export type AuditLogStatusFilter = {
   equals?: AuditLogStatus | null | undefined;
   in?: ReadonlyArray<AuditLogStatus> | null | undefined;
@@ -70,11 +84,11 @@ export type DateTimeFilter = {
   equals?: string | null | undefined;
   notEquals?: string | null | undefined;
 };
-export type UUIDFilter = {
-  equals?: string | null | undefined;
-  in?: ReadonlyArray<string> | null | undefined;
-  notEquals?: string | null | undefined;
-  notIn?: ReadonlyArray<string> | null | undefined;
+export type AuditLogActionKindFilter = {
+  equals?: AuditLogActionKind | null | undefined;
+  in?: ReadonlyArray<AuditLogActionKind> | null | undefined;
+  notEquals?: AuditLogActionKind | null | undefined;
+  notIn?: ReadonlyArray<AuditLogActionKind> | null | undefined;
 };
 export type AuditLogOrderBy = {
   direction?: OrderDirection;

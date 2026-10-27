@@ -11,8 +11,8 @@ import { render, screen } from '@testing-library/react';
 
 /**
  * #10329: an invitation shows the share's own permission cap, in the share
- * permission selector's words, not the mount permission the invite was sent
- * with, and an invite without a sharer names an unknown user. `t` is
+ * permission selector's words, and names an unknown user or the folder id
+ * when the caller may not read the sharer or the folder. `t` is
  * identity-mapped (for BUI's `useBAIi18n` too), so assertions read as keys.
  */
 
@@ -50,14 +50,11 @@ vi.mock('../hooks/useVFolderInvitations', () => ({
 
 const invitation = (overrides: Partial<InvitationItem>): InvitationItem => ({
   id: 'share-1',
-  vfolder_id: 'vf-1',
-  vfolder_name: 'data',
-  inviter: 'admin@example.com',
-  mount_permission: 'ro',
-  created_at: '2026-10-19T00:00:00Z',
-  modified_at: null,
-  status: 'pending',
-  perm: 'ro',
+  vfolderId: 'vf-1',
+  vfolderName: 'data',
+  sharerEmail: 'admin@example.com',
+  permissions: ['READ'],
+  createdAt: '2026-10-19T00:00:00Z',
   ...overrides,
 });
 
@@ -88,9 +85,9 @@ describe('FolderInvitationResponseModal (#10329)', () => {
     expect(screen.getByText('admin@example.com')).toBeInTheDocument();
   });
 
-  it('names an unknown user when the invite carries no sharer', () => {
+  it('names an unknown user when the caller may not read the sharer', () => {
     invitations.push(
-      invitation({ id: 'share-2', inviter: '', permissions: ['READ'] }),
+      invitation({ id: 'share-2', sharerEmail: null, permissions: ['READ'] }),
     );
     render(<FolderInvitationResponseModal open />);
 
@@ -100,10 +97,10 @@ describe('FolderInvitationResponseModal (#10329)', () => {
     ).toBeInTheDocument();
   });
 
-  it('shows a dash when no share matches the invitation', () => {
-    invitations.push(invitation({ id: 'share-3' }));
+  it('names the folder by its id when the caller may not read it', () => {
+    invitations.push(invitation({ id: 'share-3', vfolderName: null }));
     render(<FolderInvitationResponseModal open />);
 
-    expect(screen.getByText('-')).toBeInTheDocument();
+    expect(screen.getByText('vf-1')).toBeInTheDocument();
   });
 });
