@@ -252,18 +252,8 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     refresh: { min: '30s' },
     settings: ['resourceGroup'],
   },
-  {
-    key: 'folderStatus',
-    page: ['project'],
-    group: 'resource',
-    titleKey: 'data.MyFolders',
-    kind: 'custom',
-    Component: FoldersPanel,
-    detailLink: listLink('data', { project: 'webui.menu.Data' }),
-    defaultSize: size(2, 2),
-    minSize: size(2, 2),
-    refresh: { min: '5m' },
-  },
+  // TODO(needs-backend): BA-8719 - re-add `folderStatus` (FoldersPanel) once
+  // the folders a user owns can be counted apart from those shared with them.
   {
     key: 'quotaPerStorageVolume',
     page: ['project'],
