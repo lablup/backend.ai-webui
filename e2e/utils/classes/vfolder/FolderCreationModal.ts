@@ -113,10 +113,6 @@ export class FolderCreationModal {
     ).toHaveCount(0);
   }
 
-  async getPermissionFormItem(): Promise<Locator> {
-    return await this.getFormItemByLabel('Permission');
-  }
-
   async getProjectFormItem(): Promise<Locator> {
     return await this.getFormItemByLabel('Project');
   }
@@ -150,20 +146,6 @@ export class FolderCreationModal {
   async getAutoMountUsageModeRadio(): Promise<Locator> {
     const usageModeFormItem = await this.getUsageModeFormItem();
     return usageModeFormItem.getByLabel('Auto Mount', { exact: true });
-  }
-
-  async getReadWritePermissionRadio(): Promise<Locator> {
-    const permissionFormItem = await this.getPermissionFormItem();
-    return permissionFormItem.getByLabel('Read & Write', {
-      exact: true,
-    });
-  }
-
-  async getReadOnlyPermissionRadio(): Promise<Locator> {
-    const permissionFormItem = await this.getPermissionFormItem();
-    return permissionFormItem.getByLabel('Read only', {
-      exact: true,
-    });
   }
 
   /**

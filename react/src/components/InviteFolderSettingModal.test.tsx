@@ -26,6 +26,9 @@ import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockE
  * permission, with no mount policy of its own.
  * #10329: the cap is the bits the share permission selector picks, and each
  * listed share shows its own cap in a selector that restates the share.
+ * #10647: the folder's default mount permission sits in a settings card above
+ * the invite form and is edited in its own modal; an invite picks no mount
+ * level of its own.
  * `t` is identity-mapped (for BUI's `useBAIi18n` too), so the assertions read
  * as i18n keys.
  */
@@ -50,6 +53,14 @@ vi.mock('../helper', async (importOriginal) => {
     useBaiSignedRequestWithPromise: () => mockRequest,
   };
 });
+
+vi.mock('../hooks/useCurrentUserProjectRoles', () => ({
+  useCurrentUserProjectRoles: () => ({
+    isSuperAdmin: false,
+    domainAdminDomains: [],
+    projectAdminIds: [],
+  }),
+}));
 
 vi.mock('../hooks/useAccessibleProjects', () => ({
   useAccessibleProjects: () => ({
@@ -80,7 +91,10 @@ const PENDING_USER_SHARE_ID = '01a12f7f-3c1e-7a4b-9d02-5e6f7a8b9c0d';
 const RESOLVERS = {
   VFolder: () => ({
     id: VFOLDER_GLOBAL_ID,
+    metadata: { name: 'team-datasets', usageMode: 'GENERAL' },
     accessControl: { permission: 'READ_ONLY', ownershipType: 'USER' },
+    // The current user owns the folder, so the settings card offers Edit.
+    ownership: { userId: 'owner-uuid', projectId: null },
   }),
   EntityShareConnection: () => ({
     edges: [
@@ -340,9 +354,13 @@ describe('InviteFolderSettingModal (#10295)', () => {
     expect(screen.queryByText('old@example.com')).not.toBeInTheDocument();
     expect(screen.getByText('data.invitation.Accepted')).toBeInTheDocument();
     expect(screen.getAllByText('data.invitation.Pending')).toHaveLength(2);
+    // The settings card shows the folder and its default mount permission.
+    expect(screen.getByText('team-datasets')).toBeInTheDocument();
+    expect(screen.getByTestId('default-mount-permission')).toHaveTextContent(
+      'data.ReadOnly',
+    );
     // The accepted row reads its level from the mount policy, not from the
-    // share's cap (`[READ]`) or the folder default; the invite row above the
-    // table still shows the default.
+    // share's cap (`[READ]`) or the folder default.
     expect(
       screen.getAllByText('data.ReadWrite').some((el) => el.closest('tr')),
     ).toBe(true);
@@ -452,9 +470,15 @@ describe('InviteFolderSettingModal (#10295)', () => {
     const user = userEvent.setup();
     const environment = await renderModal();
 
+    // The invite form picks no mount level of its own (#10647); the note
+    // under it names the folder default every invitee starts at.
+    expect(
+      screen.getByText('data.folders.InviteStartsWithDefaultMountPermission'),
+    ).toBeInTheDocument();
     await user.click(screen.getByText('data.folders.SearchUser'));
     await resolvePendingQueries(environment);
-    // The mount-level Selector is a combobox too; the search box is the input.
+    // The table's mount-level Selectors are comboboxes too; the search box is
+    // the input.
     const searchBox = screen
       .getAllByRole('combobox', h)
       .find((el) => el.tagName === 'INPUT');
@@ -463,11 +487,6 @@ describe('InviteFolderSettingModal (#10295)', () => {
     await user.click(
       await findOptionResolvingQueries(environment, /nobody2@example\.com/),
     );
-    expect(
-      await screen.findByText(
-        'data.folders.EmailInviteUsesSharedMountPermission',
-      ),
-    ).toBeInTheDocument();
     await user.click(
       screen.getByRole('button', { name: 'data.folders.Invite' }),
     );
@@ -489,6 +508,67 @@ describe('InviteFolderSettingModal (#10295)', () => {
     });
     expect(operationNames(environment)).not.toContain(
       'InviteFolderSettingModalSetMountPolicyMutation',
+    );
+  });
+
+  it('edits the folder default mount permission from the settings card (#10647)', async () => {
+    const user = userEvent.setup();
+    const environment = await renderModal();
+
+    await user.click(screen.getByTestId('edit-default-mount-permission'));
+    const editTitle = await screen.findByText(
+      'data.folders.EditDefaultMountPermission',
+    );
+    const editModal = editTitle.closest('[role="dialog"]') as HTMLElement;
+    expect(editModal).not.toBeNull();
+    // Unchanged value: Save stays disabled until another level is picked.
+    const saveButton = within(editModal).getByRole('button', {
+      name: 'button.Save',
+    });
+    expect(saveButton).toBeDisabled();
+    await user.click(
+      within(editModal).getByRole('radio', { name: 'data.ReadWrite' }),
+    );
+    expect(saveButton).toBeEnabled();
+    await user.click(saveButton);
+
+    // The legacy update-options endpoint still owns the folder permission.
+    await waitFor(() =>
+      expect(mockRequest).toHaveBeenCalledWith({
+        method: 'POST',
+        url: `/folders/${VFOLDER_ID}/update-options`,
+        body: { permission: 'rw' },
+      }),
+    );
+    // Then the folder record is re-read, and the card follows the store.
+    await waitFor(() =>
+      expect(operationNames(environment)).toContain(
+        'FolderDefaultMountPermissionModalRefreshQuery',
+      ),
+    );
+    const refresh = environment.mock
+      .getAllOperations()
+      .find(
+        (operation) =>
+          operation.request.node.params.name ===
+          'FolderDefaultMountPermissionModalRefreshQuery',
+      )!;
+    await act(async () => {
+      environment.mock.resolve(
+        refresh,
+        MockPayloadGenerator.generate(refresh, {
+          ...RESOLVERS,
+          VFolder: () => ({
+            id: VFOLDER_GLOBAL_ID,
+            accessControl: { permission: 'READ_WRITE', ownershipType: 'USER' },
+          }),
+        }),
+      );
+    });
+    await waitFor(() =>
+      expect(screen.getByTestId('default-mount-permission')).toHaveTextContent(
+        'data.ReadWrite',
+      ),
     );
   });
 

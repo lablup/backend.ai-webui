@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4415f7d6a78cc8330a3bc8a068fbcb3a>>
+ * @generated SignedSource<<8cee309de0a7270e0d8e0a5396dcab0f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,6 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
-export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
 export type VFolderOwnershipType = "GROUP" | "USER" | "%future added value";
 export type VFolderUsageMode = "DATA" | "GENERAL" | "MODEL" | "%future added value";
@@ -17,9 +16,7 @@ import { FragmentRefs } from "relay-runtime";
 export type VFolderNodeDescriptionV2Fragment$data = {
   readonly accessControl: {
     readonly ownershipType: VFolderOwnershipType;
-    readonly permission: VFolderMountPermission;
   };
-  readonly entityId: string;
   readonly host: string;
   readonly id: string;
   readonly metadata: {
@@ -35,13 +32,11 @@ export type VFolderNodeDescriptionV2Fragment$data = {
         readonly name: string;
       };
     } | null | undefined;
-    readonly projectId: string | null | undefined;
     readonly user: {
       readonly basicInfo: {
         readonly email: string;
       };
     } | null | undefined;
-    readonly userId: string | null | undefined;
   };
   readonly quota: {
     readonly maxFiles: number;
@@ -51,7 +46,7 @@ export type VFolderNodeDescriptionV2Fragment$data = {
   };
   readonly status: VFolderOperationStatus;
   readonly unmanagedPath: string | null | undefined;
-  readonly " $fragmentSpreads": FragmentRefs<"VFolderPermissionCellV2Fragment" | "useVirtualFolderNodePathV2Fragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"useVirtualFolderNodePathV2Fragment">;
   readonly " $fragmentType": "VFolderNodeDescriptionV2Fragment";
 };
 export type VFolderNodeDescriptionV2Fragment$key = {
@@ -78,13 +73,6 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "entityId",
       "storageKey": null
     },
     {
@@ -153,13 +141,6 @@ return {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
-          "name": "permission",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
           "name": "ownershipType",
           "storageKey": null
         }
@@ -210,20 +191,6 @@ return {
       "name": "ownership",
       "plural": false,
       "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "userId",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "projectId",
-          "storageKey": null
-        },
         {
           "alias": null,
           "args": null,
@@ -289,11 +256,6 @@ return {
     {
       "args": null,
       "kind": "FragmentSpread",
-      "name": "VFolderPermissionCellV2Fragment"
-    },
-    {
-      "args": null,
-      "kind": "FragmentSpread",
       "name": "useVirtualFolderNodePathV2Fragment"
     }
   ],
@@ -302,6 +264,6 @@ return {
 };
 })();
 
-(node as any).hash = "5b7517f9bda5f798fd8b54628c781d4f";
+(node as any).hash = "946cb25aafcc8a386f0e16f82aca75fc";
 
 export default node;

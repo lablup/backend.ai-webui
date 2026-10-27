@@ -674,7 +674,6 @@ export async function createVFolderAndVerify(
   folderName: string,
   usageMode: 'general' | 'model' = 'general',
   type: 'user' | 'project' = 'user',
-  permission: 'rw' | 'ro' = 'rw',
 ) {
   await navigateTo(page, 'data');
   // VFolderNodeListPage's BAICard extra renders a single "Create Folder" button.
@@ -703,13 +702,8 @@ export async function createVFolderAndVerify(
     );
   }
 
-  // Select permission
-  if (permission === 'rw') {
-    await (await modal.getReadWritePermissionRadio()).click();
-  } else if (permission === 'ro') {
-    await (await modal.getReadOnlyPermissionRadio()).click();
-  }
-
+  // No mount permission step: every new folder is created read-only for
+  // shared users (#10647); the default is changed from the share modal.
   await (await modal.getCreateButton()).click();
   // Wait for the creation modal to close before verifying
   await expect(
