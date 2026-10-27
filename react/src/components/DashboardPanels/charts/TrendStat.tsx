@@ -81,14 +81,37 @@ const TrendStat: React.FC<TrendStatProps> = ({
     direction: delta.direction,
     sentiment: delta.sentiment,
   };
-  const deltaExplanation = delta?.window
-    ? t('dashboard.card.DeltaTooltip', {
-        previousSpan: formatBucketSpan(previousWindow(delta.window)),
-        previous: delta.previous.toLocaleString(),
-        currentSpan: formatBucketSpan(delta.window),
-        current: delta.current.toLocaleString(),
-      })
+  const rangeRows = delta?.window
+    ? [
+        {
+          key: 'previous',
+          label: t('dashboard.card.PreviousRange'),
+          count: delta.previous,
+          span: formatBucketSpan(previousWindow(delta.window)),
+        },
+        {
+          key: 'current',
+          label: t('dashboard.card.ThisRange'),
+          count: delta.current,
+          span: formatBucketSpan(delta.window),
+        },
+      ]
     : undefined;
+  const deltaExplanation = rangeRows ? (
+    <BAIFlex direction="column" align="start" gap="xs">
+      {rangeRows.map((row) => (
+        <BAIFlex key={row.key} direction="column" align="start">
+          <BAIFlex direction="row" align="baseline" gap="sm">
+            <Text>{row.label}</Text>
+            <Text weight="bold">{row.count.toLocaleString()}</Text>
+          </BAIFlex>
+          <Text size="sm" type="supporting">
+            {row.span}
+          </Text>
+        </BAIFlex>
+      ))}
+    </BAIFlex>
+  ) : undefined;
 
   if (!deltaExplanation) {
     return <Stat size="md" {...statProps} delta={statDelta} media={media} />;
