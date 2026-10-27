@@ -21,6 +21,7 @@ import {
   BAIFetchKeyButton,
   BAISkeleton,
   useFetchKey,
+  useIsInBAIBoardItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { ReactNode, Suspense, useTransition } from 'react';
@@ -46,6 +47,7 @@ const MyResource: React.FC<MyResourceProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
+  const isInBoard = useIsInBAIBoardItem();
   const currentProject = useCurrentProjectValue();
   const currentResourceGroup = useCurrentResourceGroupValue();
 
@@ -57,8 +59,13 @@ const MyResource: React.FC<MyResourceProps> = ({
       direction="column"
       align="stretch"
       style={{
-        paddingInline: token('--spacing-8'),
-        paddingBottom: token('--spacing-4'),
+        // On a board the board pads the item.
+        ...(isInBoard
+          ? {}
+          : {
+              paddingInline: token('--spacing-8'),
+              paddingBottom: token('--spacing-4'),
+            }),
         ...props.style,
       }}
       {..._.omit(props, ['style'])}

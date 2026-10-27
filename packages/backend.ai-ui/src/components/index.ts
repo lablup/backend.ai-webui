@@ -10,6 +10,10 @@ export type {
   BAIBoardProps,
 } from './BAIBoard';
 export { default as BAIBoardItemTitle } from './BAIBoardItemTitle';
+export {
+  BAIBoardItemInlineTitles,
+  useIsInBAIBoardItem,
+} from './BAIBoardItemTitleSlot';
 export type { BAIBoardItemTitleProps } from './BAIBoardItemTitle';
 export { default as BAIBulkEditFormItem } from './BAIBulkEditFormItem';
 export type { BAIBulkEditFormItemProps } from './BAIBulkEditFormItem';

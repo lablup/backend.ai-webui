@@ -154,7 +154,9 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
               // what it reported, or it snaps back.
               onItemsChange={(event) => {
                 onLayoutChange(
-                  _.map(event.detail.items, (item) => _.omit(item, 'data')),
+                  _.map(event.detail.items, (item) =>
+                    _.omit(item, ['data', 'title', 'description']),
+                  ),
                 );
               }}
             />

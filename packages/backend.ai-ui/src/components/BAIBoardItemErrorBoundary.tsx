@@ -3,6 +3,7 @@ import BAIAlertIconWithTooltip from './BAIAlertIconWithTooltip';
 import BAIBoardItemTitle, {
   type BAIBoardItemTitleProps,
 } from './BAIBoardItemTitle';
+import { useIsInBAIBoardItem } from './BAIBoardItemTitleSlot';
 import { useTheme } from '@lablup/ui-common/theme';
 import React, { type PropsWithChildren } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -21,6 +22,7 @@ const BAIBoardItemErrorBoundary: React.FC<BAIBoardItemErrorBoundaryProps> = ({
 }) => {
   const { t } = useBAIi18n();
   const { token } = useTheme();
+  const isInBoard = useIsInBAIBoardItem();
   return (
     <ErrorBoundary
       fallbackRender={() => {
@@ -29,8 +31,12 @@ const BAIBoardItemErrorBoundary: React.FC<BAIBoardItemErrorBoundaryProps> = ({
             data-bai-board-item-status={status}
             style={{
               height: '100%',
-              paddingInline: token('--spacing-8'),
-              paddingBottom: token('--spacing-4'),
+              ...(isInBoard
+                ? {}
+                : {
+                    paddingInline: token('--spacing-8'),
+                    paddingBottom: token('--spacing-4'),
+                  }),
               ...style,
             }}
           >

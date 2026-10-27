@@ -11,12 +11,11 @@ export const docs = {
     'board item',
     'dashboard',
     'title bar',
-    'sticky header',
     'card title',
   ],
   usage: {
     description:
-      'The header row of a dashboard board item: a title on the leading edge, an optional help tooltip beside it, and an action slot pushed to the trailing edge. It is ui-common `BoardItemTitle`, a row that sticks to the top of its scroll container and paints the container background behind itself, so a long panel body scrolls under the title instead of past it. A string `title` is rendered as a level-5 heading; anything else is rendered as given, which is how panels put a heading next to an inline control such as a resource-group selector. Use it for the panel sections that make up a dashboard board — `BAICard` remains the container for standalone cards.',
+      'The header row of a dashboard board item: a title on the leading edge, an optional help tooltip beside it, and an action slot pushed to the trailing edge. It is ui-common `BoardItemTitle`. Inside a `BAIBoard` item it renders into the item title row, which the board pads and keeps above the scrolling body; elsewhere it renders where it stands. A string `title` is rendered as a level-5 heading; anything else is rendered as given, which is how panels put a heading next to an inline control such as a resource-group selector. Use it for the panel sections that make up a dashboard board — `BAICard` remains the container for standalone cards.',
     bestPractices: [
       {
         guidance: true,
@@ -32,11 +31,6 @@ export const docs = {
         guidance: true,
         description:
           'Use `tooltip` for the "what is this panel" explanation instead of a paragraph under the header — it renders as a question-mark icon beside the title.',
-      },
-      {
-        guidance: false,
-        description:
-          'Overriding `position` or `top` through `style`; the sticky behaviour is the reason the component exists, and the z-index is tuned to sit above table fixed columns and below the app header.',
       },
       {
         guidance: false,

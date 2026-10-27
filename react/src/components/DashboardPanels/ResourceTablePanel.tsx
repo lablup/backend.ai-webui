@@ -35,8 +35,8 @@ export const boardSortsAtom = atom<
 
 /**
  * The generic executor for every table panel: title + table, in the SAME shell
- * as the built-in board items (paddingInline XL, title row with a refresh
- * button, scrollable content). The condition lives in the descriptor and is
+ * as the built-in board items (PanelFrame: the board's title row with a
+ * refresh button, scrollable content). The condition lives in the descriptor and is
  * expressed through the TITLE; it is edited only via the panel modal (edit
  * mode); a header sort on the board is temporary and never saved.
  */

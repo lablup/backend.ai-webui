@@ -275,6 +275,8 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
           movable
           resizable
           bordered
+          // Each graph draws its own title row and inset.
+          itemPadding={0}
           items={boardItems}
           onItemsChange={(event) => {
             // FIXME: This is a workaround for the issue where the board items are not updated correctly when resizing.

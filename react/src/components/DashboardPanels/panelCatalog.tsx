@@ -42,25 +42,12 @@ import type {
   PanelSize,
   PanelType,
 } from './types';
-import { useTheme } from '@lablup/ui-common/theme';
 import { BAIBoardItemErrorBoundary, BAISkeleton } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // Cards that predate the catalog, each wrapped as its page wrapped it; the
 // rest live in `cards/` (shared by pages), `memberCards/` and `superadminCards/`.
-
-const InlineSkeleton: React.FC = () => {
-  'use memo';
-  const { token } = useTheme();
-  return <BAISkeleton style={{ padding: `0px ${token('--spacing-5')}` }} />;
-};
-
-const PaddedSkeleton: React.FC = () => {
-  'use memo';
-  const { token } = useTheme();
-  return <BAISkeleton style={{ padding: token('--spacing-5') }} />;
-};
 
 const QuotaPerStorageVolumePanel: React.FC<PanelComponentProps> = () => {
   'use memo';
@@ -71,7 +58,7 @@ const QuotaPerStorageVolumePanel: React.FC<PanelComponentProps> = () => {
       title={t('data.QuotaPerStorageVolume')}
       status="error"
     >
-      <Suspense fallback={<PaddedSkeleton />}>
+      <Suspense fallback={<BAISkeleton />}>
         <QuotaPerStorageVolumeDashboardItem />
       </Suspense>
     </BAIBoardItemErrorBoundary>
@@ -81,7 +68,7 @@ const QuotaPerStorageVolumePanel: React.FC<PanelComponentProps> = () => {
 const AgentStatsPanel: React.FC<PanelComponentProps> = ({ queryRefs }) => {
   'use memo';
   return queryRefs.agentStatsQueryRef ? (
-    <Suspense fallback={<InlineSkeleton />}>
+    <Suspense fallback={<BAISkeleton />}>
       <AgentStats queryRef={queryRefs.agentStatsQueryRef} />
     </Suspense>
   ) : null;

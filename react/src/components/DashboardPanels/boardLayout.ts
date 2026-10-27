@@ -5,7 +5,10 @@
 import type { BAIBoardItem } from 'backend.ai-ui';
 
 /** A board item's persisted layout slice: id + spans + offset, no content. */
-export type BoardLayoutEntry = Omit<BAIBoardItem, 'data'>;
+export type BoardLayoutEntry = Omit<
+  BAIBoardItem,
+  'data' | 'title' | 'description'
+>;
 
 export interface ReconcileBoardLayoutInput {
   /** The layout as persisted (may be empty). */

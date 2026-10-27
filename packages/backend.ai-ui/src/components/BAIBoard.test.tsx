@@ -1,6 +1,9 @@
 import BAIBoard, { type BAIBoardItem } from './BAIBoard';
+import BAIBoardItemTitle from './BAIBoardItemTitle';
+import { BAIBoardItemInlineTitles } from './BAIBoardItemTitleSlot';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useState } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // jsdom has no layout: report a four-column width as soon as observed.
@@ -67,16 +70,98 @@ describe('BAIBoard', () => {
     expect(shell('Alpha')).toHaveClass('uic-board-item--bordered');
   });
 
-  it('lets a custom renderItem replace the default content', () => {
+  it('renders a BAIBoardItemTitle in the content as the item title row', () => {
     render(
       <BAIBoard
-        items={items}
-        renderItem={(item) => <h5>Custom {item.id}</h5>}
+        items={[
+          {
+            id: 'a',
+            rowSpan: 2,
+            columnSpan: 2,
+            data: {
+              content: (
+                <>
+                  <BAIBoardItemTitle title="Alpha" />
+                  <p>Body</p>
+                  <BAIBoardItemInlineTitles>
+                    <BAIBoardItemTitle title="Section" />
+                  </BAIBoardItemInlineTitles>
+                </>
+              ),
+            },
+          },
+        ]}
         onItemsChange={() => {}}
       />,
     );
-    expect(screen.getByRole('heading', { name: 'Custom a' })).toBeVisible();
-    expect(screen.queryByRole('heading', { name: 'Alpha' })).toBeNull();
+    const item = shell('Alpha');
+    const header = item.querySelector('.uic-board-item__header')!;
+    const content = item.querySelector('.uic-board-item__content')!;
+    expect(
+      within(header as HTMLElement).getByRole('heading'),
+    ).toHaveTextContent('Alpha');
+    expect(content).toHaveTextContent('Body');
+    expect(content).toHaveTextContent('Section');
+    expect(header).not.toHaveTextContent('Section');
+  });
+
+  it('passes an item with its own title and description through', () => {
+    render(
+      <BAIBoard
+        items={[{ id: 'a', title: 'Own', description: 'Text', data: {} }]}
+        onItemsChange={() => {}}
+      />,
+    );
+    expect(shell('Own')).toHaveTextContent('Text');
+    expect(document.querySelector('.bai-board-item-title-slot')).toBeNull();
+  });
+
+  it('keeps one title row and reports no title nodes over repeated moves', async () => {
+    const reported: Array<ReadonlyArray<BAIBoardItem>> = [];
+    const Controlled = () => {
+      const [state, setState] = useState(
+        items.map((item) => ({
+          ...item,
+          data: {
+            content: (
+              <BAIBoardItemTitle title={item.id === 'a' ? 'Alpha' : 'Beta'} />
+            ),
+          },
+        })),
+      );
+      return (
+        <BAIBoard
+          items={state}
+          movable
+          onItemsChange={({ detail }) => {
+            reported.push(detail.items);
+            setState([...detail.items]);
+          }}
+        />
+      );
+    };
+    render(<Controlled />);
+    for (let i = 0; i < 3; i++) {
+      within(shell('Beta'))
+        .getByRole('button', { name: 'Drag handle' })
+        .focus();
+      await userEvent.keyboard('{Enter}{ArrowLeft}{ArrowLeft}{Enter}');
+      within(shell('Beta'))
+        .getByRole('button', { name: 'Drag handle' })
+        .focus();
+      await userEvent.keyboard('{Enter}{ArrowRight}{ArrowRight}{Enter}');
+    }
+    expect(reported.length).toBeGreaterThanOrEqual(2);
+    for (const reportedItems of reported) {
+      for (const item of reportedItems) {
+        expect(item).not.toHaveProperty('title');
+        expect(item).not.toHaveProperty('description');
+      }
+    }
+    expect(
+      shell('Beta').querySelectorAll('.uic-board-item-title'),
+    ).toHaveLength(1);
+    expect(screen.getAllByRole('heading', { name: 'Beta' })).toHaveLength(1);
   });
 
   it('wraps a committed change as { detail } with the items in their new order', async () => {

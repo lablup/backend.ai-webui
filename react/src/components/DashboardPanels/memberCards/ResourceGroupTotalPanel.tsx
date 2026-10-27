@@ -7,8 +7,12 @@ import { useCurrentUserRole } from '../../../hooks/backendai';
 import TotalResourceWithinResourceGroup from '../../TotalResourceWithinResourceGroup';
 import PanelSettingsHeaderControls from '../PanelSettingsHeaderControls';
 import type { PanelComponentProps } from '../types';
-import { useTheme } from '@lablup/ui-common/theme';
-import { BAIBoardItemErrorBoundary, BAIFlex, BAISkeleton } from 'backend.ai-ui';
+import {
+  BAIBoardItemErrorBoundary,
+  BAIBoardItemInlineTitles,
+  BAIFlex,
+  BAISkeleton,
+} from 'backend.ai-ui';
 import React, { Suspense, useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -64,7 +68,6 @@ const ResourceGroupTotalPanel: React.FC<PanelComponentProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = useTheme();
   const resourceGroups = vars.resourceGroups;
   return (
     <BAIBoardItemErrorBoundary
@@ -73,19 +76,24 @@ const ResourceGroupTotalPanel: React.FC<PanelComponentProps> = ({
     >
       <BAIFlex direction="column" align="stretch" gap="sm">
         {resourceGroups.map((resourceGroup, index) => (
-          <Suspense
-            key={resourceGroup}
-            fallback={<BAISkeleton style={{ padding: token('--spacing-5') }} />}
-          >
-            <ResourceGroupTotal
-              resourceGroup={resourceGroup}
-              fetchKey={fetchKey}
-              isRefetching={isRefetching}
-              // Each group draws its own header; the first one's group name is the card's picker.
-              resourceGroupTitle={
-                index === 0 ? <PanelSettingsHeaderControls /> : undefined
-              }
-            />
+          <Suspense key={resourceGroup} fallback={<BAISkeleton />}>
+            {index === 0 ? (
+              <ResourceGroupTotal
+                resourceGroup={resourceGroup}
+                fetchKey={fetchKey}
+                isRefetching={isRefetching}
+                // The first group's header is the card's, its group name the card's picker.
+                resourceGroupTitle={<PanelSettingsHeaderControls />}
+              />
+            ) : (
+              <BAIBoardItemInlineTitles>
+                <ResourceGroupTotal
+                  resourceGroup={resourceGroup}
+                  fetchKey={fetchKey}
+                  isRefetching={isRefetching}
+                />
+              </BAIBoardItemInlineTitles>
+            )}
           </Suspense>
         ))}
       </BAIFlex>
