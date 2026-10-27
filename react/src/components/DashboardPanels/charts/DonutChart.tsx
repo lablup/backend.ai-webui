@@ -27,10 +27,6 @@ const LEGEND_WIDTH_GUESS = 224;
 // The `lg` gap between the ring and the legend.
 const LEGEND_GAP = 24;
 const ROW_HEIGHT = 32;
-// The hole's total scales with the ring so it reads like the stat values.
-const TOTAL_FONT_RATIO = 0.2;
-const TOTAL_FONT_MIN = 16;
-const TOTAL_FONT_MAX = 40;
 const COMPACT_ROW_HEIGHT = 24;
 
 interface LegendRow extends Record<string, unknown> {
@@ -122,13 +118,6 @@ const DonutChart: React.FC<DonutChartProps> = ({
   const hasRing = box.width > 0 && ringRoom >= RING_MIN;
   const ring = _.clamp(ringRoom, RING_MIN, RING_MAX);
   const chartSize = ring + 2 * CHART_LABEL_ROOM;
-  const totalStyle = {
-    fontSize: _.clamp(
-      Math.round(ring * TOTAL_FONT_RATIO),
-      TOTAL_FONT_MIN,
-      TOTAL_FONT_MAX,
-    ),
-  };
 
   // Zero-value slices stay in the legend only; drawn, their separators show as a gap.
   const chartRows = legendRows.filter((row) => row.value > 0);
@@ -195,14 +184,14 @@ const DonutChart: React.FC<DonutChartProps> = ({
                 }}
               >
                 {_.isNumber(total) ? (
-                  <span className="bai-donut-total" style={totalStyle}>
+                  <span className="bai-donut-total">
                     {total.toLocaleString()}
                   </span>
                 ) : null}
               </BAIFlex>
             </BAIFlex>
           ) : (
-            // An empty track the ring's size keeps the layout of the filled state.
+            // A box the ring's size keeps the layout of the filled state.
             <BAIFlex
               justify="center"
               align="center"
@@ -213,17 +202,9 @@ const DonutChart: React.FC<DonutChartProps> = ({
                 flex: 'none',
                 width: ring,
                 height: ring,
-                borderRadius: '50%',
-                border: `${Math.round(ring * 0.2)}px solid var(--color-border)`,
-                boxSizing: 'border-box',
               }}
             >
-              <span
-                className="bai-donut-total bai-donut-total--empty"
-                style={totalStyle}
-              >
-                0
-              </span>
+              <span className="bai-donut-total bai-donut-total--empty">0</span>
             </BAIFlex>
           )}
         </BAIFlex>
