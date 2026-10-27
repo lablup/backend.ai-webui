@@ -6,7 +6,7 @@ navTitle: Admin Features
 
 # Admin Features
 
-Superadmins and domain admins open the administration pages by choosing **Switch to Admin Console** in the user menu, and return to the user pages with **Switch to User Console**. Superadmins land on the administration pages right after logging in. While you are on these pages, the sidebar lists only the administration menus. User information registered in Backend.AI is listed under the **Users** menu. A super-admin can see all users' information, and create or deactivate users.
+Superadmins land on the administration pages right after logging in, and move between them and the user pages with **Switch to Admin Console** and **Switch to User Console** in the user menu. While you are on these pages, the sidebar lists only the administration menus. User information registered in Backend.AI is listed under the **Users** menu. A super-admin can see all users' information, and create or deactivate users.
 
 ![](../images/admin_user_page.png)
 
@@ -569,7 +569,7 @@ Backend.AI lets administrators define reusable **Prometheus query presets** that
 The presets are managed from the **Prometheus Preset** tab on the Admin Deployments page (`/admin/deployments?tab=prometheus-preset`).
 
 :::note[Superadmin only: live preview in the Auto Scaling Rule editor]
-When a superadmin opens the Auto Scaling Rule editor for a deployment, sets **Metric Source** to `Prometheus`, and selects a preset, a live **Current value** preview appears below the preset selector showing the latest metric value from Prometheus. This preview is only visible to superadmin accounts — regular users and domain admins do not see it.
+When a superadmin opens the Auto Scaling Rule editor for a deployment, sets **Metric Source** to `Prometheus`, and selects a preset, a live **Current value** preview appears below the preset selector showing the latest metric value from Prometheus. This preview is only visible to superadmin accounts.
 :::
 
 ![](../images/admin_prometheus_preset_list.png)
