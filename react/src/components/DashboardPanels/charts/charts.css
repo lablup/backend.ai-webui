@@ -56,8 +56,10 @@
     text-align: end;
     font-variant-numeric: tabular-nums;
   }
+  /* The stat values' size, so the total reads as one of them. */
   .bai-donut-total {
     color: var(--color-text-primary);
+    font-size: var(--font-size-xl);
     font-weight: var(--font-weight-semibold);
     font-variant-numeric: tabular-nums;
     line-height: 1;
