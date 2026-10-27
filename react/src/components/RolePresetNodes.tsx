@@ -13,9 +13,11 @@ import { IconButton } from '@lablup/ui-common/IconButton';
 import { Token } from '@lablup/ui-common/Token';
 import {
   BAIColumnType,
+  BAIEntityLabelTargetCell,
   BAITable,
   BAITableProps,
   tokenColorForTagColor,
+  useIsLabelableEntityType,
   useToggle,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -63,6 +65,7 @@ const RolePresetNodes: React.FC<RolePresetNodesProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const isLabelable = useIsLabelableEntityType('role_preset');
   const [hiddenColumnKeys, setHiddenColumnKeys] =
     useHiddenColumnKeysSetting('RolePresetList');
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
@@ -72,6 +75,7 @@ const RolePresetNodes: React.FC<RolePresetNodesProps> = ({
     graphql`
       fragment RolePresetNodesFragment on RolePreset @relay(plural: true) {
         id
+        entityId
         name
         scopeType
         autoAssign
@@ -138,6 +142,22 @@ const RolePresetNodes: React.FC<RolePresetNodesProps> = ({
       render: (updatedAt: string) =>
         updatedAt ? dayjs(updatedAt).format('YYYY-MM-DD HH:mm') : '-',
     },
+    // RolePreset carries no entityLabels field, so each row loads its own.
+    ...(isLabelable
+      ? [
+          {
+            key: 'labels',
+            title: t('entityLabel.Labels'),
+            render: (_value: unknown, record: RolePresetNodeInList) => (
+              <BAIEntityLabelTargetCell
+                entityType="role_preset"
+                entityId={record.entityId}
+                name={record.name ?? undefined}
+              />
+            ),
+          },
+        ]
+      : []),
   ];
 
   const allColumns = customizeColumns ? customizeColumns(columns) : columns;

@@ -16,10 +16,12 @@ import { Token } from '@lablup/ui-common/Token';
 import {
   BAIColumnType,
   BAIDoubleToken,
+  BAIEntityLabelTargetCell,
   BAIFlex,
   BAIId,
   BAITable,
   BAITableProps,
+  useIsLabelableEntityType,
   useToggle,
   tokenColorForTagColor,
   tokenColorForStatus,
@@ -63,6 +65,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const isLabelable = useIsLabelableEntityType('role');
   const [hiddenColumnKeys, setHiddenColumnKeys] =
     useHiddenColumnKeysSetting('RoleList');
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
@@ -235,6 +238,22 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
       render: (updatedAt: string) =>
         updatedAt ? dayjs(updatedAt).format('YYYY-MM-DD HH:mm') : '-',
     },
+    // Role carries no entityLabels field, so each row loads its own.
+    ...(isLabelable
+      ? [
+          {
+            key: 'labels',
+            title: t('entityLabel.Labels'),
+            render: (_value: unknown, record: RoleNodeInList) => (
+              <BAIEntityLabelTargetCell
+                entityType="role"
+                entityId={record.entityId}
+                name={record.name}
+              />
+            ),
+          },
+        ]
+      : []),
   ];
 
   const allColumns = customizeColumns ? customizeColumns(columns) : columns;
