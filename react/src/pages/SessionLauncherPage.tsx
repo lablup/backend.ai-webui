@@ -552,6 +552,15 @@ const SessionLauncherPage = () => {
         // If there are any failed session creations, show the first error message
         if (results?.rejected && results.rejected.length > 0) {
           const error = results.rejected[0].reason;
+          // `api_generic_invalid-parameters` is shared by all invalid-parameter
+          // failures, so match the resource-group case by its message instead.
+          const noAgentResourceGroup = (
+            error?.msg ||
+            error?.message ||
+            ''
+          ).match(
+            /resource group '(.+?)' has no agents serving any resource slot/,
+          )?.[1];
           if (error?.error_code === 'session_create_already-exists') {
             app.modal.error({
               title: t('session.launcher.SessionAlreadyExists'),
@@ -568,6 +577,16 @@ const SessionLauncherPage = () => {
             app.modal.error({
               title: t('session.launcher.VFolderNotFound'),
               content: getErrorMessage(error),
+            });
+          } else if (noAgentResourceGroup !== undefined) {
+            app.modal.error({
+              title: t('session.launcher.NoAvailableAgentInResourceGroup'),
+              content: t(
+                'session.launcher.NoAvailableAgentInResourceGroupDesc',
+                {
+                  resourceGroup: noAgentResourceGroup,
+                },
+              ),
             });
           } else {
             app.modal.error({

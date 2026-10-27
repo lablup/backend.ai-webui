@@ -3166,6 +3166,8 @@
       "NeoSwitchDescription": "Bạn đang sử dụng trình khởi chạy phiên \"{{launcher}}\".",
       "Network": "Mạng",
       "NoActiveKeypair": "Không có cặp khóa hoạt động",
+      "NoAvailableAgentInResourceGroup": "Không có agent khả dụng trong nhóm tài nguyên",
+      "NoAvailableAgentInResourceGroupDesc": "Nhóm tài nguyên \"{{resourceGroup}}\" hiện không có agent nào có thể phục vụ các slot tài nguyên được yêu cầu. Hãy chọn nhóm tài nguyên khác hoặc liên hệ với quản trị viên.",
       "NoAvailableFolderToMount": "Không có thư mục có sẵn để gắn kết.",
       "NoDescriptionFound": "Không tìm thấy mô tả.",
       "NoEnvConfigured": "Không có biến môi trường bổ sung nào được cấu hình",

@@ -3151,6 +3151,8 @@
       "NeoSwitchDescription": "You are using the \"{{launcher}}\" session launcher.",
       "Network": "Network",
       "NoActiveKeypair": "No Active Keypair",
+      "NoAvailableAgentInResourceGroup": "No available agent in the resource group",
+      "NoAvailableAgentInResourceGroupDesc": "The resource group \"{{resourceGroup}}\" currently has no agents that can serve the requested resource slots. Select a different resource group, or contact your administrator.",
       "NoAvailableFolderToMount": "There's no available folder to mount.",
       "NoDescriptionFound": "No description found.",
       "NoEnvConfigured": "No additional environment variable is configured",

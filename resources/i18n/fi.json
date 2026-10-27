@@ -3164,6 +3164,8 @@
       "NeoSwitchDescription": "Käytät \"{{launcher}}\"-istunnon käynnistintä.",
       "Network": "Verkko",
       "NoActiveKeypair": "Ei aktiivista avainparia",
+      "NoAvailableAgentInResourceGroup": "Resurssiryhmässä ei ole käytettävissä agentteja",
+      "NoAvailableAgentInResourceGroupDesc": "Resurssiryhmässä \"{{resourceGroup}}\" ei tällä hetkellä ole agentteja, jotka voivat palvella pyydettyjä resurssipaikkoja. Valitse toinen resurssiryhmä tai ota yhteyttä ylläpitäjään.",
       "NoAvailableFolderToMount": "Liitettävää kansiota ei ole saatavilla.",
       "NoDescriptionFound": "Kuvausta ei löytynyt.",
       "NoEnvConfigured": "Ylimääräistä ympäristömuuttujaa ei ole määritetty",

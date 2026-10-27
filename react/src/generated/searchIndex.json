@@ -4831,6 +4831,8 @@
         "session.launcher.MultiNode",
         "session.launcher.MultiNodeShort",
         "session.launcher.Network",
+        "session.launcher.NoAvailableAgentInResourceGroup",
+        "session.launcher.NoAvailableAgentInResourceGroupDesc",
         "session.launcher.NoFolderMounted",
         "session.launcher.Node",
         "session.launcher.NumOpenBLASthreads",

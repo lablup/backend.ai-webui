@@ -3166,6 +3166,8 @@
       "NeoSwitchDescription": "Sie verwenden den \"{{launcher}}\"-Sitzungsstarter.",
       "Network": "Netzwerk",
       "NoActiveKeypair": "Kein aktives Schlüsselpaar",
+      "NoAvailableAgentInResourceGroup": "Kein verfügbarer Agent in der Ressourcengruppe",
+      "NoAvailableAgentInResourceGroupDesc": "Die Ressourcengruppe \"{{resourceGroup}}\" hat derzeit keine Agents, die die angeforderten Ressourcen-Slots bereitstellen können. Wählen Sie eine andere Ressourcengruppe oder wenden Sie sich an Ihren Administrator.",
       "NoAvailableFolderToMount": "Es gibt keinen verfügbaren Ordner zum Einhängen.",
       "NoDescriptionFound": "Keine Beschreibung gefunden.",
       "NoEnvConfigured": "Es ist keine zusätzliche Umgebungsvariable konfiguriert",

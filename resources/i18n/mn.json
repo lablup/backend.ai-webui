@@ -3166,6 +3166,8 @@
       "NeoSwitchDescription": "Та \"{{launcher}}\" сесс эхлүүлэгч ашиглаж байна.",
       "Network": "Сүлжээ",
       "NoActiveKeypair": "Идэвхтэй товчлуур байхгүй",
+      "NoAvailableAgentInResourceGroup": "Ресурсийн бүлэгт ашиглах боломжтой агент байхгүй байна",
+      "NoAvailableAgentInResourceGroupDesc": "Ресурсийн \"{{resourceGroup}}\" бүлэгт хүсэлтэд заасан нөөцийн слотыг хангах агент одоогоор байхгүй байна. Өөр ресурсийн бүлэг сонгох эсвэл админтай холбогдоно уу.",
       "NoAvailableFolderToMount": "Холбох боломжтой фолдер байхгүй байна.",
       "NoDescriptionFound": "Тайлбар олдсонгүй.",
       "NoEnvConfigured": "Environment тохируулагдаагүй байна",

@@ -3166,6 +3166,8 @@
       "NeoSwitchDescription": "あなたは「{{launcher}}」セッション・ランチャーを使用しています。",
       "Network": "ネットワーク",
       "NoActiveKeypair": "アクティブなキーペアがありません",
+      "NoAvailableAgentInResourceGroup": "リソースグループに利用可能なエージェントがありません",
+      "NoAvailableAgentInResourceGroupDesc": "リソースグループ \"{{resourceGroup}}\" には、リクエストされたリソーススロットを提供できるエージェントがありません。別のリソースグループを選択するか、管理者にお問い合わせください。",
       "NoAvailableFolderToMount": "マウントできるフォルダがありません。",
       "NoDescriptionFound": "説明が見つかりません。",
       "NoEnvConfigured": "追加された環境変数がありません。",

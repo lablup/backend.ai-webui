@@ -3150,6 +3150,8 @@
       "NeoSwitchDescription": "คุณกำลังใช้ตัวเรียกใช้เซสชัน \"{{launcher}}\"",
       "Network": "เครือข่าย",
       "NoActiveKeypair": "ไม่มีคู่กุญแจที่ใช้งานอยู่",
+      "NoAvailableAgentInResourceGroup": "ไม่มีเอเจนต์ที่พร้อมใช้งานในกลุ่มทรัพยากร",
+      "NoAvailableAgentInResourceGroupDesc": "กลุ่มทรัพยากร \"{{resourceGroup}}\" ไม่มีเอเจนต์ที่สามารถให้บริการช่องทรัพยากรที่ร้องขอได้ในขณะนี้ โปรดเลือกกลุ่มทรัพยากรอื่นหรือติดต่อผู้ดูแลระบบ",
       "NoAvailableFolderToMount": "ไม่มีโฟลเดอร์ที่พร้อมเมาท์",
       "NoDescriptionFound": "ไม่พบคำอธิบาย",
       "NoEnvConfigured": "ไม่มีการกำหนดค่าตัวแปรสภาพแวดล้อมเพิ่มเติม",
