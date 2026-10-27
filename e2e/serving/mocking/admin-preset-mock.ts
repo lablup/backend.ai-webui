@@ -62,6 +62,7 @@ function buildRuntimeVariantNode() {
   return {
     __typename: 'RuntimeVariant',
     id: btoa(`RuntimeVariant:${MOCK_RUNTIME_VARIANT_UUID}`),
+    entityId: MOCK_RUNTIME_VARIANT_UUID,
     name: 'custom',
     readsVfolderConfigFiles: true,
   };
@@ -192,6 +193,7 @@ export function buildCreatedPreset(): Record<string, unknown> {
   return {
     __typename: 'DeploymentRevisionPreset',
     id: btoa(`DeploymentRevisionPreset:${MOCK_CREATED_PRESET_UUID}`),
+    entityId: MOCK_CREATED_PRESET_UUID,
     name: 'mock-created-preset',
     description: null,
     runtimeVariantId: btoa(`RuntimeVariant:${MOCK_RUNTIME_VARIANT_UUID}`),

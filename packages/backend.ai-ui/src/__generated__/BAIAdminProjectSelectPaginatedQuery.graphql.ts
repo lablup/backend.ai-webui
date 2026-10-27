@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8514404b4eef5cea028911f2fc7a6208>>
+ * @generated SignedSource<<ac5b6a301ef7f84d6c4f00cc6ffd19c0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -89,6 +89,7 @@ export type BAIAdminProjectSelectPaginatedQuery$data = {
         readonly basicInfo: {
           readonly name: string;
         };
+        readonly entityId: string;
         readonly id: string;
       };
     }>;
@@ -183,6 +184,13 @@ v3 = [
               {
                 "alias": null,
                 "args": null,
+                "kind": "ScalarField",
+                "name": "entityId",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
                 "concreteType": "ProjectBasicInfo",
                 "kind": "LinkedField",
                 "name": "basicInfo",
@@ -234,16 +242,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "86548d27e69f0aca7150dd91071f424a",
+    "cacheID": "bd5f606eca9f7bda49cfb3391b17c896",
     "id": null,
     "metadata": {},
     "name": "BAIAdminProjectSelectPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIAdminProjectSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: ProjectV2Filter\n) {\n  adminProjectsV2(offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: ASC}]) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIAdminProjectSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: ProjectV2Filter\n) {\n  adminProjectsV2(offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: ASC}]) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d89e2c836b89b0dd19d61cf9f43099f0";
+(node as any).hash = "4d29b458f841bf78afbcccaae9a3fa62";
 
 export default node;

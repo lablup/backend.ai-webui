@@ -10,7 +10,6 @@ import {
 import { App } from '../app-shim';
 import ActionItemContent from '../components/ActionItemContent';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
-import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import TerminateSessionModal from '../components/ComputeSessionNodeItems/TerminateSessionModal';
 import ConfigurableResourceCard from '../components/ConfigurableResourceCard';
@@ -31,10 +30,6 @@ import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import { Grid, GridSpan } from '@lablup/ui-common/Grid';
 import { IconButton } from '@lablup/ui-common/IconButton';
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@lablup/ui-common/SegmentedControl';
 import { Text } from '@lablup/ui-common/Text';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import * as stylex from '@stylexjs/stylex';
@@ -54,6 +49,8 @@ import {
   useBAIBreakpoint,
   useBAILogger,
   useFetchKey,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { LayoutGridIcon, PowerOffIcon, TableIcon } from 'lucide-react';
@@ -462,25 +459,25 @@ const ComputeSessionListPage = () => {
               }}
               wrap="wrap"
             >
-              <BAIRadioGroup
-                optionType="button"
+              <BAISegmentedControl
                 value={queryParams.statusCategory}
-                onChange={(e) => {
-                  setQueryParams({ statusCategory: e.target.value });
+                onChange={(value) => {
+                  setQueryParams({
+                    statusCategory: value as typeof queryParams.statusCategory,
+                  });
                   setTablePaginationOption({ current: 1 });
                   setSelectedSessionList([]);
                 }}
-                options={[
-                  {
-                    label: t('session.Running'),
-                    value: 'running',
-                  },
-                  {
-                    label: t('session.Finished'),
-                    value: 'finished',
-                  },
-                ]}
-              />
+              >
+                <BAISegmentedControlItem
+                  value="running"
+                  label={t('session.Running')}
+                />
+                <BAISegmentedControlItem
+                  value="finished"
+                  label={t('session.Finished')}
+                />
+              </BAISegmentedControl>
               <BAIPropertyFilter
                 filterProperties={[
                   {
@@ -525,7 +522,7 @@ const ComputeSessionListPage = () => {
                 </>
               )}
               {experimentalSessionResourceGrid && (
-                <SegmentedControl
+                <BAISegmentedControl
                   aria-label={t('session.resourceGrid.ViewMode')}
                   value={queryParams.view}
                   onChange={(value) =>
@@ -533,7 +530,7 @@ const ComputeSessionListPage = () => {
                   }
                 >
                   <Tooltip content={t('session.resourceGrid.TableView')}>
-                    <SegmentedControlItem
+                    <BAISegmentedControlItem
                       value="table"
                       label={t('session.resourceGrid.TableView')}
                       isLabelHidden
@@ -541,14 +538,14 @@ const ComputeSessionListPage = () => {
                     />
                   </Tooltip>
                   <Tooltip content={t('session.resourceGrid.GridView')}>
-                    <SegmentedControlItem
+                    <BAISegmentedControlItem
                       value="grid"
                       label={t('session.resourceGrid.GridView')}
                       isLabelHidden
                       icon={<LayoutGridIcon size="1em" />}
                     />
                   </Tooltip>
-                </SegmentedControl>
+                </BAISegmentedControl>
               )}
               <AutoUpdateFetchKeyButton
                 settingId="session-list"

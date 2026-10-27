@@ -34,6 +34,8 @@ export type BAIThemeFamily = {
   seeds?: BAIThemeSeeds;
   /** Header band background (was `components.Layout.headerBg`). */
   headerBg?: BAIThemeSeedValue;
+  /** Header band background on system admin pages. */
+  headerBgAdmin?: BAIThemeSeedValue;
 };
 
 export type BAIThemeConfig = {

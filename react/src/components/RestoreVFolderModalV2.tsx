@@ -10,7 +10,6 @@ import { Text } from '@lablup/ui-common/Text';
 import {
   BAIModal,
   type BAIModalProps,
-  toLocalId,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -45,6 +44,7 @@ const RestoreVFolderModalV2: React.FC<RestoreVFolderModalV2Props> = ({
     graphql`
       fragment RestoreVFolderModalV2Fragment on VFolder @relay(plural: true) {
         id
+        entityId
         metadata {
           name
         }
@@ -57,7 +57,7 @@ const RestoreVFolderModalV2: React.FC<RestoreVFolderModalV2Props> = ({
   // exposes one. Today only a per-folder `restoreVFolder` mutation exists, so
   // bulk restore commits one mutation per folder and aggregates results,
   // mirroring the legacy modal.
-  const restoreSingle = (id: string) =>
+  const restoreSingle = (vfolderId: string) =>
     new Promise<void>((resolve, reject) => {
       commitMutation<RestoreVFolderModalV2Mutation>(environment, {
         mutation: graphql`
@@ -67,7 +67,7 @@ const RestoreVFolderModalV2: React.FC<RestoreVFolderModalV2Props> = ({
             }
           }
         `,
-        variables: { vfolderId: toLocalId(id) },
+        variables: { vfolderId },
         onCompleted: (_data, errors) => {
           if (errors && errors.length > 0) {
             reject(errors[0]);
@@ -91,7 +91,7 @@ const RestoreVFolderModalV2: React.FC<RestoreVFolderModalV2Props> = ({
       confirmLoading={isRestoring}
       onOk={() => {
         const promises = _.map(vfolders, (vfolder) =>
-          restoreSingle(vfolder.id).catch((error) => {
+          restoreSingle(vfolder.entityId).catch((error) => {
             upsertNotification({
               message: getErrorMessage(error),
               description: error?.description,

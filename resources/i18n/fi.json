@@ -3730,6 +3730,18 @@
     "TypeInAuthKey": "Vaihtoehtoisesti voit kirjoittaa alla olevan todennuskoodin manuaalisesti."
   },
   "tourGuide": {
+    "adminViewSwitch": {
+      "AdminLandingMenuText": "Avaa käyttäjäprofiilivalikko oikeasta yläkulmasta: \"Vaihda käyttäjäkonsoliin\" vie käyttäjäsivuille ja \"Vaihda ylläpitäjän konsoliin\" tuo sinut takaisin tänne.",
+      "AdminLandingMenuTitle": "Ylläpitäjän asetukset siirtyivät profiilivalikkoon",
+      "AdminLandingStartText": "Kirjautumisen jälkeen siirryt nyt suoraan ylläpitäjän asetuksiin käyttäjäsivujen sijaan.",
+      "AdminLandingStartTitle": "Aloitat ylläpitäjän asetuksista",
+      "AdminLandingText": "Näin näkymä muuttui.",
+      "AdminLandingTitle": "Pääylläpitäjän näkymä on muuttunut",
+      "BackToAdminSettingsText": "Palataksesi ylläpitäjän asetuksiin avaa tämä valikko ja valitse \"Vaihda ylläpitäjän konsoliin\".",
+      "BackToAdminSettingsTitle": "Paluu ylläpitäjän asetuksiin",
+      "BackToUserViewText": "Olet ylläpitäjän asetuksissa. Käyttääksesi istuntoja, dataa ja muita käyttäjäsivuja avaa tämä valikko ja valitse \"Vaihda käyttäjäkonsoliin\".",
+      "BackToUserViewTitle": "Siirtyminen käyttäjänäkymään"
+    },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "Jos virhekenttä on, Luo tai Tallenna -painike ei ole käytössä. Korjaa virhe ja yritä uudelleen.",
       "FixErrorFieldByModifyButton": "Voit muokata virhekenttää suoraan oikeassa yläkulmassa olevasta Muokkaa-painikkeesta.",
@@ -3770,7 +3782,6 @@
     "BootstrapScriptEmpty": "Käsikirjoitus on tyhjä. \nAnna käsikirjoitus.",
     "BootstrapScriptUpdated": "Bootstrap-skripti päivitetty.",
     "ClearSSHKeypairInput": "Kirjoitettu SSH-avainpari poistetaan. Haluatko varmasti jatkaa?",
-    "CommandPalette": "Komentopaletti",
     "ConfigFilename": "Konfigurointitiedoston nimi",
     "CurrentSSHPublicKey": "Nykyinen julkinen avain",
     "CustomDashboardPanels": "Mukautetut koontinäytön paneelit",
@@ -4013,6 +4024,7 @@
       "ProjectDeployments": "Käyttöönotot",
       "ProjectMembers": "Käyttäjät",
       "ProjectSessions": "Istunnot",
+      "ProjectSettings": "Projektin asetukset",
       "Projects": "Hankkeet",
       "PrometheusPreset": "Prometheus-esiasetus",
       "RBACManagement": "RBAC-hallinta",
@@ -4030,6 +4042,8 @@
       "Start": "Aloita",
       "Statistics": "Tilastot",
       "Summary": "Yhteenveto",
+      "SwitchToAdminConsole": "Vaihda ylläpitäjän konsoliin",
+      "SwitchToUserConsole": "Vaihda käyttäjäkonsoliin",
       "Tasks": "Tehtävät",
       "TermsOfService": "Käyttöehdot",
       "TotalResourcesIn": "Resurssien kokonaismäärä",

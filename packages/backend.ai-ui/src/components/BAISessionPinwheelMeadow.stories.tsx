@@ -1,12 +1,10 @@
 import BAIFlex from './BAIFlex';
+import BAISegmentedControl from './BAISegmentedControl';
+import BAISegmentedControlItem from './BAISegmentedControlItem';
 import BAISessionCrowdScene from './BAISessionCrowdScene';
 import BAISessionPinwheelMeadow from './BAISessionPinwheelMeadow';
 import { FINDERS, SESSIONS, toFigure, ZONES } from './SessionScene.fixtures';
 import type { BAICrowdFigure, BAICrowdFigureMood } from './SessionSceneParts';
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@lablup/ui-common/SegmentedControl';
 import { Text } from '@lablup/ui-common/Text';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
@@ -128,10 +126,14 @@ export const CompareWithCrowd: Story = {
     return (
       <BAIFlex direction="column" align="stretch" gap="sm">
         <BAIFlex gap="sm" align="center">
-          <SegmentedControl aria-label="View" value={view} onChange={setView}>
-            <SegmentedControlItem value="meadow" label="Pinwheel meadow" />
-            <SegmentedControlItem value="crowd" label="Crowd" />
-          </SegmentedControl>
+          <BAISegmentedControl
+            aria-label="View"
+            value={view}
+            onChange={setView}
+          >
+            <BAISegmentedControlItem value="meadow" label="Pinwheel meadow" />
+            <BAISegmentedControlItem value="crowd" label="Crowd" />
+          </BAISegmentedControl>
           <Text type="supporting">
             last clicked: {picked ? `${picked.name} (${picked.owner})` : '—'}
           </Text>

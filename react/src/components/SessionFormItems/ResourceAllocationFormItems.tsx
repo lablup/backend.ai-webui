@@ -40,7 +40,6 @@ import SharedMemoryFormItems from './SharedMemoryFormItems';
 // and every control and every piece of chrome below is Astryx now.
 import { Card } from '@lablup/ui-common/Card';
 import { IconButton } from '@lablup/ui-common/IconButton';
-import { SegmentedControl } from '@lablup/ui-common/SegmentedControl';
 import { VStack } from '@lablup/ui-common/Stack';
 import { useTheme } from '@lablup/ui-common/theme';
 import { spacingVars } from '@lablup/ui-common/theme/tokens.stylex';
@@ -55,6 +54,7 @@ import {
   useEventNotStable,
   useProjectResourceGroups,
   useUpdatableState,
+  BAISegmentedControl,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { RotateCw } from 'lucide-react';
@@ -212,8 +212,7 @@ const clusterModeSegmentedStyles = stylex.create({
 /**
  * Cluster-mode segmented control — the twin of the one in
  * `ClusterModeFormItems`, declared locally for the same reason: each option
- * carries a help tooltip that the shared `AstryxFormSegmented` option shape
- * does not model. The two `Form.Item` contracts are honoured inline.
+ * carries a help tooltip.
  */
 const ClusterModeSegmented: React.FC<{
   label: string;
@@ -226,7 +225,7 @@ const ClusterModeSegmented: React.FC<{
 }> = ({ label, onValueChange, items, value, onChange }) => {
   'use memo';
   return (
-    <SegmentedControl
+    <BAISegmentedControl
       aria-label={label}
       value={value ?? items[0]?.value ?? ''}
       xstyle={clusterModeSegmentedStyles.control}
@@ -252,7 +251,7 @@ const ClusterModeSegmented: React.FC<{
           }
         />
       ))}
-    </SegmentedControl>
+    </BAISegmentedControl>
   );
 };
 

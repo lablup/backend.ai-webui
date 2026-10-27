@@ -29,7 +29,7 @@
 import { BAIAvailablePresetSelectCardScopedQuery } from '../../__generated__/BAIAvailablePresetSelectCardScopedQuery.graphql';
 import { BAIAvailablePresetSelectPaginatedQuery } from '../../__generated__/BAIAvailablePresetSelectPaginatedQuery.graphql';
 import { BAIAvailablePresetSelectValueQuery } from '../../__generated__/BAIAvailablePresetSelectValueQuery.graphql';
-import { convertToUUID, toLocalId } from '../../helper';
+import { convertToUUID } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useControllableValue, useFetchKey } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -141,6 +141,7 @@ const BAIAvailablePresetSelect: React.FC<BAIAvailablePresetSelectProps> = ({
             edges {
               node {
                 id
+                entityId
                 name
                 description
               }
@@ -205,6 +206,7 @@ const BAIAvailablePresetSelect: React.FC<BAIAvailablePresetSelectProps> = ({
           edges {
             node {
               id
+              entityId
               name
               description
               rank
@@ -257,6 +259,7 @@ const BAIAvailablePresetSelect: React.FC<BAIAvailablePresetSelectProps> = ({
           edges {
             node {
               id
+              entityId
               name
               description
               rank
@@ -308,10 +311,10 @@ const BAIAvailablePresetSelect: React.FC<BAIAvailablePresetSelectProps> = ({
     [updateFetchKey, startRefetchTransition],
   );
 
-  // id-valued (class B): the raw UUID (`toLocalId`), never the Relay global id.
+  // id-valued (class B): the raw UUID (`entityId`), never the Relay global id.
   const keyOfNode = (
-    node: { id: string } | null | undefined,
-  ): string | undefined => (node?.id ? toLocalId(node.id) : undefined);
+    node: { entityId: string } | null | undefined,
+  ): string | undefined => node?.entityId;
 
   // Flat list, RANK-ordered — see header PILOT-DECISION on the dropped
   // runtime-variant optgroup grouping.

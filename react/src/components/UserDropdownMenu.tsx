@@ -3,15 +3,23 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { UserDropdownMenuQuery } from '../__generated__/UserDropdownMenuQuery.graphql';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import {
   useCurrentUserInfo,
   useCurrentUserRole,
   useTOTPSupported,
 } from '../hooks/backendai';
+import { useBackToUserView } from '../hooks/useBackToUserView';
+import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { useOpenHelp } from '../hooks/useHelpURL';
+import { useActiveProjectName, useRouteScope } from '../hooks/useRouteScope';
 import { useThemeMode } from '../hooks/useThemeMode';
+import {
+  getPathFromMenuKey,
+  useWebUIMenuItems,
+} from '../hooks/useWebUIMenuItems';
 import AboutBackendAIModal from './AboutBackendAIModal';
+import AdminViewSwitchTour from './AdminViewSwitchTour';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useUserSettingsModal } from './UserSettingsModalOpener';
 import {
@@ -38,6 +46,7 @@ import {
   Sun,
   Moon,
   CircleHelp,
+  ArrowLeftRight,
 } from 'lucide-react';
 import React, { CSSProperties, Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -84,6 +93,18 @@ const UserDropdownMenu: React.FC<{
     useToggle(false);
 
   const userRole = useCurrentUserRole();
+  const webuiNavigate = useWebUINavigate();
+  const activeProjectName = useActiveProjectName();
+  const effectiveAdminRole = useEffectiveAdminRole();
+  const { firstAvailableAdminMenuItem } = useWebUIMenuItems();
+  const backToUserView = useBackToUserView();
+  const isSystemAdminScope = useRouteScope() === 'admin';
+  // A project admin's admin menu is project-scoped; the sider's Project
+  // Settings item serves it, so this entry is for system admins only.
+  const systemAdminMenuItem =
+    effectiveAdminRole === 'superadmin' || effectiveAdminRole === 'domainAdmin'
+      ? firstAvailableAdminMenuItem
+      : null;
 
   // The settings surface is a modal over the current page, not a route.
   const { open: openUserSettings } = useUserSettingsModal();
@@ -144,6 +165,22 @@ const UserDropdownMenu: React.FC<{
       icon: <ShieldCheck size="1em" />,
       isDisabled: true,
     },
+    systemAdminMenuItem &&
+      (isSystemAdminScope
+        ? {
+            label: t('webui.menu.SwitchToUserConsole'),
+            icon: <ArrowLeftRight size="1em" />,
+            onClick: backToUserView,
+          }
+        : {
+            label: t('webui.menu.SwitchToAdminConsole'),
+            icon: <ArrowLeftRight size="1em" />,
+            onClick: () => {
+              webuiNavigate(
+                getPathFromMenuKey(systemAdminMenuItem.key, activeProjectName),
+              );
+            },
+          }),
     { type: 'divider' },
     {
       label: t('webui.menu.AboutBackendAI'),
@@ -274,6 +311,7 @@ const UserDropdownMenu: React.FC<{
           text colour without adding a layout box. */}
       <div style={{ display: 'contents', color: 'var(--color-text-primary)' }}>
         <ErrorBoundaryWithNullFallback>
+          <AdminViewSwitchTour />
           <Suspense>
             {isOpenUserSettingModal && (
               <BAIUnmountAfterClose>

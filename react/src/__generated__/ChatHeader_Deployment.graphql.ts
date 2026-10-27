@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6805d37d3701f399a0845d1037e1effc>>
+ * @generated SignedSource<<3a43e91d68bcbf0268df3e291f4328b0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type ChatHeader_Deployment$data = {
+  readonly entityId: string;
   readonly id: string;
   readonly metadata: {
     readonly name: string;
@@ -38,6 +39,13 @@ const node: ReaderFragment = {
     {
       "alias": null,
       "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "ModelDeploymentMetadata",
       "kind": "LinkedField",
       "name": "metadata",
@@ -58,6 +66,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "80ce4c974ef3c2a4c084d7be12b094fe";
+(node as any).hash = "1daf3f550ff7bd1d3ab0fb8efa329280";
 
 export default node;

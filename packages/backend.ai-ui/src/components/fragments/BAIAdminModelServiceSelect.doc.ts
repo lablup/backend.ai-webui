@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'Admin-scoped picker for a model service (deployment), built on BAIComplexSelect and backed by the `adminDeployments` connection. It runs the page query itself — 10 rows at a time, extended by `loadNext` when the popup scrolls to the bottom, refetched with a debounced `name contains` filter as the user types — and labels each option with the deployment `metadata.name`, falling back to the UUID when the name is missing. The emitted value is the deployment UUID (`toLocalId` of the node id). A second query resolves the label of the selected value through the single-node `deployment(id:)` field, because `DeploymentFilter` has no id-based filter; it therefore resolves only the FIRST selected key, so in `multiple` mode every further selection shows its raw UUID as the label until that row is loaded into a page again. Both queries use `useLazyLoadQuery`, so render it inside a Suspense boundary; `label` is required by BAIComplexSelect, and every prop not listed below is forwarded to it — except `options`, `value`, `onChange`, `searchValue`, `onSearch` and `total`, which this wrapper owns and omits from its props type.',
+      'Admin-scoped picker for a model service (deployment), built on BAIComplexSelect and backed by the `adminDeployments` connection. It runs the page query itself — 10 rows at a time, extended by `loadNext` when the popup scrolls to the bottom, refetched with a debounced `name contains` filter as the user types — and labels each option with the deployment `metadata.name`, falling back to the UUID when the name is missing. The emitted value is the deployment UUID (the node `entityId`). A second query resolves the labels of every selected value through an `entityId` `in` filter on `adminDeployments`. Both queries use `useLazyLoadQuery`, so render it inside a Suspense boundary; `label` is required by BAIComplexSelect, and every prop not listed below is forwarded to it — except `options`, `value`, `onChange`, `searchValue`, `onSearch` and `total`, which this wrapper owns and omits from its props type.',
     bestPractices: [
       {
         guidance: true,
@@ -26,22 +26,12 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Render it inside a Suspense boundary; the page query and the single-deployment label query both suspend on first load.',
-      },
-      {
-        guidance: true,
-        description:
-          'Prefer it in single-selection mode, where the label of the selected deployment always resolves; `multiple` mode can only resolve the first key.',
+          'Render it inside a Suspense boundary; the page query and the selected-label query both suspend on first load.',
       },
       {
         guidance: true,
         description:
           'Pass the emitted value straight into inputs that expect a deployment UUID — it is the local id, not a Relay global id.',
-      },
-      {
-        guidance: false,
-        description:
-          'Expect every chip in `multiple` mode to read as a name: only the first selected key goes through the resolution query, and the rest show the UUID unless the deployment is in a loaded page.',
       },
       {
         guidance: false,

@@ -53,8 +53,8 @@
  options are the server's resource-group list, so a hand-typed name was never a
  valid selection there in the first place. Routing it to `MultiSelector` keeps
  multi-select, keeps `allowClear`, and drops an affordance that could only
- produce an invalid value. The genuine free-entry sites already moved to the
- shared `Tokenizer` adapter in wave 1 (`AstryxFormTagsInput`, P3C-7).
+ produce an invalid value. The genuine free-entry sites use ui-common's
+ `TagsInput`.
 
  PILOT-DECISION — **`searchAction` is accepted and inert.** It ran a
  caller-supplied async search in a transition and surfaced it as `loading`.
@@ -107,10 +107,10 @@ import {
   type BAIOptionDisabled,
   withOptionDisabledReason,
 } from './BAIDisabledOptionReason';
+import BAIMultiSelector from './BAIMultiSelector';
 import './BAISelect.css';
-import { MultiSelector } from '@lablup/ui-common/MultiSelector';
+import BAISelector from './BAISelector';
 import {
-  Selector,
   type SelectorOptionData,
   type SelectorOptionType,
 } from '@lablup/ui-common/Selector';
@@ -580,7 +580,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
         ? (defaultValue as Array<unknown>).map(toOptionKey)
         : [];
     return (
-      <MultiSelector
+      <BAIMultiSelector
         {...shared}
         options={optionsWithSlots}
         value={selected}
@@ -602,7 +602,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   }
 
   return (
-    <Selector
+    <BAISelector
       // QA-FINDINGS Q-34 — `placement` is the documented opt-out from
       // Astryx's selected-item overlay, and every search-less `BAISelect`
       // needs it. `Selector` computes

@@ -4,12 +4,17 @@
  */
 import './SettingItem.css';
 import { Banner } from '@lablup/ui-common/Banner';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { IconButton } from '@lablup/ui-common/IconButton';
-import { Selector, type SelectorOptionData } from '@lablup/ui-common/Selector';
+import type { SelectorOptionData } from '@lablup/ui-common/Selector';
 import { StatusDot } from '@lablup/ui-common/StatusDot';
 import { Text } from '@lablup/ui-common/Text';
-import { BAIFlex, BAIModal, useToggle } from 'backend.ai-ui';
+import {
+  BAICheckboxInput,
+  BAIFlex,
+  BAIModal,
+  BAISelector,
+  useToggle,
+} from 'backend.ai-ui';
 import { t } from 'i18next';
 import { Settings } from 'lucide-react';
 import React, {
@@ -196,7 +201,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
         // when the description wraps, which is what antd's `.ant-checkbox
         // { align-self: flex-start }` rule did.
         <BAIFlex direction="row" gap="sm" align="start">
-          <CheckboxInput
+          <BAICheckboxInput
             aria-label={title}
             value={!!value}
             disabled={checkboxProps?.disabled}
@@ -222,7 +227,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
               {description}
             </Text>
           )}
-          <Selector
+          <BAISelector
             aria-label={title}
             options={selectProps?.options ?? []}
             hasSearch={selectProps?.hasSearch}
