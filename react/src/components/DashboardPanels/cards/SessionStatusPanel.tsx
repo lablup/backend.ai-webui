@@ -97,6 +97,7 @@ const SessionStatusView: React.FC<{ data: StatusCounts }> = ({ data }) => {
       style={{ flex: 1, minHeight: 0 }}
     >
       <StatRow
+        compact
         items={STATUS_GROUPS.map(({ key }) => ({
           key,
           label: statusLabels[key],
