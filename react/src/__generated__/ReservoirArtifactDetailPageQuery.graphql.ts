@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<000b1ecc120397e878556b441e960fee>>
+ * @generated SignedSource<<f07e7e4d3c7207851e099af24f87fd93>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -361,7 +361,14 @@ v24 = [
     "variableName": "offset"
   },
   (v12/*: any*/)
-];
+],
+v25 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "fieldId",
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": [
@@ -624,6 +631,7 @@ return {
                     "selections": [
                       (v5/*: any*/),
                       (v15/*: any*/),
+                      (v25/*: any*/),
                       (v22/*: any*/),
                       (v16/*: any*/)
                     ],
@@ -677,7 +685,8 @@ return {
                       (v5/*: any*/),
                       (v21/*: any*/),
                       (v22/*: any*/),
-                      (v15/*: any*/)
+                      (v15/*: any*/),
+                      (v25/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -716,7 +725,8 @@ return {
                       (v15/*: any*/),
                       (v22/*: any*/),
                       (v21/*: any*/),
-                      (v11/*: any*/)
+                      (v11/*: any*/),
+                      (v25/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -725,6 +735,13 @@ return {
               }
             ],
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "entityId",
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -732,7 +749,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d4298ce83f39cc2d4fea958d6e5cbc0b",
+    "cacheID": "3fb44bd1c2efdc286679dde265eda903",
     "id": null,
     "metadata": {
       "connection": [
@@ -749,7 +766,7 @@ return {
     },
     "name": "ReservoirArtifactDetailPageQuery",
     "operationKind": "query",
-    "text": "query ReservoirArtifactDetailPageQuery(\n  $id: ID!\n  $offset: Int!\n  $limit: Int!\n  $filter: ArtifactRevisionFilter!\n) {\n  artifact(id: $id) {\n    id\n    name\n    ...BAIArtifactTypeTokenFragment\n    description\n    registry {\n      name\n      url\n    }\n    source {\n      name\n      url\n    }\n    updatedAt\n    pullingArtifactRevisions: revisions(filter: {status: {equals: PULLING}}, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}]) {\n      count\n      edges {\n        node {\n          id\n          status\n          ...BAIPullingArtifactRevisionAlertFragment\n          __typename\n        }\n        cursor\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n    latestVersion: revisions(limit: 1, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}]) {\n      edges {\n        node {\n          id\n          size\n          version\n          status\n          ...BAIImportArtifactModalArtifactRevisionFragment\n          ...BAIArtifactRevisionTableLatestRevisionFragment\n        }\n      }\n    }\n    revisions(offset: $offset, limit: $limit, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}], filter: $filter) {\n      count\n      edges {\n        node {\n          id\n          status\n          ...BAIArtifactRevisionTableArtifactRevisionFragment\n          ...BAIImportArtifactModalArtifactRevisionFragment\n          ...BAIDeleteArtifactRevisionsModalArtifactRevisionFragment\n          ...BAIArtifactRevisionDeleteButtonFragment\n          ...BAIArtifactRevisionDownloadButtonFragment\n          ...ImportArtifactRevisionToFolderButtonFragment\n          ...ImportArtifactRevisionToFolderModalArtifactRevisionFragment\n        }\n      }\n    }\n    ...BAIImportArtifactModalArtifactFragment\n    ...BAIDeleteArtifactRevisionsModalArtifactFragment\n  }\n}\n\nfragment BAIArtifactDescriptionsFragment on Artifact {\n  name\n  description\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTokenFragment\n}\n\nfragment BAIArtifactRevisionDeleteButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactRevisionDownloadButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactRevisionTableArtifactRevisionFragment on ArtifactRevision {\n  id\n  version\n  size\n  status\n  updatedAt\n  ...BAIArtifactStatusBadgeFragment\n  ...BAIArtifactRevisionDownloadButtonFragment\n  ...BAIArtifactRevisionDeleteButtonFragment\n}\n\nfragment BAIArtifactRevisionTableLatestRevisionFragment on ArtifactRevision {\n  id\n}\n\nfragment BAIArtifactStatusBadgeFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactTypeTokenFragment on Artifact {\n  type\n}\n\nfragment BAIDeleteArtifactRevisionsModalArtifactFragment on Artifact {\n  id\n  ...BAIArtifactDescriptionsFragment\n}\n\nfragment BAIDeleteArtifactRevisionsModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  version\n  size\n  status\n}\n\nfragment BAIImportArtifactModalArtifactFragment on Artifact {\n  id\n  name\n  ...BAIArtifactDescriptionsFragment\n}\n\nfragment BAIImportArtifactModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  version\n  size\n  status\n}\n\nfragment BAIPullingArtifactRevisionAlertFragment on ArtifactRevision {\n  id\n  status\n  version\n}\n\nfragment ImportArtifactRevisionToFolderButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment ImportArtifactRevisionToFolderModalArtifactRevisionFragment on ArtifactRevision {\n  id\n}\n"
+    "text": "query ReservoirArtifactDetailPageQuery(\n  $id: ID!\n  $offset: Int!\n  $limit: Int!\n  $filter: ArtifactRevisionFilter!\n) {\n  artifact(id: $id) {\n    id\n    name\n    ...BAIArtifactTypeTokenFragment\n    description\n    registry {\n      name\n      url\n    }\n    source {\n      name\n      url\n    }\n    updatedAt\n    pullingArtifactRevisions: revisions(filter: {status: {equals: PULLING}}, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}]) {\n      count\n      edges {\n        node {\n          id\n          status\n          ...BAIPullingArtifactRevisionAlertFragment\n          __typename\n        }\n        cursor\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n    latestVersion: revisions(limit: 1, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}]) {\n      edges {\n        node {\n          id\n          size\n          version\n          status\n          ...BAIImportArtifactModalArtifactRevisionFragment\n          ...BAIArtifactRevisionTableLatestRevisionFragment\n        }\n      }\n    }\n    revisions(offset: $offset, limit: $limit, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}], filter: $filter) {\n      count\n      edges {\n        node {\n          id\n          status\n          ...BAIArtifactRevisionTableArtifactRevisionFragment\n          ...BAIImportArtifactModalArtifactRevisionFragment\n          ...BAIDeleteArtifactRevisionsModalArtifactRevisionFragment\n          ...BAIArtifactRevisionDeleteButtonFragment\n          ...BAIArtifactRevisionDownloadButtonFragment\n          ...ImportArtifactRevisionToFolderButtonFragment\n          ...ImportArtifactRevisionToFolderModalArtifactRevisionFragment\n        }\n      }\n    }\n    ...BAIImportArtifactModalArtifactFragment\n    ...BAIDeleteArtifactRevisionsModalArtifactFragment\n  }\n}\n\nfragment BAIArtifactDescriptionsFragment on Artifact {\n  name\n  description\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTokenFragment\n}\n\nfragment BAIArtifactRevisionDeleteButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactRevisionDownloadButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactRevisionTableArtifactRevisionFragment on ArtifactRevision {\n  id\n  version\n  size\n  status\n  updatedAt\n  ...BAIArtifactStatusBadgeFragment\n  ...BAIArtifactRevisionDownloadButtonFragment\n  ...BAIArtifactRevisionDeleteButtonFragment\n}\n\nfragment BAIArtifactRevisionTableLatestRevisionFragment on ArtifactRevision {\n  id\n}\n\nfragment BAIArtifactStatusBadgeFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactTypeTokenFragment on Artifact {\n  type\n}\n\nfragment BAIDeleteArtifactRevisionsModalArtifactFragment on Artifact {\n  id\n  ...BAIArtifactDescriptionsFragment\n}\n\nfragment BAIDeleteArtifactRevisionsModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  fieldId\n  version\n  size\n  status\n}\n\nfragment BAIImportArtifactModalArtifactFragment on Artifact {\n  id\n  entityId\n  name\n  ...BAIArtifactDescriptionsFragment\n}\n\nfragment BAIImportArtifactModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  fieldId\n  version\n  size\n  status\n}\n\nfragment BAIPullingArtifactRevisionAlertFragment on ArtifactRevision {\n  id\n  fieldId\n  status\n  version\n}\n\nfragment ImportArtifactRevisionToFolderButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment ImportArtifactRevisionToFolderModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  fieldId\n}\n"
   }
 };
 })();

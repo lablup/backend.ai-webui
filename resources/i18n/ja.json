@@ -3711,6 +3711,18 @@
     "TypeInAuthKey": "または、下の認証コードを入力して直接二要素認証を有効にすることもできます。"
   },
   "tourGuide": {
+    "adminViewSwitch": {
+      "AdminLandingMenuText": "右上のユーザープロフィールメニューで「ユーザーコンソールに切り替え」を選ぶとユーザー画面へ、「管理者コンソールに切り替え」を選ぶとこの画面に戻ります。",
+      "AdminLandingMenuTitle": "管理者設定はプロフィールメニューに移動しました",
+      "AdminLandingStartText": "ログイン後、ユーザー画面ではなく管理者設定の画面に直接入るようになりました。",
+      "AdminLandingStartTitle": "管理者設定から始まります",
+      "AdminLandingText": "変更点をお知らせします。",
+      "AdminLandingTitle": "スーパー管理者の画面が変わりました",
+      "BackToAdminSettingsText": "管理者設定に戻るには、このメニューを開いて「管理者コンソールに切り替え」を選択してください。",
+      "BackToAdminSettingsTitle": "管理者設定に戻る",
+      "BackToUserViewText": "現在は管理者設定の画面です。セッションやデータなどのユーザー画面を使うには、このメニューを開いて「ユーザーコンソールに切り替え」を選択してください。",
+      "BackToUserViewTitle": "ユーザー画面への切り替え"
+    },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "エラーフィールドがある場合、「作成」または「保存」ボタンは無効になります。エラーを修正して再試行してください。",
       "FixErrorFieldByModifyButton": "そのエラー フィールドについては、右上隅にある [編集] ボタンに直接移動して編集できます。",
@@ -3751,7 +3763,6 @@
     "BootstrapScriptEmpty": "スクリプトが空です。\nスクリプトを入力してください。",
     "BootstrapScriptUpdated": "ブートストラップスクリプトが更新されました。",
     "ClearSSHKeypairInput": "書き込まれたSSHキーペアは削除されます。続行してもよろしいですか？",
-    "CommandPalette": "コマンドパレット",
     "ConfigFilename": "構成ファイル名",
     "CurrentSSHPublicKey": "現在の公開鍵",
     "CustomDashboardPanels": "カスタムダッシュボードパネル",
@@ -3993,6 +4004,7 @@
       "ProjectDeployments": "デプロイメント",
       "ProjectMembers": "ユーザー",
       "ProjectSessions": "セッション",
+      "ProjectSettings": "プロジェクト設定",
       "Projects": "プロジェクト",
       "PrometheusPreset": "Prometheusプリセット",
       "RBACManagement": "RBAC管理",
@@ -4010,6 +4022,8 @@
       "Start": "スタート",
       "Statistics": "統計",
       "Summary": "サマリー",
+      "SwitchToAdminConsole": "管理者コンソールに切り替え",
+      "SwitchToUserConsole": "ユーザーコンソールに切り替え",
       "Tasks": "作業",
       "TermsOfService": "利用規約",
       "TotalResourcesIn": "総リソース",

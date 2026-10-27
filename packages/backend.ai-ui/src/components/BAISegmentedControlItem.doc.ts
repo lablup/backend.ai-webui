@@ -15,12 +15,12 @@ export const docs = {
   ],
   usage: {
     description:
-      'The option element inside an Astryx SegmentedControl. It wraps Astryx SegmentedControlItem for one reason: Astryx types label as a string but renders it straight through as children, so a ReactNode label works at runtime and only fails the type. This wrapper widens label to ReactNode and drops isLabelHidden, which is the single path where the label would reach an attribute and a node would collapse into a broken aria-label. Use it wherever a segment needs more than text — a trailing help tooltip, an icon inline with the label, a formatted value. Every other prop (value, icon, isDisabled, …) passes through to SegmentedControlItem unchanged.',
+      'The option element inside an Astryx SegmentedControl. It wraps Astryx SegmentedControlItem for one reason: Astryx types label as a string but renders it straight through as children, so a ReactNode label works at runtime and only fails the type. This wrapper widens label to ReactNode, and allows isLabelHidden only with a string label, since a hidden label becomes the aria-label and a node would collapse into a broken one. It is the item webui uses for every segment (ADR 0014): plain text, a node label with a trailing help tooltip or a formatted value, or an icon-only segment with a hidden string label. Every other prop (value, icon, isDisabled, …) passes through to SegmentedControlItem unchanged.',
     bestPractices: [
       {
         guidance: true,
         description:
-          'Render it as a direct child of Astryx SegmentedControl, which owns the value, onChange and the group label.',
+          'Render it as a direct child of BAISegmentedControl, which owns the value, onChange and the group label.',
       },
       {
         guidance: true,
@@ -31,11 +31,6 @@ export const docs = {
         guidance: true,
         description:
           'Mark decorative label extras non-focusable (for example BAIQuestionIconWithTooltip with focusable={false}) so tabbing still moves segment to segment.',
-      },
-      {
-        guidance: false,
-        description:
-          'Reach for it when the label is plain text — Astryx SegmentedControlItem covers that case directly and the wrapper adds nothing.',
       },
       {
         guidance: false,
@@ -52,12 +47,18 @@ export const docs = {
         "The segment's content, widened from Astryx's string. Rendered as children of the segment, so any node survives.",
       required: true,
     },
+    {
+      name: 'isLabelHidden',
+      type: 'boolean',
+      description:
+        'Hides the label visually and keeps it as the accessible name, for an icon-only segment. Only allowed with a string label.',
+    },
   ],
   examples: [
     {
       label: 'Segment with a trailing help tooltip',
-      code: `<SegmentedControl
-  label={t('session.launcher.ClusterMode')}
+      code: `<BAISegmentedControl
+  aria-label={t('session.launcher.ClusterMode')}
   value={clusterMode}
   onChange={setClusterMode}
 >
@@ -73,7 +74,7 @@ export const docs = {
       }
     />
   ))}
-</SegmentedControl>`,
+</BAISegmentedControl>`,
     },
   ],
 } satisfies ComponentDoc;

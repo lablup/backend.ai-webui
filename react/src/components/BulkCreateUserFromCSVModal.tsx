@@ -38,15 +38,8 @@ import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import { passwordPattern } from './LoginFormPanel';
 import ProjectSelect from './ProjectSelect';
 import UserResourcePolicySelect from './UserResourcePolicySelect';
-import {
-  AstryxFormCheckbox,
-  AstryxFormTextArea,
-  AstryxFormTextInput,
-} from './astryxFormControls';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
-import { FileInput } from '@lablup/ui-common/FileInput';
 import { Heading } from '@lablup/ui-common/Heading';
-import { Switch } from '@lablup/ui-common/Switch';
 import { Text } from '@lablup/ui-common/Text';
 import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
@@ -69,6 +62,11 @@ import {
   useBAILogger,
   useBAISignedRequestWithPromise,
   cssLengthToPx,
+  BAICheckboxInput,
+  BAIFileInput,
+  BAISwitch,
+  BAITextArea,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
@@ -1137,7 +1135,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
             <VStack gap={1} align="stretch">
               <Text type="label">{t('credential.UploadCSVFile')}</Text>
               <Text color="secondary">{t('credential.CSVOneRowPerUser')}</Text>
-              <FileInput
+              <BAIFileInput
                 aria-label={t('credential.UploadCSVFile')}
                 mode="dropzone"
                 accept=".csv,text/csv"
@@ -1230,16 +1228,10 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               label={t('general.Password')}
               style={{ marginBottom: token('--spacing-3') }}
             >
-              {/* PILOT-DECISION: antd `Input.Password autoComplete="new-password"`
-                  (the Chrome-autofill-suppression workaround) is dropped —
-                  `AstryxFormTextInputProps` has no `autoComplete` passthrough
-                  (MIGRATION-SPEC §0 simplicity policy; not worth widening the
-                  shared adapter's type for one call site). Worst case Chrome
-                  may offer to autofill this field; it does not affect
-                  behavior. */}
-              <AstryxFormTextInput
-                label={t('general.Password')}
+              <BAITextInput
+                aria-label={t('general.Password')}
                 type="password"
+                autoComplete="new-password"
                 value={globalDefaults.defaultPassword}
                 onChange={(next) =>
                   setGlobalDefaults((prev) => ({
@@ -1256,8 +1248,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               tooltip={t('credential.TooltipForRequirePasswordChange')}
               style={{ marginBottom: token('--spacing-3') }}
             >
-              <AstryxFormCheckbox
-                label={t('general.Enable')}
+              <BAICheckboxInput
                 value={globalDefaults.needPasswordChange}
                 onChange={(next) =>
                   setGlobalDefaults((prev) => ({
@@ -1265,15 +1256,17 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                     needPasswordChange: next,
                   }))
                 }
-              />
+              >
+                {t('general.Enable')}
+              </BAICheckboxInput>
             </BAIFormItem>
 
             <BAIFormItem
               label={t('credential.Description')}
               style={{ marginBottom: 0 }}
             >
-              <AstryxFormTextArea
-                label={t('credential.Description')}
+              <BAITextArea
+                aria-label={t('credential.Description')}
                 value={globalDefaults.description}
                 onChange={(next) =>
                   setGlobalDefaults((prev) => ({
@@ -1339,7 +1332,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                 />
               </BAIRowWrapWithDividers>
               <BAIFlex gap="xs" align="center">
-                <Switch
+                <BAISwitch
                   size="sm"
                   aria-label={t('credential.OnlyShowErrors')}
                   value={onlyErrors}

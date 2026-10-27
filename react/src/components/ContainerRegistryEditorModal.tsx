@@ -11,11 +11,6 @@ import { useSuspendedBackendaiClient, useCurrentDomain } from '../hooks';
 import BAICodeEditor from './BAICodeEditor';
 import BAIFormItem from './BAIFormItem';
 import HiddenFormItem from './HiddenFormItem';
-import {
-  AstryxFormCheckbox,
-  AstryxFormSelector,
-  AstryxFormTextInput,
-} from './astryxFormControls';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIScopedProjectSelect,
@@ -23,6 +18,9 @@ import {
   BAIModal,
   BAIModalProps,
   BAISelect,
+  BAICheckboxInput,
+  BAISelector,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useRef } from 'react';
@@ -395,8 +393,8 @@ const ContainerRegistryEditorModal: React.FC<
             },
           ]}
         >
-          <AstryxFormTextInput
-            label={t('registry.RegistryName')}
+          <BAITextInput
+            aria-label={t('registry.RegistryName')}
             disabled={!!containerRegistry}
           />
         </BAIFormItem>
@@ -432,7 +430,7 @@ const ContainerRegistryEditorModal: React.FC<
             },
           ]}
         >
-          <AstryxFormTextInput label={t('registry.RegistryURL')} />
+          <BAITextInput aria-label={t('registry.RegistryURL')} />
         </BAIFormItem>
 
         <BAIFormItem
@@ -460,7 +458,7 @@ const ContainerRegistryEditorModal: React.FC<
                   },
                 ]}
               >
-                <AstryxFormTextInput label={t('registry.Username')} />
+                <BAITextInput aria-label={t('registry.Username')} />
               </BAIFormItem>
             );
           }}
@@ -475,8 +473,8 @@ const ContainerRegistryEditorModal: React.FC<
           >
             {(form) => (
               <BAIFormItem noStyle name={'password'}>
-                <AstryxFormTextInput
-                  label={t('registry.Password')}
+                <BAITextInput
+                  aria-label={t('registry.Password')}
                   type="password"
                   disabled={
                     !_.isEmpty(containerRegistry) &&
@@ -490,14 +488,15 @@ const ContainerRegistryEditorModal: React.FC<
           </BAIFormItem>
           {!_.isEmpty(containerRegistry) && (
             <BAIFormItem noStyle name="isChangedPassword">
-              <AstryxFormCheckbox
-                label={t('webui.menu.ChangePassword')}
-                onValueChange={(checked) => {
+              <BAICheckboxInput
+                onChange={(checked) => {
                   if (!checked) {
                     formRef.current?.setFieldValue('password', '');
                   }
                 }}
-              />
+              >
+                {t('webui.menu.ChangePassword')}
+              </BAICheckboxInput>
             </BAIFormItem>
           )}
         </BAIFormItem>
@@ -512,8 +511,8 @@ const ContainerRegistryEditorModal: React.FC<
             },
           ]}
         >
-          <AstryxFormSelector
-            label={t('registry.RegistryType')}
+          <BAISelector
+            aria-label={t('registry.RegistryType')}
             options={[
               'docker',
               'harbor',
@@ -547,21 +546,19 @@ const ContainerRegistryEditorModal: React.FC<
                   },
                 ]}
               >
-                <AstryxFormTextInput
-                  label={t('registry.ProjectName')}
-                  allowClear
-                />
+                <BAITextInput aria-label={t('registry.ProjectName')} hasClear />
               </BAIFormItem>
             );
           }}
         </BAIFormItem>
         <BAIFormItem name="ssl_verify" label={t('registry.SSLVerify')}>
-          <AstryxFormCheckbox label={t('registry.SSLVerifyDescription')} />
+          <BAICheckboxInput>
+            {t('registry.SSLVerifyDescription')}
+          </BAICheckboxInput>
         </BAIFormItem>
         <BAIFormItem name="is_global" label={t('registry.IsGlobal')}>
-          <AstryxFormCheckbox
-            label={t('registry.IsGlobalDescription')}
-            onValueChange={(checked) => {
+          <BAICheckboxInput
+            onChange={(checked) => {
               if (!checked) {
                 formRef.current?.setFieldValue(
                   'allowed_group_ids',
@@ -569,7 +566,9 @@ const ContainerRegistryEditorModal: React.FC<
                 );
               }
             }}
-          />
+          >
+            {t('registry.IsGlobalDescription')}
+          </BAICheckboxInput>
         </BAIFormItem>
         <BAIFormItem
           noStyle

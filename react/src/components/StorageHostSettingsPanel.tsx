@@ -5,13 +5,14 @@
 import { StorageHostSettingsPanel_storageVolumeFrgmt$key } from '../__generated__/StorageHostSettingsPanel_storageVolumeFrgmt.graphql';
 import { QuotaScopeType, addQuotaScopeTypePrefix } from '../helper/index';
 import { useCurrentDomain } from '../hooks';
-import BAIRadioGroup from './BAIRadioGroup';
 import QuotaScopeTable from './QuotaScopeTable';
 import {
   BAISkeleton,
   BAIScopedProjectSelect,
   BAIFlex,
   BAIScopedUserSelect,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
   BAISelect,
 } from 'backend.ai-ui';
 import React, { Suspense, useState } from 'react';
@@ -59,18 +60,23 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex direction="row" align="center" wrap="wrap" gap="md">
-        <BAIRadioGroup
-          options={[
-            { label: t('storageHost.ForUser'), value: 'user' },
-            { label: t('storageHost.ForProject'), value: 'project' },
-          ]}
+        <BAISegmentedControl
           value={currentSettingType}
-          onChange={(e) => {
+          onChange={(value) => {
             // Keep each side's previous pick when switching scope type;
             // `rawScopeEntityId` already selects the active side's state.
-            setCurrentSettingType(e.target.value as QuotaScopeType);
+            setCurrentSettingType(value as QuotaScopeType);
           }}
-        />
+        >
+          <BAISegmentedControlItem
+            value="user"
+            label={t('storageHost.ForUser')}
+          />
+          <BAISegmentedControlItem
+            value="project"
+            label={t('storageHost.ForProject')}
+          />
+        </BAISegmentedControl>
         {currentSettingType === 'project' ? (
           <BAIScopedProjectSelect
             scope={domainScope}

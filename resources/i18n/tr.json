@@ -3709,6 +3709,18 @@
     "TypeInAuthKey": "Alternatif olarak, aşağıdaki kimlik doğrulama kodunu manuel olarak yazabilirsiniz."
   },
   "tourGuide": {
+    "adminViewSwitch": {
+      "AdminLandingMenuText": "Sağ üstteki kullanıcı profili menüsünü açın: \"Kullanıcı Konsoluna Geç\" sizi kullanıcı sayfalarına, \"Yönetici Konsoluna Geç\" ise buraya geri götürür.",
+      "AdminLandingMenuTitle": "Yönetici Ayarları profil menüsüne taşındı",
+      "AdminLandingStartText": "Oturum açtıktan sonra artık kullanıcı sayfaları yerine doğrudan yönetici ayarlarına girersiniz.",
+      "AdminLandingStartTitle": "Yönetici ayarlarında başlarsınız",
+      "AdminLandingText": "Değişenler şunlar.",
+      "AdminLandingTitle": "Süper yönetici görünümü değişti",
+      "BackToAdminSettingsText": "Yönetici ayarlarına dönmek için bu menüyü açın ve \"Yönetici Konsoluna Geç\" seçeneğini seçin.",
+      "BackToAdminSettingsTitle": "Yönetici ayarlarına dönmek",
+      "BackToUserViewText": "Yönetici ayarlarındasınız. Oturumları, verileri ve diğer kullanıcı sayfalarını kullanmak için bu menüyü açın ve \"Kullanıcı Konsoluna Geç\" seçeneğini seçin.",
+      "BackToUserViewTitle": "Kullanıcı görünümüne geçmek"
+    },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "Bir hata alanı varsa Oluştur veya Kaydet düğmesi devre dışı bırakılır. Lütfen hatayı düzeltip tekrar deneyin.",
       "FixErrorFieldByModifyButton": "Bu hata alanını düzenlemek için doğrudan sağ üst köşedeki Düzenle düğmesine gidebilirsiniz.",
@@ -3749,7 +3761,6 @@
     "BootstrapScriptEmpty": "Senaryo boş. \nLütfen betiği girin.",
     "BootstrapScriptUpdated": "Önyükleme komut dosyası güncellendi.",
     "ClearSSHKeypairInput": "Yazılı SSH Anahtar Çifti kaldırılacaktır. Devam etmek istediğine emin misin?",
-    "CommandPalette": "Komut paleti",
     "ConfigFilename": "Yapılandırma dosyası adı",
     "CurrentSSHPublicKey": "Geçerli ortak anahtar",
     "CustomDashboardPanels": "Özel kontrol paneli panelleri",
@@ -3991,6 +4002,7 @@
       "ProjectDeployments": "Dağıtımlar",
       "ProjectMembers": "Kullanıcılar",
       "ProjectSessions": "Oturumlar",
+      "ProjectSettings": "Proje Ayarları",
       "Projects": "Projeler",
       "PrometheusPreset": "Prometheus Ön Ayarı",
       "RBACManagement": "RBAC Yönetimi",
@@ -4008,6 +4020,8 @@
       "Start": "Başlangıç",
       "Statistics": "İstatistik",
       "Summary": "Özet",
+      "SwitchToAdminConsole": "Yönetici Konsoluna Geç",
+      "SwitchToUserConsole": "Kullanıcı Konsoluna Geç",
       "Tasks": "Görevler",
       "TermsOfService": "Kullanım Şartları",
       "TotalResourcesIn": "Toplam Kaynaklar",

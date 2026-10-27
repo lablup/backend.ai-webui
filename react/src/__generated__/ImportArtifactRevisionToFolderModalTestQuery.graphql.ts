@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7a33e1fe09e416bfc362b26ff38a4ad8>>
+ * @generated SignedSource<<61dda78153f83dd6f7f89193b11174cb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -153,7 +153,14 @@ return {
                     "name": "node",
                     "plural": false,
                     "selections": [
-                      (v2/*: any*/)
+                      (v2/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "fieldId",
+                        "storageKey": null
+                      }
                     ],
                     "storageKey": null
                   }
@@ -170,7 +177,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "0d9222ee27823e386dad421dce929fd2",
+    "cacheID": "b66a4745bf05ea30c99b86fb6c0752d4",
     "id": null,
     "metadata": {
       "relayTestingSelectionTypeInfo": {
@@ -199,12 +206,18 @@ return {
           "plural": false,
           "type": "ArtifactRevision"
         },
+        "artifact.revisions.edges.node.fieldId": {
+          "enumValues": null,
+          "nullable": false,
+          "plural": false,
+          "type": "UUID"
+        },
         "artifact.revisions.edges.node.id": (v3/*: any*/)
       }
     },
     "name": "ImportArtifactRevisionToFolderModalTestQuery",
     "operationKind": "query",
-    "text": "query ImportArtifactRevisionToFolderModalTestQuery {\n  artifact(id: \"test-artifact-id\") {\n    revisions(limit: 1) {\n      edges {\n        node {\n          ...ImportArtifactRevisionToFolderModalArtifactRevisionFragment\n          id\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment ImportArtifactRevisionToFolderModalArtifactRevisionFragment on ArtifactRevision {\n  id\n}\n"
+    "text": "query ImportArtifactRevisionToFolderModalTestQuery {\n  artifact(id: \"test-artifact-id\") {\n    revisions(limit: 1) {\n      edges {\n        node {\n          ...ImportArtifactRevisionToFolderModalArtifactRevisionFragment\n          id\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment ImportArtifactRevisionToFolderModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  fieldId\n}\n"
   }
 };
 })();

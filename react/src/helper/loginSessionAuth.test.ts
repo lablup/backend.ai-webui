@@ -37,11 +37,17 @@ const DOMAIN_UUID = '22222222-2222-4222-8222-222222222222';
 const PROJECT_A = '33333333-3333-4333-8333-333333333333';
 const PROJECT_B = '44444444-4444-4444-8444-444444444444';
 
-type Edges = Array<{ node: { id: string; basicInfo: { name: string } } }>;
+type Edges = Array<{
+  node: { id: string; entityId: string; basicInfo: { name: string } };
+}>;
 
 const edges = (nodes: Array<[string, string]>): Edges =>
   nodes.map(([uuid, name]) => ({
-    node: { id: globalId('ProjectV2', uuid), basicInfo: { name } },
+    node: {
+      id: globalId('ProjectV2', uuid),
+      entityId: uuid,
+      basicInfo: { name },
+    },
   }));
 
 const meWith = (
@@ -57,6 +63,7 @@ const meWith = (
 ) => ({
   myUserV2: {
     id: globalId('UserV2', USER_UUID),
+    entityId: USER_UUID,
     basicInfo: { email: 'me@example.com', fullName: 'Me' },
     organization: {
       domainName: 'domainName' in overrides ? overrides.domainName : 'default',

@@ -3696,6 +3696,18 @@
     "TypeInAuthKey": "Alternatively, you can type in authentication code below manually."
   },
   "tourGuide": {
+    "adminViewSwitch": {
+      "AdminLandingMenuText": "Open the user profile menu at the top right: \"Switch to User Console\" takes you to the user pages, and \"Switch to Admin Console\" brings you back here.",
+      "AdminLandingMenuTitle": "Admin Settings moved to the profile menu",
+      "AdminLandingStartText": "After logging in, you now go straight to the admin settings instead of the user pages.",
+      "AdminLandingStartTitle": "You start in the admin settings",
+      "AdminLandingText": "Here is what changed.",
+      "AdminLandingTitle": "The superadmin view has changed",
+      "BackToAdminSettingsText": "To return to the admin settings, open this menu and choose \"Switch to Admin Console\".",
+      "BackToAdminSettingsTitle": "Returning to the admin settings",
+      "BackToUserViewText": "You are in the admin settings. To use sessions, data and the other user pages, open this menu and choose \"Switch to User Console\".",
+      "BackToUserViewTitle": "Switching to the user view"
+    },
     "deploymentPreset": {
       "FixErrorAndTryAgainText": "If there is an error field, the Create or Save button is disabled. Please correct the error and try again.",
       "FixErrorFieldByModifyButton": "For that error field, you can go directly to the Edit button in the top right corner to edit it.",
@@ -3736,7 +3748,6 @@
     "BootstrapScriptEmpty": "The script is empty. \nPlease enter the script.",
     "BootstrapScriptUpdated": "Bootstrap script updated.",
     "ClearSSHKeypairInput": "Written SSH Keypair will be removed. Are you sure you want to continue?",
-    "CommandPalette": "Command palette",
     "ConfigFilename": "Config file name",
     "CurrentSSHPublicKey": "Current public key",
     "CustomDashboardPanels": "Custom dashboard panels",
@@ -3976,6 +3987,7 @@
       "ProjectDeployments": "Deployments",
       "ProjectMembers": "Users",
       "ProjectSessions": "Sessions",
+      "ProjectSettings": "Project Settings",
       "Projects": "Projects",
       "PrometheusPreset": "Prometheus Preset",
       "RBACManagement": "RBAC Management",
@@ -3993,6 +4005,8 @@
       "Start": "Start",
       "Statistics": "Statistics",
       "Summary": "Summary",
+      "SwitchToAdminConsole": "Switch to Admin Console",
+      "SwitchToUserConsole": "Switch to User Console",
       "Tasks": "Tasks",
       "TermsOfService": "Terms of Service",
       "TotalResourcesIn": "Total Resources in",

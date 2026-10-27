@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b06f44232ddc1d13de004f21791e15b9>>
+ * @generated SignedSource<<403ed30a01b7f1fc5eb18b1740eeb94d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -128,6 +128,13 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
+                    "name": "entityId",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "name",
                     "storageKey": null
                   }
@@ -143,12 +150,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "6a579b9f3efbffeff3ed78d38d8fd4c5",
+    "cacheID": "e6c74cb0fe8bbbd23f3866fdd1a37e12",
     "id": null,
     "metadata": {},
     "name": "BAIActivateArtifactsModalStoriesQuery",
     "operationKind": "query",
-    "text": "query BAIActivateArtifactsModalStoriesQuery {\n  artifacts(offset: 0, first: 10) {\n    edges {\n      node {\n        ...BAIActivateArtifactsModalArtifactsFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIActivateArtifactsModalArtifactsFragment on Artifact {\n  id\n  name\n}\n"
+    "text": "query BAIActivateArtifactsModalStoriesQuery {\n  artifacts(offset: 0, first: 10) {\n    edges {\n      node {\n        ...BAIActivateArtifactsModalArtifactsFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIActivateArtifactsModalArtifactsFragment on Artifact {\n  id\n  entityId\n  name\n}\n"
   }
 };
 })();

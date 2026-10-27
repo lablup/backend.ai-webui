@@ -6,7 +6,6 @@ import {
   convertToDecimalUnit,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  toLocalId,
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIButton from '../BAIButton';
@@ -130,6 +129,7 @@ const BAIArtifactTable = ({
       fragment BAIArtifactTableArtifactFragment on Artifact
       @relay(plural: true) {
         id
+        entityId
         name
         description
         updatedAt
@@ -177,7 +177,7 @@ const BAIArtifactTable = ({
         return (
           <BAIFlex direction="column" align="start" wrap="wrap">
             <BAIFlex gap={'xs'}>
-              <BAILink to={'/reservoir/' + toLocalId(record.id)} style={{}}>
+              <BAILink to={'/reservoir/' + record.entityId} style={{}}>
                 {name}
               </BAILink>
               <BAIArtifactTypeToken artifactTypeFrgmt={record} />

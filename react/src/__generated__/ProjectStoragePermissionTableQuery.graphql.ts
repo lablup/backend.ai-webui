@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4e5512ce19e7ea1c3fc36bb479e208b1>>
+ * @generated SignedSource<<f0a72898ed83b577e3665a390be67fb0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -107,6 +107,7 @@ export type ProjectStoragePermissionTableQuery$data = {
         readonly basicInfo: {
           readonly name: string;
         };
+        readonly entityId: string;
         readonly id: string;
         readonly storage: {
           readonly allowedVfolderHosts: ReadonlyArray<{
@@ -227,6 +228,13 @@ v6 = [
                   {
                     "alias": null,
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "entityId",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
                     "concreteType": "ProjectBasicInfo",
                     "kind": "LinkedField",
                     "name": "basicInfo",
@@ -322,16 +330,16 @@ return {
     "selections": (v6/*: any*/)
   },
   "params": {
-    "cacheID": "a8574e805f19056a7de9f28d48a1de5c",
+    "cacheID": "98f3d32ed4c7805e8d2ccb22f5142dd8",
     "id": null,
     "metadata": {},
     "name": "ProjectStoragePermissionTableQuery",
     "operationKind": "query",
-    "text": "query ProjectStoragePermissionTableQuery(\n  $scope: ProjectScope!\n  $skip: Boolean!\n  $limit: Int\n  $offset: Int\n  $filter: ProjectV2Filter\n  $orderBy: [ProjectV2OrderBy!]\n) {\n  scopedProjectsV2(scope: $scope, limit: $limit, offset: $offset, filter: $filter, orderBy: $orderBy) @skip(if: $skip) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n        storage {\n          allowedVfolderHosts {\n            host\n            permissions\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ProjectStoragePermissionTableQuery(\n  $scope: ProjectScope!\n  $skip: Boolean!\n  $limit: Int\n  $offset: Int\n  $filter: ProjectV2Filter\n  $orderBy: [ProjectV2OrderBy!]\n) {\n  scopedProjectsV2(scope: $scope, limit: $limit, offset: $offset, filter: $filter, orderBy: $orderBy) @skip(if: $skip) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          name\n        }\n        storage {\n          allowedVfolderHosts {\n            host\n            permissions\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "a880fc3760f32dfd0a62da6ab518ba48";
+(node as any).hash = "6b0bb998646a61e53ef9ad10dc92826e";
 
 export default node;

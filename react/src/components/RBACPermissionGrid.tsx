@@ -9,7 +9,6 @@ import './RBACPermissionGrid.css';
 import { Button } from '@lablup/ui-common/Button';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
 import { Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
@@ -20,6 +19,7 @@ import {
   BAIFlex,
   BAIListAlert,
   BAITable,
+  BAITextInput,
 } from 'backend.ai-ui';
 import { Search } from 'lucide-react';
 import React, { useState } from 'react';
@@ -339,7 +339,7 @@ const RBACPermissionGrid: React.FC<RBACPermissionGridProps> = ({
       <BAIFlex justify="between" align="center" gap="sm" wrap="wrap">
         <BAIFlex gap="sm" align="center" wrap="wrap">
           {toolbarStart}
-          <TextInput
+          <BAITextInput
             aria-label={t('rbac.FilterByPermissionType')}
             value={filterText}
             hasClear

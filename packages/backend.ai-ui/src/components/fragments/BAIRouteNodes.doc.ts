@@ -36,7 +36,7 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Assume `onClickSchedulingHistory` receives the relay global id; it is handed the decoded UUID, falling back to the raw id when decoding fails.',
+          'Assume `onClickSchedulingHistory` receives the relay global id; it is handed the route’s `fieldId` UUID.',
       },
     ],
   },
@@ -82,7 +82,7 @@ export const docs = {
       name: 'onClickSchedulingHistory',
       type: '(routeId: string) => void',
       description:
-        'Adds a history icon button beside the status badge and receives the route’s decoded UUID. Omitting it removes the button entirely.',
+        'Adds a history icon button beside the status badge and receives the route’s `fieldId` UUID. Omitting it removes the button entirely.',
     },
   ],
   examples: [
