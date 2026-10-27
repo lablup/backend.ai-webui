@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import glob from 'fast-glob';
 import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { defineConfig } from 'vite';
+import { defineConfig, esmExternalRequirePlugin } from 'vite';
 import dts from 'vite-plugin-dts';
 import relay from 'vite-plugin-relay-lite';
 import svgr from 'vite-plugin-svgr';
@@ -54,14 +54,12 @@ export default defineConfig(({ mode }) => {
         entry: entries,
         formats: ['es'],
       },
-      rolldownOptions: {
-        external: externalPatterns,
-      },
       sourcemap: true,
       outDir: 'dist',
       emptyOutDir: !isDevMode,
     },
     plugins: [
+      esmExternalRequirePlugin({ external: externalPatterns }),
       react({ compiler: { compilationMode: 'annotation' } }),
       relay({
         module: 'esmodule',
