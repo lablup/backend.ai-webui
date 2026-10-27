@@ -143,8 +143,8 @@ const MyResourceStatisticsContent: React.FC<{
     graphql`
       fragment MyResourceV2StatisticsFragment on Query
       @argumentDefinitions(projectId: { type: "UUID!" }) {
-        myKeypairResourceAllocationV2 @catch(to: RESULT) {
-          keypair {
+        myUserResourceAllocationV2 @catch(to: RESULT) {
+          user {
             used {
               resourceType
               quantity
@@ -180,23 +180,23 @@ const MyResourceStatisticsContent: React.FC<{
     queryRef,
   );
 
-  const keypair = data.myKeypairResourceAllocationV2.ok
-    ? data.myKeypairResourceAllocationV2.value?.keypair
+  const user = data.myUserResourceAllocationV2.ok
+    ? data.myUserResourceAllocationV2.value?.user
     : undefined;
   const project = data.projectResourceAllocationV2.ok
     ? data.projectResourceAllocationV2.value?.project
     : undefined;
 
   // Raw units (cores, bytes, device counts); an undefined limit or remaining
-  // means unlimited, and a slot the keypair holds nothing of is 0 used.
+  // means unlimited, and a slot the user holds nothing of is 0 used.
   const amountsOf = (slot: string) => ({
-    used: _.find(keypair?.used, (e) => e.resourceType === slot)?.quantity ?? 0,
+    used: _.find(user?.used, (e) => e.resourceType === slot)?.quantity ?? 0,
     limit: smallestFinite(
-      finiteQuantity(keypair?.limits, slot),
+      finiteQuantity(user?.limits, slot),
       finiteQuantity(project?.limits, slot),
     ),
     remaining: smallestFinite(
-      finiteQuantity(keypair?.assignable, slot),
+      finiteQuantity(user?.assignable, slot),
       finiteQuantity(project?.assignable, slot),
     ),
   });
@@ -206,8 +206,8 @@ const MyResourceStatisticsContent: React.FC<{
   const cpuAmounts = amountsOf('cpu');
   const memAmounts = amountsOf('mem');
 
-  // Without the keypair figures there is nothing to show, not zero usage.
-  const resourceData = !keypair
+  // Without the user figures there is nothing to show, not zero usage.
+  const resourceData = !user
     ? NO_RESOURCE_DATA
     : {
         cpu: cpuSlot

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ff0b025b6212a0904c802a1b8c3d4744>>
+ * @generated SignedSource<<c8217a1ea6764d0ddee02bec2c56edb0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -106,9 +106,9 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "KeypairResourceAllocationV2",
+        "concreteType": "UserResourceAllocationV2",
         "kind": "LinkedField",
-        "name": "myKeypairResourceAllocationV2",
+        "name": "myUserResourceAllocationV2",
         "plural": false,
         "selections": [
           {
@@ -116,7 +116,7 @@ return {
             "args": null,
             "concreteType": "ScopeResourceUsageV2",
             "kind": "LinkedField",
-            "name": "keypair",
+            "name": "user",
             "plural": false,
             "selections": [
               {
@@ -167,12 +167,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "1563dab142a9e53bfd7ec9ae7703cf51",
+    "cacheID": "badcf8eb0b0e0cadb6b7677508d22ede",
     "id": null,
     "metadata": {},
     "name": "MyResourceQuery",
     "operationKind": "query",
-    "text": "query MyResourceQuery(\n  $projectId: UUID!\n) {\n  ...MyResourceV2StatisticsFragment_2CgS8h\n}\n\nfragment MyResourceV2StatisticsFragment_2CgS8h on Query {\n  myKeypairResourceAllocationV2 {\n    keypair {\n      used {\n        resourceType\n        quantity\n      }\n      limits {\n        resourceType\n        quantity\n        unlimited\n      }\n      assignable {\n        resourceType\n        quantity\n        unlimited\n      }\n    }\n  }\n  projectResourceAllocationV2(projectId: $projectId) {\n    project {\n      limits {\n        resourceType\n        quantity\n        unlimited\n      }\n      assignable {\n        resourceType\n        quantity\n        unlimited\n      }\n    }\n  }\n}\n"
+    "text": "query MyResourceQuery(\n  $projectId: UUID!\n) {\n  ...MyResourceV2StatisticsFragment_2CgS8h\n}\n\nfragment MyResourceV2StatisticsFragment_2CgS8h on Query {\n  myUserResourceAllocationV2 {\n    user {\n      used {\n        resourceType\n        quantity\n      }\n      limits {\n        resourceType\n        quantity\n        unlimited\n      }\n      assignable {\n        resourceType\n        quantity\n        unlimited\n      }\n    }\n  }\n  projectResourceAllocationV2(projectId: $projectId) {\n    project {\n      limits {\n        resourceType\n        quantity\n        unlimited\n      }\n      assignable {\n        resourceType\n        quantity\n        unlimited\n      }\n    }\n  }\n}\n"
   }
 };
 })();

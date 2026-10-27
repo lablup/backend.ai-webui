@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0e064959feae49be0c9524e6adfb9b02>>
+ * @generated SignedSource<<65a9483c2c3afcdf5cadb034e69dd252>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,8 +11,8 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs, Result } from "relay-runtime";
 export type MyResourceV2StatisticsFragment$data = {
-  readonly myKeypairResourceAllocationV2: Result<{
-    readonly keypair: {
+  readonly myUserResourceAllocationV2: Result<{
+    readonly user: {
       readonly assignable: ReadonlyArray<{
         readonly quantity: any | null | undefined;
         readonly resourceType: string;
@@ -113,9 +113,9 @@ return {
       "field": {
         "alias": null,
         "args": null,
-        "concreteType": "KeypairResourceAllocationV2",
+        "concreteType": "UserResourceAllocationV2",
         "kind": "LinkedField",
-        "name": "myKeypairResourceAllocationV2",
+        "name": "myUserResourceAllocationV2",
         "plural": false,
         "selections": [
           {
@@ -123,7 +123,7 @@ return {
             "args": null,
             "concreteType": "ScopeResourceUsageV2",
             "kind": "LinkedField",
-            "name": "keypair",
+            "name": "user",
             "plural": false,
             "selections": [
               {
@@ -189,6 +189,6 @@ return {
 };
 })();
 
-(node as any).hash = "f48917869ac25abe92b5d37ace77dd61";
+(node as any).hash = "b5a6b27c4605c1a12a17b02ac7a6d7b2";
 
 export default node;
