@@ -13,9 +13,7 @@
 import useControllableState_deprecated from '../hooks/useControllableState';
 import './InputNumberWithSlider.css';
 import { InputGroup } from '@lablup/ui-common/InputGroup';
-import { NumberInput } from '@lablup/ui-common/NumberInput';
-import { Slider } from '@lablup/ui-common/Slider';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAINumberInput, BAISlider } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useEffect } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
@@ -196,7 +194,7 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
           isLabelHidden
           isDisabled={isDisabled}
         >
-          <NumberInput
+          <BAINumberInput
             aria-label={accessibleLabel}
             max={max}
             min={min}
@@ -275,7 +273,7 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
             isEmptyMode ? 'bai-slider bai-slider--empty' : 'bai-slider'
           }
         >
-          <Slider
+          <BAISlider
             aria-label={accessibleLabel}
             width="100%"
             max={sliderMax}

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f7c76b01e256728a1a2e87482999d3b5>>
+ * @generated SignedSource<<4abac1dd7d57656cd6a962c4336e9fec>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,6 +14,7 @@ export type ModelCardDeployModalFragment$data = {
   readonly availablePresets: {
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly entityId: string;
         readonly id: string;
         readonly name: string;
         readonly runtimeVariantId: string;
@@ -21,6 +22,7 @@ export type ModelCardDeployModalFragment$data = {
       };
     }>;
   } | null | undefined;
+  readonly entityId: string;
   readonly id: string;
   readonly " $fragmentType": "ModelCardDeployModalFragment";
 };
@@ -36,6 +38,13 @@ var v0 = {
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
+},
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "entityId",
+  "storageKey": null
 };
 return {
   "argumentDefinitions": [],
@@ -44,6 +53,7 @@ return {
   "name": "ModelCardDeployModalFragment",
   "selections": [
     (v0/*: any*/),
+    (v1/*: any*/),
     {
       "alias": null,
       "args": [
@@ -85,6 +95,7 @@ return {
               "plural": false,
               "selections": [
                 (v0/*: any*/),
+                (v1/*: any*/),
                 {
                   "alias": null,
                   "args": null,
@@ -119,6 +130,6 @@ return {
 };
 })();
 
-(node as any).hash = "de848be703b1a64ce737827e01f9cc21";
+(node as any).hash = "437b87751889b219c884a0b4428ddc96";
 
 export default node;

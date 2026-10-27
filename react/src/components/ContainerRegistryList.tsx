@@ -18,7 +18,6 @@ import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import { Button } from '@lablup/ui-common/Button';
 import { IconButton } from '@lablup/ui-common/IconButton';
-import { Switch } from '@lablup/ui-common/Switch';
 import { Token } from '@lablup/ui-common/Token';
 import {
   BAITokenRow,
@@ -35,6 +34,7 @@ import {
   useBAILogger,
   useFetchKey,
   useToggle,
+  BAISwitch,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
@@ -402,7 +402,7 @@ const ContainerRegistryList: React.FC<{
           // antd Switch checked/loading/disabled -> Astryx Switch
           // value/isLoading/isDisabled; `label` is required, hidden here
           // because the column header already names the control (P2).
-          <Switch
+          <BAISwitch
             aria-label={t('general.Enabled')}
             value={
               inFlightHostName === record.id + deferredFetchKey

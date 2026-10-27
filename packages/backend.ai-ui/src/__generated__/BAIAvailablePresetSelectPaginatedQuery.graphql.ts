@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e33887fd0a9719629ac8fe014f4766c5>>
+ * @generated SignedSource<<ceb4da0f02953e1da3e34e1ec0e6da19>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -56,6 +56,7 @@ export type BAIAvailablePresetSelectPaginatedQuery$data = {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly description: string | null | undefined;
+        readonly entityId: string;
         readonly id: string;
         readonly name: string;
         readonly rank: number;
@@ -133,24 +134,31 @@ v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "entityId",
   "storageKey": null
 },
 v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "description",
+  "name": "name",
   "storageKey": null
 },
 v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "rank",
+  "name": "description",
   "storageKey": null
 },
 v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "rank",
+  "storageKey": null
+},
+v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -198,6 +206,7 @@ return {
                   (v7/*: any*/),
                   (v8/*: any*/),
                   (v9/*: any*/),
+                  (v10/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -206,7 +215,7 @@ return {
                     "name": "runtimeVariant",
                     "plural": false,
                     "selections": [
-                      (v6/*: any*/)
+                      (v7/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -263,6 +272,7 @@ return {
                   (v7/*: any*/),
                   (v8/*: any*/),
                   (v9/*: any*/),
+                  (v10/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -271,7 +281,7 @@ return {
                     "name": "runtimeVariant",
                     "plural": false,
                     "selections": [
-                      (v6/*: any*/),
+                      (v7/*: any*/),
                       (v5/*: any*/)
                     ],
                     "storageKey": null
@@ -288,16 +298,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "9da417fb2ac8e507c2add0e8ea5c6008",
+    "cacheID": "0e3f2dd8caf86d1a07e4078c350f91f8",
     "id": null,
     "metadata": {},
     "name": "BAIAvailablePresetSelectPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIAvailablePresetSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: DeploymentRevisionPresetFilter\n) {\n  deploymentRevisionPresets(offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    count\n    edges {\n      node {\n        id\n        name\n        description\n        rank\n        runtimeVariantId\n        runtimeVariant {\n          name\n          id\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIAvailablePresetSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: DeploymentRevisionPresetFilter\n) {\n  deploymentRevisionPresets(offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        description\n        rank\n        runtimeVariantId\n        runtimeVariant {\n          name\n          id\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "da235ad4d7b554db2eb0632b7385930d";
+(node as any).hash = "19be911d52b927e652d5ebdfeaa4cf64";
 
 export default node;
