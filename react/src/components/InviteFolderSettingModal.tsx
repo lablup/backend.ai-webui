@@ -527,13 +527,13 @@ const InviteFolderSettingModalBody: React.FC<{
             </StackItem>
             <StackItem size="static">
               <Selector
-                label={t('data.folders.MountPermission')}
+                aria-label={t('data.folders.MountPermission')}
                 placement="below"
                 width={150}
                 options={mountLevelOptions}
                 value={mountLevel}
                 onChange={(next) => setMountLevel(next as MountLevel)}
-                isDisabled={isEmailInvite}
+                disabled={isEmailInvite}
               />
             </StackItem>
             <StackItem size="static">
@@ -601,8 +601,7 @@ const InviteFolderSettingModalBody: React.FC<{
               render: (level: ShareRow['mountLevel'], row) =>
                 row.status === 'ACCEPTED' && row.userId ? (
                   <Selector
-                    label={t('data.folders.MountPermission')}
-                    isLabelHidden
+                    aria-label={t('data.folders.MountPermission')}
                     placement="below"
                     width={130}
                     options={mountLevelOptions}
