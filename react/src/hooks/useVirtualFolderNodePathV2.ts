@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useVirtualFolderNodePathV2Fragment$key } from '../__generated__/useVirtualFolderNodePathV2Fragment.graphql';
-import { toLocalId } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
 
@@ -14,6 +13,7 @@ export const useVirtualFolderPathV2 = (
     graphql`
       fragment useVirtualFolderNodePathV2Fragment on VFolder {
         id
+        entityId
         metadata {
           quotaScopeId
         }
@@ -30,7 +30,7 @@ export const useVirtualFolderPathV2 = (
     vfolderNode?.metadata?.quotaScopeId ?? '',
     ':',
   );
-  const vfolderId = toLocalId(vfolderNode?.id);
+  const vfolderId = vfolderNode.entityId;
   const vfolderIdPrefix1 = vfolderId.slice(0, 2);
   const vfolderIdPrefix2 = vfolderId.slice(2, 4);
   const vfolderIdRest = vfolderId.slice(4);

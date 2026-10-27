@@ -26,10 +26,9 @@ import { IconButton } from '@lablup/ui-common/IconButton';
 import { Skeleton } from '@lablup/ui-common/Skeleton';
 import { HStack, VStack } from '@lablup/ui-common/Stack';
 import { Heading, Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFlex, BAITable, toLocalId } from 'backend.ai-ui';
+import { BAIFlex, BAITable, BAITextInput } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import {
@@ -56,6 +55,7 @@ function useDefaultDeploymentId() {
           edges {
             node {
               id
+              entityId
             }
           }
         }
@@ -87,8 +87,7 @@ function useDefaultDeploymentId() {
     },
   );
 
-  const deploymentId = myDeployments?.edges[0]?.node?.id;
-  return deploymentId ? toLocalId(deploymentId) : undefined;
+  return myDeployments?.edges[0]?.node?.entityId;
 }
 
 export function useChatProviderData(
@@ -293,7 +292,7 @@ const EditableChatTitle: React.FC<EditableChatTitleProps> = ({
       }
     };
     return (
-      <TextInput
+      <BAITextInput
         aria-label={t('chatui.ChatTitle')}
         value={draft}
         onChange={setDraft}

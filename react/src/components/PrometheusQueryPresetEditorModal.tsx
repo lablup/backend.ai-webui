@@ -14,15 +14,13 @@ import { useCurrentUserRole } from '../hooks/backendai';
 import PrometheusCategorySelect from './PrometheusCategorySelect';
 import PrometheusQueryTemplatePreview from './PrometheusQueryTemplatePreview';
 import {
-  AstryxFormTagsInput,
-  AstryxFormTextArea,
-  AstryxFormTextInput,
-} from './astryxFormControls';
-import {
   BAIModal,
   BAIModalProps,
   BAISelect,
   useBAILogger,
+  BAITagsInput,
+  BAITextArea,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense } from 'react';
@@ -318,7 +316,7 @@ const PrometheusQueryPresetEditorModal: React.FC<
           ]}
           extra={t('prometheusQueryPreset.NameMustBeUnique')}
         >
-          <AstryxFormTextInput label={t('prometheusQueryPreset.Name')} />
+          <BAITextInput aria-label={t('prometheusQueryPreset.Name')} />
         </Form.Item>
 
         <Form.Item
@@ -326,11 +324,11 @@ const PrometheusQueryPresetEditorModal: React.FC<
           name="description"
         >
           {/* antd `Input.TextArea autoSize={{minRows,maxRows}}` →
-              `AstryxFormTextArea rows` (MAPPING §3.6). PILOT-DECISION:
+              `TextArea rows` (MAPPING §3.6). PILOT-DECISION:
               auto-growing has no Astryx equivalent, so the box is fixed at the
               former minimum height. */}
-          <AstryxFormTextArea
-            label={t('prometheusQueryPreset.Description')}
+          <BAITextArea
+            aria-label={t('prometheusQueryPreset.Description')}
             rows={2}
           />
         </Form.Item>
@@ -360,7 +358,7 @@ const PrometheusQueryPresetEditorModal: React.FC<
             },
           ]}
         >
-          <AstryxFormTextInput label={t('prometheusQueryPreset.MetricName')} />
+          <BAITextInput aria-label={t('prometheusQueryPreset.MetricName')} />
         </Form.Item>
 
         <Form.Item
@@ -387,8 +385,8 @@ const PrometheusQueryPresetEditorModal: React.FC<
             ) : undefined
           }
         >
-          <AstryxFormTextArea
-            label={t('prometheusQueryPreset.QueryTemplate')}
+          <BAITextArea
+            aria-label={t('prometheusQueryPreset.QueryTemplate')}
             rows={4}
           />
         </Form.Item>
@@ -397,8 +395,8 @@ const PrometheusQueryPresetEditorModal: React.FC<
           label={t('prometheusQueryPreset.TimeWindow')}
           name="timeWindow"
         >
-          <AstryxFormTextInput
-            label={t('prometheusQueryPreset.TimeWindow')}
+          <BAITextInput
+            aria-label={t('prometheusQueryPreset.TimeWindow')}
             placeholder="5m"
           />
         </Form.Item>
@@ -407,9 +405,9 @@ const PrometheusQueryPresetEditorModal: React.FC<
           label={t('prometheusQueryPreset.FilterLabels')}
           name="filterLabels"
         >
-          <AstryxFormTagsInput
+          <BAITagsInput
             tokenSeparators={[',', ' ']}
-            label={t('prometheusQueryPreset.FilterLabels')}
+            aria-label={t('prometheusQueryPreset.FilterLabels')}
           />
         </Form.Item>
 
@@ -417,9 +415,9 @@ const PrometheusQueryPresetEditorModal: React.FC<
           label={t('prometheusQueryPreset.GroupLabels')}
           name="groupLabels"
         >
-          <AstryxFormTagsInput
+          <BAITagsInput
             tokenSeparators={[',', ' ']}
-            label={t('prometheusQueryPreset.GroupLabels')}
+            aria-label={t('prometheusQueryPreset.GroupLabels')}
           />
         </Form.Item>
       </Form>

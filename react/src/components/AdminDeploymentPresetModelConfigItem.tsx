@@ -7,23 +7,18 @@ import BAIFormItem from './BAIFormItem';
 import ModelServiceHealthCheckFormItems from './ModelServiceFormItems/ModelServiceHealthCheckFormItems';
 import PreStartActionsFormList from './ModelServiceFormItems/PreStartActionsFormList';
 import ServiceConfigurationFormItems from './ModelServiceFormItems/ServiceConfigurationFormItems';
-import {
-  AstryxFormTagsInput,
-  AstryxFormTextArea,
-  AstryxFormTextInput,
-} from './astryxFormControls';
 import './collapsible-section.css';
 import { Collapsible } from '@lablup/ui-common/Collapsible';
-import { BAIFlex } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAITagsInput,
+  BAITextArea,
+  BAITextInput,
+} from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-// ---------------------------------------------------------------------------
-// TagsField — the shared `AstryxFormTagsInput` under the name this file's two
-// call sites already use. It replaced a local Tokenizer bridge that was the
-// same component minus `tokenSeparators`, which antd had on both fields
-// (`tokenSeparators={[',']}`) and which the adapter restores.
-// ---------------------------------------------------------------------------
+// A comma-separated `BAITagsInput`, shared by this file's two tag fields.
 
 const TagsField: React.FC<{
   /** Injected by `Form.Item`. */
@@ -36,8 +31,8 @@ const TagsField: React.FC<{
 }> = ({ value, onChange, label, placeholder }) => {
   'use memo';
   return (
-    <AstryxFormTagsInput
-      label={label}
+    <BAITagsInput
+      aria-label={label}
       value={value}
       onChange={onChange}
       hasClear
@@ -102,8 +97,8 @@ const ModelConfigItem: React.FC<{
           required
           rules={[{ required: true }]}
         >
-          <AstryxFormTextInput
-            label={t('adminDeploymentPreset.modelDef.ModelName')}
+          <BAITextInput
+            aria-label={t('adminDeploymentPreset.modelDef.ModelName')}
             placeholder={t(
               'adminDeploymentPreset.modelDef.ModelNamePlaceholder',
             )}
@@ -116,8 +111,8 @@ const ModelConfigItem: React.FC<{
           required
           rules={[{ required: true }]}
         >
-          <AstryxFormTextInput
-            label={t('adminDeploymentPreset.modelDef.ModelPath')}
+          <BAITextInput
+            aria-label={t('adminDeploymentPreset.modelDef.ModelPath')}
             placeholder={t(
               'adminDeploymentPreset.modelDef.ModelPathPlaceholder',
             )}
@@ -164,8 +159,8 @@ const ModelConfigItem: React.FC<{
               label={t('adminDeploymentPreset.modelDef.Title')}
               style={{ flex: 1, minWidth: 160 }}
             >
-              <AstryxFormTextInput
-                label={t('adminDeploymentPreset.modelDef.Title')}
+              <BAITextInput
+                aria-label={t('adminDeploymentPreset.modelDef.Title')}
               />
             </BAIFormItem>
             <BAIFormItem
@@ -173,8 +168,8 @@ const ModelConfigItem: React.FC<{
               label={t('adminDeploymentPreset.modelDef.Author')}
               style={{ flex: 1, minWidth: 160 }}
             >
-              <AstryxFormTextInput
-                label={t('adminDeploymentPreset.modelDef.Author')}
+              <BAITextInput
+                aria-label={t('adminDeploymentPreset.modelDef.Author')}
               />
             </BAIFormItem>
           </BAIFlex>
@@ -184,8 +179,8 @@ const ModelConfigItem: React.FC<{
               label={t('adminDeploymentPreset.modelDef.Version')}
               style={{ flex: 1, minWidth: 120 }}
             >
-              <AstryxFormTextInput
-                label={t('adminDeploymentPreset.modelDef.Version')}
+              <BAITextInput
+                aria-label={t('adminDeploymentPreset.modelDef.Version')}
               />
             </BAIFormItem>
             <BAIFormItem
@@ -193,8 +188,8 @@ const ModelConfigItem: React.FC<{
               label={t('adminDeploymentPreset.modelDef.License')}
               style={{ flex: 1, minWidth: 120 }}
             >
-              <AstryxFormTextInput
-                label={t('adminDeploymentPreset.modelDef.License')}
+              <BAITextInput
+                aria-label={t('adminDeploymentPreset.modelDef.License')}
               />
             </BAIFormItem>
           </BAIFlex>
@@ -202,8 +197,8 @@ const ModelConfigItem: React.FC<{
             name={modelField('metadata', 'description')}
             label={t('adminDeploymentPreset.modelDef.Description')}
           >
-            <AstryxFormTextArea
-              label={t('adminDeploymentPreset.modelDef.Description')}
+            <BAITextArea
+              aria-label={t('adminDeploymentPreset.modelDef.Description')}
               rows={2}
             />
           </BAIFormItem>
@@ -213,8 +208,8 @@ const ModelConfigItem: React.FC<{
               label={t('adminDeploymentPreset.modelDef.Task')}
               style={{ flex: 1, minWidth: 120 }}
             >
-              <AstryxFormTextInput
-                label={t('adminDeploymentPreset.modelDef.Task')}
+              <BAITextInput
+                aria-label={t('adminDeploymentPreset.modelDef.Task')}
               />
             </BAIFormItem>
             <BAIFormItem
@@ -222,8 +217,8 @@ const ModelConfigItem: React.FC<{
               label={t('adminDeploymentPreset.modelDef.Category')}
               style={{ flex: 1, minWidth: 120 }}
             >
-              <AstryxFormTextInput
-                label={t('adminDeploymentPreset.modelDef.Category')}
+              <BAITextInput
+                aria-label={t('adminDeploymentPreset.modelDef.Category')}
               />
             </BAIFormItem>
             <BAIFormItem
@@ -231,8 +226,8 @@ const ModelConfigItem: React.FC<{
               label={t('adminDeploymentPreset.modelDef.Architecture')}
               style={{ flex: 1, minWidth: 120 }}
             >
-              <AstryxFormTextInput
-                label={t('adminDeploymentPreset.modelDef.Architecture')}
+              <BAITextInput
+                aria-label={t('adminDeploymentPreset.modelDef.Architecture')}
               />
             </BAIFormItem>
           </BAIFlex>

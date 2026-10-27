@@ -13,7 +13,6 @@ import {
   BAIListAlert,
   BAIModal,
   type BAIModalProps,
-  toLocalId,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -57,6 +56,7 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
     graphql`
       fragment DeleteVFolderModalV2Fragment on VFolder @relay(plural: true) {
         id
+        entityId
         metadata {
           name
         }
@@ -117,7 +117,7 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
             onRequestClose?.(false);
             return;
           }
-          const ids = _.map(folders, (vfolder) => toLocalId(vfolder.id));
+          const ids = _.map(folders, (vfolder) => vfolder.entityId);
           commitBulkDeleteMutation({
             variables: { input: { ids } },
             onCompleted: (data, errors) => {
@@ -135,7 +135,7 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
               // success with `failed` populated rather than as a top-level error.
               if (failed.length > 0) {
                 const nameByLocalId = _.fromPairs(
-                  _.map(folders, (v) => [toLocalId(v.id), v.metadata?.name]),
+                  _.map(folders, (v) => [v.entityId, v.metadata?.name]),
                 );
                 setFailureReport({
                   total: folders.length,

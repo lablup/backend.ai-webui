@@ -8,10 +8,15 @@ import { Form, FormInstance } from '../form-engine';
 import { getTotpActivationErrorMessageKey } from '../helper/totpErrorType';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
-import { AstryxFormTextInput } from './astryxFormTextInput';
 import { Spinner } from '@lablup/ui-common/Spinner';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIModal, BAIModalProps, BAIFlex, BAIText } from 'backend.ai-ui';
+import {
+  BAIModal,
+  BAIModalProps,
+  BAIFlex,
+  BAIText,
+  BAITextInput,
+} from 'backend.ai-ui';
 // PILOT-DECISION (p3-w3b): antd `QRCode` was the last antd RENDER in this
 // file. MAPPING.md §2 grades it **NONE** — neither Astryx core nor lab ships
 // a QR renderer — so closing it meant adopting a dependency. `qrcode.react`
@@ -204,12 +209,9 @@ export const TOTPActivateForm: React.FC<TOTPActiveFormProps> = ({
                 `autoComplete="one-time-code"` hints are dropped because
                 `TextInputProps` is a closed surface with no raw-attribute
                 passthrough; the `Form.Item` rules above already enforce
-                required + digits-only.
-
-                `size` / `width` / `htmlName` are on the SHARED adapter now
-                (D10 fold-back), so this no longer needs a local copy. */}
-            <AstryxFormTextInput
-              label={t('totp.EnterConfirmationCode')}
+                required + digits-only. */}
+            <BAITextInput
+              aria-label={t('totp.EnterConfirmationCode')}
               size="lg"
               width={200}
               htmlName="otp"

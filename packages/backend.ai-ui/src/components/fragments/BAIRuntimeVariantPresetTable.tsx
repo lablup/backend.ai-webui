@@ -67,6 +67,7 @@ const BAIRuntimeVariantPresetTable = ({
       fragment BAIRuntimeVariantPresetTableFragment on RuntimeVariantPreset
       @relay(plural: true) {
         id @required(action: NONE)
+        entityId
         runtimeVariantId
         runtimeVariant @since(version: "26.8.0") {
           name

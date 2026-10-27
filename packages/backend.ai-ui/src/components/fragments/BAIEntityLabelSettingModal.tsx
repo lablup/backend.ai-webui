@@ -8,8 +8,8 @@ import type { BAILabelableEntityType } from '../../hooks/useLabelableEntityTypes
 import BAIBulkErrorModal from '../BAIBulkErrorModal';
 import BAIFlex from '../BAIFlex';
 import BAIModal, { type BAIModalProps } from '../BAIModal';
+import BAITextInput from '../BAITextInput';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
-import { AstryxFormTextInput } from '../astryxFormControls';
 import { formatEntityLabel } from './BAIEntityLabelTokens';
 import { Button } from '@lablup/ui-common/Button';
 import { IconButton } from '@lablup/ui-common/IconButton';
@@ -317,8 +317,8 @@ const BAIEntityLabelSettingModalContent = ({
                           }),
                         ]}
                       >
-                        <AstryxFormTextInput
-                          label={t('comp:BAIEntityLabelSettingModal.Key')}
+                        <BAITextInput
+                          aria-label={t('comp:BAIEntityLabelSettingModal.Key')}
                           placeholder={t('comp:BAIEntityLabelSettingModal.Key')}
                         />
                       </Form.Item>
@@ -342,8 +342,10 @@ const BAIEntityLabelSettingModalContent = ({
                           },
                         ]}
                       >
-                        <AstryxFormTextInput
-                          label={t('comp:BAIEntityLabelSettingModal.Value')}
+                        <BAITextInput
+                          aria-label={t(
+                            'comp:BAIEntityLabelSettingModal.Value',
+                          )}
                           placeholder={t(
                             'comp:BAIEntityLabelSettingModal.Value',
                           )}
