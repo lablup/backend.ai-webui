@@ -188,6 +188,28 @@ The build emits the overlay client as one chunk at `/review-overlay.js` and inje
 - **No `/__review/state`.** The build embeds the answer in the document instead, as `<script type="application/json" id="bai-review-state">`, with one extra field the endpoint never sends: `"host": "static"`. Blocks copied from such a build carry `pr=0` — a deployment is not a PR. (A fetch would not even have failed: Amplify rewrites every unknown path to `index.html` with a 200, so it would resolve to an HTML parse error on every boot.)
 - **No react-grab.** The app imports it behind `process.env.NODE_ENV === 'development'`, so a bundle has no fiber walk: pins carry no ⚛️ source stack, and the overlay's own hover/click picker takes over — bound to the same ⌘⌃C, and bound immediately rather than after the 20 s it otherwise spends waiting for react-grab to register. The anchor itself (selector, testid landmark, fractional rect, tag, text, note) is pure DOM and is unaffected, so pinning and deep-linking work exactly as they do in dev.
 
+## Product analytics in a build (`VITE_ANALYTICS_BUILD`)
+
+**Opt-in, off by default.** `VITE_ANALYTICS_BUILD=1` (or `true`) compiles the PostHog analytics component (`react/src/components/ProductAnalytics.tsx`) and `posthog-js` into the bundle as a lazily loaded chunk. Without it the build contains neither, and the output has no trace of PostHog (ADR 0017):
+
+```bash
+pnpm run build:react-only
+grep -rli posthog react/build   # prints nothing
+```
+
+An analytics build also needs the PostHog project key and API host. If either is missing, the app neither initialises the SDK nor sends a request:
+
+```bash
+VITE_ANALYTICS_BUILD=1 \
+VITE_POSTHOG_KEY=<project API key> \
+VITE_POSTHOG_HOST=https://posthog.example.com \
+pnpm run build
+```
+
+The same variables work in `.env.development.local` for a dev server. The SDK posts events to `VITE_POSTHOG_HOST` and loads its replay and exception-capture scripts from it, so the CSP of the server that hosts an analytics build must allow that host in `connect-src` (and in `script-src` unless the policy uses `'strict-dynamic'`). The Electron app reuses the web bundle, so it follows the same flag; every event carries `platform` (`web` or `electron`). Users are identified after login by their user UUID with `role` and `domain`, and identity is reset on logout. URL query strings and fragments are stripped before an event is sent, and session replay (when the PostHog project turns it on) masks every input. Errors logged with `useBAILogger` at ERROR level, render errors caught by `BAIErrorBoundary`, uncaught errors and unhandled rejections go to PostHog error tracking, with repeats of the same error dropped for five minutes.
+
+Per-domain opt-in through the domain app config is not part of this flag yet.
+
 ## CLI login (`/cli-login`)
 
 `bai-agent login` (`packages/backend.ai-agent-cli`, the Backend.AI WebUI Agent CLI) hands the CLI the session this dev server is already logged in with, via the `/cli-login` page. The route is always mounted; it is not linked from any menu.
