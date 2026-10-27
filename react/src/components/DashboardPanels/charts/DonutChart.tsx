@@ -28,6 +28,8 @@ const LEGEND_WIDTH_GUESS = 224;
 const LEGEND_GAP = 24;
 const ROW_HEIGHT = 32;
 const COMPACT_ROW_HEIGHT = 24;
+// The hole's share of the ring's radius, for the filled and the empty ring alike.
+const DONUT_INNER_RADIUS = 0.6;
 
 interface LegendRow extends Record<string, unknown> {
   key: string;
@@ -61,7 +63,7 @@ export interface DonutChartProps {
   label: string;
   /** Legend column headers, also used in the slice tooltip. */
   columnLabels: { name: string; value: string; percent: string };
-  /** Shown instead of the ring when every value is 0. */
+  /** The empty ring's accessible name, when every value is 0. */
   emptyText: string;
   /** A manager-counted total shown in the ring's hole; omitted, the hole stays empty. */
   total?: number | null;
@@ -95,7 +97,8 @@ const DonutChart: React.FC<DonutChartProps> = ({
     }
   });
 
-  const colors = useChartColors().categorical(Math.max(rows.length, 1));
+  const chartColors = useChartColors();
+  const colors = chartColors.categorical(Math.max(rows.length, 1));
   const legendRows: Array<LegendRow> = rows.map((row, index) => ({
     ...row,
     color: colors[index % colors.length],
@@ -121,7 +124,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
 
   // Zero-value slices stay in the legend only; drawn, their separators show as a gap.
   const chartRows = legendRows.filter((row) => row.value > 0);
-  const chartColors = legendRows.flatMap((row, i) =>
+  const sliceColors = legendRows.flatMap((row, i) =>
     row.value > 0 ? [colors[i]] : [],
   );
 
@@ -157,11 +160,11 @@ const DonutChart: React.FC<DonutChartProps> = ({
                 data={chartRows}
                 valueKey="value"
                 labelKey="label"
-                innerRadius={0.6}
+                innerRadius={DONUT_INNER_RADIUS}
                 height={chartSize}
                 label={label}
               >
-                <RadialSlice colors={chartColors} labels={false} />
+                <RadialSlice colors={sliceColors} labels={false} />
                 <RadialTooltip
                   highlight={false}
                   render={(datum) => (
@@ -191,7 +194,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
               </BAIFlex>
             </BAIFlex>
           ) : (
-            // A box the ring's size keeps the layout of the filled state.
+            // A neutral track the filled ring's size and thickness, with the 0 in its hole.
             <BAIFlex
               justify="center"
               align="center"
@@ -202,8 +205,25 @@ const DonutChart: React.FC<DonutChartProps> = ({
                 flex: 'none',
                 width: ring,
                 height: ring,
+                position: 'relative',
               }}
             >
+              <svg
+                width={ring}
+                height={ring}
+                viewBox={`0 0 ${ring} ${ring}`}
+                aria-hidden
+                style={{ position: 'absolute', inset: 0 }}
+              >
+                <circle
+                  cx={ring / 2}
+                  cy={ring / 2}
+                  r={(ring / 2) * ((1 + DONUT_INNER_RADIUS) / 2)}
+                  fill="none"
+                  stroke={chartColors.structural.grid}
+                  strokeWidth={(ring / 2) * (1 - DONUT_INNER_RADIUS)}
+                />
+              </svg>
               <span className="bai-donut-total bai-donut-total--empty">0</span>
             </BAIFlex>
           )}
