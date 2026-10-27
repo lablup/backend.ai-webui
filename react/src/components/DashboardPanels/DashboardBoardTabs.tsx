@@ -73,57 +73,57 @@ const DashboardBoardTabs: React.FC<DashboardBoardTabsProps> = ({
 
   return (
     <>
-      <BAITabList
-        value={activeBoard.id}
-        onChange={(id) => update((current) => selectBoard(current, id))}
-        aria-label={t('dashboard.boards.Boards')}
-        tabBarExtraContent={
-          <BAIFlex direction="row" align="center" gap="xxs">
+      {/* The actions sit beside the tab list, not in its rail, so the rail's divider never clips them. */}
+      <BAIFlex direction="row" align="center" gap="sm">
+        <BAIFlex style={{ flex: 1, minWidth: 0 }}>
+          <BAITabList
+            value={activeBoard.id}
+            onChange={(id) => update((current) => selectBoard(current, id))}
+            aria-label={t('dashboard.boards.Boards')}
+          >
+            {config.boards.map((board) => (
+              <Tab key={board.id} value={board.id} label={titleOf(board)} />
+            ))}
+          </BAITabList>
+        </BAIFlex>
+        <BAIFlex direction="row" align="center" gap="xxs">
+          <IconButton
+            variant="ghost"
+            label={t('dashboard.boards.EditBoard')}
+            tooltip={t('dashboard.boards.EditBoard')}
+            icon={<SquarePenIcon size="1em" />}
+            onClick={() => setEditingBoard(activeBoard)}
+          />
+          <BAIPopconfirm
+            title={t('dialog.ask.DoYouWantToDeleteSomething', {
+              name: titleOf(activeBoard),
+            })}
+            isDanger
+            okText={t('button.Delete')}
+            onConfirm={() =>
+              update((current) => removeBoard(current, activeBoard.id))
+            }
+          >
             <IconButton
               variant="ghost"
-              size="sm"
-              label={t('dashboard.boards.EditBoard')}
-              tooltip={t('dashboard.boards.EditBoard')}
-              icon={<SquarePenIcon size="1em" />}
-              onClick={() => setEditingBoard(activeBoard)}
-            />
-            <BAIPopconfirm
-              title={t('dialog.ask.DoYouWantToDeleteSomething', {
-                name: titleOf(activeBoard),
-              })}
-              isDanger
-              okText={t('button.Delete')}
-              onConfirm={() =>
-                update((current) => removeBoard(current, activeBoard.id))
+              label={t('button.Delete')}
+              tooltip={
+                config.boards.length > 1
+                  ? t('button.Delete')
+                  : t('dashboard.boards.CannotDeleteLastBoard')
               }
-            >
-              <IconButton
-                variant="ghost"
-                size="sm"
-                label={t('button.Delete')}
-                tooltip={
-                  config.boards.length > 1
-                    ? t('button.Delete')
-                    : t('dashboard.boards.CannotDeleteLastBoard')
-                }
-                icon={<Trash2 size="1em" />}
-                isDisabled={config.boards.length <= 1}
-              />
-            </BAIPopconfirm>
-            <Button
-              variant="secondary"
-              size="sm"
-              icon={<Plus size="1em" />}
-              label={t('dashboard.boards.NewBoard')}
-              onClick={addNewBoard}
+              icon={<Trash2 size="1em" />}
+              isDisabled={config.boards.length <= 1}
             />
-          </BAIFlex>
-        }
-      >
-        {config.boards.map((board) => (
-          <Tab key={board.id} value={board.id} label={titleOf(board)} />
-        ))}
-      </BAITabList>
+          </BAIPopconfirm>
+          <Button
+            variant="secondary"
+            icon={<Plus size="1em" />}
+            label={t('dashboard.boards.NewBoard')}
+            onClick={addNewBoard}
+          />
+        </BAIFlex>
+      </BAIFlex>
       <BAIUnmountAfterClose>
         <BAIModal
           open={!!editingBoard}
