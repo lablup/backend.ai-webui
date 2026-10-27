@@ -74,7 +74,7 @@ export default defineConfig(({ mode }) => {
         // library, so they have no business in the published types.
         exclude: [
           '**/*.{stories,test}.{ts,tsx}',
-          '**/*TestFixtures.{ts,tsx}',
+          '**/*.fixtures.{ts,tsx}',
           'src/locale/*.json',
           '**/*.doc.ts',
           'src/astryx-docs/**',
