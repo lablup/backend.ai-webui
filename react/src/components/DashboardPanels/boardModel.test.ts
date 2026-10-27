@@ -83,6 +83,22 @@ describe('seedBoard', () => {
   it('never seeds presets', () => {
     expect(ids(seedBoard(definitions, 'admin'))).toEqual(['adminOnly']);
   });
+
+  it('hides a card by default only on the pages its defaultHidden lists, and orders cards per page', () => {
+    const shared: ReadonlyArray<PanelDefinition> = [
+      card('first', { page: ['project', 'admin'], defaultHidden: ['admin'] }),
+      card('second', { page: ['project', 'admin'], order: { admin: 2 } }),
+      card('third', { page: ['project', 'admin'], order: { admin: 1 } }),
+    ];
+    expect(ids(seedBoard(shared, 'project'))).toEqual([
+      'first',
+      'second',
+      'third',
+    ]);
+    const admin = seedBoard(shared, 'admin');
+    expect(ids(admin)).toEqual(['third', 'second']);
+    expect(admin.knownKeys).toEqual(['third', 'second', 'first']);
+  });
 });
 
 describe('syncBoard', () => {

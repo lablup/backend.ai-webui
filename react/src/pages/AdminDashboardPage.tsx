@@ -10,7 +10,6 @@ import {
 } from '../components/DashboardPanels/DashboardRefreshContext';
 import { PANEL_CATALOG } from '../components/DashboardPanels/panelCatalog';
 import SessionDetailAndContainerLogOpenerLegacy from '../components/SessionDetailAndContainerLogOpenerLegacy';
-import { useCurrentDomainValue } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useUrlProjectValidity } from '../hooks/useUrlProjectValidity';
 import type { ProjectContextOrNull } from '../types/projectContext';
@@ -34,7 +33,6 @@ const AdminDashboardPageContent: React.FC<AdminDashboardPageProps> = ({
     page === 'projectAdmin' && urlProjectName && resolvedId
       ? { id: resolvedId, name: urlProjectName }
       : null;
-  const currentDomainName = useCurrentDomainValue();
   const isSuperAdmin = useCurrentUserRole() === 'superadmin';
 
   const { fetchKey } = useDashboardFetchKey('page-query', '30s');
@@ -44,13 +42,10 @@ const AdminDashboardPageContent: React.FC<AdminDashboardPageProps> = ({
   const queryRef = useLazyLoadQuery<AdminDashboardPageQuery>(
     graphql`
       query AdminDashboardPageQuery(
-        $scopeId: ScopeField
         $isSuperAdmin: Boolean!
         $aliveAgentFilter: String!
         $schedulableAgentFilter: String!
       ) {
-        ...SessionCountDashboardItemFragment @arguments(scopeId: $scopeId)
-        ...RecentlyCreatedSessionFragment @arguments(scopeId: $scopeId)
         ...AgentStatsFragment
           @include(if: $isSuperAdmin)
           @alias
@@ -61,9 +56,6 @@ const AdminDashboardPageContent: React.FC<AdminDashboardPageProps> = ({
       }
     `,
     {
-      scopeId: project
-        ? `project:${project.id}`
-        : `domain:${currentDomainName}`,
       isSuperAdmin,
       aliveAgentFilter: 'status == "ALIVE"',
       schedulableAgentFilter: 'status == "ALIVE" & schedulable == true',
@@ -84,10 +76,7 @@ const AdminDashboardPageContent: React.FC<AdminDashboardPageProps> = ({
         project={project}
         catalog={PANEL_CATALOG}
         isRefetching={isRefetching}
-        queryRefs={{
-          queryRef,
-          agentStatsQueryRef: queryRef.AgentStatsFragment,
-        }}
+        queryRefs={{ agentStatsQueryRef: queryRef.AgentStatsFragment }}
       />
       {/* Session names in the cards open the drawer through `sessionDetail`. */}
       <SessionDetailAndContainerLogOpenerLegacy project={project} />

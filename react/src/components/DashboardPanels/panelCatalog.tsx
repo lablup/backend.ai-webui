@@ -2,11 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import ActiveAgents from '../ActiveAgents';
 import AgentStats from '../AgentStats';
 import QuotaPerStorageVolumeDashboardItem from '../QuotaPerStorageVolumeDashboardItem';
-import RecentlyCreatedSession from '../RecentlyCreatedSession';
-import SessionCountDashboardItem from '../SessionCountDashboardItem';
 import { useDashboardRefreshQuery } from './DashboardRefreshContext';
 import AuditLogPanel from './cards/AuditLogPanel';
 import DeploymentStatusPanel from './cards/DeploymentStatusPanel';
@@ -14,7 +11,9 @@ import FoldersPanel from './cards/FoldersPanel';
 import LongRunningSessionsPanel from './cards/LongRunningSessionsPanel';
 import PendingSessionsPanel from './cards/PendingSessionsPanel';
 import RecentSessionsPanel from './cards/RecentSessionsPanel';
+import ResourceAllocationPanel from './cards/ResourceAllocationPanel';
 import SessionStatusPanel from './cards/SessionStatusPanel';
+import UsersPanel from './cards/UsersPanel';
 import { DEFAULT_PANEL_LAYOUTS, presetKey } from './defaults';
 import MyResourcesPanel from './memberCards/MyResourcesPanel';
 import ResourceGroupTotalPanel from './memberCards/ResourceGroupTotalPanel';
@@ -26,10 +25,17 @@ import {
   StartFromURLPanel,
   StartSessionPanel,
 } from './memberCards/StartActionPanels';
-import ResourceAllocationPanel from './cards/ResourceAllocationPanel';
-import UsersPanel from './cards/UsersPanel';
 import ResourceGroupCapacityPanel from './projectAdminCards/ResourceGroupCapacityPanel';
 import { resourceKeys, resourceRegistry } from './resourceRegistry';
+import AgentsPanel from './superadminCards/AgentsPanel';
+import ContainerRegistriesPanel from './superadminCards/ContainerRegistriesPanel';
+import FailuresByEntityTypePanel from './superadminCards/FailuresByEntityTypePanel';
+import FairSharePanel from './superadminCards/FairSharePanel';
+import KeypairsLoginsPanel from './superadminCards/KeypairsLoginsPanel';
+import NotificationsPanel from './superadminCards/NotificationsPanel';
+import ResourcePoliciesPanel from './superadminCards/ResourcePoliciesPanel';
+import SchedulingFailuresPanel from './superadminCards/SchedulingFailuresPanel';
+import TopProjectsUsagePanel from './superadminCards/TopProjectsUsagePanel';
 import type {
   PanelComponentProps,
   PanelDefinition,
@@ -37,14 +43,13 @@ import type {
   PanelSize,
   PanelType,
 } from './types';
-import { useDashboardProject } from './useDashboardFilters';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIBoardItemErrorBoundary, BAISkeleton } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
-// The admin pages' built-in cards, each wrapped as the page wrapped it before
-// the catalog existed; the member cards live in `memberCards/`.
+// Cards that predate the catalog, each wrapped as its page wrapped it; the
+// rest live in `cards/` (shared by pages), `memberCards/` and `superadminCards/`.
 
 const InlineSkeleton: React.FC = () => {
   'use memo';
@@ -56,19 +61,6 @@ const PaddedSkeleton: React.FC = () => {
   'use memo';
   const { token } = useTheme();
   return <BAISkeleton style={{ padding: token('--spacing-5') }} />;
-};
-
-const ActiveSessionsPanel: React.FC<PanelComponentProps> = ({ queryRefs }) => {
-  'use memo';
-  const { t } = useTranslation();
-  return queryRefs.queryRef ? (
-    <Suspense fallback={<InlineSkeleton />}>
-      <SessionCountDashboardItem
-        queryRef={queryRefs.queryRef}
-        title={t('session.ActiveSessions')}
-      />
-    </Suspense>
-  ) : null;
 };
 
 const QuotaPerStorageVolumePanel: React.FC<PanelComponentProps> = () => {
@@ -96,28 +88,6 @@ const AgentStatsPanel: React.FC<PanelComponentProps> = ({ queryRefs }) => {
   ) : null;
 };
 
-const ActiveAgentsPanel: React.FC<PanelComponentProps> = ({
-  fetchKey,
-  onRefresh,
-}) => {
-  'use memo';
-  return (
-    <Suspense fallback={<InlineSkeleton />}>
-      <ActiveAgents fetchKey={fetchKey} onChangeFetchKey={() => onRefresh()} />
-    </Suspense>
-  );
-};
-
-const RecentlyCreatedSessionPanel: React.FC<PanelComponentProps> = ({
-  queryRefs,
-}) => {
-  'use memo';
-  const project = useDashboardProject();
-  return queryRefs.queryRef ? (
-    <RecentlyCreatedSession queryRef={queryRefs.queryRef} project={project} />
-  ) : null;
-};
-
 const size = (columnSpan: number, rowSpan: number): PanelSize => ({
   columnSpan,
   rowSpan,
@@ -130,7 +100,6 @@ const ALL_PAGES: ReadonlyArray<PanelPage> = [
 ];
 
 const START_SIZE = { defaultSize: size(1, 2), minSize: size(1, 2) };
-
 /** The member page's cards and the shared ones, in the order a new board places them. */
 const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
   {
@@ -198,19 +167,8 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'session.MySessions',
     kind: 'custom',
     Component: SessionStatusPanel,
-    defaultSize: size(2, 2),
-    minSize: size(2, 2),
-    refresh: { min: '15s' },
-  },
-  {
-    key: 'activeSessions',
-    page: ['admin'],
-    group: 'session',
-    titleKey: 'session.ActiveSessions',
-    kind: 'custom',
-    Component: ActiveSessionsPanel,
-    defaultSize: size(2, 2),
-    minSize: size(2, 2),
+    defaultSize: size(2, 3),
+    minSize: size(2, 3),
     refresh: { min: '15s' },
   },
   {
@@ -315,11 +273,31 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
   },
 ];
 
-/** The project admin page's cards, in the order its default board places them. */
+/** Where the superadmin page's default board places its cards. */
+const ADMIN_ORDER = {
+  projectSessionStatus: 1,
+  pendingSessions: 2,
+  schedulingFailures: 3,
+  activeAgents: 4,
+  agentStats: 5,
+  failuresByEntityType: 6,
+  projectAuditLog: 7,
+  topProjectsUsage: 8,
+  fairShare: 9,
+} as const;
+
+const adminOrder = (key: keyof typeof ADMIN_ORDER) => ({
+  order: { admin: ADMIN_ORDER[key] },
+});
+
+/**
+ * The admin pages' cards, in the order the project admin board places them.
+ * A card on both pages is one component that reads the page's scope (ADR 0015).
+ */
 const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
   {
     key: 'projectSessionStatus',
-    page: ['projectAdmin'],
+    page: ['projectAdmin', 'admin'],
     group: 'session',
     titleKey: 'dashboard.card.SessionStatus',
     kind: 'custom',
@@ -327,10 +305,11 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(4, 3),
     minSize: size(2, 3),
     refresh: { min: '15s' },
+    ...adminOrder('projectSessionStatus'),
   },
   {
     key: 'pendingSessions',
-    page: ['projectAdmin'],
+    page: ['projectAdmin', 'admin'],
     group: 'session',
     titleKey: 'dashboard.card.PendingSessions',
     kind: 'custom',
@@ -338,10 +317,12 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(4, 3),
     minSize: size(2, 2),
     refresh: { min: '15s' },
+    settings: ['resourceGroup'],
+    ...adminOrder('pendingSessions'),
   },
   {
     key: 'longRunningSessions',
-    page: ['projectAdmin'],
+    page: ['projectAdmin', 'admin'],
     group: 'session',
     titleKey: 'dashboard.card.LongRunningSessions',
     kind: 'custom',
@@ -350,10 +331,11 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     minSize: size(2, 2),
     refresh: { min: '1m' },
     settings: ['range'],
+    defaultHidden: ['admin'],
   },
   {
     key: 'projectResourceAllocation',
-    page: ['projectAdmin'],
+    page: ['projectAdmin', 'admin'],
     group: 'resource',
     titleKey: 'dashboard.card.ResourceAllocation',
     kind: 'custom',
@@ -361,10 +343,11 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(2, 2),
     minSize: size(2, 2),
     refresh: { min: '30s' },
+    defaultHidden: ['admin'],
   },
   {
     key: 'projectDeployments',
-    page: ['projectAdmin'],
+    page: ['projectAdmin', 'admin'],
     group: 'deployment',
     titleKey: 'dashboard.card.DeploymentStatus',
     requires: { menuKey: 'deployments' },
@@ -373,10 +356,11 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(2, 3),
     minSize: size(2, 2),
     refresh: { min: '30s' },
+    defaultHidden: ['admin'],
   },
   {
     key: 'projectFolders',
-    page: ['projectAdmin'],
+    page: ['projectAdmin', 'admin'],
     group: 'resource',
     titleKey: 'general.Folders',
     kind: 'custom',
@@ -384,10 +368,11 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(2, 2),
     minSize: size(2, 2),
     refresh: { min: '5m' },
+    defaultHidden: ['admin'],
   },
   {
     key: 'projectUsers',
-    page: ['projectAdmin'],
+    page: ['projectAdmin', 'admin'],
     group: 'users',
     titleKey: 'webui.menu.Users',
     kind: 'custom',
@@ -395,10 +380,11 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(2, 2),
     minSize: size(2, 2),
     refresh: { min: '5m' },
+    defaultHidden: ['admin'],
   },
   {
     key: 'projectAuditLog',
-    page: ['projectAdmin'],
+    page: ['projectAdmin', 'admin'],
     group: 'activity',
     titleKey: 'auditLog.AuditLog',
     kind: 'custom',
@@ -407,10 +393,11 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     minSize: size(2, 3),
     refresh: { min: '1m' },
     settings: ['range'],
+    ...adminOrder('projectAuditLog'),
   },
   {
     key: 'resourceGroupCapacity',
-    page: ['projectAdmin'],
+    page: ['projectAdmin', 'admin'],
     group: 'resource',
     titleKey: 'dashboard.card.ResourceGroupCapacity',
     kind: 'custom',
@@ -423,45 +410,159 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
   },
 ];
 
-/** The admin pages' remaining built-in cards. */
-const ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
+const SUPERADMIN_ONLY = { role: 'superadmin' } as const;
+
+/** Cards only the superadmin page has: cluster-wide and superadmin-only fields. */
+const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
   {
-    key: 'agentStats',
+    key: 'schedulingFailures',
     page: ['admin'],
-    group: 'resource',
-    titleKey: 'agentStats.AgentStats',
-    requires: { role: 'superadmin' },
+    group: 'session',
+    titleKey: 'dashboard.card.SchedulingFailures',
+    requires: SUPERADMIN_ONLY,
     kind: 'custom',
-    Component: AgentStatsPanel,
-    defaultSize: size(2, 2),
-    minSize: size(2, 2),
-    refresh: { min: '30s' },
+    Component: SchedulingFailuresPanel,
+    defaultSize: size(4, 4),
+    minSize: size(2, 3),
+    refresh: { min: '1m' },
+    settings: ['range'],
+    ...adminOrder('schedulingFailures'),
   },
   {
     key: 'activeAgents',
     page: ['admin'],
     group: 'resource',
-    titleKey: 'activeAgent.ActiveAgents',
-    requires: { role: 'superadmin' },
+    titleKey: 'dashboard.card.Agents',
+    requires: SUPERADMIN_ONLY,
     kind: 'custom',
-    Component: ActiveAgentsPanel,
+    Component: AgentsPanel,
     defaultSize: size(4, 4),
-    minSize: size(4, 3),
+    minSize: size(2, 3),
     refresh: { min: '15s' },
+    ...adminOrder('activeAgents'),
   },
   {
+    key: 'agentStats',
+    page: ['admin'],
+    group: 'resource',
+    titleKey: 'agentStats.AgentStats',
+    requires: SUPERADMIN_ONLY,
+    kind: 'custom',
+    Component: AgentStatsPanel,
+    defaultSize: size(2, 2),
+    minSize: size(2, 2),
+    refresh: { min: '30s' },
+    ...adminOrder('agentStats'),
+  },
+  {
+    key: 'failuresByEntityType',
+    page: ['admin'],
+    group: 'activity',
+    titleKey: 'dashboard.card.FailuresByEntityType',
+    requires: SUPERADMIN_ONLY,
+    kind: 'custom',
+    Component: FailuresByEntityTypePanel,
+    defaultSize: size(2, 3),
+    minSize: size(2, 3),
+    refresh: { min: '1m' },
+    settings: ['range'],
+    ...adminOrder('failuresByEntityType'),
+  },
+  {
+    key: 'topProjectsUsage',
+    page: ['admin'],
+    group: 'resource',
+    titleKey: 'dashboard.card.TopProjectsByUsage',
+    requires: SUPERADMIN_ONLY,
+    kind: 'custom',
+    Component: TopProjectsUsagePanel,
+    defaultSize: size(4, 3),
+    minSize: size(2, 3),
+    refresh: { min: '5m' },
+    settings: ['range', 'resourceGroup'],
+    ...adminOrder('topProjectsUsage'),
+  },
+  {
+    key: 'fairShare',
+    page: ['admin'],
+    group: 'resource',
+    titleKey: 'dashboard.card.FairShare',
+    requires: SUPERADMIN_ONLY,
+    kind: 'custom',
+    Component: FairSharePanel,
+    defaultSize: size(4, 3),
+    minSize: size(2, 3),
+    refresh: { min: '5m' },
+    settings: ['resourceGroup'],
+    ...adminOrder('fairShare'),
+  },
+  {
+    // The member page's My Recent Sessions over the domain; the key is the one stored boards already carry.
     key: 'recentlyCreatedSession',
     page: ['admin'],
     group: 'session',
     titleKey: 'session.RecentlyCreatedSessions',
     kind: 'custom',
-    Component: RecentlyCreatedSessionPanel,
+    Component: RecentSessionsPanel,
     defaultSize: size(4, 3),
     minSize: size(2, 2),
     refresh: { min: '1m' },
+    defaultHidden: true,
+  },
+  {
+    key: 'resourcePolicies',
+    page: ['admin'],
+    group: 'resource',
+    titleKey: 'dashboard.card.ResourcePolicies',
+    requires: SUPERADMIN_ONLY,
+    kind: 'custom',
+    Component: ResourcePoliciesPanel,
+    defaultSize: size(2, 2),
+    minSize: size(2, 2),
+    refresh: { min: '10m' },
+    defaultHidden: true,
+  },
+  {
+    key: 'keypairsLogins',
+    page: ['admin'],
+    group: 'users',
+    titleKey: 'dashboard.card.KeypairsAndLogins',
+    requires: SUPERADMIN_ONLY,
+    kind: 'custom',
+    Component: KeypairsLoginsPanel,
+    defaultSize: size(4, 3),
+    minSize: size(2, 3),
+    refresh: { min: '1m' },
+    settings: ['range'],
+    defaultHidden: true,
+  },
+  {
+    key: 'containerRegistries',
+    page: ['admin'],
+    group: 'other',
+    titleKey: 'dashboard.card.ContainerRegistries',
+    requires: SUPERADMIN_ONLY,
+    kind: 'custom',
+    Component: ContainerRegistriesPanel,
+    defaultSize: size(4, 3),
+    minSize: size(2, 2),
+    refresh: { min: '10m' },
+    defaultHidden: true,
+  },
+  {
+    key: 'notifications',
+    page: ['admin'],
+    group: 'other',
+    titleKey: 'dashboard.card.Notifications',
+    requires: SUPERADMIN_ONLY,
+    kind: 'custom',
+    Component: NotificationsPanel,
+    defaultSize: size(4, 3),
+    minSize: size(2, 3),
+    refresh: { min: '10m' },
+    defaultHidden: true,
   },
 ];
-
 const sizesOf = (panelType: PanelType) => {
   const layout = DEFAULT_PANEL_LAYOUTS[panelType];
   return {
@@ -509,6 +610,6 @@ const PRESET_PANELS: ReadonlyArray<PanelDefinition> = resourceKeys.map(
 export const PANEL_CATALOG: ReadonlyArray<PanelDefinition> = [
   ...MEMBER_PANELS,
   ...PROJECT_ADMIN_PANELS,
-  ...ADMIN_PANELS,
+  ...SUPERADMIN_PANELS,
   ...PRESET_PANELS,
 ];

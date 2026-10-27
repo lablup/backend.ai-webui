@@ -3,8 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { AgentStatsFragment$key } from '../../__generated__/AgentStatsFragment.graphql';
-import type { RecentlyCreatedSessionFragment$key } from '../../__generated__/RecentlyCreatedSessionFragment.graphql';
-import type { SessionCountDashboardItemFragment$key } from '../../__generated__/SessionCountDashboardItemFragment.graphql';
 import type { SessionGridViewParams } from '../../helper/sessionResourceGridData';
 import type { UserRole } from '../../helper/userRole';
 import type { MenuKeys } from '../../hooks/useWebUIMenuItems';
@@ -212,10 +210,8 @@ export interface PanelCatalogContext {
   config: PanelCatalogConfig;
 }
 
-/** Fragment keys of the admin page query the built-in admin cards still read. */
+/** Fragment keys of the admin page query the agent statistics card still reads. */
 export interface DashboardPageQueryRefs {
-  queryRef?: SessionCountDashboardItemFragment$key &
-    RecentlyCreatedSessionFragment$key;
   agentStatsQueryRef?: AgentStatsFragment$key | null;
 }
 
@@ -271,8 +267,10 @@ export interface PanelDefinition {
   refresh: { min: RefreshInterval };
   /** The settings the card reads; only these cards get a settings control. */
   settings?: ReadonlyArray<PanelSettingKind>;
-  /** Like a BAITable column's `defaultHidden`: in the catalog, not on a new board. */
-  defaultHidden?: boolean;
+  /** Like a BAITable column's `defaultHidden`: in the catalog, not on a new board; a page list limits it to those pages. */
+  defaultHidden?: boolean | ReadonlyArray<PanelPage>;
+  /** Where a new board of the page places the card; cards without one follow, in catalog order. */
+  order?: Partial<Record<PanelPage, number>>;
 }
 
 /** Inputs the generic executor hands to a resource's `buildVariables`. */
