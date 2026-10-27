@@ -2004,6 +2004,8 @@
     "AgentId": "Хийнний ID",
     "ContainerId": "Контейнер ID",
     "ContainerLogs": "Савны бүртгэл",
+    "ContainerLogsNotReadyYet": "Савны бүртгэл одоогоор байхгүй байна",
+    "ContainerLogsNotReadyYetDescription": "Савыг одоогоор агентад хуваарилаагүй байна. Сесси эхэлсний дараа бүртгэл харагдана.",
     "FailedToLoadContainerLogs": "Савны бүртгэлийг ачаалж чадсангүй",
     "Hostname": "Хотийнгуу нэр",
     "Kernel": "Цөм",

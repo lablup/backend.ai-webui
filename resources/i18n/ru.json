@@ -2003,6 +2003,8 @@
     "AgentId": "Идентификатор агента",
     "ContainerId": "Идентификатор контейнера",
     "ContainerLogs": "Журналы контейнеров",
+    "ContainerLogsNotReadyYet": "Журналы контейнеров пока недоступны",
+    "ContainerLogsNotReadyYetDescription": "Контейнер ещё не назначен агенту. Журналы появятся после запуска сессии.",
     "FailedToLoadContainerLogs": "Не удалось загрузить журналы контейнеров",
     "Hostname": "Имя хоста",
     "Kernel": "Ядро",

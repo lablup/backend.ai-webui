@@ -2005,6 +2005,8 @@
     "AgentId": "에이전트 ID",
     "ContainerId": "컨테이너 ID",
     "ContainerLogs": "컨테이너 로그",
+    "ContainerLogsNotReadyYet": "컨테이너 로그가 아직 없습니다",
+    "ContainerLogsNotReadyYetDescription": "컨테이너가 아직 할당되지 않았습니다. 세션이 시작되면 로그가 표시됩니다.",
     "FailedToLoadContainerLogs": "컨테이너 로그를 불러오지 못했습니다",
     "Hostname": "호스트명",
     "Kernel": "커널",

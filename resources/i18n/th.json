@@ -1995,6 +1995,8 @@
     "AgentId": "ID ตัวแทน",
     "ContainerId": "ID คอนเทนเนอร์",
     "ContainerLogs": "บันทึกคอนเทนเนอร์",
+    "ContainerLogsNotReadyYet": "บันทึกคอนเทนเนอร์ยังไม่พร้อมใช้งาน",
+    "ContainerLogsNotReadyYetDescription": "คอนเทนเนอร์ยังไม่ได้ถูกมอบหมายให้เอเจนต์ บันทึกจะปรากฏเมื่อเซสชันเริ่มต้น",
     "FailedToLoadContainerLogs": "ไม่สามารถโหลดบันทึกคอนเทนเนอร์ได้",
     "Hostname": "ชื่อโฮสต์",
     "Kernel": "เคอร์เนล",

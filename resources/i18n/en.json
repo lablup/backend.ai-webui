@@ -1990,6 +1990,8 @@
     "AgentId": "Agent ID",
     "ContainerId": "Container ID",
     "ContainerLogs": "Container Logs",
+    "ContainerLogsNotReadyYet": "Container logs not available yet",
+    "ContainerLogsNotReadyYetDescription": "The container has not been assigned to an agent yet. Logs will appear once the session starts.",
     "FailedToLoadContainerLogs": "Failed to load container logs",
     "Hostname": "Hostname",
     "Kernel": "Kernel",

@@ -2003,6 +2003,8 @@
     "AgentId": "Id ejen",
     "ContainerId": "ID kontena",
     "ContainerLogs": "Log kontena",
+    "ContainerLogsNotReadyYet": "Log kontena belum tersedia",
+    "ContainerLogsNotReadyYetDescription": "Bekas belum ditugaskan kepada ejen. Log akan muncul selepas sesi bermula.",
     "FailedToLoadContainerLogs": "Gagal memuatkan log kontena",
     "Hostname": "Nama Host",
     "Kernel": "Kernel",

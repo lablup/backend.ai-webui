@@ -2006,6 +2006,8 @@
     "AgentId": "代理ID",
     "ContainerId": "容器ID",
     "ContainerLogs": "容器日誌",
+    "ContainerLogsNotReadyYet": "容器日誌尚無法使用",
+    "ContainerLogsNotReadyYetDescription": "容器尚未指派至代理。工作階段開始後將顯示日誌。",
     "FailedToLoadContainerLogs": "無法載入容器日誌",
     "Hostname": "主機名",
     "Kernel": "核心",

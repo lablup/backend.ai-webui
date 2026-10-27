@@ -2003,6 +2003,8 @@
     "AgentId": "ID do agente",
     "ContainerId": "ID do contêiner",
     "ContainerLogs": "Logs de contêineres",
+    "ContainerLogsNotReadyYet": "Logs de contêineres ainda não disponíveis",
+    "ContainerLogsNotReadyYetDescription": "O contêiner ainda não foi atribuído a um agente. Os logs aparecerão quando a sessão começar.",
     "FailedToLoadContainerLogs": "Falha ao carregar os logs de contêineres",
     "Hostname": "Nome do host",
     "Kernel": "Kernel",

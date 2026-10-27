@@ -2004,6 +2004,8 @@
     "AgentId": "ID d'agent",
     "ContainerId": "ID de conteneur",
     "ContainerLogs": "Journaux des conteneurs",
+    "ContainerLogsNotReadyYet": "Journaux des conteneurs pas encore disponibles",
+    "ContainerLogsNotReadyYetDescription": "Le conteneur n'a pas encore été attribué à un agent. Les journaux apparaîtront au démarrage de la session.",
     "FailedToLoadContainerLogs": "Échec du chargement des journaux des conteneurs",
     "Hostname": "Nom d'hôte",
     "Kernel": "Noyau",

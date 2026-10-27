@@ -2003,6 +2003,8 @@
     "AgentId": "ID de agente",
     "ContainerId": "ID de contenedor",
     "ContainerLogs": "Registros de contenedores",
+    "ContainerLogsNotReadyYet": "Registros de contenedores aún no disponibles",
+    "ContainerLogsNotReadyYetDescription": "El contenedor aún no se ha asignado a un agente. Los registros aparecerán cuando la sesión comience.",
     "FailedToLoadContainerLogs": "No se pudieron cargar los registros de contenedores",
     "Hostname": "Nombre de host",
     "Kernel": "Núcleo",
