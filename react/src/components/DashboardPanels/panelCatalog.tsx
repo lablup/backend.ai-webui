@@ -32,7 +32,6 @@ import ContainerRegistriesPanel from './superadminCards/ContainerRegistriesPanel
 import FailuresByEntityTypePanel from './superadminCards/FailuresByEntityTypePanel';
 import FairSharePanel from './superadminCards/FairSharePanel';
 import KeypairsLoginsPanel from './superadminCards/KeypairsLoginsPanel';
-import NotificationsPanel from './superadminCards/NotificationsPanel';
 import ResourcePoliciesPanel from './superadminCards/ResourcePoliciesPanel';
 import SchedulingFailuresPanel from './superadminCards/SchedulingFailuresPanel';
 import TopProjectsUsagePanel from './superadminCards/TopProjectsUsagePanel';
@@ -546,19 +545,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: ContainerRegistriesPanel,
     defaultSize: size(4, 3),
     minSize: size(2, 2),
-    refresh: { min: '10m' },
-    defaultHidden: true,
-  },
-  {
-    key: 'notifications',
-    page: ['admin'],
-    group: 'other',
-    titleKey: 'dashboard.card.Notifications',
-    requires: SUPERADMIN_ONLY,
-    kind: 'custom',
-    Component: NotificationsPanel,
-    defaultSize: size(4, 3),
-    minSize: size(2, 3),
     refresh: { min: '10m' },
     defaultHidden: true,
   },

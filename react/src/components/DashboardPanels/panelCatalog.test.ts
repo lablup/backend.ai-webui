@@ -163,7 +163,6 @@ describe('catalogFor on the real catalog', () => {
       'resourcePolicies',
       'keypairsLogins',
       'containerRegistries',
-      'notifications',
     ];
     expect(board.knownKeys).toEqual(expect.arrayContaining(catalogOnly));
     const placed = board.panels.map((panel) => panel.id);
