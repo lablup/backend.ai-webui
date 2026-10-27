@@ -132,8 +132,6 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
             if (active) scrollBoardEndIntoView();
           }}
           panels={customPanels}
-          availableResources={availableResources}
-          gridEnabled={gridEnabled}
           onRequestAdd={() => setPanelModalState({ open: true })}
           onRequestEdit={(panel) => setPanelModalState({ open: true, panel })}
           onRemove={removePanel}

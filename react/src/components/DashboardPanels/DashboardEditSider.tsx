@@ -5,19 +5,12 @@
 import { useCurrentUserRole } from '../../hooks/backendai';
 import './DashboardEditSider.css';
 import { panelTitleKey, type CatalogEntry } from './boardModel';
-import { panelTypeLabelKeys } from './panelRegistry';
-import { describePanelSettings, panelSettingsParts } from './panelSettings';
-import { resolvePanelTitle, resourceRegistry } from './resourceRegistry';
-import {
-  PANEL_GROUPS,
-  type PanelGroup,
-  type PersistedPanel,
-  type ResourceKey,
-} from './types';
+import { describePanelSettings } from './panelSettings';
+import { resolvePanelTitle } from './resourceRegistry';
+import { PANEL_GROUPS, type PanelGroup, type PersistedPanel } from './types';
 import type { PanelSettingsTarget } from './useDashboardBoard';
 import { Button } from '@lablup/ui-common/Button';
 import { CheckboxList, CheckboxListItem } from '@lablup/ui-common/CheckboxList';
-import { Divider } from '@lablup/ui-common/Divider';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
@@ -38,9 +31,6 @@ export interface DashboardEditSiderProps {
   activeKeys: ReadonlySet<string>;
   onTogglePanel: (key: string, active: boolean) => void;
   panels: ReadonlyArray<PersistedPanel>;
-  availableResources: ReadonlyArray<ResourceKey>;
-  /** `experimental_session_resource_grid`; off shows grid panels as tables. */
-  gridEnabled?: boolean;
   onRequestAdd: () => void;
   onRequestEdit: (panel: PersistedPanel) => void;
   onRemove: (id: string) => void;
@@ -71,8 +61,6 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
   activeKeys,
   onTogglePanel,
   panels,
-  availableResources,
-  gridEnabled = false,
   onRequestAdd,
   onRequestEdit,
   onRemove,
@@ -85,7 +73,6 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
   const { token } = useTheme();
   const role = useCurrentUserRole();
   const [search, setSearch] = useState('');
-  const availableSet = new Set(availableResources);
 
   const normalizedSearch = search.trim().toLowerCase();
   const labeledEntries = catalogEntries.map((entry) => ({
@@ -229,25 +216,6 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
         <BAIFlex direction="column" align="stretch">
           {panels.map((panel) => {
             const label = resolvePanelTitle(panel.descriptor, t);
-            const dataSourceLabel = t(
-              resourceRegistry[panel.descriptor.resourceType]?.labelKey ??
-                panel.descriptor.resourceType,
-            );
-            const isAvailable = availableSet.has(panel.descriptor.resourceType);
-            const isGridDegraded =
-              panel.panelType === 'sessionResourceGrid' && !gridEnabled;
-            // An untitled panel already reads as its data source; the degraded
-            // grid hint names the kind itself, so it replaces it.
-            const captionParts = [
-              isGridDegraded
-                ? t('dashboard.editSider.GridDisabled')
-                : t(panelTypeLabelKeys[panel.panelType] ?? panel.panelType),
-              panel.descriptor.title ? dataSourceLabel : undefined,
-              isAvailable
-                ? undefined
-                : t('dashboard.editSider.RequiresSuperadmin'),
-              ...panelSettingsParts(settingsTargetOf(panel.id)?.settings, t),
-            ].filter((part): part is string => !!part);
             return (
               <BAIFlex
                 key={panel.id}
@@ -266,39 +234,6 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
                   style={{ flex: 1, minWidth: 0 }}
                 >
                   <BAIText ellipsis>{label}</BAIText>
-                  <BAIFlex
-                    direction="row"
-                    align="center"
-                    wrap="nowrap"
-                    style={{ minWidth: 0, overflow: 'hidden' }}
-                  >
-                    {captionParts.map((part, index) => (
-                      <React.Fragment key={part}>
-                        {index > 0 && (
-                          <Divider
-                            orientation="vertical"
-                            variant="strong"
-                            style={{
-                              alignSelf: 'center',
-                              height: '0.9em',
-                              marginInline: token('--spacing-1'),
-                            }}
-                          />
-                        )}
-                        <BAIText
-                          type="secondary"
-                          ellipsis={{ tooltip: part }}
-                          style={{
-                            fontSize: token('--font-size-sm'),
-                            minWidth: 0,
-                            flexShrink: index === 0 ? 0 : 1,
-                          }}
-                        >
-                          {part}
-                        </BAIText>
-                      </React.Fragment>
-                    ))}
-                  </BAIFlex>
                 </BAIFlex>
                 <BAIFlex direction="row" align="center" gap="xxs">
                   {settingsButton(panel.id, label)}
