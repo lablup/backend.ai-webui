@@ -799,7 +799,7 @@
       "Boards": "Tableaux",
       "CannotDeleteLastBoard": "Le dernier tableau ne peut pas être supprimé",
       "DefaultBoard": "Par défaut",
-      "EditBoard": "Modifier le tableau",
+      "DeleteBoard": "Supprimer le tableau",
       "NewBoard": "Nouveau tableau",
       "NewBoardTitle": "Tableau {{number}}"
     },
@@ -889,6 +889,7 @@
       "Unlimited": "Illimité",
       "UsageOnDay": "Utilisation le {{day}}",
       "UsageRowsCapped": "Affichage des {{shown}} lignes les plus récentes sur {{total}}.",
+      "ViewAll": "Tout afficher",
       "ViewIn": "Afficher dans {{name}}",
       "VsPreviousRange": "par rapport à la période précédente",
       "Waiting": "Attente"

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e6ae63592ff435fd1d9fc8454eaba01c>>
+ * @generated SignedSource<<15e5b1d65a81c4cf707a0393a79a6fdf>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -23,13 +23,18 @@ export type MyResourcesPanelQuery$data = {
       readonly resourceType: string;
       readonly unlimited: boolean;
     }>;
-    readonly breakdown: {
-      readonly keypair: {
-        readonly used: ReadonlyArray<{
-          readonly quantity: any;
-          readonly resourceType: string;
-        }>;
-      };
+  } | null | undefined;
+  readonly myUserResourceAllocationV2: {
+    readonly user: {
+      readonly assignable: ReadonlyArray<{
+        readonly quantity: any | null | undefined;
+        readonly resourceType: string;
+        readonly unlimited: boolean;
+      }>;
+      readonly used: ReadonlyArray<{
+        readonly quantity: any;
+        readonly resourceType: string;
+      }>;
     };
   } | null | undefined;
 };
@@ -60,7 +65,27 @@ v2 = {
   "name": "quantity",
   "storageKey": null
 },
-v3 = [
+v3 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "ResourceLimitEntry",
+  "kind": "LinkedField",
+  "name": "assignable",
+  "plural": true,
+  "selections": [
+    (v1/*: any*/),
+    (v2/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "unlimited",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v4 = [
   {
     "alias": null,
     "args": [
@@ -75,58 +100,40 @@ v3 = [
     "name": "effectiveResourceAllocationV2",
     "plural": false,
     "selections": [
+      (v3/*: any*/)
+    ],
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "UserResourceAllocationV2",
+    "kind": "LinkedField",
+    "name": "myUserResourceAllocationV2",
+    "plural": false,
+    "selections": [
       {
         "alias": null,
         "args": null,
-        "concreteType": "ResourceLimitEntry",
+        "concreteType": "ScopeResourceUsageV2",
         "kind": "LinkedField",
-        "name": "assignable",
-        "plural": true,
-        "selections": [
-          (v1/*: any*/),
-          (v2/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "unlimited",
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "EffectiveBreakdownV2",
-        "kind": "LinkedField",
-        "name": "breakdown",
+        "name": "user",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "ScopeResourceUsageV2",
+            "concreteType": "ResourceSlotEntry",
             "kind": "LinkedField",
-            "name": "keypair",
-            "plural": false,
+            "name": "used",
+            "plural": true,
             "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "ResourceSlotEntry",
-                "kind": "LinkedField",
-                "name": "used",
-                "plural": true,
-                "selections": [
-                  (v1/*: any*/),
-                  (v2/*: any*/)
-                ],
-                "storageKey": null
-              }
+              (v1/*: any*/),
+              (v2/*: any*/)
             ],
             "storageKey": null
-          }
+          },
+          (v3/*: any*/)
         ],
         "storageKey": null
       }
@@ -140,7 +147,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "MyResourcesPanelQuery",
-    "selections": (v3/*: any*/),
+    "selections": (v4/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -149,19 +156,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "MyResourcesPanelQuery",
-    "selections": (v3/*: any*/)
+    "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "0cb5e72b1388d645515a736b2bfa77c3",
+    "cacheID": "5b8b7db7ecc26e074d00255795fea5a8",
     "id": null,
     "metadata": {},
     "name": "MyResourcesPanelQuery",
     "operationKind": "query",
-    "text": "query MyResourcesPanelQuery(\n  $input: EffectiveResourceAllocationV2Input!\n) {\n  effectiveResourceAllocationV2(input: $input) {\n    assignable {\n      resourceType\n      quantity\n      unlimited\n    }\n    breakdown {\n      keypair {\n        used {\n          resourceType\n          quantity\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query MyResourcesPanelQuery(\n  $input: EffectiveResourceAllocationV2Input!\n) {\n  effectiveResourceAllocationV2(input: $input) {\n    assignable {\n      resourceType\n      quantity\n      unlimited\n    }\n  }\n  myUserResourceAllocationV2 {\n    user {\n      used {\n        resourceType\n        quantity\n      }\n      assignable {\n        resourceType\n        quantity\n        unlimited\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5fd068866ceff5e23ecb1073ef874b9b";
+(node as any).hash = "7e4e7dcc184513a70ef200ff6641acb3";
 
 export default node;

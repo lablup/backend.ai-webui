@@ -77,7 +77,6 @@ describe('PANEL_CATALOG', () => {
         'mySession',
         'myRecentSessions',
         'myResource',
-        'resourcePresets',
         'totalResourceWithinResourceGroup',
         'folderStatus',
         'quotaPerStorageVolume',
@@ -128,6 +127,12 @@ describe('catalogFor on the real catalog', () => {
     expect(keys).not.toContain('resource.vfolder');
     expect(keys).toEqual(
       expect.arrayContaining(['mySession', 'resource.session']),
+    );
+  });
+
+  it('keeps Resource Presets in the member catalog though a new board leaves it out', () => {
+    expect(keysFor({ page: 'project', role: 'user', config: {} })).toContain(
+      'resourcePresets',
     );
   });
 

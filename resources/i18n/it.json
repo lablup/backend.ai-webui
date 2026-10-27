@@ -799,7 +799,7 @@
       "Boards": "Bacheche",
       "CannotDeleteLastBoard": "L'ultima bacheca non può essere eliminata",
       "DefaultBoard": "Predefinita",
-      "EditBoard": "Modifica bacheca",
+      "DeleteBoard": "Elimina bacheca",
       "NewBoard": "Nuova bacheca",
       "NewBoardTitle": "Bacheca {{number}}"
     },
@@ -889,6 +889,7 @@
       "Unlimited": "Illimitato",
       "UsageOnDay": "Utilizzo del {{day}}",
       "UsageRowsCapped": "Sono mostrate le {{shown}} righe più recenti su {{total}}.",
+      "ViewAll": "Mostra tutto",
       "ViewIn": "Visualizza in {{name}}",
       "VsPreviousRange": "rispetto all'intervallo precedente",
       "Waiting": "Attesa"

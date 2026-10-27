@@ -799,7 +799,7 @@
       "Boards": "Papan",
       "CannotDeleteLastBoard": "Papan terakhir tidak dapat dihapus",
       "DefaultBoard": "Bawaan",
-      "EditBoard": "Edit papan",
+      "DeleteBoard": "Hapus papan",
       "NewBoard": "Papan baru",
       "NewBoardTitle": "Papan {{number}}"
     },
@@ -889,6 +889,7 @@
       "Unlimited": "Tidak terbatas",
       "UsageOnDay": "Penggunaan pada {{day}}",
       "UsageRowsCapped": "Menampilkan {{shown}} baris terbaru dari {{total}}.",
+      "ViewAll": "Lihat semua",
       "ViewIn": "Lihat di {{name}}",
       "VsPreviousRange": "vs. rentang sebelumnya",
       "Waiting": "Menunggu"

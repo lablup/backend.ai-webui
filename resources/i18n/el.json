@@ -799,7 +799,7 @@
       "Boards": "Πίνακες",
       "CannotDeleteLastBoard": "Ο τελευταίος πίνακας δεν μπορεί να διαγραφεί",
       "DefaultBoard": "Προεπιλογή",
-      "EditBoard": "Επεξεργασία πίνακα",
+      "DeleteBoard": "Διαγραφή πίνακα",
       "NewBoard": "Νέος πίνακας",
       "NewBoardTitle": "Πίνακας {{number}}"
     },
@@ -889,6 +889,7 @@
       "Unlimited": "Απεριόριστο",
       "UsageOnDay": "Χρήση στις {{day}}",
       "UsageRowsCapped": "Εμφανίζονται οι {{shown}} νεότερες από {{total}} γραμμές.",
+      "ViewAll": "Προβολή όλων",
       "ViewIn": "Προβολή σε {{name}}",
       "VsPreviousRange": "έναντι προηγούμενου διαστήματος",
       "Waiting": "Αναμονή"

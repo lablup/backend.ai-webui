@@ -796,7 +796,7 @@
       "Boards": "บอร์ด",
       "CannotDeleteLastBoard": "ไม่สามารถลบบอร์ดสุดท้ายได้",
       "DefaultBoard": "ค่าเริ่มต้น",
-      "EditBoard": "แก้ไขบอร์ด",
+      "DeleteBoard": "ลบบอร์ด",
       "NewBoard": "บอร์ดใหม่",
       "NewBoardTitle": "บอร์ด {{number}}"
     },
@@ -886,6 +886,7 @@
       "Unlimited": "ไม่จำกัด",
       "UsageOnDay": "การใช้งานวันที่ {{day}}",
       "UsageRowsCapped": "แสดง {{shown}} แถวล่าสุดจาก {{total}} แถว",
+      "ViewAll": "ดูทั้งหมด",
       "ViewIn": "ดูใน {{name}}",
       "VsPreviousRange": "เทียบกับช่วงก่อนหน้า",
       "Waiting": "เวลารอ"

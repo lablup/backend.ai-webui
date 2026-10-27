@@ -799,7 +799,7 @@
       "Boards": "Panolar",
       "CannotDeleteLastBoard": "Son pano silinemez",
       "DefaultBoard": "Varsayılan",
-      "EditBoard": "Panoyu düzenle",
+      "DeleteBoard": "Panoyu sil",
       "NewBoard": "Yeni pano",
       "NewBoardTitle": "Pano {{number}}"
     },
@@ -889,6 +889,7 @@
       "Unlimited": "Sınırsız",
       "UsageOnDay": "{{day}} kullanımı",
       "UsageRowsCapped": "{{total}} satırdan en yeni {{shown}} tanesi gösteriliyor.",
+      "ViewAll": "Tümünü görüntüle",
       "ViewIn": "{{name}} içinde görüntüle",
       "VsPreviousRange": "önceki aralığa göre",
       "Waiting": "Bekleme"

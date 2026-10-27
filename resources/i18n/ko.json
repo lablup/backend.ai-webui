@@ -799,7 +799,7 @@
       "Boards": "보드",
       "CannotDeleteLastBoard": "마지막 보드는 삭제할 수 없습니다",
       "DefaultBoard": "기본",
-      "EditBoard": "보드 편집",
+      "DeleteBoard": "보드 삭제",
       "NewBoard": "새 보드",
       "NewBoardTitle": "보드 {{number}}"
     },
@@ -889,6 +889,7 @@
       "Unlimited": "무제한",
       "UsageOnDay": "{{day}} 하루 사용량",
       "UsageRowsCapped": "{{total}}개 행 중 최근 {{shown}}개를 보여 줍니다.",
+      "ViewAll": "전체 보기",
       "ViewIn": "{{name}}에서 보기",
       "VsPreviousRange": "이전 기간 대비",
       "Waiting": "대기 시간"
