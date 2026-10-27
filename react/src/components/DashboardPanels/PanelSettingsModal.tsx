@@ -110,7 +110,11 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
           </BAIFormItem>
         ) : null}
         {hasSetting(definition, 'range') ? (
-          <BAIFormItem name="range" label={t('dashboard.settings.TimeRange')}>
+          <BAIFormItem
+            name="range"
+            label={t('dashboard.settings.TimeRange')}
+            rules={[{ required: true }]}
+          >
             <BAISelect
               label={t('dashboard.settings.TimeRange')}
               options={RANGE_PRESETS.map((preset) => ({
