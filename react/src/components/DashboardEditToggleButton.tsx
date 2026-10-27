@@ -5,7 +5,7 @@
 import { dashboardEditModeAtom } from './dashboardEditModeAtom';
 import { Button } from '@lablup/ui-common/Button';
 import { useAtom } from 'jotai';
-import { Pencil } from 'lucide-react';
+import { SquarePenIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -21,7 +21,7 @@ const DashboardEditToggleButton: React.FC = () => {
   return (
     <Button
       variant="secondary"
-      icon={<Pencil size="1em" />}
+      icon={<SquarePenIcon size="1em" />}
       label={editMode ? t('button.Close') : t('dashboard.Edit')}
       onClick={() => setEditMode((prev) => !prev)}
       data-testid="dashboard-edit-toggle"
