@@ -20,7 +20,7 @@ const DashboardEditToggleButton: React.FC = () => {
 
   return (
     <Button
-      variant={editMode ? 'secondary' : 'primary'}
+      variant="secondary"
       size="sm"
       icon={<Pencil size="1em" />}
       label={editMode ? t('button.Close') : t('dashboard.Edit')}
