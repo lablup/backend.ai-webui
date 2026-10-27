@@ -1,0 +1,166 @@
+import{c as fe,r as j,R as ye,j as a,aT as Se,aU as je,aV as be}from"./iframe-DKLUwu6g.js";import{B as Pe}from"./BAISelect-BLlhgBL0.js";import{B as ve}from"./BAITextHighlighter-Bu6Zm4lc.js";import{u as F}from"./useControllableValue-CjdnfP_g.js";import{u as we}from"./reactQueryAlias-DlyN83H-.js";import{u as xe}from"./useConnectedBAIClient-Cy4-rzRV.js";import{f as Ae}from"./flatMap-jAiAfAZ4.js";import{f as Ge}from"./filter-Cbi-sriU.js";import{i as Re}from"./includes-9F4RVhdH.js";import{s as Ce}from"./some-Cf0_B3OP.js";import{f as Be}from"./find-BWbhJ1CR.js";import{m as Ie}from"./map-B1z_h2XP.js";import"./preload-helper-Dp1pzeXC.js";import"./astryxLabel-2F5dbhPn.js";import"./isString-D-Qv4V-l.js";import"./isEmpty-B5O9_-oQ.js";import"./index-BAqne0Yv.js";import"./runtime-BhgYCK9T.js";import"./formControl-C_gvSAsR.js";import"./FormLayoutContext-D7dDtYY4.js";import"./InputClearButton-DUlJD7d1.js";import"./selectorPresentation.stylex-BY6pJwqf.js";import"./Section-BDC2eSnj.js";import"./usePopover-CtejgcR0.js";import"./useDevWarning-B4St1Es4.js";import"./rtlStyles-T4i24HtE.js";import"./useFocusReturnVisibility-BVnos04J.js";import"./isRtlElement-B2-7SF8s.js";import"./useHighlightedOptionScroll-C4ufPlDN.js";import"./useAnnounceRenderedText-DzQP8Qyh.js";import"./useResolvedRequired-bKKIGlp3.js";import"./fieldParts-BNUrMfNg.js";import"./composeEventHandlers-BolWE7qY.js";import"./inputAria-CStWn1wH.js";import"./Badge-DQUfgsPX.js";import"./CheckboxInput-Ck3QScgD.js";import"./FieldStatus-CDlpxVFM.js";import"./useIsHydrating-DCAfefL8.js";import"./indicator.markers.stylex-DzlYzPUl.js";import"./useIndicator-Cx0dMm7Z.js";import"./Divider-DF7NfMO-.js";import"./inputStyles.stylex-Bztz6H8O.js";import"./Field-D0E4R3qn.js";import"./index-Ve1j9Nhh.js";import"./Selector-jOP9ARqn.js";import"./useMenuOverflow-DdD6qC30.js";import"./SelectorOption-Qval0ySu.js";import"./Item-Clv-F2Yf.js";import"./computeTargetAndRel-BGwjeA1c.js";import"./_baseFlatten-C-57_P8j.js";import"./_baseEach-iDyTRpmh.js";import"./get-DcJyjH2p.js";import"./_baseGet-BcKcFTG-.js";import"./isSymbol-aa5Ubb4j.js";import"./toString-nLBz1vao.js";import"./identity-DKeuBCMA.js";import"./_baseIndexOf-Be9UPhX8.js";import"./_baseFindIndex-Cj99RmFE.js";import"./toInteger-BnFrVy-a.js";import"./toFinite-C6xzHuzt.js";import"./toNumber-1_tyPd5e.js";import"./_trimmedEndIndex-DuQxD0U0.js";const Ee=({method:r,url:o,body:e=null,client:s})=>{const t=s==null?void 0:s.newSignedRequest(r,o,e,null);return s==null?void 0:s._wrapWithPromise(t)},Fe=()=>{const r=xe();return({method:o,url:e,body:s=null})=>Ee({method:o,url:e,body:s,client:r})};class Te extends Error{constructor(o){super(o instanceof Error?o.message:"Failed to fetch storage host information."),this.name="StorageHostFetchError",this.originalError=o}}const _e=(r,o,e)=>{const s=Ae(o,t=>(t==null?void 0:t.sftp_scaling_groups)??[]);return Ge(r,t=>!(e!=null&&e.includeSFTPResourceGroups)&&Re(s,t.name)?!1:e!=null&&e.filter?e.filter(t.name):!0)},De=(r,o)=>{"use memo";var B,I,S,p;const e=fe.c(16),s=Fe();let t;e[0]!==r?(t=["ResourceGroupSelectQuery",r],e[0]=r,e[1]=t):t=e[1];let l;e[2]!==s||e[3]!==r?(l=async()=>{if(!r)return null;const P=new URLSearchParams;P.set("group",r);const[i,c]=await Promise.allSettled([s({method:"GET",url:`/scaling-groups?${P.toString()}`}),s({method:"GET",url:"/folders/_/hosts"})]);if(c.status==="rejected")throw new Te(c.reason);if(i.status==="rejected")throw i.reason;return[i.value,c.value]},e[2]=s,e[3]=r,e[4]=l):l=e[4];let g;e[5]!==t||e[6]!==l?(g={queryKey:t,queryFn:l,staleTime:3e5},e[5]=t,e[6]=l,e[7]=g):g=e[7];const{data:n}=we(g);let m;e[8]!==((B=n==null?void 0:n[0])==null?void 0:B.scaling_groups)?(m=((I=n==null?void 0:n[0])==null?void 0:I.scaling_groups)??[],e[8]=(S=n==null?void 0:n[0])==null?void 0:S.scaling_groups,e[9]=m):m=e[9];const u=(p=n==null?void 0:n[1])==null?void 0:p.volume_info;let h;e[10]!==o||e[11]!==m||e[12]!==u?(h=_e(m,u,o),e[10]=o,e[11]=m,e[12]=u,e[13]=h):h=e[13];const f=h;let y;return e[14]!==f?(y={resourceGroups:f},e[14]=f,e[15]=y):y=e[15],y},d=({projectName:r,autoSelectDefault:o,filter:e,includeSFTPResourceGroups:s,showSearch:t,loading:l,...g})=>{const[n,m]=F({value:typeof t=="object"?t==null?void 0:t.searchValue:void 0,onChange:typeof t=="object"?t==null?void 0:t.onSearch:void 0}),[u,h]=F(g),[f,y]=j.useTransition(),[B,I]=j.useState(),S=ye.useCallback((c,...E)=>{I(c),y(()=>{h(c,...E)})},[y,h]),{resourceGroups:p}=De(r,{filter:e,includeSFTPResourceGroups:s});j.useEffect(()=>{u&&p.length>0&&!Ce(p,c=>c.name===u)&&S(void 0)},[p,u,S]);const P=Be(p,c=>c.name==="default")||p[0],i=P?{label:P.name,value:P.name}:void 0;return j.useEffect(()=>{o&&i&&!u&&S(i.value,i)},[o,i==null?void 0:i.value]),a.jsx(Pe,{defaultActiveFirstOption:!0,showSearch:t?{searchValue:n,onSearch:m}:void 0,defaultValue:o?i:void 0,loading:l||f,disabled:f,options:Ie(p,c=>({value:c.name,label:c.name})),optionRender:c=>{var E;return a.jsx(ve,{keyword:n,children:(E=c.data.value)==null?void 0:E.toString()})},...g,value:f?B:u,onChange:S})},ge=[{name:"default"},{name:"gpu-cluster"},{name:"cpu-only"},{name:"high-memory"}],Ne=Array.from({length:15},(r,o)=>({name:`resource-group-${o+1}`})),he={allowed:["host1","host2"],default:"host1",volume_info:{vol1:{backend:"xfs",capabilities:["quota","fast-lookup"],usage:{percentage:45.2},sftp_scaling_groups:["sftp-only"]}}},Ve=(r=ge,o=he)=>{const e={newSignedRequest:(s,t,l)=>({url:t}),_wrapWithPromise:s=>s.url.includes("/scaling-groups")?Promise.resolve({scaling_groups:r}):s.url.includes("/folders/_/hosts")?Promise.resolve(o):Promise.resolve({})};return Promise.resolve(e)},We=()=>({}),b=({children:r,scalingGroups:o=ge,volumeInfo:e=he})=>{const s=j.useMemo(()=>Ve(o,e),[o,e]),[t]=j.useState(()=>new Se({defaultOptions:{queries:{retry:!1,gcTime:0,staleTime:0}}}));return a.jsx(je,{locale:{lang:"en"},clientPromise:s,anonymousClientFactory:We,children:a.jsx(be,{client:t,children:a.jsx(j.Suspense,{fallback:a.jsx("div",{children:"Loading..."}),children:r})})})},Lr={title:"Select/BAIProjectResourceGroupSelect",component:d,tags:["autodocs"],parameters:{layout:"centered",docs:{description:{component:`
+**BAIProjectResourceGroupSelect** extends [BAISelect](/?path=/docs/components-input-baiselect--docs) to fetch and display resource groups for a project.
+
+## BAI-Specific Props
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| \`projectName\` | \`string\` | **required** | Project name to fetch resource groups for |
+| \`autoSelectDefault\` | \`boolean\` | \`false\` | Auto-select 'default' or first resource group |
+| \`filter\` | \`(name: string) => boolean\` | - | Custom filter function for resource groups |
+
+## Features
+- Fetches scaling groups from \`/scaling-groups?group={projectName}\`
+- Fetches volume info from \`/folders/_/hosts\`
+- Automatically filters out SFTP-only resource groups
+- Auto-selection with \`autoSelectDefault\` prop
+- Built-in search with text highlighting
+- TanStack Query integration with 5-minute cache
+
+## Usage
+\`\`\`tsx
+<BAIProjectResourceGroupSelect
+  projectName="my-project"
+  autoSelectDefault
+  placeholder="Select resource group"
+  onChange={(value) => console.log(value)}
+/>
+\`\`\`
+
+For all other props, refer to [BAISelect](/?path=/docs/components-input-baiselect--docs).
+        `}}},argTypes:{projectName:{control:{type:"text"},description:"Project name to fetch resource groups for",table:{type:{summary:"string"}}},autoSelectDefault:{control:{type:"boolean"},description:"Auto-select 'default' resource group or first available option",table:{type:{summary:"boolean"},defaultValue:{summary:"false"}}},filter:{control:!1,description:"Custom filter function to filter resource groups by name",table:{type:{summary:"(name: string) => boolean"}}},placeholder:{control:{type:"text"},description:"Placeholder text",table:{type:{summary:"string"}}},showSearch:{control:{type:"boolean"},description:"Enable search functionality",table:{type:{summary:"boolean"},defaultValue:{summary:"false"}}},onChange:{action:"changed",description:"Callback when selection changes"}}},v={name:"Basic",parameters:{docs:{description:{story:"Basic usage with 4 sample resource groups (default, gpu-cluster, cpu-only, high-memory). SFTP resource groups are automatically filtered out."}}},args:{projectName:"test-project",placeholder:"Select resource group"},render:r=>a.jsx(b,{children:a.jsx(d,{...r,style:{width:300}})})},w={name:"AutoSelect",parameters:{docs:{description:{story:"Automatically selects 'default' resource group when component mounts. If 'default' doesn't exist, selects the first available option."}}},args:{projectName:"test-project",autoSelectDefault:!0,placeholder:"Select resource group"},render:r=>a.jsx(b,{children:a.jsx(d,{...r,style:{width:300}})})},x={name:"SearchEnabled",parameters:{docs:{description:{story:"Enables search functionality to filter resource groups by name. Matching text is highlighted in options."}}},args:{projectName:"test-project",placeholder:"Search resource groups",showSearch:!0},render:r=>a.jsx(b,{children:a.jsx(d,{...r,style:{width:300}})})},A={name:"EmptyState",parameters:{docs:{description:{story:"Shows the component when no resource groups are returned from the API."}}},args:{projectName:"test-project",placeholder:"No resource groups available"},render:r=>a.jsx(b,{scalingGroups:[],children:a.jsx(d,{...r,style:{width:300}})})},G={name:"AutoSelectFirstOption",parameters:{docs:{description:{story:"When autoSelectDefault is enabled but 'default' resource group doesn't exist, automatically selects the first available option."}}},args:{projectName:"test-project",autoSelectDefault:!0,placeholder:"Select resource group"},render:r=>a.jsx(b,{scalingGroups:[{name:"gpu-cluster"},{name:"cpu-only"}],children:a.jsx(d,{...r,style:{width:300}})})},R={name:"CustomFilter",parameters:{docs:{description:{story:'Uses custom filter function to show only resource groups containing "gpu" in their name.'}}},args:{projectName:"test-project",placeholder:"Select GPU resource group",filter:r=>r.includes("gpu")},render:r=>a.jsx(b,{children:a.jsx(d,{...r,style:{width:300}})})},C={name:"ManyResourceGroups",parameters:{docs:{description:{story:"Demonstrates the component with 15 resource groups, showing scrollable dropdown behavior."}}},args:{projectName:"test-project",placeholder:"Select from 15 resource groups",showSearch:!0},render:r=>a.jsx(b,{scalingGroups:Ne,children:a.jsx(d,{...r,style:{width:300}})})};var T,_,D,N,V;v.parameters={...v.parameters,docs:{...(T=v.parameters)==null?void 0:T.docs,source:{originalSource:`{
+  name: 'Basic',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Basic usage with 4 sample resource groups (default, gpu-cluster, cpu-only, high-memory). SFTP resource groups are automatically filtered out.'
+      }
+    }
+  },
+  args: {
+    projectName: 'test-project',
+    placeholder: 'Select resource group'
+  },
+  render: args => <StoryProvider>
+      <BAIProjectResourceGroupSelect {...args} style={{
+      width: 300
+    }} />
+    </StoryProvider>
+}`,...(D=(_=v.parameters)==null?void 0:_.docs)==null?void 0:D.source},description:{story:"Basic usage showing 4 resource groups with auto-selection disabled.",...(V=(N=v.parameters)==null?void 0:N.docs)==null?void 0:V.description}}};var W,M,k,q,U;w.parameters={...w.parameters,docs:{...(W=w.parameters)==null?void 0:W.docs,source:{originalSource:`{
+  name: 'AutoSelect',
+  parameters: {
+    docs: {
+      description: {
+        story: "Automatically selects 'default' resource group when component mounts. If 'default' doesn't exist, selects the first available option."
+      }
+    }
+  },
+  args: {
+    projectName: 'test-project',
+    autoSelectDefault: true,
+    placeholder: 'Select resource group'
+  },
+  render: args => <StoryProvider>
+      <BAIProjectResourceGroupSelect {...args} style={{
+      width: 300
+    }} />
+    </StoryProvider>
+}`,...(k=(M=w.parameters)==null?void 0:M.docs)==null?void 0:k.source},description:{story:"Auto-selects 'default' resource group on mount.",...(U=(q=w.parameters)==null?void 0:q.docs)==null?void 0:U.description}}};var O,Q,H,$,L;x.parameters={...x.parameters,docs:{...(O=x.parameters)==null?void 0:O.docs,source:{originalSource:`{
+  name: 'SearchEnabled',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Enables search functionality to filter resource groups by name. Matching text is highlighted in options.'
+      }
+    }
+  },
+  args: {
+    projectName: 'test-project',
+    placeholder: 'Search resource groups',
+    showSearch: true
+  },
+  render: args => <StoryProvider>
+      <BAIProjectResourceGroupSelect {...args} style={{
+      width: 300
+    }} />
+    </StoryProvider>
+}`,...(H=(Q=x.parameters)==null?void 0:Q.docs)==null?void 0:H.source},description:{story:"Shows search functionality with text highlighting.",...(L=($=x.parameters)==null?void 0:$.docs)==null?void 0:L.description}}};var K,z,J,X,Y;A.parameters={...A.parameters,docs:{...(K=A.parameters)==null?void 0:K.docs,source:{originalSource:`{
+  name: 'EmptyState',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Shows the component when no resource groups are returned from the API.'
+      }
+    }
+  },
+  args: {
+    projectName: 'test-project',
+    placeholder: 'No resource groups available'
+  },
+  render: args => <StoryProvider scalingGroups={[]}>
+      <BAIProjectResourceGroupSelect {...args} style={{
+      width: 300
+    }} />
+    </StoryProvider>
+}`,...(J=(z=A.parameters)==null?void 0:z.docs)==null?void 0:J.source},description:{story:"Empty state when no resource groups are available.",...(Y=(X=A.parameters)==null?void 0:X.docs)==null?void 0:Y.description}}};var Z,ee,re,te,oe;G.parameters={...G.parameters,docs:{...(Z=G.parameters)==null?void 0:Z.docs,source:{originalSource:`{
+  name: 'AutoSelectFirstOption',
+  parameters: {
+    docs: {
+      description: {
+        story: "When autoSelectDefault is enabled but 'default' resource group doesn't exist, automatically selects the first available option."
+      }
+    }
+  },
+  args: {
+    projectName: 'test-project',
+    autoSelectDefault: true,
+    placeholder: 'Select resource group'
+  },
+  render: args => <StoryProvider scalingGroups={[{
+    name: 'gpu-cluster'
+  }, {
+    name: 'cpu-only'
+  }]}>
+      <BAIProjectResourceGroupSelect {...args} style={{
+      width: 300
+    }} />
+    </StoryProvider>
+}`,...(re=(ee=G.parameters)==null?void 0:ee.docs)==null?void 0:re.source},description:{story:"Auto-select when 'default' doesn't exist - selects first option.",...(oe=(te=G.parameters)==null?void 0:te.docs)==null?void 0:oe.description}}};var se,ae,ne,ce,ie;R.parameters={...R.parameters,docs:{...(se=R.parameters)==null?void 0:se.docs,source:{originalSource:`{
+  name: 'CustomFilter',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Uses custom filter function to show only resource groups containing "gpu" in their name.'
+      }
+    }
+  },
+  args: {
+    projectName: 'test-project',
+    placeholder: 'Select GPU resource group',
+    filter: (name: string) => name.includes('gpu')
+  },
+  render: args => <StoryProvider>
+      <BAIProjectResourceGroupSelect {...args} style={{
+      width: 300
+    }} />
+    </StoryProvider>
+}`,...(ne=(ae=R.parameters)==null?void 0:ae.docs)==null?void 0:ne.source},description:{story:"Using custom filter function to show only GPU resource groups.",...(ie=(ce=R.parameters)==null?void 0:ce.docs)==null?void 0:ie.description}}};var le,ue,pe,me,de;C.parameters={...C.parameters,docs:{...(le=C.parameters)==null?void 0:le.docs,source:{originalSource:`{
+  name: 'ManyResourceGroups',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Demonstrates the component with 15 resource groups, showing scrollable dropdown behavior.'
+      }
+    }
+  },
+  args: {
+    projectName: 'test-project',
+    placeholder: 'Select from 15 resource groups',
+    showSearch: true
+  },
+  render: args => <StoryProvider scalingGroups={sampleManyGroups}>
+      <BAIProjectResourceGroupSelect {...args} style={{
+      width: 300
+    }} />
+    </StoryProvider>
+}`,...(pe=(ue=C.parameters)==null?void 0:ue.docs)==null?void 0:pe.source},description:{story:"Many resource groups with scrollable dropdown.",...(de=(me=C.parameters)==null?void 0:me.docs)==null?void 0:de.description}}};const Kr=["Default","AutoSelectDefault","WithSearch","Empty","AutoSelectWithoutDefault","WithCustomFilter","ManyOptions"];export{w as AutoSelectDefault,G as AutoSelectWithoutDefault,v as Default,A as Empty,C as ManyOptions,R as WithCustomFilter,x as WithSearch,Kr as __namedExportsOrder,Lr as default};
