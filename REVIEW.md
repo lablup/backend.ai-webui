@@ -1,74 +1,150 @@
-# GitHub Copilot Instructions for Backend.AI WebUI
+# REVIEW.md — reviewing a pull request in Backend.AI WebUI
 
-This file guides GitHub Copilot's automated **code review** on pull requests in this
-repository. (Copilot's coding-agent mode reads `AGENTS.md` instead — this file is
-review-only and should not duplicate build/dev/architecture content that lives there.)
+Read this before reviewing a PR here, whether you are the ready gate's `/code-review` run, a
+review bot, or a person. Build, architecture and component conventions live in `CLAUDE.md` /
+`AGENTS.md`; this file is only about what to report and how.
 
-## Stack
+Backend.AI WebUI is a React 19 + Astryx (imported through `@lablup/ui-common`, never
+`@astryxdesign/*`) + Relay 20 application. Ant Design is not a dependency.
 
-Backend.AI WebUI is a **React web application** using React 19 + Astryx
-(imported through `@lablup/ui-common`, never `@astryxdesign/*`) + Relay 20 (GraphQL). Ant Design has been fully removed: it is not
-a dependency, the workspace pins exact versions, and any stray `antd` import fails
-`tsc`/build.
+## What failure looks like in this repository
 
-## Code Review Guidelines
+Report these. Each points at the rule that defines it; cite the rule in the finding.
 
-### General Principles
+- **A component renders wrong or not at all.** A fragment spread missing from the parent query,
+  a field read that the fragment does not select, a component or hook body without `'use memo'`
+  as its first statement, or a Suspense boundary that hides a card header or flashes the fallback
+  on a background refetch. (`.github/instructions/react.instructions.md` — Relay, React Compiler;
+  `.claude/rules/use-bai-card.md` — Suspense pairing.)
+- **A permission or scope leak.** Admin-only UI or an `admin*` query reachable by a user who
+  cannot use it, a leaf component reading the ambient project instead of its `project` prop, or
+  the wrong `scope` / `project` passed to a query. (`docs/adr/0001-explicit-project-prop-contract.md`,
+  `docs/adr/0012-scoped-search-fields-in-place-of-admin-fields.md`, `react/src/routes.tsx`
+  `handle.access`.)
+- **An i18n key that does not exist.** A `t('…')` key absent from `resources/i18n/en.json`, or a
+  BUI `comp:…` key absent from `packages/backend.ai-ui/src/locale/en.json` — the UI then shows the
+  raw key. Also `useTranslation` inside `packages/backend.ai-ui/src/**` (BUI uses `useBAIi18n()`,
+  FR-2986). (`.github/instructions/i18n.instructions.md`.)
+- **Two pagination modes in one connection call** — `first` + `offset`, `limit` + `after`, … on a
+  `*V2` field fails only at runtime. (`.claude/rules/graphql-pagination.md`.)
+- **An irreversible action without typed confirmation.** Permanent delete, purge or terminate
+  behind a `BAIPopconfirm` or a plain `modal.confirm` instead of `BAIDeleteConfirmModal` with
+  `requireConfirmInput`. (`.claude/rules/destructive-confirmation.md`.)
+- **An undeclared design token.** A `var(--…)` name that the Astryx token gate does not know
+  produces no error anywhere; it silently never themes. (`CLAUDE.md` — Verification Harness;
+  `node scripts/migration-gates/astryx-token-gate.mjs --strict`.)
+- **An `antd` or `@astryxdesign/*` import**, or a host-side twin of a BUI / ui-common component.
+  (`CLAUDE.md` — Architecture; `docs/adr/0009-ui-common-as-the-single-entry-point-to-astryx.md`;
+  `.claude/rules/bui-component-home.md`.)
+- **A decision that contradicts an ADR in force** without a superseding ADR in the same PR.
+  (`.claude/rules/adr.md`.)
 
-1. **Avoid Unnecessary Suggestions**
-   - Do not suggest adding comments to code that is already self-explanatory
-   - Focus on substantial issues (bugs, security vulnerabilities, performance problems)
-   - Avoid stylistic nitpicks that don't affect code quality
+## Evidence rule
 
-2. **Security First**
-   - Always check for OWASP Top 10 vulnerabilities
-   - Review for command injection, XSS, SQL injection risks
-   - Validate user input handling and sanitization
+Every finding names a file and line in the diff and says how to show it fails — the query that
+returns nothing, the route a non-admin can open, the key `en.json` does not have. A guess from a
+name ("this looks like it might…") is not a finding. If you cannot point at the line, do not post.
 
-3. **TypeScript Best Practices**
-   - Prefer explicit types over `any`
-   - Use proper type inference when types are obvious
-   - Leverage utility types (Pick, Omit, Partial, etc.)
+## What not to post
 
-4. **i18n split (FR-2986)**
-   - Host components (`react/src/**`) use `useTranslation()` / `<Trans>` from `react-i18next`
-   - BUI components (`packages/backend.ai-ui/src/**`) use `useBAIi18n()` / `<BAITrans>` —
-     direct imports of `useTranslation` / `Trans` / `withTranslation` / `Translation` /
-     `I18nextProvider` from `react-i18next` inside BUI are an ESLint error, not just a style
-     preference
-
-### What NOT to comment on
-
-1. **Do NOT comment on issues that have already been resolved** in the conversation thread
-2. **Do NOT duplicate comments** that other reviewers have already made
-3. **Do NOT bundle multiple unrelated issues** into a single review comment
-4. **Do NOT review generated or vendored files.** Skip the contents of:
-   - `**/__generated__/**` — Relay compiler output (deterministically regenerated by
-     `pnpm relay`; the real source is the `graphql` tags in `.tsx`/`.ts` files plus
-     `data/schema.graphql`)
+1. Style, naming, formatting, "consider …", and cleanup that changes no behaviour. Lint and
+   Prettier already ran (`scripts/verify.sh`).
+2. Requests to comment self-explanatory code. Comment density follows
+   `.claude/rules/comment-density.md`.
+3. Anything already answered, fixed in a later commit, or raised by another reviewer in the
+   thread. Read the whole conversation first; one issue per comment, never a bundle.
+4. **Nits: at most 3 per review.** Drop the rest.
+5. A defect in lines the PR did not add or change is tagged **Pre-existing** — reported so it is
+   not lost, never blamed on the author or required in this PR.
+6. The contents of generated or vendored files. Skip:
+   - `**/__generated__/**` — Relay compiler output (review the `graphql` tags in `.tsx`/`.ts`
+     files and `data/schema.graphql` instead)
+   - `react/src/generated/**` — the search-palette index (review `react/src/routes.tsx` and the
+     extractor instead)
    - `pnpm-lock.yaml`, `**/*.lock`, `**/*.lock.yml`
    - `*.d.ts` declaration files and other build artifacts under `dist/` or `build/`
 
-   These files cannot be meaningfully changed by the author and any comment on them is
-   noise. The only thing worth checking is whether the **set** of generated files in the
-   diff is consistent with the schema/query changes (missing or stray artifacts) — not
-   their line-by-line content. (See `.claude/rules/review-ignored-paths.md` for the full
-   rationale; keep this list in sync with that file.)
+   Only the **set** of generated files is worth a glance: a `graphql` tag changed with no
+   matching `__generated__` file, or generated files changed with no input that explains them.
+   This list is kept in sync with `.claude/rules/review-ignored-paths.md`; change both together.
 
-### Before commenting
+## Tags and summary format
 
-1. **Check if the issue was already addressed** in previous comments
-2. **Check if the code was already fixed** in recent commits
-3. **Check if another reviewer already mentioned** the same issue
-4. Only leave a comment if it adds **NEW value** to the review
-5. **Always check the PR conversation history** before commenting
+Each finding starts with one tag: **Important** (would ship wrong behaviour, leak data or
+permission, break a contract, or violate a written rule above), **Nit** (anything else in the
+PR's own lines), or **Pre-existing**.
 
-## PR Conventions
+The summary starts with the count — `N findings — a Important, b Nit, c Pre-existing` — and says
+plainly when nothing needs fixing: `0 findings — nothing to fix`.
 
-- Work items are GitHub issues. PR titles follow format: `prefix(#1234): title` (`feat` /
-  `fix` / `refactor` / `style` / `chore`), the description starts with `Resolves #1234`
-  alone, and the branch is `type/gh-1234-slug`. Do not ask for a Jira key — this applies
-  to issues whose body ends with `JIRA Issue: FR-XXXX` too.
-- Legacy: a PR opened before the switch may still use `prefix(FR-1234): title` and
-  `Resolves #1234 (FR-1234)` (the space before `(FR-1234)` is required for auto-linking).
-  Accept it on in-flight PRs; do not suggest it for new ones.
+## PR conventions
+
+- PR title `prefix(#N): title` (`feat` / `fix` / `refactor` / `style` / `chore`), body starting
+  `Resolves #N`, branch `type/gh-N-slug`. Do not ask for a Jira key, including on issues whose
+  body ends with `JIRA Issue: FR-XXXX`.
+- Legacy PRs opened before the switch may use `prefix(FR-1234): title` and
+  `Resolves #1234 (FR-1234)`. Accept them in flight; do not suggest the form for new PRs.
+- The PR body carries **Testing**, **Risk** and **How to revert** (`.github/PULL_REQUEST_TEMPLATE.md`).
+
+## Risk tiers
+
+The ready gate (`fw:pr-ready-gate`, `scripts/risk-tier.sh`) reads the two lists below. Globs
+match the changed path case-insensitively. **High**: any changed file matches. **Low**: every
+changed file matches. Everything else is **Medium**. The tier sets the review: Low → `/code-review
+medium`, 0 suggested approvals; Medium → `high`, 1 approval; High → `xhigh` plus a security
+review, 2 approvals. Approvals are a suggestion; branch protection decides.
+
+### High
+
+```
+.github/workflows/**
+.github/actions/**
+package.json
+**/package.json
+pnpm-workspace.yaml
+pnpm-lock.yaml
+config.toml*
+configs/**
+customHttp.yml
+electron-app/**
+preload.js
+app-packager.js
+packages/backend.ai-client/**
+packages/backend.ai-agent-cli/src/mutation-allowlist.ts
+packages/backend.ai-agent-cli/src/**/*login*
+react/src/routes.tsx
+react/src/hooks/useRouteAccess*
+react/src/hooks/useSToken*
+react/src/**/*login*
+react/src/**/*keypair*
+react/src/**/*credential*
+react/src/**/*permission*
+react/src/**/*rbac*
+react/src/**/*role*
+react/src/**/*scope*
+react/src/**/*delete*
+react/src/**/*purge*
+react/src/**/*terminate*
+packages/backend.ai-ui/src/**/*login*
+packages/backend.ai-ui/src/**/*keypair*
+packages/backend.ai-ui/src/**/*permission*
+packages/backend.ai-ui/src/**/*scoped*
+packages/backend.ai-ui/src/**/*delete*
+packages/backend.ai-ui/src/app-shim/**
+```
+
+### Low
+
+```
+**/*.md
+docs/**
+packages/backend.ai-webui-docs/**
+resources/i18n/**
+packages/backend.ai-ui/src/locale/**
+**/*.stories.*
+**/*.test.*
+**/*.spec.*
+e2e/**
+**/__generated__/**
+react/src/generated/**
+```

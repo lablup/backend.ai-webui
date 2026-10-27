@@ -8,10 +8,21 @@ Please precisely, concisely, and concretely describe what this PR changes, the r
 and how it affects the users and other developers.
 -->
 
+**Testing:**
+<!-- What you ran and its result: commands, manual checks, the `bash scripts/verify.sh` result line (the ready gate pastes it if empty). -->
+
+**Risk:**
+<!-- The ready gate fills the block below from `REVIEW.md` (## Risk tiers): tier, matched paths, suggested approvals. You may pre-fill it. -->
+<!-- fw-risk-tier -->
+<!-- /fw-risk-tier -->
+
+**How to revert:**
+<!-- Default below; say more when a data migration, a stored setting or `config.toml` is involved. -->
+
+Revert the squash-merge commit.
+
 **Checklist:** (if applicable)
 
 - [ ] Documentation
 - [ ] Minimum required manager version (the supported floor is `pnpm run dev-env compat`, not a number in the repository)
 - [ ] Specific setting for review (eg., KB link, endpoint or how to setup)
-- [ ] Minimum requirements to check during review
-- [ ] Test case(s) to demonstrate the difference of before/after
