@@ -879,6 +879,7 @@
       "ResetLayout": "重置布局",
       "ResetLayoutDescription": "将面板布局恢复为默认设置。自定义面板将被保留。",
       "SearchCards": "搜索卡片",
+      "SelectAll": "全选",
       "Title": "自定义面板"
     },
     "panelModal": {
