@@ -135,6 +135,7 @@ export type BAIAdminUserV2SelectValueQuery$data = {
                 readonly basicInfo: {
                     readonly email: string;
                 };
+                readonly entityId: string;
                 readonly id: string;
             };
         }>;
