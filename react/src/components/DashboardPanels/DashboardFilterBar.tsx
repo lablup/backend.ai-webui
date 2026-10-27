@@ -52,7 +52,6 @@ const DashboardFilterBar: React.FC<DashboardFilterBarProps> = ({
         {children}
       </BAIFlex>
       <BAIFetchKeyButton
-        size="small"
         loading={isRefetching}
         value=""
         showLastLoadTime
