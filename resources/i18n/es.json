@@ -3164,6 +3164,8 @@
       "NeoSwitchDescription": "Estás utilizando el lanzador de sesiones \"{{launcher}}\".",
       "Network": "Red",
       "NoActiveKeypair": "Ningún par de claves activo",
+      "NoAvailableAgentInResourceGroup": "No hay agentes disponibles en el grupo de recursos",
+      "NoAvailableAgentInResourceGroupDesc": "El grupo de recursos \"{{resourceGroup}}\" actualmente no tiene agentes que puedan atender las ranuras de recursos solicitadas. Seleccione otro grupo de recursos o contacte con su administrador.",
       "NoAvailableFolderToMount": "No hay ninguna carpeta disponible para montar.",
       "NoDescriptionFound": "No se ha encontrado ninguna descripción.",
       "NoEnvConfigured": "No se ha configurado ninguna variable de entorno adicional",

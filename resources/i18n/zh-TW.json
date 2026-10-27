@@ -3168,6 +3168,8 @@
       "NeoSwitchDescription": "您正在使用\"{{launcher}}\"会话启动器。",
       "Network": "網路",
       "NoActiveKeypair": "無活動密鑰對",
+      "NoAvailableAgentInResourceGroup": "資源組中沒有可用的代理",
+      "NoAvailableAgentInResourceGroupDesc": "資源組 \"{{resourceGroup}}\" 目前沒有可提供所需資源槽的代理。請選擇其他資源組，或聯絡管理員。",
       "NoAvailableFolderToMount": "没有可用的文件夹可以挂载。",
       "NoDescriptionFound": "未找到說明。",
       "NoEnvConfigured": "未配置额外的环境变量",

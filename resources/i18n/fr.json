@@ -3167,6 +3167,8 @@
       "NeoSwitchDescription": "Vous utilisez le lanceur de session \"{{launcher}}\".",
       "Network": "Réseau",
       "NoActiveKeypair": "Aucune paire de clés active",
+      "NoAvailableAgentInResourceGroup": "Aucun agent disponible dans le groupe de ressources",
+      "NoAvailableAgentInResourceGroupDesc": "Le groupe de ressources \"{{resourceGroup}}\" n'a actuellement aucun agent capable de servir les emplacements de ressources demandés. Sélectionnez un autre groupe de ressources ou contactez votre administrateur.",
       "NoAvailableFolderToMount": "Il n'y a pas de dossier disponible à monter.",
       "NoDescriptionFound": "Aucune description trouvée.",
       "NoEnvConfigured": "Aucune variable d'environnement supplémentaire n'est configurée",

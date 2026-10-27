@@ -3166,6 +3166,8 @@
       "NeoSwitchDescription": "Está a utilizar o iniciador de sessão \"{{launcher}}\".",
       "Network": "Rede",
       "NoActiveKeypair": "Nenhum par de chaves ativo",
+      "NoAvailableAgentInResourceGroup": "Nenhum agente disponível no grupo de recursos",
+      "NoAvailableAgentInResourceGroupDesc": "O grupo de recursos \"{{resourceGroup}}\" não tem atualmente agentes que possam servir as frações de recursos solicitadas. Selecione outro grupo de recursos ou contacte o administrador.",
       "NoAvailableFolderToMount": "Não existe uma pasta disponível para montar.",
       "NoDescriptionFound": "Nenhuma descrição encontrada.",
       "NoEnvConfigured": "Nenhuma variável de ambiente adicional está configurada",

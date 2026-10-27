@@ -3167,6 +3167,8 @@
       "NeoSwitchDescription": "Używasz programu uruchamiającego sesję \"{{launcher}}\".",
       "Network": "Sieć",
       "NoActiveKeypair": "Brak aktywnej pary kluczy",
+      "NoAvailableAgentInResourceGroup": "Brak dostępnych agentów w grupie zasobów",
+      "NoAvailableAgentInResourceGroupDesc": "Grupa zasobów \"{{resourceGroup}}\" nie ma obecnie agentów, którzy mogliby obsłużyć żądane miejsca zasobów. Wybierz inną grupę zasobów lub skontaktuj się z administratorem.",
       "NoAvailableFolderToMount": "Nie ma dostępnego folderu do zamontowania.",
       "NoDescriptionFound": "Nie znaleziono opisu.",
       "NoEnvConfigured": "Nie skonfigurowano żadnej dodatkowej zmiennej środowiskowej",

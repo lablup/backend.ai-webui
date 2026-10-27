@@ -3168,6 +3168,8 @@
       "NeoSwitchDescription": "Anda menggunakan peluncur sesi \"{{launcher}}\".",
       "Network": "Jaringan",
       "NoActiveKeypair": "Tidak Ada Pasangan Kunci Aktif",
+      "NoAvailableAgentInResourceGroup": "Tidak ada agen yang tersedia di grup sumber daya",
+      "NoAvailableAgentInResourceGroupDesc": "Grup sumber daya \"{{resourceGroup}}\" saat ini tidak memiliki agen yang dapat melayani slot sumber daya yang diminta. Pilih grup sumber daya lain atau hubungi administrator Anda.",
       "NoAvailableFolderToMount": "Tidak ada folder yang dapat dipasang",
       "NoDescriptionFound": "Tidak ada deskripsi yang ditemukan.",
       "NoEnvConfigured": "Tidak ada lingkungan yang terkonfigurasi",

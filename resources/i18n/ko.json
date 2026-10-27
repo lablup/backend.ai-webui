@@ -3167,6 +3167,8 @@
       "NeoSwitchDescription": "현재 \"{{launcher}}\" 세션 런처를 사용 중입니다.",
       "Network": "네트워크",
       "NoActiveKeypair": "활성화 된 키페어 없음",
+      "NoAvailableAgentInResourceGroup": "자원 그룹에 사용 가능한 에이전트가 없습니다",
+      "NoAvailableAgentInResourceGroupDesc": "자원 그룹 \"{{resourceGroup}}\"에 요청한 자원 슬롯을 제공할 수 있는 에이전트가 없습니다. 다른 자원 그룹을 선택하거나 관리자에게 문의하십시오.",
       "NoAvailableFolderToMount": "마운트 할 수 있는 폴더가 없습니다.",
       "NoDescriptionFound": "설명이 없습니다.",
       "NoEnvConfigured": "추가된 환경 변수가 없습니다.",
