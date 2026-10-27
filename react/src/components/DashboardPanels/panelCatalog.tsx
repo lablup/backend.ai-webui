@@ -478,7 +478,7 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(4, 3),
     minSize: size(2, 3),
     refresh: { min: '5m' },
-    settings: ['range', 'resourceGroup'],
+    settings: ['resourceGroup'],
     ...adminOrder('topProjectsUsage'),
   },
   {

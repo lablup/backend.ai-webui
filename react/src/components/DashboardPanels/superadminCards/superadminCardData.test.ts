@@ -4,7 +4,6 @@
  */
 import {
   AUDIT_ENTITY_TYPES,
-  bucketDayAfter,
   byCpuUsage,
   coreHours,
   entityTypeFailureFilters,
@@ -48,13 +47,6 @@ describe('byCpuUsage', () => {
       { id: 'c', ...usage('20') },
     ];
     expect(byCpuUsage(rows).map((row) => row.id)).toEqual(['b', 'c', 'a']);
-  });
-});
-
-describe('bucketDayAfter', () => {
-  it('is the day before the window starts, since DateFilter.after is exclusive', () => {
-    const after = new Date(2026, 9, 27, 9, 30).toISOString();
-    expect(bucketDayAfter({ after, before: after })).toBe('2026-10-26');
   });
 });
 
