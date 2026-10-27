@@ -168,7 +168,7 @@ test.describe(
         // 2. Click the dashboard's refresh button (cards have none of their own)
         const refreshButton = page
           .getByTestId('dashboard-filter-bar')
-          .getByRole('button', { name: 'Refresh' });
+          .getByRole('button', { name: 'Refresh', exact: true });
         await refreshButton.click();
 
         // 3. Verify the widget data remains visible after refresh
@@ -216,7 +216,7 @@ test.describe(
         // 2. Click the dashboard's refresh button (cards have none of their own)
         const refreshButton = page
           .getByTestId('dashboard-filter-bar')
-          .getByRole('button', { name: 'Refresh' });
+          .getByRole('button', { name: 'Refresh', exact: true });
         await refreshButton.click();
 
         // 3. Verify the widget still renders CPU/Memory after refresh
@@ -309,7 +309,7 @@ test.describe(
           // 2. Click the dashboard's refresh button (cards have none of their own)
           const refreshButton = page
             .getByTestId('dashboard-filter-bar')
-            .getByRole('button', { name: 'Refresh' });
+            .getByRole('button', { name: 'Refresh', exact: true });
           await refreshButton.click();
 
           // 3. Verify the widget still renders after refresh (no error state)
@@ -352,7 +352,7 @@ test.describe(
         // 2. Click the dashboard's refresh button (cards have none of their own)
         const refreshButton = page
           .getByTestId('dashboard-filter-bar')
-          .getByRole('button', { name: 'Refresh' });
+          .getByRole('button', { name: 'Refresh', exact: true });
         await refreshButton.click();
 
         // 3. Verify the widget still renders after refresh
