@@ -18,6 +18,7 @@
     flex: none;
     grid-template-columns: minmax(0, max-content) max-content max-content;
     column-gap: var(--spacing-4);
+    width: max-content;
     max-width: 100%;
     color: var(--color-text-primary);
   }
@@ -60,5 +61,8 @@
     font-weight: var(--font-weight-semibold);
     font-variant-numeric: tabular-nums;
     line-height: 1;
+  }
+  .bai-donut-total--empty {
+    color: var(--color-text-secondary);
   }
 }
