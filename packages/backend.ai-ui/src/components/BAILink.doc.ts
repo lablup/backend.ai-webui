@@ -86,8 +86,8 @@ export const docs = {
   examples: [
     {
       label: 'Router navigation',
-      code: `<BAILink type="hover" to={generateFolderPath(toLocalId(vfolder?.id))}>
-  {vfolder?.name}
+      code: `<BAILink type="hover" to={generateFolderPath(vfolder.entityId)}>
+  {vfolder.name}
 </BAILink>`,
     },
     {

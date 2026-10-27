@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8d59dbd29ef9f2e977837255aac99eb8>>
+ * @generated SignedSource<<24e44d3404046898f08dca1049b6b88e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -553,6 +553,13 @@ return {
                           {
                             "alias": null,
                             "args": null,
+                            "kind": "ScalarField",
+                            "name": "entityId",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
                             "concreteType": "VFolderMetadataInfo",
                             "kind": "LinkedField",
                             "name": "metadata",
@@ -590,7 +597,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "2538cf3375bb8ccd4ecc6fff587c5c4d",
+    "cacheID": "0ea747a5e6ebc3fec26e99319647d198",
     "id": null,
     "metadata": {
       "relayTestingSelectionTypeInfo": {
@@ -611,6 +618,12 @@ return {
         "vfolder_nodes.edges.node.created_at": (v12/*: any*/),
         "vfolder_nodes.edges.node.creator": (v10/*: any*/),
         "vfolder_nodes.edges.node.cur_size": (v13/*: any*/),
+        "vfolder_nodes.edges.node.entityId": {
+          "enumValues": null,
+          "nullable": false,
+          "plural": false,
+          "type": "UUID"
+        },
         "vfolder_nodes.edges.node.group": (v14/*: any*/),
         "vfolder_nodes.edges.node.group_name": (v10/*: any*/),
         "vfolder_nodes.edges.node.host": (v10/*: any*/),
@@ -690,7 +703,7 @@ return {
     },
     "name": "VFolderNodesTestQuery",
     "operationKind": "query",
-    "text": "query VFolderNodesTestQuery {\n  vfolder_nodes(first: 10) {\n    edges {\n      node {\n        id\n        ...VFolderNodesFragment\n      }\n    }\n  }\n}\n\nfragment AppLaunchConfirmationModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment AppLauncherModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  service_ports\n  access_key\n  ...useBackendAIAppLauncherFragment\n  ...SFTPConnectionInfoModalFragment\n  ...TensorboardPathModalFragment\n  ...AppLaunchConfirmationModalFragment\n}\n\nfragment BAIComputeSessionNodeNotificationItemFragment on ComputeSessionNode {\n  id\n  name\n  status\n  status_info\n  status_data\n  ...SessionActionButtonsFragment\n  ...SessionStatusBadgeFragment\n}\n\nfragment BAINodeNotificationItemFragment on Node {\n  __isNode: __typename\n  ... on ComputeSessionNode {\n    __typename\n    status\n    name\n    row_id\n    ...BAIComputeSessionNodeNotificationItemFragment\n  }\n  ... on VFolder {\n    __typename\n    ...BAIVirtualFolderNodeNotificationItemV2Fragment\n  }\n  ... on VirtualFolderNode {\n    __typename\n    status\n    ...BAIVirtualFolderNodeNotificationItemFragment\n  }\n  id\n}\n\nfragment BAIVirtualFolderNodeNotificationItemFragment on VirtualFolderNode {\n  row_id\n  id\n  name\n  status\n}\n\nfragment BAIVirtualFolderNodeNotificationItemV2Fragment on VFolder {\n  id\n  metadata {\n    name\n  }\n}\n\nfragment ContainerCommitModalFragment on ComputeSessionNode {\n  id\n  name\n  row_id\n}\n\nfragment ContainerLogModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  status\n  access_key\n  kernel_nodes {\n    edges {\n      node {\n        id\n        row_id\n        container_id\n        cluster_idx\n        cluster_role\n        cluster_hostname\n      }\n    }\n  }\n}\n\nfragment SFTPConnectionInfoModalFragment on ComputeSessionNode {\n  row_id\n  vfolder_nodes {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n\nfragment SessionActionButtonsFragment on ComputeSessionNode {\n  id\n  name\n  row_id\n  type\n  status\n  access_key\n  service_ports\n  commit_status\n  user_id\n  ...TerminateSessionModalFragment\n  ...ContainerLogModalFragment\n  ...ContainerCommitModalFragment\n  ...AppLauncherModalFragment\n  ...SFTPConnectionInfoModalFragment\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment SessionStatusBadgeFragment on ComputeSessionNode {\n  id\n  status\n  status_info\n  queue_position\n  cluster_size\n  kernel_nodes {\n    edges {\n      node {\n        id\n        status\n      }\n    }\n  }\n}\n\nfragment SharedFolderPermissionInfoModalFragment on VirtualFolderNode {\n  id\n  name\n  row_id\n  creator\n  ownership_type\n  user_email\n  permission\n  ...VFolderPermissionCellFragment\n}\n\nfragment TensorboardPathModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment TerminateSessionModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  scaling_group\n  access_key\n  project_id\n  kernel_nodes {\n    edges {\n      node {\n        container_id\n        agent_id\n        id\n      }\n    }\n  }\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n\nfragment VFolderNodesFragment on VirtualFolderNode {\n  id\n  row_id\n  status\n  name\n  host\n  quota_scope_id\n  ownership_type\n  user\n  user_email\n  group\n  group_name\n  creator\n  permission\n  usage_mode\n  max_files\n  max_size\n  created_at\n  last_used\n  num_files\n  cur_size\n  cloneable\n  permissions\n  ...VFolderPermissionCellFragment\n  ...VFolderNodeIdenticonFragment\n  ...SharedFolderPermissionInfoModalFragment\n  ...BAINodeNotificationItemFragment\n}\n\nfragment VFolderPermissionCellFragment on VirtualFolderNode {\n  permissions\n}\n\nfragment useBackendAIAppLauncherFragment on ComputeSessionNode {\n  name\n  row_id\n  vfolder_mounts\n  scaling_group\n  project_id\n  service_ports\n}\n"
+    "text": "query VFolderNodesTestQuery {\n  vfolder_nodes(first: 10) {\n    edges {\n      node {\n        id\n        ...VFolderNodesFragment\n      }\n    }\n  }\n}\n\nfragment AppLaunchConfirmationModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment AppLauncherModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  service_ports\n  access_key\n  ...useBackendAIAppLauncherFragment\n  ...SFTPConnectionInfoModalFragment\n  ...TensorboardPathModalFragment\n  ...AppLaunchConfirmationModalFragment\n}\n\nfragment BAIComputeSessionNodeNotificationItemFragment on ComputeSessionNode {\n  id\n  name\n  status\n  status_info\n  status_data\n  ...SessionActionButtonsFragment\n  ...SessionStatusBadgeFragment\n}\n\nfragment BAINodeNotificationItemFragment on Node {\n  __isNode: __typename\n  ... on ComputeSessionNode {\n    __typename\n    status\n    name\n    row_id\n    ...BAIComputeSessionNodeNotificationItemFragment\n  }\n  ... on VFolder {\n    __typename\n    ...BAIVirtualFolderNodeNotificationItemV2Fragment\n  }\n  ... on VirtualFolderNode {\n    __typename\n    status\n    ...BAIVirtualFolderNodeNotificationItemFragment\n  }\n  id\n}\n\nfragment BAIVirtualFolderNodeNotificationItemFragment on VirtualFolderNode {\n  row_id\n  id\n  name\n  status\n}\n\nfragment BAIVirtualFolderNodeNotificationItemV2Fragment on VFolder {\n  id\n  entityId\n  metadata {\n    name\n  }\n}\n\nfragment ContainerCommitModalFragment on ComputeSessionNode {\n  id\n  name\n  row_id\n}\n\nfragment ContainerLogModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  status\n  access_key\n  kernel_nodes {\n    edges {\n      node {\n        id\n        row_id\n        container_id\n        cluster_idx\n        cluster_role\n        cluster_hostname\n      }\n    }\n  }\n}\n\nfragment SFTPConnectionInfoModalFragment on ComputeSessionNode {\n  row_id\n  vfolder_nodes {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n\nfragment SessionActionButtonsFragment on ComputeSessionNode {\n  id\n  name\n  row_id\n  type\n  status\n  access_key\n  service_ports\n  commit_status\n  user_id\n  ...TerminateSessionModalFragment\n  ...ContainerLogModalFragment\n  ...ContainerCommitModalFragment\n  ...AppLauncherModalFragment\n  ...SFTPConnectionInfoModalFragment\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment SessionStatusBadgeFragment on ComputeSessionNode {\n  id\n  status\n  status_info\n  queue_position\n  cluster_size\n  kernel_nodes {\n    edges {\n      node {\n        id\n        status\n      }\n    }\n  }\n}\n\nfragment SharedFolderPermissionInfoModalFragment on VirtualFolderNode {\n  id\n  name\n  row_id\n  creator\n  ownership_type\n  user_email\n  permission\n  ...VFolderPermissionCellFragment\n}\n\nfragment TensorboardPathModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment TerminateSessionModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  scaling_group\n  access_key\n  project_id\n  kernel_nodes {\n    edges {\n      node {\n        container_id\n        agent_id\n        id\n      }\n    }\n  }\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n\nfragment VFolderNodesFragment on VirtualFolderNode {\n  id\n  row_id\n  status\n  name\n  host\n  quota_scope_id\n  ownership_type\n  user\n  user_email\n  group\n  group_name\n  creator\n  permission\n  usage_mode\n  max_files\n  max_size\n  created_at\n  last_used\n  num_files\n  cur_size\n  cloneable\n  permissions\n  ...VFolderPermissionCellFragment\n  ...VFolderNodeIdenticonFragment\n  ...SharedFolderPermissionInfoModalFragment\n  ...BAINodeNotificationItemFragment\n}\n\nfragment VFolderPermissionCellFragment on VirtualFolderNode {\n  permissions\n}\n\nfragment useBackendAIAppLauncherFragment on ComputeSessionNode {\n  name\n  row_id\n  vfolder_mounts\n  scaling_group\n  project_id\n  service_ports\n}\n"
   }
 };
 })();
