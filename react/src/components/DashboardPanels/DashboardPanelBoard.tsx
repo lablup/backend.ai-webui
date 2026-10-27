@@ -5,6 +5,7 @@
 import DashboardEditToggleButton from '../DashboardEditToggleButton';
 import { breadcrumbExtraAtom } from '../breadcrumbExtraAtom';
 import { dashboardEditModeAtom } from '../dashboardEditModeAtom';
+import DashboardBoardSection from './DashboardBoardSection';
 import DashboardBoardTabs from './DashboardBoardTabs';
 import DashboardEditSider from './DashboardEditSider';
 import DashboardFilterBar from './DashboardFilterBar';
@@ -133,13 +134,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
       <div ref={boardContainerRef} style={{ flex: 1, minWidth: 0 }}>
         <BAIFlex direction="column" align="stretch" gap="md">
           <DashboardFilterBar filters={filters} isRefetching={isRefetching}>
-            {page !== 'project' ? (
-              <DashboardBoardTabs
-                page={page}
-                boards={boards}
-                catalog={catalog}
-              />
-            ) : null}
+            {page !== 'project' ? <DashboardBoardTabs boards={boards} /> : null}
           </DashboardFilterBar>
           <DashboardFilterContext
             value={{
@@ -179,6 +174,15 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
           onResetLayout={resetLayout}
           settingsTargetOf={settingsTargetOf}
           onRequestSettings={setSettingsPanelId}
+          boardSection={
+            boards && page !== 'project' ? (
+              <DashboardBoardSection
+                page={page}
+                boards={boards}
+                catalog={catalog}
+              />
+            ) : undefined
+          }
         />
       ) : null}
       <BAIUnmountAfterClose>
