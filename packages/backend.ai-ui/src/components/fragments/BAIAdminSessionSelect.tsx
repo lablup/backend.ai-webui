@@ -28,7 +28,6 @@
 */
 import { BAIAdminSessionSelectPaginatedQuery } from '../../__generated__/BAIAdminSessionSelectPaginatedQuery.graphql';
 import { BAIAdminSessionSelectValueQuery } from '../../__generated__/BAIAdminSessionSelectValueQuery.graphql';
-import { toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useControllableValue, useFetchKey } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -119,6 +118,7 @@ const BAIAdminSessionSelect: React.FC<BAIAdminSessionSelectProps> = ({
             edges {
               node {
                 id
+                entityId
                 metadata {
                   name
                 }
@@ -161,6 +161,7 @@ const BAIAdminSessionSelect: React.FC<BAIAdminSessionSelectProps> = ({
             edges {
               node {
                 id
+                entityId
                 metadata {
                   name
                 }
@@ -204,10 +205,10 @@ const BAIAdminSessionSelect: React.FC<BAIAdminSessionSelectProps> = ({
     [updateFetchKey, startRefetchTransition],
   );
 
-  // id-valued (class B): the raw UUID (`toLocalId`), never the Relay global id.
+  // id-valued (class B): the raw UUID (`entityId`), never the Relay global id.
   const keyOfNode = (
-    node: { id: string } | null | undefined,
-  ): string | undefined => (node?.id ? toLocalId(node.id) : undefined);
+    node: { entityId: string } | null | undefined,
+  ): string | undefined => node?.entityId || undefined;
 
   const options = _.compact(
     _.map(paginationData, (item) => {

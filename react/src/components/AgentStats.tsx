@@ -4,10 +4,6 @@
  */
 import { AgentStatsFragment$key } from '../__generated__/AgentStatsFragment.graphql';
 import { useResourceSlotsDetails } from '../hooks/backendai';
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@lablup/ui-common/SegmentedControl';
 import { Heading } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
@@ -20,6 +16,8 @@ import {
   convertToNumber,
   processMemoryValue,
   useControllableValue,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { ReactNode } from 'react';
@@ -204,7 +202,7 @@ const AgentStats: React.FC<AgentStatsProps> = ({
             {/* PILOT-DECISION: SegmentedControl.label is aria-only and required;
                 composed from the two existing option labels to avoid adding new
                 i18n keys while page tickets run in parallel. */}
-            <SegmentedControl
+            <BAISegmentedControl
               size="sm"
               aria-label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
               value={displayType}
@@ -214,9 +212,15 @@ const AgentStats: React.FC<AgentStatsProps> = ({
                 )
               }
             >
-              <SegmentedControlItem value="used" label={t('dashboard.Used')} />
-              <SegmentedControlItem value="free" label={t('dashboard.Free')} />
-            </SegmentedControl>
+              <BAISegmentedControlItem
+                value="used"
+                label={t('dashboard.Used')}
+              />
+              <BAISegmentedControlItem
+                value="free"
+                label={t('dashboard.Free')}
+              />
+            </BAISegmentedControl>
             {extra}
           </BAIFlex>
         }

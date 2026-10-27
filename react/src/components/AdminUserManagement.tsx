@@ -17,7 +17,6 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
 import { useUnblockUserLogin } from '../hooks/useUnblockUserLogin';
-import BAIRadioGroup from './BAIRadioGroup';
 import BulkCreateUserFromCSVModal from './BulkCreateUserFromCSVModal';
 import PurgeUsersModal from './PurgeUsersModal';
 import UpdateUsersModal from './UpdateUsersModal';
@@ -35,6 +34,8 @@ import {
   BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
   BAISelectionLabel,
   BAIUnmountAfterClose,
   UserV2InList,
@@ -490,15 +491,15 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex justify="between" align="start" gap="xs" wrap="wrap">
         <BAIFlex direction="row" gap={'sm'} align="start" wrap="wrap">
-          <BAIRadioGroup
+          <BAISegmentedControl
             value={statusValue}
-            onChange={(e) => {
+            onChange={(value) => {
               onReload({
                 ...variables,
                 filter: {
                   ...propertyFilterValue,
                   status:
-                    e.target.value === 'ACTIVE'
+                    value === 'ACTIVE'
                       ? { equals: 'ACTIVE' }
                       : { notEquals: 'ACTIVE' },
                 },
@@ -506,18 +507,16 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
               });
               setSelectedUserList([]);
             }}
-            optionType="button"
-            options={[
-              {
-                label: t('general.Active'),
-                value: 'ACTIVE',
-              },
-              {
-                label: t('general.Inactive'),
-                value: 'INACTIVE',
-              },
-            ]}
-          />
+          >
+            <BAISegmentedControlItem
+              value="ACTIVE"
+              label={t('general.Active')}
+            />
+            <BAISegmentedControlItem
+              value="INACTIVE"
+              label={t('general.Inactive')}
+            />
+          </BAISegmentedControl>
           <BAIGraphQLPropertyFilter<UserV2Filter>
             filterProperties={filterProperties}
             value={

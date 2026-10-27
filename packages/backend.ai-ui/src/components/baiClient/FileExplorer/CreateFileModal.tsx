@@ -2,7 +2,7 @@ import { App } from '../../../app-shim';
 import { Form, type FormInstance } from '../../../form-engine';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import BAIModal, { type BAIModalProps } from '../../BAIModal';
-import { AstryxFormTextInput } from '../../astryxFormControls';
+import BAITextInput from '../../BAITextInput';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { FolderInfoContext } from './BAIFileExplorer';
 import { useMutation } from '@tanstack/react-query';
@@ -153,8 +153,8 @@ const CreateFileModal: React.FC<CreateFileModalProps> = ({
             },
           ]}
         >
-          <AstryxFormTextInput
-            label={t('comp:FileExplorer.FileName')}
+          <BAITextInput
+            aria-label={t('comp:FileExplorer.FileName')}
             placeholder={t('comp:FileExplorer.FileNamePlaceholder')}
             disabled={isCreating}
           />

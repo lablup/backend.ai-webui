@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7d0e4e3601e640a3fb5ab0e3bd35ae9a>>
+ * @generated SignedSource<<2c0ec345997c1d106356d76a04907a54>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -45,6 +45,7 @@ export type useRuntimeParameterSchemaVariantsQuery$data = {
   readonly runtimeVariantsResult: Result<{
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly entityId: string;
         readonly id: string;
         readonly name: string;
       };
@@ -110,6 +111,13 @@ v1 = {
               "alias": null,
               "args": null,
               "kind": "ScalarField",
+              "name": "entityId",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
               "name": "name",
               "storageKey": null
             }
@@ -148,16 +156,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "c682513f5e9e13cb4231c771873116d0",
+    "cacheID": "ebc1c35be5ff4124298c1a429afa462e",
     "id": null,
     "metadata": {},
     "name": "useRuntimeParameterSchemaVariantsQuery",
     "operationKind": "query",
-    "text": "query useRuntimeParameterSchemaVariantsQuery(\n  $filter: RuntimeVariantFilter\n) {\n  runtimeVariantsResult: runtimeVariants(filter: $filter, first: 1) {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query useRuntimeParameterSchemaVariantsQuery(\n  $filter: RuntimeVariantFilter\n) {\n  runtimeVariantsResult: runtimeVariants(filter: $filter, first: 1) {\n    edges {\n      node {\n        id\n        entityId\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4a430bb72586e76dae1f300fdd57f51a";
+(node as any).hash = "07db65996fbe70d27ae8ba648839fcef";
 
 export default node;

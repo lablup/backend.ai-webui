@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7366e6cc34de2eba12c8a4002e518482>>
+ * @generated SignedSource<<143d88afd87f22b29adef3a31a75f2b0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -918,6 +918,13 @@ v65 = {
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
+},
+v66 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "entityId",
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -1159,13 +1166,7 @@ return {
                     "name": "entityType",
                     "storageKey": null
                   },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "entityId",
-                    "storageKey": null
-                  },
+                  (v66/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -1189,6 +1190,7 @@ return {
                     "plural": false,
                     "selections": [
                       (v65/*: any*/),
+                      (v66/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -1242,12 +1244,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "aa78b50e2b4a60f23a591a2b0ae1bea1",
+    "cacheID": "5a5fb08e6f6bd09656601b7a9fa0b77a",
     "id": null,
     "metadata": {},
     "name": "AuditLogPanelScopedQuery",
     "operationKind": "query",
-    "text": "query AuditLogPanelScopedQuery(\n  $scope: AuditLogScope!\n  $filter: AuditLogFilter!\n  $limit: Int!\n  $offset: Int!\n  $success: AuditLogFilter!\n  $failure: AuditLogFilter!\n  $previousSuccess: AuditLogFilter!\n  $previousFailure: AuditLogFilter!\n  $s0: AuditLogFilter\n  $s0On: Boolean!\n  $s1: AuditLogFilter\n  $s1On: Boolean!\n  $s2: AuditLogFilter\n  $s2On: Boolean!\n  $s3: AuditLogFilter\n  $s3On: Boolean!\n  $s4: AuditLogFilter\n  $s4On: Boolean!\n  $s5: AuditLogFilter\n  $s5On: Boolean!\n  $s6: AuditLogFilter\n  $s6On: Boolean!\n  $s7: AuditLogFilter\n  $s7On: Boolean!\n  $f0: AuditLogFilter\n  $f0On: Boolean!\n  $f1: AuditLogFilter\n  $f1On: Boolean!\n  $f2: AuditLogFilter\n  $f2On: Boolean!\n  $f3: AuditLogFilter\n  $f3On: Boolean!\n  $f4: AuditLogFilter\n  $f4On: Boolean!\n  $f5: AuditLogFilter\n  $f5On: Boolean!\n  $f6: AuditLogFilter\n  $f6On: Boolean!\n  $f7: AuditLogFilter\n  $f7On: Boolean!\n) {\n  logs: scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAIAuditLogNodesFragment\n        id\n      }\n    }\n  }\n  success: scopedAuditLogsV2(scope: $scope, filter: $success, limit: 1) {\n    count\n  }\n  failure: scopedAuditLogsV2(scope: $scope, filter: $failure, limit: 1) {\n    count\n  }\n  previousSuccess: scopedAuditLogsV2(scope: $scope, filter: $previousSuccess, limit: 1) {\n    count\n  }\n  previousFailure: scopedAuditLogsV2(scope: $scope, filter: $previousFailure, limit: 1) {\n    count\n  }\n  s0: scopedAuditLogsV2(scope: $scope, filter: $s0, limit: 1) @include(if: $s0On) {\n    count\n  }\n  s1: scopedAuditLogsV2(scope: $scope, filter: $s1, limit: 1) @include(if: $s1On) {\n    count\n  }\n  s2: scopedAuditLogsV2(scope: $scope, filter: $s2, limit: 1) @include(if: $s2On) {\n    count\n  }\n  s3: scopedAuditLogsV2(scope: $scope, filter: $s3, limit: 1) @include(if: $s3On) {\n    count\n  }\n  s4: scopedAuditLogsV2(scope: $scope, filter: $s4, limit: 1) @include(if: $s4On) {\n    count\n  }\n  s5: scopedAuditLogsV2(scope: $scope, filter: $s5, limit: 1) @include(if: $s5On) {\n    count\n  }\n  s6: scopedAuditLogsV2(scope: $scope, filter: $s6, limit: 1) @include(if: $s6On) {\n    count\n  }\n  s7: scopedAuditLogsV2(scope: $scope, filter: $s7, limit: 1) @include(if: $s7On) {\n    count\n  }\n  f0: scopedAuditLogsV2(scope: $scope, filter: $f0, limit: 1) @include(if: $f0On) {\n    count\n  }\n  f1: scopedAuditLogsV2(scope: $scope, filter: $f1, limit: 1) @include(if: $f1On) {\n    count\n  }\n  f2: scopedAuditLogsV2(scope: $scope, filter: $f2, limit: 1) @include(if: $f2On) {\n    count\n  }\n  f3: scopedAuditLogsV2(scope: $scope, filter: $f3, limit: 1) @include(if: $f3On) {\n    count\n  }\n  f4: scopedAuditLogsV2(scope: $scope, filter: $f4, limit: 1) @include(if: $f4On) {\n    count\n  }\n  f5: scopedAuditLogsV2(scope: $scope, filter: $f5, limit: 1) @include(if: $f5On) {\n    count\n  }\n  f6: scopedAuditLogsV2(scope: $scope, filter: $f6, limit: 1) @include(if: $f6On) {\n    count\n  }\n  f7: scopedAuditLogsV2(scope: $scope, filter: $f7, limit: 1) @include(if: $f7On) {\n    count\n  }\n}\n\nfragment BAIAuditLogNodesFragment on AuditLogV2 {\n  id\n  createdAt\n  operation\n  status\n  description\n  duration\n  requestId\n  actionId\n  entityType\n  entityId\n  triggeredBy\n  clientIp @since(version: \"26.9.0\")\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n"
+    "text": "query AuditLogPanelScopedQuery(\n  $scope: AuditLogScope!\n  $filter: AuditLogFilter!\n  $limit: Int!\n  $offset: Int!\n  $success: AuditLogFilter!\n  $failure: AuditLogFilter!\n  $previousSuccess: AuditLogFilter!\n  $previousFailure: AuditLogFilter!\n  $s0: AuditLogFilter\n  $s0On: Boolean!\n  $s1: AuditLogFilter\n  $s1On: Boolean!\n  $s2: AuditLogFilter\n  $s2On: Boolean!\n  $s3: AuditLogFilter\n  $s3On: Boolean!\n  $s4: AuditLogFilter\n  $s4On: Boolean!\n  $s5: AuditLogFilter\n  $s5On: Boolean!\n  $s6: AuditLogFilter\n  $s6On: Boolean!\n  $s7: AuditLogFilter\n  $s7On: Boolean!\n  $f0: AuditLogFilter\n  $f0On: Boolean!\n  $f1: AuditLogFilter\n  $f1On: Boolean!\n  $f2: AuditLogFilter\n  $f2On: Boolean!\n  $f3: AuditLogFilter\n  $f3On: Boolean!\n  $f4: AuditLogFilter\n  $f4On: Boolean!\n  $f5: AuditLogFilter\n  $f5On: Boolean!\n  $f6: AuditLogFilter\n  $f6On: Boolean!\n  $f7: AuditLogFilter\n  $f7On: Boolean!\n) {\n  logs: scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAIAuditLogNodesFragment\n        id\n      }\n    }\n  }\n  success: scopedAuditLogsV2(scope: $scope, filter: $success, limit: 1) {\n    count\n  }\n  failure: scopedAuditLogsV2(scope: $scope, filter: $failure, limit: 1) {\n    count\n  }\n  previousSuccess: scopedAuditLogsV2(scope: $scope, filter: $previousSuccess, limit: 1) {\n    count\n  }\n  previousFailure: scopedAuditLogsV2(scope: $scope, filter: $previousFailure, limit: 1) {\n    count\n  }\n  s0: scopedAuditLogsV2(scope: $scope, filter: $s0, limit: 1) @include(if: $s0On) {\n    count\n  }\n  s1: scopedAuditLogsV2(scope: $scope, filter: $s1, limit: 1) @include(if: $s1On) {\n    count\n  }\n  s2: scopedAuditLogsV2(scope: $scope, filter: $s2, limit: 1) @include(if: $s2On) {\n    count\n  }\n  s3: scopedAuditLogsV2(scope: $scope, filter: $s3, limit: 1) @include(if: $s3On) {\n    count\n  }\n  s4: scopedAuditLogsV2(scope: $scope, filter: $s4, limit: 1) @include(if: $s4On) {\n    count\n  }\n  s5: scopedAuditLogsV2(scope: $scope, filter: $s5, limit: 1) @include(if: $s5On) {\n    count\n  }\n  s6: scopedAuditLogsV2(scope: $scope, filter: $s6, limit: 1) @include(if: $s6On) {\n    count\n  }\n  s7: scopedAuditLogsV2(scope: $scope, filter: $s7, limit: 1) @include(if: $s7On) {\n    count\n  }\n  f0: scopedAuditLogsV2(scope: $scope, filter: $f0, limit: 1) @include(if: $f0On) {\n    count\n  }\n  f1: scopedAuditLogsV2(scope: $scope, filter: $f1, limit: 1) @include(if: $f1On) {\n    count\n  }\n  f2: scopedAuditLogsV2(scope: $scope, filter: $f2, limit: 1) @include(if: $f2On) {\n    count\n  }\n  f3: scopedAuditLogsV2(scope: $scope, filter: $f3, limit: 1) @include(if: $f3On) {\n    count\n  }\n  f4: scopedAuditLogsV2(scope: $scope, filter: $f4, limit: 1) @include(if: $f4On) {\n    count\n  }\n  f5: scopedAuditLogsV2(scope: $scope, filter: $f5, limit: 1) @include(if: $f5On) {\n    count\n  }\n  f6: scopedAuditLogsV2(scope: $scope, filter: $f6, limit: 1) @include(if: $f6On) {\n    count\n  }\n  f7: scopedAuditLogsV2(scope: $scope, filter: $f7, limit: 1) @include(if: $f7On) {\n    count\n  }\n}\n\nfragment BAIAuditLogNodesFragment on AuditLogV2 {\n  id\n  createdAt\n  operation\n  status\n  description\n  duration\n  requestId\n  actionId\n  entityType\n  entityId\n  triggeredBy\n  clientIp @since(version: \"26.9.0\")\n  user {\n    id\n    entityId\n    basicInfo {\n      email\n    }\n  }\n}\n"
   }
 };
 })();

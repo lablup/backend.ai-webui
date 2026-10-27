@@ -11,7 +11,6 @@ import {
 import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSettingModalFragment.graphql';
 import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
-import BAIRadioGroup from './BAIRadioGroup';
 import KeypairInfoModal from './KeypairInfoModal';
 import KeypairSettingModal from './KeypairSettingModal';
 import { Text } from '@lablup/ui-common/Text';
@@ -24,6 +23,8 @@ import {
   BAIFlex,
   BAINameActionCell,
   BAIPropertyFilter,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
   BAISelectionLabel,
   BAITable,
   BAIText,
@@ -253,28 +254,26 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex justify="between" align="start" gap="xs" wrap="wrap">
         <BAIFlex gap={'sm'} align="start">
-          <BAIRadioGroup
+          <BAISegmentedControl
             value={activeType}
             onChange={(value) => {
               onReload({
                 ...variables,
-                is_active: value.target.value === 'active',
+                is_active: value === 'active',
                 offset: 0,
               });
               setSelectedKeypairs([]);
             }}
-            optionType="button"
-            options={[
-              {
-                label: t('general.Active'),
-                value: 'active',
-              },
-              {
-                label: t('general.Inactive'),
-                value: 'inactive',
-              },
-            ]}
-          />
+          >
+            <BAISegmentedControlItem
+              value="active"
+              label={t('general.Active')}
+            />
+            <BAISegmentedControlItem
+              value="inactive"
+              label={t('general.Inactive')}
+            />
+          </BAISegmentedControl>
           <BAIPropertyFilter
             filterProperties={[
               {

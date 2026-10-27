@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6ac415b11b6d919969826c7d73051578>>
+ * @generated SignedSource<<eb7a68fa27d450a85105b4be42eaa25c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -174,6 +174,13 @@ return {
         "plural": false,
         "selections": [
           (v2/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "entityId",
+            "storageKey": null
+          },
           {
             "alias": null,
             "args": null,
@@ -660,7 +667,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3c6b9849d9a3762ddf5f153e571debb9",
+    "cacheID": "6ffc812265971898a451cdbdbebb2fea",
     "id": null,
     "metadata": {
       "relayTestingSelectionTypeInfo": {
@@ -865,6 +872,7 @@ return {
           "plural": false,
           "type": "UUID"
         },
+        "deployment.entityId": (v16/*: any*/),
         "deployment.id": (v12/*: any*/),
         "deployment.metadata": {
           "enumValues": null,
@@ -892,7 +900,7 @@ return {
     },
     "name": "DeploymentAddRevisionModalTestQuery",
     "operationKind": "query",
-    "text": "query DeploymentAddRevisionModalTestQuery(\n  $id: ID!\n) {\n  deployment(id: $id) {\n    ...DeploymentAddRevisionModal_deployment\n    id\n  }\n}\n\nfragment DeploymentAddRevisionModal_deployment on ModelDeployment {\n  id\n  metadata {\n    resourceGroupName\n    projectId\n    projectV2 {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n  currentRevision {\n    modelMountConfig {\n      vfolderId\n    }\n    ...DeploymentAddRevisionModal_revisionSource\n    id\n  }\n}\n\nfragment DeploymentAddRevisionModal_revisionSource on ModelRevision {\n  revisionPresetId\n  clusterConfig {\n    mode\n    size\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  extraMounts {\n    vfolderId\n    vfolder {\n      name\n      id\n    }\n    mountDestination\n    subpath\n  }\n  modelRuntimeConfig {\n    runtimeVariantId\n    runtimeVariant {\n      name\n      readsVfolderConfigFiles @since(version: \"26.8.0\")\n      id\n    }\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues {\n      presetId\n      value\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    vfolder {\n      id\n      name\n    }\n    mountDestination\n    definitionPath\n    subpath\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        command @since(version: \"26.7.0\")\n        shell @since(version: \"26.7.0\")\n        startCommand\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          enable\n          path\n          maxRetries\n          initialDelay\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n  imageV2 {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n}\n"
+    "text": "query DeploymentAddRevisionModalTestQuery(\n  $id: ID!\n) {\n  deployment(id: $id) {\n    ...DeploymentAddRevisionModal_deployment\n    id\n  }\n}\n\nfragment DeploymentAddRevisionModal_deployment on ModelDeployment {\n  id\n  entityId\n  metadata {\n    resourceGroupName\n    projectId\n    projectV2 {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n  currentRevision {\n    modelMountConfig {\n      vfolderId\n    }\n    ...DeploymentAddRevisionModal_revisionSource\n    id\n  }\n}\n\nfragment DeploymentAddRevisionModal_revisionSource on ModelRevision {\n  revisionPresetId\n  clusterConfig {\n    mode\n    size\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  extraMounts {\n    vfolderId\n    vfolder {\n      name\n      id\n    }\n    mountDestination\n    subpath\n  }\n  modelRuntimeConfig {\n    runtimeVariantId\n    runtimeVariant {\n      name\n      readsVfolderConfigFiles @since(version: \"26.8.0\")\n      id\n    }\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues {\n      presetId\n      value\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    vfolder {\n      id\n      name\n    }\n    mountDestination\n    definitionPath\n    subpath\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        command @since(version: \"26.7.0\")\n        shell @since(version: \"26.7.0\")\n        startCommand\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          enable\n          path\n          maxRetries\n          initialDelay\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n  imageV2 {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n}\n"
   }
 };
 })();
