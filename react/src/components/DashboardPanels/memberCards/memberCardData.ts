@@ -46,36 +46,35 @@ const toNumber = (value: unknown) => {
   return Number.isFinite(number) ? number : 0;
 };
 
+const remainingOf = (entry: LimitEntry | undefined) =>
+  !entry || entry.unlimited || entry.quantity == null
+    ? null
+    : toNumber(entry.quantity);
+
 /**
- * Used-vs-limit rows from `effectiveResourceAllocationV2`: `used` is the
- * keypair's, the remainder is the manager's `assignable` (already the minimum
- * across scopes). Slots follow `slotOrder`, then the rest alphabetically; with
- * `dropEmpty`, a slot with nothing used and nothing assignable is left out.
+ * Used-vs-limit rows: `used` plus the smallest of the `assignables` per slot
+ * (a slot no list limits is unlimited). Slots follow `slotOrder`, then the
+ * rest alphabetically; with `dropEmpty`, a slot with nothing used and nothing
+ * assignable is left out.
  */
 export const toUsageRows = (
-  allocation:
-    | {
-        readonly assignable: ReadonlyArray<LimitEntry>;
-        readonly breakdown: {
-          readonly keypair: { readonly used: ReadonlyArray<QuantityEntry> };
-        };
-      }
-    | null
-    | undefined,
-  slotOrder: ReadonlyArray<string> = ['cpu', 'mem'],
-  dropEmpty = true,
+  used: ReadonlyArray<QuantityEntry>,
+  assignables: ReadonlyArray<ReadonlyArray<LimitEntry>>,
+  {
+    slotOrder = ['cpu', 'mem'],
+    dropEmpty = true,
+  }: { slotOrder?: ReadonlyArray<string>; dropEmpty?: boolean } = {},
 ): Array<UsageRow> => {
-  if (!allocation) return [];
-  const used = new Map(
-    allocation.breakdown.keypair.used.map((entry) => [
-      entry.resourceType,
-      toNumber(entry.quantity),
-    ]),
+  const usedBySlot = new Map(
+    used.map((entry) => [entry.resourceType, toNumber(entry.quantity)]),
   );
-  const assignable = new Map(
-    allocation.assignable.map((entry) => [entry.resourceType, entry]),
+  const assignableBySlot = assignables.map(
+    (list) => new Map(list.map((entry) => [entry.resourceType, entry])),
   );
-  const slots = _.uniq([...assignable.keys(), ...used.keys()]);
+  const slots = _.uniq([
+    ...assignableBySlot.flatMap((bySlot) => [...bySlot.keys()]),
+    ...usedBySlot.keys(),
+  ]);
   const ordered = _.sortBy(slots, [
     (slot) => {
       const index = slotOrder.indexOf(slot);
@@ -84,12 +83,13 @@ export const toUsageRows = (
     (slot) => slot,
   ]);
   return ordered.flatMap((resourceType) => {
-    const usedQuantity = used.get(resourceType) ?? 0;
-    const entry = assignable.get(resourceType);
-    const limit =
-      !entry || entry.unlimited || entry.quantity == null
-        ? null
-        : usedQuantity + toNumber(entry.quantity);
+    const usedQuantity = usedBySlot.get(resourceType) ?? 0;
+    const remainders = assignableBySlot
+      .map((bySlot) => remainingOf(bySlot.get(resourceType)))
+      .filter((value): value is number => value !== null);
+    const limit = remainders.length
+      ? usedQuantity + Math.min(...remainders)
+      : null;
     return dropEmpty && limit === 0 && usedQuantity === 0
       ? []
       : [{ resourceType, used: usedQuantity, limit }];
