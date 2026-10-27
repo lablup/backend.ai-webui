@@ -92,13 +92,19 @@ The ready gate (`fw:pr-ready-gate`, `scripts/risk-tier.sh`) reads the two lists 
 match the changed path case-insensitively. **High**: any changed file matches. **Low**: every
 changed file matches. Everything else is **Medium**. The tier sets the review: Low → `/code-review
 medium`, 0 suggested approvals; Medium → `high`, 1 approval; High → `xhigh` plus a security
-review, 2 approvals. Approvals are a suggestion; branch protection decides.
+review, 2 approvals. Approvals are a suggestion; branch protection decides. Files that steer
+the reviewer, the agents or CI (`REVIEW.md`, `AGENTS.md`, `.claude/**`, `.github/**`, the
+verification harness) are High even though most are Markdown: High wins over Low.
 
 ### High
 
 ```
-.github/workflows/**
-.github/actions/**
+REVIEW.md
+AGENTS.md
+CLAUDE.md
+.claude/**
+.github/**
+scripts/verify.sh
 package.json
 **/package.json
 pnpm-workspace.yaml
