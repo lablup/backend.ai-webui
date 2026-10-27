@@ -60,6 +60,9 @@ const KNOWN_MISSING_KEYS = new Set([]);
  */
 const OWNER_DEPTH = 4;
 
+/** Generic action labels: chrome on every page, whatever their owner count. */
+const CHROME_KEYS = new Set(['button.Cancel', 'button.Save', 'button.Refresh']);
+
 /** Edges not followed: reaching them makes every page contain every page. */
 const CUT_PATH_PREFIXES = ['react/src/components/MainLayout/'];
 const CUT_PATH_EXACT = ['react/src/components/DefaultProviders.tsx'];
@@ -1067,6 +1070,10 @@ function keyPlacement(built) {
 
   const placement = new Map();
   for (const [k, depths] of depthsPerKey) {
+    if (CHROME_KEYS.has(k)) {
+      placement.set(k, new Set());
+      continue;
+    }
     const owners = [...depths].filter(([, d]) => d <= OWNER_DEPTH);
     if (owners.length >= NOISE_THRESHOLD) {
       placement.set(k, new Set());
