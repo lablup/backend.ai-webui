@@ -2,20 +2,16 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useWebUINavigate } from '../../hooks';
-import { useProjectPath } from '../../hooks/useRouteScope';
+import PanelDetailLinkButton from './PanelDetailLinkButton';
 import PanelEditControls from './PanelEditControls';
 import PanelSettingsHeaderControls, {
   PanelHeaderSettingsContext,
 } from './PanelSettingsHeaderControls';
-import { DetailLinkContext } from './detailLink';
-import { Button } from '@lablup/ui-common/Button';
 import { Heading } from '@lablup/ui-common/Heading';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIBoardItemTitle, BAIFlex, BAIIconWithTooltip } from 'backend.ai-ui';
-import { ChevronRight, CircleHelp } from 'lucide-react';
-import React, { use, useContext } from 'react';
-import { useTranslation } from 'react-i18next';
+import { CircleHelp } from 'lucide-react';
+import React, { use } from 'react';
 
 export interface PanelFrameProps {
   title: string;
@@ -45,11 +41,7 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
   children,
 }) => {
   'use memo';
-  const { t } = useTranslation();
   const { token } = useTheme();
-  const navigate = useWebUINavigate();
-  const buildPath = useProjectPath();
-  const detailLink = useContext(DetailLinkContext);
   const hasHeaderSettings = !!use(PanelHeaderSettingsContext);
   const heading = icon ? (
     <BAIFlex align="center" gap="xs">
@@ -63,9 +55,6 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
   ) : (
     title
   );
-  const detailLabel = detailLink
-    ? t('dashboard.card.ViewIn', { name: t(detailLink.labelKey) })
-    : undefined;
 
   return (
     <BAIFlex
@@ -95,23 +84,7 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
         extra={
           <BAIFlex align="center" gap="xxs">
             {extra}
-            {detailLink && detailLabel ? (
-              <Button
-                variant="ghost"
-                size="sm"
-                label={t('dashboard.card.ViewAll')}
-                aria-label={detailLabel}
-                tooltip={detailLabel}
-                endContent={<ChevronRight size="1em" />}
-                onClick={() =>
-                  navigate(
-                    buildPath(detailLink.feature, {
-                      scope: detailLink.scope,
-                    }) + detailLink.search,
-                  )
-                }
-              />
-            ) : null}
+            <PanelDetailLinkButton />
             <PanelEditControls
               title={title}
               onEdit={onEdit}
