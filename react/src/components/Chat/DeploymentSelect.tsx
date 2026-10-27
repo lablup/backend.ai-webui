@@ -49,7 +49,6 @@ import {
   BAIComplexSelect,
   BAIFlex,
   toGlobalId,
-  toLocalId,
   type BAIComplexSelectOption,
   type BAIComplexSelectProps,
   type BAIComplexSelectValue,
@@ -182,6 +181,7 @@ const DeploymentSelect: React.FC<DeploymentSelectProps> = ({
           edges {
             node {
               id
+              entityId
               metadata {
                 name
               }
@@ -200,14 +200,14 @@ const DeploymentSelect: React.FC<DeploymentSelectProps> = ({
       getTotal: (result) => result.myDeployments?.count,
       getItem: (result) =>
         result.myDeployments?.edges?.map((edge) => edge?.node),
-      getId: (node) => (node?.id ? toLocalId(node.id) : undefined),
+      getId: (node) => node?.entityId,
     },
   );
 
   const total = myDeployments?.count ?? undefined;
   const options: Array<BAIComplexSelectOption> = _.compact(
     _.map(paginationData, (node) => {
-      const value = node?.id ? toLocalId(node.id) : undefined;
+      const value = node?.entityId;
       return value && node?.metadata.name
         ? { value, label: node.metadata.name }
         : null;

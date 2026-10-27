@@ -17,7 +17,6 @@ import {
   type LoginBootstrap,
 } from './loginBootstrap';
 import { applyConfigToClient, type LoginConfigState } from './loginConfig';
-import { toLocalId } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { fetchQuery, graphql } from 'react-relay';
 
@@ -30,6 +29,7 @@ const myUserQuery = graphql`
   ) {
     myUserV2 {
       id
+      entityId
       basicInfo {
         email
         fullName
@@ -55,6 +55,7 @@ const myUserQuery = graphql`
         edges {
           node {
             id
+            entityId
             basicInfo {
               name
             }
@@ -69,6 +70,7 @@ const myUserQuery = graphql`
         edges {
           node {
             id
+            entityId
             basicInfo {
               name
             }
@@ -233,7 +235,7 @@ export async function connectViaGQL(
   const projects = _.uniqBy(
     _.map(
       [...(me.recentProject?.edges ?? []), ...(me.defaultProject?.edges ?? [])],
-      ({ node }) => ({ id: toLocalId(node.id), name: node.basicInfo.name }),
+      ({ node }) => ({ id: node.entityId, name: node.basicInfo.name }),
     ),
     'name',
   );
@@ -255,7 +257,7 @@ export async function connectViaGQL(
     me.organization.domainName ?? me.domain?.basicInfo.name ?? '';
 
   (globalThis as any).backendaiclient.email = me.basicInfo.email;
-  (globalThis as any).backendaiclient.user_uuid = toLocalId(me.id);
+  (globalThis as any).backendaiclient.user_uuid = me.entityId;
   (globalThis as any).backendaiclient.full_name = me.basicInfo.fullName;
   (globalThis as any).backendaiclient.is_admin = [
     'superadmin',

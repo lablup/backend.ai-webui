@@ -9,10 +9,9 @@ import {
 import { localeCompare } from '../helper';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import useControllableState_deprecated from '../hooks/useControllableState';
-import {
-  Selector,
-  type SelectorOptionData,
-  type SelectorOptionType,
+import type {
+  SelectorOptionData,
+  SelectorOptionType,
 } from '@lablup/ui-common/Selector';
 import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
@@ -23,6 +22,7 @@ import {
   BAIResourceNumberWithIcon,
   useThrottleFn,
   useUpdatableState,
+  BAISelector,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Info, SquarePen } from 'lucide-react';
@@ -317,7 +317,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
         updateFetchKeyUnderTransition();
       }}
     >
-      <Selector
+      <BAISelector
         // QA-FINDINGS Q-40: `session.launcher.ResourcePresets` does not exist
         // in any locale file, so i18next fell through and Astryx rendered the
         // RAW KEY as this Selector's accessible name.

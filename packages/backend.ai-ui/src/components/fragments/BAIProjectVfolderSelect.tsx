@@ -30,7 +30,7 @@
 */
 import { BAIProjectVfolderSelectPaginatedQuery } from '../../__generated__/BAIProjectVfolderSelectPaginatedQuery.graphql';
 import { BAIProjectVfolderSelectValueQuery } from '../../__generated__/BAIProjectVfolderSelectValueQuery.graphql';
-import { combineFilters, convertToUUID, toLocalId } from '../../helper';
+import { combineFilters, convertToUUID } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useControllableValue, useFetchKey } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -182,6 +182,7 @@ const BAIProjectVfolderSelect: React.FC<BAIProjectVfolderSelectProps> = ({
             edges {
               node {
                 id
+                entityId
                 metadata {
                   name
                 }
@@ -220,10 +221,8 @@ const BAIProjectVfolderSelect: React.FC<BAIProjectVfolderSelectProps> = ({
 
   const options = _.compact(
     _.map(paginationData, (item) => {
-      // Emit the raw (dashed) local UUID — matches the
-      // `vfolderV2(vfolderId: UUID!)` shape and is what mutation callers feed
-      // to `deployVfolderV2` etc.
-      const key = item?.id ? toLocalId(item.id) : undefined;
+      // The UUID that `vfolderV2` and the deploy mutations take.
+      const key = item?.entityId;
       return key
         ? {
             value: key,

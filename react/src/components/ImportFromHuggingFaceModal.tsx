@@ -10,11 +10,9 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { AstryxFormTextInput } from './astryxFormControls';
 import { Button } from '@lablup/ui-common/Button';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
 import { InputGroup } from '@lablup/ui-common/InputGroup';
-import { Switch } from '@lablup/ui-common/Switch';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
@@ -25,6 +23,8 @@ import {
   BAIText,
   useErrorMessageResolver,
   useToggle,
+  BAISwitch,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
@@ -268,13 +268,8 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
       >
         <Form ref={formRef} preserve={false} layout="vertical">
           <Form.Item label="Hugging Face URL" required>
-            {/* antd `Space.Compact` around an input + button → `InputGroup`
-                (MAPPING §4). `onChange` now receives the value, not the event.
-                PILOT-DECISION: antd's `onPressEnter` shortcut is DROPPED — the
-                shared `AstryxFormTextInput` adapter exposes no Enter hook, and
-                widening it for one call site is out of this batch's scope. The
-                explicit "Check" button beside the field is unchanged and is
-                still the only required path. */}
+            {/* PILOT-DECISION: antd's `onPressEnter` shortcut is DROPPED; the
+                "Check" button beside the field is the only path. */}
             <InputGroup
               label="Hugging Face URL"
               isLabelHidden
@@ -291,8 +286,8 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
                   },
                 ]}
               >
-                <AstryxFormTextInput
-                  label="Hugging Face URL"
+                <BAITextInput
+                  aria-label="Hugging Face URL"
                   onChange={(value) => {
                     setTypedURL(value);
                   }}
@@ -350,15 +345,15 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
             label={t('data.modelStore.ModelStoreFolderName')}
             name="folder_name"
           >
-            <AstryxFormTextInput
-              label={t('data.modelStore.ModelStoreFolderName')}
+            <BAITextInput
+              aria-label={t('data.modelStore.ModelStoreFolderName')}
             />
           </Form.Item>
           <Form.Item
             label={t('data.modelStore.ServiceName')}
             name="service_name"
           >
-            <AstryxFormTextInput label={t('data.modelStore.ServiceName')} />
+            <BAITextInput aria-label={t('data.modelStore.ServiceName')} />
           </Form.Item>
           {huggingFaceURL && huggingFaceModelInfo.data?.markdown ? (
             <Suspense fallback={<ReadmeFallbackCard />}>
@@ -394,7 +389,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
             {/* antd `Switch checked` → Astryx `Switch value` (MAPPING §4);
                 `label` is required and the control renders it, so the sibling
                 caption becomes the label and is hidden as duplicate text. */}
-            <Switch
+            <BAISwitch
               value={isImportOnly}
               aria-label={t('data.modelStore.ImportOnly')}
               onChange={() => {

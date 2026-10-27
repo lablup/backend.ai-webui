@@ -99,6 +99,7 @@ const BAIAuditLogNodes = ({
         clientIp @since(version: "26.9.0")
         user {
           id
+          entityId
           basicInfo {
             email
           }
@@ -172,10 +173,10 @@ const BAIAuditLogNodes = ({
           const email = record.user.basicInfo?.email;
           return email ? (
             <>
-              {email} &nbsp; (<BAIId globalId={record.user.id} />)
+              {email} &nbsp; (<BAIId uuid={record.user.entityId} />)
             </>
           ) : (
-            <BAIId globalId={record.user.id} />
+            <BAIId uuid={record.user.entityId} />
           );
         },
       },

@@ -190,7 +190,7 @@ test.describe(
             .getByRole('navigation', { name: 'Side navigation' })
             .getByText('Deployments', { exact: true }),
         ).toBeVisible({ timeout: 20000 });
-        // `BAIRadioGroup` renders Astryx `SegmentedControl`: each tab is a
+        // `BAISegmentedControl` renders Astryx `SegmentedControl`: each tab is a
         // directly-visible `<button role="radio">`.
         await expect(statusTab(page, 'Serving')).toBeChecked({
           timeout: 20000,
@@ -345,7 +345,7 @@ test.describe(
         await expect(page.getByText(deploymentName).first()).toBeHidden({
           timeout: 30000,
         });
-        // `BAIRadioGroup` renders a directly-clickable `role="radio"` button
+        // `BAISegmentedControl` renders a directly-clickable `role="radio"` button
         // (see comment in "Admin can view the deployments list..." above).
         await page.getByRole('radio', { name: 'Terminated' }).click();
         await expect(page.getByText(deploymentName).first()).toBeHidden({
@@ -509,7 +509,7 @@ test.describe(
         revisionTabBar(page).getByRole('button', { name: 'Add Revision' }),
       ).toBeVisible();
 
-      // Replicas section (`DeploymentReplicasCard.tsx`'s `BAIRadioGroup`
+      // Replicas section (`DeploymentReplicasCard.tsx`'s `BAISegmentedControl`
       // toggle — see the deployments list page's toggle comment above).
       // The title shares its element with the help icon's tooltip text, so
       // anchor on the leading word instead of an exact match.
@@ -674,7 +674,7 @@ test.describe(
       const dialog = page.getByRole('dialog', { name: /Add Revision/ });
       await expect(dialog).toBeVisible({ timeout: 20000 });
 
-      // 2. Select the "Advanced Mode" segmented-control option. `BAIRadioGroup`
+      // 2. Select the "Advanced Mode" segmented-control option. `BAISegmentedControl`
       // now renders Astryx `SegmentedControl` -- a directly-clickable
       // `role="radio"` button, not antd's hidden-input-behind-a-label.
       await dialog.getByRole('radio', { name: 'Advanced Mode' }).click();
@@ -928,7 +928,7 @@ test.describe(
             .click();
           const dialog = page.getByRole('dialog', { name: /Add Revision/ });
           await expect(dialog).toBeVisible({ timeout: 20000 });
-          // `BAIRadioGroup` renders Astryx `SegmentedControl` -- a
+          // `BAISegmentedControl` renders Astryx `SegmentedControl` -- a
           // directly-clickable `role="radio"` button (see the "view
           // Advanced Mode fields" test above).
           await dialog.getByRole('radio', { name: 'Advanced Mode' }).click();
