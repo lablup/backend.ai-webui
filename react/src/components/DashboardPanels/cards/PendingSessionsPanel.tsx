@@ -12,10 +12,12 @@ import {
 } from '../projectAdminCards/projectCardData';
 import type { PanelComponentProps } from '../types';
 import { useOpenSessionDetail } from '../useOpenSessionDetail';
+import './PendingSessionsPanel.css';
 import ScopedCard from './ScopedCard';
 import SessionList from './SessionList';
 import { Text } from '@lablup/ui-common/Text';
 import {
+  BAIFlex,
   BAILink,
   BAISchedulingHistoryTable,
   BAISessionNodesV2,
@@ -29,6 +31,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const PAGE_SIZE = 5;
+const ATTEMPT_COLUMNS = ['updatedAt', 'phase', 'result', 'attempts', 'message'];
 const VISIBLE_COLUMNS = new Set(['name', 'owner', 'elapsedTime']);
 const PENDING_FILTER = { status: { in: ['PENDING' as const] } };
 // Longest waiting first.
@@ -110,13 +113,45 @@ const SchedulingAttempts: React.FC<{ sessionId: string }> = ({ sessionId }) => {
     { fetchPolicy: 'store-and-network' },
   );
   return (
-    <BAISchedulingHistoryTable
-      schedulingHistoryFrgmt={filterOutNullAndUndefined(
-        data.sessionScopedSchedulingHistories?.edges.map((edge) => edge?.node),
-      )}
-      disableSorter
-      pagination={false}
-    />
+    <BAIFlex
+      direction="column"
+      align="stretch"
+      className="bai-pending-attempts"
+    >
+      <BAISchedulingHistoryTable
+        schedulingHistoryFrgmt={filterOutNullAndUndefined(
+          data.sessionScopedSchedulingHistories?.edges.map(
+            (edge) => edge?.node,
+          ),
+        )}
+        disableSorter
+        pagination={false}
+        scroll={{}}
+        customizeColumns={(columns) =>
+          columns
+            .filter((column) => ATTEMPT_COLUMNS.includes(String(column.key)))
+            .map((column) =>
+              column.key === 'message'
+                ? {
+                    ...column,
+                    onCell: () => ({ style: { width: '100%', maxWidth: 0 } }),
+                    render: (
+                      _value: unknown,
+                      record: { message?: string | null },
+                    ) =>
+                      record.message ? (
+                        <BAIText ellipsis={{ tooltip: record.message }}>
+                          {record.message.replace(/\s*\n\s*/g, ' ')}
+                        </BAIText>
+                      ) : (
+                        '-'
+                      ),
+                  }
+                : column,
+            )
+        }
+      />
+    </BAIFlex>
   );
 };
 
