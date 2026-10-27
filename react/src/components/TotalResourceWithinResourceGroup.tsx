@@ -170,6 +170,8 @@ interface TotalResourceWithinResourceGroupProps extends BAIFlexProps {
   extra?: ReactNode;
   /** Fixes the resource group (the parent query's); without it the header's group and a picker are used. */
   resourceGroup?: string;
+  /** Drawn in place of the fixed resource group's name, e.g. a picker the host owns. */
+  resourceGroupTitle?: ReactNode;
 }
 
 export const useIsAvailableTotalResourceWithinResourceGroup = () => {
@@ -189,6 +191,7 @@ const TotalResourceWithinResourceGroup: React.FC<
   hideRefreshButton,
   extra,
   resourceGroup,
+  resourceGroupTitle,
   ...props
 }) => {
   'use memo';
@@ -436,12 +439,14 @@ const TotalResourceWithinResourceGroup: React.FC<
     >
       <BAIBoardItemTitle
         title={
-          <BAIFlex gap={'xs'} wrap="wrap">
+          <BAIFlex gap={'xs'} wrap="wrap" align="center">
             {/* antd Typography.Text (fontSizeHeading5 = 16px +
                 fontWeightStrong). 16px is heading-5 on the restored antd type
                 ramp; `level={3}` tracked the same 16px under Astryx's own. */}
             <Heading level={5}>{t('webui.menu.TotalResourcesIn')}</Heading>
-            {resourceGroup ? (
+            {resourceGroupTitle ? (
+              resourceGroupTitle
+            ) : resourceGroup ? (
               <Heading level={5}>{resourceGroup}</Heading>
             ) : (
               <SharedResourceGroupSelectForCurrentProject

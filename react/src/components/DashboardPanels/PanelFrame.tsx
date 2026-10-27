@@ -5,14 +5,16 @@
 import { useWebUINavigate } from '../../hooks';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import PanelEditControls from './PanelEditControls';
-import PanelSettingsHeaderControls from './PanelSettingsHeaderControls';
+import PanelSettingsHeaderControls, {
+  PanelHeaderSettingsContext,
+} from './PanelSettingsHeaderControls';
 import { DetailLinkContext } from './detailLink';
 import { Heading } from '@lablup/ui-common/Heading';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIBoardItemTitle, BAIFlex } from 'backend.ai-ui';
-import { ArrowUpRight } from 'lucide-react';
-import React, { useContext } from 'react';
+import { BAIBoardItemTitle, BAIFlex, BAIIconWithTooltip } from 'backend.ai-ui';
+import { ArrowUpRight, CircleHelp } from 'lucide-react';
+import React, { use, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface PanelFrameProps {
@@ -48,6 +50,19 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
   const navigate = useWebUINavigate();
   const buildPath = useProjectPath();
   const detailLink = useContext(DetailLinkContext);
+  const hasHeaderSettings = !!use(PanelHeaderSettingsContext);
+  const heading = icon ? (
+    <BAIFlex align="center" gap="xs">
+      {icon}
+      <Heading level={5} maxLines={1}>
+        {title}
+      </Heading>
+    </BAIFlex>
+  ) : hasHeaderSettings ? (
+    <Heading level={5}>{title}</Heading>
+  ) : (
+    title
+  );
   const detailLabel = detailLink
     ? t('dashboard.card.ViewIn', { name: t(detailLink.labelKey) })
     : undefined;
@@ -60,21 +75,25 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
     >
       <BAIBoardItemTitle
         title={
-          icon ? (
-            <BAIFlex align="center" gap="xs">
-              {icon}
-              <Heading level={5} maxLines={1}>
-                {title}
-              </Heading>
+          hasHeaderSettings ? (
+            // The card's own controls follow the title and its help glyph; the row's end keeps the actions.
+            <BAIFlex align="center" gap="xs" wrap="wrap">
+              {heading}
+              {tooltip ? (
+                <BAIIconWithTooltip
+                  icon={<CircleHelp size="1em" />}
+                  content={tooltip}
+                />
+              ) : null}
+              <PanelSettingsHeaderControls />
             </BAIFlex>
           ) : (
-            title
+            heading
           )
         }
-        tooltip={tooltip}
+        tooltip={hasHeaderSettings ? undefined : tooltip}
         extra={
           <BAIFlex align="center" gap="xxs">
-            <PanelSettingsHeaderControls />
             {extra}
             {detailLink && detailLabel ? (
               <IconButton

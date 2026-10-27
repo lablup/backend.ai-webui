@@ -17,8 +17,8 @@ const ResourceGroupTotal: React.FC<{
   resourceGroup: string;
   fetchKey: string;
   isRefetching: boolean;
-  extra?: React.ReactNode;
-}> = ({ resourceGroup, fetchKey, isRefetching, extra }) => {
+  resourceGroupTitle?: React.ReactNode;
+}> = ({ resourceGroup, fetchKey, isRefetching, resourceGroupTitle }) => {
   'use memo';
   const isSuperAdmin = useCurrentUserRole() === 'superadmin';
   const variables = {
@@ -51,7 +51,7 @@ const ResourceGroupTotal: React.FC<{
       resourceGroup={deferredVariables.resourceGroup}
       refetching={isRefetching || deferredVariables !== variables}
       hideRefreshButton
-      extra={extra}
+      resourceGroupTitle={resourceGroupTitle}
     />
   );
 };
@@ -81,8 +81,10 @@ const ResourceGroupTotalPanel: React.FC<PanelComponentProps> = ({
               resourceGroup={resourceGroup}
               fetchKey={fetchKey}
               isRefetching={isRefetching}
-              // This card draws its own header per group; the first one carries the card's controls.
-              extra={index === 0 ? <PanelSettingsHeaderControls /> : undefined}
+              // Each group draws its own header; the first one's group name is the card's picker.
+              resourceGroupTitle={
+                index === 0 ? <PanelSettingsHeaderControls /> : undefined
+              }
             />
           </Suspense>
         ))}
