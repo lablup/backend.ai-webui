@@ -5,6 +5,7 @@
 import type { ResourceGroupTotalPanelQuery } from '../../../__generated__/ResourceGroupTotalPanelQuery.graphql';
 import { useCurrentUserRole } from '../../../hooks/backendai';
 import TotalResourceWithinResourceGroup from '../../TotalResourceWithinResourceGroup';
+import PanelSettingsHeaderControls from '../PanelSettingsHeaderControls';
 import type { PanelComponentProps } from '../types';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIBoardItemErrorBoundary, BAIFlex, BAISkeleton } from 'backend.ai-ui';
@@ -16,7 +17,8 @@ const ResourceGroupTotal: React.FC<{
   resourceGroup: string;
   fetchKey: string;
   isRefetching: boolean;
-}> = ({ resourceGroup, fetchKey, isRefetching }) => {
+  extra?: React.ReactNode;
+}> = ({ resourceGroup, fetchKey, isRefetching, extra }) => {
   'use memo';
   const isSuperAdmin = useCurrentUserRole() === 'superadmin';
   const variables = {
@@ -49,6 +51,7 @@ const ResourceGroupTotal: React.FC<{
       resourceGroup={deferredVariables.resourceGroup}
       refetching={isRefetching || deferredVariables !== variables}
       hideRefreshButton
+      extra={extra}
     />
   );
 };
@@ -69,7 +72,7 @@ const ResourceGroupTotalPanel: React.FC<PanelComponentProps> = ({
       status="error"
     >
       <BAIFlex direction="column" align="stretch" gap="sm">
-        {resourceGroups.map((resourceGroup) => (
+        {resourceGroups.map((resourceGroup, index) => (
           <Suspense
             key={resourceGroup}
             fallback={<BAISkeleton style={{ padding: token('--spacing-5') }} />}
@@ -78,6 +81,8 @@ const ResourceGroupTotalPanel: React.FC<PanelComponentProps> = ({
               resourceGroup={resourceGroup}
               fetchKey={fetchKey}
               isRefetching={isRefetching}
+              // This card draws its own header per group; the first one carries the card's controls.
+              extra={index === 0 ? <PanelSettingsHeaderControls /> : undefined}
             />
           </Suspense>
         ))}
