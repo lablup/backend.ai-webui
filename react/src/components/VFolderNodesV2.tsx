@@ -55,7 +55,6 @@ import {
   StorageUsageBadge,
   badgeVariantForStatus,
   filterOutNullAndUndefined,
-  toLocalId,
   useErrorMessageResolver,
   useIsLabelableEntityType,
   type BAIEntityLabel,
@@ -168,7 +167,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
       ? t('data.folders.ManageProjectFolderInAdmin')
       : undefined;
 
-  const vfolderId = toLocalId(vfolder.id ?? '');
+  const vfolderId = vfolder.entityId;
   const folderPath = generateFolderPath(vfolderId);
 
   const actions: Array<BAINameActionCellAction> = filterOutNullAndUndefined([
@@ -708,7 +707,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
                     const folderId = vfolder?.id;
                     if (!folderId) return;
                     commitDeleteMutation({
-                      variables: { vfolderId: toLocalId(folderId) },
+                      variables: { vfolderId: vfolder.entityId },
                       onCompleted: (_data, errors) => {
                         if (errors && errors.length > 0) {
                           handleDeleteError(
@@ -739,7 +738,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
                       });
                     };
                     commitRestoreMutation({
-                      variables: { vfolderId: toLocalId(folderId) },
+                      variables: { vfolderId: vfolder.entityId },
                       onCompleted: (_data, errors) => {
                         if (errors && errors.length > 0) {
                           handleError(new Error(errors[0]?.message ?? ''));

@@ -17,7 +17,6 @@ import { App } from '../app-shim';
 import { localeCompare } from '../helper';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
-import { Selector } from '@lablup/ui-common/Selector';
 import { HStack, StackItem, VStack } from '@lablup/ui-common/Stack';
 import { Heading } from '@lablup/ui-common/Text';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
@@ -38,6 +37,7 @@ import {
   useErrorMessageResolver,
   useFetchKey,
   useMutationWithPromise,
+  BAISelector,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleXIcon, MailXIcon } from 'lucide-react';
@@ -526,7 +526,7 @@ const InviteFolderSettingModalBody: React.FC<{
               </Tooltip>
             </StackItem>
             <StackItem size="static">
-              <Selector
+              <BAISelector
                 aria-label={t('data.folders.MountPermission')}
                 placement="below"
                 width={150}
@@ -600,7 +600,7 @@ const InviteFolderSettingModalBody: React.FC<{
               dataIndex: 'mountLevel',
               render: (level: ShareRow['mountLevel'], row) =>
                 row.status === 'ACCEPTED' && row.userId ? (
-                  <Selector
+                  <BAISelector
                     aria-label={t('data.folders.MountPermission')}
                     placement="below"
                     width={130}

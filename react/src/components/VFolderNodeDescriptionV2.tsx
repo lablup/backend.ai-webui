@@ -24,17 +24,16 @@ import { useVirtualFolderPathV2 } from '../hooks/useVirtualFolderNodePathV2';
 import { formatBinarySizeInfo } from './VFolderNodesV2';
 import VirtualFolderPathV2 from './VirtualFolderNodeItems/VirtualFolderPathV2';
 import { Badge } from '@lablup/ui-common/Badge';
-import { Selector } from '@lablup/ui-common/Selector';
 import { HStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAIMetadataList,
   BAIMetadataListItem,
   filterOutEmpty,
-  toLocalId,
   useErrorMessageResolver,
   badgeVariantForStatus,
   BAIText,
+  BAISelector,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -87,6 +86,7 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
     graphql`
       fragment VFolderNodeDescriptionV2Fragment on VFolder {
         id
+        entityId
         host
         status
         unmanagedPath
@@ -130,7 +130,7 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
 
   const { vfolderPath } = useVirtualFolderPathV2(vfolderNode);
 
-  const vfolderId = toLocalId(vfolderNode.id);
+  const vfolderId = vfolderNode.entityId;
 
   // `accessControl.permission` is the folder's mount permission, not the
   // caller's rights on it; NONE leaves the selector empty instead of guessing.
@@ -206,14 +206,9 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
       key: 'permission',
       label: t('data.folders.MountPermission'),
       children: (
-        // QA-FINDINGS Q-34 — this Selector bypasses `BAISelect` /
-        // `AstryxFormSelector`, so it needs its own `placement`. With none,
-        // `shouldOverlaySelectedItem` is true (no search field) and Astryx
-        // centres the selected option OVER the trigger via a negative
-        // `margin-block-start` — inside a `MetadataList` row that covers the
-        // "Mount Permission" label as well as the value, which is what the
-        // folder-permission report saw.
-        <Selector
+        // QA-FINDINGS Q-34 — without `placement`, Astryx overlays the selected
+        // option on the trigger, covering the "Mount Permission" row label.
+        <BAISelector
           placement="below"
           aria-label={t('data.folders.MountPermission')}
           placeholder={t('data.folders.MountPermissionNotSet')}

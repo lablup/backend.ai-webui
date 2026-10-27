@@ -24,7 +24,6 @@ import {
   BAIText,
   useErrorMessageResolver,
   useMutationWithPromise,
-  toLocalId,
 } from 'backend.ai-ui';
 import { UserIcon, UsersIcon, LogOutIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -62,6 +61,7 @@ const SharedFolderPermissionInfoModalV2: React.FC<
     graphql`
       fragment SharedFolderPermissionInfoModalV2Fragment on VFolder {
         id
+        entityId
         metadata {
           name
         }
@@ -211,9 +211,7 @@ const SharedFolderPermissionInfoModalV2: React.FC<
                         })}
                         onConfirm={() => {
                           const globalId = data?.id;
-                          const leaveFolderId = globalId
-                            ? toLocalId(globalId)
-                            : null;
+                          const leaveFolderId = data?.entityId;
                           if (leaveFolderId && globalId) {
                             leaveFolder.mutate(
                               {

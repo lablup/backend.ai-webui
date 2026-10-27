@@ -12,14 +12,7 @@ import BAIFormItem from './BAIFormItem';
 import FolderCreateModal from './FolderCreateModal';
 import FolderLink from './FolderLink';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
-import {
-  AstryxFormSelector,
-  AstryxFormTextArea,
-  AstryxFormTagsInput,
-  AstryxFormTextInput,
-} from './astryxFormControls';
 import { Banner } from '@lablup/ui-common/Banner';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIButton,
   BAIFlex,
@@ -28,8 +21,11 @@ import {
   BAIProjectVfolderSelect,
   type BAIProjectVfolderSelectRef,
   convertToUUID,
-  toLocalId,
   useBAILogger,
+  BAISelector,
+  BAITagsInput,
+  BAITextArea,
+  BAITextInput,
 } from 'backend.ai-ui';
 import { PlusIcon } from 'lucide-react';
 import { Suspense, useRef, useState } from 'react';
@@ -81,6 +77,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
     graphql`
       fragment AdminModelCardSettingModalFragment on ModelCardV2 {
         id
+        entityId
         name
         vfolderId
         vfolder {
@@ -221,7 +218,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
           commitUpdateModelCard({
             variables: {
               input: {
-                id: toLocalId(modelCard.id),
+                id: modelCard.entityId,
                 ...metadataInput,
               },
             },
@@ -317,7 +314,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                 },
               ]}
             >
-              <AstryxFormTextInput label={t('adminModelCard.Name')} />
+              <BAITextInput aria-label={t('adminModelCard.Name')} />
             </BAIFormItem>
 
             {isEditMode ? (
@@ -344,7 +341,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                 <BAIFlex gap="xs" align="center">
                   <Suspense
                     fallback={
-                      <TextInput
+                      <BAITextInput
                         value=""
                         aria-label={t('adminModelCard.ModelStorageFolder')}
                         disabled
@@ -387,7 +384,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Author')}
               tooltip={t('adminModelCard.AuthorTooltip')}
             >
-              <AstryxFormTextInput label={t('adminModelCard.Author')} />
+              <BAITextInput aria-label={t('adminModelCard.Author')} />
             </BAIFormItem>
 
             <BAIFormItem
@@ -395,7 +392,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Title')}
               tooltip={t('adminModelCard.TitleTooltip')}
             >
-              <AstryxFormTextInput label={t('adminModelCard.Title')} />
+              <BAITextInput aria-label={t('adminModelCard.Title')} />
             </BAIFormItem>
 
             <BAIFormItem
@@ -403,7 +400,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.ModelVersion')}
               tooltip={t('adminModelCard.ModelVersionTooltip')}
             >
-              <AstryxFormTextInput label={t('adminModelCard.ModelVersion')} />
+              <BAITextInput aria-label={t('adminModelCard.ModelVersion')} />
             </BAIFormItem>
 
             <BAIFormItem
@@ -411,8 +408,8 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Description')}
               tooltip={t('adminModelCard.DescriptionTooltip')}
             >
-              <AstryxFormTextArea
-                label={t('adminModelCard.Description')}
+              <BAITextArea
+                aria-label={t('adminModelCard.Description')}
                 rows={3}
               />
             </BAIFormItem>
@@ -422,8 +419,8 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Task')}
               tooltip={t('adminModelCard.TaskTooltip')}
             >
-              <AstryxFormTextInput
-                label={t('adminModelCard.Task')}
+              <BAITextInput
+                aria-label={t('adminModelCard.Task')}
                 placeholder={t('adminModelCard.TaskPlaceholder')}
               />
             </BAIFormItem>
@@ -433,8 +430,8 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Category')}
               tooltip={t('adminModelCard.CategoryTooltip')}
             >
-              <AstryxFormTextInput
-                label={t('adminModelCard.Category')}
+              <BAITextInput
+                aria-label={t('adminModelCard.Category')}
                 placeholder={t('adminModelCard.CategoryPlaceholder')}
               />
             </BAIFormItem>
@@ -444,7 +441,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Architecture')}
               tooltip={t('adminModelCard.ArchitectureTooltip')}
             >
-              <AstryxFormTextInput label={t('adminModelCard.Architecture')} />
+              <BAITextInput aria-label={t('adminModelCard.Architecture')} />
             </BAIFormItem>
 
             <BAIFormItem
@@ -452,9 +449,9 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Framework')}
               tooltip={t('adminModelCard.FrameworkTooltip')}
             >
-              <AstryxFormTagsInput
+              <BAITagsInput
                 tokenSeparators={[',', ' ']}
-                label={t('adminModelCard.Framework')}
+                aria-label={t('adminModelCard.Framework')}
                 placeholder={t('adminModelCard.AddFramework')}
               />
             </BAIFormItem>
@@ -464,9 +461,9 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Label')}
               tooltip={t('adminModelCard.LabelTooltip')}
             >
-              <AstryxFormTagsInput
+              <BAITagsInput
                 tokenSeparators={[',', ' ']}
-                label={t('adminModelCard.Label')}
+                aria-label={t('adminModelCard.Label')}
                 placeholder={t('adminModelCard.AddLabel')}
               />
             </BAIFormItem>
@@ -476,7 +473,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.License')}
               tooltip={t('adminModelCard.LicenseTooltip')}
             >
-              <AstryxFormTextInput label={t('adminModelCard.License')} />
+              <BAITextInput aria-label={t('adminModelCard.License')} />
             </BAIFormItem>
 
             <BAIFormItem
@@ -484,7 +481,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               label={t('adminModelCard.Readme')}
               tooltip={t('adminModelCard.ReadmeTooltip')}
             >
-              <AstryxFormTextArea label={t('adminModelCard.Readme')} rows={6} />
+              <BAITextArea aria-label={t('adminModelCard.Readme')} rows={6} />
             </BAIFormItem>
 
             <BAIFormItem
@@ -498,8 +495,8 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                 },
               ]}
             >
-              <AstryxFormSelector
-                label={t('adminModelCard.AccessLevel')}
+              <BAISelector
+                aria-label={t('adminModelCard.AccessLevel')}
                 options={[
                   {
                     value: 'INTERNAL',
@@ -526,7 +523,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
           setIsOpenCreateFolderModal(false);
           if (result) {
             formRef.current?.setFieldsValue({
-              vfolderId: toLocalId(result.id),
+              vfolderId: result.entityId,
             });
             vfolderSelectRef.current?.refetch();
           }

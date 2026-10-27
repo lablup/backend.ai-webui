@@ -28,9 +28,8 @@
     `dateConstraints` entry returns `true` to ALLOW it, so the predicate is
     negated (and the native `Date` wrapped back into a `dayjs`).
 */
-import { DateTimeInput } from '@lablup/ui-common/DateTimeInput';
 import type { ISODateTimeString } from '@lablup/ui-common/DateTimeInput';
-import { useControllableValue } from 'backend.ai-ui';
+import { BAIDateTimeInput, useControllableValue } from 'backend.ai-ui';
 import dayjs, { Dayjs } from 'dayjs';
 import * as _ from 'lodash-es';
 import React from 'react';
@@ -70,7 +69,7 @@ const DatePickerISO: React.FC<DatePickerISOProps> = ({
   });
 
   return (
-    <DateTimeInput
+    <BAIDateTimeInput
       // `DateTimeInput` wants `YYYY-MM-DDTHH:MM[:SS]`, which is what dayjs
       // emits without the offset suffix; the offset/UTC choice belongs to the
       // OUTBOUND conversion below, not to what the control displays.

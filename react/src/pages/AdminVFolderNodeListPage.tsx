@@ -10,7 +10,6 @@ import type {
 } from '../__generated__/AdminVFolderNodeListPageQuery.graphql';
 import { AstryxAdminTheme } from '../astryx-theme';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
-import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import DeleteForeverVFolderModalV2 from '../components/DeleteForeverVFolderModalV2';
 import DeleteVFolderModalV2 from '../components/DeleteVFolderModalV2';
@@ -42,6 +41,8 @@ import {
   useToggle,
   toEntityLabelFilter,
   useIsLabelableEntityType,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon, RotateCcwIcon, Trash2Icon, TrashIcon } from 'lucide-react';
@@ -318,15 +319,15 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                 style={{ flexShrink: 1 }}
                 wrap="wrap"
               >
-                <BAIRadioGroup
-                  optionType="button"
+                <BAISegmentedControl
                   value={queryParams.mode}
-                  onChange={(e) => {
-                    setQuery({ mode: e.target.value });
+                  onChange={(value) => {
+                    setQuery({ mode: value as typeof queryParams.mode });
                     setTablePaginationOption({ current: 1 });
                     setSelectedFolderList([]);
                   }}
-                  options={filterOutEmpty([
+                >
+                  {filterOutEmpty([
                     {
                       label: t('data.All'),
                       value: 'all',
@@ -347,8 +348,14 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                       label: t('data.Models'),
                       value: 'model',
                     },
-                  ])}
-                />
+                  ]).map((option) => (
+                    <BAISegmentedControlItem
+                      key={option.value}
+                      value={option.value}
+                      label={option.label}
+                    />
+                  ))}
+                </BAISegmentedControl>
                 <BAIGraphQLPropertyFilter<VFolderFilter>
                   data-testid="vfolder-filter"
                   // TODO(needs-backend): V2 `VFolderFilter` does not expose

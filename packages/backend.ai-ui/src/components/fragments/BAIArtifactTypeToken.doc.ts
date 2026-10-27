@@ -58,7 +58,7 @@ export const docs = {
     {
       label: 'Beside the name in a table cell',
       code: `<BAIFlex gap="xs">
-  <BAILink to={'/reservoir/' + toLocalId(record.id)}>{name}</BAILink>
+  <BAILink to={'/reservoir/' + record.entityId}>{name}</BAILink>
   <BAIArtifactTypeToken artifactTypeFrgmt={record} />
 </BAIFlex>`,
     },
