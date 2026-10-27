@@ -178,7 +178,9 @@ export const toKernelExecutionSpecInput = (
       : null;
   const input = {
     imageId: blankToNull(value?.imageId),
-    resources: _.isEmpty(resources) ? null : resources,
+    // The manager rejects a spec whose `resources` is null; an empty list is
+    // "no slots". `resourceOpts` may stay null.
+    resources,
     resourceOpts: blankToNull(value?.shmem)
       ? { shmem: { expr: value!.shmem! } }
       : null,
@@ -188,7 +190,17 @@ export const toKernelExecutionSpecInput = (
       isBatch && value?.startsAtEnabled ? blankToNull(value.startsAt) : null,
     batchTimeoutSec,
   };
-  return _.every(input, _.isNil) ? null : input;
+  return _.every(_.omit(input, 'resources'), _.isNil) && _.isEmpty(resources)
+    ? null
+    : input;
+};
+
+// The manager also requires `imageId` once any other spec value is set.
+export const specHasValueBesidesImage = (
+  value?: SessionExecutionSpecFormValue,
+) => {
+  const input = toKernelExecutionSpecInput({ ...value, imageId: null });
+  return !_.isNil(input);
 };
 
 const ImageSelectField: React.FC<{
@@ -349,7 +361,23 @@ export const SessionExecutionSpecFormFields: React.FC<{
       title={t('resourceGroup.SessionExecutionOptions')}
       defaultIsOpen={defaultIsOpen}
     >
-      <BAIFormItem label={t('general.Image')} name={[name, 'imageId']}>
+      <BAIFormItem
+        label={t('general.Image')}
+        name={[name, 'imageId']}
+        rules={[
+          {
+            validator: (_rule, imageId: string | null | undefined) =>
+              _.isEmpty(imageId) &&
+              specHasValueBesidesImage(form.getFieldValue(name))
+                ? Promise.reject(
+                    new Error(
+                      t('general.ValueRequired', { name: t('general.Image') }),
+                    ),
+                  )
+                : Promise.resolve(),
+          },
+        ]}
+      >
         <ImageSelectField />
       </BAIFormItem>
       <BAIFormItem label={t('adminDeploymentPreset.ResourceSlots')}>
