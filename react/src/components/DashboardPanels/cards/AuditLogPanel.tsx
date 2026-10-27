@@ -25,10 +25,10 @@ import { projectAuditScope } from '../projectAdminCards/projectCardData';
 import { withinWindow, type DateTimeWindow } from '../timeRange';
 import type { PanelComponentProps } from '../types';
 import ScopedCard from './ScopedCard';
-import { Switch } from '@lablup/ui-common/Switch';
 import {
   BAIAuditLogNodes,
   BAIFlex,
+  BAISwitch,
   BAIText,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
@@ -319,14 +319,14 @@ const AuditLogPanel: React.FC<PanelComponentProps> = ({
         },
       }}
       extra={
-        <Switch
+        <BAISwitch
           size="sm"
           value={failuresOnly}
           onChange={(checked) => setFailuresOnly(checked)}
           disabled={!onChangeFilter}
         >
           {t('dashboard.card.FailuresOnly')}
-        </Switch>
+        </BAISwitch>
       }
     >
       {(cardScope, key) => (
