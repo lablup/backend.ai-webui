@@ -45,11 +45,6 @@ The **Total Resources in Resource Group** card is not shown to regular users whe
 your administrator hides agent information.
 :::
 
-- **My Folders**:
-    Three counts side by side: your folders (with your folder limit under it), the
-    folders in the trash, and pending folder invitations. When invitations are
-    pending, click the link under the count to review them.
-
 - **Quota per storage volume**:
     Shows the quota available on each storage volume.
     When no storage host supports quota, the card shows a notice instead.

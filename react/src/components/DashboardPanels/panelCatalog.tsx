@@ -11,7 +11,6 @@ import { useDashboardRefreshQuery } from './DashboardRefreshContext';
 import { DEFAULT_PANEL_LAYOUTS, presetKey } from './defaults';
 import MyActivityPanel from './memberCards/MyActivityPanel';
 import MyDeploymentsPanel from './memberCards/MyDeploymentsPanel';
-import MyFoldersPanel from './memberCards/MyFoldersPanel';
 import MyRecentSessionsPanel from './memberCards/MyRecentSessionsPanel';
 import MyResourcesPanel from './memberCards/MyResourcesPanel';
 import MySessionsPanel from './memberCards/MySessionsPanel';
@@ -263,17 +262,8 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     refresh: { min: '30s' },
     settings: ['resourceGroup'],
   },
-  {
-    key: 'folderStatus',
-    page: ['project'],
-    group: 'resource',
-    titleKey: 'data.MyFolders',
-    kind: 'custom',
-    Component: MyFoldersPanel,
-    defaultSize: size(2, 2),
-    minSize: size(2, 2),
-    refresh: { min: '5m' },
-  },
+  // TODO(needs-backend): BA-8719 - re-add `folderStatus` (MyFoldersPanel) once
+  // the folders a user owns can be counted apart from those shared with them.
   {
     key: 'quotaPerStorageVolume',
     page: ['project'],
