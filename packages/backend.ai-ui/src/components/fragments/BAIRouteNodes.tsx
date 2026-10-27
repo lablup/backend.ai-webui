@@ -6,7 +6,6 @@ import {
   badgeVariantForStatus,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  safeDecodeUuid,
   toLocalId,
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -80,6 +79,7 @@ const BAIRouteNodes = ({
     graphql`
       fragment BAIRouteNodesFragment on Route @relay(plural: true) {
         id
+        fieldId
         status
         healthStatus
         trafficRatio
@@ -101,7 +101,7 @@ const BAIRouteNodes = ({
         fixed: 'left',
         render: (_value, record) => (
           <BAIText ellipsis>
-            {toLocalId(record.id)}
+            {record.fieldId}
             {!_.isEmpty(record.errorData) && (
               <BAIButton
                 size="small"
@@ -157,11 +157,7 @@ const BAIRouteNodes = ({
                   type="text"
                   icon={<History size="1em" />}
                   size="small"
-                  onClick={() =>
-                    onClickSchedulingHistory(
-                      safeDecodeUuid(record.id) ?? record.id,
-                    )
-                  }
+                  onClick={() => onClickSchedulingHistory(record.fieldId)}
                 />
               </Tooltip>
             )}

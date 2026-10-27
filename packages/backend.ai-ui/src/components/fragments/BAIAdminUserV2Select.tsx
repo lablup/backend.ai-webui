@@ -8,7 +8,7 @@
 */
 import { BAIAdminUserV2SelectPaginatedQuery } from '../../__generated__/BAIAdminUserV2SelectPaginatedQuery.graphql';
 import { BAIAdminUserV2SelectValueQuery } from '../../__generated__/BAIAdminUserV2SelectValueQuery.graphql';
-import { combineFilters, toLocalId } from '../../helper';
+import { combineFilters } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useControllableValue, useFetchKey } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -128,6 +128,7 @@ const BAIAdminUserV2Select: React.FC<BAIAdminUserV2SelectProps> = ({
             edges {
               node {
                 id
+                entityId
                 basicInfo {
                   email
                 }
@@ -171,6 +172,7 @@ const BAIAdminUserV2Select: React.FC<BAIAdminUserV2SelectProps> = ({
             edges {
               node {
                 id
+                entityId
                 basicInfo {
                   username
                   email
@@ -217,13 +219,13 @@ const BAIAdminUserV2Select: React.FC<BAIAdminUserV2SelectProps> = ({
 
   const keyOfNode = (
     node:
-      | { id: string; basicInfo?: { email?: string | null } | null }
+      | { entityId: string; basicInfo?: { email?: string | null } | null }
       | null
       | undefined,
   ): string | undefined => {
     if (!node) return undefined;
     return valuePropName === 'id'
-      ? toLocalId(node.id)
+      ? node.entityId
       : (node.basicInfo?.email ?? undefined);
   };
 

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d2e8dd9fab08e8f3a59b0bf659688d83>>
+ * @generated SignedSource<<7c3f4b99080358d1f8bac3c148321ed7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type BAIHuggingFaceRegistrySettingModalFragment$data = {
+  readonly entityId: string;
   readonly id: string;
   readonly token: string | null | undefined;
   readonly " $fragmentType": "BAIHuggingFaceRegistrySettingModalFragment";
@@ -37,6 +38,13 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "token",
       "storageKey": null
     }
@@ -45,6 +53,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "b3f51484ba434fc50f57f259dd61546e";
+(node as any).hash = "d9f47483bd0c374fa0a6ce0f8684c8fc";
 
 export default node;

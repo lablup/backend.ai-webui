@@ -26,7 +26,6 @@ import { List, ListItem } from '@lablup/ui-common/List';
 import { HStack } from '@lablup/ui-common/Stack';
 import { StatusDot } from '@lablup/ui-common/StatusDot';
 import { Text } from '@lablup/ui-common/Text';
-import { TextArea } from '@lablup/ui-common/TextArea';
 import {
   borderVars,
   typeScaleVars,
@@ -41,6 +40,7 @@ import {
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
   useFetchKey,
+  BAITextArea,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
@@ -662,7 +662,7 @@ const ImportImageModalContent: React.FC<{
         }
         style={{ marginBottom: 0 }}
       >
-        <TextArea
+        <BAITextArea
           aria-label={t('environment.ImportImageReferences')}
           placeholder={t('environment.ImportImagePlaceholder')}
           rows={5}

@@ -12,7 +12,6 @@ import {
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import { App } from '../app-shim';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
-import BAIRadioGroup from '../components/BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from '../components/DeploymentSettingModal';
 import { convertToOrderBy } from '../helper';
@@ -43,7 +42,6 @@ import {
   availableDeploymentSorterValues,
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
-  toLocalId,
   useBAILogger,
   useFetchKey,
   useToggle,
@@ -51,6 +49,8 @@ import {
   toEntityLabelFilter,
   useIsLabelableEntityType,
   type ModelDeploymentNodeInList,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleHelp, Trash2, SquarePenIcon } from 'lucide-react';
@@ -184,6 +184,7 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
           edges {
             node {
               id
+              entityId
               ...BAIModelDeploymentNodesFragment
               ...DeploymentSettingModal_deployment
               metadata {
@@ -274,33 +275,34 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
       <BAIFlex direction="column" align="stretch" gap="sm">
         <BAIFlex justify="between" wrap="wrap" gap="sm">
           <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
-            <BAIRadioGroup
+            <BAISegmentedControl
               value={queryParams.statusCategory}
-              onChange={(e) => {
-                setQueryParams({ statusCategory: e.target.value });
+              onChange={(value) => {
+                setQueryParams({
+                  statusCategory: value as typeof queryParams.statusCategory,
+                });
                 setTablePaginationOption({ current: 1 });
               }}
-              options={[
-                {
-                  label: renderTabLabel(
-                    t('deployment.Serving'),
-                    t('deployment.ServingTooltip'),
-                  ),
-                  value: 'serving',
-                },
-                {
-                  label: renderTabLabel(
-                    t('deployment.Paused'),
-                    t('deployment.PausedTooltip'),
-                  ),
-                  value: 'paused',
-                },
-                {
-                  label: t('deployment.status.Terminated'),
-                  value: 'finished',
-                },
-              ]}
-            />
+            >
+              <BAISegmentedControlItem
+                value="serving"
+                label={renderTabLabel(
+                  t('deployment.Serving'),
+                  t('deployment.ServingTooltip'),
+                )}
+              />
+              <BAISegmentedControlItem
+                value="paused"
+                label={renderTabLabel(
+                  t('deployment.Paused'),
+                  t('deployment.PausedTooltip'),
+                )}
+              />
+              <BAISegmentedControlItem
+                value="finished"
+                label={t('deployment.status.Terminated')}
+              />
+            </BAISegmentedControl>
             <BAIGraphQLPropertyFilter<DeploymentFilter>
               filterProperties={filterProperties}
               value={queryParams.filter ?? undefined}
@@ -388,7 +390,7 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
                           title={record.metadata?.name ?? '-'}
                           onTitleClick={() =>
                             webuiNavigate(
-                              `${buildProjectPath('deployments')}/${toLocalId(record.id)}`,
+                              `${buildProjectPath('deployments')}/${record.entityId}`,
                             )
                           }
                           copyable
@@ -507,7 +509,7 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
           commitDeleteMutation({
             variables: {
               input: {
-                id: toLocalId(deletingDeployment.id) ?? deletingDeployment.id,
+                id: deletingDeployment.entityId,
               },
             },
             onCompleted: (_response, errors) => {

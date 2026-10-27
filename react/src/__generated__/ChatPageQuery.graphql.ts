@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bbc9f6098480d1451ada2596d3aef47a>>
+ * @generated SignedSource<<89f7657439932a9d06edd078f9230de9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -154,6 +154,7 @@ export type ChatPageQuery$data = {
   readonly myDeployments: {
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly entityId: string;
         readonly id: string;
       };
     }>;
@@ -219,6 +220,13 @@ v1 = [
                 "kind": "ScalarField",
                 "name": "id",
                 "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "entityId",
+                "storageKey": null
               }
             ],
             "storageKey": null
@@ -248,16 +256,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "27f504d93285f91846d14fc84600f39d",
+    "cacheID": "e04ae722be43a652b2dcc69f980a7df6",
     "id": null,
     "metadata": {},
     "name": "ChatPageQuery",
     "operationKind": "query",
-    "text": "query ChatPageQuery(\n  $filter: DeploymentFilter\n) {\n  myDeployments(filter: $filter, limit: 1, offset: 0) {\n    edges {\n      node {\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query ChatPageQuery(\n  $filter: DeploymentFilter\n) {\n  myDeployments(filter: $filter, limit: 1, offset: 0) {\n    edges {\n      node {\n        id\n        entityId\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "7a8ee2203c4082d39ab9b95c9d243df4";
+(node as any).hash = "ba9805a646eeff24c405b4daa74ad664";
 
 export default node;
