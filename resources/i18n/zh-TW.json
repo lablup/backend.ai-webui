@@ -889,6 +889,7 @@
       "Unlimited": "無限制",
       "UsageOnDay": "{{day}} 的使用量",
       "UsageRowsCapped": "顯示 {{total}} 列中最新的 {{shown}} 列。",
+      "ViewAll": "查看全部",
       "ViewIn": "在{{name}}中檢視",
       "VsPreviousRange": "與上一時間範圍相比",
       "Waiting": "等待時間"

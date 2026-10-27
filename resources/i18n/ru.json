@@ -889,6 +889,7 @@
       "Unlimited": "Без ограничений",
       "UsageOnDay": "Использование за {{day}}",
       "UsageRowsCapped": "Показаны {{shown}} новейших из {{total}} строк.",
+      "ViewAll": "Показать все",
       "ViewIn": "Открыть в разделе «{{name}}»",
       "VsPreviousRange": "по сравнению с предыдущим периодом",
       "Waiting": "Ожидание"

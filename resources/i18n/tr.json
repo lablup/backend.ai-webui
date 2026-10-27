@@ -889,6 +889,7 @@
       "Unlimited": "Sınırsız",
       "UsageOnDay": "{{day}} kullanımı",
       "UsageRowsCapped": "{{total}} satırdan en yeni {{shown}} tanesi gösteriliyor.",
+      "ViewAll": "Tümünü görüntüle",
       "ViewIn": "{{name}} içinde görüntüle",
       "VsPreviousRange": "önceki aralığa göre",
       "Waiting": "Bekleme"

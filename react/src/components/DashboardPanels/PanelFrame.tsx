@@ -6,11 +6,11 @@ import { useWebUINavigate } from '../../hooks';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import PanelEditControls from './PanelEditControls';
 import { DetailLinkContext } from './detailLink';
+import { Button } from '@lablup/ui-common/Button';
 import { Heading } from '@lablup/ui-common/Heading';
-import { IconButton } from '@lablup/ui-common/IconButton';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIBoardItemTitle, BAIFlex } from 'backend.ai-ui';
-import { ArrowUpRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -75,12 +75,13 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
           <BAIFlex align="center" gap="xxs">
             {extra}
             {detailLink && detailLabel ? (
-              <IconButton
+              <Button
                 variant="ghost"
                 size="sm"
-                label={detailLabel}
+                label={t('dashboard.card.ViewAll')}
+                aria-label={detailLabel}
                 tooltip={detailLabel}
-                icon={<ArrowUpRight size="1em" />}
+                endContent={<ChevronRight size="1em" />}
                 onClick={() =>
                   navigate(
                     buildPath(detailLink.feature, {

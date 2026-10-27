@@ -889,6 +889,7 @@
       "Unlimited": "Rajoittamaton",
       "UsageOnDay": "Käyttö {{day}}",
       "UsageRowsCapped": "Näytetään {{total}} rivistä {{shown}} uusinta.",
+      "ViewAll": "Näytä kaikki",
       "ViewIn": "Näytä kohteessa {{name}}",
       "VsPreviousRange": "verrattuna edelliseen aikaväliin",
       "Waiting": "Odotus"

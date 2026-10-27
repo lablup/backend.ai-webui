@@ -876,6 +876,7 @@
       "Unlimited": "Unlimited",
       "UsageOnDay": "Usage on {{day}}",
       "UsageRowsCapped": "Showing the {{shown}} newest of {{total}} rows.",
+      "ViewAll": "View all",
       "ViewIn": "View in {{name}}",
       "VsPreviousRange": "vs. previous range",
       "Waiting": "Waiting"

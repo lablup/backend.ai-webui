@@ -889,6 +889,7 @@
       "Unlimited": "Illimitato",
       "UsageOnDay": "Utilizzo del {{day}}",
       "UsageRowsCapped": "Sono mostrate le {{shown}} righe più recenti su {{total}}.",
+      "ViewAll": "Mostra tutto",
       "ViewIn": "Visualizza in {{name}}",
       "VsPreviousRange": "rispetto all'intervallo precedente",
       "Waiting": "Attesa"

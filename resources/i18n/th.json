@@ -886,6 +886,7 @@
       "Unlimited": "ไม่จำกัด",
       "UsageOnDay": "การใช้งานวันที่ {{day}}",
       "UsageRowsCapped": "แสดง {{shown}} แถวล่าสุดจาก {{total}} แถว",
+      "ViewAll": "ดูทั้งหมด",
       "ViewIn": "ดูใน {{name}}",
       "VsPreviousRange": "เทียบกับช่วงก่อนหน้า",
       "Waiting": "เวลารอ"

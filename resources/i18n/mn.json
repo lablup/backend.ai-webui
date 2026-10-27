@@ -889,6 +889,7 @@
       "Unlimited": "Хязгааргүй",
       "UsageOnDay": "{{day}}-ний хэрэглээ",
       "UsageRowsCapped": "{{total}} мөрөөс хамгийн шинэ {{shown}}-ийг харуулж байна.",
+      "ViewAll": "Бүгдийг харах",
       "ViewIn": "{{name}} хэсэгт харах",
       "VsPreviousRange": "өмнөх хугацаатай харьцуулахад",
       "Waiting": "Хүлээлт"
