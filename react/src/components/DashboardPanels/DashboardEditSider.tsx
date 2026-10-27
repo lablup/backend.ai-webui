@@ -141,6 +141,7 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
         width: 320,
         flexShrink: 0,
         paddingLeft: token('--spacing-6'),
+        paddingRight: token('--spacing-4'),
         borderLeft: `1px solid ${token('--color-border-emphasized')}`,
       }}
     >
