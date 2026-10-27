@@ -27,6 +27,10 @@ const LEGEND_WIDTH_GUESS = 224;
 // The `lg` gap between the ring and the legend.
 const LEGEND_GAP = 24;
 const ROW_HEIGHT = 32;
+// The hole's total scales with the ring so it reads like the stat values.
+const TOTAL_FONT_RATIO = 0.2;
+const TOTAL_FONT_MIN = 16;
+const TOTAL_FONT_MAX = 40;
 const COMPACT_ROW_HEIGHT = 24;
 
 interface LegendRow extends Record<string, unknown> {
@@ -184,7 +188,18 @@ const DonutChart: React.FC<DonutChartProps> = ({
                 }}
               >
                 {_.isNumber(total) ? (
-                  <Text weight="semibold">{total.toLocaleString()}</Text>
+                  <span
+                    className="bai-donut-total"
+                    style={{
+                      fontSize: _.clamp(
+                        Math.round(ring * TOTAL_FONT_RATIO),
+                        TOTAL_FONT_MIN,
+                        TOTAL_FONT_MAX,
+                      ),
+                    }}
+                  >
+                    {total.toLocaleString()}
+                  </span>
                 ) : null}
               </BAIFlex>
             </BAIFlex>
