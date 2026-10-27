@@ -803,7 +803,7 @@
       "Boards": "Bảng",
       "CannotDeleteLastBoard": "Không thể xóa bảng cuối cùng",
       "DefaultBoard": "Mặc định",
-      "EditBoard": "Chỉnh sửa bảng",
+      "DeleteBoard": "Xóa bảng",
       "NewBoard": "Bảng mới",
       "NewBoardTitle": "Bảng {{number}}"
     },

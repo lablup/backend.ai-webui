@@ -803,7 +803,7 @@
       "Boards": "Доски",
       "CannotDeleteLastBoard": "Последнюю доску нельзя удалить",
       "DefaultBoard": "По умолчанию",
-      "EditBoard": "Изменить доску",
+      "DeleteBoard": "Удалить доску",
       "NewBoard": "Новая доска",
       "NewBoardTitle": "Доска {{number}}"
     },

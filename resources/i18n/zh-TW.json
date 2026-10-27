@@ -803,7 +803,7 @@
       "Boards": "看板",
       "CannotDeleteLastBoard": "無法刪除最後一個看板",
       "DefaultBoard": "預設",
-      "EditBoard": "編輯看板",
+      "DeleteBoard": "刪除看板",
       "NewBoard": "新增看板",
       "NewBoardTitle": "看板 {{number}}"
     },
