@@ -3094,7 +3094,6 @@
         "dashboard.boards.NewBoardTitle",
         "dashboard.editSider.Cards",
         "dashboard.editSider.Empty",
-        "dashboard.editSider.GridDisabled",
         "dashboard.editSider.NoMatchingCards",
         "dashboard.editSider.RequiresSuperadmin",
         "dashboard.editSider.ResetLayout",
