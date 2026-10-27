@@ -883,7 +883,6 @@
       "Starting": "開始中",
       "Succeeded": "成功",
       "ThisRange": "今回の期間",
-      "Time": "時刻",
       "TopProjectsByUsage": "使用量上位のプロジェクト",
       "TopProjectsByUsageTooltip": "カードの期間とリソースグループ(既定: すべて)における現在のドメインのプロジェクトの日別使用量を、CPU使用量の多い順に表示します。各行はマネージャーが記録したプロジェクト、リソースグループ、日付の1件です。",
       "Unhealthy": "異常",

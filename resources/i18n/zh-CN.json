@@ -883,7 +883,6 @@
       "Starting": "启动中",
       "Succeeded": "成功",
       "ThisRange": "本时段",
-      "Time": "时间",
       "TopProjectsByUsage": "用量最高的项目",
       "TopProjectsByUsageTooltip": "卡片时间范围和资源组(默认全部)内当前域各项目的每日用量，按 CPU 用量从高到低。每行是管理器记录的一个项目、资源组和日期。",
       "Unhealthy": "异常",

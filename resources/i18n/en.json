@@ -870,7 +870,6 @@
       "Starting": "Starting",
       "Succeeded": "Succeeded",
       "ThisRange": "This range",
-      "Time": "Time",
       "TopProjectsByUsage": "Top Projects by Usage",
       "TopProjectsByUsageTooltip": "Daily usage buckets of the current domain's projects in the card's time range and resource groups (all by default), the heaviest CPU use first. Each row is one project, resource group and day as the manager recorded it.",
       "Unhealthy": "Unhealthy",

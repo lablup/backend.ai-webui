@@ -883,7 +883,6 @@
       "Starting": "Démarrage",
       "Succeeded": "Réussies",
       "ThisRange": "Cette période",
-      "Time": "Heure",
       "TopProjectsByUsage": "Projets les plus consommateurs",
       "TopProjectsByUsageTooltip": "Utilisation quotidienne des projets du domaine actuel sur la période et les groupes de ressources de la carte (tous par défaut), la plus forte utilisation CPU en premier. Chaque ligne est un projet, un groupe de ressources et un jour tels qu'enregistrés par le manager.",
       "Unhealthy": "Défaillant",

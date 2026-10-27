@@ -883,7 +883,6 @@
       "Starting": "Iniciando",
       "Succeeded": "Correctas",
       "ThisRange": "Este periodo",
-      "Time": "Hora",
       "TopProjectsByUsage": "Proyectos con más uso",
       "TopProjectsByUsageTooltip": "Uso diario de los proyectos del dominio actual en el periodo y los grupos de recursos de la tarjeta (todos por defecto), con más uso de CPU primero. Cada fila es un proyecto, grupo de recursos y día tal como lo registró el manager.",
       "Unhealthy": "Con problemas",

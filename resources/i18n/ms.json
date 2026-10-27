@@ -883,7 +883,6 @@
       "Starting": "Bermula",
       "Succeeded": "Berjaya",
       "ThisRange": "Julat ini",
-      "Time": "Masa",
       "TopProjectsByUsage": "Projek penggunaan tertinggi",
       "TopProjectsByUsageTooltip": "Penggunaan harian projek domain semasa dalam julat masa dan kumpulan sumber kad (semua secara lalai), penggunaan CPU tertinggi dahulu. Setiap baris ialah satu projek, kumpulan sumber dan hari seperti direkodkan oleh manager.",
       "Unhealthy": "Tidak sihat",

@@ -883,7 +883,6 @@
       "Starting": "시작 중",
       "Succeeded": "성공",
       "ThisRange": "이번 기간",
-      "Time": "시각",
       "TopProjectsByUsage": "사용량 상위 프로젝트",
       "TopProjectsByUsageTooltip": "카드에 설정한 기간과 자원 그룹(기본: 전체)에서 현재 도메인 프로젝트의 일별 사용량을 CPU 사용량이 많은 순서로 보여 줍니다. 각 행은 매니저가 기록한 프로젝트, 자원 그룹, 날짜 하나입니다.",
       "Unhealthy": "비정상",

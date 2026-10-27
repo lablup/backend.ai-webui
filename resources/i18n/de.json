@@ -883,7 +883,6 @@
       "Starting": "Wird gestartet",
       "Succeeded": "Erfolgreich",
       "ThisRange": "Dieser Zeitraum",
-      "Time": "Zeit",
       "TopProjectsByUsage": "Projekte mit höchster Nutzung",
       "TopProjectsByUsageTooltip": "Tägliche Nutzung der Projekte der aktuellen Domäne im Zeitraum und in den Ressourcengruppen der Karte (standardmäßig alle), höchste CPU-Nutzung zuerst. Jede Zeile ist ein Projekt, eine Ressourcengruppe und ein Tag, wie der Manager sie erfasst hat.",
       "Unhealthy": "Fehlerhaft",

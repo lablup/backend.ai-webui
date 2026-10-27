@@ -883,7 +883,6 @@
       "Starting": "Käynnistymässä",
       "Succeeded": "Onnistuneet",
       "ThisRange": "Tämä jakso",
-      "Time": "Aika",
       "TopProjectsByUsage": "Eniten käyttävät projektit",
       "TopProjectsByUsageTooltip": "Nykyisen toimialueen projektien päivittäinen käyttö kortin aikavälillä ja resurssiryhmissä (oletuksena kaikki), suurin CPU-käyttö ensin. Kukin rivi on yksi projekti, resurssiryhmä ja päivä managerin kirjaamana.",
       "Unhealthy": "Ongelmia",

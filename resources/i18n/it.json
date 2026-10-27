@@ -883,7 +883,6 @@
       "Starting": "Avvio",
       "Succeeded": "Riuscite",
       "ThisRange": "Questo periodo",
-      "Time": "Ora",
       "TopProjectsByUsage": "Progetti con maggiore utilizzo",
       "TopProjectsByUsageTooltip": "Utilizzo giornaliero dei progetti del dominio corrente nel periodo e nei gruppi di risorse della scheda (tutti per impostazione predefinita), con il maggiore uso di CPU prima. Ogni riga è un progetto, gruppo di risorse e giorno come registrato dal manager.",
       "Unhealthy": "Non integro",

@@ -883,7 +883,6 @@
       "Starting": "Đang khởi động",
       "Succeeded": "Thành công",
       "ThisRange": "Khoảng này",
-      "Time": "Thời gian",
       "TopProjectsByUsage": "Dự án dùng nhiều nhất",
       "TopProjectsByUsageTooltip": "Mức dùng hằng ngày của các dự án trong miền hiện tại trong khoảng thời gian và nhóm tài nguyên của thẻ (mặc định tất cả), dùng CPU nhiều nhất trước. Mỗi hàng là một dự án, nhóm tài nguyên và ngày do manager ghi nhận.",
       "Unhealthy": "Có lỗi",

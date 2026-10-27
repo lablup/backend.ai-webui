@@ -883,7 +883,6 @@
       "Starting": "Başlatılıyor",
       "Succeeded": "Başarılı",
       "ThisRange": "Bu dönem",
-      "Time": "Zaman",
       "TopProjectsByUsage": "Kullanıma göre en üst projeler",
       "TopProjectsByUsageTooltip": "Geçerli etki alanındaki projelerin kartın zaman aralığı ve kaynak gruplarındaki (varsayılan: tümü) günlük kullanımı, en yoğun CPU kullanımı önce. Her satır, yöneticinin kaydettiği bir proje, kaynak grubu ve gündür.",
       "Unhealthy": "Sağlıksız",
