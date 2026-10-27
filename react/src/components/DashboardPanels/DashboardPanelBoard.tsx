@@ -74,7 +74,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     onLayoutChange,
     catalogEntries,
     activeKeys,
-    setPanelActive,
+    setPanelsActive,
     customPanels,
     availableResources,
     gridEnabled,
@@ -135,8 +135,8 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
         <DashboardEditSider
           catalogEntries={catalogEntries}
           activeKeys={activeKeys}
-          onTogglePanel={(key, active) => {
-            setPanelActive(key, active);
+          onTogglePanels={(keys, active) => {
+            setPanelsActive(keys, active);
             if (active) scrollBoardEndIntoView();
           }}
           panels={customPanels}

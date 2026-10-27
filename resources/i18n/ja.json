@@ -826,6 +826,7 @@
       "ResetLayout": "レイアウトを初期化",
       "ResetLayoutDescription": "パネルの配置をデフォルトに戻します。カスタムパネルは維持されます。",
       "SearchCards": "カードを検索",
+      "SelectAll": "すべて選択",
       "Title": "カスタムパネル",
       "Unavailable": "この環境では利用できません"
     },
