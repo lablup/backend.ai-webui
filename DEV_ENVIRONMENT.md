@@ -207,7 +207,7 @@ VITE_POSTHOG_HOST=https://posthog.example.com \
 pnpm run build
 ```
 
-The same variables work in `.env.development.local` for a dev server. The SDK posts events to `VITE_POSTHOG_HOST` and loads its replay and exception-capture scripts from it, so the CSP of the server that hosts an analytics build must allow that host in `connect-src` (and in `script-src` unless the policy uses `'strict-dynamic'`). The Electron app reuses the web bundle, so it follows the same flag; every event carries `platform` (`web` or `electron`). Users are identified after login by their user UUID with `role` and `domain`, and identity is reset on logout. URL query strings and fragments are stripped before an event is sent, and session replay (when the PostHog project turns it on) masks every input. Errors logged with `useBAILogger` at ERROR level, render errors caught by `BAIErrorBoundary`, uncaught errors and unhandled rejections go to PostHog error tracking, with repeats of the same error dropped for five minutes.
+The same variables work in `.env.development.local` for a dev server. The SDK posts events to `VITE_POSTHOG_HOST` and loads its replay and exception-capture scripts from it, so the CSP of the server that hosts an analytics build must allow that host in `connect-src` (and in `script-src` unless the policy uses `'strict-dynamic'`). The Electron app reuses the web bundle, so it follows the same flag. What is collected and what is stripped is in ADR 0017.
 
 Per-domain opt-in through the domain app config is not part of this flag yet.
 
