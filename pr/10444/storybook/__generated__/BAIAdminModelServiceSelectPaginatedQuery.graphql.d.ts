@@ -147,6 +147,7 @@ export type BAIAdminModelServiceSelectPaginatedQuery$data = {
         readonly count: number;
         readonly edges: ReadonlyArray<{
             readonly node: {
+                readonly entityId: string;
                 readonly id: string;
                 readonly metadata: {
                     readonly name: string;
