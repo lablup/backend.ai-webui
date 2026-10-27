@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { generateUUID } from '../../helper/uuid';
+import './DashboardBoardSection.css';
 import {
   addBoard,
   createEmptyBoard,
@@ -148,6 +149,7 @@ const DashboardBoardSection: React.FC<DashboardBoardSectionProps> = ({
             size="sm"
             icon={<Trash2 size="1em" />}
             label={t('dashboard.boards.DeleteBoard')}
+            className="dashboard-board-delete"
             isDisabled={!canDelete}
             tooltip={
               canDelete
