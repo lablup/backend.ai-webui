@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Dashboard" />
   <meta name="twitter:description" content="The Dashboard is the first page you see after logging in. It summarizes your own sessions, resources, folders, deployments, and recent activity in the…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Dashboard","inLanguage":"en","description":"The Dashboard is the first page you see after logging in. It summarizes your own sessions, resources, folders, deployments, and recent activity in the…","dateModified":"2026-10-27T08:50:10.000Z","url":"https://webui.docs.backend.ai/next/en/dashboard.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Dashboard","inLanguage":"en","description":"The Dashboard is the first page you see after logging in. It summarizes your own sessions, resources, folders, deployments, and recent activity in the…","dateModified":"2026-10-27T09:44:24.000Z","url":"https://webui.docs.backend.ai/next/en/dashboard.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/dashboard.html" />
   <link rel="alternate" hreflang="en" href="../en/dashboard.html" />
   <link rel="alternate" hreflang="ja" href="../ja/dashboard.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (e235a24)">v26.10.0-alpha.1 (e235a24)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (b5035e1)">v26.10.0-alpha.1 (b5035e1)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -254,20 +254,15 @@ your administrator hides agent information.</p>
 
 
 <ul>
-<li data-bai-block="11"><p><strong>My Folders</strong>:
-  Three counts side by side: your folders (with your folder limit under it), the
-  folders in the trash, and pending folder invitations. When invitations are
-  pending, click the link under the count to review them.</p>
-</li>
-<li data-bai-block="12"><p><strong>Quota per storage volume</strong>:
+<li data-bai-block="11"><p><strong>Quota per storage volume</strong>:
   Shows the quota available on each storage volume.
   When no storage host supports quota, the card shows a notice instead.</p>
 </li>
-<li data-bai-block="13"><p><strong>My Deployments</strong>:
+<li data-bai-block="12"><p><strong>My Deployments</strong>:
   Your deployments in the current project that have not been destroyed, with
   their replica health.</p>
 </li>
-<li data-bai-block="14"><p><strong>My Activity</strong>:
+<li data-bai-block="13"><p><strong>My Activity</strong>:
   The audit log of actions you performed in the card&#39;s time range (by default,
   the last 24 hours). Turn on
   <strong>Show failures only</strong> in the card header, or click the failure count, to list
@@ -275,101 +270,101 @@ your administrator hides agent information.</p>
 </li>
 </ul>
 <p><a id="superadmin-dashboard"></a></p>
-<p data-bai-block="15">Cluster-wide cards such as <strong>Agent Statistics</strong>, <strong>Active Agents</strong>, and
+<p data-bai-block="14">Cluster-wide cards such as <strong>Agent Statistics</strong>, <strong>Active Agents</strong>, and
 <strong>Active Sessions</strong> are on the admin dashboard, the first item of the
 <strong>Admin Settings</strong> menu, for superadmins and project admins.</p>
-<h2 data-bai-block="16" id="dashboard-customizing-the-dashboard-layout">Customizing the Dashboard Layout<a class="hash-link" href="#dashboard-customizing-the-dashboard-layout" aria-label="Direct link to Customizing the Dashboard Layout">#</a></h2>
-<p data-bai-block="17">You can rearrange the board at any time — there is no mode to enter first:</p>
+<h2 data-bai-block="15" id="dashboard-customizing-the-dashboard-layout">Customizing the Dashboard Layout<a class="hash-link" href="#dashboard-customizing-the-dashboard-layout" aria-label="Direct link to Customizing the Dashboard Layout">#</a></h2>
+<p data-bai-block="16">You can rearrange the board at any time — there is no mode to enter first:</p>
 <ul>
-<li data-bai-block="18"><strong>Move panels</strong>: Drag a panel by its header to reposition it on the board.</li>
-<li data-bai-block="19"><strong>Resize panels</strong>: Drag the bottom-right corner of a panel to adjust its
+<li data-bai-block="17"><strong>Move panels</strong>: Drag a panel by its header to reposition it on the board.</li>
+<li data-bai-block="18"><strong>Resize panels</strong>: Drag the bottom-right corner of a panel to adjust its
 size. Each panel has a minimum size to ensure its content remains readable.</li>
 </ul>
-<p><figure data-bai-block="20" class="doc-figure"><img src="./images/dashboard_edit_mode.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 8.2</figcaption></figure>
+<p><figure data-bai-block="19" class="doc-figure"><img src="./images/dashboard_edit_mode.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 8.2</figcaption></figure>
 </p>
-<p data-bai-block="21">Your customized layout is automatically saved and persists across browser
+<p data-bai-block="20">Your customized layout is automatically saved and persists across browser
 sessions. The layout is stored per user, so each user can have their own
 preferred arrangement. To discard your arrangement and restore the default
 one, click the <strong>Reset layout</strong> button at the bottom of the edit sidebar and
 confirm. Resetting the layout also puts back the default cards you removed,
 and does not remove your custom panels.</p>
 <div class="admonition admonition-tip">
-<div data-bai-block="22" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>TIP</div>
+<div data-bai-block="21" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>TIP</div>
 <div class="admonition-content">
 
-<p data-bai-block="23">When the WebUI is updated with new dashboard panels, those panels will
+<p data-bai-block="22">When the WebUI is updated with new dashboard panels, those panels will
 automatically appear on your dashboard even if you have a saved custom layout.</p>
 </div></div>
 
 
 <p><a id="adding-and-removing-cards"></a></p>
-<h3 data-bai-block="24" id="dashboard-adding-and-removing-cards">Adding and Removing Cards<a class="hash-link" href="#dashboard-adding-and-removing-cards" aria-label="Direct link to Adding and Removing Cards">#</a></h3>
-<p data-bai-block="25">Click the <strong>Edit</strong> button next to the refresh button at the top right of the
+<h3 data-bai-block="23" id="dashboard-adding-and-removing-cards">Adding and Removing Cards<a class="hash-link" href="#dashboard-adding-and-removing-cards" aria-label="Direct link to Adding and Removing Cards">#</a></h3>
+<p data-bai-block="24">Click the <strong>Edit</strong> button next to the refresh button at the top right of the
 dashboard to open the edit sidebar beside the board, and <strong>Close</strong> to hide it
 again. Its <strong>Cards</strong> list shows every card you can place on this dashboard,
 grouped by kind, with a search box above it. Check a card to add it to the
 board and uncheck it to remove it; you can add it back at any time. A card that
 cannot be used in this environment is listed but disabled.</p>
-<p data-bai-block="26">The <strong>Resource Presets</strong> card, which shows whether each resource preset still
+<p data-bai-block="25">The <strong>Resource Presets</strong> card, which shows whether each resource preset still
 fits in what you can allocate in each resource group in the card&#39;s setting (by
 default, the header&#39;s resource group), is not on a new dashboard. Check it in
 the <strong>Cards</strong> list to add it.</p>
 <p><a id="card-settings"></a></p>
-<h3 data-bai-block="27" id="dashboard-card-settings">Card Settings<a class="hash-link" href="#dashboard-card-settings" aria-label="Direct link to Card Settings">#</a></h3>
-<p data-bai-block="28">Some cards read a resource group or a time range. In the edit sidebar, such a
+<h3 data-bai-block="26" id="dashboard-card-settings">Card Settings<a class="hash-link" href="#dashboard-card-settings" aria-label="Direct link to Card Settings">#</a></h3>
+<p data-bai-block="27">Some cards read a resource group or a time range. In the edit sidebar, such a
 card shows its current setting under its name and a settings (sliders) button.
 Click it to choose:</p>
 <ul>
-<li data-bai-block="29"><strong>Resource groups</strong> for <strong>My Total Resource Usage</strong>, <strong>Resource Presets</strong>, and
+<li data-bai-block="28"><strong>Resource groups</strong> for <strong>My Total Resource Usage</strong>, <strong>Resource Presets</strong>, and
 <strong>Total Resources in Resource Group</strong>: the card shows one block per selected
 resource group. With none selected, it follows the resource group chosen in
 the header.</li>
-<li data-bai-block="30"><strong>Time range</strong> for <strong>My Activity</strong>: the last hour, 24 hours, or 7 days.</li>
-<li data-bai-block="31"><strong>Resource groups</strong> for <strong>Sessions</strong> and <strong>Deployments</strong> custom panels: the
+<li data-bai-block="29"><strong>Time range</strong> for <strong>My Activity</strong>: the last hour, 24 hours, or 7 days.</li>
+<li data-bai-block="30"><strong>Resource groups</strong> for <strong>Sessions</strong> and <strong>Deployments</strong> custom panels: the
 panel lists only rows in those resource groups. With none selected, it lists
 every resource group.</li>
 </ul>
-<p data-bai-block="32">The setting is saved with your board. Cards that do not depend on a resource
+<p data-bai-block="31">The setting is saved with your board. Cards that do not depend on a resource
 group or a time range have no settings button.</p>
-<h3 data-bai-block="33" id="dashboard-custom-panels">Custom Panels<a class="hash-link" href="#dashboard-custom-panels" aria-label="Direct link to Custom Panels">#</a></h3>
-<p data-bai-block="34">The <strong>Custom panels</strong> section of the edit sidebar lists your custom panels. A
+<h3 data-bai-block="32" id="dashboard-custom-panels">Custom Panels<a class="hash-link" href="#dashboard-custom-panels" aria-label="Direct link to Custom Panels">#</a></h3>
+<p data-bai-block="33">The <strong>Custom panels</strong> section of the edit sidebar lists your custom panels. A
 custom panel shows a data source you select, narrowed by a condition you define.
 The panel itself shows only a title and its data, so
 give the panel a title that describes its condition.</p>
-<p data-bai-block="35">To add a panel, click the <strong>Add</strong> button in the sidebar. The panel dialog
+<p data-bai-block="34">To add a panel, click the <strong>Add</strong> button in the sidebar. The panel dialog
 contains the following fields. <strong>Panel type</strong> and <strong>Data source</strong> are
 required — the dialog will not submit until both are chosen.</p>
 <ul>
-<li data-bai-block="36"><strong>Data source</strong>: The data source the panel lists. Choose <strong>Sessions</strong>,
+<li data-bai-block="35"><strong>Data source</strong>: The data source the panel lists. Choose <strong>Sessions</strong>,
 <strong>Deployments</strong>, or <strong>Data &amp; Storage</strong>.</li>
-<li data-bai-block="37"><strong>Panel type</strong>: How the panel displays the data source. Choose <strong>Table</strong> or
+<li data-bai-block="36"><strong>Panel type</strong>: How the panel displays the data source. Choose <strong>Table</strong> or
 <strong>Count</strong>. For the <strong>Sessions</strong> data source, <strong>Grid</strong> is also offered.</li>
-<li data-bai-block="38"><strong>Title</strong>: An optional panel title. When omitted, the data source name is
+<li data-bai-block="37"><strong>Title</strong>: An optional panel title. When omitted, the data source name is
 used.</li>
-<li data-bai-block="39"><strong>Condition</strong>: A property filter that narrows the rows shown in the panel.</li>
+<li data-bai-block="38"><strong>Condition</strong>: A property filter that narrows the rows shown in the panel.</li>
 </ul>
-<p data-bai-block="40">A live preview below the fields shows the rows matching the current condition.
+<p data-bai-block="39">A live preview below the fields shows the rows matching the current condition.
 Sorting a column in the preview sets the panel&#39;s sort order. Click <strong>Add</strong> to
 place the panel on the board.</p>
-<p><figure data-bai-block="41" class="doc-figure"><img src="./images/dashboard_panel_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1920" height="1352" /><figcaption>Figure 8.3</figcaption></figure>
+<p><figure data-bai-block="40" class="doc-figure"><img src="./images/dashboard_panel_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1920" height="1352" /><figcaption>Figure 8.3</figcaption></figure>
 </p>
-<p data-bai-block="42"><strong>Deployments</strong> panels list the project&#39;s model deployments, using the same
+<p data-bai-block="41"><strong>Deployments</strong> panels list the project&#39;s model deployments, using the same
 table as the Deployments page: name, status, replica summary, model, and
 created at. Clicking a deployment&#39;s name opens its detail page.</p>
-<p data-bai-block="43"><strong>Grid</strong> shows the session resource grid: each matching session&#39;s allocated
+<p data-bai-block="42"><strong>Grid</strong> shows the session resource grid: each matching session&#39;s allocated
 resources as unit cells, colored by utilization. Clicking a session opens its
 detail drawer, the same as clicking a row in the table. The grid shows at most
 the first 100 matching sessions; a notice appears when there are more.</p>
-<p data-bai-block="44">The grid&#39;s display settings — resource or kernel mode, which resource or
+<p data-bai-block="43">The grid&#39;s display settings — resource or kernel mode, which resource or
 metric to show, memory unit, and layout — are chosen in the Add/Edit panel
 dialog&#39;s live preview and saved with the panel. The panel itself shows no
 controls for these settings, so create a second panel if you want a different
 view.</p>
 <div class="admonition admonition-note">
-<div data-bai-block="45" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="44" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="46"><strong>Grid</strong> is an experimental feature. It is offered in the <strong>Panel type</strong>
+<p data-bai-block="45"><strong>Grid</strong> is an experimental feature. It is offered in the <strong>Panel type</strong>
 selector only when <strong>Session resource grid view</strong> is turned on under
 <a href="./user_settings.html#experimental-features">Experimental features</a>. If it is turned off later,
 existing Grid panels keep their saved configuration but display as the
@@ -377,23 +372,23 @@ session table until the setting is turned back on.</p>
 </div></div>
 
 
-<p data-bai-block="47">To change a panel&#39;s data source, panel type, condition, or title later, click
+<p data-bai-block="46">To change a panel&#39;s data source, panel type, condition, or title later, click
 the pencil (<strong>Edit</strong>) icon next to the panel in the sidebar — or in the
 panel&#39;s header on the board — and save your changes. To remove a panel, click
 the trash (<strong>Delete</strong>) icon and confirm in the popup.</p>
 <div class="admonition admonition-note">
-<div data-bai-block="48" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="47" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="49"><strong>Sessions</strong> and <strong>Deployments</strong> panels list data for the current project and
+<p data-bai-block="48"><strong>Sessions</strong> and <strong>Deployments</strong> panels list data for the current project and
 are available to every project member. <strong>Data &amp; Storage</strong> panels are
 available to superadmins only. A panel whose data source your role cannot
 query remains listed in the sidebar but is not shown on the board.</p>
 </div></div>
 
 
-<h2 data-bai-block="50" id="dashboard-automatic-refresh">Automatic Refresh<a class="hash-link" href="#dashboard-automatic-refresh" aria-label="Direct link to Automatic Refresh">#</a></h2>
-<p data-bai-block="51">The refresh button at the top right of the dashboard is the only refresh control
+<h2 data-bai-block="49" id="dashboard-automatic-refresh">Automatic Refresh<a class="hash-link" href="#dashboard-automatic-refresh" aria-label="Direct link to Automatic Refresh">#</a></h2>
+<p data-bai-block="50">The refresh button at the top right of the dashboard is the only refresh control
 on the page: click it to reload every card at once. The arrow next to it sets
 how often the dashboard refreshes by itself (off, or every 5 seconds to
 10 minutes; 30 seconds by default), and the choice is saved with your board.
