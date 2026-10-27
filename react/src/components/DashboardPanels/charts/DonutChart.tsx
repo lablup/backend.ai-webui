@@ -122,6 +122,13 @@ const DonutChart: React.FC<DonutChartProps> = ({
   const hasRing = box.width > 0 && ringRoom >= RING_MIN;
   const ring = _.clamp(ringRoom, RING_MIN, RING_MAX);
   const chartSize = ring + 2 * CHART_LABEL_ROOM;
+  const totalStyle = {
+    fontSize: _.clamp(
+      Math.round(ring * TOTAL_FONT_RATIO),
+      TOTAL_FONT_MIN,
+      TOTAL_FONT_MAX,
+    ),
+  };
 
   // Zero-value slices stay in the legend only; drawn, their separators show as a gap.
   const chartRows = legendRows.filter((row) => row.value > 0);
@@ -188,16 +195,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
                 }}
               >
                 {_.isNumber(total) ? (
-                  <span
-                    className="bai-donut-total"
-                    style={{
-                      fontSize: _.clamp(
-                        Math.round(ring * TOTAL_FONT_RATIO),
-                        TOTAL_FONT_MIN,
-                        TOTAL_FONT_MAX,
-                      ),
-                    }}
-                  >
+                  <span className="bai-donut-total" style={totalStyle}>
                     {total.toLocaleString()}
                   </span>
                 ) : null}
@@ -220,9 +218,12 @@ const DonutChart: React.FC<DonutChartProps> = ({
                 boxSizing: 'border-box',
               }}
             >
-              <Text type="supporting" weight="semibold">
+              <span
+                className="bai-donut-total bai-donut-total--empty"
+                style={totalStyle}
+              >
                 0
-              </Text>
+              </span>
             </BAIFlex>
           )}
         </BAIFlex>
