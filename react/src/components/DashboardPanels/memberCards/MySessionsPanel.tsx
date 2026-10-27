@@ -40,6 +40,10 @@ const MySessionsDonut: React.FC<{ projectId: string; fetchKey: string }> = ({
     batch: typeFilter(projectId, 'BATCH'),
     inference: typeFilter(projectId, 'INFERENCE'),
     system: typeFilter(projectId, 'SYSTEM'),
+    all: {
+      projectId: { equals: projectId },
+      status: { in: [...ACTIVE_STATUSES] },
+    } satisfies SessionV2Filter,
   };
   const deferredVariables = useDeferredValue(variables);
   // Count aliases read only `count`; V2 connections reject `limit: 0`, so every card asks for 1 row.
@@ -50,6 +54,7 @@ const MySessionsDonut: React.FC<{ projectId: string; fetchKey: string }> = ({
         $batch: SessionV2Filter!
         $inference: SessionV2Filter!
         $system: SessionV2Filter!
+        $all: SessionV2Filter!
       ) {
         interactive: mySessionsV2(filter: $interactive, limit: 1) {
           count
@@ -63,6 +68,9 @@ const MySessionsDonut: React.FC<{ projectId: string; fetchKey: string }> = ({
         system: mySessionsV2(filter: $system, limit: 1) {
           count
         }
+        all: mySessionsV2(filter: $all, limit: 1) {
+          count
+        }
       }
     `,
     deferredVariables,
@@ -73,6 +81,7 @@ const MySessionsDonut: React.FC<{ projectId: string; fetchKey: string }> = ({
     <DonutChart
       label={t('session.MySessions')}
       emptyText={t('dashboard.card.NoActiveSessions')}
+      total={data.all?.count}
       columnLabels={{
         name: t('session.SessionType'),
         value: t('dashboard.card.Count'),

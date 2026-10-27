@@ -60,6 +60,8 @@ export interface DonutChartProps {
   columnLabels: { name: string; value: string; percent: string };
   /** Shown instead of the ring when every value is 0. */
   emptyText: string;
+  /** A manager-counted total shown in the ring's hole; omitted, the hole stays empty. */
+  total?: number | null;
 }
 
 /**
@@ -73,6 +75,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
   label,
   columnLabels,
   emptyText,
+  total,
 }) => {
   'use memo';
   const rootRef = useRef<HTMLDivElement>(null);
@@ -136,6 +139,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
             flex: 'none',
             width: ring + 2 * RING_HALO,
             height: ring + 2 * RING_HALO,
+            position: 'relative',
           }}
         >
           {hasValue ? (
@@ -166,6 +170,20 @@ const DonutChart: React.FC<DonutChartProps> = ({
                   )}
                 />
               </RadialChart>
+              {/* The total sits in the hole; pointer events pass through to the slices' tooltips. */}
+              <BAIFlex
+                justify="center"
+                align="center"
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  pointerEvents: 'none',
+                }}
+              >
+                {_.isNumber(total) ? (
+                  <Text weight="semibold">{total.toLocaleString()}</Text>
+                ) : null}
+              </BAIFlex>
             </BAIFlex>
           ) : (
             // An empty track the ring's size keeps the layout of the filled state.
