@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="ตั้งค่าผู้ใช้" />
   <meta name="twitter:description" content="กล่องโต้ตอบการตั้งค่าผู้ใช้ช่วยให้คุณปรับแต่งประสบการณ์การใช้งาน Backend.AI WebUI ได้ คุณสามารถเปิดได้โดยคลิกที่ไอคอนคนที่มุมขวาบนและเลือกเมนูการตั้งค่า…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ตั้งค่าผู้ใช้","inLanguage":"th","description":"กล่องโต้ตอบการตั้งค่าผู้ใช้ช่วยให้คุณปรับแต่งประสบการณ์การใช้งาน Backend.AI WebUI ได้ คุณสามารถเปิดได้โดยคลิกที่ไอคอนคนที่มุมขวาบนและเลือกเมนูการตั้งค่า…","dateModified":"2026-10-16T05:09:05.000Z","url":"https://webui.docs.backend.ai/next/th/user_settings.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ตั้งค่าผู้ใช้","inLanguage":"th","description":"กล่องโต้ตอบการตั้งค่าผู้ใช้ช่วยให้คุณปรับแต่งประสบการณ์การใช้งาน Backend.AI WebUI ได้ คุณสามารถเปิดได้โดยคลิกที่ไอคอนคนที่มุมขวาบนและเลือกเมนูการตั้งค่า…","dateModified":"2026-10-26T10:14:56.000Z","url":"https://webui.docs.backend.ai/next/th/user_settings.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/user_settings.html" />
   <link rel="alternate" hreflang="en" href="../en/user_settings.html" />
   <link rel="alternate" hreflang="ja" href="../ja/user_settings.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (62b78a1)">v26.10.0-alpha.1 (62b78a1)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (e6f3f5b)">v26.10.0-alpha.1 (e6f3f5b)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -504,6 +504,8 @@ session ของ Backend.AI โดยใช้คีย์ของคุณเ
 <strong>เปิดใช้งาน</strong></p>
 <p><figure data-bai-block="109" class="doc-figure"><img src="./images/experimental_features.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 19.13</figcaption></figure>
 </p>
+<!-- TODO: Recapture without the removed "Command palette" row (#10546) -->
+
 <ul>
 <li data-bai-block="110"><strong>เอเจนต์ AI</strong>: เปิดใช้งานฟีเจอร์เอเจนต์ AI ซึ่งให้ความสามารถ AI แบบ
 เอเจนต์ภายใน WebUI เมื่อเปิดใช้งาน ฟังก์ชันเอเจนต์ AI จะพร้อมใช้งาน
@@ -514,18 +516,11 @@ session ของ Backend.AI โดยใช้คีย์ของคุณเ
 หากปิดใช้งานในภายหลัง แผงของคุณจะถูกซ่อนไว้โดยไม่ถูกลบ และจะกลับมาเหมือนเดิม
 เมื่อเปิดใช้งานอีกครั้ง ดูวิธีเพิ่มและจัดการแผงได้ที่หัวข้อ
 <a href="./dashboard.html#custom-panels">แผงที่กำหนดเอง</a></li>
-<li data-bai-block="112"><strong>แผงคำสั่ง</strong>: เพิ่มปุ่ม <strong>ค้นหา</strong> ในส่วนหัว และเปิดใช้งานคีย์ลัด <code>Ctrl+K</code>
-(<code>⌘K</code> บน macOS) ซึ่งทั้งสองอย่างจะเปิดแผงสำหรับค้นหาหน้า แท็บของหน้า
-และรายการตั้งค่า นอกจากนี้แผงยังมีการดำเนินการด่วน เช่น การสลับระหว่าง
-โหมดมืดและโหมดสว่าง การเปลี่ยนภาษาของ UI การเปิดการแจ้งเตือน
-การเปิด/ปิดแถบด้านข้าง และการเปิดคู่มือของหน้าปัจจุบัน ปุ่มและคีย์ลัดนี้
-จะใช้งานได้เฉพาะเมื่อเปิดใช้งานฟีเจอร์นี้เท่านั้น ดูรายละเอียดได้ที่หัวข้อ
-<a href="./header.html#search">ค้นหา</a></li>
-<li data-bai-block="113"><strong>นำเข้าจาก Hugging Face</strong>: เพิ่มแท็บ <strong>นำเข้าโมเดล Hugging Face</strong>
+<li data-bai-block="112"><strong>นำเข้าจาก Hugging Face</strong>: เพิ่มแท็บ <strong>นำเข้าโมเดล Hugging Face</strong>
 ลงในกล่องโต้ตอบ <strong>เริ่มจาก URL</strong> บนหน้าเริ่มต้น เพื่อให้คุณนำเข้าโมเดล
 จาก Hugging Face ไปยังโฟลเดอร์โมเดลได้โดยตรง แท็บนี้จะแสดงเฉพาะเมื่อ
 การติดตั้งของคุณรองรับการปรับใช้โมเดลด้วยเท่านั้น</li>
-<li data-bai-block="114"><strong>มุมมองกริดทรัพยากรเซสชัน</strong>: เพิ่มปุ่มสลับ <strong>โหมดมุมมอง</strong> ระหว่าง
+<li data-bai-block="113"><strong>มุมมองกริดทรัพยากรเซสชัน</strong>: เพิ่มปุ่มสลับ <strong>โหมดมุมมอง</strong> ระหว่าง
 <strong>ตาราง</strong> และ <strong>กริด</strong> เหนือรายการเซสชันในหน้าเซสชัน หน้า Admin Session
 และแท็บ <strong>เซสชัน</strong> ของแผง <strong>ข้อมูลเอเจนต์</strong> ในหน้าทรัพยากร
 เมื่อเลือก <strong>กริด</strong> ระบบจะแสดงเซลล์หนึ่งเซลล์ต่อหนึ่งเซสชันแทนตาราง
@@ -535,18 +530,18 @@ session ของ Backend.AI โดยใช้คีย์ของคุณเ
 <a href="./sessions_all.html#session-list-view-and-refresh">การแสดงผลรายการเซสชัน</a></li>
 </ul>
 <p><a id="logs-tab"></a></p>
-<h2 data-bai-block="115" id="user_settings-บนทก">บันทึก<a class="hash-link" href="#user_settings-บนทก" aria-label="Direct link to บันทึก">#</a></h2>
-<p data-bai-block="116">แสดงข้อมูลรายละเอียดของบันทึกต่างๆ ที่บันทึกไว้ในฝั่งไคลเอนต์ เปิดหมวดนี้
+<h2 data-bai-block="114" id="user_settings-บนทก">บันทึก<a class="hash-link" href="#user_settings-บนทก" aria-label="Direct link to บันทึก">#</a></h2>
+<p data-bai-block="115">แสดงข้อมูลรายละเอียดของบันทึกต่างๆ ที่บันทึกไว้ในฝั่งไคลเอนต์ เปิดหมวดนี้
 เพื่อหาข้อมูลเพิ่มเติมเกี่ยวกับข้อผิดพลาดที่เกิดขึ้น
 คุณสามารถค้นหาและกรองบันทึกข้อผิดพลาด อัปเดตรายการ และล้างบันทึกทั้งหมด
 โดยคลิกปุ่ม <strong>ล้างบันทึก</strong> ที่มุมขวาบน</p>
-<p><figure data-bai-block="117" class="doc-figure"><img src="./images/user_log.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 19.14</figcaption></figure>
+<p><figure data-bai-block="116" class="doc-figure"><img src="./images/user_log.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 19.14</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="118" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="117" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="119">หากคุณล็อกอินอยู่เพียงหน้าหนึ่ง การคลิกที่ปุ่ม <strong>รีเฟรช</strong> อาจไม่แสดงผล
+<p data-bai-block="118">หากคุณล็อกอินอยู่เพียงหน้าหนึ่ง การคลิกที่ปุ่ม <strong>รีเฟรช</strong> อาจไม่แสดงผล
 อย่างถูกต้อง บันทึกเป็นการรวมคำขอไปยังเซิร์ฟเวอร์และการตอบสนองจาก
 เซิร์ฟเวอร์ และหน้าที่อยู่หลังกล่องโต้ตอบนี้จะไม่ส่งคำขอใดๆ ขณะที่คุณ
 กำลังอ่านบันทึกอยู่ หากต้องการตรวจสอบว่าบันทึกกำลังถูกจัดเรียงอย่างถูกต้อง
@@ -554,173 +549,173 @@ session ของ Backend.AI โดยใช้คีย์ของคุณเ
 </div></div>
 
 
-<p data-bai-block="120">หากคุณต้องการซ่อนหรือแสดงคอลัมน์บางอย่าง ให้คลิกที่ไอคอนเฟืองที่มุมขวา
+<p data-bai-block="119">หากคุณต้องการซ่อนหรือแสดงคอลัมน์บางอย่าง ให้คลิกที่ไอคอนเฟืองที่มุมขวา
 ล่างของตาราง จากนั้นกล่องโต้ตอบจะปรากฏขึ้นเพื่อให้คุณเลือกคอลัมน์ที่
 ต้องการเห็น</p>
-<p><figure data-bai-block="121" class="doc-figure"><img src="./images/logs_table_setting.png" alt="" class="doc-image" style="width:420px" loading="lazy" decoding="async" width="840" height="866" /><figcaption>รูปที่ 19.15</figcaption></figure>
+<p><figure data-bai-block="120" class="doc-figure"><img src="./images/logs_table_setting.png" alt="" class="doc-image" style="width:420px" loading="lazy" decoding="async" width="840" height="866" /><figcaption>รูปที่ 19.15</figcaption></figure>
 </p>
 <p><a id="login-sessions-tab"></a></p>
-<h2 data-bai-block="122" id="user_settings-เซสชนเขาสระบบ">เซสชันเข้าสู่ระบบ<a class="hash-link" href="#user_settings-เซสชนเขาสระบบ" aria-label="Direct link to เซสชันเข้าสู่ระบบ">#</a></h2>
-<p data-bai-block="123">หมวดเซสชันเข้าสู่ระบบจะแสดงรายการเซสชันเข้าสู่ระบบที่เชื่อมโยงกับบัญชีของคุณ
+<h2 data-bai-block="121" id="user_settings-เซสชนเขาสระบบ">เซสชันเข้าสู่ระบบ<a class="hash-link" href="#user_settings-เซสชนเขาสระบบ" aria-label="Direct link to เซสชันเข้าสู่ระบบ">#</a></h2>
+<p data-bai-block="122">หมวดเซสชันเข้าสู่ระบบจะแสดงรายการเซสชันเข้าสู่ระบบที่เชื่อมโยงกับบัญชีของคุณ
 อยู่ในขณะนี้ โดยมีหนึ่งรายการสำหรับทุกที่ที่คุณลงชื่อเข้าใช้ Backend.AI
 ใช้หมวดนี้เพื่อตรวจสอบว่าบัญชีของคุณถูกใช้งานที่ใดบ้าง
 และเพื่อออกจากระบบเซสชันที่คุณไม่ต้องการใช้อีกต่อไป</p>
-<p><figure data-bai-block="124" class="doc-figure"><img src="./images/login_sessions_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 19.16</figcaption></figure>
+<p><figure data-bai-block="123" class="doc-figure"><img src="./images/login_sessions_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 19.16</figcaption></figure>
 </p>
-<p data-bai-block="125">ตารางประกอบด้วยคอลัมน์ต่อไปนี้:</p>
+<p data-bai-block="124">ตารางประกอบด้วยคอลัมน์ต่อไปนี้:</p>
 <ul>
-<li data-bai-block="126"><strong>ผู้ใช้</strong>: ที่อยู่อีเมลของบัญชีที่เป็นเจ้าของเซสชันเข้าสู่ระบบนั้น</li>
-<li data-bai-block="127"><strong>คีย์การเข้าถึง</strong>: คีย์การเข้าถึงที่เซสชันเข้าสู่ระบบใช้ยืนยันตัวตน
+<li data-bai-block="125"><strong>ผู้ใช้</strong>: ที่อยู่อีเมลของบัญชีที่เป็นเจ้าของเซสชันเข้าสู่ระบบนั้น</li>
+<li data-bai-block="126"><strong>คีย์การเข้าถึง</strong>: คีย์การเข้าถึงที่เซสชันเข้าสู่ระบบใช้ยืนยันตัวตน
 คลิกไอคอนคัดลอกเพื่อคัดลอกคีย์</li>
-<li data-bai-block="128"><strong>สร้างเมื่อ</strong>: เวลาที่สร้างเซสชันเข้าสู่ระบบ
+<li data-bai-block="127"><strong>สร้างเมื่อ</strong>: เวลาที่สร้างเซสชันเข้าสู่ระบบ
 คลิกที่ส่วนหัวคอลัมน์เพื่อเรียงลำดับตามคอลัมน์นี้</li>
-<li data-bai-block="129"><strong>เข้าถึงล่าสุด</strong>: เวลาที่เซสชันเข้าสู่ระบบถูกใช้งานล่าสุด</li>
+<li data-bai-block="128"><strong>เข้าถึงล่าสุด</strong>: เวลาที่เซสชันเข้าสู่ระบบถูกใช้งานล่าสุด</li>
 </ul>
-<h3 data-bai-block="130" id="user_settings-การกรองเซสชนเขาสระบบ">การกรองเซสชันเข้าสู่ระบบ<a class="hash-link" href="#user_settings-การกรองเซสชนเขาสระบบ" aria-label="Direct link to การกรองเซสชันเข้าสู่ระบบ">#</a></h3>
-<p data-bai-block="131">ใช้ตัวกรองเหนือตารางเพื่อจำกัดรายการที่แสดง:</p>
+<h3 data-bai-block="129" id="user_settings-การกรองเซสชนเขาสระบบ">การกรองเซสชันเข้าสู่ระบบ<a class="hash-link" href="#user_settings-การกรองเซสชนเขาสระบบ" aria-label="Direct link to การกรองเซสชันเข้าสู่ระบบ">#</a></h3>
+<p data-bai-block="130">ใช้ตัวกรองเหนือตารางเพื่อจำกัดรายการที่แสดง:</p>
 <ul>
-<li data-bai-block="132"><strong>คีย์การเข้าถึง</strong>: แสดงเฉพาะเซสชันเข้าสู่ระบบที่คีย์การเข้าถึง
+<li data-bai-block="131"><strong>คีย์การเข้าถึง</strong>: แสดงเฉพาะเซสชันเข้าสู่ระบบที่คีย์การเข้าถึง
 มีข้อความที่คุณป้อนอยู่</li>
-<li data-bai-block="133"><strong>สร้างเมื่อ</strong>: แสดงเฉพาะเซสชันเข้าสู่ระบบที่สร้างขึ้นหลัง (หรือก่อน)
+<li data-bai-block="132"><strong>สร้างเมื่อ</strong>: แสดงเฉพาะเซสชันเข้าสู่ระบบที่สร้างขึ้นหลัง (หรือก่อน)
 วันที่และเวลาที่คุณเลือก</li>
 </ul>
-<p data-bai-block="134">ใช้ตัวควบคุมการแบ่งหน้าด้านล่างตารางเพื่อเลื่อนไปมาระหว่างหน้า
+<p data-bai-block="133">ใช้ตัวควบคุมการแบ่งหน้าด้านล่างตารางเพื่อเลื่อนไปมาระหว่างหน้า
 และเปลี่ยนจำนวนแถวที่แสดงต่อหนึ่งหน้า</p>
-<h3 data-bai-block="135" id="user_settings-การเพกถอนเซสชนเขาสระบบ">การเพิกถอนเซสชันเข้าสู่ระบบ<a class="hash-link" href="#user_settings-การเพกถอนเซสชนเขาสระบบ" aria-label="Direct link to การเพิกถอนเซสชันเข้าสู่ระบบ">#</a></h3>
-<p data-bai-block="136">แต่ละแถวมีการดำเนินการ <strong>เพิกถอนเซสชัน</strong> อยู่ข้างที่อยู่อีเมลในคอลัมน์
+<h3 data-bai-block="134" id="user_settings-การเพกถอนเซสชนเขาสระบบ">การเพิกถอนเซสชันเข้าสู่ระบบ<a class="hash-link" href="#user_settings-การเพกถอนเซสชนเขาสระบบ" aria-label="Direct link to การเพิกถอนเซสชันเข้าสู่ระบบ">#</a></h3>
+<p data-bai-block="135">แต่ละแถวมีการดำเนินการ <strong>เพิกถอนเซสชัน</strong> อยู่ข้างที่อยู่อีเมลในคอลัมน์
 <strong>ผู้ใช้</strong></p>
 <ol>
-<li data-bai-block="137">คลิก <strong>เพิกถอนเซสชัน</strong> ในแถวที่คุณต้องการยุติ</li>
-<li data-bai-block="138">ตรวจสอบกล่องยืนยันซึ่งแสดงคีย์การเข้าถึงของเซสชันเข้าสู่ระบบนั้น</li>
-<li data-bai-block="139">คลิก <strong>เพิกถอน</strong></li>
+<li data-bai-block="136">คลิก <strong>เพิกถอนเซสชัน</strong> ในแถวที่คุณต้องการยุติ</li>
+<li data-bai-block="137">ตรวจสอบกล่องยืนยันซึ่งแสดงคีย์การเข้าถึงของเซสชันเข้าสู่ระบบนั้น</li>
+<li data-bai-block="138">คลิก <strong>เพิกถอน</strong></li>
 </ol>
-<p data-bai-block="140">รายการจะโหลดใหม่และแสดงข้อความ <em>&quot;เพิกถอนเซสชันเข้าสู่ระบบสำเร็จ&quot;</em>
+<p data-bai-block="139">รายการจะโหลดใหม่และแสดงข้อความ <em>&quot;เพิกถอนเซสชันเข้าสู่ระบบสำเร็จ&quot;</em>
 หากไม่สามารถเพิกถอนเซสชันเข้าสู่ระบบได้ จะแสดงข้อความ
 <em>&quot;ไม่สามารถเพิกถอนเซสชันเข้าสู่ระบบได้&quot;</em> แทน</p>
 <div class="admonition admonition-warning">
-<div data-bai-block="141" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>คำเตือน</div>
+<div data-bai-block="140" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>คำเตือน</div>
 <div class="admonition-content">
 
-<p data-bai-block="142">การเพิกถอนเซสชันเข้าสู่ระบบจะทำให้เซสชันนั้นออกจากระบบทันที
+<p data-bai-block="141">การเพิกถอนเซสชันเข้าสู่ระบบจะทำให้เซสชันนั้นออกจากระบบทันที
 หากคุณเพิกถอนเซสชันเข้าสู่ระบบที่กำลังใช้งานอยู่ คุณจะต้องเข้าสู่ระบบใหม่</p>
 </div></div>
 
 
 <p><a id="login-history-tab"></a></p>
-<h2 data-bai-block="143" id="user_settings-ประวตการเขาสระบบ">ประวัติการเข้าสู่ระบบ<a class="hash-link" href="#user_settings-ประวตการเขาสระบบ" aria-label="Direct link to ประวัติการเข้าสู่ระบบ">#</a></h2>
-<p data-bai-block="144">หมวดประวัติการเข้าสู่ระบบจะแสดงความพยายามเข้าสู่ระบบที่บันทึกไว้สำหรับบัญชี
+<h2 data-bai-block="142" id="user_settings-ประวตการเขาสระบบ">ประวัติการเข้าสู่ระบบ<a class="hash-link" href="#user_settings-ประวตการเขาสระบบ" aria-label="Direct link to ประวัติการเข้าสู่ระบบ">#</a></h2>
+<p data-bai-block="143">หมวดประวัติการเข้าสู่ระบบจะแสดงความพยายามเข้าสู่ระบบที่บันทึกไว้สำหรับบัญชี
 ของคุณ ทั้งการลงชื่อเข้าใช้ที่สำเร็จ ความพยายามที่ล้มเหลว
 และเหตุการณ์ของเซสชันเข้าสู่ระบบ เช่น การออกจากระบบหรือการหมดอายุ
 หมวดนี้เป็นแบบอ่านอย่างเดียว และไม่มีการดำเนินการใดๆ บนแถว</p>
-<p><figure data-bai-block="145" class="doc-figure"><img src="./images/login_history_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 19.17</figcaption></figure>
+<p><figure data-bai-block="144" class="doc-figure"><img src="./images/login_history_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 19.17</figcaption></figure>
 </p>
-<p data-bai-block="146">ตารางประกอบด้วยคอลัมน์ต่อไปนี้:</p>
+<p data-bai-block="145">ตารางประกอบด้วยคอลัมน์ต่อไปนี้:</p>
 <ul>
-<li data-bai-block="147"><strong>ผลลัพธ์</strong>: ผลของความพยายามเข้าสู่ระบบ แสดงเป็นแท็กที่แยกด้วยสี
+<li data-bai-block="146"><strong>ผลลัพธ์</strong>: ผลของความพยายามเข้าสู่ระบบ แสดงเป็นแท็กที่แยกด้วยสี
 คุณสามารถเรียงลำดับตามคอลัมน์นี้ได้</li>
-<li data-bai-block="148"><strong>โดเมน</strong>: โดเมนที่ใช้ในการเข้าสู่ระบบ</li>
-<li data-bai-block="149"><strong>IP ของไคลเอ็นต์</strong>: ที่อยู่ IP ที่ใช้ในการพยายามเข้าสู่ระบบ แสดงตามที่เซิร์ฟเวอร์รายงานทุกประการ
+<li data-bai-block="147"><strong>โดเมน</strong>: โดเมนที่ใช้ในการเข้าสู่ระบบ</li>
+<li data-bai-block="148"><strong>IP ของไคลเอ็นต์</strong>: ที่อยู่ IP ที่ใช้ในการพยายามเข้าสู่ระบบ แสดงตามที่เซิร์ฟเวอร์รายงานทุกประการ
 ที่อยู่อาจถูกปิดบังบางส่วนตามนโยบายการปิดบัง IP ของไคลเอ็นต์ที่ผู้ดูแลระบบกำหนด
 และจะแสดงเป็น <code>-</code> หากไม่มีการบันทึก</li>
-<li data-bai-block="150"><strong>เวลาเข้าสู่ระบบ</strong>: เวลาที่บันทึกความพยายามเข้าสู่ระบบ
+<li data-bai-block="149"><strong>เวลาเข้าสู่ระบบ</strong>: เวลาที่บันทึกความพยายามเข้าสู่ระบบ
 คุณสามารถเรียงลำดับตามคอลัมน์นี้ได้</li>
-<li data-bai-block="151"><strong>สาเหตุที่ล้มเหลว</strong>: รายละเอียดเพิ่มเติมที่รายงานสำหรับความพยายามที่ล้มเหลว
+<li data-bai-block="150"><strong>สาเหตุที่ล้มเหลว</strong>: รายละเอียดเพิ่มเติมที่รายงานสำหรับความพยายามที่ล้มเหลว
 หากไม่มีรายละเอียดจะแสดงเป็น <code>-</code></li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="152" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="151" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="153">ค่าผลลัพธ์จะแสดงตามที่เซิร์ฟเวอร์รายงานทุกประการ (ตัวอย่างเช่น <code>SUCCESS</code>
+<p data-bai-block="152">ค่าผลลัพธ์จะแสดงตามที่เซิร์ฟเวอร์รายงานทุกประการ (ตัวอย่างเช่น <code>SUCCESS</code>
 หรือ <code>FAILED_INVALID_CREDENTIALS</code>) และไม่มีการแปล</p>
 </div></div>
 
 
-<h3 data-bai-block="154" id="user_settings-คาผลลพธ">ค่าผลลัพธ์<a class="hash-link" href="#user_settings-คาผลลพธ" aria-label="Direct link to ค่าผลลัพธ์">#</a></h3>
+<h3 data-bai-block="153" id="user_settings-คาผลลพธ">ค่าผลลัพธ์<a class="hash-link" href="#user_settings-คาผลลพธ" aria-label="Direct link to ค่าผลลัพธ์">#</a></h3>
 <table>
 <thead>
-<tr data-bai-block="155">
+<tr data-bai-block="154">
 <th>ผลลัพธ์</th>
 <th>สี</th>
 <th>ความหมาย</th>
 </tr>
 </thead>
-<tbody><tr data-bai-block="156">
+<tbody><tr data-bai-block="155">
 <td>SUCCESS</td>
 <td>เขียว</td>
 <td>การลงชื่อเข้าใช้สำเร็จ</td>
 </tr>
-<tr data-bai-block="157">
+<tr data-bai-block="156">
 <td>FAILED_INVALID_CREDENTIALS</td>
 <td>แดง</td>
 <td>ที่อยู่อีเมลหรือรหัสผ่านไม่ถูกต้อง</td>
 </tr>
-<tr data-bai-block="158">
+<tr data-bai-block="157">
 <td>FAILED_USER_INACTIVE</td>
 <td>แดง</td>
 <td>บัญชีไม่ได้อยู่ในสถานะใช้งาน</td>
 </tr>
-<tr data-bai-block="159">
+<tr data-bai-block="158">
 <td>FAILED_BLOCKED</td>
 <td>แดง</td>
 <td>การลงชื่อเข้าใช้ถูกบล็อก</td>
 </tr>
-<tr data-bai-block="160">
+<tr data-bai-block="159">
 <td>FAILED_PASSWORD_EXPIRED</td>
 <td>แดง</td>
 <td>รหัสผ่านของบัญชีหมดอายุแล้ว</td>
 </tr>
-<tr data-bai-block="161">
+<tr data-bai-block="160">
 <td>FAILED_REJECTED_BY_HOOK</td>
 <td>แดง</td>
 <td>การลงชื่อเข้าใช้ถูกปฏิเสธโดยฮุกฝั่งเซิร์ฟเวอร์</td>
 </tr>
-<tr data-bai-block="162">
+<tr data-bai-block="161">
 <td>FAILED_SESSION_ALREADY_EXISTS</td>
 <td>แดง</td>
 <td>มีเซสชันเข้าสู่ระบบของบัญชีนี้อยู่แล้ว</td>
 </tr>
-<tr data-bai-block="163">
+<tr data-bai-block="162">
 <td>LOGOUT</td>
 <td>เทา</td>
 <td>เซสชันเข้าสู่ระบบสิ้นสุดลงจากการออกจากระบบ</td>
 </tr>
-<tr data-bai-block="164">
+<tr data-bai-block="163">
 <td>REVOKED_BY_ADMIN</td>
 <td>เหลือง</td>
 <td>ผู้ดูแลระบบเพิกถอนเซสชันเข้าสู่ระบบ</td>
 </tr>
-<tr data-bai-block="165">
+<tr data-bai-block="164">
 <td>REVOKED_BY_USER</td>
 <td>เทา</td>
 <td>คุณเพิกถอนเซสชันเข้าสู่ระบบด้วยตนเอง</td>
 </tr>
-<tr data-bai-block="166">
+<tr data-bai-block="165">
 <td>EVICTED</td>
 <td>เหลือง</td>
 <td>เซิร์ฟเวอร์ยกเลิกเซสชันเข้าสู่ระบบ</td>
 </tr>
-<tr data-bai-block="167">
+<tr data-bai-block="166">
 <td>EXPIRED</td>
 <td>เทา</td>
 <td>เซสชันเข้าสู่ระบบหมดอายุ</td>
 </tr>
 </tbody></table>
-<h3 data-bai-block="168" id="user_settings-การกรองประวตการเขาสระบบ">การกรองประวัติการเข้าสู่ระบบ<a class="hash-link" href="#user_settings-การกรองประวตการเขาสระบบ" aria-label="Direct link to การกรองประวัติการเข้าสู่ระบบ">#</a></h3>
-<p data-bai-block="169">ใช้ตัวกรองเหนือตารางเพื่อจำกัดรายการที่แสดง:</p>
+<h3 data-bai-block="167" id="user_settings-การกรองประวตการเขาสระบบ">การกรองประวัติการเข้าสู่ระบบ<a class="hash-link" href="#user_settings-การกรองประวตการเขาสระบบ" aria-label="Direct link to การกรองประวัติการเข้าสู่ระบบ">#</a></h3>
+<p data-bai-block="168">ใช้ตัวกรองเหนือตารางเพื่อจำกัดรายการที่แสดง:</p>
 <ul>
-<li data-bai-block="170"><strong>ผลลัพธ์</strong>: แสดงเฉพาะรายการที่มีผลลัพธ์ตามที่คุณเลือกจากรายการค่าข้างต้น</li>
-<li data-bai-block="171"><strong>เวลาเข้าสู่ระบบ</strong>: แสดงเฉพาะรายการที่บันทึกไว้หลัง (หรือก่อน)
+<li data-bai-block="169"><strong>ผลลัพธ์</strong>: แสดงเฉพาะรายการที่มีผลลัพธ์ตามที่คุณเลือกจากรายการค่าข้างต้น</li>
+<li data-bai-block="170"><strong>เวลาเข้าสู่ระบบ</strong>: แสดงเฉพาะรายการที่บันทึกไว้หลัง (หรือก่อน)
 วันที่และเวลาที่คุณเลือก</li>
 </ul>
-<p data-bai-block="172">ใช้ตัวควบคุมการแบ่งหน้าด้านล่างตารางเพื่อเลื่อนไปมาระหว่างหน้า
+<p data-bai-block="171">ใช้ตัวควบคุมการแบ่งหน้าด้านล่างตารางเพื่อเลื่อนไปมาระหว่างหน้า
 และเปลี่ยนจำนวนแถวที่แสดงต่อหนึ่งหน้า</p>
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/th/user_settings/user_settings.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> แก้ไขหน้านี้</a>
-  <span class="last-updated">อัปเดตล่าสุด 16 ต.ค. 2569</span>
+  <span class="last-updated">อัปเดตล่าสุด 26 ต.ค. 2569</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./sftp_to_container.html">

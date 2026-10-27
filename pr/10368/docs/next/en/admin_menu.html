@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Admin Features" />
   <meta name="twitter:description" content="Logging in with an admin account adds an Admin Settings menu at the top of the sidebar." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Admin Features","inLanguage":"en","description":"Logging in with an admin account adds an Admin Settings menu at the top of the sidebar.","dateModified":"2026-10-22T09:31:11.000Z","url":"https://webui.docs.backend.ai/next/en/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Admin Features","inLanguage":"en","description":"Logging in with an admin account adds an Admin Settings menu at the top of the sidebar.","dateModified":"2026-10-19T09:56:15.000Z","url":"https://webui.docs.backend.ai/next/en/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/admin_menu.html" />
   <link rel="alternate" hreflang="en" href="../en/admin_menu.html" />
   <link rel="alternate" hreflang="ja" href="../ja/admin_menu.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (62b78a1)">v26.10.0-alpha.1 (62b78a1)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (e6f3f5b)">v26.10.0-alpha.1 (e6f3f5b)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -565,7 +565,7 @@ If necessary, you can copy the secret key by clicking the copy button.</p>
 in the keypair&#39;s row. The dialog is titled <strong>Edit Keypair Resource Policy</strong>; click <strong>Save</strong> to apply your
 changes. Please keep in mind that if the <strong>Rate Limit</strong> value is small, API operations such as login may
 be blocked.</p>
-<p><figure data-bai-block="134" class="doc-figure"><img src="./images/keypair_update_dialog.png" alt="" class="doc-image" style="width:500px" loading="lazy" decoding="async" width="1000" height="504" /><figcaption>Figure 24.20</figcaption></figure>
+<p><figure data-bai-block="134" class="doc-figure"><img src="./images/keypair_update_dialog.png" alt="" class="doc-image" style="width:500px" loading="lazy" decoding="async" width="1000" height="464" /><figcaption>Figure 24.20</figcaption></figure>
 </p>
 <p data-bai-block="135">You can also deactivate or reactivate the keypair by clicking the <code>Deactivate</code> button or <code>Activate</code> button in the keypair&#39;s row.
 Unlike the User tab, the Inactive tab allows permanent deletion of keypairs.
@@ -607,7 +607,7 @@ longer possible to submit an address that does not belong to a real user.</p>
 </li>
 <li data-bai-block="151"><p><strong>Resource Policy</strong>: The keypair resource policy to apply to the new keypair.</p>
 </li>
-<li data-bai-block="152"><p><strong>Rate Limit (for 15 min.)</strong>: The maximum number of requests that can be sent to the Backend.AI server
+<li data-bai-block="152"><p><strong>Rate Limit (for 15 min)</strong>: The maximum number of requests that can be sent to the Backend.AI server
 in 15 minutes. For example, if set to 1000 and the keypair sends more than 1000 API requests in 15
 minutes, the server throws an error and does not accept the request. It is recommended to use the
 default value and increase it when the API request frequency goes up high according to the user&#39;s
@@ -1029,7 +1029,7 @@ by the server, this settings has no effect. (max value: 256)</li>
 <ul>
 <li data-bai-block="375">Cluster Size: Set the maximum limit for the number of multi-containers or
 multi-nodes that can be configured when creating a session.</li>
-<li data-bai-block="376">Session Lifetime (sec.): Limits the maximum lifetime of a compute session
+<li data-bai-block="376">Session Lifetime (s): Limits the maximum lifetime of a compute session
 from the reservation in the active status, including <code>PENDING</code> and
 <code>RUNNING</code> statuses. After this time, the session will be force-terminated
 even if it is fully utilized. This will be useful to prevent the session
@@ -1039,7 +1039,7 @@ the <code>PENDING</code> status simultaneously.</li>
 <li data-bai-block="378">Concurrent Sessions: Maximum number of concurrent compute session per keypair.
 If this value is set to 3, for example, users bound to this resource policy
 cannot create more than 3 compute sessions simultaneously. (max value: 100)</li>
-<li data-bai-block="379">Idle timeout (sec.): Configurable period of time during which the user can
+<li data-bai-block="379">Idle timeout (s): Configurable period of time during which the user can
 leave their session untouched. If there is no activity at all on a
 compute session for idle timeout, the session will be garbage collected
 and destroyed automatically. The criteria of the &quot;idleness&quot; can be
@@ -1330,7 +1330,7 @@ approximately 5 minutes due to the calculation cycle.</p>
 <h3 data-bai-block="488" id="admin_menu-domain">Domain<a class="hash-link" href="#admin_menu-domain" aria-label="Direct link to Domain">#</a></h3>
 <p data-bai-block="489">After selecting a resource group, the Domain step displays a table of domains with their
 fair share weights and usage within that resource group.</p>
-<p><figure data-bai-block="490" class="doc-figure"><img src="./images/fair_share_domain_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2824" height="546" /><figcaption>Figure 24.55</figcaption></figure>
+<p><figure data-bai-block="490" class="doc-figure"><img src="./images/fair_share_domain_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2904" height="546" /><figcaption>Figure 24.55</figcaption></figure>
 </p>
 <p data-bai-block="491">The table includes the following columns:</p>
 <ul>
@@ -1352,7 +1352,7 @@ are selected, two additional buttons appear:</p>
 <h3 data-bai-block="503" id="admin_menu-project">Project<a class="hash-link" href="#admin_menu-project" aria-label="Direct link to Project">#</a></h3>
 <p data-bai-block="504">After selecting a domain, the Project step displays a table of projects with the same
 column structure as the Domain step. Click a project name to drill into the User step.</p>
-<p><figure data-bai-block="505" class="doc-figure"><img src="./images/fair_share_project_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2824" height="744" /><figcaption>Figure 24.56</figcaption></figure>
+<p><figure data-bai-block="505" class="doc-figure"><img src="./images/fair_share_project_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2904" height="612" /><figcaption>Figure 24.56</figcaption></figure>
 </p>
 <!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Project step) — capture must show the Status column. Not recaptured on 2026-09-15: the capture backend currently lists no project fair share rows for the default domain, and replacing the populated image with an empty table would be a regression. -->
 
@@ -1360,7 +1360,7 @@ column structure as the Domain step. Click a project name to drill into the User
 <h3 data-bai-block="507" id="admin_menu-user">User<a class="hash-link" href="#admin_menu-user" aria-label="Direct link to User">#</a></h3>
 <p data-bai-block="508">After selecting a project, the User step displays a table of individual users with their
 fair share weights and usage.</p>
-<p><figure data-bai-block="509" class="doc-figure"><img src="./images/fair_share_user_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2824" height="810" /><figcaption>Figure 24.57</figcaption></figure>
+<p><figure data-bai-block="509" class="doc-figure"><img src="./images/fair_share_user_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2904" height="810" /><figcaption>Figure 24.57</figcaption></figure>
 </p>
 <p data-bai-block="510">The table includes the following columns:</p>
 <ul>
@@ -1730,7 +1730,7 @@ Fairness, and it aims to provide resources as fair as possible for each user.
 <code>FAIR_SHARE</code> allocates compute resources based on historical usage patterns. For
 more details, refer to the <a href="#fair-share-scheduler">Fair Share Scheduler</a> section.
 You can deactivate a resource group by turning off <strong>Active</strong>. Click <strong>Save</strong> to apply your changes.</p>
-<p><figure data-bai-block="653" class="doc-figure"><img src="./images/modify_resource_group.png" alt="" class="doc-image" style="width:520px" loading="lazy" decoding="async" width="1040" height="2196" /><figcaption>Figure 24.80</figcaption></figure>
+<p><figure data-bai-block="653" class="doc-figure"><img src="./images/modify_resource_group.png" alt="" class="doc-image" style="width:520px" loading="lazy" decoding="async" width="1040" height="2276" /><figcaption>Figure 24.80</figcaption></figure>
 </p>
 <p data-bai-block="654">The resource group edit dialog contains the following additional fields:</p>
 <ul>
@@ -2226,7 +2226,7 @@ placeholder reading <code>No failed items. All diagnostics passed.</code>, so a 
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/en/admin_menu/admin_menu.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> Edit this page</a>
-  <span class="last-updated">Last updated on Oct 22, 2026</span>
+  <span class="last-updated">Last updated on Oct 19, 2026</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./statistics.html">
