@@ -9,7 +9,6 @@ import {
   VFolderOrderBy,
 } from '../__generated__/VFolderNodeListPageQuery.graphql';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
-import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import DeleteForeverVFolderModalV2 from '../components/DeleteForeverVFolderModalV2';
 import DeleteVFolderModalV2 from '../components/DeleteVFolderModalV2';
@@ -47,6 +46,8 @@ import {
   useToggle,
   toEntityLabelFilter,
   useIsLabelableEntityType,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { RotateCcwIcon, Trash2Icon, TrashIcon } from 'lucide-react';
@@ -368,15 +369,15 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
         <VStack align="stretch" gap={3}>
           <HStack justify="between" wrap="wrap" gap={3}>
             <HStack gap={3} align="start" style={{ flexShrink: 1 }} wrap="wrap">
-              <BAIRadioGroup
-                optionType="button"
+              <BAISegmentedControl
                 value={queryParams.mode}
-                onChange={(e) => {
-                  setQuery({ mode: e.target.value });
+                onChange={(value) => {
+                  setQuery({ mode: value as typeof queryParams.mode });
                   setTablePaginationOption({ current: 1 });
                   setSelectedFolderList([]);
                 }}
-                options={filterOutEmpty([
+              >
+                {filterOutEmpty([
                   { label: t('data.All'), value: 'all' },
                   { label: t('data.General'), value: 'general' },
                   baiClient?._config?.fasttrackEndpoint && {
@@ -388,8 +389,14 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                     label: t('data.Models'),
                     value: 'model',
                   },
-                ])}
-              />
+                ]).map((option) => (
+                  <BAISegmentedControlItem
+                    key={option.value}
+                    value={option.value}
+                    label={option.label}
+                  />
+                ))}
+              </BAISegmentedControl>
               <BAIGraphQLPropertyFilter<VFolderFilter>
                 data-testid="vfolder-filter"
                 // TODO(needs-backend): V2 `VFolderFilter` has no ownership_type,

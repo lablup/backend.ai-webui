@@ -4,9 +4,8 @@
  */
 import { AIAgent, useAIAgent } from '../../hooks/useAIAgent';
 import { FluentEmojiIcon } from '../FluentEmojiIcon';
-import { Selector } from '@lablup/ui-common/Selector';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFlex, useControllableValue } from 'backend.ai-ui';
+import { BAIFlex, BAISelector, useControllableValue } from 'backend.ai-ui';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -57,7 +56,7 @@ const AIAgentSelect: React.FC<ChatAgentSelectProps> = ({
               filters the already-loaded `options` client-side, per
               MAPPING.md §3.1). The agent catalog is small and fully loaded,
               so client-side filtering is behaviourally equivalent here. */}
-          <Selector
+          <BAISelector
             aria-label={t('chatui.SelectAgent')}
             hasSearch
             isLoading={isSearchPending || loading}

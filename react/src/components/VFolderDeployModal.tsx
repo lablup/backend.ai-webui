@@ -19,7 +19,6 @@ import {
   BAILink,
   BAIModal,
   BAIProjectResourceGroupSelect,
-  toLocalId,
   useErrorMessageResolver,
   useProjectResourceGroups,
   type BAIModalProps,
@@ -60,6 +59,7 @@ export const VFolderDeployQuery = graphql`
       edges {
         node {
           id
+          entityId
           name
           runtimeVariantId
           ...DeploymentPresetDetailModalFragment
@@ -161,8 +161,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
   >(undefined);
   const [presetDetailId, setPresetDetailId] = useState<string | null>(null);
   const effectivePresetId =
-    userSelectedPresetId ??
-    (availablePresets[0]?.id ? toLocalId(availablePresets[0].id) : undefined);
+    userSelectedPresetId ?? availablePresets[0]?.entityId;
 
   // The resource-group selection is held in an antd Form. `Form.useWatch`
   // subscribes to changes on the `resourceGroup` field so the Deploy button's
@@ -176,7 +175,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
     if (!vfolderId) return Promise.resolve();
 
     const presetId = isAutoDeployScenario
-      ? toLocalId(availablePresets[0]?.id)
+      ? availablePresets[0]?.entityId
       : effectivePresetId;
     // In `isAutoDeployScenario`, `BAIProjectResourceGroupSelect` is never
     // mounted (the component returns `null` before reaching the form), so
@@ -380,7 +379,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
           open={!!presetDetailId}
           presetFrgmt={
             presetDetailId
-              ? availablePresets.find((p) => toLocalId(p.id) === presetDetailId)
+              ? availablePresets.find((p) => p.entityId === presetDetailId)
               : null
           }
           onCancel={() => setPresetDetailId(null)}

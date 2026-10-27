@@ -8,9 +8,7 @@ import {
   FormItemProps,
   FormListProps,
 } from '../form-engine';
-import { AstryxFormTextInput } from './astryxFormControls';
 import { usePopover } from '@lablup/ui-common/Popover';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   colorVars,
   radiusVars,
@@ -18,7 +16,7 @@ import {
   typeScaleVars,
 } from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
-import { BAIFormListInput } from 'backend.ai-ui';
+import { BAIFormListInput, BAITextInput } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -34,7 +32,7 @@ export interface EnvVarConfig {
  * The value input's placeholder depends on the SIBLING `variable` field.
  *
  * `Form.Item`'s `dependencies` re-renders the *Field*, but the
- * `<AstryxFormTextInput placeholder={…}>` element it renders is still the same
+ * `<BAITextInput placeholder={…}>` element it renders is still the same
  * static element object created on the last OUTER render, so a placeholder
  * computed inline from `form.getFieldValue(...)` never updates — the field the
  * user just typed into keeps showing the generic hint. `Form.useWatch`
@@ -50,10 +48,7 @@ const EnvVarValueInput: React.FC<
     variableNamePath: Parameters<FormInstance['getFieldValue']>[0];
     getPlaceholderForVariable: (variable: string) => string | undefined;
     label: string;
-  } & Omit<
-    React.ComponentProps<typeof AstryxFormTextInput>,
-    'label' | 'placeholder'
-  >
+  } & Omit<React.ComponentProps<typeof BAITextInput>, 'placeholder'>
 > = ({
   form,
   variableNamePath,
@@ -64,9 +59,9 @@ const EnvVarValueInput: React.FC<
   'use memo';
   const variable = Form.useWatch(variableNamePath, form);
   return (
-    <AstryxFormTextInput
+    <BAITextInput
       {...controlProps}
-      label={label}
+      aria-label={label}
       placeholder={getPlaceholderForVariable(variable)}
     />
   );
@@ -255,7 +250,7 @@ const EnvVarNameInput: React.FC<EnvVarNameInputProps> = ({
       }}
       {...stylex.props(comboboxStyles.anchor)}
     >
-      <TextInput
+      <BAITextInput
         ref={(el) => {
           inputElRef.current = el;
         }}
