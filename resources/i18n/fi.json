@@ -816,6 +816,7 @@
       "ResetLayout": "Palauta asettelu",
       "ResetLayoutDescription": "Palauttaa paneelien oletusjärjestyksen. Mukautetut paneelit säilytetään.",
       "SearchCards": "Hae kortteja",
+      "SelectAll": "Valitse kaikki",
       "Title": "Mukautetut paneelit",
       "Unavailable": "Ei käytettävissä tässä ympäristössä"
     },
