@@ -13,12 +13,12 @@ import {
   FAILURES_ONLY_FILTER,
   isFailuresOnlyFilter,
 } from './memberCardData';
-import { Switch } from '@lablup/ui-common/Switch';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAIAuditLogNodes,
   BAIFlex,
   BAILink,
+  BAISwitch,
   BAIText,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
@@ -169,14 +169,14 @@ const MyActivityPanel: React.FC<PanelComponentProps> = ({
       tooltip={t('dashboard.card.MyActivityTooltip')}
       fetchKey={fetchKey}
       extra={
-        <Switch
+        <BAISwitch
           size="sm"
           value={failuresOnly}
           onChange={(checked) => setFailuresOnly(checked)}
           disabled={!onChangeFilter}
         >
           {t('dashboard.card.FailuresOnly')}
-        </Switch>
+        </BAISwitch>
       }
     >
       {(key) => (

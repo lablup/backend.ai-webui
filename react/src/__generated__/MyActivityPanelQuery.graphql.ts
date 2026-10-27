@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<69199463b83d5cfc85062054d364eeb1>>
+ * @generated SignedSource<<4fd882e4242f83e6c2daf4a0ec1c4510>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -195,6 +195,13 @@ v9 = {
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
+},
+v10 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "entityId",
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -347,13 +354,7 @@ return {
                     "name": "entityType",
                     "storageKey": null
                   },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "entityId",
-                    "storageKey": null
-                  },
+                  (v10/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -377,6 +378,7 @@ return {
                     "plural": false,
                     "selections": [
                       (v9/*: any*/),
+                      (v10/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -411,12 +413,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "b47e66c59f688741c9c6cd1d6c77f2e2",
+    "cacheID": "04361065c74c6fe58d00f966ed5c4023",
     "id": null,
     "metadata": {},
     "name": "MyActivityPanelQuery",
     "operationKind": "query",
-    "text": "query MyActivityPanelQuery(\n  $scope: AuditLogScope!\n  $filter: AuditLogFilter!\n  $failureFilter: AuditLogFilter!\n  $limit: Int!\n  $offset: Int!\n) {\n  logs: scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAIAuditLogNodesFragment\n        id\n      }\n    }\n  }\n  failures: scopedAuditLogsV2(scope: $scope, filter: $failureFilter, limit: 1) {\n    count\n  }\n}\n\nfragment BAIAuditLogNodesFragment on AuditLogV2 {\n  id\n  createdAt\n  operation\n  status\n  description\n  duration\n  requestId\n  actionId\n  entityType\n  entityId\n  triggeredBy\n  clientIp @since(version: \"26.9.0\")\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n"
+    "text": "query MyActivityPanelQuery(\n  $scope: AuditLogScope!\n  $filter: AuditLogFilter!\n  $failureFilter: AuditLogFilter!\n  $limit: Int!\n  $offset: Int!\n) {\n  logs: scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAIAuditLogNodesFragment\n        id\n      }\n    }\n  }\n  failures: scopedAuditLogsV2(scope: $scope, filter: $failureFilter, limit: 1) {\n    count\n  }\n}\n\nfragment BAIAuditLogNodesFragment on AuditLogV2 {\n  id\n  createdAt\n  operation\n  status\n  description\n  duration\n  requestId\n  actionId\n  entityType\n  entityId\n  triggeredBy\n  clientIp @since(version: \"26.9.0\")\n  user {\n    id\n    entityId\n    basicInfo {\n      email\n    }\n  }\n}\n"
   }
 };
 })();
