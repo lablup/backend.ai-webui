@@ -5,7 +5,6 @@
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import { convertToBinaryUnit } from '../helper';
 import { formatShellCommand } from '../helper/parseCliCommand';
-import { useBAIBreakpoint } from '../theme-shim';
 // Co-located CSS (P17): keeps long values (model paths, image refs, shell
 // commands) wrapping inside their MetadataList cell instead of overflowing
 // the drawer, and provides the spinner animation for the "Applying" badge
@@ -13,10 +12,10 @@ import { useBAIBreakpoint } from '../theme-shim';
 import './DeploymentRevisionDetail.css';
 import FolderLink from './FolderLink';
 import SourceCodeView from './SourceCodeView';
-import { Badge } from '@astryxdesign/core/Badge';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
+import { Badge } from '@lablup/ui-common/Badge';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAICard,
   BAIFlex,
@@ -27,6 +26,7 @@ import {
   BAIText,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  useBAIBreakpoint,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { LoaderCircle } from 'lucide-react';
@@ -72,7 +72,7 @@ const DeploymentRevisionDetail: React.FC<{
           mode
           size
         }
-        resourceSlots @since(version: "26.4.2") {
+        resourceSlots {
           slotName
           quantity
         }
@@ -95,7 +95,7 @@ const DeploymentRevisionDetail: React.FC<{
               value
             }
           }
-          runtimeVariantPresetValues @since(version: "26.4.4rc9") {
+          runtimeVariantPresetValues {
             presetId
             value
             preset {
@@ -111,7 +111,7 @@ const DeploymentRevisionDetail: React.FC<{
           vfolderId
           mountDestination
           definitionPath
-          subpath @since(version: "26.4.4")
+          subpath
           vfolder {
             id
             name
@@ -128,7 +128,7 @@ const DeploymentRevisionDetail: React.FC<{
             ...FolderLink_vfolderNode
           }
         }
-        imageV2 @since(version: "26.4.3") {
+        imageV2 {
           id
           identity {
             canonicalName
@@ -177,12 +177,7 @@ const DeploymentRevisionDetail: React.FC<{
   );
   // Runtime-variant preset values the revision was built with (the same
   // parameters set in the Add Revision "Runtime Parameters" form, e.g. DType /
-  // Quantization). Gated at `26.4.4rc9` — the rc where the field landed on the
-  // manager. Gating at the final `26.4.4` would strip it on every 26.4.4rc
-  // manager (rc < final in PEP440), but leaving it ungated sends it to
-  // pre-rc9 / 26.4.3 managers that lack the field, erroring the whole query;
-  // rc9 keeps it on rc9+ and final while stripping it on older managers.
-  // `?? []` still guards a missing field defensively.
+  // Quantization).
   // The preset's display label is resolved inline via the `preset` DataLoader
   // field; mirror the Add Revision form's `displayName ?? name` resolution,
   // then fall back to the CLI/env key or the raw preset id.

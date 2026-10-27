@@ -7,13 +7,12 @@ import {
   RoleNodesFragment$key,
 } from '../__generated__/RoleNodesFragment.graphql';
 import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { resolveRBACScopeName } from '../helper/rbacScopeName';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import { Badge } from '@astryxdesign/core/Badge';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAIColumnType,
   BAIDoubleToken,
@@ -21,8 +20,6 @@ import {
   BAIId,
   BAITable,
   BAITableProps,
-  badgeVariantForTagColor,
-  filterOutEmpty,
   useToggle,
   tokenColorForTagColor,
   tokenColorForStatus,
@@ -66,9 +63,6 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
-  // Auto-assign is only supported on managers >= 26.4.4.
-  const supportsAutoAssign = baiClient.supports('role-auto-assign');
   const [hiddenColumnKeys, setHiddenColumnKeys] =
     useHiddenColumnKeysSetting('RoleList');
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
@@ -78,42 +72,21 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
     graphql`
       fragment RoleNodesFragment on Role @relay(plural: true) {
         id @required(action: NONE)
+        entityId
         name @required(action: NONE)
         description
         source
         status
-        autoAssign @since(version: "26.4.4")
+        autoAssign
         createdAt
         updatedAt
-        scopes(first: 3) @deprecatedSince(version: "26.9.0") {
-          count
-          edges {
-            node {
-              scopeType
-              scopeId
-              scope {
-                ... on ProjectV2 {
-                  basicInfo {
-                    projectName: name
-                  }
-                }
-                ... on DomainV2 {
-                  basicInfo {
-                    domainName: name
-                  }
-                }
-                ... on UserV2 {
-                  basicInfo {
-                    userEmail: email
-                  }
-                }
-              }
-            }
-          }
+        scopeType
+        scopeId
+        rolePresetId
+        rolePreset {
+          name
         }
-        scopeType @since(version: "26.9.0")
-        scopeId @since(version: "26.9.0")
-        scope @since(version: "26.9.0") {
+        scope {
           ... on ProjectV2 {
             basicInfo {
               projectName: name
@@ -129,40 +102,35 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
               userEmail: email
             }
           }
+          ... on VFolder {
+            metadata {
+              name
+            }
+          }
+          ... on SessionV2 {
+            metadata {
+              sessionName: name
+            }
+          }
+          ... on ModelDeployment {
+            metadata {
+              name
+            }
+          }
+          ... on ResourceGroup {
+            name
+          }
+          ... on ContainerRegistryV2 {
+            registryName
+            project
+          }
         }
       }
     `,
     rolesFrgmt,
   );
 
-  // Managers >= 26.9.0 answer the one scope a role belongs to; older ones
-  // answer a scopes connection, of which the first is shown and the rest counted.
-  const readRoleScope = (
-    record: RoleNodeInList,
-  ): {
-    scopeType?: string | null;
-    scopeId?: string | null;
-    scope?: RoleNodeInList['scope'];
-    extraCount: number;
-  } => {
-    if (record.scopeType) {
-      return {
-        scopeType: record.scopeType,
-        scopeId: record.scopeId,
-        scope: record.scope,
-        extraCount: 0,
-      };
-    }
-    const first = record.scopes?.edges?.[0]?.node;
-    return {
-      scopeType: first?.scopeType,
-      scopeId: first?.scopeId,
-      scope: first?.scope,
-      extraCount: Math.max((record.scopes?.count ?? 0) - 1, 0),
-    };
-  };
-
-  const columns: BAIColumnType<RoleNodeInList>[] = filterOutEmpty([
+  const columns: BAIColumnType<RoleNodeInList>[] = [
     {
       key: 'name',
       title: t('rbac.RoleName'),
@@ -187,54 +155,39 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
     {
       key: 'scope',
       title: t('rbac.ScopeType'),
-      render: (_, record: RoleNodeInList) => {
-        const { scopeType, scopeId, scope, extraCount } = readRoleScope(record);
+      render: (_, { scopeType, scopeId, scope }: RoleNodeInList) => {
         if (!scopeType) return '-';
         const scopeTypeLabel = t(rbacTypeI18nKey(scopeType), {
           defaultValue: scopeType,
         });
         const scopeName =
-          scope?.basicInfo?.projectName ??
-          scope?.basicInfo?.domainName ??
-          scope?.basicInfo?.userEmail ??
-          scopeId ??
-          '-';
+          resolveRBACScopeName({ scopeType, scope }) ?? scopeId ?? '-';
         return (
-          <BAIFlex gap="xxs" wrap="wrap" align="center">
-            <BAIDoubleToken
-              values={[
-                { label: scopeTypeLabel, color: 'blue' },
-                { label: scopeName, color: 'default' },
-              ]}
-            />
-            {extraCount > 0 && (
-              <Badge
-                variant={badgeVariantForTagColor('default')}
-                label={`+${extraCount}`}
-              />
-            )}
-          </BAIFlex>
+          <BAIDoubleToken
+            values={[
+              { label: scopeTypeLabel, color: 'blue' },
+              { label: scopeName, color: 'default' },
+            ]}
+          />
         );
       },
     },
     {
       key: 'scopeId',
       title: t('rbac.ScopeRawId'),
-      render: (_, record: RoleNodeInList) => {
-        const { scopeId, extraCount } = readRoleScope(record);
-        if (!scopeId) return '-';
-        return (
-          <BAIFlex gap="xxs" wrap="wrap" align="center">
-            <BAIId uuid={scopeId} />
-            {extraCount > 0 && (
-              <Badge
-                variant={badgeVariantForTagColor('default')}
-                label={`+${extraCount}`}
-              />
-            )}
-          </BAIFlex>
-        );
-      },
+      render: (_, { scopeId }: RoleNodeInList) =>
+        scopeId ? <BAIId uuid={scopeId} /> : '-',
+    },
+    {
+      key: 'autoAssign',
+      title: t('rbac.AutoAssign'),
+      dataIndex: 'autoAssign',
+      render: (autoAssign: boolean) => (
+        <Token
+          color={tokenColorForTagColor(autoAssign ? 'green' : 'default')}
+          label={autoAssign ? t('general.Active') : t('general.Inactive')}
+        />
+      ),
     },
     {
       key: 'source',
@@ -249,16 +202,22 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         );
       },
     },
-    supportsAutoAssign && {
-      key: 'autoAssign',
-      title: t('rbac.AutoAssign'),
-      dataIndex: 'autoAssign',
-      render: (autoAssign: boolean) => (
-        <Token
-          color={tokenColorForTagColor(autoAssign ? 'green' : 'default')}
-          label={autoAssign ? t('general.Active') : t('general.Inactive')}
-        />
-      ),
+    {
+      key: 'rolePreset',
+      title: t('rbac.RolePreset'),
+      render: (_, record: RoleNodeInList) => {
+        if (!record.rolePresetId) return '-';
+        return (
+          <BAIFlex gap="xxs" align="center" wrap="nowrap">
+            {record.rolePreset?.name && <Text>{record.rolePreset.name}</Text>}
+            <BAIFlex align="center" wrap="nowrap">
+              <Text>(</Text>
+              <BAIId uuid={record.rolePresetId} />
+              <Text>)</Text>
+            </BAIFlex>
+          </BAIFlex>
+        );
+      },
     },
     {
       key: 'createdAt',
@@ -276,7 +235,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
       render: (updatedAt: string) =>
         updatedAt ? dayjs(updatedAt).format('YYYY-MM-DD HH:mm') : '-',
     },
-  ]);
+  ];
 
   const allColumns = customizeColumns ? customizeColumns(columns) : columns;
   const displayedColumns = _.filter(

@@ -1,6 +1,6 @@
 ---
 name: docs-lint
-description: Run periodic health diagnosis of the Backend.AI WebUI user manual. Invoke when docs-lead requests a fresh report, when the user asks for a docs health check / lint pass, or as part of a triage flow. Detects terminology drift (reads terminology.json `avoid[]`), translation parity gaps (en vs ko/ja/th heading structure), stale screenshot candidates (MD5 collision + i18n key drift), broken cross-refs / image links, and PR coverage gaps (gh pr list against packages/backend.ai-webui-docs/). Writes packages/backend.ai-webui-docs/.agent-output/docs-lint-report.md with a 10-run rolling history — diagnosis only, never modifies docs. Examples - <example>Context, User wants a periodic docs health check. user, 'Run a docs health check' assistant, 'I'll use the docs-lint agent to diagnose terminology, parity, screenshots, and coverage issues.' <commentary>The user wants diagnosis, which is exactly this agent's job.</commentary></example> <example>Context, docs-lead skill is triaging. assistant, 'Let me invoke docs-lint to get a fresh health report before showing you the priority queue.' <commentary>docs-lead delegates the heavy diagnosis pass to this agent.</commentary></example>
+description: Diagnose the health of the Backend.AI WebUI user manual (packages/backend.ai-webui-docs/) without modifying it. Use when docs-lead needs a fresh report or the user asks for a docs health check / lint pass. Checks terminology drift against terminology.json, en vs ko/ja/th heading parity, stale screenshot candidates, broken cross-refs and image links, and merged user-facing PRs without docs changes; writes .agent-output/docs-lint-report.md with a 10-run rolling history.
 tools: Glob, Grep, Read, Bash
 model: opus
 color: purple
@@ -200,11 +200,9 @@ gh pr list --state merged --base main \
 mkdir -p "$state_dir" && date -u '+%Y-%m-%d' > "$since_file"
 ```
 
-`--limit 50` was insufficient for this repo's velocity (it covered ~2 weeks); a since-date scoped scan with `--limit 200` is safer and stays incremental on repeated runs.
-
 Parse JSON. A PR is a "user-facing-without-docs" gap when **all** of:
 
-1. Title matches `^(feat|fix|style)\(FR-\d+\)`.
+1. Title matches `^(feat|fix|style)\((FR-\d+|#\d+)\)` — a Jira key, or `#N` for a GitHub-native issue.
 2. No file path in `files[].path` starts with `packages/backend.ai-webui-docs/`.
 3. At least one file path is **not** in the non-user-facing exclude set:
    - `^e2e/`

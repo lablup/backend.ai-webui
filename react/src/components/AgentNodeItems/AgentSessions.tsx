@@ -22,8 +22,8 @@ import SessionResourceGrid from '../SessionResourceGrid';
 import {
   SegmentedControl,
   SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+} from '@lablup/ui-common/SegmentedControl';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIFlex,
   BAILink,
@@ -112,7 +112,7 @@ const AgentSessions = ({ agentId, queryRef, onReload }: AgentSessionsProps) => {
   const deferredFetchKey = useDeferredValue(fetchKey);
   const baiClient = useSuspendedBackendaiClient();
   const statusBuckets = getSessionV2StatusBuckets(
-    baiClient.supports('session-preemption-statuses'),
+    baiClient.isManagerVersionCompatibleWith('26.8.0'),
   );
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
@@ -204,7 +204,7 @@ const AgentSessions = ({ agentId, queryRef, onReload }: AgentSessionsProps) => {
         <BAIFlex gap="xs" align="center">
           {experimentalSessionResourceGrid && (
             <SegmentedControl
-              label={t('session.resourceGrid.ViewMode')}
+              aria-label={t('session.resourceGrid.ViewMode')}
               value={view}
               onChange={(value) => {
                 const next = value as 'table' | 'grid';

@@ -11,8 +11,8 @@ import {
 import { getRouteScopeAndKey } from '../../hooks/useRouteScope';
 import { useUrlProjectValidity } from '../../hooks/useUrlProjectValidity';
 import ProjectScopeErrorState from './ProjectScopeErrorState';
-import { Button } from '@astryxdesign/core/Button';
-import { Icon } from '@astryxdesign/core/Icon';
+import { Button } from '@lablup/ui-common/Button';
+import { Icon } from '@lablup/ui-common/Icon';
 import { ArrowRightIcon } from 'lucide-react';
 import React, { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';

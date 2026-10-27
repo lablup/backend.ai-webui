@@ -58,7 +58,6 @@ import {
   provisionDeploymentFixtures,
   provisionDeploymentModelFolder,
 } from '../utils/deployment-fixtures';
-import { skipUnlessClientFeature } from '../utils/feature-gate-util';
 import { loginAsAdmin, modifyConfigToml, navigateTo } from '../utils/test-util';
 import { getFormItemControlByLabel } from '../utils/test-util-antd';
 import { test, expect, Page } from '@playwright/test';
@@ -68,6 +67,58 @@ import { test, expect, Page } from '@playwright/test';
 // `nav[aria-label="Tabs"]` containing plain buttons instead.
 function revisionTabBar(page: Page) {
   return page.getByRole('navigation', { name: 'Tabs' });
+}
+
+// `MetadataList` renders `<dt>`/`<dd>` pairs; `term` takes no name from its
+// content, so match the term's text and read the `<dd>` right after it.
+function metadataTerm(page: Page, label: string) {
+  return page
+    .getByRole('term')
+    .filter({ hasText: new RegExp(`^${escapeForRegExp(label)}$`) });
+}
+
+function metadataValue(page: Page, label: string) {
+  return metadataTerm(page, label).locator('xpath=following-sibling::dd[1]');
+}
+
+// Astryx `DataGrid` header names carry "Sort by <key>" / "Resize column
+// <key>", so match the visible header text instead of the accessible name.
+function columnHeader(page: Page, label: string) {
+  return page
+    .getByRole('columnheader')
+    .filter({ hasText: new RegExp(`^${escapeForRegExp(label)}`) });
+}
+
+// The deployment list's Serving / Paused / Terminated status tabs.
+function statusTab(page: Page, label: 'Serving' | 'Paused' | 'Terminated') {
+  return page.getByRole('radio', { name: label, exact: true });
+}
+
+// `deleteDeploymentAndVerify` for a deployment listed under the Paused tab:
+// the shared helper opens the default Serving tab, which never shows it.
+async function deletePausedDeploymentAndVerify(
+  page: Page,
+  name: string,
+): Promise<void> {
+  const row = page.getByRole('row', {
+    name: new RegExp(escapeForRegExp(name)),
+  });
+  await expect(async () => {
+    await navigateTo(page, 'deployments');
+    await statusTab(page, 'Paused').click();
+    await expect(row).toBeVisible({ timeout: 15000 });
+  }).toPass({ timeout: 60_000 });
+  await row.getByRole('button', { name: 'delete' }).click();
+  const dialog = page.getByRole('dialog', { name: /Delete Deployment/ });
+  await expect(dialog).toBeVisible({ timeout: 10000 });
+  await page.getByPlaceholder(name).fill(name);
+  const deleteButton = dialog.getByRole('button', {
+    name: 'Delete',
+    exact: true,
+  });
+  await expect(deleteButton).toBeEnabled({ timeout: 5000 });
+  await deleteButton.click();
+  await expect(row).toHaveCount(0, { timeout: 30000 });
 }
 
 // Local fork of deployment-fixtures.ts's `selectRevisionModalOption`: its
@@ -99,6 +150,7 @@ test.describe(
   { tag: ['@functional', '@regression', '@serving', '@deployment'] },
   () => {
     let createdDeploymentName: string | null = null;
+    let pausedDeploymentName: string | null = null;
 
     test.beforeEach(async ({ page, request }) => {
       await loginAsAdmin(page, request);
@@ -108,6 +160,16 @@ test.describe(
       if (createdDeploymentName) {
         await cleanupDeploymentSafely(page, createdDeploymentName);
         createdDeploymentName = null;
+      }
+      if (pausedDeploymentName) {
+        const name = pausedDeploymentName;
+        pausedDeploymentName = null;
+        await deletePausedDeploymentAndVerify(page, name).catch((error) =>
+          console.warn(
+            `[afterEach] could not clean up paused deployment "${name}":`,
+            error,
+          ),
+        );
       }
     });
 
@@ -128,19 +190,30 @@ test.describe(
             .getByRole('navigation', { name: 'Side navigation' })
             .getByText('Deployments', { exact: true }),
         ).toBeVisible({ timeout: 20000 });
-        await expect(page.getByRole('radio', { name: 'Running' })).toBeChecked({
+        // `BAIRadioGroup` renders Astryx `SegmentedControl`: each tab is a
+        // directly-visible `<button role="radio">`.
+        await expect(statusTab(page, 'Serving')).toBeChecked({
           timeout: 20000,
         });
-        // `BAIRadioGroup` (`react/src/components/BAIRadioGroup.tsx`) has
-        // rendered on Astryx `SegmentedControl` since ticket 10 — a real,
-        // directly-visible `<button role="radio">`
-        // (`SegmentedControlItem.tsx`), not antd's button-style radio group
-        // with its opacity:0 input behind a clickable label wrapper. No
-        // `.ant-radio-button-wrapper` workaround is needed any more; the
-        // radio role itself is visible.
-        await expect(
-          page.getByRole('radio', { name: 'Terminated' }),
-        ).toBeVisible();
+        await expect(statusTab(page, 'Paused')).toBeVisible();
+        await expect(statusTab(page, 'Paused')).not.toBeChecked();
+        await expect(statusTab(page, 'Terminated')).toBeVisible();
+        await expect(statusTab(page, 'Terminated')).not.toBeChecked();
+
+        // The Serving and Paused labels carry a help icon whose tooltip
+        // explains the Desired Replicas split; the icon, not the tab, is
+        // the hover target.
+        await statusTab(page, 'Serving').locator('svg').hover();
+        await expect(page.getByRole('tooltip')).toContainText(
+          'Desired Replicas set to 1 or more',
+        );
+        await page.mouse.move(0, 0);
+        await expect(page.getByRole('tooltip')).toHaveCount(0);
+        await statusTab(page, 'Paused').locator('svg').hover();
+        await expect(page.getByRole('tooltip')).toContainText(
+          'Desired Replicas set to 0',
+        );
+        await page.mouse.move(0, 0);
         await expect(
           page.getByRole('button', { name: 'Refresh', exact: true }),
         ).toBeVisible();
@@ -158,9 +231,7 @@ test.describe(
         await expect(
           page.getByRole('columnheader', { name: 'Lifecycle' }),
         ).toBeVisible();
-        await expect(
-          page.getByRole('columnheader', { name: /Replicas/ }),
-        ).toBeVisible();
+        await expect(columnHeader(page, 'Replicas')).toBeVisible();
         await expect(
           page.getByRole('columnheader', { name: 'Model' }),
         ).toBeVisible();
@@ -204,9 +275,11 @@ test.describe(
         await expect(
           createDialog.getByRole('spinbutton', { name: /Desired Replicas/ }),
         ).toHaveValue('1');
+        // Astryx `Tokenizer` carries the hint as the input's `placeholder`
+        // attribute, not as a text node (antd `Select` rendered a span).
         await expect(
-          createDialog.getByText('Enter tags, separated by commas'),
-        ).toBeVisible();
+          createDialog.getByRole('combobox', { name: /Tags/ }),
+        ).toHaveAttribute('placeholder', 'Enter tags, separated by commas');
         const publicCheckbox = createDialog.getByRole('checkbox', {
           name: 'Public',
         });
@@ -282,6 +355,63 @@ test.describe(
         createdDeploymentName = null;
       },
     );
+
+    test('Admin can find a deployment with zero Desired Replicas under the Paused tab', async ({
+      page,
+    }) => {
+      const deploymentName = `e2e-plan-paused-${Date.now()}`;
+      await navigateTo(page, 'deployments');
+      await createDeploymentShell(page, deploymentName);
+      createdDeploymentName = deploymentName;
+
+      // 1. Set Desired Replicas to 0 from the detail page's Edit modal.
+      await page.getByRole('button', { name: 'Edit', exact: true }).click();
+      const dialog = page.getByRole('dialog', { name: 'Edit Deployment' });
+      await expect(dialog).toBeVisible({ timeout: 20000 });
+      const replicasInput = dialog.getByRole('spinbutton', {
+        name: /Desired Replicas/,
+      });
+      await expect(replicasInput).toHaveValue('1');
+      await replicasInput.fill('0');
+      await dialog.getByRole('button', { name: 'Save' }).click();
+      await expect(dialog).toBeHidden({ timeout: 20000 });
+      await expect(metadataValue(page, 'Desired Replicas')).toHaveText('0', {
+        timeout: 20000,
+      });
+      // From here on only the Paused tab lists it.
+      pausedDeploymentName = deploymentName;
+      createdDeploymentName = null;
+
+      // 2. The Paused tab lists it, and the choice lands in the URL. The
+      // list read can lag the mutation, so re-navigate until the row shows.
+      const row = page.getByRole('row', {
+        name: new RegExp(escapeForRegExp(deploymentName)),
+      });
+      await expect(async () => {
+        await navigateTo(page, 'deployments');
+        await statusTab(page, 'Paused').click();
+        await expect(row).toBeVisible({ timeout: 15000 });
+      }).toPass({ timeout: 60_000 });
+      await expect(statusTab(page, 'Paused')).toBeChecked();
+      await expect(page).toHaveURL(/[?&]statusCategory=paused(&|$)/);
+
+      // 3. The tab survives a reload.
+      await page.reload();
+      await expect(statusTab(page, 'Paused')).toBeChecked({ timeout: 20000 });
+      await expect(row).toBeVisible({ timeout: 20000 });
+
+      // 4. The Serving tab does not list it. Switching from Paused keeps the
+      // previous rows until the Serving page arrives, so the row disappearing
+      // means the Serving result is the one on screen.
+      await statusTab(page, 'Serving').click();
+      await expect(statusTab(page, 'Serving')).toBeChecked();
+      await expect(page).not.toHaveURL(/statusCategory=paused/);
+      await expect(row).toHaveCount(0, { timeout: 20000 });
+
+      // 5. Delete it from the Paused tab.
+      await deletePausedDeploymentAndVerify(page, deploymentName);
+      pausedDeploymentName = null;
+    });
   },
 );
 
@@ -317,7 +447,9 @@ test.describe(
       // 2. Inspect the alert banner, header, "Basic Information" card, revision
       // tabs, "Replicas" section, "Auto-scaling" section, and "Access Tokens"
       // section.
-      const alert = page.getByRole('alert');
+      // Scoped to the page banner — `page.getByRole('alert')` alone also
+      // matches Astryx's empty assertive live-region div.
+      const alert = page.getByTestId('page-deployments').getByRole('alert');
       await expect(alert).toContainText('No revision is deployed', {
         timeout: 20000,
       });
@@ -340,72 +472,60 @@ test.describe(
         timeout: 20000,
       });
       await expect(page.getByRole('button', { name: 'More' })).toBeVisible();
-      await expect(
-        page.getByRole('rowheader', { name: 'Lifecycle' }),
-      ).toBeVisible();
+      // `BAIMetadataList` (Astryx `MetadataList`) renders each item as a
+      // `<dl>` term/definition pair (see `metadataTerm`). Its body hydrates
+      // via its own boundary independently of the header buttons above,
+      // same as the Auto-scaling/Access Tokens sections below — give the
+      // first item a generous timeout.
+      await expect(metadataTerm(page, 'Lifecycle')).toBeVisible({
+        timeout: 20000,
+      });
       await expect(
         page.getByRole('button', { name: /Scheduling History/ }),
       ).toBeVisible();
-      await expect(
-        page.getByRole('rowheader', { name: 'Deployment ID' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('rowheader', { name: 'Project' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('rowheader', { name: 'Domain' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('rowheader', { name: 'Resource Group' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('rowheader', { name: 'Endpoint URL' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('rowheader', { name: 'Visibility' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('rowheader', { name: 'Desired Replicas' }),
-      ).toBeVisible();
-      await expect(page.getByRole('rowheader', { name: 'Tags' })).toBeVisible();
+      await expect(metadataTerm(page, 'Deployment ID')).toBeVisible();
+      await expect(metadataTerm(page, 'Project')).toBeVisible();
+      await expect(metadataTerm(page, 'Domain')).toBeVisible();
+      await expect(metadataTerm(page, 'Resource Group')).toBeVisible();
+      await expect(metadataTerm(page, 'Endpoint URL')).toBeVisible();
+      await expect(metadataTerm(page, 'Visibility')).toBeVisible();
+      await expect(metadataTerm(page, 'Desired Replicas')).toBeVisible();
+      await expect(metadataTerm(page, 'Tags')).toBeVisible();
 
       // Revision tabs
+      // Astryx's `TabList` in its `nav` pattern marks the active tab with
+      // `aria-current="true"` (not `aria-selected`, which only the `tabs`
+      // pattern emits).
       await expect(
-        page.getByRole('tab', { name: 'Current Revision', selected: true }),
+        revisionTabBar(page).getByRole('button', { name: 'Current Revision' }),
+      ).toHaveAttribute('aria-current', 'true');
+      await expect(
+        revisionTabBar(page).getByRole('button', { name: 'Revision History' }),
       ).toBeVisible();
       await expect(
-        page.getByRole('tab', { name: 'Revision History' }),
+        revisionTabBar(page).getByRole('button', { name: 'Audit Log' }),
       ).toBeVisible();
-      await expect(page.getByRole('tab', { name: 'Audit Log' })).toBeVisible();
       await expect(
-        page.getByRole('tablist').getByRole('button', { name: 'Add Revision' }),
+        revisionTabBar(page).getByRole('button', { name: 'Add Revision' }),
       ).toBeVisible();
 
       // Replicas section (`DeploymentReplicasCard.tsx`'s `BAIRadioGroup`
       // toggle — see the deployments list page's toggle comment above).
-      await expect(page.getByText('Replicas', { exact: true })).toBeVisible();
+      // The title shares its element with the help icon's tooltip text, so
+      // anchor on the leading word instead of an exact match.
+      await expect(page.getByText(/^Replicas/)).toBeVisible();
       await expect(page.getByRole('radio', { name: 'Running' })).toBeVisible();
       await expect(
         page.getByRole('radio', { name: 'Terminated' }),
       ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Replica ID' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: /Health Status/ }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: /Traffic Status/ }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Session' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: /Revision \(ID\)/ }),
-      ).toBeVisible();
+      await expect(columnHeader(page, 'Replica ID')).toBeVisible();
+      await expect(columnHeader(page, 'Health Status')).toBeVisible();
+      await expect(columnHeader(page, 'Traffic Status')).toBeVisible();
+      await expect(columnHeader(page, 'Session')).toBeVisible();
+      await expect(columnHeader(page, 'Revision (ID)')).toBeVisible();
 
       // Auto-scaling section
-      await expect(page.getByText('Auto-scaling')).toBeVisible();
+      await expect(page.getByText(/^Auto-scaling/)).toBeVisible();
       // The Auto-scaling card's body (button + table) loads via its own
       // query/Suspense boundary independently of the heading above, and can
       // take longer than the default 5s timeout to hydrate (observed live,
@@ -415,35 +535,21 @@ test.describe(
       await expect(page.getByRole('button', { name: 'Add Rules' })).toBeVisible(
         { timeout: 20000 },
       );
-      await expect(
-        page.getByRole('columnheader', { name: /Metric Source/ }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: /Cooldown Sec\./ }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: /Step Size/ }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: /Min \/ MAX Replicas/ }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: /Last Triggered/ }),
-      ).toBeVisible();
+      await expect(columnHeader(page, 'Metric Source')).toBeVisible();
+      await expect(columnHeader(page, 'Cooldown (s)')).toBeVisible();
+      await expect(columnHeader(page, 'Step Size')).toBeVisible();
+      await expect(columnHeader(page, 'Min / MAX Replicas')).toBeVisible();
+      await expect(columnHeader(page, 'Last Triggered')).toBeVisible();
 
       // Access Tokens section
-      await expect(page.getByText('Access Tokens')).toBeVisible();
+      await expect(page.getByText(/^Access Tokens/)).toBeVisible();
       // Same independently-loading-body caveat as the Auto-scaling section
       // above.
       await expect(
         page.getByRole('button', { name: 'Create Access Token' }),
       ).toBeDisabled({ timeout: 20000 });
-      await expect(
-        page.getByRole('columnheader', { name: 'Token' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Expiration' }),
-      ).toBeVisible();
+      await expect(columnHeader(page, 'Token')).toBeVisible();
+      await expect(columnHeader(page, 'Expiration')).toBeVisible();
 
       await deleteDeploymentAndVerify(page, deploymentName);
       createdDeploymentName = null;
@@ -479,79 +585,79 @@ test.describe(
       }
     });
 
-    test('Admin can view Preset Mode fields in the Add Revision modal', async ({
-      page,
-    }) => {
-      // Preset Mode's fields only render once at least one deployment preset
-      // exists on the cluster -- with none, the modal shows a "No deployment
-      // presets available" empty state instead (confirmed live via GraphQL:
-      // this cluster had zero deployment presets at test time, which the app
-      // correctly reflects as an intentional empty state, not a bug). Ensure
-      // one exists first, exactly like the Preset Mode revision-attach test
-      // below -- reusing a compatible pre-existing preset when the cluster
-      // has one, or provisioning a throwaway `e2e-dfx-*` preset otherwise. A
-      // model folder is not needed here since this test only inspects the
-      // modal's fields and never submits.
-      await skipUnlessClientFeature(
-        page,
-        'deployment-preset',
-        "Preset Mode requires the 'deployment-preset' capability (manager >= 26.4.x)",
-      );
-      const preset = await ensureDeploymentPreset(page);
-      if (preset.presetId) {
-        fixtures = { presetId: preset.presetId, presetName: preset.presetName };
-      }
+    test(
+      'Admin can view Preset Mode fields in the Add Revision modal',
+      { tag: ['@requires-manager-v26.4'] },
+      async ({ page }) => {
+        // Preset Mode's fields only render once at least one deployment preset
+        // exists on the cluster -- with none, the modal shows a "No deployment
+        // presets available" empty state instead (confirmed live via GraphQL:
+        // this cluster had zero deployment presets at test time, which the app
+        // correctly reflects as an intentional empty state, not a bug). Ensure
+        // one exists first, exactly like the Preset Mode revision-attach test
+        // below -- reusing a compatible pre-existing preset when the cluster
+        // has one, or provisioning a throwaway `e2e-dfx-*` preset otherwise. A
+        // model folder is not needed here since this test only inspects the
+        // modal's fields and never submits.
+        const preset = await ensureDeploymentPreset(page);
+        if (preset.presetId) {
+          fixtures = {
+            presetId: preset.presetId,
+            presetName: preset.presetName,
+          };
+        }
 
-      const deploymentName = `e2e-plan-preset-${Date.now()}`;
-      await navigateTo(page, 'deployments');
-      await createDeploymentShell(page, deploymentName);
-      createdDeploymentName = deploymentName;
+        const deploymentName = `e2e-plan-preset-${Date.now()}`;
+        await navigateTo(page, 'deployments');
+        await createDeploymentShell(page, deploymentName);
+        createdDeploymentName = deploymentName;
 
-      // 1. Click "Add Revision" (from either the banner or the tab bar).
-      await revisionTabBar(page)
-        .getByRole('button', { name: 'Add Revision' })
-        .click();
-      const dialog = page.getByRole('dialog', { name: /Add Revision/ });
-      await expect(dialog).toBeVisible({ timeout: 20000 });
+        // 1. Click "Add Revision" (from either the banner or the tab bar).
+        await revisionTabBar(page)
+          .getByRole('button', { name: 'Add Revision' })
+          .click();
+        const dialog = page.getByRole('dialog', { name: /Add Revision/ });
+        await expect(dialog).toBeVisible({ timeout: 20000 });
 
-      // 2. Confirm "Preset Mode" is selected by default in the modal's segmented
-      // control.
-      await expect(
-        dialog.getByRole('radio', { name: 'Preset Mode' }),
-      ).toBeChecked();
-      await expect(
-        dialog.getByRole('radio', { name: 'Advanced Mode' }),
-      ).not.toBeChecked();
+        // 2. Confirm "Preset Mode" is selected by default in the modal's segmented
+        // control.
+        await expect(
+          dialog.getByRole('radio', { name: 'Preset Mode' }),
+        ).toBeChecked();
+        await expect(
+          dialog.getByRole('radio', { name: 'Advanced Mode' }),
+        ).not.toBeChecked();
 
-      // 3. Inspect the Preset Mode fields.
-      await expect(dialog.getByText('Select Preset')).toBeVisible();
-      // The icon-only info button next to "Preset" now carries a purpose-based
-      // aria-label ("Deployment Preset Detail") instead of the old antd
-      // icon-name-derived "info-circle" -- it stays disabled until a preset
-      // is selected.
-      await expect(
-        dialog.getByRole('button', { name: 'Deployment Preset Detail' }),
-      ).toBeDisabled();
-      await expect(dialog.getByText('Select Folder')).toBeVisible();
-      await expect(
-        dialog.getByRole('checkbox', {
-          name: 'Apply immediately after adding',
-        }),
-      ).toBeChecked();
-      await expect(
-        dialog.getByRole('button', { name: 'Cancel' }),
-      ).toBeVisible();
-      await expect(
-        dialog.getByRole('button', { name: 'Add Revision' }),
-      ).toBeVisible();
+        // 3. Inspect the Preset Mode fields.
+        await expect(dialog.getByText('Select Preset')).toBeVisible();
+        // The icon-only info button next to "Preset" now carries a purpose-based
+        // aria-label ("Deployment Preset Detail") instead of the old antd
+        // icon-name-derived "info-circle" -- it stays disabled until a preset
+        // is selected.
+        await expect(
+          dialog.getByRole('button', { name: 'Deployment Preset Detail' }),
+        ).toBeDisabled();
+        await expect(dialog.getByText('Select Folder')).toBeVisible();
+        await expect(
+          dialog.getByRole('checkbox', {
+            name: 'Apply immediately after adding',
+          }),
+        ).toBeChecked();
+        await expect(
+          dialog.getByRole('button', { name: 'Cancel' }),
+        ).toBeVisible();
+        await expect(
+          dialog.getByRole('button', { name: 'Add Revision' }),
+        ).toBeVisible();
 
-      // 4. Click "Cancel" to close without submitting.
-      await dialog.getByRole('button', { name: 'Cancel' }).click();
-      await expect(dialog).toBeHidden({ timeout: 10000 });
+        // 4. Click "Cancel" to close without submitting.
+        await dialog.getByRole('button', { name: 'Cancel' }).click();
+        await expect(dialog).toBeHidden({ timeout: 10000 });
 
-      await deleteDeploymentAndVerify(page, deploymentName);
-      createdDeploymentName = null;
-    });
+        await deleteDeploymentAndVerify(page, deploymentName);
+        createdDeploymentName = null;
+      },
+    );
 
     test('Admin can view Advanced Mode fields in the Add Revision modal', async ({
       page,
@@ -636,7 +742,7 @@ test.describe(
     test.describe.serial('Revision attach flows', () => {
       test(
         'Admin can add a revision in Preset Mode and see it attached',
-        { tag: ['@critical'] },
+        { tag: ['@critical', '@requires-manager-v26.4'] },
         async ({ page }) => {
           // This test waits up to 180s for the deployment's Lifecycle to
           // leave "Pending" (real scheduling can take a while) but, per the
@@ -654,13 +760,7 @@ test.describe(
           // Add Revision modal: a compatible pre-existing preset is reused
           // as-is when the cluster has one, and created (then torn down)
           // otherwise -- no hand-seeded cluster fixture is assumed either
-          // way. Deployment presets need backend support, so gate on the same
-          // capability flag the UI checks.
-          await skipUnlessClientFeature(
-            page,
-            'deployment-preset',
-            "Adding a revision from a preset requires the 'deployment-preset' capability (manager >= 26.4.x)",
-          );
+          // way.
           const provisioned = await provisionDeploymentFixtures(page);
           fixtures = provisioned;
 
@@ -859,9 +959,11 @@ test.describe(
           // minimum footprint (the submit handler itself rejects a missing
           // image, so a cluster with no usable image fails loudly here
           // rather than silently).
+          // Managers with the command/shell path label it "Command"; older
+          // ones keep "Start Command" (ServiceConfigurationFormItems.tsx).
           const startCommandControl = getFormItemControlByLabel(
             page,
-            'Start Command',
+            /^(Start )?Command(?! \()/,
           );
           await expect(startCommandControl).toBeVisible({ timeout: 10000 });
           await startCommandControl
@@ -991,13 +1093,7 @@ test.describe(
       // 4. Click "Save".
       await dialog.getByRole('button', { name: 'Save' }).click();
       await expect(dialog).toBeHidden({ timeout: 20000 });
-      const desiredReplicasCell = page
-        .getByRole('row')
-        .filter({
-          has: page.getByRole('rowheader', { name: 'Desired Replicas' }),
-        })
-        .getByRole('cell')
-        .last();
+      const desiredReplicasCell = metadataValue(page, 'Desired Replicas');
       await expect(desiredReplicasCell).toHaveText('2', { timeout: 20000 });
 
       // 5. Click "Cancel" instead of "Save" on a repeat run to confirm no changes
@@ -1062,9 +1158,11 @@ test.describe(
       await expect(
         getFormItemControlByLabel(page, 'Metric Source'),
       ).toContainText('Kernel');
+      // Free-text input with the known names as its placeholder (the antd
+      // AutoComplete dropdown was dropped, see AutoScalingRuleEditorModal).
       await expect(
-        dialog.getByRole('combobox', { name: /Metric Name/ }),
-      ).toBeVisible();
+        dialog.getByRole('textbox', { name: /Metric Name/ }),
+      ).toHaveAttribute('placeholder', 'cpu_util, mem, net_rx, net_tx');
       // `exact: true` is required here: "Scale In" is a literal prefix
       // substring of "Scale In & Out", so non-exact name matching resolves
       // to both radio inputs (strict-mode violation), confirmed live.
@@ -1084,7 +1182,7 @@ test.describe(
         dialog.getByRole('spinbutton', { name: /Step Size/ }),
       ).toHaveValue('1');
       await expect(
-        dialog.getByRole('spinbutton', { name: /Cooldown Sec\./ }),
+        dialog.getByRole('spinbutton', { name: /Cooldown \(s\)/ }),
       ).toHaveValue('300');
       await expect(
         dialog.getByRole('spinbutton', { name: /Min Replicas/ }),
@@ -1124,15 +1222,16 @@ test.describe(
 
       // 2. Set "Metric Name" to a valid value appropriate to the selected
       // "Metric Source".
-      await dialog.getByRole('combobox', { name: /Metric Name/ }).click();
-      await page.getByRole('option', { name: 'cpu_util' }).click();
+      await dialog
+        .getByRole('textbox', { name: /Metric Name/ })
+        .fill('cpu_util');
 
       // 3. Leave "Condition" at "Scale Out" and set a "Max Threshold" value.
       await dialog
         .getByRole('spinbutton', { name: 'Max Threshold' })
         .fill('80');
 
-      // 4. Leave Step Size (1), Cooldown Sec. (300), Min Replicas (0), Max
+      // 4. Leave Step Size (1), Cooldown (s) (300), Min Replicas (0), Max
       // Replicas (5) at their defaults.
 
       // 5. Click "OK".

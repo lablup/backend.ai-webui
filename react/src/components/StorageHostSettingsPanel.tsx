@@ -4,13 +4,15 @@
  */
 import { StorageHostSettingsPanel_storageVolumeFrgmt$key } from '../__generated__/StorageHostSettingsPanel_storageVolumeFrgmt.graphql';
 import { QuotaScopeType, addQuotaScopeTypePrefix } from '../helper/index';
+import { useCurrentDomain } from '../hooks';
 import BAIRadioGroup from './BAIRadioGroup';
 import QuotaScopeTable from './QuotaScopeTable';
 import {
   BAISkeleton,
   BAIAdminProjectSelect,
   BAIFlex,
-  BAIUserSelect,
+  BAIScopedUserSelect,
+  BAISelect,
 } from 'backend.ai-ui';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,6 +26,8 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
   storageVolumeFrgmt,
 }) => {
   'use memo';
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
   const { t } = useTranslation();
   const storageVolume = useFragment(
     graphql`
@@ -80,14 +84,19 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
         ) : (
           // valuePropName="id" makes the picked value the user's id (used as
           // the quota scope entity id), not the email.
-          <BAIUserSelect
-            label={t('storageHost.ForUser')}
-            isLabelHidden
-            valuePropName="id"
-            value={userId}
-            onChange={(value) => setUserId(value as string | undefined)}
-            width={240}
-          />
+          <Suspense
+            fallback={<BAISelect disabled loading style={{ width: 240 }} />}
+          >
+            <BAIScopedUserSelect
+              scope={domainScope}
+              label={t('storageHost.ForUser')}
+              isLabelHidden
+              valuePropName="id"
+              value={userId}
+              onChange={(value) => setUserId(value as string | undefined)}
+              width={240}
+            />
+          </Suspense>
         )}
       </BAIFlex>
 

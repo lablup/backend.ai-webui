@@ -3,19 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
-import { useCurrentUserProjectRolesProjectsQuery } from '../__generated__/useCurrentUserProjectRolesProjectsQuery.graphql';
-import {
-  useCurrentUserProjectRolesQuery,
-  PermissionNestedFilter,
-  PermissionTarget,
-} from '../__generated__/useCurrentUserProjectRolesQuery.graphql';
+import { useCurrentUserProjectRolesQuery } from '../__generated__/useCurrentUserProjectRolesQuery.graphql';
 import { useCurrentProjectValue } from './useCurrentProject';
 import { useUrlProjectValidity } from './useUrlProjectValidity';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-
-// `myAtomicBulkScopePermissions` refuses more than this many targets
-// (backend MAX_SCOPE_PERMISSION_TARGETS).
-const MAX_SCOPE_PERMISSION_TARGETS = 100;
 
 export interface CurrentUserProjectRolesResult {
   /** `true` when the authenticated user is a super-admin (derived from baiClient). */
@@ -23,129 +14,53 @@ export interface CurrentUserProjectRolesResult {
   /** Domain names the user has domain-admin rights over (derived from baiClient for now). */
   domainAdminDomains: string[];
   /**
-   * Project UUIDs the user administers, out of the projects the user can
-   * access. Match directly against `useCurrentProject().id` via
-   * `Array.includes`.
+   * Project UUIDs where the user holds a project-scoped admin role. Grants
+   * inherited from the domain or global scope are not counted.
    */
   projectAdminIds: string[];
 }
 
 /**
- * Hook that reports which of the user's projects they administer.
- *
- * Managers >= 26.9.0 answer `myAtomicBulkScopePermissions` for every project
- * the user belongs to: the bits the caller actually holds on `scope_admin`
- * within that project, read through every scope that governs it. Older
- * managers answer `myRoles` (assignments) filtered on the retired
- * `PROJECT_ADMIN_PAGE` entity, with the project read off each role's `scopes`
- * connection. The request transformer strips whichever root field the
- * connected manager does not know, and `@catch(to: RESULT)` makes a manager
- * without either resolve to `{ ok: false }` so general pages continue to render.
- *
- * Super-admin / domain-admin detection is sourced from the backendaiclient
- * (the legacy signals the existing codebase already relies on), since those
- * roles are outside the per-project scope this hook is concerned with.
+ * Hook that reports which projects the user holds a project-admin role in:
+ * `myRolesV2` filtered to the user's project-scoped roles that carry a
+ * `scope_admin` permission. `@catch(to: RESULT)` keeps general pages
+ * rendering when the query fails.
  */
 export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
   const baiClient = useSuspendedBackendaiClient();
-  // Only the 26.9 root field below consumes the project list, so older
-  // managers read it from the store without a request of their own.
-  const supportsHeldPermissions = baiClient.supports('rbac-single-scope-role');
-
-  const projects = useLazyLoadQuery<useCurrentUserProjectRolesProjectsQuery>(
-    graphql`
-      query useCurrentUserProjectRolesProjectsQuery($email: String) {
-        user(email: $email) {
-          groups {
-            id
-          }
-        }
-      }
-    `,
-    { email: baiClient.email },
-    {
-      fetchPolicy: supportsHeldPermissions ? 'store-or-network' : 'store-only',
-    },
-  );
-
-  const targets: Array<PermissionTarget> = (projects.user?.groups ?? [])
-    .flatMap((group) => (group?.id ? [group.id] : []))
-    .slice(0, MAX_SCOPE_PERMISSION_TARGETS)
-    .map((scopeId) => ({
-      scopeType: 'project',
-      scopeId,
-      entityType: 'scope_admin',
-    }));
-
-  const PROJECT_ADMIN_PAGE = 'PROJECT_ADMIN_PAGE';
-  const legacyPermissionFilter: PermissionNestedFilter = {
-    // Cast confined to the one field the generated type can't model.
-    entityType: (baiClient.supports('rbac-filter-wrapper')
-      ? { equals: PROJECT_ADMIN_PAGE }
-      : PROJECT_ADMIN_PAGE) as PermissionNestedFilter['entityType'],
-  };
 
   const data = useLazyLoadQuery<useCurrentUserProjectRolesQuery>(
     graphql`
-      query useCurrentUserProjectRolesQuery(
-        $targets: [PermissionTarget!]!
-        $legacyPermissionFilter: PermissionNestedFilter
-      ) {
-        heldPermissions: myAtomicBulkScopePermissions(
-          input: { targets: $targets }
-        ) @since(version: "26.9.0") @catch(to: RESULT) {
-          items {
-            scopeId
-            permissions
-          }
-        }
-        legacyRoles: myRoles(
+      query useCurrentUserProjectRolesQuery {
+        projectAdminRoles: myRolesV2(
           first: 100
-          filter: { permission: $legacyPermissionFilter }
-        ) @deprecatedSince(version: "26.9.0") @catch(to: RESULT) {
+          filter: {
+            status: { equals: ACTIVE }
+            mappedScope: { scopeType: { iEquals: "project" } }
+            permissions: { some: { entityType: { iEquals: "scope_admin" } } }
+          }
+        ) @catch(to: RESULT) {
           edges {
             node {
               id
-              role {
-                id
-                scopes(first: 1) {
-                  edges {
-                    node {
-                      scopeId
-                      scopeType
-                    }
-                  }
-                }
-              }
+              scopeId
             }
           }
         }
       }
     `,
-    { targets, legacyPermissionFilter },
+    {},
     {
       // store-or-network keeps the result cached across pages for the session.
-      fetchPolicy: baiClient.supports('my-roles')
-        ? 'store-or-network'
-        : 'store-only',
+      fetchPolicy: 'store-or-network',
     },
   );
 
   const ids = new Set<string>();
-  if (data.heldPermissions?.ok === true) {
-    for (const item of data.heldPermissions.value?.items ?? []) {
-      if (item.permissions.includes('READ')) {
-        ids.add(item.scopeId);
-      }
-    }
-  }
-  if (data.legacyRoles?.ok === true) {
-    for (const assignmentEdge of data.legacyRoles.value?.edges ?? []) {
-      for (const scopeEdge of assignmentEdge?.node?.role?.scopes?.edges ?? []) {
-        const scope = scopeEdge?.node;
-        if (scope?.scopeType?.toUpperCase() === 'PROJECT' && scope.scopeId) {
-          ids.add(scope.scopeId);
-        }
+  if (data.projectAdminRoles?.ok === true) {
+    for (const roleEdge of data.projectAdminRoles.value?.edges ?? []) {
+      if (roleEdge?.node?.scopeId) {
+        ids.add(roleEdge.node.scopeId);
       }
     }
   }
@@ -187,16 +102,24 @@ export type EffectiveAdminRole =
  * what converges the atom to the URL — from ever mounting.
  */
 export const useEffectiveAdminRole = (): EffectiveAdminRole => {
-  const { isSuperAdmin, domainAdminDomains, projectAdminIds } =
-    useCurrentUserProjectRoles();
-
-  const { urlProjectName, resolvedId } = useUrlProjectValidity();
-  const currentProjectId = useCurrentProjectValue()?.id;
-  const targetProjectId = urlProjectName ? resolvedId : currentProjectId;
+  const { isSuperAdmin, domainAdminDomains } = useCurrentUserProjectRoles();
+  const isCurrentProjectAdmin = useIsCurrentProjectAdmin();
 
   if (isSuperAdmin) return 'superadmin';
   if (domainAdminDomains.length > 0) return 'domainAdmin';
-  if (targetProjectId && projectAdminIds.includes(targetProjectId))
-    return 'currentProjectAdmin';
+  if (isCurrentProjectAdmin) return 'currentProjectAdmin';
   return 'none';
+};
+
+/**
+ * Whether the user holds a project-scoped admin role in the target project
+ * (URL project, else the current-project atom), regardless of super/domain
+ * admin rights.
+ */
+export const useIsCurrentProjectAdmin = (): boolean => {
+  const { projectAdminIds } = useCurrentUserProjectRoles();
+  const { urlProjectName, resolvedId } = useUrlProjectValidity();
+  const currentProjectId = useCurrentProjectValue()?.id;
+  const targetProjectId = urlProjectName ? resolvedId : currentProjectId;
+  return !!targetProjectId && projectAdminIds.includes(targetProjectId);
 };

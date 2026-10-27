@@ -42,7 +42,7 @@ navTitle: 내 환경
 2. 세션 페이지로 이동하여 새 세션 생성을 시작합니다.
 3. 복사한 이미지 경로를 수동 이미지 입력 필드에 붙여넣습니다.
 
-![](../images/copy_image_name_manual.png)
+![=700px](../images/copy_image_name_manual.png)
 
 <a id="delete-customized-image"></a>
 
@@ -60,4 +60,4 @@ navTitle: 내 환경
 특정 열을 숨기거나 보이게 하려면, 테이블 우측 하단의 기어 아이콘을 클릭합니다.
 표시할 열을 선택할 수 있는 다이얼로그가 나타납니다.
 
-![](../images/table_setting.png)
+![=420px](../images/table_setting.png)

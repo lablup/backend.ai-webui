@@ -70,7 +70,6 @@ describe('mapUserCSVColumns', () => {
     expect(sortedCols(presentColumns)).toEqual(
       [
         'description',
-        'domain_name',
         'email',
         'full_name',
         'need_password_change',
@@ -84,15 +83,19 @@ describe('mapUserCSVColumns', () => {
     );
   });
 
-  it('recognises manual column aliases (user name, full name, domain, project_name)', () => {
+  it('recognises manual column aliases (user name, full name, project_name)', () => {
     const { presentColumns } = analyze('03-valid-column-aliases.csv');
     expect(presentColumns.has('username')).toBe(true);
     expect(presentColumns.has('full_name')).toBe(true);
-    expect(presentColumns.has('domain_name')).toBe(true);
     expect(presentColumns.has('resource_policy')).toBe(true);
     expect(presentColumns.has('need_password_change')).toBe(true);
     // project_name → project, status stays status
     expect(presentColumns.has('project')).toBe(true);
+  });
+
+  it('ignores a domain column: users are always created in the current domain', () => {
+    const { presentColumns } = analyze('01-valid-all-fields.csv');
+    expect([...presentColumns]).not.toContain('domain_name');
   });
 
   it('maps export field keys: status_info → status, project_name → project', () => {
@@ -174,7 +177,6 @@ describe('extractRawUserRows', () => {
       full_name: '',
       role: '',
       status: '',
-      domain_name: '',
       description: '',
       need_password_change: '',
       resource_policy: '',

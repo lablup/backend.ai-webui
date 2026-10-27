@@ -2,29 +2,35 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { AstryxAdminTheme, AstryxReverseTheme } from '../../astryx-theme';
+import {
+  AstryxAdminTheme,
+  AstryxReverseTheme,
+  resolveRoleTheme,
+} from '../../astryx-theme';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
+import { useMyAppConfig } from '../../hooks/useAppConfig';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
+import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import { useLogoutEventListeners } from '../../hooks/useLogout';
 import { useRouteAccessDecision } from '../../hooks/useRouteAccess';
 import { useCurrentMenuKey, useRouteScope } from '../../hooks/useRouteScope';
 import { useSiderCollapsedState } from '../../hooks/useShellPanels';
 import { useSetupWebUIPluginEffect } from '../../hooks/useWebUIPluginState';
-import { theme } from '../../theme-shim';
+import ActAsBanner from '../ActAsBanner';
 import AnnouncementBanner from '../AnnouncementBanner';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAIErrorBoundary from '../BAIErrorBoundary';
 import { SIDER_WIDTH } from '../BAISider';
 import DevApiEndpointMismatchAlert from '../DevApiEndpointMismatchAlert';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
-import ForceTOTPChecker from '../ForceTOTPChecker';
 import NetworkStatusBanner from '../NetworkStatusBanner';
 import NoResourceGroupAlert from '../NoResourceGroupAlert';
 import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
 import PluginLoader from '../PluginLoader';
 import ProjectAdminScopeAlert from '../ProjectAdminScopeAlert';
+import SessionMonitorWatcher from '../SessionMonitor/SessionMonitorWatcher';
 import ThemePreviewModeAlert from '../ThemePreviewModeAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
@@ -34,6 +40,7 @@ import WebUISider, { useSiderThemeReversed } from './WebUISider';
 import WebUISiderFooter from './WebUISiderFooter';
 import WebUISiderLogo from './WebUISiderLogo';
 import WebUISiderNavigation from './WebUISiderNavigation';
+import { Theme as AstryxTheme, useTheme } from '@lablup/ui-common/theme';
 import {
   BAI_Z_INDEX,
   BAIAppShell,
@@ -41,12 +48,14 @@ import {
   BAIOverlayScrollbar,
   BAIResourceSlotsProvider,
   BAISkeleton,
+  useLabelableEntityTypes,
 } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
 import React, {
   Suspense,
   useEffect,
+  useEffectEvent,
   useLayoutEffect,
   useRef,
   useState,
@@ -63,10 +72,9 @@ export const mainContentDivRefState = atom<React.RefObject<HTMLElement | null>>(
 /**
  * FR-3612: BUI's `BAIAppShell` (Astryx `AppShell` + mobile drawer) is the shell
  * frame. Two contracts must hold: the app's scroll container stays INSIDE the
- * main slot at `height: 100%` (pages and the sticky header depend on
- * `mainContentDivRefState`; AppShell's own scroller must never engage), and
- * `topNav` stays unused on purpose (the header lives in the content column).
- * Full rationale: PR #8935.
+ * main slot, below the header (pages depend on `mainContentDivRefState`;
+ * AppShell's own scroller must never engage), and `topNav` stays unused on
+ * purpose (the header lives in the content column). Full rationale: PR #8935.
  */
 function MainLayout() {
   'use memo';
@@ -76,7 +84,7 @@ function MainLayout() {
   // Lifted to Jotai so the search palette's "Toggle sidebar" action drives the
   // same state as the `[` shortcut.
   const [sideCollapsed, setSideCollapsed] = useSiderCollapsedState();
-  // The operator's `sider.theme` polarity override applies to the drawer's
+  // The operator's `theme.siderMode` polarity override applies to the drawer's
   // navigation surface too.
   const shouldReverse = useSiderThemeReversed();
 
@@ -105,7 +113,8 @@ function MainLayout() {
     },
   );
 
-  const { token } = theme.useToken();
+  const { token } = useTheme();
+  const isSystemAdminScope = useRouteScope() === 'admin';
   const contentScrollFlexRef = useRef<HTMLDivElement>(null);
   const setMainContentDivRefState = useSetAtom(mainContentDivRefState);
   useEffect(() => {
@@ -144,83 +153,68 @@ function MainLayout() {
     };
   }, [navigate]);
 
-  const headerHeight = Number(token.Layout?.headerHeight) || 60;
-
   return (
     <>
       <CSSTokenVariables />
       <Suspense fallback={null}>
         <DismissSplashOnMount />
-        <BAIAppShell
-          data-testid={pageTestId}
-          // `wash` paints `--color-background-body` behind nav and content.
-          // The `body`/splash backdrop is the same VALUE but declared as a
-          // literal (index.html) — the token is unusable before the brand
-          // theme registers; see the note in index.html's critical <style>.
-          variant="wash"
-          contentPadding={0}
-          pathname={location.pathname}
-          banner={
-            <ErrorBoundaryWithNullFallback>
-              <Suspense fallback={null}>
-                <AnnouncementBanner />
-              </Suspense>
-            </ErrorBoundaryWithNullFallback>
-          }
-          sideNav={
-            <WebUISider
-              collapsed={sideCollapsed}
-              onCollapse={(collapsed, type) => {
-                type === 'clickTrigger' && setSideCollapsed(collapsed);
-              }}
-            />
-          }
-          drawer={{
-            'data-testid': 'webui-mobile-nav',
-            header: <WebUISiderLogo />,
-            label: t('webui.menu.Menu'),
-            // The rail's own width, so a menu row is the same size on both
-            // surfaces.
-            width: SIDER_WIDTH,
-            wrap: (drawer) =>
-              shouldReverse ? (
-                <AstryxReverseTheme>{drawer}</AstryxReverseTheme>
-              ) : (
-                drawer
-              ),
-            children: (
+        <PrefetchLabelableEntityTypes />
+        <SystemAdminScopeTheme isSystemAdminScope={isSystemAdminScope}>
+          <BAIAppShell
+            data-testid={pageTestId}
+            // `wash` paints `--color-background-body` behind nav and content.
+            // The `body`/splash backdrop is the same VALUE but declared as a
+            // literal (index.html) — the token is unusable before the brand
+            // theme registers; see the note in index.html's critical <style>.
+            variant="wash"
+            contentPadding={0}
+            pathname={location.pathname}
+            banner={
               <>
-                <WebUISiderNavigation />
-                <WebUISiderFooter />
+                <ActAsBanner />
+                <ErrorBoundaryWithNullFallback>
+                  <Suspense fallback={null}>
+                    <AnnouncementBanner />
+                  </Suspense>
+                </ErrorBoundaryWithNullFallback>
               </>
-            ),
-          }}
-        >
-          <BAIContentWithDrawerArea drawerWidth={DRAWER_WIDTH}>
-            <BAIFlex
-              ref={contentScrollFlexRef}
-              direction="column"
-              align="stretch"
-              // Stable hook for e2e and page-level styles. The native scrollbar
-              // is hidden by `BAIOverlayScrollbar` below (it sets
-              // `data-bai-custom-scrollbar` on this element) and an overlay
-              // thumb is painted instead, so content width never shifts with
-              // scrollability.
-              className="main-layout-content-scroll"
-              style={{
-                paddingLeft: token.paddingContentHorizontalLG,
-                paddingRight: token.paddingContentHorizontalLG,
-                paddingBottom: token.paddingContentVertical,
-                height: '100%',
-                overflow: 'auto',
-              }}
-            >
+            }
+            sideNav={
+              <WebUISider
+                collapsed={sideCollapsed}
+                onCollapse={(collapsed, type) => {
+                  type === 'clickTrigger' && setSideCollapsed(collapsed);
+                }}
+              />
+            }
+            drawer={{
+              'data-testid': 'webui-mobile-nav',
+              header: <WebUISiderLogo />,
+              label: t('webui.menu.Menu'),
+              // The rail's own width, so a menu row is the same size on both
+              // surfaces.
+              width: SIDER_WIDTH,
+              wrap: (drawer) =>
+                shouldReverse ? (
+                  <AstryxReverseTheme>{drawer}</AstryxReverseTheme>
+                ) : (
+                  drawer
+                ),
+              children: (
+                <>
+                  <WebUISiderNavigation />
+                  <WebUISiderFooter />
+                </>
+              ),
+            }}
+          >
+            <BAIContentWithDrawerArea drawerWidth={DRAWER_WIDTH}>
               <BAIErrorBoundary>
+                {/* The header sits above the scroll column, not inside it, so a
+                  trackpad overscroll bounces the content but never the header. */}
                 <div
                   style={{
-                    margin: `0 -${token.paddingContentHorizontalLG}px 0 -${token.paddingContentHorizontalLG}px`,
-                    position: 'sticky',
-                    top: 0,
+                    position: 'relative',
                     zIndex: BAI_Z_INDEX.appHeader,
                   }}
                 >
@@ -228,112 +222,133 @@ function MainLayout() {
                     fallback={
                       <div
                         style={{
-                          height: headerHeight,
-                          backgroundColor: token.Layout?.headerBg,
+                          height: 'var(--webui-header-height)',
+                          backgroundColor: token(
+                            isSystemAdminScope
+                              ? '--header-bg-admin'
+                              : '--header-bg',
+                          ),
                         }}
                       />
                     }
                   >
                     <WebUIHeader />
                   </Suspense>
-                  {/* sticky Alert components with banner props */}
+                  {/* Alert components pinned under the header */}
                   <ErrorBoundaryWithNullFallback>
                     <Suspense fallback={null}>
                       <NetworkStatusBanner />
                     </Suspense>
                   </ErrorBoundaryWithNullFallback>
+                  <ErrorBoundaryWithNullFallback>
+                    <Suspense fallback={null}>
+                      <SessionMonitorWatcher />
+                    </Suspense>
+                  </ErrorBoundaryWithNullFallback>
                 </div>
-                {/* Non sticky Alert components */}
-                <Suspense fallback={<div style={{ minHeight: '0px' }} />}>
+                {/* Anchors the overlay scrollbar's track to the scroll column. */}
+                <div style={{ position: 'relative', flex: 1, minHeight: 0 }}>
                   <BAIFlex
+                    ref={contentScrollFlexRef}
                     direction="column"
-                    gap={'sm'}
                     align="stretch"
-                    className="main-layout-alert-wrapper"
+                    // Stable hook for e2e and page-level styles. The native
+                    // scrollbar is hidden by `BAIOverlayScrollbar` below.
+                    className="main-layout-content-scroll"
+                    style={{
+                      paddingLeft: token('--spacing-6'),
+                      paddingRight: token('--spacing-6'),
+                      paddingBottom: token('--spacing-3'),
+                      height: '100%',
+                      overflow: 'auto',
+                    }}
                   >
-                    {/* Dev-only: warn when the connected backend differs from
+                    {/* Non sticky Alert components */}
+                    <Suspense fallback={<div style={{ minHeight: '0px' }} />}>
+                      <BAIFlex
+                        direction="column"
+                        gap={'sm'}
+                        align="stretch"
+                        className="main-layout-alert-wrapper"
+                      >
+                        {/* Dev-only: warn when the connected backend differs from
                         VITE_DEFAULT_API_ENDPOINT. Guarded by import.meta.env.DEV
                         so it is dead-code eliminated from production builds. */}
-                    {import.meta.env.DEV && (
-                      <ErrorBoundaryWithNullFallback>
-                        <DevApiEndpointMismatchAlert />
-                      </ErrorBoundaryWithNullFallback>
-                    )}
-                    <ErrorBoundaryWithNullFallback>
-                      <ThemePreviewModeAlert />
-                    </ErrorBoundaryWithNullFallback>
-                    <ErrorBoundaryWithNullFallback>
-                      <ProjectAdminScopeAlert />
-                    </ErrorBoundaryWithNullFallback>
-                    <ErrorBoundaryWithNullFallback>
-                      <NoResourceGroupAlert />
-                    </ErrorBoundaryWithNullFallback>
-                    <ErrorBoundaryWithNullFallback>
-                      <PasswordChangeRequestAlert
-                        showIcon
-                        icon={undefined}
-                        banner={false}
-                        closable
-                      />
-                    </ErrorBoundaryWithNullFallback>
-                  </BAIFlex>
-                </Suspense>
-                <Suspense>
-                  <ErrorBoundaryWithNullFallback>
-                    {/* ForceTOTPChecker is a component for previous version of manager which don't support TOTP registration before login.  */}
-                    {/* https://github.com/lablup/backend.ai/pull/4354 */}
-                    <ForceTOTPChecker />
-                  </ErrorBoundaryWithNullFallback>
-                </Suspense>
-                {/* Owns the breadcrumb AND the Outlet, so it is on screen for
+                        {import.meta.env.DEV && (
+                          <ErrorBoundaryWithNullFallback>
+                            <DevApiEndpointMismatchAlert />
+                          </ErrorBoundaryWithNullFallback>
+                        )}
+                        <ErrorBoundaryWithNullFallback>
+                          <ThemePreviewModeAlert />
+                        </ErrorBoundaryWithNullFallback>
+                        <ErrorBoundaryWithNullFallback>
+                          <ProjectAdminScopeAlert />
+                        </ErrorBoundaryWithNullFallback>
+                        <ErrorBoundaryWithNullFallback>
+                          <NoResourceGroupAlert />
+                        </ErrorBoundaryWithNullFallback>
+                        <ErrorBoundaryWithNullFallback>
+                          <PasswordChangeRequestAlert
+                            showIcon
+                            icon={undefined}
+                            banner={false}
+                            closable
+                          />
+                        </ErrorBoundaryWithNullFallback>
+                      </BAIFlex>
+                    </Suspense>
+                    {/* Owns the breadcrumb AND the Outlet, so it is on screen for
                     the whole lazy-route fetch. With no fallback that window
                     rendered nothing — the shell with an empty body. */}
-                <Suspense fallback={<BAISkeleton rows={4} />}>
-                  <ErrorBoundaryWithNullFallback>
-                    <RouteAccessBreadcrumbGate>
-                      {isHiddenBreadcrumb ? (
-                        <div
-                          style={{
-                            marginBottom: token.marginMD,
-                          }}
-                        />
-                      ) : (
-                        <WebUIBreadcrumb
-                          style={{
-                            marginBottom: token.marginMD,
-                            marginLeft: token.paddingContentHorizontalLG * -1,
-                            marginRight: token.paddingContentHorizontalLG * -1,
-                          }}
-                        />
-                      )}
-                    </RouteAccessBreadcrumbGate>
-                  </ErrorBoundaryWithNullFallback>
-                  {/* Fills the viewport space left below header/alerts/
+                    <Suspense fallback={<BAISkeleton rows={4} />}>
+                      <ErrorBoundaryWithNullFallback>
+                        <RouteAccessBreadcrumbGate>
+                          {isHiddenBreadcrumb ? (
+                            <div
+                              style={{
+                                marginBottom: token('--spacing-5'),
+                              }}
+                            />
+                          ) : (
+                            <WebUIBreadcrumb
+                              style={{
+                                marginBottom: token('--spacing-5'),
+                                marginLeft: `calc(${token('--spacing-6')} * -1)`,
+                                marginRight: `calc(${token('--spacing-6')} * -1)`,
+                              }}
+                            />
+                          )}
+                        </RouteAccessBreadcrumbGate>
+                      </ErrorBoundaryWithNullFallback>
+                      {/* Fills the viewport space left below header/alerts/
                       breadcrumb so route-error screens (RouteErrorContent
                       `flex: 1`) center in the Outlet area, identically in
                       every scope. Taller pages still grow and scroll. */}
-                  <BAIFlex
-                    direction="column"
-                    align="stretch"
-                    style={{ flexGrow: 1 }}
-                  >
-                    <BAIErrorBoundary>
-                      <AutoAdminPrimaryColorProvider>
-                        <ResourceSlotsWrapper>
-                          <Outlet />
-                        </ResourceSlotsWrapper>
-                      </AutoAdminPrimaryColorProvider>
-                    </BAIErrorBoundary>
+                      <BAIFlex
+                        direction="column"
+                        align="stretch"
+                        style={{ flexGrow: 1 }}
+                      >
+                        <BAIErrorBoundary>
+                          <AutoAdminPrimaryColorProvider>
+                            <ResourceSlotsWrapper>
+                              <Outlet />
+                            </ResourceSlotsWrapper>
+                          </AutoAdminPrimaryColorProvider>
+                        </BAIErrorBoundary>
+                      </BAIFlex>
+                    </Suspense>
+                    <ErrorBoundaryWithNullFallback>
+                      <PluginLoader />
+                    </ErrorBoundaryWithNullFallback>
                   </BAIFlex>
-                </Suspense>
-                <ErrorBoundaryWithNullFallback>
-                  <PluginLoader />
-                </ErrorBoundaryWithNullFallback>
+                  <BAIOverlayScrollbar targetRef={contentScrollFlexRef} />
+                </div>
               </BAIErrorBoundary>
-            </BAIFlex>
-            <BAIOverlayScrollbar targetRef={contentScrollFlexRef} />
-          </BAIContentWithDrawerArea>
-        </BAIAppShell>
+            </BAIContentWithDrawerArea>
+          </BAIAppShell>
+        </SystemAdminScopeTheme>
       </Suspense>
     </>
   );
@@ -375,6 +390,34 @@ const RouteAccessBreadcrumbGate = ({
   }
 
   return children;
+};
+
+/**
+ * The whole shell (header, sider, overlays) takes the admin accent on the
+ * system admin pages. One `Theme` whose theme swaps, so switching scopes does
+ * not remount the shell; `mode` is re-passed for the reason in
+ * `AstryxAdminTheme`.
+ */
+const SystemAdminScopeTheme = ({
+  isSystemAdminScope,
+  children,
+}: {
+  isSystemAdminScope: boolean;
+  children: React.ReactNode;
+}) => {
+  'use memo';
+  const { rawThemeConfig, activeThemeFamily } = useCustomThemeConfig();
+  const { mode } = useTheme();
+  const theme = resolveRoleTheme(
+    rawThemeConfig?.theme,
+    isSystemAdminScope ? 'admin' : 'brand',
+    activeThemeFamily,
+  );
+  return (
+    <AstryxTheme theme={theme} mode={mode}>
+      {children}
+    </AstryxTheme>
+  );
 };
 
 const AutoAdminPrimaryColorProvider = ({
@@ -436,14 +479,12 @@ const usePageTestId = () => {
  * nonce plumbing goes away with the last antd-style import.
  */
 export const CSSTokenVariables = () => {
-  const { token } = theme.useToken();
-  const { colorPrimary, colorBgBase, colorBgContainer, colorBorder } = token;
-  // The token may be a number or a CSS length string; only a number gets px.
-  const rawHeaderHeight = token.Layout?.headerHeight ?? 60;
-  const headerHeight =
-    typeof rawHeaderHeight === 'number'
-      ? `${rawHeaderHeight}px`
-      : rawHeaderHeight;
+  const { token } = useTheme();
+  const colorPrimary = token('--color-accent');
+  const colorBgBase = token('--color-background-body');
+  const colorBgContainer = token('--color-background-surface');
+  const colorBorder = token('--color-border-emphasized');
+  const headerHeight = '60px';
 
   useLayoutEffect(() => {
     const root = document.documentElement;
@@ -469,11 +510,24 @@ export const CSSTokenVariables = () => {
  * boundary: below the `md` breakpoint the sider renders into AppShell's drawer
  * (its own `Suspense`), so nothing else in this boundary suspends and the
  * splash was torn down before login had even finished.
+ *
+ * Also suspends on the signed-in user's `userConfig.themeFamily` and copies
+ * it into the localStorage mirror BEFORE the splash goes, so the account's
+ * family is what the page reveals (FR-3834). The mirror survives logout; the
+ * next login overrides it here.
  */
 const DismissSplashOnMount = () => {
   'use memo';
   useSuspendedBackendaiClient();
+  const userConfigFamily = useMyAppConfig<string>('themeFamily');
+  const { setActiveThemeFamily } = useCustomThemeConfig();
+  const syncThemeFamilyMirror = useEffectEvent(() => {
+    setActiveThemeFamily(
+      typeof userConfigFamily === 'string' ? userConfigFamily : undefined,
+    );
+  });
   useEffect(() => {
+    syncThemeFamilyMirror();
     (globalThis as any).__dismissSplash?.();
     (globalThis as any).__mainLayoutReady = true;
     document.dispatchEvent(new CustomEvent('main-layout-ready'));
@@ -481,6 +535,14 @@ const DismissSplashOnMount = () => {
       (globalThis as any).__mainLayoutReady = false;
     };
   }, []);
+  return null;
+};
+
+// Asks `entityTypes` once after login; label UIs read the cached answer.
+const PrefetchLabelableEntityTypes = () => {
+  'use memo';
+  useSuspendedBackendaiClient();
+  useLabelableEntityTypes();
   return null;
 };
 

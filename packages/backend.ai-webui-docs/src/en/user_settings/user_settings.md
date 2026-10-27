@@ -14,7 +14,7 @@ language, desktop notifications, SSH keypair management, shell scripts, and
 experimental features. You can also review the client-side logs, the login
 sessions currently signed in to your account, and your login history.
 
-![](../images/preferences.png)
+![=175px](../images/preferences.png)
 
 The dialog is organized into four categories, listed down its left side:
 **General**, **Logs**, **Login Sessions**, and **Login History**. On a narrow
@@ -83,25 +83,6 @@ account. Click the setting's reset button to go back to **Default**.
 The **Theme** setting appears only when your administrator has enabled theme
 customization and more than one theme is available for your installation. The
 set of themes offered can therefore differ from the list above.
-:::
-
-### Primary color
-
-**Primary Color** overrides the main accent color of the selected theme. Two
-color pickers are provided — one for **Light mode** and one for **Dark mode** —
-so each display mode can use a different accent color.
-
-1. Click the color swatch of the mode you want to change
-2. Choose a color from the picker, or enter a hex value
-3. The new accent color is applied to the WebUI immediately
-
-Clear a picker to fall back to the color that the selected theme provides for
-that mode. Clicking the setting's reset button clears both modes and restores
-the theme's own colors.
-
-:::note
-Like the **Theme** setting, **Primary Color** appears only when your
-administrator has enabled theme customization.
 :::
 
 ### Enables desktop notifications
@@ -205,7 +186,7 @@ Click the **Issue New Keypair** button to create a new keypair. After the
 keypair is issued, the **Keypair Credential Information** dialog appears, showing
 the new credentials one time only.
 
-![](../images/keypair_credential_info.png)
+![=640px](../images/keypair_credential_info.png)
 
 The dialog reveals the following values, each with a copy button:
 
@@ -260,7 +241,7 @@ deleted. To prevent accidental deletion, you must type **Permanently Delete**
 into the confirmation field before the delete is allowed.
 :::
 
-![](../images/keypair_delete_confirm.png)
+![=548px](../images/keypair_delete_confirm.png)
 
 <a id="user-ssh-keypair-management"></a>
 
@@ -277,7 +258,7 @@ generated and stored as user information. Please note that the secret key
 cannot be checked again unless it is saved manually immediately after
 creation.
 
-![](../images/ssh_keypair_dialog.png)
+![=528px](../images/ssh_keypair_dialog.png)
 
 :::note
 Backend.AI uses SSH keypair based on OpenSSH. On Windows, you may need to convert
@@ -289,7 +270,7 @@ such as accessing a private repository. To add your own SSH keypair, click the
 `Enter Manually` button. You will then see two text areas labeled **Public Key**
 and **Private Key**.
 
-![](../images/add_ssh_keypair_manually_dialog.png)
+![=528px](../images/add_ssh_keypair_manually_dialog.png)
 
 Enter the keys and click the `Save` button. When the keypair is registered
 successfully, the message *"SSH Keypair has been successfully registered."* is
@@ -299,7 +280,7 @@ malformed or the public and private keys do not match -- the dialog stays open
 and shows the error message returned by the server, so you can correct the
 keys and save again.
 
-![](../images/ssh_keypair_dialog_after.png)
+![=528px](../images/ssh_keypair_dialog_after.png)
 
 ### Max concurrent file upload limit
 
@@ -347,6 +328,7 @@ Access new experimental features early -- these may change or be removed in
 future updates. Each feature is turned on with its **Enabled** checkbox.
 
 ![](../images/experimental_features.png)
+<!-- TODO: Recapture without the removed "Command palette" row (#10546) -->
 
 - **AI Agents**: Enable the AI Agents feature, which provides agent-based AI
   capabilities within the WebUI. When turned on, AI agent functionality becomes
@@ -357,13 +339,6 @@ future updates. Each feature is turned on with its **Enabled** checkbox.
   turning it off later hides them without deleting them, and turning it back
   on restores them exactly as they were. See
   [Custom Panels](#custom-panels) for how to add and manage them.
-- **Command palette**: Adds a **Search** button to the header and the `Ctrl+K`
-  (`⌘K` on macOS) shortcut, both of which open a palette for searching pages,
-  page tabs, and setting items. The palette also offers quick actions such as
-  switching between dark and light mode, changing the UI language, opening
-  notifications, toggling the sidebar, and opening the manual for the current
-  page. The button and the shortcut are available only while this feature is
-  enabled. See [Search](#search) for details.
 - **Import from Hugging Face**: Adds an **Import Hugging Face Model** tab to the
   **Start From URL** dialog on the Start page, so you can import a model from
   Hugging Face directly into a model folder. The tab appears only when model
@@ -399,7 +374,7 @@ If you want to hide or show certain columns, click the gear icon at the bottom
 right of the table. A dialog will appear where you can select the columns you
 want to see.
 
-![](../images/logs_table_setting.png)
+![=420px](../images/logs_table_setting.png)
 
 <a id="login-sessions-tab"></a>
 
@@ -419,6 +394,7 @@ The table includes the following columns:
   copy icon to copy it.
 - **Created At**: When the login session was created. Click the column header to
   sort by this column.
+- **Last Accessed**: When the login session was last used.
 
 ### Filtering login sessions
 
@@ -460,14 +436,12 @@ successful sign-ins, failed attempts, and login session events such as logout or
 expiry. This category is read-only; there are no actions on the rows.
 
 ![](../images/login_history_tab.png)
-<!-- TODO: Capture screenshot showing the Client IP column (FR-3661) -->
 
 The table includes the following columns:
 
 - **Result**: The outcome of the login attempt, shown as a color-coded tag. You
   can sort by this column.
-- **Domain**: The domain the login attempt was made against. You can sort by
-  this column.
+- **Domain**: The domain the login attempt was made against.
 - **Client IP**: The IP address the login attempt came from, shown exactly as
   the server reports it. Depending on the administrator's client IP masking
   policy the address may be partially masked, or `-` when it was not recorded.
@@ -504,7 +478,6 @@ Use the filter above the table to narrow down the list:
 
 - **Result**: Shows only the entries with the result you select from the list of
   values above.
-- **Domain**: Shows only the entries whose domain contains the text you enter.
 - **Login Time**: Shows only the entries recorded after (or before) the date and
   time you select.
 

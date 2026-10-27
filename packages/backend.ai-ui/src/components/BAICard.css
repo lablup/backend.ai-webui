@@ -131,3 +131,20 @@
  as broken") — and `BAICard`'s `VStack gap={4}` already IS 16px. Measured
  rail->content: 16px on every tabbed surface.
 */
+
+/* Only the bordered variant subtracts its border from the padding. */
+.bai-card[data-variant='muted'] {
+  --bai-card-inset: max(0px, var(--container-padding-inline-start));
+}
+
+/* `showDivider`: the header rule runs to the card's side borders. */
+.bai-card__divider {
+  margin-inline: calc(-1 * var(--bai-card-inset));
+  max-width: none;
+  width: auto;
+}
+
+/* `size="small"`: a 14px title, so the header row is the sm button's 24px. */
+.bai-card__title--compact {
+  font-size: var(--font-size-base);
+}

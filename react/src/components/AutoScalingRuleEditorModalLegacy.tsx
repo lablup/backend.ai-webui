@@ -19,7 +19,7 @@ import {
   AstryxFormSelector,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { InputGroup } from '@astryxdesign/core/InputGroup';
+import { InputGroup } from '@lablup/ui-common/InputGroup';
 import { BAIModal, BAIModalProps, useBAILogger } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef, useState } from 'react';
@@ -240,7 +240,6 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
   return (
     <BAIModal
       {...baiModalProps}
-      destroyOnHidden
       onOk={handleOk}
       onCancel={handleCancel}
       centered
@@ -524,9 +523,7 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
             },
           ]}
         >
-          <AstryxFormNumberInput
-            label={t('autoScalingRule.CoolDownSeconds')}
-          />
+          <AstryxFormNumberInput label={t('autoScalingRule.CoolDownSeconds')} />
         </Form.Item>
       </Form>
     </BAIModal>

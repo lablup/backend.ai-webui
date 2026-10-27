@@ -29,7 +29,7 @@ Always consult these before writing or editing documentation:
 - Step-by-step procedures use numbered lists
 - Form fields use bullet lists with bold field names: `- **Field Name**: Description`
 - Notes/warnings are indented blocks (3 spaces) with no prefix markers
-- Images: `![](images/filename.png)` placed after introductory text
+- Images: `![](images/filename.png)` placed after introductory text; 2× component captures (modal, dropdown, card…) narrower than 1640px add a half-width hint: `![=520px](images/filename.png)`
 - Cross-references: `[Display Text](#anchor-id)` — never use `<>` in link URLs
 - Inline code for UI elements, paths, config values: backticks
 

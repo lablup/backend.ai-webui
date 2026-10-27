@@ -45,7 +45,7 @@ prop surface (\`open\`, \`onOk\`/\`onCancel\`, \`okButtonProps\`, \`footer\`,
 - **Always centered**: the portal centres the dialog; \`centered\` is accepted and ignored
 - **Consistent styling**: Astryx \`DialogHeader\` / \`LayoutContent\` / \`LayoutFooter\` slots with dividers
 - **Window controls**: Minimize (compact bar), maximize (viewport with margin), fullscreen (full viewport)
-- **Unmounts when closed**: \`destroyOnHidden\` semantics are unconditional
+- **Keeps content while closed**: content mounts on the first open and stays mounted; wrap in \`BAIUnmountAfterClose\` to drop it on close
 
 ## Dropped in the Astryx conversion
 - **\`draggable\`**: antd's positioned wrapper is gone; the prop is accepted and ignored (zero app call sites used it)

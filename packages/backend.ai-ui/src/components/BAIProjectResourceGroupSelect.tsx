@@ -8,6 +8,11 @@ interface BAIProjectResourceGroupSelectProps extends BAISelectProps {
   projectName: string;
   autoSelectDefault?: boolean;
   filter?: (resourceGroupName: string) => boolean;
+  /**
+   * List the SFTP-designated resource groups too. They are reserved for
+   * SSH/SFTP system sessions, so every other caller leaves this off (FR-3996).
+   */
+  includeSFTPResourceGroups?: boolean;
 }
 
 const BAIProjectResourceGroupSelect: React.FC<
@@ -16,6 +21,7 @@ const BAIProjectResourceGroupSelect: React.FC<
   projectName,
   autoSelectDefault,
   filter,
+  includeSFTPResourceGroups,
   showSearch,
   loading,
   ...selectProps
@@ -43,7 +49,10 @@ const BAIProjectResourceGroupSelect: React.FC<
     [startChangeTransition, setControllableValueDoNotUseWithoutTransition],
   );
 
-  const { resourceGroups } = useProjectResourceGroups(projectName, { filter });
+  const { resourceGroups } = useProjectResourceGroups(projectName, {
+    filter,
+    includeSFTPResourceGroups,
+  });
 
   // If the loaded resource group list does not contain the current value, reset to undefined.
   // Guard on resourceGroups.length > 0 so we don't wipe a pre-filled value while the list

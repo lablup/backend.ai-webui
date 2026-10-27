@@ -93,6 +93,7 @@ interface StopSpec {
   id: string;
   testid: string;
   path?: string;
+  query?: string;
   /** The stop's element lives inside a dialog, so it resolves only in one. */
   dlg?: true;
   via?: string;
@@ -105,6 +106,7 @@ const anchorFor = (spec: StopSpec): AnchorV3 => ({
   v: 3,
   s: `[data-testid="${spec.testid}"]`,
   p: spec.path ?? '/',
+  ...(spec.query ? { q: spec.query } : {}),
   tag: 'button',
   txt: spec.testid,
   ...(spec.check === undefined
@@ -268,6 +270,26 @@ describe('the navigator', () => {
 
     expect(seen).toEqual(['/session/start']);
     expect(pillText()).toContain('2 / 3');
+  });
+
+  it('reloads for a stop on the same path, where the router would keep the page mounted', async () => {
+    const seen: string[] = [];
+    window.__BAI_REVIEW__ = { navigate: (to) => seen.push(to) };
+    const hash = [
+      await part({ id: A, testid: 'upload', check: 'Upload is renamed' }),
+      await part({
+        id: B,
+        testid: 'create',
+        query: 'tab=credentials',
+        check: 'The other tab lists credentials',
+      }),
+    ].join('&');
+    await bootOn(hash);
+
+    act('next')?.click();
+
+    expect(seen).toEqual([]);
+    expect(sessionStorage.getItem(WALKTHROUGH_FOCUS_KEY)).toBe(B);
   });
 
   it('takes every mark and attribute off on exit', async () => {
@@ -583,6 +605,15 @@ describe('what the reader gives back', () => {
     node<HTMLTextAreaElement>('[data-pact="comment"]')?.focus();
     press('KeyN');
     expect(pillText()).toContain('1 / 2');
+
+    // So is one typed into the composer the review chord opens.
+    const composer = node<HTMLTextAreaElement>('.compose textarea');
+    expect(composer).toBeTruthy();
+    composer?.focus();
+    press('KeyN');
+    press('KeyV');
+    expect(pillText()).toContain('1 / 2');
+    expect(pillText()).toContain('1 viewed');
   });
 });
 
@@ -599,12 +630,22 @@ describe('a stop behind a dialog', () => {
       }),
     ].join('&');
 
+    // The control the via sentence names.
+    mount('open-upload', 'Upload');
     await bootOn(hash);
     act('next')?.click();
 
     expect(marks()).toHaveLength(1);
     expect(pillText()).toContain('waiting');
     expect(node('.bai-popover .via')?.textContent).toContain('Click “Upload”');
+    // The button the via sentence names is pointed at, and the popover hangs
+    // from it rather than floating at the screen's middle.
+    expect(node('.wt-hint')).not.toBeNull();
+    expect(node('.wt-badge.hint')?.textContent).toBe('Click here');
+    // The neighbour's mark must not read as the waiting stop's element.
+    expect(marks()[0].className).toContain('muted');
+    expect(node<HTMLElement>('.wt-badge.num')?.style.display).toBe('none');
+    expect(node('.bai-popover .wait')?.textContent).toBe('Waiting');
 
     // The dialog opens. No URL changed, so only the DOM settle can catch it.
     document.body.insertAdjacentHTML(
@@ -615,6 +656,11 @@ describe('a stop behind a dialog', () => {
 
     expect(marks()).toHaveLength(2);
     expect(pillText()).not.toContain('waiting');
+    expect(marks().some((mark) => mark.className.includes('muted'))).toBe(
+      false,
+    );
+    expect(node('.bai-popover .wait')?.textContent).toBe('');
+    expect(node('.wt-hint')).toBeNull();
   });
 
   it('keeps its popover open while the reader follows the via sentence', async () => {
@@ -638,5 +684,91 @@ describe('a stop behind a dialog', () => {
       ?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
 
     expect(node('.bai-popover')?.className).toContain('shown');
+  });
+  it('stops pointing at the via control once the reader clicked it, even if the stop never appears', async () => {
+    const hash = [
+      await part({ id: A, testid: 'upload', check: 'Upload is renamed' }),
+      await part({
+        id: B,
+        testid: 'confirm',
+        check: 'The confirm button is primary',
+        dlg: true,
+        via: 'Upload',
+      }),
+    ].join('&');
+    mount('open-upload', 'Upload');
+    await bootOn(hash);
+    act('next')?.click();
+    expect(node('.wt-hint')).not.toBeNull();
+
+    // A plain button keeps no state, and nothing opens on this server.
+    document.querySelector<HTMLElement>('[data-testid="open-upload"]')?.click();
+    await ticks(30);
+
+    expect(pillText()).toContain('waiting');
+    expect(node('.wt-hint')).toBeNull();
+
+    // Coming back to the stop points at the control again.
+    act('prev')?.click();
+    act('next')?.click();
+    expect(node('.wt-hint')).not.toBeNull();
+  });
+
+  it('points at the via control again once the dialog it opened is closed', async () => {
+    const hash = [
+      await part({ id: A, testid: 'upload', check: 'Upload is renamed' }),
+      await part({
+        id: B,
+        testid: 'confirm',
+        check: 'The confirm button is primary',
+        dlg: true,
+        via: 'Upload',
+      }),
+    ].join('&');
+    mount('open-upload', 'Upload');
+    await bootOn(hash);
+    act('next')?.click();
+
+    document.querySelector<HTMLElement>('[data-testid="open-upload"]')?.click();
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<div role="dialog" id="dlg"><button data-testid="confirm">confirm</button></div>',
+    );
+    await ticks(30);
+    expect(pillText()).not.toContain('waiting');
+
+    document.getElementById('dlg')?.remove();
+    await ticks(30);
+    expect(pillText()).toContain('waiting');
+    expect(node('.wt-hint')).not.toBeNull();
+  });
+});
+
+describe('a stop under an open modal', () => {
+  it('draws no mark over the modal, and marks itself when the modal closes in place', async () => {
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<div data-uic-modal-open id="modal"><div role="dialog"><button data-testid="confirm">confirm</button></div></div>',
+    );
+    const hash = [
+      await part({ id: A, testid: 'confirm', check: 'Confirm is primary' }),
+      await part({ id: B, testid: 'create', check: 'Create is renamed' }),
+    ].join('&');
+
+    await bootOn(hash);
+
+    expect(ordinals()).toEqual(['1']);
+    act('next')?.click();
+    expect(pillText()).toContain('waiting');
+    expect(node('.bai-popover .via')?.textContent).toContain(
+      'Behind the open dialog',
+    );
+
+    // ui-common Modal closes in place, dropping the attribute; no childList record.
+    document.getElementById('modal')?.removeAttribute('data-uic-modal-open');
+    await ticks(30);
+
+    expect(ordinals()).toEqual(['1', '2']);
+    expect(pillText()).not.toContain('waiting');
   });
 });

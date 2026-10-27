@@ -11,7 +11,7 @@ import { useEventNotStable } from '../hooks/useEventNotStable';
 import BAIAlert from './BAIAlert';
 import BAIFlex from './BAIFlex';
 import BAIText from './BAIText';
-import { Button, type ButtonProps } from '@astryxdesign/core/Button';
+import { Button, type ButtonProps } from '@lablup/ui-common/Button';
 import { LogIn } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 

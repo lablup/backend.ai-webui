@@ -38,7 +38,6 @@ const MOCK_SERVER_VERSION = {
 };
 
 /** Not-logged-in envelope for the fast-path session probe. */
-const MOCK_LOGIN_CHECK_NOT_AUTHED = { authenticated: false };
 
 const TOTP_REQUIRED_RESPONSE = {
   authenticated: false,
@@ -128,11 +127,14 @@ async function installBoundaryProbeMocks(page: Page): Promise<void> {
       body: JSON.stringify(MOCK_SERVER_VERSION),
     });
   });
-  await page.route('**/server/login-check', async (route) => {
+  await page.route('**/func/admin/gql', async (route) => {
     await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify(MOCK_LOGIN_CHECK_NOT_AUTHED),
+      status: 401,
+      contentType: 'application/problem+json',
+      body: JSON.stringify({
+        type: 'https://api.backend.ai/probs/auth-failed',
+        title: 'Unauthorized access',
+      }),
     });
   });
 }
@@ -254,7 +256,9 @@ test.describe(
       // the lower half of the card changes". Input.OTP exposes an
       // aria-label on its root; individual slots are queryable via
       // `locator('input')`.
-      await expect(page.getByLabel(/authenticator code/i)).toBeVisible({
+      await expect(
+        page.getByRole('textbox', { name: 'Authenticator code' }),
+      ).toBeVisible({
         timeout: 15_000,
       });
       await expect(
@@ -292,12 +296,11 @@ test.describe(
 
       await page.goto(`${webuiEndpoint}/?sToken=${FIXTURE_STOKEN}`);
 
-      const otpGroup = page.getByLabel(/authenticator code/i);
-      await expect(otpGroup).toBeVisible({ timeout: 15_000 });
-      // Input.OTP distributes a multi-char string pasted into a single
-      // slot across the remaining slots; `fill` dispatches the same
-      // input event.
-      await otpGroup.locator('input').first().fill('123456');
+      const otpInput = page.getByRole('textbox', {
+        name: 'Authenticator code',
+      });
+      await expect(otpInput).toBeVisible({ timeout: 15_000 });
+      await otpInput.fill('123456');
       await page.getByRole('button', { name: /^submit$/i }).click();
 
       await expect
@@ -385,9 +388,11 @@ test.describe(
       await page.goto(`${webuiEndpoint}/?sToken=${FIXTURE_STOKEN}`);
 
       // Step 1: supply OTP.
-      const otpGroup = page.getByLabel(/authenticator code/i);
-      await expect(otpGroup).toBeVisible({ timeout: 15_000 });
-      await otpGroup.locator('input').first().fill('999111');
+      const otpInput = page.getByRole('textbox', {
+        name: 'Authenticator code',
+      });
+      await expect(otpInput).toBeVisible({ timeout: 15_000 });
+      await otpInput.fill('999111');
       await page.getByRole('button', { name: /^submit$/i }).click();
 
       // Step 2: confirm force-login.

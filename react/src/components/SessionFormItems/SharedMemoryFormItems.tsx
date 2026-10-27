@@ -4,14 +4,14 @@
  */
 import { Form } from '../../form-engine';
 import { compareNumberWithUnits, convertToBinaryUnit } from '../../helper';
-import { theme } from '../../theme-shim';
-import { MergedResourceAllocationFormValue } from './ResourceAllocationFormItems';
-import { Switch } from '@astryxdesign/core/Switch';
+import type { MergedResourceAllocationFormValue } from './ResourceAllocationFormItems';
+import { Switch } from '@lablup/ui-common/Switch';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIQuestionIconWithTooltip,
   BAIDynamicUnitInputNumber,
   BAIDynamicUnitInputNumberProps,
   BAIFlex,
+  BAIQuestionIconWithTooltip,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
@@ -35,13 +35,14 @@ const AutomaticShmemSwitch: React.FC<{
   return (
     <Switch
       size="sm"
-      label={checked ? autoLabel : manualLabel}
       value={checked ?? false}
       onChange={(next) => {
         onChange?.(next);
         onToggle?.(next);
       }}
-    />
+    >
+      {checked ? autoLabel : manualLabel}
+    </Switch>
   );
 };
 
@@ -62,7 +63,7 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
   onChangeAutomaticShmem,
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   return (
     <Form.Item<MergedResourceAllocationFormValue>
@@ -110,9 +111,9 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
                 style={{
                   flex: 1,
                   display: 'flex',
-                  height: token.fontSize,
+                  height: token('--font-size-base'),
                   overflow: 'hidden',
-                  backgroundColor: token.colorWarningBorderHover,
+                  backgroundColor: token('--color-warning-border-hover'),
                 }}
               >
                 <div
@@ -124,7 +125,7 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
                         (memUnitResult?.number || 1)) *
                       100
                     }%`,
-                    backgroundColor: token.colorSuccessBorderHover,
+                    backgroundColor: token('--color-success-border-hover'),
                   }}
                 />
               </div>
@@ -135,15 +136,15 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
               justify="between"
               wrap="wrap"
               style={{
-                minHeight: token.controlHeightSM,
+                minHeight: token('--size-element-sm'),
               }}
             >
               <BAIFlex gap={'xxs'}>
                 <div
                   style={{
-                    height: token.fontSize,
-                    width: token.fontSize,
-                    backgroundColor: token.colorSuccessBorderHover,
+                    height: token('--font-size-base'),
+                    width: token('--font-size-base'),
+                    backgroundColor: token('--color-success-border-hover'),
                   }}
                 ></div>
                 {t('session.launcher.ApplicationMemory', {
@@ -153,9 +154,9 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
               <BAIFlex gap={'xxs'}>
                 <div
                   style={{
-                    height: token.fontSize,
-                    width: token.fontSize,
-                    backgroundColor: token.colorWarningBorderHover,
+                    height: token('--font-size-base'),
+                    width: token('--font-size-base'),
+                    backgroundColor: token('--color-warning-border-hover'),
                   }}
                 ></div>
                 {getFieldValue('enabledAutomaticShmem') &&

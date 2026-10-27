@@ -4,9 +4,9 @@
  */
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import SanitizedHtml from './SanitizedHtml';
 import './documentProse.css';
 import { BAISkeleton, BAIModal, BAIModalProps } from 'backend.ai-ui';
-import DOMPurify from 'dompurify';
 import { Suspense, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -44,12 +44,7 @@ const RenderTOSHtml = () => {
   // reset and antd's base rules were scoped to `[class^="ant-"]`. Without it a
   // 200-item numbered legal document renders unnumbered, unindented and
   // unspaced, with invisible links. QA-FINDINGS Q-22; derivation in the CSS.
-  return (
-    <div
-      className="bai-document-prose"
-      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(data) }}
-    />
-  );
+  return <SanitizedHtml className="bai-document-prose" html={data} />;
 };
 
 const TermsOfServiceModal = ({
@@ -61,7 +56,6 @@ const TermsOfServiceModal = ({
     <BAIModal
       title={t('webui.menu.TermsOfService')}
       onCancel={onRequestClose}
-      destroyOnHidden
       footer={null}
       width={'80%'}
       {...props}

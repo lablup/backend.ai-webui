@@ -8,22 +8,34 @@ import { toLocalId } from 'backend.ai-ui';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 /**
- * Hook to get the MODEL_STORE type project info.
- * Returns the first active MODEL_STORE project's id and name.
- *
- * NOTE: Currently assumes a single MODEL_STORE project exists per domain
- * and returns the first one. If multi-model-store support is needed in the
- * future, this hook should accept a project selector or return all
- * MODEL_STORE projects for the caller to choose from.
+ * Returns the id and name of the caller's active MODEL_STORE project, or nulls
+ * when the domain has none. Assumes one model store per domain (ADR 0006 pair:
+ * 26.9.0a1+ reads the caller's memberships, older managers read the domain).
  */
 export const useModelStoreProject = () => {
-  useSuspendedBackendaiClient();
+  const baiClient = useSuspendedBackendaiClient();
   const domainName = useCurrentDomainValue();
+  const userId: string = baiClient.user_uuid;
 
-  const { domainV2 } = useLazyLoadQuery<useModelStoreProjectQuery>(
+  const data = useLazyLoadQuery<useModelStoreProjectQuery>(
     graphql`
-      query useModelStoreProjectQuery($domainName: String!) {
-        domainV2(domainName: $domainName) {
+      query useModelStoreProjectQuery($userId: UUID!, $domainName: String!) {
+        scopedProjectsV2(
+          scope: { user: [{ value: $userId }] }
+          filter: { type: { equals: MODEL_STORE }, isActive: true }
+        ) @since(version: "26.9.0a1") @catch(to: RESULT) {
+          edges {
+            node {
+              id
+              basicInfo {
+                name
+              }
+            }
+          }
+        }
+        domainV2(domainName: $domainName)
+          @deprecatedSince(version: "26.9.0a1")
+          @catch(to: RESULT) {
           projects(filter: { type: { equals: MODEL_STORE }, isActive: true }) {
             edges {
               node {
@@ -37,13 +49,20 @@ export const useModelStoreProject = () => {
         }
       }
     `,
-    { domainName },
+    { userId, domainName },
     {
       fetchPolicy: 'store-or-network',
     },
   );
 
-  const modelStoreProject = domainV2?.projects?.edges?.[0]?.node ?? null;
+  const modelStoreProject =
+    (data.scopedProjectsV2?.ok === true
+      ? data.scopedProjectsV2.value?.edges?.[0]?.node
+      : null) ??
+    (data.domainV2?.ok === true
+      ? data.domainV2.value?.projects?.edges?.[0]?.node
+      : null) ??
+    null;
 
   return {
     id: modelStoreProject ? toLocalId(modelStoreProject.id) : null,

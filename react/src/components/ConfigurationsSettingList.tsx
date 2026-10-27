@@ -7,8 +7,8 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import OverlayNetworkSettingModal from './OverlayNetworkSettingModal';
 import SchedulerSettingModal from './SchedulerSettingModal';
 import SettingList, { SettingGroup } from './SettingList';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
 import { useToggle } from 'backend.ai-ui';
 import { Settings } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -202,7 +202,11 @@ const ConfigurationsSettingList = () => {
       'data-testid': 'settings-plugins',
       title: t('settings.Plugins'),
       description: (
-        <Banner title={t('settings.NoteAboutFixedSetup')} status="info" />
+        <Banner
+          role="status"
+          title={t('settings.NoteAboutFixedSetup')}
+          status="info"
+        />
       ),
       settingItems: [
         {
@@ -241,7 +245,11 @@ const ConfigurationsSettingList = () => {
       'data-testid': 'settings-enterprise',
       title: t('settings.EnterpriseFeatures'),
       description: (
-        <Banner title={t('settings.NoteAboutFixedSetup')} status="info" />
+        <Banner
+          role="status"
+          title={t('settings.NoteAboutFixedSetup')}
+          status="info"
+        />
       ),
       settingItems: [
         {

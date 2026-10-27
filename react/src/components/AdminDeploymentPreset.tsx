@@ -15,7 +15,6 @@ import AdminDeploymentPresetTable, {
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import { theme } from '../theme-shim';
 import {
   BAIButton,
   BAIDeleteConfirmModal,
@@ -24,7 +23,6 @@ import {
   BAIGraphQLPropertyFilter,
   BAIRuntimeVariantSelect,
   type BAITableSettings,
-  toLocalId,
   useBAILogger,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
@@ -56,7 +54,6 @@ export const AdminDeploymentPresetQuery = graphql`
       count
       edges {
         node {
-          id
           name
           ...AdminDeploymentPresetTableFragment
         }
@@ -84,7 +81,6 @@ const AdminDeploymentPreset = ({
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
-  const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const webuiNavigate = useWebUINavigate();
 
@@ -109,8 +105,8 @@ const AdminDeploymentPreset = ({
   const [commitDeletePreset] = useMutation<AdminDeploymentPresetDeleteMutation>(
     graphql`
       mutation AdminDeploymentPresetDeleteMutation($id: UUID!) {
-        adminDeleteDeploymentRevisionPreset(id: $id) {
-          id
+        purgeDeploymentRevisionPreset(id: $id) {
+          entityId
         }
       }
     `,
@@ -124,7 +120,7 @@ const AdminDeploymentPreset = ({
     webuiNavigate(
       buildPath(
         'admin',
-        `deployments/deployment-presets/${toLocalId(preset.id)}/edit`,
+        `deployments/deployment-presets/${preset.entityId}/edit`,
       ),
     );
   };
@@ -133,13 +129,15 @@ const AdminDeploymentPreset = ({
     webuiNavigate(buildPath('admin', 'deployments/deployment-presets/new'));
   };
 
-  const isSupported = baiClient.supports('deployment-preset');
+  // AND/OR/NOT on DeploymentRevisionPresetFilter arrived in 26.7.0.
+  const supportsSubFilter = baiClient.isManagerVersionCompatibleWith('26.7.0');
 
   return (
     <BAIFlex direction="column" align="stretch" gap={'sm'}>
       <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
         <BAIFlex gap={'sm'} align="start" wrap="wrap" style={{ flexShrink: 1 }}>
           <BAIGraphQLPropertyFilter<DeploymentRevisionPresetFilter>
+            maxConditions={supportsSubFilter ? undefined : 1}
             filterProperties={[
               {
                 key: 'name',
@@ -149,8 +147,8 @@ const AdminDeploymentPreset = ({
               {
                 key: 'runtimeVariantId',
                 propertyLabel: t('adminDeploymentPreset.Runtime'),
-                type: 'uuid',
-                fixedOperator: 'equals',
+                type: 'uuid' as const,
+                fixedOperator: 'equals' as const,
                 renderInput: ({ onAddCondition, value, isDisabled }) => (
                   <BAIRuntimeVariantSelect
                     label={t('adminDeploymentPreset.Runtime')}
@@ -193,64 +191,57 @@ const AdminDeploymentPreset = ({
           </BAIButton>
         </BAIFlex>
       </BAIFlex>
-      {isSupported ? (
-        <AdminDeploymentPresetTable
-          presetsFrgmt={filterOutNullAndUndefined(
-            _.map(deploymentRevisionPresets?.edges, 'node'),
-          )}
-          loading={isRefetching}
-          order={order}
-          onEdit={handleEditPreset}
-          onDelete={handleDeletePreset}
-          tableSettings={tableSettings}
-          pagination={{
-            pageSize,
-            current,
-            total: deploymentRevisionPresets?.count ?? 0,
-            onChange: (nextCurrent, nextPageSize) => {
-              onReload(
-                {
-                  ...queryRef.variables,
-                  limit: nextPageSize,
-                  offset:
-                    nextCurrent > 1 ? (nextCurrent - 1) * nextPageSize : 0,
-                },
-                { fetchPolicy: 'network-only' },
-              );
-            },
-          }}
-          onChangeOrder={(order) => {
+      <AdminDeploymentPresetTable
+        presetsFrgmt={filterOutNullAndUndefined(
+          _.map(deploymentRevisionPresets?.edges, 'node'),
+        )}
+        loading={isRefetching}
+        order={order}
+        onEdit={handleEditPreset}
+        onDelete={handleDeletePreset}
+        tableSettings={tableSettings}
+        pagination={{
+          pageSize,
+          current,
+          total: deploymentRevisionPresets?.count ?? 0,
+          onChange: (nextCurrent, nextPageSize) => {
             onReload(
               {
                 ...queryRef.variables,
-                orderBy: convertToOrderBy<DeploymentRevisionPresetOrderBy>(
-                  order ?? undefined,
-                ),
-                offset: 0,
+                limit: nextPageSize,
+                offset: nextCurrent > 1 ? (nextCurrent - 1) * nextPageSize : 0,
               },
               { fetchPolicy: 'network-only' },
             );
-          }}
-        />
-      ) : (
-        <BAIFlex justify="center" style={{ padding: token.paddingXL }}>
-          {t('adminDeploymentPreset.NotSupported')}
-        </BAIFlex>
-      )}
+          },
+        }}
+        onChangeOrder={(order) => {
+          onReload(
+            {
+              ...queryRef.variables,
+              orderBy: convertToOrderBy<DeploymentRevisionPresetOrderBy>(
+                order ?? undefined,
+              ),
+              offset: 0,
+            },
+            { fetchPolicy: 'network-only' },
+          );
+        }}
+      />
       <BAIDeleteConfirmModal
         open={!!deletingPreset}
         target={t('deployment.ResourcePreset')}
         requireConfirmInput
         items={
           deletingPreset
-            ? [{ key: deletingPreset.id, label: deletingPreset.name }]
+            ? [{ key: deletingPreset.entityId, label: deletingPreset.name }]
             : []
         }
         onOk={async () => {
           if (deletingPreset) {
             await new Promise<void>((resolve, reject) => {
               commitDeletePreset({
-                variables: { id: toLocalId(deletingPreset.id) },
+                variables: { id: deletingPreset.entityId },
                 onCompleted: (_data, errors) => {
                   if (errors && errors.length > 0) {
                     logger.error(errors[0]);

@@ -4,24 +4,28 @@
  */
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useIsProjectAgnosticPage } from '../../hooks/useIsProjectAgnosticPage';
+import { useRouteScope } from '../../hooks/useRouteScope';
+import { sessionMonitorScopeAtom } from '../../hooks/useSessionMonitor';
 import { useThemeMode } from '../../hooks/useThemeMode';
-import { theme, useBAIBreakpoint } from '../../theme-shim';
 import BAINotificationButton from '../BAINotificationButton';
 import GlobalSearchPaletteButton from '../GlobalSearchPalette/GlobalSearchPaletteButton';
 import LoginSessionExtendButton from '../LoginSessionExtendButton';
+import SessionMonitorButton from '../SessionMonitor/SessionMonitorButton';
 import UserDropdownMenu from '../UserDropdownMenu';
 import WEBUIHelpButton from '../WEBUIHelpButton';
 import WebUIThemeToggleButton from '../WebUIThemeToggleButton';
 import './WebUIHeader.css';
 import WebUIHeaderProjectSelect from './WebUIHeaderProjectSelect';
-import { useAppShellMobile } from '@astryxdesign/core/AppShell';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { MediaTheme } from '@astryxdesign/core/theme';
+import { useAppShellMobile } from '@lablup/ui-common/AppShell';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Text } from '@lablup/ui-common/Text';
+import { MediaTheme, useTheme } from '@lablup/ui-common/theme';
 import {
   ANTD_REVERSED_BAND_OVERLAYS,
   BAIFlex,
   BAIFlexProps,
 } from 'backend.ai-ui';
+import { useAtomValue } from 'jotai';
 import { MenuIcon } from 'lucide-react';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -30,7 +34,7 @@ export interface WebUIHeaderProps extends BAIFlexProps {}
 
 const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
   'use memo';
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   // FR-3612: hamburger visibility and action come from AppShell's mobile
   // context, so the header and the shell share one breakpoint verdict (no
   // off-by-one band around 768px between two media queries).
@@ -43,8 +47,10 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
     ANTD_REVERSED_BAND_OVERLAYS[isDarkMode ? 'dark' : 'light'];
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  // RESPONSIVE-POLICY R3: `Grid.useBreakpoint()` → theme-shim hook.
-  const gridBreakpoint = useBAIBreakpoint();
+  // Supplementary information, so it gives its width to the project on mobile.
+  const sessionMonitorScope = useAtomValue(sessionMonitorScopeAtom);
+  const hasSessionMonitor = !isMobile && sessionMonitorScope !== null;
+  const hasLoginSessionExtend = !!baiClient._config.enableExtendLoginSession;
   // FR-3414 (ADR-0001): the project-agnostic pages operate above project
   // scope, so the header's current-project selector (and the selector-bound
   // admin-exit confirm flow inside it) is not mounted there at all. Nothing
@@ -53,6 +59,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
   // header layout keeps `justify="between"`, so the left slot simply
   // collapses (no placeholder needed); the mobile menu button stays.
   const isProjectAgnosticPage = useIsProjectAgnosticPage();
+  const isSystemAdminScope = useRouteScope() === 'admin';
 
   return (
     <BAIFlex
@@ -61,10 +68,15 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
       justify="between"
       direction="row"
       style={{
-        height: token.Layout?.headerHeight || 60,
-        backgroundColor: token.Layout?.headerBg,
-        paddingRight: token.marginLG,
-        paddingLeft: token.marginLG,
+        height: 'var(--webui-header-height)',
+        backgroundColor: token(
+          isSystemAdminScope ? '--header-bg-admin' : '--header-bg',
+        ),
+        paddingRight: token('--spacing-6'),
+        paddingLeft: token('--spacing-6'),
+        // Groups are told apart by spacing, not rules, so an absent group
+        // leaves no trace.
+        gap: token(isMobile ? '--spacing-2' : '--spacing-6'),
         // The inherited colour for band content that declares none of its own
         // (bare `currentColor` glyphs). Inverts with the app mode, like the
         // `MediaTheme`s below.
@@ -77,7 +89,20 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
       }}
       className="bai-webui-header"
     >
-      <BAIFlex data-testid="label-selector-project" direction="row" gap={'sm'}>
+      {/* Width priority when the band runs short: the session monitor chip
+          gives way first, then the project group; the controls never do. */}
+      <BAIFlex
+        data-testid="label-selector-project"
+        direction="row"
+        gap={'sm'}
+        style={{
+          flex: '1 1 auto',
+          minWidth: 0,
+          // Never paint over the controls; the margin keeps the focus ring.
+          overflow: 'clip',
+          overflowClipMargin: token('--spacing-1'),
+        }}
+      >
         {/* `MediaTheme` declares the SURFACE LUMINANCE its content sits on —
             not a theme flip — so it maps `--color-text-primary` /
             `--color-icon-primary` onto `--color-on-{dark,light}`. It renders
@@ -93,9 +118,14 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
               }}
               className="non-draggable"
               style={{
-                marginLeft: token.marginSM * -1,
+                marginLeft: `calc(${token('--spacing-3')} * -1)`,
               }}
             />
+          )}
+          {isSystemAdminScope && (
+            <Text type="large" weight="semibold">
+              {t('webui.menu.AdminSettings')}
+            </Text>
           )}
         </MediaTheme>
         {!isProjectAgnosticPage && (
@@ -104,24 +134,31 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
           </Suspense>
         )}
       </BAIFlex>
+      {hasSessionMonitor && (
+        <BAIFlex
+          className="non-draggable bai-webui-header__session-monitor"
+          style={{ minWidth: 0, flex: '0 1000 auto' }}
+        >
+          <SessionMonitorButton data-testid="button-session-monitor" />
+        </BAIFlex>
+      )}
+      {hasLoginSessionExtend && (
+        <BAIFlex className="non-draggable" style={{ flexShrink: 0 }}>
+          <Suspense>
+            <LoginSessionExtendButton
+              data-testid="button-extend-login-session"
+              isCompact={isMobile}
+            />
+          </Suspense>
+        </BAIFlex>
+      )}
       <BAIFlex
         direction="row"
         className="non-draggable"
         gap="xxs"
         align="center"
+        style={{ flexShrink: 0 }}
       >
-        {baiClient.supports('extend-login-session') &&
-          baiClient._config.enableExtendLoginSession && (
-            <Suspense>
-              <LoginSessionExtendButton data-testid="button-extend-login-session" />
-              {/* PILOT-DECISION: the antd `Divider orientation="vertical"`
-                  here was painted `borderColor: 'transparent'` — i.e. it was
-                  a SPACER, not a rule. Astryx `Divider` has no colour prop
-                  (closed enums, P5), so the spacer is expressed as spacing
-                  instead of a hidden rule. */}
-              {gridBreakpoint.md && <span style={{ width: token.marginXS }} />}
-            </Suspense>
-          )}
         {/* Same self-scoping reason as `BAINotificationButton` below: both own
             floating surfaces, so neither may sit inside a `MediaTheme`. */}
         <GlobalSearchPaletteButton data-testid="button-global-search" />
@@ -133,11 +170,14 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
             sit ON the accent band, so they take the on-dark media context and
             their glyphs come out white instead of the dark theme's grey.
             Both are plain `IconButton`s — they open no floating surface, so a
-            shared wrapper has nothing to leak into. */}
-        <MediaTheme mode={bandMediaMode}>
-          <WebUIThemeToggleButton data-testid="button-theme" />
-          <WEBUIHelpButton data-testid="button-help" />
-        </MediaTheme>
+            shared wrapper has nothing to leak into. On mobile both move into
+            the user menu so the band does not overflow. */}
+        {!isMobile && (
+          <MediaTheme mode={bandMediaMode}>
+            <WebUIThemeToggleButton data-testid="button-theme" />
+            <WEBUIHelpButton data-testid="button-help" />
+          </MediaTheme>
+        )}
         {/* `UserDropdownMenu` declares its OWN on-dark context, on just the
             trigger button.
 
@@ -150,11 +190,12 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
             component's own business, not the header's — see
             `UserDropdownMenu.tsx`. */}
         <UserDropdownMenu
+          includesHeaderActions={isMobile}
           style={{
-            marginLeft: token.marginXXS,
-            marginRight: token.marginSM * -1,
-            paddingLeft: token.paddingSM,
-            paddingRight: token.paddingSM,
+            marginLeft: token('--spacing-1'),
+            marginRight: `calc(${token('--spacing-3')} * -1)`,
+            paddingLeft: token('--spacing-3'),
+            paddingRight: token('--spacing-3'),
           }}
         />
       </BAIFlex>

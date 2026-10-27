@@ -1,0 +1,56 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ In-card chat history panel (FR-4038). `position: absolute`, never `fixed`:
+ the panel is contained by the chat page card in ChatPage.tsx, which carries
+ `position: relative` and clips it (`overflow: hidden` + Astryx Card's own
+ `overflow: clip` and radius).
+*/
+.chat-history-panel {
+  --chat-history-panel-width: 300px;
+
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  z-index: 1;
+  width: var(--chat-history-panel-width);
+  max-width: 100%;
+  background-color: var(--color-background-surface);
+  border-inline-start: var(--border-width) solid var(--color-border);
+  box-shadow: var(--shadow-med);
+  animation: chat-history-panel-in var(--duration-medium) var(--ease-standard);
+}
+
+.chat-history-panel__body {
+  flex: 1;
+  min-height: 0;
+}
+
+@keyframes chat-history-panel-in {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+:is([dir='rtl'] *).chat-history-panel {
+  animation-name: chat-history-panel-in-rtl;
+}
+
+@keyframes chat-history-panel-in-rtl {
+  from {
+    transform: translateX(-100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-history-panel {
+    animation: none;
+  }
+}
+
+/* `showHeader={false}` hides the row Astryx carries column widths on, so the
+   table shrinks to its content and pulls the row actions off the edge. */
+.chat-history-panel__body table {
+  width: 100%;
+}

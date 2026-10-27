@@ -4,14 +4,13 @@
  */
 import type { AdminDeploymentPresetSettingPageContent_preset$key } from '../__generated__/AdminDeploymentPresetSettingPageContent_preset.graphql';
 import EnvVarFormList from '../components/EnvVarFormList';
-import { Form } from '../form-engine';
-import type { FormInstance } from '../form-engine';
+import { Form, type FormInstance } from '../form-engine';
 import {
   DEFAULT_MODEL_SERVICE_SHELL,
   deriveCommandModeState,
   resolvesReadsVfolderConfigFiles,
 } from '../helper/modelServiceCommand';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useCurrentDomain } from '../hooks';
 import {
   buildRuntimeVariantPresetValues,
   collectTouchedRuntimePresetParams,
@@ -19,7 +18,6 @@ import {
   type RuntimeVariantPresetValueEntry,
 } from '../hooks/useRuntimeParameterSchema';
 import { useCommonEnvVarConfigs } from '../hooks/useVariantConfigs';
-import { theme, useBAIBreakpoint } from '../theme-shim';
 import {
   STEP_KEYS,
   type AdminDeploymentPresetFormValue,
@@ -51,24 +49,25 @@ import {
   AstryxFormTextInput,
 } from './astryxFormControls';
 import './collapsible-section.css';
-import { Button } from '@astryxdesign/core/Button';
-import { Selector } from '@astryxdesign/core/Selector';
-import { Step, Stepper } from '@astryxdesign/lab';
+import { Button } from '@lablup/ui-common/Button';
+import { Selector } from '@lablup/ui-common/Selector';
+import { Step, Stepper } from '@lablup/ui-common/Stepper';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
-  BAIAdminImageSelect,
+  BAIScopedImageSelect,
   BAIButton,
   BAICard,
   BAIFlex,
-  toLocalId,
+  BAISkeleton,
+  useBAIBreakpoint,
   useDebounceFn,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
-  ChevronsRight,
   ChevronLeft,
-  CircleMinus,
   ChevronRight,
+  ChevronsRight,
+  CircleMinus,
   PlusIcon,
 } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
@@ -105,7 +104,7 @@ export interface AdminDeploymentPresetSettingPageContentProps {
   presetFrgmt?: AdminDeploymentPresetSettingPageContent_preset$key | null;
   /** Runtime variants fetched by the parent page layout. */
   runtimeVariants?: ReadonlyArray<{
-    id: string;
+    entityId: string;
     name: string;
     // `readsVfolderConfigFiles` (26.8.0+) is stripped on older managers →
     // undefined; call sites fall back to the legacy `name === 'custom'`
@@ -130,7 +129,7 @@ export interface AdminDeploymentPresetSettingPageContentProps {
 }
 
 // ---------------------------------------------------------------------------
-// ImageSelectField — thin Suspense wrapper around BAIAdminImageSelect
+// ImageSelectField — thin Suspense wrapper around BAIScopedImageSelect
 // ---------------------------------------------------------------------------
 
 const ImageSelectField: React.FC<{
@@ -141,20 +140,21 @@ const ImageSelectField: React.FC<{
 }> = ({ value, onChange }) => {
   'use memo';
   const { t } = useTranslation();
+  const { id: currentDomainId } = useCurrentDomain();
   return (
     <Suspense
       fallback={
         <Selector
-          label={t('general.Loading')}
-          isLabelHidden
-          isDisabled
+          aria-label={t('general.Loading')}
+          disabled
           options={[]}
           placeholder={t('general.Loading')}
           width="100%"
         />
       }
     >
-      <BAIAdminImageSelect
+      <BAIScopedImageSelect
+        scope={{ domain: [{ value: currentDomainId }], public: true }}
         label={t('adminDeploymentPreset.Image')}
         isLabelHidden
         value={value}
@@ -244,15 +244,13 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const screens = useBAIBreakpoint();
   const baiClient = useSuspendedBackendaiClient();
-  // BA-7210 / FR-3481: managers this version+ resolve an omitted model
-  // name/modelPath from the runtime variant baseline / model mount
-  // destination at revision resolution, so the form can stop requiring them.
-  const supportsNullableModelDefinition = baiClient.supports(
-    'preset-model-config-type',
-  );
+  // BA-7210 / FR-3481: newer managers resolve an omitted model name/modelPath,
+  // so the form can stop requiring them.
+  const supportsNullableModelDefinition =
+    baiClient.isManagerVersionCompatibleWith('26.9.0');
   const commonEnvVars = useCommonEnvVarConfigs();
 
   const preset = useFragment(
@@ -294,7 +292,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           revisionHistoryLimit
           deploymentStrategy
         }
-        presetValues @since(version: "26.4.4rc9") {
+        presetValues {
           presetId
           value
         }
@@ -312,7 +310,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               shell
               port
               healthCheck {
-                enable @since(version: "26.4.4rc7")
+                enable
                 interval
                 path
                 maxRetries
@@ -367,7 +365,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   const isFirstStep = currentStepIndex === 0;
 
   const runtimeVariantOptions = runtimeVariants.map((rt) => ({
-    value: toLocalId(rt.id),
+    value: rt.entityId,
     label: rt.name,
   }));
 
@@ -471,7 +469,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   // would silently be dropped on submit if the switch is off.
   const runtimeVariantIdWatched = Form.useWatch('runtimeVariantId', form);
   const selectedRuntimeVariantForServiceConfig = runtimeVariants.find(
-    (rt) => toLocalId(rt.id) === runtimeVariantIdWatched,
+    (rt) => rt.entityId === runtimeVariantIdWatched,
   );
   const readsVfolderConfigFiles = resolvesReadsVfolderConfigFiles(
     selectedRuntimeVariantForServiceConfig,
@@ -501,14 +499,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
     <>
       <ModelServiceHealthCheckFormItems
         namePrefix={['modelDefinition', 'models', 0, 'service']}
-        placeholders={{
-          path: t('general.Example', { value: '/health' }),
-          interval: t('general.Example', { value: '10' }),
-          maxRetries: t('general.Example', { value: '10' }),
-          maxWaitTime: t('general.Example', { value: '15' }),
-          expectedStatusCode: t('general.Example', { value: '200' }),
-          initialDelay: t('general.Example', { value: '60' }),
-        }}
+        placeholders={{ initialDelay: 1800 }}
       />
       <PreStartActionsFormList
         namePrefix={['modelDefinition', 'models', 0, 'service']}
@@ -610,11 +601,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                         shell: commandModeState.shell,
                         startCommand: commandModeState.command,
                         execution: commandModeState.execution,
-                        // 26.4.4rc7+: `enable` is authoritative; older managers
-                        // omit it, so fall back to the object's presence.
                         enableHealthCheck:
-                          m.service.healthCheck?.enable ??
-                          !!m.service.healthCheck,
+                          m.service.healthCheck?.enable ?? false,
                         healthCheck: m.service.healthCheck
                           ? {
                               path: m.service.healthCheck.path,
@@ -905,7 +893,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   formArg as FormInstance<AdminDeploymentPresetFormValue>;
                 const variantId = getFieldValue('runtimeVariantId');
                 const variant = runtimeVariants.find(
-                  (rt) => toLocalId(rt.id) === variantId,
+                  (rt) => rt.entityId === variantId,
                 );
                 const variantName = variant?.name;
                 // Runtime-parameter presets apply only to variants that do NOT
@@ -922,7 +910,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   <div
                     style={{
                       // Bottom gap comes from the component itself.
-                      marginTop: -token.margin,
+                      marginTop: `calc(-1 * ${token('--spacing-4')})`,
                     }}
                   >
                     <Suspense fallback={<BAISkeleton />}>
@@ -947,7 +935,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             {/* Service Configuration (port, command, shell) — shown only when
                 the selected runtime variant reads vfolder config files
                 (custom) AND the manager supports submitting it independently
-                of Model Definition (26.9.0+, `preset-model-config-type`).
+                of Model Definition (manager 26.9.0+).
                 Legacy managers require a real name/modelPath alongside any
                 service data (`PresetModelConfigInput.name`/`modelPath` were
                 required, non-empty strings pre-BA-7210) — showing this here
@@ -960,8 +948,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             {readsVfolderConfigFiles && supportsNullableModelDefinition && (
               <div
                 style={{
-                  marginTop: -token.margin,
-                  marginBottom: token.marginLG,
+                  marginTop: `calc(-1 * ${token('--spacing-4')})`,
+                  marginBottom: token('--spacing-6'),
                 }}
               >
                 {renderServiceConfigurationFormItems()}
@@ -981,7 +969,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               name="imageId"
               label={t('adminDeploymentPreset.Image')}
               rules={[{ required: true }]}
-              style={{ marginTop: token.marginMD }}
+              style={{ marginTop: token('--spacing-5') }}
             >
               <ImageSelectField />
             </BAIFormItem>
@@ -995,7 +983,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             title={t('adminDeploymentPreset.step.Resources')}
             style={{
               display: currentStepKey === 'basic' ? 'block' : 'none',
-              marginTop: token.marginMD,
+              marginTop: token('--spacing-5'),
             }}
             showDivider
           >
@@ -1044,7 +1032,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             </BAIFormItem>
             <BAIFormItem
               label={t('adminDeploymentPreset.ResourceOpts')}
-              style={{ marginBottom: 0, marginTop: token.marginMD }}
+              style={{ marginBottom: 0, marginTop: token('--spacing-5') }}
             >
               <Form.List name="resourceOpts">
                 {(fields, { add, remove }) => (
@@ -1108,7 +1096,10 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             <BAIFlex
               gap="md"
               wrap="wrap"
-              style={{ alignItems: 'flex-start', marginTop: token.marginMD }}
+              style={{
+                alignItems: 'flex-start',
+                marginTop: token('--spacing-5'),
+              }}
             >
               <BAIFormItem
                 name="clusterMode"
@@ -1229,7 +1220,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             title={t('adminDeploymentPreset.ModelDefinition')}
             style={{
               display: currentStepKey === 'model' ? 'block' : 'none',
-              marginTop: token.marginMD,
+              marginTop: token('--spacing-5'),
               // `.ant-card` clips with overflow:hidden, which cuts the header
               // switch's focus glow. Allow it to render fully.
               overflow: 'visible',
@@ -1269,7 +1260,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             title={t('adminDeploymentPreset.step.Deployment')}
             style={{
               display: currentStepKey === 'basic' ? 'block' : 'none',
-              marginTop: token.marginMD,
+              marginTop: token('--spacing-5'),
             }}
             showDivider
           >
@@ -1340,7 +1331,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             direction="row"
             justify="end"
             gap="sm"
-            style={{ marginTop: token.marginMD }}
+            style={{ marginTop: token('--spacing-5') }}
             data-test-id="deployment-preset-step-navigation"
           >
             {!isFirstStep && (
@@ -1389,13 +1380,9 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
       {/* Right-side vertical Steps panel — mirrors DeploymentLauncherPageContent.
           Hidden below lg so the form gets the full viewport width on small screens. */}
       {screens.lg && (
-        <BAIFlex style={{ position: 'sticky', top: 80 }}>
-          {/* PILOT-DECISION: antd Steps → lab Stepper. `current`→`activeStep`,
-              `onChange`→`onStepClick`, `size="small"`→`density="compact"`;
-              antd's explicit 'process'/'wait' statuses are derived
-              automatically from `activeStep` and were dropped. Note Astryx
-              only makes completed/current steps clickable — forward jumps go
-              through the Next / Skip-to-Review buttons instead of the rail. */}
+        <BAIFlex style={{ position: 'sticky', top: 20 }}>
+          {/* Only completed and current steps are clickable; forward jumps go
+              through the Next / Skip-to-Review buttons. */}
           <Stepper
             activeStep={currentStepIndex}
             orientation="vertical"
@@ -1409,6 +1396,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               <Step
                 key={title}
                 step={idx}
+                // Only `auto` draws the error glyph on a step not yet reached.
+                indicator={stepErrors[idx] ? 'auto' : 'number'}
                 label={title}
                 status={stepErrors[idx] ? 'error' : undefined}
               />

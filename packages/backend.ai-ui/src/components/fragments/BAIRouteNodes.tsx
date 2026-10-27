@@ -10,20 +10,19 @@ import {
   toLocalId,
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import { theme } from '../../theme-shim';
 import BAIButton from '../BAIButton';
 import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
 import BAIText from '../BAIText';
 import {
-  BAIColumnsType,
   BAIColumnType,
+  BAIColumnsType,
   BAITable,
   BAITableProps,
 } from '../Table';
-import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Badge } from '@lablup/ui-common/Badge';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { CircleAlert, History } from 'lucide-react';
@@ -75,16 +74,14 @@ const BAIRouteNodes = ({
 }: BAIRouteNodesProps) => {
   'use memo';
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
-  const baiClient = useConnectedBAIClient();
-  const isSupportRouteHealthStatus = baiClient.supports('route-health-status');
+  const { token } = useTheme();
 
   const routes = useFragment<BAIRouteNodesFragment$key>(
     graphql`
       fragment BAIRouteNodesFragment on Route @relay(plural: true) {
         id
         status
-        healthStatus @since(version: "26.4.0")
+        healthStatus
         trafficRatio
         createdAt
         errorData
@@ -110,7 +107,7 @@ const BAIRouteNodes = ({
                 size="small"
                 type="text"
                 icon={<CircleAlert size="1em" />}
-                style={{ color: token.colorError }}
+                style={{ color: token('--color-error') }}
                 onClick={() => {
                   onClickErrorData?.(record.errorData);
                 }}
@@ -171,20 +168,18 @@ const BAIRouteNodes = ({
           </BAIFlex>
         ),
       },
-      isSupportRouteHealthStatus
-        ? {
-            title: t('comp:BAIRouteNodes.HealthStatus'),
-            dataIndex: 'healthStatus',
-            key: 'healthStatus',
-            render: (healthStatus) =>
-              healthStatus && healthStatus !== '%future added value' ? (
-                <Badge
-                  variant={badgeVariantForStatus('route', healthStatus)}
-                  label={healthStatus}
-                />
-              ) : null,
-          }
-        : undefined,
+      {
+        title: t('comp:BAIRouteNodes.HealthStatus'),
+        dataIndex: 'healthStatus',
+        key: 'healthStatus',
+        render: (healthStatus) =>
+          healthStatus && healthStatus !== '%future added value' ? (
+            <Badge
+              variant={badgeVariantForStatus('route', healthStatus)}
+              label={healthStatus}
+            />
+          ) : null,
+      },
       // TODO(needs-backend): Unhide when backend interaction for traffic status is supported (FR-2591)
       // {
       //   title: t('comp:BAIRouteNodes.TrafficStatus'),

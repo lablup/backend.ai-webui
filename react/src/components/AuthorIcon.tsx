@@ -124,7 +124,7 @@ export function findAuthorIconLoader(author: string) {
 
 export interface AuthorIconProps {
   author: string;
-  size?: number;
+  size?: number | string;
   style?: React.CSSProperties;
   className?: string;
 }
@@ -147,7 +147,7 @@ function getIconPromise(author: string): Promise<BrandIconType | null> {
 
 const ResolvedIcon: React.FC<{
   icon: BrandIconType;
-  size: number;
+  size: number | string;
   style?: React.CSSProperties;
   className?: string;
 }> = ({ icon: Icon, size, style, className }) => {

@@ -9,6 +9,7 @@ import { ResourceGroupSettingModalUpdateMutation } from '../__generated__/Resour
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { newLineToBrElement } from '../helper';
+import { getSessionTypeLabel } from '../helper/sessionTypeLabel';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import {
   computeProxyDelta,
@@ -26,10 +27,9 @@ import {
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Grid } from '@astryxdesign/core/Grid';
+import { Grid } from '@lablup/ui-common/Grid';
 import {
   BAICard,
-  BAIDomainSelect,
   BAIFlex,
   BAIModal,
   BAIModalProps,
@@ -46,7 +46,6 @@ import { graphql, useFragment, useMutation } from 'react-relay';
 
 type FormInputType = {
   name: string;
-  domain: string;
   description: string;
   allowedSessionTypes: string[];
   wsProxyAddress: string;
@@ -158,7 +157,6 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
   const INITIAL_FORM_VALUES = omitNullAndUndefinedFields({
     name: resourceGroup?.name,
     description: resourceGroup?.description,
-    domain: currentDomain,
     scheduler: resourceGroup?.scheduler ?? 'fifo',
     allowedSessionTypes: schedulerOpts?.allowed_session_types ?? [
       'batch',
@@ -178,7 +176,6 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
 
   return (
     <BAIModal
-      destroyOnHidden
       title={
         resourceGroup
           ? t('resourceGroup.ModifyResourceGroup')
@@ -308,7 +305,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
 
                 commitAssociateDomain({
                   variables: {
-                    domain: values.domain,
+                    domain: currentDomain,
                     scaling_group: values.name,
                   },
                   onCompleted: (
@@ -372,22 +369,6 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               disabled={!!resourceGroup}
             />
           </BAIFormItem>
-          {!resourceGroup ? (
-            <BAIFormItem
-              label={t('resourceGroup.Domain')}
-              name="domain"
-              rules={[
-                {
-                  required: true,
-                  message: t('general.ValueRequired', {
-                    name: t('resourceGroup.Domain'),
-                  }),
-                },
-              ]}
-            >
-              <BAIDomainSelect />
-            </BAIFormItem>
-          ) : null}
           <BAIFormItem
             label={t('resourceGroup.Description')}
             name="description"
@@ -408,12 +389,10 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
           >
             <AstryxFormMultiSelector
               label={t('resourceGroup.AllowedSessionTypes')}
-              options={[
-                { label: 'Batch', value: 'batch' },
-                { label: 'Interactive', value: 'interactive' },
-                { label: 'Inference', value: 'inference' },
-                { label: 'System', value: 'system' },
-              ]}
+              options={_.map(
+                ['batch', 'interactive', 'inference', 'system'],
+                (value) => ({ label: getSessionTypeLabel(t, value), value }),
+              )}
             />
           </BAIFormItem>
           <BAIFormItem

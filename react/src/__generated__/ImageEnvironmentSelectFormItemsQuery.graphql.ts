@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7a56c9a082f2cc08ad7586b14c6b1e54>>
+ * @generated SignedSource<<02cf3435a9237ebf8673deb67575191d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -24,7 +24,6 @@ export type ImageEnvironmentSelectFormItemsQuery$data = {
       readonly key: string | null | undefined;
       readonly value: string | null | undefined;
     } | null | undefined> | null | undefined;
-    readonly name: string | null | undefined;
     readonly namespace: string | null | undefined;
     readonly registry: string | null | undefined;
     readonly resource_limits: ReadonlyArray<{
@@ -91,13 +90,6 @@ v3 = [
         "args": null,
         "kind": "ScalarField",
         "name": "id",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "name",
         "storageKey": null
       },
       {
@@ -238,16 +230,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "192812639ccebbee01e918cbd60b8816",
+    "cacheID": "5820a2541e5ea923fd62cf74eb5606d0",
     "id": null,
     "metadata": {},
     "name": "ImageEnvironmentSelectFormItemsQuery",
     "operationKind": "query",
-    "text": "query ImageEnvironmentSelectFormItemsQuery(\n  $installed: Boolean\n) {\n  images(is_installed: $installed) {\n    id\n    name @deprecatedSince(version: \"24.12.0\")\n    humanized_name\n    tag\n    registry\n    architecture\n    digest\n    installed\n    resource_limits {\n      key\n      min\n      max\n    }\n    labels {\n      key\n      value\n    }\n    namespace @since(version: \"24.12.0\")\n    base_image_name @since(version: \"24.12.0\")\n    tags @since(version: \"24.12.0\") {\n      key\n      value\n    }\n    version @since(version: \"24.12.0\")\n    supported_accelerators\n  }\n}\n"
+    "text": "query ImageEnvironmentSelectFormItemsQuery(\n  $installed: Boolean\n) {\n  images(is_installed: $installed) {\n    id\n    humanized_name\n    tag\n    registry\n    architecture\n    digest\n    installed\n    resource_limits {\n      key\n      min\n      max\n    }\n    labels {\n      key\n      value\n    }\n    namespace\n    base_image_name\n    tags {\n      key\n      value\n    }\n    version\n    supported_accelerators\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "cd124d0155c7eab304c2d3b6dc75074a";
+(node as any).hash = "6917a0759540c1f399e520a0c6a95664";
 
 export default node;

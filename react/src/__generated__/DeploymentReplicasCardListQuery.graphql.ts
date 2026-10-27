@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0ad1539c2ac6f8d49ce2f73c4c708cd6>>
+ * @generated SignedSource<<ec997e4af5f7f55933af85c7aa11f7e3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,14 +12,18 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type ReplicaHealthStatus = "DEGRADED" | "HEALTHY" | "NOT_CHECKED" | "UNHEALTHY" | "%future added value";
-export type ReplicaOrderField = "CREATED_AT" | "ID" | "%future added value";
+export type ReplicaOrderField = "CREATED_AT" | "DEPLOYMENT_ID" | "HEALTH_STATUS" | "ID" | "REVISION_ID" | "SESSION_ID" | "STATUS" | "TRAFFIC_STATUS" | "%future added value";
 export type ReplicaStatus = "FAILED_TO_START" | "PROVISIONING" | "RUNNING" | "TERMINATED" | "TERMINATING" | "%future added value";
 export type TrafficStatus = "ACTIVE" | "INACTIVE" | "%future added value";
 export type ReplicaFilter = {
   AND?: ReadonlyArray<ReplicaFilter> | null | undefined;
   NOT?: ReadonlyArray<ReplicaFilter> | null | undefined;
   OR?: ReadonlyArray<ReplicaFilter> | null | undefined;
+  createdAt?: DateTimeFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   healthStatus?: ReplicaHealthStatusFilter | null | undefined;
+  revisionId?: UUIDFilter | null | undefined;
+  sessionId?: UUIDFilter | null | undefined;
   status?: ReplicaStatusFilter | null | undefined;
   trafficStatus?: TrafficStatusFilter | null | undefined;
 };
@@ -40,6 +44,18 @@ export type TrafficStatusFilter = {
   in?: ReadonlyArray<TrafficStatus> | null | undefined;
   notEquals?: TrafficStatus | null | undefined;
   notIn?: ReadonlyArray<TrafficStatus> | null | undefined;
+};
+export type DateTimeFilter = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  equals?: string | null | undefined;
+  notEquals?: string | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type ReplicaOrderBy = {
   direction?: OrderDirection;
@@ -911,16 +927,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "8e01dda685751deba2116db8f63c7bcb",
+    "cacheID": "8660d732d76fb987ad8189050c0aaacd",
     "id": null,
     "metadata": {},
     "name": "DeploymentReplicasCardListQuery",
     "operationKind": "query",
-    "text": "query DeploymentReplicasCardListQuery(\n  $deploymentId: ID!\n  $filter: ReplicaFilter\n  $orderBy: [ReplicaOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  deployment(id: $deploymentId) {\n    replicas(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n      count\n      edges {\n        node {\n          id\n          sessionId\n          revisionId\n          status\n          trafficStatus\n          healthStatus\n          createdAt\n          revision {\n            id\n            revisionNumber\n            ...DeploymentRevisionDetail_revision\n          }\n          sessionV2 @since(version: \"26.4.3\") {\n            id\n            metadata {\n              name\n            }\n          }\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots @since(version: \"26.4.2\") {\n    slotName\n    quantity\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    inferenceRuntimeConfig\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues @since(version: \"26.4.4rc9\") {\n      presetId\n      value\n      preset {\n        name\n        displayName\n        targetSpec {\n          key\n        }\n        id\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    subpath @since(version: \"26.4.4\")\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 @since(version: \"26.4.3\") {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n    ...BAIImageNodeSimpleTagV2Fragment\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
+    "text": "query DeploymentReplicasCardListQuery(\n  $deploymentId: ID!\n  $filter: ReplicaFilter\n  $orderBy: [ReplicaOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  deployment(id: $deploymentId) {\n    replicas(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n      count\n      edges {\n        node {\n          id\n          sessionId\n          revisionId\n          status\n          trafficStatus\n          healthStatus\n          createdAt\n          revision {\n            id\n            revisionNumber\n            ...DeploymentRevisionDetail_revision\n          }\n          sessionV2 {\n            id\n            metadata {\n              name\n            }\n          }\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    inferenceRuntimeConfig\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues {\n      presetId\n      value\n      preset {\n        name\n        displayName\n        targetSpec {\n          key\n        }\n        id\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    subpath\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n    ...BAIImageNodeSimpleTagV2Fragment\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
   }
 };
 })();
 
-(node as any).hash = "3c889ebaa68c08cff62a842b2869be6a";
+(node as any).hash = "c7551e26ca6d489f6cbe939bdf537ece";
 
 export default node;

@@ -6,9 +6,11 @@ import {
   CARDS_CHORD,
   createSetDock,
   DOCK_POS_KEY,
+  SHARE_ACCOUNT_LABEL,
   type SetDock,
+  WITHHOLD_ACCOUNT_LABEL,
 } from './dock.js';
-import { ICON_NODES } from './icons.js';
+import { icon, ICON_NODES } from './icons.js';
 import type { SetPin } from './types.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
@@ -17,6 +19,7 @@ let root: ShadowRoot;
 let copied: number;
 let cleared: number;
 let toggled: number;
+let accountToggled: number;
 let located: string[];
 let removed: string[];
 let unhidden: string[];
@@ -81,6 +84,7 @@ beforeEach(() => {
   copied = 0;
   cleared = 0;
   toggled = 0;
+  accountToggled = 0;
   located = [];
   removed = [];
   unhidden = [];
@@ -106,6 +110,7 @@ const makeDock = (pageChords = true) =>
     onEdit: (id) => edited.push(id),
     onUnhide: (id) => unhidden.push(id),
     onToggleCards: () => toggled++,
+    onToggleAccount: () => accountToggled++,
     onGo: (id) => went.push(id),
   });
 
@@ -553,6 +558,36 @@ describe('createSetDock', () => {
 
       expect(node('.cards').getAttribute('aria-label')).toBe('Show every card');
       expect(node('.setdock').textContent).not.toContain(CARDS_CHORD);
+    });
+  });
+
+  /**
+   * The footer's account switch. The account is a person's email in a comment
+   * others read, so the reviewer decides; the dock only asks the owner to flip
+   * it and names what pressing it DOES (R8.1), like the cards switch.
+   */
+  describe('the account switch', () => {
+    it('asks the owner to flip it', () => {
+      dock.render([pin('c_a', 'a')]);
+
+      node<HTMLButtonElement>('.account').click();
+
+      expect(accountToggled).toBe(1);
+    });
+
+    it('offers to withhold while the account is shared, and to share while it is not', () => {
+      dock.render([pin('c_a', 'a')], new Map(), false, true);
+      expect(node('.account').getAttribute('aria-label')).toBe(
+        WITHHOLD_ACCOUNT_LABEL,
+      );
+      expect(node('.account svg').isEqualNode(icon('user-x'))).toBe(true);
+
+      dock.render([pin('c_a', 'a')], new Map(), false, false);
+      expect(node('.account').getAttribute('aria-label')).toBe(
+        SHARE_ACCOUNT_LABEL,
+      );
+      expect(node('.account svg').isEqualNode(icon('user'))).toBe(true);
+      expect(node('.account').hasAttribute('aria-pressed')).toBe(false);
     });
   });
 

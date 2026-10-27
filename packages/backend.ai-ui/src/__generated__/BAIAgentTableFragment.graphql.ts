@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7207a333df491ea78c4096cbe2b26904>>
+ * @generated SignedSource<<ef14b39c60bc21759a2fab4b4a4dcd53>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,6 +18,7 @@ export type BAIAgentTableFragment$data = ReadonlyArray<{
   readonly first_contact: string | null | undefined;
   readonly id: string;
   readonly live_stat: string | null | undefined;
+  readonly lost_at: string | null | undefined;
   readonly occupied_slots: string | null | undefined;
   readonly region: string | null | undefined;
   readonly row_id: string | null | undefined;
@@ -137,12 +138,19 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "schedulable",
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "lost_at",
+      "storageKey": null
     }
   ],
   "type": "AgentNode",
   "abstractKey": null
 };
 
-(node as any).hash = "663da12b3889cebd0348e97f8e6fb890";
+(node as any).hash = "73cb32c95a2360f7165430aa991c1b7d";
 
 export default node;

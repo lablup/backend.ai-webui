@@ -14,7 +14,6 @@ import {
 import { Form, FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { theme } from '../theme-shim';
 import { ProjectContext, ProjectContextOrNull } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
 import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
@@ -25,10 +24,11 @@ import {
   AstryxFormSwitch,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { Divider } from '@astryxdesign/core/Divider';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { Divider } from '@lablup/ui-common/Divider';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIIconWithTooltip,
   BAIModal,
@@ -117,7 +117,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { logger } = useBAILogger();
   const { getErrorMessage } = useErrorMessageResolver();
 
@@ -181,6 +181,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
         createVfolderV2(input: $input) {
           vfolder {
             id
+            entityId
             vfolderStatus: status
             host
             metadata {
@@ -215,6 +216,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
         createVFolderInProject(projectId: $projectId, input: $input) {
           vfolder {
             id
+            entityId
             vfolderStatus: status
             host
             metadata {
@@ -370,17 +372,22 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
       }}
     >
       {alertMessage ? (
-        <div style={{ marginBottom: token.marginMD }}>
-          <Banner status="warning" title={alertMessage} container="section" />
+        <div style={{ marginBottom: token('--spacing-5') }}>
+          <Banner
+            role="alert"
+            status="warning"
+            title={alertMessage}
+            container="section"
+          />
         </div>
       ) : null}
 
       <VStack
         align="stretch"
         style={{
-          paddingLeft: token.paddingMD,
-          paddingRight: token.paddingMD,
-          paddingTop: alertMessage ? 0 : token.paddingMD,
+          paddingLeft: token('--spacing-5'),
+          paddingRight: token('--spacing-5'),
+          paddingTop: alertMessage ? 0 : token('--spacing-5'),
         }}
       >
         <Form
@@ -426,7 +433,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                 </Suspense>
               </BAIFormItem>
               {/* Match the 24px bottom margin form items carry (FR-3441). */}
-              <Divider style={{ marginBottom: token.marginLG }} />
+              <Divider style={{ marginBottom: token('--spacing-6') }} />
             </>
           )}
           <BAIFormItem

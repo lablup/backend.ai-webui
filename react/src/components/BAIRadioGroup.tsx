@@ -5,7 +5,7 @@
 import {
   SegmentedControl,
   SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
+} from '@lablup/ui-common/SegmentedControl';
 import React from 'react';
 
 /**
@@ -81,8 +81,8 @@ const BAIRadioGroup: React.FC<BAIRadioGroupProps> = ({
   return (
     <SegmentedControl
       value={String(value ?? '')}
-      label={label ?? 'options'}
-      isDisabled={disabled}
+      aria-label={label ?? 'options'}
+      disabled={disabled}
       size={size}
       onChange={(next) => {
         // Re-shape Astryx's `(value) => void` back into antd's

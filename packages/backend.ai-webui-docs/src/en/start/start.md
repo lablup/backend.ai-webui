@@ -20,9 +20,8 @@ maintenance, updates, or usage guidelines.
 
 ![](../images/start_announcement_banner.png)
 
-A long announcement is shown collapsed, as a one-line summary of its first
-line. Click **See Details** on the banner to reveal the full announcement, and
-**Hide Details** to collapse it again.
+The banner shows the announcement's title. When the announcement has a message,
+click **See Details** to reveal it and **Hide Details** to collapse it again.
 
 Click the close icon to dismiss the banner. It stays hidden for the rest of the
 current browser session, and appears again when your administrator publishes a
@@ -65,7 +64,7 @@ appears when the experimental Hugging Face import is turned on.
 
 ### Import notebook
 
-![](../images/start_from_url_notebook.png)
+![=800px](../images/start_from_url_notebook.png)
 
 1. Enter a Jupyter Notebook URL (must end with `.ipynb`) in the **Notebook URL**
    field
@@ -100,7 +99,7 @@ and try again.
 
 ### Import GitHub repository
 
-![](../images/start_from_url_github.png)
+![=800px](../images/start_from_url_github.png)
 
 1. Enter a valid GitHub repository URL in the **GitHub URL** field
 2. Select a **Storage Host** where the repository will be saved
@@ -112,7 +111,7 @@ when starting a session.
 
 ### Import GitLab repository
 
-![](../images/start_from_url_gitlab.png)
+![=800px](../images/start_from_url_gitlab.png)
 
 1. Enter a valid GitLab repository URL in the **GitLab URL** field
 2. Optionally specify a **GitLab Branch Name** (defaults to `master`)
@@ -132,7 +131,7 @@ This tab is hidden until you turn on **Import from Hugging Face** in the
 Experimental features may change or be removed in future updates.
 :::
 
-![](../images/start_from_url_huggingface.png)
+![=800px](../images/start_from_url_huggingface.png)
 
 1. Enter the model in the **Hugging Face Model URL or ID** field. Both a model
    page URL such as `https://huggingface.co/openai/gpt-oss-20b` and a plain

@@ -48,7 +48,7 @@ vi.mock('../hooks', async (importOriginal) => {
   return {
     ...originalModule,
     useSuspendedBackendaiClient: () => ({
-      supports: () => false,
+      isManagerVersionCompatibleWith: () => false,
       _config: { blockList: [] },
     }),
     useWebUINavigate: () => vi.fn(),

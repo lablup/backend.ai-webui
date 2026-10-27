@@ -8,6 +8,7 @@
 */
 import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useUpdateMyUserAppConfig } from '../hooks/useAppConfig';
 import {
   useBAISettingGeneralState,
   useBAISettingUserState,
@@ -17,15 +18,14 @@ import {
   useCustomThemeConfig,
 } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
-import MyKeypairInfoModalLegacy from './MyKeypairInfoModalLegacy';
 import MyKeypairManagementModal from './MyKeypairManagementModal';
 import SSHKeypairManagementModal from './SSHKeypairManagementModal';
 import SettingList, { SettingGroup } from './SettingList';
 import ShellScriptEditModal, { ShellScriptType } from './ShellScriptEditModal';
-import ThemeAccentColorPicker from './ThemeAccentColorPicker';
-import { Button } from '@astryxdesign/core/Button';
+import { Button } from '@lablup/ui-common/Button';
 import {
   filterOutEmpty,
+  useErrorMessageResolver,
   useSessionStorageState,
   useToggle,
 } from 'backend.ai-ui';
@@ -39,6 +39,7 @@ const UserSettingsGeneralPane = () => {
 
   const { t } = useTranslation();
   const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
   const baiClient = useSuspendedBackendaiClient();
 
   const { themeMode, setThemeMode } = useThemeMode();
@@ -47,12 +48,27 @@ const UserSettingsGeneralPane = () => {
     setActiveThemeFamily: setThemeFamily,
     themeFamilies: families,
   } = useCustomThemeConfig();
-  const [themeAccent, setThemeAccent] = useBAISettingUserState(
-    'custom_primary_color',
-  );
+  // `userConfig.themeFamily` is the authoritative store; the localStorage
+  // FOUC mirror is written only after the server accepts (FR-1964).
+  const updateMyUserAppConfig = useUpdateMyUserAppConfig();
+  // The select shows the chosen family while the write is in flight.
+  const [pendingThemeFamily, setPendingThemeFamily] = useState<{
+    family: string | undefined;
+  }>();
+  const persistThemeFamily = async (next: string | undefined) => {
+    setPendingThemeFamily({ family: next });
+    try {
+      await updateMyUserAppConfig('themeFamily', next);
+      setThemeFamily(next);
+    } catch (error) {
+      message.error(getErrorMessage(error));
+    } finally {
+      setPendingThemeFamily(undefined);
+    }
+  };
   // Branding preview mode shows the edited default theme as-is, so the theme
-  // (family) and primary color settings are hidden there (useCustomThemeConfig
-  // ignores them in that mode).
+  // (family) setting is hidden there (useCustomThemeConfig ignores it in that
+  // mode).
   const [isThemePreviewMode] = useSessionStorageState('isThemePreviewMode', {
     defaultValue: false,
   });
@@ -80,14 +96,14 @@ const UserSettingsGeneralPane = () => {
     useBAISettingUserState('experimental_ai_agents');
   const [experimentalCustomDashboard, setExperimentalCustomDashboard] =
     useBAISettingUserState('experimental_custom_dashboard_panels');
-  const [experimentalGlobalSearch, setExperimentalGlobalSearch] =
-    useBAISettingUserState('experimental_global_search');
   const [
     experimentalImportFromHuggingFace,
     setExperimentalImportFromHuggingFace,
   ] = useBAISettingUserState('experimental_import_from_huggingface');
   const [experimentalSessionResourceGrid, setExperimentalSessionResourceGrid] =
     useBAISettingUserState('experimental_session_resource_grid');
+  const [experimentalSessionMonitor, setExperimentalSessionMonitor] =
+    useBAISettingUserState('experimental_session_monitor');
   const [shellInfo, setShellInfo] = useState<ShellScriptType>('bootstrap');
   const [isOpenShellScriptEditModal, { toggle: toggleShellScriptEditModal }] =
     useToggle(false);
@@ -162,10 +178,9 @@ const UserSettingsGeneralPane = () => {
             }
           },
         },
-        // Theme (family) / primary color customization is operator-gated
-        // (config.toml `allowThemeMode`). The family selector additionally
-        // needs more than the `default` family in the catalog (a theme.json
-        // without a `families` block yields a single-entry catalog).
+        // Theme family selection is operator-gated (config.toml
+        // `allowThemeMode`) and needs more than the `default` family in the
+        // catalog (a theme.json without a `families` block yields none).
         baiClient._config.allowThemeMode &&
         !isThemePreviewMode &&
         Object.keys(families).length > 1
@@ -182,30 +197,22 @@ const UserSettingsGeneralPane = () => {
                   label: config.label ?? _.startCase(key),
                   value: key,
                 })),
+                loading: !!pendingThemeFamily,
               },
               defaultValue: DEFAULT_THEME_FAMILY,
-              value: themeFamily,
+              value: pendingThemeFamily
+                ? pendingThemeFamily.family
+                : themeFamily,
               onChange: (value: string | number | undefined) => {
                 if (typeof value === 'string') {
-                  setThemeFamily(value);
+                  persistThemeFamily(value);
                 }
               },
               // Clear the stored selection instead of writing the default key
               // so resolution keeps following the `default` family.
-              onReset: () => setThemeFamily(undefined),
-            }
-          : null,
-        baiClient._config.allowThemeMode && !isThemePreviewMode
-          ? {
-              'data-testid': 'items-theme-accent',
-              type: 'custom',
-              title: t('userSettings.ThemeAccentColor'),
-              description: t('userSettings.DescThemeAccentColor'),
-              // No defaultValue: unset means "follow the theme.json colors";
-              // reset clears the per-scheme overrides back to that state.
-              value: themeAccent,
-              onReset: () => setThemeAccent(undefined),
-              children: <ThemeAccentColorPicker />,
+              onReset: () => {
+                persistThemeFamily(undefined);
+              },
             }
           : null,
         {
@@ -433,15 +440,6 @@ const UserSettingsGeneralPane = () => {
           onChange: setExperimentalCustomDashboard,
         },
         {
-          'data-testid': 'items-experimental-command-palette',
-          type: 'checkbox',
-          title: t('userSettings.CommandPalette'),
-          description: t('general.Enabled'),
-          defaultValue: false,
-          value: experimentalGlobalSearch,
-          onChange: setExperimentalGlobalSearch,
-        },
-        {
           'data-testid': 'items-experimental-import-from-huggingface',
           type: 'checkbox',
           title: t('userSettings.ImportFromHuggingFace'),
@@ -459,6 +457,15 @@ const UserSettingsGeneralPane = () => {
           value: experimentalSessionResourceGrid,
           onChange: setExperimentalSessionResourceGrid,
         },
+        {
+          'data-testid': 'items-experimental-session-monitor',
+          type: 'checkbox',
+          title: t('userSettings.SessionMonitor'),
+          description: <Trans i18nKey="userSettings.DescSessionMonitor" />,
+          defaultValue: false,
+          value: experimentalSessionMonitor,
+          onChange: setExperimentalSessionMonitor,
+        },
       ],
     },
   ];
@@ -472,17 +479,10 @@ const UserSettingsGeneralPane = () => {
         showSearchBar
         hideGroupNav
       />
-      {baiClient?.supports('my-keypairs') ? (
-        <MyKeypairManagementModal
-          open={isOpenSSHKeypairInfoModal}
-          onRequestClose={toggleSSHKeypairInfoModal}
-        />
-      ) : (
-        <MyKeypairInfoModalLegacy
-          open={isOpenSSHKeypairInfoModal}
-          onRequestClose={toggleSSHKeypairInfoModal}
-        />
-      )}
+      <MyKeypairManagementModal
+        open={isOpenSSHKeypairInfoModal}
+        onRequestClose={toggleSSHKeypairInfoModal}
+      />
       <SSHKeypairManagementModal
         open={isOpenSSHKeypairManagementModal}
         onRequestClose={toggleSSHKeypairManagementModal}

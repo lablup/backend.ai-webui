@@ -17,7 +17,7 @@ export const docs = {
   ],
   usage: {
     description:
-      "The create-and-edit dialog behind the admin Runtime Parameters page. One component serves both modes: passing `presetFrgmt` — a node with `BAIRuntimeVariantPresetSettingModalFragment` spread on it — puts the modal in edit mode (title, OK label, initial values and the update mutation all follow from it), and omitting it creates a new parameter. The form covers runtime variant, name, description, category and display name, Parameter Target and value type, key, default value, a UI-option builder (slider, number input, select choices, checkbox, text input) whose sub-fields are swapped when the UI type changes, required, and rank; OK validates, builds the create or update input and commits, then reports through `onRequestClose(true)`. Cancel reports `onRequestClose(false)`. Category, display name, UI options and required are gated on the connected BAI client's feature support, so a connected client must be above the modal and older servers see a shorter form. The runtime variant select suspends while its options load and cannot be changed in edit mode. Remaining props pass through to BAIModal, but the spread sits first, so the title, `onOk`, `onCancel`, `destroyOnHidden`, `confirmLoading` and `okText` set by the component win over anything the caller passes for them.",
+      "The create-and-edit dialog behind the admin Runtime Parameters page. One component serves both modes: passing `presetFrgmt` — a node with `BAIRuntimeVariantPresetSettingModalFragment` spread on it — puts the modal in edit mode (title, OK label, initial values and the update mutation all follow from it), and omitting it creates a new parameter. The form covers runtime variant, name, description, category and display name, Parameter Target and value type, key, default value, a UI-option builder (slider, number input, select choices, checkbox, text input) whose sub-fields are swapped when the UI type changes, required, and rank; OK validates, builds the create or update input and commits, then reports through `onRequestClose(true)`. Cancel reports `onRequestClose(false)`. Category, display name, UI options and required are gated on the connected BAI client's feature support, so a connected client must be above the modal and older servers see a shorter form. The runtime variant select suspends while its options load and cannot be changed in edit mode. Remaining props pass through to BAIModal, but the spread sits first, so the title, `onOk`, `onCancel`, `confirmLoading` and `okText` set by the component win over anything the caller passes for them.",
     bestPractices: [
       {
         guidance: true,
@@ -42,7 +42,7 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Assume the category, display name, UI-option and required fields render — each is behind a server capability check and is simply absent, along with its mutation input field, when the connected client does not advertise support.',
+          'Assume the category, display name, UI-option and required fields render — each is behind a manager version check and is simply absent, along with its mutation input field, when the connected manager is too old to serve it.',
       },
     ],
   },

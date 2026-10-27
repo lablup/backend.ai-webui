@@ -1,9 +1,9 @@
 import { Form } from '../form-engine';
 import BAICompactGroup from './BAICompactGroup';
-import { Button } from '@astryxdesign/core/Button';
-import { HStack } from '@astryxdesign/core/HStack';
-import { Selector } from '@astryxdesign/core/Selector';
-import { TextInput } from '@astryxdesign/core/TextInput';
+import { Button } from '@lablup/ui-common/Button';
+import { HStack } from '@lablup/ui-common/HStack';
+import { Selector } from '@lablup/ui-common/Selector';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
@@ -105,19 +105,19 @@ const EmailPair = ({ status }: { status?: 'error' }) => {
   return (
     <BAICompactGroup>
       <TextInput
-        label="E-Mail Prefix"
+        aria-label="E-Mail Prefix"
         value={prefix}
         onChange={setPrefix}
         width="100%"
         placeholder="Max. 30 characters"
       />
       <TextInput
-        label="E-Mail Suffix"
+        aria-label="E-Mail Suffix"
         value={suffix}
         onChange={setSuffix}
         width="100%"
         placeholder="Max. 30 characters"
-        status={status ? { type: 'error' } : undefined}
+        status={status}
       />
     </BAICompactGroup>
   );
@@ -169,13 +169,13 @@ export const AgainstAPlainRow: Story = {
       return (
         <HStack gap={0} width="100%">
           <TextInput
-            label="E-Mail Prefix"
+            aria-label="E-Mail Prefix"
             value={prefix}
             onChange={setPrefix}
             width="100%"
           />
           <TextInput
-            label="E-Mail Suffix"
+            aria-label="E-Mail Suffix"
             value={suffix}
             onChange={setSuffix}
             width="100%"
@@ -213,7 +213,7 @@ export const WithTrailingButton: Story = {
       return (
         <BAICompactGroup width="auto">
           <TextInput
-            label="Search"
+            aria-label="Search"
             value={value}
             onChange={setValue}
             hasClear
@@ -249,20 +249,20 @@ export const ThreeMembers: Story = {
       return (
         <BAICompactGroup>
           <TextInput
-            label="Prefix"
+            aria-label="Prefix"
             value={prefix}
             onChange={setPrefix}
             width="100%"
           />
           <TextInput
-            label="Team"
+            aria-label="Team"
             value={middle}
             onChange={setMiddle}
             width="100%"
             placeholder="optional"
           />
           <Selector
-            label="Domain"
+            aria-label="Domain"
             value={domain}
             onChange={setDomain}
             options={sampleDomains}
@@ -356,8 +356,7 @@ function FormTextInput({
 }) {
   return (
     <TextInput
-      label={label}
-      isLabelHidden
+      aria-label={label}
       value={value ?? ''}
       onChange={(next) => onChange?.(next)}
       width="100%"

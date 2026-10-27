@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2f742bb15ac4c655248eb35a25ce2b26>>
+ * @generated SignedSource<<0bfe278c2a8f42517a4af35a22628c7e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,7 +13,15 @@ import { FragmentRefs } from "relay-runtime";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type UserRoleV2 = "ADMIN" | "MONITOR" | "SUPERADMIN" | "USER" | "%future added value";
 export type UserStatusV2 = "ACTIVE" | "BEFORE_VERIFICATION" | "DELETED" | "INACTIVE" | "%future added value";
-export type UserV2OrderField = "CREATED_AT" | "DOMAIN_NAME" | "EMAIL" | "MODIFIED_AT" | "PROJECT_NAME" | "STATUS" | "USERNAME" | "%future added value";
+export type UserV2OrderField = "CONTAINER_MAIN_GID" | "CONTAINER_UID" | "CREATED_AT" | "DESCRIPTION" | "DOMAIN_ID" | "DOMAIN_NAME" | "EMAIL" | "ENTITY_ID" | "FULL_NAME" | "INTEGRATION_NAME" | "MODIFIED_AT" | "NEED_PASSWORD_CHANGE" | "PROJECT_NAME" | "RESOURCE_POLICY" | "ROLE" | "STATUS" | "STATUS_INFO" | "SUDO_SESSION_ENABLED" | "TOTP_ACTIVATED" | "TOTP_ACTIVATED_AT" | "USERNAME" | "%future added value";
+export type UserScope = {
+  domain?: ReadonlyArray<UUIDScope> | null | undefined;
+  project?: ReadonlyArray<UUIDScope> | null | undefined;
+  role?: ReadonlyArray<UUIDScope> | null | undefined;
+};
+export type UUIDScope = {
+  value: string;
+};
 export type UserV2Filter = {
   AND?: ReadonlyArray<UserV2Filter> | null | undefined;
   NOT?: ReadonlyArray<UserV2Filter> | null | undefined;
@@ -24,10 +32,13 @@ export type UserV2Filter = {
   createdAt?: DateTimeFilter | null | undefined;
   description?: StringFilter | null | undefined;
   domain?: UserDomainNestedFilter | null | undefined;
+  domainId?: UUIDFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
   email?: StringFilter | null | undefined;
   fullName?: StringFilter | null | undefined;
   integrationName?: StringFilter | null | undefined;
+  keypairs?: UserKeypairNestedFilter | null | undefined;
+  modifiedAt?: DateTimeFilter | null | undefined;
   needPasswordChange?: boolean | null | undefined;
   project?: UserProjectNestedFilter | null | undefined;
   resourcePolicy?: StringFilter | null | undefined;
@@ -36,6 +47,7 @@ export type UserV2Filter = {
   statusInfo?: StringFilter | null | undefined;
   sudoSessionEnabled?: boolean | null | undefined;
   totpActivated?: boolean | null | undefined;
+  totpActivatedAt?: NullableDateTimeFilter | null | undefined;
   username?: StringFilter | null | undefined;
   uuid?: UUIDFilter | null | undefined;
 };
@@ -98,6 +110,32 @@ export type DateTimeFilter = {
   equals?: string | null | undefined;
   notEquals?: string | null | undefined;
 };
+export type NullableDateTimeFilter = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  equals?: string | null | undefined;
+  isNull?: boolean | null | undefined;
+  notEquals?: string | null | undefined;
+};
+export type UserKeypairNestedFilter = {
+  every?: KeypairFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: KeypairFilter | null | undefined;
+  some?: KeypairFilter | null | undefined;
+};
+export type KeypairFilter = {
+  AND?: ReadonlyArray<KeypairFilter> | null | undefined;
+  NOT?: ReadonlyArray<KeypairFilter> | null | undefined;
+  OR?: ReadonlyArray<KeypairFilter> | null | undefined;
+  accessKey?: StringFilter | null | undefined;
+  createdAt?: DateTimeFilter | null | undefined;
+  isActive?: boolean | null | undefined;
+  isAdmin?: boolean | null | undefined;
+  isDefault?: boolean | null | undefined;
+  lastUsed?: DateTimeFilter | null | undefined;
+  resourcePolicy?: StringFilter | null | undefined;
+  userId?: UUIDFilter | null | undefined;
+};
 export type UserDomainNestedFilter = {
   isActive?: boolean | null | undefined;
   name?: StringFilter | null | undefined;
@@ -116,9 +154,10 @@ export type AdminUserManagementQuery$variables = {
   limit?: number | null | undefined;
   offset?: number | null | undefined;
   orderBy?: ReadonlyArray<UserV2OrderBy> | null | undefined;
+  scope: UserScope;
 };
 export type AdminUserManagementQuery$data = {
-  readonly adminUsersV2: {
+  readonly scopedUsersV2: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -162,7 +201,12 @@ v4 = {
   "kind": "LocalArgument",
   "name": "orderBy"
 },
-v5 = [
+v5 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "scope"
+},
+v6 = [
   {
     "kind": "Variable",
     "name": "filter",
@@ -182,23 +226,28 @@ v5 = [
     "kind": "Variable",
     "name": "orderBy",
     "variableName": "orderBy"
+  },
+  {
+    "kind": "Variable",
+    "name": "scope",
+    "variableName": "scope"
   }
 ],
-v6 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "count",
   "storageKey": null
 },
-v7 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v8 = {
+v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -212,7 +261,8 @@ return {
       (v1/*: any*/),
       (v2/*: any*/),
       (v3/*: any*/),
-      (v4/*: any*/)
+      (v4/*: any*/),
+      (v5/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
@@ -220,13 +270,13 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v5/*: any*/),
+        "args": (v6/*: any*/),
         "concreteType": "UserV2Connection",
         "kind": "LinkedField",
-        "name": "adminUsersV2",
+        "name": "scopedUsersV2",
         "plural": false,
         "selections": [
-          (v6/*: any*/),
+          (v7/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -243,7 +293,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v7/*: any*/),
+                  (v8/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -252,7 +302,7 @@ return {
                     "name": "basicInfo",
                     "plural": false,
                     "selections": [
-                      (v8/*: any*/)
+                      (v9/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -303,6 +353,7 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
+      (v5/*: any*/),
       (v0/*: any*/),
       (v4/*: any*/),
       (v2/*: any*/),
@@ -314,13 +365,13 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v5/*: any*/),
+        "args": (v6/*: any*/),
         "concreteType": "UserV2Connection",
         "kind": "LinkedField",
-        "name": "adminUsersV2",
+        "name": "scopedUsersV2",
         "plural": false,
         "selections": [
-          (v6/*: any*/),
+          (v7/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -337,7 +388,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v7/*: any*/),
+                  (v8/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -346,7 +397,7 @@ return {
                     "name": "basicInfo",
                     "plural": false,
                     "selections": [
-                      (v8/*: any*/),
+                      (v9/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -376,6 +427,13 @@ return {
                         "storageKey": null
                       }
                     ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "entityId",
                     "storageKey": null
                   },
                   {
@@ -419,7 +477,13 @@ return {
                   },
                   {
                     "alias": null,
-                    "args": null,
+                    "args": [
+                      {
+                        "kind": "Literal",
+                        "name": "limit",
+                        "value": 1000
+                      }
+                    ],
                     "concreteType": "ProjectV2Connection",
                     "kind": "LinkedField",
                     "name": "projects",
@@ -441,7 +505,7 @@ return {
                             "name": "node",
                             "plural": false,
                             "selections": [
-                              (v7/*: any*/),
+                              (v8/*: any*/),
                               {
                                 "alias": null,
                                 "args": null,
@@ -456,6 +520,13 @@ return {
                                     "kind": "ScalarField",
                                     "name": "name",
                                     "storageKey": null
+                                  },
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "kind": "ScalarField",
+                                    "name": "type",
+                                    "storageKey": null
                                   }
                                 ],
                                 "storageKey": null
@@ -467,7 +538,7 @@ return {
                         "storageKey": null
                       }
                     ],
-                    "storageKey": null
+                    "storageKey": "projects(limit:1000)"
                   },
                   {
                     "alias": null,
@@ -616,16 +687,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "4175b4b15b6dc89dd62dbb09f5ba4c5f",
+    "cacheID": "11458c58fca01384046d8734c22de4df",
     "id": null,
     "metadata": {},
     "name": "AdminUserManagementQuery",
     "operationKind": "query",
-    "text": "query AdminUserManagementQuery(\n  $filter: UserV2Filter\n  $orderBy: [UserV2OrderBy!]\n  $limit: Int\n  $offset: Int\n  $isNotSupportTotp: Boolean!\n) {\n  adminUsersV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n        }\n        ...BAIAdminUserV2TableFragment_1wLHi5\n        ...PurgeUsersModalFragment\n        ...UpdateUsersModalFragment\n        ...UserInfoModalFragment\n        ...UserSettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIAdminUserV2TableFragment_1wLHi5 on UserV2 {\n  id\n  basicInfo {\n    email\n    fullName\n    username\n    description\n    integrationName\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n    mainAccessKey\n  }\n  projects {\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n  security {\n    totpActivated @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    totpActivatedAt @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    sudoSessionEnabled\n    allowedClientIp\n  }\n  status {\n    status\n    statusInfo\n    needPasswordChange\n  }\n  container {\n    containerUid\n    containerMainGid\n    containerGids\n  }\n  timestamps {\n    createdAt\n    modifiedAt\n  }\n}\n\nfragment PurgeUsersModalFragment on UserV2 {\n  id\n  basicInfo {\n    email\n  }\n}\n\nfragment TOTPActivateModalFragment on UserV2 {\n  basicInfo {\n    email\n  }\n  security {\n    totpActivated @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n  }\n}\n\nfragment UpdateUsersModalFragment on UserV2 {\n  id\n  basicInfo {\n    email\n  }\n}\n\nfragment UserInfoModalFragment on UserV2 {\n  basicInfo {\n    email\n    username\n    fullName\n    description\n  }\n  status {\n    status\n    needPasswordChange\n  }\n  security {\n    totpActivated @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    sudoSessionEnabled\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n    mainAccessKey\n  }\n  projects {\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n\nfragment UserSettingModalFragment on UserV2 {\n  id\n  basicInfo {\n    email\n    username\n    fullName\n    description\n  }\n  status {\n    status\n    needPasswordChange\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n    mainAccessKey\n  }\n  security {\n    totpActivated @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    sudoSessionEnabled\n    allowedClientIp\n  }\n  container {\n    containerUid\n    containerMainGid\n    containerGids\n  }\n  projects {\n    edges {\n      node {\n        id\n      }\n    }\n  }\n  ...TOTPActivateModalFragment\n}\n"
+    "text": "query AdminUserManagementQuery(\n  $scope: UserScope!\n  $filter: UserV2Filter\n  $orderBy: [UserV2OrderBy!]\n  $limit: Int\n  $offset: Int\n  $isNotSupportTotp: Boolean!\n) {\n  scopedUsersV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n        }\n        ...BAIAdminUserV2TableFragment_1wLHi5\n        ...PurgeUsersModalFragment\n        ...UpdateUsersModalFragment\n        ...UserInfoModalFragment\n        ...UserSettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIAdminUserV2TableFragment_1wLHi5 on UserV2 {\n  id\n  entityId @since(version: \"26.9.0a4\")\n  basicInfo {\n    email\n    fullName\n    username\n    description\n    integrationName\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n    mainAccessKey\n  }\n  projects(limit: 1000) {\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n  security {\n    totpActivated @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    totpActivatedAt @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    sudoSessionEnabled\n    allowedClientIp\n  }\n  status {\n    status\n    statusInfo\n    needPasswordChange\n  }\n  container {\n    containerUid\n    containerMainGid\n    containerGids\n  }\n  timestamps {\n    createdAt\n    modifiedAt\n  }\n}\n\nfragment PurgeUsersModalFragment on UserV2 {\n  id\n  basicInfo {\n    email\n  }\n}\n\nfragment TOTPActivateModalFragment on UserV2 {\n  basicInfo {\n    email\n  }\n  security {\n    totpActivated @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n  }\n}\n\nfragment UpdateUsersModalFragment on UserV2 {\n  id\n  basicInfo {\n    email\n  }\n}\n\nfragment UserInfoModalFragment on UserV2 {\n  basicInfo {\n    email\n    username\n    fullName\n    description\n  }\n  status {\n    status\n    needPasswordChange\n  }\n  security {\n    totpActivated @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    sudoSessionEnabled\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n    mainAccessKey\n  }\n  projects(limit: 1000) {\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n\nfragment UserSettingModalFragment on UserV2 {\n  id\n  basicInfo {\n    email\n    username\n    fullName\n    description\n  }\n  status {\n    status\n    needPasswordChange\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n    mainAccessKey\n  }\n  security {\n    totpActivated @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    sudoSessionEnabled\n    allowedClientIp\n  }\n  container {\n    containerUid\n    containerMainGid\n    containerGids\n  }\n  projects(limit: 1000) {\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n          type\n        }\n      }\n    }\n  }\n  ...TOTPActivateModalFragment\n}\n"
   }
 };
 })();
 
-(node as any).hash = "45b19a0be46c09d4dda27e4e37c30d60";
+(node as any).hash = "7b515bd93a6c20a8bc54136841cea52e";
 
 export default node;

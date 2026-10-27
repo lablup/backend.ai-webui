@@ -18,9 +18,9 @@ navTitle: 시작 페이지
 
 ![](../images/start_announcement_banner.png)
 
-내용이 긴 공지사항은 첫 줄을 한 줄로 요약한 형태로 접혀서 표시됩니다. 배너의
-**상세보기**를 클릭하면 공지사항 전문이 표시되고, **접기**를 클릭하면 다시
-접을 수 있습니다.
+배너에는 공지사항의 제목이 표시됩니다. 공지사항에 내용이 포함되어 있으면
+**상세보기**를 클릭해 내용을 확인하고, **접기**를 클릭하면 다시 접을 수
+있습니다.
 
 닫기 아이콘을 클릭하면 배너가 닫힙니다. 닫은 배너는 현재 브라우저 세션 동안
 계속 숨겨지며, 관리자가 새로운 공지사항을 게시하거나 기존 공지사항을 변경하면
@@ -61,7 +61,7 @@ navTitle: 시작 페이지
 
 ### 노트북 가져오기
 
-![](../images/start_from_url_notebook.png)
+![=800px](../images/start_from_url_notebook.png)
 
 1. **가져올 노트북 URL** 필드에 Jupyter Notebook URL(`.ipynb`으로 끝나는)을
    입력합니다
@@ -94,7 +94,7 @@ Markdown 뱃지 코드를 복사하여 프로젝트 문서에 바로 실행 링�
 
 ### GitHub 저장소 가져오기
 
-![](../images/start_from_url_github.png)
+![=800px](../images/start_from_url_github.png)
 
 1. **GitHub 주소** 필드에 유효한 GitHub 저장소 URL을 입력합니다
 2. 저장소가 저장될 **스토리지 호스트**를 선택합니다
@@ -105,7 +105,7 @@ Markdown 뱃지 코드를 복사하여 프로젝트 문서에 바로 실행 링�
 
 ### GitLab 저장소 가져오기
 
-![](../images/start_from_url_gitlab.png)
+![=800px](../images/start_from_url_gitlab.png)
 
 1. **GitLab 주소** 필드에 유효한 GitLab 저장소 URL을 입력합니다
 2. 필요한 경우 **GitLab 브랜치 이름**을 지정합니다 (기본값: `master`)
@@ -125,7 +125,7 @@ Markdown 뱃지 코드를 복사하여 프로젝트 문서에 바로 실행 링�
 업데이트에서 변경되거나 제거될 수 있습니다.
 :::
 
-![](../images/start_from_url_huggingface.png)
+![=800px](../images/start_from_url_huggingface.png)
 
 1. **Hugging Face 모델 URL 또는 ID** 필드에 모델을 입력합니다.
    `https://huggingface.co/openai/gpt-oss-20b`와 같은 모델 페이지 URL과

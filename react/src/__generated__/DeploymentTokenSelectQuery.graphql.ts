@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<67a04953432bd9b61489a464abf3e172>>
+ * @generated SignedSource<<de6e11d7ce7c6e690d66171cb421210b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,7 @@ import { ConcreteRequest } from 'relay-runtime';
 import { Result } from "relay-runtime";
 export type DeploymentTokenSelectQuery$variables = {
   deploymentId: string;
+  limit: number;
 };
 export type DeploymentTokenSelectQuery$data = {
   readonly deployment: Result<{
@@ -38,6 +39,11 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "deploymentId"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "limit"
   }
 ],
 v1 = [
@@ -57,6 +63,11 @@ v2 = {
 v3 = {
   "alias": null,
   "args": [
+    {
+      "kind": "Variable",
+      "name": "limit",
+      "variableName": "limit"
+    },
     {
       "kind": "Literal",
       "name": "orderBy",
@@ -118,7 +129,7 @@ v3 = {
       "storageKey": null
     }
   ],
-  "storageKey": "accessTokens(orderBy:[{\"direction\":\"DESC\",\"field\":\"CREATED_AT\"}])"
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -169,16 +180,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "c83af70fa58b61c9daa4716e6a2a8049",
+    "cacheID": "d2b32223fa166044a185a0f344133282",
     "id": null,
     "metadata": {},
     "name": "DeploymentTokenSelectQuery",
     "operationKind": "query",
-    "text": "query DeploymentTokenSelectQuery(\n  $deploymentId: ID!\n) {\n  deployment(id: $deploymentId) {\n    accessTokens(orderBy: [{field: CREATED_AT, direction: DESC}]) {\n      edges {\n        node {\n          id\n          token\n          createdAt\n          expiresAt\n        }\n      }\n    }\n    id\n  }\n}\n"
+    "text": "query DeploymentTokenSelectQuery(\n  $deploymentId: ID!\n  $limit: Int!\n) {\n  deployment(id: $deploymentId) {\n    accessTokens(orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit) {\n      edges {\n        node {\n          id\n          token\n          createdAt\n          expiresAt\n        }\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d5448e0f4b2191906c5ba30e7d998fdd";
+(node as any).hash = "806ecf6b0a241f933d1ee78855a6caa9";
 
 export default node;

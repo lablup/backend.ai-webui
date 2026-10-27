@@ -17,7 +17,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The project table: Astryx Table plus an assembled plugin pipeline (column settings, sorting, selection, resizing, sticky columns, scroll modes, expansion) behind an antd-v6-shaped prop contract. It is the only table implementation, so every list surface uses it rather than composing Astryx Table and its plugins by hand — the plugin order it fixes is load-bearing and easy to get wrong. It also owns what Astryx leaves to the caller: its own bottom pagination bar next to the settings gear, a column settings modal, a CSV export modal, and the empty state. Props Astryx exposes and this wrapper does not rename are inherited and forwarded to Astryx Table.',
+      'The project table: ui-common DataGrid (Astryx Table plus its plugin pipeline, a bottom pagination bar next to the settings gear, a column settings modal, a CSV export modal and the empty state) behind the frozen antd-v6-shaped prop contract the call sites use. Every list surface uses it rather than composing Astryx Table and its plugins by hand. It translates the antd vocabulary (dataSource, rowKey, dataIndex/render columns, order strings, current/total pagination, rowSelection, tableSettings, exportSettings, expandable, size, bordered, scroll) onto DataGrid; DataGrid props it does not rename, and the Astryx Table props DataGrid forwards, pass through.',
     bestPractices: [
       {
         guidance: true,
@@ -126,7 +126,7 @@ export const docs = {
       name: 'exportSettings',
       type: 'BAIExportSettings',
       description:
-        'Turns on the CSV export button. supportedFields limits what the modal offers and onExport receives the field keys the user picked.',
+        'Turns on the CSV export button. supportedFields limits what the modal offers, onExport receives the field keys the user picked, and notice is a warning the modal shows above the column list before the user commits (e.g. a row cap).',
     },
     {
       name: 'expandable',
@@ -175,7 +175,7 @@ export const docs = {
       name: 'showHeader',
       type: 'boolean',
       description:
-        'Collapses the header row via CSS. Intended only for list-shaped tables with a single unlabelled column; sorting and selection become unreachable while it is off.',
+        'Hides the header row. Intended only for list-shaped tables with a single unlabelled column; sorting and selection become unreachable while it is off.',
       default: 'true',
     },
     {
@@ -196,13 +196,13 @@ export const docs = {
       name: 'className',
       type: 'string',
       description:
-        'Applied to the dim/scroll wrapper around the table rather than to the table element itself.',
+        'Applied to the DataGrid root that holds the table, its bottom bar and its dialogs, not to the table element itself.',
     },
     {
       name: 'style',
       type: 'React.CSSProperties',
       description:
-        'Applied to the dim/scroll wrapper around the table rather than to the table element itself.',
+        'Applied to the DataGrid root that holds the table, its bottom bar and its dialogs, not to the table element itself.',
     },
   ],
   examples: [

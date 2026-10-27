@@ -123,12 +123,6 @@ const LoginHistory = ({
               options: loginResultFilterOptions,
             },
             {
-              key: 'domainName',
-              propertyLabel: t('loginHistory.Domain'),
-              type: 'string',
-              fixedOperator: 'contains',
-            },
-            {
               key: 'createdAt',
               propertyLabel: t('loginHistory.LoginTime'),
               type: 'datetime',

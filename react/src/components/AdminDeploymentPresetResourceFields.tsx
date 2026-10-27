@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { Form } from '../form-engine';
-import { theme } from '../theme-shim';
 import type { ResourceSlotTypeInfo } from './AdminDeploymentPresetFormTypes';
 import BAIFormItem from './BAIFormItem';
 import {
@@ -12,7 +11,8 @@ import {
   AstryxFormTextInput,
   type AstryxFormNumberInputProps,
 } from './astryxFormControls';
-import { TextInput } from '@astryxdesign/core/TextInput';
+import { TextInput } from '@lablup/ui-common/TextInput';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIDynamicUnitInputNumber, BAIFlex } from 'backend.ai-ui';
 import { CircleMinus } from 'lucide-react';
 import React from 'react';
@@ -147,7 +147,7 @@ export const FixedResourceSlotField: React.FC<{
 }> = ({ slotName, resourceSlotTypes, required = true }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const slotType = resourceSlotTypes.find((s) => s.slotName === slotName);
   const precision = slotType?.numberFormat?.roundLength ?? 0;
 
@@ -159,10 +159,9 @@ export const FixedResourceSlotField: React.FC<{
             readOnly mode, so `isDisabled` carries the "not editable" state;
             the dashed-border decoration is dropped (defaults-first). */}
         <TextInput
-          label={t('adminDeploymentPreset.ResourceSlots')}
-          isLabelHidden
+          aria-label={t('adminDeploymentPreset.ResourceSlots')}
           value={slotName.toUpperCase()}
-          isDisabled
+          disabled
           width="100%"
         />
       </BAIFormItem>
@@ -199,7 +198,9 @@ export const FixedResourceSlotField: React.FC<{
         </BAIFormItem>
       )}
       {/* Spacer matching the CircleMinus delete icon in ResourceSlotRow */}
-      <span style={{ visibility: 'hidden', fontSize: token.fontSize }}>
+      <span
+        style={{ visibility: 'hidden', fontSize: token('--font-size-base') }}
+      >
         <CircleMinus size="1em" />
       </span>
     </BAIFlex>

@@ -3,7 +3,7 @@ import BAICard from './BAICard';
 import BAIFlex from './BAIFlex';
 import BAIRowWrapWithDividers from './BAIRowWrapWithDividers';
 import BAIText from './BAIText';
-import { Token } from '@astryxdesign/core/Token';
+import { Token } from '@lablup/ui-common/Token';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 /**

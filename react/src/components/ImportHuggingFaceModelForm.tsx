@@ -15,8 +15,8 @@ import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import HuggingFaceModelPreview from './HuggingFaceModelPreview';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { IconButton } from '@astryxdesign/core/IconButton';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import {
   BAIButton,
   BAIFlex,

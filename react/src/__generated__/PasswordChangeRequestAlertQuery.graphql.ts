@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<841d0a3cdf41f849049b02226ae17692>>
+ * @generated SignedSource<<f75928fa0495272f7316ebaa2629c4ce>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,8 +11,10 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type PasswordChangeRequestAlertQuery$variables = Record<PropertyKey, never>;
 export type PasswordChangeRequestAlertQuery$data = {
-  readonly user: {
-    readonly need_password_change: boolean | null | undefined;
+  readonly myUserV2: {
+    readonly status: {
+      readonly needPasswordChange: boolean | null | undefined;
+    };
   } | null | undefined;
 };
 export type PasswordChangeRequestAlertQuery = {
@@ -24,8 +26,19 @@ const node: ConcreteRequest = (function(){
 var v0 = {
   "alias": null,
   "args": null,
-  "kind": "ScalarField",
-  "name": "need_password_change",
+  "concreteType": "UserV2StatusInfo",
+  "kind": "LinkedField",
+  "name": "status",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "needPasswordChange",
+      "storageKey": null
+    }
+  ],
   "storageKey": null
 };
 return {
@@ -38,9 +51,9 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "User",
+        "concreteType": "UserV2",
         "kind": "LinkedField",
-        "name": "user",
+        "name": "myUserV2",
         "plural": false,
         "selections": [
           (v0/*: any*/)
@@ -60,9 +73,9 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "User",
+        "concreteType": "UserV2",
         "kind": "LinkedField",
-        "name": "user",
+        "name": "myUserV2",
         "plural": false,
         "selections": [
           (v0/*: any*/),
@@ -79,16 +92,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "533382334f8b565412a9a20126466e7d",
+    "cacheID": "acd9f75ed99d084c67edaf42d6f1f5ba",
     "id": null,
     "metadata": {},
     "name": "PasswordChangeRequestAlertQuery",
     "operationKind": "query",
-    "text": "query PasswordChangeRequestAlertQuery {\n  user {\n    need_password_change\n    id\n  }\n}\n"
+    "text": "query PasswordChangeRequestAlertQuery {\n  myUserV2 {\n    status {\n      needPasswordChange\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "a0c9b235a9f295a7e474d1f045860789";
+(node as any).hash = "4c28db8fbde7fcbdd47b63bb48b363ea";
 
 export default node;

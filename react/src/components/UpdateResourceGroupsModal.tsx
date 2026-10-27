@@ -10,7 +10,7 @@ import {
   useSFTPResourceGroups,
 } from '../hooks/useSFTPResourceGroups';
 import BAIFormItem from './BAIFormItem';
-import { Code } from '@astryxdesign/core/Code';
+import { Code } from '@lablup/ui-common/Code';
 import {
   BAISkeleton,
   BAIFlex,
@@ -144,7 +144,6 @@ const UpdateResourceGroupsModal: React.FC<UpdateResourceGroupsModalProps> = ({
       onCancel={() => onRequestClose(false)}
       confirmLoading={isSubmitting}
       loading={proxyResourceGroups === undefined || isFetching}
-      destroyOnHidden
       {...baiModalProps}
     >
       <BAIFlex direction="column" align="stretch" gap="md">

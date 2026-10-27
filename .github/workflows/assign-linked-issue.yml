@@ -1,0 +1,116 @@
+name: "Assign Linked Issue to PR Author"
+
+# When a PR is linked to an issue that has no assignee, assign the PR author.
+# Issues that already have an assignee are never touched.
+#
+# Link detection mirrors project-status-sync.yml: GitHub's
+# `closingIssuesReferences` plus a closing-keyword regex over the PR body,
+# because stacked PRs (not targeting the default branch) never populate the
+# former. Only same-repo issues are followed.
+#
+# Skipped authors: bot accounts, and the logins listed (space-separated) in
+# vars.AUTO_ASSIGN_SKIP_AUTHORS (default: lablup-octodog, the agent account
+# whose PRs are opened on someone else's behalf).
+#
+# Uses `pull_request_target` so fork PRs get a writable token; no PR code is
+# checked out or executed.
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - edited
+      - ready_for_review
+
+permissions:
+  issues: write
+  pull-requests: read
+
+concurrency:
+  group: assign-linked-issue-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  assign:
+    if: github.event.pull_request.user.type != 'Bot'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assign unassigned linked issues
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+          SKIP_AUTHORS: ${{ vars.AUTO_ASSIGN_SKIP_AUTHORS || 'lablup-octodog' }}
+        run: |
+          for skip in $SKIP_AUTHORS; do
+            if [ "$skip" = "$AUTHOR" ]; then
+              echo "::notice::PR author '${AUTHOR}' is in the skip list. Nothing to do."
+              exit 0
+            fi
+          done
+
+          api_numbers=$(gh api graphql \
+            -f query='
+              query($url: URI!) {
+                resource(url: $url) {
+                  ... on PullRequest {
+                    closingIssuesReferences(first: 20) {
+                      nodes { number repository { nameWithOwner } }
+                    }
+                  }
+                }
+              }' \
+            -f url="$PR_URL" \
+            --jq ".data.resource.closingIssuesReferences.nodes[]? | select(.repository.nameWithOwner == \"${REPO}\") | .number")
+
+          body_numbers=$(
+            printf '%s' "$PR_BODY" \
+              | grep -oiE '(^|[^[:alnum:]_])(close[sd]?|fix(es|ed)?|resolve[sd]?)[[:space:]]+#[0-9]+' \
+              | grep -oE '#[0-9]+' | tr -d '#' \
+              || true
+          )
+
+          numbers=$(printf '%s\n%s\n' "$api_numbers" "$body_numbers" | grep -E '^[0-9]+$' | sort -un || true)
+          if [ -z "$numbers" ]; then
+            echo "::notice::No linked issues detected for PR #${PR_NUMBER}."
+            exit 0
+          fi
+
+          failed=0
+          while IFS= read -r n; do
+            if ! gh api "repos/${REPO}/issues/${n}" > issue.json 2> err.txt; then
+              if grep -q 'HTTP 404' err.txt; then
+                echo "::notice::#${n} not found. Skipping."
+              else
+                cat err.txt >&2
+                echo "::error::Failed to fetch #${n}."
+                failed=1
+              fi
+              continue
+            fi
+            if jq -e '.pull_request' issue.json > /dev/null; then
+              echo "::notice::#${n} is a pull request, not an issue. Skipping."
+              continue
+            fi
+            if [ "$(jq '.assignees | length' issue.json)" -gt 0 ]; then
+              echo "::notice::Issue #${n} already assigned to $(jq -r '[.assignees[].login] | join(", ")' issue.json). Skipping."
+              continue
+            fi
+
+            # GitHub silently drops assignees without repo access, so verify the result.
+            if ! assigned=$(gh api -X POST "repos/${REPO}/issues/${n}/assignees" \
+              -f "assignees[]=${AUTHOR}" --jq '[.assignees[].login] | join(",")'); then
+              echo "::error::Failed to assign ${AUTHOR} to issue #${n}."
+              failed=1
+              continue
+            fi
+            case ",${assigned}," in
+              *",${AUTHOR},"*) echo "::notice::Issue #${n} assigned to ${AUTHOR}." ;;
+              *) echo "::warning::Could not assign ${AUTHOR} to issue #${n} (no repository access?)." ;;
+            esac
+          done <<< "$numbers"
+          exit "$failed"

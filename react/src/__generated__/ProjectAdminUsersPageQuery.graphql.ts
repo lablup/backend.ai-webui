@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b4aa3640d57f36b309c538f8df1fb273>>
+ * @generated SignedSource<<c44aab7241bdbdb9474adc9edf9ed0c1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,7 +13,7 @@ import { FragmentRefs } from "relay-runtime";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type UserRoleV2 = "ADMIN" | "MONITOR" | "SUPERADMIN" | "USER" | "%future added value";
 export type UserStatusV2 = "ACTIVE" | "BEFORE_VERIFICATION" | "DELETED" | "INACTIVE" | "%future added value";
-export type UserV2OrderField = "CREATED_AT" | "DOMAIN_NAME" | "EMAIL" | "MODIFIED_AT" | "PROJECT_NAME" | "STATUS" | "USERNAME" | "%future added value";
+export type UserV2OrderField = "CONTAINER_MAIN_GID" | "CONTAINER_UID" | "CREATED_AT" | "DESCRIPTION" | "DOMAIN_ID" | "DOMAIN_NAME" | "EMAIL" | "ENTITY_ID" | "FULL_NAME" | "INTEGRATION_NAME" | "MODIFIED_AT" | "NEED_PASSWORD_CHANGE" | "PROJECT_NAME" | "RESOURCE_POLICY" | "ROLE" | "STATUS" | "STATUS_INFO" | "SUDO_SESSION_ENABLED" | "TOTP_ACTIVATED" | "TOTP_ACTIVATED_AT" | "USERNAME" | "%future added value";
 export type UserV2Filter = {
   AND?: ReadonlyArray<UserV2Filter> | null | undefined;
   NOT?: ReadonlyArray<UserV2Filter> | null | undefined;
@@ -24,10 +24,13 @@ export type UserV2Filter = {
   createdAt?: DateTimeFilter | null | undefined;
   description?: StringFilter | null | undefined;
   domain?: UserDomainNestedFilter | null | undefined;
+  domainId?: UUIDFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
   email?: StringFilter | null | undefined;
   fullName?: StringFilter | null | undefined;
   integrationName?: StringFilter | null | undefined;
+  keypairs?: UserKeypairNestedFilter | null | undefined;
+  modifiedAt?: DateTimeFilter | null | undefined;
   needPasswordChange?: boolean | null | undefined;
   project?: UserProjectNestedFilter | null | undefined;
   resourcePolicy?: StringFilter | null | undefined;
@@ -36,6 +39,7 @@ export type UserV2Filter = {
   statusInfo?: StringFilter | null | undefined;
   sudoSessionEnabled?: boolean | null | undefined;
   totpActivated?: boolean | null | undefined;
+  totpActivatedAt?: NullableDateTimeFilter | null | undefined;
   username?: StringFilter | null | undefined;
   uuid?: UUIDFilter | null | undefined;
 };
@@ -97,6 +101,32 @@ export type DateTimeFilter = {
   before?: string | null | undefined;
   equals?: string | null | undefined;
   notEquals?: string | null | undefined;
+};
+export type NullableDateTimeFilter = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  equals?: string | null | undefined;
+  isNull?: boolean | null | undefined;
+  notEquals?: string | null | undefined;
+};
+export type UserKeypairNestedFilter = {
+  every?: KeypairFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: KeypairFilter | null | undefined;
+  some?: KeypairFilter | null | undefined;
+};
+export type KeypairFilter = {
+  AND?: ReadonlyArray<KeypairFilter> | null | undefined;
+  NOT?: ReadonlyArray<KeypairFilter> | null | undefined;
+  OR?: ReadonlyArray<KeypairFilter> | null | undefined;
+  accessKey?: StringFilter | null | undefined;
+  createdAt?: DateTimeFilter | null | undefined;
+  isActive?: boolean | null | undefined;
+  isAdmin?: boolean | null | undefined;
+  isDefault?: boolean | null | undefined;
+  lastUsed?: DateTimeFilter | null | undefined;
+  resourcePolicy?: StringFilter | null | undefined;
+  userId?: UUIDFilter | null | undefined;
 };
 export type UserDomainNestedFilter = {
   isActive?: boolean | null | undefined;
@@ -309,6 +339,13 @@ return {
                 "plural": false,
                 "selections": [
                   (v8/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "entityId",
+                    "storageKey": null
+                  },
                   {
                     "alias": null,
                     "args": null,
@@ -541,12 +578,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "92a2c6651885b26e9d49583233cf75d1",
+    "cacheID": "42e8e5e52b194912fe5a4d0fbc36e25b",
     "id": null,
     "metadata": {},
     "name": "ProjectAdminUsersPageQuery",
     "operationKind": "query",
-    "text": "query ProjectAdminUsersPageQuery(\n  $projectId: UUID!\n  $filter: UserV2Filter\n  $orderBy: [UserV2OrderBy!]\n  $limit: Int\n  $offset: Int\n  $isNotSupportTotp: Boolean!\n) {\n  projectUsersV2(scope: {projectId: $projectId}, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...BAIAdminUserV2TableFragment\n      }\n    }\n  }\n}\n\nfragment BAIAdminUserV2TableFragment on UserV2 {\n  id\n  basicInfo {\n    email\n    fullName\n    username\n    description\n    integrationName\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n    mainAccessKey\n  }\n  security {\n    totpActivated @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    totpActivatedAt @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    sudoSessionEnabled\n    allowedClientIp\n  }\n  status {\n    status\n    statusInfo\n    needPasswordChange\n  }\n  container {\n    containerUid\n    containerMainGid\n    containerGids\n  }\n  timestamps {\n    createdAt\n    modifiedAt\n  }\n}\n"
+    "text": "query ProjectAdminUsersPageQuery(\n  $projectId: UUID!\n  $filter: UserV2Filter\n  $orderBy: [UserV2OrderBy!]\n  $limit: Int\n  $offset: Int\n  $isNotSupportTotp: Boolean!\n) {\n  projectUsersV2(scope: {projectId: $projectId}, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...BAIAdminUserV2TableFragment\n      }\n    }\n  }\n}\n\nfragment BAIAdminUserV2TableFragment on UserV2 {\n  id\n  entityId @since(version: \"26.9.0a4\")\n  basicInfo {\n    email\n    fullName\n    username\n    description\n    integrationName\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n    mainAccessKey\n  }\n  security {\n    totpActivated @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    totpActivatedAt @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n    sudoSessionEnabled\n    allowedClientIp\n  }\n  status {\n    status\n    statusInfo\n    needPasswordChange\n  }\n  container {\n    containerUid\n    containerMainGid\n    containerGids\n  }\n  timestamps {\n    createdAt\n    modifiedAt\n  }\n}\n"
   }
 };
 })();

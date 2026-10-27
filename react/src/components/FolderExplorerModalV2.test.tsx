@@ -8,6 +8,7 @@ import FolderExplorerModalV2 from './FolderExplorerModalV2';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import * as _ from 'lodash-es';
 import { Suspense } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { MemoryRouter } from 'react-router-dom';
@@ -68,7 +69,7 @@ const { mockBaiClient, mockListHosts } = vi.hoisted(() => {
       accessKey: 'test-access-key',
       domainName: 'default',
     },
-    supports: () => false,
+    isManagerVersionCompatibleWith: () => false,
     vfolder: {
       list_hosts: mockListHosts,
     },
@@ -215,54 +216,109 @@ vi.mock('./VFolderNodeDescriptionV2', async () => {
 
 const VFOLDER_UUID = '11111111-2222-3333-4444-555555555555';
 
+/**
+ * `MockPayloadGenerator` always materializes a node, so a resolver that refuses
+ * the folder is expressed by nulling the root field after generation.
+ */
+const withNullRootFields = (
+  operation: any,
+  payload: any,
+  nullRootFields: Array<string> = [],
+  withFieldError = false,
+) => {
+  if (
+    nullRootFields.length === 0 ||
+    operation.request.node.params.name !== 'FolderExplorerModalV2Query'
+  ) {
+    return payload;
+  }
+  return {
+    ...payload,
+    data: {
+      ...payload.data,
+      ...Object.fromEntries(nullRootFields.map((field) => [field, null])),
+    },
+    // A non-nullable child that resolved to null nulls its parent and
+    // reports the error at the child's path (FR-3997).
+    ...(withFieldError
+      ? {
+          errors: nullRootFields.map((field) => ({
+            message: `Cannot return null for non-nullable field VFolderAccessControlInfo.permission.`,
+            path: [field, 'accessControl', 'permission'],
+          })),
+        }
+      : {}),
+  };
+};
+
+const ALL_FILE_HOST_PERMISSIONS = [
+  'download-file',
+  'upload-file',
+  'create-vfolder',
+  'delete-vfolder',
+  'modify-vfolder',
+];
+
 const renderModal = ({
   ownershipProjectId,
-  legacyPermissions,
+  ownershipProjectType,
+  permissionBits,
   hostPermissions,
+  nullResolvers,
+  withFieldError,
 }: {
   ownershipProjectId: string | null;
-  legacyPermissions?: string[];
+  ownershipProjectType?: 'GENERAL' | 'PERSONAL';
+  /** `VFolder.permissions` bits; defaults to read, write and delete. */
+  permissionBits?: string[];
   hostPermissions?: string[];
+  /** Root fields the manager resolves to `null` for this folder. */
+  nullResolvers?: Array<'vfolderNode'>;
+  /** Report the null as a field error, the way a broken resolver does. */
+  withFieldError?: boolean;
 }) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
   const resolver = (operation: any) =>
-    MockPayloadGenerator.generate(operation, {
-      // The legacy per-user RBAC list the FR-3800 gating reads.
-      VirtualFolderNode: () => ({
-        permissions: legacyPermissions ?? [
-          'read_content',
-          'write_content',
-          'delete_content',
-        ],
-      }),
-      VFolder: () => ({
-        id: btoa(`VFolder:${VFOLDER_UUID}`),
-        host: 'local:volume1',
-        unmanagedPath: null,
-        status: 'ready',
-        metadata: { name: 'test-folder' },
-        ownership: {
-          userId: 'someone-else-uuid',
-          projectId: ownershipProjectId,
-          project: ownershipProjectId
-            ? { basicInfo: { name: 'folder-project-name' } }
-            : null,
-        },
-      }),
-      KeyPair: () => ({ resource_policy: 'default' }),
-      // The storage-host capability axis. `enableUpload` / `enableEdit` are the
-      // AND of this and the folder-level `write_content`, so both sides need a
-      // knob to be gated independently.
-      Domain: () => ({
-        allowed_vfolder_hosts: JSON.stringify({
-          'local:volume1': hostPermissions ?? ['download-file', 'upload-file'],
+    withNullRootFields(
+      operation,
+      MockPayloadGenerator.generate(operation, {
+        VFolder: () => ({
+          id: btoa(`VFolder:${VFOLDER_UUID}`),
+          host: 'local:volume1',
+          unmanagedPath: null,
+          status: 'ready',
+          metadata: { name: 'test-folder' },
+          permissions: permissionBits ?? ['READ', 'UPDATE', 'SOFT_DELETE'],
+          ownership: {
+            userId: 'someone-else-uuid',
+            projectId: ownershipProjectId,
+            project: ownershipProjectId
+              ? { basicInfo: { name: 'folder-project-name' } }
+              : null,
+          },
         }),
+        // The owning project's type, read by the ownership banner through the
+        // legacy `group_node` (FR-3983).
+        GroupNode: () => ({
+          id: btoa(`GroupNode:${ownershipProjectId}`),
+          type: ownershipProjectType ?? 'GENERAL',
+        }),
+        KeyPair: () => ({ resource_policy: 'default' }),
+        // The storage-host axis. Every content-changing action is the AND of
+        // this and the folder-level `UPDATE` bit, so both sides need a knob.
+        Domain: () => ({
+          allowed_vfolder_hosts: JSON.stringify({
+            'local:volume1': hostPermissions ?? ALL_FILE_HOST_PERMISSIONS,
+          }),
+        }),
+        Group: () => ({ allowed_vfolder_hosts: '{}' }),
+        KeyPairResourcePolicy: () => ({ allowed_vfolder_hosts: '{}' }),
       }),
-      Group: () => ({ allowed_vfolder_hosts: '{}' }),
-      KeyPairResourcePolicy: () => ({ allowed_vfolder_hosts: '{}' }),
-    });
+      nullResolvers ?? [],
+      withFieldError,
+    );
   const seenOperations: Array<{ name: string; variables: any }> = [];
-  for (let i = 0; i < 12; i++) {
+  for (let i = 0; i < 16; i++) {
     environment.mock.queueOperationResolver((operation: any) => {
       seenOperations.push({
         name: operation.request.node.params.name,
@@ -274,24 +330,26 @@ const renderModal = ({
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
-  render(
+  const ui = (open: boolean) => (
     <RelayEnvironmentProvider environment={environment}>
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
           <>
             <Suspense fallback={null}>
               <FolderExplorerModalV2
-                vfolderID={VFOLDER_UUID.replaceAll('-', '')}
-                open
+                // The opener clears the id as it closes.
+                vfolderID={open ? VFOLDER_UUID.replaceAll('-', '') : ''}
+                open={open}
                 onRequestClose={vi.fn()}
               />
             </Suspense>
           </>
         </MemoryRouter>
       </QueryClientProvider>
-    </RelayEnvironmentProvider>,
+    </RelayEnvironmentProvider>
   );
-  return { seenOperations };
+  const { rerender } = render(ui(true));
+  return { seenOperations, setOpen: (open: boolean) => rerender(ui(open)) };
 };
 
 const findPermissionOperation = (
@@ -302,6 +360,73 @@ const findPermissionOperation = (
       op.name ===
       'useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery',
   );
+
+const findOwnershipProjectOperation = (
+  seenOperations: Array<{ name: string; variables: any }>,
+) =>
+  seenOperations.find(
+    (op) => op.name === 'FolderExplorerModalV2OwnershipProjectQuery',
+  );
+
+describe('FolderExplorerModalV2 open feedback', () => {
+  beforeEach(() => {
+    mockIsProjectAgnosticPage = false;
+    mockListHosts.mockClear();
+  });
+
+  it('paints the dialog before the folder query resolves', () => {
+    // No resolver queued: the folder query stays in flight.
+    const environment: RelayMockEnvironment = createMockEnvironment();
+    render(
+      <RelayEnvironmentProvider environment={environment}>
+        <QueryClientProvider client={new QueryClient()}>
+          <MemoryRouter>
+            <Suspense fallback={null}>
+              <FolderExplorerModalV2
+                vfolderID={VFOLDER_UUID.replaceAll('-', '')}
+                open
+                onRequestClose={vi.fn()}
+              />
+            </Suspense>
+          </MemoryRouter>
+        </QueryClientProvider>
+      </RelayEnvironmentProvider>,
+    );
+
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'button.Close' })).toBeEnabled();
+    expect(screen.queryByTestId('mock-file-explorer')).not.toBeInTheDocument();
+    expect(
+      environment.mock
+        .getAllOperations()
+        .map((operation) => operation.request.node.params.name),
+    ).toEqual(['FolderExplorerModalV2Query']);
+  });
+
+  it('starts every explorer session with fresh state (FR-4005)', async () => {
+    const { setOpen } = renderModal({ ownershipProjectId: null });
+    await screen.findByTestId('mock-file-explorer');
+
+    // Leave the default tab; the mocked description is the metadata panel.
+    fireEvent.click(screen.getAllByText('auditLog.AuditLog')[0]);
+    await waitFor(() =>
+      expect(
+        screen.queryByTestId('mock-vfolder-description'),
+      ).not.toBeInTheDocument(),
+    );
+
+    setOpen(false);
+    await waitFor(() =>
+      expect(
+        screen.queryByTestId('mock-file-explorer'),
+      ).not.toBeInTheDocument(),
+    );
+
+    setOpen(true);
+    await screen.findByTestId('mock-file-explorer');
+    expect(screen.getByTestId('mock-vfolder-description')).toBeInTheDocument();
+  });
+});
 
 describe('FolderExplorerModalV2 project context (ADR-0001, FR-3413)', () => {
   beforeEach(() => {
@@ -340,6 +465,8 @@ describe('FolderExplorerModalV2 project context (ADR-0001, FR-3413)', () => {
     expect(
       screen.queryByText('data.BelongsToDifferentProject'),
     ).not.toBeInTheDocument();
+    // ...and the project-type lookup behind it is not issued either.
+    expect(findOwnershipProjectOperation(seenOperations)).toBeUndefined();
 
     // Permission calculation follows the folder's OWN project — never the
     // ambient decoy.
@@ -372,130 +499,169 @@ describe('FolderExplorerModalV2 project context (ADR-0001, FR-3413)', () => {
 
     // Permission calculation now follows the folder's own project (FR-3413
     // acceptance criterion) instead of the header selection.
-    const permissionOperation = findPermissionOperation(seenOperations);
-    expect(permissionOperation?.variables.projectId).toBe('folder-project-id');
+    // The header's session buttons issue their own lookup for the page
+    // project, so match the explorer's by its variables, not by order.
+    expect(
+      seenOperations
+        .filter(
+          (op) =>
+            op.name ===
+            'useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery',
+        )
+        .map((op) => op.variables.projectId),
+    ).toContain('folder-project-id');
+
+    // The banner decided after looking the owning project up by its id.
+    expect(
+      findOwnershipProjectOperation(seenOperations)?.variables.projectId,
+    ).toBe(btoa('GroupNode:folder-project-id'));
+  });
+
+  it('on a general route with a folder in a PERSONAL project: hides the ownership-mismatch alert (FR-3983)', async () => {
+    const { seenOperations } = renderModal({
+      ownershipProjectId: 'folder-project-id',
+      ownershipProjectType: 'PERSONAL',
+    });
+
+    await screen.findByTestId('mock-file-explorer');
+    // The lookup ran and answered PERSONAL...
+    await waitFor(() =>
+      expect(findOwnershipProjectOperation(seenOperations)).toBeDefined(),
+    );
+
+    // ...so neither wording of the cross-project banner is rendered.
+    expect(screen.queryByText('data.NotInProject')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('data.BelongsToDifferentProject'),
+    ).not.toBeInTheDocument();
   });
 });
 
-describe('FolderExplorerModalV2 share-permission gating (FR-3800)', () => {
+describe('FolderExplorerModalV2 permission gating (FR-4140)', () => {
   beforeEach(() => {
     mockIsProjectAgnosticPage = false;
     mockListHosts.mockClear();
     fileExplorerProps.length = 0;
   });
 
-  it('a read-only share (no write_content / delete_content) disables write, delete, upload and edit', async () => {
-    renderModal({
-      ownershipProjectId: null,
-      legacyPermissions: ['read_content'],
-    });
+  const latestPermissionProps = () => {
+    const props = fileExplorerProps.at(-1);
+    return {
+      download: props.enableDownload,
+      upload: props.enableUpload,
+      create: props.enableCreate,
+      delete: props.enableDelete,
+      rename: props.enableRename,
+      edit: props.enableEdit,
+    };
+  };
+
+  it('UPDATE plus every host permission enables every action', async () => {
+    renderModal({ ownershipProjectId: null, permissionBits: ['UPDATE'] });
 
     await screen.findByTestId('mock-file-explorer');
 
-    await waitFor(() => {
-      const props = fileExplorerProps.at(-1);
-      expect(props.enableWrite).toBe(false);
-      expect(props.enableDelete).toBe(false);
-      // The host `upload-file` capability IS present in the fixture, so these
-      // prove the folder-level write gate participates in the AND.
-      expect(props.enableUpload).toBe(false);
-      expect(props.enableEdit).toBe(false);
-    });
+    await waitFor(() =>
+      expect(latestPermissionProps()).toEqual({
+        download: true,
+        upload: true,
+        create: true,
+        delete: true,
+        rename: true,
+        edit: true,
+      }),
+    );
   });
 
-  it('write_content / delete_content in the legacy permission set enable the corresponding actions', async () => {
+  it('without UPDATE only download stays enabled, SOFT_DELETE included', async () => {
     renderModal({
       ownershipProjectId: null,
-      legacyPermissions: ['read_content', 'write_content', 'delete_content'],
+      permissionBits: ['READ', 'SOFT_DELETE'],
     });
 
     await screen.findByTestId('mock-file-explorer');
 
-    // Positive control: guards against the gating collapsing to always-false.
-    await waitFor(() => {
-      const props = fileExplorerProps.at(-1);
-      expect(props.enableWrite).toBe(true);
-      expect(props.enableDelete).toBe(true);
-      expect(props.enableUpload).toBe(true);
-      expect(props.enableEdit).toBe(true);
-      expect(props.enableDownload).toBe(true);
-    });
+    await waitFor(() =>
+      expect(latestPermissionProps()).toEqual({
+        download: true,
+        upload: false,
+        create: false,
+        delete: false,
+        rename: false,
+        edit: false,
+      }),
+    );
   });
 
-  // The two cases above turn write_content and delete_content on together, so
-  // they pass just as well when the two gates are cross-wired. These separate
-  // them.
-  it('write_content without delete_content enables write but not delete', async () => {
-    renderModal({
-      ownershipProjectId: null,
-      legacyPermissions: ['read_content', 'write_content'],
-    });
+  it.each([
+    ['upload-file', ['upload', 'edit']],
+    ['create-vfolder', ['create']],
+    ['delete-vfolder', ['delete']],
+    ['modify-vfolder', ['rename', 'edit']],
+    ['download-file', ['download']],
+  ])(
+    'a host without %s disables only %j',
+    async (missingPermission, disabledActions) => {
+      renderModal({
+        ownershipProjectId: null,
+        permissionBits: ['READ', 'UPDATE'],
+        hostPermissions: _.without(
+          ALL_FILE_HOST_PERMISSIONS,
+          missingPermission,
+        ),
+      });
 
-    await screen.findByTestId('mock-file-explorer');
+      await screen.findByTestId('mock-file-explorer');
 
-    await waitFor(() => {
-      const props = fileExplorerProps.at(-1);
-      expect(props.enableWrite).toBe(true);
-      expect(props.enableDelete).toBe(false);
-      expect(props.enableUpload).toBe(true);
-      expect(props.enableEdit).toBe(true);
-    });
+      await waitFor(() => {
+        const props = latestPermissionProps();
+        expect(props).toEqual(
+          _.mapValues(
+            props,
+            (_enabled, action) => !disabledActions.includes(action),
+          ),
+        );
+      });
+    },
+  );
+});
+
+describe('FolderExplorerModalV2 unreadable folder', () => {
+  beforeEach(() => {
+    mockIsProjectAgnosticPage = false;
+    mockListHosts.mockClear();
+    fileExplorerProps.length = 0;
   });
 
-  it('delete_content without write_content enables delete but not write, upload or edit', async () => {
+  it('shows the hard error when vfolderV2 returns null', async () => {
     renderModal({
       ownershipProjectId: null,
-      legacyPermissions: ['read_content', 'delete_content'],
+      nullResolvers: ['vfolderNode'],
     });
 
-    await screen.findByTestId('mock-file-explorer');
-
-    await waitFor(() => {
-      const props = fileExplorerProps.at(-1);
-      expect(props.enableDelete).toBe(true);
-      expect(props.enableWrite).toBe(false);
-      expect(props.enableUpload).toBe(false);
-      expect(props.enableEdit).toBe(false);
-    });
+    expect(
+      await screen.findByText('explorer.FolderNotFoundOrNoAccess'),
+    ).toBeInTheDocument();
+    expect(screen.queryByTestId('mock-file-explorer')).not.toBeInTheDocument();
+    expect(screen.queryByText('explorer.Metadata')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('explorer.FolderDetailUnavailable'),
+    ).not.toBeInTheDocument();
   });
 
-  it('a host without upload-file disables upload and edit even when write_content is granted', async () => {
+  it('tells a field error apart from an unreadable folder (FR-3997)', async () => {
     renderModal({
       ownershipProjectId: null,
-      legacyPermissions: ['read_content', 'write_content', 'delete_content'],
-      hostPermissions: ['download-file'],
+      nullResolvers: ['vfolderNode'],
+      withFieldError: true,
     });
 
-    await screen.findByTestId('mock-file-explorer');
-
-    // The other side of the AND: the folder grants write, the host does not
-    // allow the upload pipeline the upload buttons and the editor save write
-    // through.
-    await waitFor(() => {
-      const props = fileExplorerProps.at(-1);
-      expect(props.enableUpload).toBe(false);
-      expect(props.enableEdit).toBe(false);
-      expect(props.enableWrite).toBe(true);
-      expect(props.enableDelete).toBe(true);
-      expect(props.enableDownload).toBe(true);
-    });
-  });
-
-  it('a host without download-file disables download', async () => {
-    renderModal({
-      ownershipProjectId: null,
-      legacyPermissions: ['read_content', 'write_content', 'delete_content'],
-      hostPermissions: ['upload-file'],
-    });
-
-    await screen.findByTestId('mock-file-explorer');
-
-    await waitFor(() => {
-      const props = fileExplorerProps.at(-1);
-      expect(props.enableDownload).toBe(false);
-      // Download is host-only: the folder-level grants are unaffected.
-      expect(props.enableUpload).toBe(true);
-      expect(props.enableWrite).toBe(true);
-    });
+    expect(
+      await screen.findByText('explorer.FolderDetailUnavailable'),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText('explorer.FolderNotFoundOrNoAccess'),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId('mock-file-explorer')).not.toBeInTheDocument();
   });
 });

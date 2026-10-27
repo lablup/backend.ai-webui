@@ -333,15 +333,6 @@ export function endpointDetailPaginatedMockResponse(
   return buildResponse(result);
 }
 
-/**
- * Legacy mock — returns routes as null (for when skipRouteNodes = true).
- */
-export function endpointDetailLegacyMockResponse(
-  _vars: Record<string, any>,
-): Record<string, any> {
-  return buildResponse(null, true);
-}
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Response builder
 // ─────────────────────────────────────────────────────────────────────────────

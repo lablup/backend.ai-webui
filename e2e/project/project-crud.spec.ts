@@ -1,4 +1,5 @@
 // spec: e2e/.agent-output/test-plan-project.md
+import { getE2EDomainName } from '../utils/e2e-scope';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import { clickRowAction } from '../utils/user-profile-util';
 import test, { expect, Page } from '@playwright/test';
@@ -133,12 +134,9 @@ async function createProject(page: Page, name: string, description: string) {
   await modal.getByRole('textbox', { name: 'Name' }).fill(name);
   await modal.getByRole('textbox', { name: 'Description' }).fill(description);
 
-  // Select Domain 'default'. `BAIDomainSelect` renders as a Selector trigger
-  // `button` (not a `combobox`) whose accessible name concatenates the field
-  // label with the placeholder ("Domain Select Domain") — match the label as
-  // a substring rather than exactly.
-  await modal.getByRole('button', { name: 'Domain' }).click();
-  await page.getByRole('option', { name: 'default', exact: true }).click();
+  // #10081 (FR-4141) removed the Domain picker: `BAIProjectSettingModal` now
+  // creates the project in the signed-in domain itself.
+  await expect(modal.getByText('Domain', { exact: true })).toHaveCount(0);
 
   // Click OK to create and verify the modal closes
   await modal.getByRole('button', { name: 'OK' }).click();
@@ -147,9 +145,18 @@ async function createProject(page: Page, name: string, description: string) {
   // Verify the new project appears in the table. The name column renders via
   // BAINameActionCell so the cell's accessible name also includes hover-only
   // action labels; match by filter({ hasText }) instead of exact name.
-  await expect(page.getByRole('row').filter({ hasText: name })).toBeVisible({
-    timeout: 10000,
-  });
+  const projectRow = page.getByRole('row').filter({ hasText: name });
+  await expect(projectRow).toBeVisible({ timeout: 10000 });
+
+  // The project lands in the admin's own domain. Read the Domain cell by its
+  // column index: other cells (e.g. the resource policy) can also hold the
+  // same text.
+  const headers = await page.getByRole('columnheader').allInnerTexts();
+  const domainColumn = headers.findIndex((text) => text.trim() === 'Domain');
+  expect(domainColumn).toBeGreaterThanOrEqual(0);
+  await expect(projectRow.getByRole('cell').nth(domainColumn)).toHaveText(
+    await getE2EDomainName(),
+  );
 }
 
 // Independent of the CRUD tests: only reads the default project list, so a
@@ -177,15 +184,25 @@ test.describe(
       await expect(projectColumnHeader(page, 'Description')).toBeVisible();
       await expect(projectColumnHeader(page, 'Type')).toBeVisible();
 
-      // 4. Verify the default project row
-      const defaultRow = page
+      // 4. Verify a GENERAL project row of the admin's own domain (not
+      // `default` on every cluster). Match the Domain and Type cells exactly:
+      // a substring match on the domain name also hits project names and the
+      // resource policy, and the list is paginated, so no single project is
+      // guaranteed to be on the first page.
+      const domainName = await getE2EDomainName();
+      const domainRow = page
         .getByRole('row')
-        .filter({ hasText: 'default' })
+        .filter({
+          has: page.getByRole('cell', { name: domainName, exact: true }),
+        })
+        .filter({
+          has: page.getByRole('cell', { name: 'GENERAL', exact: true }),
+        })
         .first();
-      await expect(defaultRow).toBeVisible();
+      await expect(domainRow).toBeVisible();
 
-      // 5. Verify the Active radio button is selected and the default row has Type = GENERAL
-      // (Active is a filter tab, not a table column; the default project is active by default).
+      // 5. Verify the Active radio button is selected and that row has Type = GENERAL
+      // (Active is a filter tab, not a table column; the project is active).
       // `ProjectPage.tsx`'s status toggle is `BAIRadioGroup`, rendered on
       // Astryx `SegmentedControl` since ticket 10 (`BAIRadioGroup.tsx`).
       // `exact` matters: a substring match on "Active" also hits "Inactive".
@@ -193,8 +210,37 @@ test.describe(
         page.getByRole('radio', { name: 'Active', exact: true }),
       ).toBeChecked();
       await expect(
-        defaultRow.getByRole('cell', { name: 'GENERAL' }),
+        domainRow.getByRole('cell', { name: 'GENERAL' }),
       ).toBeVisible();
+    });
+
+    test('Personal projects are hidden by a default type filter the admin can remove', async ({
+      page,
+      request,
+    }) => {
+      await loginAsAdmin(page, request);
+      await navigateTo(page, 'project');
+
+      // First access: the `type != "PERSONAL"` chip is pre-applied
+      // (`DEFAULT_PROJECT_FILTER` in `ProjectPage.tsx`), so no PERSONAL row
+      // is listed. Token remove buttons are named `Remove <Field>: <operator>`;
+      // `!=` renders as "is not" (`comp:BAIPropertyFilter.operator.NotEquals`).
+      const typeChip = page.getByRole('button', {
+        name: 'Remove Type: is not',
+      });
+      await expect(typeChip).toBeVisible({ timeout: 30000 });
+      await expect(
+        page.getByRole('cell', { name: 'PERSONAL', exact: true }),
+      ).toHaveCount(0);
+
+      // Removing the chip is remembered as an explicit empty filter
+      // (`?filter=`), so a reload does not bring the default back.
+      await typeChip.click();
+      await expect(typeChip).toBeHidden();
+      await expect(page).toHaveURL(/[?&]filter=(&|$)/);
+      await page.reload();
+      await expect(projectsTab(page)).toBeVisible({ timeout: 30000 });
+      await expect(typeChip).toBeHidden();
     });
   },
 );
@@ -315,9 +361,13 @@ test.describe(
       // default `ilike` = "contains".
       await page.getByRole('button', { name: 'Remove Name: contains' }).click();
 
-      // Verify the default project is visible again (filter cleared)
+      // Verify the domain's other projects are listed again (filter cleared):
+      // the filtered project was purged above, so any row in the domain means
+      // the filter is gone.
       await expect(
-        page.getByRole('cell', { name: 'default', exact: true }).first(),
+        page
+          .getByRole('cell', { name: await getE2EDomainName(), exact: true })
+          .first(),
       ).toBeVisible({ timeout: 10000 });
     });
 

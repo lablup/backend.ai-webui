@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7722feccb475111437fe24e3f3b842ec>>
+ * @generated SignedSource<<90eea1df63ea20f3832b421aad7f4a47>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -74,16 +74,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "6c6fc6e1df4b1f6fc89454dabbde4706",
+    "cacheID": "9a5bdb3f11b80bcae1b0e769bb6dd0a2",
     "id": null,
     "metadata": {},
     "name": "ImportFromHuggingFaceModalQuery",
     "operationKind": "query",
-    "text": "query ImportFromHuggingFaceModalQuery(\n  $id: UUID!\n) {\n  group(id: $id) {\n    type @since(version: \"24.03.0\")\n  }\n}\n"
+    "text": "query ImportFromHuggingFaceModalQuery(\n  $id: UUID!\n) {\n  group(id: $id) {\n    type\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d65c064ab8bae6c6266259764029b31d";
+(node as any).hash = "f74b392a30c2de2c6041362000075914";
 
 export default node;

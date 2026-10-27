@@ -134,7 +134,7 @@ export function useRuntimeParameterSchema(
               rank
               category
               displayName
-              required @since(version: "26.4.4")
+              required
               targetSpec {
                 presetTarget
                 valueType
@@ -198,9 +198,7 @@ export function useRuntimeParameterSchema(
         rank: node.rank,
         category: node.category ?? null,
         displayName: node.displayName ?? null,
-        // `required` is absent when the field is version-gated out (see the
-        // `@since` directive in the query) — default to false on legacy backends.
-        required: node.required ?? false,
+        required: node.required,
         presetTarget: node.targetSpec.presetTarget as PresetTarget,
         valueType: node.targetSpec.valueType as PresetValueType,
         defaultValue: node.targetSpec.defaultValue ?? null,

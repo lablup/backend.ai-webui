@@ -12,9 +12,9 @@
 */
 import useControllableState_deprecated from '../hooks/useControllableState';
 import './InputNumberWithSlider.css';
-import { InputGroup } from '@astryxdesign/core/InputGroup';
-import { NumberInput } from '@astryxdesign/core/NumberInput';
-import { Slider } from '@astryxdesign/core/Slider';
+import { InputGroup } from '@lablup/ui-common/InputGroup';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
+import { Slider } from '@lablup/ui-common/Slider';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useEffect } from 'react';
@@ -50,7 +50,7 @@ interface SliderBag {
   };
 }
 
-interface InputNumberWithSliderProps {
+interface InputNumberWithSliderBaseProps {
   min?: number;
   max?: number;
   step?: number | null;
@@ -71,7 +71,6 @@ interface InputNumberWithSliderProps {
   disableMode?: 'normal' | 'empty';
   value?: number;
   allowNegative?: boolean;
-  onChange?: (value: number) => void;
   inputNumberProps?: InputNumberBag;
   inputContainerMinWidth?: number;
   style?: CSSProperties;
@@ -82,6 +81,16 @@ interface InputNumberWithSliderProps {
    */
   label?: string;
 }
+
+type InputNumberWithSliderProps = InputNumberWithSliderBaseProps &
+  (
+    | { allowClear?: false; onChange?: (value: number) => void }
+    | {
+        /** Emptying the number field emits `null` instead of restoring the previous value. */
+        allowClear: true;
+        onChange?: (value: number | null) => void;
+      }
+  );
 
 /** A mark label Astryx can render itself. */
 const isPlainLabel = (label: ReactNode): label is string | number =>
@@ -128,6 +137,7 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   inputContainerMinWidth,
   style,
   label,
+  allowClear,
   ...otherProps
 }) => {
   'use memo';
@@ -187,13 +197,12 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
           isDisabled={isDisabled}
         >
           <NumberInput
-            label={accessibleLabel}
-            isLabelHidden
+            aria-label={accessibleLabel}
             max={max}
             min={min}
             step={step ?? undefined}
             hasNumberSteppers
-            isDisabled={isDisabled}
+            disabled={isDisabled}
             value={displayValue ?? null}
             placeholder={inputNumberProps?.placeholder}
             // Typed `ReactNode`, but every call site passes a plain string.
@@ -203,7 +212,10 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
                 : undefined
             }
             onChange={(next) => {
-              if (_.isNil(next)) return;
+              if (_.isNil(next)) {
+                if (allowClear && !_.isNil(value)) setValue(null);
+                return;
+              }
               setValue(next);
             }}
             onBlur={(event) => {
@@ -211,6 +223,10 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
               // so the raw field text is the only surviving trace. (React 19
               // does not pool events, so reading `target.value` here is safe.)
               const rawText = (event.target as HTMLInputElement).value;
+              if (allowClear && rawText.trim() === '') {
+                if (!_.isNil(value)) setValue(null);
+                return;
+              }
               const typed = rawText.trim() === '' ? NaN : Number(rawText);
               let current = value;
               if (
@@ -244,7 +260,7 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
               }
             }}
             width="100%"
-            style={inputNumberProps?.style}
+            controlStyle={inputNumberProps?.style}
           />
           {inputNumberProps?.addonAfter}
         </InputGroup>
@@ -260,13 +276,12 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
           }
         >
           <Slider
-            label={accessibleLabel}
-            isLabelHidden
+            aria-label={accessibleLabel}
             width="100%"
             max={sliderMax}
             min={sliderMin}
             step={step ?? undefined}
-            isDisabled={isDisabled}
+            disabled={isDisabled}
             value={displayValue ?? sliderMin}
             valueDisplay={
               isEmptyMode || sliderProps?.tooltip?.open === false

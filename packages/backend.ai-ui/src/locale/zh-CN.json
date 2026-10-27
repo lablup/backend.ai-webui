@@ -6,6 +6,7 @@
     "DiskPerc": "磁盘使用率 %",
     "Endpoint": "端点",
     "FailedToLoadCellData": "数据加载失败。",
+    "LostAt": "失联时间",
     "NoAvailableLiveStat": "暂无可用实时统计",
     "Region": "区域",
     "ResourceGroup": "资源组",
@@ -13,7 +14,8 @@
     "Schedulable": "可调度",
     "Starts": "启动次数",
     "Status": "状态",
-    "Utilization": "利用率"
+    "Utilization": "利用率",
+    "Version": "版本"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "已允许",
@@ -87,26 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "发生意外错误。请稍后重试，若问题仍然存在，请联系支持。"
   },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "清除",
-    "KeepAsIs": "保持原样",
-    "UndoChanges": "撤销更改"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "执行错误",
-    "ErrorOccurred": "发生错误"
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "清除",
-    "HexValue": "十六进制值",
-    "NoColor": "无颜色",
-    "SelectColor": "选择颜色"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "清除 搜索选项",
-    "NoResults": "无结果",
-    "SearchOptions": "搜索选项"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "选择容器镜像仓库"
   },
@@ -126,14 +108,6 @@
     "Size": "尺寸",
     "SuccessFullyRemoved": "成功删除了{{count}}版本。",
     "Version": "版本"
-  },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "您确定要删除吗？",
-    "AreYouSureToPermanentlyDeleteTarget": "确定要永久删除{{target}}吗？",
-    "CannotBeUndone": "此操作无法撤销。",
-    "DeleteItem": "删除",
-    "DeleteNItems": "删除 {{count}} 个项目",
-    "TypeToConfirm": "输入 <code>{{confirmText}}</code> 以确认。"
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "创建者"
@@ -171,6 +145,34 @@
   },
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "数量"
+  },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "添加标签"
+  },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "编辑标签"
+  },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "添加标签",
+    "AddLabelsToItems": "为 {{count}} 个项目添加标签",
+    "BulkDescription": "以下标签将添加到所有选中的项目。已有相同键的项目会更新其值，其他标签保持不变。",
+    "EditLabels": "编辑标签",
+    "Error": "错误",
+    "Key": "键",
+    "KeyMustBeUnique": "每个键只能使用一次。",
+    "KeyRequired": "请输入键。",
+    "Label": "标签",
+    "LabelsSaved": "标签已保存。",
+    "RemoveLabel": "删除标签",
+    "Save": "保存",
+    "SomeLabelsFailed": "{{count}} 项标签更改失败",
+    "Target": "对象",
+    "TooLong": "最多输入 {{max}} 个字符。",
+    "Value": "值",
+    "ValueRequired": "请输入值。"
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "标签"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "自动刷新",
@@ -246,6 +248,10 @@
       "Title": "无法使用 Backend.AI 登录"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "内核启动进度",
+    "KernelTerminationProgress": "内核终止进度"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "簇的大小",
     "Concurrency": "并发会话数",
@@ -275,7 +281,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "访问密钥",
     "CreatedAt": "创建于",
-    "InvalidatedAt": "失效于",
+    "LastAccessedAt": "最后访问时间",
     "User": "用户"
   },
   "comp:BAIModal": {
@@ -313,7 +319,6 @@
     "RevisionNumber": "修订版本",
     "RevisionNumberTooltip": "部署的当前修订版本号。",
     "StrategyType": "策略",
-    "Tags": "标签",
     "UpdatedAt": "更新时间"
   },
   "comp:BAINameActionCell": {
@@ -341,7 +346,6 @@
     "ContainerRegistryForImageCommit": "用于提交镜像的容器镜像仓库",
     "CreateProject": "创建项目",
     "Description": "描述",
-    "Domain": "域",
     "FailedToCreateProject": "创建项目失败",
     "FailedToUpdateProject": "更新项目失败",
     "IsActive": "是否启用？",
@@ -410,11 +414,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "已分配 / 请求"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "更改分组颜色",
-    "ResourceGrid": "资源网格",
-    "UseColorN": "使用颜色 {{n}}"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "无限"
@@ -558,6 +557,9 @@
     "To": "目标状态",
     "UpdatedAt": "更新时间"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "选择文件夹"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "代理人"
   },
@@ -565,8 +567,26 @@
     "MultiNodeShort": "多",
     "SingleNodeShort": "单节点"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "无限"
+  "comp:BAISessionScene": {
+    "FoundCount": "找到 {{count}} 个",
+    "Hero": "我的会话",
+    "Measuring": "测量中",
+    "ResourceShare": "资源占用",
+    "ShowAll": "显示全部",
+    "Utilization": "使用率",
+    "mood": {
+      "Idle": "空闲",
+      "Leaving": "终止中",
+      "Overheated": "过热",
+      "Waiting": "等待资源",
+      "Working": "工作中"
+    }
+  },
+  "comp:BAISessionTypeToken": {
+    "Batch": "批处理",
+    "Inference": "推理",
+    "Interactive": "交互式",
+    "System": "上传"
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "选择存储主机"
@@ -584,28 +604,13 @@
     "Time": "时间"
   },
   "comp:BAITable": {
-    "Apply": "应用",
-    "Cancel": "取消",
     "CollapseAll": "收起全部",
     "ExpandAll": "展开全部",
     "ExpandErrorsOnly": "仅展开错误",
-    "ExpandOptions": "展开选项",
-    "ExpandRow": "展开行",
-    "Export": "导出",
-    "ExportCSV": "导出 CSV",
-    "GoToFirstPage": "转到第一页",
-    "InvalidPageNumber": "无效的页码",
-    "NoDataToDisplay": "暂无数据",
-    "Pagination": "分页",
-    "SearchTableColumn": "搜索表列",
-    "SelectColumnToDisplay": "选择要显示的列",
-    "SettingTable": "表设置"
+    "ExpandOptions": "展开选项"
   },
   "comp:BAITestButton": {
     "Test": "测试"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "另有 {{rest}} 项"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "创建于",
@@ -628,8 +633,6 @@
     "CreateFolder": "创建一个新的存储文件夹",
     "DestinationPath": "容器路径 (destination)",
     "Folders": "文件夹",
-    "OwnerProject": "项目",
-    "OwnerUser": "用户",
     "PathAndAliasTooltip": "文件夹在容器内的挂载路径。留空则使用默认路径。",
     "Refresh": "刷新",
     "RemoveFolder": "移除",
@@ -655,8 +658,11 @@
     "DeleteSelectedItemDesc": "删除的文件和文件夹无法恢复。\n你想继续吗？",
     "DeleteSelectedItemsDialog": "删除确认",
     "Download": "下载",
+    "DownloadPopupBlocked": "浏览器拦截了下载窗口。请允许本站点的弹出窗口后重试。",
+    "DownloadRejected": "存储代理拒绝了此次下载（HTTP {{status}}），下载未开始。",
     "DownloadSelected": "下载",
     "DownloadStarted": "文件“ {{fileName}}”下载已开始。",
+    "DownloadUnreachable": "无法连接到 {{origin}} 上的存储代理，下载未开始。",
     "DragAndDropDesc": "将文件拖到此区域上传。",
     "DuplicatedFiles": "覆盖确认",
     "DuplicatedFilesDesc": "具有相同名称的文件或文件夹已经存在。\n你想覆盖吗？",
@@ -693,9 +699,6 @@
       "DuplicatedName": "此名称已经在使用中。\n请输入其他名称。",
       "FileNameRequired": "请输入文件或文件夹名称。"
     }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} {{total}}项目"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "没有可用的资源数据"
@@ -758,62 +761,18 @@
   "error": {
     "UnknownError": "发生了未知错误。\n请重试。"
   },
-  "form": {
-    "Optional": "（可选）",
-    "validateMessages": {
-      "Default": "字段验证错误${label}",
-      "Required": "请输入${label}",
-      "Whitespace": "${label}不能为空字符",
-      "array": {
-        "Len": "须为${len}个${label}",
-        "Max": "最多${max}个${label}",
-        "Min": "最少${min}个${label}",
-        "Range": "${label}数量须在${min}-${max}之间"
-      },
-      "number": {
-        "Len": "${label}必须等于${len}",
-        "Max": "${label}最大值为${max}",
-        "Min": "${label}最小值为${min}",
-        "Range": "${label}须在${min}-${max}之间"
-      },
-      "pattern": {
-        "Mismatch": "${label}与模式不匹配${pattern}"
-      },
-      "string": {
-        "Len": "${label}须为${len}个字符",
-        "Max": "${label}最多${max}个字符",
-        "Min": "${label}最少${min}个字符",
-        "Range": "${label}须在${min}-${max}字符之间"
-      },
-      "types": {
-        "Email": "${label}不是一个有效的${type}",
-        "Number": "${label}不是一个有效的${type}",
-        "Object": "${label}不是一个有效的${type}",
-        "String": "${label}不是一个有效的${type}",
-        "Url": "${label}不是一个有效的${type}"
-      }
-    }
-  },
   "general": {
-    "Decrease": "减少",
-    "DeselectAll": "取消全选",
     "File": "文件",
-    "Increase": "增加",
-    "Loading": "加载中...",
-    "NSelected": "{{count}}选择",
     "Optional": "可选",
     "Project": "项目",
     "Search": "搜索",
     "Select": "选择",
-    "SelectPlaceholder": "请选择{{label}}",
-    "TotalItems": "总计{{total}}项目",
     "Unit": "单位",
     "button": {
       "Action": "操作",
       "Back": "返回",
       "Cancel": "取消",
       "Close": "关闭",
-      "Collapse": "坍塌",
       "Confirm": "确认",
       "Copied": "已复制",
       "Copy": "复制",
@@ -821,7 +780,6 @@
       "Create": "创造",
       "Delete": "删除",
       "Edit": "编辑",
-      "Expand": "扩张",
       "Remove": "消除",
       "Save": "保存",
       "Upload": "上传"

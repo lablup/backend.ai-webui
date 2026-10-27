@@ -5,7 +5,7 @@
 import { Form } from '../form-engine';
 import BAIFormItem from './BAIFormItem';
 import type { BAIFormItemProps } from './BAIFormItem';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { BAIFlex } from 'backend.ai-ui';
 import React, {
   Attributes,
@@ -95,9 +95,8 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
         // The toggle is secondary to the field it disables, so it uses the
         // compact step instead of the default 24px indicator.
         size="sm"
-        label={t('resourcePolicy.Unlimited')}
         value={isUnlimited}
-        isDisabled={disableUnlimited}
+        disabled={disableUnlimited}
         onChange={(checked) => {
           setIsUnlimited(checked);
           if (checked) {
@@ -108,7 +107,9 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
             form.resetFields([name]);
           }
         }}
-      />
+      >
+        {t('resourcePolicy.Unlimited')}
+      </CheckboxInput>
     </BAIFlex>
   );
 };

@@ -9,6 +9,7 @@ import {
   loginAsUser,
   moveToTrashAndVerify,
   deleteForeverAndVerifyFromTrash,
+  getVFolderRow,
   navigateTo,
 } from '../utils/test-util';
 import { test, expect } from '@playwright/test';
@@ -37,27 +38,27 @@ test.describe(
         // 2. Verify the "Create New Storage Folder" card is visible
         await expect(
           page
-            .locator('.bai_grid_item')
+            .locator('.uic-board-item')
             .filter({ hasText: 'Create New Storage Folder' }),
         ).toBeVisible({ timeout: CARD_TIMEOUT });
 
         // 3. Verify the "Start Interactive Session" card is visible
         await expect(
           page
-            .locator('.bai_grid_item')
+            .locator('.uic-board-item')
             .filter({ hasText: 'Start Interactive Session' }),
         ).toBeVisible({ timeout: CARD_TIMEOUT });
 
         // 4. Verify the "Start Batch Session" card is visible
         await expect(
           page
-            .locator('.bai_grid_item')
+            .locator('.uic-board-item')
             .filter({ hasText: 'Start Batch Session' }),
         ).toBeVisible({ timeout: CARD_TIMEOUT });
 
         // 5. Verify the "Start From URL" card is visible
         await expect(
-          page.locator('.bai_grid_item').filter({ hasText: 'Start From URL' }),
+          page.locator('.uic-board-item').filter({ hasText: 'Start From URL' }),
         ).toBeVisible({ timeout: CARD_TIMEOUT });
 
         // 6. Verify the board is not empty (no empty-state alert visible)
@@ -78,27 +79,27 @@ test.describe(
         // 2. Verify the "Create New Storage Folder" card is visible
         await expect(
           page
-            .locator('.bai_grid_item')
+            .locator('.uic-board-item')
             .filter({ hasText: 'Create New Storage Folder' }),
         ).toBeVisible({ timeout: CARD_TIMEOUT });
 
         // 3. Verify the "Start Interactive Session" card is visible
         await expect(
           page
-            .locator('.bai_grid_item')
+            .locator('.uic-board-item')
             .filter({ hasText: 'Start Interactive Session' }),
         ).toBeVisible({ timeout: CARD_TIMEOUT });
 
         // 4. Verify the "Start Batch Session" card is visible
         await expect(
           page
-            .locator('.bai_grid_item')
+            .locator('.uic-board-item')
             .filter({ hasText: 'Start Batch Session' }),
         ).toBeVisible({ timeout: CARD_TIMEOUT });
 
         // 5. Verify the "Start From URL" card is visible
         await expect(
-          page.locator('.bai_grid_item').filter({ hasText: 'Start From URL' }),
+          page.locator('.uic-board-item').filter({ hasText: 'Start From URL' }),
         ).toBeVisible({ timeout: CARD_TIMEOUT });
       });
     });
@@ -117,7 +118,7 @@ test.describe(
 
         // 2. Locate the "Create New Storage Folder" card and click the "Create Folder" button
         const card = page
-          .locator('.bai_grid_item')
+          .locator('.uic-board-item')
           .filter({ hasText: 'Create New Storage Folder' });
         await card.getByRole('button', { name: 'Create Folder' }).click();
 
@@ -168,7 +169,7 @@ test.describe(
 
           // 2. Click the "Create Folder" button on the "Create New Storage Folder" card
           const card = page
-            .locator('.bai_grid_item')
+            .locator('.uic-board-item')
             .filter({ hasText: 'Create New Storage Folder' });
           await card.getByRole('button', { name: 'Create Folder' }).click();
 
@@ -185,11 +186,9 @@ test.describe(
           await expect(page).toHaveURL(/\/data/);
 
           // 6. Verify the newly created folder appears in the Data page list
-          await expect(
-            page
-              .getByRole('cell', { name: `VFolder Identicon ${folderName}` })
-              .filter({ hasText: folderName }),
-          ).toBeVisible({ timeout: 10_000 });
+          await expect(getVFolderRow(page, folderName)).toBeVisible({
+            timeout: 10_000,
+          });
         });
       });
 
@@ -203,7 +202,7 @@ test.describe(
 
         // 2. Click the "Create Folder" button on the "Create New Storage Folder" card
         const card = page
-          .locator('.bai_grid_item')
+          .locator('.uic-board-item')
           .filter({ hasText: 'Create New Storage Folder' });
         await card.getByRole('button', { name: 'Create Folder' }).click();
 
@@ -241,7 +240,7 @@ test.describe(
       }) => {
         // 1. Locate the "Start Interactive Session" card and click "Start Session"
         const card = page
-          .locator('.bai_grid_item')
+          .locator('.uic-board-item')
           .filter({ hasText: 'Start Interactive Session' });
         await card.getByRole('button', { name: 'Start Session' }).click();
 
@@ -254,7 +253,7 @@ test.describe(
       }) => {
         // 1. Locate the "Start Batch Session" card and click "Start Session"
         const card = page
-          .locator('.bai_grid_item')
+          .locator('.uic-board-item')
           .filter({ hasText: 'Start Batch Session' });
         await card.getByRole('button', { name: 'Start Session' }).click();
 
@@ -306,7 +305,7 @@ test.describe(
       }) => {
         // 1. Locate the "Start From URL" card and click the "Start Now" button
         const card = page
-          .locator('.bai_grid_item')
+          .locator('.uic-board-item')
           .filter({ hasText: 'Start From URL' });
         await card.getByRole('button', { name: 'Start Now' }).click();
 
@@ -350,7 +349,7 @@ test.describe(
       }) => {
         // 1. Open the Start From URL modal
         const card = page
-          .locator('.bai_grid_item')
+          .locator('.uic-board-item')
           .filter({ hasText: 'Start From URL' });
         await card.getByRole('button', { name: 'Start Now' }).click();
         const modal = page
@@ -448,13 +447,13 @@ test.describe(
         await navigateTo(page, 'start');
 
         // 2. Verify at least two cards are visible
-        const cards = page.locator('.bai_grid_item');
+        const cards = page.locator('.uic-board-item');
         await expect(cards.first()).toBeVisible({ timeout: CARD_TIMEOUT });
         const cardCount = await cards.count();
         expect(cardCount).toBeGreaterThanOrEqual(2);
 
         // 3. Verify drag handles exist on board items
-        const dragHandles = page.locator('.bai_board_handle');
+        const dragHandles = page.locator('.uic-board-item__drag-handle');
         await expect(dragHandles.first()).toBeVisible();
       });
     });

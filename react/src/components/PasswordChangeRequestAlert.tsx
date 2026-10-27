@@ -11,11 +11,13 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 interface Props extends BAIAlertProps {}
 const PasswordChangeRequestAlert: React.FC<Props> = ({ ...alertProps }) => {
   const { t } = useTranslation();
-  const { user } = useLazyLoadQuery<PasswordChangeRequestAlertQuery>(
+  const { myUserV2 } = useLazyLoadQuery<PasswordChangeRequestAlertQuery>(
     graphql`
       query PasswordChangeRequestAlertQuery {
-        user {
-          need_password_change
+        myUserV2 {
+          status {
+            needPasswordChange
+          }
         }
       }
     `,
@@ -26,7 +28,7 @@ const PasswordChangeRequestAlert: React.FC<Props> = ({ ...alertProps }) => {
   );
 
   return (
-    user?.need_password_change && (
+    myUserV2?.status?.needPasswordChange && (
       <BAIAlert
         banner
         type="warning"

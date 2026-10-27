@@ -5,11 +5,12 @@
 import { TOTPActivateModalFragment$key } from '../__generated__/TOTPActivateModalFragment.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
+import { getTotpActivationErrorMessageKey } from '../helper/totpErrorType';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
-import { theme } from '../theme-shim';
-import { AstryxFormTextInput } from './astryxFormControls';
-import { Spinner } from '@astryxdesign/core/Spinner';
+import { AstryxFormTextInput } from './astryxFormTextInput';
+import { Spinner } from '@lablup/ui-common/Spinner';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIModal, BAIModalProps, BAIFlex, BAIText } from 'backend.ai-ui';
 // PILOT-DECISION (p3-w3b): antd `QRCode` was the last antd RENDER in this
 // file. MAPPING.md §2 grades it **NONE** — neither Astryx core nor lab ships
@@ -27,12 +28,12 @@ export type TOTPActivateFormData = {
   otp: number;
 };
 
-interface Props extends BAIModalProps {
+export interface TOTPActivateModalProps extends BAIModalProps {
   userFrgmt?: TOTPActivateModalFragment$key | null;
   onRequestClose: (success?: boolean) => void;
 }
 
-const TOTPActivateModal: React.FC<Props> = ({
+const TOTPActivateModal: React.FC<TOTPActivateModalProps> = ({
   userFrgmt = null,
   onRequestClose,
   ...baiModalProps
@@ -91,8 +92,8 @@ const TOTPActivateModal: React.FC<Props> = ({
             message.success(t('totp.TotpSetupCompleted'));
             onRequestClose(true);
           },
-          onError: () => {
-            message.error(t('totp.InvalidTotpCode'));
+          onError: (error) => {
+            message.error(t(getTotpActivationErrorMessageKey(error)));
           },
         });
       })
@@ -141,14 +142,14 @@ export const TOTPActivateForm: React.FC<TOTPActiveFormProps> = ({
   ref,
 }) => {
   'use memo';
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { t } = useTranslation();
   return (
     <>
       {t('totp.ScanQRToEnable')}
       <BAIFlex
         justify="center"
-        style={{ margin: token.marginSM, gap: token.margin }}
+        style={{ margin: token('--spacing-3'), gap: token('--spacing-4') }}
       >
         {/* PILOT-DECISION: the QR is pinned to literal black-on-white in
             BOTH modes rather than themed. That is a scanner-contrast
@@ -168,7 +169,7 @@ export const TOTPActivateForm: React.FC<TOTPActiveFormProps> = ({
       {t('totp.TypeInAuthKey')}
       <BAIFlex
         justify="center"
-        style={{ margin: token.marginSM, gap: token.margin }}
+        style={{ margin: token('--spacing-3'), gap: token('--spacing-4') }}
       >
         <BAIText code copyable>
           {totp_key}
@@ -178,7 +179,7 @@ export const TOTPActivateForm: React.FC<TOTPActiveFormProps> = ({
       <Form ref={ref} preserve={false} validateTrigger={['onChange', 'onBlur']}>
         <BAIFlex
           justify="center"
-          style={{ margin: token.marginSM, gap: token.margin }}
+          style={{ margin: token('--spacing-3'), gap: token('--spacing-4') }}
         >
           <Form.Item
             name="otp"

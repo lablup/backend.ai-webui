@@ -24,13 +24,12 @@
   - antd's `ref` (a `GetRef<typeof DatePicker>` imperative handle) is DROPPED.
     Astryx uses a `handleRef` convention rather than `ref` + `GetRef`
     (MAPPING §6.2), and no consumer holds this ref.
-  - `disabledDate(dayjs)` is translated, not re-typed: Astryx's
-    `dateConstraints` receives a native `Date`, which is wrapped back into a
-    `dayjs` before the consumer's predicate sees it. antd's semantics ("return
-    true to DISABLE") are identical to Astryx's, so the predicate ports as-is.
+  - `disabledDate(dayjs)` returns `true` to DISABLE a date, while an Astryx
+    `dateConstraints` entry returns `true` to ALLOW it, so the predicate is
+    negated (and the native `Date` wrapped back into a `dayjs`).
 */
-import { DateTimeInput } from '@astryxdesign/core/DateTimeInput';
-import type { ISODateTimeString } from '@astryxdesign/core/DateTimeInput';
+import { DateTimeInput } from '@lablup/ui-common/DateTimeInput';
+import type { ISODateTimeString } from '@lablup/ui-common/DateTimeInput';
 import { useControllableValue } from 'backend.ai-ui';
 import dayjs, { Dayjs } from 'dayjs';
 import * as _ from 'lodash-es';
@@ -42,9 +41,8 @@ export interface DatePickerISOProps {
   onChange?: (value: string | undefined) => void;
   /** Emit `dayjs().format()` (local + offset) instead of a UTC ISO string. */
   localFormat?: boolean;
-  /** Accessible name. Defaults to a generic one when inside a `Form.Item`. */
+  /** Accessible name (`aria-label`); inside a `Form.Item` the item's label names it. */
   label?: string;
-  isLabelHidden?: boolean;
   disabled?: boolean;
   placeholder?: string;
   /** No-op — `DateTimeInput` always shows the time portion. See the header. */
@@ -59,7 +57,6 @@ const DatePickerISO: React.FC<DatePickerISOProps> = ({
   onChange,
   localFormat,
   label,
-  isLabelHidden = true,
   disabled,
   placeholder,
   showTime: _showTime,
@@ -92,15 +89,14 @@ const DatePickerISO: React.FC<DatePickerISOProps> = ({
           localFormat ? parsed.format() : parsed.tz().toISOString(),
         );
       }}
-      label={label ?? ''}
-      isLabelHidden={isLabelHidden}
-      isDisabled={disabled}
+      aria-label={label}
+      disabled={disabled}
       placeholder={placeholder}
       hourFormat="24h"
       hasClear
       width="100%"
       dateConstraints={
-        disabledDate ? [(date: Date) => disabledDate(dayjs(date))] : undefined
+        disabledDate ? [(date: Date) => !disabledDate(dayjs(date))] : undefined
       }
       {...rest}
     />

@@ -1,0 +1,12 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ ui-common `NotificationItem` takes no per-slot styles, so the node
+ notifications close its title gap here until it does.
+*/
+@layer components {
+  .bai-node-notification-item .uic-notification-item__title {
+    margin-bottom: 0;
+  }
+}

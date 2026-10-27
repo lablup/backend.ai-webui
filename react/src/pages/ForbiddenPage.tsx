@@ -11,8 +11,8 @@ import {
   getPathFromMenuKey,
   useWebUIMenuItems,
 } from '../hooks/useWebUIMenuItems';
-import { Button } from '@astryxdesign/core/Button';
-import { Icon } from '@astryxdesign/core/Icon';
+import { Button } from '@lablup/ui-common/Button';
+import { Icon } from '@lablup/ui-common/Icon';
 import { ArrowRightIcon } from 'lucide-react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';

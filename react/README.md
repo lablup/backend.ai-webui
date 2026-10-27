@@ -37,7 +37,7 @@ import logo from "./logo.svg";
 
 ## Styling
 
-- Use Ant Design theme configuration via `/resources/theme.json` for global theming. You can use [the theme editor](https://ant.design/theme-editor).
+- Global theming comes from `/resources/theme.json`, the v2 appearance document (`{ theme, branding }`, validated by `resources/theme.schema.json`): brand color seeds per family, font, logos. Edit it on the admin Branding page (JSON Config modal) and export the result; components read the resolved tokens through Astryx `useTheme().token()`.
 - Use inline styles for component-specific values that tokens already cover.
 - For rules inline styles cannot express (pseudo-classes, descendant selectors,
   media queries), add a **co-located `.css` file next to the component and import

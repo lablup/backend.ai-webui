@@ -51,7 +51,7 @@ vi.mock('../hooks', async (importOriginal) => {
   return {
     ...originalModule,
     useSuspendedBackendaiClient: () => ({
-      supports: () => false,
+      isManagerVersionCompatibleWith: () => false,
       vfolder: { rename: vi.fn() },
     }),
   };

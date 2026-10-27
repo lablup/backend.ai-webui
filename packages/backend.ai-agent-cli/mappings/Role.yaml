@@ -55,16 +55,13 @@ fields:
     label: Scope Type
     meaning: The kind of scope the role belongs to — a domain, a project or a user — within which its permissions apply.
     concept: rbac-scope-type
-    docs: rbac_management#scope-type-cards
   scopeId:
     label: Scope ID
     meaning: The id of the one domain, project or user the role belongs to.
-    docs: rbac_management#scope-type-cards
   scope:
     label: Scope
     meaning: The domain, project or user the role belongs to, resolved from scopeType and scopeId.
     concept: rbac-scope-type
-    docs: rbac_management#scope-type-cards
   autoAssign:
     label: Auto Assign
     meaning: Whether new accounts matching the role's scope receive it without an administrator acting.

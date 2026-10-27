@@ -29,7 +29,7 @@ Backend.AI สนับสนุนการเชื่อมต่อ SSH/SFTP
 ที่สร้างขึ้นโดยอัตโนมัติอาจเปลี่ยนแปลงเมื่อมีการสร้างเซสชันใหม่ ในกรณีนั้น ต้อง
 ดาวน์โหลดใหม่อีกครั้ง
 
-![](../images/SSH_SFTP_connection.png)
+![=800px](../images/SSH_SFTP_connection.png)
 
 ![](../images/sftp_app.png)
 
@@ -139,17 +139,17 @@ Conversions เลือกไฟล์ `id_container` ที่ดาวน์�
 และลงทะเบียนไฟล์คีย์ `id_container.ppk` (`id_container` สำหรับไคลเอ็นต์
 ที่รองรับ OpenSSH)
 
-![](../images/filezilla_setting.png)
+![=628px](../images/filezilla_setting.png)
 
 เปิด Site Manager สร้างไซต์ใหม่ และป้อนข้อมูลการเชื่อมต่อตาม
 ด้านล่าง
 
-![](../images/filezilla_site_setting.png)
+![=798px](../images/filezilla_site_setting.png)
 
 เมื่อเชื่อมต่อกับคอนเทนเนอร์เป็นครั้งแรก อาจมีป๊อปอัปยืนยัน
 ต่อไปนี้ปรากฏขึ้น คลิกปุ่ม OK เพื่อบันทึกคีย์โฮสต์
 
-![](../images/unknown_host_key.png)
+![=501px](../images/unknown_host_key.png)
 
 หลังจากครู่หนึ่ง คุณจะเห็นว่าการเชื่อมต่อถูกสร้างขึ้นดังต่อไปนี้
 ตอนนี้คุณสามารถถ่ายโอนไฟล์ขนาดใหญ่ไปยัง `/home/work/` หรือโฟลเดอร์จัดเก็บที่เมานต์อื่น
@@ -177,7 +177,7 @@ Backend.AI รองรับการพัฒนาด้วย Visual Studio 
 เพื่อคัดลอกรหัสผ่าน SSH ระยะไกลของ Visual Studio Code นอกจากนี้
 ให้จดจำโฮสต์และหมายเลขพอร์ตที่แสดงในกล่องโต้ตอบ
 
-![](../images/download_ssh_key.png)
+![=418px](../images/download_ssh_key.png)
 
 จากนั้น ตั้งค่าไฟล์ SSH config แก้ไขไฟล์ `~/.ssh/config` (สำหรับ Linux/Mac)
 หรือ `C:\Users\[ชื่อผู้ใช้]\.ssh\config` (สำหรับ Windows) และเพิ่มบล็อกต่อไปนี้
@@ -212,12 +212,12 @@ Visual Studio Code สามารถตรวจจับประเภทข�
 หลังจากเชื่อมต่อแล้ว คุณจะเห็นหน้าต่างว่าง คุณสามารถดูแถบสถานะได้เสมอ
 เพื่อดูว่าคุณเชื่อมต่อกับโฮสต์ใดอยู่
 
-![](../images/vscode_connect_finish.png)
+![=333px](../images/vscode_connect_finish.png)
 
 จากนั้นคุณสามารถเปิดโฟลเดอร์หรือพื้นที่ทำงานใด ๆ บนโฮสต์ระยะไกลได้โดยการเข้าถึงเมนู `File >
 Open...` หรือ `File > Open Workspace...` เหมือนที่คุณทำตามปกติ!
 
-![](../images/vscode_connected_host_file_open.png)
+![=614px](../images/vscode_connected_host_file_open.png)
 
 <a id="establish-ssh-connection-with-backendai-client-package"></a>
 
@@ -253,7 +253,7 @@ docker pull lablup/backend.ai-client:${VERSION}
 เวอร์ชันของเซิร์ฟเวอร์ Backend.AI สามารถพบได้ในเมนู "About Backend.AI" ที่
 ปรากฏขึ้นเมื่อคุณคลิกที่ไอคอนรูปคนที่มุมขวาบนของ Web UI
 
-![](../images/check_backend_server_version.png)
+![=350px](../images/check_backend_server_version.png)
 
 เรียกใช้อิมเมจ Docker ด้วยคำสั่งต่อไปนี้:
 

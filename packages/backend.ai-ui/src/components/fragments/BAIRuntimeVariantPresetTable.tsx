@@ -59,12 +59,8 @@ const BAIRuntimeVariantPresetTable = ({
   'use memo';
   const { t } = useBAIi18n();
   const baiClient = useConnectedBAIClient();
-  const isRequiredSupported = baiClient.supports(
-    'runtime-variant-preset-required',
-  );
-  const isRuntimeVariantFieldSupported = baiClient.supports(
-    'runtime-variant-preset-runtime-variant-field',
-  );
+  const isRuntimeVariantFieldSupported =
+    baiClient.isManagerVersionCompatibleWith('26.8.0');
 
   const presets = useFragment<BAIRuntimeVariantPresetTableFragment$key>(
     graphql`
@@ -86,7 +82,7 @@ const BAIRuntimeVariantPresetTable = ({
           defaultValue
           key
         }
-        required @since(version: "26.4.4")
+        required
         uiOption {
           uiType
         }
@@ -252,7 +248,7 @@ const BAIRuntimeVariantPresetTable = ({
         sorter: isEnableSorter('defaultValue'),
         render: (__, record) => record.targetSpec?.defaultValue ?? '-',
       },
-      isRequiredSupported && {
+      {
         key: 'required',
         title: t('comp:BAIRuntimeVariantPresetTable.Required'),
         sorter: isEnableSorter('required'),

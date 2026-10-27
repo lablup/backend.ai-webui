@@ -10,8 +10,8 @@ import {
 } from '../../hooks';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
 import { AstryxFormTextInput } from '../astryxFormControls';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Text } from '@astryxdesign/core/Text';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { SquarePen } from 'lucide-react';
@@ -145,7 +145,10 @@ const SessionInfoCell: React.FC<{
             hasAutoFocus
             onEnter={save}
             onKeyDown={(e) => {
-              if (e.key === 'Escape') setEditing(false);
+              if (e.key !== 'Escape') return;
+              // Claims the press, so an open scrimless drawer stays open.
+              e.preventDefault();
+              setEditing(false);
             }}
           />
         </Form.Item>

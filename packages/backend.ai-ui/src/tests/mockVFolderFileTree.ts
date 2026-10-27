@@ -1,4 +1,3 @@
-import type { LegacyVFolder } from '../components/fragments/BAIVFolderMountConfigInput';
 import type {
   BAIClient,
   VFolderFile,
@@ -26,74 +25,84 @@ export const mockVFolderFile = (
   modified,
 });
 
+/** A folder as the mount-folder queries return it, flattened for fixtures. */
+export interface MockMountFolder {
+  /** The vfolder UUID. */
+  id: string;
+  name: string;
+  host: string;
+  status: string;
+  usageMode: string;
+  /** The caller's mount level: READ_ONLY, READ_WRITE, RW_DELETE or NONE. */
+  permission: string;
+  ownershipType: 'USER' | 'GROUP';
+  projectId: string | null;
+  creatorEmail: string | null;
+  createdAt: string;
+}
+
 /**
- * A REST `GET /folders` row with every field filled in, so a story only has
- * to name the handful that its gate or filter actually reads.
+ * A mount folder with every field filled in, so a story only has to name the
+ * handful that its gate or filter actually reads.
  */
-export const mockLegacyVFolder = (
-  folder: Pick<LegacyVFolder, 'id' | 'name'> & Partial<LegacyVFolder>,
-): LegacyVFolder => ({
-  quota_scope_id: 'project:00000000-0000-0000-0000-000000000000',
+export const mockMountFolder = (
+  folder: Pick<MockMountFolder, 'id' | 'name'> & Partial<MockMountFolder>,
+): MockMountFolder => ({
   host: 'local:volume1',
-  status: 'ready',
-  usage_mode: 'general',
-  created_at: '2026-07-01T11:20:00+00:00',
-  is_owner: true,
-  permission: 'wd',
-  user: null,
-  group: null,
-  creator: 'user@lablup.com',
-  user_email: 'user@lablup.com',
-  group_name: null,
-  ownership_type: 'user',
-  type: 'user',
-  cloneable: false,
-  max_files: 1000,
-  max_size: null,
-  cur_size: 0,
+  status: 'READY',
+  usageMode: 'GENERAL',
+  permission: 'RW_DELETE',
+  ownershipType: 'USER',
+  projectId: null,
+  creatorEmail: 'user@lablup.com',
+  createdAt: '2026-07-01T11:20:00+00:00',
   ...folder,
 });
 
-export const MOCK_LEGACY_PROJECT_ID = '99999999-9999-9999-9999-999999999999';
-const MOCK_LEGACY_OTHER_PROJECT_ID = '88888888-8888-8888-8888-888888888888';
+export const MOCK_PROJECT_ID = '99999999-9999-9999-9999-999999999999';
+
+/** The scope a session in MOCK_PROJECT_ID mounts from. */
+export const MOCK_MOUNT_SCOPE = {
+  user: [{ value: '77777777-7777-7777-7777-777777777777' }],
+  project: [{ value: MOCK_PROJECT_ID }],
+};
+const MOCK_OTHER_PROJECT_ID = '88888888-8888-8888-8888-888888888888';
 
 /** Only `local:volume1` grants `mount-in-session`, so `archive:cold` is gated out. */
 export const MOCK_MOUNTABLE_HOSTS: Array<string> = ['local:volume1'];
 
 /**
- * The shared REST folder fixture: two mountable folders, one auto-mounted
- * dotfile, one on a host without `mount-in-session`, and one owned by another
- * project — so a story exercises every gate the mount config input applies.
+ * The shared folder fixture: two mountable folders, one auto-mounted dotfile,
+ * one on a host without `mount-in-session`, and one owned by another project,
+ * so a story exercises every gate the mount config input applies.
  */
-export const mockLegacyVFolders: Array<LegacyVFolder> = [
-  mockLegacyVFolder({
-    id: 'aaaaaaaabbbbccccddddeeeeffff0001',
+export const mockMountFolders: Array<MockMountFolder> = [
+  mockMountFolder({
+    id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeffff0001',
     name: 'my-project-data',
   }),
-  mockLegacyVFolder({
-    id: 'aaaaaaaabbbbccccddddeeeeffff0002',
+  mockMountFolder({
+    id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeffff0002',
     name: 'shared-datasets',
-    ownership_type: 'group',
-    type: 'group',
-    group: MOCK_LEGACY_PROJECT_ID,
-    group_name: 'default',
+    ownershipType: 'GROUP',
+    projectId: MOCK_PROJECT_ID,
+    creatorEmail: null,
   }),
-  mockLegacyVFolder({
-    id: 'aaaaaaaabbbbccccddddeeeeffff0003',
+  mockMountFolder({
+    id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeffff0003',
     name: '.config',
   }),
-  mockLegacyVFolder({
-    id: 'aaaaaaaabbbbccccddddeeeeffff0004',
+  mockMountFolder({
+    id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeffff0004',
     name: 'cold-archive',
     host: 'archive:cold',
   }),
-  mockLegacyVFolder({
-    id: 'aaaaaaaabbbbccccddddeeeeffff0005',
+  mockMountFolder({
+    id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeffff0005',
     name: 'other-team-data',
-    ownership_type: 'group',
-    type: 'group',
-    group: MOCK_LEGACY_OTHER_PROJECT_ID,
-    group_name: 'other-team',
+    ownershipType: 'GROUP',
+    projectId: MOCK_OTHER_PROJECT_ID,
+    creatorEmail: null,
   }),
 ];
 
@@ -115,13 +124,11 @@ const childKey = (parent: string, name: string) =>
 /**
  * A BAIClient whose `vfolder` file APIs (`list_files` / `mkdir` /
  * `rename_file` / `delete_files`) read and write the given in-memory trees,
- * and whose signed `GET /folders` request answers `folders`, so file-explorer
- * and folder-picker stories run without a backend. The trees are mutated in
+ * so file-explorer and folder-picker stories run without a backend. The trees are mutated in
  * place — hand a fresh copy per Storybook instance.
  */
 export const createMockVFolderFileClient = (
   trees: MockVFolderFileTrees,
-  folders?: Array<LegacyVFolder>,
 ): BAIClient => {
   const mockVFolder = {
     list_files: async (path: string, id: string) => {
@@ -194,15 +201,12 @@ export const createMockVFolderFileClient = (
   const newSignedRequest = (method: string, url: string) => ({ method, url });
   const _wrapWithPromise = async (request: { method: string; url: string }) => {
     await delay(250);
-    if (request.url.startsWith('/folders')) {
-      return folders ?? [];
-    }
     throw new Error(`Unmocked request: ${request.method} ${request.url}`);
   };
 
   return {
     vfolder: mockVFolder,
-    supports: () => false,
+    isManagerVersionCompatibleWith: () => false,
     newSignedRequest,
     _wrapWithPromise,
     _config: {

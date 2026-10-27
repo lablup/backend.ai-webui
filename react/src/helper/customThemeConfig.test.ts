@@ -1,434 +1,298 @@
-import {
-  getCustomTheme,
-  loadCustomThemeConfig,
-  type CustomThemeConfig,
-  type LogoConfig,
-} from './customThemeConfig';
-import type { Mock, MockInstance } from 'vitest';
+import type { BAIAppearanceConfig } from './customThemeConfig';
+import type { Mock } from 'vitest';
 
-describe('customThemeConfig', () => {
+// The loader resolves the domain and REST base through these two helpers;
+// both are controlled per test via the hoisted state below.
+const resolverState = vi.hoisted(() => ({
+  apiDomainName: undefined as string | undefined,
+  apiEndpoint: '' as string,
+}));
+
+vi.mock('../hooks/useWebUIConfig', () => ({
+  fetchAppConfigOnce: vi.fn(async () => ({
+    config: { general: { apiDomainName: resolverState.apiDomainName } },
+  })),
+}));
+vi.mock('../hooks/useResolvedApiEndpoint', () => ({
+  resolveApiEndpoint: vi.fn(async () => resolverState.apiEndpoint),
+}));
+
+const V2_THEME: BAIAppearanceConfig = {
+  schemaVersion: 2,
+  theme: {
+    fontFamily: "'Ubuntu', Roboto, sans-serif",
+    families: {
+      default: {
+        seeds: { accent: ['#FF7A00', '#DC6B03'] },
+        headerBg: ['#FF9729', '#E88A28'],
+      },
+    },
+  },
+  branding: {
+    logo: { src: '/logo.png', srcCollapsed: '/logo-small.png' },
+    companyName: 'Lablup Inc.',
+  },
+};
+
+const V2_DOMAIN_THEME: BAIAppearanceConfig = {
+  schemaVersion: 2,
+  theme: {
+    families: {
+      default: { seeds: { accent: '#123456' } },
+    },
+  },
+  branding: { brandName: 'Acme AI' },
+};
+
+const V1_THEME = {
+  fontFamily: "'Ubuntu', Roboto, sans-serif",
+  light: { token: { colorPrimary: '#FF7A00' } },
+  dark: { token: { colorPrimary: '#DC6B03' } },
+  logo: { src: '/logo.png', srcCollapsed: '/logo-small.png' },
+};
+
+describe('customThemeConfig (v2 appearance bootstrap)', () => {
   let fetchMock: Mock;
   let originalFetch: typeof global.fetch;
-  let dispatchEventSpy: MockInstance;
 
   beforeEach(() => {
-    // Save original values
+    vi.resetModules();
     originalFetch = global.fetch;
-
-    // Setup fetch mock
     fetchMock = vi.fn();
     global.fetch = fetchMock as unknown as typeof global.fetch;
-
-    // Setup event dispatcher spy
-    dispatchEventSpy = vi.spyOn(document, 'dispatchEvent');
+    resolverState.apiDomainName = undefined;
+    resolverState.apiEndpoint = '';
+    document.head
+      .querySelectorAll('link[rel="stylesheet"]')
+      .forEach((el) => el.remove());
   });
 
   afterEach(() => {
-    // Restore original values
     global.fetch = originalFetch;
-    // Vitest 4 / Node 20+ make `process.env.NODE_ENV` non-configurable, so
-    // `Object.defineProperty` throws. `vi.stubEnv` is the supported way.
-    vi.unstubAllEnvs();
     vi.clearAllMocks();
+    vi.restoreAllMocks();
   });
 
-  // Route the fetch mock by URL; each entry in `themes` feeds one
-  // `loadCustomThemeConfig` call.
-  const mockThemeFetch = (...themes: unknown[]) => {
-    const themeQueue = [...themes];
+  const importFreshModule = async () => await import('./customThemeConfig');
+
+  // Route the fetch mock by URL: theme.json and the anonymous app-config
+  // REST endpoint.
+  const mockFetchRoutes = ({
+    staticDoc,
+    publicConfigByDomain,
+    restStatus = 200,
+  }: {
+    staticDoc?: unknown;
+    publicConfigByDomain?: unknown;
+    restStatus?: number;
+  }) => {
     fetchMock.mockImplementation((url: string) => {
       if (url === 'resources/theme.json') {
         return Promise.resolve({
           ok: true,
-          json: () => Promise.resolve(themeQueue.shift()),
+          json: () => Promise.resolve(staticDoc),
+        } as unknown as Response);
+      }
+      if (String(url).endsWith('/func/v2/app-config/public/get')) {
+        return Promise.resolve({
+          ok: restStatus === 200,
+          status: restStatus,
+          json: () =>
+            Promise.resolve({
+              app_configs: [
+                {
+                  config_name: 'publicConfigByDomain',
+                  config: publicConfigByDomain,
+                },
+              ],
+            }),
         } as unknown as Response);
       }
       return Promise.reject(new Error(`Unexpected fetch: ${url}`));
     });
   };
 
-  describe('getCustomTheme', () => {
-    it('should return undefined when no theme is loaded', () => {
-      const theme = getCustomTheme();
-      expect(theme).toBeUndefined();
+  const flush = () => new Promise((resolve) => setTimeout(resolve, 50));
+
+  it('returns undefined before any load', async () => {
+    const mod = await importFreshModule();
+    expect(mod.getCustomTheme()).toBeUndefined();
+  });
+
+  it('loads a v2 theme.json and dispatches custom-theme-loaded once', async () => {
+    const mod = await importFreshModule();
+    const dispatchEventSpy = vi.spyOn(document, 'dispatchEvent');
+    mockFetchRoutes({ staticDoc: V2_THEME });
+
+    mod.loadCustomThemeConfig();
+    await flush();
+
+    expect(mod.getCustomTheme()).toEqual(V2_THEME);
+    expect(mod.getStaticAppearanceConfig()).toEqual(V2_THEME);
+    expect(mod.getDomainAppearanceConfig()).toBeUndefined();
+    expect(
+      dispatchEventSpy.mock.calls.filter(
+        ([e]) => (e as CustomEvent).type === 'custom-theme-loaded',
+      ),
+    ).toHaveLength(1);
+  });
+
+  it('rejects a v1 (antd-shaped) theme.json loudly', async () => {
+    const mod = await importFreshModule();
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    mockFetchRoutes({ staticDoc: V1_THEME });
+
+    mod.loadCustomThemeConfig();
+    await flush();
+
+    expect(mod.getCustomTheme()).toBeUndefined();
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      expect.stringContaining('does not match the theme schema'),
+    );
+  });
+
+  it('injects font CSS from theme.fontFamily', async () => {
+    const mod = await importFreshModule();
+    mockFetchRoutes({ staticDoc: V2_THEME });
+
+    mod.loadCustomThemeConfig();
+    await flush();
+
+    const link = document.head.querySelector(
+      'link[href="resources/fonts/ubuntu/ubuntu.css"]',
+    );
+    expect(link).not.toBeNull();
+  });
+
+  describe('domain document resolution', () => {
+    it('the saved domain appearance slice wins wholesale over theme.json', async () => {
+      resolverState.apiDomainName = 'default';
+      resolverState.apiEndpoint = 'https://api.example.com';
+      const mod = await importFreshModule();
+      mockFetchRoutes({
+        staticDoc: V2_THEME,
+        publicConfigByDomain: {
+          default: { appearance: V2_DOMAIN_THEME },
+        },
+      });
+
+      mod.loadCustomThemeConfig();
+      await flush();
+
+      expect(mod.getCustomTheme()).toEqual(V2_DOMAIN_THEME);
+      expect(mod.getDomainAppearanceConfig()).toEqual(V2_DOMAIN_THEME);
+      expect(mod.getStaticAppearanceConfig()).toEqual(V2_THEME);
+    });
+
+    it('skips the REST fetch entirely when no domain is known', async () => {
+      const mod = await importFreshModule();
+      mockFetchRoutes({ staticDoc: V2_THEME });
+
+      mod.loadCustomThemeConfig();
+      await flush();
+
+      expect(mod.getCustomTheme()).toEqual(V2_THEME);
+      expect(
+        fetchMock.mock.calls.filter(([url]) =>
+          String(url).includes('app-config'),
+        ),
+      ).toHaveLength(0);
+    });
+
+    it('falls back to theme.json when the REST fetch fails', async () => {
+      resolverState.apiDomainName = 'default';
+      resolverState.apiEndpoint = 'https://api.example.com';
+      const mod = await importFreshModule();
+      mockFetchRoutes({ staticDoc: V2_THEME, restStatus: 500 });
+
+      mod.loadCustomThemeConfig();
+      await flush();
+
+      expect(mod.getCustomTheme()).toEqual(V2_THEME);
+      expect(mod.getDomainAppearanceConfig()).toBeUndefined();
+    });
+
+    it('ignores an invalid (v1-shaped) domain slice and keeps theme.json', async () => {
+      resolverState.apiDomainName = 'default';
+      resolverState.apiEndpoint = 'https://api.example.com';
+      const mod = await importFreshModule();
+      const consoleErrorSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+      mockFetchRoutes({
+        staticDoc: V2_THEME,
+        publicConfigByDomain: { default: { appearance: V1_THEME } },
+      });
+
+      mod.loadCustomThemeConfig();
+      await flush();
+
+      expect(mod.getCustomTheme()).toEqual(V2_THEME);
+      expect(consoleErrorSpy).toHaveBeenCalled();
     });
   });
 
-  describe('loadCustomThemeConfig', () => {
-    it('should fetch theme configuration from resources/theme.json', async () => {
-      const mockTheme: CustomThemeConfig = {
-        light: { token: { colorPrimary: '#1890ff' } },
-        dark: { token: { colorPrimary: '#177ddc' } },
-        logo: {
-          src: '/logo.png',
-          srcCollapsed: '/logo-small.png',
-        },
-      };
+  describe('pickSeed', () => {
+    it('resolves a tuple per scheme and a string for both', async () => {
+      const mod = await importFreshModule();
+      expect(mod.pickSeed(['#111111', '#222222'], 'light')).toBe('#111111');
+      expect(mod.pickSeed(['#111111', '#222222'], 'dark')).toBe('#222222');
+      expect(mod.pickSeed('#333333', 'light')).toBe('#333333');
+      expect(mod.pickSeed('#333333', 'dark')).toBe('#333333');
+      expect(mod.pickSeed(undefined, 'light')).toBeUndefined();
+      // A short or malformed tuple falls back dark -> light (recipe parity)
+      // instead of handing a non-string to the consumer.
+      expect(mod.pickSeed(['#111111'] as never, 'dark')).toBe('#111111');
+      expect(mod.pickSeed([null, '#222222'] as never, 'light')).toBeUndefined();
+    });
+  });
 
-      mockThemeFetch(mockTheme);
-
-      loadCustomThemeConfig();
-
-      // Wait for async operations
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      expect(fetchMock).toHaveBeenCalledWith('resources/theme.json');
-      expect(dispatchEventSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          type: 'custom-theme-loaded',
-        }),
+  describe('pickValidAppearanceConfig', () => {
+    it('accepts only schemaVersion 2 plain objects', async () => {
+      const mod = await importFreshModule();
+      const consoleErrorSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+      expect(mod.pickValidAppearanceConfig(V2_THEME, 'test')).toEqual(V2_THEME);
+      expect(mod.pickValidAppearanceConfig(undefined, 'test')).toBeUndefined();
+      expect(mod.pickValidAppearanceConfig('nope', 'test')).toBeUndefined();
+      expect(mod.pickValidAppearanceConfig({}, 'test')).toBeUndefined();
+      expect(mod.pickValidAppearanceConfig(V1_THEME, 'test')).toBeUndefined();
+      // Every rejection is loud: 'nope', undefined, a schemaVersion-less
+      // object and the v1 document each log once, all as a schema mismatch.
+      expect(consoleErrorSpy).toHaveBeenCalledTimes(4);
+      expect(consoleErrorSpy).toHaveBeenLastCalledWith(
+        expect.stringContaining('does not match the theme schema'),
       );
     });
 
-    it('should handle legacy theme format (no light/dark separation)', async () => {
-      const mockLegacyTheme = {
-        token: { colorPrimary: '#1890ff' },
-        logo: {
-          src: '/logo.png',
-          srcCollapsed: '/logo-small.png',
-        },
+    it('warns whenever theme.families.default is missing but still accepts', async () => {
+      const mod = await importFreshModule();
+      const consoleErrorSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+      const noDefault = {
+        schemaVersion: 2,
+        theme: { families: { stained: { seeds: { accent: '#8B5CF6' } } } },
       };
-
-      mockThemeFetch(mockLegacyTheme);
-
-      loadCustomThemeConfig();
-
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      const theme = getCustomTheme();
-      expect(theme).toBeDefined();
-      expect(theme?.light).toEqual({
-        token: { colorPrimary: '#1890ff' },
-        logo: { src: '/logo.png', srcCollapsed: '/logo-small.png' },
-      });
-      expect(theme?.dark).toEqual({
-        token: { colorPrimary: '#1890ff' },
-        logo: { src: '/logo.png', srcCollapsed: '/logo-small.png' },
-      });
-      expect(theme?.logo).toEqual(mockLegacyTheme.logo);
-    });
-
-    it('should apply VITE_THEME_HEADER_COLOR in development environment', async () => {
-      vi.stubEnv('MODE', 'development');
-      vi.stubEnv('DEV', true);
-      vi.stubEnv('VITE_THEME_HEADER_COLOR', '#ff0000');
-
-      const mockTheme: CustomThemeConfig = {
-        light: {
-          token: { colorPrimary: '#1890ff' },
-          components: { Layout: {} },
-        },
-        dark: {
-          token: { colorPrimary: '#177ddc' },
-          components: { Layout: {} },
-        },
-        logo: {
-          src: '/logo.png',
-          srcCollapsed: '/logo-small.png',
-        },
-      };
-
-      mockThemeFetch(mockTheme);
-
-      loadCustomThemeConfig();
-
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      const theme = getCustomTheme();
-      expect(theme?.light.components?.Layout?.headerBg).toBe('#ff0000');
-      expect(theme?.dark.components?.Layout?.headerBg).toBe('#ff0000');
-    });
-
-    it('should not apply VITE_THEME_HEADER_COLOR in production environment', async () => {
-      vi.stubEnv('MODE', 'production');
-      vi.stubEnv('DEV', false);
-      vi.stubEnv('VITE_THEME_HEADER_COLOR', '#ff0000');
-
-      const mockTheme: CustomThemeConfig = {
-        light: {
-          token: { colorPrimary: '#1890ff' },
-          components: { Layout: {} },
-        },
-        dark: {
-          token: { colorPrimary: '#177ddc' },
-          components: { Layout: {} },
-        },
-        logo: {
-          src: '/logo.png',
-          srcCollapsed: '/logo-small.png',
-        },
-      };
-
-      mockThemeFetch(mockTheme);
-
-      loadCustomThemeConfig();
-
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      const theme = getCustomTheme();
-      expect(theme?.light.components?.Layout?.headerBg).toBeUndefined();
-      expect(theme?.dark.components?.Layout?.headerBg).toBeUndefined();
-    });
-
-    it('should dispatch custom-theme-loaded event after loading', async () => {
-      const mockTheme: CustomThemeConfig = {
-        light: { token: { colorPrimary: '#1890ff' } },
-        dark: { token: { colorPrimary: '#177ddc' } },
-        logo: {
-          src: '/logo.png',
-          srcCollapsed: '/logo-small.png',
-        },
-      };
-
-      mockThemeFetch(mockTheme);
-
-      loadCustomThemeConfig();
-
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      expect(dispatchEventSpy).toHaveBeenCalledTimes(1);
-      const event = dispatchEventSpy.mock.calls[0][0];
-      expect(event).toBeInstanceOf(CustomEvent);
-      expect((event as CustomEvent).type).toBe('custom-theme-loaded');
-    });
-
-    it('should handle theme with complete logo configuration', async () => {
-      const logoConfig: LogoConfig = {
-        src: '/logo.png',
-        srcCollapsed: '/logo-small.png',
-        srcDark: '/logo-dark.png',
-        srcCollapsedDark: '/logo-small-dark.png',
-        alt: 'Company Logo',
-        href: 'https://example.com',
-        size: { width: 200, height: 50 },
-        sizeCollapsed: { width: 50, height: 50 },
-        aboutModalSize: { width: 300, height: 100 },
-      };
-
-      const mockTheme: CustomThemeConfig = {
-        light: { token: { colorPrimary: '#1890ff' } },
-        dark: { token: { colorPrimary: '#177ddc' } },
-        logo: logoConfig,
-      };
-
-      mockThemeFetch(mockTheme);
-
-      loadCustomThemeConfig();
-
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      const theme = getCustomTheme();
-      expect(theme?.logo).toEqual(logoConfig);
-    });
-
-    it('should handle theme with sider configuration', async () => {
-      const mockTheme: CustomThemeConfig = {
-        light: { token: { colorPrimary: '#1890ff' } },
-        dark: { token: { colorPrimary: '#177ddc' } },
-        logo: {
-          src: '/logo.png',
-          srcCollapsed: '/logo-small.png',
-        },
-        sider: {
-          theme: 'dark',
-        },
-      };
-
-      mockThemeFetch(mockTheme);
-
-      loadCustomThemeConfig();
-
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      const theme = getCustomTheme();
-      expect(theme?.sider?.theme).toBe('dark');
-    });
-
-    it('should handle theme with branding configuration', async () => {
-      const mockTheme: CustomThemeConfig = {
-        light: { token: { colorPrimary: '#1890ff' } },
-        dark: { token: { colorPrimary: '#177ddc' } },
-        logo: {
-          src: '/logo.png',
-          srcCollapsed: '/logo-small.png',
-        },
-        branding: {
-          companyName: 'Example Corp',
-          brandName: 'Product Name',
-        },
-      };
-
-      mockThemeFetch(mockTheme);
-
-      loadCustomThemeConfig();
-
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      const theme = getCustomTheme();
-      expect(theme?.branding?.companyName).toBe('Example Corp');
-      expect(theme?.branding?.brandName).toBe('Product Name');
-    });
-
-    it('should handle nested theme token configuration', async () => {
-      const mockTheme: CustomThemeConfig = {
-        light: {
-          token: {
-            colorPrimary: '#1890ff',
-            colorSuccess: '#52c41a',
-            borderRadius: 4,
-          },
-          components: {
-            Button: {
-              primaryColor: '#ffffff',
-            },
-            Layout: {
-              headerBg: '#001529',
-              siderBg: '#ffffff',
-            },
-          },
-        },
-        dark: {
-          token: {
-            colorPrimary: '#177ddc',
-            colorSuccess: '#49aa19',
-            borderRadius: 4,
-          },
-          components: {
-            Button: {
-              primaryColor: '#ffffff',
-            },
-            Layout: {
-              headerBg: '#141414',
-              siderBg: '#1f1f1f',
-            },
-          },
-        },
-        logo: {
-          src: '/logo.png',
-          srcCollapsed: '/logo-small.png',
-        },
-      };
-
-      mockThemeFetch(mockTheme);
-
-      loadCustomThemeConfig();
-
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      const theme = getCustomTheme();
-      expect(theme?.light.token?.colorPrimary).toBe('#1890ff');
-      expect(theme?.light.components?.Layout?.headerBg).toBe('#001529');
-      expect(theme?.dark.token?.colorPrimary).toBe('#177ddc');
-      expect(theme?.dark.components?.Layout?.headerBg).toBe('#141414');
-    });
-
-    it('should handle multiple calls to loadCustomThemeConfig', async () => {
-      const mockTheme1: CustomThemeConfig = {
-        light: { token: { colorPrimary: '#1890ff' } },
-        dark: { token: { colorPrimary: '#177ddc' } },
-        logo: {
-          src: '/logo1.png',
-          srcCollapsed: '/logo-small1.png',
-        },
-      };
-
-      const mockTheme2: CustomThemeConfig = {
-        light: { token: { colorPrimary: '#ff0000' } },
-        dark: { token: { colorPrimary: '#cc0000' } },
-        logo: {
-          src: '/logo2.png',
-          srcCollapsed: '/logo-small2.png',
-        },
-      };
-
-      mockThemeFetch(mockTheme1, mockTheme2);
-
-      loadCustomThemeConfig();
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      loadCustomThemeConfig();
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      expect(
-        fetchMock.mock.calls.filter(([url]) => url === 'resources/theme.json'),
-      ).toHaveLength(2);
-      expect(dispatchEventSpy).toHaveBeenCalledTimes(2);
-    });
-
-    it('should only apply VITE_THEME_HEADER_COLOR when both development mode and env var are set', async () => {
-      vi.stubEnv('MODE', 'development');
-      vi.stubEnv('DEV', true);
-      vi.stubEnv('VITE_THEME_HEADER_COLOR', '');
-
-      const mockTheme: CustomThemeConfig = {
-        light: {
-          token: { colorPrimary: '#1890ff' },
-          components: { Layout: {} },
-        },
-        dark: {
-          token: { colorPrimary: '#177ddc' },
-          components: { Layout: {} },
-        },
-        logo: {
-          src: '/logo.png',
-          srcCollapsed: '/logo-small.png',
-        },
-      };
-
-      mockThemeFetch(mockTheme);
-
-      loadCustomThemeConfig();
-
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      const theme = getCustomTheme();
-      expect(theme?.light.components?.Layout?.headerBg).toBeUndefined();
-      expect(theme?.dark.components?.Layout?.headerBg).toBeUndefined();
-    });
-
-    it('should preserve existing Layout component settings when applying VITE_THEME_HEADER_COLOR', async () => {
-      vi.stubEnv('MODE', 'development');
-      vi.stubEnv('DEV', true);
-      vi.stubEnv('VITE_THEME_HEADER_COLOR', '#ff0000');
-
-      const mockTheme: CustomThemeConfig = {
-        light: {
-          token: { colorPrimary: '#1890ff' },
-          components: {
-            Layout: {
-              siderBg: '#ffffff',
-              bodyBg: '#f0f0f0',
-            },
-          },
-        },
-        dark: {
-          token: { colorPrimary: '#177ddc' },
-          components: {
-            Layout: {
-              siderBg: '#1f1f1f',
-              bodyBg: '#141414',
-            },
-          },
-        },
-        logo: {
-          src: '/logo.png',
-          srcCollapsed: '/logo-small.png',
-        },
-      };
-
-      mockThemeFetch(mockTheme);
-
-      loadCustomThemeConfig();
-
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      const theme = getCustomTheme();
-      expect(theme?.light.components?.Layout?.headerBg).toBe('#ff0000');
-      expect(theme?.light.components?.Layout?.siderBg).toBe('#ffffff');
-      expect(theme?.light.components?.Layout?.bodyBg).toBe('#f0f0f0');
-      expect(theme?.dark.components?.Layout?.headerBg).toBe('#ff0000');
-      expect(theme?.dark.components?.Layout?.siderBg).toBe('#1f1f1f');
-      expect(theme?.dark.components?.Layout?.bodyBg).toBe('#141414');
+      expect(mod.pickValidAppearanceConfig(noDefault, 'test')).toEqual(
+        noDefault,
+      );
+      const noFamilies = { schemaVersion: 2, theme: { fontFamily: 'Ubuntu' } };
+      expect(mod.pickValidAppearanceConfig(noFamilies, 'test')).toEqual(
+        noFamilies,
+      );
+      const noTheme = { schemaVersion: 2 };
+      expect(mod.pickValidAppearanceConfig(noTheme, 'test')).toEqual(noTheme);
+      expect(consoleErrorSpy).toHaveBeenCalledTimes(3);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('no theme.families.default entry'),
+      );
+      consoleErrorSpy.mockClear();
+      expect(mod.pickValidAppearanceConfig(V2_THEME, 'test')).toEqual(V2_THEME);
+      expect(consoleErrorSpy).not.toHaveBeenCalled();
     });
   });
 });

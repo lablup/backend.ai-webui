@@ -13,12 +13,10 @@ import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
 import { getImageFullName, localeCompare } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
-import { theme } from '../theme-shim';
 import AliasedImageTagTokens from './AliasedImageTagTokens';
-import TextHighlighter from './TextHighlighter';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Text } from '@astryxdesign/core/Text';
-import { TextInput } from '@astryxdesign/core/TextInput';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Text } from '@lablup/ui-common/Text';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIDeleteConfirmModal,
   BAIFlex,
@@ -30,6 +28,7 @@ import {
   type BAIColumnsType,
   useToggle,
   useUpdatableState,
+  BAITextHighlighter,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Trash2, RotateCw, Search, Settings } from 'lucide-react';
@@ -43,7 +42,6 @@ export type CommittedImage = NonNullable<
 
 const CustomizedImageList: React.FC = () => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
 
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
@@ -66,7 +64,6 @@ const CustomizedImageList: React.FC = () => {
       query CustomizedImageListQuery {
         customized_images {
           id
-          name @deprecatedSince(version: "24.12.0")
           humanized_name
           tag
           registry
@@ -77,13 +74,13 @@ const CustomizedImageList: React.FC = () => {
             value
           }
           supported_accelerators
-          namespace @since(version: "24.12.0")
-          base_image_name @since(version: "24.12.0")
-          tags @since(version: "24.12.0") {
+          namespace
+          base_image_name
+          tags {
             key
             value
           }
-          version @since(version: "24.12.0")
+          version
           ...AliasedImageTagTokensFragment
         }
       }
@@ -180,13 +177,13 @@ const CustomizedImageList: React.FC = () => {
           ellipsis={{ tooltip: true }}
           copyable={{ text: getImageFullName(row) || '' }}
         >
-          <TextHighlighter keyword={imageSearch}>
+          <BAITextHighlighter keyword={imageSearch}>
             {getImageFullName(row) || ''}
-          </TextHighlighter>
+          </BAITextHighlighter>
         </BAIText>
       ),
       sorter: (a, b) => localeCompare(getImageFullName(a), getImageFullName(b)),
-      width: token.screenXS,
+      width: 480,
     },
     {
       title: t('general.Control'),
@@ -216,7 +213,7 @@ const CustomizedImageList: React.FC = () => {
       key: 'registry',
       sorter: (a, b) => localeCompare(a?.registry, b?.registry),
       render: (text) => (
-        <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
+        <BAITextHighlighter keyword={imageSearch}>{text}</BAITextHighlighter>
       ),
     },
     {
@@ -225,7 +222,7 @@ const CustomizedImageList: React.FC = () => {
       key: 'architecture',
       sorter: (a, b) => localeCompare(a?.architecture, b?.architecture),
       render: (text) => (
-        <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
+        <BAITextHighlighter keyword={imageSearch}>{text}</BAITextHighlighter>
       ),
     },
     {
@@ -234,7 +231,7 @@ const CustomizedImageList: React.FC = () => {
       dataIndex: 'namespace',
       sorter: (a, b) => localeCompare(a?.namespace, b?.namespace),
       render: (text) => (
-        <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
+        <BAITextHighlighter keyword={imageSearch}>{text}</BAITextHighlighter>
       ),
     },
     {
@@ -243,9 +240,9 @@ const CustomizedImageList: React.FC = () => {
       dataIndex: 'base_image_name',
       sorter: (a, b) => localeCompare(a?.base_image_name, b?.base_image_name),
       render: (text) => (
-        <TextHighlighter keyword={imageSearch}>
+        <BAITextHighlighter keyword={imageSearch}>
           {tagAlias(text)}
-        </TextHighlighter>
+        </BAITextHighlighter>
       ),
     },
     {
@@ -254,7 +251,7 @@ const CustomizedImageList: React.FC = () => {
       dataIndex: 'version',
       sorter: (a, b) => localeCompare(a?.version, b?.version),
       render: (text) => (
-        <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
+        <BAITextHighlighter keyword={imageSearch}>{text}</BAITextHighlighter>
       ),
     },
     {
@@ -279,7 +276,9 @@ const CustomizedImageList: React.FC = () => {
         // maxLines; width lives on the BAIFlex wrapper (Text has no style).
         <BAIFlex style={{ maxWidth: 200 }} align="stretch">
           <Text maxLines={1}>
-            <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
+            <BAITextHighlighter keyword={imageSearch}>
+              {text}
+            </BAITextHighlighter>
           </Text>
         </BAIFlex>
       ),
@@ -299,8 +298,7 @@ const CustomizedImageList: React.FC = () => {
               filter input is uncontrolled in the original, so the local
               search state stays the source of truth here too. */}
           <TextInput
-            label={t('environment.SearchImages')}
-            isLabelHidden
+            aria-label={t('environment.SearchImages')}
             value={imageSearchInput}
             hasClear
             startIcon={Search}
@@ -381,9 +379,6 @@ const CustomizedImageList: React.FC = () => {
         }
         confirmText={t('credential.PermanentlyDelete')}
         requireConfirmInput
-        inputLabel={t('credential.TypePermanentlyDelete', {
-          text: t('credential.PermanentlyDelete'),
-        })}
         inputProps={{
           placeholder: t('credential.PermanentlyDelete'),
         }}

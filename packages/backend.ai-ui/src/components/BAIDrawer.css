@@ -22,6 +22,12 @@
  tokens onto. No `.ant-*` selector is touched.
 */
 @layer components {
+  /* Electron ignores z-order for app-region: without this, the header's drag
+     region under the drawer swallows clicks on the drawer's header buttons. */
+  .bai-drawer-panel {
+    -webkit-app-region: no-drag;
+  }
+
   .bai-drawer-header {
     flex: 0 0 auto;
     padding: var(--spacing-4) var(--spacing-6);

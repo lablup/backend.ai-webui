@@ -2,9 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Kbd } from '@astryxdesign/core/Kbd';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Kbd } from '@lablup/ui-common/Kbd';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { BAI_Z_INDEX, BAIFlex } from 'backend.ai-ui';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import React from 'react';

@@ -2,8 +2,8 @@ import { App } from '../../../app-shim';
 import { initiateDownload } from '../../../helper';
 import { useTanMutation } from '../../../helper/reactQueryAlias';
 import { useToggle } from '../../../hooks';
+import { useBAIBreakpoint } from '../../../hooks/useBAIBreakpoint';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
-import { theme, useBAIBreakpoint } from '../../../theme-shim';
 import BAIButton from '../../BAIButton';
 import BAIFlex from '../../BAIFlex';
 import BAISelectionLabel from '../../BAISelectionLabel';
@@ -15,9 +15,10 @@ import CreateFileModal from './CreateFileModal';
 import DeleteSelectedItemsModal, {
   DeleteSelectedItemsModalProps,
 } from './DeleteSelectedItemsModal';
-import type { RcFile } from './hooks';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { useDownloadErrorMessage, type RcFile } from './hooks';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   DownloadIcon,
   FilePlus,
@@ -39,21 +40,17 @@ interface ExplorerActionControlsProps {
   onClearSelection?: () => void;
   enableDownload?: boolean;
   enableDelete?: boolean;
-  enableWrite?: boolean;
-  // Gates the upload entry points (dropdown + drag-drop). The corresponding
-  // server operation is `upload-file` on the storage host, which is distinct
-  // from generic write capability (mkdir / create-file / rename) and from
-  // file edit (which is also an upload underneath). Defaults to `enableWrite`
-  // so callers that don't pass it explicitly keep the previous bundled
-  // behavior.
+  // Gates "Create Folder" / "Create File".
+  enableCreate?: boolean;
+  // Gates the upload entry points. "Create File" also needs it: it writes
+  // through the upload API.
   enableUpload?: boolean;
   // 'directoryPicker' keeps only the directory-relevant actions (create
   // folder); file creation and upload entry points are hidden entirely
   // instead of rendered disabled.
   mode?: 'explorer' | 'directoryPicker';
   // Fired with the new folder's name right after a successful mkdir, in
-  // addition to onRequestClose(true). The directory picker uses this to jump
-  // straight into the created folder.
+  // addition to onRequestClose(true).
   onFolderCreated?: (folderName: string) => void;
   // onClickRefresh?: (key: string) => void;
   extra?: React.ReactNode;
@@ -67,8 +64,8 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   onClearSelection,
   enableDownload = false,
   enableDelete = false,
-  enableWrite = false,
-  enableUpload = enableWrite,
+  enableCreate = false,
+  enableUpload = false,
   mode = 'explorer',
   onFolderCreated,
   extra,
@@ -80,8 +77,9 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   // SSR safety — which would make every label here flash in and out. The shim
   // exists for exactly this (RESPONSIVE-POLICY §2) and is a pure import swap.
   const { lg } = useBAIBreakpoint();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
+  const getDownloadErrorMessage = useDownloadErrorMessage();
   const { targetVFolderId, targetVFolderName, currentPath } =
     use(FolderInfoContext);
   const baiClient = useConnectedBAIClient();
@@ -149,11 +147,10 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         }),
       );
     },
-    onError: (err: any) => {
-      if (err && err.message) {
-        message.error(err.message);
-      } else if (err && err.title) {
-        message.error(err.title);
+    onError: (err: unknown) => {
+      const text = getDownloadErrorMessage(err);
+      if (text) {
+        message.error(text);
       }
     },
   });
@@ -180,8 +177,8 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
                     size="1em"
                     style={{
                       color: enableDelete
-                        ? token.colorError
-                        : token.colorTextDisabled,
+                        ? token('--color-error')
+                        : token('--color-text-disabled'),
                     }}
                   />
                 }
@@ -190,39 +187,42 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
                 }}
               />
             </Tooltip>
-            {baiClient.supports('download-archive') && (
-              <Tooltip
-                content={t('comp:FileExplorer.DownloadSelected')}
-                placement="above"
-                alignment="start"
-              >
-                <BAIButton
-                  disabled={!enableDownload}
-                  icon={
-                    <DownloadIcon
-                      style={{
-                        color: enableDownload
-                          ? token.colorInfo
-                          : token.colorTextDisabled,
-                      }}
-                    />
-                  }
-                  action={async () => {
-                    const filePaths = selectedFiles.map((file) =>
-                      currentPath === '.'
-                        ? file.name
-                        : `${currentPath}/${file.name}`,
-                    );
-                    await downloadArchiveMutation.mutateAsync(filePaths);
-                  }}
-                />
-              </Tooltip>
-            )}
+            <Tooltip
+              content={t('comp:FileExplorer.DownloadSelected')}
+              placement="above"
+              alignment="start"
+            >
+              <BAIButton
+                disabled={!enableDownload}
+                aria-label={t('comp:FileExplorer.DownloadSelected')}
+                icon={
+                  <DownloadIcon
+                    style={{
+                      color: enableDownload
+                        ? token('--color-info')
+                        : token('--color-text-disabled'),
+                    }}
+                  />
+                }
+                action={async () => {
+                  const filePaths = selectedFiles.map((file) =>
+                    currentPath === '.'
+                      ? file.name
+                      : `${currentPath}/${file.name}`,
+                  );
+                  // onError already toasted; an escaping rejection would
+                  // hit the page's error boundary and unmount the modal.
+                  await downloadArchiveMutation
+                    .mutateAsync(filePaths)
+                    .catch(() => {});
+                }}
+              />
+            </Tooltip>
           </>
         )}
         <Tooltip content={t('comp:FileExplorer.CreateFolder')} isEnabled={!lg}>
           <BAIButton
-            disabled={!enableWrite}
+            disabled={!enableCreate}
             aria-label={t('comp:FileExplorer.CreateFolder')}
             icon={<FolderPlus size="1em" />}
             onClick={() => {
@@ -235,7 +235,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         {mode !== 'directoryPicker' && (
           <Tooltip content={t('comp:FileExplorer.CreateFile')} isEnabled={!lg}>
             <BAIButton
-              disabled={!enableWrite}
+              disabled={!enableCreate || !enableUpload}
               aria-label={t('comp:FileExplorer.CreateFile')}
               icon={<FilePlus size="1em" />}
               onClick={() => {
@@ -314,7 +314,6 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         )}
       </BAIFlex>
       <DeleteSelectedItemsModal
-        destroyOnHidden
         open={openDeleteModal}
         selectedFiles={selectedFiles}
         onDeleteFilesInBackground={onDeleteFilesInBackground}
@@ -326,7 +325,6 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         }}
       />
       <CreateDirectoryModal
-        destroyOnHidden
         open={openCreateModal}
         onRequestClose={(success: boolean, createdFolderName?: string) => {
           if (success) {
@@ -339,7 +337,6 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         }}
       />
       <CreateFileModal
-        destroyOnHidden
         open={openCreateFileModal}
         onRequestClose={(success: boolean) => {
           if (success) {

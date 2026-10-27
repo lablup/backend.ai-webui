@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { parseAsString, useQueryState } from 'nuqs';
+import { useWebUILocation, useWebUINavigate } from './index';
 import { useEffect, useEffectEvent } from 'react';
 
 /** Deep-link param the credentials page established and the palette reuses. */
@@ -16,11 +16,20 @@ export const CREATE_ACTION_VALUE = 'add';
 export const useCreateActionArrival = (open: () => void): void => {
   'use memo';
 
-  const [action, setAction] = useQueryState(CREATE_ACTION_PARAM, parseAsString);
+  // Read from the router, not nuqs: nuqs applies the palette's navigation in a
+  // transition, which React holds back while any async action is pending.
+  const location = useWebUILocation();
+  const navigate = useWebUINavigate();
+  const action = new URLSearchParams(location.search).get(CREATE_ACTION_PARAM);
 
   const arrive = useEffectEvent(() => {
     open();
-    setAction(null);
+    const search = new URLSearchParams(location.search);
+    search.delete(CREATE_ACTION_PARAM);
+    navigate(
+      { search: search.toString(), hash: location.hash },
+      { replace: true, state: location.state },
+    );
   });
 
   useEffect(() => {

@@ -34,6 +34,9 @@
      it follows the notification drawer's margin shift for free. */
   height: 100%;
   position: relative;
+  /* Header on top, scroll column (`flex: 1`) filling the rest. */
+  display: flex;
+  flex-direction: column;
 }
 
 .main-layout-main-content.margin-style {

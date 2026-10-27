@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b1c9240c0e272186c1c61a6223868a88>>
+ * @generated SignedSource<<a80fde64761c1c44da8fe3b939b6c250>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -25,6 +25,7 @@ export type BAIAdminUserV2TableFragment$data = ReadonlyArray<{
     readonly containerMainGid: number | null | undefined;
     readonly containerUid: number | null | undefined;
   };
+  readonly entityId: string;
   readonly id: string;
   readonly organization: {
     readonly domainName: string | null | undefined;
@@ -94,6 +95,13 @@ return {
       "kind": "RequiredField",
       "field": (v0/*: any*/),
       "action": "NONE"
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
     },
     {
       "alias": null,
@@ -187,7 +195,13 @@ return {
       "selections": [
         {
           "alias": null,
-          "args": null,
+          "args": [
+            {
+              "kind": "Literal",
+              "name": "limit",
+              "value": 1000
+            }
+          ],
           "concreteType": "ProjectV2Connection",
           "kind": "LinkedField",
           "name": "projects",
@@ -235,7 +249,7 @@ return {
               "storageKey": null
             }
           ],
-          "storageKey": null
+          "storageKey": "projects(limit:1000)"
         }
       ]
     },
@@ -380,6 +394,6 @@ return {
 };
 })();
 
-(node as any).hash = "039268ec2b3d7a0c99464d2d860344a0";
+(node as any).hash = "626b6a1a25a1e918c3dfc2ca60b9164d";
 
 export default node;

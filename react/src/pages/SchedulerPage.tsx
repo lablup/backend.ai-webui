@@ -4,8 +4,8 @@
  */
 import { type ErrorWithGraphQL } from '../components/BAIErrorBoundary';
 import FairShareList from '../components/FairShareItems/FairShareList';
-import { Button } from '@astryxdesign/core/Button';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { Button } from '@lablup/ui-common/Button';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
 import {
   BAISkeleton,
   BAICard,

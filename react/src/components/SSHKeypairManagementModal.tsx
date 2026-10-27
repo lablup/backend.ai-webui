@@ -7,11 +7,12 @@ import { useTanQuery } from '../hooks/reactQueryAlias';
 import SSHKeyBlock from './SSHKeyBlock';
 import SSHKeypairGenerationModal from './SSHKeypairGenerationModal';
 import SSHKeypairManualFormModal from './SSHKeypairManualFormModal';
-import { Button } from '@astryxdesign/core/Button';
-import { HStack } from '@astryxdesign/core/Stack';
+import { Button } from '@lablup/ui-common/Button';
+import { HStack } from '@lablup/ui-common/Stack';
 import {
   BAIModal,
   BAIModalProps,
+  BAIUnmountAfterClose,
   useToggle,
   useUpdatableState,
 } from 'backend.ai-ui';
@@ -96,18 +97,20 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
           });
         }}
       />
-      <SSHKeypairManualFormModal
-        open={isOpenSSHKeypairManualFormModal}
-        // Closing is idempotent: the modal now closes from the mutation's
-        // onSuccess, so a toggle would reopen it after a cancel mid-request.
-        onCancel={closeSSHKeypairManualFormModal}
-        onRequestClose={closeSSHKeypairManualFormModal}
-        onRequestRefresh={() => {
-          startRefreshModalTransition(() => {
-            updateFetchKey();
-          });
-        }}
-      />
+      <BAIUnmountAfterClose>
+        <SSHKeypairManualFormModal
+          open={isOpenSSHKeypairManualFormModal}
+          // Closing is idempotent: the modal now closes from the mutation's
+          // onSuccess, so a toggle would reopen it after a cancel mid-request.
+          onCancel={closeSSHKeypairManualFormModal}
+          onRequestClose={closeSSHKeypairManualFormModal}
+          onRequestRefresh={() => {
+            startRefreshModalTransition(() => {
+              updateFetchKey();
+            });
+          }}
+        />
+      </BAIUnmountAfterClose>
     </>
   );
 };

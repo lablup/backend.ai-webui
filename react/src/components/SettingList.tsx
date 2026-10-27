@@ -3,25 +3,30 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSettingArrival } from '../hooks/useSettingArrival';
-import { useBAIBreakpoint } from '../theme-shim';
 import SettingItem, { SettingItemProps } from './SettingItem';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { Divider } from '@astryxdesign/core/Divider';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { Heading } from '@astryxdesign/core/Heading';
-import { Icon } from '@astryxdesign/core/Icon';
-import { Layout, LayoutContent, LayoutPanel } from '@astryxdesign/core/Layout';
-import { List, ListItem } from '@astryxdesign/core/List';
-import { Text } from '@astryxdesign/core/Text';
-import { TextInput } from '@astryxdesign/core/TextInput';
-import { Toolbar } from '@astryxdesign/core/Toolbar';
-import { BAIButton, BAIFlex, BAIModal, useToggle } from 'backend.ai-ui';
+import { Badge } from '@lablup/ui-common/Badge';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { Divider } from '@lablup/ui-common/Divider';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { Heading } from '@lablup/ui-common/Heading';
+import { Icon } from '@lablup/ui-common/Icon';
+import { Layout, LayoutContent, LayoutPanel } from '@lablup/ui-common/Layout';
+import { List, ListItem } from '@lablup/ui-common/List';
+import { Text } from '@lablup/ui-common/Text';
+import { TextInput } from '@lablup/ui-common/TextInput';
+import { Toolbar } from '@lablup/ui-common/Toolbar';
+import {
+  BAIButton,
+  BAIFlex,
+  BAIModal,
+  useBAIBreakpoint,
+  useToggle,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { ArrowLeft, ChevronRight, Redo2, Search } from 'lucide-react';
-import React, { useState, ReactNode, CSSProperties } from 'react';
+import React, { CSSProperties, ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // Frame budget for the settings shell (astryx docs layout — pick the shell and
@@ -32,11 +37,26 @@ import { useTranslation } from 'react-i18next';
 // Environment") still fits beside its count badge instead of truncating.
 const NAV_PANEL_WIDTH = 240;
 
-// From the `settings-sidebar` template: the nav column carries its own padding
-// so its first item sits on the same baseline as the content pane's first row.
+// The body bleeds to the card border, so the host BAICard's padding (step 6)
+// is the inset: nav labels get it from spacing-3 here + the spacious ListItem's
+// spacing-3, the content pane from `LayoutContent padding={6}`.
 const navPanelPadding: CSSProperties = {
   paddingBlock: 'var(--spacing-4)',
-  paddingInline: 'var(--spacing-1)',
+  paddingInline: 'var(--spacing-3)',
+};
+
+// Layout escapes the card padding on its own (`--container-padding-*`); only
+// its top margin is kept so the gap under the toolbar survives, and the top
+// border runs edge to edge like the card header's divider.
+const bodyBleed: CSSProperties = {
+  marginBlockStart: 0,
+  borderBlockStart: '1px solid var(--color-border)',
+};
+// The narrow nav list is a plain flex column, so it bleeds by hand.
+const narrowNavBleed: CSSProperties = {
+  ...bodyBleed,
+  marginInlineStart: 'calc(-1 * var(--container-padding-inline-start, 0px))',
+  marginInlineEnd: 'calc(-1 * var(--container-padding-inline-end, 0px))',
 };
 
 const ALL_NAV_KEY = 'all';
@@ -291,8 +311,7 @@ const SettingList: React.FC<SettingPageProps> = ({
             // "take the remainder" basis has to be set from a wrapper.
             <BAIFlex style={{ flex: 1, minWidth: 0 }}>
               <TextInput
-                label={t('settings.SearchPlaceholder')}
-                isLabelHidden
+                aria-label={t('settings.SearchPlaceholder')}
                 startIcon={Search}
                 placeholder={t('settings.SearchPlaceholder')}
                 onChange={(nextValue) => setSearchValue(nextValue)}
@@ -310,10 +329,11 @@ const SettingList: React.FC<SettingPageProps> = ({
           )}
           {!!showChangedOptionFilter && (
             <CheckboxInput
-              label={t('settings.ShowOnlyChanged')}
               value={changedOptionFilter}
               onChange={(checked) => setChangedOptionFilter(checked)}
-            />
+            >
+              {t('settings.ShowOnlyChanged')}
+            </CheckboxInput>
           )}
           {extraButton}
           {!!showResetButton && (
@@ -330,11 +350,14 @@ const SettingList: React.FC<SettingPageProps> = ({
         {hideGroupNav ? (
           allGroupsPane
         ) : isNarrow && narrowView === 'nav' ? (
-          navList
+          <BAIFlex direction="column" align="stretch" style={narrowNavBleed}>
+            {navList}
+          </BAIFlex>
         ) : (
           <Layout
             height="auto"
             padding={0}
+            style={bodyBleed}
             start={
               isNarrow ? undefined : (
                 <LayoutPanel
@@ -350,7 +373,7 @@ const SettingList: React.FC<SettingPageProps> = ({
               )
             }
             content={
-              <LayoutContent padding={4} isScrollable={false}>
+              <LayoutContent padding={6} isScrollable={false}>
                 <BAIFlex direction="column" align="stretch" gap={'md'}>
                   {isNarrow && (
                     <Toolbar
@@ -390,7 +413,11 @@ const SettingList: React.FC<SettingPageProps> = ({
         cancelText={t('button.Cancel')}
         onCancel={() => setIsOpenResetChangesModal()}
       >
-        <Banner status="warning" title={t('dialog.warning.CannotBeUndone')} />
+        <Banner
+          role="alert"
+          status="warning"
+          title={t('dialog.warning.CannotBeUndone')}
+        />
       </BAIModal>
     </>
   );

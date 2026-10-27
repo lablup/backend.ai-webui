@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2e95fe37ba3c51a25c81d5a9b06dfbca>>
+ * @generated SignedSource<<f7c76b01e256728a1a2e87482999d3b5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -47,6 +47,11 @@ return {
     {
       "alias": null,
       "args": [
+        {
+          "kind": "Literal",
+          "name": "limit",
+          "value": 100
+        },
         {
           "kind": "Literal",
           "name": "orderBy",
@@ -106,7 +111,7 @@ return {
           "storageKey": null
         }
       ],
-      "storageKey": "availablePresets(orderBy:[{\"direction\":\"ASC\",\"field\":\"RANK\"}])"
+      "storageKey": "availablePresets(limit:100,orderBy:[{\"direction\":\"ASC\",\"field\":\"RANK\"}])"
     }
   ],
   "type": "ModelCardV2",
@@ -114,6 +119,6 @@ return {
 };
 })();
 
-(node as any).hash = "59149a747da6a659eb4b7c126a6d89aa";
+(node as any).hash = "de848be703b1a64ce737827e01f9cc21";
 
 export default node;

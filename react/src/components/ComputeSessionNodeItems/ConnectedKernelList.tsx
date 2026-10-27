@@ -9,10 +9,10 @@ import {
 import { ContainerLogModalFragment$key } from '../../__generated__/ContainerLogModalFragment.graphql';
 // import BAIPropertyFilter from '../BAIPropertyFilter';
 import { isNotYetAllocatedSession } from '../../helper/sessionResourceGridData';
-import ContainerLogModal from './ContainerLogModal';
-import { Badge } from '@astryxdesign/core/Badge';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Text } from '@astryxdesign/core/Text';
+import ContainerLogModal from './ContainerLogModalLazy';
+import { Badge } from '@lablup/ui-common/Badge';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Text } from '@lablup/ui-common/Text';
 import {
   badgeVariantForStatus,
   filterOutEmpty,
@@ -20,6 +20,7 @@ import {
   BAITable,
   BAIUnmountAfterClose,
   BAIDoubleBadge,
+  BAIFlex,
   BAIId,
   type BAIColumnType,
   BAIText,
@@ -70,7 +71,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
       dataIndex: 'cluster_hostname',
       render: (hostname, record) => {
         return (
-          <>
+          <BAIFlex gap="xxs">
             <Text>{hostname}</Text>
             <IconButton
               variant="ghost"
@@ -83,7 +84,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
                 record.row_id && setKernelIdForLogModal(record.row_id);
               }}
             />
-          </>
+          </BAIFlex>
         );
       },
     },

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<205c2c643e838d8f0f07a5098902a2f8>>
+ * @generated SignedSource<<3eb9f311a7b29eaf75ee37d977a51288>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -754,16 +754,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "7e80f2540f5ea6ef48db1d821cafa664",
+    "cacheID": "198c5d2f8280532dc82184ac91022808",
     "id": null,
     "metadata": {},
     "name": "AdminDeploymentPresetSettingPageUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation AdminDeploymentPresetSettingPageUpdateMutation(\n  $input: UpdateDeploymentRevisionPresetInput!\n) {\n  adminUpdateDeploymentRevisionPreset(input: $input) {\n    preset {\n      id\n      name\n      updatedAt\n      runtimeVariant {\n        id\n        name\n      }\n      image @since(version: \"26.4.4\") {\n        id\n        identity {\n          canonicalName\n          architecture\n        }\n      }\n      ...AdminDeploymentPresetSettingPageContent_preset\n    }\n  }\n}\n\nfragment AdminDeploymentPresetSettingPageContent_preset on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    name\n    id\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues @since(version: \"26.4.4rc9\") {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        preStartActions {\n          action\n          args\n        }\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n      metadata {\n        author\n        title\n        version\n        created\n        lastModified\n        description\n        task\n        category\n        architecture\n        framework\n        label\n        license\n        minResource\n      }\n    }\n  }\n}\n"
+    "text": "mutation AdminDeploymentPresetSettingPageUpdateMutation(\n  $input: UpdateDeploymentRevisionPresetInput!\n) {\n  adminUpdateDeploymentRevisionPreset(input: $input) {\n    preset {\n      id\n      name\n      updatedAt\n      runtimeVariant {\n        id\n        name\n      }\n      image {\n        id\n        identity {\n          canonicalName\n          architecture\n        }\n      }\n      ...AdminDeploymentPresetSettingPageContent_preset\n    }\n  }\n}\n\nfragment AdminDeploymentPresetSettingPageContent_preset on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    name\n    id\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        preStartActions {\n          action\n          args\n        }\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        healthCheck {\n          enable\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n      metadata {\n        author\n        title\n        version\n        created\n        lastModified\n        description\n        task\n        category\n        architecture\n        framework\n        label\n        license\n        minResource\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "2a3776b549b9c5cb358c6be8e504c805";
+(node as any).hash = "5b11fdaea6ee0991aeded73bd6f3cc39";
 
 export default node;

@@ -22,11 +22,11 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import BAIFormItem from './BAIFormItem';
 import { AstryxFormSelector, AstryxFormTextInput } from './astryxFormControls';
-import { Button } from '@astryxdesign/core/Button';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Selector } from '@astryxdesign/core/Selector';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Heading } from '@astryxdesign/core/Text';
+import { Button } from '@lablup/ui-common/Button';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Selector } from '@lablup/ui-common/Selector';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Heading } from '@lablup/ui-common/Text';
 import {
   BAIPopconfirm,
   BAIModal,
@@ -255,7 +255,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
         </VStack>
 
         <VStack align="stretch" gap={4}>
-          <HStack gap={2}>
+          <HStack gap={2} align="center">
             <Heading level={5}>{t('data.folders.SharedUser')}</Heading>
             <BAIQuestionIconWithTooltip
               title={t('data.folders.SharedUserDesc')}
@@ -281,10 +281,9 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
                 dataIndex: 'perm',
                 render: (perm, record) => {
                   return (
-                    <HStack gap={1}>
+                    <HStack gap={1} align="center">
                       <Selector
-                        label={t('data.explorer.Permission')}
-                        isLabelHidden
+                        aria-label={t('data.explorer.Permission')}
                         width={130}
                         options={[
                           { label: t('data.ReadOnly'), value: 'ro' },

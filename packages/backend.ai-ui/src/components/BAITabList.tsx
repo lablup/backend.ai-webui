@@ -28,11 +28,11 @@
     is the whole fix; there is nothing to override.
  2. **Trailing actions go INSIDE the nav**, pushed over with
     `margin-inline-start: auto` — Astryx's own `TabListTabsWithActions` idiom
-    (`astryx template TabListTabsWithActions`). Laying them out as a SIBLING of
+    (`ui-common template TabListTabsWithActions`). Laying them out as a SIBLING of
     the nav is what forces rule 1 to be violated.
 */
 import './BAITabList.css';
-import { TabList, type TabListProps } from '@astryxdesign/core/TabList';
+import { TabList, type TabListProps } from '@lablup/ui-common/TabList';
 import React, { type ReactNode } from 'react';
 
 export interface BAITabListProps extends Omit<TabListProps, 'ref'> {

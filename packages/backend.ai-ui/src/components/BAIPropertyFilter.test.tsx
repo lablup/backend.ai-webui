@@ -282,10 +282,24 @@ const PAGE_FIXTURES: Array<{
     filterProperties: [
       { key: 'name', propertyLabel: 'Name', type: 'string' },
       { key: 'is_active', propertyLabel: 'Active', type: 'boolean' },
+      {
+        key: 'type',
+        propertyLabel: 'Type',
+        type: 'string',
+        strictSelection: true,
+        defaultOperator: '==',
+        options: ['GENERAL', 'MODEL_STORE', 'PERSONAL'].map((type) => ({
+          label: type,
+          value: type,
+        })),
+      },
     ],
     filters: [
       'name ilike "%default%"',
       'name ilike "%ml%" & is_active == true',
+      // The default chip ProjectPage seeds on managers with BA-8075.
+      'type != "PERSONAL"',
+      'type == "MODEL_STORE" & name ilike "%store%"',
     ],
   },
   {
@@ -537,6 +551,27 @@ describe('BAIPropertyFilter render', () => {
     expect(
       screen.getByTestId('property-filter').closest('.bai-power-search'),
     ).not.toBeNull();
+  });
+
+  it('labels a renderInput token by its option until one is picked', () => {
+    render(
+      <BAIPropertyFilter
+        data-testid="property-filter"
+        filterProperties={[
+          {
+            key: 'user_id',
+            propertyLabel: 'Owner',
+            type: 'uuid',
+            options: [{ label: 'Me', value: 'u-1' }],
+            renderInput: () => null,
+          },
+        ]}
+        value={'user_id == "u-1"'}
+        onChange={() => {}}
+      />,
+    );
+    expect(screen.getByText('Me')).toBeInTheDocument();
+    expect(screen.queryByText('u-1')).toBeNull();
   });
 });
 

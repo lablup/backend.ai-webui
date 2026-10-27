@@ -30,9 +30,9 @@ outline and dark text. A filled chip reads as "a state right now", an outlined
 chip reads as "a value". Drawing a username with a `Badge`, or a session status
 with a `Token`, tells the user the wrong thing.
 
-The Astryx-generated agent block says "Status = StatusDot/Token; Badge = counts
-only". This repository overrides that line (the `STATUS SEMANTICS` line under
-it in `AGENTS.md`): status shown as a labelled chip is a `Badge` here.
+The UI-COMMON block (`ui-common agents`) says "Status = StatusDot/Token; Badge =
+counts only". This repository overrides that line (the `STATUS SEMANTICS` line in
+the PROJECT LINES under it in `AGENTS.md`): status shown as a labelled chip is a `Badge` here.
 
 ## Rules
 
@@ -83,7 +83,7 @@ const colorMap = { ACTIVE: 'green', INACTIVE: 'orange' };
 ### ✅ Correct — live status as a Badge, colour from the helper
 
 ```tsx
-import { Badge } from '@astryxdesign/core/Badge';
+import { Badge } from '@lablup/ui-common/Badge';
 import { badgeVariantForStatus } from 'backend.ai-ui';
 
 <Badge variant={badgeVariantForStatus('route', route.status)} label={route.status} />
@@ -92,7 +92,7 @@ import { badgeVariantForStatus } from 'backend.ai-ui';
 ### ✅ Correct — settled value as a Token, colour from the helper
 
 ```tsx
-import { Token } from '@astryxdesign/core/Token';
+import { Token } from '@lablup/ui-common/Token';
 import { tokenColorForStatus } from 'backend.ai-ui';
 
 <Token color={tokenColorForStatus('role', role.status)} label={role.status} />

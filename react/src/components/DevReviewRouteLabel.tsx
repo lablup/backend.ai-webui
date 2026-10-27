@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { ReviewEnv } from '../../vite-plugins/review-overlay/client/types';
 import { useWebUINavigate } from '../hooks';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -35,11 +36,34 @@ const routeLabelFrom = (
 };
 
 /**
+ * Where the reviewer is: WebUI build, manager, endpoint and account. Read off
+ * the live client at COPY time — a login after boot still counts, and a
+ * logout leaves nothing stale behind.
+ */
+export const readReviewEnv = (): ReviewEnv | undefined => {
+  const client = globalThis.backendaiclient;
+  const webui = globalThis.packageVersion || undefined;
+  if (!client) return webui ? { webui } : undefined;
+  const role = client.is_superadmin
+    ? 'superadmin'
+    : client.is_admin
+      ? 'admin'
+      : 'user';
+  return {
+    webui,
+    manager: client.managerVersion || undefined,
+    endpoint: client._config?.endpoint || undefined,
+    account: client.email ? `${client.email} (${role})` : undefined,
+  };
+};
+
+/**
  * Publishes the current route's ENGLISH label on `window.__BAI_REVIEW__` for
  * the review overlay (FR-3811), which lives outside React and so cannot
  * read `useMatches()` itself. English regardless of the user's language: the
  * label ends up in a PR comment other people read. `navigate` rides along so
- * the overlay's guided mode (FR-3950) can cross pages without a full reload.
+ * the overlay's guided mode (FR-3950) can cross pages without a full reload,
+ * and `env` so a copied set says where it was reviewed.
  */
 const DevReviewRouteLabel: React.FC = () => {
   'use memo';
@@ -53,6 +77,7 @@ const DevReviewRouteLabel: React.FC = () => {
         ...window.__BAI_REVIEW__,
         routeLabel: routeLabelFrom(matches, i18n.getFixedT('en')),
         navigate: (to: string) => navigate(to),
+        env: readReviewEnv,
       };
     };
     publish();

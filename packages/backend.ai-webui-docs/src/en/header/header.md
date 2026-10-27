@@ -69,17 +69,10 @@ extension and it has been enabled in the system configuration.
 The magnifier button opens the search palette, which lets you jump to any page,
 page tab, or setting item without leaving the keyboard.
 
-:::note
-The search palette is an experimental feature and is turned off by default. The
-**Search** button appears in the top bar, and its shortcut works, only while the
-**Command palette** item under **Experimental features** on the User Settings
-page is enabled.
-:::
-
 Click the button, or press `Ctrl-K` (`Cmd-K` on macOS), to open the palette. The
 shortcut works even while the cursor is in an input field.
 
-![](../images/global_search_palette.png)
+![=640px](../images/global_search_palette.png)
 
 Type in the search field, whose placeholder reads `Search pages, tabs, and
 settings`, to look up pages, page tabs, and setting items at once. A result that
@@ -98,6 +91,26 @@ The palette also offers quick actions in three groups.
 
 Before you type anything, the results you opened most recently are listed at the
 top under `Recent`.
+
+<a id="session-monitor"></a>
+
+## Session monitor
+
+The session monitor shows the number of sessions you watch, on every page. Click
+it to open the list of those sessions, where the monitor's settings let you
+choose what it watches.
+
+:::note
+The session monitor is an experimental feature and is turned off by default. It
+appears in the top bar only while the **Session monitor** item under
+**Experimental features** on the User Settings page is enabled.
+:::
+
+![=618px](../images/session_monitor_popover.png)
+
+When the idle-termination item is turned on in those settings, you also receive
+a notification 30 and 10 minutes before an idle check terminates one of your
+sessions.
 
 <a id="notification"></a>
 
@@ -146,7 +159,7 @@ small screens.
 
 Click the user icon on the right side of the top bar to see the user menu.
 
-![](../images/user_drop_down.png)
+![=177px](../images/user_drop_down.png)
 
 At the top of the dropdown, the following user information is displayed for
 reference. These items are not clickable.
@@ -201,7 +214,7 @@ In that case, please contact the administrator of your system.
 
 If you activate the `2FA Enabled` switch, the following dialog appears.
 
-![](../images/2fa_setup.png)
+![=520px](../images/2fa_setup.png)
 
 Turn on the 2FA application you use and scan the QR code or manually enter the verification
 code. There are many 2FA-enabled applications, such as Google Authenticator, 2STP, 1Password,
@@ -217,7 +230,7 @@ for the OTP code.
 
 To log in, you must open the 2FA application and enter a 6-digit code in the One-time password field.
 
-![](../images/remove_2fa.png)
+![=408px](../images/remove_2fa.png)
 
 If you want to disable 2FA, turn off the `2FA Enabled` switch and click the confirm button in the
 following dialog.
@@ -229,13 +242,13 @@ following dialog.
 Selecting `Downloads` opens a dialog with one tab for each download the
 administrator has enabled: `Desktop App` and `CLI`.
 
-![](../images/downloads_desktop_app_tab.png)
+![=520px](../images/downloads_desktop_app_tab.png)
 
 On the `Desktop App` tab, select your operating system in the **OS** field, then
 click the button for your CPU architecture to start the download. The
 stand-alone app gives you the same WebUI outside a browser.
 
-![](../images/downloads_cli_tab.png)
+![=520px](../images/downloads_cli_tab.png)
 
 The `CLI` tab offers two ways to start using the command-line client:
 

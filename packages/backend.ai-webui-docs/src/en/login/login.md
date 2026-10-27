@@ -20,7 +20,7 @@ be sent to verify that the email is yours. If the verification email is sent, yo
 will need to read the email and click the link inside to pass verification
 before you can log in with your account.
 
-![](../images/signup_dialog.png)
+![=400px](../images/signup_dialog.png)
 
 
 :::note
@@ -154,7 +154,7 @@ the Start page.
 By clicking the user icon in the upper-right corner, you will see the user menu.
 You can log out by selecting the `Log Out` menu item.
 
-![](../images/signout_button.png)
+![=175px](../images/signout_button.png)
 
 :::note
 If your system has a login session timer enabled, you will be automatically
@@ -172,7 +172,7 @@ then the `Change` link on the login panel. A dialog will appear where you can
 enter your email address to receive a password change link. Follow the
 instructions in the email to reset your password.
 
-![](../images/forgot_password_panel.png)
+![=520px](../images/forgot_password_panel.png)
 
 :::note
 Depending on the server configuration, the password change feature may not be
@@ -220,7 +220,7 @@ Clicking it again will return the sidebar to its original width.
 You can also use the shortcut key ( `[` ) to toggle between the narrow and original sidebar widths.
 
 
-![](../images/menu_collapse.png)
+![=268px](../images/menu_collapse.png)
 
 <a id="pages-you-cannot-open"></a>
 

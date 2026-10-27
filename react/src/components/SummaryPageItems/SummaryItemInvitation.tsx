@@ -12,11 +12,11 @@ import {
   useSuspenseTanQuery,
   useTanMutation,
 } from '../../hooks/reactQueryAlias';
-import { Button } from '@astryxdesign/core/Button';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { Heading } from '@astryxdesign/core/Heading';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Token } from '@astryxdesign/core/Token';
+import { Button } from '@lablup/ui-common/Button';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { Heading } from '@lablup/ui-common/Heading';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAICard,
   BAIFlex,

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<187fdc2d2db50d917a3667890cf6f433>>
+ * @generated SignedSource<<bee76b50e5c3e301c0a27d92dbb26756>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -60,10 +60,11 @@ v4 = {
   "storageKey": null
 },
 v5 = {
-  "enumValues": null,
-  "nullable": false,
-  "plural": false,
-  "type": "ID"
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "type",
+  "storageKey": null
 },
 v6 = {
   "enumValues": null,
@@ -73,9 +74,9 @@ v6 = {
 },
 v7 = {
   "enumValues": null,
-  "nullable": true,
+  "nullable": false,
   "plural": false,
-  "type": "UUID"
+  "type": "ID"
 },
 v8 = {
   "enumValues": null,
@@ -84,6 +85,12 @@ v8 = {
   "type": "Boolean"
 },
 v9 = {
+  "enumValues": null,
+  "nullable": true,
+  "plural": false,
+  "type": "UUID"
+},
+v10 = {
   "enumValues": null,
   "nullable": false,
   "plural": false,
@@ -147,13 +154,7 @@ return {
             "name": "url",
             "storageKey": null
           },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "type",
-            "storageKey": null
-          },
+          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -191,7 +192,13 @@ return {
           },
           {
             "alias": null,
-            "args": null,
+            "args": [
+              {
+                "kind": "Literal",
+                "name": "first",
+                "value": 100
+              }
+            ],
             "concreteType": "GroupConnection",
             "kind": "LinkedField",
             "name": "allowed_groups",
@@ -215,7 +222,22 @@ return {
                     "selections": [
                       (v2/*: any*/),
                       (v3/*: any*/),
-                      (v4/*: any*/)
+                      (v4/*: any*/),
+                      (v5/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "is_active",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "domain_name",
+                        "storageKey": null
+                      }
                     ],
                     "storageKey": null
                   }
@@ -223,7 +245,7 @@ return {
                 "storageKey": null
               }
             ],
-            "storageKey": null
+            "storageKey": "allowed_groups(first:100)"
           }
         ],
         "storageKey": null
@@ -231,7 +253,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "dae6f7ea2866ae70744bbe1b9725b4dd",
+    "cacheID": "d526a8fdf7ac09b0e1458d09195804c0",
     "id": null,
     "metadata": {
       "relayTestingSelectionTypeInfo": {
@@ -259,21 +281,24 @@ return {
           "plural": false,
           "type": "GroupNode"
         },
-        "container_registry_node.allowed_groups.edges.node.id": (v5/*: any*/),
+        "container_registry_node.allowed_groups.edges.node.domain_name": (v6/*: any*/),
+        "container_registry_node.allowed_groups.edges.node.id": (v7/*: any*/),
+        "container_registry_node.allowed_groups.edges.node.is_active": (v8/*: any*/),
         "container_registry_node.allowed_groups.edges.node.name": (v6/*: any*/),
-        "container_registry_node.allowed_groups.edges.node.row_id": (v7/*: any*/),
+        "container_registry_node.allowed_groups.edges.node.row_id": (v9/*: any*/),
+        "container_registry_node.allowed_groups.edges.node.type": (v6/*: any*/),
         "container_registry_node.extra": {
           "enumValues": null,
           "nullable": true,
           "plural": false,
           "type": "JSONString"
         },
-        "container_registry_node.id": (v5/*: any*/),
+        "container_registry_node.id": (v7/*: any*/),
         "container_registry_node.is_global": (v8/*: any*/),
         "container_registry_node.name": (v6/*: any*/),
         "container_registry_node.project": (v6/*: any*/),
-        "container_registry_node.registry_name": (v9/*: any*/),
-        "container_registry_node.row_id": (v7/*: any*/),
+        "container_registry_node.registry_name": (v10/*: any*/),
+        "container_registry_node.row_id": (v9/*: any*/),
         "container_registry_node.ssl_verify": (v8/*: any*/),
         "container_registry_node.type": {
           "enumValues": null,
@@ -281,13 +306,13 @@ return {
           "plural": false,
           "type": "ContainerRegistryTypeField"
         },
-        "container_registry_node.url": (v9/*: any*/),
+        "container_registry_node.url": (v10/*: any*/),
         "container_registry_node.username": (v6/*: any*/)
       }
     },
     "name": "ContainerRegistryEditorModalTestQuery",
     "operationKind": "query",
-    "text": "query ContainerRegistryEditorModalTestQuery(\n  $id: String!\n) {\n  container_registry_node(id: $id) {\n    ...ContainerRegistryEditorModalFragment\n    id\n  }\n}\n\nfragment ContainerRegistryEditorModalFragment on ContainerRegistryNode {\n  id\n  row_id\n  name\n  registry_name\n  url\n  type\n  project\n  username\n  ssl_verify\n  extra @since(version: \"24.09.3\")\n  is_global @since(version: \"24.09.0\")\n  allowed_groups @since(version: \"25.3.0\") {\n    edges {\n      node {\n        id\n        row_id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query ContainerRegistryEditorModalTestQuery(\n  $id: String!\n) {\n  container_registry_node(id: $id) {\n    ...ContainerRegistryEditorModalFragment\n    id\n  }\n}\n\nfragment ContainerRegistryEditorModalFragment on ContainerRegistryNode {\n  id\n  row_id\n  name\n  registry_name\n  url\n  type\n  project\n  username\n  ssl_verify\n  extra\n  is_global\n  allowed_groups(first: 100) {\n    edges {\n      node {\n        id\n        row_id\n        name\n        type\n        is_active\n        domain_name\n      }\n    }\n  }\n}\n"
   }
 };
 })();

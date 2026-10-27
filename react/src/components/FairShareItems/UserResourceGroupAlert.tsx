@@ -1,5 +1,5 @@
 import type { UserResourceGroupAlertQuery } from '../../__generated__/UserResourceGroupAlertQuery.graphql';
-import { Banner } from '@astryxdesign/core/Banner';
+import { Banner } from '@lablup/ui-common/Banner';
 import * as _ from 'lodash-es';
 import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -64,6 +64,7 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
 
   return (
     <Banner
+      role="alert"
       status="warning"
       title={t('fairShare.UserNotAllowedInResourceGroup', {
         project: group?.name,

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8d81e3f058a262bef9ada9c646e6fa3c>>
+ * @generated SignedSource<<626b8ce8ab9cc2d7a18b9d5ac704faef>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,10 +16,30 @@ export type ModelCardV2Filter = {
   AND?: ReadonlyArray<ModelCardV2Filter> | null | undefined;
   NOT?: ReadonlyArray<ModelCardV2Filter> | null | undefined;
   OR?: ReadonlyArray<ModelCardV2Filter> | null | undefined;
+  accessLevel?: StringFilter | null | undefined;
+  architecture?: StringFilter | null | undefined;
+  author?: StringFilter | null | undefined;
+  category?: StringFilter | null | undefined;
+  createdAt?: DateTimeFilter | null | undefined;
+  creatorId?: UUIDFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
+  license?: StringFilter | null | undefined;
+  minResource?: ModelCardV2ResourceRequirementNestedFilter | null | undefined;
+  modelVersion?: StringFilter | null | undefined;
   name?: StringFilter | null | undefined;
   projectId?: UUIDFilter | null | undefined;
   storageHost?: StringFilter | null | undefined;
+  task?: StringFilter | null | undefined;
+  title?: StringFilter | null | undefined;
+  updatedAt?: NullableDateTimeFilter | null | undefined;
+  vfolderId?: UUIDFilter | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type StringFilter = {
   contains?: string | null | undefined;
@@ -43,11 +63,36 @@ export type StringFilter = {
   notStartsWith?: string | null | undefined;
   startsWith?: string | null | undefined;
 };
-export type UUIDFilter = {
+export type DateTimeFilter = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
   equals?: string | null | undefined;
-  in?: ReadonlyArray<string> | null | undefined;
   notEquals?: string | null | undefined;
-  notIn?: ReadonlyArray<string> | null | undefined;
+};
+export type NullableDateTimeFilter = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  equals?: string | null | undefined;
+  isNull?: boolean | null | undefined;
+  notEquals?: string | null | undefined;
+};
+export type ModelCardV2ResourceRequirementNestedFilter = {
+  every?: ModelCardV2ResourceRequirementFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: ModelCardV2ResourceRequirementFilter | null | undefined;
+  some?: ModelCardV2ResourceRequirementFilter | null | undefined;
+};
+export type ModelCardV2ResourceRequirementFilter = {
+  minQuantity?: DecimalFilter | null | undefined;
+  slotName?: StringFilter | null | undefined;
+};
+export type DecimalFilter = {
+  equals?: any | null | undefined;
+  greaterThan?: any | null | undefined;
+  greaterThanOrEqual?: any | null | undefined;
+  lessThan?: any | null | undefined;
+  lessThanOrEqual?: any | null | undefined;
+  notEquals?: any | null | undefined;
 };
 export type ModelCardSelectQuery$variables = {
   filter?: ModelCardV2Filter | null | undefined;

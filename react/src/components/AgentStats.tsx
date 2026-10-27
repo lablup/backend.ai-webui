@@ -4,25 +4,26 @@
  */
 import { AgentStatsFragment$key } from '../__generated__/AgentStatsFragment.graphql';
 import { useResourceSlotsDetails } from '../hooks/backendai';
-import { theme } from '../theme-shim';
 import {
   SegmentedControl,
   SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
-import { Heading } from '@astryxdesign/core/Text';
+} from '@lablup/ui-common/SegmentedControl';
+import { Heading } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
   BAIBoardItemTitle,
+  BAIDoubleBadge,
   BAIFetchKeyButton,
   BAIFlex,
   BAIFlexProps,
+  BAISkeleton,
   ResourceStatistics,
   convertToNumber,
   processMemoryValue,
   useControllableValue,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { useTransition, ReactNode } from 'react';
+import { ReactNode, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
 
@@ -42,7 +43,7 @@ const AgentStats: React.FC<AgentStatsProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
@@ -57,13 +58,26 @@ const AgentStats: React.FC<AgentStatsProps> = ({
   const [data, refetch] = useRefetchableFragment(
     graphql`
       fragment AgentStatsFragment on Query
+      @argumentDefinitions(
+        aliveAgentFilter: { type: "String!" }
+        schedulableAgentFilter: { type: "String!" }
+      )
       @refetchable(queryName: "AgentStatsRefetchQuery") {
-        agentStats @since(version: "25.15.0") {
+        agentStats {
           totalResource {
             free
             used
             capacity
           }
+        }
+        aliveAgents: agent_nodes(filter: $aliveAgentFilter, first: 1) {
+          count
+        }
+        schedulableAgents: agent_nodes(
+          filter: $schedulableAgentFilter
+          first: 1
+        ) {
+          count
         }
       }
     `,
@@ -165,19 +179,29 @@ const AgentStats: React.FC<AgentStatsProps> = ({
       direction="column"
       align="stretch"
       style={{
-        paddingInline: token.paddingXL,
-        paddingBottom: token.padding,
+        paddingInline: token('--spacing-8'),
+        paddingBottom: token('--spacing-4'),
         ...props.style,
       }}
       {..._.omit(props, ['style'])}
     >
       <BAIBoardItemTitle
         title={
-          // antd Typography.Text styled to fontSizeHeading5 (16px) +
-          // fontWeightStrong. On the restored antd type ramp 16px is
-          // heading-5; `level={3}` tracked the same 16px back when Astryx's
-          // own ramp put 17px there.
-          <Heading level={5}>{t('agentStats.AgentStats')}</Heading>
+          <BAIFlex gap="xs" align="center" wrap="wrap">
+            {/* antd Typography.Text styled to fontSizeHeading5 (16px). On the
+                restored antd type ramp 16px is heading-5. */}
+            <Heading level={5}>{t('agentStats.AgentStats')}</Heading>
+            <BAIDoubleBadge
+              values={[
+                { label: t('agentStats.SchedulableAgents') },
+                {
+                  label: `${data.schedulableAgents?.count ?? 0} / ${
+                    data.aliveAgents?.count ?? 0
+                  }`,
+                },
+              ]}
+            />
+          </BAIFlex>
         }
         tooltip={t('agentStats.AgentStatsDescription')}
         extra={
@@ -187,7 +211,7 @@ const AgentStats: React.FC<AgentStatsProps> = ({
                 i18n keys while page tickets run in parallel. */}
             <SegmentedControl
               size="sm"
-              label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
+              aria-label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
               value={displayType}
               onChange={(v) =>
                 setDisplayType(

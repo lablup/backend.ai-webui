@@ -626,7 +626,7 @@ function createPinView(deps: ViewDeps): PinView {
     const landmark = hasLandmark(target.anchor);
     if (landmark && !hadLandmark) missedScans = 0;
     hadLandmark = landmark;
-    // A dialog that closed without unmounting (BAIDialog drops its role) must
+    // A dialog that closed without unmounting (ui-common Modal drops its role) must
     // release the element it held, or a dlg stop stays located behind nothing.
     const held =
       located?.isConnected &&

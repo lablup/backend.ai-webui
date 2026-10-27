@@ -1,8 +1,9 @@
 /**
  * Mock response for ComputeSessionListPageQuery.
  *
- * Returns a single RUNNING interactive session with all fields that the Relay
- * operation selects (including fragment spreads resolved to their leaf fields).
+ * By default returns a single RUNNING interactive session with all fields that
+ * the Relay operation selects (including fragment spreads resolved to their
+ * leaf fields); pass `createMockSessionNode(overrides)` nodes to vary it.
  */
 
 const MOCK_SESSION_UUID = 'mock-session-uuid-001';
@@ -12,7 +13,7 @@ const MOCK_KERNEL_GLOBAL_ID = btoa(`KernelNode:${MOCK_KERNEL_UUID}`);
 const MOCK_IMAGE_GLOBAL_ID = btoa('ImageNode:mock-image-001');
 const MOCK_USER_GLOBAL_ID = btoa('UserNode:mock-user-001');
 
-function createMockSessionNode() {
+export function createMockSessionNode(overrides: Record<string, unknown> = {}) {
   return {
     __typename: 'ComputeSessionNode',
     id: MOCK_SESSION_GLOBAL_ID,
@@ -98,25 +99,29 @@ function createMockSessionNode() {
         },
       ],
     },
+    ...overrides,
   };
 }
 
-export function sessionListMockResponse() {
-  const sessionNode = createMockSessionNode();
-
+export function sessionListMockResponse(
+  sessionNodes: ReadonlyArray<Record<string, unknown>> = [
+    createMockSessionNode(),
+  ],
+) {
   return {
     computeSessionNodeResult: {
       __typename: 'ComputeSessionConnection',
-      edges: [
-        {
-          __typename: 'ComputeSessionEdge',
-          node: sessionNode,
-        },
-      ],
-      count: 1,
+      edges: sessionNodes.map((node) => ({
+        __typename: 'ComputeSessionEdge',
+        node,
+      })),
+      count: sessionNodes.length,
     },
-    all: { __typename: 'ComputeSessionConnection', count: 1 },
-    interactive: { __typename: 'ComputeSessionConnection', count: 1 },
+    all: { __typename: 'ComputeSessionConnection', count: sessionNodes.length },
+    interactive: {
+      __typename: 'ComputeSessionConnection',
+      count: sessionNodes.length,
+    },
     inference: { __typename: 'ComputeSessionConnection', count: 0 },
     batch: { __typename: 'ComputeSessionConnection', count: 0 },
     system: { __typename: 'ComputeSessionConnection', count: 0 },

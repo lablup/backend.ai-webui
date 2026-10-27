@@ -29,15 +29,15 @@
  stable; the behaviour is current.
 */
 import './BAIPowerSearchAdapters.css';
-import { PowerSearchFilterEditor } from '@astryxdesign/core/PowerSearch';
+import { PowerSearchFilterEditor } from '@lablup/ui-common/PowerSearch';
 import type {
   CustomOperatorValue,
   EnumItem,
   OperatorValue,
   PowerSearchComponentOverride,
   PowerSearchEditorProps,
-} from '@astryxdesign/core/PowerSearch';
-import type { SearchSource } from '@astryxdesign/core/Typeahead';
+} from '@lablup/ui-common/PowerSearch';
+import type { SearchSource } from '@lablup/ui-common/Typeahead';
 import * as _ from 'lodash-es';
 import React, { useRef } from 'react';
 import type { ComponentType, ReactNode } from 'react';

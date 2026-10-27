@@ -48,24 +48,38 @@ const meta: Meta<typeof BAIAgentTable> = {
 | \`customizeColumns\` | \`(baseColumns: BAIColumnType[]) => BAIColumnType[]\` | - | Function to customize table columns |
 
 ## Available Sorter Keys
+- \`id\` (the ID column renders \`row_id\` but the server orders by \`id\`)
 - \`first_contact\`
 - \`scaling_group\`
 - \`status\`
 - \`schedulable\`
+- \`region\`
+- \`version\`
+- \`lost_at\`
 
 Use with prefix \`-\` for descending order (e.g., \`'-first_contact'\`).
+The list mirrors \`_queryorder_colmap\` of the graphene \`agent_nodes\` resolver.
 
 ## Pre-configured Columns
 - **ID / Endpoint**: Agent row ID and address
 - **Region**: Agent region
-- **Architecture**: CPU architecture
+- **Architecture**: CPU architecture (no server order key, so not sortable)
+- **Version**: Agent version — \`defaultHidden\`; the status cell already prints it, so the column exists to make the \`version\` ordering reachable
 - **Starts**: First contact time and running duration
+- **Lost At**: When the agent was lost — \`defaultHidden\`; only meaningful on terminated agents, and makes the \`lost_at\` ordering reachable
 - **Allocation**: Resource allocation (CPU, memory, GPU, etc.) with progress bars
 - **Utilization**: Live resource utilization statistics
 - **Disk %**: Disk usage percentage
 - **Resource Group**: Scaling group name
 - **Status**: Agent status, CUDA version, plugin info
 - **Schedulable**: Whether agent can schedule new sessions
+
+Hidden-by-default columns are opt-in through the table's column settings.
+
+## Customizing Columns
+\`customizeColumns\` receives the base array and its return value is used verbatim.
+Match entries on \`column.key\`, never by index — the base list grows, and an index
+slice silently drops whichever column moved into the gap.
 
 For other props (loading, pagination, etc.), refer to [BAITable](?path=/docs/table-baitable--docs).
         `,
@@ -250,6 +264,7 @@ const generateMockAgent = (id: number, overrides = {}) => ({
   }),
   version: '24.03.0',
   schedulable: true,
+  lost_at: null,
   ...overrides,
 });
 

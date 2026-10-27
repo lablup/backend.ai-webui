@@ -19,7 +19,7 @@ export const normText = (s: string | null | undefined) =>
  * React's `useId` encodes the element's position in the fiber tree — `:r1:` in
  * React 18, `_r_1_` / `_R_2H3_` in React 19 — so it changes whenever anything
  * above the element is refactored, which is exactly what the anchor has to
- * survive. `BAIComplexSelect` and `BAIDialog` put such ids on real DOM nodes,
+ * survive. `BAIComplexSelect` and ui-common `Modal` put such ids on real DOM nodes,
  * so skip them and let the nth-of-type walk find a stable landmark instead.
  */
 export const isStableId = (id: string): boolean =>

@@ -6,6 +6,7 @@
     "DiskPerc": "การใช้ดิสก์ %",
     "Endpoint": "เอ็นด์พอยต์",
     "FailedToLoadCellData": "โหลดข้อมูลไม่สำเร็จ",
+    "LostAt": "สูญหายเมื่อ",
     "NoAvailableLiveStat": "ไม่มีสถิติเรียลไทม์ที่ใช้งานได้",
     "Region": "ภูมิภาค",
     "ResourceGroup": "กลุ่มทรัพยากร",
@@ -13,7 +14,8 @@
     "Schedulable": "ตั้งเวลาได้",
     "Starts": "เริ่ม",
     "Status": "สถานะ",
-    "Utilization": "การใช้งาน"
+    "Utilization": "การใช้งาน",
+    "Version": "เวอร์ชัน"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "อนุญาตแล้ว",
@@ -87,26 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "เกิดข้อผิดพลาดที่ไม่คาดคิด กรุณาลองอีกครั้งภายหลัง หากปัญหายังคงมีอยู่ โปรดติดต่อฝ่ายสนับสนุน"
   },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "ล้าง",
-    "KeepAsIs": "เก็บไว้ตามเดิม",
-    "UndoChanges": "ยกเลิกการเปลี่ยนแปลง"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "การดำเนินการล้มเหลว",
-    "ErrorOccurred": "เกิดข้อผิดพลาด"
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "ล้าง",
-    "HexValue": "ค่าเลขฐานสิบหก",
-    "NoColor": "ไม่มีสี",
-    "SelectColor": "เลือกสี"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "ล้าง ค้นหาตัวเลือก",
-    "NoResults": "ไม่พบผลลัพธ์",
-    "SearchOptions": "ค้นหาตัวเลือก"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "เลือกรีจิสทรีคอนเทนเนอร์"
   },
@@ -126,14 +108,6 @@
     "Size": "ขนาด",
     "SuccessFullyRemoved": "ลบเวอร์ชัน {{count}} สำเร็จ",
     "Version": "รุ่น"
-  },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "คุณแน่ใจหรือไม่ว่าต้องการลบ?",
-    "AreYouSureToPermanentlyDeleteTarget": "คุณแน่ใจหรือไม่ว่าต้องการลบ {{target}} อย่างถาวร?",
-    "CannotBeUndone": "การกระทำนี้ไม่สามารถยกเลิกได้",
-    "DeleteItem": "ลบ",
-    "DeleteNItems": "ลบ {{count}} รายการ",
-    "TypeToConfirm": "พิมพ์ <code>{{confirmText}}</code> เพื่อยืนยัน"
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "สร้างโดย"
@@ -171,6 +145,34 @@
   },
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "จำนวน"
+  },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "เพิ่มป้ายกำกับ"
+  },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "แก้ไขป้ายกำกับ"
+  },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "เพิ่มป้ายกำกับ",
+    "AddLabelsToItems": "เพิ่มป้ายกำกับให้ {{count}} รายการ",
+    "BulkDescription": "ป้ายกำกับเหล่านี้จะถูกเพิ่มให้ทุกรายการที่เลือก รายการที่มีคีย์เดียวกันอยู่แล้วจะได้รับค่าใหม่ ส่วนป้ายกำกับอื่นยังคงอยู่",
+    "EditLabels": "แก้ไขป้ายกำกับ",
+    "Error": "ข้อผิดพลาด",
+    "Key": "คีย์",
+    "KeyMustBeUnique": "แต่ละคีย์ใช้ได้เพียงครั้งเดียว",
+    "KeyRequired": "กรุณาป้อนคีย์",
+    "Label": "ป้ายกำกับ",
+    "LabelsSaved": "บันทึกป้ายกำกับแล้ว",
+    "RemoveLabel": "ลบป้ายกำกับ",
+    "Save": "บันทึก",
+    "SomeLabelsFailed": "การเปลี่ยนป้ายกำกับล้มเหลว {{count}} รายการ",
+    "Target": "เป้าหมาย",
+    "TooLong": "ไม่เกิน {{max}} ตัวอักษร",
+    "Value": "ค่า",
+    "ValueRequired": "กรุณาป้อนค่า"
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "ป้ายกำกับ"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "รีเฟรชอัตโนมัติ",
@@ -246,6 +248,10 @@
       "Title": "ไม่สามารถเข้าสู่ระบบด้วย Backend.AI ได้"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "ความคืบหน้าการเริ่มเคอร์เนล",
+    "KernelTerminationProgress": "ความคืบหน้าการยุติเคอร์เนล"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "ขนาดคลัสเตอร์",
     "Concurrency": "เซสชันที่ทำงานพร้อมกัน",
@@ -275,7 +281,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "คีย์การเข้าถึง",
     "CreatedAt": "สร้างเมื่อ",
-    "InvalidatedAt": "ถูกยกเลิกเมื่อ",
+    "LastAccessedAt": "เข้าถึงล่าสุด",
     "User": "ผู้ใช้"
   },
   "comp:BAIModal": {
@@ -313,7 +319,6 @@
     "RevisionNumber": "ฉบับแก้ไข",
     "RevisionNumberTooltip": "หมายเลขฉบับแก้ไขปัจจุบันของการปรับใช้",
     "StrategyType": "กลยุทธ์",
-    "Tags": "แท็ก",
     "UpdatedAt": "วันที่อัปเดต"
   },
   "comp:BAINameActionCell": {
@@ -341,7 +346,6 @@
     "ContainerRegistryForImageCommit": "รีจิสทรีคอนเทนเนอร์สำหรับการคอมมิตอิมเมจ",
     "CreateProject": "สร้างโปรเจกต์",
     "Description": "คำอธิบาย",
-    "Domain": "โดเมน",
     "FailedToCreateProject": "ไม่สามารถสร้างโปรเจกต์ได้",
     "FailedToUpdateProject": "ไม่สามารถอัปเดตโปรเจ็กต์ได้",
     "IsActive": "ใช้งานอยู่หรือไม่?",
@@ -410,11 +414,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "ที่จัดสรร / ที่ร้องขอ"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "เปลี่ยนสีกลุ่ม",
-    "ResourceGrid": "ตารางทรัพยากร",
-    "UseColorN": "ใช้สี {{n}}"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "ไม่ จำกัด"
@@ -558,6 +557,9 @@
     "To": "สถานะปลายทาง",
     "UpdatedAt": "อัปเดตเมื่อ"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "เลือกโฟลเดอร์"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "ตัวแทน"
   },
@@ -565,8 +567,26 @@
     "MultiNodeShort": "หลาย",
     "SingleNodeShort": "เดี่ยว"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "ไม่ จำกัด"
+  "comp:BAISessionScene": {
+    "FoundCount": "พบ {{count}} รายการ",
+    "Hero": "ของฉัน",
+    "Measuring": "กำลังวัด",
+    "ResourceShare": "สัดส่วนทรัพยากร",
+    "ShowAll": "แสดงทั้งหมด",
+    "Utilization": "การใช้งาน",
+    "mood": {
+      "Idle": "ว่าง",
+      "Leaving": "กำลังสิ้นสุด",
+      "Overheated": "ร้อนเกิน",
+      "Waiting": "รอทรัพยากร",
+      "Working": "กำลังทำงาน"
+    }
+  },
+  "comp:BAISessionTypeToken": {
+    "Batch": "แบบแบตช์",
+    "Inference": "การอนุมาน",
+    "Interactive": "แบบโต้ตอบ",
+    "System": "อัปโหลด"
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "เลือกโฮสต์จัดเก็บข้อมูล"
@@ -584,28 +604,13 @@
     "Time": "เวลา"
   },
   "comp:BAITable": {
-    "Apply": "ใช้",
-    "Cancel": "ยกเลิก",
     "CollapseAll": "ยุบทั้งหมด",
     "ExpandAll": "ขยายทั้งหมด",
     "ExpandErrorsOnly": "ขยายเฉพาะข้อผิดพลาด",
-    "ExpandOptions": "ตัวเลือกการขยาย",
-    "ExpandRow": "ขยายแถว",
-    "Export": "ส่งออก",
-    "ExportCSV": "ส่งออก CSV",
-    "GoToFirstPage": "ไปยังหน้าแรก",
-    "InvalidPageNumber": "หมายเลขหน้าไม่ถูกต้อ",
-    "NoDataToDisplay": "ไม่มีข้อมูลที่จะแสดง",
-    "Pagination": "การแบ่งหน้า",
-    "SearchTableColumn": "คอลัมน์ตารางค้นหา",
-    "SelectColumnToDisplay": "เลือกคอลัมน์ที่จะแสดง",
-    "SettingTable": "การตั้งค่าตาราง"
+    "ExpandOptions": "ตัวเลือกการขยาย"
   },
   "comp:BAITestButton": {
     "Test": "ทดสอบ"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "และอีก {{rest}} รายการ"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "สร้างเมื่อ",
@@ -628,8 +633,6 @@
     "CreateFolder": "สร้างโฟลเดอร์จัดเก็บใหม่",
     "DestinationPath": "พาธในคอนเทนเนอร์ (destination)",
     "Folders": "โฟลเดอร์",
-    "OwnerProject": "โปรเจกต์",
-    "OwnerUser": "ผู้ใช้",
     "PathAndAliasTooltip": "พาธภายใน container ที่โฟลเดอร์จะถูก mount ปล่อยว่างเพื่อใช้พาธเริ่มต้น",
     "Refresh": "รีเฟรช",
     "RemoveFolder": "ลบ",
@@ -655,8 +658,11 @@
     "DeleteSelectedItemDesc": "ไม่สามารถกู้คืนไฟล์และโฟลเดอร์ที่ถูกลบได้ \nคุณต้องการดำเนินการต่อหรือไม่?",
     "DeleteSelectedItemsDialog": "ลบการยืนยัน",
     "Download": "ดาวน์โหลด",
+    "DownloadPopupBlocked": "เบราว์เซอร์บล็อกหน้าต่างดาวน์โหลด โปรดอนุญาตป๊อปอัปสำหรับเว็บไซต์นี้แล้วลองอีกครั้ง",
+    "DownloadRejected": "storage proxy ปฏิเสธการดาวน์โหลด (HTTP {{status}}) การดาวน์โหลดไม่ได้เริ่มต้น",
     "DownloadSelected": "ดาวน์โหลด",
     "DownloadStarted": "การดาวน์โหลดไฟล์ \"{{fileName}}\" เริ่มต้นแล้ว",
+    "DownloadUnreachable": "ไม่สามารถเชื่อมต่อ storage proxy ที่ {{origin}} ได้ การดาวน์โหลดไม่ได้เริ่มต้น",
     "DragAndDropDesc": "ลากและวางไฟล์ไปยังพื้นที่นี้เพื่ออัปโหลด",
     "DuplicatedFiles": "การยืนยันการเขียนทับ",
     "DuplicatedFilesDesc": "ไฟล์หรือโฟลเดอร์ที่มีชื่อเดียวกันมีอยู่แล้ว \nคุณต้องการเขียนทับ?",
@@ -693,9 +699,6 @@
       "DuplicatedName": "ชื่อนี้มีการใช้งานแล้ว \nกรุณากรอกชื่ออื่น",
       "FileNameRequired": "กรุณากรอกชื่อไฟล์หรือโฟลเดอร์"
     }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} ของ {{total}} รายการ"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "ไม่มีข้อมูลทรัพยากร"
@@ -758,62 +761,18 @@
   "error": {
     "UnknownError": "เกิดข้อผิดพลาดที่ไม่รู้จัก \nโปรดลองอีกครั้ง"
   },
-  "form": {
-    "Optional": "(ไม่จำเป็น)",
-    "validateMessages": {
-      "Default": "ฟิลด์ ${label} ไม่ผ่านเงื่อนไขการตรวจสอบ",
-      "Required": "กรุณากรอก ${label}",
-      "Whitespace": "${label} ไม่สามารถเป็นช่องว่างได้",
-      "array": {
-        "Len": "ต้องมี ${len} ${label}",
-        "Max": "มีได้สูงสุด ${max} ${label}",
-        "Min": "ต้องมีอย่างน้อย ${min} ${label}",
-        "Range": "จำนวน ${label} ต้องอยู่ในช่วง ${min}-${max}"
-      },
-      "number": {
-        "Len": "${label} ต้องมี ${len} ตัว",
-        "Max": "ค่าสูงสุด ${label} คือ ${max}",
-        "Min": "ค่าต่ำสุด ${label} คือ ${min}",
-        "Range": "${label} ต้องมีค่า ${min}-${max}"
-      },
-      "pattern": {
-        "Mismatch": "${label} ไม่ตรงกับรูปแบบ ${pattern}"
-      },
-      "string": {
-        "Len": "${label} ต้องมี ${len} ตัวอักษร",
-        "Max": "${label} มีได้สูงสุด ${max} ตัวอักษร",
-        "Min": "${label} ต้องมีอย่างน้อย ${min} ตัวอักษร",
-        "Range": "${label} ต้องมี ${min}-${max} ตัวอักษร"
-      },
-      "types": {
-        "Email": "${label} ไม่ใช่ ${type} ที่ถูกต้อง",
-        "Number": "${label} ไม่ใช่ ${type} ที่ถูกต้อง",
-        "Object": "${label} ไม่ใช่ ${type} ที่ถูกต้อง",
-        "String": "${label} ไม่ใช่ ${type} ที่ถูกต้อง",
-        "Url": "${label} ไม่ใช่ ${type} ที่ถูกต้อง"
-      }
-    }
-  },
   "general": {
-    "Decrease": "ลด",
-    "DeselectAll": "ยกเลิกการเลือกทั้งหมด",
     "File": "ไฟล์",
-    "Increase": "เพิ่ม",
-    "Loading": "กำลังโหลด...",
-    "NSelected": "{{count}} เลือก",
     "Optional": "ไม่บังคับ",
     "Project": "โครงการ",
     "Search": "ค้นหา",
     "Select": "เลือก",
-    "SelectPlaceholder": "เลือก{{label}}",
-    "TotalItems": "รวม {{total}} รายการ",
     "Unit": "หน่วย",
     "button": {
       "Action": "การดำเนินการ",
       "Back": "ย้อนกลับ",
       "Cancel": "ยกเลิก",
       "Close": "ปิด",
-      "Collapse": "ทรุด",
       "Confirm": "ยืนยัน",
       "Copied": "คัดลอกแล้ว",
       "Copy": "คัดลอก",
@@ -821,7 +780,6 @@
       "Create": "สร้าง",
       "Delete": "ลบ",
       "Edit": "แก้ไข",
-      "Expand": "ขยาย",
       "Remove": "ลบ",
       "Save": "บันทึก",
       "Upload": "อัพโหลด"

@@ -73,7 +73,6 @@ const BAIProjectBulkEditModal = ({
           })
           .finally(() => setIsSaving(false));
       }}
-      destroyOnHidden
     >
       <BAIFlex direction="column" align="stretch" gap="md">
         <BAIListAlert

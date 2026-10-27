@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7ce117d92a1960029052fd29e0d9a3d3>>
+ * @generated SignedSource<<bd89badc17334329601177fe709308eb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -310,6 +310,11 @@ return {
                             "kind": "Variable",
                             "name": "filter",
                             "variableName": "keypairFilter"
+                          },
+                          {
+                            "kind": "Literal",
+                            "name": "limit",
+                            "value": 100
                           }
                         ],
                         "concreteType": "KeyPairConnection",
@@ -394,12 +399,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d760e1e5e20eefd0823d90916d0e7c53",
+    "cacheID": "7f9f80b6002c1311c909cde56de283b6",
     "id": null,
     "metadata": {},
     "name": "UserFolderPermissionPanelV2Query",
     "operationKind": "query",
-    "text": "query UserFolderPermissionPanelV2Query(\n  $filter: KeypairResourcePolicyV2Filter\n  $limit: Int!\n  $offset: Int!\n  $includeKeypairs: Boolean!\n  $keypairFilter: KeypairFilter\n) {\n  adminKeypairResourcePoliciesV2(filter: $filter, limit: $limit, offset: $offset, orderBy: [{field: NAME, direction: ASC}]) {\n    count\n    edges {\n      node {\n        ...KeypairResourcePolicyStoragePermissionTableV2_nodeFrgmt\n        id\n      }\n    }\n  }\n}\n\nfragment KeypairResourcePolicyStoragePermissionTableV2_nodeFrgmt on KeypairResourcePolicyV2 {\n  id\n  name\n  allowedVfolderHosts {\n    host\n    permissions\n  }\n  keypairs(filter: $keypairFilter) @include(if: $includeKeypairs) {\n    edges {\n      node {\n        id\n        accessKey\n        user {\n          organization {\n            mainAccessKey\n          }\n          id\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query UserFolderPermissionPanelV2Query(\n  $filter: KeypairResourcePolicyV2Filter\n  $limit: Int!\n  $offset: Int!\n  $includeKeypairs: Boolean!\n  $keypairFilter: KeypairFilter\n) {\n  adminKeypairResourcePoliciesV2(filter: $filter, limit: $limit, offset: $offset, orderBy: [{field: NAME, direction: ASC}]) {\n    count\n    edges {\n      node {\n        ...KeypairResourcePolicyStoragePermissionTableV2_nodeFrgmt\n        id\n      }\n    }\n  }\n}\n\nfragment KeypairResourcePolicyStoragePermissionTableV2_nodeFrgmt on KeypairResourcePolicyV2 {\n  id\n  name\n  allowedVfolderHosts {\n    host\n    permissions\n  }\n  keypairs(filter: $keypairFilter, limit: 100) @include(if: $includeKeypairs) {\n    edges {\n      node {\n        id\n        accessKey\n        user {\n          organization {\n            mainAccessKey\n          }\n          id\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();

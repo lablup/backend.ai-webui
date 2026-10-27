@@ -20,13 +20,13 @@ describe('formatElapsed', () => {
     ).toBe('4.30 s');
   });
 
-  test('a minute or more switches to m/s, an hour or more to h/m', () => {
+  test('a minute or more switches to min/s, an hour or more to h/min', () => {
     expect(
       formatElapsed('2026-08-24T16:19:00.000Z', '2026-08-24T16:20:05.000Z'),
-    ).toBe('1m 05s');
+    ).toBe('1 min 05 s');
     expect(
       formatElapsed('2026-08-24T16:00:00.000Z', '2026-08-24T18:07:00.000Z'),
-    ).toBe('2h 07m');
+    ).toBe('2 h 07 min');
   });
 
   test('a zero-length interval is a real duration, not a missing one', () => {

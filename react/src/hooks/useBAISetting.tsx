@@ -2,14 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { BAIBoardItem } from '../components/BAIBoard';
 import type { PersistedPanel } from '../components/DashboardPanels/types';
 import { jotaiStore } from '../components/DefaultProviders';
 import type { RecentSearchHit } from '../components/GlobalSearchPalette/types';
 import { backendaiOptions } from '../global-stores';
-import { CustomThemeConfig } from '../helper/customThemeConfig';
+import { BAIAppearanceConfig } from '../helper/customThemeConfig';
 import type { AgentEndpointBindings, AgentProfile } from './useAIAgent';
-import { BAITableColumnOverrideRecord } from 'backend.ai-ui';
+import { type BAIBoardItem, BAITableColumnOverrideRecord } from 'backend.ai-ui';
 import { atom, useAtom } from 'jotai';
 import { atomFamily } from 'jotai-family';
 import { SetStateAction } from 'react';
@@ -18,7 +17,17 @@ export interface UserSettings {
   has_opened_tour_neo_session_validation?: boolean;
   has_opened_tour_neo_deployment_validation?: boolean;
   has_opened_tour_deployment_preset_validation?: boolean;
+  has_opened_tour_back_to_user_view?: boolean;
+  has_opened_tour_back_to_admin_settings?: boolean;
   desktop_notification?: boolean;
+  session_monitor_sort?: 'deadline' | 'newest' | 'name';
+  session_monitor_rows?: number;
+  /** Queryfilter on the watched sessions; unset means the role's default. */
+  session_monitor_condition?: string;
+  /** What the header chip shows besides the count; default none. */
+  session_monitor_chip_items?: Array<
+    'starting' | 'error' | 'resources' | 'idle'
+  >;
   compact_sidebar?: boolean;
   preserve_login?: boolean;
   automatic_update_check?: boolean;
@@ -35,9 +44,10 @@ export interface UserSettings {
   start_page_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   experimental_ai_agents?: boolean;
   experimental_custom_dashboard_panels?: boolean;
-  experimental_global_search?: boolean;
   experimental_import_from_huggingface?: boolean;
   experimental_session_resource_grid?: boolean;
+  /** Header session monitor (chip, polling, idle alerts); default off. */
+  experimental_session_monitor?: boolean;
   extra_ai_agents?: Array<AgentProfile>;
   agent_endpoints?: AgentEndpointBindings;
   session_metrics_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
@@ -58,14 +68,14 @@ export interface UserSettings {
   [key: `fetchKeyAutoUpdateDelay.${string}`]: number | null;
 
   max_concurrent_uploads?: number;
-  custom_theme_config?: CustomThemeConfig;
-  custom_primary_color?: { light?: string; dark?: string };
+  custom_theme_config?: BAIAppearanceConfig;
   deploymentRevisionCreationMode?: 'preset' | 'custom';
   // Session resource grid: per-session group-color overrides, keyed by
   // session id, valued by palette index (FR-3570).
   sessionResourceGridHueOverrides?: Record<string, number>;
   schedulingHistoryExpandMode?: 'expand-all' | 'collapse-all' | 'errors-only';
   chat_intro_alert_dismissed?: boolean;
+  show_accelerator_dedicated_images_first?: boolean;
 }
 
 export type SessionHistory = {
@@ -163,8 +173,13 @@ const SettingAtomFamily = atomFamily((param: string) => {
           ? newValueOrUpdater(currentValue)
           : newValueOrUpdater;
 
-      localStorage.setItem(key, settingToRaw(newValue));
       const [namespace, name] = param.split('.', 2);
+      // `undefined` removes the key; writing it would store the string "undefined".
+      if (newValue === undefined) {
+        localStorage.removeItem(key);
+      } else {
+        localStorage.setItem(key, settingToRaw(newValue));
+      }
 
       // only for the reactivity
       const prev = get(settingAtom);
@@ -172,7 +187,11 @@ const SettingAtomFamily = atomFamily((param: string) => {
         ...prev,
         [key]: newValue,
       });
-      backendaiOptions?.set?.(name, newValue, namespace, true);
+      if (newValue === undefined) {
+        backendaiOptions?.delete?.(name, namespace, true);
+      } else {
+        backendaiOptions?.set?.(name, newValue, namespace, true);
+      }
     },
   );
 });

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<44a6cdf64de6980568f3b74f0dbd5872>>
+ * @generated SignedSource<<adf0fa3cf06123ea43f5a843b9818147>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,6 +14,7 @@ export type BAILoginSessionTableFragment$data = ReadonlyArray<{
   readonly accessKey: string;
   readonly createdAt: string;
   readonly id: string;
+  readonly lastAccessedAt: string | null | undefined;
   readonly user: {
     readonly basicInfo: {
       readonly email: string;
@@ -61,6 +62,13 @@ return {
     {
       "alias": null,
       "args": null,
+      "kind": "ScalarField",
+      "name": "lastAccessedAt",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "UserV2",
       "kind": "LinkedField",
       "name": "user",
@@ -94,6 +102,6 @@ return {
 };
 })();
 
-(node as any).hash = "b191c9ad8bef80db83e6a304d36baeac";
+(node as any).hash = "85b10af09f4ce6cf5fadfe77dc5e3e29";
 
 export default node;

@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The alert that summarizes which items an action is about to affect — the selected users of a bulk update, the folders a delete will skip. It renders BAIAlert and fills its description with a standardized bulleted `ul` built from `items`; the list is keyboard-focusable and scrolls vertically once it passes `maxHeight`, so a modal holding it never grows unbounded. An empty `items` array renders the alert with no description at all. Everything else — `type`, `title`, `showIcon`, `closable`, `style` — passes through to BAIAlert, except `description`, which this component owns and Omits.',
+      'The alert that summarizes which items an action is about to affect — the selected users of a bulk update, the folders a delete will skip. It is ui-common ListBanner under its BUI name, with the BAIAlert props mapped as BAIAlert maps them: a Banner whose description is a standardized bulleted `ul` built from `items`; the list is keyboard-focusable and scrolls vertically once it passes `maxHeight`, so a modal holding it never grows unbounded. An empty `items` array renders the alert with no description at all. Everything else — `type`, `title`, `showIcon`, `closable`, `style` — is mapped as on BAIAlert, except `description`, which this component owns and Omits.',
     bestPractices: [
       {
         guidance: true,

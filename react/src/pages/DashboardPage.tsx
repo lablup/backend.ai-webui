@@ -5,7 +5,6 @@
 import { DashboardPageQuery } from '../__generated__/DashboardPageQuery.graphql';
 import ActiveAgents from '../components/ActiveAgents';
 import AgentStats from '../components/AgentStats';
-import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
 import DashboardEditToggleButton from '../components/DashboardEditToggleButton';
 import { useCustomPanels } from '../components/DashboardPanels';
 import DashboardEditSider from '../components/DashboardPanels/DashboardEditSider';
@@ -27,7 +26,7 @@ import TotalResourceWithinResourceGroup, {
 } from '../components/TotalResourceWithinResourceGroup';
 import { breadcrumbExtraAtom } from '../components/breadcrumbExtraAtom';
 import { dashboardEditModeAtom } from '../components/dashboardEditModeAtom';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
@@ -35,9 +34,11 @@ import {
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { theme } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAIBoard,
+  type BAIBoardItem,
   BAISkeleton,
   BAIBoardItemErrorBoundary,
   BAIFlex,
@@ -62,13 +63,12 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const DashboardPage: React.FC = () => {
   'use memo';
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { t } = useTranslation();
 
   const currentProject = useCurrentProjectValue();
   const currentResourceGroup = useCurrentResourceGroupValue();
   const userRole = useCurrentUserRole();
-  const baiClient = useSuspendedBackendaiClient();
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
 
@@ -119,8 +119,8 @@ const DashboardPage: React.FC = () => {
   const boardContainerRef = useRef<HTMLDivElement>(null);
 
   // Decoupled "query-as-config" custom panels, rendered as additional items in
-  // the SAME single board (a second Cloudscape <Board> would corrupt the shared
-  // module-level DnD controller). The hook owns custom content + identity; the
+  // the SAME single board, so one persisted list owns the whole layout. The
+  // hook owns custom content + identity; the
   // unified `dashboard_board_items` list owns order/layout for built-in and custom
   // alike, so both are dragged/resized and persisted identically.
   const {
@@ -141,8 +141,6 @@ const DashboardPage: React.FC = () => {
   const isAvailableTotalResourcePanel =
     useIsAvailableTotalResourceWithinResourceGroup();
 
-  const isAgentStatsSupported = baiClient.supports('agent-stats');
-
   const queryRef = useLazyLoadQuery<DashboardPageQuery>(
     graphql`
       query DashboardPageQuery(
@@ -151,6 +149,8 @@ const DashboardPage: React.FC = () => {
         $skipTotalResourceWithinResourceGroup: Boolean!
         $isSuperAdmin: Boolean!
         $agentNodeFilter: String!
+        $aliveAgentFilter: String!
+        $schedulableAgentFilter: String!
       ) {
         ...SessionCountDashboardItemFragment @arguments(scopeId: $scopeId)
         ...RecentlyCreatedSessionFragment @arguments(scopeId: $scopeId)
@@ -162,7 +162,13 @@ const DashboardPage: React.FC = () => {
             isSuperAdmin: $isSuperAdmin
             agentNodeFilter: $agentNodeFilter
           )
-        ...AgentStatsFragment @include(if: $isSuperAdmin) @alias
+        ...AgentStatsFragment
+          @include(if: $isSuperAdmin)
+          @alias
+          @arguments(
+            aliveAgentFilter: $aliveAgentFilter
+            schedulableAgentFilter: $schedulableAgentFilter
+          )
       }
     `,
     {
@@ -171,6 +177,8 @@ const DashboardPage: React.FC = () => {
       skipTotalResourceWithinResourceGroup: !isAvailableTotalResourcePanel,
       isSuperAdmin: _.isEqual(userRole, 'superadmin'),
       agentNodeFilter: `schedulable == true & status == "ALIVE" & scaling_group == "${currentResourceGroup}"`,
+      aliveAgentFilter: 'status == "ALIVE"',
+      schedulableAgentFilter: 'status == "ALIVE" & schedulable == true',
     },
     {
       fetchPolicy:
@@ -200,7 +208,7 @@ const DashboardPage: React.FC = () => {
         content: (
           <Suspense
             fallback={
-              <BAISkeleton style={{ padding: `0px ${token.marginMD}px` }} />
+              <BAISkeleton style={{ padding: `0px ${token('--spacing-5')}` }} />
             }
           >
             <SessionCountDashboardItem
@@ -231,7 +239,9 @@ const DashboardPage: React.FC = () => {
             status="error"
           >
             <Suspense
-              fallback={<BAISkeleton style={{ padding: token.marginMD }} />}
+              fallback={
+                <BAISkeleton style={{ padding: token('--spacing-5') }} />
+              }
             >
               <MyResource
                 fetchKey={deferredFetchKey}
@@ -257,7 +267,9 @@ const DashboardPage: React.FC = () => {
             status="error"
           >
             <Suspense
-              fallback={<BAISkeleton style={{ padding: token.marginMD }} />}
+              fallback={
+                <BAISkeleton style={{ padding: token('--spacing-5') }} />
+              }
             >
               <MyResourceWithinResourceGroup
                 fetchKey={deferredFetchKey}
@@ -283,7 +295,9 @@ const DashboardPage: React.FC = () => {
             status="error"
           >
             <Suspense
-              fallback={<BAISkeleton style={{ padding: token.marginMD }} />}
+              fallback={
+                <BAISkeleton style={{ padding: token('--spacing-5') }} />
+              }
             >
               <StorageStatusPanelCard
                 fetchKey={deferredFetchKey}
@@ -316,7 +330,9 @@ const DashboardPage: React.FC = () => {
             status="error"
           >
             <Suspense
-              fallback={<BAISkeleton style={{ padding: token.marginMD }} />}
+              fallback={
+                <BAISkeleton style={{ padding: token('--spacing-5') }} />
+              }
             >
               <QuotaPerStorageVolumeDashboardItem />
             </Suspense>
@@ -342,7 +358,6 @@ const DashboardPage: React.FC = () => {
       },
     },
     _.isEqual(userRole, 'superadmin') &&
-      isAgentStatsSupported &&
       queryRef.AgentStatsFragment && {
         id: 'agentStats',
         rowSpan: 2,
@@ -355,7 +370,9 @@ const DashboardPage: React.FC = () => {
           content: (
             <Suspense
               fallback={
-                <BAISkeleton style={{ padding: `0px ${token.marginMD}px` }} />
+                <BAISkeleton
+                  style={{ padding: `0px ${token('--spacing-5')}` }}
+                />
               }
             >
               <AgentStats
@@ -378,7 +395,7 @@ const DashboardPage: React.FC = () => {
         content: (
           <Suspense
             fallback={
-              <BAISkeleton style={{ padding: `0px ${token.marginMD}px` }} />
+              <BAISkeleton style={{ padding: `0px ${token('--spacing-5')}` }} />
             }
           >
             <ActiveAgents
@@ -428,7 +445,7 @@ const DashboardPage: React.FC = () => {
     ...customDefaultLayout,
   ];
 
-  // Cloudscape <Board> is controlled: next render's `items` must equal the
+  // ui-common Board is controlled: next render's `items` must equal the
   // order + spans + columnOffset that onItemsChange last reported, or the board
   // snaps back. So ORDER and LAYOUT live in ONE persisted list
   // (`dashboard_board_items`); content is resolved by id every render.
@@ -462,7 +479,7 @@ const DashboardPage: React.FC = () => {
           items={boardItems}
           onItemsChange={(event) => {
             // event.detail.items is the COMPLETE board in its new order, with
-            // updated spans + columnOffset (Cloudscape's transformItems). Persist
+            // updated spans + columnOffset (ui-common's transformItems). Persist
             // it verbatim (minus runtime `data`) as the unified layout for every id
             // — built-in and custom alike. Because the next render rebuilds `items`
             // in exactly this order, the controlled board never reverts.

@@ -50,7 +50,7 @@ const DeploymentAuditLogTab: React.FC<DeploymentAuditLogTabProps> = ({
             {
               // 26.9.0 names the entity by the manager's own `EntityType`;
               // 26.4.4-26.8.x type this as the RBAC enum instead (FR-3982).
-              entityType: baiClient.supports('audit-log-entity-type-name')
+              entityType: baiClient.isManagerVersionCompatibleWith('26.9.0')
                 ? 'deployment'
                 : 'MODEL_DEPLOYMENT',
               entityId: safeDecodeUuid(deploymentId) ?? deploymentId,

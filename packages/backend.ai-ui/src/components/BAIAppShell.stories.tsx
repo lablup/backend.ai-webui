@@ -3,7 +3,7 @@ import {
   SideNav,
   SideNavItem,
   SideNavSection,
-} from '@astryxdesign/core/SideNav';
+} from '@lablup/ui-common/SideNav';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 /**

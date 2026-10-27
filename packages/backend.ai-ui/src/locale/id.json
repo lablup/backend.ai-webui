@@ -6,6 +6,7 @@
     "DiskPerc": "Disk %",
     "Endpoint": "Endpoint",
     "FailedToLoadCellData": "Gagal memuat data.",
+    "LostAt": "Hilang Pada",
     "NoAvailableLiveStat": "Tidak ada statistik langsung yang tersedia",
     "Region": "Wilayah",
     "ResourceGroup": "Grup Sumber Daya",
@@ -13,7 +14,8 @@
     "Schedulable": "Dapat dijadwalkan",
     "Starts": "Mulai",
     "Status": "Status",
-    "Utilization": "Utilisasi"
+    "Utilization": "Utilisasi",
+    "Version": "Versi"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Diizinkan",
@@ -87,26 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Terjadi kesalahan tak terduga. Silakan coba lagi nanti atau hubungi dukungan jika masalah berlanjut."
   },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "Hapus",
-    "KeepAsIs": "Pertahankan",
-    "UndoChanges": "Batalkan perubahan"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Eksekusi gagal",
-    "ErrorOccurred": "Terjadi kesalahan"
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "Hapus",
-    "HexValue": "Nilai heksa",
-    "NoColor": "Tanpa warna",
-    "SelectColor": "Pilih warna"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Hapus Cari opsi",
-    "NoResults": "Tidak ada hasil",
-    "SearchOptions": "Cari opsi"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Pilih Registri Container"
   },
@@ -126,14 +108,6 @@
     "Size": "Ukuran",
     "SuccessFullyRemoved": "Berhasil menghapus {{count}} versi.",
     "Version": "Versi"
-  },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "Apakah Anda yakin ingin menghapus?",
-    "AreYouSureToPermanentlyDeleteTarget": "Apakah Anda yakin ingin menghapus {{target}} secara permanen?",
-    "CannotBeUndone": "Tindakan ini tidak dapat dibatalkan.",
-    "DeleteItem": "Hapus",
-    "DeleteNItems": "Hapus {{count}} item",
-    "TypeToConfirm": "Ketik <code>{{confirmText}}</code> untuk mengonfirmasi."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Dibuat oleh"
@@ -172,11 +146,39 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Jumlah"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "Tambah label"
+  },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Edit label"
+  },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "Tambah label",
+    "AddLabelsToItems": "Tambahkan label ke {{count}} item",
+    "BulkDescription": "Label ini ditambahkan ke setiap item yang dipilih. Item yang sudah memiliki kunci tersebut mendapat nilai baru; label lainnya tetap.",
+    "EditLabels": "Edit label",
+    "Error": "Kesalahan",
+    "Key": "Kunci",
+    "KeyMustBeUnique": "Setiap kunci hanya dapat digunakan sekali.",
+    "KeyRequired": "Masukkan kunci.",
+    "Label": "Label",
+    "LabelsSaved": "Label disimpan.",
+    "RemoveLabel": "Hapus label",
+    "Save": "Simpan",
+    "SomeLabelsFailed": "{{count}} perubahan label gagal",
+    "Target": "Target",
+    "TooLong": "Maksimal {{max}} karakter.",
+    "Value": "Nilai",
+    "ValueRequired": "Masukkan nilai."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "Label"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Penyegaran otomatis",
-    "EveryHours": "{{count}}h",
-    "EveryMinutes": "{{count}}m",
-    "EverySeconds": "{{count}}s",
+    "EveryHours": "{{count}} h",
+    "EveryMinutes": "{{count}} min",
+    "EverySeconds": "{{count}} s",
     "LastUpdated": "Terakhir diperbarui",
     "Off": "Mati",
     "Refresh": "Segarkan"
@@ -246,6 +248,10 @@
       "Title": "Tidak dapat masuk dengan Backend.AI"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "Progres startup kernel",
+    "KernelTerminationProgress": "Progres terminasi kernel"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Ukuran Klaster",
     "Concurrency": "Sesi Serentak",
@@ -275,7 +281,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "Kunci Akses",
     "CreatedAt": "Dibuat pada",
-    "InvalidatedAt": "Dibatalkan Pada",
+    "LastAccessedAt": "Akses Terakhir",
     "User": "Pengguna"
   },
   "comp:BAIModal": {
@@ -313,7 +319,6 @@
     "RevisionNumber": "Revisi",
     "RevisionNumberTooltip": "Nomor revisi saat ini dari penerapan.",
     "StrategyType": "Strategi",
-    "Tags": "Tag",
     "UpdatedAt": "Diperbarui pada"
   },
   "comp:BAINameActionCell": {
@@ -341,7 +346,6 @@
     "ContainerRegistryForImageCommit": "Registry Kontainer untuk Commit Image",
     "CreateProject": "Buat Proyek",
     "Description": "Deskripsi",
-    "Domain": "Domain",
     "FailedToCreateProject": "Gagal membuat proyek",
     "FailedToUpdateProject": "Gagal memperbarui proyek",
     "IsActive": "Aktif?",
@@ -410,11 +414,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Dialokasikan / Diminta"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "Ubah warna grup",
-    "ResourceGrid": "Kisi sumber daya",
-    "UseColorN": "Gunakan warna {{n}}"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Tak terbatas"
@@ -558,6 +557,9 @@
     "To": "Status tujuan",
     "UpdatedAt": "Diperbarui pada"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Pilih Folder"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agen"
   },
@@ -565,8 +567,26 @@
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Lajang"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Tak terbatas"
+  "comp:BAISessionScene": {
+    "FoundCount": "{{count}} ditemukan",
+    "Hero": "Milik saya",
+    "Measuring": "Mengukur",
+    "ResourceShare": "Porsi sumber daya",
+    "ShowAll": "Tampilkan semua",
+    "Utilization": "Pemanfaatan",
+    "mood": {
+      "Idle": "Menganggur",
+      "Leaving": "Menghentikan",
+      "Overheated": "Terlalu panas",
+      "Waiting": "Menunggu sumber daya",
+      "Working": "Bekerja"
+    }
+  },
+  "comp:BAISessionTypeToken": {
+    "Batch": "Batch",
+    "Inference": "Inferensi",
+    "Interactive": "Interaktif",
+    "System": "Unggah"
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Pilih Host Penyimpanan"
@@ -584,28 +604,13 @@
     "Time": "Waktu"
   },
   "comp:BAITable": {
-    "Apply": "Terapkan",
-    "Cancel": "Batal",
     "CollapseAll": "Ciutkan semua",
     "ExpandAll": "Perluas semua",
     "ExpandErrorsOnly": "Perluas hanya kesalahan",
-    "ExpandOptions": "Opsi perluasan",
-    "ExpandRow": "Perluas baris",
-    "Export": "Ekspor",
-    "ExportCSV": "Ekspor CSV",
-    "GoToFirstPage": "Ke halaman pertama",
-    "InvalidPageNumber": "Nomor halaman tidak valid",
-    "NoDataToDisplay": "Tidak ada data untuk ditampilkan",
-    "Pagination": "Penomoran halaman",
-    "SearchTableColumn": "Kolom Tabel Cari",
-    "SelectColumnToDisplay": "Pilih kolom untuk ditampilkan",
-    "SettingTable": "Pengaturan Tabel"
+    "ExpandOptions": "Opsi perluasan"
   },
   "comp:BAITestButton": {
     "Test": "tes"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "dan {{rest}} lainnya"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Dibuat di",
@@ -628,8 +633,6 @@
     "CreateFolder": "Buat folder penyimpanan baru",
     "DestinationPath": "Jalur kontainer (destination)",
     "Folders": "Folder",
-    "OwnerProject": "Proyek",
-    "OwnerUser": "Pengguna",
     "PathAndAliasTooltip": "Jalur di dalam container tempat folder akan di-mount. Kosongkan untuk menggunakan jalur default.",
     "Refresh": "Segarkan",
     "RemoveFolder": "Hapus",
@@ -655,8 +658,11 @@
     "DeleteSelectedItemDesc": "File dan folder yang dihapus tidak dapat dipulihkan. \nApakah Anda ingin melanjutkan?",
     "DeleteSelectedItemsDialog": "Hapus Konfirmasi",
     "Download": "Unduh",
+    "DownloadPopupBlocked": "Peramban memblokir jendela unduhan. Izinkan pop-up untuk situs ini lalu coba lagi.",
+    "DownloadRejected": "Storage proxy menolak unduhan (HTTP {{status}}). Unduhan tidak dimulai.",
     "DownloadSelected": "Unduh",
     "DownloadStarted": "File \"{{fileName}}\" unduhan telah dimulai.",
+    "DownloadUnreachable": "Tidak dapat menjangkau storage proxy di {{origin}}. Unduhan tidak dimulai.",
     "DragAndDropDesc": "Seret dan jatuhkan file ke area ini untuk diunggah.",
     "DuplicatedFiles": "Timpa konfirmasi",
     "DuplicatedFilesDesc": "File atau folder dengan nama yang sama sudah ada. \nApakah Anda ingin menimpa?",
@@ -693,9 +699,6 @@
       "DuplicatedName": "Nama ini sudah digunakan. \nHarap masukkan nama yang berbeda.",
       "FileNameRequired": "Harap masukkan file atau nama folder."
     }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} dari {{total}} item"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Tidak ada data sumber daya yang tersedia"
@@ -758,62 +761,18 @@
   "error": {
     "UnknownError": "Terjadi kesalahan yang tidak diketahui. \nTolong coba lagi."
   },
-  "form": {
-    "Optional": "(optional)",
-    "validateMessages": {
-      "Default": "Kesalahan validasi untuk ${label}",
-      "Required": "Tolong masukkan ${label}",
-      "Whitespace": "${label} tidak boleh berupa karakter kosong",
-      "array": {
-        "Len": "Harus ${len} ${label}",
-        "Max": "Maksimal ${max} ${label}",
-        "Min": "Minimal ${min} ${label}",
-        "Range": "Jumlah ${label} harus di antara ${min}-${max}"
-      },
-      "number": {
-        "Len": "${label} harus sama dengan ${len}",
-        "Max": "${label} harus maksimal ${max}",
-        "Min": "${label} harus minimal ${min}",
-        "Range": "${label} harus di antara ${min}-${max}"
-      },
-      "pattern": {
-        "Mismatch": "${label} tidak sesuai dengan pola ${pattern}"
-      },
-      "string": {
-        "Len": "${label} harus berupa ${len} karakter",
-        "Max": "${label} harus maksimal ${max} karakter",
-        "Min": "${label} harus minimal ${min} karakter",
-        "Range": "${label} harus diantara ${min}-${max} karakter"
-      },
-      "types": {
-        "Email": "${label} tidak valid ${type}",
-        "Number": "${label} tidak valid ${type}",
-        "Object": "${label} tidak valid ${type}",
-        "String": "${label} tidak valid ${type}",
-        "Url": "${label} tidak valid ${type}"
-      }
-    }
-  },
   "general": {
-    "Decrease": "Kurangi",
-    "DeselectAll": "Batalkan semua pilihan",
     "File": "Berkas",
-    "Increase": "Tambah",
-    "Loading": "Memuat...",
-    "NSelected": "{{count}} dipilih",
     "Optional": "Opsional",
     "Project": "Proyek",
     "Search": "Cari",
     "Select": "Pilih",
-    "SelectPlaceholder": "Pilih {{label}}",
-    "TotalItems": "Total {{total}} item",
     "Unit": "Satuan",
     "button": {
       "Action": "Tindakan",
       "Back": "Kembali",
       "Cancel": "Membatalkan",
       "Close": "Menutup",
-      "Collapse": "Runtuh",
       "Confirm": "Konfirmasi",
       "Copied": "Disalin",
       "Copy": "Salin",
@@ -821,7 +780,6 @@
       "Create": "Membuat",
       "Delete": "Menghapus",
       "Edit": "Edit",
-      "Expand": "Memperluas",
       "Remove": "Menghapus",
       "Save": "Simpan",
       "Upload": "Mengunggah"

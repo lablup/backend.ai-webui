@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0c7c1d772d942303fe1044624c7b972e>>
+ * @generated SignedSource<<5b68509379c2c625b95cb6df1a22d445>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,16 +11,18 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type ProjectTypeV2 = "GENERAL" | "MODEL_STORE" | "PERSONAL" | "%future added value";
-export type ProjectV2OrderField = "CREATED_AT" | "DOMAIN_NAME" | "IS_ACTIVE" | "MODIFIED_AT" | "NAME" | "TYPE" | "USER_EMAIL" | "USER_USERNAME" | "%future added value";
+export type ProjectV2OrderField = "CREATED_AT" | "DESCRIPTION" | "DOMAIN_NAME" | "ID" | "INTEGRATION_NAME" | "IS_ACTIVE" | "MODIFIED_AT" | "NAME" | "TYPE" | "USER_EMAIL" | "USER_USERNAME" | "%future added value";
 export type VFolderHostPermissionV2 = "CREATE_VFOLDER" | "DELETE_VFOLDER" | "DOWNLOAD_FILE" | "INVITE_OTHERS" | "MODIFY_VFOLDER" | "MOUNT_IN_SESSION" | "SET_USER_PERM" | "UPLOAD_FILE" | "%future added value";
 export type ProjectV2Filter = {
   AND?: ReadonlyArray<ProjectV2Filter> | null | undefined;
   NOT?: ReadonlyArray<ProjectV2Filter> | null | undefined;
   OR?: ReadonlyArray<ProjectV2Filter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  description?: StringFilter | null | undefined;
   domain?: ProjectDomainNestedFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
   id?: UUIDFilter | null | undefined;
+  integrationName?: StringFilter | null | undefined;
   isActive?: boolean | null | undefined;
   modifiedAt?: DateTimeFilter | null | undefined;
   name?: StringFilter | null | undefined;

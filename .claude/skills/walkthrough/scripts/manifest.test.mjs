@@ -94,6 +94,47 @@ test("code refs and via steps are shape-checked", () => {
   rejects([stop({ type: "renamed" })], "added");
 });
 
+test("fill and select steps are shape-checked", () => {
+  const ok = parseManifest([
+    stop({
+      via: [
+        { fill: { label: "Search by name", value: "abc", enter: 1 } },
+        { select: { tid: "usage-mode", option: "Models" } },
+      ],
+    }),
+  ]);
+  assert.equal(ok.length, 1);
+  rejects(
+    [stop({ via: [{ fill: { label: "Search" } }] })],
+    "fill needs a value",
+  );
+  rejects(
+    [stop({ via: [{ fill: { value: "x" } }] })],
+    "fill needs label or tid",
+  );
+  rejects(
+    [stop({ via: [{ select: { label: "Mode" } }] })],
+    "select needs a option",
+  );
+  rejects(
+    [stop({ via: [{ fill: { label: "Search", value: "x", enter: true } }] })],
+    "fill.enter",
+  );
+  rejects(
+    [stop({ via: [{ fill: { label: "x" }, click: { text: "y" } }] })],
+    "exactly one",
+  );
+});
+
+test("a fill into a secret field is refused", () => {
+  for (const field of [
+    { label: "Password", value: "hunter2" },
+    { tid: "api-key-input", value: "abc" },
+    { label: "Access Token", value: "abc" },
+  ])
+    rejects([stop({ via: [{ fill: field }] })], "publish its value");
+});
+
 test("every problem is reported at once", () => {
   assert.throws(
     () => parseManifest([stop({ ch: "" }), stop({ route: "x" })]),
@@ -113,6 +154,7 @@ test("the caps match stop-guard.ts, which is what strips a field in-page", () =>
     "CODE_REFS_MAX",
     "VIA_MAX",
     "VIA_TEXT_MAX",
+    "I18N_LANGS_MAX",
   ]) {
     const declared = new RegExp(`export const ${name} = (\\d+)`).exec(source);
     assert.ok(declared, `${name} is no longer declared in stop-guard.ts`);
@@ -159,4 +201,84 @@ test("routes hang off the project-scoped base the app lands on", () => {
   );
   assert.equal(projectBasePath("/start"), "");
   assert.equal(projectBasePath(""), "");
+});
+
+// ---------------------------------------------------------------- i18n
+
+const KO = {
+  ch: "생성 버튼이 카드 헤더로 옮겨졌습니다.",
+  ck: '목록 위에 "폴더 생성" 버튼이 보여야 합니다.',
+};
+
+test("a stop translated into a second language passes", () => {
+  const [parsed] = parseManifest([stop({ lng: "en", i18n: { ko: KO } })]);
+  assert.equal(parsed.i18n.ko.ck, KO.ck);
+});
+
+test("lng and i18n travel together or not at all", () => {
+  rejects([stop({ lng: "en" })], "lng needs i18n");
+  rejects([stop({ i18n: { ko: KO } })], "i18n needs lng");
+});
+
+test("a language must be a code, and not the one ch/ck are in", () => {
+  rejects([stop({ lng: "korean", i18n: { ko: KO } })], "lng must be");
+  rejects([stop({ lng: "en", i18n: { korean: KO } })], "not a language code");
+  rejects(
+    [stop({ lng: "en", i18n: { en: KO } })],
+    "already the language ch/ck are written in",
+  );
+});
+
+test("a translation says at least what changed and what to check", () => {
+  rejects([stop({ lng: "en", i18n: { ko: { ch: KO.ch } } })], "i18n.ko: ck");
+  rejects([stop({ lng: "en", i18n: { ko: { ck: KO.ck } } })], "i18n.ko: ch");
+  rejects(
+    [stop({ lng: "en", i18n: { ko: "nope" } })],
+    "i18n.ko: not an object",
+  );
+  rejects([stop({ lng: "en", i18n: {} })], "names no language");
+});
+
+test("a translation obeys the same caps as the stop it translates", () => {
+  rejects(
+    [
+      stop({
+        lng: "en",
+        i18n: { ko: { ...KO, ch: "x".repeat(STOP_TEXT_MAX + 1) } },
+      }),
+    ],
+    `i18n.ko: ch is required (<= ${STOP_TEXT_MAX}`,
+  );
+  rejects(
+    [
+      stop({
+        lng: "en",
+        i18n: { ko: { ...KO, old: "x".repeat(STOP_LITERAL_MAX + 1) } },
+      }),
+    ],
+    "i18n.ko: old must be",
+  );
+  rejects(
+    [stop({ lng: "en", i18n: { ko: { ...KO, ck: "ok\nforged" } } })],
+    "i18n.ko: ck",
+  );
+  rejects(
+    [stop({ lng: "en", i18n: { ko: { ...KO, via: [{}] } } })],
+    "exactly one replayable {click}, {fill} or {select}",
+  );
+});
+
+test("a stop carries at most I18N_LANGS_MAX translations", () => {
+  const many = {};
+  for (const lang of ["ko", "ja", "th", "de", "fr"]) many[lang] = KO;
+  rejects(
+    [stop({ lng: "en", i18n: many })],
+    `i18n holds at most ${caps.I18N_LANGS_MAX} languages`,
+  );
+});
+
+test("the PR reads English and the one translation is Korean", () => {
+  rejects([stop({ lng: "ko", i18n: { en: KO } })], 'lng must be "en"');
+  rejects([stop({ lng: "en", i18n: { ja: KO } })], "i18n.ja: only ko");
+  rejects([stop({ lng: "en", i18n: { ko: KO, th: KO } })], "i18n.th: only ko");
 });

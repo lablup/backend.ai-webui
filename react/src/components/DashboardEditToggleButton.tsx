@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { dashboardEditModeAtom } from './dashboardEditModeAtom';
-import { Button } from '@astryxdesign/core/Button';
+import { Button } from '@lablup/ui-common/Button';
 import { useAtom } from 'jotai';
 import { Pencil } from 'lucide-react';
 import React from 'react';

@@ -7,7 +7,6 @@ import {
   DEFAULT_SESSION_GRID_VIEW,
   type SessionGridViewParams,
 } from '../../helper/sessionResourceGridData';
-import { theme } from '../../theme-shim';
 import {
   AstryxFormSegmented,
   AstryxFormSelector,
@@ -26,6 +25,7 @@ import type {
   PersistedPanel,
   ResourceKey,
 } from './types';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIBoardItemErrorBoundary,
   BAIFlex,
@@ -76,7 +76,7 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const [form] = Form.useForm<PanelFormValues>();
   const fallbackResource = availableResources[0];
   const initialResource =
@@ -140,7 +140,6 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
   return (
     <BAIModal
       open={open}
-      destroyOnHidden
       width="min(960px, 95vw)"
       title={
         initialPanel
@@ -252,9 +251,9 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
       <BAIFlex direction="column" align="stretch" gap="xs">
         <div
           style={{
-            border: `1px solid ${token.colorBorderSecondary}`,
-            borderRadius: token.borderRadius,
-            padding: token.paddingSM,
+            border: `1px solid ${token('--color-border')}`,
+            borderRadius: token('--radius-inner'),
+            padding: token('--spacing-3'),
             maxHeight: 360,
             overflow: 'auto',
           }}

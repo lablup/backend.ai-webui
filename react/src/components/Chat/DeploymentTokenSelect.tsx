@@ -6,12 +6,13 @@ import type {
   DeploymentTokenSelectQuery,
   DeploymentTokenSelectQuery$data,
 } from '../../__generated__/DeploymentTokenSelectQuery.graphql';
+import { CATALOG_FETCH_LIMIT } from '../../helper/const-vars';
 import WebUILink from '../WebUILink';
-import { Code } from '@astryxdesign/core/Code';
-import type { SelectorOptionData } from '@astryxdesign/core/Selector';
-import { Selector } from '@astryxdesign/core/Selector';
-import { Text } from '@astryxdesign/core/Text';
-import { TextInput } from '@astryxdesign/core/TextInput';
+import { Code } from '@lablup/ui-common/Code';
+import type { SelectorOptionData } from '@lablup/ui-common/Selector';
+import { Selector } from '@lablup/ui-common/Selector';
+import { Text } from '@lablup/ui-common/Text';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIFlex,
   BAIIconWithTooltip,
@@ -76,12 +77,16 @@ const DeploymentTokenSelectWithQuery: React.FC<
   const { t } = useTranslation();
   const [controllableValue, setControllableValue] =
     useControllableValue<string>(props);
-
   const { deployment } = useLazyLoadQuery<DeploymentTokenSelectQuery>(
     graphql`
-      query DeploymentTokenSelectQuery($deploymentId: ID!) {
+      query DeploymentTokenSelectQuery($deploymentId: ID!, $limit: Int!) {
         deployment(id: $deploymentId) @catch {
-          accessTokens(orderBy: [{ field: CREATED_AT, direction: DESC }]) {
+          # Expiry is filtered client-side: DateTimeFilter cannot match a NULL
+          # expiresAt, so an after-filter would drop never-expiring tokens.
+          accessTokens(
+            orderBy: [{ field: CREATED_AT, direction: DESC }]
+            limit: $limit
+          ) {
             edges {
               node {
                 id
@@ -100,6 +105,7 @@ const DeploymentTokenSelectWithQuery: React.FC<
       // mounts with a non-empty deploymentId (the outer DeploymentTokenSelect
       // renders a plain Input otherwise), so no client-skip guard is needed.
       deploymentId: toGlobalId('ModelDeployment', deploymentId),
+      limit: CATALOG_FETCH_LIMIT,
     },
     // Refetch on mount so returning from token creation (e.g. via the Access
     // Token Settings shortcut) does not render a stale cached list. This reads
@@ -162,19 +168,18 @@ const DeploymentTokenSelectWithQuery: React.FC<
   return (
     <BAIFlex gap="xs" align="center">
       <Selector
-        label={t('chatui.SelectToken')}
-        isLabelHidden
+        aria-label={t('chatui.SelectToken')}
         placeholder={t('chatui.SelectToken')}
         // Fixed width so the token field looks the same across panel sizes
         // instead of following CustomModelForm's responsive 100%/200px width,
         // while still shrinking to fit narrow screens (maxWidth + minWidth 0).
-        style={{ ...style, minWidth: 0 }}
+        controlStyle={{ ...style, minWidth: 0 }}
         width={220}
         options={selectOptions}
         renderOption={renderTokenOption}
         value={controllableValue || undefined}
         onChange={(v) => setControllableValue(v)}
-        isDisabled={props.disabled}
+        disabled={props.disabled}
         isLoading={loading}
       />
       <WebUILink
@@ -209,12 +214,11 @@ const DeploymentTokenSelect: React.FC<DeploymentTokenSelectProps> = ({
   if (!deploymentId) {
     return (
       <TextInput
-        label={t('chatui.SelectToken')}
-        isLabelHidden
+        aria-label={t('chatui.SelectToken')}
         value={controllableValue ?? ''}
         onChange={(v) => setControllableValue(v)}
-        style={props.style}
-        isDisabled={props.disabled}
+        controlStyle={props.style}
+        disabled={props.disabled}
       />
     );
   }

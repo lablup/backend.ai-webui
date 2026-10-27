@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e56d3f507e9d1d51388a62705f2e3ef8>>
+ * @generated SignedSource<<32971453f6c8acc1538c092315293535>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,11 +10,12 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type DeploymentOrderField = "CREATED_AT" | "DESTROYED_AT" | "DOMAIN" | "NAME" | "PROJECT" | "RESOURCE_GROUP" | "TAG" | "%future added value";
+export type DeploymentOrderField = "CREATED_AT" | "CREATED_USER_ID" | "DESIRED_REPLICAS" | "DESTROYED_AT" | "DOMAIN" | "ENDPOINT_URL" | "ENTITY_ID" | "NAME" | "OPEN_TO_PUBLIC" | "PROJECT" | "RESOURCE_GROUP" | "SCALING_STATE" | "TAG" | "%future added value";
 export type DeploymentStatus = "DEPLOYING" | "PENDING" | "READY" | "SCALING" | "STOPPED" | "STOPPING" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type ReplicaHealthStatus = "DEGRADED" | "HEALTHY" | "NOT_CHECKED" | "UNHEALTHY" | "%future added value";
 export type ReplicaStatus = "FAILED_TO_START" | "PROVISIONING" | "RUNNING" | "TERMINATED" | "TERMINATING" | "%future added value";
+export type ScalingState = "SCALING" | "STABLE" | "%future added value";
 export type TrafficStatus = "ACTIVE" | "INACTIVE" | "%future added value";
 export type DeploymentFilter = {
   AND?: ReadonlyArray<DeploymentFilter> | null | undefined;
@@ -22,15 +23,18 @@ export type DeploymentFilter = {
   OR?: ReadonlyArray<DeploymentFilter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
   createdUserId?: UUIDFilter | null | undefined;
+  desiredReplicas?: IntFilter | null | undefined;
   destroyedAt?: NullableDateTimeFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
   endpointUrl?: StringFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   labels?: EntityLabelNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
   openToPublic?: boolean | null | undefined;
   projectId?: UUIDFilter | null | undefined;
   replicas?: ReplicaNestedFilter | null | undefined;
   resourceGroup?: StringFilter | null | undefined;
+  scalingState?: ScalingStateFilter | null | undefined;
   status?: DeploymentStatusFilter | null | undefined;
   tags?: StringFilter | null | undefined;
 };
@@ -83,6 +87,7 @@ export type NullableDateTimeFilter = {
 };
 export type ReplicaNestedFilter = {
   every?: ReplicaFilter | null | undefined;
+  exists?: boolean | null | undefined;
   none?: ReplicaFilter | null | undefined;
   some?: ReplicaFilter | null | undefined;
 };
@@ -90,7 +95,11 @@ export type ReplicaFilter = {
   AND?: ReadonlyArray<ReplicaFilter> | null | undefined;
   NOT?: ReadonlyArray<ReplicaFilter> | null | undefined;
   OR?: ReadonlyArray<ReplicaFilter> | null | undefined;
+  createdAt?: DateTimeFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   healthStatus?: ReplicaHealthStatusFilter | null | undefined;
+  revisionId?: UUIDFilter | null | undefined;
+  sessionId?: UUIDFilter | null | undefined;
   status?: ReplicaStatusFilter | null | undefined;
   trafficStatus?: TrafficStatusFilter | null | undefined;
 };
@@ -114,6 +123,7 @@ export type TrafficStatusFilter = {
 };
 export type EntityLabelNestedFilter = {
   every?: EntityLabelFilter | null | undefined;
+  exists?: boolean | null | undefined;
   none?: EntityLabelFilter | null | undefined;
   some?: EntityLabelFilter | null | undefined;
 };
@@ -125,6 +135,20 @@ export type EntityLabelFilter = {
   entityType?: StringFilter | null | undefined;
   key?: StringFilter | null | undefined;
   value?: StringFilter | null | undefined;
+};
+export type IntFilter = {
+  equals?: number | null | undefined;
+  greaterThan?: number | null | undefined;
+  greaterThanOrEqual?: number | null | undefined;
+  lessThan?: number | null | undefined;
+  lessThanOrEqual?: number | null | undefined;
+  notEquals?: number | null | undefined;
+};
+export type ScalingStateFilter = {
+  equals?: ScalingState | null | undefined;
+  in?: ReadonlyArray<ScalingState> | null | undefined;
+  notEquals?: ScalingState | null | undefined;
+  notIn?: ReadonlyArray<ScalingState> | null | undefined;
 };
 export type DeploymentOrderBy = {
   direction?: OrderDirection;
@@ -313,6 +337,13 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
+                    "name": "entityId",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "currentRevisionId",
                     "storageKey": null
                   },
@@ -344,13 +375,6 @@ return {
                         "args": null,
                         "kind": "ScalarField",
                         "name": "status",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "tags",
                         "storageKey": null
                       },
                       {
@@ -536,6 +560,67 @@ return {
                   },
                   {
                     "alias": null,
+                    "args": [
+                      {
+                        "kind": "Literal",
+                        "name": "limit",
+                        "value": 100
+                      }
+                    ],
+                    "concreteType": "EntityLabelConnection",
+                    "kind": "LinkedField",
+                    "name": "entityLabels",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "EntityLabelEdge",
+                        "kind": "LinkedField",
+                        "name": "edges",
+                        "plural": true,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "EntityLabel",
+                            "kind": "LinkedField",
+                            "name": "node",
+                            "plural": false,
+                            "selections": [
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "key",
+                                "storageKey": null
+                              },
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "value",
+                                "storageKey": null
+                              },
+                              (v6/*: any*/),
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "fieldId",
+                                "storageKey": null
+                              }
+                            ],
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": "entityLabels(limit:100)"
+                  },
+                  {
+                    "alias": null,
                     "args": null,
                     "concreteType": "UserV2",
                     "kind": "LinkedField",
@@ -590,12 +675,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "de03280bc473b7caac1876a7850c4a3b",
+    "cacheID": "e525fd5db2492670c9ec19704b6f693a",
     "id": null,
     "metadata": {},
     "name": "resourceRegistryDeploymentQuery",
     "operationKind": "query",
-    "text": "query resourceRegistryDeploymentQuery(\n  $filter: DeploymentFilter\n  $orderBy: [DeploymentOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  myDeployments(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...BAIModelDeploymentNodesFragment\n      }\n    }\n  }\n}\n\nfragment BAIDeploymentOwnerInfo_deployment on ModelDeployment {\n  id\n  creator @since(version: \"26.4.3\") {\n    id\n    basicInfo {\n      email\n      username\n      fullName\n    }\n  }\n}\n\nfragment BAIDeploymentTagTokens_metadata on ModelDeploymentMetadata {\n  tags\n}\n\nfragment BAIModelDeploymentNodesFragment on ModelDeployment {\n  id\n  currentRevisionId\n  metadata {\n    projectId\n    domainName\n    name\n    status\n    tags\n    createdAt\n    updatedAt\n    resourceGroupName\n    projectV2 @since(version: \"26.4.3\") {\n      basicInfo {\n        name\n      }\n      id\n    }\n    ...BAIDeploymentTagTokens_metadata\n  }\n  networkAccess {\n    endpointUrl\n    preferredDomainName\n    openToPublic\n  }\n  defaultDeploymentStrategy {\n    type\n  }\n  replicaState {\n    desiredReplicaCount\n  }\n  runningReplicas: replicas(filter: {status: {equals: RUNNING}}) {\n    count\n  }\n  currentRevision @since(version: \"26.4.3\") {\n    id\n    revisionNumber\n    modelMountConfig {\n      vfolder {\n        id\n        name\n      }\n    }\n  }\n  ...BAIDeploymentOwnerInfo_deployment\n}\n"
+    "text": "query resourceRegistryDeploymentQuery(\n  $filter: DeploymentFilter\n  $orderBy: [DeploymentOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  myDeployments(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...BAIModelDeploymentNodesFragment\n      }\n    }\n  }\n}\n\nfragment BAIDeploymentOwnerInfo_deployment on ModelDeployment {\n  id\n  creator {\n    id\n    basicInfo {\n      email\n      username\n      fullName\n    }\n  }\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIModelDeploymentNodesFragment on ModelDeployment {\n  id\n  entityId\n  currentRevisionId\n  metadata {\n    projectId\n    domainName\n    name\n    status\n    createdAt\n    updatedAt\n    resourceGroupName\n    projectV2 {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n  networkAccess {\n    endpointUrl\n    preferredDomainName\n    openToPublic\n  }\n  defaultDeploymentStrategy {\n    type\n  }\n  replicaState {\n    desiredReplicaCount\n  }\n  runningReplicas: replicas(filter: {status: {equals: RUNNING}}) {\n    count\n  }\n  currentRevision {\n    id\n    revisionNumber\n    modelMountConfig {\n      vfolder {\n        id\n        name\n      }\n    }\n  }\n  entityLabels(limit: 100) {\n    ...BAIEntityLabelTokensFragment\n    ...BAIEntityLabelSettingModalFragment\n  }\n  ...BAIDeploymentOwnerInfo_deployment\n}\n"
   }
 };
 })();

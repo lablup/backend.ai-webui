@@ -29,7 +29,6 @@ const availableUserV2SorterKeys = [
   'email',
   'username',
   'status',
-  'domainName',
   'projectName',
   'createdAt',
   'modifiedAt',
@@ -83,6 +82,7 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
       )
       @relay(plural: true) {
         id @required(action: NONE)
+        entityId @since(version: "26.9.0a4")
         basicInfo {
           email
           fullName
@@ -96,11 +96,11 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
           resourcePolicy
           mainAccessKey
         }
-        # Unpaginated: Relay requires identical arguments across fragments on
-        # one parent, and the modals spread alongside this one take none.
-        # Opt-in so a project-scoped surface never fetches a member's
-        # memberships of OTHER projects.
-        projects @include(if: $withProjects) {
+        # limit: 1000 on every UserV2.projects selection: Relay requires
+        # identical arguments across the fragments spread on one parent, and
+        # the default page (10) truncates a member's list. Opt-in so a
+        # project-scoped surface never fetches memberships of OTHER projects.
+        projects(limit: 1000) @include(if: $withProjects) {
           edges {
             node {
               id

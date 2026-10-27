@@ -2,27 +2,48 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { resolveApiEndpoint } from '../hooks/useResolvedApiEndpoint';
+import { fetchAppConfigOnce } from '../hooks/useWebUIConfig';
 import * as _ from 'lodash-es';
 
 /**
- * The antd `ThemeConfig` import is replaced by the slice this file's consumers
- * actually read out of `resources/theme.json`: the brand seed tokens (named
- * explicitly so they stay assignable to `BrandSeeds` in
- * `packages/backend.ai-ui/src/theme-shim`) plus the per-component override map.
- * The open `Record` keeps any other antd token the document carries — theme.json
- * is parsed from untyped JSON, so nothing in it is narrowed away.
+ * The v2 appearance document (FR-3605): `theme` carries what feeds the Astryx
+ * pipeline, `branding` the structural metadata no token can express. The same
+ * shape is shipped as `resources/theme.json` and stored wholesale as a
+ * domain's `appearance` slice of `publicConfigByDomain` (FR-1964). Seed values
+ * follow Astryx `TokenValue` semantics: a string applies to both schemes, a
+ * `[light, dark]` tuple splits them. v1 (antd-shaped) documents are NOT
+ * readable — see the migration guide in the FR-3605 release notes.
  */
-export type ThemeConfig = {
-  token?: {
-    colorPrimary?: string;
-    colorLink?: string;
-    colorError?: string;
-    colorSuccess?: string;
-    colorWarning?: string;
-    colorInfo?: string;
-    fontFamily?: string;
-  } & Record<string, unknown>;
-  components?: Record<string, Record<string, unknown>>;
+export type BAIThemeSeedValue = string | [light: string, dark: string];
+
+export type BAIThemeSeeds = {
+  /** Brand accent (was antd `colorPrimary`). Also seeds the brand role. */
+  accent?: BAIThemeSeedValue;
+  /** Link color (was `colorLink`); rendered as `--color-link`. */
+  link?: BAIThemeSeedValue;
+  /** Info color (was `colorInfo`); also seeds the admin role accent. */
+  info?: BAIThemeSeedValue;
+  error?: BAIThemeSeedValue;
+  /** Success color; also seeds the secondary role accent. */
+  success?: BAIThemeSeedValue;
+  warning?: BAIThemeSeedValue;
+};
+
+export type BAIThemeFamily = {
+  seeds?: BAIThemeSeeds;
+  /** Header band background (was `components.Layout.headerBg`). */
+  headerBg?: BAIThemeSeedValue;
+  /** Header band background on system admin pages. */
+  headerBgAdmin?: BAIThemeSeedValue;
+};
+
+export type BAIThemeConfig = {
+  fontFamily?: string;
+  /** Forces the sider chrome's polarity regardless of the page scheme. */
+  siderMode?: 'light' | 'dark';
+  /** Selectable families keyed by family id; `default` must exist. */
+  families?: Record<string, BAIThemeFamily>;
 };
 
 export type LogoConfig = {
@@ -58,62 +79,126 @@ export type LogoConfig = {
     height?: number;
   };
 };
-export type SiderConfig = {
-  theme?: 'light' | 'dark';
-};
-export type BrandingConfig = {
+
+export type BAIBrandingConfig = {
+  logo?: LogoConfig;
   companyName?: string;
   brandName?: string;
-};
-export type ThemeFamilyConfig = {
-  /** Ant Design theme config for the light scheme of this family. */
-  light: ThemeConfig;
-  /** Ant Design theme config for the dark scheme of this family. */
-  dark: ThemeConfig;
-  /** Human-readable label shown in the family selector. Falls back to the key. */
-  label?: string;
+  /** Family selector labels keyed by family id; falls back to the id. */
+  familyLabels?: Record<string, string>;
 };
 
-export type CustomThemeConfig = {
-  fontFamily?: string;
-  light: ThemeConfig;
-  dark: ThemeConfig;
-  /**
-   * Selectable theme families keyed by family id (e.g. `stained`, `glass`).
-   * The `default` family is always synthesized from the top-level
-   * `light`/`dark` above — a `default` key here is ignored — so pre-family
-   * theme.json files (no `families` block) keep working as a single-entry
-   * catalog.
-   */
-  families?: Record<string, ThemeFamilyConfig>;
-  logo: LogoConfig;
-  sider?: SiderConfig;
-  branding?: BrandingConfig;
+export const APPEARANCE_SCHEMA_VERSION = 2;
+
+export type BAIAppearanceConfig = {
+  $schema?: string;
+  schemaVersion: typeof APPEARANCE_SCHEMA_VERSION;
+  theme?: BAIThemeConfig;
+  branding?: BAIBrandingConfig;
 };
 
-let _customTheme: CustomThemeConfig | undefined;
-
-export const getCustomTheme = () => _customTheme;
+/** Per-domain subKey of `publicConfigByDomain` holding the v2 document. */
+export const DOMAIN_APPEARANCE_CONFIG_KEY = 'appearance';
 
 /**
- * Keep only structurally valid family entries (each must carry both `light`
- * and `dark` theme configs) so a malformed `families` block in theme.json
- * degrades to fewer families instead of a broken catalog.
+ * Resolve a seed value for one scheme (string = both schemes). A tuple with
+ * a missing/non-string dark entry reuses the light one, matching the theme
+ * recipe's `seedPairFromValue`, so both consumers render the same color.
  */
-export function pickValidThemeFamilies(
+export const pickSeed = (
+  value: BAIThemeSeedValue | undefined,
+  mode: 'light' | 'dark',
+): string | undefined => {
+  if (_.isString(value)) {
+    return value;
+  }
+  if (_.isArray(value)) {
+    const light = _.isString(value[0]) ? value[0] : undefined;
+    if (mode === 'light') {
+      return light;
+    }
+    return _.isString(value[1]) ? value[1] : light;
+  }
+  return undefined;
+};
+
+const logAppearanceError = (message: string) =>
+  // eslint-disable-next-line no-console -- module-scope diagnostics; no logger exists outside React here
+  console.error(`[appearance] ${message}`);
+
+const NEUTRAL_FALLBACK =
+  "rendering Astryx's neutral theme (no Backend.AI colors)";
+
+/**
+ * Accept only structurally valid v2 documents, and say why when one is not.
+ * A rejected document renders brand-less, so the rejection is loud. `default`
+ * must exist in `theme.families` (the family the app boots into and falls
+ * back to); its absence is accepted but reported for the same reason.
+ */
+export const pickValidAppearanceConfig = (
   input: unknown,
-): Record<string, ThemeFamilyConfig> | undefined {
+  source: string,
+): BAIAppearanceConfig | undefined => {
   if (!_.isPlainObject(input)) {
+    logAppearanceError(`${source} is not a JSON object; ${NEUTRAL_FALLBACK}.`);
     return undefined;
   }
-  return _.pickBy(
-    input as Record<string, ThemeFamilyConfig>,
-    (family) =>
-      _.isPlainObject(family) &&
-      _.isPlainObject(family.light) &&
-      _.isPlainObject(family.dark),
-  );
-}
+  const doc = input as Record<string, unknown>;
+  if (doc.schemaVersion !== APPEARANCE_SCHEMA_VERSION) {
+    logAppearanceError(
+      `${source} does not match the theme schema (resources/theme.schema.json): ` +
+        `"schemaVersion": ${APPEARANCE_SCHEMA_VERSION} is required ` +
+        `(got ${JSON.stringify(doc.schemaVersion)}); ${NEUTRAL_FALLBACK}.`,
+    );
+    return undefined;
+  }
+  const families = (doc.theme as Record<string, unknown> | undefined)?.families;
+  if (
+    !_.isPlainObject((families as Record<string, unknown> | undefined)?.default)
+  ) {
+    logAppearanceError(
+      `${source} has no theme.families.default entry; ` +
+        `the default family is ${NEUTRAL_FALLBACK}.`,
+    );
+  }
+  return doc as BAIAppearanceConfig;
+};
+
+type AppearanceStore = {
+  /** The shipped/operator `resources/theme.json` (v2), untouched. */
+  staticDoc?: BAIAppearanceConfig;
+  /** The current domain's saved `appearance` slice, if any. */
+  domainDoc?: BAIAppearanceConfig;
+  /**
+   * The domain slice wholesale, else theme.json — with the dev-server header
+   * color applied. What the providers render.
+   */
+  appliedDoc?: BAIAppearanceConfig;
+};
+
+const store: AppearanceStore = {};
+
+/** The applied document: the domain slice wholesale, else theme.json. */
+export const getCustomTheme = (): BAIAppearanceConfig | undefined =>
+  store.appliedDoc;
+
+/**
+ * `useSyncExternalStore` subscription for the applied document. React re-reads
+ * the snapshot right after subscribing, so a document that settles between a
+ * component's first render and its subscription is not missed.
+ */
+export const subscribeCustomTheme = (onChange: () => void) => {
+  document.addEventListener('custom-theme-loaded', onChange);
+  return () => document.removeEventListener('custom-theme-loaded', onChange);
+};
+
+/** The pristine shipped document (Branding editor seed/reset source). */
+export const getStaticAppearanceConfig = (): BAIAppearanceConfig | undefined =>
+  store.staticDoc;
+
+/** The saved domain document (Branding editor prefill source). */
+export const getDomainAppearanceConfig = (): BAIAppearanceConfig | undefined =>
+  store.domainDoc;
 
 const GENERIC_FAMILIES = new Set([
   'serif',
@@ -159,51 +244,138 @@ function injectFontCSS(fontFamilies: string[]) {
   }
 }
 
+// `general.apiDomainName` from config.toml: webserver-hosted deployments are
+// 1:1 with a domain and expose it there (BA-7405/BA-7406). Electron / direct
+// API mode has no single domain, so this stays undefined and the theme keeps
+// theme.json.
+const resolveConfigDomainName = async (): Promise<string | undefined> => {
+  try {
+    const { config } = await fetchAppConfigOnce();
+    const raw = config?.general?.apiDomainName;
+    return typeof raw === 'string' && raw.trim() ? raw.trim() : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+// config.toml `apiEndpoint`, else the stored login endpoint.
+const resolveRestBase = async (): Promise<string> => {
+  const endpoint = await resolveApiEndpoint();
+  return endpoint.replace(/^"+|"+$/g, '').replace(/\/+$/, '');
+};
+
+/**
+ * `publicConfigByDomain` read path (FR-1964). REST (`POST
+ * /func/v2/app-config/public/get`, served anonymously) rather than
+ * GraphQL/Relay: this runs once at bootstrap, before login and outside
+ * `RelayEnvironmentProvider`, so the domain and endpoint come from config.toml
+ * (or the stored login endpoint), never from a connected client. A session
+ * that cannot fetch here keeps theme.json until the next reload — accepted per
+ * FR-1964; there is no retry and no connect listener.
+ */
+const fetchDomainDoc = async (): Promise<BAIAppearanceConfig | undefined> => {
+  try {
+    const domainName = await resolveConfigDomainName();
+    if (!domainName) {
+      return undefined;
+    }
+    const base = await resolveRestBase();
+    if (!base) {
+      return undefined;
+    }
+    const response = await fetch(`${base}/func/v2/app-config/public/get`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ config_names: ['publicConfigByDomain'] }),
+    });
+    if (!response.ok) {
+      throw new Error(
+        `Failed to load the public app config: ${response.status}`,
+      );
+    }
+    const payload = await response.json();
+    const doc = payload?.app_configs?.find(
+      (c: { config_name: string }) => c.config_name === 'publicConfigByDomain',
+    )?.config;
+    const slice = _.get(doc, [domainName, DOMAIN_APPEARANCE_CONFIG_KEY]);
+    // No saved slice is the normal case; only a present-but-invalid one warns.
+    return _.isNil(slice)
+      ? undefined
+      : pickValidAppearanceConfig(
+          slice,
+          `publicConfigByDomain[${domainName}].appearance`,
+        );
+  } catch (error) {
+    logAppearanceError(
+      `the domain appearance document could not be fetched (${String(error)}).`,
+    );
+    return undefined;
+  }
+};
+
+const fetchStaticDoc = async (): Promise<BAIAppearanceConfig | undefined> => {
+  let response: Response;
+  try {
+    response = await fetch('resources/theme.json');
+  } catch (error) {
+    logAppearanceError(`theme.json could not be fetched (${String(error)}).`);
+    return undefined;
+  }
+  if (!response.ok) {
+    logAppearanceError(`theme.json responded HTTP ${response.status}.`);
+    return undefined;
+  }
+  try {
+    return pickValidAppearanceConfig(await response.json(), 'theme.json');
+  } catch (error) {
+    logAppearanceError(`theme.json is not valid JSON (${String(error)}).`);
+    return undefined;
+  }
+};
+
+/** The dev-server header color, applied to a copy so the shipped doc stays pristine. */
+const applyDevServerHeaderColorOverride = (
+  doc: BAIAppearanceConfig | undefined,
+): BAIAppearanceConfig | undefined => {
+  const headerColor = import.meta.env.DEV
+    ? import.meta.env.VITE_THEME_HEADER_COLOR
+    : undefined;
+  if (!doc || !headerColor) {
+    return doc;
+  }
+  const applied = _.cloneDeep(doc);
+  for (const family of Object.values(applied.theme?.families ?? {})) {
+    if (_.isPlainObject(family)) {
+      family.headerBg = headerColor;
+    }
+  }
+  return applied;
+};
+
+/**
+ * One-shot appearance bootstrap: theme.json and the domain's saved document
+ * are fetched in parallel, the domain slice wins wholesale, and a single
+ * `custom-theme-loaded` event fires once both have settled — including when
+ * neither document is usable, so listeners never wait forever.
+ */
 export const loadCustomThemeConfig = () => {
-  fetch('resources/theme.json')
-    .then((response) => response.json())
-    .then((theme) => {
-      if (_.isUndefined(theme.light)) {
-        _customTheme = { light: theme, dark: theme, logo: theme.logo };
-      } else {
-        _customTheme = theme;
-      }
-      if (
-        _customTheme &&
-        import.meta.env.DEV &&
-        import.meta.env.VITE_THEME_HEADER_COLOR
-      ) {
-        _.set(
-          _customTheme,
-          'light.components.Layout.headerBg',
-          import.meta.env.VITE_THEME_HEADER_COLOR,
-        );
-        _.set(
-          _customTheme,
-          'dark.components.Layout.headerBg',
-          import.meta.env.VITE_THEME_HEADER_COLOR,
-        );
-      }
+  Promise.all([fetchStaticDoc(), fetchDomainDoc()])
+    .then(([staticDoc, domainDoc]) => {
+      store.staticDoc = staticDoc;
+      store.domainDoc = domainDoc;
+      store.appliedDoc = applyDevServerHeaderColorOverride(
+        domainDoc ?? staticDoc,
+      );
 
-      // Propagate top-level fontFamily into light/dark tokens so Ant Design receives it
-      if (_customTheme) {
-        const topLevelFont = _customTheme.fontFamily;
-        if (topLevelFont) {
-          _.set(_customTheme, 'light.token.fontFamily', topLevelFont);
-          _.set(_customTheme, 'dark.token.fontFamily', topLevelFont);
-        }
-
-        // Auto-load font CSS based on fontFamily in theme config
-        const fontFamily =
-          topLevelFont ??
-          (_.get(_customTheme, 'light.token.fontFamily') as
-            string | undefined) ??
-          (_.get(_customTheme, 'dark.token.fontFamily') as string | undefined);
-        if (fontFamily) {
-          injectFontCSS(parseFontFamilies(fontFamily));
-        }
+      const fontFamily = store.appliedDoc?.theme?.fontFamily;
+      if (_.isString(fontFamily) && fontFamily) {
+        injectFontCSS(parseFontFamilies(fontFamily));
       }
-
+    })
+    .catch((error) => {
+      logAppearanceError(`appearance bootstrap failed (${String(error)}).`);
+    })
+    .finally(() => {
       document.dispatchEvent(new CustomEvent('custom-theme-loaded'));
     });
 };

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d199ded4c5238339c3abf0a6d1c85493>>
+ * @generated SignedSource<<c7159181032516f4c425368ea79b640c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -223,6 +223,13 @@ return {
                     "kind": "ScalarField",
                     "name": "schedulable",
                     "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "lost_at",
+                    "storageKey": null
                   }
                 ],
                 "storageKey": null
@@ -237,12 +244,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "62c57c68ebfae2c1de6d55be55b39fac",
+    "cacheID": "d411b518001a19dfaef437faaefa9a68",
     "id": null,
     "metadata": {},
     "name": "BAIAgentTableStoriesQuery",
     "operationKind": "query",
-    "text": "query BAIAgentTableStoriesQuery {\n  agent_nodes(offset: 0, first: 100) {\n    edges {\n      node {\n        ...BAIAgentTableFragment\n        id\n      }\n    }\n    count\n  }\n}\n\nfragment BAIAgentTableFragment on AgentNode {\n  id\n  row_id\n  addr\n  region\n  architecture\n  first_contact\n  occupied_slots\n  available_slots\n  live_stat\n  status\n  scaling_group\n  compute_plugins\n  version\n  schedulable\n}\n"
+    "text": "query BAIAgentTableStoriesQuery {\n  agent_nodes(offset: 0, first: 100) {\n    edges {\n      node {\n        ...BAIAgentTableFragment\n        id\n      }\n    }\n    count\n  }\n}\n\nfragment BAIAgentTableFragment on AgentNode {\n  id\n  row_id\n  addr\n  region\n  architecture\n  first_contact\n  occupied_slots\n  available_slots\n  live_stat\n  status\n  scaling_group\n  compute_plugins\n  version\n  schedulable\n  lost_at\n}\n"
   }
 };
 })();

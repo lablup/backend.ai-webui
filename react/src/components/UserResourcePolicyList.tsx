@@ -17,7 +17,7 @@ import {
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import UserResourcePolicySettingModal from './UserResourcePolicySettingModal';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   useUpdatableState,
   filterOutEmpty,
@@ -68,11 +68,11 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
             created_at
             # follows version of https://github.com/lablup/backend.ai/pull/1993
             # --------------- START --------------------
-            max_vfolder_count @since(version: "23.09.6")
-            max_session_count_per_model_session @since(version: "23.09.10")
-            max_quota_scope_size @since(version: "23.09.2")
+            max_vfolder_count
+            max_session_count_per_model_session
+            max_quota_scope_size
             # ---------------- END ---------------------
-            max_customized_image_count @since(version: "24.03.0")
+            max_customized_image_count
             ...UserResourcePolicySettingModalFragment
           }
         }
@@ -210,7 +210,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
 
     exportCSVWithFormattingRules(
       responseData as UserResourcePolicies[],
-      'user-resource-policies',
+      'user_resource_policies',
       {
         max_vfolder_count: (text) => (_.toNumber(text) === 0 ? '-' : text),
         max_quota_scope_size: (text) => (text === -1 ? '-' : bytesToGB(text)),

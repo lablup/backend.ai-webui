@@ -28,7 +28,7 @@ SSH/SFTP接続は、SSH/SFTPアイコンをクリックするまで、セッシ�
 自動生成されたSSH鍵は、新しいセッションが作成されたときに変更される可能性があります。
 その場合は、再度ダウンロードする必要があります。
 
-![](../images/SSH_SFTP_connection.png)
+![=800px](../images/SSH_SFTP_connection.png)
 
 ![](../images/sftp_app.png)
 
@@ -136,16 +136,16 @@ PuTTYgenの「Save private key」ボタンをクリックし、`id_container.ppk
 FileZillaクライアントを起動した後、「Settings-Connection-SFTP」に移動し、
 鍵ファイル`id_container.ppk`（OpenSSHをサポートするクライアントの場合は`id_container`）を登録します。
 
-![](../images/filezilla_setting.png)
+![=628px](../images/filezilla_setting.png)
 
 サイトマネージャーを開き、新しいサイトを作成し、次のように接続情報を入力します。
 
-![](../images/filezilla_site_setting.png)
+![=798px](../images/filezilla_site_setting.png)
 
 コンテナに初めて接続する際、次のような確認ポップアップが表示される場合があります。
 「OK」ボタンをクリックしてホスト鍵を保存します。
 
-![](../images/unknown_host_key.png)
+![=501px](../images/unknown_host_key.png)
 
 しばらくすると、次のように接続が確立されたことが確認できます。
 このSFTP接続を使用して、`/home/work/`やその他のマウントされたストレージフォルダに
@@ -173,7 +173,7 @@ VSCode Remote Connectionダイアログで、コピーアイコンボタンを�
 Visual Studio Codeのリモート用SSHパスワードをコピーします。
 また、ダイアログに表示されたホストとポート番号も覚えておきます。
 
-![](../images/download_ssh_key.png)
+![=418px](../images/download_ssh_key.png)
 
 次に、SSH configファイルを設定します。`~/.ssh/config`ファイル（Linux/Macの場合）または
 `C:\Users\[ユーザー名]\.ssh\config`（Windowsの場合）を編集し、次のブロックを追加します。
@@ -208,12 +208,12 @@ Visual Studio Codeは、接続先のホストのタイプを自動的に検出�
 接続が完了すると、空のウィンドウが表示されます。ステータスバーで、
 どのホストに接続しているかをいつでも確認できます。
 
-![](../images/vscode_connect_finish.png)
+![=333px](../images/vscode_connect_finish.png)
 
 その後は、いつものように`File > Open...`または`File > Open Workspace...`メニューから、
 リモートホスト上の任意のフォルダやワークスペースを開くことができます。
 
-![](../images/vscode_connected_host_file_open.png)
+![=614px](../images/vscode_connected_host_file_open.png)
 
 <a id="establish-ssh-connection-with-backendai-client-package"></a>
 
@@ -248,7 +248,7 @@ docker pull lablup/backend.ai-client:${VERSION}
 Backend.AIサーバーのバージョンは、Web UI右上の人物アイコンをクリックすると表示される
 「About Backend.AI」メニューで確認できます。
 
-![](../images/check_backend_server_version.png)
+![=350px](../images/check_backend_server_version.png)
 
 次のコマンドでDockerイメージを実行します。
 

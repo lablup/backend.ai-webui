@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6aaa1d863e6f36968426a8286a54c034>>
+ * @generated SignedSource<<e975a9913f8baf982a2b4ba7c0d5b6d0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,6 +19,7 @@ export type VFolderFilter = {
   OR?: ReadonlyArray<VFolderFilter> | null | undefined;
   cloneable?: boolean | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   host?: StringFilter | null | undefined;
   labels?: EntityLabelNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
@@ -67,6 +68,7 @@ export type DateTimeFilter = {
 };
 export type EntityLabelNestedFilter = {
   every?: EntityLabelFilter | null | undefined;
+  exists?: boolean | null | undefined;
   none?: EntityLabelFilter | null | undefined;
   some?: EntityLabelFilter | null | undefined;
 };

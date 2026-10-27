@@ -27,21 +27,34 @@ import { App } from '../app-shim';
 //     served by the Astryx app-shim (see the header comment), so no antd
 //     Message is rendered here at all and the override was already dead.
 import { Form } from '../form-engine';
+import { extractErrorType } from '../helper';
+import { getActAsTarget } from '../helper/actAs';
 import {
   devApiEndpointOverride,
   devEmailOverride,
   devPasswordOverride,
 } from '../helper/devLoginOverrides';
 import {
+  LoginBootstrapIncompleteError,
+  SessionAuthFailureError,
+  probeLoginSession,
+  refusalDetail,
+  type LoginBootstrap,
+} from '../helper/loginBootstrap';
+import {
   getDefaultLoginConfig,
   type LoginConfigState,
 } from '../helper/loginConfig';
+import { isCredentialMismatchLoginError } from '../helper/loginErrorType';
 import {
-  createBackendAIClient,
+  LoginProbeCancelledError,
   connectViaGQL,
+  createBackendAIClient,
+  escapeLoginProbe,
   loadConfigFromWebServer,
-  loginWithSAML,
   loginWithOpenID,
+  loginWithSAML,
+  probeManager,
 } from '../helper/loginSessionAuth';
 import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
 import { useLoginOrchestration } from '../hooks/useLoginOrchestration';
@@ -54,29 +67,22 @@ import {
 import { pluginApiEndpointState } from '../hooks/useWebUIPluginState';
 import { preloadPostLoginChunks } from '../preload';
 import { jotaiStore } from './DefaultProviders';
-import LoginFormPanel from './LoginFormPanel';
-// antd's <App> element stays mounted as a nested provider: unmigrated
-// children in this subtree (e.g. SignupModal) still read antd's context.
-import { Button } from '@astryxdesign/core/Button';
-import type { DropdownMenuOption } from '@astryxdesign/core/DropdownMenu';
-import { BAIModal, useBAILogger } from 'backend.ai-ui';
+import LoginFormPanel, { type EndpointHistoryEntry } from './LoginFormPanel';
+import { Button } from '@lablup/ui-common/Button';
+import { Text } from '@lablup/ui-common/Text';
+import { BAIAlert, BAIFlex, BAIModal, useBAILogger } from 'backend.ai-ui';
 import i18n from 'i18next';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { Trash2Icon } from 'lucide-react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 
 type ConnectionMode = 'SESSION' | 'API';
-
-/**
- * Extract the error type suffix from a Backend.AI problem type URL.
- * e.g., "https://api.backend.ai/probs/auth-failed" → "auth-failed"
- */
-const extractErrorType = (typeUrl?: string): string => {
-  if (!typeUrl) return '';
-  const parts = typeUrl.split('/');
-  return parts[parts.length - 1] || '';
-};
 
 const STORED_API_ENDPOINT_KEY = 'backendaiwebui.api_endpoint';
 
@@ -154,6 +160,10 @@ const LoginView: React.FC<{
   const [blockMessage, setBlockMessage] = useState('');
   const [blockType, setBlockType] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  // The session is live but the manager could not return the user; the login
+  // form would only get "already logged in" back, so offer retry / log out.
+  const [sessionLoadError, setSessionLoadError] = useState<string | null>(null);
+  const [isSessionLogoutFailed, setIsSessionLogoutFailed] = useState(false);
   const [loginError, setLoginError] = useState<{
     message: string;
     description?: string;
@@ -161,6 +171,13 @@ const LoginView: React.FC<{
   const [endpoints, setEndpoints] = useState<string[]>(() => {
     return (globalThis as any).backendaioptions?.get('endpoints', []) ?? [];
   });
+  const [dismissedEnvEndpoints, setDismissedEnvEndpoints] = useState<string[]>(
+    () =>
+      (globalThis as any).backendaioptions?.get(
+        'dismissed_env_endpoints',
+        [],
+      ) ?? [],
+  );
   const [showEndpointInput, setShowEndpointInput] = useState(true);
   const [isEndpointDisabled, setIsEndpointDisabled] = useState(false);
 
@@ -179,6 +196,18 @@ const LoginView: React.FC<{
   // Reset when credentials or endpoint change to prevent unintended force-login
   // against a different user/endpoint.
   const forceLoginApprovedRef = useRef(false);
+  // One-shot: marks the automatic login fired right after a forced password change.
+  const reloginAfterPasswordChangeRef = useRef(false);
+  // A session the orchestrator's check already bootstrapped; the silent
+  // login that follows connects with it instead of probing again.
+  const probedSessionRef = useRef<{
+    endpoint: string;
+    client: ReturnType<typeof createBackendAIClient>['client'];
+    bootstrap: LoginBootstrap;
+  } | null>(null);
+  // Dev-only Backspace bumps this to cancel the login in flight; each step compares
+  // the value it started with after every await and drops a stale result.
+  const loginAttemptRef = useRef(0);
 
   // Reset force-login approval when credentials or endpoint change
   const watchedUserId = Form.useWatch('user_id', form);
@@ -256,6 +285,15 @@ const LoginView: React.FC<{
   useEffect(() => {
     configRef.current = loginConfig;
   }, [loginConfig]);
+
+  // FR-3562: a configured `apiEndpoint` is a webserver (it renders its own
+  // origin into `config.toml`), and a webserver cannot serve API-mode sign-in.
+  // Derived, never stored: a config refresh re-applies the configured mode at
+  // any time, so a value pinned once here would be silently reverted.
+  const isApiSigninBlocked = !!loginConfig.api_endpoint;
+  const effectiveConnectionMode: ConnectionMode = isApiSigninBlocked
+    ? 'SESSION'
+    : connectionMode;
 
   // Sync apiEndpoint state changes to the form field.
   // Ant Design's initialValues only applies on first render, so subsequent
@@ -382,6 +420,18 @@ const LoginView: React.FC<{
     }, 2000);
   }, []);
 
+  const showSessionLoadError = (err: LoginBootstrapIncompleteError) => {
+    if (blockTimerRef.current) {
+      clearTimeout(blockTimerRef.current);
+      blockTimerRef.current = null;
+    }
+    setIsBlockPanelOpen(false);
+    setIsLoginPanelOpen(false);
+    setIsLoading(false);
+    setIsSessionLogoutFailed(false);
+    setSessionLoadError(err.message);
+  };
+
   const clearSavedLoginInfo = useCallback(() => {
     localStorage.removeItem('backendaiwebui.login.api_key');
     localStorage.removeItem('backendaiwebui.login.secret_key');
@@ -440,14 +490,24 @@ const LoginView: React.FC<{
   );
 
   const doGQLConnect = useCallback(
-    async (client: ReturnType<typeof createBackendAIClient>['client']) => {
+    async (
+      client: ReturnType<typeof createBackendAIClient>['client'],
+      bootstrap?: LoginBootstrap | null,
+      attempt = loginAttemptRef.current,
+    ) => {
       // Read directly from Jotai store to get the latest config synchronously,
       // including any merged webserver config from loadConfigFromWebServer().
       // Using configRef.current here would return stale config because React
       // hasn't re-rendered yet after the Jotai atom update.
       const cfg = jotaiStore.get(loginConfigState) ?? configRef.current;
 
-      const updatedEndpoints = await connectViaGQL(client, cfg, endpoints);
+      const updatedEndpoints = await connectViaGQL(
+        client,
+        cfg,
+        endpoints,
+        bootstrap,
+        () => attempt !== loginAttemptRef.current,
+      );
       setEndpoints(updatedEndpoints);
 
       postConnectSetup(client);
@@ -652,6 +712,17 @@ const LoginView: React.FC<{
         return 'reopen';
       }
 
+      // --- A refused post-login query: show the manager's text, not the wrapper's ---
+      if (
+        err instanceof SessionAuthFailureError ||
+        (err as Error | null)?.name === 'AuthorizationError'
+      ) {
+        if (showError) {
+          notification(t('error.LoginFailed'), refusalDetail(err) || undefined);
+        }
+        return 'reopen';
+      }
+
       // --- Unstructured errors (network failures, etc.) ---
       if (showError) {
         if (e.message) {
@@ -665,40 +736,65 @@ const LoginView: React.FC<{
     [notification, t, otpRequired, form, modal, logger],
   );
 
-  const handleGQLError = useCallback(
-    (err: unknown, showError: boolean) => {
-      setIsBlockPanelOpen(false);
-      if (showError) {
-        const e = err as {
-          title?: string;
-          message?: string;
-          status?: number;
-        };
-        if (e.message) {
-          if (e.status === 408) {
-            notification(
-              t('error.LoginSucceededManagerNotResponding'),
-              e.message,
-            );
-          } else {
-            notification(e.title || t('error.LoginFailed'), e.message);
-          }
+  const handleGQLError = (err: unknown, showError: boolean) => {
+    if (err instanceof LoginBootstrapIncompleteError) {
+      showSessionLoadError(err);
+      return;
+    }
+    setIsBlockPanelOpen(false);
+    if (showError) {
+      const e = err as {
+        title?: string;
+        message?: string;
+        status?: number;
+      };
+      // connectViaGQL rethrows the app environment's AuthorizationError as is.
+      if (
+        err instanceof SessionAuthFailureError ||
+        (err as Error | null)?.name === 'AuthorizationError'
+      ) {
+        notification(t('error.LoginFailed'), refusalDetail(err) || undefined);
+      } else if (e.message) {
+        if (e.status === 408) {
+          notification(
+            t('error.LoginSucceededManagerNotResponding'),
+            e.message,
+          );
         } else {
-          notification(t('error.LoginInformationMismatch'));
+          notification(e.title || t('error.LoginFailed'), e.message);
         }
+      } else {
+        notification(t('error.LoginInformationMismatch'));
       }
-      open();
-      setIsLoading(false);
-    },
-    [notification, t, open],
-  );
+    }
+    open();
+    setIsLoading(false);
+  };
 
   const connectUsingSession = useCallback(
-    async (showError = true, endpointOverride?: string) => {
+    async (
+      showError = true,
+      endpointOverride?: string,
+      isReloginAfterPasswordChange = false,
+    ) => {
       const ep = (endpointOverride ?? apiEndpoint).trim();
       if (ep === '') {
         setIsBlockPanelOpen(false);
         open();
+        return;
+      }
+      const attempt = loginAttemptRef.current;
+      const isCancelled = () => attempt !== loginAttemptRef.current;
+
+      const probed = probedSessionRef.current;
+      probedSessionRef.current = null;
+      if (!showError && probed?.endpoint === ep) {
+        clientRef.current = probed.client;
+        try {
+          await doGQLConnect(probed.client, probed.bootstrap, attempt);
+        } catch (err: unknown) {
+          if (!isCancelled()) handleGQLError(err, showError);
+        }
         return;
       }
 
@@ -709,31 +805,35 @@ const LoginView: React.FC<{
       const { client } = createBackendAIClient(userId, password, ep, 'SESSION');
       clientRef.current = client;
 
+      // The session probe runs alongside the reachability check, which is
+      // awaited first so Backspace can still abort it.
+      const sessionProbe = probeLoginSession(client).catch((err: unknown) =>
+        err instanceof LoginBootstrapIncompleteError ? err : null,
+      );
       try {
-        await client.get_manager_version();
-      } catch {
+        await probeManager(client);
+      } catch (err: unknown) {
+        if (isCancelled()) return;
         setIsBlockPanelOpen(false);
         open();
         setIsLoading(false);
-        if (showError) {
+        if (showError && !(err instanceof LoginProbeCancelledError)) {
           notification(t('error.CannotConnectToServer'));
         }
         return;
       }
 
-      // Check if already logged in
-      let isLogon = false;
-      try {
-        isLogon = !!(await client.check_login());
-      } catch {
-        isLogon = false;
+      const bootstrap = await sessionProbe;
+      if (isCancelled()) return;
+      if (bootstrap instanceof LoginBootstrapIncompleteError) {
+        showSessionLoadError(bootstrap);
+        return;
       }
-
-      if (isLogon) {
+      if (bootstrap) {
         try {
-          await doGQLConnect(client);
+          await doGQLConnect(client, bootstrap, attempt);
         } catch (err: unknown) {
-          handleGQLError(err, showError);
+          if (!isCancelled()) handleGQLError(err, showError);
         }
         return;
       }
@@ -755,17 +855,35 @@ const LoginView: React.FC<{
       // with structured info from _wrapWithPromise.
       try {
         await client.login(otp, forceLoginApprovedRef.current);
-        await doGQLConnect(client);
+        await doGQLConnect(client, undefined, attempt);
         return;
       } catch (err: unknown) {
+        if (isCancelled()) return;
+        if (err instanceof LoginBootstrapIncompleteError) {
+          showSessionLoadError(err);
+          return;
+        }
         setIsBlockPanelOpen(false);
 
-        const handled = handleLoginError(err, showError, userId, password);
-        if (handled === 'keep-open') {
-          // A dedicated modal (password reset, TOTP registration) was opened.
-          // Keep the login panel open to preserve form values for child modals.
-          setIsLoading(false);
-          return;
+        // The server can report a password change as applied when it was not
+        // (BA-8218); retrying the unapplied password only burns the lockout budget.
+        if (
+          isReloginAfterPasswordChange &&
+          isCredentialMismatchLoginError(err)
+        ) {
+          form.setFieldValue('password', '');
+          notification(
+            t('login.NewPasswordMayNotBeApplied'),
+            t('login.NewPasswordMayNotBeAppliedDesc'),
+          );
+        } else {
+          const handled = handleLoginError(err, showError, userId, password);
+          if (handled === 'keep-open') {
+            // A dedicated modal (password reset, TOTP registration) was opened.
+            // Keep the login panel open to preserve form values for child modals.
+            setIsLoading(false);
+            return;
+          }
         }
       }
 
@@ -793,12 +911,16 @@ const LoginView: React.FC<{
       const { client } = createBackendAIClient(apiKey, secretKey, ep, 'API');
       clientRef.current = client;
       client.ready = false;
+      const attempt = loginAttemptRef.current;
 
       try {
-        await client.get_manager_version();
-        await doGQLConnect(client);
-      } catch {
-        notification(t('error.CannotConnectToServer'));
+        await probeManager(client);
+        await doGQLConnect(client, undefined, attempt);
+      } catch (err: unknown) {
+        if (attempt !== loginAttemptRef.current) return;
+        if (!(err instanceof LoginProbeCancelledError)) {
+          notification(t('error.CannotConnectToServer'));
+        }
         setIsLoading(false);
       }
     },
@@ -807,6 +929,8 @@ const LoginView: React.FC<{
 
   const handleLogin = useCallback(async () => {
     setLoginError(null);
+    const isReloginAfterPasswordChange = reloginAfterPasswordChangeRef.current;
+    reloginAfterPasswordChangeRef.current = false;
 
     const loginAttempt = (globalThis as any).backendaioptions.get(
       'login_attempt',
@@ -868,7 +992,7 @@ const LoginView: React.FC<{
       await loadConfigFromWebServer(ep);
     }
 
-    if (connectionMode === 'SESSION') {
+    if (effectiveConnectionMode === 'SESSION') {
       const userId = (form.getFieldValue('user_id') || '').trim();
       const password = form.getFieldValue('password') || '';
 
@@ -882,7 +1006,7 @@ const LoginView: React.FC<{
         setIsLoading(false);
         return;
       }
-      await connectUsingSession(true, ep);
+      await connectUsingSession(true, ep, isReloginAfterPasswordChange);
     } else {
       const apiKey = form.getFieldValue('api_key') || '';
       const secretKey = form.getFieldValue('secret_key') || '';
@@ -903,7 +1027,7 @@ const LoginView: React.FC<{
     loginConfig,
     form,
     apiEndpoint,
-    connectionMode,
+    effectiveConnectionMode,
     connectUsingSession,
     connectUsingAPI,
     notification,
@@ -931,9 +1055,9 @@ const LoginView: React.FC<{
       if ((globalThis as Record<string, unknown>).isElectron) {
         await loadConfigFromWebServer(ep);
       }
-      if (connectionMode === 'SESSION') {
+      if (effectiveConnectionMode === 'SESSION') {
         await connectUsingSession(showError, ep);
-      } else if (connectionMode === 'API') {
+      } else if (effectiveConnectionMode === 'API') {
         await connectUsingAPI(showError, ep);
       } else {
         open();
@@ -941,7 +1065,7 @@ const LoginView: React.FC<{
     },
     [
       resolveEndpoint,
-      connectionMode,
+      effectiveConnectionMode,
       connectUsingSession,
       connectUsingAPI,
       open,
@@ -955,24 +1079,33 @@ const LoginView: React.FC<{
     if ((globalThis as Record<string, unknown>).isElectron) {
       await loadConfigFromWebServer(ep);
     }
-    if (connectionMode === 'SESSION') {
+    if (effectiveConnectionMode === 'SESSION') {
       if (ep === '') return false;
       const { client } = createBackendAIClient('', '', ep, 'SESSION');
       clientRef.current = client;
+      const attempt = loginAttemptRef.current;
       try {
-        await client.get_manager_version();
-        const isLogon = await client.check_login();
-        return !!isLogon;
-      } catch {
-        return false;
+        const [, bootstrap] = await Promise.all([
+          probeManager(client),
+          probeLoginSession(client),
+        ]);
+        if (attempt !== loginAttemptRef.current) return false;
+        probedSessionRef.current = bootstrap
+          ? { endpoint: ep, client, bootstrap }
+          : null;
+        return bootstrap !== null;
+      } catch (err) {
+        // Live, only its user failed to load; the connect step shows the dialog.
+        return err instanceof LoginBootstrapIncompleteError;
       }
     }
     return false;
-  }, [resolveEndpoint, connectionMode]);
+  }, [resolveEndpoint, effectiveConnectionMode]);
 
   // Log out the current session on the server.
   // Used by the orchestration hook as `onLogoutSession`.
   const logoutSession = useCallback(async (): Promise<void> => {
+    probedSessionRef.current = null;
     if (clientRef.current) {
       await clientRef.current.logout();
     }
@@ -987,17 +1120,20 @@ const LoginView: React.FC<{
     onCheckLogin: checkLogin,
     onLogoutSession: logoutSession,
     apiEndpoint,
-    connectionMode,
+    connectionMode: effectiveConnectionMode,
   });
+
+  const canChangeSigninMode =
+    loginConfig.change_signin_support && !isApiSigninBlocked;
 
   const handleConnectionModeChange = useCallback(
     (mode: ConnectionMode) => {
-      if (!loginConfig.change_signin_support) return;
+      if (!canChangeSigninMode) return;
       setConnectionMode(mode);
       setLoginError(null);
       localStorage.setItem('backendaiwebui.connection_mode', mode);
     },
-    [loginConfig.change_signin_support],
+    [canChangeSigninMode],
   );
 
   const showSignupDialog = useCallback(
@@ -1020,20 +1156,32 @@ const LoginView: React.FC<{
     (endpoint: string) => {
       const updated = endpoints.filter((e) => e !== endpoint);
       setEndpoints(updated);
-
       (globalThis as any).backendaioptions.set('endpoints', updated);
+
+      // The env-pinned row is not in `endpoints`, so dropping it has to be
+      // remembered separately or it would reappear on the next load.
+      if (devApiEndpointOverride === endpoint) {
+        const nextDismissed = Array.from(
+          new Set([...dismissedEnvEndpoints, endpoint]),
+        );
+        setDismissedEnvEndpoints(nextDismissed);
+        (globalThis as any).backendaioptions.set(
+          'dismissed_env_endpoints',
+          nextDismissed,
+        );
+      }
     },
-    [endpoints],
+    [endpoints, dismissedEnvEndpoints],
   );
 
-  // Dev-only: pin the VITE_DEFAULT_API_ENDPOINT value at the top of the endpoint
-  // history so it is always selectable (even before the first login) and clearly
-  // tagged as coming from the env — distinct from manually-saved endpoints, which
-  // keep their Delete action. `devApiEndpointOverride` is `undefined` in
+  // Dev-only: pin the VITE_DEFAULT_API_ENDPOINT value at the top of the history
+  // so it is selectable before the first login. It is an ordinary row otherwise
+  // — same delete action as the rest. `devApiEndpointOverride` is `undefined` in
   // production builds, so this whole branch is dead-code eliminated there.
-  const savedEndpoints = devApiEndpointOverride
-    ? endpoints.filter((ep) => ep !== devApiEndpointOverride)
-    : endpoints;
+  const isEnvEndpointPinned =
+    !!devApiEndpointOverride &&
+    !endpoints.includes(devApiEndpointOverride) &&
+    !dismissedEnvEndpoints.includes(devApiEndpointOverride);
 
   const selectEndpoint = useCallback(
     (ep: string) => {
@@ -1043,47 +1191,39 @@ const LoginView: React.FC<{
     [form],
   );
 
-  // PILOT-DECISION: antd `Dropdown` items carried a rendered `label` node and
-  // a single group-level `onClick({key})`; Astryx `DropdownMenuOption` has a
-  // required STRING `label` and a per-item `onClick` (MAPPING §3.7), so the
-  // handler is bound HERE instead of in LoginFormPanel. Consequences:
-  //   - the "Endpoint history" header row becomes a native
-  //     `{type: 'section', title}` (better than antd's disabled fake row);
-  //   - the per-row trailing controls (the blue `env` Tag and the red
-  //     `Delete` button) have no destination — `DropdownMenuItemData` has no
-  //     trailing slot — so the env marker folds into the label text and the
-  //     delete action becomes its own menu row per endpoint.
-  const endpointMenuItems: DropdownMenuOption[] = [
-    {
-      type: 'section',
-      title: t('login.EndpointHistory'),
-      items: [
-        ...(devApiEndpointOverride
-          ? [
-              {
-                label: `${devApiEndpointOverride} (env)`,
-                onClick: () => selectEndpoint(devApiEndpointOverride ?? ''),
-              },
-            ]
-          : []),
-        ...(savedEndpoints.length === 0
-          ? devApiEndpointOverride
-            ? []
-            : [{ label: t('login.NoEndpointSaved'), isDisabled: true }]
-          : savedEndpoints.flatMap((ep) => [
-              {
-                label: ep,
-                onClick: () => selectEndpoint(ep),
-              },
-              {
-                label: `${t('button.Delete')}: ${ep}`,
-                icon: <Trash2Icon size="1em" />,
-                onClick: () => deleteEndpoint(ep),
-              },
-            ])),
-      ],
-    },
+  const endpointHistory: EndpointHistoryEntry[] = [
+    ...(isEnvEndpointPinned && devApiEndpointOverride
+      ? [{ endpoint: devApiEndpointOverride, isFromEnv: true }]
+      : []),
+    ...endpoints.map((endpoint) => ({ endpoint })),
   ];
+
+  // Dev-only: Backspace cancels a login stuck on an unreachable endpoint, so the
+  // form comes back without waiting out the timeout.
+  // The loading splash itself is handled by the inline script in index.html.
+  const onDevCancelLogin = useEffectEvent(() => {
+    if (escapeLoginProbe()) {
+      logger.info('[dev] login probe aborted with Backspace');
+      return;
+    }
+    if (!isLoading || (globalThis as any).backendaiclient?.ready === true) {
+      return;
+    }
+    loginAttemptRef.current += 1;
+    probedSessionRef.current = null;
+    setIsBlockPanelOpen(false);
+    open();
+    setIsLoading(false);
+    logger.info('[dev] login cancelled with Backspace');
+  });
+  useEffect(() => {
+    if (!import.meta.env.DEV) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Backspace') onDevCancelLogin();
+    };
+    window.addEventListener('keydown', onKeyDown, true);
+    return () => window.removeEventListener('keydown', onKeyDown, true);
+  }, []);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -1122,7 +1262,12 @@ const LoginView: React.FC<{
         isLoading={isLoading}
         loginError={loginError}
         onClearLoginError={() => setLoginError(null)}
-        connectionMode={connectionMode}
+        connectionMode={effectiveConnectionMode}
+        signinModeDisabled={
+          isApiSigninBlocked
+            ? { reason: t('login.APISigninNeedsManagerEndpoint') }
+            : false
+        }
         loginConfig={loginConfig}
         apiEndpoint={apiEndpoint}
         otpRequired={otpRequired}
@@ -1135,9 +1280,15 @@ const LoginView: React.FC<{
         showEndpointInput={showEndpointInput}
         isEndpointDisabled={isEndpointDisabled}
         form={form}
-        endpointMenuItems={endpointMenuItems}
+        endpointHistory={endpointHistory}
+        onSelectEndpoint={selectEndpoint}
+        onDeleteEndpoint={deleteEndpoint}
         onKeyDown={handleKeyDown}
         onLogin={handleLogin}
+        onReloginAfterPasswordChange={() => {
+          reloginAfterPasswordChangeRef.current = true;
+          handleLogin();
+        }}
         onConnectionModeChange={handleConnectionModeChange}
         onShowSignupDialog={showSignupDialog}
         onSAMLLogin={handleSAMLLogin}
@@ -1168,11 +1319,67 @@ const LoginView: React.FC<{
         }
         closable={false}
         mask={{ closable: false }}
-        destroyOnHidden
       >
         <div style={{ textAlign: 'center', paddingTop: 15 }}>
           {blockMessage}
         </div>
+      </BAIModal>
+
+      <BAIModal
+        open={sessionLoadError !== null}
+        title={t('login.AccountInfoLoadFailed')}
+        footer={
+          <BAIFlex gap="xs" justify="end">
+            {/* An act-as tab shares the super admin's cookie; never log it out. */}
+            {!getActAsTarget() && (
+              <Button
+                onClick={async () => {
+                  try {
+                    await logoutSession();
+                  } catch (err) {
+                    // The cookie is still live, so the login form would be refused.
+                    logger.error('[LoginView] logout failed', err);
+                    setIsSessionLogoutFailed(true);
+                    return;
+                  }
+                  setSessionLoadError(null);
+                  open();
+                }}
+                label={t('webui.menu.LogOut')}
+              />
+            )}
+            <Button
+              variant="primary"
+              onClick={() => {
+                setSessionLoadError(null);
+                setIsLoading(true);
+                connectUsingSession(true);
+              }}
+              label={t('button.Retry')}
+            />
+          </BAIFlex>
+        }
+        closable={false}
+        mask={{ closable: false }}
+      >
+        <BAIFlex direction="column" align="stretch" gap="xs">
+          <Text as="p" display="block" style={{ margin: 0 }}>
+            {t('login.AccountInfoLoadFailedDesc')}
+          </Text>
+          {sessionLoadError ? (
+            <Text
+              as="p"
+              display="block"
+              type="supporting"
+              style={{ margin: 0, whiteSpace: 'pre-wrap' }}
+            >
+              {sessionLoadError}
+            </Text>
+          ) : null}
+          {isSessionLogoutFailed ? (
+            <BAIAlert type="error" showIcon title={t('error.UnknownError')} />
+          ) : null}
+        </BAIFlex>
       </BAIModal>
     </>
   );

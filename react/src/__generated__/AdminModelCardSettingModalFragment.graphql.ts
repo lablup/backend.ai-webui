@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4cd7ad526272124a9e7189f6e7da3c6e>>
+ * @generated SignedSource<<a0cf1088526602f5cf69791a3ffa5e39>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,7 +13,6 @@ export type ModelCardV2AccessLevel = "INTERNAL" | "PUBLIC" | "%future added valu
 import { FragmentRefs } from "relay-runtime";
 export type AdminModelCardSettingModalFragment$data = {
   readonly accessLevel: ModelCardV2AccessLevel;
-  readonly domainName: string;
   readonly id: string;
   readonly metadata: {
     readonly architecture: string | null | undefined;
@@ -99,13 +98,6 @@ return {
           "name": "VFolderNodeIdenticonV2Fragment"
         }
       ],
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "domainName",
       "storageKey": null
     },
     {
@@ -216,6 +208,6 @@ return {
 };
 })();
 
-(node as any).hash = "fc20746dc758eebbc7867c29352fafa2";
+(node as any).hash = "706f9e7dde547287206f93f080acecdf";
 
 export default node;

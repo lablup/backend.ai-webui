@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<dc3970cf2285ab564a3dbffa551c72c1>>
+ * @generated SignedSource<<0f6cb09a415202d4277149447c6e2e7b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -399,16 +399,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "a60c7187a8a98fe197d4e2f0ffe9e553",
+    "cacheID": "2445954f7e75b75312adb8dc4b6715b2",
     "id": null,
     "metadata": {},
     "name": "useRuntimeParameterSchemaPresetsQuery",
     "operationKind": "query",
-    "text": "query useRuntimeParameterSchemaPresetsQuery(\n  $filter: RuntimeVariantPresetFilter\n  $orderBy: [RuntimeVariantPresetOrderBy!]\n) {\n  runtimeVariantPresetsResult: runtimeVariantPresets(filter: $filter, orderBy: $orderBy, first: 100) {\n    edges {\n      node {\n        id\n        name\n        description\n        rank\n        category\n        displayName\n        required @since(version: \"26.4.4\")\n        targetSpec {\n          presetTarget\n          valueType\n          defaultValue\n          key\n        }\n        uiOption {\n          uiType\n          slider {\n            min\n            max\n            step\n          }\n          number {\n            min\n            max\n          }\n          choices {\n            items {\n              value\n              label\n            }\n          }\n          text {\n            placeholder\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query useRuntimeParameterSchemaPresetsQuery(\n  $filter: RuntimeVariantPresetFilter\n  $orderBy: [RuntimeVariantPresetOrderBy!]\n) {\n  runtimeVariantPresetsResult: runtimeVariantPresets(filter: $filter, orderBy: $orderBy, first: 100) {\n    edges {\n      node {\n        id\n        name\n        description\n        rank\n        category\n        displayName\n        required\n        targetSpec {\n          presetTarget\n          valueType\n          defaultValue\n          key\n        }\n        uiOption {\n          uiType\n          slider {\n            min\n            max\n            step\n          }\n          number {\n            min\n            max\n          }\n          choices {\n            items {\n              value\n              label\n            }\n          }\n          text {\n            placeholder\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "eb11f28932562bb0bc22819e3555441d";
+(node as any).hash = "ce7dffcae5ebed903f93c2c289b56982";
 
 export default node;

@@ -14,7 +14,8 @@ A **Project Admin** is a user who has been granted administrative authority over
 
 When you open the project dropdown in the header, projects in which you have the project-admin role are marked with a shield-shaped badge next to the project name. Hovering the badge displays a **Project Admin** tooltip, confirming that selecting this project will reveal the project-admin sidebar entries described below.
 
-![](../images/header_project_selector_with_admin_badge.png)
+![=260px](../images/header_project_selector_with_admin_badge.png)
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 Switching to a different project from the header's project selector re-evaluates the user's role: the same user may act as a project admin in one project and as a regular user in another within the same login session. To learn how project-admin roles are granted and revoked, see [Grant Project Admin Authority](#grant-project-admin) in the RBAC Management chapter.
 
@@ -23,6 +24,7 @@ Because project-admin authority is re-evaluated per selected project, the pages 
 :::
 
 ![](../images/forbidden_page.png)
+<!-- TODO(screenshot): recapture while logged in as a user who lacks project-admin rights on the requested project. This image was captured with the superadmin account. -->
 
 <a id="set-project-admin"></a>
 
@@ -58,18 +60,20 @@ When you add several users at once, any that fail are surfaced through an error 
 
 ## The Project Admin sidebar
 
-When you select a project in which you are a project admin, the sidebar's **Operations** section displays four entries dedicated to managing that project:
+When you select a project in which you are a project admin, the sidebar shows a **Project Settings** entry. Selecting it switches the sidebar to the project management menu, whose **Operations** section lists four entries dedicated to managing that project:
 
 - **Users** — the members of the current project
 - **Data** — the storage folders owned by the current project
 - **Sessions** — the compute sessions owned by users in the current project
 - **Deployments** — the model deployments owned by the current project
 
-![](../images/project_admin_sidebar.png)
+![=240px](../images/project_admin_sidebar.png)
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 On the project-admin pages, only the items under the project selected with the project selector at the top are shown. You can check this through the banner at the top of the page.
 
 ![](../images/project_admin_scope_alert.png)
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 <a id="refreshing-project-admin-pages"></a>
 
@@ -79,7 +83,8 @@ The project-admin pages provide the same refresh button. Click the refresh butto
 
 The dropdown button next to the refresh button opens the **Auto Refresh** menu, where you can choose the auto-refresh interval.
 
-![](../images/project_admin_auto_refresh_menu.png)
+![=86px](../images/project_admin_auto_refresh_menu.png)
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 <a id="users"></a>
 
@@ -88,6 +93,7 @@ The dropdown button next to the refresh button opens the **Auto Refresh** menu, 
 The **Users** page lists every user who belongs to the currently selected project. Use this page to review project membership at a glance — for example, to confirm who has access to the project's resources or to identify inactive accounts.
 
 ![](../images/project_admin_users_page.png)
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 The page provides the following controls:
 
@@ -103,6 +109,7 @@ The Users page is **read-only** for project admins. There are no create, edit, o
 The **Data** page lists the storage folders (vfolders) owned by the currently selected project. Use this page to create project-shared folders, restore folders that were accidentally deleted, or purge folders that no longer need to be retained.
 
 ![](../images/project_admin_data_page.png)
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 The page provides the following controls:
 
@@ -113,6 +120,8 @@ The page provides the following controls:
 
 - **Property filter**: Filter the list using the standard storage-folder property filter.
 
+Use a folder's **Edit labels** action to attach key-value labels to it, or select several folders and click **Add labels** to label them in bulk.
+
 ### Create a folder
 
 To create a new folder from this page:
@@ -121,7 +130,8 @@ To create a new folder from this page:
 2. Fill in the folder details in the creation modal.
 3. Click **Create** to create the folder.
 
-![](../images/project_admin_create_folder_modal.png)
+![=650px](../images/project_admin_create_folder_modal.png)
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 :::info
 Folders created from the Project Admin Data page are always **project folders** — the creation modal has no folder-type selection. The modal displays the following message to make this explicit:
@@ -139,6 +149,7 @@ Switch to the **Trash** tab to see folders that have been soft-deleted. Select o
 - **Delete forever**: Permanently purge the selected folders. This action is irreversible and requires you to type the folder's name to confirm.
 
 ![](../images/project_admin_data_deleted_tab.png)
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 :::danger
 Permanently deleting a storage folder removes all of its contents and cannot be undone. The confirmation modal requires you to type the folder's name before the deletion button becomes enabled.
@@ -151,11 +162,14 @@ Permanently deleting a storage folder removes all of its contents and cannot be 
 The **Sessions** page lists the compute sessions owned by users in the currently selected project. Use this page to monitor active workloads, identify long-running sessions, or terminate sessions that are no longer needed.
 
 ![](../images/project_admin_sessions_page.png)
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 The page provides the following controls:
 
 - **Running / Finished** segmented control: Toggle between currently running sessions and sessions that have already finished.
 - **Property filter and sorting**: Filter the list by ID, Session Name, or Owner. The Owner value is picked from a searchable dropdown of user accounts rather than typed as a UUID, and the resulting filter tag shows the account's email address. Click a sortable column header to sort the table.
+
+Sessions take key-value labels as well: use a session's **Edit labels** action, or select several sessions and click **Add labels** to label them in bulk.
 
 ### Terminate sessions
 
@@ -167,7 +181,8 @@ To terminate one or more sessions:
 4. Optionally select the **Force Terminate** checkbox to terminate or cancel the sessions regardless of their current status. Enabling this option displays a warning and changes the confirm button label from **Terminate** to **Force Terminate**.
 5. Click the confirm button to terminate the sessions.
 
-![](../images/project_admin_terminate_session_modal.png)
+![=520px](../images/project_admin_terminate_session_modal.png)
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 :::warning
 Use **Force Terminate** only when a session is stuck and its state does not change for an unreasonably long time. Force terminate does not delete the actual containers on the agent(s), so manual cleanup may be required afterward.
@@ -184,11 +199,12 @@ Clicking a session name on the project-admin Sessions page does not currently op
 The **Deployments** page lists the model deployments owned by the currently selected project. Use this page to oversee inference endpoints, edit deployment settings, or remove deployments that are no longer in use.
 
 ![](../images/project_admin_deployments_page.png)
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 The page provides the following controls:
 
 - **Running / Terminated** segmented control: Toggle between currently running deployments and deployments that have been terminated.
-- **Property filter**: Filter the list by Name, Tags, Endpoint URL, or Open to Public.
+- **Property filter**: Filter the list by Name, Endpoint URL, or Open to Public.
 
 The table displays the deployment's Name, Revision, Lifecycle, Replicas, Model, Owner, and Created At columns, along with the deployment's domain, project, and resource group when relevant.
 
@@ -201,8 +217,10 @@ The following actions are available on each deployment row:
 - Click the **deployment name** to navigate to the deployment detail page within the project-admin scope.
 - Click the **revision number** (`#N`) to open the revision detail drawer for the current revision.
 - Click the **pencil icon** to edit the deployment's configuration in the settings modal.
+- Use the **Edit labels** action to add, change, or remove the deployment's key-value labels.
 - Click the **trash icon** to delete the deployment. The confirmation modal requires you to type the deployment's name before the deletion is performed.
 
 ![](../images/project_admin_deployment_detail.png)
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 For details about deployment revisions, replicas, and traffic routing, see the [Deployments](#model-serving) chapter.

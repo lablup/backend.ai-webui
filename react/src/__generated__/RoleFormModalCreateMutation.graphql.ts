@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2e170102f543fd10247792f7f14dfb50>>
+ * @generated SignedSource<<1bc520c03451867f85825eee1ce1b03a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -144,16 +144,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "f6ee1aff1347d6722ece22d9cb82bc6f",
+    "cacheID": "84f42f3304d32d5014f199055fef1bf8",
     "id": null,
     "metadata": {},
     "name": "RoleFormModalCreateMutation",
     "operationKind": "mutation",
-    "text": "mutation RoleFormModalCreateMutation(\n  $input: CreateRoleInput!\n) {\n  adminCreateRole(input: $input) {\n    id\n    name\n    description\n    source\n    status\n    autoAssign @since(version: \"26.4.4\")\n    createdAt\n    updatedAt\n  }\n}\n"
+    "text": "mutation RoleFormModalCreateMutation(\n  $input: CreateRoleInput!\n) {\n  adminCreateRole(input: $input) {\n    id\n    name\n    description\n    source\n    status\n    autoAssign\n    createdAt\n    updatedAt\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "e12846e47fa1c002557ccc6b3d1bc458";
+(node as any).hash = "bc5c0da936725137a3a6ac2990723ae8";
 
 export default node;

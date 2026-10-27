@@ -154,7 +154,7 @@ describe('ResourcePresetSettingModal resource-group scope contract (ADR-0001, FR
     // match the role, not `input[type="number"]`.
     const memInput = screen
       .getByText('mem')
-      .closest('[data-bai-form-item]')!
+      .closest('.uic-form-item')!
       .querySelector('input[role="spinbutton"]')!;
     await user.type(memInput, '1');
     await user.click(screen.getByRole('button', { name: /button.Create/ }));

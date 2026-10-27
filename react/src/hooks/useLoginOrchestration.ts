@@ -134,6 +134,13 @@ export function useLoginOrchestration({
   // useEffectEvent captures the latest callback values without making
   // them dependencies of the useEffect below.
   const doOrchestrate = useEffectEvent(async () => {
+    // Set by useLogout (or the dev splash Backspace) before a reload: skip the
+    // silent re-login and show the login panel directly. Consumed before any
+    // early return so it cannot leak into a later load of this tab.
+    const wasIntentionalLogout =
+      sessionStorage.getItem(INTENTIONAL_LOGOUT_FLAG) === '1';
+    sessionStorage.removeItem(INTENTIONAL_LOGOUT_FLAG);
+
     // Edu-applauncher and applauncher pages are handled by React Router
     // routes that perform their own login flow.
     if (isAppLauncherPage()) return;
@@ -141,13 +148,7 @@ export function useLoginOrchestration({
     // If the client is already connected, nothing to do.
     if (isClientConnected()) return;
 
-    // Check for intentional logout flag set by useLogout before the reload.
-    // When present, skip silent re-login and show the login panel directly
-    // so that the "Connecting to Cluster" modal never appears after logout.
-    const wasIntentionalLogout =
-      sessionStorage.getItem(INTENTIONAL_LOGOUT_FLAG) === '1';
     if (wasIntentionalLogout) {
-      sessionStorage.removeItem(INTENTIONAL_LOGOUT_FLAG);
       onOpen();
       return;
     }

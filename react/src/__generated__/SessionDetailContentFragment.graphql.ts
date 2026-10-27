@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1868f76a027e0f325387e55cc6cbd4aa>>
+ * @generated SignedSource<<c12b877dd4babde26c1c523df2fd0627>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -59,7 +59,6 @@ export type SessionDetailContentFragment$data = {
   readonly scaling_group: string | null | undefined;
   readonly startup_command: string | null | undefined;
   readonly status: string | null | undefined;
-  readonly status_data: string | null | undefined;
   readonly tag: string | null | undefined;
   readonly terminated_at: string | null | undefined;
   readonly type: string | null | undefined;
@@ -73,7 +72,7 @@ export type SessionDetailContentFragment$data = {
       } | null | undefined;
     } | null | undefined>;
   } | null | undefined;
-  readonly " $fragmentSpreads": FragmentRefs<"AppLauncherModalFragment" | "BAISessionAgentIdsFragment" | "BAISessionClusterModeFragment" | "BAISessionTypeTokenFragment" | "ContainerCommitModalFragment" | "ContainerLogModalFragment" | "EditableSessionNameFragment" | "MountedVFolderLinksFragment" | "SessionAccessKeyFragment" | "SessionActionButtonsFragment" | "SessionIdleChecksNodeFragment" | "SessionReservationFragment" | "SessionStatusBadgeFragment" | "SessionStatusDetailModalFragment" | "SessionUsageMonitorFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"AppLauncherModalFragment" | "BAISessionAgentIdsFragment" | "BAISessionClusterModeFragment" | "BAISessionTypeTokenFragment" | "ContainerCommitModalFragment" | "ContainerLogModalFragment" | "EditableSessionNameFragment" | "MountedVFolderLinksFragment" | "SessionAccessKeyFragment" | "SessionActionButtonsFragment" | "SessionIdleChecksNodeFragment" | "SessionReservationFragment" | "SessionStatusBadgeFragment" | "SessionUsageMonitorFragment">;
   readonly " $fragmentType": "SessionDetailContentFragment";
 } | null | undefined;
 export type SessionDetailContentFragment$key = {
@@ -195,13 +194,6 @@ return {
       "storageKey": null
     },
     (v3/*: any*/),
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "status_data",
-      "storageKey": null
-    },
     {
       "alias": null,
       "args": null,
@@ -444,11 +436,6 @@ return {
     {
       "args": null,
       "kind": "FragmentSpread",
-      "name": "SessionStatusDetailModalFragment"
-    },
-    {
-      "args": null,
-      "kind": "FragmentSpread",
       "name": "AppLauncherModalFragment"
     },
     {
@@ -477,6 +464,6 @@ return {
 };
 })();
 
-(node as any).hash = "6fadc80e1af29a6361c08ced0a5c11f8";
+(node as any).hash = "b79ba853d0304ae3ae731b640b2640d3";
 
 export default node;

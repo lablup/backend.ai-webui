@@ -14,12 +14,12 @@ import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import AppLauncherModal from './AppLauncherModal';
 import ContainerCommitModal from './ContainerCommitModal';
-import ContainerLogModal from './ContainerLogModal';
+import ContainerLogModal from './ContainerLogModalLazy';
 import SFTPConnectionInfoModal from './SFTPConnectionInfoModal';
 import TerminateSessionModal from './TerminateSessionModal';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { HStack } from '@astryxdesign/core/Stack';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { HStack } from '@lablup/ui-common/Stack';
 import {
   BAIAppIcon,
   BAIContainerCommitIcon,
@@ -93,13 +93,12 @@ const isAppSupported = (session: SessionActionButtonsFragment$data) => {
 const toAstryxSize = (size?: SessionActionButtonSize): 'sm' | 'md' | 'lg' =>
   size === 'small' ? 'sm' : 'md';
 
-// A disabled control must not keep a solid fill: inside an info Banner the theme
-// collapses `--color-accent` onto the text colour, so a half-opacity filled chip
-// still reads louder than an enabled neighbour. FR-3506.
+// A disabled member keeps the group's outlined surface and reads as disabled from
+// its glyph alone; a ghost member let the notice's tint through. FR-4023.
 const variantWhenEnabled = (
   isDisabled: boolean,
   variant: 'primary' | 'secondary',
-): 'primary' | 'secondary' | 'ghost' => (isDisabled ? 'ghost' : variant);
+): 'primary' | 'secondary' => (isDisabled ? 'secondary' : variant);
 
 const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
   sessionFrgmt,
@@ -305,6 +304,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
         isVisible('logs') && (
           <IconButton
             key="logs"
+            data-testid="session-container-logs-button"
             size={astryxSize}
             variant={variantWhenEnabled(isLogDisabled, 'secondary')}
             isDisabled={isLogDisabled}

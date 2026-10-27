@@ -1,6 +1,6 @@
 ---
 name: docs-update-planner
-description: Use this agent to plan user manual documentation updates. It can analyze PR/stack changes OR accept a feature description to identify what needs to be added or updated in the user manual (packages/backend.ai-webui-docs/). Examples: <example>Context: Developer has finished a PR adding a new feature and wants to check if docs need updating. user: 'Check if the docs need updating for this PR' assistant: 'I'll use the docs-update-planner agent to analyze PR changes and create a documentation update plan.' <commentary> The user wants to identify documentation gaps from code changes, which is exactly what this planner agent does. </commentary></example><example>Context: User describes a feature they want documented. user: 'We added a new bulk delete feature in the data page. Users can select multiple folders and delete them at once with a confirmation dialog.' assistant: 'I'll use the docs-update-planner to plan the documentation for the bulk delete feature.' <commentary> The user described a feature directly without referencing a PR, and the planner can work from this description. </commentary></example><example>Context: A PR stack adds a new admin feature. user: 'Plan docs updates for my current PR stack' assistant: 'I'll launch the docs-update-planner to analyze all changes in your PR stack and plan the necessary manual updates.' <commentary> The user needs documentation planning across multiple stacked PRs, perfect for this agent. </commentary></example>
+description: Plan user manual updates (packages/backend.ai-webui-docs/) from a PR, a PR stack, a Jira issue, or a plain feature description. Use when someone asks whether a change needs docs, or wants a documentation update plan before writing. Writes .agent-output/docs-update-plan-{topic}.md for docs-update-writer.
 tools: Glob, Grep, Read, Bash, WebFetch, WebSearch
 model: opus
 color: green
@@ -80,35 +80,7 @@ Whether from code changes or feature description, determine user-facing impact:
 
 ### Step 3: Map Changes to Documentation Sections
 
-Cross-reference the changes with existing documentation structure:
-
-```
-quickstart.md              - Getting started guide
-overview/overview.md       - System overview, architecture
-installation/installation.md - Installation guide
-login/login.md             - Login/signup flows
-header/header.md           - Header navigation
-start/start.md             - Start page
-dashboard/dashboard.md     - Dashboard page
-summary/summary.md         - Summary/resource overview
-vfolder/vfolder.md         - Data/storage folders
-session_page/session_page.md - Session management
-sessions_all/sessions_all.md - All sessions list
-mount_vfolder/mount_vfolder.md - Mounting folders to sessions
-share_vfolder/share_vfolder.md - Sharing folders
-model_serving/model_serving.md - Model serving/endpoints
-chat/chat.md               - Chat interface
-import_run/import_run.md   - Import & run
-my_environments/my_environments.md - Custom environments
-agent_summary/agent_summary.md - Agent summary (admin)
-statistics/statistics.md   - Usage statistics
-sftp_to_container/sftp_to_container.md - SFTP access
-user_settings/user_settings.md - User settings/preferences
-cluster_session/cluster_session.md - Cluster sessions
-admin_menu/admin_menu.md   - Admin menu features
-trouble_shooting/trouble_shooting.md - Troubleshooting
-appendix/appendix.md       - Appendix
-```
+Cross-reference the changes with the existing documentation structure. The page list and its grouping live in the `navigation` section of `packages/backend.ai-webui-docs/src/book.config.yaml`; read it rather than assuming a page exists.
 
 ### Step 4: Read Relevant Existing Documentation
 
@@ -217,9 +189,9 @@ See `packages/backend.ai-webui-docs/DOCUMENTATION-STYLE-GUIDE.md` for the full s
 - H3 (`###`) for subsections
 - Bullet lists (`-`) for features/options, `*` for nested sub-items
 - Numbered lists for step-by-step procedures
-- Indented text (3 spaces) for notes/warnings, no prefix markers
+- Admonitions (`:::note`, `:::warning`, ...) for notes/warnings; 3-space indented notes are legacy
 - `![](images/filename.png)` for images, placed after introductory text
-- Cross-references: `[link text <ref>](#section <ref>)`
+- Cross-references: `[Display Text](#anchor-id)`
 - Professional, instructional tone, second person, active voice
 - See `TERMINOLOGY.md` for standardized terminology
 

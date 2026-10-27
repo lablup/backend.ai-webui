@@ -6,15 +6,10 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
 /**
- * BAIComplexSelect is the Astryx-based select foundation (to-astryx ticket
- * 26) built on Astryx's `ComplexSelector`. It is the popup-body layer the
- * ~18 Relay-backed `*Select` wrappers (`BAIUserSelect`,
- * `BAIAdminProjectSelect`, …) share — see `BAIUserSelect.stories.tsx`
- * for a Relay-connected example with infinite scroll.
- *
- * Value contract is deliberately identical to antd `labelInValue`:
- * `{ label: string; value: string }` (or an array in `multiple` mode), so
- * `Form.Item`/`BAIFormItem` keep working without `getValueProps`/`normalize`.
+ * BAIComplexSelect is the BUI adapter over ui-common `PagedSelector`, shared
+ * by the Relay-backed `*Select` wrappers (`BAIUserSelect`,
+ * `BAIAdminProjectSelect`, …) — see `BAIUserSelect.stories.tsx` for a
+ * Relay-connected example with infinite scroll.
  */
 const meta: Meta<typeof BAIComplexSelect> = {
   title: 'Select/BAIComplexSelect',
@@ -25,13 +20,11 @@ const meta: Meta<typeof BAIComplexSelect> = {
     docs: {
       description: {
         component: `
-**BAIComplexSelect** re-implements the popup body of Astryx's \`ComplexSelector\` (search input, listbox, keyboard/ARIA, scroll container, footer) so infinite-scroll/server-search selects can be built on it.
+**BAIComplexSelect** is the BUI adapter over ui-common's \`PagedSelector\` (search box, listbox, keyboard/ARIA, scroll container, footer). It keeps the antd-shaped props the Relay wrappers use and a \`labelInValue\` value (\`{ label, value }\`, an array in \`multiple\` mode).
 
-## Dropped vs antd \`Select\` (ticket 26 PILOT-DECISIONs — simplicity policy)
-- **Virtualization is deferred.** One DOM row per loaded option; bounded by the pagination window (10–20 rows).
-- **\`label\` is a plain string**, not a ReactNode. Rich per-row content goes in \`description\`/\`extra\`.
-- **Trigger chips (multiple mode) are display-only** — no per-chip remove button (\`ComplexSelector\` renders the trigger label inside its own \`<button>\`, so a removable chip would nest a button in a button). Deselect by clicking the option row again.
-- No \`allowClear\`, controlled \`open\`, or imperative \`ref.focus()\`.
+- One DOM row per loaded option; the pagination window (10–20 rows) keeps that bounded.
+- \`label\` is a plain string. Rich per-row content goes in \`labelContent\`/\`description\`/\`extra\`.
+- Trigger chips (multiple mode, \`triggerDisplay="badges"\`) are display-only. Deselect by clicking the option row again.
 
 ## Relay wiring
 Server-paginated consumers pass \`endReached\` (-> Relay \`loadNext\`), \`isLoadingNext\`, \`total\`, and toggle \`onOpenChange\` to flip \`fetchPolicy\` between \`network-only\`/\`store-only\`. See \`BAIUserSelect\` for the full pattern.
@@ -49,7 +42,7 @@ Server-paginated consumers pass \`endReached\` (-> Relay \`loadNext\`), \`isLoad
     },
     hasSearch: {
       control: { type: 'boolean' },
-      description: 'Show the search TextInput above the listbox',
+      description: 'Show the search box above the listbox',
     },
     isLoading: { control: { type: 'boolean' } },
     isDisabled: { control: { type: 'boolean' } },

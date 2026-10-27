@@ -3,29 +3,22 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { Form, type FormInstance } from '../form-engine';
-import {
-  isAutoMountFolderName,
-  ownerEmailFromOwner,
-} from '../helper/vfolderMounts';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useMountableStorageHosts } from '../hooks/useMountableStorageHosts';
-import { useSuspendedAutoMountedFolders } from '../hooks/useSuspendedAutoMountedFolders';
-import { SessionLauncherFormValue } from '../pages/SessionLauncherPage';
+import type { SessionLauncherFormValue } from '../pages/SessionLauncherPage';
 import type { ProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import {
   BAIVFolderMountConfigInput,
-  safeDecodeUuid,
+  isAutoMountFolderName,
+  mountableVFolderScope,
   type BAIVFolderMountConfigInputRef,
-  type LegacyVFolder,
+  useSuspendedAutoMountedVFolders,
   useVFolderMountConfigFormRule,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef, useState } from 'react';
-
-// Dotfile folders are mounted by the session itself, so they are never offered.
-const isSelectableFolder = (folder: LegacyVFolder) =>
-  folder.status === 'ready' && !isAutoMountFolderName(folder.name);
 
 const SessionLauncherStorageStep: React.FC<{
   form: FormInstance<SessionLauncherFormValue>;
@@ -35,15 +28,12 @@ const SessionLauncherStorageStep: React.FC<{
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const mountConfigInputRef = useRef<BAIVFolderMountConfigInputRef>(null);
 
-  // `preserve` reads the raw store: `owner` has no registered Form.Item, and
-  // `setFieldValue` still notifies watchers through `setFields`.
-  const owner = Form.useWatch('owner', { form, preserve: true });
-  const ownerEmail = ownerEmailFromOwner(owner);
-
+  const baiClient = useSuspendedBackendaiClient();
+  const scope = mountableVFolderScope(baiClient.user_uuid, project.id);
   const mountableHosts = useMountableStorageHosts(project.id);
-  const autoMountedFolders = useSuspendedAutoMountedFolders({
-    ownerEmail,
-    currentProjectId: project.id,
+  // Shares the query the input reads, so the input's refetch reaches this rule.
+  const { autoMountedFolders } = useSuspendedAutoMountedVFolders({
+    scope,
     mountableHosts,
   });
   const mountConfigRule = useVFolderMountConfigFormRule({ autoMountedFolders });
@@ -62,13 +52,9 @@ const SessionLauncherStorageStep: React.FC<{
         >
           <BAIVFolderMountConfigInput
             ref={mountConfigInputRef}
-            currentProjectId={project.id}
-            currentProjectName={project.name}
-            ownerEmail={ownerEmail}
+            scope={scope}
             mountableHosts={mountableHosts}
-            autoMountedFolders={autoMountedFolders}
             folderExplorerPath={generateFolderPath}
-            filter={isSelectableFolder}
             onClickCreateFolder={() => setIsCreateModalOpen(true)}
           />
         </Form.Item>
@@ -76,17 +62,13 @@ const SessionLauncherStorageStep: React.FC<{
       <FolderCreateModalV2
         open={isCreateModalOpen}
         project={project}
-        onRequestClose={async (response) => {
+        onRequestClose={(response) => {
           setIsCreateModalOpen(false);
           if (!response) return;
-          // The select can only offer the new folder once its own
-          // `GET /folders` query has seen it.
-          await mountConfigInputRef.current?.refetch();
+          mountConfigInputRef.current?.refetch();
           // A dotfile folder is auto-mounted by the session, never selected.
           if (isAutoMountFolderName(response.metadata.name)) return;
-          // The create mutation answers with a Relay global id.
-          const vfolderId = safeDecodeUuid(response.id);
-          if (!vfolderId) return;
+          const vfolderId = response.entityId;
           const mounts = form.getFieldValue('vfolderMounts') ?? [];
           if (_.some(mounts, (mount) => mount.vfolderId === vfolderId)) return;
           form.setFieldValue('vfolderMounts', [

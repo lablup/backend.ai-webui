@@ -6,12 +6,13 @@ import { PurgeUsersModalBulkMutation } from '../__generated__/PurgeUsersModalBul
 import { PurgeUsersModalFragment$key } from '../__generated__/PurgeUsersModalFragment.graphql';
 import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { VStack } from '@astryxdesign/core/Stack';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { VStack } from '@lablup/ui-common/Stack';
 import {
   BAIBulkErrorModal,
   type BAIColumnsType,
   BAIDeleteConfirmModal,
+  type BAIDeleteConfirmModalProps,
   filterOutNullAndUndefined,
   toLocalId,
   useBAILogger,
@@ -25,7 +26,7 @@ import { graphql, useFragment, useMutation } from 'react-relay';
 // full component swap to BUI `BAIDeleteConfirmModal` rather than a
 // piecemeal Form/Checkbox rename. Purge is the permanent-delete flow
 // (`.claude/rules/destructive-confirmation.md`), and BAIDeleteConfirmModal
-// (BUI/antd) has no Astryx equivalent to extend in place. The public prop
+// (BUI) has no Astryx equivalent to extend in place. The public prop
 // contract (`usersFrgmt`/`open`/`onOk`/`onCancel`) is kept unchanged so
 // AdminUserManagement.tsx's 2 call sites don't need to change.
 interface PurgeFailure {
@@ -34,7 +35,10 @@ interface PurgeFailure {
   message: string;
 }
 
-export interface PurgeUsersModalProps {
+export interface PurgeUsersModalProps extends Pick<
+  BAIDeleteConfirmModalProps,
+  'afterOpenChange' | 'afterClose'
+> {
   usersFrgmt: PurgeUsersModalFragment$key;
   open?: boolean;
   onOk?: () => void;
@@ -46,6 +50,8 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
   open,
   onOk,
   onCancel,
+  afterOpenChange,
+  afterClose,
 }) => {
   'use memo';
 
@@ -78,13 +84,13 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
   const [failureReport, setFailureReport] = useState<{
     failures: PurgeFailure[];
     total: number;
+    purgedCount: number;
   } | null>(null);
 
   // `successes` only exists on 26.9.0+ managers; older ones reject the whole
   // document, so it is gated and the deprecated count is selected instead.
-  const supportsPerIdResults = useSuspendedBackendaiClient().supports(
-    'bulk-mutation-per-id-results',
-  );
+  const supportsPerIdResults =
+    useSuspendedBackendaiClient().isManagerVersionCompatibleWith('26.9.0');
 
   const [commitBulkPurge, isInFlightBulkPurge] =
     useMutation<PurgeUsersModalBulkMutation>(graphql`
@@ -130,14 +136,12 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
             reject(new Error(t('error.UnknownError')));
             return;
           }
-          const {
-            successes,
-            purgedCount: deprecatedCount,
-            failed,
-          } = adminBulkPurgeUsersV2;
+          const { successes, failed } = adminBulkPurgeUsersV2;
+          // `successes`/`failed` answer for every requested user exactly
+          // once; derive from that instead of trusting the deprecated count.
           const purgedCount = supportsPerIdResults
             ? (successes?.length ?? 0)
-            : (deprecatedCount ?? 0);
+            : userList.length - failed.length;
 
           if (failed.length > 0) {
             const emailByLocalId = _.fromPairs(
@@ -145,6 +149,7 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
             );
             setFailureReport({
               total: userList.length,
+              purgedCount,
               failures: _.map(failed, (f) => ({
                 key: f.userId,
                 email: emailByLocalId[f.userId] ?? f.userId,
@@ -153,14 +158,17 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
             });
           }
 
-          if (purgedCount > 0) {
+          // An empty `failed` list is success even at a zero count. A partial
+          // success keeps the confirm open under the report; `onOk` (close +
+          // reload) then runs once the report is dismissed.
+          if (failed.length === 0 || purgedCount > 0) {
             message.success(
               t('credential.UsersPermanentlyDeleted', {
                 total: userList.length,
                 count: purgedCount,
               }),
             );
-            onOk?.();
+            if (failed.length === 0) onOk?.();
             resolve();
           } else {
             reject(new Error(t('error.UnknownError')));
@@ -188,6 +196,8 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
         onOpenChange={(next) => {
           if (!next) onCancel?.();
         }}
+        afterOpenChange={afterOpenChange}
+        afterClose={afterClose}
         title={t('credential.PermanentlyDeleteUsers')}
         maskClosable={false}
         confirmLoading={isPending || isInFlightBulkPurge}
@@ -197,9 +207,6 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
         }))}
         requireConfirmInput
         confirmText={t('credential.PermanentlyDelete')}
-        inputLabel={t('credential.TypePermanentlyDelete', {
-          text: t('credential.PermanentlyDelete'),
-        })}
         inputProps={{ placeholder: t('credential.PermanentlyDelete') }}
         cannotBeUndoneText={t('dialog.warning.CannotBeUndone')}
         okText={t('credential.PermanentlyDelete')}
@@ -207,15 +214,17 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
         extraContent={
           <VStack gap={1} align="stretch">
             <CheckboxInput
-              label={t('credential.DeleteSharedVirtualFolders')}
               value={purgeSharedVfolders}
               onChange={setPurgeSharedVfolders}
-            />
+            >
+              {t('credential.DeleteSharedVirtualFolders')}
+            </CheckboxInput>
             <CheckboxInput
-              label={t('credential.DeleteDeploymentsAsWell')}
               value={deleteModelServices}
               onChange={setDeleteModelServices}
-            />
+            >
+              {t('credential.DeleteDeploymentsAsWell')}
+            </CheckboxInput>
           </VStack>
         }
         onOk={handleAction}
@@ -228,7 +237,10 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
         })}
         columns={failureColumns}
         dataSource={failureReport?.failures ?? []}
-        onRequestClose={() => setFailureReport(null)}
+        onRequestClose={() => {
+          setFailureReport(null);
+          if (failureReport && failureReport.purgedCount > 0) onOk?.();
+        }}
       />
     </>
   );

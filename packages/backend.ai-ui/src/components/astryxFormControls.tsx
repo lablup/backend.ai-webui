@@ -14,9 +14,10 @@
 
  What each adapter reconciles, per contract:
 
- 1. **`label` is a required string the control renders itself.** Every control
-    here sits inside a `Form.Item` / `BAIFormItem` that ALREADY prints the
-    label, so each passes `isLabelHidden` — otherwise the label renders twice.
+ 1. **`label` is a required string passed on as `aria-label`.** The ui-common
+    controls take no field chrome (the `Form.Item` prints the visible label);
+    `aria-label` names them outside an item. A visible checkbox label is its
+    `children`.
  2. **`onChange` takes the VALUE, not the event.** antd's `Form.Item` injects
     `onChange` and reads the new value back through rc-field-form's
     `defaultGetValueFromEvent`, which returns the first argument verbatim when
@@ -29,12 +30,12 @@
  antd-identical API, which is why the reconciliations above still read against
  antd's semantics. These adapters are only the control layer.
 */
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { NumberInput } from '@astryxdesign/core/NumberInput';
-import { Switch } from '@astryxdesign/core/Switch';
-import { TextArea } from '@astryxdesign/core/TextArea';
-import { TextInput } from '@astryxdesign/core/TextInput';
-import type { SizeValue } from '@astryxdesign/core/utils';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
+import { Switch } from '@lablup/ui-common/Switch';
+import { TextArea } from '@lablup/ui-common/TextArea';
+import { TextInput } from '@lablup/ui-common/TextInput';
+import type { SizeValue } from '@lablup/ui-common/utils';
 import React from 'react';
 import type { CSSProperties } from 'react';
 
@@ -43,7 +44,7 @@ export interface AstryxFormTextInputProps {
   value?: string;
   /** Injected by `Form.Item`. */
   onChange?: (value: string) => void;
-  /** Accessible name. Visually hidden — the `Form.Item` renders the visible one. */
+  /** Accessible name (`aria-label`); the `Form.Item` renders the visible one. */
   label: string;
   type?: 'text' | 'password' | 'email';
   placeholder?: string;
@@ -76,17 +77,12 @@ export const AstryxFormTextInput: React.FC<AstryxFormTextInputProps> = ({
       type={type}
       value={value ?? ''}
       onChange={(next) => onChange?.(next)}
-      label={label}
-      isLabelHidden
+      aria-label={label}
       placeholder={placeholder}
-      isDisabled={disabled}
+      disabled={disabled}
       hasAutoFocus={hasAutoFocus}
       hasClear={hasClear}
-      status={
-        status === 'error' || status === 'warning'
-          ? { type: status }
-          : undefined
-      }
+      status={status}
       width={width}
     />
   );
@@ -120,11 +116,10 @@ export const AstryxFormTextArea: React.FC<AstryxFormTextAreaProps> = ({
       {...(rest as object)}
       value={value ?? ''}
       onChange={(next) => onChange?.(next)}
-      label={label}
-      isLabelHidden
+      aria-label={label}
       rows={rows}
       placeholder={placeholder}
-      isDisabled={disabled}
+      disabled={disabled}
       width={width}
     />
   );
@@ -165,9 +160,8 @@ export const AstryxFormSwitch: React.FC<AstryxFormSwitchProps> = ({
       // field arrives as `undefined`, and Astryx's `Switch.value` is required.
       value={value ?? checked ?? false}
       onChange={(next) => onChange?.(next)}
-      label={label}
-      isLabelHidden
-      isDisabled={disabled}
+      aria-label={label}
+      disabled={disabled}
       size={size}
     />
   );
@@ -209,11 +203,12 @@ export const AstryxFormCheckbox: React.FC<AstryxFormCheckboxProps> = ({
       // Contract 3 in boolean form, as in `AstryxFormSwitch`.
       value={value ?? checked ?? false}
       onChange={(next) => onChange?.(next)}
-      label={label}
-      isLabelHidden={isLabelHidden}
-      isDisabled={disabled}
+      aria-label={isLabelHidden ? label : undefined}
+      disabled={disabled}
       size={size}
-    />
+    >
+      {isLabelHidden ? undefined : label}
+    </CheckboxInput>
   );
 };
 
@@ -232,6 +227,8 @@ export interface AstryxFormNumberInputProps {
   units?: string;
   placeholder?: string;
   disabled?: boolean;
+  /** Shows a clear button; clearing (or emptying the text) emits `null`. */
+  hasClear?: boolean;
   width?: SizeValue;
   [key: `data-${string}`]: string | undefined;
 }
@@ -246,6 +243,7 @@ export const AstryxFormNumberInput: React.FC<AstryxFormNumberInputProps> = ({
   units,
   placeholder,
   disabled,
+  hasClear,
   width = '100%',
   ...rest
 }) => {
@@ -254,15 +252,15 @@ export const AstryxFormNumberInput: React.FC<AstryxFormNumberInputProps> = ({
     <NumberInput
       {...(rest as object)}
       value={value ?? null}
-      onChange={(next) => onChange?.(next)}
-      label={label}
-      isLabelHidden
+      hasClear={hasClear ?? false}
+      onChange={(next: number | null) => onChange?.(next)}
+      aria-label={label}
       min={min}
       max={max}
       step={step}
       units={units}
       placeholder={placeholder}
-      isDisabled={disabled}
+      disabled={disabled}
       width={width}
     />
   );

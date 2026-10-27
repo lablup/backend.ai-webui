@@ -8,14 +8,14 @@ import BAIGeneralNotificationItem from './BAIGeneralNotificationItem';
 import BAIMultiStepNotificationItem from './BAIMultiStepNotificationItem';
 import BAINodeNotificationItem from './BAINodeNotificationItem';
 import './WEBUINotificationDrawer.css';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
 import {
   SegmentedControl,
   SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
-import { VStack } from '@astryxdesign/core/Stack';
-import { StatusDot } from '@astryxdesign/core/StatusDot';
+} from '@lablup/ui-common/SegmentedControl';
+import { VStack } from '@lablup/ui-common/Stack';
+import { StatusDot } from '@lablup/ui-common/StatusDot';
 import { BAIDrawer, BAIFlex } from 'backend.ai-ui';
 import { BellOff, EllipsisVertical } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
@@ -117,7 +117,7 @@ const WEBUINotificationDrawer: React.FC<Props> = ({
               setSelectedCategory(value as NotificationCategory)
             }
             size="sm"
-            label={t('notification.Notifications')}
+            aria-label={t('notification.Notifications')}
           >
             <SegmentedControlItem value="all" label={t('general.All')} />
             <SegmentedControlItem

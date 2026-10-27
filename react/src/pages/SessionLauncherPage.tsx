@@ -16,10 +16,10 @@ import { mainContentDivRefState } from '../components/MainLayout/MainLayout';
 import PortSelectFormItem, {
   PortSelectFormValues,
 } from '../components/PortSelectFormItem';
+import { ResourceNumbersOfSession } from '../components/ResourceNumbersOfSession';
 import ResourceAllocationFormItems, {
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
   ResourceAllocationFormValue,
-  isUnifiedAcceleratorSlot,
 } from '../components/SessionFormItems/ResourceAllocationFormItems';
 import SessionLauncherValidationTour from '../components/SessionLauncherErrorTourProps';
 import SessionLauncherFormIncompatibleValueChecker from '../components/SessionLauncherFormIncompatibleValueChecker';
@@ -28,9 +28,6 @@ import SessionLauncherStorageStep from '../components/SessionLauncherStorageStep
 import SessionNameFormItem, {
   SessionNameFormItemValue,
 } from '../components/SessionNameFormItem';
-import SessionOwnerSetterCard, {
-  SessionOwnerSetterFormValues,
-} from '../components/SessionOwnerSetterCard';
 import SessionTemplateModal from '../components/SessionTemplateModal';
 import {
   AstryxFormCheckbox,
@@ -41,49 +38,36 @@ import {
   AstryxFormTextInput,
 } from '../components/astryxFormControls';
 import { Form } from '../form-engine';
-import { formatDuration, convertToBinaryUnit } from '../helper';
+import { formatDuration } from '../helper';
 import { normalizeLegacyMountFields } from '../helper/vfolderMounts';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import {
-  useCurrentUserRole,
-  useResourceSlotsDetails,
-} from '../hooks/backendai';
 import {
   useCurrentProjectValue,
   useCurrentResourceGroupState,
 } from '../hooks/useCurrentProject';
 import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
 import { useStartSession } from '../hooks/useStartSession';
-import { theme, useBAIBreakpoint } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
-import { Button } from '@astryxdesign/core/Button';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { Card } from '@astryxdesign/core/Card';
-import { Divider } from '@astryxdesign/core/Divider';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { Grid as AstryxGrid } from '@astryxdesign/core/Grid';
-import { Heading } from '@astryxdesign/core/Heading';
-// FRONTIER (ticket 17): the Form ENGINE is still antd's — ticket 34's
-// self-hosted replacement is parked (see form-engine/engine.ts). Everything
-// INSIDE the items is Astryx as of wave 3: the controls go through the shared
-// `astryxFormControls` adapters, and `Steps` is the lab `Stepper`, which is a
-// real dependency now (`@astryxdesign/lab@0.3.0-canary.12db2a1`, already in
-// the graph for Drawer/Tour and for `EduAppLauncher`'s own Stepper).
-import { InputGroup } from '@astryxdesign/core/InputGroup';
-import { RadioList, RadioListItem } from '@astryxdesign/core/RadioList';
-import { VStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { Step, Stepper } from '@astryxdesign/lab';
-import * as stylex from '@stylexjs/stylex';
+import { Button } from '@lablup/ui-common/Button';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { Grid as AstryxGrid } from '@lablup/ui-common/Grid';
+import { Heading } from '@lablup/ui-common/Heading';
+// The form engine is ui-common's (`@lablup/ui-common/Form`); the controls
+// inside the items go through the shared `astryxFormControls` adapters.
+import { InputGroup } from '@lablup/ui-common/InputGroup';
+import { RadioList, RadioListItem } from '@lablup/ui-common/RadioList';
+import { Step, Stepper } from '@lablup/ui-common/Stepper';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import type { SessionResources as ClientSessionResources } from 'backend.ai-client';
 import {
   BAIPopconfirm,
+  BAICard,
   BAIFlex,
   BAIIntervalView,
-  BAIResourceNumberWithIcon,
   BAIUnmountAfterClose,
-  ResourceTypeIcon,
   type VFolderMountConfigValue,
   filterOutEmpty,
   generateRandomString,
@@ -92,6 +76,7 @@ import {
   useErrorMessageResolver,
   useToggle,
   useUpdatableState,
+  useBAIBreakpoint,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
@@ -137,7 +122,6 @@ export interface SessionResources {
   starts_at?: string;
   startupCommand?: string;
   bootstrap_script?: string;
-  owner_access_key?: string;
   enqueueOnly?: boolean;
   reuseIfExists?: boolean;
   dependencies?: string[];
@@ -198,8 +182,7 @@ export type SessionLauncherFormValue = SessionLauncherValue &
   ImageEnvironmentFormInput &
   ResourceAllocationFormValue &
   SessionLauncherVFolderMountValues &
-  PortSelectFormValues &
-  SessionOwnerSetterFormValues;
+  PortSelectFormValues;
 
 type SessionMode = 'normal' | 'inference' | 'import';
 
@@ -217,11 +200,7 @@ export type AppOption = {
 export type SessionLauncherStepKey =
   'sessionType' | 'environment' | 'storage' | 'network' | 'review';
 
-/**
- * antd `StepsProps['items'][number]`, restated as the three fields this page
- * actually sets. `status` was assigned per item at render time (see the
- * Stepper below) and has no lab counterpart, so it is not part of the shape.
- */
+/** The fields this page sets on a `Stepper` step. */
 type StepItem = {
   title: string;
   icon?: React.ReactNode;
@@ -232,8 +211,7 @@ interface StepPropsWithKey extends StepItem {
 }
 
 /**
- * Step-section container: Astryx `Card` + `Heading` composition replacing the
- * antd `Card title` (MAPPING.md §5.1). `hidden` keeps the original
+ * Step-section container. `hidden` keeps the original
  * `style={{display:'none'}}` show/hide behaviour, which preserves mounted
  * form state across steps (the form engine requirement).
  */
@@ -244,12 +222,9 @@ const StepCard: React.FC<{
 }> = ({ title, hidden, children }) => {
   'use memo';
   return (
-    <Card style={{ display: hidden ? 'none' : undefined }}>
-      <VStack gap={4} align="stretch">
-        {title ? <Heading level={5}>{title}</Heading> : null}
-        {children}
-      </VStack>
-    </Card>
+    <BAICard title={title} style={{ display: hidden ? 'none' : undefined }}>
+      {children}
+    </BAICard>
   );
 };
 
@@ -273,8 +248,7 @@ const SessionTypeRadioList: React.FC<{
     <RadioList
       value={value ?? ''}
       onChange={(next) => onChange?.(next)}
-      label={t('session.launcher.SessionType')}
-      isLabelHidden
+      aria-label={t('session.launcher.SessionType')}
       orientation="vertical"
     >
       <RadioListItem
@@ -298,8 +272,6 @@ const SessionLauncherPage = () => {
 
   const mainContentDivRef = useAtomValue(mainContentDivRefState);
   const baiClient = useSuspendedBackendaiClient();
-  const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
-  const currentUserRole = useCurrentUserRole();
   const [, setCurrentGlobalResourceGroup] = useCurrentResourceGroupState();
   // ADR-0001 (FR-3411): pages are the only readers of the ambient current
   // project; ResourceAllocationFormItems takes it as an explicit required
@@ -363,7 +335,6 @@ const SessionLauncherPage = () => {
           _.omit(form.getFieldsValue(), [
             'environments.image',
             'environments.customizedTag',
-            'owner',
             'envvars',
           ]),
           {
@@ -387,7 +358,7 @@ const SessionLauncherPage = () => {
       { history: 'push' },
     );
   };
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const { t } = useTranslation();
 
@@ -628,6 +599,7 @@ const SessionLauncherPage = () => {
         <BAIFlex
           direction="column"
           align="stretch"
+          gap="md"
           style={{ flex: 1, maxWidth: 700 }}
         >
           <BAIFlex direction="row" justify="between">
@@ -882,121 +854,118 @@ const SessionLauncherPage = () => {
                       }}
                     </Form.Item>
 
-                    {supportBatchTimeout ? (
-                      <Form.Item
-                        noStyle
-                        dependencies={[
-                          ['batch', 'timeoutEnabled'],
-                          ['batch', 'timeoutUnit'],
-                        ]}
-                      >
-                        {() => {
-                          const timeout = form.getFieldValue([
-                            'batch',
-                            'timeout',
-                          ]);
-                          const unit = form.getFieldValue([
-                            'batch',
-                            'timeoutUnit',
-                          ]);
+                    <Form.Item
+                      noStyle
+                      dependencies={[
+                        ['batch', 'timeoutEnabled'],
+                        ['batch', 'timeoutUnit'],
+                      ]}
+                    >
+                      {() => {
+                        const timeout = form.getFieldValue([
+                          'batch',
+                          'timeout',
+                        ]);
+                        const unit = form.getFieldValue([
+                          'batch',
+                          'timeoutUnit',
+                        ]);
 
-                          const timeDuration = dayjs.duration(
-                            timeout,
-                            unit ?? 's',
-                          );
+                        const timeDuration = dayjs.duration(
+                          timeout,
+                          unit ?? 's',
+                        );
 
-                          const formattedDuration = formatDuration(
-                            timeDuration,
-                            t,
-                          );
+                        const formattedDuration = formatDuration(
+                          timeDuration,
+                          t,
+                        );
 
-                          const durationText =
-                            !_.isNull(timeout) && _.toFinite(timeout) > 0
-                              ? formattedDuration
-                              : null;
-                          return (
-                            <Form.Item
-                              label={t(
-                                'session.launcher.BatchJobTimeoutDuration',
-                              )}
-                              tooltip={t(
-                                'session.launcher.BatchJobTimeoutDurationDesc',
-                              )}
-                              // extra={durationText}
-                              help={durationText}
-                            >
-                              <BAIFlex direction="row" gap={'xs'}>
-                                <Form.Item
-                                  noStyle
-                                  name={['batch', 'timeoutEnabled']}
-                                  valuePropName="checked"
-                                >
-                                  <AstryxFormCheckbox
-                                    label={t('session.launcher.Enable')}
-                                    onValueChange={(checked) => {
-                                      if (checked === false) {
-                                        form.setFieldValue(
-                                          ['batch', 'timeout'],
-                                          undefined,
-                                        );
-                                      }
-                                      form.validateFields([
+                        const durationText =
+                          !_.isNull(timeout) && _.toFinite(timeout) > 0
+                            ? formattedDuration
+                            : null;
+                        return (
+                          <Form.Item
+                            label={t(
+                              'session.launcher.BatchJobTimeoutDuration',
+                            )}
+                            tooltip={t(
+                              'session.launcher.BatchJobTimeoutDurationDesc',
+                            )}
+                            // extra={durationText}
+                            help={durationText}
+                          >
+                            <BAIFlex direction="row" gap={'xs'}>
+                              <Form.Item
+                                noStyle
+                                name={['batch', 'timeoutEnabled']}
+                                valuePropName="checked"
+                              >
+                                <AstryxFormCheckbox
+                                  label={t('session.launcher.Enable')}
+                                  onValueChange={(checked) => {
+                                    if (checked === false) {
+                                      form.setFieldValue(
                                         ['batch', 'timeout'],
-                                      ]);
-                                    }}
-                                  />
-                                </Form.Item>
-                                <Form.Item
-                                  noStyle
-                                  dependencies={[['batch', 'timeoutEnabled']]}
-                                >
-                                  {() => {
-                                    const disabled =
-                                      form.getFieldValue([
-                                        'batch',
-                                        'timeoutEnabled',
-                                      ]) !== true;
-                                    return (
-                                      <>
-                                        {/* antd `Space.Compact` (weld the
+                                        undefined,
+                                      );
+                                    }
+                                    form.validateFields([['batch', 'timeout']]);
+                                  }}
+                                />
+                              </Form.Item>
+                              <Form.Item
+                                noStyle
+                                dependencies={[['batch', 'timeoutEnabled']]}
+                              >
+                                {() => {
+                                  const disabled =
+                                    form.getFieldValue([
+                                      'batch',
+                                      'timeoutEnabled',
+                                    ]) !== true;
+                                  return (
+                                    <>
+                                      {/* antd `Space.Compact` (weld the
                                             number field and its unit select
                                             into one control) -> Astryx
                                             `InputGroup`, the documented
                                             destination for the input flavour
                                             of Compact (MAPPING §"Space"). */}
-                                        <InputGroup
+                                      <InputGroup
+                                        label={t(
+                                          'session.launcher.BatchJobTimeoutDuration',
+                                        )}
+                                        // `BAIFormItem` already renders the
+                                        // visible label above; without this
+                                        // the group printed it a second time
+                                        // inside the field (measured).
+                                        isLabelHidden
+                                      >
+                                        <Form.Item
+                                          name={['batch', 'timeout']}
                                           label={t(
                                             'session.launcher.BatchJobTimeoutDuration',
                                           )}
-                                          // `BAIFormItem` already renders the
-                                          // visible label above; without this
-                                          // the group printed it a second time
-                                          // inside the field (measured).
-                                          isLabelHidden
+                                          noStyle
+                                          dependencies={[
+                                            ['batch', 'timeoutEnabled'],
+                                          ]}
+                                          rules={[
+                                            {
+                                              min: 0,
+                                              type: 'number',
+                                              message: t(
+                                                'error.AllowsPositiveNumberOnly',
+                                              ),
+                                            },
+                                            {
+                                              required: !disabled,
+                                            },
+                                          ]}
                                         >
-                                          <Form.Item
-                                            name={['batch', 'timeout']}
-                                            label={t(
-                                              'session.launcher.BatchJobTimeoutDuration',
-                                            )}
-                                            noStyle
-                                            dependencies={[
-                                              ['batch', 'timeoutEnabled'],
-                                            ]}
-                                            rules={[
-                                              {
-                                                min: 0,
-                                                type: 'number',
-                                                message: t(
-                                                  'error.AllowsPositiveNumberOnly',
-                                                ),
-                                              },
-                                              {
-                                                required: !disabled,
-                                              },
-                                            ]}
-                                          >
-                                            {/* antd `InputNumber` ->
+                                          {/* antd `InputNumber` ->
                                                 `AstryxFormNumberInput`.
                                                 `style.width:'100%'` becomes
                                                 the adapter's `width` default.
@@ -1005,53 +974,54 @@ const SessionLauncherPage = () => {
                                                 engine COMPOSES a child's own
                                                 trigger handler after its own
                                                 (`originTriggerFunc` in
-                                                `form-engine/Field.tsx`), so
+                                                ui-common Form's `Field`), so
                                                 both run. */}
-                                            <AstryxFormNumberInput
-                                              label={t(
-                                                'session.launcher.BatchJobTimeoutDuration',
-                                              )}
-                                              disabled={disabled}
-                                              min={1}
-                                              onChange={() => {
-                                                form.validateFields([
-                                                  ['batch', 'timeoutUnit'],
+                                          <AstryxFormNumberInput
+                                            label={t(
+                                              'session.launcher.BatchJobTimeoutDuration',
+                                            )}
+                                            disabled={disabled}
+                                            min={1}
+                                            onChange={() => {
+                                              form.validateFields([
+                                                ['batch', 'timeoutUnit'],
+                                              ]);
+                                            }}
+                                          />
+                                        </Form.Item>
+                                        <Form.Item
+                                          noStyle
+                                          name={['batch', 'timeoutUnit']}
+                                          dependencies={[
+                                            ['batch', 'timeout'],
+                                            ['batch', 'timeoutEnabled'],
+                                          ]}
+                                          rules={[
+                                            ({ getFieldValue }) => ({
+                                              validator() {
+                                                const timeout = getFieldValue([
+                                                  'batch',
+                                                  'timeout',
                                                 ]);
-                                              }}
-                                            />
-                                          </Form.Item>
-                                          <Form.Item
-                                            noStyle
-                                            name={['batch', 'timeoutUnit']}
-                                            dependencies={[
-                                              ['batch', 'timeout'],
-                                              ['batch', 'timeoutEnabled'],
-                                            ]}
-                                            rules={[
-                                              ({ getFieldValue }) => ({
-                                                validator() {
-                                                  const timeout = getFieldValue(
-                                                    ['batch', 'timeout'],
-                                                  );
-                                                  const timeoutEnabled =
-                                                    getFieldValue([
-                                                      'batch',
-                                                      'timeoutEnabled',
-                                                    ]);
-                                                  if (
-                                                    timeoutEnabled === true &&
-                                                    (timeout === undefined ||
-                                                      timeout === null ||
-                                                      timeout < 1)
-                                                  ) {
-                                                    return Promise.reject();
-                                                  }
-                                                  return Promise.resolve();
-                                                },
-                                              }),
-                                            ]}
-                                          >
-                                            {/* antd `Select options=` (five
+                                                const timeoutEnabled =
+                                                  getFieldValue([
+                                                    'batch',
+                                                    'timeoutEnabled',
+                                                  ]);
+                                                if (
+                                                  timeoutEnabled === true &&
+                                                  (timeout === undefined ||
+                                                    timeout === null ||
+                                                    timeout < 1)
+                                                ) {
+                                                  return Promise.reject();
+                                                }
+                                                return Promise.resolve();
+                                              },
+                                            }),
+                                          ]}
+                                        >
+                                          {/* antd `Select options=` (five
                                                 static string options) ->
                                                 `AstryxFormSelector`, the
                                                 plain-`Selector` branch of
@@ -1071,62 +1041,51 @@ const SessionLauncherPage = () => {
                                                 an existing string rather than
                                                 add a key needing 22
                                                 translations). */}
-                                            <AstryxFormSelector
-                                              label={t(
-                                                'session.launcher.BatchJobTimeoutDuration',
-                                              )}
-                                              disabled={disabled}
-                                              width={100}
-                                              options={[
-                                                {
-                                                  label: t('time.Sec'),
-                                                  value: 's',
-                                                },
-                                                {
-                                                  label: t('time.Min'),
-                                                  value: 'm',
-                                                },
-                                                {
-                                                  label: t('time.Hour'),
-                                                  value: 'h',
-                                                },
-                                                {
-                                                  label: t('time.Day'),
-                                                  value: 'd',
-                                                },
-                                                {
-                                                  label: t('time.Week'),
-                                                  value: 'w',
-                                                },
-                                              ]}
-                                            />
-                                          </Form.Item>
-                                        </InputGroup>
-                                      </>
-                                    );
-                                  }}
-                                </Form.Item>
-                              </BAIFlex>
-                            </Form.Item>
-                          );
-                        }}
-                      </Form.Item>
-                    ) : null}
+                                          <AstryxFormSelector
+                                            label={t(
+                                              'session.launcher.BatchJobTimeoutDuration',
+                                            )}
+                                            disabled={disabled}
+                                            width={100}
+                                            options={[
+                                              {
+                                                label: t('time.Sec'),
+                                                value: 's',
+                                              },
+                                              {
+                                                label: t('time.Min'),
+                                                value: 'm',
+                                              },
+                                              {
+                                                label: t('time.Hour'),
+                                                value: 'h',
+                                              },
+                                              {
+                                                label: t('time.Day'),
+                                                value: 'd',
+                                              },
+                                              {
+                                                label: t('time.Week'),
+                                                value: 'w',
+                                              },
+                                            ]}
+                                          />
+                                        </Form.Item>
+                                      </InputGroup>
+                                    </>
+                                  );
+                                }}
+                              </Form.Item>
+                            </BAIFlex>
+                          </Form.Item>
+                        );
+                      }}
+                    </Form.Item>
                   </StepCard>
                 )}
 
-                {(currentUserRole === 'admin' ||
-                  currentUserRole === 'superadmin') && (
-                  <SessionOwnerSetterCard
-                    style={{
-                      display:
-                        currentStepKey === 'sessionType' ? 'block' : 'none',
-                    }}
-                  />
-                )}
-
                 {sessionType === 'inference' && (
-                  <StepCard title="Inference Mode Configuration">
+                  <StepCard title={t('session.launcher.InferenceModeConfig')}>
                     <Form.Item
                       name={['inference', 'vFolderName']}
                       label={t('session.launcher.ModelStorageToMount')}
@@ -1136,19 +1095,12 @@ const SessionLauncherPage = () => {
                         },
                       ]}
                     >
-                      {/* An OPTIONLESS antd `<Select />` — a placeholder left
-                          behind when the `VFolderSelect` below was commented
-                          out. It converts to an equally optionless
-                          `AstryxFormSelector`; there is nothing to preserve
-                          but the empty control. */}
+                      {/* Optionless placeholder left behind when the model
+                          folder select was removed from this step. */}
                       <AstryxFormSelector
                         label={t('session.launcher.ModelStorageToMount')}
                         options={[]}
                       />
-                      {/* <VFolderSelect
-                          filter={(vf) => vf.usage_mode === 'model'}
-                          autoSelectDefault
-                          /> */}
                     </Form.Item>
                   </StepCard>
                 )}
@@ -1180,10 +1132,10 @@ const SessionLauncherPage = () => {
                 >
                   <ResourceAllocationFormItems
                     project={currentProjectContext}
-                    enableAgentSelect={
-                      !baiClient._config.hideAgents &&
-                      baiClient.supports('agent-select')
-                    }
+                    // An SSH/SFTP system session runs in the SFTP resource
+                    // group the selector hides from every other session type.
+                    includeSFTPResourceGroups={sessionType === 'system'}
+                    enableAgentSelect={!baiClient._config.hideAgents}
                     enableResourcePresets
                     showRemainingWarning
                   />
@@ -1266,7 +1218,7 @@ const SessionLauncherPage = () => {
                           width="100%"
                           style={{
                             display: enabled ? 'none' : undefined,
-                            marginTop: token.marginMD,
+                            marginTop: token('--spacing-5'),
                           }}
                         >
                           <Form.Item
@@ -1520,21 +1472,8 @@ const SessionLauncherPage = () => {
         {screens.lg && (
           <BAIFlex
             data-test-id="neo-session-launcher-tour-step"
-            style={{ position: 'sticky', top: 80 }}
+            style={{ position: 'sticky', top: 20 }}
           >
-            {/* antd `Steps` -> lab `Stepper` + `Step` (MAPPING §2 LAB; same
-                call W2A-15 made for `FairShareList` and ticket 23 for
-                `EduAppLauncher`).
-                - `current` -> `activeStep`, `onChange` -> `onStepClick`.
-                - The per-item `status: 'process' | 'wait'` mapping is DROPPED:
-                  lab derives completed / active / upcoming from `activeStep`,
-                  and its `status` is a SEMANTIC enum (accent/success/warning/
-                  error) layered on top. `process`/`wait` said nothing that
-                  `activeStep` does not already say.
-                - `size="small"` has no counterpart; `density` is the nearest
-                  axis and `compact` is the small rung.
-                - `Step.label` is a required STRING, which every step title
-                  here already is. */}
             <Stepper
               orientation="vertical"
               density="compact"
@@ -1551,7 +1490,12 @@ const SessionLauncherPage = () => {
               }}
             >
               {_.map(steps, (s, idx) => (
-                <Step key={s.key} step={idx} label={s.title} icon={s.icon} />
+                <Step
+                  key={s.key}
+                  step={idx}
+                  label={s.title}
+                  indicator={s.icon ?? 'number'}
+                />
               ))}
             </Stepper>
           </BAIFlex>
@@ -1594,14 +1538,6 @@ const SessionLauncherPage = () => {
                 vfolderMounts: [],
                 bootstrap_script: '',
                 num_of_sessions: 1,
-                owner: {
-                  enabled: false,
-                  accesskey: '',
-                  domainName: '',
-                  email: undefined,
-                  project: '',
-                  resourceGroup: '',
-                },
                 environments: {
                   manual: '',
                 },
@@ -1643,198 +1579,6 @@ const SessionLauncherPage = () => {
   );
 };
 
-type FormOrResourceRequired = {
-  /**
-   * The resource map to display as the primary value. For most callers this is
-   * the requested (configured) resource; on the session detail page it is the
-   * actually-allocated `occupied_slots`.
-   */
-  resource: ResourceAllocationFormValue['resource'];
-  containerCount?: number;
-  /**
-   * Optional reference resource map to compare against `resource`. On the
-   * session detail page this is the requested amount: for any numeric slot
-   * whose primary value differs from the compared value, the compared amount is
-   * appended as a muted `/ <value>` reference with an "allocated / requested"
-   * tooltip on the chip. The component computes the differing slots itself —
-   * callers only pass the two resource maps.
-   *
-   * Comparison is applied to the numeric `slotChips` only. The object-shaped
-   * `{ accelerator, acceleratorType }` branch is not threaded through the
-   * comparison; on the session detail page fGPU is compared via its dotted
-   * `cuda.shares` slot key (which routes through `slotChips`), so that path is
-   * covered. A form-shaped caller relying on `accelerator` would not get a
-   * comparison reference on the accelerator chip.
-   */
-  comparedResource?: ResourceAllocationFormValue['resource'];
-  /**
-   * When true, render a vertical divider between chips so the resources read as
-   * distinct items (used on the session detail page). Off by default so
-   * column-layout callers (e.g. `DeploymentPresetDetailModal`) don't get stray
-   * dividers between stacked chips.
-   */
-  showDividers?: boolean;
-};
-
-const unifiedChipStyles = stylex.create({
-  description: {
-    minWidth: 0,
-    whiteSpace: 'normal',
-    overflowWrap: 'anywhere',
-  },
-});
-
-// Renders a unified-memory accelerator as "<device description>" with the same
-// explanatory tooltip as the launcher's accelerator field. Kept as a separate
-// component so a long description wraps gracefully: the icon + text wrap as a
-// unit, and the text breaks onto multiple lines instead of overflowing.
-const UnifiedAcceleratorChip: React.FC<{ type: string }> = ({ type }) => {
-  'use memo';
-  const { t } = useTranslation();
-  const { token } = theme.useToken();
-  // The description lives only in the backend slot-details response, not in
-  // the local device_metadata.json, and is not scoped to a resource group.
-  const { mergedResourceSlots } = useResourceSlotsDetails();
-  const description = mergedResourceSlots[type]?.description ?? type;
-  // One line of the description text, so the icon can be vertically centered
-  // against the first line (not the whole wrapped block).
-  const lineHeightPx = token.fontSize * token.lineHeight;
-  return (
-    <Tooltip
-      content={t('session.launcher.UnifiedAcceleratorMemoryNote', {
-        description,
-      })}
-    >
-      <BAIFlex
-        direction="row"
-        gap="xxs"
-        align="start"
-        style={{ minWidth: 0, maxWidth: '100%' }}
-      >
-        {/* Match the icon box to one text line and center the icon so it stays
-            aligned with the first line when the description wraps. */}
-        <BAIFlex align="center" style={{ flexShrink: 0, height: lineHeightPx }}>
-          <ResourceTypeIcon type={type} showTooltip={false} />
-        </BAIFlex>
-        <Text xstyle={unifiedChipStyles.description}>{description}</Text>
-      </BAIFlex>
-    </Tooltip>
-  );
-};
-
-export const ResourceNumbersOfSession: React.FC<FormOrResourceRequired> = ({
-  resource,
-  containerCount = 1,
-  comparedResource,
-  showDividers = false,
-}) => {
-  'use memo';
-  // `resource` is the primary value to display; `comparedResource` (when given)
-  // is the reference to compare against (e.g. requested vs. allocated on the
-  // session detail page). Each chip carries a stable identity key (slot type /
-  // 'accelerator' / 'unified') so React reconciles by resource across renders
-  // even though `'0'` slots are dropped and the accelerator chip is
-  // conditionally appended.
-  const slotChips = _.compact(
-    _.map(
-      _.omit(resource, 'shmem', 'accelerator', 'acceleratorType'),
-      (value, type) => {
-        const comparedRaw = comparedResource
-          ? _.get(comparedResource, type)
-          : undefined;
-        // A zero slot normally renders no chip, but when a non-zero compared
-        // (requested) amount exists keep it so the fully-denied case renders
-        // `0 / <requested>` instead of silently disappearing while the section
-        // label still warns about the difference.
-        const hasComparedAmount =
-          !_.isUndefined(comparedRaw) && _.toNumber(comparedRaw) !== 0;
-        if (value === '0' && !hasComparedAmount) {
-          return null;
-        }
-        // Convert a raw slot value to the displayed amount (memory is byte count
-        // → number; everything else is multiplied by the container count).
-        // Applied identically to the primary and compared values.
-        const toDisplayValue = (raw: string | number) =>
-          type === 'mem'
-            ? (convertToBinaryUnit(raw.toString(), '')?.number || 0) *
-                containerCount +
-              ''
-            : _.toNumber(raw) * containerCount + '';
-        // When a compared resource is present, compare it against this slot's
-        // primary value. A difference passes the compared value to the chip,
-        // which appends it as a muted `/ <value>` reference and wraps the whole
-        // number group in an "allocated / requested" tooltip (separate from the
-        // icon's description tooltip). Raw equality only short-circuits the
-        // obviously-equal case; the chip itself additionally drops a compared
-        // value that rounds to the same displayed number, so sub-precision
-        // differences never render as `4 / 4 GiB`-style pairs.
-        const isDifferent =
-          !_.isUndefined(comparedRaw) &&
-          _.toNumber(comparedRaw) !== _.toNumber(value);
-        return {
-          key: type,
-          node: (
-            <BAIResourceNumberWithIcon
-              // @ts-ignore
-              type={type}
-              value={toDisplayValue(value)}
-              comparedValue={
-                isDifferent ? toDisplayValue(comparedRaw) : undefined
-              }
-              opts={{
-                shmem: resource.shmem
-                  ? (convertToBinaryUnit(resource.shmem, '')?.number || 0) *
-                    containerCount
-                  : undefined,
-              }}
-            />
-          ),
-        };
-      },
-    ),
-  );
-  const acceleratorChip =
-    resource?.acceleratorType &&
-    isUnifiedAcceleratorSlot(resource.acceleratorType)
-      ? {
-          key: 'unified',
-          // Unified-memory accelerator: show the device description regardless
-          // of amount, with the same explanatory tooltip as the launcher's
-          // accelerator field on hover.
-          node: <UnifiedAcceleratorChip type={resource.acceleratorType} />,
-        }
-      : resource &&
-          resource.accelerator &&
-          resource.acceleratorType &&
-          _.isNumber(resource.accelerator)
-        ? {
-            key: 'accelerator',
-            node: (
-              <BAIResourceNumberWithIcon
-                // @ts-ignore
-                type={resource.acceleratorType}
-                value={_.toString(resource.accelerator * containerCount)}
-              />
-            ),
-          }
-        : null;
-  const chips = _.compact([...slotChips, acceleratorChip]);
-  return (
-    <>
-      {chips.map(({ key, node }, index) => (
-        <React.Fragment key={key}>
-          {/* Separate each resource chip with a vertical divider (same pattern
-              as ImageNodeSimpleTag) so the resources read as distinct items.
-              Opt-in via `showDividers` — column-layout callers leave it off to
-              avoid stray dividers between stacked chips. */}
-          {showDividers && index > 0 ? (
-            <Divider orientation="vertical" style={{ marginInline: 0 }} />
-          ) : null}
-          {node}
-        </React.Fragment>
-      ))}
-    </>
-  );
-};
+export { ResourceNumbersOfSession };
 
 export default SessionLauncherPage;

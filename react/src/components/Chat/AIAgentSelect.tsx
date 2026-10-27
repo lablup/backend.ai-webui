@@ -3,9 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { AIAgent, useAIAgent } from '../../hooks/useAIAgent';
-import { theme } from '../../theme-shim';
 import { FluentEmojiIcon } from '../FluentEmojiIcon';
-import { Selector } from '@astryxdesign/core/Selector';
+import { Selector } from '@lablup/ui-common/Selector';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex, useControllableValue } from 'backend.ai-ui';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -33,7 +33,7 @@ const AIAgentSelect: React.FC<ChatAgentSelectProps> = ({
   ...props
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const [controllableValue, setControllableValue] = useControllableValue(props);
 
   const [searchAgent, setSearchAgent] = useState<string>();
@@ -48,8 +48,8 @@ const AIAgentSelect: React.FC<ChatAgentSelectProps> = ({
         <BAIFlex gap="xs">
           <FluentEmojiIcon
             emoji={selectedAgent.icon}
-            height={token.sizeXL}
-            width={token.sizeXL}
+            height={token('--spacing-8')}
+            width={token('--spacing-8')}
           />
           {/* PILOT-DECISION: antd `showSearch={{filterOption:false, onSearch}}`
               (remote-shaped incremental search) has no destination on
@@ -58,8 +58,7 @@ const AIAgentSelect: React.FC<ChatAgentSelectProps> = ({
               MAPPING.md §3.1). The agent catalog is small and fully loaded,
               so client-side filtering is behaviourally equivalent here. */}
           <Selector
-            label={t('chatui.SelectAgent')}
-            isLabelHidden
+            aria-label={t('chatui.SelectAgent')}
             hasSearch
             isLoading={isSearchPending || loading}
             options={makeAgentOptions(agents, searchAgent)}

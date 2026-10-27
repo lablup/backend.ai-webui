@@ -15,16 +15,15 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { GBToBytes, bytesToGB } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
-import { useSuspendedBackendaiClient } from '../hooks';
-import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
 import {
   AstryxFormNumberInput,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Banner } from '@astryxdesign/core/Banner';
-import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
+import { Banner } from '@lablup/ui-common/Banner';
+import { useTheme } from '@lablup/ui-common/theme';
+import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -43,12 +42,9 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
   ...baiModalProps
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
   const formRef = useRef<FormInstance>(null);
-
-  const baiClient = useSuspendedBackendaiClient();
-  const supportMaxNetworkCount = baiClient?.supports('max_network_count');
 
   const projectResourcePolicy = useFragment(
     graphql`
@@ -58,10 +54,10 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
         created_at
         # follows version of https://github.com/lablup/backend.ai/pull/1993
         # --------------- START --------------------
-        max_vfolder_count @since(version: "23.09.6")
-        max_quota_scope_size @since(version: "23.09.2")
+        max_vfolder_count
+        max_quota_scope_size
         # ---------------- END ---------------------
-        max_network_count @since(version: "24.12.0")
+        max_network_count
       }
     `,
     projectResourcePolicyFrgmt,
@@ -138,9 +134,6 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
                 : GBToBytes(values?.max_quota_scope_size),
             max_network_count: values?.max_network_count || -1,
           };
-        if (!supportMaxNetworkCount) {
-          delete props.max_network_count;
-        }
         if (projectResourcePolicy === null) {
           commitCreateProjectResourcePolicy({
             variables: {
@@ -212,7 +205,6 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
       }
       onOk={handleOk}
       onCancel={() => onRequestClose()}
-      destroyOnHidden
       confirmLoading={
         isInFlightCommitCreateProjectResourcePolicy ||
         isInFlightCommitModifyProjectResourcePolicy
@@ -220,9 +212,10 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
       {...baiModalProps}
     >
       <Banner
+        role="alert"
         title={t('storageHost.BeCarefulToSetProjectResourcePolicy')}
         status="warning"
-        style={{ marginBottom: token.marginMD }}
+        style={{ marginBottom: token('--spacing-5') }}
       />
       <Form
         ref={formRef}
@@ -266,7 +259,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
           direction="column"
           align="stretch"
           gap={'md'}
-          style={{ marginBottom: token.marginMD }}
+          style={{ marginBottom: token('--spacing-5') }}
         >
           <FormItemWithUnlimited
             name={'max_vfolder_count'}
@@ -294,20 +287,18 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
               units="GB"
             />
           </FormItemWithUnlimited>
-          {supportMaxNetworkCount ? (
-            <FormItemWithUnlimited
-              name={'max_network_count'}
-              unlimitedValue={-1}
+          <FormItemWithUnlimited
+            name={'max_network_count'}
+            unlimitedValue={-1}
+            label={t('resourcePolicy.MaxNetworkCount')}
+            style={{ width: '100%', margin: 0 }}
+          >
+            <AstryxFormNumberInput
               label={t('resourcePolicy.MaxNetworkCount')}
-              style={{ width: '100%', margin: 0 }}
-            >
-              <AstryxFormNumberInput
-                label={t('resourcePolicy.MaxNetworkCount')}
-                min={0}
-                max={SIGNED_32BIT_MAX_INT}
-              />
-            </FormItemWithUnlimited>
-          ) : null}
+              min={0}
+              max={SIGNED_32BIT_MAX_INT}
+            />
+          </FormItemWithUnlimited>
         </BAIFlex>
       </Form>
     </BAIModal>

@@ -48,7 +48,6 @@ vi.mock('../hooks', async (importOriginal) => {
   return {
     ...originalModule,
     useSuspendedBackendaiClient: () => ({
-      supports: () => false,
       _config: {},
     }),
     useWebUINavigate: () => vi.fn(),
@@ -106,10 +105,6 @@ vi.mock(
 vi.mock(
   './ComputeSessionNodeItems/SessionReservation',
   stubComponent('mock-session-reservation'),
-);
-vi.mock(
-  './ComputeSessionNodeItems/SessionStatusDetailModal',
-  stubComponent('mock-session-status-detail-modal'),
 );
 vi.mock(
   './ComputeSessionNodeItems/SessionIdleChecks',

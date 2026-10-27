@@ -102,13 +102,13 @@ Older flat links such as `/admin-deployments/deployment-presets/new` still work 
       * **Replica Count**: Default number of replicas created from this preset.
       * **Revision History Limit**: Number of past revisions kept for each deployment created from this preset.
       * **Open to Public**: Whether the endpoint of deployments created from this preset is reachable without an access token by default.
-   - **Health Check**: This section has an **Enable Health Check** toggle, which is **off** by default. When the toggle is off, the health check fields are hidden. When you turn it on, the health check fields appear and become configurable: Path, Interval, Max Retries, Max Wait Time, Status Code, and Startup Grace Period.
+   - **Health Check**: This section has an **Enable Health Check** toggle, which is **off** by default. When the toggle is off, the health check fields are hidden. When you turn it on, the health check fields appear and become configurable: Path, Interval, Max Retries, Max Wait Time, Status Code, and Startup Grace Period. Each of these fields is optional — a field left blank keeps its default value.
    - **Pre-Start Actions**: Actions to execute before the model service starts. Click **Add Pre-Start Action** to add a row, then fill in **Action** and **Args (JSON)**.
    - **Model Definition** (optional): A switch in the card header turns the model definition on. When it is on, fill in **Model Name** and **Model Path** — both required — and, optionally, expand the **Metadata** section for the served model's title, author, version, license, description, task, category, architecture, framework, and labels.
 
-   ![](../images/deployment_preset_create_modal.png)
+   ![=800px](../images/deployment_preset_create_modal.png)
 
-   ![](../images/deployment_preset_service_configuration.png)
+   ![=768px](../images/deployment_preset_service_configuration.png)
 
 3. On the **Review** step, check the summary and click `Create` to save. A success notification confirms the preset has been created.
 
@@ -136,7 +136,7 @@ The remaining cards summarize **Resources** (resource slots, resource options, c
 
    The **Runtime** row appears when you create a preset **and** when you edit one, matching the fact that the runtime is editable on step 1 in both cases. Use it to confirm which runtime the preset will use before you save.
 
-![](../images/deployment_preset_review_step.png)
+![=800px](../images/deployment_preset_review_step.png)
 
 :::note[Required parameters in presets]
 Administrators can mark individual Runtime Parameters as required. Required parameters display a red asterisk (★) next to the label. The save button stays disabled until all required parameters are filled in. Required parameter validation applies even to parameters on unvisited tabs.

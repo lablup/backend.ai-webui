@@ -11,10 +11,11 @@ import { AutoScalingRuleEditorModalPresetsQuery } from '../__generated__/AutoSca
 import { AutoScalingRuleEditorModalUpdateMutation } from '../__generated__/AutoScalingRuleEditorModalUpdateMutation.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
-import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
-import { useSuspendedBackendaiClient } from '../hooks';
+import {
+  CATALOG_FETCH_LIMIT,
+  SIGNED_32BIT_MAX_INT,
+} from '../helper/const-vars';
 import { useCurrentUserRole } from '../hooks/backendai';
-import { theme } from '../theme-shim';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import PrometheusQueryTemplatePreview from './PrometheusQueryTemplatePreview';
 import {
@@ -24,12 +25,13 @@ import {
   AstryxFormTextInput,
   type AstryxFormSelectorOptions,
 } from './astryxFormControls';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
   BAIFlex,
   BAIModal,
   BAIModalProps,
+  BAISkeleton,
   toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
@@ -109,18 +111,14 @@ const AutoScalingRuleEditorModalContent: React.FC<{
 }> = ({ autoScalingRule, formRef }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const baiClient = useSuspendedBackendaiClient();
+  const { token } = useTheme();
   const currentUserRole = useCurrentUserRole();
-  const isSupportPrometheusAutoScalingRule = baiClient.supports(
-    'prometheus-auto-scaling-rule',
-  );
 
   const { prometheusQueryPresets } =
     useLazyLoadQuery<AutoScalingRuleEditorModalPresetsQuery>(
       graphql`
-        query AutoScalingRuleEditorModalPresetsQuery {
-          prometheusQueryPresets {
+        query AutoScalingRuleEditorModalPresetsQuery($limit: Int!) {
+          prometheusQueryPresets(limit: $limit) {
             edges {
               node {
                 id
@@ -131,7 +129,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
                 metricName
                 queryTemplate
                 timeWindow
-                category @since(version: "26.4.3") {
+                category {
                   id
                   name
                 }
@@ -140,7 +138,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
           }
         }
       `,
-      {},
+      { limit: CATALOG_FETCH_LIMIT },
     );
 
   const presetNodes = React.useMemo(
@@ -288,14 +286,6 @@ const AutoScalingRuleEditorModalContent: React.FC<{
               label: t('autoScalingRule.MetricSourceKernel'),
               value: 'KERNEL',
             },
-            ...(!isSupportPrometheusAutoScalingRule
-              ? [
-                  {
-                    label: t('autoScalingRule.MetricSourceInferenceFramework'),
-                    value: 'INFERENCE_FRAMEWORK',
-                  },
-                ]
-              : []),
             {
               label: t('autoScalingRule.MetricSourcePrometheus'),
               value: 'PROMETHEUS',
@@ -404,7 +394,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
             the form adapter (MAPPING §3.10). `onChange` takes the VALUE, not
             the event (P3), and the `marginBottom` moves to a wrapper because
             Astryx controls take no `style` escape hatch for layout. */}
-        <div style={{ marginBottom: token.marginSM }}>
+        <div style={{ marginBottom: token('--spacing-3') }}>
           <Form.Item name={'conditionMode'} noStyle>
             <AstryxFormSegmented
               label={t('autoScalingRule.Condition')}

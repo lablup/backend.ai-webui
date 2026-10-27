@@ -5,27 +5,27 @@
 import { AdminDashboardPageQuery } from '../__generated__/AdminDashboardPageQuery.graphql';
 import ActiveAgents from '../components/ActiveAgents';
 import AgentStats from '../components/AgentStats';
-import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
 import RecentlyCreatedSession from '../components/RecentlyCreatedSession';
 import SessionCountDashboardItem from '../components/SessionCountDashboardItem';
 import TotalResourceWithinResourceGroup, {
   useIsAvailableTotalResourceWithinResourceGroup,
 } from '../components/TotalResourceWithinResourceGroup';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
   useCurrentProjectValue,
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
-import { theme } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAISkeleton,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
   useFetchKey,
   useInterval,
+  BAIBoard,
+  type BAIBoardItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Suspense, useTransition } from 'react';
@@ -33,13 +33,12 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const AdminDashboardPage: React.FC = () => {
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { t } = useTranslation();
 
   const currentProject = useCurrentProjectValue();
   const currentResourceGroup = useCurrentResourceGroupValue();
   const userRole = useCurrentUserRole();
-  const baiClient = useSuspendedBackendaiClient();
 
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [isPendingIntervalRefetch, startIntervalRefetchTransition] =
@@ -51,17 +50,16 @@ const AdminDashboardPage: React.FC = () => {
   const isAvailableTotalResourcePanel =
     useIsAvailableTotalResourceWithinResourceGroup();
 
-  const isAgentStatsSupported = baiClient.supports('agent-stats');
-
   const queryRef = useLazyLoadQuery<AdminDashboardPageQuery>(
     graphql`
       query AdminDashboardPageQuery(
         $scopeId: ScopeField
         $resourceGroup: String
         $skipTotalResourceWithinResourceGroup: Boolean!
-        $skipAgentStats: Boolean!
         $isSuperAdmin: Boolean!
         $agentNodeFilter: String!
+        $aliveAgentFilter: String!
+        $schedulableAgentFilter: String!
       ) {
         ...SessionCountDashboardItemFragment @arguments(scopeId: $scopeId)
         ...RecentlyCreatedSessionFragment @arguments(scopeId: $scopeId)
@@ -73,16 +71,21 @@ const AdminDashboardPage: React.FC = () => {
             isSuperAdmin: $isSuperAdmin
             agentNodeFilter: $agentNodeFilter
           )
-        ...AgentStatsFragment @skip(if: $skipAgentStats) @alias
+        ...AgentStatsFragment
+          @arguments(
+            aliveAgentFilter: $aliveAgentFilter
+            schedulableAgentFilter: $schedulableAgentFilter
+          )
       }
     `,
     {
       scopeId: `project:${currentProject.id}`,
       resourceGroup: currentResourceGroup || 'default',
       skipTotalResourceWithinResourceGroup: !isAvailableTotalResourcePanel,
-      skipAgentStats: !isAgentStatsSupported,
       isSuperAdmin: _.isEqual(userRole, 'superadmin'),
       agentNodeFilter: `schedulable == true & status == "ALIVE" & scaling_group == "${currentResourceGroup}"`,
+      aliveAgentFilter: 'status == "ALIVE"',
+      schedulableAgentFilter: 'status == "ALIVE" & schedulable == true',
     },
     {
       fetchPolicy:
@@ -110,7 +113,7 @@ const AdminDashboardPage: React.FC = () => {
         content: (
           <Suspense
             fallback={
-              <BAISkeleton style={{ padding: `0px ${token.marginMD}px` }} />
+              <BAISkeleton style={{ padding: `0px ${token('--spacing-5')}` }} />
             }
           >
             <SessionCountDashboardItem
@@ -139,30 +142,29 @@ const AdminDashboardPage: React.FC = () => {
         ),
       },
     },
-    isAgentStatsSupported &&
-      queryRef.AgentStatsFragment && {
-        id: 'agentStats',
-        rowSpan: 2,
-        columnSpan: 2,
-        definition: {
-          minRowSpan: 2,
-          minColumnSpan: 2,
-        },
-        data: {
-          content: (
-            <Suspense
-              fallback={
-                <BAISkeleton style={{ padding: `0px ${token.marginMD}px` }} />
-              }
-            >
-              <AgentStats
-                queryRef={queryRef.AgentStatsFragment}
-                isRefetching={isPendingIntervalRefetch}
-              />
-            </Suspense>
-          ),
-        },
+    {
+      id: 'agentStats',
+      rowSpan: 2,
+      columnSpan: 2,
+      definition: {
+        minRowSpan: 2,
+        minColumnSpan: 2,
       },
+      data: {
+        content: (
+          <Suspense
+            fallback={
+              <BAISkeleton style={{ padding: `0px ${token('--spacing-5')}` }} />
+            }
+          >
+            <AgentStats
+              queryRef={queryRef}
+              isRefetching={isPendingIntervalRefetch}
+            />
+          </Suspense>
+        ),
+      },
+    },
     {
       id: 'activeAgents',
       rowSpan: 4,
@@ -175,7 +177,7 @@ const AdminDashboardPage: React.FC = () => {
         content: (
           <Suspense
             fallback={
-              <BAISkeleton style={{ padding: `0px ${token.marginMD}px` }} />
+              <BAISkeleton style={{ padding: `0px ${token('--spacing-5')}` }} />
             }
           >
             <ActiveAgents

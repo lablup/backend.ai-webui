@@ -3,10 +3,11 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RecentlyCreatedSessionFragment$key } from '../__generated__/RecentlyCreatedSessionFragment.graphql';
-import { theme } from '../theme-shim';
+import { useWebUINavigate } from '../hooks';
 import { ProjectContextOrNull } from '../types/projectContext';
 import SessionDetailDrawer from './SessionDetailDrawer';
 import SessionNodes from './SessionNodes';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   filterOutNullAndUndefined,
   toLocalId,
@@ -15,10 +16,10 @@ import {
   BAIFetchKeyButton,
   BAIBoardItemTitle,
 } from 'backend.ai-ui';
-import { parseAsString, useQueryState } from 'nuqs';
 import { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
+import { useLocation } from 'react-router-dom';
 
 interface RecentlyCreatedSessionProps {
   queryRef: RecentlyCreatedSessionFragment$key;
@@ -36,13 +37,22 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
   project,
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const [sessionDetailId, setSessionDetailId] = useQueryState(
+  const { token } = useTheme();
+  // Read from the router, not nuqs: the board's session panels set the param
+  // with a navigation, which nuqs applies in a transition that React holds
+  // back while any async action is pending.
+  const location = useLocation();
+  const navigate = useWebUINavigate();
+  const sessionDetailId = new URLSearchParams(location.search).get(
     'sessionDetail',
-    // Push so Back closes the drawer (nuqs defaults to replace; the legacy
-    // param pushed history on open/close).
-    parseAsString.withOptions({ history: 'push' }),
   );
+  // Pushes on open and on close, so Back steps through both.
+  const setSessionDetailId = (value: string | null) => {
+    const searchParams = new URLSearchParams(location.search);
+    if (value === null) searchParams.delete('sessionDetail');
+    else searchParams.set('sessionDetail', value);
+    navigate({ search: searchParams.toString(), hash: location.hash });
+  };
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
   const [data, refetch] = useRefetchableFragment(
@@ -76,7 +86,7 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
         direction="column"
         align="stretch"
         style={{
-          paddingInline: token.paddingXL,
+          paddingInline: token('--spacing-8'),
           height: '100%',
         }}
       >
@@ -116,7 +126,7 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
             flex: 1,
             overflowY: 'auto',
             overflowX: 'hidden',
-            marginBottom: token.margin,
+            marginBottom: token('--spacing-4'),
           }}
         >
           <SessionNodes

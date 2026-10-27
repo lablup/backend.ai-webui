@@ -19,12 +19,11 @@ function buildParams(formValues: Record<string, unknown>): string {
 }
 
 /**
- * Seed localStorage with session history that contains both a multi-node
- * session and a single-node session, then reload so the app picks them up.
+ * Seed the user's `userConfig` with session history that contains both a
+ * multi-node session and a single-node session, then reload so the app picks
+ * them up.
  */
 async function seedSessionHistory(page: import('@playwright/test').Page) {
-  const STORAGE_KEY = 'backendaiwebui.settings.user.recentSessionHistory';
-
   const multiNodeEntry = {
     id: 'e2e-multi-node-id',
     name: 'multi-node-session',
@@ -47,17 +46,38 @@ async function seedSessionHistory(page: import('@playwright/test').Page) {
     createdAt: new Date(Date.now() - 2000).toISOString(),
   };
 
-  await page.evaluate(
-    ({ key, value }: { key: string; value: string }) => {
-      localStorage.setItem(key, value);
+  const error = await page.evaluate(
+    async (history) => {
+      const client = (globalThis as any).backendaiclient;
+      try {
+        const raw = await client.query(
+          `query { myAppConfigFragmentsByNames(configNames: ["userConfig"]) { config } }`,
+          {},
+        );
+        const config = {
+          ...(raw?.myAppConfigFragmentsByNames?.[0]?.config ?? {}),
+          recentSessionHistory: history,
+          pinnedSessionHistory: [],
+        };
+        const result = await client.query(
+          `mutation ($input: MyUpsertAppConfigFragmentsInput!) {
+          myUpsertAppConfigFragments(input: $input) { failed { message } }
+        }`,
+          { input: { items: [{ configName: 'userConfig', config }] } },
+        );
+        const failed = result?.myUpsertAppConfigFragments?.failed ?? [];
+        return failed.length > 0 ? failed[0].message : null;
+      } catch (e: any) {
+        return e?.message || e?.title || String(e);
+      }
     },
-    {
-      key: STORAGE_KEY,
-      value: JSON.stringify([multiNodeEntry, singleNodeEntry]),
-    },
+    [multiNodeEntry, singleNodeEntry],
   );
+  if (error) {
+    throw new Error(`Failed to seed session history: ${error}`);
+  }
 
-  // Reload so Jotai atoms are initialised from the updated localStorage
+  // Reload so the app reads the seeded userConfig
   await page.reload({ waitUntil: 'domcontentloaded' });
 }
 
@@ -79,7 +99,7 @@ async function openTemplateModal(page: import('@playwright/test').Page) {
 }
 
 // ---------------------------------------------------------------------------
-// Tests: Multi-Node Indicator (using seeded localStorage)
+// Tests: Multi-Node Indicator (using seeded userConfig)
 // ---------------------------------------------------------------------------
 
 test.describe(
@@ -95,7 +115,7 @@ test.describe(
       await expect(
         page.getByRole('button', { name: 'Recent History' }),
       ).toBeVisible({ timeout: 15_000 });
-      // Seed session history via localStorage then reload
+      // Seed session history via userConfig then reload
       await seedSessionHistory(page);
       // After reload, navigate back to session/start
       await navigateTo(page, 'session/start');
@@ -232,7 +252,7 @@ test.describe(
   'Session Template Modal – Real Session History',
   { tag: ['@session', '@functional'] },
   () => {
-    // The session history (localStorage key `recentSessionHistory`) is not
+    // The session history (`userConfig.recentSessionHistory`) is not
     // being populated after session creation in the current test environment.
     // `pushSessionHistory` is called with `name: results.fulfilled[0].value.sessionName`
     // but the API response field may not carry `sessionName`, leaving the history

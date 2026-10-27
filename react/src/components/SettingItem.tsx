@@ -3,12 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import './SettingItem.css';
-import { Banner } from '@astryxdesign/core/Banner';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Selector, type SelectorOptionData } from '@astryxdesign/core/Selector';
-import { StatusDot } from '@astryxdesign/core/StatusDot';
-import { Text } from '@astryxdesign/core/Text';
+import { Banner } from '@lablup/ui-common/Banner';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Selector, type SelectorOptionData } from '@lablup/ui-common/Selector';
+import { StatusDot } from '@lablup/ui-common/StatusDot';
+import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex, BAIModal, useToggle } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { Settings } from 'lucide-react';
@@ -63,6 +63,7 @@ type SelectSettingItemProps = BaseSettingItemProps & {
     options: SettingSelectOption[];
     hasSearch?: boolean;
     disabled?: boolean;
+    loading?: boolean;
   };
   checkboxProps?: never;
 };
@@ -196,10 +197,9 @@ const SettingItem: React.FC<SettingItemProps> = ({
         // { align-self: flex-start }` rule did.
         <BAIFlex direction="row" gap="sm" align="start">
           <CheckboxInput
-            label={title}
-            isLabelHidden
+            aria-label={title}
             value={!!value}
-            isDisabled={checkboxProps?.disabled}
+            disabled={checkboxProps?.disabled}
             onChange={(checked) => onChange?.(checked)}
           />
           {description && (
@@ -223,11 +223,11 @@ const SettingItem: React.FC<SettingItemProps> = ({
             </Text>
           )}
           <Selector
-            label={title}
-            isLabelHidden
+            aria-label={title}
             options={selectProps?.options ?? []}
             hasSearch={selectProps?.hasSearch}
-            isDisabled={selectProps?.disabled}
+            disabled={selectProps?.disabled}
+            isLoading={selectProps?.loading}
             value={value}
             width="fit-content"
             onChange={(nextValue) => onChange?.(nextValue)}
@@ -246,7 +246,11 @@ const SettingItem: React.FC<SettingItemProps> = ({
         cancelText={t('button.Cancel')}
         onCancel={() => setIsOpenResetChangesModal()}
       >
-        <Banner status="warning" title={t('dialog.warning.CannotBeUndone')} />
+        <Banner
+          role="alert"
+          status="warning"
+          title={t('dialog.warning.CannotBeUndone')}
+        />
       </BAIModal>
     </BAIFlex>
   );

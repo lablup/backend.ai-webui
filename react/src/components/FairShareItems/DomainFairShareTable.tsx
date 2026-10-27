@@ -7,16 +7,16 @@ import {
   DomainFairShareTableFragment$data,
   DomainFairShareTableFragment$key,
 } from '../../__generated__/DomainFairShareTableFragment.graphql';
-import { theme } from '../../theme-shim';
 import DomainResourceGroupWarningIcon from './DomainResourceGroupWarningIcon';
-import { Divider } from '@astryxdesign/core/Divider';
-import { Text } from '@astryxdesign/core/Text';
+import { Divider } from '@lablup/ui-common/Divider';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIQuestionIconWithTooltip,
   BAIBadge,
   BAIColumnsType,
   BAIFlex,
   BAINameActionCell,
+  BAIQuestionIconWithTooltip,
   BAIResourceNumberWithIcon,
   BAITable,
   BAITableProps,
@@ -81,7 +81,7 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const [queryParams, setQueryParams] = useQueryStates(
     {
@@ -181,7 +181,10 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
                 ? '-'
                 : toFixedFloorWithoutTrailingZeros(weight, 1)}
             </Text>
-            <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
+            <Text
+              color="secondary"
+              style={{ fontSize: token('--font-size-sm') }}
+            >
               {record.spec.usesDefault
                 ? `(${t('fairShare.UsingDefault')})`
                 : ''}

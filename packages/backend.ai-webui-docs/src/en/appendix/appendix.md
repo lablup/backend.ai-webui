@@ -29,12 +29,12 @@ with a GPU with 8 GB of memory as in the following figure. And through the
 administrator settings, 1 fGPU is set to an amount equivalent to 0.5 physical
 GPU (or 1 physical GPU is 2 fGPU).
 
-![](../images/host_gpu.png)
+![=722px](../images/host_gpu.png)
 
 Now let's go to the Sessions page and create a compute session by allocating 0.5
 fGPU as follows:
 
-![](../images/session_launch_dialog_with_gpu.png)
+![=740px](../images/session_launch_dialog_with_gpu.png)
 
 In the AI Accelerator panel of the session list, you can see that
 0.5 fGPU is allocated.
@@ -60,7 +60,7 @@ to the process and this process is occupying about 25% of the resources of the
 physical GPU. (GPU occupancy can vary greatly depending on training code and GPU
 model.)
 
-![](../images/host_nvidia_smi.png)
+![=717px](../images/host_nvidia_smi.png)
 
 Alternatively, you can run the `nvidia-smi` command from the web terminal to query the GPU usage history inside the container.
 
@@ -87,7 +87,7 @@ Sessions. Set Number of sessions to 3 and click Start, and the three sessions
 are requested at the same time. This is the situation that 3 sessions requesting a
 total of 3 fGPUs are created when only 2 fGPUs exist.
 
-![](../images/session_launch_dialog_2_sessions.png)
+![=560px](../images/session_launch_dialog_2_sessions.png)
 
 Wait for a while and you will see three compute sessions being listed.
 If you look closely at the Status panel, you can see that two of the
@@ -119,11 +119,11 @@ advantage of multiple versions of the multiple ML library immediately.
 Go to the Sessions page and open the session launch dialog. There may be various
 kernel images depending on the installation settings.
 
-![](../images/various_kernel_images.png)
+![=700px](../images/various_kernel_images.png)
 
 Here, let's select the TensorFlow 2.3 environment and created a session.
 
-![](../images/session_launch_dialog_tf23.png)
+![=700px](../images/session_launch_dialog_tf23.png)
 
 Open the web terminal of the created session and run the following Python
 command. You can see that TensorFlow 2.3 version is installed.
@@ -133,7 +133,7 @@ command. You can see that TensorFlow 2.3 version is installed.
 This time, let's select the TensorFlow 1.15 environment to create a compute
 session. If resources are insufficient, delete the previous session.
 
-![](../images/session_launch_dialog_tf115.png)
+![=700px](../images/session_launch_dialog_tf115.png)
 
 Open the web terminal of the created session and run the same Python command as
 before. You can see that TensorFlow 1.15(.4) version is installed.
@@ -142,7 +142,7 @@ before. You can see that TensorFlow 1.15(.4) version is installed.
 
 Finally, create a compute session using PyTorch version 1.9.
 
-![](../images/session_launch_dialog_pytorch17.png)
+![=740px](../images/session_launch_dialog_pytorch17.png)
 
 Open the web terminal of the created session and run the following Python
 command. You can see that PyTorch 1.9 version is installed.
@@ -186,7 +186,7 @@ Docker image.
 - You can manually enter the image name in the session launch dialog. The image
   is private and not be revealed to other users
 
-  ![](../images/session-creation-by-specifying-image-name.png)
+  ![=700px](../images/session-creation-by-specifying-image-name.png)
 
 - A new compute session will be created using the new Docker image.
 
@@ -275,7 +275,7 @@ mlflow ui --host 0.0.0.0
 
 Then, Click "MLFlow UI" app in app launcher dialog.
 
-![](../images/app_dialog.png)
+![=450px](../images/app_dialog.png)
 
 After few moment, you will see a new page for MLFlow UI.
 

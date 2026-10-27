@@ -14,12 +14,16 @@
  * ONLY `index.html` runs zero test jobs. This gate runs from `scripts/verify.sh`
  * whatever changed.
  *
- * Also pinned: `@astryxdesign/lab`'s non-modal `Drawer` / `BottomSheet` base of
- * 1000 — the one off-ladder value the ladder must not collide with. It sits
- * between `loginHost` (950) and `modalBase` (1100), so an upstream bump moving
- * it lands inside the ladder's range with nothing else to notice. Still live
- * after FR-3585: `ChatPage`, the notification drawer, and the inner `<dialog>`
- * of every portalled drawer all open with `show()` and take this base.
+ * Also pinned: the non-modal `Drawer`'s base of 1000 — the one off-ladder
+ * value the ladder must not collide with. It sits between `loginHost` (950)
+ * and `modalBase` (1100), so a bump moving it lands inside the ladder's range
+ * with nothing else to notice. `ChatPage`, the notification drawer, and the
+ * inner `<dialog>` of every portalled drawer open with `show()` and take it.
+ * The drawer is ui-common's fork (`@lablup/ui-common/lab`), not lab's: lab
+ * 0.6.5 moved its own non-modal drawer into the top layer, and the fork keeps
+ * it on this base. The fork's published `Drawer.js` renames the constant, so
+ * the check reads `NON_MODAL_BASE_Z` from its source map; `lab.css` is still
+ * checked for the absence of any literal in the ladder's band.
  */
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -34,10 +38,10 @@ export const LADDER_TS = "packages/backend.ai-ui/src/styles/zIndexLadder.ts";
 export const LADDER_CSS = "packages/backend.ai-ui/src/styles/zIndexLadder.css";
 export const INDEX_HTML = "index.html";
 export const LAB_CSS = "react/node_modules/@astryxdesign/lab/dist/lab.css";
-export const LAB_DRAWER_JS =
-  "react/node_modules/@astryxdesign/lab/dist/Drawer/Drawer.js";
-/** `NON_MODAL_BASE_Z` in lab's Drawer, and the `z-index` its CSS emits. */
-export const LAB_NON_MODAL_BASE_Z = 1000;
+export const DRAWER_SOURCE_MAP =
+  "react/node_modules/@lablup/ui-common/dist/forks/Drawer/Drawer.js.map";
+/** `NON_MODAL_BASE_Z` in ui-common's Drawer fork. */
+export const NON_MODAL_DRAWER_BASE_Z = 1000;
 
 /** `appHeader` -> `--bai-z-app-header`. */
 export const cssName = (key) =>
@@ -122,7 +126,9 @@ export function runZIndexLadderGate({ repoRoot = REPO_ROOT } = {}) {
   for (const [key, value] of Object.entries(layers)) {
     const name = cssName(key);
     if (declared[name] === undefined) {
-      failures.push(`${LADDER_CSS}: ${name} is not declared (${key} = ${value}).`);
+      failures.push(
+        `${LADDER_CSS}: ${name} is not declared (${key} = ${value}).`,
+      );
     } else if (declared[name] !== value) {
       failures.push(
         `${LADDER_CSS}: ${name} is ${declared[name]}, but ` +
@@ -143,7 +149,9 @@ export function runZIndexLadderGate({ repoRoot = REPO_ROOT } = {}) {
   ]);
   for (const name of Object.keys(declared)) {
     if (!expected.has(name)) {
-      failures.push(`${LADDER_CSS}: ${name} has no counterpart in ${LADDER_TS}.`);
+      failures.push(
+        `${LADDER_CSS}: ${name} has no counterpart in ${LADDER_TS}.`,
+      );
     }
   }
 
@@ -168,32 +176,48 @@ export function runZIndexLadderGate({ repoRoot = REPO_ROOT } = {}) {
     );
   }
 
-  // 3. lab's non-modal overlay base — off the ladder, and inside the range it
+  // 3. The non-modal drawer base — off the ladder, and inside the range it
   //    spans (between `loginHost` and `modalBase`).
   const labCss = read(LAB_CSS);
-  const drawerJs = read(LAB_DRAWER_JS);
+  const drawerJs = read(DRAWER_SOURCE_MAP);
   if (labCss === null || drawerJs === null) {
     skipped.push(
-      `@astryxdesign/lab not installed — skipped the ${LAB_NON_MODAL_BASE_Z} ` +
+      `@astryxdesign/lab or @lablup/ui-common not installed — skipped the ${NON_MODAL_DRAWER_BASE_Z} ` +
         "non-modal overlay base check.",
     );
   } else {
-    if (!new RegExp(`z-index:\\s*${LAB_NON_MODAL_BASE_Z}\\b`).test(labCss)) {
-      failures.push(
-        `${LAB_CSS}: no \`z-index:${LAB_NON_MODAL_BASE_Z}\` rule. lab's ` +
-          "non-modal overlay base moved; re-check that no ladder layer " +
-          "collides with the new one.",
-      );
+    // lab.css must not pin an overlay inside the band this ladder spans: the
+    // base is the JS constant below, and the stylesheet only carries it in
+    // through an inline custom property. A literal in range is a second,
+    // unowned source of truth.
+    for (const key of ["loginHost", "notification"]) {
+      if (layers[key] === undefined) {
+        failures.push(
+          `${LADDER_TS}: \`${key}\` is gone, and it bounds the band the ` +
+            `${LAB_CSS} check scans. Update the bounds in this gate.`,
+        );
+      }
+    }
+    for (const [, value] of labCss.matchAll(/z-index:\s*(\d+)\b/g)) {
+      const z = Number(value);
+      if (z >= layers.loginHost && z <= layers.notification) {
+        failures.push(
+          `${LAB_CSS}: literal \`z-index:${z}\` inside the ladder's band ` +
+            `(${layers.loginHost}–${layers.notification}). lab used to leave ` +
+            "this to the inline custom property its JS sets; a literal here " +
+            "stacks against the ladder with nothing to notice.",
+        );
+      }
     }
     if (
-      !new RegExp(
-        `NON_MODAL_BASE_Z\\s*=\\s*${LAB_NON_MODAL_BASE_Z}\\b`,
-      ).test(drawerJs)
+      !new RegExp(`NON_MODAL_BASE_Z\\s*=\\s*${NON_MODAL_DRAWER_BASE_Z}\\b`).test(
+        drawerJs,
+      )
     ) {
       failures.push(
-        `${LAB_DRAWER_JS}: \`NON_MODAL_BASE_Z\` is no longer ` +
-          `${LAB_NON_MODAL_BASE_Z}. A non-modal lab Drawer now stacks ` +
-          "somewhere else against this ladder.",
+        `${DRAWER_SOURCE_MAP}: \`NON_MODAL_BASE_Z\` is no longer ` +
+          `${NON_MODAL_DRAWER_BASE_Z}. A non-modal Drawer now stacks ` +
+          "somewhere else against this ladder (or left it for the top layer).",
       );
     }
   }

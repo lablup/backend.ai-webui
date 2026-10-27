@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { IconButton } from '@astryxdesign/core/IconButton';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import { useEventNotStable } from 'backend.ai-ui';
 import { ArrowDownIcon } from 'lucide-react';
 import React, { useEffect } from 'react';

@@ -21,11 +21,12 @@ import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
 import { useVirtualFolderPathV2 } from '../hooks/useVirtualFolderNodePathV2';
+import { formatBinarySizeInfo } from './VFolderNodesV2';
 import VirtualFolderPathV2 from './VirtualFolderNodeItems/VirtualFolderPathV2';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Selector } from '@astryxdesign/core/Selector';
-import { HStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
+import { Badge } from '@lablup/ui-common/Badge';
+import { Selector } from '@lablup/ui-common/Selector';
+import { HStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIMetadataList,
   BAIMetadataListItem,
@@ -99,6 +100,12 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
           permission
           ownershipType
         }
+        quota {
+          maxFiles
+          maxSize {
+            expr @since(version: "26.8.0")
+          }
+        }
         ownership {
           userId
           projectId
@@ -125,18 +132,15 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
 
   const vfolderId = toLocalId(vfolderNode.id);
 
-  // V2 `VFolderMountPermission` enum → legacy REST permission string mapping
-  // for the `<Selector/>` below. READ_ONLY → 'ro', READ_WRITE/RW_DELETE → 'rw'.
-  // NOTE: `accessControl.permission` is the *mount* permission (how this folder
-  // would be mounted into a session), not the caller's operational rights on
-  // the folder. When the value is null/undefined we fall back to 'ro' so that
-  // users without an explicit permission do not see a misleading read-write
-  // default. See FR-2619 follow-up for a proper permission set.
+  // `accessControl.permission` is the folder's mount permission, not the
+  // caller's rights on it; NONE leaves the selector empty instead of guessing.
+  const mountPermission = vfolderNode.accessControl?.permission;
   const currentSelectPermission =
-    vfolderNode.accessControl?.permission === 'READ_WRITE' ||
-    vfolderNode.accessControl?.permission === 'RW_DELETE'
+    mountPermission === 'READ_WRITE' || mountPermission === 'RW_DELETE'
       ? 'rw'
-      : 'ro';
+      : mountPermission === 'READ_ONLY'
+        ? 'ro'
+        : undefined;
   // The value the user just picked, shown until the update and the store
   // refresh land (or the update fails and the server value returns).
   const [pendingPermission, setPendingPermission] = useState<string | null>(
@@ -211,8 +215,8 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
         // folder-permission report saw.
         <Selector
           placement="below"
-          label={t('data.folders.MountPermission')}
-          isLabelHidden
+          aria-label={t('data.folders.MountPermission')}
+          placeholder={t('data.folders.MountPermissionNotSet')}
           value={pendingPermission ?? currentSelectPermission}
           isLoading={pendingPermission !== null}
           options={[
@@ -319,9 +323,19 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
         </HStack>
       ),
     },
-    // TODO(needs-backend): V2 `VFolder` does not yet expose quota limits
-    // (`max_size`, `max_files`). Hide the MaxSize row until the backend
-    // catches up — see FR-2573 follow-up.
+    // A null `maxSize` / a zero `maxFiles` is "no limit".
+    {
+      key: 'max_size',
+      label: t('data.folders.MaxSize'),
+      children: formatBinarySizeInfo(vfolderNode.quota.maxSize) ?? '∞',
+    },
+    {
+      key: 'max_files',
+      label: t('data.folders.MaxFiles'),
+      children: vfolderNode.quota.maxFiles
+        ? vfolderNode.quota.maxFiles.toLocaleString()
+        : '∞',
+    },
     {
       key: 'usage',
       label: t('data.UsageMode'),

@@ -15,7 +15,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The body of a single notice: a stacked title, description, trailing action row and footer, laid out with BAIFlex. It is the renderer a notification passes to BAINotificationStack as its `content` slot — the folder, session and multi-step notices are all built from it — rather than a standalone surface. Primitive `title`, `description` and `footer` values are wrapped in Astryx `Text` automatically, so a plain string needs no markup, while a node is rendered as given. `action` is right-aligned under the description and `footer` is right-aligned in secondary text, which is where the timestamp goes.',
+      'The body of a single notice: a stacked title, description, trailing action row and footer, on ui-common `NotificationItem`. It is the renderer a notification passes to BAINotificationStack as its `content` slot — the folder, session and multi-step notices are all built from it — rather than a standalone surface. Primitive `title`, `description` and `footer` values are wrapped in Astryx `Text` automatically, so a plain string needs no markup, while a node is rendered as given. `action` is right-aligned under the description and `footer` is right-aligned in secondary text, which is where the timestamp goes.',
     bestPractices: [
       {
         guidance: true,
@@ -36,11 +36,6 @@ export const docs = {
         guidance: false,
         description:
           'Render it outside a notification — the spacing and the secondary footer colour are tuned for the 384px notice column, not for page content.',
-      },
-      {
-        guidance: false,
-        description:
-          'Reach for `styles` to restyle a section wholesale; it exists for per-notice nudges such as a width or a margin, and the rest belongs in the theme.',
       },
     ],
   },
@@ -70,10 +65,9 @@ export const docs = {
         'Trailing line, right-aligned in secondary text colour. Typically the formatted timestamp.',
     },
     {
-      name: 'styles',
-      type: 'BAINotificationItemStyles',
-      description:
-        'Per-section inline style overrides — `title`, `description`, `action`, `footer` — merged after the component defaults.',
+      name: 'className',
+      type: 'string',
+      description: 'Class names on the root, after `bai-notification-item`.',
     },
   ],
   examples: [

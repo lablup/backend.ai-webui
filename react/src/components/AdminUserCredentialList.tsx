@@ -10,36 +10,37 @@ import {
 } from '../__generated__/AdminUserCredentialListQuery.graphql';
 import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSettingModalFragment.graphql';
 import { App } from '../app-shim';
-import { theme } from '../theme-shim';
+import { useSuspendedBackendaiClient } from '../hooks';
 import BAIRadioGroup from './BAIRadioGroup';
 import KeypairInfoModal from './KeypairInfoModal';
 import KeypairSettingModal from './KeypairSettingModal';
-import { Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  filterOutEmpty,
-  filterOutNullAndUndefined,
   BAIButton,
-  BAITable,
-  BAIFlex,
-  BAIPropertyFilter,
-  BAINameActionCell,
   BAIDeleteConfirmModal,
+  BAIFlex,
+  BAINameActionCell,
+  BAIPropertyFilter,
   BAISelectionLabel,
-  useBAILogger,
+  BAITable,
   BAIText,
   PRIMARY_TOKEN_COLOR,
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  useBAILogger,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import {
-  Trash2,
-  Info,
-  RotateCw,
   BanIcon,
+  Info,
   PlusIcon,
+  RotateCw,
   SquarePenIcon,
+  Trash2,
   UndoIcon,
 } from 'lucide-react';
 import { useDeferredValue, useState, useTransition } from 'react';
@@ -82,7 +83,7 @@ export const AdminUserCredentialListQuery = graphql`
         last_used
         rate_limit
         num_queries
-        concurrency_used @since(version: "24.09.0")
+        concurrency_used
 
         ...KeypairSettingModalFragment
         ...KeypairInfoModalFragment
@@ -114,9 +115,12 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message, modal } = App.useApp();
   const { logger } = useBAILogger();
+  // Keypair management is out of scope for the scoped migration and stays
+  // superadmin-only by design (ADR 0012).
+  const isSuperAdmin = useSuspendedBackendaiClient().is_superadmin;
 
   const [keypairSettingModalFrgmt, setKeypairSettingModalFrgmt] =
     useState<KeypairSettingModalFragment$key | null>(null);
@@ -343,7 +347,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
           />
         </BAIFlex>
         <BAIFlex gap={'xs'}>
-          {selectedKeypairs.length > 0 && (
+          {isSuperAdmin && selectedKeypairs.length > 0 && (
             <BAIFlex gap="xs">
               <BAISelectionLabel
                 count={selectedKeypairs.length}
@@ -352,7 +356,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
               {activeType === 'active' ? (
                 <Tooltip content={t('credential.Deactivate')}>
                   <BAIButton
-                    icon={<BanIcon style={{ color: token.colorError }} />}
+                    icon={<BanIcon style={{ color: token('--color-error') }} />}
                     loading={isBulkUpdating}
                     onClick={() => handleBulkStatusUpdate(false)}
                   />
@@ -360,7 +364,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
               ) : (
                 <Tooltip content={t('credential.Activate')}>
                   <BAIButton
-                    icon={<UndoIcon style={{ color: token.colorInfo }} />}
+                    icon={<UndoIcon style={{ color: token('--color-info') }} />}
                     loading={isBulkUpdating}
                     onClick={() => handleBulkStatusUpdate(true)}
                   />
@@ -377,15 +381,17 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
               icon={<RotateCw size="1em" />}
             />
           </Tooltip>
-          <BAIButton
-            type="primary"
-            icon={<PlusIcon />}
-            onClick={() => {
-              setOpenUserKeypairSettingModal(true);
-            }}
-          >
-            {t('credential.AddCredential')}
-          </BAIButton>
+          {isSuperAdmin && (
+            <BAIButton
+              type="primary"
+              icon={<PlusIcon />}
+              onClick={() => {
+                setOpenUserKeypairSettingModal(true);
+              }}
+            >
+              {t('credential.AddCredential')}
+            </BAIButton>
+          )}
         </BAIFlex>
       </BAIFlex>
       <BAITable<Keypair>
@@ -396,20 +402,24 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
         // desktop widths. Restores what the antd file carried pre-migration.
         scroll={{ x: 'max-content' }}
         dataSource={filterOutNullAndUndefined(keypair_list?.items)}
-        rowSelection={{
-          type: 'checkbox',
-          selectedRowKeys: _.compact(
-            selectedKeypairs.map((keypair) => keypair.id),
-          ),
-          onChange: (keys) => {
-            const items = filterOutNullAndUndefined(keypair_list?.items);
-            setSelectedKeypairs(
-              items.filter(
-                (keypair) => keypair.id && keys.includes(keypair.id),
-              ),
-            );
-          },
-        }}
+        rowSelection={
+          isSuperAdmin
+            ? {
+                type: 'checkbox',
+                selectedRowKeys: _.compact(
+                  selectedKeypairs.map((keypair) => keypair.id),
+                ),
+                onChange: (keys) => {
+                  const items = filterOutNullAndUndefined(keypair_list?.items);
+                  setSelectedKeypairs(
+                    items.filter(
+                      (keypair) => keypair.id && keys.includes(keypair.id),
+                    ),
+                  );
+                },
+              }
+            : undefined
+        }
         columns={filterOutEmpty([
           {
             key: 'userID',
@@ -563,7 +573,11 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
                 <BAINameActionCell
                   title={record.user_id}
                   showActions="always"
-                  actions={actions}
+                  actions={
+                    isSuperAdmin
+                      ? actions
+                      : actions.filter((action) => action.key === 'info')
+                  }
                 />
               );
             },
@@ -606,7 +620,9 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
             title: t('credential.KeyAge'),
             dataIndex: 'created_at',
             render: (createdAt) => {
-              return `${dayjs().diff(createdAt, 'day')}${t('credential.Days')}`;
+              return t('credential.Days', {
+                value: dayjs().diff(createdAt, 'day'),
+              });
             },
             sorter: true,
           },

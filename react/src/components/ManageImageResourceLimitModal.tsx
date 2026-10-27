@@ -13,8 +13,8 @@ import { compareNumberWithUnits } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import BAIFormItem from './BAIFormItem';
 import { AstryxFormNumberInput } from './astryxFormControls';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Grid } from '@astryxdesign/core/Grid';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Grid } from '@lablup/ui-common/Grid';
 import {
   BAIFlex,
   BAIModal,
@@ -53,8 +53,7 @@ const ManageImageResourceLimitModal: React.FC<
           max
         }
         registry
-        name @deprecatedSince(version: "24.12.0")
-        namespace @since(version: "24.12.0")
+        namespace
         architecture
         tag
       }
@@ -101,7 +100,7 @@ const ManageImageResourceLimitModal: React.FC<
     // sessions immediately without any image reinstall.
     commitModifyImageInput({
       variables: {
-        target: `${image?.registry}/${image?.name ?? image?.namespace}:${image?.tag}`,
+        target: `${image?.registry}/${image?.namespace}:${image?.tag}`,
         architecture: image?.architecture,
         props: {
           resource_limits,
@@ -127,7 +126,6 @@ const ManageImageResourceLimitModal: React.FC<
 
   return (
     <BAIModal
-      destroyOnHidden
       open={open}
       maskClosable={false}
       onOk={handleOnClick}
@@ -146,6 +144,7 @@ const ManageImageResourceLimitModal: React.FC<
           BAIFlex column gap. */}
       <BAIFlex direction="column" align="stretch" gap="md">
         <Banner
+          role="status"
           status="info"
           title={t('environment.ResourceLimitAppliesToNewSessionsOnly')}
         />

@@ -4,29 +4,39 @@
  */
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
-import { useBAIBreakpoint } from '../theme-shim';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useUpdatableState, BAIFlex, BAIIntervalView } from 'backend.ai-ui';
+import { Button } from '@lablup/ui-common/Button';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import {
+  BAIFlex,
+  BAIIntervalView,
+  useBAIBreakpoint,
+  useUpdatableState,
+} from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import { atom, useAtom } from 'jotai';
 import { Clock, Repeat2Icon } from 'lucide-react';
 import React, { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface LoginSessionExtendButtonProps {}
+interface LoginSessionExtendButtonProps {
+  'data-testid'?: string;
+  /** Narrow header: the remaining time becomes the extend button's label. */
+  isCompact?: boolean;
+}
 
 export const isLoginSessionExpiredState = atom(false);
 
-const LoginSessionExtendButton: React.FC<
-  LoginSessionExtendButtonProps
-> = () => {
+const LoginSessionExtendButton: React.FC<LoginSessionExtendButtonProps> = ({
+  isCompact,
+  ...props
+}) => {
   const { t } = useTranslation();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const [isPending, startTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
 
-  // RESPONSIVE-POLICY R3: antd `Grid.useBreakpoint()` → the theme-shim's
+  // RESPONSIVE-POLICY R3: antd `Grid.useBreakpoint()` → BUI's
   // `useBAIBreakpoint()` (MAPPING §3.9 — `useMediaQuery` is not equivalent).
   const gridBreakpoint = useBAIBreakpoint();
 
@@ -53,21 +63,48 @@ const LoginSessionExtendButton: React.FC<
     throw error;
   }
 
+  const getRemainingText = () => {
+    const diff = dayjs(data?.expires).diff(dayjs(), 'seconds');
+    const duration = dayjs.duration(Math.max(0, diff), 'seconds');
+    const days = Math.floor(duration.asDays());
+    const isExpired = duration.asMilliseconds() <= 0;
+    setIsLoginSessionExpired(isExpired);
+    return gridBreakpoint.xl
+      ? `${days ? `${days} d ` : ''}${duration.format('HH:mm:ss')}`
+      : days
+        ? `${days} d`
+        : duration.format('HH:mm:ss');
+  };
+  const extend = () => startTransition(() => updateFetchKey());
+
+  if (isCompact) {
+    return (
+      <BAIIntervalView
+        callback={getRemainingText}
+        delay={isLoginSessionExpired ? null : 100}
+        render={(text) => (
+          <Button
+            data-testid={props['data-testid']}
+            variant="primary"
+            size="sm"
+            icon={<Repeat2Icon size="1em" />}
+            label={t('general.ExtendLoginSession')}
+            tooltip={t('general.ExtendLoginSession')}
+            isLoading={isPending}
+            isDisabled={isLoginSessionExpired}
+            onClick={extend}
+          >
+            {text}
+          </Button>
+        )}
+      />
+    );
+  }
+
   return (
     <BAIFlex direction="row" gap="xs">
       <BAIIntervalView
-        callback={() => {
-          const diff = dayjs(data?.expires).diff(dayjs(), 'seconds');
-          const duration = dayjs.duration(Math.max(0, diff), 'seconds');
-          const days = Math.floor(duration.asDays());
-          const isExpired = duration.asMilliseconds() <= 0;
-          setIsLoginSessionExpired(isExpired);
-          return gridBreakpoint.lg
-            ? `${days ? days + 'd ' : ''}${duration.format('HH:mm:ss')}`
-            : days
-              ? days + 'd'
-              : duration.format('HH:mm:ss');
-        }}
+        callback={getRemainingText}
         delay={isLoginSessionExpired ? null : 100}
         render={(text) => {
           return (
@@ -93,7 +130,7 @@ const LoginSessionExtendButton: React.FC<
         tooltip={t('general.ExtendLoginSession')}
         label={t('general.ExtendLoginSession')}
         isLoading={isPending}
-        onClick={() => startTransition(() => updateFetchKey())}
+        onClick={extend}
         icon={<Repeat2Icon size="1em" />}
         isDisabled={isLoginSessionExpired}
       />

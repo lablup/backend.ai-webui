@@ -35,9 +35,24 @@ export interface AnchorCodeRef {
   to?: number;
 }
 
-/** One replayable step on the way to a stop's element. */
-export interface AnchorVia {
-  click: { text?: string; tid?: string };
+/** One replayable step on the way to a stop's element; exactly one key. */
+export type AnchorVia =
+  | { click: { text?: string; tid?: string } }
+  /** Type `value` into the field named by testid or label; `enter` presses Enter. */
+  | { fill: { tid?: string; label?: string; value: string; enter?: 1 } }
+  /** Open the select named by testid or label and choose `option`. */
+  | { select: { tid?: string; label?: string; option: string } };
+
+/** One stop's wording in a language other than the one it was written in. */
+export interface AnchorI18nText {
+  ch?: string;
+  ck?: string;
+  old?: string;
+  new?: string;
+  /** Only the labels the sentence quotes; replay always uses the base `via`. */
+  via?: AnchorVia[];
+  /** The element's own text with the app in this language (FR-4103). */
+  txt?: string;
 }
 
 /**
@@ -96,6 +111,10 @@ export interface AnchorV3 {
   via?: AnchorVia[];
   /** Picked inside a dialog (`DIALOG_SELECTOR`). */
   dlg?: 1;
+  /** Language of the stop text above, present only with `i18n` (FR-4057). */
+  lng?: string;
+  /** The same stop in other languages, keyed by language code. */
+  i18n?: Record<string, AnchorI18nText>;
 }
 
 /**
@@ -172,8 +191,33 @@ declare global {
        * `location.assign` then.
        */
       navigate?: (to: string) => void;
+      /**
+       * What the reviewer was looking at, read at COPY time so a login that
+       * happened after boot still counts. Absent on a host with no app behind
+       * it, and the copy ends where it always has.
+       */
+      env?: () => ReviewEnv | undefined;
     };
   }
+}
+
+/**
+ * The environment a set was reviewed in, rendered once under the set as a
+ * footer. Every field optional; a field the host cannot answer is left out of
+ * the line rather than printed blank.
+ */
+export interface ReviewEnv {
+  /** The WebUI's own version. */
+  webui?: string;
+  /** The manager version the session is logged into. */
+  manager?: string;
+  /** The API endpoint the session talks to. */
+  endpoint?: string;
+  /**
+   * `email (role)` of the logged-in account. Ships only while the dock's
+   * account switch is on — it names a person in a comment others read.
+   */
+  account?: string;
 }
 
 /**
