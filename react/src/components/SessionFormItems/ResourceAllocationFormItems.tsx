@@ -700,6 +700,30 @@ const ResourceAllocationFormItems: React.FC<
     },
   );
 
+  // A preset kept across a resource-group change (or restored from the URL) may
+  // need a slot the new group lacks; pick again instead of launching without it.
+  useEffect(() => {
+    if (_.isUndefined(resourceSlotsInRG)) return;
+    const selectedPreset = _.find(
+      checkPresetInfo?.presets,
+      (preset) => preset.id === currentAllocationPreset,
+    );
+    if (
+      selectedPreset &&
+      getUnavailableSlotNames(
+        selectedPreset.resource_slots,
+        _.keys(resourceSlotsInRG),
+      ).length > 0
+    ) {
+      form.setFieldValue('allocationPreset', 'auto-select');
+    }
+  }, [
+    currentAllocationPreset,
+    resourceSlotsInRG,
+    checkPresetInfo?.presets,
+    form,
+  ]);
+
   // This effect is
   // - for auto selecting the preset right after initialling the form and resourceSlots are loaded
   // - ensuring accelerator type is valid when related data is changed
