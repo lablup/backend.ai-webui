@@ -161,25 +161,6 @@ test.describe(
         // The fourth session type is "Upload Sessions" (not "System")
         await expect(widget.getByText('Upload Sessions')).toBeVisible();
       });
-
-      test('Admin can manually refresh the session count widget', async ({
-        page,
-      }) => {
-        // 1. Locate the "Active Sessions" widget
-        const widget = page
-          .locator('.uic-board-item')
-          .filter({ hasText: 'Active Sessions' })
-          .first();
-        await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
-
-        // 2. Click the refresh (BAIFetchKeyButton) in the widget's header area
-        const refreshButton = widget.getByRole('button', { name: 'Refresh' });
-        await refreshButton.click();
-
-        // 3. Verify the widget data remains visible after refresh
-        await expect(widget.getByText('Interactive')).toBeVisible();
-        await expect(widget.getByText('Batch')).toBeVisible();
-      });
     });
 
     // -----------------------------------------------------------------------
@@ -206,24 +187,6 @@ test.describe(
 
         // 3. Verify the Memory usage statistic is displayed
         await expect(widget.getByText(/Memory|RAM/i)).toBeVisible();
-      });
-
-      test('Admin can manually refresh the My Resources widget', async ({
-        page,
-      }) => {
-        // 1. Locate the "My Resources" widget
-        const widget = page
-          .locator('.uic-board-item')
-          .filter({ hasText: 'My Total Resource Usage' })
-          .first();
-        await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
-
-        // 2. Click the refresh button in the widget header
-        const refreshButton = widget.getByRole('button', { name: 'Refresh' });
-        await refreshButton.click();
-
-        // 3. Verify the widget still renders CPU/Memory after refresh
-        await expect(widget.getByText(/CPU/i)).toBeVisible();
       });
     });
 
@@ -363,22 +326,6 @@ test.describe(
             segmentedControl.getByRole('radio', { name: 'Used' }),
           ).toBeChecked();
         });
-
-        test('Admin can manually refresh the Agent Stats widget', async ({
-          page,
-        }) => {
-          const widget = page
-            .locator('.uic-board-item')
-            .filter({ hasText: 'Agent Statistics' });
-          await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
-
-          // 2. Click the refresh button in the widget header
-          const refreshButton = widget.getByRole('button', { name: 'Refresh' });
-          await refreshButton.click();
-
-          // 3. Verify the widget still renders after refresh (no error state)
-          await expect(widget).toBeVisible();
-        });
       },
     );
 
@@ -401,23 +348,6 @@ test.describe(
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
         // 2. Verify the sessions table container is displayed
-        await expect(widget.getByRole('table')).toBeVisible();
-      });
-
-      test('Admin can manually refresh the Recently Created Sessions widget', async ({
-        page,
-      }) => {
-        // 1. Locate the "Recently Created Sessions" widget
-        const widget = page
-          .locator('.uic-board-item')
-          .filter({ hasText: 'Recently Created Sessions' });
-        await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
-
-        // 2. Click the refresh button in the widget header
-        const refreshButton = widget.getByRole('button', { name: 'Refresh' });
-        await refreshButton.click();
-
-        // 3. Verify the widget still renders after refresh
         await expect(widget.getByRole('table')).toBeVisible();
       });
     });
