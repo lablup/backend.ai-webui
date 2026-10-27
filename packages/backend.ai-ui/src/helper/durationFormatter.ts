@@ -23,11 +23,11 @@ export const formatCompactDuration = (ms: number): string => {
   const parts: Array<[number, string]> = [
     [Math.floor(totalSeconds / 86_400), 'd'],
     [Math.floor(totalSeconds / 3600) % 24, 'h'],
-    [Math.floor(totalSeconds / 60) % 60, 'm'],
+    [Math.floor(totalSeconds / 60) % 60, 'min'],
     [totalSeconds % 60, 's'],
   ];
   return parts
     .filter(([amount]) => amount > 0)
-    .map(([amount, unit]) => `${amount}${unit}`)
+    .map(([amount, unit]) => `${amount} ${unit}`)
     .join(' ');
 };
