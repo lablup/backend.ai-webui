@@ -853,6 +853,7 @@
       "ResetLayout": "Layout zurücksetzen",
       "ResetLayoutDescription": "Stellt die Standardanordnung der Panels wieder her. Benutzerdefinierte Panels bleiben erhalten.",
       "SearchCards": "Karten suchen",
+      "SelectAll": "Alle auswählen",
       "Title": "Benutzerdefinierte Panels"
     },
     "panelModal": {

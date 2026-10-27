@@ -853,6 +853,7 @@
       "ResetLayout": "Düzeni sıfırla",
       "ResetLayoutDescription": "Varsayılan panel düzenini geri yükler. Özel paneller korunur.",
       "SearchCards": "Kart ara",
+      "SelectAll": "Tümünü Seç",
       "Title": "Özel paneller"
     },
     "panelModal": {
