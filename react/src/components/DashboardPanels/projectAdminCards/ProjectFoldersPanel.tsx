@@ -3,16 +3,13 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { ProjectFoldersPanelQuery } from '../../../__generated__/ProjectFoldersPanelQuery.graphql';
+import StatRow from '../charts/StatRow';
 import MemberCard, { NoProjectText } from '../memberCards/MemberCard';
 import type { PanelComponentProps } from '../types';
 import { adminProjectId } from './projectCardData';
-import { Stat } from '@lablup/ui-common/lab';
-import { BAIFlex } from 'backend.ai-ui';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-
-const STAT_FLEX = { flex: '1 1 96px' } as const;
 
 const ProjectFolderCounts: React.FC<{
   projectId: string;
@@ -66,26 +63,25 @@ const ProjectFolderCounts: React.FC<{
     : null;
 
   return (
-    <BAIFlex direction="row" gap="lg" wrap="wrap" align="start">
-      <BAIFlex style={STAT_FLEX} direction="column">
-        <Stat
-          label={t('general.Folders')}
-          value={String(data.ready?.count ?? 0)}
-          description={
-            limit ? t('dashboard.card.FolderLimit', { max: limit }) : undefined
-          }
-        />
-      </BAIFlex>
-      <BAIFlex style={STAT_FLEX} direction="column">
-        <Stat
-          label={t('data.folders.TrashBin')}
-          value={String(data.trash?.count ?? 0)}
-        />
-      </BAIFlex>
-    </BAIFlex>
+    <StatRow
+      items={[
+        {
+          key: 'ready',
+          label: t('general.Folders'),
+          value: String(data.ready?.count ?? 0),
+          description: limit
+            ? t('dashboard.card.FolderLimit', { max: limit })
+            : undefined,
+        },
+        {
+          key: 'trash',
+          label: t('data.folders.TrashBin'),
+          value: String(data.trash?.count ?? 0),
+        },
+      ]}
+    />
   );
 };
-
 /** The project's folders (trash apart) against the project's folder limit. */
 const ProjectFoldersPanel: React.FC<PanelComponentProps> = ({
   scope,

@@ -7,7 +7,6 @@ import type {
   ProjectAuditLogPanelQuery,
 } from '../../../__generated__/ProjectAuditLogPanelQuery.graphql';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
-import SuccessFailureChart from '../charts/SuccessFailureChart';
 import SuccessFailureStats from '../charts/SuccessFailureStats';
 import {
   readSuccessFailure,
@@ -43,7 +42,7 @@ const VISIBLE_COLUMNS = new Set([
   'description',
 ]);
 
-export const auditOutcomeFilter = (
+const auditOutcomeFilter = (
   outcome: Outcome,
   window: DateTimeWindow,
 ): AuditLogFilter => ({
@@ -70,7 +69,6 @@ const ProjectAuditLog: React.FC<{
   onShowFailures,
 }) => {
   'use memo';
-  const { t } = useTranslation();
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -245,18 +243,8 @@ const ProjectAuditLog: React.FC<{
     <BAIFlex direction="column" align="stretch" gap="sm">
       <SuccessFailureStats
         counts={counts}
-        showTrend={false}
-        onClickFailure={failuresOnly ? undefined : onShowFailures}
-      />
-      <SuccessFailureChart
         buckets={buckets}
-        successTrend={counts.successTrend}
-        failureTrend={counts.failureTrend}
-        labels={{
-          success: t('dashboard.card.Succeeded'),
-          failure: t('dashboard.card.Failed'),
-          chart: t('dashboard.card.AuditLogTrend'),
-        }}
+        onClickFailure={failuresOnly ? undefined : onShowFailures}
       />
       <BAIAuditLogNodes
         auditLogFrgmt={filterOutNullAndUndefined(

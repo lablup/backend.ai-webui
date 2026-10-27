@@ -18,7 +18,7 @@ import {
 import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 
-export interface TrendStatProps extends Omit<StatProps, 'delta' | 'media'> {
+export interface TrendStatProps extends Omit<StatProps, 'delta'> {
   /** The change from the previous range; `sentiment` flips the colour for counts where up is bad. */
   delta?: CountDelta & { sentiment?: 'positive' | 'negative' | 'neutral' };
   /** Manager-counted bucket values, oldest first, drawn as a sparkline. */
@@ -30,7 +30,7 @@ export interface TrendStatProps extends Omit<StatProps, 'delta' | 'media'> {
 
 const SPARKLINE_HEIGHT = 32;
 
-/** A count with its change from the previous range and a bucket sparkline. */
+/** The dashboard's one stat: a count, its change from the previous range, and a bucket sparkline (else `media`). */
 const TrendStat: React.FC<TrendStatProps> = ({
   delta,
   trend,
@@ -76,7 +76,9 @@ const TrendStat: React.FC<TrendStatProps> = ({
               )}
             />
           </Chart>
-        ) : undefined
+        ) : (
+          statProps.media
+        )
       }
     />
   );

@@ -9,11 +9,12 @@ import type {
   SessionV2Type,
 } from '../../../__generated__/ProjectSessionStatusPanelQuery.graphql';
 import { getSessionV2StatusBuckets } from '../../../helper/sessionStatusBuckets';
+import DonutChart from '../charts/DonutChart';
+import StatRow from '../charts/StatRow';
 import MemberCard, { NoProjectText } from '../memberCards/MemberCard';
+import { toDonutRows } from '../memberCards/memberCardData';
 import type { PanelComponentProps } from '../types';
 import { adminProjectId } from './projectCardData';
-import { Text } from '@lablup/ui-common/Text';
-import { Stat } from '@lablup/ui-common/lab';
 import { BAIFlex, useSessionTypeLabel } from 'backend.ai-ui';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -149,29 +150,38 @@ const SessionStatusCounts: React.FC<{
   };
   const sessionTypeLabel = useSessionTypeLabel();
   return (
-    <BAIFlex direction="column" align="stretch" gap="sm">
-      <BAIFlex direction="row" gap="lg" wrap="wrap" align="start">
-        {STATUS_GROUPS.map(({ key }) => (
-          <BAIFlex key={key} style={{ flex: '1 1 88px' }} direction="column">
-            <Stat
-              label={statusLabels[key]}
-              value={String(data[key]?.count ?? 0)}
-            />
-          </BAIFlex>
-        ))}
-      </BAIFlex>
-      <BAIFlex direction="row" gap="md" wrap="wrap">
-        <Text type="supporting">{t('dashboard.card.ActiveByType')}</Text>
-        {SESSION_TYPES.map(({ key, type }) => (
-          <Text
-            key={key}
-          >{`${sessionTypeLabel(type)} ${data[key]?.count ?? 0}`}</Text>
-        ))}
-      </BAIFlex>
+    <BAIFlex
+      direction="column"
+      align="stretch"
+      gap="md"
+      style={{ flex: 1, minHeight: 0 }}
+    >
+      <StatRow
+        items={STATUS_GROUPS.map(({ key }) => ({
+          key,
+          label: statusLabels[key],
+          value: String(data[key]?.count ?? 0),
+        }))}
+      />
+      <DonutChart
+        label={t('dashboard.card.ActiveByType')}
+        emptyText={t('dashboard.card.NoActiveSessions')}
+        columnLabels={{
+          name: t('session.SessionType'),
+          value: t('dashboard.card.Count'),
+          percent: t('dashboard.card.Share'),
+        }}
+        rows={toDonutRows(
+          SESSION_TYPES.map(({ key, type }) => ({
+            key: type,
+            label: sessionTypeLabel(type),
+            count: data[key]?.count,
+          })),
+        )}
+      />
     </BAIFlex>
   );
 };
-
 /** The project's sessions now, by status, and the active ones by type. */
 const ProjectSessionStatusPanel: React.FC<PanelComponentProps> = ({
   scope,

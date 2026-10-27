@@ -96,7 +96,6 @@ describe('PANEL_CATALOG', () => {
         'projectFolders',
         'projectUsers',
         'projectAuditLog',
-        'failedOperations',
       ],
     ],
     [

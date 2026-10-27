@@ -24,7 +24,6 @@ import {
   StartFromURLPanel,
   StartSessionPanel,
 } from './memberCards/StartActionPanels';
-import FailedOperationsPanel from './projectAdminCards/FailedOperationsPanel';
 import LongRunningSessionsPanel from './projectAdminCards/LongRunningSessionsPanel';
 import PendingSessionsPanel from './projectAdminCards/PendingSessionsPanel';
 import ProjectAuditLogPanel from './projectAdminCards/ProjectAuditLogPanel';
@@ -329,8 +328,8 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'dashboard.card.SessionStatus',
     kind: 'custom',
     Component: ProjectSessionStatusPanel,
-    defaultSize: size(2, 2),
-    minSize: size(2, 2),
+    defaultSize: size(4, 3),
+    minSize: size(2, 3),
     refresh: { min: '15s' },
   },
   {
@@ -397,7 +396,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'webui.menu.Users',
     kind: 'custom',
     Component: ProjectUsersPanel,
-    defaultSize: size(2, 3),
+    defaultSize: size(2, 2),
     minSize: size(2, 2),
     refresh: { min: '5m' },
   },
@@ -410,18 +409,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: ProjectAuditLogPanel,
     defaultSize: size(4, 4),
     minSize: size(2, 3),
-    refresh: { min: '1m' },
-    settings: ['range'],
-  },
-  {
-    key: 'failedOperations',
-    page: ['projectAdmin'],
-    group: 'activity',
-    titleKey: 'dashboard.card.FailedOperations',
-    kind: 'custom',
-    Component: FailedOperationsPanel,
-    defaultSize: size(2, 2),
-    minSize: size(1, 2),
     refresh: { min: '1m' },
     settings: ['range'],
   },

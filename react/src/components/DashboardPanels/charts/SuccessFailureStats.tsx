@@ -4,64 +4,60 @@
  */
 import { failureSentiment, type SuccessFailureCounts } from '../countAliases';
 import type { DateTimeWindow } from '../timeRange';
-import TrendStat from './TrendStat';
-import { BAIFlex, BAILink } from 'backend.ai-ui';
+import StatRow from './StatRow';
+import { BAILink } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface SuccessFailureStatsProps {
   counts: SuccessFailureCounts;
-  /** Draws each count's bucket sparkline; off when a chart beside it shows the buckets. */
-  showTrend?: boolean;
   /** The bucket windows behind the trends, for the sparkline tooltips. */
   buckets?: ReadonlyArray<DateTimeWindow>;
   /** Makes the failure count a link, e.g. to turn on "failures only". */
   onClickFailure?: () => void;
 }
 
-/** Succeeded and failed counts with their change from the previous range. */
+/** Succeeded and failed counts with their change from the previous range and a bucket sparkline each. */
 const SuccessFailureStats: React.FC<SuccessFailureStatsProps> = ({
   counts,
-  showTrend = true,
   buckets,
   onClickFailure,
 }) => {
   'use memo';
   const { t } = useTranslation();
   return (
-    <BAIFlex direction="row" gap="lg" wrap="wrap" align="stretch">
-      <BAIFlex style={{ flex: '1 1 140px' }} direction="column">
-        <TrendStat
-          label={t('dashboard.card.Succeeded')}
-          value={String(counts.success)}
-          description={t('dashboard.card.VsPreviousRange')}
-          delta={counts.successDelta}
-          trend={showTrend ? counts.successTrend : undefined}
-          buckets={buckets}
-          trendColor="positive"
-        />
-      </BAIFlex>
-      <BAIFlex style={{ flex: '1 1 140px' }} direction="column">
-        <TrendStat
-          label={t('dashboard.card.Failed')}
-          value={
+    <StatRow
+      items={[
+        {
+          key: 'success',
+          label: t('dashboard.card.Succeeded'),
+          value: String(counts.success),
+          description: t('dashboard.card.VsPreviousRange'),
+          delta: counts.successDelta,
+          trend: counts.successTrend,
+          buckets,
+          trendColor: 'positive',
+        },
+        {
+          key: 'failure',
+          label: t('dashboard.card.Failed'),
+          value:
             onClickFailure && counts.failure > 0 ? (
               <BAILink onClick={onClickFailure}>{counts.failure}</BAILink>
             ) : (
               String(counts.failure)
-            )
-          }
-          description={t('dashboard.card.VsPreviousRange')}
-          delta={{
+            ),
+          description: t('dashboard.card.VsPreviousRange'),
+          delta: {
             ...counts.failureDelta,
             sentiment: failureSentiment(counts.failureDelta),
-          }}
-          trend={showTrend ? counts.failureTrend : undefined}
-          buckets={buckets}
-          trendColor="negative"
-        />
-      </BAIFlex>
-    </BAIFlex>
+          },
+          trend: counts.failureTrend,
+          buckets,
+          trendColor: 'negative',
+        },
+      ]}
+    />
   );
 };
 
