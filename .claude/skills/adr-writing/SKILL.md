@@ -54,7 +54,8 @@ not a decision record.
 
 This is the definition of how an ADR file is named, titled, and retired. The
 one other copy is `.github/instructions/adr.instructions.md`, which restates
-the points Copilot needs because it cannot load a skill; keep the two in step.
+the points a review bot needs because it cannot load a skill (`REVIEW.md` points
+reviewers at the ADRs); keep the two in step.
 
 - **Filename** — `NNNN-title.md`, for example
   `0001-explicit-project-prop-contract.md`. The next number is the highest
