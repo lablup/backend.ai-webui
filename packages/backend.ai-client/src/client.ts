@@ -493,7 +493,10 @@ export class Client {
         type: errorType,
         requestUrl: rqst.uri,
         requestMethod: rqst.method,
-        requestParameters: rqst.body,
+        // Redacted the same way as the persisted debug log: login failures
+        // re-throw this envelope (e.g. 429/502/503), and any consumer that
+        // logs the error object must never print the plaintext password.
+        requestParameters: redactRequestParameters(rqst.body),
         statusCode: respOverlay.status,
         statusText: respOverlay.statusText,
         title: errorTitle,

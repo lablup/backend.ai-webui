@@ -7,7 +7,13 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { Button } from '@lablup/ui-common/Button';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
-import { BAI_Z_INDEX, BAICard, BAIFlex, BAIMetadataList } from 'backend.ai-ui';
+import {
+  BAI_Z_INDEX,
+  BAICard,
+  BAIFlex,
+  BAIMetadataList,
+  resolveCallbackUrl,
+} from 'backend.ai-ui';
 import { parseAsString, useQueryState } from 'nuqs';
 import { Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -32,6 +38,14 @@ const Children = () => {
   const [callback] = useQueryState('callback', parseAsString);
   const [name] = useQueryState('name', parseAsString);
   const { t } = useTranslation();
+
+  // The `callback` query param is attacker-craftable, so it must never be
+  // assigned to `window.location.href` raw — a `javascript:` URL would execute
+  // in this origin. `resolveCallbackUrl` (shared with the BUI interactive-login
+  // flow) only resolves absolute http(s) URLs and drops everything else.
+  // Resolved only when the param exists: without one the helper would fall
+  // back to this page's own URL and show it as the callback.
+  const resolvedCallback = callback ? resolveCallbackUrl(callback) : null;
 
   // This route has no MainLayout, so the interactive-login card is its "main
   // UI". Put the splash into login-backdrop mode (keeps the Diagonal Weave +
@@ -66,7 +80,7 @@ const Children = () => {
               {name}
             </MetadataListItem>
             <MetadataListItem label="URL">
-              {callback ? new URL(callback).origin : '-'}
+              {resolvedCallback ? new URL(resolvedCallback).origin : '-'}
             </MetadataListItem>
           </BAIMetadataList>
           <BAIFlex
@@ -102,8 +116,10 @@ const Children = () => {
               variant="primary"
               label={t('login.Login')}
               onClick={() => {
-                //redirect to callback
-                window.location.href = callback || '';
+                if (resolvedCallback) {
+                  //redirect to callback
+                  window.location.href = resolvedCallback;
+                }
               }}
             />
           </BAIFlex>
