@@ -6,7 +6,7 @@ import DashboardBoardSection from './DashboardBoardSection';
 import { DEFAULT_BOARD_VARS, activeBoardOf } from './dashboardConfig';
 import type { DashboardModel, DashboardPageConfig } from './types';
 import '@testing-library/jest-dom';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React, { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
@@ -139,7 +139,7 @@ describe('DashboardBoardSection', () => {
     expect(latest.config.boards).toHaveLength(1);
   });
 
-  it('deletes the active board after confirming', async () => {
+  it('deletes the active board only after its name is typed', async () => {
     const user = userEvent.setup();
     const latest = renderSection({
       boards: [board('default', ''), board('ops', 'Ops')],
@@ -147,11 +147,35 @@ describe('DashboardBoardSection', () => {
     });
 
     await user.click(screen.getByTestId('dashboard-board-delete'));
-    await user.click(
-      await screen.findByRole('button', { name: 'button.Delete' }),
-    );
+    const dialog = await screen.findByRole('dialog');
+    const okButton = within(dialog).getByRole('button', {
+      name: 'button.Delete',
+    });
+    expect(okButton).toBeDisabled();
+
+    await user.type(within(dialog).getByRole('textbox'), 'Op');
+    expect(okButton).toBeDisabled();
+    await user.type(within(dialog).getByRole('textbox'), 's');
+    expect(okButton).toBeEnabled();
+    await user.click(okButton);
 
     expect(latest.config.boards.map(({ id }) => id)).toEqual(['default']);
     expect(latest.config.active).toBe('default');
+  });
+
+  it('keeps the board when the delete dialog is cancelled', async () => {
+    const user = userEvent.setup();
+    const latest = renderSection({
+      boards: [board('default', ''), board('ops', 'Ops')],
+      active: 'ops',
+    });
+
+    await user.click(screen.getByTestId('dashboard-board-delete'));
+    const dialog = await screen.findByRole('dialog');
+    await user.type(within(dialog).getByRole('textbox'), 'Ops');
+    await user.keyboard('{Escape}');
+
+    expect(latest.config.boards).toHaveLength(2);
+    expect(latest.config.active).toBe('ops');
   });
 });

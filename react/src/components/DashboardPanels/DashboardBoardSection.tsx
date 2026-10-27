@@ -16,8 +16,8 @@ import type { DashboardBoardsState } from './useDashboardBoards';
 import { Button } from '@lablup/ui-common/Button';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAIDeleteConfirmModal,
   BAIFlex,
-  BAIPopconfirm,
   BAISelector,
   BAIText,
   BAITextInput,
@@ -47,6 +47,7 @@ const DashboardBoardSection: React.FC<DashboardBoardSectionProps> = ({
   const { config, activeBoard, update } = boards;
   // An unsaved name belongs to the board it was typed for.
   const [draft, setDraft] = useState<{ boardId: string; title: string }>();
+  const [deleting, setDeleting] = useState<{ id: string; title: string }>();
 
   const titleOf = (board: DashboardModel) =>
     board.title || t('dashboard.boards.DefaultBoard');
@@ -134,32 +135,38 @@ const DashboardBoardSection: React.FC<DashboardBoardSectionProps> = ({
           onClick={addNewBoard}
           data-testid="dashboard-board-add"
         />
-        <BAIPopconfirm
-          title={t('dialog.ask.DoYouWantToDeleteSomething', {
-            name: titleOf(activeBoard),
-          })}
-          isDanger
-          okText={t('button.Delete')}
-          onConfirm={() =>
-            update((current) => removeBoard(current, activeBoard.id))
+        <Button
+          variant="secondary"
+          size="sm"
+          icon={<Trash2 size="1em" />}
+          label={t('dashboard.boards.DeleteBoard')}
+          className="dashboard-board-delete"
+          isDisabled={!canDelete}
+          tooltip={
+            canDelete ? undefined : t('dashboard.boards.CannotDeleteLastBoard')
           }
-        >
-          <Button
-            variant="secondary"
-            size="sm"
-            icon={<Trash2 size="1em" />}
-            label={t('dashboard.boards.DeleteBoard')}
-            className="dashboard-board-delete"
-            isDisabled={!canDelete}
-            tooltip={
-              canDelete
-                ? undefined
-                : t('dashboard.boards.CannotDeleteLastBoard')
-            }
-            data-testid="dashboard-board-delete"
-          />
-        </BAIPopconfirm>
+          onClick={() =>
+            setDeleting({ id: activeBoard.id, title: titleOf(activeBoard) })
+          }
+          data-testid="dashboard-board-delete"
+        />
       </BAIFlex>
+      <BAIDeleteConfirmModal
+        open={!!deleting}
+        title={t('dashboard.boards.DeleteBoard')}
+        items={deleting ? [{ key: deleting.id, label: deleting.title }] : []}
+        confirmText={deleting?.title ?? ''}
+        requireConfirmInput
+        okText={t('button.Delete')}
+        onOk={() => {
+          if (deleting) {
+            const { id } = deleting;
+            update((current) => removeBoard(current, id));
+          }
+          setDeleting(undefined);
+        }}
+        onCancel={() => setDeleting(undefined)}
+      />
     </BAIFlex>
   );
 };
