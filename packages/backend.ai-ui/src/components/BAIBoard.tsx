@@ -5,16 +5,12 @@
  Adapter over ui-common `Board`: keeps the frozen `movable` / `resizable` /
  `bordered` names and the `onItemsChange({ detail })` shape the dashboards
  read. An item without its own `title` / `description` gets `data.content` as
- the description and a title row the content's `BAIBoardItemTitle` renders into.
+ the description; ui-common `Board` moves its first `BAIBoardItemTitle` into the header.
 */
 import './BAIBoard.css';
 import {
-  BAIBoardItemProvider,
-  BAIBoardItemTitleSlot,
-  useBAIBoardTitleSlots,
-} from './BAIBoardItemTitleSlot';
-import {
   Board,
+  useIsInBoardItem,
   type BoardItem,
   type BoardItemsChangeDetail,
   type BoardProps,
@@ -62,7 +58,6 @@ const BAIBoard = <T extends BAIBoardDataType = BAIBoardDataType>({
   ...boardProps
 }: BAIBoardProps<T>) => {
   'use memo';
-  const slots = useBAIBoardTitleSlots();
   const ownSlotIds = new Set(
     items.filter((item) => hasOwnSlots(item)).map((item) => item.id),
   );
@@ -71,23 +66,13 @@ const BAIBoard = <T extends BAIBoardDataType = BAIBoardDataType>({
       {...boardProps}
       className={classNames('bai-board', className)}
       items={items.map((item) =>
-        hasOwnSlots(item)
-          ? item
-          : {
-              ...item,
-              title: <BAIBoardItemTitleSlot slots={slots} id={item.id} />,
-              description: (
-                <BAIBoardItemProvider value={{ slots, id: item.id }}>
-                  {item.data?.content}
-                </BAIBoardItemProvider>
-              ),
-            },
+        hasOwnSlots(item) ? item : { ...item, description: item.data?.content },
       )}
-      // Hand back the items as given: the nodes added here are rebuilt on every render.
+      // Hand back the items as given: the description added here is rebuilt on every render.
       onItemsChange={(detail) => {
         const strip = <I extends BAIBoardItem<T> | undefined>(item: I): I =>
           item && !ownSlotIds.has(item.id)
-            ? (_.omit(item, ['title', 'description']) as I)
+            ? (_.omit(item, 'description') as I)
             : item;
         onItemsChange({
           detail: {
@@ -106,4 +91,7 @@ const BAIBoard = <T extends BAIBoardDataType = BAIBoardDataType>({
 };
 
 BAIBoard.displayName = 'BAIBoard';
+
+/** Whether the caller renders inside a `BAIBoard` item, whose board pads it. */
+export const useIsInBAIBoardItem = useIsInBoardItem;
 export default BAIBoard;

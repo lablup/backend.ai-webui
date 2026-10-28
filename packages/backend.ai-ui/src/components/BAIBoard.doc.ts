@@ -17,7 +17,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The dashboard grid: ui-common `Board` behind the prop names the Backend.AI dashboards were written against. Each item carries its content in `data.content`, which the board renders as the item description; a `BAIBoardItemTitle` inside that content renders into the item title row, which the board pads and places with the drag handle on its first line. Content without one gets no title row. An item that sets its own `title` or `description` is passed to ui-common `Board` as is. The board pads every item (`itemPadding`), so content brings no inset of its own; `useIsInBAIBoardItem()` tells a component shared with non-board pages whether to pad itself. `movable`, `resizable` and `bordered` map onto the ui-common `isMovable`, `isResizable` and `variant` props, and `onItemsChange` receives `{ detail }` with the whole board in its new order, so the dashboards persist `event.detail.items` (minus `data`) and pass it back as `items`; the title and description nodes the adapter adds are stripped from what it reports. Items keep the shape the dashboards have always persisted (`id`, `rowSpan`, `columnSpan`, `columnOffset`, `definition`, `data`), so a layout stored in local storage keeps rendering. An item whose content renders a `BAIBoardItemErrorBoundary` fallback gets an error or warning border from the `data-bai-board-item-status` attribute.',
+      'The dashboard grid: ui-common `Board` behind the prop names the Backend.AI dashboards were written against. Each item carries its content in `data.content`, which the board renders as the item description; the first `BAIBoardItemTitle` inside that content renders in the item header row (ui-common `Board`), which the board pads and places with the drag handle on its first line. Content without one gets no header row. An item that sets its own `title` or `description` is passed to ui-common `Board` as is. The board pads every item (`itemPadding`), so content brings no inset of its own; `useIsInBAIBoardItem()` tells a component shared with non-board pages whether to pad itself. `movable`, `resizable` and `bordered` map onto the ui-common `isMovable`, `isResizable` and `variant` props, and `onItemsChange` receives `{ detail }` with the whole board in its new order, so the dashboards persist `event.detail.items` (minus `data`) and pass it back as `items`; the description node the adapter adds is stripped from what it reports. Items keep the shape the dashboards have always persisted (`id`, `rowSpan`, `columnSpan`, `columnOffset`, `definition`, `data`), so a layout stored in local storage keeps rendering. An item whose content renders a `BAIBoardItemErrorBoundary` fallback gets an error or warning border from the `data-bai-board-item-status` attribute.',
     bestPractices: [
       {
         guidance: true,
@@ -27,7 +27,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Start the content with one `BAIBoardItemTitle` and give it no inset; the board pads the title row and the body. Wrap a second titled section of the same item in `BAIBoardItemInlineTitles` so its title stays in the body.',
+          'Start the content with one `BAIBoardItemTitle` and give it no inset; the board pads the title row and the body. Give the title of a second section in the same item `inline` so it stays in the body.',
       },
       {
         guidance: false,

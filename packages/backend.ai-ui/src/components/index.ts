@@ -2,7 +2,7 @@ export { default as BAIImageWithFallback } from './BAIImageWithFallback';
 export type { BAIImageWithFallbackProps } from './BAIImageWithFallback';
 export { default as BAIBadge } from './BAIBadge';
 export type { BAIBadgeProps } from './BAIBadge';
-export { default as BAIBoard } from './BAIBoard';
+export { default as BAIBoard, useIsInBAIBoardItem } from './BAIBoard';
 export type {
   BAIBoardDataType,
   BAIBoardItem,
@@ -10,10 +10,6 @@ export type {
   BAIBoardProps,
 } from './BAIBoard';
 export { default as BAIBoardItemTitle } from './BAIBoardItemTitle';
-export {
-  BAIBoardItemInlineTitles,
-  useIsInBAIBoardItem,
-} from './BAIBoardItemTitleSlot';
 export type { BAIBoardItemTitleProps } from './BAIBoardItemTitle';
 export { default as BAIBulkEditFormItem } from './BAIBulkEditFormItem';
 export type { BAIBulkEditFormItemProps } from './BAIBulkEditFormItem';

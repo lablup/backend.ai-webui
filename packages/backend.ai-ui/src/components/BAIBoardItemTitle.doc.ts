@@ -71,20 +71,11 @@ export const docs = {
           description:
             'Trailing action slot, right-aligned and wrapping. Holds refresh buttons, view toggles, and other panel-scoped controls.',
         },
-      ],
-    },
-    {
-      name: 'BAIBoardItemInlineTitles',
-      displayName: 'BAI Board Item Inline Titles',
-      description:
-        'Wraps a second section inside one board item. The item title row is already taken, so every `BAIBoardItemTitle` below it renders where it stands, in the body. Outside a `BAIBoard` item it renders its children unchanged.',
-      props: [
         {
-          name: 'children',
-          type: 'React.ReactNode',
+          name: 'inline',
+          type: 'boolean',
           description:
-            'The section whose `BAIBoardItemTitle` should stay in the item body.',
-          required: true,
+            'Inside a `BAIBoard` item, keep this title in the body instead of the item header row, for a second titled section of the same item.',
         },
       ],
     },

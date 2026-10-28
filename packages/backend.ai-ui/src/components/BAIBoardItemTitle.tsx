@@ -3,17 +3,15 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  Adapter over ui-common `BoardItemTitle` (FR-4054): keeps `extra` and the
- CircleHelp tooltip glyph. Inside a `BAIBoard` item it renders into the item's
- title row, which the board pads and places; elsewhere, where it stands.
+ CircleHelp tooltip glyph. In an untitled `BAIBoard` item, the first one renders
+ in the item's header row (ui-common `Board`); `inline` keeps it in the body.
 */
-import { useBAIBoardItemTitleTarget } from './BAIBoardItemTitleSlot';
 import {
   BoardItemTitle,
   type BoardItemTitleProps,
 } from '@lablup/ui-common/components/BoardItemTitle';
 import { CircleHelp } from 'lucide-react';
 import React from 'react';
-import { createPortal } from 'react-dom';
 
 export interface BAIBoardItemTitleProps extends Omit<
   BoardItemTitleProps,
@@ -28,17 +26,13 @@ const BAIBoardItemTitle: React.FC<BAIBoardItemTitleProps> = ({
   ...titleProps
 }) => {
   'use memo';
-  const target = useBAIBoardItemTitleTarget();
-  const row = (
+  return (
     <BoardItemTitle
       {...titleProps}
       tooltipIcon={tooltipIcon}
       endContent={extra}
     />
   );
-  if (target === undefined) return row;
-  // The board's title row mounts with the item; until then there is nowhere to draw.
-  return target ? createPortal(row, target) : null;
 };
 
 BAIBoardItemTitle.displayName = 'BAIBoardItemTitle';

@@ -5,8 +5,7 @@
  Co-located styles for <BAIBoard>, imported by the component itself (P17).
  ui-common `Board` draws the item surface, border, handles and title row; what
  remains here is the status tint `BAIBoardItemErrorBoundary` asks for through
- `data-bai-board-item-status`, and the title slot `BAIBoardItemTitle` renders
- into. In `@layer components`, which follows `ui-common` in the layer order
+ `data-bai-board-item-status`. In `@layer components`, which follows `ui-common` in the layer order
  (styles/backend.ai-ui.css).
 */
 @layer components {
@@ -16,27 +15,5 @@
 
   .bai-board .uic-board-item:has([data-bai-board-item-status='warning']) {
     border-color: var(--color-warning);
-  }
-
-  .bai-board-item-title-slot {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  /* Content without a BAIBoardItemTitle: no title row, the content takes the item. */
-  .bai-board
-    .uic-board-item__header:has(
-      > .uic-board-item__title > .bai-board-item-title-slot:empty
-    ) {
-    display: none;
-  }
-
-  .bai-board
-    .uic-board-item__header:has(
-      > .uic-board-item__title > .bai-board-item-title-slot:empty
-    )
-    + .uic-board-item__content {
-    padding-block-start: var(--board-item-padding-top, var(--spacing-5));
   }
 }

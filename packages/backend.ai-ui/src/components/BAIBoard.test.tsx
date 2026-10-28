@@ -1,6 +1,5 @@
 import BAIBoard, { type BAIBoardItem } from './BAIBoard';
 import BAIBoardItemTitle from './BAIBoardItemTitle';
-import { BAIBoardItemInlineTitles } from './BAIBoardItemTitleSlot';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
@@ -83,9 +82,7 @@ describe('BAIBoard', () => {
                 <>
                   <BAIBoardItemTitle title="Alpha" />
                   <p>Body</p>
-                  <BAIBoardItemInlineTitles>
-                    <BAIBoardItemTitle title="Section" />
-                  </BAIBoardItemInlineTitles>
+                  <BAIBoardItemTitle title="Section" inline />
                 </>
               ),
             },
@@ -113,7 +110,6 @@ describe('BAIBoard', () => {
       />,
     );
     expect(shell('Own')).toHaveTextContent('Text');
-    expect(document.querySelector('.bai-board-item-title-slot')).toBeNull();
   });
 
   it('keeps one title row and reports no title nodes over repeated moves', async () => {
