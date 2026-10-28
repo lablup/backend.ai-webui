@@ -39,13 +39,11 @@ const Children = () => {
   const [name] = useQueryState('name', parseAsString);
   const { t } = useTranslation();
 
-  // The `callback` query param is attacker-craftable, so it must never be
-  // assigned to `window.location.href` raw — a `javascript:` URL would execute
-  // in this origin. `resolveCallbackUrl` (shared with the BUI interactive-login
-  // flow) only resolves absolute http(s) URLs and drops everything else.
-  // Resolved only when the param exists: without one the helper would fall
-  // back to this page's own URL and show it as the callback.
-  const resolvedCallback = callback ? resolveCallbackUrl(callback) : null;
+  // Never navigate to the raw param: a `javascript:` callback would run in this
+  // origin. Blank → null, since the helper would fall back to this page's URL.
+  const resolvedCallback = callback?.trim()
+    ? resolveCallbackUrl(callback)
+    : null;
 
   // This route has no MainLayout, so the interactive-login card is its "main
   // UI". Put the splash into login-backdrop mode (keeps the Diagonal Weave +
@@ -115,9 +113,9 @@ const Children = () => {
               size="lg"
               variant="primary"
               label={t('login.Login')}
+              isDisabled={!resolvedCallback}
               onClick={() => {
                 if (resolvedCallback) {
-                  //redirect to callback
                   window.location.href = resolvedCallback;
                 }
               }}

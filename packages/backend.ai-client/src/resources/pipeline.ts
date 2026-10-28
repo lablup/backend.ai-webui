@@ -45,10 +45,9 @@ export class Pipeline {
         return Promise.resolve(false);
       } else {
         const token = result.token;
-        // Secure + SameSite=Lax: the token grants full API access to the
-        // pipeline server, so it must never travel over plain HTTP or on
-        // cross-site requests (same attributes as STokenLoginBoundary.tsx).
-        document.cookie = `${this.tokenName}=${token}; path=/; Secure; SameSite=Lax`;
+        // `Secure` only over https: a browser drops a Secure cookie set from http.
+        const secure = location.protocol === 'https:' ? '; Secure' : '';
+        document.cookie = `${this.tokenName}=${token}; path=/; SameSite=Lax${secure}`;
         return Promise.resolve(false);
       }
     } catch (err) {

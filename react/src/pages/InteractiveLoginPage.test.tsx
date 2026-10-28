@@ -3,11 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 /**
- * `/interactive-login` navigates to the `callback` query param on the Login
- * click, so the one thing worth pinning is that only an absolute http(s)
- * callback survives — the raw value is attacker-craftable, and a
- * `javascript:` URL must never reach `window.location.href`. A malformed
- * value must not crash the render either.
+ * The `callback` query param is attacker-craftable: only an http(s) URL may
+ * reach `window.location.href`, and a malformed value must not crash the render.
  */
 import InteractiveLoginPage from './InteractiveLoginPage';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -136,5 +133,12 @@ describe('InteractiveLoginPage', () => {
     await userEvent.click(screen.getByRole('button', { name: 'login.Login' }));
 
     expect(assignedHref).toBeUndefined();
+  });
+
+  it('treats a blank callback as absent instead of this page', () => {
+    renderLogin('?name=webapp&callback=%20');
+
+    expect(screen.getByText('-')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'login.Login' })).toBeDisabled();
   });
 });

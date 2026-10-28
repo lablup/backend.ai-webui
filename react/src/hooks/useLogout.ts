@@ -10,11 +10,7 @@ import { useTranslation } from 'react-i18next';
 
 /**
  * Clears all Backend.AI login-related localStorage keys and sessionStorage.
- *
- * Covers the legacy `backendaiwebui.login.*` credentials (case-insensitive)
- * and the `backendaiwebui.appproxy-permit-key` proxy credential, which is
- * written by the app launcher and must not survive logout on a shared
- * machine. Settings keys (`backendaiwebui.settings`, theme, lang, …) survive.
+ * Settings keys (`backendaiwebui.settings`, theme, lang, …) survive.
  */
 function clearLoginStorage() {
   const loginRelated = /^backendaiwebui\.(login\.|appproxy-permit-key)/i;
@@ -87,8 +83,12 @@ async function performLogoutCleanup(notificationMessage: string) {
       }),
     );
 
-    await logoutBackendAIClient();
-    clearLoginStorage();
+    try {
+      await logoutBackendAIClient();
+    } finally {
+      // Credentials must not survive a failed server-side logout.
+      clearLoginStorage();
+    }
 
     // Set the flag AFTER clearLoginStorage() so it is not erased by the
     // sessionStorage.clear() call inside clearLoginStorage().  The flag
@@ -119,8 +119,12 @@ async function performAppCloseCleanup(notificationMessage: string) {
       }),
     );
 
-    await logoutBackendAIClient();
-    clearLoginStorage();
+    try {
+      await logoutBackendAIClient();
+    } finally {
+      // Credentials must not survive a failed server-side logout.
+      clearLoginStorage();
+    }
   }
 }
 

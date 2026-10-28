@@ -97,6 +97,39 @@ describe('clearLoginStorage (via useLogout)', () => {
     expect(localStorage.getItem('other.key')).toBe('keep-me');
   });
 
+  it('removes lowercase login keys and the app-proxy permit key, keeping settings', async () => {
+    localStorage.setItem('backendaiwebui.login.password', 'secret');
+    localStorage.setItem('backendaiwebui.appproxy-permit-key', 'permit');
+    localStorage.setItem('backendaiwebui.settings.lang', 'en');
+
+    const { result } = renderHook(() => useLogout(), { wrapper });
+    await act(async () => {
+      await result.current.logout();
+    });
+
+    expect(localStorage.getItem('backendaiwebui.login.password')).toBeNull();
+    expect(
+      localStorage.getItem('backendaiwebui.appproxy-permit-key'),
+    ).toBeNull();
+    expect(localStorage.getItem('backendaiwebui.settings.lang')).toBe('en');
+  });
+
+  it('clears credentials even when the server-side logout fails', async () => {
+    (globalThis as any).backendaiclient.logout = vi
+      .fn()
+      .mockRejectedValue(new Error('unreachable'));
+    localStorage.setItem('backendaiwebui.appproxy-permit-key', 'permit');
+
+    const { result } = renderHook(() => useLogout(), { wrapper });
+    await act(async () => {
+      await result.current.logout().catch(() => {});
+    });
+
+    expect(
+      localStorage.getItem('backendaiwebui.appproxy-permit-key'),
+    ).toBeNull();
+  });
+
   it('clears sessionStorage on logout', async () => {
     sessionStorage.setItem('session-data', 'value');
 
