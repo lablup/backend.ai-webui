@@ -1001,7 +1001,6 @@
       "FolderRenamed": "เปลี่ยนชื่อโฟลเดอร์แล้ว",
       "FolderRestored": "กู้คืนโฟลเดอร์ {{ folderName }} แล้ว",
       "FolderSharePermission": "สิทธิ์การแชร์โฟลเดอร์",
-      "FolderSharingSettings": "การตั้งค่าการแชร์โฟลเดอร์",
       "FolderUpdated": "อัปเดตตัวเลือกโฟลเดอร์แล้ว",
       "FolderUsage": "การใช้งานโฟลเดอร์",
       "FolderUsing": "กำลังใช้",

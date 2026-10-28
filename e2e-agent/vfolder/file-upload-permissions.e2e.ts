@@ -37,13 +37,13 @@ test(
     await app.open("/data");
     await agent.act('Open the "Share Folder" action of a folder the user owns');
     await agent.act(
-      'Read the "Folder sharing settings" card, which shows the folder name and "Read only" as the default mount permission, and press "Edit"',
+      'Read the "Folder Info" section, which shows the folder name and "Read only" as the default mount permission, and press "Edit"',
     );
     await agent.act(
       'In the "Edit default mount permission" dialog choose "Read & Write" and press "Save"',
     );
     await agent.act(
-      'Read "Read & Write" as the default mount permission on the "Folder sharing settings" card',
+      'Read "Read & Write" as the default mount permission on the "Folder Info" section',
     );
     await agent.act('Close the "Share Folder" dialog');
   },
