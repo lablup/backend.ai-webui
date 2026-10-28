@@ -25,6 +25,7 @@ import { useWebUISettingLabels } from './WebUISettingLabels';
 import { Button } from '@lablup/ui-common/Button';
 import { Text } from '@lablup/ui-common/Text';
 import {
+  BAIAlert,
   BAIFlex,
   BAIModal,
   BAIUncontrolledInput,
@@ -292,7 +293,11 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
         onOk={applySettings}
         onCancel={() => setIsApplyConfirmOpen(false)}
       >
-        <Text>{t('webuiSettings.ApplySettingsDesc')}</Text>
+        <BAIAlert
+          type="warning"
+          showIcon
+          title={t('webuiSettings.ApplySettingsDesc')}
+        />
       </BAIModal>
     </>
   );
