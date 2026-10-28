@@ -16,6 +16,7 @@ import {
   useChartColors,
   type StatProps,
 } from '@lablup/ui-common/lab';
+import * as stylex from '@stylexjs/stylex';
 import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -31,6 +32,11 @@ export interface TrendStatProps extends Omit<StatProps, 'delta'> {
 }
 
 const SPARKLINE_HEIGHT = 32;
+
+// The Tooltip surface is dark in both themes, so its text inherits the tooltip colour.
+const tooltipTextStyles = stylex.create({
+  secondary: { opacity: 0.75 },
+});
 
 /** The dashboard's one stat: a count, its change from the previous range, and a bucket sparkline (else `media`). */
 const TrendStat: React.FC<TrendStatProps> = ({
@@ -102,10 +108,17 @@ const TrendStat: React.FC<TrendStatProps> = ({
       {rangeRows.map((row) => (
         <BAIFlex key={row.key} direction="column" align="start">
           <BAIFlex direction="row" align="baseline" gap="sm">
-            <Text>{row.label}</Text>
-            <Text weight="bold">{row.count.toLocaleString()}</Text>
+            <Text color="inherit">{row.label}</Text>
+            <Text color="inherit" weight="bold">
+              {row.count.toLocaleString()}
+            </Text>
           </BAIFlex>
-          <Text size="sm" type="supporting">
+          <Text
+            size="sm"
+            type="supporting"
+            color="inherit"
+            xstyle={tooltipTextStyles.secondary}
+          >
             {row.span}
           </Text>
         </BAIFlex>

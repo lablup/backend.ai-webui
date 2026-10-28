@@ -85,7 +85,7 @@ const MyResource: React.FC<MyResourceProps> = ({
           </BAIFlex>
         }
       />
-      {/* A transport failure escapes @catch; keep the title and let refresh retry. */}
+      {/* A transport failure, or a manager without myUserResourceAllocationV2, escapes @catch; keep the title and let refresh retry. */}
       <ErrorBoundary
         resetKeys={[
           fetchKey,
@@ -173,12 +173,17 @@ const MyResourceStatisticsContent: React.FC<{
             quantity
             unlimited
           }
-          breakdown {
-            keypair {
-              used {
-                resourceType
-                quantity
-              }
+        }
+        myUserResourceAllocationV2 @catch(to: RESULT) {
+          user {
+            used {
+              resourceType
+              quantity
+            }
+            assignable {
+              resourceType
+              quantity
+              unlimited
             }
           }
         }
@@ -187,13 +192,20 @@ const MyResourceStatisticsContent: React.FC<{
     queryRef,
   );
 
-  const allocation = data.effectiveResourceAllocationV2.ok
+  // Same user-based usage as the dashboard's My Resources card: every keypair's sessions.
+  const effective = data.effectiveResourceAllocationV2.ok
     ? data.effectiveResourceAllocationV2.value
     : undefined;
+  const user = data.myUserResourceAllocationV2.ok
+    ? data.myUserResourceAllocationV2.value?.user
+    : undefined;
+  const allocation = effective && user ? { effective, user } : undefined;
   const usageRows = allocation
-    ? toUsageRows(allocation.breakdown.keypair.used, [allocation.assignable], {
-        dropEmpty: false,
-      })
+    ? toUsageRows(
+        allocation.user.used,
+        [allocation.effective.assignable, allocation.user.assignable],
+        { dropEmpty: false },
+      )
     : [];
 
   // Raw units (cores, bytes, device counts); the manager's effective limit

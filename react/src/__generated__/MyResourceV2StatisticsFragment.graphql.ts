@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6623fc7dcea58166e3706ecc2c998eee>>
+ * @generated SignedSource<<9e704892c74809cf57050c350a7f41c3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,13 +17,18 @@ export type MyResourceV2StatisticsFragment$data = {
       readonly resourceType: string;
       readonly unlimited: boolean;
     }>;
-    readonly breakdown: {
-      readonly keypair: {
-        readonly used: ReadonlyArray<{
-          readonly quantity: any;
-          readonly resourceType: string;
-        }>;
-      };
+  } | null | undefined, unknown>;
+  readonly myUserResourceAllocationV2: Result<{
+    readonly user: {
+      readonly assignable: ReadonlyArray<{
+        readonly quantity: any | null | undefined;
+        readonly resourceType: string;
+        readonly unlimited: boolean;
+      }>;
+      readonly used: ReadonlyArray<{
+        readonly quantity: any;
+        readonly resourceType: string;
+      }>;
     };
   } | null | undefined, unknown>;
   readonly " $fragmentType": "MyResourceV2StatisticsFragment";
@@ -46,6 +51,26 @@ v1 = {
   "args": null,
   "kind": "ScalarField",
   "name": "quantity",
+  "storageKey": null
+},
+v2 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "ResourceLimitEntry",
+  "kind": "LinkedField",
+  "name": "assignable",
+  "plural": true,
+  "selections": [
+    (v0/*: any*/),
+    (v1/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "unlimited",
+      "storageKey": null
+    }
+  ],
   "storageKey": null
 };
 return {
@@ -76,58 +101,44 @@ return {
         "name": "effectiveResourceAllocationV2",
         "plural": false,
         "selections": [
+          (v2/*: any*/)
+        ],
+        "storageKey": null
+      },
+      "to": "RESULT"
+    },
+    {
+      "kind": "CatchField",
+      "field": {
+        "alias": null,
+        "args": null,
+        "concreteType": "UserResourceAllocationV2",
+        "kind": "LinkedField",
+        "name": "myUserResourceAllocationV2",
+        "plural": false,
+        "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "ResourceLimitEntry",
+            "concreteType": "ScopeResourceUsageV2",
             "kind": "LinkedField",
-            "name": "assignable",
-            "plural": true,
-            "selections": [
-              (v0/*: any*/),
-              (v1/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "unlimited",
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "EffectiveBreakdownV2",
-            "kind": "LinkedField",
-            "name": "breakdown",
+            "name": "user",
             "plural": false,
             "selections": [
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "ScopeResourceUsageV2",
+                "concreteType": "ResourceSlotEntry",
                 "kind": "LinkedField",
-                "name": "keypair",
-                "plural": false,
+                "name": "used",
+                "plural": true,
                 "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "ResourceSlotEntry",
-                    "kind": "LinkedField",
-                    "name": "used",
-                    "plural": true,
-                    "selections": [
-                      (v0/*: any*/),
-                      (v1/*: any*/)
-                    ],
-                    "storageKey": null
-                  }
+                  (v0/*: any*/),
+                  (v1/*: any*/)
                 ],
                 "storageKey": null
-              }
+              },
+              (v2/*: any*/)
             ],
             "storageKey": null
           }
@@ -142,6 +153,6 @@ return {
 };
 })();
 
-(node as any).hash = "bfb4dc46915a5c8acbcbc15df730d84f";
+(node as any).hash = "1fe059b3971607955c4be87998d82a09";
 
 export default node;
