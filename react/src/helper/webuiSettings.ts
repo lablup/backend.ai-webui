@@ -70,6 +70,7 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
       'login_attempt_limit',
     ),
     def('loginBlockTime', 'public', 'number', 'login', 'login_block_time'),
+    def('autoLogout', 'public', 'boolean', 'login'),
     // Also anonymous: the diagnostics surfaces run on the login page too.
     def('debug', 'public', 'boolean', 'diagnostics'),
 
