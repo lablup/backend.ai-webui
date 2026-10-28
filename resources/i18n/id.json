@@ -4327,6 +4327,7 @@
       "Summary": "Ringkasan",
       "SwitchToAdminConsole": "Beralih ke Konsol Admin",
       "SwitchToUserConsole": "Beralih ke Konsol Pengguna",
+      "SystemSettings": "Pengaturan sistem",
       "Tasks": "Tugas",
       "TermsOfService": "Persyaratan layanan",
       "TotalResourcesInResourceGroup": "Total Sumber Daya dalam Grup Sumber Daya",
@@ -4338,7 +4339,6 @@
       "UserCredentials&Policies": "Kredensial & Kebijakan Pengguna",
       "UserSessionHistory": "Riwayat sesi pengguna",
       "Users": "Pengguna",
-      "WebUISettings": "Pengaturan WebUI",
       "WelcomeMessage": "Selamat datang, {{ userName }}.",
       "YouMushChangeYourPassword": "Disarankan untuk mengubah kata sandi Anda secara berkala untuk alasan keamanan. Karena sejumlah waktu telah berlalu sejak terakhir kali Anda mengubah kata sandi, Anda harus mengubahnya agar dapat terus menggunakan layanan ini.",
       "groupName": {
