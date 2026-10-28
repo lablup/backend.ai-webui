@@ -4152,6 +4152,7 @@
       "Summary": "Özet",
       "SwitchToAdminConsole": "Yönetici Konsoluna Geç",
       "SwitchToUserConsole": "Kullanıcı Konsoluna Geç",
+      "SystemSettings": "Sistem ayarları",
       "Tasks": "Görevler",
       "TermsOfService": "Kullanım Şartları",
       "TotalResourcesIn": "Toplam Kaynaklar",
@@ -4164,7 +4165,6 @@
       "UserCredentials&Policies": "Kullanıcı Kimlik Bilgileri ve Politikaları",
       "UserSessionHistory": "Kullanıcı Oturumu Geçmişi",
       "Users": "Kullanıcılar",
-      "WebUISettings": "WebUI Ayarları",
       "WelcomeMessage": "Hoş geldiniz, {{ userName }}.",
       "YouMushChangeYourPassword": "Güvenlik nedeniyle şifrenizi periyodik olarak değiştirmeniz önerilir. Şifrenizi en son değiştirdiğinizden bu yana belirli bir süre geçtiğinden, hizmeti kullanmaya devam etmek için şifrenizi değiştirmeniz gerekir.",
       "groupName": {

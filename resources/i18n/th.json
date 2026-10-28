@@ -4138,6 +4138,7 @@
       "Summary": "สรุป",
       "SwitchToAdminConsole": "สลับไปยังคอนโซลผู้ดูแลระบบ",
       "SwitchToUserConsole": "สลับไปยังคอนโซลผู้ใช้",
+      "SystemSettings": "การตั้งค่าระบบ",
       "Tasks": "งาน",
       "TermsOfService": "ข้อตกลงการใช้บริการ",
       "TotalResourcesIn": "ทรัพยากรทั้งหมดใน",
@@ -4150,7 +4151,6 @@
       "UserCredentials&Policies": "ข้อมูลประจำตัวผู้ใช้และนโยบาย",
       "UserSessionHistory": "ประวัติเซสชันของผู้ใช้",
       "Users": "ผู้ใช้",
-      "WebUISettings": "การตั้งค่า WebUI",
       "WelcomeMessage": "ยินดีต้อนรับ, {{ userName }}",
       "YouMushChangeYourPassword": "แนะนำให้เปลี่ยนรหัสผ่านเป็นระยะเพื่อความปลอดภัย เนื่องจากเวลาผ่านไปพอสมควรแล้วตั้งแต่คุณเปลี่ยนรหัสผ่านครั้งล่าสุด คุณต้องเปลี่ยนรหัสผ่านเพื่อใช้บริการต่อไป",
       "groupName": {

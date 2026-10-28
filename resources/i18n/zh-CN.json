@@ -4154,6 +4154,7 @@
       "Summary": "概括",
       "SwitchToAdminConsole": "切换到管理员控制台",
       "SwitchToUserConsole": "切换到用户控制台",
+      "SystemSettings": "系统设置",
       "Tasks": "任务",
       "TermsOfService": "服务条款",
       "TotalResourcesIn": "总资源中",
@@ -4166,7 +4167,6 @@
       "UserCredentials&Policies": "用户凭证和政策",
       "UserSessionHistory": "用户会话历史记录",
       "Users": "用户",
-      "WebUISettings": "WebUI 设置",
       "WelcomeMessage": "欢迎，{{ userName }}.",
       "YouMushChangeYourPassword": "出于安全考虑，建议您定期更改密码。由于距离上次更改密码已过去一定时间，您必须更改密码才能继续使用服务。",
       "groupName": {

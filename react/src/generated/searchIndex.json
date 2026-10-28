@@ -1549,8 +1549,8 @@
         "webui.menu.Sessions",
         "webui.menu.Start",
         "webui.menu.Statistics",
+        "webui.menu.SystemSettings",
         "webui.menu.Users",
-        "webui.menu.WebUISettings",
         "webui.menu.groupName.Metrics",
         "webui.menu.groupName.Mlops",
         "webui.menu.groupName.Playground",
@@ -3072,7 +3072,7 @@
       "menuKey": "webui-settings",
       "scope": "admin",
       "path": "/admin/webui-settings",
-      "labelKey": "webui.menu.WebUISettings",
+      "labelKey": "webui.menu.SystemSettings",
       "tabs": [],
       "settings": [],
       "keys": [

@@ -4152,6 +4152,7 @@
       "Summary": "Resumo",
       "SwitchToAdminConsole": "Mudar para o console de administrador",
       "SwitchToUserConsole": "Mudar para o console de usuário",
+      "SystemSettings": "Configurações do sistema",
       "Tasks": "Tarefas",
       "TermsOfService": "Termos de serviço",
       "TotalResourcesIn": "Recursos totais em",
@@ -4164,7 +4165,6 @@
       "UserCredentials&Policies": "Credenciais e políticas do usuário",
       "UserSessionHistory": "Histórico da sessão do usuário",
       "Users": "Comercial",
-      "WebUISettings": "Configurações da WebUI",
       "WelcomeMessage": "Bem vindo, {{userName }}.",
       "YouMushChangeYourPassword": "Recomenda-se que altere periodicamente a sua palavra-passe por razões de segurança. Uma vez que passou um certo tempo desde a última vez que alterou a sua palavra-passe, deve alterá-la para poder continuar a utilizar o serviço.",
       "groupName": {

@@ -4137,6 +4137,7 @@
       "Summary": "Summary",
       "SwitchToAdminConsole": "Switch to Admin Console",
       "SwitchToUserConsole": "Switch to User Console",
+      "SystemSettings": "System Settings",
       "Tasks": "Tasks",
       "TermsOfService": "Terms of Service",
       "TotalResourcesIn": "Total Resources in",
@@ -4149,7 +4150,6 @@
       "UserCredentials&Policies": "User Credentials & Policies",
       "UserSessionHistory": "User Session History",
       "Users": "Users",
-      "WebUISettings": "WebUI Settings",
       "WelcomeMessage": "Welcome, {{ userName }}.",
       "YouMushChangeYourPassword": "It is recommended to periodically change your password for security reasons. Since a certain amount of time has passed since you last changed your password, you must change it in order to continue using the service.",
       "groupName": {

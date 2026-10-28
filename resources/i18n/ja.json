@@ -4154,6 +4154,7 @@
       "Summary": "サマリー",
       "SwitchToAdminConsole": "管理者コンソールに切り替え",
       "SwitchToUserConsole": "ユーザーコンソールに切り替え",
+      "SystemSettings": "システム設定",
       "Tasks": "作業",
       "TermsOfService": "利用規約",
       "TotalResourcesIn": "総リソース",
@@ -4166,7 +4167,6 @@
       "UserCredentials&Policies": "ユーザーの資格情報とポリシー",
       "UserSessionHistory": "ユーザーセッション履歴",
       "Users": "ユーザー管理",
-      "WebUISettings": "WebUI 設定",
       "WelcomeMessage": "ようこそ、{{ userName }}.",
       "YouMushChangeYourPassword": "セキュリティのため、定期的にパスワードを変更することをお勧めします。パスワードを変更してから一定時間が経過したため、サービスを継続して利用するには、パスワードを変更する必要があります。",
       "groupName": {

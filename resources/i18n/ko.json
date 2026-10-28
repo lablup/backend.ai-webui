@@ -4155,6 +4155,7 @@
       "Summary": "요약",
       "SwitchToAdminConsole": "관리자 콘솔로 전환",
       "SwitchToUserConsole": "사용자 콘솔로 전환",
+      "SystemSettings": "시스템 설정",
       "Tasks": "작업",
       "TermsOfService": "약관",
       "TotalResourcesIn": "자원 그룹별 총자원",
@@ -4167,7 +4168,6 @@
       "UserCredentials&Policies": "자격 증명 및 정책",
       "UserSessionHistory": "사용자 세션 기록",
       "Users": "사용자",
-      "WebUISettings": "WebUI 설정",
       "WelcomeMessage": "환영합니다. {{ userName }}님",
       "YouMushChangeYourPassword": "보안을 위해 비밀번호를 주기적으로 변경하는 것이 좋습니다. 비밀번호를 변경한 지 일정 시간이 지났으므로, 서비스를 계속 이용하려면 비밀번호를 변경해야 합니다.",
       "groupName": {

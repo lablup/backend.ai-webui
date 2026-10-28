@@ -570,7 +570,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
         'admin-system',
       ),
     createAdminMenuItem(
-      t('webui.menu.WebUISettings'),
+      t('webui.menu.SystemSettings'),
       <Settings2 style={{ color: token('--color-info') }} size="1em" />,
       'webui-settings',
       'admin-system',

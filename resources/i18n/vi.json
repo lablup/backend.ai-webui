@@ -4154,6 +4154,7 @@
       "Summary": "Tóm lược",
       "SwitchToAdminConsole": "Chuyển sang bảng điều khiển quản trị",
       "SwitchToUserConsole": "Chuyển sang bảng điều khiển người dùng",
+      "SystemSettings": "Cài đặt hệ thống",
       "Tasks": "Nhiệm vụ",
       "TermsOfService": "Điều khoản dịch vụ",
       "TotalResourcesIn": "Tổng tài nguyên trong",
@@ -4166,7 +4167,6 @@
       "UserCredentials&Policies": "Chính sách & Thông tin đăng nhập Người dùng",
       "UserSessionHistory": "Lịch sử phiên người dùng",
       "Users": "Người dùng",
-      "WebUISettings": "Cài đặt WebUI",
       "WelcomeMessage": "Chào mừng, {{ userName }}.",
       "YouMushChangeYourPassword": "Bạn nên thay đổi mật khẩu định kỳ vì lý do bảo mật. \nVì một khoảng thời gian nhất định đã trôi qua kể từ lần cuối bạn thay đổi mật khẩu, bạn phải thay đổi mật khẩu để tiếp tục sử dụng dịch vụ.",
       "groupName": {

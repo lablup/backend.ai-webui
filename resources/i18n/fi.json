@@ -4153,6 +4153,7 @@
       "Summary": "Yhteenveto",
       "SwitchToAdminConsole": "Vaihda ylläpitäjän konsoliin",
       "SwitchToUserConsole": "Vaihda käyttäjäkonsoliin",
+      "SystemSettings": "Järjestelmäasetukset",
       "Tasks": "Tehtävät",
       "TermsOfService": "Käyttöehdot",
       "TotalResourcesIn": "Resurssien kokonaismäärä",
@@ -4165,7 +4166,6 @@
       "UserCredentials&Policies": "Käyttäjien valtakirjat ja käytännöt",
       "UserSessionHistory": "Käyttäjäistunnon historia",
       "Users": "Käyttäjät",
-      "WebUISettings": "WebUI-asetukset",
       "WelcomeMessage": "Tervetuloa, {{ userName }}.",
       "YouMushChangeYourPassword": "On suositeltavaa vaihtaa salasana säännöllisesti turvallisuussyistä. Koska salasanasi viimeisimmästä vaihtamisesta on kulunut tietty aika, sinun on vaihdettava se, jotta voit jatkaa palvelun käyttöä.",
       "groupName": {

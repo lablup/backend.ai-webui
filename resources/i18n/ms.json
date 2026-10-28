@@ -4152,6 +4152,7 @@
       "Summary": "Ringkasan",
       "SwitchToAdminConsole": "Tukar ke Konsol Pentadbir",
       "SwitchToUserConsole": "Tukar ke Konsol Pengguna",
+      "SystemSettings": "Tetapan sistem",
       "Tasks": "Tugasan",
       "TermsOfService": "Syarat perkhidmatan",
       "TotalResourcesIn": "Jumlah sumber dalam",
@@ -4164,7 +4165,6 @@
       "UserCredentials&Policies": "Kepercayaan & Dasar Pengguna",
       "UserSessionHistory": "Sejarah Sesi Pengguna",
       "Users": "Pengguna",
-      "WebUISettings": "Tetapan WebUI",
       "WelcomeMessage": "Selamat datang, {{ userName }}.",
       "YouMushChangeYourPassword": "Adalah disyorkan untuk menukar kata laluan anda secara berkala atas sebab keselamatan. \nMemandangkan tempoh masa tertentu telah berlalu sejak kali terakhir anda menukar kata laluan anda, anda mesti menukarnya untuk terus menggunakan perkhidmatan tersebut.",
       "groupName": {

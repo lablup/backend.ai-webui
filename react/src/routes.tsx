@@ -989,7 +989,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
           scope: 'admin',
           menuKey: 'webui-settings',
           access: 'admin',
-          labelKey: 'webui.menu.WebUISettings',
+          labelKey: 'webui.menu.SystemSettings',
         },
       },
       {

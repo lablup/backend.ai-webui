@@ -4152,6 +4152,7 @@
       "Summary": "Resumen",
       "SwitchToAdminConsole": "Cambiar a la consola de administrador",
       "SwitchToUserConsole": "Cambiar a la consola de usuario",
+      "SystemSettings": "Configuración del sistema",
       "Tasks": "Tareas",
       "TermsOfService": "Condiciones de uso",
       "TotalResourcesIn": "Recursos totales en",
@@ -4164,7 +4165,6 @@
       "UserCredentials&Policies": "Credenciales de usuario y políticas",
       "UserSessionHistory": "Historial de la sesión de usuario",
       "Users": "Usuarios",
-      "WebUISettings": "Ajustes de WebUI",
       "WelcomeMessage": "Bienvenido, {{ userName }}.",
       "YouMushChangeYourPassword": "Se recomienda cambiar periódicamente la contraseña por razones de seguridad. Dado que ha transcurrido cierto tiempo desde la última vez que cambió su contraseña, deberá cambiarla para poder seguir utilizando el servicio.",
       "groupName": {

@@ -55,7 +55,7 @@ const WebUISettingsPage: React.FC = () => {
   return (
     <BAICard
       activeTabKey={curTabKey}
-      tabList={[{ key: 'settings', label: t('webui.menu.WebUISettings') }]}
+      tabList={[{ key: 'settings', label: t('webui.menu.SystemSettings') }]}
     >
       <BAIFlex direction="column" align="stretch" gap="md">
         <Text color="secondary">{t('webuiSettings.PageDesc')}</Text>

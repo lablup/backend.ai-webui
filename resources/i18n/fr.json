@@ -4155,6 +4155,7 @@
       "Summary": "Résumé",
       "SwitchToAdminConsole": "Passer à la console d'administration",
       "SwitchToUserConsole": "Passer à la console utilisateur",
+      "SystemSettings": "Paramètres système",
       "Tasks": "Tâches",
       "TermsOfService": "Conditions d'utilisation",
       "TotalResourcesIn": "Ressources totales dans",
@@ -4167,7 +4168,6 @@
       "UserCredentials&Policies": "Identifiants et politiques",
       "UserSessionHistory": "Historique des sessions utilisateur",
       "Users": "Utilisateurs",
-      "WebUISettings": "Paramètres WebUI",
       "WelcomeMessage": "Bienvenue, {{ userName }}.",
       "YouMushChangeYourPassword": "Il est recommandé de modifier périodiquement votre mot de passe pour des raisons de sécurité. Étant donné qu'un certain temps s'est écoulé depuis la dernière modification de votre mot de passe, vous devez le modifier pour pouvoir continuer à utiliser le service.",
       "groupName": {
