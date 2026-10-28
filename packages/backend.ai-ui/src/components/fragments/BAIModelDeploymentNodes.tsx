@@ -8,7 +8,10 @@ import { useIsLabelableEntityType } from '../../hooks/useLabelableEntityTypes';
 import BAIBooleanToken from '../BAIBooleanToken';
 import BAIDeploymentStatusBadge, {
   BAIDeploymentStatus,
+  isDeploymentInProgress,
+  isDeploymentInStoppedCategory,
 } from '../BAIDeploymentStatusBadge';
+import BAIDoubleBadge from '../BAIDoubleBadge';
 import BAIFlex from '../BAIFlex';
 import BAIId from '../BAIId';
 import BAIText from '../BAIText';
@@ -129,6 +132,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           type
         }
         replicaState {
+          replicaCount
           desiredReplicaCount
         }
         runningReplicas: replicas(filter: { status: { equals: RUNNING } }) {
@@ -200,6 +204,27 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           const status = record.metadata?.status;
           if (!status || status === '%future added value') {
             return '-';
+          }
+          // Autoscaling changes only desiredReplicaCount, so a user-set count
+          // above zero means an autoscaling rule paused it.
+          if (
+            record.replicaState?.desiredReplicaCount === 0 &&
+            !isDeploymentInStoppedCategory(status) &&
+            !isDeploymentInProgress(status)
+          ) {
+            return (
+              <BAIDoubleBadge
+                values={[
+                  {
+                    label: t('comp:BAIModelDeploymentNodes.Paused'),
+                    variant: 'warning',
+                  },
+                  record.replicaState.replicaCount === 0
+                    ? t('comp:BAIModelDeploymentNodes.PausedByUser')
+                    : t('comp:BAIModelDeploymentNodes.PausedByAutoScaling'),
+                ]}
+              />
+            );
           }
           return (
             <BAIDeploymentStatusBadge status={status as BAIDeploymentStatus} />
