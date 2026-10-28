@@ -13,6 +13,7 @@ import { VFolderNodeDescriptionV2Fragment$key } from '../__generated__/VFolderNo
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useVirtualFolderPathV2 } from '../hooks/useVirtualFolderNodePathV2';
 import { formatBinarySizeInfo } from './VFolderNodesV2';
+import VFolderPermissionCellV2 from './VFolderPermissionCellV2';
 import VirtualFolderPathV2 from './VirtualFolderNodeItems/VirtualFolderPathV2';
 import { Badge } from '@lablup/ui-common/Badge';
 import { HStack } from '@lablup/ui-common/Stack';
@@ -70,6 +71,7 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
           }
         }
         ownership {
+          userId
           projectId
           creatorId
           user {
@@ -85,6 +87,7 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
             }
           }
         }
+        ...VFolderPermissionCellV2Fragment
         ...useVirtualFolderNodePathV2Fragment
       }
     `,
@@ -133,6 +136,13 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
             <UsersIcon size="1em" />
           </HStack>
         ),
+    },
+    // The owner always mounts read & write, so the row is for everyone else,
+    // showing the same server-computed level as the folder list (#10647).
+    vfolderNode.ownership?.userId !== currentUser?.uuid && {
+      key: 'mount_permission',
+      label: t('data.folders.MountPermission'),
+      children: <VFolderPermissionCellV2 vfolderFrgmt={vfolderNode} />,
     },
     {
       key: 'owner',

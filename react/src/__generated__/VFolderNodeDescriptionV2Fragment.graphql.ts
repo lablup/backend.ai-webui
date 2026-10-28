@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b0fdd3c2baa78ca13126cc53593d7743>>
+ * @generated SignedSource<<6036083054d19909c9159940aad0b946>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -38,6 +38,7 @@ export type VFolderNodeDescriptionV2Fragment$data = {
         readonly email: string;
       };
     } | null | undefined;
+    readonly userId: string | null | undefined;
   };
   readonly quota: {
     readonly maxFiles: number;
@@ -47,7 +48,7 @@ export type VFolderNodeDescriptionV2Fragment$data = {
   };
   readonly status: VFolderOperationStatus;
   readonly unmanagedPath: string | null | undefined;
-  readonly " $fragmentSpreads": FragmentRefs<"useVirtualFolderNodePathV2Fragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"VFolderPermissionCellV2Fragment" | "useVirtualFolderNodePathV2Fragment">;
   readonly " $fragmentType": "VFolderNodeDescriptionV2Fragment";
 };
 export type VFolderNodeDescriptionV2Fragment$key = {
@@ -196,6 +197,13 @@ return {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
+          "name": "userId",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "projectId",
           "storageKey": null
         },
@@ -268,6 +276,11 @@ return {
     {
       "args": null,
       "kind": "FragmentSpread",
+      "name": "VFolderPermissionCellV2Fragment"
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
       "name": "useVirtualFolderNodePathV2Fragment"
     }
   ],
@@ -276,6 +289,6 @@ return {
 };
 })();
 
-(node as any).hash = "af55b5d43a748d22247382471805ff00";
+(node as any).hash = "f6b6e8ee5142a2dff8b886a475e65599";
 
 export default node;
