@@ -51,6 +51,10 @@ export const useWebUISettingLabels = (): {
         title: t('webuiSettings.LoginBlockTime'),
         description: t('webuiSettings.DescLoginBlockTime'),
       },
+      autoLogout: {
+        title: t('webuiSettings.AutoLogout'),
+        description: t('webuiSettings.DescAutoLogout'),
+      },
       debug: {
         title: t('webuiSettings.Debug'),
         description: t('webuiSettings.DescDebug'),

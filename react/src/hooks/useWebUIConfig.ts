@@ -219,6 +219,22 @@ export function fetchAppConfigOnce(): Promise<ConfigFetchResult> {
 }
 
 /**
+ * The user's own choice (user settings, kept in `backendaioptions`) wins over
+ * the configured default, whether that default came from the file or from
+ * the public app config.
+ */
+export function resolveAutoLogout(
+  cfg: Pick<LoginConfigState, 'autoLogout'>,
+): boolean {
+  const options = (globalThis as Record<string, unknown>).backendaioptions as
+    { get: (key: string, defaultValue?: unknown) => unknown } | undefined;
+  const stored = options ? options.get('auto_logout') : null;
+  return stored === null || stored === undefined
+    ? cfg.autoLogout
+    : Boolean(stored);
+}
+
+/**
  * Process the raw config to extract config values and set global state.
  * This replaces the Lit shell's loadConfig() method.
  */
@@ -228,27 +244,6 @@ function processConfig(config: RawTomlConfig): {
   loginPlugin: string;
   loginConfig: LoginConfigState;
 } {
-  // Auto-logout setting
-  let autoLogout = false;
-  const storedAutoLogout = (globalThis as Record<string, unknown>)
-    .backendaioptions
-    ? (
-        (globalThis as Record<string, unknown>).backendaioptions as {
-          get: (key: string, defaultValue?: unknown) => unknown;
-        }
-      ).get('auto_logout')
-    : null;
-
-  if (
-    storedAutoLogout === null &&
-    config.general !== undefined &&
-    'autoLogout' in config.general
-  ) {
-    autoLogout = config.general.autoLogout as boolean;
-  } else {
-    autoLogout = (storedAutoLogout as boolean) ?? false;
-  }
-
   // Package edition and license info
   let edition = 'Open Source';
   let validUntil = '';
@@ -279,7 +274,7 @@ function processConfig(config: RawTomlConfig): {
   const loginConfig = refreshConfigFromToml(config);
 
   return {
-    autoLogout,
+    autoLogout: resolveAutoLogout(loginConfig),
     proxyUrl,
     loginPlugin,
     loginConfig,
@@ -346,7 +341,7 @@ export function initializeConfigOnce(
 
       store.set(rawConfigState, result.config);
 
-      const { autoLogout, proxyUrl, loginPlugin, loginConfig } = processConfig(
+      const { proxyUrl, loginPlugin, loginConfig } = processConfig(
         result.config,
       );
 
@@ -363,7 +358,7 @@ export function initializeConfigOnce(
       );
       syncDebugFlag(effectiveLoginConfig);
       store.set(loginConfigState, effectiveLoginConfig);
-      store.set(autoLogoutState, autoLogout);
+      store.set(autoLogoutState, resolveAutoLogout(effectiveLoginConfig));
       store.set(proxyUrlState, proxyUrl);
       store.set(loginPluginState, loginPlugin);
 
