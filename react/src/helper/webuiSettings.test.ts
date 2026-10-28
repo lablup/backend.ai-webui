@@ -85,12 +85,16 @@ describe('applyWebUISettings', () => {
       allowChangeSigninMode: true,
       ssoRealmName: 'Corp',
       debug: true,
+      loginAttemptLimit: 5,
+      loginBlockTime: 600,
     };
     expect(applyWebUISettings(state, doc, 'domain')).toEqual(state);
     const next = applyWebUISettings(state, doc, 'public');
     expect(next.change_signin_support).toBe(true);
     expect(next.ssoRealmName).toBe('Corp');
     expect(next.debug).toBe(true);
+    expect(next.login_attempt_limit).toBe(5);
+    expect(next.login_block_time).toBe(600);
   });
 
   it('does not mutate the input state', () => {
