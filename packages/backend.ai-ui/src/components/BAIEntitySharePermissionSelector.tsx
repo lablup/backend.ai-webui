@@ -152,6 +152,10 @@ const BAIEntitySharePermissionSelector: React.FC<
     menuWidth,
     onOpenChange,
     isDisabled,
+    // The Field chrome the doc names; the rest of FieldProps passes through.
+    isLabelHidden,
+    description,
+    status,
     'data-testid': testId,
     ...fieldProps
   } = props;
@@ -174,7 +178,14 @@ const BAIEntitySharePermissionSelector: React.FC<
   };
 
   return (
-    <Field inputID={inputID} isDisabled={isDisabled} {...fieldProps}>
+    <Field
+      inputID={inputID}
+      isDisabled={isDisabled}
+      isLabelHidden={isLabelHidden}
+      description={description}
+      status={status}
+      {...fieldProps}
+    >
       <DropdownMenu
         data-testid={testId}
         placement={placement}
