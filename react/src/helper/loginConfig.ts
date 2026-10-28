@@ -121,11 +121,13 @@ export interface LoginConfigState {
   domain_name: string;
   domain_id: string;
   debug: boolean;
+  autoLogout: boolean;
 }
 
 export function getDefaultLoginConfig(): LoginConfigState {
   return {
     debug: false,
+    autoLogout: false,
     signup_support: false,
     allowAnonymousChangePassword: false,
     change_signin_support: false,
@@ -267,6 +269,12 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
     defaultValue: state.login_block_time,
     value: parseInt(g?.loginBlockTime),
   }) as number;
+
+  state.autoLogout = getConfigValueByExists(g, {
+    valueType: 'boolean',
+    defaultValue: false,
+    value: g?.autoLogout,
+  }) as boolean;
 
   state.api_endpoint = getConfigValueByExists(g, {
     valueType: 'string',

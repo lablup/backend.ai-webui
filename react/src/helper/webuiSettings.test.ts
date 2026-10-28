@@ -87,6 +87,7 @@ describe('applyWebUISettings', () => {
       debug: true,
       loginAttemptLimit: 5,
       loginBlockTime: 600,
+      autoLogout: true,
     };
     expect(applyWebUISettings(state, doc, 'domain')).toEqual(state);
     const next = applyWebUISettings(state, doc, 'public');
@@ -95,6 +96,7 @@ describe('applyWebUISettings', () => {
     expect(next.debug).toBe(true);
     expect(next.login_attempt_limit).toBe(5);
     expect(next.login_block_time).toBe(600);
+    expect(next.autoLogout).toBe(true);
   });
 
   it('does not mutate the input state', () => {
