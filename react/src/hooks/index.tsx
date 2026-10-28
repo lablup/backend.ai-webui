@@ -744,7 +744,7 @@ type BackendAIConfig = {
   force2FA: boolean;
   directoryBasedUsage: boolean;
   maxCountForPreopenPorts: number;
-  pluginPages: string;
+  pluginPages: string[];
   eduAppNamePrefix: string;
   blockList: MenuKeys[];
   inactiveList: MenuKeys[];

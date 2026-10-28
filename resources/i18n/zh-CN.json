@@ -4281,6 +4281,8 @@
     "DescMenuBlocklist": "要从侧边栏移除的菜单键，以逗号分隔，例如 \"statistics, import\"。\"start\" 菜单无法隐藏。",
     "DescMenuInactivelist": "在侧边栏中显示但禁用的菜单键，以逗号分隔。",
     "DescOpenPortToPublic": "在应用启动器中显示“公开开放”选项，使应用无需代理令牌即可访问。",
+    "DescPluginLogin": "登录前加载到登录页面的 /dist/plugins/ 下脚本名称，例如 \"signup-cloud\"。留空则不加载。",
+    "DescPluginPage": "添加页面和菜单项的 /dist/plugins/ 下脚本名称，以逗号分隔，例如 \"test-plugin1, test-plugin2\"。",
     "DescShowNonInstalledImages": "列出所有环境镜像，无论代理是否已安装。",
     "DescSingleSignOnVendors": "在登录页面上提供的 SSO 供应商列表，以逗号分隔，例如 \"saml, openid\"。",
     "DescSsoRealmName": "在 SSO 登录按钮上代替供应商名称显示的标签。",
@@ -4320,6 +4322,8 @@
     "MenuInactivelist": "禁用的菜单项",
     "OpenPortToPublic": "允许公开开放应用端口",
     "PageDesc": "管理员在此更改的值会在此域中覆盖 config.toml。保持默认值的项目继续遵循 config.toml。",
+    "PluginLogin": "登录页面插件",
+    "PluginPage": "页面插件",
     "PublicGroupDesc": "这些值在登录前读取，因此只有超级管理员可以更改。保存在此域的公开应用配置中。",
     "ShowNonInstalledImages": "显示未安装的镜像",
     "SingleSignOnVendors": "单点登录供应商",
@@ -4334,6 +4338,7 @@
       "Environments": "镜像",
       "Login": "登录",
       "Menu": "侧边栏",
+      "Plugins": "插件",
       "Session": "会话启动器",
       "Storage": "文件夹与上传"
     }

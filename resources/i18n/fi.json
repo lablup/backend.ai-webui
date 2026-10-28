@@ -4280,6 +4280,8 @@
     "DescMenuBlocklist": "Pilkuilla erotetut valikkoavaimet, jotka poistetaan sivupalkista, esimerkiksi \"statistics, import\". \"start\"-valikkoa ei voi piilottaa.",
     "DescMenuInactivelist": "Pilkuilla erotetut valikkoavaimet, jotka näytetään sivupalkissa mutta poistetaan käytöstä.",
     "DescOpenPortToPublic": "Näyttää \"Avaa julkisesti\" -valinnan sovelluskäynnistimessä, jotta sovellukseen pääsee ilman välityspalvelimen tunnistetta.",
+    "DescPluginLogin": "Hakemiston /dist/plugins/ skriptin nimi, joka ladataan kirjautumissivulle ennen kirjautumista, esimerkiksi \"signup-cloud\". Jätä tyhjäksi, jos et lataa mitään.",
+    "DescPluginPage": "Pilkuilla erotellut nimet hakemiston /dist/plugins/ skripteistä, jotka lisäävät sivuja ja valikkokohtia, esimerkiksi \"test-plugin1, test-plugin2\".",
     "DescShowNonInstalledImages": "Näyttää kaikki ympäristöimaget riippumatta siitä, onko jokin agentti asentanut ne.",
     "DescSingleSignOnVendors": "Pilkuilla erotettu luettelo kirjautumissivulla tarjottavista SSO-toimittajista, esimerkiksi \"saml, openid\".",
     "DescSsoRealmName": "SSO-kirjautumispainikkeessa toimittajan nimen sijaan näytettävä teksti.",
@@ -4319,6 +4321,8 @@
     "MenuInactivelist": "Käytöstä poistetut valikkokohdat",
     "OpenPortToPublic": "Salli sovellusporttien avaaminen julkisesti",
     "PageDesc": "Arvot, joita ylläpitäjä muuttaa tässä, ohittavat config.toml-tiedoston tässä toimialueessa. Oletusarvoon jätetty kohta noudattaa edelleen config.toml-tiedostoa.",
+    "PluginLogin": "Kirjautumissivun liitännäinen",
+    "PluginPage": "Sivuliitännäiset",
     "PublicGroupDesc": "Luetaan ennen kirjautumista, joten vain superadmin voi muuttaa näitä arvoja. Tallennetaan tämän toimialueen julkiseen sovelluskokoonpanoon.",
     "ShowNonInstalledImages": "Näytä asentamattomat imaget",
     "SingleSignOnVendors": "Kertakirjautumisen toimittajat",
@@ -4333,6 +4337,7 @@
       "Environments": "Imaget",
       "Login": "Kirjautuminen",
       "Menu": "Sivupalkki",
+      "Plugins": "Liitännäiset",
       "Session": "Istunnon käynnistin",
       "Storage": "Kansiot ja lataukset"
     }

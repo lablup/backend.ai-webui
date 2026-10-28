@@ -4281,6 +4281,8 @@
     "DescMenuBlocklist": "サイドバーから削除するメニューキーをカンマ区切りで指定します。例: \"statistics, import\"。\"start\" メニューは非表示にできません。",
     "DescMenuInactivelist": "サイドバーに表示するが無効にするメニューキーをカンマ区切りで指定します。",
     "DescOpenPortToPublic": "プロキシトークンなしでアプリにアクセスできるように、アプリランチャーに「公開する」オプションを表示します。",
+    "DescPluginLogin": "サインイン前にログインページへ読み込む /dist/plugins/ 配下のスクリプト名です。例: \"signup-cloud\"。空にすると読み込みません。",
+    "DescPluginPage": "ページとメニュー項目を追加する /dist/plugins/ 配下のスクリプト名をコンマ区切りで指定します。例: \"test-plugin1, test-plugin2\"。",
     "DescShowNonInstalledImages": "エージェントにインストールされているかどうかに関係なく、すべての環境イメージを表示します。",
     "DescSingleSignOnVendors": "ログインページに表示する SSO プロバイダーをカンマ区切りで指定します。例: \"saml, openid\"。",
     "DescSsoRealmName": "プロバイダー名の代わりに SSO ログインボタンに表示するラベルです。",
@@ -4320,6 +4322,8 @@
     "MenuInactivelist": "無効にするメニュー項目",
     "OpenPortToPublic": "アプリポートの公開を許可",
     "PageDesc": "管理者がここで変更した値は、このドメインで config.toml より優先されます。デフォルトのままの項目は引き続き config.toml に従います。",
+    "PluginLogin": "ログインページプラグイン",
+    "PluginPage": "ページプラグイン",
     "PublicGroupDesc": "ログイン前に読み込まれる値のため、スーパー管理者のみ変更できます。このドメインの公開アプリ設定に保存されます。",
     "ShowNonInstalledImages": "未インストールのイメージを表示",
     "SingleSignOnVendors": "シングルサインオンプロバイダー",
@@ -4334,6 +4338,7 @@
       "Environments": "イメージ",
       "Login": "サインイン",
       "Menu": "サイドバー",
+      "Plugins": "プラグイン",
       "Session": "セッションランチャー",
       "Storage": "フォルダとアップロード"
     }

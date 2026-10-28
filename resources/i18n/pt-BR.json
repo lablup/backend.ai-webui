@@ -4279,6 +4279,8 @@
     "DescMenuBlocklist": "Chaves de menu separadas por vírgula a remover da barra lateral, por exemplo \"statistics, import\". O menu \"start\" não pode ser ocultado.",
     "DescMenuInactivelist": "Chaves de menu separadas por vírgula a mostrar, mas desativar, na barra lateral.",
     "DescOpenPortToPublic": "Mostra a opção \"Abrir ao público\" no lançador de aplicativos para que um aplicativo possa ser acessado sem o token do proxy.",
+    "DescPluginLogin": "Nome do script em /dist/plugins/ carregado na página de login antes da autenticação, por exemplo \"signup-cloud\". Deixe em branco para não carregar nenhum.",
+    "DescPluginPage": "Nomes, separados por vírgulas, dos scripts em /dist/plugins/ que adicionam páginas e itens de menu, por exemplo \"test-plugin1, test-plugin2\".",
     "DescShowNonInstalledImages": "Lista todas as imagens de ambiente, independentemente de um agente tê-las instalado.",
     "DescSingleSignOnVendors": "Lista de provedores de SSO, separados por vírgula, a oferecer na página de login, por exemplo \"saml, openid\".",
     "DescSsoRealmName": "Rótulo mostrado no botão de login SSO em vez do nome do provedor.",
@@ -4318,6 +4320,8 @@
     "MenuInactivelist": "Itens de menu desativados",
     "OpenPortToPublic": "Permitir abrir as portas dos aplicativos ao público",
     "PageDesc": "Os valores que um administrador altera aqui substituem o config.toml para este domínio. Um item deixado no valor padrão continua seguindo o config.toml.",
+    "PluginLogin": "Plugin da página de login",
+    "PluginPage": "Plugins de páginas",
     "PublicGroupDesc": "É lido antes do login, então só um superadmin pode alterar estes valores. Salvo na configuração pública do aplicativo deste domínio.",
     "ShowNonInstalledImages": "Mostrar imagens não instaladas",
     "SingleSignOnVendors": "Provedores de login único",
@@ -4332,6 +4336,7 @@
       "Environments": "Imagens",
       "Login": "Login",
       "Menu": "Barra lateral",
+      "Plugins": "Plugins",
       "Session": "Lançador de sessões",
       "Storage": "Pastas e uploads"
     }

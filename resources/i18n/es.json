@@ -4279,6 +4279,8 @@
     "DescMenuBlocklist": "Claves de menú separadas por comas que se eliminan de la barra lateral, por ejemplo \"statistics, import\". El menú \"start\" no se puede ocultar.",
     "DescMenuInactivelist": "Claves de menú separadas por comas que se muestran pero se desactivan en la barra lateral.",
     "DescOpenPortToPublic": "Muestra la opción \"Abrir al público\" en el lanzador de aplicaciones para que una aplicación sea accesible sin el token del proxy.",
+    "DescPluginLogin": "Nombre del script en /dist/plugins/ que se carga en la página de inicio de sesión antes de iniciar sesión, por ejemplo \"signup-cloud\". Déjelo en blanco para no cargar ninguno.",
+    "DescPluginPage": "Nombres, separados por comas, de los scripts en /dist/plugins/ que añaden páginas y elementos de menú, por ejemplo \"test-plugin1, test-plugin2\".",
     "DescShowNonInstalledImages": "Muestra todas las imágenes de entorno, las haya instalado un agente o no.",
     "DescSingleSignOnVendors": "Lista de proveedores de SSO, separados por comas, que se ofrecen en la página de inicio de sesión, por ejemplo \"saml, openid\".",
     "DescSsoRealmName": "Etiqueta que se muestra en el botón de inicio de sesión SSO en lugar del nombre del proveedor.",
@@ -4318,6 +4320,8 @@
     "MenuInactivelist": "Elementos de menú desactivados",
     "OpenPortToPublic": "Permitir abrir los puertos de aplicación al público",
     "PageDesc": "Los valores que un administrador cambia aquí sustituyen a config.toml para este dominio. Un elemento que se deja con su valor predeterminado sigue usando config.toml.",
+    "PluginLogin": "Plugin de la página de inicio de sesión",
+    "PluginPage": "Plugins de páginas",
     "PublicGroupDesc": "Se lee antes de iniciar sesión, por lo que solo un superadmin puede cambiar estos valores. Se guarda en la configuración pública de la aplicación de este dominio.",
     "ShowNonInstalledImages": "Mostrar imágenes no instaladas",
     "SingleSignOnVendors": "Proveedores de inicio de sesión único",
@@ -4332,6 +4336,7 @@
       "Environments": "Imágenes",
       "Login": "Inicio de sesión",
       "Menu": "Barra lateral",
+      "Plugins": "Plugins",
       "Session": "Lanzador de sesiones",
       "Storage": "Carpetas y subidas"
     }

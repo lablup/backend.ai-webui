@@ -4264,6 +4264,8 @@
     "DescMenuBlocklist": "Comma-separated menu keys to remove from the sidebar, for example \"statistics, import\". The \"start\" menu cannot be hidden.",
     "DescMenuInactivelist": "Comma-separated menu keys to show but disable in the sidebar.",
     "DescOpenPortToPublic": "Show the \"Open to public\" option in the app launcher so an app can be reached without the proxy token.",
+    "DescPluginLogin": "Name of the script under /dist/plugins/ loaded into the login page before sign-in, for example \"signup-cloud\". Leave blank to load none.",
+    "DescPluginPage": "Comma-separated names of the scripts under /dist/plugins/ that add pages and menu items, for example \"test-plugin1, test-plugin2\".",
     "DescShowNonInstalledImages": "List every environment image regardless of whether an agent has installed it.",
     "DescSingleSignOnVendors": "Comma-separated list of SSO vendors to offer on the login page, for example \"saml, openid\".",
     "DescSsoRealmName": "Label shown on the SSO sign-in button instead of the vendor name.",
@@ -4303,6 +4305,8 @@
     "MenuInactivelist": "Disabled menu items",
     "OpenPortToPublic": "Allow opening app ports to the public",
     "PageDesc": "Values an admin changes here override config.toml for this domain. An item left at its default keeps following config.toml.",
+    "PluginLogin": "Login page plugin",
+    "PluginPage": "Page plugins",
     "PublicGroupDesc": "Read before sign-in, so only a superadmin can change these. Saved in the public app config of this domain.",
     "ShowNonInstalledImages": "Show non-installed images",
     "SingleSignOnVendors": "Single sign-on vendors",
@@ -4317,6 +4321,7 @@
       "Environments": "Images",
       "Login": "Sign-in",
       "Menu": "Sidebar",
+      "Plugins": "Plugins",
       "Session": "Session launcher",
       "Storage": "Folders and uploads"
     }

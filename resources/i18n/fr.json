@@ -4282,6 +4282,8 @@
     "DescMenuBlocklist": "Clés de menu séparées par des virgules à retirer de la barre latérale, par exemple \"statistics, import\". Le menu \"start\" ne peut pas être masqué.",
     "DescMenuInactivelist": "Clés de menu séparées par des virgules à afficher mais désactiver dans la barre latérale.",
     "DescOpenPortToPublic": "Affiche l'option \"Ouvrir au public\" dans le lanceur d'applications afin qu'une application soit accessible sans le jeton du proxy.",
+    "DescPluginLogin": "Nom du script sous /dist/plugins/ chargé dans la page de connexion avant l'authentification, par exemple \"signup-cloud\". Laisser vide pour n'en charger aucun.",
+    "DescPluginPage": "Noms, séparés par des virgules, des scripts sous /dist/plugins/ qui ajoutent des pages et des entrées de menu, par exemple \"test-plugin1, test-plugin2\".",
     "DescShowNonInstalledImages": "Liste toutes les images d'environnement, qu'un agent les ait installées ou non.",
     "DescSingleSignOnVendors": "Liste des fournisseurs SSO à proposer sur la page de connexion, séparés par des virgules, par exemple \"saml, openid\".",
     "DescSsoRealmName": "Libellé affiché sur le bouton de connexion SSO à la place du nom du fournisseur.",
@@ -4321,6 +4323,8 @@
     "MenuInactivelist": "Éléments de menu désactivés",
     "OpenPortToPublic": "Autoriser l'ouverture publique des ports d'application",
     "PageDesc": "Les valeurs qu'un administrateur modifie ici remplacent config.toml pour ce domaine. Un élément laissé à sa valeur par défaut continue de suivre config.toml.",
+    "PluginLogin": "Plugin de la page de connexion",
+    "PluginPage": "Plugins de pages",
     "PublicGroupDesc": "Lu avant la connexion, donc seul un superadmin peut modifier ces valeurs. Enregistré dans la configuration publique de l'application de ce domaine.",
     "ShowNonInstalledImages": "Afficher les images non installées",
     "SingleSignOnVendors": "Fournisseurs d'authentification unique",
@@ -4335,6 +4339,7 @@
       "Environments": "Images",
       "Login": "Connexion",
       "Menu": "Barre latérale",
+      "Plugins": "Plugins",
       "Session": "Lanceur de session",
       "Storage": "Dossiers et téléversements"
     }

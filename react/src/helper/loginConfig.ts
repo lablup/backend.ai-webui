@@ -116,7 +116,8 @@ export interface LoginConfigState {
   blockList: string[];
   inactiveList: string[];
   fasttrackEndpoint: string;
-  pluginPages: string;
+  pluginPages: string[];
+  loginPlugin: string;
   domain_name: string;
   domain_id: string;
   debug: boolean;
@@ -193,7 +194,8 @@ export function getDefaultLoginConfig(): LoginConfigState {
     blockList: [],
     inactiveList: [],
     fasttrackEndpoint: '',
-    pluginPages: '',
+    pluginPages: [],
+    loginPlugin: '',
     domain_name: '',
     domain_id: '',
   };
@@ -644,9 +646,21 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
 
   // -- plugin section --
   state.pluginPages = getConfigValueByExists(pl, {
+    valueType: 'array',
+    defaultValue: [] as string[],
+    value:
+      typeof pl?.page === 'string'
+        ? pl.page
+            .split(',')
+            .map((el: string) => el.trim())
+            .filter((el: string) => el.length > 0)
+        : [],
+  }) as string[];
+
+  state.loginPlugin = getConfigValueByExists(pl, {
     valueType: 'string',
     defaultValue: '',
-    value: pl?.page,
+    value: pl?.login,
   }) as string;
 
   return state;

@@ -4283,6 +4283,8 @@
     "DescMenuBlocklist": "Kunci menu yang dipisahkan koma untuk dihapus dari bilah sisi, misalnya \"statistics, import\". Menu \"start\" tidak dapat disembunyikan.",
     "DescMenuInactivelist": "Kunci menu yang dipisahkan koma untuk ditampilkan tetapi dinonaktifkan di bilah sisi.",
     "DescOpenPortToPublic": "Menampilkan opsi \"Buka untuk publik\" di peluncur aplikasi agar aplikasi dapat diakses tanpa token proxy.",
+    "DescPluginLogin": "Nama skrip di /dist/plugins/ yang dimuat ke halaman masuk sebelum masuk, misalnya \"signup-cloud\". Kosongkan untuk tidak memuat apa pun.",
+    "DescPluginPage": "Nama skrip di /dist/plugins/ yang menambahkan halaman dan item menu, dipisahkan koma, misalnya \"test-plugin1, test-plugin2\".",
     "DescShowNonInstalledImages": "Menampilkan semua image lingkungan terlepas dari apakah agen telah memasangnya.",
     "DescSingleSignOnVendors": "Daftar vendor SSO yang dipisahkan koma untuk ditawarkan di halaman masuk, misalnya \"saml, openid\".",
     "DescSsoRealmName": "Label yang ditampilkan pada tombol masuk SSO menggantikan nama vendor.",
@@ -4322,6 +4324,8 @@
     "MenuInactivelist": "Item menu yang dinonaktifkan",
     "OpenPortToPublic": "Izinkan membuka port aplikasi untuk publik",
     "PageDesc": "Nilai yang diubah admin di sini menimpa config.toml untuk domain ini. Item yang dibiarkan pada nilai bawaan tetap mengikuti config.toml.",
+    "PluginLogin": "Plugin halaman masuk",
+    "PluginPage": "Plugin halaman",
     "PublicGroupDesc": "Dibaca sebelum masuk, sehingga hanya superadmin yang dapat mengubah nilai ini. Disimpan di konfigurasi aplikasi publik domain ini.",
     "ShowNonInstalledImages": "Tampilkan image yang belum dipasang",
     "SingleSignOnVendors": "Vendor single sign-on",
@@ -4336,6 +4340,7 @@
       "Environments": "Image",
       "Login": "Masuk",
       "Menu": "Bilah sisi",
+      "Plugins": "Plugin",
       "Session": "Peluncur sesi",
       "Storage": "Folder dan unggahan"
     }

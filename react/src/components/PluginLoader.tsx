@@ -14,7 +14,7 @@
  * 6. Manages plugin active/inactive state based on the current route
  */
 import { useCurrentMenuKey } from '../hooks/useRouteScope';
-import { configLoadedState, rawConfigState } from '../hooks/useWebUIConfig';
+import { configLoadedState, loginConfigState } from '../hooks/useWebUIConfig';
 import {
   type PluginPage,
   type WebUIPluginType,
@@ -44,15 +44,14 @@ const pluginLoadingStartedState = atom<boolean>(false);
 function PluginLoader() {
   'use memo';
 
-  // Derive plugin config directly from rawConfigState.
-  // This way PluginLoader automatically picks up plugin.page values
-  // regardless of whether they come from the initial local config
-  // or from the endpoint config merged by loadConfigFromWebServer.
-  const rawConfig = useAtomValue(rawConfigState);
+  // The effective login config carries `plugin.page` from the file, the
+  // endpoint config merged by loadConfigFromWebServer, and the public
+  // app-config override (`pluginPage`), whichever applies.
+  const loginConfig = useAtomValue(loginConfigState);
   const configLoaded = useAtomValue(configLoadedState);
-  const pluginConfigString =
-    rawConfig?.plugin && 'page' in rawConfig.plugin
-      ? (rawConfig.plugin.page as string) || undefined
+  const pluginNames =
+    loginConfig && loginConfig.pluginPages.length > 0
+      ? loginConfig.pluginPages
       : undefined;
 
   const apiEndpoint = useAtomValue(pluginApiEndpointState);
@@ -67,12 +66,7 @@ function PluginLoader() {
   const currentMenuKey = useCurrentMenuKey();
 
   const loadPlugins = useCallback(
-    async (configString: string) => {
-      const pluginNames = configString
-        .split(',')
-        .map((name) => name.trim())
-        .filter((name) => name.length > 0);
-
+    async (pluginNames: string[]) => {
       if (pluginNames.length === 0) {
         setPluginLoaded(true);
         document.dispatchEvent(
@@ -178,7 +172,7 @@ function PluginLoader() {
   useEffect(() => {
     if (
       configLoaded &&
-      !pluginConfigString &&
+      !pluginNames &&
       !loadingStarted &&
       !loadingGuardRef.current
     ) {
@@ -187,9 +181,9 @@ function PluginLoader() {
         new CustomEvent('backend-ai-plugin-loaded', { detail: true }),
       );
     }
-  }, [configLoaded, pluginConfigString, loadingStarted, setPluginLoaded]);
+  }, [configLoaded, pluginNames, loadingStarted, setPluginLoaded]);
 
-  // Load plugins when config string becomes available.
+  // Load plugins when the plugin list becomes available.
   // In Electron, apiEndpoint must also be set before starting, because the plugin URL
   // is `${apiEndpoint}/dist/plugins/${page}.js`. If we start early with apiEndpoint=null,
   // the guard (loadingGuardRef + loadingStarted) is set and blocks any later retry
@@ -197,7 +191,7 @@ function PluginLoader() {
   useEffect(() => {
     const isElectronEnv = (globalThis as Record<string, unknown>).isElectron;
     const canLoad =
-      pluginConfigString &&
+      pluginNames &&
       !loadingStarted &&
       !loadingGuardRef.current &&
       (!isElectronEnv || !!apiEndpoint);
@@ -205,13 +199,13 @@ function PluginLoader() {
     if (canLoad) {
       loadingGuardRef.current = true;
       setLoadingStarted(true);
-      loadPlugins(pluginConfigString).catch((error) => {
+      loadPlugins(pluginNames).catch((error) => {
         logger.error('Unexpected error during plugin loading:', error);
         setPluginLoaded(true);
       });
     }
   }, [
-    pluginConfigString,
+    pluginNames,
     apiEndpoint,
     loadingStarted,
     setLoadingStarted,

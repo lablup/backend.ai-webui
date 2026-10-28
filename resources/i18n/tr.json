@@ -4279,6 +4279,8 @@
     "DescMenuBlocklist": "Kenar çubuğundan kaldırılacak menü anahtarları, virgülle ayrılmış; örneğin \"statistics, import\". \"start\" menüsü gizlenemez.",
     "DescMenuInactivelist": "Kenar çubuğunda gösterilecek ancak devre dışı bırakılacak menü anahtarları, virgülle ayrılmış.",
     "DescOpenPortToPublic": "Bir uygulamaya proxy belirteci olmadan erişilebilmesi için uygulama başlatıcıda \"Herkese aç\" seçeneğini gösterir.",
+    "DescPluginLogin": "Oturum açmadan önce oturum açma sayfasına yüklenen /dist/plugins/ altındaki betiğin adı, örneğin \"signup-cloud\". Hiçbirini yüklememek için boş bırakın.",
+    "DescPluginPage": "Sayfa ve menü öğesi ekleyen /dist/plugins/ altındaki betiklerin virgülle ayrılmış adları, örneğin \"test-plugin1, test-plugin2\".",
     "DescShowNonInstalledImages": "Bir temsilcinin yükleyip yüklemediğine bakılmaksızın tüm ortam imajlarını listeler.",
     "DescSingleSignOnVendors": "Oturum açma sayfasında sunulacak SSO sağlayıcılarının virgülle ayrılmış listesi; örneğin \"saml, openid\".",
     "DescSsoRealmName": "SSO oturum açma düğmesinde sağlayıcı adı yerine gösterilen etiket.",
@@ -4318,6 +4320,8 @@
     "MenuInactivelist": "Devre dışı menü öğeleri",
     "OpenPortToPublic": "Uygulama portlarının herkese açılmasına izin ver",
     "PageDesc": "Bir yöneticinin burada değiştirdiği değerler bu etki alanı için config.toml dosyasını geçersiz kılar. Varsayılan değerinde bırakılan bir öğe config.toml dosyasını izlemeye devam eder.",
+    "PluginLogin": "Oturum açma sayfası eklentisi",
+    "PluginPage": "Sayfa eklentileri",
     "PublicGroupDesc": "Oturum açmadan önce okunur; bu nedenle bu değerleri yalnızca bir süper yönetici değiştirebilir. Bu etki alanının herkese açık uygulama yapılandırmasında saklanır.",
     "ShowNonInstalledImages": "Yüklenmemiş imajları göster",
     "SingleSignOnVendors": "Tek oturum açma sağlayıcıları",
@@ -4332,6 +4336,7 @@
       "Environments": "İmajlar",
       "Login": "Oturum açma",
       "Menu": "Kenar çubuğu",
+      "Plugins": "Eklentiler",
       "Session": "Oturum başlatıcı",
       "Storage": "Klasörler ve yüklemeler"
     }

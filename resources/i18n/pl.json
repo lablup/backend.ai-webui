@@ -4282,6 +4282,8 @@
     "DescMenuBlocklist": "Rozdzielone przecinkami klucze menu do usunięcia z paska bocznego, na przykład \"statistics, import\". Menu \"start\" nie można ukryć.",
     "DescMenuInactivelist": "Rozdzielone przecinkami klucze menu, które mają być pokazywane na pasku bocznym, ale wyłączone.",
     "DescOpenPortToPublic": "Pokazuje opcję \"Otwórz publicznie\" w programie uruchamiającym aplikacje, aby aplikacja była dostępna bez tokenu proxy.",
+    "DescPluginLogin": "Nazwa skryptu w /dist/plugins/ ładowanego na stronie logowania przed zalogowaniem, np. \"signup-cloud\". Pozostaw puste, aby nie ładować żadnego.",
+    "DescPluginPage": "Rozdzielone przecinkami nazwy skryptów w /dist/plugins/, które dodają strony i pozycje menu, np. \"test-plugin1, test-plugin2\".",
     "DescShowNonInstalledImages": "Wyświetla wszystkie obrazy środowisk niezależnie od tego, czy agent je zainstalował.",
     "DescSingleSignOnVendors": "Rozdzielona przecinkami lista dostawców SSO oferowanych na stronie logowania, na przykład \"saml, openid\".",
     "DescSsoRealmName": "Etykieta wyświetlana na przycisku logowania SSO zamiast nazwy dostawcy.",
@@ -4321,6 +4323,8 @@
     "MenuInactivelist": "Wyłączone pozycje menu",
     "OpenPortToPublic": "Zezwalaj na publiczne otwieranie portów aplikacji",
     "PageDesc": "Wartości zmienione tutaj przez administratora nadpisują config.toml dla tej domeny. Pozycja pozostawiona z wartością domyślną nadal korzysta z config.toml.",
+    "PluginLogin": "Wtyczka strony logowania",
+    "PluginPage": "Wtyczki stron",
     "PublicGroupDesc": "Odczytywane przed zalogowaniem, więc tylko superadministrator może zmienić te wartości. Zapisywane w publicznej konfiguracji aplikacji tej domeny.",
     "ShowNonInstalledImages": "Pokazuj niezainstalowane obrazy",
     "SingleSignOnVendors": "Dostawcy logowania jednokrotnego",
@@ -4335,6 +4339,7 @@
       "Environments": "Obrazy",
       "Login": "Logowanie",
       "Menu": "Pasek boczny",
+      "Plugins": "Wtyczki",
       "Session": "Program uruchamiający sesje",
       "Storage": "Foldery i przesyłanie"
     }

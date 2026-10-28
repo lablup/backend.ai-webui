@@ -4279,6 +4279,8 @@
     "DescMenuBlocklist": "Kunci menu yang dipisahkan dengan koma untuk dibuang daripada bar sisi, contohnya \"statistics, import\". Menu \"start\" tidak boleh disembunyikan.",
     "DescMenuInactivelist": "Kunci menu yang dipisahkan dengan koma untuk ditunjukkan tetapi dilumpuhkan dalam bar sisi.",
     "DescOpenPortToPublic": "Tunjukkan pilihan \"Buka kepada umum\" dalam pelancar aplikasi supaya aplikasi boleh dicapai tanpa token proksi.",
+    "DescPluginLogin": "Nama skrip di /dist/plugins/ yang dimuatkan ke halaman log masuk sebelum log masuk, contohnya \"signup-cloud\". Biarkan kosong untuk tidak memuatkan apa-apa.",
+    "DescPluginPage": "Nama skrip di /dist/plugins/ yang menambah halaman dan item menu, dipisahkan dengan koma, contohnya \"test-plugin1, test-plugin2\".",
     "DescShowNonInstalledImages": "Senaraikan semua imej persekitaran tanpa mengira sama ada agen telah memasangnya.",
     "DescSingleSignOnVendors": "Senarai vendor SSO yang dipisahkan dengan koma untuk ditawarkan pada halaman log masuk, contohnya \"saml, openid\".",
     "DescSsoRealmName": "Label yang ditunjukkan pada butang log masuk SSO menggantikan nama vendor.",
@@ -4318,6 +4320,8 @@
     "MenuInactivelist": "Item menu dilumpuhkan",
     "OpenPortToPublic": "Benarkan membuka port aplikasi kepada umum",
     "PageDesc": "Nilai yang diubah pentadbir di sini mengatasi config.toml untuk domain ini. Item yang dibiarkan pada nilai lalai terus mengikut config.toml.",
+    "PluginLogin": "Pemalam halaman log masuk",
+    "PluginPage": "Pemalam halaman",
     "PublicGroupDesc": "Dibaca sebelum log masuk, jadi hanya superadmin boleh mengubah nilai ini. Disimpan dalam konfigurasi aplikasi awam domain ini.",
     "ShowNonInstalledImages": "Tunjukkan imej yang belum dipasang",
     "SingleSignOnVendors": "Vendor log masuk tunggal",
@@ -4332,6 +4336,7 @@
       "Environments": "Imej",
       "Login": "Log masuk",
       "Menu": "Bar sisi",
+      "Plugins": "Pemalam",
       "Session": "Pelancar sesi",
       "Storage": "Folder dan muat naik"
     }

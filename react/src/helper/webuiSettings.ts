@@ -27,7 +27,8 @@ export type WebUISettingGroup =
   | 'menu'
   | 'downloads'
   | 'account'
-  | 'diagnostics';
+  | 'diagnostics'
+  | 'plugins';
 
 export interface WebUISettingDefinition {
   /** App-config key, equal to the `config.toml` key unless noted. */
@@ -73,6 +74,10 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
     def('autoLogout', 'public', 'boolean', 'login'),
     // Also anonymous: the diagnostics surfaces run on the login page too.
     def('debug', 'public', 'boolean', 'diagnostics'),
+    // Plugin scripts are loaded at bootstrap, before sign-in, so both keys
+    // are anonymous too.
+    def('pluginLogin', 'public', 'string', 'plugins', 'loginPlugin'),
+    def('pluginPage', 'public', 'stringList', 'plugins', 'pluginPages'),
 
     // Session launcher.
     def(
@@ -161,6 +166,7 @@ export const WEBUI_SETTING_GROUPS: ReadonlyArray<WebUISettingGroup> = [
   'downloads',
   'account',
   'diagnostics',
+  'plugins',
 ];
 
 export type WebUISettingsDocument = Record<string, unknown>;

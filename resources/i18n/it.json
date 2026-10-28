@@ -4279,6 +4279,8 @@
     "DescMenuBlocklist": "Chiavi di menu separate da virgole da rimuovere dalla barra laterale, ad esempio \"statistics, import\". Il menu \"start\" non può essere nascosto.",
     "DescMenuInactivelist": "Chiavi di menu separate da virgole da mostrare ma disattivare nella barra laterale.",
     "DescOpenPortToPublic": "Mostra l'opzione \"Apri al pubblico\" nel launcher di app così che un'app sia raggiungibile senza il token del proxy.",
+    "DescPluginLogin": "Nome dello script in /dist/plugins/ caricato nella pagina di accesso prima dell'autenticazione, ad esempio \"signup-cloud\". Lasciare vuoto per non caricarne alcuno.",
+    "DescPluginPage": "Nomi, separati da virgole, degli script in /dist/plugins/ che aggiungono pagine e voci di menu, ad esempio \"test-plugin1, test-plugin2\".",
     "DescShowNonInstalledImages": "Elenca tutte le immagini di ambiente, indipendentemente dal fatto che un agente le abbia installate.",
     "DescSingleSignOnVendors": "Elenco di fornitori SSO, separati da virgole, da offrire nella pagina di accesso, ad esempio \"saml, openid\".",
     "DescSsoRealmName": "Etichetta mostrata sul pulsante di accesso SSO al posto del nome del fornitore.",
@@ -4318,6 +4320,8 @@
     "MenuInactivelist": "Voci di menu disattivate",
     "OpenPortToPublic": "Consenti l'apertura al pubblico delle porte delle app",
     "PageDesc": "I valori che un amministratore modifica qui sostituiscono config.toml per questo dominio. Un elemento lasciato al valore predefinito continua a seguire config.toml.",
+    "PluginLogin": "Plugin della pagina di accesso",
+    "PluginPage": "Plugin di pagina",
     "PublicGroupDesc": "Viene letto prima dell'accesso, quindi solo un superadmin può modificare questi valori. Salvato nella configurazione pubblica dell'app di questo dominio.",
     "ShowNonInstalledImages": "Mostra le immagini non installate",
     "SingleSignOnVendors": "Fornitori di single sign-on",
@@ -4332,6 +4336,7 @@
       "Environments": "Immagini",
       "Login": "Accesso",
       "Menu": "Barra laterale",
+      "Plugins": "Plugin",
       "Session": "Launcher di sessione",
       "Storage": "Cartelle e caricamenti"
     }

@@ -3157,6 +3157,8 @@
         "webuiSettings.DescMenuBlocklist",
         "webuiSettings.DescMenuInactivelist",
         "webuiSettings.DescOpenPortToPublic",
+        "webuiSettings.DescPluginLogin",
+        "webuiSettings.DescPluginPage",
         "webuiSettings.DescShowNonInstalledImages",
         "webuiSettings.DescSingleSignOnVendors",
         "webuiSettings.DescSsoRealmName",
@@ -3196,6 +3198,8 @@
         "webuiSettings.MenuInactivelist",
         "webuiSettings.OpenPortToPublic",
         "webuiSettings.PageDesc",
+        "webuiSettings.PluginLogin",
+        "webuiSettings.PluginPage",
         "webuiSettings.PublicGroupDesc",
         "webuiSettings.ShowNonInstalledImages",
         "webuiSettings.SingleSignOnVendors",
@@ -3209,6 +3213,7 @@
         "webuiSettings.group.Environments",
         "webuiSettings.group.Login",
         "webuiSettings.group.Menu",
+        "webuiSettings.group.Plugins",
         "webuiSettings.group.Session",
         "webuiSettings.group.Storage"
       ]

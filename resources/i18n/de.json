@@ -4281,6 +4281,8 @@
     "DescMenuBlocklist": "Durch Kommas getrennte Menüschlüssel, die aus der Seitenleiste entfernt werden, zum Beispiel \"statistics, import\". Das Menü \"start\" kann nicht ausgeblendet werden.",
     "DescMenuInactivelist": "Durch Kommas getrennte Menüschlüssel, die in der Seitenleiste angezeigt, aber deaktiviert werden.",
     "DescOpenPortToPublic": "Zeigt die Option \"Öffentlich freigeben\" im App-Starter, damit eine App ohne Proxy-Token erreichbar ist.",
+    "DescPluginLogin": "Name des Skripts unter /dist/plugins/, das vor der Anmeldung in die Anmeldeseite geladen wird, z. B. \"signup-cloud\". Leer lassen, um keines zu laden.",
+    "DescPluginPage": "Durch Kommas getrennte Namen der Skripte unter /dist/plugins/, die Seiten und Menüeinträge hinzufügen, z. B. \"test-plugin1, test-plugin2\".",
     "DescShowNonInstalledImages": "Listet jedes Umgebungs-Image auf, unabhängig davon, ob ein Agent es installiert hat.",
     "DescSingleSignOnVendors": "Durch Kommas getrennte Liste der SSO-Anbieter, die auf der Anmeldeseite angeboten werden, zum Beispiel \"saml, openid\".",
     "DescSsoRealmName": "Beschriftung, die auf der SSO-Anmeldeschaltfläche anstelle des Anbieternamens angezeigt wird.",
@@ -4320,6 +4322,8 @@
     "MenuInactivelist": "Deaktivierte Menüeinträge",
     "OpenPortToPublic": "Öffentliches Freigeben von App-Ports erlauben",
     "PageDesc": "Werte, die ein Administrator hier ändert, überschreiben config.toml für diese Domain. Ein auf dem Standardwert belassener Eintrag folgt weiterhin config.toml.",
+    "PluginLogin": "Plugin der Anmeldeseite",
+    "PluginPage": "Seiten-Plugins",
     "PublicGroupDesc": "Wird vor der Anmeldung gelesen, daher kann nur ein Superadmin diese Werte ändern. Gespeichert in der öffentlichen App-Konfiguration dieser Domain.",
     "ShowNonInstalledImages": "Nicht installierte Images anzeigen",
     "SingleSignOnVendors": "Single-Sign-on-Anbieter",
@@ -4334,6 +4338,7 @@
       "Environments": "Images",
       "Login": "Anmeldung",
       "Menu": "Seitenleiste",
+      "Plugins": "Plugins",
       "Session": "Sitzungsstarter",
       "Storage": "Ordner und Uploads"
     }

@@ -4281,6 +4281,8 @@
     "DescMenuBlocklist": "Các khóa menu phân tách bằng dấu phẩy cần xóa khỏi thanh bên, ví dụ \"statistics, import\". Không thể ẩn menu \"start\".",
     "DescMenuInactivelist": "Các khóa menu phân tách bằng dấu phẩy sẽ hiển thị nhưng bị vô hiệu hóa trong thanh bên.",
     "DescOpenPortToPublic": "Hiển thị tùy chọn \"Mở công khai\" trong trình khởi chạy ứng dụng để có thể truy cập ứng dụng mà không cần mã proxy.",
+    "DescPluginLogin": "Tên tập lệnh trong /dist/plugins/ được tải vào trang đăng nhập trước khi đăng nhập, ví dụ \"signup-cloud\". Để trống nếu không tải.",
+    "DescPluginPage": "Tên các tập lệnh trong /dist/plugins/ thêm trang và mục menu, phân tách bằng dấu phẩy, ví dụ \"test-plugin1, test-plugin2\".",
     "DescShowNonInstalledImages": "Liệt kê mọi image môi trường bất kể đại lý đã cài đặt hay chưa.",
     "DescSingleSignOnVendors": "Danh sách nhà cung cấp SSO phân tách bằng dấu phẩy để hiển thị trên trang đăng nhập, ví dụ \"saml, openid\".",
     "DescSsoRealmName": "Nhãn hiển thị trên nút đăng nhập SSO thay cho tên nhà cung cấp.",
@@ -4320,6 +4322,8 @@
     "MenuInactivelist": "Mục menu bị vô hiệu hóa",
     "OpenPortToPublic": "Cho phép mở công khai cổng ứng dụng",
     "PageDesc": "Các giá trị quản trị viên thay đổi tại đây sẽ ghi đè config.toml cho miền này. Mục được giữ ở giá trị mặc định vẫn tiếp tục theo config.toml.",
+    "PluginLogin": "Plugin trang đăng nhập",
+    "PluginPage": "Plugin trang",
     "PublicGroupDesc": "Được đọc trước khi đăng nhập, nên chỉ superadmin mới có thể thay đổi các giá trị này. Được lưu trong cấu hình ứng dụng công khai của miền này.",
     "ShowNonInstalledImages": "Hiển thị image chưa cài đặt",
     "SingleSignOnVendors": "Nhà cung cấp đăng nhập một lần",
@@ -4334,6 +4338,7 @@
       "Environments": "Image",
       "Login": "Đăng nhập",
       "Menu": "Thanh bên",
+      "Plugins": "Plugin",
       "Session": "Trình khởi chạy phiên",
       "Storage": "Thư mục và tải lên"
     }
